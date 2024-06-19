@@ -1,166 +1,510 @@
-Return-Path: <linux-kernel+bounces-221714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1661490F794
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:36:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B595190F797
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A931F241CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:36:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F6C283379
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991C0159911;
-	Wed, 19 Jun 2024 20:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5D515990E;
+	Wed, 19 Jun 2024 20:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yDM3gZ38"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d3ddwFdO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B2376413
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 20:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E4B157E82
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 20:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718829405; cv=none; b=LpODbCXy2P+DhnG3nHVV0716jMLcr/vUXH3Wp+e0rOZF0sGoI0UKgwf+rtnF73+8nlb7I8VQJk6m34dk/++iRDwKrLscuvDFDgFWfsMCgpVWCzQcXwpZnVItqLcI5e3oA9Y8EBweksVX7kc2Ou/vMqs2aWZ9ckPaBtDtWkrAruc=
+	t=1718829609; cv=none; b=NGNxGU9zVDIHfZzMhQ8S+kCxIeL7SqYLBM1AY4Ueupsv3QWNJJ+tzW2cd7V3wUTE5Te5WNUaFZtJRhOnhiaxmdQsUqPEls8+y70CuzLVnGP5MVGQMwVCKgu9LpiOz793KJ7tRNQOw3Nc9y2uYJmzcU2pRgWoGyeealgVFq7/DqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718829405; c=relaxed/simple;
-	bh=YHpZBKOTGpiCGrM0Gky8nUyTgm2aWWdFfAQxJF+pTiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BzB50a9Eo8Zo8XzSAwrrRA//tqau4d1k+ddHdyidHyzdC+OGN5Api2BTFI5b5NfBOdbPEKvxF/7pmbcPx8f+y4LMrpGC9mxgUFcFvfVwFZmtOzIqQq9ss6tGYrwiXiuhsRdtr6CbJCnYh2bZUOT981oiBslJSqfH1wJz26zxhJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yDM3gZ38; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-25c9ef2701fso157102fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:36:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718829402; x=1719434202; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7Bhz4UEquitBq09lUPEQydDdFbLGzU2edcWDV1BKWGo=;
-        b=yDM3gZ38+SEkhPab9SWoxS1ojy/76ttk668fMn93lvzh2RVce/QPaDWkkX/SGusQ+Z
-         0mGDJpLCHhwhPavzTFDCD1po3DoofT1pTvRiuMeW8hexjkQve5VTvJU9fTy9SokTqOa5
-         PER1LwZlmGRmxI1Lz92uxjqlLxDbZPdoxrNGKtzAHLbjc1YUpwqLqD+NypPewRp/0dUb
-         9gIKEQFOFlVbC0X70A7dtywIH5lD0QtuUTEvtE6FX0wBJjTlVNU8z8oe0aZJSazSuECY
-         /3e6tS/iEXoGoIMtygOfc08dLw4SwndW5qSVJTC5MqFp9VFJIvAqDECXwt3T8qd7hguK
-         05YQ==
+	s=arc-20240116; t=1718829609; c=relaxed/simple;
+	bh=S7QilYAI/ERc+Iiav2VuCMv39uHnsftVBxzze6qxJb0=;
+	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LEL1yILl0p76Fzs476pIxVblZ1AQqjCTpTk1QihTJV+VFfWS9R0TSmWtx/T6hIujNrHMaZY5o4TVBVPdfMznhdR5a/wPE8yPH2+nyKvqwJ0WtxKzyHudz9eoUFexQO0sI5DCYnKBtz8dP8OIOEX/89wU2BnD46Qku4SbduoBSAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d3ddwFdO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718829605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H7AlWQL5S/wkFuqpvdeZdhsg4cN8Wxn4B6AXKblG+Gs=;
+	b=d3ddwFdON09v30C5Vxosd0OoED7yfYWJ6Cd6uMBZRm/eCX8Z33NCDe0cxjzyp6yiuYM8Ym
+	2aIlbE7Lt2oWlIMSdaOTId1mUeOh7ibrlekBp7GgBs9mufmgvoUx8ebM3uySoWPl29ZUJA
+	Uyj+XV/DXNrsDsLHfyM9WiI55F56B84=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-597-sp9ZOJRmOnWs5kpsvy0ZQQ-1; Wed, 19 Jun 2024 16:40:04 -0400
+X-MC-Unique: sp9ZOJRmOnWs5kpsvy0ZQQ-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6b50b0270d8so2902246d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:40:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718829402; x=1719434202;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Bhz4UEquitBq09lUPEQydDdFbLGzU2edcWDV1BKWGo=;
-        b=tWEv1SjKU1YiFlz3MpHXWlGQueLXrNwKqRb3tlkMl7pRIx5lF2RNh1RqrTbK9MGG9I
-         qqQfXnAig+hDz1sXgxI8p7acejRDKBoBGGEttmT5I1v/g4nlB9BwNpU5uGocctPFsqKb
-         zNX0xD2VTTPmZIjLwLfQJxElyUZNyMMgOKPgsFhphyCJzlIohmChjbLvColGutlDbEXg
-         cD/0NTsuX0wjfO4l7DdDLCxLMXxqWb4Gxtmfr23xxgBJynJ4HW2LGGYN/KWEi4kNXawX
-         O7tulShT24ijJ7AD5oj80gpOCoVbTLoyYh3KdXSQMhGk3nwEB4VSK+KnpR82scLhqwr7
-         1MQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUs5lKkzsEPAxy29m8pIGw5kmgWGOCQVcrdFq584ykj0Nv6P/NzZ2xveoIn5Fp8YiC59zoPcSpVmfh1j0LlG7VI0IBGrrsFMHoaA5sN
-X-Gm-Message-State: AOJu0YwUedMxJu85HX61QDL9gb/KgIayuqr8Pznk7MqZoIiHMgSPX2Hw
-	mz1GbhvC5PvZyc1qdzUYu7Hfx/bBdP+267ChRhqg3r1JEZDKxMdR1+/r3Vo8Q9k=
-X-Google-Smtp-Source: AGHT+IFB+dmoTZsjm1rjTdd/Rx0XJY6qdj/XU6ksvKxjea18nZLUHV9q0z0ee2VgHzIViuH6JCshyg==
-X-Received: by 2002:a05:6870:c0cc:b0:25c:a725:f150 with SMTP id 586e51a60fabf-25ca7261c54mr2212458fac.23.1718829402194;
-        Wed, 19 Jun 2024 13:36:42 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25a6d0fd5a6sm796453fac.56.2024.06.19.13.36.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 13:36:41 -0700 (PDT)
-Message-ID: <e7a2438a-f6a3-439e-8058-937248dd5b3f@baylibre.com>
-Date: Wed, 19 Jun 2024 15:36:41 -0500
+        d=1e100.net; s=20230601; t=1718829604; x=1719434404;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
+         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=H7AlWQL5S/wkFuqpvdeZdhsg4cN8Wxn4B6AXKblG+Gs=;
+        b=DUmJiwasSycuCXv/7czn0HGvvKi/DnnRUUTOBqx3IHZ2gq53Y1p3NWlSsmokXQBPVJ
+         VQtcnLX7Yz8/xOajCIF1chszdAi1IlGdoyKsZBdRf4EAm7nOx8tJHGQWaUoodNngSJHp
+         CqZvqfYQGzC7XaQU25udHfjUiH0RUWQnMw5YBv/OAQ0p1pOPuVhj0cypbo97tA+jmHNM
+         bkk87EGfVYdvycmiIqOrd6BlQ5T0pUvtZw8+2LPgpm7HW64c/zd8qjPE8g898LElrdqR
+         TDEDtFdtSBmp8qUs8NR0z+sVPE+t9bn5/h4wghINXaV2W5/Qt1M7EWeznPXoaBd+nn6y
+         h5Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCWe9kKiakMNgOW3n2Js8dHMLRXQtbEnXRq9wg/m0Y0xv34yEvAIY/g+Qs/EVYQRnM9QAvRN4ZK9/EgQu1I2vkDNEQHrMRHIKVNu9Bw9
+X-Gm-Message-State: AOJu0Ywwk4v4JnAAyh5KSdLkvn/wr3JVZiCWaHMhxKG3PuZmiT2wSzF5
+	IWkelBDsxRsoUhEl6xHZZZgCoTK3oX6yqxDKt1e3xVy/cu5bmOtHiuFNbFRFRm0HLJu8TtBE2oj
+	sEGh5QROoItPQXq8kwCGx7nwybFZAUwPlnErpVQXeCSI9HLnBAJ0Sr8IHcFfVfvrPseSUWkghvs
+	XT+NLGbYJvfBfHMrgdrVt7GurIdVSLA0oaHovN
+X-Received: by 2002:ad4:57aa:0:b0:6b0:738f:faf1 with SMTP id 6a1803df08f44-6b501e3f1b4mr35696946d6.38.1718829603823;
+        Wed, 19 Jun 2024 13:40:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH3u9It0QDraAyuCt1WFEP98Mdj35/qyKCseYUSVQBU/Nw54QbB7EnD+Lbrc+FZrsnolxqHwl8GX/vbXLbSfLE=
+X-Received: by 2002:ad4:57aa:0:b0:6b0:738f:faf1 with SMTP id
+ 6a1803df08f44-6b501e3f1b4mr35696746d6.38.1718829603338; Wed, 19 Jun 2024
+ 13:40:03 -0700 (PDT)
+Received: from 311643009450 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 19 Jun 2024 20:40:02 +0000
+From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240603185647.2310748-1-amorenoz@redhat.com> <20240603185647.2310748-8-amorenoz@redhat.com>
+ <8624ccf8-e9e2-4a95-a25c-7d3166bb3256@ovn.org> <f8050877-1728-4723-acb8-8a8ab7674470@ovn.org>
+ <CAG=2xmPAwvCR4ky0cu7Yai29v3H592-ATXtNkhsNJ-vTwR4BVw@mail.gmail.com>
+ <5f293bac-4117-4f93-8d3f-636d6ce236a4@ovn.org> <CAG=2xmPbpvYGy1rAkcLsK6PFxCx3bmZyXKX5RTag8XZBTxMZdg@mail.gmail.com>
+ <5c369615-1774-4dc5-87fc-d96ce3421ff8@ovn.org> <CAG=2xmNWXjocXk6FXfvxjOeKgB0BQsEdXvFRm6OoqHKs88OmTw@mail.gmail.com>
+ <9ef1ec07-2345-4176-bc7a-ab7e011484b0@ovn.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI protocol
- with MOSI idle configuration
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
- lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- nuno.sa@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1718749981.git.marcelo.schmitt@analog.com>
- <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
- <63db9349-f453-4a5b-aa09-d1857ddd8b03@baylibre.com>
- <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <9ef1ec07-2345-4176-bc7a-ab7e011484b0@ovn.org>
+Date: Wed, 19 Jun 2024 20:40:02 +0000
+Message-ID: <CAG=2xmPW1Du3ahvwjarHaXMiXe2qr2G-wH9z8Sv7qKQK9t9nTA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 7/9] net: openvswitch: do not notify drops
+ inside sample
+To: Ilya Maximets <i.maximets@ovn.org>
+Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com, 
+	horms@kernel.org, dev@openvswitch.org, Pravin B Shelar <pshelar@ovn.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/19/24 1:58 PM, Marcelo Schmitt wrote:
-> On 06/19, David Lechner wrote:
->> On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
->>
->>
+On Wed, Jun 19, 2024 at 08:21:02PM GMT, Ilya Maximets wrote:
+> On 6/19/24 08:35, Adri=C3=A1n Moreno wrote:
+> > On Tue, Jun 18, 2024 at 05:44:05PM GMT, Ilya Maximets wrote:
+> >> On 6/18/24 12:50, Adri=C3=A1n Moreno wrote:
+> >>> On Tue, Jun 18, 2024 at 12:22:23PM GMT, Ilya Maximets wrote:
+> >>>> On 6/18/24 09:00, Adri=C3=A1n Moreno wrote:
+> >>>>> On Mon, Jun 17, 2024 at 02:10:37PM GMT, Ilya Maximets wrote:
+> >>>>>> On 6/17/24 13:55, Ilya Maximets wrote:
+> >>>>>>> On 6/3/24 20:56, Adrian Moreno wrote:
+> >>>>>>>> The OVS_ACTION_ATTR_SAMPLE action is, in essence,
+> >>>>>>>> observability-oriented.
+> >>>>>>>>
+> >>>>>>>> Apart from some corner case in which it's used a replacement of =
+clone()
+> >>>>>>>> for old kernels, it's really only used for sFlow, IPFIX and now,
+> >>>>>>>> local emit_sample.
+> >>>>>>>>
+> >>>>>>>> With this in mind, it doesn't make much sense to report
+> >>>>>>>> OVS_DROP_LAST_ACTION inside sample actions.
+> >>>>>>>>
+> >>>>>>>> For instance, if the flow:
+> >>>>>>>>
+> >>>>>>>>   actions:sample(..,emit_sample(..)),2
+> >>>>>>>>
+> >>>>>>>> triggers a OVS_DROP_LAST_ACTION skb drop event, it would be extr=
+emely
+> >>>>>>>> confusing for users since the packet did reach its destination.
+> >>>>>>>>
+> >>>>>>>> This patch makes internal action execution silently consume the =
+skb
+> >>>>>>>> instead of notifying a drop for this case.
+> >>>>>>>>
+> >>>>>>>> Unfortunately, this patch does not remove all potential sources =
+of
+> >>>>>>>> confusion since, if the sample action itself is the last action,=
+ e.g:
+> >>>>>>>>
+> >>>>>>>>     actions:sample(..,emit_sample(..))
+> >>>>>>>>
+> >>>>>>>> we actually _should_ generate a OVS_DROP_LAST_ACTION event, but =
+we aren't.
+> >>>>>>>>
+> >>>>>>>> Sadly, this case is difficult to solve without breaking the
+> >>>>>>>> optimization by which the skb is not cloned on last sample actio=
+ns.
+> >>>>>>>> But, given explicit drop actions are now supported, OVS can just=
+ add one
+> >>>>>>>> after the last sample() and rewrite the flow as:
+> >>>>>>>>
+> >>>>>>>>     actions:sample(..,emit_sample(..)),drop
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> >>>>>>>> ---
+> >>>>>>>>  net/openvswitch/actions.c | 13 +++++++++++--
+> >>>>>>>>  1 file changed, 11 insertions(+), 2 deletions(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions=
+.c
+> >>>>>>>> index 33f6d93ba5e4..54fc1abcff95 100644
+> >>>>>>>> --- a/net/openvswitch/actions.c
+> >>>>>>>> +++ b/net/openvswitch/actions.c
+> >>>>>>>> @@ -82,6 +82,15 @@ static struct action_fifo __percpu *action_fi=
+fos;
+> >>>>>>>>  static struct action_flow_keys __percpu *flow_keys;
+> >>>>>>>>  static DEFINE_PER_CPU(int, exec_actions_level);
+> >>>>>>>>
+> >>>>>>>> +static inline void ovs_drop_skb_last_action(struct sk_buff *skb=
+)
+> >>>>>>>> +{
+> >>>>>>>> +	/* Do not emit packet drops inside sample(). */
+> >>>>>>>> +	if (OVS_CB(skb)->probability)
+> >>>>>>>> +		consume_skb(skb);
+> >>>>>>>> +	else
+> >>>>>>>> +		ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
+> >>>>>>>> +}
+> >>>>>>>> +
+> >>>>>>>>  /* Make a clone of the 'key', using the pre-allocated percpu 'f=
+low_keys'
+> >>>>>>>>   * space. Return NULL if out of key spaces.
+> >>>>>>>>   */
+> >>>>>>>> @@ -1061,7 +1070,7 @@ static int sample(struct datapath *dp, str=
+uct sk_buff *skb,
+> >>>>>>>>  	if ((arg->probability !=3D U32_MAX) &&
+> >>>>>>>>  	    (!arg->probability || get_random_u32() > arg->probability)=
+) {
+> >>>>>>>>  		if (last)
+> >>>>>>>> -			ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
+> >>>>>>>> +			ovs_drop_skb_last_action(skb);
+> >>>>>>
+> >>>>>> Always consuming the skb at this point makes sense, since having s=
+maple()
+> >>>>>> as a last action is a reasonable thing to have.  But this looks mo=
+re like
+> >>>>>> a fix for the original drop reason patch set.
+> >>>>>>
+> >>>>>
+> >>>>> I don't think consuming the skb at this point makes sense. It was v=
+ery
+> >>>>> intentionally changed to a drop since a very common use-case for
+> >>>>> sampling is drop-sampling, i.e: replacing an empty action list (tha=
+t
+> >>>>> triggers OVS_DROP_LAST_ACTION) with a sample(emit_sample()). Ideall=
+y,
+> >>>>> that replacement should not have any effect on the number of
+> >>>>> OVS_DROP_LAST_ACTION being reported as the packets are being treate=
+d in
+> >>>>> the same way (only observed in one case).
+> >>>>>
+> >>>>>
+> >>>>>>>>  		return 0;
+> >>>>>>>>  	}
+> >>>>>>>>
+> >>>>>>>> @@ -1579,7 +1588,7 @@ static int do_execute_actions(struct datap=
+ath *dp, struct sk_buff *skb,
+> >>>>>>>>  		}
+> >>>>>>>>  	}
+> >>>>>>>>
+> >>>>>>>> -	ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
+> >>>>>>>> +	ovs_drop_skb_last_action(skb);
+> >>>>>>>
+> >>>>>>> I don't think I agree with this one.  If we have a sample() actio=
+n with
+> >>>>>>> a lot of different actions inside and we reached the end while th=
+e last
+> >>>>>>> action didn't consume the skb, then we should report that.  E.g.
+> >>>>>>> "sample(emit_sample(),push_vlan(),set(eth())),2"  should report t=
+hat the
+> >>>>>>> cloned skb was dropped.  "sample(push_vlan(),emit_sample())" shou=
+ld not.
+> >>>>>>>
+> >>>>>
+> >>>>> What is the use case for such action list? Having an action branch
+> >>>>> executed randomly doesn't make sense to me if it's not some
+> >>>>> observability thing (which IMHO should not trigger drops).
+> >>>>
+> >>>> It is exactly my point.  A list of actions that doesn't end is some =
+sort
+> >>>> of a terminal action (output, drop, etc) does not make a lot of sens=
+e and
+> >>>> hence should be signaled as an unexpected drop, so users can re-chec=
+k the
+> >>>> pipeline in case they missed the terminal action somehow.
+> >>>>
+> >>>>>
+> >>>>>>> The only actions that are actually consuming the skb are "output"=
+,
+> >>>>>>> "userspace", "recirc" and now "emit_sample".  "output" and "recir=
+c" are
+> >>>>>>> consuming the skb "naturally" by stealing it when it is the last =
+action.
+> >>>>>>> "userspace" has an explicit check to consume the skb if it is the=
+ last
+> >>>>>>> action.  "emit_sample" should have the similar check.  It should =
+likely
+> >>>>>>> be added at the point of action introduction instead of having a =
+separate
+> >>>>>>> patch.
+> >>>>>>>
+> >>>>>
+> >>>>> Unlinke "output", "recirc", "userspace", etc. with emit_sample the
+> >>>>> packet does not continue it's way through the datapath.
+> >>>>
+> >>>> After "output" the packet leaves the datapath too, i.e. does not con=
+tinue
+> >>>> it's way through OVS datapath.
+> >>>>
+> >>>
+> >>> I meant a broader concept of "datapath". The packet continues. For th=
+e
+> >>> userspace action this is true only for the CONTROLLER ofp action but
+> >>> since the datapath does not know which action it's implementing, we
+> >>> cannot do better.
+> >>
+> >> It's not only controller() action.  Packets can be brought to userspac=
+e
+> >> for various reason including just an explicit ask to execute some acti=
+ons
+> >> in userspace.  In any case the packet sent to userspace kind of reache=
+d its
+> >> destination and it's not the "datapath drops the packet" situation.
+> >>
+> >>>
+> >>>>>
+> >>>>> It would be very confusing if OVS starts monitoring drops and adds =
+a bunch
+> >>>>> of flows such as "actions:emit_sample()" and suddently it stops rep=
+orting such
+> >>>>> drops via standard kfree_skb_reason. Packets _are_ being dropped he=
+re,
+> >>>>> we are just observing them.
+> >>>>
+> >>>> This might make sense from the higher logic in user space applicatio=
+n, but
+> >>>> it doesn't from the datapath perspective.  And also, if the user add=
+s the
+> >>>> 'emit_sample' action for drop monitring, they already know where to =
+find
+> >>>> packet samples, they don't need to use tools like dropwatch anymore.
+> >>>> This packet is not dropped from the datapath perspective, it is samp=
+led.
+> >>>>
+> >>>>>
+> >>>>> And if we change emit_sample to trigger a drop if it's the last act=
+ion,
+> >>>>> then "sample(50%, emit_sample()),2" will trigger a drop half of the=
+ times
+> >>>>> which is also terribly confusing.
+> >>>>
+> >>>> If emit_sample is the last action, then skb should be consumed silen=
+tly.
+> >>>> The same as for "output" and "userspace".
+> >>>>
+> >>>>>
+> >>>>> I think we should try to be clear and informative with what we
+> >>>>> _actually_ drop and not require the user that is just running
+> >>>>> "dropwatch" to understand the internals of the OVS module.
+> >>>>
+> >>>> If someone is already using sampling to watch their packet drops, wh=
+y would
+> >>>> they use dropwatch?
+> >>>>
+> >>>>>
+> >>>>> So if you don't want to accept the "observational" nature of sample=
+(),
+> >>>>> the only other solution that does not bring even more confusion to =
+OVS
+> >>>>> drops would be to have userspace add explicit drop actions. WDYT?
+> >>>>>
+> >>>>
+> >>>> These are not drops from the datapath perspective.  Users can add ex=
+plicit
+> >>>> drop actions if they want to, but I'm really not sure why they would=
+ do that
+> >>>> if they are already capturing all these packets in psample, sFlow or=
+ IPFIX.
+> >>>
+> >>> Because there is not a single "user". Tools and systems can be built =
+on
+> >>> top of tracepoints and samples and they might not be coordinated betw=
+een
+> >>> them. Some observability application can be always enabled and doing
+> >>> constant network monitoring or statistics while other lower level too=
+ls
+> >>> can be run at certain moments to troubleshoot issues.
+> >>>
+> >>> In order to run dropwatch in a node you don't need to have rights to
+> >>> access the OpenFlow controller and ask it to change the OpenFlow rule=
+s
+> >>> or else dropwatch simply will not show actual packet drops.
+> >>
+> >> The point is that these are not drops in this scenario.  The packet wa=
+s
+> >> delivered to its destination and hence should not be reported as dropp=
+ed.
+> >> In the observability use-case that you're describing even OpenFlow lay=
+er
+> >> in OVS doesn't know if these supposed to be treated as packet drops fo=
+r
+> >> the user or if these are just samples with the sampling being the only
+> >> intended destination.  For OpenFlow and OVS userspace components these
+> >> two scenarios are indistinguishable.  Only the OpenFlow controller kno=
+ws
+> >> that these rules were put in place because it was an ACL created by so=
+me
+> >> user or tool.  And since OVS in user space can't make such a distincti=
+on,
+> >> kernel can't make it either, and so shouldn't guess what the user two
+> >> levels of abstraction higher up meant.
+> >>
+> >>>
+> >>> To me it seems obvious that drop sampling (via emit_sample) "includes=
+"
+> >>> drop reporting via emit_sample. In both cases you get the packet
+> >>> headers, but in one case you also get OFP controller metadata. Now ev=
+en
+> >>> if there is a system that uses both, does it make sense to push to th=
+em
+> >>> the responsibility of dealing with them being mutually exclusive?
+> >>>
+> >>> I think this makes debugging OVS datapath unnecessarily obscure when =
+we
+> >>> know the packet is actually being dropped intentionally by OVS.
+> >>
+> >> I don't think we know that we're in a drop sampling scenario.  We don'=
+t
+> >> have enough information even in OVS userspace to tell.
+> >>
+> >> And having different behavior between "userspace" and "emit_sample" in
+> >> the kernel may cause even more confusion, because now two ways of samp=
+ling
+> >> packets will result in packets showing up in dropwatch in one case, bu=
+t
+> >> not in the other.
+> >>
+> >>>
+> >>> What's the problem with having OVS write the following?
+> >>>     "sample(50%, emit_sample()),drop(0)"
+> >>
+> >> It's a valid sequence of actions, but we shouldn't guess what the end
+> >> user meant by putting those actions into the kernel.  If we see such a
+> >> sequence in the kernel, then we should report an explicit drop.  If
+> >> there was only the "sample(50%, emit_sample())" then we should simply
+> >> consume the skb as it reached its destination in the psample.
+> >>
+> >> For the question if OVS in user space should put explicit drop action
+> >> while preparing to emit sample, this doesn't sound reasonable for the
+> >> same reason - OVS in user space doesn't know what the intention was of
+> >> the user or tool that put the sampling action into OpenFlow pipeline.
+> >>
+> >
+> > I don't see it that way. The spec says that packets whose action sets
+> > (the result of classification) have no output action and no group actio=
+n
+> > must be dropped. Even if OFP sample action is an extension, I don't see
+> > it invalidating that semantics.
+> > So, IMHO, OVS does know that a flow that is just sampled is a drop.
+>
+> This applies to "action sets", but most users are actually using "action
+> lists" supplied via "Apply-actions" OF instruction and the action sets
+> always remain empty.  So, from the OF perspective, strictly speaking, we
+> are dropping every single packet.  So, this is not a good analogy.
+>
+> >
+> >> I actually became more confused about what are we arguing about.
+> >> To recap:
+> >>
+> >>                                      This patch     My proposal
+> >>
+> >> 1. emit_sample() is the last            consume        consume
+> >>     inside the sample()
+> >>
+> >> 2. the end of the action list           consume        drop
+> >>     inside the sample()
+> >>
+> >> 3. emit_sample() is the last            drop           consume
+> >>     outside the sample()
+> >>
+> >> 4. the end of the action list           drop           drop
+> >>     outside the sample()
+> >>
+> >> 5. sample() is the last action          consume        consume
+> >>     and probability failed
+> >>
+> >>
+> >> I don't think cases 1 and 3 should differ, i.e. the behavior should
+> >> be the same regardless of emit_sample() being inside or outside of
+> >> the sample().  As a side point, OVS in user space will omit the 100%
+> >> rate sample() action and will just list inner actions instead.  This
+> >> means that 100% probability sampling will generate drops and 99% will
+> >> not.  Doesn't sound right.
+> >>
+> >
+> > That's what I was refering to in the commit message, we still OVS to
+> > write:
+> >     actions:sample(..,emit_sample(..)),drop
+> >
+> >> Case 2 should likely never happen, but I'd like to see a drop reported
+> >> if that ever happens, because it is not a meaningful list of actions.
+> >>
+> >> Best regards, Ilya Maximets.
+> >>
+> >
+> > I think we could drop this patch if we agree that OVS could write
+> > explicit drops when it knows the packet is being dropped and sampled
+> > (the action only has OFP sample actions).
+> >
+> > The drop could be placed inside the odp sample action to avoid
+> > breaking the clone optimization:
+> >     actions:sample(50%, actions(emit_sample(),drop)))
+> >
+> > or outside if the sample itself is optimized out:
+> >     actions:emit_sample(),drop
+> >
+> > IIUC, if we don't do that, we are saying that sampling is incompatible
+> > with decent drop reporting via kfree_skb infrastructure used by tools
+> > like dropwatch or retis (among many others). And I think that is
+> > unnecessarily and deliberately making OVS datapath more difficult to
+> > troubleshoot.
+>
+> This makes some sense, so let's ensure that semantics is consistent
+> within the kernel and discuss how to make the tools happy from the
+> user space perspective.
+>
+> But we shouldn't simply drop this patch, we still need to consume the
+> skb after emit_sample() when it is the last action.  The same as we
+> do for the userpsace() action.  Though it should be done at the point
+> of the action introduction.  Having both actions consistent will allow
+> us to solve the observability problem for both in the same way by
+> adding explicit drop actions from user space.
 
-...
+OK. I'll resend the series dropping this patch (and consuming the skb
+apropriately).
 
->>
->>> +the peripheral and also when CS is inactive.
->>
->> As I mentioned in a previous review, I think the key detail here is that the
->> MOSI line has to be in the required state during the CS line assertion
->> (falling edge). I didn't really get that from the current wording. The current
->> wording makes it sound like MOSI needs to be high indefinitely longer.
-> 
-> It may be that we only need MOSI high just before bringing CS low. Though,
-> I don't see that info in the datasheets. How much time would MOSI be required
-> to be high prior to bringing CS low? The timing diagrams for register access and
-> ADC sampling in "3-wire" mode all start and end with MOSI at logical 1 (high).
-> I think reg access work if MOSI is brought low after CS gets low, but sample
-> read definitely don't work.
-> 
-> From the info available in datasheets, it looks like MOSI is indeed expected 
-> to be high indefinitely amount of time. Except when the controller is clocking
-> out data to the peripheral.
-> 
-> Even if find out the amount of time MOSI would be required high prior to CS low,
-> then we would need some sort of MOSI high/low state set with a delay prior to
-> active CS. That might be enough to support the AD4000 series of devices but,
-> would it be worth the added complexity?
-> 
+>
+> On a side note:
+> I wonder if probability-induced drop needs a separate reason... i.e.
+> it could have been consumed by emit_smaple()/userspace() but wasn't.
+>
 
-It needs to happen at the same time as setting CPOL for the SCLK line for the
-device that is about to have the CS asserted. So I don't think we are breaking
-new ground here. Typically, in most datasheets I've seen they tend to say
-something like 2 ns before the CS change. So in most cases, I don't think
-anyone bothers adding a delay. But if a longer delay was really needed for
-a specific peripheral, we could add a SPI xfer with no read/write that has
-cs_off=1 and a delay to get the correct state of both MOSI and SCLK a longer
-time before the CS change.
+You mean in sample action "get_random_u32() > arg->probability"?
+It only makes sense to drop it if the last action so currently uses
+OVS_DROP_LAST_ACTION.
 
->>
->>> index e8e1e798924f..8e50a8559225 100644
->>> --- a/include/linux/spi/spi.h
->>> +++ b/include/linux/spi/spi.h
->>> @@ -599,6 +599,12 @@ struct spi_controller {
->>>  	 * assert/de-assert more than one chip select at once.
->>>  	 */
->>>  #define SPI_CONTROLLER_MULTI_CS		BIT(7)
->>> +	/*
->>> +	 * The spi-controller is capable of keeping the MOSI line low or high
->>> +	 * when not clocking out data.
->>> +	 */
->>> +#define SPI_CONTROLLER_MOSI_IDLE_LOW    BIT(8)  /* Can idle MOSI low */
->>> +#define SPI_CONTROLLER_MOSI_IDLE_HIGH   BIT(9)  /* Can idle MOSI high */
->>
->> I don't see where these are used anywhere else in the series. They
->> seem redundant with SPI_MOSI_IDLE_LOW and SPI_MOSI_IDLE_HIGH.
->>
-> Good point.
-> They are currently not being used.
-> Comparing with what we have for SPI_CONTROLLER_MULTI_CS, I'm thinking it may be
-> handy to have dt properties to indicate controller MOSI idle capabilities.
-> Does that sound reasonable?
+> Best regards, Ilya Maximets.
+>
 
-I don't see any properties in spi-controller.yaml related to
-SPI_CONTROLLER_MULTI_CS. So I don't see how a property for
-the idle capabilities would be useful there.
+Thanks for the great discussion.
+Adri=C3=A1n
 
 
