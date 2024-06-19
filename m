@@ -1,84 +1,85 @@
-Return-Path: <linux-kernel+bounces-220904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3089290E8F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:05:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6594390E8FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D027E1F211CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:05:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02EC4B22BCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A896013B792;
-	Wed, 19 Jun 2024 11:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQPoj8uq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E853D139D15;
-	Wed, 19 Jun 2024 11:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A56136664;
+	Wed, 19 Jun 2024 11:08:04 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B908713664C;
+	Wed, 19 Jun 2024 11:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718795122; cv=none; b=fPm3xcAJWQQzN6TYZ8VS7BV8j5sU0prEv6cUr1tzxcB4VW6DQXJbGgLCMRPHtYOE0i1h+Sx9cNp9LOhLtLPbC2SZhkyyVx7BvH75sYfeLR1lVygrV6veiyECmZRA61NxNcO4SlgAJZWW4L1wcEHxdM+/C5gYdh7ReTvStqFylCE=
+	t=1718795284; cv=none; b=A/RdsvS7o0hh2N2UEcpyPen1edkZbVYfnH240eenxzuY7gj+YIBmZGjP2XLNF8kYedAgInNoGnAUbghzvEPkqrTMp6u/9QRtnTbF86pAP4StXy3/5REQdC8HC9NfP4gbmfvaodbQ2ZYJ4BBWsVOsw1apVdzh82gv3nLeN7gaHyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718795122; c=relaxed/simple;
-	bh=Uh5WmoLVL5Fngn5y6WjRvd07oh2JBAFi2uDL6j7S7uk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N69a4KT4nojE7h6ACxzuqMhowcNfg1UYXrz2U56A/JAiib5xFZmd3byXkaE2WKktU7TZcM3rwBvxcYILt+SJxcejfWY0fufqxp/ezQijoq8G0jWuCNy9/+DGC6zpPOyDBgkJYVmKm+AMre5WOjSp4TDpCOrcfQ4pVReAJASZffQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQPoj8uq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BC1FC4AF49;
-	Wed, 19 Jun 2024 11:05:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718795121;
-	bh=Uh5WmoLVL5Fngn5y6WjRvd07oh2JBAFi2uDL6j7S7uk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BQPoj8uqFOmX5PAChvrpAjJx8vxT+JB0Dee4Kj9XAgefq/qX6wgxUuTRkbNGKTw5O
-	 yUDUxpLipNvJ4gYYRC4KVFF8JrHBwgjKvhO3lcwLAiPukcgiuODPWZDvPLjYVK/Q+z
-	 BSYthMfoQL7VGdCdURw3ZKdaHT8QMZ4fkXDOva2jjkjPSIguIBgTJmcD1OMkV5G1PP
-	 B3nrxGERj45M+O++MAFBgRU4Q8WlZ3X3cKsjCeB4+0oGmtjaBpk9Tp5GHvGLFHCqrZ
-	 G9QkwSdP0bKTG8XCwtbj2whIvWKF6GhEdInhkweJXyvWStCb6+t79OACdz+/qWaBzf
-	 ksBPSjf0tSXdQ==
-Date: Wed, 19 Jun 2024 12:05:17 +0100
-From: Simon Horman <horms@kernel.org>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
-	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
-Subject: Re: [net PATCH] octeontx2-pf: Fix linking objects into multiple
- modules
-Message-ID: <20240619110517.GC690967@kernel.org>
-References: <20240618061122.6628-1-gakula@marvell.com>
+	s=arc-20240116; t=1718795284; c=relaxed/simple;
+	bh=1roHWMTkenylQTVxa6sCfmt+lt8ygc+cj7orJ3CFXr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y9pY21zgylwDqVvOoQSftTYpXTpzFIzzusCcLCo/7TCJwC6FW6ptBDvOBxNlv30cO+3k6BrydaRHMP2pl75UgL2gG9YZ7968US2ZA4hYarOoT+/OdhebPtO13pndgo+yIx8RGDrbsMmyhCAGer4V1MUYCWu4DTQCzVoMeqHZC5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sJtAM-00027J-00; Wed, 19 Jun 2024 13:07:50 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 7C77AC0120; Wed, 19 Jun 2024 13:07:40 +0200 (CEST)
+Date: Wed, 19 Jun 2024 13:07:40 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: torvalds@linux-foundation.org
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] MIPS fixes for v6.10
+Message-ID: <ZnK7/CW+hLH3/Hhs@alpha.franken.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240618061122.6628-1-gakula@marvell.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 18, 2024 at 11:41:22AM +0530, Geetha sowjanya wrote:
-> This patch fixes the below build warning messages that are
-> caused due to linking same files to multiple modules by
-> exporting the required symbols.
-> 
-> "scripts/Makefile.build:244: drivers/net/ethernet/marvell/octeontx2/nic/Makefile:
-> otx2_devlink.o is added to multiple modules: rvu_nicpf rvu_nicvf
-> 
-> scripts/Makefile.build:244: drivers/net/ethernet/marvell/octeontx2/nic/Makefile:
-> otx2_dcbnl.o is added to multiple modules: rvu_nicpf rvu_nicvf"
-> 
-> Fixes: 8e67558177f8 ("octeontx2-pf: PFC config support with DCBx").
-> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
 
-Thanks Geetha,
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
 
-I checked and it does not seem to be possible to compile
-rvu_nicvf as a built-in and rvu_nicpf as a module,
-which was my only concern about this.
+are available in the Git repository at:
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips-fixes_6.10_1
+
+for you to fetch changes up to 6e5aee08bd2517397c9572243a816664f2ead547:
+
+  Revert "MIPS: pci: lantiq: restore reset gpio polarity" (2024-06-13 10:17:09 +0200)
+
+----------------------------------------------------------------
+- fix for BCM6538 boards
+- fix RB532 PCI workaround
+
+----------------------------------------------------------------
+Christian Marangi (1):
+      mips: bmips: BCM6358: make sure CBR is correctly set
+
+Ilpo Järvinen (1):
+      MIPS: Routerboard 532: Fix vendor retry check code
+
+Martin Schiller (1):
+      MIPS: pci: lantiq: restore reset gpio polarity
+
+Thomas Bogendoerfer (1):
+      Revert "MIPS: pci: lantiq: restore reset gpio polarity"
+
+ arch/mips/bmips/setup.c     | 3 ++-
+ arch/mips/pci/ops-rc32434.c | 4 ++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
