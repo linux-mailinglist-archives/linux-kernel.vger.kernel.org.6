@@ -1,106 +1,241 @@
-Return-Path: <linux-kernel+bounces-221248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B298990F0DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:38:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FEB90F00D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B70C1F23CB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:38:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE9EC1C221E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B602E64A;
-	Wed, 19 Jun 2024 14:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A456F18EBF;
+	Wed, 19 Jun 2024 14:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nucleusys.com header.i=@nucleusys.com header.b="DPRo9UiM"
-Received: from lan.nucleusys.com (lan.nucleusys.com [92.247.61.126])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="FmPxiJy3"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533901F94D;
-	Wed, 19 Jun 2024 14:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.247.61.126
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD76125C9;
+	Wed, 19 Jun 2024 14:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718807825; cv=none; b=Jkr12ZqkAL587Dlq/FApG1Y8dANd/uZRvOM8h2e5txTP+1TvcdmM4Jn+egd01iMS5fKXgxcJtVgk4X8OqD3lt4fZxezzuBsAZq66l5us+KdmGcp6DvO3aZH/JqkEsRb3YkDBCL2CBbItBzqMas8RvSHZXCx/vcrGBlafPyBmLTw=
+	t=1718806648; cv=none; b=Z34/8DOi5sLpFPaaoLM414l2Q/72WJ9yv9ZYBflhXrUC4b7qOAvYBK6NXcbSkxrxknoztI5NnCA5kBwo/qXVwcF0W2POj2AZWdzSbu6B1inHcMJ8NJpPISrvnDDVAp6vtBDQPcAV3gRV4RBe6e66qxUzs5ndTAveR69WgLPJ51I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718807825; c=relaxed/simple;
-	bh=GKJQP8b1zlzBtB7Nw8Wg91kyevfxGQ9EerYqgJk9e9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBHkU13BHTtUkwOLMeDJU5cwlW1TjsuTLE3K+JrfrVGAUkvD4icReqe04+aBmr2vk9GFioccphRVEnE5foVoMkPgNia7oA8GR3W1hhnuckfkCNtZtX3q8mn8ONpCWpXONNo5dBLgs0wAzCo43IG+Yn4yV5/jzNTO30AbLhN8nbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nucleusys.com; spf=pass smtp.mailfrom=nucleusys.com; dkim=pass (1024-bit key) header.d=nucleusys.com header.i=@nucleusys.com header.b=DPRo9UiM; arc=none smtp.client-ip=92.247.61.126
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nucleusys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nucleusys.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=nucleusys.com; s=xyz; h=In-Reply-To:Content-Type:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=NHlgvKgkmz/r5O4COSwNlcOqz89YyW4SjGocwrI7G50=; b=DPRo9UiMRQ0tkUF3s7/iJIDXkF
-	9WWXUNVABckCSjHnD3GqmZTso4TmtUWBvNlrPuvJ4WqqOOk+9utY05TUYPFh+/7cuDxW5eChZWLkd
-	hqfvf+sZtPxIEL3LWqSahs28Z1A1UiEjjARfvwqdAc2ddVi/yHBsZNk4xtkApK/0kX00=;
-Received: from [192.168.234.1] (helo=bender.k.g)
-	by lan.nucleusys.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <petkan@nucleusys.com>)
-	id 1sJw79-007H4v-1s;
-	Wed, 19 Jun 2024 17:16:44 +0300
-Date: Wed, 19 Jun 2024 17:16:43 +0300
-From: Petko Manolov <petkan@nucleusys.com>
-To: Oliver Neukum <oneukum@suse.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+5186630949e3c55f0799@syzkaller.appspotmail.com
-Subject: Re: [PATCH net] net: usb: rtl8150 fix unintiatilzed variables in
- rtl8150_get_link_ksettings
-Message-ID: <20240619141643.GB3770@bender.k.g>
-References: <20240619132816.11526-1-oneukum@suse.com>
+	s=arc-20240116; t=1718806648; c=relaxed/simple;
+	bh=NVgY0XjwH1/Dzdx4p/6biFDtQtQB8fKlhZZyNBuaOWU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LHctFbsCay8/owTSTomjWsHbNPSsHYAUSVYyTW7GhKdLalebmcxW0pde5msHNXRQfKfMIV2lA/jAL+DKCQyDJVm8ssvUfP/KEM/jzwZUZ5XA9Jndrl5qr5+MUhe00fqxZbD6OnFbGtxIEjfOzcRR3mwPsKeicP7c9r/7AE3A7NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=FmPxiJy3; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9l8id011743;
+	Wed, 19 Jun 2024 07:17:22 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=LoRSQm0IEzl5RYRAlaSG62F
+	7NMGt8qNHT0zSPippKns=; b=FmPxiJy3NgVq/myT9Knm6nldBhZvd2O7HcXvDK0
+	aeU5XytMfwBUQEbWsPbdHFg2+wWGfNfbfPMatapjYmFP9YIh6OWrFyj44Ld+ItUv
+	LxTVbNt0xM9Vsg1tMXQFf1Ww2PT4HMsbbkOaC0J/OgiBDsN/hiv5g1KFCPZbQfJP
+	+VrDI93wmsRrSlz/0VGJb4TOBGSTfLk0kZp67GwCg9g7ED//luroY6n1ol5kZXvQ
+	+0cGvmOb+csPeO7HDQLgEOuUhHyE+heH/gX2YVw9VCiMl/+xIbSMNS+0CgWUHB+C
+	sED38Dzu/ESdQWfvQFrqmNJLavDt2kTCuT7DH3SzgYSc9aQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3yuw0jrudr-3
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 07:17:21 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 19 Jun 2024 07:17:20 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 19 Jun 2024 07:17:20 -0700
+Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
+	by maili.marvell.com (Postfix) with ESMTP id 5F81E3F7044;
+	Wed, 19 Jun 2024 07:17:20 -0700 (PDT)
+From: Witold Sadowski <wsadowski@marvell.com>
+To: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <broonie@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <pthombar@cadence.com>, Witold Sadowski <wsadowski@marvell.com>
+Subject: [PATCH v9 0/9] Marvell HW overlay support for Cadence xSPI
+Date: Wed, 19 Jun 2024 07:17:06 -0700
+Message-ID: <20240619141716.1785467-1-wsadowski@marvell.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619132816.11526-1-oneukum@suse.com>
-X-Spam_score: -1.0
-X-Spam_bar: -
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: u9i0x1Q0MT5weM-xOac4eeKEA6J_je4C
+X-Proofpoint-ORIG-GUID: u9i0x1Q0MT5weM-xOac4eeKEA6J_je4C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
 
-On 24-06-19 15:28:03, Oliver Neukum wrote:
-> This functions retrieves values by passing a pointer. As the function that
-> retrieves them can fail before touching the pointers, the variables must be
-> initialized.
+This patch series adds support for the second version of the Marvell
+hardware overlay for the Cadence xSPI IP block. The overlay is a hardware
+change made around the original xSPI block. It extends xSPI features with
+clock configuration, interrupt masking, and full-duplex, variable-length SPI
+operations.
 
-ACK.
+These functionalities allow the xSPI block to operate not only with memory
+devices but also with simple SPI devices and TPM devices.
 
+Example ACPI entry:
+      Device (SPI0) {
+        Name (_HID, "PRP0001")          // ACPI_DT_NAMESPACE_HID
+        Name (_UID, 0)
+        Name (_DDN, "SPI controller 0")
+        Name (_CCA, ONE)
 
-		Petko
+        Method (_STA) {Return (0xF)}
 
+        Name (_CRS, ResourceTemplate() {
 
-> Reported-by: syzbot+5186630949e3c55f0799@syzkaller.appspotmail.com
-> Signed-off-by: Oliver Neukum <oneukum@suse.com>
-> ---
->  drivers/net/usb/rtl8150.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/usb/rtl8150.c b/drivers/net/usb/rtl8150.c
-> index 97afd7335d86..01a3b2417a54 100644
-> --- a/drivers/net/usb/rtl8150.c
-> +++ b/drivers/net/usb/rtl8150.c
-> @@ -778,7 +778,8 @@ static int rtl8150_get_link_ksettings(struct net_device *netdev,
->  				      struct ethtool_link_ksettings *ecmd)
->  {
->  	rtl8150_t *dev = netdev_priv(netdev);
-> -	short lpa, bmcr;
-> +	short lpa = 0;
-> +	short bmcr = 0;
->  	u32 supported;
->  
->  	supported = (SUPPORTED_10baseT_Half |
-> -- 
-> 2.45.1
-> 
-> 
+          QWordMemory ( ResourceConsumer,// ResourceUsage
+                        PosDecode,       // Decode
+                        MinFixed,        // MinType
+                        MaxFixed,        // MaxType
+                        NonCacheable,    // MemType
+                        ReadWrite,       // ReadWriteType
+                        0,               // AddressGranularity
+                        0x804000000000,  // MinAddress
+                        0x804000001037,  // MaxAddress
+                        0,               // AddressTranslation
+                        0x1038)          // AddressLength
+
+          QWordMemory ( ResourceConsumer,// ResourceUsage
+                        PosDecode,       // Decode
+                        MinFixed,        // MinType
+                        MaxFixed,        // MaxType
+                        NonCacheable,    // MemType
+                        ReadWrite,       // ReadWriteType
+                        0,               // AddressGranularity
+                        0x804010000000,  // MinAddress
+                        0x804010000007,  // MaxAddress
+                        0,               // AddressTranslation
+                        0x8)             // AddressLength
+
+          QWordMemory ( ResourceConsumer,// ResourceUsage
+                        PosDecode,       // Decode
+                        MinFixed,        // MinType
+                        MaxFixed,        // MaxType
+                        NonCacheable,    // MemType
+                        ReadWrite,       // ReadWriteType
+                        0,               // AddressGranularity
+                        0x804000002000,  // MinAddress
+                        0x804000004027,  // MaxAddress
+                        0,               // AddressTranslation
+                        0x2028)          // AddressLength
+
+          QWordMemory ( ResourceConsumer,// ResourceUsage
+            PosDecode,       // Decode
+            MinFixed,        // MinType
+            MaxFixed,        // MaxType
+            NonCacheable,    // MemType
+            ReadWrite,       // ReadWriteType
+            0,               // AddressGranularity
+            0x804000008000,  // MinAddress
+            0x804000008237,  // MaxAddress
+            0,               // AddressTranslation
+            0x238)           // AddressLength
+
+          Interrupt(ResourceConsumer, Edge, ActiveHigh, Exclusive) { 0x7A }
+        })
+
+        Name (_DSD, Package() {
+            ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+            Package () {
+                Package () { "compatible", "marvell,cn10-xspi-nor"},
+                Package () { "reg", 0x8040},
+            }
+        })
+      } // SPI0
+
+Changes:
+v9:
+  Split into smaller patches:
+    - Marvell overlay splitted into: PHY, Clock, Interrupt and SDMA ops
+    - ACPI support splitted into resource mapping, CS parameter reading and tx/rx bus length
+  Add separate ops and a few function pointers to distinguish between Cadence and Marvell:
+    - SDMA read handler.
+    - IRQ enable/disable handler
+    - Separate mem_ops for Marvell xSPI
+  Cleanup xfer code from magic numbers
+  Add more descriptive commit msg for xfer block
+  Use bitrev8 instead of custom bit reversal
+  Rework Marvell SDMA read operations
+  Add example ACPI entry
+
+v8:
+  Rename xferbase to xfer
+  Rework DLL reset, to return non inverted boolean value
+  Rework STIG and SDMA status check, to return non inverted boolean value
+
+v7:
+  Rebase patches to latest sources, changes in "Allow to read basic xSPI configuration
+ from ACPI"
+  Removed bugfix, as it was integrated to next tree from v6
+
+v6:
+  Fix item order in cdns,xspi.yaml
+
+v5:
+  Rework cdns,xspi.yaml file
+  Reword commit messages
+  Move mamory mapping to ACPI patch
+  Use devm_platform_ioremap_resource instead of two step mapping
+
+v4:
+  Rename new Marvell registers to keep naming conventions
+  Rename mrvl,xspi-nor to marvell,cnxx,xspi-nor
+  Various fixed for cdns,xspi.yaml file:
+    - Remove unnecesary parameters
+    - Link register xferbase with marvell,cn10-xspi-nor
+    - Move default values to .c file from device-tree
+  Clock configuration optimization
+  ACPI fixes:
+    - Remove incorrect ACPI match table
+  Added .data field to device_id, fixes for matching in ACPI and dtb case
+  Minor style comment changes
+
+v3:
+  Removed all kconfig changes
+  Added device-tree mrvl,xspi-nor tag
+
+v2:
+  Support for second overlay iteration
+
+v1:
+  -
+
+v0:
+  Initial support for v1 overlay
+
+Witold Sadowski (9):
+  spi: dt-bindings: cadence: Add Marvell overlay bindings documentation
+    for Cadence XSPI
+  spi: cadence: Add static PHY configuration in Marvell overlay
+  spi: cadence: Add clock configuration for Marvell xSPI overlay
+  spi: cadence: Add Marvell SDMA operations
+  spi: cadence: Add Marvell xSPI interrupt changes
+  spi: cadence: Add Marvell xfer operation support
+  spi: cadence: Change resource mapping
+  spi: cadence: Change cs property reading.
+  spi: cadence: Try to read spi-tx/rx-bus width property using ACPI
+
+ .../devicetree/bindings/spi/cdns,xspi.yaml    |  32 +-
+ drivers/spi/spi-cadence-xspi.c                | 665 +++++++++++++++++-
+ 2 files changed, 677 insertions(+), 20 deletions(-)
+
+-- 
+2.43.0
+
 
