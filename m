@@ -1,126 +1,135 @@
-Return-Path: <linux-kernel+bounces-220591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C0C90E422
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9404B90E426
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 811261C24475
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:13:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 893BD1C20A30
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1A476035;
-	Wed, 19 Jun 2024 07:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B7E7580D;
+	Wed, 19 Jun 2024 07:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CXfAjh3N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="gxi7KgWK"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FE36139;
-	Wed, 19 Jun 2024 07:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BB6757F3
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718781177; cv=none; b=VGOV2ixgYnvgzaG7YjdGfM+j0HRqO8D6JZnbIPyyXetU4nK1Sgagio7VkYn19JcCeno6hwepVNU7rS+yXkABar5dnxSdHMh9ki4jvcWysU/TfHh9CDjIB55vw4c4EEfLXzsNJ/0dKpYyrhqPso6ymOhpd1rNgA4ffv3sHVd/SK4=
+	t=1718781304; cv=none; b=oyU+pP8WC++uWiRTFYT8EKWvJoKNWXDBFGQUXycmWTKxBlbwIYDId/rrsHKHYcWrF/kY20Q06riVmAHS1ZMa1Y5UY7aH9Bg2xxpTkkU6RpGvRnKV+HkV+ytr2GNXxuYg95+lpwRd6XGMPFzkFph+S5Dqww8RlKa8IH1snYyQwHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718781177; c=relaxed/simple;
-	bh=1chuFAqYE6dJD49A1FU7iaMclljnN30WPad6vj2dIoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PlCN1dUEZLXCVi107Mqk/Antp/0aY01z63zGatevO5OGFYCgeuXIdI1cKyVBM9F6BFq+EhRmV4jGyjxOnYiaDM3P90NnhnjUNKbvvlVovftdkNAr40wCG3nAUVu7Md9rQ1sQq7PXl+iNmwHcKV3QONTv+ViVSSkjvOrKibQdeN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CXfAjh3N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71C80C32786;
-	Wed, 19 Jun 2024 07:12:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718781177;
-	bh=1chuFAqYE6dJD49A1FU7iaMclljnN30WPad6vj2dIoE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CXfAjh3NbnxJNcVD6gM3s1BgEP7eRbGSTbVqml1/XqenyATV3CgMJXIgDPZPvmVfT
-	 DN5tWbEE3+obD3s73UTA6vxAIcHz4ACGIyByj3qXAi7go9UMJPvh9AP5kLLqdd/wmv
-	 WrKZrIU4kTrG5tU9vUSbgLzlfUOvZ/RJ71CxHz55vebIkcBzjbqGo0Ta+LGhvUMNVt
-	 pOG1l3geCyMLLAAe5esg4u/2vwiF352qPtL6CzU7oy4h0VKNh5t7JmlYd7uG0JE5Qa
-	 F6nYxxDFBQ0MurmaA4bi8mGAekdcVZME2WFUxP85w/nTMdz9MssaqeZF7JKfUr0c+B
-	 vdbVVuVHDyLxg==
-Date: Wed, 19 Jun 2024 10:12:51 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	ksummit@lists.linux.dev
-Subject: Re: [PATCH 2/2] Documentation: best practices for using Link trailers
-Message-ID: <20240619071251.GI4025@unreal>
-References: <20240618-docs-patch-msgid-link-v1-0-30555f3f5ad4@linuxfoundation.org>
- <20240618-docs-patch-msgid-link-v1-2-30555f3f5ad4@linuxfoundation.org>
+	s=arc-20240116; t=1718781304; c=relaxed/simple;
+	bh=EX4t+3xm8l3Q1wykGkU1o3cyd8qUxK6piIGJGvSRg50=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=hAHzxc3Inw8jt1D4g/ZUbgLPKqzXHu18sFfRsFAwkIBwt/PapdfNCFXvSVeDheSCeaVZ46M5jjFbgAfldTQyVyG78CKst+3qib8XszhYKfQc0fHQMy5WNarAiAM7T0e+/+JfXEP9+uEbPmjQKCpznF80ihod43x7Pf+HnJLRIX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=gxi7KgWK; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=smartx.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6f99555c922so3633756a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 00:15:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1718781301; x=1719386101; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Skd7XFv1VpSVP5Nz+gUbCXLZPArGMYNgkzg+l7mFaqc=;
+        b=gxi7KgWK6qDSkUAfI+kPq2oCgvqjkvWZf3yy8nEXVBF1BBtmdCPvaOCjIfluMztGyD
+         nnDz8cjB8Vl6ISUV87GpmK8tS5wbcfLB2bYO72lBWA7B9NevnWovPAcxkxxasOiCo/r6
+         0+n/lOf2Hpots67naguvbLoLQrt5FffjEvPSsoUrrtt7ara3FVKPwSrwMqiE6nr67vTD
+         lj3IpKo5iT7gxzTXE1VViaJ94eOkfldtSYLhcNyYxp/C+cClqWlV8gyyJQmbi+2wDKjA
+         HMCBtzSqThQag8dPfgSI2GxzTWrwJY40j51s+uTocZbNXjEeugRsMjCF1MWYxZcLnX5B
+         a6vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718781301; x=1719386101;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Skd7XFv1VpSVP5Nz+gUbCXLZPArGMYNgkzg+l7mFaqc=;
+        b=u37dlj5uNq8UCRs2I4nZMgaQUYvsxe/OuPUmlESc615tCmXrnj71yISnvGuYX+AfIc
+         5Ro6qVuguB4uBK2oX90Tevw5VzJhyBaciJCHgEaXqHzUKPZuurfrLrpdy9i6eUSamY9F
+         w3WB61fNuX4Njiyc1EepllYNo/C9O/E1+orwWJSG55Fgbe0ShSDFaTaeTU0TtxEIjoGn
+         7XHCs9ooJviqVekvKm+yHTU8H4nUG11YIRnMwr03tbZlFpeZmUkWh7URcVvRMo2S7gE7
+         OIGER07esfLK36ZM3oMLjwuFcDquof3637yhtIG3Mzn8/pe0gbZrQU1SMsomHZMEeXzU
+         hqOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHVfj77avyr6zOC8sgD/ioPRkN+Srz/NNqKWvlCmSaAl5jTeyIWcV2wKfvfm2HvL3qoRH0mW1gJAe4FgABbdEPe0TkSmCpTEECbRHJ
+X-Gm-Message-State: AOJu0YyMYVCkTPUSr1OXv0gNtKipaYNDR/6m96bFgOnu5Di4gDVpKCar
+	gf6v17CtIiVU6AztAKR/hJek0XfussC06Eyr8SKZUiWs/tTAB4vDqhnDsg9g6DE=
+X-Google-Smtp-Source: AGHT+IG7O3ICtniQOneaeIPZYCNZjjl4rvONDhxstG56u2rMRyHM9mj6qtwBBthgaCjatBgs0U0Zyw==
+X-Received: by 2002:a9d:6296:0:b0:6f9:710e:65a1 with SMTP id 46e09a7af769-7007568bbd1mr1952243a34.28.1718781300665;
+        Wed, 19 Jun 2024 00:15:00 -0700 (PDT)
+Received: from localhost.localdomain.cc ([103.172.41.199])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fedf2a74dcsm8993316a12.46.2024.06.19.00.14.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 00:15:00 -0700 (PDT)
+From: Li Feng <fengli@smartx.com>
+To: Christoph Hellwig <hch@infradead.org>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-scsi@vger.kernel.org (open list:SCSI SUBSYSTEM),
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH v2] scsi: sd: Keep the discard mode stable
+Date: Wed, 19 Jun 2024 15:14:03 +0800
+Message-ID: <20240619071412.140100-1-fengli@smartx.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618-docs-patch-msgid-link-v1-2-30555f3f5ad4@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 18, 2024 at 12:42:11PM -0400, Konstantin Ryabitsev wrote:
-> Based on multiple conversations, most recently on the ksummit mailing
-> list [1], add some best practices for using the Link trailer, such as:
-> 
-> - how to use markdown-like bracketed numbers in the commit message to
-> indicate the corresponding link
-> - when to use lore.kernel.org vs patch.msgid.link domains
-> 
-> Cc: ksummit@lists.linux.dev
-> Link: https://lore.kernel.org/20240617-arboreal-industrious-hedgehog-5b84ae@meerkat # [1]
-> Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-> ---
->  Documentation/process/maintainer-tip.rst | 24 ++++++++++++++++++------
->  1 file changed, 18 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/process/maintainer-tip.rst b/Documentation/process/maintainer-tip.rst
-> index 64739968afa6..57ffa553c21e 100644
-> --- a/Documentation/process/maintainer-tip.rst
-> +++ b/Documentation/process/maintainer-tip.rst
-> @@ -375,14 +375,26 @@ following tag ordering scheme:
->     For referring to an email on LKML or other kernel mailing lists,
->     please use the lore.kernel.org redirector URL::
->  
-> -     https://lore.kernel.org/r/email-message@id
-> +     Link: https://lore.kernel.org/email-message@id
->  
-> -   The kernel.org redirector is considered a stable URL, unlike other email
-> -   archives.
-> +   This URL should be used when referring to relevant mailing list
-> +   resources, related patch sets, or other notable discussion threads.
-> +   A convenient way to associate Link trailers with the accompanying
-> +   message is to use markdown-like bracketed notation, for example::
->  
-> -   Maintainers will add a Link tag referencing the email of the patch
-> -   submission when they apply a patch to the tip tree. This tag is useful
-> -   for later reference and is also used for commit notifications.
-> +     A similar approach was attempted before as part of a different
-> +     effort [1], but the initial implementation caused too many
-> +     regressions [2], so it was backed out and reimplemented.
-> +
-> +     Link: https://lore.kernel.org/some-msgid@here # [1]
-> +     Link: https://bugzilla.example.org/bug/12345  # [2]
-> +
-> +   When using the ``Link:`` trailer to indicate the provenance of the
-> +   patch, you should use the dedicated ``patch.msgid.link`` domain. This
-> +   makes it possible for automated tooling to establish which link leads
-> +   to the original patch submission. For example::
-> +
-> +     Link: https://patch.msgid.link/patch-source-msgid@here
+There is a scenario where a large number of discard commands
+are issued when the iscsi initiator connects to the target
+and then performs a session rescan operation. There is a time
+window, most of the commands are in UNMAP mode, and some
+discard commands become WRITE SAME with UNMAP.
 
-Default b4.linkmask points to https://msgid.link/ and not to https://patch.msgid.link/
+The discard mode has been negotiated during the SCSI probe. If
+the mode is temporarily changed from UNMAP to WRITE SAME with
+UNMAP, IO ERROR may occur because the target may not implement
+WRITE SAME with UNMAP. Keep the discard mode stable to fix this
+issue.
 
-https://git.kernel.org/pub/scm/utils/b4/b4.git/tree/.b4-config#n3
-https://git.kernel.org/pub/scm/utils/b4/b4.git/tree/docs/config.rst#n46
+Signed-off-by: Li Feng <fengli@smartx.com>
+---
+ drivers/scsi/sd.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-It will be good to update the default value in b4 to point to the correct domain.
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index e01393ed4207..f628ca5ac0ac 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2621,8 +2621,6 @@ static int read_capacity_16(struct scsi_disk *sdkp, struct scsi_device *sdp,
+ 
+ 		if (buffer[14] & 0x40) /* LBPRZ */
+ 			sdkp->lbprz = 1;
+-
+-		sd_config_discard(sdkp, lim, SD_LBP_WS16);
+ 	}
+ 
+ 	sdkp->capacity = lba + 1;
+@@ -3271,8 +3269,6 @@ static void sd_read_block_limits(struct scsi_disk *sdkp,
+ 		if (vpd->data[32] & 0x80)
+ 			sdkp->unmap_alignment =
+ 				get_unaligned_be32(&vpd->data[32]) & ~(1 << 31);
+-
+-		sd_config_discard(sdkp, lim, sd_discard_mode(sdkp));
+ 	}
+ 
+  out:
+@@ -3671,6 +3667,8 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 			sd_read_cpr(sdkp);
+ 		}
+ 
++		sd_config_discard(sdkp, &lim, sd_discard_mode(sdkp));
++
+ 		sd_print_capacity(sdkp, old_capacity);
+ 
+ 		sd_read_write_protect_flag(sdkp, buffer);
+-- 
+2.45.2
 
-Thanks
 
