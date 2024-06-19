@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-220480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9674390E23F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:12:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F6C90E241
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20F231F24270
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 04:12:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 432C91F2326D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 04:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72021E878;
-	Wed, 19 Jun 2024 04:12:25 +0000 (UTC)
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0F64C635;
+	Wed, 19 Jun 2024 04:13:07 +0000 (UTC)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97A03C099
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 04:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E935588E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 04:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718770345; cv=none; b=Tjr/NrBDgH5Msoe+m6ph+Y4KRUSfFin65JdpOrMQvpT3qSGMGjOBGAFoaQEAAfIiuy99/prjceFWAJVWJK7uyxG0+cyLP2nPJ9xcXhHtqafGPpGtBLbcTXQr0GKU/EKRgN9+ha64aj+qPtm9dU+GWfrC2UsgFXBfXGPyNeV7GNw=
+	t=1718770387; cv=none; b=Gg61vlImK5gl5FzB3GgZWO5barehTn47NM4ubtG1M4xLWshzMI1mBj2oWNw+bEI58r3h96Nf2GyNuohJ2yamrS9EZ3Ve2z9FxzPUf+KvBXN+3ABcz5TzM1HklGB77PX+l7Tsss8YgYjgCGFAaTHtx4LYu5HpuK+Be6XjHMXHGq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718770345; c=relaxed/simple;
-	bh=sUrNmkLXmK66eGoLP0Q3kuFYnsriY9zdRjT2aEhy/pY=;
+	s=arc-20240116; t=1718770387; c=relaxed/simple;
+	bh=N5xqzhHiMn5sjodiwTiMky0jNsveAIIw19AeHh9JrSw=;
 	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=aYBu7C4j8M4aot96sn2MWeIyg0jpEErSdhSCDX/Fh/fluG/msEWIHKsDPI/JtZAYqCdxjB22ZouJgllwq+j4NtFW6a5iXtxzVTq6YWmtIOFwu1ZIQjvfxO48Rt7xrGxgssqnDVt98ZwqeZgMOacv5ar0SLBjtwSKqOXYDxacuUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+	 Content-Type:Subject; b=dzAhpnXUxnOzN58mHCShZpeUTQ0frseEEKbH4wVfqjCpNEuImdS2KJpT5Y8ETvM2BE2oF7O6BXQ3IaVaVLSalihSXK3uFAkY42wGLa3eeaR5uORP8SZpg1ea+8CTPlIKI5834K/lGyHpo5NKt5xo79Sxdye+dWnNzjig7y7C4o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:39140)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+Received: from in01.mta.xmission.com ([166.70.13.51]:42776)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.93)
 	(envelope-from <ebiederm@xmission.com>)
-	id 1sJmgI-005up4-G8; Tue, 18 Jun 2024 22:12:22 -0600
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:59068 helo=email.froward.int.ebiederm.org.xmission.com)
+	id 1sJmgy-004PYQ-G3; Tue, 18 Jun 2024 22:13:04 -0600
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:56222 helo=email.froward.int.ebiederm.org.xmission.com)
 	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.93)
 	(envelope-from <ebiederm@xmission.com>)
-	id 1sJmgH-009SG7-1S; Tue, 18 Jun 2024 22:12:22 -0600
+	id 1sJmgx-009SKN-DK; Tue, 18 Jun 2024 22:13:04 -0600
 From: "Eric W. Biederman" <ebiederm@xmission.com>
 To: Oleg Nesterov <oleg@redhat.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>,  Tejun Heo <tj@kernel.org>,
@@ -50,10 +50,10 @@ References: <20240609142342.GA11165@redhat.com>
 	<20240617183758.GB10753@redhat.com>
 	<87iky5k2yi.fsf@email.froward.int.ebiederm.org>
 	<87o77xinmt.fsf_-_@email.froward.int.ebiederm.org>
-Date: Tue, 18 Jun 2024 23:12:12 -0500
+Date: Tue, 18 Jun 2024 23:12:56 -0500
 In-Reply-To: <87o77xinmt.fsf_-_@email.froward.int.ebiederm.org> (Eric
 	W. Biederman's message of "Tue, 18 Jun 2024 23:04:42 -0500")
-Message-ID: <877celfu5f.fsf_-_@email.froward.int.ebiederm.org>
+Message-ID: <87y171efjr.fsf_-_@email.froward.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,227 +62,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1sJmgH-009SG7-1S;;;mid=<877celfu5f.fsf_-_@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX18H0Aorairo9gNKQotFHiRTRk8CwDTc7a0=
+X-XM-SPF: eid=1sJmgx-009SKN-DK;;;mid=<87y171efjr.fsf_-_@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/Jyv22mqBP7c5a8A8XIKv6TJOQkl6JrFY=
 X-SA-Exim-Connect-IP: 68.227.168.167
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Level: **
+X-Spam-Virus: No
 X-Spam-Report: 
 	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
 	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.5000]
-	*  0.7 XMSubLong Long Subject
+	*      [score: 0.4894]
 	*  1.5 XMNoVowels Alpha-numberic number with no vowels
+	*  0.7 XMSubLong Long Subject
 	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+	*      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
 	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-	*  0.0 T_TooManySym_02 5+ unique symbols in subject
-	*  0.4 XMBrknScrpt_02 Possible Broken Spam Script
 	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-	*  0.0 T_TooManySym_03 6+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
 X-Spam-Combo: **;Oleg Nesterov <oleg@redhat.com>
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 874 ms - load_scoreonly_sql: 0.05 (0.0%),
-	signal_user_changed: 12 (1.4%), b_tie_ro: 11 (1.2%), parse: 1.30
-	(0.1%), extract_message_metadata: 15 (1.8%), get_uri_detail_list: 4.5
-	(0.5%), tests_pri_-2000: 13 (1.5%), tests_pri_-1000: 2.3 (0.3%),
-	tests_pri_-950: 1.26 (0.1%), tests_pri_-900: 0.97 (0.1%),
-	tests_pri_-90: 323 (37.0%), check_bayes: 321 (36.8%), b_tokenize: 14
-	(1.5%), b_tok_get_all: 11 (1.3%), b_comp_prob: 3.2 (0.4%),
-	b_tok_touch_all: 289 (33.1%), b_finish: 1.17 (0.1%), tests_pri_0: 489
-	(56.0%), check_dkim_signature: 0.61 (0.1%), check_dkim_adsp: 3.0
-	(0.3%), poll_dns_idle: 1.27 (0.1%), tests_pri_10: 3.0 (0.3%),
-	tests_pri_500: 8 (1.0%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH 15/17] ptrace: Separate task->ptrace_code out from
- task->exit_code
+X-Spam-Timing: total 443 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 4.5 (1.0%), b_tie_ro: 3.1 (0.7%), parse: 1.30
+	(0.3%), extract_message_metadata: 11 (2.5%), get_uri_detail_list: 2.8
+	(0.6%), tests_pri_-2000: 11 (2.4%), tests_pri_-1000: 1.80 (0.4%),
+	tests_pri_-950: 1.06 (0.2%), tests_pri_-900: 0.78 (0.2%),
+	tests_pri_-90: 55 (12.5%), check_bayes: 54 (12.3%), b_tokenize: 7
+	(1.6%), b_tok_get_all: 7 (1.6%), b_comp_prob: 1.60 (0.4%),
+	b_tok_touch_all: 36 (8.0%), b_finish: 0.75 (0.2%), tests_pri_0: 342
+	(77.4%), check_dkim_signature: 0.43 (0.1%), check_dkim_adsp: 3.8
+	(0.9%), poll_dns_idle: 1.49 (0.3%), tests_pri_10: 2.8 (0.6%),
+	tests_pri_500: 8 (1.8%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH 16/17] signal: Record the exit_code when an exit is scheduled
 X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
 X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 
 
-A process can be marked for death by setting SIGNAL_GROUP_EXIT and
-group_exit_code, long before do_exit is called.  Unfortunately because
-of PTRACE_EVENT_EXIT residing in do_exit this same tactic can not be
-used for task death.
+With ptrace_stop no longer using task->exit_code it is safe
+to set task->exit_code when an exit is scheduled.
 
-Correct this by adding a new task field task->ptrace_code that holds
-the code for ptrace stops.  This allows task->exit_code to be set to
-the exit code long before the PTRACE_EVENT_EXIT ptrace stop.
+Use the bit JOBCTL_WILL_EXIT to detect when a exit is first scheduled
+and only set exit_code the first time.  Only use the code provided
+to do_exit if the task has not yet been schedled to exit.
+
+In get_signal and do_grup_exit when JOBCTL_WILL_EXIT is set read the
+recored exit_code from current->exit_code, instead of assuming
+exit_code will always be 0.
 
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- fs/proc/array.c       |  3 +++
- include/linux/sched.h |  1 +
- kernel/exit.c         |  2 +-
- kernel/ptrace.c       | 12 ++++++------
- kernel/signal.c       | 22 +++++++++++-----------
- 5 files changed, 22 insertions(+), 18 deletions(-)
+ fs/exec.c                    | 2 +-
+ include/linux/sched/signal.h | 2 +-
+ kernel/exit.c                | 9 +++++----
+ kernel/signal.c              | 7 ++++---
+ 4 files changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 34a47fb0c57f..b1c1d1f2bda8 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -525,6 +525,9 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
- 
- 		rsslim = READ_ONCE(sig->rlim[RLIMIT_RSS].rlim_cur);
- 
-+		if (task_is_traced(task) && !(task->jobctl & JOBCTL_LISTENING))
-+			exit_code = task->ptrace_code;
-+
- 		if (whole) {
- 			if (sig->flags & (SIGNAL_GROUP_EXIT | SIGNAL_STOP_STOPPED))
- 				exit_code = sig->group_exit_code;
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 61591ac6eab6..0995775cd065 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1213,6 +1213,7 @@ struct task_struct {
- 	/* Ptrace state: */
- 	unsigned long			ptrace_message;
- 	kernel_siginfo_t		*last_siginfo;
-+	int				ptrace_code;
- 
- 	struct task_io_accounting	ioac;
- #ifdef CONFIG_PSI
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 35452e822cc9..dc944e3c1493 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -1199,7 +1199,7 @@ static int *task_stopped_code(struct task_struct *p, bool ptrace)
- {
- 	if (ptrace) {
- 		if (task_is_traced(p) && !(p->jobctl & JOBCTL_LISTENING))
--			return &p->exit_code;
-+			return &p->ptrace_code;
- 	} else {
- 		if (p->signal->flags & SIGNAL_STOP_STOPPED)
- 			return &p->signal->group_exit_code;
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index d5f89f9ef29f..9f8022e55eb7 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -162,7 +162,7 @@ void __ptrace_unlink(struct task_struct *child)
- 
- static bool looks_like_a_spurious_pid(struct task_struct *task)
- {
--	if (task->exit_code != ((PTRACE_EVENT_EXEC << 8) | SIGTRAP))
-+	if (task->ptrace_code != ((PTRACE_EVENT_EXEC << 8) | SIGTRAP))
- 		return false;
- 
- 	if (task_pid_vnr(task) == task->ptrace_message)
-@@ -578,7 +578,7 @@ static int ptrace_detach(struct task_struct *child, unsigned int data)
- 	 * tasklist_lock avoids the race with wait_task_stopped(), see
- 	 * the comment in ptrace_resume().
- 	 */
--	child->exit_code = data;
-+	child->ptrace_code = data;
- 	__ptrace_detach(current, child);
- 	write_unlock_irq(&tasklist_lock);
- 
-@@ -851,16 +851,16 @@ static int ptrace_resume(struct task_struct *child, long request,
+diff --git a/fs/exec.c b/fs/exec.c
+index 57d617917b1c..99ee1a850c37 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1097,7 +1097,7 @@ static int de_thread(struct task_struct *tsk)
+ 		if (t == tsk)
+ 			continue;
+ 		sig->notify_count++;
+-		schedule_task_exit_locked(t);
++		schedule_task_exit_locked(t, 0);
  	}
  
- 	/*
--	 * Change ->exit_code and ->state under siglock to avoid the race
--	 * with wait_task_stopped() in between; a non-zero ->exit_code will
-+	 * Change ->ptrace_code and ->state under siglock to avoid the race
-+	 * with wait_task_stopped() in between; a non-zero ->ptrace_code will
- 	 * wrongly look like another report from tracee.
- 	 *
--	 * Note that we need siglock even if ->exit_code == data and/or this
-+	 * Note that we need siglock even if ->ptrace_code == data and/or this
- 	 * status was not reported yet, the new status must not be cleared by
- 	 * wait_task_stopped() after resume.
- 	 */
- 	spin_lock_irq(&child->sighand->siglock);
--	child->exit_code = data;
-+	child->ptrace_code = data;
- 	child->jobctl &= ~JOBCTL_TRACED;
- 	wake_up_state(child, __TASK_TRACED);
- 	spin_unlock_irq(&child->sighand->siglock);
-diff --git a/kernel/signal.c b/kernel/signal.c
-index fe1d46b00e9f..dc9ab998fa15 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2193,7 +2193,7 @@ static void do_notify_parent_cldstop(struct task_struct *tsk,
-  		info.si_status = tsk->signal->group_exit_code & 0x7f;
-  		break;
-  	case CLD_TRAPPED:
-- 		info.si_status = tsk->exit_code & 0x7f;
-+		info.si_status = tsk->ptrace_code & 0x7f;
-  		break;
-  	default:
-  		BUG();
-@@ -2223,7 +2223,7 @@ static void do_notify_parent_cldstop(struct task_struct *tsk,
-  * with.  If the code did not stop because the tracer is gone,
-  * the stop signal remains unchanged unless clear_code.
-  */
--static int ptrace_stop(int exit_code, int why, unsigned long message,
-+static int ptrace_stop(int code, int why, unsigned long message,
- 		       kernel_siginfo_t *info)
- 	__releases(&current->sighand->siglock)
- 	__acquires(&current->sighand->siglock)
-@@ -2246,12 +2246,12 @@ static int ptrace_stop(int exit_code, int why, unsigned long message,
+ 	while (sig->notify_count) {
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index 54b2b924aaea..bc702fd94a1f 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -461,7 +461,7 @@ static inline void ptrace_signal_wake_up(struct task_struct *t, bool resume)
+ 	signal_wake_up_state(t, state);
+ }
  
- 	/* Do not stop if ptrace_unlink has happened. */
- 	if (!current->ptrace)
--		return exit_code;
-+		return code;
+-void schedule_task_exit_locked(struct task_struct *task);
++void schedule_task_exit_locked(struct task_struct *task, int exit_code);
+ void schedule_group_exit_locked(struct signal_struct *signal, int exit_code);
  
- 	/* Do not stop in a killed task except for PTRACE_EVENT_EXIT */
- 	if (task_exit_pending(current) &&
--	    ((exit_code >> 8) != PTRACE_EVENT_EXIT))
--		return exit_code;
-+	    ((code >> 8) != PTRACE_EVENT_EXIT))
-+		return code;
+ void task_join_group_stop(struct task_struct *task);
+diff --git a/kernel/exit.c b/kernel/exit.c
+index dc944e3c1493..2b4e57ff02a1 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -795,13 +795,14 @@ static void check_stack_usage(void)
+ static inline void check_stack_usage(void) {}
+ #endif
  
- 	/*
- 	 * After this point ptrace_unlink or a fatal signal will clear
-@@ -2282,7 +2282,7 @@ static int ptrace_stop(int exit_code, int why, unsigned long message,
+-static void synchronize_group_exit(struct task_struct *tsk, long code)
++static int synchronize_group_exit(struct task_struct *tsk, long code)
+ {
+ 	struct sighand_struct *sighand = tsk->sighand;
+ 	struct signal_struct *signal = tsk->signal;
  
- 	current->ptrace_message = message;
- 	current->last_siginfo = info;
--	current->exit_code = exit_code;
-+	current->ptrace_code = code;
- 
- 	/*
- 	 * If @why is CLD_STOPPED, we're trapping to participate in a group
-@@ -2361,10 +2361,10 @@ static int ptrace_stop(int exit_code, int why, unsigned long message,
- 	 * any signal-sending on another CPU that wants to examine it.
- 	 */
- 	spin_lock_irq(&current->sighand->siglock);
--	exit_code = current->exit_code;
-+	code = current->ptrace_code;
- 	current->last_siginfo = NULL;
- 	current->ptrace_message = 0;
--	current->exit_code = 0;
-+	current->ptrace_code = 0;
- 
- 	/* LISTENING can be set only during STOP traps, clear it */
- 	current->jobctl &= ~(JOBCTL_LISTENING | JOBCTL_PTRACE_FROZEN);
-@@ -2375,7 +2375,7 @@ static int ptrace_stop(int exit_code, int why, unsigned long message,
- 	 * This sets TIF_SIGPENDING, but never clears it.
- 	 */
- 	recalc_sigpending_tsk(current);
--	return exit_code;
+ 	spin_lock_irq(&sighand->siglock);
+-	schedule_task_exit_locked(tsk);
++	schedule_task_exit_locked(tsk, code);
++	code = tsk->exit_code;
+ 	signal->quick_threads--;
+ 	if ((signal->quick_threads == 0) &&
+ 	    !(signal->flags & SIGNAL_GROUP_EXIT)) {
+@@ -810,6 +811,7 @@ static void synchronize_group_exit(struct task_struct *tsk, long code)
+ 		signal->group_stop_count = 0;
+ 	}
+ 	spin_unlock_irq(&sighand->siglock);
 +	return code;
  }
  
- static int ptrace_do_notify(int signr, int exit_code, int why, unsigned long message)
-@@ -2535,11 +2535,11 @@ static bool do_signal_stop(int signr)
-  *
-  * When PT_SEIZED, it's used for both group stop and explicit
-  * SEIZE/INTERRUPT traps.  Both generate PTRACE_EVENT_STOP trap with
-- * accompanying siginfo.  If stopped, lower eight bits of exit_code contain
-+ * accompanying siginfo.  If stopped, lower eight bits of ptrace_code contain
-  * the stop signal; otherwise, %SIGTRAP.
-  *
-  * When !PT_SEIZED, it's used only for group stop trap with stop signal
-- * number as exit_code and no siginfo.
-+ * number as ptrace_code and no siginfo.
-  *
-  * CONTEXT:
-  * Must be called with @current->sighand->siglock held, which may be
+ void __noreturn do_exit(long code)
+@@ -819,7 +821,7 @@ void __noreturn do_exit(long code)
+ 
+ 	WARN_ON(irqs_disabled());
+ 
+-	synchronize_group_exit(tsk, code);
++	code = synchronize_group_exit(tsk, code);
+ 
+ 	WARN_ON(tsk->plug);
+ 
+@@ -856,7 +858,6 @@ void __noreturn do_exit(long code)
+ 		tty_audit_exit();
+ 	audit_free(tsk);
+ 
+-	tsk->exit_code = code;
+ 	taskstats_exit(tsk, group_dead);
+ 
+ 	exit_mm();
+diff --git a/kernel/signal.c b/kernel/signal.c
+index dc9ab998fa15..c8b896bc84bb 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1013,7 +1013,7 @@ void schedule_group_exit_locked(struct signal_struct *signal, int exit_code)
+ 	signal->group_exit_code = exit_code;
+ 	signal->group_stop_count = 0;
+ 	__for_each_thread(signal, t)
+-		schedule_task_exit_locked(t);
++		schedule_task_exit_locked(t, exit_code);
+ }
+ 
+ static void complete_signal(int sig, struct task_struct *p, enum pid_type type)
+@@ -1373,11 +1373,12 @@ int force_sig_info(struct kernel_siginfo *info)
+ 	return force_sig_info_to_task(info, current, HANDLER_CURRENT);
+ }
+ 
+-void schedule_task_exit_locked(struct task_struct *task)
++void schedule_task_exit_locked(struct task_struct *task, int exit_code)
+ {
+ 	if (!(task->jobctl & JOBCTL_WILL_EXIT)) {
+ 		task_clear_jobctl_pending(task, JOBCTL_PENDING_MASK);
+ 		task->jobctl |= JOBCTL_WILL_EXIT;
++		task->exit_code = exit_code;
+ 		signal_wake_up(task, true);
+ 	}
+ }
+@@ -2749,7 +2750,7 @@ bool get_signal(struct ksignal *ksig)
+ 			if (signal->flags & SIGNAL_GROUP_EXIT)
+ 				exit_code = signal->group_exit_code;
+ 			else
+-				exit_code = 0;
++				exit_code = current->exit_code;
+ 			goto fatal;
+ 		}
+ 
 -- 
 2.41.0
 
