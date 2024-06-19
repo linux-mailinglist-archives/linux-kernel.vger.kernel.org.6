@@ -1,101 +1,164 @@
-Return-Path: <linux-kernel+bounces-221309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 965A190F1B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:06:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5124490F1B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B2712881A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:06:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEF9A282B57
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E4A142E98;
-	Wed, 19 Jun 2024 15:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF8F8248C;
+	Wed, 19 Jun 2024 15:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khNXe69m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M9H415DL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l2bBuiLI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AE778C91;
-	Wed, 19 Jun 2024 15:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0044E335A7;
+	Wed, 19 Jun 2024 15:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718809602; cv=none; b=i70X8RUW/MQ+3+Hd750y8y2oa8wooAPoIjCMtI2OuspJJpsIU+ieYnYtZAhb2QfUlOxEELX39MajY7CAC982uOcDMNUDisD4RNh7s2z34ldgzzldOznLAPouVTcoaQ8D0wHQehQIvK1D5NHHNEVe7/t33M38fU4F24kLF0KLla4=
+	t=1718809699; cv=none; b=CjJ3k4t6RejNNqyqvSwekDPOQkquq7Wvvx6Cq1T0+CaSKB/Fk0jUqA8aEcRDpTIY9oK3x+DWiaITccNWMzaP/1iXGqWzm4dsj0yHdGVlmNGYp4SABOn9jc8aq8PqhPzNoo9haeigT8HsjVyxKFha/U8OtYp+OGTxzxpqY18pSkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718809602; c=relaxed/simple;
-	bh=t6RqYDc9zHOqi3suBjLShR9za2xsd+P52ElnvkNMnNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZIdoF+wOwaQFsgImuAl0Dxbgg6qe+7isKv6ubZHj7BnzgfzwNrtNa7rmjFqCedXkOpTt12GfXSu/RGqG/jqIl9pNzhJJH5tHlsfvDHyur3RU7XZVKIHAd37fm04C7/JN7U3pRNl0DIemU6cKL3Eyn6y4A3O+XiThnqrebdmITLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khNXe69m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E22C2BBFC;
-	Wed, 19 Jun 2024 15:06:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718809601;
-	bh=t6RqYDc9zHOqi3suBjLShR9za2xsd+P52ElnvkNMnNA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=khNXe69msU/1f4gJPQxwg7veWijNkvSzAGBJjeoYKc5VdJWwGLc7AJaKotbqedCyc
-	 iJckGaj+CUMmhrIJZVZmWLc4FY6Opl83Tzreg9vJZyCdLETg1ZKvdwUTAY/DK9xXL5
-	 IKNiIgWoQh0XSFZTWwf3YyL/vId3H41NIZ2pNAWHpJ2VCUMgXrhjSUxD98aY8ddh/H
-	 HUVYKhUzVsjznbSwdYdR36Zp4gnbHLxrtUANbQcQhQQMRBe5dThPWsOW9Q7GfJLkAl
-	 b6TzGFllyz3P2JW13k6rgxQE69HGXNb5c3liTmctJIwi1rNh5FDItxysX1bX+oF57p
-	 2EBqJBwDOUhRQ==
-Date: Wed, 19 Jun 2024 16:06:36 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Igor Artemiev <Igor.A.Artemiev@mcst.ru>
-Cc: Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: Re: [lvc-project] [PATCH] ASoC: simple-card-utils: Fix error
- handling in simple_util_init_jack()
-Message-ID: <cdeb8451-8a72-473f-812e-6c21a96cecb9@sirena.org.uk>
-References: <20240619142432.573338-1-Igor.A.Artemiev@mcst.ru>
+	s=arc-20240116; t=1718809699; c=relaxed/simple;
+	bh=ABCcemSNEbE7rCsra2BS0VgQhdESrD0mKGqGjnuktjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=P0sXGNsOsQN9FMRA5YhftQcbc35rpRF8WZMObR+wJOWai7csw3N4lAtmg66UFLp5unvBlA9RKo7Gqin3mP7vqR9ttuRNpRWmR6emRqp03mHS1d2i9QiyKpwb6xprlHcW9/Qx9Heboc9ilwkM6kVB1bweDgF2w0U9rlTJmgMNnAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M9H415DL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l2bBuiLI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 19 Jun 2024 17:08:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718809695;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=pcjM/1ffZBGxlyWRn5r0TyHP3SCAYh82B8FLcXLwEjk=;
+	b=M9H415DLEMuTH3BNGY2hAB05Bdy0jw3UZyqyG8n82jhz3PaFvT4audMJHBclNONJk+/F4u
+	X4353plyV+3u4WdlyXzgyoL9MZSIsrH4Isv6omQEBygdPnnuX91VFxbeZ/e4UnnkWLECTh
+	useg8S8ZxCPbSWCnhGolDyAlNoz4Km+Pmww5GF9olCO7ub9DnLOsVh4Mq0Otekx1cr2Sv+
+	cp5ENfZYXSCUZBg5c4FfVRw9nlDob9BMK3xV+NkCUm1aykDun45QtLbTsDkLQI4wxieiql
+	XbilGpBHCx7eY7JPVzajhqy0oGGZ+xdkbELJUxGhKcx4pGaMzSr8+qaEngz/CQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718809695;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=pcjM/1ffZBGxlyWRn5r0TyHP3SCAYh82B8FLcXLwEjk=;
+	b=l2bBuiLIXKpnLuJflb3Top7Xus3aTbUI+b1g1rJbL3PJxQuuHMvCuVOm3FnuUi653Xmxxq
+	xYBPNBzmTWWLQCDw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>, Mike Galbraith <umgwanakikbuti@gmail.com>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] zram: Replace bit spinlocks with spinlock_t for PREEMPT_RT.
+Message-ID: <20240619150814.BRAvaziM@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ngyz7Xu2vyiOf4Qc"
-Content-Disposition: inline
-In-Reply-To: <20240619142432.573338-1-Igor.A.Artemiev@mcst.ru>
-X-Cookie: Don't I know you?
-
-
---ngyz7Xu2vyiOf4Qc
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 
-On Wed, Jun 19, 2024 at 05:24:32PM +0300, Igor Artemiev wrote:
+From: Mike Galbraith <umgwanakikbuti@gmail.com>
 
-> Currently, if snd_soc_card_jack_new_pins() or snd_soc_jack_add_gpios()
-> fails, the function continues execution without handling the error.
-> This can lead to unexpected behavior and potential crashes.
+The bit spinlock disables preemption. The spinlock_t lock becomes a sleeping
+lock on PREEMPT_RT and it can not be acquired in this context. In this locked
+section, zs_free() acquires a zs_pool::lock, and there is access to
+zram::wb_limit_lock.
 
-This just looks like some static checker thing, I'm just seeing a bald
-assertation about issues and crashes with no analysis about what those
-might be.  TBH I'd expect this to make things worse not better.
+Use a spinlock_t on PREEMPT_RT for locking and set/ clear ZRAM_LOCK bit after
+the lock has been acquired/ dropped.
 
---ngyz7Xu2vyiOf4Qc
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Mike Galbraith <umgwanakikbuti@gmail.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+I posted this few times. Mikes intents to keep it based on last feedback.
+Any reason not to apply it?
 
------BEGIN PGP SIGNATURE-----
+https://lkml.kernel.org/r/YqIbMuHCPiQk+Ac2@linutronix.de
+https://lore.kernel.org/20230323161830.jFbWCosd@linutronix.de
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZy8/sACgkQJNaLcl1U
-h9BYcgf+OnjKQt79MdSbG/lH7BYTolBSIy5tsmp0AuL540BEGkdL8bvLOmsOtVHf
-btjHv7kQRhkt6JbSpQvAbDvInPU8oBNWlRBfr7S3WXkRgzn8bidhw/XjPjOHq/fl
-dQOgbjpnPRjd3xVgzec1xxsLz+u4y3mnwS0qIr/nPwUGm/tLOP+Q1JK5DlYwaBbj
-gD9DdFdTywY/dsfqPgjkm54CoYCG7SVhMNWISWUTvfoNg5laoP2DSKJVLXZ8g3fR
-kI6AYLfCti3msZh2un5yONgyaPWzg/k9zxULKwiN5k/alW7dW6Lp9Dh2ifpA4anA
-eU3BauCXjomvQ4gvQMBI0edBhoA76w==
-=RspS
------END PGP SIGNATURE-----
+ drivers/block/zram/zram_drv.c |   37 +++++++++++++++++++++++++++++++++++++
+ drivers/block/zram/zram_drv.h |    3 +++
+ 2 files changed, 40 insertions(+)
 
---ngyz7Xu2vyiOf4Qc--
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -57,6 +57,41 @@ static void zram_free_page(struct zram *
+ static int zram_read_page(struct zram *zram, struct page *page, u32 index,
+ 			  struct bio *parent);
+ 
++#ifdef CONFIG_PREEMPT_RT
++static void zram_meta_init_table_locks(struct zram *zram, size_t num_pages)
++{
++	size_t index;
++
++	for (index = 0; index < num_pages; index++)
++		spin_lock_init(&zram->table[index].lock);
++}
++
++static int zram_slot_trylock(struct zram *zram, u32 index)
++{
++	int ret;
++
++	ret = spin_trylock(&zram->table[index].lock);
++	if (ret)
++		__set_bit(ZRAM_LOCK, &zram->table[index].flags);
++	return ret;
++}
++
++static void zram_slot_lock(struct zram *zram, u32 index)
++{
++	spin_lock(&zram->table[index].lock);
++	__set_bit(ZRAM_LOCK, &zram->table[index].flags);
++}
++
++static void zram_slot_unlock(struct zram *zram, u32 index)
++{
++	__clear_bit(ZRAM_LOCK, &zram->table[index].flags);
++	spin_unlock(&zram->table[index].lock);
++}
++
++#else
++
++static void zram_meta_init_table_locks(struct zram *zram, size_t num_pages) { }
++
+ static int zram_slot_trylock(struct zram *zram, u32 index)
+ {
+ 	return bit_spin_trylock(ZRAM_LOCK, &zram->table[index].flags);
+@@ -71,6 +106,7 @@ static void zram_slot_unlock(struct zram
+ {
+ 	bit_spin_unlock(ZRAM_LOCK, &zram->table[index].flags);
+ }
++#endif
+ 
+ static inline bool init_done(struct zram *zram)
+ {
+@@ -1226,6 +1262,7 @@ static bool zram_meta_alloc(struct zram
+ 
+ 	if (!huge_class_size)
+ 		huge_class_size = zs_huge_class_size(zram->mem_pool);
++	zram_meta_init_table_locks(zram, num_pages);
+ 	return true;
+ }
+ 
+--- a/drivers/block/zram/zram_drv.h
++++ b/drivers/block/zram/zram_drv.h
+@@ -69,6 +69,9 @@ struct zram_table_entry {
+ 		unsigned long element;
+ 	};
+ 	unsigned long flags;
++#ifdef CONFIG_PREEMPT_RT
++	spinlock_t lock;
++#endif
+ #ifdef CONFIG_ZRAM_TRACK_ENTRY_ACTIME
+ 	ktime_t ac_time;
+ #endif
 
