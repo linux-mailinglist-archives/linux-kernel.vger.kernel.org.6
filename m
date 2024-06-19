@@ -1,242 +1,118 @@
-Return-Path: <linux-kernel+bounces-221145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1934490EF73
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:53:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1FF190EF74
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928E91F22DDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E57321C215C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E7814EC79;
-	Wed, 19 Jun 2024 13:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6057314F10F;
+	Wed, 19 Jun 2024 13:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccMRLCaQ"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MaRiY4d1"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCB413DDAF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68056144D3E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718805206; cv=none; b=Fa/Zg6u9jRd39VGUVWUN7oDOfqoBMv24BfoQ10Su7vyjApjh7ScFpAYhT7NBuU8NUpKAwsQeAARHyf7pkBh+RwMemAyhWSIJoTVgoqhYDLHq3X0sFpMUEQPUP3uNGLH/Wo79zrJYyA4FtWf0Amn9MKDYmhE5lcGkQk/V8PtjcRA=
+	t=1718805261; cv=none; b=ZZbG5776oZP0p79uMyIg3bZaGdSnYGflQJuYlA81sjQa9LmeUElb2TJKuLg4wc3i7I1E7lEriuO/ZwMeyGiqow5qgvG4yZ5o9yzaix9HkFgHofKSyjurnj/chf5dyR3PH78r0ifchMWKUNWiuPjIL0RR+CIvP1941Vb4q5oWP3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718805206; c=relaxed/simple;
-	bh=wW93xxzTiTV5Ny3UiyzdXLUJcbS9Yx7Bk9mJDdLd7SQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p4DfKdub7umyY7Kjg3cmTA6oQ55aEXPTvve3sTmhnUxqBxlkee12xvAmKwDEPMikx0Xfc+1ED2mwr6JxsfV/IZwZeW22RIR89LH8Gs7iWe4Uo0WW0lr/SQqSxZdxAtAmrGzTjuarpBcjupH3JsjhAWx0GKFQNPLtBJCaFnbOaPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccMRLCaQ; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7062c11d0d1so799550b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:53:24 -0700 (PDT)
+	s=arc-20240116; t=1718805261; c=relaxed/simple;
+	bh=xpkqazG6++afbEk83vkpLmSWnTiOgnZWcv/jTUALrv4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=S5+36f4K6kml7ln9G2M8WC1N95bio8JTg3cvlBJ2yCXSAsUcjYu89xpI5d6PAas4mzh2ygzA9sOomCVQkpMKOg/Useq3ZIGUHfZ7GYFUGFqBUI3fDqprcSKkfZK8VMcakci8xxr8fxKl2op0FmgTnVesypc5cBacqrJIdMUIbsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MaRiY4d1; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c2edc2611bso1226370a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:54:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718805204; x=1719410004; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718805260; x=1719410060; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=raeXeI6lwsevNLvXbd1wYh1qsMJosT/xi6mC5/F+he0=;
-        b=ccMRLCaQg5iZTExjBkK+c110xeSLi2fp/C5axm72FUfZl+GeKfOGRqs27Iw7h0DGQO
-         6+AsaAWHnNygqT8mkl/PlouomASAQsE43/DaPAfzZGqOYuL3IgAJBnTtan+QgpLZLr0B
-         vbmdgrpHuidGaJD0C1LxoRE+D6oPwFjaiYPgYw6IKmh5UOElbfFQmi7hqMKSpYOTBKlr
-         cCDgiDz4uRV6v/u4eegu2yGNo/aeTutnG39YoR2+O/khbi8utC1Ri3P56zLd4IDJX297
-         reILV6YrCg1g4y3tX9WVRzBpKV89CoFIb9J3km2y0uKSyWFh/lwInf2d7p8WGezgu2Lf
-         5UIg==
+        bh=WkDHd790kWmtvQ6UF8dcb7gjO3oHpCPMgBhaS8+VJfk=;
+        b=MaRiY4d1qds/DjlSUOL5kNPU06HRjIVvMI2X3c0KSILjOdFvT1tgkbo9kqnO66OMtE
+         yULRsb5fu8+FCt3qk5SLifHsNRkSAB9wRXhzd3JPr6lXAJ5s21REzaw244JLdgcHPREF
+         oXKs0LuggaEzWFkIjKtEfXSxGpFI44z/5fzbvITZpTdP+h+7OXKbWIsspd35nYywlPb7
+         HHwrtjyiJfT6AAZlRbOptU0djRGrL3ewLfyW38z6IDmCwYGfIVke8yj9Wv9NluUApu7D
+         VtGNFHhVxvM5EKMApXwTmdVugBQZ6C4+iqUTAxiiztkoKSn3gqoYpk5A/nLVhG+HMa3y
+         tmaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718805204; x=1719410004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718805260; x=1719410060;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=raeXeI6lwsevNLvXbd1wYh1qsMJosT/xi6mC5/F+he0=;
-        b=TL5c6cbzWEXlyycGzU5OV/MmpEmw43avWR+Et95VpoIewTbliyQibj8RbHfgEUyViw
-         9x2+DZ52HEqnn43MopVGEablckiPISmJbwU7HlAEtgE3QHYcmAhCtT1GAeZEHV30pBLa
-         jy5FVECNZmvjj5DUzkyLmJ9bdKlLAeLFtqKppVu50c37gywGeu6MlCt6OdzcvExmitNC
-         S2Jt5jXyKPVY2MCarFBzpU4udRJv8d46KDlncCO1/s4QyO7XyeBq/NR0T94lX2NF2Izr
-         Q4Bovqkq7mxP29oJTlFlskFor76aK7lU7cvrPYun9ycEMDSkmNszw3IhgMH/qScmM2Xc
-         q49w==
-X-Forwarded-Encrypted: i=1; AJvYcCURlIfT8BRCmTJ+7PjRP6++9+wQktMveqTWjIAmjK17geaAdanFK8R63HBZnRR5uo0AawbuVZyP6LV+0B3ufOttG5otBzxLLLS59rda
-X-Gm-Message-State: AOJu0Yz5fMsIyz6WGodEajnrryGZHcuqJvXBoB9TgD+BK7FZBNkbwd6C
-	EEzolKNPpvuHYxIGl5bAZ2bF/i0/AQXEP+BxIgfh0uEioUfPvorRMEFXVECHxMAxqD+bsM6g1/O
-	2u/eMT1ICSTnFouf9G3tmDZ+zvFw=
-X-Google-Smtp-Source: AGHT+IGfmLwqL/WkyQUnXfiuN9AiOOQ44qs6v6SXVcDXsEMS0iiTxBl8WlPuS7Nozytf9SFo6IkiWknJVQCz/uGDszY=
-X-Received: by 2002:a05:6a20:9313:b0:1b8:5c3c:794f with SMTP id
- adf61e73a8af0-1bcbb3a0026mr2432960637.10.1718805203901; Wed, 19 Jun 2024
- 06:53:23 -0700 (PDT)
+        bh=WkDHd790kWmtvQ6UF8dcb7gjO3oHpCPMgBhaS8+VJfk=;
+        b=Ci9o7CJLkQYwqeLGRf2eTD48S/6IBRG+nnQ5bU6/cLlBrUyCPjPEOxAyPmpcMLQ9vv
+         AM7STSvOJAsYXkbTypVFLNZwz2n9iHS8wDoWNJIrT/bKr3JfI6LrvQyK8TfbFQJx/HIi
+         2nzgtludPOVtbzH04W8nRsBzDPEHgrujF50YSgnN1tYeiVcVSXKQSyulqZIoEM5Hh3Q6
+         KLFjaBR2CGtuyY5MfISQsp81IMraN62zTTZFUKsg7t4EPmyR6FJJ5YLW/sWYQCwoq0Gs
+         JCrElevpSBllThWNsCJlsPLUM2gf+bFd/J1e+Dn6YnOb94ZetXseAP0HMWwyYjWHNgPu
+         DX1A==
+X-Forwarded-Encrypted: i=1; AJvYcCU3jgJPzW/E030rdI7R4Wq54+SJqDSsC3I6sbXZyac7jPclv+S/1ZiHYTC0LiryNXuhaVf2JanrZAnEaueF3b0wc1HaTRYXM2psHBnj
+X-Gm-Message-State: AOJu0YzFcrZ+nr/H3ktvwiSDXQsQDk4EVRb+hIS6X9Pl6ouFlroR0hLe
+	TERGC35EwpzpS7zCsDkydikkdHcc9br9LruVUnqQQPMelOX8o/Ydv0o8Q/8wa5j2EKuz7GXgn47
+	P
+X-Google-Smtp-Source: AGHT+IHa5lmBL3cTRn8I7U6f9EAY1cpzPJyppZPZB1ibCn7ith2thKtjx5wQNTrWrGQBB2QxHoKaeg==
+X-Received: by 2002:a05:6a21:99a0:b0:1b6:d2e7:160 with SMTP id adf61e73a8af0-1bcbb151a6cmr2662623637.0.1718805259647;
+        Wed, 19 Jun 2024 06:54:19 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e56183sm116843765ad.28.2024.06.19.06.54.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 06:54:19 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <20240617-md-m68k-drivers-block-v1-0-b200599a315e@quicinc.com>
+References: <20240617-md-m68k-drivers-block-v1-0-b200599a315e@quicinc.com>
+Subject: Re: [PATCH 0/3] block: m68k: add missing MODULE_DESCRIPTION()
+ macros
+Message-Id: <171880525880.107379.10461906104688825511.b4-ty@kernel.dk>
+Date: Wed, 19 Jun 2024 07:54:18 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612222435.3188234-1-dianders@chromium.org>
- <20240612152752.v2.8.I27914059cc822b52db9bf72b4013b525b60e06fd@changeid>
- <CADnq5_PbqE0E2pP26mGD94cdc=tLZZsF10e7ZZWeC5AU-LS8vw@mail.gmail.com>
- <CAD=FV=XJAiVGFn_Tqs_JNo1fQKFys3m=hH9MwmMot93gkdg=Qw@mail.gmail.com>
- <CADnq5_M+H_h1Me_O3u=R3q52PgYcCwwY9Mr8_R1eX0G7HvBp2w@mail.gmail.com>
- <CAD=FV=X=9PV+zbmd2S-TBBxq+yQZ2D+-cCHjFX-gm-f+DyXXiQ@mail.gmail.com> <CADnq5_OXUKj=bfK0NOAhOzmhYCSnQXbxHbwLOaBQ6wFX033Wgw@mail.gmail.com>
-In-Reply-To: <CADnq5_OXUKj=bfK0NOAhOzmhYCSnQXbxHbwLOaBQ6wFX033Wgw@mail.gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 19 Jun 2024 09:53:12 -0400
-Message-ID: <CADnq5_O1EGj-_xx7LuiXSVY7MSmfS7_1-hqShFk6Deu1wsBwOA@mail.gmail.com>
-Subject: Re: [PATCH v2 8/8] drm/amdgpu: Call drm_atomic_helper_shutdown() at
- shutdown time
-To: Doug Anderson <dianders@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
-	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	Aurabindo Pillai <aurabindo.pillai@amd.com>, Candice Li <candice.li@amd.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Hamza Mahfooz <hamza.mahfooz@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>, Le Ma <le.ma@amd.com>, 
-	Lijo Lazar <lijo.lazar@amd.com>, Ma Jun <Jun.Ma2@amd.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Shashank Sharma <shashank.sharma@amd.com>, 
-	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Victor Lu <victorchengchi.lu@amd.com>, amd-gfx@lists.freedesktop.org, 
-	chenxuebing <chenxb_99091@126.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-On Wed, Jun 19, 2024 at 9:50=E2=80=AFAM Alex Deucher <alexdeucher@gmail.com=
-> wrote:
->
-> On Tue, Jun 18, 2024 at 7:53=E2=80=AFPM Doug Anderson <dianders@chromium.=
-org> wrote:
-> >
-> > Hi,
-> >
-> > On Tue, Jun 18, 2024 at 3:00=E2=80=AFPM Alex Deucher <alexdeucher@gmail=
-.com> wrote:
-> > >
-> > > On Tue, Jun 18, 2024 at 5:40=E2=80=AFPM Doug Anderson <dianders@chrom=
-ium.org> wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > >
-> > > > On Mon, Jun 17, 2024 at 8:01=E2=80=AFAM Alex Deucher <alexdeucher@g=
-mail.com> wrote:
-> > > > >
-> > > > > On Wed, Jun 12, 2024 at 6:37=E2=80=AFPM Douglas Anderson <diander=
-s@chromium.org> wrote:
-> > > > > >
-> > > > > > Based on grepping through the source code this driver appears t=
-o be
-> > > > > > missing a call to drm_atomic_helper_shutdown() at system shutdo=
-wn
-> > > > > > time. Among other things, this means that if a panel is in use =
-that it
-> > > > > > won't be cleanly powered off at system shutdown time.
-> > > > > >
-> > > > > > The fact that we should call drm_atomic_helper_shutdown() in th=
-e case
-> > > > > > of OS shutdown/restart comes straight out of the kernel doc "dr=
-iver
-> > > > > > instance overview" in drm_drv.c.
-> > > > > >
-> > > > > > Suggested-by: Maxime Ripard <mripard@kernel.org>
-> > > > > > Cc: Alex Deucher <alexander.deucher@amd.com>
-> > > > > > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
-> > > > > > Cc: Xinhui Pan <Xinhui.Pan@amd.com>
-> > > > > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > > > > > ---
-> > > > > > This commit is only compile-time tested.
-> > > > > >
-> > > > > > ...and further, I'd say that this patch is more of a plea for h=
-elp
-> > > > > > than a patch I think is actually right. I'm _fairly_ certain th=
-at
-> > > > > > drm/amdgpu needs this call at shutdown time but the logic is a =
-bit
-> > > > > > hard for me to follow. I'd appreciate if anyone who actually kn=
-ows
-> > > > > > what this should look like could illuminate me, or perhaps even=
- just
-> > > > > > post a patch themselves!
-> > > > >
-> > > > > I'm not sure this patch makes sense or not.  The driver doesn't r=
-eally
-> > > > > do a formal tear down in its shutdown routine, it just quiesces t=
-he
-> > > > > hardware.  What are the actual requirements of the shutdown funct=
-ion?
-> > > > > In the past when we did a full driver tear down in shutdown, it
-> > > > > delayed the shutdown sequence and users complained.
-> > > >
-> > > > The "inspiration" for this patch is to handle panels properly.
-> > > > Specifically, panels often have several power/enable signals going =
-to
-> > > > them and often have requirements that these signals are powered off=
- in
-> > > > the proper order with the proper delays between them. While we can'=
-t
-> > > > always do so when the system crashes / reboots in an uncontrolled w=
-ay,
-> > > > panel manufacturers / HW Engineers get upset if we don't power thin=
-gs
-> > > > off properly during an orderly shutdown/reboot. When panels are
-> > > > powered off badly it can cause garbage on the screen and, so I've b=
-een
-> > > > told, can even cause long term damage to the panels over time.
-> > > >
-> > > > In Linux, some panel drivers have tried to ensure a proper poweroff=
- of
-> > > > the panel by handling the shutdown() call themselves. However, this=
- is
-> > > > ugly and panel maintainers want panel drivers to stop doing it. We
-> > > > have removed the code doing this from most panels now [1]. Instead =
-the
-> > > > assumption is that the DRM modeset drivers should be calling
-> > > > drm_atomic_helper_shutdown() which will make sure panels get an
-> > > > orderly shutdown.
-> > > >
-> > > > For a lot more details, see the cover letter [2] which then contain=
-s
-> > > > links to even more discussions about the topic.
-> > > >
-> > > > [1] https://lore.kernel.org/r/20240605002401.2848541-1-dianders@chr=
-omium.org
-> > > > [2] https://lore.kernel.org/r/20240612222435.3188234-1-dianders@chr=
-omium.org
-> > >
-> > > I don't think it's an issue.  We quiesce the hardware as if we were
-> > > about to suspend the system (e.g., S3).  For the display hardware we
-> > > call drm_atomic_helper_suspend() as part of that sequence.
-> >
-> > OK. It's no skin off my teeth and we can drop this patch if you're
-> > convinced it's not needed. From the point of view of someone who has
-> > no experience with this driver it seems weird to me that it would use
-> > drm_atomic_helper_suspend() at shutdown time instead of the documented
-> > drm_atomic_helper_shutdown(), but if it works for everyone then I'm
-> > not gonna complain.
->
-> I think the problem is that it is not clear exactly what the
-> expectations are around the PCI shutdown callback.  The documentation
-> says:
->
-> "Hook into reboot_notifier_list (kernel/sys.c). Intended to stop any
-> idling DMA operations. Useful for enabling wake-on-lan (NIC) or
-> changing the power state of a device before reboot. e.g.
-> drivers/net/e100.c."
 
-Arguably, there is no requirement to even touch the display hardware
-at all.  In theory you could just leave the display hardware as is in
-the current state.  The system will either be rebooting or powering
-down anyway.
+On Mon, 17 Jun 2024 18:13:31 -0700, Jeff Johnson wrote:
+> With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/amiflop.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/ataflop.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/z2ram.o
+> 
+> Since these have traditionally had different commit prefixes, I
+> submitted individual patches. Let me know if you want me to squash
+> them.
+> 
+> [...]
 
-Alex
+Applied, thanks!
 
->
-> We tried a full driver teardown in the shutdown callback and it added
-> a lot of latency that really wasn't needed since the system was just
-> going into a reboot or power down.  The best middle ground was to just
-> leverage our hw level suspend code to quiesce the hardware.  Adding
-> complexity to call drm_atomic_helper_suspend() vs
-> drm_atomic_helper_shutdown() doesn't seem worth it since the functions
-> do pretty much the same thing (both call
-> drm_atomic_helper_disable_all()).  Maybe it's better to update the
-> documentation to recommend drm_atomic_helper_suspend() if drivers want
-> to leverage their suspend code?
->
-> Alex
+[1/3] amiflop: add missing MODULE_DESCRIPTION() macro
+      commit: 28d8c13830cc530996157e22ecf22def90cb7f35
+[2/3] ataflop: add missing MODULE_DESCRIPTION() macro
+      commit: ba8df22e25e7e906254f4f490d7bcfbe637152aa
+[3/3] z2ram: add missing MODULE_DESCRIPTION() macro
+      commit: 465478bb00168a7620788990b1679c5067d421f2
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 
