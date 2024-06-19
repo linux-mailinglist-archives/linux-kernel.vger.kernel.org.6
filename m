@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-221149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D48590EF7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:55:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135F090EF7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91BC0282104
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:55:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFB5C1F233C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3901514F9D5;
-	Wed, 19 Jun 2024 13:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE57114F13E;
+	Wed, 19 Jun 2024 13:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLDfWOkJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvKc6XLY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731221DFF7;
-	Wed, 19 Jun 2024 13:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A2614EC42;
+	Wed, 19 Jun 2024 13:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718805304; cv=none; b=g1pwxgDaj1uqeTBhYevSxn2/dPCOV16Huq5qx2H6HXX/I1pdCsFnq7Cd8QuEqgspQlMC2DCflzDa/LtyxhADu+gTTMHIO51lKx0hC0A2N9xm6Wn+FVxhmT4fsjp8NNJYUiiXmOC3Jn4+j5X9uk5h6uE8xme42w8MN6wkuoXPlJs=
+	t=1718805333; cv=none; b=cqbA1UCHWfcStOhxCt72185ROjrmYwOH0YnN3ONjuphpRMcSkPQu+qWEvKPyw/pLFE8UX+sAeLIvmIgWx1WgWiwCO6UznDuxU2u1Kpoe7JkMMFd7mwmJnegABxZ9lwhRAvvLVDfT2MptI7zMxEa5iNVlFy9smkDu9il8BNzzS24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718805304; c=relaxed/simple;
-	bh=2L+1+gYamAC+cVSHQFSO0PZ1BNdypHQRZrJb2/vZugA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Jm+9YFo0yip9Pe/UZDRMoZlAckBeTZRqD9a75Lf6kUtto6MlbqggJ+jT1lCWMrQLAg+0xzGojJ4wIf12X8MGpKG3vpoa26y3y522rhWRB7rDa97xlLExFsabBoDVjXHFUkrMQcTSBL9t/q+nrRa+1SG99977iR0AmbkRxzxGuhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLDfWOkJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DB5BC2BBFC;
-	Wed, 19 Jun 2024 13:55:01 +0000 (UTC)
+	s=arc-20240116; t=1718805333; c=relaxed/simple;
+	bh=sdrbWJs4C9JSQQPyUxLltmmFFyWY2dENHToMBoBCL3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WaBRYxvzLlkNWQ6YfeoBQSSREni9ovkjt+gKZmf/XpYMZO6Aw5otam/2hyTbVjy2HTg22kbXLGKqWFEYK9wAXdFimOBBP1J5AT+pyMA68B9/4ucfK/WRRgm6FfKGLgR3At3ottoBXUt7ENj0Xhvzh334Ux/INrUthAYL3zXyNeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvKc6XLY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 956FAC2BBFC;
+	Wed, 19 Jun 2024 13:55:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718805304;
-	bh=2L+1+gYamAC+cVSHQFSO0PZ1BNdypHQRZrJb2/vZugA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=eLDfWOkJs16coIdHaDXkWEYi4Ygwc7SSM9NMfot3FR8z4eYvk5oGV0UWLHh2CRWYk
-	 eO4+M4u6nMa4C0pWij/NKtp8q2GAKl1h29Rbv+2dQ74MNYrVJpPUBZ012KJZpxgWwY
-	 jwV/SQQUEO3QSPTg22SLHPP3MiJ9ExIa26+nSf/j+1uAg6v9aqJ15MX9MIUXi70RUl
-	 bNi0B8NLH+YgUn7xh2zs+Wk4wlMlUdcoAbJUztUxrxWHrM/kRVW4bVXRZfQ34R+1Qu
-	 wZ4T/bcd+1beBKR2+b0e55vjHMJAlvD9E+D2bqk1+7fWz/J85xPLMuexQ3jphpKJ0X
-	 g3Eu2NxKJveQw==
-Date: Wed, 19 Jun 2024 14:54:59 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Ashish Kalra <ashish.kalra@amd.com>, Borislav Petkov <bp@alien8.de>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Michael Roth <michael.roth@amd.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>
-Subject: linux-next: manual merge of the kvm tree with the tip tree
-Message-ID: <ZnLjMxzFE6UCPhqi@sirena.org.uk>
+	s=k20201202; t=1718805332;
+	bh=sdrbWJs4C9JSQQPyUxLltmmFFyWY2dENHToMBoBCL3A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dvKc6XLYs5ghjKbTSa0puSbpeDvu1GzKXCuMjf+4VURFWhAhz+ET8UQ7+z9YGWRaa
+	 ymwUyXnAlDAj9wcElGWahjWYT/P8ZhOPzPikq4svulM+Re3Vi3LtC19lzK9veo6g9i
+	 BbNd2d+f6FGRKq37LEHRTetOFwvMBPArjkc+K9/pYqAHfFhXfT+ggp7E4aBULi4uZm
+	 8ltFxh6579SwGSSPy1RXlCsiPVKT73yefPsnrg3DWwdQs68WVNBdELFjCe7IBldmPe
+	 TQbbBNh4OTUIjtGKAYhJSXwX82FHCmXWoUIoPLUykEF2s8XEeLHN+cLpCZS0AQa7J+
+	 2Eg+AbPxgtaTQ==
+Date: Wed, 19 Jun 2024 10:55:27 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] perf trace: Augment enum arguments with BTF
+Message-ID: <ZnLjT_m90EDtRFE0@x1>
+References: <20240619082042.4173621-1-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nQUwDpK7LRDpRSib"
-Content-Disposition: inline
-
-
---nQUwDpK7LRDpRSib
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240619082042.4173621-1-howardchu95@gmail.com>
 
-Hi all,
+On Wed, Jun 19, 2024 at 04:20:37PM +0800, Howard Chu wrote:
+> changes in v2:
+> - Move inline landlock_add_rule c code to tests/workloads
+> - Rename 'enum_aug_prereq' to 'check_vmlinux'
 
-Today's linux-next merge of the kvm tree got a conflict in:
+Usually the versions descriptions comes at the end, after your signature
+line, just before the list of csets in the series.
+ 
+> Augment enum arguments in perf trace, including syscall arguments and
+> non-syscall tracepoint arguments. The augmentation is implemented using
+> BTF.
+> 
+> This patch series also includes a bug fix by Arnaldo Carvalho de Melo 
+> <acme@redhat.com>, which makes more syscalls to be traceable by perf trace.
+> 
+> Test is included.
 
-  arch/x86/include/asm/sev-common.h
+Thanks, the patch submission is now very good, at some point you'll be
+able to point to a git tree from where to do a pull, then have it with a
+signed tag, etc, all this is not necessary at this point in our
+collaboration, but as you evolve as a kernel developer, it eventually
+will be asked from you.
 
-between commit:
+And it comes with a test that introduces a 'perf test -w' workload,
+super great!
 
-  34ff659017359 ("x86/sev: Use kernel provided SVSM Calling Areas")
-
-=66rom the tip tree and commit:
-
-  d46b7b6a5f9ec ("KVM: SEV: Add support to handle MSR based Page State Chan=
-ge VMGEXIT")
-
-=66rom the kvm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/x86/include/asm/sev-common.h
-index e90d403f2068b,8647cc05e2f49..0000000000000
---- a/arch/x86/include/asm/sev-common.h
-+++ b/arch/x86/include/asm/sev-common.h
-@@@ -98,19 -109,9 +109,22 @@@ enum psc_op=20
-  	/* GHCBData[63:32] */				\
-  	(((u64)(val) & GENMASK_ULL(63, 32)) >> 32)
- =20
- +/* GHCB Run at VMPL Request/Response */
- +#define GHCB_MSR_VMPL_REQ		0x016
- +#define GHCB_MSR_VMPL_REQ_LEVEL(v)			\
- +	/* GHCBData[39:32] */				\
- +	(((u64)(v) & GENMASK_ULL(7, 0) << 32) |		\
- +	/* GHCBDdata[11:0] */				\
- +	GHCB_MSR_VMPL_REQ)
- +
- +#define GHCB_MSR_VMPL_RESP		0x017
- +#define GHCB_MSR_VMPL_RESP_VAL(v)			\
- +	/* GHCBData[63:32] */				\
- +	(((u64)(v) & GENMASK_ULL(63, 32)) >> 32)
- +
-+ /* Set highest bit as a generic error response */
-+ #define GHCB_MSR_PSC_RESP_ERROR (BIT_ULL(63) | GHCB_MSR_PSC_RESP)
-+=20
-  /* GHCB Hypervisor Feature Request/Response */
-  #define GHCB_MSR_HV_FT_REQ		0x080
-  #define GHCB_MSR_HV_FT_RESP		0x081
-
---nQUwDpK7LRDpRSib
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZy4zIACgkQJNaLcl1U
-h9Ac1ggAgkntQi6/mci/5sPhuewuaPr/pC/ZfJHq+36pfpdyL6J13Tq30j1ZVnr5
-h9WfzGd8g4wyOUN0jfXJRunOtDbYDNi/B2r+rLikhtUW0VKPKsPl1xQX2pODRvYN
-Zg9+Nj4WQ+Ir5zslNjNF97+4IExUaxSDkqeja8LlZ5PEzOPGpuLriYJEAH9D7svp
-I9BFrGeOG87IKfRS+skYEwDFTiTTcsgDuZ4S8GeYA1M4tDJXSLiVT1aDWhTKbnhT
-KS0/2KwhngcdcSDR6xlhs/xvzwkTtsTVza1IpGG10r8rOp53LRNRa39pG9kDKGn2
-qmBgRuJFC8jL3/XDNnlNKzk2kuxdAQ==
-=cDeN
------END PGP SIGNATURE-----
-
---nQUwDpK7LRDpRSib--
+- Arnaldo
+ 
+> Howard Chu (5):
+>   perf trace: Fix iteration of syscall ids in syscalltbl->entries
+>   perf trace: Augment enum syscall arguments with BTF
+>   perf trace: Augment enum tracepoint arguments with BTF
+>   perf trace: Filter enum arguments with enum names
+>   perf trace: Add test for enum augmentation
+> 
+>  tools/perf/builtin-trace.c                    | 214 ++++++++++++++++--
+>  tools/perf/tests/builtin-test.c               |   1 +
+>  tools/perf/tests/shell/trace_btf_enum.sh      |  57 +++++
+>  tools/perf/tests/tests.h                      |   1 +
+>  tools/perf/tests/workloads/Build              |   1 +
+>  .../perf/tests/workloads/landlock_add_rule.c  |  32 +++
+>  tools/perf/util/syscalltbl.c                  |   7 +
+>  tools/perf/util/syscalltbl.h                  |   1 +
+>  8 files changed, 289 insertions(+), 25 deletions(-)
+>  create mode 100755 tools/perf/tests/shell/trace_btf_enum.sh
+>  create mode 100644 tools/perf/tests/workloads/landlock_add_rule.c
+> 
+> -- 
+> 2.45.2
+> 
 
