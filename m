@@ -1,117 +1,152 @@
-Return-Path: <linux-kernel+bounces-221109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB4B90EE5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:28:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB34D90EE6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA046B25946
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:28:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B282F1C2430C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0838714D6FF;
-	Wed, 19 Jun 2024 13:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DAF146016;
+	Wed, 19 Jun 2024 13:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QP3fv3+W"
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="a2Zw825w";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="a2Zw825w"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3196814373E;
-	Wed, 19 Jun 2024 13:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5276A14373E;
+	Wed, 19 Jun 2024 13:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718803676; cv=none; b=TGM01Qzez7deyC/Z0SmgIgxov7xfwp7qf6Tx7Up0DjetHicOmZhsUCQgvIJWQOCcwFy3y0B2ukVjSsoTbfa5HQzmfFyx3GKRBEj8V9BjXVPuBVEbbrcloe/ohG4SF0SiaJJrZ9TeITu0sVHSMYS+vTRYmr3pDc86mtuuSrwp6DE=
+	t=1718803704; cv=none; b=TCOTIDAoMvp8CfAjO6JNhhYgZkB0xeu1jAxF7ny20FEuPChYEQMmJUsc2+SpUsOSRUhS0ymQhg7NB8P85zFBYJmxhNX7fufL1rp0wyhwaMcW13HLmZmlrfmU5Jfk0dxiy/ZSEBj2JGKk9giMa2OqdajAeIHSXK0n58Qdrxntcoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718803676; c=relaxed/simple;
-	bh=rCR7QuMaFcOz1m7J9fyPFPxCKL6AfHbaF5fRTnWNcm4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k0V5Cc1bkJ+JeWgRWrV+yj5uXjljiSSan5034spXnBfrPKmq2fuwhKGhlvj+FZDQX4szPWzz1wguJgUk8RNSpejDJMJAt7S59aBT8DbFKSFJuVp/4/U/ymDF+dXuS6lKjq6wSVEv0jniym6xJNEbrsWjG/rLQ9/9YqGpkCefRRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QP3fv3+W; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-80f50dadadfso490368241.1;
-        Wed, 19 Jun 2024 06:27:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718803673; x=1719408473; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U+EdAOsIyAeNB2MEPeOqJ21gcXQroPI9pOzshoyJ47o=;
-        b=QP3fv3+W56QV7UuVAXuiJlym4GgyYQHId/jUXlxwzwPkMwHrMdvANdAlqqQYMtGf5p
-         Bzssto5mHvsI/GD0o5EwMsTuNtACFimiOk3542PgeSyqcACHrOyDAQLAFtL+iNumAaIt
-         WnhIixWXnpONc+3KewbACFsIR100GanZADsNZWTLCCUe1su5Yw1BM8g4vqkqhMNVq2qw
-         JaTxazc0JJze4U+9j5aNpQkqHIrVXoKACjXkHK2yrUqYGYiu8DYOkMlNe9oIqtAEeKKX
-         cnTRFB03yMhxG7e5iROZsYGDxfgKLlCcB8/WRhNrLHHtU1Ksz4u67kK1m8WAeYtf/4W1
-         sgsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718803673; x=1719408473;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U+EdAOsIyAeNB2MEPeOqJ21gcXQroPI9pOzshoyJ47o=;
-        b=pfLzGOYytYSReNVLknEBZU8zrvehkZbkIVHtTHHY/jtoriWdOm4hcqok7OVkxShRg8
-         xk02bX0nkeNQwJb2wlo1+Mf24v3gk0jqInZJ+FcEliR231DwY9NlAXRPKODpLw8IThri
-         A9irogKS/vrdyNoTO3uroaZm/1oaVakOWDzBz+5Pre2lmXePGDJirYjeoSd+QzbtCLLz
-         kGZ6z5yFjQran20suzkCc7Pzbyq/lAQ4laAM1VOtmvM/aWYFayEMuoO0J0bewU575Gt2
-         EoBabAGScHakjYsQHW6sL+SQiGeIxfClmaayeTAtCRORq7wopnGd80hR9z6pDsiuEEUr
-         nDHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbYDxjS5dK7irEhd57hm+ApgPu20AaBJrz+5KTDMtSVfV/xoerJHqnY1pyidvreYa2UdYk6GM6RqNkIT4UmOFOozRycbwzPh8IAHJJLbT4Ba54dO/1umBTOkmfiU70/OMIE4lR5DOwkuisTW2FHV//koLVmb6G2bmVKw2B4j4hJhHCEjsbAv4bT4CKgqsXke6njx02hKHrZ4e0FUf/UwfikHLE/5ofgflCO9hnDcjUlTQcv5NNQe6rrYgxcfl0+ahjC2AbXdXmRybTJh06z0cwkrRj/4o9NRaX3k33nkC3zFE4bJ4lPcfBLsTRigMQkH+xZez2AxHU1mUmD4cAYsZnrVKNSaUjK5xmEnhns5HfyIzmSS+ytMchdVxA7TWJgZBdcyn1pHlZS+aug3prhgL4/IlTp5EzaFhpkAt09w4dh8kvFgCpNcFJdCIebM1pmrg=
-X-Gm-Message-State: AOJu0YwL+uZy8sFlSUBlunvKpmdjSUJkYl9ZmHhlLB6qoX1KkJA1OuFl
-	RcoADOg20Y4ZFFQEPPigLHjcSex1aHxpMFW9ebZRLf3ANBOiJi6GHvBcHcXIX/EC5OYDh7JurtD
-	w+yZLDvBPXRmTIuEuN7lEGgb1EA8=
-X-Google-Smtp-Source: AGHT+IGwE8bFf/VlY/jk/YXUnYkoze8GDMP6nvE5vZma8oxX1CjkKEtLu+mwZHIrK4bFz/7xDykwdahIAJ7lHkmGhA4=
-X-Received: by 2002:a67:ee4b:0:b0:48d:8904:3dad with SMTP id
- ada2fe7eead31-48f13140716mr2780689137.32.1718803671634; Wed, 19 Jun 2024
- 06:27:51 -0700 (PDT)
+	s=arc-20240116; t=1718803704; c=relaxed/simple;
+	bh=23ifTE2BbLszVOYk+nDmzGkUuLpyFuSdy9xfyKOZ0kM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KWn3OP656yBiKcMRPD9XncQ8Tul6tKHyzV9Dm4q4rX6UVV/XTy7M4wdU6x8E7unG05lSUL6fI88iD+F+gGNrpV9MXzqzMJ805uYMth38++s9sHyUm7W1ggkp8hgQtfa5O65z5fabP+8SCt1rf1nrYjS8dHIRhcK6JFW93d8oA5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=a2Zw825w; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=a2Zw825w; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4FE9821AB5;
+	Wed, 19 Jun 2024 13:28:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718803700; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=4JsY+EPtMaRXfnzJxvSEnU0R09HA9SC8CtDxtOIu5Dg=;
+	b=a2Zw825wwynfuNcrk2V0Q4dBCa1m8mr0kGF06U6s72kCaNa5CyA5IVW9NeYl1rbq/sIjvV
+	LN7knV0tstiTjhQZ1wV8VRMduQwEjbMMTvw+xvp6zLBVnLdDnYbx1jIOljdByYw+CvSrcn
+	Blzo8qwN3VlUML6AlfI2R3mMAajBAYE=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=a2Zw825w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718803700; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=4JsY+EPtMaRXfnzJxvSEnU0R09HA9SC8CtDxtOIu5Dg=;
+	b=a2Zw825wwynfuNcrk2V0Q4dBCa1m8mr0kGF06U6s72kCaNa5CyA5IVW9NeYl1rbq/sIjvV
+	LN7knV0tstiTjhQZ1wV8VRMduQwEjbMMTvw+xvp6zLBVnLdDnYbx1jIOljdByYw+CvSrcn
+	Blzo8qwN3VlUML6AlfI2R3mMAajBAYE=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D75CE13ABD;
+	Wed, 19 Jun 2024 13:28:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 98Q2MvPccmZ4egAAD6G6ig
+	(envelope-from <oneukum@suse.com>); Wed, 19 Jun 2024 13:28:19 +0000
+From: Oliver Neukum <oneukum@suse.com>
+To: petkan@nucleusys.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Oliver Neukum <oneukum@suse.com>,
+	syzbot+5186630949e3c55f0799@syzkaller.appspotmail.com
+Subject: [PATCH net] net: usb: rtl8150 fix unintiatilzed variables in rtl8150_get_link_ksettings
+Date: Wed, 19 Jun 2024 15:28:03 +0200
+Message-ID: <20240619132816.11526-1-oneukum@suse.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-11-e3f6662017ac@gmail.com> <pkmxbxoc4sno6mbjsftz6hp5lxefc6yhwxjlhiy2pd4wbkzpvl@as43z4t64mm6>
-In-Reply-To: <pkmxbxoc4sno6mbjsftz6hp5lxefc6yhwxjlhiy2pd4wbkzpvl@as43z4t64mm6>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Wed, 19 Jun 2024 16:27:40 +0300
-Message-ID: <CABTCjFABEY0urmgrr5E3-oq9u_aNR8KcCTMpJpoGLOTPOfKAGg@mail.gmail.com>
-Subject: Re: [PATCH v3 11/23] drm/panel: Add support for S6E3HA8 panel driver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-0.49 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	DWL_DNSWL_LOW(-1.00)[suse.com:dkim];
+	MID_CONTAINS_FROM(1.00)[];
+	BAYES_HAM(-0.98)[86.98%];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[5186630949e3c55f0799];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 4FE9821AB5
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -0.49
+X-Spam-Level: 
 
-=D0=B2=D1=82, 18 =D0=B8=D1=8E=D0=BD. 2024=E2=80=AF=D0=B3. =D0=B2 21:39, Dmi=
-try Baryshkov <dmitry.baryshkov@linaro.org>:
->
-> > +     ret =3D mipi_dsi_compression_mode(dsi, true);
-> > +     if (ret < 0) {
-> > +             dev_err(dev, "Failed to set compression mode: %d\n", ret)=
-;
-> > +             return ret;
-> > +     }
->
-> Interesting, compression mode is being set before the PPS programming?
->
-Yes, as per vendor kernel:
-https://github.com/klabit87/twrp_android_samsung_kernel_sdm845/blob/e8bb630=
-39008e1704a2f1bde68d39ded9c16ea88/drivers/gpu/drm/msm/samsung/S6E3HA8_AMB57=
-7PX01/dsi_panel_S6E3HA8_AMB577PX01_wqhd_octa_cmd.dtsi#L5508
+This functions retrieves values by passing a pointer. As the function
+that retrieves them can fail before touching the pointers, the variables
+must be initialized.
+
+Reported-by: syzbot+5186630949e3c55f0799@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+---
+ drivers/net/usb/rtl8150.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/usb/rtl8150.c b/drivers/net/usb/rtl8150.c
+index 97afd7335d86..01a3b2417a54 100644
+--- a/drivers/net/usb/rtl8150.c
++++ b/drivers/net/usb/rtl8150.c
+@@ -778,7 +778,8 @@ static int rtl8150_get_link_ksettings(struct net_device *netdev,
+ 				      struct ethtool_link_ksettings *ecmd)
+ {
+ 	rtl8150_t *dev = netdev_priv(netdev);
+-	short lpa, bmcr;
++	short lpa = 0;
++	short bmcr = 0;
+ 	u32 supported;
+ 
+ 	supported = (SUPPORTED_10baseT_Half |
+-- 
+2.45.1
+
 
