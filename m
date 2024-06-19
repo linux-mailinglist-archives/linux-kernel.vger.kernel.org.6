@@ -1,316 +1,80 @@
-Return-Path: <linux-kernel+bounces-220408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B0590E15A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:37:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EC590E161
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C3A6B21A6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:37:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A17A8283E8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00128473;
-	Wed, 19 Jun 2024 01:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA5DDDC0;
+	Wed, 19 Jun 2024 01:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDCGVi9O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="xsCcz3WG"
+Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2FCCA40;
-	Wed, 19 Jun 2024 01:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3ABCA40;
+	Wed, 19 Jun 2024 01:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718761047; cv=none; b=fr/+zLuEDqNHCufXlYVk4YUD06AiNBt8TvxAomRMNwC1zb+e4LEs38R/LV8ijijQ0lDQlvlEBmRBuNwhLg6A1f4pLVgQUfpqWtCCvSFXc1ZanhhCsw3koAfkh/uUr8Xe1kZlmMKofNTFYncVwsJEXQqJ6c6SWRd+LkTQvoIhLwU=
+	t=1718761398; cv=none; b=GBEHN85cXxOhOypam4iu5kGAZJWnW+rEkNdxSpajRCtU1EDQJ6fX+Di+NELiJU4YeWlt8alVcKUzYGIJVSS9IGI2CY0H90ppqiH9PKyfgqcLcMXimdo6F0lzFF1G7wfUP83FDWQ9unw+K3VPdQZTEsGNZajrC2iTsCPEZVCIycc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718761047; c=relaxed/simple;
-	bh=7KPk+eUpUpVkXhfAm4cYEHZmPxsTEAG5Bit5UYU3VHc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UNDpI3AoB6qtFatobsMDqGFIjTVkZu/6BBDEk7yN1tW2y99pwqhlK8ULuQOcmh0dDQDY948ngj/UseL2l1fChZD59KF8VI4t+lnVc3puYQpjIsLbS1ExVtIF7SMmAfpeOw2VXSFHjLoJOqOs0MnW1gbVVGnWERscalcAMBvUtcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JDCGVi9O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 629E7C4AF1C;
-	Wed, 19 Jun 2024 01:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718761047;
-	bh=7KPk+eUpUpVkXhfAm4cYEHZmPxsTEAG5Bit5UYU3VHc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JDCGVi9O560pnYhznCNHxS7Ejy23bQCmeAa6F0lbqt8CI25Z/JZLp3+hXMZWW7rdg
-	 Fb1YOQX8pddpmSSe6rnt3CLQPBSFLn/pDjSh1TlghkSOQQrks23kHTelhWF4nl7ZQG
-	 TPeikpifkJVdpbb+GPzL0gNksthVgX1Mu5T8z34zfQi3VrqHHwM+4c8hTvhap/9ruR
-	 rOJeXMtXpynSullMduUi3AU4zn7s/rsmpzktzOAYeIGkyUgW5lXLGh+fgCDjvSiK/o
-	 rLYS7R4QcY170Bl6jYaTKAntDaw9JpyMQOqh3GfVFpQsh6/dhaFx4kogjEaypc9HqE
-	 DmhUNxC0XUpIg==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c819f6146so8007851e87.1;
-        Tue, 18 Jun 2024 18:37:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUf+Dv+UzYXYkQWKMngyg/crjsAx89soJ6Ydyrbb5PRINsg8HIfmRjCwRGdZ+Ou5UG/kRp4qYmYy09MsqIpVULV77UcP6xUhwnFhwlOkfBbCPH9IqMIAjo0F8ZTkb34z9OTJsulrqfrWJhF
-X-Gm-Message-State: AOJu0YyJZLtLJtBc34oelozk7teiUlS4lR22rj7p0Ey4Qztj0dt3Yn+c
-	ZIcoC0r4IV+hQYnJd2/ZWAYSdFaaLMuwtpBD759oaWPM7dKTMFhf8FTcwsaE5dlA8VbGP1AFBeO
-	/jPvov2dYopDWJh+PcVV4UDgLH1E=
-X-Google-Smtp-Source: AGHT+IEK7oJtpoJScl8nb4APMXGgqAM5F71c5kuZrKvsrbng6BgrHAlh94+h8812eKok2YCS89SeZykcmYtIEYM6jFE=
-X-Received: by 2002:a19:6a12:0:b0:52c:8ea2:9a82 with SMTP id
- 2adb3069b0e04-52ccaa65765mr660342e87.35.1718761046016; Tue, 18 Jun 2024
- 18:37:26 -0700 (PDT)
+	s=arc-20240116; t=1718761398; c=relaxed/simple;
+	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+	h=Message-ID:From:Content-Type:Mime-Version:Subject:Date:Cc:To; b=fjmb1Sj/9cFud3FhIPf6EfCO8rO1OZozxxe/xrvsxkvgwnW2U+qG0NFiVy+tN+GRfLq4aW7nuIxg1loXKq0VXHOqKmdUGxzVl3uzbxiSm7oGqA89sKXjaasa9k9lF19viVCbyrtgswwqF2ZaVv8BTHLS8rxBoVVMpVcHgKFmYvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=xsCcz3WG; arc=none smtp.client-ip=203.205.221.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1718761086;
+	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+	h=From:Subject:Date:Cc:To;
+	b=xsCcz3WGEC0jUtG/OFZH/2SrmfktfMqk5UZGZ8Ju2HUKQfZXszAf6CWELwu0VuYHI
+	 KABoQxrguE+mjo5HG3nRL819gv+Gt7z/W2NzWwuqYOzNJGtbErdpHd7n73ilx4RHQn
+	 aZlu/4eizveWZABH3TZL7Mh1GXnFU0dC2ja+tXMo=
+Received: from smtpclient.apple ([2401:b180:9000:0:1051:934d:1051:934d])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 983B581C; Wed, 19 Jun 2024 09:38:03 +0800
+X-QQ-mid: xmsmtpt1718761083tq8lqe0wo
+Message-ID: <tencent_33256C08A57BF8870600614ECB9602004405@qq.com>
+X-QQ-XMAILINFO: MVKy59SpMLfUV+b8Y0xW1uUo8WDMtRWsdFPbHcJ4FQkUYMHE4Pz+nsCp2U6G4o
+	 EtSbApYCfO7AKa6H+hQrPINoIaL6DaD4l3oedMvCXzRN7WgGqDU5af8d7s/tjrvmjDlHXFw35O6T
+	 Zv6eRN0RalLM6CS++3IGCEE/weCjXGGiX3xUEKvEnWRgzTEkSH2C1UzlT43A7HJZfwhwLVgdbJOS
+	 9gmNS5+i4Pqbd9k5EHhFDREbaOxXGJddvVNy/+jBfzvsMv+fLDhtMgEXR6bucoRgWYtSrsB0wTjw
+	 ia8EzpqqybDeF1z7BWiFBc2QTG74v4g0o1VoIeney7l4tT7xLc7zyB85kK+ZgTL6oPLXChp+FNXG
+	 LBzIEdvI220fTtA8bUYFijxrMnKaGL1N2j2c5/VDxgoZRlPp+MdZmNWNgeMK2Zl16VM7I8pzZjU0
+	 tsBXTfRlLtt4UJjPGIAiIwh6aR0Qg1K97pKJ6hgPt4FPIjlulTuc1Vw+FfJK43ecJQpWprHpGZCE
+	 13UnGg6ESum2oJyH5J9GW0XWdiCPS+/vaz8MWRLuvEVjBKNpYGDwb4QcgAjsjVuVdC7/NbnOGKME
+	 YE+ScgHNiHbpZVARcCp30ZjkfGUzp5+OjNDdIoaajW911B7jjyiEPsglPEsWsUPf7wUqC84NaPYV
+	 yDAPzCmdgGOdVGiZpNwBYhc02YAYQtQLXebk3ZIpafUOZn4u44YOhtRH5ft9WuS0upg0hePfVsIt
+	 fHQYzwtI9v99oFIzDxe9LGlHvLhEDKC5Fgzu/ykoBMzW2p/VHb5sJ9gIN20p1nUMk0XRsqPxD/1P
+	 4TiRj16pGxXIUkVK3ET30Dq4DwLdmbSRbN1//wxzLmA7HyTCX4vr7bgzda8QNtLBz8ErKwCbkNvn
+	 Q9N0znxTqE5tZjZNx6yHYP2oM+KzVhuLrS/R+Tyw4t
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: =?utf-8?B?6YK55rab?= <wodemia@foxmail.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240618185609.4096399-1-elsk@google.com>
-In-Reply-To: <20240618185609.4096399-1-elsk@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 19 Jun 2024 10:36:49 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS2621mLaaUPSJqLPTCeowYSAXgoO9uKhF8uTeNK1jU8Q@mail.gmail.com>
-Message-ID: <CAK7LNAS2621mLaaUPSJqLPTCeowYSAXgoO9uKhF8uTeNK1jU8Q@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: Prevent segfault when getting filename
-To: Yifan Hong <elsk@google.com>
-Cc: kernel-team@android.com, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH V1 RESEND 1/1] zh_CN/admin-guide: Add
+ zh_CN/admin-guide/numastat.rst translation document
+X-OQ-MSGID: <F7159148-EA2E-4BDB-B689-C6DD75C1D3CC@foxmail.com>
+Date: Wed, 19 Jun 2024 09:37:53 +0800
+Cc: alexs@kernel.org,
+ corbet@lwn.net,
+ linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ wodemia@foxmail.com,
+ wodemia@linux.alibaba.com
+To: Yanteng Si <siyanteng@loongson.cn>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-On Wed, Jun 19, 2024 at 3:56=E2=80=AFAM Yifan Hong <elsk@google.com> wrote:
->
-> ... and lineno in recursive checks.
->
-> If the following snippet is found in Kconfig:
->
-> config FOO
->         tristate
->         depends on BAR
->         select BAR
->         help
->           foo
->
-> ... without BAR defined; then if one runs
-> `make tinyconfig`, there is a segfault.
->
->   Kconfig:34:error: recursive dependency detected!
->   Kconfig:34:   symbol FOO depends on BAR
->   make[4]: *** [scripts/kconfig/Makefile:85: allnoconfig] Segmentation fa=
-ult
->
-> This is because of the following. BAR is
-> a fake entry created by sym_lookup() with prop
-> being NULL. In the recursive check, there is a
-> NULL check for prop to fall back to
-> stack->sym->prop if stack->prop is NULL. However,
-> in this case, stack->sym points to the fake BAR
-> entry created by sym_lookup(), so prop is still
-> NULL. prop was then referenced without additional
-> NULL checks, causing segfault.
->
-> Similarly, menu is also accessed without NULL
-> checks. However, sym_lookup() creates entry
-> that is not a choice, so technically it shouldn't
-> fall into the state where menu is NULL for
-> choices. But I mechnically apply the NULL check
-> anyways for completeness.
->
-> This mechnical patch avoids the segfault. The
-> above snippet produces the following error with
-> this patch:
->
->   Kconfig:34:error: recursive dependency detected!
->   Kconfig:34:   symbol FOO depends on BAR
->   ???:-1:       symbol BAR is selected by FOO
->
-> That being said, I am not sure if it is the right
-> fix conceptually and in functionality.
-
-
-
-  "???:-1:       symbol BAR is selected by FOO"
-
-is weird, as there is no property
-like "selected by".
-
-It should print the file and lineno of
-"select BAR".
-
-
-
-
-
-The existing code is already wrong.
-
-In the past, I was thinking of fixing it to reference
-the relevant menu entry.
-
-
-Currently, it points to an unrelated location.
-
-
-
-[Test Code]
-
-
-config FOO
-       bool
-
-config BAR
-       bool
-
-config FOO
-       bool "FOO"
-       depends on BAR
-       select BAR
-
-
-
-
-$ make defconfig
-*** Default configuration is based on 'x86_64_defconfig'
-Kconfig:1:error: recursive dependency detected!
-Kconfig:1: symbol FOO depends on BAR
-Kconfig:4: symbol BAR is selected by FOO
-For a resolution refer to Documentation/kbuild/kconfig-language.rst
-subsection "Kconfig recursive dependency limitations"
-
-
-
-
-"Kconfig:1: symbol FOO depends on BAR"
-points to the other unrelated definition
-because "depends on BAR" appears the second
-entry starting line 7.
-
-
-
-
-So, I am not keen on applying another cheap fix
-to already-wrong code.
-
-If you want to fix it now, please remove all
-file/lineno logs from this function.
-
-Then, somebody may rewrite the code some day.
-
-
-
-
-
-
-
-
-
-
->
-> Signed-off-by: Yifan Hong <elsk@google.com>
-> ---
->  scripts/kconfig/symbol.c | 29 +++++++++++++++++++++--------
->  1 file changed, 21 insertions(+), 8 deletions(-)
->
-> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-> index 8df0a75f40b9..72ab4f274289 100644
-> --- a/scripts/kconfig/symbol.c
-> +++ b/scripts/kconfig/symbol.c
-> @@ -1045,6 +1045,8 @@ static void sym_check_print_recursive(struct symbol=
- *last_sym)
->         struct menu *menu =3D NULL;
->         struct property *prop;
->         struct dep_stack cv_stack;
-> +       const char *filename =3D NULL;
-> +       int lineno =3D 0;
->
->         if (sym_is_choice_value(last_sym)) {
->                 dep_stack_insert(&cv_stack, last_sym);
-> @@ -1060,6 +1062,10 @@ static void sym_check_print_recursive(struct symbo=
-l *last_sym)
->         }
->
->         for (; stack; stack =3D stack->next) {
-> +               filename =3D "???";
-> +               lineno =3D 0;
-> +               menu =3D NULL;
-> +
->                 sym =3D stack->sym;
->                 next_sym =3D stack->next ? stack->next->sym : last_sym;
->                 prop =3D stack->prop;
-> @@ -1073,45 +1079,52 @@ static void sym_check_print_recursive(struct symb=
-ol *last_sym)
->                                 if (prop->menu)
->                                         break;
->                         }
-> +                       if (menu) {
-> +                               filename =3D menu->filename;
-> +                               lineno =3D menu->lineno;
-> +                       }
-> +               } else if (prop) {
-> +                       filename =3D prop->filename;
-> +                       lineno =3D prop->lineno;
->                 }
->                 if (stack->sym =3D=3D last_sym)
->                         fprintf(stderr, "%s:%d:error: recursive dependenc=
-y detected!\n",
-> -                               prop->filename, prop->lineno);
-> +                               filename, lineno);
->
->                 if (sym_is_choice(sym)) {
->                         fprintf(stderr, "%s:%d:\tchoice %s contains symbo=
-l %s\n",
-> -                               menu->filename, menu->lineno,
-> +                               filename, lineno,
->                                 sym->name ? sym->name : "<choice>",
->                                 next_sym->name ? next_sym->name : "<choic=
-e>");
->                 } else if (sym_is_choice_value(sym)) {
->                         fprintf(stderr, "%s:%d:\tsymbol %s is part of cho=
-ice %s\n",
-> -                               menu->filename, menu->lineno,
-> +                               filename, lineno,
->                                 sym->name ? sym->name : "<choice>",
->                                 next_sym->name ? next_sym->name : "<choic=
-e>");
->                 } else if (stack->expr =3D=3D &sym->dir_dep.expr) {
->                         fprintf(stderr, "%s:%d:\tsymbol %s depends on %s\=
-n",
-> -                               prop->filename, prop->lineno,
-> +                               filename, lineno,
->                                 sym->name ? sym->name : "<choice>",
->                                 next_sym->name ? next_sym->name : "<choic=
-e>");
->                 } else if (stack->expr =3D=3D &sym->rev_dep.expr) {
->                         fprintf(stderr, "%s:%d:\tsymbol %s is selected by=
- %s\n",
-> -                               prop->filename, prop->lineno,
-> +                               filename, lineno,
->                                 sym->name ? sym->name : "<choice>",
->                                 next_sym->name ? next_sym->name : "<choic=
-e>");
->                 } else if (stack->expr =3D=3D &sym->implied.expr) {
->                         fprintf(stderr, "%s:%d:\tsymbol %s is implied by =
-%s\n",
-> -                               prop->filename, prop->lineno,
-> +                               filename, lineno,
->                                 sym->name ? sym->name : "<choice>",
->                                 next_sym->name ? next_sym->name : "<choic=
-e>");
->                 } else if (stack->expr) {
->                         fprintf(stderr, "%s:%d:\tsymbol %s %s value conta=
-ins %s\n",
-> -                               prop->filename, prop->lineno,
-> +                               filename, lineno,
->                                 sym->name ? sym->name : "<choice>",
->                                 prop_get_type_name(prop->type),
->                                 next_sym->name ? next_sym->name : "<choic=
-e>");
->                 } else {
->                         fprintf(stderr, "%s:%d:\tsymbol %s %s is visible =
-depending on %s\n",
-> -                               prop->filename, prop->lineno,
-> +                               filename, lineno,
->                                 sym->name ? sym->name : "<choice>",
->                                 prop_get_type_name(prop->type),
->                                 next_sym->name ? next_sym->name : "<choic=
-e>");
-> --
-> 2.45.2.627.g7a2c4fd464-goog
->
->
-
-
---
-Best Regards
-Masahiro Yamada
 
