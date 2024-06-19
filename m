@@ -1,158 +1,121 @@
-Return-Path: <linux-kernel+bounces-221652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A1D90F6CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:15:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52ABD90F691
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63D50284A9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:15:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 532A61C221DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2548158D7D;
-	Wed, 19 Jun 2024 19:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF0F15887D;
+	Wed, 19 Jun 2024 18:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Cd0+vLiX"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YlrjEVaS"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3D353398;
-	Wed, 19 Jun 2024 19:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEAD158859;
+	Wed, 19 Jun 2024 18:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718824514; cv=none; b=tswks0PsKuQZ31kfoppyX200qCppZMnLhvLftcs4AjCBp2TX41GhT20BGXXDCJvWECRByx2s94T2aNdkrxV1OCOp/v/KjDNyI1T23CxJYYj8iW5A7EDQl/+xE9PpLQOy7lOMF+HnS2utYpsb0vIeRKMi5FBd5nGgu4QestIb1+8=
+	t=1718823480; cv=none; b=cCqUpSFq6Y/NiD1Ol52qq1BKOBwrow1q/WBvZLXVF7CcND5kkzYMgn/gskkWKtKzlwnzJpt4q1KmDXLSo37fMZPkhQFlUMaRmALVw97wDpQvczZ0/nT26WWoEv3016/wZx6O6ZU1Iq7fE5K+BJZLwSGem6/+NLDxVGp3fbIKlA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718824514; c=relaxed/simple;
-	bh=i1O+8SuJRlMo4HLcHbCW/vbpdUEkEZ114ilGvFd19Ic=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RZ5GnmGTrhymODJgW2IZlC7b8sYXigAs8QVl6tOptr4sbyN6FJTcB7iGhauvYy2BInYli7U2PJhEC/Be2VUDJ402nVYV5xBuD9knodiTSdDwx6pUSQAIkfgIC2VzeBBFbwMpIliqmcO9k5xNlk7IW9LktBv173ZYTBkDVIALRUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Cd0+vLiX; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 5B74C80E9A;
-	Wed, 19 Jun 2024 21:15:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1718824509;
-	bh=2sBQZJl5GOkXP3lCyMuq4jH0kmltgWo/xNkz+SDOjYI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cd0+vLiXuXd7IoP6GMpUo+GrIyTzbVea4Xu335PLbu6D/Yc6LFvWzly2fNYHc2m7H
-	 Yjm4LrPiwU9KJS83HZrpsHUmgj3lqqh2NXA5snyQ1JjTP5n25zXtJ5EocpLmiVIThs
-	 eq5FKj01f6LceN/HxDjcERepanO7x6UHBgxsAx3R3Klda7ISxU3p1/IOqY/Qmf3Kv7
-	 I+9sMR+27WkqjXBz/iogHaDdF7kJscPA2KOoa/tQE+LPe9N3gLDuccEFce9BMB739+
-	 0IolR48QcLxw5NVvYI4vq70puRptIKievYIdjcqTARywnZFdy5chlQjqSf7okigfay
-	 CTMqyLUAZYn5A==
-Message-ID: <b760c6ba-36aa-4486-891a-c40a8cac7c1b@denx.de>
-Date: Wed, 19 Jun 2024 20:56:40 +0200
+	s=arc-20240116; t=1718823480; c=relaxed/simple;
+	bh=S/i5GFI0C9CJiviOc39zgsIUOtMoI4rR7IhOp4KKGlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gOdK/yGM29emnavSm9kyB7cEVTtlMS2BE9olHcNSq0q/SFqmVnuhnf05UJSYF7W54Fq5cxTlPqkMaHVafa+qLRBH+SkjGXq0Q6HAtL6H/iqXK4iaxCxurJvHCdJc60PldBP2MOosGfnuqzt2IcPeJCg7D9B8tyKG57zv3U4/HY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YlrjEVaS; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6c4926bf9baso97799a12.2;
+        Wed, 19 Jun 2024 11:57:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718823478; x=1719428278; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MNFr4gjlFkmez4slphwi72YZdoWHOHUsWjmtkgawLZI=;
+        b=YlrjEVaSxia0Vks8JBKxaek3HvRNphTl+KIdzdA4XfLTj2ujO8uVCPA9dcuDCXGgTS
+         Cf54ZZUmwbYZaZuFNbk7RtvE5Xw2xPasmKQeDRdfAsIRfmmPFWBCLMU4dccuYcpHm9MG
+         XuHjubYsijd0QXz+ODYURXEfDghKMgre9VrmyDIBG5JuhC+6RZzoQoEPCIh9BfuquZ/d
+         pnquURwHbM6+K102uy2gqiVg8bMjH4pdcrzzh1d04c0A0mYBBYNsdLzKawisAuaRjzIM
+         Bl4CUovqCbLu+J0J3OVW+xTNpKjjq2Ke3YIjw9cdfndW6vffqy6qkb5R1jAdDRkv4E5x
+         x7Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718823478; x=1719428278;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MNFr4gjlFkmez4slphwi72YZdoWHOHUsWjmtkgawLZI=;
+        b=k0g0ycsZ0tHhJsPhpL872bEQTaJ6kGQTkgvOpzNynU8D7BQ+pUFD6TANKGPm3oVrtl
+         Smp0CAAJfHP66vT7XOi/n9318JmTdTVHPexuySNTOQVciSfa9eB8S/ofo9GpmeXWzzyI
+         ijo+G5Je8NaE9wiLSNJbxDp3zy8WgE3MU1p5xgrAO19ek8RHTHVbmPfrBZKD27H1Uvuc
+         gxa2e1HGxkHc3S81smejFLXhJDMc9rqH2AkdTVfoy3712H+bDt0BGAy3sP8Wgi81f5ka
+         TqjdxN3M4Rej+ZlSqz8O6CySkNA9FOhiv1anVf3ktv40tnfXT7tNIeIXp06Yx0wDmmVM
+         BsdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOZZpDoQZGiwBfMMHU9V3/ADlljrwxBkxMBBZTWMYj7Bkl4DUibcohsD1kgdOPyNTVHBWkQoxQaomLzFQRClevbNXhyfsY3SOnIwjkZyPe81GnjFgBbr7Ay/hP89nplK3WG8HtrlI=
+X-Gm-Message-State: AOJu0YxsD5k1nydHOEw8zTe2SadORYeQ7obsysaQ7P+UivpB7DNqOaMU
+	nkLMGTdwgQ/4eflKU5XDt2WQTXcnfBUTXNgDYhAsyLNSv2Z6bIBJ
+X-Google-Smtp-Source: AGHT+IGJ0WV5e2sIVPNXyt6/XEqLyh2MyoJXOZxUvVSz6bv2LV4c1qabtQYtWZ8dV693DXnj+2iIvQ==
+X-Received: by 2002:a05:6a20:cd5e:b0:1b8:4107:ce3a with SMTP id adf61e73a8af0-1bcbb5d4c78mr3208567637.39.1718823477712;
+        Wed, 19 Jun 2024 11:57:57 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fee2d34c38sm9969055a12.73.2024.06.19.11.57.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 11:57:57 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 19 Jun 2024 08:57:56 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
+	void@manifault.com, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, mingo@redhat.com, peterz@infradead.org,
+	David Vernet <dvernet@meta.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH 1/2] cpufreq_schedutil: Refactor sugov_cpu_is_busy()
+Message-ID: <ZnMqNHzCaAmolxkK@slm.duckdns.org>
+References: <20240619031250.2936087-1-tj@kernel.org>
+ <20240619031250.2936087-2-tj@kernel.org>
+ <0c0073ef-3fe3-4c9f-9a86-5c42336b3da1@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next,PATCH 2/2] net: stmmac: dwmac-stm32: stm32: add
- management of stm32mp25 for stm32
-To: Christophe ROULLIER <christophe.roullier@foss.st.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Richard Cochran <richardcochran@gmail.com>, Jose Abreu
- <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240614130812.72425-1-christophe.roullier@foss.st.com>
- <20240614130812.72425-3-christophe.roullier@foss.st.com>
- <4c2f1bac-4957-4814-bf62-816340bd9ff6@denx.de>
- <09010b02-fb55-4c4b-9d0c-36bd0b370dc8@foss.st.com>
- <39d35f6d-4f82-43af-883b-a574b8a67a1a@denx.de>
- <8c3f1696-d67c-4960-ad3a-90461c896aa5@foss.st.com>
- <3dee3c8a-12f0-42bd-acdf-8008da795467@denx.de>
- <aee3f6d2-6a44-4de6-9348-f83c4107188f@foss.st.com>
- <c74f393d-7d0a-4a34-8e72-553ccf273a41@denx.de>
- <01e435a5-3a69-49a5-9d5e-ab9af0a2af7b@foss.st.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <01e435a5-3a69-49a5-9d5e-ab9af0a2af7b@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c0073ef-3fe3-4c9f-9a86-5c42336b3da1@arm.com>
 
-On 6/19/24 5:40 PM, Christophe ROULLIER wrote:
+Hello, Christian.
+
+On Wed, Jun 19, 2024 at 03:07:32PM +0100, Christian Loehle wrote:
+> > +	if (sugov_hold_freq(sg_cpu) && next_f < sg_policy->next_freq &&
+> >  	    !sg_policy->need_freq_update) {
+> >  		next_f = sg_policy->next_freq;
+> >  
 > 
-> On 6/19/24 15:14, Marek Vasut wrote:
->> On 6/19/24 9:41 AM, Christophe ROULLIER wrote:
->>
->> Hi,
->>
->>>>>>>>> +static int stm32mp2_configure_syscfg(struct 
->>>>>>>>> plat_stmmacenet_data *plat_dat)
->>>>>>>>> +{
->>>>>>>>> +    struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
->>>>>>>>> +    u32 reg = dwmac->mode_reg;
->>>>>>>>> +    int val = 0;
->>>>>>>>> +
->>>>>>>>> +    switch (plat_dat->mac_interface) {
->>>>>>>>> +    case PHY_INTERFACE_MODE_MII:
->>>>>>>>> +        break;
->>>>>>>>
->>>>>>>> dwmac->enable_eth_ck does not apply to MII mode ? Why ?
->>>>>>>
->>>>>>> It is like MP1 and MP13, nothing to set in syscfg register for 
->>>>>>> case MII mode wo crystal.
->>>>>>
->>>>>> Have a look at STM32MP15xx RM0436 Figure 83. Peripheral clock 
->>>>>> distribution for Ethernet.
->>>>>>
->>>>>> If RCC (top-left corner of the figure) generates 25 MHz MII clock 
->>>>>> (yellow line) on eth_clk_fb (top-right corner), can I set 
->>>>>> ETH_REF_CLK_SEL to position '1' and ETH_SEL[2] to '0' and feed ETH 
->>>>>> (right side) clk_rx_i input with 25 MHz clock that way ?
->>>>>>
->>>>>> I seems like this should be possible, at least theoretically. Can 
->>>>>> you check with the hardware/silicon people ?
->>>>> No it is not possible (it will work if speed (and frequency) is 
->>>>> fixed 25Mhz=100Mbps, but for speed 10Mbps (2,5MHz) it will not work.
->>>>
->>>> Could the pll4_p_ck or pll3_q_ck generate either 25 MHz or 2.5 MHz 
->>>> as needed in that case ? Then it would work, right ?
->>>
->>> Yes you can set frequency you want for pll4 or pll3, if you set 25MHz 
->>> and auto-negotiation of speed is 100Mbps it should work (pad ETH_CK 
->>> of 25MHz clock the PHY and eth_clk_fb set to 25MHz for clk_RX)
->>>
->>> but if autoneg of speed is 10Mbps, then 2.5MHz is needed for clk_RX 
->>> (you will provide 25Mhz)
->>
->> What if:
->>
->> - Aneg is 10 Mbps
->> - PLL4_P_CK/PLL3_Q_CK = 2.5 MHz
->> - ETH_REF_CLK_SEL = 1
->> - ETH_SEL[2] = 0
->>
->> ?
->>
->> Then, clk_rx_i is 2.5 MHz, right ?
-> Yes that right
->>
->> Does this configuration work ?
-> For me no, because PHY Ethernet Oscillator/cristal need in PAD 25Mhz or 
-> 50Mhz, I think it is does not work if oscillator frequency provided is 
-> 2.5MHz (To my knowledge there is no Ethernet PHY which have oscillator 
-> working to 2.5MHz)
+> Not necessarily related to your changes, but in case you're touching this
+> again, maybe sugov_hold_freq() could be the last condition?
 
-Would it work if the PHY had a dedicated Xtal , while the clocking of 
-the MAC was done using RCC ?
+I'll update the patch so that sugov_hold_freq() is the last condition.
+
+> And do we want something like
+> #ifdef CONFIG_NO_HZ_COMMON                                                      
+> else
+> 	sg_cpu->saved_idle_calls = tick_nohz_get_idle_calls_cpu(sg_cpu->cpu);
+> #endif
+> here?
+
+I have no idea but if something like the above is necessary, it'd probably
+fit better in the #else definition of sugof_hold_freq() or just move the
+#ifdef inside the function body so that the common part is outside?
+
+Thanks.
+
+-- 
+tejun
 
