@@ -1,158 +1,126 @@
-Return-Path: <linux-kernel+bounces-220557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E3190E3A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:40:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79EBB90E39E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5001C23D07
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:40:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AFD41F24A5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F886F2E6;
-	Wed, 19 Jun 2024 06:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7280C6F2FF;
+	Wed, 19 Jun 2024 06:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cLYq8ZZa"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WkpyGp97"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B256F2E2
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122984C98;
+	Wed, 19 Jun 2024 06:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718779244; cv=none; b=rfgBhEGWAMyjVdEx6yNRrSVECV5ZjjrCN5SbFNewlhyLFlzC0b9Yz+lCNIXMtB2O/Ow+Z1hhFNssaG7Gzfw5Occa4jTIXy+u8mgIbjKc1nS/rrjqkJnBqIrZvWi1mzHKJc+LAhkcBRN0q1b1UU39PcksbOoIeYsAkE32qNwCy+c=
+	t=1718779215; cv=none; b=Lpi3aEBHu9nXDA5tcmGjgLkzk0xOh3YEjMKdqLN2FPn+ypEc9nLa5MHlUozYvEEaeFib5TTIRH8Su9FsBn0UoU9NgI5Y8w5MYrF2rM+6I4PmLjVFVqUsCSg+GdQKqhCxxOJTq7GdH7CJfkGKxBkf85s2g660iDSfpydO6xtYK/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718779244; c=relaxed/simple;
-	bh=STW330cWe99Pche2sdfTP7cbUeC0jxLPrB02JUX1kCQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=ex7RZVsjeobcfDdVjb5b9wiuUaBq4eEoYMaH1z+4PFhZWeg3c17R4Jq5v+LIeNxch6veuLXS+TkAA2C7hfxg2sdHJYUZDDaArmBJP2wNOJzu0qPUzd7NDp/MCTjXiXfDWo04Ib6nyeQSZC13WEpAFZX2F0uSTaHcQWSci3qVJxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cLYq8ZZa; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240619064034epoutp023df654604f252a6ca92f4d84b2f3dfd3~aVJtsNw-w2571925719epoutp02-
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:40:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240619064034epoutp023df654604f252a6ca92f4d84b2f3dfd3~aVJtsNw-w2571925719epoutp02-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718779234;
-	bh=Wxu+W8g/EmXfv0ETPHjj9NJMUXWZg033DcwmRKYmwGI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cLYq8ZZa18XWKmw2INKMxW67YflQ/vSrbETavFCyMrJHv7QAqZvl7DRaKYbSctLxW
-	 U2+1aeIqVfSFLDlM7oRANLLTueMcUDh2+/YPCLl1vhKyHZJdID1r0FABE5yDdUDYgm
-	 JYas2dFhinC5lK/1A4km9dHKx8pyVfVL1o8PqZJk=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240619064034epcas5p44be878f430423954023f921f7310a575~aVJtdSLjC0248402484epcas5p4Y;
-	Wed, 19 Jun 2024 06:40:34 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4W3vBl0jKNz4x9Q1; Wed, 19 Jun
-	2024 06:40:31 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	2D.B0.10047.E5D72766; Wed, 19 Jun 2024 15:40:30 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240619063854epcas5p2d20a854d5e73a5f68f899dad45900cc0~aVIQiw8nc1860218602epcas5p2C;
-	Wed, 19 Jun 2024 06:38:54 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240619063854epsmtrp22949e38c1c7697d118ce69eece13fde0~aVIQiEFKd0989509895epsmtrp2u;
-	Wed, 19 Jun 2024 06:38:54 +0000 (GMT)
-X-AuditID: b6c32a49-1d5fa7000000273f-30-66727d5e6876
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	25.84.18846.EFC72766; Wed, 19 Jun 2024 15:38:54 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240619063853epsmtip1e5e76735e46653f78953f3af3adea342~aVIPvWxc10048100481epsmtip1a;
-	Wed, 19 Jun 2024 06:38:53 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: hch@infradead.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH] block: Avoid polling configuration errors
-Date: Wed, 19 Jun 2024 14:38:47 +0800
-Message-Id: <20240619063847.588031-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <693af28d-5e25-432b-ab1b-37eb9026c7cd@kernel.dk>
+	s=arc-20240116; t=1718779215; c=relaxed/simple;
+	bh=BWCauMt68vFjBRrLNx3G2KlJT+7wCHlFSe+2GGiOfq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IpdOmvg7d419dhO21WZb2C55qpMBjIthTMRuy7eY4GVNO2TTXj2dJp9sp6D5IQ7qDIwQJMoWHWwA0WiLJ40k6QIot8rW+eQ+3zOJBVAZjI3jKx2vtkOxZi+QX9nTUC36gMkcbNhCHXmea6jrc+zXi4w8XUzlW/m6IoPd36ITZoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WkpyGp97; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718779214; x=1750315214;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BWCauMt68vFjBRrLNx3G2KlJT+7wCHlFSe+2GGiOfq8=;
+  b=WkpyGp97rfKd3E61mx+S1I44VdWjv0+vu5edxhU7k/zh/DOSuNgIY1Fd
+   uaukhot9qsZuhh8vh48iaTZwNf7FyY9EECf/LBKOBdBN3sL3UkNFTCc1g
+   xZKtsujHcBPwb12jX0L6637PSRfO9CNFnaHQB8+1MzSlXLGkuQbSUlZdU
+   +TK9SyrUimSarUn2aqg0/ve5QgL6Eijlepu2CsXGXx5IhcHIdQe458iTZ
+   IZJjKcxVpsmb0N28fAJPYCzeEl2/N9994BmJBw79aLH4Ig6/7hhWgLB08
+   KWYnsoPCpbUCjY32fqRwQGnWm1x//JWT8GGAlZBW0/DkXcmr+Zr2ERlDH
+   w==;
+X-CSE-ConnectionGUID: IA7CVRFwRQ6IIG/fzxG4sQ==
+X-CSE-MsgGUID: JgY/uaYNQsOkfBczoaGVgA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="27102379"
+X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
+   d="scan'208";a="27102379"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 23:40:14 -0700
+X-CSE-ConnectionGUID: j25NWx8hS6GtZnxJJ/Z/UQ==
+X-CSE-MsgGUID: p6/cW7vCSMW49szzklmGNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
+   d="scan'208";a="65045346"
+Received: from marquiz-s-2.fi.intel.com (HELO [10.237.72.58]) ([10.237.72.58])
+  by fmviesa002.fm.intel.com with ESMTP; 18 Jun 2024 23:40:09 -0700
+Message-ID: <f427b28c-420b-4174-a670-70f626f8061e@linux.intel.com>
+Date: Wed, 19 Jun 2024 09:40:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgk+LIzCtJLcpLzFFi42LZdlhTXTeutijNYNoqK4vVd/vZLE5PWMRk
-	8av7LqPF3lvaFpd3zWGzODvhA6sDm8fmFVoel8+WevRtWcXo8XmTXABLVLZNRmpiSmqRQmpe
-	cn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtBmJYWyxJxSoFBAYnGxkr6d
-	TVF+aUmqQkZ+cYmtUmpBSk6BSYFecWJucWleul5eaomVoYGBkSlQYUJ2xp+LjxgL+ngqHvxs
-	Zm1gfMjZxcjJISFgIvF+23nGLkYuDiGB3YwSexZNZQFJCAl8YpSY99ACzr58NQem4camZ2wQ
-	DTsZJZrWtDFDOD8YJb5M2soGUsUmoCSxf8sHRhBbREBYYn9HK9hUZoEgifau9WA1wgJOEi/m
-	HGcCsVkEVCWmPuxjBbF5Bawkrm48zA6xTV7iZtd+oAUcHJwCthJ/jhVClAhKnJz5BGqkvETz
-	1tnMEOXn2CWWH3KHsF0kem8uZ4GwhSVeHd8CNVJK4vO7vWwQdr7E5O/rGSHsGol1m99B1VtL
-	/LuyhwVkLbOApsT6XfoQYVmJqafWMUGs5ZPo/f2ECSLOK7FjHoytJLHkyAqokRISvycsYoWw
-	PSSevX0HDegJjBLn99xnm8CoMAvJO7OQvDMLYfUCRuZVjJKpBcW56anFpgWGeanl8ChOzs/d
-	xAhOilqeOxjvPvigd4iRiYPxEKMEB7OSCK/TtLw0Id6UxMqq1KL8+KLSnNTiQ4ymwOCeyCwl
-	mpwPTMt5JfGGJpYGJmZmZiaWxmaGSuK8r1vnpggJpCeWpGanphakFsH0MXFwSjUwpdz7Nn9W
-	1p3nWsyzqgO7X6XUXJD83xOUmqm5f+pOjvWFXDJHJmfUajU85u/LlNfzlRYsO3jse+8MyUT7
-	wvzYo/sFC24839XO9G/VnJg4a3f5C1nbj3Iv8bKNbTnhfPpfm6v+teYnT7csc5ToEwrPffcw
-	45FF4P6lceIMrJmvo5may04+zP7yPmL3xRQ5N4adX+T5FJfzrA58yDzp9PM1TdsnyK1TWd98
-	+9gemV2CyzM2flwRobNjivLyIzrrXFeLz2ve/lPG8K/O4fM1Cz2Yv4V9upvSp9E94QtPwEPl
-	B2cPucX/d1iqr/nh9A6+f+b8c5znyUQdM1gW9HTu9SP+WfE272OcT4hPnX9IeQ+TvhJLcUai
-	oRZzUXEiAIoxMssTBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsWy7bCSnO6/mqI0g/5GbovVd/vZLE5PWMRk
-	8av7LqPF3lvaFpd3zWGzODvhA6sDm8fmFVoel8+WevRtWcXo8XmTXABLFJdNSmpOZllqkb5d
-	AlfGn4uPGAv6eCoe/GxmbWB8yNnFyMkhIWAicWPTM7YuRi4OIYHtjBKL/01ihkhISOx49IcV
-	whaWWPnvOTtE0TdGiY19c8CK2ASUJPZv+cAIYosAFe3vaGUBsZkFQiQmn33OBGILCzhJvJhz
-	HMxmEVCVmPqwD2wor4CVxNWNh9khFshL3OzaDzSTg4NTwFbiz7FCkLCQgI3EnOapzBDlghIn
-	Zz6BGi8v0bx1NvMERoFZSFKzkKQWMDKtYhRNLSjOTc9NLjDUK07MLS7NS9dLzs/dxAgOWa2g
-	HYzL1v/VO8TIxMF4iFGCg1lJhNdpWl6aEG9KYmVValF+fFFpTmrxIUZpDhYlcV7lnM4UIYH0
-	xJLU7NTUgtQimCwTB6dUA9Ne3n3nHaODzm6Om7b+H8OLEydeG+1g0j4+/fq5B8cCd6yWn3bO
-	TNXFsuB794tD1cJme4L5qmYwRk8RlJ7zW4PN3rzBQttoYcbH+PdNaUfCHhyZf9pxz8pzmn+X
-	ximeL+0secJ/Iurhmb8bLaQrvgvvq4luWB371aQ35WkoU/ebj8cOv/zg6BC0o2SdppHRde9s
-	PfuJ+43rGJd2tnkcOby1yFvhmHnIrWX2dQ4ff51S8fvIt6X451ruKo3ozP5nJf9d65vvfCtf
-	+txG4cfpXjmh6H3JIfsmbCtpn/itodbvWfLqT0pn/hlkLzt0bK3C0UOXFWMsBfy+XM2a0NHc
-	IFw6u0Ig0cEk7nnnxCkHbM2VWIozEg21mIuKEwHn3ZK7yAIAAA==
-X-CMS-MailID: 20240619063854epcas5p2d20a854d5e73a5f68f899dad45900cc0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240619063854epcas5p2d20a854d5e73a5f68f899dad45900cc0
-References: <693af28d-5e25-432b-ab1b-37eb9026c7cd@kernel.dk>
-	<CGME20240619063854epcas5p2d20a854d5e73a5f68f899dad45900cc0@epcas5p2.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: i2c: dw: Document compatible
+ thead,th1520-i2c
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
+ Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+ Drew Fustini <dfustini@tenstorrent.com>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Conor Dooley <conor@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Conor Dooley <conor.dooley@microchip.com>
+References: <20240618-i2c-th1520-v3-0-3042590a16b1@bootlin.com>
+ <20240618-i2c-th1520-v3-1-3042590a16b1@bootlin.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20240618-i2c-th1520-v3-1-3042590a16b1@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 6/16/24 2:39 AM,, Jens Axboe wrote:
->On 6/13/24 2:07 AM, Christoph Hellwig wrote:
->>> We happily allow polled IO for async polled IO, even if the destination
->>> queue isn't polled (or it doesn't exist). This is different than the old
->>> sync polled support.
->> 
->> Yes, and for that to work we can't start returning -EOPNOTSUPP as in
->> this patch, as BLK_QC_T_NONE an be cleared for all kinds of reasons.
->> 
->> So if we want some kind of error handling that people don't even
->> bother to poll for devices where it is not supported we need that
->> check much earlier (probably in io_uring).
->
->There's just no way we can do that, who knows if you'll run into a
->polled queue or not further down the stack.
->
->IMHO there's nothing wrong with the current code. If you do stupid
->things (do polled IO without having polled queues), then you get to
->collect stupid prizes (potentially excessive CPU usage).
+Hi
 
-I think the problem is that when the user makes this incorrect configuration,
-but doesn't have any error feedback, user is unware and easy to get some wrong
-performance information. So I hope to add some feedback for the user to help
-them more easily modify the configuration.
+On 6/18/24 10:42 AM, Thomas Bonnefille wrote:
+> Add documentation for compatible string thead,th1520-i2c which can be
+> used specifically for the TH1520 SoC.
+> 
+> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>   Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
+> index d9293c57f573..60035a787e5c 100644
+> --- a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
+> @@ -33,6 +33,10 @@ properties:
+>             - const: snps,designware-i2c
+>         - description: Baikal-T1 SoC System I2C controller
+>           const: baikal,bt1-sys-i2c
+> +      - description: T-HEAD TH1520 SoCs I2C controller
+> +        items:
+> +          - const: thead,th1520-i2c
+> +          - const: snps,designware-i2c
+>   
 
-I got your point, therefore, I'm considering whether it would be more
-resonable to not return -EOPNOTSUPP directly to stop the operation.
-Instead, we could detect this information and provide a prompt (like 
-warining?), allowing user to be aware without disrupting the original
-flow. Do you think this approach is more reasonable?
+Your comment below makes me thinking is this change needed? So is it 
+enough to specify "snps,designware-i2c" for the compatible string in 
+patch 2/3?
+
+"It appears that the TH1520 I2C is already supported in the upstream 
+kernel through the Synopsis Designware I2C adapter driver."
 
