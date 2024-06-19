@@ -1,200 +1,126 @@
-Return-Path: <linux-kernel+bounces-221716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC60E90F7AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:41:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B334F90F7B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F578283293
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:41:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F1BC283E0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED83615A84A;
-	Wed, 19 Jun 2024 20:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599A615957E;
+	Wed, 19 Jun 2024 20:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VI8SD32Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="moXwfYrW"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117151591F3;
-	Wed, 19 Jun 2024 20:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686BC46426;
+	Wed, 19 Jun 2024 20:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718829677; cv=none; b=pkFx8TlA6ctYCa2c4u99mwx0nWr8MD6nJT/F7csiBXr8/8qi3PTqyaM41g5THk8hzTg1yiHUNCOSZ1k6qhyw2be6w/Zc+htmYijLC722US0u/cekkaruGbYwNmFJqHV2J2bQHkHyHvz2EjzA9ZWGF5DcM/uEBtUmeRam7SCd6DE=
+	t=1718829762; cv=none; b=qxJF//0RQuoHD5Dn5uNp+I+FKclWHaup1XrIrIHamZP3cQX+FS/i85P0FTMJEQOF543ucv1u04TL/V0s/raO4Mh0IWyiRnrTI/TT0QztIRAwPGHopDQPQUyRy/wJ0iyxNH/z/NUQ5Iuhv2DW65AecnnO52LoE8Xh41fLknJdPWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718829677; c=relaxed/simple;
-	bh=hsAftkLN4fxN7Bc95o8vyB/YDSgQFr59/CdyR9siv4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eC5Xkk4hEBqPINvD2oMmafksS2A0WILKk4fgbI4eDUGe9FpLmkZNfVZvVzAV0nL3SZX2EKuc2n9IrY8KXzfrelbxf6sdG5uPs1MTp2mhX1p1UZurgOqEJH4RAuvgbq8+ADsKPdUn4++UxwuW/FJ19jXo4wAlEeuDB/XYgYde94s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VI8SD32Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E03BBC2BBFC;
-	Wed, 19 Jun 2024 20:41:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718829676;
-	bh=hsAftkLN4fxN7Bc95o8vyB/YDSgQFr59/CdyR9siv4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VI8SD32ZiFz4904GFvpC+tXK1cPzkucpL5JmbdLUes7BdH3JX1lgGFmcOFKwGw8mY
-	 6I4txIMw4m981lYGDoMBkEgWBoVnqJZHNbAT4cO54AnTCcRcjTzPDH80ytr71xn6hs
-	 JbSdNIyTnKSUaOp7A1wjuncql3f4TGEFbBX1zBDcctCtHRqM8pWbK3dZ6OBcxFA3KH
-	 +HkQTEnWK+Dw+ZOghKzWk0o9VmCL0Lmkj1wSMAYKspptbt8G/2TcQ18LleXIntkyM5
-	 A9eQJtha7Nprs1iphPWQLq8c/Vcv//SR9gMHK2JATRpKzB8VGI8n/nBty2LJ6lZ0Jt
-	 7pF+Q8UPrwOdw==
-Date: Wed, 19 Jun 2024 13:41:16 -0700
-From: Kees Cook <kees@kernel.org>
-To: Jeff Xu <jeffxu@chromium.org>
-Cc: Adrian Ratiu <adrian.ratiu@collabora.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org,
-	kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com,
-	inglorion@google.com, ajordanr@google.com, jorgelo@chromium.org,
-	Guenter Roeck <groeck@chromium.org>,
-	Doug Anderson <dianders@chromium.org>, Jann Horn <jannh@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Christian Brauner <brauner@kernel.org>, Jeff Xu <jeffxu@google.com>,
-	Mike Frysinger <vapier@chromium.org>
-Subject: Re: [PATCH v6 2/2] proc: restrict /proc/pid/mem
-Message-ID: <202406191336.AC7F803123@keescook>
-References: <20240613133937.2352724-1-adrian.ratiu@collabora.com>
- <20240613133937.2352724-2-adrian.ratiu@collabora.com>
- <CABi2SkXY20M24fcUgejAMuJpNZqsLxd0g1PZ-8RcvzxO6NO6cA@mail.gmail.com>
+	s=arc-20240116; t=1718829762; c=relaxed/simple;
+	bh=D9CKnHm8Mga/iQVySnp3DBkc8z1KAq2U2xMIajbreb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NFx6ofKXB5nUXKmzWyLpSkuyvDuvvcUPLMV50WqvyxqLVjtLdMKnGok3zjhaQzrxcXgCbYk7CuAYRLuB8oCyBGz54FPQGue3W48x1eD2XsOufYKO+JbQ8kRiw9kbLWuLT4w70ahyBE1vSHgCTjA6aUfQXiTr62szmloBotoo2FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=moXwfYrW; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f6da06ba24so1271945ad.2;
+        Wed, 19 Jun 2024 13:42:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718829760; x=1719434560; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uxz4VqLQLmREYFYF+b7YOv+fmdIW8c4422sFxBtw+fU=;
+        b=moXwfYrW56xNAJ8K7IWXkVKwfS27jeJACa3Su/1tvWRSUNMM9ocpqppwzWYoS29CUw
+         o+LM01MVydhDyzMW6SNuLtW7fpiSZaUWATrFpjn/C5a0CdrNkrnkwRccNlQCjTwlCJTL
+         aNKIzVJtfADPafg4TnasQr2jTFeNVDjhCCzPrhR8iL0EMBpvjQgWhryEH0gdZdI3C0zP
+         qg6vvgZLc8B5hIeU0m96f6HbRkpO+AIpVW1R+MrCOKDd3WPgt0rl1pb67dQrKLchMWxx
+         qOzitBwsC7WibgBCLqpIYtFF6qDu6mjYFFw66AaiXEkv7JlyeLT2/59+zAaeHEDaNIwd
+         iDGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718829760; x=1719434560;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Uxz4VqLQLmREYFYF+b7YOv+fmdIW8c4422sFxBtw+fU=;
+        b=l7plZvT3/mpmW7bCwMMBk0SZ0o0kZZJA5HBW8fJdeyAUOqooO4Nl6VgDFvIZIlLs7F
+         HgCc79Ztyjx/aPbSApJ/DXUg8enkiQbvbRGEk9cBNG/p1Ae6kcI9It4mw2xDtZD8omGs
+         cLDcUzNV9SzFAPHYu6b/QrzCXHU2xmJbxcTkNdHzmj9cF3HpjEV+lf4W48V0DLvoSOjj
+         s2HAqjswx+y7p6L1R2/1ZU5wceDq97wjihE13ZJzyo15GQbojk/aCtjN17QVa5vEya1n
+         o9LG3IHFLg1Fhm0DMQ6CW9+y5Rw1vqcPxXJy7tgL7n28mV/vPesF6fgn0S6I6rIzoM/L
+         sTrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTP5RdbR1SkrGRYl0zNwb3WDiUAZ4fycKpWJ1z2mnqfVQhBXQvm/ZkeW4VccubumuyDeDhMkMajVCDn+bGw2PUdTGUfKbcJWy4FVeX03T0XaCI3ofPMS6R994jlW+iVOUiGDZ6OAi3H/N6zloHdQ==
+X-Gm-Message-State: AOJu0YwSKQUbP/xCXrZsA7VR+tWJvZfq/nKzRUT6hHNUn5Q/t+NuDxm1
+	ObAXPOc7KFcOH8oB5IG8Y8n9NKMVIlfrTbrUXgzBgsORxcQpFvBd
+X-Google-Smtp-Source: AGHT+IFMCYWnUzQ20k9uHazgNQHQLq2exNGlYO6Xg7klSyxBlwOQ+GWc+KL+7u1jhI6ix7gkhzEtow==
+X-Received: by 2002:a17:903:41d0:b0:1f7:4021:5092 with SMTP id d9443c01a7336-1f9aa413407mr41236675ad.41.1718829760502;
+        Wed, 19 Jun 2024 13:42:40 -0700 (PDT)
+Received: from localhost.localdomain ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e55d7dsm121992165ad.14.2024.06.19.13.42.36
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 19 Jun 2024 13:42:40 -0700 (PDT)
+From: yskelg@gmail.com
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>
+Cc: kan.liang@linux.intel.com,
+	Yang Jihong <yangjihong1@huawei.com>,
+	Ze Gao <zegao2021@gmail.com>,
+	Leo Yan <leo.yan@linux.dev>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Austin Kim <austindh.kim@gmail.com>,
+	shjy180909@gmail.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <yskelg@gmail.com>
+Subject: [PATCH] perf unwind-libunwind: Add malloc() failure handling
+Date: Thu, 20 Jun 2024 05:42:12 +0900
+Message-ID: <20240619204211.6438-2-yskelg@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABi2SkXY20M24fcUgejAMuJpNZqsLxd0g1PZ-8RcvzxO6NO6cA@mail.gmail.com>
 
-On Tue, Jun 18, 2024 at 03:39:44PM -0700, Jeff Xu wrote:
-> Hi
-> 
-> Thanks for the patch !
-> 
-> On Thu, Jun 13, 2024 at 6:40 AM Adrian Ratiu <adrian.ratiu@collabora.com> wrote:
-> >
-> > Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
-> > after which it got allowed in commit 198214a7ee50 ("proc: enable
-> > writing to /proc/pid/mem"). Famous last words from that patch:
-> > "no longer a security hazard". :)
-> >
-> > Afterwards exploits started causing drama like [1]. The exploits
-> > using /proc/*/mem can be rather sophisticated like [2] which
-> > installed an arbitrary payload from noexec storage into a running
-> > process then exec'd it, which itself could include an ELF loader
-> > to run arbitrary code off noexec storage.
-> >
-> > One of the well-known problems with /proc/*/mem writes is they
-> > ignore page permissions via FOLL_FORCE, as opposed to writes via
-> > process_vm_writev which respect page permissions. These writes can
-> > also be used to bypass mode bits.
-> >
-> > To harden against these types of attacks, distrbutions might want
-> > to restrict /proc/pid/mem accesses, either entirely or partially,
-> > for eg. to restrict FOLL_FORCE usage.
-> >
-> > Known valid use-cases which still need these accesses are:
-> >
-> > * Debuggers which also have ptrace permissions, so they can access
-> > memory anyway via PTRACE_POKEDATA & co. Some debuggers like GDB
-> > are designed to write /proc/pid/mem for basic functionality.
-> >
-> > * Container supervisors using the seccomp notifier to intercept
-> > syscalls and rewrite memory of calling processes by passing
-> > around /proc/pid/mem file descriptors.
-> >
-> > There might be more, that's why these params default to disabled.
-> >
-> > Regarding other mechanisms which can block these accesses:
-> >
-> > * seccomp filters can be used to block mmap/mprotect calls with W|X
-> > perms, but they often can't block open calls as daemons want to
-> > read/write their runtime state and seccomp filters cannot check
-> > file paths, so plain write calls can't be easily blocked.
-> >
-> > * Since the mem file is part of the dynamic /proc/<pid>/ space, we
-> > can't run chmod once at boot to restrict it (and trying to react
-> > to every process and run chmod doesn't scale, and the kernel no
-> > longer allows chmod on any of these paths).
-> >
-> > * SELinux could be used with a rule to cover all /proc/*/mem files,
-> > but even then having multiple ways to deny an attack is useful in
-> > case one layer fails.
-> >
-> > Thus we introduce four kernel parameters to restrict /proc/*/mem
-> > access: open-read, open-write, write and foll_force. All these can
-> > be independently set to the following values:
-> >
-> > all     => restrict all access unconditionally.
-> > ptracer => restrict all access except for ptracer processes.
-> >
-> > If left unset, the existing behaviour is preserved, i.e. access
-> > is governed by basic file permissions.
-> >
-> > Examples which can be passed by bootloaders:
-> >
-> > proc_mem.restrict_foll_force=all
-> > proc_mem.restrict_open_write=ptracer
-> > proc_mem.restrict_open_read=ptracer
-> > proc_mem.restrict_write=all
-> >
-> > These knobs can also be enabled via Kconfig like for eg:
-> >
-> > CONFIG_PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT=y
-> > CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT=y
-> >
-> > Each distribution needs to decide what restrictions to apply,
-> > depending on its use-cases. Embedded systems might want to do
-> > more, while general-purpouse distros might want a more relaxed
-> > policy, because for e.g. foll_force=all and write=all both break
-> > break GDB, so it might be a bit excessive.
-> >
-> > Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
-> >
-> It is noteworthy that ChromeOS has benefited from blocking
-> /proc/pid/mem write since 2017 [1], owing to the patch implemented by
-> Mike Frysinger.
-> 
-> It is great that upstream can consider this patch, ChromeOS will use
-> the solution once it is accepted.
-> 
-> > Link: https://lwn.net/Articles/476947/ [1]
-> > Link: https://issues.chromium.org/issues/40089045 [2]
-> > Cc: Guenter Roeck <groeck@chromium.org>
-> > Cc: Doug Anderson <dianders@chromium.org>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Jann Horn <jannh@google.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Randy Dunlap <rdunlap@infradead.org>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Jeff Xu <jeffxu@google.com>
-> > Co-developed-by: Mike Frysinger <vapier@chromium.org>
-> > Signed-off-by: Mike Frysinger <vapier@chromium.org>
-> > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-> 
-> Reviewed-by: Jeff Xu <jeffxu@chromium.org>
-> Tested-by: Jeff Xu <jeffxu@chromium.org>
-> [1] https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/764773
+From: Yunseong Kim <yskelg@gmail.com>
 
-Thanks for the testing! What settings did you use? I think Chrome OS was
-effectively doing this?
+Add malloc() failure handling in unread_unwind_spec_debug_frame().
+This make caller find_proc_info() works well when the allocation failure.
 
-PROC_MEM_RESTRICT_OPEN_READ_OFF=y
-CONFIG_PROC_MEM_RESTRICT_OPEN_WRITE_ALL=y
-CONFIG_PROC_MEM_RESTRICT_WRITE_ALL=y
-CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_ALL=y
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+---
+ tools/perf/util/unwind-libunwind-local.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Though I don't see the FOLL_FORCE changes in the linked Chrome OS patch,
-but I suspect it's unreachable with
-CONFIG_PROC_MEM_RESTRICT_OPEN_WRITE_ALL=y.
-
--Kees
-
+diff --git a/tools/perf/util/unwind-libunwind-local.c b/tools/perf/util/unwind-libunwind-local.c
+index cde267ea3e99..a424eae6d308 100644
+--- a/tools/perf/util/unwind-libunwind-local.c
++++ b/tools/perf/util/unwind-libunwind-local.c
+@@ -390,6 +390,11 @@ static int read_unwind_spec_debug_frame(struct dso *dso,
+ 			char *debuglink = malloc(PATH_MAX);
+ 			int ret = 0;
+ 
++			if (debuglink == NULL) {
++				pr_err("unwind: Can't read unwind spec debug frame.\n");
++				return -ENOMEM;
++			}
++
+ 			ret = dso__read_binary_type_filename(
+ 				dso, DSO_BINARY_TYPE__DEBUGLINK,
+ 				machine->root_dir, debuglink, PATH_MAX);
 -- 
-Kees Cook
+2.45.2
+
 
