@@ -1,135 +1,112 @@
-Return-Path: <linux-kernel+bounces-221762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1294E90F844
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:07:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FE490F847
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A62286316
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:07:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A4E42864C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1462615AD93;
-	Wed, 19 Jun 2024 21:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6A915A87D;
+	Wed, 19 Jun 2024 21:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Wul1SQyf"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JlsBqu2N"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DF1249ED;
-	Wed, 19 Jun 2024 21:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C28F7A724;
+	Wed, 19 Jun 2024 21:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718831262; cv=none; b=l7ecwSPG6RnLJavz3Sd1/L2FB4ocZj3qJF9PC5tdBUzOK0KnBQndiFOiTTfk3oUXG7ggZzfWgn4XnGmQ0THuozeqQ6y//jb0gxZ2tJRQIH7hlzVGiMuuekK2wf0J9iWI6KnXKstkBX1pm7pVzew0r2M5jUCoK4wpxGLkLf6mKpM=
+	t=1718831513; cv=none; b=DVWnjlsUYuezw/ANoFYn78YwsSXeJfzHtoT+f5/PlB/LauCfUviCansWS+gnbttgGE7/j/QjLU1BgXhUi+5Iw6jr07qK4sW5lo3uXEP+xk8sAnfkjlAE2PqRlIktMYRs3CFNa2tA4SYVZk2SXx4jwuMEN4OUQjfEyjOkWw+rKGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718831262; c=relaxed/simple;
-	bh=0IIV3bnyus9HOHKlCn/aygXr6Djhst/TvjOn2OocBkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mv11A/w3AP48T25uzrXGkIlYBVkr6j6z7revDf3pyHsQblng2sOtMEk1idhuvkrmDHfP+BMrZg8n7VL0qeSFbadFTTRMWo1c+5S/Mqnd/rHmtK4oHEtkJrGa8VxMmpQDDEC1mJAW7C3ziIC56VnftsenvY7Skwf23SEGuGRsrUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Wul1SQyf; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=apkHiW2X6RnjMVqGxxO930mZZqBygksKAzUjVPVtHeo=; b=Wul1SQyfHjvOBkw3PAVi9q4N3W
-	9GA/iJg5pesd7SSsJ0aSHQLtT63biBvLKb+LH2EUDgD152ZdphHFPeowup7b6dAAZ/qvcGeu0Xrmb
-	snb+lKOWTj0piaejkVboQJPFYAdF/KUu0W6nmvFqjGDuKheObVZHOlWO6Nu2TBvNeMhFpv+5Vt1Zi
-	u6VT2qynIhDC49gouf8dLQnHhhMQav19yWujBsmyhaSb7zHhro2ViWj2GnaQS+L/VQuAS7pCSZSE5
-	yQEfkcZxBpkHFhlKqoh1DXjUKksB5pnOzl0b/nRbneZ0dvF4C3A6RLaOAld0FN8+g6Sbyh3jjAAYw
-	56RkOMXg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57470)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sK2WX-0000tM-2V;
-	Wed, 19 Jun 2024 22:07:21 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sK2WX-00072L-Ov; Wed, 19 Jun 2024 22:07:21 +0100
-Date: Wed, 19 Jun 2024 22:07:21 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Vinod Koul <vkoul@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH net-next 1/8] net: phy: add support for overclocked SGMII
-Message-ID: <ZnNIib8GEpvAOlGd@shell.armlinux.org.uk>
-References: <20240619184550.34524-1-brgl@bgdev.pl>
- <20240619184550.34524-2-brgl@bgdev.pl>
- <bedd74cb-ee1e-4f8d-86ee-021e5964f6e5@lunn.ch>
- <CAMRc=MeCcrvid=+KG-6Pe5_-u21PBJDdNCChVrib8zT+FUfPJw@mail.gmail.com>
- <160b9abd-3972-449d-906d-71d12b2a0aeb@lunn.ch>
+	s=arc-20240116; t=1718831513; c=relaxed/simple;
+	bh=JonIJaq3OZKtX2IdWUeB2L72zt1Pa52H9/4Dlgj3xoM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ds0taG/KehMFARMVBlAIdUfmHSHRBXqaYDiazu53o7tNd0TGCriu9gpp6hoZ8iQthZb7F31UkVcqNFYxmSosaN5o9Y8fbUMzlRbjzOQ53GXvNyl0ECYRJlrDNpEUaUwsSD/pBRS9mBrevJ11gvz31931Xcs/Qso8/2OPkf7g6/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JlsBqu2N; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-80f4f7e6856so71786241.2;
+        Wed, 19 Jun 2024 14:11:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718831511; x=1719436311; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=G1Wf/koZbFW9IPk/YrluCkWzg9WkxM+rq1aaZRjZ11M=;
+        b=JlsBqu2NswBGPwEs59iK+zePqFmQa80TN7XEScK6ZrGuBuvjssNo1OylWsWk85tvr7
+         Iawa2jud0OoroKiDtN2LKAsdauoW2Iw2cpaq9a2MqhReUiSfBSP+evAFk9RG5aYUPTj1
+         prxfkIT2OraSSmkmtA6xXU6OEEflzaQ2geiFcBOTrYubQasPz0OGlpWhA/92Sp2DGX9m
+         PSBhn8CTC1p4abH/L+toVAEgflwjcyk13BI7oGcSl0Xj/V9RKanM1f1P3AM9IpAXakTy
+         HMkeJ2n5TDMVtXJ01PC2n2LNtwS/FzvHtISkMUcfIRfIwiTmI2DrG0Lc7LEcm3kLHPrq
+         G/Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718831511; x=1719436311;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G1Wf/koZbFW9IPk/YrluCkWzg9WkxM+rq1aaZRjZ11M=;
+        b=ToRUhaTeXJFbDER6bPzVAKat7D6HX4PHamETPEO56/7w5tLspJcWIVDtU6Nc+7jxhT
+         khE6mGye5yAoQc0ERicBApnq4iRSPmxv9ZaxG6hVx70MyQ13t7wBgLsQ3mLKisXBUnJZ
+         IhIpFX1Vy/0mJtf9OYrvVos4bjnNZrLlqo/zD8Sj6u2aRO7ZhbZ3+uuJwH+aiYRaGAe5
+         pMv1PElNIs2oXoRrmh6gs7IJ9MdiHxQN1wtfxDUu9kfyYT2ltpu3OAKYgbL9NPbR8Sji
+         GGqtliUX/AHtAMg/vGipj7axi2cIX2mT4nyj7ju58c8r/Ia+G15xXQC/I96JGls6i0aj
+         vnfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWKhrxE+p2ZeIKNfT++PJizGyM48aPaES3RnWRcvffkz7nsr6rdVC4jzpKKjmaBAm8B3bakVX9na6C3RSARts+IZ7vLiLPfIoXSmA5
+X-Gm-Message-State: AOJu0Yw9VbMLhRKlUdyMwCYiXlp8B1e/+Ji8mUMujj0dlLSLPDyPwEGZ
+	LYXg2GKgFu0EvuFcqCK+JWsFzZkC9wgY7MJqKAKcWUUtj8MpugMmneHVn6wCGhvQ21sINJ5cgI5
+	ebAVEWTT5mT5TO53wso0iUfLCXOM=
+X-Google-Smtp-Source: AGHT+IGjyujEK+bHyLZHGQKjMkIjxvDNm29uWhTBhACl6IcDhQiGcoLcjOlh9JO/lLGeoXMwIZaOtHEreRocNL6N4n8=
+X-Received: by 2002:a05:6122:920:b0:4e4:e90f:6749 with SMTP id
+ 71dfb90a1353d-4ef277dd297mr4205321e0c.10.1718831510898; Wed, 19 Jun 2024
+ 14:11:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <160b9abd-3972-449d-906d-71d12b2a0aeb@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20240619125606.345939659@linuxfoundation.org>
+In-Reply-To: <20240619125606.345939659@linuxfoundation.org>
+From: Allen <allen.lkml@gmail.com>
+Date: Wed, 19 Jun 2024 14:11:30 -0700
+Message-ID: <CAOMdWSKYu2f5Pz_CNVktWQonknPOOskdp9Jxj+xBJgp_JdsdnQ@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/267] 6.6.35-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 19, 2024 at 09:51:12PM +0200, Andrew Lunn wrote:
-> phylib supports out of band signalling, which is enough to make this
-> work, so long as two peers will actually establish a link because they
-> are sufficiently tolerant of what the other end is doing. Sometimes
-> they need a hint. Russell King has been working on this mess, and i'm
-> sure he will be along soon.
+> This is the start of the stable review cycle for the 6.6.35 release.
+> There are 267 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.35-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-... and I'm rolling my eyes, wondering whether I will get time to
-finish the code that I started any time soon. I'll note that the more
-hacky code we end up merging, the harder it will become to solve this
-problem (and we already have several differing behaviours merged with
-2500base-X already.)
+Compiled and booted on my x86_64 and ARM64 test systems. No errors or
+regressions.
 
-> What i expect will happen is you keep calling this 2500BaseX, without
-> in band signalling. You can look back in the netdev mailling list for
-> more details and those that have been here before you. It is always
-> good to search the history, otherwise you are just going to repeat it.
+Tested-by: Allen Pais <apais@linux.microsoft.com>
 
-That's where things start getting sticky, because at the moment,
-phylink expects 2500base-X to be like 1000base-X, and be a media
-interface mode rather than a MAC-to-PHY interface mode. This is partly
-what my patches will address if I can get around to finishing them -
-but at this point I really do not know when that will be.
-
-I still have the high priority work problem that I'm actively involved
-with. I may have three weeks holiday at the start of July (and I really
-need it right now!) Then, there's possibly quite a lot of down time in
-August because I'm having early cataract ops which will substantially
-change my eye sight. There's two possible outcomes from that. The best
-case is that in just over two weeks after the first op, I'll be able to
-read the screen without glasses. The worst case is that I have to wait
-a further two to three weeks to see my optometrist (assuming he has
-availability), and then wait for replacement lenses to be made up,
-fitted and the new glasses sent.
-
-So, I'm only finding the occasional time to be able to look at
-mainline stuff, and I don't see that changing very much until maybe
-September.
-
-At this point, I think we may as well give up and let people do
-whatever they want to do with 2500base-X (which is basically what we're
-already doing), and when they have compatibility problems... well...
-really not much we can do about that, and it will be way too late to
-try and sort the mess out.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks.
 
