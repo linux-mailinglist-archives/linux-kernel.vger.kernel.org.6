@@ -1,137 +1,208 @@
-Return-Path: <linux-kernel+bounces-220528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704A790E328
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:15:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1DBB90E32C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ED7D2839E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:15:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D420A1C20EFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24E86BB33;
-	Wed, 19 Jun 2024 06:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF18154650;
+	Wed, 19 Jun 2024 06:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SJTeukPi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O5QMhSgJ"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E718A4A1D;
-	Wed, 19 Jun 2024 06:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0672063D0
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718777701; cv=none; b=cs9prNd98Zd+eZChtRrKLS3BhdfIeRBPnCHhDDPx3BKa+g2dLT11/cP2OHcg3SZe0kjJoDQOfUYYBOldBHGmVr3d4dC85qUJaruBeELGSwPbVrB18vSR9YwMniuO+fuTfyCcmMOC27m8vYaHdK+xvuBDTwoR4hx1U2fmMfAUyN0=
+	t=1718777745; cv=none; b=PO/eK/MWUd8LY9fC9vhplBwGTUJE9QYviCem4vtC2jM8ocT6UjufgbytPKKhB3r9BQh+4d3/M+ob+wwINYarDj3+iLQbGxSMhTCsW3dt1xl16KQW8iX10Tq8b9us1c+rAVVS/NIOURTNrwPkk4yuI1zvq+CtfFcvZrFFZ9wPKQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718777701; c=relaxed/simple;
-	bh=60c30djlc6yW40sTp82eLHFt4jyff+jykZzIZjYegOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uKciVm2RNllcOlxLsLrLVAvUWQebsnXucZQhgOlovVsUHqjE9bkW/yhgjzjuHCf8f4L61w6YzuqEz9fA9JeAMCII/aWa635KOCayWVMA82XJFcj2w0R/Dfkl/t2DqTGWCiYgdiFE2ASNbdje0AKcdWJ4/A5lUui/r4zqdJqyLKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SJTeukPi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DD67C2BBFC;
-	Wed, 19 Jun 2024 06:14:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718777700;
-	bh=60c30djlc6yW40sTp82eLHFt4jyff+jykZzIZjYegOk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SJTeukPi+tXeIvcwj4yI72Y0QMpZlk606h4TEgy7I5LZcPKVdIpb6hmNa++lsAoRu
-	 L8tetlagsZHxolbD1kW0QBmmq6eNOticHg1ePpG9j6xMn/UTnW9ko48WvJbsK+HQlQ
-	 qqofUnZ53c7eDtOFRhbdo9Buh5Weqo3Ul26OSUk8=
-Date: Wed, 19 Jun 2024 08:14:57 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Kuangyi Chiang <ki.chiang65@gmail.com>
-Cc: mathias.nyman@intel.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] xhci: Don't issue Reset Device command to Etron xHCI
- host
-Message-ID: <2024061903-shadow-pesky-1205@gregkh>
-References: <20240619054808.12861-1-ki.chiang65@gmail.com>
+	s=arc-20240116; t=1718777745; c=relaxed/simple;
+	bh=E32afqFs5Lu7Y5oNxXL0EzLi11zTM40ymyrgpPSVGoI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PM+c9PtoQ7r6b55knAbparGn5P4v6h2Ok5DTISbv+p47CioKzDUMqUr1crWvfVnRfz5s5sjwxU6USpdCw0fqgwVM+xGiLjygnwq+d3GIl1Hfphm+rS2Sqzt8hxvduqbtnWMtl539sRl0OFkDQJdJAoftbmzE3+J8dlNzuFFzDqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=O5QMhSgJ; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52bc27cfb14so7556569e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:15:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718777739; x=1719382539; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=r1bGbDKaKhkn1mQHGSzAalsmolUgZrz+Gk53FfmEtnk=;
+        b=O5QMhSgJD0oGfbivtk9IqlwhJ32IQNQu2By1toZIPPO5lhoobeuVeIPzeFNNJ8UCgy
+         7EhjLJIWfMcZnrmWJIArfvQTFXXGKHdHXgfY1BxNcdBO5MfUXYaG66Tt3CmxaPEPR0ET
+         HTYlrSvqNUisVGdGMQdUb1/2JWr0bIarfxgC4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718777739; x=1719382539;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r1bGbDKaKhkn1mQHGSzAalsmolUgZrz+Gk53FfmEtnk=;
+        b=uPqyfg5uopDNlq2exeSuHMOQRTGw/pixEluEgxTMFZM7a1+K/2V6cP7fDz/OZXKBF7
+         Xr5ESmkm8eZJsTl5PzLcy65e1pjXYJdrS1HIe+mNqNHYNPSngJZvQBFclYobmxhGE4OL
+         PZWrr0ntsf6BcTer8Y0sgPxw/RH2OtWSJ7gM7EqF1PJ1okqtwchxDtx3zO5qrRVtkFpa
+         UEZ7EloDeJmsUyuaGPjvdq1X3YDP0pTgrCHf0Q3dAsphPmN8nEoYRzfZ/P30WxgfNx0f
+         3X1XX5CtFC42Esal88hJF65+IbSff4ZzJ6LOSnpnvgNSu6fG0UlFgSk7ncPae8l3wZcq
+         7fnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIfp0CxMSkr4xvwLdGH/XIyLEv8/YEZK5hhWTvCat7TDF9uLuRtyfY20HHMJ2zjLkNz2B12UdZWxHtgA9QrpzT7OcX2crp5fHa4dwB
+X-Gm-Message-State: AOJu0YwDFq7FToAK0rchKsJ7G5E2X0sm255QC5Be4r+I0+1ed79nJhhk
+	Vfu2Tcip3SeGY5vTWj1nV4t6ESDglzbHjIh8r9NcMENsDK8793cnxOHeoTGOOA73+i8i8lfnL1G
+	zbvVG
+X-Google-Smtp-Source: AGHT+IGKnMbZGFvaA4izwA6ZB3pW6QHzwv1rKOMEAuhGfEmtUaPCL7FPIdxurmJKiQjtrczGS/WOmA==
+X-Received: by 2002:a05:6512:2252:b0:52c:8289:e891 with SMTP id 2adb3069b0e04-52ccaa2a86emr1252051e87.6.1718777739474;
+        Tue, 18 Jun 2024 23:15:39 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ed3658sm650614866b.133.2024.06.18.23.15.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 23:15:38 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6f51660223so370216166b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:15:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWHT3FfxiythJrCWpJ1keRxGlISjL/iybQ2o0SjVpBIlXyjHlXXEJnfASTtP3b93pSN00MUSkGGSBoUxCW3COYAeow5vUb5/74bZsF+
+X-Received: by 2002:a50:9359:0:b0:57c:77a1:d1da with SMTP id
+ 4fb4d7f45d1cf-57d07c37da2mr981271a12.0.1718777737964; Tue, 18 Jun 2024
+ 23:15:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619054808.12861-1-ki.chiang65@gmail.com>
+References: <cover.1718726777.git.soyer@irl.hu> <b062c3ec615a69cbc1b154b1838df3cdc3e1282a.1718726777.git.soyer@irl.hu>
+In-Reply-To: <b062c3ec615a69cbc1b154b1838df3cdc3e1282a.1718726777.git.soyer@irl.hu>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Wed, 19 Jun 2024 08:15:26 +0200
+X-Gmail-Original-Message-ID: <CANiDSCs2MLqdNuZtcQEHhE6c8XXc=4AKNcuHNNgqJKnc9da3Hg@mail.gmail.com>
+Message-ID: <CANiDSCs2MLqdNuZtcQEHhE6c8XXc=4AKNcuHNNgqJKnc9da3Hg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] media: uvcvideo: UVC minimum relative
+ pan/tilt/zoom speed fix.
+To: Gergo Koteles <soyer@irl.hu>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, John Bauer <johnebgood@securitylive.com>, linh.tp.vu@gmail.com, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 19, 2024 at 01:48:08PM +0800, Kuangyi Chiang wrote:
-> Sometimes the hub driver does not recognize the USB device connected
-> to the external USB2.0 hub when the system resumes from S4.
-> 
-> This happens when the xHCI driver issue the Reset Device command to
-> inform the Etron xHCI host that the USB device has been reset.
-> 
-> Seems that the Etron xHCI host can not perform this command correctly,
-> affecting the USB device.
-> 
-> Instead, to avoid this, disabling slot ID and then enabling slot ID
-> is a workable solution to replace the Reset Device command.
-> 
-> An easy way to issue these commands in sequence is to call
-> xhci_free_dev() and then xhci_alloc_dev().
-> 
-> Applying this patch then the issue is gone.
-> 
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Kuangyi Chiang <ki.chiang65@gmail.com>
+Hi Gergo
 
-What commit id does this fix?
+Thanks for your your patch.
 
+On Tue, 18 Jun 2024 at 18:33, Gergo Koteles <soyer@irl.hu> wrote:
+>
+> From: John Bauer <johnebgood@securitylive.com>
+>
+> The minimum UVC control value for the relative pan/tilt/zoom speeds
+> cannot be probed as the implementation condenses the pan and tilt
+> direction and speed into two 16 bit values. The minimum cannot be
+> set at probe time because it is probed first and the maximum is not
+> yet known. With this fix if a relative speed control is queried
+> or set the minimum is set and checked based on the additive inverse of
+> the maximum at that time.
+>
+> Signed-off-by: John Bauer <johnebgood@securitylive.com>
+> Signed-off-by: Gergo Koteles <soyer@irl.hu>
+
+Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
 > ---
-> Changes in v2:
-> - Change commit log
-> - Add a comment for the workaround
-> - Revert "global xhci_free_dev()"
-> - Remove XHCI_ETRON_HOST quirk bit
-> 
->  drivers/usb/host/xhci.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> index 37eb37b0affa..c892750a89c5 100644
-> --- a/drivers/usb/host/xhci.c
-> +++ b/drivers/usb/host/xhci.c
-> @@ -3682,6 +3682,8 @@ void xhci_free_device_endpoint_resources(struct xhci_hcd *xhci,
->  				xhci->num_active_eps);
+>  drivers/media/usb/uvc/uvc_ctrl.c | 38 +++++++++++++++++++++++++++-----
+>  1 file changed, 33 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 4b685f883e4d..93ed2462e90b 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -441,7 +441,6 @@ static s32 uvc_ctrl_get_rel_speed(struct uvc_control_mapping *mapping,
+>                 return (rel == 0) ? 0 : (rel > 0 ? data[first+1]
+>                                                  : -data[first+1]);
+>         case UVC_GET_MIN:
+> -               return -data[first+1];
+>         case UVC_GET_MAX:
+>         case UVC_GET_RES:
+>         case UVC_GET_DEF:
+> @@ -1233,6 +1232,17 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
+>         return ~0;
 >  }
->  
-> +static void xhci_free_dev(struct usb_hcd *hcd, struct usb_device *udev);
+>
+> +static bool is_relative_ptz_ctrl(__u32 ctrl_id)
+> +{
+> +       switch (ctrl_id) {
+> +       case V4L2_CID_ZOOM_CONTINUOUS:
+> +       case V4L2_CID_PAN_SPEED:
+> +       case V4L2_CID_TILT_SPEED:
+> +               return true;
+> +       }
+> +       return false;
+> +}
 > +
->  /*
->   * This submits a Reset Device Command, which will set the device state to 0,
->   * set the device address to 0, and disable all the endpoints except the default
-> @@ -3752,6 +3754,20 @@ static int xhci_discover_or_reset_device(struct usb_hcd *hcd,
->  						SLOT_STATE_DISABLED)
->  		return 0;
->  
-> +	if (dev_is_pci(hcd->self.controller) &&
-> +		to_pci_dev(hcd->self.controller)->vendor == 0x1b6f) {
+>  static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+>         struct uvc_control *ctrl,
+>         struct uvc_control_mapping *mapping,
+> @@ -1322,14 +1332,23 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+>                 break;
+>         }
+>
+> -       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN)
+> -               v4l2_ctrl->minimum = mapping->get(mapping, UVC_GET_MIN,
+> -                                    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
+> -
+>         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MAX)
+>                 v4l2_ctrl->maximum = mapping->get(mapping, UVC_GET_MAX,
+>                                      uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX));
+>
+> +       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN) {
+> +               /*
+> +                * For the relative speed implementation the minimum
+> +                * value cannot be probed so it becomes the additive
+> +                * inverse of maximum.
+> +                */
+> +               if (is_relative_ptz_ctrl(v4l2_ctrl->id))
+> +                       v4l2_ctrl->minimum = -v4l2_ctrl->maximum;
+> +               else
+> +                       v4l2_ctrl->minimum = mapping->get(mapping, UVC_GET_MIN,
+> +                                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
+> +       }
+> +
+>         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES)
+>                 v4l2_ctrl->step = mapping->get(mapping, UVC_GET_RES,
+>                                   uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES));
+> @@ -1916,6 +1935,15 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>                                    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
+>                 max = mapping->get(mapping, UVC_GET_MAX,
+>                                    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX));
+> +
+> +               /*
+> +                * For the relative speed implementation the minimum
+> +                * value cannot be probed so it becomes the additive
+> +                * inverse of maximum.
+> +                */
+> +               if (is_relative_ptz_ctrl(xctrl->id))
+> +                       min = -max;
+> +
 
-Odd indentation :(
+nit: The following would probably be more correct but less clear:
 
-Also, that's a specific value, shouldn't it be in a #define somewhere?
+if  (is_relative_ptz_ctrl(xctrl->id))
+    min = -max;
+else
+    min = mapping->get(mapping, UVC_GET_MIN,...)
 
-> +		/*
-> +		 * Disabling and then enabling device slot ID to inform xHCI
-> +		 * host that the USB device has been reset.
-> +		 */
-> +		xhci_free_dev(hcd, udev);
-> +		ret = xhci_alloc_dev(hcd, udev);
+So up to you what do you/Laurent what is better ;)
 
-You are relying on the behavior of free/alloc here to disable/enable the
-slot id, why not just do that instead?  What happens if the free/alloc
-call stops doing that?  This feels very fragile to me.
+>                 step = mapping->get(mapping, UVC_GET_RES,
+>                                     uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES));
+>                 if (step == 0)
+> --
+> 2.45.2
+>
 
-> +		if (ret == 1)
-> +			return 0;
-> +		else
-> +			return -EINVAL;
 
-Why -EINVAL?  What value was wrong?
-
-thanks,
-
-greg k-h
+-- 
+Ricardo Ribalda
 
