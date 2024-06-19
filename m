@@ -1,124 +1,101 @@
-Return-Path: <linux-kernel+bounces-220910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B9AB90E90B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:11:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD56690E90E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2D21F22B06
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:11:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 551CF282D01
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92707136E2E;
-	Wed, 19 Jun 2024 11:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35C0136E30;
+	Wed, 19 Jun 2024 11:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nS192f2p"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4N+24W4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154A075817;
-	Wed, 19 Jun 2024 11:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B55044C6C;
+	Wed, 19 Jun 2024 11:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718795504; cv=none; b=n38IyOKJ3oJHjF3O9dm2UL4Qppx9NxanVGgrWDW1XZYkbKDsv0xuppOH0IWFNZEoAIYEeRFJZt+uuilkPJ4fs+NM6RszUAloGUhEwID/aa061WqtMx+BihgpLUjnDYBKWe40fuPhw1aa3i72u3CaipeJDMG096aMtXVSIHAHn6U=
+	t=1718795557; cv=none; b=qrpdGpF+lf8S5ysyvilIE3ywBkYj84Ksg8YZiqhOY8GHZipMRfDqxsb881f6mF501+1aq+/7Pg3HxXF7LZ6p+9q2UkZaEyuZJd9M7WQ5pG2OVhXM8NPfBsQU7mpaZhty7m+bP3uprmpX0BrSENXVtKFX9MR23/WlVTm3grYwMW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718795504; c=relaxed/simple;
-	bh=Q4p8OGkyZzyrh1giwx6LIVg6Ii/VKLg/MXvccZBGuxM=;
+	s=arc-20240116; t=1718795557; c=relaxed/simple;
+	bh=O9nhu/+Qvcd4o30VuBzlUYrvaX7bpq5z3EfEXG99SKA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P50JDl5ly5XAzGBV2Y512jdRN6khF1J9weV0J43FY9iVsBaSBqtkz8pF+6kRVu/4wpaVpPUk4X1hkcnYLDDYOY1qqhPNAs2xWo+XA3HjYfjszd7QOecDTqaOfVL5jhIPKNRFKmP4UQ7QDQ8I5wJmZ5QrDkXIzcCAjTImxDTx2HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nS192f2p; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718795503; x=1750331503;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Q4p8OGkyZzyrh1giwx6LIVg6Ii/VKLg/MXvccZBGuxM=;
-  b=nS192f2pB2rr8Y19mdkmR3LUk2HjpknqCNtXWssfgmiAlO9vJRtGXV7V
-   BIEbZVzGGvw0b92s45K6hhHmreSiKpPp/lmU9AiuYMhC7DtlqIZnckImM
-   kVvee0Ky8ebedgVkEaYkcl7zGq62VQ/VNxxxHj1xMnhRR6K7YtWKYgRbm
-   h85sAu5ovaVHXsTns84ExLayRXnL4AhwgNjZAhOXN6HZidOppUf1e/pqe
-   73zXsFmgD0A1FJSentPsAvGakiLUBkLPsPeTwx8VSjisprMiMn8yLKGAt
-   PhMINX/7aB0BjbyfjOZKoQyqAxKpFzt6oNGgGdAw5SJ7l6BXKXaArTFZ+
-   g==;
-X-CSE-ConnectionGUID: 7ad/JKByTTyhl6QL5G1O6g==
-X-CSE-MsgGUID: 74ai+d2NSZiLY7KHHp92gg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="19509363"
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="19509363"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 04:11:42 -0700
-X-CSE-ConnectionGUID: Mdk7oiMqRseYyKPfAuwCtg==
-X-CSE-MsgGUID: Us5UChcrTv2vW5+bzdDyiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="46323943"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmviesa005.fm.intel.com with SMTP; 19 Jun 2024 04:11:39 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 19 Jun 2024 14:11:38 +0300
-Date: Wed, 19 Jun 2024 14:11:37 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nikita Travkin <nikita@trvn.ru>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC 0/7] usb: typec: ucsi: rework glue driver interface
-Message-ID: <ZnK86Zgkr6krdV9C@kuha.fi.intel.com>
-References: <20240603-ucsi-rework-interface-v1-0-99a6d544cec8@linaro.org>
- <hgqvyaziumpag5g5ajzupllvpwlz44scma6yu3drmtoqwcwav4@w366suy7c2eo>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGK9NtywQYEpwuEUbwrNGN6ko/hBUwTwYRZoub0gKYFc7nN1gSVSI4G/R/1t+3vIbuaFTNrm36X0ZP/H1rjA26mIZN0zrYwkiWhnrv5WpLIAUMdD840cVpRMw7kirVKU2am4aaYu+G/vnjjEfGy5Ehbj0WetIa6nQngcE8DSbVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m4N+24W4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19465C2BBFC;
+	Wed, 19 Jun 2024 11:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718795556;
+	bh=O9nhu/+Qvcd4o30VuBzlUYrvaX7bpq5z3EfEXG99SKA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m4N+24W4GUYywKfd1i2dwkIWWjD5HVHCyj20kf4BUsnWhLyOC0niZaYsukQyT40AC
+	 2cgc9CdRNQ9UYlL567COAG+eEsCsaaYz7Bjjf/BuRbPMghM6N+gH3kSUnHCod578ka
+	 owgCGNYXKzNSe9xhYHuxjicp+EojR0lPu1ySPu9DtJIk5UGQ+R+PpgcJ7lgw6wJn7H
+	 wbXW8fAyzBbE+shz836a92bqhZWS5U8nEjJqT+kj+3UxNke3DIvp1kv2vIYyP19ZJO
+	 WmxtGLpsHi6YFkw/K9yq1nNcYGbcH7JzWIjko1e67vTvTBVbbAPjOG0FLsqthikwpC
+	 1XuRgZXPux22Q==
+Date: Wed, 19 Jun 2024 12:12:30 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Drew Fustini <dfustini@tenstorrent.com>
+Cc: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] clk: thead: Add support for TH1520 AP_SUBSYS clock
+ controller
+Message-ID: <20240619-tapping-jaundice-471811929d96@spud>
+References: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="FObDbNoTBAgucHoG"
+Content-Disposition: inline
+In-Reply-To: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
+
+
+--FObDbNoTBAgucHoG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <hgqvyaziumpag5g5ajzupllvpwlz44scma6yu3drmtoqwcwav4@w366suy7c2eo>
 
-Hi Dmitry,
+On Sat, Jun 15, 2024 at 06:54:29PM -0700, Drew Fustini wrote:
+> This series adds support for the AP sub-system clock controller in the
+> T-Head TH1520 [1]. Yangtao Li originally submitted this series in May
+> 2023 [2]. Jisheng made additional improvements and then passed on the
+> work in progress to me.
 
-On Tue, Jun 18, 2024 at 09:59:07PM +0300, Dmitry Baryshkov wrote:
-> On Mon, Jun 03, 2024 at 02:24:53AM GMT, Dmitry Baryshkov wrote:
-> > The interface between UCSI and the glue driver is very low-level. It
-> > allows reading the UCSI data from any offset (but in reality the UCSI
-> > driver reads only VERSION, CCI an MESSAGE_IN data). All event handling
-> > is to be done by the glue driver (which already resulted in several
-> > similar-but-slightly different implementations). It leaves no place to
-> > optimize the write-read-read sequence for the command execution (which
-> > might be beneficial for some of the drivers), etc.
-> > 
-> > The patchseries attempts to restructure the UCSI glue driver interface
-> > in order to provide sensible operations instead of a low-level read /
-> > write calls.
-> > 
-> > If this approach is found to be acceptable, I plan to further rework the
-> > command interface, moving reading CCI and MESSAGE_IN to the common
-> > control code, which should simplify driver's implementation and remove
-> > necessity to split quirks between sync_control and read_message_in e.g.
-> > as implemented in the ucsi_ccg.c.
-> > 
-> > Note, the series was tested only on the ucsi_glink platforms. Further
-> > testing is appreciated.
-> 
-> Gracious ping for the reviews / comments. My endgoal is to simplify the
-> command submission interface, allowing us to handle odd commands in a
-> single function rather than having the code split between sync_write()
-> and notification handling.
+One thing I noticed on the dts side is that the GPIO controllers have no
+clocks provided. Does the AP sub-system clock controller provide their
+clocks too?
 
-I don't have any objections. Just rebase these and drop the RFC. The
-patch 6/7 did not apply cleanly anymore on top of the two dependencies
-you listed.
+--FObDbNoTBAgucHoG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-thanks,
+-----BEGIN PGP SIGNATURE-----
 
--- 
-heikki
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnK9HgAKCRB4tDGHoIJi
+0nOtAQCGanWyMDVqpiwnBPcON68b0Uar/qqWSiQrmJT0LkotFAD/QrasnNc1TUTV
+RH7Wx87PHTMMHt9BO/UguDi5bJ5uJQU=
+=LFxV
+-----END PGP SIGNATURE-----
+
+--FObDbNoTBAgucHoG--
 
