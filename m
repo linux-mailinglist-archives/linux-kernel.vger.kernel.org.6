@@ -1,147 +1,121 @@
-Return-Path: <linux-kernel+bounces-221604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E9290F606
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:25:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE0990F60D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE2ECB22612
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:25:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0C6F1C218A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1192B157E84;
-	Wed, 19 Jun 2024 18:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68455157E9F;
+	Wed, 19 Jun 2024 18:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gBaxKp5q"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fKPo7ey+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DF015748C;
-	Wed, 19 Jun 2024 18:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81680157A4D;
+	Wed, 19 Jun 2024 18:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718821544; cv=none; b=hOvcTFPHKug4NGtjpkOkhYx3T2zBMcuIBGlytjTX8GntPYrVA+QVUNJWZST/eQ6pc/dU39OO9HMcJJT35u3B+MAHuIl9PQ+TKYyTRRfJhk8OZQzE5iWuEp6nXUPC/01fY9zfZbMCMIKbbBcNThgFEibWjzq3lCDEO1MDKgbM4aQ=
+	t=1718821660; cv=none; b=XEMcDg5rXouaiY6Yn2x++O31UjDOLbBJjUthXASfUQqseQOblwaW89TWcpdhbljrhDJf9TawjExWxJd61se7iH9Cf68atZOunoduiWLk5GXvz5PIvZWsqnOKqvEjnirJ/Uc65XIGEdrBNH/HdSpD4POZrEYUEi9LsOZ9tp5W6Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718821544; c=relaxed/simple;
-	bh=cNU4k4Z9vt2ZVTeVLys4gCrez6b7RfRDUbs2t8p/kSA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kwbE4CPfxO5fMPS29z8/viXnWIkAcEZqeHoxfegFX838aDTm1J8OSVgEszYAbIc71rn+h42044Ww72hTxG0QOe9BBpRw3OfNAQb7m17Z9+hyzKe7T8v+PX7Qh3+RtwtgkJgk9R83Jv+qOO54IVbVV0Bo44vFi2tJTG/TsbUVJrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gBaxKp5q; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dff06b3f413so42070276.3;
-        Wed, 19 Jun 2024 11:25:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718821542; x=1719426342; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nRPhb4LcEfmXog7Vq9PBNDJLtn9KBxrQUGmQ/CKFcK8=;
-        b=gBaxKp5qqj3hVL3m7DfFdg7Gonlmb/6pR+Ps4y8cSGgbA+VT5JZ3c1DRgfBzTXooEM
-         SDm4G0Qhe9UhUcpNqLs2nov3bwzWysR1k/Cur1UWszDJOrOdnLnjf2eQCdnuaZ5Uq7X9
-         7bHLrzCyQ0HBAULtrRCC4ypkvgFNpxLV5pq2EHWREgeySD1unXbVRS5+EAA61JHhfpks
-         m6fIehZeKizByy/2e6qlJHoOnaOwS1Cx0iQUZGWA8G7i7gm73SylXfBm7Z2z+c64GxKC
-         URgUcrNYAfcIODlIlaztH/4IToUEpG7oTVEXWKSLUR2Gl+R4+osyTdKQ12h+Yo1l6VQ7
-         /Png==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718821542; x=1719426342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nRPhb4LcEfmXog7Vq9PBNDJLtn9KBxrQUGmQ/CKFcK8=;
-        b=w4pCVREHMNOjx949qGP5K/ho1p4pvujxVPIjrus1kDXCJiYbe0xiqs/LzYyDV4gx5T
-         Mmg7mILipK/dbk77AbYYUQYN4NzcKRiWoMx+t6x1MYK5+hQyc/q9xfmwr2zD4lStzwJu
-         Clm7BuG1YbGwlN7SdsbxAMg6wUoggTPAiQ4feUqyxeQrc8HYDUggUggZT7pb+7l9reiN
-         1sr0tmihbYdu7fC2XFJKr+l9QWPHIU6FDpxQ+7Syi+BFwkiTxWOxWsTUj2ZbBwzC1k3y
-         NE4gxTBsSagX+b2GNOuiUcFKsXjoC4qvLZvsO5nuOmOK1MsGbzbGzLAkRWeXrg14eQJc
-         f17g==
-X-Forwarded-Encrypted: i=1; AJvYcCU3kT7zGLyl9RFSXa3azsq/bwcqjfbuGwnNGEM470lPAKj25VO0+JRspD1J+o+VaFfSgOndplgExVg87FYrlr3z9mLB/RRTLGezBesMrPGJqbaVyv+DORwUKjym/vywvvx+JiHyurrHoKpTSteH0Q==
-X-Gm-Message-State: AOJu0YzeZaZQR0wRw9W0nId/U+m4FoG3vNp9Vb5A21pPp7W9Wt3q5BFO
-	LSKVAwLf+yxy6QMILCTQy2Kn6a/g98r8C6vHVSx+inqu6z+gSHvmCWee7s96WBgGuaOrwNvR/Jb
-	ygkGnizdC9ReR/lrldQk2KVN9ZWW6/RYgtbBQaQ==
-X-Google-Smtp-Source: AGHT+IFBqPeCafDYX98OBfIHDMdNXxq0533UQn/rqrzPYZG3GXmQAYQdzhHwVxBSZpPaRgZPDWT48kPDLYdJLzfphj0=
-X-Received: by 2002:a25:a2c1:0:b0:dfb:e1c:c799 with SMTP id
- 3f1490d57ef6-e02bdf625f8mr3693344276.0.1718821541823; Wed, 19 Jun 2024
- 11:25:41 -0700 (PDT)
+	s=arc-20240116; t=1718821660; c=relaxed/simple;
+	bh=ePMdXyYG5VP9699OyXIjL4DJdrxVOUDFWzBVFuvKuew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I8Uin40rSTuFLEvQiyZ0Gv8ROrZIFEoegauLkl5vFtVntASELbr7ubUTeC5WFgPg8lcNdx6hgTGEmQcupyizAtHYYCKna6lB+30oRevmq3AFrmCmDXi8TDbEH3bYcOQilED536yCgEoXO4nV6R+WM37Rs1YrdfDF+gExK/Wz+mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fKPo7ey+; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718821659; x=1750357659;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ePMdXyYG5VP9699OyXIjL4DJdrxVOUDFWzBVFuvKuew=;
+  b=fKPo7ey+64mhRqh0LZG8q3hHTtaABkBsorDxkDUrlPc0nyMZNq4qSlsi
+   vWItodCl5Vhs4tXAcyPuOiy6pXzj8OfKtVgif5kwSFg9eHsWoAd92de8t
+   q7ICPYWNl1GGRdtgSluqQjx3vhyV2cyzgOoiy0jitNFIPVYqxyfQ7Qg/W
+   pA/zaK7Cb7ht9Q8GbY4S7Ub8oEDju2glkHVCCTL9StL3ZmtAZkVtlDuyO
+   4J8jh77gZz5uOUOMSLnhwD9i9TO0/sC+I+Xv0Tz1ydcdlFHcbbnzylxVY
+   +F53aUIzZT5GZu3HbJ1T8K1inlvcOuZCGhWYZQ9K32WWO9T08C0ZmpwC+
+   A==;
+X-CSE-ConnectionGUID: 5fFY+98JSWSE79vfkipGyw==
+X-CSE-MsgGUID: GTmAuOeVRzyDYMzk0emgWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="41178780"
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="41178780"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 11:27:38 -0700
+X-CSE-ConnectionGUID: ILNZl8P+Q3GMl7+ZHFDZUg==
+X-CSE-MsgGUID: nrkcKSQpRwmJ/hGixWRnVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="42697044"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 19 Jun 2024 11:27:35 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sK01s-0006s6-2H;
+	Wed, 19 Jun 2024 18:27:32 +0000
+Date: Thu, 20 Jun 2024 02:26:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Kanak Shilledar <kanakshilledar@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: i2c: convert to dt schema
+Message-ID: <202406200223.QexMAKqr-lkp@intel.com>
+References: <20240619154941.144011-2-kanakshilledar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619082042.4173621-1-howardchu95@gmail.com>
- <ZnLjT_m90EDtRFE0@x1> <CAM9d7ci+TEXG49=-7oLfFpTakUMHikxGFc-=NhEPPG0sf-UC9g@mail.gmail.com>
-In-Reply-To: <CAM9d7ci+TEXG49=-7oLfFpTakUMHikxGFc-=NhEPPG0sf-UC9g@mail.gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Thu, 20 Jun 2024 02:25:32 +0800
-Message-ID: <CAH0uvoiFvHu-iKJFNHeO1TcQHLMgo60N+1zXFQx3QrLibgEU6w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] perf trace: Augment enum arguments with BTF
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619154941.144011-2-kanakshilledar@gmail.com>
 
-On Thu, Jun 20, 2024 at 2:19=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> Hello,
->
-> On Wed, Jun 19, 2024 at 9:55=E2=80=AFAM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Wed, Jun 19, 2024 at 04:20:37PM +0800, Howard Chu wrote:
-> > > changes in v2:
-> > > - Move inline landlock_add_rule c code to tests/workloads
-> > > - Rename 'enum_aug_prereq' to 'check_vmlinux'
-> >
-> > Usually the versions descriptions comes at the end, after your signatur=
-e
-> > line, just before the list of csets in the series.
-> >
-> > > Augment enum arguments in perf trace, including syscall arguments and
-> > > non-syscall tracepoint arguments. The augmentation is implemented usi=
-ng
-> > > BTF.
-> > >
-> > > This patch series also includes a bug fix by Arnaldo Carvalho de Melo
-> > > <acme@redhat.com>, which makes more syscalls to be traceable by perf =
-trace.
-> > >
-> > > Test is included.
-> >
-> > Thanks, the patch submission is now very good, at some point you'll be
-> > able to point to a git tree from where to do a pull, then have it with =
-a
-> > signed tag, etc, all this is not necessary at this point in our
-> > collaboration, but as you evolve as a kernel developer, it eventually
-> > will be asked from you.
-> >
-> > And it comes with a test that introduces a 'perf test -w' workload,
-> > super great!
-> >
-> > - Arnaldo
-> >
-> > > Howard Chu (5):
-> > >   perf trace: Fix iteration of syscall ids in syscalltbl->entries
-> > >   perf trace: Augment enum syscall arguments with BTF
-> > >   perf trace: Augment enum tracepoint arguments with BTF
-> > >   perf trace: Filter enum arguments with enum names
-> > >   perf trace: Add test for enum augmentation
->
-> Please make sure that your change doesn't break the build
-> in case libbpf is not available.  For example, a build without
-> libelf seems to be broken.
->
->   $ make NO_LIBELF=3D1
->
-> Thanks,
-> Namhyung
+Hi Kanak,
 
-Thank you, I'll fix this.
+kernel test robot noticed the following build warnings:
 
-Thanks,
-Howard
+[auto build test WARNING on andi-shyti/i2c/i2c-host]
+[also build test WARNING on linus/master v6.10-rc4 next-20240619]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kanak-Shilledar/dt-bindings-i2c-convert-to-dt-schema/20240620-000339
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20240619154941.144011-2-kanakshilledar%40gmail.com
+patch subject: [PATCH] dt-bindings: i2c: convert to dt schema
+reproduce: (https://download.01.org/0day-ci/archive/20240620/202406200223.QexMAKqr-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406200223.QexMAKqr-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   Warning: Documentation/devicetree/bindings/power/wakeup-source.txt references a file that doesn't exist: Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
+   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/display/exynos/
+   Using alabaster theme
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
