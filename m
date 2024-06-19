@@ -1,94 +1,146 @@
-Return-Path: <linux-kernel+bounces-220700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2ED090E584
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:31:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6363D90E57E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B950282CE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF5D81F22A95
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BACE7E774;
-	Wed, 19 Jun 2024 08:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F7579DD4;
+	Wed, 19 Jun 2024 08:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ft4oiK4a"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="SqCt513j";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="SqCt513j"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD317A158
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F44356448
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718785867; cv=none; b=jD5mSZ1XZl8BkLwNkkFoC91/tKXIxQsbhJpudQZAvIqk/wihP1UZ12W0cwPR81NicYmsDrUBHP8/YJrq9ULZM71NvTUaY05Ex/ZYw3ROkxu4Yp8EajDaaT9fy/XgmSGUwCQ3xR8bnoh+dGq4B7VgI7VxnFjLOLFvEl3/TqxTtwc=
+	t=1718785850; cv=none; b=aEmvDWrDoZ+LKsib2DnzTkfWUiJUGJgsSq2O8sHAuqKCMr/nOkc+qG7L0Wg884ckaMubSoUUhXSSYtmFo9g4e/4rTF7dKgp7XQZ36EJspZjgp0zcZeScgClRi3Y1aQ/hVdzD3LzIjajOHaGFgUT2mpb2wqxDVsBCZnnh9RawX+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718785867; c=relaxed/simple;
-	bh=77UgR2xivnvEyej3LXAy8J36h9jQCajS3QuIEZO4cMw=;
+	s=arc-20240116; t=1718785850; c=relaxed/simple;
+	bh=iuTm0NDUxdEgh6C5LmYedrKC39nulEaAGuIfK6jpCnc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hr8wuChXDiDyOse+adDAvCettTz8ugXVvVHeSgpkwrqhEkIRfMmESEZpqSWCyuFR0yjK/5Z6ApDDc6E8ErHLt8yjnI3V/qLQpyO0gMEFn7KEv3wCscWgmOMc5/fk4KLFiNsg73f8W9oqVVTa3UPd99Tw5UD9Mhn6NQ7zjzg+tOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ft4oiK4a; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5E82340E0219;
-	Wed, 19 Jun 2024 08:31:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id y76HJXVC0076; Wed, 19 Jun 2024 08:30:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718785856; bh=nrHGuJZQSf6Emehlq57OfsJQaGAjXLph2bW1wMyJzlU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ft4oiK4aeUhblaeM8VwL8s8RdoxfkxAPhrHNYfI4XfW/pF0Z4tUeIlzfCzXh90MlK
-	 cJ2ghkJLffjBK/HirIPBspxqro3+rLZYVso+9KevU6pDlu6zkg/tB/pJYoye0X3/XS
-	 B9Q37pNbEPSanF/nimHrxWeRQvjiH13p+XFwNjVS75sYZlOeB8syTPkt+Jc8MIfV15
-	 laIKUKwls5VJKtXAqeTkkLetxXcDKRSf/opljgdQsNo9g9zF5vcERKM/H4biEmv4jy
-	 qCG+t4++sSsXQJavSlXF/6eZ9N5BOhDxmGsyiM5/82mCau/gRncHsM1M0yw+AGrN9X
-	 7VQK1NPAUNKhbzR3uJfKn0u9ntmPbgWRrvBUaIwk9V39bxvklWuwFuKIxxMwkqdhcA
-	 SnatbAERNpq4wFRX+0BoKQqski1vAsAVLdhux6BaEhasQJcS4MEs9103OF9qbNg+Hx
-	 kWRohsrH37j3KIx8n68ejeUfX0E1H5xLR0s3TTNwEfW+eVoihiTYFw6svANr9fZyOi
-	 KHq4ehUpBymZgw+NgZVTaGoy6KXFHEdGDbrmAUir5qKZVeVrDPx4SixCn6P+ltWzdH
-	 4kyVK2oMryDX4oCpu8fEzigEQwyCigDU6uLkOTHVKsBZOpVPngnNvcJges68BeHSg5
-	 54jd7ICAvKce4ekJxS6II0Ig=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mwj19mfTdBgEk1HXvV7F9LZRyDPlFZN2I7CLDx9wlXHWS/nDgAVQoBR6939dYDj854st+5heeHzu+l0/0gaURXh693efgRPwDs+JT5BT9BdYnVuzucD6aL5h+dLsrG7wjN2nY6OoL9/XR2wJnnFzGW346gitrU8Uf1AQ8p9inFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=SqCt513j; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=SqCt513j; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E786E40E01F9;
-	Wed, 19 Jun 2024 08:30:44 +0000 (UTC)
-Date: Wed, 19 Jun 2024 10:30:39 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller@googlegroups.com, elver@google.com, glider@google.com,
-	nogikh@google.com, tarasmadan@google.com
-Subject: Re: [PATCH v2 0/4] KCOV fixes
-Message-ID: <20240619083039.GAZnKXL8euon1-hHIR@fat_crate.local>
-References: <cover.1718092070.git.dvyukov@google.com>
- <CACT4Y+Z=U+Y8gKBgaU76=zg=rAdq=AQ=epAq+RxDfdXsaqO_0w@mail.gmail.com>
- <CACT4Y+Zq3t2JXEbGDzYU61Rs5KH3mhCDiZ4GP9OacKuyocnYHQ@mail.gmail.com>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BE6D21F80C;
+	Wed, 19 Jun 2024 08:30:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718785846; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3csz8VA55EtnZ1qgNXezIt/I0+UuI2lwvyZNtecuq3U=;
+	b=SqCt513j19wKluV1OJniLT9Q9ap6QMmNV2A55jNTZPUKeULT0twMe90B9kSygqO3t9EHNQ
+	dbNU2khWPeMiJUXvVxTuMjbzSGXq/WgVTUiJAsb14nP/ZyAsekpojF6Xjm7LQ3t60QCm8R
+	u4YQtQzYYekTI+nMPjJnljIgSKcTp90=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718785846; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3csz8VA55EtnZ1qgNXezIt/I0+UuI2lwvyZNtecuq3U=;
+	b=SqCt513j19wKluV1OJniLT9Q9ap6QMmNV2A55jNTZPUKeULT0twMe90B9kSygqO3t9EHNQ
+	dbNU2khWPeMiJUXvVxTuMjbzSGXq/WgVTUiJAsb14nP/ZyAsekpojF6Xjm7LQ3t60QCm8R
+	u4YQtQzYYekTI+nMPjJnljIgSKcTp90=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9CC0413AAA;
+	Wed, 19 Jun 2024 08:30:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Pgs7IzaXcmbgHQAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Wed, 19 Jun 2024 08:30:46 +0000
+Date: Wed, 19 Jun 2024 10:30:46 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	kernel-team@meta.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Kyle McMartin <kyle@infradead.org>
+Subject: Re: [PATCH] mm: ratelimit oversized kvmalloc warnings instead of once
+Message-ID: <ZnKXNuuQRwNxRe4z@tiehlicka>
+References: <20240618213421.282381-1-shakeel.butt@linux.dev>
+ <ZnKGjdw8xkMZG0oX@tiehlicka>
+ <ajp536dpkss32kmjihcfbl4ulunfho2odzw4ghwfekw2yv3ctt@fh62fmyxwwcs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+Zq3t2JXEbGDzYU61Rs5KH3mhCDiZ4GP9OacKuyocnYHQ@mail.gmail.com>
+In-Reply-To: <ajp536dpkss32kmjihcfbl4ulunfho2odzw4ghwfekw2yv3ctt@fh62fmyxwwcs>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-On Wed, Jun 19, 2024 at 07:20:56AM +0200, Dmitry Vyukov wrote:
-> Or is it OK to take this via mm tree (where KCOV changes usually go)?
+On Wed 19-06-24 01:03:16, Shakeel Butt wrote:
+> On Wed, Jun 19, 2024 at 09:19:41AM GMT, Michal Hocko wrote:
+> > On Tue 18-06-24 14:34:21, Shakeel Butt wrote:
+> > > At the moment oversize kvmalloc warnings are triggered once using
+> > > WARN_ON_ONCE() macro. One issue with this approach is that it only
+> > > detects the first abuser and then ignores the remaining abusers which
+> > > complicates detecting all such abusers in a timely manner. The situation
+> > > becomes worse when the repro has low probability and requires production
+> > > traffic and thus require large set of machines to find such abusers. In
+> > > Mera production, this warn once is slowing down the detection of these
+> > > abusers. Simply replace WARN_ON_ONCE with WARN_RATELIMIT.
+> > 
+> > Long time ago, I've had a patch to do the once_per_callsite WARN. I
+> > cannot find reference at the moment but it used stack depot to note
+> > stacks that have already triggered. Back then there was no reponse on
+> > the ML. Should I try to dig deep and recover it from my archives? I
+> > think this is exactly kind of usecase where it would fit.
+> > 
+> 
+> Do you mean something like warn once per unique call stack?
 
-Be patient, pls, you're on the TODO list.
+Exactly!
+
+> If yes then
+> I think that is better than the simple ratelimiting version as
+> ratelimiting one may still miss some abusers and also may keep warning
+> about the same abuser. Please do share your patch.
+
+https://lore.kernel.org/all/20170103134424.28123-1-mhocko@kernel.org/
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Michal Hocko
+SUSE Labs
 
