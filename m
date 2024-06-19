@@ -1,180 +1,134 @@
-Return-Path: <linux-kernel+bounces-221649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 157ED90F6BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:11:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4439390F6C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D131B24F0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:11:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 866AB284C1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5477D158A3E;
-	Wed, 19 Jun 2024 19:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F46158A3B;
+	Wed, 19 Jun 2024 19:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/xikShP"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jRxZbx5B"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41360155759;
-	Wed, 19 Jun 2024 19:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055B0134A5
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718824261; cv=none; b=QP3r1sy2LBviC/LFUP/3wqfcoePqt2CT9YXf8ETaRDwf1zrd1EVXN+pxM5+bHr1vpp9VWnLPF4vySH9Yyqn9/NUlXZZfCdYxn3Wz6T5OOApZDEyZp6FjiNn9U4vXnuA37ya5bw4q1vh1F4b3GyG662JWu94xbCJzX2GgVf/+EI4=
+	t=1718824367; cv=none; b=b8BPp39ClSYbKQxuL/qgeRbrorkFNaLSg9odLyhmKWPDJcdwDBLyNaDuyDPRPIP8FX7QyNHeu4Q1dU13ERlkN2vCnPvZLbfx+LviuqiEe/oNgUodzpJWE3d7UXRkpGJ+XIH0jGomLKuM980KGA4swwy0NA0naVznrsmS32eN30E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718824261; c=relaxed/simple;
-	bh=JKW2nPoX2X2ixRz7pyFwqsv9YNVEIIHz4xhzfHpO/eI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jAFfHxG2ck7hcTyXoGgOW2Zo68n9Vg0IeQW78wtlHokGQfLRTW129NjILaZR8T3ufGYzQ1rg1lzxOfcO1CBLTkEXR/ug71HR1YodMBxt0025lWlRowwWrasCa+yJjW7a11AdiPhQJX1Q03N8e4I3X5+XXhPGgC1KgWSkuDTFi7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/xikShP; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f9aeb96b93so655235ad.3;
-        Wed, 19 Jun 2024 12:11:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718824259; x=1719429059; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hUGdZMjZzoHYGKKUGNyDbK2J+i2WH4vetBoEX5oj4xo=;
-        b=W/xikShPU8KwwMUASYJS4iiOO6+BsIPWGYv5EMh6/pFxLCD1aJJTxHlWfrWpZ5q3kl
-         44XXLG9T82ktYjG5sSo18adsU0l1nI0WCybHDSns/Fl4n7IilIZGgrdIp+qqLcoWIpTQ
-         VtDkuBGO1V43lYFCAg/7ShE2uzKerVpK4dj4c5/W6L3R61Uca/Pwwb9s/yPiiH9sPn6k
-         FphcwqX1nwiVwEMIAd5S3rNkKl8VXI//w3UnhMuGdvikEtcurLys1XZ+b5O7CgMefjQM
-         LRCfk/Au7qMpbuiAlKQ5I6gS0h4K5M30ym0cprvP/AArbAUduHCBYZee9l9sGwiYiqAr
-         Fk1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718824259; x=1719429059;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hUGdZMjZzoHYGKKUGNyDbK2J+i2WH4vetBoEX5oj4xo=;
-        b=SpKugucKUdD2yHLzSy6Xuw1QB1G3cJkciG0hGk9t4/Wg/JiEqVj/TvNJHrQApsH5jI
-         yPuJhBwKlcw7ZC2jGHINGQfadsu6N/R5ZdHf7jktFrWO8Pr1ZixJZ5iMfwFEfNv/D122
-         ThKTVVM5cBhpBekC/MhMwNQIow+3Vlm/rJsWy+BQJdjP1z/RZdqrH7T0yPEkRdgFYzl+
-         lfz5ot+4L3Afp3X8mRKu4X7BTeCAaVvS9ULTmha2imMHy50q0Y5s9WUZftynQuVe8I3L
-         B35cQEVaWq2sAFyArhK+7Ux05D9OVlsXjV47mbn07XCxpLpvomMSOS8+XqeyGz+fHm62
-         eh6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWKKN8yOimLbdjMMyWnyG+8Q+yt0umM0JxjRHLOk/mC1CvO7P8QdRz/gLFsTdsNFr15/xzVuiEIzE2NRgygQtM4tGBiSJ/5MBPbmzJBcbRqtG3XRs59OQ5AJdV1YWqVTE3+u2riA2r7sLzCVN/8kQ==
-X-Gm-Message-State: AOJu0YwTafBC15u6z7PfK/kMhZ3KK7nRsJ7r1KbeYXdJpXZtlU//VPpw
-	xwTWgPbvhu9mqiqC7vhiGhbE8xOrckO0AYHL6/oUGJRO9T95it3J
-X-Google-Smtp-Source: AGHT+IEcexetf6hadylHwrbQObZoy+JCEiQ1uOfbi2F+xopKplHeVr/OBJsC/CdDC2h+xNB0MFcDmg==
-X-Received: by 2002:a17:902:a507:b0:1f8:46c9:c96f with SMTP id d9443c01a7336-1f9aa4729b7mr32007575ad.61.1718824259539;
-        Wed, 19 Jun 2024 12:10:59 -0700 (PDT)
-Received: from [192.168.50.95] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855efea73sm120492015ad.182.2024.06.19.12.10.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 12:10:59 -0700 (PDT)
-Message-ID: <5c1f3b54-da71-47b7-a30c-0011a23195c8@gmail.com>
-Date: Thu, 20 Jun 2024 04:10:53 +0900
+	s=arc-20240116; t=1718824367; c=relaxed/simple;
+	bh=GGF/fe6a5yj/a6oly5zHWrK5YZcq1VQVJ3N3/tCxsNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QesNhXv6W7n0YsjJ3y5RlLrVxhMPZER63XbnP+JWWYUMZluR4jBZBHmt346fJkFNGpNRhtS+Pm/AYp/akzCCaPirL1Eq1K99gt87UXfi7r8zQs1lPr8v9hIc+yxsmMTd1piZeMdBH1toLvw4kvEurc0gfDWdn539566hWAGSBV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jRxZbx5B; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718824364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kXViuHr3FFbCPe+Uz6+9F744Xmz3ZOg5rqNGLZG3fDA=;
+	b=jRxZbx5BnjpRl8bhKYDfpLbxBk53Q++CRRvo7iDZUrqXJOQ00t0Fc9BCow4InzSB4lmd60
+	42IhNs7jXh3qU1ZHMHfxdZmkYjmBrdPgd4eL8EaiEhe6LCKu0UtLer+snUkU0OlK2YG6tn
+	uUB06I8sAiOZcMVLqD7y2Ej+CV7qS5k=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-179-5YJlhXPXMj6eusjUvTwGeg-1; Wed,
+ 19 Jun 2024 15:12:41 -0400
+X-MC-Unique: 5YJlhXPXMj6eusjUvTwGeg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 70B1C1956088;
+	Wed, 19 Jun 2024 19:12:40 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.168])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6B2291956050;
+	Wed, 19 Jun 2024 19:12:38 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 19 Jun 2024 21:11:08 +0200 (CEST)
+Date: Wed, 19 Jun 2024 21:11:06 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/17] signal: Make SIGKILL during coredumps an explicit
+ special case
+Message-ID: <20240619191105.GE24240@redhat.com>
+References: <87r0d5t2nt.fsf@email.froward.int.ebiederm.org>
+ <20240610152902.GC20640@redhat.com>
+ <20240613154541.GD18218@redhat.com>
+ <87ikyamf4u.fsf@email.froward.int.ebiederm.org>
+ <20240617183758.GB10753@redhat.com>
+ <87iky5k2yi.fsf@email.froward.int.ebiederm.org>
+ <87o77xinmt.fsf_-_@email.froward.int.ebiederm.org>
+ <87iky5inlv.fsf_-_@email.froward.int.ebiederm.org>
+ <20240619155016.GC24240@redhat.com>
+ <87cyocerda.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] util: constant -1 with expression of type char and
- allocation failure handling
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Yang Jihong <yangjihong1@huawei.com>, Ze Gao <zegao2021@gmail.com>,
- Leo Yan <leo.yan@linux.dev>, Ravi Bangoria <ravi.bangoria@amd.com>,
- Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com,
- linux-perf-users <linux-perf-users@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <20240619183857.4819-2-yskelg@gmail.com>
- <CAP-5=fWm-Tij+vjqOa-18RsiO+1_ytWnKkDvp3vz5hv1O9aMCw@mail.gmail.com>
-Content-Language: en-US
-From: Yunseong Kim <yskelg@gmail.com>
-In-Reply-To: <CAP-5=fWm-Tij+vjqOa-18RsiO+1_ytWnKkDvp3vz5hv1O9aMCw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87cyocerda.fsf@email.froward.int.ebiederm.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi Ian,
+On 06/19, Eric W. Biederman wrote:
+>
+> Oleg Nesterov <oleg@redhat.com> writes:
+>
+> > Hi Eric,
+> >
+> > I'll _try_ to read this (nontrivial) changes this week. To be honest,
+> > right now I don't really understand your goals after the quick glance...
+> >
+> > So far I have only looked at this simple 1/17 and it doesn't look right
+> > to me.
+>
+> It might be worth applying them all on a branch and just looking at the
+> end result.
 
-On 6/20/24 4:03 오전, Ian Rogers wrote:
-> 
-> 
-> On Wed, Jun 19, 2024, 11:39 AM <yskelg@gmail.com
-> <mailto:yskelg@gmail.com>> wrote:
-> 
->     From: Yunseong Kim <yskelg@gmail.com <mailto:yskelg@gmail.com>>
-> 
->     This patch resolve this warning.
-> 
->     tools/perf/util/evsel.c:1620:9: error: result of comparison of constant
->     -1 with expression of type 'char' is always false
->      -Werror,-Wtautological-constant-out-of-range-compare
->      1620 |                 if (c == -1)
->           |                     ~ ^  ~~
-> 
->     Add handling on unread_unwind_spec_debug_frame().
->     This make caller find_proc_info() works well when the allocation
->     failure.
-> 
->     Signed-off-by: Yunseong Kim <yskelg@gmail.com <mailto:yskelg@gmail.com>>
-> 
-> 
-> 
-> Both changes look good. Could you make them 2 commits? If so add my: 
+Perhaps. Say, the next 2/17 patch. I'd say it is very difficult to understand
+the purpose unless you read the next patches. OK, at least the change log
+mentions "in preparation".
 
-No problem! I'll send it right away.
+> > 	- complete_signal() won't be called, so signal->group_exit_code
+> > 	  won't be updated.
+> >
+> > 	  coredump_finish() won't change it too so the process will exit
+> > 	  with group_exit_code == signr /* coredumping signal */.
+> >
+> > 	  Yes, the fix is obvious and trivial...
+>
+> The signal handling from the coredump is arguably correct.  The process
+> has already exited, and gotten an exit code.
 
-Thank you for the code review.
+And zap_process() sets roup_exit_code = signr. But,
 
-> Reviewed-by: Ian Rogers <irogers@google.com <mailto:irogers@google.com>>
-> 
-> Thanks, 
-> Ian
-> 
->     ---
->      tools/perf/util/evsel.c                  | 2 +-
->      tools/perf/util/unwind-libunwind-local.c | 5 +++++
->      2 files changed, 6 insertions(+), 1 deletion(-)
-> 
->     diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
->     index 25857894c047..bc603193c477 100644
->     --- a/tools/perf/util/evsel.c
->     +++ b/tools/perf/util/evsel.c
->     @@ -1620,7 +1620,7 @@ static int evsel__read_group(struct evsel
->     *leader, int cpu_map_idx, int thread)
-> 
->      static bool read_until_char(struct io *io, char e)
->      {
->     -       char c;
->     +       int c;
-> 
->             do {
->                     c = io__get_char(io);
->     diff --git a/tools/perf/util/unwind-libunwind-local.c
->     b/tools/perf/util/unwind-libunwind-local.c
->     index cde267ea3e99..a424eae6d308 100644
->     --- a/tools/perf/util/unwind-libunwind-local.c
->     +++ b/tools/perf/util/unwind-libunwind-local.c
->     @@ -390,6 +390,11 @@ static int read_unwind_spec_debug_frame(struct
->     dso *dso,
->                             char *debuglink = malloc(PATH_MAX);
->                             int ret = 0;
-> 
->     +                       if (debuglink == NULL) {
->     +                               pr_err("unwind: Can't read unwind
->     spec debug frame.\n");
->     +                               return -ENOMEM;
->     +                       }
->     +
->                             ret = dso__read_binary_type_filename(
->                                     dso, DSO_BINARY_TYPE__DEBUGLINK,
->                                     machine->root_dir, debuglink, PATH_MAX);
->     -- 
->     2.44.0
-> 
+> But I really don't care about the exit_code either way.  I just want to
+> make ``killing'' a dead process while it core dumps independent of
+> complete_signal.
+>
+> That ``killing'' of a dead process is a completely special case.
 
-Warm Regards,
-Yunseong Kim
+Sorry I fail to understand...
+
+If the coredumping process is killed by SIGKILL, it should exit with
+group_exit_code = SIGKILL, right? At least this is what we have now.
+
+Oleg.
+
 
