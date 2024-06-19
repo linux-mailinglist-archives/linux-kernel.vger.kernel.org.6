@@ -1,161 +1,179 @@
-Return-Path: <linux-kernel+bounces-221039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 633E190EB18
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:26:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 251C190EB12
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6FBEB268A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:26:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F7691C20C21
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EEC143865;
-	Wed, 19 Jun 2024 12:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A9914601E;
+	Wed, 19 Jun 2024 12:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3B1OpPj"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nvn/+l+h"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5F8142E96;
-	Wed, 19 Jun 2024 12:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2777213FD96
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718799931; cv=none; b=EEL55amw4xZZNmjSzjTZWiqE7qxrGNv6BEvki/JfZqmcGXcrxd2cJMAURo+s9jGgFuCDpu3u+ywUsieBs/OSE71TZcMXFQjx6kKQ89rwLDDbsBSKZJ7Dy7Hx08NmPYNR2XU+Ae4V5YRq8ff30rNOTPUJN8rm8bxluWef0xXRBY0=
+	t=1718799842; cv=none; b=NVzHLOCXfACH5WFML26uZbLSCbetGgNZq1YIDEly1TN127T1hoXG8J2GofHllvnV+PWUQIBQrNc/iu8G6/SofqFcmOFesxBDtH5m9e0Mx/oKRKfIAwDw9cGGHgJ+tBgpOHizckhGdvj6vKasOw5UbO/VDGOep2zpz/sOtxgVbN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718799931; c=relaxed/simple;
-	bh=hQNDan+UFqR9ttiAhh9GsVYNs82AvEXxBGvx1OpaPW0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RIFn6C2Q8tWS0XsefiDh7sHrl+G0nzxJfjSLGJ3DKhgsLyttyeeLxHjIJkTAq5decdbCaMwT0dLzzalVfSqSwNV0p9HOWZDg5omCOOggGx0X0M064sa9KCn+WoB4tQlkzRwYKkqozUhmw/ITF2NMqiwPieJ0SPZs3BgMDO8Zirg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3B1OpPj; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-705fff50de2so563137b3a.1;
-        Wed, 19 Jun 2024 05:25:30 -0700 (PDT)
+	s=arc-20240116; t=1718799842; c=relaxed/simple;
+	bh=bz1IakQFfcfiAJ7FlVyWHudEX7j14MDRLiwXOlzfR2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NOx7CHTvBjU4uQnrJfPG1Aj9KPQfjE4toGoG0e2msmYnsvnaBEUZzNqydh0gz20jdzQ4j3x5gVF0jgX9sQD7UmEUlnyeLTI6H/qrib8ct8c/2/7MUFHH9P4EKtgvnAzIl4UuthY2dJCX+PX4ZtJRRDuL64Ubu3dL55j59qaDdec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nvn/+l+h; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-424798859dfso2767135e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 05:24:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718799929; x=1719404729; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z0Ug2g/wIn4Acp6+WRdmoDjC1CjnDCEohkjBAJAA0nk=;
-        b=M3B1OpPjMfyYSchdw3dZLip852jfJboKKIbsxreIO2DtQRZ2u6dt8WG4o1vRd9g2l9
-         xeyFTp+uYWIIqQ7bcJVdnwb1sVQISlkujXOqw0pPKc6gSRX6WPMlg6S2RLk+Zgw8CqOt
-         SitnlohNSZ8xu7bQL7tpc9zoxoMWC42GT+rnIKLV62RMwUhXbs5GnuVbBWxc2THOqMHz
-         Regf3R+eiY16Uq/N4DhIOU19EytysOTqZJQi5tXCu9wxm7+oPQqxuxOmqH8JNTITaOqR
-         MXwvcz4ioUVLHZLtx4YQMTubjSftv348sLBi6i9bmgxuO399NjFSlJCuhf9I4SEeEz5o
-         EMwA==
+        d=linaro.org; s=google; t=1718799839; x=1719404639; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=VHUEUcW2skIFmJr8wZ7QcNeIR23OIvnta7eNO+sU4Bc=;
+        b=Nvn/+l+h7BECNOdnpTAGGiTZSz7QjT7J1paHs0xKBpidPMeLJ1h7gib3ligqAkHgAb
+         B0zRzoBNANby5jUZB6aW4TOrAVy9oLbfMOiq469LkbIcOcwjuV9i+Z1nlopkmybayUFa
+         cWQJrpgXacP1YwX5hbURwzqgsd2Xxm1OJl0gl5kiR3PQVJ7IAacRxV/1mKgE6+ZOj8nC
+         JNwydKgo9rcRqwrkMEc4VuvH1WePoCIvSgMdXpV6K4nlv48GDme9Jo/4DzihxwjNXK4u
+         5NWFDpOqOjvgPRgV83yJgLGz0bx+q7fse2Btq3ZOIiXEvrXQq6v1G05pKgYpt2ZrsNNU
+         Pg0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718799929; x=1719404729;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1718799839; x=1719404639;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Z0Ug2g/wIn4Acp6+WRdmoDjC1CjnDCEohkjBAJAA0nk=;
-        b=Kcy4x/EYTHm9zUkcwfKg2wei6vcb92N094YU0pHRSatCv14TVBBi9I4qWcn7GMgL+q
-         sPHMT9PCfZmhPlt2L/VUYuFHLPmigNrzsvwkRjVTxPX+Xbirqe8DR/OKJ4eLZhlqW09I
-         wxYumFeOgsa+ymiKceXONi1sP/6LwIBQpzg7+pXULm+4yZ+D7Mz6YfgiZpPy+ZMV8gKn
-         aqcrL9a2Ui4DHl8zVStT6ywCJVIo46fxQhUpTgolbMvtxjNfvBjbfifS+Ik/bUNe5gCg
-         kYUdSAdj6OnQh6MCCwtlWICiw0SaK1JPU9VHEgXiemmD5J9YGnGbCIDlFkbU3Ig61vvO
-         nXyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXATus8DDEG9j7fitje79dL5LuN5lUke+fnqkWomkiiVfSNnzoqczdTarKr7KdvdMkTYU9zRksgnwdrwrt6P/9M3Sx59hiVPWNBn9y3dZHpGxpI1z6273w1FkqAaiIYSrHu
-X-Gm-Message-State: AOJu0Yzu4HSHtJ3kofbRkq/r2Van0HpveySwB2g2zKcW5xIEkriNfR9Q
-	0QnLcfDWh/gb/yrvvfEEMznoVjhnd2eCN+6lp19agFm+m/kXw8mM
-X-Google-Smtp-Source: AGHT+IE1n3e6J5vtH+XvnHz0Hcn1RKaFgUkqBTz8l9pQyCzGnMO9k0LxvqsUebPcdoSuJ03qhAwsaQ==
-X-Received: by 2002:a62:ee11:0:b0:704:3580:8e16 with SMTP id d2e1a72fcca58-7061ac34763mr7365753b3a.17.1718799929303;
-        Wed, 19 Jun 2024 05:25:29 -0700 (PDT)
-Received: from ubuntu.localdomain ([124.126.129.60])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb3d19esm10500824b3a.122.2024.06.19.05.25.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 05:25:28 -0700 (PDT)
-From: Donglin Peng <dolinux.peng@gmail.com>
-To: alan.maguire@oracle.com,
-	eddyz87@gmail.com
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	song@kernel.org,
-	andrii@kernel.org,
-	haoluo@google.com,
-	yonghong.song@linux.dev,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Donglin Peng <dolinux.peng@gmail.com>
-Subject: [PATCH v2] libbpf: checking the btf_type kind when fixing variable offsets
-Date: Wed, 19 Jun 2024 05:23:55 -0700
-Message-Id: <20240619122355.426405-1-dolinux.peng@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        bh=VHUEUcW2skIFmJr8wZ7QcNeIR23OIvnta7eNO+sU4Bc=;
+        b=aa/QlWcjFT6irgULH0J8Ixa/XMwor953AcmxkAgZHKePxEv67ih9WjWbCjzHV4lilh
+         P0MtGHZkz4ewkuAthm/RWLccCPW0/TRI5n04AQeMUxhf1SpOi+5KJzaeme9tCcmlDwFB
+         TWSk+wETzZHf2L5PrdiGIyGnxYuTX6ZD/kiZ67TF7NkZCj7knkiXo3QKOAMLLt+l9Tod
+         MKREakvdO7ers9YyqPzJc+x3H/nunJY5aO7bjrVEdGNwomSkbQ7/hsb3CrYSc+sffcM4
+         DwzZxDqUZUZiA7A8c6PVC5JRGLeLhvZa9dO8mMGa1+B3AmJobOPPEDBCUQYBPV6H4k/a
+         k89A==
+X-Forwarded-Encrypted: i=1; AJvYcCVY0KxnYCZ3sV59lth5msT1rCbOdMeVb2d+0miPCbfDzJDGVFmHE2Y6P1skuVvVLg45jk0trNASDhfzxKnh7pubKi30h0l0wQsguo9F
+X-Gm-Message-State: AOJu0YzKLgtr3AvZYzvnzgd/oaSpY/VnkCFhimqmSj2yRa+HgizDmSFA
+	JVSXtJB4N6QvXBkpl6OFohV1AHkc2TwwFR+1AngyY2cVg760eSgnIb5D9JFeXQY=
+X-Google-Smtp-Source: AGHT+IGYIQ8j6on7KsIOL1DTsgh1Wi9tlJ8z4iKPN6WIKHifRVl6a3pQkGaSMBmzmnLnzeIV7MJUDQ==
+X-Received: by 2002:a05:600c:1792:b0:421:75e2:c090 with SMTP id 5b1f17b1804b1-42475176435mr18751355e9.11.1718799839499;
+        Wed, 19 Jun 2024 05:23:59 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4246eb25af4sm71637185e9.4.2024.06.19.05.23.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 05:23:58 -0700 (PDT)
+Message-ID: <10568cd0-8005-4a8f-bb4c-03d33c87a15c@linaro.org>
+Date: Wed, 19 Jun 2024 14:23:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: Enable secure QFPROM driver
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: Komal Bajaj <quic_kbajaj@quicinc.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20240619105642.18947-1-quic_kbajaj@quicinc.com>
+ <5582a2a0-c772-4573-9d55-2f963cb87df1@linaro.org>
+ <ZnLKwqENxC4wzrUm@hu-mojha-hyd.qualcomm.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <ZnLKwqENxC4wzrUm@hu-mojha-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-I encountered an issue when building the test_progs from the repository[1]:
+On 19/06/2024 14:10, Mukesh Ojha wrote:
+> On Wed, Jun 19, 2024 at 01:08:48PM +0200, Krzysztof Kozlowski wrote:
+>> On 19/06/2024 12:56, Komal Bajaj wrote:
+>>> Enable the secure QFPROM driver which is used by QDU1000
+>>
+>> Qualcomm QDU1000. You are changing kernel-wide defconfig, not some
+>> Qualcomm downstream stuff.
+>>
+>>> platform for reading the secure qfprom region to get the
+>>> DDR channel configuration.
+>>>
+>>> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+>>> ---
+>>>  arch/arm64/configs/defconfig | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>>> index 838b4466d6f6..c940437ae1b3 100644
+>>> --- a/arch/arm64/configs/defconfig
+>>> +++ b/arch/arm64/configs/defconfig
+>>> @@ -1575,6 +1575,7 @@ CONFIG_NVMEM_LAYERSCAPE_SFP=m
+>>>  CONFIG_NVMEM_MESON_EFUSE=m
+>>>  CONFIG_NVMEM_MTK_EFUSE=y
+>>>  CONFIG_NVMEM_QCOM_QFPROM=y
+>>> +CONFIG_NVMEM_QCOM_SEC_QFPROM=y
+>>
+>> Module
+> 
+> Should not this be inline with what CONFIG_NVMEM_QCOM_QFPROM is having ?
+> Either both CONFIG_NVMEM_QCOM_QFPROM and CONFIG_NVMEM_QCOM_SEC_QFPROM
+> should be m or both y
 
-$ pwd
-/work/Qemu/x86_64/linux-6.10-rc2/tools/testing/selftests/bpf/
+Why? There is no dependency in Kconfig.
 
-$ make test_progs V=1
-...
-./tools/sbin/bpftool gen object ./ip_check_defrag.bpf.linked2.o ./ip_check_defrag.bpf.linked1.o
-libbpf: failed to find symbol for variable 'bpf_dynptr_slice' in section '.ksyms'
-Error: failed to link './ip_check_defrag.bpf.linked1.o': No such file or directory (2)
-...
-
-Upon investigation, I discovered that the btf_types referenced in the '.ksyms'
-section had a kind of BTF_KIND_FUNC instead of BTF_KIND_VAR:
-
-$ bpftool btf dump file ./ip_check_defrag.bpf.linked1.o
-...
-[2] DATASEC '.ksyms' size=0 vlen=2
-        type_id=16 offset=0 size=0 (FUNC 'bpf_dynptr_from_skb')
-        type_id=17 offset=0 size=0 (FUNC 'bpf_dynptr_slice')
-...
-[16] FUNC 'bpf_dynptr_from_skb' type_id=82 linkage=extern
-[17] FUNC 'bpf_dynptr_slice' type_id=85 linkage=extern
-...
-
-For a detailed analysis, please refer to [2]. We can add a kind checking to
-fix the issue.
-
-[1] https://github.com/eddyz87/bpf/tree/binsort-btf-dedup
-[2] https://lore.kernel.org/all/0c0ef20c-c05e-4db9-bad7-2cbc0d6dfae7@oracle.com/
-
-Fixes: 8fd27bf69b86 ("libbpf: Add BPF static linker BTF and BTF.ext support")
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
-Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
-Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
----
-v2:
- - Refactored the code using btf_is_var
- - Improved the comment to be more reasonable
----
- tools/lib/bpf/linker.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/tools/lib/bpf/linker.c b/tools/lib/bpf/linker.c
-index 0d4be829551b..5a583053e311 100644
---- a/tools/lib/bpf/linker.c
-+++ b/tools/lib/bpf/linker.c
-@@ -2213,10 +2213,17 @@ static int linker_fixup_btf(struct src_obj *obj)
- 		vi = btf_var_secinfos(t);
- 		for (j = 0, m = btf_vlen(t); j < m; j++, vi++) {
- 			const struct btf_type *vt = btf__type_by_id(obj->btf, vi->type);
--			const char *var_name = btf__str_by_offset(obj->btf, vt->name_off);
--			int var_linkage = btf_var(vt)->linkage;
-+			const char *var_name;
-+			int var_linkage;
- 			Elf64_Sym *sym;
- 
-+			/* could be a variable or function */
-+			if (!btf_is_var(vt))
-+				continue;
-+
-+			var_name = btf__str_by_offset(obj->btf, vt->name_off);
-+			var_linkage = btf_var(vt)->linkage;
-+
- 			/* no need to patch up static or extern vars */
- 			if (var_linkage != BTF_VAR_GLOBAL_ALLOCATED)
- 				continue;
--- 
-2.25.1
+Best regards,
+Krzysztof
 
 
