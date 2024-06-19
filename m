@@ -1,182 +1,260 @@
-Return-Path: <linux-kernel+bounces-220728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F6F390E655
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:53:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B37790E658
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0539AB224AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:53:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20BB31F235EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8917E103;
-	Wed, 19 Jun 2024 08:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8835B7E794;
+	Wed, 19 Jun 2024 08:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RCsL/qu+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="PzXPGTkO"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7E07D06B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614C57CF18
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718787201; cv=none; b=MAgLybgnIq1I0bC/qWf7p8sG0Z/AHmyxYMnHpqigdWm9zi1h91rvBxHwOs2PTS5Q8LiAW7keJ0wv0djGWxUpr/lsJd0vG/B45lP3lekonVj61jxq7KWre0SUUnBvcsYsPh62C2XgIDWNOQ05KoCMreRJAsXHRgfoHN4Okvj/NuE=
+	t=1718787201; cv=none; b=ILTlQu9ZvOEX6/1Gf+dXdN8wPvbvA7g0qTJ1tMXY1MClLPhgWRwIsja1grk8vfu9UmTMPS7mcfLXH3kUbCoyD/ed0W6oIrlHNbl/KlBwHjb34oUpuZlZt4y1qoCiqntwF60b85XOioqj15VtkugBO4X5+QmnyHDZJlTABaLLLNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718787201; c=relaxed/simple;
-	bh=+6Ph+TrFLry0RALJDZwC+l5NPuVfp+qEKrt9VTovrrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aka6B2tv1ivKjLrfvW2DZVwK+9ebFRATCyTpxTUz02NATWro7NPNR8mGhOk39TIIc3mseJr+vTwA8a378GVgAmqqRIXINipn6SGvQHerzsQo3d2vCGHR9HANoz5khwbBEWit+umLlZpQrC+OOh2JXQE5fhmQMESxhemX+Y7Ye94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RCsL/qu+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718787198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xPS8SS6ennjQHF2kXRfpt1rl7sSsrfRS8VpYtUApKVM=;
-	b=RCsL/qu+fGVIx9C4b8/XrJ1W4zaKBpbKuk6quHUFL8HXtAn33EBYJ9kjFRyjxg0H+JqUSx
-	uRxlQZbNorpKFJQ1Gmbs+ai1cWqJKdtFtlpsoa+w+gwf1U8SfnIKiprNBVgUuHatQpftCV
-	FOw57oDmHD6C2LVFBG1Z1iBuH0prU0s=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-203-GZOgIdjJMkKvE9J5rtC_UA-1; Wed, 19 Jun 2024 04:53:17 -0400
-X-MC-Unique: GZOgIdjJMkKvE9J5rtC_UA-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ebdc5ccb17so47225921fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 01:53:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718787195; x=1719391995;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xPS8SS6ennjQHF2kXRfpt1rl7sSsrfRS8VpYtUApKVM=;
-        b=cpNLCCwnzianadT6TLffZLZsEbJ0BKMLNJ03RoHE7Zx0Xmm5EA3e8WrKBQ2MDBYP8n
-         nrCBAhQmrkMTPhZahoOBC64qk6fvM3bRAQ88/7Y4HGcw1A/8yJqQR/iITM3FC/60ok7B
-         QNSwI26rQkHIea3m570woOrXIt2DFdWxzXwM5UyTWca7Kym8mk8HOJf8QfWr1Px+hFS5
-         46G8A3cBZzO/zK4gfg3pJl3Q9MVWlcFN62KCBwU/9g74L5xKv7V7Iai2EkyCfvCLnFzq
-         mAPKwgh0KZuN5NNNGTQDPbwX8uWVjhpNkiVCsXmrI4SgQF8b2lYBTN+hmzPeBwvrhZuJ
-         zHWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXN+By63T5//Kz1f/z93SuqvBDFMUwe3hVruWlckOvHUrKli11FG3ggrnqGNPwhyhziaieQ/nnZnWD5Ll9rI1C5EPz/g/1IghK3FvYH
-X-Gm-Message-State: AOJu0YzKIqoc6MIbM7UPvdZ4ThG8icUxhstS8XsCbPODdwUJkNB7OPmt
-	FJPIcXIV9HEuBXFysS5+n7rPRbgKumblOlvQ+OwS9OiqJ8qFGOCLtaXCZGcWSuIxJq/pT95Gqr9
-	6cLHoDANgonHanQQqfYqrj0U9zrch9Db6vTZoNTaWziqLNzUWlLAJiLH/L2ux+A==
-X-Received: by 2002:ac2:560a:0:b0:52b:bdfe:e0c9 with SMTP id 2adb3069b0e04-52ccaa558a4mr1248387e87.9.1718787195420;
-        Wed, 19 Jun 2024 01:53:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE14pHNTd76/dq2L2pGAL/VAZ5zNFTz33QD2tvo9FUi+TaA3x0uzc0+wECZLIvEP2JDyTVymQ==
-X-Received: by 2002:ac2:560a:0:b0:52b:bdfe:e0c9 with SMTP id 2adb3069b0e04-52ccaa558a4mr1248366e87.9.1718787194585;
-        Wed, 19 Jun 2024 01:53:14 -0700 (PDT)
-Received: from redhat.com ([2.52.146.100])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282564dsm1699516e87.9.2024.06.19.01.53.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 01:53:13 -0700 (PDT)
-Date: Wed, 19 Jun 2024 04:53:08 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	ksummit@lists.linux.dev
-Subject: Re: [PATCH 2/2] Documentation: best practices for using Link trailers
-Message-ID: <20240619044810-mutt-send-email-mst@kernel.org>
-References: <20240618-docs-patch-msgid-link-v1-0-30555f3f5ad4@linuxfoundation.org>
- <20240618-docs-patch-msgid-link-v1-2-30555f3f5ad4@linuxfoundation.org>
- <20240619043727-mutt-send-email-mst@kernel.org>
+	bh=JzOv+FKo4c0KcRrvkL0lGpzjLRpDDjA9GmnK9SkYkJg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TGpThd6SRWP/KzU2TnWE6ylzcQy/yIiFyYhDsMLauG8dLOasO1MC78luwhOVNGS49f0JMWgMM65ui/je6S6ucjIkgb9DoD7yQyIKFVcXayJ/QAO9/fMRUgd/cRZ3YCcqZuqTkZiErlaDj6xi1zj1/fDl8zaNVG4p/cHUcDd8cn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=PzXPGTkO; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=snlegwbmlfertojwo6ecli3wve.protonmail; t=1718787195; x=1719046395;
+	bh=bznw5tDTy8icVqH5yxfNfTnDKC6dWBkUO+jA+0XZCX8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=PzXPGTkO7Q57ToUKolhivkewFshNFBAKwcxnDMYFQAB6fkffK2ugxPbENVNr5qco/
+	 V+v5xHUfQsgTfs0mNOfkpd512GcFUOk+Ry0Umsnb4MziWPVc1Pady/jAfG1rgqA7om
+	 4/RoJLpJQjS3FMKBTM9b4zuhWBXHYj2xZppE4GI6BClkrvkemR+F0TfhCwh8StGQ1G
+	 IBNr8ZVn6VIuA8SofDTP9ZUanHfQgdaAYlmbjbnQJMTNwRizf/c93QSaPdUpJppuaE
+	 lR8dTu5DvbNnplQlSdIOxYlBDOt6GIYM6AW0+TmrPXO+MGPOt3RAjCmGC5+8VxHqR4
+	 Kv8/NtwcrntvA==
+Date: Wed, 19 Jun 2024 08:53:11 +0000
+To: Danilo Krummrich <dakr@redhat.com>, gregkh@linuxfoundation.org, rafael@kernel.org, mcgrof@kernel.org, russ.weight@linux.dev, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com, pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] rust: add abstraction for struct device
+Message-ID: <a4bf20a0-60e9-4462-a9d7-7353514b02a7@proton.me>
+In-Reply-To: <20240618154841.6716-2-dakr@redhat.com>
+References: <20240618154841.6716-1-dakr@redhat.com> <20240618154841.6716-2-dakr@redhat.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: de6d3edd9df502580cfde2cd4dea14fba16b66df
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619043727-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2024 at 04:41:49AM -0400, Michael S. Tsirkin wrote:
-> On Tue, Jun 18, 2024 at 12:42:11PM -0400, Konstantin Ryabitsev wrote:
-> > Based on multiple conversations, most recently on the ksummit mailing
-> > list [1], add some best practices for using the Link trailer, such as:
-> > 
-> > - how to use markdown-like bracketed numbers in the commit message to
-> > indicate the corresponding link
-> > - when to use lore.kernel.org vs patch.msgid.link domains
-> > 
-> > Cc: ksummit@lists.linux.dev
-> > Link: https://lore.kernel.org/20240617-arboreal-industrious-hedgehog-5b84ae@meerkat # [1]
-> > Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-> > ---
-> >  Documentation/process/maintainer-tip.rst | 24 ++++++++++++++++++------
-> >  1 file changed, 18 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/Documentation/process/maintainer-tip.rst b/Documentation/process/maintainer-tip.rst
-> > index 64739968afa6..57ffa553c21e 100644
-> > --- a/Documentation/process/maintainer-tip.rst
-> > +++ b/Documentation/process/maintainer-tip.rst
-> > @@ -375,14 +375,26 @@ following tag ordering scheme:
-> >     For referring to an email on LKML or other kernel mailing lists,
-> >     please use the lore.kernel.org redirector URL::
-> >  
-> > -     https://lore.kernel.org/r/email-message@id
-> > +     Link: https://lore.kernel.org/email-message@id
-> >  
-> > -   The kernel.org redirector is considered a stable URL, unlike other email
-> > -   archives.
-> > +   This URL should be used when referring to relevant mailing list
-> > +   resources, related patch sets, or other notable discussion threads.
-> > +   A convenient way to associate Link trailers with the accompanying
-> > +   message is to use markdown-like bracketed notation, for example::
-> >  
-> > -   Maintainers will add a Link tag referencing the email of the patch
-> > -   submission when they apply a patch to the tip tree. This tag is useful
-> > -   for later reference and is also used for commit notifications.
-> > +     A similar approach was attempted before as part of a different
-> > +     effort [1], but the initial implementation caused too many
-> > +     regressions [2], so it was backed out and reimplemented.
-> > +
-> > +     Link: https://lore.kernel.org/some-msgid@here # [1]
-> > +     Link: https://bugzilla.example.org/bug/12345  # [2]
-> > +
-> > +   When using the ``Link:`` trailer to indicate the provenance of the
-> > +   patch, you should use the dedicated ``patch.msgid.link`` domain. This
-> > +   makes it possible for automated tooling to establish which link leads
-> > +   to the original patch submission. For example::
-> > +
-> > +     Link: https://patch.msgid.link/patch-source-msgid@here
-> >  
-> >  Please do not use combined tags, e.g. ``Reported-and-tested-by``, as
-> >  they just complicate automated extraction of tags.
-> 
-> I don't really understand what this is saying.
-> So when is msgid.link preferable to kernel.org?
-> And when is kernel.org preferable to msgid?
+On 18.06.24 17:48, Danilo Krummrich wrote:
+> Add an (always) reference-counted abstraction for a generic C `struct
+> device`. This abstraction encapsulates existing `struct device` instances
+> and manages its reference count.
+>=20
+> Subsystems may use this abstraction as a base to abstract subsystem
+> specific device instances based on a generic `struct device`, such as
+> `struct pci_dev`.
+>=20
+> Co-developed-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+> ---
+>  rust/helpers.c        |   1 +
+>  rust/kernel/device.rs | 102 ++++++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs    |   1 +
+>  3 files changed, 104 insertions(+)
+>  create mode 100644 rust/kernel/device.rs
+>=20
+> diff --git a/rust/helpers.c b/rust/helpers.c
+> index 2c37a0f5d7a8..0e02b2c64c72 100644
+> --- a/rust/helpers.c
+> +++ b/rust/helpers.c
+> @@ -23,6 +23,7 @@
+>  #include <kunit/test-bug.h>
+>  #include <linux/bug.h>
+>  #include <linux/build_bug.h>
+> +#include <linux/device.h>
+>  #include <linux/err.h>
+>  #include <linux/errname.h>
+>  #include <linux/mutex.h>
+> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> new file mode 100644
+> index 000000000000..e445e87fb7d7
+> --- /dev/null
+> +++ b/rust/kernel/device.rs
+> @@ -0,0 +1,102 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Generic devices that are part of the kernel's driver model.
+> +//!
+> +//! C header: [`include/linux/device.h`](srctree/include/linux/device.h)
+> +
+> +use crate::{
+> +    bindings,
+> +    types::{ARef, Opaque},
+> +};
+> +use core::ptr;
+> +
+> +/// A reference-counted device.
+> +///
+> +/// This structure represents the Rust abstraction for a C `struct devic=
+e`. This implementation
+> +/// abstracts the usage of an already existing C `struct device` within =
+Rust code that we get
+> +/// passed from the C side.
+> +///
+> +/// An instance of this abstraction can be obtained temporarily or perma=
+nent.
+> +///
+> +/// A temporary one is bound to the lifetime of the C `struct device` po=
+inter used for creation.
+> +/// A permanent instance is always reference-counted and hence not restr=
+icted by any lifetime
+> +/// boundaries.
+> +///
+> +/// For subsystems it is recommended to create a permanent instance to w=
+rap into a subsystem
+> +/// specific device structure (e.g. `pci::Device`). This is useful for p=
+assing it to drivers in
+> +/// `T::probe()`, such that a driver can store the `ARef<Device>` (equiv=
+alent to storing a
+> +/// `struct device` pointer in a C driver) for arbitrary purposes, e.g. =
+allocating DMA coherent
+> +/// memory.
+> +///
+> +/// # Invariants
+> +///
+> +/// The pointer stored in `Self` is non-null and valid for the lifetime =
+of the `ARef` instance. In
 
+There is no pointer stored in `Self` directly. I think you can just
+remove the first sentence.
 
-After reading the discussion in the commit log, it's now clearer what's meant
-to me, but the Documentation patch itself does not really make it clear
-IMHO.
+The second sentence can also be improved, see `Task` in
+`rust/kernel/task.rs:42`.
 
+> +/// particular, the `ARef` instance owns an increment on the underlying =
+object=E2=80=99s reference count.
+> +///
+> +/// `bindings::device::release` is valid to be called from any thread, h=
+ence `ARef<Device>` can be
+> +/// dropped from any thread.
+> +#[repr(transparent)]
+> +pub struct Device(Opaque<bindings::device>);
+> +
+> +impl Device {
+> +    /// Creates a new reference-counted abstraction instance of an exist=
+ing `struct device` pointer.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Callers must ensure that `ptr` is valid, non-null, and has a non=
+-zero reference count,
+> +    /// i.e. it must be ensured that the reference count of the C `struc=
+t device` `ptr` points to
+> +    /// can't drop to zero, for the duration of this function call.
+> +    ///
+> +    /// It must also be ensured that `bindings::device::release` can be =
+called from any thread.
+> +    /// While not officially documented, this should be the case for any=
+ `struct device`.
+> +    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Self> {
+> +        // SAFETY: By the safety requirements, ptr is valid.
+> +        // Initially increase the reference count by one to compensate f=
+or the final decrement once
+> +        // this newly created `ARef<Device>` instance is dropped.
+> +        unsafe { bindings::get_device(ptr) };
+> +
+> +        // CAST: `Self` is a `repr(transparent)` wrapper around `binding=
+s::device`.
+> +        let ptr =3D ptr.cast::<Self>();
+> +
+> +        // SAFETY: By the safety requirements, ptr is valid.
 
-It is also sad that instead of just setting
-[am]
-        messageid = true
+That is not the only requirement on `from_raw`, you also need to own
+a refcount (which you do) on `ptr`.
 
-one now apparently has to resort to funky scripts.
-Any chance to at least document the best practices - what has to be done
-as part of this patch to make git-am create these Link: things?
+---
+Cheers,
+Benno
 
-
-Thanks!
-
-
-> 
-> 
-> > -- 
-> > 2.45.2
-> > 
+> +        unsafe { ARef::from_raw(ptr::NonNull::new_unchecked(ptr)) }
+> +    }
+> +
+> +    /// Obtain the raw `struct device *`.
+> +    pub(crate) fn as_raw(&self) -> *mut bindings::device {
+> +        self.0.get()
+> +    }
+> +
+> +    /// Convert a raw C `struct device` pointer to a `&'a Device`.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Callers must ensure that `ptr` is valid, non-null, and has a non=
+-zero reference count,
+> +    /// i.e. it must be ensured that the reference count of the C `struc=
+t device` `ptr` points to
+> +    /// can't drop to zero, for the duration of this function call and t=
+he entire duration when the
+> +    /// returned reference exists.
+> +    pub unsafe fn as_ref<'a>(ptr: *mut bindings::device) -> &'a Self {
+> +        // SAFETY: Guaranteed by the safety requirements of the function=
+.
+> +        unsafe { &*ptr.cast() }
+> +    }
+> +}
+> +
+> +// SAFETY: Instances of `Device` are always reference-counted.
+> +unsafe impl crate::types::AlwaysRefCounted for Device {
+> +    fn inc_ref(&self) {
+> +        // SAFETY: The existence of a shared reference guarantees that t=
+he refcount is non-zero.
+> +        unsafe { bindings::get_device(self.as_raw()) };
+> +    }
+> +
+> +    unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
+> +        // SAFETY: The safety requirements guarantee that the refcount i=
+s non-zero.
+> +        unsafe { bindings::put_device(obj.cast().as_ptr()) }
+> +    }
+> +}
+> +
+> +// SAFETY: As by the type invariant `Device` can be sent to any thread.
+> +unsafe impl Send for Device {}
+> +
+> +// SAFETY: `Device` can be shared among threads because all immutable me=
+thods are protected by the
+> +// synchronization in `struct device`.
+> +unsafe impl Sync for Device {}
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index fbd91a48ff8b..dd1207f1a873 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -28,6 +28,7 @@
+>=20
+>  pub mod alloc;
+>  mod build_assert;
+> +pub mod device;
+>  pub mod error;
+>  pub mod init;
+>  pub mod ioctl;
+> --
+> 2.45.1
+>=20
 
 
