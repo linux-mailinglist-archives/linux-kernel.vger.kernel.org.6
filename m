@@ -1,107 +1,114 @@
-Return-Path: <linux-kernel+bounces-221568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B7690F591
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:57:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDC490F595
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE056282C5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:57:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5433D282A5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E312815696E;
-	Wed, 19 Jun 2024 17:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B568815697D;
+	Wed, 19 Jun 2024 17:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W1uIjQxm"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5jradRK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B289E20DCB
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 17:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F081855884;
+	Wed, 19 Jun 2024 17:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718819843; cv=none; b=grAQ4+qONancJPdAkMI7yZjVPRvF5yeV69WCgAUyAIZhjdJgQ4XZf3OLnxANIUw6us6rCVF/yHwcmaq7fUWZsp3ACesFBNDTvZUqRZtUC6laDQB+xkNWhxldwyv2s7Zimt1+KppST9ZdtNHON4+fFoZnjoKzSIAm2IdKlRm43RU=
+	t=1718819885; cv=none; b=n6y+sxuXQaUae1Bm6b72sUegMMhzmRgrhEU79EWtQTBXMteCKZxqexQvpfD+8cN2SgviQ3hv57eLx1IBGoSbgYn5+hGRf07eMB29kRXS6s/ijeBU79uqrIgkPF92vi6i1I2uxVC62kO7Ikhut2fK/Izkm1tlzRL1ZN6fElEWVHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718819843; c=relaxed/simple;
-	bh=cOST1LD2L/IX7IsCCJXvuJQMIXuM5uZcCpA50xbBDuw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tzZ2kb9bRLigfPXyXwu8jsg0Maq3woiEJEVq9d9NKL0gECWQQ939EsqeEEO0qpN32uFhEcEjLWXB7ktMkvtIR6Ld8mGj07eWBUNRdtDZNNBtCZP8mBiP4UIw+3pUkPtfxgGsBbTFTa8mphIrT2jlox8SwEp9glI5AKw9SuMvoBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=W1uIjQxm; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52bc035a7ccso74691e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:57:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718819840; x=1719424640; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=N8Kayv4g6koIn38mbeG+B2azD4AgtkWZC+a18KeR3Ss=;
-        b=W1uIjQxmaOD/MhrLCRSRm0fbIco7Hp0GIDfsFINT93DZoJTi1bdrr+r8ywfP+RAbmX
-         /3N9YFSTNOHmbhtkiq9bbGR0Q/54Yo2vX5nWVtvbdocxMUVS5tw4J+zjJZaKu57LW42L
-         fOr4f6xGI8C4hwZMSlZ4F5T7MvvSJUu2DwCYQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718819840; x=1719424640;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N8Kayv4g6koIn38mbeG+B2azD4AgtkWZC+a18KeR3Ss=;
-        b=snqHGf2Qmi8xOmE51DmK6qhjmH7w41hSWHGy3iqv6FXRMik+bACJQ6SE3wnydpFt9Y
-         WLXZzcH9fuV3paK1C71GKCCrnlb0MKMvyjtvskWLW/GBDIfLh+nuZuseeO0vanRN8xEX
-         XkmLSt1jPEp7QCU71QhWk6W79Y+xTlyLyJhLfTGShkj9QzIZdhOn8pBVhSkXeUznLByI
-         XhOaQEZSnC9YlQGEQMRFPgYEwnaoIAmU0Vhy88SwF4ti4MPvtFluVOfxA/EEQ/uGbpFQ
-         W4wb3KFQIW05scIF+7L+impk69JVWIoDXd8VMbhBC6vF7y5ulR8SEX+gIlH61+Sw5s16
-         Z6ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJBGkntz6Ef7KpTmYwIKANMFMRTJhcBDhnXtgHkIh4kmg95ZO1GOHIxRzPhuccHNLtkjXQaB2NtDpnZeEA1iMTCCJ7yfDqLJr8VJqh
-X-Gm-Message-State: AOJu0YwuNZnR97nBfmsvILEv1hhG7/WwUzyYXClHJ3fKK9dp/9k3QbAG
-	NXumH3oEYlGcxwJJvpc7bdM7Bc64Jelh0UXQ2d1l1UABaYVVfx/UcBj3Hvg6hwa7QzruseVQlPP
-	HLNCsmOxEryk/CFXWruzrniGmuKeYaV8eYJY=
-X-Google-Smtp-Source: AGHT+IEgCS86JnQXRyN0nE0BGQEBVqiPjOVoriIOkC3n4X0reg2XiAoY/sbyO3Xu8SPKVUrmNpIW/ln1WidijI4MmP4=
-X-Received: by 2002:a05:6512:3f0d:b0:52c:818c:13b8 with SMTP id
- 2adb3069b0e04-52ccaa587c8mr2438161e87.4.1718819839758; Wed, 19 Jun 2024
- 10:57:19 -0700 (PDT)
+	s=arc-20240116; t=1718819885; c=relaxed/simple;
+	bh=dulOfWapq1riowFzarPIjt0FGEvDfAqz4NvXyqMk3Hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gt1gX+ISJsoNVO2sNXbwFojJBO1ZG/1xp5rm32KAeRqb5KpLLuxFdvfRpSsMnsNetRIR+0Ki8R3T/oclxdIAjkmxsg34A2jQ3jelIegJ3838ApAvEp1dIeAeTjNzku/D/W/EqiYCIX+CgVgZhjjgnsD96VQJc2/FqQ2csHbCK2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5jradRK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FF24C2BBFC;
+	Wed, 19 Jun 2024 17:58:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718819884;
+	bh=dulOfWapq1riowFzarPIjt0FGEvDfAqz4NvXyqMk3Hg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C5jradRKDOYlJ4oZTE2K1yTJ0Rdb7pnd578crjSaPs2mJnivr2VUHx9pcfhZsonF4
+	 pWdZDIA+7zWq9kBxRUfa0VrbfORmXynK19G0Hf/rO2h3jFCRj8zxmDbum24diV0FNM
+	 vKt8BG+IWQOUAtoyQVEx7XZT0MbPG2hohh4FPN5SkmxIwnZVyamJwe5Bksau9G/yvS
+	 FmFDw8VC2XzRRrHbKtilfwkZGDAqXxCRfZ3oMt7IYUvHvYjVcW1rhJOVz72CLSjh2D
+	 jVlOWsklDxEK4ShTgmJk73t+4wWuWRcPPFQJslWVToDneMw/imTBUcGoPXz7qae3s2
+	 zne6RXXH4tQmw==
+Date: Wed, 19 Jun 2024 18:57:59 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Subject: Re: [PATCH v4 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
+Message-ID: <20240619-vanity-crowd-24d93dda47b8@spud>
+References: <20240619064904.73832-1-kimseer.paller@analog.com>
+ <20240619064904.73832-5-kimseer.paller@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618093656.1944210-1-takayas@chromium.org> <20240618155320.75807db5@rorschach.local.home>
-In-Reply-To: <20240618155320.75807db5@rorschach.local.home>
-From: Takaya Saeki <takayas@chromium.org>
-Date: Thu, 20 Jun 2024 02:57:08 +0900
-Message-ID: <CAH9xa6cNT6VwQoQwcop3uLOHLF8xqX=D8HQ7x4C1Aw3qNr=2_A@mail.gmail.com>
-Subject: Re: [PATCH] filemap: add trace events for get_pages, map_pages, and fault
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Junichi Uekawa <uekawa@chromium.org>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="VZs3U0EDq8+3ekdN"
+Content-Disposition: inline
+In-Reply-To: <20240619064904.73832-5-kimseer.paller@analog.com>
 
-Thanks Steven for trying it out.
 
-> I can see it bringing down the number of pages needed to be saved dramatically.
+--VZs3U0EDq8+3ekdN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yes, I agree.
-However, note that wc does not count the size of the page caches
-correctly since 'get_map_pages' gives you a range. In your example of
-the less command, actually the total sizes of page_cache_size and
-get_map_pages look the same.
+On Wed, Jun 19, 2024 at 02:49:03PM +0800, Kim Seer Paller wrote:
+> +patternProperties:
+> +  "^channel@[0-4]$":
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        description: The channel number representing the DAC output channel.
+> +        maximum: 4
+> +
+> +      adi,toggle-mode:
+> +        description:
+> +          Set the channel as a toggle enabled channel. Toggle operation enables
+> +          fast switching of a DAC output between two different DAC codes without
+> +          any SPI transaction.
+> +        type: boolean
+> +
+> +      adi,output-range-microamp:
+> +        description: Specify the channel output full scale range.
+> +        enum: [3125000, 6250000, 12500000, 25000000, 50000000, 100000000,
+> +               200000000, 300000000]
 
-Instead of less, running a large binary such as Chrome (232MB) gives
-us a better example. '# trace-cmd record -e filemap chrome --version'
-showed 58% reduction from 42MB to 17MB in my environment.
-- Total size of mm_filemap_add_to_page_cache: 42,958,848 bytes
-- With mm_filemap_map_pages and mm_filemap_get_pages: 17,993,728 bytes
+IIO folks, is this sort of thing common/likely to exist on other DACs?
 
-By the way,  'mm_filemap_map_pages' traces a range requested to
-populate, which includes pages that are not in caches yet and thus are
-skipped. So, you need to calculate the intersection with
-mm_filemap_add_to_page_cache to see page caches that are actually
-mapped.
-I'm wondering if we should put a trace event per each successful page
-mapping event as mm_filemap_add_to_page_cache does, by putting an
-event inside the page map loop.
+--VZs3U0EDq8+3ekdN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnMcJwAKCRB4tDGHoIJi
+0qTHAQCIBJ6P9QySiAd2lvBBP8TytzaivOaDJCPxiSOpB2GEeAD/amMaLYjHrHTI
+cN0HQsmvkMOJOJv0w/QSOQjlkK4yQQ8=
+=RET4
+-----END PGP SIGNATURE-----
+
+--VZs3U0EDq8+3ekdN--
 
