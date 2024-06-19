@@ -1,171 +1,316 @@
-Return-Path: <linux-kernel+bounces-220407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B696090E155
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:33:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B0590E15A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFFB8B21B49
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:33:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C3A6B21A6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FAD8AD32;
-	Wed, 19 Jun 2024 01:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00128473;
+	Wed, 19 Jun 2024 01:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GDzwUmEY"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDCGVi9O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE11363A9
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 01:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2FCCA40;
+	Wed, 19 Jun 2024 01:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718760819; cv=none; b=fB5G/+YUeszZycciRUK+dg2E6kuw7iowuWkqMjY2GdI9fRvHfhDATZwNqRCtAHGr72mRxmnAPwb/OS2kqSLZvErLAxTVyWWFJFvJiJTGu9dWMzg4uGnys4tnrLL8iOrewuj+XEl2p/MeFvdGqrEmeEr38uYx1/PiL2+QhwhRzsA=
+	t=1718761047; cv=none; b=fr/+zLuEDqNHCufXlYVk4YUD06AiNBt8TvxAomRMNwC1zb+e4LEs38R/LV8ijijQ0lDQlvlEBmRBuNwhLg6A1f4pLVgQUfpqWtCCvSFXc1ZanhhCsw3koAfkh/uUr8Xe1kZlmMKofNTFYncVwsJEXQqJ6c6SWRd+LkTQvoIhLwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718760819; c=relaxed/simple;
-	bh=AgBQfUPLoqrbhuSoC4dUS42wrCdlYP45yQF/5SJEYpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=gdHSi2tsEYdzR0H7eU+yIuWB5PHt3zag/Fy1LFq3Yd8Bz2Xm2ZHN1rgtGfYaPNGM9lexyK3MPID2ySObDM8mvHGAMuK9Eofqj6oyEERLmP+6fknp/ps1ViA1TKTgqBRS/EinSnPYTu+7x2sKRNq5+h9GhRWfN3JovN/rpBA0j+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GDzwUmEY; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240619013329epoutp01fa5e7eb2a203fcb02ba3150ac4b61377~aQ9l-UMPu0610906109epoutp01k
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 01:33:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240619013329epoutp01fa5e7eb2a203fcb02ba3150ac4b61377~aQ9l-UMPu0610906109epoutp01k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718760809;
-	bh=4t/SmYLar+HaG2yFNDOf3LyoDqlKE/6BTNN5g/MR14Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GDzwUmEYkrqDlIXzI8+m6PqScF6BtKnrjoOf4fbpzsUgrrWwokY6aQS1sKGLQC8CY
-	 yoi9tGd6F2kZHhncfX3NUF6zUCK/bdqjsMCMKrxm7+Lbbd+7cPaJ32lodZsB2X/51e
-	 wLQTlZMdmXViP/rn4a5sKBRQPpgL0g1sUwQRl24o=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20240619013328epcas2p494f2194ebe55b1b6c1f899a77d359d17~aQ9lUZRaF2096220962epcas2p4M;
-	Wed, 19 Jun 2024 01:33:28 +0000 (GMT)
-Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.70]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4W3mNS0zWCz4x9Q1; Wed, 19 Jun
-	2024 01:33:28 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1C.00.25328.86532766; Wed, 19 Jun 2024 10:33:28 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240619013327epcas2p46269e8b7db43b5897a65c4c67fa7ff58~aQ9kV-voa2094720947epcas2p4d;
-	Wed, 19 Jun 2024 01:33:27 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240619013327epsmtrp10184b41cf3437c9bff27ee4706de600a~aQ9kVQoj52781227812epsmtrp1R;
-	Wed, 19 Jun 2024 01:33:27 +0000 (GMT)
-X-AuditID: b6c32a4d-d53ff700000262f0-3f-667235688e26
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	53.EC.07412.76532766; Wed, 19 Jun 2024 10:33:27 +0900 (KST)
-Received: from ubuntu (unknown [10.229.95.128]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240619013327epsmtip29d769f5bdd0ca8faf4c2876b7be0a569~aQ9kKoWM92746027460epsmtip2P;
-	Wed, 19 Jun 2024 01:33:27 +0000 (GMT)
-Date: Wed, 19 Jun 2024 10:34:26 +0900
-From: Jung Daehwan <dh10.jung@samsung.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: joswang <joswang1221@gmail.com>, Greg KH <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, Jos Wang
-	<joswang@lenovo.com>
-Subject: Re: [PATCH v4, 3/3] usb: dwc3: core: Workaround for CSR read
- timeout
-Message-ID: <20240619013423.GA132190@ubuntu>
+	s=arc-20240116; t=1718761047; c=relaxed/simple;
+	bh=7KPk+eUpUpVkXhfAm4cYEHZmPxsTEAG5Bit5UYU3VHc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UNDpI3AoB6qtFatobsMDqGFIjTVkZu/6BBDEk7yN1tW2y99pwqhlK8ULuQOcmh0dDQDY948ngj/UseL2l1fChZD59KF8VI4t+lnVc3puYQpjIsLbS1ExVtIF7SMmAfpeOw2VXSFHjLoJOqOs0MnW1gbVVGnWERscalcAMBvUtcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JDCGVi9O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 629E7C4AF1C;
+	Wed, 19 Jun 2024 01:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718761047;
+	bh=7KPk+eUpUpVkXhfAm4cYEHZmPxsTEAG5Bit5UYU3VHc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JDCGVi9O560pnYhznCNHxS7Ejy23bQCmeAa6F0lbqt8CI25Z/JZLp3+hXMZWW7rdg
+	 Fb1YOQX8pddpmSSe6rnt3CLQPBSFLn/pDjSh1TlghkSOQQrks23kHTelhWF4nl7ZQG
+	 TPeikpifkJVdpbb+GPzL0gNksthVgX1Mu5T8z34zfQi3VrqHHwM+4c8hTvhap/9ruR
+	 rOJeXMtXpynSullMduUi3AU4zn7s/rsmpzktzOAYeIGkyUgW5lXLGh+fgCDjvSiK/o
+	 rLYS7R4QcY170Bl6jYaTKAntDaw9JpyMQOqh3GfVFpQsh6/dhaFx4kogjEaypc9HqE
+	 DmhUNxC0XUpIg==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c819f6146so8007851e87.1;
+        Tue, 18 Jun 2024 18:37:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUf+Dv+UzYXYkQWKMngyg/crjsAx89soJ6Ydyrbb5PRINsg8HIfmRjCwRGdZ+Ou5UG/kRp4qYmYy09MsqIpVULV77UcP6xUhwnFhwlOkfBbCPH9IqMIAjo0F8ZTkb34z9OTJsulrqfrWJhF
+X-Gm-Message-State: AOJu0YyJZLtLJtBc34oelozk7teiUlS4lR22rj7p0Ey4Qztj0dt3Yn+c
+	ZIcoC0r4IV+hQYnJd2/ZWAYSdFaaLMuwtpBD759oaWPM7dKTMFhf8FTcwsaE5dlA8VbGP1AFBeO
+	/jPvov2dYopDWJh+PcVV4UDgLH1E=
+X-Google-Smtp-Source: AGHT+IEK7oJtpoJScl8nb4APMXGgqAM5F71c5kuZrKvsrbng6BgrHAlh94+h8812eKok2YCS89SeZykcmYtIEYM6jFE=
+X-Received: by 2002:a19:6a12:0:b0:52c:8ea2:9a82 with SMTP id
+ 2adb3069b0e04-52ccaa65765mr660342e87.35.1718761046016; Tue, 18 Jun 2024
+ 18:37:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240618213600.63fdhod6nnx4h4m6@synopsys.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmmW6GaVGawdntLBbNi9ezWdx/y27R
-	fW0Pk8XlXXPYLBYta2W2WLDxEaPFqgUH2B3YPXbOusvucfbXS2aP/XPXsHts2f+Z0ePzJrkA
-	1qhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygK5QU
-	yhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BeYFesWJucWleel6eaklVoYGBkamQIUJ
-	2RndMwQLjrJVLJv5gLGBcT1rFyMnh4SAicS++dcZuxi5OIQE9jBK/Nm6kw3C+cQo8fDhaxYI
-	5xujxLxpB1hgWrrWtjBDJPYySiz8d50dwnnCKDHt1mdmkCoWAVWJV0t+MoLYbAJaEvd+nACL
-	iwjoSBw4cZ4JpIFZYDaTxNzfD4GKODiEBfwllmyQAKnhBapZdeE/G4QtKHFy5hOwzZwC1hKz
-	Gg6zgZSLCqhIvDpYDzJGQuAru8SN75eZIa5zkXi44grUpcISr45vYYewpSRe9rdB2cUSt54/
-	Y4ZobmGUWPGqBarZWGLWs3awo5kFMiR+fZnIDrJMQkBZ4sgtFogwn0TH4b9QYV6JjjYhiE5l
-	iemXJ0DDVFLi4OtzUBM9JK7OmAoNn43MEl3/NzNPYJSfheS1WUi2Qdg6Egt2f2KbBbSCWUBa
-	Yvk/DghTU2L9Lv0FjKyrGKVSC4pz01OTjQoMdfNSy+ERnpyfu4kRnEi1fHcwvl7/V+8QIxMH
-	4yFGCQ5mJRFep2l5aUK8KYmVValF+fFFpTmpxYcYTYFxNZFZSjQ5H5jK80riDU0sDUzMzAzN
-	jUwNzJXEee+1zk0REkhPLEnNTk0tSC2C6WPi4JRqYKpyPZ9Uy3uzZeVa1w1337m5HnPY2sYi
-	VVex7M4xtb+nm1L/i/op6Al9v3JLRzwzufdD1cpJoksOWz261JmZZKa8ZHe64oXuc70LH/9d
-	zPm9/tHEQ4sX5Gf/PKex+aiRm6PfBKUPrebiRxhVT9xiODxrU4M0h2BYlkPZu6rnWp4WLuf3
-	HxIUUDAx0c1vjetIChOM4F7ncF28eK3PvWfnjl0WMiqumjRhtdSkvx3vZjSFTWf8JD1j+pza
-	5cWHA2OO7C2ZFa0r9tFsmmnG7rXKLTl/VcRuVut/15if8t5O6xAXE9PWAGGuc7/FZz5cvLjk
-	zuojB7KztmfWFS1ie5TD9etoGrd6wzVjr6VnvXM1LJVYijMSDbWYi4oTAWx46pctBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsWy7bCSvG66aVGawfp/ohbNi9ezWdx/y27R
-	fW0Pk8XlXXPYLBYta2W2WLDxEaPFqgUH2B3YPXbOusvucfbXS2aP/XPXsHts2f+Z0ePzJrkA
-	1igum5TUnMyy1CJ9uwSujFMHtzAWtLJUTNp8k7mBsYO5i5GTQ0LARKJrbQuQzcUhJLCbUeL5
-	6fVQCUmJpXNvsEPYwhL3W46wQhQ9YpSY0dgNVsQioCrxaslPRhCbTUBL4t6PE2BxEQEdiQMn
-	zjOBNDALzGaSOHdvBViRsICvxPl9PWA2L1DRqgv/2SCmbmSW6PzbzQqREJQ4OfMJC4jNDDT1
-	xr+XQJM4gGxpieX/OEDCnALWErMaDrOBhEUFVCReHayfwCg4C0nzLCTNsxCaFzAyr2KUTC0o
-	zk3PTTYsMMxLLdcrTswtLs1L10vOz93ECI4BLY0djPfm/9M7xMjEwXiIUYKDWUmE12laXpoQ
-	b0piZVVqUX58UWlOavEhRmkOFiVxXsMZs1OEBNITS1KzU1MLUotgskwcnFINTEfNc7rjfm6L
-	3FPcdufAPdGcfW3pvKfP3uUsZr72Omx6c/R80W/vzn3pz0xXi+HWn3fdyNb24Z33s7cWlP+s
-	+afWO/V5X6K735nQHfXc8XtlhQqm8+YlnrkccFNmJ6fvyrNHLOY+sj+ntdf1e4qHlFzaBtct
-	bClOG9y7ayweNeuqznbTKP+wfKnj7PmivYf9nf1++xZvefCrOsX69j39XFZZpzKl13LTJjkk
-	/zdrTOLJyp6xdvu3Y+cyBCNt5W6b/Q2wevuo7DPDFX81m8Vn4yx+eW++4GTVEjCVIStqSuSB
-	xs8a91WynBT2H6uSb9x5Q197dfxjob2GBqI/drz7IjRr1a2yC9mvwsRn/O6cpMRSnJFoqMVc
-	VJwIAITzWYrwAgAA
-X-CMS-MailID: 20240619013327epcas2p46269e8b7db43b5897a65c4c67fa7ff58
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----40rWTt6DAFmUrjtMexcyNm5gpMTj9FMdHa8zGfbdWx6mQz74=_de1c8_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240618000530epcas2p15ee3deff0d07c8b8710bf909bdc82a50
-References: <20240601092646.52139-1-joswang1221@gmail.com>
-	<20240612153922.2531-1-joswang1221@gmail.com>
-	<2024061203-good-sneeze-f118@gregkh>
-	<CAMtoTm0NWV_1sGNzpULAEH6qAzQgKT_xWz7oPaLrKeu49r2RzA@mail.gmail.com>
-	<CGME20240618000530epcas2p15ee3deff0d07c8b8710bf909bdc82a50@epcas2p1.samsung.com>
-	<20240618000502.n3elxua2is3u7bq2@synopsys.com>
-	<20240618042429.GA190639@ubuntu>
-	<20240618213600.63fdhod6nnx4h4m6@synopsys.com>
+References: <20240618185609.4096399-1-elsk@google.com>
+In-Reply-To: <20240618185609.4096399-1-elsk@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 19 Jun 2024 10:36:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS2621mLaaUPSJqLPTCeowYSAXgoO9uKhF8uTeNK1jU8Q@mail.gmail.com>
+Message-ID: <CAK7LNAS2621mLaaUPSJqLPTCeowYSAXgoO9uKhF8uTeNK1jU8Q@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: Prevent segfault when getting filename
+To: Yifan Hong <elsk@google.com>
+Cc: kernel-team@android.com, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-------40rWTt6DAFmUrjtMexcyNm5gpMTj9FMdHa8zGfbdWx6mQz74=_de1c8_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-
-On Tue, Jun 18, 2024 at 09:36:03PM +0000, Thinh Nguyen wrote:
-> On Tue, Jun 18, 2024, Jung Daehwan wrote:
-> > 
-> > Hi Thinh,
-> > 
-> > We faced similar issue on DRD mode operating as device.
-> > Could you check it internally?
-> > Case: 01635304
-> > 
-> 
-> Hi Jung,
-> 
-> It's a separate case. Please check through our support channel to avoid
-> any miscommunication/disconnect.
-> 
-> Thanks,
-> Thinh
-
-Thanks for the check. I will check through the support channel again.
-
-Best Regards,
-Jung Daehwan
-
-------40rWTt6DAFmUrjtMexcyNm5gpMTj9FMdHa8zGfbdWx6mQz74=_de1c8_
-Content-Type: text/plain; charset="utf-8"
+On Wed, Jun 19, 2024 at 3:56=E2=80=AFAM Yifan Hong <elsk@google.com> wrote:
+>
+> ... and lineno in recursive checks.
+>
+> If the following snippet is found in Kconfig:
+>
+> config FOO
+>         tristate
+>         depends on BAR
+>         select BAR
+>         help
+>           foo
+>
+> ... without BAR defined; then if one runs
+> `make tinyconfig`, there is a segfault.
+>
+>   Kconfig:34:error: recursive dependency detected!
+>   Kconfig:34:   symbol FOO depends on BAR
+>   make[4]: *** [scripts/kconfig/Makefile:85: allnoconfig] Segmentation fa=
+ult
+>
+> This is because of the following. BAR is
+> a fake entry created by sym_lookup() with prop
+> being NULL. In the recursive check, there is a
+> NULL check for prop to fall back to
+> stack->sym->prop if stack->prop is NULL. However,
+> in this case, stack->sym points to the fake BAR
+> entry created by sym_lookup(), so prop is still
+> NULL. prop was then referenced without additional
+> NULL checks, causing segfault.
+>
+> Similarly, menu is also accessed without NULL
+> checks. However, sym_lookup() creates entry
+> that is not a choice, so technically it shouldn't
+> fall into the state where menu is NULL for
+> choices. But I mechnically apply the NULL check
+> anyways for completeness.
+>
+> This mechnical patch avoids the segfault. The
+> above snippet produces the following error with
+> this patch:
+>
+>   Kconfig:34:error: recursive dependency detected!
+>   Kconfig:34:   symbol FOO depends on BAR
+>   ???:-1:       symbol BAR is selected by FOO
+>
+> That being said, I am not sure if it is the right
+> fix conceptually and in functionality.
 
 
-------40rWTt6DAFmUrjtMexcyNm5gpMTj9FMdHa8zGfbdWx6mQz74=_de1c8_--
+
+  "???:-1:       symbol BAR is selected by FOO"
+
+is weird, as there is no property
+like "selected by".
+
+It should print the file and lineno of
+"select BAR".
+
+
+
+
+
+The existing code is already wrong.
+
+In the past, I was thinking of fixing it to reference
+the relevant menu entry.
+
+
+Currently, it points to an unrelated location.
+
+
+
+[Test Code]
+
+
+config FOO
+       bool
+
+config BAR
+       bool
+
+config FOO
+       bool "FOO"
+       depends on BAR
+       select BAR
+
+
+
+
+$ make defconfig
+*** Default configuration is based on 'x86_64_defconfig'
+Kconfig:1:error: recursive dependency detected!
+Kconfig:1: symbol FOO depends on BAR
+Kconfig:4: symbol BAR is selected by FOO
+For a resolution refer to Documentation/kbuild/kconfig-language.rst
+subsection "Kconfig recursive dependency limitations"
+
+
+
+
+"Kconfig:1: symbol FOO depends on BAR"
+points to the other unrelated definition
+because "depends on BAR" appears the second
+entry starting line 7.
+
+
+
+
+So, I am not keen on applying another cheap fix
+to already-wrong code.
+
+If you want to fix it now, please remove all
+file/lineno logs from this function.
+
+Then, somebody may rewrite the code some day.
+
+
+
+
+
+
+
+
+
+
+>
+> Signed-off-by: Yifan Hong <elsk@google.com>
+> ---
+>  scripts/kconfig/symbol.c | 29 +++++++++++++++++++++--------
+>  1 file changed, 21 insertions(+), 8 deletions(-)
+>
+> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+> index 8df0a75f40b9..72ab4f274289 100644
+> --- a/scripts/kconfig/symbol.c
+> +++ b/scripts/kconfig/symbol.c
+> @@ -1045,6 +1045,8 @@ static void sym_check_print_recursive(struct symbol=
+ *last_sym)
+>         struct menu *menu =3D NULL;
+>         struct property *prop;
+>         struct dep_stack cv_stack;
+> +       const char *filename =3D NULL;
+> +       int lineno =3D 0;
+>
+>         if (sym_is_choice_value(last_sym)) {
+>                 dep_stack_insert(&cv_stack, last_sym);
+> @@ -1060,6 +1062,10 @@ static void sym_check_print_recursive(struct symbo=
+l *last_sym)
+>         }
+>
+>         for (; stack; stack =3D stack->next) {
+> +               filename =3D "???";
+> +               lineno =3D 0;
+> +               menu =3D NULL;
+> +
+>                 sym =3D stack->sym;
+>                 next_sym =3D stack->next ? stack->next->sym : last_sym;
+>                 prop =3D stack->prop;
+> @@ -1073,45 +1079,52 @@ static void sym_check_print_recursive(struct symb=
+ol *last_sym)
+>                                 if (prop->menu)
+>                                         break;
+>                         }
+> +                       if (menu) {
+> +                               filename =3D menu->filename;
+> +                               lineno =3D menu->lineno;
+> +                       }
+> +               } else if (prop) {
+> +                       filename =3D prop->filename;
+> +                       lineno =3D prop->lineno;
+>                 }
+>                 if (stack->sym =3D=3D last_sym)
+>                         fprintf(stderr, "%s:%d:error: recursive dependenc=
+y detected!\n",
+> -                               prop->filename, prop->lineno);
+> +                               filename, lineno);
+>
+>                 if (sym_is_choice(sym)) {
+>                         fprintf(stderr, "%s:%d:\tchoice %s contains symbo=
+l %s\n",
+> -                               menu->filename, menu->lineno,
+> +                               filename, lineno,
+>                                 sym->name ? sym->name : "<choice>",
+>                                 next_sym->name ? next_sym->name : "<choic=
+e>");
+>                 } else if (sym_is_choice_value(sym)) {
+>                         fprintf(stderr, "%s:%d:\tsymbol %s is part of cho=
+ice %s\n",
+> -                               menu->filename, menu->lineno,
+> +                               filename, lineno,
+>                                 sym->name ? sym->name : "<choice>",
+>                                 next_sym->name ? next_sym->name : "<choic=
+e>");
+>                 } else if (stack->expr =3D=3D &sym->dir_dep.expr) {
+>                         fprintf(stderr, "%s:%d:\tsymbol %s depends on %s\=
+n",
+> -                               prop->filename, prop->lineno,
+> +                               filename, lineno,
+>                                 sym->name ? sym->name : "<choice>",
+>                                 next_sym->name ? next_sym->name : "<choic=
+e>");
+>                 } else if (stack->expr =3D=3D &sym->rev_dep.expr) {
+>                         fprintf(stderr, "%s:%d:\tsymbol %s is selected by=
+ %s\n",
+> -                               prop->filename, prop->lineno,
+> +                               filename, lineno,
+>                                 sym->name ? sym->name : "<choice>",
+>                                 next_sym->name ? next_sym->name : "<choic=
+e>");
+>                 } else if (stack->expr =3D=3D &sym->implied.expr) {
+>                         fprintf(stderr, "%s:%d:\tsymbol %s is implied by =
+%s\n",
+> -                               prop->filename, prop->lineno,
+> +                               filename, lineno,
+>                                 sym->name ? sym->name : "<choice>",
+>                                 next_sym->name ? next_sym->name : "<choic=
+e>");
+>                 } else if (stack->expr) {
+>                         fprintf(stderr, "%s:%d:\tsymbol %s %s value conta=
+ins %s\n",
+> -                               prop->filename, prop->lineno,
+> +                               filename, lineno,
+>                                 sym->name ? sym->name : "<choice>",
+>                                 prop_get_type_name(prop->type),
+>                                 next_sym->name ? next_sym->name : "<choic=
+e>");
+>                 } else {
+>                         fprintf(stderr, "%s:%d:\tsymbol %s %s is visible =
+depending on %s\n",
+> -                               prop->filename, prop->lineno,
+> +                               filename, lineno,
+>                                 sym->name ? sym->name : "<choice>",
+>                                 prop_get_type_name(prop->type),
+>                                 next_sym->name ? next_sym->name : "<choic=
+e>");
+> --
+> 2.45.2.627.g7a2c4fd464-goog
+>
+>
+
+
+--
+Best Regards
+Masahiro Yamada
 
