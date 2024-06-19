@@ -1,121 +1,219 @@
-Return-Path: <linux-kernel+bounces-221240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B990790F0BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:34:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9063B90F09B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D8E1B25D2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:34:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A9091F21828
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAA11527AA;
-	Wed, 19 Jun 2024 14:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011CA225D7;
+	Wed, 19 Jun 2024 14:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="txRLZHMw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aazhs2cs"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCC147779
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 14:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FA21F934;
+	Wed, 19 Jun 2024 14:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718807535; cv=none; b=CmyFzcUC0r5wV4H3AAyPLynuVWX3pSl9xTvBqXpGd37gqNonllaxEGxCDvqwWwrxPtZ0NtGZqVHh1UOnHB3nBJo0mb3s9BldBDwRAMcXoK4nwS1bLvlK/TnzQS5M7V1P2GNyqlPaWwgOaO60tzpUk7n+X+WRNdFlZjPFGjk55UY=
+	t=1718807496; cv=none; b=KAHrUKHpxvRJYRY1uEELCXdKrGyXLUXZ2YbT85ANbrFFJlo5BFg0hEnqTUeYSZ/2fxcmK1lJmDgmxANpUNpbRAlVIRVM/sO/eu425g0koMA2zxYBPiID/xxw3P139lCvQr9kT89GqD2FZE6w+A1HIaxps9fyGxs5j2z9G/JE6d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718807535; c=relaxed/simple;
-	bh=683XBBTcCjvNlqsnqsvC5qU2ha2+uSLRYzWNbExOTr8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YTq8AS0nQXU/2aFiX92HvJnw/8LysLpUg64n04aC071wzG4rW/NRZQIU/jEZIMV2PsKZvrzq2kAE3mpUMyFgftS1ekRlY94+j+Q4KNadZ8z+hGhI6C3UvR/+Ip/RmqlLP3kinNBqUAM7prcU3o4dZ1RI0KpTQ9kPN5IWCmq74xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=txRLZHMw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2E9F4C4AF61;
-	Wed, 19 Jun 2024 14:32:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718807535;
-	bh=683XBBTcCjvNlqsnqsvC5qU2ha2+uSLRYzWNbExOTr8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=txRLZHMwbTzif/kI0RBsVhAlpzzjw9EWMOsJ9pKS338xPVGTcpoHA9P92VGa1x8pe
-	 edXEu1CoLeViLtW9T21Wpt5qvUz0HiFNnsWx7wUV2ZD8knp6Dce+ndPKqpw7mL3DP4
-	 Q82EvBG/TZJ0OPYK+ilzq2ltYFU3jD/mNXFNTA1r/AWG09f4kiwiCBqowERGpsJ6A2
-	 ZxN7jNjBpuCt8Doq9GFQGyYaitABO7OH8pujajqz+aV++tlNEV6YmGXBPRIHuU1/WK
-	 KiTq8jlqyML52lKrIXYFW/bJVv5mA+gRmF0YqoF7n6GlQZN6e2e2y1NPooMLZjFxV0
-	 l4uDZkimFW3eQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2743AC27C53;
-	Wed, 19 Jun 2024 14:32:15 +0000 (UTC)
-From: Hsiao Chien Sung via B4 Relay <devnull+shawn.sung.mediatek.com@kernel.org>
-Date: Wed, 19 Jun 2024 22:30:55 +0800
-Subject: [PATCH v2 14/14] drm/mediatek: Fix XRGB setting error in OVL
+	s=arc-20240116; t=1718807496; c=relaxed/simple;
+	bh=K/s9nUtJuD0MesvSHYBvTTnfha4lS02lOilVao9hFVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=li+oyeydlkLktnBxcua7Jc/zLajrwn6ETmfGvTougCtJ3c2tHHm5MSCwIFfaK1D9nKB0cj7mDP0Zm3oA+p79RiVnPcWEKqgl0351I0UqAmO/dtbuKNLf6q4abayj8eKXVBhY9r22y+fByRiyuOPrUUt3dNb99RXF/Dhkf+POQss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aazhs2cs; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J99VCp027906;
+	Wed, 19 Jun 2024 14:31:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/3x0+fw4XMuD1kYUOrDfeygenAwP7QZLSyRF/0+KWhc=; b=aazhs2csLvMT521V
+	XoI7W8Sv23MF5mj0sV4jujVFehrTHx9T2c7/S4kXWWHIKtr4tlHhZS8Xm9bs7eAj
+	dRyyv+g7iA6BVJxS7a6ptRRm5v9TFseWL0WPDwHTyRY2NopXXNkZFoBhNzlokqSy
+	uUChFNxDbmh25golhgKX2ptxG4xogdVWbs50j9prxetQ1nO2wfnMSjy/xmF8C8Rb
+	6Ko9UrmtTHRHOoafROGltq15yEulT7a8gzIEAxE/KNxc02wfqvum3gO+WQI05OA5
+	Hp1F/jUMjewUmVg4jDqPKVzocktUGHCwISh+9YNE4ZhxNLXO46wONx80tBSG/f+y
+	Kl3biQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9yt0h5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 14:31:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JEVHCj010629
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 14:31:18 GMT
+Received: from [10.216.5.74] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
+ 2024 07:31:08 -0700
+Message-ID: <650a391a-cb2b-7570-5e0b-adaf7f20151e@quicinc.com>
+Date: Wed, 19 Jun 2024 20:01:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240619-mediatek-drm-next-v2-14-abf68f46f8d2@mediatek.com>
-References: <20240619-mediatek-drm-next-v2-0-abf68f46f8d2@mediatek.com>
-In-Reply-To: <20240619-mediatek-drm-next-v2-0-abf68f46f8d2@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- CK Hu <ck.hu@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>, 
- Daniel Kurtz <djkurtz@chromium.org>, YT Shen <yt.shen@mediatek.com>, 
- Mao Huang <littlecvr@chromium.org>, "Nancy.Lin" <nancy.lin@mediatek.com>
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Hsiao Chien Sung <shawn.sung@mediatek.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718807531; l=1547;
- i=shawn.sung@mediatek.com; s=20240616; h=from:subject:message-id;
- bh=N+q+J8F01q3+w5AJm23nX2Ta3bBWa72KPt0JkxnFDyM=;
- b=UGkb80MLoatE4rhTH91SKYMfduSoEsuHwJOGEjgG5YhEsMiyJ77CyrZu85rwXyMZq3lSE0pKP
- BuGab+SbGDVCkdRv1qaDjrNhTvABHv31tqQubuZZIXknz7+ZNzsYWPw
-X-Developer-Key: i=shawn.sung@mediatek.com; a=ed25519;
- pk=lq1w8BuWDINX+4JHjGHhhbAU5ICP+cL9VCj7wn+cEDA=
-X-Endpoint-Received: by B4 Relay for shawn.sung@mediatek.com/20240616 with
- auth_id=172
-X-Original-From: Hsiao Chien Sung <shawn.sung@mediatek.com>
-Reply-To: shawn.sung@mediatek.com
-
-From: Hsiao Chien Sung <shawn.sung@mediatek.com>
-
-CONST_BLD must be enabled for XRGB formats although the alpha channel
-can be ignored, or OVL will still read the value from memory.
-This error only affects CRC generation.
-
-Fixes: 119f5173628a ("drm/mediatek: Add DRM Driver for Mediatek SoC MT8173.")
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index f358dbfed5e3..6abefc338045 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -455,6 +455,14 @@ void mtk_ovl_layer_config(struct device *dev, unsigned int idx,
- 		con |= state->base.alpha & OVL_CON_ALPHA;
- 	}
- 
-+	/* CONST_BLD must be enabled for XRGB formats although the alpha channel
-+	 * can be ignored, or OVL will still read the value from memory.
-+	 * For RGB888 related formats, whether CONST_BLD is enabled or not won't
-+	 * affect the result. Therefore we use !has_alpha as the condition.
-+	 */
-+	if (state->base.fb && !state->base.fb->format->has_alpha)
-+		ignore_pixel_alpha = OVL_CONST_BLEND;
-+
- 	/* CONST_BLD must be enabled for XRGB formats although the alpha channel
- 	 * can be ignored, or OVL will still read the value from memory.
- 	 * For RGB888 related formats, whether CONST_BLD is enabled or not won't
-
--- 
-Git-146)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v14 4/4] PCI: qcom: Add OPP support to scale performance
+Content-Language: en-US
+To: =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+	<kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, <johan+linaro@kernel.org>,
+        <bmasney@redhat.com>, <djakov@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <vireshk@kernel.org>, <quic_vbadigan@quicinc.com>,
+        <quic_skananth@quicinc.com>, <quic_nitegupt@quicinc.com>,
+        <quic_parass@quicinc.com>, <krzysztof.kozlowski@linaro.org>
+References: <20240609-opp_support-v14-0-801cff862b5a@quicinc.com>
+ <20240609-opp_support-v14-4-801cff862b5a@quicinc.com>
+ <04e7e509-9911-d5b2-619c-e7b87ed0ef50@linux.intel.com>
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <04e7e509-9911-d5b2-619c-e7b87ed0ef50@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 1NdQMcCbDRYx7VFeZ6ieW8tyR7oiFKno
+X-Proofpoint-GUID: 1NdQMcCbDRYx7VFeZ6ieW8tyR7oiFKno
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 mlxscore=0 adultscore=0
+ clxscore=1015 bulkscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406190109
 
 
+
+On 6/14/2024 6:12 PM, Ilpo Järvinen wrote:
+> On Sun, 9 Jun 2024, Krishna chaitanya chundru wrote:
+> 
+>> QCOM Resource Power Manager-hardened (RPMh) is a hardware block which
+>> maintains hardware state of a regulator by performing max aggregation of
+>> the requests made by all of the clients.
+>>
+>> PCIe controller can operate on different RPMh performance state of power
+>> domain based on the speed of the link. And this performance state varies
+>> from target to target, like some controllers support GEN3 in NOM (Nominal)
+>> voltage corner, while some other supports GEN3 in low SVS (static voltage
+>> scaling).
+>>
+>> The SoC can be more power efficient if we scale the performance state
+>> based on the aggregate PCIe link bandwidth.
+>>
+>> Add Operating Performance Points (OPP) support to vote for RPMh state based
+>> on the aggregate link bandwidth.
+>>
+>> OPP can handle ICC bw voting also, so move ICC bw voting through OPP
+>> framework if OPP entries are present.
+>>
+>> As we are moving ICC voting as part of OPP, don't initialize ICC if OPP
+>> is supported.
+>>
+>> Before PCIe link is initialized vote for highest OPP in the OPP table,
+>> so that we are voting for maximum voltage corner for the link to come up
+>> in maximum supported speed.
+>>
+>> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-qcom.c | 93 +++++++++++++++++++++++++++-------
+>>   1 file changed, 75 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>> index ff1d891c8b9a..296e2d5036f6 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>> @@ -21,6 +21,7 @@
+>>   #include <linux/init.h>
+>>   #include <linux/of.h>
+>>   #include <linux/pci.h>
+>> +#include <linux/pm_opp.h>
+>>   #include <linux/pm_runtime.h>
+>>   #include <linux/platform_device.h>
+>>   #include <linux/phy/pcie.h>
+>> @@ -1404,15 +1405,13 @@ static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
+>>   	return 0;
+>>   }
+>>   
+>> -static void qcom_pcie_icc_update(struct qcom_pcie *pcie)
+>> +static void qcom_pcie_icc_opp_update(struct qcom_pcie *pcie)
+>>   {
+>> +	int speed, width, ret, freq_mbps;
+>>   	struct dw_pcie *pci = pcie->pci;
+>> +	unsigned long freq_kbps;
+>> +	struct dev_pm_opp *opp;
+>>   	u32 offset, status;
+>> -	int speed, width;
+>> -	int ret;
+>> -
+>> -	if (!pcie->icc_mem)
+>> -		return;
+>>   
+>>   	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>>   	status = readw(pci->dbi_base + offset + PCI_EXP_LNKSTA);
+>> @@ -1424,10 +1423,26 @@ static void qcom_pcie_icc_update(struct qcom_pcie *pcie)
+>>   	speed = FIELD_GET(PCI_EXP_LNKSTA_CLS, status);
+>>   	width = FIELD_GET(PCI_EXP_LNKSTA_NLW, status);
+>>   
+>> -	ret = icc_set_bw(pcie->icc_mem, 0, width * QCOM_PCIE_LINK_SPEED_TO_BW(speed));
+>> -	if (ret) {
+>> -		dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
+>> -			ret);
+>> +	if (pcie->icc_mem) {
+>> +		ret = icc_set_bw(pcie->icc_mem, 0, width * QCOM_PCIE_LINK_SPEED_TO_BW(speed));
+>> +		if (ret) {
+>> +			dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
+>> +				ret);
+>> +		}
+>> +	} else {
+>> +		freq_mbps = pcie_link_speed_to_mbps(pcie_link_speed[speed]);
+>> +		if (freq_mbps < 0)
+>> +			return;
+>> +
+>> +		freq_kbps = freq_mbps * 1000;
+> 
+> Use define from units.h instead of literal.
+> 
+>> +		opp = dev_pm_opp_find_freq_exact(pci->dev, freq_kbps * width, true);
+>> +		if (!IS_ERR(opp)) {
+>> +			ret = dev_pm_opp_set_opp(pci->dev, opp);
+>> +			if (ret)
+>> +				dev_err(pci->dev, "Failed to set OPP for freq (%ld): %d\n",
+>> +					freq_kbps * width, ret);
+> 
+> Make width unsigned and use %lu ?
+> 
+Ack to all comments. I will update them in next patch series.
+
+- Krishna chaitanya
 
