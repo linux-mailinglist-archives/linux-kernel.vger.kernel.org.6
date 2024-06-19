@@ -1,123 +1,171 @@
-Return-Path: <linux-kernel+bounces-220378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1526890E085
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 02:13:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6195090E0C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 02:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92D44B20995
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 00:13:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB80F284247
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 00:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF24AA55;
-	Wed, 19 Jun 2024 00:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985EB1869;
+	Wed, 19 Jun 2024 00:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="NWj8tTXj"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I1r9twxW"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A404EC5;
-	Wed, 19 Jun 2024 00:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6F61C20
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 00:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718756020; cv=none; b=hNirP53TH+DY/VSpq0D9Ev3Q06pDrGe2+mCPIYXwHXChESodudSxx+P1wj4/Qg50wjcObXrbVyjvwOMUnXX7DDEBkKCYLx1wZvP79QZNOVqd4MP8U2HN5/D5ZAtAgDkAh5amiIXGUEVLfO6pO2GuA5D/DIeiS1Ild1kUR/ZJzlA=
+	t=1718756531; cv=none; b=RwVp9vnnSWxDMrsqxiBbZR/e5UW9xpaZjwD8u3NkF9xL8mvtaTOl1N28c4cB+tR84gi46rtz0R3CXREd5tIneM/ZFFzcmz1D6WxQ9t0IjBxmbw5yg4nPE59Nlp9qhiKDzuh50NyAubaLA049ZYillwzh+6TsmYyww/cGkayAq+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718756020; c=relaxed/simple;
-	bh=nCyR+FF46pdp2WHubBl4TFE4rTAqrIiTJSaS8RfSrEc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Bvc1vs97fakot9rhrEGW4N+qaug266hqf1CDKn19PvqYbmTMR9pB783hGX9oMMwVbUv+w3eIKdKDhcMm2k3EVEDXsQRxysvYUI0+g96rBm2ddfMdlMaUicywuWqTxB1v164dNseNjWbRiVjTrOSBNK9otXwPqEPDpeknWkwarxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=NWj8tTXj; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718756018; x=1750292018;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=nCyR+FF46pdp2WHubBl4TFE4rTAqrIiTJSaS8RfSrEc=;
-  b=NWj8tTXjN8rB8h1IR53uMdqg4QbMaNsbdscI8vQSbjtwxKEgdTz6WCxC
-   8dSd93yrhH/axyodA+CzJWfdGl82HbGXkxllkFNYlvGxMvrW4A+7IUyoJ
-   nScRNuhWYYyVrXaUw7kUHl3wdXlLkl/Cx39A0N85lZCtziw7EoG1zjEVl
-   KfmpjoeHOu7vJcgxXAwPcb1JYzL3QYsKoFT7lo50hbSTjSSnPSEv+IUBk
-   C4ZW1p8dAMm/MesTX41rOZwEhIMuTZR3yTobrpSgSCuKJpwG7olhEBJs+
-   APuoQMie3ZyyYxAP+QHD7vEyaRUZObpXEpz+wcMwIgZy1KQ8geGloi9lm
-   Q==;
-X-CSE-ConnectionGUID: RCjaWn5qSgKWprKYp1rnmA==
-X-CSE-MsgGUID: KnrOr0d8R5u8x7/pB7vSEQ==
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="28148942"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Jun 2024 17:13:31 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 18 Jun 2024 17:13:10 -0700
-Received: from hat-linux.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 18 Jun 2024 17:13:09 -0700
-From: <Tristram.Ha@microchip.com>
-To: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
-	Vivien Didelot <vivien.didelot@gmail.com>, Florian Fainelli
-	<f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, <UNGLinuxDriver@microchip.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tristram Ha
-	<tristram.ha@microchip.com>
-Subject: [PATCH v1 net] net: dsa: microchip: fix initial port flush problem
-Date: Tue, 18 Jun 2024 17:16:42 -0700
-Message-ID: <1718756202-2731-1-git-send-email-Tristram.Ha@microchip.com>
-X-Mailer: git-send-email 1.9.1
+	s=arc-20240116; t=1718756531; c=relaxed/simple;
+	bh=qM+LxVb3gd4Cbbp6AwSC8O9zXKOmQtVsfa3JiOHGIIg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=XfsJgc6a3UTmWH21ggKyiGcCmG+WpMCTbLk0aKGNBI7XJzhqi/FpIhOvISlm9S3IOfE3RW3VDFcyBKuHAB5BMabre/cMGsL6Eu+CszCRfH1uncuoaBemdkAZzXWMwkmbhuTMihMcuGi0IZsNOGWO7lcRd/USUmupm+rgltM39NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I1r9twxW; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-6658175f9d4so6027048a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 17:22:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718756530; x=1719361330; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ahBmUPS4Gd/AZ2DWokpFsWoFXzbZMIx0lYvExMMEgDs=;
+        b=I1r9twxWQRxXYWRGLBkRuBkU8DXC53/eyeemo0zH+L7zK2N62hO4IRfjVcMzaHYXmU
+         7S3OEb9goyKGpw2i1gYjo/kFeKYERSUQlJLHCf2zVACVwqS8+51pLfSbSigmcm16+jXG
+         qB964P56z0fJ8M16rDSow0rRwfvMQBD7nhrWCNT7A7pW0kSAC3o0hbA/hNnwxIkE0OlT
+         KOB/ZQZpFmQpWavEvzd0s5Hr6HEdwJmyO69L1kRRQd7+8vFXwJn8YqAzQExicCa5/QbO
+         UD3sYYkErNXOl/B3L7uGC0nBVJKwoI6q07cbCX/bjvaUMHqypuqpfmhTMPKkPmBl3VBJ
+         3zfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718756530; x=1719361330;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ahBmUPS4Gd/AZ2DWokpFsWoFXzbZMIx0lYvExMMEgDs=;
+        b=pkyidyC9diUeXuRX7CCHDHVGnmHq9M+HBfyQIe/lmgx+NYi9azPAPCu9y4KplrbMPw
+         RnkCL0N/xrqkswAe1tRWmMvbOlPMAEnU+72/1MKoW8ntMT7x77hLjGtQ3uXe70gfhN3z
+         IRVJ7S4jB8fR7R02Ev+CBsJlz8rH+PzNf/ITukNw7cPnJ/BwXV3n+/iCx+ZSMFK3s1vH
+         U3jJ+DwB6p10xjcee+V0jI+Ldeh5aKzZLZ/vnV1ZH4IX67Mk7pKlnqYniNhTEBIMcWLW
+         UaT5Ykmppsrg0CJBEGcKT12poUYLuUGlCjREbYa99unXzsA5/AiHHZ61mrC2di7FvnPz
+         vAjA==
+X-Gm-Message-State: AOJu0YzoKO2/cCz9tsvm+vySWSFLCZ6RfrmRaf1Lbg9FkXvPigF8obOD
+	HAx8lIDu0ilH9T0mIvUbZxbXoy/nGkmRgZcmwIER8HFaV96VB0IVuR7v7ktyuWPTbRaiA+QX0HW
+	H5Q==
+X-Google-Smtp-Source: AGHT+IGuzqkcfFNHspKhd9S3iQjNf5nMtU8q6h/0CLbWzogJs2rTSXjiomF+jr/wK3M2dHQupyre3nYJvrc=
+X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
+ (user=edliaw job=sendgmr) by 2002:a17:902:e744:b0:1f6:fbea:7959 with SMTP id
+ d9443c01a7336-1f9aa25aaa7mr302005ad.0.1718756529581; Tue, 18 Jun 2024
+ 17:22:09 -0700 (PDT)
+Date: Wed, 19 Jun 2024 00:22:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
+Message-ID: <20240619002204.2492673-1-edliaw@google.com>
+Subject: [PATCH] selftests/futex: Order calls in futex_requeue
+From: Edward Liaw <edliaw@google.com>
+To: shuah@kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, 
+	"=?UTF-8?q?Andr=C3=A9=20Almeida?=" <andrealmeid@igalia.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kernel-team@android.com, Edward Liaw <edliaw@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Tristram Ha <tristram.ha@microchip.com>
+Like fbf4dec70277 ("selftests/futex: Order calls to futex_lock_pi"),
+which fixed a flake in futex_lock_pi due to racing between the parent
+and child threads.
 
-The very first flush in any port will flush all learned addresses in all
-ports.  This can be observed by unplugging the cable from one port while
-additional ports are connected and dumping the fdb entries.
+The same issue can occur in the futex_requeue test, because it expects
+waiterfn to make progress to futex_wait before the parent starts to
+requeue. This is mitigated by the parent sleeping for WAKE_WAIT_US, but
+it still fails occasionally. This can be reproduced by adding a sleep in
+the waiterfn before futex_wait:
 
-This problem is caused by the initially wrong value programmed to the
-REG_SW_LUE_CTRL_1 register.  Setting SW_FLUSH_STP_TABLE and
-SW_FLUSH_MSTP_TABLE bits does not have an immediate effect.  It is when
-ksz9477_flush_dyn_mac_table() is called then the SW_FLUSH_STP_TABLE bit
-takes effect and flushes all learned entries.  After that call both bits
-are reset and so the next port flush will not cause such problem again.
+TAP version 13
+1..2
+not ok 1 futex_requeue simple returned: 0
+not ok 2 futex_requeue simple returned: 0
+not ok 3 futex_requeue many returned: 0
+not ok 4 futex_requeue many returned: 0
 
-Fixes: b987e98e50ab ("dsa: add DSA switch driver for Microchip KSZ9477")
-Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+Instead, replace the sleep with barriers to make the sequencing
+explicit.
+
+Fixes: 7cb5dd8e2c8c ("selftests: futex: Add futex compare requeue test")
+Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
-v1
- - explain how the 2 extra bits affect the flushing operation
- - write directly to disable the default SW_FWD_MCAST_SRC_ADDR bit and so
-   no need to read the register first
+ .../selftests/futex/functional/futex_requeue.c       | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
- drivers/net/dsa/microchip/ksz9477.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/dsa/microchip/ksz9477.c b/drivers/net/dsa/microchip/ksz9477.c
-index f8ad7833f5d9..2231128eef8b 100644
---- a/drivers/net/dsa/microchip/ksz9477.c
-+++ b/drivers/net/dsa/microchip/ksz9477.c
-@@ -355,10 +355,8 @@ int ksz9477_reset_switch(struct ksz_device *dev)
- 			   SPI_AUTO_EDGE_DETECTION, 0);
+diff --git a/tools/testing/selftests/futex/functional/futex_requeue.c b/tools/testing/selftests/futex/functional/futex_requeue.c
+index 51485be6eb2f..8f7d3e8bf32a 100644
+--- a/tools/testing/selftests/futex/functional/futex_requeue.c
++++ b/tools/testing/selftests/futex/functional/futex_requeue.c
+@@ -12,9 +12,9 @@
  
- 	/* default configuration */
--	ksz_read8(dev, REG_SW_LUE_CTRL_1, &data8);
--	data8 = SW_AGING_ENABLE | SW_LINK_AUTO_AGING |
--	      SW_SRC_ADDR_FILTER | SW_FLUSH_STP_TABLE | SW_FLUSH_MSTP_TABLE;
--	ksz_write8(dev, REG_SW_LUE_CTRL_1, data8);
-+	ksz_write8(dev, REG_SW_LUE_CTRL_1,
-+		   SW_AGING_ENABLE | SW_LINK_AUTO_AGING | SW_SRC_ADDR_FILTER);
+ #define TEST_NAME "futex-requeue"
+ #define timeout_ns  30000000
+-#define WAKE_WAIT_US 10000
  
- 	/* disable interrupts */
- 	ksz_write32(dev, REG_SW_INT_MASK__4, SWITCH_INT_MASK);
+ volatile futex_t *f1;
++static pthread_barrier_t barrier;
+ 
+ void usage(char *prog)
+ {
+@@ -32,6 +32,8 @@ void *waiterfn(void *arg)
+ 	to.tv_sec = 0;
+ 	to.tv_nsec = timeout_ns;
+ 
++	pthread_barrier_wait(&barrier);
++
+ 	if (futex_wait(f1, *f1, &to, 0))
+ 		printf("waiter failed errno %d\n", errno);
+ 
+@@ -70,13 +72,15 @@ int main(int argc, char *argv[])
+ 	ksft_print_msg("%s: Test futex_requeue\n",
+ 		       basename(argv[0]));
+ 
++	pthread_barrier_init(&barrier, NULL, 2);
+ 	/*
+ 	 * Requeue a waiter from f1 to f2, and wake f2.
+ 	 */
+ 	if (pthread_create(&waiter[0], NULL, waiterfn, NULL))
+ 		error("pthread_create failed\n", errno);
+ 
+-	usleep(WAKE_WAIT_US);
++	pthread_barrier_wait(&barrier);
++	pthread_barrier_destroy(&barrier);
+ 
+ 	info("Requeuing 1 futex from f1 to f2\n");
+ 	res = futex_cmp_requeue(f1, 0, &f2, 0, 1, 0);
+@@ -99,6 +103,7 @@ int main(int argc, char *argv[])
+ 		ksft_test_result_pass("futex_requeue simple succeeds\n");
+ 	}
+ 
++	pthread_barrier_init(&barrier, NULL, 11);
+ 
+ 	/*
+ 	 * Create 10 waiters at f1. At futex_requeue, wake 3 and requeue 7.
+@@ -109,7 +114,8 @@ int main(int argc, char *argv[])
+ 			error("pthread_create failed\n", errno);
+ 	}
+ 
+-	usleep(WAKE_WAIT_US);
++	pthread_barrier_wait(&barrier);
++	pthread_barrier_destroy(&barrier);
+ 
+ 	info("Waking 3 futexes at f1 and requeuing 7 futexes from f1 to f2\n");
+ 	res = futex_cmp_requeue(f1, 0, &f2, 3, 7, 0);
 -- 
-2.34.1
+2.45.2.627.g7a2c4fd464-goog
 
 
