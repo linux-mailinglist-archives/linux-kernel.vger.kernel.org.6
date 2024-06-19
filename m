@@ -1,208 +1,130 @@
-Return-Path: <linux-kernel+bounces-221181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8DC90EFDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:14:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F07A90EFA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D88C628164D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:14:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08EF7B22B59
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C011509A0;
-	Wed, 19 Jun 2024 14:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2257914F108;
+	Wed, 19 Jun 2024 14:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ma7rT9HF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="H9mjke0j"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334171369BB;
-	Wed, 19 Jun 2024 14:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAA31DDD1;
+	Wed, 19 Jun 2024 14:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718806460; cv=none; b=DWTYOnNlzfQ5kRSeCceYJUIwMtvKuZuxxKOs4oEbipTFM6w007RDDiJiCMApU2Wj9rDot3mtrQ+koVmzJFvzpW2GwB7bWfJbE1mYg8NS7dP7AxxHdiFdulnQdSl40nG0i65k8npo3odYbrzLwUa66ihPBqLz8XmT74sjzco5B/g=
+	t=1718805980; cv=none; b=txWudITYL2kCZ2qsTmzZQ6efbqE/H0WjRBqeS8dW0g0iDEyjuN+3RA+XCrIO4H2+wjBZVvmR3jVEiv0k0sSbgMQHnTSKpuolV2XKXDJEXgtForkPB5V5oWsr9YOvOQJKwmqUcK4beq5DBKqGu6FXBU7PvSCKiZdw8ysO9HyWBUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718806460; c=relaxed/simple;
-	bh=zpRor5o8seRH1rrrqANiimySX1ZFehCBeLGhHXD+kEI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=py2LyvITrUK7a0WTZ3UZ2/fYc3+TCTM/gGHBTFTvDGNaRL9fk/uNUlt5P/bh42hw0LkDiPbZt+eWPmxvoK181HvITBlEafMmO1BMPkANE4MUVzpT0CNolP/GEer6ziwDNMgGgT5hGkDqb5vclASIlcCpov8+AutFF9rNrs+6EUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ma7rT9HF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9LgDo016142;
-	Wed, 19 Jun 2024 14:14:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=0+wfIXGd2KDcuUHv8J0Jpb
-	o2J2z2nWCl15tSQ1b9UxQ=; b=ma7rT9HFc2KfU9lSjw+2nvedgTep5/3iNRnlsA
-	b/mspuDKicp6xWC3v6XNCbKAVFOwqiGItOx/YxoxczDjJ0gklzofjQbXY8ZPKli+
-	GR3wAUsd67D2Oj66tV4yyw4qrVRvo8N1kvoRT348ewqiblfVdWgFV9NdTwJwOXlq
-	PDLe02Q4QK3goYsKQKrf9+RjmKyqbr3/NazDHDTF0NodJpyx+bzUTdi9osJzCU+o
-	/20QglSarsYfXG4kBjRa2TIwxO1ZF7DZGeD8ydbh3o6q34tEGeG8zpSs2Wz454o9
-	F1SqOxKz5UMEisyh0LPR7ksoE4ehnCAHajtJgDIbEaX59GZA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuja51wfs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 14:14:14 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JEEDdk019682
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 14:14:13 GMT
-Received: from hu-kshivnan-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 19 Jun 2024 07:14:11 -0700
-From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_rgottimu@quicinc.com>,
-        Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Subject: [PATCH] soc: qcom: icc-bwmon: Add tracepoints in bwmon_intr_thread
-Date: Wed, 19 Jun 2024 19:21:40 +0530
-Message-ID: <20240619135140.3581119-1-quic_kshivnan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718805980; c=relaxed/simple;
+	bh=ahSL1WyTl3cJXialu5fedyaGFKTnP0EwJfAW8b8qtDQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A34PSYDU7M8kDDDB608B/ESBq+/u4ubOxj3fpriWNpdLuL1TrFVBwcZyJWbNjkhre5HdJx2NxXDiFHeb6QsmME1YMuwA650Ie+BZzy5AStJBXAvnUFTqhmngpKke1sktTC5YDXrYIJTj7zt4m74xiEpKrV1/3vG2FHQbiwHgJPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=H9mjke0j; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 69379A00ED;
+	Wed, 19 Jun 2024 16:06:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=8KCtIFk5Jn2HULoa1bshxqf0/aEGts2U2h/0kblk5Ug=; b=
+	H9mjke0jaGcOwQkFUrqDivrKt18yWQ+RR5hNM1tApJ23cp9x+bmmVrbRnecHazlz
+	ca8H5YiGDUTyNSV+DYvjihUGQDm1x1aU6k/ZuMKvMPAtnoayuheociC4jzVctOxk
+	KOsU9yFrDIJtuz9iNoztZokSikWgNc+uXQwv+Qc6nqoBiGE8XQW1a7t3uGN6NYI0
+	dx3ax9Nl5Spi4f/j9pvp8ovesDomDIt8I6gt1PS7TvGVKE9Pq+aWEM5hKb+D3njJ
+	Ht0Rjhjcc8XEoE9nIQOQg5g2LdQpwd2FF83l1RP3HwXmjjOFahTve12+7AdIellq
+	69Uvxf7Lm1fbKBfMmT+MFGXfgUVKjAlYhhtYKWeVBLSfsQPsRBdyaeeYZ9KgaP2X
+	xa7GO/mubc3JhOel633jHHFbyxAPzVBwa5+kgs/HH3er3CJxfRLOPuk7CCUxl+Qw
+	+dPBuMefs35baSI5u9M0VksWuM4twQD7RnFN4AABsAFuShvtZ1CQmdgWgIEYL+PU
+	1mGm/N9k2GQqHVfo3cFCycokUgHoc+qWBz/+lhEKG4yLHM0oVuQWwV+YHWKS8pjO
+	DGklf/rTjTsFakIME4DuH2uR0iRAStvqxi6J9dRRb+LQRex0dKpnDexZEAPhRkMA
+	++k3KD+xUcqwY4ObGZcvcvAhdfax4DfAe7vkTbzplSo=
+From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	<linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+Subject: [PATCH v2] rtc: interface: Add RTC offset to alarm after fix-up
+Date: Wed, 19 Jun 2024 16:04:52 +0200
+Message-ID: <20240619140451.2800578-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: aSs72N7S48wph9N-QKTy8icDBSAlFChy
-X-Proofpoint-GUID: aSs72N7S48wph9N-QKTy8icDBSAlFChy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- adultscore=0 impostorscore=0 clxscore=1011 mlxscore=0 spamscore=0
- bulkscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190106
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1718805974;VERSION=7972;MC=1526577659;ID=844469;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A29916D3B546D7D67
 
-Add tracepoint for tracing the measured traffic in kbps,
-up_kbps and down_kbps in bwmon. This information is valuable
-for understanding what bwmon hw measures at the system cache
-level and at the DDR level which is helpful in debugging
-bwmon behavior.
+`rtc_add_offset()` is called by `__rtc_read_time()`
+and `__rtc_read_alarm()` to add the RTC's offset to
+the raw read-outs from the device drivers. However,
+in the latter case, a fix-up algorithm is run if
+the RTC device does not report a full `struct rtc_time`
+alarm value. In that case, the offset was forgot to be
+added.
 
-Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+Fixes: fd6792bb022e ("rtc: fix alarm read and set offset")
+
+Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
 ---
- MAINTAINERS                        |  1 +
- drivers/soc/qcom/icc-bwmon.c       |  7 +++--
- drivers/soc/qcom/trace_icc-bwmon.h | 49 ++++++++++++++++++++++++++++++
- 3 files changed, 55 insertions(+), 2 deletions(-)
- create mode 100644 drivers/soc/qcom/trace_icc-bwmon.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 242fc612fbc5..1b410c0183bb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18573,6 +18573,7 @@ M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
-+F:	drivers/soc/qcom/trace_icc-bwmon.h
- F:	drivers/soc/qcom/icc-bwmon.c
+Notes:
+    Changes in v2:
+    * don't try to add offset to an invalid tm
 
- QUALCOMM IOMMU
-diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
-index fb323b3364db..9b5ac1e62673 100644
---- a/drivers/soc/qcom/icc-bwmon.c
-+++ b/drivers/soc/qcom/icc-bwmon.c
-@@ -17,6 +17,8 @@
- #include <linux/pm_opp.h>
- #include <linux/regmap.h>
- #include <linux/sizes.h>
-+#define CREATE_TRACE_POINTS
-+#include "trace_icc-bwmon.h"
+ drivers/rtc/interface.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
- /*
-  * The BWMON samples data throughput within 'sample_ms' time. With three
-@@ -645,9 +647,9 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
- 	struct icc_bwmon *bwmon = dev_id;
- 	unsigned int irq_enable = 0;
- 	struct dev_pm_opp *opp, *target_opp;
--	unsigned int bw_kbps, up_kbps, down_kbps;
-+	unsigned int bw_kbps, up_kbps, down_kbps, meas_kbps;
+diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+index 1b63111cdda2..0b23706d9fd3 100644
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -272,14 +272,13 @@ int __rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
+ 		err = rtc_read_alarm_internal(rtc, alarm);
+ 		if (err)
+ 			return err;
+ 
+ 		/* full-function RTCs won't have such missing fields */
+-		if (rtc_valid_tm(&alarm->time) == 0) {
+-			rtc_add_offset(rtc, &alarm->time);
+-			return 0;
+-		}
++		err = rtc_valid_tm(&alarm->time);
++		if (!err)
++			goto done;
+ 
+ 		/* get the "after" timestamp, to detect wrapped fields */
+ 		err = rtc_read_time(rtc, &now);
+ 		if (err < 0)
+ 			return err;
+@@ -377,10 +376,12 @@ int __rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
+ 
+ done:
+ 	if (err && alarm->enabled)
+ 		dev_warn(&rtc->dev, "invalid alarm value: %ptR\n",
+ 			 &alarm->time);
++	else
++		rtc_add_offset(rtc, &alarm->time);
+ 
+ 	return err;
+ }
+ 
+ int rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
+-- 
+2.34.1
 
--	bw_kbps = bwmon->target_kbps;
-+	meas_kbps = bw_kbps = bwmon->target_kbps;
-
- 	target_opp = dev_pm_opp_find_bw_ceil(bwmon->dev, &bw_kbps, 0);
- 	if (IS_ERR(target_opp) && PTR_ERR(target_opp) == -ERANGE)
-@@ -679,6 +681,7 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
- 	bwmon_clear_irq(bwmon);
- 	bwmon_enable(bwmon, irq_enable);
-
-+	trace_qcom_bwmon_update(dev_name(bwmon->dev), meas_kbps, up_kbps, down_kbps);
- 	if (bwmon->target_kbps == bwmon->current_kbps)
- 		goto out;
-
-diff --git a/drivers/soc/qcom/trace_icc-bwmon.h b/drivers/soc/qcom/trace_icc-bwmon.h
-new file mode 100644
-index 000000000000..5bdba0b77b72
---- /dev/null
-+++ b/drivers/soc/qcom/trace_icc-bwmon.h
-@@ -0,0 +1,49 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM icc_bwmon
-+
-+#if !defined(_TRACE_ICC_BWMON_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_ICC_BWMON_H
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(qcom_bwmon_update,
-+
-+	TP_PROTO(const char *name,
-+		 unsigned int meas_kbps, unsigned int up_kbps, unsigned int down_kbps),
-+
-+	TP_ARGS(name, meas_kbps, up_kbps, down_kbps),
-+
-+	TP_STRUCT__entry(
-+		__string(name, name)
-+		__field(unsigned int, meas_kbps)
-+		__field(unsigned int, up_kbps)
-+		__field(unsigned int, down_kbps)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(name);
-+		__entry->meas_kbps = meas_kbps;
-+		__entry->up_kbps = up_kbps;
-+		__entry->down_kbps = down_kbps;
-+	),
-+
-+	TP_printk("name=%s meas_kbps=%u up_kbps=%u down_kbps=%u",
-+		__get_str(name),
-+		__entry->meas_kbps,
-+		__entry->up_kbps,
-+		__entry->down_kbps)
-+);
-+
-+#endif /* _TRACE_ICC_BWMON_H */
-+
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH ../../drivers/soc/qcom/
-+
-+#undef TRACE_INCLUDE_FILE
-+#define TRACE_INCLUDE_FILE trace_icc-bwmon
-+
-+#include <trace/define_trace.h>
---
-2.25.1
 
 
