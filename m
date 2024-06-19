@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-221745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BABB90F7F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:01:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A190990F7FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04CDC1F2257F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:01:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE7A01C21E11
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA7D15B553;
-	Wed, 19 Jun 2024 21:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EFC15B975;
+	Wed, 19 Jun 2024 21:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I0lfIalt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PCVE+z7l"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAB715B140
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 21:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EA515B140
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 21:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718830852; cv=none; b=O92Ge/OJKMLosUr3H7EuPxW2HryWkODsHi/3CoYfWsCpVSOib9Wi11xVGZ9aJHxE8CegnqfyEcfPP0k33y5WmzXWl+Ws237bQ+fh/u7aJSZ4xfccLy5TL2Hpy/FF95ZFedQ0GgM+TdSsiw8S3ICLKEhR425PS9Zv+/4mqI1L5As=
+	t=1718830858; cv=none; b=YVTaIDtVNgW1zFoV+4EXyzqEZDUrAbdLxv+5GfOV+JPP3GoU1rXL5YtqJ4QABkha4oaK14jBWQUwygcj8tvce+WMhke4ohqDcwZNzl4htMJoYs4Ji/8bbV5w2u0P59yeDFl0im924W6SI+T97kF8h2JTlXUGanVT6fXoKCMIltI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718830852; c=relaxed/simple;
-	bh=5pAd5l8SzMmlQSEbbBoeGexj0e42jZKo6+z9g7T1oew=;
+	s=arc-20240116; t=1718830858; c=relaxed/simple;
+	bh=z4Yy+U4uehQ++A/G5l/zIQt9seE0IMgFku5riP5EMjM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MTnKXs67f2SX8VQp42V83ctmqmau4dFlF1I0BIMp2RZiGcC9nH6aQnsnDGPRgkpuQ4Yr18JqMC22Ch8LJO6thXcUr1o/ih2d6f4K6reIUwzpt7hQLKH8yi7QJn5VxFVLIcr/72K03ygz12zGnKIwz0n9kDBwLmfQQpxuuwKQEVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I0lfIalt; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=GbdjLu/I/4BXOdeFIem6/xXFW4IUBCCUakuB/PeJB6l8YKbyUOIRCke0X8FmTg7R66AwmPBI3kX4gh1kBv6o3hdWvGvVnbiLNydUJQzQXPkefsZjziIpulxhKmRr+UUxfnRcSAiFvFof6oKD3N8iD258b9r2xygpoA2mGhacv8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PCVE+z7l; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718830850;
+	s=mimecast20190719; t=1718830855;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=maZ9TMPYGbzb/EBP71+0JWLbUHEakzvhjd9HxWMo8cg=;
-	b=I0lfIaltKY643uh0qKr6yNXC9Sai8vfaXLaBRN/6reJbn1VaFWO32Aa2UKmmeFOSekrslZ
-	yssyOUDhfSshby0v5Y+fieivO1jugQ9L9Lz7oF9VjCXkeVwf6W10wjzlC6KwOKtoG4C5IB
-	+pKJnlbnaaKFK0sJYOhIWeOAX2mURds=
+	bh=KcxrhhFi5l+NUgOTWEhyXPFPi3rVOzg15nAozasXi0Q=;
+	b=PCVE+z7lYRik6s0SCbrlDDYyQObZj0Ns5m8+LaT4trhGVQBfBGrhaFWHELXmYMkJ4oHMKY
+	17F6HamcIuEbjWrXRc3K0OR/NWb/Hgi3JbIZT2BIkIudlY1olUrqql3HaTo4B4Vl6t1Nrj
+	Z5+7zH/Em3ZSyE0SqtYAx13p254uJmU=
 Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-696-2XxbiWXBP0mG2Y7-X9m8mw-1; Wed,
- 19 Jun 2024 17:00:47 -0400
-X-MC-Unique: 2XxbiWXBP0mG2Y7-X9m8mw-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-651-A_FJCZgAOF61t9Ck_3Tp7Q-1; Wed,
+ 19 Jun 2024 17:00:52 -0400
+X-MC-Unique: A_FJCZgAOF61t9Ck_3Tp7Q-1
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 01FCE195608B;
-	Wed, 19 Jun 2024 21:00:44 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 790EE19560B7;
+	Wed, 19 Jun 2024 21:00:49 +0000 (UTC)
 Received: from antares.redhat.com (unknown [10.39.193.189])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EB50519560AE;
-	Wed, 19 Jun 2024 21:00:39 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D608B19560AE;
+	Wed, 19 Jun 2024 21:00:44 +0000 (UTC)
 From: Adrian Moreno <amorenoz@redhat.com>
 To: netdev@vger.kernel.org
 Cc: aconole@redhat.com,
@@ -68,10 +68,13 @@ Cc: aconole@redhat.com,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 03/10] net: psample: skip packet copy if no listeners
-Date: Wed, 19 Jun 2024 23:00:04 +0200
-Message-ID: <20240619210023.982698-4-amorenoz@redhat.com>
+Subject: [PATCH net-next v3 04/10] net: psample: allow using rate as probability
+Date: Wed, 19 Jun 2024 23:00:05 +0200
+Message-ID: <20240619210023.982698-5-amorenoz@redhat.com>
 In-Reply-To: <20240619210023.982698-1-amorenoz@redhat.com>
 References: <20240619210023.982698-1-amorenoz@redhat.com>
 Precedence: bulk
@@ -83,32 +86,103 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-If nobody is listening on the multicast group, generating the sample,
-which involves copying packet data, seems completely unnecessary.
+Although not explicitly documented in the psample module itself, the
+definition of PSAMPLE_ATTR_SAMPLE_RATE seems inherited from act_sample.
 
-Return fast in this case.
+Quoting tc-sample(8):
+"RATE of 100 will lead to an average of one sampled packet out of every
+100 observed."
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+With this semantics, the rates that we can express with an unsigned
+32-bits number are very unevenly distributed and concentrated towards
+"sampling few packets".
+For example, we can express a probability of 2.32E-8% but we
+cannot express anything between 100% and 50%.
+
+For sampling applications that are capable of sampling a decent
+amount of packets, this sampling rate semantics is not very useful.
+
+Add a new flag to the uAPI that indicates that the sampling rate is
+expressed in scaled probability, this is:
+- 0 is 0% probability, no packets get sampled.
+- U32_MAX is 100% probability, all packets get sampled.
+
 Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
 ---
- net/psample/psample.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/net/psample.h                 |  3 ++-
+ include/uapi/linux/psample.h          | 10 +++++++++-
+ include/uapi/linux/tc_act/tc_sample.h |  1 +
+ net/psample/psample.c                 |  3 +++
+ 4 files changed, 15 insertions(+), 2 deletions(-)
 
+diff --git a/include/net/psample.h b/include/net/psample.h
+index 2ac71260a546..c52e9ebd88dd 100644
+--- a/include/net/psample.h
++++ b/include/net/psample.h
+@@ -24,7 +24,8 @@ struct psample_metadata {
+ 	u8 out_tc_valid:1,
+ 	   out_tc_occ_valid:1,
+ 	   latency_valid:1,
+-	   unused:5;
++	   rate_as_probability:1,
++	   unused:4;
+ 	const u8 *user_cookie;
+ 	u32 user_cookie_len;
+ };
+diff --git a/include/uapi/linux/psample.h b/include/uapi/linux/psample.h
+index e80637e1d97b..b765f0e81f20 100644
+--- a/include/uapi/linux/psample.h
++++ b/include/uapi/linux/psample.h
+@@ -8,7 +8,11 @@ enum {
+ 	PSAMPLE_ATTR_ORIGSIZE,
+ 	PSAMPLE_ATTR_SAMPLE_GROUP,
+ 	PSAMPLE_ATTR_GROUP_SEQ,
+-	PSAMPLE_ATTR_SAMPLE_RATE,
++	PSAMPLE_ATTR_SAMPLE_RATE,	/* u32, ratio between observed and
++					 * sampled packets or scaled probability
++					 * if PSAMPLE_ATTR_SAMPLE_PROBABILITY
++					 * is set.
++					 */
+ 	PSAMPLE_ATTR_DATA,
+ 	PSAMPLE_ATTR_GROUP_REFCOUNT,
+ 	PSAMPLE_ATTR_TUNNEL,
+@@ -20,6 +24,10 @@ enum {
+ 	PSAMPLE_ATTR_TIMESTAMP,		/* u64, nanoseconds */
+ 	PSAMPLE_ATTR_PROTO,		/* u16 */
+ 	PSAMPLE_ATTR_USER_COOKIE,	/* binary, user provided data */
++	PSAMPLE_ATTR_SAMPLE_PROBABILITY,/* no argument, interpret rate in
++					 * PSAMPLE_ATTR_SAMPLE_RATE as a
++					 * probability scaled 0 - U32_MAX.
++					 */
+ 
+ 	__PSAMPLE_ATTR_MAX
+ };
+diff --git a/include/uapi/linux/tc_act/tc_sample.h b/include/uapi/linux/tc_act/tc_sample.h
+index fee1bcc20793..7ee0735e7b38 100644
+--- a/include/uapi/linux/tc_act/tc_sample.h
++++ b/include/uapi/linux/tc_act/tc_sample.h
+@@ -18,6 +18,7 @@ enum {
+ 	TCA_SAMPLE_TRUNC_SIZE,
+ 	TCA_SAMPLE_PSAMPLE_GROUP,
+ 	TCA_SAMPLE_PAD,
++	TCA_SAMPLE_PROBABILITY,
+ 	__TCA_SAMPLE_MAX
+ };
+ #define TCA_SAMPLE_MAX (__TCA_SAMPLE_MAX - 1)
 diff --git a/net/psample/psample.c b/net/psample/psample.c
-index b37488f426bc..1c76f3e48dcd 100644
+index 1c76f3e48dcd..f48b5b9cd409 100644
 --- a/net/psample/psample.c
 +++ b/net/psample/psample.c
-@@ -376,6 +376,10 @@ void psample_sample_packet(struct psample_group *group, struct sk_buff *skb,
- 	void *data;
- 	int ret;
+@@ -497,6 +497,9 @@ void psample_sample_packet(struct psample_group *group, struct sk_buff *skb,
+ 		    md->user_cookie))
+ 		goto error;
  
-+	if (!genl_has_listeners(&psample_nl_family, group->net,
-+				PSAMPLE_NL_MCGRP_SAMPLE))
-+		return;
++	if (md->rate_as_probability)
++		nla_put_flag(skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
 +
- 	meta_len = (in_ifindex ? nla_total_size(sizeof(u16)) : 0) +
- 		   (out_ifindex ? nla_total_size(sizeof(u16)) : 0) +
- 		   (md->out_tc_valid ? nla_total_size(sizeof(u16)) : 0) +
+ 	genlmsg_end(nl_skb, data);
+ 	genlmsg_multicast_netns(&psample_nl_family, group->net, nl_skb, 0,
+ 				PSAMPLE_NL_MCGRP_SAMPLE, GFP_ATOMIC);
 -- 
 2.45.1
 
