@@ -1,182 +1,129 @@
-Return-Path: <linux-kernel+bounces-220886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4001290E89B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:47:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CDC90E89D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CDA284407
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:47:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C29851C22004
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B5B130AFC;
-	Wed, 19 Jun 2024 10:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DC712FF63;
+	Wed, 19 Jun 2024 10:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T4mY5J0k"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nhh1LUrl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AA73398B;
-	Wed, 19 Jun 2024 10:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BBC3398B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718794063; cv=none; b=XLdlpiiB31H3jl0/s5rJ3453kprOhKrtYG/owMNXrTXBMcz3W8EL6z5BUel9Pd+V/FFWzk7t1v/BAHugyytcNG+gArN2MlvD6hiDlu9nElPSRkzGu/9+57K5s6iLcoRbZyE0RGWT5TwVmysx4jdaks9sqjAagljjCf2pJ72GspQ=
+	t=1718794087; cv=none; b=GHC1y+AnG2Elpx4yaccq7j8s9tc0hYVsixTr32kQnJa3N5K39LC9RW81YbDJy+7Aj3fuVClmY8/nZGXOJ+GffGj71wHhYQoLcXHe0Aid1IG/MFOc35Vecxq9Xk/oa/VDyZuo9Sh32kbpEhu0MjO6/V716GRGvsObnpayFE1PhRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718794063; c=relaxed/simple;
-	bh=s5naf1uttC3SK4CM5eDhQozogAI6TwHH9teO5TqANBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QKYHUH47thgKMwCnBa7EdcOrluF7ZVt8t8FHp+kMKgAY/SGh1mSqFabZeMoGFXF5iTGG0jmfFPfAgZpCDV2f0qm17ZshtK2Oy8j6M9KO+HoV8me804BQGlMD2Xs+bvNgclW/U94CObb+zDJAQ42stb2cs6ahQWc1WH4m+FfiKiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T4mY5J0k; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718794059;
-	bh=s5naf1uttC3SK4CM5eDhQozogAI6TwHH9teO5TqANBA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T4mY5J0kWd9rWAuUygLrHgEwAvT+rBy5VzRpjzulnY1JnSwLd4y1yGT8QDq/sNbfU
-	 BCLi1J9wgtKK353wEwEbhwtdUuRyoOhm92U1DpNxDSGRWbJJDeO3jD33qIsJKw7urk
-	 fbcNFGkIwxDqZaiOW8U2Lj4iXJJLXwK+bUJUYNvTVfHoT9sTA2JfIy9PwdvPRGmos8
-	 TxrmI5ClLetGkAAD1dVPJUa62ao8rdSg37awRUD5w/ugslTyegss3NBaQng+cTN5IA
-	 oGJ04vUHIs7i04HjjOO2FmEjdP5OTYXAuSYPDjPWRr0KLr3KYUegH7IRzTcSq5XpGJ
-	 SDkvSKRTe4fCQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 10A5B37821C3;
-	Wed, 19 Jun 2024 10:47:38 +0000 (UTC)
-Message-ID: <6ab278ab-b8ed-405c-8f37-fc28610eac4e@collabora.com>
-Date: Wed, 19 Jun 2024 12:47:37 +0200
+	s=arc-20240116; t=1718794087; c=relaxed/simple;
+	bh=mCxiKmF5FtxEh3AMxcTpMqIkx0eNtMcqVNEWz/TCWJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pf1JQZ7Bo0UpYm9vx6fujvGGA1CRtqmKPjVuWVngBjaFQtogs4HIvuobK5+6VQ6YIJhTNjlJHUrG+DkqGNV4QcMk1uQzLMYCvShA8nUWXYlmK6PCdzlLzGX3zCUUggqYkA1rBeJ5DiqdVmEQGHJ1kTFUoAjG3ORxz4fziOpHxc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nhh1LUrl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1490C32786;
+	Wed, 19 Jun 2024 10:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718794087;
+	bh=mCxiKmF5FtxEh3AMxcTpMqIkx0eNtMcqVNEWz/TCWJA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nhh1LUrl0dJ0HBwYjWY+FLm+Xid2gbA4GdO531RQdSobw1UQSht0KbYOZMsU3JIE7
+	 nItjRK14Q63aaoJc+d6v0CZASa0WRDj1f6vJB7SJBaLOo5TTodbKNmgtVdi8hnqPp7
+	 jbK/FTjS0/Zno2yBvSC9RcE7fwfuAgqVjBjTSokY=
+Date: Wed, 19 Jun 2024 12:48:04 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Khasnis Soumya <soumya.khasnis@sony.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org,
+	linux-kernel@vger.kernel.org, festevam@denx.de, lee@kernel.org,
+	benjamin.bara@skidata.com, dmitry.osipenko@collabora.com,
+	ldmldm05@gmail.com, srinavasa.nagaraju@sony.com,
+	Madhusudan.Bobbili@sony.com, shingo.takeuchi@sony.com,
+	keita.aihara@sony.com, masaya.takahashi@sony.com
+Subject: Re: [PATCH v5] driver core: Add timeout for device shutdown
+Message-ID: <2024061955-zigzagged-uncoiled-da96@gregkh>
+References: <20240613083226.GA8191@sony.com>
+ <2024061326-moonlit-protozoan-61f8@gregkh>
+ <ecf55d97-363d-4731-bcfa-81cb4e58f2c7@linaro.org>
+ <20240619100000.GA10362@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 14/15] arm64: dts: mediatek: add display blocks support
- for the MT8365 SoC
-To: Alexandre Mergnat <amergnat@baylibre.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Jitao Shi <jitao.shi@mediatek.com>,
- CK Hu <ck.hu@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20231023-display-support-v4-0-ed82eb168fb1@baylibre.com>
- <20231023-display-support-v4-14-ed82eb168fb1@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20231023-display-support-v4-14-ed82eb168fb1@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619100000.GA10362@sony.com>
 
-Il 23/05/24 14:49, Alexandre Mergnat ha scritto:
-> - Add aliases for each display components to help display drivers.
-> - Add the Display Pulse Width Modulation (DISP_PWM) to provide PWM signals
->    for the LED driver of mobile LCM.
-> - Add the MIPI Display Serial Interface (DSI) PHY support. (up to 4-lane
->    output)
-> - Add the display mutex support.
-> - Add the following display component support:
->    - OVL0 (Overlay)
->    - RDMA0 (Data Path Read DMA)
->    - Color0
->    - CCorr0 (Color Correction)
->    - AAL0 (Adaptive Ambient Light)
->    - GAMMA0
->    - Dither0
->    - DSI0 (Display Serial Interface)
->    - RDMA1 (Data Path Read DMA)
->    - DPI0 (Display Parallel Interface)
+On Wed, Jun 19, 2024 at 10:00:00AM +0000, Khasnis Soumya wrote:
+> On Thu, Jun 13, 2024 at 01:51:57PM +0200, Daniel Lezcano wrote:
+> > On 13/06/2024 10:43, Greg KH wrote:
+> > > On Thu, Jun 13, 2024 at 08:32:26AM +0000, Soumya Khasnis wrote:
+> > >> The device shutdown callbacks invoked during shutdown/reboot
+> > >> are prone to errors depending on the device state or mishandling
+> > >> by one or more driver. In order to prevent a device hang in such
+> > >> scenarios, we bail out after a timeout while dumping a meaningful
+> > >> call trace of the shutdown callback to kernel logs, which blocks
+> > >> the shutdown or reboot process.
+> > > 
+> > > Again, this is not a "device shutdown" timeout, it is a "the whole
+> > > system has not shutdown this fast" timeout.
+> > > 
+> > > And in looking at my system, it doesn't shutdown in 10 seconds as it is
+> > > madly flushing a ton of stuff out to the disks, and they are slow
+> > > beasts.  So your 10 second default would cause me data loss on my
+> > > workstation, not good!
+> > 
+> > Thanks for pointing this out. It is exactly what I was worried about ...
+> Thank you for comments Daniel and Greg, let me explain.
 > 
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
-> ---
->   arch/arm64/boot/dts/mediatek/mt8365.dtsi | 336 +++++++++++++++++++++++++++++++
->   1 file changed, 336 insertions(+)
+> Typically reboot/shutdown sequence involves following steps in User land before kernel restart/shutdown sequence is entered.
 > 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8365.dtsi b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-> index 24581f7410aa..9f88645141d6 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-> @@ -8,6 +8,7 @@
->   #include <dt-bindings/clock/mediatek,mt8365-clk.h>
->   #include <dt-bindings/interrupt-controller/arm-gic.h>
->   #include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/memory/mediatek,mt8365-larb-port.h>
->   #include <dt-bindings/phy/phy.h>
->   #include <dt-bindings/power/mediatek,mt8365-power.h>
->   
+> 1.	Terminate all services (except shutdown critical tasks)
+> 2.	Sync File systems
+> 3.	Unmount File systems
+> 4.	Trigger kernel reboot(LINUX_REBOOT_CMD_RESTART/LINUX_REBOOT_CMD_POWER_OFF) system call
+> 
+> A userspace watchdog can be setup for above as exists on Android system.
+> This needs large timeout value because it involves syncing data to disks.  
 
-..snip..
+True.
 
-> +
-> +		rdma1: rdma@14016000 {
-> +			compatible = "mediatek,mt8365-disp-rdma", "mediatek,mt8183-disp-rdma";
-> +			reg = <0 0x14016000 0 0x1000>;
-> +			clocks = <&mmsys CLK_MM_MM_DISP_RDMA1>;
-> +			interrupts = <GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
-> +			iommus = <&iommu M4U_PORT_DISP_RDMA1>;
-> +			mediatek,rdma-fifo-size = <2048>;
-> +			power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0>;
+> Below is the kernel restart sequence after control moves to kernel in step 4).
+> The issue we intend to address here is that the device driver shutdown callbacks may hang
+> due to unresponsive device or a broken driver.
+> 
+> |-kernel_restart()
+>               |- kernel_restart_prepare()
+>                      |- device_shutdown() // Iterates over the device hierarchy and invokes the shutdown callbacks (class/bus/driver->shutdown)
+>               |- syscore_shutdown()
+>               |- machine_restart()
+> 
+> I still believe a 10 sec timeout as default is reasonable for the device_shutdown().
+> Not all drivers necessarily implement a shutdown callback and the timeout can be configured for large systems as needed.
 
-Hey Alex,
+No, you can not break existing systems with this, sorry.
 
-only one nit here - trying to get the formatting consistent between devicetrees for
-all MediaTek SoCs.
+Just enable the watchdog before you do step 4 and then if reboot doesn't
+happen in time, the watchdog will reboot the kernel for you.
 
-VDOSYS/MMSYS:
-			port {
-				#address-cells = <1>;
-				#size-cells = <0>;
+Also, again, fix your broken drivers to not do this please.  You
+obviously have experience with this already, what's preventing that from
+being fixed on your end?  Same goes for an "unresponsive device", that
+too can be fixed in your broken driver, and some might argue, needs to
+be fixed no matter what.
 
-				vdosys0_ep_main: endpoint@0 {
-					reg = <0>;
-					remote-endpoint = <&ovl0_in>;
-				};
-			};
+Don't paper over broken out-of-tree kernel code with stuff like this,
+fix it please.
 
-RDMA/OVL/other components:
+thanks,
 
-			ports {
-				#address-cells = <1>;
-				#size-cells = <0>;
-
-				port@0 {
-					reg = <0>;
-
-					rdma0_in: endpoint {
-						remote-endpoint = <&ovl0_out>;
-					};
-				};
-
-Can you please follow the style that I've shown up there for all of the ports
-nodes and resend the devicetree commits?
-
-P.S.: This is a paste from the MT8195 devicetree that I'll send soon, probably
-tomorrow or something along those lines.
-
-After which, the devicetree looks ok to me.
-
-Thanks,
-Angelo
-
-
+greg k-h
 
