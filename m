@@ -1,222 +1,128 @@
-Return-Path: <linux-kernel+bounces-221426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CAE490F375
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:01:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A7590F378
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7426284FBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:01:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36D261C20F98
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D59158DCD;
-	Wed, 19 Jun 2024 15:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C0D15A850;
+	Wed, 19 Jun 2024 15:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxaywD5m"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SGfT/ou1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AAF158DA8;
-	Wed, 19 Jun 2024 15:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6750C1534FD
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812232; cv=none; b=cMnlIfQPmqAhtchjv9HiCq0Uc9ME6QkyDUaES9ai6U1HAsFlGdqIyjQlBmXWMS2fqEZCnQnbINz8WWLK9D4M5qwH8MvpcNgNUKlIOfbNOWf/jGQzrhLmEPLqjDx8LAtaMgBxac1oZu/bBK2pwFjNzmo9rLxl4JhYYLIXRNT9APg=
+	t=1718812318; cv=none; b=ZbL5NSrMA9uJvr8O6JefPU/pym81tFuNhYdl+fK1hL1qXvx/N1UIBcOJbHOpY20VGX+YXTTn9qZAmCaJ50tEZg2r/GcZSp1y4px7W0T15ZxeTuP/8P1rkdc66ZpE9Zn/Mq96ZR6dZT/eOA7C9NLQQBBUKeh/+J7OBaTX2rjU9cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718812232; c=relaxed/simple;
-	bh=K6MWcb8JgHbFUPFbexO82Uth2bOqMvsxZPn9kppEFTk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=puR8cMGs04zBsG4Zk8k+80eYmKQPSbAG7jfOQB6IjsU7NnkRo2vJXazpVkkIYULuiOvFyH2kJl5QEynxBembYDULgDvV/4VVs4FbggYk725JgUxD3ZvR3CXVweOBK+zN3FQ7fHag6jWvdGCunI1KKvxnXAA9kA9Rsznx9H3V8LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PxaywD5m; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70599522368so4816631b3a.2;
-        Wed, 19 Jun 2024 08:50:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718812230; x=1719417030; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zd7wiy/VlVLvBtVtiqflRbF+ChuoP1J0JG+G7pVlywY=;
-        b=PxaywD5m/Rj7vpZ92sKXz1nYiluihvQIAE0mqgA1LgpdSJ9USPh6qTOFbkAwQuUgqy
-         6pdlaqy8OVgzb51tLzvgRzwqPKStwSCfZeXndgeFg72/WDWxWyfrsCqYHP+zdK5fDF3i
-         s34j4gM+xkMahDhseQXMb+qKZkamBGYtScoP0zNXKnBG7XGPrf4J1BHFUb3Hb5wsHRO3
-         c4Bp8MQ18Jjc/3lGiILn01+mObchfJXh72M7xKPyJxHulFWk6/n+/vbBfRJQb73w+JHZ
-         tGqiHc5zYgA9d17zq/+dn6xrxuNiATkdCLvKKQKhk9gn3j7AJFRlQf9Bh5zR69o8UnZz
-         Sm8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718812230; x=1719417030;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zd7wiy/VlVLvBtVtiqflRbF+ChuoP1J0JG+G7pVlywY=;
-        b=k7hPaMTnZ53Q/F6kv10ckfKiCGuBtkKFojh17gii4hgXbLyFODRPsYP3xd9Di5g4Lq
-         bG9lDo5c8ny2tyP+0r5ZJZ7RaTNtu8E4iv0+AAhQhB3tcWrB8+MG28BKpApJYorhc0VR
-         sDz5bAqcvjhsouO5dzLpWvjxCYBkvQDQ+0yBYBiLlxTEqPhoV+By7/uXlVEUsgnAwXL3
-         vxPONUi7P+lf6LK1xOy2FMrpNhyCt63hU7Sw7AzTTHUlAl/ho+wi144Qj8DyjmTSlgai
-         QTF1Kkx4/xHZoW5QGYfZMMjHUVVbGgZHgyIGJ+ie/kMnSX0WhCg0meCbalZh4AxBz7pB
-         yDBw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3gmmzLTfo1Ih/asnvjDj8T7jfE9FQNZ3z/1AKplUchVMFnorSQ/IWknkAxfkp+tqIXMqto0p4HSl+bsrHHo24A0FamLCi+NdMiH1tRQdwHoGdfBX9UipINrLSvMdxWk0OFUOTojv3QfjSpqYKZ4/6GyC0oMe1p5JDGlBjQwimbzH0TQ==
-X-Gm-Message-State: AOJu0YxrjN5VfZODaEk39mM/X1yz4krCFmI0Y+JXPCEOUhBToX01UK/5
-	vB9p3LmSEuPih2c1YxRDmIRNhsNjdx0gNMDb2Pj/d1ZhDMYPOjzl
-X-Google-Smtp-Source: AGHT+IF5kuW0M2dM/4GTa3QjwDZqbi4zHzmHnRmjAa5S++TiLw7FT1gdA2uZD4U2FAbY0OsBzKcPdQ==
-X-Received: by 2002:a05:6a00:2a6:b0:704:34a0:96c9 with SMTP id d2e1a72fcca58-70629cf6a33mr2553824b3a.30.1718812230417;
-        Wed, 19 Jun 2024 08:50:30 -0700 (PDT)
-Received: from ga401ii.. ([2401:4900:1cc8:6da5:5a28:6118:91d6:c407])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-705ccb3cdc6sm10813934b3a.138.2024.06.19.08.50.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 08:50:29 -0700 (PDT)
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-To: 
-Cc: Kanak Shilledar <kanakshilledar@gmail.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1718812318; c=relaxed/simple;
+	bh=34RScb7gxw/Yp50N/EE+gfdXpQ3Dp+K6v1Va+Fk8o3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNK6DD6Is80ARKM8QhLamBegarXOoQaCUmh5if/xVWmTTXAqlI5vEiBJY23SrI1btwC3NZMSCbIPTCB+fZHs+K2zSoujtJHiPRYmKD4phOshO03/FnwHIjYpAWZbRLfPn0SC1kffdfnCwzE3Xh4O2p8Jhv03Uw0cR7KfziKsRTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SGfT/ou1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718812316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9JqI/LAuaUFgB9TLpPBaaCDWA4te0tvM+w4q/2+xqbU=;
+	b=SGfT/ou1jWwMq8QMvLvZqV3I1sgCnU+F2s9Ply3AzvmpIhuG7p0wIHviEgRoJOMPytIwUD
+	H0EuasVZQGOO3D6byyqqb5DQvojw0wR6Qrh0TrWOtDdaRf4Qb63q5v63TYl5mr2X3i9gnA
+	LYMysSuTQSSZ9Eop7DBLWuqQNMxjqCM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-493-MsxMLdZaP2O5dZaxBDx9bw-1; Wed,
+ 19 Jun 2024 11:51:53 -0400
+X-MC-Unique: MsxMLdZaP2O5dZaxBDx9bw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1EEA195608B;
+	Wed, 19 Jun 2024 15:51:51 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.168])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8328119560AE;
+	Wed, 19 Jun 2024 15:51:49 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 19 Jun 2024 17:50:20 +0200 (CEST)
+Date: Wed, 19 Jun 2024 17:50:17 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: i2c: convert to dt schema
-Date: Wed, 19 Jun 2024 21:19:36 +0530
-Message-ID: <20240619154941.144011-2-kanakshilledar@gmail.com>
-X-Mailer: git-send-email 2.45.2
+Subject: Re: [PATCH 01/17] signal: Make SIGKILL during coredumps an explicit
+ special case
+Message-ID: <20240619155016.GC24240@redhat.com>
+References: <20240609142342.GA11165@redhat.com>
+ <87r0d5t2nt.fsf@email.froward.int.ebiederm.org>
+ <20240610152902.GC20640@redhat.com>
+ <20240613154541.GD18218@redhat.com>
+ <87ikyamf4u.fsf@email.froward.int.ebiederm.org>
+ <20240617183758.GB10753@redhat.com>
+ <87iky5k2yi.fsf@email.froward.int.ebiederm.org>
+ <87o77xinmt.fsf_-_@email.froward.int.ebiederm.org>
+ <87iky5inlv.fsf_-_@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87iky5inlv.fsf_-_@email.froward.int.ebiederm.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Convert the NXP I2C controller for LPC2xxx/178x/18xx/43xx
-to newer DT schema. Created DT schema based on the .txt file
-which had `compatible`, `reg`, `interrupts`, `clocks`,
-`#address-cells` and `#size-cells` as required properties.
+Hi Eric,
 
-Additional changes to the original .txt binding
-- added maintainer from the MAINTAINERS file.
-- added resets property required by the corresponding DTS files.
+I'll _try_ to read this (nontrivial) changes this week. To be honest,
+right now I don't really understand your goals after the quick glance...
 
-Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
----
- .../devicetree/bindings/i2c/i2c-lpc2k.txt     | 33 ----------
- .../bindings/i2c/nxp,lpc1788-i2c.yaml         | 66 +++++++++++++++++++
- 2 files changed, 66 insertions(+), 33 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
- create mode 100644 Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+So far I have only looked at this simple 1/17 and it doesn't look right
+to me.
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt b/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
-deleted file mode 100644
-index 4101aa621ad4..000000000000
---- a/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
-+++ /dev/null
-@@ -1,33 +0,0 @@
--NXP I2C controller for LPC2xxx/178x/18xx/43xx
--
--Required properties:
-- - compatible: must be "nxp,lpc1788-i2c"
-- - reg: physical address and length of the device registers
-- - interrupts: a single interrupt specifier
-- - clocks: clock for the device
-- - #address-cells: should be <1>
-- - #size-cells: should be <0>
--
--Optional properties:
--- clock-frequency: the desired I2C bus clock frequency in Hz; in
--  absence of this property the default value is used (100 kHz).
--
--Example:
--i2c0: i2c@400a1000 {
--	compatible = "nxp,lpc1788-i2c";
--	reg = <0x400a1000 0x1000>;
--	interrupts = <18>;
--	clocks = <&ccu1 CLK_APB1_I2C0>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--};
--
--&i2c0 {
--	clock-frequency = <400000>;
--
--	lm75@48 {
--		compatible = "nxp,lm75";
--		reg = <0x48>;
--	};
--};
--
-diff --git a/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml b/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
-new file mode 100644
-index 000000000000..79d6774dd54f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
-@@ -0,0 +1,66 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/i2c/nxp,lpc1788-i2c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP I2C controller for LPC2xxx/178x/18xx/43xx
-+
-+maintainers:
-+  - Vladimir Zapolskiy <vz@mleia.com>
-+
-+allOf:
-+  - $ref: /schemas/i2c/i2c-controller.yaml#
-+
-+properties:
-+  compatible:
-+    const: nxp,lpc1788-i2c
-+
-+  reg:
-+    description: physical address and length of the device registers
-+    maxItems: 1
-+
-+  interrupts:
-+    description: a single interrupt specifier
-+    maxItems: 1
-+
-+  clocks:
-+    description: clock for the device
-+    maxItems: 1
-+
-+  clock-frequency:
-+    description: the desired I2C bus clock frequency in Hz
-+    default: 100000
-+
-+  resets:
-+    description: reset for the device
-+    maxItems: 1
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - "#address-cells"
-+  - "#size-cells"
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include "dt-bindings/clock/lpc18xx-ccu.h"
-+
-+    i2c@400a1000 {
-+        compatible = "nxp,lpc1788-i2c";
-+        reg = <0x400a1000 0x1000>;
-+        interrupts = <18>;
-+        clocks = <&ccu1 CLK_APB1_I2C0>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+    };
--- 
-2.45.2
+On 06/18, Eric W. Biederman wrote:
+>
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -907,8 +907,12 @@ static bool prepare_signal(int sig, struct task_struct *p, bool force)
+>  	sigset_t flush;
+>  
+>  	if (signal->flags & SIGNAL_GROUP_EXIT) {
+> -		if (signal->core_state)
+> -			return sig == SIGKILL;
+> +		if (signal->core_state && (sig == SIGKILL)) {
+> +			struct task_struct *dumper =
+> +				signal->core_state->dumper.task;
+> +			sigaddset(&dumper->pending.signal, SIGKILL);
+> +			signal_wake_up(dumper, 1);
+> +		}
+
+and after that it returns false so __send_signal_locked/send_sigqueue simply
+return. This means:
+
+	- the caller will wrongly report TRACE_SIGNAL_IGNORED
+
+	- complete_signal() won't be called, so signal->group_exit_code
+	  won't be updated.
+
+	  coredump_finish() won't change it too so the process will exit
+	  with group_exit_code == signr /* coredumping signal */.
+
+	  Yes, the fix is obvious and trivial...
+
+Oleg.
 
 
