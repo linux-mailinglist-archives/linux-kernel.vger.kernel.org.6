@@ -1,100 +1,166 @@
-Return-Path: <linux-kernel+bounces-221713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113A590F790
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1661490F794
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1B8D1F241FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:35:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A931F241CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E65158D6C;
-	Wed, 19 Jun 2024 20:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991C0159911;
+	Wed, 19 Jun 2024 20:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0UDKG4J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yDM3gZ38"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EBD76413;
-	Wed, 19 Jun 2024 20:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B2376413
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 20:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718829305; cv=none; b=DeAWlI/jluoxDSmRrjcU60oQ8w+wMALfhwRZ6gwGDuOR4UUHjWpQeGE6Fgtq31DifWQZRCEo0rarIhXlCjV28idYx9f0uvQbV6JpWmZe67vcLFc/Ii+7ipLScPVCWPqbMySLVrBJQ08e/DSZfjAQkZAoFRfbSu1k9vTYW+aBRtA=
+	t=1718829405; cv=none; b=LpODbCXy2P+DhnG3nHVV0716jMLcr/vUXH3Wp+e0rOZF0sGoI0UKgwf+rtnF73+8nlb7I8VQJk6m34dk/++iRDwKrLscuvDFDgFWfsMCgpVWCzQcXwpZnVItqLcI5e3oA9Y8EBweksVX7kc2Ou/vMqs2aWZ9ckPaBtDtWkrAruc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718829305; c=relaxed/simple;
-	bh=DwSqGIFWO7qDKpdb7yKEj89W14i4MmRr2Boksk1EBcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VGJkb1aelHb9GX7xW1CWfTW0i3iRcZoeRP+XM/MLtfwZTTr9coBCdGDODC5LcKjtKPenDPcBrTRsh/YDjqVtlbkIXNY7h0vfQl87ZB7LTrVpvtts3xllKJa08FQCzRILpu53zZyCXJq3BB+ecrxnq1G+foc9gisFdCWBbsABGuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0UDKG4J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC36EC2BBFC;
-	Wed, 19 Jun 2024 20:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718829304;
-	bh=DwSqGIFWO7qDKpdb7yKEj89W14i4MmRr2Boksk1EBcA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I0UDKG4J2YCeJh6+iV+ePsRpBg3SQwdej1LXQaTZIlskG82dYIRsd2pGoH4HpIVS2
-	 ZX0hNnkT1QRrhB/KJc1RqESOfCHG7lBITUHChxXFhNvoTXGtPCnqpPBMzZwlcyK9cg
-	 U3G7EVRkF2pKVSGLjOPaeWOVSuczuTzENulES88Aj0w2n7kQPJ74YBZFU2XZnP1rWC
-	 NXUFLn7vA5L+HWgwjyvnOU8wbLlAdTIS4h+yJG6lZ+Q03N8qSwKIjyLaHcgN/LC9Ho
-	 hDCwEJO4E2RnLN0bjIh7oTLVjKDEzVE9NJ8Ni5tabMNFnKmR7jw2j0fsgfR2Yab9nP
-	 gtR5cfU5VSPTA==
-Date: Wed, 19 Jun 2024 13:35:04 -0700
-From: Kees Cook <kees@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Vitor Massaru Iha <vitor@massaru.org>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	David Gow <davidgow@google.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	Rae Moar <rmoar@google.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] usercopy: Convert test_user_copy to KUnit test
-Message-ID: <202406191334.EBF96371@keescook>
-References: <20240612195412.make.760-kees@kernel.org>
- <20240612195921.2685842-2-kees@kernel.org>
- <e91728af-83e7-453e-816f-add3b0011a66@quicinc.com>
+	s=arc-20240116; t=1718829405; c=relaxed/simple;
+	bh=YHpZBKOTGpiCGrM0Gky8nUyTgm2aWWdFfAQxJF+pTiI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BzB50a9Eo8Zo8XzSAwrrRA//tqau4d1k+ddHdyidHyzdC+OGN5Api2BTFI5b5NfBOdbPEKvxF/7pmbcPx8f+y4LMrpGC9mxgUFcFvfVwFZmtOzIqQq9ss6tGYrwiXiuhsRdtr6CbJCnYh2bZUOT981oiBslJSqfH1wJz26zxhJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yDM3gZ38; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-25c9ef2701fso157102fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:36:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718829402; x=1719434202; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7Bhz4UEquitBq09lUPEQydDdFbLGzU2edcWDV1BKWGo=;
+        b=yDM3gZ38+SEkhPab9SWoxS1ojy/76ttk668fMn93lvzh2RVce/QPaDWkkX/SGusQ+Z
+         0mGDJpLCHhwhPavzTFDCD1po3DoofT1pTvRiuMeW8hexjkQve5VTvJU9fTy9SokTqOa5
+         PER1LwZlmGRmxI1Lz92uxjqlLxDbZPdoxrNGKtzAHLbjc1YUpwqLqD+NypPewRp/0dUb
+         9gIKEQFOFlVbC0X70A7dtywIH5lD0QtuUTEvtE6FX0wBJjTlVNU8z8oe0aZJSazSuECY
+         /3e6tS/iEXoGoIMtygOfc08dLw4SwndW5qSVJTC5MqFp9VFJIvAqDECXwt3T8qd7hguK
+         05YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718829402; x=1719434202;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Bhz4UEquitBq09lUPEQydDdFbLGzU2edcWDV1BKWGo=;
+        b=tWEv1SjKU1YiFlz3MpHXWlGQueLXrNwKqRb3tlkMl7pRIx5lF2RNh1RqrTbK9MGG9I
+         qqQfXnAig+hDz1sXgxI8p7acejRDKBoBGGEttmT5I1v/g4nlB9BwNpU5uGocctPFsqKb
+         zNX0xD2VTTPmZIjLwLfQJxElyUZNyMMgOKPgsFhphyCJzlIohmChjbLvColGutlDbEXg
+         cD/0NTsuX0wjfO4l7DdDLCxLMXxqWb4Gxtmfr23xxgBJynJ4HW2LGGYN/KWEi4kNXawX
+         O7tulShT24ijJ7AD5oj80gpOCoVbTLoyYh3KdXSQMhGk3nwEB4VSK+KnpR82scLhqwr7
+         1MQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUs5lKkzsEPAxy29m8pIGw5kmgWGOCQVcrdFq584ykj0Nv6P/NzZ2xveoIn5Fp8YiC59zoPcSpVmfh1j0LlG7VI0IBGrrsFMHoaA5sN
+X-Gm-Message-State: AOJu0YwUedMxJu85HX61QDL9gb/KgIayuqr8Pznk7MqZoIiHMgSPX2Hw
+	mz1GbhvC5PvZyc1qdzUYu7Hfx/bBdP+267ChRhqg3r1JEZDKxMdR1+/r3Vo8Q9k=
+X-Google-Smtp-Source: AGHT+IFB+dmoTZsjm1rjTdd/Rx0XJY6qdj/XU6ksvKxjea18nZLUHV9q0z0ee2VgHzIViuH6JCshyg==
+X-Received: by 2002:a05:6870:c0cc:b0:25c:a725:f150 with SMTP id 586e51a60fabf-25ca7261c54mr2212458fac.23.1718829402194;
+        Wed, 19 Jun 2024 13:36:42 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25a6d0fd5a6sm796453fac.56.2024.06.19.13.36.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 13:36:41 -0700 (PDT)
+Message-ID: <e7a2438a-f6a3-439e-8058-937248dd5b3f@baylibre.com>
+Date: Wed, 19 Jun 2024 15:36:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e91728af-83e7-453e-816f-add3b0011a66@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI protocol
+ with MOSI idle configuration
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1718749981.git.marcelo.schmitt@analog.com>
+ <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
+ <63db9349-f453-4a5b-aa09-d1857ddd8b03@baylibre.com>
+ <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 19, 2024 at 11:38:31AM -0700, Jeff Johnson wrote:
-> On 6/12/24 12:59, Kees Cook wrote:
-> > Convert the runtime tests of hardened usercopy to standard KUnit tests.
-> > 
-> > Additionally disable usercopy_test_invalid() for systems with separate
-> > address spaces (or no MMU) since it's not sensible to test for address
-> > confusion there (e.g. m68k).
-> > 
-> > Co-developed-by: Vitor Massaru Iha <vitor@massaru.org>
-> > Signed-off-by: Vitor Massaru Iha <vitor@massaru.org>
-> > Link: https://lore.kernel.org/r/20200721174654.72132-1-vitor@massaru.org
-> > Tested-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-> > Reviewed-by: David Gow <davidgow@google.com>
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> ...
-> > +kunit_test_suites(&usercopy_test_suite);
-> > +MODULE_AUTHOR("Kees Cook <kees@kernel.org>");
-> >   MODULE_LICENSE("GPL");
+On 6/19/24 1:58 PM, Marcelo Schmitt wrote:
+> On 06/19, David Lechner wrote:
+>> On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
+>>
+>>
+
+...
+
+>>
+>>> +the peripheral and also when CS is inactive.
+>>
+>> As I mentioned in a previous review, I think the key detail here is that the
+>> MOSI line has to be in the required state during the CS line assertion
+>> (falling edge). I didn't really get that from the current wording. The current
+>> wording makes it sound like MOSI needs to be high indefinitely longer.
 > 
-> Can you add the missing MODULE_DESCRIPTION() to remove the W=1 warning?
+> It may be that we only need MOSI high just before bringing CS low. Though,
+> I don't see that info in the datasheets. How much time would MOSI be required
+> to be high prior to bringing CS low? The timing diagrams for register access and
+> ADC sampling in "3-wire" mode all start and end with MOSI at logical 1 (high).
+> I think reg access work if MOSI is brought low after CS gets low, but sample
+> read definitely don't work.
 > 
-> The fix to the current file is part of:
-> https://lore.kernel.org/all/20240601-md-lib-test-v1-1-a728620e37d8@quicinc.com/
+> From the info available in datasheets, it looks like MOSI is indeed expected 
+> to be high indefinitely amount of time. Except when the controller is clocking
+> out data to the peripheral.
+> 
+> Even if find out the amount of time MOSI would be required high prior to CS low,
+> then we would need some sort of MOSI high/low state set with a delay prior to
+> active CS. That might be enough to support the AD4000 series of devices but,
+> would it be worth the added complexity?
+> 
 
-Thanks for the reminder! I've split it out and sent a separate patch to
-Shuah.
+It needs to happen at the same time as setting CPOL for the SCLK line for the
+device that is about to have the CS asserted. So I don't think we are breaking
+new ground here. Typically, in most datasheets I've seen they tend to say
+something like 2 ns before the CS change. So in most cases, I don't think
+anyone bothers adding a delay. But if a longer delay was really needed for
+a specific peripheral, we could add a SPI xfer with no read/write that has
+cs_off=1 and a delay to get the correct state of both MOSI and SCLK a longer
+time before the CS change.
 
--- 
-Kees Cook
+>>
+>>> index e8e1e798924f..8e50a8559225 100644
+>>> --- a/include/linux/spi/spi.h
+>>> +++ b/include/linux/spi/spi.h
+>>> @@ -599,6 +599,12 @@ struct spi_controller {
+>>>  	 * assert/de-assert more than one chip select at once.
+>>>  	 */
+>>>  #define SPI_CONTROLLER_MULTI_CS		BIT(7)
+>>> +	/*
+>>> +	 * The spi-controller is capable of keeping the MOSI line low or high
+>>> +	 * when not clocking out data.
+>>> +	 */
+>>> +#define SPI_CONTROLLER_MOSI_IDLE_LOW    BIT(8)  /* Can idle MOSI low */
+>>> +#define SPI_CONTROLLER_MOSI_IDLE_HIGH   BIT(9)  /* Can idle MOSI high */
+>>
+>> I don't see where these are used anywhere else in the series. They
+>> seem redundant with SPI_MOSI_IDLE_LOW and SPI_MOSI_IDLE_HIGH.
+>>
+> Good point.
+> They are currently not being used.
+> Comparing with what we have for SPI_CONTROLLER_MULTI_CS, I'm thinking it may be
+> handy to have dt properties to indicate controller MOSI idle capabilities.
+> Does that sound reasonable?
+
+I don't see any properties in spi-controller.yaml related to
+SPI_CONTROLLER_MULTI_CS. So I don't see how a property for
+the idle capabilities would be useful there.
+
 
