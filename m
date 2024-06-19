@@ -1,146 +1,397 @@
-Return-Path: <linux-kernel+bounces-221646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881A490F6B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:09:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCDB90F6BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3755C2830A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:09:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D351C24587
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17705158A3B;
-	Wed, 19 Jun 2024 19:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9D1158D66;
+	Wed, 19 Jun 2024 19:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iVtbzgag"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wf1XOlcW"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06052157E9F;
-	Wed, 19 Jun 2024 19:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFAF155759;
+	Wed, 19 Jun 2024 19:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718824137; cv=none; b=YIfzT+BVWtKKamrOGy9GDGPSNesJ+fRiORJ8Qplw5PyNzYMBFVEjfVpmUOKsewwr/1CQw/KDAcz1sQPwD38lWMH02Oky1rgw/crtx4zuLK79czPLUlnScVYK2lEuX50/Rp5uoMxir2LxuaKlcWtcZERVFg/gfdqfop/QE/LFjXU=
+	t=1718824220; cv=none; b=aY5Q1K9fEuKbYsYAU8hyfxp52aOnYR2zI794kciKBzWHDFuPbWL4hNlJBZ8Bs6klVnS89S0uSx+MFqh1d3A5bSIRTV3IZfOTfSV0ZPNiKolp8+aEJtOYweHp939qTUrwaMcnnuSWSgRCmqrtYaaBO+P791958sXrkvicwVbyVzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718824137; c=relaxed/simple;
-	bh=zRnzS9SZ+dxXGc3ihVIyUkY1xWZtFIkc0xyC6fJGY1w=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dlt5UtKYRV6rBix5P3DZjg+Wk/aQIEBu/ndBLx89U+cRx75XuBBSxfCwWIBkfr6Cv3CqJ2Kz5rwH4bQPVaEkFbi1FfboLr3HhMgqzj1hlz3OwFtOp2eEiOn0dYMUfx9lA3DDF4v73Jj54tHEBdgCQ+Cdb/B9xH7aRJWXEMuv90g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iVtbzgag; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9rQsA027119;
-	Wed, 19 Jun 2024 19:08:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ZyMEkR9BE8crvd7eINIckNo/
-	AY9lbygpGEBGCIg3TI4=; b=iVtbzgagFp1MyBjvKJsTleyh99UbIsIJAGpL0QBk
-	WjmjN2tcOwKZ4g4epCH2DWZJ+u4x18oikF6cD88ONBwFtCicRrYko++AD0SOdHQN
-	G3Ini4ujZhPmPOICTvxDyCyc5qskcTkMRVP2c++MkYI+eERM4wd8QSVswRgLwN0f
-	2FvHbThhHVetORBnmRrfGf7oskkh2M9EI07OKVAiPsRB1tm88LngJcbNY6r+Go5O
-	xYYN3Npbn2Zmh3Ajy7+Lw7zgdcH0FODxTKvZvB8Y1SH/sYg47LlUdPzd5Fe5abnZ
-	mbMbfGCOmqgthcZOqgcIQALOh1HHnGbl+gcfks6SZnddbA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9ytkst-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 19:08:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JJ8qIl015527
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 19:08:52 GMT
-Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 19 Jun 2024 12:08:51 -0700
-Date: Wed, 19 Jun 2024 12:08:50 -0700
-From: Mike Tipton <quic_mdtipton@quicinc.com>
-To: Elliot Berman <quic_eberman@quicinc.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: qcom: Remove QCOM_RPMCC symbol
-Message-ID: <20240619190850.GA12720@hu-mdtipton-lv.qualcomm.com>
-References: <20240619-drop-qcom-rpmcc-v1-1-b487c95162ef@quicinc.com>
+	s=arc-20240116; t=1718824220; c=relaxed/simple;
+	bh=WAmFx+ZAhBE6QYFnuAIgPCTyeKlQ0c2u0P1mZZ6eo2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pE58gKPtYolM4LR4gTx1tZoP1ZQFKrKQLiuSHQ6stQO5mdbDCIlyXgTZw0jwTJK8RtYytj0J8lJ9wkl1l5x0dW9fQ2naVmrx5EANIZtduMU4L7sNaeA8okH0Fy5ybNzz4f3Rsygj+orduftSeDGqouL7+kN+MROMdHnp3+dzqJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wf1XOlcW; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6fb696d2d8so8958266b.1;
+        Wed, 19 Jun 2024 12:10:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718824217; x=1719429017; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ahlND5Zmd1zch0hsIJlAQEvMAiC/XZH76a69+Fwt53Q=;
+        b=Wf1XOlcWsbSG9aBaqeoXp3/VT/rXDkYi/ghPnCEP/RH7rgYdV72/nP80pkt1P+vVNf
+         +fhDPN6yGX99ZInJKxoWBx/FsEMyW0KiN0HUqOL8JV45LYWcTkcWesYI+JFV7K2/XsVJ
+         wKUllft9iIMK9/854hnjW8yxZiK6u95kVmGcAd9uzRTqwO3dDyqiM7FV03Cv0g2Mt0mc
+         suXb36ptvec8L1K3+cHN3dMAyemtvN7VHC8rFZFHhygrdUhoCO7btO6aYcWS5AaJPt4v
+         VcRFj+CMgo2D8mJMtiVHKmK3VZuBpCc6nYqXjgVvREjx3dSlaKMxrbFUYkwXx1KoG8vP
+         B1zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718824217; x=1719429017;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ahlND5Zmd1zch0hsIJlAQEvMAiC/XZH76a69+Fwt53Q=;
+        b=DrkmFZ8kuHuLGyJFtkZLq07KFuFhiOpC0wUWoXgy+ODR1ubT+IdNXjUbFAeVFvmh5Q
+         n63g3O3DVgmacdvCY5aeOYiFcKsvwTyjkamuI710b5NP3BPWeCzSN+6vFMVAFKjR4ez7
+         8/dUTqQXc0des1qNGd3oJlmkncGHUllLCduHa8qtgDCyXJQSBGXlhPN77dtKODgYwDJK
+         Kropz4ILyFUKmHppj2Utb6pS/JXGrx7Pq+zHj6ZtG5N1z+Tltwlo/uIkT92QEgP2p6sU
+         0cMOvcu8ldujqh8a4WGhRaLmcQ3LkWlHzNjKzfGtoMMmMRyS5HnFQXKKo3TfEn0FSFSx
+         glQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZNkP2B/3RuLwegjtZuvBR7kzdDPZnYzitSQf659HL5C9qD6RxLkwCFwon7cfy5aUdE8iOqqAqDKlKZjnudmYYg2qPDv23UZALYBVGSY5Iiv3rYzwnw9I9NlGVz9YMRs4j8ctKAXzck53MmCaOTBrVWUtkgtCN31C8o3akFj3YBcW0QQ==
+X-Gm-Message-State: AOJu0YyyriPeWgtFNsumEUQKigc7apfQ5dy9kk05B0s1qbBgazcWqLly
+	gsbvQc538Xgh452r3vG2EYJyoBEgsrn3EJlAatg+kuuAzwzYPQZAtlIbLlwv15Fu0uphe3YVGUY
+	fvj0wIZEl2WRaw37+LBnqi2jioXA=
+X-Google-Smtp-Source: AGHT+IG4EwmKdtxr3rqPxduBQKlfNFGX/bVsYbwYUwt0xso+kVroPnVAVQiWZQJtFZGOfOIImTMOT+FeU9/N8iQIJas=
+X-Received: by 2002:a17:906:3112:b0:a6e:f793:461f with SMTP id
+ a640c23a62f3a-a6fab6459b0mr207708666b.38.1718824216746; Wed, 19 Jun 2024
+ 12:10:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240619-drop-qcom-rpmcc-v1-1-b487c95162ef@quicinc.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: P62NNEpelElMNrCzTGLgfQtpLH-P68pa
-X-Proofpoint-GUID: P62NNEpelElMNrCzTGLgfQtpLH-P68pa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=814 spamscore=0 lowpriorityscore=0 mlxscore=0 adultscore=0
- clxscore=1011 bulkscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190145
+References: <20240619054641.277062-1-shanchun1218@gmail.com> <20240619054641.277062-3-shanchun1218@gmail.com>
+In-Reply-To: <20240619054641.277062-3-shanchun1218@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 19 Jun 2024 21:09:39 +0200
+Message-ID: <CAHp75VcJGoDaAbD7vWin8yTGarrLZbVQqucHs+M9rAAS0BZd9g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mmc: sdhci-of-ma35d1: Add Novoton MA35D1 SDHCI driver
+To: Shan-Chun Hung <shanchun1218@gmail.com>
+Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, adrian.hunter@intel.com, p.zabel@pengutronix.de, 
+	pbrobinson@gmail.com, serghox@gmail.com, mcgrof@kernel.org, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, forbidden405@outlook.com, 
+	tmaimon77@gmail.com, linux-arm-kernel@lists.infradead.org, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ychuang3@nuvoton.com, schung@nuvoton.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2024 at 08:41:52AM -0700, Elliot Berman wrote:
-> This symbol is selected by a couple drivers, but isn't used by anyone
-> and hasn't been for years now. Drop it.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> ---
->  drivers/clk/qcom/Kconfig | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index f72838aa573b..67c9188d53cb 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -7,9 +7,6 @@ config QCOM_GDSC
->  	bool
->  	select PM_GENERIC_DOMAINS if PM
->  
-> -config QCOM_RPMCC
-> -	bool
-> -
->  menuconfig COMMON_CLK_QCOM
->  	tristate "Support for Qualcomm's clock controllers"
->  	depends on OF
-> @@ -122,7 +119,6 @@ config QCOM_CLK_APCS_SDX55
->  config QCOM_CLK_RPM
->  	tristate "RPM based Clock Controller"
->  	depends on MFD_QCOM_RPM
-> -	select QCOM_RPMCC
->  	help
->  	  The RPM (Resource Power Manager) is a dedicated hardware engine for
->  	  managing the shared SoC resources in order to keep the lowest power
-> @@ -135,7 +131,6 @@ config QCOM_CLK_RPM
->  config QCOM_CLK_SMD_RPM
->  	tristate "RPM over SMD based Clock Controller"
->  	depends on QCOM_SMD_RPM
-> -	select QCOM_RPMCC
->  	help
->  	  The RPM (Resource Power Manager) is a dedicated hardware engine for
->  	  managing the shared SoC resources in order to keep the lowest power
-> 
-> ---
-> base-commit: eefb5ee4b41cdb68bf6feffe0d68b5bbe038e29d
-> change-id: 20240618-drop-qcom-rpmcc-2f3d85aca0a1
-> 
-> Best regards,
-> -- 
-> Elliot Berman <quic_eberman@quicinc.com>
-> 
-> 
+On Wed, Jun 19, 2024 at 7:47=E2=80=AFAM Shan-Chun Hung <shanchun1218@gmail.=
+com> wrote:
+>
+> This adds the SDHCI driver for the MA35 series SoC. It is based upon the
+> SDHCI interface, but requires some extra initialization.
+>
+> Signed-off-by: schung <schung@nuvoton.com>
 
-Reviewed-by: Mike Tipton <quic_mdtipton@quicinc.com>
+Even I agree with Markus' remarks, so please correct your SoB by using
+something similar to the From line.
+
+...
+
+> +config MMC_SDHCI_OF_MA35D1
+> +       tristate "SDHCI OF support for the MA35D1 SDHCI controller"
+> +       depends on ARCH_A35 || COMPILE_TEST
+> +       depends on MMC_SDHCI_PLTFM
+
+> +       depends on OF && COMMON_CLK
+
+OF is not compile dependency AFAICS, if you want make it functional, use
+
+  depends on OF || COMPILE_TEST
+
+...
+
+You are missing a lot of header inclusions, please follow IWYU principle.
+
++ array_size.h
++ bits.h
+
+> +#include <linux/clk.h>
+
++ device.h
+
+> +#include <linux/dma-mapping.h>
+
++ err.h
+
+> +#include <linux/mfd/syscon.h>
+
++ math.h
++ mod_devicetable.h
+
+> +#include <linux/module.h>
+> +#include <linux/mmc/mmc.h>
+> +#include <linux/pinctrl/consumer.h>
+
++ platform_device.h
+
+> +#include <linux/regmap.h>
+> +#include <linux/reset.h>
+> +#include <linux/slab.h>
+
++ types.h
+
+...
+
+> +#define BOUNDARY_OK(addr, len) \
+> +       ((addr | (SZ_128M - 1)) =3D=3D ((addr + len - 1) | (SZ_128M - 1))=
+)
+
+Besides sizes.h being missed, this can be done with help of ALIGN()
+macro (or alike). So, kill this and use the globally defined macro
+inline.
+
+...
+
+> +       /* If the clock frequency exceeds MMC_HIGH_52_MAX_DTR,
+> +        *      disable command conflict check.
+> +        */
+
+  /*
+   * The comment style is wrong and
+   * the indentation in the second line.
+   * Fix it as in this example.
+   */
+
+...
+
+> +static void ma35_voltage_switch(struct sdhci_host *host)
+> +{
+> +       /* Wait for 5ms after set 1.8V signal enable bit */
+> +       usleep_range(5000, 5500);
+
+Use fsleep()
+
+> +}
+> +
+> +static int ma35_execute_tuning(struct mmc_host *mmc, u32 opcode)
+> +{
+> +       struct sdhci_host *host =3D mmc_priv(mmc);
+> +       struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+> +       struct ma35_priv *priv =3D sdhci_pltfm_priv(pltfm_host);
+> +
+> +       /* Limitations require a reset SD/eMMC before tuning. */
+> +       if (!IS_ERR(priv->rst)) {
+
+It's way too big for indentation, moreover it uses an unusual pattern,
+usually we check for an error case first. So, invert the conditional
+and this all code will become much better.
+
+> +               int idx;
+> +               u32 *val;
+> +
+> +               val =3D kmalloc(ARRAY_SIZE(restore_data), GFP_KERNEL);
+> +               for (idx =3D 0; idx < ARRAY_SIZE(restore_data); idx++) {
+> +                       if (restore_data[idx].width =3D=3D 32)
+
+sizeof(u32) ?
+
+> +                               val[idx] =3D sdhci_readl(host, restore_da=
+ta[idx].reg);
+> +                       else if (restore_data[idx].width =3D=3D 8)
+
+sizeof(u8) ?
+
+> +                               val[idx] =3D sdhci_readb(host, restore_da=
+ta[idx].reg);
+> +               }
+> +
+> +               reset_control_assert(priv->rst);
+> +               reset_control_deassert(priv->rst);
+> +
+> +               for (idx =3D 0; idx < ARRAY_SIZE(restore_data); idx++) {
+> +                       if (restore_data[idx].width =3D=3D 32)
+> +                               sdhci_writel(host, val[idx], restore_data=
+[idx].reg);
+> +                       else if (restore_data[idx].width =3D=3D 8)
+> +                               sdhci_writeb(host, val[idx], restore_data=
+[idx].reg);
+
+As per above?
+
+> +               }
+> +
+> +               kfree(val);
+> +       }
+> +
+> +       return sdhci_execute_tuning(mmc, opcode);
+> +}
+
+...
+
+> +static int ma35_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+
+Since you have it, use it!
+
+> +       struct sdhci_pltfm_host *pltfm_host;
+> +       struct sdhci_host *host;
+> +       struct ma35_priv *priv;
+> +       int err;
+> +       u32 extra, ctl;
+> +
+> +       host =3D sdhci_pltfm_init(pdev, &sdhci_ma35_pdata,
+> +                               sizeof(struct ma35_priv));
+
+One line?
+
+> +       if (IS_ERR(host))
+> +               return PTR_ERR(host);
+> +
+> +       /*
+> +        * extra adma table cnt for cross 128M boundary handling.
+> +        */
+
+Wrong comment style.
+
+> +       extra =3D DIV_ROUND_UP_ULL(dma_get_required_mask(&pdev->dev), SZ_=
+128M);
+> +       if (extra > SDHCI_MAX_SEGS)
+> +               extra =3D SDHCI_MAX_SEGS;
+
+min() ? clamp() ?
+
+> +       host->adma_table_cnt +=3D extra;
+> +       pltfm_host =3D sdhci_priv(host);
+> +       priv =3D sdhci_pltfm_priv(pltfm_host);
+
+> +       if (dev->of_node) {
+
+Why?
+
+> +               pltfm_host->clk =3D devm_clk_get(&pdev->dev, NULL);
+> +               if (IS_ERR(pltfm_host->clk)) {
+
+> +                       err =3D PTR_ERR(pltfm_host->clk);
+> +                       dev_err(&pdev->dev, "failed to get clk: %d\n", er=
+r);
+
+Use
+
+  return dev_err_probe(...);
+
+> +                       goto free_pltfm;
+
+This is wrong. You may not call non-devm before devm ones, otherwise
+it makes a room for subtle mistakes on remove-probe or unbind-bind
+cycles. Have you tested that?
+
+> +               }
+> +               err =3D clk_prepare_enable(pltfm_host->clk);
+> +               if (err)
+> +                       goto free_pltfm;
+
+Use _enabled variant of devm_clk_get() instead.
+
+> +       }
+> +
+> +       err =3D mmc_of_parse(host->mmc);
+> +       if (err)
+> +               goto err_clk;
+> +
+> +       priv->rst =3D devm_reset_control_get(&pdev->dev, NULL);
+
+No error check?!
+
+> +       sdhci_get_of_property(pdev);
+> +
+> +       priv->pinctrl =3D devm_pinctrl_get(&pdev->dev);
+> +       if (!IS_ERR(priv->pinctrl)) {
+> +               priv->pins_default =3D pinctrl_lookup_state(priv->pinctrl=
+, "default");
+> +               priv->pins_uhs =3D pinctrl_lookup_state(priv->pinctrl, "s=
+tate_uhs");
+> +               pinctrl_select_state(priv->pinctrl, priv->pins_default);
+> +       }
+> +
+> +       if (!(host->quirks2 & SDHCI_QUIRK2_NO_1_8_V)) {
+> +               u32 reg;
+> +
+> +               priv->regmap =3D syscon_regmap_lookup_by_phandle(
+> +                               pdev->dev.of_node, "nuvoton,sys");
+
+dev_of_node(dev)
+
+> +
+> +               if (!IS_ERR(priv->regmap)) {
+> +                       /* Enable SDHCI voltage stable for 1.8V */
+> +                       regmap_read(priv->regmap, MA35_SYS_MISCFCR0, &reg=
+);
+> +                       reg |=3D BIT(17);
+> +                       regmap_write(priv->regmap, MA35_SYS_MISCFCR0, reg=
+);
+> +               }
+> +
+> +               host->mmc_host_ops.start_signal_voltage_switch =3D
+> +                                       ma35_start_signal_voltage_switch;
+> +       }
+> +
+> +       host->mmc_host_ops.execute_tuning =3D ma35_execute_tuning;
+> +
+> +       err =3D sdhci_add_host(host);
+> +       if (err)
+> +               goto err_clk;
+> +
+> +       /* Enable INCR16 and INCR8 */
+> +       ctl =3D sdhci_readw(host, MA35_SDHCI_MBIUCTL);
+> +       ctl &=3D ~MA35_SDHCI_INCR_MSK;
+> +       ctl |=3D MA35_SDHCI_INCR16|MA35_SDHCI_INCR8;
+> +       sdhci_writew(host, ctl, MA35_SDHCI_MBIUCTL);
+> +
+> +       return 0;
+
+> +err_clk:
+> +       clk_disable_unprepare(pltfm_host->clk);
+
+This will go with the _enabled variant being used.
+
+> +free_pltfm:
+> +       sdhci_pltfm_free(pdev);
+
+This should go to be correct in ordering.
+
+> +       return err;
+> +}
+> +
+> +static int ma35_remove(struct platform_device *pdev)
+
+Use remove_new callback.
+
+> +{
+> +       struct sdhci_host *host =3D platform_get_drvdata(pdev);
+> +       struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+> +
+> +       sdhci_remove_host(host, 0);
+
+> +       clk_disable_unprepare(pltfm_host->clk);
+> +       sdhci_pltfm_free(pdev);
+
+At least these two will go away as per probe error path.
+
+> +       return 0;
+> +}
+
+...
+
+> +MODULE_AUTHOR("shanchun1218@google.com");
+
+Needs to be fixed as Markus said.
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
