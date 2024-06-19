@@ -1,162 +1,320 @@
-Return-Path: <linux-kernel+bounces-221566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679C090F58C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:56:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0FA90F58F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BEE41C219C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:56:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07D08B22163
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA5815667C;
-	Wed, 19 Jun 2024 17:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC0C156C6E;
+	Wed, 19 Jun 2024 17:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="qssnXKt/"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0xpagqW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF82153820
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 17:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701FE55884;
+	Wed, 19 Jun 2024 17:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718819768; cv=none; b=CSUE45q1nAYsuvFgTjjworkyVzaE7y8RFWW/oQ2MphYIIbjyKiCjb7VfEDvmpLjJcezyKaXB1gcSETRzX0cw1GDR7LsxW8SmLEKAI/TLLXl5Xc4rJAetXHQ0vubPx2rkot7G4VrG9XbhP6ZJe13iwXcvzzGJrgkAESfk9FuiIbs=
+	t=1718819802; cv=none; b=mWaOLIoQ285Zt4cQakacT/7MkqgOIJPQZ3j9ItAJbcAavvWl/mSvAVkKpvhcJa6dyxBauv0gD+KLNHgb3YocnM/KsRyyaf3j3v0Pf4AgCXkcBs2tBZhXDtwYFftVrWJIIeyNxEsqTBFhm/iysnlRbEYXzttxTTrawCYVbNdvmBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718819768; c=relaxed/simple;
-	bh=qZLAW1L5M56DwbKoi1/YqdkTRNLosZQ9XhdG7pPvBuo=;
+	s=arc-20240116; t=1718819802; c=relaxed/simple;
+	bh=DCOrH0OZSQJd5pXhQNmxRLV8v4tj9PjaFm7KtBv65fw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ql8iBqoA167QO/EBxgCahLXpGjxzUEUQL2JVeFYZseDHW6nMY5V+lmNQz3sHbqWk+HESmYbb1fWLXH2fphoFTacBGpV8WYCvcofbXca76kJSCn8j6OkS49VhWFREdZNcBERSPyV6BiGkHj+Ag0sjh0byeJUGaARZFDKHNvA1664=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=qssnXKt/; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7eb01106015so299602839f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:56:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1718819765; x=1719424565; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mbjif+WJ/551UA6yF5H6wna1Ibvk9vV1Wcfn2sMlCyY=;
-        b=qssnXKt/BrjOKDUTCiK3f3cKtEd5fS30IbK3v9TaUs7so1EnQMWguUzWfM5fFHcwQv
-         aseKZb/j8S7N1OFjOjwOjpRBxI2NYptCqVeaAqZ/g2+h/dQCy4uD5HVInzvWf9TjQX3F
-         9H8EcmId/6tdxjSUS/OIvg95c3qKeDhbg3ZTY6FNEnEngG2OT8XX2jzyZoerUFpfc+hm
-         DIJCiu0Lwpqbj//+fvrRUjrpkGn6g+vjQPxVlTfgxIl/ftfKsH7711u/ahwsotzNWmVO
-         BEST826VkUWgslJrX7qqp/LB+qU+5NjSsjpT4WwtrDtsr95/oADpBi8clhtDEkHKcQkL
-         +d8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718819765; x=1719424565;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mbjif+WJ/551UA6yF5H6wna1Ibvk9vV1Wcfn2sMlCyY=;
-        b=krxY1CtDE1fNCFAgqJ5xW2Mc+FO0ROrHymZWwkjzb13HTckSSxPVVKuuCLxwvTl5+r
-         DK4EImLjV9w8jBsBxK+XM5dqgfTnhUBZgdjXL4nDuSWDX53Q8vSdkZLHQFiTodyVtR6I
-         bswoTpaSsk3jRj8NqIwVNUzmHHvQEt5GiDqB2G4amNMsNtrn9/FF0bfmkroBNyflTknv
-         iGfYRkPmiPtLv3w/A0b2nAJHSbW3R8m7z4H8WyrEXF5rsRTniHja1HV3u8iHIrehW1Qa
-         RAcBb6qH3wM11INrBM3nlHVoXZRP0nTRiBd+r7TCLSofT/0Mb+HnzpZeIhN/4SzinO5B
-         gCsg==
-X-Forwarded-Encrypted: i=1; AJvYcCULET7OnCn5mrJKDSQID8GCg5g8Ck0MQyTQQjoLOM3QMhFIQDDknYH3UPmZkt60L+Yyi+06tG4dXQK2GUaaYNT+OA4zF66sfAXvAxnF
-X-Gm-Message-State: AOJu0YyT913BnN4oHxqOCCHyyJn1ORjglaPSmXqvHmeuHnU4VHVD4rfb
-	Zk6I/hIDnIecRoCqjngOyfdgMgiG37zhVMlhfVeOoGBfMLSE4SAxsFkfliofxn4=
-X-Google-Smtp-Source: AGHT+IF9TsY8NVv2B42kRpxvrVeMm3R5ONdANb6gDSHycKGPhfTbgx+nCs8+HifwJCTtlx5q0X8U3A==
-X-Received: by 2002:a05:6602:640c:b0:7eb:c972:dee2 with SMTP id ca18e2360f4ac-7f13ee0e286mr404164839f.3.1718819765360;
-        Wed, 19 Jun 2024 10:56:05 -0700 (PDT)
-Received: from kf-XE ([2607:fb91:111c:4643:212e:5310:572e:1126])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b957bb0c0csm3978084173.87.2024.06.19.10.56.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 10:56:05 -0700 (PDT)
-Date: Wed, 19 Jun 2024 12:56:02 -0500
-From: Aaron Rainbolt <arainbolt@kfocus.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lenb@kernel.org, mmikowski@kfocus.org, Perry.Yuan@amd.com,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH V3] acpi: Allow ignoring _OSC CPPC v2 bit via kernel
- parameter
-Message-ID: <ZnMbshMhyoSKyClb@kf-XE>
-References: <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com>
- <ZnJfmUXmU_tsb9pV@kf-XE>
- <CAJZ5v0gOBH7OKF3KXwxYfWkGkC45rzDguR4VmSnoZDKpm+KPSg@mail.gmail.com>
- <12457165.O9o76ZdvQC@rjwysocki.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GV/hyv4TjGAjIvIv0P4BOaFns1odWFK+JXAgE6JS68Z9+NojW6bv9T/+1RxynxmoA3+n426yuF0575ywUbzN2WheYH3HEy6HLO/CxKGxNxIbbc/eQfWmBsIJpMUmXX7+zOY8aCxNaLvo6E+kPiiE0aNaqZe/w1VpHnaYukQOMIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0xpagqW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0036BC2BBFC;
+	Wed, 19 Jun 2024 17:56:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718819801;
+	bh=DCOrH0OZSQJd5pXhQNmxRLV8v4tj9PjaFm7KtBv65fw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G0xpagqWXN01HKeXoD9/oBeeyEaCbhjSETFc7wR9y83EgL5z8dUHQimHhknOEjEKv
+	 7k60YkVQ6S7Wb/EBhYN1wUDB7KDmwbzME/wwwm4qO5Y2adxpT8d7ZzihXNkGGuNan7
+	 e6+zJFswQe3+YJJmeIw9fYJNZXdhWDMRmuybinbD7aQYTrvY3cDVm/E52uVwuQRfrg
+	 TKO9iGK8nY8dmNuQT7uWLh/3yaqddTn65owE0tCuxIQwxDQuykVdjAsHoxXLEz6xEb
+	 MJCCkdF911ul+eztryYaF26kbIO7tqU4H9xYUwOCFlsDRTNiaz9E1YzI2Z97yXmPWe
+	 F/I9CpqH0btQA==
+Date: Wed, 19 Jun 2024 18:56:36 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Subject: Re: [PATCH v4 3/5] dt-bindings: iio: dac: Add adi,ltc2664.yaml
+Message-ID: <20240619-left-usable-316cbe62468a@spud>
+References: <20240619064904.73832-1-kimseer.paller@analog.com>
+ <20240619064904.73832-4-kimseer.paller@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="XW3JZQj+36UYFiPt"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <12457165.O9o76ZdvQC@rjwysocki.net>
+In-Reply-To: <20240619064904.73832-4-kimseer.paller@analog.com>
 
-On Wed, Jun 19, 2024 at 07:30:55PM +0200, Rafael J. Wysocki wrote:
-> On Wednesday, June 19, 2024 7:09:35 PM CEST Rafael J. Wysocki wrote:
-> > On Wed, Jun 19, 2024 at 6:33 AM Aaron Rainbolt <arainbolt@kfocus.org> wrote:
-> > >
-> > > acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
-> > >
-> > > The _OSC is supposed to contain a bit indicating whether the hardware
-> > > supports CPPC v2 or not. This bit is not always set, causing CPPC v2 to
-> > > be considered absent. This results in severe single-core performance
-> > > issues with the EEVDF scheduler on heterogenous-core Intel processors.
-> > 
-> > While some things can be affected by this, I don't immediately see a
-> > connection between CPPC v2, Intel hybrid processors and EEVDF.
-> > 
-> > In particular, why would EEVDF alone be affected?
-> > 
-> > Care to explain this?
-> 
-> And the reason why I am asking is because I think that you really need
-> something like this (untested beyond compilation):
-> 
+
+--XW3JZQj+36UYFiPt
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jun 19, 2024 at 02:49:02PM +0800, Kim Seer Paller wrote:
+> Add documentation for ltc2664.
+>=20
+> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
 > ---
->  drivers/cpufreq/intel_pstate.c |   16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> Index: linux-pm/drivers/cpufreq/intel_pstate.c
-> ===================================================================
-> --- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-> +++ linux-pm/drivers/cpufreq/intel_pstate.c
-> @@ -355,16 +355,16 @@ static void intel_pstate_set_itmt_prio(i
->  	int ret;
->  
->  	ret = cppc_get_perf_caps(cpu, &cppc_perf);
-> -	if (ret)
-> -		return;
-> -
->  	/*
-> -	 * On some systems with overclocking enabled, CPPC.highest_perf is hardcoded to 0xff.
-> -	 * In this case we can't use CPPC.highest_perf to enable ITMT.
-> -	 * In this case we can look at MSR_HWP_CAPABILITIES bits [8:0] to decide.
-> +	 * If CPPC is not available, fall back to MSR_HWP_CAPABILITIES bits [8:0].
-> +	 *
-> +	 * Also, on some systems with overclocking enabled, CPPC.highest_perf is
-> +	 * hardcoded to 0xff, so CPPC.highest_perf cannot be used to enable ITMT.
-> +	 * Fall back to MSR_HWP_CAPABILITIES then too.
->  	 */
-> -	if (cppc_perf.highest_perf == CPPC_MAX_PERF)
-> -		cppc_perf.highest_perf = HWP_HIGHEST_PERF(READ_ONCE(all_cpu_data[cpu]->hwp_cap_cached));
-> +	if (ret || cppc_perf.highest_perf == CPPC_MAX_PERF)
-> +		cppc_perf.highest_perf =
-> +			HWP_HIGHEST_PERF(READ_ONCE(all_cpu_data[cpu]->hwp_cap_cached));
->  
->  	/*
->  	 * The priorities can be set regardless of whether or not
-> 
-> 
-> 
+>  .../bindings/iio/dac/adi,ltc2664.yaml         | 167 ++++++++++++++++++
+>  MAINTAINERS                                   |   8 +
+>  2 files changed, 175 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ltc2664=
+=2Eyaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml b=
+/Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> new file mode 100644
+> index 000000000000..be37700e3b1f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> @@ -0,0 +1,167 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/dac/adi,ltc2664.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices LTC2664 DAC
+> +
+> +maintainers:
+> +  - Michael Hennerich <michael.hennerich@analog.com>
+> +  - Kim Seer Paller <kimseer.paller@analog.com>
+> +
+> +description: |
+> +  Analog Devices LTC2664 4 channel, 12-/16-Bit, +-10V DAC
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/26=
+64fa.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ltc2664
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 50000000
+> +
+> +  vcc-supply:
+> +    description: Analog Supply Voltage Input.
+> +
+> +  v-pos-supply:
+> +    description: Positive Supply Voltage Input.
+> +
+> +  v-neg-supply:
+> +    description: Negative Supply Voltage Input.
+> +
+> +  iovcc-supply:
+> +    description: Digital Input/Output Supply Voltage.
+> +
+> +  ref-supply:
+> +    description:
+> +      Reference Input/Output. The voltage at the REF pin sets the full-s=
+cale
+> +      range of all channels. If not provided the internal reference is u=
+sed and
+> +      also provided on the VREF pin.
+> +
+> +  reset-gpios:
+> +    description:
+> +      Active-low Asynchronous Clear Input. A logic low at this level-tri=
+ggered
+> +      input clears the part to the reset code and range determined by the
+> +      hardwired option chosen using the MSPAN pins. The control register=
+s are
+> +      cleared to zero.
+> +    maxItems: 1
+> +
+> +  adi,manual-span-operation-config:
+> +    description:
+> +      This property must mimic the MSPAN pin configurations. By tying th=
+e MSPAN
+> +      pins (MSP2, MSP1 and MSP0) to GND and/or VCC, any output range can=
+ be
+> +      hardware-configured with different mid-scale or zero-scale reset o=
+ptions.
+> +      The hardware configuration is latched during power on reset for pr=
+oper
+> +      operation.
+> +        0 - MPS2=3DGND, MPS1=3DGND, MSP0=3DGND (+-10V, reset to 0V)
+> +        1 - MPS2=3DGND, MPS1=3DGND, MSP0=3DVCC (+-5V, reset to 0V)
+> +        2 - MPS2=3DGND, MPS1=3DVCC, MSP0=3DGND (+-2.5V, reset to 0V)
+> +        3 - MPS2=3DGND, MPS1=3DVCC, MSP0=3DVCC (0V to 10, reset to 0V)
+> +        4 - MPS2=3DVCC, MPS1=3DGND, MSP0=3DGND (0V to 10V, reset to 5V)
+> +        5 - MPS2=3DVCC, MPS1=3DGND, MSP0=3DVCC (0V to 5V, reset to 0V)
+> +        6 - MPS2=3DVCC, MPS1=3DVCC, MSP0=3DGND (0V to 5V, reset to 2.5V)
+> +        7 - MPS2=3DVCC, MPS1=3DVCC, MSP0=3DVCC (0V to 5V, reset to 0V, e=
+nables SoftSpan)
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3, 4, 5, 6, 7]
 
-Gah. I can't read apparently. That patch may very well work because I
-just realized the "if (ret) return;" means to return if ret is NOT 0. I
-had it confused with "return if ret is 0".
+Can you explain why this property is required, when below there's one
+that sets the ranges in microvolts? Isn't the only new information that
+this provides the reset values (in a few cases that it is not 0).
+What am I missing?
 
-That patch looks like it may very well work, and better than what I had
-because it doesn't require manually setting a kernel parameter. I'll apply
-it and test it. (That may take me a bit, I don't have access to the
-hardware with the problem, only my boss does, but I should be able to get
-it done before the end of today.)
+> +    default: 7
+> +
+> +  io-channels:
+> +    description:
+> +      ADC channel to monitor voltages and temperature at the MUXOUT pin.
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^channel@[0-3]$":
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        description: The channel number representing the DAC output chan=
+nel.
+> +        maximum: 3
+> +
+> +      adi,toggle-mode:
+> +        description:
+> +          Set the channel as a toggle enabled channel. Toggle operation =
+enables
+> +          fast switching of a DAC output between two different DAC codes=
+ without
+> +          any SPI transaction.
+> +        type: boolean
+> +
+> +      adi,output-range-microvolt:
+> +        description: Specify the channel output full scale range.
+> +        oneOf:
+> +          - items:
+> +              - const: 0
+> +              - enum: [5000000, 10000000]
+> +          - items:
+> +              - const: -5000000
+> +              - const: 5000000
+> +          - items:
+> +              - const: -10000000
+> +              - const: 10000000
+> +          - items:
+> +              - const: -2500000
+> +              - const: 2500000
+> +
+> +    required:
+> +      - reg
+> +      - adi,output-range-microvolt
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - spi-max-frequency
+> +  - vcc-supply
+> +  - iovcc-supply
+> +  - v-pos-supply
+> +  - v-neg-supply
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    spi {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +        dac@0 {
+> +            compatible =3D "adi,ltc2664";
+> +            reg =3D <0>;
+> +            spi-max-frequency =3D <10000000>;
+> +
+> +            vcc-supply =3D <&vcc>;
+> +            iovcc-supply =3D <&vcc>;
+> +            ref-supply =3D <&vref>;
+> +            v-pos-supply =3D <&vpos>;
+> +            v-neg-supply =3D <&vneg>;
+> +
+> +            io-channels =3D <&adc 0>;
+> +
+> +            #address-cells =3D <1>;
+> +            #size-cells =3D <0>;
+> +            channel@0 {
+> +                    reg =3D <0>;
+> +                    adi,toggle-mode;
+> +                    adi,output-range-microvolt =3D <(-10000000) 10000000=
+>;
+> +            };
+> +
+> +            channel@1 {
+> +                    reg =3D <1>;
+> +                    adi,output-range-microvolt =3D <0 10000000>;
+> +            };
+> +        };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index be590c462d91..849800d9cbf7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13074,6 +13074,14 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
+>  F:	drivers/iio/dac/ltc1660.c
+> =20
+> +LTC2664 IIO DAC DRIVER
+> +M:	Michael Hennerich <michael.hennerich@analog.com>
+> +M:	Kim Seer Paller <kimseer.paller@analog.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Supported
+> +W:	https://ez.analog.com/linux-software-drivers
+> +F:	Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> +
+>  LTC2688 IIO DAC DRIVER
+>  M:	Nuno S=E1 <nuno.sa@analog.com>
+>  L:	linux-iio@vger.kernel.org
+> --=20
+> 2.34.1
+>=20
+
+--XW3JZQj+36UYFiPt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnMb1AAKCRB4tDGHoIJi
+0mZsAP9GNCu3FZFO1OetheXbTc08RY3vcp3bln0Pju6dJ3cGBAD5AcRIAm+Pgz1w
+nLR10IFUS+x7zo1wvVKMyMXZhZG/6QI=
+=YAw6
+-----END PGP SIGNATURE-----
+
+--XW3JZQj+36UYFiPt--
 
