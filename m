@@ -1,122 +1,218 @@
-Return-Path: <linux-kernel+bounces-221550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1396E90F548
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:38:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 693D990F55F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A71042838E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D61C1C22A44
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C03A156243;
-	Wed, 19 Jun 2024 17:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A00156243;
+	Wed, 19 Jun 2024 17:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlexAPjc"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pH4U57RK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4738513FD83;
-	Wed, 19 Jun 2024 17:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD2477107;
+	Wed, 19 Jun 2024 17:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718818715; cv=none; b=T2/qbn2NzYJ2HhyN1UrIss40j6sd4/fkuxkOxUq+c/RoXsmC3p/hU965hHmOOTImISoNae4f4JW6KHB2tBhq1GqRekyu5hCTPQIRbXN87ArBUKOnEx0sxBZUkEhJ6MLStJsJbB4cY5eyjVL9JP04Nf3Nf0ZUsWQCB0qGSn3Wcr0=
+	t=1718818958; cv=none; b=rKDeFmzx7f4XpykUYlFyiwmJV0KG3Z3Ivdd+XMW3iFqkPWkCAwHUYT8oxHe/ITwIUztm3W6245MdmPobz5zb44J+wyvXObFFEQtAUwEYGMPn0cXcAOIuf7iUg0N3zOs5eQgn7v0Rxw1nGoRNL7R71XUcpvAlsHT8fuyNOvDMyEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718818715; c=relaxed/simple;
-	bh=4yMlmNu3E4RPfMYi/vUwCHzrd3B4Imj083hU/YUWekI=;
+	s=arc-20240116; t=1718818958; c=relaxed/simple;
+	bh=IMD+o+HtoEpgZPwdGoQZpT4+nJLbdqGSdMmmb9m9c+A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pm1oHGYfbew+Zm7pFWi1Uv6+hv5kVuVKaaz6Y9KLlFb0C/+XbOq4Pw7vvmlx1QEA3/aJmbGjaPSZ2k2Z0Y0Q8dZPbxVkkWvNl/hhG2evgdT10/PfXnMKeIpc8RQSezUTIku/WOjSuSa7orH+qn/E7/e0GSkcAAfdr2LQL1e6MZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RlexAPjc; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-70df2135426so30689a12.2;
-        Wed, 19 Jun 2024 10:38:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718818713; x=1719423513; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AwlqRmpnnTbOA8a/YYpeWoQQ9Oj2iA9/yTutC9gsceI=;
-        b=RlexAPjcA16POJxXvYNTfUD9xhKzcTKKLLy69876NfLLJcwQU1wuxc2NOQWvyttss2
-         IariaH4gpie0wGSDrJvHrMBEbsCD2hc10va8x4WATC7wnw5X1ijc71uQZgYGosXivkbp
-         dSeapBmOqkRXvT7ECZXSzA4lcworRoK9tzIsyTre3SDsQYUUOyN9S9bZrRb5rBoTXddi
-         2rBZ73IIHz7Gze65LKkm7YdwkDuIF38sv7oBhCPetZ9rXSx8tCaJzHrGc8nyGCKebmof
-         j0Vheh/lw0Rm0557596VAFzC/lXu6B9LXKqwYrr9ocNtkh6PTbKEmkFKyknIi90/yBXf
-         rLyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718818713; x=1719423513;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AwlqRmpnnTbOA8a/YYpeWoQQ9Oj2iA9/yTutC9gsceI=;
-        b=hFtfFoikKQzdsAlVQKGK0LkAzR9rCxv4QiyBSC6pi1x8ohzVLN0syfK+0nbOO1NFxs
-         Cuc97qktERwIXh2MsTe2WW5zljj3WH8Y03rZZkKO80+bbWzMQKONPxITj6arv1aLdfzc
-         vINQRrX+Ksar0VRWyoC+YTQj2GD/oL46eGBR3Il3geYUTcLYprwTSjzRr8hykQCMt4G6
-         sBr2Ls2nPHpq2uMsiTRpg4JyzL96jBAbUlLHf9+6PrFo0+r1Id2X2wFS7ye11dabzfny
-         zG9vbcf0vsVLQeuEqhDPPX2gbg9XikTby9KXTuHBbPzHdrEWyyaE+oGnGfasS4RSxmti
-         910Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVEN1NHk/dmkme5Qr+VI2qtGbfIDRJAo0lXr4Or9v6/1A4DKOBWs5z40CLPTPurl8xuXA9ThitfEGKc+jO0aX8UhuHh+sbDTAKCXj4Kisj9qGjmRPvBYTw1araDQJbfiOsjfkO+3D+HQ92cIwJ1qH2TQ7JkxJhuaal4D2SN6blyWb14dkqdxHMydXlJ3SdlsIlQjNyXywCkomuzUyxYaabNqA==
-X-Gm-Message-State: AOJu0YwLpKu5gvpAjdFZs3vBxaZ+K9Kg0LsqBES+epzSpWZNljqKoJ9y
-	wYS7Q1Q95+pTTLB8K3zpSJXeqs+j0E3IqDpugkcem1cX2DkVjNvf
-X-Google-Smtp-Source: AGHT+IGigk1SJQVkobXkIRHmXQvXlqqaw2Y/3/XxAO+442rp0W/fQMCjhA8liZPY8oQLO1GaOnawTg==
-X-Received: by 2002:a17:902:d4c1:b0:1f6:7f8f:65c7 with SMTP id d9443c01a7336-1f9aa3e9e54mr37915675ad.26.1718818713403;
-        Wed, 19 Jun 2024 10:38:33 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f01a26sm120205105ad.199.2024.06.19.10.38.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 10:38:32 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 19 Jun 2024 07:38:31 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Xavier <ghostxavier@sina.com>, Peter Hunt <pehunt@redhat.com>,
-	Petr Malat <oss@malat.biz>
-Subject: Re: [PATCH-cgroup v2 0/5] cgroup/cpuset: Fix miscellaneous issues
-Message-ID: <ZnMXl5mS5zUHp7rS@slm.duckdns.org>
-References: <20240617143945.454888-1-longman@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPHJJdx4TfSL/ev0t7oiDtLF6mRdV1KlUVMv5ofepWH8jCZF5xh9pbZZ0rWqTSFxMThAxdnJj/Vmbw7deSkNEMiqZIgejVqQ+ZsVub3SUIhzLfmCRerCBfDD1xk1vmXbrAGq+cWRvgsxb48B5wMbSkvkg5KMae589aZkwjVytmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pH4U57RK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F0D8C2BBFC;
+	Wed, 19 Jun 2024 17:42:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718818958;
+	bh=IMD+o+HtoEpgZPwdGoQZpT4+nJLbdqGSdMmmb9m9c+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pH4U57RKTHye7kcgscE74d6x6iWpjFvzye6Yl1G6LisVHUGm18xcXhWHTH+gSLowX
+	 MDn+x2broIqM4BGXnRAugyMCGTX4rBkfvLDQuZu3llasVnthWFeyviLdJjHDRpLoHv
+	 i3KpXnCnmlgOcS/I/K7/4RZnhlcnONjv0RGlJlTetK+OSZQcxz84D2gDywgfHcNChv
+	 pD85mheLgSa6gK9a5T3FFu5UbGBgJ5tPrz+AZnvVybnjUVdMDeaM5XqIgzzmXv9vBM
+	 hslTx3hWKpuMfILAdb1ZV4Tq1syONoMHfzKGQxuF413ezJ68sX/BQM6E88v7kPGWtB
+	 fC8z8k6RGKUJw==
+Date: Wed, 19 Jun 2024 18:42:31 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+Cc: linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Maksim Kiselev <bigunclemax@gmail.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Okan Sahin <okan.sahin@analog.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>,
+	Liam Beguin <liambeguin@gmail.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: iio: adc: add a7779 doc
+Message-ID: <20240619-pouring-evaluator-470155652a40@spud>
+References: <20240619122105.22642-1-ramona.nechita@analog.com>
+ <20240619122105.22642-2-ramona.nechita@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zWzIdbr3LJguoypS"
 Content-Disposition: inline
-In-Reply-To: <20240617143945.454888-1-longman@redhat.com>
+In-Reply-To: <20240619122105.22642-2-ramona.nechita@analog.com>
 
-On Mon, Jun 17, 2024 at 10:39:40AM -0400, Waiman Long wrote:
->  v2:
->   - Fix test_cpuset_prs.sh problems reported by test robot
->   - Relax restriction imposed between cpuset.cpus.exclusive and
->     cpuset.cpus of sibling cpusets.
->   - Make cpuset.cpus.exclusive independent of cpuset.cpus. 
->   - Update test_cpuset_prs.sh accordingly.
->   
->  [v1] https://lore.kernel.org/lkml/20240605171858.1323464-1-longman@redhat.com/
-> 
-> This patchset attempts to address the following cpuset issues.
->  1) While reviewing the generate_sched_domains() function, I found a bug
->     in generating sched domains for remote non-isolating partitions.
->  2) Test robot had reported a test_cpuset_prs.sh test failure.
->  3) The current exclusivity test between cpuset.cpus.exclusive and
->     cpuset.cpus and the restriction that the set effective exclusive
->     CPUs has to be a subset of cpuset.cpus make it harder to preconfigure
->     the cgroup hierarchy to enable remote partition.
-> 
-> The test_cpuset_prs.sh script is updated to match changes made in this
-> patchset and was run to verify that the new code did not cause any
-> regression.
 
-Applied to cgroup/for-6.11.
+--zWzIdbr3LJguoypS
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
+On Wed, Jun 19, 2024 at 03:20:44PM +0300, Ramona Alexandra Nechita wrote:
+> Add dt bindings for adc ad7779.
+>=20
+> Signed-off-by: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+> ---
+>  .../bindings/iio/adc/adi,ad7779.yaml          | 84 +++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.=
+yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+> new file mode 100644
+> index 000000000000..f1eec656acec
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+> @@ -0,0 +1,84 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7779.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices AD777X family 8-Channel, 24-Bit, Simultaneous Samp=
+ling ADCs
+> +
+> +maintainers:
+> +  - Ramona Nechita <ramona.nechita@analog.com>
+> +
+> +description: |
+> +  The AD777X family consist of 8-channel, simultaneous sampling analog-t=
+o-
+> +  digital converter (ADC). Eight full =CE=A3-=CE=94 ADCs are on-chip. The
+> +  AD7771 provides an ultralow input current to allow direct sensor
+> +  connection. Each input channel has a programmable gain stage
+> +  allowing gains of 1, 2, 4, and 8 to map lower amplitude sensor
+> +  outputs into the full-scale ADC input range, maximizing the
+> +  dynamic range of the signal chain.
+> +
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
+7770.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
+7771.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
+7779.pdf
+> +
+> +$ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ad7770
+> +      - adi,ad7771
+> +      - adi,ad7779
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
 
--- 
-tejun
+Why does this device have address/size cells, but not have any child
+nodes? Are you missing some channel child nodes? If you don't have
+children, you don't need these properties.
+
+Also, your patch is still not threaded with the other 2 patches in the
+series (I see 1/3 in the subject). Where are those patches?
+
+Thanks,
+Conor.
+
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  vref-supply:
+> +    description:
+> +      ADC reference voltage supply
+> +
+> +  start-gpios:
+> +    description:
+> +      Pin that controls start synchronization pulse.
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +- |
+> +  #include <dt-bindings/gpio/gpio.h>
+> +  spi {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +
+> +      adc@0 {
+> +        compatible =3D "adi,ad7779";
+> +        reg =3D <0>;
+> +        vref-supply =3D <&vref>;
+> +        start-gpios =3D <&gpio0 87 GPIO_ACTIVE_LOW>;
+> +        reset-gpios =3D <&gpio0 93 GPIO_ACTIVE_LOW>;
+> +        clocks =3D <&adc_clk>;
+> +      };
+> +  };
+> +...
+> --=20
+> 2.43.0
+>=20
+
+--zWzIdbr3LJguoypS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnMYhwAKCRB4tDGHoIJi
+0ljnAQCua8lOT/HSJP8NZDAHBxmVeFj8Oa6o1ZcxDly4qE9TvwEA8+FFAZoo7WOx
++je7T8yijGxZsIl3Hap9aqSs4HeHlQI=
+=2IPT
+-----END PGP SIGNATURE-----
+
+--zWzIdbr3LJguoypS--
 
