@@ -1,160 +1,156 @@
-Return-Path: <linux-kernel+bounces-220638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8C3490E4C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AA290E4C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909BE1F26665
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:43:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47C2F1F25E36
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C65E77119;
-	Wed, 19 Jun 2024 07:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C870C77114;
+	Wed, 19 Jun 2024 07:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="bQYIK2BV"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ksJkm6BV"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A536473514;
-	Wed, 19 Jun 2024 07:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C139373514;
+	Wed, 19 Jun 2024 07:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718783013; cv=none; b=Q8Yq0vrY1tb1FxNoyKwoLDu4bv07TPsiV4KcNR5FjG2dp2l9YSTmHMAufJ+K9XXCBQyakz22H5ikt7mHy2ZPy5+9xgtnmRd36WzFHObYpVasV/z/5xjatZB1UKcnqf6Uj4O4a+4n4J+bwrb2YxJsEx21xU35BsreHLiy7xjU2Us=
+	t=1718782920; cv=none; b=HecNxYGPta3RLVGKEhMQ0pkXg+oDTq6Ue45U2vkOisbFsxyOnZ9UbDQ/7BOnqpJx8+LOF0D5oRXZHE2fbq/9pWV3R+fPOyu+9bUfPEqo43FUGa0cI7CYwXhNF6XWgfsCviUJ/T2mky8bspRC7LLouq6+3xhP2PECqI7V0Ztxg9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718783013; c=relaxed/simple;
-	bh=Kk0tvkTiO2T3b876bdyv7dDPKT0iSXVPQDtbWjD4hA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UNlGJRx30w08sRVb/s4i15Vb7gmjmVDBO8k8cAE29UklDzEuohkUEsCuG1S0zRaawUTNIdj+m9pDNcYESlHSDM3O8RuEVVo58hdSr1y56FxyX8BjG1s+ly2njiK3oHx7ShlRVtC1BxVC6d/2Mbi/RUS3y5AUReW92G1AS3uarIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=bQYIK2BV; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J7QKhf006854;
-	Wed, 19 Jun 2024 09:43:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	di+SFQRmDgPvKMWT6Avy9+LOTjR2HwG3kwmIyd/HWss=; b=bQYIK2BVaJri3TYl
-	Mx9sEnwEywh9t7P2P9uEBpVr9z0M2NJ8+BqVkU4DX3Yd0O4nuuiuiN/gbbsujcmz
-	PFJMEPSU1RyqjHdHjVrOQl6Wi/nwyh6rpyhcZ1+ojawgwQ2NSXo+9LoumV7TaG+n
-	kPuvrorX22uMVDsct3j7jaW9F+qOeCdYWylExJKWRhE4vJs/K3lv4aqWVUkbG0yI
-	CSL1HfPRS9vRRPN5CJIwwiO/m6g45zD8TQ2qHY9O9hOEBHIwhQcTwdBHqWtYLYH5
-	DpIjOLBgrNUc1P0abkwJ53f7R1W9NL4JGDbt0yfTxlKjeqjKx3onsE/EWHlABaz3
-	4crI/Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yuj9t1u0k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 09:43:00 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9017D40048;
-	Wed, 19 Jun 2024 09:42:54 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C3253210F6D;
-	Wed, 19 Jun 2024 09:41:42 +0200 (CEST)
-Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 19 Jun
- 2024 09:41:39 +0200
-Message-ID: <aee3f6d2-6a44-4de6-9348-f83c4107188f@foss.st.com>
-Date: Wed, 19 Jun 2024 09:41:38 +0200
+	s=arc-20240116; t=1718782920; c=relaxed/simple;
+	bh=YTRa4gq5UCd3xSgYihZnce0eIH+/AuZILZa29HHqF/s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TExON7r0eH2hsZG3RIx1VafBdowLnuMhaWguIC4sIE7qjHO8vv0HBHotmvsQEOYl7d1s7NjTB8G7ahEMo70SKRXrli6DVp8ycExWIlYjh+rTzGH0aFlJoBO0Dm5AWGVlFivpTYCmEczNAnT1vGhrIoGMeeLy2cWLZzYTTZqRxv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ksJkm6BV; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-6bfd4b88608so4550708a12.1;
+        Wed, 19 Jun 2024 00:41:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718782918; x=1719387718; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EYf14K0o/GtP+Ak9bfKmmPfeyfY6du+2C660F2DlOvU=;
+        b=ksJkm6BVXusJegiFJYSyCwC1UscE4NBOtuinLDwhJi/3cCxztnWuhhKkGTJ8eJjiAR
+         fYBpipNXCMB8Cf5QwaU5JHqxfFgeeePIvBkElTwgR3QT2S7v5/GEdVi6iuA9PLCQhyVs
+         AjLcsBsSAvQv8gfhwalDzcHeWp7jSmi1iX26iIJXju1M+slajcr3Ic4cnqndKVpP5pXk
+         DLSO+j9PuAzbeUHSsb2hEbN/i0e8PNHLDxBB0ox3bRzFV1nRW7oauWp1fc0b5m3JBxnS
+         LIAPBmvtRVcwdSSEXq229Lrr2hw5KFEsC8UH1lepNPoN46WEDfGbxwqYI9bIOzrWu0Nq
+         gXMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718782918; x=1719387718;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EYf14K0o/GtP+Ak9bfKmmPfeyfY6du+2C660F2DlOvU=;
+        b=Zgr23Mb7/20xtamHaHp6I2cuXunw5UDbCcbBpU8qfQAIk+g0JAK4H1Bh2ZSUoJY/MI
+         roWkQyzITOuKvWDuU/17xKvyVUkc/vpbH9gTRknFy8HhykAk1C9OYq8wY1QDCA8RCtKa
+         9/QjYx5PkabvGlw4fnsK/5q7qhRUJL8OWle3P8B092JebZJ/03dVTvWCGwlcI6wHXeUZ
+         QFJKXqvU8ti9evrLcClo24/m6y68fOcWDw0xFA4KjSQdYGlGWjEVgwJxM2Fm5n4+N+qz
+         lDeDZkBzWcqAVZVZu5xKwINImAZ7ckS2RfGUpE6HUdBScmgqy5IvLdtMeOK81n3z8p56
+         aTHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgC5JtVfs+Z6xEFuP7xcOBq5+adLC9XSUtIuwwXSO/4gOdvhDcvPY3QYCjxar1oYKaofH3YdRhFN5F6oyeok8R9Le2JqhiMn6c4DgMdZX49pWw9azHBogd0zt+gET2Lc4bWl3prjVP7o9pFuUarmdLM2/wZoOwZPZ7jevFy/GZcTpJ/erh
+X-Gm-Message-State: AOJu0YxsZLjJOoluKst8eeP4IKBE8RRaUhsak83gCmWac5m95BhOZuE/
+	KxIlLJ2M+ufepVEa3S4AjE9oAJsrTw28FLBG7PWN0DNyO2paIPuw5tXox15BF/I=
+X-Google-Smtp-Source: AGHT+IH+9mFlVOWUGxjHQVXw4qG3V8AeXjQgSMD+qpxAz0/Fx43VORUI8LtUbjV7U3DwdOEy2ZllCQ==
+X-Received: by 2002:a05:6a21:610:b0:1b0:58e:1b93 with SMTP id adf61e73a8af0-1bcbb3826camr1797590637.1.1718782917869;
+        Wed, 19 Jun 2024 00:41:57 -0700 (PDT)
+Received: from localhost.localdomain ([221.220.133.99])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855effc9fsm109835865ad.189.2024.06.19.00.41.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 00:41:57 -0700 (PDT)
+From: Jianfeng Liu <liujianfeng1994@gmail.com>
+To: nicolas@ndufresne.ca
+Cc: alchark@gmail.com,
+	andy.yan@rock-chips.com,
+	conor+dt@kernel.org,
+	cristian.ciocaltea@collabora.com,
+	detlev.casanova@collabora.com,
+	devicetree@vger.kernel.org,
+	didi.debian@cknow.org,
+	dsimic@manjaro.org,
+	gregkh@linuxfoundation.org,
+	heiko@sntech.de,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-staging@lists.linux.dev,
+	liujianfeng1994@gmail.com,
+	mchehab@kernel.org,
+	robh@kernel.org,
+	sebastian.reichel@collabora.com
+Subject: Re: [PATCH 1/3] media: rockchip: Introduce the rkvdec2 driver
+Date: Wed, 19 Jun 2024 15:41:50 +0800
+Message-Id: <20240619074150.103770-1-liujianfeng1994@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <0e8561108c4fc99291ad7cdc0c6af2dbb8e58f02.camel@ndufresne.ca>
+References: <0e8561108c4fc99291ad7cdc0c6af2dbb8e58f02.camel@ndufresne.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next,PATCH 2/2] net: stmmac: dwmac-stm32: stm32: add
- management of stm32mp25 for stm32
-To: Marek Vasut <marex@denx.de>, "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>,
-        Richard Cochran
-	<richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240614130812.72425-1-christophe.roullier@foss.st.com>
- <20240614130812.72425-3-christophe.roullier@foss.st.com>
- <4c2f1bac-4957-4814-bf62-816340bd9ff6@denx.de>
- <09010b02-fb55-4c4b-9d0c-36bd0b370dc8@foss.st.com>
- <39d35f6d-4f82-43af-883b-a574b8a67a1a@denx.de>
- <8c3f1696-d67c-4960-ad3a-90461c896aa5@foss.st.com>
- <3dee3c8a-12f0-42bd-acdf-8008da795467@denx.de>
-Content-Language: en-US
-From: Christophe ROULLIER <christophe.roullier@foss.st.com>
-In-Reply-To: <3dee3c8a-12f0-42bd-acdf-8008da795467@denx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-17_01,2024-05-17_01
 
-Hi Marek,
+Hi,
 
-On 6/18/24 17:00, Marek Vasut wrote:
-> On 6/18/24 11:09 AM, Christophe ROULLIER wrote:
+On Tue, 18 Jun 2024 08:39:07 -0400, Detlev Casanova wrote:
+>> I think the min/max width/height are incorrect. From rockchip's TRM V1.0
+>> Part1 page 374, supported image size is 64x64 to 65472x65472.
 >
-> Hi,
+>Page 374 shows the sizes for h265. h264 is the next table, where 16x16 and 
+>65520x65520 is documented.
 >
->>>>>> +static int stm32mp2_configure_syscfg(struct plat_stmmacenet_data 
->>>>>> *plat_dat)
->>>>>> +{
->>>>>> +    struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
->>>>>> +    u32 reg = dwmac->mode_reg;
->>>>>> +    int val = 0;
->>>>>> +
->>>>>> +    switch (plat_dat->mac_interface) {
->>>>>> +    case PHY_INTERFACE_MODE_MII:
->>>>>> +        break;
->>>>>
->>>>> dwmac->enable_eth_ck does not apply to MII mode ? Why ?
->>>>
->>>> It is like MP1 and MP13, nothing to set in syscfg register for case 
->>>> MII mode wo crystal.
->>>
->>> Have a look at STM32MP15xx RM0436 Figure 83. Peripheral clock 
->>> distribution for Ethernet.
->>>
->>> If RCC (top-left corner of the figure) generates 25 MHz MII clock 
->>> (yellow line) on eth_clk_fb (top-right corner), can I set 
->>> ETH_REF_CLK_SEL to position '1' and ETH_SEL[2] to '0' and feed ETH 
->>> (right side) clk_rx_i input with 25 MHz clock that way ?
->>>
->>> I seems like this should be possible, at least theoretically. Can 
->>> you check with the hardware/silicon people ?
->> No it is not possible (it will work if speed (and frequency) is fixed 
->> 25Mhz=100Mbps, but for speed 10Mbps (2,5MHz) it will not work.
+>> And my
+>> chromium can't use rkvdec2 because min width/height are set to 16, which
+>> 
+>> will cause error at here in rkvdec2_h264_validate_sps:
+>> >+	if (width > ctx->coded_fmt.fmt.pix_mp.width ||
+>> >+	    height > ctx->coded_fmt.fmt.pix_mp.height)
+>> >+		return -EINVAL;
+>> 
+>> width is 16, height is 32 while ctx->coded_fmt.fmt.pix_mp.width and
+>> ctx->coded_fmt.fmt.pix_mp.height are both 16.
 >
-> Could the pll4_p_ck or pll3_q_ck generate either 25 MHz or 2.5 MHz as 
-> needed in that case ? Then it would work, right ?
+>Maybe
+>
+>if (!(sps->flags & V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY))
+>	height *= 2;
+>
+>is causing issues in this case, I can check.
 
-Yes you can set frequency you want for pll4 or pll3, if you set 25MHz 
-and auto-negotiation of speed is 100Mbps it should work (pad ETH_CK of 
-25MHz clock the PHY and eth_clk_fb set to 25MHz for clk_RX)
+You are right. H264 decoder should support 16x16 to 65520x65520. After 
+removeing the "height *= 2" code chromium can also decode video now.
+Checking with V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY is copied from rkvdec and
+rkvdec has min width/height 48x48 so there is no issue with chromium.
+Chromium will call VIDIOC_STREAMON with size 16x16 and without sps flag
+V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY at the beginning of the video play.
+Gstreamer doesn't has this issue because it will call VIDIOC_STREAMON
+with the actual video size like 1920x1080.
 
-but if autoneg of speed is 10Mbps, then 2.5MHz is needed for clk_RX (you 
-will provide 25Mhz). For RMII case, frequency from pll (eth_clk_fb) is 
-automatically adjust in function of speed value, thanks to diviser /2, 
-/20 with mac_speed_o.
+On Tue, 18 Jun 2024 12:34:07 -0400, Nicolas Dufresne worte:
+>Just a theory, but 64x64 looks like Mali GPU requirement to me. Can you give
+>more details how it fails exactly ?
 
->
->> (you can see than diviser are only for RMII mode)
->
-> Do you refer to /2 and /20 dividers to the left of mac_speed_o[0] ?
+Chromium failed when calling v4l2 uapi VIDIOC_STREAMON with size 16x16 and
+V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY disabled. It has not come to render step
+which will use gpu. Other decoders I have tested with chromium like
+hantro g1 and rkvdec both don't have this 16x16 min width/height.
+
+I also tried gstreamer with a 16x16 video and it works fine. So there
+should be something wrong in chromium's code. But I have not find where
+chromium set sps flags in its v4l2 decoder.
+
+Best regards,
+Jianfeng
 
