@@ -1,113 +1,132 @@
-Return-Path: <linux-kernel+bounces-221544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C90AC90F531
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:34:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736F190F538
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4C671C21815
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:34:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C13E2819AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F031156255;
-	Wed, 19 Jun 2024 17:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDFC155A32;
+	Wed, 19 Jun 2024 17:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="h3tsHZXm"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8kmch8B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1220055884
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 17:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0D41848;
+	Wed, 19 Jun 2024 17:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718818469; cv=none; b=dGrBwca4pzBrkw76yROOVPJzPLZ1txpxQtQun7CKyzk2SP5OmhvofnVXwdipurFWwM9EnzuqFIX3iSeugVRfh5Zzxvf+z+yLshkHR+YIATYhSMhcMSIMsN6BPAYaLJ0DSNcQ6OmHVhZUxjDNVdYyFhZ47pRzKQHasdpcDHI/fCg=
+	t=1718818582; cv=none; b=Aase4nq1jpgJfxYasHp5QSWcl37KEkbw69NfDT0o7zDjc9xu4Blwz/5Aurf9vNOgw/edgHmMBfLAgwoLGU8ifinfgjO27PXqd0b2H+7eaxnYAzM5TcwswK8ZFnr0MAkm1NxlMqblbsVNoOfikxEwyradggXxrNe4xZaAZx13sbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718818469; c=relaxed/simple;
-	bh=gH3oGfMqS4kzu7B67Mvqr/4UBQoAPWhsBQ6/w+YZYcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b+i7ocQRRSP/3ueirRjeYskBo6N9ncMX1vlvNWjpYSuJ9fyqQyJmBEMxreeO8/yXm8mcCPCGEi4BJDlCH++S/Hwf7neDhmHXQ8tt0m6utITEJRwXRe7KozF2TPm7JwhjGY8DYhx0RpgwzoiAGOoGcSVVDvl0QhDwAti6iQ4bwAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=h3tsHZXm; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-64ecc2f111dso2909a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:34:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718818465; x=1719423265; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gZ4zwIDnnKIalzS0ZDDoJ0VyYnGS2z3S1zxJBVJg9NA=;
-        b=h3tsHZXmh7uB/oDJUcz1vk0MNrMm8WL3vRQzF4m678YyCE1vyqTCHjW3xkcCyGBnOn
-         5BMq3rjrkr7zIYfScvAdsamcghu3adci5IoB1Ai7tjsZkkJ7syOwW6heB3AKcVLM7H3T
-         ELSS1d7PB1Z3LlY9qIsDtZKL7adLo4Wpc2tkttskJwUcD+jgsAc39ULo+AKhGkS5mmWs
-         NGuoTFOtkJpoRe/8HoHS6b9Zx6L/TOvbnk3a/a1ANkfN9UmN7wiG+bF74ICDPx4G8tVg
-         fJfBtTer0LrrFcycEO5d8cBpIWCSeNtUZdIvLonBzAIZK92Fv8ovjjeGPul+joX1qTNw
-         BJ9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718818465; x=1719423265;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gZ4zwIDnnKIalzS0ZDDoJ0VyYnGS2z3S1zxJBVJg9NA=;
-        b=VLXvYpdUeDXV7hezszpWOZy95A7A8UZyYCH2MNcHrB2F+nALJmravrMa/M8buWB+ar
-         ofRQoOki6TfkIsB5s/r00bF8C+4mtKSOotI/a6bA5k2A45IObv5VfeQ5GMlourM2akg3
-         WaXR/ZcWl6B/d3Yzz6+9q1LnfdkPzUFQJYXMUGisudgNbyfIUMDu7ww7N0gXTa5vCNh8
-         CQKxzbVRgAnUvkNeb4Uf0BM7Q1xW7RqEp6LISxoR3vmrcDCtThPoAhYIuDBQjjJBrOWD
-         iETkBMFb7kWh91DyI8eK1+kh5DNLobXM4q5T5ncfBVOzOD7gdb4CvJvZcNhAxwKOLVAi
-         VCXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwA1Kw+MDFvz2gAbYbC4m0kyURuqlCurQL7180DBou9gyGq3YAQlroSJJZwjHScD1XcSJ9CD4w4q2W6lffeM+MxX9lR33MBNpW5ICT
-X-Gm-Message-State: AOJu0YwdCaL3n6AOydhjRbc3BLBIR4rpMAqZo7ciVsOaBgBfW+tDgKsb
-	/aE8x0Y7GFGuSy5RSbBkOXDQE3Xvt1IoZuvdrAJMgCpMfLPy6ZIPLS284BEu+RoYP7fzOSP7pzt
-	/
-X-Google-Smtp-Source: AGHT+IE5pBl2myAzW23kPeuMrQgGPYpwRUhThsgUATrzEh52SnuolheqaKQqp15bUsCeHOnsZg2dZA==
-X-Received: by 2002:a17:902:ea07:b0:1f7:2046:a8ae with SMTP id d9443c01a7336-1f9aa263810mr33560165ad.0.1718818465295;
-        Wed, 19 Jun 2024 10:34:25 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9b17f9bcasm17222755ad.161.2024.06.19.10.34.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 10:34:24 -0700 (PDT)
-Message-ID: <51f64ee9-35fb-482e-aa50-e2a446dcd972@kernel.dk>
-Date: Wed, 19 Jun 2024 11:34:23 -0600
+	s=arc-20240116; t=1718818582; c=relaxed/simple;
+	bh=DrmJn4DQDg8tS/79j2zVF7iokicQzqB2ahSSIe6NO1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JrjcFrRAPqqxF+nNT9P4MlaPn2OkkbDWLJowDwP3dLOsbjCfd0RiBIZXflUrat/65KKjLktPRkdDNSulKbks20ctbgZOjCwMZlS0cq9lWwlKe/CTGSMYR4+BBzDlz8RZ3qcWy10EqYbrq0r1RIqwDJmdvU6ScaoTRJsMo7qS8Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8kmch8B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 572FAC2BBFC;
+	Wed, 19 Jun 2024 17:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718818581;
+	bh=DrmJn4DQDg8tS/79j2zVF7iokicQzqB2ahSSIe6NO1Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k8kmch8BTnHgHALIfxSL47FmS0jyLMCvAZBQ7IxJly7ya4XiTwxj5cV6q+iAsvhZF
+	 aIZTkgJU3bwobPbCSeXvYNll8cXvnf7+M5ZNUWPToS7cvXHj0T6YF1NdE05G93edBU
+	 WWewKuNMx5cH9ThC/7+vk04+wwr7zm66P6dSb7lzt/KaISu1fpD6nLzulNV3Iy39aG
+	 AopUWom6uyVXKkAEX1ITgFgrBAzZ8fQX9HpUN7pfLTss79hgyYNE55wcwW5pMoxI2f
+	 fYLx8wEcr0LLcSPthTUmmAEevu7HTA1iqJUXx2PHm6NDoE3iqh1WkV0XEAvM9R1YKc
+	 FldH9tXO7tbGQ==
+Date: Wed, 19 Jun 2024 18:36:16 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 3/4] dt-bindings: ethernet-phy: add optional brr-mode
+ flag
+Message-ID: <20240619-plow-audacity-8ee9d98a005e@spud>
+References: <20240619150359.311459-1-kamilh@axis.com>
+ <20240619150359.311459-4-kamilh@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] zram: Replace bit spinlocks with spinlock_t for
- PREEMPT_RT.
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mike Galbraith <umgwanakikbuti@gmail.com>,
- Minchan Kim <minchan@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20240619150814.BRAvaziM@linutronix.de>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240619150814.BRAvaziM@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="c7q0oAxjwmmc8+yb"
+Content-Disposition: inline
+In-Reply-To: <20240619150359.311459-4-kamilh@axis.com>
 
-On 6/19/24 9:08 AM, Sebastian Andrzej Siewior wrote:
-> From: Mike Galbraith <umgwanakikbuti@gmail.com>
-> 
-> The bit spinlock disables preemption. The spinlock_t lock becomes a sleeping
-> lock on PREEMPT_RT and it can not be acquired in this context. In this locked
-> section, zs_free() acquires a zs_pool::lock, and there is access to
-> zram::wb_limit_lock.
-> 
-> Use a spinlock_t on PREEMPT_RT for locking and set/ clear ZRAM_LOCK bit after
-> the lock has been acquired/ dropped.
 
-The conditional code depending on CONFIG_PREEMPT_RT is nasty. Why not
-just get rid of that and use the CONFIG_PREEMPT_RT variants for
-everything? They are either good enough to work well in general, or it
-should be redone such that it is.
+--c7q0oAxjwmmc8+yb
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Jens Axboe
+On Wed, Jun 19, 2024 at 05:03:58PM +0200, Kamil Hor=E1k - 2N wrote:
+> There is a group of PHY chips supporting BroadR-Reach link modes in
+> a manner allowing for more or less identical register usage as standard
+> Clause 22 PHY.
+> These chips support standard Ethernet link modes as well, however, the
+> circuitry is mutually exclusive and cannot be auto-detected.
+> The link modes in question are 100Base-T1 as defined in IEEE802.3bw,
+> based on Broadcom's 1BR-100 link mode, and newly defined 10Base-T1BRR
+> (1BR-10 in Broadcom documents).
+>=20
+> Add optional brr-mode flag to switch the PHY to BroadR-Reach mode.
+>=20
+> Signed-off-by: Kamil Hor=E1k - 2N <kamilh@axis.com>
 
+Please fix your SoB and from addresses via your gitconfig as I told you
+to in response to the off-list mail you sent me. You also dropped my Ack
+without an explanation, why?
+
+> ---
+>  Documentation/devicetree/bindings/net/ethernet-phy.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Do=
+cumentation/devicetree/bindings/net/ethernet-phy.yaml
+> index 8fb2a6ee7e5b..0353ef98f2e1 100644
+> --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> @@ -93,6 +93,13 @@ properties:
+>        the turn around line low at end of the control phase of the
+>        MDIO transaction.
+> =20
+> +  brr-mode:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Request the PHY to operate in BroadR-Reach mode. This means the
+> +      PHY will use the BroadR-Reach protocol to communicate with the oth=
+er
+> +      end of the link, including LDS auto-negotiation if applicable.
+> +
+>    clocks:
+>      maxItems: 1
+>      description:
+> --=20
+> 2.39.2
+>
+
+--c7q0oAxjwmmc8+yb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnMXEAAKCRB4tDGHoIJi
+0lkSAQDW+9gNfAKDGi1U2F+s8+yBsEsb0NQ5+TLYGiHPwWj5OgD/StCQn3Ce4XCU
+fD0X4999cQOtS22vCCda+6giB/kDbwM=
+=JF9C
+-----END PGP SIGNATURE-----
+
+--c7q0oAxjwmmc8+yb--
 
