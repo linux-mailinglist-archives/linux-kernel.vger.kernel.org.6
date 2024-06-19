@@ -1,141 +1,152 @@
-Return-Path: <linux-kernel+bounces-221860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD7B190F9AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:14:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6753F90F9AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E33251C21FE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:14:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0B4D1F2368A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB51F15B15F;
-	Wed, 19 Jun 2024 23:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6466215B148;
+	Wed, 19 Jun 2024 23:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HpiA7VKV"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="mYOmcT9T"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41F4C2FC;
-	Wed, 19 Jun 2024 23:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EDD15B120;
+	Wed, 19 Jun 2024 23:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718838837; cv=none; b=nsTFFpkbPYr7IsYf+/BCe0r4siY/J2pHF63kCpROOowZxbgzT39AgdxikLJuRcWcW4oFY5zD8rNhZJRTP+5XPSLNcc7wVow9gWtK3rb5FoQy5u9T/C2gHQkEPYrOFWrsSPU7HtI05n3J9W21iuMIgzkDoDENYmowwACIm5a1Cv8=
+	t=1718838851; cv=none; b=lmJxZU6uIQ69xmT7TdJWgADMWY2BWNACfhREtEV2mFWa0dFR4XNcspodR+4wNiw+3AFJrukW1yoR0SbWW4DGm99kvb5xAOangutMlnoBNFsOSKYG38q0/6MIZOvOGuaGjgRYo59vJjDCGb3Xa+kmvFsxcNOwuVjfPgfAVfWzK+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718838837; c=relaxed/simple;
-	bh=T/PslGIW1KV8oOz5+52ktPpAOmgftn6/F4FjPEI2Nt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EOi2q8iLue4pJoG6yVjBbcGzpnWAU7it2rGcVeE9CNnB3O3HcVMfVnIcvpfxZGQJqI08/v9AGxmEC8FvV6WKOuYWRmSuM0wfvtwer74faFWFqadvPNjeGSQOC8PRK5ySq9NJJKXjrHebMwx/kro5IsV//YtsRPKIpBbN21oAzyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HpiA7VKV; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Qj6mjjBSg8sx2QqOSj72ZERLwLtr27wz6L+Qn/QniuI=; b=HpiA7VKVLxR+26EUaKUgi4g6xT
-	99NdHmfT2ejkpZthNu15wMhmWhaOei7+08Ph0J/jbz9ZQ9j6eQRoEZt73Md0HhMmdRjqaMpS+JLd+
-	1SIH67tmEQ2uQnDygYet6csedm9moex3fXp/Q912vfhnj4obzvQCRZHmd3DCu33KjgnI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sK4Uf-000W73-R3; Thu, 20 Jun 2024 01:13:33 +0200
-Date: Thu, 20 Jun 2024 01:13:33 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com,
-	Andrew Halaney <ahalaney@redhat.com>, linux-arm-msm@vger.kernel.org,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] net: stmmac: Add interconnect support in qcom-ethqos
- driver
-Message-ID: <159700cc-f46c-4f70-82aa-972ba6e904ca@lunn.ch>
-References: <20240619-icc_bw_voting_from_ethqos-v1-0-6112948b825e@quicinc.com>
- <20240619-icc_bw_voting_from_ethqos-v1-1-6112948b825e@quicinc.com>
+	s=arc-20240116; t=1718838851; c=relaxed/simple;
+	bh=lqD73KbcTA9rE0QqwLDAzACeJNJS6kpCN78MphVDmw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AfNQqTd++rDYeO0wrlePrFharUcP8vmzRQuvBgHv5ThTRdTTGJpXfK98fNVzKc1LmYYXNvJnZNVvbJUrwtyM2kgc5S6TymbWsxvoUZkRt2FZSu7C7F8IjQMeQ2/leqKm4CXV2z26rr6Qvke92YlR6ERG5lWWRWQwcA7sxyehcZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=mYOmcT9T; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1718838842; x=1719443642; i=w_armin@gmx.de;
+	bh=SMLL+EFH86lh6xH5HAHP6uEFcblvyJ4KgSaVly4ZCLY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=mYOmcT9TreIk0JMHeM5TXWWPeDAz8U+QqQ8wvc7hK2jS2J5yXxAQvh3mI01cKF+w
+	 M06cLmhzmy/cygbeF+IcPOof1xOhhAhGco+mjdGVr7s+g6RnqBwKC1QpIxYqBRCSW
+	 B5v/EosDUxSedFBXMq+tCWRGO371zpE9kXDzieXANKPF2sytCD+O6YDTkH2szgcoV
+	 E9DxzWFc1HUfndEYH7ZnDKzxHf+N0u+qrOL+rtK5AfQ0TxMLtY0ylR/m3P1agCB5p
+	 JgcDlDZGgJVkKBPO5L6MTICEYnDqzJHYWwbzdH60ff1zC5GWaaJyQy4r7ZCh0QB4G
+	 9G/FFPAXl76CpCvSYg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MG9g4-1sA9va0FOm-00FGTn; Thu, 20
+ Jun 2024 01:14:02 +0200
+Message-ID: <2b7d9f31-a24b-4dac-b57e-8cca165a79b1@gmx.de>
+Date: Thu, 20 Jun 2024 01:14:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619-icc_bw_voting_from_ethqos-v1-1-6112948b825e@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 3/5] power: supply: core: implement extension API
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240608-power-supply-extensions-v2-0-2dcd35b012ad@weissschuh.net>
+ <20240608-power-supply-extensions-v2-3-2dcd35b012ad@weissschuh.net>
+ <76dff03c-08f6-4edc-af57-c0b8dbf55293@gmx.de>
+ <3491c641-bee2-4100-8eb6-8e90d63330b0@t-8ch.de>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <3491c641-bee2-4100-8eb6-8e90d63330b0@t-8ch.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RDSSts2+cwtXXQRUmCJFPeJ2G9Cco0JpFX0u3x2iRslb3YTKmzn
+ oZXfFfwzPRaeVsUYWJf+yV+b926FKrBFVjCIwQpacAyOdy+O2V68Q2jRJexIQmGc7OAf9nM
+ fxYKA/d6DbET4AeMSErKZVPWG17vcI/TpTX87cKsaEBuHhYoqQ8njB6JtyEZno+sLHAPOks
+ neZK3VrbNJhVhsEKG3bSA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:NWSbAzhsFLU=;Li6LgmfJhFWaWe6ii7NbCAgR3Cy
+ iAkafZD1M3KH2Dloho+eptJFmt7+10wPfg8gu+ErOF/tOszPFz0JUcMKYgEAJkWj3dK14hHNf
+ j19nBw5t6fmHtf/zRElG7Gj0dlkeRDeMfbrvWrIP+ys+KU57WG/fhCQDvJ6xzG9jGfbDXUf0L
+ vNOqfKGl7EOZfT9wLxnfzsOUhK4+daePtC+EEMmglzKlPB0PNlWAVNDJX8ElC3YYTnl+MXw++
+ ES+IUlDa75WLiLdGbIENNIqY7Y3jSIECf84lvpPpE7bl6i4UK3ZLCkUYS4O52OETfXbcWiggK
+ ZyOIe0979v3Ln/n49qKi1X3cc/xrveavrV7+WDWfVTsokP35xBR4ctDFpIF+aDnUphrlShU+4
+ rr4Mo7yknQ/qfJDNp45rlGrMycpSkA/bstFVS5aSj4FTlDCQaPDTOHuTvqX8q9W8mhX67GbrO
+ j7IVL0HixahZR5GwMvNiLVFqiF5NV1zi8N0vLD10B3jpYptpfEbnEJASxyCCTevhSBgWurTn6
+ 4W8zgNf9u1PrjdfbXq+6jYkjMiYO9yN0fyxF11FeDUIZF7l3IxRe2X08cHDZbZtvcYDd/kLXu
+ NUOqKCYa9zLjoVsP2jl4oH5STGcDsGOrAduhFthEay2skEhGc3emPMAUm6kaEfJ1EsTiJbe14
+ fRlNlsFHj3scGOVDfeWR+JDSdZTi4Qhuzk7e2lLb4X4e9a645S8o1+dTPb/bYx+Yi1wYm8bYN
+ pYQzk0lRYS1GOPV3LVH0k5xZw5OtZgHrAG8PVNOSrfheZzHhnBacq2kHzZXH1RB1JmaIlnKBa
+ luxm+UtkOkDgpNNXWzl67MJHH4ECUD98SoIRW8MBkaLM0=
 
-On Wed, Jun 19, 2024 at 03:41:29PM -0700, Sagar Cheluvegowda wrote:
-> Add interconnect support in qcom-ethqos driver to vote for bus
-> bandwidth based on the current speed of the driver.
-> This change adds support for two different paths - one from ethernet
-> to DDR and the other from Apps to ethernet.
+Am 14.06.24 um 09:02 schrieb Thomas Wei=C3=9Fschuh:
 
-What do you mean by Apps?
+> Hi!
+>
+> On 2024-06-14 01:11:29+0000, Armin Wolf wrote:
+>> Am 08.06.24 um 21:19 schrieb Thomas Wei=C3=9Fschuh:
+>>
+>>> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+>>> ---
+>>>    drivers/power/supply/power_supply.h       |  13 ++-
+>>>    drivers/power/supply/power_supply_core.c  | 128 +++++++++++++++++++=
++++++++++--
+>>>    drivers/power/supply/power_supply_hwmon.c |   2 +-
+>>>    drivers/power/supply/power_supply_sysfs.c |  37 ++++++++-
+>>>    include/linux/power_supply.h              |  26 ++++++
+>>>    5 files changed, 192 insertions(+), 14 deletions(-)
+>>>
+>>> diff --git a/drivers/power/supply/power_supply.h b/drivers/power/suppl=
+y/power_supply.h
+>>> index 622be1f0a180..686b66161900 100644
+>>> --- a/drivers/power/supply/power_supply.h
+>>> +++ b/drivers/power/supply/power_supply.h
+>>> @@ -13,8 +13,17 @@ struct device;
+>>>    struct device_type;
+>>>    struct power_supply;
+>>>
+>>> -extern bool power_supply_has_property(const struct power_supply_desc =
+*psy_desc,
+>>> -				      enum power_supply_property psp);
+>>> +struct psy_ext_registration {
+>>> +	struct list_head list_head;
+>>> +	const struct power_supply_ext *ext;
+>>> +};
+>>> +
+>>> +#define psy_for_each_extension(psy, pos) list_for_each_entry(pos, &(p=
+sy)->extensions, list_head)
+>> sorry for taking so long to respond, the patch looks good to me except =
+one single thing:
+>>
+>> when removing a power supply extension, the driver has to be sure that =
+no one is still using
+>> the removed extension. So you might want to add some sort of locking wh=
+en using a power supply
+>> extension.
+> That was part of the v1 of the series [0].
+> I dropped it in v2 to focus on the external API and semantics first.
+> IMO now that we have the loop macro anyways that can also take care of
+> the locking: psy_for_each_extension_locked()
+>
+> [0] https://lore.kernel.org/all/20240606-power-supply-extensions-v1-4-b4=
+5669290bdc@weissschuh.net/
+>
+> Thomas
 
-> Vote from each interconnect client is aggregated and the on-chip
-> interconnect hardware is configured to the most appropriate
-> bandwidth profile.
-> 
-> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-> ---
->  .../net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c   | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-> index e254b21fdb59..682e68f37dbd 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-> @@ -7,6 +7,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/phy.h>
->  #include <linux/phy/phy.h>
-> +#include <linux/interconnect.h>
+Sounds good to me.
 
-If you look at these includes, you should notice they are
-alphabetical.
+Thanks,
+Armin Wolf
 
-> +static void ethqos_set_icc_bw(struct qcom_ethqos *ethqos, unsigned int speed)
-> +{
-> +	icc_set_bw(ethqos->axi_icc_path, Mbps_to_icc(speed), Mbps_to_icc(speed));
-> +	icc_set_bw(ethqos->ahb_icc_path, Mbps_to_icc(speed), Mbps_to_icc(speed));
-> +}
-> +
->  static void ethqos_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
->  {
->  	struct qcom_ethqos *ethqos = priv;
->  
->  	ethqos->speed = speed;
->  	ethqos_update_link_clk(ethqos, speed);
-> +	ethqos_set_icc_bw(ethqos, speed);
->  	ethqos_configure(ethqos);
->  }
->  
-> @@ -813,6 +824,14 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
->  		return dev_err_probe(dev, PTR_ERR(ethqos->link_clk),
->  				     "Failed to get link_clk\n");
->  
-> +	ethqos->axi_icc_path = devm_of_icc_get(dev, "axi_icc_path");
-> +	if (IS_ERR(ethqos->axi_icc_path))
-> +		return PTR_ERR(ethqos->axi_icc_path);
-> +
-> +	ethqos->ahb_icc_path = devm_of_icc_get(dev, "ahb_icc_path");
-> +	if (IS_ERR(ethqos->axi_icc_path))
-> +		return PTR_ERR(ethqos->axi_icc_path);
-> +
-
-This all looks pretty generic. Any reason why this is just in the
-Qualcomm device, and not at a higher level so it could be used for all
-stmmac devices if the needed properties are found in DT?
-
-       Andrew
+> <snip>
 
