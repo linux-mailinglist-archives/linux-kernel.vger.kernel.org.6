@@ -1,111 +1,138 @@
-Return-Path: <linux-kernel+bounces-220936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D1B90E960
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:26:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 949B090E962
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1132B286189
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:26:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C94E286242
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B03013CA92;
-	Wed, 19 Jun 2024 11:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A26013B583;
+	Wed, 19 Jun 2024 11:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Du+dh5j3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cMadrCHp"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D01C13A263;
-	Wed, 19 Jun 2024 11:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5557F139578
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718796330; cv=none; b=tclf3A4Sfu2h0yImarDDynnRNahRqgWXLETEQh6HwCk+BHG9GY7qTA6fL9TXCjQky15VuYx4r5Qfm6wzGqO1JnPhle0Xn4FSOUCnZW4A/UxprrEgrhZNxdqO3PoyNfQs7Y0NKcXADL7uHM2kNPFs9Z2SIfVLwI2HP8s63ROoYqE=
+	t=1718796394; cv=none; b=WV82SfuAKfsA3bJgQXG82hNxouQhsPrlKDd7eeOM1YJ7qxNUmC80UZx4N1r5y0ODaKNGXisOvnwUYmYFn1SEFEMreBLhop8j2X5muBo8GwoQYP3yz8tL17+E4zz/DalXy+h+5Df1JuyQg1e1RDkfXLiwrA12R4V4fJ0UqRvak6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718796330; c=relaxed/simple;
-	bh=wzgwyeFbIPVmN/m2LlPsgW89UGP112++2zLlQoa6br0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SYef2zjdyKcavrR8ShSqjW/HYcZwy3GUzXSJpbpuNe/V1Xf+LPFBVQzF/kiidF4Vyn7k67cZON6kqDrhUWzFGNeaixRUKqL7GBW7AOwhdW0CfJ7+bHBgtWSF9+Ukg6sraHExOO8xAmLvmwgVRsogfadykuWKArMVKrX7ctZ1bxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Du+dh5j3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94BDFC4AF53;
-	Wed, 19 Jun 2024 11:25:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718796329;
-	bh=wzgwyeFbIPVmN/m2LlPsgW89UGP112++2zLlQoa6br0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Du+dh5j3HHzpa9yey8zGx6MNBhRSP5yQXWuWgd8fZ+2wjMfn2vfuZQWDvD6mfzdDE
-	 ALVAAyypHvZYwZ7gQLIbC6J2/lDVDvJDeXsXPtcoshRW+qweIlKecxXE+xXw1latK0
-	 295u5iSD3QMCimGrhNLiv7f2uBLI/v0yKTZxlMS2mDfY2XsuKPrWFz/lrKGNnw2/fy
-	 OZvO4Q0gC+SetiNpSZ6ZN1vcJ9u8CRoSpaGcKqJJWIfIWAJlXkTRxzn/Dy8jeW38ee
-	 90nqDKny33ACfjWnYETbC+ZOw9mtfcELCdxvaLuYHAXfRzbVQOHsIXmGOzLsGvuq3b
-	 lRykQ6JA79PhQ==
-From: Conor Dooley <conor@kernel.org>
-To: linux-riscv@lists.infradead.org,
-	Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Jamie Gibbons <jamie.gibbons@microchip.com>,
-	Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	=?utf-8?q?Daire_McNamara_=3Cdaire=2Emcnamara=40microchip=2Ecom=3E=2C_Jam?=@web.codeaurora.org,
-	=?utf-8?q?ie_Gibbons_=3Cjamie=2Egibbons=40microchip=2Ecom=3E=2C_Valentina_F?=@web.codeaurora.org,
-	=?utf-8?q?ernandez_=3Cvalentina=2Efernandezalanis=40microchip=2Ecom=3E=2C_L?=@web.codeaurora.org,
-	=?utf-8?q?inus_Walleij_=3Clinus=2Ewalleij=40linaro=2Eorg=3E=2C_Bartosz_Gola?=@web.codeaurora.org,
-	=?utf-8?q?szewski_=3Cbrgl=40bgdev=2Epl=3E=2C_Rob_Herring_=3Crobh=40kernel?=@web.codeaurora.org,
-	=?utf-8?q?=2Eorg=3E=2C_Krzysztof_Kozlowski_=3Ckrzysztof=2Ekozlowski+dt=40li?=@web.codeaurora.org,
-	=?utf-8?q?naro=2Eorg=3E=2C_Lorenzo_Pieralisi_=3Clpieralisi=40kernel=2Eorg?=@web.codeaurora.org,
-	=?utf-8?q?=3E=2C_Krzysztof_Wilczy=C5=84ski_=3Ckw=40linux=2Ecom=3E=2C_Bjorn_?=@web.codeaurora.org,
-	=?utf-8?q?Helgaas_=3Cbhelgaas=40google=2Ecom=3E=2C_linux-gpio=40vger=2Ekern?=@web.codeaurora.org,
-	=?utf-8?q?el=2Eorg=2C_devicetree=40vger=2Ekernel=2Eorg=2C_linux-kernel=40vg?=@web.codeaurora.org,
-	=?utf-8?q?er=2Ekernel=2Eorg=2C_linux-pci=40vger=2Ekernel=2Eorg?=@web.codeaurora.org
-Subject: Re: (subset) [PATCH v1 0/5] BeagleV Fire support
-Date: Wed, 19 Jun 2024 12:24:48 +0100
-Message-ID: <20240619-tightly-stuffed-a91e32ae9fc3@spud>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240327-parkway-dodgy-f0fe1fa20892@spud>
-References: <20240327-parkway-dodgy-f0fe1fa20892@spud>
+	s=arc-20240116; t=1718796394; c=relaxed/simple;
+	bh=4HJJvOCanSvFasaOJXhHHOeNLQyWe9AWCzHMzWVELsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NlTmT9Lpo7Ro0FdVZmlGqdeUSuZnMVnIRm/WSkO/mQAE8cl7scdUuyt7DlW5WIhuT8yOCcnz9v0fGj/FvGRo7PITVAIPzk8OYEOhvavASUDSCpTPP+tUZcAWW7J4nMMGJsBgriHr3athl5IsPAWUw+4IxBFkR7dgxPteqEAlRKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cMadrCHp; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CMEsgmEvGJ4Hj7lSuiue76188D0A06Hsho4VAEhEX9Q=; b=cMadrCHp2suTdL2rwtC2k9456C
+	C+ehshrabzylFoJFgCa4tPsHADIu5x5S2wi4rRWEJn/ySS5ZQhLfrDgxeY1zAbeNOV9t/edruttXF
+	3jK8k+Z9GYWyZ+p2Ho07HXwE5ZUDcmTV4XCP5QpR2Wo3uUNe21Yf8UhA5MTok2eOh48fpjGGB+gc/
+	YPZGi9TvAmth353IdENZMmQJEKRslFQiFAvc36iPi+i7Umrag4QC26Tn5reEOli48i6ITygKB8BoY
+	pIro9KaQkd5wnNvGkyw897Stiq/QmJu7z0luiyE4cahvR8VXPT73C56nIKKl+lshCCOX1pHdslNKv
+	qk9HUbww==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sJtSM-00000004ct8-1l1D;
+	Wed, 19 Jun 2024 11:26:26 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 11E2E300561; Wed, 19 Jun 2024 13:26:26 +0200 (CEST)
+Date: Wed, 19 Jun 2024 13:26:25 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
+	elver@google.com, glider@google.com, nogikh@google.com,
+	tarasmadan@google.com
+Subject: Re: [PATCH v2 2/4] kcov: add interrupt handling self test
+Message-ID: <20240619112625.GM31592@noisy.programming.kicks-ass.net>
+References: <cover.1718092070.git.dvyukov@google.com>
+ <7662127c97e29da1a748ad1c1539dd7b65b737b2.1718092070.git.dvyukov@google.com>
+ <20240619111309.GJ31592@noisy.programming.kicks-ass.net>
+ <CACT4Y+bUPsrGpbakLE-yJN8aKE3ODgB7oWHu+cHW2XSoFvJd_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=693; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=W31/LXvbm3p0gQHN+AHn/iS7bX0lEsjhbAHyFzbXYq0=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGlFBxh8f6/zXfjC9NGcM4ltLn98vHsktk+Z/fxqdsDvr bOvnM6b3lHKwiDGwSArpsiSeLuvRWr9H5cdzj1vYeawMoEMYeDiFICJfAxhZDga2nAq+VdN38M/ d2wvNudvOpjAbmnDcl+8d6Z2N5OBdx3DP+3M/hvHV+4K+s9a98Ofad+XBEtuwxk72msy7u6t2Li 7lREA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+bUPsrGpbakLE-yJN8aKE3ODgB7oWHu+cHW2XSoFvJd_g@mail.gmail.com>
 
-From: Conor Dooley <conor.dooley@microchip.com>
-
-On Wed, 27 Mar 2024 12:24:35 +0000, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
+On Wed, Jun 19, 2024 at 01:18:52PM +0200, Dmitry Vyukov wrote:
+> On Wed, 19 Jun 2024 at 13:13, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Tue, Jun 11, 2024 at 09:50:31AM +0200, Dmitry Vyukov wrote:
+> > > Add a boot self test that can catch sprious coverage from interrupts.
+> > > The coverage callback filters out interrupt code, but only after the
+> > > handler updates preempt count. Some code periodically leaks out
+> > > of that section and leads to spurious coverage.
+> > > Add a best-effort (but simple) test that is likely to catch such bugs.
+> > > If the test is enabled on CI systems that use KCOV, they should catch
+> > > any issues fast.
+> > >
+> > > Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+> > > Reviewed-by: Alexander Potapenko <glider@google.com>
+> > > Cc: x86@kernel.org
+> > > Cc: linux-kernel@vger.kernel.org
+> > > Cc: syzkaller@googlegroups.com
+> > >
+> > > ---
+> > >
+> > > Changed since v1:
+> > >  - renamed KCOV_TEST to KCOV_SELFTEST
+> > >  - improved the config description
+> > >  - loop for exactly 300ms in the test
+> > >
+> > > In my local testing w/o the previous fix,
+> > > it immidiatly produced the following splat:
+> > >
+> > > kcov: running selftest
+> > > BUG: TASK stack guard page was hit at ffffc90000147ff8
+> > > Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN PTI
+> > > ...
+> > >  kvm_set_cpu_l1tf_flush_l1d+0x5/0x20
+> > >  sysvec_call_function+0x15/0xb0
+> > >  asm_sysvec_call_function+0x1a/0x20
+> > >  kcov_init+0xe4/0x130
+> > >  do_one_initcall+0xbc/0x470
+> > >  kernel_init_freeable+0x4fc/0x930
+> > >  kernel_init+0x1c/0x2b0
+> >
+> > So I'm not entirely sure how the above BUG comes about, nor how this
+> > selftest tickles it. Could you elaborate?
+> >
+> > I've found check_kcov_mode() which has this !in_task() clause, but I'm
+> > not entirely sure how failing that leads to the above mentioned failure.
 > 
-> Yo,
+> I've tried to explain it in the test comment, maybe I need to improve it:
 > 
-> Wee series adding support for the BeagleV Fire. I've had a dts sitting
-> locally for this for over a year for testing Auto Update and I meant to
-> submit something to mainline once the board got announced publicly, but
-> only got around to that now.
+> +        * We set kcov_mode to enable tracing, but don't setup the area,
+> +        * so any attempt to trace will crash. Note: we must not call any
+> +        * potentially traced functions in this region.
+
+Ah, I'm just slow today.. did not connect the dots. No this is fine.
+
+> Basically, we setup current task kcov in a way that any attempt to
+> trace in __sanitizer_cov_trace_pc() will crash, and then just loop
+> waiting for interrupts.
 > 
-> [...]
+> A more legit way to achieve the same would be to properly setup kcov
+> for tracing from within the kernel, then call outermost interrupt
+> entry function, then check we traced nothing. But that would require a
+> non-trivial amount of new complex code, and e.g. the top-most
+> interrupt entry function is not exported and is arch-specific.
 
-Applied to riscv-dt-for-next, thanks!
-
-[1/5] dt-bindings: riscv: microchip: document beaglev-fire
-      https://git.kernel.org/conor/c/76ed031dc750
-[5/5] riscv: dts: microchip: add an initial devicetree for the BeagleV Fire
-      https://git.kernel.org/conor/c/9e2569c28589
-
-I've applied this with the incorrect PCIe root port node removed.
-
-Cheers,
-Conor.
+Yeah, polling jiffies should be fine I suppose.
 
