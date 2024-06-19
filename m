@@ -1,153 +1,143 @@
-Return-Path: <linux-kernel+bounces-220999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F1190EA87
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:11:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A9E90EA8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3259B2459A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:11:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92D76B24748
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9CA13E034;
-	Wed, 19 Jun 2024 12:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0ED13EFEC;
+	Wed, 19 Jun 2024 12:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhWiNJ0+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j0fFlgaC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509981419A6;
-	Wed, 19 Jun 2024 12:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0932913E883;
+	Wed, 19 Jun 2024 12:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718799040; cv=none; b=c6p9Cxknv23kI1T9+V/MZtjNcqdjoqzyab3n7E9yADJ6ezhmg3oO+VPqKsnSL3CJnGzoJYClYOfUrlTpBHrRd2TUBZmPe2cD6D6yqfyVuXfBM4sqkPGCP48kMzcyRtprehw9pRbKLfs8QGxkv6jr1s38SHZ+QwL8QeZCdfDC4/o=
+	t=1718799072; cv=none; b=SQFtHnNP5zGgn9KWIK36mMaad4iqJwkB/UoiLOeT8ZAgsI5c+Iq/7MIQGX1A27Tx6WdndnmmIKvS28a27krnTXxPG91DNIe+RQtC4HtWZJXSqTUFiEVrErdhKmfzSMgtTls8pazll9D4V2UfkyvUDeisIPOMOW2kr8q9GNXlWd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718799040; c=relaxed/simple;
-	bh=ALeYzxeS3iOY2rx4/Kx+ydsSavqKfiI2lPUx7xtO4Lo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GfmPJG9SfFm7y9Os0iryauSWRjR7y3QFM9CcBHPVAehmMHX2gohYEKRYZtMjvIRV9VcJEFTNRoLzfBp8ekjMwXZjyeH3DoCy3D9J5jFvW/4YpzRVT3I+AbkWt4tV53gdfnxRor3hC8yff2nSgt1VwRtQCp1h/OIe+/I31q81qeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhWiNJ0+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F498C2BBFC;
-	Wed, 19 Jun 2024 12:10:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718799040;
-	bh=ALeYzxeS3iOY2rx4/Kx+ydsSavqKfiI2lPUx7xtO4Lo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BhWiNJ0+B3Q4eHQ1K7y8i+X17whuMCJeFlKi9b8MGlUccFDRcokvvQb6YrbkjfgTa
-	 cHVPfzP+fAWgVmJOujiYoRkbS5WAMR8WfGthqljGJsAP8CtGBeqKc0XZKG00yQLstP
-	 qbO5Wn5qV47nujprFxnzPCSMS4r546QuEP6PdYfDbWMX/BVe9X6QnwIskwq8R5cphm
-	 GzgQU60LmN52ts2ygjfjDKheMcc5LN95Tjj1vfumM80dJaqtrPovkDTOky1V+DwU2+
-	 SyveyxTMRowvWN3OMX1KUNfx/cluUsknBPyuiWq/ML8tHU7RO56XhRTTkmhfVF/o1C
-	 dGTsLLBemPaZg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sJu97-005RVc-6I;
-	Wed, 19 Jun 2024 13:10:37 +0100
-Date: Wed, 19 Jun 2024 13:10:36 +0100
-Message-ID: <868qz1jfpf.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Will Deacon <will@kernel.org>,
-	Catalin
- Marinas <catalin.marinas@arm.com>,
-	<linux-acpi@vger.kernel.org>,
-	<linux-arch@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-pm@vger.kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	<loongarch@lists.linux.dev>,
-	<x86@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	"Rafael J . Wysocki"
-	<rafael@kernel.org>,
-	Miguel Luis <miguel.luis@oracle.com>,
-	James Morse
-	<james.morse@arm.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Jean-Philippe
- Brucker <jean-philippe@linaro.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Gavin
- Shan <gshan@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov
-	<bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	<linuxarm@huawei.com>,
-	<justin.he@arm.com>,
-	<jianyong.wu@arm.com>
-Subject: Re: [PATCH v10 14/19] irqchip/gic-v3: Add support for ACPI's disabled but 'online capable' CPUs
-In-Reply-To: <20240529133446.28446-15-Jonathan.Cameron@huawei.com>
-References: <20240529133446.28446-1-Jonathan.Cameron@huawei.com>
-	<20240529133446.28446-15-Jonathan.Cameron@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1718799072; c=relaxed/simple;
+	bh=WriduSbwbn/qSGKRQsihKJkVQoJS7zLsV4IDFn27vqE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f2ONeKtYG778JCG/4BkI9Civ/Gj/KpdGgbCvxpzNfdYySrDTRFfdo5afwUsjj7P9E28lv5rXA9KEiZFQKbE7IUeghtMmh5RrcABGrxKkdIVtDkUK6yRTdWnbl8LxoBwnTNqzhgPBE1PfqtlH8lCzdtlmvnG4Y8mVyvwXDBerU+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j0fFlgaC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9CJLe026483;
+	Wed, 19 Jun 2024 12:10:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=0l/9AqPR4e/gX2FPodZGZsB9
+	iThzDI4l1fEjSO7phl4=; b=j0fFlgaChrhWjrBG4jrDP+XTx7zf85EhnFTYrJZ4
+	oH3kyuH4mdwRW3PxeXGrtAiuHrdVM4/sQur98CQm61cJVu++dwq+x4K6JaRp4396
+	mNk9ObWqYrWfFMvILClIIzVUSo6g3R83+7UJwvVdRAqiQaRgFcdqZhzMepl09PpN
+	QfqIPpGW+8ifrn2KhtyCNr6cWuzBWVy+sfRQsTv77WYJ1HrQK8wqouCNkTgmv1z+
+	yMVucvD7iF1z/d7Bv20ANe3C7Vf5aLAaNdDfXltivQXj8wb+j5CI6XMLTSSakJgx
+	vUE564nUUmds3ijPQ9tMiLQ1sW2n8inXKqoMQAfAJqVAFg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yujc4hnn7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 12:10:49 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JCAnHj029599
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 12:10:49 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 19 Jun 2024 05:10:45 -0700
+Date: Wed, 19 Jun 2024 17:40:42 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Komal Bajaj <quic_kbajaj@quicinc.com>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Bjorn Andersson
+	<quic_bjorande@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH] arm64: defconfig: Enable secure QFPROM driver
+Message-ID: <ZnLKwqENxC4wzrUm@hu-mojha-hyd.qualcomm.com>
+References: <20240619105642.18947-1-quic_kbajaj@quicinc.com>
+ <5582a2a0-c772-4573-9d55-2f963cb87df1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: Jonathan.Cameron@huawei.com, will@kernel.org, catalin.marinas@arm.com, linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, mark.rutland@arm.com, tglx@linutronix.de, peterz@infradead.org, loongarch@lists.linux.dev, x86@kernel.org, linux@armlinux.org.uk, rafael@kernel.org, miguel.luis@oracle.com, james.morse@arm.com, salil.mehta@huawei.com, jean-philippe@linaro.org, guohanjun@huawei.com, gshan@redhat.com, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, linuxarm@huawei.com, justin.he@arm.com, jianyong.wu@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <5582a2a0-c772-4573-9d55-2f963cb87df1@linaro.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9QKnJF0ty2M9ngem-9x81nldQ0AJbDmh
+X-Proofpoint-GUID: 9QKnJF0ty2M9ngem-9x81nldQ0AJbDmh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
+ priorityscore=1501 mlxlogscore=492 malwarescore=0 lowpriorityscore=0
+ mlxscore=0 bulkscore=0 impostorscore=0 spamscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406190091
 
-On Wed, 29 May 2024 14:34:41 +0100,
-Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+On Wed, Jun 19, 2024 at 01:08:48PM +0200, Krzysztof Kozlowski wrote:
+> On 19/06/2024 12:56, Komal Bajaj wrote:
+> > Enable the secure QFPROM driver which is used by QDU1000
 > 
-> From: James Morse <james.morse@arm.com>
+> Qualcomm QDU1000. You are changing kernel-wide defconfig, not some
+> Qualcomm downstream stuff.
 > 
-> To support virtual CPU hotplug, ACPI has added an 'online capable' bit
-> to the MADT GICC entries. This indicates a disabled CPU entry may not
-> be possible to online via PSCI until firmware has set enabled bit in
-> _STA.
+> > platform for reading the secure qfprom region to get the
+> > DDR channel configuration.
+> > 
+> > Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+> > ---
+> >  arch/arm64/configs/defconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> > index 838b4466d6f6..c940437ae1b3 100644
+> > --- a/arch/arm64/configs/defconfig
+> > +++ b/arch/arm64/configs/defconfig
+> > @@ -1575,6 +1575,7 @@ CONFIG_NVMEM_LAYERSCAPE_SFP=m
+> >  CONFIG_NVMEM_MESON_EFUSE=m
+> >  CONFIG_NVMEM_MTK_EFUSE=y
+> >  CONFIG_NVMEM_QCOM_QFPROM=y
+> > +CONFIG_NVMEM_QCOM_SEC_QFPROM=y
 > 
-> This means that a "usable" GIC redistributor is one that is marked as
-> either enabled, or online capable. The meaning of the
-> acpi_gicc_is_usable() would become less clear than just checking the
-> pair of flags at call sites. As such, drop that helper function.
-> The test in gic_acpi_match_gicc() remains as testing just the
-> enabled bit so the count of enabled distributors is correct.
-> 
-> What about the redistributor in the GICC entry? ACPI doesn't want to say.
-> Assume the worst: When a redistributor is described in the GICC entry,
-> but the entry is marked as disabled at boot, assume the redistributor
-> is inaccessible.
-> 
-> The GICv3 driver doesn't support late online of redistributors, so this
-> means the corresponding CPU can't be brought online either.
-> Rather than modifying cpu masks that may already have been used,
-> register a new cpuhp callback to fail this case. This must run earlier
-> than the main gic_starting_cpu() so that this case can be rejected
-> before the section of cpuhp that runs on the CPU that is coming up as
-> that is not allowed to fail. This solution keeps the handling of this
-> broken firmware corner case local to the GIC driver. As precise ordering
-> of this callback doesn't need to be controlled as long as it is
-> in that initial prepare phase, use CPUHP_BP_PREPARE_DYN.
-> 
-> Systems that want CPU hotplug in a VM can ensure their redistributors
-> are always-on, and describe them that way with a GICR entry in the MADT.
-> 
-> Suggested-by: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Tested-by: Miguel Luis <miguel.luis@oracle.com>
-> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Module
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+Should not this be inline with what CONFIG_NVMEM_QCOM_QFPROM is having ?
+Either both CONFIG_NVMEM_QCOM_QFPROM and CONFIG_NVMEM_QCOM_SEC_QFPROM
+should be m or both y
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+-Mukesh
+> 
+> >  CONFIG_NVMEM_RMEM=m
+> >  CONFIG_NVMEM_ROCKCHIP_EFUSE=y
+> >  CONFIG_NVMEM_ROCKCHIP_OTP=y
+> > --
+> > 2.42.0
+> > 
+> 
+> Best regards,
+> Krzysztof
+> 
 
