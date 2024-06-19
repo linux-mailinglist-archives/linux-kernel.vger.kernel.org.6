@@ -1,73 +1,97 @@
-Return-Path: <linux-kernel+bounces-221259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F5790F0F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:41:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3736A90F0EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 255A528176A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:41:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD968B245C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4944723775;
-	Wed, 19 Jun 2024 14:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2E41EB2F;
+	Wed, 19 Jun 2024 14:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V/vdWVCv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NydbKapE"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4E72374E
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 14:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E87B1CAB1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 14:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718808039; cv=none; b=HAw4d2fOCuwt9fwhHvJ3ePSNm2aRXeRFrwbamECC1nKOSSyh8dy7KmXXeiAiuJWVBeyVmG22zzrjvJs4VCXD9dcXoXnPnq4Mkii7BTvXJbuddu4OOyBwWf4t4e7X9guja+t7z8XfDzs551ca1gfzEt+72Xp6WQUohekEbEHiO7M=
+	t=1718807975; cv=none; b=nv/c76KwnJsjaRDVblyxHOl4tLyXQPdXpKZbPSy/xvHUbG0609jjutixniPhwtYRR+bdTFs+MfyeWbFAQhpEvQglLzH6MBQLjFWYEF5nlwCSx6LeqYClEZQ1u6Ry4b1oSn834Z+SJlUcMxvugv8E/Eh4VvRFqO5u4+zn1xJYf2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718808039; c=relaxed/simple;
-	bh=z0Mpv6gcJa3VDpSzPcPg/SCmOnYRbY7zuWvo13wbiqQ=;
+	s=arc-20240116; t=1718807975; c=relaxed/simple;
+	bh=R3guH+r22vxWZS45Xhn/5mcUPnpAYFt1nE1jSbf7vGw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RNj3BT+7uvs/XxCQlKINgLX45Xe4i6+mRLgQZ+dB5dW1KsqCUBLiRhkI5RCYYFfK5jDI2/Q/yxhY98bu2XhQfOcKjjdcLbfzG1NnyyPTTEQYXO14qlJjsKkYbwewGBNKm92Ikzc2cATOinmBdkveBQOjuEwq18ljxQDB7oh89tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V/vdWVCv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718808036;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0q4qMgcNqiwKOKLULuCG3ztTE8UvFIWH7RjHNIB9mr0=;
-	b=V/vdWVCvmzamcPAS6hXd+KdnFYawgHVYk/9PE3Yx9qGSgR5koDd/B1KfOQuupsENhbvL+/
-	VsH4WxnLu3f5WKRTKP5Ire052HPQd33EkZVieQKUQ14aU4az/FgrNbE253+Z1CiTOBUZtg
-	9rPZaCKS33IBuW9OM8F2eIjvKzDCyPE=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-62-6uouwswPPmOORU9DfPV1ug-1; Wed,
- 19 Jun 2024 10:40:33 -0400
-X-MC-Unique: 6uouwswPPmOORU9DfPV1ug-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DF2FF19560B3;
-	Wed, 19 Jun 2024 14:40:30 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.168])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4C3F51955E83;
-	Wed, 19 Jun 2024 14:40:24 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 19 Jun 2024 16:38:59 +0200 (CEST)
-Date: Wed, 19 Jun 2024 16:38:52 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Liao Chang <liaochang1@huawei.com>
-Cc: jolsa@kernel.org, rostedt@goodmis.org, mhiramat@kernel.org,
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	nathan@kernel.org, peterz@infradead.org, mingo@redhat.com,
-	mark.rutland@arm.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH bpf-next] uprobes: Fix the xol slots reserved for
- uretprobe trampoline
-Message-ID: <20240619143852.GA24240@redhat.com>
-References: <20240619013411.756995-1-liaochang1@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RJlEjWPoZ1G0hZyqrd9qrIjRFRpPAF5DIvsofpw9W/4Iwn4dpWaT9a8GZWzVdsRQOBVpvlwDJ1FFWXWbdNe8AhRD7ADUJG/mUHcLt8ierLZftU2yRJNPZPO1mAEbfZrqSlai8lYpjJMePhkHIwvF3AMophM1Pj67h4MKrqM+yVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=NydbKapE; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-44056295c8cso31680071cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:39:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1718807973; x=1719412773; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cokph3+KYsFeNsm+0akdDgXIRf+sbN6W33vmdBN3BV8=;
+        b=NydbKapEUNcvceJx8fdCnoVnbvfYMAEEGsQWdF9kl0K5NZ9gmlE7NmzYYCCCwZQarR
+         PTTKGa0s2Tgb1fMVVCz2Yeyt6biQf9KqoSS/hI/NdgzzltfIC9B5bihinI0WS2qlerk5
+         G3+AbAzoF3OHpLqwMdA5m27f0BhjuYWFebjxc3cEer17CrSAMjblF/uThOKZ4lxxXxoB
+         ysuw4iWCgIGYoagdUssaLd6fc9hnlABiHfRsNhQxPEKqQ8tJHm6iS6pNlygK8ox45mPJ
+         0tYTxoSm7Jk9pVJBhFo5zXit24DpG6OeXx24AhH6XwqXR48fPa4WMsf8BTS5y16q4VhL
+         CPrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718807973; x=1719412773;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cokph3+KYsFeNsm+0akdDgXIRf+sbN6W33vmdBN3BV8=;
+        b=J/QW5nOsXpevh+zwaUFxeHOkH1iGbBoNiB+cbxKMtwEDzKH0RrIgym95DYIgyb3bL6
+         Ef8pHe2tEDRn3iXOVTb5bpaAUR1UjmkcRl4szdU/cTeiqdNkwK4lm9tvSGXoxZM0jtlU
+         45qafB6rVkOK9WG+Dyk0D2UIpwygbQYzBA51qjo7+ZJi/szGZXsOz5PW/iBYWt17grUc
+         mnekpuPfwd2VXniYj/Q3tukfRWjR4lCRtYIAtAN1/c6FJ346syfFFmH7mN8Q91o45RYy
+         qZFJeAjU/1S3pQ6oGniIpsj/vg69PfLQnXL3SQdX/47I6AYdDIJKOKXHi8vWYb6L1hn7
+         Iyqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdRLa4KTg4zTgxe01vthk0ugVjV3y/Sor2WHa63NRUkc/Nj9jaIl/nYvZt6Runq6b8VTBQpMZ66ZqKmoIBI5XaR893MO9s2Uxe6y3Z
+X-Gm-Message-State: AOJu0YzNw1C3TwPMIS9/tOQ+R7Y46Fo95myqbQrXjLIM/OZ6mJmpY5TX
+	IcXmadPz9tKutAjt6iLhdMEQv3OjVhcLin2fxdbNLrpmD0YspFRT1X1A7PKyWEM=
+X-Google-Smtp-Source: AGHT+IG1XaOP45+fSUMkTGWH4nocXjjMBFeSWjsksr0Y1tefBQYZu2xLsBBhuOT4sOfHsJbLjtz4+A==
+X-Received: by 2002:ac8:5ac4:0:b0:440:5b49:2d63 with SMTP id d75a77b69052e-444a7a76f5amr34714511cf.66.1718807973466;
+        Wed, 19 Jun 2024 07:39:33 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441f2ffb37bsm65405151cf.90.2024.06.19.07.39.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 07:39:32 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sJwTE-004dqv-Em;
+	Wed, 19 Jun 2024 11:39:32 -0300
+Date: Wed, 19 Jun 2024 11:39:32 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Kalle Valo <kvalo@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
+	Jason Wang <jasowang@redhat.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	ath10k@lists.infradead.org, ath11k@lists.infradead.org,
+	iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 13/21] soc/fsl/qbman: Use iommu_paging_domain_alloc()
+Message-ID: <20240619143932.GH1091770@ziepe.ca>
+References: <20240610085555.88197-1-baolu.lu@linux.intel.com>
+ <20240610085555.88197-14-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,91 +100,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240619013411.756995-1-liaochang1@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20240610085555.88197-14-baolu.lu@linux.intel.com>
 
-On 06/19, Liao Chang wrote:
->
-> When the new uretprobe system call was added [1], the xol slots reserved
-> for the uretprobe trampoline might be insufficient on some architecture.
-
-Confused... this doesn't depend on the change above?
-
-> For example, on arm64, the trampoline is consist of three instructions
-> at least. So it should mark enough bits in area->bitmaps and
-> and area->slot_count for the reserved slots.
-
-Do you mean that on arm64 UPROBE_SWBP_INSN_SIZE > UPROBE_XOL_SLOT_BYTES ?
-
-From arch/arm64/include/asm/uprobes.h
-
-	#define MAX_UINSN_BYTES		AARCH64_INSN_SIZE
-
-	#define UPROBE_SWBP_INSN	cpu_to_le32(BRK64_OPCODE_UPROBES)
-	#define UPROBE_SWBP_INSN_SIZE	AARCH64_INSN_SIZE
-	#define UPROBE_XOL_SLOT_BYTES	MAX_UINSN_BYTES
-
-	typedef __le32 uprobe_opcode_t;
-
-	struct arch_uprobe_task {
-	};
-
-	struct arch_uprobe {
-		union {
-			u8 insn[MAX_UINSN_BYTES];
-			u8 ixol[MAX_UINSN_BYTES];
-
-So it seems that UPROBE_SWBP_INSN_SIZE == MAX_UINSN_BYTES and it must
-be less than UPROBE_XOL_SLOT_BYTES, otherwise
-
-arch_uprobe_copy_ixol(..., uprobe->arch.ixol, sizeof(uprobe->arch.ixol))
-in xol_get_insn_slot() won't fit the slot as well?
-
-OTOH, it look as if UPROBE_SWBP_INSN_SIZE == UPROBE_XOL_SLOT_BYTES, so
-I don't understand the problem...
-
-Oleg.
-
-> [1] https://lore.kernel.org/all/20240611112158.40795-4-jolsa@kernel.org/
+On Mon, Jun 10, 2024 at 04:55:47PM +0800, Lu Baolu wrote:
+> An iommu domain is allocated in portal_set_cpu() and is attached to
+> pcfg->dev in the same function.
 > 
-> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+> Use iommu_paging_domain_alloc() to make it explicit.
+> 
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 > ---
->  kernel/events/uprobes.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 2816e65729ac..efd2d7f56622 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -1485,7 +1485,7 @@ void * __weak arch_uprobe_trampoline(unsigned long *psize)
->  static struct xol_area *__create_xol_area(unsigned long vaddr)
->  {
->  	struct mm_struct *mm = current->mm;
-> -	unsigned long insns_size;
-> +	unsigned long insns_size, slot_nr;
->  	struct xol_area *area;
->  	void *insns;
->  
-> @@ -1508,10 +1508,13 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
->  
->  	area->vaddr = vaddr;
->  	init_waitqueue_head(&area->wq);
-> -	/* Reserve the 1st slot for get_trampoline_vaddr() */
-> -	set_bit(0, area->bitmap);
-> -	atomic_set(&area->slot_count, 1);
->  	insns = arch_uprobe_trampoline(&insns_size);
-> +	/* Reserve enough slots for the uretprobe trampoline */
-> +	for (slot_nr = 0;
-> +	     slot_nr < max((insns_size / UPROBE_XOL_SLOT_BYTES), 1);
-> +	     slot_nr++)
-> +		set_bit(slot_nr, area->bitmap);
-> +	atomic_set(&area->slot_count, slot_nr);
->  	arch_uprobe_copy_ixol(area->pages[0], 0, insns, insns_size);
->  
->  	if (!xol_add_vma(mm, area))
-> -- 
-> 2.34.1
-> 
+>  drivers/soc/fsl/qbman/qman_portal.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+Jason
 
