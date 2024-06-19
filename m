@@ -1,135 +1,183 @@
-Return-Path: <linux-kernel+bounces-221621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D1A90F654
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECA490F648
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1976D284E4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:46:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF19E284D2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69C0158A3E;
-	Wed, 19 Jun 2024 18:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6157D1586F2;
+	Wed, 19 Jun 2024 18:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="CYgJUNPD"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="olp51VWv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F9E15748B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 18:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9965A1BF37;
+	Wed, 19 Jun 2024 18:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718822765; cv=none; b=Qf6ekhJkQyLBFvSZrwYsHhEsWLrlCk4Xai7mel9ojTfU1IlOLnsmsU7EpHsppqhuoPWSImJHMvFKbUPH/0J3U6mJJncN41AB6gh1k7UGi+FbZuDLPSmN3jWTqN+QzbChSdgsPDUKl2R2yHw7ZQolxHu64tIdg8nDwJ2F817YSwI=
+	t=1718822754; cv=none; b=JNZPgJsggcpcfrYZWKBaqsCORaYiPx25hSytz24D90E5UzLBDgYQtGu2dOcIz+BadOjmsMkJmzS0XTpGG4TlpI7rjZKnBEGGQX953FF+Av2lVYkDBJ4IT+NP/F07VgR4eVlNq0UWe/9eN+QqJ3u6TBYbtSf/MlJoDlI+GdKBswk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718822765; c=relaxed/simple;
-	bh=zPMoBTclesTxV19K2NhgdoO2cUtAkYyX/FhmCFJ4hp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YPogzO5kOljHLxraOlIjOKo4e8yDQwYluCYytXK5g3/W6xwryEeUrcLLLvQRG45DN1e3EI7YNpH4SDs8rywcJyDQOoDgShXFjWsu5cTeJiPmjmaaDz6xsCymZLwDLtBRQKxOfF1B98IVtTnZjmwNEZg1UofSTqsSrZrfZWvES1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=CYgJUNPD; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-35f06861ae6so67559f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718822762; x=1719427562; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q803tOePwccb1h2zDMiIz3ozPcAah2s1cv6FSztbWf0=;
-        b=CYgJUNPDQ7ZPdksmZBrfeC+Mu1rT2mVPgLBZ8IMt0xyOeokMwvefJgBmYqjKmdjXKl
-         ppZFyA8jHHIgr2CsL+yjnua7eHsPxism5RwKoqcwpKoC8QNCEybccLmCf5kL+qd5kzEE
-         7K6wTCY7+H+jXbI+rGtTF2WEkyfg5n3E9vVQRzaC4iDnutVIP2WS+MeJV9M1EGgaOD44
-         7y6hSAtsrF0wYF6bAE/L6yZag4qsBGGiCeJJx0JsdJsTPt7rgrd3PJWa0qC1elHxWYxg
-         l0hF6BD5UPLQDnVKLf8QhI9IrUouQYAfEp6NZyf6PtbwFjN9OHYVOSd8KE0Hl7FfRycB
-         oMnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718822762; x=1719427562;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q803tOePwccb1h2zDMiIz3ozPcAah2s1cv6FSztbWf0=;
-        b=l/F2SQJffzTNafNTEtfWQ6IwU6/xxIVRXGkXSvWnTFVYpNOarQd/MoS9sP5M7hd5TH
-         GOkvp/p7C07HrtV0ECaejwL84k+XiLP8Kd6NiS5fVBdvCcY6UnbigU9hraD5jzhR5s/C
-         URTmB1KKL+yuZjdIo++iZLfa2i2TzBtpAMvJwVsv16q+RUw1MQAwzz/uGV5UZRwLJHn2
-         uiF6R2l0nCLaMvgR3LVZLaw7rFrbY5SsuclMnHAfVKQJAMAtrlqgI3eA7CECxdn3uXtG
-         soa2wdliOyiFj9K1ZuwsDjPxn1l8bqqNopwrE79ylF1PaaLrE0LWB2dXzzTTQXPgMZWI
-         kQFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGlVPTYXRZFWMQpduyvhn8Ed36xM0jI353Sk+BbAYPZU/bN49iWrLr3uTjjYq0P1QQBT5BTN2Tk0l2+HlAyEMQ9wUK3lye8G6tz4p7
-X-Gm-Message-State: AOJu0YykQyp6OglE3zws5uHGKmRbsquG481SsRyqDXXxWf1yPgHh2MGa
-	8FKLm521+CErsWnQgfEZ9j2mOJ4IYEcz7y7JDPKiI63OAWVclbJsJFpGHdP/o72J1go1SzrzXHg
-	1
-X-Google-Smtp-Source: AGHT+IFWT+3bRELnyfZyXWx5RSUNx7IO660yuwGioJQSIgOSEIf5ViL1XqpqGrTP8TUu85sQWpkvPA==
-X-Received: by 2002:a5d:43c9:0:b0:35f:d6e:f7bd with SMTP id ffacd0b85a97d-36317b79cabmr2407085f8f.29.1718822761741;
-        Wed, 19 Jun 2024 11:46:01 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:991f:deb8:4c5d:d73d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36098c8c596sm7594156f8f.14.2024.06.19.11.46.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 11:46:01 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Vinod Koul <vkoul@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>
-Cc: netdev@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH net-next 0/8] net: support 2.5G ethernet in dwmac-qcom-ethqos
-Date: Wed, 19 Jun 2024 20:45:41 +0200
-Message-ID: <20240619184550.34524-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718822754; c=relaxed/simple;
+	bh=LnvttFyoAWSkuawVy/9codAPfnxNDkMkJ4iJyuXHu4U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L1G9Q0Q9EwO38rEHdE/tL6qYfa1mIAWNEOeLh+53J1/ZxITLBZiqXm4aSKhEgVo8N9qJ60AXzdcKDdJYV3QK7Y2FstU+3xeLoneN8ZZrZFYjSki0AsZ0raa0jP0ZsPT3TCsQMUx1LmOIBIYIL5PaaYXBwEwkpAqVejQKuqtYpQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=olp51VWv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08E48C4AF09;
+	Wed, 19 Jun 2024 18:45:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718822754;
+	bh=LnvttFyoAWSkuawVy/9codAPfnxNDkMkJ4iJyuXHu4U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=olp51VWvhKIb+U3wldz9Dp/v31KChoierAHu85CMI/y69b52vQxdiddvOFMTAVKHR
+	 u01IegGbZbnVg6ULCnZup6NSJ/4RtdzmYXGJd2ybRDIb9O5o4GsUXDmIn8z/fGXZcS
+	 JceBYxafdv0jhPYHZkgb9/Qyr5z67HAyssWXSVf4xRpa0LlTP2jHsS3pwDmyBqP3ha
+	 HAv0SZ5mPqfMgW+gpv1sW89Z2fj/1DWiI7WX8szW8eNkzS8klqdhB8EHVv+MxN2MMx
+	 4C3ROaSBWvx7Uextb8O26EZUDkeUHrXZasPHsd2+RH6NOrI0UK/r5JXSmj5IEGADII
+	 rfaflBhmNyOyQ==
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5bae827df63so1502eaf.3;
+        Wed, 19 Jun 2024 11:45:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW/9F/e3UV3XIByQINNb8Hgdn/pzKaW73bkCMPMoWgTxH2Q4h2eiIm9MzbzrN0gR43OerPBY/ZETO8wc3saFeibbTwIHaMJSK6J0tbphevGZ0hF8VDoBhVHEH0hEk2jsgzLG+6le6g=
+X-Gm-Message-State: AOJu0YwWBtGSCTp/cgfptqkcCl3nHGyq466fav9wP8TSO21MSXPARAph
+	xdQdhe7g2/oVvSKVatlBUYQBjA1MF1hgegw/FZSkoITBuvofYvVpYmzyt55sxQ/ETy61dd82Vdq
+	b5vTTgHr0sW4jD6YYjwQSEf5ePOE=
+X-Google-Smtp-Source: AGHT+IGNKmtp8sSF77RfefKSh6NOj/ZLCbev2ggM8c8woGdyv9hH/XPACV482/vYzxoqoRVOJefsJJaAYygHx0ECG9g=
+X-Received: by 2002:a4a:bc8f:0:b0:5be:9981:bb69 with SMTP id
+ 006d021491bc7-5c1adbed14dmr3732672eaf.1.1718822753279; Wed, 19 Jun 2024
+ 11:45:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240619031250.2936087-1-tj@kernel.org> <20240619031250.2936087-2-tj@kernel.org>
+In-Reply-To: <20240619031250.2936087-2-tj@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 19 Jun 2024 20:45:42 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0i=0QqkvjA9mnqcX6Yv-T+rQ7ZKvuF1HPJL8pG2kqicGQ@mail.gmail.com>
+Message-ID: <CAJZ5v0i=0QqkvjA9mnqcX6Yv-T+rQ7ZKvuF1HPJL8pG2kqicGQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] cpufreq_schedutil: Refactor sugov_cpu_is_busy()
+To: Tejun Heo <tj@kernel.org>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
+	void@manifault.com, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+	mingo@redhat.com, peterz@infradead.org, David Vernet <dvernet@meta.com>, 
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, Jun 19, 2024 at 5:13=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote:
+>
+> sugov_cpu_is_busy() is used to avoid decreasing performance level while t=
+he
+> CPU is busy and called by sugov_update_single_freq() and
+> sugov_update_single_perf(). Both callers repeat the same pattern to first
+> test for uclamp and then the business. Let's refactor so that the tests
+> aren't repeated.
+>
+> The new helper is named sugov_hold_freq() and tests both the uclamp
+> exception and CPU business. No functional changes. This will make adding
+> more exception conditions easier.
+>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reviewed-by: David Vernet <dvernet@meta.com>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
 
-The following series introduces various related changes that allow
-supporting 2.5G ethernet on the sa8775p-ride board.
+Acked-by: Rafael J. Wysocki <rafael@kernel.org>
 
-First two patches add support for the new SGMII mode in PHY core and the
-dwmac-qcom-ethqos driver. Next three introduce support for a new PHY
-model to the aquantia driver (while at it: fix two issues I noticed).
+for this particular change.
 
-Final three provide a way to work around a DMA reset issue on the
-sa8775p-ride board where RX clocks from the PHY are not available during
-the reset.
-
-Bartosz Golaszewski (8):
-  net: phy: add support for overclocked SGMII
-  net: stmmac: qcom-ethqos: add support for 2.5G overlocked SGMII mode
-  net: phy: aquantia: add missing include guards
-  net: phy: aquantia: add support for aqr115c
-  net: phy: aquantia: wait for FW reset before checking the vendor ID
-  net: stmmac: provide the link_up() callback
-  net: stmmac: provide the open() callback
-  net: stmmac: qcom-ethqos: add a DMA-reset quirk for sa8775p-ride-r3
-
- .../stmicro/stmmac/dwmac-qcom-ethqos.c        | 44 +++++++++++++++++
- .../net/ethernet/stmicro/stmmac/stmmac_main.c |  6 +++
- drivers/net/phy/aquantia/aquantia.h           |  6 +++
- drivers/net/phy/aquantia/aquantia_firmware.c  |  4 ++
- drivers/net/phy/aquantia/aquantia_main.c      | 47 +++++++++++++++++--
- drivers/net/phy/phy-core.c                    |  1 +
- drivers/net/phy/phylink.c                     | 13 ++++-
- include/linux/phy.h                           |  4 ++
- include/linux/stmmac.h                        |  2 +
- 9 files changed, 121 insertions(+), 6 deletions(-)
-
--- 
-2.43.0
-
+> ---
+>  kernel/sched/cpufreq_schedutil.c | 38 +++++++++++++++-----------------
+>  1 file changed, 18 insertions(+), 20 deletions(-)
+>
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_sche=
+dutil.c
+> index eece6244f9d2..972b7dd65af2 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -325,16 +325,27 @@ static unsigned long sugov_iowait_apply(struct sugo=
+v_cpu *sg_cpu, u64 time,
+>  }
+>
+>  #ifdef CONFIG_NO_HZ_COMMON
+> -static bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu)
+> +static bool sugov_hold_freq(struct sugov_cpu *sg_cpu)
+>  {
+> -       unsigned long idle_calls =3D tick_nohz_get_idle_calls_cpu(sg_cpu-=
+>cpu);
+> -       bool ret =3D idle_calls =3D=3D sg_cpu->saved_idle_calls;
+> +       unsigned long idle_calls;
+> +       bool ret;
+> +
+> +       /* if capped by uclamp_max, always update to be in compliance */
+> +       if (uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)))
+> +               return false;
+> +
+> +       /*
+> +        * Maintain the frequency if the CPU has not been idle recently, =
+as
+> +        * reduction is likely to be premature.
+> +        */
+> +       idle_calls =3D tick_nohz_get_idle_calls_cpu(sg_cpu->cpu);
+> +       ret =3D idle_calls =3D=3D sg_cpu->saved_idle_calls;
+>
+>         sg_cpu->saved_idle_calls =3D idle_calls;
+>         return ret;
+>  }
+>  #else
+> -static inline bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu) { return =
+false; }
+> +static inline bool sugov_hold_freq(struct sugov_cpu *sg_cpu) { return fa=
+lse; }
+>  #endif /* CONFIG_NO_HZ_COMMON */
+>
+>  /*
+> @@ -382,14 +393,8 @@ static void sugov_update_single_freq(struct update_u=
+til_data *hook, u64 time,
+>                 return;
+>
+>         next_f =3D get_next_freq(sg_policy, sg_cpu->util, max_cap);
+> -       /*
+> -        * Do not reduce the frequency if the CPU has not been idle
+> -        * recently, as the reduction is likely to be premature then.
+> -        *
+> -        * Except when the rq is capped by uclamp_max.
+> -        */
+> -       if (!uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)) &&
+> -           sugov_cpu_is_busy(sg_cpu) && next_f < sg_policy->next_freq &&
+> +
+> +       if (sugov_hold_freq(sg_cpu) && next_f < sg_policy->next_freq &&
+>             !sg_policy->need_freq_update) {
+>                 next_f =3D sg_policy->next_freq;
+>
+> @@ -436,14 +441,7 @@ static void sugov_update_single_perf(struct update_u=
+til_data *hook, u64 time,
+>         if (!sugov_update_single_common(sg_cpu, time, max_cap, flags))
+>                 return;
+>
+> -       /*
+> -        * Do not reduce the target performance level if the CPU has not =
+been
+> -        * idle recently, as the reduction is likely to be premature then=
+.
+> -        *
+> -        * Except when the rq is capped by uclamp_max.
+> -        */
+> -       if (!uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)) &&
+> -           sugov_cpu_is_busy(sg_cpu) && sg_cpu->util < prev_util)
+> +       if (sugov_hold_freq(sg_cpu) && sg_cpu->util < prev_util)
+>                 sg_cpu->util =3D prev_util;
+>
+>         cpufreq_driver_adjust_perf(sg_cpu->cpu, sg_cpu->bw_min,
+> --
+> 2.45.2
+>
+>
 
