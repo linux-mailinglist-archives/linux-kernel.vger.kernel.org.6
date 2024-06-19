@@ -1,101 +1,230 @@
-Return-Path: <linux-kernel+bounces-221090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0871290EC6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:07:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C422990EC98
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 099531C209D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:07:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54CEF1F21C53
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527A2143C4A;
-	Wed, 19 Jun 2024 13:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8980A147C6E;
+	Wed, 19 Jun 2024 13:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JS0k1MIq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="dMDtwO8D"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8261F13AA40;
-	Wed, 19 Jun 2024 13:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081ED13F426
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718802432; cv=none; b=toSmqCrdwQBl6R9hj0GwuYlDhg35Rcmb6Mayl2cgcOp/mVFjDgq4UoqLRn/5qHqde7dfnjbcJ35mUO14l1YT4vdxjRCVB7YpMuZ22wFw3BhGrseIQyOvEDLVoaRN4ou/XNGGxhei66gOYBlxMFuPjnmKn18pc7PtwCdKehyZuWI=
+	t=1718802538; cv=none; b=aeDkMF1zvEyJ8mIaz6fZl9LEjiT/NajST6aJNmlGjfDVIJxvwY/QqGhoA9kShJCmy7HO4Eic3OzCyb3KEUkWY0cpOCYG3UI7TDgJd2VGOR8vI7nVM+snx2d5wBV1015xHuGB6rMo2J7b6IRFSrayj/Q2lK+FW9iGg+x/rbEpvtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718802432; c=relaxed/simple;
-	bh=7ECgoqLxbnkE8eeAvsruy/XOatVSDC2HNxneNHxFsak=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nKEpaRLwedGvDnSUmWyvOAtznqIuEkNOoOkrh1K2nRtT4QSm9fr7Sy/X2loZXr3rxPjiNerzjrkK+MyJf7vMnzkb5+uRnipuk+tMiGeKl0wKYpf5n/JvLKKoMJxckXfW8+QmK8S9Yj48qb4+aylnjyLmLhQeU1xV8H054hiJ4lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JS0k1MIq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39070C2BBFC;
-	Wed, 19 Jun 2024 13:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718802432;
-	bh=7ECgoqLxbnkE8eeAvsruy/XOatVSDC2HNxneNHxFsak=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=JS0k1MIqNdCqn6Y3j1Pe+uEF6xsDKriiJ/PsjYTvd7CZmMYL5yxQn/3fHkYtaa1Q1
-	 Sf1D/ng3FCcqaUet+ILdCd87bfOzts/TyEVQxRo4U4TkjDk9e+rdmLTllYiAFz6pAR
-	 l+gPWZcA5PK+kH1IL8R9BkbcZcmMHedx8YEdWxN3Kw4TCBT0qY8ULn9aA3Nz/A/KoX
-	 kbPTLlAi2APyhgW/2iq2eeCpUOxqHJQQpYKbcnMtz9RobgCmBn2lW5mf7IhPYMFE2d
-	 KdZI69csb2p7+bl3Nocy1UsPt7q24cRCo9ujyKTUdY2l+JhgHQHErB76B6IquIDJ66
-	 Di7xp7ZyIHQFw==
-From: Mark Brown <broonie@kernel.org>
-To: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, git@amd.com, 
- amitrkcian2002@gmail.com
-In-Reply-To: <20240617153052.26636-1-amit.kumar-mahapatra@amd.com>
-References: <20240617153052.26636-1-amit.kumar-mahapatra@amd.com>
-Subject: Re: [PATCH 1/1] spi: Fix SPI slave probe failure
-Message-Id: <171880243095.125187.8391249561773435131.b4-ty@kernel.org>
-Date: Wed, 19 Jun 2024 14:07:10 +0100
+	s=arc-20240116; t=1718802538; c=relaxed/simple;
+	bh=5/ZgA8zhLrdVDYchq6/Y99NUFdbXaCiUTPCiwdCmYYM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CYNUTdIK5bn5lJxDWYviLsQZJmMDPmKTZOz8QZp/xUY6F3ldOBJy3jjjA+0U0gl0BbImEKTiHTo6l3VMt9WoxFw6NClYa34ymwV/J+o3cpAZrNtkXg8PZAkh/c3CG4k74fPCOiWp6zqWzF0tMbs23S+TUaaCoxQi54ftVgLu9vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=dMDtwO8D; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-652fd0bb5e6so5122753a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1718802536; x=1719407336; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p7QBxRjX6bK4nfQFtvwlMhqO1YN0X8hSMyp1M5GJNSs=;
+        b=dMDtwO8D4rRZpxE+ZilOMCvkuFWoxd4wuZH1TLWWmsHrWGhQiBLL7pgZmlMF/Hi/ix
+         jKXx+NGuNJGTgB0PnFO4OS1MW2wVJLbg4P+GVA8wW/ZL42ziX5fyceoEQByaKOrniZUx
+         TGY1olKRSVSqDlAAm4qcGWj9e7CKNC9oq5TwBioL144/cr6k7ylufN5VVkD+fIEBLwyp
+         jp2U6x6sUfG+QOiYrYHANmG0r2bt76P6rHSPgm3pXXeGsuJ5ntgP77/p6e1oMNCMHH6I
+         cDqOmX3E4B3A+ckxF0Rb6qJQUgiQGibpDMT+Oi+572A0MYDetADXmFuV1rBW96QlcE/x
+         15jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718802536; x=1719407336;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p7QBxRjX6bK4nfQFtvwlMhqO1YN0X8hSMyp1M5GJNSs=;
+        b=gDLnnGFJviFx0pmI9nPkKb5lR3cHK9yLzNdCTI/vx3nHDVND5+cmeg0s28att5gSIh
+         Pt/CIFAJmGOGuG10Ynv4f2Qwxm9MUOK32T15RPQwm9gHxRpYDsMlzxa5NyAR0/zmktJj
+         YtfdFELUS9bEvspH0Enn3SwCT2btzHpur/TqucUtKbFk237HoKMGgcykD4U9GVTF8d6T
+         11QAIgJ0a2lzUmcFw9ywP3GKhfFnlLNOO+/l2coy85aeecCqpAJswAPPreYIR1Mi1KcO
+         LsC/xABd9LH5vKZfzXAJpMYsW9IdoDapio+Sl2hCkhKnSxcgL+72TOTGeQu9lPuwK/7x
+         sR/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWgG/xfJ9Iz+kAzJGwlc31k5Zi4osZeRuo+sVdwFe/vGp13sz60RVkGeKZx3JDFML3Q+Jf+R4IrZH1FumXV8+nocBhmghcVRIAt9PRD
+X-Gm-Message-State: AOJu0YwiZ31CMYZmPcBTyN24hndD39iS1ztS8lZEyqRTOEuaJ1+XUZGY
+	aN2ryquy5rFAXDPwudX6n7R5GLMWkqRorxXMHJClTvCTocciPViNYX72dQ+2cUkWKP7VvRQIyXV
+	F/+uKI49gaZXNWjM7fxlsoB7AYl0zZBNENB06ZA==
+X-Google-Smtp-Source: AGHT+IE0FPXNumij9mjrz3O1ImHZTXZjz3dyjeywqSnPUCIu/Ng38CP6z8Kvps/xrN0z7q87QtndEIlgt/vVLUqsO7E=
+X-Received: by 2002:a17:90a:f0d4:b0:2c2:fa5e:106a with SMTP id
+ 98e67ed59e1d1-2c7b5db2a3fmr2356670a91.48.1718802536199; Wed, 19 Jun 2024
+ 06:08:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+References: <20240617210205.67311-1-ignat@cloudflare.com> <c9446790-9bac-4541-919b-0af396349c59@linux.alibaba.com>
+In-Reply-To: <c9446790-9bac-4541-919b-0af396349c59@linux.alibaba.com>
+From: Ignat Korchagin <ignat@cloudflare.com>
+Date: Wed, 19 Jun 2024 14:08:45 +0100
+Message-ID: <CALrw=nGSf49VnRVy--b5qSM7_rSRyDBUFe_t8taFs2tmRP2QTw@mail.gmail.com>
+Subject: Re: [PATCH net v3] net: do not leave a dangling sk pointer, when
+ socket creation fails
+To: "D. Wythe" <alibuda@linux.alibaba.com>
+Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Florent Revest <revest@chromium.org>, kernel-team@cloudflare.com, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 17 Jun 2024 21:00:52 +0530, Amit Kumar Mahapatra wrote:
-> While adding a SPI device, the SPI core ensures that multiple logical CS
-> doesn't map to the same physical CS. For example, spi->chip_select[0] !=
-> spi->chip_select[1] and so forth. However, unlike the SPI master, the SPI
-> slave doesn't have the list of chip selects, this leads to probe failure
-> when the SPI controller is configured as slave. Update the
-> __spi_add_device() function to perform this check only if the SPI
-> controller is configured as master.
-> 
-> [...]
+On Wed, Jun 19, 2024 at 1:31=E2=80=AFPM D. Wythe <alibuda@linux.alibaba.com=
+> wrote:
+>
+>
+>
+> On 6/18/24 5:02 AM, Ignat Korchagin wrote:
+> > It is possible to trigger a use-after-free by:
+> >    * attaching an fentry probe to __sock_release() and the probe callin=
+g the
+> >      bpf_get_socket_cookie() helper
+> >    * running traceroute -I 1.1.1.1 on a freshly booted VM
+> >
+> > A KASAN enabled kernel will log something like below (decoded and strip=
+ped):
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > BUG: KASAN: slab-use-after-free in __sock_gen_cookie (./arch/x86/includ=
+e/asm/atomic64_64.h:15 ./include/linux/atomic/atomic-arch-fallback.h:2583 .=
+/include/linux/atomic/atomic-instrumented.h:1611 net/core/sock_diag.c:29)
+> > Read of size 8 at addr ffff888007110dd8 by task traceroute/299
+> >
+> > CPU: 2 PID: 299 Comm: traceroute Tainted: G            E      6.10.0-rc=
+2+ #2
+> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debi=
+an-1.16.2-1 04/01/2014
+> > Call Trace:
+> >   <TASK>
+> > dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1))
+> > print_report (mm/kasan/report.c:378 mm/kasan/report.c:488)
+> > ? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/=
+linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-inst=
+rumented.h:1611 net/core/sock_diag.c:29)
+> > kasan_report (mm/kasan/report.c:603)
+> > ? __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/=
+linux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-inst=
+rumented.h:1611 net/core/sock_diag.c:29)
+> > kasan_check_range (mm/kasan/generic.c:183 mm/kasan/generic.c:189)
+> > __sock_gen_cookie (./arch/x86/include/asm/atomic64_64.h:15 ./include/li=
+nux/atomic/atomic-arch-fallback.h:2583 ./include/linux/atomic/atomic-instru=
+mented.h:1611 net/core/sock_diag.c:29)
+> > bpf_get_socket_ptr_cookie (./arch/x86/include/asm/preempt.h:94 ./includ=
+e/linux/sock_diag.h:42 net/core/filter.c:5094 net/core/filter.c:5092)
+> > bpf_prog_875642cf11f1d139___sock_release+0x6e/0x8e
+> > bpf_trampoline_6442506592+0x47/0xaf
+> > __sock_release (net/socket.c:652)
+> > __sock_create (net/socket.c:1601)
+> > ...
+> > Allocated by task 299 on cpu 2 at 78.328492s:
+> > kasan_save_stack (mm/kasan/common.c:48)
+> > kasan_save_track (mm/kasan/common.c:68)
+> > __kasan_slab_alloc (mm/kasan/common.c:312 mm/kasan/common.c:338)
+> > kmem_cache_alloc_noprof (mm/slub.c:3941 mm/slub.c:4000 mm/slub.c:4007)
+> > sk_prot_alloc (net/core/sock.c:2075)
+> > sk_alloc (net/core/sock.c:2134)
+> > inet_create (net/ipv4/af_inet.c:327 net/ipv4/af_inet.c:252)
+> > __sock_create (net/socket.c:1572)
+> > __sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
+> > __x64_sys_socket (net/socket.c:1718)
+> > do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+> > entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+> >
+> > Freed by task 299 on cpu 2 at 78.328502s:
+> > kasan_save_stack (mm/kasan/common.c:48)
+> > kasan_save_track (mm/kasan/common.c:68)
+> > kasan_save_free_info (mm/kasan/generic.c:582)
+> > poison_slab_object (mm/kasan/common.c:242)
+> > __kasan_slab_free (mm/kasan/common.c:256)
+> > kmem_cache_free (mm/slub.c:4437 mm/slub.c:4511)
+> > __sk_destruct (net/core/sock.c:2117 net/core/sock.c:2208)
+> > inet_create (net/ipv4/af_inet.c:397 net/ipv4/af_inet.c:252)
+> > __sock_create (net/socket.c:1572)
+> > __sys_socket (net/socket.c:1660 net/socket.c:1644 net/socket.c:1706)
+> > __x64_sys_socket (net/socket.c:1718)
+> > do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+> > entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+> >
+> > Fix this by clearing the struct socket reference in sk_common_release()=
+ to cover
+> > all protocol families create functions, which may already attached the
+> > reference to the sk object with sock_init_data().
+> >
+> > Fixes: c5dbb89fc2ac ("bpf: Expose bpf_get_socket_cookie to tracing prog=
+rams")
+> > Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+> > Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
+> > Cc: stable@vger.kernel.org
+> > Link: https://lore.kernel.org/netdev/20240613194047.36478-1-kuniyu@amaz=
+on.com/T/
+> > ---
+> > Changes in v3:
+> >    * re-added KASAN repro steps to the commit message (somehow stripped=
+ in v2)
+> >    * stripped timestamps and thread id from the KASAN splat
+> >    * removed comment from the code (commit message should be enough)
+> >
+> > Changes in v2:
+> >    * moved the NULL-ing of the socket reference to sk_common_release() =
+(as
+> >      suggested by Kuniyuki Iwashima)
+> >    * trimmed down the KASAN report in the commit message to show only r=
+elevant
+> >      info
+> >
+> >   net/core/sock.c | 3 +++
+> >   1 file changed, 3 insertions(+)
+> >
+> > diff --git a/net/core/sock.c b/net/core/sock.c
+> > index 8629f9aecf91..100e975073ca 100644
+> > --- a/net/core/sock.c
+> > +++ b/net/core/sock.c
+> > @@ -3742,6 +3742,9 @@ void sk_common_release(struct sock *sk)
+> >
+> >       sk->sk_prot->unhash(sk);
+> >
+> > +     if (sk->sk_socket)
+> > +             sk->sk_socket->sk =3D NULL;
+> > +
+> >       /*
+> >        * In this point socket cannot receive new packets, but it is pos=
+sible
+> >        * that some packets are in flight because some CPU runs receiver=
+ and
+>
+> Reviewed-by: D. Wythe <alibuda@linux.alibaba.com>
+>
+>
+> A small tip:
+>
+> It seems that you might have missed CCing some maintainers, using
+> scripts/get_maintainer.pl "Your patch" can help you avoid this issue
+> again.
 
-Applied to
+Thanks. I did scripts/get_maintainer.pl <file I'm modifying>. Not sure
+if it is different.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: Fix SPI slave probe failure
-      commit: 2c1b7bbe253986619fa5623a13055316e730e746
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+>
+> D. Wythe
+>
+>
+>
 
