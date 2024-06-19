@@ -1,213 +1,357 @@
-Return-Path: <linux-kernel+bounces-220648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B81190E4E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:51:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B51A90E4EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E2D41F27DCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:51:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 681A4B227C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D920A481BD;
-	Wed, 19 Jun 2024 07:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEA077110;
+	Wed, 19 Jun 2024 07:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gtuLurii"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E35xSU1F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5851A7828B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BED73441
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718783480; cv=none; b=UCk140nzfLq6gE3VF9HVEX6Rt7RlNn9Mt08M54Z+10kBUS/9V6kfw9b+gWx2VexzfssziZdXFaeQyT1XgEoySsTrNCgCLPsQw6HX634OCjph/sa2eHWbkSdVlLJSVFlC3cmrWf6GDuQhDdp2gXcFyp/xkIUTzXCT9qE7I+KQTRY=
+	t=1718783585; cv=none; b=U9+nhUbLQOxF4p2Sg6T7jUvtGGu+jug3OmpK9mXOwVapyToBVQM0bbsa5SclKjX2qs76w2et8zH7v5wlV5yr5qABMbG5RROBfHlRo8IJc4C0wW5zrm66tEWV2IDqk3+q3jhvTrveMyON5ypJp/2xHJIOeO3AYuQBxLjB5AAWDTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718783480; c=relaxed/simple;
-	bh=SakDkSaznJ42+rNLU6g9ncLYcfpB/RFNYeC3yICgVuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UBrwreO/shadhx+rYXXOhawLa7gLW88/jw32JCG+jgx0M6rE5mrFQeCxrrYHt8PKyR0PkuAnel5po0Lrb+nvQFCWgrrLzCWX2VR3AOyG6CYEGaIX4v+hsgT1kaePXqUPiRFvq9D98P7uyyWGQ9jGyHcpWCjN9FZtFRiJTLzzIis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gtuLurii; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718783477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=54l/bQWI1DZeSh0ObKloGm/WQfpdPpAWrREcvojyFcI=;
-	b=gtuLuriiFys4uTFgJA5Ctc8Vg/sbnGTZXa0e2Xi5V5jlCFunq+/IwNQBQRLnMMdo7mAwxQ
-	1m7wWs+NcWe/2XNMX7wITcl5DU9CNHUtd25f5SEJVk7msTxEPTLId1IKTFCaQY/x3GJlTK
-	AGxNC6XU1He42rsb/UPYdWw/AinFGf0=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-28-z1gB-zN1M-Sw50AjmjMlEA-1; Wed, 19 Jun 2024 03:51:15 -0400
-X-MC-Unique: z1gB-zN1M-Sw50AjmjMlEA-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-36083bd1b12so3823053f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 00:51:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718783475; x=1719388275;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=54l/bQWI1DZeSh0ObKloGm/WQfpdPpAWrREcvojyFcI=;
-        b=wYirlkOSkRbXn1RECWK0TkoLTINA07IZkVjIjZnXmHZhljDRSoBFSjx6MSL8uPlQ7W
-         ZZL77zmm4CDeXYoGE1YAfTm4mX3leVOFNPkB/DtChh+Z6q+F+OQH5Z1+X92XJQg2wjfG
-         occz3alcsjI52DCnDh40djnxOhWkUNQpOr69C7QYfm1zYbR9lM7X/PkJdBF+B1L0YvcZ
-         QnlabbomW2qrN1egyK57Kzy5XM777THRhDGjI1sdkPAJpjmIxjhtVQoNGGuEk9qE43vR
-         uywY8l/kw45/1/Y2aXS5ZGGgTT7BA0BY3qmlJc7RhR9wBXBP9Z7XyZKJfWvTIZ8WXSq2
-         DiSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwH5CRpOx2z3IHHnYBDWpLLFpFaj11JGcDenFi6M4ogDhfCWIizU3B7VYnvhBS3E42IOp8oW+cDFRACWcztRI6OVDRibabXJ68nEb5
-X-Gm-Message-State: AOJu0YwNAVFucvBY73VAIrs41kVHVQ2F/ZggCwk0rzUkYZpmhcRh0MZf
-	ZUWvF27IBFBNVG50HIC32yi8LR8Uci7WILjbriyCeHmYIOAJln5eXpd4up3LANh9Oo41XQy0pTg
-	BTLlpkcn9ulkyN7kHGTRewhkzke7id29wyyjDvrlEsorPVJAD/LMjiyQEq9X0KQ==
-X-Received: by 2002:a5d:4d4e:0:b0:360:711b:114f with SMTP id ffacd0b85a97d-363170ed43fmr1677406f8f.5.1718783474581;
-        Wed, 19 Jun 2024 00:51:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGgshaVs3GIEzhy3LqFFVEKzd78LiEjfe2e4rzHd9MLxQKBApInQuCqxm9Tqj4WTUduoEdJkQ==
-X-Received: by 2002:a5d:4d4e:0:b0:360:711b:114f with SMTP id ffacd0b85a97d-363170ed43fmr1677368f8f.5.1718783473735;
-        Wed, 19 Jun 2024 00:51:13 -0700 (PDT)
-Received: from redhat.com ([2.52.146.100])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36302e474e8sm2130125f8f.37.2024.06.19.00.51.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 00:51:13 -0700 (PDT)
-Date: Wed, 19 Jun 2024 03:51:08 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Denis Arefev <arefev@swemel.ru>
-Cc: Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	lvc-project@linuxtesting.org
-Subject: Re: [PATCH v2] net: missing check virtio
-Message-ID: <20240619035015-mutt-send-email-mst@kernel.org>
-References: <20240613095448.27118-1-arefev@swemel.ru>
+	s=arc-20240116; t=1718783585; c=relaxed/simple;
+	bh=HqAayMXfsb3bAlmNU8C06hZ7IHnX6K11yuzyPkwsHy0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=K1Nmafs/zU2OXLvfl2sztknQUujvYtTX+yoHQwrgk8vSfGqxjdbIuzMpwi5aj0SE4FZbQaHaHosddar5TBRocQF7eWEREoCdNghZBlgr68OlbtlxMJJ9OFK5WOpUWvfS0a536DMjnQN4qkt1ByG6xiHpMvOksGpW0TaIx6oSRiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E35xSU1F; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718783584; x=1750319584;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=HqAayMXfsb3bAlmNU8C06hZ7IHnX6K11yuzyPkwsHy0=;
+  b=E35xSU1FUfzXapcjTZXLIDs3WDyTUXvx7C8Nf5Vjk4ONb7Z6zhTsTCg+
+   kNm90hhjsPxRijPlBfcbqENuiNpOJSRetYMjElcTiPzfhITAqoAu+oHq4
+   ucNyyhQry8qC7M6ODvK8Fnp60WpUAvVfaeQj6D34CusR6GdJJ0oU+bjVy
+   AmRZWc1n3fWKWQWF6Q6HMJK4Rc0RwbtZBx/Y0qhcRJIPAz1zrSjOpdAfM
+   RKbdqoCQu9IjBgeQaJEQjpLSNTIMuLffzvAkvIXNRAyGAtx7pVftQ3xLR
+   1MYMhW5JSl2sPTmsHeRsLL8NHUhxXJUtIXChQ9Nqp3Ywz9DvnY77TC/LC
+   g==;
+X-CSE-ConnectionGUID: I9hAKW2lSyS13OgW5jJnqQ==
+X-CSE-MsgGUID: zzYC/XtzT3OeZcsdcRNl3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15846955"
+X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
+   d="scan'208";a="15846955"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 00:53:03 -0700
+X-CSE-ConnectionGUID: zfLGzj9NQCe8JAkYt4MAxg==
+X-CSE-MsgGUID: G1L5H5Z0R2ic3jRkOdIBbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
+   d="scan'208";a="41978623"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 00:53:00 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Chris Li <chrisl@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  Kairui Song
+ <kasong@tencent.com>,  Ryan Roberts <ryan.roberts@arm.com>,  Kalesh Singh
+ <kaleshsingh@google.com>,  linux-kernel@vger.kernel.org,
+  linux-mm@kvack.org,  Barry Song <baohua@kernel.org>
+Subject: Re: [PATCH v2 1/2] mm: swap: swap cluster switch to double link list
+In-Reply-To: <CAF8kJuPqTWdxdUnU_0b4JNY06S6qdc5rEDwtr6M6NV9PhmHVUw@mail.gmail.com>
+	(Chris Li's message of "Tue, 18 Jun 2024 03:01:42 -0700")
+References: <20240614-swap-allocator-v2-0-2a513b4a7f2f@kernel.org>
+	<20240614-swap-allocator-v2-1-2a513b4a7f2f@kernel.org>
+	<87frtc5bxm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CAF8kJuMTAuGN6Zt-=Nb-4TPZ4aNBX17W6eop5LPVHYTakV+LHw@mail.gmail.com>
+	<87y1724re8.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CAF8kJuPqTWdxdUnU_0b4JNY06S6qdc5rEDwtr6M6NV9PhmHVUw@mail.gmail.com>
+Date: Wed, 19 Jun 2024 15:51:09 +0800
+Message-ID: <87le314bgy.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613095448.27118-1-arefev@swemel.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 12:54:48PM +0300, Denis Arefev wrote:
-> Two missing check in virtio_net_hdr_to_skb() allowed syzbot
-> to crash kernels again
-> 
-> 1. After the skb_segment function the buffer may become non-linear
-> (nr_frags != 0), but since the SKBTX_SHARED_FRAG flag is not set anywhere
-> the __skb_linearize function will not be executed, then the buffer will
-> remain non-linear. Then the condition (offset >= skb_headlen(skb))
-> becomes true, which causes WARN_ON_ONCE in skb_checksum_help.
-> 
-> 2. The struct sk_buff and struct virtio_net_hdr members must be
-> mathematically related.
-> (gso_size) must be greater than (needed) otherwise WARN_ON_ONCE.
-> (remainder) must be greater than (needed) otherwise WARN_ON_ONCE.
-> (remainder) may be 0 if division is without remainder.
-> 
-> offset+2 (4191) > skb_headlen() (1116)
-> WARNING: CPU: 1 PID: 5084 at net/core/dev.c:3303 skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
-> Modules linked in:
-> CPU: 1 PID: 5084 Comm: syz-executor336 Not tainted 6.7.0-rc3-syzkaller-00014-gdf60cee26a2e #0
-> Hardware name: Google Compute Engine/Google Compute Engine, BIOS Google 11/10/2023
-> RIP: 0010:skb_checksum_help+0x5e2/0x740 net/core/dev.c:3303
-> Code: 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 52 01 00 00 44 89 e2 2b 53 74 4c 89 ee 48 c7 c7 40 57 e9 8b e8 af 8f dd f8 90 <0f> 0b 90 90 e9 87 fe ff ff e8 40 0f 6e f9 e9 4b fa ff ff 48 89 ef
-> RSP: 0018:ffffc90003a9f338 EFLAGS: 00010286
-> RAX: 0000000000000000 RBX: ffff888025125780 RCX: ffffffff814db209
-> RDX: ffff888015393b80 RSI: ffffffff814db216 RDI: 0000000000000001
-> RBP: ffff8880251257f4 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000001 R12: 000000000000045c
-> R13: 000000000000105f R14: ffff8880251257f0 R15: 000000000000105d
-> FS:  0000555555c24380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000002000f000 CR3: 0000000023151000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  ip_do_fragment+0xa1b/0x18b0 net/ipv4/ip_output.c:777
->  ip_fragment.constprop.0+0x161/0x230 net/ipv4/ip_output.c:584
->  ip_finish_output_gso net/ipv4/ip_output.c:286 [inline]
->  __ip_finish_output net/ipv4/ip_output.c:308 [inline]
->  __ip_finish_output+0x49c/0x650 net/ipv4/ip_output.c:295
->  ip_finish_output+0x31/0x310 net/ipv4/ip_output.c:323
->  NF_HOOK_COND include/linux/netfilter.h:303 [inline]
->  ip_output+0x13b/0x2a0 net/ipv4/ip_output.c:433
->  dst_output include/net/dst.h:451 [inline]
->  ip_local_out+0xaf/0x1a0 net/ipv4/ip_output.c:129
->  iptunnel_xmit+0x5b4/0x9b0 net/ipv4/ip_tunnel_core.c:82
->  ipip6_tunnel_xmit net/ipv6/sit.c:1034 [inline]
->  sit_tunnel_xmit+0xed2/0x28f0 net/ipv6/sit.c:1076
->  __netdev_start_xmit include/linux/netdevice.h:4940 [inline]
->  netdev_start_xmit include/linux/netdevice.h:4954 [inline]
->  xmit_one net/core/dev.c:3545 [inline]
->  dev_hard_start_xmit+0x13d/0x6d0 net/core/dev.c:3561
->  __dev_queue_xmit+0x7c1/0x3d60 net/core/dev.c:4346
->  dev_queue_xmit include/linux/netdevice.h:3134 [inline]
->  packet_xmit+0x257/0x380 net/packet/af_packet.c:276
->  packet_snd net/packet/af_packet.c:3087 [inline]
->  packet_sendmsg+0x24ca/0x5240 net/packet/af_packet.c:3119
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg+0xd5/0x180 net/socket.c:745
->  __sys_sendto+0x255/0x340 net/socket.c:2190
->  __do_sys_sendto net/socket.c:2202 [inline]
->  __se_sys_sendto net/socket.c:2198 [inline]
->  __x64_sys_sendto+0xe0/0x1b0 net/socket.c:2198
->  do_syscall_x64 arch/x86/entry/common.c:51 [inline]
->  do_syscall_64+0x40/0x110 arch/x86/entry/common.c:82
->  entry_SYSCALL_64_after_hwframe+0x63/0x6b
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Syzkaller
-> 
-> Signed-off-by: Denis Arefev <arefev@swemel.ru>
-> ---
->  V1 -> V2: incorrect type in argument 2
->  include/linux/virtio_net.h | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
-> index 4dfa9b69ca8d..d1d7825318c3 100644
-> --- a/include/linux/virtio_net.h
-> +++ b/include/linux/virtio_net.h
-> @@ -56,6 +56,7 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
->  	unsigned int thlen = 0;
->  	unsigned int p_off = 0;
->  	unsigned int ip_proto;
-> +	u64 ret, remainder, gso_size;
->  
->  	if (hdr->gso_type != VIRTIO_NET_HDR_GSO_NONE) {
->  		switch (hdr->gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
-> @@ -98,6 +99,16 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
->  		u32 off = __virtio16_to_cpu(little_endian, hdr->csum_offset);
->  		u32 needed = start + max_t(u32, thlen, off + sizeof(__sum16));
->  
-> +		if (hdr->gso_size) {
-> +			gso_size = __virtio16_to_cpu(little_endian, hdr->gso_size);
-> +			ret = div64_u64_rem(skb->len, gso_size, &remainder);
-> +			if (!(ret && (hdr->gso_size > needed) &&
-> +						((remainder > needed) || (remainder == 0)))) {
-> +				return -EINVAL;
-> +			}
+Chris Li <chrisl@kernel.org> writes:
 
+> On Tue, Jun 18, 2024 at 12:56=E2=80=AFAM Huang, Ying <ying.huang@intel.co=
+m> wrote:
+>>
+>> Chris Li <chrisl@kernel.org> writes:
+>>
+>> > On Sun, Jun 16, 2024 at 11:21=E2=80=AFPM Huang, Ying <ying.huang@intel=
+.com> wrote:
+>> >>
+>> >> Hi, Chris,
+>> >>
+>> >> Chris Li <chrisl@kernel.org> writes:
 
-Could you please add some comments explaining the logic here?
+[snip]
 
-And do we really need u64 math? All the values here are 32 bit ATM ...
+>> >> > diff --git a/include/linux/swap.h b/include/linux/swap.h
+>> >> > index 3df75d62a835..cd9154a3e934 100644
+>> >> > --- a/include/linux/swap.h
+>> >> > +++ b/include/linux/swap.h
+>> >> > @@ -242,23 +242,22 @@ enum {
+>> >> >   * space with SWAPFILE_CLUSTER pages long and naturally aligns in =
+disk. All
+>> >> >   * free clusters are organized into a list. We fetch an entry from=
+ the list to
+>> >> >   * get a free cluster.
+>> >> > - *
+>> >> > - * The data field stores next cluster if the cluster is free or cl=
+uster usage
+>> >> > - * counter otherwise. The flags field determines if a cluster is f=
+ree. This is
+>> >> > - * protected by swap_info_struct.lock.
+>> >> >   */
+>> >> >  struct swap_cluster_info {
+>> >> >       spinlock_t lock;        /*
+>> >> > -                              * Protect swap_cluster_info fields
+>> >> > -                              * and swap_info_struct->swap_map
+>> >> > +                              * Protect swap_cluster_info count an=
+d state
+>> >>
+>> >> Protect swap_cluster_info fields except 'list' ?
+>> >
+>> > I change it to protect the swap_cluster_info bitfields in the second p=
+atch.
+>>
+>> Although I still prefer my version, I will not insist on that.
+>
+> Sure, I actually don't have a strong preference about that. It is just co=
+mments.
+>
+>>
+>> >>
+>> >> > +                              * field and swap_info_struct->swap_m=
+ap
+>> >> >                                * elements correspond to the swap
+>> >> >                                * cluster
+>> >> >                                */
+>> >> > -     unsigned int data:24;
+>> >> > -     unsigned int flags:8;
+>> >> > +     unsigned int count:12;
+>> >> > +     unsigned int state:3;
+>> >>
+>> >> I still prefer normal data type over bit fields.  How about
+>> >>
+>> >>         u16 usage;
+>> >>         u8  state;
+>> >
+>> > I don't mind the "count" rename to "usage". That is probably a better
+>> > name. However I have another patch intended to add more bit fields in
+>> > the cluster info struct. The second patch adds "order" and the later
+>> > patch will add more. That is why I choose bitfield to be more condense
+>> > with bits.
+>>
+>> We still have space for another "u8" for "order".  It appears trivial to
+>> change it to bit fields when necessary in the future.
+>
+> We can, I don't see it necessary to change from bit field to u8 and
+> back to bit field in the future. It is more of a personal preference
+> issue.
 
+I have to say that I don't think that it's just a personal preference.
+IMO, if it's unnecessary, we shouldn't use bit fields.  You cannot
+guarantee that your future changes will be merged in its current state.
+So, I still think that it's better to avoid bit fields for now.
 
+>> >>
+>> >> And, how about use 'usage' instead of 'count'?  Personally I think th=
+at
+>> >> it is more clear.  But I don't have strong opinions on this.
+>> >>
+>> >> > +     struct list_head list;  /* Protected by swap_info_struct->loc=
+k */
+>> >> >  };
+>> >> > -#define CLUSTER_FLAG_FREE 1 /* This cluster is free */
+>> >> > -#define CLUSTER_FLAG_NEXT_NULL 2 /* This cluster has no next clust=
+er */
+>> >> > +
+>> >> > +#define CLUSTER_STATE_FREE   1 /* This cluster is free */
+>> >>
 
+[snip]
 
-> +			skb_shinfo(skb)->tx_flags |= SKBFL_SHARED_FRAG;
-> +		}
-> +
->  		if (!pskb_may_pull(skb, needed))
->  			return -EINVAL;
->  
-> -- 
-> 2.25.1
+>> >> >  /*
+>> >> > @@ -481,21 +371,22 @@ static void __free_cluster(struct swap_info_s=
+truct *si, unsigned long idx)
+>> >> >  */
+>> >> >  static void swap_do_scheduled_discard(struct swap_info_struct *si)
+>> >> >  {
+>> >> > -     struct swap_cluster_info *info, *ci;
+>> >> > +     struct swap_cluster_info *ci;
+>> >> >       unsigned int idx;
+>> >> >
+>> >> > -     info =3D si->cluster_info;
+>> >> > -
+>> >> > -     while (!cluster_list_empty(&si->discard_clusters)) {
+>> >> > -             idx =3D cluster_list_del_first(&si->discard_clusters,=
+ info);
+>> >> > +     while (!list_empty(&si->discard_clusters)) {
+>> >> > +             ci =3D list_first_entry(&si->discard_clusters, struct=
+ swap_cluster_info, list);
+>> >> > +             list_del(&ci->list);
+>> >> > +             idx =3D ci - si->cluster_info;
+>> >> >               spin_unlock(&si->lock);
+>> >> >
+>> >> >               discard_swap_cluster(si, idx * SWAPFILE_CLUSTER,
+>> >> >                               SWAPFILE_CLUSTER);
+>> >> >
+>> >> >               spin_lock(&si->lock);
+>> >> > -             ci =3D lock_cluster(si, idx * SWAPFILE_CLUSTER);
+>> >> > -             __free_cluster(si, idx);
+>> >> > +
+>> >> > +             spin_lock(&ci->lock);
+>> >>
+>> >> Personally, I still prefer to use lock_cluster(), which is more reada=
+ble
+>> >> and matches unlock_cluster() below.
+>> >
+>> > lock_cluster() uses an index which is not matching unlock_cluster()
+>> > which is using a pointer to cluster.
+>>
+>> lock_cluster()/unlock_cluster() are pair and fit original design
+>> well.  They use different parameter because swap cluster is optional.
+>>
+>> > When you get the cluster from the list, you have a cluster pointer. I
+>> > feel it is unnecessary to convert to index then back convert to
+>> > cluster pointer inside lock_cluster(). I actually feel using indexes
+>> > to refer to the cluster is error prone because we also have offset.
+>>
+>> I don't think so, it's common to use swap offset.
+>
+> Swap offset is not an issue, it is all over the place. The cluster
+> index(offset/512) is the one I try to avoid.
+> I have made some mistakes myself on offset vs index.
 
+Yes.  That's not good, but it's hard to be avoided too.  Can we make the
+variable name more consistent?  index: cluster index, offset: swap
+offset.
+
+And, in fact, swap offset is the parameter of lock_cluster() instead of
+cluster index.
+
+>> >
+>> >>
+>> >> > +             __free_cluster(si, ci);
+>> >> >               memset(si->swap_map + idx * SWAPFILE_CLUSTER,
+>> >> >                               0, SWAPFILE_CLUSTER);
+>> >> >               unlock_cluster(ci);
+>> >> > @@ -521,20 +412,19 @@ static void swap_users_ref_free(struct percpu=
+_ref *ref)
+>> >> >       complete(&si->comp);
+>> >> >  }
+>> >> >
+
+[snip]
+
+>> >> > @@ -611,10 +497,10 @@ scan_swap_map_ssd_cluster_conflict(struct swa=
+p_info_struct *si,
+>> >> >  {
+>> >> >       struct percpu_cluster *percpu_cluster;
+>> >> >       bool conflict;
+>> >> > -
+>> >>
+>> >> Usually we use one blank line after local variable declaration.
+>> > Ack.
+>> >
+>> >>
+>> >> > +     struct swap_cluster_info *first =3D list_first_entry(&si->fre=
+e_clusters, struct swap_cluster_info, list);
+>> >> >       offset /=3D SWAPFILE_CLUSTER;
+>> >> > -     conflict =3D !cluster_list_empty(&si->free_clusters) &&
+>> >> > -             offset !=3D cluster_list_first(&si->free_clusters) &&
+>> >> > +     conflict =3D !list_empty(&si->free_clusters) &&
+>> >> > +             offset !=3D  first - si->cluster_info &&
+>> >> >               cluster_is_free(&si->cluster_info[offset]);
+>> >> >
+>> >> >       if (!conflict)
+>> >> > @@ -655,10 +541,14 @@ static bool scan_swap_map_try_ssd_cluster(str=
+uct swap_info_struct *si,
+>> >> >       cluster =3D this_cpu_ptr(si->percpu_cluster);
+>> >> >       tmp =3D cluster->next[order];
+>> >> >       if (tmp =3D=3D SWAP_NEXT_INVALID) {
+>> >> > -             if (!cluster_list_empty(&si->free_clusters)) {
+>> >> > -                     tmp =3D cluster_next(&si->free_clusters.head)=
+ *
+>> >> > -                                     SWAPFILE_CLUSTER;
+>> >> > -             } else if (!cluster_list_empty(&si->discard_clusters)=
+) {
+>> >> > +             if (!list_empty(&si->free_clusters)) {
+>> >> > +                     ci =3D list_first_entry(&si->free_clusters, s=
+truct swap_cluster_info, list);
+>> >> > +                     list_del(&ci->list);
+>> >>
+>> >> The free cluster is deleted from si->free_clusters now.  But later you
+>> >> will call scan_swap_map_ssd_cluster_conflict() and may abandon the
+>> >> cluster.  And in alloc_cluster() later, it may be deleted again.
+>> >
+>> > Yes, that is a bug. Thanks for catching that.
+>> >
+>> >>
+>> >> > +                     spin_lock(&ci->lock);
+>> >> > +                     ci->state =3D CLUSTER_STATE_PER_CPU;
+>> >>
+>> >> Need to change ci->state when move a cluster off the percpu_cluster.
+>> >
+>> > In the next patch. This patch does not use the off state yet.
+>>
+>> But that is confusing to use wrong state name, the really meaning is
+>> something like CLUSTER_STATE_NON_FREE.  But as I suggested above, we can
+>
+> It can be FREE and on the per cpu pointer as well. That is the tricky par=
+t.
+> It can happen on the current code as well.
+
+cluster_set_count_flag(0, 0) is called in alloc_cluster().  So, it's not
+an issue in current code.  If you need more, that shouldn't be done in
+this patch.
+
+>> keep swap_cluster_info.flags and CLUSTER_FLAG_FREE in this patch.
+>
+> Maybe. Will consider that.
+>
+>>
+>> >>
+>> >> > +                     spin_unlock(&ci->lock);
+>> >> > +                     tmp =3D (ci - si->cluster_info) * SWAPFILE_CL=
+USTER;
+>> >> > +             } else if (!list_empty(&si->discard_clusters)) {
+>> >> >                       /*
+>> >> >                        * we don't have free cluster but have some c=
+lusters in
+>> >> >                        * discarding, do discard now and reclaim the=
+m, then
+>> >> > @@ -1062,8 +952,8 @@ static void swap_free_cluster(struct swap_info=
+_struct *si, unsigned long idx)
+>> >> >
+>> >> >       ci =3D lock_cluster(si, offset);
+>> >> >       memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
+>> >> > -     cluster_set_count_flag(ci, 0, 0);
+>> >> > -     free_cluster(si, idx);
+>> >> > +     ci->count =3D 0;
+>> >> > +     free_cluster(si, ci);
+>> >> >       unlock_cluster(ci);
+>> >> >       swap_range_free(si, offset, SWAPFILE_CLUSTER);
+>> >> >  }
+
+[snip]
+
+--
+Best Regards,
+Huang, Ying
 
