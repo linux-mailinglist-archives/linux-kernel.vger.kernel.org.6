@@ -1,342 +1,126 @@
-Return-Path: <linux-kernel+bounces-221334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C11890F212
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:25:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B0B90F214
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4312C1C21275
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:25:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 412BDB23567
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E94015099B;
-	Wed, 19 Jun 2024 15:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFC114EC56;
+	Wed, 19 Jun 2024 15:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ytltaMUA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dats/ee+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IF3cdEsa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9241419BA;
-	Wed, 19 Jun 2024 15:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8BB13C676;
+	Wed, 19 Jun 2024 15:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718810736; cv=none; b=Kh8soPd7uHEyi1GlT+kGJU32IBtVfgFKh3FvvTDrkj5B6qWWR0i9WSq07yNeaGLTUyHbFBCSsp3rQFU2pn/SPCSv7qsrAOqFNdKrvehiIKSG3BrjL9jIQIp84aR/4huKS/HU2ele3jLnATrg+Y+PM8v0KC/qu9jidJiqKmtyAOk=
+	t=1718810750; cv=none; b=kIZWjEH4RnRKytex8e8lJeS7UTC5qwdVuSw6p6ccw7zhO5DLbJNe+ivAAMlovyH9px6cgi0+waXDutfAEZkEfyq4bFE6xbQ7WmC3VzZOQLzBem77RTybXHPqB/BQKAqeQxSbveuGiz/AD3xW4v0BiHfniltQQDLav3EaKrFWRiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718810736; c=relaxed/simple;
-	bh=WzWDtNue3hRd2biGkJTRD00eZMjZrOqv7+jwWg0sAMo=;
+	s=arc-20240116; t=1718810750; c=relaxed/simple;
+	bh=KnBRaCMJ7PQVhc64M/Jh+r8IKDFW7kujI10v4h+YJE0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nt5K348J9wN4aaFXp1X0eiWhGGzoLhf5+i8ikgWbN8jdqqi5M144BgYrYjVMZwZzx2xPKgRZhuaEdi/rtfg5yt9mvKMnMbGSdngYdcYfMlr5/pQQ86yS0lpeRNE+Pnl8jI4kz6X5zfFX+hR6wz8hzgTNfEp7KV9qO8hbpEc2DGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ytltaMUA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dats/ee+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 19 Jun 2024 17:25:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718810732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=JvTd++bxqB2tzJ/1TJMkxtwR2mcwlGeOghjVO6g9sbI=;
-	b=ytltaMUAReaCQdmNEailem09qwRruemiMTzlhcuf+PDtSOi7ZmovR6kSZR8RXFrv/Hegjw
-	GfeyR1k2TPE3tAetYhK5Q2XfSkx10RqQGoZxnFERpbM2BV9Z7JSu3EKwqch5ekMehLvuQ5
-	hdItJVkB+F+JhQztX7+N8SpK31avjGI15u1Q0RYcuCekpEyhhOIxT9eCV9lyT8qF8js+gB
-	YFSUJBAnz4QMFznc9OJ83qVHqCzuqKfFpje7Yea4LYmCMtsVn60fEY7kebx/luVAvqgMsp
-	U043Vs6ti+uLBX+w+8HPoEw+eAdCgnSpJu2UAOk+QMjP8R7NPgcM8n8f4EWxZw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718810732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=JvTd++bxqB2tzJ/1TJMkxtwR2mcwlGeOghjVO6g9sbI=;
-	b=Dats/ee+iRjMNLXOHghJ77767v0dxOU7zjgYgfM1JwFGBSP+uNK6sx8PvQ5xeAMa52N10s
-	iFFLGM0LUZX6MGAw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v6.10-rc4-rt7
-Message-ID: <20240619152531.TtA4yAWo@linutronix.de>
+	 Content-Disposition; b=s3KhIttw2ZPqVXGlbq1qhBgXepbGrlL6ByY7hyaIsr9mbDDGrp6ZqXsOGk/+Pn9NBon4JId/deQq3iVSdcFcVJaHBhk8mD8LmQTUjK/XzWsEEmdC08jUA/KLIKa5GCWK2Wu7hNCVze4YprDuCbideNFVfXFLS086F4N/X+Ky0Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IF3cdEsa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12F48C2BBFC;
+	Wed, 19 Jun 2024 15:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718810749;
+	bh=KnBRaCMJ7PQVhc64M/Jh+r8IKDFW7kujI10v4h+YJE0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=IF3cdEsaPJyVckqTU7FvwLKUmH9Oy6E+F7u9RoidXU2Fd2ngob66NNj6XvUIWGbtl
+	 isqDkGLUliEJyIqWZpXqgJNtKfcqx16zSO+ZWJuHypDxnQvL+acjRrOGrMMBNEgU7R
+	 DS4MYTohxoiEG03YOzhRyDDsPphFIsDGbCvEk+HJm1Dd8aOC83jNca9yCv6vfRFxBz
+	 RDphvPxp/CsIfT4WXLyLwN11pR7ZxCYBwO/ja9QX08qqncjWjSSnsrA41wFw4U56EA
+	 tlzZBoenISb2HGS8Ak6caTcFwBC4PCqsidBdoTe3g6b7rKPtD4UvtZbtYcvNnrtPNb
+	 Gpp4Slno3TpSw==
+Date: Wed, 19 Jun 2024 16:25:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Jun 19
+Message-ID: <ZnL4evFtHPLHl4f7@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oG8QnXiMS9PHkCIO"
 Content-Disposition: inline
 
-Dear RT folks!
 
-I'm pleased to announce the v6.10-rc4-rt7 patch set. 
+--oG8QnXiMS9PHkCIO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Changes since v6.10-rc4-rt6:
+Hi all,
 
-  - Update the net/BH series to the last version that has been posted.
+Changes since 20240618:
 
-  - Update the i915 patches based on feedback.
+The mm-everything tree gained a build failure for which I applied a
+workaround.
 
-Known issues
-    None.
+The paulmck tree gained a build failure, I used the tree from 20240618.
 
-The delta patch against v6.10-rc4-rt6 is appended below and can be found here:
- 
-     https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/incr/patch-6.10-rc4-rt6-rt7.patch.xz
+The kvm tree gained a conflict with the tip tree.
 
-You can get this release via the git tree at:
+Non-merge commits (relative to Linus' tree): 6348
+ 6756 files changed, 585477 insertions(+), 116016 deletions(-)
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.10-rc4-rt7
+----------------------------------------------------------------------------
 
-The RT patch against v6.10-rc4 can be found here:
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/older/patch-6.10-rc4-rt7.patch.xz
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm
+and a native build of tools/perf.
 
-The split quilt queue is available at:
+Below is a summary of the state of the merge.
 
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/older/patches-6.10-rc4-rt7.tar.xz
+I am currently merging 377 trees (counting Linus' and 106 trees of bug
+fix patches pending for the current merge release).
 
-Sebastian
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
 
-diff --git a/drivers/gpu/drm/i915/i915_utils.h b/drivers/gpu/drm/i915/i915_utils.h
-index 2ca54bc235925..12cbf04990182 100644
---- a/drivers/gpu/drm/i915/i915_utils.h
-+++ b/drivers/gpu/drm/i915/i915_utils.h
-@@ -273,7 +273,12 @@ wait_remaining_ms_from_jiffies(unsigned long timestamp_jiffies, int to_wait_ms)
- 						   (Wmax))
- #define wait_for(COND, MS)		_wait_for((COND), (MS) * 1000, 10, 1000)
- 
--/* If CONFIG_PREEMPT_COUNT is disabled, in_atomic() always reports false. */
-+/*
-+ * If CONFIG_PREEMPT_COUNT is disabled, in_atomic() always reports false.
-+ * On PREEMPT_RT the context isn't becoming atomic because it is used in an
-+ * interrupt handler or because a spinlock_t is acquired. This leads to
-+ * warnings which don't occur otherwise and therefore the check is disabled.
-+ */
- #if defined(CONFIG_DRM_I915_DEBUG) && defined(CONFIG_PREEMPT_COUNT) && !defined(CONFIG_PREEMPT_RT)
- # define _WAIT_FOR_ATOMIC_CHECK(ATOMIC) WARN_ON_ONCE((ATOMIC) && !in_atomic())
- #else
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index f0ab89caf3cc2..883d55005362c 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -43,6 +43,7 @@
- 
- #include <linux/netdev_features.h>
- #include <linux/neighbour.h>
-+#include <linux/netdevice_xmit.h>
- #include <uapi/linux/netdevice.h>
- #include <uapi/linux/if_bonding.h>
- #include <uapi/linux/pkt_cls.h>
-@@ -3223,15 +3224,7 @@ struct softnet_data {
- 	struct sk_buff_head	xfrm_backlog;
- #endif
- 	/* written and read only by owning cpu: */
--	struct {
--#ifndef CONFIG_PREEMPT_RT
--		u16 recursion;
--#endif
--		u8  more;
--#ifdef CONFIG_NET_EGRESS
--		u8  skip_txqueue;
--#endif
--	} xmit;
-+	struct netdev_xmit xmit;
- #ifdef CONFIG_RPS
- 	/* input_queue_head should be written by cpu owning this struct,
- 	 * and only read by other cpus. Worth using a cache line.
-@@ -3259,18 +3252,17 @@ struct softnet_data {
- 
- DECLARE_PER_CPU_ALIGNED(struct softnet_data, softnet_data);
- 
--#ifdef CONFIG_PREEMPT_RT
--static inline int dev_recursion_level(void)
--{
--	return current->net_xmit_recursion;
--}
--
--#else
--
-+#ifndef CONFIG_PREEMPT_RT
- static inline int dev_recursion_level(void)
- {
- 	return this_cpu_read(softnet_data.xmit.recursion);
- }
-+#else
-+static inline int dev_recursion_level(void)
-+{
-+	return current->net_xmit.recursion;
-+}
-+
- #endif
- 
- void __netif_schedule(struct Qdisc *q);
-@@ -4886,18 +4878,35 @@ static inline ktime_t netdev_get_tstamp(struct net_device *dev,
- 	return hwtstamps->hwtstamp;
- }
- 
--static inline netdev_tx_t __netdev_start_xmit(const struct net_device_ops *ops,
--					      struct sk_buff *skb, struct net_device *dev,
--					      bool more)
-+#ifndef CONFIG_PREEMPT_RT
-+static inline void netdev_xmit_set_more(bool more)
- {
- 	__this_cpu_write(softnet_data.xmit.more, more);
--	return ops->ndo_start_xmit(skb, dev);
- }
- 
- static inline bool netdev_xmit_more(void)
- {
- 	return __this_cpu_read(softnet_data.xmit.more);
- }
-+#else
-+static inline void netdev_xmit_set_more(bool more)
-+{
-+	current->net_xmit.more = more;
-+}
-+
-+static inline bool netdev_xmit_more(void)
-+{
-+	return current->net_xmit.more;
-+}
-+#endif
-+
-+static inline netdev_tx_t __netdev_start_xmit(const struct net_device_ops *ops,
-+					      struct sk_buff *skb, struct net_device *dev,
-+					      bool more)
-+{
-+	netdev_xmit_set_more(more);
-+	return ops->ndo_start_xmit(skb, dev);
-+}
- 
- static inline netdev_tx_t netdev_start_xmit(struct sk_buff *skb, struct net_device *dev,
- 					    struct netdev_queue *txq, bool more)
-diff --git a/include/linux/netdevice_xmit.h b/include/linux/netdevice_xmit.h
-new file mode 100644
-index 0000000000000..38325e0702968
---- /dev/null
-+++ b/include/linux/netdevice_xmit.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+#ifndef _LINUX_NETDEVICE_XMIT_H
-+#define _LINUX_NETDEVICE_XMIT_H
-+
-+struct netdev_xmit {
-+	u16 recursion;
-+	u8  more;
-+#ifdef CONFIG_NET_EGRESS
-+	u8  skip_txqueue;
-+#endif
-+};
-+
-+#endif
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index bd2a568b22d05..34c6169f631eb 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -36,6 +36,7 @@
- #include <linux/signal_types.h>
- #include <linux/syscall_user_dispatch_types.h>
- #include <linux/mm_types_task.h>
-+#include <linux/netdevice_xmit.h>
- #include <linux/task_io_accounting.h>
- #include <linux/posix-timers_types.h>
- #include <linux/restart_block.h>
-@@ -977,7 +978,7 @@ struct task_struct {
- 	unsigned                        in_thrashing:1;
- #endif
- #ifdef CONFIG_PREEMPT_RT
--	u8				net_xmit_recursion;
-+	struct netdev_xmit		net_xmit;
- #endif
- 	unsigned long			atomic_flags; /* Flags requiring atomic access. */
- 
-diff --git a/localversion-rt b/localversion-rt
-index 8fc605d806670..045478966e9f1 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt6
-+-rt7
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 85702022c5cd4..7d59afa862630 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -3942,6 +3942,7 @@ netdev_tx_queue_mapping(struct net_device *dev, struct sk_buff *skb)
- 	return netdev_get_tx_queue(dev, netdev_cap_txqueue(dev, qm));
- }
- 
-+#ifndef CONFIG_PREEMPT_RT
- static bool netdev_xmit_txqueue_skipped(void)
- {
- 	return __this_cpu_read(softnet_data.xmit.skip_txqueue);
-@@ -3952,6 +3953,19 @@ void netdev_xmit_skip_txqueue(bool skip)
- 	__this_cpu_write(softnet_data.xmit.skip_txqueue, skip);
- }
- EXPORT_SYMBOL_GPL(netdev_xmit_skip_txqueue);
-+
-+#else
-+static bool netdev_xmit_txqueue_skipped(void)
-+{
-+	return current->net_xmit.skip_txqueue;
-+}
-+
-+void netdev_xmit_skip_txqueue(bool skip)
-+{
-+	current->net_xmit.skip_txqueue = skip;
-+}
-+EXPORT_SYMBOL_GPL(netdev_xmit_skip_txqueue);
-+#endif
- #endif /* CONFIG_NET_EGRESS */
- 
- #ifdef CONFIG_NET_XGRESS
-diff --git a/net/core/dev.h b/net/core/dev.h
-index 2f96d63053ad0..4984dd9b334bc 100644
---- a/net/core/dev.h
-+++ b/net/core/dev.h
-@@ -151,24 +151,7 @@ void kick_defer_list_purge(struct softnet_data *sd, unsigned int cpu);
- 
- #define XMIT_RECURSION_LIMIT	8
- 
--#ifdef CONFIG_PREEMPT_RT
--static inline bool dev_xmit_recursion(void)
--{
--	return unlikely(current->net_xmit_recursion > XMIT_RECURSION_LIMIT);
--}
--
--static inline void dev_xmit_recursion_inc(void)
--{
--	current->net_xmit_recursion++;
--}
--
--static inline void dev_xmit_recursion_dec(void)
--{
--	current->net_xmit_recursion--;
--}
--
--#else
--
-+#ifndef CONFIG_PREEMPT_RT
- static inline bool dev_xmit_recursion(void)
- {
- 	return unlikely(__this_cpu_read(softnet_data.xmit.recursion) >
-@@ -184,6 +167,21 @@ static inline void dev_xmit_recursion_dec(void)
- {
- 	__this_cpu_dec(softnet_data.xmit.recursion);
- }
-+#else
-+static inline bool dev_xmit_recursion(void)
-+{
-+	return unlikely(current->net_xmit.recursion > XMIT_RECURSION_LIMIT);
-+}
-+
-+static inline void dev_xmit_recursion_inc(void)
-+{
-+	current->net_xmit.recursion++;
-+}
-+
-+static inline void dev_xmit_recursion_dec(void)
-+{
-+	current->net_xmit.recursion--;
-+}
- #endif
- 
- #endif
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+--oG8QnXiMS9PHkCIO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZy+HkACgkQJNaLcl1U
+h9DesAf/YQHfqjZenYhdyj/TB8tkT0r/iD9gt+CqGtc3N2Wr5FRTMsLxUbTttubX
+Tt4hnDxDMpS8neLMO+TuwawLPMOHttJA7BTuu1s1e47h2KxF+lsak2vrm8ZdNvGO
+wN/X8WoJZ5gH8g1uXn2m3hQSlk3wLmUdUvPoiz8CU3Ku62WZ9u6V8dHlJTnNk13Q
+JwwCGT21iGi2uEU9bQ5xE7WLpwWKAseMx2itBGPRW9/C3nyFMcx2yyHPsZPpoLj2
+VFtO8Up7VC4BIdBTKE/n9DRR3yv5/iSuRXUR/1IpQgQQNE6MyPfH+np9YNs1JxvC
+qrSGx8xR2l6rC6ox2oVTmMrXi1lSeQ==
+=NFiZ
+-----END PGP SIGNATURE-----
+
+--oG8QnXiMS9PHkCIO--
 
