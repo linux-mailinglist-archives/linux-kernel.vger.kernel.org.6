@@ -1,169 +1,130 @@
-Return-Path: <linux-kernel+bounces-220377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA8290E081
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 02:12:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5C790E07E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 02:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AF3B281E31
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 00:12:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906851C21063
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 00:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655AF139B;
-	Wed, 19 Jun 2024 00:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aUoeFcz7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8589136A;
+	Wed, 19 Jun 2024 00:11:22 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC08368;
-	Wed, 19 Jun 2024 00:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02718193
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 00:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718755918; cv=none; b=SqAgcU+yjcuzFTiI7DPRyaKc+n44/nFfiNsWZVqlm/AswkNOfLRjM92ycfUyuJlLqB8AjD9QuabzYUkff5tYjx8C0r9IFUs+RF9GYDGMudX3Q2e1R9F9Ot9OgVIdNm2Ju9jvO0Vu48lnbriEi/dUQF5GSyuZUc5PutLuAjK1KeQ=
+	t=1718755882; cv=none; b=un9WxQB0gx0NwBrKwIYUQaF8pBmSk0qzCVfZ+7BlCXVtvF5PNpBoVtGDKPSMh/HbykpdBKX6dUC74GrCkLN0K9sod8Z3fRRqEKHE7RZ3NcPZEarXkVlBIcaEp0w4d1RPOPG8ZfGY7jthpObxB/VoUmvpvgFlasgbFOh9oKTK1YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718755918; c=relaxed/simple;
-	bh=LWcZ51UxFIRAL/r9A4s2Tdn7a2it7Yp0C+WI7OUTKg8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUU2RtJDAvfOrqKzjrx137PEEX4EcFWSV9HBPVkoBj2Zezh8g2I+2vJqXoTDcMU6yiEoD7iR/BblurSH4fWMWUd2a3i4d0ooVihV1QJSUKgPuKH3DDHBSeOw7ix2SwGGijvGNn2DeI7fsuI85zYdPDaEXHZrYt0bTrQVAYuEYds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aUoeFcz7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ILZsTY006075;
-	Wed, 19 Jun 2024 00:11:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=KZU+R13/Ttt99a5SqVwpops+
-	V2v9unmEIBAarn5mQJ4=; b=aUoeFcz7t0nCQEjWostul9clAp42UKksOciHpmfX
-	BwK8DQjww10rB09sy64oKigiCAb2GNwdzt52Q9qX7DFBzwfCHcRnkit0mEeOKR0G
-	/nXNhJy4o8uyw6SfMesilR4yikPpZ+d+6qWVRxk10UI/2Wxry41K7almnowA1TmC
-	1CQ8HLVxkU3nzFJTxyyrg9hFlXUiEyA7UkvElK/VWb6pa5bd9aN4n0HTWBJ58dNL
-	m1FAst1BuKTColUSDvYSINCM8xfR0u2B3a2XlnsQAeSTfgp3SLQAEeiD7sFdkVLh
-	+0Ht84cwvYmR3Zn1brs/Uyr7A8yO1YHX4rT4xKtWwEO8Lg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9u07pe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 00:11:05 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45J0B1e7014737
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 00:11:01 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 18 Jun 2024 17:11:00 -0700
-Date: Tue, 18 Jun 2024 17:11:00 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, <maz@kernel.org>
-CC: <kvm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <pbonzini@redhat.com>,
-        Fuad Tabba
-	<tabba@google.com>, <chenhuacai@kernel.org>,
-        <mpe@ellerman.id.au>, <anup@brainfault.org>,
-        <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-        <aou@eecs.berkeley.edu>, <seanjc@google.com>,
-        <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <willy@infradead.org>,
-        <akpm@linux-foundation.org>, <xiaoyao.li@intel.com>,
-        <yilun.xu@intel.com>, <chao.p.peng@linux.intel.com>,
-        <jarkko@kernel.org>, <amoorthy@google.com>, <dmatlack@google.com>,
-        <yu.c.zhang@linux.intel.com>, <isaku.yamahata@intel.com>,
-        <mic@digikod.net>, <vbabka@suse.cz>, <vannapurve@google.com>,
-        <ackerleytng@google.com>, <mail@maciej.szmigiero.name>,
-        <david@redhat.com>, <michael.roth@amd.com>, <wei.w.wang@intel.com>,
-        <liam.merwick@oracle.com>, <isaku.yamahata@gmail.com>,
-        <kirill.shutemov@linux.intel.com>, <suzuki.poulose@arm.com>,
-        <steven.price@arm.com>, <quic_eberman@quicinc.com>,
-        <quic_mnalajal@quicinc.com>, <quic_tsoni@quicinc.com>,
-        <quic_svaddagi@quicinc.com>, <quic_cvanscha@quicinc.com>,
-        <quic_pderrin@quicinc.com>, <quic_pheragu@quicinc.com>,
-        <catalin.marinas@arm.com>, <james.morse@arm.com>,
-        <yuzenghui@huawei.com>, <oliver.upton@linux.dev>, <maz@kernel.org>,
-        <will@kernel.org>, <qperret@google.com>, <keirf@google.com>
-Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
-Message-ID: <20240618170853139-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+	s=arc-20240116; t=1718755882; c=relaxed/simple;
+	bh=zUk4PJQj040+altTZQi2P9xGOdiRD/LpLPND1/EIfQE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Se6NnpUNZj6zItNrEteKht5fwFpL7G1N0mihSPNIih4NPWsKqmweml1TZbHnQ3YCy/fH0vCFe1gul+/oYSXSt0BqNtQ3U5NglY5Nszkb1hTlaS9Cmig4SMErDTAAGQWL5vCyiPjIJ3PmPWDBXjQ7oRkbTFaGCwgvc72rYrGDziw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7eb1d659c76so775915039f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 17:11:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718755880; x=1719360680;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EXevxKNM8dWqLihLY7avM1/no8pefWJwTC3rupvj+TI=;
+        b=jQIVrqO7wjfj3jO09NGzNo/d7T5q1BUPGgOF7n7L6GoYqS0DXQ7RT4pp6vCKq5fHcn
+         xQJofSOPG3ig1YLWREg6ZqohvIuaysF3SQovYT4JY67CbQkQKXFYIikX/MIBwUlG/u8q
+         idU2vRo9sbPWLXyBJdEIWFS5DoHXA7vpAl3FM2kI6zaUSuN0fTWifiJ42dqF8rSBE6cJ
+         8niVL0SIKy6h5DGKLbmXiwpOszogqqsI5Kat+cdssOeCbXLIk/c1JBZjITP0aMwWS0tr
+         7cLPQxOqsTF0poNg7xDX/lApHnKbIxUWYeV5cZXNXR9eEIqzsRbKonxwlhzd8+OTAQjX
+         7ZiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVT0ZJFkmLZpE8RvdKsvjMgFFxx3dTt6rQzz4QvjxQHXZL6nInCrTWO2+IA0C+A3Z0Cw5djp0mPI4N4MaNyrxdIs44dgOG2XVu4E5nE
+X-Gm-Message-State: AOJu0Yyj4uTbUNsIdklLAidrcobdnYHK/XY4pK2D1hdgnsoyB+Ddd6A/
+	VWUYdYwDLj2Gt7137lGYRRw4hgq0fX5eLn42CgF//tgEptJbSBbBCMnsnRm5hIGy3y6IUFS834Z
+	sVqjyJMshFhiqlYQCgVmcamdqdNmRJdP5/0SpRHcL+U0giQDuyOKOIaA=
+X-Google-Smtp-Source: AGHT+IFHaOVDQCA7cLz/diVjEC310AujbXQfgMqkJKgZXogK4WkdNQ3r+IwuHk/Nn//3yAdo/EWp8nQiCEwifxVbQ02O5y7z2sMT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YwAw23Mh7tamv-wTy3-W4oEdnIM4fPV1
-X-Proofpoint-ORIG-GUID: YwAw23Mh7tamv-wTy3-W4oEdnIM4fPV1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_06,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxlogscore=999 clxscore=1011 mlxscore=0 phishscore=0
- bulkscore=0 impostorscore=0 spamscore=0 suspectscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190000
+X-Received: by 2002:a05:6638:890c:b0:4b9:ad20:521d with SMTP id
+ 8926c6da1cb9f-4b9ad205468mr30266173.1.1718755880145; Tue, 18 Jun 2024
+ 17:11:20 -0700 (PDT)
+Date: Tue, 18 Jun 2024 17:11:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b123a6061b33099c@google.com>
+Subject: [syzbot] [netfilter?] net-next test error: WARNING: suspicious RCU
+ usage in corrupted
+From: syzbot <syzbot+6c048081aec46ad4ddf5@syzkaller.appspotmail.com>
+To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
+	kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
+	pablo@netfilter.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-b4 wasn't happy with my copy/paste of the CC list from Fuad's series
-[1]. CC'ing them here.
+Hello,
 
-[1]: https://lore.kernel.org/all/20240222161047.402609-1-tabba@google.com/
+syzbot found the following issue on:
 
-On Tue, Jun 18, 2024 at 05:05:06PM -0700, Elliot Berman wrote:
-> In arm64 pKVM and QuIC's Gunyah protected VM model, we want to support
-> grabbing shmem user pages instead of using KVM's guestmemfd. These
-> hypervisors provide a different isolation model than the CoCo
-> implementations from x86. KVM's guest_memfd is focused on providing
-> memory that is more isolated than AVF requires. Some specific examples
-> include ability to pre-load data onto guest-private pages, dynamically
-> sharing/isolating guest pages without copy, and (future) migrating
-> guest-private pages.  In sum of those differences after a discussion in
-> [1] and at PUCK, we want to try to stick with existing shmem and extend
-> GUP to support the isolation needs for arm64 pKVM and Gunyah. To that
-> end, we introduce the concept of "exclusive GUP pinning", which enforces
-> that only one pin of any kind is allowed when using the FOLL_EXCLUSIVE
-> flag is set. This behavior doesn't affect FOLL_GET or any other folio
-> refcount operations that don't go through the FOLL_PIN path.
-> 
-> [1]: https://lore.kernel.org/all/20240319143119.GA2736@willie-the-truck/
-> 
-> Tree with patches at:
-> https://git.codelinaro.org/clo/linux-kernel/gunyah-linux/-/tree/sent/exclusive-gup-v1
-> 
-> 
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> ---
-> Elliot Berman (2):
->       mm/gup-test: Verify exclusive pinned
->       mm/gup_test: Verify GUP grabs same pages twice
-> 
-> Fuad Tabba (3):
->       mm/gup: Move GUP_PIN_COUNTING_BIAS to page_ref.h
->       mm/gup: Add an option for obtaining an exclusive pin
->       mm/gup: Add support for re-pinning a normal pinned page as exclusive
-> 
->  include/linux/mm.h                    |  57 ++++----
->  include/linux/mm_types.h              |   2 +
->  include/linux/page_ref.h              |  74 ++++++++++
->  mm/Kconfig                            |   5 +
->  mm/gup.c                              | 265 ++++++++++++++++++++++++++++++----
->  mm/gup_test.c                         | 108 ++++++++++++++
->  mm/gup_test.h                         |   1 +
->  tools/testing/selftests/mm/gup_test.c |   5 +-
->  8 files changed, 457 insertions(+), 60 deletions(-)
-> ---
-> base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
-> change-id: 20240509-exclusive-gup-66259138bbff
-> 
-> Best regards,
-> -- 
-> Elliot Berman <quic_eberman@quicinc.com>
-> 
+HEAD commit:    4314175af496 Merge branch 'net-smc-IPPROTO_SMC'
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14f4852e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7266aeba025a54a4
+dashboard link: https://syzkaller.appspot.com/bug?extid=6c048081aec46ad4ddf5
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/48b3722e2009/disk-4314175a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2297abec79e7/vmlinux-4314175a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1e99b4419b68/bzImage-4314175a.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6c048081aec46ad4ddf5@syzkaller.appspotmail.com
+
+=============================
+WARNING: suspicious RCU usage
+6.10.0-rc3-syzkaller-00696-g4314175af496 #0 Not tainted
+-----------------------------
+net/netfilter/ipset/ip_set_core.c:1200 suspicious rcu_dereference_protected() usage!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+3 locks held by kworker/u8:3/51:
+ #0: ffff888015edd948 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff888015edd948 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc90000bb7d00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc90000bb7d00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffffffff8f5db650 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:594
+
+stack backtrace:
+CPU: 0 PID: 51 Comm
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
