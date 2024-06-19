@@ -1,285 +1,242 @@
-Return-Path: <linux-kernel+bounces-221694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9E190F74C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:59:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 715EE90F74F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88181F268EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:59:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CBA4B20B85
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E2F158DDF;
-	Wed, 19 Jun 2024 19:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB3B15748B;
+	Wed, 19 Jun 2024 20:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vAQTT/Eh"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2072.outbound.protection.outlook.com [40.107.96.72])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLXes0kR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA78E41A87
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718827190; cv=fail; b=ViPaVhjoQlxCa5qVYZabjosTK5AdDRNkkd1dbJmWCfm51aGbyaZxIsV474oE41RxSbmqyulc5KJ6pHzpmJ6oCNEuO6C0zAj+AtR7U9/Lfx69OmqalpnG0i83+v1ZAShDsbtYIizF3PKWsVxviNMWVNgWjcO6I6Bn24jolXQnM84=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718827190; c=relaxed/simple;
-	bh=VqfzkDX1ZFuYy3vHq00ZfqvOvw6UkYM/4pcWCpztIzY=;
-	h=Message-ID:Date:To:Cc:From:Subject:Content-Type:MIME-Version; b=q/SqgAxFMM8WbtHMceBJDrI9Q9Ma6c4tI8lYngatZ/BLqGUTaa3zg6RN5HiUQjyxBZd3lOphrLXpmt2jsrbQ/HAonfVYmm4QRAFuaZg1tr1Tdm0eX5ruRKc/0ENejuHlGSfxkb62YW6dWZfpg56p1MrfyXoekxbyPxJJrCxAgxQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vAQTT/Eh; arc=fail smtp.client-ip=40.107.96.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WlFaGoYQqpmEMHeZFhItqeCujFZIQhDjvjVNiy2bmBQ+SVCquS335R8kSIh1gvOcMc2kWWvdLsdhQoAyToRZQuLdXV9//6lMxcNo/WnQ2f96VxMmYI0vy+EkJRxTBpKa53bEyMVxUIg+eKx9wdSKJmsqdl6h+GMpj1M3CexPK3h8BkEluirBeN2ZuovavthSdm7iv4alzvPKedi3SmkhKCx4uC6kn8Ew0tvBIG0AC6zYyvQoptQTPRN9CjfgHC9lGoLb6EjcCVZf6CzSQQPSoh49eIYfb+SFyA5JWFVMb8O0u8VTMhPQkP2vzdG4p87cqVsseZPJ4fOR//iMBDfucQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MJsxV4UEZAOQmHsD298ScgispGoA6h1uhtvYxRZk+y4=;
- b=MT/1Sty8w+siddjoGlUiy/UJBUcVJN1jy3YByqLcwsram+Zo3DUnB0TPgmDCV/x2JGLzwDi6HA8ySKuYcCb5nJh9e0EtC41bZAPnleDky8AJRwOhWGssuJopmRDCZDvHFgddbV7VnPw563DWvvLXsuM+LrZxjoazuUGmw1WfwTHPdCGKGCyg4COWBe/b9m1agfwrzywB/OT0rNhwVLJJduJoCnP4JcHlVTNpKMcmF6Ykts7+42C7PLa6SeCbpCpXvqleeswQZRO1lIRHbPE7yDLqg0L8qyc4L3EGGcSol64//OmUSaJCzThaJdDhgR8WYjSw9TpIZLOZsDVCgUahJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MJsxV4UEZAOQmHsD298ScgispGoA6h1uhtvYxRZk+y4=;
- b=vAQTT/EhOWrokIfiW3MXWlbaOy8knnmXv0lmLNrMOBByZUY78BYqNfqhgyAzFOV3DBW+Ly7xJ7WlVQaA9LmrLd/klPaG9jBQH3D/UmDNNxMw6eNGiefZLTjdqNntu2dVVGsNuEw5j0UeKsEWMi+Sr/inRYp5szr9lQSpT3DlY0c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5732.namprd12.prod.outlook.com (2603:10b6:208:387::17)
- by BL3PR12MB6403.namprd12.prod.outlook.com (2603:10b6:208:3b3::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Wed, 19 Jun
- 2024 19:59:46 +0000
-Received: from BL1PR12MB5732.namprd12.prod.outlook.com
- ([fe80::bf0:d462:345b:dc52]) by BL1PR12MB5732.namprd12.prod.outlook.com
- ([fe80::bf0:d462:345b:dc52%6]) with mapi id 15.20.7677.030; Wed, 19 Jun 2024
- 19:59:46 +0000
-Message-ID: <6904c198-9047-14bb-858e-38b531589379@amd.com>
-Date: Wed, 19 Jun 2024 14:59:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-To: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
- <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Kees Cook <keescook@chromium.org>, Brian Gerst <brgerst@gmail.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH v3 1/4] x86/sev: Avoid WARN()s in early boot code
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7P220CA0028.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:806:123::33) To BL1PR12MB5732.namprd12.prod.outlook.com
- (2603:10b6:208:387::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592FF4A19;
+	Wed, 19 Jun 2024 20:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718827242; cv=none; b=HQPavlfnE8mjfoyAHiKissi2pWFA3zNy8eaephGfMQ5qKIX/KFc/sxi5iK4N8Xd28UoFqHBMEZDSpKdFJciRF0DccMvmwbLWJCrS0/yIVjPLSqKXbNRgAUC3r33QFXvhkYwJSz8JtS/n3ewsS8iCOvF0tOk+wJil07Tjg77jE/g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718827242; c=relaxed/simple;
+	bh=aCGa6edCKrfdPW2raArQARW88dX9AV7C5HmYaPUFTL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=tCtEDcFXy8+/3ea+R7Kdl5l28NtK7Psp8Gw2H+IvW4ad8Hoj9oIMqInHzJ1uzMjo79uH2H7NsP6NyV5nfWnhj5RZvr3mXNtryDCCTX3kuu4LxIWRJuApeZ3LVJme1hUdyoduqfX/CJ7tohLh5ITL3IXT08pKQ4oU0cz7QiS8I18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dLXes0kR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1101C2BBFC;
+	Wed, 19 Jun 2024 20:00:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718827242;
+	bh=aCGa6edCKrfdPW2raArQARW88dX9AV7C5HmYaPUFTL0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=dLXes0kR7tEXrQ2F7lhQsjRODW9bEwuzSGNzgCgJMLoTTmnHFBKrCDyvppM3MlY/P
+	 F5DaOpedXTveG/38pnL1wTsnoOlZ44onBrVlbOqJnrk2y1oiWF2FERJDleAOzbfWL+
+	 zy/KOCK+gtP5pwwTnZ3w2LPiGWTImrVu/LuPzlgMVaLgMstyHLPImHrV7J/xHZJLFp
+	 BSfr8xN8KzJhWRb/0ZjpYF34oJgAdrlJzHXgSMwjaKcY7Atlf2AR2ttwEgSqP4SF63
+	 a61V7idSxlIzFobiFIYwq767Frdq+qMpjyatSBuy0Wto1UFh/ILdTQYSL4d0xGl86i
+	 6Xuk/DEmIJiqA==
+Date: Wed, 19 Jun 2024 15:00:39 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jiwei Sun <sunjw10@outlook.com>
+Cc: nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sunjw10@lenovo.com,
+	ahuang12@lenovo.com, Thomas Gleixner <tglx@linutronix.de>,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCH] PCI: vmd: Use raw spinlock for cfg_lock
+Message-ID: <20240619200039.GA1319210@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5732:EE_|BL3PR12MB6403:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2ab717d-d453-4122-58df-08dc909a5e27
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|1800799021|7416011|366013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?clZON3VTVUNtUTU5WUU2UlZjNFdmeDF6cWt0eDQrVElGVlFYZ0JYTkN1VHpD?=
- =?utf-8?B?bDk1RkEwUkQvY1FZeUVxMTd3L1J4WmtpUy9nOExvNkd1WERyY2U1U3cydmg0?=
- =?utf-8?B?eE56NUdrZGRlenZvRVRDVDAxcDhvUWVYY1VzekNBYml1bHQycFZ3UG55R09C?=
- =?utf-8?B?TUgvQmRXcUY3QnBpZW55eHJpNzFRblBlQktIZ3pzeXlRU09xZld5SWVpWkNw?=
- =?utf-8?B?MlZjMEJ0aklyL0xEK3RKUDhPUUNOR0JkNitZY2YzYmhrVXBRWFBGaWZ6RDNL?=
- =?utf-8?B?aFljcWUveUJpcVNzVkQwRmlDeGd0dU9YVDRFM1BHanljbmxLQUZoaVZRdDM3?=
- =?utf-8?B?WDJVeTUreVM3QnhUaDJwSlhWSThpNkl3amlVd3VrQkV4dTBldVNabzcxT280?=
- =?utf-8?B?aCtCZFI2dlV5ME9xa0RBWU52ZVFjRFhZTSs1UTk3aXpUOE9LdFBWdHJLYmFX?=
- =?utf-8?B?ejYrMUY0R2FhQ3ZHaDczUFZScEZ1ZE41VGxrUXA5R2Q0cytwQTg4MEVleC9l?=
- =?utf-8?B?ak5PajIrMk51blZHV3I4TUlzd0RUdW1Dd01Fdnd5RnNnRytLNXA2TnlQZHZK?=
- =?utf-8?B?UjAvVTNCQloyV2hXWUFRalpKN1ZHd0ViT0U1ZWUxUW1mSHlYSFNMb1phQU50?=
- =?utf-8?B?NjRuS2w2NGNmU1pEZU9nUk5STy9jSzcvZVFzamwyT3JJS2xlcTA1V2k1djRN?=
- =?utf-8?B?dEo1eFd5N2xxTnJLWElLNXlGbGp6VEViZXNwVVNGdkt4UHN6bzZWMTRGNXZk?=
- =?utf-8?B?TmhHdXJBckxoT1oxV1U5QWNuaHBxUVdveDBrTkk2REJ5MklyTUNRVnNUVzVn?=
- =?utf-8?B?bmZFTTU5V1NMZCtFV3NsYzhuODdVY1ZOYVlDRGpiZkxZMmg2R0F2T1RNTlQw?=
- =?utf-8?B?TUJjSm83bzJtZ1FaeXdHdHVuUklyMTN6TFJtYk5aMWdOZDQyUUI1aEtERmVO?=
- =?utf-8?B?L3lWcVBNSHh6enNXL3hMZUh0T2NOVTFXUC9MM3ptMm54QUxlSTYzakdRRGJG?=
- =?utf-8?B?WWg0ZG0wUFJYaEhMYWh3RFF4TjVEaDJpQWtvUmEwdFZld3RpMDgzT3ZZdmdL?=
- =?utf-8?B?dW1hQjVzV3g5aDdTNk5wVHMzWUZzL2V1Z3M2NEpiZm16dDd3NGJ5YmNDcVpC?=
- =?utf-8?B?V0dFTWlwSjl1Q29ITHpNRnM1NTlkQ0QxM3M2WEpBWlNCenc3ZjQ4R0xkUXl0?=
- =?utf-8?B?SVpPZ3N3dy9iNzJvWFBUc2pIMCthTU1WTHNPMGJ0eHdkd0doUXBlUnRWU1FY?=
- =?utf-8?B?Y3ZzdjMyRm4vbGFoODdIR2gyZ0RzRkxJN1ZCTFE4SUphSHAzaGhRaEV3ZlYx?=
- =?utf-8?B?VVNqdjJrbElxOXdkc001ZXRZK1pLbDZNeXdhVXk2NHVQNUg2VWszbURiTGkx?=
- =?utf-8?B?Ums1MVAwS0V3N1J0dVl0emNSZXB1b0hHcmN2YmxGTHZpZksvcENJRjZ0OHU2?=
- =?utf-8?B?ekE3L1ZFK2d4Y0dnM1VLcFFhTkdVY1RpdHNOTXZVeUtRVTZJWVhUNzY5Yk1v?=
- =?utf-8?B?MEpVVDVNNTYydFl6cUdVMjQ4aFlRL3hUcGgwS3pqaEROenljNmxZUzQrQ3RT?=
- =?utf-8?B?SUNXVDdiVno3RzhTekFmSVF4N0ZDTlVnbFZPdGttbk55b1MrV2NHRGI5Y05k?=
- =?utf-8?B?Q2I1Yk5ZNlZYSmloUEdqUjFoNzI0QUFHUTR2SkF0TnRBeHgvR1JEYzJGYk84?=
- =?utf-8?B?QXRsVVg4ZzlEaWhmQVVhWXJxaE5SN2xndmtvS3ZLV3JRTHNxUjhkZEF1TzZt?=
- =?utf-8?Q?6rdPx2BYmqrdbHLqUY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5732.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(7416011)(366013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QUJyMjNFWnRtMWxhUndVN2dtQ01aRXZKVXdpSUxtN0hLQmhnOGY4Y0VUaC8y?=
- =?utf-8?B?ZnVpc3lVOUlMdHB1eDZUbXBYVGRYWStTd0RCNmlyNjhWZ1JJOTltTzJQUGJi?=
- =?utf-8?B?TmZKZUtOQlBrdUFld3ZjWVRIYlRZNENjNFA4WThjb1puT3NXNnRMckx5cDBF?=
- =?utf-8?B?b1IzUEdrZXRLOXYvcWg4NlVibmZMdWVIVGpyTjFNZ0NjeG40dlVVMG1ETjJt?=
- =?utf-8?B?RDFBTFNLVUtiWVRaUmN5Z0szMGROa0R3VFBlUUlHM3R5cy9pbWlOc0hNN0M2?=
- =?utf-8?B?RUFKNlJ6enFJZlRKanBhZ0tjYVVwRExMREVjRWJ0d0VRRUVDaHJ2Vks1T1Zq?=
- =?utf-8?B?c0xnVVMrWXkxMHpMbnJNVGZUeEtSYk4rcDdDOFJHaUxjYkVXK2VhTk4rbkhK?=
- =?utf-8?B?eFZ5TG8vdlRnVjN2SG01SWFuYmRSclVzbHVGZVczTGt3cXhwUEYvaTh3U0Ux?=
- =?utf-8?B?cWppU09pc2RCNW01Yis4OUpvM0xMU0ZZVGhYcHp0WFlLZDBZOUc1YUI3dkkx?=
- =?utf-8?B?V1hjTWE0ckNTVGZxUDRmc1AxWVAzRHBucUhGeStuTWFIVGpUU0gwWVczTGJF?=
- =?utf-8?B?bUliYXM5QjNKb21GbHlGcWJQeU9oQUdQSE4xTWUzQkJHNFYzTnQvbDI0bmJq?=
- =?utf-8?B?eGwwT3E1YkdXQ1BsTHE2VGQxMFNhem13bjVweDJ1L3dMUVFqVitkalo4cFdv?=
- =?utf-8?B?R1g0UWFaUFpUM2I1K1E0TkhybkpUdVNBUVp5dzUraXdrZFYvVDZlbmtRVFVU?=
- =?utf-8?B?UGN0czhtcDN4RENMQ3lLQlp5Z3g1UjNtK2RQSDVsaCsrQWpzVmg3bkY1MDhI?=
- =?utf-8?B?bSs3ZkNZK24xNFE3TE9PVmRHU0pzVzlvK2tlRnhWdHpKWmRSZndJSm0rd3NU?=
- =?utf-8?B?N3NNb3ptZWtCcXkyekdCamQ5eXdCcFlZRjBXc3BET3p4S1lsa0daMFpRUWZu?=
- =?utf-8?B?NXgvZ2ZDa0pBOGFpbG11OTk1c1BOR1dENXJsbTBaR0UvMGEvQUdQaTJrWEdD?=
- =?utf-8?B?WGI5MzdWcVAyV1lldm40bVVZSWhNOWk4U0Qrc0ZLQUYzZVphVWMxckc5bFpu?=
- =?utf-8?B?YzduejdHSTF0QmgvL21KUXJMUGxUUHN3ZFM1aE1yZGtwN2p0Nk1GNW5KUEN4?=
- =?utf-8?B?OXFlQmhPQVd1dEtUakRXcU9CK1U4ZmRlclJ4b3JJY3FRSXB3Y1pPUGhTb3Jv?=
- =?utf-8?B?ODB0RDVDQzdkNU45QkRzWkR1SHhCOEF3N2d1dnc5MnBoNkY3WTYyeElvQ0RM?=
- =?utf-8?B?bkpmUTMxaWhxemVOVEN0THdGb25WQXVqZVI3dVR2eWdJRE1HNDZISVdHOFgw?=
- =?utf-8?B?ZklyYnZHV1o2N3FRUUczbFArYit1MWRqMmdhUlJZZncrRGR2ZUZJajZ3V0Nu?=
- =?utf-8?B?YUMrYlhHTituYWFHNEhTUHZqMFhNZkpDTVN3OTJ4djZXcnVNbDdUMUJlbGVL?=
- =?utf-8?B?b1F4N2VNc2hYV0ZVdDRNbjVqUnAzUC9GNjRCN2pNWFRXbjI3cC9vUE9abm1n?=
- =?utf-8?B?VXBBckROKzlrQjdETStDcmhkVzgydmdhNDQ3VVE5WlorYTFqL2l3SVUweWg3?=
- =?utf-8?B?c2UyVVdxbCtzZnNkU2JLUzh5TXY0b3dhSGh2Rk90UlVpTFNUb0NCckpaZzRi?=
- =?utf-8?B?TmNvNGE1QjNaaGxpYjNSUkpyK1FQQmpqbkkxUm5RMy95czN0TVI3OVJlNEor?=
- =?utf-8?B?eGsvVzFyT0RKbzhQRDNxT3dBeDZIYThkT1NCeE5wbXE2Q3BiZkN0U3dlNERL?=
- =?utf-8?B?SEdhSVZYZ0FOaVFjUkpaQktsM003R3FCYm5rUEVFZXpydTZUL0dMaTJKNEZU?=
- =?utf-8?B?T2lUQVVZMlFoRUdvYkVvVlB6RnhncWkrVUlML2VieFRpZ0NXZ0dMcHhyTmRn?=
- =?utf-8?B?T2I3K09NVUFlTmQ1L3FLeG1CZ3pGbHVlZy94K2Z6NkdkbVgyNEhKQmMzT0VH?=
- =?utf-8?B?RFJKdWtwK1ZiSlNzUzB6L1d6eWxSS3ZMZlY4dE5rZFBPakFzQVBtL2IwMzEr?=
- =?utf-8?B?ZHg3bWJLNHRNSnZYa21UZG5vTm00elNIWk1MY3BZY3A2blIwQTlKTlgrZkJV?=
- =?utf-8?B?VVhEQVYzaCtEdHFBVGRPcTZTWVh0TENiNnRuSFhIK3I2WTJDRGRRNGJQZi96?=
- =?utf-8?Q?IrAl8p3Q/qdENUfjQ0ujxQPtq?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2ab717d-d453-4122-58df-08dc909a5e27
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5732.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2024 19:59:46.1345
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EuMTkB7x3KFBfSp+QWsjMlaFD1Oc0TLnFDP1taDneHxZz8DpiqiK5adrO2x7gPWKe19OfAX7+CXIMFPlKbue/w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6403
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SEZPR01MB45274AF863D3BD2F028141D9A8CF2@SEZPR01MB4527.apcprd01.prod.exchangelabs.com>
 
-On 6/5/24 05:16, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
+[+cc Thomas in case he has msi_lock comment, Keith in case he has
+cfg_lock comment]
+
+On Wed, Jun 19, 2024 at 07:27:59PM +0800, Jiwei Sun wrote:
+> From: Jiwei Sun <sunjw10@lenovo.com>
 > 
-> Using WARN() before the kernel is even mapped is unlikely to do anything
-> useful: the string literals are passed using their kernel virtual
-> addresses which are not even mapped yet. But even if they were, calling
-> into the printk machinery from the early 1:1 mapped code is not going to
-> get very far.
+> If the kernel is built with the following configurations and booting
+>   CONFIG_VMD=y
+>   CONFIG_DEBUG_LOCKDEP=y
+>   CONFIG_DEBUG_SPINLOCK=y
+>   CONFIG_PROVE_LOCKING=y
+>   CONFIG_PROVE_RAW_LOCK_NESTING=y
 > 
-> So drop the WARN()s entirely.
+> The following log appears,
 > 
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> =============================
+> [ BUG: Invalid wait context ]
+> 6.10.0-rc4 #80 Not tainted
+> -----------------------------
+> kworker/18:2/633 is trying to lock:
+> ffff888c474e5648 (&vmd->cfg_lock){....}-{3:3}, at: vmd_pci_write+0x185/0x2a0
+> other info that might help us debug this:
+> context-{5:5}
+> 4 locks held by kworker/18:2/633:
+>  #0: ffff888100108958 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0xf78/0x1920
+>  #1: ffffc9000ae1fd90 ((work_completion)(&wfc.work)){+.+.}-{0:0}, at: process_one_work+0x7fe/0x1920
+>  #2: ffff888c483508a8 (&md->mutex){+.+.}-{4:4}, at: __pci_enable_msi_range+0x208/0x800
+>  #3: ffff888c48329bd8 (&dev->msi_lock){....}-{2:2}, at: pci_msi_update_mask+0x91/0x170
+> stack backtrace:
+> CPU: 18 PID: 633 Comm: kworker/18:2 Not tainted 6.10.0-rc4 #80 7c0f2526417bfbb7579e3c3442683c5961773c75
+> Hardware name: Lenovo ThinkSystem SR630/-[7X01RCZ000]-, BIOS IVEL60O-2.71 09/28/2020
+> Workqueue: events work_for_cpu_fn
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x7c/0xc0
+>  __lock_acquire+0x9e5/0x1ed0
+>  lock_acquire+0x194/0x490
+>  _raw_spin_lock_irqsave+0x42/0x90
+>  vmd_pci_write+0x185/0x2a0
+>  pci_msi_update_mask+0x10c/0x170
+>  __pci_enable_msi_range+0x291/0x800
+>  pci_alloc_irq_vectors_affinity+0x13e/0x1d0
+>  pcie_portdrv_probe+0x570/0xe60
+>  local_pci_probe+0xdc/0x190
+>  work_for_cpu_fn+0x4e/0xa0
+>  process_one_work+0x86d/0x1920
+>  process_scheduled_works+0xd7/0x140
+>  worker_thread+0x3e9/0xb90
+>  kthread+0x2e9/0x3d0
+>  ret_from_fork+0x2d/0x60
+>  ret_from_fork_asm+0x1a/0x30
+>  </TASK>
+> 
+> The root cause is that the dev->msi_lock is a raw spinlock, but
+> vmd->cfg_lock is a spinlock.
+
+Can you expand this a little bit?  This isn't enough unless one
+already knows the difference between raw_spinlock_t and spinlock_t,
+which I didn't.
+
+Documentation/locking/locktypes.rst says they are the same except when
+CONFIG_PREEMPT_RT is set (might be worth mentioning with the config
+list above?), but that with CONFIG_PREEMPT_RT, spinlock_t is based on
+rt_mutex.
+
+And I guess there's a rule that you can't acquire rt_mutex while
+holding a raw_spinlock.
+
+The dev->msi_lock was added by 77e89afc25f3 ("PCI/MSI: Protect
+msi_desc::masked for multi-MSI") and only used in
+pci_msi_update_mask():
+
+  raw_spin_lock_irqsave(lock, flags);
+  desc->pci.msi_mask &= ~clear;
+  desc->pci.msi_mask |= set;
+  pci_write_config_dword(msi_desc_to_pci_dev(desc), desc->pci.mask_pos,
+			 desc->pci.msi_mask);
+  raw_spin_unlock_irqrestore(lock, flags);
+
+The vmd->cfg_lock was added by 185a383ada2e ("x86/PCI: Add driver for
+Intel Volume Management Device (VMD)") and is only used around VMD
+config accesses, e.g.,
+
+  * CPU may deadlock if config space is not serialized on some versions of this
+  * hardware, so all config space access is done under a spinlock.
+
+  static int vmd_pci_read(...)
+  {
+    spin_lock_irqsave(&vmd->cfg_lock, flags);
+    switch (len) {
+    case 1:
+	    *value = readb(addr);
+	    break;
+    case 2:
+	    *value = readw(addr);
+	    break;
+    case 4:
+	    *value = readl(addr);
+	    break;
+    default:
+	    ret = -EINVAL;
+	    break;
+    }
+    spin_unlock_irqrestore(&vmd->cfg_lock, flags);
+  }
+
+IIUC those reads turn into single PCIe MMIO reads, so I wouldn't
+expect any concurrency issues there that need locking.
+
+But apparently there's something weird that can deadlock the CPU.
+
+> Signed-off-by: Jiwei Sun<sunjw10@lenovo.com>
+> Suggested-by: Adrian Huang <ahuang12@lenovo.com>
 > ---
->  arch/x86/kernel/sev.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
+>  drivers/pci/controller/vmd.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-> diff --git a/arch/x86/kernel/sev.c b/arch/x86/kernel/sev.c
-> index 3342ed58e168..33a669e85e5b 100644
-> --- a/arch/x86/kernel/sev.c
-> +++ b/arch/x86/kernel/sev.c
-> @@ -720,7 +720,7 @@ early_set_pages_state(unsigned long vaddr, unsigned long paddr,
->  		if (op == SNP_PAGE_STATE_SHARED) {
->  			/* Page validation must be rescinded before changing to shared */
->  			ret = pvalidate(vaddr, RMP_PG_SIZE_4K, false);
-> -			if (WARN(ret, "Failed to validate address 0x%lx ret %d", paddr, ret))
-> +			if (ret)
->  				goto e_term;
-
-This area of the code around the pvalidate() calls has changed now. They
-are now calls to pvalidate_4k_page() that will issue a WARN() through a
-common function available to both the early code and the regular code.
-
-If you want to rework this patch, you can use the added diff below to
-remove the calls to the common function and just terminate directly. Or,
-I can submit it as a separate patch.
-
-Dropping the other WARN() calls around the GHCB MSR checks is good,
-though.
-
-Thanks,
-Tom
-
-diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
-index 71de53194089..ced15210ea50 100644
---- a/arch/x86/kernel/sev-shared.c
-+++ b/arch/x86/kernel/sev-shared.c
-@@ -1243,7 +1243,7 @@ static void svsm_pval_terminate(struct svsm_pvalidate_call *pc, int ret, u64 svs
- 	__pval_terminate(pfn, action, page_size, ret, svsm_ret);
- }
- 
--static void svsm_pval_4k_page(unsigned long paddr, bool validate)
-+static void __head svsm_pval_4k_page(unsigned long paddr, bool validate)
- {
- 	struct svsm_pvalidate_call *pc;
- 	struct svsm_call call = {};
-@@ -1275,12 +1275,12 @@ static void svsm_pval_4k_page(unsigned long paddr, bool validate)
- 
- 	ret = svsm_perform_call_protocol(&call);
- 	if (ret)
--		svsm_pval_terminate(pc, ret, call.rax_out);
-+		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PVALIDATE);
- 
- 	native_local_irq_restore(flags);
- }
- 
--static void pvalidate_4k_page(unsigned long vaddr, unsigned long paddr, bool validate)
-+static void __head pvalidate_4k_page(unsigned long vaddr, unsigned long paddr, bool validate)
- {
- 	int ret;
- 
-@@ -1293,7 +1293,7 @@ static void pvalidate_4k_page(unsigned long vaddr, unsigned long paddr, bool val
- 	} else {
- 		ret = pvalidate(vaddr, RMP_PG_SIZE_4K, validate);
- 		if (ret)
--			__pval_terminate(PHYS_PFN(paddr), validate, RMP_PG_SIZE_4K, ret, 0);
-+			sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PVALIDATE);
- 	}
- }
- 
-
->  		}
+> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+> index 87b7856f375a..45d0ebf96adc 100644
+> --- a/drivers/pci/controller/vmd.c
+> +++ b/drivers/pci/controller/vmd.c
+> @@ -125,7 +125,7 @@ struct vmd_irq_list {
+>  struct vmd_dev {
+>  	struct pci_dev		*dev;
 >  
-> @@ -733,21 +733,16 @@ early_set_pages_state(unsigned long vaddr, unsigned long paddr,
+> -	spinlock_t		cfg_lock;
+> +	raw_spinlock_t		cfg_lock;
+>  	void __iomem		*cfgbar;
 >  
->  		val = sev_es_rd_ghcb_msr();
+>  	int msix_count;
+> @@ -402,7 +402,7 @@ static int vmd_pci_read(struct pci_bus *bus, unsigned int devfn, int reg,
+>  	if (!addr)
+>  		return -EFAULT;
 >  
-> -		if (WARN(GHCB_RESP_CODE(val) != GHCB_MSR_PSC_RESP,
-> -			 "Wrong PSC response code: 0x%x\n",
-> -			 (unsigned int)GHCB_RESP_CODE(val)))
-> +		if (GHCB_RESP_CODE(val) != GHCB_MSR_PSC_RESP)
->  			goto e_term;
->  
-> -		if (WARN(GHCB_MSR_PSC_RESP_VAL(val),
-> -			 "Failed to change page state to '%s' paddr 0x%lx error 0x%llx\n",
-> -			 op == SNP_PAGE_STATE_PRIVATE ? "private" : "shared",
-> -			 paddr, GHCB_MSR_PSC_RESP_VAL(val)))
-> +		if (GHCB_MSR_PSC_RESP_VAL(val))
->  			goto e_term;
->  
->  		if (op == SNP_PAGE_STATE_PRIVATE) {
->  			/* Page validation must be performed after changing to private */
->  			ret = pvalidate(vaddr, RMP_PG_SIZE_4K, true);
-> -			if (WARN(ret, "Failed to validate address 0x%lx ret %d", paddr, ret))
-> +			if (ret)
->  				goto e_term;
->  		}
->  
-> @@ -780,7 +775,7 @@ void __head early_snp_set_memory_private(unsigned long vaddr, unsigned long padd
->  	early_set_pages_state(vaddr, paddr, npages, SNP_PAGE_STATE_PRIVATE);
+> -	spin_lock_irqsave(&vmd->cfg_lock, flags);
+> +	raw_spin_lock_irqsave(&vmd->cfg_lock, flags);
+>  	switch (len) {
+>  	case 1:
+>  		*value = readb(addr);
+> @@ -417,7 +417,7 @@ static int vmd_pci_read(struct pci_bus *bus, unsigned int devfn, int reg,
+>  		ret = -EINVAL;
+>  		break;
+>  	}
+> -	spin_unlock_irqrestore(&vmd->cfg_lock, flags);
+> +	raw_spin_unlock_irqrestore(&vmd->cfg_lock, flags);
+>  	return ret;
 >  }
 >  
-> -void __init early_snp_set_memory_shared(unsigned long vaddr, unsigned long paddr,
-> +void __head early_snp_set_memory_shared(unsigned long vaddr, unsigned long paddr,
->  					unsigned long npages)
->  {
->  	/*
+> @@ -437,7 +437,7 @@ static int vmd_pci_write(struct pci_bus *bus, unsigned int devfn, int reg,
+>  	if (!addr)
+>  		return -EFAULT;
+>  
+> -	spin_lock_irqsave(&vmd->cfg_lock, flags);
+> +	raw_spin_lock_irqsave(&vmd->cfg_lock, flags);
+>  	switch (len) {
+>  	case 1:
+>  		writeb(value, addr);
+> @@ -455,7 +455,7 @@ static int vmd_pci_write(struct pci_bus *bus, unsigned int devfn, int reg,
+>  		ret = -EINVAL;
+>  		break;
+>  	}
+> -	spin_unlock_irqrestore(&vmd->cfg_lock, flags);
+> +	raw_spin_unlock_irqrestore(&vmd->cfg_lock, flags);
+>  	return ret;
+>  }
+>  
+> @@ -1015,7 +1015,7 @@ static int vmd_probe(struct pci_dev *dev, const struct pci_device_id *id)
+>  	if (features & VMD_FEAT_OFFSET_FIRST_VECTOR)
+>  		vmd->first_vec = 1;
+>  
+> -	spin_lock_init(&vmd->cfg_lock);
+> +	raw_spin_lock_init(&vmd->cfg_lock);
+>  	pci_set_drvdata(dev, vmd);
+>  	err = vmd_enable_domain(vmd, features);
+>  	if (err)
+> -- 
+> 2.27.0
+> 
 
