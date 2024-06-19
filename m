@@ -1,177 +1,162 @@
-Return-Path: <linux-kernel+bounces-220716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF89390E616
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:40:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3BA90E62D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FF031F2598B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:40:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95AAD1C21859
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CF17C082;
-	Wed, 19 Jun 2024 08:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FEF7CF1A;
+	Wed, 19 Jun 2024 08:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZRQWK3PB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vopo60QR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a+KXMmjZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43547A705;
-	Wed, 19 Jun 2024 08:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECBD7A705
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718786397; cv=none; b=UCHRxXoj/8rHe7hgFlpV0RytBHVAmN9ri6bOM7FdS1Z4+Jy5ikWYvAJNl885+1M8n8odrbgeLU5qOueX4blkOAxgzL753xdLerzud0V+pd6MNFDfj0bsUyuV1ciX87dvJlOZWs83zWCo3irS3pCFUjW2ahh59x2tMFSlnmPPpxM=
+	t=1718786515; cv=none; b=cMlVDeLLGoYPTzA9JtYmqx6f8Q+fy+/zHiSF9DsZii2QlTzMGJp46Pgz9oiOLxzjxrFkr9q+Qpa2Wj34oBurj4b8aANLSHNmwTis4aPh++N7RSKUzyRsIVTtlIq/RZZ9DfOjDlQWn1hrRgeF8W7NmVC/vOoFlLA8X+9RJZeb3t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718786397; c=relaxed/simple;
-	bh=WxBPYdBf20vZqluKTXoy6qT/m6UvyG0nZz/rmrkwg64=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=DXbAav9A5O/K1YC41fO6YD9Zpe0bew4AbFgI/tJUmFVkZzrHZL9zgJ6B0Qd9K02XXv5y+YaDxkIXJ8gofMGfjVKGqric6k0LZ285cQABTXWSZMFcw1Wg5aRWeS3pC8ToOwIb1gBWzNP1LGwh1AUf1PYPbWZddhlIvJP1OAC8+nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZRQWK3PB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vopo60QR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 19 Jun 2024 08:39:52 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718786393;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=8xOxzk9AkeIlOg1aSe9X63Xn1GV0GlJ22pyCLrFM9gI=;
-	b=ZRQWK3PBGNNIPTHMn5NeT21JRceWggKvsX0mvqN4s8iapgIsFIO3x7wTrLHUJigrUcBQkd
-	EgWPtiR+MATxqH3UFEOiCHtOy/ovaAX+tRHjecPe9L+4CocpxfaMyIwAzCBaDgNYp6TwtI
-	FCVnGCvxHJNBejE3fGM95AFDmjdoHii2EjLxjtKQjIAwPiGQHr7fAFg47NQX6KQH4LlIBs
-	J5P9WX3abJUySqqHpkIRJTtQFGXs5K6K6SD/RXByhdq55tG3hRKlJdZQvvkQZyFA2kgnR1
-	gXYXhbPZQ8h/q5mgXa6WCQPKSOfQ7HTFeUJQweO9U8lnXQcZE7b95mj9bUUESA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718786393;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=8xOxzk9AkeIlOg1aSe9X63Xn1GV0GlJ22pyCLrFM9gI=;
-	b=vopo60QR+CU8CrcfX8Sz3VTqc1HmCMDZyQETmPQnvzPHkfzKu+Ltr/dYnS6Ij58XtFxl6T
-	iaI903heiYVwtUCA==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/alternatives] x86/alternatives, kvm: Fix a couple of CALLs
- without a frame pointer
-Cc: kernel test robot <lkp@intel.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Sean Christopherson <seanjc@google.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1718786515; c=relaxed/simple;
+	bh=rWeIOug2Ynbv6OTURHg7XDbCwxyQQJLoRG3mJeBPx7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uYZgBprrRNY38jTUNkXpF9bc41F8gfr+54EUqTi2UrO5oFnQbwdlG6bZglR7uXgU213QYBMHebuZrmkIJqODZ05OwyKMw9wflyQuP6BAm7RlZhjW0BTjNV4vF3PJJybjLVSR+uqltyYLxbdH59bE41glcgUOmktp3lnhzrPJX5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a+KXMmjZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718786512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XdxpcAnJIttE7xF3rf60XtSKDuT7zxfz6ipOIlDZ/C4=;
+	b=a+KXMmjZdv/OUbl8hyd2L2EaOD6aCln6h8FWX67WHpn0apIoOOd7JfH7mYT+H6snh3xDCP
+	J8ltlfgmKNhymIdnRoF5hMhQ5zvB2OCz+Xm0L3T2UuI2rOfzUukEYFieFF9zr539bvry5Z
+	UPKY/qrFETHT4m2NUq60apCuCc+CmRo=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-Ner9OlnkOZmbycSTvJ0ICw-1; Wed, 19 Jun 2024 04:41:51 -0400
+X-MC-Unique: Ner9OlnkOZmbycSTvJ0ICw-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3630a676a07so394137f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 01:41:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718786510; x=1719391310;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XdxpcAnJIttE7xF3rf60XtSKDuT7zxfz6ipOIlDZ/C4=;
+        b=hiTlTieE7+UE0WkLCZF6wEs7LI5xXbDMXO84mypvB/GbqYNFHNxwieVwp03ksf3o6R
+         FZvwCD9tPA+aE0tBz5qi2aEarAGrevUDH1JVNYFjVqabYtDn0JJPlgvaHMRFN8r5+jf3
+         Y3ymgUcyHsFDqCezC/vyUU0Xxxdg+fk6YVOSU3N+68eZUv8hS0cXPDBPKkV/3rAy/7Hl
+         hzljqSvgCguqIIAhOXlGjL3jhlKmNbUbxTyyFlUaVM4opXdjxrHGuyyWIbIs7aGJZNdQ
+         GuZYDIj/VZEvZ7p6ym54v30nbDisC8ArM3E7OM/SpV1ia2LNaWzESP/a05O08KhqDwNC
+         Qv8A==
+X-Forwarded-Encrypted: i=1; AJvYcCU+TFuOwRIPkdMRqMsRAREHSVLLKg/If+ZJu7rLkcOsxWE1JrdAyf3aNUP9rXzbeCzUarEkgdD6rkAiYWqE8XF6/KcDf9naVw+z6jNJ
+X-Gm-Message-State: AOJu0YwsOU03T1LespBozPejGXuG0L8Qw65gjmkhVKTBfZJHTLnGPy8/
+	LWR+p4UFDYBgIAc8rSgZe0lGRP8vEKGxikH6ncJmJk3PxR1cMvamPACnyEKx96T5VfzmNG+VPCm
+	bgVPGudItm6OeLn9zqkreHkvZwSNKrCYqAGA2oO11uPbTdJixbgCz+QgJdDzszg==
+X-Received: by 2002:a5d:408d:0:b0:360:7829:bb93 with SMTP id ffacd0b85a97d-363177a3a72mr1642374f8f.21.1718786509773;
+        Wed, 19 Jun 2024 01:41:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGmonG/1oENmgMotUOYhNKtoTPMrBWuRz2ayevhgGPlMbNtdCXnZPDcBQKyrmKw0SKJQvaQlg==
+X-Received: by 2002:a5d:408d:0:b0:360:7829:bb93 with SMTP id ffacd0b85a97d-363177a3a72mr1642352f8f.21.1718786509061;
+        Wed, 19 Jun 2024 01:41:49 -0700 (PDT)
+Received: from redhat.com ([2.52.146.100])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-363bd4668aasm730542f8f.48.2024.06.19.01.41.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 01:41:48 -0700 (PDT)
+Date: Wed, 19 Jun 2024 04:41:44 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: [PATCH 2/2] Documentation: best practices for using Link trailers
+Message-ID: <20240619043727-mutt-send-email-mst@kernel.org>
+References: <20240618-docs-patch-msgid-link-v1-0-30555f3f5ad4@linuxfoundation.org>
+ <20240618-docs-patch-msgid-link-v1-2-30555f3f5ad4@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171878639288.10875.12927337921927674667.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618-docs-patch-msgid-link-v1-2-30555f3f5ad4@linuxfoundation.org>
 
-The following commit has been merged into the x86/alternatives branch of tip:
+On Tue, Jun 18, 2024 at 12:42:11PM -0400, Konstantin Ryabitsev wrote:
+> Based on multiple conversations, most recently on the ksummit mailing
+> list [1], add some best practices for using the Link trailer, such as:
+> 
+> - how to use markdown-like bracketed numbers in the commit message to
+> indicate the corresponding link
+> - when to use lore.kernel.org vs patch.msgid.link domains
+> 
+> Cc: ksummit@lists.linux.dev
+> Link: https://lore.kernel.org/20240617-arboreal-industrious-hedgehog-5b84ae@meerkat # [1]
+> Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+> ---
+>  Documentation/process/maintainer-tip.rst | 24 ++++++++++++++++++------
+>  1 file changed, 18 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/process/maintainer-tip.rst b/Documentation/process/maintainer-tip.rst
+> index 64739968afa6..57ffa553c21e 100644
+> --- a/Documentation/process/maintainer-tip.rst
+> +++ b/Documentation/process/maintainer-tip.rst
+> @@ -375,14 +375,26 @@ following tag ordering scheme:
+>     For referring to an email on LKML or other kernel mailing lists,
+>     please use the lore.kernel.org redirector URL::
+>  
+> -     https://lore.kernel.org/r/email-message@id
+> +     Link: https://lore.kernel.org/email-message@id
+>  
+> -   The kernel.org redirector is considered a stable URL, unlike other email
+> -   archives.
+> +   This URL should be used when referring to relevant mailing list
+> +   resources, related patch sets, or other notable discussion threads.
+> +   A convenient way to associate Link trailers with the accompanying
+> +   message is to use markdown-like bracketed notation, for example::
+>  
+> -   Maintainers will add a Link tag referencing the email of the patch
+> -   submission when they apply a patch to the tip tree. This tag is useful
+> -   for later reference and is also used for commit notifications.
+> +     A similar approach was attempted before as part of a different
+> +     effort [1], but the initial implementation caused too many
+> +     regressions [2], so it was backed out and reimplemented.
+> +
+> +     Link: https://lore.kernel.org/some-msgid@here # [1]
+> +     Link: https://bugzilla.example.org/bug/12345  # [2]
+> +
+> +   When using the ``Link:`` trailer to indicate the provenance of the
+> +   patch, you should use the dedicated ``patch.msgid.link`` domain. This
+> +   makes it possible for automated tooling to establish which link leads
+> +   to the original patch submission. For example::
+> +
+> +     Link: https://patch.msgid.link/patch-source-msgid@here
+>  
+>  Please do not use combined tags, e.g. ``Reported-and-tested-by``, as
+>  they just complicate automated extraction of tags.
 
-Commit-ID:     93f78dadee5e56ae48aff567583d503868aa3bf2
-Gitweb:        https://git.kernel.org/tip/93f78dadee5e56ae48aff567583d503868aa3bf2
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Tue, 18 Jun 2024 21:57:27 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 19 Jun 2024 10:33:25 +02:00
+I don't really understand what this is saying.
+So when is msgid.link preferable to kernel.org?
+And when is kernel.org preferable to msgid?
 
-x86/alternatives, kvm: Fix a couple of CALLs without a frame pointer
 
-objtool complains:
 
-  arch/x86/kvm/kvm.o: warning: objtool: .altinstr_replacement+0xc5: call without frame pointer save/setup
-  vmlinux.o: warning: objtool: .altinstr_replacement+0x2eb: call without frame pointer save/setup
+> -- 
+> 2.45.2
+> 
 
-Make sure rSP is an output operand to the respective asm() statements.
-
-The test_cc() hunk courtesy of peterz. Also from him add some helpful
-debugging info to the documentation.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202406141648.jO9qNGLa-lkp@intel.com/
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Acked-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/include/asm/alternative.h      |  2 +-
- arch/x86/kernel/alternative.c           |  2 +-
- arch/x86/kvm/emulate.c                  |  2 +-
- tools/objtool/Documentation/objtool.txt | 19 +++++++++++++++++++
- 4 files changed, 22 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 89fa50d..8cff462 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -248,7 +248,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
-  */
- #define alternative_call(oldfunc, newfunc, ft_flags, output, input...)	\
- 	asm_inline volatile(ALTERNATIVE("call %c[old]", "call %c[new]", ft_flags) \
--		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
-+		: output, ASM_CALL_CONSTRAINT : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
- 
- /*
-  * Like alternative_call, but there are two features and respective functions.
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 37596a4..333b161 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -1657,7 +1657,7 @@ static noinline void __init alt_reloc_selftest(void)
- 	 */
- 	asm_inline volatile (
- 		ALTERNATIVE("", "lea %[mem], %%" _ASM_ARG1 "; call __alt_reloc_selftest;", X86_FEATURE_ALWAYS)
--		: /* output */
-+		: ASM_CALL_CONSTRAINT
- 		: [mem] "m" (__alt_reloc_selftest_addr)
- 		: _ASM_ARG1
- 	);
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index 5d4c861..c8cc578 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -1069,7 +1069,7 @@ static __always_inline u8 test_cc(unsigned int condition, unsigned long flags)
- 
- 	flags = (flags & EFLAGS_MASK) | X86_EFLAGS_IF;
- 	asm("push %[flags]; popf; " CALL_NOSPEC
--	    : "=a"(rc) : [thunk_target]"r"(fop), [flags]"r"(flags));
-+	    : "=a"(rc), ASM_CALL_CONSTRAINT : [thunk_target]"r"(fop), [flags]"r"(flags));
- 	return rc;
- }
- 
-diff --git a/tools/objtool/Documentation/objtool.txt b/tools/objtool/Documentation/objtool.txt
-index fe39c2a..7c3ee95 100644
---- a/tools/objtool/Documentation/objtool.txt
-+++ b/tools/objtool/Documentation/objtool.txt
-@@ -284,6 +284,25 @@ the objtool maintainers.
- 
-    Otherwise the stack frame may not get created before the call.
- 
-+   objtool can help with pinpointing the exact function where it happens:
-+
-+   $ OBJTOOL_ARGS="--verbose" make arch/x86/kvm/
-+
-+   arch/x86/kvm/kvm.o: warning: objtool: .altinstr_replacement+0xc5: call without frame pointer save/setup
-+   arch/x86/kvm/kvm.o: warning: objtool:   em_loop.part.0+0x29: (alt)
-+   arch/x86/kvm/kvm.o: warning: objtool:   em_loop.part.0+0x0: <=== (sym)
-+    LD [M]  arch/x86/kvm/kvm-intel.o
-+   0000 0000000000028220 <em_loop.part.0>:
-+   0000    28220:  0f b6 47 61             movzbl 0x61(%rdi),%eax
-+   0004    28224:  3c e2                   cmp    $0xe2,%al
-+   0006    28226:  74 2c                   je     28254 <em_loop.part.0+0x34>
-+   0008    28228:  48 8b 57 10             mov    0x10(%rdi),%rdx
-+   000c    2822c:  83 f0 05                xor    $0x5,%eax
-+   000f    2822f:  48 c1 e0 04             shl    $0x4,%rax
-+   0013    28233:  25 f0 00 00 00          and    $0xf0,%eax
-+   0018    28238:  81 e2 d5 08 00 00       and    $0x8d5,%edx
-+   001e    2823e:  80 ce 02                or     $0x2,%dh
-+   ...
- 
- 2. file.o: warning: objtool: .text+0x53: unreachable instruction
- 
 
