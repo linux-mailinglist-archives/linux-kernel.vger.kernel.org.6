@@ -1,151 +1,156 @@
-Return-Path: <linux-kernel+bounces-221182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EECD90EFDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:14:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CA290F005
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 366B01F236C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:14:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E074B22BCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBAF1509AF;
-	Wed, 19 Jun 2024 14:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48687125C1;
+	Wed, 19 Jun 2024 14:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeNNPO0n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VEiUsVF8"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA59814F9F1
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 14:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF7011CA1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 14:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718806460; cv=none; b=iHA5bGkh3Utp7uNGlOf87bIF7WINOZ+L25kYvMcwIIpu8b4/lpv5cF5ctuLN3yIigfE9kASlRVEOlU9q3lYPiqNzaqKb3la2bCpZ8Ye2RngQhVPCS90BRXQCfgU97QhMwvP1v14AQ+sqgP9zogDmWhEakBmp5sCGokySfkq5ukg=
+	t=1718806595; cv=none; b=LhOEn344b3YysumY5jU6ol7e3Kl62nrGA9YOJWNKE59gtB5QW7/4ykkyPCgADZTLsqUIM4a/bH/okjBwQjdUUr0IvhN0qdlax8ErrRnB1OaeYdh3IiA1hgk6lJel+1z3hInWLjBLDpeqs8AnylSjie4RN+zahHRCZMM7DsFurL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718806460; c=relaxed/simple;
-	bh=5mGGDm0HnkYWrCDF9AkhkQYTTIQdgfo19VKts2ac/jM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Sui77jcLIQ3jTAU6kekOLAWb7ppph6AVgxu2Db3Vd4NR2mhGOwnlWzzTIEN0Lg2piRyvwf6zK0L2CkLWfouX5vvClwvuIDV9RkT7Q6gApbRqoy4Gzi0eeXXLMbJORHKaiqKxi3+DKOlR157MabXC+IaIuig1nMrZeaBOI8mmaS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NeNNPO0n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC672C32786;
-	Wed, 19 Jun 2024 14:14:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718806460;
-	bh=5mGGDm0HnkYWrCDF9AkhkQYTTIQdgfo19VKts2ac/jM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=NeNNPO0nUjIEgjC6MYiKT+1DS9ui2kMTYwEWveMbiLA0KtNLJVVd9QOk5aT1jxVgK
-	 SzcEIzgkn7qaFR0SCMeoIh/GOjO2XPOVEbQmIcF0jWBRk9Az9b6iCui22aTX6IL0fx
-	 HuF4nCkp7EBlu2GcQDL+3efngTFLXeivIpdkSVTQZfpL2OwfS71w0xazNGbRsgzzHK
-	 Jq4aH27X19A2ivEKahR+nJkPf9+EJ+Z39S7roKfwZPVwwmn9gOGE3v072/eqPMTFpw
-	 g2C26h41cQJvOkJ6lpYFPFDnZKncS7r9lRfw+658L1LpQmGBxMUD+yBA3SbC3Qsw8e
-	 RY5jzpZ2yiLvA==
-Message-ID: <3c262735-accf-41a8-aa74-a96a7ae05945@kernel.org>
-Date: Wed, 19 Jun 2024 22:14:18 +0800
+	s=arc-20240116; t=1718806595; c=relaxed/simple;
+	bh=j8hnpKSgdsPwZhLgHwzSQMYWcXcujLvM0S2A4+l+rpk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AVxES4FlqqiCKqHcfkBu5EETkEHD8dyeiWFf63QTJt/bLpkNvm9PGEmfbsfV4nSpht/iSwD77c4FYK9m57+I8RKJ+/kX12d2TYZkGzB2Z1Ti2E54YuEFRlYMTdr+uK12s6VZVaWz50mxyZoTFCaeZSd0qPLUsXsM1M6YHEPUgmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VEiUsVF8; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: leon@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718806591;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D7YB9+PQ0z1j6tWHwXjxGAjgSnoPcuX+AMvafJbdH/Y=;
+	b=VEiUsVF8H2cuXxGHYJXKR6rFCC6a1/RQ8mqASAwIwniKHLP05IqkvUzy9+HVAHseCmSwmS
+	IjkE0ZYFaN9tAk2tH1m3xpg+S/gKfrAlcENIrm624/D7xmsgNlkrhrHIs+aLbopn/9gFOF
+	C51OxOTobHtDWYLcTaTydtiYI9cwaWI=
+X-Envelope-To: syzbot+19ec7595e3aa1a45f623@syzkaller.appspotmail.com
+X-Envelope-To: jgg@ziepe.ca
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-rdma@vger.kernel.org
+X-Envelope-To: netdev@vger.kernel.org
+X-Envelope-To: syzkaller-bugs@googlegroups.com
+Message-ID: <94d36dd5-313b-46b3-8d43-95016175d273@linux.dev>
+Date: Wed, 19 Jun 2024 22:16:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: fix to use sb_{start,
- end}_intwrite{_trylock, }() in gc_thread_func()
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-References: <20240606095213.4087668-1-chao@kernel.org>
- <20240606095213.4087668-2-chao@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=chao@kernel.org; keydata=
- xsFNBFYs6bUBEADJuxYGZRMvAEySns+DKVtVQRKDYcHlmj+s9is35mtlhrLyjm35FWJY099R
- 6DL9bp8tAzLJOMBn9RuTsu7hbRDErCCTiyXWAsFsPkpt5jgTOy90OQVyTon1i/fDz4sgGOrL
- 1tUfcx4m5i5EICpdSuXm0dLsC5lFB2KffLNw/ZfRuS+nNlzUm9lomLXxOgAsOpuEVps7RdYy
- UEC81IYCAnweojFbbK8U6u4Xuu5DNlFqRFe/MBkpOwz4Nb+caCx4GICBjybG1qLl2vcGFNkh
- eV2i8XEdUS8CJP2rnp0D8DM0+Js+QmAi/kNHP8jzr7CdG5tje1WIVGH6ec8g8oo7kIuFFadO
- kwy6FSG1kRzkt4Ui2d0z3MF5SYgA1EWQfSqhCPzrTl4rJuZ72ZVirVxQi49Ei2BI+PQhraJ+
- pVXd8SnIKpn8L2A/kFMCklYUaLT8kl6Bm+HhKP9xYMtDhgZatqOiyVV6HFewfb58HyUjxpza
- 1C35+tplQ9klsejuJA4Fw9y4lhdiFk8y2MppskaqKg950oHiqbJcDMEOfdo3NY6/tXHFaeN1
- etzLc1N3Y0pG8qS/mehcIXa3Qs2fcurIuLBa+mFiFWrdfgUkvicSYqOimsrE/Ezw9hYhAHq4
- KoW4LQoKyLbrdOBJFW0bn5FWBI4Jir1kIFHNgg3POH8EZZDWbQARAQABzRlDaGFvIFl1IDxj
- aGFvQGtlcm5lbC5vcmc+wsF3BBMBCgAhBQJWLOm1AhsDBQsJCAcDBRUKCQgLBRYCAwEAAh4B
- AheAAAoJEKTPgB1/p52Gm2MP/0zawCU6QN7TZuJ8R1yfdhYr0cholc8ZuPoGim69udQ3otet
- wkTNARnpuK5FG5la0BxFKPlazdgAU1pt+dTzCTS6a3/+0bXYQ5DwOeBPRWeFFklm5Frmk8sy
- wSTxxEty0UBMjzElczkJflmCiDfQunBpWGy9szn/LZ6jjIVK/BiR7CgwXTdlvKcCEkUlI7MD
- vTj/4tQ3y4Vdx+p7P53xlacTzZkP+b6D2VsjK+PsnsPpKwaiPzVFMUwjt1MYtOupK4bbDRB4
- NIFSNu2HSA0cjsu8zUiiAvhd/6gajlZmV/GLJKQZp0MjHOvFS5Eb1DaRvoCf27L+BXBMH4Jq
- 2XIyBMm+xqDJd7BRysnImal5NnQlKnDeO4PrpFq4JM0P33EgnSOrJuAb8vm5ORS9xgRlshXh
- 2C0MeyQFxL6l+zolEFe2Nt2vrTFgjYLsm2vPL+oIPlE3j7ToRlmm7DcAqsa9oYMlVTTnPRL9
- afNyrsocG0fvOYFCGvjfog/V56WFXvy9uH8mH5aNOg5xHB0//oG9vUyY0Rv/PrtW897ySEPh
- 3jFP/EDI0kKjFW3P6CfYG/X1eaw6NDfgpzjkCf2/bYm/SZLV8dL2vuLBVV+hrT1yM1FcZotP
- WwLEzdgdQffuQwJHovz72oH8HVHD2yvJf2hr6lH58VK4/zB/iVN4vzveOdzlzsFNBFYs6bUB
- EADZTCTgMHkb6bz4bt6kkvj7+LbftBt5boKACy2mdrFFMocT5zM6YuJ7Ntjazk5z3F3IzfYu
- 94a41kLY1H/G0Y112wggrxem6uAtUiekR9KnphsWI9lRI4a2VbbWUNRhCQA8ag7Xwe5cDIV5
- qb7r7M+TaKaESRx/Y91bm0pL/MKfs/BMkYsr3wA1OX0JuEpV2YHDW8m2nFEGP6CxNma7vzw+
- JRxNuyJcNi+VrLOXnLR6hZXjShrmU88XIU2yVXVbxtKWq8vlOSRuXkLh9NQOZn7mrR+Fb1EY
- DY1ydoR/7FKzRNt6ejI8opHN5KKFUD913kuT90wySWM7Qx9icc1rmjuUDz3VO+rl2sdd0/1h
- Q2VoXbPFxi6c9rLiDf8t7aHbYccst/7ouiHR/vXQty6vSUV9iEbzm+SDpHzdA8h3iPJs6rAb
- 0NpGhy3XKY7HOSNIeHvIbDHTUZrewD2A6ARw1VYg1vhJbqUE4qKoUL1wLmxHrk+zHUEyLHUq
- aDpDMZArdNKpT6Nh9ySUFzlWkHUsj7uUNxU3A6GTum2aU3Gh0CD1p8+FYlG1dGhO5boTIUsR
- 6ho73ZNk1bwUj/wOcqWu+ZdnQa3zbfvMI9o/kFlOu8iTGlD8sNjJK+Y/fPK3znFqoqqKmSFZ
- aiRALjAZH6ufspvYAJEJE9eZSX7Rtdyt30MMHQARAQABwsFfBBgBCgAJBQJWLOm1AhsMAAoJ
- EKTPgB1/p52GPpoP/2LOn/5KSkGHGmdjzRoQHBTdm2YV1YwgADg52/mU68Wo6viStZqcVEnX
- 3ALsWeETod3qeBCJ/TR2C6hnsqsALkXMFFJTX8aRi/E4WgBqNvNgAkWGsg5XKB3JUoJmQLqe
- CGVCT1OSQA/gTEfB8tTZAGFwlw1D3W988CiGnnRb2EEqU4pEuBoQir0sixJzFWybf0jjEi7P
- pODxw/NCyIf9GNRNYByUTVKnC7C51a3b1gNs10aTUmRfQuu+iM5yST5qMp4ls/yYl5ybr7N1
- zSq9iuL13I35csBOn13U5NE67zEb/pCFspZ6ByU4zxChSOTdIJSm4/DEKlqQZhh3FnVHh2Ld
- eG/Wbc1KVLZYX1NNbXTz7gBlVYe8aGpPNffsEsfNCGsFDGth0tC32zLT+5/r43awmxSJfx2P
- 5aGkpdszvvyZ4hvcDfZ7U5CBItP/tWXYV0DDl8rCFmhZZw570vlx8AnTiC1v1FzrNfvtuxm3
- 92Qh98hAj3cMFKtEVbLKJvrc2AO+mQlS7zl1qWblEhpZnXi05S1AoT0gDW2lwe54VfT3ySon
- 8Klpbp5W4eEoY21tLwuNzgUMxmycfM4GaJWNCncKuMT4qGVQO9SPFs0vgUrdBUC5Pn5ZJ46X
- mZA0DUz0S8BJtYGI0DUC/jAKhIgy1vAx39y7sAshwu2VILa71tXJ
-In-Reply-To: <20240606095213.4087668-2-chao@kernel.org>
+Subject: Re: [syzbot] [rdma?] WARNING in ib_uverbs_release_dev
+To: Leon Romanovsky <leon@kernel.org>,
+ syzbot <syzbot+19ec7595e3aa1a45f623@syzkaller.appspotmail.com>, jgg@ziepe.ca
+Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+ netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <000000000000057e4c061b386e23@google.com>
+ <20240619091557.GM4025@unreal>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20240619091557.GM4025@unreal>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2024/6/6 17:52, Chao Yu wrote:
-> Since background GC is f2fs inner operation, so, let's use
-> sb_{start,end}_intwrite{_trylock,}() instead of
-> sb_{start,end}_write{_trylock,}() in gc_thread_func().
-
-It may cause racing in between gc_thread and freeze_super(), result in
-writeback of dirty page after ->freeze, so please ignore this patch.
-
-- sb_wait_write(sb, SB_FREEZE_WRITE)
-- sync_filesystem(sb)
-				- sb_start_intwrite_trylock
-				 - f2fs_gc
-				  : dirty pages
-- sb_wait_write(sb, SB_FREEZE_FS)
-
-Thanks,
-
+在 2024/6/19 17:15, Leon Romanovsky 写道:
+> On Tue, Jun 18, 2024 at 11:37:18PM -0700, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=179e93fe980000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=19ec7595e3aa1a45f623
+>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>>
+>> Unfortunately, I don't have any reproducer for this issue yet.
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/27e64d7472ce/disk-2ccbdf43.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/e1c494bb5c9c/vmlinux-2ccbdf43.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/752498985a5e/bzImage-2ccbdf43.xz
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+19ec7595e3aa1a45f623@syzkaller.appspotmail.com
+>>
+>> smc: removing ib device syz0
+>> ------------[ cut here ]------------
+>> WARNING: CPU: 0 PID: 51 at kernel/rcu/srcutree.c:653 cleanup_srcu_struct+0x404/0x4d0 kernel/rcu/srcutree.c:653
+>> Modules linked in:
+>> CPU: 0 PID: 51 Comm: kworker/u8:3 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+>> Workqueue: ib-unreg-wq ib_unregister_work
+>> RIP: 0010:cleanup_srcu_struct+0x404/0x4d0 kernel/rcu/srcutree.c:653
+>> Code: 12 80 00 48 c7 03 00 00 00 00 48 83 c4 48 5b 41 5c 41 5d 41 5e 41 5f 5d e9 14 67 34 0a 90 0f 0b 90 eb e7 90 0f 0b 90 eb e1 90 <0f> 0b 90 eb db 90 0f 0b 90 eb 0a 90 0f 0b 90 eb 04 90 0f 0b 90 48
+>> RSP: 0018:ffffc90000bb7970 EFLAGS: 00010202
+>> RAX: 0000000000000001 RBX: ffff88802a1bc980 RCX: 0000000000000002
+>> RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffe8ffffd74c58
+>> RBP: 0000000000000001 R08: ffffe8ffffd74c5f R09: 1ffffd1ffffae98b
+>> R10: dffffc0000000000 R11: fffff91ffffae98c R12: dffffc0000000000
+>> R13: ffff88802285b5f0 R14: ffff88802285b000 R15: ffff88802a1bc800
+>> FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 00007fa3852cae10 CR3: 000000000e132000 CR4: 0000000000350ef0
+>> Call Trace:
+>>   <TASK>
+>>   ib_uverbs_release_dev+0x4e/0x80 drivers/infiniband/core/uverbs_main.c:136
+>>   device_release+0x9b/0x1c0
+>>   kobject_cleanup lib/kobject.c:689 [inline]
+>>   kobject_release lib/kobject.c:720 [inline]
+>>   kref_put include/linux/kref.h:65 [inline]
+>>   kobject_put+0x231/0x480 lib/kobject.c:737
+>>   remove_client_context+0xb9/0x1e0 drivers/infiniband/core/device.c:776
+>>   disable_device+0x13b/0x360 drivers/infiniband/core/device.c:1282
+>>   __ib_unregister_device+0x6d/0x170 drivers/infiniband/core/device.c:1475
+>>   ib_unregister_work+0x19/0x30 drivers/infiniband/core/device.c:1586
+>>   process_one_work kernel/workqueue.c:3231 [inline]
+>>   process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
+>>   worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+>>   kthread+0x2f2/0x390 kernel/kthread.c:389
+>>   ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+>>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>>   </TASK>
 > 
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->   fs/f2fs/gc.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> I see that this is caused by call to ib_unregister_device_queued() as a
+> response to NETDEV_UNREGISTER event, but we don't flush anything before.
+> How can we be sure that ib_device is not used anymore?
+
+Hi, Leon
+
+This is the console output:
+
+https://syzkaller.appspot.com/x/log.txt?x=179e93fe980000
+
+ From the above link, it seems that other devices or subsystems failed 
+firstly, then caused this call trace to appear. When other problem 
+occurred, the whole kernel system was in mess state.So it is not weird 
+that some problems occurred.
+
+To be simple, the root cause is not in RDMA subsystem.
+
+I will continue to delve into this problem.
+
+Zhu Yanjun
 > 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index ef667fec9a12..004587ac5530 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -76,7 +76,7 @@ static int gc_thread_func(void *data)
->   			f2fs_stop_checkpoint(sbi, false,
->   					STOP_CP_REASON_FAULT_INJECT);
->   
-> -		if (!sb_start_write_trylock(sbi->sb)) {
-> +		if (!sb_start_intwrite_trylock(sbi->sb)) {
->   			stat_other_skip_bggc_count(sbi);
->   			continue;
->   		}
-> @@ -163,7 +163,7 @@ static int gc_thread_func(void *data)
->   			}
->   			spin_unlock(&sbi->gc_remaining_trials_lock);
->   		}
-> -		sb_end_write(sbi->sb);
-> +		sb_end_intwrite(sbi->sb);
->   
->   	} while (!kthread_should_stop());
->   	return 0;
+> Thanks
+
 
