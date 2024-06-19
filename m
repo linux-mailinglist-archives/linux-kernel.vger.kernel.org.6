@@ -1,132 +1,96 @@
-Return-Path: <linux-kernel+bounces-220724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2715190E644
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:50:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4353890E64E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB1F7284160
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:50:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E43881F22A96
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D027D3F5;
-	Wed, 19 Jun 2024 08:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i5IqqHzz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0257D7D3E4;
+	Wed, 19 Jun 2024 08:52:03 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E592139B1;
-	Wed, 19 Jun 2024 08:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA27770F6;
+	Wed, 19 Jun 2024 08:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718787052; cv=none; b=Hv2TlYhaWG7PlKpbZaWqezigfj+6RTBy4w2w/yWdg/CiRmkGwwEuRivNFPY8ruUVPpQc3SJmUnLn8jj+rShhgOijrJtlR1LwZlitK7InYG0ACeQxAxbiTBsD7mpJlKgPTHiG95zbG+yyh+mjtr8OoOA0MpEbFCFunWSbKPcHZiE=
+	t=1718787122; cv=none; b=BpfzOwF0jfnzsMLNvjmP9f4pmD87pVaJCB1869bFu9bx9rNknnAjqYoX68H7jnOQsEIEJ1D9/YUmh8hBBVQsWCpspCq3vNBDOXm3zG/Ls6QnpfM7atnhw7Z/3kyp9isaCFroBdDYIx2oO4OKRvDX4YPiy0gSEh/86EsUqTh+82w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718787052; c=relaxed/simple;
-	bh=ZCCMGl34xRrIKFTYqowJ46msSrObNO3g4OFsLbjVgBs=;
+	s=arc-20240116; t=1718787122; c=relaxed/simple;
+	bh=yTW84Rd3+jSNgbXyGVRddFr9tmJfm5gqMbMKa/I78l8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fNFEGQZM58fKi577pvnRiwl/C1dzJ9B2MbDw5lUfvBu4GB4n+NMq1S2bbFMDfFBq1aG/704v1MXaV3llMveHWFfGKA1X5JsJmMSIX0BGr5h0PIoxE7eF0128Z4ju2bOJQnpZwLL13XuKodD35GvhaktPiGCpLJyh8T9DtdVY4GQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i5IqqHzz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C2D9C2BBFC;
-	Wed, 19 Jun 2024 08:50:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718787051;
-	bh=ZCCMGl34xRrIKFTYqowJ46msSrObNO3g4OFsLbjVgBs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i5IqqHzzyDvvOl6iLxEDIR5dMU74s6v2Y4FQ5uVlOuLUiiUQEkqvRWeVfyIC7XzW0
-	 LSe0P0Q91bQI3evoiNVkNgM+k81s2N6bhKzUZVpqsdcMt0dt948OKkIxsRkBopabvk
-	 ft4Fr0mVgNal3jNL5yVseCX+4FyOE5ui0YNo0UmxVecFAd8IDqO8XeGJcmgtp7MB5U
-	 dKjJZvfAGBODt7Y+t36+YK0RkrynGueLxL3lA45XhexXMgU0+KtT9ymog3h4qBpVNN
-	 4Pqs7iDuITxq/9wDCEqyCuNY49ITHpXtzWx/dGghtjg6TVm2luxTUxzz5bV7J5zZCl
-	 daMrlyGnuIVTQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sJr1m-000000003N9-3viY;
-	Wed, 19 Jun 2024 10:50:51 +0200
-Date: Wed, 19 Jun 2024 10:50:50 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Rob Herring <robh@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>
-Subject: Re: [PATCH v4 0/8] serial: qcom-geni: Overhaul TX handling to fix
- crashes/hangs
-Message-ID: <ZnKb6oMGcA-tWtxy@hovoldconsulting.com>
-References: <20240610222515.3023730-1-dianders@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GmBTwscmCLunqECRlSXqep6wpAY9H2tHWNojk/wdUDLjk0J4yVSNLKs/gmVCFrjUvPVE4atpRjLLTBJstmS3/dznH9bnqLreej3iPPxY8nMTw6EYBECZzgfd/1qDN0ubRlK8nYaTcpf/xJPwoHVonsrYyskdjfs3SKaZ9lRjH9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 519BC1C00A4; Wed, 19 Jun 2024 10:51:52 +0200 (CEST)
+Date: Wed, 19 Jun 2024 10:51:51 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 5.10 000/770] 5.10.220-rc1 review
+Message-ID: <ZnKcJ0722Gn7nL1i@duo.ucw.cz>
+References: <20240618123407.280171066@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8F2IxwsITKFUDXt5"
+Content-Disposition: inline
+In-Reply-To: <20240618123407.280171066@linuxfoundation.org>
+
+
+--8F2IxwsITKFUDXt5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240610222515.3023730-1-dianders@chromium.org>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Doug,
+Hi!
 
-and sorry about the late feedback on this (was out of office last
-week).
+> This is the start of the stable review cycle for the 5.10.220 release.
+> There are 770 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-On Mon, Jun 10, 2024 at 03:24:18PM -0700, Douglas Anderson wrote:
-> 
-> While trying to reproduce -EBUSY errors that our lab was getting in
-> suspend/resume testing, I ended up finding a whole pile of problems
-> with the Qualcomm GENI serial driver. I've posted a fix for the -EBUSY
-> issue separately [1]. This series is fixing all of the Qualcomm GENI
-> problems that I found.
-> 
-> As far as I can tell most of the problems have been in the Qualcomm
-> GENI serial driver since inception, but it can be noted that the
-> behavior got worse with the new kfifo changes. Previously when the OS
-> took data out of the circular queue we'd just spit stale data onto the
-> serial port. Now we'll hard lockup. :-P
+Mentioning motivation behind 800 nfs patches would be welcome here.
 
-Thanks for taking a stab at this. This is indeed a known issue that has
-been on my ever growing TODO list for over a year now. I worked around a
-related regression with:
+CIP testing did not find any problems here:
 
-	9aff74cc4e9e ("serial: qcom-geni: fix console shutdown hang")
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+5.10.y
 
-but noticed that the underlying bug can still easily be triggered, for
-example, using software flow control in a serial console.
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
 
-With 6.10-rc1 I started hitting this hang on every reboot. I was booting
-the new x1e80100 so wasn't sure at first what caused it, but after
-triggering the hang by interrupting a dmesg command I remembered the
-broken serial driver and indeed your (v2) series fixed the regression
-which was also present on sc8280xp.
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
-I did run a quick benchmark this morning to see if there was any
-significant performance penalty and I am seeing a 26% slow down (e.g.
-catting 544 kB takes 68 instead of 54 seconds at 115200).
+--8F2IxwsITKFUDXt5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I've had a feeling that boot was slower with the series applied, but I
-haven't verified that (just printing dmesg takes an extra second,
-though).
+-----BEGIN PGP SIGNATURE-----
 
-Correctness first, of course, but perhaps something can be done about
-that too.
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZnKcJwAKCRAw5/Bqldv6
+8m/2AKCr33N3KeC1NPRzbbrsLEZFIf7uXACdGm0mhK5L9yMH68fN4CgwKNoCIqU=
+=5noE
+-----END PGP SIGNATURE-----
 
-I'll comment on the individual patches as well, but for now:
-
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
-
-(I did a quick test with Bluetooth / DMA as well.)
-
-Johan
+--8F2IxwsITKFUDXt5--
 
