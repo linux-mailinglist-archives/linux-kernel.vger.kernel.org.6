@@ -1,165 +1,141 @@
-Return-Path: <linux-kernel+bounces-221859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF0F90F9A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:07:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD7B190F9AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBFE41C2179B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:07:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E33251C21FE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7DB15D5AA;
-	Wed, 19 Jun 2024 23:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB51F15B15F;
+	Wed, 19 Jun 2024 23:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MrwsdxZY"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HpiA7VKV"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD7615B98B;
-	Wed, 19 Jun 2024 23:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41F4C2FC;
+	Wed, 19 Jun 2024 23:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718838447; cv=none; b=s/DXwNRmwj7AgDvM95yl0LVVEV3K6D6KyYQdAm6ZClTI7PPrYdP5zuLTo85y69kX8lBlic2F84NMjyCh6fzHFOw71/4V1DvQJcmEcLJE6QjeBY4+GxyG9J1pVmKV5Um55wgXVg/1L/66UgWmfy0vceYIplzIlhUlETFWSy7Ynuw=
+	t=1718838837; cv=none; b=nsTFFpkbPYr7IsYf+/BCe0r4siY/J2pHF63kCpROOowZxbgzT39AgdxikLJuRcWcW4oFY5zD8rNhZJRTP+5XPSLNcc7wVow9gWtK3rb5FoQy5u9T/C2gHQkEPYrOFWrsSPU7HtI05n3J9W21iuMIgzkDoDENYmowwACIm5a1Cv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718838447; c=relaxed/simple;
-	bh=gkaLVKEUL3lbPtEZ2EXss+0oLV810gqFDcmSVpCYBVk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f9miaIqj2DEyXYrjZbOS/E7PMDCbLEJzIIWP/vDyLxi3xZGfOf7HyKSKQTGYopvgkISVJBZ7F8zBHaytcZUpHt8QIic1rVzeGtHOCzZjGrGdXIPzoUaDXoFA6iXBKgw5zllwVwG9/5eS/YbkCt/cGTiNsmJNhMg7+dOxHIcZnMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MrwsdxZY; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-705d9f4cd7bso300948b3a.1;
-        Wed, 19 Jun 2024 16:07:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718838445; x=1719443245; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qN8gPqKBPJkUNHcQlK7Q4bJYi1fFC2bhS3Wri9N3oWI=;
-        b=MrwsdxZYWfVjuqIdRgzK9ojp/dmJ4tQy4CvYTe1D0xT4Qj3awQBtep5ilxYG6mOSKZ
-         d1Nb9B4SC0eSt6zaV4Ydj5MI4HAZprs5RlGdGyZhSmxyH9aVwI/f9OrmKdH7WaQPLFDk
-         Lonk/hh5zCl11rrvsaSg5AYajHASgeBRyusjkGTiXe82+u5CB4PgSEDztL0m/8flhLdR
-         Mi67ye+XBxUPmi+CfpZjLlkNMby47xNZ5NDgjnx9x4aC7mm1tbj7XAxe+XSwEq3adBV8
-         BbJPmIqwUX7Mezz7dCN5U20wprOODQvNUmYi6YItkowi7huPNin3C619y6TCdlxdtQQ1
-         Fvig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718838445; x=1719443245;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qN8gPqKBPJkUNHcQlK7Q4bJYi1fFC2bhS3Wri9N3oWI=;
-        b=DQKS/0+zxUCY5Hv2gQdEbcAINhET4Hqful3zDQT+SBPYi9GSm4fWzPqs9n8GL545fU
-         EcpGe2uQrWrOsWpag7bvzpYt7B0jj5716QXrQ52EuG0nkW8bSPwwzJPZBtf8vSAc8EGu
-         F/8RgrokJO4oSEcX9UF6yuAZUSxuFEh+w3MFf4yX1YN9UgFVK4ZBH/bd8bUZLCHEqpzm
-         IFA7qnM5WPAI1MPB2U/HculH/Pmp4PRs8NlglR8xwY8Yu4Sos9/ymrEcCKqEeQVwsVzE
-         d2AfsjdBHurJCrjrq2HTdN5Ob1rTvFqgSB13hWFAdrEb6Fr0bvGOqEZRJSMqa0MR/cr/
-         MeXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZq82oO6BVUj8/pUEUjMLlOPzLAJJiwhqxlbuKyaF6cLqQJLkGzq56YAeaOeHOGRz8orwh7LITkM1HI6RXplHMzPFvz52QwBCB+l7q9xWguaR+WwnxaSa+248+8Lqt215pxuvRKXEUccfbdlAmPLzrRRUsJRrNYQYhsYOuXfaxYiWa
-X-Gm-Message-State: AOJu0Yw62RU1ltycIcyWUD5bSp9Cukk/n7Xevl+N7/Jpyspw2aF0byYD
-	5Di0e4l4CZwx0kXEuHBD51a9fEc1GEi4MiRTIzv3Q2Y8Q6RbkG/W
-X-Google-Smtp-Source: AGHT+IFlePG119J2Dj5ca4f+myd0lorlQ73LIGPhBojW7JeYQ3rVUmsG0e5p0gs+gwyLEAV1hPUE5A==
-X-Received: by 2002:aa7:9a5c:0:b0:705:d988:f05d with SMTP id d2e1a72fcca58-70629cedb71mr3846714b3a.28.1718838445167;
-        Wed, 19 Jun 2024 16:07:25 -0700 (PDT)
-Received: from localhost.localdomain (140-211-169-189-openstack.osuosl.org. [140.211.169.189])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705e5fbe103sm8101558b3a.72.2024.06.19.16.07.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 16:07:24 -0700 (PDT)
-From: Zhouyi Zhou <zhouzhouyi@gmail.com>
-To: paulmck@kernel.org,
-	linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	lance@osuosl.org,
-	mark.rutland@arm.com
-Cc: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Subject: [PATCH V4] rcutorture: Add CFcommon.arch for the various arch's need
-Date: Wed, 19 Jun 2024 23:06:58 +0000
-Message-Id: <20240619230658.805185-1-zhouzhouyi@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718838837; c=relaxed/simple;
+	bh=T/PslGIW1KV8oOz5+52ktPpAOmgftn6/F4FjPEI2Nt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EOi2q8iLue4pJoG6yVjBbcGzpnWAU7it2rGcVeE9CNnB3O3HcVMfVnIcvpfxZGQJqI08/v9AGxmEC8FvV6WKOuYWRmSuM0wfvtwer74faFWFqadvPNjeGSQOC8PRK5ySq9NJJKXjrHebMwx/kro5IsV//YtsRPKIpBbN21oAzyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HpiA7VKV; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Qj6mjjBSg8sx2QqOSj72ZERLwLtr27wz6L+Qn/QniuI=; b=HpiA7VKVLxR+26EUaKUgi4g6xT
+	99NdHmfT2ejkpZthNu15wMhmWhaOei7+08Ph0J/jbz9ZQ9j6eQRoEZt73Md0HhMmdRjqaMpS+JLd+
+	1SIH67tmEQ2uQnDygYet6csedm9moex3fXp/Q912vfhnj4obzvQCRZHmd3DCu33KjgnI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sK4Uf-000W73-R3; Thu, 20 Jun 2024 01:13:33 +0200
+Date: Thu, 20 Jun 2024 01:13:33 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com,
+	Andrew Halaney <ahalaney@redhat.com>, linux-arm-msm@vger.kernel.org,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] net: stmmac: Add interconnect support in qcom-ethqos
+ driver
+Message-ID: <159700cc-f46c-4f70-82aa-972ba6e904ca@lunn.ch>
+References: <20240619-icc_bw_voting_from_ethqos-v1-0-6112948b825e@quicinc.com>
+ <20240619-icc_bw_voting_from_ethqos-v1-1-6112948b825e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619-icc_bw_voting_from_ethqos-v1-1-6112948b825e@quicinc.com>
 
-Add CFcommon.arch for the various arch's need for rcutorture.
-    
-In accordance with [1], [2] and [3], move x86 specific kernel option
-CONFIG_HYPERVISOR_GUEST to CFcommon.arch, also move kernel option
-CONFIG_KVM_GUEST which only exists on x86 & PowerPC to CFcommon.arch. 
-    
-[1] https://lore.kernel.org/all/20240427005626.1365935-1-zhouzhouyi@gmail.com/
-[2] https://lore.kernel.org/all/059d36ce-6453-42be-a31e-895abd35d590@paulmck-laptop/
-[3] https://lore.kernel.org/all/ZnBkHosMDhsh4H8g@J2N7QTR9R3/
-    
-Tested in x86_64 and PPC VM of Open Source Lab of Oregon State University.
-   
-Fixes: a6fda6dab93c ("rcutorture: Tweak kvm options")
-Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>
----
- tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh        | 2 ++
- tools/testing/selftests/rcutorture/configs/rcu/CFcommon         | 2 --
- tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686    | 2 ++
- tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le | 1 +
- tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64  | 2 ++
- 5 files changed, 7 insertions(+), 2 deletions(-)
- create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
- create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le
- create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
+On Wed, Jun 19, 2024 at 03:41:29PM -0700, Sagar Cheluvegowda wrote:
+> Add interconnect support in qcom-ethqos driver to vote for bus
+> bandwidth based on the current speed of the driver.
+> This change adds support for two different paths - one from ethernet
+> to DDR and the other from Apps to ethernet.
 
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-index b33cd8753689..ad79784e552d 100755
---- a/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-+++ b/tools/testing/selftests/rcutorture/bin/kvm-test-1-run.sh
-@@ -68,6 +68,8 @@ config_override_param "--gdb options" KcList "$TORTURE_KCONFIG_GDB_ARG"
- config_override_param "--kasan options" KcList "$TORTURE_KCONFIG_KASAN_ARG"
- config_override_param "--kcsan options" KcList "$TORTURE_KCONFIG_KCSAN_ARG"
- config_override_param "--kconfig argument" KcList "$TORTURE_KCONFIG_ARG"
-+config_override_param "$config_dir/CFcommon.$(uname -m)" KcList \
-+		      "`cat $config_dir/CFcommon.$(uname -m) 2> /dev/null`"
- cp $T/KcList $resdir/ConfigFragment
- 
- base_resdir=`echo $resdir | sed -e 's/\.[0-9]\+$//'`
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-index 0e92d85313aa..217597e84905 100644
---- a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon
-@@ -1,7 +1,5 @@
- CONFIG_RCU_TORTURE_TEST=y
- CONFIG_PRINTK_TIME=y
--CONFIG_HYPERVISOR_GUEST=y
- CONFIG_PARAVIRT=y
--CONFIG_KVM_GUEST=y
- CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC=n
- CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=n
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
-new file mode 100644
-index 000000000000..d8b2f555686f
---- /dev/null
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.i686
-@@ -0,0 +1,2 @@
-+CONFIG_HYPERVISOR_GUEST=y
-+CONFIG_KVM_GUEST=y
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le
-new file mode 100644
-index 000000000000..133da04247ee
---- /dev/null
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.ppc64le
-@@ -0,0 +1 @@
-+CONFIG_KVM_GUEST=y
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64 b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
-new file mode 100644
-index 000000000000..d8b2f555686f
---- /dev/null
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/CFcommon.x86_64
-@@ -0,0 +1,2 @@
-+CONFIG_HYPERVISOR_GUEST=y
-+CONFIG_KVM_GUEST=y
--- 
-2.39.2
+What do you mean by Apps?
 
+> Vote from each interconnect client is aggregated and the on-chip
+> interconnect hardware is configured to the most appropriate
+> bandwidth profile.
+> 
+> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+> ---
+>  .../net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c   | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> index e254b21fdb59..682e68f37dbd 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/phy.h>
+>  #include <linux/phy/phy.h>
+> +#include <linux/interconnect.h>
+
+If you look at these includes, you should notice they are
+alphabetical.
+
+> +static void ethqos_set_icc_bw(struct qcom_ethqos *ethqos, unsigned int speed)
+> +{
+> +	icc_set_bw(ethqos->axi_icc_path, Mbps_to_icc(speed), Mbps_to_icc(speed));
+> +	icc_set_bw(ethqos->ahb_icc_path, Mbps_to_icc(speed), Mbps_to_icc(speed));
+> +}
+> +
+>  static void ethqos_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
+>  {
+>  	struct qcom_ethqos *ethqos = priv;
+>  
+>  	ethqos->speed = speed;
+>  	ethqos_update_link_clk(ethqos, speed);
+> +	ethqos_set_icc_bw(ethqos, speed);
+>  	ethqos_configure(ethqos);
+>  }
+>  
+> @@ -813,6 +824,14 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
+>  		return dev_err_probe(dev, PTR_ERR(ethqos->link_clk),
+>  				     "Failed to get link_clk\n");
+>  
+> +	ethqos->axi_icc_path = devm_of_icc_get(dev, "axi_icc_path");
+> +	if (IS_ERR(ethqos->axi_icc_path))
+> +		return PTR_ERR(ethqos->axi_icc_path);
+> +
+> +	ethqos->ahb_icc_path = devm_of_icc_get(dev, "ahb_icc_path");
+> +	if (IS_ERR(ethqos->axi_icc_path))
+> +		return PTR_ERR(ethqos->axi_icc_path);
+> +
+
+This all looks pretty generic. Any reason why this is just in the
+Qualcomm device, and not at a higher level so it could be used for all
+stmmac devices if the needed properties are found in DT?
+
+       Andrew
 
