@@ -1,341 +1,678 @@
-Return-Path: <linux-kernel+bounces-221812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E7790F8F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:31:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EEA790F8FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 292661F2243A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:31:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D81151F233A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740C715B142;
-	Wed, 19 Jun 2024 22:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34A846BF;
+	Wed, 19 Jun 2024 22:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cCqSVVAG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITvcNCzX"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F9B46BF;
-	Wed, 19 Jun 2024 22:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A7A15B14C;
+	Wed, 19 Jun 2024 22:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718836244; cv=none; b=SVhKLupOKJMr4oevwCIJX0+EkLwgkG0oz/cgOpmGwleMSVI24ZeJRbLy5JNK1p9210GQayMuqhaQh+o8nRMC13sxLSMTzHf15D1OSmBFLy/6mU6sWVEXYWFFQ1FHz8/h2VGSILou9yXLMvxDJm3p6grAkf2PS8OTfEohIXIqFYk=
+	t=1718836249; cv=none; b=edDWGtE+yIEu8PaeZPc4bQVdviZ1qj1/OdpBpCu9A4Z+KNBNjRuAaQB6xh0RqtGCRFD1HH2hDGg0T4Y1pdlhhF2N7z6BMgtqXiggyxt7eCEFU5uReMBEMJtLoNqayDUjkxTWNsUIsEHRDnuhRDcOTT2ezD8p/Mo+xccPFks02Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718836244; c=relaxed/simple;
-	bh=gzMFBPpBlk/r4Pnb3CSznRqun7AGqPGMwLCef6y0ydg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aeOA/jnsBmQoJ7ECKAyj2VUjeCQGlgn8V/i1zhiNyCp2yNrLakX274XopRJ5PBAOwyVT1wOnBbZrGyTEB/A7Tn/+FiTuwZkzbRMrL1VOkkIfRC22yBZE8Xixei85IlMJAcmUWZ6jq3d+/0wLH2Gwm78+0RZ1Wc3xxUE2yeaTNgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cCqSVVAG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9mpNA000504;
-	Wed, 19 Jun 2024 22:30:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gzMFBPpBlk/r4Pnb3CSznRqun7AGqPGMwLCef6y0ydg=; b=cCqSVVAGXXicSrMl
-	I///EIC5BoMijI0J/vrb34u68/ezWi/vlzO0O+AeFMcWFvjUcEZVc/JDuS74HSJc
-	m63r8JBza2NoGtFL1WibFLHdBeK+hLTApBqtv4c91TMwrzHBL+tnzNynCE7HGrRN
-	an1RpbuqUG5ItzaE6cCmQXklsakRVbdPXbNdS9Qa9Oz0RiDSdQGisGqV2JCUK4ee
-	2IdetR40Xqk0RoXeykQtw+L8p5V/BLgCfr9RbWkJ+fC2w/f7mwgRxiDnH/f9Vavn
-	wHVXxn1kkMVYRfH6ejXfq0DD7l5Ev1QpuYfijvMnHc6CMQ2I5K0GpxK++1kGUZbK
-	7ZmxRw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yujag2ucn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 22:30:13 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JMUCQe021799
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 22:30:12 GMT
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 19 Jun 2024 15:30:07 -0700
-Received: from nalasex01a.na.qualcomm.com ([fe80::62ba:cee1:5495:c89]) by
- nalasex01a.na.qualcomm.com ([fe80::62ba:cee1:5495:c89%4]) with mapi id
- 15.02.1544.009; Wed, 19 Jun 2024 15:30:07 -0700
-From: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>
-To: "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>
-CC: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "andersson@kernel.org" <andersson@kernel.org>,
-        "ebiggers@google.com"
-	<ebiggers@google.com>,
-        "neil.armstrong@linaro.org"
-	<neil.armstrong@linaro.org>,
-        srinivas.kandagatla
-	<srinivas.kandagatla@linaro.org>,
-        "krzysztof.kozlowski+dt@linaro.org"
-	<krzysztof.kozlowski+dt@linaro.org>,
-        "conor+dt@kernel.org"
-	<conor+dt@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        kernel
-	<kernel@quicinc.com>,
-        "linux-crypto@vger.kernel.org"
-	<linux-crypto@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "Om Prakash Singh (QUIC)"
-	<quic_omprsing@quicinc.com>,
-        "Bao D. Nguyen (QUIC)"
-	<quic_nguyenb@quicinc.com>,
-        bartosz.golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        "konrad.dybcio@linaro.org"
-	<konrad.dybcio@linaro.org>,
-        "ulf.hansson@linaro.org"
-	<ulf.hansson@linaro.org>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "mani@kernel.org"
-	<mani@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        Prasad Sodagudi
-	<psodagud@quicinc.com>,
-        Sonal Gupta <sonalg@quicinc.com>
-Subject: RE: [PATCH v5 04/15] soc: qcom: ice: add hwkm support in ice
-Thread-Topic: [PATCH v5 04/15] soc: qcom: ice: add hwkm support in ice
-Thread-Index: AQHawFGQ2Cb4IdeC1UawBk8ySHD6CrHMC+2AgAKAhjCAAAKiAIABGqdw
-Date: Wed, 19 Jun 2024 22:30:06 +0000
-Message-ID: <3a15df00a2714b40aba4ebc43011a7b6@quicinc.com>
-References: <20240617005825.1443206-1-quic_gaurkash@quicinc.com>
- <20240617005825.1443206-5-quic_gaurkash@quicinc.com>
- <3eehkn3cdhhjfqtzpahxhjxtu5uqwhntpgu22k3hknctrop3g5@f7dhwvdvhr3k>
- <96e2ce4b154a4f918be0bc2a45011e6d@quicinc.com>
- <CAA8EJppGpv7N_JQQNJZrbngBBdEKZfuqutR9MPnS1R_WqYNTQw@mail.gmail.com>
-In-Reply-To: <CAA8EJppGpv7N_JQQNJZrbngBBdEKZfuqutR9MPnS1R_WqYNTQw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1718836249; c=relaxed/simple;
+	bh=9YIb5OS+BHYwjeZ2kz75aEiIqfxIjvjTWF70v22zDH0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tYkgWmZ1bMcuZplzfF50gD+aR98ZEZS270kA/CsSwBkU0hSMJ+KHY9omVwfQArb08oCh8hVKnP9RUl2wBl6hc8eigqQor3UFvsOhv/LgYGocNfqviW8OTqJXdo9Ut6csAQu+9lM+BYwHGo+brxFx3Y2eIJKayAjGWcwchrniIcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ITvcNCzX; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-713fa1aea36so40097a12.1;
+        Wed, 19 Jun 2024 15:30:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718836247; x=1719441047; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=csI2H+Rs6bIctYJIqmJF7l1t4vY//7FkqN3R5aHNSgk=;
+        b=ITvcNCzXRxh03aqHBDfnEby+u/5sWUmn7dN2xBaGWy+36C+IHM8h9zsH0BvpjIIo/D
+         Dy/II2UpC2y6LnFVW/vWvVpW8qB+cRqgZbGnek5oo+enamqG0/QBtbTzN+YnM/uisZgz
+         YrnUyLFezn1hjXDnCaGPvJWoODn4/xG043CBCFgHRpK1Y7tiiDWjYdjXA27JTlscOorv
+         ww0yNizDmQ1D86+9/peGe7jhBcIFESxqioCf26llp8cciaOadVe1q+FIEWyxbuJRLQPu
+         TVFepaPJ2LmWO5CFa0ihW44GTa8H9RIvXESLLrg+D9ZZ9ClEEoY+6Ul7tggdKOhTAxPV
+         d+kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718836247; x=1719441047;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=csI2H+Rs6bIctYJIqmJF7l1t4vY//7FkqN3R5aHNSgk=;
+        b=dHvIiuNBtiNoB/iZhjOfwsA5xKeNMMWmp8UGAJMOrw7exGHyKFBKLEfOOwPzkxbFEG
+         WQfz3E9WRpPXJj81GJ0O2UslpbCdm5LI69IQNrwNFyp2MTrtNZe5uhw8vrT1wqRpO1HJ
+         Nzyh8saUWzxnrlWUytMJZVkI7t8n8njTdMi8Rxgo6eW2y1KSJ7+spJF/4p/4fDUHLTJR
+         Eu0fJQR+DOcZws5MJxKAfw4uIpx40V1Gwb+uKHkW1SVnzCmyEM+k8sigaMufCNzRtOfF
+         nakMs24iVH+ucVShqupU2mLGEzcuAFCBhjh9NExkJRqu1XUwH0pQyDphC1191kUyZD0k
+         LVSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUiQUNI+zq6pg9xe852Y+5mCCi04KzQvvH+JEXe7jlxlF41u99awK7+HYNbK84v/Z4ANo94xW7eELhWmcwuDmLzeyTzX5QfvBCfEVBV+spc8L3h33e3AdY6DAIPTo8q7vXrP988JHvvgxHs1l1dWhKQW1o9RRcxzgY/ueP4DKkMlBhXFRQGd2LRvol
+X-Gm-Message-State: AOJu0YwIsbIRemNna7hdv/rTbFlrqMp3/EYKHsgNasJZkHcQOIyhwDjk
+	K1BAc/3aS82v22QtLy4moCtXZp9yb/xrw8hJhCGJ4ZtbNhc1NLgEpCfsxdDp
+X-Google-Smtp-Source: AGHT+IFsx0FI/S5AkoRdVDrjyUsGVQ7lVBP7G3kthNgbWkWiX4OPsm0vL8MNuf62qFLAWiHCC+hepQ==
+X-Received: by 2002:a05:6a20:c11a:b0:1b5:4c70:d688 with SMTP id adf61e73a8af0-1bcbb3dcb94mr3732697637.3.1718836246544;
+        Wed, 19 Jun 2024 15:30:46 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fedf3a34ddsm8729111a12.48.2024.06.19.15.30.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 15:30:46 -0700 (PDT)
+Date: Wed, 19 Jun 2024 16:30:43 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev,
+	netdev@vger.kernel.org
+Subject: [PATCH v4] landlock: Add abstract unix socket connect restriction
+Message-ID: <ZnNcE3ph2SWi1qmd@tahera-OptiPlex-5000>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kACAm74VlXbTYgflfSZ8_YBPOPohwyAp
-X-Proofpoint-ORIG-GUID: kACAm74VlXbTYgflfSZ8_YBPOPohwyAp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- clxscore=1015 impostorscore=0 suspectscore=0 adultscore=0 spamscore=0
- malwarescore=0 phishscore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406190169
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-SGVsbG8gRG1pdHJ5DQoNCk9uIDA2LzE4LzIwMjQgMzoxNyBQTSBQRFQsIERtaXRyeSBCYXJ5c2hr
-b3Ygd3JvdGU6DQo+IE9uIFdlZCwgMTkgSnVuIDIwMjQgYXQgMDE6MDcsIEdhdXJhdiBLYXNoeWFw
-IChRVUlDKQ0KPiA8cXVpY19nYXVya2FzaEBxdWljaW5jLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBI
-ZWxsbyBEbWl0cnksDQo+ID4NCj4gPiBPbiAwNi8xNy8yMDI0IDEyOjU1IEFNIFBEVCwgRG1pdHJ5
-IEJhcnlzaGtvdiB3cm90ZToNCj4gPiA+IE9uIFN1biwgSnVuIDE2LCAyMDI0IGF0IDA1OjUwOjU5
-UE0gR01ULCBHYXVyYXYgS2FzaHlhcCB3cm90ZToNCj4gPiA+ID4gUXVhbGNvbW0ncyBJQ0UgKElu
-bGluZSBDcnlwdG8gRW5naW5lKSBjb250YWlucyBhIHByb3ByaWV0YXJ5IGtleQ0KPiA+ID4gPiBt
-YW5hZ2VtZW50IGhhcmR3YXJlIGNhbGxlZCBIYXJkd2FyZSBLZXkgTWFuYWdlciAoSFdLTSkuDQo+
-ID4gPiA+IFRoaXMgcGF0Y2ggaW50ZWdyYXRlcyBIV0tNIHN1cHBvcnQgaW4gSUNFIHdoZW4gaXQg
-aXMgYXZhaWxhYmxlLg0KPiA+ID4gPiBIV0tNIHByaW1hcmlseSBwcm92aWRlcyBoYXJkd2FyZSB3
-cmFwcGVkIGtleSBzdXBwb3J0IHdoZXJlIHRoZQ0KPiBJQ0UNCj4gPiA+ID4gKHN0b3JhZ2UpIGtl
-eXMgYXJlIG5vdCBhdmFpbGFibGUgaW4gc29mdHdhcmUgYW5kIHByb3RlY3RlZCBpbg0KPiA+ID4g
-PiBoYXJkd2FyZS4NCj4gPiA+ID4NCj4gPiA+ID4gV2hlbiBIV0tNIHNvZnR3YXJlIHN1cHBvcnQg
-aXMgbm90IGZ1bGx5IGF2YWlsYWJsZSAoZnJvbQ0KPiA+ID4gPiBUcnVzdHpvbmUpLCB0aGVyZSBj
-YW4gYmUgYSBzY2VuYXJpbyB3aGVyZSB0aGUgSUNFIGhhcmR3YXJlDQo+ID4gPiA+IHN1cHBvcnRz
-IEhXS00sIGJ1dCBpdCBjYW5ub3QgYmUgdXNlZCBmb3Igd3JhcHBlZCBrZXlzLiBJbiB0aGlzDQo+
-ID4gPiA+IGNhc2UsIHN0YW5kYXJkIGtleXMgaGF2ZSB0byBiZSB1c2VkIHdpdGhvdXQgdXNpbmcg
-SFdLTS4gSGVuY2UsDQo+ID4gPiA+IHByb3ZpZGluZyBhIHRvZ2dsZSBjb250cm9sbGVkIGJ5IGEg
-ZGV2aWNldHJlZSBlbnRyeSB0byB1c2UgSFdLTSBvciBub3QuDQo+ID4gPiA+DQo+ID4gPiA+IFRl
-c3RlZC1ieTogTmVpbCBBcm1zdHJvbmcgPG5laWwuYXJtc3Ryb25nQGxpbmFyby5vcmc+DQo+ID4g
-PiA+IFNpZ25lZC1vZmYtYnk6IEdhdXJhdiBLYXNoeWFwIDxxdWljX2dhdXJrYXNoQHF1aWNpbmMu
-Y29tPg0KPiA+ID4gPiAtLS0NCj4gPiA+ID4gIGRyaXZlcnMvc29jL3Fjb20vaWNlLmMgfCAxNTMN
-Cj4gPiA+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tDQo+ID4gPiA+
-ICBpbmNsdWRlL3NvYy9xY29tL2ljZS5oIHwgICAxICsNCj4gPiA+ID4gIDIgZmlsZXMgY2hhbmdl
-ZCwgMTUwIGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+ID4gPiA+DQo+ID4gPiA+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL3NvYy9xY29tL2ljZS5jIGIvZHJpdmVycy9zb2MvcWNvbS9pY2Uu
-YyBpbmRleA0KPiA+ID4gPiA2Zjk0MWQzMmZmZmIuLmQ1ZTc0Y2YyOTQ2YiAxMDA2NDQNCj4gPiA+
-ID4gLS0tIGEvZHJpdmVycy9zb2MvcWNvbS9pY2UuYw0KPiA+ID4gPiArKysgYi9kcml2ZXJzL3Nv
-Yy9xY29tL2ljZS5jDQo+ID4gPiA+IEBAIC0yNiw2ICsyNiw0MCBAQA0KPiA+ID4gPiAgI2RlZmlu
-ZSBRQ09NX0lDRV9SRUdfRlVTRV9TRVRUSU5HICAgICAgICAgICAgMHgwMDEwDQo+ID4gPiA+ICAj
-ZGVmaW5lIFFDT01fSUNFX1JFR19CSVNUX1NUQVRVUyAgICAgICAgICAgICAweDAwNzANCj4gPiA+
-ID4gICNkZWZpbmUgUUNPTV9JQ0VfUkVHX0FEVkFOQ0VEX0NPTlRST0wgICAgICAgICAgICAgICAg
-MHgxMDAwDQo+ID4gPiA+ICsjZGVmaW5lIFFDT01fSUNFX1JFR19DT05UUk9MICAgICAgICAgICAg
-ICAgICAweDANCj4gPiA+ID4gKy8qIFFDT00gSUNFIEhXS00gcmVnaXN0ZXJzICovDQo+ID4gPiA+
-ICsjZGVmaW5lIFFDT01fSUNFX1JFR19IV0tNX1RaX0tNX0NUTCAgICAgICAgICAgICAgICAgIDB4
-MTAwMA0KPiA+ID4gPiArI2RlZmluZSBRQ09NX0lDRV9SRUdfSFdLTV9UWl9LTV9TVEFUVVMgICAg
-ICAgICAgICAgICAgICAgICAgIDB4MTAwNA0KPiA+ID4gPiArI2RlZmluZSBRQ09NX0lDRV9SRUdf
-SFdLTV9CQU5LMF9CQU5LTl9JUlFfU1RBVFVTDQo+IDB4MjAwOA0KPiA+ID4gPiArI2RlZmluZSBR
-Q09NX0lDRV9SRUdfSFdLTV9CQU5LMF9CQkFDXzAgICAgICAgICAgICAgICAgICAgICAgIDB4NTAw
-MA0KPiA+ID4gPiArI2RlZmluZSBRQ09NX0lDRV9SRUdfSFdLTV9CQU5LMF9CQkFDXzEgICAgICAg
-ICAgICAgICAgICAgICAgIDB4NTAwNA0KPiA+ID4gPiArI2RlZmluZSBRQ09NX0lDRV9SRUdfSFdL
-TV9CQU5LMF9CQkFDXzIgICAgICAgICAgICAgICAgICAgICAgIDB4NTAwOA0KPiA+ID4gPiArI2Rl
-ZmluZSBRQ09NX0lDRV9SRUdfSFdLTV9CQU5LMF9CQkFDXzMgICAgICAgICAgICAgICAgICAgICAg
-IDB4NTAwQw0KPiA+ID4gPiArI2RlZmluZSBRQ09NX0lDRV9SRUdfSFdLTV9CQU5LMF9CQkFDXzQg
-ICAgICAgICAgICAgICAgICAgICAgIDB4NTAxMA0KPiA+ID4gPiArDQo+ID4gPiA+ICsvKiBRQ09N
-IElDRSBIV0tNIHJlZyB2YWxzICovDQo+ID4gPiA+ICsjZGVmaW5lIFFDT01fSUNFX0hXS01fQklT
-VF9ET05FX1YxICAgICAgICAgICBCSVQoMTYpDQo+ID4gPiA+ICsjZGVmaW5lIFFDT01fSUNFX0hX
-S01fQklTVF9ET05FX1YyICAgICAgICAgICBCSVQoOSkNCj4gPiA+ID4gKyNkZWZpbmUgUUNPTV9J
-Q0VfSFdLTV9CSVNUX0RPTkUodmVyKQ0KPiA+ID4gUUNPTV9JQ0VfSFdLTV9CSVNUX0RPTkVfViMj
-dmVyDQo+ID4gPiA+ICsNCj4gPiA+ID4gKyNkZWZpbmUgUUNPTV9JQ0VfSFdLTV9DUllQVE9fQklT
-VF9ET05FX1YxICAgICAgICAgICAgQklUKDE0KQ0KPiA+ID4gPiArI2RlZmluZSBRQ09NX0lDRV9I
-V0tNX0NSWVBUT19CSVNUX0RPTkVfVjIgICAgICAgICAgICBCSVQoNykNCj4gPiA+ID4gKyNkZWZp
-bmUgUUNPTV9JQ0VfSFdLTV9DUllQVE9fQklTVF9ET05FKHYpDQo+ID4gPiBRQ09NX0lDRV9IV0tN
-X0NSWVBUT19CSVNUX0RPTkVfViMjdg0KPiA+ID4gPiArDQo+ID4gPiA+ICsjZGVmaW5lIFFDT01f
-SUNFX0hXS01fQk9PVF9DTURfTElTVDFfRE9ORSAgICAgICAgICAgIEJJVCgyKQ0KPiA+ID4gPiAr
-I2RlZmluZSBRQ09NX0lDRV9IV0tNX0JPT1RfQ01EX0xJU1QwX0RPTkUgICAgICAgICAgICBCSVQo
-MSkNCj4gPiA+ID4gKyNkZWZpbmUgUUNPTV9JQ0VfSFdLTV9LVF9DTEVBUl9ET05FICAgICAgICAg
-ICAgICAgICAgQklUKDApDQo+ID4gPiA+ICsNCj4gPiA+ID4gKyNkZWZpbmUgUUNPTV9JQ0VfSFdL
-TV9CSVNUX1ZBTCh2KQ0KPiA+ID4gKFFDT01fSUNFX0hXS01fQklTVF9ET05FKHYpIHwgICAgICAg
-ICAgIFwNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBRQ09N
-X0lDRV9IV0tNX0NSWVBUT19CSVNUX0RPTkUodikgfCAgICAgXA0KPiA+ID4gPiArICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIFFDT01fSUNFX0hXS01fQk9PVF9DTURfTElTVDFf
-RE9ORSB8ICAgICBcDQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgUUNPTV9JQ0VfSFdLTV9CT09UX0NNRF9MSVNUMF9ET05FIHwgICAgIFwNCj4gPiA+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBRQ09NX0lDRV9IV0tNX0tUX0NMRUFS
-X0RPTkUpDQo+ID4gPiA+ICsNCj4gPiA+ID4gKyNkZWZpbmUgUUNPTV9JQ0VfSFdLTV9WMV9TVEFO
-REFSRF9NT0RFX1ZBTCAgIChCSVQoMCkgfA0KPiBCSVQoMSkNCj4gPiA+IHwgQklUKDIpKQ0KPiA+
-ID4gPiArI2RlZmluZSBRQ09NX0lDRV9IV0tNX1YyX1NUQU5EQVJEX01PREVfTUFTSw0KPiA+ID4g
-R0VOTUFTSygzMSwgMSkgI2RlZmluZQ0KPiA+ID4gPiArUUNPTV9JQ0VfSFdLTV9ESVNBQkxFX0NS
-Q19DSEVDS1NfVkFMIChCSVQoMSkgfCBCSVQoMikpDQo+ID4gPiA+ICsjZGVmaW5lIFFDT01fSUNF
-X0hXS01fUlNQX0ZJRk9fQ0xFQVJfVkFMICAgICBCSVQoMykNCj4gPiA+ID4NCj4gPiA+ID4gIC8q
-IEJJU1QgKCJidWlsdC1pbiBzZWxmLXRlc3QiKSBzdGF0dXMgZmxhZ3MgKi8NCj4gPiA+ID4gICNk
-ZWZpbmUgUUNPTV9JQ0VfQklTVF9TVEFUVVNfTUFTSyAgICAgICAgICAgIEdFTk1BU0soMzEsIDI4
-KQ0KPiA+ID4gPiBAQCAtMzQsNiArNjgsOSBAQA0KPiA+ID4gPiAgI2RlZmluZSBRQ09NX0lDRV9G
-T1JDRV9IV19LRVkwX1NFVFRJTkdfTUFTSyAgMHgyICAjZGVmaW5lDQo+ID4gPiA+IFFDT01fSUNF
-X0ZPUkNFX0hXX0tFWTFfU0VUVElOR19NQVNLICAweDQNCj4gPiA+ID4NCj4gPiA+ID4gKyNkZWZp
-bmUgUUNPTV9JQ0VfSFdLTV9SRUdfT0ZGU0VUICAgICAweDgwMDANCj4gPiA+ID4gKyNkZWZpbmUg
-SFdLTV9PRkZTRVQocmVnKSAgICAgICAgICAgICAoKHJlZykgKw0KPiA+ID4gUUNPTV9JQ0VfSFdL
-TV9SRUdfT0ZGU0VUKQ0KPiA+ID4gPiArDQo+ID4gPiA+ICAjZGVmaW5lIHFjb21faWNlX3dyaXRl
-bChlbmdpbmUsIHZhbCwgcmVnKSAgICBcDQo+ID4gPiA+ICAgICAgIHdyaXRlbCgodmFsKSwgKGVu
-Z2luZSktPmJhc2UgKyAocmVnKSkNCj4gPiA+ID4NCj4gPiA+ID4gQEAgLTQ2LDYgKzgzLDkgQEAg
-c3RydWN0IHFjb21faWNlIHsNCj4gPiA+ID4gICAgICAgc3RydWN0IGRldmljZV9saW5rICpsaW5r
-Ow0KPiA+ID4gPg0KPiA+ID4gPiAgICAgICBzdHJ1Y3QgY2xrICpjb3JlX2NsazsNCj4gPiA+ID4g
-KyAgICAgdTggaHdrbV92ZXJzaW9uOw0KPiA+ID4gPiArICAgICBib29sIHVzZV9od2ttOw0KPiA+
-ID4gPiArICAgICBib29sIGh3a21faW5pdF9jb21wbGV0ZTsNCj4gPiA+ID4gIH07DQo+ID4gPiA+
-DQo+ID4gPiA+ICBzdGF0aWMgYm9vbCBxY29tX2ljZV9jaGVja19zdXBwb3J0ZWQoc3RydWN0IHFj
-b21faWNlICppY2UpIEBADQo+ID4gPiA+IC02Myw4DQo+ID4gPiA+ICsxMDMsMjEgQEAgc3RhdGlj
-IGJvb2wgcWNvbV9pY2VfY2hlY2tfc3VwcG9ydGVkKHN0cnVjdCBxY29tX2ljZQ0KPiA+ID4gPiAr
-KmljZSkNCj4gPiA+ID4gICAgICAgICAgICAgICByZXR1cm4gZmFsc2U7DQo+ID4gPiA+ICAgICAg
-IH0NCj4gPiA+ID4NCj4gPiA+ID4gLSAgICAgZGV2X2luZm8oZGV2LCAiRm91bmQgUUMgSW5saW5l
-IENyeXB0byBFbmdpbmUgKElDRSkgdiVkLiVkLiVkXG4iLA0KPiA+ID4gPiAtICAgICAgICAgICAg
-ICBtYWpvciwgbWlub3IsIHN0ZXApOw0KPiA+ID4gPiArICAgICBpZiAobWFqb3IgPj0gNCB8fCAo
-bWFqb3IgPT0gMyAmJiBtaW5vciA9PSAyICYmIHN0ZXAgPj0gMSkpDQo+ID4gPiA+ICsgICAgICAg
-ICAgICAgaWNlLT5od2ttX3ZlcnNpb24gPSAyOw0KPiA+ID4gPiArICAgICBlbHNlIGlmIChtYWpv
-ciA9PSAzICYmIG1pbm9yID09IDIpDQo+ID4gPiA+ICsgICAgICAgICAgICAgaWNlLT5od2ttX3Zl
-cnNpb24gPSAxOw0KPiA+ID4gPiArICAgICBlbHNlDQo+ID4gPiA+ICsgICAgICAgICAgICAgaWNl
-LT5od2ttX3ZlcnNpb24gPSAwOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsgICAgIGlmIChpY2UtPmh3
-a21fdmVyc2lvbiA9PSAwKQ0KPiA+ID4gPiArICAgICAgICAgICAgIGljZS0+dXNlX2h3a20gPSBm
-YWxzZTsNCj4gPiA+ID4gKw0KPiA+ID4gPiArICAgICBkZXZfaW5mbyhkZXYsICJGb3VuZCBRQyBJ
-bmxpbmUgQ3J5cHRvIEVuZ2luZSAoSUNFKQ0KPiA+ID4gPiArIHYlZC4lZC4lZCwNCj4gPiA+IEhX
-S00gdiVkXG4iLA0KPiA+ID4gPiArICAgICAgICAgICAgICBtYWpvciwgbWlub3IsIHN0ZXAsIGlj
-ZS0+aHdrbV92ZXJzaW9uKTsNCj4gPiA+ID4gKw0KPiA+ID4gPiArICAgICBpZiAoIWljZS0+dXNl
-X2h3a20pDQo+ID4gPiA+ICsgICAgICAgICAgICAgZGV2X2luZm8oZGV2LCAiUUMgSUNFIEhXS00g
-KEhhcmR3YXJlIEtleSBNYW5hZ2VyKQ0KPiA+ID4gPiArIG5vdCB1c2VkL3N1cHBvcnRlZCIpOw0K
-PiA+ID4gPg0KPiA+ID4gPiAgICAgICAvKiBJZiBmdXNlcyBhcmUgYmxvd24sIElDRSBtaWdodCBu
-b3Qgd29yayBpbiB0aGUgc3RhbmRhcmQgd2F5LiAqLw0KPiA+ID4gPiAgICAgICByZWd2YWwgPSBx
-Y29tX2ljZV9yZWFkbChpY2UsIFFDT01fSUNFX1JFR19GVVNFX1NFVFRJTkcpOyBAQA0KPiA+ID4g
-PiAtMTEzLDI3ICsxNjYsMTA2IEBAIHN0YXRpYyB2b2lkDQo+ID4gPiA+IHFjb21faWNlX29wdGlt
-aXphdGlvbl9lbmFibGUoc3RydWN0DQo+ID4gPiBxY29tX2ljZSAqaWNlKQ0KPiA+ID4gPiAgICog
-ZmFpbHMsIHNvIHdlIG5lZWRuJ3QgZG8gaXQgaW4gc29mdHdhcmUgdG9vLCBhbmQgKGMpIHByb3Bl
-cmx5IHRlc3RpbmcNCj4gPiA+ID4gICAqIHN0b3JhZ2UgZW5jcnlwdGlvbiByZXF1aXJlcyB0ZXN0
-aW5nIHRoZSBmdWxsIHN0b3JhZ2Ugc3RhY2sgYW55d2F5LA0KPiA+ID4gPiAgICogYW5kIG5vdCBy
-ZWx5aW5nIG9uIGhhcmR3YXJlLWxldmVsIHNlbGYtdGVzdHMuDQo+ID4gPiA+ICsgKg0KPiA+ID4g
-PiArICogSG93ZXZlciwgd2Ugc3RpbGwgY2FyZSBhYm91dCBpZiBIV0tNIEJJU1QgZmFpbGVkICh3
-aGVuDQo+ID4gPiA+ICsgc3VwcG9ydGVkKSBhcw0KPiA+ID4gPiArICogaW1wb3J0YW50IGZ1bmN0
-aW9uYWxpdHkgd291bGQgZmFpbCBsYXRlciwgc28gZGlzYWJsZSBod2ttIG9uIGZhaWx1cmUuDQo+
-ID4gPiA+ICAgKi8NCj4gPiA+ID4gIHN0YXRpYyBpbnQgcWNvbV9pY2Vfd2FpdF9iaXN0X3N0YXR1
-cyhzdHJ1Y3QgcWNvbV9pY2UgKmljZSkgIHsNCj4gPiA+ID4gICAgICAgdTMyIHJlZ3ZhbDsNCj4g
-PiA+ID4gKyAgICAgdTMyIGJpc3RfZG9uZV92YWw7DQo+ID4gPiA+ICAgICAgIGludCBlcnI7DQo+
-ID4gPiA+DQo+ID4gPiA+ICAgICAgIGVyciA9IHJlYWRsX3BvbGxfdGltZW91dChpY2UtPmJhc2Ug
-Kw0KPiBRQ09NX0lDRV9SRUdfQklTVF9TVEFUVVMsDQo+ID4gPiA+ICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICByZWd2YWwsICEocmVndmFsICYgUUNPTV9JQ0VfQklTVF9TVEFUVVNfTUFT
-SyksDQo+ID4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA1MCwgNTAwMCk7DQo+
-ID4gPiA+IC0gICAgIGlmIChlcnIpDQo+ID4gPiA+ICsgICAgIGlmIChlcnIpIHsNCj4gPiA+ID4g
-ICAgICAgICAgICAgICBkZXZfZXJyKGljZS0+ZGV2LCAiVGltZWQgb3V0IHdhaXRpbmcgZm9yIElD
-RQ0KPiA+ID4gPiBzZWxmLXRlc3QgdG8gY29tcGxldGVcbiIpOw0KPiA+ID4gPiArICAgICAgICAg
-ICAgIHJldHVybiBlcnI7DQo+ID4gPiA+ICsgICAgIH0NCj4gPiA+ID4NCj4gPiA+ID4gKyAgICAg
-aWYgKGljZS0+dXNlX2h3a20pIHsNCj4gPiA+ID4gKyAgICAgICAgICAgICBiaXN0X2RvbmVfdmFs
-ID0gaWNlLT5od2ttX3ZlcnNpb24gPT0gMSA/DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIFFDT01fSUNFX0hXS01fQklTVF9WQUwoMSkgOg0KPiA+ID4gPiArICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBRQ09NX0lDRV9IV0tNX0JJU1RfVkFMKDIpOw0KPiA+ID4gPiAr
-ICAgICAgICAgICAgIGlmIChxY29tX2ljZV9yZWFkbChpY2UsDQo+ID4gPiA+ICsNCj4gPiA+IEhX
-S01fT0ZGU0VUKFFDT01fSUNFX1JFR19IV0tNX1RaX0tNX1NUQVRVUykpICE9DQo+ID4gPiA+ICsg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGJpc3RfZG9uZV92YWwpIHsNCj4gPiA+ID4g
-KyAgICAgICAgICAgICAgICAgICAgIGRldl9lcnIoaWNlLT5kZXYsICJIV0tNIEJJU1QgZXJyb3Jc
-biIpOw0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgaWNlLT51c2VfaHdrbSA9IGZhbHNl
-Ow0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgZXJyID0gLUVOT0RFVjsNCj4gPiA+ID4g
-KyAgICAgICAgICAgICB9DQo+ID4gPiA+ICsgICAgIH0NCj4gPiA+ID4gICAgICAgcmV0dXJuIGVy
-cjsNCj4gPiA+ID4gIH0NCj4gPiA+ID4NCj4gPiA+ID4gK3N0YXRpYyB2b2lkIHFjb21faWNlX2Vu
-YWJsZV9zdGFuZGFyZF9tb2RlKHN0cnVjdCBxY29tX2ljZSAqaWNlKSB7DQo+ID4gPiA+ICsgICAg
-IHUzMiB2YWwgPSAwOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsgICAgIC8qDQo+ID4gPiA+ICsgICAg
-ICAqIFdoZW4gSUNFIGlzIGluIHN0YW5kYXJkIChod2ttKSBtb2RlLCBpdCBzdXBwb3J0cyBIVyB3
-cmFwcGVkDQo+ID4gPiA+ICsgICAgICAqIGtleXMsIGFuZCB3aGVuIGl0IGlzIGluIGxlZ2FjeSBt
-b2RlLCBpdCBvbmx5IHN1cHBvcnRzIHN0YW5kYXJkDQo+ID4gPiA+ICsgICAgICAqIChub24gSFcg
-d3JhcHBlZCkga2V5cy4NCj4gPiA+DQo+ID4gPiBJIGNhbid0IHNheSB0aGlzIGlzIHZlcnkgbG9n
-aWNhbC4NCj4gPiA+DQo+ID4gPiBzdGFuZGFyZCBtb2RlID0+IEhXIHdyYXBwZWQga2V5cw0KPiA+
-ID4gbGVnYWN5IG1vZGUgPT4gc3RhbmRhcmQga2V5cw0KPiA+ID4NCj4gPiA+IENvbnNpZGVyIGNo
-YW5naW5nIHRoZSB0ZXJtcy4NCj4gPiA+DQo+ID4NCj4gPiBBY2ssIHdpbGwgbWFrZSB0aGlzIGNs
-ZWFyZXINCj4gPg0KPiA+ID4gPiArICAgICAgKg0KPiA+ID4gPiArICAgICAgKiBQdXQgSUNFIGlu
-IHN0YW5kYXJkIG1vZGUsIElDRSBkZWZhdWx0cyB0byBsZWdhY3kgbW9kZS4NCj4gPiA+ID4gKyAg
-ICAgICogTGVnYWN5IG1vZGUgLSBJQ0UgSFdLTSBzbGF2ZSBub3Qgc3VwcG9ydGVkLg0KPiA+ID4g
-PiArICAgICAgKiBTdGFuZGFyZCBtb2RlIC0gSUNFIEhXS00gc2xhdmUgc3VwcG9ydGVkLg0KPiA+
-ID4NCj4gPiA+IHMvc2xhdmUvc29tZSBvdGhlciB0ZXJtLw0KPiA+ID4NCj4gPiBBY2sgLSB3aWxs
-IGFkZHJlc3MgdGhpcy4NCj4gPg0KPiA+ID4gSXMgaXQgcG9zc2libGUgdG8gdXNlIGJvdGgga2lu
-ZCBvZiBrZXlzIHdoZW4gd29ya2luZyBvbiBzdGFuZGFyZCBtb2RlPw0KPiA+ID4gSWYgbm90LCBp
-dCBzaG91bGQgYmUgdGhlIHVzZXIgd2hvIHNlbGVjdHMgd2hhdCB0eXBlIG9mIGtleXMgdG8gYmUg
-dXNlZC4NCj4gPiA+IEVuZm9yY2luZyB0aGlzIHZpYSBEVCBpcyBub3QgYSB3YXkgdG8gZ28uDQo+
-ID4gPg0KPiA+DQo+ID4gVW5mb3J0dW5hdGVseSwgdGhhdCBzdXBwb3J0IGlzIG5vdCB0aGVyZSB5
-ZXQuIFdoZW4geW91IHNheSB1c2VyLCBkbw0KPiA+IHlvdSBtZWFuIHRvIGhhdmUgaXQgYXMgYSBm
-aWxlc3lzdGVtIG1vdW50IG9wdGlvbj8NCj4gDQo+IER1cmluZyBjcnlwdHNldHVwIHRpbWUuIFdo
-ZW4gcnVubmluZyBlLmcuIGNyeXB0c2V0dXAgSSwgYXMgYSB1c2VyLCB3b3VsZCBsaWtlDQo+IHRv
-IGJlIGFibGUgdG8gdXNlIGVpdGhlciBhIGhhcmR3YXJlLXdyYXBwZWQga2V5IG9yIGEgc3RhbmRh
-cmQga2V5Lg0KPiANCg0KV2hhdCB3ZSBhcmUgbG9va2luZyBmb3Igd2l0aCB0aGVzZSBwYXRjaGVz
-IGlzIGZvciBwZXItZmlsZS9mb2xkZXIgZW5jcnlwdGlvbiB1c2luZyBmc2NyeXB0IHBvbGljaWVz
-Lg0KQ3J5cHRzZXR1cCB0byBteSB1bmRlcnN0YW5kaW5nIHN1cHBvcnRzIG9ubHkgZnVsbC1kaXNr
-ICwgYW5kIGRvZXMgbm90IHN1cHBvcnQgRkJFIChGaWxlLUJhc2VkKQ0KDQpIZW5jZSB0aGUgaWRl
-YSBoZXJlIGlzIHRoYXQgd2UgbW91bnQgYW4gdW5lbmNyeXB0ZWQgZGV2aWNlICh3aXRoIHRoZSBp
-bmxpbmVjcnlwdCBvcHRpb24gdGhhdCBpbmRpY2F0ZXMgaW5saW5lIGVuY3J5cHRpb24gaXMgc3Vw
-cG9ydGVkKQ0KQW5kIHNwZWNpZnkgcG9saWNpZXMgKGxpbmtzIHRvIGtleXMpIGZvciBkaWZmZXJl
-bnQgZm9sZGVycy4NCg0KPiA+IFRoZSB3YXkgdGhlIFVGUy9FTU1DIGNyeXB0byBsYXllciBpcyBk
-ZXNpZ25lZCBjdXJyZW50bHkgaXMgdGhhdCwgdGhpcw0KPiA+IGluZm9ybWF0aW9uIGlzIG5lZWRl
-ZCB3aGVuIHRoZSBtb2R1bGVzIGFyZSBsb2FkZWQuDQo+ID4NCj4gPiBodHRwczovL2xvcmUua2Vy
-bmVsLm9yZy9hbGwvMjAyMzExMDQyMTEyNTkuMTc0NDgtMi1lYmlnZ2Vyc0BrZXJuZWwub3JnDQo+
-ID4gLyNaMzFkcml2ZXJzOnVmczpjb3JlOnVmc2hjZC1jcnlwdG8uYw0KPiANCj4gSSBzZWUgdGhh
-dCB0aGUgZHJpdmVyIGxpc3RzIGNhcGFiaWxpdGllcyBoZXJlLiBFLmcuIHRoYXQgaXQgc3VwcG9y
-dHMgSFctd3JhcHBlZA0KPiBrZXlzLiBCdXQgdGhlIGxpbmUgZG9lc24ndCBzcGVjaWZ5IHRoYXQg
-c3RhbmRhcmQga2V5cyBhcmUgbm90IHN1cHBvcnRlZC4NCj4gDQoNClRob3NlIGFyZSBjYXBhYmls
-aXRpZXMgdGhhdCBhcmUgcmVhZCBmcm9tIHRoZSBzdG9yYWdlIGNvbnRyb2xsZXIuIEhvd2V2ZXIs
-IHdyYXBwZWQga2V5cw0KQXJlIG5vdCBhIHN0YW5kYXJkIGluIHRoZSBJQ0UgSkVERUMgc3BlY2lm
-aWNhdGlvbiwgYW5kIGluIG1vc3QgY2FzZXMsIGlzIGEgdmFsdWUgYWRkIGNvbWluZw0KZnJvbSB0
-aGUgU29DLg0KDQpRQ09NIFNPQyBhbmQgZmlybXdhcmUgY3VycmVudGx5IGRvZXMgbm90IHN1cHBv
-cnQgYm90aCBraW5kcyBvZiBrZXlzIGluIHRoZSBIV0tNIG1vZGUuDQpUaGF0IGlzIHNvbWV0aGlu
-ZyB3ZSBhcmUgaW50ZXJuYWxseSB3b3JraW5nIG9uLCBidXQgbm90IGF2YWlsYWJsZSB5ZXQuDQoN
-Cj4gQWxzbywgSSdkIGhhdmUgZXhwZWN0ZWQgdGhhdCBody13cmFwcGVkIGtleXMgYXJlIGhhbmRs
-ZWQgdXNpbmcgdHJ1c3RlZA0KPiBrZXlzIG1lY2hhbmlzbSAoc2VlIHNlY3VyaXR5L2tleXMvdHJ1
-c3RlZC1rZXlzLykuIENvdWxkIHlvdSBwbGVhc2UgcG9pbnQNCj4gb3V0IHdoeSB0aGF0J3Mgbm90
-IHRoZSBjYXNlPw0KPiANCg0KSSB3aWxsIGV2YWx1YXRlIHRoaXMuDQpCdXQgbXkgaW5pdGlhbCBy
-ZXNwb25zZSBpcyB0aGF0IHdlIGN1cnJlbnRseSBjYW5ub3QgY29tbXVuaWNhdGUgdG8gb3VyIFRQ
-TSBkaXJlY3RseSBmcm9tIEhMT1MsIGJ1dA0KZ29lcyB0aHJvdWdoIFFURUUsIGFuZCBJIGRvbid0
-IHRoaW5rIG91ciBxdGVlIGN1cnJlbnRseSBpbnRlcmZhY2VzIHdpdGggdGhlIG9wZW4gc291cmNl
-IHRlZQ0KZHJpdmVyLiBUaGUgaW50ZXJmYWNlIGlzIHRocm91Z2ggUUNPTSBTQ00gZHJpdmVyLg0K
-DQo+ID4gSSBhbSB0aGlua2luZyBvZiBhIHdheSBub3cgdG8gZG8gdGhpcyB3aXRoIERULCBidXQg
-d2l0aG91dCBoYXZpbmcgYSBuZXcNCj4gdmVuZG9yIHByb3BlcnR5Lg0KPiA+IElzIGl0IGFjY2Vw
-dGFibGUgdG8gdXNlIHRoZSBhZGRyZXNzYWJsZSByYW5nZSBhcyB0aGUgZGVjaWRpbmcgZmFjdG9y
-Pw0KPiA+IFNheSB1c2UgbGVnYWN5IG1vZGUgb2YgSUNFIHdoZW4gdGhlIGFkZHJlc3NhYmxlIHNp
-emUgaXMgMHg4MDAwIGFuZCB1c2UNCj4gPiBIV0tNIG1vZGUgb2YgSUNFIHdoZW4gdGhlIGFkZHJl
-c3NhYmxlIHNpemUgaXMgMHgxMDAwMC4NCj4gDQo+IERlZmluaXRlbHksIHRoaXMgaXMgYSBOQUsu
-IEl0J3MgYSB2ZXJ5IHVub2J2aW91cyBoYWNrLiBZb3UgaGF2ZSBiZWVuIGFza2VkIHRvDQo+IHVz
-ZSBjb21wYXRpYmxlIHN0cmluZ3MgdG8gZGV0ZWN0IHdoZXRoZXIgSFcga2V5cyBhcmUgc3VwcG9y
-dGVkIG9yIG5vdC4NCj4gDQo+IC0tDQo+IFdpdGggYmVzdCB3aXNoZXMNCj4gRG1pdHJ5DQoNClJl
-Z2FyZHMsDQpHYXVyYXYNCg==
+Abstract unix sockets are used for local inter-process communications
+without on a filesystem. Currently a sandboxed process can connect to a
+socket outside of the sandboxed environment, since landlock has no
+restriction for connecting to a unix socket in the abstract namespace.
+Access to such sockets for a sandboxed process should be scoped the same
+way ptrace is limited.
+
+Because of compatibility reasons and since landlock should be flexible,
+we extend the user space interface by adding a new "scoped" field. This
+field optionally contains a "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to
+specify that the ruleset will deny any connection from within the
+sandbox to its parents(i.e. any parent sandbox or non-sandbox processes)
+
+Closes: https://github.com/landlock-lsm/linux/issues/7
+Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+
+-------
+V3: Added "scoped" field to landlock_ruleset_attr
+V2: Remove wrapper functions
+
+-------
+
+Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+---
+ include/uapi/linux/landlock.h                 |  27 ++
+ security/landlock/limits.h                    |   3 +
+ security/landlock/ruleset.c                   |   7 +-
+ security/landlock/ruleset.h                   |  29 +-
+ security/landlock/syscalls.c                  |  13 +-
+ security/landlock/task.c                      |  58 ++++
+ .../testing/selftests/landlock/ptrace_test.c  | 261 ++++++++++++++++++
+ 7 files changed, 392 insertions(+), 6 deletions(-)
+
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index 68625e728f43..3ea370c52aaa 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -37,6 +37,11 @@ struct landlock_ruleset_attr {
+ 	 * rule explicitly allow them.
+ 	 */
+ 	__u64 handled_access_net;
++	/**
++	 * scoped: Bitmask of actions (cf. `Scope access flags`_)
++	 * which are confined to only affect the current Landlock domain.
++	 */
++	__u64 scoped;
+ };
+ 
+ /*
+@@ -266,4 +271,26 @@ struct landlock_net_port_attr {
+ #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+ #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+ /* clang-format on */
++
++/**
++ * DOC: scope
++ *
++ * .scoped attribute handles a set of restrictions on kernel IPCs through
++ * the following flags.
++ *
++ * Scope access flags
++ * ~~~~~~~~~~~~~~~~~~~~
++ * 
++ * These flags enable to restrict a sandboxed process from a set of IPC 
++ * actions. Setting a flag in a landlock domain will isolate the Landlock
++ *  domain to forbid connections to resources outside the domain.
++ *
++ * IPCs with allowed actions:
++ * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandbox process to
++ *   connect to a process outside of the sandbox domain through abstract
++ *   unix sockets. 
++ */
++/* clang-format off */
++#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
++/* clang-format on*/
+ #endif /* _UAPI_LINUX_LANDLOCK_H */
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index 4eb643077a2a..93d5fa8495b2 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -26,6 +26,9 @@
+ #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+ #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+ 
++#define LANDLOCK_LAST_ACCESS_SCOPE       LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
++#define LANDLOCK_MASK_ACCESS_SCOPE	((LANDLOCK_LAST_ACCESS_SCOPE << 1) - 1)
++#define LANDLOCK_NUM_ACCESS_SCOPE         __const_hweight64(LANDLOCK_MASK_ACCESS_SCOPE)
+ /* clang-format on */
+ 
+ #endif /* _SECURITY_LANDLOCK_LIMITS_H */
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index 6ff232f58618..a93bdbf52fff 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -52,12 +52,13 @@ static struct landlock_ruleset *create_ruleset(const u32 num_layers)
+ 
+ struct landlock_ruleset *
+ landlock_create_ruleset(const access_mask_t fs_access_mask,
+-			const access_mask_t net_access_mask)
++			const access_mask_t net_access_mask,
++			const access_mask_t scope_mask)
+ {
+ 	struct landlock_ruleset *new_ruleset;
+ 
+ 	/* Informs about useless ruleset. */
+-	if (!fs_access_mask && !net_access_mask)
++	if (!fs_access_mask && !net_access_mask && !scope_mask)
+ 		return ERR_PTR(-ENOMSG);
+ 	new_ruleset = create_ruleset(1);
+ 	if (IS_ERR(new_ruleset))
+@@ -66,6 +67,8 @@ landlock_create_ruleset(const access_mask_t fs_access_mask,
+ 		landlock_add_fs_access_mask(new_ruleset, fs_access_mask, 0);
+ 	if (net_access_mask)
+ 		landlock_add_net_access_mask(new_ruleset, net_access_mask, 0);
++	if (scope_mask)
++		landlock_add_scope_mask(new_ruleset, scope_mask, 0);
+ 	return new_ruleset;
+ }
+ 
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index 0f1b5b4c8f6b..2d3f41613bdc 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -35,6 +35,8 @@ typedef u16 access_mask_t;
+ static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+ /* Makes sure all network access rights can be stored. */
+ static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_NET);
++/* Makes sure all scoped rights can be stored*/
++static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_SCOPE);
+ /* Makes sure for_each_set_bit() and for_each_clear_bit() calls are OK. */
+ static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
+ 
+@@ -42,8 +44,15 @@ static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
+ struct access_masks {
+ 	access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
+ 	access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
++	access_mask_t scoped : LANDLOCK_NUM_ACCESS_SCOPE;
+ };
+ 
++typedef u32 access_masks_t;
++/* Makes sure all ruleset access rights can be stored. */
++static_assert(BITS_PER_TYPE(access_masks_t) >=
++	      LANDLOCK_NUM_ACCESS_FS + LANDLOCK_NUM_ACCESS_NET +
++		      LANDLOCK_NUM_ACCESS_SCOPE);
++
+ typedef u16 layer_mask_t;
+ /* Makes sure all layers can be checked. */
+ static_assert(BITS_PER_TYPE(layer_mask_t) >= LANDLOCK_MAX_NUM_LAYERS);
+@@ -233,7 +242,8 @@ struct landlock_ruleset {
+ 
+ struct landlock_ruleset *
+ landlock_create_ruleset(const access_mask_t access_mask_fs,
+-			const access_mask_t access_mask_net);
++			const access_mask_t access_mask_net,
++			const access_mask_t scope_mask);
+ 
+ void landlock_put_ruleset(struct landlock_ruleset *const ruleset);
+ void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset);
+@@ -280,6 +290,16 @@ landlock_add_net_access_mask(struct landlock_ruleset *const ruleset,
+ 	ruleset->access_masks[layer_level].net |= net_mask;
+ }
+ 
++static inline void
++landlock_add_scope_mask(struct landlock_ruleset *const ruleset,
++			const access_mask_t scope_mask, const u16 layer_level)
++{
++	access_mask_t scoped_mask = scope_mask & LANDLOCK_MASK_ACCESS_SCOPE;
++
++	WARN_ON_ONCE(scope_mask != scoped_mask);
++	ruleset->access_masks[layer_level].scoped |= scoped_mask;
++}
++
+ static inline access_mask_t
+ landlock_get_raw_fs_access_mask(const struct landlock_ruleset *const ruleset,
+ 				const u16 layer_level)
+@@ -303,6 +323,13 @@ landlock_get_net_access_mask(const struct landlock_ruleset *const ruleset,
+ 	return ruleset->access_masks[layer_level].net;
+ }
+ 
++static inline access_mask_t
++landlock_get_scope_mask(const struct landlock_ruleset *const ruleset,
++			const u16 layer_level)
++{
++	return ruleset->access_masks[layer_level].scoped;
++}
++
+ bool landlock_unmask_layers(const struct landlock_rule *const rule,
+ 			    const access_mask_t access_request,
+ 			    layer_mask_t (*const layer_masks)[],
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 03b470f5a85a..15ad79ac022b 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -97,8 +97,9 @@ static void build_check_abi(void)
+ 	 */
+ 	ruleset_size = sizeof(ruleset_attr.handled_access_fs);
+ 	ruleset_size += sizeof(ruleset_attr.handled_access_net);
++	ruleset_size += sizeof(ruleset_attr.scoped);
+ 	BUILD_BUG_ON(sizeof(ruleset_attr) != ruleset_size);
+-	BUILD_BUG_ON(sizeof(ruleset_attr) != 16);
++	BUILD_BUG_ON(sizeof(ruleset_attr) != 24);
+ 
+ 	path_beneath_size = sizeof(path_beneath_attr.allowed_access);
+ 	path_beneath_size += sizeof(path_beneath_attr.parent_fd);
+@@ -170,7 +171,7 @@ static const struct file_operations ruleset_fops = {
+  * Possible returned errors are:
+  *
+  * - %EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
+- * - %EINVAL: unknown @flags, or unknown access, or too small @size;
++ * - %EINVAL: unknown @flags, or unknown access, or uknown scope, or too small @size;
+  * - %E2BIG or %EFAULT: @attr or @size inconsistencies;
+  * - %ENOMSG: empty &landlock_ruleset_attr.handled_access_fs.
+  */
+@@ -212,10 +213,16 @@ SYSCALL_DEFINE3(landlock_create_ruleset,
+ 	if ((ruleset_attr.handled_access_net | LANDLOCK_MASK_ACCESS_NET) !=
+ 	    LANDLOCK_MASK_ACCESS_NET)
+ 		return -EINVAL;
++	
++	/* Checks IPC scoping content (and 32-bits cast). */
++	if ((ruleset_attr.scoped | LANDLOCK_MASK_ACCESS_SCOPE) !=
++	    LANDLOCK_MASK_ACCESS_SCOPE)
++		return -EINVAL;
+ 
+ 	/* Checks arguments and transforms to kernel struct. */
+ 	ruleset = landlock_create_ruleset(ruleset_attr.handled_access_fs,
+-					  ruleset_attr.handled_access_net);
++					  ruleset_attr.handled_access_net,
++					  ruleset_attr.scoped);
+ 	if (IS_ERR(ruleset))
+ 		return PTR_ERR(ruleset);
+ 
+diff --git a/security/landlock/task.c b/security/landlock/task.c
+index 849f5123610b..b8bde74ff684 100644
+--- a/security/landlock/task.c
++++ b/security/landlock/task.c
+@@ -13,6 +13,8 @@
+ #include <linux/lsm_hooks.h>
+ #include <linux/rcupdate.h>
+ #include <linux/sched.h>
++#include <net/sock.h>
++#include <net/af_unix.h>
+ 
+ #include "common.h"
+ #include "cred.h"
+@@ -108,9 +110,65 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
+ 	return task_ptrace(parent, current);
+ }
+ 
++static access_mask_t
++get_scoped_accesses(const struct landlock_ruleset *const domain)
++{
++	access_mask_t access_dom = 0;
++	size_t layer_level;
++
++	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
++		access_dom |= landlock_get_scope_mask(domain, layer_level);
++	return access_dom;
++}
++
++static bool sock_is_scoped(struct sock *const other)
++{
++	bool is_scoped = true;
++	const struct landlock_ruleset *dom_other;
++	const struct landlock_ruleset *const dom =
++		landlock_get_current_domain();
++
++	/* quick return if there is no domain or .scoped is not set */
++	if (!dom || !get_scoped_accesses(dom))
++		return true;
++
++	/* the credentials will not change */
++	lockdep_assert_held(&unix_sk(other)->lock);
++	if (other->sk_type != SOCK_DGRAM){
++		dom_other = landlock_cred(other->sk_peer_cred)->domain;
++	} else {
++		dom_other = landlock_cred(other->sk_socket->file->f_cred)->domain;
++	}
++	is_scoped = domain_scope_le(dom, dom_other);
++	return is_scoped;
++}
++
++static int hook_unix_stream_connect(struct sock *const sock,
++				    struct sock *const other,
++				    struct sock *const newsk)
++{
++	if (sock_is_scoped(other))
++		return 0;
++
++	return -EPERM;
++}
++
++static int hook_unix_may_send(struct socket *const sock,
++			      struct socket *const other)
++{
++	pr_warn("XXX %s:%d sock->file:%p other->file:%p\n", __func__, __LINE__,
++		sock->file, other->file);
++	if (sock_is_scoped(other->sk))
++		return 0;
++
++	return -EPERM;
++}
++
+ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
+ 	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
++	LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
++	LSM_HOOK_INIT(unix_may_send, hook_unix_may_send),
+ };
+ 
+ __init void landlock_add_task_hooks(void)
+diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
+index a19db4d0b3bd..73eddf08907e 100644
+--- a/tools/testing/selftests/landlock/ptrace_test.c
++++ b/tools/testing/selftests/landlock/ptrace_test.c
+@@ -17,6 +17,10 @@
+ #include <sys/wait.h>
+ #include <unistd.h>
+ 
++#include <sys/socket.h>
++#include <sys/un.h>
++#include <stddef.h>
++
+ #include "common.h"
+ 
+ /* Copied from security/yama/yama_lsm.c */
+@@ -436,4 +440,261 @@ TEST_F(hierarchy, trace)
+ 		_metadata->exit_code = KSFT_FAIL;
+ }
+ 
++static void create_unix_domain(struct __test_metadata *const _metadata)
++{
++	int ruleset_fd;
++	const struct landlock_ruleset_attr ruleset_attr = {
++		.scoped = LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET,
++	};
++
++	ruleset_fd =
++		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
++	EXPECT_LE(0, ruleset_fd)
++	{
++		TH_LOG("Failed to create a ruleset: %s", strerror(errno));
++	}
++	enforce_ruleset(_metadata, ruleset_fd);
++	EXPECT_EQ(0, close(ruleset_fd));
++}
++
++/* clang-format off */
++FIXTURE(unix_socket)
++{
++	int server, client;
++};
++/* clang-format on */
++
++FIXTURE_VARIANT(unix_socket)
++{
++	int type;
++	bool domain_both;
++	bool domain_parent;
++	bool domain_child;
++	bool connect_to_parent;
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(unix_socket, allow_without_domain) {
++	/* clang-format on */
++	.type = SOCK_STREAM,	   .domain_both = false,
++	.domain_parent = false,	   .domain_child = false,
++	.connect_to_parent = true,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(unix_socket, deny_child_connection_with_domain) {
++	/* clang-format on */
++	.type = SOCK_STREAM,  .domain_both = false,	 .domain_parent = false,
++	.domain_child = true, .connect_to_parent = true,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(unix_socket, allow_child_connection_and_parent_domain) {
++	/* clang-format on */
++	.type = SOCK_STREAM,   .domain_both = false,	  .domain_parent = true,
++	.domain_child = false, .connect_to_parent = true,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(unix_socket, deny_parent_connection_with_domain) {
++	/* clang-format on */
++	.type = SOCK_STREAM,	    .domain_both = false,
++	.domain_parent = true,	    .domain_child = false,
++	.connect_to_parent = false,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(unix_socket, allow_parent_connection_without_domain) {
++	/* clang-format on */
++	.type = SOCK_STREAM,	    .domain_both = false,
++	.domain_parent = false,	    .domain_child = false,
++	.connect_to_parent = false,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(unix_socket, allow_parent_connection_with_sibling_domain) {
++	/* clang-format on */
++	.type = SOCK_STREAM,	    .domain_both = true,
++	.domain_parent = false,	    .domain_child = false,
++	.connect_to_parent = false,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(unix_socket, dgrm_allow_without_domain) {
++	/* clang-format on */
++	.type = SOCK_DGRAM,	   .domain_both = false,
++	.domain_parent = false,	   .domain_child = false,
++	.connect_to_parent = true,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(unix_socket, dgrm_deny_child_connection_with_domain) {
++	/* clang-format on */
++	.type = SOCK_DGRAM,   .domain_both = false,	 .domain_parent = false,
++	.domain_child = true, .connect_to_parent = true,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(unix_socket, dgrm_allow_child_with_sibling_domain) {
++	/* clang-format on */
++	.type = SOCK_DGRAM,	   .domain_both = true,
++	.domain_parent = false,	   .domain_child = false,
++	.connect_to_parent = true,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(unix_socket, dgrm_deny_parent_connection_with_domain) {
++	/* clang-format on */
++	.type = SOCK_DGRAM,	    .domain_both = false,
++	.domain_parent = true,	    .domain_child = false,
++	.connect_to_parent = false,
++};
++
++/* clang-format off */
++FIXTURE_VARIANT_ADD(unix_socket, dgrm_allow_parent_connection_with_child_domain) {
++	/* clang-format on */
++	.type = SOCK_DGRAM,	    .domain_both = false,
++	.domain_parent = false,	    .domain_child = true,
++	.connect_to_parent = false,
++};
++
++FIXTURE_SETUP(unix_socket)
++{
++}
++
++FIXTURE_TEARDOWN(unix_socket)
++{
++	close(self->server);
++	close(self->client);
++}
++
++/* Test UNIX_STREAM_CONNECT for parent and child. */
++TEST_F(unix_socket, abstract_unix_socket)
++{
++	int status;
++	pid_t child;
++	socklen_t addrlen;
++	int sock_len = 5;
++	struct sockaddr_un addr = {
++		.sun_family = AF_UNIX,
++	};
++	const char sun_path[8] = "\0test";
++	bool can_connect_to_parent, can_connect_to_child;
++	int err;
++	int pipe_child[2], pipe_parent[2];
++	char buf_parent;
++	/*
++         * can_connect_to_child is true if a parent process can connect to its
++         * child process. The parent process is not isolated from the child
++	 * with a dedicated Landlock domain.
++         */
++	can_connect_to_child = !variant->domain_parent;
++	/*
++         * can_connect_to_parent is true if a child process can connect to its parent
++         * process. This depends on the child process is not isolated from
++	 * the parent with a dedicated Landlock domain.
++         */
++	can_connect_to_parent = !variant->domain_child;
++
++	ASSERT_EQ(0, pipe2(pipe_child, O_CLOEXEC));
++	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
++	if (variant->domain_both) {
++		create_unix_domain(_metadata);
++		if (!__test_passed(_metadata))
++			return;
++	}
++
++	addrlen = offsetof(struct sockaddr_un, sun_path) + sock_len;
++	memcpy(&addr.sun_path, sun_path, sock_len);
++
++	child = fork();
++	ASSERT_LE(0, child);
++	if (child == 0) {
++		int child_ret;
++		char buf_child;
++
++		ASSERT_EQ(0, close(pipe_parent[1]));
++		ASSERT_EQ(0, close(pipe_child[0]));
++		if (variant->domain_child)
++			create_unix_domain(_metadata);
++
++		/* Waits for the parent to be in a domain, if any. */
++		ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
++
++		/* create a socket for child process */
++		if (variant->connect_to_parent) {
++			self->client = socket(AF_UNIX, variant->type, 0);
++			ASSERT_NE(-1, self->client);
++
++			ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
++			child_ret = connect(self->client,
++					    (struct sockaddr *)&addr, addrlen);
++			if (can_connect_to_parent) {
++				EXPECT_EQ(0, child_ret);
++			} else {
++				EXPECT_EQ(-1, child_ret);
++				EXPECT_EQ(EPERM, errno);
++			}
++		} else {
++			/* child process should create a listening socket */
++			self->server = socket(AF_UNIX, variant->type, 0);
++			ASSERT_NE(-1, self->server);
++
++			ASSERT_EQ(0, bind(self->server,
++					  (struct sockaddr *)&addr, addrlen));
++			if (variant->type == SOCK_STREAM) {
++				err = listen(self->server, 32);
++				ASSERT_EQ(0, err);
++			}
++			/* signal to parent that child is listening */
++			ASSERT_EQ(1, write(pipe_child[1], ".", 1));
++			/* wait to connect */
++			ASSERT_EQ(1, read(pipe_parent[0], &buf_child, 1));
++		}
++		_exit(_metadata->exit_code);
++		return;
++	}
++
++	ASSERT_EQ(0, close(pipe_child[1]));
++	ASSERT_EQ(0, close(pipe_parent[0]));
++
++	if (variant->domain_parent)
++		create_unix_domain(_metadata);
++
++	/* Signals that the parent is in a domain, if any. */
++	ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
++
++	if (!variant->connect_to_parent) {
++		self->client = socket(AF_UNIX, variant->type, 0);
++		ASSERT_NE(-1, self->client);
++		/* Waits for the child to listen */
++		ASSERT_EQ(1, read(pipe_child[0], &buf_parent, 1));
++		err = connect(self->client, (struct sockaddr *)&addr, addrlen);
++		if (can_connect_to_child) {
++			EXPECT_EQ(0, err);
++		} else {
++			EXPECT_EQ(-1, err);
++			EXPECT_EQ(EPERM, errno);
++		}
++		ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
++	} else {
++		self->server = socket(AF_UNIX, variant->type, 0);
++		ASSERT_NE(-1, self->server);
++		ASSERT_EQ(0, bind(self->server, (struct sockaddr *)&addr,
++				  addrlen));
++		if (variant->type == SOCK_STREAM) {
++			err = listen(self->server, 32);
++			ASSERT_EQ(0, err);
++		}
++		/* signal to child that parent is listening */
++		ASSERT_EQ(1, write(pipe_parent[1], ".", 1));
++	}
++
++	ASSERT_EQ(child, waitpid(child, &status, 0));
++
++	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
++	    WEXITSTATUS(status) != EXIT_SUCCESS)
++		_metadata->exit_code = KSFT_FAIL;
++}
++
+ TEST_HARNESS_MAIN
+-- 
+2.34.1
+
 
