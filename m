@@ -1,114 +1,116 @@
-Return-Path: <linux-kernel+bounces-220917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3590390E923
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:18:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B9E90E926
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27B11F22C1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:18:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 472CEB235B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E73139CEC;
-	Wed, 19 Jun 2024 11:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C7B13A27D;
+	Wed, 19 Jun 2024 11:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipSTa62S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S6DSPamK"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AB04D8B2;
-	Wed, 19 Jun 2024 11:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5D64D8B2;
+	Wed, 19 Jun 2024 11:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718795929; cv=none; b=cHw/qm9MUtiLvfQ8whcsVYRKstKjbZhlw77IoJMP3Jh7nFn5BFjAOU/za9v5KGcZJYepnFf6blW3LHk5TvdHX6VnsA0rNB7k/Hyx3/hkAJ3VRBdeetrraYbXH/Qvb5qd1XWqjYT8mHkHUW0huImqIkvcbg6/C2jc7dDArPP6tVY=
+	t=1718795942; cv=none; b=kGmRvhyHUu+7WREs/EJJfxU57qt/03KzLv/6Mh5gdbjomKMqRcY91YP1kaU6Vt197VoJAu4Gb3NwJmpWL3omqrvMU2W/uhMpA+fKJSOqNUqDOKy2+gFhePZVvp/nxH/9Y/r+EDtTm+hd4y9VA8YBUm6qBiKGCEaB7F+b/P/zHNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718795929; c=relaxed/simple;
-	bh=z4T+IJBLwyf5+aKRPm9GucoAyD3f08lBm6C/VluK0Y8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NaJ1Ws767BY4NN173DDeLTE72F/DHkAOU2Ddc+1VarDzvga4PRUPxZNcHBfnpIPpCcJ318Pt+cxLxFHrcYekyEV7+lGcmF8DnThV3fPzOoPh64moqn9tpxRQLjoNK5dUlWCPyLrttZfkRwLY8YNYgF8EmJJOWXOyFS99njMJokI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipSTa62S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F54EC2BBFC;
-	Wed, 19 Jun 2024 11:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718795929;
-	bh=z4T+IJBLwyf5+aKRPm9GucoAyD3f08lBm6C/VluK0Y8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ipSTa62SfcCD6kWVUoBW1qjbaMOFa/kNXSXeFPQ/n8wwW0lG/18nkza5lJUwCeqQb
-	 quHlYsyx81Og7GSKknkYPGpIWcApAhknBCQ4jsDn2VGdAqIJ7K2eGh6yWmQPFsceiq
-	 jdVoTY5HHRzeMVOMEIIjPkJ84NkRRCCeH6lzcjqsTa0Z1rKJeC66LjJE5P+Y0u7ryh
-	 PyBQqQWaHZRkEcLspdW64OAiywWGnljAeNCIRhRYnqBUa7INu2uPjOqNa5gsbRBSNi
-	 hdqgVg2Cjgoui6YypjZLF+Z1obYbXfUdUzQKhvCFiHJuZc6kZlZeBDeOW9J3Q7cscY
-	 KJUtQqN8az6Hw==
-Date: Wed, 19 Jun 2024 12:18:45 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-mmc@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, cyril.jean@microchip.com,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-spi@vger.kernel.org
-Subject: Re: [RFC v1 2/3] spi: microchip-core-qspi: Add regular transfers
-Message-ID: <20240619-frozen-angriness-8648636f1440@spud>
-References: <20240612-brigade-shell-1f626e7e592f@spud>
- <20240612-uphold-dinner-a47b4c44be18@spud>
- <ZmnPh39YyfS4ocNU@finisterre.sirena.org.uk>
- <20240612-spending-stalling-62070dbbcf3d@spud>
+	s=arc-20240116; t=1718795942; c=relaxed/simple;
+	bh=qx/037j5l/h26XirlFV4UFdaLFteBY/swy2KfQlGKZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FMFfBpZovvbHjgcSLoZ6MS+0ROhkXCrg9WOU++ehlsTPaqe7b5CjoGInU3P11qMVEGrPfvd/wXm5XqdDI3M5RWPs6sVhBPSdfVqIV5yraCZh/5hwEd4loTKKj0v412FKf0zssp70E2aWt+o1Ia4CMnk338LlBfgt3IX+ZOMfldg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S6DSPamK; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a6fb341a7f2so67262166b.1;
+        Wed, 19 Jun 2024 04:19:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718795939; x=1719400739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pLVIq+eeSfRMQKg1AreCKiYpS4TWzLzpMNboeHds0vI=;
+        b=S6DSPamKmdPt97iIn48RyFjcnlYlNEjo+0/esIimma7Cro/BMLhARI7rxwg+du0YLt
+         lGdHhnIzp+P1TvMezbqYUoppeiw/49fSPgdaXKhcSdNWSoS9Jtdugzl5UWgpmfs24498
+         jB7W2ADUvGBXZl1/XO6/N2cVK4anm/lUMPZ49I8WFrbkG5MDacICFqOb+AoyRg1fWW9T
+         XGu9B+3Pu4Ogxobr2KJl62o853Cp5bbP0e4C6snoRaf1rC0r7O0rXthrgzp8S5mXm7hf
+         H7XwHt+Fp1qoUo4M68sO05Ah/zI2RmwYLUxYxJoDfT7VmS+n+OswFs0bFAltkYGTQD2v
+         MWmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718795939; x=1719400739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pLVIq+eeSfRMQKg1AreCKiYpS4TWzLzpMNboeHds0vI=;
+        b=wIn3Pw74joJF/vMlfQzA6URNoYpfpTFEjm3PHFUg97wlwmDfzp9lRfELqEctzwrwhK
+         1YlDxZjGXvj4OpjwJ8YtPi1Dg3b8/txQaSxJBxUwbqAZrEK6ZZyKLWcaFnz1KT1y3wMV
+         Sd/pM0IaGRgthFnkQeGI+trzd73j380n8DYVg3TqQ68LSl6YGVzHRNP2ltNbv1X8kAMp
+         VNgdzxo8fWGGrbEf31v9fiNTW3D1jazvKnL5jGV5Oq0mSgDxkSS7PerFBusj8wqGMkHl
+         rb1qaYIn2B3xMk317JcELQJDUp80jThqEannC+h1PznOylS7kzK4MxmBDP7IJzBMJEKw
+         8IlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkoytWEBWgMbWOleV6r4NfFRPOQVfE154VksPiMdiaqRzwyirrnMZfpapwAZWRJj5mMFs6T9vjHfPy/HmiQ1Mh77h6uJbHPHiBQbb43MZMR7xp62wmdHpWnUMp9S1WNLc5/U67vWNZholoH2d8otmK4qOSfdAzc/jXlnUU9ZNZ
+X-Gm-Message-State: AOJu0YxHhI7GgVddOEUDt5ikSS2rk4YGmQ/susavZingJROrt3fUaWZD
+	Nxs79+v4tVlvb1ij3Gvr/5xWRwuUWx1bxcwbxcT5Tii/YCKU7WZ3aBXx5DiSHCF4BbtyPjNOXMC
+	tip/0QHSLnCiTLLIghrIhsFTqo6g=
+X-Google-Smtp-Source: AGHT+IGICb+ryxdnC8Bm0bzuX9pSGgnIGjfjrPhkvEs3vkcekNWZ9OOSOET2zfCNqCAEIzzbZUhrHh6rWIR1j2CxIys=
+X-Received: by 2002:a17:906:2814:b0:a6f:4e1f:e613 with SMTP id
+ a640c23a62f3a-a6fab6488famr127124966b.37.1718795938561; Wed, 19 Jun 2024
+ 04:18:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bZO+FHlLZI0c0AGy"
-Content-Disposition: inline
-In-Reply-To: <20240612-spending-stalling-62070dbbcf3d@spud>
-
-
---bZO+FHlLZI0c0AGy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240619050125.4444-1-joswang1221@gmail.com> <2024061947-grandpa-bucktooth-4f55@gregkh>
+In-Reply-To: <2024061947-grandpa-bucktooth-4f55@gregkh>
+From: joswang <joswang1221@gmail.com>
+Date: Wed, 19 Jun 2024 19:18:48 +0800
+Message-ID: <CAMtoTm3+eSCeF_FQtyBZ1Yb43Sb_ABKDQv7zEueAHwXYGnv72Q@mail.gmail.com>
+Subject: Re: [PATCH v6] usb: dwc3: core: Workaround for CSR read timeout
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Jos Wang <joswang@lenovo.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2024 at 09:48:16PM +0100, Conor Dooley wrote:
-> On Wed, Jun 12, 2024 at 05:40:39PM +0100, Mark Brown wrote:
-> > On Wed, Jun 12, 2024 at 04:48:32PM +0100, Conor Dooley wrote:
-> >=20
-> > > +	//TODO: questionable robustness if both cs_change and cs_off toggle
-> > > +	list_for_each_entry(t, &m->transfers, transfer_list) {
-> > > +		//cs_change being set means we need to re-enable
-> >=20
-> > Is it not possible to implement prepare_message() and transfer_one()
-> > rather than open coding all this?
->=20
-> If I can, I will. I already found one issue with the cs toggling in the
-> code Cyril gave me and I need to figure out why there's a udelay(750)
-> required later on in the function anyway!
+On Wed, Jun 19, 2024 at 1:10=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Wed, Jun 19, 2024 at 01:01:25PM +0800, joswang wrote:
+> > From: Jos Wang <joswang@lenovo.com>
+> >
+> > This is a workaround for STAR 4846132, which only affects
+> > DWC_usb31 version2.00a operating in host mode.
+> >
+> > There is a problem in DWC_usb31 version 2.00a operating
+> > in host mode that would cause a CSR read timeout When CSR
+> > read coincides with RAM Clock Gating Entry. By disable
+> > Clock Gating, sacrificing power consumption for normal
+> > operation.
+> >
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Jos Wang <joswang@lenovo.com>
+> > ---
+> > v5 -> v6: no change
+> > v4 -> v5: no change
+>
+> If there was no change, why was there new versions submitted?  Please
+> always document what was done.
+>
+> greg k-h
 
-Actually wasn't too bad, glad to be rid of the open coded CS handling.
-I still need the as of yet not understood udelay(), but it looks even
-worse now:
+Ok, I will submit a new version and add the differences.
 
-+static int mchp_coreqspi_unprepare_message(struct spi_controller *ctlr, st=
-ruct spi_message *m)
-+{
-+	udelay(750);
-+
-+	return 0;
-+}
-
-
-
---bZO+FHlLZI0c0AGy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnK+lQAKCRB4tDGHoIJi
-0p4lAQC9ueXu3bI/u1wcG0M7RbuNlGJDK37D2Q/ueWBcxQVIUAD+MkzD/mHoIpM0
-MXOkMxtS9lWwiMt8z42Pg949gpXsMw8=
-=h1cY
------END PGP SIGNATURE-----
-
---bZO+FHlLZI0c0AGy--
+Thanks,
+Jos Wang
 
