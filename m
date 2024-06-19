@@ -1,85 +1,239 @@
-Return-Path: <linux-kernel+bounces-221140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B709C90EF63
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:51:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9A490EF65
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE9631C21726
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:51:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E332F1F232D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F3414EC52;
-	Wed, 19 Jun 2024 13:51:27 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B580414EC42;
+	Wed, 19 Jun 2024 13:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPfq55WT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C6613DDAF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21B614C581;
+	Wed, 19 Jun 2024 13:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718805086; cv=none; b=SZXkYKf3bIHrX98Tk3phDFUVHU8Ak25vR5LXWShsrapgfvQHyennacPB3cUST0eg+T9xj5KUWrZJfMAN1Pcx3UDSlrsYk51Lt19eq3hsOFTHZZGmGrR0P9MTsyoxj41GzMPFD9kCfP8/KSlHOhkA80kC+94q6Cp/Uq7JPxZdc3c=
+	t=1718805103; cv=none; b=QFHF350Z40yvTHfHhqT6Dl8TYUqKUQ6YvbWMFNGLNhQE2v1Mv5hz6ecYJC4IYP2LgreG1SVqEg2/0MOSqudTRuaPKIX2wPFDAU06T/8GX6X9P82q6Zo5NzV2brA9O7TKokI8Pju8A2CrVe+V8xnTYzs6hWHmQhPHvdf01A482Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718805086; c=relaxed/simple;
-	bh=0rILnc5eYGBaa6rf76Vo40Z5d2IlTHwSurhnGC1ZPcE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ny3JgWXsn+t/H5VDwxMntSCQk2TK3e1s/5hYkWBC/ZX2tmYRb1n5lHwPV6hx8XWzzALpR6N+t3gKEhr34v7qoErMRGz1FVRhYGEuWK3+KtdxSZePDd+IWheCWA6t1GLATWF4Qqdf4xNCzm68NM0FuOAhoFo1oUA4pBI9JaoBxFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eee4ffd19eso406644439f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:51:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718805084; x=1719409884;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0rILnc5eYGBaa6rf76Vo40Z5d2IlTHwSurhnGC1ZPcE=;
-        b=XR4KLlFLB1jWj4+oM531pGGWMKIrRfDvMXq6O+BUzOAkhv3bYs3IgT7qSluDXs0xEo
-         jaiUTJ8PQoTlQm+XFzBy98IUluRXtLGGWp2ii8YY2OGdRHu706nQuq62BIm9pniZwpFM
-         FfFazkjP251GCuscJNSBPmWMIEhacTeXSg/RXn2s3NCkz+/MmOr3H3SuDWpiQ28IwEO/
-         Ts4la0Y8SRmk1xOIU7kISXfi2oNYwJIkdtcEInpBxt/Tdg/llpNwINyeDpVTeP7RD1S0
-         Phbnp3l0cmQgQ0ufN+J3HxttanJR7P0CRYmsGrTMv0PcOQ9zQFdDjma4FJhtScG8tQNS
-         KsXg==
-X-Gm-Message-State: AOJu0YzhhhPxI56Jm+jbrfAAeIUPLoYSrBNdnA1bAWDzY1V9AM6qmiF5
-	t5sFvfeBENTTgnSC9NIpEiiHakDYDvW6SIvJWljCgw1kHEzE7PT6YNwS0z6PQ9V8JLLD9/vMKWv
-	uMiIvDhZQ5O6kKsL5nvwIXqu3SCBzSPXnYdfP2nyH4hfAMNzfgbvYtng=
-X-Google-Smtp-Source: AGHT+IEaOfSybRFbbK7YqIfK1U6N/0Jg9uOEK3kMzqLN1hTJkwsBnWc5O0UbMrqfluziFW5ChjbREwViXyH3YqKcYzo6NVadzPqN
+	s=arc-20240116; t=1718805103; c=relaxed/simple;
+	bh=zzpgsWo6tMSadzkSdZbgz/EogbJdNEbVvnPtoToCJ2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TUR8QZJ9WuQgplIPZrqwpM5VW3Fe7EGe8ytjgT+8Hq921DyBtBveEaHxdGTPpVom2fXLyFi8zDXiyzuKF3P4kns9Nqk7WaMULJYcHQ3d8eEjKZkJL5BZj4bYNGj1GqHpop+IQeIWMxLZ4YyuaD6B61VDv1aUDNqR8f+q/4KKX84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPfq55WT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D43CC2BBFC;
+	Wed, 19 Jun 2024 13:51:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718805102;
+	bh=zzpgsWo6tMSadzkSdZbgz/EogbJdNEbVvnPtoToCJ2o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RPfq55WTcKuMX7gPSvAl9i9PltoHebCJ5w3EoMzLet6C97wXyYTsW81PakejWbUI6
+	 R/UMukAe6Y+IYB0lx7yH+r7S/WbbdK2feF2l/QtD8+MFyZCFvdiIz9DOST9sz5HZ8i
+	 hJtsaG3YPnc29Klfs11n8Ybmwca4QyeHS8xd1fgPnRqo6kEqGq5vEUhWdNCNu5gUqJ
+	 K1W6fupvvPVjIitEArjzzSX7tf/K3y0yzMKdD0r/0AynWcJ4AssZ6FJ3HPAnaA9AzD
+	 gggTuZXTp5UZpvgsRVw4i0KEAS5PR+BWZiHVFQPgn30xtthMe3t2FaIfmGRCeFhbeW
+	 IE1DnPxyz3N4Q==
+Date: Wed, 19 Jun 2024 10:51:38 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] perf trace: Add test for enum augmentation
+Message-ID: <ZnLianWCCEF6ydVO@x1>
+References: <20240619082042.4173621-1-howardchu95@gmail.com>
+ <20240619082042.4173621-6-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c4d:b0:375:8fd0:c939 with SMTP id
- e9e14a558f8ab-3761d61dec0mr1802445ab.1.1718805084731; Wed, 19 Jun 2024
- 06:51:24 -0700 (PDT)
-Date: Wed, 19 Jun 2024 06:51:24 -0700
-In-Reply-To: <0000000000007a5ef50610c5799c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000083931d061b3e7e07@google.com>
-Subject: Re: [syzbot] BUG: unable to handle kernel paging request in bpf_probe_read_kernel_str
-From: syzbot <syzbot+a0fa177e13690b663c74@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619082042.4173621-6-howardchu95@gmail.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, Jun 19, 2024 at 04:20:42PM +0800, Howard Chu wrote:
+> Check for vmlinux's existence in sysfs as prerequisite.
+> 
+> Add landlock_add_rule.c workload. Trace landlock_add_rule syscall to see
+> if the output is desirable.
+> 
+> Trace the non-syscall tracepoint 'timer:hrtimer_init' and
+> 'timer:hrtimer_start', see if the 'mode' argument is augmented,
+> the 'mode' enum argument has the prefix of 'HRTIMER_MODE_'
+> in its name.
+> 
+> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> ---
+>  tools/perf/tests/builtin-test.c               |  1 +
+>  tools/perf/tests/shell/trace_btf_enum.sh      | 57 +++++++++++++++++++
+>  tools/perf/tests/tests.h                      |  1 +
+>  tools/perf/tests/workloads/Build              |  1 +
+>  .../perf/tests/workloads/landlock_add_rule.c  | 32 +++++++++++
+>  5 files changed, 92 insertions(+)
+>  create mode 100755 tools/perf/tests/shell/trace_btf_enum.sh
+>  create mode 100644 tools/perf/tests/workloads/landlock_add_rule.c
+> 
+> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+> index c3d84b67ca8e..e83200415ad1 100644
+> --- a/tools/perf/tests/builtin-test.c
+> +++ b/tools/perf/tests/builtin-test.c
+> @@ -152,6 +152,7 @@ static struct test_workload *workloads[] = {
+>  	&workload__sqrtloop,
+>  	&workload__brstack,
+>  	&workload__datasym,
+> +	&workload__landlock_add_rule,
+>  };
+>  
+>  static int num_subtests(const struct test_suite *t)
+> diff --git a/tools/perf/tests/shell/trace_btf_enum.sh b/tools/perf/tests/shell/trace_btf_enum.sh
+> new file mode 100755
+> index 000000000000..4861983553ab
+> --- /dev/null
+> +++ b/tools/perf/tests/shell/trace_btf_enum.sh
+> @@ -0,0 +1,57 @@
+> +#!/bin/sh
+> +# perf trace enum augmentation tests
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +err=0
+> +set -e
+> +
+> +syscall="landlock_add_rule"
+> +non_syscall="timer:hrtimer_init,timer:hrtimer_start"
+> +
+> +TESTPROG="perf test -w landlock_add_rule"
+> +
+> +. "$(dirname $0)"/lib/probe.sh
+> +skip_if_no_perf_trace || exit 2
+> +
+> +check_vmlinux() {
+> +  echo "Checking if vmlinux exists"
+> +  if ! ls /sys/kernel/btf/vmlinux 1>/dev/null 2>&1
+> +  then
+> +    echo "trace+enum test [Skipped missing vmlinux BTF support]"
+> +    err=2
+> +  fi
+> +}
+> +
+> +trace_landlock() {
+> +  echo "Tracing syscall ${syscall}"
+> +  if perf trace -e $syscall $TESTPROG 2>&1 | \
+> +     grep -q -E ".*landlock_add_rule\(ruleset_fd: 11, rule_type: (LANDLOCK_RULE_PATH_BENEATH|LANDLOCK_RULE_NET_PORT), rule_attr: 0x[a-f0-9]+, flags: 45\) = -1.*"
+> +  then
+> +    err=0
+> +  else
+> +    err=1
+> +  fi
+> +}
+> +
+> +trace_non_syscall() {
+> +  echo "Tracing non-syscall tracepoint ${non-syscall}"
+> +  if perf trace -e $non_syscall --max-events=1 2>&1 | \
+> +     grep -q -E '.*timer:hrtimer_.*\(.*mode: HRTIMER_MODE_.*\)$'
+> +  then
+> +    err=0
+> +  else
+> +    err=1
+> +  fi
+> +}
+> +
+> +check_vmlinux
+> +
+> +if [ $err = 0 ]; then
+> +  trace_landlock
+> +fi
+> +
+> +if [ $err = 0 ]; then
+> +  trace_non_syscall
+> +fi
+> +
+> +exit $err
+> diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
+> index 3aa7701ee0e9..69126299bb08 100644
+> --- a/tools/perf/tests/tests.h
+> +++ b/tools/perf/tests/tests.h
+> @@ -205,6 +205,7 @@ DECLARE_WORKLOAD(leafloop);
+>  DECLARE_WORKLOAD(sqrtloop);
+>  DECLARE_WORKLOAD(brstack);
+>  DECLARE_WORKLOAD(datasym);
+> +DECLARE_WORKLOAD(landlock_add_rule);
+>  
+>  extern const char *dso_to_test;
+>  extern const char *test_objdump_path;
+> diff --git a/tools/perf/tests/workloads/Build b/tools/perf/tests/workloads/Build
+> index a1f34d5861e3..5b12b93ecffa 100644
+> --- a/tools/perf/tests/workloads/Build
+> +++ b/tools/perf/tests/workloads/Build
+> @@ -6,6 +6,7 @@ perf-y += leafloop.o
+>  perf-y += sqrtloop.o
+>  perf-y += brstack.o
+>  perf-y += datasym.o
+> +perf-y += landlock_add_rule.o
+>  
+>  CFLAGS_sqrtloop.o         = -g -O0 -fno-inline -U_FORTIFY_SOURCE
+>  CFLAGS_leafloop.o         = -g -O0 -fno-inline -fno-omit-frame-pointer -U_FORTIFY_SOURCE
+> diff --git a/tools/perf/tests/workloads/landlock_add_rule.c b/tools/perf/tests/workloads/landlock_add_rule.c
+> new file mode 100644
+> index 000000000000..529b5f1ea5a7
+> --- /dev/null
+> +++ b/tools/perf/tests/workloads/landlock_add_rule.c
+> @@ -0,0 +1,32 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#include <linux/compiler.h>
+> +#include <uapi/asm-generic/unistd.h> // for __NR_landlock_add_rule
+> +#include <unistd.h>
+> +#include <linux/landlock.h>
 
-***
+This file was introduced on linux in 2021, unsure if it will be present
+in some of the older distros we test, I'll check with my container test
+suite.
 
-Subject: BUG: unable to handle kernel paging request in bpf_probe_read_kern=
-el_str
-Author: wojciech.gladysz@infogain.com
+Maybe we'll have to just define those LANDLOCK_ACCESS_FS_READ_FILE,
+LANDLOCK_ACCESS_NET_CONNECT_TCP, etc as plain #define to make sure it
+builds ok with uCLibc, musl libc and older glibc.
 
-#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux e=
-e0e39a63b78849f8abbef268b13e4838569f646
-The information in this email is confidential and may be legally privileged=
-. It is intended solely for the addressee and access to it by anyone else i=
-s unauthorized. If you are not the intended recipient, any disclosure, copy=
-ing, distribution or any action taken or omitted to be taken based on it, i=
-s strictly prohibited and may be unlawful.
+- Arnaldo
+
+> +#include "../tests.h"
+> +
+> +static int landlock_add_rule(int argc __maybe_unused, const char **argv __maybe_unused)
+> +{
+> +	int fd = 11;
+> +	int flags = 45;
+> +
+> +	struct landlock_path_beneath_attr path_beneath_attr = {
+> +	    .allowed_access = LANDLOCK_ACCESS_FS_READ_FILE,
+> +	    .parent_fd = 14,
+> +	};
+> +
+> +	struct landlock_net_port_attr net_port_attr = {
+> +	    .port = 19,
+> +	    .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +	};
+> +
+> +	syscall(__NR_landlock_add_rule, fd, LANDLOCK_RULE_PATH_BENEATH,
+> +		&path_beneath_attr, flags);
+> +
+> +	syscall(__NR_landlock_add_rule, fd, LANDLOCK_RULE_NET_PORT,
+> +		&net_port_attr, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +DEFINE_WORKLOAD(landlock_add_rule);
+> -- 
+> 2.45.2
+> 
 
