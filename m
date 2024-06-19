@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-221425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4BA90F370
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:01:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF6E90F36F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4568E2820AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:01:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE90F281B03
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBA5158D6C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7028158D65;
 	Wed, 19 Jun 2024 15:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Giu7MEVV"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Deuzf+T7"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E8C1586CD;
-	Wed, 19 Jun 2024 15:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52272158202
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812160; cv=none; b=hxqnNqfWskUQMDa7sTjztVzadXp+BAvhD9LtfUIhvhEYL/pjz6Vh8XGdZZsaauXHmj0LLRvXUn/81+oMZWV9YUxUsSxe3oH2+Lwh9zNiHzNfRKXvzfC8vrQ0oJ5Uw6AKbp4Yuz6KCS/Y6T0YBIqwYQOIeGrxbLE5DuyP3xaI5Aw=
+	t=1718812160; cv=none; b=Gxvwn75Pfi6A7sJDUqNEs3H7EPt2E4Z984mq9XT2OnXVVEAzm5RjdZHf1LytHAi1CWcVj0cbZ6DtRqgPmpT53fiQzLS1+W8sr3kBHbNl9x+H6MwWp9voX94LaNQdNR+Z5jubn27LB1X4AAuXz0H9UsDsDoexgUwYZeIWWoxSdc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718812160; c=relaxed/simple;
-	bh=sCo0S/t/wVuMA8QyWX9utK/82LOwdLvNdRyW93Wh9Zo=;
+	bh=cSH93zHXkK5myzncS0R9U3Eonp7whM/bFDFKKdLoqKk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hvJ+ZJ4luCQz8jiND4nL6yYkxQtICTCIDOo5/NLR0mj3Vza7/Dz/Pm+FJK/E3SdxC00jzLeMcj2LYGckp1qDu3rjN28FlywFMjVRdcOdYj9OlSt6lYZNPUParPP1acOVlEAOsKQAZGpAanqJNdT+rLc/5fc+clemOiBUEelunGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Giu7MEVV; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-80d6c63af28so2528192241.0;
-        Wed, 19 Jun 2024 08:49:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=b259tJLhzN3VbbMzrffVAvtylkd7VyQhP08dVRDV35ExKQJWDMQGMbgnyvrCLRz1UTI10frhfNuKj42X7cwNEW0kwS42BJSdtU1vFQfpVbsGqGZfzewdwsTm/Kz3Ll2auVnVhI+At+1Oe7KVhXlb9mSpb3tMGO65MT+MfxSmaCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Deuzf+T7; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-62a08092c4dso66918637b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:49:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718812157; x=1719416957; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1718812157; x=1719416957; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sCo0S/t/wVuMA8QyWX9utK/82LOwdLvNdRyW93Wh9Zo=;
-        b=Giu7MEVVW4CDe7/rxoWgXS+g3BfknXRz5SScKP9PTDBZ6+T0hjUTcqZXAhcTvKh+JA
-         xnnI+pJXlD2w7sq70hBGcLxYjGuzp+smoB0aaxENhSORF+vhQ5KcXE9btXcY4vaPWlam
-         6H51BZ5lkF/mGW2+7wYUwrzQ6jmz5zU5+Lrmw8zVCSCHJdaDdJhjQxu+PdQQfXt+oGzB
-         tEKz14AshBDyVn2d27Sk4pcdoiBqbiyV38scuI56oTipWtA+vzQGJZNDs58GvLJMUIxE
-         ecPwyS/5F8RRmGnNcla3IXv4v2LRIJPBXpiogYBt6OxipSL0aJ5sWI694cazCo54hOtR
-         zKfw==
+        bh=3A3V41ThbwHIAGZpAhL1w9y7K8p24jvNIlupY7BQNOY=;
+        b=Deuzf+T7eIoBmSjD0usGJ8i1x1VH9BioooixvPYb5R5hoaZaXI0MekCU7r/i0D31Sa
+         ZjAc8jE/T4Em5onVaGSWln4Ds5DiMatRYi7HpFN+oFqyDgbaISxht2YO8VtPfr85MeEB
+         oTs8ew+/Sf5VZsFdGKZe8GLudEPvrxrOFEUG3IuaRK/zFpiMhoF44PMocckPFcbB/rBL
+         t7dFYaoLU3Gt29BgTW0SLHOzBPgp1ga7J3wzPZiOO9KqhSRgpwvwD63KQ8k+L09P9UOY
+         4bNKDTs0r2yZgP4g3XnOae5yXnHYjfMKGDpMpqUn8rooCPqPM1p2O31BENaO19Q8RNKt
+         m4qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1718812157; x=1719416957;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sCo0S/t/wVuMA8QyWX9utK/82LOwdLvNdRyW93Wh9Zo=;
-        b=J82jj0LT/P6PFDqXvLRDP9I+G9MrnFGdgzbhB9iF7G0cC11K9N08/9gr5Hy9OfNFVb
-         KXDGMAjKAYChtHXOR7Cl8ya5h7TaVrHPT36QML4wlwh+sxYDC8i4Dajqk40WSJf3+mgo
-         DMtVHFPtQzBmba17f3ilEgdu/NtQmBmBnwI54fHxbBtblX/02WZlGlgWNMYmNxQKNbp4
-         jic0SZaxiuH841hz5yQ8jvKN4S30CbjP3n3cOXnMw+7eLZRGwKDLIfQmb11NrqUN3n+7
-         3hotV7z+/0UhdM9JXRsKSw4Licn6vclxt5MZMj8BSJgnjN2X1QmZ1XSD5XP2enCl5hAS
-         JpmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNfV6/zxzeq9u504Dn+20+/NXomd8Rl9abPCmzU75Ls1SMzX7kEQlP29HL2l+xhplW/Un4qnMJbxXi7zvzDx0IVcaUF20U1XldnjFpxf6sjwXBCdqvb2zDEyDYRDVyhD4U8Mv3L9AKntC7v9msHUXIcUzG0rNnwWbPIOFd9lKR8SQfTXIYAwW0XRSaiBNWvA3GDeS8znYjDSSQ5hKwUezvY0Tq0lTW1k0MCBeG+90uLfi4IB6nM4g0fqqpPAAIBV7ACPR1trIYR9nDGJrfY82PwTDd+e+q7foHL6QR3rsVDG0Lrt2wwsRTqX/BSoa4Z6iPFvEL5tk7iIrYYAVkQzqsAzcFT0MjUR42f3iJHehuNBGAfobAkmpcWyLFr0fXcvm9yDS+bqsp9khF8RHWuy/bR78qCOphvIQ76W1UpQz33RbuHqw1yntFHvXGrpSm/Ko=
-X-Gm-Message-State: AOJu0YxQ/SnjNJ4BVcTpeDyEKgsFkRWz5mqL7lQLHR9BGg2ilF0YpSo+
-	eJ3XmUMeWVOOOLDirrWQp7pmeJbomedVaZtjVUXA1gHRe7bmBiB48uP/4ai5Biio6wtICX4ASuy
-	UiS7IGZq7NC1yrytmrED8gw8Q9uk=
-X-Google-Smtp-Source: AGHT+IHg0GWswSl3r9pwlr7iQjchG/nGHT//aM8i64MYsXIGAJArmngGDjmCxE9ZpGaKh9pHgPCRQReNLVUNTwTTHm4=
-X-Received: by 2002:a05:6102:26ce:b0:48c:40cd:e4da with SMTP id
- ada2fe7eead31-48f1304b1c6mr3802757137.19.1718812157407; Wed, 19 Jun 2024
+        bh=3A3V41ThbwHIAGZpAhL1w9y7K8p24jvNIlupY7BQNOY=;
+        b=xVMBAB50zAnOA6MXVACvOMnOla2OMfJZ3q1XkJLNMANOhqE/WLaaDRot/h6bBGTFis
+         7YOak1SWJD0CUEAexeBgKIOa9sGdxw6wg2rlZGcBlhbUcgcS1O257ZTLg81/7wGR3ZYH
+         nY5LDMi6Id2pnJVwvjasE8sdISqIwIb+dadSRfkmIf4wCenLXtgpIDS7nDcER+ajFDw5
+         mQpo0tEL+J2CaLJR4zi0mcDaPZuAbJgIwadoHyHZLTYucRjPgDrGjUyWFr0ypZhDkiy2
+         83BjchOZ8g2tfqO7kDDybbJJ+nicc7A5OyJ+OzYZr4UEsrm3llAdd41UCT+AjXjg0wgw
+         /WTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLP53IQX4Z6LyBj5iFqMzu/lk7X0ZeniMVSp6Bfygtehjw+mO73+0IFTjBnce5Reus3s1Vqf3+Z9RY+ZAbnyc0xyhw6qUV/GQRfmQX
+X-Gm-Message-State: AOJu0YxnglKHRXJTk8Exe/NzKezpc5PodDPFfYz/gvk3HJVFCApqH99m
+	PeAsoiZ+mdq/e3i5Oes0kKXvaOVRg3A93UaOHszkOtAJEPurFrErFDUpA3wepAgF/oA4Fm3x07f
+	ZHw48IH05c7Ggpn+8MlUd1jakP8rY4HmFZoO5
+X-Google-Smtp-Source: AGHT+IEkDQP5qZ6Yrjj3uYAUPWx122jAV/ve6smoTK2csXSUiZ3XrnUftHl2q2TGjzjXyIgjKZD8k1vF8LzOBOY22t0=
+X-Received: by 2002:a81:84c5:0:b0:62c:e6c0:e887 with SMTP id
+ 00721157ae682-63a8d72f60bmr34069987b3.9.1718812157336; Wed, 19 Jun 2024
  08:49:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -70,50 +70,83 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-18-e3f6662017ac@gmail.com> <4eab619f-6da9-4aff-b956-69d8e2ecd47f@sirena.org.uk>
-In-Reply-To: <4eab619f-6da9-4aff-b956-69d8e2ecd47f@sirena.org.uk>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Wed, 19 Jun 2024 18:49:06 +0300
-Message-ID: <CABTCjFDUKgeYWuwo8eLt+5WD=4O+kLbFwMRxsTufGnqK0Ecpvg@mail.gmail.com>
-Subject: Re: [PATCH v3 18/23] regulator: add s2dos05 regulator support
-To: Mark Brown <broonie@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Liam Girdwood <lgirdwood@gmail.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
+ <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com> <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
+In-Reply-To: <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 19 Jun 2024 11:49:06 -0400
+Message-ID: <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
+	akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, mic@digikod.net, 
+	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+	linux-integrity@vger.kernel.org, wufan@linux.microsoft.com, 
+	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org, 
+	pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, jikos@kernel.org, 
+	mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de, 
+	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=B2=D1=82, 18 =D0=B8=D1=8E=D0=BD. 2024=E2=80=AF=D0=B3. =D0=B2 17:08, Mar=
-k Brown <broonie@kernel.org>:
+On Wed, Jun 19, 2024 at 3:59=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Tue, 2024-06-18 at 19:20 -0400, Paul Moore wrote:
+> > On Mon, Apr 15, 2024 at 10:25=E2=80=AFAM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > >
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > >
+> > > Integrity detection and protection has long been a desirable feature,=
+ to
+> > > reach a large user base and mitigate the risk of flaws in the softwar=
+e
+> > > and attacks.
+> > >
+> > > However, while solutions exist, they struggle to reach the large user
+> > > base, due to requiring higher than desired constraints on performance=
+,
+> > > flexibility and configurability, that only security conscious people =
+are
+> > > willing to accept.
+> > >
+> > > This is where the new digest_cache LSM comes into play, it offers
+> > > additional support for new and existing integrity solutions, to make
+> > > them faster and easier to deploy.
+> > >
+> > > The full documentation with the motivation and the solution details c=
+an be
+> > > found in patch 14.
+> > >
+> > > The IMA integration patch set will be introduced separately. Also a P=
+oC
+> > > based on the current version of IPE can be provided.
+> >
+> > I'm not sure we want to implement a cache as a LSM.  I'm sure it would
+> > work, but historically LSMs have provided some form of access control,
+> > measurement, or other traditional security service.  A digest cache,
+> > while potentially useful for a variety of security related
+> > applications, is not a security service by itself, it is simply a file
+> > digest storage mechanism.
 >
-> On Tue, Jun 18, 2024 at 04:59:52PM +0300, Dzmitry Sankouski wrote:
->
-> > index 000000000000..3c58a1bd2262
-> > --- /dev/null
-> > +++ b/drivers/regulator/s2dos05-regulator.c
-> > @@ -0,0 +1,362 @@
-> > +// SPDX-License-Identifier: GPL-2.0+
-> > +/*
-> > + * s2dos05.c - Regulator driver for the Samsung s2dos05
-> > + *
->
-> Please make the entire comment a C++ one so things look more
-> intentional.
->
-Do you mean enclosing the first line (license identifier) in /* */
-style comment?
+> Uhm, currently the digest_cache LSM is heavily based on the LSM
+> infrastructure:
+
+I understand that, but as I said previously, I don't believe that we
+want to support a LSM which exists solely to provide a file digest
+cache.  LSMs should be based around the idea of some type of access
+control, security monitoring, etc.
+
+Including a file digest cache in IMA, or implementing it as a
+standalone piece of kernel functionality, are still options.  If you
+want to pursue this, I would suggest that including the digest cache
+as part of IMA would be the easier of the two options; if it proves to
+be generally useful outside of IMA, it can always be abstracted out to
+a general kernel module/subsystem.
+
+--=20
+paul-moore.com
 
