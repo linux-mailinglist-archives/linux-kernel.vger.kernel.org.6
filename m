@@ -1,390 +1,1138 @@
-Return-Path: <linux-kernel+bounces-221703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A7E90F76A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:11:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE0690F76E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42ADB1F239A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:11:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 087C71F239F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659A5158DDF;
-	Wed, 19 Jun 2024 20:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3B174068;
+	Wed, 19 Jun 2024 20:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="N/RiiT31"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2084.outbound.protection.outlook.com [40.107.95.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="B7bVuqog"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DB9A55;
-	Wed, 19 Jun 2024 20:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718827864; cv=fail; b=K+drP5GHiejIj/34Al4+ZueVe0cLOfCOCyYz1LzyPQUBrRhvI3unve0RcBXL9CrieT/er3K+y7jh4jLUX95x0+qa7QC5iw9HdrqHXZhspyyHGc04AXCYlTidLRJN68wcEIRijBtzk3kBVdhpjWRCiWw41Q/ByxWhB9gXAsn4/8E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718827864; c=relaxed/simple;
-	bh=h1DxaI7ZlIHV+afEWHVkpD700zNqvZ9F3md7I63mhSY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jXhZkGeO04smxeDXXT3Q+D0MnaKfTe9oQl7Wnow48GLDa8tQ0SeEwK27uPlpiiBIrid07Cs44bHzTjOgpg/ToFrz6B2ySEn9A6zvC+fqOntQKXuGqPAQ2H+PT2g7TJ6bl0MBkpn+YbOeQuzTBPvEQpdq6Uu/DJ+P7WitJb5GQAk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=N/RiiT31; arc=fail smtp.client-ip=40.107.95.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aQejlBZHwle51Gvg12YhAze9zdAiDZ3DeADO+ag8Ku1x0IlKIi3MQVDGOjAhhLGlTMNLkNqB4/kONeNcuqYEbUG5e5bBcLyqEFguTtmZYcqCHD/1QLwp0lEl44IyMXq+V4OEXmC2b2K08EgKTuLOhN1gBci/Q1yIzeFr89UEtYDh8FugIACaRfMsm+MeTYvzVj4ISQxsLZ4zosiUrxQU/7s898Xk8BkDVEP/aB57KYMoMbg5N13heoTjuyiTRGXUucKK/1z2epiOvru96RgeBGrIuSyIEsD5v74paroh04titB58RYa5zk7P3bEBuRo1Jepfp+KNj+0Ztanrp1nPdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5WRYFRU8Uu5xI9Y+m5kJd+3Xv/SNemLOUBvkdm8N2nE=;
- b=KEv6J3Mvm7O100AT5eQI2sqN+znVqYJqsmVqPlz8PG4dlAVRNafVp2nLpx8ULIJGHr6rfUdOA1X2UuMAo6/06rQMJWwtJxEamWnqFF+u2HV2Ai9p/7CEHvlzzAn4kxjh63GiHNvNVvxgUik0mYKBNBCvUNYDMnz6gFLkqEj9oEFZhCP9gk8F9BiMXpnC2Vu3dAIbBW3hLDji9BcJjdtC4GP5gvZE5B3P7BgerK250s1NZyWHHetl0ekAG5ZvxlyDMP+Bgcs9ikvZfUQCFso9CpcW/LuiL2Dm0u1HY1zOt/UIeLxlR0ddWgM4BTXg68KVKtmQYP32mK5PYtI9LZ1fhQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5WRYFRU8Uu5xI9Y+m5kJd+3Xv/SNemLOUBvkdm8N2nE=;
- b=N/RiiT31Gm9gu0ZIMKI8OI/CocBLG7okcUbdTfMv05m0FvZzIt1F79iQjssYtC8KDtrAgwbN5Hb+dDK/7o8+mfkQjlBeMBtHrlQ8zXK8VbE4JpBgYLmCy79FxavcKJjDDWknozLWo9tpR+P+RAmB9D2snKniyDq4/cQusRqJE9c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by DS0PR12MB6582.namprd12.prod.outlook.com (2603:10b6:8:d2::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Wed, 19 Jun
- 2024 20:11:00 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.7698.017; Wed, 19 Jun 2024
- 20:11:00 +0000
-Message-ID: <5b110b95-b50d-482c-ae00-b59b7382875e@amd.com>
-Date: Wed, 19 Jun 2024 15:10:55 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v4 13/19] x86/resctrl: Add data structures for ABMC
- assignment
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
- kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
- jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-References: <cover.1716552602.git.babu.moger@amd.com>
- <a68ff64d52eff2de91a3c6030c2650396ea7fb8c.1716552602.git.babu.moger@amd.com>
- <31497c62-fe32-43a6-ba8d-361c4c89422b@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <31497c62-fe32-43a6-ba8d-361c4c89422b@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA1P222CA0151.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:3c3::21) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B4B45BF1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 20:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718828058; cv=none; b=RKqa+SqDdEf2M31BrMT3o1j7Sw5ZZaDi86JNw7E42SYSA/oRQGTKjWg5V7C7YI1IIa5RoMx5S+1YsFw63XYviGJsMY2alYl7xbvKtPUnfCne7fVPM4RH/xsLhmi5I+ZPlpcZAwsGjogdWBkQ0UgmAL1lSvaWovwlwtbdxVXd5lo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718828058; c=relaxed/simple;
+	bh=AIfv95sj1Js/hLfn+ylEMc80Gwsb3Dp7cGfpiYUoglw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V3b4By4FyL64r0ypihOJDmI5i10310bf8GvdyL5ZTCaUWnYmQkhyMl9flsuBKPCq70p75EQ4v/NtsL8Fc3lzNSvc2PWBcXX/f8kT9Fi9wylbd/dsIICsOPKy9nQCfTcXF3LriT1uoq0bkyE0OK6/dpIhnVgwdR7OFLXGCtq97sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=B7bVuqog; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42172ed3487so1592495e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:14:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1718828053; x=1719432853; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WOxL5pQLlkUl/uDE8d6cm6J5apnf8wsa0xS1dcBi1Co=;
+        b=B7bVuqoguQC1/C707wm+4piP7sZPpbtwTyLjMsPhZcyTFBT1OC8fEoAxPjkCikAQex
+         e7T2WlfvhQIF2ssn5XPMpOCNTht9X99txTo6rbYQjsWUTUYyki/PVXuYwO4uk4MmX/QE
+         +mJ6bbt9AQ0QUav6ZT+SD+xaVZtpf9zrgUAjyiwumwsT2cfEtmyVp90w3SljW4Qw8VJi
+         c+GdIXRZZPojXHPibRjxE9amDO8VJoCdv8mCL8U+dwY6qHDq1bAjk4/nIs5d6mMGW2Eq
+         mxW2bf5tS2U92j6pvbKXBGGvel7Dpqw89trYFKwbmCW6XrmRkj1h4HQeSKuyF/59QKYS
+         pTxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718828053; x=1719432853;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WOxL5pQLlkUl/uDE8d6cm6J5apnf8wsa0xS1dcBi1Co=;
+        b=T2iJW6qxXSxNCuNRR32GZ/h73de6Z/yeGYqLFFwDE+t7G5pVciPS37aguEvCTiauiM
+         Wg5DDvvOEb7BWut4cGfylbUYupETHmJaIYoyzc0jcKDkpf1KgX6iIuG1XCIRkoKcvrDe
+         RfHiUVREc6XG8hVtUAOuhTfi0NT7zgveBdCjmQp8kr9nCvFTKZOKSC8d9lt0O+dIYRn1
+         EYdaIcBsehlUFMi7MMiEbN8qtGaLYGYOd4gPTtsv8Lsy7fIysxRhlXUXE/RQevnyo5+F
+         WyTdE7wz5RUvhdtAglpp6cRhKVjB65D/N3SmdTf1PuYJOKEkT+7COalKgb52ljBSzX2y
+         iUww==
+X-Forwarded-Encrypted: i=1; AJvYcCX9ME2VuDDs5tNo2EXQ3UP2UQxakckBhmWYf9QHyT/VmhN3c+atoSwWQIEHN5xAqThnH6mPLiY9E36LTbgNQjyQ6db2hQ3uhjLwHMsM
+X-Gm-Message-State: AOJu0YxQ1Kl0/NJYrSZbfeF3FZKb9sEpMRmVAujzIPfmVa1oDHTBSn4i
+	MMSAa/PaCLmCQaz3M59NHHzZwex6MMJvFAj+tPW1MqhRBkrcEpL0Zj0tD4xx4iPLE0YdoTNaZ+V
+	a
+X-Google-Smtp-Source: AGHT+IGEaB4CfLZsElE/Lsz18hlzJs6YE22G1vB1ZbzY6bLjcKgPbd3MEsgKIOBS23cKbOVvmLCB+g==
+X-Received: by 2002:a05:600c:1608:b0:421:8e64:5f23 with SMTP id 5b1f17b1804b1-4247507a472mr22991935e9.5.1718828052847;
+        Wed, 19 Jun 2024 13:14:12 -0700 (PDT)
+Received: from airbuntu.. (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0be818sm1303095e9.15.2024.06.19.13.14.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 13:14:12 -0700 (PDT)
+From: Qais Yousef <qyousef@layalina.io>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Hongyan Xia <hongyan.xia2@arm.com>,
+	John Stultz <jstultz@google.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Qais Yousef <qyousef@layalina.io>
+Subject: [PATCH v6] sched: Consolidate cpufreq updates
+Date: Wed, 19 Jun 2024 21:14:09 +0100
+Message-Id: <20240619201409.2071728-1-qyousef@layalina.io>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|DS0PR12MB6582:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53a2a6f3-0c05-447b-65e1-08dc909bf00d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|376011|7416011|366013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c3NlTjRWb1ZSV3JZT0VOU1FHeVdvaEhPSHVkVnpaUDhZdDUrV3czaUwzSzZh?=
- =?utf-8?B?U3dXREsyT0JyY0R4c1VjQ0VGRjdLaHF4WlpsVlZhRHYyZ3hpU2Q4N00vQlFP?=
- =?utf-8?B?R0JHR09wMkpIMXorMlFXWEZVNGFIZGNBRDN0RndyemxjOCtzT3gza1lXalRZ?=
- =?utf-8?B?SGlGTkV2cFZsNVZPZFFDVEd5VTI2cnVkbzBwVHQ3MkVLSkk4UjNXOUxvdjFi?=
- =?utf-8?B?RGJNdi95RWo1RGpuaThNRHd6TE50YXU2V0UyL1FFNkhrRlZ2em41TG9TMDNw?=
- =?utf-8?B?MnN6NTlCaW5xWEZMWSt3ZlJpRkQ3WE5aT3M3d1k2VkNtSGlDMDFZcHF3QUsw?=
- =?utf-8?B?TE1STWdMaE5YMUp0RDFwOTFrUnY5aGFjOW42UjJLZHF0czlMdFNsdHZoU2V0?=
- =?utf-8?B?Z24yKzJTSWZuSzhYZWIreDFsaWw5K2VZNTduOEpqWWdyOTdrWjcvYVlGaHh1?=
- =?utf-8?B?Vk1GcnlpeFZBVjhLcGcxMFJjOWlGd0VlT2dUYlIzMmszeDRpZklQU3laSC96?=
- =?utf-8?B?NnU0d05iY0FaQnB5NlVCMEZCaVNCY0NKWmFCcC8zSGpCb0hTQ3NNUUhTQ01Y?=
- =?utf-8?B?WHJLbC9mR3Iwdks0OHhYYm43d1dUdzZtWGRSb2pZYUR1TGNoa3J0K2RGV0lT?=
- =?utf-8?B?UHBHR3BKSGFYR0xqYTZqeDFpbEhGVmY3bDY2cUt3YmxmVGJwOTZaT0JOODJJ?=
- =?utf-8?B?bUF3bnBpTzdtbzdmVldDOEE3Zmw4UysyNktDTkhwd1Y2SmpPYWtFWnV1dFFL?=
- =?utf-8?B?dTBMdzNQYVpJcXM2aXF6S1d2SFJLUnRtQ3lqSUVDN3Nvamp3aVQ4ckI5NWM0?=
- =?utf-8?B?d1VnclpEdWFodUxmb05LaWd1WVJLWjZteFVhMEk0aTdFcGI2alRUL2NqNTFl?=
- =?utf-8?B?S3lBM3hGbWxYN2tSbVE1VVhRQ05SY1Fmd2hWSGdYZHhVZkhRYXRUWndibUd1?=
- =?utf-8?B?ZmUvUUlScDNxcDNuYTRvNXl3L2QvUUZzREhqc3BPbVUveGhkb0hXOThBcFl6?=
- =?utf-8?B?TC9na3ByZHlJcHJncE9LRjJwY09SdGUvM1RFU2hiQkhQR0xpaGI0dmpzamFE?=
- =?utf-8?B?SENaMk9ZUmZsamVJZWxTUjF1K0pScEFlQnZuSzRGYkpJYjUxak9LUlJGZXhr?=
- =?utf-8?B?RDNzN0QvcGRDSHlvOUgzSlJGazdydGI2aHdETHJPTHI1Tlpzd0dGTTJaUEY0?=
- =?utf-8?B?dis5OW94b0Uza2duYkpEL3VBcnR3QVlIc3F1STBtTmd0TEFCMm1XTk5TOGRQ?=
- =?utf-8?B?alE0QmplQzB3VTJuRXEvWHpZcjhVRkJmZU80cmVESnMrbDFpYTVDMUxlOHcr?=
- =?utf-8?B?UlplZDZMVHZ1R0VJcWFMM2s0Y2pOamQvL3lmVmtGZ3Z6SG1lTUJ3Z2w4SU1L?=
- =?utf-8?B?UFcvS0FtVUZuREV0QUdwR3FUOGNkRmhmMm1za09lWFNldTgzLzFGc0Q4UjAw?=
- =?utf-8?B?UTRrTjV6YVlkRjlGUi9TdnJVY3lrb1R6elJ5d3VpR2pNTmNyREd5azQwOE5S?=
- =?utf-8?B?Z0cwbXZ1SjRNamJCQ1c2MjBwdmpHVWt2UTJ1dmFIZTYySFg0bW15bjZ4MHc1?=
- =?utf-8?B?RUErbnBBK29jaWtBYTEvakNPUllKWGFOVXROUEc1Z3ZNVk0yZmNnNDc1cXla?=
- =?utf-8?B?Zlh2UDRWb1haV01ESTdVKzMxcUdZWmNqWWpsOHpkTUQ4b0R4RWJnWFl0b2R6?=
- =?utf-8?B?Vkp0R1pWZ0tBMWtFUVZyVSs1bDB3T29HeThheG8vdGhzT2RCV0ZkSnNBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(7416011)(366013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NmsydEYxWVM2NTZNd1F2VDNOQkR5aUI2bmVvNlB6NzFGZGxPUFBPOStOeEpK?=
- =?utf-8?B?aGV0SDJZWXpzeEpEYkpkOG1wVExRSkRwMHkxRU15dGl5VjR3MnBpS2dHbnJn?=
- =?utf-8?B?OWhpSS90VDJXTkR6TnJPRkZKT3JUd0RkR05pWEROZm1FMUVYTElSRDVrOEVS?=
- =?utf-8?B?UFhzeEdVZ3laSWNVL2Q0dnJpWDZieHlXdExvWlpRaXU2WVJ5WW4wZW1QdjJP?=
- =?utf-8?B?cU1PclZoSllhREo4ZnlPQ1o2Q1JMS3lGcHZpeGhYeEhsNEY2anFJZ1RhdVNI?=
- =?utf-8?B?VkZLYlNBa3ZEWkcyd2RsbHdDV3B3VlhuZXVqcUIwSjBuOEI5L3hrMUsvYk1h?=
- =?utf-8?B?Qm5DOWFaeHlEUjF0dGZHSDdDRG1hQ1RpL3NMN2VmTWV3a2ozVVBWZ015MDBI?=
- =?utf-8?B?MHdFWFp2K1dyendDbkxQclR4NzIreHJZN1h2ZENXSFRDaFJFWDRmZWdVMEN3?=
- =?utf-8?B?MXhPcytDZVBISFJIRWlLZnpnaFlOdGRWVHhTNzQ3azIwNzhJbW9uUGNXc0tH?=
- =?utf-8?B?Y0ZHRUJFUTdoOWVwcWNERC9aeEVaU2FuNzAxSkdZWUhnT2hXMENKM0loVjZE?=
- =?utf-8?B?eFJoSlB1UVpZWjVZK0RvZVVxMEkwVk9mazc2TGRFeHZwdjVOWHpDK2ZBMGtY?=
- =?utf-8?B?MkF4SGpsSjNsbktnTTIzUm0wM2VoK09VTE9DVGlONEs3WlA0US9hQjJsZjlT?=
- =?utf-8?B?Ty9QVXliVkxMY2dJUUNDQUpMNm11S1NLNklPWW1tbFBHS0ZsZldOKzV6aDBQ?=
- =?utf-8?B?OExRb3EwOWJrcGxHdmszUGQ5Y2RWbURtdEdhTHFleXJGZkZKLzA5ZlBlREZI?=
- =?utf-8?B?Qkh3NWw2TmxQcGdSM2NHQm1HMHVKZi9SbHlSL3BPTWN0em5WMWw4dm5MaWFR?=
- =?utf-8?B?dERIbHl4a2FDeDdUcEkrekxKeXNESzdVbnNTc2hxVVdwc281VFgvSFVyeGl6?=
- =?utf-8?B?OGxzWVVJU256ZzlTbHNJdGU0aWczbVJodHNhbXgvajBpeXZ5d3ZzQ2hadWQy?=
- =?utf-8?B?bm04Y2ZvbTNlVy9DMVM2KzQydndjSWVSaWthMzB0TnJKRExKYmd5ZVArTG84?=
- =?utf-8?B?enZCdDhyL2ZhS0tXSnBidkpCRDVGTTBxSm9kb1FXdGdXbmRneHkwTW13aXpX?=
- =?utf-8?B?VjhKdXMwTEJnL2t0ZE4vTTBIYTJtVkoyOGpiWW16NHZBMXY4eGg0eGdZVnVP?=
- =?utf-8?B?L1BEK1JrVkF4dmh5VUtnNmZ6M1dJeUc5Ry9qeTIzeHVZb0VWbzlIN0MyNzQr?=
- =?utf-8?B?aW9PenkwaEVwYnhIWHl5QUhBMGVUQ1JMdjNuWmpPYitOTHpkSE5HRXBoQml5?=
- =?utf-8?B?aUdDa09WTHp1MDRwQXBUT1NZZnpBem1TVlkyR3hKRGNvby9MbHpSQzBKY0ox?=
- =?utf-8?B?QUdra3JsTEdPUTIvMnljQjJpU3NTSzJhSlQyR0diNWpvaUVCTlZFc2RLNWYy?=
- =?utf-8?B?K0pxaG9JdHRuSXBEUlhKUC9GTU1pSmhyeGNDYUxQenNrTUJ1TE1uWldXUVhK?=
- =?utf-8?B?ODJPUmJpbzRqeEh6emF4SmVaZ2lISFVzcktOdEJXQzFQdnozYlo1Ri9zdHV3?=
- =?utf-8?B?bDJ0U1RKTHhCamY5bGtQZXNqRWxpWWljeGVZMTRiSTZJUEt2TmZQSEo5SENv?=
- =?utf-8?B?UzVTNHhyRTRaaDYrRTkySWtCU3dMYWJHZ3VwS1NTaWlGL1cvTTkwa3NwTmw0?=
- =?utf-8?B?TS90eHhpVU4yYU9qVnhqditENUdYbFh3TjVET3ZWUVg5cHpzbVk2RUlGdVlB?=
- =?utf-8?B?STRKbHVERnFiNWcvQnNRR0s2dkZHQVl5NGVUaG1UeHlNZFlqSUQ3dU1hRzFo?=
- =?utf-8?B?UzdSaEUxZ2dOSlZSaGp6R2kwV2xKamRTWkhMVGVyRElKcVpFSUprWDhucENI?=
- =?utf-8?B?eU1xcVo0M3VSS0JLT1IrTW41NmdJQUlFcmR2REM5UEdiMHpDTFpYbGdWcm9W?=
- =?utf-8?B?bHJKM1U2anlvN3VVdi9QU2dIbW9ScDVkS0ZPQ3htcHlVQ0tpUDd3VXZuaDBx?=
- =?utf-8?B?QVNrTnUvZ0xWRTdmSFV0UTc4WFhMN3FRSnZqcGZhNFl2M1ZNUEJ1ZUQ0ZUlS?=
- =?utf-8?B?SkUrVWJzRHhoaHl0dTFNYnJYdkV5ZGFUR3JyNVJTVEVRcTA5NEl0QnNNTjhk?=
- =?utf-8?Q?8q7Y=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53a2a6f3-0c05-447b-65e1-08dc909bf00d
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2024 20:11:00.3483
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Rm4xGuEdRNGR2bAHhwjUvv4IeZ4rRG9OYf0YdTArBQV2huH60996eCZdULEuX9ZQ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6582
+Content-Transfer-Encoding: 8bit
 
-Hi Reinette,
+Improve the interaction with cpufreq governors by making the
+cpufreq_update_util() calls more intentional.
 
-On 6/13/24 20:44, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 5/24/24 5:23 AM, Babu Moger wrote:
->> The ABMC feature provides an option to the user to assign a hardware
->> counter to an RMID and monitor the bandwidth as long as the counter
->> is assigned. The bandwidth events will be tracked by the hardware until
->> the user changes the configuration. Each resctrl group can configure
->> maximum two counters, one for total event and one for local event.
->>
->> The counters are configured by writing to MSR L3_QOS_ABMC_CFG.
->> Configuration is done by setting the counter id, bandwidth source (RMID),
->> bandwidth types. Reading L3_QOS_ABMC_DSC returns the configuration of
-> 
-> What is a "bandwidth type" here?
+At the moment we send them when load is updated for CFS, bandwidth for
+DL and at enqueue/dequeue for RT. But this can lead to too many updates
+sent in a short period of time and potentially be ignored at a critical
+moment due to the rate_limit_us in schedutil.
 
-Its bandwidth configuration(reads, writes etc). It is
-mbm_total_bytes_config", "mbm_local_bytes_config" in
-https://www.kernel.org/doc/Documentation/x86/resctrl.rst
+For example, simultaneous task enqueue on the CPU where 2nd task is
+bigger and requires higher freq. The trigger to cpufreq_update_util() by
+the first task will lead to dropping the 2nd request until tick. Or
+another CPU in the same policy triggers a freq update shortly after.
 
-I will add that text.
+Updates at enqueue for RT are not strictly required. Though they do help
+to reduce the delay for switching the frequency and the potential
+observation of lower frequency during this delay. But current logic
+doesn't intentionally (at least to my understanding) try to speed up the
+request.
 
-> 
->> the counter id specified in L3_QOS_ABMC_CFG.
->>
->> Attempts to read or write these MSRs when ABMC is not enabled will result
->> in a #GP(0) exception.
->>
->> MSR L3_QOS_ABMC_CFG (0xC000_03FDh) and L3_QOS_ABMC_DSC (0xC000_03FEh)
->> details.
->> ==========================================================================
->> Bits     Mnemonic    Description        Access Type   Reset Value
->> ==========================================================================
->> 63     CfgEn         Configuration Enable     R/W         0
->>
->> 62     CtrEn         Counter Enable         R/W         0
->>
->> 61:53     –         Reserved         MBZ         0
->>
->> 52:48     CtrID         Counter Identifier    R/W        0
->>
->> 47     IsCOS        BwSrc field is a COS    R/W        0
->>             (not an RMID)
->>
->> 46:44     –        Reserved        MBZ        0
->>
->> 43:32    BwSrc        Bandwidth Source    R/W        0
->>             (RMID or COS)
->>
->> 31:0    BwType        Bandwidth types to    R/W        0
->>             track for this counter
->> ==========================================================================
->>
-> 
-> This is copy&paste from AMD spec but needs some translation to map it to
-> resctrl.
+To help reduce the amount of cpufreq updates and make them more
+purposeful, consolidate them into these locations:
 
-Yes. Sure. Will elaborate.
+1. context_switch()
+2. task_tick_fair()
+3. update_blocked_averages()
+4. on syscall that changes policy or uclamp values
+5. on check_preempt_wakeup_fair() if wakeup preemption failed
 
-> 
->> The feature details are documented in the APM listed below [1].
->> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
->> Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable Bandwidth
->> Monitoring (ABMC).
->>
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
->> ---
->> v4: Added more descriptions.
->>      Changed the name abmc_ctr_id to ctr_id.
->>      Added L3_QOS_ABMC_DSC. Used for reading the configuration.
->>
->> v3: No changes.
->>
->> v2: No changes.
->> ---
->>   arch/x86/include/asm/msr-index.h       |  2 ++
->>   arch/x86/kernel/cpu/resctrl/internal.h | 30 ++++++++++++++++++++++++++
->>   2 files changed, 32 insertions(+)
->>
->> diff --git a/arch/x86/include/asm/msr-index.h
->> b/arch/x86/include/asm/msr-index.h
->> index 5f9a0139e98c..6d2fe39ac68f 100644
->> --- a/arch/x86/include/asm/msr-index.h
->> +++ b/arch/x86/include/asm/msr-index.h
->> @@ -1172,6 +1172,8 @@
->>   #define MSR_IA32_SMBA_BW_BASE        0xc0000280
->>   #define MSR_IA32_EVT_CFG_BASE        0xc0000400
->>   #define MSR_IA32_L3_QOS_EXT_CFG        0xc00003ff
->> +#define MSR_IA32_L3_QOS_ABMC_CFG    0xc00003fd
->> +#define MSR_IA32_L3_QOS_ABMC_DSC    0xc00003fe
->>     /* MSR_IA32_VMX_MISC bits */
->>   #define MSR_IA32_VMX_MISC_INTEL_PT                 (1ULL << 14)
->> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h
->> b/arch/x86/kernel/cpu/resctrl/internal.h
->> index 60a1ca0a11a7..45ed33f4f0ff 100644
->> --- a/arch/x86/kernel/cpu/resctrl/internal.h
->> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
->> @@ -107,6 +107,9 @@ cpumask_any_housekeeping(const struct cpumask *mask,
->> int exclude_cpu)
->>   #define ASSIGN_TOTAL            BIT(QOS_L3_MBM_TOTAL_EVENT_ID)
->>   #define ASSIGN_LOCAL            BIT(QOS_L3_MBM_LOCAL_EVENT_ID)
->>   +/* Maximum assignable counters per resctrl group */
->> +#define MAX_CNTRS        2
->> +
->>   struct rdt_fs_context {
->>       struct kernfs_fs_context    kfc;
->>       bool                enable_cdpl2;
->> @@ -211,6 +214,7 @@ enum rdtgrp_mode {
->>    * @crdtgrp_list:        child rdtgroup node list
->>    * @rmid:            rmid for this rdtgroup
->>    * @mon_state:            Assignment state of the group
->> + * @ctr_id:            ABMC counter ids assigned to this group
->>    */
->>   struct mongroup {
->>       struct kernfs_node    *mon_data_kn;
->> @@ -218,6 +222,7 @@ struct mongroup {
->>       struct list_head    crdtgrp_list;
->>       u32            rmid;
->>       u32            mon_state;
->> +    u32            ctr_id[MAX_CNTRS];
-> 
-> To match "num_cntrs" it seems "cntr_id" may be more appropriate?
+The update at context switch should help guarantee that DL and RT get
+the right frequency straightaway when they're RUNNING. As mentioned
+though the update will happen slightly after enqueue_task(); though in
+an ideal world these tasks should be RUNNING ASAP and this additional
+delay should be negligible. For fair tasks we need to make sure we send
+a single update for every decay for the root cfs_rq. Any changes to the
+rq will be deferred until the next task is ready to run, or we hit TICK.
+But we are guaranteed the task is running at a level that meets its
+requirements after enqueue.
 
-Yes. Will change appropriately.
+To guarantee RT and DL tasks updates are never missed, we add a new
+SCHED_CPUFREQ_FORCE_UPDATE to ignore the rate_limit_us. If we are
+already running at the right freq, the governor will end up doing
+nothing, but we eliminate the risk of the task ending up accidentally
+running at the wrong freq due to rate_limit_us.
 
-> 
->>   };
->>     /**
->> @@ -568,6 +573,31 @@ union cpuid_0x10_x_edx {
->>       unsigned int full;
->>   };
->>   +/*
->> + * ABMC counters can be configured  by writing to L3_QOS_ABMC_CFG.
-> 
-> extra space
+Similarly for iowait boost, we ignore rate limits. We also handle a case
+of a boost reset prematurely by adding a guard in sugov_iowait_apply()
+to reduce the boost after 1ms which seems iowait boost mechanism relied
+on rate_limit_us and cfs_rq.decay preventing any updates to happen soon
+after iowait boost.
 
-ok
+The new SCHED_CPUFREQ_FORCE_UPDATE should not impact the rate limit
+time stamps otherwise we can end up delaying updates for normal
+requests.
 
-> 
->> + * @bw_type        : Bandwidth types to track for this counter
-> 
-> What is a "Bandwidth type"? What are possible values?
+As a simple optimization, we avoid sending cpufreq updates when
+switching from RT to another RT as RT tasks run at max freq by default.
+If CONFIG_UCLAMP_TASK is enabled, we can do a simple check to see if
+uclamp_min is different to avoid unnecessary cpufreq update as most RT
+tasks are likely to be running at the same performance level, so we can
+avoid unnecessary overhead of forced updates when there's nothing to do.
 
-Its bandwidth configuration(reads, writes etc). It is
-mbm_total_bytes_config", "mbm_local_bytes_config" in
-https://www.kernel.org/doc/Documentation/x86/resctrl.rst
-It is a bitmap. Will clarify  that.
+We also ensure to ignore cpufreq udpates for sugov workers at context
+switch. It doesn't make sense for the kworker that applies the frequency
+update (which is a DL task) to trigger a frequency update itself.
 
+The update at task_tick_fair will guarantee that the governor will
+follow any updates to load for tasks/CPU or due to new enqueues/dequeues
+to the rq. Since DL and RT always run at constant frequencies and have
+no load tracking, this is only required for fair tasks.
 
-> 
->> + * @bw_src        : Bandwidth Source (RMID or CLOSID)
->> + * @reserved1        : Reserved
->> + * @is_cos        : BwSrc field is a COS (not an RMID)
-> 
-> Please be consistent wrt "CLOS"/"CLOSID" in comment and member name
+The update at update_blocked_averages() will ensure we decay frequency
+as the CPU becomes idle for long enough.
 
-Sure. Will change it to CLOSID.
+If the currently running task changes its policy or uclamp values, we
+ensure we follow up with cpufreq update to ensure we follow up with any
+potential new perf requirements based on the new change.
 
-> 
->> + * @ctr_id        : Counter Identifier
-> 
-> Please be consistent with "cntr" vs "ctr". Earlier the series
-> introduces "num_cntrs" so cntr seems appropriate?
+To handle systems with long TICK where tasks could end up enqueued but
+no preemption happens until TICK, we add an update in
+check_preempt_wakeup_fair() if wake up preemption fails. This will send
+special SCHED_CPUFREQ_TASK_ENQUEUED cpufreq update to tell the governor
+that the state of the CPU has changed and it can consider an update if
+it deems worthwhile. In schedutil this will do an update if no update
+was done since sysctl_sched_base_slice which is our ideal slice length
+for context switch.
 
-Sure.
+Since we now DL tasks always ignore rate limit, remove
+ignore_dl_rate_limit() function as it's no longer necessary.
 
-> 
->> + * @reserved        : Reserved
->> + * @ctr_en        : Counter Enable bit
->> + * @cfg_en        : Configuration Enable bit
-> 
-> Why are there two enable bits? How are they used?
+Also move updating sg_cpu->last_update inside sugov_iowait_boost() where
+this variable is associated.
 
-I am setting both these bits when configuring, I need some clarifications
-on these bits with h/w team. I need to know how different combinations
-changes the behavior. I will confirm about this.
+Results of
 
-> 
-> (please match other kernel doc wrt : usage)
-> 
->> + */
->> +union l3_qos_abmc_cfg {
->> +    struct {
->> +        unsigned long  bw_type    :32,
->> +                   bw_src    :12,
->> +                   reserved1: 3,
->> +                   is_cos    : 1,
->> +                   ctr_id    : 5,
->> +                   reserved    : 9,
->> +                   ctr_en    : 1,
->> +                   cfg_en    : 1;
->> +    } split;
->> +    unsigned long full;
->> +};
->> +
->>   void rdt_last_cmd_clear(void);
->>   void rdt_last_cmd_puts(const char *s);
->>   __printf(1, 2)
-> 
-> Reinette
-> 
+	taskset 1 perf stat --repeat 10 -e cycles,instructions,task-clock perf bench sched pipe
 
+on AMD 3900X to verify any potential overhead because of the addition at
+context switch against v6.8.7 stable kernel
+
+v6.8.7: schedutil:
+------------------
+
+ Performance counter stats for 'perf bench sched pipe' (10 runs):
+
+       814,886,355      cycles:u                  #    0.073 GHz                      ( +-  1.79% )
+        82,724,139      instructions:u            #    0.10  insn per cycle           ( +-  0.00% )
+         11,112.19 msec task-clock:u              #    0.996 CPUs utilized            ( +-  0.18% )
+
+           11.1575 +- 0.0207 seconds time elapsed  ( +-  0.19% )
+
+v6.8.7: performance:
+--------------------
+
+ Performance counter stats for 'perf bench sched pipe' (10 runs):
+
+       731,701,038      cycles:u                  #    0.067 GHz                      ( +-  2.27% )
+        82,724,255      instructions:u            #    0.10  insn per cycle           ( +-  0.00% )
+         10,830.95 msec task-clock:u              #    0.992 CPUs utilized            ( +-  0.14% )
+
+           10.9172 +- 0.0150 seconds time elapsed  ( +-  0.14% )
+
+v6.8.7+patch: schedutil:
+------------------------
+
+ Performance counter stats for 'perf bench sched pipe' (10 runs):
+
+       814,294,812      cycles:u                  #    0.073 GHz                      ( +-  1.45% )
+        82,724,229      instructions:u            #    0.10  insn per cycle           ( +-  0.00% )
+         11,109.70 msec task-clock:u              #    1.000 CPUs utilized            ( +-  0.11% )
+
+           11.1131 +- 0.0125 seconds time elapsed  ( +-  0.11% )
+
+v6.8.7+patch: performance:
+--------------------------
+
+ Performance counter stats for 'perf bench sched pipe' (10 runs):
+
+       849,621,311      cycles:u                  #    0.077 GHz                      ( +-  0.50% )
+        82,724,306      instructions:u            #    0.10  insn per cycle           ( +-  0.00% )
+         11,031.10 msec task-clock:u              #    0.996 CPUs utilized            ( +-  0.14% )
+
+           11.0716 +- 0.0149 seconds time elapsed  ( +-  0.13% )
+
+With performance governor we seem to be doing slightly worse. Comparing
+perf diff of
+
+	taskset 1 perf record perf bench sched pipe
+
+    28.95%     -3.66%  [kernel.kallsyms]     [k] delay_halt_mwaitx
+     1.49%     +1.08%  [kernel.kallsyms]     [k] update_load_avg
+     1.14%     +0.86%  [kernel.kallsyms]     [k] native_sched_clock
+     0.56%     +0.56%  [kernel.kallsyms]     [k] sched_clock_cpu
+     7.34%     -0.45%  [kernel.kallsyms]     [k] native_write_msr
+     8.54%     -0.42%  [kernel.kallsyms]     [k] native_read_msr
+     1.07%     +0.34%  [kernel.kallsyms]     [k] pick_next_task_fair
+     2.46%     -0.30%  [kernel.kallsyms]     [k] x86_pmu_disable_all
+     1.73%     -0.28%  [kernel.kallsyms]     [k] amd_pmu_check_overflow
+     0.36%     +0.27%  [kernel.kallsyms]     [k] sched_clock
+     1.05%     -0.25%  [kernel.kallsyms]     [k] try_to_wake_up
+     0.70%     -0.24%  [kernel.kallsyms]     [k] enqueue_task_fair
+     0.88%     +0.20%  [kernel.kallsyms]     [k] pipe_read
+     0.54%     +0.19%  [kernel.kallsyms]     [k] dequeue_entity
+     0.37%     +0.17%  [kernel.kallsyms]     [k] aa_file_perm
+     0.66%     +0.16%  [kernel.kallsyms]     [k] vfs_write
+     0.11%     +0.15%  [kernel.kallsyms]     [k] __x64_sys_write
+     0.35%     +0.15%  libc.so.6             [.] __GI___libc_write
+     1.32%     +0.15%  [kernel.kallsyms]     [k] update_curr
+     1.22%     +0.14%  [kernel.kallsyms]     [k] psi_task_switch
+     0.58%     -0.14%  [kernel.kallsyms]     [k] enqueue_entity
+     0.83%     +0.14%  perf                  [.] worker_thread
+     0.63%     +0.13%  [kernel.kallsyms]     [k] dequeue_task_fair
+     1.42%     -0.13%  [kernel.kallsyms]     [k] delay_halt
+     0.24%     +0.13%  [kernel.kallsyms]     [k] __wake_up_common
+
+It seems update_load_avg() is slightly worse. Earlier versions of the
+patch didn't produce such a difference. I am not sure if this is
+a problem or just attributed to minor binary difference and caching
+effect.
+
+Note worthy that we still have the following race condition on systems
+that have shared policy:
+
+* CPUs with shared policy can end up sending simultaneous cpufreq
+  updates requests where the 2nd one will be unlucky and get blocked by
+  the rate_limit_us (schedutil).
+
+We can potentially address this limitation later, but it is out of the
+scope of this patch.
+
+Signed-off-by: Qais Yousef <qyousef@layalina.io>
+---
+
+Changes since v5:
+
+	* Fix a bug where switching between RT and sugov tasks triggered an
+	  endless cycle of cpufreq updates.
+	* Only do cpufreq updates at tick for fair after verifying
+	  rq->cfs.decayed
+	* Remove optimization in update_load_avg() to avoid sending an update
+	  if util hasn't changed that caused a bug when switching from Idle
+	* Handle systems with long ticks by adding extra update on
+	  check_preempt_wakeup_fair(). The idea is to rely on context switch
+	  but still consider an update if wakeup preemption failed and no
+	  update was sent since sysctl_sched_base_slice
+	* Remove ignore_dl_rate_limit() as this function is now redundant
+	* move sg_cpu->last_update = time inside sugov_iowait_boost()
+	* Update commit message with new details and with perf diff output
+
+Changes since v4:
+
+	* Fix updating freq when uclamp changes before the dequeue/enqueue
+	  dance. (Hongyan)
+	* Rebased on top of tip/sched/core 6.10-rc1 and resolve some conflicts
+	  due to code shuffling to syscalls.c. Added new function
+	  update_cpufreq_current() to be used outside core.c when
+	  task_current() requires cpufreq update.
+
+Changes since v3:
+
+	* Omit cpufreq updates at attach/detach_entity_load_avg(). They share
+	  the update path from enqueue/dequeue which is not intended to trigger
+	  an update. And task_change_group_fair() is not expected to cause the
+	  root cfs_rq util to change significantly to warrant an immediate
+	  update for enqueued tasks. Better defer for next context switch to
+	  sample the state of the cpu taking all changes into account before
+	  the next task is due to run.
+	  Dietmar also pointed out a bug where we could send more updates vs
+	  without the patch in this path as I wasn't sending the update for
+	  cfs_rq == &rq->cfs.
+
+Changes since v2:
+
+	* Clean up update_cpufreq_ctx_switch() to reduce branches (Peter)
+	* Fix issue with cpufreq updates missed on switching from idle (Vincent)
+	* perf bench sched pipe regressed after fixing the switch from idle,
+	  detect when util_avg has changed when cfs_rq->decayed to fix it
+	* Ensure to issue cpufreq updates when task_current() switches
+	  policy/uclamp values
+
+Changes since v1:
+
+	* Use taskset and measure with performance governor as Ingo suggested
+	* Remove the static key as I found out we always register a function
+	  for cpu_dbs in cpufreq_governor.c; and as Christian pointed out it
+	  trigger a lock debug warning.
+	* Improve detection of sugov workers by using SCHED_FLAG_SUGOV
+	* Guard against NSEC_PER_MSEC instead of TICK_USEC to avoid prematurely
+	  reducing iowait boost as the latter was a NOP and like
+	  sugov_iowait_reset() like Christian pointed out.
+
+v1 discussion: https://lore.kernel.org/all/20240324020139.1032473-1-qyousef@layalina.io/
+v2 discussion: https://lore.kernel.org/lkml/20240505233103.168766-1-qyousef@layalina.io/
+v3 discussion: https://lore.kernel.org/lkml/20240512190018.531820-1-qyousef@layalina.io/
+v4 discussion: https://lore.kernel.org/lkml/20240516204802.846520-1-qyousef@layalina.io/
+v5 discussion: https://lore.kernel.org/lkml/20240530104653.1234004-1-qyousef@layalina.io/
+
+ include/linux/sched/cpufreq.h    |   4 +-
+ kernel/sched/core.c              | 107 +++++++++++++++++++++++++++--
+ kernel/sched/cpufreq_schedutil.c | 111 ++++++++++++++++++++-----------
+ kernel/sched/deadline.c          |   4 --
+ kernel/sched/fair.c              |  79 ++++++++--------------
+ kernel/sched/rt.c                |   8 +--
+ kernel/sched/sched.h             |   9 ++-
+ kernel/sched/syscalls.c          |  26 ++++++--
+ 8 files changed, 232 insertions(+), 116 deletions(-)
+
+diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
+index bdd31ab93bc5..5409a9f79cc0 100644
+--- a/include/linux/sched/cpufreq.h
++++ b/include/linux/sched/cpufreq.h
+@@ -8,7 +8,9 @@
+  * Interface between cpufreq drivers and the scheduler:
+  */
+ 
+-#define SCHED_CPUFREQ_IOWAIT	(1U << 0)
++#define SCHED_CPUFREQ_IOWAIT		(1U << 0)
++#define SCHED_CPUFREQ_FORCE_UPDATE	(1U << 1) /* ignore transition_delay_us */
++#define SCHED_CPUFREQ_TASK_ENQUEUED	(1U << 2) /* new fair task was enqueued */
+ 
+ #ifdef CONFIG_CPU_FREQ
+ struct cpufreq_policy;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 0935f9d4bb7b..732acf9cc0c5 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -153,6 +153,9 @@ const_debug unsigned int sysctl_sched_nr_migrate = SCHED_NR_MIGRATE_BREAK;
+ 
+ __read_mostly int scheduler_running;
+ 
++static __always_inline void
++__update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev);
++
+ #ifdef CONFIG_SCHED_CORE
+ 
+ DEFINE_STATIC_KEY_FALSE(__sched_core_enabled);
+@@ -2042,17 +2045,24 @@ inline int task_curr(const struct task_struct *p)
+  * this means any call to check_class_changed() must be followed by a call to
+  * balance_callback().
+  */
+-void check_class_changed(struct rq *rq, struct task_struct *p,
++bool check_class_changed(struct rq *rq, struct task_struct *p,
+ 			 const struct sched_class *prev_class,
+ 			 int oldprio)
+ {
++	bool class_changed = false;
++
+ 	if (prev_class != p->sched_class) {
+ 		if (prev_class->switched_from)
+ 			prev_class->switched_from(rq, p);
+ 
+ 		p->sched_class->switched_to(rq, p);
+-	} else if (oldprio != p->prio || dl_task(p))
++
++		class_changed = true;
++	} else if (oldprio != p->prio || dl_task(p)) {
+ 		p->sched_class->prio_changed(rq, p, oldprio);
++	}
++
++	return class_changed;
+ }
+ 
+ void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags)
+@@ -4917,6 +4927,84 @@ static inline void __balance_callbacks(struct rq *rq)
+ 
+ #endif
+ 
++static __always_inline void
++__update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
++{
++#ifdef CONFIG_CPU_FREQ
++	if (prev && prev->dl.flags & SCHED_FLAG_SUGOV) {
++		/* Sugov just did an update, don't be too aggressive */
++		return;
++	}
++
++	/*
++	 * RT and DL should always send a freq update. But we can do some
++	 * simple checks to avoid it when we know it's not necessary.
++	 *
++	 * iowait_boost will always trigger a freq update too.
++	 *
++	 * Fair tasks will only trigger an update if the root cfs_rq has
++	 * decayed.
++	 *
++	 * Everything else should do nothing.
++	 */
++	switch (current->policy) {
++	case SCHED_NORMAL:
++	case SCHED_BATCH:
++		if (unlikely(current->in_iowait)) {
++			cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE);
++			return;
++		}
++
++#ifdef CONFIG_SMP
++		if (unlikely(rq->cfs.decayed)) {
++			rq->cfs.decayed = false;
++			cpufreq_update_util(rq, 0);
++			return;
++		}
++#else
++		cpufreq_update_util(rq, 0);
++#endif
++		return;
++	case SCHED_FIFO:
++	case SCHED_RR:
++		if (prev && rt_policy(prev->policy)) {
++#ifdef CONFIG_UCLAMP_TASK
++			unsigned long curr_uclamp_min = uclamp_eff_value(current, UCLAMP_MIN);
++			unsigned long prev_uclamp_min = uclamp_eff_value(prev, UCLAMP_MIN);
++
++			if (curr_uclamp_min == prev_uclamp_min)
++#endif
++				return;
++		}
++#ifdef CONFIG_SMP
++		/* Stopper task masquerades as RT */
++		if (unlikely(current->sched_class == &stop_sched_class))
++			return;
++#endif
++		cpufreq_update_util(rq, SCHED_CPUFREQ_FORCE_UPDATE);
++		return;
++	case SCHED_DEADLINE:
++		if (current->dl.flags & SCHED_FLAG_SUGOV) {
++			/* Ignore sugov kthreads, they're responding to our requests */
++			return;
++		}
++		cpufreq_update_util(rq, SCHED_CPUFREQ_FORCE_UPDATE);
++		return;
++	default:
++		return;
++	}
++#endif
++}
++
++/*
++ * Call when currently running task had an attribute change that requires
++ * an immediate cpufreq update.
++ */
++void update_cpufreq_current(struct rq *rq)
++{
++	__update_cpufreq_ctx_switch(rq, NULL);
++}
++
+ static inline void
+ prepare_lock_switch(struct rq *rq, struct task_struct *next, struct rq_flags *rf)
+ {
+@@ -4934,7 +5022,7 @@ prepare_lock_switch(struct rq *rq, struct task_struct *next, struct rq_flags *rf
+ #endif
+ }
+ 
+-static inline void finish_lock_switch(struct rq *rq)
++static inline void finish_lock_switch(struct rq *rq, struct task_struct *prev)
+ {
+ 	/*
+ 	 * If we are tracking spinlock dependencies then we have to
+@@ -4943,6 +5031,11 @@ static inline void finish_lock_switch(struct rq *rq)
+ 	 */
+ 	spin_acquire(&__rq_lockp(rq)->dep_map, 0, 0, _THIS_IP_);
+ 	__balance_callbacks(rq);
++	/*
++	 * Request freq update after __balance_callbacks to take into account
++	 * any changes to rq.
++	 */
++	__update_cpufreq_ctx_switch(rq, prev);
+ 	raw_spin_rq_unlock_irq(rq);
+ }
+ 
+@@ -5061,7 +5154,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
+ 	perf_event_task_sched_in(prev, current);
+ 	finish_task(prev);
+ 	tick_nohz_task_switch();
+-	finish_lock_switch(rq);
++	finish_lock_switch(rq, prev);
+ 	finish_arch_post_lock_switch();
+ 	kcov_finish_switch(current);
+ 	/*
+@@ -6920,6 +7013,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
+ 	int prio, oldprio, queued, running, queue_flag =
+ 		DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
+ 	const struct sched_class *prev_class;
++	bool class_changed;
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+ 
+@@ -7021,7 +7115,10 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
+ 	if (running)
+ 		set_next_task(rq, p);
+ 
+-	check_class_changed(rq, p, prev_class, oldprio);
++	class_changed = check_class_changed(rq, p, prev_class, oldprio);
++	if (class_changed && running)
++		update_cpufreq_current(rq);
++
+ out_unlock:
+ 	/* Avoid rq from going away on us: */
+ 	preempt_disable();
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index eece6244f9d2..4cdaca0a984e 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -59,10 +59,32 @@ static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
+ 
+ /************************ Governor internals ***********************/
+ 
+-static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
++static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time,
++				     unsigned int flags)
+ {
+ 	s64 delta_ns;
+ 
++	delta_ns = time - sg_policy->last_freq_update_time;
++
++	/*
++	 * We want to update cpufreq at context switch, but on systems with
++	 * long TICK values, this can happen after a long time while more tasks
++	 * would have been added meanwhile leaving us potentially running at
++	 * inadequate frequency for extended period of time.
++	 *
++	 * This logic should only apply when new fair task was added to the
++	 * CPU, we'd want to defer to context switch as much as possible, but
++	 * to avoid the potential delays mentioned above, let's check if this
++	 * additional tasks warrants sending an update sooner.
++	 *
++	 * We want to ensure there's at least an update every
++	 * sysctl_sched_base_slice.
++	 */
++	if (likely(flags & SCHED_CPUFREQ_TASK_ENQUEUED)) {
++		if (delta_ns < sysctl_sched_base_slice)
++			return false;
++	}
++
+ 	/*
+ 	 * Since cpufreq_update_util() is called with rq->lock held for
+ 	 * the @target_cpu, our per-CPU data is fully serialized.
+@@ -87,13 +109,14 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+ 		return true;
+ 	}
+ 
+-	delta_ns = time - sg_policy->last_freq_update_time;
++	if (unlikely(flags & SCHED_CPUFREQ_FORCE_UPDATE))
++		return true;
+ 
+ 	return delta_ns >= sg_policy->freq_update_delay_ns;
+ }
+ 
+ static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
+-				   unsigned int next_freq)
++				   unsigned int next_freq, unsigned int flags)
+ {
+ 	if (sg_policy->need_freq_update)
+ 		sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);
+@@ -101,7 +124,9 @@ static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
+ 		return false;
+ 
+ 	sg_policy->next_freq = next_freq;
+-	sg_policy->last_freq_update_time = time;
++
++	if (!unlikely(flags & SCHED_CPUFREQ_FORCE_UPDATE))
++		sg_policy->last_freq_update_time = time;
+ 
+ 	return true;
+ }
+@@ -249,9 +274,12 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
+ 			       unsigned int flags)
+ {
+ 	bool set_iowait_boost = flags & SCHED_CPUFREQ_IOWAIT;
++	bool forced_update = flags & SCHED_CPUFREQ_FORCE_UPDATE;
++
++	sg_cpu->last_update = time;
+ 
+ 	/* Reset boost if the CPU appears to have been idle enough */
+-	if (sg_cpu->iowait_boost &&
++	if (sg_cpu->iowait_boost && !forced_update &&
+ 	    sugov_iowait_reset(sg_cpu, time, set_iowait_boost))
+ 		return;
+ 
+@@ -294,17 +322,34 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
+  * being more conservative on tasks which does sporadic IO operations.
+  */
+ static unsigned long sugov_iowait_apply(struct sugov_cpu *sg_cpu, u64 time,
+-			       unsigned long max_cap)
++			       unsigned long max_cap, unsigned int flags)
+ {
++	bool forced_update = flags & SCHED_CPUFREQ_FORCE_UPDATE;
++	s64 delta_ns = time - sg_cpu->last_update;
++
+ 	/* No boost currently required */
+ 	if (!sg_cpu->iowait_boost)
+ 		return 0;
+ 
++	if (forced_update)
++		goto apply_boost;
++
+ 	/* Reset boost if the CPU appears to have been idle enough */
+ 	if (sugov_iowait_reset(sg_cpu, time, false))
+ 		return 0;
+ 
+ 	if (!sg_cpu->iowait_boost_pending) {
++		/*
++		 * This logic relied on PELT signal decays happening once every
++		 * 1ms. But due to changes to how updates are done now, we can
++		 * end up with more request coming up leading to iowait boost
++		 * to be prematurely reduced. Make the assumption explicit
++		 * until we improve the iowait boost logic to be better in
++		 * general as it is due for an overhaul.
++		 */
++		if (delta_ns <= NSEC_PER_MSEC)
++			goto apply_boost;
++
+ 		/*
+ 		 * No boost pending; reduce the boost value.
+ 		 */
+@@ -315,6 +360,7 @@ static unsigned long sugov_iowait_apply(struct sugov_cpu *sg_cpu, u64 time,
+ 		}
+ 	}
+ 
++apply_boost:
+ 	sg_cpu->iowait_boost_pending = false;
+ 
+ 	/*
+@@ -337,31 +383,18 @@ static bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu)
+ static inline bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu) { return false; }
+ #endif /* CONFIG_NO_HZ_COMMON */
+ 
+-/*
+- * Make sugov_should_update_freq() ignore the rate limit when DL
+- * has increased the utilization.
+- */
+-static inline void ignore_dl_rate_limit(struct sugov_cpu *sg_cpu)
+-{
+-	if (cpu_bw_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->bw_min)
+-		sg_cpu->sg_policy->limits_changed = true;
+-}
+-
+ static inline bool sugov_update_single_common(struct sugov_cpu *sg_cpu,
+ 					      u64 time, unsigned long max_cap,
+ 					      unsigned int flags)
+ {
+ 	unsigned long boost;
+ 
+-	sugov_iowait_boost(sg_cpu, time, flags);
+-	sg_cpu->last_update = time;
+-
+-	ignore_dl_rate_limit(sg_cpu);
+-
+-	if (!sugov_should_update_freq(sg_cpu->sg_policy, time))
++	if (!sugov_should_update_freq(sg_cpu->sg_policy, time, flags))
+ 		return false;
+ 
+-	boost = sugov_iowait_apply(sg_cpu, time, max_cap);
++	sugov_iowait_boost(sg_cpu, time, flags);
++
++	boost = sugov_iowait_apply(sg_cpu, time, max_cap, flags);
+ 	sugov_get_util(sg_cpu, boost);
+ 
+ 	return true;
+@@ -397,7 +430,7 @@ static void sugov_update_single_freq(struct update_util_data *hook, u64 time,
+ 		sg_policy->cached_raw_freq = cached_freq;
+ 	}
+ 
+-	if (!sugov_update_next_freq(sg_policy, time, next_f))
++	if (!sugov_update_next_freq(sg_policy, time, next_f, flags))
+ 		return;
+ 
+ 	/*
+@@ -449,10 +482,12 @@ static void sugov_update_single_perf(struct update_util_data *hook, u64 time,
+ 	cpufreq_driver_adjust_perf(sg_cpu->cpu, sg_cpu->bw_min,
+ 				   sg_cpu->util, max_cap);
+ 
+-	sg_cpu->sg_policy->last_freq_update_time = time;
++	if (!unlikely(flags & SCHED_CPUFREQ_FORCE_UPDATE))
++		sg_cpu->sg_policy->last_freq_update_time = time;
+ }
+ 
+-static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
++static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time,
++					   unsigned int flags)
+ {
+ 	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
+ 	struct cpufreq_policy *policy = sg_policy->policy;
+@@ -465,7 +500,7 @@ static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
+ 		struct sugov_cpu *j_sg_cpu = &per_cpu(sugov_cpu, j);
+ 		unsigned long boost;
+ 
+-		boost = sugov_iowait_apply(j_sg_cpu, time, max_cap);
++		boost = sugov_iowait_apply(j_sg_cpu, time, max_cap, flags);
+ 		sugov_get_util(j_sg_cpu, boost);
+ 
+ 		util = max(j_sg_cpu->util, util);
+@@ -483,22 +518,20 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
+ 
+ 	raw_spin_lock(&sg_policy->update_lock);
+ 
+-	sugov_iowait_boost(sg_cpu, time, flags);
+-	sg_cpu->last_update = time;
++	if (!sugov_should_update_freq(sg_policy, time, flags))
++		goto unlock;
+ 
+-	ignore_dl_rate_limit(sg_cpu);
++	sugov_iowait_boost(sg_cpu, time, flags);
+ 
+-	if (sugov_should_update_freq(sg_policy, time)) {
+-		next_f = sugov_next_freq_shared(sg_cpu, time);
++	next_f = sugov_next_freq_shared(sg_cpu, time, flags);
+ 
+-		if (!sugov_update_next_freq(sg_policy, time, next_f))
+-			goto unlock;
++	if (!sugov_update_next_freq(sg_policy, time, next_f, flags))
++		goto unlock;
+ 
+-		if (sg_policy->policy->fast_switch_enabled)
+-			cpufreq_driver_fast_switch(sg_policy->policy, next_f);
+-		else
+-			sugov_deferred_update(sg_policy);
+-	}
++	if (sg_policy->policy->fast_switch_enabled)
++		cpufreq_driver_fast_switch(sg_policy->policy, next_f);
++	else
++		sugov_deferred_update(sg_policy);
+ unlock:
+ 	raw_spin_unlock(&sg_policy->update_lock);
+ }
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index b216e6deeac4..8e015e219da8 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -251,8 +251,6 @@ void __add_running_bw(u64 dl_bw, struct dl_rq *dl_rq)
+ 	dl_rq->running_bw += dl_bw;
+ 	SCHED_WARN_ON(dl_rq->running_bw < old); /* overflow */
+ 	SCHED_WARN_ON(dl_rq->running_bw > dl_rq->this_bw);
+-	/* kick cpufreq (see the comment in kernel/sched/sched.h). */
+-	cpufreq_update_util(rq_of_dl_rq(dl_rq), 0);
+ }
+ 
+ static inline
+@@ -265,8 +263,6 @@ void __sub_running_bw(u64 dl_bw, struct dl_rq *dl_rq)
+ 	SCHED_WARN_ON(dl_rq->running_bw > old); /* underflow */
+ 	if (dl_rq->running_bw > old)
+ 		dl_rq->running_bw = 0;
+-	/* kick cpufreq (see the comment in kernel/sched/sched.h). */
+-	cpufreq_update_util(rq_of_dl_rq(dl_rq), 0);
+ }
+ 
+ static inline
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 41b58387023d..bb67888486c3 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3988,29 +3988,6 @@ static inline void update_cfs_group(struct sched_entity *se)
+ }
+ #endif /* CONFIG_FAIR_GROUP_SCHED */
+ 
+-static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq, int flags)
+-{
+-	struct rq *rq = rq_of(cfs_rq);
+-
+-	if (&rq->cfs == cfs_rq) {
+-		/*
+-		 * There are a few boundary cases this might miss but it should
+-		 * get called often enough that that should (hopefully) not be
+-		 * a real problem.
+-		 *
+-		 * It will not get called when we go idle, because the idle
+-		 * thread is a different class (!fair), nor will the utilization
+-		 * number include things like RT tasks.
+-		 *
+-		 * As is, the util number is not freq-invariant (we'd have to
+-		 * implement arch_scale_freq_capacity() for that).
+-		 *
+-		 * See cpu_util_cfs().
+-		 */
+-		cpufreq_update_util(rq, flags);
+-	}
+-}
+-
+ #ifdef CONFIG_SMP
+ static inline bool load_avg_is_decayed(struct sched_avg *sa)
+ {
+@@ -4688,8 +4665,6 @@ static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+ 
+ 	add_tg_cfs_propagate(cfs_rq, se->avg.load_sum);
+ 
+-	cfs_rq_util_change(cfs_rq, 0);
+-
+ 	trace_pelt_cfs_tp(cfs_rq);
+ }
+ 
+@@ -4718,8 +4693,6 @@ static void detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+ 
+ 	add_tg_cfs_propagate(cfs_rq, -se->avg.load_sum);
+ 
+-	cfs_rq_util_change(cfs_rq, 0);
+-
+ 	trace_pelt_cfs_tp(cfs_rq);
+ }
+ 
+@@ -4735,7 +4708,6 @@ static void detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ {
+ 	u64 now = cfs_rq_clock_pelt(cfs_rq);
+-	int decayed;
+ 
+ 	/*
+ 	 * Track task load average for carrying it to new CPU after migrated, and
+@@ -4744,8 +4716,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+ 	if (se->avg.last_update_time && !(flags & SKIP_AGE_LOAD))
+ 		__update_load_avg_se(now, cfs_rq, se);
+ 
+-	decayed  = update_cfs_rq_load_avg(now, cfs_rq);
+-	decayed |= propagate_entity_load_avg(se);
++	cfs_rq->decayed |= update_cfs_rq_load_avg(now, cfs_rq);
++	cfs_rq->decayed |= propagate_entity_load_avg(se);
+ 
+ 	if (!se->avg.last_update_time && (flags & DO_ATTACH)) {
+ 
+@@ -4766,11 +4738,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+ 		 */
+ 		detach_entity_load_avg(cfs_rq, se);
+ 		update_tg_load_avg(cfs_rq);
+-	} else if (decayed) {
+-		cfs_rq_util_change(cfs_rq, 0);
+-
+-		if (flags & UPDATE_TG)
+-			update_tg_load_avg(cfs_rq);
++	} else if (cfs_rq->decayed && (flags & UPDATE_TG)) {
++		update_tg_load_avg(cfs_rq);
+ 	}
+ }
+ 
+@@ -5145,7 +5114,6 @@ static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
+ 
+ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int not_used1)
+ {
+-	cfs_rq_util_change(cfs_rq, 0);
+ }
+ 
+ static inline void remove_entity_load_avg(struct sched_entity *se) {}
+@@ -6760,14 +6728,6 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	 */
+ 	util_est_enqueue(&rq->cfs, p);
+ 
+-	/*
+-	 * If in_iowait is set, the code below may not trigger any cpufreq
+-	 * utilization updates, so do it here explicitly with the IOWAIT flag
+-	 * passed.
+-	 */
+-	if (p->in_iowait)
+-		cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
+-
+ 	for_each_sched_entity(se) {
+ 		if (se->on_rq)
+ 			break;
+@@ -8354,7 +8314,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 	int cse_is_idle, pse_is_idle;
+ 
+ 	if (unlikely(se == pse))
+-		return;
++		goto nopreempt;
+ 
+ 	/*
+ 	 * This is possible from callers such as attach_tasks(), in which we
+@@ -8363,7 +8323,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 	 * next-buddy nomination below.
+ 	 */
+ 	if (unlikely(throttled_hierarchy(cfs_rq_of(pse))))
+-		return;
++		goto nopreempt;
+ 
+ 	if (sched_feat(NEXT_BUDDY) && !(wake_flags & WF_FORK)) {
+ 		set_next_buddy(pse);
+@@ -8380,7 +8340,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 	 * below.
+ 	 */
+ 	if (test_tsk_need_resched(curr))
+-		return;
++		goto nopreempt;
+ 
+ 	/* Idle tasks are by definition preempted by non-idle tasks. */
+ 	if (unlikely(task_has_idle_policy(curr)) &&
+@@ -8392,7 +8352,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 	 * is driven by the tick):
+ 	 */
+ 	if (unlikely(p->policy != SCHED_NORMAL) || !sched_feat(WAKEUP_PREEMPTION))
+-		return;
++		goto nopreempt;
+ 
+ 	find_matching_se(&se, &pse);
+ 	WARN_ON_ONCE(!pse);
+@@ -8407,7 +8367,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 	if (cse_is_idle && !pse_is_idle)
+ 		goto preempt;
+ 	if (cse_is_idle != pse_is_idle)
+-		return;
++		goto nopreempt;
+ 
+ 	cfs_rq = cfs_rq_of(se);
+ 	update_curr(cfs_rq);
+@@ -8418,6 +8378,14 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+ 	if (pick_eevdf(cfs_rq) == pse)
+ 		goto preempt;
+ 
++nopreempt:
++#ifdef CONFIG_SMP
++	if (rq->cfs.decayed && rq->cfs.h_nr_running > 1)
++		cpufreq_update_util(rq, SCHED_CPUFREQ_TASK_ENQUEUED);
++#else
++	if (rq->cfs.h_nr_running > 1)
++		cpufreq_update_util(rq, SCHED_CPUFREQ_TASK_ENQUEUED);
++#endif
+ 	return;
+ 
+ preempt:
+@@ -9357,10 +9325,6 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
+ 	unsigned long hw_pressure;
+ 	bool decayed;
+ 
+-	/*
+-	 * update_load_avg() can call cpufreq_update_util(). Make sure that RT,
+-	 * DL and IRQ signals have been updated before updating CFS.
+-	 */
+ 	curr_class = rq->curr->sched_class;
+ 
+ 	hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
+@@ -12699,6 +12663,15 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+ 	update_misfit_status(curr, rq);
+ 	check_update_overutilized_status(task_rq(curr));
+ 
++#ifdef CONFIG_SMP
++	if (rq->cfs.decayed) {
++		rq->cfs.decayed = false;
++		cpufreq_update_util(rq, 0);
++	}
++#else
++	cpufreq_update_util(rq, 0);
++#endif
++
+ 	task_tick_core(rq, curr);
+ }
+ 
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 63e49c8ffc4d..92ed373e5b90 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -555,11 +555,8 @@ static void sched_rt_rq_dequeue(struct rt_rq *rt_rq)
+ 
+ 	rt_se = rt_rq->tg->rt_se[cpu];
+ 
+-	if (!rt_se) {
++	if (!rt_se)
+ 		dequeue_top_rt_rq(rt_rq, rt_rq->rt_nr_running);
+-		/* Kick cpufreq (see the comment in kernel/sched/sched.h). */
+-		cpufreq_update_util(rq_of_rt_rq(rt_rq), 0);
+-	}
+ 	else if (on_rt_rq(rt_se))
+ 		dequeue_rt_entity(rt_se, 0);
+ }
+@@ -1064,9 +1061,6 @@ enqueue_top_rt_rq(struct rt_rq *rt_rq)
+ 		add_nr_running(rq, rt_rq->rt_nr_running);
+ 		rt_rq->rt_queued = 1;
+ 	}
+-
+-	/* Kick cpufreq (see the comment in kernel/sched/sched.h). */
+-	cpufreq_update_util(rq, 0);
+ }
+ 
+ #if defined CONFIG_SMP
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 62fd8bc6fd08..87325eff1884 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -639,6 +639,11 @@ struct cfs_rq {
+ 		unsigned long	runnable_avg;
+ 	} removed;
+ 
++	/*
++	 * Store whether last update_load_avg() has decayed
++	 */
++	bool			decayed;
++
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 	u64			last_update_tg_load_avg;
+ 	unsigned long		tg_load_avg_contrib;
+@@ -3608,10 +3613,12 @@ extern void set_load_weight(struct task_struct *p, bool update_load);
+ extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
+ extern void dequeue_task(struct rq *rq, struct task_struct *p, int flags);
+ 
+-extern void check_class_changed(struct rq *rq, struct task_struct *p,
++extern bool check_class_changed(struct rq *rq, struct task_struct *p,
+ 				const struct sched_class *prev_class,
+ 				int oldprio);
+ 
++extern void update_cpufreq_current(struct rq *rq);
++
+ #ifdef CONFIG_SMP
+ extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
+ extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
+diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+index ae1b42775ef9..8b1194c39161 100644
+--- a/kernel/sched/syscalls.c
++++ b/kernel/sched/syscalls.c
+@@ -491,7 +491,7 @@ static bool uclamp_reset(const struct sched_attr *attr,
+ 	return false;
+ }
+ 
+-static void __setscheduler_uclamp(struct task_struct *p,
++static bool __setscheduler_uclamp(struct task_struct *p,
+ 				  const struct sched_attr *attr)
+ {
+ 	enum uclamp_id clamp_id;
+@@ -517,7 +517,7 @@ static void __setscheduler_uclamp(struct task_struct *p,
+ 	}
+ 
+ 	if (likely(!(attr->sched_flags & SCHED_FLAG_UTIL_CLAMP)))
+-		return;
++		return false;
+ 
+ 	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN &&
+ 	    attr->sched_util_min != -1) {
+@@ -530,6 +530,8 @@ static void __setscheduler_uclamp(struct task_struct *p,
+ 		uclamp_se_set(&p->uclamp_req[UCLAMP_MAX],
+ 			      attr->sched_util_max, true);
+ 	}
++
++	return true;
+ }
+ 
+ #else /* !CONFIG_UCLAMP_TASK: */
+@@ -539,8 +541,11 @@ static inline int uclamp_validate(struct task_struct *p,
+ {
+ 	return -EOPNOTSUPP;
+ }
+-static void __setscheduler_uclamp(struct task_struct *p,
+-				  const struct sched_attr *attr) { }
++static bool __setscheduler_uclamp(struct task_struct *p,
++				  const struct sched_attr *attr)
++{
++	return false;
++}
+ #endif
+ 
+ /*
+@@ -614,6 +619,7 @@ int __sched_setscheduler(struct task_struct *p,
+ 	int retval, oldprio, newprio, queued, running;
+ 	const struct sched_class *prev_class;
+ 	struct balance_callback *head;
++	bool update_cpufreq;
+ 	struct rq_flags rf;
+ 	int reset_on_fork;
+ 	int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
+@@ -796,7 +802,8 @@ int __sched_setscheduler(struct task_struct *p,
+ 		__setscheduler_params(p, attr);
+ 		__setscheduler_prio(p, newprio);
+ 	}
+-	__setscheduler_uclamp(p, attr);
++
++	update_cpufreq = __setscheduler_uclamp(p, attr);
+ 
+ 	if (queued) {
+ 		/*
+@@ -811,7 +818,14 @@ int __sched_setscheduler(struct task_struct *p,
+ 	if (running)
+ 		set_next_task(rq, p);
+ 
+-	check_class_changed(rq, p, prev_class, oldprio);
++	update_cpufreq |= check_class_changed(rq, p, prev_class, oldprio);
++
++	/*
++	 * Changing class or uclamp value implies requiring to send cpufreq
++	 * update.
++	 */
++	if (update_cpufreq && running)
++		update_cpufreq_current(rq);
+ 
+ 	/* Avoid rq from going away on us: */
+ 	preempt_disable();
 -- 
-Thanks
-Babu Moger
+2.34.1
+
 
