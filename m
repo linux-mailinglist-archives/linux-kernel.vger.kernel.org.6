@@ -1,114 +1,85 @@
-Return-Path: <linux-kernel+bounces-221142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B2D90EF69
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:52:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9231590EF6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97064B24905
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:52:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FF6D283551
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED20414F9F1;
-	Wed, 19 Jun 2024 13:51:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7B914EC42;
-	Wed, 19 Jun 2024 13:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E14414EC60;
+	Wed, 19 Jun 2024 13:52:30 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346D413DDAF
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718805113; cv=none; b=an2rjnLn0X1kyuYBlJq5Z5Gj7aT+ltGRGej4byk//rLoL1tHOcN4Eyh02SspIm6orWilk8WLuNylVEqh4UNSzLhGtKW2WVA3E185tpJEDfD4jy89h1s36uEuLGTN+RpdpGmB0QxM7qnICbFIk12kEPL9wF1FAOdx3VcURL8g/FU=
+	t=1718805150; cv=none; b=dRp4dAPhNjWZf3O2dTVLcyjThDvB7J8d5qap0X6xhdHdfPWIoXWSt5QrxjkmZdxIZYryfxhhkFyZAFozUi6jXvFLXkk6qheiXRWYWjCSTRxLTwpgXWyUIpJgAyg31vV1IVsyatRbY0g6r3DPYzAN8JPXyF6OXe7hEbdUbj9f3kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718805113; c=relaxed/simple;
-	bh=NcbVL8HU9Je49lLwp3mfyuRCxqqP6v2o4zytyBE5jB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLUjo3grT+yskJ+D5TLGQ/H+qa6FoRY2iv8Wv1pM6ycnKk4nqVd5PMqcEmrw+9N9ygKPWlwylUbIZ76l5P80r9ix27gmQspSPcu1cE0xYcWvfBynnoESW8KqJ090d3PxHm7+cV2E6zXc5FBq8KS8ZrlJMkx3Yo8CyW/RdSpmXSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB8071042;
-	Wed, 19 Jun 2024 06:52:13 -0700 (PDT)
-Received: from bogus (unknown [10.57.89.235])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 990903F6A8;
-	Wed, 19 Jun 2024 06:51:44 -0700 (PDT)
-Date: Wed, 19 Jun 2024 14:51:43 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-	Melody Olvera <quic_molvera@quicinc.com>,
-	Shivendra Pratap <quic_spratap@quicinc.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
-Message-ID: <20240619135143.kr2tx4ynxayc5v3a@bogus>
-References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
- <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
+	s=arc-20240116; t=1718805150; c=relaxed/simple;
+	bh=YSpE9S2xxyLbufDRVIPgnOEAcdIQHmLKAesUq+HAkcU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FNP/TY8HrEVt3Tzc7nqHhwcb71mOJxV6qEnCcniCaJlgAAdTGI7/FyKENJ+Q5KafbB3THT1MgLOxWzFYrYpNTQocqlYhgJUbxITfk/tsL0NXyjAxLixV/CRtENkpNJIM4Q2z9hj2eL6Q0FXYabsKnhbQRAJdGkEmzZbmzHnhPRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-37613924eefso17626795ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:52:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718805147; x=1719409947;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YSpE9S2xxyLbufDRVIPgnOEAcdIQHmLKAesUq+HAkcU=;
+        b=m6SxsKNHRcW4BjP6GodQ/DfaM77Azww/+bl2BbXZBA0IIg4YtApKP0w8I0bKLD66bW
+         JbAZyjSs6qAOgi5BE8vuD1NekUruTeiIMbNhGJNlLMmzoLF2xV+KVRUJFU9DqoSkThi0
+         jGo1ZV+WcHOLqqBfk4Etls1WLd5WAocOIyLwen0LaRuX/vAA6cqgnpFfgF9/MM5gCMHc
+         WbtuCTnK8DW12+I5iMHpZotdIsGJKCYWCnEdVYdwi1HMv2HJosmORe1W7TRu93KIKIur
+         yn/TnrTLNUhYFzuQ2fjMrCD2I/HxxFcr6ipWDk/fOZo+C+ziVV/8Gd5nMXJQWBa7CC2K
+         +1ew==
+X-Gm-Message-State: AOJu0YwtIaU1ZOEm1naOW5NJ6uv16YBVg4X1rFEdBpZoHkgEjx2ItucN
+	pBc04hg6AYfsdljwYUhN6pqLLWwn3ZCD+C//iR6lWLB2G7q81KylqrXz84l02diMCK7VTBGiOHa
+	F6199K79G1a2aQnA1cpT++2Scq8hvN5ZpNbK0KVeBKEZCC7co8mfGyx0=
+X-Google-Smtp-Source: AGHT+IFXF1PwSNstlp/VRJ/BmHkVaBriTLVKLz0/0UrIJ4UF2+9LELnCah0VRMwHv0MhRmqLUw8Se65Ys76XPY013VJccjpqLEBD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
+X-Received: by 2002:a05:6638:9808:b0:4b9:6f13:faf8 with SMTP id
+ 8926c6da1cb9f-4b9abe2932emr76153173.1.1718805147334; Wed, 19 Jun 2024
+ 06:52:27 -0700 (PDT)
+Date: Wed, 19 Jun 2024 06:52:27 -0700
+In-Reply-To: <0000000000007a5ef50610c5799c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003ecc42061b3e82cc@google.com>
+Subject: Re: [syzbot] Re: BUG: unable to handle kernel paging request in bpf_probe_read_kernel_str
+From: syzbot <syzbot+a0fa177e13690b663c74@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 10:18:09AM -0700, Elliot Berman wrote:
-> SoC vendors have different types of resets and are controlled through
-> various registers. For instance, Qualcomm chipsets can reboot to a
-> "download mode" that allows a RAM dump to be collected. Another example
-> is they also support writing a cookie that can be read by bootloader
-> during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
-> vendor reset types to be implemented without requiring drivers for every
-> register/cookie.
-> 
-> Add support in PSCI to statically map reboot mode commands from
-> userspace to a vendor reset and cookie value using the device tree.
-> 
-> A separate initcall is needed to parse the devicetree, instead of using
-> psci_dt_init because mm isn't sufficiently set up to allocate memory.
-> 
-> Reboot mode framework is close but doesn't quite fit with the
-> design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
-> be solved but doesn't seem reasonable in sum:
->  1. reboot mode registers against the reboot_notifier_list, which is too
->     early to call SYSTEM_RESET2. PSCI would need to remember the reset
->     type from the reboot-mode framework callback and use it
->     psci_sys_reset.
->  2. reboot mode assumes only one cookie/parameter is described in the
->     device tree. SYSTEM_RESET2 uses 2: one for the type and one for
->     cookie.
->  3. psci cpuidle driver already registers a driver against the
->     arm,psci-1.0 compatible. Refactoring would be needed to have both a
->     cpuidle and reboot-mode driver.
->
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-I need to think through it but when you first introduced the generic
-Documentation/devicetree/bindings/power/reset/reboot-mode.yaml bindings
-I also looked at drivers/power/reset/reboot-mode.c
+***
 
-I assumed this extension to that binding would reuse the same and
-PSCI would just do reboot_mode_register(). I didn't expect to see these
-changes. I might have missing something but since the bindings is still
-quite generic with additional cells that act as additional cookie for
-reboot call, I still think that should be possible.
+Subject: Re: BUG: unable to handle kernel paging request in bpf_probe_read_=
+kernel_str
+Author: wojciech.gladysz@infogain.com
 
-What am I missing here then ?
-
--- 
-Regards,
-Sudeep
+#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux 3=
+2019c659ecfe1d92e3bf9fcdfbb11a7c70acd58
+The information in this email is confidential and may be legally privileged=
+. It is intended solely for the addressee and access to it by anyone else i=
+s unauthorized. If you are not the intended recipient, any disclosure, copy=
+ing, distribution or any action taken or omitted to be taken based on it, i=
+s strictly prohibited and may be unlawful.
 
