@@ -1,132 +1,187 @@
-Return-Path: <linux-kernel+bounces-220437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 681C490E1B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 04:46:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F0090E1BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 04:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 995D0B21145
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 02:46:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 588161C21A60
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 02:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4DB45BE7;
-	Wed, 19 Jun 2024 02:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42524B5CD;
+	Wed, 19 Jun 2024 02:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lv36ijLb"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KIrbL4kZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75F9A38
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 02:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F85A38;
+	Wed, 19 Jun 2024 02:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718765207; cv=none; b=oV2pq+g5ovaZMq2Ul5QG0GPv9dlipY1xyWugL7y8NbKlUT8iWp6OZkTd69iooMjFATGDmXY/G4s4FEED7jgWwlhJenb7aU32cMeJxRDuh7z0cDzEyuDlxJladIiZ40tGnF8x6XiqWcCRpKifj3F5WQCS9nCL4AH4GAc01ZiOW3I=
+	t=1718765684; cv=none; b=BPgfyg0OGzMgJCa6UsQOLgem8dfBASWu8ds1KIKRQa4zCjBCvpTfwBOxLVFgnCHD/REQHs0jEYx/8IvSYJgBAZIJY7WEY8p9Qogz/DufwvrOzA1pgQpvxKLXMOHx76jKyEbUck5lER/noSERaw+j2mIV31G5r6FaHYCizdUUkSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718765207; c=relaxed/simple;
-	bh=nb7SQjv8Yb+Mp78NEj5zPaCJi0vIpp9k7DYwZtKyp00=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ImvJ1yakwMdHuokGga/k7nyJXiik4Bh7rT9M/MpaYHoIHhg0s/IcLa0I2iOvkDY2YHxioBIL6oOnDCZW3k28eSHPA45h5x87TLwOwP2kbLCQGTq0PAz2m1Oj5ZMnJ85GgOI8zuctrk3esZblm1CbX+IPSCkzpMYm0wJZzbrKozc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lv36ijLb; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6f95be3d4c4so2385017a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 19:46:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718765205; x=1719370005; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nb7SQjv8Yb+Mp78NEj5zPaCJi0vIpp9k7DYwZtKyp00=;
-        b=lv36ijLbvdYfMnT3n3lwvR8HZwvR9t3HSqmPGHV3IS+BwUPGdcN5FcGaOrNb6VjK7Q
-         ZT15VErobRCuzOdV4+b6ZFlTMBWqe/06cAsgB9T+ZFq+DZyl8XC9N88B+UDKZNiIzTaO
-         gEvVj/XiU8DbW3EnI/wJUPmFyyxSvFSFQevoRb60k66sshAlEQYZaZcf77i63FkxWCvD
-         ONSV9xGnXA1bxnJ3twtav4XKWmy06iBCq7F7/icFUan6g145klkHVYevb1aR4gSZgkHw
-         F78Ac1eE5drRIMsFi6Vgtlao7i23/v085nvokPI6EL2dQn2TajSAq0bMilVFWLgnxeCO
-         drcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718765205; x=1719370005;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nb7SQjv8Yb+Mp78NEj5zPaCJi0vIpp9k7DYwZtKyp00=;
-        b=DVpxCZLfe1qzdlP9afpy4btK5mKMHz9WwGjJV8GdfXlvh/4i69Q/ASgFvN+GBYyw0X
-         Sj8opqFZR41mwpgplX97AuPt97YWxbeRds4yfxI5uUa64or2zU7dLUgVdSWKstFFybt7
-         ABjIZFasquSvTZTRsZ1MPoUaoxOIdBTYT37YAVF+7sHc4kAa7j/xHzlPHf2qpKaG3mii
-         rLKhTW8Rg52zISviHKrH9Xz1NhS+mw9vKnNcNxIr5FVqsQQz6+FBMaax0C3S42+/6N2o
-         ULyIMXGbSHaNKfGDBipu+wnMQ931oVUniMj8B+P2ZcArbHmHC4FazsoMdbT5UbttToBo
-         pjYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+P53NOZb6VMBzYtXubsyznBmuDLAzKf5THF34kjjj1EVSHWNj3wFrwh8PJ3/hOkiYLeslAdgx2zaLCYzKuN2dlW+/fEPC8JN7LpaG
-X-Gm-Message-State: AOJu0YxDqFZo54Gyql9VwFei0J/AfJBZenYeddi3zJEuKACayDU1vZal
-	6LTL7BfUk1E7NfOsQPDQjNnwfZtgW+2RR+AEycTJj4CT1M9DcZsvdDvc5rNMcQUUM/P9HQ/fkDz
-	8+oob4B0KL9yguKW6+IWzA0Lj8Y8=
-X-Google-Smtp-Source: AGHT+IEjhpqzam3srDiMRxXuEDeu5n4A2Acf5zKcihTHCzfzuVVTWhxM3nAuNZQ6A97GVf1RngYgJA+2MG5ZOTEGNKQ=
-X-Received: by 2002:a05:6830:1685:b0:6f9:5d33:e21d with SMTP id
- 46e09a7af769-7007365c25emr1637391a34.1.1718765204709; Tue, 18 Jun 2024
- 19:46:44 -0700 (PDT)
+	s=arc-20240116; t=1718765684; c=relaxed/simple;
+	bh=ruiJuo0TcIPww1MKnKhDXKjJpEPkKk7FFb1iT/KeR1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BZ7cO9omln9venX/dP7HTOAqPLfQVf2waxipZ5GcoiBFeLDPatzbE50FKO8Lt8nrzC2edWVUNaZz9WuRhBzFXBBOXIAUmCR4wEmVsksoNrZVLvxn5/YKiHQUW5znQ7w5+eI70XW2JXrKF0CGA04yCX5MWEVxzKyWoA2nMFtVE54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KIrbL4kZ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718765682; x=1750301682;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ruiJuo0TcIPww1MKnKhDXKjJpEPkKk7FFb1iT/KeR1I=;
+  b=KIrbL4kZ3bH10kAUukPQniCzEdRyOQ4IyU5t7WNtlIwQTiGvf3ca0BsZ
+   9fbcrMsDKYWbO185AEg1vknMDv2ouTHbXLQsbEwnWIHjAsVMthbmpOBgg
+   +1hq8oTUfSEX5ggj6fT+h50/FcOK7PTCBrqH5hY9wqOYsEQe67agbSD3J
+   L7PeTGPdgE5T86ql05fMcag2IPFM5pPQktR7opC/zKQ9TYZqenjyQiNC6
+   SLuR552WBt3KnDYplhw061DoLZIi6AujCOZ7Upt3dq6FHfpnpwBF6vYOh
+   K4yaHO7xPf9JqCrKQxlbqjjftoBEvpAutfglAU8vnulaezkER4WVWJuel
+   w==;
+X-CSE-ConnectionGUID: U/8bMd1kSuCe5sCm2Q+O7A==
+X-CSE-MsgGUID: Jn7KZuO4TTe62OekxBI7yg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="27098706"
+X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
+   d="scan'208";a="27098706"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 19:54:41 -0700
+X-CSE-ConnectionGUID: REFS4McYQWKbyGSnAE9OGA==
+X-CSE-MsgGUID: ve6VOm3WTSi6RXgIBjiO6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
+   d="scan'208";a="41860800"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 18 Jun 2024 19:54:38 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sJlT1-0006Cw-34;
+	Wed, 19 Jun 2024 02:54:35 +0000
+Date: Wed, 19 Jun 2024 10:53:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Manikantan R <quic_manrav@quicinc.com>
+Subject: Re: [PATCH 2/2] ASoC: codecs:lpass-wsa-macro: Fix logic of enabling
+ vi channels
+Message-ID: <202406191005.yMuWtspN-lkp@intel.com>
+References: <20240618-lpass-wsa-vi-v1-2-416a6f162c81@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606070645.3295-1-xuewen.yan@unisoc.com> <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
- <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
- <20240616222003.agcz5osb2nkli75h@airbuntu> <CAB8ipk-ejDKQTr8nAmK9MkhL2Ra=0J==p3Q+U-4K18G6MeJhQw@mail.gmail.com>
- <20240617110348.pyofhzekzoqda7fo@airbuntu> <20240618145851.je4a7cu4ltrt3qxa@airbuntu>
-In-Reply-To: <20240618145851.je4a7cu4ltrt3qxa@airbuntu>
-From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Wed, 19 Jun 2024 10:46:33 +0800
-Message-ID: <CAB8ipk_LXzkkGzT1SS6U8i4nW6j9coxeuwn6vuUFusCQcFM8zw@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding actual_cpu_capacity
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org, mingo@redhat.com, 
-	peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
-	vschneid@redhat.com, vincent.donnefort@arm.com, ke.wang@unisoc.com, 
-	linux-kernel@vger.kernel.org, christian.loehle@arm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618-lpass-wsa-vi-v1-2-416a6f162c81@linaro.org>
 
-On Tue, Jun 18, 2024 at 10:58=E2=80=AFPM Qais Yousef <qyousef@layalina.io> =
-wrote:
->
-> On 06/17/24 12:03, Qais Yousef wrote:
->
-> > > Sorry, I miss the "fits_capacity() use capacity_of()", and without
-> > > uclamp_max, the rd is over-utilized,
-> > > and would not use feec().
-> > > But I notice the uclamp_max, if the rq's uclamp_max is smaller than
-> > > SCHED_CAPACITY_SCALE,
-> > > and is bigger than actual_cpu_capacity, the util_fits_cpu() would
-> > > return true, and the rd is not over-utilized.
-> > > Is this setting intentional?
-> >
-> > Hmm. To a great extent yes. We didn't want to take all types of rq pres=
-sure
-> > into account for uclamp_max. But this corner case could be debatable.
-> >
-> > Is this the source of your problem? If you change util_fits_cpu() to re=
-turn
-> > false here, would this fix the problem you're seeing?
->
-> FWIW, if this happens due to uclamp_max, then this patch to do the cappin=
-g is
-> still needed.
->
-> I think it's good to understand first how we end up in feec() when a CPU =
-is
-> supposed to be overutlized. uclamp_max is the only way to override this
-> decision AFAICT..
+Hi Srinivas,
 
-Sorry for the late reply...
-In our own tree, we removed the check for rd overutil in feec(), so
-the above case often occurs.
-And now it seems that on the mainline, uclamp_max is the only way to
-override this.
+kernel test robot noticed the following build warnings:
 
-Thanks!
-BR
----
-xuewen
+[auto build test WARNING on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Srinivas-Kandagatla/ASoC-codecs-lpass-wsa-macro-Fix-vi-feedback-rate/20240618-221030
+base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+patch link:    https://lore.kernel.org/r/20240618-lpass-wsa-vi-v1-2-416a6f162c81%40linaro.org
+patch subject: [PATCH 2/2] ASoC: codecs:lpass-wsa-macro: Fix logic of enabling vi channels
+config: i386-buildonly-randconfig-002-20240619 (https://download.01.org/0day-ci/archive/20240619/202406191005.yMuWtspN-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240619/202406191005.yMuWtspN-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406191005.yMuWtspN-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   sound/soc/codecs/lpass-wsa-macro.c:999:2: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+     999 |         default:
+         |         ^
+   sound/soc/codecs/lpass-wsa-macro.c:999:2: note: insert 'break;' to avoid fall-through
+     999 |         default:
+         |         ^
+         |         break; 
+>> sound/soc/codecs/lpass-wsa-macro.c:1238:6: warning: variable 'tx_reg0' set but not used [-Wunused-but-set-variable]
+    1238 |         u32 tx_reg0, tx_reg1;
+         |             ^
+>> sound/soc/codecs/lpass-wsa-macro.c:1238:15: warning: variable 'tx_reg1' set but not used [-Wunused-but-set-variable]
+    1238 |         u32 tx_reg0, tx_reg1;
+         |                      ^
+   3 warnings generated.
+
+
+vim +/tx_reg0 +1238 sound/soc/codecs/lpass-wsa-macro.c
+
+0c27e978419e7e Srinivas Kandagatla 2024-06-18  1231  
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1232  static int wsa_macro_enable_vi_feedback(struct snd_soc_dapm_widget *w,
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1233  					struct snd_kcontrol *kcontrol,
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1234  					int event)
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1235  {
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1236  	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1237  	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05 @1238  	u32 tx_reg0, tx_reg1;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1239  	u32 rate_val;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1240  
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1241  	switch (wsa->pcm_rate_vi) {
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1242  	case 8000:
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1243  		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_8K;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1244  		break;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1245  	case 16000:
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1246  		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_16K;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1247  		break;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1248  	case 24000:
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1249  		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_24K;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1250  		break;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1251  	case 32000:
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1252  		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_32K;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1253  		break;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1254  	case 48000:
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1255  		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_48K;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1256  		break;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1257  	default:
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1258  		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_8K;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1259  		break;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1260  	}
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1261  
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1262  	if (test_bit(WSA_MACRO_TX0, &wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1263  		tx_reg0 = CDC_WSA_TX0_SPKR_PROT_PATH_CTL;
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1264  		tx_reg1 = CDC_WSA_TX1_SPKR_PROT_PATH_CTL;
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1265  	} else if (test_bit(WSA_MACRO_TX1, &wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1266  		tx_reg0 = CDC_WSA_TX2_SPKR_PROT_PATH_CTL;
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1267  		tx_reg1 = CDC_WSA_TX3_SPKR_PROT_PATH_CTL;
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1268  	}
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1269  
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1270  	switch (event) {
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1271  	case SND_SOC_DAPM_POST_PMU:
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1272  			/* Enable V&I sensing */
+0c27e978419e7e Srinivas Kandagatla 2024-06-18  1273  		wsa_macro_enable_disable_vi_feedback(component, true, rate_val);
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1274  		break;
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1275  	case SND_SOC_DAPM_POST_PMD:
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1276  		/* Disable V&I sensing */
+0c27e978419e7e Srinivas Kandagatla 2024-06-18  1277  		wsa_macro_enable_disable_vi_feedback(component, false, rate_val);
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1278  		break;
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1279  	}
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1280  
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1281  	return 0;
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1282  }
+2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1283  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
