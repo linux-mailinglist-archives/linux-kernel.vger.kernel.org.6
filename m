@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-221692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C9B90F745
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:57:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4BEB90F73F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96A0DB22F94
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:57:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B27A281F71
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D701015A863;
-	Wed, 19 Jun 2024 19:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6683159217;
+	Wed, 19 Jun 2024 19:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="p9CSOebo"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="cUMIEkC5"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8FD15A4AE
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C281422A2
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718827046; cv=none; b=YoKoPKH84bQF+zx2X6mF3+/ciVdKQpJL0FPXWoVZ8u9kttIFX749C9AKix89sdWeAeul11nblo0XFrvX+CB58UjqyvJK4qFKcnP5ExkCfFnsshkHqRWEYp5w3FWU+8SHqcziWIsUYWPleUQNQ1oVRGnl75zW1lkVwdPP2Ktig4E=
+	t=1718826983; cv=none; b=tjK+luOacbT2im5UD2hiQls6cZwFiLcyidc+DqQqu1xuAhirjSd2ETuopiAXPS8XNBOzF07eM+4xIE7yN/smfdOLVDindmL0/BZu3dn/rbilCGgWLUzHs4Y9WdKbKV8TaJcsy776Wo+3deBN4Qk5lsrrjrxMVked896glfrZn64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718827046; c=relaxed/simple;
-	bh=Ih3HoKeM+JivQUDjkQOQSsTb5IqA8OMRYT3a/x38Moo=;
+	s=arc-20240116; t=1718826983; c=relaxed/simple;
+	bh=7CwnBP+4cGwZQuJJW8YWaPRddYGkYIrG+c5Kwn0f9Kc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oULr5Zh1pAPP3GUYDWgQMUukn4cbIR+H8vAuk+dKglRvySK6mmUQ/zWrQqmsxLhjDFMNABYbjE3Gf+4nB1szESl1H2kGMqL1VXDq8OvPTbrEwSBa4adeJ2bHspYEJHyRwDOvvNYLiKa7LDLHfPC8b9trT5iiQcpBgiZgTxQBVx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=p9CSOebo; arc=none smtp.client-ip=44.202.169.35
+	 In-Reply-To:Content-Type; b=JN8e/ZW0woVXxO6CCfjGlpYWF2IMhsAWyTBebOxLIlX28YNQaFXsudN8URVK/iQmt7H1CBFRHRVNwO9blAScACuyGJGLr5/pb2VAbdD+cNB8zUSmXc1ILMXL/VLgfULhFLzscQEhX/HkDvLKYzIBwVcgUISS+Ugqd6jsZLLsaWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=cUMIEkC5; arc=none smtp.client-ip=35.89.44.37
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6005a.ext.cloudfilter.net ([10.0.30.201])
+Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
 	by cmsmtp with ESMTPS
-	id JxkCsSQA5AidIK1PIsbqPu; Wed, 19 Jun 2024 19:55:48 +0000
+	id K1Bvs23TjSLKxK1PpsNkLp; Wed, 19 Jun 2024 19:56:21 +0000
 Received: from gator4166.hostgator.com ([108.167.133.22])
 	by cmsmtp with ESMTPS
-	id K1PHsCihPHHoAK1PIsbMF7; Wed, 19 Jun 2024 19:55:48 +0000
-X-Authority-Analysis: v=2.4 cv=dskQCEg4 c=1 sm=1 tr=0 ts=667337c4
+	id K1PosRWDYDoe7K1Pos3shA; Wed, 19 Jun 2024 19:56:21 +0000
+X-Authority-Analysis: v=2.4 cv=Gq1E+F1C c=1 sm=1 tr=0 ts=667337e5
  a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
  a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=wYkD_t78qR0A:10 a=VwQbUJbxAAAA:8
- a=pGLkceISAAAA:8 a=H_ziCM4yXGDOzRzd5GwA:9 a=QEXdDO2ut3YA:10
+ a=pGLkceISAAAA:8 a=KW3gg0Ai8grSkJK8CL4A:9 a=QEXdDO2ut3YA:10
  a=AjGcO6oz07-iQ99wixmX:22
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
@@ -47,20 +47,20 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
 	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=3MFAG9hxEjQwa+Na4espi9g8ae3vk8uExQTWwRlZqnQ=; b=p9CSOeboBafi7eCrr10QNnYEXc
-	Q6NqxD/i9F0BtG5dZYvyKu76/i/e5IhgIq5jRzPV66krblfk0/b3DpvpZBQIdJkUE2Pfr3h8XYBaL
-	uR6+gPMErJMZ8evBgXbRuLNUYhtG1gIoRHB/6JdL8+guy92sR/d/TrqQkgtsISvA6JhWb20Bd93q+
-	9oNzscGrmUs02R/4vro+OZyCjWWUvctfgu0kSJwmsLMzbGfQnVY9MuhKQAqaUF+Z41HSt3Hx2YS5S
-	Ll6hG8O971aN8VPK7TgYONCE35fCgEj9767yQCEsfqdDGoh0Ih9RrkQuaxgnBBqoMBjP1kTUDCA5b
-	rAdcY4og==;
-Received: from [201.172.173.139] (port=50738 helo=[192.168.15.14])
+	bh=eaO3vrXA39/v4UfFM5hBURpZQ31SpLg2lD0Yrk2pD1U=; b=cUMIEkC5zHTWZZXiy0tXc7hYzi
+	OWyMSq9Scd1Ksz9HwbsYhLsOQNK/EcnsZgXSyY38ZGdg67fnNGp3gBYYzjPZhM9r/s1Dm0iZP8afv
+	uBXklAcALPZKj8P0TB1+YA6Fl/S+ZI7b5UnsBDmd4jseLOvwh9X+vYpN2lnP9U87OEi0e89IhV0/N
+	381JtgxVJjsvJfde3UYI0pgoAV0ExYNgaH8QI9IG7X4DZYrlyMsbc8olXLkJ8bznehXyeDwcSFy+T
+	gJ5pnjUe8OIZe6vF3tGFjOUx12XcmxPU9SniQBMTDhhLWEHINNsOCAjMNVqN5Ndogndnukp7EsQ24
+	zHcfqa6Q==;
+Received: from [201.172.173.139] (port=46726 helo=[192.168.15.14])
 	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 	(Exim 4.96.2)
 	(envelope-from <gustavo@embeddedor.com>)
-	id 1sK1PF-000xWO-3D;
-	Wed, 19 Jun 2024 14:55:46 -0500
-Message-ID: <d3c2ac49-b8c3-4add-98ad-d06924b33d65@embeddedor.com>
-Date: Wed, 19 Jun 2024 13:55:43 -0600
+	id 1sK1Pn-000y00-0f;
+	Wed, 19 Jun 2024 14:56:19 -0500
+Message-ID: <62ab07f5-3d09-4f84-b917-f7e16fdfd32d@embeddedor.com>
+Date: Wed, 19 Jun 2024 13:56:17 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,8 +68,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] USB: serial: garmin_gps: use struct_size to
- allocate pkt
+Subject: Re: [PATCH v2 1/2] USB: serial: garmin_gps: annotate struct
+ garmin_packet with __counted_by
 To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
  Johan Hovold <johan@kernel.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kees Cook
@@ -80,10 +80,10 @@ To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
 Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-hardening@vger.kernel.org, llvm@lists.linux.dev
 References: <20240619-garmin_gps_counted_by-v2-0-f82f10ebbf28@gmail.com>
- <20240619-garmin_gps_counted_by-v2-2-f82f10ebbf28@gmail.com>
+ <20240619-garmin_gps_counted_by-v2-1-f82f10ebbf28@gmail.com>
 Content-Language: en-US
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240619-garmin_gps_counted_by-v2-2-f82f10ebbf28@gmail.com>
+In-Reply-To: <20240619-garmin_gps_counted_by-v2-1-f82f10ebbf28@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
@@ -94,26 +94,26 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 201.172.173.139
 X-Source-L: No
-X-Exim-ID: 1sK1PF-000xWO-3D
+X-Exim-ID: 1sK1Pn-000y00-0f
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.15.14]) [201.172.173.139]:50738
+X-Source-Sender: ([192.168.15.14]) [201.172.173.139]:46726
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
+X-Email-Count: 16
 X-Org: HG=hgshared;ORG=hostgator;
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfN3HDQliyoaq3h2VFHCyYz86j4mm97iUVV1xgo/N77S7rSJKhZFDKYHoT+Lgr03hNa0dFxmag80j4VEDBWCOV8ReDW7OR9vDhGg9e5DOIzZW1f2a4g2+
- r+/f0axR0Rfi2WfBjecYhE85OAJWbPcPBOP4/NY518ptss40wcEY3v4S/PDDImHur6wP0M0cXqmUGFhpTzQWS4cemCTRDMWdDtvQQu8H4XgBUtKw9vlq4dhv
+X-CMAE-Envelope: MS4xfDK6+IgmatiGvTMrEM+5VjCpVwhEhLMxLsivITqIGcrxS31ZtlfdMqhkRafSCeCtlkOV98iy3YcGFiVTNojq4d86lIFSSmVAK8hmbYGtuEnUBLpJAf/C
+ x5adCrPKcZBAuXWsMOt4S3eD5tA2i9lagHKWHDW3a2BJw+TgMOLUwTf8aV6DDmUblw/A6fXF1uWDFBBN7WPoQaMcf4uZMtZm5d2Icc3IKgZH6IBv9q0KeeAq
 
 
 
 On 19/06/24 21:42, Javier Carrasco wrote:
-> Use the struct_size macro to calculate the size of the pkt, which
-> includes a trailing flexible array.
+> Use the __counted_by compiler attribute for the data[] flexible array
+> member to improve the results of array bound sanitizers.
 > 
-> Suggested-by: Nathan Chancellor <nathan@kernel.org>
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
@@ -123,22 +123,21 @@ Thanks
 Gustavo
 
 > ---
->   drivers/usb/serial/garmin_gps.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
+>   drivers/usb/serial/garmin_gps.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/drivers/usb/serial/garmin_gps.c b/drivers/usb/serial/garmin_gps.c
-> index 57df6ad183ff..6d6ec7eed87c 100644
+> index 670e942fdaaa..57df6ad183ff 100644
 > --- a/drivers/usb/serial/garmin_gps.c
 > +++ b/drivers/usb/serial/garmin_gps.c
-> @@ -267,8 +267,7 @@ static int pkt_add(struct garmin_data *garmin_data_p,
+> @@ -104,7 +104,7 @@ struct garmin_packet {
+>   	int               seq;
+>   	/* the real size of the data array, always > 0 */
+>   	int               size;
+> -	__u8              data[];
+> +	__u8              data[] __counted_by(size);
+>   };
 >   
->   	/* process only packets containing data ... */
->   	if (data_length) {
-> -		pkt = kmalloc(sizeof(struct garmin_packet)+data_length,
-> -								GFP_ATOMIC);
-> +		pkt = kmalloc(struct_size(pkt, data, data_length), GFP_ATOMIC);
->   		if (!pkt)
->   			return 0;
->   
+>   /* structure used to keep the current state of the driver */
 > 
 
