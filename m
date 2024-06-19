@@ -1,142 +1,130 @@
-Return-Path: <linux-kernel+bounces-220966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2A690E9E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:42:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636AD90E9EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECB9628A99E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:42:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B87B4B21F76
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4391913F450;
-	Wed, 19 Jun 2024 11:37:27 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22B41419BA;
+	Wed, 19 Jun 2024 11:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="aR9PdGSe";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PDnsSNyz"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77D6824BB
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587EF13C90D;
+	Wed, 19 Jun 2024 11:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718797046; cv=none; b=VFypSh31LoMGpaAqwBooP7/6ByomvHRR9r9vgwFrx5xkSY+rbgwDrACUeXyz8LSpTDy6viJU2BC1n/nh2SpBKOIN60TaAKlna+bxzxigR564OeNH5ww8+aU6GpqwJR/hecbaETUI28IsUWRgLGoxOC7XmhWVnLOWdLIUBndmuEI=
+	t=1718797090; cv=none; b=coYRVfHGQ2nxT1lPJO4nZY3a3zbdhShDNdXpJ//pPxOVz/o8UhRj0pBLxJupjrUBjE2FSC7+Be1r669qZNbFvs7E6ha2x4Zy9rXmYeYGG9nLEe9oauCCDGDQh4qEdJC/fPJ6HidTmKmmjEucTFdBqRDi19ckTJbyghKoDHH3a60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718797046; c=relaxed/simple;
-	bh=BSHkKLrECWLAlbeSl4v1U37C/da+oM2lEsa5kkc5HAU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=unRPwLeo7aW7P1fj2D30PiK99Akuco8KOg9as2mIOVHS1s/u5b6UHr7Zc0Bd+tVycxI7F1jCzaIKwcSO6NzfCLjBiTWbiFUVt8KMpSg1//AZY95qTZ/B4BNaksRBh7yH5BnCd5OO/IK4RLJn7O7LlltjV9Su9oNJBPhNubxweEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-194-CS909xtoNvSfQqELdIGVDA-1; Wed, 19 Jun 2024 12:37:22 +0100
-X-MC-Unique: CS909xtoNvSfQqELdIGVDA-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 19 Jun
- 2024 12:36:46 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 19 Jun 2024 12:36:46 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Jason A. Donenfeld'" <Jason@zx2c4.com>, Andy Lutomirski
-	<luto@amacapital.net>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "linux-crypto@vger.kernel.org"
-	<linux-crypto@vger.kernel.org>, "linux-api@vger.kernel.org"
-	<linux-api@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, Adhemerval Zanella Netto
-	<adhemerval.zanella@linaro.org>, Carlos O'Donell <carlos@redhat.com>,
-	"Florian Weimer" <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann
- Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, David
- Hildenbrand <dhildenb@redhat.com>
-Subject: RE: [PATCH v17 4/5] random: introduce generic vDSO getrandom()
- implementation
-Thread-Topic: [PATCH v17 4/5] random: introduce generic vDSO getrandom()
- implementation
-Thread-Index: AQHawbWRB8EYMZoZREup+2i1zqOfJbHO9S3w
-Date: Wed, 19 Jun 2024 11:36:46 +0000
-Message-ID: <e860c5fdea5b4d26b1d95d32e2662a9d@AcuMS.aculab.com>
-References: <20240614190646.2081057-1-Jason@zx2c4.com>
- <20240614190646.2081057-5-Jason@zx2c4.com>
- <CALCETrVQtQO87U3SEgQyHfkNKsrcS8PjeZrsy2MPAU7gQY70XA@mail.gmail.com>
- <ZnDQ-HQH8NlmCcIr@zx2c4.com>
- <CALCETrWzXQMXjvL+nGq-+aLVUeiABJ46DACtLnrLXxmwh9s_dg@mail.gmail.com>
- <ZnHftrP3H410gScf@zx2c4.com>
-In-Reply-To: <ZnHftrP3H410gScf@zx2c4.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1718797090; c=relaxed/simple;
+	bh=yZudgVwFrbAD24ua3ncZF3ujIAa6PJAdt/LLy341WBo=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=KCdGdZpuBSpS5qrPPlZvATszPyjaP5BqXsHQOHT6JfGZjjPN1gNtWTvZCx9PRpm7nvU3Cmcol+qKW4B8iYlVN11hYq9boCd2+UklO8ZLhnIZCEA3VzqZYh+0VTH2mRnNnwHzCiswiah6Onqno6WT/RxKpgujrxGdbWHJknT6qcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=aR9PdGSe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PDnsSNyz; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 70BFE138046D;
+	Wed, 19 Jun 2024 07:38:07 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Wed, 19 Jun 2024 07:38:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1718797087;
+	 x=1718883487; bh=B3TFD3iuYOcL5vn75+BRuI7pktVxWxvqZ1gMwULHmhA=; b=
+	aR9PdGSe/AR82h0xlUVY6CbjmZ8LJPKG7Jh40x0KdL919kyhcUS9EIIR2UY+QywN
+	JgYeQuUJF6eYo+aSqVg4YM37Y1NRqrxvFu8vgPtSSMcOxcwSJqUXIWcORmZX4pkk
+	AsrbbN6mUb7vXQmU+L9gG0TYv7Ce/y0Ag7STDvfdiEJ8qn+CIkw6lf5+WOfC7pVB
+	EO8OS3VM47hpaIzcs4P+s4S3AARqA/m8NCmlX3xLGiFvqFLMc7XjqUWw37yMu/7t
+	mxkxPw/yVLjsEeCMP6/Xf/7Mhkd9QZzxiTwF+f9b2CgcAbM7kf/DjrLBT3578SBO
+	e06A32dXO1O15CGAxGCVcQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718797087; x=
+	1718883487; bh=B3TFD3iuYOcL5vn75+BRuI7pktVxWxvqZ1gMwULHmhA=; b=P
+	DnsSNyzaAqa2dp5JlEGxdxvXeCR+TgbUIVYu4Gl9icKiY1PRwYWzYF6L2PLSZ7Rn
+	1bMB3HUUg93fCU42W8d5bbM6lyBZ5ukTLzkkwfaEQ58EHEHGYnOssL8+CCrnr7K7
+	WAF9IURNOzl5V8Q6XNlA7tvop0ZbL8hN99u9/F5QutqyMkbrP6CFD+S6/1NPbM95
+	shOW2JmPLxGhMCPRC6OU209UOPoS6m78Te9FHMEUGPbYPzDm/7K/yefGZN9WPX3w
+	R8W9Eg+/GUyCxNjbDnRmN3jjj0E0kH5jGpIelH/YpyA4bK6DWKn1csomqCgw1efp
+	SHPz8laiaOW7ryguc1wxQ==
+X-ME-Sender: <xms:H8NyZhxfJ5Oh1k1hGQoyPbey7Vmdqk6iYvSlcr8xuOseJIXIEcuOjQ>
+    <xme:H8NyZhTD_ESsYoPGarf1ffGtEeQo09fTft7FiYxeS94jcIh054i6FZaBBKYi6hMco
+    U_zk-msAPA-7lDjbIo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeftddggeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
+    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
+    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:H8NyZrVfs5yRFkM9j-bs-EYB1SFT2Fyc1P6IYkATPsKBS7VjYvDcUQ>
+    <xmx:H8NyZjjKG1YMT9Gb1V8Ij7XtWoqMa8MR4wGUfcAjD_2V0d1XKpQz2g>
+    <xmx:H8NyZjAuZ9kdQAAP7c5KCwIYMfQeh7Mt8u4i_sPEzqzq-F2yz3Uvuw>
+    <xmx:H8NyZsJmlPl33XFzaZ5RG8hJQmUMT_htPKXxpTs36dNpmjS8toCnNw>
+    <xmx:H8NyZqMippUOMbfKwJoEdproHmBkyNV8SR8MB5gtDMwbfwUVhXI1EyM9>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 0B78F36A0074; Wed, 19 Jun 2024 07:38:06 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Message-Id: <14cc8572-406e-47c4-a590-540d6c69466b@app.fastmail.com>
+In-Reply-To: <859402a6-4e31-4029-a6ad-87c3be4d3fdd@app.fastmail.com>
+References: <20240616-mips-mt-fixes-v1-0-83913e0e60fc@flygoat.com>
+ <20240616-mips-mt-fixes-v1-1-83913e0e60fc@flygoat.com>
+ <859402a6-4e31-4029-a6ad-87c3be4d3fdd@app.fastmail.com>
+Date: Wed, 19 Jun 2024 12:37:48 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH fixes 1/4] MIPS: mipsmtregs: Fix target register for MFTC0
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-RnJvbTogSmFzb24gQS4gRG9uZW5mZWxkDQo+IFNlbnQ6IDE4IEp1bmUgMjAyNCAyMDoyOA0KPiBP
-biBUdWUsIEp1biAxOCwgMjAyNCBhdCAxMDo1NToxN0FNIC0wNzAwLCBBbmR5IEx1dG9taXJza2kg
-d3JvdGU6DQo+ID4gT24gTW9uLCBKdW4gMTcsIDIwMjQgYXQgNToxMuKAr1BNIEphc29uIEEuIERv
-bmVuZmVsZCA8SmFzb25AengyYzQuY29tPiB3cm90ZToNCj4gPiA+DQo+ID4gPiBIaSBBbmR5LA0K
-PiA+ID4NCj4gPiA+IE9uIE1vbiwgSnVuIDE3LCAyMDI0IGF0IDA1OjA2OjIyUE0gLTA3MDAsIEFu
-ZHkgTHV0b21pcnNraSB3cm90ZToNCj4gPiA+ID4gT24gRnJpLCBKdW4gMTQsIDIwMjQgYXQgMTI6
-MDjigK9QTSBKYXNvbiBBLiBEb25lbmZlbGQgPEphc29uQHp4MmM0LmNvbT4gd3JvdGU6DQo+ID4g
-PiA+ID4NCj4gPiA+ID4gPiBQcm92aWRlIGEgZ2VuZXJpYyBDIHZEU08gZ2V0cmFuZG9tKCkgaW1w
-bGVtZW50YXRpb24sIHdoaWNoIG9wZXJhdGVzIG9uDQo+ID4gPiA+ID4gYW4gb3BhcXVlIHN0YXRl
-IHJldHVybmVkIGJ5IHZnZXRyYW5kb21fYWxsb2MoKSBhbmQgcHJvZHVjZXMgcmFuZG9tIGJ5dGVz
-DQo+ID4gPiA+ID4gdGhlIHNhbWUgd2F5IGFzIGdldHJhbmRvbSgpLiBUaGlzIGhhcyBhIHRoZSBB
-UEkgc2lnbmF0dXJlOg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gICBzc2l6ZV90IHZnZXRyYW5kb20o
-dm9pZCAqYnVmZmVyLCBzaXplX3QgbGVuLCB1bnNpZ25lZCBpbnQgZmxhZ3MsIHZvaWQgKm9wYXF1
-ZV9zdGF0ZSk7DQo+ID4gPiA+DQo+ID4gPiA+IExhc3QgdGltZSBhcm91bmQsIEkgbWVudGlvbmVk
-IHNvbWUgcG90ZW50aWFsIGlzc3VlcyB3aXRoIHRoaXMgZnVuY3Rpb24NCj4gPiA+ID4gc2lnbmF0
-dXJlLCBhbmQgSSBkaWRuJ3Qgc2VlIGFueSBhbnN3ZXIuICBNeSBzcGVjaWZpYyBvYmplY3Rpb24g
-d2FzIHRvDQo+ID4gPiA+IHRoZSBmYWN0IHRoYXQgdGhlIGNhbGxlciBwYXNzZXMgaW4gYSBwb2lu
-dGVyIGJ1dCBub3QgYSBsZW5ndGgsIGFuZA0KPiA+ID4gPiB0aGlzIHBvdGVudGlhbGx5IG1ha2Vz
-IHJlYXNvbmluZyBhYm91dCBtZW1vcnkgc2FmZXR5IGF3a3dhcmQsDQo+ID4gPiA+IGVzcGVjaWFs
-bHkgaWYgYW55dGhpbmcgbGlrZSBDUklVIGlzIGludm9sdmVkLg0KPiA+ID4NCj4gPiA+IE9oLCBJ
-IHVuZGVyc3Rvb2QgdGhpcyBiYWNrd2FyZHMgbGFzdCB0aW1lIC0gSSB0aG91Z2h0IHlvdSB3ZXJl
-DQo+ID4gPiBjcml0aWNpemluZyB0aGUgc2l6ZV90IGxlbiBhcmd1bWVudCwgd2hpY2ggZGlkbid0
-IG1ha2UgYW55IHNlbnNlLg0KPiA+ID4NCj4gPiA+IFJlLXJlYWRpbmcgbm93LCB3aGF0IHlvdSdy
-ZSBzdWdnZXN0aW5nIGlzIHRoYXQgSSBhZGQgYW4gYWRkaXRpb25hbA0KPiA+ID4gYXJndW1lbnQg
-Y2FsbGVkIGBzaXplX3Qgb3BhcXVlX2xlbmAsIGFuZCB0aGVuIHRoZSBpbXBsZW1lbnRhdGlvbiBk
-b2VzDQo+ID4gPiBzb21ldGhpbmcgbGlrZToNCj4gPiA+DQo+ID4gPiAgICAgaWYgKG9wYXF1ZV9s
-ZW4gIT0gc2l6ZW9mKHN0cnVjdCB2Z2V0cmFuZG9tX3N0YXRlKSkNCj4gPiA+ICAgICAgICAgZ290
-byBmYWxsYmFja19zeXNjYWxsOw0KPiA+ID4NCj4gPiA+IFdpdGggdGhlIHJlYXNvbmluZyB0aGF0
-IGZhbGxpbmcgYmFjayB0byBzeXNjYWxsIGlzIGJldHRlciB0aGFuIHJldHVybmluZw0KPiA+ID4g
-LUVJTlZBTCwgYmVjYXVzZSB0aGF0IGNvdWxkIGhhcHBlbiBpbiBhIG5hdHVyYWwgd2F5IGR1ZSB0
-byBDUklVLiBJbg0KPiA+ID4gY29udHJhc3QsIHlvdXIgb2JqZWN0aW9uIHRvIG9wYXF1ZV9zdGF0
-ZSBub3QgYmVpbmcgYWxpZ25lZCBmYWxsaW5nIGJhY2sNCj4gPiA+IHRvIHRoZSBzeXNjYWxsIHdh
-cyB0aGF0IGl0IHNob3VsZCBuZXZlciBoYXBwZW4gZXZlciwgc28gLUVGQVVMVCBpcyBtb3JlDQo+
-ID4gPiBmaXR0aW5nLg0KPiA+ID4NCj4gPiA+IElzIHRoYXQgY29ycmVjdD8NCj4gPg0KPiA+IE15
-IGFsdGVybmF0aXZlIHN1Z2dlc3Rpb24sIHdoaWNoIGlzIGZhciBsZXNzIHdlbGwgZm9ybWVkLCB3
-b3VsZCBiZSB0bw0KPiA+IG1ha2UgdGhlIG9wYXF1ZSBhcmd1bWVudCBiZSBzb21laG93IG5vdCBw
-b2ludGVyLWxpa2UgYW5kIGJlIG1vcmUgb2YgYW4NCj4gPiBvcGFxdWUgaGFuZGxlLiAgU28gaXQg
-d291bGQgYmUgdWludHB0cl90IGluc3RlYWQgb2Ygdm9pZCAqLCBhbmQgdGhlDQo+ID4gdXNlciBB
-UEkgd291bGQgYmUgYnVpbHQgYXJvdW5kIHRoZSB1c2VyIGdldHRpbmcgYSBsaXN0IG9mIGhhbmRs
-ZXMNCj4gPiBpbnN0ZWFkIG9mIGEgYmxvY2sgb2YgbWVtb3J5Lg0KPiA+DQo+ID4gVGhlIGJlbmVm
-aXQgd291bGQgYmUgYSB0aW55IGJpdCBsZXNzIG92ZXJoZWFkIChwb3RlbnRpYWxseSksIGJ1dCB0
-aGUNCj4gPiBBUEkgd291bGQgbmVlZCBzdWJzdGFudGlhbGx5IG1vcmUgcmV3b3JrLiAgSSdtIG5v
-dCBjb252aW5jZWQgdGhhdCB0aGlzDQo+ID4gd291bGQgYmUgd29ydGh3aGlsZS4NCj4gDQo+IEkn
-ZCB0aG91Z2h0IGFib3V0IHRoaXMgdG9vIC0tIGEgV2luZG93cy1zdHlsZSBoYW5kbGUgc3lzdGVt
-IC0tIGJ1dA0KPiBpdCBzZWVtZWQgY29tcGxpY2F0ZWQgYW5kIGp1c3Qgbm90IHdvcnRoIGl0LCBz
-byB0aGUgc2ltcGxpY2l0eSBoZXJlDQo+IHNlZW1zIG1vcmUgYXBwZWFsaW5nLiBJJ20gaGFwcHkg
-dG8gdGFrZSB5b3VyIHN1Z2dlc3Rpb24gb2YgYW4gb3BhcXVlX2xlbg0KPiBhcmd1bWVudCAoYW5k
-IGl0J3MgYWxyZWFkeSBpbXBsZW1lbnRlZCBpbiBteSAidmRzbyIgYnJhbmNoKSwgYW5kDQo+IGxl
-YXZpbmcgaXQgYXQgdGhhdC4NCg0KVGhleSBkb24ndCB3b3JrIGVpdGhlci4uLg0KDQpQcm9iYWJs
-eSBiZXN0IGlzIHRvIG1ha2UgaXQgJ3N0cnVjdCB2Z2V0cmFuZG9tX3N0YXRlIConIGJ1dCBuZXZl
-cg0KYWN0dWFsbHkgZGVmaW5lIHRoYXQgc3RydWN0dXJlIGluIGFueSB1c2VyIGhlYWRlci4NClRo
-ZW4gYXQgbGVhc3QgdGhlIGFwcGxpY2F0aW9uIGdldHMgc29tZSB0eXBlIGNoZWNraW5nIGZyb20g
-dGhlIGNvbXBpbGVyDQp0aGF0IHRoZSBjb3JyZWN0IHBvaW50ZXIgaXMgYmVpbmcgcGFzc2VkLg0K
-DQpEZXBlbmRpbmcgb24gd2hlcmUvaG93IHRoZSBkYXRhIGlzIGFsbG9jYXRlZCB5b3UgbWF5IHRo
-ZW4gbm90IG5lZWQNCmEgbGVuZ3RoPyANCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVz
-cyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEg
-MVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
+
+=E5=9C=A82024=E5=B9=B46=E6=9C=8819=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
+=8D=8812:32=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+> =E5=9C=A82024=E5=B9=B46=E6=9C=8816=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=
+=E5=8D=882:25=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+>> Target register of mftc0 should be __res instead of $1, this is
+>> a leftover from old .insn code.
+>>
+>> Fixes: dd6d29a61489 ("MIPS: Implement microMIPS MT ASE helpers")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>
+> Hi Thomas,
+>
+> I saw you sent mips-fixes_6.10_1 pull request but this series is
+> not included in that PR while one of my later patch is included.
+>
+> If you think the whole series is not fit for fixes tree then please
+> at least let this series go through fixes tree. There are many MT
+                    ^ Sorry I meant patch.
+
+[...]
+--=20
+- Jiaxun
 
