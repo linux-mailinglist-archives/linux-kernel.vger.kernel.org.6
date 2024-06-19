@@ -1,90 +1,114 @@
-Return-Path: <linux-kernel+bounces-220916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0DCA90E91F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:18:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3590390E923
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FB722857E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:18:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27B11F22C1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1A9139578;
-	Wed, 19 Jun 2024 11:18:16 +0000 (UTC)
-Received: from njjs-sys-mailin01.njjs.baidu.com (mx310.baidu.com [180.101.52.44])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF274D8B2
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.101.52.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E73139CEC;
+	Wed, 19 Jun 2024 11:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipSTa62S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AB04D8B2;
+	Wed, 19 Jun 2024 11:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718795895; cv=none; b=XCl/nLQz6PzkbhBhvzQGVxCxmmtFTGz8XDzaMCtYv2GMYA0ucZI/sQl54n84fnectTW0kC/JDBn41C8aUyHeiwHT9e1h2Vxtff4NA8b9gULcwOWEHqwi9s8P4vtcJj5awAb2ve9CEGTLvO3iUaAttWj4SsYKaJY7kmXPByesRx4=
+	t=1718795929; cv=none; b=cHw/qm9MUtiLvfQ8whcsVYRKstKjbZhlw77IoJMP3Jh7nFn5BFjAOU/za9v5KGcZJYepnFf6blW3LHk5TvdHX6VnsA0rNB7k/Hyx3/hkAJ3VRBdeetrraYbXH/Qvb5qd1XWqjYT8mHkHUW0huImqIkvcbg6/C2jc7dDArPP6tVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718795895; c=relaxed/simple;
-	bh=/uzSBEejCZP3ZuvUlQ+maBnaKGLioRrgetYx6SzumfA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=IwjdH7ei/myASvjbWNzqZhRt5i9DMCrwIluHRF3BxwhImusEcdx0OS5tKYOqN6tbeyTqtnMj/ABfz8L0L0QMiLFpC1hlXCrKrk+TV+rPi9Orsa8Txx/gw/+w3FAcvrhIgcQUkhZ7o0kgjpBP56jR9SaxsBwsVHQF0DgQDs1Cnv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=180.101.52.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-Received: from localhost (bjhw-sys-rpm015653cc5.bjhw.baidu.com [10.227.53.39])
-	by njjs-sys-mailin01.njjs.baidu.com (Postfix) with ESMTP id 81AFF7F00057;
-	Wed, 19 Jun 2024 19:18:03 +0800 (CST)
-From: Li RongQing <lirongqing@baidu.com>
-To: kirill.shutemov@linux.intel.com,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	rick.p.edgecombe@intel.com
-Cc: Li RongQing <lirongqing@baidu.com>
-Subject: [PATCH][v4] virt: tdx-guest: Don't free decrypted memory
-Date: Wed, 19 Jun 2024 19:18:01 +0800
-Message-Id: <20240619111801.25630-1-lirongqing@baidu.com>
-X-Mailer: git-send-email 2.9.4
+	s=arc-20240116; t=1718795929; c=relaxed/simple;
+	bh=z4T+IJBLwyf5+aKRPm9GucoAyD3f08lBm6C/VluK0Y8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NaJ1Ws767BY4NN173DDeLTE72F/DHkAOU2Ddc+1VarDzvga4PRUPxZNcHBfnpIPpCcJ318Pt+cxLxFHrcYekyEV7+lGcmF8DnThV3fPzOoPh64moqn9tpxRQLjoNK5dUlWCPyLrttZfkRwLY8YNYgF8EmJJOWXOyFS99njMJokI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipSTa62S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F54EC2BBFC;
+	Wed, 19 Jun 2024 11:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718795929;
+	bh=z4T+IJBLwyf5+aKRPm9GucoAyD3f08lBm6C/VluK0Y8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ipSTa62SfcCD6kWVUoBW1qjbaMOFa/kNXSXeFPQ/n8wwW0lG/18nkza5lJUwCeqQb
+	 quHlYsyx81Og7GSKknkYPGpIWcApAhknBCQ4jsDn2VGdAqIJ7K2eGh6yWmQPFsceiq
+	 jdVoTY5HHRzeMVOMEIIjPkJ84NkRRCCeH6lzcjqsTa0Z1rKJeC66LjJE5P+Y0u7ryh
+	 PyBQqQWaHZRkEcLspdW64OAiywWGnljAeNCIRhRYnqBUa7INu2uPjOqNa5gsbRBSNi
+	 hdqgVg2Cjgoui6YypjZLF+Z1obYbXfUdUzQKhvCFiHJuZc6kZlZeBDeOW9J3Q7cscY
+	 KJUtQqN8az6Hw==
+Date: Wed, 19 Jun 2024 12:18:45 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-mmc@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, cyril.jean@microchip.com,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-spi@vger.kernel.org
+Subject: Re: [RFC v1 2/3] spi: microchip-core-qspi: Add regular transfers
+Message-ID: <20240619-frozen-angriness-8648636f1440@spud>
+References: <20240612-brigade-shell-1f626e7e592f@spud>
+ <20240612-uphold-dinner-a47b4c44be18@spud>
+ <ZmnPh39YyfS4ocNU@finisterre.sirena.org.uk>
+ <20240612-spending-stalling-62070dbbcf3d@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="bZO+FHlLZI0c0AGy"
+Content-Disposition: inline
+In-Reply-To: <20240612-spending-stalling-62070dbbcf3d@spud>
 
-In CoCo VMs it is possible for the untrusted host to cause
-set_memory_decrypted() to fail such that an error is returned
-and the resulting memory is shared. Callers need to take care
-to handle these errors to avoid returning decrypted (shared)
-memory to the page allocator, which could lead to functional
-or security issues.
 
-Leak the decrypted memory when set_memory_decrypted() fails,
-and don't need to print an error since set_memory_decrypted()
-will call WARN_ONCE().
+--bZO+FHlLZI0c0AGy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
----
- diff with v3: modify the commit log as suggested by Kirill
- diff with v2: remove print error
- diff with v1: leak the page, and print error
+On Wed, Jun 12, 2024 at 09:48:16PM +0100, Conor Dooley wrote:
+> On Wed, Jun 12, 2024 at 05:40:39PM +0100, Mark Brown wrote:
+> > On Wed, Jun 12, 2024 at 04:48:32PM +0100, Conor Dooley wrote:
+> >=20
+> > > +	//TODO: questionable robustness if both cs_change and cs_off toggle
+> > > +	list_for_each_entry(t, &m->transfers, transfer_list) {
+> > > +		//cs_change being set means we need to re-enable
+> >=20
+> > Is it not possible to implement prepare_message() and transfer_one()
+> > rather than open coding all this?
+>=20
+> If I can, I will. I already found one issue with the cs toggling in the
+> code Cyril gave me and I need to figure out why there's a udelay(750)
+> required later on in the function anyway!
 
- drivers/virt/coco/tdx-guest/tdx-guest.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Actually wasn't too bad, glad to be rid of the open coded CS handling.
+I still need the as of yet not understood udelay(), but it looks even
+worse now:
 
-diff --git a/drivers/virt/coco/tdx-guest/tdx-guest.c b/drivers/virt/coco/tdx-guest/tdx-guest.c
-index 1253bf7..8575d98 100644
---- a/drivers/virt/coco/tdx-guest/tdx-guest.c
-+++ b/drivers/virt/coco/tdx-guest/tdx-guest.c
-@@ -124,10 +124,8 @@ static void *alloc_quote_buf(void)
- 	if (!addr)
- 		return NULL;
- 
--	if (set_memory_decrypted((unsigned long)addr, count)) {
--		free_pages_exact(addr, len);
-+	if (set_memory_decrypted((unsigned long)addr, count))
- 		return NULL;
--	}
- 
- 	return addr;
- }
--- 
-2.9.4
++static int mchp_coreqspi_unprepare_message(struct spi_controller *ctlr, st=
+ruct spi_message *m)
++{
++	udelay(750);
++
++	return 0;
++}
 
+
+
+--bZO+FHlLZI0c0AGy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnK+lQAKCRB4tDGHoIJi
+0p4lAQC9ueXu3bI/u1wcG0M7RbuNlGJDK37D2Q/ueWBcxQVIUAD+MkzD/mHoIpM0
+MXOkMxtS9lWwiMt8z42Pg949gpXsMw8=
+=h1cY
+-----END PGP SIGNATURE-----
+
+--bZO+FHlLZI0c0AGy--
 
