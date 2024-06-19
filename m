@@ -1,200 +1,164 @@
-Return-Path: <linux-kernel+bounces-221457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF29990F3EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:20:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5F190F3F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 147A9B23317
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:19:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 902B51F21C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43915155355;
-	Wed, 19 Jun 2024 16:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862C2156644;
+	Wed, 19 Jun 2024 16:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxrQ7+Ho"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r5BoTtpl"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CCF1534E6;
-	Wed, 19 Jun 2024 16:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C53155A5F;
+	Wed, 19 Jun 2024 16:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718813968; cv=none; b=LG36XMr3AvtslOy+fHIlBZf1qYtsl6s0tR9DklmTkPVCXuPbL+RuKDxsjRMDmEFjlHOdHXnIPaCbYPNVtp64/4zElc0rrz1Oq3SPixQwUjkeXO5fI5wguFVdlrjsnji3q2v4wJndoSgMo3gBeU7DRkrYtUMAJTzLy+wYXG1N8bA=
+	t=1718813977; cv=none; b=XZtJ6uyXo0XsAnf/ryxbTyfNB0dMtOhkcNXQPOy/TFEh7rAuKJe31td8Ri3T/TKGImeNcTx1g2pnA5oqtemBeUBDAnJ9VUeN3cIffIMBJoB0wEztp7dwmEfHWqi5Kf+n51wx1f4n2j6BW0kW/vQPzfPNb9IVEZCCOBYP3BIvRBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718813968; c=relaxed/simple;
-	bh=UMgouaT6S/IixEQF8EjbaOo9Ec9dIFnfX3ko37uhAoM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A2NSkeqTfi4IFJqqWNgZaY7qEoYxRDjxorjl3j+ttNLOIXtDNxCaZlYzSAcPhNZOc3fafNVnKPTJsCuvblsfed42YV3/zxDZHUixGDC9q18g+7qzuKqc/gn9kVUxAizBnka3od/4+h9gMdmSvXRCKOjFVaj0oENd99mMm/p9jV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxrQ7+Ho; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25488f4e55aso19694fac.0;
-        Wed, 19 Jun 2024 09:19:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718813965; x=1719418765; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vFTtLiupNQjUDm5wJ7kx2VnTWJ/TIurLfPXStd+BLtA=;
-        b=gxrQ7+HoV/6xifISWjvwpbsC7cY44G4DGahaMD8NXHngr5/YHeUWA9Y4aU9jVZ5Pqw
-         /voMBbL0IELciBUgDnWGEtqQP0X7Qk90cq7Hib/ZLFfaZb8HDwY/WnDtzx6suRXfDpsa
-         7MIjHsZOndJe6axUuh9NMjRVsSLhKy1kyzbcjFAxoKJo0ZG146cO2HQq+9azqwlKORko
-         6aa3fcD/yd/oFmSUkPtO5GEkhztpylzNGBqi/h2cQkyjKW89rPo3Wx7L5gC9zvRt36GN
-         m8giRC3xXRgyiwds13fUyyqU7ulzwjoXMHwBceCsR09nRmvU5xB0JAjGjTE4X4JSqfFp
-         5OHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718813965; x=1719418765;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vFTtLiupNQjUDm5wJ7kx2VnTWJ/TIurLfPXStd+BLtA=;
-        b=Sa/qZcsMJiehhDkK38PZIbgaiPh6Fr210i/kRV4lx0GGUjCY/m2rUoUs7chuemoDKr
-         yu0ma1L3TAnSVAiLf0ricHXNuzyoUepgzB11zV3rx36TTzwukTwol+rPTFJToL5Dkf/9
-         ItdJDsVpNJ2WpVzo6kYxevmKCzDgiaoqTXuf2gB5G0SZJ/LrG07Wy/uryQYRZexTBtMi
-         AFhT0v10/9GOait4NUTdH6lkNpD43qTFmUj8L6T6tY09ZZMxT6Ipr82d3ZpkdqOXBzUh
-         2p2jLsMHps8kUwGISCCpmZZ3TmmEU3zJZ+IPB/aEut0WvvDmHujO4O4h+W45qYqGdfaS
-         3cgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtGniZNGRuozn42BXvGcsVOvmWwvvOjQZ1sQGC1XMsYeyBLTi2YmWjDeTMGi5lR5sxQhQKLUMQc46gukJm7awdqrZd79W46K2vEy1NVAnGBnxGsmVpf9ACXbjVRiMSg4vaI19UMbcVgZhu7v7gbh/K0FxZp8BiHT7TeZ4WalINkiYD4q6teBhfYekf
-X-Gm-Message-State: AOJu0YwN+55EB/E2NS4DUFXW06c6kjmOHzNLdhtXawHG36z0ZW1aYMY7
-	x1IGWjSb4GxC2HUT1CvWzeu2Cj5i78OkNpJ3VuG/PY9UDThmVNxvViEU1O14FqigyjVdKj9qvvF
-	ikoPvcY5DgSQ0+pQN6e4Zb+MryJ8=
-X-Google-Smtp-Source: AGHT+IG8lcFqoVxgi4qmEwYOa2FXhJDu1cbELTejcdqT7shjKmkU/mTPDTR+dr1wTP2oazD7SaMIDyBEPwcu4hTw8Zg=
-X-Received: by 2002:a05:6870:5247:b0:254:956f:ff9a with SMTP id
- 586e51a60fabf-25c94a1f1b3mr3499722fac.32.1718813964714; Wed, 19 Jun 2024
- 09:19:24 -0700 (PDT)
+	s=arc-20240116; t=1718813977; c=relaxed/simple;
+	bh=3KvxBET2y5jKjuO29Ijw2Ch0iSqQIKcl603N9UJfkeE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=db4an2pnodf1H5B6ujj8gD1cFviAVEMOzWADEZxtho5UKZjcG7bCenTmjrAVwgGs9snrYyb8S8AEdK5W7iO2IGa6N2otdJs2xo7JzshGJ4RqFiZ/4b7KPifSBLZDk84mLeQT3dZHazBHeLe9dhQI22tJPcSr2tXvuXHJvVw1H4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=r5BoTtpl; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45JGJEr8039856;
+	Wed, 19 Jun 2024 11:19:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718813954;
+	bh=w9Hz1Zj6qVVo83JgmbjuRtdlhc6TYk982qtNVzNil4Q=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=r5BoTtplK2yVwF0yHj3i52Dz5n2BtYVppFRDtLCw9Iw9N8hVDr59Njc4c+NtGs3zt
+	 AAXioJqOXVF8ELDKoqMPSNlBGN9/hmH5hlSv+l/DYHAvgD/D8j4DCImPJBB5RTltpM
+	 RfPDanCaCOwwdvjbzsa2uPskN7182M8K8JRWxz/A=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45JGJENL007917
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 19 Jun 2024 11:19:14 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
+ Jun 2024 11:19:14 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 19 Jun 2024 11:19:14 -0500
+Received: from [128.247.81.8] (ula0226330.dhcp.ti.com [128.247.81.8] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45JGJDBd057924;
+	Wed, 19 Jun 2024 11:19:13 -0500
+Message-ID: <c1b7a47e-cb05-4701-9766-d1fc13612f34@ti.com>
+Date: Wed, 19 Jun 2024 11:19:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613091721.525266-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <prdvmtsp35yy2naohivbrya3go6vh5ji2cdjoebw3ovditcujo@bhck6tca6mhj>
-In-Reply-To: <prdvmtsp35yy2naohivbrya3go6vh5ji2cdjoebw3ovditcujo@bhck6tca6mhj>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 19 Jun 2024 17:18:58 +0100
-Message-ID: <CA+V-a8u6KAFp1pox+emszjCHqvNRYrkOPpsv5XBdkAVJQMxjmA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 3/3] mmc: renesas_sdhi: Add support for RZ/V2H(P) SoC
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-mmc@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Prabhakar <prabhakar.csengg@gmail.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: pinctrl: pinctrl-single: Define a max count
+ for "pinctrl-single,gpio-range"
+To: Nishanth Menon <nm@ti.com>, "Rob Herring (Arm)" <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
+        Linus
+ Walleij <linus.walleij@linaro.org>,
+        Tony Lindgren <tony@atomide.com>
+References: <20240618165102.2380159-1-nm@ti.com>
+ <171873566448.3500109.16734660300499772836.robh@kernel.org>
+ <20240618185705.5fwevm7drphgvwl2@dilation>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20240618185705.5fwevm7drphgvwl2@dilation>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Wolfram,
+On 6/18/24 1:57 PM, Nishanth Menon wrote:
+> On 12:34-20240618, Rob Herring wrote:
+>>
+>> On Tue, 18 Jun 2024 11:51:02 -0500, Nishanth Menon wrote:
+>>> "pinctrl-single,gpio-range" allows us to define a dis-contiguous
+>>> range of pinctrl registers that can have different mux settings for
+>>> GPIO mode of operation. However, the maxItems seem to be set to 1 in
+>>> processed schema for some reason. This is incorrect. For example:
+>>> arch/arm64/boot/dts/hisilicon/hi6220.dtsi and others have more than
+>>> one dis-contiguous range.
+>>>
+>>> Arbitrarily define a max 100 count to override the defaults.
+>>>
+>>> Signed-off-by: Nishanth Menon <nm@ti.com>
+>>> ---
+>>> I am not sure if I should call this RFC or not.. and if this is even the
+>>> right solution.. I am on 2024.05 dt-schema for this check.
+>>>
+>>> I noticed this when adding gpio-ranges for am62p platform:
+>>> https://gist.github.com/nmenon/7019cd2f24be47997640df5db60a7544
+>>>
+>>> It is possible that this is a bug in dt-schema, but I have'nt been able
+>>> to track it down either.
+>>>
+>>> behavior seen is the following:
+>>> pinctrl-single,gpio-range = <&mcu_pmx_range 0 21 7>;
+>>> generates no warning
+>>> However,
+>>> pinctrl-single,gpio-range = <&mcu_pmx_range 0 21 7>, <&mcu_pmx_range 32 2 7>;
+>>>
+>>> generates "is too long" warning.
+>>>
+>>>
+>>>   Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>
+>> My bot found errors running 'make dt_binding_check' on your patch:
+>>
+>> yamllint warnings/errors:
+>>
+>> dtschema/dtc warnings/errors:
+>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml: properties:pinctrl-single,gpio-range: {'description': 'Optional list of pin base, nr pins & gpio function', '$ref': '/schemas/types.yaml#/definitions/phandle-array', 'maxItems': 100, 'items': [{'items': [{'description': 'phandle of a gpio-range node'}, {'description': 'pin base'}, {'description': 'number of pins'}, {'description': 'gpio function'}]}]} should not be valid under {'required': ['maxItems']}
+>> 	hint: "maxItems" is not needed with an "items" list
+>> 	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+> 
+> yes, I had expected the same, but processed schema indicates a maxItems
+> of 1 for reasons I am unable to make sense of.. will be great to have
+> some additional eyes:
+> 
 
-Thank you for the review.
+As the warning says, setting the item count is not needed when the
+item list content (and therefore item count) is explicitly defined.
+The binding is saying there is a single item of 4 elements.
 
-On Mon, Jun 17, 2024 at 9:31=E2=80=AFAM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> Hi Prabhakar,
->
-> > - Ive modelled the regulator now to control the PWEN aswell.
->
-> Yay, this looks much better. Good work!
->
-> > - I have still kept regulator bits in quirks I was wondering if I shoul=
-d
-> >   move this to renesas_sdhi_of_data instead?
->
-> I think so. An internal regulator is not a quirk.
->
-Agreed.
+"pinctrl-single,gpio-range"'s type is a single phandle-array[0]. What
+you want is an array of phandle-arrays. The length of each is usually
+set by the target of the phandle with its #*-cells property.
 
-> > - I still need to add checks if the internal regulator used and
-> >   only then call regulator_enable/regulator_set_voltage. ATM I am still
-> >   unclear on differentiating if internal/external regulator is used.
->
-> When it comes to re-enabling the regulator in sdhi_reset, I think this
-> can be a sdhi_flag like SDHI_FLAG_ENABLE_REGULATOR_IN_RESET or alike.
->
-OK.
+This binding is a bit of a mess, the phandle is always a pointer to
+a node with the cells length hard-coded to 3. This looks to have been done
+to allow the driver to use the function "of_parse_phandle_with_args" which
+needs a property name for to find the cell count. But that makes no sense
+as the count is always 3, the driver cannot accept any other value. The
+driver should have just looped of_get_property() 3 times but wanted to
+use the helper. So a silly driver mistake has turned into a binding issue.
 
-> When it comes to the regulator, I wonder if it wouldn't be clearer to
-> replace renesas_sdhi_internal_dmac_register_regulator() with a proper
-> probe function and a dedicated compatible value for it. We could use
-> platform_driver_probe() to instantiate the new driver within the SDHI
-> probe function. This will ensure that the regulator driver will only be
-> started once the main driver got all needed resources (mapped
-> registers).
->
-I did give it a try with platform_driver_probe() and failed.
+We should drop the "pinctrl-single,gpio-range" from the binding and
+fix the driver.
 
-- Firstly I had to move the regulator node outside the SDHI node for
-platform_driver_probe() to succeed or else it failed with -ENODEV (at
-https://elixir.bootlin.com/linux/latest/source/drivers/base/platform.c#L953=
-)
-- In Renesas SoCs we have multiple instances of SDHI, the problem
-being for each instance we are calling platform_driver_probe(). Which
-causes a problem as the regulator node will use the first device.
+Andrew
 
-Let me know if I have missed something obvious here.
+[0] https://patchwork.kernel.org/project/netdevbpf/patch/20220119015038.2433585-1-robh@kernel.org/
 
-> My gut feeling is that it will pay off if the internal regulator will be
-> described in DT as any other regulator. Like, we could name the
-> regulator in DT as always etc...
->
-> More opinions on this idea are welcome, though...
->
-> > --- a/drivers/mmc/host/renesas_sdhi.h
-> > +++ b/drivers/mmc/host/renesas_sdhi.h
-> > @@ -11,6 +11,9 @@
-> >
-> >  #include <linux/dmaengine.h>
-> >  #include <linux/platform_device.h>
-> > +#include <linux/regmap.h>
->
-> Regmap can luckily go now.
->
-Agreed.
-
-> > +#include <linux/regulator/driver.h>
-> > +#include <linux/regulator/machine.h>
-> >  #include "tmio_mmc.h"
-> >
-> >  struct renesas_sdhi_scc {
-> > @@ -49,6 +52,9 @@ struct renesas_sdhi_quirks {
-> >       bool manual_tap_correction;
-> >       bool old_info1_layout;
-> >       u32 hs400_bad_taps;
-> > +     bool internal_regulator;
-> > +     struct regulator_desc *rdesc;
-> > +     struct regulator_init_data *reg_init_data;
-> >       const u8 (*hs400_calib_table)[SDHI_CALIB_TABLE_MAX];
-> >  };
-> >
-> > @@ -93,6 +99,8 @@ struct renesas_sdhi {
-> >       unsigned int tap_set;
-> >
-> >       struct reset_control *rstc;
-> > +
-> > +     struct regulator_dev *sd_status;
->
-> This is a strange name for the regulater. Especially given that you have
-> as well the more fitting 'u32 sd_status' in the code later.
->
-I will update it.
-
-> ...
->
-> > +static struct regulator_init_data r9a09g057_regulator_init_data =3D {
-> > +     .constraints =3D {
-> > +             .valid_ops_mask =3D REGULATOR_CHANGE_STATUS,
->
-> Don't we need REGULATOR_CHANGE_VOLTAGE here as well? Or is this implicit
-> because of REGULATOR_VOLTAGE? Can't find this, though.
->
-I will investigate it.
-
-Cheers,
-Prabhakar
+> https://gist.github.com/nmenon/7019cd2f24be47997640df5db60a7544#file-processed-schema-pinctrl
+> 
+> next-20240617 baseline
 
