@@ -1,207 +1,94 @@
-Return-Path: <linux-kernel+bounces-221736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35D2490F7DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:56:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C75BA90F7E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65BCBB24610
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:56:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547762862D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F1C15B125;
-	Wed, 19 Jun 2024 20:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BAzCVFfz"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D74115A87F;
+	Wed, 19 Jun 2024 20:53:42 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C70015B124;
-	Wed, 19 Jun 2024 20:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B1615A875;
+	Wed, 19 Jun 2024 20:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718830399; cv=none; b=PLpxcsE0ZUl8beTiGSNaPA1fvwX5l+x9IAThLkNfWOiF9kQKNQyythPX1U2rXWaxPxUYG0gUuvD20DW/TYHsCjESjKBPiPlW77SGKlP6GqpF1zywyJhiUAtuG3kEljITHrhaj21SNyEyuD3bdid2GcXd5M9LDxNghtm6xRHZBb4=
+	t=1718830421; cv=none; b=kdh7eoqYIXT23E5jdzt1GY+mJ3wqZFqg3jvmGbGfr0e69w0x8YdVIpTh1yKooM9IefYjtVzIutgHGQaKRS3r3SCiS0b+M7jWDjI29kctl/gWCAQ36HtrS/hxG1/pvpfdVxQ0j5b2BGomAMTIew4VdI990Py0zDyFdTY/RBa5DJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718830399; c=relaxed/simple;
-	bh=RaADqzyGVgATxjkyrCGLr59ecKKEBBDwXHF88bT0AM8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=F7f7D3rAPHoXclbXPCZjsNUmsOHZvW3zL20fEsE7yt2K4m8raOCZJULPUe43dM8di18jA2fTHMGM32Nz6reyItMojZv6TNJnOITzThIbkZj8V7fqIXOmFUz+3RrQc107bJsA6TiFz2xf9U00MRxYg+S6mjVVt5hEwlmI3Go+ZoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BAzCVFfz; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a6f85f82ffeso17376466b.0;
-        Wed, 19 Jun 2024 13:53:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718830395; x=1719435195; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xoMonN5KTGsTAI06z21/CRk7gcVlzV6jDkZYPNRbNuM=;
-        b=BAzCVFfzFtXhGVT0K+aUA3nOBZVflixIGbH1VzjbaSExEkLJAck8QvRlFaIPuOu/aB
-         xshy3t8D6w3QS18aJ258F/QCJzy8P6lwk33Ho4gHB6OjOLFr6/nbzqLb+MypN6y8SCaR
-         aHhYuqgwNAvcHVQFnnk3EC05fanilzn+YkQEbVcr4nQETtxBr8cPT5LBGMq7PfCyWo1r
-         dpHMHcXZy9u189VzM+efznpQYKNKtuOHZ/yKHm2HFGwwXmxqPEzYqkGCzIf9V33+mpTQ
-         r/6jAvnBV/z71qTmW6MIqcXRqqtKxAlni4zIQCl0TPC5tGri4KVXHNFzfBzIYC4DLDnn
-         HScg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718830395; x=1719435195;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xoMonN5KTGsTAI06z21/CRk7gcVlzV6jDkZYPNRbNuM=;
-        b=ofEiv1YRPECBHphjUc31NQGjU+Lzn0a/pmLGgpKV5JRKlF+ABI+mJiGYjofIvg/2LF
-         wsHARslWjuxvWOdRSXuNIoGnOD51Za0OK0bUEp4A+ZzN8UCKAqAtxRxKA/NevOXUKDhI
-         vMY6DU64H4n7RHHjg0ZyS3L53CyufD3/WgRWgHVVxdRO6JNtwaAcrXhDQnAiqAlDiilJ
-         V7N+hKXhfD2YYu2SV2HcYqegHxFUY/XGYd0W6uM6AtOAspsV3FW5DTM+Rwpjde4wy0Cv
-         OMajHB3W+h9K9iWH2Fz/A7gZ2YDCCx8ExbjAs1V9LE4kNe/EAixa3scsZdyUK/BfxzO2
-         Ul2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXDtj9jj3td9ImPhR9ESAYBjIWzuSVa0jlsDSO4UhF1tywWpjOo6YMOskrHarJa0avxbuoFoUll4ke/ZAau+EjXBccxbWvXAtRIOaKg
-X-Gm-Message-State: AOJu0Yw9yNYBXYzwbDt+gq15oEhqZcYGdOaXYcpsbg3gLYExnQO6G+2f
-	kElAHq77zUfVo8XvQc+RmQu2iMSf9frULsjSU9hEeylYmNN+NRM9OQPoNRO/Vuk=
-X-Google-Smtp-Source: AGHT+IEXILH/Tq7bqav/jGPzVjS1HnrVKhCXc5prH+gFx0OUY5ZvV9Y41L0pcmcVKUPdVUo7XV42/w==
-X-Received: by 2002:a17:906:3c48:b0:a69:13a2:4f6e with SMTP id a640c23a62f3a-a6fab7d6d0emr203187266b.74.1718830395383;
-        Wed, 19 Jun 2024 13:53:15 -0700 (PDT)
-Received: from WBEC325.dom.lan ([185.188.71.122])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db5b2fsm697329566b.47.2024.06.19.13.53.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 13:53:15 -0700 (PDT)
-From: Pawel Dembicki <paweldembicki@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Paolo Abeni <pabeni@redhat.com>,
-	Pawel Dembicki <paweldembicki@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	UNGLinuxDriver@microchip.com,
-	Russell King <linux@armlinux.org.uk>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 12/12] net: dsa: vsc73xx: start treating the BR_LEARNING flag
-Date: Wed, 19 Jun 2024 22:52:18 +0200
-Message-Id: <20240619205220.965844-13-paweldembicki@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240619205220.965844-1-paweldembicki@gmail.com>
-References: <20240619205220.965844-1-paweldembicki@gmail.com>
+	s=arc-20240116; t=1718830421; c=relaxed/simple;
+	bh=GNFCgL0eo3F/Upeqaudb5LNHEm1jLtMNrmv0qv2nLA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J8O2NgQ6O9gujCAVdwQIGuXNC/JjeWpkywTNiIforFI5cjbSw+WkI0BpX8Uy7IcUp8CBztXYR2mQHS5nLEjo3hVYd2388/uckgvnSgo8nsHzYKj4s9KYT3obu3IB8jaOm/iAuI+XFVHE4CmQLz13Oi9ZO1BHy4av3YQnv9qKg90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 8C91C1C009C; Wed, 19 Jun 2024 22:53:37 +0200 (CEST)
+Date: Wed, 19 Jun 2024 22:53:37 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/217] 6.1.95-rc1 review
+Message-ID: <ZnNFUSCvPI/7KG1R@duo.ucw.cz>
+References: <20240619125556.491243678@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gDOuMhcyTfEL1C/f"
+Content-Disposition: inline
+In-Reply-To: <20240619125556.491243678@linuxfoundation.org>
 
-This patch implements .port_pre_bridge_flags() and .port_bridge_flags(),
-which are required for properly treating the BR_LEARNING flag. Also,
-.port_stp_state_set() is tweaked and now disables learning for standalone
-ports.
 
-Disabling learning for standalone ports is required to avoid situations
-where one port sees traffic originating from another, which could cause
-packet drops.
+--gDOuMhcyTfEL1C/f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
----
-v2,v1:
-  - resend only
----
-Before patch series split:
-https://patchwork.kernel.org/project/netdevbpf/list/?series=841034&state=%2A&archive=both
-v8:
-  - resend only
-v7:
-  - added 'Acked-by' and 'Reviewed-by' and improve  commit message
-v6:
-  - fix arranging local variables in reverse xmas tree order
-v5:
-  - introduce patch
----
- drivers/net/dsa/vitesse-vsc73xx-core.c | 41 ++++++++++++++++++++++----
- 1 file changed, 35 insertions(+), 6 deletions(-)
+Hi!
 
-diff --git a/drivers/net/dsa/vitesse-vsc73xx-core.c b/drivers/net/dsa/vitesse-vsc73xx-core.c
-index 6606bfdf58b0..11660f1d7cbe 100644
---- a/drivers/net/dsa/vitesse-vsc73xx-core.c
-+++ b/drivers/net/dsa/vitesse-vsc73xx-core.c
-@@ -1581,6 +1581,31 @@ static int vsc73xx_tag_8021q_vlan_del(struct dsa_switch *ds, int port, u16 vid)
- 	return vsc73xx_update_vlan_table(vsc, port, vid, false);
- }
- 
-+static int vsc73xx_port_pre_bridge_flags(struct dsa_switch *ds, int port,
-+					 struct switchdev_brport_flags flags,
-+					 struct netlink_ext_ack *extack)
-+{
-+	if (flags.mask & ~BR_LEARNING)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int vsc73xx_port_bridge_flags(struct dsa_switch *ds, int port,
-+				     struct switchdev_brport_flags flags,
-+				     struct netlink_ext_ack *extack)
-+{
-+	if (flags.mask & BR_LEARNING) {
-+		u32 val = flags.val & BR_LEARNING ? BIT(port) : 0;
-+		struct vsc73xx *vsc = ds->priv;
-+
-+		return vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0,
-+					   VSC73XX_LEARNMASK, BIT(port), val);
-+	}
-+
-+	return 0;
-+}
-+
- static int vsc73xx_port_setup(struct dsa_switch *ds, int port)
- {
- 	struct vsc73xx_portinfo *portinfo;
-@@ -1655,19 +1680,21 @@ static void vsc73xx_refresh_fwd_map(struct dsa_switch *ds, int port, u8 state)
- static void vsc73xx_port_stp_state_set(struct dsa_switch *ds, int port,
- 				       u8 state)
- {
-+	struct dsa_port *dp = dsa_to_port(ds, port);
- 	struct vsc73xx *vsc = ds->priv;
--	u32 val;
-+	u32 val = 0;
-+
-+	if (state == BR_STATE_LEARNING || state == BR_STATE_FORWARDING)
-+		val = dp->learning ? BIT(port) : 0;
-+
-+	vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0,
-+			    VSC73XX_LEARNMASK, BIT(port), val);
- 
- 	val = (state == BR_STATE_BLOCKING || state == BR_STATE_DISABLED) ?
- 	      0 : BIT(port);
- 	vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0,
- 			    VSC73XX_RECVMASK, BIT(port), val);
- 
--	val = (state == BR_STATE_LEARNING || state == BR_STATE_FORWARDING) ?
--	      BIT(port) : 0;
--	vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0,
--			    VSC73XX_LEARNMASK, BIT(port), val);
--
- 	/* CPU Port should always forward packets when user ports are forwarding
- 	 * so let's configure it from other ports only.
- 	 */
-@@ -1693,6 +1720,8 @@ static const struct dsa_switch_ops vsc73xx_ds_ops = {
- 	.port_setup = vsc73xx_port_setup,
- 	.port_enable = vsc73xx_port_enable,
- 	.port_disable = vsc73xx_port_disable,
-+	.port_pre_bridge_flags = vsc73xx_port_pre_bridge_flags,
-+	.port_bridge_flags = vsc73xx_port_bridge_flags,
- 	.port_bridge_join = dsa_tag_8021q_bridge_join,
- 	.port_bridge_leave = dsa_tag_8021q_bridge_leave,
- 	.port_change_mtu = vsc73xx_change_mtu,
--- 
-2.34.1
+> This is the start of the stable review cycle for the 6.1.95 release.
+> There are 217 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.1.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--gDOuMhcyTfEL1C/f
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZnNFUQAKCRAw5/Bqldv6
+8sBOAKCAFl46L0o6ySgncfy84IlpeLdEkwCgk6lw7qY/Lifqoq2waYQgt2OqisM=
+=6ulv
+-----END PGP SIGNATURE-----
+
+--gDOuMhcyTfEL1C/f--
 
