@@ -1,64 +1,54 @@
-Return-Path: <linux-kernel+bounces-220860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DCC90E84C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:24:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4216790E852
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7107B2192A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:24:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4856B1C21BAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33B712FF83;
-	Wed, 19 Jun 2024 10:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE608627D;
+	Wed, 19 Jun 2024 10:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="VMNoveSj"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kq8EXNUE"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878AC77F0B;
-	Wed, 19 Jun 2024 10:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF34277F0B;
+	Wed, 19 Jun 2024 10:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718792657; cv=none; b=bvfbBCDJmcxXj5ykG7u45m4+Bdx2BMoO6KM3YMVpU9cTTSt1UZxGWCu87u/qTzyU5dtvqlDM3CorxoEdFOskxr2Tk6sc+J+Q2pZfEHH1WoSSXCESRojsoy09h6piQOrbBSRBoXNlguYO0Qu9ex6yhVvuyXbtYH5bEylGNc4vN+U=
+	t=1718792854; cv=none; b=EsywL7MC0wxXRUr5aa9tW8UCA1aZhV+EQ9rvxDHbk7HsCkjyam6NW2hkK8qzoqfSSGfOhi3AYCROESThVvQ87hwOskQ0HnDRTyVwZre7S1WhIo1I0RXCv0ZgbhkGndbTSNmDfTdiktuoDrt+9TmfVtUnc+bbopZajKkwoVM+I2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718792657; c=relaxed/simple;
-	bh=oRd71k4awj/6s9BRMEV7w3ZoQI9623aTuz0KN1OcpdA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DMUEGgx+Z3CblTwNhaL86F0pmkMNllusNbJgojN8SdUlhRtCadqFc8AcudS2sS+koPSuxH3hoD32SL3mn11sFOESKwUOKANwyjwj/+ldlrrfwjeEROXiwzJIXc81ADwJUsiQE4aAR8tz7ucehxLZQhYnlEpohDSOrXv5RJKUhEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=VMNoveSj; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J6sYgY029887;
-	Wed, 19 Jun 2024 05:24:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=RPk4rBMEEC3dEWsw4E893T9mznv8r6hBMz9IHmL9niE=; b=
-	VMNoveSjmRpH0g0U3QBmQU/2CxVO8AUB3GSvSihrz5ou8Mlv7/2xOSSACm9Zc1XL
-	fSEgfbWQnTOGa8Jp+kk31uYliOtnpxmvHjgNew0B0GyI/buoDkA2aVhSxkfGoLNe
-	04k5ZFqe/6FZsBbOrQxKW+Q9FCVyDVEgUguSnX/UzWK4KtmYnOo3Qq7p+4CZBlLe
-	ROzAHis1RxP6sXSZ9LYwUxH5AfBh8AjvORChy7GSvsHYyFsTVMxIJAp6opCNntLB
-	t6he/b1BAWqmOinZz1aTdQl5d1e56VpSMV9PuTfw1DoMLnwAPnEmZj3JfZ8yme6a
-	dZ0enXU8AHkh6iZF/7No4g==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3yuj8m0g1n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 05:24:09 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
- 2024 11:24:07 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Wed, 19 Jun 2024 11:24:07 +0100
-Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 01DCD820248;
-	Wed, 19 Jun 2024 10:24:07 +0000 (UTC)
-Message-ID: <97da8398-599e-45cb-abb2-97cc66567628@opensource.cirrus.com>
-Date: Wed, 19 Jun 2024 11:24:06 +0100
+	s=arc-20240116; t=1718792854; c=relaxed/simple;
+	bh=Po6rLiiLYmVB2a4i9yoEDHQtVf1CvljI6wljwScnm/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MXXKxU8m+oMe26Dqb9UtzOw30xZdvkwBEEG7OuTNNXqhGoBNU4owc4JXHIVD2bNSVuqkDM7mPeabD4lCKNkDltu/7yJKg2PLekN301uMat3JVWtMmGg47bH+QeaELM2Z3lbnO76LDqqYh8I7WJ9HSQE4a41CQnEktNdvSGo2mRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kq8EXNUE; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718792850;
+	bh=Po6rLiiLYmVB2a4i9yoEDHQtVf1CvljI6wljwScnm/Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kq8EXNUEhE6G5wgiCNTojlxDD0ITutYp3eNUlwYNjNrYROuZrSQn83dvBAwhSa5KF
+	 nGsT2K20V+mL9JeixZ2gcpIdxgXGf8va3gsMwv46qFMC43VjzzJuZLP1aBH63+dima
+	 u8zyjfnsuUmO5Kfsj8o8DyBayOE1IHEaNHvwTs8dl7nn2UddiLIDPlx/hJpXdygng7
+	 Va9lvIFRRLz1RDpWUN3THDw4x5lOvwjM24PSq97K40nXIWbnay1zgnko1L9g9F1scU
+	 y+J6boAX5/19xL/Ur5N8i11AJjCsnnjrarBPsmBcKu2FwcKjIkcUQUwkFFzuHQPd2t
+	 WXDrIZpiGbJGQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B54A93780F7F;
+	Wed, 19 Jun 2024 10:27:29 +0000 (UTC)
+Message-ID: <c8ec67c6-a486-4665-b5ce-ea858116a8a2@collabora.com>
+Date: Wed, 19 Jun 2024 12:27:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,30 +56,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: cs35l56: Accept values greater than 0 as IRQ
- numbers
-To: Mark Brown <broonie@kernel.org>
-CC: Simon Trimmer <simont@opensource.cirrus.com>,
-        <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-References: <20240617135338.82006-1-simont@opensource.cirrus.com>
- <fe9dd613-8909-4c7d-a7d7-9094b75fe8fb@opensource.cirrus.com>
- <941d2b8a-18b5-43ad-9aec-6785f841dfaa@sirena.org.uk>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <941d2b8a-18b5-43ad-9aec-6785f841dfaa@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: YpzMdpZlHV6yBMraLsbqwHkcovA7cKyq
-X-Proofpoint-ORIG-GUID: YpzMdpZlHV6yBMraLsbqwHkcovA7cKyq
-X-Proofpoint-Spam-Reason: safe
+Subject: Re: [PATCH 2/4] soc: mediatek: mtk-mutex: Add support for MT8188
+ VPPSYS
+To: Fei Shao <fshao@chromium.org>
+Cc: linux-media@vger.kernel.org, mchehab@kernel.org, robh@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, amergnat@baylibre.com, moudy.ho@mediatek.com,
+ hverkuil-cisco@xs4all.nl, sebastian.fricke@collabora.com,
+ u.kleine-koenig@pengutronix.de, chunkuang.hu@kernel.org,
+ p.zabel@pengutronix.de, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, kernel@collabora.com
+References: <20240322092845.381313-1-angelogioacchino.delregno@collabora.com>
+ <20240322092845.381313-3-angelogioacchino.delregno@collabora.com>
+ <CAC=S1niaYZ=NNTwfSrJPdj79uG_hmqGm=cz_Sis3Zrf9octsnw@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAC=S1niaYZ=NNTwfSrJPdj79uG_hmqGm=cz_Sis3Zrf9octsnw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 19/06/2024 11:22, Mark Brown wrote:
-> On Wed, Jun 19, 2024 at 10:44:47AM +0100, Richard Fitzgerald wrote:
+Il 19/06/24 12:09, Fei Shao ha scritto:
+> Hi Angelo,
 > 
->> Mark, I don't understand what your objection is.
->> What is it you want us to do to get this bugfix accepted?
+> On Fri, Mar 22, 2024 at 5:29 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> Add MT8188 VPPSYS0 and VPPSYS1 mutex info to driver data
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   drivers/soc/mediatek/mtk-mutex.c | 41 ++++++++++++++++++++++++++++++++
+>>   1 file changed, 41 insertions(+)
+>>
+>> diff --git a/drivers/soc/mediatek/mtk-mutex.c b/drivers/soc/mediatek/mtk-mutex.c
+>> index 73c256d3950b..b5af1fb5847e 100644
+>> --- a/drivers/soc/mediatek/mtk-mutex.c
+>> +++ b/drivers/soc/mediatek/mtk-mutex.c
+>> @@ -496,6 +496,39 @@ static const unsigned int mt8188_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+>>          [DDP_COMPONENT_MERGE5] = MT8188_MUTEX_MOD_DISP1_VPP_MERGE4,
+>>   };
+>>
+>> +static const unsigned int mt8188_mdp_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
+>> +       [MUTEX_MOD_IDX_MDP_RDMA0] = MT8195_MUTEX_MOD_MDP_RDMA0,
+>> +       [MUTEX_MOD_IDX_MDP_RDMA2] = MT8195_MUTEX_MOD_MDP_RDMA2,
+>> +       [MUTEX_MOD_IDX_MDP_RDMA3] = MT8195_MUTEX_MOD_MDP_RDMA3,
+>> +       [MUTEX_MOD_IDX_MDP_FG0] = MT8195_MUTEX_MOD_MDP_FG0,
+>> +       [MUTEX_MOD_IDX_MDP_FG2] = MT8195_MUTEX_MOD_MDP_FG2,
+>> +       [MUTEX_MOD_IDX_MDP_FG3] = MT8195_MUTEX_MOD_MDP_FG3,
+>> +       [MUTEX_MOD_IDX_MDP_HDR0] = MT8195_MUTEX_MOD_MDP_HDR0,
+>> +       [MUTEX_MOD_IDX_MDP_HDR2] = MT8195_MUTEX_MOD_MDP_HDR2,
+>> +       [MUTEX_MOD_IDX_MDP_HDR3] = MT8195_MUTEX_MOD_MDP_HDR3,
+>> +       [MUTEX_MOD_IDX_MDP_AAL0] = MT8195_MUTEX_MOD_MDP_AAL0,
+>> +       [MUTEX_MOD_IDX_MDP_AAL2] = MT8195_MUTEX_MOD_MDP_AAL2,
+>> +       [MUTEX_MOD_IDX_MDP_AAL3] = MT8195_MUTEX_MOD_MDP_AAL3,
+>> +       [MUTEX_MOD_IDX_MDP_RSZ0] = MT8195_MUTEX_MOD_MDP_RSZ0,
+>> +       [MUTEX_MOD_IDX_MDP_RSZ2] = MT8195_MUTEX_MOD_MDP_RSZ2,
+>> +       [MUTEX_MOD_IDX_MDP_RSZ3] = MT8195_MUTEX_MOD_MDP_RSZ3,
+>> +       [MUTEX_MOD_IDX_MDP_MERGE2] = MT8195_MUTEX_MOD_MDP_MERGE2,
+>> +       [MUTEX_MOD_IDX_MDP_MERGE3] = MT8195_MUTEX_MOD_MDP_MERGE3,
+>> +       [MUTEX_MOD_IDX_MDP_TDSHP0] = MT8195_MUTEX_MOD_MDP_TDSHP0,
+>> +       [MUTEX_MOD_IDX_MDP_TDSHP2] = MT8195_MUTEX_MOD_MDP_TDSHP2,
+>> +       [MUTEX_MOD_IDX_MDP_TDSHP3] = MT8195_MUTEX_MOD_MDP_TDSHP3,
+>> +       [MUTEX_MOD_IDX_MDP_COLOR0] = MT8195_MUTEX_MOD_MDP_COLOR0,
+>> +       [MUTEX_MOD_IDX_MDP_COLOR2] = MT8195_MUTEX_MOD_MDP_COLOR2,
+>> +       [MUTEX_MOD_IDX_MDP_COLOR3] = MT8195_MUTEX_MOD_MDP_COLOR3,
+>> +       [MUTEX_MOD_IDX_MDP_OVL0] = MT8195_MUTEX_MOD_MDP_OVL0,
+>> +       [MUTEX_MOD_IDX_MDP_PAD0] = MT8195_MUTEX_MOD_MDP_PAD0,
+>> +       [MUTEX_MOD_IDX_MDP_PAD2] = MT8195_MUTEX_MOD_MDP_PAD2,
+>> +       [MUTEX_MOD_IDX_MDP_PAD3] = MT8195_MUTEX_MOD_MDP_PAD3,
 > 
-> Have patience.
-Ah, ok. Sorry, I assumed you were objecting not just overloaded.
+> I know it's too late since this is in the tree already, but I noticed
+> that MDP_COMP_TCC0 is added in the 4th patch but not here.
+> Is that expected?
+> 
+
+Many, many, many thanks for that. I missed TCC0 for real in the mutex mod
+list for MT8188, even though it's present at bit 10.
+
+I'll send a Fixes commit adding that bit in a jiffy.
+
+Cheers,
+Angelo
+
+> Everything else looks nice, so just a record in the mailing list:
+> Reviewed-by: Fei Shao <fshao@chromium.org>
+> 
+> Regards,
+> Fei
+> 
+> 
+>> +       [MUTEX_MOD_IDX_MDP_WROT0] = MT8195_MUTEX_MOD_MDP_WROT0,
+>> +       [MUTEX_MOD_IDX_MDP_WROT2] = MT8195_MUTEX_MOD_MDP_WROT2,
+>> +       [MUTEX_MOD_IDX_MDP_WROT3] = MT8195_MUTEX_MOD_MDP_WROT3,
+>> +};
+>> +
+>>   static const unsigned int mt8192_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+>>          [DDP_COMPONENT_AAL0] = MT8192_MUTEX_MOD_DISP_AAL0,
+>>          [DDP_COMPONENT_CCORR] = MT8192_MUTEX_MOD_DISP_CCORR0,
+>> @@ -735,6 +768,13 @@ static const struct mtk_mutex_data mt8188_mutex_driver_data = {
+>>          .mutex_sof_reg = MT8183_MUTEX0_SOF0,
+>>   };
+>>
+>> +static const struct mtk_mutex_data mt8188_vpp_mutex_driver_data = {
+>> +       .mutex_sof = mt8188_mutex_sof,
+>> +       .mutex_mod_reg = MT8183_MUTEX0_MOD0,
+>> +       .mutex_sof_reg = MT8183_MUTEX0_SOF0,
+>> +       .mutex_table_mod = mt8188_mdp_mutex_table_mod,
+>> +};
+>> +
+>>   static const struct mtk_mutex_data mt8192_mutex_driver_data = {
+>>          .mutex_mod = mt8192_mutex_mod,
+>>          .mutex_sof = mt8183_mutex_sof,
+>> @@ -1089,6 +1129,7 @@ static const struct of_device_id mutex_driver_dt_match[] = {
+>>          { .compatible = "mediatek,mt8186-disp-mutex", .data = &mt8186_mutex_driver_data },
+>>          { .compatible = "mediatek,mt8186-mdp3-mutex", .data = &mt8186_mdp_mutex_driver_data },
+>>          { .compatible = "mediatek,mt8188-disp-mutex", .data = &mt8188_mutex_driver_data },
+>> +       { .compatible = "mediatek,mt8188-vpp-mutex",  .data = &mt8188_vpp_mutex_driver_data },
+>>          { .compatible = "mediatek,mt8192-disp-mutex", .data = &mt8192_mutex_driver_data },
+>>          { .compatible = "mediatek,mt8195-disp-mutex", .data = &mt8195_mutex_driver_data },
+>>          { .compatible = "mediatek,mt8195-vpp-mutex",  .data = &mt8195_vpp_mutex_driver_data },
+>> --
+>> 2.44.0
+>>
+>>
+
+
 
