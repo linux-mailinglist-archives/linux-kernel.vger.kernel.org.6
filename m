@@ -1,83 +1,94 @@
-Return-Path: <linux-kernel+bounces-221049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC95D90EB39
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:35:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4C290EB3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C667B25182
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:35:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543ED28691F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5BA142E98;
-	Wed, 19 Jun 2024 12:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786D182D9F;
+	Wed, 19 Jun 2024 12:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mRiBkAy5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VNOkxuOS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2863682D9F;
-	Wed, 19 Jun 2024 12:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B071422DF
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718800534; cv=none; b=MyM0dc49oBHW305MY6uBkialO8hV0NyGpbfgU51OsOOeq8WFRlQTCiBlNoxmFvZkb83eFR0bgJUT4Oa0ktgS/nfbsGOmo+O8VphAtKCnNCTjd8CMCKDzafQwh7pz4v+Uac7xIgq0gEi7up38l2LF8JhsRiKKpOAl2k1Wd9ixO80=
+	t=1718800589; cv=none; b=XQ/chGbYvxpfF7AMj+movqiSntcltjt9BrpKXhY01AphA/AG9hiHwg6UBps2BFELTUBvfjBPvyk1Myss3u/FXh1wXbQ0SlQaSR2ALWXUG8Ty/AicoP1r72BM/BZpjFgwzzBWqwLmB2H7WDDrrCCw5cAvLIDqdQMVNFykN76uODM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718800534; c=relaxed/simple;
-	bh=bWkehLKbyMN0TQm5ThBcwF/VhXENZa2oHWDKQhP00EU=;
+	s=arc-20240116; t=1718800589; c=relaxed/simple;
+	bh=/FVy10aFr7x51brEPgDPEOqk4u4JyYISn2GEH/QstT4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qwFu51IH+jiDvhP55h1GLYxHutCLJ5fuEzs70+th1cKeZNV8unnYCDufI1YD+BERzn+7WTMNLD2ARvMG4WmyJoogjrY1+CZr+oFDE20GwIc2KZniDeTia9FQkQj2nwtA525jgkVF4DGyffxHPCf0AdGWd46ly2AnrGoYG74D2Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mRiBkAy5; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718800532; x=1750336532;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bWkehLKbyMN0TQm5ThBcwF/VhXENZa2oHWDKQhP00EU=;
-  b=mRiBkAy5AE4cRnwgDVQF3cun2CcBxpItuAQ1uXEmamAaXzowfp94mNla
-   WrDTlgAQMz1bTh5bGsl0tEUKmNFPAAwWDb4Y/L57YmjK9juoMNsH5W3xw
-   f2m3tSO/hWiwjZudyvzVfvRgC6DbE24aWi08a1nDCzlL2X5pa2lqocAut
-   O9y9NKMAY9ooSinzxNBfohYk26PfqgL6wc2nQ7M9REL+1lA5S8dhZD7kw
-   FHWJoYC0zL2em6+czaIY6HRyl3WbH3tl71FXXle9HOwYcMZAuAutIb20b
-   6Mdly1jIxEAnrgiGrAzcju9nAkSJaZWCNzBMo8tRWKi4Ch0zw3jTRLNVo
-   A==;
-X-CSE-ConnectionGUID: F32MiXT9RQOESDrQzIegNw==
-X-CSE-MsgGUID: XuTwuLIbRhW2dPckvIA73w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="19607363"
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="19607363"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 05:35:31 -0700
-X-CSE-ConnectionGUID: obv0HVmfRq2JhlnVUf/i1g==
-X-CSE-MsgGUID: bzqRP8+KRG+tpAt3p5kEWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="46450978"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.247.16])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 05:35:27 -0700
-Date: Wed, 19 Jun 2024 15:35:22 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] serial: core: Rename preferred console handling
- for match and update
-Message-ID: <ZnLQin5blQ7QDxrz@tlindgre-MOBL1>
-References: <20240618045458.14731-1-tony.lindgren@linux.intel.com>
- <20240618045458.14731-4-tony.lindgren@linux.intel.com>
- <ZnGQ8JAu2OQf0GX8@pathway.suse.cz>
- <ZnJg6KQeIs95UFAB@tlindgre-MOBL1>
- <ZnKGGoboxRMwkeWm@tlindgre-MOBL1>
- <ZnLKSEzKBTXYvOMe@pathway.suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=coBJzWR+XwQsBUJa4vsSz0C2EPeNey5YS+/wT9pegv5ik3aFwciGl7nLOCRP70REdWdvIVeXH4ZUPwr2snfdPgxF7r72o5VO11Qs0XQrs1JO7elxN5lMH1ZrPSKWS5e5D83xEgYxK6FYb1lOqoTKCaG16Cv957vXj4Ub1ae9Pjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VNOkxuOS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718800587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dd/aicNb70QNh/1zDfB5K+VP/fQZJBOti9XVpxOWFmg=;
+	b=VNOkxuOS6JrB7tAkuQlwV+ePyqfqzs1fVJI7x02JA0hs4fLnDdTskZZq9sF4PfTdS9qO9V
+	0m/h1TLj2WylKqxLIMT6bFW63H0h6+2AurUxpCjCHB5fcgmhhiRzQccSBIUu4ayudI0UxJ
+	UIF75/WqFsFGPebKeiotOnfns9WbeLc=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-248-bNbGTblvPJ-h8G_vD3GE1Q-1; Wed, 19 Jun 2024 08:36:25 -0400
+X-MC-Unique: bNbGTblvPJ-h8G_vD3GE1Q-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-363520c91b1so350893f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 05:36:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718800584; x=1719405384;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dd/aicNb70QNh/1zDfB5K+VP/fQZJBOti9XVpxOWFmg=;
+        b=EPNhoeCvC4dErh6xhi6XpGB2VQQ7PYgByoSNDGEjTG0weC6YMwKWkLfYS//7qecmj0
+         1P54Wl6ZVBvy35zhyQj+2jWPwf9h1fVizdqZMJNIsnpsz+Efyt4kL6gr/0H5VLqIeP96
+         0K4WmJ0AZVudLNlKDajZM1JAuI0HLT/c8ejfK0Lp86mEQZJVP7a+elV2jYBR/IwDzBwL
+         PJc2JHzRdu3dEq6UPSFZ/d/Lh4K4lt61jxiVa7Yxs/bB0Hg9DTRFlmEJIjLQWNhlzHgz
+         B1TJssA1C8f5dx74sHE3tKlVh2FLeaLM9ZblijEtlRr+esr7rs54pCSjbakVoWfRmNZ/
+         lZ0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW4VXukCYNvylRAVdXtDlWvBCJysfvcuDGgHVTTqKbMYtcCO+/Be0g3UBchOwYEPo9v/QQUSo7yRxvASF/t9kj8CWOpAiyUWvfRZPAx
+X-Gm-Message-State: AOJu0YymU+14uIIt2aeoTrkUYMbr+2At045a7cDgQhbGAy3mK3zpqGW9
+	C14aC44e5OfkJ1n0eRJL9VDzWeox8F1Sy4t8XSMeFEwSomum8da7/Qd56w1DsSmAnF2C0mSbnta
+	isGh21zwaM4Jg8NRO4B94xGSdYDj1+7dJN6ZTzOIXOdfVYfYN5Xku7V6Vvw5WYw==
+X-Received: by 2002:adf:ef91:0:b0:361:a8fb:6fb7 with SMTP id ffacd0b85a97d-3631998f659mr1543823f8f.57.1718800584634;
+        Wed, 19 Jun 2024 05:36:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEAiW64q2l48NwaPPFk1R4aXPb0dO4uvIu/0xZJdLCWddq9CQWGfE3dTeBvBqQlY0UcEAOZHQ==
+X-Received: by 2002:adf:ef91:0:b0:361:a8fb:6fb7 with SMTP id ffacd0b85a97d-3631998f659mr1543785f8f.57.1718800584186;
+        Wed, 19 Jun 2024 05:36:24 -0700 (PDT)
+Received: from pollux ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36262f77ad9sm3874899f8f.109.2024.06.19.05.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 05:36:23 -0700 (PDT)
+Date: Wed, 19 Jun 2024 14:36:21 +0200
+From: Danilo Krummrich <dakr@redhat.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
+	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com,
+	lyude@redhat.com, robh@kernel.org, daniel.almeida@collabora.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH v2 00/10] Device / Driver and PCI Rust abstractions
+Message-ID: <ZnLQxZjtsmDJb4I1@pollux>
+References: <20240618234025.15036-1-dakr@redhat.com>
+ <20240619120407.o7qh6jlld76j5luu@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,32 +97,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZnLKSEzKBTXYvOMe@pathway.suse.cz>
+In-Reply-To: <20240619120407.o7qh6jlld76j5luu@vireshk-i7>
 
-On Wed, Jun 19, 2024 at 02:08:40PM +0200, Petr Mladek wrote:
-> On Wed 2024-06-19 10:17:46, Tony Lindgren wrote:
-> > On Wed, Jun 19, 2024 at 07:39:04AM +0300, Tony Lindgren wrote:
-> > > On Tue, Jun 18, 2024 at 03:51:44PM +0200, Petr Mladek wrote:
-> > > > It seems to try whether c->devname matches a number "X", or "ttySX".
-> > > > It even tries the sparc-specific transformations in
-> > > > serial_base_add_sparc_console()
-> > > > 
-> > > > But this is the original format which does _not_ include ":".
-> > > > It never will be stored in c->devname and will never match.
-> > > 
-> > > Good catch, this won't do anything now with console_setup()
-> > > checking for ":" for deferred consoles. So we should revert commit
-> > > a0f32e2dd998 ("serial: core: Handle serial console options").
-> > 
-> > Heh actually we can revert a lot more, basically leaving only
-> > the renamed serial_base_match_and_update_preferred_console().
+On Wed, Jun 19, 2024 at 05:34:07PM +0530, Viresh Kumar wrote:
+> On 19-06-24, 01:39, Danilo Krummrich wrote:
+> > - move base device ID abstractions to a separate source file (Greg)
+> > - remove `DeviceRemoval` trait in favor of using a `Devres` callback to
+> >   unregister drivers
+> > - remove `device::Data`, we don't need this abstraction anymore now that we
+> >   `Devres` to revoke resources and registrations
 > 
-> I wonder if it would be cleaner to revert all patches adding
-> the feature and then add back just the minimalist solution.
+> Hi Danilo,
+> 
+> I am working on writing bindings for CPUFreq drivers [1] and was
+> looking to rebase over staging/rust-device, and I am not sure how to
+> proceed after device::Data is dropped now.
+> 
+> What I was doing at probe() was something like this:
+> 
+>     fn probe(dev: &mut platform::Device, id_info: Option<&Self::IdInfo>) -> Result<Self::Data> {
+>         let data = Arc::<DeviceData>::from(kernel::new_device_data!(
+>             cpufreq::Registration::new(),
+>             (),
+>             "CPUFreqDT::Registration"
+>         )?);
+> 
+>         ...
+> 
+>         // Need a mutable object to be passed to register() here.
+>         data.registrations()
+>             .ok_or(ENXIO)?
+>             .as_pinned_mut()
+>             .register(c_str!("cpufreq-dt"), ...)?;
+> 
+>         Ok(data)
+>     }
+> 
+> The register() function of cpufreq core needs a mutable pointer to
+> `self` and it worked earlier as Data used a RevocableMutex. But with
+> Devres, we don't have a Mutex anymore and devres.try_access() doesn't
+> give a mutable object.
 
-Yeah let's do that. Otherwise it's hard to see what's going on :)
+If you want to split `cpufreq::Registration` in `new()` and `register()`, you
+probably want to pass the registration object to `Devres` in `register()`
+instead.
 
-Regards,
+However, I wouldn't recommend splitting it up (unless you absolutely have to),
+it's way cleaner (and probably less racy) if things are registered once the
+registration is created.
 
-Tony
+> 
+> I am a bit confused on how to get this going. I looked at how PCI bus
+> is implemented in the staging/dev but I couldn't find an end driver
+> using this work.
+
+The PCI abstraction did not need to change for that, since it uses the
+generalized `driver::Registration`, which is handled by the `Module` structure
+instead.
+
+However, staging/dev also contains the `drm::drv::Registration` type [1], which
+in principle does the same thing as `cpufreq::Registration` just for a DRM
+device.
+
+If you're looking for an example driver making use of this, please have a look
+at Nova [1].
+
+[1] https://github.com/Rust-for-Linux/linux/blob/staging/dev/rust/kernel/drm/drv.rs
+[2] https://gitlab.freedesktop.org/drm/nova/-/blob/nova-next/drivers/gpu/drm/nova/driver.rs
+
+> 
+> Maybe I am making an mistake and missing the obvious.
+> 
+> Thanks.
+> 
+> -- 
+> viresh
+> 
+> [1] https://lore.kernel.org/all/cover.1717750631.git.viresh.kumar@linaro.org/
+> 
+
 
