@@ -1,357 +1,365 @@
-Return-Path: <linux-kernel+bounces-220650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B51A90E4EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:53:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACA090E4EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 681A4B227C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:53:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B061C21F2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEA077110;
-	Wed, 19 Jun 2024 07:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6212278297;
+	Wed, 19 Jun 2024 07:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E35xSU1F"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nvf0QXle"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BED73441
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DCF73441;
+	Wed, 19 Jun 2024 07:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718783585; cv=none; b=U9+nhUbLQOxF4p2Sg6T7jUvtGGu+jug3OmpK9mXOwVapyToBVQM0bbsa5SclKjX2qs76w2et8zH7v5wlV5yr5qABMbG5RROBfHlRo8IJc4C0wW5zrm66tEWV2IDqk3+q3jhvTrveMyON5ypJp/2xHJIOeO3AYuQBxLjB5AAWDTs=
+	t=1718783562; cv=none; b=h76RGtDKumNUQPaEB3FJdkkKjE2UI8zNhzmRt23oOiJPm4hZXVNgudTubEes33984VaGgITgBFglYxSuVjjljDaMXWuVHDBfLDAqnrOZI20VFxkbmlqI+gDLGjEddE9dQi8WM344eiFV0efm11teSEsXxVnRXSKK7gjx13+Dj9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718783585; c=relaxed/simple;
-	bh=HqAayMXfsb3bAlmNU8C06hZ7IHnX6K11yuzyPkwsHy0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=K1Nmafs/zU2OXLvfl2sztknQUujvYtTX+yoHQwrgk8vSfGqxjdbIuzMpwi5aj0SE4FZbQaHaHosddar5TBRocQF7eWEREoCdNghZBlgr68OlbtlxMJJ9OFK5WOpUWvfS0a536DMjnQN4qkt1ByG6xiHpMvOksGpW0TaIx6oSRiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E35xSU1F; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1718783562; c=relaxed/simple;
+	bh=H10wBpKPsvDcsTb0TDOwAb2cn0L0fhqGpU7vrHSA07g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fc9rUimu9gMZcNqq4NyPFob8czzWuOPfF7qDZxzdZLFNZcRvrMXSgJFIKABzpg6dm/GP4lfgK4fcoVBjBHWFts1PLX4Rs1axeyCsXBElSrowVd8ffuyPJFuQXVfMpGIcD+sqfV33uymjQRVAR2P5scq2ng4lEW4NBmXG3ro8X+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nvf0QXle; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718783584; x=1750319584;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=HqAayMXfsb3bAlmNU8C06hZ7IHnX6K11yuzyPkwsHy0=;
-  b=E35xSU1FUfzXapcjTZXLIDs3WDyTUXvx7C8Nf5Vjk4ONb7Z6zhTsTCg+
-   kNm90hhjsPxRijPlBfcbqENuiNpOJSRetYMjElcTiPzfhITAqoAu+oHq4
-   ucNyyhQry8qC7M6ODvK8Fnp60WpUAvVfaeQj6D34CusR6GdJJ0oU+bjVy
-   AmRZWc1n3fWKWQWF6Q6HMJK4Rc0RwbtZBx/Y0qhcRJIPAz1zrSjOpdAfM
-   RKbdqoCQu9IjBgeQaJEQjpLSNTIMuLffzvAkvIXNRAyGAtx7pVftQ3xLR
-   1MYMhW5JSl2sPTmsHeRsLL8NHUhxXJUtIXChQ9Nqp3Ywz9DvnY77TC/LC
-   g==;
-X-CSE-ConnectionGUID: I9hAKW2lSyS13OgW5jJnqQ==
-X-CSE-MsgGUID: zzYC/XtzT3OeZcsdcRNl3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15846955"
+  t=1718783561; x=1750319561;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=H10wBpKPsvDcsTb0TDOwAb2cn0L0fhqGpU7vrHSA07g=;
+  b=nvf0QXleOq0MgplrysU5SFBRmaUg6WToqIXH15Q8CzlLVfqg8zAbISfC
+   EreCNnhqgizGx/33myrz2LdY0rKdd/wPMIwzJXrt2iBsKA5VAxc+Bt8G+
+   WcYMjv0JV5rDVkJSjHUPd915QHBZtlQ5m3eBjl+GUDNXHdbOkT/BEN/pP
+   BzCqYKnTJ6RGJx+InlAOzgykTmTeAkdYiKlMlpplVCjVfEYms/92H4CuY
+   xoKdiPSOQPRZJY5dfOG9adPiie0q1OvOdh01NYSb266MWydRu/VDg5gfA
+   7U3OJrZpYlLL8LxhTHM8R1OooA21KdQx6JkI2/kIUBhJGlsWlQqBjEbDY
+   A==;
+X-CSE-ConnectionGUID: OWSZsjAITaeTqqDnsNU2Tg==
+X-CSE-MsgGUID: KKKrBe1YT3WF2V5kAC8FDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15467290"
 X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
-   d="scan'208";a="15846955"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 00:53:03 -0700
-X-CSE-ConnectionGUID: zfLGzj9NQCe8JAkYt4MAxg==
-X-CSE-MsgGUID: G1L5H5Z0R2ic3jRkOdIBbQ==
+   d="scan'208";a="15467290"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 00:52:39 -0700
+X-CSE-ConnectionGUID: L1xmlWBIRdeoOtiVtpbpug==
+X-CSE-MsgGUID: zFr38q7+Twaj/W7YB8LB2w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
-   d="scan'208";a="41978623"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 00:53:00 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Chris Li <chrisl@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  Kairui Song
- <kasong@tencent.com>,  Ryan Roberts <ryan.roberts@arm.com>,  Kalesh Singh
- <kaleshsingh@google.com>,  linux-kernel@vger.kernel.org,
-  linux-mm@kvack.org,  Barry Song <baohua@kernel.org>
-Subject: Re: [PATCH v2 1/2] mm: swap: swap cluster switch to double link list
-In-Reply-To: <CAF8kJuPqTWdxdUnU_0b4JNY06S6qdc5rEDwtr6M6NV9PhmHVUw@mail.gmail.com>
-	(Chris Li's message of "Tue, 18 Jun 2024 03:01:42 -0700")
-References: <20240614-swap-allocator-v2-0-2a513b4a7f2f@kernel.org>
-	<20240614-swap-allocator-v2-1-2a513b4a7f2f@kernel.org>
-	<87frtc5bxm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CAF8kJuMTAuGN6Zt-=Nb-4TPZ4aNBX17W6eop5LPVHYTakV+LHw@mail.gmail.com>
-	<87y1724re8.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CAF8kJuPqTWdxdUnU_0b4JNY06S6qdc5rEDwtr6M6NV9PhmHVUw@mail.gmail.com>
-Date: Wed, 19 Jun 2024 15:51:09 +0800
-Message-ID: <87le314bgy.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+   d="scan'208";a="73040390"
+Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.0.53]) ([10.94.0.53])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 00:52:34 -0700
+Message-ID: <510468c7-b181-48d0-bf2d-3e478b2f2aca@linux.intel.com>
+Date: Wed, 19 Jun 2024 09:52:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB
+Content-Language: en-US
+To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+ corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
+ robh@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
+ alsa-devel@alsa-project.org
+References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
+ <20240610235808.22173-33-quic_wcheng@quicinc.com>
+ <5be51e1f-70c9-4bbc-96fa-1e50e441bd35@linux.intel.com>
+ <408d9e8e-0f40-7e66-54be-2f8d2c0783a3@quicinc.com>
+ <ca1e1063-e1bd-4e03-a7cd-91985e9954e9@linux.intel.com>
+ <096d59a0-5e18-092c-c9ae-d98130226f06@quicinc.com>
+ <368d9019-2c96-468e-b472-7e1127f76213@linux.intel.com>
+ <eb6370ea-47a0-3659-3c10-cb7f95e3e520@quicinc.com>
+From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>
+In-Reply-To: <eb6370ea-47a0-3659-3c10-cb7f95e3e520@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Chris Li <chrisl@kernel.org> writes:
-
-> On Tue, Jun 18, 2024 at 12:56=E2=80=AFAM Huang, Ying <ying.huang@intel.co=
-m> wrote:
+On 6/18/2024 10:52 PM, Wesley Cheng wrote:
+> Hi Amadeusz,
+> 
+> On 6/18/2024 4:42 AM, Amadeusz Sławiński wrote:
+>> On 6/17/2024 7:02 PM, Wesley Cheng wrote:
+>>> Hi Amadeusz,
+>>>
+>>> On 6/13/2024 12:46 AM, Amadeusz Sławiński wrote:
+>>>> On 6/12/2024 9:28 PM, Wesley Cheng wrote:
+>>>>> Hi Amadeusz,
+>>>>>
+>>>>> On 6/12/2024 7:47 AM, Amadeusz Sławiński wrote:
+>>>>>> On 6/11/2024 1:58 AM, Wesley Cheng wrote:
+>>>>>>
+>>>>>> (...)
+>>>>>>
+>>>>>>> +In the case where the USB offload driver is unbounded, while USB 
+>>>>>>> SND is
+>>>>>>
+>>>>>> unbounded -> unbound
+>>>>>>
+>>>>>> (...)
+>>>>>>
+>>>>>>> +SOC USB and USB Sound Kcontrols
+>>>>>>> +===============================
+>>>>>>> +Details
+>>>>>>> +-------
+>>>>>>> +SOC USB and USB sound expose a set of SND kcontrols for 
+>>>>>>> applications to select
+>>>>>>> +and fetch the current offloading status for the ASoC platform 
+>>>>>>> sound card. Kcontrols
+>>>>>>> +are split between two layers:
+>>>>>>> +
+>>>>>>> +    - USB sound - Notifies the sound card number for the ASoC 
+>>>>>>> platform sound
+>>>>>>> +      card that it is registered to for supporting audio offload.
+>>>>>>> +
+>>>>>>> +    - SOC USB - Maintains the current status of the offload 
+>>>>>>> path, and device
+>>>>>>> +      (USB sound card and PCM device) information.  This would 
+>>>>>>> be the main
+>>>>>>> +      card that applications can read to determine offloading 
+>>>>>>> capabilities.
+>>>>>>> +
+>>>>>>> +Implementation
+>>>>>>> +--------------
+>>>>>>> +
+>>>>>>> +**Example:**
+>>>>>>> +
+>>>>>>> +  **Sound Cards**:
+>>>>>>> +
+>>>>>>> +    ::
+>>>>>>> +
+>>>>>>> +      0 [SM8250MTPWCD938]: sm8250 - SM8250-MTP-WCD9380-WSA8810-VA-D
+>>>>>>> +                     SM8250-MTP-WCD9380-WSA8810-VA-DMIC
+>>>>>>> +      1 [C320M          ]: USB-Audio - Plantronics C320-M
+>>>>>>> +                     Plantronics Plantronics C320-M at 
+>>>>>>> usb-xhci-hcd.1.auto-1, full speed
+>>>>>>> +
+>>>>>>> +
+>>>>>>> +  **Platform Sound Card** - card#0:
+>>>>>>> +
+>>>>>>> +    ::
+>>>>>>> +
+>>>>>>> +      USB Offload Playback Route Card Select  1 (range -1->32)
+>>>>>>> +      USB Offload Playback Route PCM Select   0 (range -1->255)
+>>>>>>> +      USB Offload Playback Route Card Status  -1 (range -1->32)
+>>>>>>> +      USB Offload Playback Route PCM Status   -1 (range -1->255)
+>>>>>>> +
+>>>>>>> +
+>>>>>>> +  **USB Sound Card** - card#1:
+>>>>>>> +
+>>>>>>> +    ::
+>>>>>>> +
+>>>>>>> +      USB Offload Playback Capable Card         0 (range -1->32)
+>>>>>>> +
+>>>>>>> +
+>>>>>>> +The platform sound card(card#0) kcontrols are created as part of 
+>>>>>>> adding the SOC
+>>>>>>> +USB device using **snd_soc_usb_add_port()**.  The following 
+>>>>>>> kcontrols are defined
+>>>>>>> +as:
+>>>>>>> +
+>>>>>>> +  - ``USB Offload Playback Route Card Status`` **(R)**: USB 
+>>>>>>> sound card device index
+>>>>>>> +    that defines which USB SND resources are currently 
+>>>>>>> offloaded. If -1 is seen, it
+>>>>>>> +    signifies that offload is not active.
+>>>>>>> +  - ``USB Offload Playback Route PCM Status`` **(R)**: USB PCM 
+>>>>>>> device index
+>>>>>>> +    that defines which USB SND resources are currently 
+>>>>>>> offloaded. If -1 is seen, it
+>>>>>>> +    signifies that offload is not active.
+>>>>>>> +  - ``USB Offload Playback Route Card Select`` **(R/W)**: USB 
+>>>>>>> sound card index which
+>>>>>>> +    selects the USB device to initiate offloading on.  If no 
+>>>>>>> value is written to the
+>>>>>>> +    kcontrol, then the last USB device discovered card index 
+>>>>>>> will be chosen.
+>>>>>>
+>>>>>> I see only one kcontrol, what if hardware is capable of offloading 
+>>>>>> on more cards, is it possible to do offloading on more than one 
+>>>>>> device?
+>>>>>>
+>>>>>>> +  - ``USB Offload Playback Route PCM Select`` **(R/W)**: USB PCM 
+>>>>>>> index which selects
+>>>>>>> +    the USB device to initiate offloading on.  If no value is 
+>>>>>>> written to the
+>>>>>>> +    kcontrol, then the last USB device discovered PCM zero index 
+>>>>>>> will be chosen.
+>>>>>>> +
+>>>>>>> +The USB sound card(card#1) kcontrols are created as USB audio 
+>>>>>>> devices are plugged
+>>>>>>> +into the physical USB port and enumerated.  The kcontrols are 
+>>>>>>> defined as:
+>>>>>>> +
+>>>>>>> +  - ``USB Offload Playback Capable Card`` **(R)**: Provides the 
+>>>>>>> sound card
+>>>>>>> +    number/index that supports USB offloading.  Further/follow 
+>>>>>>> up queries about
+>>>>>>> +    the current offload state can be handled by reading the 
+>>>>>>> offload status
+>>>>>>> +    kcontrol exposed by the platform card.
+>>>>>>> +
+>>>>>>
+>>>>>>
+>>>>>> Why do we need to some magic between cards? I feel like whole 
+>>>>>> kcontrol thing is overengineered a bit - I'm not sure I understand 
+>>>>>> the need to do linking between cards. It would feel a lot simpler 
+>>>>>> if USB card exposed one "USB Offload" kcontrol on USB card if USB 
+>>>>>> controller supports offloading and allowed to set it to true/false 
+>>>>>> to allow user to choose if they want to do offloading on device.
+>>>>>>
+>>>>>> (...)
+>>>>>
+>>>>> Based on feedback from Pierre, what I understood is that for some 
+>>>>> applications, there won't be an order on which sound card is 
+>>>>> queried/opened first.
+>>>>>
+>>>>
+>>>> Yes if you have multiple cards, they are probed in random order.
+>>>>
+>>>>> So the end use case example given was if an application opened the 
+>>>>> USB sound card first, it can see if there is an offload path 
+>>>>> available. If there is then it can enable the offload path on the 
+>>>>> corresponding card if desired.
+>>>>>
+>>>>
+>>>> This still doesn't explain why you need to link cards using 
+>>>> controls. What would not work with simple "Enable Offload" with 
+>>>> true/false values on USB card that works while you do have above 
+>>>> routing controls?
+>>>>
+>>>
+>>> Sorry for the late response.
+>>>
+>>> I think either way, even with the "Enable Offload" kcontrol in USB 
+>>> SND, we'd need a way to link these cards, because if you have 
+>>> multiple USB audio devices connected, and say... your offload 
+>>> mechanism only supports one stream.  Then I assume we'd still need to 
+>>> way to determine if that stream can be enabled for that USB SND 
+>>> device or not.
+>>>
+>>> Since the USB SND isn't really the entity maintaining the offload 
+>>> path, I went with the decision to add that route selection to the 
+>>> ASoC platform card. It would have access to all the parameters 
+>>> supported by the audio DSP.
+>>>
 >>
->> Chris Li <chrisl@kernel.org> writes:
+>> Problem with card selection is that it will most likely work in pretty 
+>> random way during reboots and similar scenarios.
 >>
->> > On Sun, Jun 16, 2024 at 11:21=E2=80=AFPM Huang, Ying <ying.huang@intel=
-.com> wrote:
->> >>
->> >> Hi, Chris,
->> >>
->> >> Chris Li <chrisl@kernel.org> writes:
-
-[snip]
-
->> >> > diff --git a/include/linux/swap.h b/include/linux/swap.h
->> >> > index 3df75d62a835..cd9154a3e934 100644
->> >> > --- a/include/linux/swap.h
->> >> > +++ b/include/linux/swap.h
->> >> > @@ -242,23 +242,22 @@ enum {
->> >> >   * space with SWAPFILE_CLUSTER pages long and naturally aligns in =
-disk. All
->> >> >   * free clusters are organized into a list. We fetch an entry from=
- the list to
->> >> >   * get a free cluster.
->> >> > - *
->> >> > - * The data field stores next cluster if the cluster is free or cl=
-uster usage
->> >> > - * counter otherwise. The flags field determines if a cluster is f=
-ree. This is
->> >> > - * protected by swap_info_struct.lock.
->> >> >   */
->> >> >  struct swap_cluster_info {
->> >> >       spinlock_t lock;        /*
->> >> > -                              * Protect swap_cluster_info fields
->> >> > -                              * and swap_info_struct->swap_map
->> >> > +                              * Protect swap_cluster_info count an=
-d state
->> >>
->> >> Protect swap_cluster_info fields except 'list' ?
->> >
->> > I change it to protect the swap_cluster_info bitfields in the second p=
-atch.
+>> Taking from your example:
+>>      USB Offload Playback Route Card Select  1 (range -1->32)
+>>      USB Offload Playback Route PCM Select   0 (range -1->255)
+>>      USB Offload Playback Route Card Status  -1 (range -1->32)
+>>      USB Offload Playback Route PCM Status   -1 (range -1->255)
 >>
->> Although I still prefer my version, I will not insist on that.
->
-> Sure, I actually don't have a strong preference about that. It is just co=
-mments.
->
+>> This tells that hw:1,0 will be offloaded USB card. What happens if 
+>> after reboot the USB card and offload card change places, the control 
+>> will be pointing at its owner... Another scenario to consider is that 
+>> user attaches two USB cards and only first one does offload. Now what 
+>> happens when they enumerate in different order after reboot (swapping 
+>> places)? Taking into the account that most systems restore previous 
+>> values of controls in some way - this will point at wrong card.
+> 
+> That sounds like a problem that would exist with current USB SND 
+> implementation too?  Removing the offloading perspective, how does the 
+> system ensure that the previous setting stays persistent?  For example, 
+> as you mentioned, depending on which USB device enumerates first, the 
+> sound card may be different so cards will be switched.
+> 
+
+It works because there is no control pointing at other card. My main 
+problem is with controls which have card and pcm id of other card in it.
+
+> I think I mentioned this previously in another discussion, but I think 
+> the idea was that with the
+> USB Offload Playback Capable Card
+> 
+> kcontrol, would allow the system to at least know there is an offload 
+> capable path pointing to the ASoC platform card, and fetch more detailed 
+> information about which device is selected for offloading, etc...
+> 
+
+This works only in your design, where USB Offload is backed by card, 
+what happens if it is backed by something else?
+
 >>
->> >>
->> >> > +                              * field and swap_info_struct->swap_m=
-ap
->> >> >                                * elements correspond to the swap
->> >> >                                * cluster
->> >> >                                */
->> >> > -     unsigned int data:24;
->> >> > -     unsigned int flags:8;
->> >> > +     unsigned int count:12;
->> >> > +     unsigned int state:3;
->> >>
->> >> I still prefer normal data type over bit fields.  How about
->> >>
->> >>         u16 usage;
->> >>         u8  state;
->> >
->> > I don't mind the "count" rename to "usage". That is probably a better
->> > name. However I have another patch intended to add more bit fields in
->> > the cluster info struct. The second patch adds "order" and the later
->> > patch will add more. That is why I choose bitfield to be more condense
->> > with bits.
+>> In my opinion Offload capability should be the capability of the 
+>> endpoint - in this case USB card (even if in the background it needs 
+>> to talk to some other device) and it should be exposed as such. 
+>> Currently you are mixing capabilities of your audio card with 
+>> capabilities of USB card.
 >>
->> We still have space for another "u8" for "order".  It appears trivial to
->> change it to bit fields when necessary in the future.
->
-> We can, I don't see it necessary to change from bit field to u8 and
-> back to bit field in the future. It is more of a personal preference
-> issue.
+>> And adding more controls will not make it easy to use from end user 
+>> perspective. Most users will most likely want for the devices to 
+>> perform offload automatically if possible to save power and just have 
+>> control to disable it in case they want to test if it works better 
+>> without it in case of some problems.
+> 
+> I agree with you that we need to keep the controls at a minimum, but I 
+> think what I have in place is fairly reasonable.  If we switch to having 
+> the USB SND controlling things, we'd save maybe one control?  I think 
+> keeping the offload status controls are still fairly valuable in both 
+> scenarios, as userspace may need to verify which USB SND card is being 
+> offloaded.
+> 
 
-I have to say that I don't think that it's just a personal preference.
-IMO, if it's unnecessary, we shouldn't use bit fields.  You cannot
-guarantee that your future changes will be merged in its current state.
-So, I still think that it's better to avoid bit fields for now.
+It should be able to tell which one is being offloaded by examining 
+which USB card has Offload control set to true.
 
->> >>
->> >> And, how about use 'usage' instead of 'count'?  Personally I think th=
-at
->> >> it is more clear.  But I don't have strong opinions on this.
->> >>
->> >> > +     struct list_head list;  /* Protected by swap_info_struct->loc=
-k */
->> >> >  };
->> >> > -#define CLUSTER_FLAG_FREE 1 /* This cluster is free */
->> >> > -#define CLUSTER_FLAG_NEXT_NULL 2 /* This cluster has no next clust=
-er */
->> >> > +
->> >> > +#define CLUSTER_STATE_FREE   1 /* This cluster is free */
->> >>
+I would assume that USB cards that cannot perform Offload have no 
+control at all, as it is unneeded. And ones that can do, have Offload 
+control. And ones actively being Offloaded have it set to true, 
+otherwise to false.
 
-[snip]
+End user has no need to know where it is offloaded. I'm not HW person, 
+but I would assume that it is even unlikely that someone will design HW, 
+where it is possible to Offload one endpoint to two different places, as 
+this complicates things a lot, but if it were possible, from design 
+perspective it would make a lot more sense to set it in Offloaded USB 
+card settings, instead of some seemingly unrelated controller card 
+device. And that is assuming that all solutions use some other card 
+device to perform Offload.
 
->> >> >  /*
->> >> > @@ -481,21 +371,22 @@ static void __free_cluster(struct swap_info_s=
-truct *si, unsigned long idx)
->> >> >  */
->> >> >  static void swap_do_scheduled_discard(struct swap_info_struct *si)
->> >> >  {
->> >> > -     struct swap_cluster_info *info, *ci;
->> >> > +     struct swap_cluster_info *ci;
->> >> >       unsigned int idx;
->> >> >
->> >> > -     info =3D si->cluster_info;
->> >> > -
->> >> > -     while (!cluster_list_empty(&si->discard_clusters)) {
->> >> > -             idx =3D cluster_list_del_first(&si->discard_clusters,=
- info);
->> >> > +     while (!list_empty(&si->discard_clusters)) {
->> >> > +             ci =3D list_first_entry(&si->discard_clusters, struct=
- swap_cluster_info, list);
->> >> > +             list_del(&ci->list);
->> >> > +             idx =3D ci - si->cluster_info;
->> >> >               spin_unlock(&si->lock);
->> >> >
->> >> >               discard_swap_cluster(si, idx * SWAPFILE_CLUSTER,
->> >> >                               SWAPFILE_CLUSTER);
->> >> >
->> >> >               spin_lock(&si->lock);
->> >> > -             ci =3D lock_cluster(si, idx * SWAPFILE_CLUSTER);
->> >> > -             __free_cluster(si, idx);
->> >> > +
->> >> > +             spin_lock(&ci->lock);
->> >>
->> >> Personally, I still prefer to use lock_cluster(), which is more reada=
-ble
->> >> and matches unlock_cluster() below.
->> >
->> > lock_cluster() uses an index which is not matching unlock_cluster()
->> > which is using a pointer to cluster.
 >>
->> lock_cluster()/unlock_cluster() are pair and fit original design
->> well.  They use different parameter because swap cluster is optional.
+>> Additional question what happens if you want to offload two usb cards, 
+>> currently the above set of controls allows you to only point at one 
+>> card, will you be adding additional set of above controls dynamically 
+>> for each USB card attached?
 >>
->> > When you get the cluster from the list, you have a cluster pointer. I
->> > feel it is unnecessary to convert to index then back convert to
->> > cluster pointer inside lock_cluster(). I actually feel using indexes
->> > to refer to the cluster is error prone because we also have offset.
->>
->> I don't think so, it's common to use swap offset.
->
-> Swap offset is not an issue, it is all over the place. The cluster
-> index(offset/512) is the one I try to avoid.
-> I have made some mistakes myself on offset vs index.
+> 
+> It would depend on the number of offload streams that folks may be 
+> supporting on their platform.  In our case we only have one available 
+> stream, so applications would need to switch between the two devices 
+> using the card/pcm selector.
+> 
+> In this case, there will be only one set of controls to select the 
+> card/pcm device.  As of now (I think I'll change to to add another 
+> separate set of controls per stream) if you did support multiple 
+> streams, then the current card/PCM device selector would take in 
+> multiple arugments. (ie for two streams the kcontrol can take in two 
+> values)
+> 
 
-Yes.  That's not good, but it's hard to be avoided too.  Can we make the
-variable name more consistent?  index: cluster index, offset: swap
-offset.
+Then it is implementation detail of your device, and it should be 
+implemented as controls in your device instead of as part of generic API.
 
-And, in fact, swap offset is the parameter of lock_cluster() instead of
-cluster index.
-
->> >
->> >>
->> >> > +             __free_cluster(si, ci);
->> >> >               memset(si->swap_map + idx * SWAPFILE_CLUSTER,
->> >> >                               0, SWAPFILE_CLUSTER);
->> >> >               unlock_cluster(ci);
->> >> > @@ -521,20 +412,19 @@ static void swap_users_ref_free(struct percpu=
-_ref *ref)
->> >> >       complete(&si->comp);
->> >> >  }
->> >> >
-
-[snip]
-
->> >> > @@ -611,10 +497,10 @@ scan_swap_map_ssd_cluster_conflict(struct swa=
-p_info_struct *si,
->> >> >  {
->> >> >       struct percpu_cluster *percpu_cluster;
->> >> >       bool conflict;
->> >> > -
->> >>
->> >> Usually we use one blank line after local variable declaration.
->> > Ack.
->> >
->> >>
->> >> > +     struct swap_cluster_info *first =3D list_first_entry(&si->fre=
-e_clusters, struct swap_cluster_info, list);
->> >> >       offset /=3D SWAPFILE_CLUSTER;
->> >> > -     conflict =3D !cluster_list_empty(&si->free_clusters) &&
->> >> > -             offset !=3D cluster_list_first(&si->free_clusters) &&
->> >> > +     conflict =3D !list_empty(&si->free_clusters) &&
->> >> > +             offset !=3D  first - si->cluster_info &&
->> >> >               cluster_is_free(&si->cluster_info[offset]);
->> >> >
->> >> >       if (!conflict)
->> >> > @@ -655,10 +541,14 @@ static bool scan_swap_map_try_ssd_cluster(str=
-uct swap_info_struct *si,
->> >> >       cluster =3D this_cpu_ptr(si->percpu_cluster);
->> >> >       tmp =3D cluster->next[order];
->> >> >       if (tmp =3D=3D SWAP_NEXT_INVALID) {
->> >> > -             if (!cluster_list_empty(&si->free_clusters)) {
->> >> > -                     tmp =3D cluster_next(&si->free_clusters.head)=
- *
->> >> > -                                     SWAPFILE_CLUSTER;
->> >> > -             } else if (!cluster_list_empty(&si->discard_clusters)=
-) {
->> >> > +             if (!list_empty(&si->free_clusters)) {
->> >> > +                     ci =3D list_first_entry(&si->free_clusters, s=
-truct swap_cluster_info, list);
->> >> > +                     list_del(&ci->list);
->> >>
->> >> The free cluster is deleted from si->free_clusters now.  But later you
->> >> will call scan_swap_map_ssd_cluster_conflict() and may abandon the
->> >> cluster.  And in alloc_cluster() later, it may be deleted again.
->> >
->> > Yes, that is a bug. Thanks for catching that.
->> >
->> >>
->> >> > +                     spin_lock(&ci->lock);
->> >> > +                     ci->state =3D CLUSTER_STATE_PER_CPU;
->> >>
->> >> Need to change ci->state when move a cluster off the percpu_cluster.
->> >
->> > In the next patch. This patch does not use the off state yet.
->>
->> But that is confusing to use wrong state name, the really meaning is
->> something like CLUSTER_STATE_NON_FREE.  But as I suggested above, we can
->
-> It can be FREE and on the per cpu pointer as well. That is the tricky par=
-t.
-> It can happen on the current code as well.
-
-cluster_set_count_flag(0, 0) is called in alloc_cluster().  So, it's not
-an issue in current code.  If you need more, that shouldn't be done in
-this patch.
-
->> keep swap_cluster_info.flags and CLUSTER_FLAG_FREE in this patch.
->
-> Maybe. Will consider that.
->
->>
->> >>
->> >> > +                     spin_unlock(&ci->lock);
->> >> > +                     tmp =3D (ci - si->cluster_info) * SWAPFILE_CL=
-USTER;
->> >> > +             } else if (!list_empty(&si->discard_clusters)) {
->> >> >                       /*
->> >> >                        * we don't have free cluster but have some c=
-lusters in
->> >> >                        * discarding, do discard now and reclaim the=
-m, then
->> >> > @@ -1062,8 +952,8 @@ static void swap_free_cluster(struct swap_info=
-_struct *si, unsigned long idx)
->> >> >
->> >> >       ci =3D lock_cluster(si, offset);
->> >> >       memset(si->swap_map + offset, 0, SWAPFILE_CLUSTER);
->> >> > -     cluster_set_count_flag(ci, 0, 0);
->> >> > -     free_cluster(si, idx);
->> >> > +     ci->count =3D 0;
->> >> > +     free_cluster(si, ci);
->> >> >       unlock_cluster(ci);
->> >> >       swap_range_free(si, offset, SWAPFILE_CLUSTER);
->> >> >  }
-
-[snip]
-
---
-Best Regards,
-Huang, Ying
+Thanks,
+Amadeusz
 
