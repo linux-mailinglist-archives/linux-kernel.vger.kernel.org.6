@@ -1,131 +1,146 @@
-Return-Path: <linux-kernel+bounces-221003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A2390EA92
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:12:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0822990EA90
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60B40282278
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:12:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B33511F24A6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEABE142E67;
-	Wed, 19 Jun 2024 12:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QT3HCbpq"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0AF1422C8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F411422C5;
 	Wed, 19 Jun 2024 12:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sc38HwOX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A82140395;
+	Wed, 19 Jun 2024 12:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718799113; cv=none; b=l2ZHE1Khws2XhEXzh7NPQMXazhR3XgG0D5Z8XncuvdXcn0o7jvewhKpqsaCS/tZ77J9jB7SC9H+k9RHr2F5/bouXbeIqYVvkQt0x816PWAPKyOJufqltjT1bbZrg5UN1debRmj5Y0zYdrrcaxzxeNK1uj/TI+Zycbl4hNNOIrfE=
+	t=1718799111; cv=none; b=ZUqxiUsE96JXGymCuQJgMao4B1V8UXMfsYrZUcffuy9pbn0Bu3FVL3oxRdjcgE4bMaJ44kWU3Wu5t+Eco+TcIJF+aJbYraw3YB00LOWXOvCIZd8gW/pVXMKcp8d4dXML61YbyUgDXkS/w1XGhlCHR8JvaQwYaqHQYFVylZD39X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718799113; c=relaxed/simple;
-	bh=+3gqV7Iuv2ZRkcfvFpsH8CF696dpD1A7msCstk55Y0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=of0EqUjyL6tuiqu3qcKRDC4O0ix82JvqfihlQjWydiVE8lyM/3TQqadpUZZ+ltZ0OG92L6h+vnPzM6Bf2zObswtUs43xhLQ4VskmmXJxy7nrte3oH0cksY6qN2SVqPxTGYdlQw7/Y+wtnDHpJCxh74U2TZZn+FEbrjI/ZU8c2Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QT3HCbpq; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70623ec42c2so659100b3a.0;
-        Wed, 19 Jun 2024 05:11:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718799111; x=1719403911; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+3gqV7Iuv2ZRkcfvFpsH8CF696dpD1A7msCstk55Y0E=;
-        b=QT3HCbpqfUoN0gWY4A9JozXztilzNHxWNBXgKIXObtoVydFTdr8CBbveJVfGZLamk4
-         g+n+mOYlwz0jVSFnRg2s+G+kEjXZkdWjpYAfWpW8q+fcXG8H44qNqgiO2/HiMVUDswvI
-         Zc64mBG+iekAmM61a/x1x+4CcNYnLF3OAoHDJHuGL7u6F25O+nlixks8vozkY1231eir
-         tKLr9C40Do9KRgyyO5xRS2Tgl7ZhUEGLvBlhQ2i9TVFasMn3WPdTG1hwAKMrNC5sAWaH
-         EhWK3LhurWSkVapOO9W0Je9ybnupvR/cQG7sx2SXwpMn07E85b5haCXsOl8qyC/i3Bku
-         PlmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718799111; x=1719403911;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+3gqV7Iuv2ZRkcfvFpsH8CF696dpD1A7msCstk55Y0E=;
-        b=uO6qwCyNWag7tX+MT/oCt/9NIpIGOVI8khO1KtXPd4weJf91t62oEAxE2n7deTNzi5
-         Cov4/kBT4Qphf/rOR/AX2fxIi0R39l1jmnSj8rUITEEm1m3LNcZdC6Pb8+7jBi1qFHxb
-         AoVtOXS54qxpiEhpGH7qe32QZeZrLXphXBbEsZ7HX9f+/tZXM97wm+wW4sEK3gA+mLIE
-         CO7+HDRH1daID6EXmsQyBZDIofHuAGubcS5h1pL5Io2BlYmInDY/Kumb7HFrJVH2ooNs
-         X/tdt8TRuVHBzqX+xYrkRAmXbgs0r5uP0dK5h2KhXRRl9mRHYrc2TWq0jezmb6CkdH6g
-         Br7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVEiuU2M4kKt8KlbAirm4lv5/ttYQjnAuriZolxlE23GFAgUo0eXhlAjdOLmvdMSCziWm03GLbKHZIDW0OoIYLmwpG9
-X-Gm-Message-State: AOJu0YyzgiiIXtygoRm9vgCVWbKdoZSwjnyL1040MEU9618Shd17CAp+
-	tuXhrCIqbGXdamF+/KWsOYoc05z0Sn+4pnTYB1L8Pa8FYOmfLui/
-X-Google-Smtp-Source: AGHT+IEpGpAXuLgQJ4z6VgIagioZhQFvB+Vm0B+Ee3ak9Q/Tc3qYqVNqsoJ1sW3vvYl+tiioUor6Kg==
-X-Received: by 2002:a05:6a20:3c9e:b0:1b6:a7c5:4fad with SMTP id adf61e73a8af0-1bcba22f29fmr3966572637.26.1718799110818;
-        Wed, 19 Jun 2024 05:11:50 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb8dd68sm10477120b3a.206.2024.06.19.05.11.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 05:11:49 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 91252183A81FA; Wed, 19 Jun 2024 19:11:45 +0700 (WIB)
-Date: Wed, 19 Jun 2024 19:11:45 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Tejun Heo <tj@kernel.org>, torvalds@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 29/30] sched_ext: Documentation: scheduler: Document
- extensible scheduler class
-Message-ID: <ZnLLAWbryU0-aqX1@archie.me>
-References: <20240618212056.2833381-1-tj@kernel.org>
- <20240618212056.2833381-30-tj@kernel.org>
+	s=arc-20240116; t=1718799111; c=relaxed/simple;
+	bh=8UC3dd/xs1eHvnpkbzMHjvpFYyuJFdFAOtxj21nX+eg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qM27il8YBG3mV9MFQfqE8WilpmDWbuE1FfdchPlmcXOtpkfmBE2Le7+CgX1bESUddxdbUn/2R3tgqv2uStoeWApGvPldIzLxn13LLJNMTm0NcF8q9ioipaeiT0VtjY16U1q8ZHLXGDEK+Xx8QgUoU86HahA/0aqWFnA4scSZ6k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sc38HwOX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 778F7C4AF1D;
+	Wed, 19 Jun 2024 12:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718799110;
+	bh=8UC3dd/xs1eHvnpkbzMHjvpFYyuJFdFAOtxj21nX+eg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sc38HwOXXA8zwNu1EdxnZfwAfuSgOQAgHP98hrVE8/M1bYDhPzGiO2utokmcGPh1O
+	 tUL7KmeG5lBnM5WSk8yS/X47u3Dd3UmY2teYTP7QE3Vb8AptBUIXiCRPVRJ7AjS6Zr
+	 LNs4+n7wK0e8Id0QAB6MiwNXdtY0v7B/ymqcOPu6+hrsUidSmxxRKPEpwQB/vcNMr8
+	 Yb9jHJs98KH+8M5/8tRuph9lP666N3CpqYfCuiejh8sdyMsx5eQyh5hnnuVRaQHMOd
+	 JpcDIKnRshkSsCf6s4mO7+BYH6mXPLaKKeY3HVgG37cdfWuK0Yz4VLu2NXh2TS5d9F
+	 MKgqmi0zKCfdg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sJuAG-005RXt-4M;
+	Wed, 19 Jun 2024 13:11:48 +0100
+Date: Wed, 19 Jun 2024 13:11:47 +0100
+Message-ID: <867celjfng.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Will Deacon <will@kernel.org>,
+	"Catalin\
+ Marinas" <catalin.marinas@arm.com>,
+	<linux-acpi@vger.kernel.org>,
+	<linux-arch@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-pm@vger.kernel.org>,
+	<linuxarm@huawei.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	<loongarch@lists.linux.dev>,
+	<x86@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	"Rafael J . Wysocki"
+	<rafael@kernel.org>,
+	"Miguel Luis" <miguel.luis@oracle.com>,
+	James Morse
+	<james.morse@arm.com>,
+	"Salil Mehta" <salil.mehta@huawei.com>,
+	Jean-Philippe
+ Brucker <jean-philippe@linaro.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Gavin
+ Shan <gshan@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov
+	<bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	<justin.he@arm.com>,
+	<jianyong.wu@arm.com>,
+	Karl Heubaum
+	<karl.heubaum@oracle.com>
+Subject: Re: [PATCH v10 00/19] ACPI/arm64: add support for virtual cpu hotplug
+In-Reply-To: <20240613112511.00006331@huawei.com>
+References: <20240529133446.28446-1-Jonathan.Cameron@huawei.com>
+	<20240613112511.00006331@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QTBRT25tDLXH91dy"
-Content-Disposition: inline
-In-Reply-To: <20240618212056.2833381-30-tj@kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: Jonathan.Cameron@Huawei.com, will@kernel.org, catalin.marinas@arm.com, linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linuxarm@huawei.com, mark.rutland@arm.com, tglx@linutronix.de, peterz@infradead.org, loongarch@lists.linux.dev, x86@kernel.org, linux@armlinux.org.uk, rafael@kernel.org, miguel.luis@oracle.com, james.morse@arm.com, salil.mehta@huawei.com, jean-philippe@linaro.org, guohanjun@huawei.com, gshan@redhat.com, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, justin.he@arm.com, jianyong.wu@arm.com, karl.heubaum@oracle.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Thu, 13 Jun 2024 11:25:27 +0100,
+Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
+> 
+> On Wed, 29 May 2024 14:34:27 +0100
+> Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+> 
+> > v10:
+> > - Make acpi_processor_set_per_cpu() return 0 / error rather than bool
+> >   to simplify error handling at the call sites.
+> >   (Thanks to both Rafael and Gavin who commented on this)
+> > - Gather tags.
+> > - Rebase on v6.10-rc1
+> > 
+> > The approach to the GICv3 changes stablized very late in the 6.10 cycle.
+> > Subject to Marc taking a final look at those, I think we are now
+> > in a good state wrt to those and the ACPI parts. The remaining code
+> > that hasn't received review tags from the relevant maintainers
+> > is the arm64 specific arch_register_cpu().  Given I think this will go
+> > through the arm64 tree, hopefully they have just been waiting for
+> > everything else to be ready.
+> 
+> Marc, Will, Catalin,
+> 
+> Any comments on this series?  We definitely want to finally land this
+> in 6.11!
+> 
+> Marc, in practice I think you already gave feedback on the the GICv3
+> changes in here as part of the discussions in the earlier version threads,
+> but if you have time for a final glance through it would be much appreciated.
+> Thanks for all your earlier help on this btw.
 
---QTBRT25tDLXH91dy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I've had a quick look and the GICv3 parts look OK to me (you should
+now have by tags for both patches).
 
-On Tue, Jun 18, 2024 at 11:17:44AM -1000, Tejun Heo wrote:
-> Add Documentation/scheduler/sched-ext.rst which gives a high-level overvi=
-ew
-> and pointers to the examples.
->=20
+Thanks,
 
-LGTM, thanks!
+	M.
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---QTBRT25tDLXH91dy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZnLK/AAKCRD2uYlJVVFO
-o/m3AQDvlkShSHUwxaqKX5DV/HcD2PbL5R+9f+zPNpLRV5IVSwEAqHcCISspS8dU
-UWAGJ9pJNmfVZ9sLaGeXH4uN2TvS0wU=
-=ciJC
------END PGP SIGNATURE-----
-
---QTBRT25tDLXH91dy--
+-- 
+Without deviation from the norm, progress is not possible.
 
