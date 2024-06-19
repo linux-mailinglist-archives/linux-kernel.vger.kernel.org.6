@@ -1,141 +1,125 @@
-Return-Path: <linux-kernel+bounces-221613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9457190F627
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:37:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DF090F62B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EAE2B226C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:37:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46639283439
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE2C158202;
-	Wed, 19 Jun 2024 18:37:27 +0000 (UTC)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A86158206;
+	Wed, 19 Jun 2024 18:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QFIZ9FS6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933C015748B;
-	Wed, 19 Jun 2024 18:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C034315748C;
+	Wed, 19 Jun 2024 18:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718822246; cv=none; b=rAK1Dp5jrJytBKwRoDRNUGKdHyY+kJtObQEWucO7n47Ych7MAjo7Z0qJkXxCT1mZzyXSXJXJjyX/8cIU3uDVJXaGuXAAAzFzhoSAJhxdBOUbRvKa2+hoSzZnNZZtqIw1EVzEpPQDTxFVKELqRL7GO1xsbqM+wet07zzzAf/OlDs=
+	t=1718822329; cv=none; b=hVFauMqb0F/IuP8duf4T+u/kOk/VWsvLD7OyNXl993fF8vdIyxRYwQOKmXqU/+0pU4tjFFL1q0OS+tMsrigHpHir8/7019moQcLWbf3ic6m7INSn/vEPUumMACpDBMK3rUQZTS+8ccE4MCH92UhPO5Fqyaggm1/FV/eWNMoanq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718822246; c=relaxed/simple;
-	bh=QhUYoWBf63AsJ/OW0Yna5f3rQ3Zd7nBKGpP/7eph1Oo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RXh7VkfPgPsoZsqafwvbcHOxHvqJuT8jNl10qPgEtctHkIOG45zuAym8jUzwMnzW4wIA3Ft51z9xYWETfUItbKSaWk8iPmtiKikeWEvbz70sjKdeLnwn2b13DNGghtry9dZJo8qf/bhWtU+pWRl79Enge+GFWF7/hQKEPHstyHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-705cffc5bcfso148739b3a.3;
-        Wed, 19 Jun 2024 11:37:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718822245; x=1719427045;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gW/h20d34xs/p3I5YUoc4XTJZsGBJiaZGRgH62s/GAA=;
-        b=XAgoHWa+3z4MwYM63kS3ABkgH0Lijgbwues+rrCdK/Gm1t7mYH0CcmbH6K1coJVeZR
-         3k1hJLL4GSDM4uPxQq6Mq9l5Ow9YINTie2tjuTdeuSCJllX5lkM66y0K2aD34GJQlugj
-         1SxXNjOcYj8BzkrE1H2MCCay0L856SFujpqgvk9rYPY6kMIj/qA/AuxOXYCaiWKc8gJM
-         zDozNrXw77BqqPWGYUC7eBAG1KKZYtn7adsQSMLZki3ZTLIEgJQdQApmI2tATHLiztoP
-         V7FrHw6+IkhV7ObUGt29/Vn9phMZ2y1Wi5gk+fHcKwlwAIfao8iVm23/UaWDyVTmerOE
-         nleA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9cLDrAtr6mW/zlNJWzewUdKWhWBEjeXvkIcOfJKfc1elUqbozyvQphBSZ61HkeoojbjXEn9OE4MjwbbOggfl724zqEXpioz+i0jLaRE1Wf4gW8HIuIzNTfMBXieb6JxUDZRZX+8AfnA1RRc43nQ==
-X-Gm-Message-State: AOJu0YzsPL9VXbDuv3lHJhq4Ix2Wr6hFujtjq/SoZmhvIxJd1itcrbFV
-	vCUXz8TTAnbUOWt4Hx2mocnLqriTp4MWJdhW34lmojLf8FOCbRF+vc2IEZ4qZKeHm5+iuvV4bqD
-	v3NnKZuvjPBOCHjU7g4Pqa/iLBoY=
-X-Google-Smtp-Source: AGHT+IFB3pt44wbgHuiQLRJ0LsGXwaW2pjJyI/BCA7wLetbqAMxPqLHjp99ZCqaHNXJgJDfpJPmOp/bP+X6Dn3p4zK4=
-X-Received: by 2002:a05:6a20:4694:b0:1b8:5ac6:4bd8 with SMTP id
- adf61e73a8af0-1bcbb56afadmr3063880637.28.1718822244550; Wed, 19 Jun 2024
- 11:37:24 -0700 (PDT)
+	s=arc-20240116; t=1718822329; c=relaxed/simple;
+	bh=CLulv+F6AfNeTOO6KvrB+UAA0kz4EaRiJ5NQ78Qp/Ik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jw+u4kivmMawP2lOdxckXkFH1ovVDJGaxLbMm05TlAGaoHYPsc8PjqcwRcnyqdwYgzvOVxlB9vMz1oVOWZzU2XY9/f+1yVsDeAq6lrhrSH9T3vQmLiurgEN7CZikdAaiRNTgdYw9WjCOjxz73hBygc5MXJQISaVFVT7IcFt7Mo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QFIZ9FS6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9jAq7016044;
+	Wed, 19 Jun 2024 18:38:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pQi4cEGMKplahCMAtCGNOa8fyNL1P8ZRu9NQMbNyKBA=; b=QFIZ9FS6ZKtdEjJM
+	V/sG6dL5Fe1cD2bordNaC910PqXBZuqFLgJIoc0RsMrUJS0CBAf+YHjkMht1DdP2
+	az1y3pL+ThG6LKYg1eZzLrpF/3ogDhjmBrh5zih00zDGma1tr8f4Kk8sYWj5iI2/
+	KWCnCLM6+TOYc9hQkQvo9eQPXwJ74XwB6n/q68R/Gb941TslXlJ/dEjta0VpHwpe
+	k/Mx37iWxGBX99nICfSitHA3uwoHOeDqvZu+KArJ7413cmS1y7E4/cWJeyvOu2fM
+	Fs6NCOtKkztTZtiSmBIXZ1EhjVisORRzeQXUNjsW05AMBOs/zifSEMJEbTXaIe17
+	pYfJRw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuja52fgu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 18:38:34 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JIcWKP006906
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 18:38:32 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
+ 2024 11:38:32 -0700
+Message-ID: <e91728af-83e7-453e-816f-add3b0011a66@quicinc.com>
+Date: Wed, 19 Jun 2024 11:38:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202406180932.84be448c-oliver.sang@intel.com>
-In-Reply-To: <202406180932.84be448c-oliver.sang@intel.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 19 Jun 2024 14:37:13 -0400
-Message-ID: <CAM9d7cjzuJCGXLe_5Jzmcu2iiRtb07WwATnrz01sR7g++b6Frg@mail.gmail.com>
-Subject: Re: [linus:master] [perf dsos] 7a9418cf7f: util/dsos.c:184:8: runtime
- error: null pointer passed as argument 2, which is declared to never be null
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Ian Rogers <irogers@google.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
-	linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, 
-	=?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Ben Gainey <ben.gainey@arm.com>, 
-	Changbin Du <changbin.du@huawei.com>, Chengen Du <chengen.du@canonical.com>, 
-	Colin Ian King <colin.i.king@gmail.com>, Dima Kogan <dima@secretsauce.net>, 
-	Ilkka Koskinen <ilkka@os.amperecomputing.com>, Ingo Molnar <mingo@redhat.com>, 
-	James Clark <james.clark@arm.com>, Jiri Olsa <jolsa@kernel.org>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Leo Yan <leo.yan@linux.dev>, Li Dong <lidong@vivo.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Paran Lee <p4ranlee@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Song Liu <song@kernel.org>, 
-	Sun Haiyong <sunhaiyong@loongson.cn>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Yanteng Si <siyanteng@loongson.cn>, 
-	zhaimingbing <zhaimingbing@cmss.chinamobile.com>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] usercopy: Convert test_user_copy to KUnit test
+To: Kees Cook <kees@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+CC: Vitor Massaru Iha <vitor@massaru.org>,
+        Ivan Orlov
+	<ivan.orlov0322@gmail.com>,
+        David Gow <davidgow@google.com>,
+        Brendan Higgins
+	<brendan.higgins@linux.dev>,
+        Rae Moar <rmoar@google.com>,
+        "Gustavo A. R.
+ Silva" <gustavoars@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <kunit-dev@googlegroups.com>, <linux-hardening@vger.kernel.org>
+References: <20240612195412.make.760-kees@kernel.org>
+ <20240612195921.2685842-2-kees@kernel.org>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240612195921.2685842-2-kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: BxSyBGdf2KXEaNU80wT485Y1kHpPWMz4
+X-Proofpoint-GUID: BxSyBGdf2KXEaNU80wT485Y1kHpPWMz4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ adultscore=0 impostorscore=0 clxscore=1011 mlxscore=0 spamscore=0
+ bulkscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406190140
 
-Hello,
+On 6/12/24 12:59, Kees Cook wrote:
+> Convert the runtime tests of hardened usercopy to standard KUnit tests.
+> 
+> Additionally disable usercopy_test_invalid() for systems with separate
+> address spaces (or no MMU) since it's not sensible to test for address
+> confusion there (e.g. m68k).
+> 
+> Co-developed-by: Vitor Massaru Iha <vitor@massaru.org>
+> Signed-off-by: Vitor Massaru Iha <vitor@massaru.org>
+> Link: https://lore.kernel.org/r/20200721174654.72132-1-vitor@massaru.org
+> Tested-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+> Reviewed-by: David Gow <davidgow@google.com>
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+...
+> +kunit_test_suites(&usercopy_test_suite);
+> +MODULE_AUTHOR("Kees Cook <kees@kernel.org>");
+>   MODULE_LICENSE("GPL");
 
-On Mon, Jun 17, 2024 at 9:45=E2=80=AFPM kernel test robot <oliver.sang@inte=
-l.com> wrote:
->
->
->
-> Hello,
->
-> kernel test robot noticed "util/dsos.c:184:8: runtime error: null pointer=
- passed as argument 2, which is declared to never be null" on:
->
-> commit: 7a9418cf7f05a74cbc9d4c750ee1bfddaa11f121 ("perf dsos: Switch hand=
- crafted code to bsearch()")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->
-> [test failed on linus/master      a3e18a540541325a8c8848171f71e0d45ad30b2=
-c]
-> [test failed on linux-next/master 6906a84c482f098d31486df8dc98cead21cce2d=
-0]
->
->
->
-> the issue can be reproduced by below commands:
->
-> $ sudo make WERROR=3D0 ARCH=3D DEBUG=3D1 EXTRA_CFLAGS=3D'-fno-omit-frame-=
-pointer -fsanitize=3Dundefined -fsanitize=3Daddress'
-> $ sudo ./perf record  -e 'cpu/branch-instructions/' -- sleep 1
-> util/dsos.c:184:8: runtime error: null pointer passed as argument 2, whic=
-h is declared to never be null
+Can you add the missing MODULE_DESCRIPTION() to remove the W=1 warning?
 
-It seems we need to return early from the function when
-dsos->dsos is NULL since there's nothing to search.
-
-Thanks,
-Namhyung
-
->
->
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202406180932.84be448c-oliver.san=
-g@intel.com
->
->
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
->
->
+The fix to the current file is part of:
+https://lore.kernel.org/all/20240601-md-lib-test-v1-1-a728620e37d8@quicinc.com/
 
