@@ -1,115 +1,115 @@
-Return-Path: <linux-kernel+bounces-221662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3667590F6F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:29:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E64190F6F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3EAEB2206E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:29:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19733B22F85
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F700158DA9;
-	Wed, 19 Jun 2024 19:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A2C6F2F5;
+	Wed, 19 Jun 2024 19:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nInh2kjm"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KWMx2oIX"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F78A155759
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABE26139
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718825358; cv=none; b=fPPOukP7t8nUHB5t1MQ/DO6163rahXj6dBFQpY0iiEPc3nyQ68AXpWIs+H/Dd7MpAa7m+RFVJEq8llrZHcImrWgvoPKbAkI+KC9JfpMtUsl1JPLMmM1RNgbyJ8gvENgbbzXL3i1BpfiE9Wf8trDb44vcLXN3YDEiqf96WrhIO4I=
+	t=1718825465; cv=none; b=iV4bBqZazKDduSb8xroh+nM3hCUC6pD0zpR+bGfQOiQ3WLyJKvgN/Avu4RFqK3zfyDrCBJdpJFJhb5MZDHDUhbUYsxEWa2li6v0gqkW1GLlKfYigHZG0YdkiHLs3qqfpb5URzpfgIt6dNMgqLhHZNus6VRhu5Ud19MW/cIa45Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718825358; c=relaxed/simple;
-	bh=1SXc52g+zhJGJZ9WknweUhXNqTt2ao1lVhNUkIST54M=;
+	s=arc-20240116; t=1718825465; c=relaxed/simple;
+	bh=ONbBVAYXgWykvvraEBnL8NkxMpKZpr3SVE0PVe+A6Tk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VP716pN249gzP2PRC4Oot3cSQgCzWVq7BJkhu6HmvcSglqhclE9judJWyI7Mue5Pwjsg47NaqDUhVRueegID6mSXqGmVJTVgUIZSlgfvmJPJso9RWWc5zi/yu0JNHR5GFv2pfxDIi3fJLqmtPH1RG5PW4N3uvImOHpbt8BtaiKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nInh2kjm; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52c32d934c2so141276e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:29:16 -0700 (PDT)
+	 To:Cc:Content-Type; b=htutr65XQy28Cy4xNUeeouMBD62uWq1gub99ZH89zumOLoK8dVuzg0iUdNv9p6mc8eTDI6JmXLx1eh/hzT7wC5yYFEPSJ9AbM2106lw/1vOlNbCgM8gpbNupiGY0u9bH6N8/oi41+jD+gQBTQW3gl0CJHhG2MqFHTWo2TG+UA2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KWMx2oIX; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57d1679ee6eso1070259a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:31:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718825355; x=1719430155; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sizxqf/p+Ad13rP5NaIetozu8E9y9ijMGImLu6tat1A=;
-        b=nInh2kjmRTpQcmXG/2/AHC8Lw3rX9hLk09yUGGxYXQtUu33hawYcjWNZVaNN2jSLIm
-         k+1A1LbI4d4MNJXxfO6SZW31L/jDaqbeGOcqaD3gZIKQqTUWbVHrQHoj5VUty4ExFrmr
-         0U7Uv4yIcVSZSq6DCDslTNncg6R/wOlafSVip0tsBX+EX3sa67j7qsRfUZmLNQoIk3WM
-         RTdS5JlMulpQC5uZeBy/3mOwbW7jR6pGON4ruVruYB9G8xKyOZQGSzRtM3MzCMjaSbyH
-         UZmXO+A3immYXXBguan/0s5l2o0aaDrTHt8yIwJGLhuvk9WJc/X7wUGZv02adtIcLZcp
-         xsfw==
+        d=linux-foundation.org; s=google; t=1718825461; x=1719430261; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+wN5dEx96D+70+iPxSD0VoqGzqbVt1ZsfN7BnJKyZXQ=;
+        b=KWMx2oIXa/cumvmBz+h0GkqKi7WVae6RS8KASNTNcdHAQWYkccq59xCdMMmlt+C9/f
+         VrlYy2+PhmwX62T4F2KWBvCp2Jy0tWDNhG8jXzJKMeb011w0NFzFHja9J1+RyvH0CsG3
+         cng25kTZvqPtSPwJcNl0D17CBGJoaPP+m3iEk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718825355; x=1719430155;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sizxqf/p+Ad13rP5NaIetozu8E9y9ijMGImLu6tat1A=;
-        b=J2YRgGW1vFFYIZlFzr82q/vgAQQIiVIdPiWWQNZcjGRi4KMxIz45Hnun7++OwtdiVW
-         NJHzwzCsfKjQVG9Wd6EsALv8P0jQclcdgNvjrFfJJ/huue/Ms1CKWPEn7rjFvWtMtUYD
-         WQJ05UTJses2kfyjDdgGCIu8Pbr1l8kGLJVAlhtYqfgo7a7rKSwGP3R4CQ09PO1m9zUv
-         WGbdlijikYbi0BQ/b2EfNs4eGsQLNKch+/2qQY//xzzs5cCTQvrClyPrgWpKuQ+lZ98z
-         RKt1+7xWeNWsTTsmv2nFYW+2+11SKh6PD+tkKk/hjUOuFy83d9KxzL72K7b75rI9HY9p
-         einw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJUrMqJYi2Ph9wB+rPit5B9QPSsMIFN/jn6gn7TI12sHasZdLegAJex7sFbNIXlNGanciXVrQkAlt/5AA1890JAmXBZ2es62+RBldW
-X-Gm-Message-State: AOJu0Yz8ieSWFFwHoTkT42Gh6c0RsLwDbCfgjbxZS+DG983C1NilQDSH
-	EcupPv4LT7t5lq3sj0IHgfmH1fgvNFVXsW8gGvSQBoy3eyRqNp/Bv7xEstkuOf7jHI476iM6yGw
-	bia3xOtvFJFm2VgvDULawy0AnvvB+vsydEssG2w==
-X-Google-Smtp-Source: AGHT+IH/SFsikh0a7Jr/pP4kVDIchxhejysWu07Ul9ypfLKXOG9XTdZtFR6KlZwkn8zT1K3TP7nGNZxnhwc9pC67zws=
-X-Received: by 2002:ac2:4c06:0:b0:529:b5ea:fda5 with SMTP id
- 2adb3069b0e04-52ccaa5459fmr1881427e87.53.1718825355350; Wed, 19 Jun 2024
- 12:29:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718825461; x=1719430261;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+wN5dEx96D+70+iPxSD0VoqGzqbVt1ZsfN7BnJKyZXQ=;
+        b=F9WHHQp4DsNNBxLDBrQU3fJiak4L52LOQI1oi2WJCh4JEfK0JVxi1CjZJr5HUsyFn2
+         aOcUyZAj0a2oE/kGXLrRn7viAGK3YTt0TNz/VYu/rfMf4I9MTTwAtiemZ3Sao41uFr6K
+         cwtWc0jSYiVlwZ8cErX0eTbRJ2WJvQdWGOS7r6fYjNzZah/w6VwwVMp/2xXLP3q/v0oJ
+         1eIiMmgN4bzdGAWNEUmoCLHPsRyGyLmFAhLiWtFjh+JajBbL/OT3dbxXWEr2UC72ZGTa
+         HjWX9goNIdKYqqO44Lhnd0aXjKLY6yOzWAjofIwjTJkL/c73hTt8RAr8tPrWxx7qX4F5
+         bIiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfDWVHG27Dnv6gDmTaqpGFYA7QmO/q6mAaJHT7iYEG9DmBryNpIy0Aa0EkRJxVpRW6JWGsBiEHOToukr/PJMq6DCG+92v1vaiKvqKC
+X-Gm-Message-State: AOJu0YzBmpa/WZDFC8vMJ9HslKGx22YEq/uJvUL2o0spFlx3bvHLE0hF
+	Cd3zPBLwWUTCEGltuSE4NYLt2FmRsCoE/9ewnP7HpyrjR2Q1Mq/OJNTrNHnELMrnocUpQXR9NBy
+	iTefe1A==
+X-Google-Smtp-Source: AGHT+IF6dki17L0QkfqdTymcCuBcQSxlr+KD6ZSGy2pwu9iJ9TcZ8JEq83ENLIhQ3wGiSWFoFx8MfA==
+X-Received: by 2002:a17:907:7212:b0:a6f:bd33:d1d5 with SMTP id a640c23a62f3a-a6fbd33d225mr51400966b.34.1718825460800;
+        Wed, 19 Jun 2024 12:31:00 -0700 (PDT)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f41ad3sm683170866b.181.2024.06.19.12.30.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 12:30:59 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6f9fe791f8so29640966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:30:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU2zwCNNtjlo/pHIRoyzVmvz3yUv0xnHnOCmsoMGizshiyGgFP5n+2WTEAIXc8bshgiZ6fYQicCUWrECulJdsfCbXl/33OQTO8LfREq
+X-Received: by 2002:a17:906:bf45:b0:a6f:77bb:1703 with SMTP id
+ a640c23a62f3a-a6fa4109c43mr237633366b.13.1718825459486; Wed, 19 Jun 2024
+ 12:30:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619184550.34524-1-brgl@bgdev.pl> <20240619184550.34524-2-brgl@bgdev.pl>
- <bedd74cb-ee1e-4f8d-86ee-021e5964f6e5@lunn.ch>
-In-Reply-To: <bedd74cb-ee1e-4f8d-86ee-021e5964f6e5@lunn.ch>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 19 Jun 2024 21:29:03 +0200
-Message-ID: <CAMRc=MeCcrvid=+KG-6Pe5_-u21PBJDdNCChVrib8zT+FUfPJw@mail.gmail.com>
-Subject: Re: [PATCH net-next 1/8] net: phy: add support for overclocked SGMII
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vinod Koul <vkoul@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240618213421.282381-1-shakeel.butt@linux.dev>
+ <ZnKGjdw8xkMZG0oX@tiehlicka> <ajp536dpkss32kmjihcfbl4ulunfho2odzw4ghwfekw2yv3ctt@fh62fmyxwwcs>
+ <ZnKXNuuQRwNxRe4z@tiehlicka> <ZnKbR7IOd0b6GDBI@tiehlicka> <20240619174751.7r2s7iojxbaxpqlw@linux.dev>
+In-Reply-To: <20240619174751.7r2s7iojxbaxpqlw@linux.dev>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 19 Jun 2024 12:30:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whXL32xG1HWGaVaOkHf+g407upYbvZeZgmhnsxn2R+JRQ@mail.gmail.com>
+Message-ID: <CAHk-=whXL32xG1HWGaVaOkHf+g407upYbvZeZgmhnsxn2R+JRQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: ratelimit oversized kvmalloc warnings instead of once
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Michal Hocko <mhocko@suse.com>, Andrew Morton <akpm@linux-foundation.org>, kernel-team@meta.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Kyle McMartin <kyle@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2024 at 9:09=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+On Wed, 19 Jun 2024 at 10:47, Shakeel Butt <shakeel.butt@linux.dev> wrote:
 >
-> On Wed, Jun 19, 2024 at 08:45:42PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > The Aquantia AQR115C PHY supports the Overlocked SGMII mode. In order t=
-o
-> > support it in the driver, extend the PHY core with the new mode bits an=
-d
-> > pieces.
->
-> Here we go again....
->
+> Linus, please let me know if you have any concerns on the approach
+> Michal is suggesting i.e. a variant for warn once for unique call stack.
 
-Admittedly I don't post to net very often and I assume there's a story
-to this comment? Care to elaborate?
+I think we should just try to change the existing WARN_ONCE(), and see
+if it causes any issues.
 
-Bart
+A new "WARN_UNIQUE()" might be the borign and safe approach, but
 
-> Is this 2500BaseX but without inband signalling, since SGMII inband
-> signalling makes no sense at 2.5G?
->
->         Andrew
+ (a) it won't actually be unique if you don't have stackdepot anyway,
+and will just be WARN_ONCE
+
+ (b) I suspect most WARN_ONCE users really do want WARN_UNIQUE
+
+so let's at least _start_ with just changing semantics of the existing
+"once", and then if it causes problems we'll have to revisit this.
+
+I doubt it will cause problems,
+
+                Linus
 
