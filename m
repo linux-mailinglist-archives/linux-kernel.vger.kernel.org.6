@@ -1,97 +1,73 @@
-Return-Path: <linux-kernel+bounces-221254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B79490F0E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:39:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F5790F0F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346051C241B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:39:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 255A528176A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA802262B;
-	Wed, 19 Jun 2024 14:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4944723775;
+	Wed, 19 Jun 2024 14:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="cgMilols"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V/vdWVCv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322781CD15
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 14:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4E72374E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 14:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718807910; cv=none; b=Kf8rymm6llzeQ4A70H3WfnhIk6HavcqhA6TKPLwIQ4xIj0FInuHWWh8Pz+Sygnr5jFDfmh+c1QJ4Sbpgh8S5iW1PMD9HTM62TQ250LKPhadiKtm8b7HIP3j9/2XaP+zGcZFnMIGgZaIasfICC+hvIxGxyOXeoFpSQ0oRXzY7mmU=
+	t=1718808039; cv=none; b=HAw4d2fOCuwt9fwhHvJ3ePSNm2aRXeRFrwbamECC1nKOSSyh8dy7KmXXeiAiuJWVBeyVmG22zzrjvJs4VCXD9dcXoXnPnq4Mkii7BTvXJbuddu4OOyBwWf4t4e7X9guja+t7z8XfDzs551ca1gfzEt+72Xp6WQUohekEbEHiO7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718807910; c=relaxed/simple;
-	bh=vHJZR07TDsfMQhSOpJNQ7ySVcEwfyhK/k1s8y8Oef78=;
+	s=arc-20240116; t=1718808039; c=relaxed/simple;
+	bh=z0Mpv6gcJa3VDpSzPcPg/SCmOnYRbY7zuWvo13wbiqQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VBGHGgh0GHu4yb0jSzLefK5pPhTe4Rm1TiLido+D6UnBCxZgbm7+7qCQ/UshMTfAOU+qQajil2kHwpNol9f650Eyh1AxPsPuGCvHyU7dgW8qj4V2DCsmxNrFM3NKA0Q043JVhYh0w4Br6Nu1M9W3AbC+YESgQZgKPrxfSPzqDHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=cgMilols; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4421c014b95so7906911cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:38:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1718807908; x=1719412708; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7eSifi9kzw937hBs9m+vGjWLDbN4rIVu8qbt3p8ubO8=;
-        b=cgMilolsiUYk+2ryzymTsdMFNtxEIu2giNffwwDhHmhD2/AtZrAf5bnoeMcrf4xSLH
-         iGHu0+rUx5iFussFMBuRfh2MENs0tzdZvx3LfTJ7iy8JyGhpK2C2+WIQzny3zu8Ag/kg
-         zksyGxcX3F+QJSzrfwZrjYcLAAiYI/1MBv/RR3cnVry2tRYDSzmm4xp0yz5I01D5DVQt
-         8hrzrZ96wvZiDxbnZsWjGseb/mEkjyfJ+HgzUQLyQRkvM82QRsCVB2FHli48Qbx9FKyt
-         pznSae8ymmrEG9TKlSH5GegKD0a1XLa5oQooGuLOWif5rpjwCmncJMpvWHCvu5x8hSMQ
-         gcTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718807908; x=1719412708;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7eSifi9kzw937hBs9m+vGjWLDbN4rIVu8qbt3p8ubO8=;
-        b=KZaZbQe3su64XtFRoNS5Q8doRtyv69EgYiKGllNCoHC2BBhTDqXiiLy9BQMn0P1O9z
-         Flcpzn4kNYwkn/JTfVT5Lafta87zLtfqtqmJD3CpaeVOhTje11vABQFAlBgO4hgfTtQR
-         91Qaj6krkC9Xaf242mtRTgOLQuhl4BcFl9SmCO9KGpZ8T/tvtTXWGskWQvUyPuio+oV9
-         Fb+jgCMH7wgI3TLN+PX1Dj3kj3Fr3Zm7Smsetnj4d7BVKK+/vseBjc2+pZR6SvxWbhOY
-         vDt3Hpc9rco1uZYreu7jqT8xtLy8j7JYTX9O+3nt0WO0E3SlKhK9KbhdiWcrcvH6vn8L
-         b11g==
-X-Forwarded-Encrypted: i=1; AJvYcCVCGhxwtNJx2Wls8c5Juis4Oea8Io9FDdT+abhfwlyxKT8KNxRiMRSjsY9vZZHIcYEX0MDf8glh+eq8hkSpQ1yoA2zjCSMqxZtofl7y
-X-Gm-Message-State: AOJu0Yzp2V6f2qvB6JSgviep6sI0rwsKslD7scbXM+uZD1kRTYEnM1uk
-	0jSNaNkfjUqHK6HvRaLWcAm4jhkGcloj2UGZ3lsrCt7B+DScSPd3h3tZcfaTvOQ=
-X-Google-Smtp-Source: AGHT+IGZSB/Brli4dklvGSX8RN5hj5Xa3TKJWnONX5AltWqs8DK5Wub0LYx6UoNFdFIIjbi83LBDQw==
-X-Received: by 2002:a05:6214:124c:b0:6b0:8991:a2f7 with SMTP id 6a1803df08f44-6b2e230ec57mr96370946d6.12.1718807908248;
-        Wed, 19 Jun 2024 07:38:28 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5eb4f4asm77884476d6.98.2024.06.19.07.38.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 07:38:27 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sJwSB-004dXU-Dy;
-	Wed, 19 Jun 2024 11:38:27 -0300
-Date: Wed, 19 Jun 2024 11:38:27 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Kalle Valo <kvalo@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
-	Jason Wang <jasowang@redhat.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	ath10k@lists.infradead.org, ath11k@lists.infradead.org,
-	iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 12/21] remoteproc: Use iommu_paging_domain_alloc()
-Message-ID: <20240619143827.GG1091770@ziepe.ca>
-References: <20240610085555.88197-1-baolu.lu@linux.intel.com>
- <20240610085555.88197-13-baolu.lu@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RNj3BT+7uvs/XxCQlKINgLX45Xe4i6+mRLgQZ+dB5dW1KsqCUBLiRhkI5RCYYFfK5jDI2/Q/yxhY98bu2XhQfOcKjjdcLbfzG1NnyyPTTEQYXO14qlJjsKkYbwewGBNKm92Ikzc2cATOinmBdkveBQOjuEwq18ljxQDB7oh89tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V/vdWVCv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718808036;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0q4qMgcNqiwKOKLULuCG3ztTE8UvFIWH7RjHNIB9mr0=;
+	b=V/vdWVCvmzamcPAS6hXd+KdnFYawgHVYk/9PE3Yx9qGSgR5koDd/B1KfOQuupsENhbvL+/
+	VsH4WxnLu3f5WKRTKP5Ire052HPQd33EkZVieQKUQ14aU4az/FgrNbE253+Z1CiTOBUZtg
+	9rPZaCKS33IBuW9OM8F2eIjvKzDCyPE=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-62-6uouwswPPmOORU9DfPV1ug-1; Wed,
+ 19 Jun 2024 10:40:33 -0400
+X-MC-Unique: 6uouwswPPmOORU9DfPV1ug-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DF2FF19560B3;
+	Wed, 19 Jun 2024 14:40:30 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.168])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4C3F51955E83;
+	Wed, 19 Jun 2024 14:40:24 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 19 Jun 2024 16:38:59 +0200 (CEST)
+Date: Wed, 19 Jun 2024 16:38:52 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Liao Chang <liaochang1@huawei.com>
+Cc: jolsa@kernel.org, rostedt@goodmis.org, mhiramat@kernel.org,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	nathan@kernel.org, peterz@infradead.org, mingo@redhat.com,
+	mark.rutland@arm.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH bpf-next] uprobes: Fix the xol slots reserved for
+ uretprobe trampoline
+Message-ID: <20240619143852.GA24240@redhat.com>
+References: <20240619013411.756995-1-liaochang1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,20 +76,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240610085555.88197-13-baolu.lu@linux.intel.com>
+In-Reply-To: <20240619013411.756995-1-liaochang1@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Mon, Jun 10, 2024 at 04:55:46PM +0800, Lu Baolu wrote:
-> An iommu domain is allocated in rproc_enable_iommu() and is attached to
-> rproc->dev.parent in the same function.
+On 06/19, Liao Chang wrote:
+>
+> When the new uretprobe system call was added [1], the xol slots reserved
+> for the uretprobe trampoline might be insufficient on some architecture.
+
+Confused... this doesn't depend on the change above?
+
+> For example, on arm64, the trampoline is consist of three instructions
+> at least. So it should mark enough bits in area->bitmaps and
+> and area->slot_count for the reserved slots.
+
+Do you mean that on arm64 UPROBE_SWBP_INSN_SIZE > UPROBE_XOL_SLOT_BYTES ?
+
+From arch/arm64/include/asm/uprobes.h
+
+	#define MAX_UINSN_BYTES		AARCH64_INSN_SIZE
+
+	#define UPROBE_SWBP_INSN	cpu_to_le32(BRK64_OPCODE_UPROBES)
+	#define UPROBE_SWBP_INSN_SIZE	AARCH64_INSN_SIZE
+	#define UPROBE_XOL_SLOT_BYTES	MAX_UINSN_BYTES
+
+	typedef __le32 uprobe_opcode_t;
+
+	struct arch_uprobe_task {
+	};
+
+	struct arch_uprobe {
+		union {
+			u8 insn[MAX_UINSN_BYTES];
+			u8 ixol[MAX_UINSN_BYTES];
+
+So it seems that UPROBE_SWBP_INSN_SIZE == MAX_UINSN_BYTES and it must
+be less than UPROBE_XOL_SLOT_BYTES, otherwise
+
+arch_uprobe_copy_ixol(..., uprobe->arch.ixol, sizeof(uprobe->arch.ixol))
+in xol_get_insn_slot() won't fit the slot as well?
+
+OTOH, it look as if UPROBE_SWBP_INSN_SIZE == UPROBE_XOL_SLOT_BYTES, so
+I don't understand the problem...
+
+Oleg.
+
+> [1] https://lore.kernel.org/all/20240611112158.40795-4-jolsa@kernel.org/
 > 
-> Use iommu_paging_domain_alloc() to make it explicit.
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Liao Chang <liaochang1@huawei.com>
 > ---
->  drivers/remoteproc/remoteproc_core.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  kernel/events/uprobes.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 2816e65729ac..efd2d7f56622 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1485,7 +1485,7 @@ void * __weak arch_uprobe_trampoline(unsigned long *psize)
+>  static struct xol_area *__create_xol_area(unsigned long vaddr)
+>  {
+>  	struct mm_struct *mm = current->mm;
+> -	unsigned long insns_size;
+> +	unsigned long insns_size, slot_nr;
+>  	struct xol_area *area;
+>  	void *insns;
+>  
+> @@ -1508,10 +1508,13 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
+>  
+>  	area->vaddr = vaddr;
+>  	init_waitqueue_head(&area->wq);
+> -	/* Reserve the 1st slot for get_trampoline_vaddr() */
+> -	set_bit(0, area->bitmap);
+> -	atomic_set(&area->slot_count, 1);
+>  	insns = arch_uprobe_trampoline(&insns_size);
+> +	/* Reserve enough slots for the uretprobe trampoline */
+> +	for (slot_nr = 0;
+> +	     slot_nr < max((insns_size / UPROBE_XOL_SLOT_BYTES), 1);
+> +	     slot_nr++)
+> +		set_bit(slot_nr, area->bitmap);
+> +	atomic_set(&area->slot_count, slot_nr);
+>  	arch_uprobe_copy_ixol(area->pages[0], 0, insns, insns_size);
+>  
+>  	if (!xol_add_vma(mm, area))
+> -- 
+> 2.34.1
+> 
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-
-Jason
 
