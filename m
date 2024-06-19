@@ -1,153 +1,206 @@
-Return-Path: <linux-kernel+bounces-220505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762ED90E2B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:29:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4547690E2B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74E1A1C2121A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 05:29:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB5CF1F24668
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 05:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A0756452;
-	Wed, 19 Jun 2024 05:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C810F56444;
+	Wed, 19 Jun 2024 05:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UvEwz7G/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kQb++Fqa"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6974D55887;
-	Wed, 19 Jun 2024 05:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF54208B0;
+	Wed, 19 Jun 2024 05:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718774973; cv=none; b=jMN99mCi9NTphc0wnsghsR03jLMsf58tP4RcJuWG1q90w27RqLZ1W7F9WcrWyibTBTV0MWSN94HH0uIDmB78/x41C6iyW+L93/5pwqNtVwvLtMvoXgYhDscpjXTYCNbDKpnDCbPYLR9LtdmApLQWZBl3AHVCUsYBLCkD/nFohqs=
+	t=1718775075; cv=none; b=omu4hnmr47eqnA5jQs0oWtJWkBfUDz54TkigFeGV6IPxJwpGNyDXsdS/PZxaswUQ5AneHBJBA8FUucbllRG99CJcONVJgcwDhZrWK1sym8Uq1OP07eOZrnl/6LtmNAO8PaxsrO7CQEeLeQNQiWJQlWAc4h2CEeE8gZYZiIreOUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718774973; c=relaxed/simple;
-	bh=ProNh6WDpQJsTCKWeK/xBB+DgqPo4qArcFsOCcPezwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tSYYEEvVm/OgCbSwU7H+v7GW1YeooXLjWrhIDVOxKzJOiJg5VIkLLMOFnv79dobYZKyIgcTRpC+9T4DpscdMloyNeAno0dUUeA1ZacLEUFQvAF6Fuq52RiR+Tmd/ujGZ3KuJghldw2/S9jB/x7Wr60vAb5ojCiQ6cohfTuO5lw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UvEwz7G/; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718774971; x=1750310971;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ProNh6WDpQJsTCKWeK/xBB+DgqPo4qArcFsOCcPezwM=;
-  b=UvEwz7G/0ZzxFAge9gmBj4C3LxCjmanrdUIp2EwrHCTyyAO7WFm1TNLL
-   8Zr3YXsus3j26122QllO3Aqm0MXiq66jO+5UPaxbbcq8x6z6r3Ve13bGZ
-   d/SuazcVK2mBhyZmOiCEVaqFlFgO24hyXcdO3NBcKlSqqdWJv02Kf96Qb
-   qD29x2+g9fXk6eDZieoj+hKMX1THZutvL2J3LXjlX93trv8A6BIerrHVR
-   gnEN439xbD5dQmm/gzMvhN7S1DVCWG9EkarINWDsG7kRAIfXjqrrL58ex
-   /5rYol0kt3QQogMFEboIUEgEZvJmWWXPocga3L0An0yhdDP4ArlYdTkY8
-   w==;
-X-CSE-ConnectionGUID: czHvkxWIQTm6Q4uEzgfyBw==
-X-CSE-MsgGUID: Rd0kxEWPQQWJL34wAosL/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="33235027"
-X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
-   d="scan'208";a="33235027"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 22:29:30 -0700
-X-CSE-ConnectionGUID: B63f9b/RT0WXS1EvrdiIRg==
-X-CSE-MsgGUID: J9RujRSITdSp2fbnatoSKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
-   d="scan'208";a="65031965"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 18 Jun 2024 22:29:28 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 705971A3; Wed, 19 Jun 2024 08:29:27 +0300 (EEST)
-Date: Wed, 19 Jun 2024 08:29:27 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
-	Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>
-Subject: Re: [PATCH 0/4] Verify devices transition from D3cold to D0
-Message-ID: <20240619052927.GF1532424@black.fi.intel.com>
-References: <20240613054204.5850-1-mario.limonciello@amd.com>
- <20240618131452.GC1532424@black.fi.intel.com>
- <9f465ec4-32b9-4cd8-89de-a57a99880360@amd.com>
+	s=arc-20240116; t=1718775075; c=relaxed/simple;
+	bh=S3sIQqQ3//Is06NvUQ4of0J1odDwxVc1O1l6BRUxaQI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=q9CDKygfwoMEEgh3ZFe9AnmnoJLWoHNyURd+UKpXxeZxfP44/FohD9YLqCSCHaZe0j+OhsdvdMzfu6jm6NF/4qdHm9X8HKVJbxXqtcvluSIP74VffLsd1sp/4eWt7Ai/aZkDMHQl3VFJQDHWHi2ZpzpMLFoulWl1cpJPAphHmBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kQb++Fqa; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ec1ac1aed2so49803011fa.3;
+        Tue, 18 Jun 2024 22:31:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718775072; x=1719379872; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=r9vPtlZ4BEfdVrcH0b0OXPRdbJTCb7JH0uFuSNUJCaI=;
+        b=kQb++FqaRWmtG20OtwDVF57JMHWYzzBTix0oiUyRfkhRVp9I775hyIjZCTesWHUwoK
+         NBKa1qWgZwlEFitDpci0sdNZZxDW2+54NINlRPpTUREFcHJsSXFsff32bFcyc3MU6Uos
+         4ScQ6ke81a6x9d/JZgEd30qxL8w+cQLvn3TFXS+JY5gpetgUV6nEB3bA7BrpAphz8cSb
+         yT6TGQU/fYOcC3rWhDoQmfhMFLBta7l6al5Jlv2JoJYe9290/dgVRBZezkDfk01dr3qE
+         6l/j1Wb8i/Xdj6HQ1C18cGe0NQEl7IDIHZy9qk6EB96YD7lmTQSp0tLwsqZxkRZWvBeS
+         sv8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718775072; x=1719379872;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r9vPtlZ4BEfdVrcH0b0OXPRdbJTCb7JH0uFuSNUJCaI=;
+        b=Dj+rf8ZVpLdJXabZlIKLUqDjXDh+v2//hgHCcO4r5p/pleAN0KnYhUlJJlTPcp+EHB
+         BY6FwqE9bzyuWktF+4tiY5aGZP4wxj5mingItul1GMRhGmDlFq44ak7N0tY3vPGHTAsE
+         cM0M76Ye5z6LzeeSvILF/Gq/wGjbux5b45vteg+MX9j/QQHEJ5vFXfnbEvZcUjCz5q57
+         azgkoyoQAuB/HtaQDMHm0zZoO5EU7OV5uThwiTfNMZD6Kz6nV6KaYFec2O2IpjSX0zMJ
+         JjlWCbQS3P5A/Sg4gsb+ohQrh05apDBa1dIlJcFgqNRRuCGuYyPFYilfcqYwlrlOg8bP
+         4IUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXT/ZEyph0d8S6H3m3CPwiw661e/njhM6sosFOsPPwaAO6fTXkKxCGdqA/9wI1/3O979MHUD/73gF+K5/prxie9jjl9lRwM6lSX/Baj
+X-Gm-Message-State: AOJu0Yz1R0iIEOO0dxWxMfOKRZehoxfP52GG1+LyjRtKLdqbT6uR2Ccz
+	jSuekjVvWZeKKro66n1jEZePicQNodOKBcjOT5+5CUHvIYJzy2lc
+X-Google-Smtp-Source: AGHT+IHuSmL/ymrKFv3dE1AjkfE2DbcrkpwnD4enL7EQqezvrPVir4e1owWjmqTMnPn8ZF+LuoTYOA==
+X-Received: by 2002:a2e:a286:0:b0:2eb:552a:f6d0 with SMTP id 38308e7fff4ca-2ec3cfffa27mr8508261fa.52.1718775071217;
+        Tue, 18 Jun 2024 22:31:11 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422870e96f9sm253628215e9.26.2024.06.18.22.31.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 22:31:11 -0700 (PDT)
+Message-ID: <4ee7d979736bb9e1518ce78ccb4a5b1a3766289c.camel@gmail.com>
+Subject: Re: [PATCH 3/8] iio: add child nodes support in iio backend
+ framework
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Olivier Moysan <olivier.moysan@foss.st.com>, Nuno Sa
+ <nuno.sa@analog.com>,  Jonathan Cameron <jic23@kernel.org>, Lars-Peter
+ Clausen <lars@metafoo.de>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 19 Jun 2024 07:31:10 +0200
+In-Reply-To: <20240618160836.945242-4-olivier.moysan@foss.st.com>
+References: <20240618160836.945242-1-olivier.moysan@foss.st.com>
+	 <20240618160836.945242-4-olivier.moysan@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9f465ec4-32b9-4cd8-89de-a57a99880360@amd.com>
 
-On Tue, Jun 18, 2024 at 11:56:50AM -0500, Mario Limonciello wrote:
-> On 6/18/2024 08:14, Mika Westerberg wrote:
-> > Hi Mario,
-> > 
-> > On Thu, Jun 13, 2024 at 12:42:00AM -0500, Mario Limonciello wrote:
-> > > Gary has reported that when a dock is plugged into a system at the same
-> > > time the autosuspend delay has tripped that the USB4 stack malfunctions.
-> > > 
-> > > Messages show up like this:
-> > > 
-> > > ```
-> > > thunderbolt 0000:e5:00.6: ring_interrupt_active: interrupt for TX ring 0 is already enabled
-> > > ```
-> > > 
-> > > Furthermore the USB4 router is non-functional at this point.
-> > 
-> > Once the USB4 domain starts the sleep transition, it cannot be
-> > interrupted by anything so it always should go through full sleep
-> > transition and only then back from sleep.
-> > 
-> > > Those messages happen because the device is still in D3cold at the time
-> > > that the PCI core handed control back to the USB4 connection manager
-> > > (thunderbolt).
-> > 
-> > This is weird. Yes we should be getting the wake from the hotplug but
-> > that should happen only after the domain is fully in sleep (D3cold). The
-> > BIOS ACPI code is supposed to deal with this.
-> 
-> Is that from from experience or do you mean there is a spec behavior?
-> 
-> IE I'm wondering if we have different "expectations" from different
-> company's hardware designers.
+On Tue, 2024-06-18 at 18:08 +0200, Olivier Moysan wrote:
+> Add an API to support IIO generic channels binding:
+> http://devicetree.org/schemas/iio/adc/adc.yaml#
+> This new API is needed, as generic channel DT node
+> isn't populated as a device.
+> Add devm_iio_backend_subnode_get() to allow an IIO device
+> backend consumer to configure backend phandles in its
+> child nodes.
+>=20
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> ---
 
-The spec and the CM guide "imply" this behaviour as far as I can tell,
-so that the "sleep event" is done completely once started. I guess this
-can be interpreted differently too because it is not explicitly said
-there.
+Again small notes nits. With it:
 
-Can you ask AMD HW folks if this is their interpretation too? Basically
-when we get "Sleep Ready" bit set for all the routers in the domain and
-turn off power (send PERST) there cannot be wake events until that is
-fully completed.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-There is typically a timeout mechanism in the BIOS side (part of the
-power off method) that waits for the PCIe links to enter L2 before it
-triggers PERST. We have seen an issue on our side that if this L2
-transition is not completed in time a wake event triggered but that was
-a BIOS issue.
+> =C2=A0drivers/iio/industrialio-backend.c | 48 ++++++++++++++++++++++-----=
+---
+> =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 2 ++
+> =C2=A02 files changed, 38 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
+o-
+> backend.c
+> index d3db048c086b..e9d29131634d 100644
+> --- a/drivers/iio/industrialio-backend.c
+> +++ b/drivers/iio/industrialio-backend.c
+> @@ -575,17 +575,8 @@ static int __devm_iio_backend_get(struct device *dev=
+, struct
+> iio_backend *back)
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> -/**
+> - * devm_iio_backend_get - Device managed backend device get
+> - * @dev: Consumer device for the backend
+> - * @name: Backend name
+> - *
+> - * Get's the backend associated with @dev.
+> - *
+> - * RETURNS:
+> - * A backend pointer, negative error pointer otherwise.
+> - */
+> -struct iio_backend *devm_iio_backend_get(struct device *dev, const char =
+*name)
+> +static struct iio_backend *__devm_iio_backend_node_get(struct device *de=
+v, const
+> char *name,
+> +						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct fwnode_handle *node)
 
-> > > The issue is that it takes time for a device to enter D3cold and do a
-> > > conventional reset, and then more time for it to exit D3cold.
-> > > 
-> > > This appears not to be a new problem; previously there were very similar
-> > > reports from Ryzen XHCI controllers.  Quirks were added for those.
-> > > Furthermore; adding extra logging it's apparent that other PCI devices
-> > > in the system can take more than 10ms to recover from D3cold as well.
-> > 
-> > They can take anything up to 100ms after the link has trained.
-> 
-> Right; so currently there is nothing checking they really made it back to D0
-> after calling pci_power_up().  I feel like we've "mostly" gotten lucky.
+I would call it __devm_iio_backend_fwnode_get(). Also the parameter node ->=
+ fwnode.
 
-We do have pci_bridge_wait_for_secondary_bus() there but I guess that's
-not called for integrated PCIe endpoints such as xHCI and the USB4 Host
-Interface. They too enter D3cold once power is turned off so I agree we
-might have gotten lucky here with the D3hot 10ms delay.
+> =C2=A0{
+> =C2=A0	struct fwnode_handle *fwnode;
+> =C2=A0	struct iio_backend *back;
+> @@ -602,7 +593,7 @@ struct iio_backend *devm_iio_backend_get(struct devic=
+e *dev,
+> const char *name)
+> =C2=A0		index =3D 0;
+> =C2=A0	}
+> =C2=A0
+> -	fwnode =3D fwnode_find_reference(dev_fwnode(dev), "io-backends", index)=
+;
+> +	fwnode =3D fwnode_find_reference(node, "io-backends", index);
+> =C2=A0	if (IS_ERR(fwnode)) {
+> =C2=A0		dev_err_probe(dev, PTR_ERR(fwnode),
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "Cannot get Firmware reference\n"=
+);
+> @@ -625,8 +616,41 @@ struct iio_backend *devm_iio_backend_get(struct devi=
+ce *dev,
+> const char *name)
+> =C2=A0	fwnode_handle_put(fwnode);
+> =C2=A0	return ERR_PTR(-EPROBE_DEFER);
+> =C2=A0}
+> +
+> +/**
+> + * devm_iio_backend_get - Device managed backend device get
+> + * @dev: Consumer device for the backend
+> + * @name: Backend name
+> + *
+> + * Get's the backend associated with @dev.
+> + *
+> + * RETURNS:
+> + * A backend pointer, negative error pointer otherwise.
+> + */
+> +struct iio_backend *devm_iio_backend_get(struct device *dev, const char =
+*name)
+> +{
+> +	return __devm_iio_backend_node_get(dev, name, dev_fwnode(dev));
+> +}
+> =C2=A0EXPORT_SYMBOL_NS_GPL(devm_iio_backend_get, IIO_BACKEND);
+> =C2=A0
+> +/**
+> + * devm_iio_backend_subnode_get - Device managed backend device get
+> + * @dev: Consumer device for the backend
+> + * @name: Backend name
+> + * @node: Firmware node of the backend consumer
+> + *
+> + * Get's the backend associated with @dev.
+> + *
+> + * RETURNS:
+> + * A backend pointer, negative error pointer otherwise.
+> + */
+> +struct iio_backend *devm_iio_backend_subnode_get(struct device *dev, con=
+st char
+> *name,
+> +						 struct fwnode_handle *node)
+
+Again, for consistency devm_iio_backend_fwnode_get(). And node -> fwnode
+
+- Nuno S=C3=A1
+
+
 
