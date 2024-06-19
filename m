@@ -1,135 +1,140 @@
-Return-Path: <linux-kernel+bounces-221127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E68A90EF40
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:42:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF0A90EF45
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 889C11C23EFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:42:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B3AA1C242C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C652514E2D7;
-	Wed, 19 Jun 2024 13:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9F214EC42;
+	Wed, 19 Jun 2024 13:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UzfYs/eZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="W/lMsG15"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D28278C73;
-	Wed, 19 Jun 2024 13:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC941E492;
+	Wed, 19 Jun 2024 13:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718804552; cv=none; b=CSN8osZ8zqRLU/zU55/nhs349vBatdeGoeTispndunT2qp1ZcQmAHiqiR+g784j4KBxCKTkbc8zSklW7GT/KVG0irjrGPScmS23im1E7JbYcH4TiiJea5v8TIRbpLEEc85U2AeQ/85JiYhMFJPnhQwXxXOc7dkJ3o9rcd+pULAM=
+	t=1718804607; cv=none; b=nY6owUUYBCJ6UdynjMvFWxYGGuvPPS1gj1hQEFqWFUn5cv7G+cR8S/U1V8bAz2bJ7vNwmWIpzR38+K9sM6YtetPSj/kN/sKMylMu8kd6LrH4i2EF78oAkY3x+Z7kJZOfII81A8NOp6/Oh8elTD4Z8gHnEarU0tCGY7sUcsSLMxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718804552; c=relaxed/simple;
-	bh=9r5Ceks4s8d+tHDH0o9Hm+jP9uqytN7Zxvu/USoXgjg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bv0HEr54f/Puj7/kkCoeR6gM72c4ZBxj3zZr41gVa4BQ2Ho+D2rY5BA3xHHllmvFpJ4p+SX4Sw1+AOvG1uZl7LL+gWFWT7hnIEBM+x44DiugquB90e6BAjX7+1Avf1unnjgdAgylXGemm1KFF+Rw6IvY9GuGD8emzC1PhjRi5ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UzfYs/eZ; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718804551; x=1750340551;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9r5Ceks4s8d+tHDH0o9Hm+jP9uqytN7Zxvu/USoXgjg=;
-  b=UzfYs/eZO+8QLLtrSZ+XM9DCbFSzYgJwWaXbfD+vDRetp98mwIRLKRIx
-   yh0UOJ8kG4Gcd/mX/K1eqCUVfvCZ+4FCwRtjNUWg+YWO67ugaj9Ny+WCc
-   F9ouAJU4lm+djmpiIHSIALwrjvzBVB71NuhSglk56ijAdTCdhqv11d8vh
-   D7hNS+sOoHvOrHxwwBmC5P7pDBMPQqd1Z44gka/SUuFg20Uf4kHvzja/M
-   ZFVwb57+Cm5YWEkFd/EScpkRhFPGXBogo7blBer0eBpjNp9eW+tjLI0fh
-   tXtrammZiZGTVfbJsHsDHg8jd7MZprrElGtwkZeRZ9K5TjQ5e3emykNVb
-   g==;
-X-CSE-ConnectionGUID: XoBXw+wcTXKlu4dPlVWQ1w==
-X-CSE-MsgGUID: qz/72pKYSMG0qyxyMh3XXQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="15577283"
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="15577283"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 06:42:23 -0700
-X-CSE-ConnectionGUID: zwlqVW2gR3mlObMXteFd9A==
-X-CSE-MsgGUID: s15hi+FUQGeDZBs4Rf3zLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="42603106"
-Received: from marquiz-s-2.fi.intel.com (HELO [10.237.72.58]) ([10.237.72.58])
-  by orviesa008.jf.intel.com with ESMTP; 19 Jun 2024 06:42:18 -0700
-Message-ID: <51c1faeb-c54d-4ee4-b913-50aed7a0909c@linux.intel.com>
-Date: Wed, 19 Jun 2024 16:42:16 +0300
+	s=arc-20240116; t=1718804607; c=relaxed/simple;
+	bh=dUSlc6Lg5vWg8y4LNfZgdjLzNa2vJIlTrGtGI9EZzdM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BjZt/iJGTwg6+GNJ/Sh957cdAEiaMU2qwt3Y/V/w0ccuCKaaQZX4nRUC9sr35ukNyPu7an8kJ7n2t6LhG9gKB+5pWMiqAhcx2BajR6BKCbm7TEJteHm0nGHOSacLAyofUgo2jmvqapEWWg89O32xgSTi/EfeeritHiU6SXv0NwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=W/lMsG15; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 4722E8839C;
+	Wed, 19 Jun 2024 15:43:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1718804595;
+	bh=LxutYi9m1J9PLpwUyDonpTyGQDOBfl75a2yDTGQqVDY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=W/lMsG15BMmpqQYBrjjOOXHzK/ljzRuZaZV9LWCpGOWLSA6MRLHyMAwN2yRoaZx8p
+	 8SlcIVuLfTHY1cSZwsqIMALmsDWmgM5dV3W3go7qtYuA1tf/FxSA3pZPvuMzjOc4s3
+	 P9dBD/s218dI9X70EcgOkzZeG8czoRI6GxXY8wCSKozKKsXQy5d0PfYLCk2kFdZ1DK
+	 kJhScT7v5Mr4l6jgbVEk21g9wdkfpGH20xD+5YcFI7CrMB54WWe0EzfQ8TvUc1eZla
+	 ovnl6pqzC9j6FLfS04dn2JNlAwsBYr04V7VGvoLkX+F5ZjeNYB/Ov0H5aHrdv3uyD9
+	 ywTVU78zkMYfw==
+From: Lukasz Majewski <lukma@denx.de>
+To: Vladimir Oltean <olteanv@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Tristram.Ha@microchip.com,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	Casper Andersson <casper.casan@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH v2 net-next] net: dsa: Allow only up to two HSR HW offloaded ports for KSZ9477
+Date: Wed, 19 Jun 2024 15:42:48 +0200
+Message-Id: <20240619134248.1228443-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: i2c: dw: Document compatible
- thead,th1520-i2c
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
- Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
- Drew Fustini <dfustini@tenstorrent.com>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- Conor Dooley <conor@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Conor Dooley <conor.dooley@microchip.com>
-References: <20240618-i2c-th1520-v3-0-3042590a16b1@bootlin.com>
- <20240618-i2c-th1520-v3-1-3042590a16b1@bootlin.com>
- <f427b28c-420b-4174-a670-70f626f8061e@linux.intel.com>
- <a55524d8-40f0-44ba-a42f-c63a487ccb45@kernel.org>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <a55524d8-40f0-44ba-a42f-c63a487ccb45@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On 6/19/24 10:39 AM, Krzysztof Kozlowski wrote:
-> On 19/06/2024 08:40, Jarkko Nikula wrote:
->> Hi
->>
->> On 6/18/24 10:42 AM, Thomas Bonnefille wrote:
->>> Add documentation for compatible string thead,th1520-i2c which can be
->>> used specifically for the TH1520 SoC.
->>>
->>> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
->>> Acked-by: Conor Dooley <conor.dooley@microchip.com>
->>> ---
->>>    Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml | 4 ++++
->>>    1 file changed, 4 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
->>> index d9293c57f573..60035a787e5c 100644
->>> --- a/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
->>> +++ b/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml
->>> @@ -33,6 +33,10 @@ properties:
->>>              - const: snps,designware-i2c
->>>          - description: Baikal-T1 SoC System I2C controller
->>>            const: baikal,bt1-sys-i2c
->>> +      - description: T-HEAD TH1520 SoCs I2C controller
->>> +        items:
->>> +          - const: thead,th1520-i2c
->>> +          - const: snps,designware-i2c
->>>    
->>
->> Your comment below makes me thinking is this change needed? So is it
->> enough to specify "snps,designware-i2c" for the compatible string in
->> patch 2/3?
-> 
-> SoC specific compatible is always required (see writing bindings doc).
-> 
-Fair enough.
+The KSZ9477 allows HSR in-HW offloading for any of two selected ports.
+This patch adds check if one tries to use more than two ports with
+HSR offloading enabled.
 
-Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+The problem is with RedBox configuration (HSR-SAN) - when configuring:
+ip link add name hsr0 type hsr slave1 lan1 slave2 lan2 interlink lan3 \
+	supervision 45 version 1
+
+The lan1 (port0) and lan2 (port1) are correctly configured as ports, which
+can use HSR offloading on ksz9477.
+
+However, when we do already have two bits set in hsr_ports, we need to
+return (-ENOTSUPP), so the interlink port (lan3) would be used with
+SW based HSR RedBox support.
+
+Otherwise, I do see some strange network behavior, as some HSR frames are
+visible on non-HSR network and vice versa.
+
+This causes the switch connected to interlink port (lan3) to drop frames
+and no communication is possible.
+
+Moreover, conceptually - the interlink (i.e. HSR-SAN port - lan3/port2)
+shall be only supported in software as it is also possible to use ksz9477
+with only SW based HSR (i.e. port0/1 -> hsr0 with offloading, port2 ->
+HSR-SAN/interlink, port4/5 -> hsr1 with SW based HSR).
+
+Fixes: 5055cccfc2d1 ("net: hsr: Provide RedBox support (HSR-SAN)")
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+
+---
+Changes for v2:
+- Add more verbose description with Fixes: tag
+- Check the condition earlier and remove extra check if SoC is ksz9477
+- Add comment in the source code file
+---
+ drivers/net/dsa/microchip/ksz_common.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+index 2818e24e2a51..72bb419e34b0 100644
+--- a/drivers/net/dsa/microchip/ksz_common.c
++++ b/drivers/net/dsa/microchip/ksz_common.c
+@@ -3906,6 +3906,13 @@ static int ksz_hsr_join(struct dsa_switch *ds, int port, struct net_device *hsr,
+ 		return -EOPNOTSUPP;
+ 	}
+ 
++	/* KSZ9477 can only perform HSR offloading for up to two ports */
++	if (hweight8(dev->hsr_ports) >= 2) {
++		NL_SET_ERR_MSG_MOD(extack,
++				   "Cannot offload more than two ports - use software HSR");
++		return -EOPNOTSUPP;
++	}
++
+ 	/* Self MAC address filtering, to avoid frames traversing
+ 	 * the HSR ring more than once.
+ 	 */
+-- 
+2.20.1
 
 
