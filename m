@@ -1,93 +1,93 @@
-Return-Path: <linux-kernel+bounces-220821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B03390E7AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:58:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F69290E7B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 054B0289080
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:58:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B9AE1C2175E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204688249E;
-	Wed, 19 Jun 2024 09:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7B782483;
+	Wed, 19 Jun 2024 09:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BgpkkD+z"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GmO5PGXN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E21D80C13;
-	Wed, 19 Jun 2024 09:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4005C80624;
+	Wed, 19 Jun 2024 09:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718791128; cv=none; b=ry1UmiUdcr+44k3tKOQGCuFkxhycZu/zm36oa2hQ6PwtLQ6xgLPa+ur0OdPlR0ezkihRRtqeJG3UJ8lv0RTi9XkoerHLP3TQsI4ETlYoxkmfDZUOIAG4NAuBzwoJkI6veGKVf5I6pSceiHy0akq1rzBa1ZhQ86rB0l8iKx8fU9M=
+	t=1718791171; cv=none; b=r3kAYArMNPkxZJ67aUCrJzyJXYL45eskegNlNoHu+5hpLcK7tZzhOU6Aa/Lwzkjce1UxVtzWEvDUWGsoMEZTfbu6VCCmJPCdcaOrtX3HAmV3tqPO1eK6COtvlc5vCDdADW7oVXn5bQb07KDFhWQaPRXuaEsa9UCPMGwHlKGXEwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718791128; c=relaxed/simple;
-	bh=3DgwcQEpJg+efanAve5I4mMMZoiHaWnUZB/zpU57N9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GEOKCOZcJDizfzp4yjJ+nFQmVf8/6eERLGZdbM0RMszPZqOch12OGhfO2NweIUkSoAxMmS/7U1oL/3jgwKA5fJgan+4xh5YQXkGW/1dHAnK/C+TfDvllA2CX4z6m2STaOsqf7kwKJQLGnAaA6MdkdVaAJQhojiO5afMl8a043To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BgpkkD+z; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718791125;
-	bh=3DgwcQEpJg+efanAve5I4mMMZoiHaWnUZB/zpU57N9o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BgpkkD+zwBWb+KtGZW8JOKmhG6ZpcccQWu6eAPU6eRO9Pi6z4f3mDI8Y0Zm0IFiih
-	 QotGPFng1sbxYrqlgtu0MA9FIiNjbhqKyTcu0kC3Kcz9LZ1jG5TQS1buvZIXGD4UEF
-	 kLszpPyzgKOnATlbm8jy0Tb7Bm89D+3ua4/1F2Z5ZQCGrd6qTKZnPubS9NuFOlsMvO
-	 FtOVkJHbRW8jqWg3Qd4vXH0+MP26JIbeZSCsS/sywr5dqmBBmdwFno/HzkvViErNMz
-	 HX4rGVwUHmyVuaRSjHVHcqF1vPt6PzkynBZuYRSlINrg0/vyTMXkDwol29W2IcIDV6
-	 MDJbvV2I7q2bg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 985913782163;
-	Wed, 19 Jun 2024 09:58:43 +0000 (UTC)
-Message-ID: <6ba7aad1-0113-4e07-9420-18369ec6a79b@collabora.com>
-Date: Wed, 19 Jun 2024 11:58:42 +0200
+	s=arc-20240116; t=1718791171; c=relaxed/simple;
+	bh=rVkec0lmYTeD+HpXP+XLA09ezAGhgUX+iEtNr7e0C8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g+9Ti1aT1ZXmaEqatj7YhydOQwG5VXSndCMwYP03E5JErh2hppVhcrHfPMRPI6lIgzCWjw0xhrsmcysMf7DOAELRWZtciy3uqdqZwctI8fjAMOWgVChl6H8xzQknb5o24POCX7dR9rGRygb2p9gw5OJXSQ+L3DfRv586X8T+pos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GmO5PGXN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 281A5C2BBFC;
+	Wed, 19 Jun 2024 09:59:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718791170;
+	bh=rVkec0lmYTeD+HpXP+XLA09ezAGhgUX+iEtNr7e0C8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GmO5PGXNDpdmKwsPGSiskI0naNkfBwnko/Cmwg3mM8rDLVKWfkATunk7ezM4pWM4D
+	 orJsnpcjABl3Y335KrMajXI7BNqscmYGKgM0gczpaRIT+MAyX8AwaKWhO4a4GhNjom
+	 1p44htm7sl+q3LN5hASpFpvKc7AAfIo5+4iIkjSHBI/n18zdp517sakDtxnDscFh6H
+	 g5g7om0vzD/in16jyDsqjA1nHxWvojRqP+aG4SRRouta+64idNQ11uTg0e2cx3+3tf
+	 XgcMsn7pXVa4NhCUwN7YQvVAFZlzjwtYue5NTnaYhe3WU21Yb/Ktis3XGt9xSmdao8
+	 mFixNtK48uwbg==
+Date: Wed, 19 Jun 2024 10:59:23 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: adrian.hunter@intel.com, aou@eecs.berkeley.edu, conor+dt@kernel.org,
+	guoren@kernel.org, inochiama@outlook.com, jszhang@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
+	paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com, haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com, tingzhu.wang@sophgo.com,
+	Chen Wang <unicorn_wang@outlook.com>
+Subject: Re: [PATCH v4 4/4] riscv: dts: add mmc controllers for Sophgo SG2042
+ SoC
+Message-ID: <20240619-tissue-cornmeal-b8fde286df94@spud>
+References: <cover.1718697954.git.unicorn_wang@outlook.com>
+ <e2d3b19e06fa29116b8032addc70c8dc1ec3866e.1718697954.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v5 15/16] arm64: dts: mediatek: add afe support for
- mt8365 SoC
-To: Alexandre Mergnat <amergnat@baylibre.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Lee Jones <lee@kernel.org>,
- Flora Fu <flora.fu@mediatek.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-References: <20240226-audio-i350-v5-0-54827318b453@baylibre.com>
- <20240226-audio-i350-v5-15-54827318b453@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240226-audio-i350-v5-15-54827318b453@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Il 14/06/24 09:27, Alexandre Mergnat ha scritto:
-> Add audio front end support of MT8365 SoC.
-> Update the file header.
-> 
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="oARMAadtnvvW9ND+"
+Content-Disposition: inline
+In-Reply-To: <e2d3b19e06fa29116b8032addc70c8dc1ec3866e.1718697954.git.unicorn_wang@outlook.com>
 
 
+--oARMAadtnvvW9ND+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+
+$subject: riscv: dts: add mmc controllers for Sophgo SG2042 SoC
+
+Could you add a sopho: prefix in that please?
+
+--oARMAadtnvvW9ND+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnKr+wAKCRB4tDGHoIJi
+0uQYAQCLDnQ8kuVplcSQhCJRGya0nlVeK4NRhWCT2y1i+ALS/QEA3SIUtrg6cbYw
+l1eeyKul0LIKuHtMo89emedzhuEbdQ8=
+=WwOe
+-----END PGP SIGNATURE-----
+
+--oARMAadtnvvW9ND+--
 
