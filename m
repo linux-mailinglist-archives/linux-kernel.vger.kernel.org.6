@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-221087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F8E90EBF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:03:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D95190EC0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0986C1F2127A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:03:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5579F1F22DD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D0614D705;
-	Wed, 19 Jun 2024 13:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761A1143C4E;
+	Wed, 19 Jun 2024 13:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="ihpkXdXe"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vcY55Q7N"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0916F13DB90;
-	Wed, 19 Jun 2024 13:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7BF143873;
+	Wed, 19 Jun 2024 13:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718802117; cv=none; b=DlHmNBwkj3ngpzsKm5sfrIbz/OjL9d32Cvxuwjk6oJo78EHdbtXb3JJgolkh9RYJKk4ked49ztK06u3wS8nBmQcnfABo+gxwHNYuLZWCmVuVKpVOV0KDoHbcFRETjNoXzlOuqQ9QEzHety51OcV2dQx8/BO0lOINQ4SyEKuzDn4=
+	t=1718802175; cv=none; b=MKLano0x43GKybgfmKm61DFA5H7WTKCGqbqwcbv4V2gQzF684QEJKO9iWZ+U754IhYhU5cJsEb6RXrwe/zsJ4syZXGDX82VETysTWrk3DVpMiNsBQ0Qnwhm0cX8A4UQoNt5wR7pUWFQmnjEHds4vIk6GcbaX5eTuJjXaNFg/em4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718802117; c=relaxed/simple;
-	bh=Wqj4fkKWDCEh/pzYyA3u8TD2BiyQQ36+PhN66S75nf8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hB0rtRXazHYqdEnZ+B3E24fGpuf6Lrk1VwpOZ3YtQX3UXa3W/i3t3w4ZRLp/5sc5E2V6+C6m3iMQE/ubNZFSlG4j2iMiIjDmHcCddYVuHEEuUaPBJcsostT24YSlRtg1t7eOisD6FBW/GMum4MSrQOIkcvhV4QY4uGPHp14AW08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=ihpkXdXe; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A32EAA0B51;
-	Wed, 19 Jun 2024 15:01:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=xC0P4So+IH1EdQB9fWJmhxeSCfO4o+MbyG70cV7lM6E=; b=
-	ihpkXdXeHFk3LSVzjH9VgfW2HFy6e7K4WA8Vn0MsHeakxqZp9xTDvnbw8CxYbBCN
-	vi/zOjB36qnXkR95fcSe0OwPg/2V+DIt5lFnCx1/qV6OEa2c+lQX49NfS0R+9Mwn
-	hsVisuZRzvYZ+NqQgNPBkDj6a1mxfBCmK5qDfzB0vjHVvJmQrdkAANVRXarC/Odw
-	Qs6Sx1IQNsUjq/hbF8FEm6ESDz0Q97GEMROvXkCu6qjSSHPCwG5aAhMWz07DIBPN
-	t8DUCleKUKU1xdXVBw7u6ZYLGDlpJj4vfsnrUQSTHguUrUgLHetf8WHP12ugnLzs
-	35a90OqY/1+KKPZgd4n86asE5A/TWc+JHOluiwr1QEkURBB8uDWlHiVup49pTAiI
-	zBKVFXPCW9CuM0STk9ZUn0rJJQLltgoPrWLl5YjH2vyBxZ3Hu4fZXqiv2U3yDR0F
-	1eWy4uHPRZ4V+bDnvyp5NragSedOPBJAnqDtyJVRz0a5HCeuEniDgN70n/AA7nM0
-	TWlHidR4Y/G0yUVtZoJwwoG1ftlvIrAs+bFmuXig6Xyg5EM8tvTjAfF8xNZqoVqE
-	syAFMxKcaTn+krzyqeI43NehvQdPKfURKBvL3T/n6w1R3+om9+22syKaWANQOm+j
-	Zm8eENMnldNCLH+y/5tDs79a3p1q6cFMuI1NBvS2xBY=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	<linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-Subject: [PATCH resubmit] rtc: interface: Add RTC offset to alarm after fix-up
-Date: Wed, 19 Jun 2024 15:01:16 +0200
-Message-ID: <20240619130115.2799118-1-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718802175; c=relaxed/simple;
+	bh=Jvol2e9lzek2jg8e0ND3FZQETfpH3FrvjCpbr4/IHBc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M/x/j+D6AqmknMOPFgUmYzyjonFvBOPF7SM3Zx7bjcm7Kjc5alnExI3KMn0o7jKLsPMCebIYZ17mddjWvj1EFCthQEPJah/eScHEOb99e2OFTNhHoQbzJWKWbOKsPNA1LwAgyWGiwNfywti2Bexj54Wdp7f/jRHYHAZIlImSmz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vcY55Q7N; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45JD2e2l124608;
+	Wed, 19 Jun 2024 08:02:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718802161;
+	bh=4INkyI/sA/RaVNPzbecxi0GUkLiFmY7SAMUpTE6Nhj0=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=vcY55Q7N6FUWYgG6ivM0o6CZAyEHiPcj3x1AKrhrCmCBhQrgmhoTpscniMlgAjKkw
+	 OihOQdtdCzKcqj1Fn0Hhqx45J9GrkPE15uDLY4LfHe0G5dWpke0IEugAZmbZ4ourEZ
+	 Zkn7cuCNkXQW1Vfna44ppsZvQZ4+o2Vo0KmsuDuA=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45JD2eK6040475
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 19 Jun 2024 08:02:40 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
+ Jun 2024 08:02:40 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 19 Jun 2024 08:02:40 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45JD2eDU124779;
+	Wed, 19 Jun 2024 08:02:40 -0500
+Date: Wed, 19 Jun 2024 08:02:40 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Dhruva Gole <d-gole@ti.com>
+CC: Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Tero Kristo <kristo@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Vaishnav Achath <vaishnav.a@ti.com>,
+        Jared McArthur <j-mcarthur@ti.com>, Bryan Brattlof <bb@ti.com>
+Subject: Re: [PATCH 1/3] arm64: dts: ti: k3-pinctrl: Define a generic GPIO
+ MUX Mode
+Message-ID: <20240619130240.azkb4fwhrnwlsv45@uneasily>
+References: <20240618173123.2592074-1-nm@ti.com>
+ <20240618173123.2592074-2-nm@ti.com>
+ <20240619045258.xy4pwqv6ut5wzk63@dhruva>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1718802111;VERSION=7972;MC=2560499276;ID=565953;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2945A129576D7D61
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240619045258.xy4pwqv6ut5wzk63@dhruva>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-`rtc_add_offset()` is called by `__rtc_read_time()`
-and `__rtc_read_alarm()` to add the RTC's offset to
-the raw read-outs from the device drivers. However,
-in the latter case, a fix-up algorithm is run if
-the RTC device does not report a full `struct rtc_time`
-alarm value. In that case, the offset was forgot to be
-added.
+On 10:22-20240619, Dhruva Gole wrote:
+> Hi Nishanth,
+> 
+> On Jun 18, 2024 at 12:31:21 -0500, Nishanth Menon wrote:
+> > Introduce a GPIO mux mode macro for easier readability. All K3 devices
+> > use mux mode 7 to switch to GPIO mux.
+> > 
+> > Signed-off-by: Nishanth Menon <nm@ti.com>
+> > ---
+> >  arch/arm64/boot/dts/ti/k3-pinctrl.h | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
+> > index 4cd2df467d0b..b1a0415e6611 100644
+> > --- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
+> > +++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
+> > @@ -38,6 +38,8 @@
+> >  #define PIN_DEBOUNCE_CONF5	(5 << DEBOUNCE_SHIFT)
+> >  #define PIN_DEBOUNCE_CONF6	(6 << DEBOUNCE_SHIFT)
+> >  
+> > +#define PIN_GPIO_MUX_MODE	(7)
+> > +
+> 
+> While I do agree that this is a standard thing, don't you think that
+> updating it everywhere else (k3 DTs) makes sense? Having the number 7 in some
+> places and others having PIN_GPIO_MUX_MODE will give rise to confusion I
+> feel.
+> 
 
-Fixes: fd6792bb022e ("rtc: fix alarm read and set offset")
 
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
- drivers/rtc/interface.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Yes, thinking again, we will repeat using this for other SoCs as well for
+gpio-ranges. I think it might be better if we did this instead:
 
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index 1b63111cdda2..db8dffffed91 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -273,12 +273,11 @@ int __rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
- 		if (err)
- 			return err;
- 
- 		/* full-function RTCs won't have such missing fields */
- 		if (rtc_valid_tm(&alarm->time) == 0) {
--			rtc_add_offset(rtc, &alarm->time);
--			return 0;
-+			goto done;
- 		}
- 
- 		/* get the "after" timestamp, to detect wrapped fields */
- 		err = rtc_read_time(rtc, &now);
- 		if (err < 0)
-@@ -378,10 +377,12 @@ int __rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
- done:
- 	if (err && alarm->enabled)
- 		dev_warn(&rtc->dev, "invalid alarm value: %ptR\n",
- 			 &alarm->time);
- 
-+	rtc_add_offset(rtc, &alarm->time);
-+
- 	return err;
- }
- 
- int rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
- {
+/* Default mux configuration for gpio-ranges use with pinctrl */
+#define PIN_GPIO_RANGE_IOPAD  (PIN_INPUT | 7)
+
+* Clears up the understanding what the define is for.
+* Consistent usage across K3 SoCs.
+* Prevents mis-understanding where to use the macro.
+
+Thoughts?
 -- 
-2.34.1
-
-
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
