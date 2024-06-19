@@ -1,69 +1,72 @@
-Return-Path: <linux-kernel+bounces-220836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB8A90E7F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:12:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599A890E7FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:12:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A76C282B27
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:12:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB9CAB21A53
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EF5824BB;
-	Wed, 19 Jun 2024 10:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F5212DDBF;
+	Wed, 19 Jun 2024 10:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Woqa+H3o"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jOQFWAm/"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1EC48248B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AED2824B2
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718791932; cv=none; b=co460LhIwEecrWW53kt1kA9DH+b7h8lPPlJ+76otbmKm62WpnxuIc2lwsLzAnowpLOKL0LCPKx50znF8g1JQO3n29CtEXfEt+geF/y5QktQP5m9P75biHu4v/UdkuMwYqnRPxdn8fL0X/F4diQo1AYqQxF26V+tkwEehHwjDIyI=
+	t=1718791933; cv=none; b=pHXl5Gw96rah6tQKUT2T1f1jVUGBY15at8C+DJAdUqTjY/+KpLwN3hOIJd/8gU2fcYyKICUKjYbWtb1xdozbaTjcM0MMSMZYM3FiUM1qqHGwqijz6hK5/HQ7A0m0lXmNkyxo9V+vwBgh42Qt/m4TL1Uyp+6JBdEwB+tjLNVMcec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718791932; c=relaxed/simple;
-	bh=kHY1vH6BBkxxZFRnYufEk6fxcSBFGkIlkEUUcK6K/FU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gI94lwWc2R7tzBpFW11vWy5LlULu9QBqepQhirxTrMidsgCb1/3L+dt3jJKR8rdzdNwI206yQb8kkGZtqKQgU0dtHFLB7stLRkCs4RhiOWbdI2t+kZ4ZkqH2+F1jmEmYfkVxfY2LMHDsObFXR12chuIGvg9epV2aTUFB66DxtHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Woqa+H3o; arc=none smtp.client-ip=209.85.208.181
+	s=arc-20240116; t=1718791933; c=relaxed/simple;
+	bh=URUfwaiOSrPZlfy433XXHQY/TFA8jECx1YrYlu6D9CI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WNuv0EVDSUzqyJoNueM4GjkmhYjTa19YHx5OrCR5V1I4f0jJuUNzccZ1CuhHywwkUL54V/ZQgC3M82bCWkR6qmBbMrF1XgCyL4W6aQ5rV/RiFhhJLbj67K1Wr+obJFwKGYUYcUE80OYELNCvEdzBCFXzkW+qD8jP+rys0t0Dt2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jOQFWAm/; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ebe0a81dc8so68632681fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:12:09 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3620ee2cdf7so1117892f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:12:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718791928; x=1719396728; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hcu8+Zif/ccINpaWODxcQKH3yfc3YxmRr6966jXAh7I=;
-        b=Woqa+H3o0qmt4Suf2t8irflv4gE9LfAQ/QX0X8K79Kub54OnhJvowp1YpxSDWI7W1s
-         OxjSvquFhyuVoCn5J+lozPfachdw1EmJ92Pg8fyw82YmVxz6Vb1gLQYgVNTxBa/6mPDo
-         fTWpGLLzQEu6TqOFv5hZYHeq1ekX7/N8INyJNDHSDAz70vHjjpdYasgxWRBikSzN4gWm
-         HeMiDu3xbOeASbM70CayVQQEySQ0nHpVUvl/N5vS0XBqwVCqheL7+zSIp/SLfA2jYF6k
-         4ZecztwEXGz8PA+9azXrKQX/8YUXv5ZCAK+7ESJravPruVcYogqo93qRlmYCDzuZqROl
-         vbGg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718791929; x=1719396729; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T3xON2h2xbVG30yQyF33zsls/t9gOK/543Opt+teOpk=;
+        b=jOQFWAm/5RqhE2aT2QP+7RkqqWRhLX7bqMv5MgYRUJ/n3iPvIGVApFPKSEp53+asBr
+         BsIFozjmDXtZX5hVoNZ4hRHnpeaTgcRqh7Olj/vwZuK4ex4Iqvy8d/uCdr5FUgBoVzxm
+         NKHNwk0ajUg06FI1D5gDXI2iz7XWVEqghoN1FdyfB0a360JS0ovUk3SuINqnMwjvy6gQ
+         yWIKdGsKoKAWYLAlfmJJmFhuNxjK3wYWkKK2hq2EWf8mQ0C8EXHSMLb4iX9TPgo2KaVi
+         vYr9JFB3mBZnu8mkXUmnqRdgcQnB8gYNtwNPQDIB7/qhsJd4kHrqH8va9pJQN5Uv5SL/
+         esNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718791928; x=1719396728;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hcu8+Zif/ccINpaWODxcQKH3yfc3YxmRr6966jXAh7I=;
-        b=vzyyf7t8pZ1/dkTlC1WeC7sP5FQo8NNjekOLxuXGKaFC68d62qmpyH4pAGK0FxEkVF
-         m/XSPyqjYUVg0q0Hj8LWGl3aSa+Ew1pZS1rLmgjCW+V+FTYiE/N76o6mJxGwGZcnRXJW
-         6/Xc8gAVQZP1OelSm12CLAV7xT/YyZub6ByhPa9gN8R8iCSel0rW3mfiAnkYrv/yj43W
-         SqgnJFszNke3kI7eDNX+vQpw3bHXkmCDzyJ6SwHmdPDZ0tnwMPMxb4sqImdQ6HGvao+A
-         cFWWsd7m16mytfv1QmHMs+1kxFKeYJR6w0g9RcWk1JXHqJVzUTk3dqN6wyFdkBMD525G
-         n5yg==
-X-Forwarded-Encrypted: i=1; AJvYcCVg6yrS+ztdsVXt8ofNOnVMJF4hjEpbee5oqVd/z8mPcn4GNowj9bfboh8ZJl1wt2jyUv/IZEkweBlfApBbdiJxCqLyxV3oyIdTej8M
-X-Gm-Message-State: AOJu0Yx8t3SqmBzfglD0o+s/BPeY1Wrwoz9EISb5Z4inTbm/3oR93LQf
-	vMqVdG3s5F8T7WUxNihtMoq19GVPcHxQ5rNd7vxDpyz9Y80NBIdxUni09qZfWCE=
-X-Google-Smtp-Source: AGHT+IEzhMWtxs5cTYTajp8i9SldB6gh0A8ivaB2clHoeVqUAeVMsyroeG07KMstx6mQ8pQMtp+O1Q==
-X-Received: by 2002:a2e:90d1:0:b0:2eb:2e0b:72c with SMTP id 38308e7fff4ca-2ec3ce940c5mr14717371fa.16.1718791927842;
-        Wed, 19 Jun 2024 03:12:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718791929; x=1719396729;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T3xON2h2xbVG30yQyF33zsls/t9gOK/543Opt+teOpk=;
+        b=A5dQZYNUOFZa9bN31pDB2ws8E5Oi1zl1A5bJUQbPJ1BStl7PKlCy5YzNZyUaqEww8p
+         FIWmfzLStZoT2ye76A4AxxXzNDVmq/WHD3sClroTF+PtoHrsXvEpwgk6Q4xz3MHviXkJ
+         0BmY3ttPTTjRFSGGnQWnF7cm0ocHmIDMuaqvT5vqemU/oPkR1TOQskMWuJjsJLLpuWLG
+         QTYZ0VdfJCGFLg3Iaqi0jRyAYo4x04IETSD1TdIhU98KC7j1ORimsvqSU4pwnTjfQ+uW
+         jpNyhDR8DyuoQBvo6FGa49j+1Zy5Wqh4aS8g7mDvBcrLvH7SJhWQIBLowZEP6UXBWozQ
+         VB3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXeb07oa5cNQ40JEYNnmXRXxrM1+uKZUXjwCO30frOtiG20zHpJOhcO2Hdv9DzckcXJFUuDGENj/DT9DY2CSPfUJ4GSlZ885X89Rmfv
+X-Gm-Message-State: AOJu0YxU/4Tfturmv5u495HmX/aDmk9QsyYgTF7JZxFg9uTWz0FQ4aM9
+	vxVDLuzzhEwQVpiu0U3zt+L3nXZXEbvv7VLPvX+qy+KunP/wfBa50gdK3VFLV5tID36nxuuSrjk
+	Zk/k=
+X-Google-Smtp-Source: AGHT+IG2kKR9AJ4Xve9v1M/xcezVMVRX51DSqCLtivR58CHrVK/OVUmA/K+zAtsEnUAD/1LOt9gYfg==
+X-Received: by 2002:a5d:550e:0:b0:35f:2c43:8861 with SMTP id ffacd0b85a97d-3631998f664mr1605544f8f.66.1718791929293;
+        Wed, 19 Jun 2024 03:12:09 -0700 (PDT)
 Received: from localhost (p509153eb.dip0.t-ipconnect.de. [80.145.83.235])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320bcdsm226186795e9.35.2024.06.19.03.12.07
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750ad20bsm16622708f8f.54.2024.06.19.03.12.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 03:12:07 -0700 (PDT)
+        Wed, 19 Jun 2024 03:12:08 -0700 (PDT)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
 To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
 	William Breathitt Gray <wbg@kernel.org>,
@@ -76,10 +79,12 @@ Cc: linux-pwm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Thorsten Scherer <T.Scherer@eckelmann.de>
-Subject: [PATCH v2 0/5] mfd: stm32-timers: Make register definition more flexible
-Date: Wed, 19 Jun 2024 12:11:41 +0200
-Message-ID: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
+Subject: [PATCH v2 1/5] mfd: stm32-timers: Unify alignment of register definition
+Date: Wed, 19 Jun 2024 12:11:42 +0200
+Message-ID:  <da3b7f9af5794d7463aa62cbaa7251abf1af2018.1718791090.git.u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
+References: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,53 +92,205 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1724; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=kHY1vH6BBkxxZFRnYufEk6fxcSBFGkIlkEUUcK6K/FU=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBmcq7erMUf6iircChQ0RcAdlPwtSu8f0VDee7Kn n3MWM2MKluJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZnKu3gAKCRCPgPtYfRL+ TrTCCACLqYUAHkJZT0Tw/SLsxP+jGGK0k7jYsnE8R/rp8lXu7e3RVClxmNFOaUN9xqaQUfTKV1R thDnxrP64UR7FGN9NufoxhW5qJhmwi6FG9pmcjAwCvDqTJBe4k0UvavEtH/y2freKrnVKYZUoIv tcDhHbm2O9AP7a1tvAE5sbS0wIo53nVho728sKSY6yJRjTVj/1PyN+Ev0Kd8ae29xEqtMoCLpQu GAxYhrXrkgQbHQ2YsfTe3Pp8xyJ6uMmRBIbr6LAVbnT2IPcbePU0T1Sn8p5XUS7Xlme8dbG1phD wDtnbmSwF5mY9vILtIlNAoUe7S2pwq3C7hUMppx6gou2E4ts
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11404; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=URUfwaiOSrPZlfy433XXHQY/TFA8jECx1YrYlu6D9CI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBmcq7hDOp2oycl/aTg79uVReGpzfgzpVnaEjxop EKtatm46oaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZnKu4QAKCRCPgPtYfRL+ TtvpB/9WWbNmM+4Fh90FJ67FdiyBqJQvSzqX4/KEuhMnUeeGitAyIJDFoJLnxYk6Ne8Km2sifO0 /LddP279V3TSYUzsGFF6VYv8fFLG7RLv8VYX8Wt3VGbS+mUV26el6qeH7uAKx3qnBavujOSLKKP WmaBKGbsc8kp5NbeD5dFfvqK2uxjofFXvLbNanS9ZmP2z8xgVyqoNxkg5+AAjIuuOsN9pOAHNSM ph3Sbl9KyyWm2+dRW1Rxwr0c0uS6pIfW7k0Gy24z+5/9HIPuQG4+OJnC6Gwz+T7j9yGMh2Qfkk3 bLjt3ZqrB+Pg98Mj0eDMVHoI7JivcKzE9c2HKHfbhmPzN/cD
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Hello,
+Use tabs consistently for indention and properly align register names,
+values and comments. This improves readability (at least for my eyes).
 
-(implicit) v1 is available at
-https://lore.kernel.org/lkml/cover.1718352022.git.u.kleine-koenig@baylibre.com
-.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+ include/linux/mfd/stm32-timers.h | 170 +++++++++++++++----------------
+ 1 file changed, 85 insertions(+), 85 deletions(-)
 
-Changes introduced here:
-
- - Split the patch removing TIM_DIER_CC_IE() and use appropriate subject
-   prefixes. Lee and William didn't like the patch touching both
-   include/linux/mfd/stm32-timers.h and
-   drivers/counter/stm32-timer-cnt.c not having a hint to the counter
-   subsystem (at least that's my interpretation of their feedback).
-   Not mentioning mfd didn't seem to be considerably better in my eyes,
-   so I split this patch.
- - Fix typo noticed by Thorsten.
- - Update subject prefix of the last patch to match what is usually done
-   for pwm.
-
-I have some further updates to the pwm-stm32 driver that will probably
-go in before v6.10-rc1. They shouldn't conflict, still I'd prefer to let
-the pwm patch go in via my tree as I might have some further changes for
-that driver. So if this is merged using the mfd or counter tree, please
-skip the pwm patch. A stable branch would be welcome in this case.
-
-Best regards
-Uwe
-
-
-Uwe Kleine-König (5):
-  mfd: stm32-timers: Unify alignment of register definition
-  mfd: stm32-timers: Add some register definitions with a parameter
-  counter: stm32-timer-cnt: Use TIM_DIER_CCxIE(x) instead of
-    TIM_DIER_CCxIE(x)
-  mfd: stm32-timers: Drop unused TIM_DIER_CC_IE
-  pwm: stm32: Make use of parametrised register definitions
-
- drivers/counter/stm32-timer-cnt.c |   4 +-
- drivers/pwm/pwm-stm32.c           |  22 ++--
- include/linux/mfd/stm32-timers.h  | 179 ++++++++++++++++--------------
- 3 files changed, 107 insertions(+), 98 deletions(-)
-
-base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+diff --git a/include/linux/mfd/stm32-timers.h b/include/linux/mfd/stm32-timers.h
+index 9eb17481b07f..5794110b2b28 100644
+--- a/include/linux/mfd/stm32-timers.h
++++ b/include/linux/mfd/stm32-timers.h
+@@ -12,97 +12,97 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/regmap.h>
+ 
+-#define TIM_CR1		0x00	/* Control Register 1      */
+-#define TIM_CR2		0x04	/* Control Register 2      */
+-#define TIM_SMCR	0x08	/* Slave mode control reg  */
+-#define TIM_DIER	0x0C	/* DMA/interrupt register  */
+-#define TIM_SR		0x10	/* Status register	   */
+-#define TIM_EGR		0x14	/* Event Generation Reg    */
+-#define TIM_CCMR1	0x18	/* Capt/Comp 1 Mode Reg    */
+-#define TIM_CCMR2	0x1C	/* Capt/Comp 2 Mode Reg    */
+-#define TIM_CCER	0x20	/* Capt/Comp Enable Reg    */
+-#define TIM_CNT		0x24	/* Counter		   */
+-#define TIM_PSC		0x28	/* Prescaler               */
+-#define TIM_ARR		0x2c	/* Auto-Reload Register    */
+-#define TIM_CCR1	0x34	/* Capt/Comp Register 1    */
+-#define TIM_CCR2	0x38	/* Capt/Comp Register 2    */
+-#define TIM_CCR3	0x3C	/* Capt/Comp Register 3    */
+-#define TIM_CCR4	0x40	/* Capt/Comp Register 4    */
+-#define TIM_BDTR	0x44	/* Break and Dead-Time Reg */
+-#define TIM_DCR		0x48	/* DMA control register    */
+-#define TIM_DMAR	0x4C	/* DMA register for transfer */
+-#define TIM_TISEL	0x68	/* Input Selection         */
++#define TIM_CR1		0x00			/* Control Register 1			*/
++#define TIM_CR2		0x04			/* Control Register 2			*/
++#define TIM_SMCR	0x08			/* Slave mode control reg		*/
++#define TIM_DIER	0x0C			/* DMA/interrupt register		*/
++#define TIM_SR		0x10			/* Status register			*/
++#define TIM_EGR		0x14			/* Event Generation Reg			*/
++#define TIM_CCMR1	0x18			/* Capt/Comp 1 Mode Reg			*/
++#define TIM_CCMR2	0x1C			/* Capt/Comp 2 Mode Reg			*/
++#define TIM_CCER	0x20			/* Capt/Comp Enable Reg			*/
++#define TIM_CNT		0x24			/* Counter				*/
++#define TIM_PSC		0x28			/* Prescaler				*/
++#define TIM_ARR		0x2c			/* Auto-Reload Register			*/
++#define TIM_CCR1	0x34			/* Capt/Comp Register 1			*/
++#define TIM_CCR2	0x38			/* Capt/Comp Register 2			*/
++#define TIM_CCR3	0x3C			/* Capt/Comp Register 3			*/
++#define TIM_CCR4	0x40			/* Capt/Comp Register 4			*/
++#define TIM_BDTR	0x44			/* Break and Dead-Time Reg		*/
++#define TIM_DCR		0x48			/* DMA control register			*/
++#define TIM_DMAR	0x4C			/* DMA register for transfer		*/
++#define TIM_TISEL	0x68			/* Input Selection			*/
+ 
+-#define TIM_CR1_CEN	BIT(0)	/* Counter Enable	   */
+-#define TIM_CR1_DIR	BIT(4)  /* Counter Direction	   */
+-#define TIM_CR1_ARPE	BIT(7)	/* Auto-reload Preload Ena */
+-#define TIM_CR2_MMS	(BIT(4) | BIT(5) | BIT(6)) /* Master mode selection */
+-#define TIM_CR2_MMS2	GENMASK(23, 20) /* Master mode selection 2 */
+-#define TIM_SMCR_SMS	(BIT(0) | BIT(1) | BIT(2)) /* Slave mode selection */
+-#define TIM_SMCR_TS	(BIT(4) | BIT(5) | BIT(6)) /* Trigger selection */
+-#define TIM_DIER_UIE	BIT(0)	/* Update interrupt	   */
+-#define TIM_DIER_CC1IE	BIT(1)  /* CC1 Interrupt Enable    */
+-#define TIM_DIER_CC2IE	BIT(2)  /* CC2 Interrupt Enable    */
+-#define TIM_DIER_CC3IE	BIT(3)  /* CC3 Interrupt Enable    */
+-#define TIM_DIER_CC4IE	BIT(4)  /* CC4 Interrupt Enable    */
+-#define TIM_DIER_CC_IE(x)	BIT((x) + 1) /* CC1, CC2, CC3, CC4 interrupt enable */
+-#define TIM_DIER_UDE	BIT(8)  /* Update DMA request Enable */
+-#define TIM_DIER_CC1DE	BIT(9)  /* CC1 DMA request Enable  */
+-#define TIM_DIER_CC2DE	BIT(10) /* CC2 DMA request Enable  */
+-#define TIM_DIER_CC3DE	BIT(11) /* CC3 DMA request Enable  */
+-#define TIM_DIER_CC4DE	BIT(12) /* CC4 DMA request Enable  */
+-#define TIM_DIER_COMDE	BIT(13) /* COM DMA request Enable  */
+-#define TIM_DIER_TDE	BIT(14) /* Trigger DMA request Enable */
+-#define TIM_SR_UIF	BIT(0)	/* Update interrupt flag   */
+-#define TIM_SR_CC_IF(x)	BIT((x) + 1) /* CC1, CC2, CC3, CC4 interrupt flag */
+-#define TIM_EGR_UG	BIT(0)	/* Update Generation       */
+-#define TIM_CCMR_PE	BIT(3)	/* Channel Preload Enable  */
+-#define TIM_CCMR_M1	(BIT(6) | BIT(5))  /* Channel PWM Mode 1 */
+-#define TIM_CCMR_CC1S		(BIT(0) | BIT(1)) /* Capture/compare 1 sel */
+-#define TIM_CCMR_IC1PSC		GENMASK(3, 2)	/* Input capture 1 prescaler */
+-#define TIM_CCMR_CC2S		(BIT(8) | BIT(9)) /* Capture/compare 2 sel */
+-#define TIM_CCMR_IC2PSC		GENMASK(11, 10)	/* Input capture 2 prescaler */
+-#define TIM_CCMR_CC1S_TI1	BIT(0)	/* IC1/IC3 selects TI1/TI3 */
+-#define TIM_CCMR_CC1S_TI2	BIT(1)	/* IC1/IC3 selects TI2/TI4 */
+-#define TIM_CCMR_CC2S_TI2	BIT(8)	/* IC2/IC4 selects TI2/TI4 */
+-#define TIM_CCMR_CC2S_TI1	BIT(9)	/* IC2/IC4 selects TI1/TI3 */
+-#define TIM_CCMR_CC3S		(BIT(0) | BIT(1)) /* Capture/compare 3 sel */
+-#define TIM_CCMR_CC4S		(BIT(8) | BIT(9)) /* Capture/compare 4 sel */
+-#define TIM_CCMR_CC3S_TI3	BIT(0)	/* IC3 selects TI3 */
+-#define TIM_CCMR_CC4S_TI4	BIT(8)	/* IC4 selects TI4 */
+-#define TIM_CCER_CC1E	BIT(0)	/* Capt/Comp 1  out Ena    */
+-#define TIM_CCER_CC1P	BIT(1)	/* Capt/Comp 1  Polarity   */
+-#define TIM_CCER_CC1NE	BIT(2)	/* Capt/Comp 1N out Ena    */
+-#define TIM_CCER_CC1NP	BIT(3)	/* Capt/Comp 1N Polarity   */
+-#define TIM_CCER_CC2E	BIT(4)	/* Capt/Comp 2  out Ena    */
+-#define TIM_CCER_CC2P	BIT(5)	/* Capt/Comp 2  Polarity   */
+-#define TIM_CCER_CC2NP	BIT(7)	/* Capt/Comp 2N Polarity   */
+-#define TIM_CCER_CC3E	BIT(8)	/* Capt/Comp 3  out Ena    */
+-#define TIM_CCER_CC3P	BIT(9)	/* Capt/Comp 3  Polarity   */
+-#define TIM_CCER_CC3NP	BIT(11)	/* Capt/Comp 3N Polarity   */
+-#define TIM_CCER_CC4E	BIT(12)	/* Capt/Comp 4  out Ena    */
+-#define TIM_CCER_CC4P	BIT(13)	/* Capt/Comp 4  Polarity   */
+-#define TIM_CCER_CC4NP	BIT(15)	/* Capt/Comp 4N Polarity   */
+-#define TIM_CCER_CCXE	(BIT(0) | BIT(4) | BIT(8) | BIT(12))
+-#define TIM_BDTR_BKE(x)	BIT(12 + (x) * 12) /* Break input enable */
+-#define TIM_BDTR_BKP(x)	BIT(13 + (x) * 12) /* Break input polarity */
+-#define TIM_BDTR_AOE	BIT(14)	/* Automatic Output Enable */
+-#define TIM_BDTR_MOE	BIT(15)	/* Main Output Enable      */
+-#define TIM_BDTR_BKF(x)	(0xf << (16 + (x) * 4))
+-#define TIM_DCR_DBA	GENMASK(4, 0)	/* DMA base addr */
+-#define TIM_DCR_DBL	GENMASK(12, 8)	/* DMA burst len */
++#define TIM_CR1_CEN		BIT(0)					/* Counter Enable				*/
++#define TIM_CR1_DIR		BIT(4)					/* Counter Direction				*/
++#define TIM_CR1_ARPE		BIT(7)					/* Auto-reload Preload Ena			*/
++#define TIM_CR2_MMS		(BIT(4) | BIT(5) | BIT(6))		/* Master mode selection			*/
++#define TIM_CR2_MMS2		GENMASK(23, 20)				/* Master mode selection 2			*/
++#define TIM_SMCR_SMS		(BIT(0) | BIT(1) | BIT(2))		/* Slave mode selection				*/
++#define TIM_SMCR_TS		(BIT(4) | BIT(5) | BIT(6))		/* Trigger selection				*/
++#define TIM_DIER_UIE		BIT(0)					/* Update interrupt				*/
++#define TIM_DIER_CC1IE		BIT(1)					/* CC1 Interrupt Enable				*/
++#define TIM_DIER_CC2IE		BIT(2)					/* CC2 Interrupt Enable				*/
++#define TIM_DIER_CC3IE		BIT(3)					/* CC3 Interrupt Enable				*/
++#define TIM_DIER_CC4IE		BIT(4)					/* CC4 Interrupt Enable				*/
++#define TIM_DIER_CC_IE(x)	BIT((x) + 1)				/* CC1, CC2, CC3, CC4 interrupt enable		*/
++#define TIM_DIER_UDE		BIT(8)					/* Update DMA request Enable			*/
++#define TIM_DIER_CC1DE		BIT(9)					/* CC1 DMA request Enable			*/
++#define TIM_DIER_CC2DE		BIT(10)					/* CC2 DMA request Enable			*/
++#define TIM_DIER_CC3DE		BIT(11)					/* CC3 DMA request Enable			*/
++#define TIM_DIER_CC4DE		BIT(12)					/* CC4 DMA request Enable			*/
++#define TIM_DIER_COMDE		BIT(13)					/* COM DMA request Enable			*/
++#define TIM_DIER_TDE		BIT(14)					/* Trigger DMA request Enable			*/
++#define TIM_SR_UIF		BIT(0)					/* Update interrupt flag			*/
++#define TIM_SR_CC_IF(x)		BIT((x) + 1)				/* CC1, CC2, CC3, CC4 interrupt flag		*/
++#define TIM_EGR_UG		BIT(0)					/* Update Generation				*/
++#define TIM_CCMR_PE		BIT(3)					/* Channel Preload Enable			*/
++#define TIM_CCMR_M1		(BIT(6) | BIT(5))			/* Channel PWM Mode 1				*/
++#define TIM_CCMR_CC1S		(BIT(0) | BIT(1))			/* Capture/compare 1 sel			*/
++#define TIM_CCMR_IC1PSC		GENMASK(3, 2)				/* Input capture 1 prescaler			*/
++#define TIM_CCMR_CC2S		(BIT(8) | BIT(9))			/* Capture/compare 2 sel			*/
++#define TIM_CCMR_IC2PSC		GENMASK(11, 10)				/* Input capture 2 prescaler			*/
++#define TIM_CCMR_CC1S_TI1	BIT(0)					/* IC1/IC3 selects TI1/TI3			*/
++#define TIM_CCMR_CC1S_TI2	BIT(1)					/* IC1/IC3 selects TI2/TI4			*/
++#define TIM_CCMR_CC2S_TI2	BIT(8)					/* IC2/IC4 selects TI2/TI4			*/
++#define TIM_CCMR_CC2S_TI1	BIT(9)					/* IC2/IC4 selects TI1/TI3			*/
++#define TIM_CCMR_CC3S		(BIT(0) | BIT(1))			/* Capture/compare 3 sel			*/
++#define TIM_CCMR_CC4S		(BIT(8) | BIT(9))			/* Capture/compare 4 sel			*/
++#define TIM_CCMR_CC3S_TI3	BIT(0)					/* IC3 selects TI3				*/
++#define TIM_CCMR_CC4S_TI4	BIT(8)					/* IC4 selects TI4				*/
++#define TIM_CCER_CC1E		BIT(0)					/* Capt/Comp 1  out Ena				*/
++#define TIM_CCER_CC1P		BIT(1)					/* Capt/Comp 1  Polarity			*/
++#define TIM_CCER_CC1NE		BIT(2)					/* Capt/Comp 1N out Ena				*/
++#define TIM_CCER_CC1NP		BIT(3)					/* Capt/Comp 1N Polarity			*/
++#define TIM_CCER_CC2E		BIT(4)					/* Capt/Comp 2  out Ena				*/
++#define TIM_CCER_CC2P		BIT(5)					/* Capt/Comp 2  Polarity			*/
++#define TIM_CCER_CC2NP		BIT(7)					/* Capt/Comp 2N Polarity			*/
++#define TIM_CCER_CC3E		BIT(8)					/* Capt/Comp 3  out Ena				*/
++#define TIM_CCER_CC3P		BIT(9)					/* Capt/Comp 3  Polarity			*/
++#define TIM_CCER_CC3NP		BIT(11)					/* Capt/Comp 3N Polarity			*/
++#define TIM_CCER_CC4E		BIT(12)					/* Capt/Comp 4  out Ena				*/
++#define TIM_CCER_CC4P		BIT(13)					/* Capt/Comp 4  Polarity			*/
++#define TIM_CCER_CC4NP		BIT(15)					/* Capt/Comp 4N Polarity			*/
++#define TIM_CCER_CCXE		(BIT(0) | BIT(4) | BIT(8) | BIT(12))
++#define TIM_BDTR_BKE(x)		BIT(12 + (x) * 12)			/* Break input enable				*/
++#define TIM_BDTR_BKP(x)		BIT(13 + (x) * 12)			/* Break input polarity				*/
++#define TIM_BDTR_AOE		BIT(14)					/* Automatic Output Enable			*/
++#define TIM_BDTR_MOE		BIT(15)					/* Main Output Enable				*/
++#define TIM_BDTR_BKF(x)		(0xf << (16 + (x) * 4))
++#define TIM_DCR_DBA		GENMASK(4, 0)				/* DMA base addr				*/
++#define TIM_DCR_DBL		GENMASK(12, 8)				/* DMA burst len				*/
+ 
+-#define MAX_TIM_PSC		0xFFFF
+-#define MAX_TIM_ICPSC		0x3
+-#define TIM_CR2_MMS_SHIFT	4
+-#define TIM_CR2_MMS2_SHIFT	20
++#define MAX_TIM_PSC				0xFFFF
++#define MAX_TIM_ICPSC				0x3
++#define TIM_CR2_MMS_SHIFT			4
++#define TIM_CR2_MMS2_SHIFT			20
+ #define TIM_SMCR_SMS_SLAVE_MODE_DISABLED	0 /* counts on internal clock when CEN=1 */
+ #define TIM_SMCR_SMS_ENCODER_MODE_1		1 /* counts TI1FP1 edges, depending on TI2FP2 level */
+ #define TIM_SMCR_SMS_ENCODER_MODE_2		2 /* counts TI2FP2 edges, depending on TI1FP1 level */
+ #define TIM_SMCR_SMS_ENCODER_MODE_3		3 /* counts on both TI1FP1 and TI2FP2 edges */
+-#define TIM_SMCR_TS_SHIFT	4
+-#define TIM_BDTR_BKF_MASK	0xF
+-#define TIM_BDTR_BKF_SHIFT(x)	(16 + (x) * 4)
++#define TIM_SMCR_TS_SHIFT			4
++#define TIM_BDTR_BKF_MASK			0xF
++#define TIM_BDTR_BKF_SHIFT(x)			(16 + (x) * 4)
+ 
+ enum stm32_timers_dmas {
+ 	STM32_TIMERS_DMA_CH1,
 -- 
 2.43.0
 
