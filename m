@@ -1,71 +1,124 @@
-Return-Path: <linux-kernel+bounces-220696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD6E90E579
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:27:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7804490E581
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 793821F228E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:27:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 311C31F22AAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB3F7A15C;
-	Wed, 19 Jun 2024 08:27:25 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372E27A705;
+	Wed, 19 Jun 2024 08:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PerXvv4r"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D8878286;
-	Wed, 19 Jun 2024 08:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297295FBB1;
+	Wed, 19 Jun 2024 08:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718785644; cv=none; b=o9clX2b+syZx2ccNYOQrkXZBn5GIkL4QI26Xwi4HWdkweqVyQ109MOhYJYLR2DjMWZbfd9Wb/AqWo+gT09ju5K5pkLROlHSyI5EAieyGvTi/ZkiLxGn1oqYz2XekT0POH7OTU9fzYQGTrznLaV6C9tQrFF9Sx8wS3f3BS4P/ykM=
+	t=1718785860; cv=none; b=DM02OR48QwhmxCIsfe1NjiKxE4ldoZSE9wKf8jSo99jnjsTcI9eE29Ms69yDw+UhekHQKRiUEikrDxICBn84y551axPaJscsLw0CdQDvY/r524qOTSHfOfexzpGl9n570YMMZZe73OI1lgWAUD5x0WSvPTsbWHoHMSRZo2xwa1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718785644; c=relaxed/simple;
-	bh=HcKnbgCi4hLpOl0YpLIpOvB7FlpujelaZwgYAxrNWKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lsvBTKDxM7QlbrMRdKpuDS4MKFldky4vxgQOL8jZkB2tYgPYHTCtBZ6484xNXNRhMzZq2yAklXPoPge9PcId+YSdKJybbWcXOk0Mqaow0sghzkP9QpU5gnpPo+HOwn6DB2Rbn2jWgv8l/FHoElp9h+PEdj3mm38ri7H4KKCv4P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id DA1B468AFE; Wed, 19 Jun 2024 10:27:18 +0200 (CEST)
-Date: Wed, 19 Jun 2024 10:27:18 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Gulam Mohamed <gulam.mohamed@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"yukuai1@huaweicloud.com" <yukuai1@huaweicloud.com>,
-	"axboe@kernel.dk" <axboe@kernel.dk>
-Subject: Re: [PATCH V6 for-6.11/block] loop: Fix a race between loop detach
- and loop open
-Message-ID: <20240619082718.GA6210@lst.de>
-References: <20240618164042.343777-1-gulam.mohamed@oracle.com> <20240619081601.GA5434@lst.de> <IA1PR10MB7240896628D86A86E91DE9E798CF2@IA1PR10MB7240.namprd10.prod.outlook.com>
+	s=arc-20240116; t=1718785860; c=relaxed/simple;
+	bh=6t6LPo6KB4T7Xhw11JvM6OKrv7NGo7ATHTH9MbWDWjg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ntf/vrn9eILWSR3qqQ7runMlK//8g8GX56aUX9AD+KpuKCTu3/5TrKIhcW6AyGykSBSEwawusnQs5jyn7IKoj2k9UI4CmVWL5L9lF9ymGvm+7U7FcjWHhsVBburgjaz3p/QXYW3dkxuhMvgrggPmgmX5d1bkLu+CoO/bk+/iCfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PerXvv4r; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3737dc4a669so25597965ab.0;
+        Wed, 19 Jun 2024 01:30:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718785858; x=1719390658; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gN+wjFKhTOCT+2IXXI1zItvi9uGT3PVnpu+/RhI2psY=;
+        b=PerXvv4rV0R29PFJPN97dmcE4pdN3mKOsZciYUxyVWq+3Y5C+XlGZqwpvhIJS0j+6s
+         tWJhmnGscud1GckF7dPNIN9XPnwJTRPFX21vvjoEeRD5yTSKnvlXBlnaH/tAuTN3G1fv
+         t7u8SXWcGYpYTtl92T3bkdgrBsF9rCRP36tI4nQkdl2bpxBDBFPGRst1o4P2vYVjjOhK
+         AUGatGUYeXiPsP5lwotJwQ8XMQe2OCO3Bef8xi6PNuwel2rhAVahw8PdknVLt9+HfvPX
+         Txh4XFsUQf+tTgpo5eyOKt38ClhgeRLhb2b9BZusUHpEdIRit0vbKeom2PULc3QORVwr
+         4omQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718785858; x=1719390658;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gN+wjFKhTOCT+2IXXI1zItvi9uGT3PVnpu+/RhI2psY=;
+        b=Y0mTYEsF3vKbIJmO9y4nZClpMDLcY3APU3QsIwvVEpnzfSy/F8jsOPdc+AAC3viRtX
+         6+JJ24GMF10YRRSQ8yGZRKT6PVu3H15K+OeCx9euPcLYqD3vheCkocI6bXeD/K2+RvCF
+         XpFUGfouiXgn8BCbG4YoNQyBB+gtqTL5HDLxf6MUPVsOjV8f0+NdjZE/SV8hf964nmX+
+         DusNCMmhiA/shptpbcdy3RtbW69MRayfXoFlUvwuucpqfTuLDIpPueWK4IsejCglL6oU
+         /oaC5D01fGeY1Wvzpk+8bmHq/ijEKUd/uJskKQs+dOD4+PUkIw6ipatB71mKyJZOgB8w
+         bVTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWe82nFt6k/RPAPTKGS4/fZRYq2SuAjHn00JxaSWVXVXwA6sA1PMfSgI+8S+JKF59f0i0znP7BZZunPmYqTyXiklmYXQHHDvJZDkdOE
+X-Gm-Message-State: AOJu0Yy/KPh0ji2I8bt6oSLXZnzSngP6FZlkpLs5zFb8mnxFB8Y/vOX3
+	YxI8YLTJH4q2BwnNo91SLgXIBmZ7d7PmngPX4InUsLLEaXVw5hvW
+X-Google-Smtp-Source: AGHT+IHP27fhfKPSiFfK+9z/QFg1s4ZnSqXIMKSbPRjjLLjp47rKRzbt97NO8emMT2FrDUYPaeyHfw==
+X-Received: by 2002:a92:c266:0:b0:375:e06f:4b79 with SMTP id e9e14a558f8ab-3761d727d3fmr18965685ab.31.1718785858134;
+        Wed, 19 Jun 2024 01:30:58 -0700 (PDT)
+Received: from localhost.localdomain ([114.111.24.234])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6fee3ba48c1sm9134808a12.81.2024.06.19.01.30.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 01:30:57 -0700 (PDT)
+From: Yusong Gao <a869920004@gmail.com>
+To: mcgrof@kernel.org
+Cc: linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	a869920004@gmail.com
+Subject: [PATCH v2] module: Add log information for loading module failures
+Date: Wed, 19 Jun 2024 08:30:37 +0000
+Message-Id: <20240619083037.1070310-1-a869920004@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <IA1PR10MB7240896628D86A86E91DE9E798CF2@IA1PR10MB7240.namprd10.prod.outlook.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 19, 2024 at 08:21:35AM +0000, Gulam Mohamed wrote:
-> > To: Gulam Mohamed <gulam.mohamed@oracle.com>
-> > Cc: linux-block@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > yukuai1@huaweicloud.com; hch@lst.de; axboe@kernel.dk
-> > Subject: Re: [PATCH V6 for-6.11/block] loop: Fix a race between loop detach
-> > and loop open
-> > 
-> > Do we need the re-addition of the open method to fix the ltp test case?  I
-> > kinda hate it, but if that is what it takes:
-> > 
-> I don't think its needed but I kept it because your following comment in the suggested change says " switch the state to roundown here to prevent new openers from coming in":
+Add log information in kernel-space when loading module failures.
+Try to load the unsigned module and the module with bad signature
+when set 1 to /sys/module/module/parameters/sig_enforce.
 
-Let's keep it.  I meant to say new I/O coming in, but letting a new
-opener come in and then fail I/O isn't really nice behavior.
+Unsigned module case:
+(linux) insmod unsigned.ko
+[   18.714661] Loading of unsigned module is rejected
+insmod: can't insert 'unsigned.ko': Key was rejected by service
+(linux)
+
+Bad signature module case:
+(linux) insmod bad_signature.ko
+insmod: can't insert 'bad_signature.ko': Key was rejected by service
+(linux)
+
+There have different logging behavior the bad signature case only log
+in user-space, add log info for fatal errors in module_sig_check().
+
+Signed-off-by: Yusong Gao <a869920004@gmail.com>
+---
+V2: Change print level from notice to debug.
+---
+ kernel/module/signing.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kernel/module/signing.c b/kernel/module/signing.c
+index a2ff4242e623..b0c7b30e4d89 100644
+--- a/kernel/module/signing.c
++++ b/kernel/module/signing.c
+@@ -113,6 +113,7 @@ int module_sig_check(struct load_info *info, int flags)
+ 		 * unparseable signatures, and signature check failures --
+ 		 * even if signatures aren't required.
+ 		 */
++		pr_debug("Loading module failed (errno=%d)\n", -err);
+ 		return err;
+ 	}
+ 
+-- 
+2.34.1
 
 
