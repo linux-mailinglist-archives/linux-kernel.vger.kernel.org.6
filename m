@@ -1,93 +1,135 @@
-Return-Path: <linux-kernel+bounces-220863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1DFD90E858
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:30:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08D690E85B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 332C4B21A1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:30:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99E31C2192F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FC685626;
-	Wed, 19 Jun 2024 10:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF20C12F5BF;
+	Wed, 19 Jun 2024 10:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Dodw+hqE"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VymZb0Dq"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973CC78C91
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F2578C91;
+	Wed, 19 Jun 2024 10:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718793041; cv=none; b=exGO3C/MJCI+m7poTeGR0BV+Wg6xYmA2IfKJCofk7kVz42Paar9vbRLTzON9O/Tb5i1ET8P2NUdTKA4T3AZHGnFf1cyH2eQ7yXohvp4qHEbqKd5QiRJcnubE2slLQxQWG9OzbhGfDp6IpJMilFecchjpbd6ezHTYmmeFyQVl2UE=
+	t=1718793189; cv=none; b=HDVr9OYqNI1E7bmUgi5VdhhpIQOi4WIfjG1rJwpKIEcFmZiA8L03nOi0bIZfYcc3yPmL66pAQaOSMCL63SswIUzCLZSeTKJpQV8LxhKqsLNYkO3zUKhidTg+pJ5pcBL0GHl619Manbn22P0eGTDOfAe1+I6uYnnvR/7sWbKWBfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718793041; c=relaxed/simple;
-	bh=uWBOfNWDaWysr82LJvlFXwnZM9j18ErxE9+uXo17HHg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gPXNrYGcHZ6QULD6HHd0EMB57XU83wzYw8qhVxvUatsKdM0F7aVGS9Nx7fz4nCuqgZUqUYOPtVkCVr+oRc3dc0V2B/m6eGywdaoc68JKCSiW2s40VYhMPzJTtNHdKEodiSRhKVQUC1SFJWDLVQOoP7HEU/RYSCG9jpfAfkBCFww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Dodw+hqE; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718793037;
-	bh=uWBOfNWDaWysr82LJvlFXwnZM9j18ErxE9+uXo17HHg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Dodw+hqEZzT7cQGDj+ZKzi81LYGZmNbHRAUVFDkKHPFhX8AvrHsAG7xno1PwqwMh4
-	 bABg1RI2g/mGDF/B6or+yCyyLUD9ZkSupn3PTWKIWcpt61nGKUxt/afREBfO9Dc5c0
-	 hbpxLKXvauPcpfUmnBRWKkpYkvIL2BXCI89DcPXRZduGgcI6r8KWki5u+NMN4t5FR/
-	 ssGl7SijzWzdg1MzipnnqLfHLoTR4s6TsXyzQoZKEXcOP6Kc2PjN13eBUyMj9QvkTt
-	 fOP0LWOrvrlKAH4lQIQ9TeUyoFW2IwrU3cS45Yw+uOgpSzlY5CL/vkVAX3Tla2tWDr
-	 rFdiqUDps0A0A==
-Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4299B3780F7F;
-	Wed, 19 Jun 2024 10:30:37 +0000 (UTC)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: linux-mediatek@lists.infradead.org
-Cc: matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	fshao@chromium.org,
-	kernel@collabora.com
-Subject: [PATCH] soc: mediatek: mtk-mutex: Add MDP_TCC0 mod to MT8188 mutex table
-Date: Wed, 19 Jun 2024 12:30:34 +0200
-Message-ID: <20240619103034.110377-1-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718793189; c=relaxed/simple;
+	bh=UrZRPJUMF85098sOggzaqUsbYYJWPI5tGohEdROwtpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IL+8fzhTyhk+1M3i9GAB8tUgydpJeeCeXp/KogxBATxs6atPmkToYHgSDZeq9ywsK5mBVE6jLJX/khdfySLAl09nbwMdWj9/TV1hmSYQh6hJwgTTEgAC0xK6VbwIpBqGmwTlRLVqgFsbqoG0Q5Eoe7IADEOPmQPt8m6frFFb6Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VymZb0Dq; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JATtdE016633;
+	Wed, 19 Jun 2024 10:33:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
+	EmFnM2M6vINWkHXs613zLTG1TdJP9EUBcYSfppMV+yQ=; b=VymZb0DqgymUQD+t
+	U9ygY+RCVEDplpFs+wg0VDyn4wboiGPTiY6QBI2pzeqjxv4+YWI6lhvSYonPyoIm
+	b9+swAivHcFPir4Di+Bj5eHuNuq5XfP6Eb8/FL03YRZdpsvZ1enJSZc/A2/qLbJh
+	4a3HUjsCFj9aeQl/RLQinT1sF1w3saZTZv9Wgbz0Rl7OAw2ubQizWFeVp97jpfOK
+	df/szhLREn9JHiaJ5T3tCauzZnUd+K+4hQUouHAbU/YygksUz+oS8yxDdEEiE7m2
+	RwUJCMyPsYz1jAVbP3WqdAdPsnVRP8dJeOEbVbMezZeqtv4/kWDOI26ZqqVzVtrK
+	GjDMtw==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yuwm6007g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 10:33:04 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45J8exqE011027;
+	Wed, 19 Jun 2024 10:33:03 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yspsnb9gu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 10:33:03 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45JAWvJn44695938
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Jun 2024 10:32:59 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 84D052004E;
+	Wed, 19 Jun 2024 10:32:57 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 97F1020043;
+	Wed, 19 Jun 2024 10:32:56 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.171.42.81])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Wed, 19 Jun 2024 10:32:56 +0000 (GMT)
+Date: Wed, 19 Jun 2024 12:32:55 +0200
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Eric Farman <farman@linux.ibm.com>
+Cc: Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Jeff Johnson
+ <quic_jjohnson@quicinc.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger
+ <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Matthew
+ Rosato <mjrosato@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: [PATCH] s390/cio: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240619123255.4b1a6c6d.pasic@linux.ibm.com>
+In-Reply-To: <afdde0842680698276df0856dd8b896dac692b56.camel@linux.ibm.com>
+References: <20240615-md-s390-drivers-s390-cio-v1-1-8fc9584e8595@quicinc.com>
+	<064eb313-2f38-479d-80bd-14777f7d3d62@linux.ibm.com>
+	<afdde0842680698276df0856dd8b896dac692b56.camel@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: kwRyS9oDx2UqRyENfPbHRtoLutxEkTs1
+X-Proofpoint-ORIG-GUID: kwRyS9oDx2UqRyENfPbHRtoLutxEkTs1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ malwarescore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 mlxlogscore=992
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406190077
 
-MT8188's MDP3 is able to use MDP_TCC0, this mutex_mod bit does
-actually exist and it's the same as MT8195: add it to the table.
+On Tue, 18 Jun 2024 16:11:33 -0400
+Eric Farman <farman@linux.ibm.com> wrote:
 
-Fixes: 26bb17dae6fa ("soc: mediatek: mtk-mutex: Add support for MT8188 VPPSYS")
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/soc/mediatek/mtk-mutex.c | 1 +
- 1 file changed, 1 insertion(+)
+> > > +MODULE_DESCRIPTION("VFIO based Physical Subchannel device
+> > > driver");  
+> > 
+> > Halil/Mathew/Eric,
+> > Could you please comment on this ?  
+> 
+> That's what is in the prologue, and is fine.
 
-diff --git a/drivers/soc/mediatek/mtk-mutex.c b/drivers/soc/mediatek/mtk-mutex.c
-index b5af1fb5847e..01b129caf1eb 100644
---- a/drivers/soc/mediatek/mtk-mutex.c
-+++ b/drivers/soc/mediatek/mtk-mutex.c
-@@ -524,6 +524,7 @@ static const unsigned int mt8188_mdp_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
- 	[MUTEX_MOD_IDX_MDP_PAD0] = MT8195_MUTEX_MOD_MDP_PAD0,
- 	[MUTEX_MOD_IDX_MDP_PAD2] = MT8195_MUTEX_MOD_MDP_PAD2,
- 	[MUTEX_MOD_IDX_MDP_PAD3] = MT8195_MUTEX_MOD_MDP_PAD3,
-+	[MUTEX_MOD_IDX_MDP_TCC0] = MT8195_MUTEX_MOD_MDP_TCC0,
- 	[MUTEX_MOD_IDX_MDP_WROT0] = MT8195_MUTEX_MOD_MDP_WROT0,
- 	[MUTEX_MOD_IDX_MDP_WROT2] = MT8195_MUTEX_MOD_MDP_WROT2,
- 	[MUTEX_MOD_IDX_MDP_WROT3] = MT8195_MUTEX_MOD_MDP_WROT3,
--- 
-2.45.2
+Eric can you explain it to me why is the attribute "physical" appropriate
+here? I did a quick grep for "Physical Subchannel" only turned up hits
+in vfio-ccw.
 
+My best guess is that "physical" was somehow intended to mean the
+opposite of "virtual". But actually it does not matter if our underlying
+subchannel is emulated or not, at least AFAIU.
+
+Regards,
+Halil
 
