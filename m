@@ -1,113 +1,109 @@
-Return-Path: <linux-kernel+bounces-220981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4876090EA25
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:56:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256B590EA28
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F5D01C21E0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:56:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DFD71C2102D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C788913DDC7;
-	Wed, 19 Jun 2024 11:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB56013F435;
+	Wed, 19 Jun 2024 11:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="J9rCWZ5g";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="bC00VQxP"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQCAR30K"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6151137747;
-	Wed, 19 Jun 2024 11:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87577137747;
+	Wed, 19 Jun 2024 11:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718798181; cv=none; b=qe5YaS8ScEqXU0J5J3iVazVEmgTXlhkmrPhqNzgtIGtlGaadzJoAap0+k2JOYEi4sK1/Vblk9A+Z6S+iyt28o+QRjKP81Zfbg2J7Mc5ur7Yxg3vDnA6ilN5OyBTVHepa03okA5QXBZ5t8dnniH2chBx+UhcfiLkkSUxhkvB7mAE=
+	t=1718798187; cv=none; b=dMkBla+9U/q/NgHAewoA18oCA6hxaEQccinLPkadOyhOxAc1QMR14dmW9GA8+XBMbb6OHmUE0EHg8YAfO+52KaFI2mZtdlbQENkyvAWNb0PdDygvwUa3hJZek37Z/hneZhSNq37LEkqyamgsYeVfg5u6U/M3GB66xD+/smiLTP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718798181; c=relaxed/simple;
-	bh=vNlqdyqa9MfOvISLpNehM2+w4OXrnK6P7mGk6acSEfE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NkWyDgf28P1NZZE3jxERdgE3EoBg9p9hDMBKBA1rqANCo8x7NNfDXlIEvb9kQaH8IkxqyFjy+gPE4CTzVVUI3m6xE50wyVg7sprmm1UeUiQeeQURf2SwgG3+rp/C7KZTLETIVckgTYQsncikwx0YdPO0wVqem/L+67m1xV57l5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=J9rCWZ5g; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=bC00VQxP reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1718798187; c=relaxed/simple;
+	bh=pOc8XAV3ETcz2jRRlUtG7K4MJXex94LvXrdBqMtoB00=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GSvdzhH13Z9XuHnedOICC6DiWwKf68qAVupxquSNMdDiOax/unzhMetcSnPsbYwhj+nPH2pmqK6MTB/OR04xUesHhozY7pX0MYWTovNN5xBTJ//wWN6Cf1Dw8IH4J5+9/j9KWZbwsKNBXU7clYbOJOXfpBqbuGaQk55wXu/CQuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQCAR30K; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a63359aaaa6so1007081366b.2;
+        Wed, 19 Jun 2024 04:56:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1718798179; x=1750334179;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+lWn1KtMeGuGAa+FVSQruLojNNK9iYkcG7UCHgu3G/w=;
-  b=J9rCWZ5gd9Gc46sKWkv0yACZgHEXu99u3nnS46INtfX3D9ovl2PkBZQy
-   pZ+GmPhjRBgoMnmZpEHQzrIxVhBlTAazWRpEU3V8AUKRNQ9bAOYdB1Q64
-   tO6QoHF+ZPicahJnN3Ne8RK1b55T08pRSY8GUnn4F4HmurClNIde86oib
-   vDx9lBa0BUMfsPDZQLb/czDtmuf39FjZ83p5z3v7CaOw8DBjGsvCPg/WV
-   kaWpT5B7UVFQSEV+1p2TonCZOl/4WfBZERKEDgriccYwRo5wocmqn8PBT
-   G8KE+/poLxMgcLx63BwvFhzG4sS46b0w4vzUUjNVrwWBcyRGUlePwBLPm
-   A==;
-X-CSE-ConnectionGUID: ep4LqlfCT9yhsl/RnvAKtQ==
-X-CSE-MsgGUID: UMnrp/tGQROlJerEq8BtrQ==
-X-IronPort-AV: E=Sophos;i="6.08,250,1712613600"; 
-   d="scan'208";a="37475541"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 19 Jun 2024 13:56:16 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6E239161456;
-	Wed, 19 Jun 2024 13:56:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1718798172; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=+lWn1KtMeGuGAa+FVSQruLojNNK9iYkcG7UCHgu3G/w=;
-	b=bC00VQxPw2/s1LjYTjh5PO+eI8IUP84VmxjAXDKmdwxTvJuzLh/4xeuMMQuw4rUQZ/qPSq
-	k/MBMKZGWi6v1Tl06PORk5NKIsrg6Yi6PVynrhqCrD2h88nx8ZQ/vkLC+SebD0M3BJvTtb
-	eiQxdOhvoz7CSgkz7TBDRkDukgHYWntI8gsbfJu4yv3UqYlaZlcEguf6Y6AEPD5xSZOKcp
-	Rq5n8xuebCoN7fAPk2Il2DCIIDoSZ0E9hc+nj+zKvDOjKAgJcC54R6v09UTHNerbNX2pHN
-	SsucbR2m+QyWyr+p02pI72TLou8jqQv1ezNwI+asTC66gWqXub/1wVzZ6kN4RQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-	Lee Jones <lee@kernel.org>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1 resend] MAINTAINERS: Fix 32-bit i.MX platform paths
-Date: Wed, 19 Jun 2024 13:56:10 +0200
-Message-Id: <20240619115610.2045421-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
+        d=gmail.com; s=20230601; t=1718798184; x=1719402984; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VigCe6J4hk8HOFljrC6mCt89lYlhdtQHnpiVgdfrXfk=;
+        b=iQCAR30KA31GNptXcyS33a1dOZ+RmYtou3FPoHpyk65EKa7TVp3jx6AF1HVsWYGRhT
+         k/EgMA3aaSP7RCaKwg0yUpS6yUGBHtRiqNZRQNHLWXpoGzM+bR7xaoq163PXrdhH7D5j
+         hSGm6TGi1pf85rk0iyugDYzI+jTtp5J5zAszEfj0x79JrvZhyByQ5j1uC/ADRP/ukLL3
+         jzWhbFPggthW1B7da2iOp9tua7jzJUnj57wfSOxLBwpZI/7I6OyIo60LvxxJ6JnIcbF6
+         kxF/Ncwrc0IUchFXsX6ocn6JRntBPPVxDtAxpxqqCpecNrCf85XkgOBSjufZl8gwIm1N
+         E9Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718798184; x=1719402984;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VigCe6J4hk8HOFljrC6mCt89lYlhdtQHnpiVgdfrXfk=;
+        b=C3o39M6shSLNJhAnDpQ4sB3Zrvmj8kj7AAZiv3H1t+RRxbNWIAmC3whbCMFj3e/pMT
+         EHCQVWourDW2S7H6MpehK95Xo9YyJrl1mBDD2on/cbfX5UALOlxiGJm7sQT55Sa1Iv2H
+         tlbVBWaYXDG9bH5cZ2Wo0GdaFNvB9+xNURavEFRgIDJojGflkdOyOSGJHgKGYnwq3Z6d
+         gBpg7qCoE21IUdzqP6eEf8cxvGNkb2yLnjr/feisg+mFHcLrNpXEMGNCB/Au6XirRdXQ
+         l74hgJpgNJN+i/NZrq/qxVo+YOuS27b0KlgmCwmwYUT8gkpSRkn14q6QRv7alBikrn6T
+         r3hg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNuTWKZedcSuIjtCgR7nemcx4YanL2vfVCSJU0qSvwj4cc/xqdD/DZQGVS9wLEH6C9iy/EC5He76jZYGPr7O/cL2n2ntpCdNfKnmp6qK+9G1znM2f2fRSW9IZjYv+s2OfOACd3QfkN5qgFpbt4r1G/cj3K4Ntfde//vI1D3hpKRJwq1Q==
+X-Gm-Message-State: AOJu0YyLCQ0kMukzAbzma4lW8R5IbwlM3btEngs8FsN0LqZEiFynqHUe
+	ZpQZB6La8d6XlNCk4K6am/yG5CXLxOgp7vfJbrCJZBV8olT7NQS/g8LVXq5XpmvqBfSpO/abbzT
+	H2hFmewKgofJdwBohJsnN3uM4mR6ZHoOeE6kJTjHW
+X-Google-Smtp-Source: AGHT+IGJ1U5ZREckNCsu3v55VGRmfeDWoXXFjg+Sbw+yUhNJDknb7XhOIuRCdgjK7SXELVRWFiBFKcXkae1qeuZgB84=
+X-Received: by 2002:a17:906:284f:b0:a6f:2130:34c2 with SMTP id
+ a640c23a62f3a-a6fab62bc61mr107040566b.18.1718798183544; Wed, 19 Jun 2024
+ 04:56:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20240601092646.52139-1-joswang1221@gmail.com> <20240603130126.25758-1-joswang1221@gmail.com>
+ <20240604000147.2xxkkp7efjsbr3i5@synopsys.com>
+In-Reply-To: <20240604000147.2xxkkp7efjsbr3i5@synopsys.com>
+From: joswang <joswang1221@gmail.com>
+Date: Wed, 19 Jun 2024 19:56:13 +0800
+Message-ID: <CAMtoTm0S2WSO6VxK79DkTs+1aq5xBYBMRsPXWAFuWo4DoymUEw@mail.gmail.com>
+Subject: Re: [PATCH v2, 2/3] usb: dwc3: core: add p3p2tranok quirk
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "balbi@kernel.org" <balbi@kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, joswang <joswang@lenovo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The original patch was created way before the .dts movement on arch/arm.
-But it was patch merged after the .dts reorganization. Fix the arch/arm
-paths accordingly.
+Hi Thinh
 
-Fixes: 7564efb37346a ("MAINTAINERS: Add entry for TQ-Systems device trees and drivers")
-Cc: stable@vger.kernel.org
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- MAINTAINERS | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The workaround solution provided by your company for this issue is as follo=
+ws:
+  Workaround=EF=BC=9Aif the phy support direct P3 to P2 transition=EF=BC=8C=
+program
+GUSB3PIPECTL.P3P2Tranok=3D1
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c36d72143b995..762e97653aa3c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22930,9 +22930,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
- L:	linux@ew.tq-group.com
- S:	Supported
- W:	https://www.tq-group.com/en/products/tq-embedded/
--F:	arch/arm/boot/dts/imx*mba*.dts*
--F:	arch/arm/boot/dts/imx*tqma*.dts*
--F:	arch/arm/boot/dts/mba*.dtsi
-+F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
-+F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
-+F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
- F:	arch/arm64/boot/dts/freescale/fsl-*tqml*.dts*
- F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
- F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
--- 
-2.34.1
+As the databook mentions:
+This bit is used only for some non-Synopsys PHYs that cannot do LFPS in P3.
+This bit is used by third-party SS PHY. It must be set to '0' for Synopsys =
+PHY.
 
+For Synopsys PHY, if this bit is set to "1", will it cause unknown problems=
+?
+Please help confirm this, thank you!
+
+Thanks,
+Jos Wang
 
