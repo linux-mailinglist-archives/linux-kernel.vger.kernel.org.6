@@ -1,314 +1,119 @@
-Return-Path: <linux-kernel+bounces-221422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C35790F35F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:00:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A730C90F361
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB06B281709
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:00:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F4ACB21D71
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144CC1514FD;
-	Wed, 19 Jun 2024 15:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4433B157A7C;
+	Wed, 19 Jun 2024 15:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JOsWrcFI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kw/IrreC"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCD7156C5F
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812132; cv=fail; b=mFXw57poe2xdLrC/kX5HdZohwPb9yr2HbCCarYcwbVRfvhseu1BZw3oDhTYCBpc5oFQQSkXvDf2OIy2Hd5FOC3VbG9RVv99gygIlXoFuKb7yzzDBPVIrliooMSZqRTLpWWBtoqRvFEM7AbB0GslfKZpr3YZiwkm3bJO0jWR7ha0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718812132; c=relaxed/simple;
-	bh=AZveLGQU57sVJVobm81P+kLsvWBuQRkPItviBAALhT0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=qS0aBEoXXDcl6d6FsQ5++5ZaJrv+XfBy4pLzfMJHSKuogEMADIcDwy2Myz0r5dJHU8qVq7rxqM4FK61M56bgvLxUekdMi74WV3Iizp8tx1tLNWPbULrFI36YPMJtCYBwauxZa9f8YtJqFv18wV7UyVPzySPCd9iV/y7LPMxIFJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JOsWrcFI; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718812131; x=1750348131;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=AZveLGQU57sVJVobm81P+kLsvWBuQRkPItviBAALhT0=;
-  b=JOsWrcFIK2ptLOspSnKWlAGqrMRBMZFcgf2NTpUgPPLucUGS5G43M6WG
-   VyfpncDYfcXK6p5zF8Wx7bR61/slNOPb6FR/W9T1JE5jS9zO/YaLe4ywv
-   xrcNnXMOUOGy+dGN5mlkXLqNm4iYXAiJmlczQVhS7sIrPEkKKYSpQlyLV
-   vu4mjyqd2ZmT+YR8X/bDtVt7njrpT+JkFncafCV1wh122XnqeUvOArY5/
-   zod0PYvAmdulo4N66YNlsouXd+YqwWEMPx9Fte9qh9zB4LxKAHS2dX4uY
-   xNLXcS7CSB/V6s4Qc0H4tBGqahqPn8n+IRvNk0YrzYoSgIATfHq3IewVG
-   Q==;
-X-CSE-ConnectionGUID: PEBWB0ujR1+c48hISleXXQ==
-X-CSE-MsgGUID: bkW9LH3CSfeiQ/2DD5wc8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="41163049"
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="41163049"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 08:48:50 -0700
-X-CSE-ConnectionGUID: BAAiHE2wR4qBpw52CTuoRQ==
-X-CSE-MsgGUID: rgb/nKIlSt2v2aBPTfeZjg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="41818821"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Jun 2024 08:48:50 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 19 Jun 2024 08:48:49 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 19 Jun 2024 08:48:49 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 19 Jun 2024 08:48:49 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 19 Jun 2024 08:48:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eTCZoSXrpXFHFlnfuvun0uNkFZiHblaCNjO989aIpai3MblpLZ73zzz3GcPsarA+IERSEuq5SakWlkGpAEYkADoqBceE/FFyedymezuQUhmhgdU5urv6x0QV/dlRcIuCYkq3ZLoAB3U+I96kTyJD/XMptgl+JD8jKAuMG2L5/VBoDT3V0pcl3OQGBv7u8WPVhDtccxjfuHzSZPNgUX8ObZvAxDtfR4MeYyDaMRhnpeD7kgLh088WTZHAmE7wLYz+ykoBHddlAeEDD73LbKF42Z4g+UI+kvu608HDe/y4hC6qJg7CXYG1WePviqYVr65yuMCwjyAUYQhQjrodXs86Fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OMc/8/9uIOdcIcAW1z6McMHUg4wfm8e6DiQca4L7Pz4=;
- b=H6cL9/t6SoBE+dVfr1de7cev38G5WlFMfdYVSgZkvzhZiwWhnYrscz02MHtAvdZU/sDVQAzU4PWuJo7nVSuq6woqbVMRpCjadIGbStflKORgOW8+CBsTaCN9Wzk6IH/ULY6j94gt94BwynCyO98mUyNjsj7LAYhgat8/JM+aTp0l8zGuK1BXG/yOhJOePVsV5CNIzX58pE7OQ9ZB2wEwBxbCt7qjz7cWInUO7Q9J7JpHbEhhIy6SVgyQxWW25ktqXfT4XFBPIwIduM3loWmgcRR43J6SZULd7QWDKcu9BVEpTw+os72HigdOEpQ9rA9TNBoOEO2WIeExGNAgiKhL7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
- DS0PR11MB7411.namprd11.prod.outlook.com (2603:10b6:8:150::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.31; Wed, 19 Jun 2024 15:48:47 +0000
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce%7]) with mapi id 15.20.7633.036; Wed, 19 Jun 2024
- 15:48:47 +0000
-Date: Wed, 19 Jun 2024 23:48:31 +0800
-From: Chen Yu <yu.c.chen@intel.com>
-To: Nikolay Borisov <nik.borisov@suse.com>
-CC: Dave Hansen <dave.hansen@linux.intel.com>, Juergen Gross
-	<jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Ajay Kaher
-	<ajay.kaher@broadcom.com>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
-	<virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Qiuxu Zhuo
-	<qiuxu.zhuo@intel.com>, Prem Nath Dey <prem.nath.dey@intel.com>, "Xiaoping
- Zhou" <xiaoping.zhou@intel.com>
-Subject: Re: [PATCH v2] x86/paravirt: Disable virt spinlock on bare metal
-Message-ID: <ZnL9z/wr+x67G14s@chenyu5-mobl2>
-References: <20240526015847.14142-1-yu.c.chen@intel.com>
- <c83127de-b59a-4475-8d20-e3582ee2e6f8@suse.com>
- <ZnL4VRwPNd58Ccl+@chenyu5-mobl2>
- <5eeeb8ae-db72-4468-bff1-2de402ea113f@suse.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5eeeb8ae-db72-4468-bff1-2de402ea113f@suse.com>
-X-ClientProxiedBy: SI1PR02CA0012.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::8) To DM4PR11MB6020.namprd11.prod.outlook.com
- (2603:10b6:8:61::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2026E157496
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718812145; cv=none; b=X5AVU95K8emLagBB1mTXpEzQmv3KS/gClRYmXlhFB84Dq0vqySF3sq+BTF2h2tXpet+jZbXC0ZNa1wJXEQNWv2zEvUJVP1dxdm8bYa4njNrw4mKRGlT1WtFOjM22ASum3nUyd0JGu66RVn1Dfdu8p6wmMhsnsGY5InT5Uy17MCA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718812145; c=relaxed/simple;
+	bh=gqmsV2wQyLRTa+dMlIDvFO+HmlyFWBidO1o5Ifz7Rpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prJxJLshQLXEJnqDOEqBB595oHe40q4DwsiUve9onrGB7UtwdgO1qaqkS+wCpDD9EuVI75+c1nBbGHTxNBPbZq4AOADSPYul4Gk0GtYmX+nDPROiJz1eZdMZPo0LBZXLDbw67PnO5r7kLH1Scsvh4kOTgACJ+4xR4aqnpm/8e+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kw/IrreC; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-6f855b2499cso3700614a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:49:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1718812143; x=1719416943; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zaUP1kZaDzbLlLlrnXpwVvSSBYt89/ufOLldJsnhc4U=;
+        b=kw/IrreCDMgEKOFOdzIwpFmxMhJvNJBLonHfusm9UL4IutZsWe2UdTwYavLzyi0fIb
+         vN/Aq6FrbhSGvupvX/Ce4lXc27lCsRV66OhO2eh74ZJ+olgem/+bYBXNsoxjW1wG6Efz
+         KKi+1dlYRh1XTX4g3UiusZEGxnhgWChij7csWKulmcgojVcuv2spR5Y4wE1yOKRAhgup
+         fbNKacVouxr9YKveSVuEyGMqzqnBBkxgE0XlowL09D4+aI2PrhzDaZMRZOTMFxkXZs3N
+         8m/Rub2qNohbUOeBb5F8ZWl9LeTIGPmSFsR6ywEQ7+SUSisZ0Njw9MSyVjojFsxYW1dj
+         nJlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718812143; x=1719416943;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zaUP1kZaDzbLlLlrnXpwVvSSBYt89/ufOLldJsnhc4U=;
+        b=vUZ8dsE1Hwhm7ifSOpf0sI9TVuhHRUhenXeFNprg7WR8Yf8e+uBixRPP5obXGx3Ac0
+         68BIWBnYbNu2WTu42l+1zRSzIfKhvCUUZ6dFjT/uh/Vu18ei8HnEaQ9bVQcdkArcF4Wy
+         S7P7LkX1wWzJINfG7tNJ1yxi7JQknlf9yozUZIVbngSN7AX1NMqZlkg7vqFl2TAx/L3s
+         y1ra61oV6KNMxOlTZtQV6dcsg/YTw0exhar/GS0W7zocftuGW/uTeC0v8l+pUiERI3eT
+         KjSN5fzr9B2QJ1qmMqx8zFKHRWktvBgxDgPzMzRV9/YRgu7MMshhwZ8BgDjTMQGY7AAm
+         966w==
+X-Forwarded-Encrypted: i=1; AJvYcCXXqNvSL+K8U+7D9bprm1fiKurwfVqEr+TP6x21opKUrQiAXw5BuI95K5bkexmiaKRif2ZI6Qw6+FDmXbNWn0wwBaTYG5kJ6YGSktjp
+X-Gm-Message-State: AOJu0YzgqHl6aGL00d8OgaMpEqENcFC+xXAZwtWkmukkOujMPE9ImIPt
+	O39UeSWi03ckt4Sb7lN9gUZCjxkeBdVOIYvzBRLjnrwEgzpaVrhmN/Blr4pkOds=
+X-Google-Smtp-Source: AGHT+IGiKyWuqgAIxgrEV+lA+jwRvALxPu8Ex4GA8h6qTDbq5CrrDib3WqnWy/fQMHVAIh7lZU0CKQ==
+X-Received: by 2002:a9d:7e9a:0:b0:6f9:62e9:9f93 with SMTP id 46e09a7af769-70075a747edmr2788040a34.35.1718812143157;
+        Wed, 19 Jun 2024 08:49:03 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b4fcf9ab77sm15777616d6.7.2024.06.19.08.49.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 08:49:02 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sJxYT-004xTQ-Ic;
+	Wed, 19 Jun 2024 12:49:01 -0300
+Date: Wed, 19 Jun 2024 12:49:01 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Zong Li <zong.li@sifive.com>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+	tjeznach@rivosinc.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, kevin.tian@intel.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-riscv@lists.infradead.org
+Subject: Re: [RFC PATCH v2 06/10] iommu/riscv: support nested iommu for
+ getting iommu hardware information
+Message-ID: <20240619154901.GN1091770@ziepe.ca>
+References: <20240614142156.29420-1-zong.li@sifive.com>
+ <20240614142156.29420-7-zong.li@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|DS0PR11MB7411:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb5b9e3f-7b29-491c-8fd7-08dc90774e65
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|7416011|1800799021|376011|366013;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?YWF3Qkh1blJQbVhRT3lQZmhSQmhMZmt3ZXU5WDJDdXFRQU1BM0lrZ1V2cjJp?=
- =?utf-8?B?RjhhcHZ6VkZkcnI0N0Z6ekJEZFI0RlRJUGNKc0lMVTNIUFduNmJiTlZWQ3dH?=
- =?utf-8?B?aEdKVkNqK1VMN3R6UnlybGtuc1pHYm9pcnFyMExTazA4TFRoaEV3QmRMc2VS?=
- =?utf-8?B?V1ZKbnl1UXp0bWZKOEZSRm51U2VzYXdQYWpFdFFadHZzTVh1RHpoOUM4Uk9t?=
- =?utf-8?B?ZnpCUzVBT3hkbnpwQ0xvVy90V0FpWHZkSjZUUlNPM2JRZ2NKbHBNdzBZcDZ2?=
- =?utf-8?B?Tml3cXcvMHdhUDhVVG9GVG5ZQWVRYUJkUXd0SkloVEdMVEZ6ZGwwN1MvMFFB?=
- =?utf-8?B?N3JjNCsvMEIzZnN0dzh1UHpWdE5FOVVYSi9QT0FadkxBbGd1MnpCd052b0hH?=
- =?utf-8?B?VVlHclVFK3drQTV6L3ZyNlBrbjd5L0lMMFJjRHRRZFVJRHVRUFBSWXR3RUxP?=
- =?utf-8?B?MTVYUmRRNkpCN2tNQTNkVTg3dmhya2VqVWRnWXJnMUVnV0lxWUs4N1JTczZC?=
- =?utf-8?B?U1o1cXZzZTZSY3kzNEpxTFVHdnVoTEdOeFJ0UGhxKzhWNmE2QTRUN1RNVlpX?=
- =?utf-8?B?aDFXaU1ta0lrbFdnYVcySWU5RzhqSGhVT0dUMFQzUkZpRVJPRDNhdUI2MkEz?=
- =?utf-8?B?Y1NMYzQwZXFHcFdsczZSWDZTdnlSeXpGNEx5QUpIRkQ1eDBJTDR6eVBVSlNq?=
- =?utf-8?B?WlJLeFlCdVlJSXhHWjFjc2NWaG1SWjdIUU5hRTR5WTBTOWNQRGtKcUFuUVUr?=
- =?utf-8?B?ZFQxVnZhaTdpNjFncnkyblJ4MXM0UWM2SjJaZXdhTGlsMjNsRDQyczh0UHNK?=
- =?utf-8?B?OWFxenF2aWZzb3pQMGd4NGlHYTM1eU10MThkY3lNTWc5OEFwUFlFUHlydW5M?=
- =?utf-8?B?ZjdFbzkyTU9DR2U3aktMcjdWb2dFQk9ZQ3ZFQWpXTWRlczByR0Y0WGpmTVcr?=
- =?utf-8?B?bEVidTdtelpxa3BIaFdoUGdpbEpEaFpnVGFvRThoWFErSW1ta1hZcVdFdEU3?=
- =?utf-8?B?akZkc29pZVYzZWdJNFkvNjlLS0xIQzJWZENrc2wyTk1KNW1MYXBQeGZRQ0tm?=
- =?utf-8?B?bXJyYmhzc2RRY0NJQWJmMzFTajFSWk04OU9wVXNpSWtUWGVkK2loZUs5Y2ZQ?=
- =?utf-8?B?TE1zSkw5RzFJcXg2emdvZi9LcVYzNWxmVGdSNnc2OUtlQ0tERGVWQm9VQW1Q?=
- =?utf-8?B?NVU0WjJFeUlMaklvZERkTHJZT1ZSVlJXOWR6am9XNU44QVAxY09wRXBsa0x2?=
- =?utf-8?B?d1hycEczMGhJbGtCT3Ara3A2UXNtUDVFMjhyN0Zuc0ozT1pxWlpSViswek9Z?=
- =?utf-8?B?Ny9WNFVWdnZNdnpQMkg5dkRVdE1MZDVGNU04SEhXYjJHcWxDZFIrTVFiUkxs?=
- =?utf-8?B?YlFlNmdXaG1iNG9GbHkwOFlodGw2V3hRVTJ1UUZtYUlsQnZPK3orckxWczVa?=
- =?utf-8?B?RWdPRGNTZ2tkUlN3eFllNUFtbVN1cUNMN0xaQjJYTEY3dHZVUW5nbjlNYnhB?=
- =?utf-8?B?MkFoTGF1dkpIQUFwK0phTkl6REU1Y1NZbE4wODlucXFjanArR3V1czFOUXNn?=
- =?utf-8?B?Q2t4MmVYTDFJZ09wQTZFajRkN0Q4cSszSTRObU83L2EwaGowbklIK2tZTmZq?=
- =?utf-8?B?V0YxL2VpK0RyQXpkWWFHaDV5WU16MzU0YVNkV3VtN3VEZlFBNGg2UklhL0xv?=
- =?utf-8?B?b08ycmpQMWdxSjVUejlFOGJGVmFVWXE0aGNuNmJFK1NuUWZBWjJtSGhmaFNN?=
- =?utf-8?Q?ayVxQZRs2N8ZaribOgPckelY0vpP7vVobnQ/g6v?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(7416011)(1800799021)(376011)(366013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aVJabXBtVDRxZDUweFJ6cU5hS1VCS2s3ZVJCOE1TcDVIT09SaWNKdlArcEhx?=
- =?utf-8?B?dXZBa1paSE54YUFtTEloR0ZveUU3Ymc1ekRqWU9NY1BXVFlSZkpHUFMxVkhR?=
- =?utf-8?B?YUhESVo0d1VhcUlWd05nMm1kN0JQY21HS0I0VlY2a2RpQTR3c3hySUtRSHl1?=
- =?utf-8?B?L2daaXBEWi85Szc2czZONjVIZkV6MWNHVGhWRlpVMGdyZlJJKzNXOWI3MVhB?=
- =?utf-8?B?Z09SVVBHdTh5VERRNmNkVEw4K2lGeTYzUEpaem51NWJaeng0RllxUGdoQjJR?=
- =?utf-8?B?QW1oQW1jaVk0cXNqL1I1T1ZRb1dHQnAwVTNtM3hhbjM1MnplVVhWNjVNS3ZY?=
- =?utf-8?B?dS9uaHdWRnJ0eW0rSG00NG55a3ZKYTV2ZGI4cG9mNll1MFcrUkdvSEtMcEVz?=
- =?utf-8?B?dDQ4eEkxMS9Zcm5DdHZ6dDlsZkhETm53Vys3WmJHRzhIZWNPUWtmZ2ZUUkRt?=
- =?utf-8?B?MzdVZWx4aEpab1RCd0JJc0JuY1pueG9iSGZhNklnTHdTNXNNcG5sem5FL2xZ?=
- =?utf-8?B?MFprRWRycWhrRGZqc0lnUzdwUkFFUURuZzVxaGNHTGJ6T3JLTTJjSzQxK29P?=
- =?utf-8?B?V1NzVHdINmtoQU95dTlxK3JBRDJ3M0hKNVlVcXJsbmJ6dzRZVXlabnp4Smd3?=
- =?utf-8?B?WW1qQXlDc2JLa0t4VGxDcWZHNmtYODV4bWJhVnRjQ2pIQkpMMGw1TVRWVjVK?=
- =?utf-8?B?K2lhY0V3eHdyOUN2eWRLTEVIU0pib2VqMUFDY3JTRXZ3cWJSaHlTVnNwcVBM?=
- =?utf-8?B?eWRXdGNOcHBxUzkrNzY3bU55Q0NGZGFpamZuTlJkSjVubDRyWHFxN2JxMk02?=
- =?utf-8?B?TzBMcTQ3eGFPYXpYZ2NEcHIrQTlRZWMvT01WdlpzRTdsRzAwM0xMeS8yMUNw?=
- =?utf-8?B?SFF5cmNzSnM4dVBZb2JKK2NpQnBsYWxQck9UZ1FXcXlFczlXbkk3YlNOSTh1?=
- =?utf-8?B?aWpLVW1WY0lmbmdPQ1RwTzU3TU1xWnViSzdlMmZsM2czK1o5MGdRT0QwNmxi?=
- =?utf-8?B?WDVLd3ZLdnErYWwrNDZwcGptQ1JSbTA1TXFoRnNoYnY2Vmo4ckJCc2I1V3E4?=
- =?utf-8?B?bUVlRVNldVBSMmVRa0cxTHVKdjJ6K1ZXYTI5RENHZDhSVWZWdllxZnp4QTNP?=
- =?utf-8?B?YTRWY2RlOGpOMHA5R0J1WWxpODk5bDVMUzRneVdxRjIybEl4WmpjN2NiZXFM?=
- =?utf-8?B?ODVRV24ybU10bmR2VlFoeTdJZDJsR1lpb05UcFJZelRlbmRYbXd0UHBoRTRm?=
- =?utf-8?B?T3RWdDgvUDdKWHRBVXhTNmpRd3I0UXF4VlY2Vit0Q24vWFdGK2d1dkU5WFpq?=
- =?utf-8?B?dC8vandsbDZFRm8xY0psUWVRWFAvaDlvS1Qrd2hvSXYyV2VGZHU1ZUFEcUlH?=
- =?utf-8?B?dVkrWE5LeTJDbi90eWFsU3V1aWZkQVhJR2FFUWcydHRXNFkxVzRlajBBUjJE?=
- =?utf-8?B?TDEyUnJDWXpsdUk4OHJ2SzNWNW15aXJHc0JCbDJmbkorOTdyTkVoVytoRWc5?=
- =?utf-8?B?UHdmV3ZKQnRQc0F6aGxML1BBV3cvVmV0c2UzSjhEY1lPN20xYmRqdWhOdmxY?=
- =?utf-8?B?b0gwVWs3TWRZMHRsdkVrby9BazlxWlUrekprcXJuK1h4UUkwVk92VDFLWjZK?=
- =?utf-8?B?WEV4VTZzdkwxWmQza0RLSEF0dFVlc2dqM1BiQUViUnRRaTNCUXZLRE1oWHh2?=
- =?utf-8?B?alZMMk5XMXNNQnZ0THBYR3c3VXRFUy9oVzBzVkx5R1BXTERML0ZmY1FWa1pI?=
- =?utf-8?B?MWRBajVTbUYvb3QyTFFlV3dwd3MyYVphQk5tSSszUTNpSm5VV0Z1WW1HRmtD?=
- =?utf-8?B?VGVxYW9TUFFkem5Fd2Zob280blhrWmp6V3RnQ3BLcWp0TXVCTFdaRkFyOFBW?=
- =?utf-8?B?bERWVWFPZWNOZndlOHZ6dmxHdEdSeVkzVjlwS1R0bkcxamJTaWE2dXVDQUoz?=
- =?utf-8?B?bXdyK25pWnkzbjJXOVA3QzZ4anpwL1pnd0xUeVlDQ3hUVS9zVHNXZ0FqczZH?=
- =?utf-8?B?amZteHEvRGhDU1I2RG0ySTB3c1MyejZ6M2lZdmE1OXBSYUpWSUhoS3Q4d08v?=
- =?utf-8?B?TTY0dkphT1ZIckhtbytwYldDTGdiNzNYWDZFYlNEaVJweVRvRjZobS9aQXJj?=
- =?utf-8?Q?HhZ/zUNNx/mMBaHeFSmoyNt6r?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb5b9e3f-7b29-491c-8fd7-08dc90774e65
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2024 15:48:47.2685
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qzti46f+FMY11NU2lmssMCXl9/hIUKvQ5+idOTP0xgY7j0scMngn33LjVcS7FXOcA28k0CotU+DaXBFoPvGY7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7411
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240614142156.29420-7-zong.li@sifive.com>
 
-On 2024-06-19 at 18:34:34 +0300, Nikolay Borisov wrote:
+On Fri, Jun 14, 2024 at 10:21:52PM +0800, Zong Li wrote:
+> This patch implements .hw_info operation and the related data
+> structures for passing the IOMMU hardware capabilities for iommufd.
 > 
-> 
-> On 19.06.24 г. 18:25 ч., Chen Yu wrote:
-> > Hi Nikolay,
-> > 
-> > On 2024-06-18 at 11:24:42 +0300, Nikolay Borisov wrote:
-> > > 
-> > > 
-> > > On 26.05.24 г. 4:58 ч., Chen Yu wrote:
-> > > > The kernel can change spinlock behavior when running as a guest. But
-> > > > this guest-friendly behavior causes performance problems on bare metal.
-> > > > So there's a 'virt_spin_lock_key' static key to switch between the two
-> > > > modes.
-> > > > 
-> > > > The static key is always enabled by default (run in guest mode) and
-> > > > should be disabled for bare metal (and in some guests that want native
-> > > > behavior).
-> > > > 
-> > > > Performance drop is reported when running encode/decode workload and
-> > > > BenchSEE cache sub-workload.
-> > > > Bisect points to commit ce0a1b608bfc ("x86/paravirt: Silence unused
-> > > > native_pv_lock_init() function warning"). When CONFIG_PARAVIRT_SPINLOCKS
-> > > > is disabled the virt_spin_lock_key is incorrectly set to true on bare
-> > > > metal. The qspinlock degenerates to test-and-set spinlock, which
-> > > > decrease the performance on bare metal.
-> > > > 
-> > > > Fix this by disabling virt_spin_lock_key if it is on bare metal,
-> > > > regardless of CONFIG_PARAVIRT_SPINLOCKS.
-> > > > 
-> > > 
-> > > nit:
-> > > 
-> > > This bug wouldn't have happened if the key was defined FALSE by default and
-> > > only enabled in the appropriate case. I think it makes more sense to invert
-> > > the logic and have the key FALSE by default and only enable it iff the
-> > > kernel is running under a hypervisor... At worst only the virtualization
-> > > case would suffer if the lock is falsely not enabled.
-> > 
-> > Thank you for your review. I agree, initializing the key to FALSE by default seems
-> > to be more readable. Could this change be the subsequent adjustment based
-> > on current fix, which could be more bisectible?
-> 
-> Why can't this change be squashed in the current proposed patch?
->
+> Signed-off-by: Zong Li <zong.li@sifive.com>
+> ---
+>  drivers/iommu/riscv/iommu.c  | 20 ++++++++++++++++++++
+>  include/uapi/linux/iommufd.h | 18 ++++++++++++++++++
+>  2 files changed, 38 insertions(+)
 
-Current patch deals with the incorrect condition of CONFIG_PARAVIRT_SPINLOCKS.
-The change of the virt_spin_lock_key's default value is supposed to be "no functional
-change expected", but maybe just in case of some corner cases...
-Anyway, I'll put the changes together in one patch and do some tests.
- 
-> > 
-> > 
-> > Set the default key to false. If booting in a VM, enable this key. Later during
-> > the VM initialization, if other high-efficient spinlock is preferred, like
-> > paravirt-spinlock, the virt_spin_lock_key will be disabled accordingly.
-> 
-> Yep, or simply during the initialization stage the correct flavor will be
-> chosen, no need to do the on-off dance. But that's a topic for a different
-> discussion.
->
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Yes it is doable. 
+>  /**
+>   * enum iommu_hw_info_type - IOMMU Hardware Info Types
+>   * @IOMMU_HW_INFO_TYPE_NONE: Used by the drivers that do not report hardware
+>   *                           info
+>   * @IOMMU_HW_INFO_TYPE_INTEL_VTD: Intel VT-d iommu info type
+> + * @IOMMU_HW_INFO_TYPE_RISCV_IOMMU: RISC-V iommu info type
+>   */
 
-thanks,
-Chenyu
-> > 
-> > diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
-> > index cde8357bb226..a7d3ba00e70e 100644
-> > --- a/arch/x86/include/asm/qspinlock.h
-> > +++ b/arch/x86/include/asm/qspinlock.h
-> > @@ -66,13 +66,13 @@ static inline bool vcpu_is_preempted(long cpu)
-> >   #ifdef CONFIG_PARAVIRT
-> >   /*
-> > - * virt_spin_lock_key - enables (by default) the virt_spin_lock() hijack.
-> > + * virt_spin_lock_key - disables (by default) the virt_spin_lock() hijack.
-> >    *
-> >    * Native (and PV wanting native due to vCPU pinning) should disable this key.
-> >    * It is done in this backwards fashion to only have a single direction change,
-> >    * which removes ordering between native_pv_spin_init() and HV setup.
-> >    */
-> > -DECLARE_STATIC_KEY_TRUE(virt_spin_lock_key);
-> > +DECLARE_STATIC_KEY_FALSE(virt_spin_lock_key);
-> >   /*
-> >    * Shortcut for the queued_spin_lock_slowpath() function that allows
-> > diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-> > index c193c9e60a1b..fec381533555 100644
-> > --- a/arch/x86/kernel/paravirt.c
-> > +++ b/arch/x86/kernel/paravirt.c
-> > @@ -51,12 +51,12 @@ DEFINE_ASM_FUNC(pv_native_irq_enable, "sti", .noinstr.text);
-> >   DEFINE_ASM_FUNC(pv_native_read_cr2, "mov %cr2, %rax", .noinstr.text);
-> >   #endif
-> > -DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
-> > +DEFINE_STATIC_KEY_FALSE(virt_spin_lock_key);
-> >   void __init native_pv_lock_init(void)
-> >   {
-> > -	if (!boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> > -		static_branch_disable(&virt_spin_lock_key);
-> > +	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> > +		static_branch_enable(&virt_spin_lock_key);
-> >   }
-> >   static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
+Is there a more formal name than "RISCV IOMMU" here? It seems like you
+will probably have a RISCV_IOMMU_V2 someday, is that naming OK?
+
+Jason
 
