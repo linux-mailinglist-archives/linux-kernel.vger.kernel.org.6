@@ -1,83 +1,51 @@
-Return-Path: <linux-kernel+bounces-220527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1A490E325
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 704A790E328
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDE0A2839E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:14:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ED7D2839E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9405F6F06D;
-	Wed, 19 Jun 2024 06:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24E86BB33;
+	Wed, 19 Jun 2024 06:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aNqK85Wb"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SJTeukPi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509F74A1D;
-	Wed, 19 Jun 2024 06:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E718A4A1D;
+	Wed, 19 Jun 2024 06:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718777653; cv=none; b=LqBXGQzTRgggbdn3D2nzdKc24p5kcP9J+hpBpXJUtzMZqrUbTF4sh5lgr5JyOoWDSMqUflWXwM86aIqWgMRhFxk4WYg/oWlkTNzgqZJsvDuj800eIAiiH9YJvt93TJB1tVOW5UQlIlB9qUrdge1BeS8VYlfkARPHUETcDAUsX8Y=
+	t=1718777701; cv=none; b=cs9prNd98Zd+eZChtRrKLS3BhdfIeRBPnCHhDDPx3BKa+g2dLT11/cP2OHcg3SZe0kjJoDQOfUYYBOldBHGmVr3d4dC85qUJaruBeELGSwPbVrB18vSR9YwMniuO+fuTfyCcmMOC27m8vYaHdK+xvuBDTwoR4hx1U2fmMfAUyN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718777653; c=relaxed/simple;
-	bh=xvj6DblVXIhvHqhIgVQ38lAueoVuFR6OL/vl+QTmWaQ=;
+	s=arc-20240116; t=1718777701; c=relaxed/simple;
+	bh=60c30djlc6yW40sTp82eLHFt4jyff+jykZzIZjYegOk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lx5fGXFp28Hp7QQH7aBX1SqepA//4wRwhhaV2lW4j/iqPTUxmUQxohwcGBuQt9PsuxaLvX2z6ercNlAyPavG89CIWnM30gBgwVoHWAe4DbhT2TMCdDctSES07Xad1LpNQ/DAf555nO0cbciG2HEZLvVl3G1FSlbs44OuIwkJ8JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aNqK85Wb; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52bc335e49aso6907390e87.3;
-        Tue, 18 Jun 2024 23:14:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718777650; x=1719382450; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fzmSViGchLceE7ZVFGAcuIV9ClbAk4S7GC1JzzuAB8s=;
-        b=aNqK85WbdFXNisyxvobVPxYvYRyJL4QKhTwXP+ZXLS2JhFArTkdV2wZxU+zV11LkjB
-         PhQtnNkg+b28sJq4i3soj6zIQTZKmoQNSVYCD42fzhK8CNzX40Hy2OtRC4BQQGOSi8Me
-         4lALphbjMNGRLCHdIypC+uqfOuci9W623O/tm8fr9Fk3eK/7svZDwDeWQ1HqjRBboAxF
-         OWY+YDV2nE0zREjNruq7lvucSgU12VWojU7ve4hUvwP58QLi08hbrl9ZDcJsQZ81idWX
-         dGJP4fq1Yx8e2Eole0cD7e5/gXHBR8a3nc4Rhmtfzlvy7++VzhZJJDX3DMVU4xlUSdz/
-         UpEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718777650; x=1719382450;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fzmSViGchLceE7ZVFGAcuIV9ClbAk4S7GC1JzzuAB8s=;
-        b=AlXFvNLcathm7CMF85Cy26nhBF9SkSVHz4cpsrxIe/iSgvlB5h7e5dPXIEXONIXQkN
-         RFcYtQDGw/rK+6SEWFioi+JGCbUnpI/S6sM3RMxlRpXaquGskKfNk7y9LFQ3c1/qD3iN
-         /2oBw+fYtf2qM2poLs3fz0DDZ+IN5BRw5dK8t1r+GxjtjCnSmv9HMkbqSieFF5ulH4t4
-         kuHz/hMSmMsV5OV42DRnk1wtnxKf+dpOwivIhHlFSwU+uInXuJKIYcZN10PiV7lcQ2tx
-         SG00QAo7uJ1I/CjNTeU2cHvGceDIStkvWh99UdPDrNFtdyI58J8dahzlH+D2tzG/oGAM
-         7HHA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6xICzP2rrE3ZPYAc5YzNArPBnfFAMmDOFp6N6WF3KbDP46Yj9O2KxHM1YWLHSsddOlnXkhga2V/tc1/HZG+aA2JGAsS6C29BXzjYISnzhPOwq0oBtwMFYXCrORTp5N3jFgcuF9cyd1fsBagjW+OmoRgVg/d736FnWj/J8iOFQ/NT9
-X-Gm-Message-State: AOJu0YzaW0+BaKlKK45mf+szxG2AHXyvSHZUucwNFpsfeiWUhCeLA55j
-	+VIYplPvExz/XFVd2ii0ONI754GiLqZSX/svmjPtNTw/fIN8ovA5
-X-Google-Smtp-Source: AGHT+IGg6DQJIzO7sfrKDh1lIktrtgxmEg2uujJDnLN3SUBWBfzQsv9XXF/KfNs1cnWVnwHz1hV8cQ==
-X-Received: by 2002:ac2:58cf:0:b0:52c:88b8:12ab with SMTP id 2adb3069b0e04-52ccaa5e2b6mr870434e87.23.1718777650022;
-        Tue, 18 Jun 2024 23:14:10 -0700 (PDT)
-Received: from debian ([93.184.186.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874de63asm254980325e9.30.2024.06.18.23.14.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 23:14:09 -0700 (PDT)
-Date: Wed, 19 Jun 2024 08:14:07 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-Subject: Re: [PATCH v4 2/2] power: supply: add support for MAX1720x
- standalone fuel gauge
-Message-ID: <20240619061407.GA51605@debian>
-References: <20240617184504.304211-1-dima.fedrau@gmail.com>
- <20240617184504.304211-3-dima.fedrau@gmail.com>
- <dzrsh5dsraz62sc3mfhlmf5yolkzjet2agv2ochg3xg4ryfofs@bnmxbtsavv4o>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uKciVm2RNllcOlxLsLrLVAvUWQebsnXucZQhgOlovVsUHqjE9bkW/yhgjzjuHCf8f4L61w6YzuqEz9fA9JeAMCII/aWa635KOCayWVMA82XJFcj2w0R/Dfkl/t2DqTGWCiYgdiFE2ASNbdje0AKcdWJ4/A5lUui/r4zqdJqyLKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SJTeukPi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DD67C2BBFC;
+	Wed, 19 Jun 2024 06:14:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718777700;
+	bh=60c30djlc6yW40sTp82eLHFt4jyff+jykZzIZjYegOk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SJTeukPi+tXeIvcwj4yI72Y0QMpZlk606h4TEgy7I5LZcPKVdIpb6hmNa++lsAoRu
+	 L8tetlagsZHxolbD1kW0QBmmq6eNOticHg1ePpG9j6xMn/UTnW9ko48WvJbsK+HQlQ
+	 qqofUnZ53c7eDtOFRhbdo9Buh5Weqo3Ul26OSUk8=
+Date: Wed, 19 Jun 2024 08:14:57 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Kuangyi Chiang <ki.chiang65@gmail.com>
+Cc: mathias.nyman@intel.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] xhci: Don't issue Reset Device command to Etron xHCI
+ host
+Message-ID: <2024061903-shadow-pesky-1205@gregkh>
+References: <20240619054808.12861-1-ki.chiang65@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,56 +54,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dzrsh5dsraz62sc3mfhlmf5yolkzjet2agv2ochg3xg4ryfofs@bnmxbtsavv4o>
+In-Reply-To: <20240619054808.12861-1-ki.chiang65@gmail.com>
 
-Am Wed, Jun 19, 2024 at 01:19:32AM +0200 schrieb Sebastian Reichel:
-> Hi,
->
-> On Mon, Jun 17, 2024 at 08:45:04PM GMT, Dimitri Fedrau wrote:
-> > The MAX17201 monitors a single cell pack. The MAX17205 monitors and
-> > balances a 2S or 3S pack or monitors a multiple-series cell pack. Both
-> > devices use a I2C interface.
-> > 
-> > Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
-> > ---
+On Wed, Jun 19, 2024 at 01:48:08PM +0800, Kuangyi Chiang wrote:
+> Sometimes the hub driver does not recognize the USB device connected
+> to the external USB2.0 hub when the system resumes from S4.
 > 
-> [...]
+> This happens when the xHCI driver issue the Reset Device command to
+> inform the Etron xHCI host that the USB device has been reset.
 > 
-> > +static int max1720x_read_word_data_nvmem(struct i2c_client *ancillary, u8 addr)
-> > +{
-> > +	u8 rx[2];
-> > +	struct i2c_msg msgs[] = {
-> > +		{
-> > +			.addr = ancillary->addr,
-> > +			.flags = 0,
-> > +			.len = 1,
-> > +			.buf = &addr,
-> > +		},
-> > +		{
-> > +			.addr = ancillary->addr,
-> > +			.flags = I2C_M_RD,
-> > +			.len = 2,
-> > +			.buf = &rx[0],
-> > +		},
-> > +	};
-> > +	int ret;
-> > +
-> > +	ret = i2c_transfer(ancillary->adapter, msgs, ARRAY_SIZE(msgs));
-> > +	if (ret != ARRAY_SIZE(msgs))
-> > +		return ret < 0 ? ret : -EIO;
-> > +
-> > +	return get_unaligned_le16(&rx[0]);
-> > +}
+> Seems that the Etron xHCI host can not perform this command correctly,
+> affecting the USB device.
 > 
-> Have you tried using i2c_smbus_read_word_data(ancillary, addr)
-> instead of the above?
->
-Yes, I did and it worked. Used it in V3 and changed it due to review
-comments by Thomas which make sense to me. I don't have any preference on
-this. Should I change it back ?
-> [...]
+> Instead, to avoid this, disabling slot ID and then enabling slot ID
+> is a workable solution to replace the Reset Device command.
 > 
-[...]
+> An easy way to issue these commands in sequence is to call
+> xhci_free_dev() and then xhci_alloc_dev().
+> 
+> Applying this patch then the issue is gone.
+> 
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Kuangyi Chiang <ki.chiang65@gmail.com>
 
-Dimitri
+What commit id does this fix?
+
+> ---
+> Changes in v2:
+> - Change commit log
+> - Add a comment for the workaround
+> - Revert "global xhci_free_dev()"
+> - Remove XHCI_ETRON_HOST quirk bit
+> 
+>  drivers/usb/host/xhci.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+> index 37eb37b0affa..c892750a89c5 100644
+> --- a/drivers/usb/host/xhci.c
+> +++ b/drivers/usb/host/xhci.c
+> @@ -3682,6 +3682,8 @@ void xhci_free_device_endpoint_resources(struct xhci_hcd *xhci,
+>  				xhci->num_active_eps);
+>  }
+>  
+> +static void xhci_free_dev(struct usb_hcd *hcd, struct usb_device *udev);
+> +
+>  /*
+>   * This submits a Reset Device Command, which will set the device state to 0,
+>   * set the device address to 0, and disable all the endpoints except the default
+> @@ -3752,6 +3754,20 @@ static int xhci_discover_or_reset_device(struct usb_hcd *hcd,
+>  						SLOT_STATE_DISABLED)
+>  		return 0;
+>  
+> +	if (dev_is_pci(hcd->self.controller) &&
+> +		to_pci_dev(hcd->self.controller)->vendor == 0x1b6f) {
+
+Odd indentation :(
+
+Also, that's a specific value, shouldn't it be in a #define somewhere?
+
+> +		/*
+> +		 * Disabling and then enabling device slot ID to inform xHCI
+> +		 * host that the USB device has been reset.
+> +		 */
+> +		xhci_free_dev(hcd, udev);
+> +		ret = xhci_alloc_dev(hcd, udev);
+
+You are relying on the behavior of free/alloc here to disable/enable the
+slot id, why not just do that instead?  What happens if the free/alloc
+call stops doing that?  This feels very fragile to me.
+
+> +		if (ret == 1)
+> +			return 0;
+> +		else
+> +			return -EINVAL;
+
+Why -EINVAL?  What value was wrong?
+
+thanks,
+
+greg k-h
 
