@@ -1,113 +1,158 @@
-Return-Path: <linux-kernel+bounces-220774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE55A90E6DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:23:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220D790E6DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C30DA1C211E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:23:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDC2F1F219B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2098580BEC;
-	Wed, 19 Jun 2024 09:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB4580025;
+	Wed, 19 Jun 2024 09:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qmKoFaXh"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="cemrlbqu"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E0E7FBC5;
-	Wed, 19 Jun 2024 09:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665AC7D3EF
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718788989; cv=none; b=s5+NAPeHS4xqKWccJHyI209wawjz+4QgSI2cIHgc0d5kLovL+nB7Wn/+cPo4eAdmxWGH99FeRzS0g4657P4WFM9lZdMKhdbW+fL/81xOsZhsFhijHPG/y6BnQdSmCcG5pUgLnK17qdnmALQDjUQHp5TzT1JHY+6xCwbp324o2Yk=
+	t=1718789021; cv=none; b=lBVwkRLOc7VgOE8uhELu7z8Ot/MfCr4dNSAoYywrNcElNHDsUeSU1YMi/YlGJlYMghrN//FkZZguMH9f5omOBrLcHRUg61d1ZYeqdnM6Q2HQw80WbijpXCSfijAW/ULdxK4eG4zAzHoWdMQ8B1cVGRVxwYoM6kT3vr96XFJg9Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718788989; c=relaxed/simple;
-	bh=u5hdWnd9lzdDV9BWthAA8txrbh1qaZGtYlyLfYODBbk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eRr3ImAy92xOtcLhZE8sMR71c60J12d3p7EeXOdR+NeIWSHGhjUeBw+APV17iRTZcZj/1vk0UFF0sciqbFF4WhwSx7VRShY0ugs6TBL59ZtIZ8PynvFF/wZZbSjHqmoM7jM+sQa23ZdnnIdusVYZJNMXCHAdLvhSPQpUpSWS9wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qmKoFaXh; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718788986;
-	bh=u5hdWnd9lzdDV9BWthAA8txrbh1qaZGtYlyLfYODBbk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qmKoFaXh+BX23XZ7425uwnJ5P2KXjjA4P9OJBQXCzSWOfUYmWY+vJAjmkwnu8vXIQ
-	 JoZro56VB8rMSmbMkB4CBCV9x+H6MCFPjPO+6mXyi2VFBcvPa5XLlgaDrC+BoioptF
-	 ucCFQ7ScdVDSFK5r00KgndiwgLccjR6jdju+Pc5fb579QaUEpzGbgjfjEQA0i9Ir1X
-	 1JuUHvxZ8R3WZaaqa+EhlL6m5aLXl9u8NincvKnYml5p+GDeJwueT3FfOQ70KiCPWL
-	 rObUYkN38MwydiK2V5CKiNCtTCrVe+qf3ikxAAq8q4wRGO7paa4ULxrcHAhs0cll0+
-	 az3YATr9qXWBg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D6C273782163;
-	Wed, 19 Jun 2024 09:23:04 +0000 (UTC)
-Message-ID: <4e1a8383-fdcb-45b9-b3d8-7019ed8c07bb@collabora.com>
-Date: Wed, 19 Jun 2024 11:23:04 +0200
+	s=arc-20240116; t=1718789021; c=relaxed/simple;
+	bh=c6mCFLDwnEj0M0yPmsIQCRB4t/fBDoZ4qwONT/Fjbec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QXR6OSXx9s53gAC8riQhvuLE33ZuuedExRHoQeWr6KlFeI2RSrSGGOmRlMSESod8HzQyFAz4DSfXfgSzSuYRmO2ZZak7gUi8sCBt8eZL5qX4qUC4rkBYi0QKyx/JlL7mCne2TU3ZGnQnoCNsqBubKnuKCFn76xapC5zLnly3DEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=cemrlbqu; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so760259466b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 02:23:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1718789017; x=1719393817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E02jv30Jn5KEyH9ZDrmzhOXntMuebj1OtVrel1S6NPY=;
+        b=cemrlbquzeqpeZAK2qByaFC1iCJUr6TQBSUbMHVCZPrZNxaXwLHB0QLrjoNRGGUg1q
+         uhY3IERk1r8bWmpq4DDrAG61bSCfDE1vkRbOIg7dtYecw/LelD0PtyaNNyk+nh4rjHh3
+         xynmSSlN9Gu7BrGi26GgVfBUyqpGCCN/PF7YA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718789017; x=1719393817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E02jv30Jn5KEyH9ZDrmzhOXntMuebj1OtVrel1S6NPY=;
+        b=LbKKodCiU7rA8YdyEfNZhbXmpsRQ8C/DAk+SNQmH35NXI2ctqBcucdF8F+5djx01vl
+         AHBJetpH6hvQLkT4b5HA9TftOlOBhq8NYqqEo3aMYOyjAbZc1eUvH53lzeHZ8a0v1cfC
+         8CAFTRz1oNuRLg+Z+zIhyvH3a4PWM9kr0acFVkqHeKUOi8C7xSZ0i23diHUJHJ6BaDx4
+         jtKBo2WZLi4mGPVlp6c0gA79VXjvihMetKwtsVvofZdMuJCqV2Ex/15vpu+w4PtY70Bd
+         cuHbccc4KYKz32fujQN68a+K31zXMISWVksoBliB4bnVnjd5cXzV+0CXav6C3JG88lyR
+         ydXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJbboicbG+4uAKX+/XV1/5VfYz/JAcDddpubiAREJp5xnt4JYMfiOEDH50DAVJ22xgQBBPdEWdzAuLDkaE2rfyL+tt7CvAo1ZLwpjo
+X-Gm-Message-State: AOJu0YxJlseH6kD1x1IsNcuIGMEw/Gbr6Kz6F1n8XK2tfXu6SbtWFh8y
+	kUC8f0axbDmNkDRBYMHvXs71kDeql0uiJIw3l4ryO3WxUTme/53t7X/kRWf8/jekY5u2BFTjh8a
+	Yh3oHeLibuQnoHrWO+PJFAPaCUxRZb2vrRv2I6HesF4aNoRJMV/c=
+X-Google-Smtp-Source: AGHT+IFKQvk8lAQ+nFDkshiq3A/6mD+WFlIPkfhgxOHvbp51SeWW3bgS+ClQyEOwinwc3A2jk5hQBWZfiwOzdNFxXfc=
+X-Received: by 2002:a17:906:130a:b0:a6f:97b4:d1a5 with SMTP id
+ a640c23a62f3a-a6fab648ac6mr95888166b.40.1718789016391; Wed, 19 Jun 2024
+ 02:23:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Support MediaTek MT8188 Media Data Path 3 (MDP3)
-To: linux-media@vger.kernel.org, hverkuil-cisco@xs4all.nl,
- sebastian.fricke@collabora.com
-Cc: mchehab@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- conor+dt@kernel.org, matthias.bgg@gmail.com, amergnat@baylibre.com,
- moudy.ho@mediatek.com, u.kleine-koenig@pengutronix.de,
- chunkuang.hu@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20240322092845.381313-1-angelogioacchino.delregno@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240322092845.381313-1-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240619091737.669040-1-albertosecondi@gmail.com>
+In-Reply-To: <20240619091737.669040-1-albertosecondi@gmail.com>
+From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date: Wed, 19 Jun 2024 11:23:24 +0200
+Message-ID: <CAOf5uwk_i5yA+K=riMcP9r4V9FynRBv2+=P98xUMvmvBtJr4Mg@mail.gmail.com>
+Subject: Re: [PATCH] New config added to handle 64-bit systems with 32-bit DMA support
+To: Alberto Secondi <albertosecondi@gmail.com>
+Cc: hch@lst.de, m.szyprowski@samsung.com, robin.murphy@arm.com, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	alberto.secondi@abinsula.com, Davide Salaris <davide.salaris@abinsula.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 22/03/24 10:28, AngeloGioacchino Del Regno ha scritto:
-> This series adds code to support for the MDP3 block found in the
-> MediaTek MT8188 SoC, including the necessary bits for mtk-mutex
-> and platform data for the MDP3 driver.
-> 
-> This is mostly compatible with MT8195, with a few differences
-> "here and there", with the former having less instances of some
-> of the MDP3 IPs compared to the latter.
-> 
+Hi Alberto
 
-Gentle ping for this series getting stale.
+On Wed, Jun 19, 2024 at 11:20=E2=80=AFAM Alberto Secondi
+<albertosecondi@gmail.com> wrote:
+>
+> From: Alberto Secondi <alberto.secondi@abinsula.com>
+>
+> The kernel assumes that 64-bit systems have 64-bit DMA support through
+> CONFIG_ARCH_DMA_ADDR_T_64BIT. This is not always true; for example, sever=
+al
+> iMX8 systems (verified on iMX8MM and iMX8MP) have DMA with only 32-bit su=
+pport.
+> This results in several drivers requesting DMA_BIT_MASK(64), which causes
+> malfunctions, particularly when systems have more than 3GB of DRAM (verif=
+ied
+> with the lan743x driver and iMX8 systems with 4GB of DRAM). Therefore, a =
+new
+> config ARCH_64BIT_HAS_DMA32_ONLY was added to manage 64-bit systems with =
+32-bit
+> DMA, which adjusts DMA_BIT_MASK(n) accordingly.
+>
+> Signed-off-by: Alberto Secondi <alberto.secondi@abinsula.com>
+> Co-developed-by: Davide Salaris <davide.salaris@abinsula.com>
+> ---
+>  include/linux/dma-mapping.h | 4 ++++
+>  kernel/dma/Kconfig          | 8 ++++++++
+>  2 files changed, 12 insertions(+)
+>
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index f693aafe221f..629220a777e3 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -74,7 +74,11 @@
+>   */
+>  #define DMA_MAPPING_ERROR              (~(dma_addr_t)0)
+>
+> +#ifdef CONFIG_ARCH_64BIT_HAS_DMA32_ONLY
+> +#define DMA_BIT_MASK(n)        (((n) > 32) ? ((1ULL<<(32))-1) : ((1ULL<<=
+(n))-1))
+> +#else
+>  #define DMA_BIT_MASK(n)        (((n) =3D=3D 64) ? ~0ULL : ((1ULL<<(n))-1=
+))
+> +#endif
+>
 
-The soc bindings and commits are already upstream (v6.10).
+How can this fit configuration where you want to have one Kernel image
+for several arm64 machine?
 
-The commits that would go through the media tree [3/4], [4/4] still apply
-cleanly as they are.
+Michael
 
-Should I resend this, or ... ?
-
-Cheers,
-Angelo
-
-> 
-> AngeloGioacchino Del Regno (4):
->    dt-bindings: soc: mediatek: Add support for MT8188 VPPSYS
->    soc: mediatek: mtk-mutex: Add support for MT8188 VPPSYS
->    dt-bindings: media: mediatek: mdp3: Add support for MT8188 RDMA
->    media: platform: mtk-mdp3: Add support for MT8188 MDP3 components
-> 
->   .../bindings/media/mediatek,mdp3-rdma.yaml    |   1 +
->   .../bindings/soc/mediatek/mediatek,mutex.yaml |   1 +
->   .../platform/mediatek/mdp3/mdp_cfg_data.c     | 280 ++++++++++++++++++
->   .../platform/mediatek/mdp3/mtk-img-ipi.h      |   1 +
->   .../platform/mediatek/mdp3/mtk-mdp3-cfg.h     |   1 +
->   .../platform/mediatek/mdp3/mtk-mdp3-core.c    |   3 +
->   drivers/soc/mediatek/mtk-mutex.c              |  41 +++
->   7 files changed, 328 insertions(+)
-
+>  #ifdef CONFIG_DMA_API_DEBUG
+>  void debug_dma_mapping_error(struct device *dev, dma_addr_t dma_addr);
+> diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig
+> index c06e56be0ca1..0a27eafed808 100644
+> --- a/kernel/dma/Kconfig
+> +++ b/kernel/dma/Kconfig
+> @@ -36,6 +36,14 @@ config NEED_DMA_MAP_STATE
+>  config ARCH_DMA_ADDR_T_64BIT
+>         def_bool 64BIT || PHYS_ADDR_T_64BIT
+>
+> +config ARCH_64BIT_HAS_DMA32_ONLY
+> +        bool "64bit System has DMA32 only"
+> +        depends on ARCH_DMA_ADDR_T_64BIT
+> +        default n
+> +       help
+> +         This enables forcing the maximum DMA_BIT_MASK to 32 bits for
+> +         64-bit systems that have DMA support limited to 32 bits.
+> +
+>  config ARCH_HAS_DMA_SET_MASK
+>         bool
+>
+> --
+> 2.34.1
+>
+>
 
