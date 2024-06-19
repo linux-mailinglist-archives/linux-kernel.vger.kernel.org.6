@@ -1,162 +1,86 @@
-Return-Path: <linux-kernel+bounces-221077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604E390EB85
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:58:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A80C90EB88
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86BC31C22D70
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E347F1F2157C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA9D1448E1;
-	Wed, 19 Jun 2024 12:57:59 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A79A1494A6;
+	Wed, 19 Jun 2024 12:58:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CABE143873;
-	Wed, 19 Jun 2024 12:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3754A14885B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718801878; cv=none; b=OauqgrKsDPjVf9WsFsegmyc20ccrNrK9EwFJdmli9jWogb4q6MIO3IpAm++SB3yPp0KykU/kduDmg7rz88pJhnva8APLqr8BkpYHNcQNViNhg4WTJOGxJ4FsWPwdqFc4+ByI52j+R6ZHnpLrkb5SPY0KtgZ3sDSgVtvNlWygKP4=
+	t=1718801885; cv=none; b=EpghpWYD28kc/TY4/grcE6eZ7wlZbrGT9By+8cfTZSJ1E0MiCbKn3u0bqqdSpHc9tKq1iRJkC/N2ueZWKUX8iuQ0WhSze75utxqTt4D8gW3fYho2PcGULBS/m9rn/G9OcdFpelbgOqeZYxqGIfmNXUKtu0JMuTf64hsclAHpJqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718801878; c=relaxed/simple;
-	bh=uk5hm7TKh2yMcxEW5i9dKkR0mT9ncyfCEXcuyrUdsK0=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=aFGekEmBjgQ8EI9Qkc6xKIoifvV2tBIQN04xpQVfaNTsxkahxtoawG/cl6L5b2UbnS8z10BZaTWje1r/UbsKjtubq7lhcUK/fuvCWEG5NzH0TweSNMRcfV8oCmBhhOaC0rsfYfvExicgpFqa3ugrempi7F630BCQz4ib6iLsvFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W43TF3QhQz1M8v2;
-	Wed, 19 Jun 2024 20:53:37 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 79F9118007A;
-	Wed, 19 Jun 2024 20:57:52 +0800 (CST)
-Received: from [10.69.30.204] (10.69.30.204) by dggpemf200006.china.huawei.com
- (7.185.36.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 19 Jun
- 2024 20:57:52 +0800
-Subject: Re: [PATCH net-next v7 01/15] mm: page_frag: add a test module for
- page_frag
-To: wang wei <a929244872@163.com>
-CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Alexander Duyck
-	<alexander.duyck@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
-	<linux-mm@kvack.org>
-References: <20240607123819.40694-1-linyunsheng@huawei.com>
- <20240607123819.40694-2-linyunsheng@huawei.com>
- <45a90c2.baa1.1902bcfd33a.Coremail.a929244872@163.com>
-From: Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <a0396334-e9fa-9ceb-5d6e-7bf798ed545a@huawei.com>
-Date: Wed, 19 Jun 2024 20:57:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+	s=arc-20240116; t=1718801885; c=relaxed/simple;
+	bh=m8aBRy4mN7j0EJLvGv+Yo8UhHdWcXxl9dBdQ+FIgQW8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qXFHMOW93+B/iHTRtB2fk7pGWc+SnIIYMEu+c5rThjM3Imlpj3Eg4O3v/d/eqzUS/mf8yohymntqM+Swl7mVuune7IXczcC7hfKPZP70pS4/Lg5iMwRBW/4Y5xiDeLsQ3jMtnNRbXgnZBsxVtq0qtXU95gNyGUQT8uFzeReT5jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-376210a881dso6662825ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 05:58:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718801883; x=1719406683;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n8jzsiNVNmCEzQlIhhbY2JRnB5eogtT9dfAbl4/eOdI=;
+        b=WX2hiqt6ZUe1N/gFwc81uB1s+JYhXj+e9eCBRW4bk27LjRpT7XNHoMOewQg3sEe04c
+         n6omNZpcyLEB5ZtOt2w3GhZSJhxjVzdfHovmKp9kS/YL2HaeAvGR7VhXU7SbMDoUjtSr
+         LSycv1TV6X5cTOgXpmY+8I413h7WmJ92tY2j32nrv0Jl9hxyWY++JsWmqNVAAd9syDLF
+         mzyGLCG/TIMwQ0u+FrG4loP1WpNmJ2U68bz6CpnbDm7AWLRzzF8GnFiIhitV85mYzVGd
+         3+j08IVDCPaCNxVALLekfacoAWpb/yU07XHYw7PNiGzIkymJVV9bVIIlyGyh37kuJvuq
+         KmXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRNY7NUWCosUZxpfGWhqS3z1ySXZjU8/i2ulylQKj88sA75ehi3f6bX8HKfgYNca/0rbOcol+7ecm3zf7g6tKoDpuDqj11BGFZh/XJ
+X-Gm-Message-State: AOJu0YwRwjpFCo2dGe32r4XbPLHF33uGOA+53SRPPbwYaaioPCb6HCEE
+	Ml3TFtlaPimv7g0NYKyS82R/MWUptwqYM22eNst3ogif9Urq51knHgJy9tK+YU1iLfZwI52mRLi
+	XGz2Yr7CfpEOTs2RZv94TbQjQdbOFPCcYb1fPR7L8zHcv01clNUBv0F4=
+X-Google-Smtp-Source: AGHT+IHTQIMxF+lQgOg1yHEDktEZ/PM05w6V64nO7cHwtlcmnV6MAhPR7wP5+8W6eggyZfvXdsxU4hOAyMM61IJh6uSVuwle4fD5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <45a90c2.baa1.1902bcfd33a.Coremail.a929244872@163.com>
-Content-Type: text/plain; charset="gbk"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+X-Received: by 2002:a05:6e02:1383:b0:375:8f93:bbb1 with SMTP id
+ e9e14a558f8ab-3761d789e2amr1304505ab.5.1718801883332; Wed, 19 Jun 2024
+ 05:58:03 -0700 (PDT)
+Date: Wed, 19 Jun 2024 05:58:03 -0700
+In-Reply-To: <tencent_E56D8C9494EB5EEE52CDB8797A6E742CA10A@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b2148d061b3dbf55@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: invalid-free in hci_req_sync_complete
+From: syzbot <syzbot+35ebc808442df6420eae@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/6/18 22:45, wang wei wrote:
-> 
->>+
->>+static struct objpool_head ptr_pool;
->>+static int nr_objs = 512;
->>+static atomic_t nthreads;
->>+static struct completion wait;
->>+static struct page_frag_cache test_frag;
->>+
->>+static int nr_test = 5120000;
->>+module_param(nr_test, int, 0600);
-> 
-> 
-> "S_IRUSR | S_IWUSR" is better than "0600".
+Hello,
 
-Yes, it is better.
-But as we do the testing in module init, it seems we could just
-use module_param(nr_test, int, 0) instead.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> 
-> 
->>+MODULE_PARM_DESC(nr_test, "number of iterations to test");
->>+
->>+static bool test_align;
->>+module_param(test_align, bool, 0600);
->>+MODULE_PARM_DESC(test_align, "use align API for testing");
->>+
->>+static int test_alloc_len = 2048;
->>+module_param(test_alloc_len, int, 0600);
->>+MODULE_PARM_DESC(test_alloc_len, "alloc len for testing");
->>+
->>+static int test_push_cpu;
->>+module_param(test_push_cpu, int, 0600);
->>+MODULE_PARM_DESC(test_push_cpu, "test cpu for pushing fragment");
->>+
->>+static int test_pop_cpu;
->>+module_param(test_pop_cpu, int, 0600);
->>+MODULE_PARM_DESC(test_pop_cpu, "test cpu for popping fragment");
->>+
->>+static int page_frag_pop_thread(void *arg)
->>+{
->>+	struct objpool_head *pool = arg;
->>+	int nr = nr_test;
->>+
->>+	pr_info("page_frag pop test thread begins on cpu %d\n",
->>+		smp_processor_id());
->>+
->>+	while (nr > 0) {
->>+		void *obj = objpool_pop(pool);
->>+
->>+		if (obj) {
->>+			nr--;
->>+			page_frag_free(obj);
->>+		} else {
->>+			cond_resched();
->>+		}
->>+	}
->>+
->>+	if (atomic_dec_and_test(&nthreads))
->>+		complete(&wait);
->>+
->>+	pr_info("page_frag pop test thread exits on cpu %d\n",
->>+		smp_processor_id());
->>+
->>+	return 0;
->>+}
->>+
->>+static int page_frag_push_thread(void *arg)
->>+{
->>+	struct objpool_head *pool = arg;
->>+	int nr = nr_test;
->>+
->>+	pr_info("page_frag push test thread begins on cpu %d\n",
->>+		smp_processor_id());
->>+
->>+	while (nr > 0) {
->>+		void *va;
->>+		int ret;
->>+
->>+		if (test_align)
->>+			va = page_frag_alloc_align(&test_frag, test_alloc_len,
->>+ GFP_KERNEL, SMP_CACHE_BYTES);
-> 
-> 
-> Every page fragment max size is PAGE_FRAG_CACHE_MAX_SIZE, hence the value of test_alloc_len needs to be checked.
-> 
+Reported-and-tested-by: syzbot+35ebc808442df6420eae@syzkaller.appspotmail.com
 
-yes, that needs to be checked.
-limit the test_alloc_len to PGAE_SIZE seems better, as we may fail back to
-order 0 page.
+Tested on:
 
-> 
+commit:         2ccbdf43 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=16b60a61980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
+dashboard link: https://syzkaller.appspot.com/bug?extid=35ebc808442df6420eae
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11174ada980000
 
+Note: testing is done by a robot and is best-effort only.
 
