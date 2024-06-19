@@ -1,123 +1,180 @@
-Return-Path: <linux-kernel+bounces-220393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8377C90E115
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:02:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B8A90E111
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5FA2813E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:02:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA961F23312
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07277470;
-	Wed, 19 Jun 2024 01:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hKFLppKa"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8638E6FB8;
+	Wed, 19 Jun 2024 01:01:40 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72868EDC;
-	Wed, 19 Jun 2024 01:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC5F1C20;
+	Wed, 19 Jun 2024 01:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718758911; cv=none; b=LHoRdfmPbDrjqsZniLoAdN3LW4cCqbDrQ78Sii2LXViNBtK5eQAgbW0GnyxnFhjY5yzKoY/MV7IGOXut5peausqIZwFyiKf7LkzcVt1jYT/H/O3NAkIm0HZ7TxVrMi3Sm/i4BWlZuo/1ce8xH60jWreXg14PzYJZ0+c4C0pPyDI=
+	t=1718758900; cv=none; b=lnNPUeqadVwMEUXLuY5qHo0NAWZz6+2eNXYXJSlItji0GiEDrTsgZIl5h1zLrbtj8stzSL6xf5yv4AuAbDgRsxjqo71i0ywqYuMiSc5BU4bgGpEFz9GjyWsEE+n5dZAq2H5rbzyW/NLwAVTCz10eGuihOM3CYecJ2kVXCEj7xM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718758911; c=relaxed/simple;
-	bh=+39AZubS+hg4CRo3u/U46R2iKurRlJVqaALw0AM9A7Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=e0QSv6NSXEj4xPmOtMKN/Flb0LaVKaI3ZkNNVMOgDzgWS3keraqxuPXE0llTkxfqYwJ6MxbKx9VzGa80hcPTcU4EP6bb14BE+/rCPZXLqE6a/q6Xdi6qSJbyid3vlsGYjfNPrwgqea6V0MdCrH3L6NAoOxhbpz+hsMAs16AQ/io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hKFLppKa; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ILepET026456;
-	Wed, 19 Jun 2024 01:01:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=cJqIaYok+7/VUeaqZ0FZsV
-	RqtKvMcUBtJZOpeR6SDO0=; b=hKFLppKaz92bIiEhIvMmGGQFu6atE89N6sy+b0
-	7jh6lG/A/AbDPKsjHptODbHJ2PtBRneAnO+IDvHvtwEGPTRTiOgExImWCPiaeGlO
-	rTxlOUXQoApgrfmhnMCwUQPT71Gotc4eG8Eu23vmLSJL7A/FwQtazcHKg0wJRtNX
-	Qx+QHcC+jGfou+v1E4VE2sI480+ZGvc6gaO2a+Wyp7Lmj3RAF9q5V5sucjWQ4qVR
-	chL2i54W3q83rNI/Nmtbu1ixan0iUwScn76KwYLNblFG3/nWP4rDcLPeY/ZRmeV+
-	7QlxemmpKP2pAWqp0u7TJr6R3tIgiGLuIx/u6Jy3+jZhEHyg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yujc4ga4s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 01:01:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45J11VjZ007448
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 01:01:31 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
- 2024 18:01:30 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 18 Jun 2024 18:01:29 -0700
-Subject: [PATCH] crypto: mips/poly1305 - add missing MODULE_DESCRIPTION()
- macro
+	s=arc-20240116; t=1718758900; c=relaxed/simple;
+	bh=HfrUQHKUfdTyX4Y7zj/TBDvU7xjtOZyPCFW72wYPSrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TvH0Zv+XxeQ32hFT4rFvOlYUy6EgipZH4ehJDR1qMhQlY0uMeXCfLpbaBlRzcDy1Mo+Jg5oWhKVHWN5Qo6c+57ouM5BrXYe5ulHTcKEvl1C4E/zSNFoXJucsk52BK34ecEJ2Z1ekS8khrXmxFujysHQdiCxTbDiMFJBe/4z7IvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W3lZl4w9jz1SCDV;
+	Wed, 19 Jun 2024 08:57:19 +0800 (CST)
+Received: from dggpemd100001.china.huawei.com (unknown [7.185.36.94])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0C84B18007A;
+	Wed, 19 Jun 2024 09:01:34 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ dggpemd100001.china.huawei.com (7.185.36.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 19 Jun 2024 09:01:33 +0800
+Message-ID: <2f408257-c516-8de1-4b3a-db77b0aa816f@huawei.com>
+Date: Wed, 19 Jun 2024 09:01:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v3] scsi: libsas: Fix exp-attached end device cannot be
+ scanned in again after probe failed
+Content-Language: en-CA
+To: John Garry <john.g.garry@oracle.com>, <yanaijie@huawei.com>,
+	<jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+	<damien.lemoal@opensource.wdc.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>,
+	<chenxiang66@hisilicon.com>, <kangfenglong@huawei.com>
+References: <20240613122355.7797-1-yangxingui@huawei.com>
+ <437c99f4-a67d-48d9-98ee-58cbbc3d19f4@oracle.com>
+ <815fcddf-85cc-126e-4be1-618b5ba8f823@huawei.com>
+ <bfc045d4-746e-4555-9e17-5a0be57ac787@oracle.com>
+ <d590fde9-69bc-0b9c-c907-0b90838e5f94@huawei.com>
+ <c4ad0886-6148-4714-b91e-3f669d438dcf@oracle.com>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <c4ad0886-6148-4714-b91e-3f669d438dcf@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240618-md-mips-arch-mips-crypto-v1-1-1ba592871112@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOgtcmYC/yXMQQ6CMBCF4auQWTsJJaDFqxgXpR3tJLY0M2gwh
- Ltbdfe+xfs3UBImhXOzgdCLledcYQ4N+OjynZBDNXRt17dHYzEFTFwUnfj4X17eZZnRjCc7hHH
- ojfVQ70XoxusvfblWT04JJ3HZx2/wwfm5YnK6kMC+fwCwo2HniQAAAA==
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-CC: <linux-crypto@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0lE7O43GVlYP2e2ofOSJZDEEltanySQj
-X-Proofpoint-GUID: 0lE7O43GVlYP2e2ofOSJZDEEltanySQj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_07,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
- priorityscore=1501 mlxlogscore=918 malwarescore=0 lowpriorityscore=0
- mlxscore=0 bulkscore=0 impostorscore=0 spamscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190007
+X-ClientProxiedBy: dggpemm500020.china.huawei.com (7.185.36.49) To
+ dggpemd100001.china.huawei.com (7.185.36.94)
 
-With ARCH=mips, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/mips/crypto/poly1305-mips.o
+Hi, John
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+On 2024/6/18 23:21, John Garry wrote:
+> On 18/06/2024 14:10, yangxingui wrote:
+>>>>>
+>>>>>> We found that it is judged as broadcast flutter when the 
+>>>>>> exp-attached end
+>>>>>> device reconnects after probe failed, as follows:
+>>>>>>
+>>>>>> [78779.654026] sas: broadcast received: 0
+>>>>>> [78779.654037] sas: REVALIDATING DOMAIN on port 0, pid:10
+>>>>>> [78779.654680] sas: ex 500e004aaaaaaa1f phy05 change count has 
+>>>>>> changed
+>>>>>> [78779.662977] sas: ex 500e004aaaaaaa1f phy05 originated 
+>>>>>> BROADCAST(CHANGE)
+>>>>>> [78779.662986] sas: ex 500e004aaaaaaa1f phy05 new device attached
+>>>>>> [78779.663079] sas: ex 500e004aaaaaaa1f phy05:U:8 attached: 
+>>>>>> 500e004aaaaaaa05 (stp)
+>>>>>> [78779.693542] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] found
+>>>>>> [78779.701155] sas: done REVALIDATING DOMAIN on port 0, pid:10, 
+>>>>>> res 0x0
+>>>>>> [78779.707864] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+>>>>>> ...
+>>>>>> [78835.161307] sas: --- Exit sas_scsi_recover_host: busy: 0 
+>>>>>> failed: 0 tries: 1
+>>>>>> [78835.171344] sas: sas_probe_sata: for exp-attached device 
+>>>>>> 500e004aaaaaaa05 returned -19
+>>>>>> [78835.180879] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] is gone
+>>>>>> [78835.187487] sas: broadcast received: 0
+>>>>>> [78835.187504] sas: REVALIDATING DOMAIN on port 0, pid:10
+>>>>>> [78835.188263] sas: ex 500e004aaaaaaa1f phy05 change count has 
+>>>>>> changed
+>>>>>> [78835.195870] sas: ex 500e004aaaaaaa1f phy05 originated 
+>>>>>> BROADCAST(CHANGE)
+>>>>>> [78835.195875] sas: ex 500e004aaaaaaa1f rediscovering phy05
+>>>>>> [78835.196022] sas: ex 500e004aaaaaaa1f phy05:U:A attached: 
+>>>>>> 500e004aaaaaaa05 (stp)
+>>>>>> [78835.196026] sas: ex 500e004aaaaaaa1f phy05 broadcast flutter
+>>>>>> [78835.197615] sas: done REVALIDATING DOMAIN on port 0, pid:10, 
+>>>>>> res 0x0
+>>>>>>
+>>>>>> The cause of the problem is that the related ex_phy's 
+>>>>>> attached_sas_addr was
+>>>>>> not cleared after the end device probe failed. In order to solve 
+>>>>>> the above
+>>>>>> problem, a function sas_ex_unregister_end_dev() is defined to 
+>>>>>> clear the
+>>>>>> ex_phy information and unregister the end device after the 
+>>>>>> exp-attached end
+>>>>>> device probe failed.
+>>>>>
+>>>>> Can you just manually clear the ex_phy's attached_sas_addr at the 
+>>>>> appropiate point (along with calling sas_unregister_dev())? It 
+>>>>> seems that we are using heavy-handed approach in calling 
+>>>>> sas_unregister_devs_sas_addr(), which does the clearing and much more.
+>>>>
+>>>> I just tried it and it worked. If we only clear ex_phy's 
+>>>> attached_sas_addr, there is no need to call sas_destruct_ports(). We 
+>>>> are currently using sas_unregister_devs_sas_addr() which will add 
+>>>> the port to sas_port_del_list, so we need to call 
+>>>> sas_destruct_ports() separately to delete the port.
+>>>>
+>>>> Should we also delete the port after the devices probe failed?
+>>>
+>>> I'm not sure. Please check it.
+>>>
+>>> sas_fail_probe() would still call sas_unregister_dev(), as required.
+>>>
+>>> And you said that the sas_fail_probe() probe call would be 
+>>> asynchronous to sas_revalidate_domainin(). I actually expected you to 
+>>> have the new call to sas_destruct_ports() at the top of 
+>>> sas_revalidate_domainin(), like v2, but it is in sas_probe_devices().
+>>>
+>>> Anyway, please check whether you require this additional call to 
+>>> delete the port.
+>>>
+>> Sorry, there was something wrong with the previous process description.
+>> the correct is:
+>>
+>> 1. REVALIDATING DOMAIN
+>> 2. new device attached, create port,etc.
+>> 4. done REVALIDATING DOMAIN
+>> 5. @out, handle parent->port->sas_port_del_list
+>> 6. sas_probe_devices()
+>> 7. if device probe failed in step 6 and call 
+>> sas_unregister_devs_sas_addr(), then add phy->port->list to 
+>> parent->port->sas_port_del_list // port won't delete
+>>
+>> 8. next, REVALIDATING DOMAIN
+>> 9. new device attached
+>> 10. new port create failed, as port already exits.
+>>
+>>
+>> So, v3 delete port at then end of sas_probe_devices(). And if we don't 
+>> use sas_unregister_devs_sas_addr() follow your suggestion then we 
+>> don't need to call sas_destruct_ports().
+> 
+> I am finding it hard to follow you now.
+I'm sorry for that. ^-^
+> 
+> Can you show the complete change which you think that we now require to 
+> fix this issue?
+> 
+Okay, I'll update a new version.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- arch/mips/crypto/poly1305-glue.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/mips/crypto/poly1305-glue.c b/arch/mips/crypto/poly1305-glue.c
-index bc6110fb98e0..867728ee535a 100644
---- a/arch/mips/crypto/poly1305-glue.c
-+++ b/arch/mips/crypto/poly1305-glue.c
-@@ -186,6 +186,7 @@ static void __exit mips_poly1305_mod_exit(void)
- module_init(mips_poly1305_mod_init);
- module_exit(mips_poly1305_mod_exit);
- 
-+MODULE_DESCRIPTION("Poly1305 transform (MIPS accelerated");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS_CRYPTO("poly1305");
- MODULE_ALIAS_CRYPTO("poly1305-mips");
-
----
-base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
-change-id: 20240618-md-mips-arch-mips-crypto-19785d95418c
-
+Thanks,
+Xingui
 
