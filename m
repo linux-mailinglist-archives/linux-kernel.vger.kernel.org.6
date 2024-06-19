@@ -1,90 +1,80 @@
-Return-Path: <linux-kernel+bounces-220485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC1E90E255
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:33:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F00C90E25E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F0C28215E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 04:33:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DD971F228E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 04:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F143DB89;
-	Wed, 19 Jun 2024 04:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07DE41746;
+	Wed, 19 Jun 2024 04:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="BsV/oZYn"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qgupp7Nj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D7A179AE
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 04:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C32179AE;
+	Wed, 19 Jun 2024 04:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718771614; cv=none; b=gqXrTWppJ7qtzDqzxPygvUkUwa+EwjA7xKr48G8nIlQ0Tve56QjeizgCFWHmYx50VDQZ0OYTN2CUQMuOjZYOeGwK31KZFV06ILsywoU+50/xJNvZP8L4xFImWvlrhPeVnCVc1okSOcmMKokCURyZShn5vPxBml8V4xa8kHGq378=
+	t=1718771958; cv=none; b=VkGh1npDt83cx/2QIROe3lsYs31iWVyczAxHFjM/y4GsqlyE3MJfPbfE7+7c+LAGnLwcWcBqz4ENe1CifidL0qotxfXStYwlk5BOaCHqDRvtD50ivENGN9sIPj1dep4PMbJaB3fTNYAZAonwVwWJB53yyq6ARPLjMYF8pjTl6dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718771614; c=relaxed/simple;
-	bh=l4w/LvYlB6QlwrMz9fQ/LSeC2pWpySat/4xzansMIl4=;
+	s=arc-20240116; t=1718771958; c=relaxed/simple;
+	bh=b6m98e4sk/WXMF9G7Y9dAqU8aFp5yb0EEKE+Qaz8hIs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jLZTbG8GF1XLqgvR195Bb2STZ3W3fhooUY+o6iIF7UTnG43y1QGReYa7EJxQIJpENdeSC91JEuv/7qQe0hg8JSGe5CcmHLUrqgiFhwolUJsD4k+4lo+bS981XiYuVp9A4ooeF+NRA3UMim5FRPeWOgwJVeuSgfrLL/BpIG9poz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=BsV/oZYn; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7eb7bf1357cso239538139f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 21:33:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1718771612; x=1719376412; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NWlYdNwXcIt2Uj/WmtGcgNX4cntxb9XSir9I0MKekec=;
-        b=BsV/oZYnjcRwcKgN0jA396kw6i3pE1roVC4RTq/qrsBzXvdjLYJ1bBRCAfYFrMsOLF
-         sDy33TnfqAMea6eZqGNitJ1mOabovwVsaRUGFXlY0mATrLp/qzbgPxHxZai9jxZCkgft
-         4G3/170cG+OpvLJJbsBXErZRPnsZudRbup448NlNXEz3BMkRE/mo58LAn2caM1i996XP
-         3ZwGrnTkBFcK7NmgB1/83NwfnPMyiSzY6rGND5zv6CJ9NavBSkT8cbsTLg26ECl3bmzs
-         suLOTERpcsNb2+749LakndoZrQZfx72zD9IriizX7OTeqgB2s+m6ibkQXc2rRt6uqx2Q
-         74cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718771612; x=1719376412;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NWlYdNwXcIt2Uj/WmtGcgNX4cntxb9XSir9I0MKekec=;
-        b=BaPOMx0f5KRzAuu6IQuX8V4jjB1EzX9arnjClC+zIFj8LKOHDUSbYFFqYCD8bItA39
-         BD+2nBtAOpW15LS9xztb1RkfTPpGGZhFYL/XorymEGWGp1jp0AQLkfc7UIEDhRGlmmqh
-         pnD9vwFHQPScPIk14ctyMfZTplFHPqmnptYBTaIkvYtKee82P3xr0bxsgVCtxw4Y+DU9
-         6WFNQWzcRkLZS0Wy2mIAqCJd/h206o7PyE9q242FTJ1Bol93YE12IXhv4ukfCINQrouA
-         0aSyF6l1JJGRwzy6TTVy8yBT85G0aTIxT5MDp8lc3HLHxTE1HRXLfg6myqGt8ccHqHwq
-         /SWA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6BqmQ5clBYp3S0WdjqyjRk8DLyMNBhnl/9NmE7XBJng+vA7HbTcTxt+hBv6+l3cWu+QRhGmtZEj+ZznwRuQH8ScuddvoLKMo+KRmN
-X-Gm-Message-State: AOJu0YzH5NiM87DQqWmnXLGaTpMnLyObVqRMVAPdc5Y8hrUqE0ZmBInZ
-	b1pF336A5GTfQyzwINKjld5FYD2Wvtj62UM7B7Bxw+7lWxHW4HCZLKgcOsaeTxhV0XOZrqizNbb
-	lm065wg==
-X-Google-Smtp-Source: AGHT+IERVC8ibZcD8y1uku57YmVlXRCDnAChTM5lB2gA4zuk557SjUwxDXw/tQhWcQEXPUrzPE/adg==
-X-Received: by 2002:a05:6602:6c10:b0:7eb:7f2e:5b3a with SMTP id ca18e2360f4ac-7f13edb2453mr214966539f.2.1718771612308;
-        Tue, 18 Jun 2024 21:33:32 -0700 (PDT)
-Received: from kf-XE ([2607:fb91:111c:4643:212e:5310:572e:1126])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9a1d0980fsm691665173.102.2024.06.18.21.33.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 21:33:32 -0700 (PDT)
-Date: Tue, 18 Jun 2024 23:33:29 -0500
-From: Aaron Rainbolt <arainbolt@kfocus.org>
-To: Mario Limonciello <mario.limonciello@amd.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: rafael@kernel.org, lenb@kernel.org, mmikowski@kfocus.org,
-	Perry.Yuan@amd.com
-Subject: Re: [PATCH V3] acpi: Allow ignoring _OSC CPPC v2 bit via kernel
- parameter
-Message-ID: <ZnJfmUXmU_tsb9pV@kf-XE>
-References: <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com>
- <ZnHSKiaYf2tIQo58@kf-XE>
- <a7790c74-2bec-4a24-b6e5-223c4e1ed372@amd.com>
- <ZnHXfLEwk2uRbg58@kf-XE>
- <b4d65232-b69e-419d-9b15-d0ca64b78b26@amd.com>
- <ZnHfNbLTgY1op3Zv@kf-XE>
- <fb8c965a-5f1c-4975-8e7d-6f6a0eb4d02f@amd.com>
- <ZnHtPbszYT8afOOk@kf-XE>
- <c6bda238-166e-4de6-b0c7-4bddfb8ef6f4@amd.com>
- <ZnIAX9P5XSco4cZw@kf-XE>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R0v/sTTpsV01YdAj/pCLQ1BgGXaiG/Ii3uP3rLqJZepvUfid80+x20RftRJRRC+NOgheIL+jv9egZF9cmnckj7peuwCgcpM7E9Pr88GZKcADEPduTiiHpiI/pOP6jMBYrkg5RGUcUYHzGjsS6e2Wj4BM2qn5HPAlCxJCjX0/j5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qgupp7Nj; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718771958; x=1750307958;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=b6m98e4sk/WXMF9G7Y9dAqU8aFp5yb0EEKE+Qaz8hIs=;
+  b=Qgupp7Nj/gzDTXJlrKjWGg23NhqwrUOmsPQ4diV6ZVadDqff+vL/6m0g
+   +yCtQ39k5EdujjMFG1xpjhw3RGapbtITKdcY6VwOFoMRC8ZRNrFstYTRQ
+   QQesJvII/EBagnHzkSK3l5UZLFL/vzUh/FPkT8uLJyh5fTlsiEESSULl8
+   /Po2dpGOs/q2FuelmtqNU0lkM5hLIGGZ2boKbPUpbqYsU3fsvOtojCNMz
+   AykD16ucCWe/OssWf05xFlBzOJ5e6mvNrizTzIbgORsjoqWEjTm7OcdS3
+   cVMy6+MCkFvl8AZitSr9vVLW2JmSu1K2GQosaX3BasKtNhqmUguKSCQDy
+   g==;
+X-CSE-ConnectionGUID: pBOIqUioSYifaaNz20mazg==
+X-CSE-MsgGUID: CHOIUmNgRuSQsijAmvfSuA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="27106461"
+X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
+   d="scan'208";a="27106461"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 21:39:17 -0700
+X-CSE-ConnectionGUID: +LbDWLEoSzS5YheUqJXteg==
+X-CSE-MsgGUID: KY5sjASnSIGN9kpDhrZDNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
+   d="scan'208";a="72528622"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.247.16])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 21:39:12 -0700
+Date: Wed, 19 Jun 2024 07:39:04 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] serial: core: Rename preferred console handling
+ for match and update
+Message-ID: <ZnJg6KQeIs95UFAB@tlindgre-MOBL1>
+References: <20240618045458.14731-1-tony.lindgren@linux.intel.com>
+ <20240618045458.14731-4-tony.lindgren@linux.intel.com>
+ <ZnGQ8JAu2OQf0GX8@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,69 +83,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZnIAX9P5XSco4cZw@kf-XE>
+In-Reply-To: <ZnGQ8JAu2OQf0GX8@pathway.suse.cz>
 
-acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
+On Tue, Jun 18, 2024 at 03:51:44PM +0200, Petr Mladek wrote:
+> On Tue 2024-06-18 07:54:50, Tony Lindgren wrote:
+> > We are now matching and updating the preferred console, not adding it.
+> > Let's update the naming accordingly to avoid confusion.
+> > 
+> > --- a/drivers/tty/serial/serial_base_bus.c
+> > +++ b/drivers/tty/serial/serial_base_bus.c
+> > @@ -304,7 +305,7 @@ int serial_base_add_preferred_console(struct uart_driver *drv,
+> 
+> I was curious whether this patch renamed everything. And it seems
+> that it did not rename serial_base_add_preferred_console().
 
-The _OSC is supposed to contain a bit indicating whether the hardware
-supports CPPC v2 or not. This bit is not always set, causing CPPC v2 to
-be considered absent. This results in severe single-core performance
-issues with the EEVDF scheduler on heterogenous-core Intel processors.
+Oops, will update the naming for that too.
 
-To work around this, provide a new kernel parameter, "ignore_osc_cppc_bit",
-which may be used to ignore the _OSC CPPC v2 bit and act as if the bit was
-enabled. This allows CPPC to be properly detected even if not "enabled" by
-_OSC, allowing users with problematic hardware to obtain decent single-core
-performance.
+> >  	const char *port_match __free(kfree) = NULL;
+> >  	int ret;
+> >  
+> > -	ret = serial_base_add_prefcon(drv->dev_name, port->line);
+> > +	ret = serial_base_match_and_update_prefcon(drv->dev_name, port->line);
+> >  	if (ret)
+> >  		return ret;
+> >  
+> 
+> Honestly, I do not understand what are all these layers for.
+> Especially, serial_base_match_and_update_prefcon() looks suspicious:
+> 
+> static int serial_base_match_and_update_prefcon(const char *name, int idx)
+> {
+> 	const char *char_match __free(kfree) = NULL;
+> 	const char *nmbr_match __free(kfree) = NULL;
+> 	int ret;
+> 
+> 	/* Handle ttyS specific options */
+> 	if (strstarts(name, "ttyS")) {
+> 		/* No name, just a number */
+> 		nmbr_match = kasprintf(GFP_KERNEL, "%i", idx);
+> 		if (!nmbr_match)
+> 			return -ENODEV;
+> 
+> 		ret = serial_base_match_and_update_one_prefcon(nmbr_match, name, idx);
+> 		if (ret)
+> 			return ret;
+> 
+> 		/* Sparc ttya and ttyb */
+> 		ret = serial_base_add_sparc_console(name, idx);
+> 		if (ret)
+> 			return ret;
+> 	}
+> 
+> 	/* Handle the traditional character device name style console=ttyS0 */
+> 	char_match = kasprintf(GFP_KERNEL, "%s%i", name, idx);
+> 	if (!char_match)
+> 		return -ENOMEM;
+> 
+> 	return serial_base_match_and_update_one_prefcon(char_match, name, idx);
+> }
+> 
+> It seems to try whether c->devname matches a number "X", or "ttySX".
+> It even tries the sparc-specific transformations in
+> serial_base_add_sparc_console()
+> 
+> But this is the original format which does _not_ include ":".
+> It never will be stored in c->devname and will never match.
 
-Tested-by: Michael Mikowski <mmikowski@kfocus.org>
-Signed-off-by: Aaron Rainbolt <arainbolt@kfocus.org>
+Good catch, this won't do anything now with console_setup()
+checking for ":" for deferred consoles. So we should revert commit
+a0f32e2dd998 ("serial: core: Handle serial console options").
 
----
+> I think that it has been the case even before this patchset.
 
-V2 -> V3: Move bit ignore to before switch.
-V1 -> V2: Rewrite to work in cpc_supported_by_cpu.
+For the earlier case, I tested things with serial handling removed
+from console_setup() to let the serial layer handle the quirks.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index b600df82669d..af2d8973ba3a 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2063,6 +2063,12 @@
-                        could change it dynamically, usually by
-                        /sys/module/printk/parameters/ignore_loglevel.
+With the new handling, we could just eventually defer the serial
+consoles in console_setup(), and let the serial core do the quirk
+handling. No immediate need for that though, that would be just
+longer term clean-up.
 
-+       ignore_osc_cppc_bit
-+                       Assume CPPC is present and ignore the CPPC v2 bit from
-+                       the ACPI _OSC method. This is useful for working
-+                       around buggy firmware where CPPC is supported, but
-+                       _OSC incorrectly reports it as being absent.
-+
-        ignore_rlimit_data
-                        Ignore RLIMIT_DATA setting for data mappings,
-                        print warning at first misuse.  Can be changed via
-diff --git a/arch/x86/kernel/acpi/cppc.c b/arch/x86/kernel/acpi/cppc.c
-index ff8f25faca3d..0ca1eac826af 100644
---- a/arch/x86/kernel/acpi/cppc.c
-+++ b/arch/x86/kernel/acpi/cppc.c
-@@ -11,8 +11,20 @@
+> I think that we should remove these layers and check just
+> the "DEVNAME:X.Y" format, aka "%s:%d.%d" [*].
 
- /* Refer to drivers/acpi/cppc_acpi.c for the description of functions */
+Yes let's revert the quirk handling.
+ 
+> [*] It would be nice to use the same printf format "%s:%d.%d"
+>     in both serial_base_device_init() and also in the functions
+>     matching the devname to make it clear that these are
+>     the same names. Heh, I just guess that these are the same
+>     names.
 
-+static bool ignore_osc_cppc_bit;
-+static int __init parse_ignore_osc_cppc_bit(char *arg)
-+{
-+       ignore_osc_cppc_bit = true;
-+       return 0;
-+}
-+early_param("ignore_osc_cppc_bit", parse_ignore_osc_cppc_bit);
-+
- bool cpc_supported_by_cpu(void)
- {
-+       if (ignore_osc_cppc_bit) {
-+               return true;
-+       }
-+
-        switch (boot_cpu_data.x86_vendor) {
-        case X86_VENDOR_AMD:
-        case X86_VENDOR_HYGON:
+I'll do a separate clean-up patch for that, and that can then
+be used for the match() too eventually.
+
+Regards,
+
+Tony
 
