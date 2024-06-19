@@ -1,329 +1,183 @@
-Return-Path: <linux-kernel+bounces-220781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 614DB90E6EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:26:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09AC90E6EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66F6C1C211C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:26:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4166F1F230E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64CB80617;
-	Wed, 19 Jun 2024 09:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E26180034;
+	Wed, 19 Jun 2024 09:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="Axka7AHo"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BnnY+FAE"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B577D7EEFD;
-	Wed, 19 Jun 2024 09:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.135.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718789157; cv=fail; b=Jmf+XpnKkyNmEPwDPWvp1/VpUwsxamU/7D7h9qlvk8Yj6tgTT9UhlxJs0lwvYukkgCgS9vC3aQLzbCnHJaZjt/2dITHoEc5gkrXqfMrg/vMB0cY0SJglv0UhIZFeOepFACGInwy2hNogn4j/whloE+3Oaze47NYiMgdwevpHhZI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718789157; c=relaxed/simple;
-	bh=tfNB+uUffLiH9pwpbRoqCMdnIcbYhx4ymtYGRaCxCY0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oZxXPrMp6fCgJK3sidqH3Z906QsgEY6BPmBeHLYEIezwV99JpEJTDmcNHy7pKSh7cmN2lovBVpA+93Gcf2cciGB6kUXtzpGnAZHyt0a1VRi4N5YJ71BtHTN37UB4Nk7fCcD3kHnQanKHUQAOFXU0YUbAiN7SNOM21yl8MjVnroI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=Axka7AHo; arc=fail smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J6eRZD001428;
-	Wed, 19 Jun 2024 05:25:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=b/IHg
-	2blMaJbOhgYHOsrjeGkhtHrqEtaSxeDeQeLWiM=; b=Axka7AHoOqc+S87xOulO5
-	wXi5OJsZ+0WGCd46uDBRbnr7d60S2wvBgY1PXC/9Hau1pMS2szv5Jvk5p4Jksisi
-	4X1s5Z/AKnIXMehYjlIHmv0aNnFz3BR87HfLlbsU5ZLBaLvob31fnFUiVvjYvqNe
-	ZD2PrXLoOdZ/uuagEkt1zNSVkuznIuLb0jClEv1M+cqq5JvG1UWaPIyv3xpiSgj+
-	lQeytHgiLdn6EdoPgp4J8exdpZa3tBX/CUfXhCXJqjSRlvY2hoi0W4dOmA1N0GIe
-	qQMadcAcxg+iUL8B9UAMzSHGjqujRfZegPQHrvG1vpXP1ACwmcIy9PUzJYIPoETd
-	w==
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2169.outbound.protection.outlook.com [104.47.55.169])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3yut928jdp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 05:25:27 -0400 (EDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Rfn0YsKkRhqgnzLyGZIWpbErGNgVGKeGUU1dDD2J4pYzJeXDjToG9JMcLM6SzHnFqKvCzRpCdbRwJy/wNpWQEHWlriCUX7rWS38/r54O48tLi9XgSjw6MCiT2QcZIsfjlsBhOnZEQD+C9Jg3bt7SieDzc9nMH+IcsjatSyKW+M+ZBdjUklpDhltQG4RBhYLC7kwzY7cip3rbgRhXfGtVFK/afIhi87uJeKWzFn6HVpeExKfz7Oertv00OxOslN7CWtwvDot3c8fEzTMsC4ItbOXnD97NiOjSfRxipKoPdDmiSYRNwOla+WGuga7XIsaopD/ctK7iw0IExATXTaSYgw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b/IHg2blMaJbOhgYHOsrjeGkhtHrqEtaSxeDeQeLWiM=;
- b=FnTvouzgeMZDpE5ugBckhlUgsT4k1NKe5a/xOSSbem7KaPu6YyYMNjr3Czsk8OiwfUnKPQ/s/CsEzOxdv+Hxw+cVbGSfkj/rOqDzfw7bsV2l6bT8VpCTSE3RzflQKI6SASrLW5RgA/0NGgpu/F6aE8m4cD7bRacdzyt0Dg6PmtRcdCSS2I3f2ubV5KANqFWsV9yHVkF/6MbVjdHN7d9t8i5N9AokYUO0Z8zTbn7VQpBh7k+IeHp6oPTxDUZ7MlwkwON7kZeQLKCXRME5gBChxw28lBAk6x7w2mUXO2s9fP360FR4lZ7OPs1dmveGUxQYPmnFOmzOK2VvZ69APGv3ig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
- dkim=pass header.d=analog.com; arc=none
-Received: from CY4PR03MB3399.namprd03.prod.outlook.com (2603:10b6:910:57::13)
- by DS7PR03MB5576.namprd03.prod.outlook.com (2603:10b6:5:2cb::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Wed, 19 Jun
- 2024 09:25:22 +0000
-Received: from CY4PR03MB3399.namprd03.prod.outlook.com
- ([fe80::6504:9615:dbab:cc17]) by CY4PR03MB3399.namprd03.prod.outlook.com
- ([fe80::6504:9615:dbab:cc17%4]) with mapi id 15.20.7677.029; Wed, 19 Jun 2024
- 09:25:22 +0000
-From: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>
-To: kernel test robot <lkp@intel.com>, Lars-Peter Clausen <lars@metafoo.de>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "Gradinariu, Ramona"
-	<Ramona.Gradinariu@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Jun Yan
-	<jerrysteve1101@gmail.com>,
-        Matti Vaittinen
-	<matti.vaittinen@fi.rohmeurope.com>,
-        Matti Vaittinen
-	<mazziesaccount@gmail.com>,
-        Mehdi Djait <mehdi.djait.k@gmail.com>,
-        Mario
- Limonciello <mario.limonciello@amd.com>,
-        "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>
-CC: "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>
-Subject: RE: [PATCH 3/3] docs: iio: add documentation for adxl380 driver
-Thread-Topic: [PATCH 3/3] docs: iio: add documentation for adxl380 driver
-Thread-Index: AQHawW2wzjB9ESvFWEmb7Kejqn0X57HNkCYAgAFBP2A=
-Date: Wed, 19 Jun 2024 09:25:22 +0000
-Message-ID: 
- <CY4PR03MB33993E7AAEFF707834D2DFAC9BCF2@CY4PR03MB3399.namprd03.prod.outlook.com>
-References: <20240618105150.38141-3-antoniu.miclaus@analog.com>
- <202406182244.fOy7IrR8-lkp@intel.com>
-In-Reply-To: <202406182244.fOy7IrR8-lkp@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: 
- =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYW1pY2xhdXNc?=
- =?us-ascii?Q?YXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRi?=
- =?us-ascii?Q?YTI5ZTM1Ylxtc2dzXG1zZy1kODBkNGYzYy0yZTFkLTExZWYtYWY0Ni1kNDgx?=
- =?us-ascii?Q?ZDc1MDZkZGVcYW1lLXRlc3RcZDgwZDRmM2QtMmUxZC0xMWVmLWFmNDYtZDQ4?=
- =?us-ascii?Q?MWQ3NTA2ZGRlYm9keS50eHQiIHN6PSI0ODcyIiB0PSIxMzM2MzI2MjcxOTky?=
- =?us-ascii?Q?ODAxMDQiIGg9ImZQT3ZmWWM0a3pESE9qUGVnMS9uK3JyWmF5WT0iIGlkPSIi?=
- =?us-ascii?Q?IGJsPSIwIiBibz0iMSIgY2k9ImNBQUFBRVJIVTFSU1JVRk5DZ1VBQUVvQ0FB?=
- =?us-ascii?Q?RG9nNTJhS3NMYUFlenlBWDREc3FNVjdQSUJmZ095b3hVREFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFIQUFBQURhQVFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFFQUFRQUJBQUFBWVBUSTJRQUFBQUFBQUFBQUFBQUFBSjRBQUFCaEFHUUFh?=
- =?us-ascii?Q?UUJmQUhNQVpRQmpBSFVBY2dCbEFGOEFjQUJ5QUc4QWFnQmxBR01BZEFCekFG?=
- =?us-ascii?Q?OEFaZ0JoQUd3QWN3QmxBRjhBWmdCdkFITUFhUUIwQUdrQWRnQmxBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBR0VBWkFCcEFGOEFjd0JsQUdNQWRR?=
- =?us-ascii?Q?QnlBR1VBWHdCd0FISUFid0JxQUdVQVl3QjBBSE1BWHdCMEFHa0FaUUJ5QURF?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFBQ0FB?=
- =?us-ascii?Q?QUFBQUNlQUFBQVlRQmtBR2tBWHdCekFHVUFZd0IxQUhJQVpRQmZBSEFBY2dC?=
- =?us-ascii?Q?dkFHb0FaUUJqQUhRQWN3QmZBSFFBYVFCbEFISUFNZ0FBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFBPT0iLz48L21l?=
- =?us-ascii?Q?dGE+?=
-x-dg-rorf: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY4PR03MB3399:EE_|DS7PR03MB5576:EE_
-x-ms-office365-filtering-correlation-id: fca91734-2270-4e02-f8ca-08dc9041be94
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230037|376011|7416011|1800799021|366013|38070700015|921017;
-x-microsoft-antispam-message-info: 
- =?us-ascii?Q?BCS9M29RMhVzR01IloUX5zhIHfX2ESJvO+t9fssNT/81/oQWmfv+tU4GYZT7?=
- =?us-ascii?Q?s8+gnrBe/fLlXGh/N8KhmMv1h4nTkczffBf5eARr4G1NomC/FlbbA+vwduIk?=
- =?us-ascii?Q?S0fYz4kFmQsbxFAdU21cjxyHRNYp17qxJ1626eSf7PKMU1x/+4uxUtzfjt8t?=
- =?us-ascii?Q?dCxJD7JdVsV62kKEbnv4THf06o6C/YZBlZqsgmLDGEp4ynlGEFWVmVULkdiB?=
- =?us-ascii?Q?PJNQu99H3yfvDsoA28EzW+o/7xNGEgjDeSF1L4wDsLMzt8PNiFFB5h+l8/aX?=
- =?us-ascii?Q?0oCQbmjmSns46+Z2ElQ7KEYUFxZvHZN5uKATsj1Jx1+ZKlR+Xoda0rmazUT7?=
- =?us-ascii?Q?JYxq3LVjHQWyZiVCL4kBx+7iUdD+X+LIxLiy56xL+yNX/2exzzPSBB1o0Iqt?=
- =?us-ascii?Q?SLGuiR0jRCE+G/68xYQbgOUjLMW3Sq6lkvUHVJ1tvy5Jfs2ywyKDHsQhqZtf?=
- =?us-ascii?Q?Tv2nBs6SGvO0J6ELryNiLbfHNUANQUQwNTPUg1L5t5/DRJhoFGYkpZViQvge?=
- =?us-ascii?Q?MYozS6ZyKgKZJ/I2eznsYUPftExFfkOCWroC2DH5JRn49eluNpRoYyD89nAZ?=
- =?us-ascii?Q?aIQ/yESTCSlq8U2y0mIoWfOdOyt9wyzx9tyYGhv7xwINyMoSBuDKtZJf/uVd?=
- =?us-ascii?Q?6fgltOaCcDA5bsLAzJe/nE1gHXLfCoK2E2hDfVZ9tRncagUzWBBR4Ft3aDYB?=
- =?us-ascii?Q?FQROR7GactIstiAiUqMW998/PR/aTgMfIbwJPpkE0A1jtdqupBblUVB5LdnF?=
- =?us-ascii?Q?Px4lFVJvYZyu01jC0LHxSMv6b+DQKXVhHaJA/8LIdWhba2Y2c/bCfMG4nIWN?=
- =?us-ascii?Q?rTTZ+A1EnhHpB8rZtaTxXXyBP8cYth7sB+45hclhv21ma+8UAAQYHqFXOOci?=
- =?us-ascii?Q?39Utltm+CpvxOr4GNuKh+Zv/RKGrDM1dnMhg3L0Q6iU0fQYYVwDLazO19W7m?=
- =?us-ascii?Q?x6jogeeVGBBUi7HxUKjT3RKV9P/obFgf4wRFKe7wDHjs2NwlYqSkA77m3NlG?=
- =?us-ascii?Q?NXVWbROeP1+rdsJSVFJxzd9D0Naj+jSY0Qjj7iesVkb42ojBhESsljWEw+NH?=
- =?us-ascii?Q?8xHSpLTsLe4VcGPKBEiEbnBRUHoirvg3Snd+FNpenjfG2Ki66y0USR+bCQ3K?=
- =?us-ascii?Q?oIPYRkIdMEO6u9SddxsdSOZIefzIS9r9/JtYmPnbN1bGz5KZoIrxPtfdIFXC?=
- =?us-ascii?Q?mOuH5vJYock5sdj3zBxDMjb1QUvDbQfPyeoqtt/h7F7YSUDdGL3hPQ1Wv1sm?=
- =?us-ascii?Q?kpH7oAFo4WKp6W4ymgZWqrFMby1u/56trqHjAupD8rbzMY6MT8Gv2cjGASz6?=
- =?us-ascii?Q?hs3aXffbDqRpuX2ksk0Nxl5XDG+ywC40QbLNZtZz6NGoqw=3D=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR03MB3399.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(7416011)(1800799021)(366013)(38070700015)(921017);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?BTNeQ6k4Pu+19xlS3h9QxE37Vxix2Ixzw7NTIbhFkjVelwLDKHCbnXrkIKyr?=
- =?us-ascii?Q?bCDPz44Htc/e9M1NkH4CvDa/Eicf8Mp2vHLRh8mm6ZZ0UujeJS9R68aMqDGq?=
- =?us-ascii?Q?nd5XrhfJoai8kgEeCAgjQ1s35yzjxW8rdaeKGs6Lgk6k10R5tABs8C1N9hLg?=
- =?us-ascii?Q?diOm8skOsbAlpGSmn3BhYWYy76dVKFZjqqkB/Oa54ClK/Av44uoiuvgUjbBI?=
- =?us-ascii?Q?yCsu6aB2qvxP0Pd/duVrF1OVh1S5oAqhU6pAc91gGP8ctgOj6/qSkJ4dJ9tu?=
- =?us-ascii?Q?GGorQi4w3QpRLUVb+1ewI6Bm+u5prUOoLEGWJcp6p6Py04ezyzy/yDavaMOw?=
- =?us-ascii?Q?bnB7nOf/izBU5Ja3A/+D6oTcOF6fIRSZa/Djmh6NkjkeqRJvTzuOh0tXbJkW?=
- =?us-ascii?Q?XsT9PBVJnNQWsZ1UQoZgi/nt3I76ntulUjlK09uA/2uw921X3joikHluTgq9?=
- =?us-ascii?Q?DhSHU1pbz9aV25g+4mSgNIoCKDfkD3ecgKWByh5a+H4V4LSZlPfqD1ePmvLK?=
- =?us-ascii?Q?DJteLyuhfZiRU33o2DLFHrlC73ED3q7BTyRRw9D2IMAA8/A2A+Gp75I65REO?=
- =?us-ascii?Q?zh8ge954QwyDxPMzTRUIPYw9plNj/UchIbNzaZhlEgIw6Jgx+BWki8tThN6S?=
- =?us-ascii?Q?7ud9eohj23VOzuS6k2loFZF+Wr8wCEYCNQ5ARKJ/C4bB2AH0zGUVQtAVGYRx?=
- =?us-ascii?Q?W7L5SxprxSg6KDgmePiB8PyWTnTsWcFXceuae4ykbB7BuVzhUZaV+mHN2wL8?=
- =?us-ascii?Q?MBi9tMpl6GNqudWflcRsm4URxyeI5RBDcicXXqus8UhHT+neWzEFjKERePbU?=
- =?us-ascii?Q?op1N5bK0QAxmTv3DVkqe4ifis4fYvHMs1kNzxqykfnuVIbpnenzsrhb5yxZ3?=
- =?us-ascii?Q?f33NCJr4Qbx6nAY6joRxKR4gN5rcBFvq9qm3zHE6grRm1cz4Cq5EEaJGelq/?=
- =?us-ascii?Q?ZsMxgCLX0/2Q7ojoW4tdryB09F1tmblNgvlVD1yaoNc4qKPUkAnLmxdN0KAJ?=
- =?us-ascii?Q?KiruGF6iPJ3h35WcdG/3BCQi8x8Y4Wzd5zHc/KjqDkcEUMwzKhQ44VTRR+Tq?=
- =?us-ascii?Q?bYcVLBj/c8c+QhiCPX/LPX3dKa2zR60Rcvbv+XWYgCQk9q/RoHCaYT4vh0Xe?=
- =?us-ascii?Q?N5dCEUdmvFj5xcsZUsZC+AXyvuLqSnbw0aiCpTrvb9Hk2qhLLYqX/KLZtpRm?=
- =?us-ascii?Q?I5w5pk4zbOGP2ZWNEcLqHNtkE1vQxxIbDoO6NLDVjk8Ur3AlQQ3DPwdWOCOh?=
- =?us-ascii?Q?T6J91Slwzob5xgIkFplyR3UqEiTweN3hSAWnQULYStkhjeFff3LOd8cL85gK?=
- =?us-ascii?Q?Ml5tRQNMKDtqt0nxe8MjZ4ztjw7zH7y8t3Z0U1qwHYsu2aytr3xxbdF2QBpD?=
- =?us-ascii?Q?RrLEZLacB7TQYR1rtERgLJNyOquSWAg2wgcdkJx3I+PGkUixOu4mzJE++wr+?=
- =?us-ascii?Q?bXKcGe//dD0xk2HafegAyWMsfuKwkZgKaSw2xOfVrImvNi0HmfSYk0f41HUi?=
- =?us-ascii?Q?y2KmqEf6tIPXisdazeMnL18MwYxis+xNZG8X6KxmCJsxgCu9YkGPhhmLTooB?=
- =?us-ascii?Q?67qrYpBfhe+LOiG6/WzXpgrYzWGoLgONzmTbYaB923QEnGbc6TIr8YLkpuZl?=
- =?us-ascii?Q?lA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC90D7D07F
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718789142; cv=none; b=RH/OqHph9eWUP3BgsuokczgFxvjBXv9uYQ32zo4rWeodPMf85DzblQGfWI57oAjDNRjUpd+jMh/ZnaydlkReTOASNxZqEl9zlpb0KZ8ciNYhvbyqyU1gHc43b4g6Kfpft74NJ9/vO4aXJX8Q1vV1cy97ZyMJ9f6XnLCcIrRVDg0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718789142; c=relaxed/simple;
+	bh=SJ5MjWa+kg4P31QsjkiYysOM7MxcX3F2b7YYfaZ041c=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=rY3dOMeC1MJFrsu7xYoOegx8RQQrdwwVJTgHZSlZdM0VvNxXD2CfbXXYBqftDEsy6NUK4VRMYyyMRpso2TXlWx/57QpTIf26hj/nl4KDMNLujC/Xb75YAawpmV26cyovxsslR/Vtv5AfLbXLLylKCQxt7PGmbI8rbYZnUafj078=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BnnY+FAE; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240619092537euoutp0103bdc661a388d28bb982e13fc79ebd95~aXZ1JqB-v1844518445euoutp01Y
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:25:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240619092537euoutp0103bdc661a388d28bb982e13fc79ebd95~aXZ1JqB-v1844518445euoutp01Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1718789137;
+	bh=C7MUlZlbXbQr4FMlK3fzLH/GoaX9/kMf7dZJJ5mXoMI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=BnnY+FAEtR+19kI8WwkzyEVWmVs16dDRtv2WlyogNLEVPnhYHPMe6xT0JvQzDgVLE
+	 3s87CTjiC64z2rri1bEu7r3uoBnIraeagnlBDlQNxICDum+eGpIe3cIvjC9cKo4zZg
+	 xtLdzVaHyVmYMie9Xgf8G8vVDmwG/lCEfwbbWKRo=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240619092537eucas1p13e685ae3537564bd31c99a38bc77fd09~aXZ06Soem2953529535eucas1p1_;
+	Wed, 19 Jun 2024 09:25:37 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 53.9E.09624.114A2766; Wed, 19
+	Jun 2024 10:25:37 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240619092537eucas1p1564630b83ceb4990be6a7b63ceaa2c53~aXZ0qRCRd0106301063eucas1p1G;
+	Wed, 19 Jun 2024 09:25:37 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240619092537eusmtrp1cac2e927199573b3d9a841eb1488065d~aXZ0pt5qB1897818978eusmtrp17;
+	Wed, 19 Jun 2024 09:25:37 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-ef-6672a411bdbc
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 81.5C.08810.114A2766; Wed, 19
+	Jun 2024 10:25:37 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240619092536eusmtip1d4363510ce4f54eb14c36cec66c6a062~aXZ0QoJu60386803868eusmtip1I;
+	Wed, 19 Jun 2024 09:25:36 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC01.scsc.local
+	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 19 Jun 2024 10:25:36 +0100
+Date: Wed, 19 Jun 2024 11:25:31 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+CC: Luis Chamberlain <mcgrof@kernel.org>, <linux-kernel@vger.kernel.org>,
+	Kees Cook <keescook@chromium.org>, <martin.lau@linux.dev>
+Subject: Re: Current state of the sysctl constification effort
+Message-ID: <20240619092531.ighb6pxh2ls4qjpu@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY4PR03MB3399.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fca91734-2270-4e02-f8ca-08dc9041be94
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2024 09:25:22.4150
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pIJi8I8f3zyl5OV/GG/40X8UQ63usOW/m6u4hP2gpBumw8QI++Xs7YjjSMfkAaonU4uQ8QZy3tD1Izugfsyk8B7pYNNKwDMDgM04N+AnM3Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR03MB5576
-X-Proofpoint-GUID: NdLdh9aBgFAH0FgFjWLaWRhBaTS0L2CU
-X-Proofpoint-ORIG-GUID: NdLdh9aBgFAH0FgFjWLaWRhBaTS0L2CU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 phishscore=0 lowpriorityscore=0 mlxlogscore=999
- adultscore=0 clxscore=1011 suspectscore=0 impostorscore=0 malwarescore=0
- mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190069
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dd22004b-9bed-4537-b7d5-bc218ffc0087@t-8ch.de>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCKsWRmVeSWpSXmKPExsWy7djP87qCS4rSDC7+ULU4051rcXnXHDaL
+	NZ0rWS1uTHjKaHHo7XQ2B1aP2Q0XWTw2repk81jYMJXZY/aSGywenzfJBbBGcdmkpOZklqUW
+	6dslcGVMejGTuWCSUMXbXp8Gxh18XYwcHBICJhKPlvt1MXJxCAmsYJRYtnktM4TzhVGi/ekX
+	FgjnM6PE7a4nQA4nWMeTk5dZIRLLGSX+bpnDCFfVMfMqO4SzmVHi4s0f7CAtLAKqEjO6z4DZ
+	bAI6Euff3GEGsUUEzCXuHJwNtpBZoJVR4t2TRWwgCWEBO4k9G5aDNfAKOEj0vNvIDGELSpyc
+	CXEHs4CexI2pU9hAvmAWkJZY/o8DIiwv0bx1Nlg5p4CNxJvuc+wQZytKfF18D+qFWom1x86A
+	HSoh8IJDYuvVHlaIhIvE7pszoIqEJV4d3wLVLCNxenIPC0TDZEaJ/f8+QHWvBoZZ41cmiCpr
+	iZYrT6A6HCVWPFzOBgljPokbbwUhruOTmLRtOjNEmFeio01oAqPKLCSvzULy2iyE12YheW0B
+	I8sqRvHU0uLc9NRiw7zUcr3ixNzi0rx0veT83E2MwIRz+t/xTzsY5776qHeIkYmD8RCjBAez
+	kgjv866iNCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8qinyqUIC6YklqdmpqQWpRTBZJg5OqQYm
+	samHE1vX/9rR+/dIKUe7vvdC96kX/jFoXtucZvbn9dsWlg9rsru3Z4jnBoqynXj9+o1HvHIT
+	f/5d/aaV1XNLNY+ILpXb1CH6tdlhRpb2ifSVRg9/x94qrW4N0zi/Zt0M6RmO2hYhdSsXBTJ0
+	GBwuklsz64sl7yV2pmLLI6vPHlLomdKZZDy7oWsrj5P/Ah73Jg2tAymupx3FA9Qzgsr3fLjP
+	vd6S47cOu665yIO+LSUCcbrZdyp4tzDI+pxMD/x3p/x2+e6IxQ7JRfsmCZqvmiAme/VznfyP
+	dLm9G18e/OX/XXVlodr11Yci31Wx3ezbuC3wmbzf+5qfB3wKQs4zTzgRzbBk61HjyCu6f94o
+	sRRnJBpqMRcVJwIArd+o5qcDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsVy+t/xu7qCS4rSDE4t47c4051rcXnXHDaL
+	NZ0rWS1uTHjKaHHo7XQ2B1aP2Q0XWTw2repk81jYMJXZY/aSGywenzfJBbBG6dkU5ZeWpCpk
+	5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GVMejGTuWCSUMXbXp8G
+	xh18XYycHBICJhJPTl5mBbGFBJYySuxsKoCIy0hs/HKVFcIWlvhzrYuti5ELqOYjo8SZDW9Z
+	IZzNjBI72s4yg1SxCKhKzOg+ww5iswnoSJx/cwcsLiJgLnHn4GxmkAZmgVZGiR/3D7OAJIQF
+	7CT2bFgO1sAr4CDR824jM8TUh0wSXX17GSESghInZz4Ba2AW0JO4MXUK0B0cQLa0xPJ/HBBh
+	eYnmrbPBlnEK2Ei86T7HDnG2osTXxfdYIOxaiVf3dzNOYBSZhWTqLCRTZyFMnYVk6gJGllWM
+	IqmlxbnpucWGesWJucWleel6yfm5mxiB0bjt2M/NOxjnvfqod4iRiYPxEKMEB7OSCO/zrqI0
+	Id6UxMqq1KL8+KLSnNTiQ4ymwDCayCwlmpwPTAd5JfGGZgamhiZmlgamlmbGSuK8ngUdiUIC
+	6YklqdmpqQWpRTB9TBycUg1M+a/uPP7w6OlBp3155g+rPPObgi14NyR7Te/TvFDWdCX0zXVT
+	bSfbLd9ibA7McmKSm759zplG1vZlYl4q1W5uhyzS5aSWreZuZQ1gvZwTGsjb9zLFosywc7bl
+	a403q2at+Xh52RG9g1c+zPHVO6K/8aT0BJW5be8+2HNNz67cVfEx7Mi5M2Lit5+cm/r12yfn
+	jCW/tvf2vGGJL+9Rub3SIOTLnfrOMw++lrYsbn/0/3LTvJ6rLUntE5T0T72YfeOkj0ycyqP7
+	i2edqz59uGHuK42mafW2V/dzVIVMSSy/7PfW7Z1L25OVN1zXHRNP/vt7RcyR96++lkk3FJlc
+	PSjjqy97f9ObFWdMP97f+kz3nqASS3FGoqEWc1FxIgCwxQD0TwMAAA==
+X-CMS-MailID: 20240619092537eucas1p1564630b83ceb4990be6a7b63ceaa2c53
+X-Msg-Generator: CA
+X-RootMTR: 20240531105042eucas1p1bcf3ee22d224c8d88aca633e5f01e0d2
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240531105042eucas1p1bcf3ee22d224c8d88aca633e5f01e0d2
+References: <CGME20240531105042eucas1p1bcf3ee22d224c8d88aca633e5f01e0d2@eucas1p1.samsung.com>
+	<7823ff95-1490-4c1b-b489-a9c05adad645@t-8ch.de>
+	<20240607094053.x3cmkhmrgaw6jqd3@joelS2.panther.com>
+	<37d5fd30-9327-4b57-8e4d-22af929d3fc4@t-8ch.de>
+	<20240610081036.bugf62o3y2wh2ugu@joelS2.panther.com>
+	<dd22004b-9bed-4537-b7d5-bc218ffc0087@t-8ch.de>
 
-> -----Original Message-----
-> From: kernel test robot <lkp@intel.com>
-> Sent: Tuesday, June 18, 2024 5:12 PM
-> To: Miclaus, Antoniu <Antoniu.Miclaus@analog.com>; Lars-Peter Clausen
-> <lars@metafoo.de>; Hennerich, Michael <Michael.Hennerich@analog.com>;
-> Gradinariu, Ramona <Ramona.Gradinariu@analog.com>; Jonathan Cameron
-> <jic23@kernel.org>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
-> <krzk@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Jonathan Corbet
-> <corbet@lwn.net>; Jun Yan <jerrysteve1101@gmail.com>; Matti Vaittinen
-> <matti.vaittinen@fi.rohmeurope.com>; Matti Vaittinen
-> <mazziesaccount@gmail.com>; Mehdi Djait <mehdi.djait.k@gmail.com>;
-> Mario Limonciello <mario.limonciello@amd.com>; linux-iio@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> doc@vger.kernel.org
-> Cc: oe-kbuild-all@lists.linux.dev
-> Subject: Re: [PATCH 3/3] docs: iio: add documentation for adxl380 driver
->=20
-> [External]
->=20
-> Hi Antoniu,
->=20
-> kernel test robot noticed the following build warnings:
->=20
-> [auto build test WARNING on linus/master]
-> [also build test WARNING on v6.10-rc4]
-> [cannot apply to jic23-iio/togreg next-20240617]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://urldefense.com/v3/__https://git-scm.com/docs/git-format-
-> patch*_base_tree_information__;Iw!!A3Ni8CS0y2Y!7TY303y6Qd4Tevi0Hct2c
-> fHJgbP9qlTrlFoYk6IrEVT7JMcy2tiEce06QENuIkGGJVaTH5xlmowBJA$ ]
->=20
-> url:    https://urldefense.com/v3/__https://github.com/intel-lab-
-> lkp/linux/commits/Antoniu-Miclaus/iio-accel-add-ADXL380-
-> driver/20240618-
-> 194141__;!!A3Ni8CS0y2Y!7TY303y6Qd4Tevi0Hct2cfHJgbP9qlTrlFoYk6IrEVT7
-> JMcy2tiEce06QENuIkGGJVaTH5xZTS2OIg$
-> base:   linus/master
-> patch link:
-> https://urldefense.com/v3/__https://lore.kernel.org/r/20240618105150.38
-> 141-3-
-> antoniu.miclaus*40analog.com__;JQ!!A3Ni8CS0y2Y!7TY303y6Qd4Tevi0Hct2
-> cfHJgbP9qlTrlFoYk6IrEVT7JMcy2tiEce06QENuIkGGJVaTH5xbrkTQag$
-> patch subject: [PATCH 3/3] docs: iio: add documentation for adxl380 drive=
-r
-> reproduce: (https://urldefense.com/v3/__https://download.01.org/0day-
-> ci/archive/20240618/202406182244.fOy7IrR8-
-> lkp@intel.com/reproduce__;!!A3Ni8CS0y2Y!7TY303y6Qd4Tevi0Hct2cfHJgbP
-> 9qlTrlFoYk6IrEVT7JMcy2tiEce06QENuIkGGJVaTH5y0Dc1FTg$ )
->=20
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://urldefense.com/v3/__https://lore.kernel.org/oe-kbuild-
-> all/202406182244.fOy7IrR8-
-> lkp@intel.com/__;!!A3Ni8CS0y2Y!7TY303y6Qd4Tevi0Hct2cfHJgbP9qlTrlFoYk
-> 6IrEVT7JMcy2tiEce06QENuIkGGJVaTH5yDCB9XLw$
->=20
-> All warnings (new ones prefixed by >>):
->=20
->    Documentation/userspace-api/netlink/netlink-raw.rst:
-> :doc:`rt_link<../../networking/netlink_spec/rt_link>`
->    Documentation/userspace-api/netlink/netlink-raw.rst:
-> :doc:`tc<../../networking/netlink_spec/tc>`
->    Documentation/userspace-api/netlink/netlink-raw.rst:
-> :doc:`tc<../../networking/netlink_spec/tc>`
->    Warning: Documentation/devicetree/bindings/power/wakeup-source.txt
-> references a file that doesn't exist:
-> Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
->    Warning:
-> Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-
-> regulator.yaml references a file that doesn't exist:
-> Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
-> >> Warning: Documentation/iio/adxl380.rst references a file that doesn't =
-exist:
-> Documentation/iio/iio_tools.rst
-The file exists on the togreg branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=3Dt=
-ogreg&id=3D9bc8b4d27c410f62742bad6a05639ee3e13f49eb
-The adxl380 patches were created against the master branch:=20
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
->    Warning: Documentation/userspace-api/netlink/index.rst references a fi=
-le
-> that doesn't exist: Documentation/networking/netlink_spec/index.rst
->    Warning: Documentation/userspace-api/netlink/specs.rst references a fi=
-le
-> that doesn't exist: Documentation/networking/netlink_spec/index.rst
->    Warning: MAINTAINERS references a file that doesn't exist:
-> Documentation/devicetree/bindings/reserved-memory/qcom
->    Warning: MAINTAINERS references a file that doesn't exist:
-> Documentation/devicetree/bindings/display/exynos/
->    Using alabaster theme
->=20
-> --
-> 0-DAY CI Kernel Test Service
-> https://urldefense.com/v3/__https://github.com/intel/lkp-
-> tests/wiki__;!!A3Ni8CS0y2Y!7TY303y6Qd4Tevi0Hct2cfHJgbP9qlTrlFoYk6IrEV
-> T7JMcy2tiEce06QENuIkGGJVaTH5zeR7qKDg$
+On Sat, Jun 15, 2024 at 10:18:48PM +0200, Thomas Weißschuh wrote:
+> On 2024-06-10 10:10:36+0000, Joel Granados wrote:
+> > On Fri, Jun 07, 2024 at 03:54:01PM +0200, Thomas Weißschuh wrote:
+> > > On 2024-06-07 11:40:53+0000, Joel Granados wrote:
+> > > > On Fri, May 31, 2024 at 12:50:32PM +0200, Thomas Weißschuh wrote:
+> > ...
+> > > > Is there anything left to do besides
+> > > > what is being discussed in this mail, to start changing the ctl_tables
+> > > > to `static const`?
+> > > 
+> > > The changes to the tables also need (as per [0] and [1]):
+> > > 
+> > > * sysctl: move internal interfaces to const struct ctl_table
+> > > * sysctl: allow registration of const struct ctl_table
+> > > 
+> > > I think we do the handlers for v6.11, the rest of [0] and [1] for v6.12
+> > > and then we can go through the rest of the trees ctl_tables.
+> > 
+> > LGTM. Once you send "sysctl: move internal interfaces to const struct ctl_table" and
+> > "sysctl: allow registration of const struct ctl_table", I'll put them
+> > into sysctl-testing and have them there until they can go into sysctl-next
+> > (after the end of the next merge window). Please send both of them in one
+> > series and remember to work on the "what" and the "why" for the commit
+> > messages and cover letter.
+> 
+> IMO all of the remaining commits can go in as one series, as they all
+> belong to the sysctl core
+This sounds good to me. If everything is related to sysctl core, then it
+belongs in one series.
+
+> (I can leave out "sysctl: constify standard sysctl tables")
+This also sounds good. You can push this through when you are actually
+changing all the static struct ctl_table occurances
+
+> 
+> FYI recent changes to the sysctl core introduced another prerequisite
+> for "sysctl: move internal interfaces to const struct ctl_table", which
+> is "bpf: Constify ctl_table argument of filter function".
+> 
+> See https://git.kernel.org/pub/scm/linux/kernel/git/thomas.weissschuh/linux.git/ sysctl-constfy
+I see it. This looks like something related to BPF [STORAGE & CGROUPS]
+(cc: martin.lau@linux.dev). We can push it ("bpf: Constify ctl_table
+argument of filter function") through sysctl-next, if Martin is OK with
+it. Otherwise you need to send a separate patch to bpf@vger.kernel.org.
+
+Best
+
+-- 
+
+Joel Granados
 
