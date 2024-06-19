@@ -1,159 +1,175 @@
-Return-Path: <linux-kernel+bounces-220682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7D890E55A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:17:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056A590E55C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F73DB21874
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:17:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB7AE1C20A22
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC9378C83;
-	Wed, 19 Jun 2024 08:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E504878C91;
+	Wed, 19 Jun 2024 08:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mOLvKZJb"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RZG0LP+/"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E53B6F308
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAE2481BD
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718785019; cv=none; b=JdJo43RGbrOHX+9ie9CmDuWJGD3vT+Xa0l98t83jnzDMYwM9x5SYVJbZKMkVEpK+yy5W/yz1MLroyhjzvuOJBwWr3pJEHanQHkUTrP3muko3Fs08K9A+f87hbeo/vne8w2JzHdR7ZiH1y20+rUhKwe2G9vupJqt+tjoPIEDgmwg=
+	t=1718785066; cv=none; b=Pa9iXWyhVSwseZdSHUlzzQCbwcf3F+t8KbBtvvivfc2U0lW6FChmSv1j2g730oRB/5CLi7jZJq8BfuuBW28dekMnm+q+yvaE+gvg0P0Ek+IMaJloAzTI5a+0rM9oSVDCgaHiUmQYD+pbHNtNwpI2Xw/CaJopXw8sAv1erAjQu9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718785019; c=relaxed/simple;
-	bh=B1YSxg53BtuU+5Ww8RPVWrXNHvaeTdVrQsJ++9uhYuY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gCKe8suTNL13JADSkLQiWRh7Ovmt22yILecSwakTeSpZcdd0ztmhsBcZy/l68WvXbDQdAa7AIApFd0QlHmCsfcXpZ5Kyo5JPBlNrjBDuzoBGbmILCJDixqR/qgsCC4dJQ5RvRedErVcV5o0i8tEI45xAshcSPkaT8myYhuE/3dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mOLvKZJb; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e02c4168e09so366838276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 01:16:57 -0700 (PDT)
+	s=arc-20240116; t=1718785066; c=relaxed/simple;
+	bh=Kul4ZPewJpKlw42/XRu1y2BrrpjeqmExBHAtC/YfsE4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ph+73364ZdJbDQwZaRC9myts2mvojaLGe9niY1VOKbe5F+8attj3H/DbdDlcCbnSqwq2BMdmWlmcipsJz6wTkfgxQyoOlyt6sXQsZR7Ebk+c+KLboaPk12tv2tPKZ2zEWqhQudCvY8ZdO/WB7wPphRrc3f6Mlp0K8Ss5HnyHIgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RZG0LP+/; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-254aec5a084so3054381fac.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 01:17:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718785017; x=1719389817; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=udL2a5wRT7zXBVRjusc0IQrqpRO1o5H9EI6N+/cMSLs=;
-        b=mOLvKZJbCFp1a3Em4YCXSuWfG6ziEXQIBmSIKe4u7ywTCayY+rrWc0HtfMt1Bpa4HD
-         qB5hekXXdujfm4dbf6R707nZck/alvS1kCojN+7DhjKRf+ArEl935XXdUJhwtXcDJm4N
-         GI4M0TnQf7JlXcx4OTJFOjeI31OdzW/WeTnZ/sz1Kyvhdu6hSVbeuwFIAe8hwTpTeTRB
-         JqWH8FQlVM0XuAYpisoYJ2ip6tZEjcNLTCA3+X0lSyfeg1WP7RQ/BCwTA2ZUJ2i4j7FA
-         Fq4RnZVocHz151Xodqii+fwSoeckQPiJfPGo+0AMZmApG22hKk+QDV9uBe9xLq7eDNnO
-         ExTg==
+        d=linaro.org; s=google; t=1718785063; x=1719389863; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sc1RZubOxjRz9khsYbYWs4fb617BxGLfhuFOmPcsviU=;
+        b=RZG0LP+/1qy8bPyWmJQtqyVCq57RxlO/EHGqyQjhZQBTaoc+wwV3uiwdB3F7ixE1ng
+         n/YUNJmPKR85Bksn1zON8/0IMOrQr8t/wLEJsWDmw5aFPvQODxxxRHbQD/SDXMi+TiKK
+         oqFy8hMzsoBY7TpEURbrn69hZbNdDD+uz9zul234C0ZLTpZfxPKXccC/FLz3SUQSTp1a
+         pv5qONgsNSHCuTxTRtx5I7mhJ+UfaW6n7hFOd71egfUxRQgzHKU4xjt2PCflrKzl82u+
+         ZyM5sUsmtjblS5dlgl/0dL4TS8PkVSdxiq7Q6DyqKLKOjCvTwgnCuFmNCO1IBNKSeSG7
+         LJpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718785017; x=1719389817;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=udL2a5wRT7zXBVRjusc0IQrqpRO1o5H9EI6N+/cMSLs=;
-        b=G76by5zLDDuOri+U6AGFU2P2YPaH7U2pCMxnpC/aAUcXJBnVIzopVUg9PBXHQgSE7l
-         /Sxcnp1bNRyC5wWP5XKYEXNF0nek07XrQGqpQZVA8g2HGlTG5tkxi9gEqunXgUJZ8iiB
-         qtK0CwI75uPHAP2ZQRHCiPfMIsR9U6DIgyo7IMf4kjmtv28oAilOAd1rnUhVF2n6ynma
-         Fx9AHCwqSogUZhCtyIkSubp2gdU+IcTCBqbmB8ECxpxaBn42yas290KAqWqfUv2ygPIz
-         KP15EPchggyvV6pNbEG60cygnGWRtKeltP/Ti5S8N8uSBnPLDxQFoyw8/7fQ0pf3U7Tr
-         0Irg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5wFhtlH8RS4u+4o79VvZoEUTY33aIQTr8ht1g0FJOlu3iInA5XUyJj3vpL7+iayKytZsiy82hofAhPjwFUcuVmBqncPQ1lHu6hzSW
-X-Gm-Message-State: AOJu0YxipQaBIbH9BQeTxB43WOrHuQdmsUVy05lPnVeLkkfdLfNYo/ty
-	gwWKVh5yKvVykvUiqX4H0lxh3b8d2q4Iql+q9HQpDoAq0O+BjvDooLUxU9mLZA==
-X-Google-Smtp-Source: AGHT+IEhzBkF7Z0jyehBxG1zsjaq93hFbMY8O6eFZLB79MPPLKfuY1+TVYAPvE7XdNBRVHtNtrQPiw==
-X-Received: by 2002:a25:db94:0:b0:e02:92cf:4ea2 with SMTP id 3f1490d57ef6-e02be10a18amr2049102276.8.1718785016673;
-        Wed, 19 Jun 2024 01:16:56 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e02b87381ecsm407937276.32.2024.06.19.01.16.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 01:16:55 -0700 (PDT)
-Date: Wed, 19 Jun 2024 01:16:42 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>
-cc: hughd@google.com, willy@infradead.org, david@redhat.com, 
-    wangkefeng.wang@huawei.com, chrisl@kernel.org, ying.huang@intel.com, 
-    21cnbao@gmail.com, ryan.roberts@arm.com, shy828301@gmail.com, 
-    ziy@nvidia.com, ioworker0@gmail.com, da.gomez@samsung.com, 
-    p.raghav@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/9] support large folio swap-out and swap-in for
- shmem
-In-Reply-To: <475f0f2c-afc7-4225-809f-93c93f45c830@linux.alibaba.com>
-Message-ID: <2683b71d-aebd-5527-348c-18c0e021b653@google.com>
-References: <cover.1718690645.git.baolin.wang@linux.alibaba.com> <20240618130538.ffab3ce1b4e66e3ba095d8cf@linux-foundation.org> <475f0f2c-afc7-4225-809f-93c93f45c830@linux.alibaba.com>
+        d=1e100.net; s=20230601; t=1718785063; x=1719389863;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sc1RZubOxjRz9khsYbYWs4fb617BxGLfhuFOmPcsviU=;
+        b=oqGs4HPWyM4w9131rUzQh6uLuB0PJcdp3SOJT/VMyQY2VAT8QkKu8wfHOjg4QZVY/T
+         9bpCDa17VLxDSYjLMQwgiPVu22Zi0eH21jOX4ktpZolwmJiqhbaFixfHoSvDTlbB9Q2u
+         DXtfaovB2NXQTPd40VTHE7CrvKXylE6Wzz/tbdjlLWhn7h1FMRyTCjQAXTadlWg3c3BU
+         H5leXLJZaXLDp3z6KTZ3dY5TVHcXk5ezwAZQAXSkFZoulHVMEutaxK5UNpD8JF0ux3ZY
+         YAB1WgGsLn5xrq6gGnQWOHbeSwe5uUh6PGxOEgjEkXxDdnAuX20tMVErMwxiq2nuGUos
+         SIUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmvL+wcDvVvOMtlm7egJERr2lsPDLS8lCkmsL1FEiJDaG1ZtcOpbOCOWi0ddO156t2F1bfRJ7X4hd4kwmhL38vDy6RUyKtn06W+yhB
+X-Gm-Message-State: AOJu0YwN6B0daYkqTdHomuNg0TB2/fa2RKb2YqANp+m9lzOz5b8ey+nx
+	gD05rm16pmJh4KlkVIcntKME+HFsZT+wHq8jAq8IPQwK4bYz8ajBbMY5LFe7Dd4SWVPqwqh4mEZ
+	btnajAierzHtdILFcevhylnEfBhWzDFEeMeXebg==
+X-Google-Smtp-Source: AGHT+IHu4kdsSjkGyKzbpXZ2TIBj+GIIW/W1efhV7pWpeQ1s1hpYUiOZD98wqs6aYcg0O6aeG24kPa7JH3Xg+GVtW68=
+X-Received: by 2002:a05:6870:6114:b0:24f:f282:2411 with SMTP id
+ 586e51a60fabf-25c94cf4f4emr2088744fac.47.1718785063530; Wed, 19 Jun 2024
+ 01:17:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240614140421.3172674-1-peter.griffin@linaro.org>
+ <20240614140421.3172674-2-peter.griffin@linaro.org> <d904bcd0-62e3-47b0-acb2-0cf864fa33fb@kernel.org>
+In-Reply-To: <d904bcd0-62e3-47b0-acb2-0cf864fa33fb@kernel.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 19 Jun 2024 09:17:32 +0100
+Message-ID: <CADrjBPry4Pqk4cKmEccPQB3qJ0uOZ+C1+f=FdZAtzfW4N9Bvcw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mfd: syscon: add of_syscon_register_regmap() API
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: lee@kernel.org, arnd@arndb.de, alim.akhtar@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	semen.protsenko@linaro.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 19 Jun 2024, Baolin Wang wrote:
-> On 2024/6/19 04:05, Andrew Morton wrote:
-> > On Tue, 18 Jun 2024 14:54:12 +0800 Baolin Wang
-> > <baolin.wang@linux.alibaba.com> wrote:
-> > 
-> >> Shmem will support large folio allocation [1] [2] to get a better
-> >> performance,
-> >> however, the memory reclaim still splits the precious large folios when
-> >> trying
-> >> to swap-out shmem, which may lead to the memory fragmentation issue and can
-> >> not
-> >> take advantage of the large folio for shmeme.
-> >>
-> >> Moreover, the swap code already supports for swapping out large folio
-> >> without
-> >> split, and large folio swap-in[3] series is queued into mm-unstable branch.
-> >> Hence this patch set also supports the large folio swap-out and swap-in for
-> >> shmem.
-> > 
-> > I'll add this to mm-unstable for some exposure, but I wonder how much
-> > testing it will have recieved by the time the next merge window opens?
-> 
-> Thanks Andrew. I am fine with this series going to 6.12 if you are concerned
-> about insufficient testing (and let's also wait for Hugh's comments). Since we
-> (Daniel and I) have some follow-up patches that will rely on this swap series,
-> hope this series can be tested as extensively as possible to ensure its
-> stability in the mm branch.
+Hi Krzysztof,
 
-Thanks for giving it the exposure, Andrew, but please drop it from
-mm-unstable until the next cycle. I'd been about to write to say I
-wouldn't be trying it until next cycle, when your mm-commits came in:
-so I thought I ought at least to give mm-everything-2024-06-18 a try.
+Thanks for your review feedback.
 
-Baolin may have fixed stuff, but he (or the interaction with other mm
-work) has broken stuff too: I couldn't get as far with it as with the
-previous version. Just "cp -a" of a kernel source tree into a tmpfs
-huge=always size=<bigenough> failed with lots of ENOSPCs, and when
-"rm -rf"ed lots of WARN_ON(inode->i_blocks) from shmem_evict_inode();
-and on second attempt, then a VM_BUG_ON_FOLIO(!folio_contains) from
-find_lock_entries().
+On Wed, 19 Jun 2024 at 07:29, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 14/06/2024 16:04, Peter Griffin wrote:
+> > The of_syscon_register_regmap() API allows an externally created regmap
+> > to be registered with syscon. This regmap can then be returned to client
+> > drivers using the syscon_regmap_lookup_by_phandle() APIs.
+> >
+> > The API is used by platforms where mmio access to the syscon registers is
+> > not possible, and a underlying soc driver like exynos-pmu provides a SoC
+> > specific regmap that can issue a SMC or hypervisor call to write the
+> > register.
+> >
+> > This approach keeps the SoC complexities out of syscon, but allows common
+> > drivers such as  syscon-poweroff, syscon-reboot and friends that are used
+> > by many SoCs already to be re-used.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  drivers/mfd/syscon.c       | 48 ++++++++++++++++++++++++++++++++++++++
+> >  include/linux/mfd/syscon.h |  8 +++++++
+> >  2 files changed, 56 insertions(+)
+> >
+> > diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+> > index 7d0e91164cba..44991da3ea23 100644
+> > --- a/drivers/mfd/syscon.c
+> > +++ b/drivers/mfd/syscon.c
+> > @@ -192,6 +192,54 @@ static struct regmap *device_node_get_regmap(struct device_node *np,
+> >       return syscon->regmap;
+> >  }
+> >
+> > +/**
+> > + * of_syscon_register_regmap() - Register regmap for specified device node
+> > + * @np: Device tree node
+> > + * @regmap: Pointer to regmap object
+> > + *
+> > + * Register an externally created regmap object with syscon for the specified
+> > + * device tree node. This regmap can then be returned to client drivers using
+> > + * the syscon_regmap_lookup_by_phandle() API.
+> > + *
+> > + * Return: 0 on success, negative error code on failure.
+> > + */
+> > +int of_syscon_register_regmap(struct device_node *np, struct regmap *regmap)
+> > +{
+> > +     struct syscon  *entry, *syscon = NULL;
+> > +
+> > +     if (!np || !regmap)
+> > +             return -EINVAL;
+> > +
+> > +     /* check if syscon entry already exists */
+> > +     spin_lock(&syscon_list_slock);
+> > +
+> > +     list_for_each_entry(entry, &syscon_list, list)
+> > +             if (entry->np == np) {
+> > +                     syscon = entry;
+> > +                     break;
+> > +             }
+> > +
+> > +     spin_unlock(&syscon_list_slock);
+> > +
+> > +     if (syscon)
+> > +             return -EEXIST;
+> > +
+> > +     syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
+> > +     if (!syscon)
+> > +             return -ENOMEM;
+> > +
+> > +     syscon->regmap = regmap;
+> > +     syscon->np = np;
+> > +
+> > +     /* register the regmap in syscon list */
+> > +     spin_lock(&syscon_list_slock);
+>
+> You still have window between the check for existing syscon and adding
+> to the list. This likely is not an issue now, but it might if we have
+> more devices using same syscon and we enable asynchronous probing.
 
-Or maybe that VM_BUG_ON_FOLIO() was unrelated, but a symptom of the bug
-I'm trying to chase even when this series is reverted: some kind of page
-double usage, manifesting as miscellaneous "Bad page"s and VM_BUG_ONs,
-mostly from page reclaim or from exit_mmap(). I'm still getting a feel
-for it, maybe it occurs soon enough for a reliable bisection, maybe not.
+Good point, I will update it so that the lock is held throughout for
+the check, and also adding it to the list.
 
-(While writing, a run with mm-unstable cut off at 2a9964cc5d27,
-drop KSM_KMEM_CACHE(), instead of reverting just Baolin's latest,
-has not yet hit any problem: too early to tell but promising.)
+Thanks,
 
-And before 2024-06-18, I was working on mm-everything-2024-06-15 minus
-Chris Li's mTHP swap series: which worked fairly well, until it locked
-up with __try_to_reclaim_swap()'s filemap_get_folio() spinning around
-on a page with 0 refcount, while a page table lock is held which one
-by one the other CPUs come to want for reclaim. On two machines.
+Peter.
 
-None of these problems seen on Stephen's last next-2024-06-13.
-I had wanted to see if mm-everything-2024-06-18 fixed that lockup,
-but with the new problems I cannot tell (or it could all be the same
-problem: but if so, odd that it manifests consistently differently).
-
-There are way too many mTHP shmem and swap patch series floating
-around at the moment, in mm and in fs, for me to cope with:
-everyone, please slow down and test more.
-
-Hugh
-
-p.s. I think Andrew Bresticker's do_set_pmd() fix has soaked
-long enough, and deserves promotion to hotfix and Linus soon.
+[..]
 
