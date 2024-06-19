@@ -1,60 +1,52 @@
-Return-Path: <linux-kernel+bounces-221013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB6290EABF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:19:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3389490EAD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0871F2278C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:19:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D236B1F246D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C601428E6;
-	Wed, 19 Jun 2024 12:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9A313FD8D;
+	Wed, 19 Jun 2024 12:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cu+jPbtp"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wU8YO6+y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9600213F43B;
-	Wed, 19 Jun 2024 12:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FF314F9EF;
+	Wed, 19 Jun 2024 12:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718799481; cv=none; b=aIWwHr8adbzv2TcJ/xP/vfDVOWEQtqSeipKaZ6cKLDhrk3F3xxgx9oNSZ87y8KDPb+y0AYCy9Vz9eKGwuCJgq94H1dyk9XRa6YrdUBqngw5iiqXOp+FimSIWiVI5EwRLrO4f+gJ7AylD9pc1smwNDCcaa8GbOAULyTiPiTW6EOA=
+	t=1718799518; cv=none; b=sVzi0KfKv2Qtn+PH+CI80YJknhnSFq9JJBOBjOqCO4LwM/1VCvEBelhSCPmKNHwI8/9iwhMGjied093SY4UsP4/SmbEfEJBquwyEBwBzqoUecMOLGeRj/9yv4SuZa80U3RpI7QeVA/eTdt8jCDlCQiSg1H3eZxiivjnL2UA17QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718799481; c=relaxed/simple;
-	bh=TWnMaEvCvx0cR2o6SryzwIH73EH/ed79KtcNQbuis34=;
+	s=arc-20240116; t=1718799518; c=relaxed/simple;
+	bh=oS16SDxq7LLevQ5fdL1wikBwb3na4x3KCVVA1PsNSXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LD5hOIwkScN7b4TX7OIp4reO5S3MU6+UfJaMNz7EXanyPcnQrs83Wrat4QY/za0Frk2Hei0I9lNMpgWXWK7K2CwUsVsyS21eW5tfXatef431WqyhbZPGvYBdhdtej7QnxPtZYpjYtX9qTbTZgV5sBcyaT6zBc3VErpexrRu+KR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cu+jPbtp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E972C2BBFC;
-	Wed, 19 Jun 2024 12:18:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=blWecT5cIo4s9WixoQetSYz0Q4LDgtqkKTGKO4TKRFH8zsTuupAelbfK07Jko/aWFsSDQF4TOy2HFp3SHBCV8uQHmJZr4QC8lPmFa7RNYJJvrrcCtEoiR+4VEpghFu7xkwtD78iFO4oQiPqSzguGOu3x7Ll9sYT8tlWBGCmlyoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wU8YO6+y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 522C2C32786;
+	Wed, 19 Jun 2024 12:18:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718799481;
-	bh=TWnMaEvCvx0cR2o6SryzwIH73EH/ed79KtcNQbuis34=;
+	s=korg; t=1718799517;
+	bh=oS16SDxq7LLevQ5fdL1wikBwb3na4x3KCVVA1PsNSXs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cu+jPbtpHoi2meRDzKvODYh9ya5iH0Cxunf+1ho54i1DmRo1nvSbH86+B8G8013z9
-	 4//wy45SeW7fRqiLVNI5CKstKRTCVwQoIsCYYce0zTSjbg3mPW7wKkyckO7e7Y3fSN
-	 WKACsgYJDS5b/pbvYldLJmxcuCuRb3py+6SWFfKE=
-Date: Wed, 19 Jun 2024 14:17:58 +0200
+	b=wU8YO6+yCaSsHwRSHnoxZ1Dof72Uie9MfShkbtQVORWO3BQlw8NkBARGtnDxhiWZZ
+	 dmhSSgmYliQJvVyCrQGyTVu3NZLRaemMfE53nZItVHx/goomfKJ2NZBYJctxGtqFdW
+	 ffVDkCs0N0WTsWyE1lLqgE6TELV6sTpgfsdadZak=
+Date: Wed, 19 Jun 2024 14:18:35 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Danilo Krummrich <dakr@redhat.com>, rafael@kernel.org,
-	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com,
-	wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH v2 00/10] Device / Driver and PCI Rust abstractions
-Message-ID: <2024061929-onstage-mongrel-0c92@gregkh>
-References: <20240618234025.15036-1-dakr@redhat.com>
- <20240619120407.o7qh6jlld76j5luu@vireshk-i7>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+	Lee Jones <lee@kernel.org>, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1 resend] MAINTAINERS: Fix 32-bit i.MX platform paths
+Message-ID: <2024061920-hardwired-pry-bb81@gregkh>
+References: <20240619115610.2045421-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,33 +55,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240619120407.o7qh6jlld76j5luu@vireshk-i7>
+In-Reply-To: <20240619115610.2045421-1-alexander.stein@ew.tq-group.com>
 
-On Wed, Jun 19, 2024 at 05:34:07PM +0530, Viresh Kumar wrote:
-> On 19-06-24, 01:39, Danilo Krummrich wrote:
-> > - move base device ID abstractions to a separate source file (Greg)
-> > - remove `DeviceRemoval` trait in favor of using a `Devres` callback to
-> >   unregister drivers
-> > - remove `device::Data`, we don't need this abstraction anymore now that we
-> >   `Devres` to revoke resources and registrations
+On Wed, Jun 19, 2024 at 01:56:10PM +0200, Alexander Stein wrote:
+> The original patch was created way before the .dts movement on arch/arm.
+> But it was patch merged after the .dts reorganization. Fix the arch/arm
+> paths accordingly.
 > 
-> Hi Danilo,
+> Fixes: 7564efb37346a ("MAINTAINERS: Add entry for TQ-Systems device trees and drivers")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+>  MAINTAINERS | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> I am working on writing bindings for CPUFreq drivers [1] and was
-> looking to rebase over staging/rust-device, and I am not sure how to
-> proceed after device::Data is dropped now.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c36d72143b995..762e97653aa3c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22930,9 +22930,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
+>  L:	linux@ew.tq-group.com
+>  S:	Supported
+>  W:	https://www.tq-group.com/en/products/tq-embedded/
+> -F:	arch/arm/boot/dts/imx*mba*.dts*
+> -F:	arch/arm/boot/dts/imx*tqma*.dts*
+> -F:	arch/arm/boot/dts/mba*.dtsi
+> +F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
+> +F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
+> +F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
+>  F:	arch/arm64/boot/dts/freescale/fsl-*tqml*.dts*
+>  F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
+>  F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
+> -- 
+> 2.34.1
+> 
+> 
 
-As it should be dropped :)
-
-A struct device does not have a "data" pointer, it has specific other
-pointers to hold data in, but they better be accessed by their proper
-name if you want rust code to be reviewable by anyone.
-
-Also, you shouldn't be accessing that field directly anyway, that's what
-the existing dev_set_drvdata/dev_get_drvdata() calls are for.  Just use
-them please.
-
-thanks,
-
-greg k-h
+Why is a MAINTAINERS change needed for stable kernels?
 
