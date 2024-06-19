@@ -1,152 +1,222 @@
-Return-Path: <linux-kernel+bounces-221424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF6E90F36F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:01:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CAE490F375
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE90F281B03
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:01:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7426284FBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7028158D65;
-	Wed, 19 Jun 2024 15:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D59158DCD;
+	Wed, 19 Jun 2024 15:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Deuzf+T7"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxaywD5m"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52272158202
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AAF158DA8;
+	Wed, 19 Jun 2024 15:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812160; cv=none; b=Gxvwn75Pfi6A7sJDUqNEs3H7EPt2E4Z984mq9XT2OnXVVEAzm5RjdZHf1LytHAi1CWcVj0cbZ6DtRqgPmpT53fiQzLS1+W8sr3kBHbNl9x+H6MwWp9voX94LaNQdNR+Z5jubn27LB1X4AAuXz0H9UsDsDoexgUwYZeIWWoxSdc4=
+	t=1718812232; cv=none; b=cMnlIfQPmqAhtchjv9HiCq0Uc9ME6QkyDUaES9ai6U1HAsFlGdqIyjQlBmXWMS2fqEZCnQnbINz8WWLK9D4M5qwH8MvpcNgNUKlIOfbNOWf/jGQzrhLmEPLqjDx8LAtaMgBxac1oZu/bBK2pwFjNzmo9rLxl4JhYYLIXRNT9APg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718812160; c=relaxed/simple;
-	bh=cSH93zHXkK5myzncS0R9U3Eonp7whM/bFDFKKdLoqKk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b259tJLhzN3VbbMzrffVAvtylkd7VyQhP08dVRDV35ExKQJWDMQGMbgnyvrCLRz1UTI10frhfNuKj42X7cwNEW0kwS42BJSdtU1vFQfpVbsGqGZfzewdwsTm/Kz3Ll2auVnVhI+At+1Oe7KVhXlb9mSpb3tMGO65MT+MfxSmaCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Deuzf+T7; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-62a08092c4dso66918637b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:49:18 -0700 (PDT)
+	s=arc-20240116; t=1718812232; c=relaxed/simple;
+	bh=K6MWcb8JgHbFUPFbexO82Uth2bOqMvsxZPn9kppEFTk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=puR8cMGs04zBsG4Zk8k+80eYmKQPSbAG7jfOQB6IjsU7NnkRo2vJXazpVkkIYULuiOvFyH2kJl5QEynxBembYDULgDvV/4VVs4FbggYk725JgUxD3ZvR3CXVweOBK+zN3FQ7fHag6jWvdGCunI1KKvxnXAA9kA9Rsznx9H3V8LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PxaywD5m; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70599522368so4816631b3a.2;
+        Wed, 19 Jun 2024 08:50:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718812157; x=1719416957; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3A3V41ThbwHIAGZpAhL1w9y7K8p24jvNIlupY7BQNOY=;
-        b=Deuzf+T7eIoBmSjD0usGJ8i1x1VH9BioooixvPYb5R5hoaZaXI0MekCU7r/i0D31Sa
-         ZjAc8jE/T4Em5onVaGSWln4Ds5DiMatRYi7HpFN+oFqyDgbaISxht2YO8VtPfr85MeEB
-         oTs8ew+/Sf5VZsFdGKZe8GLudEPvrxrOFEUG3IuaRK/zFpiMhoF44PMocckPFcbB/rBL
-         t7dFYaoLU3Gt29BgTW0SLHOzBPgp1ga7J3wzPZiOO9KqhSRgpwvwD63KQ8k+L09P9UOY
-         4bNKDTs0r2yZgP4g3XnOae5yXnHYjfMKGDpMpqUn8rooCPqPM1p2O31BENaO19Q8RNKt
-         m4qw==
+        d=gmail.com; s=20230601; t=1718812230; x=1719417030; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zd7wiy/VlVLvBtVtiqflRbF+ChuoP1J0JG+G7pVlywY=;
+        b=PxaywD5m/Rj7vpZ92sKXz1nYiluihvQIAE0mqgA1LgpdSJ9USPh6qTOFbkAwQuUgqy
+         6pdlaqy8OVgzb51tLzvgRzwqPKStwSCfZeXndgeFg72/WDWxWyfrsCqYHP+zdK5fDF3i
+         s34j4gM+xkMahDhseQXMb+qKZkamBGYtScoP0zNXKnBG7XGPrf4J1BHFUb3Hb5wsHRO3
+         c4Bp8MQ18Jjc/3lGiILn01+mObchfJXh72M7xKPyJxHulFWk6/n+/vbBfRJQb73w+JHZ
+         tGqiHc5zYgA9d17zq/+dn6xrxuNiATkdCLvKKQKhk9gn3j7AJFRlQf9Bh5zR69o8UnZz
+         Sm8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718812157; x=1719416957;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3A3V41ThbwHIAGZpAhL1w9y7K8p24jvNIlupY7BQNOY=;
-        b=xVMBAB50zAnOA6MXVACvOMnOla2OMfJZ3q1XkJLNMANOhqE/WLaaDRot/h6bBGTFis
-         7YOak1SWJD0CUEAexeBgKIOa9sGdxw6wg2rlZGcBlhbUcgcS1O257ZTLg81/7wGR3ZYH
-         nY5LDMi6Id2pnJVwvjasE8sdISqIwIb+dadSRfkmIf4wCenLXtgpIDS7nDcER+ajFDw5
-         mQpo0tEL+J2CaLJR4zi0mcDaPZuAbJgIwadoHyHZLTYucRjPgDrGjUyWFr0ypZhDkiy2
-         83BjchOZ8g2tfqO7kDDybbJJ+nicc7A5OyJ+OzYZr4UEsrm3llAdd41UCT+AjXjg0wgw
-         /WTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLP53IQX4Z6LyBj5iFqMzu/lk7X0ZeniMVSp6Bfygtehjw+mO73+0IFTjBnce5Reus3s1Vqf3+Z9RY+ZAbnyc0xyhw6qUV/GQRfmQX
-X-Gm-Message-State: AOJu0YxnglKHRXJTk8Exe/NzKezpc5PodDPFfYz/gvk3HJVFCApqH99m
-	PeAsoiZ+mdq/e3i5Oes0kKXvaOVRg3A93UaOHszkOtAJEPurFrErFDUpA3wepAgF/oA4Fm3x07f
-	ZHw48IH05c7Ggpn+8MlUd1jakP8rY4HmFZoO5
-X-Google-Smtp-Source: AGHT+IEkDQP5qZ6Yrjj3uYAUPWx122jAV/ve6smoTK2csXSUiZ3XrnUftHl2q2TGjzjXyIgjKZD8k1vF8LzOBOY22t0=
-X-Received: by 2002:a81:84c5:0:b0:62c:e6c0:e887 with SMTP id
- 00721157ae682-63a8d72f60bmr34069987b3.9.1718812157336; Wed, 19 Jun 2024
- 08:49:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718812230; x=1719417030;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zd7wiy/VlVLvBtVtiqflRbF+ChuoP1J0JG+G7pVlywY=;
+        b=k7hPaMTnZ53Q/F6kv10ckfKiCGuBtkKFojh17gii4hgXbLyFODRPsYP3xd9Di5g4Lq
+         bG9lDo5c8ny2tyP+0r5ZJZ7RaTNtu8E4iv0+AAhQhB3tcWrB8+MG28BKpApJYorhc0VR
+         sDz5bAqcvjhsouO5dzLpWvjxCYBkvQDQ+0yBYBiLlxTEqPhoV+By7/uXlVEUsgnAwXL3
+         vxPONUi7P+lf6LK1xOy2FMrpNhyCt63hU7Sw7AzTTHUlAl/ho+wi144Qj8DyjmTSlgai
+         QTF1Kkx4/xHZoW5QGYfZMMjHUVVbGgZHgyIGJ+ie/kMnSX0WhCg0meCbalZh4AxBz7pB
+         yDBw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3gmmzLTfo1Ih/asnvjDj8T7jfE9FQNZ3z/1AKplUchVMFnorSQ/IWknkAxfkp+tqIXMqto0p4HSl+bsrHHo24A0FamLCi+NdMiH1tRQdwHoGdfBX9UipINrLSvMdxWk0OFUOTojv3QfjSpqYKZ4/6GyC0oMe1p5JDGlBjQwimbzH0TQ==
+X-Gm-Message-State: AOJu0YxrjN5VfZODaEk39mM/X1yz4krCFmI0Y+JXPCEOUhBToX01UK/5
+	vB9p3LmSEuPih2c1YxRDmIRNhsNjdx0gNMDb2Pj/d1ZhDMYPOjzl
+X-Google-Smtp-Source: AGHT+IF5kuW0M2dM/4GTa3QjwDZqbi4zHzmHnRmjAa5S++TiLw7FT1gdA2uZD4U2FAbY0OsBzKcPdQ==
+X-Received: by 2002:a05:6a00:2a6:b0:704:34a0:96c9 with SMTP id d2e1a72fcca58-70629cf6a33mr2553824b3a.30.1718812230417;
+        Wed, 19 Jun 2024 08:50:30 -0700 (PDT)
+Received: from ga401ii.. ([2401:4900:1cc8:6da5:5a28:6118:91d6:c407])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-705ccb3cdc6sm10813934b3a.138.2024.06.19.08.50.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 08:50:29 -0700 (PDT)
+From: Kanak Shilledar <kanakshilledar@gmail.com>
+To: 
+Cc: Kanak Shilledar <kanakshilledar@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: i2c: convert to dt schema
+Date: Wed, 19 Jun 2024 21:19:36 +0530
+Message-ID: <20240619154941.144011-2-kanakshilledar@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
- <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com> <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
-In-Reply-To: <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 19 Jun 2024 11:49:06 -0400
-Message-ID: <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
-	akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, mic@digikod.net, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
-	linux-integrity@vger.kernel.org, wufan@linux.microsoft.com, 
-	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org, 
-	pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, jikos@kernel.org, 
-	mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de, 
-	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 19, 2024 at 3:59=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Tue, 2024-06-18 at 19:20 -0400, Paul Moore wrote:
-> > On Mon, Apr 15, 2024 at 10:25=E2=80=AFAM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > >
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > >
-> > > Integrity detection and protection has long been a desirable feature,=
- to
-> > > reach a large user base and mitigate the risk of flaws in the softwar=
-e
-> > > and attacks.
-> > >
-> > > However, while solutions exist, they struggle to reach the large user
-> > > base, due to requiring higher than desired constraints on performance=
-,
-> > > flexibility and configurability, that only security conscious people =
-are
-> > > willing to accept.
-> > >
-> > > This is where the new digest_cache LSM comes into play, it offers
-> > > additional support for new and existing integrity solutions, to make
-> > > them faster and easier to deploy.
-> > >
-> > > The full documentation with the motivation and the solution details c=
-an be
-> > > found in patch 14.
-> > >
-> > > The IMA integration patch set will be introduced separately. Also a P=
-oC
-> > > based on the current version of IPE can be provided.
-> >
-> > I'm not sure we want to implement a cache as a LSM.  I'm sure it would
-> > work, but historically LSMs have provided some form of access control,
-> > measurement, or other traditional security service.  A digest cache,
-> > while potentially useful for a variety of security related
-> > applications, is not a security service by itself, it is simply a file
-> > digest storage mechanism.
->
-> Uhm, currently the digest_cache LSM is heavily based on the LSM
-> infrastructure:
+Convert the NXP I2C controller for LPC2xxx/178x/18xx/43xx
+to newer DT schema. Created DT schema based on the .txt file
+which had `compatible`, `reg`, `interrupts`, `clocks`,
+`#address-cells` and `#size-cells` as required properties.
 
-I understand that, but as I said previously, I don't believe that we
-want to support a LSM which exists solely to provide a file digest
-cache.  LSMs should be based around the idea of some type of access
-control, security monitoring, etc.
+Additional changes to the original .txt binding
+- added maintainer from the MAINTAINERS file.
+- added resets property required by the corresponding DTS files.
 
-Including a file digest cache in IMA, or implementing it as a
-standalone piece of kernel functionality, are still options.  If you
-want to pursue this, I would suggest that including the digest cache
-as part of IMA would be the easier of the two options; if it proves to
-be generally useful outside of IMA, it can always be abstracted out to
-a general kernel module/subsystem.
+Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+---
+ .../devicetree/bindings/i2c/i2c-lpc2k.txt     | 33 ----------
+ .../bindings/i2c/nxp,lpc1788-i2c.yaml         | 66 +++++++++++++++++++
+ 2 files changed, 66 insertions(+), 33 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
 
---=20
-paul-moore.com
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt b/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
+deleted file mode 100644
+index 4101aa621ad4..000000000000
+--- a/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
++++ /dev/null
+@@ -1,33 +0,0 @@
+-NXP I2C controller for LPC2xxx/178x/18xx/43xx
+-
+-Required properties:
+- - compatible: must be "nxp,lpc1788-i2c"
+- - reg: physical address and length of the device registers
+- - interrupts: a single interrupt specifier
+- - clocks: clock for the device
+- - #address-cells: should be <1>
+- - #size-cells: should be <0>
+-
+-Optional properties:
+-- clock-frequency: the desired I2C bus clock frequency in Hz; in
+-  absence of this property the default value is used (100 kHz).
+-
+-Example:
+-i2c0: i2c@400a1000 {
+-	compatible = "nxp,lpc1788-i2c";
+-	reg = <0x400a1000 0x1000>;
+-	interrupts = <18>;
+-	clocks = <&ccu1 CLK_APB1_I2C0>;
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-};
+-
+-&i2c0 {
+-	clock-frequency = <400000>;
+-
+-	lm75@48 {
+-		compatible = "nxp,lm75";
+-		reg = <0x48>;
+-	};
+-};
+-
+diff --git a/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml b/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+new file mode 100644
+index 000000000000..79d6774dd54f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+@@ -0,0 +1,66 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/nxp,lpc1788-i2c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP I2C controller for LPC2xxx/178x/18xx/43xx
++
++maintainers:
++  - Vladimir Zapolskiy <vz@mleia.com>
++
++allOf:
++  - $ref: /schemas/i2c/i2c-controller.yaml#
++
++properties:
++  compatible:
++    const: nxp,lpc1788-i2c
++
++  reg:
++    description: physical address and length of the device registers
++    maxItems: 1
++
++  interrupts:
++    description: a single interrupt specifier
++    maxItems: 1
++
++  clocks:
++    description: clock for the device
++    maxItems: 1
++
++  clock-frequency:
++    description: the desired I2C bus clock frequency in Hz
++    default: 100000
++
++  resets:
++    description: reset for the device
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - "#address-cells"
++  - "#size-cells"
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include "dt-bindings/clock/lpc18xx-ccu.h"
++
++    i2c@400a1000 {
++        compatible = "nxp,lpc1788-i2c";
++        reg = <0x400a1000 0x1000>;
++        interrupts = <18>;
++        clocks = <&ccu1 CLK_APB1_I2C0>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++    };
+-- 
+2.45.2
+
 
