@@ -1,145 +1,136 @@
-Return-Path: <linux-kernel+bounces-220665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FEA090E52B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1515D90E52D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A134F1C220C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:05:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3524B1C21F53
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA1578C7B;
-	Wed, 19 Jun 2024 08:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A9C7A158;
+	Wed, 19 Jun 2024 08:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IvUq0+UN"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVykuycm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BF47407D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4263177F12;
+	Wed, 19 Jun 2024 08:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718784325; cv=none; b=p03+p53SHkEhehgJtMqK/HpUOFnmyByAvrKV0h9ugxURS1/W6/hfiOw7jZ95zXD+RM5kRCiiBLxToXMqlkdfazLYqBgxM5YoZnLoEoaQjLTimNnsJ7lkMA8zAE79VAhh44wnO37LcNPtrwBQOuruI0CyltoD2yudvgA32VeHQx0=
+	t=1718784332; cv=none; b=UmwsCs4pZscqGQjpFtHE8B4KpvLuBm2CGZuo7lBgXaoahR8OIRvw+cDtlTKCjfUUT+j6Y0/bxPw64sWI160NYrN5a54G25Ot4rIKMq3SVGb2tzycA4Q2Lu0jmpb6ADaFXBlEe2s5fh1p55/bJfYFW/JyjZDWjWKTQd9a8lzhz6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718784325; c=relaxed/simple;
-	bh=ic4OonCzqz8zb+Ab91IFChnLZE4u5xYviggsjSwZYYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F1F8kJnrQFV2rCLK5q2i1Ww9guVEryAnNbpZds0G22egoDfbB4sNE/5zxILKx7mTs4c1A7uTpWxYCZAwkhGnLLZd1PTAIm2Bv4wUcfmEpNLnYARmlnVOhZSMXn4T97oO/icYZfacKoPiyv+2mNzNk1y1BL3HYtYX2awQ6iqpSZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IvUq0+UN; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35f090093d8so4915747f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 01:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1718784321; x=1719389121; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0XDhme2tEckF2guKUB8AsWcTvk4ojSd7Dq78DV7RT+Y=;
-        b=IvUq0+UNfMSrOtCNKBhEbuVVb5OEsEb0NhbZwy3GxPxIQ2l71CLwQCL10Oork3hqgq
-         IefrOEY86XPCUNxPEODi3h5qduFZPOQZy6V3ePFjLGWBPreioxahjiAPvTYBwYUZPOr5
-         lz6Ve2eXELFHnVLllYoEYvRreJcrVwpk7+rnxqnKVwr9PFlUzuU4FnPh4evrIqR3t4E4
-         W1sYiyp2ncp4sOxayM/lUKrhouO21Ywo1TDYxiJSmHeKFaGqKlSB3IfdwdyxCoPtZAjj
-         qky6d1VlbvXKOMgp/hTCiZUbtli5BWg4H90gLS2atcj/AQ33HcTp1jbFkEBqxdGsPnfH
-         NUFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718784321; x=1719389121;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XDhme2tEckF2guKUB8AsWcTvk4ojSd7Dq78DV7RT+Y=;
-        b=T0Cx/1oEH7zOoCNrH6Dr44VOA/lc1+1QpX2jbcsXWS8qojs9mZSN21T/sgU5yK23c1
-         hVB89i1M0yoYbhC/zC4UScbwZYhI4OZ/QDLUDA47vuApSeZWtAxK05GZMdfb85rkhdOQ
-         UorcRb528ac4oYOsyMgo4LhIFPx9irZZDKynYi+qC0Rl8qCnGmHluYaSbpFMgFKUnDch
-         dy46ZqYGRlJkXYJEZVc8XxooU22/AyyPWnk7c+WL6qKMlbvnXk9oNhY/AksTKrynanav
-         0nZVJPSWw3tmvvpSL9ty+pZY+0xwcS0CHl10lIaWzNk+jI1qXqKjv0qxrin8D4hD+uFN
-         CoAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVl0DItd3ykpf3DAMxm0CIiyELcutDyRh7Z7xVuuimAWcaH4x1U8jK42ZmgJhmOoc/v8YMGdwErYJS7UBtUPLYKlPVWHNVyuUC7D194
-X-Gm-Message-State: AOJu0YzudHCWtty3xsBb78AINwAOxZneEGiTKly7tx+vmLO6wH0OzOiI
-	hjyAQRdICREKzqKy3vzFHz87EhsfkJ8A/hGOhvLtmBRVEaX/JyUWibLkykxZ3lI=
-X-Google-Smtp-Source: AGHT+IEj7vjm+HP1+efuKyLCaFUdRhGnnBejRO8fJMKf2VyJXSdGt3xeE55DDZM87/j6gDghlb3alA==
-X-Received: by 2002:adf:b189:0:b0:354:fc65:39d6 with SMTP id ffacd0b85a97d-363175b8055mr1476687f8f.26.1718784321011;
-        Wed, 19 Jun 2024 01:05:21 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607510340fsm16427144f8f.93.2024.06.19.01.05.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 01:05:20 -0700 (PDT)
-Message-ID: <dea78e58-a4b5-48ee-8c99-213dd5ec9b8f@suse.com>
-Date: Wed, 19 Jun 2024 11:05:19 +0300
+	s=arc-20240116; t=1718784332; c=relaxed/simple;
+	bh=Pozoj6qv+Vp/UO1RPeTwW2rV8ca42eOTPcUD5Xy7Ftc=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=oKY3EJ8aCRV75BZPStqInFhS3aUvcVcJFpgH9PDCcf5vQdzNk40r2Xwe2i0cz8FbjKQBSD9rtKYhmKZ2VjgaHQhWZcvFwhcy34NmA+pxq8ASIz/kmctxIhtUATNSoVRuogO5mTWKJ60nE2IHp50io4aTHeiVbxxx3v7hpxD6jaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVykuycm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F29BC2BBFC;
+	Wed, 19 Jun 2024 08:05:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718784331;
+	bh=Pozoj6qv+Vp/UO1RPeTwW2rV8ca42eOTPcUD5Xy7Ftc=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=pVykuycmWT5HhGPmaV1bKKbl7B2dqSeLGH9rL0PVXfuzzsP3HUGQsfeX4/+wt8B+8
+	 hfCApwdGmMOaGOIazqnroYpWJl4O9Ssgx8jd5u4p+mD2KYBjjkkKO26f1fYlf/Qth3
+	 NY6QEGPEJCaTPt+Bw5DENkv82Mo/cQP/7kli+Wxme926v2YTZZMvsdm9tkYng8pkm3
+	 OIfHlui+gVUj/jYvW38sHNJB7dj0l5JNz7FHHkzoZh7fsHt8bTmKO0L581ZqKzVL0u
+	 tC3AoNLzzXaGoXSMYiSpDaO0ndGwsYfOLH6iH0xSDEEPZXembleEeHCoDybXZJJlf5
+	 nFundW6NoEeaw==
+From: Kalle Valo <kvalo@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-wireless@vger.kernel.org,  linux-kernel@vger.kernel.org,  David
+ Lin <yu-hao.lin@nxp.com>,  Francesco Dolcini <francesco@dolcini.it>,
+  Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH] [RFC] mwifiex: Fix NULL pointer deref
+References: <20240619070824.537856-1-s.hauer@pengutronix.de>
+Date: Wed, 19 Jun 2024 11:05:28 +0300
+In-Reply-To: <20240619070824.537856-1-s.hauer@pengutronix.de> (Sascha Hauer's
+	message of "Wed, 19 Jun 2024 09:08:24 +0200")
+Message-ID: <87wmmll5mf.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/9] x86/virt/tdx: Support global metadata read for all
- element sizes
-To: Kai Huang <kai.huang@intel.com>, linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, dave.hansen@intel.com, dan.j.williams@intel.com,
- kirill.shutemov@linux.intel.com, rick.p.edgecombe@intel.com,
- peterz@infradead.org, tglx@linutronix.de, bp@alien8.de, mingo@redhat.com,
- hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
- isaku.yamahata@intel.com, binbin.wu@linux.intel.com
-References: <cover.1718538552.git.kai.huang@intel.com>
- <210f7747058e01c4d2ed683660a4cb18c5d88440.1718538552.git.kai.huang@intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <210f7747058e01c4d2ed683660a4cb18c5d88440.1718538552.git.kai.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Sascha Hauer <s.hauer@pengutronix.de> writes:
 
-
-On 16.06.24 г. 15:01 ч., Kai Huang wrote:
-> The TDX module provides "global metadata fields" for software to query.
-> Each metadata field is accessible by a unique "metadata field ID".  TDX
-> supports 8/16/32/64 bits metadata element sizes.  The size of each
-> metadata field is encoded in its associated metadata field ID.
-> 
-> For now the kernel only reads "TD Memory Region" (TDMR) related global
-> metadata fields for module initialization.  All these metadata fields
-> are 16-bit, and the kernel only supports reading 16-bit fields.
-> 
-> Future changes will need to read more metadata fields with other element
-> sizes.  To resolve this once for all, extend the existing metadata
-> reading code to support reading all element sizes.
-> 
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> When an Access Point is repeatedly started it happens that the
+> interrupts handler is called with priv->wdev.wiphy being NULL, but
+> dereferenced in mwifiex_parse_single_response_buf() resulting in:
+>
+> | Unable to handle kernel NULL pointer dereference at virtual address 0000000000000140
+> | Mem abort info:
+> |   ESR = 0x0000000096000004
+> |   EC = 0x25: DABT (current EL), IL = 32 bits
+> |   SET = 0, FnV = 0
+> |   EA = 0, S1PTW = 0
+> |   FSC = 0x04: level 0 translation fault
+> | Data abort info:
+> |   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> |   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> |   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> | user pgtable: 4k pages, 48-bit VAs, pgdp=0000000046d96000
+> | [0000000000000140] pgd=0000000000000000, p4d=0000000000000000
+> | Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> | Modules linked in: caam_jr caamhash_desc spidev caamalg_desc crypto_engine authenc libdes mwifiex_sdio mwifiex crct10dif_ce cdc_acm onboard_usb_hub fsl_imx8_ddr_perf imx8m_ddrc rtc_ds1307 lm75 rtc_snvs imx_sdma caam imx8mm_thermal spi_imx error imx_cpufreq_dt fuse ip_tables x_tables ipv6
+> | CPU: 0 PID: 8 Comm: kworker/0:1 Not tainted 6.9.0-00007-g937242013fce-dirty #18
+> | Hardware name: somemachine (DT)
+> | Workqueue: events sdio_irq_work
+> | pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> | pc : mwifiex_get_cfp+0xd8/0x15c [mwifiex]
+> | lr : mwifiex_get_cfp+0x34/0x15c [mwifiex]
+> | sp : ffff8000818b3a70
+> | x29: ffff8000818b3a70 x28: ffff000006bfd8a5 x27: 0000000000000004
+> | x26: 000000000000002c x25: 0000000000001511 x24: 0000000002e86bc9
+> | x23: ffff000006bfd996 x22: 0000000000000004 x21: ffff000007bec000
+> | x20: 000000000000002c x19: 0000000000000000 x18: 0000000000000000
+> | x17: 000000040044ffff x16: 00500072b5503510 x15: ccc283740681e517
+> | x14: 0201000101006d15 x13: 0000000002e8ff43 x12: 002c01000000ffb1
+> | x11: 0100000000000000 x10: 02e8ff43002c0100 x9 : 0000ffb100100157
+> | x8 : ffff000003d20000 x7 : 00000000000002f1 x6 : 00000000ffffe124
+> | x5 : 0000000000000001 x4 : 0000000000000003 x3 : 0000000000000000
+> | x2 : 0000000000000000 x1 : 0001000000011001 x0 : 0000000000000000
+> | Call trace:
+> |  mwifiex_get_cfp+0xd8/0x15c [mwifiex]
+> |  mwifiex_parse_single_response_buf+0x1d0/0x504 [mwifiex]
+> |  mwifiex_handle_event_ext_scan_report+0x19c/0x2f8 [mwifiex]
+> |  mwifiex_process_sta_event+0x298/0xf0c [mwifiex]
+> |  mwifiex_process_event+0x110/0x238 [mwifiex]
+> |  mwifiex_main_process+0x428/0xa44 [mwifiex]
+> |  mwifiex_sdio_interrupt+0x64/0x12c [mwifiex_sdio]
+> |  process_sdio_pending_irqs+0x64/0x1b8
+> |  sdio_irq_work+0x4c/0x7c
+> |  process_one_work+0x148/0x2a0
+> |  worker_thread+0x2fc/0x40c
+> |  kthread+0x110/0x114
+> |  ret_from_fork+0x10/0x20
+> | Code: a94153f3 a8c37bfd d50323bf d65f03c0 (f940a000)
+> | ---[ end trace 0000000000000000 ]---
+>
+> Fix this by adding a NULL check before dereferencing this pointer.
+>
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+>
 > ---
->   arch/x86/virt/vmx/tdx/tdx.c | 29 ++++++++++++++++-------------
->   arch/x86/virt/vmx/tdx/tdx.h |  3 ++-
->   2 files changed, 18 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> index 854312e97eff..4392e82a9bcb 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.c
-> +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> @@ -270,23 +270,25 @@ static int read_sys_metadata_field(u64 field_id, u64 *data)
->   	return 0;
->   }
->   
-> -static int read_sys_metadata_field16(u64 field_id,
-> -				     int offset,
-> -				     void *stbuf)
-> +/*
-> + * Read one global metadata field and store the data to a location of a
-> + * given buffer specified by the offset and size (in bytes).
-> + */
-> +static int stbuf_read_sysmd_field(u64 field_id, void *stbuf, int offset,
-> +				  int bytes)
+>
+> This is the most obvious fix for this problem, but I am not sure if we
+> might want to catch priv->wdev.wiphy being NULL earlier in the call
+> chain.
 
-Actually I think opencoding read_sys_metadata_field in 
-stbuf_read_sysmd_field and leaving the function named as
-read_sys_metadata_field would be best. The new function is still very 
-short and linear.
+I haven't looked at the call but the symptoms sound like that either we
+are enabling the interrupts too early or there's some kind of locking
+problem so that an other cpu doesn't see the change.
 
-Another point - why do proliferate the offset calculations in the lower 
-layers of TDX. Simply pass in a buffer and a size, calculate the exact 
-location in the callers of the read functions.
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-<snip>
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
