@@ -1,119 +1,101 @@
-Return-Path: <linux-kernel+bounces-221113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DD290EE89
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:30:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC7390EEA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 646F0284BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:29:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 539821C24B16
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887CA14EC5C;
-	Wed, 19 Jun 2024 13:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8069147C89;
+	Wed, 19 Jun 2024 13:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZcRSyda3"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q1EMpIZT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5214114601E;
-	Wed, 19 Jun 2024 13:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B783C0B;
+	Wed, 19 Jun 2024 13:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718803759; cv=none; b=WhmEN4ljzDxhbLOltjNwGCAr+BUkIwi4Z7tQVwx5Azzj3li57BIzDWJK/HZtlKm86u96uH/IQ2J/cPJlPRxqd8LDbRvEpXUWxw/ivAg6BSonIQKPct7m5lZxEgn7eUS40SdjCjg6MyRm32F3o8iLsPK1nurdPBQrUqrm2g/tvpk=
+	t=1718803838; cv=none; b=rJk8cMjQ4CvRLCH8bLlj/u1fK14yCeXXTjDtX5BzM0vNaVmJN2RPmXy3+P+nASoQTo2B3Yw4mUklcJ25+yZVGTBr+QNkhnZc5wrtdT133N5YVj1TjgtSaQhBxMAUj9ALlCGyLUt6OxIBjkV2wKPx56lVnJigkZu78M7OprmpvX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718803759; c=relaxed/simple;
-	bh=dmUopKpgxEYeprNgTnMdC5f05WlDYqe8aQuoCu7zLfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NLIQrx3Thd6MAqLCFMkxU4QJy1rwxcO4rT2R8o3AGByeYa4TKNjU3Msk8+oncb1GF7aOxOd/kV6xQDHi+TCQpEsGF6vlMefaBLFc5L+PWaWi36M0DpHLvAvTsnZnzjVrrQZ5k8JglELpG2/vBBc/SlKOES0WB1J1g90O7ySPPJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZcRSyda3; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718803725; x=1719408525; i=markus.elfring@web.de;
-	bh=Cqv24v/8lPgdG+NBHkh3HOkG7c3WtsIJpUILM4XYcKM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ZcRSyda3HljeeSrPJsg9pt/SRxpkFHlcTRi7289KIbREzjXnwYJjEL1b4ikYNyW0
-	 cwW2t0z/i+PgBzGJZiJi0DglhseueROUNz0HG4pwc3qldtuJ5jRI7MgUspvcwEA3Q
-	 MEaj14Balwr38BcHKbT0+yUpLht6u+kQ+r4IDeFaZXNtOO0AQXYYbfNxM1qdX061D
-	 1CZw7uJVV1rqnUvKEzkbkzyPiVj9foILjLYAyrYxm1dD0qgfhIop+nwagQxHXKbps
-	 T51aMnsKpdNl7/gt5I2+nGV4TaZbgsg3SrNmjqkGylvMem0EgtWxIruVS6lNFpi8U
-	 4NS5T70OYGbFOvl1NQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MUl9H-1rtlXw0E0f-00K0rd; Wed, 19
- Jun 2024 15:28:45 +0200
-Message-ID: <d8d4cca1-031f-4ea7-89da-573e0863c3ec@web.de>
-Date: Wed, 19 Jun 2024 15:28:43 +0200
+	s=arc-20240116; t=1718803838; c=relaxed/simple;
+	bh=wYOFD82t4v7k8JjPLQqTT4vKASwcpulAg1FaGqWT578=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QVwMSOC1n6dUt20yQsDpd+MAN2LJZ3YP2eqPmCDKXs5VRiutyye9oNZckkIlQ3lnalPLlG0ZVV10t6RCO6azEvsEgaBNf3aYX33QqxDSiY3vNKWwu1Dq9hKgxNyTm2mjeeU2wZwPSXakGLXjnzGZZEr02OM4FHM9fJc+gnimYNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q1EMpIZT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8288C4AF1A;
+	Wed, 19 Jun 2024 13:30:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718803837;
+	bh=wYOFD82t4v7k8JjPLQqTT4vKASwcpulAg1FaGqWT578=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q1EMpIZT52pGnbOuOjlfbzaimv4LfFRUs+qkfCam7jTmpCg2E/Un2vmmuvmdKxmrt
+	 lZlJpQDElii1v+2/e4VHknKtPDRrnjz//abJ5FTZURavwXnoYqDz1sCnrPTm7cHM0P
+	 lljEJA02Btk7sk4J2U1BrSAxfemRn1iP1Koyv5zuvKYLCEN08o9lnPUm4s5kssm7f/
+	 ZdPDqlrTrWU2/A0nFQHguY7G6Yg+hFAo5ZIkcMbi8wE0vKtit/466Iqp7ZPhcojuRm
+	 AVWp2qiEeKuKlO68vyn6+TnfpXdYtC48feWpgGvIjcWpRfOm/S8beIOYLciG9iudHH
+	 EYXrgh78uEMBQ==
+Date: Wed, 19 Jun 2024 14:30:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH v2 1/2] spi: cs42l43: Refactor accessing the SDCA
+ extension properties
+Message-ID: <d7502ea4-03bd-425a-8566-9ab0a6ea32e1@sirena.org.uk>
+References: <20240619121703.3411989-1-ckeepax@opensource.cirrus.com>
+ <171880144842.113265.13864100805243474696.b4-ty@kernel.org>
+ <ZnLcjO67FH2weX+y@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 3/7] iio: core: Add new DMABUF interface
- infrastructure
-To: Paul Cercueil <paul@crapouillou.net>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, linux-iio@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, =?UTF-8?Q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Sumit Semwal
- <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
-References: <20240618100302.72886-4-paul@crapouillou.net>
- <fc3045c5-d542-4a6c-906d-84f72e776e9c@web.de>
- <8d536bb864c145340a15f496ad3b89e08a847718.camel@crapouillou.net>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <8d536bb864c145340a15f496ad3b89e08a847718.camel@crapouillou.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:MrJKaxOVCei/mZBzi2PVNabKJ6tVMvGyFZ5xYhMj5+zLLOoWPW9
- RP1yEleiWkMbS2BUGrEkH6qWN74vGTCeozUL9FB2tABigS/1SKC/gRb6PjhqDjkxi8TvibN
- DirViL6WNMQC8mFjztRZzggJYPP4XdQPTe30mSzWbulcYWwh8hlHd6aXs+ESjHDzKU9+Y0k
- FHer/BM6ZfIttjr8bzCaQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:l/XCafQtm8M=;bwyV0boUcJejmr0awi4VkGYb3GT
- 8KvUhYW4dlBpvKPcQb+UN/Q6hCIjR0DKLLpUkvsRqwzuV/on4SZSWw+QLa+duVi1FfiJlqb4C
- 4Baj1bsgCB6QeLRkJHaYQPVlgPWz+mC9yWM3C1TR10W3ERu+mGsut1HSrqDA+zVsmR+nMgaWB
- 4nmIhoyOe1U2LhuNyCgfpx0Q5q6DF9SPHNghAdilUKEQXIE7kfG3QlBNcBOZNuGo5hxDArrBq
- wRPnl2z2PbR47TkcBmRlcdomU92Z2m26JLjSPGFyUniY2OhmqMwvCbI1e+9GtlIal/IP/HbHV
- LasZf5HRKoj7imJCZzUoiUsVIsA9RE6g2LZE3ouH8fPLRKUYFbW2raRX+HXia/M0HfNJxbyk8
- +wgDRNi1Fx6i2L97JYOtjcRybz8qDuCv7X+im9g5L635DLibimhTJlvF9dfFVF/PTmkPbptkO
- yAwbbKSw9Z/IfYCZ6d7+lh2vLZt5VLbngU1JZJ/Pz+qj6o8xaCthpCzf6FilfNut0xIxKNYY6
- 9IqKEL5scAjXRhIDv5ieh2WZNLMFvT5iIi37u3lXrnp1N995MVRm5rBraB4wQU/CqLh7HeOQL
- mQ+HezzE1Qcv6bfS44m7WB7ZkXiefpwrcEpcieQI54mwmNl4+wUlhCWa7+WVnM9AbGUTad4c8
- 4Uymo0kUl6sV4dIsl4YxsR1+5XDMEFvyOk4fxvHjKUarsn1dkXHKmqy90J/ujrKCnfI/6DsVk
- WgZBx38VO5Exv1Urg8H4ZBlAYDVCJA1aWy4kKNi2t1+wRAxKNCU3EE//+oEbjR4qmFP3MLGtN
- SoQmH7zNnqvoZRGShO1xA+cixFbbN9Nst1Yo9Qg2EQWSbULpnDszsWJ1lusLMDb2Dz
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uNjr7feeoI/PFmkY"
+Content-Disposition: inline
+In-Reply-To: <ZnLcjO67FH2weX+y@opensource.cirrus.com>
+X-Cookie: Don't I know you?
 
->> =E2=80=A6
->>> +++ b/drivers/iio/industrialio-buffer.c
->> =E2=80=A6
->>> +static void iio_buffer_dmabuf_release(struct kref *ref)
->>> +{
->> =E2=80=A6
->>> +	dma_resv_lock(dmabuf->resv, NULL);
->>> +	dma_buf_unmap_attachment(attach, priv->sgt, priv->dir);
->>> +	dma_resv_unlock(dmabuf->resv);
->> =E2=80=A6
->>
->> Under which circumstances will another lock guard become applicable?
->> https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/cleanup=
-.h#L179
->
-> As soon as "struct dma_resv" gets a DEFINE_GUARD().
 
-Would any contributor like to add a macro call accordingly?
+--uNjr7feeoI/PFmkY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Regards,
-Markus
+On Wed, Jun 19, 2024 at 02:26:36PM +0100, Charles Keepax wrote:
+> On Wed, Jun 19, 2024 at 01:50:48PM +0100, Mark Brown wrote:
+
+> > [1/2] spi: cs42l43: Refactor accessing the SDCA extension properties
+> >       commit: 6914ee9cd1b0c91bd2fb4dbe204947c3c31259e1
+> > [2/2] spi: cs42l43: Add speaker id support to the bridge configuration
+> >       (no commit info)
+
+> Not sure all went smoothly here. This seems to have picked up v1
+> of the first patch and not picked up the second one.
+
+That's because when I told you that the second patch didn't apply I left
+the other one in the queue, and what you sent now didn't apply either.
+
+--uNjr7feeoI/PFmkY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZy3XgACgkQJNaLcl1U
+h9AJiQf+J2SYf5OBoaoHE0eCB0wRaGj86y8jzvLRw4+FzRPLyd91mv3AJic7zj93
+i7iN5fMg9oNNpX1DTiEQwfjkhC8iJ11YwVwp3ARPxWbGgIiSG/j4/STbYxjkaiNh
+s2ySGwCGjzzUVegAej0LDQyRKRxCj7BFyWgG1D1MMj9uMkZfFNSReN/mks2rLZJ4
+wHZuYqfk10MGAc5AStw9jX16C0plttTd3yPlEn+kPm5y6o16tTzt+s11oxmvB6Sd
+vm5jH9LAzYLlG+zo+iq7ZG+lE6GxtRWBrJew27g/Plrqff1ZL9eER2vkSDKVVR/l
+T4+KzysGjnEGSHTuTKnWzibvM209NA==
+=XR22
+-----END PGP SIGNATURE-----
+
+--uNjr7feeoI/PFmkY--
 
