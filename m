@@ -1,129 +1,117 @@
-Return-Path: <linux-kernel+bounces-221048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1FF190EB36
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC95D90EB39
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52CC5B24FD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:35:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C667B25182
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A85514373D;
-	Wed, 19 Jun 2024 12:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5BA142E98;
+	Wed, 19 Jun 2024 12:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DnASga92"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mRiBkAy5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A60E82D9F;
-	Wed, 19 Jun 2024 12:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2863682D9F;
+	Wed, 19 Jun 2024 12:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718800493; cv=none; b=GuwsaNIPsz3kK0lazyYdc7ItbF/6Ac6jx1HB8/6CGiV0XwXPYENELR4iLCuuN6ODBpfOegIHL/u7L3ymnaXlLdkD76XpguFwGd9Mvwq2XE5Pkxdtm4oShDo2u+MsTbfq+i3pgjVn2FGkXH0TawdO6xkKNk0TJHDxP8x9KXgT55U=
+	t=1718800534; cv=none; b=MyM0dc49oBHW305MY6uBkialO8hV0NyGpbfgU51OsOOeq8WFRlQTCiBlNoxmFvZkb83eFR0bgJUT4Oa0ktgS/nfbsGOmo+O8VphAtKCnNCTjd8CMCKDzafQwh7pz4v+Uac7xIgq0gEi7up38l2LF8JhsRiKKpOAl2k1Wd9ixO80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718800493; c=relaxed/simple;
-	bh=izLEjKclWmIAjHC4MNPzF0kEUXBzIGhUDyI33snqJIc=;
+	s=arc-20240116; t=1718800534; c=relaxed/simple;
+	bh=bWkehLKbyMN0TQm5ThBcwF/VhXENZa2oHWDKQhP00EU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M096exBoNcwSeCrr4GmGULO5EzS8bYl4f2Pn+PQng0+i8h1lF13qS+G/ItLJ8hdK3EX+hm6EidldV89gechlc0z8K1DGIQ7BnhUH/vrS4nTK6WmVN2XNHOYTR+ziyYlgpeej+MtDZKUNZRl9tRqlQlGlYaUJc/AGwqBSOm+1oXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DnASga92; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f9b523a15cso3278025ad.0;
-        Wed, 19 Jun 2024 05:34:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718800491; x=1719405291; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=izLEjKclWmIAjHC4MNPzF0kEUXBzIGhUDyI33snqJIc=;
-        b=DnASga92zvP15UWiLkNfkdvFzbyay1o9y+0G8uR1T3nSe3Oa8Y5T3gzO6YfO1C5LC/
-         oz5Zv3qrR4PCWmpDd9rOs4qunHHsgqVEgqfZxvNm6F94DxZwZKmEMPNTNqJ+ubb+C7MP
-         aA3DL5qmjEqL2rwv0ltOfi9RYN6C5e+HD77Lw/4NpXyOLjGekodUakxM8Y4iB/a7r37O
-         RNURp0FGJZ1u4TD4g/OW9GRle2H2bxAQwV6RscqAMz+gu6gEAUAkEGJ46nno2Q9PgrW5
-         Xt1r4qBj3fyLfTIjbdE7UmUlqBthdWJxSdUroyQ4O7xXqBU91Cm83PvEY762DMjDvLnz
-         7T9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718800491; x=1719405291;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=izLEjKclWmIAjHC4MNPzF0kEUXBzIGhUDyI33snqJIc=;
-        b=rt7FuRHdnRso3pfGlTtlyawXP+ExhbNger2QB4hFwonRbNsiFUEy8nUrg+dfU/8tMP
-         YP3GClBF9yA+iZe9QkGEWaPgOJN9VVhaDK3tENI8HBV0OJF8jp9QxdaEu93z8JCwe+gZ
-         CgW13xt3VcnDrtfwEbGC+0U0pAAlQI2+gcWseIeOrLnm4yUTAbPmr0FB8mWQMsiO06aZ
-         wwl7J4RZlvHw+xPdizHZd93mFrGAK82x2u8H5cw160dbVsNkBMzRCSA1aR6HgUu6Fvtk
-         Q7jT/vZG4aDUDqIdlflZv2bsHabEXg6PVtEgMSIomCbYK96ciXH87MM7VS7E6DuBgi3V
-         VUOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBDMR3o5rKN5X1JnxzBg065kXlSeQMgwWjTuB3zghiiJre2MgZ1QXrMqwSl9yJGh7NhX/YE5DKAhKHZpIo33cgAB0DBCtH/qRkXRIZ+LaUMZ+GeuLH6hgm47oKsr4SwpW3q/YruAi2nA1WLEBAtVCvGR0nTDvENVbC0lrIP/1/1PlY6gbZbu2ChRXZGplNildnkYJT8qE2L4lSDnMhWF0MS0aL+WqfQ1f1HU1Y2tepvdp3h1jjBHesrjA=
-X-Gm-Message-State: AOJu0YxD6ab7rVNLdaWzr4KYEISMQioH0YBpQQ9G0TX6umo/ITLIq0S0
-	WKPpUzqZP7Ex1bFSVNYFwwWwryFILwXWmaHBJ/eE5Ih/dxui5Mni
-X-Google-Smtp-Source: AGHT+IEcB9hqDiOaiiqXDcdkruBbV/uMxC4QPzGwEbCe7v1uupCHq+Ap/o3FdsOBJyDISnfA+bQ6nQ==
-X-Received: by 2002:a17:902:e80d:b0:1f9:b19b:4281 with SMTP id d9443c01a7336-1f9b19b46admr18456575ad.33.1718800491391;
-        Wed, 19 Jun 2024 05:34:51 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f1ac4bsm115511095ad.227.2024.06.19.05.34.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 05:34:50 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id AE04C190E115C; Wed, 19 Jun 2024 19:34:48 +0700 (WIB)
-Date: Wed, 19 Jun 2024 19:34:48 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Paul Cercueil <paul@crapouillou.net>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Vinod Koul <vkoul@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Nuno Sa <nuno.sa@analog.com>,
-	linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v11 7/7] Documentation: dmaengine: Document new dma_vec
- API
-Message-ID: <ZnLQaBQrV7KhxOeC@archie.me>
-References: <20240618100302.72886-1-paul@crapouillou.net>
- <20240618100302.72886-8-paul@crapouillou.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qwFu51IH+jiDvhP55h1GLYxHutCLJ5fuEzs70+th1cKeZNV8unnYCDufI1YD+BERzn+7WTMNLD2ARvMG4WmyJoogjrY1+CZr+oFDE20GwIc2KZniDeTia9FQkQj2nwtA525jgkVF4DGyffxHPCf0AdGWd46ly2AnrGoYG74D2Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mRiBkAy5; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718800532; x=1750336532;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bWkehLKbyMN0TQm5ThBcwF/VhXENZa2oHWDKQhP00EU=;
+  b=mRiBkAy5AE4cRnwgDVQF3cun2CcBxpItuAQ1uXEmamAaXzowfp94mNla
+   WrDTlgAQMz1bTh5bGsl0tEUKmNFPAAwWDb4Y/L57YmjK9juoMNsH5W3xw
+   f2m3tSO/hWiwjZudyvzVfvRgC6DbE24aWi08a1nDCzlL2X5pa2lqocAut
+   O9y9NKMAY9ooSinzxNBfohYk26PfqgL6wc2nQ7M9REL+1lA5S8dhZD7kw
+   FHWJoYC0zL2em6+czaIY6HRyl3WbH3tl71FXXle9HOwYcMZAuAutIb20b
+   6Mdly1jIxEAnrgiGrAzcju9nAkSJaZWCNzBMo8tRWKi4Ch0zw3jTRLNVo
+   A==;
+X-CSE-ConnectionGUID: F32MiXT9RQOESDrQzIegNw==
+X-CSE-MsgGUID: XuTwuLIbRhW2dPckvIA73w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="19607363"
+X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
+   d="scan'208";a="19607363"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 05:35:31 -0700
+X-CSE-ConnectionGUID: obv0HVmfRq2JhlnVUf/i1g==
+X-CSE-MsgGUID: bzqRP8+KRG+tpAt3p5kEWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
+   d="scan'208";a="46450978"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.247.16])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 05:35:27 -0700
+Date: Wed, 19 Jun 2024 15:35:22 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] serial: core: Rename preferred console handling
+ for match and update
+Message-ID: <ZnLQin5blQ7QDxrz@tlindgre-MOBL1>
+References: <20240618045458.14731-1-tony.lindgren@linux.intel.com>
+ <20240618045458.14731-4-tony.lindgren@linux.intel.com>
+ <ZnGQ8JAu2OQf0GX8@pathway.suse.cz>
+ <ZnJg6KQeIs95UFAB@tlindgre-MOBL1>
+ <ZnKGGoboxRMwkeWm@tlindgre-MOBL1>
+ <ZnLKSEzKBTXYvOMe@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="P+G0VMb+YrutxSpB"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240618100302.72886-8-paul@crapouillou.net>
+In-Reply-To: <ZnLKSEzKBTXYvOMe@pathway.suse.cz>
 
+On Wed, Jun 19, 2024 at 02:08:40PM +0200, Petr Mladek wrote:
+> On Wed 2024-06-19 10:17:46, Tony Lindgren wrote:
+> > On Wed, Jun 19, 2024 at 07:39:04AM +0300, Tony Lindgren wrote:
+> > > On Tue, Jun 18, 2024 at 03:51:44PM +0200, Petr Mladek wrote:
+> > > > It seems to try whether c->devname matches a number "X", or "ttySX".
+> > > > It even tries the sparc-specific transformations in
+> > > > serial_base_add_sparc_console()
+> > > > 
+> > > > But this is the original format which does _not_ include ":".
+> > > > It never will be stored in c->devname and will never match.
+> > > 
+> > > Good catch, this won't do anything now with console_setup()
+> > > checking for ":" for deferred consoles. So we should revert commit
+> > > a0f32e2dd998 ("serial: core: Handle serial console options").
+> > 
+> > Heh actually we can revert a lot more, basically leaving only
+> > the renamed serial_base_match_and_update_preferred_console().
+> 
+> I wonder if it would be cleaner to revert all patches adding
+> the feature and then add back just the minimalist solution.
 
---P+G0VMb+YrutxSpB
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah let's do that. Otherwise it's hard to see what's going on :)
 
-On Tue, Jun 18, 2024 at 12:03:02PM +0200, Paul Cercueil wrote:
-> Document the dmaengine_prep_peripheral_dma_vec() API function, the
-> device_prep_peripheral_dma_vec() backend function, and the dma_vec
-> struct.
->=20
+Regards,
 
-LGTM, thanks!
-
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---P+G0VMb+YrutxSpB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZnLQaAAKCRD2uYlJVVFO
-o62HAP9Sf4C2GxRgQTiPvegZlarJtrtpsHOKgq1BhJIuokVeCgEA3Sb4DkOK66Dj
-J768fmI0av+lWGHkQD9s9mkd4Y3TcAc=
-=Ys7t
------END PGP SIGNATURE-----
-
---P+G0VMb+YrutxSpB--
+Tony
 
