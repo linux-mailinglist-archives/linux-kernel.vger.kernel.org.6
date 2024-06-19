@@ -1,125 +1,135 @@
-Return-Path: <linux-kernel+bounces-220941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B7490E973
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:30:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C83EF90E97A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4521F2453D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:30:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E66A1F244C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8171F13D525;
-	Wed, 19 Jun 2024 11:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5339513DDC9;
+	Wed, 19 Jun 2024 11:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="BAebpz7I"
-Received: from aposti.net (aposti.net [89.234.176.197])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fG9mzoR3"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76987763FD;
-	Wed, 19 Jun 2024 11:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.234.176.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0864413C90D
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718796633; cv=none; b=Whp66OlmBL1KsoKhe86CVRwGmOE1/Yy8pxC3u9c1w+dHCJrh0z+r0muYvjecGPMCbYfq/aqomJw+loB2WyBnCvtZf1p4qhJosecS/P0nlvnbNS0Rqhrdgmu7Tvu5qDhndrbNBdjkJf9ZeLtjTOC+NIXM7hR9yPNqAHRFxecE6Dw=
+	t=1718796723; cv=none; b=SFl5HN7fTVoYseo/sDld9gtaGLnICrID/vHUReWtmIcT+nvB1tygRP9P+jCuVvEcd0wft/IsAOcWSs6/hb/E5GZC+kz8LOcw+qSFAhP1YV0DlFoHaFx5KSNQrJZhQH3uWCA7BricYxZjxglr9qOSMFP97tFj8t0DMw0bblQ9C7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718796633; c=relaxed/simple;
-	bh=Yyxl889DHkRMW58vYSwPNQbN8gbiIvWycmZudebEJWY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IDV2ZJAdcXL2Euw+ZIYiMW/6VeXYix5/TSnep65HpsgojR7rwDC1Rk0vo86tRfGfbldeXpMmi2Hcs0n57AJt4ezOSmEdyjgX6eHRcIUr+W4uzbo7SHe9kk+tpzbjXoH3P25E7ATodVu0W6ghGmysNEQ5dHze3/TJXkv3EMV8WvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=BAebpz7I; arc=none smtp.client-ip=89.234.176.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-	s=mail; t=1718796629;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Yyxl889DHkRMW58vYSwPNQbN8gbiIvWycmZudebEJWY=;
-	b=BAebpz7IWphQzRh5q88qdbEOCnohwwD99HUuv6uLmCuPIcVCtRh7d7KKEOGYXbOF+yA0zg
-	fkvTnyzraP9wFmsCl/N4rlkKn5iX2/kz1KYd29knS3JTELw0E+FEe1HVIYKrcawcZNBBOz
-	E/oe8zwf+Hu5i0TxdXG7lnB6il26ZSc=
-Message-ID: <e948cd137da8e4f97bfbf7ef68a5450476aeee0c.camel@crapouillou.net>
-Subject: Re: [v11 3/7] iio: core: Add new DMABUF interface infrastructure
-From: Paul Cercueil <paul@crapouillou.net>
-To: Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com, Nuno
- =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
- dmaengine@vger.kernel.org,  linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org,  linaro-mm-sig@lists.linaro.org, Christian
- =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Sumit Semwal
- <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>, 
-	linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Randy Dunlap
-	 <rdunlap@infradead.org>
-Date: Wed, 19 Jun 2024 13:30:27 +0200
-In-Reply-To: <cbcfb64a-e5c2-41a7-8847-227d4f6872de@web.de>
-References: <202406191014.9JAzwRV6-lkp@intel.com>
-	 <a4dd1d73-5af3-4d3d-8c0f-92dc439fa119@web.de>
-	 <d452ecc4fc703a1f98aa4f243c6ded7fbfe54b0e.camel@crapouillou.net>
-	 <cbcfb64a-e5c2-41a7-8847-227d4f6872de@web.de>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
- LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
- FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
- z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
- +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
- 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
- 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
- 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
- dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
- 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
- rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
- lBwgAhlGy6nqP7O3u7q23hRW5AQ0EXQqFwQEIAMo+MgvYHsyjX3Ja4Oolg1Txzm8woj30ch2nACFC
- qaO0R/1kLj2VVeLrDyQUOlXx9PD6IQI4M8wy8m0sR4wV2p/g/paw7k65cjzYYLh+FdLNyO7IWYXnd
- JO+wDPi3aK/YKUYepqlP+QsmaHNYNdXEQDRKqNfJg8t0f5rfzp9ryxd1tCnbV+tG8VHQWiZXNqN70
- 62DygSNXFUfQ0vZ3J2D4oAcIAEXTymRQ2+hr3Hf7I61KMHWeSkCvCG2decTYsHlw5Erix/jYWqVOt
- X0roOOLqWkqpQQJWtU+biWrAksmFmCp5fXIg1Nlg39v21xCXBGxJkxyTYuhdWyu1yDQ+LSIUAEQEA
- AYkBNgQYAQoAIBYhBNdHYd8OeCBwpMuVxnPua9InSr1BBQJdCoXBAhsMAAoJEHPua9InSr1B4wsH/
- Az767YCT0FSsMNt1jkkdLCBi7nY0GTW+PLP1a4zvVqFMo/vD6uz1ZflVTUAEvcTi3VHYZrlgjcxmc
- Gu239oruqUS8Qy/xgZBp9KF0NTWQSl1iBfVbIU5VV1vHS6r77W5x0qXgfvAUWOH4gmN3MnF01SH2z
- McLiaUGF+mcwl15rHbjnT3Nu2399aSE6cep86igfCAyFUOXjYEGlJy+c6UyT+DUylpjQg0nl8MlZ/
- 7Whg2fAU9+FALIbQYQzGlT4c71SibR9T741jnegHhlmV4WXXUD6roFt54t0MSAFSVxzG8mLcSjR2c
- LUJ3NIPXixYUSEn3tQhfZj07xIIjWxAYZo=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1718796723; c=relaxed/simple;
+	bh=G9s7/39SAaCha/Gb6/TvfL2LDBIFo42TdwmiOE0eSbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pbHapWdB7trcUynoVC660q/es7xcWPBMBKQQ6VRnifp1bLN3Sqo/9GgY41MH/EXajTmIDa9Y8H5BU/2yp/uM1b/SZWtsVF0D5WaLYC8a8HrpRE4pe/10KlyjaX75jZWYrT3f5XPl8D37IDpG1QOX9tc7bvxWb+GYOt8G08biPNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fG9mzoR3; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52c1cb35ea3so744008e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 04:32:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718796720; x=1719401520; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hrZJ+jfag4mrs/6y3l9PMepTZEbpXG78/iWf/2590xE=;
+        b=fG9mzoR3B4ekZ9z6tVZuejBOMltyEaRRUuAqsLBzubLSN/k0FWwYvZzk8deQwZjOJO
+         4LtYILPsxgPp9JQZg8J5RM/7BsK0K24GpHHB8xARitNZiVLvO+udKrkSNzWVPnZt65VM
+         piiEpyYnqisw9LWyqjcHE1tGA0Y0eyi+kQ6gvzOOrh7NSuCWFtTj557wroTt4SyxIrou
+         dKBXtw7xsgx0KevcJ0Ju1eDfDytG7tFVt7TmwpuysxobW18a9JLOQhFaT0nnXipzkyO9
+         9yKmySvoL9kQzETLBrbIGc0FYSQrY+W4kiHrJewdmROnrIVRyxMfRZJIlcNc2LWLYjrp
+         UG5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718796720; x=1719401520;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hrZJ+jfag4mrs/6y3l9PMepTZEbpXG78/iWf/2590xE=;
+        b=EMxQVgFNBoKnBVujmbBYICzN2zlR/bb/TKYB6ne/ItXYHY9grq56fVvpnK3id4k22O
+         DfX7earZI9n3zchsyznEMQPPEbnwIhIhWAjSx7uv/FNOaH+FiVS9axwoPh7dEVoiw4Fn
+         jPY2aBpvQ3YYJLmgD6J8sAMuthgkbc2WcUk5tekkgoMpxjj7pT+eR4OlVXULidBLdU7k
+         sR+hI1af/K+iI6GELcLYiNd0KVF1diFiyAOkRYi4sslmDcsX8ccEENiabCeMK9shlugG
+         ImwEk2gk6jhBbLSpXRs8bo1gXqk4sFKCfm7wfpXflg4X0DuLbHs7RPGevuDYOr2EGo67
+         SQLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYqoQQ+s4ndnxFVTJX13xTJ1HezvR81bthpSVJ6yGd5TXxW7Kj+EgLefg+h69ccebaP9LY96+jCAelz2AzeHfDqe20MZRSiCERECWi
+X-Gm-Message-State: AOJu0Yxdtb8yHy+o6UAAigkS9E9nZTXpXU+YEAKY3ci3kWskOr5C+onA
+	IOt6Ll4Q10NywNU15H5PvourcUO7mUMC2RFfZE0WrChgKLolXn8CBONwa7DKR2o=
+X-Google-Smtp-Source: AGHT+IFqSpuJazzXtIXmixGX1v6zw4GP/mYamPi/L5REMZv7WfliRiZz68u0QlFghzrjcLt4hlfqpQ==
+X-Received: by 2002:a05:6512:2389:b0:51f:8ad:673f with SMTP id 2adb3069b0e04-52ccaa7ae43mr1356015e87.5.1718796720170;
+        Wed, 19 Jun 2024 04:32:00 -0700 (PDT)
+Received: from [192.168.1.3] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca288cd87sm1738309e87.304.2024.06.19.04.31.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 04:31:59 -0700 (PDT)
+Message-ID: <3b723807-44f9-40da-9d61-215395637064@linaro.org>
+Date: Wed, 19 Jun 2024 14:31:51 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm8650: Add video and camera
+ clock controllers
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, neil.armstrong@linaro.org
+Cc: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio
+ <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>
+References: <20240602114439.1611-1-quic_jkona@quicinc.com>
+ <20240602114439.1611-9-quic_jkona@quicinc.com>
+ <3ad2d00f-6b5f-46c5-b95c-c8d68e8be736@linaro.org>
+ <fr4j6gignu7ll4nhur65asj35rbsbzr3w4xtxq55jxcfcmb5nh@l6l3qyhk7qmw>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <fr4j6gignu7ll4nhur65asj35rbsbzr3w4xtxq55jxcfcmb5nh@l6l3qyhk7qmw>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Le mercredi 19 juin 2024 =C3=A0 13:13 +0200, Markus Elfring a =C3=A9crit=C2=
-=A0:
-> > > Would you dare to transform the remaining goto chain into further
-> > > applications
-> > > of scope-based resource management?
-> >=20
-> > We discussed this after v6 or v7, DRM/DMABUF maintainers were not
-> > keen
-> > on doing that *just yet*.
->=20
-> * Would you like to add any links for corresponding development
-> discussions?
+Hi Dmitry,
 
-https://lore.kernel.org/linux-iio/219abc43b4fdd4a13b307ed2efaa0e6869e68e3f.=
-camel@gmail.com/T/#eefd360069c4261aec9621fafde30924706571c94
+On 6/18/24 17:33, Dmitry Baryshkov wrote:
+> On Tue, Jun 18, 2024 at 02:17:23PM GMT, neil.armstrong@linaro.org wrote:
+>> On 02/06/2024 13:44, Jagadeesh Kona wrote:
+>>> Add device nodes for video and camera clock controllers on Qualcomm
+>>> SM8650 platform.
+>>>
+>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>>> ---
+>>>    arch/arm64/boot/dts/qcom/sm8650.dtsi | 26 ++++++++++++++++++++++++++
+>>>    1 file changed, 26 insertions(+)
+>>>
+> 
+> [...]
+> 
+>>
+>> And add the missing required-opps for the clock controllers like
+>> dispcc.
+> 
+> Unless the opps is required because cmd-db has lower level than
+> required for the functioning of the device, there should be no need to
+> add the required-opps.
+> 
 
-(and responses below)
+this is totally fine, but then 'required-opps' property shall be removed
+from the list of required properties in device tree bindings description.
 
-It's more nuanced than I remembered. Christian was OK to add cleanup.h
-support to the DMABUF code as long as the examples were updated as
-well, but those aren't good candidates as they don't free up the
-resources in all code paths.
-
->=20
-> * Will the desire grow for further collateral evolution according to
-> =C2=A0 affected software components?
-
-Not sure what you mean by that.
-
-Cheers,
--Paul
+--
+Best wishes,
+Vladimir
 
