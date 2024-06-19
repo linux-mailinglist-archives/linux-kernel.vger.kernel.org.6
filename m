@@ -1,149 +1,101 @@
-Return-Path: <linux-kernel+bounces-221653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A107090F6CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:16:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304DE90F6D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1FD1F22CCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:16:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 443031C24355
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B070158D65;
-	Wed, 19 Jun 2024 19:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4328C158DA1;
+	Wed, 19 Jun 2024 19:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lc8CGBh/"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gq5epQCN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F79225AF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D09158D61;
+	Wed, 19 Jun 2024 19:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718824580; cv=none; b=ZvSgzFdArs1DvmyS0cLC3Uvl39wIMyS0raQvASoyarrYTaVNw1ABxAx3yCpm9uD2JyoKCSguf4zhvK5Sjxy3leJ31G2CiHQ3ZJjSoG0MsnCcEh3Y2BgR8so1R6amQiQif23hA48DR6coaqCWW7E/B7myhvwGMUzbFq2WV3pDt6M=
+	t=1718824614; cv=none; b=YPL9Q7tAWUDpatP/Ekhc8ZXx5+mSzITfwKxefLYGDJwuB501HGBCVYey2PDrJ2ZZYTEJlxDtQh3U42Tb31PWVreNe4a4REt7touejO+Bz3k9S72c7EeMGKLCa+23q2BBPcp887oxNCTus3lZnJeH3OVyRnvW2ZtQPJUtXA6J8Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718824580; c=relaxed/simple;
-	bh=yJrxFSgPh0QuqkiXzOmnP8k+M1hWvwouzWu4chmR7Ko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I/7jwQlQJJYJQC4cZK3tfeeE0EvUTpIyaqGA+fJj0ajlxzRE9Lt7Nr+NgurFmWp0pnBIWyH7MBLjABWYsJJH/aU9zwgqjlmPchHeeY2nkmUbGyTLu/P1JgBafqmivjcp/86JTcjP1/W4g6hSntX0kizHolN8RaFZ2dFAdHzOezo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lc8CGBh/; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6e43dad8ecso24973566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:16:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718824577; x=1719429377; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3yEJfbkZg1yJ5m5VYOAmJOz46lXmJNvnDDj3GFcbJg8=;
-        b=lc8CGBh/zhjnJuVaz2GtQP0HJh/gqQX0VCKsYjmD4sgCbqcyzsCNyeVx39oWe7ta5k
-         i+S60YchQMGMcohRv/WMBhOyNZ+Z9//DK+FHKmebb8E+AxBYZLT7GJTo482628j2aqZ9
-         tI+cYhgXeJtrTIJTuBvCMK9ddIweumviH2cpndEimeGMAltN4u2+B0XF4j7/J6v7PA0X
-         ExOXw+nk+F+4+PhLL/rq9lXX+VtIMVRU8fMdF5SIPkE3jqe203IqUA1u/hCbvrG1ZkR3
-         KurwepWMa8JvMdF6gR6x7aZyXo1Z3Nggszi5JnE6G2LQBNfSADKKHSfAZ/TUVzKWdwBD
-         d9Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718824577; x=1719429377;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3yEJfbkZg1yJ5m5VYOAmJOz46lXmJNvnDDj3GFcbJg8=;
-        b=gp+I4jxy988KJkqUB4rJ1kC2DhIbn5gkmnoZREvh0w7Qz5KLTn1xduO5KS52KCTghR
-         NwPSu29wpnRb1fbcOIrdfAOW8477tCTWLYMLznqCPdxJSbzMBEa8WL1sNcbX7oh4CDqv
-         6JoHHDt+wwTNGe9PXfd8rXpEq5f6WHeNDHZFu7ZlRTkTVVI+OKnX/EtmRbs9zImd8K2q
-         e3lhonUoryoiFWgNUTrIU4Iy0CS7MlCPCZMmLOdTYjyQVGZ8a5zjizzsm+DBJTywnsxP
-         vfE1EU6wkkKPMrrDt5mULDp18G4wj4JytJUrlO7hWGeJGuFGGtO7MLati27iYcBr8pDb
-         Cjgg==
-X-Gm-Message-State: AOJu0Yyhju2RoemE3qeE6dGmjgHlPyHBck9R96VojtODHdqoEaeFOBan
-	4zThlln7LMCzCMwpnWdxi0FvYK3cQhtr4r0VrER1uTpJbHLlPA4xSVi2d0Yy3aE=
-X-Google-Smtp-Source: AGHT+IE8ZkBq8SDbwkZNBrB9p14Qcunp5+QpcNAulyIdJq1GogucMKYZh0P5W7z1T9VwPobhNYsr0Q==
-X-Received: by 2002:a17:907:a588:b0:a6f:55e3:ee5f with SMTP id a640c23a62f3a-a6fa4109cd4mr230994066b.9.1718824576961;
-        Wed, 19 Jun 2024 12:16:16 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:9028:9df3:4dba:9578:7545:6874? ([2a00:f41:9028:9df3:4dba:9578:7545:6874])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f4170bsm684420766b.157.2024.06.19.12.16.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 12:16:16 -0700 (PDT)
-Message-ID: <a30fb728-d832-4309-8415-a28fed301e27@linaro.org>
-Date: Wed, 19 Jun 2024 21:16:14 +0200
+	s=arc-20240116; t=1718824614; c=relaxed/simple;
+	bh=/cs5OYCa2lpAA+z+y9xQeJ0jRLhe5YHXS68JWqgYx/0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N/i3oyiqk7NJg0zxD33r6rrSPEqk1aw+lMr8VHuCi5BcFb9CbBBKKeXvHhfMR4Hfnw0xB0/Rk+rIjlkND72bwIKqc1Vca+T+N4hIVSHYbl5vQWhNZLtHv98K8MCmz3zzFQtN7kddtsP22GDWYAxd6dczi/eF+VWj3CbRKPvOJU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gq5epQCN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0D92C4AF09;
+	Wed, 19 Jun 2024 19:16:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718824614;
+	bh=/cs5OYCa2lpAA+z+y9xQeJ0jRLhe5YHXS68JWqgYx/0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Gq5epQCN46wle97nJq0CkCwCtJ4lJyHWfYXNEDMvZhDkoZhRjDQUoI1775JovzcKT
+	 cy5es/W2HSi4PzEt/LHPnzIXDtO68NgsswFlUHhvICwjOn+3PDKXqjT9/BQVyX0Fk4
+	 oKU4NP8dT1nBjQRt2TxV9x/oHwAFDwbjiFluiayyFteiB4Uv2fETTw1VIPO6U1hn8f
+	 qzu3y+0hI0j/HI3Y2ztMbc++ku9bQxuznOcf9nUOq+3xJmFS/jIQo8mmGGcIvxM3L0
+	 cXn6JQ1uOsNtIZqoEWxW+pu2yQZLMTexemArNQPFrsuPGidwUm76AkOueLvvC7aD9L
+	 jxhWsGf1wsQQg==
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d1b8bacf67so2154b6e.2;
+        Wed, 19 Jun 2024 12:16:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUrKqNx5M5wScLVNK5byKHUV/OxwHH2CrEI/PqEIclgXtdW2Mj0X4ytARMemQNZL39Ygm4QGX55JnA8+7oSvZwBY4407hGEPDfvZ9uAEX5bQDIKhjuPzGqCxEJ52zrMpyBMXIATCDI=
+X-Gm-Message-State: AOJu0YxtHER6N87scgr25vN2WF/l4d0cux8H2mLi4ZZHdvx8VQ0vo324
+	eMH2YFQbUzJp3V/RjLCKiayRJzAgrPZwS1j+oMIwTLGY+GFNERuXs2JVnjxoXk6CJ2PBZBZp3U9
+	otFiAPP3gwPXL/sg9Ze5Jdvayu74=
+X-Google-Smtp-Source: AGHT+IEfml7ZblzBlVlSN+ywWZBraHzOqqfJ0BgNoe5hJYTnwnxJeTLHnkP/zv5sY8p388n6ccfEn2lMgH4BRGW+x3o=
+X-Received: by 2002:a05:6870:5586:b0:254:d163:c3a9 with SMTP id
+ 586e51a60fabf-25c9443c7b6mr3920450fac.0.1718824613209; Wed, 19 Jun 2024
+ 12:16:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: qcom: icc-bwmon: Add tracepoints in
- bwmon_intr_thread
-To: Shivnandan Kumar <quic_kshivnan@quicinc.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- quic_rgottimu@quicinc.com
-References: <20240619135140.3581119-1-quic_kshivnan@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240619135140.3581119-1-quic_kshivnan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240618055221.446108-1-srinivas.pandruvada@linux.intel.com>
+In-Reply-To: <20240618055221.446108-1-srinivas.pandruvada@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 19 Jun 2024 21:16:41 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jyf4A58z5mLa0xLdjQ=3uVAsopuH1CMx8yhMi8jFSVNA@mail.gmail.com>
+Message-ID: <CAJZ5v0jyf4A58z5mLa0xLdjQ=3uVAsopuH1CMx8yhMi8jFSVNA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] cpufreq: intel_pstate: Update Arrow Lake hybrid
+ scaling factor
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 6/19/24 15:51, Shivnandan Kumar wrote:
-> Add tracepoint for tracing the measured traffic in kbps,
-> up_kbps and down_kbps in bwmon. This information is valuable
-> for understanding what bwmon hw measures at the system cache
-> level and at the DDR level which is helpful in debugging
-> bwmon behavior.
-> 
-> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+On Tue, Jun 18, 2024 at 7:52=E2=80=AFAM Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+>
+> Arrow Lake uses the same scaling factor as Meteor Lake, so reuse the
+> same scaling factor.
+>
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 > ---
->   MAINTAINERS                        |  1 +
->   drivers/soc/qcom/icc-bwmon.c       |  7 +++--
->   drivers/soc/qcom/trace_icc-bwmon.h | 49 ++++++++++++++++++++++++++++++
->   3 files changed, 55 insertions(+), 2 deletions(-)
->   create mode 100644 drivers/soc/qcom/trace_icc-bwmon.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 242fc612fbc5..1b410c0183bb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18573,6 +18573,7 @@ M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->   L:	linux-arm-msm@vger.kernel.org
->   S:	Maintained
->   F:	Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
-> +F:	drivers/soc/qcom/trace_icc-bwmon.h
->   F:	drivers/soc/qcom/icc-bwmon.c
-> 
->   QUALCOMM IOMMU
-> diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
-> index fb323b3364db..9b5ac1e62673 100644
-> --- a/drivers/soc/qcom/icc-bwmon.c
-> +++ b/drivers/soc/qcom/icc-bwmon.c
-> @@ -17,6 +17,8 @@
->   #include <linux/pm_opp.h>
->   #include <linux/regmap.h>
->   #include <linux/sizes.h>
-> +#define CREATE_TRACE_POINTS
-> +#include "trace_icc-bwmon.h"
-> 
->   /*
->    * The BWMON samples data throughput within 'sample_ms' time. With three
-> @@ -645,9 +647,9 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
->   	struct icc_bwmon *bwmon = dev_id;
->   	unsigned int irq_enable = 0;
->   	struct dev_pm_opp *opp, *target_opp;
-> -	unsigned int bw_kbps, up_kbps, down_kbps;
-> +	unsigned int bw_kbps, up_kbps, down_kbps, meas_kbps;
-> 
-> -	bw_kbps = bwmon->target_kbps;
-> +	meas_kbps = bw_kbps = bwmon->target_kbps;
-> 
->   	target_opp = dev_pm_opp_find_bw_ceil(bwmon->dev, &bw_kbps, 0);
+>  drivers/cpufreq/intel_pstate.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
+e.c
+> index 3dc9b82c43af..72d9e60369e0 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -3401,6 +3401,7 @@ static const struct x86_cpu_id intel_epp_default[] =
+=3D {
+>
+>  static const struct x86_cpu_id intel_hybrid_scaling_factor[] =3D {
+>         X86_MATCH_VFM(INTEL_METEORLAKE_L, HYBRID_SCALING_FACTOR_MTL),
+> +       X86_MATCH_VFM(INTEL_ARROWLAKE, HYBRID_SCALING_FACTOR_MTL),
+>         {}
+>  };
+>
+> --
 
-This breaks bwmon, as dev_pm_opp_find_bw_ceil is now fed a random
-(uninitialized variable) value
-
-Konrad
+Applied as 6.11 material along with the [2/2], thanks!
 
