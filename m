@@ -1,164 +1,179 @@
-Return-Path: <linux-kernel+bounces-221310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5124490F1B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:08:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82ABE90F1BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEF9A282B57
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:08:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73BB81C2282C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF8F8248C;
-	Wed, 19 Jun 2024 15:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6CC42A87;
+	Wed, 19 Jun 2024 15:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M9H415DL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l2bBuiLI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VLaTq1EI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0044E335A7;
-	Wed, 19 Jun 2024 15:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C8E335A7
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718809699; cv=none; b=CjJ3k4t6RejNNqyqvSwekDPOQkquq7Wvvx6Cq1T0+CaSKB/Fk0jUqA8aEcRDpTIY9oK3x+DWiaITccNWMzaP/1iXGqWzm4dsj0yHdGVlmNGYp4SABOn9jc8aq8PqhPzNoo9haeigT8HsjVyxKFha/U8OtYp+OGTxzxpqY18pSkQ=
+	t=1718809757; cv=none; b=XPP7b0bflNAI0r1IhIFFOt3t98HMCLw1Y3r+gnn9Pq3ZKWoUxhIc8BaZVhmMvPUB/dQ9MJuLa8nvp1qvmKnJI4PxyurQyugq6o5ovf+g2IrzpHKTzEwFvqng7Rnm/vo0n9nhNSiB8zztCf6MrHfM3DnRuHyQY+CFRnhHydkR4uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718809699; c=relaxed/simple;
-	bh=ABCcemSNEbE7rCsra2BS0VgQhdESrD0mKGqGjnuktjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=P0sXGNsOsQN9FMRA5YhftQcbc35rpRF8WZMObR+wJOWai7csw3N4lAtmg66UFLp5unvBlA9RKo7Gqin3mP7vqR9ttuRNpRWmR6emRqp03mHS1d2i9QiyKpwb6xprlHcW9/Qx9Heboc9ilwkM6kVB1bweDgF2w0U9rlTJmgMNnAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M9H415DL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l2bBuiLI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 19 Jun 2024 17:08:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718809695;
+	s=arc-20240116; t=1718809757; c=relaxed/simple;
+	bh=512ZCaEEz4eWfZutUiztkEEEXYz1p7svVNn8c4qwTrU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z7E058jwOopS9Yt9gHYKl2/DidLcDuXtqk6x30864H4QmVjikXlq1Y41N6dPzwslMJk7xlwelfs3R0ju0l3hI+2tb2uwtVPSl335fyRAdMXxO9rXD5GoXJxRhHVzczIG1R+xwdBYQaXY6imBMhcoiZClPgsi1xK1s9nYAPOSBKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VLaTq1EI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718809754;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=pcjM/1ffZBGxlyWRn5r0TyHP3SCAYh82B8FLcXLwEjk=;
-	b=M9H415DLEMuTH3BNGY2hAB05Bdy0jw3UZyqyG8n82jhz3PaFvT4audMJHBclNONJk+/F4u
-	X4353plyV+3u4WdlyXzgyoL9MZSIsrH4Isv6omQEBygdPnnuX91VFxbeZ/e4UnnkWLECTh
-	useg8S8ZxCPbSWCnhGolDyAlNoz4Km+Pmww5GF9olCO7ub9DnLOsVh4Mq0Otekx1cr2Sv+
-	cp5ENfZYXSCUZBg5c4FfVRw9nlDob9BMK3xV+NkCUm1aykDun45QtLbTsDkLQI4wxieiql
-	XbilGpBHCx7eY7JPVzajhqy0oGGZ+xdkbELJUxGhKcx4pGaMzSr8+qaEngz/CQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718809695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=pcjM/1ffZBGxlyWRn5r0TyHP3SCAYh82B8FLcXLwEjk=;
-	b=l2bBuiLIXKpnLuJflb3Top7Xus3aTbUI+b1g1rJbL3PJxQuuHMvCuVOm3FnuUi653Xmxxq
-	xYBPNBzmTWWLQCDw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, Mike Galbraith <umgwanakikbuti@gmail.com>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] zram: Replace bit spinlocks with spinlock_t for PREEMPT_RT.
-Message-ID: <20240619150814.BRAvaziM@linutronix.de>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BMIw7ds/nWlexouYyFojHRj11oBl9QxmnevyQlA8My8=;
+	b=VLaTq1EIGO85WUpN8V20/jFBwEfDCDF986XX0MV7hxuCfcj6M4oVxE7kGCUQUoUMVPyN9N
+	HGlEpjUWSpPwGITZ1EntGIzhEaqlRT6xo/BkCIeHdZaZy0s0h6BZ5EUjpvfA1CdAWV5SbX
+	VOq9B+j0sAlXLTqkJFwMZZIZoYox8QI=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-659-RpPzVCe8PGefe0vg3nKmow-1; Wed, 19 Jun 2024 11:09:13 -0400
+X-MC-Unique: RpPzVCe8PGefe0vg3nKmow-1
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-627f43bec13so127896727b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:09:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718809752; x=1719414552;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BMIw7ds/nWlexouYyFojHRj11oBl9QxmnevyQlA8My8=;
+        b=W224aOQvz3r7CfBL4irnkNj7bwpirVZLUr5t1VqE/7hHHlMum3U/2I40VSqRX0cZhq
+         3IBspgL605qTR9BrEEDhs5VDbGQoFsco56XtplGHFsIcyYHcrZm4GQHrWmdYqL0Be4bH
+         XLqXYvUggzCyLKFcPm7+mfoguve7DNMF2XVQVRVcgxyewQOkXbmpARj/9UGpNrTWPHE9
+         1JXSIz4TsHCyn9kC0opT1pE6yzm2E1FaxfuwiWo25487x82z0GbKpUZpJuwguZQCfOa2
+         HreunwZZDT82vNwxj1VlQK0DYBux5XeBKjMgXkvigeFsPRuHVaHE2jTMvMSDpLG+0DKb
+         D8zA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrNvowVFXDqBpCoaD9gOuw7UURPflewVdRK7iLk5a5PtPdqgoXD0dyMAIziMeL7u9msh2OEH9hFMxZIWyMYBz9qnTBc3o3HHDlI1B4
+X-Gm-Message-State: AOJu0Yw+EB2FWPEeOH0GJJqq+CjtGd9gQX+DyHBGXZBxwroSIzuewLGO
+	hl0KJZoOJi9sTBhBtsLwPoCBi4mTVzmXC4YQncF/RrIz/7z7+T/olTCAperNbbTDWeKAs/Z6riY
+	lkAJmTN7qHhQTI+4OPmX1a/zBUX9EnkOKGwndmoZJkMHw36RT2KCUGlcPc9hdHUwKtIKtVReyod
+	uKKIOByuuB7M9OGnDu+P8UTBh/MZ/U3/pCh+V5
+X-Received: by 2002:a25:8004:0:b0:dff:3058:e30f with SMTP id 3f1490d57ef6-e02be13ba98mr3072453276.21.1718809752485;
+        Wed, 19 Jun 2024 08:09:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH3OygO+UAqhsmU2eYtM9cFyW9UsJ4Ba910yO3Z4ITLZ68HjjdISuMgaXJBXkGYQ6BkgCtmeVGylZ1w88hx65c=
+X-Received: by 2002:a25:8004:0:b0:dff:3058:e30f with SMTP id
+ 3f1490d57ef6-e02be13ba98mr3072423276.21.1718809752187; Wed, 19 Jun 2024
+ 08:09:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240617-stage-vdpa-vq-precreate-v1-0-8c0483f0ca2a@nvidia.com> <20240617-stage-vdpa-vq-precreate-v1-11-8c0483f0ca2a@nvidia.com>
+In-Reply-To: <20240617-stage-vdpa-vq-precreate-v1-11-8c0483f0ca2a@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 19 Jun 2024 17:08:36 +0200
+Message-ID: <CAJaqyWedSQdAiFoQuqdzwdZ4KNNPD7wyX4=QTMMG4aYt7US7PQ@mail.gmail.com>
+Subject: Re: [PATCH vhost 11/23] vdpa/mlx5: Set an initial size on the VQ
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
+	Cosmin Ratiu <cratiu@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Mike Galbraith <umgwanakikbuti@gmail.com>
+On Mon, Jun 17, 2024 at 5:09=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+> The virtqueue size is a pre-requisite for setting up any virtqueue
+> resources. For the upcoming optimization of creating virtqueues at
+> device add, the virtqueue size has to be configured.
+>
+> Store the default queue size in struct mlx5_vdpa_net to make it easy in
+> the future to pre-configure this default value via vdpa tool.
+>
+> The queue size check in setup_vq() will always be false. So remove it.
+>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+> ---
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 7 ++++---
+>  drivers/vdpa/mlx5/net/mlx5_vnet.h | 1 +
+>  2 files changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
+x5_vnet.c
+> index 245b5dac98d3..1181e0ac3671 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -58,6 +58,8 @@ MODULE_LICENSE("Dual BSD/GPL");
+>   */
+>  #define MLX5V_DEFAULT_VQ_COUNT 2
+>
+> +#define MLX5V_DEFAULT_VQ_SIZE 256
+> +
+>  struct mlx5_vdpa_cq_buf {
+>         struct mlx5_frag_buf_ctrl fbc;
+>         struct mlx5_frag_buf frag_buf;
+> @@ -1445,9 +1447,6 @@ static int setup_vq(struct mlx5_vdpa_net *ndev, str=
+uct mlx5_vdpa_virtqueue *mvq)
+>         u16 idx =3D mvq->index;
+>         int err;
+>
+> -       if (!mvq->num_ent)
+> -               return 0;
+> -
+>         if (mvq->initialized)
+>                 return 0;
+>
+> @@ -3523,6 +3522,7 @@ static void init_mvqs(struct mlx5_vdpa_net *ndev)
+>                 mvq->ndev =3D ndev;
+>                 mvq->fwqp.fw =3D true;
+>                 mvq->fw_state =3D MLX5_VIRTIO_NET_Q_OBJECT_NONE;
+> +               mvq->num_ent =3D ndev->default_queue_size;
+>         }
+>  }
+>
+> @@ -3660,6 +3660,7 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *=
+v_mdev, const char *name,
+>                 goto err_alloc;
+>         }
+>         ndev->cur_num_vqs =3D MLX5V_DEFAULT_VQ_COUNT;
+> +       ndev->default_queue_size =3D MLX5V_DEFAULT_VQ_SIZE;
+>
+>         init_mvqs(ndev);
+>         allocate_irqs(ndev);
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.h b/drivers/vdpa/mlx5/net/ml=
+x5_vnet.h
+> index 90b556a57971..2ada29767cc5 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.h
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.h
+> @@ -58,6 +58,7 @@ struct mlx5_vdpa_net {
+>         bool setup;
+>         u32 cur_num_vqs;
+>         u32 rqt_size;
+> +       u16 default_queue_size;
 
-The bit spinlock disables preemption. The spinlock_t lock becomes a sleeping
-lock on PREEMPT_RT and it can not be acquired in this context. In this locked
-section, zs_free() acquires a zs_pool::lock, and there is access to
-zram::wb_limit_lock.
+It seems to me this is only assigned here and not used in the rest of
+the series, why allocate a member here instead of using macro
+directly?
 
-Use a spinlock_t on PREEMPT_RT for locking and set/ clear ZRAM_LOCK bit after
-the lock has been acquired/ dropped.
+>         bool nb_registered;
+>         struct notifier_block nb;
+>         struct vdpa_callback config_cb;
+>
+> --
+> 2.45.1
+>
 
-Signed-off-by: Mike Galbraith <umgwanakikbuti@gmail.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-I posted this few times. Mikes intents to keep it based on last feedback.
-Any reason not to apply it?
-
-https://lkml.kernel.org/r/YqIbMuHCPiQk+Ac2@linutronix.de
-https://lore.kernel.org/20230323161830.jFbWCosd@linutronix.de
-
- drivers/block/zram/zram_drv.c |   37 +++++++++++++++++++++++++++++++++++++
- drivers/block/zram/zram_drv.h |    3 +++
- 2 files changed, 40 insertions(+)
-
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -57,6 +57,41 @@ static void zram_free_page(struct zram *
- static int zram_read_page(struct zram *zram, struct page *page, u32 index,
- 			  struct bio *parent);
- 
-+#ifdef CONFIG_PREEMPT_RT
-+static void zram_meta_init_table_locks(struct zram *zram, size_t num_pages)
-+{
-+	size_t index;
-+
-+	for (index = 0; index < num_pages; index++)
-+		spin_lock_init(&zram->table[index].lock);
-+}
-+
-+static int zram_slot_trylock(struct zram *zram, u32 index)
-+{
-+	int ret;
-+
-+	ret = spin_trylock(&zram->table[index].lock);
-+	if (ret)
-+		__set_bit(ZRAM_LOCK, &zram->table[index].flags);
-+	return ret;
-+}
-+
-+static void zram_slot_lock(struct zram *zram, u32 index)
-+{
-+	spin_lock(&zram->table[index].lock);
-+	__set_bit(ZRAM_LOCK, &zram->table[index].flags);
-+}
-+
-+static void zram_slot_unlock(struct zram *zram, u32 index)
-+{
-+	__clear_bit(ZRAM_LOCK, &zram->table[index].flags);
-+	spin_unlock(&zram->table[index].lock);
-+}
-+
-+#else
-+
-+static void zram_meta_init_table_locks(struct zram *zram, size_t num_pages) { }
-+
- static int zram_slot_trylock(struct zram *zram, u32 index)
- {
- 	return bit_spin_trylock(ZRAM_LOCK, &zram->table[index].flags);
-@@ -71,6 +106,7 @@ static void zram_slot_unlock(struct zram
- {
- 	bit_spin_unlock(ZRAM_LOCK, &zram->table[index].flags);
- }
-+#endif
- 
- static inline bool init_done(struct zram *zram)
- {
-@@ -1226,6 +1262,7 @@ static bool zram_meta_alloc(struct zram
- 
- 	if (!huge_class_size)
- 		huge_class_size = zs_huge_class_size(zram->mem_pool);
-+	zram_meta_init_table_locks(zram, num_pages);
- 	return true;
- }
- 
---- a/drivers/block/zram/zram_drv.h
-+++ b/drivers/block/zram/zram_drv.h
-@@ -69,6 +69,9 @@ struct zram_table_entry {
- 		unsigned long element;
- 	};
- 	unsigned long flags;
-+#ifdef CONFIG_PREEMPT_RT
-+	spinlock_t lock;
-+#endif
- #ifdef CONFIG_ZRAM_TRACK_ENTRY_ACTIME
- 	ktime_t ac_time;
- #endif
 
