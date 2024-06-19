@@ -1,127 +1,87 @@
-Return-Path: <linux-kernel+bounces-221854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4457F90F997
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:02:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF4790F99C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2998B210CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00C5F1F224D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03F2152792;
-	Wed, 19 Jun 2024 23:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E707D15B14C;
+	Wed, 19 Jun 2024 23:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="dHNHh77+"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="k3NiJS0N"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4DC61FCF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 23:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F73361FCF;
+	Wed, 19 Jun 2024 23:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718838155; cv=none; b=oAoEmuOv1R6oUD2FFeH6xdSQLcHOlehpEW9AWZKja23o/wR5mRHxbog6fy1Umwg8WmOyNuktnzRgsMWNDGxxH12W78fY6pafkS2MKTWL9fZGlW/MgFLBDUz+Sb7I7GFF+vXK5YSihWEYNgJKjE5hmiJxaWF5u6YIGRDmcMPtTVg=
+	t=1718838234; cv=none; b=BwnI0bFIa1wjc3crEu5CqLi69fz1dBKbRF24gTgdwnAsr9i/1z963ib817onL2aNJ3h3+nIOn5YD1u1JFU5HyUxX5QoD6kTqv8UthokRvEvGOZDO8S1uz36wZ57Cpc9pFsrbQFheg2BrYk5QeURTlvvMnwymk0fWdneOtg/JvWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718838155; c=relaxed/simple;
-	bh=8cOKgCCE+/fZV5sUFgeaHLiS1p/hzdH8D1P9ORGa9BQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BCFKeLhZsI67X9COYH68c4UeEXaybvEMadmrc5iwE/umt8UWPIl8pGv09EDhU9dlZAM6Ox8QiO5rghD8ctjOg9RuLXwTNj3J0b0Wt02mh5GdqpExwQNtqOE+uX1BQxMQ3ehiElDTs9CVCMwO1OjqBW//cqG+duzvndVsZVCPBzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=dHNHh77+; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c7c614b7dcso56088a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 16:02:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1718838153; x=1719442953; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0dWkQUm9OfoeajTLTENIn0KJlC31Px5cJJWI4W24MQ0=;
-        b=dHNHh77+dkc0Ao1drIH0B6Rlbvt0AWfPVSupXMx+3CWj4ueWdj8EBxlV4BdgeQMYpO
-         NoB0zxn/ObKU9/maYDkyHMB6WTF+SyQbHcNyI71sjgsIn0OxoK7QOQtSJP7Q60fe3DnT
-         lDvtBI7JFYmhWPmshS1MH5A/V0/zUVwUNYM8TZ5hSi+qkh/6ZonOJVVeG9wJZ/YD0Lja
-         npNeIZZ0NU2kQqqZ7OkC5LCYfApEJiJM2KEBeZYTozhDPoj2i7CzYvh+3n0bZsvZewo9
-         /iploOyMsmjqDZQCkaaEKHPPOX0Us7VMwE6IzgTETM075kCiywcmWuPG1APMvmtBJrSI
-         IZlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718838153; x=1719442953;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0dWkQUm9OfoeajTLTENIn0KJlC31Px5cJJWI4W24MQ0=;
-        b=ktIDTxov/O5l4QB9dI4ZVCf2hJ+w6ZUvTr36oiVFWkpWQjFOcGUC67GPRCrLl/K2OQ
-         iVxKu3NZcyV9m3vh6u7astySPcVXnvir7oGHYr9Myuh5CwsTClgMpU27x9jldyUOr9lR
-         SpoS2Plf/sVC81uMkTQt0hWz0vzFxYNPPGgNoyGcFqx3fpDsPGK1gTWbX6SUG9dZadbf
-         4Njkl9WxPpLp++t353pAFvkj0Zdam+we/92//4bQvftsyo2E6lkwbLoKZMwQWE8Z8VPO
-         vbkLtThwnrkaRnqJX9dHvLYQOxGBHeoR78BTRjUwlW1MG/Ju6sZbliMV9Wu55ElMxPCQ
-         TPEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUP0EC62ZzHRhCf4yOwDPgIvSIUXID8ZRmGpnl2GILLPWZxxacClQjqIq4EIuAN3VZ70R6ughi0+AootOFDGEWEVC5wg6C4Q5Q7qIaA
-X-Gm-Message-State: AOJu0YzJQambW0GSbP6/avb7w5Kq5kZoFD9VPDzw4HAKup2eGj3lM0fX
-	ftgQLDM+ATGCrzwc1sfh32Pd/NlPj9Fe0FBbX4xsmZrupOfGudVc9blBXJnxjA9INyDm2o1ZaFU
-	aR6dXhDQ+EMMS2VI/Si8F7fzcndR7W57hkQR9
-X-Google-Smtp-Source: AGHT+IFp9XjlaNwKpDcHheqgWJaXZAWTOxzQ7d7NnVWmLR8GKXgj3RDZPizKzrUy0sHdB8foZjeJ62eKyxCGWbss+Ro=
-X-Received: by 2002:a17:90b:3113:b0:2c4:cd15:3e4b with SMTP id
- 98e67ed59e1d1-2c7b5db2a79mr3640661a91.4.1718838152744; Wed, 19 Jun 2024
- 16:02:32 -0700 (PDT)
+	s=arc-20240116; t=1718838234; c=relaxed/simple;
+	bh=dZi0Gvh+GLG/1jbOwA+xe80NGtCynRIMekgpe8wJvR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YKyYo905duyvNW/Atbq7pzm4tqWUP8Usv/yWUi6Plm6hfN/DhqNAE7mjQksYk/MrNkRDwvBzzR4O0+GovmAyWP0zwh8SHQKmZ69hwXQUOsrFsJoOufFDdigjpR1+bqIGz9NO7Mt693O6o2EeB9kELLc44WyZmR66HAQ/71J94TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=k3NiJS0N; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Ywl436OGO2QA6BpHUwKrzeOAiJO51IGPFmToE85n3MU=; b=k3NiJS0N9XxGODPMgwgmw7ub38
+	ukmXJZ+ztjxzI8/r4SpXVDrQpYUSzTJ8KGkmLSGEmtRSeeSwOWgSp6PAt+cTNRy119fiK3Tru3j0C
+	WiZMULqHyyNqzjqOVVflEMIkK7nyj+ckMeCqY9gx7eVyZE7Pc+VyD6DAzdwk/SBF9hr8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sK4Kq-000W3K-Kh; Thu, 20 Jun 2024 01:03:24 +0200
+Date: Thu, 20 Jun 2024 01:03:24 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com,
+	Andrew Halaney <ahalaney@redhat.com>, linux-arm-msm@vger.kernel.org,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/3] Add interconnect support for qcom_ethqos driver.
+Message-ID: <53708a0d-1c20-4a26-a374-461002c846b3@lunn.ch>
+References: <20240619-icc_bw_voting_from_ethqos-v1-0-6112948b825e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240616170553.2832-1-jszhang@kernel.org> <20240616170553.2832-3-jszhang@kernel.org>
-In-Reply-To: <20240616170553.2832-3-jszhang@kernel.org>
-From: Cyril Bur <cyrilbur@tenstorrent.com>
-Date: Thu, 20 Jun 2024 09:02:20 +1000
-Message-ID: <CANtDSirgLW2_QCOO7kLLotONcgnYC_mHOxW3=-2d+FJ3FfBduQ@mail.gmail.com>
-Subject: Re: [PATCH 2/6] riscv: avoid corrupting the RAS
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Samuel Holland <samuel.holland@sifive.com>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619-icc_bw_voting_from_ethqos-v1-0-6112948b825e@quicinc.com>
 
-On Mon, Jun 17, 2024 at 3:21=E2=80=AFAM Jisheng Zhang <jszhang@kernel.org> =
-wrote:
->
-> Inspired by[1], "modifying the return address of to point to
-> ret_from_exception will corrupt the RAS", so modify the code
-> to remove the code of modifying ra.
->
-> Link: https://lore.kernel.org/linux-riscv/20240607061335.2197383-1-cyrilb=
-ur@tenstorrent.com/ [1]
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-
-I've run this and it is the same idea that Anton used in the previous patch
-Reviewed-by: Cyril Bur <cyrilbur@tenstorrent.com>
-
+On Wed, Jun 19, 2024 at 03:41:28PM -0700, Sagar Cheluvegowda wrote:
+> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
 > ---
->  arch/riscv/kernel/entry.S | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> index c933460ed3e9..81dec627a8d4 100644
-> --- a/arch/riscv/kernel/entry.S
-> +++ b/arch/riscv/kernel/entry.S
-> @@ -235,8 +235,8 @@ SYM_CODE_START(ret_from_fork)
->         jalr s0
->  1:
->         move a0, sp /* pt_regs */
-> -       la ra, ret_from_exception
-> -       tail syscall_exit_to_user_mode
-> +       call syscall_exit_to_user_mode
-> +       j ret_from_exception
->  SYM_CODE_END(ret_from_fork)
->
->  #ifdef CONFIG_IRQ_STACKS
-> --
-> 2.43.0
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+You are supposed to put some text here which explains the big picture
+of this patchset. The text will also be used in the text of the git
+merge when the patchset is merged into net-next/main.
+
+    Andrew
+
+---
+pw-bot: cr
 
