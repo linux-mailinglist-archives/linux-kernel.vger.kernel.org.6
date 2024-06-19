@@ -1,212 +1,126 @@
-Return-Path: <linux-kernel+bounces-220590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1815690E41B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:12:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C0C90E422
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A8E61F2519C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:12:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 811261C24475
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C93D7603A;
-	Wed, 19 Jun 2024 07:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1A476035;
+	Wed, 19 Jun 2024 07:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A2n5ZnzA"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CXfAjh3N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6E16BB5B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FE36139;
+	Wed, 19 Jun 2024 07:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718781149; cv=none; b=dunM4J71e9nCqwP9eZzEHYhPF8vJh+qtApM2TwEjiNioDO/Z2RBTz12GxYgUYRLuHENd0aQ634MPA04tUZ/tlK4bpjSIGlo+CPAuHms90J/49XcsZgC7HVlmzF0tbB8JF7Gd9Z+lmj1tgzM1QImVKbcyFVFrs2Emj4JS/kw/yAw=
+	t=1718781177; cv=none; b=VGOV2ixgYnvgzaG7YjdGfM+j0HRqO8D6JZnbIPyyXetU4nK1Sgagio7VkYn19JcCeno6hwepVNU7rS+yXkABar5dnxSdHMh9ki4jvcWysU/TfHh9CDjIB55vw4c4EEfLXzsNJ/0dKpYyrhqPso6ymOhpd1rNgA4ffv3sHVd/SK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718781149; c=relaxed/simple;
-	bh=8W4LbrWm1kYw0GsZppHHivzVKYF4UoUJF3V4pnFaxRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kB3whk3q3J9ppPO5trEoCTVq2Kag75nRP27ncU9i1VNs2yFSWlDryYQgZLTJ5f/6J5s6fWPZIkgEVo7ZPoxFNDyhNHw6o/gNiXepY0V22985PiFGWs5KVlPPo71mECZEwaXDcckFdO8+bYDn+oRFj9VhVWfwOaAqNpeqPrANQpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A2n5ZnzA; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec0f3b9cdbso44880051fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 00:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718781145; x=1719385945; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rNkt80zZ5bRZ67g3R3x+4enPR3S8kwJm33iEuDlFGnk=;
-        b=A2n5ZnzARZlvW3uQmbTxuwOUg9R0C0RirylD22Hs3E3xYZ4u3ikwbQFexZBwqfHpHH
-         X4QLBA4kDok5/hzmmA9joMgQMp1VMkF6QwHMIJtWdrjy38JQvFC+PDwdeUMV6mcCacKz
-         LEa156GkvRRtnUA+eVurd/wgiSY2M627TZinJxIovYj/d1rU67pkarHEC1nUJYQ8IndW
-         SuNmkaM/JX/1Or1FihQ5XQ+H+8Z8w3d4NFsnoHbkn3Uf4mzg9Q1zmIrP1jwI3+mJ1wPP
-         hbOdKgDzRH9KmNg7PBTs5MpL1HvAfoJFggZmaXMOAlm87FMIMqCJb5KbTT2qZGBuMamx
-         h3Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718781145; x=1719385945;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rNkt80zZ5bRZ67g3R3x+4enPR3S8kwJm33iEuDlFGnk=;
-        b=E5fl/Vp6XOQ6+qA0E/S+1sQI6lB2oytq/EDNRAEAsfYdruq10CSIUiFlvN+PDRx3kW
-         TfBWxnjupIWsQ9Ap5+53eq3gny34IJ3IEG6LvNtwUkgnZhStgRNz+MA3Q5jPaakA3Kx7
-         z3von56gswqtDEqHSH7g1IktRs9lgEXbE3YBOU4OPaNoeDgg/1Jlk/hXQaKyQjvuL3QO
-         5SZ2sTv4VvLOT36EDyidP8icpZlbZZG7mPEu761gweFExPPIMcFVnSlkla5ZtXXY+87e
-         R5qCdrXk/IzoxOmsCZTFTIj75LqY3u+x+U4/3GPebhNXA5w3HdsJ94if64DokEF4nkVZ
-         GEGA==
-X-Gm-Message-State: AOJu0YyYQoxFtyixav81mXe8BKRiNt4IV7mQW6V7SKirU20qMJekwOgr
-	dYmeScdR5iz8hoUDDr4xMPq+4Vl/jAKkazqkXWE+Wz20VB3bji4FcqYYTUKCFLQ=
-X-Google-Smtp-Source: AGHT+IGldqIFYgyHuslG1CMTYyN0h1G1iCdYZZcpRlsRiqTgyMA+KWZnaXAKWv96mTUsoZGXaQFBlg==
-X-Received: by 2002:a2e:9153:0:b0:2ec:17a9:ce95 with SMTP id 38308e7fff4ca-2ec3ce9a91cmr13378821fa.5.1718781144791;
-        Wed, 19 Jun 2024 00:12:24 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:cd29:2431:ff2f:880b? ([2a01:e0a:982:cbb0:cd29:2431:ff2f:880b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3607509c9absm16285621f8f.46.2024.06.19.00.12.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 00:12:24 -0700 (PDT)
-Message-ID: <22121526-c6c7-4667-af82-76725ad72888@linaro.org>
-Date: Wed, 19 Jun 2024 09:12:21 +0200
+	s=arc-20240116; t=1718781177; c=relaxed/simple;
+	bh=1chuFAqYE6dJD49A1FU7iaMclljnN30WPad6vj2dIoE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PlCN1dUEZLXCVi107Mqk/Antp/0aY01z63zGatevO5OGFYCgeuXIdI1cKyVBM9F6BFq+EhRmV4jGyjxOnYiaDM3P90NnhnjUNKbvvlVovftdkNAr40wCG3nAUVu7Md9rQ1sQq7PXl+iNmwHcKV3QONTv+ViVSSkjvOrKibQdeN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CXfAjh3N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71C80C32786;
+	Wed, 19 Jun 2024 07:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718781177;
+	bh=1chuFAqYE6dJD49A1FU7iaMclljnN30WPad6vj2dIoE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CXfAjh3NbnxJNcVD6gM3s1BgEP7eRbGSTbVqml1/XqenyATV3CgMJXIgDPZPvmVfT
+	 DN5tWbEE3+obD3s73UTA6vxAIcHz4ACGIyByj3qXAi7go9UMJPvh9AP5kLLqdd/wmv
+	 WrKZrIU4kTrG5tU9vUSbgLzlfUOvZ/RJ71CxHz55vebIkcBzjbqGo0Ta+LGhvUMNVt
+	 pOG1l3geCyMLLAAe5esg4u/2vwiF352qPtL6CzU7oy4h0VKNh5t7JmlYd7uG0JE5Qa
+	 F6nYxxDFBQ0MurmaA4bi8mGAekdcVZME2WFUxP85w/nTMdz9MssaqeZF7JKfUr0c+B
+	 vdbVVuVHDyLxg==
+Date: Wed, 19 Jun 2024 10:12:51 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: [PATCH 2/2] Documentation: best practices for using Link trailers
+Message-ID: <20240619071251.GI4025@unreal>
+References: <20240618-docs-patch-msgid-link-v1-0-30555f3f5ad4@linuxfoundation.org>
+ <20240618-docs-patch-msgid-link-v1-2-30555f3f5ad4@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 04/15] soc: qcom: ice: add hwkm support in ice
-To: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>,
- "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "andersson@kernel.org" <andersson@kernel.org>,
- "ebiggers@google.com" <ebiggers@google.com>,
- "srinivas.kandagatla" <srinivas.kandagatla@linaro.org>,
- "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "robh+dt@kernel.org" <robh+dt@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
- kernel <kernel@quicinc.com>,
- "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "Om Prakash Singh (QUIC)" <quic_omprsing@quicinc.com>,
- "Bao D. Nguyen (QUIC)" <quic_nguyenb@quicinc.com>,
- "bartosz.golaszewski" <bartosz.golaszewski@linaro.org>,
- "konrad.dybcio@linaro.org" <konrad.dybcio@linaro.org>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
- "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "mani@kernel.org" <mani@kernel.org>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
- Prasad Sodagudi <psodagud@quicinc.com>, Sonal Gupta <sonalg@quicinc.com>
-References: <20240617005825.1443206-1-quic_gaurkash@quicinc.com>
- <20240617005825.1443206-5-quic_gaurkash@quicinc.com>
- <ad7f22f5-21e4-4411-88f3-7daa448d2c83@linaro.org>
- <51a930fdf83146cb8a3e420a11f1252b@quicinc.com>
-Content-Language: en-GB
-From: Neil Armstrong <neil.armstrong@linaro.org>
-In-Reply-To: <51a930fdf83146cb8a3e420a11f1252b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618-docs-patch-msgid-link-v1-2-30555f3f5ad4@linuxfoundation.org>
 
-Le 19/06/2024 à 00:08, Gaurav Kashyap (QUIC) a écrit :
-> Hello Neil,
+On Tue, Jun 18, 2024 at 12:42:11PM -0400, Konstantin Ryabitsev wrote:
+> Based on multiple conversations, most recently on the ksummit mailing
+> list [1], add some best practices for using the Link trailer, such as:
 > 
-> On 06/18/2024 12:14 AM PDT, Neil Armstrong wrote:
->> On 17/06/2024 02:50, Gaurav Kashyap wrote:
->>> Qualcomm's ICE (Inline Crypto Engine) contains a proprietary key
->>> management hardware called Hardware Key Manager (HWKM).
->>> This patch integrates HWKM support in ICE when it is available. HWKM
->>> primarily provides hardware wrapped key support where the ICE
->>> (storage) keys are not available in software and protected in
->>> hardware.
->>>
->>> When HWKM software support is not fully available (from Trustzone),
->>> there can be a scenario where the ICE hardware supports HWKM, but it
->>> cannot be used for wrapped keys. In this case, standard keys have to
->>> be used without using HWKM. Hence, providing a toggle controlled by a
->>> devicetree entry to use HWKM or not.
->>>
->>> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
->>> Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
->>> ---
->>>    drivers/soc/qcom/ice.c | 153
->> +++++++++++++++++++++++++++++++++++++++--
->>>    include/soc/qcom/ice.h |   1 +
->>>    2 files changed, 150 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c index
->>> 6f941d32fffb..d5e74cf2946b 100644
->>> --- a/drivers/soc/qcom/ice.c
->>> +++ b/drivers/soc/qcom/ice.c
->>> @@ -26,6 +26,40 @@
->>
->> <snip>
->>
->>> +
->>>    static struct qcom_ice *qcom_ice_create(struct device *dev,
->>>                                        void __iomem *base)
->>>    {
->>> @@ -239,6 +382,8 @@ static struct qcom_ice *qcom_ice_create(struct
->> device *dev,
->>>                engine->core_clk = devm_clk_get_enabled(dev, NULL);
->>>        if (IS_ERR(engine->core_clk))
->>>                return ERR_CAST(engine->core_clk);
->>> +     engine->use_hwkm = of_property_read_bool(dev->of_node,
->>> +                                              "qcom,ice-use-hwkm");
->>
->> Please drop this property and instead add an scm function calling:
->>
->> __qcom_scm_is_call_available(QCOM_SCM_SVC_ES,
->> QCOM_SCM_ES_DERIVE_SW_SECRET)
->>
->> like
->>
->> bool qcom_scm_derive_sw_secret_available(void)
->> {
->>          if (!__qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_ES,
->>                                            QCOM_SCM_ES_DERIVE_SW_SECRET))
->>                  return false;
->>
->>          return true;
->> }
->>
->> You may perhaps only call qcom_scm_derive_sw_secret_available() for
->> some ICE versions.
->>
->> Neil
+> - how to use markdown-like bracketed numbers in the commit message to
+> indicate the corresponding link
+> - when to use lore.kernel.org vs patch.msgid.link domains
 > 
-> The issue here is that for the same ICE version, based on the chipset,
-> there might be different configurations.
+> Cc: ksummit@lists.linux.dev
+> Link: https://lore.kernel.org/20240617-arboreal-industrious-hedgehog-5b84ae@meerkat # [1]
+> Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+> ---
+>  Documentation/process/maintainer-tip.rst | 24 ++++++++++++++++++------
+>  1 file changed, 18 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/process/maintainer-tip.rst b/Documentation/process/maintainer-tip.rst
+> index 64739968afa6..57ffa553c21e 100644
+> --- a/Documentation/process/maintainer-tip.rst
+> +++ b/Documentation/process/maintainer-tip.rst
+> @@ -375,14 +375,26 @@ following tag ordering scheme:
+>     For referring to an email on LKML or other kernel mailing lists,
+>     please use the lore.kernel.org redirector URL::
+>  
+> -     https://lore.kernel.org/r/email-message@id
+> +     Link: https://lore.kernel.org/email-message@id
+>  
+> -   The kernel.org redirector is considered a stable URL, unlike other email
+> -   archives.
+> +   This URL should be used when referring to relevant mailing list
+> +   resources, related patch sets, or other notable discussion threads.
+> +   A convenient way to associate Link trailers with the accompanying
+> +   message is to use markdown-like bracketed notation, for example::
+>  
+> -   Maintainers will add a Link tag referencing the email of the patch
+> -   submission when they apply a patch to the tip tree. This tag is useful
+> -   for later reference and is also used for commit notifications.
+> +     A similar approach was attempted before as part of a different
+> +     effort [1], but the initial implementation caused too many
+> +     regressions [2], so it was backed out and reimplemented.
+> +
+> +     Link: https://lore.kernel.org/some-msgid@here # [1]
+> +     Link: https://bugzilla.example.org/bug/12345  # [2]
+> +
+> +   When using the ``Link:`` trailer to indicate the provenance of the
+> +   patch, you should use the dedicated ``patch.msgid.link`` domain. This
+> +   makes it possible for automated tooling to establish which link leads
+> +   to the original patch submission. For example::
+> +
+> +     Link: https://patch.msgid.link/patch-source-msgid@here
 
-So use a combination of a list of compatible strings + qcom_scm_derive_sw_secret_available()
-to enable hwkm.
+Default b4.linkmask points to https://msgid.link/ and not to https://patch.msgid.link/
 
-Neil
+https://git.kernel.org/pub/scm/utils/b4/b4.git/tree/.b4-config#n3
+https://git.kernel.org/pub/scm/utils/b4/b4.git/tree/docs/config.rst#n46
 
-> 
-> Is it acceptable to use the addressable size from DTSI instead?
-> Meaning, if it 0x8000, it would take the legacy route, and only when it has been
-> updated to 0x10000, we would use HWKM and wrapped keys.
-> 
->>
->>>
->>>        if (!qcom_ice_check_supported(engine))
->>>                return ERR_PTR(-EOPNOTSUPP); diff --git
->>> a/include/soc/qcom/ice.h b/include/soc/qcom/ice.h index
->>> 9dd835dba2a7..1f52e82e3e1c 100644
->>> --- a/include/soc/qcom/ice.h
->>> +++ b/include/soc/qcom/ice.h
->>> @@ -34,5 +34,6 @@ int qcom_ice_program_key(struct qcom_ice *ice,
->>>                         const struct blk_crypto_key *bkey,
->>>                         u8 data_unit_size, int slot);
->>>    int qcom_ice_evict_key(struct qcom_ice *ice, int slot);
->>> +bool qcom_ice_hwkm_supported(struct qcom_ice *ice);
->>>    struct qcom_ice *of_qcom_ice_get(struct device *dev);
->>>    #endif /* __QCOM_ICE_H__ */
-> 
-> Regards,
-> Gaurav
+It will be good to update the default value in b4 to point to the correct domain.
 
+Thanks
 
