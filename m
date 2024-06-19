@@ -1,154 +1,130 @@
-Return-Path: <linux-kernel+bounces-220946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D1590E982
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:33:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC6B90E97F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8050B21810
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:33:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6DD5B23A56
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D818813C90D;
-	Wed, 19 Jun 2024 11:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39B413CFBD;
+	Wed, 19 Jun 2024 11:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="hb1uWTXz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CSb5RTRB"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M23GDzaQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A88713B583;
-	Wed, 19 Jun 2024 11:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD8B13C8F0
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718796809; cv=none; b=FC8FK6zh4tCieYtCWbV5o7kHydsPZ1DzUvJ/hdRFS5Af2vRmR2XmPXF/8pESLvWAAxY/Nzy0/Bsf5Js5FnEO5sHC5RXYyivOVeoQ3doUDmq/c53tQWheqoy+rwajhPCJIULSoF5vo7PNJxG+ksCfwh71HQ+ROxnJ8b80kURyuRk=
+	t=1718796792; cv=none; b=nhPy6ZJweQPkvLHrzo5RzTnFRLAWl2VbfWnsa9JrXaDGf7Q+Q/x9Uv1YU1aaeSHNSVQO9rAOqMdJyNmMoLb8/MZvSd2DEEWlpNb+cq6rnHKAsbTYoLrdmYWnU6stN66SXmv3Y5VW83oaFiHmY88uFGySsp67l7/xG76HQVt1WsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718796809; c=relaxed/simple;
-	bh=VWvnmoFIlOj6btiz8Jh00kSCgZVAlN2H0RXQfJabBmo=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=JkpugQmr9IhAqVaE/NUYSdxdsU6Y1ALx7TJ4M18CvXpqiu7hs6DpEe6VSZs9rquRtDxVBWdcestRxoygr3kP60F/bwQ4pendUFws6Zixh8c4HDlJ6NF6/cUmUdPF7NIJjqS2iXG4HL0MVm1KGD9P/p3r23PNyfU3JJysEl3ziWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=hb1uWTXz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CSb5RTRB; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 656A8114010E;
-	Wed, 19 Jun 2024 07:33:27 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Wed, 19 Jun 2024 07:33:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1718796807;
-	 x=1718883207; bh=kDIE2Hn4BfwvhYLdbxICkDPcyzDjOxJr9UO616nJz2I=; b=
-	hb1uWTXzGe4fI8RqXGly3ydCZUfjdDuyz3YTqPYyiDZopvsqvv3MuwuyHmf4NfV+
-	HJAreFvaYQwlMBGuCpQMAWxmFuB6B1x//V+UHvw/HNoFu/Au7E06+fS9kd+DquvH
-	3I7JhhrxuBuCT5DHO17Ppobhg/oQoSUObeDV4FqfVW1kUTQRRszOOzmHosG5Utde
-	Ak5u1IrxavqTtdU66llP3N57rLYyF9I3wwB4nsSR36AHgcXibBP1mrtUZQ/v7t2f
-	ClZpsgUZohCSe/jygsdXbHP7Am4foiInfb6T8jprTiBoiqomkXuQyuPu6AdlPZQw
-	ntdHG6N4Q0oVNx2B3M5EOQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718796807; x=
-	1718883207; bh=kDIE2Hn4BfwvhYLdbxICkDPcyzDjOxJr9UO616nJz2I=; b=C
-	Sb5RTRB+vSDqHmDYf96iPx0UWbFzJRUNyYuVSFX0NxdT5kv7B7S86a0xfg/p6LYj
-	avPW9YMttvLXaEzbl9uCIEAViEvN6c3odmUsqESuwZtiAS0Docp8FGTtiWnaew42
-	TMa+4rwV3kYS4VZrZx4myQKIJu7+xj5QKulqaaHjtZnVtmTscQ3KxGscjC7PAT93
-	0xKcscbYckxgqJhISJuruy2Tt3QVKjGb0qk8MndEl4RP1Yh2Jw25MvrzKHrES1CV
-	x/Ws6SHhKOnNYhyNRdobuO0qoLvxT41wnsoa54p+tG6y9P/fPIK9OucNxquM38oQ
-	JDWNOzVHjZcc37JCFQLeA==
-X-ME-Sender: <xms:B8JyZqVwt7lbl9ejfvBpfBKYLdKWhrvCUPgDMr8r78DiLkGNjo_h1Q>
-    <xme:B8JyZmlQYRh_jTTGM0LV4PCd3PIAvzb3gALhZygMy7loQGhk6HBbsPyp5IKCMb2fy
-    fEI4qYzIcVWFzMqTH4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeftddggeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:B8JyZubq2fXNzQxjs4OrhA01ZziFUZShK-rGoSnmw5wPX6tWCNgRuw>
-    <xmx:B8JyZhUUv7s8w5PdIcnkRi5xP7qePglLICpUU86RV0BPvCN8-BIo7A>
-    <xmx:B8JyZkkvBpJ9aNJ871R4sK2SHIRoZ3UBz3RW9NRP9V6ekR-HMXlKeg>
-    <xmx:B8JyZmdUUCFatZSQ00_9-3n93yFf5xLVfWxf8kDupuVZJ6fcovpDHg>
-    <xmx:B8JyZug_UkH9xDFNumR3Te0Gb9YnFVd1_Gvs2vqnXgdy_WbUU-yfgEwX>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1B53036A0074; Wed, 19 Jun 2024 07:33:26 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718796792; c=relaxed/simple;
+	bh=zu1vs7ZdDVtFoE38c70rrqDEqtDlY34Ku3fCysJmNdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tE6n5aoOL98sQm4belHGKsxpq9M3fDbCPOgye771T0ck08pPPHtGZhDlXF+uqBJYYkI6m7fs79QTyVKfVZKMDwVu8JNKjDDGNvASy14s6b66Tz0qmKq3loXRt/GjF/VYf3Z48OMlzPwKWlM7Go7hvD8lEYoYAKl/oqJ61NgJsuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M23GDzaQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718796789;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X/Q2VF9fZ8HK87tEqiSr0MKzekbPaQnI9QQW+NcCAq8=;
+	b=M23GDzaQVd0aEulsh6z844yaxGWTHIczNb4/eCGdAPqCQ6/jXZqmRr2V2dtSmO670oWmJK
+	1oWu4TVT96nt3cxvR3Rymri7jHlcL0qpn10gIsPjnR7d/7PRUry+rNuWET+PeL63DPZyZ+
+	3O0R1E3SLYu+gKhi1rFE7QbQGaFmQXs=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-519-e2Xme3woNHCcH5E5wnYjQg-1; Wed, 19 Jun 2024 07:33:08 -0400
+X-MC-Unique: e2Xme3woNHCcH5E5wnYjQg-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-421f3b7b27eso57336285e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 04:33:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718796787; x=1719401587;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X/Q2VF9fZ8HK87tEqiSr0MKzekbPaQnI9QQW+NcCAq8=;
+        b=nMnEf2BJNjxbt2qITBzhLeYmgPuIM94b5hRBvwl47V3vAHZf6Jgv+Ud4K4QRwNggnj
+         IgR6F5z9CcnW8VhRcZcnDfg8OIEJgExsBp5ZuJDQlwO1wFhzMY+EOCKcJKI/X+CucKlq
+         RPMqLqXCDpXyq9i1l0E2YIiFGlCNjG4wLCnf4No8+gUsgiGZiDUNQYtLUdz7HXNHAupi
+         tskDsfMrzbxEN27R4bI6DA5FtcQXe8H7UAUeg4CDoVAIEPmJTo8h+zJR9NGJCrIWmBhM
+         X5oC0RYGBn9Qd95SjSpX9utr1kzWRAJRukGXFvv67lfU0njlTWiFqK7tQ/dNfOOp+fAs
+         xDpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNG5082FJjDbBwCpnuy4LdKSmmIeDEyO1bAKDnAqKJdr3T7AfGlkYnMlQ8EtCVEO1pgsRGwRKv9geLNFnVj/BHQ8aRu58M086tzi/u
+X-Gm-Message-State: AOJu0YxebX/5sEpi8syp7UmPXoNWISGZp22ZlnX7FQ+fpqDzaEHtEo6J
+	v8juUQibdyxDeyCtF+IeAuCroPBmf4JXoG3Xk292d2cvckVNTLCKGmPkbUtCHm6o8aYPHVtv03p
+	MeNh7OX9oD8zy5f+4DFSIJ0qk/3fC16kGXjqwaUSIFekbKlDrkLSUpTus9XnTiA==
+X-Received: by 2002:a05:600c:4244:b0:421:f43d:dadd with SMTP id 5b1f17b1804b1-4247529bce6mr20527155e9.33.1718796787221;
+        Wed, 19 Jun 2024 04:33:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHqpVPfgWKKcRncsnLWODxvfCBzAlT7douK77Cb12ZP17mu8jO7pgfL+qWICCltVabK5jaTcQ==
+X-Received: by 2002:a05:600c:4244:b0:421:f43d:dadd with SMTP id 5b1f17b1804b1-4247529bce6mr20526775e9.33.1718796786850;
+        Wed, 19 Jun 2024 04:33:06 -0700 (PDT)
+Received: from pollux ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320bf2sm225835235e9.31.2024.06.19.04.33.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 04:33:06 -0700 (PDT)
+Date: Wed, 19 Jun 2024 13:33:04 +0200
+From: Danilo Krummrich <dakr@redhat.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Benno Lossin <benno.lossin@proton.me>, rafael@kernel.org,
+	mcgrof@kernel.org, russ.weight@linux.dev, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com,
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] rust: add firmware abstractions
+Message-ID: <ZnLB8KfIFpN5dlid@pollux>
+References: <20240618154841.6716-1-dakr@redhat.com>
+ <20240618154841.6716-3-dakr@redhat.com>
+ <8d6f98c2-afe2-4e94-b630-96a8fa0b39cf@proton.me>
+ <ZnKod6Wn5louhPu8@pollux>
+ <2024061900-outspoken-blast-a391@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <859402a6-4e31-4029-a6ad-87c3be4d3fdd@app.fastmail.com>
-In-Reply-To: <20240616-mips-mt-fixes-v1-1-83913e0e60fc@flygoat.com>
-References: <20240616-mips-mt-fixes-v1-0-83913e0e60fc@flygoat.com>
- <20240616-mips-mt-fixes-v1-1-83913e0e60fc@flygoat.com>
-Date: Wed, 19 Jun 2024 12:32:50 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH fixes 1/4] MIPS: mipsmtregs: Fix target register for MFTC0
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024061900-outspoken-blast-a391@gregkh>
 
+On Wed, Jun 19, 2024 at 12:43:55PM +0200, Greg KH wrote:
+> On Wed, Jun 19, 2024 at 11:44:23AM +0200, Danilo Krummrich wrote:
+> > Greg,
+> > 
+> > Benno's comments provide some nice hints to further improve the safety comments.
+> > Since I was notified that those patches hit your tree already, how do you want
+> > to proceed?
+> 
+> Please start by not top-posting :)
 
+Well, I guess it kinda made sense in this case, since I wasn't replying to any
+of the comments specifically.
 
-=E5=9C=A82024=E5=B9=B46=E6=9C=8816=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
-=8D=882:25=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
-> Target register of mftc0 should be __res instead of $1, this is
-> a leftover from old .insn code.
->
-> Fixes: dd6d29a61489 ("MIPS: Implement microMIPS MT ASE helpers")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> 
+> Anyway, patches on top of what is in my tree is fine, these are just
+> comment updates, not any real broken issue to prevent the existing stuff
+> from existing.
 
-Hi Thomas,
+Ok, I'll send you another series for this including the changes for the
+MAINTAINERS file.
 
-I saw you sent mips-fixes_6.10_1 pull request but this series is
-not included in that PR while one of my later patch is included.
+- Danilo
 
-If you think the whole series is not fit for fixes tree then please
-at least let this series go through fixes tree. There are many MT
-users for routers etc and I don't want to risk break things for them
-in linus tree for too long.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-The patch itself is obvious.
-
-Thanks
-- Jiaxun
-
-> ---
->  arch/mips/include/asm/mipsmtregs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/mips/include/asm/mipsmtregs.h=20
-> b/arch/mips/include/asm/mipsmtregs.h
-> index 30e86861c206..b1ee3c48e84b 100644
-> --- a/arch/mips/include/asm/mipsmtregs.h
-> +++ b/arch/mips/include/asm/mipsmtregs.h
-> @@ -322,7 +322,7 @@ static inline void ehb(void)
->  	"	.set	push				\n"	\
->  	"	.set	"MIPS_ISA_LEVEL"		\n"	\
->  	_ASM_SET_MFTC0							\
-> -	"	mftc0	$1, " #rt ", " #sel "		\n"	\
-> +	"	mftc0	%0, " #rt ", " #sel "		\n"	\
->  	_ASM_UNSET_MFTC0						\
->  	"	.set	pop				\n"	\
->  	: "=3Dr" (__res));						\
->
-> --=20
-> 2.43.0
-
---=20
-- Jiaxun
 
