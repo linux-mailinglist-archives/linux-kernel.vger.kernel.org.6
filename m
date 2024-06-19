@@ -1,121 +1,173 @@
-Return-Path: <linux-kernel+bounces-220626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E859A90E48F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:32:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A71F90E4A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E16D51C20985
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 903422826AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DE0763F7;
-	Wed, 19 Jun 2024 07:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C643077114;
+	Wed, 19 Jun 2024 07:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxBjJGDG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MxEF1spK"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F324247F59;
-	Wed, 19 Jun 2024 07:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7974F768EF
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718782361; cv=none; b=jMpYLZ6kPq3uO7oiLmcVWmRSeMU7Mr7gdY2muxHF+hooWJGqayamaeODdwJFjBFS+bySr6l9e5QXj2Yt2EAhG0Xr2nOGIVtSUyxWsusonNPr/Td2M/o6uCYGRnXsUlctCysCNMXgTosM7qQteC2WuO0l7cvT9bftUl6OgyeqDBQ=
+	t=1718782549; cv=none; b=FpXAalRHqk6ZYCQjInBNmgfYIMYcb12Bd4vIyvBLFWYpx2ZuueyqR+hH5y/5hTeNJFmPL5+XWUkylNPnBGSSaD7TOImsnqHd1SJLIw6L+/1pyDLxTYlsFU5/tpUzBd1/MWbzNtVi+j4ABoKgfNAFKnIgz4yXumQv31ONoxUo9w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718782361; c=relaxed/simple;
-	bh=ttsrjTw6/TkL2WGb9G5HQp905lj/XpXo9gt948bymvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C9jCk3oqQPcFRqyqXSrwKRPfi2/0pkliv4P7DaKKCVBZE2hPQ5PprKI0HLY9SLnoonYC+fZBfexKpPUPdkwucBs7jcsZToX0dLoDBaqJXL5Dz+bD9gVSPTLOlnD/sO486pq+kT51EyTRtnvlBeQFZlKlUjxnl0enzjb6+/ZDN8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxBjJGDG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D55BC2BBFC;
-	Wed, 19 Jun 2024 07:32:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718782360;
-	bh=ttsrjTw6/TkL2WGb9G5HQp905lj/XpXo9gt948bymvo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TxBjJGDGU1sOOIoZ5zCoxgEYRk7odk4j3ejnIvpNXEjOC0JPOFhXzZZvgx+RoSr+t
-	 XqTTamzJFHFX3uys56SvvmU7EKOGmPkdDz1QZNdFGGoCgImts0UnXZXR6oBQbFMj2V
-	 fhSryw1GCnxY7Meb78ZTc1XkT9bIJlF3KuJSY+XYJ/EsMoRkbjOJ90rxUy+UjhXLSD
-	 +TtL0Xx+Ze5j3eUhdBu94Kqjo33dJa+tdYzsL7B533kLkmhQ+UJwAfXvc9DK2AZ0eg
-	 YfrmwB7ns4O/bVuEpGrCSzTOYGqGpNQH9Srz5LVBzG6FG32nyvOGRypZmxlMJjObdT
-	 Lw2PJ+KlESGcg==
-Message-ID: <07db56c5-c8be-421a-9102-435586e6dbbe@kernel.org>
-Date: Wed, 19 Jun 2024 09:32:34 +0200
+	s=arc-20240116; t=1718782549; c=relaxed/simple;
+	bh=+S5Uv3HO+4mevHlHKh5Y+xeuc2VhQf6TXsTM9rXh0js=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QjAZc+VnUEARBv94qRiJuxnMHBAmvv9PHqfCbpTYFqxGLX6nlAestAqOJWa8vru2BV07SEpofZaM5vDdfuaBHIdF5tC0/hUvA1uCC0VrHdy7sL9k+0z622IDeE8u21SBbQ+tSVBTjCjrlI86LKQo/xI81bLtwyTvgGPXcJ9GC70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MxEF1spK; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52bc0a9cea4so541729e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 00:35:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718782545; x=1719387345; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NAirk0f0PKTwzOziyA/BSlPSIpqsEtALcS+cg2LXns8=;
+        b=MxEF1spKn7wqLKraUNzIKIXdzjGCH44lcL/5kKGAm723HiZD45aIY43SFf+bi1WtDn
+         TqnVv4YeVPBMM3mq2TMhK7p8J7Ci749uGax12nigJ1wjv9YTC065zxoFYC+Ql+zGJmxk
+         xCYJISE7lBRSzrrwomhJRt7ghW9Kyjmp5O4N8kQAtoe1GQlQ3iShfYR1zRhw7eoFtpBP
+         208OywI7jS1WdEU3Ttyd5Qvlm65djZTIX76XqRFezX3//r7ZyhpD6zIMeB0An4uvs1Al
+         iuFj8lV75NgJQ564yEU6uuvlwtR1WDWdG4QqmexokdF3qShGfy7+4WeKL54d+KDKh298
+         HFSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718782545; x=1719387345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NAirk0f0PKTwzOziyA/BSlPSIpqsEtALcS+cg2LXns8=;
+        b=IgCYg2uy6eq4hYbF3sHBBBKSvE1eN35zfs+7pcNOaUhdc2tM2LpZAPIMIze7hcq4bL
+         CygTGNP+ZF3PCJIMftBaoJMcxpV9ImEUIkNf+KVZ/PGMIV/OBnasuERFf4FMSwMYN6mD
+         hcOLfmq3WVoJiolba2Wc7elYqnrkEzoaMhrcZ96lidG2pS2DllLFiSSFS5v5ZM8YFXw5
+         yDtK4hhaqNkzoMb/tb2IJ/eu1Rr7SACGgchmFlBMh1tVWTjG4a0zD6s7wQ9Ant+L25qn
+         xz6VNLV7hxLbqITwNuaBU1AjZIf3uELE+LtGl3N2NNAROY0LxLLMuwlrLYj51yW2S5ky
+         /jQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEKwNlzthPq61boJQo7AayRGR3Ccjp/jJxMuHKStZvRid2yrJD/1X/2MbNRiMi5FbfsRE6zEQ8Ilx00te1wNBh639Iibo/Bt/xauQs
+X-Gm-Message-State: AOJu0YyRtuW1hIBpWnzx2C/cTxz7Xbp66N2g7fHUzbvchEv/0lV2ljDB
+	x2GwQ+2owYjfe0iz5DcNSnzm+IqV2yOMT77Yd6dnPK0CZ7hlcHMPs3zZOziUIJp29s7hhlkrcmG
+	9OFP2NvQrCE4oaftv9Bd5aH5XlvyDtPHKwrJCitsGtiQpRTgd
+X-Google-Smtp-Source: AGHT+IFSnKagBTz38/KAjI8t4GnDrMsPoKM/8j0e3wn2GQsI00XKi7Y1hebzFZ6x66wwp3aNl7M+IXmjhb/C18jBEp4=
+X-Received: by 2002:a05:6512:3b89:b0:52c:80e6:60c7 with SMTP id
+ 2adb3069b0e04-52cca1bfa80mr623875e87.13.1718782544654; Wed, 19 Jun 2024
+ 00:35:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: arm: cpus: Add new Cortex and Neoverse names
-To: Andre Przywara <andre.przywara@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, devicetree@vger.kernel.org,
- Jun Wu <jun.wu@arm.com>, linux-kernel@vger.kernel.org
-References: <20240618160450.3168005-1-andre.przywara@arm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240618160450.3168005-1-andre.przywara@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240612075829.18241-1-brgl@bgdev.pl> <CABBYNZLrwgj848w97GP+ijybt-yU8yMNnW5UWhb2y5Zq6b5H9A@mail.gmail.com>
+ <CAMRc=Mdb31YGUUXRWACnx55JawayFaRjEPYSdjOCMrYr5xDYag@mail.gmail.com>
+ <CABBYNZLPv3zk_UX67yPetQKWiQ-g+Dv9ZjZydhwG3jfaeV+48w@mail.gmail.com> <CAMRc=Mdsw5c_BDwUwP2Ss4Bogz-d+waZVd8LLaZ5oyc9dWS2Qg@mail.gmail.com>
+In-Reply-To: <CAMRc=Mdsw5c_BDwUwP2Ss4Bogz-d+waZVd8LLaZ5oyc9dWS2Qg@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 19 Jun 2024 09:35:33 +0200
+Message-ID: <CAMRc=Mf2koxQH8Pw--6g5O3FTFn_qcyfwTVQjUqxwJ5qW1nzjw@mail.gmail.com>
+Subject: Re: [GIT PULL] Immutable tag between the Bluetooth and pwrseq
+ branches for v6.11-rc1
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/06/2024 18:04, Andre Przywara wrote:
-> Add compatible strings for the Arm Cortex-A725 and Cortex-A925 CPUs, as
-> well as new Neoverse cores: Arm Neoverse N3, Neoverse V2, Neoverse V3,
-> and Neoverse V3AE.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+On Wed, Jun 12, 2024 at 5:00=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> On Wed, Jun 12, 2024 at 4:54=E2=80=AFPM Luiz Augusto von Dentz
+> <luiz.dentz@gmail.com> wrote:
+> >
+> > Hi Bartosz,
+> >
+> > On Wed, Jun 12, 2024 at 10:45=E2=80=AFAM Bartosz Golaszewski <brgl@bgde=
+v.pl> wrote:
+> > >
+> > > On Wed, Jun 12, 2024 at 4:43=E2=80=AFPM Luiz Augusto von Dentz
+> > > <luiz.dentz@gmail.com> wrote:
+> > > >
+> > > > Hi Bartosz,
+> > > >
+> > > > On Wed, Jun 12, 2024 at 3:59=E2=80=AFAM Bartosz Golaszewski <brgl@b=
+gdev.pl> wrote:
+> > > > >
+> > > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > > >
+> > > > > Hi Marcel, Luiz,
+> > > > >
+> > > > > Please pull the following power sequencing changes into the Bluet=
+ooth tree
+> > > > > before applying the hci_qca patches I sent separately.
+> > > > >
+> > > > > Link: https://lore.kernel.org/linux-kernel/20240605174713.GA76726=
+1@bhelgaas/T/
+> > > > >
+> > > > > The following changes since commit 83a7eefedc9b56fe7bfeff13b6c735=
+6688ffa670:
+> > > > >
+> > > > >   Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
+> > > > >
+> > > > > are available in the Git repository at:
+> > > > >
+> > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git ta=
+gs/pwrseq-initial-for-v6.11
+> > > > >
+> > > > > for you to fetch changes up to 2f1630f437dff20d02e4b3f07e836f4286=
+9128dd:
+> > > > >
+> > > > >   power: pwrseq: add a driver for the PMU module on the QCom WCN =
+chipsets (2024-06-12 09:20:13 +0200)
+> > > > >
+> > > > > ----------------------------------------------------------------
+> > > > > Initial implementation of the power sequencing subsystem for linu=
+x v6.11
+> > > > >
+> > > > > ----------------------------------------------------------------
+> > > > > Bartosz Golaszewski (2):
+> > > > >       power: sequencing: implement the pwrseq core
+> > > > >       power: pwrseq: add a driver for the PMU module on the QCom =
+WCN chipsets
+> > > >
+> > > > Is this intended to go via bluetooth-next or it is just because it =
+is
+> > > > a dependency of another set? You could perhaps send another set
+> > > > including these changes to avoid having CI failing to compile.
+> > > >
+> > >
+> > > No, the pwrseq stuff is intended to go through its own pwrseq tree
+> > > hence the PR. We cannot have these commits in next twice.
+> >
+> > Not following you here, why can't we have these commits on different
+> > next trees? If that is the case how can we apply the bluetooth
+> > specific ones without causing build regressions?
+> >
+>
+> We can't have the same commits twice with different hashes in next
+> because Stephen Rothwell will yell at us both.
+>
+> Just pull the tag I provided and then apply the Bluetooth specific
+> changes I sent on top of it. When sending to Linus Torvalds/David
+> Miller (not sure how your tree gets upstream) mention that you pulled
+> in the pwrseq changes in your PR cover letter.
+>
+> Bart
 
+Gentle ping.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+Bart
 
