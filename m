@@ -1,173 +1,182 @@
-Return-Path: <linux-kernel+bounces-220745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350B190E68C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:09:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1A790E6E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1FB528334B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:09:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 319111F2295F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22507FBC1;
-	Wed, 19 Jun 2024 09:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OM2cjq7V"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C027880046;
+	Wed, 19 Jun 2024 09:24:57 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E997E794
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10957FBBF;
+	Wed, 19 Jun 2024 09:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718788125; cv=none; b=VVkFumFJvfZSXjUQcE1vPpgpYpc4TDbGvO7MLjFty6JUIRRVmpVIiAl7tr5yCQm6hOM8BWyr8IICm9glYd4BsiD/zffGX/cchSQyRAarNvhlTRteZj/mPywtaViFmqFifaBzo75WpsbzmV71h7bcSOkJYvLYf+hzft8V8KTVWno=
+	t=1718789097; cv=none; b=eXdF0/Dm8G2HgjBnxz8jcjCtlCUy5O3Z+tvANiJZ+7vvWh3ktyVfRi1TnKvVkdjkknWEO0wNe+5zVTWjoMw45eCj9Puff7OR47dIxeImoTkJX6VCREpWRWx9OV1JBlafW95aSsA9d5mrbdVaoU3rBSsswBDCkw865u8l/ExOG1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718788125; c=relaxed/simple;
-	bh=l5ExirGQyRAtIOk0NhDOS9E3Rwzt/v5G6frBd1Eto7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vDsaymf5bWc3W0Jch5aNMb6MBjM+JiDp3UHqUHHdvug9W2l8d6iqbSNjRWllE0xe0X0dcPUn/+iJJX87HQoenmG6EUqT3zNUq0X2f7WLa2S7w7YB0urZLz9Yq838qnMHrWiBqtWofIMDc9HsdEhsMq5qQvanW15YjRhQzddhHik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OM2cjq7V; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718788122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H6etdIHf+vLceRRGRQM9DwQ8BkpeTzkHdW5ywbuRdZ8=;
-	b=OM2cjq7VMqt6oE3m9h5M+UJ+LGJzW6z6+94TzuNX39jk/x7hxduXaGZXa7/QQGlO5DdK3m
-	jGlSwlS3zX6a+cb0Tzc1YIkVu3C/yE+CQ9cy+TIdzxDo4FmWs8etQAftGSFii50ZfhKAfD
-	FU/u6r2zmIkFwh8BpvaUkDaU5K27zOc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-633-Ntcasq87OQG-u5WcuNSgLA-1; Wed, 19 Jun 2024 05:08:39 -0400
-X-MC-Unique: Ntcasq87OQG-u5WcuNSgLA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-421739476b3so56322245e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 02:08:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718788119; x=1719392919;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H6etdIHf+vLceRRGRQM9DwQ8BkpeTzkHdW5ywbuRdZ8=;
-        b=JKFO/o85vuYwgP+/CivsiTrv2jFWWKvC45Zb8U1HZkNteliA7fYg1soSa4lLRHBE8L
-         lQ0FxnpL59LnehrSu9Uailgd7Gf7Ehn6EIiqKH4J5Tn7Q4J5CXDc77WmyigTmsXlNxZd
-         sDlw2pjRgqKwqQ/kUMqSUR6dZ6WCzbQ+JoakVcFVcD1SvGM7pqMEKA8MsC3OHDymxODL
-         hydz8ee131cnxZd2j22feW4V8cVgCQS/0IztOGtAIZn/CL3GXn7QFVzNjz6vFqdRNpqx
-         cdcuRE2CsWXG/GeYPtKoTssqn0ZdK2J3Xf/Z2pD4nFaNqg5G3PHzmX7JrDYzkH+sNzFD
-         e+6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXCHYMCoL1j09be8pA7+iNti8BvK5Eeg2x7/meDfo0h6fWd+mdpf2hf0H2xVRipFn8WHyrgSSjnY946VRucvE+YWPjOAON6EildVKSS
-X-Gm-Message-State: AOJu0YyMqwiZCU3PahQkbxevOlnfJl8Im3m9FRg0CmdBdCOalJNBwqP2
-	gGHqCp7e1+0eu7yHq2AFxcTfwO1ymzixvLSjMErgTj1pcMOPlfKU4kbNk/o2H+seThwFZYGdDC8
-	b98JLkruTG6vDyME+gFNi2GU9+whgcYqWrfyUkHnpCTIzwPWhwa+ZUKj/8AAomw==
-X-Received: by 2002:a05:600c:214c:b0:422:683b:df31 with SMTP id 5b1f17b1804b1-424750796a4mr16406215e9.7.1718788118663;
-        Wed, 19 Jun 2024 02:08:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEDmHDeUKSzvwFZloG+Wasg47pkCbBVp7dtO2iM2/FT/vYQ18GUuBHQi2kxayKUmsy2s8xgdg==
-X-Received: by 2002:a05:600c:214c:b0:422:683b:df31 with SMTP id 5b1f17b1804b1-424750796a4mr16405765e9.7.1718788117895;
-        Wed, 19 Jun 2024 02:08:37 -0700 (PDT)
-Received: from redhat.com ([2.52.146.100])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422870e9681sm260339195e9.28.2024.06.19.02.08.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 02:08:37 -0700 (PDT)
-Date: Wed, 19 Jun 2024 05:08:32 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	ksummit@lists.linux.dev
-Subject: Re: [PATCH 2/2] Documentation: best practices for using Link trailers
-Message-ID: <20240619050715-mutt-send-email-mst@kernel.org>
-References: <20240618-docs-patch-msgid-link-v1-0-30555f3f5ad4@linuxfoundation.org>
- <20240618-docs-patch-msgid-link-v1-2-30555f3f5ad4@linuxfoundation.org>
- <87r0ctfh93.fsf@intel.com>
+	s=arc-20240116; t=1718789097; c=relaxed/simple;
+	bh=hN6kdnLBTquDXR9KrmJk7yIsGzVwE9lDcA2ZQdIL3wI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=n+0kB3zeIUbZjWAWyAS+7j3llXhwajop4i56xoZEPYoExbQQJUqTW5BeEDOxj+1kY3oNx+/wHNI1UnU2mxFo07TdqRBBbiI9nEKUuL2URTeFZ9A0UsXLKIhPeH8GrWDaADPCW2ZAuMyouPds5HI1HjxxXnPGCOahKupO9+R7y6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W3yNw3MCqznWSR;
+	Wed, 19 Jun 2024 17:04:32 +0800 (CST)
+Received: from dggpemd100001.china.huawei.com (unknown [7.185.36.94])
+	by mail.maildlp.com (Postfix) with ESMTPS id CE6A518007A;
+	Wed, 19 Jun 2024 17:09:26 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ dggpemd100001.china.huawei.com (7.185.36.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 19 Jun 2024 17:09:26 +0800
+Message-ID: <df7b4ee6-0d75-9ed5-f147-3c180be6d4a5@huawei.com>
+Date: Wed, 19 Jun 2024 17:09:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87r0ctfh93.fsf@intel.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v4] scsi: libsas: Fix exp-attached end device cannot be
+ scanned in again after probe failed
+Content-Language: en-CA
+To: John Garry <john.g.garry@oracle.com>, <yanaijie@huawei.com>,
+	<jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+	<damien.lemoal@opensource.wdc.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>,
+	<chenxiang66@hisilicon.com>, <kangfenglong@huawei.com>
+References: <20240619032815.3499-1-yangxingui@huawei.com>
+ <45175ca4-d0da-42ca-97b9-f3891bf13c53@oracle.com>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <45175ca4-d0da-42ca-97b9-f3891bf13c53@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggpemm500007.china.huawei.com (7.185.36.183) To
+ dggpemd100001.china.huawei.com (7.185.36.94)
 
-On Wed, Jun 19, 2024 at 11:50:48AM +0300, Jani Nikula wrote:
-> On Tue, 18 Jun 2024, Konstantin Ryabitsev <konstantin@linuxfoundation.org> wrote:
-> > Based on multiple conversations, most recently on the ksummit mailing
-> > list [1], add some best practices for using the Link trailer, such as:
-> >
-> > - how to use markdown-like bracketed numbers in the commit message to
-> > indicate the corresponding link
-> > - when to use lore.kernel.org vs patch.msgid.link domains
-> >
-> > Cc: ksummit@lists.linux.dev
-> > Link: https://lore.kernel.org/20240617-arboreal-industrious-hedgehog-5b84ae@meerkat # [1]
-> > Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-> > ---
-> >  Documentation/process/maintainer-tip.rst | 24 ++++++++++++++++++------
-> >  1 file changed, 18 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/Documentation/process/maintainer-tip.rst b/Documentation/process/maintainer-tip.rst
-> > index 64739968afa6..57ffa553c21e 100644
-> > --- a/Documentation/process/maintainer-tip.rst
-> > +++ b/Documentation/process/maintainer-tip.rst
-> > @@ -375,14 +375,26 @@ following tag ordering scheme:
-> >     For referring to an email on LKML or other kernel mailing lists,
-> >     please use the lore.kernel.org redirector URL::
-> >  
-> > -     https://lore.kernel.org/r/email-message@id
-> > +     Link: https://lore.kernel.org/email-message@id
-> >  
-> > -   The kernel.org redirector is considered a stable URL, unlike other email
-> > -   archives.
-> > +   This URL should be used when referring to relevant mailing list
-> > +   resources, related patch sets, or other notable discussion threads.
-> > +   A convenient way to associate Link trailers with the accompanying
-> > +   message is to use markdown-like bracketed notation, for example::
-> >  
-> > -   Maintainers will add a Link tag referencing the email of the patch
-> > -   submission when they apply a patch to the tip tree. This tag is useful
-> > -   for later reference and is also used for commit notifications.
-> > +     A similar approach was attempted before as part of a different
-> > +     effort [1], but the initial implementation caused too many
-> > +     regressions [2], so it was backed out and reimplemented.
-> > +
-> > +     Link: https://lore.kernel.org/some-msgid@here # [1]
-> > +     Link: https://bugzilla.example.org/bug/12345  # [2]
-> > +
-> > +   When using the ``Link:`` trailer to indicate the provenance of the
-> > +   patch, you should use the dedicated ``patch.msgid.link`` domain. This
-> > +   makes it possible for automated tooling to establish which link leads
-> > +   to the original patch submission. For example::
+Hi John,
+
+On 2024/6/19 15:50, John Garry wrote:
+> On 19/06/2024 04:28, Xingui Yang wrote:
+>> The expander phy will be treated as broadcast flutter in the next
+>> revalidation after the exp-attached end device probe failed, as follows:
+>>
+>> [78779.654026] sas: broadcast received: 0
+>> [78779.654037] sas: REVALIDATING DOMAIN on port 0, pid:10
+>> [78779.654680] sas: ex 500e004aaaaaaa1f phy05 change count has changed
+>> [78779.662977] sas: ex 500e004aaaaaaa1f phy05 originated 
+>> BROADCAST(CHANGE)
+>> [78779.662986] sas: ex 500e004aaaaaaa1f phy05 new device attached
+>> [78779.663079] sas: ex 500e004aaaaaaa1f phy05:U:8 attached: 
+>> 500e004aaaaaaa05 (stp)
+>> [78779.693542] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] found
+>> [78779.701155] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
+>> [78779.707864] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+>> ...
+>> [78835.161307] sas: --- Exit sas_scsi_recover_host: busy: 0 failed: 0 
+>> tries: 1
+>> [78835.171344] sas: sas_probe_sata: for exp-attached device 
+>> 500e004aaaaaaa05 returned -19
+>> [78835.180879] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] is gone
+>> [78835.187487] sas: broadcast received: 0
+>> [78835.187504] sas: REVALIDATING DOMAIN on port 0, pid:10
+>> [78835.188263] sas: ex 500e004aaaaaaa1f phy05 change count has changed
+>> [78835.195870] sas: ex 500e004aaaaaaa1f phy05 originated 
+>> BROADCAST(CHANGE)
+>> [78835.195875] sas: ex 500e004aaaaaaa1f rediscovering phy05
+>> [78835.196022] sas: ex 500e004aaaaaaa1f phy05:U:A attached: 
+>> 500e004aaaaaaa05 (stp)
+>> [78835.196026] sas: ex 500e004aaaaaaa1f phy05 broadcast flutter
+>> [78835.197615] sas: done REVALIDATING DOMAIN on port 0, pid:10, res 0x0
+>>
+>> The cause of the problem is that the related ex_phy's 
+>> attached_sas_addr was
+>> not cleared after the end device probe failed, so reset it.
+>>
+>> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
 > 
-> Mostly highlighting my own ignorance here, but s/provenance/origin/
-> would've felt more obvious to me, as a non-native speaker.
+> Apart from a couple of comments, below:
+> Reviewed-by: John Garry <john.g.garry@oracle.com>
 > 
-> BR,
-> Jani.
-
-Or even "origin (message id)" to be very explicit.
-
-
-
-
-
-
+>> ---
+>> Changes since v3:
+>> - Just manually clear the ex_phy's attached_sas_addr instead of calling
+>>    sas_unregister_devs_sas_addr() and deleting the port.
+>> - Update commit information.
+>>
+>> Changes since v2:
+>> - Add a helper for calling sas_destruct_devices() and 
+>> sas_destruct_ports(),
+>>    and put the new call at the end of sas_probe_devices() based on John's
+>>    suggestion.
+>>
+>> Changes since v1:
+>> - Simplify the process of getting ex_phy id based on Jason's suggestion.
+>> - Update commit information.
+>> ---
+>>   drivers/scsi/libsas/sas_internal.h | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
+>>
+>> diff --git a/drivers/scsi/libsas/sas_internal.h 
+>> b/drivers/scsi/libsas/sas_internal.h
+>> index 85948963fb97..7c0931ccea23 100644
+>> --- a/drivers/scsi/libsas/sas_internal.h
+>> +++ b/drivers/scsi/libsas/sas_internal.h
+>> @@ -145,6 +145,20 @@ static inline void sas_fail_probe(struct 
+>> domain_device *dev, const char *func, i
+>>           func, dev->parent ? "exp-attached" :
+>>           "direct-attached",
+>>           SAS_ADDR(dev->sas_addr), err);
+>> +
+>> +    /* if the device probe failed, the expander phy attached address
 > 
-> > +
-> > +     Link: https://patch.msgid.link/patch-source-msgid@here
-> >  
-> >  Please do not use combined tags, e.g. ``Reported-and-tested-by``, as
-> >  they just complicate automated extraction of tags.
+> please use standard comment format, i.e. /* goes on a line on its own
+OK.
 > 
-> -- 
-> Jani Nikula, Intel
+>> +     * need to be reset so that the phy will not be treated as flutter
+> 
+> /s/need to be reset/needs to be reset/OK.
+> 
+>> +     * in the next revalidation
+>> +     */
+>> +    if (dev->parent && !dev_is_expander(dev->dev_type)) {
+>> +        struct domain_device *parent = dev->parent;
+>> +        struct expander_device *ex_dev = &parent->ex_dev;
+>> +        struct sas_phy *phy = dev->phy;
+>> +        struct ex_phy *ex_phy = &ex_dev->ex_phy[phy->number];
+> 
+> this could all be put on fewer lines, or even 1, like:
+OK. I'll update a new version.
+> 
+> struct ex_phy *ex_phy = &dev->ex_dev.ex_phy[phy->number];
+> 
+> you could even add a helper, like:
+> 
+> static inline struct ex_phy *sas_expander_ex_phy(struct domain_device
+>   *parent, int phy_id)
+>   {
+>   struct expander_device *ex_dev = &parent->ex_dev;
+> 
+>   return &ex_dev->ex_phy[phy_id];
+>   }
+> 
+> However, I am not sure how helpful it will be, since we often require a 
+> struct expander_device pointer when we would be using that helper.
+> 
+Thanks,
+Xingui
+
 
 
