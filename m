@@ -1,136 +1,167 @@
-Return-Path: <linux-kernel+bounces-221338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27BF990F21A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:27:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E62A590F21E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B4E284160
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:27:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9777C283909
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D52114D702;
-	Wed, 19 Jun 2024 15:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6679B14EC4D;
+	Wed, 19 Jun 2024 15:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="XPW+p68K"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZL4K/yMs"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC59513D525
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF697FBDF;
+	Wed, 19 Jun 2024 15:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718810861; cv=none; b=VR8RqrNx5kAHQe7p3ljoGc0CzOspw+lr6WcFtApr8fKGg8KT/9Lhy+3EjdHRM2mL34iTVGtZQYO4x8PlJtdTzfmjAXacoatwO5yS5TokNomS1R2+1uG9AfZ+KuDCtx1yD6iVfuw2OBLX+uGBwtmOqSdG4g5c9ien6oQwNGyifcY=
+	t=1718810903; cv=none; b=Xb19EKMCrfTZWmr0e1He1nlVBHmrB9rARGhC6cWxuLjJYdtf6duZPFbvHpzcpFJjfshn2BL3SrdM5zoh5SgnrJV3vXdc63ulyx6Jogh1Fb1vXMEan1xxZIQ9vGd12Q5YeF3D+uwOC/sikrKJSrRvTAHoD2Wl3Mut6MYjgfGKt/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718810861; c=relaxed/simple;
-	bh=dlVW0Zt+yD0AYF7FVIAwlp8E7GCLYrxCPZlP2ToeyWw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TZYUXEW8qR5AW8/0T/I2mWbJvzea/7RkPsZKeO4/aTYUyq8E5lgW67cbHyf48s9ebyZ8ObVA3HxFP0FG2wavJ+hloyVDFc1L25n8uFwAP+wnSxyrcjEhfDdTTe3NmIxz7T7nWzwPT1INbvh+N3uoOnizxkoCThNlFPucw+Fz9+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=XPW+p68K; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6010a.ext.cloudfilter.net ([10.0.30.248])
-	by cmsmtp with ESMTPS
-	id Jw4rsbG9gJXoqJxDhs9eKy; Wed, 19 Jun 2024 15:27:33 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id JxDgswmJEy2LPJxDgspnoj; Wed, 19 Jun 2024 15:27:32 +0000
-X-Authority-Analysis: v=2.4 cv=CZoO5qrl c=1 sm=1 tr=0 ts=6672f8e4
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=wYkD_t78qR0A:10 a=pGLkceISAAAA:8
- a=VwQbUJbxAAAA:8 a=UpB2q-s9SAH0Zd9J5qsA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=FvJxBu1YSpxd+/VCWen78+JSc56VIImOsnuc2H9+pC4=; b=XPW+p68KqNViATw/50CcjHJeqs
-	iR2t1LTnsYC15yhdO/6Fs2o5FFz1iYsshhRXKp91gEHnzuzG49JRq9oNz+qAMy/B7EKh7SCV6vLs9
-	v4owBH/rD+Hzilp6/lvwFZRmj+W/3PAsVpnebS2jBhbLhaWUOqmBg+YmEWJfS1qtMAs8S53K9IfKt
-	OkoOkXnB5UtyR6dn5J8w2FvyDKyvJ+bmyJmC1L/cRYa29FUs1/bANOzGAeADkgz0DQmv2jJQfi0nl
-	I1vueRgsGmax2jLhEBxyo8Q+0vlZed2Yu9pVplQsaE14TU7B6CUV+uhum1KYQDECKwwH+u5zh5dZp
-	iDT0/O/w==;
-Received: from [201.172.173.139] (port=49740 helo=[192.168.15.14])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sJxDe-000rOz-1I;
-	Wed, 19 Jun 2024 10:27:30 -0500
-Message-ID: <5832065e-d998-4dc7-9df9-9186d3d26d9b@embeddedor.com>
-Date: Wed, 19 Jun 2024 09:27:28 -0600
+	s=arc-20240116; t=1718810903; c=relaxed/simple;
+	bh=bv3STp8KBKC0DDs1k9/4Mh5MeA6oKIPOmMNrz9Lmxfk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JsRGYXH+HXUvLihveDx7/8TbQPE6cmYkZIJ014ziUFFA5aF0118YZ2SCcrShezH8TeeGC6h4xb8xfx9leQESux8oTyMrGzFZ05/K+U4tckooe0xQAcBAs9A38qVSxbCrcSe0fsWJ7zjXx91dnwQPvVwBlEG2OBoDiYziPzfbhXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZL4K/yMs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9MSci005118;
+	Wed, 19 Jun 2024 15:28:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=cM57tgyraaxh2Y5ZsyMDB6eD
+	2mxEf0KJUWRxrjXip9M=; b=ZL4K/yMsGTSziM3zQ8iJPQ1q7Pu+BAmPdgaL2JXF
+	6hEGWp69NO3pKwi6VDrbN8tGDd06b5RvNMs8w5990nht1lVZkCipAr4c/AThtfQe
+	5Li3+AAURaMa2wrCm+z9EDPK4k/n0ywqyxEzECAJ3cuaPttWm23lVmEc747vjgOX
+	XIqUCjeuh9Lzwb+rWphDGOivzBE31dFiyPJuyyUTaiO70EaONi+if7owKQL/Gfsf
+	l33PVBpJFEuvBIgNgk2uRtx62AFsKtPeYgsNcBdC1m+i9fNXYHDIeiL4iRJM17A7
+	eud02/hSTTWACAWp4WA0Fcagou1/X1XmKCKlxp80p78aow==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuja7a36h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 15:28:09 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JFS7SD024492
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 15:28:07 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 19 Jun 2024 08:28:07 -0700
+Date: Wed, 19 Jun 2024 08:28:06 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Andy Yan
+	<andy.yan@rock-chips.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        "Mark
+ Rutland" <mark.rutland@arm.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Shivendra Pratap <quic_spratap@quicinc.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
+Message-ID: <20240619080933071-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
+ <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
+ <20240619135143.kr2tx4ynxayc5v3a@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] USB: serial: garmin_gps: annotate struct garmin_packet
- with __counted_by
-To: Nathan Chancellor <nathan@kernel.org>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Johan Hovold <johan@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kees Cook
- <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-References: <20240619-garmin_gps_counted_by-v1-1-d8d816f085d9@gmail.com>
- <20240619144320.GA2091442@thelio-3990X>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240619144320.GA2091442@thelio-3990X>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sJxDe-000rOz-1I
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.14]) [201.172.173.139]:49740
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfLGhq3DtVAfqAUfCWy3v7/hGNt20Vj8W1ukHg74ftmp7gPtBLxy1gS5cH2CS19KU/QsiYvE+cdX9nXqobrvZ4I6H8Y/rIU5KyTc/E8SnqPoYDmhUVDHY
- MqoF67mV9SfDwrJexSVQP8DM1bWrq2rhpiOk60l6brWDlMSI+t07ckuZhoJkNBe8HDvqG4ZUJhuZcUiV2nzLrQg3mYL8L3nbAD9Gc7L3fndZsRR/hnFhwldv
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240619135143.kr2tx4ynxayc5v3a@bogus>
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: OVQtWNf157rS_leVNyegDf2H0YEELSVJ
+X-Proofpoint-GUID: OVQtWNf157rS_leVNyegDf2H0YEELSVJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
+ phishscore=0 bulkscore=0 suspectscore=0 clxscore=1011 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406190116
 
-
-
-On 19/06/24 16:43, Nathan Chancellor wrote:
-> On Wed, Jun 19, 2024 at 11:40:57AM +0200, Javier Carrasco wrote:
->> Use the __counted_by compiler attribute for the data[] flexible array member
->> to improve the results of array bound sanitizers.
->>
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->> ---
->> The size is assigned before the first reference to the flexible array
->> (see pkt_add()), which allows for a straightforward annotation without
->> further modifications.
+On Wed, Jun 19, 2024 at 02:51:43PM +0100, Sudeep Holla wrote:
+> On Mon, Jun 17, 2024 at 10:18:09AM -0700, Elliot Berman wrote:
+> > SoC vendors have different types of resets and are controlled through
+> > various registers. For instance, Qualcomm chipsets can reboot to a
+> > "download mode" that allows a RAM dump to be collected. Another example
+> > is they also support writing a cookie that can be read by bootloader
+> > during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
+> > vendor reset types to be implemented without requiring drivers for every
+> > register/cookie.
+> > 
+> > Add support in PSCI to statically map reboot mode commands from
+> > userspace to a vendor reset and cookie value using the device tree.
+> > 
+> > A separate initcall is needed to parse the devicetree, instead of using
+> > psci_dt_init because mm isn't sufficiently set up to allocate memory.
+> > 
+> > Reboot mode framework is close but doesn't quite fit with the
+> > design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
+> > be solved but doesn't seem reasonable in sum:
+> >  1. reboot mode registers against the reboot_notifier_list, which is too
+> >     early to call SYSTEM_RESET2. PSCI would need to remember the reset
+> >     type from the reboot-mode framework callback and use it
+> >     psci_sys_reset.
+> >  2. reboot mode assumes only one cookie/parameter is described in the
+> >     device tree. SYSTEM_RESET2 uses 2: one for the type and one for
+> >     cookie.
+> >  3. psci cpuidle driver already registers a driver against the
+> >     arm,psci-1.0 compatible. Refactoring would be needed to have both a
+> >     cpuidle and reboot-mode driver.
+> >
 > 
-> Agreed, this seems like a reasonable patch in and of itself that should
-> work:
+> I need to think through it but when you first introduced the generic
+> Documentation/devicetree/bindings/power/reset/reboot-mode.yaml bindings
+> I also looked at drivers/power/reset/reboot-mode.c
 > 
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> I assumed this extension to that binding would reuse the same and
+> PSCI would just do reboot_mode_register(). I didn't expect to see these
+> changes. I might have missing something but since the bindings is still
+> quite generic with additional cells that act as additional cookie for
+> reboot call, I still think that should be possible.
 > 
-> It might also make sense to change the pkt allocation to use
-> struct_size() instead of open coding it?
+> What am I missing here then ?
+> 
 
-+1 :)
+Right, if that was only thing to "solve" to make it easy to use
+reboot-mode framework, I agree we should update reboot mode framework to
+work with the additional cells. There are a few other issues I mention
+above which, when combined, make me feel that PSCI is different enough
+from how reboot mode framework works that we shouldn't try to make PSCI
+work with the framework. Issues #1 and #2 are pretty easy to solve
+(whether they should be solved is different); I'm not sure a good
+approach to issue #3.
 
-Thanks
---
-Gustavo
+Thanks,
+Elliot
+
 
