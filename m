@@ -1,66 +1,73 @@
-Return-Path: <linux-kernel+bounces-221690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BEB90F73F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:56:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A2D90F744
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B27A281F71
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:56:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7931C211A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6683159217;
-	Wed, 19 Jun 2024 19:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE100159565;
+	Wed, 19 Jun 2024 19:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="cUMIEkC5"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dBLe2KBm"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C281422A2
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD4D158DD1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718826983; cv=none; b=tjK+luOacbT2im5UD2hiQls6cZwFiLcyidc+DqQqu1xuAhirjSd2ETuopiAXPS8XNBOzF07eM+4xIE7yN/smfdOLVDindmL0/BZu3dn/rbilCGgWLUzHs4Y9WdKbKV8TaJcsy776Wo+3deBN4Qk5lsrrjrxMVked896glfrZn64=
+	t=1718827042; cv=none; b=sK6v3axsGEyGVdp2uxC2nSw8XC2QzY4mW56KxYC9nvAKlwhgxrsxKEMpRIRCtbvm5v2wTfXt5btivrIyaRtw/8xOgM4HYSRVjSWWqRvxyO6HV0r6Gdl5Cb5u3apgSLD//jxOqJBRhmMiAgTCCiWuSnNc4ERsYBHROYw8CptO6bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718826983; c=relaxed/simple;
-	bh=7CwnBP+4cGwZQuJJW8YWaPRddYGkYIrG+c5Kwn0f9Kc=;
+	s=arc-20240116; t=1718827042; c=relaxed/simple;
+	bh=4me6X2bHfsq1TiQJ4WdBTA05DRCGGjpKMn1S9ccRekE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JN8e/ZW0woVXxO6CCfjGlpYWF2IMhsAWyTBebOxLIlX28YNQaFXsudN8URVK/iQmt7H1CBFRHRVNwO9blAScACuyGJGLr5/pb2VAbdD+cNB8zUSmXc1ILMXL/VLgfULhFLzscQEhX/HkDvLKYzIBwVcgUISS+Ugqd6jsZLLsaWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=cUMIEkC5; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
-	by cmsmtp with ESMTPS
-	id K1Bvs23TjSLKxK1PpsNkLp; Wed, 19 Jun 2024 19:56:21 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id K1PosRWDYDoe7K1Pos3shA; Wed, 19 Jun 2024 19:56:21 +0000
-X-Authority-Analysis: v=2.4 cv=Gq1E+F1C c=1 sm=1 tr=0 ts=667337e5
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=wYkD_t78qR0A:10 a=VwQbUJbxAAAA:8
- a=pGLkceISAAAA:8 a=KW3gg0Ai8grSkJK8CL4A:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=eaO3vrXA39/v4UfFM5hBURpZQ31SpLg2lD0Yrk2pD1U=; b=cUMIEkC5zHTWZZXiy0tXc7hYzi
-	OWyMSq9Scd1Ksz9HwbsYhLsOQNK/EcnsZgXSyY38ZGdg67fnNGp3gBYYzjPZhM9r/s1Dm0iZP8afv
-	uBXklAcALPZKj8P0TB1+YA6Fl/S+ZI7b5UnsBDmd4jseLOvwh9X+vYpN2lnP9U87OEi0e89IhV0/N
-	381JtgxVJjsvJfde3UYI0pgoAV0ExYNgaH8QI9IG7X4DZYrlyMsbc8olXLkJ8bznehXyeDwcSFy+T
-	gJ5pnjUe8OIZe6vF3tGFjOUx12XcmxPU9SniQBMTDhhLWEHINNsOCAjMNVqN5Ndogndnukp7EsQ24
-	zHcfqa6Q==;
-Received: from [201.172.173.139] (port=46726 helo=[192.168.15.14])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sK1Pn-000y00-0f;
-	Wed, 19 Jun 2024 14:56:19 -0500
-Message-ID: <62ab07f5-3d09-4f84-b917-f7e16fdfd32d@embeddedor.com>
-Date: Wed, 19 Jun 2024 13:56:17 -0600
+	 In-Reply-To:Content-Type; b=M5VCpnUO219NCt23hXRODz/g1gjPIeBqla1ZbOwGOmdPiRHBn9P/r6dQb8QCTrQ2qpOlH3JbOx6jOnUZAk2uklE5isfxK+u5ySs5XqqyHU43x8h5aiMlVwHrBm6oc0C9WBV720mjmA3VYoIFCe8nMLEFr1t3/ei7w2Aq2KYxIYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dBLe2KBm; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2598a57b2c1so109574fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:57:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718827039; x=1719431839; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z9qBxHg+OHvtBgD9gIdkfXbSsKcI6es7NIjQNQHIQGM=;
+        b=dBLe2KBmVV8Fk7ssT10EgEzn0AQuDxDNPQP9xZSZ2nTu08oeWwRKO+3iX5voQhOv8t
+         NsueDkSkW0SvaRPDSjDcy+tVq3ckQdUc+/TStVAEdzkW0aZcLv90vOmpUYCy0WelTsYL
+         kC0yZ8fVV5PjV6n09IHhJowenLQ5KPjSCl+gNMKyH4OittG2hRt0MexqKih4sSRUKjbS
+         ffyw6kcNEWa5lfinQmTEFYhxJwJSUZ883T8t7/6L92ebhXMkb8y99MxNOllGtY5BJ04x
+         VW72C/vOoYrJOAEQ9BnTfgMkN8So11Ae4Dn31d0g3qDcWj0/6BL/qm83vu7pOvW9j6kZ
+         a9oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718827039; x=1719431839;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z9qBxHg+OHvtBgD9gIdkfXbSsKcI6es7NIjQNQHIQGM=;
+        b=CcPs/0ZNbnAjH26YIxxjCoHnScTGrsJry6n8tZLyS/3dYuo65LjUdusJhaMRHAVQbo
+         MKjiPNUvZNeZZri3WcNaZaYQ/Te8HfD7vYBJnnO7gHlJjkG7OI1nQF4Vo7Uhyu1/2AgQ
+         47jlAJy5N4D32mI5Lx0PkGIwVfMDtbyYxjShugJFVOGMgNCHS1jmDskhsDsQDszr1Fuu
+         Y+u/HcdRVtf3yfcXuf9KwgvjhAmy3fjIwHCUOfFhjnTyzJUWvaatY6QvcGfb6F6EDlk9
+         24QTQh/b61I26Zqqqgegf+OlxaJn8wYnSk12bRHfxbUTis6X7nV3wxJ/9WnMG/p0vZt0
+         oRyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVkJayl1+fpGmssE9IbxmMI+5klxMXUTkH47gSYRhp+P8j5qaxdHJq30d5G62SwvGeJeFl+/sn81DCu1uG9rM59wbqwFCQVoJmmPm5
+X-Gm-Message-State: AOJu0Ywsu68C3znmG4PsGP0CXYLtDENmC4o5zg+PGL5wBEptFIi6Vq5B
+	XWlFsNinoZeadlHvksNUDddQhT3RzhIflheV9U8sfFHzTvDKyBb7gDuibfOVsbc=
+X-Google-Smtp-Source: AGHT+IFIUTihrHZD3I/z7TebG9AmH7Kc94UGPrYGOv57KU4OX/INgP1nt8tRMicOxEV5usreFEe6iQ==
+X-Received: by 2002:a05:6870:e2d6:b0:254:affe:5a05 with SMTP id 586e51a60fabf-25c94990ab4mr4149008fac.21.1718827039594;
+        Wed, 19 Jun 2024 12:57:19 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25983669238sm951101fac.33.2024.06.19.12.57.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 12:57:19 -0700 (PDT)
+Message-ID: <8d6b39c8-a00c-4440-8451-70eac566c544@baylibre.com>
+Date: Wed, 19 Jun 2024 14:57:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,76 +75,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] USB: serial: garmin_gps: annotate struct
- garmin_packet with __counted_by
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Johan Hovold <johan@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kees Cook
- <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-References: <20240619-garmin_gps_counted_by-v2-0-f82f10ebbf28@gmail.com>
- <20240619-garmin_gps_counted_by-v2-1-f82f10ebbf28@gmail.com>
+Subject: Re: [PATCH v4 5/6] dt-bindings: iio: adc: Add AD4000
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1718749981.git.marcelo.schmitt@analog.com>
+ <34a16c6e513b32bc6111b695e1c8b467bd6993d9.1718749981.git.marcelo.schmitt@analog.com>
 Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240619-garmin_gps_counted_by-v2-1-f82f10ebbf28@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <34a16c6e513b32bc6111b695e1c8b467bd6993d9.1718749981.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sK1Pn-000y00-0f
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.14]) [201.172.173.139]:46726
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfDK6+IgmatiGvTMrEM+5VjCpVwhEhLMxLsivITqIGcrxS31ZtlfdMqhkRafSCeCtlkOV98iy3YcGFiVTNojq4d86lIFSSmVAK8hmbYGtuEnUBLpJAf/C
- x5adCrPKcZBAuXWsMOt4S3eD5tA2i9lagHKWHDW3a2BJw+TgMOLUwTf8aV6DDmUblw/A6fXF1uWDFBBN7WPoQaMcf4uZMtZm5d2Icc3IKgZH6IBv9q0KeeAq
 
-
-
-On 19/06/24 21:42, Javier Carrasco wrote:
-> Use the __counted_by compiler attribute for the data[] flexible array
-> member to improve the results of array bound sanitizers.
+On 6/18/24 6:12 PM, Marcelo Schmitt wrote:
+> Add device tree documentation for AD4000 series of ADC devices.
 > 
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+...
 
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> +  adi,spi-mode:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum: [ single, chain ]
+> +    description: |
+> +      This property indicates the SPI wiring configuration.
+> +
+> +      When this property is omitted, it is assumed that the device is using what
+> +      the datasheet calls "4-wire mode". This is the conventional SPI mode used
+> +      when there are multiple devices on the same bus. In this mode, the CNV
+> +      line is used to initiate the conversion and the SDI line is connected to
+> +      CS on the SPI controller.
+> +
+> +      When this property is present, it indicates that the device is using one
+> +      of the following alternative wiring configurations:
+> +
+> +      * single: The datasheet calls this "3-wire mode". (NOTE: The datasheet's
+> +        definition of 3-wire mode is NOT at all related to the standard
+> +        spi-3wire property!) This mode is often used when the ADC is the only
+> +        device on the bus. In this mode, SDI is connected to MOSI or to VIO, and
+> +        the CNV line can be connected to the CS line of the SPI controller or to
+> +        a GPIO, in which case the CS line of the controller is unused.
+> +      * chain: The datasheet calls this "chain mode". This mode is used to save
+> +        on wiring when multiple ADCs are used. In this mode, the SDI line of
+> +        one chip is tied to the SDO of the next chip in the chain and the SDI of
+> +        the last chip in the chain is tied to GND. Only the first chip in the
+> +        chain is connected to the SPI bus. The CNV line of all chips are tied
+> +        together. The CS line of the SPI controller can be used as the CNV line
+> +        only if it is active high.
+> +
 
-Thanks
---
-Gustavo
+After reviewing the driver and going back and looking at the diagrams in [1] again,
+I think we are missing a wiring mode here. What the driver is calling "single/3-wire"
+mode is actually using 4 wires and is the wiring mode that I suggested should be
+the default since that is the only wiring configuration where we can read/write
+registers.
 
-> ---
->   drivers/usb/serial/garmin_gps.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/serial/garmin_gps.c b/drivers/usb/serial/garmin_gps.c
-> index 670e942fdaaa..57df6ad183ff 100644
-> --- a/drivers/usb/serial/garmin_gps.c
-> +++ b/drivers/usb/serial/garmin_gps.c
-> @@ -104,7 +104,7 @@ struct garmin_packet {
->   	int               seq;
->   	/* the real size of the data array, always > 0 */
->   	int               size;
-> -	__u8              data[];
-> +	__u8              data[] __counted_by(size);
->   };
->   
->   /* structure used to keep the current state of the driver */
-> 
+[1]: https://lore.kernel.org/linux-iio/87058695-a1a6-4e68-87c5-accdb8451bf4@baylibre.com/
+
+So to recap, this is what I suggest we should do:
+
+default unnamed mode:
+
+  * Wiring:
+      ADC    HOST
+      ---    ----
+      CNV    CS (or GPIO)
+      SDI    SDO
+      SDO    SDI
+      SCLK   SCLK
+  * Requires SPI controller with SPI_MOSI_IDLE_HIGH/LOW capability
+  * Can read/write registers
+  * Can do "3-wire mode"-style reads (turbo and not turbo)
+    * Requires SPI_MOSI_IDLE_HIGH
+  * Can do "4-wire mode"-style reads (turbo and not turbo)
+    * Requires SPI_MOSI_IDLE_HIGH, SPI_CS_HIGH (or no CS and cnv-gpios)
+  * Can do "daisy-chain mode"-style reads
+    * Requires SPI_MOSI_IDLE_LOW, SPI_CS_HIGH (or no CS and cnv-gpios)
+  * #daisy-chained-devices is optional
+
+"single" mode:
+
+  * Wiring: same as default except ADC SDI is hard-wired to logic high.
+  * Cannot read/write registers.
+  * Doesn't require special SPI controller (no SPI_MOSI_IDLE_HIGH/LOW)
+  * Can do "3-wire mode"-style reads (turbo and not turbo)
+  * #daisy-chained-devices is forbidden
+  * Use case: save one wire, works with any SPI controller
+
+"multi" mode:
+
+  * Wiring:
+      ADC    HOST
+      ---    ----
+      CNV    GPIO
+      SDI    CSn
+      SDO    SDI
+      SCLK   SCLK
+
+  * Cannot read/write registers.
+  * Doesn't require special SPI controller (no SPI_MOSI_IDLE_HIGH/LOW)
+  * Can do "4-wire mode"-style reads (not turbo)
+  * #daisy-chained-devices is forbidden
+  * Use case: multiple ADCs can share one CNV trigger
+
+"chain" mode:
+
+  * Wiring: same as default except ADC SDI is hard-wired to logic low.
+  * Cannot read/write registers.
+  * Doesn't require special SPI controller (no SPI_MOSI_IDLE_HIGH/LOW)
+  * Can do "daisy-chain mode"-style reads (requires CS high or cnv-gpios)
+  * #daisy-chained-devices is required
+  * Use case: save one wire, works with any SPI controller
+
+---
+
+To put it more simply in the bindings though, really this property
+is just describing how the SDI pin is wired. (CNV pin wiring can be
+inferred from this property and presence or absence of cnv-gpios
+property.) So maybe better would be:
+
+  adi,sdi-pin:
+    $ref: /schemas/types.yaml#/definitions/string
+    enum: [ high, low, cs ]
+    description:
+       Describes how the ADC SDI pin is wired. When this property is
+       omitted, ADC SDI is connected to host SDO. "high" indicates
+       that the ADC SDI pin is hard-wired to logic high (VIO).
+       "low" indicates that it is hard-wired low (GND). "cs" indicates
+       that the ADC SDI pin is connected to the host CS line.
+
+And put a note about the specialized SPI controller requirements in
+the main description.
+
 
