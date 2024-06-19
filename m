@@ -1,169 +1,125 @@
-Return-Path: <linux-kernel+bounces-220940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D18D90E969
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:28:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B7490E973
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C89FF1F24573
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:28:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4521F2453D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A54F13C8F0;
-	Wed, 19 Jun 2024 11:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8171F13D525;
+	Wed, 19 Jun 2024 11:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MDvDepqK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="BAebpz7I"
+Received: from aposti.net (aposti.net [89.234.176.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D763813AA4D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76987763FD;
+	Wed, 19 Jun 2024 11:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.234.176.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718796526; cv=none; b=lttXGxICwsPrwzYj724i4/6tmHK36CGwx9lyxm8XNkvc2f7wO3c/iWr0LOP3YiCGKykmgCATe0DIq1ihrPJcyHex77vZd2xp3oPlPZfLOFfjJpSqUYSYiO8Q1BWj0xjgwM7ytuijWhIWnLt8D5iDxDpFaKBPJP7e6sZS1NQ+2vM=
+	t=1718796633; cv=none; b=Whp66OlmBL1KsoKhe86CVRwGmOE1/Yy8pxC3u9c1w+dHCJrh0z+r0muYvjecGPMCbYfq/aqomJw+loB2WyBnCvtZf1p4qhJosecS/P0nlvnbNS0Rqhrdgmu7Tvu5qDhndrbNBdjkJf9ZeLtjTOC+NIXM7hR9yPNqAHRFxecE6Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718796526; c=relaxed/simple;
-	bh=UebvP+HuSTSd4+xs5uWLtAZajwRAnKbKtoQ1F5LF4fE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ht1A7/1qtbTYT3HHa709aBBk73P7PxEq6OafTeVZrEO75SePTkWIA1yWMTkjJf88c0UPSlrqD3xAOcC+RkQ0uFmJe63REHK2VKOTff+EqwKAXmB1+0SwAFv0CZxlM0fDnuS13rdyYSJb8x6uubESnHDuptSGNzGrtkARLWGJBV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MDvDepqK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718796524;
+	s=arc-20240116; t=1718796633; c=relaxed/simple;
+	bh=Yyxl889DHkRMW58vYSwPNQbN8gbiIvWycmZudebEJWY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IDV2ZJAdcXL2Euw+ZIYiMW/6VeXYix5/TSnep65HpsgojR7rwDC1Rk0vo86tRfGfbldeXpMmi2Hcs0n57AJt4ezOSmEdyjgX6eHRcIUr+W4uzbo7SHe9kk+tpzbjXoH3P25E7ATodVu0W6ghGmysNEQ5dHze3/TJXkv3EMV8WvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=BAebpz7I; arc=none smtp.client-ip=89.234.176.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+	s=mail; t=1718796629;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8nu4T3Lf7xrksBQPYeiJSwp8o6qGfAc6ny6mt2UlNiA=;
-	b=MDvDepqKqOPCoX6eBKw4ON4BSCgwl4HtdEPsIE3I81pGjMyO3qoS/jIwQJqCOj1fr9q8Pc
-	Wc9qjnKQsNbjyzSlI5rSWHJGN+iQ58aq7nJKvSnpCpoekcEDFohyxu026KpEqxnkUczwmq
-	8qucHqxuGdvR6BwOQRaleWgtQj4VkGw=
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
- [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-536-xvzF0N_DM3m1OPg3EFrtkA-1; Wed, 19 Jun 2024 07:28:42 -0400
-X-MC-Unique: xvzF0N_DM3m1OPg3EFrtkA-1
-Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-e02726920d8so3000013276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 04:28:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718796522; x=1719401322;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8nu4T3Lf7xrksBQPYeiJSwp8o6qGfAc6ny6mt2UlNiA=;
-        b=TKbnJKNXB6LAUxEj8s6gS9vT91rhsVS2qxJwgP/x+QXDcEhrbBsX2HMh8ypTzagWF0
-         yZajzmgbl4wWtYxvRTQ71Kx/fN5xgrC97bAy56cM/oHOPR+MLi8ZZ+iskl/2/3QZ1bIb
-         ItAreHI4b4EGMbzLUYewFLVS4zjlhkzPWwmQB5AnP5YVmb5T1CU9ujptq39YJs5NBCQV
-         VXRWNZgsMffwOyeYZQv06cZbV24HO4jxIuXdhdwtzjSbHvlrwRnXLtO3X7AwamLyQ872
-         HVoT8h/zPz+iByF3wf1geB6RaCmBhQg91eGolmlSV4aCztL3wbZRaIx1sngi6hKD4P1P
-         uSCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1/TFdBxctONeJq4S33v35STO4KauVdCC+anfeZ8Rthoq0agpgOlq9teLLd0KK1nd0+21hP0Bo7tpVkOMv5W1tIx20ToqUJ3IBAT2D
-X-Gm-Message-State: AOJu0YwjQvsgAfOnj0LuLLum273vlZ95ggBb18n5TlLj34GEpOfeGz4r
-	6yxi4yaSxxNmMkRPj/M0LqSgu+aufRRZLSXuQ8l/RHxm/dW3C+L6QSJ9s68KkKRamX3YToGX6Pm
-	jEexD9i3NzqlIGd6kZkOJAadxWEjmhurb5wr/vqRNSi5XME5nMJ/z8vfNMA0Tdnvl/KQp8omtnc
-	XkdwnOYyZcGO/IG/YYvZVKGNC9MHopZH+MPn1E
-X-Received: by 2002:a25:9e92:0:b0:dfe:f4e3:72cb with SMTP id 3f1490d57ef6-e02be16636amr2405832276.27.1718796522160;
-        Wed, 19 Jun 2024 04:28:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG2//M0xJEG1ac3l2EWYJOki/9vn16+rkHiPKi6eqTjS6c2HpE220pBNTiYol4LEfF4a8/TbCQvq5VtNyY6U/4=
-X-Received: by 2002:a25:9e92:0:b0:dfe:f4e3:72cb with SMTP id
- 3f1490d57ef6-e02be16636amr2405820276.27.1718796521806; Wed, 19 Jun 2024
- 04:28:41 -0700 (PDT)
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Yyxl889DHkRMW58vYSwPNQbN8gbiIvWycmZudebEJWY=;
+	b=BAebpz7IWphQzRh5q88qdbEOCnohwwD99HUuv6uLmCuPIcVCtRh7d7KKEOGYXbOF+yA0zg
+	fkvTnyzraP9wFmsCl/N4rlkKn5iX2/kz1KYd29knS3JTELw0E+FEe1HVIYKrcawcZNBBOz
+	E/oe8zwf+Hu5i0TxdXG7lnB6il26ZSc=
+Message-ID: <e948cd137da8e4f97bfbf7ef68a5450476aeee0c.camel@crapouillou.net>
+Subject: Re: [v11 3/7] iio: core: Add new DMABUF interface infrastructure
+From: Paul Cercueil <paul@crapouillou.net>
+To: Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
+ dmaengine@vger.kernel.org,  linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,  linaro-mm-sig@lists.linaro.org, Christian
+ =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Jonathan Cameron
+ <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Vinod Koul <vkoul@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>, 
+	linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Randy Dunlap
+	 <rdunlap@infradead.org>
+Date: Wed, 19 Jun 2024 13:30:27 +0200
+In-Reply-To: <cbcfb64a-e5c2-41a7-8847-227d4f6872de@web.de>
+References: <202406191014.9JAzwRV6-lkp@intel.com>
+	 <a4dd1d73-5af3-4d3d-8c0f-92dc439fa119@web.de>
+	 <d452ecc4fc703a1f98aa4f243c6ded7fbfe54b0e.camel@crapouillou.net>
+	 <cbcfb64a-e5c2-41a7-8847-227d4f6872de@web.de>
+Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
+ keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZM
+ LQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5Uz
+ FZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtN
+ z8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe
+ +rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY
+ 3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr
+ 1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f
+ 33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIP
+ dlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET
+ 4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7U
+ rf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KF
+ lBwgAhlGy6nqP7O3u7q23hRW5AQ0EXQqFwQEIAMo+MgvYHsyjX3Ja4Oolg1Txzm8woj30ch2nACFC
+ qaO0R/1kLj2VVeLrDyQUOlXx9PD6IQI4M8wy8m0sR4wV2p/g/paw7k65cjzYYLh+FdLNyO7IWYXnd
+ JO+wDPi3aK/YKUYepqlP+QsmaHNYNdXEQDRKqNfJg8t0f5rfzp9ryxd1tCnbV+tG8VHQWiZXNqN70
+ 62DygSNXFUfQ0vZ3J2D4oAcIAEXTymRQ2+hr3Hf7I61KMHWeSkCvCG2decTYsHlw5Erix/jYWqVOt
+ X0roOOLqWkqpQQJWtU+biWrAksmFmCp5fXIg1Nlg39v21xCXBGxJkxyTYuhdWyu1yDQ+LSIUAEQEA
+ AYkBNgQYAQoAIBYhBNdHYd8OeCBwpMuVxnPua9InSr1BBQJdCoXBAhsMAAoJEHPua9InSr1B4wsH/
+ Az767YCT0FSsMNt1jkkdLCBi7nY0GTW+PLP1a4zvVqFMo/vD6uz1ZflVTUAEvcTi3VHYZrlgjcxmc
+ Gu239oruqUS8Qy/xgZBp9KF0NTWQSl1iBfVbIU5VV1vHS6r77W5x0qXgfvAUWOH4gmN3MnF01SH2z
+ McLiaUGF+mcwl15rHbjnT3Nu2399aSE6cep86igfCAyFUOXjYEGlJy+c6UyT+DUylpjQg0nl8MlZ/
+ 7Whg2fAU9+FALIbQYQzGlT4c71SibR9T741jnegHhlmV4WXXUD6roFt54t0MSAFSVxzG8mLcSjR2c
+ LUJ3NIPXixYUSEn3tQhfZj07xIIjWxAYZo=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617-stage-vdpa-vq-precreate-v1-0-8c0483f0ca2a@nvidia.com> <20240617-stage-vdpa-vq-precreate-v1-8-8c0483f0ca2a@nvidia.com>
-In-Reply-To: <20240617-stage-vdpa-vq-precreate-v1-8-8c0483f0ca2a@nvidia.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Wed, 19 Jun 2024 13:28:05 +0200
-Message-ID: <CAJaqyWd5HRa2JVXVgPxYZn05drN8UyUHu=7jyxtON1d-XHneNg@mail.gmail.com>
-Subject: Re: [PATCH vhost 08/23] vdpa/mlx5: Clear and reinitialize software VQ
- data on reset
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
-	Cosmin Ratiu <cratiu@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 5:08=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
-> wrote:
->
-> The hardware VQ configuration is mirrored by data in struct
-> mlx5_vdpa_virtqueue . Instead of clearing just a few fields at reset,
-> fully clear the struct and initialize with the appropriate default
-> values.
->
-> As clear_vqs_ready() is used only during reset, get rid of it.
->
-> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+Le mercredi 19 juin 2024 =C3=A0 13:13 +0200, Markus Elfring a =C3=A9crit=C2=
+=A0:
+> > > Would you dare to transform the remaining goto chain into further
+> > > applications
+> > > of scope-based resource management?
+> >=20
+> > We discussed this after v6 or v7, DRM/DMABUF maintainers were not
+> > keen
+> > on doing that *just yet*.
+>=20
+> * Would you like to add any links for corresponding development
+> discussions?
 
-Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+https://lore.kernel.org/linux-iio/219abc43b4fdd4a13b307ed2efaa0e6869e68e3f.=
+camel@gmail.com/T/#eefd360069c4261aec9621fafde30924706571c94
 
-> ---
->  drivers/vdpa/mlx5/net/mlx5_vnet.c | 16 +++-------------
->  1 file changed, 3 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
-x5_vnet.c
-> index c8b5c87f001d..de013b5a2815 100644
-> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> @@ -2941,18 +2941,6 @@ static void teardown_vq_resources(struct mlx5_vdpa=
-_net *ndev)
->         ndev->setup =3D false;
->  }
->
-> -static void clear_vqs_ready(struct mlx5_vdpa_net *ndev)
-> -{
-> -       int i;
-> -
-> -       for (i =3D 0; i < ndev->mvdev.max_vqs; i++) {
-> -               ndev->vqs[i].ready =3D false;
-> -               ndev->vqs[i].modified_fields =3D 0;
-> -       }
-> -
-> -       ndev->mvdev.cvq.ready =3D false;
-> -}
-> -
->  static int setup_cvq_vring(struct mlx5_vdpa_dev *mvdev)
->  {
->         struct mlx5_control_vq *cvq =3D &mvdev->cvq;
-> @@ -3035,12 +3023,14 @@ static int mlx5_vdpa_compat_reset(struct vdpa_dev=
-ice *vdev, u32 flags)
->         down_write(&ndev->reslock);
->         unregister_link_notifier(ndev);
->         teardown_vq_resources(ndev);
-> -       clear_vqs_ready(ndev);
-> +       init_mvqs(ndev);
+(and responses below)
 
-Nitpick / suggestion if you have to send a v2. The init_mvqs function
-name sounds like it can allocate stuff that needs to be released to
-me. But I'm very bad at naming :). Maybe something like
-"mvqs_set_defaults" or similar?
+It's more nuanced than I remembered. Christian was OK to add cleanup.h
+support to the DMABUF code as long as the examples were updated as
+well, but those aren't good candidates as they don't free up the
+resources in all code paths.
 
-> +
->         if (flags & VDPA_RESET_F_CLEAN_MAP)
->                 mlx5_vdpa_destroy_mr_resources(&ndev->mvdev);
->         ndev->mvdev.status =3D 0;
->         ndev->mvdev.suspended =3D false;
->         ndev->cur_num_vqs =3D MLX5V_DEFAULT_VQ_COUNT;
-> +       ndev->mvdev.cvq.ready =3D false;
->         ndev->mvdev.cvq.received_desc =3D 0;
->         ndev->mvdev.cvq.completed_desc =3D 0;
->         memset(ndev->event_cbs, 0, sizeof(*ndev->event_cbs) * (mvdev->max=
-_vqs + 1));
->
-> --
-> 2.45.1
->
+>=20
+> * Will the desire grow for further collateral evolution according to
+> =C2=A0 affected software components?
 
+Not sure what you mean by that.
+
+Cheers,
+-Paul
 
