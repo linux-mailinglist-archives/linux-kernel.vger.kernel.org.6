@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-221231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 105A190F0BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:34:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EBB590F0B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F60DB25D8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:34:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3197281BED
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42EA152536;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A431F15253B;
 	Wed, 19 Jun 2024 14:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULgFEi/I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KHo3JVfm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AA82261D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD58A3B182
 	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 14:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718807534; cv=none; b=Q0WvhIIHsRbpMDtLI6zlcnw+y6r1JYQjaZUSOQrhhPSYf0FXM5ZKhCb8LFqADkV4nBlCwyM7vOaVnxZiQ4EDpbyl9mJsOspk57ZoqE4mWtCfsCWdtWsHgGs07np/oEPMFDL8whSHnQKWg1v0ykEwOdfe3fI8gWVny+cTDnV5unk=
+	t=1718807534; cv=none; b=G4baNlz4GjjwGU+6qiEsPo68IlpinWY/EntyuhGko/GFWiwyQCdAz7lvdQbnXgEc7M+Gx4hYqm144HU6W33pqPSCRmfjFI9szaBUCrfdbBhdg+tSGRoQcCNVbITIWwHhOI9+OXELGj/6K4f+eBhD/lwfMUUr3l+isLq1jrLy2Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718807534; c=relaxed/simple;
-	bh=3aWzivexV5OnPdHVvbgtL9q6cZA0n9TwnH6JwwcATE4=;
+	bh=RcmQcMTGb3TjjetIygkqxi2DFEmz4EZHzeWqu6F7toc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rUMpMG6tRx3yIYDUTXyrN9qaRKgttVJi2txzXyZcADa0RCt718Qf50V5LBQb7SF9yUwxAqYhP8gdGDzErDDHU8ZJcnbXkvu8bHJvWOlQzqOfLZIGcG590RIWKNy7bmEAOvOqaZvkGccD64aNwfLp4+jAYJHHDNbSuaqslfQvJXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULgFEi/I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A662BC4AF0E;
+	 In-Reply-To:To:Cc; b=D4GGRku6721So1KV1YxGz16OnSnC5qDNx/mTpnKAIJ13AhHZ0uW/YJitvat97zUX1w3FSRUZ6swxLiD17a7Jn7/pbdeMF4/Inojmc/K+xbPr1tS17bal2MCP/5YDGlQSGwiPWZRycSdH3TzVhs3nTaVgRD6eVhsYiaRQuXggnBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KHo3JVfm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BCC5BC4AF11;
 	Wed, 19 Jun 2024 14:32:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1718807534;
-	bh=3aWzivexV5OnPdHVvbgtL9q6cZA0n9TwnH6JwwcATE4=;
+	bh=RcmQcMTGb3TjjetIygkqxi2DFEmz4EZHzeWqu6F7toc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ULgFEi/IAO27gYLvrIVQrMwdiwXE5ksvrBvLu3yVvdX6PRPWdFcOctdW6q45Fewkg
-	 mxbCO24QwntMSjIu8QbCxp7FmNmkAJuHqyxQeQpRGhnZzvKy5NBlfSa4d4hfzmB0yR
-	 0wk7ZLD6N4IjU2/82Es+XEVq/b91WC3s2v3MSiPz2Br5nTQrTTTLmOM3maA9SH9cy5
-	 iJ4YAck6+kR33FAt0XT6Y9ejZ1xJ+kTjFg8HWwk2CjYBPmzH4XHUBAYNu/R/Zmf5za
-	 5z8JJI7W+/e/9I0N/yxqREdqhqHdvCtkGNFIhTEg/vdB8dowaIyFkml2bCH5qznJec
-	 bDdWT7Wz3KUyg==
+	b=KHo3JVfmCxOaL63n6fJLsKP8lVeBOGVeMJICLHVttOLOgkG91Bxyn8mIMcFD7KHkr
+	 xlaMuabrd0PRI9oLSR9qYHRcC8wWpTcHVUmn1l96iVmLT6VMZBxvzZNNVHfUryscpl
+	 czLMx71uZ3heD79GApGA1qKXUTk0fBtOmSMo0/lbY5rok5pRB33v0BZyDAzC/b3tZL
+	 SSa32A/lX2ySTNLKdfS0kOrKsqsw9cYe5KC5rROGVSHZFZ6d+MvqTSFVAzW8XPqnhD
+	 6xXkNAVWyXnKVydMcI+q4FZ4FKYmevfRtQybc1QJ/hyLy12AhMh/j6E6vIt2Sf63rH
+	 I7D/0FovnsLtQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEF2C27C79;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AFCC27C53;
 	Wed, 19 Jun 2024 14:32:14 +0000 (UTC)
 From: Hsiao Chien Sung via B4 Relay <devnull+shawn.sung.mediatek.com@kernel.org>
-Date: Wed, 19 Jun 2024 22:30:48 +0800
-Subject: [PATCH v2 07/14] drm/mediatek: Add DRM_MODE_ROTATE_0 to rotation
- property
+Date: Wed, 19 Jun 2024 22:30:49 +0800
+Subject: [PATCH v2 08/14] drm/mediatek: Add new color format MACROs in OVL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240619-mediatek-drm-next-v2-7-abf68f46f8d2@mediatek.com>
+Message-Id: <20240619-mediatek-drm-next-v2-8-abf68f46f8d2@mediatek.com>
 References: <20240619-mediatek-drm-next-v2-0-abf68f46f8d2@mediatek.com>
 In-Reply-To: <20240619-mediatek-drm-next-v2-0-abf68f46f8d2@mediatek.com>
 To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
@@ -69,11 +68,11 @@ Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  Hsiao Chien Sung <shawn.sung@mediatek.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718807531; l=3032;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718807531; l=2232;
  i=shawn.sung@mediatek.com; s=20240616; h=from:subject:message-id;
- bh=Rr3Cn0zcHA1tgf1aiwUMCaOAX6oP85JESJH6W+QO72g=;
- b=X89nl0hoD9/fxKLIjA9LXFs1fIXdKluqoGGwHoFrQZBrBCJIcnaoO9Y3h78jYD05f3OBcoyQl
- qYLesDX019rAOtwzWEl8wD/sEsN/BhOWVltvLMMBytdVIgz+qWA85IP
+ bh=oUVv7apF4+nnjxXV56NKRfwr0Y4AFgBqQp/J41EVF8c=;
+ b=CurnOUQgY9U6U5M2zMATgsFC1vs0x2x3pnYy8evYWtiNqeVJKwC9GAWJg9+fl9t91UoRWXXQu
+ C1C7qcO6aT0AMidpUF7y6DA+NhN+R6yOWP+msh/CWnG2qQLIHQbVxMp
 X-Developer-Key: i=shawn.sung@mediatek.com; a=ed25519;
  pk=lq1w8BuWDINX+4JHjGHhhbAU5ICP+cL9VCj7wn+cEDA=
 X-Endpoint-Received: by B4 Relay for shawn.sung@mediatek.com/20240616 with
@@ -83,85 +82,57 @@ Reply-To: shawn.sung@mediatek.com
 
 From: Hsiao Chien Sung <shawn.sung@mediatek.com>
 
-Always add DRM_MODE_ROTATE_0 to rotation property to meet
-IGT's (Intel GPU Tools) requirement.
+Define new color formats to hide the bit operation in the MACROs to make
+the switch statement more concise.
+Change the MACROs to align the naming rule in DRM.
 
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_ddp_comp.h |  6 +++++-
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 17 +++++------------
- drivers/gpu/drm/mediatek/mtk_plane.c    |  2 +-
- 3 files changed, 11 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-index 26236691ce4c..f7fe2e08dc8e 100644
---- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.h
-@@ -192,7 +192,11 @@ unsigned int mtk_ddp_comp_supported_rotations(struct mtk_ddp_comp *comp)
- 	if (comp->funcs && comp->funcs->supported_rotations)
- 		return comp->funcs->supported_rotations(comp->dev);
- 
--	return 0;
-+	/*
-+	 * In order to pass IGT tests, DRM_MODE_ROTATE_0 is required when
-+	 * rotation is not supported.
-+	 */
-+	return DRM_MODE_ROTATE_0;
- }
- 
- static inline unsigned int mtk_ddp_comp_layer_nr(struct mtk_ddp_comp *comp)
 diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index bd00e5e85deb..880ef61ccc92 100644
+index 880ef61ccc92..3724f77c5b6b 100644
 --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
 +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -297,27 +297,20 @@ int mtk_ovl_layer_check(struct device *dev, unsigned int idx,
- 			struct mtk_plane_state *mtk_state)
- {
- 	struct drm_plane_state *state = &mtk_state->base;
--	unsigned int rotation = 0;
- 
--	rotation = drm_rotation_simplify(state->rotation,
--					 DRM_MODE_ROTATE_0 |
--					 DRM_MODE_REFLECT_X |
--					 DRM_MODE_REFLECT_Y);
--	rotation &= ~DRM_MODE_ROTATE_0;
--
--	/* We can only do reflection, not rotation */
--	if ((rotation & DRM_MODE_ROTATE_MASK) != 0)
-+	/* check if any unsupported rotation is set */
-+	if (state->rotation & ~mtk_ovl_supported_rotations(dev))
- 		return -EINVAL;
- 
- 	/*
- 	 * TODO: Rotating/reflecting YUV buffers is not supported at this time.
- 	 *	 Only RGB[AX] variants are supported.
-+	 *	 Since DRM_MODE_ROTATE_0 means "no rotation", we should not
-+	 *	 reject layers with this property.
- 	 */
--	if (state->fb->format->is_yuv && rotation != 0)
-+	if (state->fb->format->is_yuv && (state->rotation & ~DRM_MODE_ROTATE_0))
- 		return -EINVAL;
- 
--	state->rotation = rotation;
--
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/mediatek/mtk_plane.c
-index a74b26d35985..1723d4333f37 100644
---- a/drivers/gpu/drm/mediatek/mtk_plane.c
-+++ b/drivers/gpu/drm/mediatek/mtk_plane.c
-@@ -338,7 +338,7 @@ int mtk_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 		return err;
- 	}
- 
--	if (supported_rotations & ~DRM_MODE_ROTATE_0) {
-+	if (supported_rotations) {
- 		err = drm_plane_create_rotation_property(plane,
- 							 DRM_MODE_ROTATE_0,
- 							 supported_rotations);
+@@ -55,8 +55,10 @@
+ #define OVL_CON_BYTE_SWAP	BIT(24)
+ #define OVL_CON_MTX_YUV_TO_RGB	(6 << 16)
+ #define OVL_CON_CLRFMT_RGB	(1 << 12)
+-#define OVL_CON_CLRFMT_RGBA8888	(2 << 12)
+-#define OVL_CON_CLRFMT_ARGB8888	(3 << 12)
++#define OVL_CON_CLRFMT_ARGB8888	(2 << 12)
++#define OVL_CON_CLRFMT_RGBA8888	(3 << 12)
++#define OVL_CON_CLRFMT_ABGR8888	(OVL_CON_CLRFMT_RGBA8888 | OVL_CON_BYTE_SWAP)
++#define OVL_CON_CLRFMT_BGRA8888	(OVL_CON_CLRFMT_ARGB8888 | OVL_CON_BYTE_SWAP)
+ #define OVL_CON_CLRFMT_UYVY	(4 << 12)
+ #define OVL_CON_CLRFMT_YUYV	(5 << 12)
+ #define OVL_CON_CLRFMT_RGB565(ovl)	((ovl)->data->fmt_rgb565_is_0 ? \
+@@ -369,18 +371,18 @@ static unsigned int ovl_fmt_convert(struct mtk_disp_ovl *ovl, unsigned int fmt)
+ 		return OVL_CON_CLRFMT_RGB888(ovl) | OVL_CON_BYTE_SWAP;
+ 	case DRM_FORMAT_RGBX8888:
+ 	case DRM_FORMAT_RGBA8888:
+-		return OVL_CON_CLRFMT_ARGB8888;
++		return OVL_CON_CLRFMT_RGBA8888;
+ 	case DRM_FORMAT_BGRX8888:
+ 	case DRM_FORMAT_BGRA8888:
+ 	case DRM_FORMAT_BGRA1010102:
+-		return OVL_CON_CLRFMT_ARGB8888 | OVL_CON_BYTE_SWAP;
++		return OVL_CON_CLRFMT_BGRA8888;
+ 	case DRM_FORMAT_XRGB8888:
+ 	case DRM_FORMAT_ARGB8888:
+ 	case DRM_FORMAT_ARGB2101010:
+-		return OVL_CON_CLRFMT_RGBA8888;
++		return OVL_CON_CLRFMT_ARGB8888;
+ 	case DRM_FORMAT_XBGR8888:
+ 	case DRM_FORMAT_ABGR8888:
+-		return OVL_CON_CLRFMT_RGBA8888 | OVL_CON_BYTE_SWAP;
++		return OVL_CON_CLRFMT_ABGR8888;
+ 	case DRM_FORMAT_UYVY:
+ 		return OVL_CON_CLRFMT_UYVY | OVL_CON_MTX_YUV_TO_RGB;
+ 	case DRM_FORMAT_YUYV:
 
 -- 
 Git-146)
