@@ -1,265 +1,160 @@
-Return-Path: <linux-kernel+bounces-221115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B5990EEBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:31:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F8690EEC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49DAA1C2465F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:31:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88BD11F2192E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFED149DFC;
-	Wed, 19 Jun 2024 13:31:36 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4405314B07B;
+	Wed, 19 Jun 2024 13:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TpU+pb1+"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2D81E526;
-	Wed, 19 Jun 2024 13:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E8113DDC0;
+	Wed, 19 Jun 2024 13:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718803896; cv=none; b=bpl2KqsRoz6ahcGKhi9A0zuthJmYj+49vCJFDYiOaIx8zxhJ1mcxTqHixtmm9/j+5Y3d3Q7yhOnlyvzJpPfSOexy1KfO9IMj8MIY1PmgFpYIMuhoVCOSi1OevUvlc2y3jUHq8NWNKjbQKiNJep+92ObsYctg2XFPQEmdqC7gJ8Q=
+	t=1718803906; cv=none; b=YlmXL/LmR7u2Vfhusyjn3L8+wpE2XsaAmJEAAkzR/2QxMEH87X/E3BvWZaZUFNYUQhE6YunZP2Y4WxZvxABb9tZ8bpXxDtM9HfKgiYllakrVeWwcUdQF2jJpA433t24Lp2NfOvhrDFT3JKi0y+XQSTiP+mfAH4J3tXUfToVMGIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718803896; c=relaxed/simple;
-	bh=+QbUwWCPAn++iu2c2Vl3hSYdSoxIO8Gi/j1gFVZds8c=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CxDCCxFMmMDdiKqHH3a+GNdT64DrvufiYi7i/YHDdqpZuqzH66k3YcsHxMvPIfVvKaw9BO1kJwx9jKEXj+uQ50L1/tTEpk/lNFxTUGWxGYOn3dCmO51Hh0nR1Er1Zhpq8K1RU2/h6rpqaD44Uisf4AltulZy+J51mBXCLlppx/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W44JS2p9Qz6K6FZ;
-	Wed, 19 Jun 2024 21:31:04 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 943051406AE;
-	Wed, 19 Jun 2024 21:31:24 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 19 Jun
- 2024 14:31:20 +0100
-Date: Wed, 19 Jun 2024 14:31:17 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>, "Rafael
- J. Wysocki" <rafael@kernel.org>, Shiju Jose <shiju.jose@huawei.com>, Tony
- Luck <tony.luck@intel.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>, "Alison Schofield"
-	<alison.schofield@intel.com>, Ard Biesheuvel <ardb@kernel.org>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Ira Weiny
-	<ira.weiny@intel.com>, Len Brown <lenb@kernel.org>, Shuai Xue
-	<xueshuai@linux.alibaba.com>, <linux-acpi@vger.kernel.org>,
-	<linux-edac@vger.kernel.org>, <linux-efi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] efi/cper: align ARM CPER type with UEFI 2.9A/2.10
- specs
-Message-ID: <20240619143117.00000c9c@Huawei.com>
-In-Reply-To: <60da74c80a0b05ea4a5b4b7f2eda1b58d555edce.1718794335.git.mchehab+huawei@kernel.org>
-References: <60da74c80a0b05ea4a5b4b7f2eda1b58d555edce.1718794335.git.mchehab+huawei@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718803906; c=relaxed/simple;
+	bh=ZBfChBVBWlZJjIw54iQUHW8NeUGjauKrsiDKAhuBBOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KH4sq5FFul9mfwdQ8o2P1fr6I9R4dQ6wwIVWPyh//dYukSOC4cLN0km9VbTn7uS421uYHiDZqmeEcWrgD1yYbVNHH7Mvt3IejgQlwybZTyaeX08RBgqpVxvFejCQYuwWErPGqvEz6Gr5yFpJLbDo9vU8ERlt5kP2Vd+NYSpyA2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TpU+pb1+; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6e9f52e99c2so4813683a12.1;
+        Wed, 19 Jun 2024 06:31:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718803904; x=1719408704; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=HI0t+/1JB+6ef0nfrkSzkQxua50xtKanE9sFqkgJ53E=;
+        b=TpU+pb1+KBmf8s06PVFGWzH6MZIHPaHcuCBvH7cHNANRvGjvT9tkVLROCEyjXLZs5Q
+         J2UHSwctxXzokTleKxsd869SeM0rifbc/1sobJk1vZkFP1/RB15DlUre2AJhths+kKmF
+         56Q+B8RisarVeNhlAc/v368Iwuof/xk9XUurzmhRNeImzsuC556wVZL2L6EHbJQpJJ53
+         mQSRUDe44PpWoaY7ITsvLjkP4rOmAMD6pAFd9GAajah61U7Fsz6mGfl6XoiCWM6BbFJR
+         RiLHWVuaQvizvv9vkRcIJ2qeZyS0vi9iy1rRGOyQ167K+eOvYWuFCZKV5etIsVbFxt6T
+         4c1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718803904; x=1719408704;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HI0t+/1JB+6ef0nfrkSzkQxua50xtKanE9sFqkgJ53E=;
+        b=FMqH104ESVNXSLrQWeHELu+eJblc8gAgeDzJu8nLQsIDWMLtC08iRMAHDhRkyFDpA2
+         T7Yi56KaYdpZs4hmK7PnonK8LmCMGq11hZJd0tQXPLy9cyAeCuRUiFaCDlbVCG5+mNDh
+         ICuOEfimrAvOF0hCJ28+X2hlh1OzUi9n0O0UwFJOFnZ4O8I+MV1A4Iq/zvyEhFR2mfeX
+         wVKnU+npJwQhK+wAWI3NFqiYIuweE+OcWz1zoszogdUGus5TuPeMurXSFeOhRiKax22N
+         lfvt0pClohHBDgsiHutZldwEoBugHb5wDnXKfm24M9Uim/t+D/kg+mwP+rEXzFZon0dr
+         7pPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIjF6yY8kkkKvOj5N9Ei3ltpsa/3LF1bywsvEdWOO/ptaUd04qE6RBgsbsDZdbsVrWKElNd0034ejMF/ut/SR7oV0q/7Ffu/gtOUnP4VZ36eVatUu1qlcbKCIgNixCgN2rmOiIk+w2Gk7ZPj3zLiiMjWCEBeMS2Z8g447kf4HQZhsCfQ==
+X-Gm-Message-State: AOJu0YxZbP8pN2JYg8UBNv5gB+HzLX//6GkfTs4jBjBxu8B+fStb89/B
+	EpffUqTXZ2rmqsuD3YfB56HMnPSSXfw03t9+hoBAK0+1Ygg1eTO0
+X-Google-Smtp-Source: AGHT+IFPpveAvpchtmNTCN+GZfPG6z+XtfrCcq/Z03OLD+nabATM05+LiujAr+DnkDsUiF7evQTapA==
+X-Received: by 2002:a17:90a:4dc6:b0:2c7:5622:bf40 with SMTP id 98e67ed59e1d1-2c7b59f0cf8mr2471835a91.4.1718803903861;
+        Wed, 19 Jun 2024 06:31:43 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c79963a2b9sm2862985a91.54.2024.06.19.06.31.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 06:31:42 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <2a1ae708-3718-4f70-9837-bcc50b7c8f66@roeck-us.net>
+Date: Wed, 19 Jun 2024 06:31:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/9] Add Mule MFD support
+To: Farouk Bouabid <farouk.bouabid@cherry.de>,
+ Quentin Schulz <quentin.schulz@cherry.de>, Jean Delvare <jdelvare@suse.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Peter Rosin <peda@axentia.se>, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20240618-dev-mule-i2c-mux-v4-0-5462d28354c8@cherry.de>
+ <fdeea79f-4568-4e70-9b49-0c02abc91170@roeck-us.net>
+ <4f92528b-8311-4c0b-998b-f0221d7bd474@cherry.de>
+ <c2803eed-b4f4-44cf-a7f7-9557d05e798e@roeck-us.net>
+ <19ee521d-298d-4718-bdc6-f282666de371@cherry.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <19ee521d-298d-4718-bdc6-f282666de371@cherry.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Wed, 19 Jun 2024 12:52:38 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On 6/19/24 00:45, Farouk Bouabid wrote:
 
-> Up to UEFI spec, the type byte of CPER struct was defined simply
-> as:
+>>
+>> If it is properly defined in devicetree, the emulated AMC6821 should be
+>> an i2c device, possibly sitting behind an i2c multiplexer, not a
+>> platform device.
 > 
-> Type at byte offset 4:
 > 
-> 	- Cache error
-> 	- TLB Error
-> 	- Bus Error
-> 	- Micro-architectural Error
-> 	All other values are reserved
+> The emulated AMC6821 and the Mule I2C mux are both reachable using I2C address (0x18), and hence the use of MFD as the mux only uses one I2C register that is not used by AMC6821.
 > 
-> Yet, there was no information about how this would be encoded.
-> 
-> Spec 2.9A corrected it by defining:
-> 
-> 	- Bit 1 - Cache Error
-> 	- Bit 2 - TLB Error
-> 	- Bit 3 - Bus Error
-> 	- Bit 4 - Micro-architectural Error
-> 	All other values are reserved
-> 
-> Spec 2.10 also preserve the same encoding as 2.9A
-> 
-> See: https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-information
-> 
-> Adjust CPER handling code for ARM to properly handle UEFI 2.9A and
-> 2.10 encoding.
 
-Hi Mauro,
+Whatever you do, the amc chip is still an i2c driver and needs to remain one.
+Modeling it as platform driver is simply wrong, and I won't accept those patches.
 
-I'd be tempted to use "ARM Processor" throughout this patch description
-as could in theory be something else and currently the link
-is the only way to tell!
-
-A few comments inline.
-
-Good catch on the spec change btw.
-
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  drivers/acpi/apei/ghes.c        | 19 +++++++++++---
->  drivers/firmware/efi/cper-arm.c | 44 ++++++++++++++-------------------
->  include/linux/cper.h            |  9 +++----
->  3 files changed, 37 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index ed32bbecb4a3..365de4115508 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -546,9 +546,12 @@ static bool ghes_handle_arm_hw_error(struct acpi_hest_generic_data *gdata,
->  	p = (char *)(err + 1);
->  	for (i = 0; i < err->err_info_num; i++) {
->  		struct cper_arm_err_info *err_info = (struct cper_arm_err_info *)p;
-> -		bool is_cache = (err_info->type == CPER_ARM_CACHE_ERROR);
-> +		bool is_cache = (err_info->type & CPER_ARM_CACHE_ERROR);
-
-Matches local style I guess but the () are unnecessary.
-
->  		bool has_pa = (err_info->validation_bits & CPER_ARM_INFO_VALID_PHYSICAL_ADDR);
-> -		const char *error_type = "unknown error";
-> +		char error_type[120] = "";
-
-> +		char *s = error_type;
-> +		int len = 0;
-> +		int i;
-
-Shadowing i which is bad for readability.
-
->  
->  		/*
->  		 * The field (err_info->error_info & BIT(26)) is fixed to set to
-> @@ -562,8 +565,16 @@ static bool ghes_handle_arm_hw_error(struct acpi_hest_generic_data *gdata,
->  			continue;
->  		}
->  
-> -		if (err_info->type < ARRAY_SIZE(cper_proc_error_type_strs))
-> -			error_type = cper_proc_error_type_strs[err_info->type];
-> +		for (i = 0; i < ARRAY_SIZE(cper_proc_error_type_strs); i++) {
-> +			if (!(err_info->type & (1U << i)))
-> +				continue;
-> +
-> +			len += snprintf(s, sizeof(err_info->type) - len, "%s ", cper_proc_error_type_strs[i]);
-
-Size of the index into the type string array?  I'm confused.
-sizeof(error_type) maybe?
-
-Also, maybe break that long line of code before cper_*
-
-
-> +			s += len;
-> +		}
-> +
-> +		if (!*error_type)
-> +			strscpy(error_type, "unknown error", sizeof(error_type));
-
-Perhaps should handle multiple bits where only one is unknown?
-So maybe compare with a mask of known bits and print this on the end (perhaps
-including which bit)?
-
->  
->  		pr_warn_ratelimited(FW_WARN GHES_PFX
->  				    "Unhandled processor error type: %s\n",
-> diff --git a/drivers/firmware/efi/cper-arm.c b/drivers/firmware/efi/cper-arm.c
-> index fa9c1c3bf168..f57641eb548a 100644
-> --- a/drivers/firmware/efi/cper-arm.c
-> +++ b/drivers/firmware/efi/cper-arm.c
-> @@ -93,15 +93,11 @@ static void cper_print_arm_err_info(const char *pfx, u32 type,
->  	bool proc_context_corrupt, corrected, precise_pc, restartable_pc;
->  	bool time_out, access_mode;
->  
-> -	/* If the type is unknown, bail. */
-> -	if (type > CPER_ARM_MAX_TYPE)
-> -		return;
-> -
->  	/*
->  	 * Vendor type errors have error information values that are vendor
->  	 * specific.
->  	 */
-> -	if (type == CPER_ARM_VENDOR_ERROR)
-> +	if (type & CPER_ARM_VENDOR_ERROR)
->  		return;
->  
->  	if (error_info & CPER_ARM_ERR_VALID_TRANSACTION_TYPE) {
-> @@ -116,43 +112,38 @@ static void cper_print_arm_err_info(const char *pfx, u32 type,
->  	if (error_info & CPER_ARM_ERR_VALID_OPERATION_TYPE) {
->  		op_type = ((error_info >> CPER_ARM_ERR_OPERATION_SHIFT)
->  			   & CPER_ARM_ERR_OPERATION_MASK);
-> -		switch (type) {
-> -		case CPER_ARM_CACHE_ERROR:
-> +		if (type & CPER_ARM_CACHE_ERROR) {
->  			if (op_type < ARRAY_SIZE(arm_cache_err_op_strs)) {
-> -				printk("%soperation type: %s\n", pfx,
-> +				printk("%scache error: %s\n", pfx,
->  				       arm_cache_err_op_strs[op_type]);
-Can we keep that this is an operation type in print?
-"%scache error, operation type: %s\n" perhaps?
-
->  			}
-> -			break;
-> -		case CPER_ARM_TLB_ERROR:
-> +		}
-> +		if (type & CPER_ARM_TLB_ERROR) {
->  			if (op_type < ARRAY_SIZE(arm_tlb_err_op_strs)) {
-> -				printk("%soperation type: %s\n", pfx,
-> +				printk("%sTLB error: %s\n", pfx,
->  				       arm_tlb_err_op_strs[op_type]);
->  			}
-> -			break;
-> -		case CPER_ARM_BUS_ERROR:
-> +		}
-> +		if (type & CPER_ARM_BUS_ERROR) {
->  			if (op_type < ARRAY_SIZE(arm_bus_err_op_strs)) {
-> -				printk("%soperation type: %s\n", pfx,
-> +				printk("%sbus error: %s\n", pfx,
->  				       arm_bus_err_op_strs[op_type]);
->  			}
-> -			break;
->  		}
->  	}
->  
->  	if (error_info & CPER_ARM_ERR_VALID_LEVEL) {
->  		level = ((error_info >> CPER_ARM_ERR_LEVEL_SHIFT)
->  			 & CPER_ARM_ERR_LEVEL_MASK);
-
-Not a today thing, but would be lovely to use FIELD_GET()
-for all these with appropriately fixed up mask definitions.
-Right now it is inconsistent as the valid entries are handled
-as shifted values, and we have GENMASK(X,0) plus a shift for these.
-
-> -		switch (type) {
-> -		case CPER_ARM_CACHE_ERROR:
-> +		if (type & CPER_ARM_CACHE_ERROR)
->  			printk("%scache level: %d\n", pfx, level);
-> -			break;
-> -		case CPER_ARM_TLB_ERROR:
-> +
-> +		if (type & CPER_ARM_TLB_ERROR)
->  			printk("%sTLB level: %d\n", pfx, level);
-> -			break;
-> -		case CPER_ARM_BUS_ERROR:
-> +
-> +		if (type & CPER_ARM_BUS_ERROR)
->  			printk("%saffinity level at which the bus error occurred: %d\n",
->  			       pfx, level);
-> -			break;
-> -		}
->  	}
-
+Guenter
 
 
