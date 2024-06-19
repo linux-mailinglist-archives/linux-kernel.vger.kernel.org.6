@@ -1,81 +1,117 @@
-Return-Path: <linux-kernel+bounces-221867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7DE290F9D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DA190F9D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A775B1C21AA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:38:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1AEB1C217DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BA015B574;
-	Wed, 19 Jun 2024 23:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF7915B548;
+	Wed, 19 Jun 2024 23:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxPv9RjD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ar2S47wb"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8BFF9E8;
-	Wed, 19 Jun 2024 23:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A0EF9E8
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 23:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718840286; cv=none; b=YYzo1N6lZ2AXbMfjzM2hkHaNUAK7MHLgxIekJaifEvobIXtaUNl2fG1eC2T9QI9BTgIJj+QLkHLQ8k+yftxzR3oaZ1HAuTLS8tp/HgsuO4j7sCQIiYHzleHnDfiMrVLZMXHl44YOqNa7vMtgLoTW2jNrHvhkSQUE5uETMS5idQs=
+	t=1718840497; cv=none; b=MtrrueZf6F/DgeB4CK5RhZl4XZ1vZbW7t/+ZSR1dv8ocGegqClnDVqx3h9gefT//yF+b4rsT5X5dfxCYs0DVQ2iyCWlTjKrTXxDmPJzmfSHYboAzpyznMuvxWLIQjWmy4C6CMlH3esvLMHFdWnMAAecrWgJQl0irsoGP8cSOUe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718840286; c=relaxed/simple;
-	bh=pMFC1L80r+HKtEqEtcqW/lrqNA7cATLlLk4yYdkyGaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c+vhiITl7vchbXsiE+klw89xL/fN5bcaC0Ps7/HyY5KsGvTMpn2GNLbaJVX/2kAXhvFXa7iyBRHiLkFWCZsuJmONMyA8TViGfvWxiQXwEkfvV4MPtajnBju+3/d9zWCu5Ky0oSoE4pBxU6E85hsrl7vUUbmd78aYdfTKHF/YSik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxPv9RjD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D60EFC2BBFC;
-	Wed, 19 Jun 2024 23:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718840285;
-	bh=pMFC1L80r+HKtEqEtcqW/lrqNA7cATLlLk4yYdkyGaM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sxPv9RjDTXneMVpxOVzgyndQCUrZbrE0mUWHgVS05kq5SGHKyYE7kkCRblm3q6wTw
-	 W3Ou1G2+P4gjCb29VZEJLppiXrNy2cwXXsRMrj74Z5MMn/Dd2sfHOVg0HUrtqKUbaK
-	 ZyEeGDSBCu6/WLOaeJjMoDvo3Mlp9dfiQgub85Pus5uiBjyMSL0vqGF6Cnm/jL/4sp
-	 VXuoHXrPkMjkBsz0t6mzkkPaX9yQ5hT497Y58WnxFP2apxVgYw1Pyw06qx1HjGjD8C
-	 TDpLUZ41JKmEnYw4yqiEfoBofShn0HcZnark8Z5qig2hf7jhCaiNFvZy4Dj4W7exxE
-	 aqqE1C0e66xNQ==
-Date: Wed, 19 Jun 2024 16:38:03 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kamil =?UTF-8?B?SG9yw6Fr?= - 2N <kamilh@axis.com>
-Cc: Conor Dooley <conor@kernel.org>, florian.fainelli@broadcom.com,
- bcm-kernel-feedback-list@broadcom.com, andrew@lunn.ch,
- hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 3/4] dt-bindings: ethernet-phy: add optional brr-mode
- flag
-Message-ID: <20240619163803.6ba73ec5@kernel.org>
-In-Reply-To: <20240619-plow-audacity-8ee9d98a005e@spud>
-References: <20240619150359.311459-1-kamilh@axis.com>
-	<20240619150359.311459-4-kamilh@axis.com>
-	<20240619-plow-audacity-8ee9d98a005e@spud>
+	s=arc-20240116; t=1718840497; c=relaxed/simple;
+	bh=5M1DMqBlnYVPlq0gBNHs9DY74jBPxkdWmEYhs1qccEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u39ZHp6kjUciA7aKYoqZbqA9etsQ9fHXeBMQ7oS/Vw2eewV0Z2QgL6bTcKxLH/1FrvjAjrPwB5rO1HpqfOdCQOfiM/Azztf/5Of4AlCysDCEs20UejDFaAwavloGsuNA+MtrleWPQ7ez/kFFaHXFOFsTpjRbxs09npYjepEI72s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ar2S47wb; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c72becd4fdso314953a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 16:41:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718840496; x=1719445296; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0keBuP7WcJHXk0McVAgIzARo8mUrjAQPWgU72CE0fsY=;
+        b=ar2S47wbi7Z0pSHHJ/d+Kfdn1XQJ786mSFt/xq+UmeZv9OjzqlQ/FEjRUbU5R6DL8A
+         H6DLVyxUwLauUC9dcprwsATJT6R/Xs2IDFRX4kQii0pB6w0QGAaA/JB965ortDv6cQXq
+         qt8T68YAOEYubB+PGrIAl5uqttANyrhS4Z4+VOO1ThDcfzhINZm8XPTfFmh8tUFw5K/I
+         OoIBJiEbPCFjZ2vG+SUOsj/R2zICy+UwmY+pn5PXaMWRhkALB4NryIxr6+dct+A+3Xek
+         IsVG/guf4TZchlGmI4lGOUOgpzb+iPDgVTYhbznj5Oupz/K7oPo6iBsj88tV2g2JEPaO
+         saBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718840496; x=1719445296;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0keBuP7WcJHXk0McVAgIzARo8mUrjAQPWgU72CE0fsY=;
+        b=L5aANt3f1x7AYZK7OGfkIK7vmux3k3r25GNr2GVMccutMUpB544xE70Oz799t1dNhI
+         nAI6wFDsj20ANju4bFqPQss47bWJ9fcgdsJuOyblFqvNVHF6GtKXSJqEbSGxZBax5hrK
+         Ah1blbDXS44jhQUCrv4bg6u9YN5jbTEatfLzOWknaACQVDWpT0WOb4+eu9j8obX/M9fW
+         2Tn41J+bxvCESNWhTKMD+iNUwm+85jqrY+GYSttCeADLa/2XHBjmzHbxDAXF5yUjdU3+
+         wXQPCywmkMaQ+IM6slv/8VbiAEYHKq19r31IchABQUC/usZ5wzi0eqwv+MU3WQ/FmKqI
+         iPzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVs0/rcYNF2e1xPYe3MkzclxlqxQyjBkczvXcAO4bIbIrxO/1rxO8ncROprFw55y7xtVRiYAr1tiK9nIOELTMlSIvoyiMicH++jMkYz
+X-Gm-Message-State: AOJu0YyTkfo5rzD57a7hrWh0EnHHe80eMxJHrLDMxXHIkB88yvnEZdZc
+	xHIVVWvFqgdrv5HccoYSZq10iQxKViPwdkN8nj5LFCRwQjYYPFRnlVCeX5ZvA9F/bfZL6R7SxPx
+	xCA==
+X-Google-Smtp-Source: AGHT+IFZAS0GNQpPXJKmJsAJOHjI2xJa/GQSJnG1uqCBLSne/K3Igo4Iq+YLUDzCk+PG0cVHPzhUYw==
+X-Received: by 2002:a17:90a:ea83:b0:2c3:c80:9ac8 with SMTP id 98e67ed59e1d1-2c7b59f0c7emr4004627a91.9.1718840495481;
+        Wed, 19 Jun 2024 16:41:35 -0700 (PDT)
+Received: from google.com (201.215.168.34.bc.googleusercontent.com. [34.168.215.201])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c70aa25553sm1780658a91.0.2024.06.19.16.41.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 16:41:33 -0700 (PDT)
+Date: Wed, 19 Jun 2024 23:41:28 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Lei Liu <liulei.rjpt@vivo.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v3] binder_alloc: Replace kcalloc with kvcalloc to
+ mitigate OOM issues
+Message-ID: <ZnNsqBNeXnyzhtZ5@google.com>
+References: <20240614040930.11119-1-liulei.rjpt@vivo.com>
+ <ZmyOJJmA7h6sZ_8A@google.com>
+ <c46a07f5-f504-4c6f-af54-cfa00f987ce3@vivo.com>
+ <ZnCDvpFveS6X0a1g@google.com>
+ <32e0c2ea-6035-4ec9-b99c-e6b686f04cf3@vivo.com>
+ <ZnEO8X-7pjeTFTur@google.com>
+ <239d2936-8fae-4538-8621-b07c09918df9@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <239d2936-8fae-4538-8621-b07c09918df9@vivo.com>
 
-On Wed, 19 Jun 2024 18:36:16 +0100 Conor Dooley wrote:
-> > Signed-off-by: Kamil Hor=C3=A1k - 2N <kamilh@axis.com> =20
->=20
-> Please fix your SoB and from addresses via your gitconfig as I told you
-> to in response to the off-list mail you sent me. You also dropped my Ack
-> without an explanation, why?
+On Wed, Jun 19, 2024 at 04:44:07PM +0800, Lei Liu wrote:
+> We used the "adb shell stop" command to retest the data.
+> 
+> Now, the test data for kmalloc and vmalloc are basically consistent.
 
-+1, possibly repeating what Conor already said but the common
-format if 2N is your employer or sponsor of the work would be:
+Ok, this matches my observations too.
 
-  Signed-off-by: Kamil Hor=C3=A1k (2N) <kamilh@axis.com> =20
---=20
-pw-bot: cr
+> Can I prepare the V4 version of the patch now? Do I need to modify anything
+> else in the V4 version, in addition to addressing the following two points?
+> 
+> 1.Shorten the "backtrace" in the commit message.
+> 
+> 2.Modify the code indentation to comply with the community's code style
+> requirements.
+
+Yeap, that would be all. Thanks.
+
+Carlos Llamas
 
