@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-220635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84C1990E4BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:40:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8C3490E4C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A06B1F2351F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909BE1F26665
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7695877106;
-	Wed, 19 Jun 2024 07:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C65E77119;
+	Wed, 19 Jun 2024 07:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqCGOksC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="bQYIK2BV"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B92770E7;
-	Wed, 19 Jun 2024 07:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A536473514;
+	Wed, 19 Jun 2024 07:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718782831; cv=none; b=JoCnCUf9ntmbakCbmmKGNR271PiM4+3wWQerl8TBt+OpQ2WOwtWYCnZeoNZLhmauGgCyNUwSKGORWI8YHYo1GTILnsVhUs6FwRL6nfmliqLdMNWaSJ2YmpYCZfDqY8hhRVi7tpe6FZouV0UrIo2LxFPKJzDvtQzRESX33d8aFFs=
+	t=1718783013; cv=none; b=Q8Yq0vrY1tb1FxNoyKwoLDu4bv07TPsiV4KcNR5FjG2dp2l9YSTmHMAufJ+K9XXCBQyakz22H5ikt7mHy2ZPy5+9xgtnmRd36WzFHObYpVasV/z/5xjatZB1UKcnqf6Uj4O4a+4n4J+bwrb2YxJsEx21xU35BsreHLiy7xjU2Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718782831; c=relaxed/simple;
-	bh=aWm2Zn/yfgkVk8K8GvJUjzKZiA6iKLuYwUOr0Zn0WXM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=axCOHomRyY+11Hur0QaCH7eHNn/xiJgyj4rk1W6i/Ld1efcQ6xpY8ylT7pC9AI4Xd1YxMAbkr7qUSiBxgYMAhV7IttTjivRWicH9DOnQ7Iw9cmSI38uHWK7U7/uBqtKAGirkGkf71SUG19fCd5zE+5CkDIEClHjuOoO0iMC4G8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqCGOksC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9A8C32786;
-	Wed, 19 Jun 2024 07:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718782831;
-	bh=aWm2Zn/yfgkVk8K8GvJUjzKZiA6iKLuYwUOr0Zn0WXM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YqCGOksCjbMPmB8GsElxBtcwcCQPRiW3iRocOO2ivqrwETXd4j7td50Xq9yl5+uKD
-	 4PilYSrUTRTeArfaeo3HYH/1DGA0VgFqB7GgRRxwevYo+hx6p9mYVDrL49eD/W7uyw
-	 MfPXti8HPqVwm+QSFG6gHtLBYBwQHBJynHMzMVF7FzMy0Zebv9xSLfSkFRrGaCOvBn
-	 Fcm/fJ0Z1k+9eDg/F/tsbMOuBAJ+07N6Pr+aq69P/GL/NUrjGmvCB/UTaGJc1YUqxH
-	 18Fqno+pDWH2xIYja1AlcQRsov7t0Es8nYxBW+wjLhQA96+n3iMC2w9VI7DHhtRZRi
-	 q0eC6U4aExtUQ==
-Message-ID: <ebd65254-c0bb-4c07-810a-e46ba7e0b929@kernel.org>
-Date: Wed, 19 Jun 2024 09:40:27 +0200
+	s=arc-20240116; t=1718783013; c=relaxed/simple;
+	bh=Kk0tvkTiO2T3b876bdyv7dDPKT0iSXVPQDtbWjD4hA0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UNlGJRx30w08sRVb/s4i15Vb7gmjmVDBO8k8cAE29UklDzEuohkUEsCuG1S0zRaawUTNIdj+m9pDNcYESlHSDM3O8RuEVVo58hdSr1y56FxyX8BjG1s+ly2njiK3oHx7ShlRVtC1BxVC6d/2Mbi/RUS3y5AUReW92G1AS3uarIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=bQYIK2BV; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J7QKhf006854;
+	Wed, 19 Jun 2024 09:43:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	di+SFQRmDgPvKMWT6Avy9+LOTjR2HwG3kwmIyd/HWss=; b=bQYIK2BVaJri3TYl
+	Mx9sEnwEywh9t7P2P9uEBpVr9z0M2NJ8+BqVkU4DX3Yd0O4nuuiuiN/gbbsujcmz
+	PFJMEPSU1RyqjHdHjVrOQl6Wi/nwyh6rpyhcZ1+ojawgwQ2NSXo+9LoumV7TaG+n
+	kPuvrorX22uMVDsct3j7jaW9F+qOeCdYWylExJKWRhE4vJs/K3lv4aqWVUkbG0yI
+	CSL1HfPRS9vRRPN5CJIwwiO/m6g45zD8TQ2qHY9O9hOEBHIwhQcTwdBHqWtYLYH5
+	DpIjOLBgrNUc1P0abkwJ53f7R1W9NL4JGDbt0yfTxlKjeqjKx3onsE/EWHlABaz3
+	4crI/Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yuj9t1u0k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 09:43:00 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9017D40048;
+	Wed, 19 Jun 2024 09:42:54 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C3253210F6D;
+	Wed, 19 Jun 2024 09:41:42 +0200 (CEST)
+Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 19 Jun
+ 2024 09:41:39 +0200
+Message-ID: <aee3f6d2-6a44-4de6-9348-f83c4107188f@foss.st.com>
+Date: Wed, 19 Jun 2024 09:41:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,86 +66,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the mediatek tree
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
- Julien Panis <jpanis@baylibre.com>, Mark Brown <broonie@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Nicolas Pitre <npitre@baylibre.com>
-References: <ZnBn-vSj-ssrJFr2@sirena.org.uk>
- <01f2ee94-f8b0-449c-aa19-3ee38a2e36a1@baylibre.com>
- <d87b7376-5ba2-4810-90cb-76648d4a8080@kernel.org>
- <be5a8b12-b042-48cc-9508-759a2a285a8b@kernel.org>
- <99b7f55f-2909-450f-88ce-8cbe8f41c7f8@baylibre.com>
- <9674d79f-83c0-44bf-bcf0-e78f8bdbfbd3@linaro.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@kernel.org>
+Subject: Re: [net-next,PATCH 2/2] net: stmmac: dwmac-stm32: stm32: add
+ management of stm32mp25 for stm32
+To: Marek Vasut <marex@denx.de>, "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240614130812.72425-1-christophe.roullier@foss.st.com>
+ <20240614130812.72425-3-christophe.roullier@foss.st.com>
+ <4c2f1bac-4957-4814-bf62-816340bd9ff6@denx.de>
+ <09010b02-fb55-4c4b-9d0c-36bd0b370dc8@foss.st.com>
+ <39d35f6d-4f82-43af-883b-a574b8a67a1a@denx.de>
+ <8c3f1696-d67c-4960-ad3a-90461c896aa5@foss.st.com>
+ <3dee3c8a-12f0-42bd-acdf-8008da795467@denx.de>
 Content-Language: en-US
-In-Reply-To: <9674d79f-83c0-44bf-bcf0-e78f8bdbfbd3@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Christophe ROULLIER <christophe.roullier@foss.st.com>
+In-Reply-To: <3dee3c8a-12f0-42bd-acdf-8008da795467@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-17_01,2024-05-17_01
 
-Il 18/06/24 20:03, Daniel Lezcano ha scritto:
-> On 18/06/2024 18:45, Julien Panis wrote:
->> On 6/18/24 12:20, AngeloGioacchino Del Regno wrote:
->>> Il 18/06/24 12:03, AngeloGioacchino Del Regno ha scritto:
->>>> Il 18/06/24 09:49, Julien Panis ha scritto:
->>>>> On 6/17/24 18:44, Mark Brown wrote:
->>>>>> Hi all,
->>>>>>
->>>>>> After merging the mediatek tree, today's linux-next build (arm64
->>>>>> defconfig) failed like this:
->>>>>>
->>>>>> /tmp/next/build/arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5-display.dtsi:113.6-121.3: Warning (graph_port): /fragment@4/__overlay__: graph port node name should be 'port'
->>>>>> Error: /tmp/next/build/arch/arm64/boot/dts/mediatek/mt8186.dtsi:2399.29-30 
->>>>>> syntax error
->>>>>> FATAL ERROR: Unable to parse input tree
->>>>>> make[4]: *** [/tmp/next/build/scripts/Makefile.lib:431: 
->>>>>> arch/arm64/boot/dts/mediatek/mt8186-corsola-magneton-sku393216.dtb] Error 1
->>>>>>
->>>>>> Caused by commit
->>>>>>
->>>>>>    d7c1bde38bf37a5 ("arm64: dts: mediatek: mt8186: add default thermal zones")
->>>>>>
->>>>>> I have used the last version of the mediatek tree from 20240613 instead.
+Hi Marek,
+
+On 6/18/24 17:00, Marek Vasut wrote:
+> On 6/18/24 11:09 AM, Christophe ROULLIER wrote:
+>
+> Hi,
+>
+>>>>>> +static int stm32mp2_configure_syscfg(struct plat_stmmacenet_data 
+>>>>>> *plat_dat)
+>>>>>> +{
+>>>>>> +    struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
+>>>>>> +    u32 reg = dwmac->mode_reg;
+>>>>>> +    int val = 0;
+>>>>>> +
+>>>>>> +    switch (plat_dat->mac_interface) {
+>>>>>> +    case PHY_INTERFACE_MODE_MII:
+>>>>>> +        break;
 >>>>>
->>>>> Hello Mark,
->>>>>
->>>>> Here is the explanation:
->>>>> https://lore.kernel.org/all/71d53ff6-fdae-440d-b60d-3ae6f0c881d9@baylibre.com/
->>>>> https://lore.kernel.org/all/6d9e0f19-9851-4f23-a8b8-6acc82ae7a3d@baylibre.com/
->>>>>
->>>>> For some reason, the 2 first commits of the series were not applied
->>>>> with the dts. These commits are needed because they contain some
->>>>> definitions used by the dts.
->>>>>
->>>>> Julien
+>>>>> dwmac->enable_eth_ck does not apply to MII mode ? Why ?
 >>>>
->>>> I'm not sure how should I proceed here.
->>>>
+>>>> It is like MP1 and MP13, nothing to set in syscfg register for case 
+>>>> MII mode wo crystal.
 >>>
->>> Reiterating, I'm sure how should I proceed.
+>>> Have a look at STM32MP15xx RM0436 Figure 83. Peripheral clock 
+>>> distribution for Ethernet.
 >>>
->>> I'm removing those patches from mediatek for-next until further notice.
+>>> If RCC (top-left corner of the figure) generates 25 MHz MII clock 
+>>> (yellow line) on eth_clk_fb (top-right corner), can I set 
+>>> ETH_REF_CLK_SEL to position '1' and ETH_SEL[2] to '0' and feed ETH 
+>>> (right side) clk_rx_i input with 25 MHz clock that way ?
 >>>
->>> Regards,
->>> Angelo
->>
->> Just for my information: Should we just wait for another maintainer
->> to pick the 2 missing patches ? Who is in charge of doing it ?
-> 
-> I've picked the 2 first patches but they are going through the validation process 
-> through our CI. They will be available in a couple of days in linux-next.
-> 
-> If you want me to drop them and let them go through the Mediatek tree, just let me 
-> know.
-> 
+>>> I seems like this should be possible, at least theoretically. Can 
+>>> you check with the hardware/silicon people ?
+>> No it is not possible (it will work if speed (and frequency) is fixed 
+>> 25Mhz=100Mbps, but for speed 10Mbps (2,5MHz) it will not work.
+>
+> Could the pll4_p_ck or pll3_q_ck generate either 25 MHz or 2.5 MHz as 
+> needed in that case ? Then it would work, right ?
 
-Thanks but no, thanks :-)
+Yes you can set frequency you want for pll4 or pll3, if you set 25MHz 
+and auto-negotiation of speed is 100Mbps it should work (pad ETH_CK of 
+25MHz clock the PHY and eth_clk_fb set to 25MHz for clk_RX)
 
-Please, keep them in the thermal trees where they belong.
-I will adjust accordingly.
+but if autoneg of speed is 10Mbps, then 2.5MHz is needed for clk_RX (you 
+will provide 25Mhz). For RMII case, frequency from pll (eth_clk_fb) is 
+automatically adjust in function of speed value, thanks to diviser /2, 
+/20 with mac_speed_o.
 
-Cheers,
-Angelo
+>
+>> (you can see than diviser are only for RMII mode)
+>
+> Do you refer to /2 and /20 dividers to the left of mac_speed_o[0] ?
 
