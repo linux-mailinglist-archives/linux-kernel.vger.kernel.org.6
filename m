@@ -1,166 +1,214 @@
-Return-Path: <linux-kernel+bounces-221519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6927390F4DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:10:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D4B90F4E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D2DA1C21B27
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:10:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83AE7281BDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6E4155A32;
-	Wed, 19 Jun 2024 17:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE72155752;
+	Wed, 19 Jun 2024 17:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FclR8giC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=usask.ca header.i=@usask.ca header.b="dOnVa3l0"
+Received: from CAN01-YT3-obe.outbound.protection.outlook.com (mail-yt3can01on2125.outbound.protection.outlook.com [40.107.115.125])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03211C3E;
-	Wed, 19 Jun 2024 17:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718816999; cv=none; b=JNmEWPqvTKNSxz8vMw8I47SMQSvUnPAXTuYzh/6JRX4pKzaOno9JwdpqwMAZwBgIikckanI8TPrzmwUL2Ih/GoPwMftnHlTrhISai4kxOXWipv6M9YxFFLvJe+43O72islX0nSjrPoSf/pLAip2Wq0AYDlwFcArK7l3ooi8kbiw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718816999; c=relaxed/simple;
-	bh=zwhIa2Tzx0+wGQlJWCxens0OIx8tCG7Ay9QzvVgv0/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CJBZWrYHA3FcIBdT9R9Zd3k94fsDdxW1X7e3EN/vhMH3hHdHLpOmnofA+k2UeJ/1gYh/TInHopNsR4noepUFprpBeKMH1j1cxYOoEVL/NIaWG0OErjq7qfb853Qlvl4UumQUqKu3Fm7c4WAToXOs7Ujx02BgO00yMjG05wLRV5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FclR8giC; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718816998; x=1750352998;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zwhIa2Tzx0+wGQlJWCxens0OIx8tCG7Ay9QzvVgv0/w=;
-  b=FclR8giC7cesWPY81GwHEQf/OURVrWzTA1N6z/t3p4pRZyzfUJAz1v7Y
-   9yUGJnzIHrV62hFNN2wYkyHPxgPrS85CiROgbUv9zdAMcyH7kCnzKuyhv
-   L6qd6wG0OOc7mxf8lN5oljlOLdfoIla45F7p3xTFwx7EP1FRnhL8/+Int
-   PUAbzHHZKPvkC/m4P0Z3HBnRLXvumTvA0XK43pLiT0YzdI1XqjB8bqY4j
-   dvrEqF7AJr74xyd0ybhgFXcKFFBMpgupYPBn3s9cwn5bYceqA18e7KFuT
-   40kLdZQW/tf3rR2vy0OZCsKrqu8aUTOZLD1KUfJaV2DP0yAwPDikabbyW
-   g==;
-X-CSE-ConnectionGUID: a3yEfC/4TR2hM+PZzWuH5w==
-X-CSE-MsgGUID: v6pNowWUQtGN6C2mwdIdew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="15745076"
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="scan'208";a="15745076"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 10:09:57 -0700
-X-CSE-ConnectionGUID: 2inXw1JhRji7XLO7A2TBNQ==
-X-CSE-MsgGUID: 6J6WLotvRZmkXvEH4ta9Eg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="scan'208";a="46350976"
-Received: from junlanba-mobl.ccr.corp.intel.com (HELO [10.124.229.108]) ([10.124.229.108])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 10:09:52 -0700
-Message-ID: <aa0f9982-d88a-4613-8d96-41abb6905c06@intel.com>
-Date: Thu, 20 Jun 2024 01:09:47 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436EA1C3E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 17:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.115.125
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718817067; cv=fail; b=m9mNkLz5UcYdZwCTF3mZhaNtRFuhbM/KKkOKPkrK/YvmhthNDUuN72fekOuvKSwygkeFjBBssMnUX4WZwEYCrU2joZmZI9l0oKMvrZ4JDv9SsO8PBLWY/OFc6AuCSKoEYoj4CmBv9GEq4UZVzsVEYlbK13M9EK/MNYXdtOSXVVw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718817067; c=relaxed/simple;
+	bh=cuEXgYi3dMBfLGYN08nc0VumQeD/Bnq0RZJd6Y+wNWg=;
+	h=Message-ID:Date:To:From:Subject:Content-Type:MIME-Version; b=KAZpYPu6b6jMHH3RksWwiwjrn7XP4srN+cdWWm+uGxZtMAgCp1ZiZECZ/WvycFkgK+vxLodS0uBygf6CFSh5ZdRuU74o3jvY46bTDD3fMf9aPSeaUs9Lm1C08HUml5FrrItpprKCx9cbP8WwVJzx/GArd9htRaCaUgPeIlj6V9Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=usask.ca; spf=pass smtp.mailfrom=mail.usask.ca; dkim=pass (2048-bit key) header.d=usask.ca header.i=@usask.ca header.b=dOnVa3l0; arc=fail smtp.client-ip=40.107.115.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=usask.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.usask.ca
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PWqP1FiSojGQt+qovuaOnwHAEd3EqzIpdXDTHzkB33Po469ETsqR4n0Z0JHUG83sRfEETDaokVlujPv00ZklrDCaC4cdc8jhNlvMGMwQs8+/6rI9jpDUPlzzNbxbS/MpHA9O0wy0soIYgLmj4LFpoxoQONe6Pdj3Sg/jjHYB6HB561v2fepizybW9M9auGe93Gul2DbgoSCqcaAEQBP2brYq2kUetMAm8XTr72sF1NlspQWtgEfAlU1AjlhikFuuZgbJVvxLVkZtVBLOoFSO9dPhrwO0K7eZRvIglOWyxDMejTy8Dg6abMgGNtiFGF8o66fpwnU+PnSmYQoyu65iQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EkymB5DFlGLf3zw30zVh9BvzVdW5FXQ36nqx/gI2JP0=;
+ b=OupyCzolNzZCP72VwHhQiQ79fv20qmhUAKZ1W0wFqdBjHf5dBRVA/Qv522CHV4jchMbPkWbA8Tb/Hi6zk9ppv1uBcg56xh2petlS0JNIaqUzXF2ztjtFwkKhzLRXnmJERiJNu5xNyMJ4po1e+lTmmh3lrCbJ62fr8n9gewLZRSCUdcUDhqnai3xyf5f122LVW9ZaKNVvZGM4O5SjdWT6vP8voSr9bc5uVZroJ0vO5dw7cx4FiMmZQcH80X7r9n8FAhTJ2TBvTygTCJLjTCizvgKaGk4FL2LuVsO73XyVc8VEUPEdO7N9XLPEoRFkjEvOdWtnCKvp94z9W7qV85GZ8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mail.usask.ca; dmarc=pass action=none header.from=usask.ca;
+ dkim=pass header.d=usask.ca; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=usask.ca; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EkymB5DFlGLf3zw30zVh9BvzVdW5FXQ36nqx/gI2JP0=;
+ b=dOnVa3l0Qk1hOzcEeMkzz9KDWOGYkczUIzLIJbTHZZsOhTmU9PqDwNP/xMbTUX5c86MTitD+fWasGILxRlK38+iYcez06hyhteepBhxnEv0fvF7D1t9F/5l0RiZJXLUiPB0ezPYlybsPOA2fGTcBofpGZ5QV9BVkBWI6/H3/wte6M18BcoiWcqO4Uchjp7MikLyr99V7yC6AhgQkfx2e/aI4fLjI+3n6BTYC6/wHvIIcDYKKhL64XuAlIHfuSw6pw2b6SF/fW7bgQkhBdWzKrfcEAI5gTrUc6T7ZS9m7weC/mg9RJLxLCAqv6VQ3kOlz4wWd53U/1UdoaxzBd1fUpw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=usask.ca;
+Received: from YQBPR0101MB6200.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:38::6)
+ by YQBPR0101MB9422.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:61::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Wed, 19 Jun
+ 2024 17:11:03 +0000
+Received: from YQBPR0101MB6200.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::94df:38df:6872:f321]) by YQBPR0101MB6200.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::94df:38df:6872:f321%4]) with mapi id 15.20.7698.017; Wed, 19 Jun 2024
+ 17:11:03 +0000
+Message-ID: <a64d8d0f-e83d-41af-838e-7c41790453f4@usask.ca>
+Date: Wed, 19 Jun 2024 11:11:01 -0600
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: LKML <linux-kernel@vger.kernel.org>
+From: Chris Friesen <cbf123@usask.ca>
+Subject: is there a known change in CPU affinity for new containerized tasks
+ between 5.10 and 6.6?
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN2PR01CA0042.prod.exchangelabs.com (2603:10b6:208:23f::11)
+ To YQBPR0101MB6200.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:38::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: RE: [PATCH 1/3] fs/file.c: add fast path in alloc_fd()
-To: David Laight <David.Laight@ACULAB.COM>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
- Mateusz Guzik <mjguzik@gmail.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
- "tim.c.chen@intel.com" <tim.c.chen@intel.com>,
- "pan.deng@intel.com" <pan.deng@intel.com>,
- "tianyou.li@intel.com" <tianyou.li@intel.com>, yu.ma@intel.com
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240614163416.728752-2-yu.ma@intel.com>
- <218ccf06e7104eb580023fb69c395d3e@AcuMS.aculab.com>
-From: "Ma, Yu" <yu.ma@intel.com>
-Content-Language: en-US
-In-Reply-To: <218ccf06e7104eb580023fb69c395d3e@AcuMS.aculab.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YQBPR0101MB6200:EE_|YQBPR0101MB9422:EE_
+X-MS-Office365-Filtering-Correlation-Id: d213e0c9-837a-4641-f40d-08dc9082cc6d
+X-UofS-Origin: Internal
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|1800799021|366013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NFBoZUhoRVhxUXc2Z1FNSkpvalVuRmhWT3JTNGhyZDQzU2d2cXpOYndnemsy?=
+ =?utf-8?B?UWRyazFkQytTaGtTQ2MvWkFmMk9IZHpyMS82RTQ3Mlo2aElTZzlVUWhzbXZh?=
+ =?utf-8?B?MnY5ek9sSktNYmR6WERGZVBtLzdjVEVUUC80NHA5OUdxdTArdHlFSDltL055?=
+ =?utf-8?B?ZDM0c2JadERzQXdPd2w1YVZSdVRobFJ1dk5ta1hndTdUbjkrZ3p4MDdDV1gz?=
+ =?utf-8?B?MmpzZm5YSVh4M2pkREdqbkl6QS9tbUpCcmh2TVBFdFhJLzZCREM0ZHQ0WjJp?=
+ =?utf-8?B?S2hHbTRNQldSL1ZUbjJGV1Z6YlYzRW9uQmdlOC9LZ0RwSnhJZXlnem1uT241?=
+ =?utf-8?B?dC9MMjRtenF1NTFTRlY4QlZrNlRDVG1ZbHRSUmdUWFJoS3R1Z05FNzB6eWVS?=
+ =?utf-8?B?aHpUVHdEVUFjdG1qbWVEMEEyQnRUN1VMOHN3TnN1QWJyWEd4MFhsUzg3TXYz?=
+ =?utf-8?B?bm5UMEhuc2toTlNLYy8xUnZBOU9OUjZ3WDEySVFseVRocjd0blNFSDYyMytB?=
+ =?utf-8?B?YmFhVmgwV3BkZ0prK1ZwdEJ0aWZITVpKVkhwMmw3YUMyQjVBdHh0RlNRb3Ry?=
+ =?utf-8?B?ckRhS3NKbU9GNnh2OGw4Wm9MZXJjZUZBeGp2dVJxTDZFUzJMTTR6bEJaN0JV?=
+ =?utf-8?B?T1N3K3Rndy9OV2ZqNTByb25CSHhRRFE2cFNqeGxCNm9nU2dtVVJqZHh6YW1B?=
+ =?utf-8?B?aVZyN0F3NzM0TTA2NEV4SHRyWnhSYktyTzEyd0Y5VFdOSUs1dlpLOHpNMC9Q?=
+ =?utf-8?B?T2FmajZRMkNiUFAwMllDM2JpQUNwV2N5QUZNRXN5WkoxQlBLWHRpV3ZHWmUw?=
+ =?utf-8?B?VWNlS0kxYzh3eE5PMnhEc3RINzkrWEhrTDRLZ1poeXFyZ2YwRUFHVytjREZo?=
+ =?utf-8?B?Z3BJOEdqL1doUVZHS2gwQmdOSEw4UVc0TTVMMGRJU1k1OFFNRVEzOG9lb1BW?=
+ =?utf-8?B?TVR2TFlCUzRNNW1MbWliSEVxSTZvdk1wSUdQemg1MlBEckRIYm0xaGt1Smxs?=
+ =?utf-8?B?d2JRL2prMUhOSTk2T01SKzQwZDdJcHFBYklwNXZwRkxRblNiZUpOMy9GWGNi?=
+ =?utf-8?B?V2ZUZTBaRklMbE05cExkaEZmNEZBaVM3ZmMxYTlGV1JKSlQ5bTFvaFJvVGU0?=
+ =?utf-8?B?blc2MTNHc3NwczVNRG9DSlNjY29OaFFla1NpWXdleWNHc3hZSXU5clNISUNG?=
+ =?utf-8?B?b3I2V3pqTDVhbWQxNGVVWUYvcndPYzFCaHZId0xBR0d2dlpnVHZOT2xuWXFa?=
+ =?utf-8?B?Q2ZvL0lycjNWTkNpcGt2V3BteUE1K21pb0c1V3BhVzdWR3dhWm1aakg1eFBu?=
+ =?utf-8?B?NVgwVEMyZGk2QTVjdHdDQUN6S3RzQnNFQThhZEpPMFdrZFJ6eVJ5NCs4ampq?=
+ =?utf-8?B?ak51VEZ5SElMbytpUC81YVdOb01EM3NzTlEzVXJsOEcvdmJFenJZeUNJNnE5?=
+ =?utf-8?B?YWJuWmE4QVFiMEYrQVQxMk1mOU1IbUpwZmtERE9FdVlOU2dZbUxMRmZHNUFr?=
+ =?utf-8?B?MlFnTkZUZWNtQm5PTG9RSGRXd2ZpeDExNUJzclV6MnEwYXdzNGNHYWFKdWpO?=
+ =?utf-8?B?Z1VKdzhSQTAyZkJJWEdBVHZWUnA3R0RXeTZlelNxQnlyeGhtS3VqcTJBZ1Nt?=
+ =?utf-8?B?TW5teDBwS3pvbVJzekRpeDczVTBKUGZSaDV2eXU3TFRzY1AyemVpeWlUV1ZO?=
+ =?utf-8?B?V1NEOENlQjFJMjBZNGkzd3BKbXZqRk9XUGNsT01xK3Y0TjhiZzd3UFc5NkZj?=
+ =?utf-8?Q?W2+a3W9erCIyQ4xEPfo8uL8WcnzDUpumIVGh2nF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YQBPR0101MB6200.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(366013);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?S1JhdUF2MHc3RkswWkFCV3QvR291NmQzL3dqVkd3QWdDQ2ZXeWhuTTNaclRW?=
+ =?utf-8?B?cHpkNkJDalMybUdkK2Z4d1g4NGdnMEZxNGVZQXc5eU9xeVl4cHFZZU43TDFW?=
+ =?utf-8?B?UTJaYkdudEpBbklzdTEyei94OUdTUGJRR0IvS21xTEh4bE5rdHpaaGZtb1B3?=
+ =?utf-8?B?TS9sdXMxWUYvUEZrenNSRG52dStPSDg5U2krTFR6bmxmdnJBTnQ3bWNaczN3?=
+ =?utf-8?B?YkZ4eUcxSHJIYnJTNmxEOEhBOTZwbFAzenVKUXE2MWVxTlZjd1BZc0dSSkJR?=
+ =?utf-8?B?bXk3dnpnV2pGZXJ4ZC93akNuUi9wVWx4dVhrbWtwYWtmcGhBaUdCY3RXN0t4?=
+ =?utf-8?B?azBvUklRTlpKQktmTjBEK3BQR3cvQkFhUGRLQ0ZMS250MmpCODlzRFRNR3ZK?=
+ =?utf-8?B?R3N2Y3M1S0ZUU2lMZU9oWjhVZlo0V09iMFhCNHBabmRlTmZITHU2Uks3MmE1?=
+ =?utf-8?B?RWxlbzNKUlVneWxRSnplNkFOOUxxTmZrdnVpMk5jbmJzYkdnN0EzWW1CR0lp?=
+ =?utf-8?B?dE1qZFRBLzlpTk1NMnRiYUxDZUdKWWJPaEl6Vjc0KzhOSm9qcGovZHRTU3kz?=
+ =?utf-8?B?UTZFaUQ1S3YyMkYzYnB5S3grejlPZEIza1gxYzkvMldjNVEvK2pLTFcyWTE3?=
+ =?utf-8?B?RlB3bDcvUmtWTlgyUkthR3VxL3FzZkxsNDJVb05SMFQwT1VDcXcxM2dUUE9N?=
+ =?utf-8?B?QmEzMHRXSlQ1WkxaY1dHYUFyVnd3czhIZi9RaVk3WnVYK0lyN284VEtXRDVZ?=
+ =?utf-8?B?RExVSmRqMDVNUURRbDFNdmFHQ0RTT0pWL1FTVldKTnBXN2V4Qi9FU2ZYa3lV?=
+ =?utf-8?B?TU5TelM4SW9OWE1DRmhyb1pyam5ObEZ2MERVaXFnay9rbWZkMllpMkZaNTRq?=
+ =?utf-8?B?RmFueXpVUWJ5bEtCUTdFSGo0Z0oycUZHVk5VbU10S25IR3kxSzlzdnJ0Mnda?=
+ =?utf-8?B?dG5nVFpTaWxnd25DNlhCaXNZL3VXSHU1ZDhKL0JLVFp0MGNOWGxmeU43R25p?=
+ =?utf-8?B?cVBhSGh0N05oNWxVSUZBWmF0ZXpJcjRLeHphekdZSGhTOVVpRTAvRVlRTFRR?=
+ =?utf-8?B?ZHdWd2FGRmU5TkJvU0NoTVF5WjNHc3RENmdyeC84M01HZGhhRFFGODdNbWN1?=
+ =?utf-8?B?c3pWQS95WW5RYzVJcDBKNitiRE9pSXlTNXdMTnhUWEc2K25iZ3JlbkxVTmpz?=
+ =?utf-8?B?bGx6YllrMXVDK3VlZFZPWXlvQTdnWmZnWkZMWkhEbGUyL3NLTmJOMC9zT1Va?=
+ =?utf-8?B?aWpNZGZIbmlYckM2dUg2ZTFEVXNPK2dtalhSZ1VuYkZmUUNiQVhmeHkxLzBZ?=
+ =?utf-8?B?K2Q2bFNTVU1nSnJoQTBGM0VtT2dxNVd2TXR3NkZwQisvR1NhTlRQUzdOMWNu?=
+ =?utf-8?B?ejBEVmhRRmVSUDZjdlJaaFJVc1hZOTl6bXArMlFzVll2T2dQS3pRU2N3UXlt?=
+ =?utf-8?B?Vm9yUklQOVpMRVJvVW1iRno3eXV5MVFkWWRUWGt3a0pKelQraUlUaHRLWHBl?=
+ =?utf-8?B?NFZtSGFxTTJldTA1eEY4NVlSMXpXYU1xM2xGeVZnOHRkK1FYL0drdVdqRVgr?=
+ =?utf-8?B?UFpkV3pZQWVJUk0vMkF5S0JmbEk0QjBoYU1rRS9UQlBIZ3JNU1pYRUttUEN4?=
+ =?utf-8?B?UjBHQnNwd3NTUTVoQWltWmlML3FrOG53ZkxSNC9WWGV5U2JXSTduYWVRMDNj?=
+ =?utf-8?B?WGZyUlA0MkpsMFhEUElyZFRkSlNMcmlla3BXTEhGTHExRjcvZGhKU2REMTM4?=
+ =?utf-8?B?ZGZ6OWIzUGN1UkVTUEIrQURjZSs1UFo0TlFqcFpPS0pvTVpGdHZNR04rVkVx?=
+ =?utf-8?B?MmNJVUNReGVlb1l5bmxVL1NSNURrcmM5K3JNNEN0Wm9Zb08wVks5aEZISzZh?=
+ =?utf-8?B?cWpwNE95RHR4am1QV1BhZHE4cVBpZmhoUTJVQXRrcit4aGY0OHhtTEJRQkVR?=
+ =?utf-8?B?WXZjclBmam9kdEVuR0NLSUxJYzh5TGdjK0dnVW54ZmxDK0FvRnBBUXBvNGVt?=
+ =?utf-8?B?aGIwblVwY3FOWjBSelZvdWZnZjZ2cXV0bDdONFlOUlFveUFDS2d6TGJPNDJN?=
+ =?utf-8?B?WUNBU0VEL25tUU13MEthY0JuN3kyd0JuOGZpQXlwZS8rNzM3M2h0OG5rTnN2?=
+ =?utf-8?Q?FokVxn3kSsTRHq1E1njeqTH/s?=
+X-OriginatorOrg: usask.ca
+X-MS-Exchange-CrossTenant-Network-Message-Id: d213e0c9-837a-4641-f40d-08dc9082cc6d
+X-MS-Exchange-CrossTenant-AuthSource: YQBPR0101MB6200.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2024 17:11:03.1536
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 24ab6cd0-487e-4722-9bc3-da9c4232776c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gxU9lQLj2/Vo5j6focIAZfNI6zD+45YsGb6ScTngYM5rzOZfELImybbgecwDusJv
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB9422
+
+Hi all,
+
+I'm not subscribed to the list so please CC me on replies.
+
+I'm seeing some changes in CPU affinity for tasks in new Kubernetes 
+containers when going from the 5.10 kernel to the 6.6 kernel, and was 
+wondering if the new behaviour is expected or would be considered a 
+regression.
+
+I'm running Kubernetes 1.28.4, with containerd and runc.   Kubelet is 
+running with "--reserved-cpus=0,64 --cpu-manager-policy=none", and the 
+containerd daemon is affined to CPUs 0 and 64.
+
+When using the 5.10 kernel when I start up a new pod the tasks within 
+the new pod/container are affined to all online CPUs.
+
+When using the 6.6.7 kernel, when I start up a new pod the tasks within 
+the pod/container are affined to just CPUs 0 and 64, even though the 
+cgroup for the container specifies "cpuset.cpus" and 
+"cpuset.effective_cpus" values corresponding to all the online CPUs.
+
+In the example below, pid 220350 is running within the new container.
 
 
-On 6/19/2024 6:36 PM, David Laight wrote:
-> From: Yu Ma <yu.ma@intel.com>
->> Sent: 14 June 2024 17:34
->>
->> There is available fd in the lower 64 bits of open_fds bitmap for most cases
->> when we look for an available fd slot. Skip 2-levels searching via
->> find_next_zero_bit() for this common fast path.
->>
->> Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
->> free slot is available there, as:
->> (1) The fd allocation algorithm would always allocate fd from small to large.
->> Lower bits in open_fds bitmap would be used much more frequently than higher
->> bits.
->> (2) After fdt is expanded (the bitmap size doubled for each time of expansion),
->> it would never be shrunk. The search size increases but there are few open fds
->> available here.
->> (3) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
->> searching.
->>
->> With the fast path added in alloc_fd() through one-time bitmap searching,
->> pts/blogbench-1.1.0 read is improved by 20% and write by 10% on Intel ICX 160
->> cores configuration with v6.8-rc6.
->>
->> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
->> Signed-off-by: Yu Ma <yu.ma@intel.com>
->> ---
->>   fs/file.c | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/file.c b/fs/file.c
->> index 3b683b9101d8..e8d2f9ef7fd1 100644
->> --- a/fs/file.c
->> +++ b/fs/file.c
->> @@ -510,8 +510,13 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->>   	if (fd < files->next_fd)
->>   		fd = files->next_fd;
->>
->> -	if (fd < fdt->max_fds)
->> +	if (fd < fdt->max_fds) {
->> +		if (~fdt->open_fds[0]) {
->> +			fd = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, fd);
->> +			goto success;
->> +		}
->>   		fd = find_next_fd(fdt, fd);
->> +	}
-> Hmm...
-> How well does that work when the initial fd is > 64?
->
-> Since there is exactly one call to find_next_fd() and it is static and should
-> be inlined doesn't this optimisation belong inside find_next_fd().
->
-> Plausibly find_next_fd() just needs rewriting.
-The consideration for this fast path is as stated in commit, for 
-scenarios like fd>64, it means that fast path already worked in the 
-first 64 bits for fast return and all other times when any fd<64 gets 
-recycled and then allocated. For some cases like a process opened more 
-than 64 fds and kept occupied, the extra cost would be a conditional 
-statement which can be benefit from branch prediction, as Guzik 
-suggests, we'll copy Eric for benchmark to check the effect if it is 
-available.  For the code, it's more efficient to be here outside of 
-find_next_fd() for jumping to fast return. Besides, identified by Guzik, 
-find_next_fd() itself could be improved with inlined calls inside for 
-better performance, story for another patch :)
->
-> Or, possibly. even inside an inlinable copy of find_next_zero-bit()
-> (although a lot of callers won't be 'hot' enough for the inlined bloat
-> being worth while).
-As mentioned, current find_next_zero_bit() already has a fast path 
-inside to handle the searching size <= 64, and it has been utilized here 
-for fast return.
->
-> 	David
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
->
+[sysadmin@controller-0 ~(keystone_admin)]$ taskset -c -p 220350
+pid 220350's current affinity list: 0,64
+
+root@controller-0:/var/home/sysadmin# cat /proc/220350/cpuset
+/k8s-infra/kubepods/besteffort/pod1c4b3a1b-5c63-4f38-b568-57ce87c9c3a0/c2b5de13e14d13ae3f6f8fb39bd287579261f00a1a2a0fdca3e764fbfbef28a7
+
+root@controller-0:/var/home/sysadmin# cat 
+/sys/fs/cgroup/cpuset/k8s-infra/kubepods/besteffort/pod1c4b3a1b-5c63-4f38-b568-57ce87c9c3a0/c2b5de13e14d13ae3f6f8fb39bd287579261f00a1a2a0fdca3e764fbfbef28a7/cpuset.cpus
+0-127
+
+
+I can explicitly re-affine pid 220350 to CPUs 0-127 and the kernel 
+allows it.
+
+If I affine the containerd daemon to all online CPUs and start up a new 
+pod, the tasks within the new container are affined to all online CPUs.
+
+It seems like with the newer kernel something has changed to cause the 
+tasks within the container to inherit the CPU affinity of the parent 
+containerd daemon rather than being affined to the CPU affinity 
+specified for the container.  Anyone have any ideas what might be 
+causing this?
+
+Thanks,
+Chris
 
