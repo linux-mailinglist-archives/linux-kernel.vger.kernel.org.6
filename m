@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-221093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C00790ECD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:11:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698BE90EE18
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE4F2824C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:11:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15F2F1F21D76
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6875914389C;
-	Wed, 19 Jun 2024 13:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524A71482EE;
+	Wed, 19 Jun 2024 13:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="d2W88XqF"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBxOc3rk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B28146A85
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E64143757;
+	Wed, 19 Jun 2024 13:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718802669; cv=none; b=eOrQhXgq6SStf48Z4tomlvuk/UUz/l2x0rdLuKshMcJd4mDj0gmg0OxY0iPdLCX37wvY1cS6vP+1tv8NQQKIFvxx6gc7KzoIeaEuqRV3TrnkGrnvJqnZCvpI9LAZPyWEsd4EtsgzVRgTHIQJRakN+zNAAOSSSd9IzplAMZ3RyrI=
+	t=1718803529; cv=none; b=XghMO7CKivUSK/DHleEqb1i4TfSKeVMDBW0vsIwMhWc4k0lvatJFvsCTVMSWjZIeGSB+BQF2/iBHf4WeSDX6Hv/panJuh4i0oyjs7BK6+e706VNrEWzG/8CYymn2NQ3wq7xELvcCKaZovvKYE21HwVgyWbtMuiL8Mc8zNO5VMss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718802669; c=relaxed/simple;
-	bh=f8D/9s2CDW3GK+4dmcg1ylCC474S4Jkf25ughKFSwm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FgwB01DHHWhvVp5XGAPrye3SezWRVBFED9VreEqgRNRr+v+fVh6IY2Ql0V6Ysyk80IELjIuugdlEhMmd8Uoxv5qlFOxGjRUlZYmEkNP5wA5K4fXjBkx6yD0PN1RH0cIeC81bxn8jAN6vcKVI1X731DnPyfq4nNVyZddAqj/x5og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=d2W88XqF; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-795569eedcaso328089785a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:11:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1718802667; x=1719407467; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Kf9r27RNSYH+M0vPwe+rDP3evgG93CXIjp23HZ8WnCY=;
-        b=d2W88XqFhE2y/SDcMzT+0C0zYIMhNgK8ONGubqLwv1xRK2jb2ttXZhtsbb+JJahQa2
-         08ovHWMFjwdhUc8h1Zt6ppBnmkJSE+32wKmDmwaUZXfH9szggYb0EQJTXZw+DFCqXaLK
-         uc94N7k1ds0iPBqHw9f9npMfEp6jog0cbV4yJyJ/GrX8fCbVQrL0HEFhsXxVv8PB8a1z
-         QC+Z9qYOO9ULO0mnENQ6Y3Wdprdp6+uCSuta6myZr32riqjqk94cp/EMcJM27tu/CNB0
-         LQjHIrmUx1aIbOJ+FigU8qGTQBIbertr5xNXww2bgSnEWZuaYQHkFBgejbO2X0lO1GaE
-         qFug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718802667; x=1719407467;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kf9r27RNSYH+M0vPwe+rDP3evgG93CXIjp23HZ8WnCY=;
-        b=M+pcRrkxayyM0K5s6nSxZCGi1CqjAchszdxZOqcMiFIN3pLtUyahYB2ZMrbjzWvkAu
-         ElRsE7lAfwYCt+urmcowdxstsuTiZexiSQOdO4QTXlISOMjCQ97My0ReQ9d89Cn/6046
-         4f6L2DMcSFLOfrnO+/WOQl03Sdpgc/zQxTLsZzhgxITUh3J7KBhoRF2/TFO18UJRnf/4
-         0hXN0YV7sj1qj4bLsw3rbrTP3RI+fP6ysVgUzF8eqxkxgvkCMQel+787FB+W+yc037k8
-         On2buCRiSM+DD4QcUP3rzTlRYV2Ax6k6rwQV/guPfWlmJUKOWN7OvlaU8KxOUpmO9wtW
-         bXdg==
-X-Forwarded-Encrypted: i=1; AJvYcCXq5QiLk2DJJNiFOdJ2phbrILjMiTvhU9MHjlM41Eomjvw1JW0LYrQOzv1/wbwvHO8urEvwe/HX8ABOw6VwA2Vn6nzQkye+YY4/k9PA
-X-Gm-Message-State: AOJu0Yx++1BtOKRn35xHXigsWtGAya4qSZbrybwrTx+P7iEi015SW4mc
-	dsZhC4HoobkjwQQQcj5wGqHVMJg2qk+OypHyIgKVSn6OfxT24+EfQXxxmrU22eI=
-X-Google-Smtp-Source: AGHT+IFE11ASRWf4WYTH0x6XxeEds9PyEcIqeUwSrbCnNFW+6zWifwS2t6Yt+SRC48O2ptbYQuGPdQ==
-X-Received: by 2002:a05:620a:4308:b0:795:4e35:ea9c with SMTP id af79cd13be357-79bb3e2f4b6mr277089185a.29.1718802666926;
-        Wed, 19 Jun 2024 06:11:06 -0700 (PDT)
-Received: from sunil-laptop ([106.51.187.237])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aaee575fsm605502085a.40.2024.06.19.06.11.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 06:11:06 -0700 (PDT)
-Date: Wed, 19 Jun 2024 18:40:54 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	linux-riscv@lists.infradead.org, bhelgaas@google.com,
-	james.morse@arm.com, jeremy.linton@arm.com,
-	Jonathan.Cameron@huawei.com, pierre.gondois@arm.com,
-	sudeep.holla@arm.com, tiantao6@huawei.com
-Subject: Re: [PATCH v6 3/3] RISC-V: Select ACPI PPTT drivers
-Message-ID: <ZnLY3mNxyv9QOmGn@sunil-laptop>
-References: <20240617131425.7526-1-cuiyunhui@bytedance.com>
- <20240617131425.7526-3-cuiyunhui@bytedance.com>
- <CAEEQ3wnkQsfmLbyMrG_YBvWvhHJdSTg7dG5W_mxv_wxCjatgCA@mail.gmail.com>
+	s=arc-20240116; t=1718803529; c=relaxed/simple;
+	bh=CBl//lO4qFOL4+qF/5/XncehXiBwSbzhWClESpKygHg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p4ZesNmUfUUhc1h5bKgeQt8Z6eHUw8U1XM8URpnEcah99rbu+XEvTpWfxV/w2P3WFeyW1WFBQSbpoM0xBilkkYw0TSL6C0kCa4TAtVPLzGgummWdOpRW33jU+uHLFDLNNHu75H9C6VyUDoD/2tnd1Er0Z1MfDrDjLWtd3l4OsBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBxOc3rk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CD87C2BBFC;
+	Wed, 19 Jun 2024 13:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718803529;
+	bh=CBl//lO4qFOL4+qF/5/XncehXiBwSbzhWClESpKygHg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KBxOc3rkLulVYUS/yi38GbU5HIewXsHaByRSrRPHh4yD1hEQfbs73Lyywsrqisjul
+	 W2K6j6Uuw6e23/aU60P5Wc7HUy5tYMxtfhKAL3mqj+NNOy3ilzxZXDKYa/c2yPQRvv
+	 mEaBUxPHk0hFbICXafyWFywDcHayO/W8QyDdIpjUVPJtyo8Qr397ZxjzRQIP0XN5Y9
+	 rtd6y2odW8P79RMndQ2WOeLLnhADrgXTkj5pgvtiahSENj044Psi88bgy7qomroEuX
+	 kQNlJIjY8ir0Q11Vq0b19w8G6xjEdctxL0qYBuVoxeHm33Tt3G7+h2WZjZnOkL8+id
+	 o6Fkfd9adLmRg==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Xu Kuohai <xukuohai@huaweicloud.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: puranjay12@gmail.com
+Subject: [PATCH] bpf, arm64: inline bpf_get_current_task/_btf() helpers
+Date: Wed, 19 Jun 2024 13:13:34 +0000
+Message-Id: <20240619131334.4297-1-puranjay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEEQ3wnkQsfmLbyMrG_YBvWvhHJdSTg7dG5W_mxv_wxCjatgCA@mail.gmail.com>
 
-On Wed, Jun 19, 2024 at 07:32:18PM +0800, yunhui cui wrote:
-> Hi Sunil,
-> 
-> On Mon, Jun 17, 2024 at 9:14 PM Yunhui Cui <cuiyunhui@bytedance.com> wrote:
-> >
-> > After adding ACPI support to populate_cache_leaves(), RISC-V can build
-> > cacheinfo through the ACPI PPTT table, thus enabling the ACPI_PPTT
-> > configuration.
-> >
-> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
-> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-> > ---
-> >  arch/riscv/Kconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > index 9f38a5ecbee3..1b4c310a59fb 100644
-> > --- a/arch/riscv/Kconfig
-> > +++ b/arch/riscv/Kconfig
-> > @@ -13,6 +13,7 @@ config 32BIT
-> >  config RISCV
-> >         def_bool y
-> >         select ACPI_GENERIC_GSI if ACPI
-> > +       select ACPI_PPTT if ACPI
-> >         select ACPI_REDUCED_HARDWARE_ONLY if ACPI
-> >         select ARCH_DMA_DEFAULT_COHERENT
-> >         select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
-> > --
-> > 2.20.1
-> >
-> 
-> Gentle ping.
-> 
-Actually, my RB is still valid. Anyway, here again.
+On ARM64, the pointer to task_struct is always available in the sp_el0
+register and therefore the calls to bpf_get_current_task() and
+bpf_get_current_task_btf() can be inlined into a single MRS instruction.
 
-Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
+Here is the difference before and after this change:
 
-Thanks,
-Sunil
+Before:
+
+; struct task_struct *task = bpf_get_current_task_btf();
+  54:   mov     x10, #0xffffffffffff7978        // #-34440
+  58:   movk    x10, #0x802b, lsl #16
+  5c:   movk    x10, #0x8000, lsl #32
+  60:   blr     x10          -------------->    0xffff8000802b7978 <+0>:     mrs     x0, sp_el0
+  64:   add     x7, x0, #0x0 <--------------    0xffff8000802b797c <+4>:     ret
+
+After:
+
+; struct task_struct *task = bpf_get_current_task_btf();
+  54:   mrs     x7, sp_el0
+
+This shows around 1% performance improvement in artificial microbenchmark.
+
+Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+---
+ arch/arm64/net/bpf_jit_comp.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+index 720336d28856..b838dab3bd26 100644
+--- a/arch/arm64/net/bpf_jit_comp.c
++++ b/arch/arm64/net/bpf_jit_comp.c
+@@ -1244,6 +1244,13 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx,
+ 			break;
+ 		}
+ 
++		/* Implement helper call to bpf_get_current_task/_btf() inline */
++		if (insn->src_reg == 0 && (insn->imm == BPF_FUNC_get_current_task ||
++					   insn->imm == BPF_FUNC_get_current_task_btf)) {
++			emit(A64_MRS_SP_EL0(r0), ctx);
++			break;
++		}
++
+ 		ret = bpf_jit_get_func_addr(ctx->prog, insn, extra_pass,
+ 					    &func_addr, &func_addr_fixed);
+ 		if (ret < 0)
+@@ -2581,6 +2588,8 @@ bool bpf_jit_inlines_helper_call(s32 imm)
+ {
+ 	switch (imm) {
+ 	case BPF_FUNC_get_smp_processor_id:
++	case BPF_FUNC_get_current_task:
++	case BPF_FUNC_get_current_task_btf:
+ 		return true;
+ 	default:
+ 		return false;
+-- 
+2.40.1
+
 
