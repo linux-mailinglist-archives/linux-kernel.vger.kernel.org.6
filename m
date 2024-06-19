@@ -1,138 +1,143 @@
-Return-Path: <linux-kernel+bounces-220824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 326DE90E7B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:01:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B68C90E7E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DA92892BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:00:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B60921F22394
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2718249E;
-	Wed, 19 Jun 2024 10:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1732E86636;
+	Wed, 19 Jun 2024 10:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TcihEThj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="bLKbaH/p"
+Received: from jpms-ob02.noc.sony.co.jp (jpms-ob02.noc.sony.co.jp [211.125.140.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6258E8175E;
-	Wed, 19 Jun 2024 10:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A6D80C04
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718791247; cv=none; b=CHWqC7dLjHrGtB6rlqIx7t7PU0B1ty4PbK+STXkbLmG9YdJ2x1GJpdUgYp4DQqR2gKyeOkuOzovIwZrC5nkwAGGrrH+h2BBXI9lJsPJ8TJtIoQbMzPiFUVUzJZBEeFfMy1hpKdZlGpIEe7GX/qh2bQwZHnR4VeQLgbb1mHs5TQ0=
+	t=1718791813; cv=none; b=s/O37CcOLkTjwqwNTV9uR1NpTI5stB+VO7n6Y9mnHRh9/87k0axpUPI8R2tyw5X+ofGULfrBz3bxPjBAMBCCwZtFd9QTWsufFts8kS/Fdea3GuEcTUjHmpD6Z/F2I9xyof/l/8BVRHeswnK95nf/1ERpr7eOt8QD2NAPnov3JOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718791247; c=relaxed/simple;
-	bh=eayWKS6Wu7Bqf8vNh/QlnwnY/rDj8Fs1l2UlPp8StoI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r84Nt1fdAKPXw8/CB9vEBJWpSc2mP8xUoL5EUDLeWXZtEEZrLhhLJBt7lEnwBUBBQtFRYOBOqfQCTFiElCc9w++rMP0+8KA3nw/5fF3Aa9B8qdabRX/pZlhZaN/MHi+IE6DBuvkHzmzwTOlWnnBDh2Uc/d65Rga87intDiPC4A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TcihEThj; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718791246; x=1750327246;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=eayWKS6Wu7Bqf8vNh/QlnwnY/rDj8Fs1l2UlPp8StoI=;
-  b=TcihEThjv4rH4R0OOdBrrZW+V4YUoLT6jlMmYwqS7fHGJbJVpqNarJqT
-   5fwosxa5HqyYIw9YyyKaCBGWFxfo4Wd6ccwcaX1XR1rJc586cSPCLgjN5
-   Sfi6pthmk5qMPbIjF5mh3sk25TOGeQBcTNKZ/OaGMWca+ot65bxi5KDJf
-   yff/i0atcNMV+dQtQ9Y71fa7xEjU1dpcU+coktbqFagoQf5KUmtak4EZG
-   cQG2l3/DsP1YJaAS/t82CTFyF7/VWyp5R/QCtJrsMylG8B/L6K9l/YL8X
-   2E1/HGR0l5Pt0SkBJcRq82ysiRue7VXTufzWldZe0hMXhym+c4+U2VJRT
-   g==;
-X-CSE-ConnectionGUID: qSjihEZMQNeYs1RXfNxrBw==
-X-CSE-MsgGUID: niW3AjgcT/ykYgZc+eGY2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15849381"
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="15849381"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 03:00:45 -0700
-X-CSE-ConnectionGUID: wc5mkL1JRqyiNrZZRxpFrw==
-X-CSE-MsgGUID: IL9k4KU/R9iAllvTymSjlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="72608683"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.249.84])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 03:00:40 -0700
-Message-ID: <6ab8c7fd-c718-49ff-bbbb-9241293127f7@intel.com>
-Date: Wed, 19 Jun 2024 13:00:34 +0300
+	s=arc-20240116; t=1718791813; c=relaxed/simple;
+	bh=squliK7jr0NC6xXWsIbFQ48EcsRgBrMr7MO6MWuF8wE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k3x4jeBD9MppGcCmwLQStYBWI2Ba5Rmgi1iqFYN+RZiSwgexNGd3UVGPGk8O7W81JMnHPzP1Jk6JvHL47qK8KvQ1jMbcS2R8JKLLH4yXrltLLGafLuXXxVtYKC0iylkpS1UETbp1Up8dUhDv8vfglof4He4MkfCAgoJCT4oa+w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=bLKbaH/p; arc=none smtp.client-ip=211.125.140.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=sony.com; s=s1jp; t=1718791810; x=1750327810;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=SwEPVkX3dmPP3UFXdzAhYNE6buV92cORmitwcIWuV0I=;
+  b=bLKbaH/p3qMfjZUq9aD1JImYvRGHpJ1uQcnLIhtJh3JFiWoutiITeBqo
+   1TPCvUjz1P4G4M4P/ZHaCuXF5tsOsyOOMnydCFmy6eRuTliET3RXReRts
+   v8JirbUCN5ps6hyHu2hN0+Wj+lonaQdYHP9/ATxmvn9Rb7P2QxrUagyaW
+   y7lrCN+Uc2Fql0YvVopqbcjvF9conU+cFwxzys9YVF8TBjWQaYy2CHA/y
+   3ZB1IRBWZAFD4gv+sidUtGYdDxETIKU4bl13TrOC51ZsNncQy+fonMH0g
+   WBEv2RhvVSNJCtt2/v4yttiqDg3BCCxMOnpolK70lEs5LBOo+liAJ5pxx
+   A==;
+Received: from unknown (HELO jpmta-ob1.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::6])
+  by jpms-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 19:00:00 +0900
+X-IronPort-AV: E=Sophos;i="6.08,250,1712588400"; 
+   d="scan'208";a="425625442"
+Received: from unknown (HELO LXJ00013166) ([IPv6:2001:cf8:2:f100:2ef0:5dff:fe04:1f0f])
+  by jpmta-ob1.noc.sony.co.jp with ESMTP; 19 Jun 2024 19:00:00 +0900
+Date: Wed, 19 Jun 2024 10:00:00 +0000
+From: Khasnis Soumya <soumya.khasnis@sony.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, gregkh@linuxfoundation.org
+Cc: rafael@kernel.org, linux-kernel@vger.kernel.org,
+	daniel.lezcano@linaro.org, festevam@denx.de, lee@kernel.org,
+	benjamin.bara@skidata.com, dmitry.osipenko@collabora.com,
+	ldmldm05@gmail.com, soumya.khasnis@sony.com,
+	srinavasa.nagaraju@sony.com, Madhusudan.Bobbili@sony.com,
+	shingo.takeuchi@sony.com, keita.aihara@sony.com,
+	masaya.takahashi@sony.com
+Subject: Re: [PATCH v5] driver core: Add timeout for device shutdown
+Message-ID: <20240619100000.GA10362@sony.com>
+References: <20240613083226.GA8191@sony.com>
+ <2024061326-moonlit-protozoan-61f8@gregkh>
+ <ecf55d97-363d-4731-bcfa-81cb4e58f2c7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/x86/intel/pt: Update topa_entry base len to support
- 52-bit physical addresses
-To: Dave Hansen <dave.hansen@intel.com>,
- Marco Cavenati <cavenati.marco@gmail.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com, jolsa@kernel.org,
- irogers@google.com, kan.liang@linux.intel.com, tglx@linutronix.de,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com
-References: <20240618110617.22626-1-cavenati.marco@gmail.com>
- <efc3a224-27b3-4259-a9a3-0296ccbf3e8d@intel.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <efc3a224-27b3-4259-a9a3-0296ccbf3e8d@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ecf55d97-363d-4731-bcfa-81cb4e58f2c7@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-On 18/06/24 20:59, Dave Hansen wrote:
-> On 6/18/24 04:06, Marco Cavenati wrote:
->> Increase topa_entry base to 40 bits to accommodate page addresses in
->> systems with 52-bit physical addresses.
->> The Base Physical Address field (base) has a length of MAXPHYADDR - 12 as
->> stated in Intel's SDM chapter 33.2.7.2.
->> The maximum MAXPHYADDR is 52 as stated in SDM 4.1.4.
->> Therefore, the maximum base bit length is 40.
+On Thu, Jun 13, 2024 at 01:51:57PM +0200, Daniel Lezcano wrote:
+> On 13/06/2024 10:43, Greg KH wrote:
+> > On Thu, Jun 13, 2024 at 08:32:26AM +0000, Soumya Khasnis wrote:
+> >> The device shutdown callbacks invoked during shutdown/reboot
+> >> are prone to errors depending on the device state or mishandling
+> >> by one or more driver. In order to prevent a device hang in such
+> >> scenarios, we bail out after a timeout while dumping a meaningful
+> >> call trace of the shutdown callback to kernel logs, which blocks
+> >> the shutdown or reboot process.
+> > 
+> > Again, this is not a "device shutdown" timeout, it is a "the whole
+> > system has not shutdown this fast" timeout.
+> > 
+> > And in looking at my system, it doesn't shutdown in 10 seconds as it is
+> > madly flushing a ton of stuff out to the disks, and they are slow
+> > beasts.  So your 10 second default would cause me data loss on my
+> > workstation, not good!
 > 
-> This makes it sound like it's _adding_ support for larger physical
-> addresses.  It really was a bug from day one.  MAXPHYADDR has been
-> defined to be "at most 52" for a long, long time.  I think it was well
-> before 5-level paging came on the scene and actual MAXPHYADDR=52 systems
-> came along.
-> 
-> It probably needs to say something more along the lines of:
-> 
-> 	topa_entry->base needs to store a pfn.  It obviously needs to be
-> 	large enough to store the largest possible x86 pfn which is
-> 	MAXPHYADDR-PAGE_SIZE (52-12).  So it is 4 bits too small.
-> 
-> This isn't the only bug in the area:
-> 
->> static void *pt_buffer_region(struct pt_buffer *buf)
->> {
->>         return phys_to_virt(TOPA_ENTRY(buf->cur, buf->cur_idx)->base << TOPA_SHIFT);
->> }
-> 
-> At this point, ->base is still a 40-bit (or 36-bit before this patch)
-> type.  If it has anything in the high 12 bits, a <<TOPA_SHIFT will just
-> lose those bits.
+> Thanks for pointing this out. It is exactly what I was worried about ...
+Thank you for comments Daniel and Greg, let me explain.
 
-Yes
+Typically reboot/shutdown sequence involves following steps in User land before kernel restart/shutdown sequence is entered.
+
+1.	Terminate all services (except shutdown critical tasks)
+2.	Sync File systems
+3.	Unmount File systems
+4.	Trigger kernel reboot(LINUX_REBOOT_CMD_RESTART/LINUX_REBOOT_CMD_POWER_OFF) system call
+
+A userspace watchdog can be setup for above as exists on Android system.
+This needs large timeout value because it involves syncing data to disks.  
+
+Below is the kernel restart sequence after control moves to kernel in step 4).
+The issue we intend to address here is that the device driver shutdown callbacks may hang
+due to unresponsive device or a broken driver.
+
+|-kernel_restart()
+              |- kernel_restart_prepare()
+                     |- device_shutdown() // Iterates over the device hierarchy and invokes the shutdown callbacks (class/bus/driver->shutdown)
+              |- syscore_shutdown()
+              |- machine_restart()
+
+I still believe a 10 sec timeout as default is reasonable for the device_shutdown().
+Not all drivers necessarily implement a shutdown callback and the timeout can be configured for large systems as needed.
+
 
 > 
-> But maybe I'm reading it wrong.  If I'm right, this malfunctions at pfns
-> over 36-12=24 bits, or 64GB of RAM.  Is it possible nobody has ever
-> allocated a 'struct pt_buffer' over 64GB?  Or is this somehow tolerant
-> of reading garbage?
-
-Yes, it will go wrong with any physical address above 64GB - 1.
-i.e. the machine just needs more than 64GB of memory.
-
-However that code is used only in one place which is conditional on
-!intel_pt_validate_hw_cap(PT_CAP_topa_multiple_entries) which is true
-only for Broadwell.  Also "snapshot" (and sampling) modes are
-unaffected.
-
-Testing on a Broadwell with 400GB of memory confirmed the issue.
-
+> [ ... ]
+> 
+> > Isn't this just a bug in your drivers?  Why not fix them?  Or if you
+> > really have to have 10 seconds to shut down, use a watchdog timer that
+> > you trigger from userspace and stop petting once you want to shut down.
+> > Then, if it expires it will reset the machine, all of your policy
+> > decisions would have been done in userspace, no need to get the kernel
+> > involved at all.
+> 
+> +1
+> 
+> 
+> -- 
+> <https://urldefense.com/v3/__http://www.linaro.org/__;!!JmoZiZGBv3RvKRSx!_c6dCsrFBbO_ivlpLdqDvkFPd2bIFgHN48Xbjt4dqXVv5_QYeLwNMJOuy_jh5vBfqDUbNuCQ23qnLmHmRRCvtllhT_Uq$ [linaro[.]org]> Linaro.org │ Open source software for ARM SoCs
+> 
+> Follow Linaro:  <https://urldefense.com/v3/__http://www.facebook.com/pages/Linaro__;!!JmoZiZGBv3RvKRSx!_c6dCsrFBbO_ivlpLdqDvkFPd2bIFgHN48Xbjt4dqXVv5_QYeLwNMJOuy_jh5vBfqDUbNuCQ23qnLmHmRRCvtqiO2qBL$ [facebook[.]com]> Facebook |
+> <https://urldefense.com/v3/__http://twitter.com/*!/linaroorg__;Iw!!JmoZiZGBv3RvKRSx!_c6dCsrFBbO_ivlpLdqDvkFPd2bIFgHN48Xbjt4dqXVv5_QYeLwNMJOuy_jh5vBfqDUbNuCQ23qnLmHmRRCvtrJS5bNz$ [twitter[.]com]> Twitter |
+> <https://urldefense.com/v3/__http://www.linaro.org/linaro-blog/__;!!JmoZiZGBv3RvKRSx!_c6dCsrFBbO_ivlpLdqDvkFPd2bIFgHN48Xbjt4dqXVv5_QYeLwNMJOuy_jh5vBfqDUbNuCQ23qnLmHmRRCvthplPsVl$ [linaro[.]org]> Blog
+> 
 
