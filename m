@@ -1,114 +1,167 @@
-Return-Path: <linux-kernel+bounces-220503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3482690E29E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:21:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1830F90E29D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE9391F2421D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 05:21:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70B111F24114
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 05:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350E456452;
-	Wed, 19 Jun 2024 05:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5D155893;
+	Wed, 19 Jun 2024 05:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bbizCot0"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SWggAkHD"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB66B46433
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 05:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09D228EC;
+	Wed, 19 Jun 2024 05:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718774471; cv=none; b=pltNtr1EnaMSnw/ulIMEFboCyc0JzqcMeWEFlGfV21TrzdTkJWvhH+GzbUkn+2+uugjJtxW1EUuxfIZcnwRj7yHX7FEVHuhzK0/E+s67xWzCj8vpS3ZIhfJAhu/ZaIT69UCYJYVOQJDixxTU/d2pmipKWV0IaFTh16Ma0+zbNaU=
+	t=1718774470; cv=none; b=bZAvl6DUwCkNZCURnT47jOeEeWUUchmrbrEl3e7ToivuC1zaj6i8ayo5sfu2nPOv5yRndsIRTIdA/AhzudLZXoxpzFgzdWP2T0rnLMwWMiu05/4GrZmuVI54/hMdhmBn7582UEkfZJkCt5TAS78VHaPWDlriYGEqpzQIO41YQLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718774471; c=relaxed/simple;
-	bh=HPwAkIjCMCtyaHAN9mZhtVAFPxZ7yV3F8HsoSGgFVuQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TbpcQIE1GUqeXrXp0iiiwc+FRZw279B93nJWNVATFZ71r0PLns344ClJ9IuFMCt8eYpiNuKxl/zaqI/J2iOVtUZ4p98l/NFTiosZQU93+vlh0Uvxh2A6wFmI5NT7VojDznAX2A3xkvMx+pDkFi7WZV0pzGi3+QeAPLWcPCC5U5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bbizCot0; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso8820a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 22:21:09 -0700 (PDT)
+	s=arc-20240116; t=1718774470; c=relaxed/simple;
+	bh=3fhxlCy9Vz8ZybVo7OOz3mT1ven3q+ULsCnER4N4Jms=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PmZl8cxow1A2teoBhQS7JEUzxea+OsbyelptPQaA4eruyKT2OdcNRn1bTickt04e32PeRZdayo6VwvoIJs5+tDHTOJYxjcawWH4kAukISEkifDUSsOgLlPTgitVJEvw6xk6trDM+HecnmHQYtTQJopcnJyx27RBXFUDKAjk1K1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SWggAkHD; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35f1bc2ab37so5553576f8f.1;
+        Tue, 18 Jun 2024 22:21:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718774468; x=1719379268; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3k194h42+AL5905GXUgisOm1fqGa03CLUfEe2tpgoV8=;
-        b=bbizCot0dX6if40Wgqm1xHHXReL8A1sDoUT1dXHdMHyStWyYGvPTD7NV3Q4zoGEGqE
-         QR0DsAv8fiifuVLSo9C7E4BXVFj40LQm2XS5h4ekjJ4RGEnet0Dy7dfab/0JQTl4Ayo4
-         hFDEdu29KoDsdBALjXWZ5N6D+J1fEkHbCIsNBk6SxLPOH7ROQVQsThKuhmhNGtBdxTUG
-         dfhiaVT/R21QFM4LVbTBoE5osXeIkAKtvBr4Ezq4zb7uvKj7Om2e0GsY6OF5XsE1Qug0
-         hga6hPXpVVdPjWXZr2ibZfxABPndCPwR30jAMkM1N4tF2oC5V8Q3HlbHcsVfahT3PsFY
-         xCBA==
+        d=gmail.com; s=20230601; t=1718774467; x=1719379267; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Qwp3G2wkgfWztC1WiEcAvtKbcMmGeeZKMaO+Raf4cOc=;
+        b=SWggAkHDcEwiWYhEeY9I8XjHp3/FhgMT3R4TRCVxa8Y9ZosRqpEEKXaPZDXm/8C+f7
+         bbILypTMAcHzVN4tDsCxTWuLYqtnfaWagooKvybK2ksJvKCdST3SpyzdzgpnerX9jy2c
+         BTFSeUmeDYOqRCiCc78CIUq8aqRqpfUMBv8lLBORfiTmkMl0cC5Jx6uODdcGB8dGIIqu
+         SLiDhUWq4s3Wv4la9GdCq6aV9hd80Li34ItSSmGhppqBshL4fLh1t6fzlnrp3Hz2CCZa
+         RQVL9nMe8MH0io9qlFyKuo3DokMcYUQkVoOME1zhE3iqIFfoRXAqcl2mUfTU/SFTuFDd
+         fP3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718774468; x=1719379268;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3k194h42+AL5905GXUgisOm1fqGa03CLUfEe2tpgoV8=;
-        b=rxc4GqFpiZxLn3qJAHua5RnZtfYCf/eWm578o8L1lqWBIwZcAvF4WoAvdfl5kvg7VI
-         OA1pU7AGKMzr4pBmWC5uFnm87XpzKHohzN8PBQjyPPadElEQotxnyIIWwPd8mG83gW8H
-         TM6fIX4I6GzrqzcFStMsMxWWTC4w8lXJZ0K6YWKj1r5S04Z3s81boVX+wwNr7/acl/xV
-         UB5MS0cnuHxqvLCbYtC4BYq2xG5iPgBdsuFlMxgO9MS63AhvTS+NPoEAV9w/0fp9t6iU
-         YJSLdRjXWNjx5oN0OzYqyPuqTC9Q34DCYiXEr6qDlZxDYMvQmg4aHNBN6C5730sqqbTk
-         fvew==
-X-Gm-Message-State: AOJu0Yxh1PNbWPllmHgJzVJ2jBuL9ikO/VjJpbKvPZAmyyTW0mwaIQXa
-	H8kHEBTby0eQCq3+MtUPLFWbU71UdTfTG4j0C7171DUNr4mohEjI3C4CQ2Z7N5KVhJUAIpUL0kE
-	tGnG4L3jspp0XcXgehJxj0yEsqUg5UV1EgTVr
-X-Google-Smtp-Source: AGHT+IG8dQ4X7CFXHfXruoTw56f5zrnQJknmdxZt/3Pyr9uPyZ3b7NIAPGRrH0vwwAo/9kibsCTfCTppzIYy4o2RpDE=
-X-Received: by 2002:a05:6402:278f:b0:57c:bb0d:5e48 with SMTP id
- 4fb4d7f45d1cf-57d0d3428admr141190a12.2.1718774467850; Tue, 18 Jun 2024
- 22:21:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718774467; x=1719379267;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Qwp3G2wkgfWztC1WiEcAvtKbcMmGeeZKMaO+Raf4cOc=;
+        b=nBoyfT6ZNCOSf6r80FuGUHZTrSnu3PByUaxQGP1TER1F1rRp1rRH39XGvEST6VfHAk
+         xU6NPY4TsL14NxO//DnpRoXuer5XkSE6q6fNhI6DgsZd5aXUaXEHj1nDSeWXC98E+IRm
+         CKXCCHmNx6pqdylQ5fwXe3B4XEGSMxVHtLJgAVIeG+f/8aSMkezTtIG1F3dwLfsxU1rW
+         yq9jIYX4pDbjS4uAue7IL8KN44LO9XNjvyRriKPs6lxc99bMcSbJKcf+UgtyHQ8C30/O
+         iGlWXsgmQLI0F10CZL2NU3VwEh3riW/hi5jrJ9LLc1DA0lnR+prRiGjiAWqjYpqckRAr
+         dzZw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3kZKMA3yf7RbJ9gvu15zR1pAC+H6nvj6xFVbiOROfqEqBefiUb0j3b9OTNuqS3VZ1B28pweDeQVXgDwJYT/sQ+oGo4uMahlFBMzca
+X-Gm-Message-State: AOJu0YxbNXVO0SCvQkYFXvJWeUu8m2w0t/YorpXybRAPOV4X9BBfMl15
+	JjbKUDbGyjkSoC/9cKb6ZRzdokciyzYcDoaHP4J326Fi0LQhc30+
+X-Google-Smtp-Source: AGHT+IFj8N/tYTeh5HIsrNsSRhmMsWBORvW0ufQGbGhkqZvMrK95BBDNOYgO7F76PX0O5jwKLu2TpQ==
+X-Received: by 2002:a05:6000:12c1:b0:362:bbd8:229d with SMTP id ffacd0b85a97d-363176ad606mr915492f8f.27.1718774466762;
+        Tue, 18 Jun 2024 22:21:06 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36289a4faeasm2607189f8f.95.2024.06.18.22.21.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 22:21:06 -0700 (PDT)
+Message-ID: <5b7b8a7132934b77b43ffde0650c68c1dd9a5b7e.camel@gmail.com>
+Subject: Re: [PATCH 2/8] iio: add enable and disable services to iio backend
+ framework
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Olivier Moysan <olivier.moysan@foss.st.com>, Nuno Sa
+ <nuno.sa@analog.com>,  Jonathan Cameron <jic23@kernel.org>, Lars-Peter
+ Clausen <lars@metafoo.de>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 19 Jun 2024 07:21:06 +0200
+In-Reply-To: <20240618160836.945242-3-olivier.moysan@foss.st.com>
+References: <20240618160836.945242-1-olivier.moysan@foss.st.com>
+	 <20240618160836.945242-3-olivier.moysan@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1718092070.git.dvyukov@google.com> <CACT4Y+Z=U+Y8gKBgaU76=zg=rAdq=AQ=epAq+RxDfdXsaqO_0w@mail.gmail.com>
-In-Reply-To: <CACT4Y+Z=U+Y8gKBgaU76=zg=rAdq=AQ=epAq+RxDfdXsaqO_0w@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 19 Jun 2024 07:20:56 +0200
-Message-ID: <CACT4Y+Zq3t2JXEbGDzYU61Rs5KH3mhCDiZ4GP9OacKuyocnYHQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] KCOV fixes
-To: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, syzkaller@googlegroups.com, elver@google.com, 
-	glider@google.com, nogikh@google.com, tarasmadan@google.com
-Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 11 Jun 2024 at 11:31, Dmitry Vyukov <dvyukov@google.com> wrote:
-> > Fix spurious KCOV coverage from interrupts and add a test.
-> > Ignore some additional files that lead to large amounts
-> > of uninteresting coverage.
-> > As a reference point, tracing a simple open system call
-> > produces ~10K PCs with these changes instead of ~45K PCs.
-> >
-> > Dmitry Vyukov (4):
-> >   x86/entry: Remove unwanted instrumentation in common_interrupt()
-> >   kcov: add interrupt handling self test
-> >   module: Fix KCOV-ignored file name
-> >   x86: Ignore stack unwinding in KCOV
-> >
-> >  arch/x86/include/asm/hardirq.h  |  8 ++++++--
-> >  arch/x86/include/asm/idtentry.h |  6 +++---
-> >  arch/x86/kernel/Makefile        |  8 ++++++++
-> >  kernel/kcov.c                   | 31 +++++++++++++++++++++++++++++++
-> >  kernel/module/Makefile          |  2 +-
-> >  lib/Kconfig.debug               |  8 ++++++++
-> >  6 files changed, 57 insertions(+), 6 deletions(-)
-> >
-> >
-> > base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> > --
-> > 2.45.2.505.gda0bf45e8d-goog
->
-> Thomas, Ingo, Borislav, Dave,
->
-> Can you take this via x86 tree please?
+On Tue, 2024-06-18 at 18:08 +0200, Olivier Moysan wrote:
+> Add iio_backend_disable() and iio_backend_enable() APIs to allow
+> IIO backend consumer to request backend disabling and enabling.
+>=20
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> ---
 
-Or is it OK to take this via mm tree (where KCOV changes usually go)?
+Hi Olivier,
+
+small notes from me...
+
+> =C2=A0drivers/iio/industrialio-backend.c | 26 ++++++++++++++++++++++++++
+> =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 2 ++
+> =C2=A02 files changed, 28 insertions(+)
+>=20
+> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
+o-
+> backend.c
+> index b950e30018ca..d3db048c086b 100644
+> --- a/drivers/iio/industrialio-backend.c
+> +++ b/drivers/iio/industrialio-backend.c
+> @@ -166,6 +166,32 @@ int devm_iio_backend_enable(struct device *dev, stru=
+ct
+> iio_backend *back)
+> =C2=A0}
+> =C2=A0EXPORT_SYMBOL_NS_GPL(devm_iio_backend_enable, IIO_BACKEND);
+> =C2=A0
+> +/**
+> + * iio_backend_enable - Backend enable
+> + * @dev: Consumer device for the backend
+> + * @back: Backend device
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_enable(struct device *dev, struct iio_backend *back)
+> +{
+> +	return iio_backend_op_call(back, enable);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_enable, IIO_BACKEND);
+
+We do already have devm_iio_backend_enable(). From a correctness stand poin=
+t and even
+scalability, that API should now call your new iio_backend_enable() instead=
+ of
+directly call iio_backend_op_call(). I guess that change could be in this p=
+atch.
+
+> +
+> +/**
+> + * iio_backend_disable - Backend disable
+> + * @dev: Consumer device for the backend
+> + * @back: Backend device
+> + *
+> + */
+> +void iio_backend_disable(struct device *dev, struct iio_backend *back)
+> +{
+> +	iio_backend_void_op_call(back, disable);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_disable, IIO_BACKEND);
+> +
+
+We also have __iio_backend_disable() which is static since all users were u=
+sing
+devm_iio_backend_enable(). I understand that's not suitable for you but I w=
+ould
+instead rename the existing function to iio_backend_disable() and export it=
+.
+
+With the above changes:
+
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+
+- Nuno S=C3=A1
+
 
