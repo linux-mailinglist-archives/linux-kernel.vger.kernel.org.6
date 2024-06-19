@@ -1,126 +1,215 @@
-Return-Path: <linux-kernel+bounces-220855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0996190E835
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:19:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E2A90E811
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA7BA1F22202
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:19:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97481B22DBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C82082866;
-	Wed, 19 Jun 2024 10:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6748286D;
+	Wed, 19 Jun 2024 10:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AQzOgtHP"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gHYoVbVK"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4784B40879
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C17824B2
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718792365; cv=none; b=nm0bU3AjJHSileR2EBIzowRZPQ4VFaD3GvJZbyVIc8HWmC/AF3+d4h0/r3ZMjCyJWmNxOkdgbth7OOOZsbfc+qeAlYKNYpxov9f2VGQd40Jkho/8PaI8YgFr0/xDBX8vJ9FWHFWxuuuW5bWGzLOY8c1xG37tNHH0asBQxxByZ2c=
+	t=1718792044; cv=none; b=VNzzT0KGvbQwtR3Qg6mKblgXQLMIqDHwmuPnjxoI9IccmCObK+vGXXONKsJNagyvjpbLU/fKNyngNvvJLbkLZOLOjTMY5pNwZcVgeLd+95+rOWb5IEJ0OLYUiHN3RNCOTiPp1hRpHrtYiJAuvHIGCAMDl/nNXbdNff3tN3a818g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718792365; c=relaxed/simple;
-	bh=MbUeaa2LZLaNTE5kZ2SLNoA2hdABUPU/FjsRj6mUvFI=;
+	s=arc-20240116; t=1718792044; c=relaxed/simple;
+	bh=4EGNH+EZmxPWT9lmaQ8vJOntiLtZSIoxKvEA95bhO3g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HjwiiBGmLZ3kIe3A6Xlza8IaacmFhgY2LAbmDiAAAKWqWOvnmFr7zS9I4eM/82kVKUHyAjVizq4KPG04J+3hlqBTtAC7ebNec9hDSYxrIIVXdVF67EkLFkF0H7s3D/nYx1emitYkNxkXCNtwARkw0LPEPIz8j+GARyH7YLPzyJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AQzOgtHP; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f9923df5dbso3615716a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:19:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=bLT/NSg/FPqmV3TbKwjvhZfjj9bimJaa82ilHaS/Yj1wn8H6y5LR9iySv0ownADoACMYll3UhiEm64/8PxnqYCS8pCQVinNyKeSR16KoihYTOgN5+VwV5tJLcez8AzHniQo9KB/29nokSl0wprLBQWREUw93IUDAleldR9H37z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gHYoVbVK; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-80b8a8b06b9so1646090241.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:14:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718792363; x=1719397163; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718792041; x=1719396841; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KE8h2jNNZ6vFW2z7uotyBC53nGYQN5vB31WOkuARonw=;
-        b=AQzOgtHPRluMjBQdG0F4m8pZZqU4fhb/bYy2NyLcUDm8iJgjByu7CSCxb3fBKbXrwT
-         utoeFE129X5JJ4t4FO10RDaFCB/1A5BsAtiVp7PBH2lB2/LXm+MTYv9TIHb5dXX2o2sp
-         mBO4q32IlwjOad4dnGDdt/HokKPEXCXcyc9Ks=
+        bh=UuZeMhgyDbj4Vj/SJ3SA8UCb/5gKLQ+XAJUVVoR6RnY=;
+        b=gHYoVbVKuEOTUXFcTPZ50Ne1QpuzFD8dlvI7ZBXcmy5PqtGI5pBwUIWd1dka76OqPz
+         vwba///0akIVX69mH3x4kqdXSNEtht7oPwJY4jDlQ8mYxcBUbK7TiPEV1WxnSJZXK7bu
+         OxyPyAc+Q8cIelh0oi6sYBKJ1Cm2KbCnLeKxNmMMQKauveaCrWTP6oRmRrtLAUbGX1u7
+         LaEGKtP2ZJeSg25aX8XMQMCvGhh11ZppfhJGZ8AU/ILJx1JpxDj7sIOe2Pu6FlVbaZta
+         +eeFVQvpO7m454nMDbCG0te8iKiDgG6o0PUF7vU2iMIoEOdvOUbO0oVUPBkhApnJe9dN
+         EpXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718792363; x=1719397163;
+        d=1e100.net; s=20230601; t=1718792041; x=1719396841;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KE8h2jNNZ6vFW2z7uotyBC53nGYQN5vB31WOkuARonw=;
-        b=ihw/0w2kco+/Gfry7EoB5QqF/zkLfO8wIxQBBlioPS6j3LsrZXfYLIBLbiEn+TcWgn
-         MMtgZmXPbUsefPOw3MId2DpShuZdYTcxc4qLHr197lKRO1J2mipSgObv1bH6pPoJbyuX
-         bVlm1kG5HTexFgbXpJWdIQynKv6s7tBYLRbHBTZ2ohXOx/0N6njs0qZpD3OivtlPHi1Y
-         N8bm2uECC+PPrT5728Ft8HT+86co4qZsSaqLd204zJaHum9FOLH/rD6JohE6kLYxHfgw
-         EUoqc/w7OaBBAD9ii7TuNnR5vk9k9IC1KGzNS2pC0hcBxE3P9iUak0mX+5t4CrnemmCx
-         uTgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlPGzKjGMiC85RgoGLA9/XgxtXTMxp7ljI8F6mT30H9Vakq9v5NNP6FsXbR2BI2f5naAnRf622YcfqaQUj4EIqYeMGCDSpAjMO0aW5
-X-Gm-Message-State: AOJu0YyWRQmmgf1G1QHQVbLDyAoNKcTv6kbqRKobll5bb39E/DB6QblU
-	6p0WxZGWGjnT341+GGpXsZ040EJIFjuxVOug+PfIIHnF+hzote/hJ5S61wd4uSqqCOajTGvO4Fw
-	=
-X-Google-Smtp-Source: AGHT+IGMtzBYauL+ikNQE3HoFJcNa20r99mJ2YAGRD64FTwPdgM6oelv91TKueP+bc+Mm4gM1cQ+2w==
-X-Received: by 2002:a9d:7409:0:b0:6fc:15e9:c3ed with SMTP id 46e09a7af769-7007549908dmr2737381a34.18.1718792363131;
-        Wed, 19 Jun 2024 03:19:23 -0700 (PDT)
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com. [209.85.161.49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb5b1b14f5sm2162043a34.26.2024.06.19.03.19.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 03:19:22 -0700 (PDT)
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5bae81effd1so3366976eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:19:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUXRgPMRkZei98Udt4WZrQDiZgnTBnL+umAVVKJUkgW09w4/eS53AJxkWX8Utb5NG4P9FNP5haEyn8XhBoqXNVlVdn9oBaoKY0PxmBJ
-X-Received: by 2002:a05:6122:250e:b0:4d3:45a2:ae53 with SMTP id
- 71dfb90a1353d-4ef27845548mr2420871e0c.16.1718792011586; Wed, 19 Jun 2024
- 03:13:31 -0700 (PDT)
+        bh=UuZeMhgyDbj4Vj/SJ3SA8UCb/5gKLQ+XAJUVVoR6RnY=;
+        b=ePtynWQaH6OXJV0u8ltfVDSxroR0Dyjdg0gw+cl+0avmoTJABgOaeXuqZBA/YP2aWd
+         CV8k1Qu/32A9876aD/06LabFlhHmx+GDI5cezAC0ultnM8ZqBYAqCtoRPndnXrN2Xu+a
+         eqXXuU+dOldUpjQw5XzLA+rbCxz2jxQtfgnfudmkFK+TucEVDRma+wRh7nwB6RAkzQYP
+         NdrwtNrbFrwHx+Axjp+EvYMJlKXxr+c16hbU5tX1zUGXiiv3sFRDDO3gQw2NShGldSbL
+         ZUn2mqbTo0LQSD/1CgbrTzqSXIN4zXhxL5WP/p1PNrZyQLd8Mrzuv1z6uRdzaefCUfk/
+         c7Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8+f1fP/1jX6lVN9YmPqlGKIuLxp1GCBvGKcq9CP+D2x5tF6CbqgAegaNT4/vVoh5ZnifSX8fNI/flnp6XKl/NbiXhXUhZdUZH9vRT
+X-Gm-Message-State: AOJu0YyeWppR5C3yoaN7J/zkhVnXUTzSmab7Zkk6cxW5etO5dovcR6Vf
+	FqTGXNtB5qCqGqqpTUJTBIm7bTp7sq5mvA59ElSqzjrLSHr1fJyXSO6+DMD9MXDW8K3a7Qla7w6
+	aBn9WxkISH1B4Qm+RJhSuDBit7xnyEZgz
+X-Google-Smtp-Source: AGHT+IGqhOfEodhIqdPObmAOCxJYsofDFl0wxJwXrVRUXoPdREis6EiObX9MZB2Mh9s5T33p+07wlRdyaYHfNUcw6qQ=
+X-Received: by 2002:a05:6102:2745:b0:48c:43f2:4f29 with SMTP id
+ ada2fe7eead31-48f13140ed9mr2244373137.34.1718792041497; Wed, 19 Jun 2024
+ 03:14:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240322092845.381313-1-angelogioacchino.delregno@collabora.com> <20240322092845.381313-5-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240322092845.381313-5-angelogioacchino.delregno@collabora.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Wed, 19 Jun 2024 18:12:55 +0800
-X-Gmail-Original-Message-ID: <CAC=S1niC5ZePFFbEM6Fhr4q7kNqv45uSQNnTp1U8pesfe5f_Aw@mail.gmail.com>
-Message-ID: <CAC=S1niC5ZePFFbEM6Fhr4q7kNqv45uSQNnTp1U8pesfe5f_Aw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] media: platform: mtk-mdp3: Add support for MT8188
- MDP3 components
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-media@vger.kernel.org, mchehab@kernel.org, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	matthias.bgg@gmail.com, amergnat@baylibre.com, moudy.ho@mediatek.com, 
-	hverkuil-cisco@xs4all.nl, sebastian.fricke@collabora.com, 
-	u.kleine-koenig@pengutronix.de, chunkuang.hu@kernel.org, 
-	p.zabel@pengutronix.de, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, kernel@collabora.com
+References: <1718790499-28151-1-git-send-email-yangge1116@126.com>
+In-Reply-To: <1718790499-28151-1-git-send-email-yangge1116@126.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 19 Jun 2024 22:13:50 +1200
+Message-ID: <CAGsJ_4zAg_Ui3uNUz6rwRPeERo6PskthGUB2V=4Yr+c+AU8iqA@mail.gmail.com>
+Subject: Re: [PATCH] mm/page_alloc: add one PCP list for THP
+To: yangge1116@126.com
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, baolin.wang@linux.alibaba.com, 
+	liuzixing@hygon.cn, Mel Gorman <mgorman@techsingularity.net>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Angelo,
++Mel, the original author of commit 5d0a661d808f
+('mm/page_alloc: use only one PCP list..."
 
-On Fri, Mar 22, 2024 at 5:29=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
+
+On Wed, Jun 19, 2024 at 9:48=E2=80=AFPM <yangge1116@126.com> wrote:
 >
-> MT8195 and MT8188 share a similar MDP3 macro-block, with minor
-> differences - as in, the latter supports a subset of the number
-> of components supported by the former, but are otherwise handled
-> in the same way.
+> From: yangge <yangge1116@126.com>
 >
-> Add driver data for MT8188, reusing the already present MT8195
-> data where possible.
+> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+> THP-sized allocations") no longer differentiates the migration type
+> of pages in THP-sized PCP list, it's possible that non-movable
+> allocation requests may get a CMA page from the list, in some cases,
+> it's not acceptable.
 >
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+> If a large number of CMA memory are configured in system (for
+> example, the CMA memory accounts for 50% of the system memory),
+> starting a virtual machine with device passthrough will get stuck.
+> During starting the virtual machine, it will call
+> pin_user_pages_remote(..., FOLL_LONGTERM, ...) to pin memory. Normally
+> if a page is present and in CMA area, pin_user_pages_remote() will
+> migrate the page from CMA area to non-CMA area because of
+> FOLL_LONGTERM flag. But if non-movable allocation requests return
+> CMA memory, migrate_longterm_unpinnable_pages() will migrate a CMA
+> page to another CMA page, which will fail to pass the check in
+> check_and_migrate_movable_pages() and cause migration endless.
+> Call trace:
+> pin_user_pages_remote
+> --__gup_longterm_locked // endless loops in this function
+> ----_get_user_pages_locked
+> ----check_and_migrate_movable_pages
+> ------migrate_longterm_unpinnable_pages
+> --------alloc_migration_target
+>
+
+Please also describe its potential negative impact to cma_alloc().
+
+> To fix the problem above, we add one PCP list for THP, which will
+> not introduce a new cacheline. THP will have 2 PCP lists, one PCP
+
+not introduce a new cacheline for struct per_cpu_pages.
+
+> list is used by MOVABLE allocation, and the other PCP list is used
+> by UNMOVABLE allocation. MOVABLE allocation contains GPF_MOVABLE,
+> and UNMOVABLE allocation contains GFP_UNMOVABLE and GFP_RECLAIMABLE.
+>
+> Link: https://lore.kernel.org/all/1717492460-19457-1-git-send-email-yangg=
+e1116@126.com/
+
+no this tag.
+
+> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for THP-sized =
+allocations")
+
+Cc: <stable@vger.kernel.org> ?
+
+> Signed-off-by: yangge <yangge1116@126.com>
 > ---
->  .../platform/mediatek/mdp3/mdp_cfg_data.c     | 280 ++++++++++++++++++
->  .../platform/mediatek/mdp3/mtk-img-ipi.h      |   1 +
->  .../platform/mediatek/mdp3/mtk-mdp3-cfg.h     |   1 +
->  .../platform/mediatek/mdp3/mtk-mdp3-core.c    |   3 +
->  4 files changed, 285 insertions(+)
+>  include/linux/mmzone.h | 9 ++++-----
+>  mm/page_alloc.c        | 9 +++++++--
+>  2 files changed, 11 insertions(+), 7 deletions(-)
+>
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index b7546dd..cb7f265 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -656,13 +656,12 @@ enum zone_watermarks {
+>  };
+>
+>  /*
+> - * One per migratetype for each PAGE_ALLOC_COSTLY_ORDER. One additional =
+list
+> - * for THP which will usually be GFP_MOVABLE. Even if it is another type=
+,
+> - * it should not contribute to serious fragmentation causing THP allocat=
+ion
+> - * failures.
+> + * One per migratetype for each PAGE_ALLOC_COSTLY_ORDER. Two additional =
+lists
+> + * are added for THP. One PCP list is used by GPF_MOVABLE, and the other=
+ PCP list
+> + * is used by GFP_UNMOVABLE and GFP_RECLAIMABLE.
+>   */
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -#define NR_PCP_THP 1
+> +#define NR_PCP_THP 2
+>  #else
+>  #define NR_PCP_THP 0
+>  #endif
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 8f416a0..0ecbde3 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -504,10 +504,15 @@ static void bad_page(struct page *page, const char =
+*reason)
+>
+>  static inline unsigned int order_to_pindex(int migratetype, int order)
+>  {
+> +       bool __maybe_unused movable;
+> +
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>         if (order > PAGE_ALLOC_COSTLY_ORDER) {
+>                 VM_BUG_ON(order !=3D HPAGE_PMD_ORDER);
+> -               return NR_LOWORDER_PCP_LISTS;
+> +
+> +               movable =3D migratetype =3D=3D MIGRATE_MOVABLE;
+> +
+> +               return NR_LOWORDER_PCP_LISTS + movable;
+>         }
+>  #else
+>         VM_BUG_ON(order > PAGE_ALLOC_COSTLY_ORDER);
+> @@ -521,7 +526,7 @@ static inline int pindex_to_order(unsigned int pindex=
+)
+>         int order =3D pindex / MIGRATE_PCPTYPES;
+>
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -       if (pindex =3D=3D NR_LOWORDER_PCP_LISTS)
+> +       if (order > PAGE_ALLOC_COSTLY_ORDER)
 
-Reviewed-by: Fei Shao <fshao@chromium.org>
+pindex >=3D NR_LOWORDER_PCP_LISTS
 
-Regards,
-Fei
+>                 order =3D HPAGE_PMD_ORDER;
+>  #else
+>         VM_BUG_ON(order > PAGE_ALLOC_COSTLY_ORDER);
+> --
+> 2.7.4
+>
+
+Thanks
+Barry
 
