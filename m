@@ -1,107 +1,78 @@
-Return-Path: <linux-kernel+bounces-221540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2027190F529
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:33:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ECFF90F52B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1920E1C21782
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:33:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7381F220EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CA9152799;
-	Wed, 19 Jun 2024 17:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D387515689B;
+	Wed, 19 Jun 2024 17:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKzAu5DO"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2ki9hx6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F323155884;
-	Wed, 19 Jun 2024 17:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236DA156237;
+	Wed, 19 Jun 2024 17:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718818431; cv=none; b=MTO70ui+DXD9p08lTf4F5iv1Z3FIbaGefrxL3oM/CCVv3LuiVvkc309JgAXbdiXQOpLfHhgh5lYBkk8eUmxvCJSBn8qratGrmWd/RO/5dBhB708qTKbvcIU74q+J5Kf8AcNEWfQ8/XFIJ7V7ezYiOz1aG5KibEKq6RDcyatVqzo=
+	t=1718818434; cv=none; b=pa9B4Zb3VRlzumaDBc1QozyO5tTyMEspwT39vosGMHUJZW2Jc2OAuY4iZ79oh/rbCL5Z+O+Uc52m5HY8w0doUcj6fHppuTJFtE9mHThSvSYKKD93JUlH9uG1itqbIzDnohtwtfxy9pj7OoXukUSZnYpxtengrfTuERF8i7d4dGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718818431; c=relaxed/simple;
-	bh=NhXQpP5JSuXGv4UOVeTcHcdCKwgq8YGXn/U1WzJL7Xg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X07bzERLFOu7Z7h/rrVKbHOeW8Se56XnJMHAzFrk/6QaAk9gtuCEEUeoyXoerYYqW4H/vvMwK59JXUKORycuVhA5BIgLBwuhJNwBhx4AgPisLetItUlZ+FFsimbP7z9NGC7fnzpx8nMwi1J+k9tuY89GCOIj+EOeX2OcQ86/50g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PKzAu5DO; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7023b6d810bso57489b3a.3;
-        Wed, 19 Jun 2024 10:33:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718818429; x=1719423229; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9MHYuCTXj1wgKr32ecevMwTNfCM7u5/w/vIeb4fObr0=;
-        b=PKzAu5DOAksFaUCaeImrZyFQ+SNlxVovDQBQxtTAmhEQPAfJseb1niUz4vSs0/+eef
-         8i3MdffhXRfc4ZcyNIfvVkSGZuy5ScNkgZOSWIrWYLvnS2w5YbFu5tSmGZqhJMGfcAuw
-         OvHa65qYQq227Mrh+JlDXKSrzd5ogI1ATb+OOuRKT5WRE9m5b97IaR9Wgz03R26hhI2G
-         D4k9kS3lmjXJksQt0/aui49/uhebntxLqqM2W+g+E9/UBCq/fOJrDDILQt6iIyf5Wfh1
-         4lfcRpWSuffLKeHhqqUsnKM2qf6Y0Oc5dRNdrWviDRh5akkJJiRWrzZyCG7SYxuUiyql
-         62RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718818429; x=1719423229;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9MHYuCTXj1wgKr32ecevMwTNfCM7u5/w/vIeb4fObr0=;
-        b=JP0ZitK1+ec8kqPkR0Yp5LI3tkCo42TDRxL+zR2bomqGsKyxjxFpL8c09cMOoGaBHa
-         Em8iTxO60o6ntaQ26Dnv4U5u/4sWBnoV+T+VCbYwQ2IMl56b1bobKRXrJ5NrFhbouXYm
-         +7hrqdOY5d5MJK631KqwLPxm0uktKW3hHgwYS4FvyP37fAs5q1Va2pOQsl7eAN2B9nTh
-         DPTNpcuIG+o8YimnNM1ul0KwmdfvsY3y8U6Mth/xqfVD1qfgALAUdgh+hoJngf0KXnt3
-         Nu/FsZddcrrYHzx4230jCzsjkbb9CljiU5z+BhgMdVDOzMEdpC1fT1NapwyACu7eurk8
-         JsrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXC9jUGmqVKisAhwci+y3Go5ZJ3Hyz5uyTYLMRNYhg0M+eSWKztaKKXLNisNZ0ZJust2wWDUvk0FouiTQY/CevsTuGISUkFUeqUTEECsk7n4VIO+h5ZVrjYUYyyd95VFJ9mLc9Y/w==
-X-Gm-Message-State: AOJu0Yxqfj0xJtVFjgKLOBjgM2UllnqcJRy0ENrQOl04+F+6SqhP7ZNW
-	yyTizMh9gQbXgt2r/AVvf2nYtSuay8UM0sgYa3gaMrj1bo69++bG
-X-Google-Smtp-Source: AGHT+IEm8A83LuqziTExDgYEpe8+ENozNbQf8yOYX49jpolFcY3ZmW1xGtRUUhma91RUUxT6PB3dWQ==
-X-Received: by 2002:a05:6a20:6386:b0:1b5:d194:d87f with SMTP id adf61e73a8af0-1bcbb63c664mr3134905637.59.1718818429033;
-        Wed, 19 Jun 2024 10:33:49 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb6c1c7sm10996557b3a.167.2024.06.19.10.33.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 10:33:48 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 19 Jun 2024 07:33:47 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] cgroup: avoid the unnecessary list_add(dying_tasks)
- in cgroup_exit()
-Message-ID: <ZnMWe4dcz3M6cyAU@slm.duckdns.org>
-References: <20240617143129.GA10395@redhat.com>
- <20240617143152.GA10404@redhat.com>
+	s=arc-20240116; t=1718818434; c=relaxed/simple;
+	bh=IlN+ArWEjRCMt5bQyQ0/MnQy9BaC7Nt4A/CNDxWRSoU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FSDbtxxaeh9B/6645AYUaD52yFmAc3Fr4bDhsgpxYl4raZpFfxDd9mR5y5uw5k6d9SrhdKZ9ky5IFgvqdSBR82U7Bht691NGwnZh/qNa9QA6SVSbc6AqAN3/EvT+l9e2HgQIGMgL/te8Mm0RYk0aMXdCBfo1oVN2zPkvS1m4fgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2ki9hx6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 033F2C32786;
+	Wed, 19 Jun 2024 17:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718818434;
+	bh=IlN+ArWEjRCMt5bQyQ0/MnQy9BaC7Nt4A/CNDxWRSoU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=H2ki9hx6hYgMIuUd2Y79kAn0j1V72M6jJSeWBt6V4dYgp0qVAq+Psm5c1AJ/Opsn/
+	 58yUHTTnvBDrh1JU3vuDNgvYYU5EavpdOJaohZdTeZG4XvgClnP3wah3emWxqie2sO
+	 9OqcPqhquZVWbA1mxd1t7r2KKRFvDG5pvBAuWb8kLieJjth8f/GP/iHWBqd+RG7xDj
+	 IGzhfhQuqA+5jDYsUUwRQ96x8KfJVBiZMdPg1jciKV8xlWVGVfHSANtge2TwWF12l9
+	 FnkTRr8oXWDZjIvZ26IGZqASJxy1v185/1wsg34HnnqJjhNvfK0m/6aAUSdvcuMW5a
+	 WRnv1ldUrnDLQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E976AC32767;
+	Wed, 19 Jun 2024 17:33:53 +0000 (UTC)
+Subject: Re: [GIT PULL] MIPS fixes for v6.10
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZnK7/CW+hLH3/Hhs@alpha.franken.de>
+References: <ZnK7/CW+hLH3/Hhs@alpha.franken.de>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZnK7/CW+hLH3/Hhs@alpha.franken.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips-fixes_6.10_1
+X-PR-Tracked-Commit-Id: 6e5aee08bd2517397c9572243a816664f2ead547
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6785e3cc09f149c42ce70eb92736d68c0db64684
+Message-Id: <171881843393.4952.2497418037259685380.pr-tracker-bot@kernel.org>
+Date: Wed, 19 Jun 2024 17:33:53 +0000
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: torvalds@linux-foundation.org, linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617143152.GA10404@redhat.com>
 
-On Mon, Jun 17, 2024 at 04:31:52PM +0200, Oleg Nesterov wrote:
-> cgroup_exit() needs to do this only if the exiting task is a leader and it
-> is not the last live thread.  The patch doesn't use delay_group_leader(),
-> atomic_read(signal->live) matches the code css_task_iter_advance() more.
-> 
-> cgroup_release() can now check list_empty(task->cg_list) before it takes
-> css_set_lock and calls ss_set_skip_task_iters().
-> 
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+The pull request you sent on Wed, 19 Jun 2024 13:07:40 +0200:
 
-Applied to cgroup/for-6.11.
+> git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips-fixes_6.10_1
 
-Thanks.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6785e3cc09f149c42ce70eb92736d68c0db64684
+
+Thank you!
 
 -- 
-tejun
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
