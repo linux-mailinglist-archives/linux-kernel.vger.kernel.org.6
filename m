@@ -1,208 +1,86 @@
-Return-Path: <linux-kernel+bounces-220720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E4E90E638
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:46:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC56D90E63C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3359A28393C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:45:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74C781F229FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1549D7CF25;
-	Wed, 19 Jun 2024 08:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgTIjAMe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8092139B1;
-	Wed, 19 Jun 2024 08:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E007CF18;
+	Wed, 19 Jun 2024 08:48:03 +0000 (UTC)
+Received: from njjs-sys-mailin01.njjs.baidu.com (mx314.baidu.com [180.101.52.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBDC7C6DF
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.101.52.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718786753; cv=none; b=ERoPPf2tAdPP2RngnQAtA+gdgV34SqKqCC+L+E2VvThGR9KqzS6h1trqm2AKhGZrkTou+zJ6CYmW91tDOR6J1HCOHoOnmCMbCzkSbJsHMFYgKyZVJtZgeTYwenjjmAFrFncFLP/soPptYaLyb5RkzPha0Jx5356jkdVtc2rfAPs=
+	t=1718786883; cv=none; b=GKsKURY/RK05Dgw0Vox9mWLd9QK/qIsPTZ0h13SCuHQWgN7gZ6KBy9/pvnEe4hUapO/PiN/kUclVIxRLkYMBha/HIR7QzZa1Sq64HaEjQDj5iPc+8pRMA84hMZYQjlmcoy4WVsZNyOOR2ICSgPnQQjhrAY3NFcmL0OQKSRhYlFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718786753; c=relaxed/simple;
-	bh=VPko8A1dsJhGfauSkOnRVf64PdjlMkke7UygpBGQoRU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iXv1MRnbHOrWpd1ag49yYnelnxhhcmaowNeWJPJXEm4cTnxouOWe+EaxKLXm2jjvLlkT3/TB+Sriw1Zv8x9E1+T8IoCLmskF5t5xvJLpGEVODejf2LgeYzBQl840MoaZbeO5QWRwh/JXjqfrCXTVMUeaO68hkdfIZJXKrvV7tcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgTIjAMe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA1F4C2BBFC;
-	Wed, 19 Jun 2024 08:45:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718786752;
-	bh=VPko8A1dsJhGfauSkOnRVf64PdjlMkke7UygpBGQoRU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=AgTIjAMea49Zr/kJ721r/Hf5kIr12/zNJ+P8cs8qMWvDxwiYUSZg9rwCmD8atMX0P
-	 8D/OqD/c5CRkkJ0dHKkSU6S+00kNs+6GC2WaGPlJtq5zxzH2e2y0oNoSh4bNk4vone
-	 3RTvnaHucIy2MjyXP5OC/YIhDGrpf1IcIPBTJi9cHKXxLve7TGWa/jRYBeYu6MqwCu
-	 vbJAGEwS9p/8qswACATfh7YyRytuEIvakr3M5vieqSfFarczygba6vMhzsFYvjO6Xf
-	 SWzSct9/Any8mAWymtFOB3J747WDcbieFCBIjORigGplnKteqBmw9EvPmiQeD7PZca
-	 z89i2qXlgMakA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.97.1)
-	(envelope-from <mchehab@kernel.org>)
-	id 1sJqww-00000003FRA-2Url;
-	Wed, 19 Jun 2024 10:45:50 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: 
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	linux-efi@vger.kernel.org,
+	s=arc-20240116; t=1718786883; c=relaxed/simple;
+	bh=FCE4CHEiQevoo0zi1nKry0ww328+u54fXJyCP0cAAWs=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=EbyegHbaVT3uJj+SydrcGQ91f9SRoIIsptwxduSxqC7wDhL2xDFXFtSC1tgimLkOPzvqR76GQwaaG69/+I3Lt/JOxC/tNUwQOu4iS00MYAFEnvSyi2oaWSa7cBlwcsJEwZvKJbWTOg2op43I2gMr6M/Q+YQgGgQur9Twgf8bGF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=180.101.52.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+Received: from localhost (bjhw-sys-rpm015653cc5.bjhw.baidu.com [10.227.53.39])
+	by njjs-sys-mailin01.njjs.baidu.com (Postfix) with ESMTP id 059B07F0004B;
+	Wed, 19 Jun 2024 16:47:52 +0800 (CST)
+From: Li RongQing <lirongqing@baidu.com>
+To: kirill.shutemov@linux.intel.com,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	linux-coco@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org
-Subject: [RFC] efi/cper: align ARM CPER type with UEFI 2.9A/2.10 specs
-Date: Wed, 19 Jun 2024 10:45:43 +0200
-Message-ID: <a6c2b6e6e49550c15ce58d496183cf984915f996.1718786451.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	rick.p.edgecombe@intel.com
+Cc: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH][v3] virt: tdx-guest: Don't free decrypted memory
+Date: Wed, 19 Jun 2024 16:47:50 +0800
+Message-Id: <20240619084750.9207-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.9.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-Up to UEFI 2.9 spec, the type byte of CPER struct was defined simply
-as type at byte offset 4:
+In CoCo VMs it is possible for the untrusted host to cause
+set_memory_decrypted() to fail such that an error is returned
+and the resulting memory is shared. Callers need to take care
+to handle these errors to avoid returning decrypted (shared)
+memory to the page allocator, which could lead to functional
+or security issues. So leak the decrypted memory when
+set_memory_decrypted fails, and don't need to print an error
+since set_memory_decrypted will call WARN_ONCE.
 
-	- Cache error
-	- TLB Error
-	- Bus Error
-	- Micro-architectural Error
-	All other values are reserved
-
-Yet, there was no information about how this would be encoded.
-
-Spec 2.9A errata corrected it by defining:
-
-	- Bit 1 - Cache Error
-	- Bit 2 - TLB Error
-	- Bit 3 - Bus Error
-	- Bit 4 - Micro-architectural Error
-	All other values are reserved
-
-Spec 2.10 also preserve the same encoding as 2.9A
-
-See: https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-information
-
-Adjust CPER handling code for ARM to properly handle UEFI 2.9A and
-2.10 encoding.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
 ---
- drivers/firmware/efi/cper-arm.c | 37 +++++++++++++--------------------
- include/linux/cper.h            |  9 ++++----
- 2 files changed, 18 insertions(+), 28 deletions(-)
+ diff with v2: remove print error
+ diff with v1: leak the page, and print error
 
-diff --git a/drivers/firmware/efi/cper-arm.c b/drivers/firmware/efi/cper-arm.c
-index fa9c1c3bf168..17b84ffa61d2 100644
---- a/drivers/firmware/efi/cper-arm.c
-+++ b/drivers/firmware/efi/cper-arm.c
-@@ -93,15 +93,11 @@ static void cper_print_arm_err_info(const char *pfx, u32 type,
- 	bool proc_context_corrupt, corrected, precise_pc, restartable_pc;
- 	bool time_out, access_mode;
+ drivers/virt/coco/tdx-guest/tdx-guest.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/virt/coco/tdx-guest/tdx-guest.c b/drivers/virt/coco/tdx-guest/tdx-guest.c
+index 1253bf7..8575d98 100644
+--- a/drivers/virt/coco/tdx-guest/tdx-guest.c
++++ b/drivers/virt/coco/tdx-guest/tdx-guest.c
+@@ -124,10 +124,8 @@ static void *alloc_quote_buf(void)
+ 	if (!addr)
+ 		return NULL;
  
--	/* If the type is unknown, bail. */
--	if (type > CPER_ARM_MAX_TYPE)
--		return;
--
- 	/*
- 	 * Vendor type errors have error information values that are vendor
- 	 * specific.
- 	 */
--	if (type == CPER_ARM_VENDOR_ERROR)
-+	if (type & CPER_ARM_VENDOR_ERROR)
- 		return;
+-	if (set_memory_decrypted((unsigned long)addr, count)) {
+-		free_pages_exact(addr, len);
++	if (set_memory_decrypted((unsigned long)addr, count))
+ 		return NULL;
+-	}
  
- 	if (error_info & CPER_ARM_ERR_VALID_TRANSACTION_TYPE) {
-@@ -116,43 +112,38 @@ static void cper_print_arm_err_info(const char *pfx, u32 type,
- 	if (error_info & CPER_ARM_ERR_VALID_OPERATION_TYPE) {
- 		op_type = ((error_info >> CPER_ARM_ERR_OPERATION_SHIFT)
- 			   & CPER_ARM_ERR_OPERATION_MASK);
--		switch (type) {
--		case CPER_ARM_CACHE_ERROR:
-+		if (type & CPER_ARM_CACHE_ERROR) {
- 			if (op_type < ARRAY_SIZE(arm_cache_err_op_strs)) {
--				printk("%soperation type: %s\n", pfx,
-+				printk("%scache error: %s\n", pfx,
- 				       arm_cache_err_op_strs[op_type]);
- 			}
--			break;
--		case CPER_ARM_TLB_ERROR:
-+		}
-+		if (type & CPER_ARM_TLB_ERROR) {
- 			if (op_type < ARRAY_SIZE(arm_tlb_err_op_strs)) {
--				printk("%soperation type: %s\n", pfx,
-+				printk("%sTLB error: %s\n", pfx,
- 				       arm_tlb_err_op_strs[op_type]);
- 			}
--			break;
--		case CPER_ARM_BUS_ERROR:
-+		}
-+		if (type & CPER_ARM_BUS_ERROR) {
- 			if (op_type < ARRAY_SIZE(arm_bus_err_op_strs)) {
--				printk("%soperation type: %s\n", pfx,
-+				printk("%sbus error: %s\n", pfx,
- 				       arm_bus_err_op_strs[op_type]);
- 			}
--			break;
- 		}
- 	}
- 
- 	if (error_info & CPER_ARM_ERR_VALID_LEVEL) {
- 		level = ((error_info >> CPER_ARM_ERR_LEVEL_SHIFT)
- 			 & CPER_ARM_ERR_LEVEL_MASK);
--		switch (type) {
--		case CPER_ARM_CACHE_ERROR:
-+		if (type & CPER_ARM_CACHE_ERROR)
- 			printk("%scache level: %d\n", pfx, level);
--			break;
--		case CPER_ARM_TLB_ERROR:
-+
-+		if (type & CPER_ARM_TLB_ERROR)
- 			printk("%sTLB level: %d\n", pfx, level);
--			break;
--		case CPER_ARM_BUS_ERROR:
-+
-+		if (type & CPER_ARM_BUS_ERROR)
- 			printk("%saffinity level at which the bus error occurred: %d\n",
- 			       pfx, level);
--			break;
--		}
- 	}
- 
- 	if (error_info & CPER_ARM_ERR_VALID_PROC_CONTEXT_CORRUPT) {
-diff --git a/include/linux/cper.h b/include/linux/cper.h
-index 265b0f8fc0b3..afc6d41b4e67 100644
---- a/include/linux/cper.h
-+++ b/include/linux/cper.h
-@@ -293,11 +293,10 @@ enum {
- #define CPER_ARM_INFO_FLAGS_PROPAGATED		BIT(2)
- #define CPER_ARM_INFO_FLAGS_OVERFLOW		BIT(3)
- 
--#define CPER_ARM_CACHE_ERROR			0
--#define CPER_ARM_TLB_ERROR			1
--#define CPER_ARM_BUS_ERROR			2
--#define CPER_ARM_VENDOR_ERROR			3
--#define CPER_ARM_MAX_TYPE			CPER_ARM_VENDOR_ERROR
-+#define CPER_ARM_CACHE_ERROR			BIT(1)
-+#define CPER_ARM_TLB_ERROR			BIT(2)
-+#define CPER_ARM_BUS_ERROR			BIT(3)
-+#define CPER_ARM_VENDOR_ERROR			BIT(4)
- 
- #define CPER_ARM_ERR_VALID_TRANSACTION_TYPE	BIT(0)
- #define CPER_ARM_ERR_VALID_OPERATION_TYPE	BIT(1)
+ 	return addr;
+ }
 -- 
-2.45.2
-
+2.9.4
 
 
