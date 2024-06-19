@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-221748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 031A190F803
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:02:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B68C790F809
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D09E51C21F61
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4083E1F22371
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF35315DBCA;
-	Wed, 19 Jun 2024 21:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1401F15EFC3;
+	Wed, 19 Jun 2024 21:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="THRYOpjv"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IRYmaQFd"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF7E15DBA0
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 21:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B5C15A850
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 21:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718830866; cv=none; b=HWHNPz7x417H+wcy1qEk/M9ByPwODVCx/CfbofzzOMhuBB6iG6tya6cEB6n7dsHcpLj3DKQAeZM6gCYYLGqMPfWG3iTWESCJAuVkQheSIEgJZthPthSLYp9yQF2vGfBZHk8YMu3kXln3bXqKmkPQtGkmAp0vkKgRyN5loFUM3yw=
+	t=1718830874; cv=none; b=oN2kj8POm5hN3tlTntWS89Y53PJxyw2ElSPIRenhIYz6QI5pcoNUonczai8+o7aq9CK29ieqpJJerpuhNaC4WxGNBQ6hO+hhHdL7T18dRfmuz/ITnllbA9JizWp5xx4abK/ekxJ2WGixB5xbvh+In/MbeWa3kbArb7ZNziWwO04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718830866; c=relaxed/simple;
-	bh=OOF/BPBg3yzTU3UvX16p0AMFD9nIJ5/GVWVc7L1IS9I=;
+	s=arc-20240116; t=1718830874; c=relaxed/simple;
+	bh=bZJzFlWdq5tOtSuEnluAcwCs3WkVItltB8uWupLS0TY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Udw//Cu548tS2Rb1RuvTO1rcxwQsDXPECADqoY9MiGsLYBhxCd58oRmYUyv3w+M3lOj72iffW+I9Wl4eTzPHI4jaLf+ILy6T0XfKYoBTLcOGoqKB7ym+/l98UG9qxMFlhR/fSpqc9Cwj3Y1dV6zB3e0s16hHTdro4VirdsTjkdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=THRYOpjv; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=TZNwH9qzPTdO4T+1nSRRzcQ28kjntwVSTqh9MOiLxQiW5BZcnrvg6fX7VbsBEIhRX6eak82iWtxe25vVG28aNXCv8sNfvrxtxQvH9jfK9wJcyG+ll8x4TeN3qm7SRH/q71bfD2IOiYgo9STNr4hdPLQLaENpbmSEUVkqGkqYpH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IRYmaQFd; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718830863;
+	s=mimecast20190719; t=1718830871;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WnFLjUWhNvrcRFePGY/iHu+4XfRVpyYVm2R3TuQOP2Q=;
-	b=THRYOpjvZgwzCpMZJbZTzkcf3ZXpNLh/uz3EQTUY+sHNYONi+3PW4TSQ1irE3dRwOodq2g
-	wvpjuAV7PUv2oit/Ed1IPsLbGn/bGGmoklaNVebpyEOZg4ocN6JcqjuHibMnfxEQKLBGwe
-	FAk8iwS+rHQU7yWZsvcLMmyU9QiVi0A=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+	bh=Nt6EMOIKSwMdU1Up5vcgl1cAO7/Q9VkkafvHEpfjgCA=;
+	b=IRYmaQFdkkGfwG5awrcQUUT/ssGsgGrlk6P2n1ogfFutNU/pg/wPvi++MYEUIbSmt2A+qf
+	TvnBFls7fjTkDDp0+sn1/fkCnNNRWIV7a1ym6GXXWLyAccP3nnKn7QVLOeDq+vvaLDdw2x
+	JnokGKOI/jpOCy8KcruZxSr6dYPpc9w=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-370-ruyL-zLUM_-a0GWv9BcgXA-1; Wed,
- 19 Jun 2024 17:01:02 -0400
-X-MC-Unique: ruyL-zLUM_-a0GWv9BcgXA-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-164-ASAh7qqSPMyQXsSs8Pc4IA-1; Wed,
+ 19 Jun 2024 17:01:07 -0400
+X-MC-Unique: ASAh7qqSPMyQXsSs8Pc4IA-1
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6838B1956050;
-	Wed, 19 Jun 2024 21:01:00 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 67F9D19560AE;
+	Wed, 19 Jun 2024 21:01:05 +0000 (UTC)
 Received: from antares.redhat.com (unknown [10.39.193.189])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A2F2219560AE;
-	Wed, 19 Jun 2024 21:00:56 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2567F19560AE;
+	Wed, 19 Jun 2024 21:01:00 +0000 (UTC)
 From: Adrian Moreno <amorenoz@redhat.com>
 To: netdev@vger.kernel.org
 Cc: aconole@redhat.com,
@@ -68,10 +68,12 @@ Cc: aconole@redhat.com,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 06/10] net: openvswitch: store sampling probability in cb.
-Date: Wed, 19 Jun 2024 23:00:07 +0200
-Message-ID: <20240619210023.982698-7-amorenoz@redhat.com>
+Subject: [PATCH net-next v3 07/10] selftests: openvswitch: add emit_sample action
+Date: Wed, 19 Jun 2024 23:00:08 +0200
+Message-ID: <20240619210023.982698-8-amorenoz@redhat.com>
 In-Reply-To: <20240619210023.982698-1-amorenoz@redhat.com>
 References: <20240619210023.982698-1-amorenoz@redhat.com>
 Precedence: bulk
@@ -83,126 +85,225 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-When a packet sample is observed, the sampling rate that was used is
-important to estimate the real frequency of such event.
+Add sample and emit_sample action support to ovs-dpctl.py.
 
-Store the probability of the parent sample action in the skb's cb area
-and use it in emit_sample to pass it down to psample.
+Refactor common attribute parsing logic into an external function.
 
 Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
 ---
- include/uapi/linux/openvswitch.h |  3 ++-
- net/openvswitch/actions.c        | 20 +++++++++++++++++---
- net/openvswitch/datapath.h       |  3 +++
- net/openvswitch/vport.c          |  1 +
- 4 files changed, 23 insertions(+), 4 deletions(-)
+ .../selftests/net/openvswitch/ovs-dpctl.py    | 162 +++++++++++++++++-
+ 1 file changed, 161 insertions(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/openvswitch.h
-index b91b4c3cc230..3e7257a714d2 100644
---- a/include/uapi/linux/openvswitch.h
-+++ b/include/uapi/linux/openvswitch.h
-@@ -649,7 +649,8 @@ enum ovs_flow_attr {
-  * Actions are passed as nested attributes.
-  *
-  * Executes the specified actions with the given probability on a per-packet
-- * basis.
-+ * basis. Nested actions will be able to access the probability value of the
-+ * parent @OVS_ACTION_ATTR_SAMPLE.
-  */
- enum ovs_sample_attr {
- 	OVS_SAMPLE_ATTR_UNSPEC,
-diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-index 1f555cbba312..85a2ff91379b 100644
---- a/net/openvswitch/actions.c
-+++ b/net/openvswitch/actions.c
-@@ -1048,12 +1048,15 @@ static int sample(struct datapath *dp, struct sk_buff *skb,
- 	struct nlattr *sample_arg;
- 	int rem = nla_len(attr);
- 	const struct sample_arg *arg;
-+	u32 init_probability;
- 	bool clone_flow_key;
-+	int err;
+diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+index 1dd057afd3fb..beb2499b7126 100644
+--- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
++++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+@@ -8,6 +8,7 @@ import argparse
+ import errno
+ import ipaddress
+ import logging
++import math
+ import multiprocessing
+ import re
+ import struct
+@@ -58,6 +59,7 @@ OVS_FLOW_CMD_DEL = 2
+ OVS_FLOW_CMD_GET = 3
+ OVS_FLOW_CMD_SET = 4
  
- 	/* The first action is always 'OVS_SAMPLE_ATTR_ARG'. */
- 	sample_arg = nla_data(attr);
- 	arg = nla_data(sample_arg);
- 	actions = nla_next(sample_arg, &rem);
-+	init_probability = OVS_CB(skb)->probability;
++UINT32_MAX = 0xFFFFFFFF
  
- 	if ((arg->probability != U32_MAX) &&
- 	    (!arg->probability || get_random_u32() > arg->probability)) {
-@@ -1062,9 +1065,16 @@ static int sample(struct datapath *dp, struct sk_buff *skb,
- 		return 0;
- 	}
+ def macstr(mac):
+     outstr = ":".join(["%02X" % i for i in mac])
+@@ -267,6 +269,75 @@ def parse_extract_field(
+     return str_skipped, data
  
-+	OVS_CB(skb)->probability = arg->probability;
+ 
++def parse_attrs(actstr, attr_desc):
++    """Parses the given action string and returns a list of netlink
++    attributes based on a list of attribute descriptions.
 +
- 	clone_flow_key = !arg->exec;
--	return clone_execute(dp, skb, key, 0, actions, rem, last,
--			     clone_flow_key);
-+	err = clone_execute(dp, skb, key, 0, actions, rem, last,
-+			    clone_flow_key);
++    Each element in the attribute description list is a tuple such as:
++        (name, attr_name, parse_func)
++    where:
++        name: is the string representing the attribute
++        attr_name: is the name of the attribute as defined in the uAPI.
++        parse_func: is a callable accepting a string and returning either
++            a single object (the parsed attribute value) or a tuple of
++            two values (the parsed attribute value and the remaining string)
 +
-+	if (!last)
-+		OVS_CB(skb)->probability = init_probability;
++    Returns a list of attributes and the remaining string.
++    """
++    def parse_attr(actstr, key, func):
++        actstr = actstr[len(key) :]
 +
-+	return err;
- }
- 
- /* When 'last' is true, clone() should always consume the 'skb'.
-@@ -1312,6 +1322,7 @@ static void execute_emit_sample(struct datapath *dp, struct sk_buff *skb,
- 	struct psample_group psample_group = {};
- 	struct psample_metadata md = {};
- 	const struct nlattr *a;
-+	u32 rate;
- 	int rem;
- 
- 	nla_for_each_attr(a, nla_data(attr), nla_len(attr), rem) {
-@@ -1330,8 +1341,11 @@ static void execute_emit_sample(struct datapath *dp, struct sk_buff *skb,
- 	psample_group.net = ovs_dp_get_net(dp);
- 	md.in_ifindex = OVS_CB(skb)->input_vport->dev->ifindex;
- 	md.trunc_size = skb->len - OVS_CB(skb)->cutlen;
-+	md.rate_as_probability = 1;
++        if not func:
++            return None, actstr
 +
-+	rate = OVS_CB(skb)->probability ? OVS_CB(skb)->probability : U32_MAX;
++        delim = actstr[0]
++        actstr = actstr[1:]
++
++        if delim == "=":
++            pos = strcspn(actstr, ",)")
++            ret = func(actstr[:pos])
++        else:
++            ret = func(actstr)
++
++        if isinstance(ret, tuple):
++            (datum, actstr) = ret
++        else:
++            datum = ret
++            actstr = actstr[strcspn(actstr, ",)"):]
++
++        if delim == "(":
++            if not actstr or actstr[0] != ")":
++                raise ValueError("Action contains unbalanced parentheses")
++
++            actstr = actstr[1:]
++
++        actstr = actstr[strspn(actstr, ", ") :]
++
++        return datum, actstr
++
++    attrs = []
++    attr_desc = list(attr_desc)
++    while actstr and actstr[0] != ")" and attr_desc:
++        found = False
++        for i, (key, attr, func) in enumerate(attr_desc):
++            if actstr.startswith(key):
++                datum, actstr = parse_attr(actstr, key, func)
++                attrs.append([attr, datum])
++                found = True
++                del attr_desc[i]
++
++        if not found:
++            raise ValueError("Unknown attribute: '%s'" % actstr)
++
++        actstr = actstr[strspn(actstr, ", ") :]
++
++    if actstr[0] != ")":
++        raise ValueError("Action string contains extra garbage or has "
++                         "unbalanced parenthesis: '%s'" % actstr)
++
++    return attrs, actstr[1:]
++
++
+ class ovs_dp_msg(genlmsg):
+     # include the OVS version
+     # We need a custom header rather than just being able to rely on
+@@ -285,7 +356,7 @@ class ovsactions(nla):
+         ("OVS_ACTION_ATTR_SET", "none"),
+         ("OVS_ACTION_ATTR_PUSH_VLAN", "none"),
+         ("OVS_ACTION_ATTR_POP_VLAN", "flag"),
+-        ("OVS_ACTION_ATTR_SAMPLE", "none"),
++        ("OVS_ACTION_ATTR_SAMPLE", "sample"),
+         ("OVS_ACTION_ATTR_RECIRC", "uint32"),
+         ("OVS_ACTION_ATTR_HASH", "none"),
+         ("OVS_ACTION_ATTR_PUSH_MPLS", "none"),
+@@ -304,8 +375,85 @@ class ovsactions(nla):
+         ("OVS_ACTION_ATTR_ADD_MPLS", "none"),
+         ("OVS_ACTION_ATTR_DEC_TTL", "none"),
+         ("OVS_ACTION_ATTR_DROP", "uint32"),
++        ("OVS_ACTION_ATTR_EMIT_SAMPLE", "emit_sample"),
+     )
  
--	psample_sample_packet(&psample_group, skb, 0, &md);
-+	psample_sample_packet(&psample_group, skb, rate, &md);
- #endif
- }
++    class emit_sample(nla):
++        nla_flags = NLA_F_NESTED
++
++        nla_map = (
++            ("OVS_EMIT_SAMPLE_ATTR_UNSPEC", "none"),
++            ("OVS_EMIT_SAMPLE_ATTR_GROUP", "uint32"),
++            ("OVS_EMIT_SAMPLE_ATTR_COOKIE", "array(uint8)"),
++        )
++
++        def dpstr(self, more=False):
++            args = "group=%d" % self.get_attr("OVS_EMIT_SAMPLE_ATTR_GROUP")
++
++            cookie = self.get_attr("OVS_EMIT_SAMPLE_ATTR_COOKIE")
++            if cookie:
++                args += ",cookie(%s)" % \
++                        "".join(format(x, "02x") for x in cookie)
++
++            return "emit_sample(%s)" % args
++
++        def parse(self, actstr):
++            desc = (
++                ("group", "OVS_EMIT_SAMPLE_ATTR_GROUP", int),
++                ("cookie", "OVS_EMIT_SAMPLE_ATTR_COOKIE",
++                    lambda x: list(bytearray.fromhex(x)))
++            )
++
++            attrs, actstr = parse_attrs(actstr, desc)
++
++            for attr in attrs:
++                self["attrs"].append(attr)
++
++            return actstr
++
++    class sample(nla):
++        nla_flags = NLA_F_NESTED
++
++        nla_map = (
++            ("OVS_SAMPLE_ATTR_UNSPEC", "none"),
++            ("OVS_SAMPLE_ATTR_PROBABILITY", "uint32"),
++            ("OVS_SAMPLE_ATTR_ACTIONS", "ovsactions"),
++        )
++
++        def dpstr(self, more=False):
++            args = []
++
++            args.append("sample={:.2f}%".format(
++                100 * self.get_attr("OVS_SAMPLE_ATTR_PROBABILITY") /
++                UINT32_MAX))
++
++            actions = self.get_attr("OVS_SAMPLE_ATTR_ACTIONS")
++            if actions:
++                args.append("actions(%s)" % actions.dpstr(more))
++
++            return "sample(%s)" % ",".join(args)
++
++        def parse(self, actstr):
++            def parse_nested_actions(actstr):
++                subacts = ovsactions()
++                parsed_len = subacts.parse(actstr)
++                return subacts, actstr[parsed_len :]
++
++            def percent_to_rate(percent):
++                percent = float(percent.strip('%'))
++                return int(math.floor(UINT32_MAX * (percent / 100.0) + .5))
++
++            desc = (
++                ("sample", "OVS_SAMPLE_ATTR_PROBABILITY", percent_to_rate),
++                ("actions", "OVS_SAMPLE_ATTR_ACTIONS", parse_nested_actions),
++            )
++            attrs, actstr = parse_attrs(actstr, desc)
++
++            for attr in attrs:
++                self["attrs"].append(attr)
++
++            return actstr
++
+     class ctact(nla):
+         nla_flags = NLA_F_NESTED
  
-diff --git a/net/openvswitch/datapath.h b/net/openvswitch/datapath.h
-index 0cd29971a907..9ca6231ea647 100644
---- a/net/openvswitch/datapath.h
-+++ b/net/openvswitch/datapath.h
-@@ -115,12 +115,15 @@ struct datapath {
-  * fragmented.
-  * @acts_origlen: The netlink size of the flow actions applied to this skb.
-  * @cutlen: The number of bytes from the packet end to be removed.
-+ * @probability: The sampling probability that was applied to this skb; 0 means
-+ * no sampling has occurred; U32_MAX means 100% probability.
-  */
- struct ovs_skb_cb {
- 	struct vport		*input_vport;
- 	u16			mru;
- 	u16			acts_origlen;
- 	u32			cutlen;
-+	u32			probability;
- };
- #define OVS_CB(skb) ((struct ovs_skb_cb *)(skb)->cb)
+@@ -637,6 +785,18 @@ class ovsactions(nla):
+                 self["attrs"].append(["OVS_ACTION_ATTR_CT", ctact])
+                 parsed = True
  
-diff --git a/net/openvswitch/vport.c b/net/openvswitch/vport.c
-index 972ae01a70f7..8732f6e51ae5 100644
---- a/net/openvswitch/vport.c
-+++ b/net/openvswitch/vport.c
-@@ -500,6 +500,7 @@ int ovs_vport_receive(struct vport *vport, struct sk_buff *skb,
- 	OVS_CB(skb)->input_vport = vport;
- 	OVS_CB(skb)->mru = 0;
- 	OVS_CB(skb)->cutlen = 0;
-+	OVS_CB(skb)->probability = 0;
- 	if (unlikely(dev_net(skb->dev) != ovs_dp_get_net(vport->dp))) {
- 		u32 mark;
- 
++            elif parse_starts_block(actstr, "sample(", False):
++                sampleact = self.sample()
++                actstr = sampleact.parse(actstr[len("sample(") : ])
++                self["attrs"].append(["OVS_ACTION_ATTR_SAMPLE", sampleact])
++                parsed = True
++
++            elif parse_starts_block(actstr, "emit_sample(", False):
++                emitact = self.emit_sample()
++                actstr = emitact.parse(actstr[len("emit_sample(") : ])
++                self["attrs"].append(["OVS_ACTION_ATTR_EMIT_SAMPLE", emitact])
++                parsed = True
++
+             actstr = actstr[strspn(actstr, ", ") :]
+             while parencount > 0:
+                 parencount -= 1
 -- 
 2.45.1
 
