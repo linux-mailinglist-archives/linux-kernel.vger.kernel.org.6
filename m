@@ -1,177 +1,169 @@
-Return-Path: <linux-kernel+bounces-221028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F1E90EAEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:23:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B1390EAFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14241B2664D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:23:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DAF21F22AF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C8914D705;
-	Wed, 19 Jun 2024 12:20:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9931494A6;
-	Wed, 19 Jun 2024 12:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01211422D5;
+	Wed, 19 Jun 2024 12:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="HZxyltUm"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75ADC1422C1;
+	Wed, 19 Jun 2024 12:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718799632; cv=none; b=O9mn/CPw3Qd/urdOP0SW11Uzc+ujL5tNAPku/mMimuplmVVntJNNtwnQUi0hk216sqB1ckg4HD3oTeNE1dAZqwllJLfRHNHAxxpHCNMeBPAe1YNKhKAl1wQ3/u1CdMvPOsAYxXOrlHVg6Dvb115BJvG9Tga1SOe/oVC1ESZgkPo=
+	t=1718799743; cv=none; b=CAnFz9yiY0M88q08/VeheCLVT0Zps7oElmulvo3LbaqUQU6OZvnCCxGcJX1zJZx1rL9L2DXPCzfIvV4tApDd4RgjhWhajttSJYZyHETNfGuvBhEkxvdF9EMfzLKBq6zQY8RfFQNX4CWNlOXrMAjoI0EIwYImy6GPeTsfrCqykf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718799632; c=relaxed/simple;
-	bh=txPCvjL+WnJutH59PsF5sZ5h3sut4eHWQz8KbcyhNno=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gTLcYU+05PyVFYSEmRaCkLGQf2gs5PDdISwovpR3UKuYRV778CTVtRWCjVTV9fyFl/TYqYxqxjGLAyd9dLGGruax2Mbe+ks715qqov3RS+O7iOE2KjrS0UHdYTKsAhghEgIxXpLZrh2dcye4p6Yot/piYXtw5s7SB8WZnx5Dwak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1512A150C;
-	Wed, 19 Jun 2024 05:20:54 -0700 (PDT)
-Received: from [10.57.69.141] (unknown [10.57.69.141])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 35E8F3F6A8;
-	Wed, 19 Jun 2024 05:20:27 -0700 (PDT)
-Message-ID: <4439aa79-64d1-48f4-ba5f-fc794fc274d3@arm.com>
-Date: Wed, 19 Jun 2024 13:20:37 +0100
+	s=arc-20240116; t=1718799743; c=relaxed/simple;
+	bh=Olzzvp24AOC4T+V7DJiEH5HUqYnKd+8BcbBEFc09ZE0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VSiTrzUJ+szfKe52l0tCQk0imbWRvjsooOsTv2sAh3pYSWJ8Wv+nPXybTVXwwWk2g+NAzGMksjJx4DuppPq4PxPhOLPGc20hsRE/qDffSE88B0zTRjwOMM074QJQ79j068SUwSw08mgERRBETUTO26i2VYeNndfnTzwqRyHnsXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=HZxyltUm; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JBHNEP001428;
+	Wed, 19 Jun 2024 08:21:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=vNRa5Oiplrn2Xgjadf1n6RmThiC
+	4FkAUT3lbnFrTe1s=; b=HZxyltUmGX8KKUc5FK1K2p5e+IZHgBoi2b1CTFHOe9f
+	6MT3ai9cZbplj/3RUFxaLPZKPrHd1PcFRLBiGNFnLTkbjhPCMen7zszstTyvwrbm
+	fHE6SnmkQ5peMQDqPSh4yYnlCtV0TJ9tnaP1HftcYrDi5Rac9DMQuA1afEiKd9Iv
+	dH5Dw3AGQjaVzJkJqa+VYLg6NVuLW64ub4tZMm5K7EV9fVE1pOzm2GPAN5D249/J
+	YR08RqP3AbPLhbsKyKU1C7/1QloJgG238pBDUNx0rZSRw6YgHA/QhaHZO2s4iNb7
+	ZBdIfvpQXrjFN1yKFyXrg9Q/BaI2RRQR3DJ9GHYqqUQ==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3yut929709-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 08:21:53 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 45JCLqV7057202
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 19 Jun 2024 08:21:52 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Wed, 19 Jun
+ 2024 08:21:51 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Wed, 19 Jun 2024 08:21:51 -0400
+Received: from HYB-hYN1yfF7zRm.ad.analog.com (HYB-hYN1yfF7zRm.ad.analog.com [10.48.65.166])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 45JCLWw9017121;
+	Wed, 19 Jun 2024 08:21:34 -0400
+From: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+To: <linux-iio@vger.kernel.org>
+CC: Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+        Jonathan Cameron
+	<jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Cosmin Tanislav
+	<cosmin.tanislav@analog.com>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Nuno Sa <nuno.sa@analog.com>,
+        Marius Cristea <marius.cristea@microchip.com>,
+        Marcelo Schmitt
+	<marcelo.schmitt@analog.com>,
+        Maksim Kiselev <bigunclemax@gmail.com>,
+        Liam
+ Beguin <liambeguin@gmail.com>,
+        Ivan Mikhaylov <fr0st61te@gmail.com>,
+        Marcus
+ Folkesson <marcus.folkesson@gmail.com>,
+        Lee Jones <lee@kernel.org>, Mike
+ Looijmans <mike.looijmans@topic.nl>,
+        Okan Sahin <okan.sahin@analog.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH v3 0/3] ad777x driver addressing patch comments
+Date: Wed, 19 Jun 2024 15:20:43 +0300
+Message-ID: <20240619122105.22642-1-ramona.nechita@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] cpuidle: teo: Introduce util-awareness
-From: Lukasz Luba <lukasz.luba@arm.com>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Kajetan Puchalski <kajetan.puchalski@arm.com>, rafael@kernel.org,
- daniel.lezcano@linaro.org, Dietmar.Eggemann@arm.com, dsmythies@telus.net,
- yu.chen.surf@gmail.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Qais Yousef <qyousef@layalina.io>
-References: <20230105145159.1089531-1-kajetan.puchalski@arm.com>
- <20230105145159.1089531-3-kajetan.puchalski@arm.com>
- <20230711175814.zfavcn7xn3ia5va4@airbuntu>
- <ZLZ/btJw5LNVxVy8@e126311.manchester.arm.com>
- <20230718132432.w5xoxbqm54jmu6n5@airbuntu>
- <20230917010516.54dgcmms44wyfrvx@airbuntu>
- <CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com>
- <d54d6115-a4d6-466b-a4a2-9c064194f06e@arm.com>
- <CAKfTPtB21aY9cgi5dSHB0jRp6pE85AfGcHrHjrcpMwi3fJL0FA@mail.gmail.com>
- <286d4cf8-814b-41a2-8d5f-2673dc737f45@arm.com>
- <CAKfTPtBh6ZDv7=1Tst1kjQjD=UjDG1DAaQOUCXvzP4ZhD94iTg@mail.gmail.com>
- <7ba09d9e-61dc-4d36-a401-0f89915fadfb@arm.com>
-Content-Language: en-US
-In-Reply-To: <7ba09d9e-61dc-4d36-a401-0f89915fadfb@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: n3K_sUnCP5GZdzH7d5N7gYGkpEXGehFx
+X-Proofpoint-ORIG-GUID: n3K_sUnCP5GZdzH7d5N7gYGkpEXGehFx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 mlxlogscore=999
+ adultscore=0 clxscore=1011 suspectscore=0 impostorscore=0 malwarescore=0
+ mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406190092
 
-Hi Vincent,
+This patch series is sent to address the comments received
+with regards to the ad7779 driver patch:
+v2-0001-drivers-iio-adc-add-support-for-ad777x-family.patch,
+as well as the dt-bindings patch:
+v3-0001-dt-bindings-iio-adc-add-a7779-doc.patch.
+The patches were initially sent separated, this has now
+been corrected with this patch series, along with soeme
+other issues such as the cover letter and author.
+The changes in the series:
+v3:
+	* drop spi-max-frequency from yaml and fix indent
+	* separate ABI doc into different patch, drop ad4130
+	 ABI doc file and combine the filter_mode/type properties
+	 in the sysfs-bus-iio file
+	* update Kconfig help section for the driver
+	* update driver commit message
+	* drop crc_enabled and check crc by default on all regs
+	  except GEN_ERR_REG_1_EN
+	* rename from "ad777x_*" to "ad7779_*"
+	* switch from kfifo to triggered buffer and send w/timestamp
+	* switched spidata_rx/tx buffer data type to u8 and declared
+	  channels as IIO_BE
+	* switched to fsleep and added comments for each of them
+	* changed "____cacheline_aligned" to "__aligned(IIO_DMA_MINALIGN)"
+	* fixed allignments and removed redundant variables
+	* removed local update_scan_mode in favor of iio active_scan_mask
+	* requested trigger as NO_AUTOEN and it is enabled/disabled only
+	  in preenable/postdisable functions
+	* removed separate ad777x_register function and moved the code
+	  in probe
+	* switched to get_clk_enabled
+	* check for irq earlier in probe
+	* misc code style / format changes, as suggested
 
-On 6/12/24 10:17, Lukasz Luba wrote:
-> 
-> 
-> On 6/12/24 10:04, Vincent Guittot wrote:
->> On Wed, 12 Jun 2024 at 09:25, Lukasz Luba <lukasz.luba@arm.com> wrote:
->>>
->>> Hi Vincent,
->>>
->>> My apologies for delay, I was on sick leave.
->>>
->>> On 5/28/24 15:07, Vincent Guittot wrote:
->>>> On Tue, 28 May 2024 at 11:59, Lukasz Luba <lukasz.luba@arm.com> wrote:
->>>>>
->>>>> Hi Vincent,
->>>>>
->>>>> On 5/28/24 10:29, Vincent Guittot wrote:
->>>>>> Hi All,
->>>>>>
->>>>>> I'm quite late on this thread but this patchset creates a major
->>>>>> regression for psci cpuidle driver when using the OSI mode (OS
->>>>>> initiated mode).  In such a case, cpuidle driver takes care only of
->>>>>> CPUs power state and the deeper C-states ,which includes cluster and
->>>>>> other power domains, are handled with power domain framework. In such
->>>>>> configuration ,cpuidle has only 2 c-states : WFI and cpu off states
->>>>>> and others states that include the clusters, are managed by genpd and
->>>>>> its governor.
->>>>>>
->>>>>> This patch selects cpuidle c-state N-1 as soon as the utilization is
->>>>>> above CPU capacity / 64 which means at most a level of 16 on the big
->>>>>> core but can be as low as 4 on little cores. These levels are very 
->>>>>> low
->>>>>> and the main result is that as soon as there is very little activity
->>>>>> on a CPU, cpuidle always selects WFI states whatever the estimated
->>>>>> sleep duration and which prevents any deeper states. Another 
->>>>>> effect is
->>>>>> that it also keeps the tick firing every 1ms in my case.
->>>>>
->>>>> Thanks for reporting this.
->>>>> Could you add what regression it's causing, please?
->>>>> Performance or higher power?
->>>>
->>>> It's not a perf but rather a power regression. I don't have a power
->>>> counter so it's difficult to give figures but I found it while running
->>>> a unitary test below on my rb5:
->>>> run 500us every 19457ms on medium core (uclamp_min: 600).
->>>
->>> Mid cores are built differently, they have low static power (leakage).
->>> Therefore, for them the residency in deeper idle state should be
->>> longer than for Big CPU. When you power off the CPU you loose your
->>> cache data/code. The data needs to be stored in the L3 or
->>> further memory. When the cpu is powered on again, it needs code & data.
->>> Thus, it will transfer that data/code from L3 or from DDR. That
->>> information transfer has energy cost (it's not for free). The cost
->>> of data from DDR is very high.
->>> Then we have to justify if the energy lost while sleeping in shallower
->>> idle state can be higher than loading data/code from outside.
->>> For different CPU it would be different.
->>
->> I'm aware of these points and the residency time of an idle state is
->> set to reflect this cost. In my case, the idle time is far above the
->> residency time which means that we should get some energy saving.
->> cpu off 4.488ms
->> cluster off 9.987ms
->> vs
->> sleep duration 18.000ms
->>
->> Also, the policy of selecting a shallower idle state than the final
->> selected one doesn't work with PSCI OSI because cpuidle is only aware
->> of per CPU idle states but it is not aware of the cluster or
->> deeper/wider idle states so cpuidle doesn't know what will be the
->> final selected idle state. This is a major problem, in addition to
->> keep the tick firing
-> 
-> I think we are aligned with this.
-> Something has to change in this implementation of idle gov.
-> 
-> I'm a bit more skeptical about your second point with PSCI.
-> That standard might be to strong to change.
-> 
+Ramona Alexandra Nechita (3):
+  dt-bindings: iio: adc: add a7779 doc
+  Documentation: ABI: added filter mode doc in sysfs-bus-iio
+  drivers: iio: adc: add support for ad777x family
 
-I'm coming back to you with some public information about our WFI
-idle state. WFI can be not only the clock-gating thing, it can
-automatically put the CPU into retention mode, which saves the
-static power.
+ Documentation/ABI/testing/sysfs-bus-iio       |   7 +
+ .../ABI/testing/sysfs-bus-iio-adc-ad4130      |  46 -
+ .../bindings/iio/adc/adi,ad7779.yaml          |  84 ++
+ drivers/iio/adc/Kconfig                       |  11 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/ad7779.c                      | 936 ++++++++++++++++++
+ 6 files changed, 1039 insertions(+), 46 deletions(-)
+ delete mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+ create mode 100644 drivers/iio/adc/ad7779.c
 
-That's why I said WFI can be really efficient and we can/should
-leverage that. That's also why we shouldn't assume power numbers
-based on statistics of idle states (especially available in kernel).
+-- 
+2.43.0
 
-Please check TRM for Cortex-X1, section:
-A4.6.4 Core dynamic retention mode [1].
-
-The period after which the HW can decide to enter retention mode
-is configurable via registers. It's up to our vendors to experiment
-and implement the right configuration.
-
-It's up to the vendor to try that and some of them do this AFAIK.
-We should really talk based on the data including power from experiments
-and also investigate deeper if the right configurations are
-used in HW.
-
-Regards,
-Lukasz
-
-[1] 
-https://developer.arm.com/documentation/101433/0102/Functional-description/Power-management-/Core-power-modes/Core-dynamic-retention-mode
 
