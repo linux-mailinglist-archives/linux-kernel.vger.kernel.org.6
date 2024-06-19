@@ -1,243 +1,164 @@
-Return-Path: <linux-kernel+bounces-220458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D77690E204
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 05:40:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C363390E212
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 05:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE8D284855
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:40:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496591F23D36
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540705588E;
-	Wed, 19 Jun 2024 03:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC56B5588E;
+	Wed, 19 Jun 2024 03:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TosN0g1H"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2040.outbound.protection.outlook.com [40.107.237.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394E32139C7;
-	Wed, 19 Jun 2024 03:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718768447; cv=fail; b=ASDmBUov8mpm57yTxzAJcck+cgjVyTR0FvS7yFsJ2WguL1FCXH1jsnY4jGbj68mz+iaU4+i0bBb6C//LfkNJJ9kiLeqlT/iEk5eWEShrk9XMe/JPJFZ++FoIZNOte/ICsIxCNZuohkQqvGQWd/DQ/Fg4LbmcW9EOejRABJgQzDw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718768447; c=relaxed/simple;
-	bh=ggNWFFjYIo2ZQKn2x3Sjlnl4Cq6FGqeYYk07gYAQv9E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=u9JLMhZ/B7nizu+0nPHLX6KD2kXqwi+kOq6gmYgY76Sog7fKTxLWIqUGjLnqBZ/x+18RQ+xfL0ntYEpLFHkOwwOxDRWfXvd6XEod4B2J/U0mDxjtfPEODg7tOAwaidhJ7iLWNCdZ68DiLKJrTlUjX45U0OtTt2BfDnr+BF8/uTk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TosN0g1H; arc=fail smtp.client-ip=40.107.237.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DdUBsTpRa/oyElheUvgwFFF9snyDIQwYPgbC8UImtynFBv0F24JXUCGVQD0EFEVna60jck4SUdI3glssBGZR+jKHvWgETnN4YunaMbA4lhZtZvNfI9xeXjDmBR+qFEwJHqHM8QIqHoEFidapIu+ZUtWbVgasFGh7NrMpd3NKaUR1bIgTl2GGieQpz9ECbFImiw+n+AdFtf+3KwXMmJGFZeDgaTCNWlnCfe2z2RqKTziB+3fTrd6XmKPKdZ6/ValQjsIonm9VDuNhPVQP1OZ0nLoQEdfNnqL/BSynpbQv+q/bimzJpzvrkbajKwQRCfiqN7Uj290FOMxM5HPojCiLaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ggNWFFjYIo2ZQKn2x3Sjlnl4Cq6FGqeYYk07gYAQv9E=;
- b=KK5c0+9DJlM3XRcUXEwFMXTrG57BppAx00FclwHVmqnepbkr0Q1skSjpRpfKewcYIJLMuNX202vdC95oZiFKkNbgqkz53P9z8ISXX2JLXM+sUXrM3SUDLMTxtalHhyxdRPSLpIs9H4GL/hhwbRtmKaToF/sCeXosyv7T0Itt1OfyMRNNt7x3lA/MgD2yiFgv5ZdjQb/le+8eeC5kyJs832d3flf+AaDgFkd7Km806dUSzMMfMKn55ISQyuwzQqc3C+QMup/vof5njAVsLSBn0QS7JNA2SF4snB/2xdT2SBm6FN1deQJX3s4QQLyl+d+X3Auvg9RNJPS+FbizFsd/aA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ggNWFFjYIo2ZQKn2x3Sjlnl4Cq6FGqeYYk07gYAQv9E=;
- b=TosN0g1HafcgZwBCnqB7ohTBwY3uUi9lH/Qd4+QXaypOaWY4o7uHXRg1XNYZloVCyGliWAv/1oBVzq3WKFz72RC8doabGkMYxGITmUgRGDJhcDy0Aqj8e1jfSqbGSHvS9Lh+eFjOwCaEGTjkjx8kebOlr48XeukHviutFLBkXhs=
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
- by CY8PR12MB8297.namprd12.prod.outlook.com (2603:10b6:930:79::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.18; Wed, 19 Jun
- 2024 03:40:42 +0000
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf%6]) with mapi id 15.20.7677.030; Wed, 19 Jun 2024
- 03:40:41 +0000
-From: "Yuan, Perry" <Perry.Yuan@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "Limonciello,
- Mario" <Mario.Limonciello@amd.com>, "viresh.kumar@linaro.org"
-	<viresh.kumar@linaro.org>, "Huang, Ray" <Ray.Huang@amd.com>, "Shenoy, Gautham
- Ranjal" <gautham.shenoy@amd.com>, "Deucher, Alexander"
-	<Alexander.Deucher@amd.com>, "Huang, Shimmer" <Shimmer.Huang@amd.com>, "Du,
- Xiaojian" <Xiaojian.Du@amd.com>, "Meng, Li (Jassmine)" <Li.Meng@amd.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4 08/11] x86/cpufeatures: Add feature bits for AMD
- heterogeneous processor
-Thread-Topic: [PATCH v4 08/11] x86/cpufeatures: Add feature bits for AMD
- heterogeneous processor
-Thread-Index: AQHawIRo5KS01Fven06s+cavrEvZl7HLopMAgALNdXA=
-Date: Wed, 19 Jun 2024 03:40:41 +0000
-Message-ID:
- <CYYPR12MB86550DC34EE07D11736E6A719CCF2@CYYPR12MB8655.namprd12.prod.outlook.com>
-References: <cover.1718606975.git.perry.yuan@amd.com>
- <4416ff72ea5a33173b69561803f1578073baccae.1718606975.git.perry.yuan@amd.com>
- <20240617083902.GEZm_2JjnNvHaT0Knq@fat_crate.local>
-In-Reply-To: <20240617083902.GEZm_2JjnNvHaT0Knq@fat_crate.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=edc2f60a-47bf-4c95-92fd-d240a9f989c4;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-06-19T03:26:54Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|CY8PR12MB8297:EE_
-x-ms-office365-filtering-correlation-id: 9428b590-4f8d-44e0-81a3-08dc9011980b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230037|366013|1800799021|376011|38070700015;
-x-microsoft-antispam-message-info:
- =?utf-8?B?THdHdStYaUpRdVhwenY5Mk9nYzczV0ljNlZEUjV5L1pXYTFybWFRTDA3WGF6?=
- =?utf-8?B?Ui9TWGtJRlNPNVYxOG8wQW9DMWd1OEUwTXZmV0ljbXM0SnhtTWxVQzJMeU1z?=
- =?utf-8?B?Mm9tNHRXRFkyczNrRjhocllUZWFEUEtBaUE2WmNQMWt6OUYzczRHRXdZb3dh?=
- =?utf-8?B?UDNneUFhR1ZxZW1Bb28zRzhnNjZGYkJIY0k3MGlPM01NNGlWWWt0Sk54Ynpl?=
- =?utf-8?B?WjNpb2xuSStkbVBaWE9BT3psdVhUbU1JUWxpaFVFVHdTS3F2TWFjYzRMWkRM?=
- =?utf-8?B?OW4wSG9mMzhLOThFSDNsOUt5Uy9KYlRJYldIcGxBbndiZGtVdHA3bEJOcmhU?=
- =?utf-8?B?K28xL1BDb0VJZGRZUzNPVFZDWUxnblA5LzZQQzQ3MFVOZTFRaUxtWVJlOFdx?=
- =?utf-8?B?TGFQRU1DSEpLSUh3SGc0b2RCci9kQ04wcXQvNkNiWUZPUWhuY3JrQ3k0eDhG?=
- =?utf-8?B?VGsrT25EY3ZxbDhtZThuSWtlUkpOSjh5Um5Fd21DQS82NFl3bzkzb05BaWhR?=
- =?utf-8?B?d0JTWE4wRGQ5Nk1uc2hRWm9abTZySTdXNExJSWFrbVNLUThUYjlNYi9wWHJJ?=
- =?utf-8?B?UDFFY2ZPZUgvbkh3TnNrTjNibjQyR3FPbkVjUFF5c1JCWndhZ254M2syeDBh?=
- =?utf-8?B?NUZCeHdyOXM4bHl6cXg0b1RhR3BCbFVQNE1vdWRodzg5QUxSN2U5MUl5R1pv?=
- =?utf-8?B?Y2hSWFlGYTNFb3p4NXJtckhFZlNHVGpzNW9QVmF6Nk1kU0pGdjVFSFVaTVFv?=
- =?utf-8?B?eE5mYlk3UHlGSEplYmpiWXlwQURzbzR5b2NEM29oU2FHek5rWmFTd1lJY1d4?=
- =?utf-8?B?SFJDdDdsc3ErY2oyUXJMNnF6N1Q4cnh6THprNzRnNUlCcUxVTCtUSFQzSUR3?=
- =?utf-8?B?MEl0dEtWZThBekFZTy9VY0pXTjUvcHFTZlJWMUVVRThTU2FqSXBvbkVCQTdF?=
- =?utf-8?B?Rnp1M0wrdEJKQmY1OFhsblAvMlU1MEtqdU90ZUNXcytKY2NLOElObEFiUEk2?=
- =?utf-8?B?aXZRUkVpQkJXd0JZMDhURGZPd3NTeVJLaWZQRzZyMFNkY0hjTTV0ZG1aRkJo?=
- =?utf-8?B?VWI1Mjd3VktGbi9LVVJhNFcvaUs5bEYwbVg4TU52ckpqVm9EMmF6aHI3N1kw?=
- =?utf-8?B?eGwyY1FVaEFlV0czam1DU1FMSHUxWTA5UnhRVW5tejM4R3NKWTlhZXBmcndJ?=
- =?utf-8?B?Wm4wcWpUbHpkMUpuQ25raVhSRTNnRVNiWDUrdmRuQ1FTbkFBQVZnbGtOcE0z?=
- =?utf-8?B?UmduODEyRE5YUE5NOGs1YUlIazNqdUZCUjd0OUNoZ1pnWTVmRXpjZmRpajZs?=
- =?utf-8?B?bXdqNGErdW85YTVZdnZjODZ6aTZLRUt5OTM2MXNtZmgvUVJ6VWZQbHFuaWZn?=
- =?utf-8?B?b2M5eGE1eUgxelJieE8vbHRpMmozeTlwazlSR2diSVhtZUpnU1pxcmtPZ0Ny?=
- =?utf-8?B?WjhnZktqSnorbVF6RnRhbXJpcktERWxCMWZrTlNJKzBkSitEQ2R2WkFrcEhp?=
- =?utf-8?B?ZG9xdVpZTnk2NXY2THQ3TlAyRUtDZkRkN1lObTlVZWlMRGhIZGJ1V0djeWEw?=
- =?utf-8?B?UUc0U0RaN1FBb2llNk5ONHRlY09qWTNCR3BtcFJ1YXBIZllFUzJrMTg1ZC9L?=
- =?utf-8?B?VVh1a2J6Yk5ueVdWSWoyUWthNVdxdW9SMVhUeXNLSGZCcTlQYk5MT0gwT2FY?=
- =?utf-8?B?d0g5TVVDSENUNzFvZ01OSjRtQkpBUFoyaGIvd2FGQ0hyUy8ydnpGVVkvaDhn?=
- =?utf-8?Q?uoFIvBaNdRVHuFMqWB78bQaakJZNGdlZDOZwQul?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(1800799021)(376011)(38070700015);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WWVYcVZvS2ZudUdwZ0RzdnBvSVF3V21rZmZiRVZCdDZPOW4xMzEzMzg3Y2pR?=
- =?utf-8?B?dHZETkxWRE1aVmc1VE4xQWRqVEtqRVQzVHVyT1RrRVN2WEMzSTk1N0lMdEFz?=
- =?utf-8?B?VEpWc2pwSHNWTmFCT1dRdjVmaHdDeG02cnFkQ0hOTmlNUUZ6NEkvWW5rbzAx?=
- =?utf-8?B?M2xYTmpLT2VSWFBuSnBlNmFBVU4veGR3bFpWNHFiUVJaeitqVDN5QVJ4emo3?=
- =?utf-8?B?TmRjaGtyTzlsTWNUSXZnMzZ4SVJBalJFY0tYUkpWTU43QktCMU5MaVlDWTVH?=
- =?utf-8?B?ZEx3bnBCczA2NTJyb29IYk1RRUNYVE9NakdpSmxMMFo1N0w3ckhDZHRITVZR?=
- =?utf-8?B?WDUwaTNORFBFM3ZBMndydXBUQWdIZlZTVUFMWHdzMXBDMUpqTStwYTdCSGJE?=
- =?utf-8?B?N3U5L1JNbXI0VHZvKzV5cGc2TE9XQVhBdUV1cnFHL3k1OGNOZ3ZvaUkwRHRp?=
- =?utf-8?B?NHRyeFlLTFVCdGUydm5lY2JlTHozQmRQTkpQdjhrRUlzdFVML29HMzdONkg5?=
- =?utf-8?B?UHFXdXgzcmZXRnM0ZnR2Smh1clpEZFAvV3d3S3laWWxncFBCMHpmaldnZmVN?=
- =?utf-8?B?UHN2TEdxejF4c3Z1bEdEWjhVQ3A1cTM5blZTTFRwb3VIMkVOTnVMZnpPcXpS?=
- =?utf-8?B?VnBaWGFSb3VDUXBRQUpmSDZSUTk2ekxRUnYzbDdteUlzaTh4a1F5NHVsdGFt?=
- =?utf-8?B?cU5oT0tQKy9wTGRHUm93KzBnTEMyejNYM05aZnZlbmptODM1eFpLdUptbGRM?=
- =?utf-8?B?MmhlY2w5NGw3Z2JUS1FpdjVDK2FYNWEvbVVyOHpZUVpDTkl6ZFRPeUhKUEMw?=
- =?utf-8?B?SmdwOVB6R1lrcVJmQXVFRmlNSFhRQkJXdmVIaTdSNXJOVzNEKzNQdkUzS0o3?=
- =?utf-8?B?R25FRU1YSHNiWm51Tmd2MFliSEF2RGowVzJXdEUvczVTNjdRTFlVdG9MQjF0?=
- =?utf-8?B?azBBb2g5dytpcFpvcGwyQ1A4OTBMTWc4Z2hOdDR1TUhpQTNsOXFRa3AwZEM0?=
- =?utf-8?B?YlpWQ1NyZ2dQbGhRNHJKcFpFcExKNU9ReVFLNFl6cUxNNDhxN0Y3ZDlMWGFI?=
- =?utf-8?B?ckhjZVBuZkhPdDdmaXUweTVQWXZLdUJVUnIvYlpkckhLQVkvMXBOeklxVmVT?=
- =?utf-8?B?OGFka3hKZVNuNHJqTCtiRGRwWTJIbzMzcWlkMEtRSndSdzhWU1dxcUVuWlgv?=
- =?utf-8?B?UkJ0NXhiNXFyUlZhTUtZZEpYYTF5eGJ5OEZrK2FsRTYxODZzZW9Rd0VCMXU2?=
- =?utf-8?B?RGVoWTR3cGxVblFOZEgvMTBBcVNCYzdoeUlIbmFYSlJBTEF2SzRGMG5VT0N2?=
- =?utf-8?B?VDQ4aVZHQm5DUk41ZmRFRmE2VjFwKzlkM2xrekQxODlDenY5T09nbmFpTTRy?=
- =?utf-8?B?WmFEUE1tTVQ4UUMvLzU1S3BZNWVtWFU3cnhYNlBWd3dPZ2NUYjh2bGFOdVE0?=
- =?utf-8?B?RWFNNWZvZERDckM1Wm9TOExiSWYvYXRBY0NXZjJMamJXSk9QY0pjRTkrQ1Rw?=
- =?utf-8?B?SnVvRVlRR0JEZUF6d29MV3gvWXU3ckVDcEhKVHRtOFhFLzlPNWpNZE00Q0Vq?=
- =?utf-8?B?Y2kxK3RXVnRhUXprTnhmaytxZVM1Z2tqN3hDK3dZOWVvR2dXTTBIU2lrbzUy?=
- =?utf-8?B?ZXJLV1pDN3REcE5BcGtoeFVoK08rOEYwZmYzenFKMGM3RXNvQUc0dUdPRmRh?=
- =?utf-8?B?OXg3MjBTNHV3SmFLcVJKZWNmeTRxQVB2SkYxcEg3SUJkSE1NKzh4U1ZOVGVt?=
- =?utf-8?B?cjV2MnRhRUFhOU5vNXlEbXRhOWpqN0RxSEdkTnpwQ0ZpUnJnL0xlYnE2WVFB?=
- =?utf-8?B?ZkhvNFc1OGQ3c3NUZFQzM1pHZWZXSE53ZWYyemVhMWdRWXlkVmg1VFVyUG9X?=
- =?utf-8?B?dHlTYkdUYWJPS0s4YWpUa2dhYVNaOEF5UmI3R1Vod0p6Wm1JR2s4OTBtdkpo?=
- =?utf-8?B?R3MrRU1FL3FDbTdQM3pRcjFPamN5cHRLZDhBZjMvK3ZpY0ZKeUdOR0tSSGcy?=
- =?utf-8?B?M3FVQVM3S3lZRlJpQkoxUFhaa0lQS2R2RXhBUzVicDBqajRiVk8rMXZmRGJz?=
- =?utf-8?B?U3pZR2pYR2w1RVpPdGVyVWJYR2dtR2owR1lUUmV1RFgvUjRWR2w1RkhKZ3Nh?=
- =?utf-8?Q?tWQk=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.b="yNSygeqS"
+Received: from smtp.cecloud.com (unknown [1.203.97.246])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971342914
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.246
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718768949; cv=none; b=fIaDKQLLyB4cDsyybI3yob5OFP5yB4RwkOKk/BA5iIqBMQBdQ/icYUVw6foDIhepLyqjxlm2VhuglvcXgsvVrT/1ppfNKUhJXaO6HYddQ7GYJ7sEDPKn32giPWEqq1b0ts2M/m12Ir8EGLJzYvgrB94lkGKojkXaz57B1QJxD1Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718768949; c=relaxed/simple;
+	bh=0wu43ss5MZxU6auseVgUcpp02zVtPRgsQ2zs5rmjFlM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Disposition; b=o0UlAeoX2Rays/GKgwz2rXKHjYvB/WpXRho3yAiJwHq9MpkaUHiPvDOmDapvyTvGsa5ocI4QMhfs/ru5g8UwQQT2HAetbWw4rgWZiDTCC74++uco4Dh0FGDsY+PFGZRXTjSlfhNFWsKBHYFwjfK1acdXscRxEVucO25d1lFkqew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; dkim=fail (2048-bit key) header.d=lists.infradead.org header.i=@lists.infradead.org header.b=yNSygeqS reason="signature verification failed"; arc=none smtp.client-ip=1.203.97.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.cecloud.com (Postfix) with ESMTP id E561E7C0112;
+	Wed, 19 Jun 2024 11:43:34 +0800 (CST)
+X-MAIL-GRAY:0
+X-MAIL-DELIVERY:1
+X-SKE-CHECKED:1
+X-ABS-CHECKED:1
+X-ANTISPAM-LEVEL:2
+Received: from localhost.localdomain (unknown [111.48.69.245])
+	by smtp.cecloud.com (postfix) whith ESMTP id P2702681T281466040545648S1718768612546527_;
+	Wed, 19 Jun 2024 11:43:34 +0800 (CST)
+X-IP-DOMAINF:1
+X-RL-SENDER:liuwei09@cestc.cn
+X-SENDER:liuwei09@cestc.cn
+X-LOGIN-NAME:liuwei09@cestc.cn
+X-FST-TO:sudeep.holla@arm.com
+X-RCPT-COUNT:10
+X-LOCAL-RCPT-COUNT:1
+X-MUTI-DOMAIN-COUNT:0
+X-SENDER-IP:111.48.69.245
+X-ATTACHMENT-NUM:0
+X-UNIQUE-TAG:<c586e26224d9f0c4143127ebe1860d4b>
+X-System-Flag:0
+From: Liu Wei <liuwei09@cestc.cn>
+To: sudeep.holla@arm.com,
+	Will Deacon <will@kernel.org>
+Cc: catalin.marinas@arm.com,
+	guohanjun@huawei.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	liuwei09@cestc.cn,
+	lpieralisi@kernel.org,
+	prarit@redhat.com,
+	rafael@kernel.org
+Subject: Re: [PATCH] ACPI: Do not enable ACPI SPCR console by default on arm64
+Date: Wed, 19 Jun 2024 11:43:21 +0800
+Message-ID: <20240618164024.tehpbscax47jkluj@bogus>
+X-Mailer: git-send-email 2.42.1
+In-Reply-To: <20240618152923.GB2354@willie-the-truck>
+References: <20240530015332.7305-1-liuwei09@cestc.cn> <cb4c5fd0-9629-4362-918a-cb044eb9e558@redhat.com> <20240618152923.GB2354@willie-the-truck>
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133]) (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits)) (No client certificate requested) by smtp.lore.kernel.org (Postfix) with ESMTPS id 41841C27C4F for <linux-arm-kernel@archiver.kernel.org>; Tue, 18 Jun 2024 16:40:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lists.infradead.org; s=bombadil.20210309; h=Sender:List-Subscribe:List-Help :List-Post:List-Archive:List-Unsubscribe:List-Id:In-Reply-To:Content-Type: MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To: Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date: Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Owner; bh=0yJM0ovOkN6GK5Bd8SBBgPGoyqQCrIxqepYNCbNI5Is=; b=yNSygeqS9A/PB8UajuVNFuKbMc fjjRiRUe4vxdoI778yxuyban3Pzx7uxXDDxm1MOjkW5oXuhWpzP50DBGebGmzz8LY2fJvkBmFtjEJ OGg+e2cXGYc58UgZiBCxGSGenwMVBRNHZrzjSWMxOQNLjLK3e+uHL2TlzPS8Ek87uzcDxqNEfutVK utK5pyzu8ITAigz7WmiTh+JARzIG8+TGNxXrvlAwBG2wmWNdk2ZyFxVmMdeE66zQTLTYAe83jgr1I zdKNyM/bceJFxfgYGGaspZ7rvV32uP+IemZDR9QjE+BxBNqgSq+N5ExfrtT45Z4YLE8tclPf9bZUE AKYVwc1A==;
+Received: from localhost ([::1] helo=bombadil.infradead.org) by bombadil.infradead.org with esmtp (Exim 4.97.1 #2 (Red Hat Linux)) id 1sJbsq-0000000FtAJ-3GCl; Tue, 18 Jun 2024 16:40:36 +0000
+Received: from foss.arm.com ([217.140.110.172]) by bombadil.infradead.org with esmtp (Exim 4.97.1 #2 (Red Hat Linux)) id 1sJbsk-0000000Ft9T-0WP6 for linux-arm-kernel@lists.infradead.org; Tue, 18 Jun 2024 16:40:33 +0000
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14]) by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0659ADA7; Tue, 18 Jun 2024 09:40:53 -0700 (PDT)
+Received: from bogus (unknown [10.57.89.235]) by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 99DC73F6A8; Tue, 18 Jun 2024 09:40:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9428b590-4f8d-44e0-81a3-08dc9011980b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2024 03:40:41.9243
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JnXgR9gEvuFEtqyBsVY6pcXV3k78FJ9TIFLyy2jVsTeTvaNKTA99TldtHX4pVLu4w0+ZHtR90BW964LKbzR55A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8297
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-BeenThere: linux-arm-kernel@lists.infradead.org
+X-Mailman-Version: 2.1.34
+Precedence: list
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=archiver.kernel.org@lists.infradead.org
+Content-Transfer-Encoding: 8bit
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEFNRCBJbnRlcm5hbCBEaXN0cmlidXRpb24gT25seV0N
-Cg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCb3Jpc2xhdiBQZXRrb3Yg
-PGJwQGFsaWVuOC5kZT4NCj4gU2VudDogTW9uZGF5LCBKdW5lIDE3LCAyMDI0IDQ6MzkgUE0NCj4g
-VG86IFl1YW4sIFBlcnJ5IDxQZXJyeS5ZdWFuQGFtZC5jb20+DQo+IENjOiByYWZhZWwuai53eXNv
-Y2tpQGludGVsLmNvbTsgTGltb25jaWVsbG8sIE1hcmlvDQo+IDxNYXJpby5MaW1vbmNpZWxsb0Bh
-bWQuY29tPjsgdmlyZXNoLmt1bWFyQGxpbmFyby5vcmc7IEh1YW5nLCBSYXkNCj4gPFJheS5IdWFu
-Z0BhbWQuY29tPjsgU2hlbm95LCBHYXV0aGFtIFJhbmphbA0KPiA8Z2F1dGhhbS5zaGVub3lAYW1k
-LmNvbT47IERldWNoZXIsIEFsZXhhbmRlcg0KPiA8QWxleGFuZGVyLkRldWNoZXJAYW1kLmNvbT47
-IEh1YW5nLCBTaGltbWVyDQo+IDxTaGltbWVyLkh1YW5nQGFtZC5jb20+OyBEdSwgWGlhb2ppYW4g
-PFhpYW9qaWFuLkR1QGFtZC5jb20+OyBNZW5nLA0KPiBMaSAoSmFzc21pbmUpIDxMaS5NZW5nQGFt
-ZC5jb20+OyBsaW51eC1wbUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5r
-ZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjQgMDgvMTFdIHg4Ni9jcHVmZWF0dXJl
-czogQWRkIGZlYXR1cmUgYml0cyBmb3IgQU1EDQo+IGhldGVyb2dlbmVvdXMgcHJvY2Vzc29yDQo+
-DQo+IE9uIE1vbiwgSnVuIDE3LCAyMDI0IGF0IDAyOjU5OjEwUE0gKzA4MDAsIFBlcnJ5IFl1YW4g
-d3JvdGU6DQo+ID4gQ1BVSUQgbGVhZiAweDgwMDAwMDI2IGFkdmVydGlzZXMgY29yZSB0eXBlcyB3
-aXRoIGRpZmZlcmVudCBlZmZpY2llbmN5DQo+ID4gcmFua2luZ3MNCj4gPg0KPiA+IEJpdCAzMCBp
-bmRpY2F0ZXMgdGhlIGhldGVyb2dlbmVvdXMgY29yZSB0b3BvbG9neSBmZWF0dXJlLCBpZiB0aGUg
-Yml0DQo+ID4gc2V0LCBpdCBtZWFucyBub3QgYWxsIGluc3RhbmNlcyBhdCB0aGUgY3VycmVudCBo
-aWVyYXJjaGljYWwgbGV2ZWwgaGF2ZQ0KPiA+IHRoZSBzYW1lIGNvcmUgdG9wb2xvZ3kuDQo+ID4N
-Cj4gPiBGb3IgYmV0dGVyIHV0aWxpemF0aW9uIG9mIGZlYXR1cmUgd29yZHMgYW5kIGhlbHAgdG8g
-aWRlbnRpZnkgY29yZQ0KPiA+IHR5cGUsIFg4Nl9GRUFUVVJFX0hFVEVST19DT1JFX1RPUE9MT0dZ
-IGlzIGFkZGVkIGFzIGEgZmV3IHNjYXR0ZXJlZA0KPiBmZWF0dXJlIGJpdHMuDQo+ID4NCj4gPiBS
-ZWZlcmVuY2U6DQo+ID4gU2VlIHRoZSBwYWdlIDExOSBvZiBQUFIgZm9yIEFNRCBGYW1pbHkgMTlo
-IE1vZGVsIDYxaCBCMSwgZG9jSUQgNTY3MTMNCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFBlcnJ5
-IFl1YW4gPHBlcnJ5Lnl1YW5AYW1kLmNvbT4NCj4gPiAtLS0NCj4gPiAgYXJjaC94ODYvaW5jbHVk
-ZS9hc20vY3B1ZmVhdHVyZXMuaCB8IDEgKw0KPiA+ICBhcmNoL3g4Ni9rZXJuZWwvY3B1L3NjYXR0
-ZXJlZC5jICAgIHwgMSArDQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspDQo+
-ID4NCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20vY3B1ZmVhdHVyZXMuaA0K
-PiA+IGIvYXJjaC94ODYvaW5jbHVkZS9hc20vY3B1ZmVhdHVyZXMuaA0KPiA+IGluZGV4IDZjMTI4
-ZDQ2M2ExNC4uZWNlYWEwZGYwMTM3IDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gveDg2L2luY2x1ZGUv
-YXNtL2NwdWZlYXR1cmVzLmgNCj4gPiArKysgYi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9jcHVmZWF0
-dXJlcy5oDQo+ID4gQEAgLTQ3MSw2ICs0NzEsNyBAQA0KPiA+ICAjZGVmaW5lIFg4Nl9GRUFUVVJF
-X0NMRUFSX0JIQl9IVyAgICgyMSozMisgMykgLyogIiIgQkhJX0RJU19TDQo+IEhXIGNvbnRyb2wg
-ZW5hYmxlZCAqLw0KPiA+ICAjZGVmaW5lIFg4Nl9GRUFUVVJFX0NMRUFSX0JIQl9MT09QX09OX1ZN
-RVhJVCAoMjEqMzIrIDQpIC8qICIiDQo+IENsZWFyIGJyYW5jaCBoaXN0b3J5IGF0IHZtZXhpdCB1
-c2luZyBTVyBsb29wICovDQo+ID4gICNkZWZpbmUgWDg2X0ZFQVRVUkVfRkFTVF9DUFBDICAgICAg
-ICAgICAgICAoMjEqMzIgKyA1KSAvKiAiIiBBTUQgRmFzdA0KPiBDUFBDICovDQo+ID4gKyNkZWZp
-bmUgWDg2X0ZFQVRVUkVfSEVURVJPX0NPUkVfVE9QT0xPR1kgICAgICAgKDIxKjMyKyA2KSAvKiAi
-Ig0KPiBIZXRlcm9nZW5lb3VzIENvcmUgVG9wb2xvZ3kgKi8NCj4gPg0KPiA+ICAvKg0KPiA+ICAg
-KiBCVUcgd29yZChzKQ0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NjYXR0
-ZXJlZC5jDQo+ID4gYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L3NjYXR0ZXJlZC5jIGluZGV4IGM4NGMz
-MDE4OGZkZi4uNmIzNDc3NTAzZGQwDQo+ID4gMTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC94ODYva2Vy
-bmVsL2NwdS9zY2F0dGVyZWQuYw0KPiA+ICsrKyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvc2NhdHRl
-cmVkLmMNCj4gPiBAQCAtNTIsNiArNTIsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGNwdWlkX2Jp
-dCBjcHVpZF9iaXRzW10gPSB7DQo+ID4gICAgIHsgWDg2X0ZFQVRVUkVfUEVSRk1PTl9WMiwgICAg
-ICAgQ1BVSURfRUFYLCAgMCwgMHg4MDAwMDAyMiwgMCB9LA0KPiA+ICAgICB7IFg4Nl9GRUFUVVJF
-X0FNRF9MQlJfVjIsICAgICAgIENQVUlEX0VBWCwgIDEsIDB4ODAwMDAwMjIsIDAgfSwNCj4gPiAg
-ICAgeyBYODZfRkVBVFVSRV9BTURfTEJSX1BNQ19GUkVFWkUsICAgICAgIENQVUlEX0VBWCwgIDIs
-DQo+IDB4ODAwMDAwMjIsIDAgfSwNCj4gPiArICAgeyBYODZfRkVBVFVSRV9IRVRFUk9fQ09SRV9U
-T1BPTE9HWSwgICAgIENQVUlEX0VBWCwgIDMwLA0KPiAweDgwMDAwMDI2LCAwIH0sDQo+ID4gICAg
-IHsgMCwgMCwgMCwgMCwgMCB9DQo+ID4gIH07DQo+ID4NCj4gPiAtLQ0KPg0KPiBOYWNrZWQtYnk6
-IEJvcmlzbGF2IFBldGtvdiAoQU1EKSA8YnBAYWxpZW44LmRlPg0KPg0KPiBVbnRpbCBhbGwgcmV2
-aWV3IGNvbW1lbnRzIGhhdmUgYmVlbiBhZGRyZXNzZWQ6DQo+DQo+IGh0dHBzOi8vbG9yZS5rZXJu
-ZWwub3JnL3IvMjAyNDA2MTExMDUyMTYuR0FabWdzWUMtDQo+IEpfeUxmZHVwRkBmYXRfY3JhdGUu
-bG9jYWwNCj4NCj4gLS0NCj4gUmVnYXJkcy9HcnVzcywNCj4gICAgIEJvcmlzLg0KPg0KPiBodHRw
-czovL3Blb3BsZS5rZXJuZWwub3JnL3RnbHgvbm90ZXMtYWJvdXQtbmV0aXF1ZXR0ZQ0KDQpCb3Jp
-cywNCkkgSnVzdCBhY2NpZGVudGFsbHkgbWlzc2VkIHRoZSBvdGhlciBjb21tZW50cywgIHdpbGwg
-YWRkcmVzcyBpdCBpbiB2NS4NClRoYW5rcyBmb3IgeW91ciByZXZpZXcgIH4NCg0K
+From: Sudeep Holla <sudeep.holla@arm.com>
+
+On Tue, Jun 18, 2024 at 04:29:24PM +0100, Will Deacon wrote:
+> > On Thu, May 30, 2024 at 09:06:17AM -0400, Prarit Bhargava wrote:
+> > > On 5/29/24 21:53, Liu Wei wrote:
+> > > > Consistency with x86 and loongarch, don't enable ACPI SPCR console
+> > > > by default on arm64
+> > > >
+> > > > Signed-off-by: Liu Wei <liuwei09@cestc.cn>
+> > > > ---
+> > > >   arch/arm64/kernel/acpi.c | 3 ++-
+> > > >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+> > > > index dba8fcec7f33..1deda3e5a0d2 100644
+> > > > --- a/arch/arm64/kernel/acpi.c
+> > > > +++ b/arch/arm64/kernel/acpi.c
+> > > > @@ -227,7 +227,8 @@ void __init acpi_boot_table_init(void)
+> > > >   		if (earlycon_acpi_spcr_enable)
+> > > >   			early_init_dt_scan_chosen_stdout();
+> > > >   	} else {
+> > > > -		acpi_parse_spcr(earlycon_acpi_spcr_enable, true);
+> > > > +		/* Do not enable ACPI SPCR console by default */
+> > > > +		acpi_parse_spcr(earlycon_acpi_spcr_enable, false);
+> > > >   		if (IS_ENABLED(CONFIG_ACPI_BGRT))
+> > > >   			acpi_table_parse(ACPI_SIG_BGRT, acpi_parse_bgrt);
+> > > >   	}
+> > >
+> > > It's been a while, and the status of arm hardware may have changed. IIRC the
+> > > choice to force enable this is that most arm hardware is headless and this
+> > > was a _required_ option for booting.
+> > >
+> > > I'm not sure if that's still the case as it's been a long time.
+> > >
+> > > Can anyone from the ARM community provide an approval here?
+> >
+> > I don't have a strong opinion either way, but adding the Arm ACPI folks
+> > in case they care.
+> >
+> > Having said that, if the only rationale for this patch is consistency
+> > with other architectures, then I think I'd lean towards leaving the
+> > behaviour as-is so we don't give users a nasty surprise on their next
+> > kernel upgrade.
+> >
+> 
+> +1, I am concerned about breaking existing behaviour on the platforms
+> in the wild. Also many platforms running ACPI would have already used
+> console cmdline parameter if SPCR is not their choice for the console.
+> So I don't see the need to align with other arch default behaviour here,
+> we can revisit if someone shouts with a real reason as why cmdline option
+> is not viable.
+
+For varying privacy and security reasons, sometimes we would like to 
+completely silence the serial console output, and only enable it through
+cmdline when needed.
+
+On ARM, it is difficult because SPCR is enabled by default.
+
+Thanks for your patience,
+Liu Wei
+
+> 
+> --
+> Regards,
+> Sudeep
+
+
+
+
 
