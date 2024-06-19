@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-221423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A730C90F361
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:00:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4BA90F370
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F4ACB21D71
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:00:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4568E2820AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4433B157A7C;
-	Wed, 19 Jun 2024 15:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBA5158D6C;
+	Wed, 19 Jun 2024 15:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kw/IrreC"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Giu7MEVV"
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2026E157496
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E8C1586CD;
+	Wed, 19 Jun 2024 15:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812145; cv=none; b=X5AVU95K8emLagBB1mTXpEzQmv3KS/gClRYmXlhFB84Dq0vqySF3sq+BTF2h2tXpet+jZbXC0ZNa1wJXEQNWv2zEvUJVP1dxdm8bYa4njNrw4mKRGlT1WtFOjM22ASum3nUyd0JGu66RVn1Dfdu8p6wmMhsnsGY5InT5Uy17MCA=
+	t=1718812160; cv=none; b=hxqnNqfWskUQMDa7sTjztVzadXp+BAvhD9LtfUIhvhEYL/pjz6Vh8XGdZZsaauXHmj0LLRvXUn/81+oMZWV9YUxUsSxe3oH2+Lwh9zNiHzNfRKXvzfC8vrQ0oJ5Uw6AKbp4Yuz6KCS/Y6T0YBIqwYQOIeGrxbLE5DuyP3xaI5Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718812145; c=relaxed/simple;
-	bh=gqmsV2wQyLRTa+dMlIDvFO+HmlyFWBidO1o5Ifz7Rpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=prJxJLshQLXEJnqDOEqBB595oHe40q4DwsiUve9onrGB7UtwdgO1qaqkS+wCpDD9EuVI75+c1nBbGHTxNBPbZq4AOADSPYul4Gk0GtYmX+nDPROiJz1eZdMZPo0LBZXLDbw67PnO5r7kLH1Scsvh4kOTgACJ+4xR4aqnpm/8e+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kw/IrreC; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-6f855b2499cso3700614a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:49:03 -0700 (PDT)
+	s=arc-20240116; t=1718812160; c=relaxed/simple;
+	bh=sCo0S/t/wVuMA8QyWX9utK/82LOwdLvNdRyW93Wh9Zo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hvJ+ZJ4luCQz8jiND4nL6yYkxQtICTCIDOo5/NLR0mj3Vza7/Dz/Pm+FJK/E3SdxC00jzLeMcj2LYGckp1qDu3rjN28FlywFMjVRdcOdYj9OlSt6lYZNPUParPP1acOVlEAOsKQAZGpAanqJNdT+rLc/5fc+clemOiBUEelunGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Giu7MEVV; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-80d6c63af28so2528192241.0;
+        Wed, 19 Jun 2024 08:49:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1718812143; x=1719416943; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zaUP1kZaDzbLlLlrnXpwVvSSBYt89/ufOLldJsnhc4U=;
-        b=kw/IrreCDMgEKOFOdzIwpFmxMhJvNJBLonHfusm9UL4IutZsWe2UdTwYavLzyi0fIb
-         vN/Aq6FrbhSGvupvX/Ce4lXc27lCsRV66OhO2eh74ZJ+olgem/+bYBXNsoxjW1wG6Efz
-         KKi+1dlYRh1XTX4g3UiusZEGxnhgWChij7csWKulmcgojVcuv2spR5Y4wE1yOKRAhgup
-         fbNKacVouxr9YKveSVuEyGMqzqnBBkxgE0XlowL09D4+aI2PrhzDaZMRZOTMFxkXZs3N
-         8m/Rub2qNohbUOeBb5F8ZWl9LeTIGPmSFsR6ywEQ7+SUSisZ0Njw9MSyVjojFsxYW1dj
-         nJlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718812143; x=1719416943;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718812157; x=1719416957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zaUP1kZaDzbLlLlrnXpwVvSSBYt89/ufOLldJsnhc4U=;
-        b=vUZ8dsE1Hwhm7ifSOpf0sI9TVuhHRUhenXeFNprg7WR8Yf8e+uBixRPP5obXGx3Ac0
-         68BIWBnYbNu2WTu42l+1zRSzIfKhvCUUZ6dFjT/uh/Vu18ei8HnEaQ9bVQcdkArcF4Wy
-         S7P7LkX1wWzJINfG7tNJ1yxi7JQknlf9yozUZIVbngSN7AX1NMqZlkg7vqFl2TAx/L3s
-         y1ra61oV6KNMxOlTZtQV6dcsg/YTw0exhar/GS0W7zocftuGW/uTeC0v8l+pUiERI3eT
-         KjSN5fzr9B2QJ1qmMqx8zFKHRWktvBgxDgPzMzRV9/YRgu7MMshhwZ8BgDjTMQGY7AAm
-         966w==
-X-Forwarded-Encrypted: i=1; AJvYcCXXqNvSL+K8U+7D9bprm1fiKurwfVqEr+TP6x21opKUrQiAXw5BuI95K5bkexmiaKRif2ZI6Qw6+FDmXbNWn0wwBaTYG5kJ6YGSktjp
-X-Gm-Message-State: AOJu0YzgqHl6aGL00d8OgaMpEqENcFC+xXAZwtWkmukkOujMPE9ImIPt
-	O39UeSWi03ckt4Sb7lN9gUZCjxkeBdVOIYvzBRLjnrwEgzpaVrhmN/Blr4pkOds=
-X-Google-Smtp-Source: AGHT+IGiKyWuqgAIxgrEV+lA+jwRvALxPu8Ex4GA8h6qTDbq5CrrDib3WqnWy/fQMHVAIh7lZU0CKQ==
-X-Received: by 2002:a9d:7e9a:0:b0:6f9:62e9:9f93 with SMTP id 46e09a7af769-70075a747edmr2788040a34.35.1718812143157;
-        Wed, 19 Jun 2024 08:49:03 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b4fcf9ab77sm15777616d6.7.2024.06.19.08.49.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 08:49:02 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sJxYT-004xTQ-Ic;
-	Wed, 19 Jun 2024 12:49:01 -0300
-Date: Wed, 19 Jun 2024 12:49:01 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Zong Li <zong.li@sifive.com>
-Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
-	tjeznach@rivosinc.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, kevin.tian@intel.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-riscv@lists.infradead.org
-Subject: Re: [RFC PATCH v2 06/10] iommu/riscv: support nested iommu for
- getting iommu hardware information
-Message-ID: <20240619154901.GN1091770@ziepe.ca>
-References: <20240614142156.29420-1-zong.li@sifive.com>
- <20240614142156.29420-7-zong.li@sifive.com>
+        bh=sCo0S/t/wVuMA8QyWX9utK/82LOwdLvNdRyW93Wh9Zo=;
+        b=Giu7MEVVW4CDe7/rxoWgXS+g3BfknXRz5SScKP9PTDBZ6+T0hjUTcqZXAhcTvKh+JA
+         xnnI+pJXlD2w7sq70hBGcLxYjGuzp+smoB0aaxENhSORF+vhQ5KcXE9btXcY4vaPWlam
+         6H51BZ5lkF/mGW2+7wYUwrzQ6jmz5zU5+Lrmw8zVCSCHJdaDdJhjQxu+PdQQfXt+oGzB
+         tEKz14AshBDyVn2d27Sk4pcdoiBqbiyV38scuI56oTipWtA+vzQGJZNDs58GvLJMUIxE
+         ecPwyS/5F8RRmGnNcla3IXv4v2LRIJPBXpiogYBt6OxipSL0aJ5sWI694cazCo54hOtR
+         zKfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718812157; x=1719416957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sCo0S/t/wVuMA8QyWX9utK/82LOwdLvNdRyW93Wh9Zo=;
+        b=J82jj0LT/P6PFDqXvLRDP9I+G9MrnFGdgzbhB9iF7G0cC11K9N08/9gr5Hy9OfNFVb
+         KXDGMAjKAYChtHXOR7Cl8ya5h7TaVrHPT36QML4wlwh+sxYDC8i4Dajqk40WSJf3+mgo
+         DMtVHFPtQzBmba17f3ilEgdu/NtQmBmBnwI54fHxbBtblX/02WZlGlgWNMYmNxQKNbp4
+         jic0SZaxiuH841hz5yQ8jvKN4S30CbjP3n3cOXnMw+7eLZRGwKDLIfQmb11NrqUN3n+7
+         3hotV7z+/0UhdM9JXRsKSw4Licn6vclxt5MZMj8BSJgnjN2X1QmZ1XSD5XP2enCl5hAS
+         JpmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNfV6/zxzeq9u504Dn+20+/NXomd8Rl9abPCmzU75Ls1SMzX7kEQlP29HL2l+xhplW/Un4qnMJbxXi7zvzDx0IVcaUF20U1XldnjFpxf6sjwXBCdqvb2zDEyDYRDVyhD4U8Mv3L9AKntC7v9msHUXIcUzG0rNnwWbPIOFd9lKR8SQfTXIYAwW0XRSaiBNWvA3GDeS8znYjDSSQ5hKwUezvY0Tq0lTW1k0MCBeG+90uLfi4IB6nM4g0fqqpPAAIBV7ACPR1trIYR9nDGJrfY82PwTDd+e+q7foHL6QR3rsVDG0Lrt2wwsRTqX/BSoa4Z6iPFvEL5tk7iIrYYAVkQzqsAzcFT0MjUR42f3iJHehuNBGAfobAkmpcWyLFr0fXcvm9yDS+bqsp9khF8RHWuy/bR78qCOphvIQ76W1UpQz33RbuHqw1yntFHvXGrpSm/Ko=
+X-Gm-Message-State: AOJu0YxQ/SnjNJ4BVcTpeDyEKgsFkRWz5mqL7lQLHR9BGg2ilF0YpSo+
+	eJ3XmUMeWVOOOLDirrWQp7pmeJbomedVaZtjVUXA1gHRe7bmBiB48uP/4ai5Biio6wtICX4ASuy
+	UiS7IGZq7NC1yrytmrED8gw8Q9uk=
+X-Google-Smtp-Source: AGHT+IHg0GWswSl3r9pwlr7iQjchG/nGHT//aM8i64MYsXIGAJArmngGDjmCxE9ZpGaKh9pHgPCRQReNLVUNTwTTHm4=
+X-Received: by 2002:a05:6102:26ce:b0:48c:40cd:e4da with SMTP id
+ ada2fe7eead31-48f1304b1c6mr3802757137.19.1718812157407; Wed, 19 Jun 2024
+ 08:49:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614142156.29420-7-zong.li@sifive.com>
+References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-18-e3f6662017ac@gmail.com> <4eab619f-6da9-4aff-b956-69d8e2ecd47f@sirena.org.uk>
+In-Reply-To: <4eab619f-6da9-4aff-b956-69d8e2ecd47f@sirena.org.uk>
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Date: Wed, 19 Jun 2024 18:49:06 +0300
+Message-ID: <CABTCjFDUKgeYWuwo8eLt+5WD=4O+kLbFwMRxsTufGnqK0Ecpvg@mail.gmail.com>
+Subject: Re: [PATCH v3 18/23] regulator: add s2dos05 regulator support
+To: Mark Brown <broonie@kernel.org>
+Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
+	Liam Girdwood <lgirdwood@gmail.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2024 at 10:21:52PM +0800, Zong Li wrote:
-> This patch implements .hw_info operation and the related data
-> structures for passing the IOMMU hardware capabilities for iommufd.
-> 
-> Signed-off-by: Zong Li <zong.li@sifive.com>
-> ---
->  drivers/iommu/riscv/iommu.c  | 20 ++++++++++++++++++++
->  include/uapi/linux/iommufd.h | 18 ++++++++++++++++++
->  2 files changed, 38 insertions(+)
-
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-
->  /**
->   * enum iommu_hw_info_type - IOMMU Hardware Info Types
->   * @IOMMU_HW_INFO_TYPE_NONE: Used by the drivers that do not report hardware
->   *                           info
->   * @IOMMU_HW_INFO_TYPE_INTEL_VTD: Intel VT-d iommu info type
-> + * @IOMMU_HW_INFO_TYPE_RISCV_IOMMU: RISC-V iommu info type
->   */
-
-Is there a more formal name than "RISCV IOMMU" here? It seems like you
-will probably have a RISCV_IOMMU_V2 someday, is that naming OK?
-
-Jason
+=D0=B2=D1=82, 18 =D0=B8=D1=8E=D0=BD. 2024=E2=80=AF=D0=B3. =D0=B2 17:08, Mar=
+k Brown <broonie@kernel.org>:
+>
+> On Tue, Jun 18, 2024 at 04:59:52PM +0300, Dzmitry Sankouski wrote:
+>
+> > index 000000000000..3c58a1bd2262
+> > --- /dev/null
+> > +++ b/drivers/regulator/s2dos05-regulator.c
+> > @@ -0,0 +1,362 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * s2dos05.c - Regulator driver for the Samsung s2dos05
+> > + *
+>
+> Please make the entire comment a C++ one so things look more
+> intentional.
+>
+Do you mean enclosing the first line (license identifier) in /* */
+style comment?
 
