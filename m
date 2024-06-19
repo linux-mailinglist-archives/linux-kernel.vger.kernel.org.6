@@ -1,124 +1,122 @@
-Return-Path: <linux-kernel+bounces-221526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC7B90F4F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:24:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE6E90F508
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C2B21F22D1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:24:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D4D1F23D9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8819A15625A;
-	Wed, 19 Jun 2024 17:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C01156C4B;
+	Wed, 19 Jun 2024 17:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Dor1pG4Q"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A8S4pCnd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D1184FAD
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 17:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C11155C8A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 17:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718817873; cv=none; b=UKwVoE2RRLsoF8/5oE+tQfnBAsGAFwCI7vv4I2G9+LPX/WsatTgISX1fPLgAM77/hYxEdFU1qldbBnMjSs55Zmk18bvTUqAxq7XwEVoOKa0ROD8Cw46zwV6vgGAAp+ZQmYlEJn3FiJE8V5TO2C4ZtCIDMuZ/mFdCpEYgqv2zlqs=
+	t=1718818032; cv=none; b=rEqbZaa9WsZO+KKILJk+ofAAxjn7YMEVjp2f/L1EW+VaN7jgnyNDSHmNeXHZ8+ExHxkUWJgmKkRbl02lNia3k5jQScl+ijwKJlQAPgLliTDV4PpLiO9FJxHx0x3ugKg7+fwVAmKwqlJad37FbK/r0RS0+vDdnMDDHo/jbKKJozw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718817873; c=relaxed/simple;
-	bh=pHGHrMlLeKjI1/up7Rrmj+CZx30fzhzHLvJvS34Vm1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZoDbXnD+Fj4uKpiwyim1zU/3gusve84Dz08jtQ3HpEdpV0mYFIwaUQFwOQuzMRVGFZXZUExdJX8+a7TjkyEELfsfUdZvUiBFJY/ZdDzByEWXk984RGLmUgup/uqJTag8CWOa6kGlsSsoLc+c5Zv3JzetsxhbhWWGtxw0I4SCG9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Dor1pG4Q; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2547e1c7bbeso44574fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:24:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718817870; x=1719422670; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WW/sGpONNf0gL3cR4b4skPpNC8NQNbXJ/sZFcTqP6DY=;
-        b=Dor1pG4Qu+/1feuIJb5xH9E1dRiL/pF4P/tuzZCw02844zQYFW4t6pejHri09PnSsg
-         ZYh6A4QbVIO9g16Dt4sVW3/owtrYOfO8G9q0gaKu3Q0hcuFATbB+mL/k/bhbU+0xhKWk
-         gYpkAhSQ5dJfyhQgHPtmFafJkfXDOVqXGS1GOnY/n/5EQjW7PYxnGZ9AqZJs1R7XRcx2
-         PM+1Ja2iZ5eE0HrUe+8K3T6/qCMggorIBLkI6wrsbuBfpzKjq0MxLd65PULuFYa2UDVm
-         vrpqYZKVg21F38RWVaJjqqmU7xWJxbahWaFamP6Q6XtJoScqsoV2i8dnwZ75SgrYupD/
-         gdsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718817870; x=1719422670;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WW/sGpONNf0gL3cR4b4skPpNC8NQNbXJ/sZFcTqP6DY=;
-        b=EBE7DhFrm9vQddUeXfDywxA5kOzh7dT74DC+7sWf37eDJ1od1jV94UHaXZM1fxo1AM
-         OdV3JJ3+hM4Q5bw6ukpl6fzLQJet3Vd338q7ZfV5QWU+RH2etXyxV5BVcDf+LO+IyaJ0
-         7G/QU8USTvDhESW5h8QoY8bElcIcu0g4A5W2kJW4S3K1QOObeFdesy44XLAXL0n/kUB3
-         WttJ8uXljqkofhhp25IVREgiXlQV0c/Uhk61Cb9WncQORKB4RooYaSe7X8p7BamapQP1
-         1YAwRj8TS21KG6u12mZm9cTL1W+Yjcs1pdmzI/J1VzljV7ucBmDOVG2pYuTsYMUisYYP
-         I8ig==
-X-Forwarded-Encrypted: i=1; AJvYcCXR/jV/yEtukrZptZkhAsDDL7AdvvHpt4iOOgMrVeoz16aID0ecqHTiLlDsfwkM0QBvnVw1wx+tZUZbJBpMvA5eLUZdx3Tmhhr48i/u
-X-Gm-Message-State: AOJu0YxPmHPHCrB+pD//xAN0wT8T0Y9buXkyYk66RfyDdoazNjdiFUBM
-	KkKEvqJqTLnH0S5/UKe1axMU4+8Eaznx+gXBmGoUlSfluryw2jjy8xc3MmgYQNo=
-X-Google-Smtp-Source: AGHT+IHR54HXcr7/yjcrsiJmtUghksi74ROiI+fCbYFFhArdAwoof+CXH2w8urjUZ7OSSXvEzQS16w==
-X-Received: by 2002:a05:6870:1716:b0:258:44b7:b842 with SMTP id 586e51a60fabf-25c94991633mr3524648fac.13.1718817870065;
-        Wed, 19 Jun 2024 10:24:30 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2567a94e375sm3804185fac.4.2024.06.19.10.24.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 10:24:29 -0700 (PDT)
-Message-ID: <e3c12062-9bb3-40fd-8b55-5cecbd2fda4b@baylibre.com>
-Date: Wed, 19 Jun 2024 12:24:28 -0500
+	s=arc-20240116; t=1718818032; c=relaxed/simple;
+	bh=ffa9QQcOJtyAVtiNDqxJ1WmYeHKO0blFbInuddhMTh8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=f5y+aFHb714V/5L1kWantBN735aDKAHj/DIKmAbCyZtp4FfkUabWbuuvQGV8QlNSCqMcZSs1f9J1aTt8ntmVOGRxoZ6QSf5g3WUTyC3eM0PwnJ3GU+s4W6QWjdvuCn5ZA5+RerdOS7BpH0NewCBimMZ4hO+/iPAemkSlkEQM11k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A8S4pCnd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 24545C2BBFC;
+	Wed, 19 Jun 2024 17:27:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718818032;
+	bh=ffa9QQcOJtyAVtiNDqxJ1WmYeHKO0blFbInuddhMTh8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=A8S4pCndRUUKF92doaVSqCWx3oxLR9/ACVPt0WBE4qI9L9+/z7kSPUhYITiv/WZxG
+	 dkn02Do3Qgc6M8RXBwGOUgWrbdXUnbNm/4DtNXFJz2VQEx0+4SfNmdg53sa20PKUxv
+	 A8vMhHk+Xi+MSWxgqSmBnfdNPl2oKI7wxkXwHuyedn/0dcMngDd7Vreg2jpZExd/nh
+	 svYxo4FxfHyFiuEjnQ7JEP+HvhqIVCTiRWpM6OGed9pxxVzPa+EoUUPD/9nM87e+bH
+	 R/aneBMvgNY3NWp0V6fMqQLR5bUZ1RudINcrKCQq3I+EXxXWRAbDaY21NUn6GMN/r1
+	 ZyNX1T1mjX0oA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C621C27C53;
+	Wed, 19 Jun 2024 17:27:12 +0000 (UTC)
+From: Hsiao Chien Sung via B4 Relay <devnull+shawn.sung.mediatek.com@kernel.org>
+Subject: [PATCH 0/5] Support alpha blending in MTK display driver
+Date: Thu, 20 Jun 2024 01:27:05 +0800
+Message-Id: <20240620-blend-v1-0-72670072ca20@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI protocol
- with MOSI idle configuration
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
- lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- nuno.sa@analog.com, marcelo.schmitt1@gmail.com
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1718749981.git.marcelo.schmitt@analog.com>
- <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOoUc2YC/02OywqDMBBFf0Vm3cAk0Rj9leIij0kbWrVNrAjiv
+ zfUTZfncjmcHTKlSBn6aodEa8xxngrwSwXubqYbsegLg0BRoxLI7JMmzzoU0khsnA0tlO8rUYj
+ bz3MdTk70/hTdco5gTSbm5nGMS18pEai2qNpGc19rJK0k73gRBo7akg3BOqQO/jP66ozgDRvJR
+ 7PQg/k0som2hRmvkFtZd0HIfpUwHMcX91ar6NwAAAA=
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+ Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Hsiao Chien Sung <shawn.sung@mediatek.com>, CK Hu <ck.hu@mediatek.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718818030; l=1980;
+ i=shawn.sung@mediatek.com; s=20240616; h=from:subject:message-id;
+ bh=ffa9QQcOJtyAVtiNDqxJ1WmYeHKO0blFbInuddhMTh8=;
+ b=Em29vUs75c5lfJAEUFMC1hTlqcCcSmdGQzeYIvo6/AGBCkZ8m4TWer36zaThJfIeZeITw0f32
+ v0Vfbb67LuDADyMxoePAZ3AVo1rlmHkOhPrxcUign/xyHGac4mrdNMa
+X-Developer-Key: i=shawn.sung@mediatek.com; a=ed25519;
+ pk=lq1w8BuWDINX+4JHjGHhhbAU5ICP+cL9VCj7wn+cEDA=
+X-Endpoint-Received: by B4 Relay for shawn.sung@mediatek.com/20240616 with
+ auth_id=172
+X-Original-From: Hsiao Chien Sung <shawn.sung@mediatek.com>
+Reply-To: shawn.sung@mediatek.com
 
-On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
+Support "Pre-multiplied" and "None" blend mode on MediaTek's chips by
+adding correct blend mode property when the planes init.
+Before this patch, only the "Coverage" mode (default) is supported.
 
-...
+Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
+---
+Hsiao Chien Sung (5):
+      drm/mediatek: Support "None" blending in OVL
+      drm/mediatek: Support "None" blending in Mixer
+      drm/mediatek: Support "Pre-multiplied" blending in OVL
+      drm/mediatek: Support "Pre-multiplied" blending in Mixer
+      drm/mediatek: Support alpha blending in display driver
 
-> @@ -3928,7 +3934,8 @@ int spi_setup(struct spi_device *spi)
->  	 * so it is ignored here.
->  	 */
->  	bad_bits = spi->mode & ~(spi->controller->mode_bits | SPI_CS_WORD |
-> -				 SPI_NO_TX | SPI_NO_RX);
-> +				 SPI_NO_TX | SPI_NO_RX | SPI_MOSI_IDLE_LOW |
-> +				 SPI_MOSI_IDLE_HIGH);
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 36 +++++++++++++++++++++++++--------
+ drivers/gpu/drm/mediatek/mtk_ethdr.c    | 14 ++++++++++---
+ drivers/gpu/drm/mediatek/mtk_plane.c    | 11 ++++++++++
+ 3 files changed, 50 insertions(+), 11 deletions(-)
+---
+base-commit: 62fe4b067581d480e863191305f108bebffbc0e9
+change-id: 20240620-blend-9023a305cbf7
+prerequisite-change-id: 20240615-mediatek-drm-next-ad601b349f23:v3
+prerequisite-patch-id: fdd0efbeca41c69c6fa93a5e49a2f16b3d2e8ef7
+prerequisite-patch-id: 24bfda7b207bf9698ab88c7233d9168187aa54bb
+prerequisite-patch-id: f2ab4804bbe54091a89b310c2ecd4b65fe031137
+prerequisite-patch-id: 26bfe746bda376c070c23c72fcc25949e396d952
+prerequisite-patch-id: b0b1589f88a9067b93a1e439e1db9abbde96e9e8
+prerequisite-patch-id: 14603755fd2d5b6f0ef8a7843e118d0e8d27f57d
+prerequisite-patch-id: 86f89ad0a06705cd2ad2867e9409da5610c9d228
+prerequisite-patch-id: bd0b091709980bc6e993055d78573f3979139662
+prerequisite-patch-id: 2f4da7b628f9d1f03e045b4c8f04b53eeb133a03
+prerequisite-patch-id: 9ee1d1b3c69dc6ca828c21fae9180d2e9b5cd4d5
+prerequisite-patch-id: 5c1f57bc1bd2d56061c2b927c9efbc9dad36ab68
+prerequisite-patch-id: 05443d9f227599f0784da4006c4c983513654087
+prerequisite-patch-id: 694abac72844a2b9753453aa514f9485a47a8f32
+prerequisite-patch-id: 99f314c9dc697cb78c57d1311dfe055204b9e7b8
 
-This looks wrong to me. Adding flags here causes them to be ignored
-rather than to be checked.
+Best regards,
+-- 
+Hsiao Chien Sung <shawn.sung@mediatek.com>
 
-I also did a runtime check with a random driver and a SPI controller
-that does not have the flag.
-
-	spi->mode |= SPI_MOSI_IDLE_LOW;
-	ret = spi_setup(spi);
-	if (ret)
-		return ret;
-
-It incorrectly passes when used with this change but correctly fails
-without this change.
-
->  	ugly_bits = bad_bits &
->  		    (SPI_TX_DUAL | SPI_TX_QUAD | SPI_TX_OCTAL |
->  		     SPI_RX_DUAL | SPI_RX_QUAD | SPI_RX_OCTAL);
 
 
