@@ -1,112 +1,115 @@
-Return-Path: <linux-kernel+bounces-221774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F40E790F860
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:16:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF1890F865
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 855301F2161E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:16:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A50DC28384A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7525E79B84;
-	Wed, 19 Jun 2024 21:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9597C6EB;
+	Wed, 19 Jun 2024 21:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1pzdkBD"
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCUpjWrP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A16C249ED;
-	Wed, 19 Jun 2024 21:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF81433B9;
+	Wed, 19 Jun 2024 21:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718831763; cv=none; b=r6kSoIhFudpFmL1n2vn/al3jE6AOWB/SYocOTU0iJBh43Gwnhsu3HTOadQEYeGYY6veivBKtIUuPuN/yg0YSl2xQrJYa6k4t8P4SzUGw1gLy49Y6ZHC7VSfSWI1uF8bBAW/tdSHU3XOtYtNoKLn6vXHcxa07kOjhjNtMFDaZtSM=
+	t=1718831865; cv=none; b=lXLPG0rGhD70joEDRIrlrhHqQFY+/+icLHLUDlTeIvSj/JCZd2xXzlfCQz3LZE48W0+wY2D09UFy/mHmBNNVzwKoPUVO/SuiRW+e4yggfTEMfvvFMJ+N9C3OBKChR8g3deK+VR4pZSBV4epkGVKZdsu/WMeegf1S/JXqOuT1l4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718831763; c=relaxed/simple;
-	bh=C+KO6WOHrjxoga94KRP33XIx6lWs1G8zXZg+g0TEIXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f2dqrgnz/cWO6ctrhGp3yueIdP2IipI+3nXxV7sOUy44ErYUUZIxH515rgUe82TKYhG0gAFGE36AxRpvFvox8Iw9d7xbsr57tMlmSNSka198CoJDjs9++fCYuejcekESPyvn0pPaCX76uWhvmiNdACUB33yrihdeqXpLdY0nBh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h1pzdkBD; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-48d9998787fso89999137.1;
-        Wed, 19 Jun 2024 14:16:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718831761; x=1719436561; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=P51anmAPzV9wYSDoUqP/bhaw8/p6FKuq0IY5YhnZqM0=;
-        b=h1pzdkBDJl7Q4gYvljzeS1aQWw2JjrDU49t8sc9iARAeyE10SlbIOY4M3XP4y2Ib5Y
-         04FdIuMu70/nJkSYfYOHq/wmbksg+ZOKvdjNKyVRFSxjeYZK2fSdXw2WxCI9nXmc/WOi
-         89TInDw/zSdnb/f7iD+QrxWQUReH/TXWKp9NV/F5K+Ac1ucxAmSvm9rt58zJkz9Ye6vm
-         7jN5mBGnyt3WenNKJ2tjgyHG1iubUcxbkvEJ+R1gHS4i4bA+JSpfHpr7/HRmC3lbjh7R
-         +CcPvhDGkppt3ShtCK3SoT98eDc497m7CcpSGWju4zbedANeJmrGy+ylVoKDolvbwtv5
-         5QPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718831761; x=1719436561;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P51anmAPzV9wYSDoUqP/bhaw8/p6FKuq0IY5YhnZqM0=;
-        b=TWus6vAxCYWo+z0F3k/kYGA4cMi6ORh1zdh8YQBYWKVUFfHYiSiQe7VQukquom6Di9
-         S3+4mPbqRKPwv+wg2+CxpFDX3GGO5HtK2wcrJ4m6XF+fm7txpxZCw2UIKT+YcE1v3YHa
-         UgFPl2n9J52x4WKSUelt5p4YnQh4Y3PY3pFzQeUK8ciN7sURP1z+kAHF89Q2xu6EEXte
-         JF3amfilEpI1LXYFqX8D6Gt7lihQPlWRuTG0VQ/5aitxxdGYT/nYI6C5ydgGkGbUadsR
-         wNecGwbuDXrdKgdLZJRu1Nbz2/HuA/2X/cnfEr8RgzdPUdS+8lLgrimJE9/6wdcZTnNh
-         3XEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsD9/WI9QpzbUqrPLBRVjWZIhDFvKx7iSj9FTsf7p9/+HwPCTY/ka5pDzx/HABrRNr7ni4fOZuCvRaLPd2ql8E+1vpSqt494fkXcyU
-X-Gm-Message-State: AOJu0YzRhI58Wf1M4AX7jbsEPRKw2/fG/sHFmwyE+sCBu0bFhF94Izqy
-	66RoSCJv4ETZDuahfqNQw7tfuCZ84kUI3uKRBT4qPElg5FuNEmXjzDhpqDjkIfzLE1lyWI7o/1c
-	FZcoecvMlXNKr3bix9eaNB1PYV18=
-X-Google-Smtp-Source: AGHT+IHUYhwn5CA+as4/BnMoW/s7G1P+1RaW4HbsMU7gltMXF/rPb1W5yXJHb/MReLCjSN3zDFFboHoNMbef0Ypr9iA=
-X-Received: by 2002:a05:6102:317:b0:48f:1674:f5b5 with SMTP id
- ada2fe7eead31-48f1674f725mr2932551137.18.1718831761348; Wed, 19 Jun 2024
- 14:16:01 -0700 (PDT)
+	s=arc-20240116; t=1718831865; c=relaxed/simple;
+	bh=iRETBpfwtwAK5g7polO8QWzB5wBcNxu9v3DHjML7TRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hoExR1q9k0i/+BBktdkZy2CgMqjHDyPBK9Joq7I4ftEnBRACRbS0heuXLz+YdWJ5k42ChYPC9GzGWpTFIO0j6ua9xWtux44qzvcwxGmEuh85sZXIlieAXJ9PUwJwki6iYHi2xIgqz9eBGPpEWOUG2WdAav9eTnHnI7NkAN5X7aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCUpjWrP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F124C2BBFC;
+	Wed, 19 Jun 2024 21:17:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718831865;
+	bh=iRETBpfwtwAK5g7polO8QWzB5wBcNxu9v3DHjML7TRo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SCUpjWrPPxU8rhsXuAiXYzpWLnmeRrHp+sMIKVKOIPUPnycCDH16v57EXrEkGQXDt
+	 RcOHYM+VMviMcbO3hjCfrXwgNA+mSDHvwPPS/UX84TdFpFpq0/KY64LdIeSafmqEoQ
+	 SDbrHluPjY7fVer3OSDkbKfa2SXkBZUi7CW7NuXbiZQ0zWj4wl8V2tQyHqmIZBbO0k
+	 2/0r0jA3QfqGvsFr74eEceLsKQkODIXyn4FUflC+v4sPtyETm0ze3BuUdlGwAKgATc
+	 MpOqgWruVhCMvFSMwOgwG9MgyWdbbkXrgBpaY8GiaqKfa1GZnePOZOet+KO0c1d9Og
+	 4oDaufEYCfg1w==
+Date: Wed, 19 Jun 2024 14:17:44 -0700
+From: Kees Cook <kees@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
+	linux-hardening@vger.kernel.org,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: mips gcc plugin issues
+Message-ID: <202406191414.67C589A@keescook>
+References: <563b8f82-9865-40ae-85d3-055b3bcda7d6@quicinc.com>
+ <202406191343.D361BC137@keescook>
+ <f1f08297-e8c7-4673-88b5-e9b6bff69371@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619125609.836313103@linuxfoundation.org>
-In-Reply-To: <20240619125609.836313103@linuxfoundation.org>
-From: Allen <allen.lkml@gmail.com>
-Date: Wed, 19 Jun 2024 14:15:41 -0700
-Message-ID: <CAOMdWS+Vk5Mp_EWUpzZYZjXHeqFXLU_XNoyxXMyX+QboeQkq7w@mail.gmail.com>
-Subject: Re: [PATCH 6.9 000/281] 6.9.6-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1f08297-e8c7-4673-88b5-e9b6bff69371@app.fastmail.com>
 
-> This is the start of the stable review cycle for the 6.9.6 release.
-> There are 281 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.6-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+On Wed, Jun 19, 2024 at 11:12:25PM +0200, Arnd Bergmann wrote:
+> On Wed, Jun 19, 2024, at 22:50, Kees Cook wrote:
+> > On Tue, Jun 18, 2024 at 04:41:01PM -0700, Jeff Johnson wrote:
+> >> I see the following in my .config:
+> >> CONFIG_HAVE_GCC_PLUGINS=y
+> >> CONFIG_GCC_PLUGINS=y
+> >> CONFIG_GCC_PLUGIN_LATENT_ENTROPY=y
+> >> CONFIG_GCC_PLUGIN_RANDSTRUCT=y
+> >> 
+> >> So I'll turn those off, but just want to flag that this issue exists.
+> >> Seems either the plugins should work or the allmodconfig should turn them off.
+> >
+> > Well, the plugins work with all the other compiler versions all the
+> > various CI systems use. :) For example, I don't see this with distro
+> > cross compilers:
+> >
+> > $ mipsel-linux-gnu-gcc --version
+> > mipsel-linux-gnu-gcc (Ubuntu 12.3.0-1ubuntu1) 12.3.0
+> >
+> > I suspect this is a problem with the kernel.org crosstool builds? I'm
+> > CCing Arnd, who might know more about this.
+> 
+> Yes, this is a known problem, and I don't think there is a good
+> solution for it, compiler plugins on cross-compilers are inherently
+> fragile.
+> 
+> The problem here is that a gcc plugin links against the
+> compiler, not against code produced by it. I'm linking the
+> crosstool compilers statically against libraries as much as
+> possible in order to make them more portable between distros,
+> but the downside of that is that plugins will only work in
+> the environment that I was using to build these toolchains.
+> 
+> My build environment is an older Debian (in order to be
+> portable to old glibc versions), but with the system compiler
+> updated to gcc-13 (since x86 libgcc cannot be cross-compiled
+> with an older compiler).
 
-Compiled and booted on my x86_64 and ARM64 test systems. No errors or
-regressions.
+Can the crosstools remove the plugin support? That seems like the best
+solution. Kconfig test for plugin availability with:
 
-Tested-by: Allen Pais <apais@linux.microsoft.com>
+	depends on $(success,test -e $(shell,$(CC) -print-file-name=plugin)/include/plugin-version.h)
 
-Thanks.
+> The long-term solution of course is to replace all the
+> gcc plugins with some other way of getting the same
+> features, but that will still take some time.
+
+Agreed. There's not much motion on the GCC side of this, though.
+
+-- 
+Kees Cook
 
