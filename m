@@ -1,129 +1,160 @@
-Return-Path: <linux-kernel+bounces-220867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F48890E862
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:35:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5FF90E861
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2E351C22054
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:35:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08DE1C21B16
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7728112EBE8;
-	Wed, 19 Jun 2024 10:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B0B12F5B6;
+	Wed, 19 Jun 2024 10:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UOUoSeBB"
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LwmLBZ/H"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4758585285
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3862D78C91;
+	Wed, 19 Jun 2024 10:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718793320; cv=none; b=hfAHMzLdL11jXoldStMhO/IIZxlq2QSScwHMXUICBWdhN+/6kfnhLD3qaOznSaEt0cjXwcYv/G+22cnVxSFuxB4WdXRmn4o7QrdHscnsZUONA14aiC1Ev49xgcfqwmvX19MQofKt/Z+JhESxhmHSmNoNx5wj7541xaNhybAB+vA=
+	t=1718793307; cv=none; b=ZfgfRLZ1E25/jWjReKG6RVwACb9VBXDqTeutwt8KwPJWDGfvO0aBndWXyRxSJN2yg7XgY61KOWMpsOMx1dYPyQSCq4kL30zfY7H2DY1bdAsC63kWuJVMqt+vBdfDb+Xnp0rDTRb9/MgpSSrCRfoC8E9s/bay+vvtc1diF43nK3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718793320; c=relaxed/simple;
-	bh=0GKpp7Tj8rmrANzPpFFyYQDQk5Nc6/mSbfS5ot7teh8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KhNQ3VqdVEacTif6Cz8sFWZyRyTyLNGbPQeloxbqd5Dewx0d7PCP6fNmUPKRbKO9Tmnd6ER4xQHwV2nCSgrUAodjz6zRTcrS+bWT8YUlE9u8lTHisRQ4b1IjatHZG3yu+TDo5cAxoDoHWUJqTXwKxVbAbKF6VUZXF4F7shjO2fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UOUoSeBB; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-48d75899a88so2060398137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:35:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718793318; x=1719398118; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oQeGra2iBmmyFMexo3SqyeNsqV++ufvz/AJLf19SFYk=;
-        b=UOUoSeBBkgBEqKJIEChXJ6Qnd2NBxfhw2uJecO4kBuWd7QPvH/chpP8HxLYXOeuVid
-         VEYPcMKCCxufwPspiBV+gqiJA5l1CyHdjvPWZIly4BUaZ6UG9lR0MpOvsPtwGyZnB1r5
-         jxHXWqo+CBTScDjwV8PBFyKXCZbIoxYxRg3go=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718793318; x=1719398118;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oQeGra2iBmmyFMexo3SqyeNsqV++ufvz/AJLf19SFYk=;
-        b=uDysyvXDq0eK+3u0BNaIXBbxCiD9yDH9Iu8xxQke2OwcIDcP9H6hGhz9Tjy+3515Zx
-         6RyLDbGnFHrCMCBiOipE/A26mY1UYvB9WedUQxXa2JvSJJauNlZLDZ2UZjtTazG7xm4O
-         pYCLRc8BlPcwvLBn5xmBgyTzdGdEjTM7tk34MjSpcrnIaou72gtD4W9Z/jTuAKimTmxg
-         aIxIQsO98eQq8R48k0LthauCG3ZNKBb3Od7pAE9h5P/xlFNi/DOQY+KQ5v7BA65yHoc7
-         sr3bhmiZwouYcwGgH3TNMRMBhpQKnD/CWjf8Ij1AjFarTG23C96CUY1l4ACjLrRG+ao0
-         nmJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXeLZnGh1d1IvNrbUcYrOdVLAwY5Msxb6OPpLizt5ovB7XqvvHP0SO98GjG1EtJisvjEXKvZTyaEM4YLCjHnGKVZkF/gbVs/Y+uLEvT
-X-Gm-Message-State: AOJu0Yw/EjIZqaSJ10/QZwEVTVynzEcYH1ndbuP7ijp7gRdDRyztuGZ8
-	6lgpF9Y1bD1XFYi6TeXMZ70xm2TU6bCmlTnglGJhFMehPkwngf997Z9exS1czIT9aLqEek1cpZM
-	=
-X-Google-Smtp-Source: AGHT+IEZqJXfAyxxRpWG7q0ZHdry1TiKm+aMMN4yAio20QinMhBC2rf/vxZEDnlT6jamfzYrisuBGg==
-X-Received: by 2002:a05:6102:1887:b0:48d:89e2:8ff6 with SMTP id ada2fe7eead31-48f130ade13mr2294093137.23.1718793318038;
-        Wed, 19 Jun 2024 03:35:18 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-48da4483626sm2621080137.21.2024.06.19.03.35.17
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 03:35:17 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-48d75899a88so2060389137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:35:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUcnx6hqTqTUkNfd2pxrSjnEf65YSziYAd9w+4iEp+SC2YSK1rJQtS/Dm/nu/8Ny1YqGnSsvCQ30+cBZEdBVjIlz7s6bqo25HyY8Spg
-X-Received: by 2002:a05:6102:2926:b0:48f:19b5:2685 with SMTP id
- ada2fe7eead31-48f19b52895mr915741137.26.1718793317187; Wed, 19 Jun 2024
- 03:35:17 -0700 (PDT)
+	s=arc-20240116; t=1718793307; c=relaxed/simple;
+	bh=rAkZoulyRqoWcGhfxv3cdCzwzCQF6KLQPe1hqhtmVBQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QG14v0lWeLtGBU0QwUAKsSKQ+WRvd3jggRebdRwD85ACGj05GWd/vfnO+oueinW8NWbH1MhCsHO7Z1vw48zgFvJMHdYGq1Dzxqardl+3at2lz9wGhbkMm8zNHB99FbPKScRhy++kW0pdjQ0qR6fZxxBII0acTIS37Em68Nxk+vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LwmLBZ/H; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718793305; x=1750329305;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=rAkZoulyRqoWcGhfxv3cdCzwzCQF6KLQPe1hqhtmVBQ=;
+  b=LwmLBZ/HEG9lGlSclIZO8jMiiiWYz93rs4LcgDjNiryfzciSu8vq3Wl3
+   SuCtXbX/YwjyI8qQ8LFUPPVyQiCZFjxiIaivkkSpRa5mZImkGroNRkHux
+   RTEBRWeuygOxxcfjrc6UYYPwaV/hFzYN3HRkhFiYVsXdMvOpBE0eOo/3A
+   7L7g3mBnjxWjxvvlGZRsvkxPmbE/0644wnX798zBAkZU8dsfr1aTUpMO8
+   HSCPFMcGA/2a8SoF+Wx+c8R3IhODWsJ9aZyP7p4bp8Tf4ZHy4BkvilSdR
+   xGtaQ5HVYNdfRMdIOSBJNdr1Qt/ELLv0P0OGHUD0/Ntje7UfHrOGmTqOp
+   g==;
+X-CSE-ConnectionGUID: cK4+lQJPRzOFUFxuu7z+Zg==
+X-CSE-MsgGUID: 6EnvEt65QY6ERkurd+lspg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="19596813"
+X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
+   d="scan'208";a="19596813"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 03:35:04 -0700
+X-CSE-ConnectionGUID: UjQFZ2qzTJ6GiLj/nm1kiA==
+X-CSE-MsgGUID: oN9ZG3u6TViQwpUipDLVZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
+   d="scan'208";a="41987288"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 03:34:47 -0700
+Message-ID: <bc75ff55161671e4470849ed51baa547f619889d.camel@linux.intel.com>
+Subject: Re: [PATCH 0/9] Add CPU-type to topology
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Brice Goglin
+	 <brice.goglin@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org,  daniel.sneddon@linux.intel.com, tony.luck@intel.com, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Ricardo Neri
+ <ricardo.neri-calderon@linux.intel.com>,  "Liang, Kan"
+ <kan.liang@linux.intel.com>, Andrew Cooper <andrew.cooper3@citrix.com>
+Date: Wed, 19 Jun 2024 03:34:46 -0700
+In-Reply-To: <20240619015315.3ei5f6rovzdnxovo@desk>
+References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
+	 <8d757ea3-87a3-4663-ac76-66b04e33e6b3@gmail.com>
+	 <20240619015315.3ei5f6rovzdnxovo@desk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619103034.110377-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240619103034.110377-1-angelogioacchino.delregno@collabora.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Wed, 19 Jun 2024 18:34:41 +0800
-X-Gmail-Original-Message-ID: <CAC=S1nikgOVAqwHDEv5yQAQAKT4pBDwcC3zCduwf64nwtATY7Q@mail.gmail.com>
-Message-ID: <CAC=S1nikgOVAqwHDEv5yQAQAKT4pBDwcC3zCduwf64nwtATY7Q@mail.gmail.com>
-Subject: Re: [PATCH] soc: mediatek: mtk-mutex: Add MDP_TCC0 mod to MT8188
- mutex table
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2024 at 6:30=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> MT8188's MDP3 is able to use MDP_TCC0, this mutex_mod bit does
-> actually exist and it's the same as MT8195: add it to the table.
->
-> Fixes: 26bb17dae6fa ("soc: mediatek: mtk-mutex: Add support for MT8188 VP=
-PSYS")
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+On Tue, 2024-06-18 at 18:53 -0700, Pawan Gupta wrote:
+> On Tue, Jun 18, 2024 at 02:49:10PM +0200, Brice Goglin wrote:
+> > Le 17/06/2024 =C3=A0 11:11, Pawan Gupta a =C3=A9crit=C2=A0:
+> > > Hi,
+> > >=20
+> > > This series adds support for CPU-type (CPUID.1A.EAX[31-24] on
+> > > Intel) to
+> > > differentiate between hybrid variants P+E, P-only, E-only that
+> > > share the
+> > > same Family/Model/Stepping. One of the use case for CPU-type is
+> > > the
+> > > affected CPU table for CPU vulnerabilities, which can now use the
+> > > CPU-type
+> > > to filter the unaffected variants.
+> > >=20
+> > > * Patch 1 adds cpu-type to CPU topology structure and introduces
+> > > =C2=A0=C2=A0 topology_cpu_type() to get the CPU-type.
+> > >=20
+> > > * Patch 2-4 replaces usages of get_this_hybrid_cpu_type() with
+> > > =C2=A0=C2=A0 topology_cpu_type().
+> > >=20
+> > > * Patch 5-7 Updates CPU-matching infrastructure to use CPU-type.
+> > >=20
+> > > * Patch 8 cleans up the affected CPU list.
+> > >=20
+> > > * Patch 9 uses the CPU-type to exclude P-only parts from the RFDS
+> > > affected
+> > > =C2=A0=C2=A0 list.
+> >=20
+> >=20
+> > Hello
+> >=20
+> > Is there still a plan to expose this info in sysfs?
+>=20
+> Sure, if it helps userspace.
+>=20
+> > Userspace currently uses frequencies to guess which cores are E or
+> > P.
+> > Intel sent some patches several years ago [1], but they got
+> > abandoned
+> > nowhere as far as I know. There was also some discussion about
+> > using a
+> > "capacity" field like ARM does, but IIRC Intel didn't like the idea
+> > in
+> > the end.
+>=20
+> There can be many ways to expose this information in sysfs. Like this
+> ...
+>=20
+> > [1] https://lkml.org/lkml/2020/10/2/1208
+>=20
+> ... exposes /sys/devices/system/cpu/types which, in hybrid parts,
+> creates a
+> subdirectory for each type of CPU. Each subdirectory contains a CPU
+> list
+> and a CPU map that user space can query.
+>=20
+> The other way is to expose the CPU-type in a file:
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/sys/devices/system/cpu/c=
+puN/type
+>=20
+> that could return the CPU-type of the CPU N. Is there a preference?
 
-Reviewed-by: Fei Shao <fshao@chromium.org>
+But you still have to look at frequency or caches as there are Low
+power E-cores which will have same type but different capabilities.
 
-> ---
->  drivers/soc/mediatek/mtk-mutex.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/soc/mediatek/mtk-mutex.c b/drivers/soc/mediatek/mtk-=
-mutex.c
-> index b5af1fb5847e..01b129caf1eb 100644
-> --- a/drivers/soc/mediatek/mtk-mutex.c
-> +++ b/drivers/soc/mediatek/mtk-mutex.c
-> @@ -524,6 +524,7 @@ static const unsigned int mt8188_mdp_mutex_table_mod[=
-MUTEX_MOD_IDX_MAX] =3D {
->         [MUTEX_MOD_IDX_MDP_PAD0] =3D MT8195_MUTEX_MOD_MDP_PAD0,
->         [MUTEX_MOD_IDX_MDP_PAD2] =3D MT8195_MUTEX_MOD_MDP_PAD2,
->         [MUTEX_MOD_IDX_MDP_PAD3] =3D MT8195_MUTEX_MOD_MDP_PAD3,
-> +       [MUTEX_MOD_IDX_MDP_TCC0] =3D MT8195_MUTEX_MOD_MDP_TCC0,
->         [MUTEX_MOD_IDX_MDP_WROT0] =3D MT8195_MUTEX_MOD_MDP_WROT0,
->         [MUTEX_MOD_IDX_MDP_WROT2] =3D MT8195_MUTEX_MOD_MDP_WROT2,
->         [MUTEX_MOD_IDX_MDP_WROT3] =3D MT8195_MUTEX_MOD_MDP_WROT3,
-> --
-> 2.45.2
->
+Thanks,
+Srinivas
+
+
+
 
