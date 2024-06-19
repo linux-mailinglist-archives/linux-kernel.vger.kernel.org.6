@@ -1,142 +1,175 @@
-Return-Path: <linux-kernel+bounces-220986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF6D90EA41
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:59:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E360290EA4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1EC1C22195
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:59:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B13B1F22EF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF58213E3FD;
-	Wed, 19 Jun 2024 11:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F2913EFEC;
+	Wed, 19 Jun 2024 12:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vox1CVvX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UJ7/eVmy"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F86213D242
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C87613DBA2
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718798386; cv=none; b=Ul5Xp4p7H+kwxC+h7Z9rxvOMUtLo1/hvMIEgxIthExQYlGQ+NNJJmS9hH2w/uHiyTNNPLypNYOLzB7GXewfHDxxaJ1KEG9rOnyEOPOQMxM0WA/EMNfgmbIOyNSz+5NVjzOFpZM3ZEbL8ms6EAlvrsyuiaXubHQofJn8mHZCBtmE=
+	t=1718798514; cv=none; b=loDF899nBLUcn0AVSmecizNs1fLkP1oQzMaRW/PWErVuJtd5a3Wldn4pbNfxNQXU2fRL1JNasMws/5ecWAw4t7PpjqxQf+Vn3szKMKYeN9SYMcCaoMHKX43qoiUj8yxTKR86+ltX2qsoFa48ff17HdwwJ5qwqDWO+dR0OOdu1PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718798386; c=relaxed/simple;
-	bh=4pUXmg8tvBd4/enK6DhVVPrUAzUNxmY937r07g9IdxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RbDPgSl7cH8Qj5OcejmSYgcvjB3ZR/oDitR0sUZImyLyKApM766E9yFAxhS1MLxoADOH5Y3TTX4h5lGyfRIIZOnwsYF5Os5bHxCvrSs6DNoKFkfShKXRVpNLhnxGgo/oo99pt2wgueVqdhbkIabMz+7UgJpAXj6DbVni8Puj3OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vox1CVvX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718798383;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PB56SY2RVpI0Q4zam47FNIcr41Z7FNuOT0Omjr+HEoo=;
-	b=Vox1CVvXWdaDyDYtg4SFxgWxXagG5NCdAHabT8IeOf2CP0AgL9d0u682m1nSjQYX9vg2Xc
-	rG77NCMgLMQ6UbhQXmWvhM+zTzghepmBd28QrUEBzcwysF50+MdA0IpoerZa5v/pf/O9yg
-	hJdLCZUqvdQGH70j+ThqiGu+R7oGGU4=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-601-enAcDaMgN0GPAY1ZP4aUQw-1; Wed, 19 Jun 2024 07:59:41 -0400
-X-MC-Unique: enAcDaMgN0GPAY1ZP4aUQw-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ebdc5ccb17so48620041fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 04:59:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718798380; x=1719403180;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1718798514; c=relaxed/simple;
+	bh=FYVRkfdWOHFIaNl93eRsJCgFbdWq9Zi5DUBQJDGT+mM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Aj34uLwpS8GgO0mBwJBntplr8m6aHcRJGHW3hMh12FLAtfJKvHilR9sHOpS4wxt3/mz/Z/vjpyDn0ZUI+mxP/c4V66Myax6USf3Vj2pOtcyPQXhvn2CTHrteyaJLGCIdayBsjsqCASS1JyKB3VTZfNyjFOzYrX7wbNcsiZ287oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UJ7/eVmy; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3d2472450d6so3440775b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 05:01:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718798511; x=1719403311; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PB56SY2RVpI0Q4zam47FNIcr41Z7FNuOT0Omjr+HEoo=;
-        b=WMDzxRpiqapT5Ayre6aL8yOjyHfEBFRQTDZyAmExv7GZYsjcDDnsHMS8cJz4UlsPQy
-         efWT0uDBBdQQSB1X8KQ6LQJu0+fuciJzo9yYZNNQ7CLsUpct3TWmRsKaWzI6C+WDvCLU
-         voKGUbNNPapyp+dyDG9k3v4rI+CrBmzleaPYTAKWwKIRaZNDaactTHoMld6gSEkrMgGv
-         z/FmbhLZ3UZZGSa/ORX3zdjRVeuK+poT95P9cGY1XsicSqgpmhOMeXb/NkVR1TyjyJVS
-         mtss5ozNxqBP5FhxoALUo4TP8fHa4QH7weRKRYDC5wgy9XjY9NnOV4t1vLnNDfyn3a93
-         3qyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvygwZdRnPhfpc58Z4r9VVtRE/htrhSfzGZ/klXX8TEPLsiJY+qAm3n+7gHsXsi+X/uDAgBi/FsKYmry6NlUHDaXJ7/kxELvR/jm9D
-X-Gm-Message-State: AOJu0YzRgpb8WS2/gREajqAC1AMN+dfQ5hiE6cOQ40r8kTbfa6C3SXhR
-	mBBRBNAhKC9bgTy0JUiLkrH3fr/WNF0A2so/AzI6VmLn9m+yUSYdn0MgtvPemJYdRBnMOq17WFi
-	vx6jRFqNhmkidQ7RZLXSObBbU3x1/cuRXZlzlHpgdOi9JJAlmH27LxH4G83hA1FJpX0YgMg==
-X-Received: by 2002:a2e:7a0d:0:b0:2ec:3ca1:e54c with SMTP id 38308e7fff4ca-2ec3cffc5eamr18365821fa.43.1718798379978;
-        Wed, 19 Jun 2024 04:59:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3DIwLSSt+g2QyLbF22jGNXIU73vEU43ydFOx4aD/OJAnDChOc06t7QxDe87GwALKmeKPnoQ==
-X-Received: by 2002:a2e:7a0d:0:b0:2ec:3ca1:e54c with SMTP id 38308e7fff4ca-2ec3cffc5eamr18365741fa.43.1718798379580;
-        Wed, 19 Jun 2024 04:59:39 -0700 (PDT)
-Received: from pollux ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e73b1sm265682115e9.45.2024.06.19.04.59.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 04:59:39 -0700 (PDT)
-Date: Wed, 19 Jun 2024 13:59:37 +0200
-From: Danilo Krummrich <dakr@redhat.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: mcgrof@kernel.org, russ.weight@linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] MAINTAINERS: add Danilo as maintainer for FIRMWARE
- LOADER
-Message-ID: <ZnLIKfqQF1hqOjhK@pollux>
-References: <20240619001209.109227-1-dakr@redhat.com>
- <20240619001209.109227-2-dakr@redhat.com>
- <2024061944-abrasive-creamed-d2d9@gregkh>
+        bh=iOim+GQVHsUMHPzr0/zmYaztK3VZnG5jmRJWacqKqkM=;
+        b=UJ7/eVmyUTRWAT2Y60xDGiljeheMkQeOky862/m14dmhpbSvMgDHMCH4B+xRlRu994
+         cpOy69zrsxh5Had2/qN3TTg1FgW58DQcKyN8F6yxkPTFULPWgJhxnjyD61pV8JhIupuz
+         f336PMB+MK2r3IsdfMQykPN5q65RQKGzDqXzJ/aCYQSavtQHa6qsqKHdPKX42sqX+MdU
+         Rc7Wb0/WoP5n+qztwW2vz1p0dUCh2YyBVg2qRUyVqDS+SpvebLynJijKyfu7IRSnHlS6
+         TK8DzEJZfd77H2/2qmaAFr1HOQpZtrJPRGfd0F2irFZpMZg8aQmzj6MJkypNg/YIkpxd
+         w6Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718798511; x=1719403311;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iOim+GQVHsUMHPzr0/zmYaztK3VZnG5jmRJWacqKqkM=;
+        b=t0BVTAbto8Dp+orIQetEbLpPWRGHUcrx91yYOislVxxL7VR9Pz+tVX7LRUFVIjlngj
+         0WCK/eItM6kjp/uPSUomJXvCAMvazJYUGt1wbGQWM+1Z2CmHA3+V5yX6GUy/L62EJBTS
+         SjO6RhJ9mPP5Ru9vMmzY4GDf1Fb8MhHDJ7djLILC9eiGSUmRafRxE53HiGzp9W5TMlot
+         ZofMLWFDzN9w8WAWoblNyF+SL0E8A35tKtB1YTLHzKNkaN1lqI2QqdNRrQniL9ghtVGd
+         mP0omW4HfbL3Dun+YELjqxZS9ewus9YtDUF+UKdz2Eh38MAokJKzHeTDZ+gM2U+gOi0n
+         /7zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDM1kknlB1Nnknd1y4llXFPZY+4c2kTiZRWyTEbuV/mHlisdsqHn6k/7VAeTyMjV1449VUq1ioeBwRIRAhLyeX+QqGlu3huKDMMwhW
+X-Gm-Message-State: AOJu0Yx3sXK6pWZfF+MKInDfLvriA41nAca406O23pPD1Q2OdK/43Iwa
+	qc6ndbSsAfMhdJmYMwxhcvYq4C3tK8xZxw4MZCEpbAYpRLsXDAcsj9WontWiZu3zm1Uu2phk2Oc
+	nVGAAroP95W6zIYmM7r8bqDr8B/a5MXh0Cl31
+X-Google-Smtp-Source: AGHT+IEn8HCT0+a4ly7gvmO3sbJl6r+3UVNd8+bJNqdKRtJx00yvI5NJhWVel34eQ5lTMDMcqvOsVTaCCjBhWoD15B8=
+X-Received: by 2002:a05:6808:128b:b0:3d5:1f50:188a with SMTP id
+ 5614622812f47-3d51f5028a9mr1376646b6e.24.1718798511327; Wed, 19 Jun 2024
+ 05:01:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024061944-abrasive-creamed-d2d9@gregkh>
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+ <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com> <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+ <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com> <20240619115135.GE2494510@nvidia.com>
+In-Reply-To: <20240619115135.GE2494510@nvidia.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Wed, 19 Jun 2024 13:01:14 +0100
+Message-ID: <CA+EHjTz_=J+bDpqciaMnNja4uz1Njcpg5NVh_GW2tya-suA7kQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>, 
+	Elliot Berman <quic_eberman@quicinc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>, maz@kernel.org, 
+	kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2024 at 08:47:45AM +0200, Greg KH wrote:
-> On Wed, Jun 19, 2024 at 02:11:59AM +0200, Danilo Krummrich wrote:
-> > Add myself as maintainer for the firmware loader, as suggested by Luis
-> > in [1].
-> > 
-> > CC: Luis Chamberlain <mcgrof@kernel.org>
-> > CC: Russ Weight <russ.weight@linux.dev>
-> > CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Link: https://lore.kernel.org/rust-for-linux/ZnHkQpyiX4UKdLEt@bombadil.infradead.org/ [1]
-> > Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-> > ---
-> >  MAINTAINERS | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 38e7e0edd9b8..19e4a21e574e 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -8569,6 +8569,7 @@ F:	include/linux/arm_ffa.h
-> >  FIRMWARE LOADER (request_firmware)
-> >  M:	Luis Chamberlain <mcgrof@kernel.org>
-> >  M:	Russ Weight <russ.weight@linux.dev>
-> > +M:	Danilo Krummrich <dakr@redhat.com>
-> >  L:	linux-kernel@vger.kernel.org
-> >  S:	Maintained
-> >  F:	Documentation/firmware_class/
-> > -- 
-> > 2.45.1
-> > 
-> 
-> These never hit a public mailing list as you provided an incorrect email
-> address for it (hint, lkml does not have a = sign in it, I fixed it up
-> for this response.)
+Hi Jason,
 
-Huh! I indeed fat-fingered an additional '=' after '--cc='.
+On Wed, Jun 19, 2024 at 12:51=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> w=
+rote:
+>
+> On Wed, Jun 19, 2024 at 10:11:35AM +0100, Fuad Tabba wrote:
+>
+> > To be honest, personally (speaking only for myself, not necessarily
+> > for Elliot and not for anyone else in the pKVM team), I still would
+> > prefer to use guest_memfd(). I think that having one solution for
+> > confidential computing that rules them all would be best. But we do
+> > need to be able to share memory in place, have a plan for supporting
+> > huge pages in the near future, and migration in the not-too-distant
+> > future.
+>
+> I think using a FD to control this special lifetime stuff is
+> dramatically better than trying to force the MM to do it with struct
+> page hacks.
+>
+> If you can't agree with the guest_memfd people on how to get there
+> then maybe you need a guest_memfd2 for this slightly different special
+> stuff instead of intruding on the core mm so much. (though that would
+> be sad)
+>
+> We really need to be thinking more about containing these special
+> things and not just sprinkling them everywhere.
 
-> 
-> Please fix up and resend so that I can take them.  For obvious reasons,
-> I can't take a private email thread.
+I agree that we need to agree :) This discussion has been going on
+since before LPC last year, and the consensus from the guest_memfd()
+folks (if I understood it correctly) is that guest_memfd() is what it
+is: designed for a specific type of confidential computing, in the
+style of TDX and CCA perhaps, and that it cannot (or will not) perform
+the role of being a general solution for all confidential computing.
 
-Will resend.
+> > The approach we're taking with this proposal is to instead restrict
+> > the pinning of protected memory. If the host kernel can't pin the
+> > memory, then a misbehaving process can't trick the host into accessing
+> > it.
+>
+> If the memory can't be accessed by the CPU then it shouldn't be mapped
+> into a PTE in the first place. The fact you made userspace faults
+> (only) work is nifty but still an ugly hack to get around the fact you
+> shouldn't be mapping in the first place.
+>
+> We already have ZONE_DEVICE/DEVICE_PRIVATE to handle exactly this
+> scenario. "memory" that cannot be touched by the CPU but can still be
+> specially accessed by enlightened components.
+>
+> guest_memfd, and more broadly memfd based instead of VMA based, memory
+> mapping in KVM is a similar outcome to DEVICE_PRIVATE.
+>
+> I think you need to stay in the world of not mapping the memory, one
+> way or another.
 
-> 
-> thanks,
-> 
-> greg k-h
-> 
+As I mentioned earlier, that's my personal preferred option.
 
+> > > 3) How can we be sure we don't need other long-term pins (IOMMUs?) in
+> > >     the future?
+> >
+> > I can't :)
+>
+> AFAICT in the pKVM model the IOMMU has to be managed by the
+> hypervisor..
+
+I realized that I misunderstood this. At least speaking for pKVM, we
+don't need other long term pins as long as the memory is private. The
+exclusive pin is dropped when the memory is shared.
+
+> > We are gating it behind a CONFIG flag :)
+> >
+> > Also, since pin is already overloading the refcount, having the
+> > exclusive pin there helps in ensuring atomic accesses and avoiding
+> > races.
+>
+> Yeah, but every time someone does this and then links it to a uAPI it
+> becomes utterly baked in concrete for the MM forever.
+
+I agree. But if we can't modify guest_memfd() to fit our needs (pKVM,
+Gunyah), then we don't really have that many other options.
+
+Thanks!
+/fuad
+
+> Jason
 
