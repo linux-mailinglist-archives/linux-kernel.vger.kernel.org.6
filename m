@@ -1,117 +1,108 @@
-Return-Path: <linux-kernel+bounces-221121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45C890EF2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:40:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC9D90EF30
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8FF11C23E88
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:40:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C3E0B22045
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4EB15098B;
-	Wed, 19 Jun 2024 13:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5653014EC51;
+	Wed, 19 Jun 2024 13:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UjbHmzYV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="h3/MJhnb"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC75014F131
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F5514E2FA;
+	Wed, 19 Jun 2024 13:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718804403; cv=none; b=VP66wdWnPRhuXVKaf8qws7WRRN9s7qTrlP/VD+eBpC6T5ynCLxYLkSULIQrPT8ocq2XSF6VzoPBGZ0o+3I7u71TKdda2XuRXFpt1inDjflCttOhTXjOZehCWoAcr4sq1lLhRHaipcevZ062qt6IsmLCueDnAo6p/nz2rK63MPVM=
+	t=1718804412; cv=none; b=GPGTcE5eouuBsyOTMVJoYW+vEFAykz1nXaNY+kcm/UokCzT7PTcgTksgAfgFNBH0UfNoJo2qILnEHwQurak01i4saM8HTmnhTv9NNpYATQEku0RmTQvigcPTGkzxvyVG++anbPDlFnRoMp1Rbd5JgAEpIwFZWxSza0zch8BHLMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718804403; c=relaxed/simple;
-	bh=6MzhpI9fJCcEpgQhs7kB5z05QS7LHzxzTbVhNvTC/wU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PiibIHf+Jug/7uuwQPw32SQpDq2MjSc8bNLfFq6NSMbzkeTDGMYVGTgJ7c9AnlmYVDqeofg2bhR4i5cT80a01YJwsesy8VFavwiyZsYJZjZ3IGpxg2SqYmgZKbQWOGNxkMUoNvmHRunp3CRCO6oAjm11z2oIR+ZeLEYn+3trGig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UjbHmzYV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718804400;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BuMMLNSwR36fe8ZSML4xmcTbA5i566bPVz1jYRmdpSE=;
-	b=UjbHmzYVN09zpZsq8GXLG7G/a5sD1wtRTgus3wHXbXQPixFIelgD1N6SeSE/giP/mhxFg8
-	fmPzl//AjITofMIqumlQOWul19oBj/YVSbo0EzzjVyLey2jRKgkU5/jvXVRe2Uq3ZjtQ4j
-	AkZGk08rum89S3NwU8DdAZ0TzXPXcWg=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-557-1jCyufwIP7u9pL1YHmW79A-1; Wed, 19 Jun 2024 09:39:59 -0400
-X-MC-Unique: 1jCyufwIP7u9pL1YHmW79A-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42183fdd668so41116855e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:39:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718804398; x=1719409198;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BuMMLNSwR36fe8ZSML4xmcTbA5i566bPVz1jYRmdpSE=;
-        b=dXTT9Lg3jtyBQCUJSPFj/hJNlJQGctmKHxxJiqhnbou9zDXhcKtUdT1+GyjFqOItF1
-         QgpGrOpam/aDiLrZWFm2QQZxK+GXBPhwfh5jZNSbdLxhysAPe8sgSZrIfxEqb4Vs/HBG
-         a7mP+AKTT6/XnBzUeSo9/EmEi+AxpUJHf3naT99gvlU5/pCGRDMKLO26G2fklzMNbqEj
-         LCl/1iWiKepw++yAcRpU0RdemrP4rnXkNjHs01vc4EPoqj+MmYCdAzZ46+mQJSOR7EId
-         JaekhvD+1/p1ltoglQyl1G2qbhE5Fi6DpOgVtvKv9Mo/MQwWuemA99LEjY4HzJC3IR5s
-         uStw==
-X-Gm-Message-State: AOJu0YziJJPN05baWRZWoeYpmx1Zuts+wx5DHjtFMBpkmn65DxoamnKt
-	E6ZGTzeip/mCHZUBNDWa7nOF/MLu7krkzAqB/YG29TpvAFDTv3matKKVEFsZs7M3eYReNqr8Zn7
-	7Ac4y9XKCnNoSDLukyfn3SHq0pDQaTnvIfl2ZbgJYaTFRnYLvcLka99cnBeYLFRf8Co1QWA==
-X-Received: by 2002:a05:600c:1c94:b0:424:798c:120a with SMTP id 5b1f17b1804b1-424798c1341mr9623915e9.24.1718804397899;
-        Wed, 19 Jun 2024 06:39:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8xLEHLAiIZGvEWrnYIWMvrdXuriX36HI3VGWbzjKEdB3y6vH9kHZRBFc0eqLASc3sxSsRIQ==
-X-Received: by 2002:a05:600c:1c94:b0:424:798c:120a with SMTP id 5b1f17b1804b1-424798c1341mr9623745e9.24.1718804397530;
-        Wed, 19 Jun 2024 06:39:57 -0700 (PDT)
-Received: from cassiopeiae.. ([2a02:810d:4b3f:ee94:642:1aff:fe31:a19f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f6320c16sm230512565e9.38.2024.06.19.06.39.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 06:39:56 -0700 (PDT)
-From: Danilo Krummrich <dakr@redhat.com>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	Danilo Krummrich <dakr@redhat.com>
-Subject: [PATCH 2/2] MAINTAINERS: add Rust device abstractions to DRIVER CORE
-Date: Wed, 19 Jun 2024 15:39:18 +0200
-Message-ID: <20240619133949.64638-2-dakr@redhat.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240619133949.64638-1-dakr@redhat.com>
-References: <20240619133949.64638-1-dakr@redhat.com>
+	s=arc-20240116; t=1718804412; c=relaxed/simple;
+	bh=9XTFzNenZVnBtZtYQrfLs2GuQRgQL1Y763n8xKB7jQw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pa3QKMZtIHD1flmpZtapgsJ50PqDyyBj9Ij879UfLlmCXCWQWQ7jesJ9/89G8kM7B93FkuwfQ8rBFzQ0pdCCHtJ9J9PUa7JzLgy/gbLydcuqE37Lo3GCFlkS/9ncQVH0ycZNBZkXW4cphaDmu1gpypY+l77OGiK4QXXCKfSiyL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=h3/MJhnb; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JC1C48003623;
+	Wed, 19 Jun 2024 08:40:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=ciDQ9HxYDaZTNNuigB
+	Uabs2anNyAP+09ApTmCC+FRfI=; b=h3/MJhnbfttg4psdcvGa5E01v1V6qrCRoY
+	JhIUjjpGpbnAsZOG63YaUVcli4g0+lN/6FY50yFDNnkFNZ2h7xX47YJbMrnF8dXf
+	UMbWow4OVNtUIhS5Xs/EF1PObkIT0LE+bSxaASFrxBndgUdEMVOmrdQZjhzD8KjU
+	tFYRrDiLCwLhTWA6+LSqzZ++BMdg48feDGOoF9lP2wE6eat7GMGRYBOxEkq9JN+g
+	XkxxJlkFU9BdLaIRM2/Upm2rG/IBOgNUYQHxAsNKKBab6WEVnIB6YsNuZJ37gavd
+	SnYZWqkSYqwQMmV1Ad4xAoUf2Smof3RzlnetNqEHC6bqP2KuBW1A==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3yujb10qbj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 08:40:07 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
+ 2024 14:40:06 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Wed, 19 Jun 2024 14:40:06 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 0616D820248;
+	Wed, 19 Jun 2024 13:40:06 +0000 (UTC)
+Date: Wed, 19 Jun 2024 14:40:04 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Mark Brown <broonie@kernel.org>
+CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH v2 1/2] spi: cs42l43: Refactor accessing the SDCA
+ extension properties
+Message-ID: <ZnLftHS7RLRRQSk/@opensource.cirrus.com>
+References: <20240619121703.3411989-1-ckeepax@opensource.cirrus.com>
+ <171880144842.113265.13864100805243474696.b4-ty@kernel.org>
+ <ZnLcjO67FH2weX+y@opensource.cirrus.com>
+ <d7502ea4-03bd-425a-8566-9ab0a6ea32e1@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <d7502ea4-03bd-425a-8566-9ab0a6ea32e1@sirena.org.uk>
+X-Proofpoint-ORIG-GUID: Sq7IpnBa3qpnQ2PCmMwwP9cHqd8vbCjg
+X-Proofpoint-GUID: Sq7IpnBa3qpnQ2PCmMwwP9cHqd8vbCjg
+X-Proofpoint-Spam-Reason: safe
 
-Add missing file path of the Rust abstractions to the maintainers entry,
-until we can move it to 'drivers/base/'.
+On Wed, Jun 19, 2024 at 02:30:33PM +0100, Mark Brown wrote:
+> On Wed, Jun 19, 2024 at 02:26:36PM +0100, Charles Keepax wrote:
+> > On Wed, Jun 19, 2024 at 01:50:48PM +0100, Mark Brown wrote:
+> 
+> > > [1/2] spi: cs42l43: Refactor accessing the SDCA extension properties
+> > >       commit: 6914ee9cd1b0c91bd2fb4dbe204947c3c31259e1
+> > > [2/2] spi: cs42l43: Add speaker id support to the bridge configuration
+> > >       (no commit info)
+> 
+> > Not sure all went smoothly here. This seems to have picked up v1
+> > of the first patch and not picked up the second one.
+> 
+> That's because when I told you that the second patch didn't apply I left
+> the other one in the queue, and what you sent now didn't apply either.
 
-Signed-off-by: Danilo Krummrich <dakr@redhat.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Hmm... what branch are you applying this to? Pulling the patch
+off the list and git am-ing it onto your spi for-next branch
+works fine for me.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cf9c9221c388..6dc6f264f800 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6714,6 +6714,7 @@ F:	include/linux/fwnode.h
- F:	include/linux/kobj*
- F:	include/linux/property.h
- F:	lib/kobj*
-+F:	rust/kernel/device.rs
- 
- DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
- M:	Nishanth Menon <nm@ti.com>
--- 
-2.45.1
+I mean I can just resend it but presumably we will hit the same
+issue again.
 
+Thanks,
+Charles
 
