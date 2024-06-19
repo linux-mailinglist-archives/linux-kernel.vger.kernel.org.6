@@ -1,141 +1,280 @@
-Return-Path: <linux-kernel+bounces-220747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF0D90E692
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:10:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5608390E69A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6309C1F227BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEB941F21F92
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C1E7F490;
-	Wed, 19 Jun 2024 09:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C377FBA1;
+	Wed, 19 Jun 2024 09:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="oX5LzuC2"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zhnxfwmF"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8457EEFF;
-	Wed, 19 Jun 2024 09:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AB07F460
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718788212; cv=none; b=SbkOYmATvm48XoA5NYMpI2TLFTTcCLoaEqV70w65c4yxd+bPfSFJnqMxJw3P1MM5LKVZLDpuxXxnhenRQBYpPNwoSHiRGyyxv5TDXTgiGz17CSs7Bf3hUWEpeIxugL4NWzGF+uMniA216u/zteejEPEAxuG9HLLR/0VyqxuZfUo=
+	t=1718788336; cv=none; b=OceKeTJOmzgr54aCPeSj6BRUU0Uz+dJ2Tu0I2Hl1OhMU7KvoOfsF3U2+k9B8CCo3xU3llMi/COfkd1qtmf2wheh2DIEvwWifc0wpx0yMMCCpn4St86LVEf2zKBwziptLbLpqVFVXB3JRewyo6emB+kRJZm7/X4GK2mPmR8Ed6yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718788212; c=relaxed/simple;
-	bh=j9QHuK1sZ1p2aIuDGVpmJ7JI6mmRW3HX761dvuCIG1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nhnWwkaujn8eEvuwutjiF0t9ehIXl2RCugrudqhaj7tsUYNMGu/RlUgg0kDm5UxxPFvfrlVzjfCcpgtZ9xZZoVnLJn1liYUK2T88Dfuu7Qhlpd81rAp//wtz75qgPEkDKElwTIvMetjX29AiE3vvmz3T0eMo4KXCTnNAPFZqT48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=oX5LzuC2; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=XZPCE7bDbCBCJxvXyCnEG/PIPyH9SX836CQZUsB/9WE=; b=oX5LzuC2K6FLF5l89DJSwL40Iw
-	qRtT/Ti0Co6QpZ/PmYuNy93+M0pKDqqNhn93L1vV/WFvbEHF0zRZ2Uop2JUkJmSHKJwU0zsV/9Wdn
-	uZ+rIIwq4ob4+RhM0zLZqrGXu7ptaunWqZvePtiekwrIA8iS65EkpGc/xRB90Ezvjld+SA84W1r6v
-	hOa3ekJlt9Qgaoqy8qaq/ztMyOeo/S7jiF/jdjRYLCZhI3gF35BdS2Oj9QCfiaZ3ceZZKUWBISHuS
-	mPHk7G1G/oHlimw0qEkXW2MnCJW6GzTVDu/BGmCMwFCXt83iDNkiXSSp7AsPMgOyt8dyxEL/EThzt
-	2Te6fj7w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44894)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sJrKD-00083a-2i;
-	Wed, 19 Jun 2024 10:09:53 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sJrKE-0006dv-7S; Wed, 19 Jun 2024 10:09:54 +0100
-Date: Wed, 19 Jun 2024 10:09:53 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v7 5/5] net: phy: add driver for built-in 2.5G
- ethernet PHY on MT7988
-Message-ID: <ZnKgYSi81+JdAdhC@shell.armlinux.org.uk>
-References: <20240613104023.13044-1-SkyLake.Huang@mediatek.com>
- <20240613104023.13044-6-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1718788336; c=relaxed/simple;
+	bh=devHkRkV7shlB9En5cc49p7lL4U/8UsLhV/aO+tvt60=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CtFEpqRC6YlgGfSj4V29EPCFAhJ/VAfHV+MJQX+6Xr/QNDWWy2WBQkbfP3PE8eG+xlNqs4Tff0+lRFWDEqWRsOeeyzpEgP5zbw8f5ucrk53pRW5aOwHYLGBLOxjMT7RKLUNwWPze0EA7vsCf3KS9WKR1ZyhB2t5gVz+tplZJMGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zhnxfwmF; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-48c50e74fe6so2285405137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 02:12:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718788333; x=1719393133; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wYkYh6+hMVb+fOYqcnMpeJBX33GChbsvZ+EqmJ1i9Cw=;
+        b=zhnxfwmFWaNH7Hos+1tqrH8ezXV2ludv7BsjJvDRtXVXZP/PkYpPbovOp3Ys0+D6Dj
+         8rhAHj1d4XPoJdrsziss9kx6dgvOcwxMoSzNRDySWhjhOitTyc+7oXHukZsG0PzcWNnu
+         eaDbYfHyRjEnY2uQ7zCEdRx5obbr3+1xDF6JBOFQjpSsXjJZjqtvToZoutYbO3HiIAOa
+         7QmrsKH2TUuJ9WqSKrA93N7eo5nut4WDCtvuWFMrBNh53ok7CY4uAv2c1dHRjK4h6Iiu
+         xBZupjo7QhzeDSkR/4ageeJzY31yjauTXU5PtfSVgBTBwQVwYUxx5WVm9MrupW5WgLKp
+         WvGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718788333; x=1719393133;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wYkYh6+hMVb+fOYqcnMpeJBX33GChbsvZ+EqmJ1i9Cw=;
+        b=XDD0mSamG8MOrdCt9ggRLlzJqDjQF2cfnPa79bZ+ABB9j3bMiW8HH15uCsbC/LWMmP
+         y1f2ttg8Z2WvQbYvOLQvy9FzMSzsDLENx+RqFlYxbOqekpld8GkbxcREn1I6GgVq/YYG
+         Deyvk6HFIHSABfojdqxJwetTZD0j13oZF5UhWZGOLnRvi4M57pNdGxW20rNoVspf3Yil
+         E5VPjZTUVZHBHAK5SrtZuFUTC1gsUJfAlnjgGdpXYPHuxZ11uDDTRQT4nhW3Y/F0MRRv
+         +p8ao18RTbnhzDPkDwvn3a/cRuqUTQdG0Gy6uQMryPg8MD2Lu5eOzTDDVkQHOJCvl6NV
+         qKnA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA76JI2CUTRcZPde9ckNal0Ch6eAcZlHbGDeyXp9yZHMfYeOq3bolG+/VbLyRdHH6NPv7B9d4IufHqalYyKNWzYtnMXmgzggh6DBbB
+X-Gm-Message-State: AOJu0YzDz0dTj7QYFixmOcy0nfJU1orYmkaoSRsBwVEz6yOoSdTvmyCN
+	gtrunfT4nl85jYbBJEMcL+lQ1q595FLOC5s1SOZPDmYzsirtiF3AdHHqK/rBmJKMDtAeqe7Q+UN
+	6ToVaNwWA1RfKPUWnYN8LFiD+B44MNKBoHQsO
+X-Google-Smtp-Source: AGHT+IFULFV5uhgABgZzBXYJqHVOU0QqocPAW9nYgm8HwHd5Y1v9lYw0r20cKwTG9sBBXkjoh+WhigVT8vp4bpfmLgc=
+X-Received: by 2002:a67:ef8e:0:b0:48c:3c3f:3696 with SMTP id
+ ada2fe7eead31-48f13015e86mr2161505137.10.1718788332754; Wed, 19 Jun 2024
+ 02:12:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613104023.13044-6-SkyLake.Huang@mediatek.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+ <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com> <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+In-Reply-To: <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Wed, 19 Jun 2024 10:11:35 +0100
+Message-ID: <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+To: David Hildenbrand <david@redhat.com>
+Cc: John Hubbard <jhubbard@nvidia.com>, Elliot Berman <quic_eberman@quicinc.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, maz@kernel.org, kvm@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com, Jason Gunthorpe <jgg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 06:40:23PM +0800, Sky Huang wrote:
-> +static const unsigned long supported_triggers =
-> +	(BIT(TRIGGER_NETDEV_FULL_DUPLEX) |
-> +	 BIT(TRIGGER_NETDEV_LINK)        |
-> +	 BIT(TRIGGER_NETDEV_LINK_10)     |
-> +	 BIT(TRIGGER_NETDEV_LINK_100)    |
-> +	 BIT(TRIGGER_NETDEV_LINK_1000)   |
-> +	 BIT(TRIGGER_NETDEV_LINK_2500)   |
-> +	 BIT(TRIGGER_NETDEV_RX)          |
-> +	 BIT(TRIGGER_NETDEV_TX));
+Hi John and David,
 
-Absolutely no need for the outer parens around this.
+Thank you for your comments.
 
-type foo assignment-operator expr;
+On Wed, Jun 19, 2024 at 8:38=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> Hi,
+>
+> On 19.06.24 04:44, John Hubbard wrote:
+> > On 6/18/24 5:05 PM, Elliot Berman wrote:
+> >> In arm64 pKVM and QuIC's Gunyah protected VM model, we want to support
+> >> grabbing shmem user pages instead of using KVM's guestmemfd. These
+> >> hypervisors provide a different isolation model than the CoCo
+> >> implementations from x86. KVM's guest_memfd is focused on providing
+> >> memory that is more isolated than AVF requires. Some specific examples
+> >> include ability to pre-load data onto guest-private pages, dynamically
+> >> sharing/isolating guest pages without copy, and (future) migrating
+> >> guest-private pages.  In sum of those differences after a discussion i=
+n
+> >> [1] and at PUCK, we want to try to stick with existing shmem and exten=
+d
+> >> GUP to support the isolation needs for arm64 pKVM and Gunyah.
+>
+> The main question really is, into which direction we want and can
+> develop guest_memfd. At this point (after talking to Jason at LSF/MM), I
+> wonder if guest_memfd should be our new target for guest memory, both
+> shared and private. There are a bunch of issues to be sorted out though .=
+..
+>
+> As there is interest from Red Hat into supporting hugetlb-style huge
+> pages in confidential VMs for real-time workloads, and wasting memory is
+> not really desired, I'm going to think some more about some of the
+> challenges (shared+private in guest_memfd, mmap support, migration of
+> !shared folios, hugetlb-like support, in-place shared<->private
+> conversion, interaction with page pinning). Tricky.
+>
+> Ideally, we'd have one way to back guest memory for confidential VMs in
+> the future.
 
-There is no reason to ever put parens around expr in this kind of thing.
-assignment-operator are things like =, |=, &=, <<=, >>=, and so forth.
+As you know, initially we went down the route of guest memory and
+invested a lot of time on it, including presenting our proposal at LPC
+last year. But there was resistance to expanding it to support more
+than what was initially envisioned, e.g., sharing guest memory in
+place migration, and maybe even huge pages, and its implications such
+as being able to conditionally mmap guest memory.
 
-Excessive parens detracts from readability, and leads to mistakes. If
-operator precedence is a worry, then knowing the common C precedence
-rules rather than littering code with extra parens would be good so
-that code can remain readable.
+To be honest, personally (speaking only for myself, not necessarily
+for Elliot and not for anyone else in the pKVM team), I still would
+prefer to use guest_memfd(). I think that having one solution for
+confidential computing that rules them all would be best. But we do
+need to be able to share memory in place, have a plan for supporting
+huge pages in the near future, and migration in the not-too-distant
+future.
 
-> +static struct phy_driver mtk_gephy_driver[] = {
-> +	{
-> +		PHY_ID_MATCH_MODEL(MTK_2P5GPHY_ID_MT7988),
-> +		.name		= "MediaTek MT7988 2.5GbE PHY",
-> +		.probe		= mt798x_2p5ge_phy_probe,
-> +		.config_init	= mt798x_2p5ge_phy_config_init,
-> +		.config_aneg    = mt798x_2p5ge_phy_config_aneg,
-> +		.get_features	= mt798x_2p5ge_phy_get_features,
-> +		.read_status	= mt798x_2p5ge_phy_read_status,
-> +		.get_rate_matching	= mt798x_2p5ge_phy_get_rate_matching,
-> +		.suspend	= genphy_suspend,
-> +		.resume		= genphy_resume,
-> +		.read_page	= mtk_phy_read_page,
-> +		.write_page	= mtk_phy_write_page,
-> +		.led_blink_set	= mt798x_2p5ge_phy_led_blink_set,
-> +		.led_brightness_set = mt798x_2p5ge_phy_led_brightness_set,
-> +		.led_hw_is_supported = mt798x_2p5ge_phy_led_hw_is_supported,
-> +		.led_hw_control_get = mt798x_2p5ge_phy_led_hw_control_get,
-> +		.led_hw_control_set = mt798x_2p5ge_phy_led_hw_control_set,
+We are currently shipping pKVM in Android as it is, warts and all.
+We're also working on upstreaming the rest of it. Currently, this is
+the main blocker for us to be able to upstream the rest (same probably
+applies to Gunyah).
 
-I don't see the point of trying to align some of these method
-declarators but not others. Consistency is important.
+> Can you comment on the bigger design goal here? In particular:
 
-I know several PHY drivers do this, this will be because new methods
-with longer names have been added over time, and to reformat the
-tables of every driver would be noise. However, new implementations
-should at least make an effort to have consistency.
+At a high level: We want to prevent a misbehaving host process from
+crashing the system when attempting to access (deliberately or
+accidentally) protected guest memory. As it currently stands in pKVM
+and Gunyah, the hypervisor does prevent the host from accessing
+(private) guest memory. In certain cases though, if the host attempts
+to access that memory and is prevented by the hypervisor (either out
+of ignorance or out of malice), the host kernel wouldn't be able to
+recover, causing the whole system to crash.
 
-Thanks.
+guest_memfd() prevents such accesses by not allowing confidential
+memory to be mapped at the host to begin with. This works fine for us,
+but there's the issue of being able to share memory in place, which
+implies mapping it conditionally (among others that I've mentioned).
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+The approach we're taking with this proposal is to instead restrict
+the pinning of protected memory. If the host kernel can't pin the
+memory, then a misbehaving process can't trick the host into accessing
+it.
+
+>
+> 1) Who would get the exclusive PIN and for which reason? When would we
+>     pin, when would we unpin?
+
+The exclusive pin would be acquired for private guest pages, in
+addition to a normal pin. It would be released when the private memory
+is released, or if the guest shares that memory.
+
+> 2) What would happen if there is already another PIN? Can we deal with
+>     speculative short-term PINs from GUP-fast that could introduce
+>     errors?
+
+The exclusive pin would be rejected if there's any other pin
+(exclusive or normal). Normal pins would be rejected if there's an
+exclusive pin.
+
+> 3) How can we be sure we don't need other long-term pins (IOMMUs?) in
+>     the future?
+
+I can't :)
+
+> 4) Why are GUP pins special? How one would deal with other folio
+>     references (e.g., simply mmap the shmem file into a different
+>     process).
+
+Other references would crash the userspace process, but the host
+kernel can handle them, and shouldn't cause the system to crash. The
+way things are now in Android/pKVM, a userspace process can crash the
+system as a whole.
+
+> 5) Why you have to bother about anonymous pages at all (skimming over s
+>     some patches), when you really want to handle shmem differently only?
+
+I'm not sure I understand the question. We use anonymous memory for pKVM.
+
+> >> To that
+> >> end, we introduce the concept of "exclusive GUP pinning", which enforc=
+es
+> >> that only one pin of any kind is allowed when using the FOLL_EXCLUSIVE
+> >> flag is set. This behavior doesn't affect FOLL_GET or any other folio
+> >> refcount operations that don't go through the FOLL_PIN path.
+>
+> So, FOLL_EXCLUSIVE would fail if there already is a PIN, but
+> !FOLL_EXCLUSIVE would succeed even if there is a single PIN via
+> FOLL_EXCLUSIVE? Or would the single FOLL_EXCLUSIVE pin make other pins
+> that don't have FOLL_EXCLUSIVE set fail as well?
+
+A FOLL_EXCLUSIVE would fail if there's any other pin. A normal pin
+(!FOLL_EXCLUSIVE) would fail if there's a FOLL_EXCLUSIVE pin. It's the
+PIN to end all pins!
+
+> >>
+> >> [1]: https://lore.kernel.org/all/20240319143119.GA2736@willie-the-truc=
+k/
+> >>
+> >
+> > Hi!
+> >
+> > Looking through this, I feel that some intangible threshold of "this is
+> > too much overloading of page->_refcount" has been crossed. This is a ve=
+ry
+> > specific feature, and it is using approximately one more bit than is
+> > really actually "available"...
+>
+> Agreed.
+
+We are gating it behind a CONFIG flag :)
+
+Also, since pin is already overloading the refcount, having the
+exclusive pin there helps in ensuring atomic accesses and avoiding
+races.
+
+> >
+> > If we need a bit in struct page/folio, is this really the only way? Wil=
+ly
+> > is working towards getting us an entirely separate folio->pincount, I
+> > suppose that might take too long? Or not?
+>
+> Before talking about how to implement it, I think we first have to learn
+> whether that approach is what we want at all, and how it fits into the
+> bigger picture of that use case.
+>
+> >
+> > This feels like force-fitting a very specific feature (KVM/CoCo handlin=
+g
+> > of shmem pages) into a more general mechanism that is running low on
+> > bits (gup/pup).
+>
+> Agreed.
+>
+> >
+> > Maybe a good topic for LPC!
+>
+> The KVM track has plenty of guest_memfd topics, might be a good fit
+> there. (or in the MM track, of course)
+
+We are planning on submitting a proposal for LPC (see you in Vienna!) :)
+
+Thanks again!
+/fuad (and elliot*)
+
+* Mistakes, errors, and unclear statements in this email are mine alone tho=
+ugh.
+
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
