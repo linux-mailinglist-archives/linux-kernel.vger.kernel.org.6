@@ -1,92 +1,228 @@
-Return-Path: <linux-kernel+bounces-221431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5940190F381
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:03:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870DF90F382
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6638284DFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:03:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D43D1C220BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF39515B158;
-	Wed, 19 Jun 2024 15:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A334415B96E;
+	Wed, 19 Jun 2024 15:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="HWEhxZid"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="chsdEEjD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBA03FF1;
-	Wed, 19 Jun 2024 15:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E14D15B55E
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812389; cv=none; b=NbRBxAhUwqB+xIGo91B9Gvob96onIY0OvYV08zwe6MzT3e1oHdq57VPUif5hmlUSjG18nQzwpeQlH9yRGAZtEuRwgLai4pCOD9PTmZH94BtskJwKA2Qt1XBdoaorvXPNVXgV73RWpvf5liHUJC4fLtRCs3f8q62NWd2rAkWoYA4=
+	t=1718812490; cv=none; b=rt4hxklGOiY2kmK2+VUZOnW8kTmi9MqcNvRL0S+vpXsUfr87qoNwH9m8Q7WuKPeyrIBOENljXfYkKElV5GyyTW+H/kPYnh+Chd0M39ACNcLm4SqKF9hAIGfVWIe+dnmlQgp2V5RBR6yJDVsC6xToWZMYeDF7c8RTUmR3jwEUD1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718812389; c=relaxed/simple;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=dq9dzGbczenGlIXMKjfwP+loUW8hjtFOA4sgzr9v/qj9Rk0WJpoITetkGurehGgX+MF1TXJaA02sykmFlZM0Pc5bhWwl69YWKAO10TNYB11A0xGPQm9rVjM5aTwx5WUipf6dKhNV9BJh0fiypAlad54koTYZTANnb1ZVOhgwZ7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=HWEhxZid; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1718812384; x=1719417184; i=rwarsow@gmx.de;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=HWEhxZidUyDb61BMCpECbxu0jmVSQcepqfEso2FHaHXFcAzj7jDvtvvE4NJep337
-	 vTo9+tGXlIeYQrqGMsvoNGf41UKQ1LcqerZ/jQhSluIa2yFOG9wB6qVAt4r5Uvjvj
-	 wJu2THyXBmJP89kgtgBCnI73xHl7YJ1OMDAIXnF93jouasuanpI6CpBg7BCE/YD67
-	 HVFu/1exzczqmlQSer9H1SgvEMv4Awj2S0OLU6FvLRWPr55iamCscf5l/Lg/RWQgX
-	 GOtwUuuYgPRmEG/h/wUwknI1do3+kiSGLLqGNbGLP3meSnNPJVgQYBmtpqHMN4w9q
-	 +VOqWzAUolRKW5heCg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.100.20] ([46.142.32.141]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MacOW-1suewf3pr0-00cbyg; Wed, 19
- Jun 2024 17:53:03 +0200
-Message-ID: <c81b02c2-9222-4f1b-822b-974c75408bbf@gmx.de>
-Date: Wed, 19 Jun 2024 17:53:03 +0200
+	s=arc-20240116; t=1718812490; c=relaxed/simple;
+	bh=sT8eTwvksE75eAHBd6bjsUlFaGgqOtK+oZB9YtpybaY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tf+lmQPa2HvUN2pYqF/8uSqdBH1OGpKouClk4jdkJ7PSiW2rrRVS75pC1APtUAFW2iBhPhgvlal8oatm9OrLjhO6IZ1a1NXd0lCTXDsQWXb/S56Vq1/WpJ6jm5KI2OVrzbb+RNrgYJ4qb/5qIDWpzhJMdM6NIc9tKckx99ZlrcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=chsdEEjD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718812488;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zHnCTPxtH9G59nobXFr/kIxd9TQRzv+enLUupkQvcbM=;
+	b=chsdEEjDq+3xCRPAC/pVWM5r1oC01eS0ZYLEMH/CTG/3V2BOwp1QnMmeOY635Q03oXzdau
+	u2zt3eLAL3WP7ebX2ngdm3T+EcHIVTS1mxDEj3eoq+OxkpSjngH+z++sxq2J+yEBMB0o2a
+	ynuiVy5RU6fDO9Z95eqLIzBYbijsrEg=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-418-kLSVI41oMrWRkKKtgmhHkw-1; Wed, 19 Jun 2024 11:54:46 -0400
+X-MC-Unique: kLSVI41oMrWRkKKtgmhHkw-1
+Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-e02c3d0f784so1360963276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:54:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718812486; x=1719417286;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zHnCTPxtH9G59nobXFr/kIxd9TQRzv+enLUupkQvcbM=;
+        b=q/640N8We0C92GX2ntDGrFcTAkpOIsgGQ3RS5aXXQZ17YC7oIiv092VdzGKBKyHLlf
+         PPKL4js7aQm2X3mill+lcESa3Jobp6IzUENEck/f2Xsp7+Akso9G2spEmGalyV8AMKIE
+         cGJt51x0t9jCoM15JQVadh/Pty0g0UHROGfyVTq3BAIcsnz5/uzoUTPQifeYVhwBX+zX
+         YqFd6NZuf/TOD/0Of95CwWJNnLivxqHILDjcF58Y4gBZREhFG8uImB9Tk04fsXqL1vqR
+         rvvFVMQzMUNMMtlH75fJtnvT3hIbZcYmrPH7m9en5fG6IuFRPNLQMqwVwg6AQLOs6w9W
+         ObkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5+6KGHLkS78PSiEvtLzFwa1FijSzkdnkbIQnZCbOfArzkxbgHuRylbTBsAyPzPuGDcMmdQ8AhVevZeDHdGaT19El4NUgK4ryw12YT
+X-Gm-Message-State: AOJu0Yw3DOq2qOl+huMqeeUi6z8MOdj1hNhxaycpHu8zW4BtymVHTRP4
+	C4WOb2yMpzbVVpVUsceQGEMGPiLAsaevlOHxYTLxRax3CGoWmkFpc2zv/s9aJYVOWzzOK/SNQy6
+	nyHZbVC0nX59F9K6hRhUI2xI0jVuhHwHCAtgSyznJLkalx4ijg3AD29ZsfqbQstnTB+471XzjaQ
+	Egxa83XRrQrca6x71rciqbTHiTwEZxq5je9lSy
+X-Received: by 2002:a25:f622:0:b0:e02:8ab0:c940 with SMTP id 3f1490d57ef6-e02be203ac9mr3184012276.47.1718812485896;
+        Wed, 19 Jun 2024 08:54:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFZFBAbdDk5C33KuW9phrPEsdWFCncL/S7aJzm0AP8bBcXSMAZkab9c9AuLmu/k5xJ1fPHedp6Ccdvx+WB9tV4=
+X-Received: by 2002:a25:f622:0:b0:e02:8ab0:c940 with SMTP id
+ 3f1490d57ef6-e02be203ac9mr3183981276.47.1718812485514; Wed, 19 Jun 2024
+ 08:54:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.9 000/281] 6.9.6-rc1 review
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:KkYLWqajPsFAzWMo9i5hTzoVqT+0OLWrt4ql18tjuKF5FpasL0l
- 7FLiL0im0GM/ufioxxjCE2dofI01riXsnKNa30v0isx4H7n+P9Knx/5+Ku5RIWpG9OWjXDm
- sStkGDm2LTMPP6p1CMgWtu0vL/ZOlE3m/Oq2H+mnEZ2F2yFsBD/O+7YpLXoemWPAq87WkKg
- 1ni52Sa9+XroDCThcdh3w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SVvc5PLfhvs=;oxMkguzMTPv2xhWtZODp/BzHDZA
- xxQfKvebN7PSZfBP0QqmoqIPyACkROxSWRaD22ZAIKI8Ajiqo13T5Q+mwHj62TdRLTt5vnwk2
- abUY7aSBro6c+ibPqH8h0DQmWTJVKH2zlv1OXrkTS36gs1SPLuP8QT6PoE5J7Yk6/tW52/2ob
- GNJej1LZGL/dVoddNqxYdEevQtZ7bjGA5qM6JGrfDj+wwjcieDTDuxI+aoRqjBVgF05106uuL
- IDUwgYy9gmTTa2HNKaHKfrGIEtdjdCDzlU+7nwz6ZSCY4rf4T+4O65N6JWNMjrBtLUEuTT6kS
- XKns/bh5Fs42JnYs3R6hD74prO+SXOXokH7HawNCfsRfxkZuLyjECHrKuy/EZ1FTgHbmAXqZB
- +oP0ocijhs/M6nJtEje3tCKr8gXZkSAwsp7zViVRFcExWXOuorInX/DrEIXOlFby/Nox4Nk1v
- TjCvbxB6eXqxFZiXpI8c/Li9081RzQWpl3qd71F47W8dv/VeHLFO3K+crD81/VaB+GEDkWkEj
- lg2QDSiSiTpZ6d7YZnGv7wbiQQWtY2JrVLr4Ajpe3OwkyIlpLG+RGByMMy+OSVxVKs0uVFBdr
- 8YOSiy8+3xSnuJ8Ogt1HEK9bReVgNKDuu6B2QkhJrLLUVIE7ycuL0y1mW1lUldYAyzXZMOWPq
- S+7RiE+blMH/1wD2C6GtMIg1qi0ruuxRGKBtVOej0PUux8SVzqGn3GsRd4+OIRPg9PuHQ4Tk4
- jGxtKvSGeqMgMZN56A06qLNp3/hxPeoWmhIGjznDykJHU2oNAbHiZodwqg+vy2tVexr2OYpnH
- QucMQ1a91kflfGgGmsSAlxNDvj2xFUrCZgBItcdUf/+e8=
+References: <20240617-stage-vdpa-vq-precreate-v1-0-8c0483f0ca2a@nvidia.com> <20240617-stage-vdpa-vq-precreate-v1-20-8c0483f0ca2a@nvidia.com>
+In-Reply-To: <20240617-stage-vdpa-vq-precreate-v1-20-8c0483f0ca2a@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 19 Jun 2024 17:54:09 +0200
+Message-ID: <CAJaqyWd3yiPUMaGEmzgHF-8u+HcqjUxBNB3=Xg6Lon-zYNVCow@mail.gmail.com>
+Subject: Re: [PATCH vhost 20/23] vdpa/mlx5: Pre-create hardware VQs at vdpa
+ .dev_add time
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
+	Cosmin Ratiu <cratiu@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg
+On Mon, Jun 17, 2024 at 5:09=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+> Currently, hardware VQs are created right when the vdpa device gets into
+> DRIVER_OK state. That is easier because most of the VQ state is known by
+> then.
+>
+> This patch switches to creating all VQs and their associated resources
+> at device creation time. The motivation is to reduce the vdpa device
+> live migration downtime by moving the expensive operation of creating
+> all the hardware VQs and their associated resources out of downtime on
+> the destination VM.
+>
+> The VQs are now created in a blank state. The VQ configuration will
+> happen later, on DRIVER_OK. Then the configuration will be applied when
+> the VQs are moved to the Ready state.
+>
+> When .set_vq_ready() is called on a VQ before DRIVER_OK, special care is
+> needed: now that the VQ is already created a resume_vq() will be
+> triggered too early when no mr has been configured yet. Skip calling
+> resume_vq() in this case, let it be handled during DRIVER_OK.
+>
+> For virtio-vdpa, the device configuration is done earlier during
+> .vdpa_dev_add() by vdpa_register_device(). Avoid calling
+> setup_vq_resources() a second time in that case.
+>
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+I guess this happens if virtio_vdpa is already loaded, but I cannot
+see how this is different here. Apart from the IOTLB, what else does
+it change from the mlx5_vdpa POV?
 
-Thanks
-
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
+> ---
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 37 ++++++++++++++++++++++++++++++++-=
+----
+>  1 file changed, 32 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
+x5_vnet.c
+> index 249b5afbe34a..b2836fd3d1dd 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -2444,7 +2444,7 @@ static void mlx5_vdpa_set_vq_ready(struct vdpa_devi=
+ce *vdev, u16 idx, bool ready
+>         mvq =3D &ndev->vqs[idx];
+>         if (!ready) {
+>                 suspend_vq(ndev, mvq);
+> -       } else {
+> +       } else if (mvdev->status & VIRTIO_CONFIG_S_DRIVER_OK) {
+>                 if (resume_vq(ndev, mvq))
+>                         ready =3D false;
+>         }
+> @@ -3078,10 +3078,18 @@ static void mlx5_vdpa_set_status(struct vdpa_devi=
+ce *vdev, u8 status)
+>                                 goto err_setup;
+>                         }
+>                         register_link_notifier(ndev);
+> -                       err =3D setup_vq_resources(ndev, true);
+> -                       if (err) {
+> -                               mlx5_vdpa_warn(mvdev, "failed to setup dr=
+iver\n");
+> -                               goto err_driver;
+> +                       if (ndev->setup) {
+> +                               err =3D resume_vqs(ndev);
+> +                               if (err) {
+> +                                       mlx5_vdpa_warn(mvdev, "failed to =
+resume VQs\n");
+> +                                       goto err_driver;
+> +                               }
+> +                       } else {
+> +                               err =3D setup_vq_resources(ndev, true);
+> +                               if (err) {
+> +                                       mlx5_vdpa_warn(mvdev, "failed to =
+setup driver\n");
+> +                                       goto err_driver;
+> +                               }
+>                         }
+>                 } else {
+>                         mlx5_vdpa_warn(mvdev, "did not expect DRIVER_OK t=
+o be cleared\n");
+> @@ -3142,6 +3150,7 @@ static int mlx5_vdpa_compat_reset(struct vdpa_devic=
+e *vdev, u32 flags)
+>                 if (mlx5_vdpa_create_dma_mr(mvdev))
+>                         mlx5_vdpa_warn(mvdev, "create MR failed\n");
+>         }
+> +       setup_vq_resources(ndev, false);
+>         up_write(&ndev->reslock);
+>
+>         return 0;
+> @@ -3836,8 +3845,21 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev =
+*v_mdev, const char *name,
+>                 goto err_reg;
+>
+>         mgtdev->ndev =3D ndev;
+> +
+> +       /* For virtio-vdpa, the device was set up during device register.=
+ */
+> +       if (ndev->setup)
+> +               return 0;
+> +
+> +       down_write(&ndev->reslock);
+> +       err =3D setup_vq_resources(ndev, false);
+> +       up_write(&ndev->reslock);
+> +       if (err)
+> +               goto err_setup_vq_res;
+> +
+>         return 0;
+>
+> +err_setup_vq_res:
+> +       _vdpa_unregister_device(&mvdev->vdev);
+>  err_reg:
+>         destroy_workqueue(mvdev->wq);
+>  err_res2:
+> @@ -3863,6 +3885,11 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_dev=
+ *v_mdev, struct vdpa_device *
+>
+>         unregister_link_notifier(ndev);
+>         _vdpa_unregister_device(dev);
+> +
+> +       down_write(&ndev->reslock);
+> +       teardown_vq_resources(ndev);
+> +       up_write(&ndev->reslock);
+> +
+>         wq =3D mvdev->wq;
+>         mvdev->wq =3D NULL;
+>         destroy_workqueue(wq);
+>
+> --
+> 2.45.1
+>
 
 
