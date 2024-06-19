@@ -1,241 +1,212 @@
-Return-Path: <linux-kernel+bounces-221639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A52590F68F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:56:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C8C90F69A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E8A2837C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:56:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C66781F21B67
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14685158A2F;
-	Wed, 19 Jun 2024 18:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA69158D65;
+	Wed, 19 Jun 2024 18:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cwUtKpw5"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5dLTt8O"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7485524C4;
-	Wed, 19 Jun 2024 18:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2913F15746A;
+	Wed, 19 Jun 2024 18:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718823400; cv=none; b=AxQ8g8zcVPWz7jnRUygj7QLp/XNwURgl3AF2kWMBCifSV907r9Ygrv+4/K92kbsfq6dUKSGxHX755Iwmlf3xoJTMGrr2Z3sf4zTsdaa7VGg/SDFzb2/gsEA9y9BF26IQGa5hM8K0hysHLmtlRz0wDiMQiMPKDg+ybhr9U5w/c34=
+	t=1718823579; cv=none; b=hXy3EhIpi4an/DUdR8jTJJiyEOo0gXcV8KyZXsQBuhmtdelgGo0pg0vhRk/osAcoR2OAQsadF0ZoGjauG51W1yQLuKseklXUCARoPT5kUOob+43+TA0GOuyxSrD+IQn4+wmhu83DkRkHKDV5snr5kWI/sqWAD412pcLZ0WxyJso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718823400; c=relaxed/simple;
-	bh=T7Ciu3qNiR5Icl6XemypPAeb5qL3BwqYVV6dNqVCi/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CPyjHIMqmZ65mVbTLAxbHTOfAEJ1s9BGhJ5FGPveq0759w1OPkH5eaSE7+eUlZWUe+Hw4vxsQqqjNxv8YvhTx0PZde9BJvSmClQjy5R2hWH+Rt40re24xlmeZX7tMrwjHKHNE7zhaQjIj/vsDIhVtdezlQzPSflb8tbb6psR64U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cwUtKpw5; arc=none smtp.client-ip=209.85.210.182
+	s=arc-20240116; t=1718823579; c=relaxed/simple;
+	bh=AbDCZR6rtnoVh3Q+LWHr4xNPU33oG6JRD0p+ibkqUTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DKEZ6bcCp3RaVGc+avtq4j7/UsXmuHbs5xEE2Si6t3lOQQ74w/d12/6vvkLorsKqCw/h5H+JQqce9q44wzoHs58A9+JJ7dxS/AW4shN2B+qIGsAA8OvXNHgo6U6B5LNs9AneZnaeLebTxKcyLshN2PGXbGX4IEKPrW/Si1Lnsx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L5dLTt8O; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-706264e1692so138024b3a.1;
-        Wed, 19 Jun 2024 11:56:38 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e95a75a90eso690141fa.2;
+        Wed, 19 Jun 2024 11:59:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718823398; x=1719428198; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ScMXAGmkvjxsewPcBmGJ0WhcoL5/MBR16fEttQQynUM=;
-        b=cwUtKpw5MlUOJBOzOmhRyoQGC1TbXPDAqJIWSPdyhqGBKeCk447G1Rk+ciLNHhjNba
-         5/IuZ5SehOj8Wodfd19wHaeqpLsyw4NsiX5o4zBUj7SNkauJ9jOUumtd+yYmWGzOpTYw
-         0KhsEdD44PCXDR4dzllpB3WbHUK4g68oKfN2VFHtiOMKJDYJacxP//HnEBbZCl2AiIWJ
-         jx+TV+4DemCPjZk84g8SW+GMp1KWq+r1DKmoPmLW4V7cxPl4d5mGuP19KKJjy0vkM0G5
-         b/0U88bJy1LOmCGJF8rRPRgbjHJ7Jj5X2MVUjP4uX7e5fJ40aw7vVhoCV+ytETGqOUzD
-         lkbA==
+        d=gmail.com; s=20230601; t=1718823576; x=1719428376; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZenQCaH+ZdCQPpWoM19NHpqEacZDxEuvdit/MjorSCI=;
+        b=L5dLTt8OMpfdQiO8gop/jHjbqtUXVZDBH5pG+b5uRrYuYDlo3ZThleSwoCMdNiRZzI
+         KKqLDTjRUNYPipCiuVZwKXOAdDmfYD+4L2Mw/vl868M0OF0KVzntUajTJDPVpLYXx6Uy
+         8TX0/qGtYz0hMlBziVV+iK87ctFaCcWtdeypLZDJX/pEthhvc39dGZjcvpjgihp+l6QP
+         0uVhE2VJeljr81ZiFQIVmqnj+xwYLgnjMwVglsZzwVsQ+W+1xveEENhz2qu5wu4kXMdz
+         Pi6o8cNTVNpiVAZTe7wWPDQFodb59cpzmq9ZYDCd4JcjpLc/MbAYMxP8v6O8qNMfZVJG
+         G99g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718823398; x=1719428198;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ScMXAGmkvjxsewPcBmGJ0WhcoL5/MBR16fEttQQynUM=;
-        b=I7lujwx1TxuRzNbZr75fUCYZPcEFxCWH52liomJ2ALt87bs/CjIs+q3NDOOiU9687/
-         VvvUh76RqjclTPx0YXVbknq2/bi7hzd34420myMTfYusOwpZaqMaTFtnBnYLFIdVT55S
-         RxfZmYTvZQD6jbFXXiG7Y6lP4rxYdRw7fkJ4m58w4I5G2v7cyB42L4q1weUis5/5MO2P
-         kFY8gIpGCtAe1EQv1/mBvUNoBuappt3rSbCIjN9tmRU5AWqq/ce3AxppxWq8LkhigNrL
-         uGdvhg72bYAk2Bofz7W11pW/hfKVkOKObt9arg2IaijNRCZGbEfRT8nUJd/ferNw29PS
-         8OpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMrF3R5nz1qWsDpeV/H6PdmGzrzwbXbVH/XUrh+lMPvj0djmixQXg5O+3KXVdF6QUCuDe10Z9jfUqheW3lkzBvoPZ2Ve/cUsCXGLhS6LhcnSVPNhXipHN0NdrieO1CTHeUT7b7eM2GFr+RE+aTQ3YT8+fQ73OyCDl2ZyFqMJ9+88tU2XSKjfKxAaTWKhnDMe7ENE5qc9DC/tFtk+sMcA==
-X-Gm-Message-State: AOJu0YyNd8+i+IpsTAmNtLgYPxd2yRzXEullug0WkLcdKsLWNwnubWb6
-	lg09NvDam7WEjhbamT1BuXFjX6mYaAlgavLv2XSsLcrfzYoMSRqL
-X-Google-Smtp-Source: AGHT+IGeruaa+Etxr3n220Oj1wJ6MN9OOELByR395klkY1ApI9Xn7SOJaTIASjNfY1AyfiM5tjGYjg==
-X-Received: by 2002:a05:6a20:249e:b0:1b7:d72e:9e5e with SMTP id adf61e73a8af0-1bcbb58ba3fmr3204568637.37.1718823397733;
-        Wed, 19 Jun 2024 11:56:37 -0700 (PDT)
-Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb6af7fsm11026144b3a.159.2024.06.19.11.56.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 11:56:37 -0700 (PDT)
-Date: Wed, 19 Jun 2024 15:58:00 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI
- protocol with MOSI idle configuration
-Message-ID: <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1718749981.git.marcelo.schmitt@analog.com>
- <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
- <63db9349-f453-4a5b-aa09-d1857ddd8b03@baylibre.com>
+        d=1e100.net; s=20230601; t=1718823576; x=1719428376;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZenQCaH+ZdCQPpWoM19NHpqEacZDxEuvdit/MjorSCI=;
+        b=QQF6IUn2aG2iOtAuDIqDEg66u3ihUHvPfq8Q6IhmFeKxiBirex3+H3XXPbyJ6VX+Wz
+         p8SCEaOZu3h1KAqUUJydwJIT9vgExyx/pXlGFHFd3NbKTDRrR6sixeZWLvLn1GkQPjR7
+         sqDfL/Zr6pgssQbjg5hRPqfSTxHK/bXhbPYM/LO4YjedYKeZbz6T07cG4F9KfwrspCCk
+         nNmIkP2tM88UE5kQzAaS1xen8N6KYetUsqGbLG+k25VniU0UnZsfOKpKgmfrmJlQXk8H
+         b98eoK3dhNvNBwIatI5ocfdyTGbFyys1x5XI8g4/5+dWyxdUKiOZ0CKDEq83CQeNsQEj
+         hEbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjzH0Nb88eWzy+/x8UFBqQekZOqn6AmK2kKq7o8wnnXWTvg3f7rL95h9EN9Vs08M27BOVke7R5TedzVKZPO9GpFkbdZYKDnEIsR1H3oO9g+EJ6L8w8YKl2gm3yVyCRmAuG5OURov1HSnB6h9D9uiRQ8rFWoN0J44hQM5K5gwWMoWoODVaiR1hdC2iA6ldbyL4YNL60RanTXTPF9SEfFxXuwg==
+X-Gm-Message-State: AOJu0Ywdx+NRwjT3GcwPRq9scf98FkiARMYbnTEAqQkUQE6jyVKELtp/
+	8tIbGlFwzvCEtxi8QXRBBYZZ2NaTd60trJ5GAjb7m2YP5Ahkfvtu7RAUIfc0Z/wOk2qqiMmLHsu
+	aBnrVjPobLr5Z2NUNOh5KEmFGNbrx+cu/
+X-Google-Smtp-Source: AGHT+IGoHkVG4a4nmBiilF1j+3f6y8TethA+TK0xS0ef6S14rvGX0+Quf84zWgVHRtxJEOPdCpZRjTkzuZNWpcTihEo=
+X-Received: by 2002:a2e:989a:0:b0:2ec:21cc:ca6f with SMTP id
+ 38308e7fff4ca-2ec3ce94139mr19700521fa.17.1718823576005; Wed, 19 Jun 2024
+ 11:59:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <63db9349-f453-4a5b-aa09-d1857ddd8b03@baylibre.com>
+References: <20240612075829.18241-1-brgl@bgdev.pl> <CABBYNZLrwgj848w97GP+ijybt-yU8yMNnW5UWhb2y5Zq6b5H9A@mail.gmail.com>
+ <CAMRc=Mdb31YGUUXRWACnx55JawayFaRjEPYSdjOCMrYr5xDYag@mail.gmail.com>
+ <CABBYNZLPv3zk_UX67yPetQKWiQ-g+Dv9ZjZydhwG3jfaeV+48w@mail.gmail.com>
+ <CAMRc=Mdsw5c_BDwUwP2Ss4Bogz-d+waZVd8LLaZ5oyc9dWS2Qg@mail.gmail.com> <CAMRc=Mf2koxQH8Pw--6g5O3FTFn_qcyfwTVQjUqxwJ5qW1nzjw@mail.gmail.com>
+In-Reply-To: <CAMRc=Mf2koxQH8Pw--6g5O3FTFn_qcyfwTVQjUqxwJ5qW1nzjw@mail.gmail.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Wed, 19 Jun 2024 14:59:23 -0400
+Message-ID: <CABBYNZ+7SrLSDeCLF0WDM01prRgAEHMD=9mhu5MfWOuGwoAkNQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Immutable tag between the Bluetooth and pwrseq
+ branches for v6.11-rc1
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06/19, David Lechner wrote:
-> On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
-> 
-> 
-> > +
-> > +MOSI idle state configuration
-> > +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > +
-> > +Common SPI protocol implementations don't specify any state or behavior for the
-> > +MOSI line when the controller is not clocking out data. However, there do exist
-> > +peripherals that require specific MOSI line state when data is not being clocked
-> > +out. For example, if the peripheral expects the MOSI line to be high when the
-> > +controller is not clocking out data (SPI_MOSI_IDLE_HIGH), then a transfer in SPI
-> > +mode 0 would look like the following:
-> > +
-> > +::
-> > +
-> > +  nCSx ___                                                                   ___
-> > +          \_________________________________________________________________/
-> > +          •                                                                 •
-> > +          •                                                                 •
-> > +  SCLK         ___     ___     ___     ___     ___     ___     ___     ___
-> > +       _______/   \___/   \___/   \___/   \___/   \___/   \___/   \___/   \_____
-> > +          •   :   ;   :   ;   :   ;   :   ;   :   ;   :   ;   :   ;   :   ; •
-> > +          •   :   ;   :   ;   :   ;   :   ;   :   ;   :   ;   :   ;   :   ; •
-> > +  MOSI _____         _______         _______         _______________         ___
-> > +  0x56      \_0_____/ 1     \_0_____/ 1     \_0_____/ 1       1     \_0_____/
-> > +          •       ;       ;       ;       ;       ;       ;       ;       ; •
-> > +          •       ;       ;       ;       ;       ;       ;       ;       ; •
-> > +  MISO XXX__________         _______________________          _______        XXX
-> > +  0xBA XXX__/     1 \_____0_/     1       1       1 \_____0__/    1  \____0__XXX
-> > +
-> > +Legend::
-> > +
-> > +  • marks the start/end of transmission;
-> > +  : marks when data is clocked into the peripheral;
-> > +  ; marks when data is clocked into the controller;
-> > +  X marks when line states are not specified.
-> > +
-> > +In this extension to the usual SPI protocol, the MOSI line state is specified to
-> > +be kept high when CS is active but the controller is not clocking out data to
-> 
-> I think it would be less ambiguous to say "asserted" instead of "active".
+Hi Bartosz,
 
-I'm not sure. IMHO, it looks less ambiguous to say a CS is active.
-I think the most common for CS lines is to have a CS that is active low (i.e.
-the line is at a low voltage level when the controller is selecting the device).
-To me, "assert" sounds closer to the idea o setting something (like a bit to 1),
-which is the opposite of active low CS.
-Though, no strong opinion about it.
-I go with what the maintainers prefer.
+On Wed, Jun 19, 2024 at 3:35=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> On Wed, Jun 12, 2024 at 5:00=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
+> >
+> > On Wed, Jun 12, 2024 at 4:54=E2=80=AFPM Luiz Augusto von Dentz
+> > <luiz.dentz@gmail.com> wrote:
+> > >
+> > > Hi Bartosz,
+> > >
+> > > On Wed, Jun 12, 2024 at 10:45=E2=80=AFAM Bartosz Golaszewski <brgl@bg=
+dev.pl> wrote:
+> > > >
+> > > > On Wed, Jun 12, 2024 at 4:43=E2=80=AFPM Luiz Augusto von Dentz
+> > > > <luiz.dentz@gmail.com> wrote:
+> > > > >
+> > > > > Hi Bartosz,
+> > > > >
+> > > > > On Wed, Jun 12, 2024 at 3:59=E2=80=AFAM Bartosz Golaszewski <brgl=
+@bgdev.pl> wrote:
+> > > > > >
+> > > > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > > > >
+> > > > > > Hi Marcel, Luiz,
+> > > > > >
+> > > > > > Please pull the following power sequencing changes into the Blu=
+etooth tree
+> > > > > > before applying the hci_qca patches I sent separately.
+> > > > > >
+> > > > > > Link: https://lore.kernel.org/linux-kernel/20240605174713.GA767=
+261@bhelgaas/T/
+> > > > > >
+> > > > > > The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7=
+356688ffa670:
+> > > > > >
+> > > > > >   Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
+> > > > > >
+> > > > > > are available in the Git repository at:
+> > > > > >
+> > > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git =
+tags/pwrseq-initial-for-v6.11
+> > > > > >
+> > > > > > for you to fetch changes up to 2f1630f437dff20d02e4b3f07e836f42=
+869128dd:
+> > > > > >
+> > > > > >   power: pwrseq: add a driver for the PMU module on the QCom WC=
+N chipsets (2024-06-12 09:20:13 +0200)
+> > > > > >
+> > > > > > ---------------------------------------------------------------=
+-
+> > > > > > Initial implementation of the power sequencing subsystem for li=
+nux v6.11
+> > > > > >
+> > > > > > ---------------------------------------------------------------=
+-
+> > > > > > Bartosz Golaszewski (2):
+> > > > > >       power: sequencing: implement the pwrseq core
+> > > > > >       power: pwrseq: add a driver for the PMU module on the QCo=
+m WCN chipsets
+> > > > >
+> > > > > Is this intended to go via bluetooth-next or it is just because i=
+t is
+> > > > > a dependency of another set? You could perhaps send another set
+> > > > > including these changes to avoid having CI failing to compile.
+> > > > >
+> > > >
+> > > > No, the pwrseq stuff is intended to go through its own pwrseq tree
+> > > > hence the PR. We cannot have these commits in next twice.
+> > >
+> > > Not following you here, why can't we have these commits on different
+> > > next trees? If that is the case how can we apply the bluetooth
+> > > specific ones without causing build regressions?
+> > >
+> >
+> > We can't have the same commits twice with different hashes in next
+> > because Stephen Rothwell will yell at us both.
+> >
+> > Just pull the tag I provided and then apply the Bluetooth specific
+> > changes I sent on top of it. When sending to Linus Torvalds/David
+> > Miller (not sure how your tree gets upstream) mention that you pulled
+> > in the pwrseq changes in your PR cover letter.
 
-> 
-> > +the peripheral and also when CS is inactive.
-> 
-> As I mentioned in a previous review, I think the key detail here is that the
-> MOSI line has to be in the required state during the CS line assertion
-> (falling edge). I didn't really get that from the current wording. The current
-> wording makes it sound like MOSI needs to be high indefinitely longer.
+By pull the tag you mean using merge commits to merge the trees and
+not rebase, doesn't that lock us down to only doing merge commits
+rather than rebases later on? I have never used merge commits before.
+There is some documentation around it that suggests not to use merges:
 
-It may be that we only need MOSI high just before bringing CS low. Though,
-I don't see that info in the datasheets. How much time would MOSI be required
-to be high prior to bringing CS low? The timing diagrams for register access and
-ADC sampling in "3-wire" mode all start and end with MOSI at logical 1 (high).
-I think reg access work if MOSI is brought low after CS gets low, but sample
-read definitely don't work.
+'While merges from downstream are common and unremarkable, merges from
+other trees tend to be a red flag when it comes time to push a branch
+upstream. Such merges need to be carefully thought about and well
+justified, or there=E2=80=99s a good chance that a subsequent pull request
+will be rejected.'
+https://docs.kernel.org/maintainer/rebasing-and-merging.html#merging-from-s=
+ibling-or-upstream-trees
 
-From the info available in datasheets, it looks like MOSI is indeed expected 
-to be high indefinitely amount of time. Except when the controller is clocking
-out data to the peripheral.
+But then looking forward in that documentation it says:
 
-Even if find out the amount of time MOSI would be required high prior to CS low,
-then we would need some sort of MOSI high/low state set with a delay prior to
-active CS. That might be enough to support the AD4000 series of devices but,
-would it be worth the added complexity?
+'Another reason for doing merges of upstream or another subsystem tree
+is to resolve dependencies. These dependency issues do happen at
+times, and sometimes a cross-merge with another tree is the best way
+to resolve them; as always, in such situations, the merge commit
+should explain why the merge has been done. Take a moment to do it
+right; people will read those changelogs.'
 
-> 
-> > +
-> > +Peripherals that require this extension must request it by setting the
-> > +SPI_MOSI_IDLE_HIGH bit into the mode attribute of their struct spi_device and
-> 
-> Could use inline code formatting for C code bits, e.g. ``struct spi_device``
-> ``SPI_MOSI_IDLE_HIGH``, etc.
-ok, updated those for v5.
+So I guess that is the reason we want to merge the trees, but what I'm
+really looking forward to is for the 'proper' commands and commit
+message to use to make sure we don't have problems in the future.
 
-> 
-> > +call spi_setup(). Controllers that support this extension should indicate it by> +setting SPI_MOSI_IDLE_HIGH in the mode_bits attribute of their struct
-> > +spi_controller. The configuration to idle MOSI low is analogous but uses the
-> > +SPI_MOSI_IDLE_LOW mode bit.
-> > +
-> > +
-> >  THANKS TO
-> >  ---------
-> >  Contributors to Linux-SPI discussions include (in alphabetical order,
-> 
-> ...
-> 
-> > index e8e1e798924f..8e50a8559225 100644
-> > --- a/include/linux/spi/spi.h
-> > +++ b/include/linux/spi/spi.h
-> > @@ -599,6 +599,12 @@ struct spi_controller {
-> >  	 * assert/de-assert more than one chip select at once.
-> >  	 */
-> >  #define SPI_CONTROLLER_MULTI_CS		BIT(7)
-> > +	/*
-> > +	 * The spi-controller is capable of keeping the MOSI line low or high
-> > +	 * when not clocking out data.
-> > +	 */
-> > +#define SPI_CONTROLLER_MOSI_IDLE_LOW    BIT(8)  /* Can idle MOSI low */
-> > +#define SPI_CONTROLLER_MOSI_IDLE_HIGH   BIT(9)  /* Can idle MOSI high */
-> 
-> I don't see where these are used anywhere else in the series. They
-> seem redundant with SPI_MOSI_IDLE_LOW and SPI_MOSI_IDLE_HIGH.
-> 
-Good point.
-They are currently not being used.
-Comparing with what we have for SPI_CONTROLLER_MULTI_CS, I'm thinking it may be
-handy to have dt properties to indicate controller MOSI idle capabilities.
-Does that sound reasonable?
+> > Bart
+>
+> Gentle ping.
+>
+> Bart
 
-> >  
-> >  	/* Flag indicating if the allocation of this struct is devres-managed */
-> >  	bool			devm_allocated;
-> > diff --git a/include/uapi/linux/spi/spi.h b/include/uapi/linux/spi/spi.h
-> > index ca56e477d161..ee4ac812b8f8 100644
-> > --- a/include/uapi/linux/spi/spi.h
-> > +++ b/include/uapi/linux/spi/spi.h
-> > @@ -28,7 +28,8 @@
-> >  #define	SPI_RX_OCTAL		_BITUL(14)	/* receive with 8 wires */
-> >  #define	SPI_3WIRE_HIZ		_BITUL(15)	/* high impedance turnaround */
-> >  #define	SPI_RX_CPHA_FLIP	_BITUL(16)	/* flip CPHA on Rx only xfer */
-> > -#define SPI_MOSI_IDLE_LOW	_BITUL(17)	/* leave mosi line low when idle */
-> > +#define SPI_MOSI_IDLE_LOW	_BITUL(17)	/* leave MOSI line low when idle */
-> > +#define SPI_MOSI_IDLE_HIGH	_BITUL(18)	/* leave MOSI line high when idle */
-> >  
-> >  /*
-> >   * All the bits defined above should be covered by SPI_MODE_USER_MASK.
-> > @@ -38,6 +39,6 @@
-> >   * These bits must not overlap. A static assert check should make sure of that.
-> >   * If adding extra bits, make sure to increase the bit index below as well.
-> >   */
-> > -#define SPI_MODE_USER_MASK	(_BITUL(18) - 1)
-> > +#define SPI_MODE_USER_MASK	(_BITUL(19) - 1)
-> >  
-> >  #endif /* _UAPI_SPI_H */
-> 
+
+
+--=20
+Luiz Augusto von Dentz
 
