@@ -1,395 +1,208 @@
-Return-Path: <linux-kernel+bounces-221546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32FFA90F53C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:36:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E4C90F53F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0607281AC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50F191F2209D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE58152534;
-	Wed, 19 Jun 2024 17:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2024B155C8E;
+	Wed, 19 Jun 2024 17:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b/DMHMYG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkZWXkYJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4899914F9DC;
-	Wed, 19 Jun 2024 17:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E001E87B;
+	Wed, 19 Jun 2024 17:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718818598; cv=none; b=kNIOIQmKNpvFRG4eBDGd7OAVtTiQ6t6gRvO6MdAJOSsvK+x9azQkhwbaxSf4VBzdVn6onnlSVCsYJkOLgJ9zXpwN3VOFdlRQNeTqwwcgVC8mOMpMJDKKzTX6FXNoaMiaRKtnGIpSGOW9vK4CNkO9l6Tp+G8rLhFUVevcYddstq8=
+	t=1718818658; cv=none; b=OdnLMCwESv+bXV4fYi1DSxaYGqgfmOB7xHNmWnIRfAsXgBZZulZH+0AR2Y4R3Mueo+L51une2+imgwtsF9hiURZnIBlMJQz56Z8iIJcCNhwFa/8t57Q+3ShB+zSxQpvZVULiLC09Fkj0wqlUHCwR6/Dp9nb53pigt7d0bmydM6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718818598; c=relaxed/simple;
-	bh=8EQIh1cl5guawuEi5F+UOWnLaNeNj95hXPKviBE2mMg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RWl4xPun8MqvEebl4iI732+HnSrT4NW7iJ7NC99MEXsHTPQyB+rPoe0yKuA7+rET5CWIXjWv3zBA1chZP2RzJIw8T7jjn4ZpGsLbuqaDDbNdWOetVGJ88l2h4plb0yoaUVqgWqI7lMZ7Gkkhy7WcGvZHSbjcpnFAatVaylgC+98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b/DMHMYG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9kovg000787;
-	Wed, 19 Jun 2024 17:36:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	63W9BCq6VlHfJn06OJqBKpAee/EZOawWgvEKWA09x60=; b=b/DMHMYGvvpzwbib
-	pCHwwcOVD7zj63Gp6FxDW0kac5LCWkdY7C3PcKQpaxjN7QC4eEsLP5KMlk5cbc4A
-	APIUORdd5+n5hUJHcK0TOcMItsOwRt3j7pMjHBZXQD1UKbUa4q/+7IGqSjKLasjX
-	76luZRNmifPnnJXArABnVPxT68aXj0EgxUQ5fdl8qKsVg+UihZHKj9onkU+rrefi
-	EfygKR2r9pq7QDGmfOfjhyDKYtRMxLyQZFxZZ/veqPL7zl37NaABXt6OSCdkZXtx
-	OJK45MNOdZXQE8bVG9BlGeZkY+xyMPSJ09NH/ZLbwMYIBTPT4ATWg6tcWoxrgWL7
-	s/m2oA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yujag2bnf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 17:36:29 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JHaSpI023002
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 17:36:28 GMT
-Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
- 2024 10:36:27 -0700
-Message-ID: <f84c0d3c-4c09-4067-843f-91f84ad06214@quicinc.com>
-Date: Wed, 19 Jun 2024 10:36:27 -0700
+	s=arc-20240116; t=1718818658; c=relaxed/simple;
+	bh=aTTUFWcg2KfCBZQyUcLHsG1W9EOcEhA72GIkli1rAjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z/VkUSC7xKeLbHUID/9+UzhNWJx7DkaH1D62hsHI85MYiSUUhoSkfzXvDW7aY3XUHT/D0fOMFgsCw3G1qrWSotH6oIJvgpk4q8P9+Cyp+Y8RbtnGDbMgtS7ZxEnPUd5Mdr5Z04aFrRKgaWm0PpKZ2ld6mcvmqDLPF1/s7eER1nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkZWXkYJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18216C2BBFC;
+	Wed, 19 Jun 2024 17:37:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718818657;
+	bh=aTTUFWcg2KfCBZQyUcLHsG1W9EOcEhA72GIkli1rAjg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rkZWXkYJ0650nk3Skne+YMQ35tM8hYlNF/QdJudkzL5FQEGh9y8n9bIx/GD8NGEnF
+	 HzwuWFbOguznxmS/U05NEwW5vU1s4K+hkxKxDGRcWhukZpYfOc9m7ejAbS0wpXV4ze
+	 OLTMg9cSzBIIyCbazuXgXQ0XfvoRfP+tLLSjUw0GpVk/GARc9AInzn7qi0d/NRq2JO
+	 fhQCcUQng/ytMYTofKBIjReTdqceA+J7O+ywCjmksm2q3+rn+OI66AF5FJMeoQfTJb
+	 TguBMxEJKYN04aUkmlhrA5b6HN4TTKwNf5UvWE9QQwVuzRbLl1tHpdAMErHzW/tUau
+	 Sc7I4W4Yn+8JQ==
+Date: Wed, 19 Jun 2024 18:37:31 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Jonas Karlman <jonas@kwiboo.se>, Alex Bee <knaerzche@gmail.com>,
+	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 3/4] media: dt-bindings: rockchip: Document RK3588
+ Video Decoder bindings
+Message-ID: <20240619-contently-demote-769bf48d7eb6@spud>
+References: <20240619150029.59730-1-detlev.casanova@collabora.com>
+ <20240619150029.59730-4-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/14] drm/msm/hdmi: implement proper runtime PM
- handling
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul
-	<sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David
- Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
- <20240522-fd-hdmi-hpd-v2-9-c30bdb7c5c7e@linaro.org>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240522-fd-hdmi-hpd-v2-9-c30bdb7c5c7e@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: z3MIkBj3XIcrlVGZUdD5wLwdVzrIn-0k
-X-Proofpoint-ORIG-GUID: z3MIkBj3XIcrlVGZUdD5wLwdVzrIn-0k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- clxscore=1015 impostorscore=0 suspectscore=0 adultscore=0 spamscore=0
- malwarescore=0 phishscore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406190132
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="D5HLkMsx9LZ0D828"
+Content-Disposition: inline
+In-Reply-To: <20240619150029.59730-4-detlev.casanova@collabora.com>
 
 
+--D5HLkMsx9LZ0D828
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 5/22/2024 3:51 AM, Dmitry Baryshkov wrote:
-> It is completely not obvious, but the so-called 'hpd' clocks and
-> regulators are required for the HDMI host to function properly. Merge
-> pwr and hpd regulators. Use regulators, clocks and pinctrl to implement
-> proper runtime PM callbacks.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-
+On Wed, Jun 19, 2024 at 10:57:20AM -0400, Detlev Casanova wrote:
+> Document the Rockchip RK3588 Video Decoder bindings.
+>=20
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 > ---
->   drivers/gpu/drm/msm/hdmi/hdmi.c        | 62 +++++++++++++++++++++++++---------
->   drivers/gpu/drm/msm/hdmi/hdmi.h        |  7 +---
->   drivers/gpu/drm/msm/hdmi/hdmi_bridge.c | 12 -------
->   drivers/gpu/drm/msm/hdmi/hdmi_hpd.c    | 42 +----------------------
->   4 files changed, 48 insertions(+), 75 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
-> index 7ec4ca3b7597..cc671baad87b 100644
-> --- a/drivers/gpu/drm/msm/hdmi/hdmi.c
-> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
-> @@ -8,6 +8,7 @@
->   #include <linux/gpio/consumer.h>
->   #include <linux/of_irq.h>
->   #include <linux/of_platform.h>
-> +#include <linux/pinctrl/consumer.h>
->   #include <linux/platform_device.h>
->   
->   #include <drm/drm_bridge_connector.h>
-> @@ -226,11 +227,11 @@ int msm_hdmi_modeset_init(struct hdmi *hdmi,
->   	.item ## _names = item ##_names_ ## entry, \
->   	.item ## _cnt   = ARRAY_SIZE(item ## _names_ ## entry)
->   
-> -static const char *hpd_reg_names_8960[] = {"core-vdda"};
-> +static const char *pwr_reg_names_8960[] = {"core-vdda"};
->   static const char *hpd_clk_names_8960[] = {"core", "master_iface", "slave_iface"};
->   
->   static const struct hdmi_platform_config hdmi_tx_8960_config = {
-> -		HDMI_CFG(hpd_reg, 8960),
-> +		HDMI_CFG(pwr_reg, 8960),
->   		HDMI_CFG(hpd_clk, 8960),
->   };
->   
-> @@ -434,20 +435,6 @@ static int msm_hdmi_dev_probe(struct platform_device *pdev)
->   	if (hdmi->irq < 0)
->   		return hdmi->irq;
->   
-> -	hdmi->hpd_regs = devm_kcalloc(&pdev->dev,
-> -				      config->hpd_reg_cnt,
-> -				      sizeof(hdmi->hpd_regs[0]),
-> -				      GFP_KERNEL);
-> -	if (!hdmi->hpd_regs)
-> -		return -ENOMEM;
-> -
-> -	for (i = 0; i < config->hpd_reg_cnt; i++)
-> -		hdmi->hpd_regs[i].supply = config->hpd_reg_names[i];
-> -
-> -	ret = devm_regulator_bulk_get(&pdev->dev, config->hpd_reg_cnt, hdmi->hpd_regs);
-> -	if (ret)
-> -		return dev_err_probe(dev, ret, "failed to get hpd regulators\n");
-> -
->   	hdmi->pwr_regs = devm_kcalloc(&pdev->dev,
->   				      config->pwr_reg_cnt,
->   				      sizeof(hdmi->pwr_regs[0]),
-> @@ -525,6 +512,48 @@ static void msm_hdmi_dev_remove(struct platform_device *pdev)
->   	msm_hdmi_put_phy(hdmi);
->   }
->   
-> +static int msm_hdmi_runtime_suspend(struct device *dev)
-> +{
-> +	struct hdmi *hdmi = dev_get_drvdata(dev);
-> +	const struct hdmi_platform_config *config = hdmi->config;
+>  .../bindings/media/rockchip,vdec.yaml         | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/media/rockchip,vdec.yaml b=
+/Documentation/devicetree/bindings/media/rockchip,vdec.yaml
+> index 08b02ec16755..22cb62faaa9b 100644
+> --- a/Documentation/devicetree/bindings/media/rockchip,vdec.yaml
+> +++ b/Documentation/devicetree/bindings/media/rockchip,vdec.yaml
+> @@ -17,6 +17,7 @@ properties:
+>    compatible:
+>      oneOf:
+>        - const: rockchip,rk3399-vdec
+> +      - const: rockchip,rk3588-vdec
+>        - items:
+>            - enum:
+>                - rockchip,rk3228-vdec
+> @@ -30,29 +31,56 @@ properties:
+>      maxItems: 1
+> =20
+>    clocks:
+> +    minItems: 4
+>      items:
+>        - description: The Video Decoder AXI interface clock
+>        - description: The Video Decoder AHB interface clock
+>        - description: The Video Decoded CABAC clock
+>        - description: The Video Decoder core clock
+> +      - description: The Video decoder HEVC CABAC clock
+> =20
+>    clock-names:
+> +    minItems: 4
+>      items:
+>        - const: axi
+>        - const: ahb
+>        - const: cabac
+>        - const: core
+> +      - const: hevc_cabac
+> =20
+>    assigned-clocks: true
+> =20
+>    assigned-clock-rates: true
+> =20
+> +  resets:
+> +    items:
+> +      - description: The Video Decoder AXI interface reset
+> +      - description: The Video Decoder AHB interface reset
+> +      - description: The Video Decoded CABAC reset
+> +      - description: The Video Decoder core reset
+> +      - description: The Video decoder HEVC CABAC reset
 > +
-> +	clk_bulk_disable_unprepare(config->hpd_clk_cnt, hdmi->hpd_clks);
+> +  reset-names:
+> +    items:
+> +      - const: rst_axi
+> +      - const: rst_ahb
+> +      - const: rst_cabac
+> +      - const: rst_core
+> +      - const: rst_hevc_cabac
 > +
-> +	pinctrl_pm_select_sleep_state(dev);
+>    power-domains:
+>      maxItems: 1
+> =20
+>    iommus:
+>      maxItems: 1
+> =20
+> +  sram:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: |
+> +      phandle to a reserved on-chip SRAM regions.
+> +      Some SoCs, like rk3588 provide on-chip SRAM to store temporary
+> +      buffers during decoding.
 > +
-> +	regulator_bulk_disable(config->pwr_reg_cnt, hdmi->pwr_regs);
+>  required:
+>    - compatible
+>    - reg
+> @@ -61,6 +89,24 @@ required:
+>    - clock-names
+>    - power-domains
+> =20
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: rockchip,rk3588-vdec
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 5
+> +        clock-names:
+> +          minItems: 5
 > +
-> +	return 0;
-> +}
-> +
-> +static int msm_hdmi_runtime_resume(struct device *dev)
-> +{
-> +	struct hdmi *hdmi = dev_get_drvdata(dev);
-> +	const struct hdmi_platform_config *config = hdmi->config;
-> +	int ret;
-> +
-> +	ret = regulator_bulk_enable(config->pwr_reg_cnt, hdmi->pwr_regs);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = pinctrl_pm_select_default_state(dev);
-> +	if (ret)
-> +		goto fail;
-> +
-> +	ret = clk_bulk_prepare_enable(config->hpd_clk_cnt, hdmi->hpd_clks);
-> +	if (ret)
-> +		goto fail;
-> +
-> +	return 0;
-> +
-> +fail:
-> +	pinctrl_pm_select_sleep_state(dev);
-> +
-> +	return ret;
-> +}
-> +
-> +DEFINE_RUNTIME_DEV_PM_OPS(msm_hdmi_pm_ops, msm_hdmi_runtime_suspend, msm_hdmi_runtime_resume, NULL);
-> +
->   static const struct of_device_id msm_hdmi_dt_match[] = {
->   	{ .compatible = "qcom,hdmi-tx-8996", .data = &hdmi_tx_8974_config },
->   	{ .compatible = "qcom,hdmi-tx-8994", .data = &hdmi_tx_8974_config },
-> @@ -541,6 +570,7 @@ static struct platform_driver msm_hdmi_driver = {
->   	.driver = {
->   		.name = "hdmi_msm",
->   		.of_match_table = msm_hdmi_dt_match,
-> +		.pm = &msm_hdmi_pm_ops,
->   	},
->   };
->   
-> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.h b/drivers/gpu/drm/msm/hdmi/hdmi.h
-> index eeba85ffef09..ee5463eb41b6 100644
-> --- a/drivers/gpu/drm/msm/hdmi/hdmi.h
-> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.h
-> @@ -48,7 +48,6 @@ struct hdmi {
->   	void __iomem *qfprom_mmio;
->   	phys_addr_t mmio_phy_addr;
->   
-> -	struct regulator_bulk_data *hpd_regs;
->   	struct regulator_bulk_data *pwr_regs;
->   	struct clk_bulk_data *hpd_clks;
->   	struct clk *extp_clk;
-> @@ -86,11 +85,7 @@ struct hdmi {
->   
->   /* platform config data (ie. from DT, or pdata) */
->   struct hdmi_platform_config {
-> -	/* regulators that need to be on for hpd: */
-> -	const char **hpd_reg_names;
-> -	int hpd_reg_cnt;
-> -
-> -	/* regulators that need to be on for screen pwr: */
-> +	/* regulators that need to be on: */
->   	const char **pwr_reg_names;
->   	int pwr_reg_cnt;
->   
-> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-> index d1b35328b6e8..cddba640d292 100644
-> --- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-> +++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-> @@ -16,15 +16,10 @@ static void msm_hdmi_power_on(struct drm_bridge *bridge)
->   	struct drm_device *dev = bridge->dev;
->   	struct hdmi_bridge *hdmi_bridge = to_hdmi_bridge(bridge);
->   	struct hdmi *hdmi = hdmi_bridge->hdmi;
-> -	const struct hdmi_platform_config *config = hdmi->config;
->   	int ret;
->   
->   	pm_runtime_resume_and_get(&hdmi->pdev->dev);
->   
-> -	ret = regulator_bulk_enable(config->pwr_reg_cnt, hdmi->pwr_regs);
-> -	if (ret)
-> -		DRM_DEV_ERROR(dev->dev, "failed to enable pwr regulator: %d\n", ret);
-> -
->   	if (hdmi->extp_clk) {
->   		DBG("pixclock: %lu", hdmi->pixclock);
->   		ret = clk_set_rate(hdmi->extp_clk, hdmi->pixclock);
-> @@ -39,11 +34,8 @@ static void msm_hdmi_power_on(struct drm_bridge *bridge)
->   
->   static void power_off(struct drm_bridge *bridge)
->   {
-> -	struct drm_device *dev = bridge->dev;
->   	struct hdmi_bridge *hdmi_bridge = to_hdmi_bridge(bridge);
->   	struct hdmi *hdmi = hdmi_bridge->hdmi;
-> -	const struct hdmi_platform_config *config = hdmi->config;
-> -	int ret;
->   
->   	/* TODO do we need to wait for final vblank somewhere before
->   	 * cutting the clocks?
-> @@ -53,10 +45,6 @@ static void power_off(struct drm_bridge *bridge)
->   	if (hdmi->extp_clk)
->   		clk_disable_unprepare(hdmi->extp_clk);
->   
-> -	ret = regulator_bulk_disable(config->pwr_reg_cnt, hdmi->pwr_regs);
-> -	if (ret)
-> -		DRM_DEV_ERROR(dev->dev, "failed to disable pwr regulator: %d\n", ret);
-> -
->   	pm_runtime_put(&hdmi->pdev->dev);
->   }
->   
-> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_hpd.c b/drivers/gpu/drm/msm/hdmi/hdmi_hpd.c
-> index fc21ad3b01dc..32e447267e3b 100644
-> --- a/drivers/gpu/drm/msm/hdmi/hdmi_hpd.c
-> +++ b/drivers/gpu/drm/msm/hdmi/hdmi_hpd.c
-> @@ -64,36 +64,17 @@ int msm_hdmi_hpd_enable(struct drm_bridge *bridge)
->   {
->   	struct hdmi_bridge *hdmi_bridge = to_hdmi_bridge(bridge);
->   	struct hdmi *hdmi = hdmi_bridge->hdmi;
-> -	const struct hdmi_platform_config *config = hdmi->config;
->   	struct device *dev = &hdmi->pdev->dev;
->   	uint32_t hpd_ctrl;
->   	int ret;
->   	unsigned long flags;
->   
-> -	ret = regulator_bulk_enable(config->hpd_reg_cnt, hdmi->hpd_regs);
-> -	if (ret) {
-> -		DRM_DEV_ERROR(dev, "failed to enable hpd regulators: %d\n", ret);
-> -		goto fail;
-> -	}
-> -
-> -	ret = pinctrl_pm_select_default_state(dev);
-> -	if (ret) {
-> -		DRM_DEV_ERROR(dev, "pinctrl state chg failed: %d\n", ret);
-> -		goto fail;
-> -	}
-> -
->   	if (hdmi->hpd_gpiod)
->   		gpiod_set_value_cansleep(hdmi->hpd_gpiod, 1);
->   
->   	ret = pm_runtime_resume_and_get(dev);
-> -	if (ret) {
-> -		DRM_DEV_ERROR(dev, "runtime resume failed: %d\n", ret);
-> -		goto fail;
-> -	}
-> -
-> -	ret = clk_bulk_prepare_enable(config->hpd_clk_cnt, hdmi->hpd_clks);
->   	if (ret)
-> -		goto fail;
-> +		return ret;
->   
->   	msm_hdmi_set_mode(hdmi, false);
->   	msm_hdmi_phy_reset(hdmi);
-> @@ -119,32 +100,18 @@ int msm_hdmi_hpd_enable(struct drm_bridge *bridge)
->   	spin_unlock_irqrestore(&hdmi->reg_lock, flags);
->   
->   	return 0;
-> -
-> -fail:
-> -	return ret;
->   }
->   
->   void msm_hdmi_hpd_disable(struct hdmi *hdmi)
->   {
-> -	const struct hdmi_platform_config *config = hdmi->config;
->   	struct device *dev = &hdmi->pdev->dev;
-> -	int ret;
->   
->   	/* Disable HPD interrupt */
->   	hdmi_write(hdmi, REG_HDMI_HPD_INT_CTRL, 0);
->   
->   	msm_hdmi_set_mode(hdmi, false);
->   
-> -	clk_bulk_disable_unprepare(config->hpd_clk_cnt, hdmi->hpd_clks);
->   	pm_runtime_put(dev);
-> -
-> -	ret = pinctrl_pm_select_sleep_state(dev);
-> -	if (ret)
-> -		dev_warn(dev, "pinctrl state chg failed: %d\n", ret);
-> -
-> -	ret = regulator_bulk_disable(config->hpd_reg_cnt, hdmi->hpd_regs);
-> -	if (ret)
-> -		dev_warn(dev, "failed to disable hpd regulator: %d\n", ret);
->   }
->   
->   void msm_hdmi_hpd_irq(struct drm_bridge *bridge)
-> @@ -179,7 +146,6 @@ void msm_hdmi_hpd_irq(struct drm_bridge *bridge)
->   
->   static enum drm_connector_status detect_reg(struct hdmi *hdmi)
->   {
-> -	const struct hdmi_platform_config *config = hdmi->config;
->   	uint32_t hpd_int_status = 0;
->   	int ret;
->   
-> @@ -187,14 +153,8 @@ static enum drm_connector_status detect_reg(struct hdmi *hdmi)
->   	if (ret)
->   		goto out;
->   
-> -	ret = clk_bulk_prepare_enable(config->hpd_clk_cnt, hdmi->hpd_clks);
-> -	if (ret)
-> -		goto out;
-> -
->   	hpd_int_status = hdmi_read(hdmi, REG_HDMI_HPD_INT_STATUS);
->   
-> -	clk_bulk_disable_unprepare(config->hpd_clk_cnt, hdmi->hpd_clks);
-> -
->   out:
->   	pm_runtime_put(&hdmi->pdev->dev);
->   
-> 
-> -- 
-> 2.39.2
-> 
+> +        resets:
+> +          minItems: 5
+> +        reset-names:
+> +          minItems: 5
+
+You need an else clause here to restrict sram, resets on the other
+platforms and to cap clocks at maxItems: 4.
+
+Thanks,
+Conor.
+
+--D5HLkMsx9LZ0D828
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnMXWgAKCRB4tDGHoIJi
+0unCAQC2SBHJSe0kI6JV8OXZNtLluXhS2J4UwBm+kjbN2zXMugD/Rnr/Zc9PCLvM
+lEBc7CW/o9jDLrIyQYTKdCF2lJw0jwc=
+=k/38
+-----END PGP SIGNATURE-----
+
+--D5HLkMsx9LZ0D828--
 
