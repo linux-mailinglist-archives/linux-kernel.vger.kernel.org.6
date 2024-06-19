@@ -1,215 +1,131 @@
-Return-Path: <linux-kernel+bounces-220843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E2A90E811
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:14:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7BF90E814
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97481B22DBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:14:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7201F223A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6748286D;
-	Wed, 19 Jun 2024 10:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F9684E1F;
+	Wed, 19 Jun 2024 10:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gHYoVbVK"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0abrkew"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C17824B2
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA09282495;
+	Wed, 19 Jun 2024 10:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718792044; cv=none; b=VNzzT0KGvbQwtR3Qg6mKblgXQLMIqDHwmuPnjxoI9IccmCObK+vGXXONKsJNagyvjpbLU/fKNyngNvvJLbkLZOLOjTMY5pNwZcVgeLd+95+rOWb5IEJ0OLYUiHN3RNCOTiPp1hRpHrtYiJAuvHIGCAMDl/nNXbdNff3tN3a818g=
+	t=1718792080; cv=none; b=G+RKz9jD8HxIJCNsiy//4KH+PvoJ7VC1+smMQ55URutp2oDCWNEjgWkAo7T5AACwa+0yuyNBqeX4RznCArYOKdzy0ZkVfsczdW1XtGYaJFVA4BgNbGLDf0Ow+PN6/bUPmuReWlzzYOiD5TtfGJ8nBK6IDc0nOFO0NwhcfPBCIao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718792044; c=relaxed/simple;
-	bh=4EGNH+EZmxPWT9lmaQ8vJOntiLtZSIoxKvEA95bhO3g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bLT/NSg/FPqmV3TbKwjvhZfjj9bimJaa82ilHaS/Yj1wn8H6y5LR9iySv0ownADoACMYll3UhiEm64/8PxnqYCS8pCQVinNyKeSR16KoihYTOgN5+VwV5tJLcez8AzHniQo9KB/29nokSl0wprLBQWREUw93IUDAleldR9H37z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gHYoVbVK; arc=none smtp.client-ip=209.85.222.46
+	s=arc-20240116; t=1718792080; c=relaxed/simple;
+	bh=/5lsOClEjTTiqIX0EKnwOr/nLlBBkUQDOTvZJquLTe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YbHoeZT/QBSWXUtiJReU3B/R4Oa0VU9SsJB5avP2XYqF3G0D/4LKaZaCgKOqZ/3Yr5dEyTUgvRqAVl1QOb9Y6Q7qYxL9gsAQxtdigwbShaBeGXocHtTnnrAfoBilF8KbenlWX/fYns17r0TmyvdMT42TH4RnAjz+QBZwY1oZRYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0abrkew; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-80b8a8b06b9so1646090241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:14:02 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4217a96de38so46407505e9.1;
+        Wed, 19 Jun 2024 03:14:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718792041; x=1719396841; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UuZeMhgyDbj4Vj/SJ3SA8UCb/5gKLQ+XAJUVVoR6RnY=;
-        b=gHYoVbVKuEOTUXFcTPZ50Ne1QpuzFD8dlvI7ZBXcmy5PqtGI5pBwUIWd1dka76OqPz
-         vwba///0akIVX69mH3x4kqdXSNEtht7oPwJY4jDlQ8mYxcBUbK7TiPEV1WxnSJZXK7bu
-         OxyPyAc+Q8cIelh0oi6sYBKJ1Cm2KbCnLeKxNmMMQKauveaCrWTP6oRmRrtLAUbGX1u7
-         LaEGKtP2ZJeSg25aX8XMQMCvGhh11ZppfhJGZ8AU/ILJx1JpxDj7sIOe2Pu6FlVbaZta
-         +eeFVQvpO7m454nMDbCG0te8iKiDgG6o0PUF7vU2iMIoEOdvOUbO0oVUPBkhApnJe9dN
-         EpXw==
+        d=gmail.com; s=20230601; t=1718792077; x=1719396877; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OWj4qqqcVIxCNyRZ2DfdgkNb1wGK6bSkCctArSODDZg=;
+        b=i0abrkew2IHTI9Qk06UxvswNafj0EDe0n2oAP+tqiADtS4wd5/UEGh6ttH1oaLstsb
+         Uj/feb08gfVDbnJ+5jjhOuPwDMWx5vGgEBCPDVlACEQsw/q4fRQ+OPD4eIrfxQfi6qbF
+         xWMLDcxrTJzp0D/m4bixlj7HFGZjKJ06SIWbwKmt1Of/YpCF2vhSsDIttd5yEqX9FzXc
+         mMPdJDReAdtJdCVaM1M03lz32q064RJM2v9/vbev+MdLPRf2VRVYSubsejy70CAkoDTu
+         /sHu1O1evKVn/0Xc8sqZyouHwGkd05Y7IPiWZfvFVsZpGc+iESeXZkpkr6tL1yY8SgzZ
+         dZmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718792041; x=1719396841;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UuZeMhgyDbj4Vj/SJ3SA8UCb/5gKLQ+XAJUVVoR6RnY=;
-        b=ePtynWQaH6OXJV0u8ltfVDSxroR0Dyjdg0gw+cl+0avmoTJABgOaeXuqZBA/YP2aWd
-         CV8k1Qu/32A9876aD/06LabFlhHmx+GDI5cezAC0ultnM8ZqBYAqCtoRPndnXrN2Xu+a
-         eqXXuU+dOldUpjQw5XzLA+rbCxz2jxQtfgnfudmkFK+TucEVDRma+wRh7nwB6RAkzQYP
-         NdrwtNrbFrwHx+Axjp+EvYMJlKXxr+c16hbU5tX1zUGXiiv3sFRDDO3gQw2NShGldSbL
-         ZUn2mqbTo0LQSD/1CgbrTzqSXIN4zXhxL5WP/p1PNrZyQLd8Mrzuv1z6uRdzaefCUfk/
-         c7Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8+f1fP/1jX6lVN9YmPqlGKIuLxp1GCBvGKcq9CP+D2x5tF6CbqgAegaNT4/vVoh5ZnifSX8fNI/flnp6XKl/NbiXhXUhZdUZH9vRT
-X-Gm-Message-State: AOJu0YyeWppR5C3yoaN7J/zkhVnXUTzSmab7Zkk6cxW5etO5dovcR6Vf
-	FqTGXNtB5qCqGqqpTUJTBIm7bTp7sq5mvA59ElSqzjrLSHr1fJyXSO6+DMD9MXDW8K3a7Qla7w6
-	aBn9WxkISH1B4Qm+RJhSuDBit7xnyEZgz
-X-Google-Smtp-Source: AGHT+IGqhOfEodhIqdPObmAOCxJYsofDFl0wxJwXrVRUXoPdREis6EiObX9MZB2Mh9s5T33p+07wlRdyaYHfNUcw6qQ=
-X-Received: by 2002:a05:6102:2745:b0:48c:43f2:4f29 with SMTP id
- ada2fe7eead31-48f13140ed9mr2244373137.34.1718792041497; Wed, 19 Jun 2024
- 03:14:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718792077; x=1719396877;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OWj4qqqcVIxCNyRZ2DfdgkNb1wGK6bSkCctArSODDZg=;
+        b=IXO1x2nxUXy/drjWWuOzpNz7cXfHot16L55OjqxL3S5PlD/05z7KM6Rm3iL9qSTdZZ
+         6Xle67Hzf49yYVCREcSWqbKYB1BTV8gI+LG6Ehk1JXjdLTEbgu3b+LoPlTDFBTr88Nse
+         8LVoj9MMEyKxGm7OCgNlmbSKXrkgK/Z9UVPexW6rf1LOhm8Y4RPZg0Q0CKad/WkOp7Sg
+         0obexOWlgAbS2BDtxnUZXUoV/yExfLqLoeQBLU6B69w/M/UOVHxXPgclW01xrRhqTdax
+         kB1Yepwfr9DlRaXpFCJ0YkIHLKMqyTO7NlkWeYi89GRb1Qz1ZoWiCFGr++8W/eag2XGt
+         9OUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPxcReMoYo+uSEYLi+TqeakamMzGMuCXRSwn1ilMCgTbe1VW7v4mnv5kUv2/OKQuLNXc1rXLxA1z1bSkhIHI7wmQhrEnJEA0Crftm9KKnINqJxEh9Q534HIfmVeOymXPGJ
+X-Gm-Message-State: AOJu0YyUExtK2wj1Ui/aVESWFAg2vK3SuEUStfRZI8AzAIAGk5l2B6M9
+	u3vPQVkbzLG/eZggR4uFICwfrp3yp9EkKDKdyxkhJ/P+ak+C1MY=
+X-Google-Smtp-Source: AGHT+IGUS7OckNuAZosynBKA8uInq63efrk9sBC2i2lWzzzmjRF94hBF+hTm9Du2LZrcQOQBPKM6Vw==
+X-Received: by 2002:a05:600c:4213:b0:421:aace:7a94 with SMTP id 5b1f17b1804b1-4247529c841mr11626615e9.40.1718792076991;
+        Wed, 19 Jun 2024 03:14:36 -0700 (PDT)
+Received: from p183 ([46.53.254.81])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3641788cf4fsm235849f8f.90.2024.06.19.03.14.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 03:14:36 -0700 (PDT)
+Date: Wed, 19 Jun 2024 13:14:34 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	gregkh@linuxfoundation.org, linux-mm@kvack.org,
+	liam.howlett@oracle.com, surenb@google.com, rppt@kernel.org
+Subject: Re: [PATCH v5 3/6] fs/procfs: add build ID fetching to PROCMAP_QUERY
+ API
+Message-ID: <984d7898-d86a-4cea-9cdf-262b9ec4bc84@p183>
+References: <20240618224527.3685213-1-andrii@kernel.org>
+ <20240618224527.3685213-4-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1718790499-28151-1-git-send-email-yangge1116@126.com>
-In-Reply-To: <1718790499-28151-1-git-send-email-yangge1116@126.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 19 Jun 2024 22:13:50 +1200
-Message-ID: <CAGsJ_4zAg_Ui3uNUz6rwRPeERo6PskthGUB2V=4Yr+c+AU8iqA@mail.gmail.com>
-Subject: Re: [PATCH] mm/page_alloc: add one PCP list for THP
-To: yangge1116@126.com
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, baolin.wang@linux.alibaba.com, 
-	liuzixing@hygon.cn, Mel Gorman <mgorman@techsingularity.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240618224527.3685213-4-andrii@kernel.org>
 
-+Mel, the original author of commit 5d0a661d808f
-('mm/page_alloc: use only one PCP list..."
+On Tue, Jun 18, 2024 at 03:45:22PM -0700, Andrii Nakryiko wrote:
+> The need to get ELF build ID reliably is an important aspect when
+> dealing with profiling and stack trace symbolization, and
+> /proc/<pid>/maps textual representation doesn't help with this.
 
-
-On Wed, Jun 19, 2024 at 9:48=E2=80=AFPM <yangge1116@126.com> wrote:
->
-> From: yangge <yangge1116@126.com>
->
-> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
-> THP-sized allocations") no longer differentiates the migration type
-> of pages in THP-sized PCP list, it's possible that non-movable
-> allocation requests may get a CMA page from the list, in some cases,
-> it's not acceptable.
->
-> If a large number of CMA memory are configured in system (for
-> example, the CMA memory accounts for 50% of the system memory),
-> starting a virtual machine with device passthrough will get stuck.
-> During starting the virtual machine, it will call
-> pin_user_pages_remote(..., FOLL_LONGTERM, ...) to pin memory. Normally
-> if a page is present and in CMA area, pin_user_pages_remote() will
-> migrate the page from CMA area to non-CMA area because of
-> FOLL_LONGTERM flag. But if non-movable allocation requests return
-> CMA memory, migrate_longterm_unpinnable_pages() will migrate a CMA
-> page to another CMA page, which will fail to pass the check in
-> check_and_migrate_movable_pages() and cause migration endless.
-> Call trace:
-> pin_user_pages_remote
-> --__gup_longterm_locked // endless loops in this function
-> ----_get_user_pages_locked
-> ----check_and_migrate_movable_pages
-> ------migrate_longterm_unpinnable_pages
-> --------alloc_migration_target
->
-
-Please also describe its potential negative impact to cma_alloc().
-
-> To fix the problem above, we add one PCP list for THP, which will
-> not introduce a new cacheline. THP will have 2 PCP lists, one PCP
-
-not introduce a new cacheline for struct per_cpu_pages.
-
-> list is used by MOVABLE allocation, and the other PCP list is used
-> by UNMOVABLE allocation. MOVABLE allocation contains GPF_MOVABLE,
-> and UNMOVABLE allocation contains GFP_UNMOVABLE and GFP_RECLAIMABLE.
->
-> Link: https://lore.kernel.org/all/1717492460-19457-1-git-send-email-yangg=
-e1116@126.com/
-
-no this tag.
-
-> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for THP-sized =
-allocations")
-
-Cc: <stable@vger.kernel.org> ?
-
-> Signed-off-by: yangge <yangge1116@126.com>
-> ---
->  include/linux/mmzone.h | 9 ++++-----
->  mm/page_alloc.c        | 9 +++++++--
->  2 files changed, 11 insertions(+), 7 deletions(-)
->
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index b7546dd..cb7f265 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -656,13 +656,12 @@ enum zone_watermarks {
->  };
->
->  /*
-> - * One per migratetype for each PAGE_ALLOC_COSTLY_ORDER. One additional =
-list
-> - * for THP which will usually be GFP_MOVABLE. Even if it is another type=
-,
-> - * it should not contribute to serious fragmentation causing THP allocat=
-ion
-> - * failures.
-> + * One per migratetype for each PAGE_ALLOC_COSTLY_ORDER. Two additional =
-lists
-> + * are added for THP. One PCP list is used by GPF_MOVABLE, and the other=
- PCP list
-> + * is used by GFP_UNMOVABLE and GFP_RECLAIMABLE.
->   */
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -#define NR_PCP_THP 1
-> +#define NR_PCP_THP 2
->  #else
->  #define NR_PCP_THP 0
->  #endif
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 8f416a0..0ecbde3 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -504,10 +504,15 @@ static void bad_page(struct page *page, const char =
-*reason)
->
->  static inline unsigned int order_to_pindex(int migratetype, int order)
->  {
-> +       bool __maybe_unused movable;
+> @@ -539,6 +543,21 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
+>  		}
+>  	}
+>  
+> +	if (karg.build_id_size) {
+> +		__u32 build_id_sz;
 > +
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->         if (order > PAGE_ALLOC_COSTLY_ORDER) {
->                 VM_BUG_ON(order !=3D HPAGE_PMD_ORDER);
-> -               return NR_LOWORDER_PCP_LISTS;
-> +
-> +               movable =3D migratetype =3D=3D MIGRATE_MOVABLE;
-> +
-> +               return NR_LOWORDER_PCP_LISTS + movable;
->         }
->  #else
->         VM_BUG_ON(order > PAGE_ALLOC_COSTLY_ORDER);
-> @@ -521,7 +526,7 @@ static inline int pindex_to_order(unsigned int pindex=
-)
->         int order =3D pindex / MIGRATE_PCPTYPES;
->
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -       if (pindex =3D=3D NR_LOWORDER_PCP_LISTS)
-> +       if (order > PAGE_ALLOC_COSTLY_ORDER)
+> +		err = build_id_parse(vma, build_id_buf, &build_id_sz);
 
-pindex >=3D NR_LOWORDER_PCP_LISTS
+This is not your bug but build_id_parse() assumes program headers
+immediately follow ELF header which is not guaranteed.
 
->                 order =3D HPAGE_PMD_ORDER;
->  #else
->         VM_BUG_ON(order > PAGE_ALLOC_COSTLY_ORDER);
-> --
-> 2.7.4
->
+> +	 * If this field is set to non-zero value, build_id_addr should point
+> +	 * to valid user space memory buffer of at least build_id_size bytes.
+> +	 * If set to zero, build_id_addr should be set to zero as well
+> +	 */
+> +	__u32 build_id_size;		/* in/out */
+>  	/*
+>  	 * User-supplied address of a buffer of at least vma_name_size bytes
+>  	 * for kernel to fill with matched VMA's name (see vma_name_size field
+> @@ -519,6 +539,14 @@ struct procmap_query {
+>  	 * Should be set to zero if VMA name should not be returned.
+>  	 */
+>  	__u64 vma_name_addr;		/* in */
+> +	/*
+> +	 * User-supplied address of a buffer of at least build_id_size bytes
+> +	 * for kernel to fill with matched VMA's ELF build ID, if available
+> +	 * (see build_id_size field description above for details).
+> +	 *
+> +	 * Should be set to zero if build ID should not be returned.
+> +	 */
+> +	__u64 build_id_addr;		/* in */
 
-Thanks
-Barry
+Can this be simplified to 512-bit buffer in ioctl structure?
+BUILD_ID_SIZE_MAX is 20 which is sha1.
 
