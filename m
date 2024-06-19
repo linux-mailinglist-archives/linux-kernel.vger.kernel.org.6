@@ -1,172 +1,109 @@
-Return-Path: <linux-kernel+bounces-221468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54E6390F41B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:34:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5749F90F421
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDA1B1F22C8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:34:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 512A41C22154
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68873153BC7;
-	Wed, 19 Jun 2024 16:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4A4155747;
+	Wed, 19 Jun 2024 16:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SODf2MPX"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Vu5/rXaQ"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7F51527BF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 16:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533A6155322
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 16:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718814862; cv=none; b=pw4qPTkWcdhDKFeyopcDaN5kJ64ciXSM6uNxlv7dp+VWco8eRWxvPlhWdaY3+9Dsg3wBVxTPMSzeITwUk7pUI1hEM61cHNyIMGHDScaKOVyeKxgq7gSkSf8B4qP+ccOTlR6OHKMXoRMFsXtEUM/j6Dfj2Z02Tf6a3kpQYBsg/MM=
+	t=1718814889; cv=none; b=a2/QYnn2yNxFGWAMPiZjo95Q0xYcnByrquUYaeFx3GWLmLz3UfYPQSGzhmEDIgsNUFp/cdu4TZL0ziMr4233ipn9eH9Al89SweyxftzZIoWCtJiQ/A9aG207OzfBpmLnul3Y1x4sZSyqV1FTlX+/DXole/yi7lvhHvruIo3pNcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718814862; c=relaxed/simple;
-	bh=sWXfe3iROAv5nunMV/T4SIqsE90qqOYqjalWoYIQLNg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qNxiLOqevHKbV+xpCEUjtoUhxjGNgQBEDgx587una9HVfNdxzgRQzavboAAKlDYOjgdoH8Jpg6Ts8rnjACqVYBBD4ShKcu1BA5a9Nht+BU2YnTj8yhUsFzVMMMMFe6jXg10xv2n5wkpytLFtNGmwU+2v+RPZ8lqmOxBb/DNlMLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SODf2MPX; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-627e3368394so70417977b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:34:20 -0700 (PDT)
+	s=arc-20240116; t=1718814889; c=relaxed/simple;
+	bh=vz3OyqF6PjBb+NDoBEl8crxXV6LQcMi1lT8jRt8+XwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lbWWib1xZGI0gJoOR7N4M0fGFFE6hHmFEFL2/m1KjNiPbXZ5k1NRn9Sk6K9NCkPuC9EdeISW8d2Awjk5jWYw5d/lr2EPWJpj3oXj0D5pDcxgWIfB334S5KrvI/75CkN89LPuk/bTKKBG/SZZcduEJEdbOApf7pd+HvMx3mzHVlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Vu5/rXaQ; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-6f98178ceb3so3792434a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:34:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718814860; x=1719419660; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eTFDXI3lmE89xsXWjsBu8Z87GpVx8y3WY9kndQ0G3Gg=;
-        b=SODf2MPXUD/inhB9ZtlYlD84hfxYzjhXeiikobWzaM1pcA77EfeDJmsH9zNNRBorOA
-         D9c0VQUciNOCB76tfq1s13vwYnnZ3f+akptgtsehgEgReJj6k8Ikl6VaaJpFSxZgM5Mg
-         Q1wkeg3JatlgRzSUDRAxEVemsSh7IvC7cuRh+ghj/2WyCid2KD9oubusgrm0ulSEzZ7v
-         KkGV3xHoVjWtuQsYQd4YcL5CciyIFTwGsKk7Vot+J/cRaSb2rNNxHj2OBc74/k5h4AC4
-         jKbakHk1uvegVzJorWizxtmA/st3BoFe4NFgOkBY/dz5ocOTZPYnXaVOn2Jw8EdpCxOD
-         IFZQ==
+        d=ziepe.ca; s=google; t=1718814887; x=1719419687; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=U0Z3MILfX5zi94LfosxPsrOvnWTNdLm10NYSBu4aEWY=;
+        b=Vu5/rXaQyfeTAi7/rv4vTsJL0ulf7MwmTz4DtKzBI2EjvsX3fIESxNVgPAP5vjnxFE
+         1VYQfu+ZkqJOdSzECsnPut6NFRmnQRJeYeoFYwxSWXbbnLL3ktWuBDSV79KOc72ZLw01
+         5m/Axu+DWbMbbTwqpVnbTeu0rl5qR/dgOCPBMAdq7xyVThKcjK/aiX9LRmDYfz8qLQxI
+         8ybyoxVaM55rOdzo2jxHUAdg76X1oyq2bup1N0/o/oDPX1sXm2tggXlIrO22TdqG4nIQ
+         xOzC0DWDvECjN1dZYhvtWR54CYhQON/BbTR9Am8GRwFkYpHkn0OLWpp0CL+hhGfXxbhM
+         0TfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718814860; x=1719419660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eTFDXI3lmE89xsXWjsBu8Z87GpVx8y3WY9kndQ0G3Gg=;
-        b=ryLMDvuWTVc0M0rafvxvjt0rO6CtJBwoo8BIoryp4m4GT+c41FaX94t3dYBlQgCUR+
-         FHamXoXU9db2sqXwyKefC2kGhhTvrNI/b/rT3yoLKIfsoUozsGvcxXKBa3cBFHOL9DSy
-         tpiUqQPZmJ9N3W4T88pnv8/1bNcmYDMqLVF6P7lOmUaHCMwKTUuozMmkpqoumvrxFdYv
-         JZN0VZXv5xusU8CDaYqbVz2RzNJXPKDhqpjqNR+xbNeGuo58NHUJXZnXPg0cw8tY4Bk3
-         gsq8bgL2LTWGrK/Zo1eynKfkkSZV4T2Y/t8vLzQjKE2A0YL7s2cLY0bdV+k0qMCLA65e
-         kPiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUH2a5uNxThjnsFgNcaXWnIUV+58yFRZi2VmKm/LbH1QyoY1yOYipizQ8Ag4xUfJqdYrcXaejeWcJOhCeUSGMYr8qkSrJkiFxmyRvXI
-X-Gm-Message-State: AOJu0YyFXZVWHby5AJR8ov4FaIkxEhtrM/BJ9Yu30Biq4S55EmmI2GCi
-	hN9D/Fx9UMY5VbUdNcb04nLyINovfB5vr4QHi0znS2vRf1TcOg1YNphmZH52nhLeoiZACMnGxvq
-	AY+0nK4gFsPZUOqKjyA7QGNp/J+a/y+VhS6AS
-X-Google-Smtp-Source: AGHT+IHu6b6GzxTUmoaKY8FCnkWOQQ5arRuKCg2OzKx7h+qxUq7WqX1BaUl/DWaLG0aZ1MBJukslwKHs4gsEbHoMAg4=
-X-Received: by 2002:a05:690c:80f:b0:617:fe2a:a0aa with SMTP id
- 00721157ae682-63a8d736f33mr33957447b3.6.1718814860138; Wed, 19 Jun 2024
- 09:34:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718814887; x=1719419687;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U0Z3MILfX5zi94LfosxPsrOvnWTNdLm10NYSBu4aEWY=;
+        b=ETJJdaQ0EYYMDjMslrXvkGgdvmO/SD4PIW0r6pmlcrLNVsL71Xhee4O+dL/O9+ECe2
+         IoXEdlohiDs6tt7GoxwRwb7hrn53Bo6hLexG1jsfSTJPfWIfuWTTfJQj7Czv+C3DSjP7
+         mFzcu6KSJC7Lp2ZWZ7/9J735OOng0UV4AQTTZjAdlWg8JYxfFv3djx1BPnu4dAs2BlNq
+         +1qV2FrxzSsvaVP6AZiuLYFxOAQJJ1JhvGoIEPhQnShdct6ZdYekILUtgl0/5p7aX0w2
+         iZPgYp/LUvEIy6/m2IH7YZnbrCiwlqkn9spTviroC5E8kcQycxPQg7Y6FDQDgu3IdkSi
+         t3JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5FU18aYf48h0IzKRMe49bBr5/hNdcryPlv54OnGGuk3UBw0xtLrCwckiq+9uBWd6SFr/ppzspxbNW7jDta4ydwRmMvrV41Y8SRKlX
+X-Gm-Message-State: AOJu0YwyY5lZHp+20uyuZy9cag+F3lMKkUOVSYAyvD3A6gnVed3+zmnB
+	Az4wZNQOjBNjF0FmPCOIz81NHid+aItjXzIIsHs36MeFlqONaFdQDqj0ANuzSV0=
+X-Google-Smtp-Source: AGHT+IHbLaigtw0mJHzx/yQd28ehpS3L1U7ULHkxwkCKVmyGufSvndmmDVZaVUaeop0hhX6BCYc7SQ==
+X-Received: by 2002:a05:6830:1243:b0:6f9:aaab:d34f with SMTP id 46e09a7af769-7007365c28amr2973145a34.6.1718814887452;
+        Wed, 19 Jun 2024 09:34:47 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b4f8754a9bsm17821726d6.92.2024.06.19.09.34.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 09:34:46 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sJyGk-005ArA-0i;
+	Wed, 19 Jun 2024 13:34:46 -0300
+Date: Wed, 19 Jun 2024 13:34:46 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iommu/arm-smmu-v3: add missing MODULE_DESCRIPTION() macro
+Message-ID: <20240619163446.GM791043@ziepe.ca>
+References: <20240613-md-arm64-drivers-iommu-arm-arm-smmu-v3-v1-1-0e9f7584a5c8@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
- <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
- <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
- <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com> <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
-In-Reply-To: <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 19 Jun 2024 12:34:09 -0400
-Message-ID: <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
-	akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, mic@digikod.net, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
-	linux-integrity@vger.kernel.org, wufan@linux.microsoft.com, 
-	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org, 
-	pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, jikos@kernel.org, 
-	mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de, 
-	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240613-md-arm64-drivers-iommu-arm-arm-smmu-v3-v1-1-0e9f7584a5c8@quicinc.com>
 
-On Wed, Jun 19, 2024 at 11:55=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Wed, 2024-06-19 at 11:49 -0400, Paul Moore wrote:
-> > On Wed, Jun 19, 2024 at 3:59=E2=80=AFAM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > On Tue, 2024-06-18 at 19:20 -0400, Paul Moore wrote:
-> > > > On Mon, Apr 15, 2024 at 10:25=E2=80=AFAM Roberto Sassu
-> > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > >
-> > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > >
-> > > > > Integrity detection and protection has long been a desirable feat=
-ure, to
-> > > > > reach a large user base and mitigate the risk of flaws in the sof=
-tware
-> > > > > and attacks.
-> > > > >
-> > > > > However, while solutions exist, they struggle to reach the large =
-user
-> > > > > base, due to requiring higher than desired constraints on perform=
-ance,
-> > > > > flexibility and configurability, that only security conscious peo=
-ple are
-> > > > > willing to accept.
-> > > > >
-> > > > > This is where the new digest_cache LSM comes into play, it offers
-> > > > > additional support for new and existing integrity solutions, to m=
-ake
-> > > > > them faster and easier to deploy.
-> > > > >
-> > > > > The full documentation with the motivation and the solution detai=
-ls can be
-> > > > > found in patch 14.
-> > > > >
-> > > > > The IMA integration patch set will be introduced separately. Also=
- a PoC
-> > > > > based on the current version of IPE can be provided.
-> > > >
-> > > > I'm not sure we want to implement a cache as a LSM.  I'm sure it wo=
-uld
-> > > > work, but historically LSMs have provided some form of access contr=
-ol,
-> > > > measurement, or other traditional security service.  A digest cache=
-,
-> > > > while potentially useful for a variety of security related
-> > > > applications, is not a security service by itself, it is simply a f=
-ile
-> > > > digest storage mechanism.
-> > >
-> > > Uhm, currently the digest_cache LSM is heavily based on the LSM
-> > > infrastructure:
-> >
-> > I understand that, but as I said previously, I don't believe that we
-> > want to support a LSM which exists solely to provide a file digest
-> > cache.  LSMs should be based around the idea of some type of access
-> > control, security monitoring, etc.
-> >
-> > Including a file digest cache in IMA, or implementing it as a
-> > standalone piece of kernel functionality, are still options.  If you
-> > want to pursue this, I would suggest that including the digest cache
-> > as part of IMA would be the easier of the two options; if it proves to
-> > be generally useful outside of IMA, it can always be abstracted out to
-> > a general kernel module/subsystem.
->
-> Ok. I thought about IPE and eBPF as potential users. But if you think
-> that adding as part of IMA would be easier, I could try to pursue that.
+On Thu, Jun 13, 2024 at 12:44:17PM -0700, Jeff Johnson wrote:
+> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-test.o
 
-It isn't clear to me how this would interact with IPE and/or eBPF, but
-if you believe there is value there I would encourage you to work with
-those subsystem maintainers.  If the consensus is that a general file
-digest cache is useful then you should pursue the digest cache as a
-kernel subsystem, just not a LSM.
+Weird I never saw that..
 
---=20
-paul-moore.com
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c | 1 +
+>  1 file changed, 1 insertion(+)
+
+Fixes: da55da5a42d4 ("iommu/arm-smmu-v3: Make the kunit into a module")
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+Jason
 
