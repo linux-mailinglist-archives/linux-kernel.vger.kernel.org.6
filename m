@@ -1,108 +1,83 @@
-Return-Path: <linux-kernel+bounces-221157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 474AE90EF9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:01:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C766590EF9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43C761C244AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:01:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EBC0B22491
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4292D1509B0;
-	Wed, 19 Jun 2024 14:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNlSj1K3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B114014F108;
+	Wed, 19 Jun 2024 14:02:03 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7C0D26A;
-	Wed, 19 Jun 2024 14:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037B81DDD1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 14:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718805698; cv=none; b=NrRXLixU9mQcse3gpm3JyNBV4+gsG6xwaGMHETU1a6y6f3uSZU3+DHgVw+VYybJKXgP5GaPiX+5X1CEbg8qqPaNyDR4+2toFol+ZGdntsf6VuBOiq7i6OYetInAgiwekyHyNkuoZAx5xSyomEKscNC96ytEoNxXKJizvMIilZQM=
+	t=1718805723; cv=none; b=X25Qh9qICm3KKz83GTk4WorxhhFvps65u0C7aCZzHKIcjHDEEziOx05nU76nu845180VwDpjrhU0TS7Z22+5a0/1VZIRXj+SCID3BsjS3C3E3lY0cdI8ZGAx4ZxHhjq8+SApgeMkza6In0y+S7adw0+wUPjAPXTS9NPQLBzG70Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718805698; c=relaxed/simple;
-	bh=CEgOzGB7LClupNgDDq0D815zenWO1JkO/EBzHOwsrME=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XEyzyyjJSX2KnLmg4vw4uQFJHRcXsbca6n9mxUe2Mdc9xcNaNy+jAxrLyvLSDE6Bu0mXz/ox/BjMqrHjME0FSQL83YNbBQoxn80P0wq8jV3UzQJyiErM8TKw+PQZIWxE7GceoVx0ksrQxWJW/M/1Q2LC4dbGdSaB/m6I15DP+jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNlSj1K3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E92F4C2BBFC;
-	Wed, 19 Jun 2024 14:01:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718805698;
-	bh=CEgOzGB7LClupNgDDq0D815zenWO1JkO/EBzHOwsrME=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oNlSj1K3HpYLwsgbrm7zxDdxWjqdGCVO+92QAXmVtEtZPVdLbI5ZURMT7kRT++WM/
-	 hFU9sZFraYvulrCDTuKvMU1dTWfIKv3SJwG9NJOeBL+anoJwaaCOJqHlQxDE7j52kg
-	 l4rzvoJuSxjqz+Cv9VwFHvIDQ9HjNCe9VU1EYqq/nmx1sJE/gFhrbHSgNnNRJmrjCv
-	 DyXAR12d/ngMDKfb3x6ixX0dgm3Ip2PgLQDDbabovZL33JlHFpEcf6Ocsm4ICug1EE
-	 UILSLGuL1e+wo5yBchqX4gmVdAwGpImmjxicRpEJB45SMuis0uIIxPxsf7VDyCMTj9
-	 LvOzpPVPUHfdg==
-From: Christian Brauner <brauner@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	david@fromorbit.com,
-	chandanbabu@kernel.org,
-	jack@suse.cz,
-	yi.zhang@huawei.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH -next v6 0/2] iomap/xfs: fix stale data exposure when truncating realtime inodes
-Date: Wed, 19 Jun 2024 16:01:29 +0200
-Message-ID: <20240619-umliegenden-original-ece354ddc842@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240618142112.1315279-1-yi.zhang@huaweicloud.com>
-References: <20240618142112.1315279-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1718805723; c=relaxed/simple;
+	bh=a5x3fZBuTurilP1lJX3BEd/oe1t12MtLNpXyZ32CN/E=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=aKT/On+hghcRJCKkY8eABiu/YIBqabw1SlrZKswnmML+uMr8TZnu1NB62F7BhrdiTW+SM/HAEQv7/CCvfHzJHaZ4M0zQUlFMHo++JfPYk0op1O4vybFlTHlVuXc0Ae6k9S18x7wi75HrbJkkVvONCt8komJ7j7Grubebl0LU8ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eb846f49adso815898839f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:02:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718805721; x=1719410521;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a5x3fZBuTurilP1lJX3BEd/oe1t12MtLNpXyZ32CN/E=;
+        b=xBPis9k16oL+QSEfmE35RrhrkK5GrjMKzcg9z5sv5qVaBkeAKWxb/o8SKwpsVgvDbu
+         GliuYu7/gydntE8AS6bXKHVG/SVTT41w+NwtQdtqxIU057u52NoShDH0hiBFRF08UoVJ
+         5mYq8DCO6p8qAcas/hjLDdwU3r6dPVZtRwWRiFpbcZfJJ1LtWQaTSPySjyezNl5BkeNl
+         d6Av0v9sC4TU0kRnt8UG5SRqjDZZpNAh9GxQU90ULWOaWS6xTx2vb9bDtOC6GtwdvJsA
+         KQ2w10XnzahPq0rNnxuzE+aMr5IyNyMorhGNc/NYlSd3zva3IT6p8MvBrRDQ2Lc51MjN
+         bnRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbDtmXKkY2yaxIL4n4CQnTCpTMnhpGnzoxh/pwXydUg2NfMqo7cxfjjHQIjtOURll8iz/tE6YEroxcMONUcJnIGRjS4+WsHWS0R+oo
+X-Gm-Message-State: AOJu0YyTqUsx0tOQX4H7Xp8gjc6330F5x/m4VPFdfz3fmmbPnDubtLqw
+	rZ8/RdUMcYAtdd1kE5r6W25Lhmu0jFaB57QBGogVV/JkHqaan56MamE4QHyCB5bUySEh8N8GMJt
+	Hdc5mOXuOLh28FQVCPrlu+7AZeZtBYTKvxqGXlMXu7Hdu+YZjFE+csHo=
+X-Google-Smtp-Source: AGHT+IF1ENX17AlB5FFI7b+xHhcbb0jIK1HD9zAPhxxzJ+jpgkgYGyF1D+onSq+xMT6nf9Gc4AmUqkpRUbi+hHQ2qsinp99QHXNn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1467; i=brauner@kernel.org; h=from:subject:message-id; bh=CEgOzGB7LClupNgDDq0D815zenWO1JkO/EBzHOwsrME=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQVPdm1lFl1oua3Ewv2KilkH24Tt5r5snNvg8232Ng53 Slun/87dJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEpo+RYYnq3K9f9/7Pa5j5 5q3Bj+A7PpOsWi1mv1687U7T86fpRvcZ/hf+LXBMujvNeV7ndL85YnViEdrbM3ILsu+LvP67bFs UGy8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:b49:b0:374:64df:681c with SMTP id
+ e9e14a558f8ab-3761d751e2emr1920645ab.4.1718805721176; Wed, 19 Jun 2024
+ 07:02:01 -0700 (PDT)
+Date: Wed, 19 Jun 2024 07:02:01 -0700
+In-Reply-To: <PN2PR01MB48914ED83EB96F2270A2A124FCCF2@PN2PR01MB4891.INDPRD01.PROD.OUTLOOK.COM>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000072ee64061b3ea47e@google.com>
+Subject: Re: WARNING in sock_map_close
+From: syzbot <syzbot+07a2e4a1a57118ef7355@syzkaller.appspotmail.com>
+To: wojciech.gladysz@infogain.com
+Cc: wojciech.gladysz@infogain.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 18 Jun 2024 22:21:10 +0800, Zhang Yi wrote:
-> Changes since v5:
->  - Drop all the code about zeroing out the whole allocation unitsize
->    on truncate down in xfs_setattr_size() as Christoph suggested, let's
->    just fix this issue for RT file by converting tail blocks to
->    unwritten now, and we could think about forced aligned extent and
->    atomic write later until it needs, so only pick patch 6 and 8 in
->    previous version, do some minor git log changes.
-> 
-> [...]
+> #syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux=
+ c519cf9b7434183bb56ed1e200ac577a5fd34d9b
 
-I've put this into vfs.iomap for testing which should end up in fs-next asap.
+This bug is already marked as fixed. No point in testing.
 
----
-
-Applied to the vfs.iomap branch of the vfs/vfs.git tree.
-Patches in the vfs.iomap branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.iomap
-
-[1/2] xfs: reserve blocks for truncating large realtime inode
-      https://git.kernel.org/vfs/vfs/c/d048945150b7
-[2/2] iomap: don't increase i_size in iomap_write_end()
-      https://git.kernel.org/vfs/vfs/c/602f09f4029c
+>
+> The information in this email is confidential and may be legally privileg=
+ed. It is intended solely for the addressee and access to it by anyone else=
+ is unauthorized. If you are not the intended recipient, any disclosure, co=
+pying, distribution or any action taken or omitted to be taken based on it,=
+ is strictly prohibited and may be unlawful.
 
