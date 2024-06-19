@@ -1,122 +1,122 @@
-Return-Path: <linux-kernel+bounces-221598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8016090F5DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:19:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 993BA90F5E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28E661F2283B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:19:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9F381C212D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2002B157487;
-	Wed, 19 Jun 2024 18:19:51 +0000 (UTC)
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E35B157496;
+	Wed, 19 Jun 2024 18:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UyQVV3m/"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC8615698D;
-	Wed, 19 Jun 2024 18:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF4315746A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 18:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718821190; cv=none; b=kSNUaxXiVjikwiRUbsbIV9X1HghBFnt7FF8YMNwokWj7JJk5qIflc28T+DHkLbPKzJevvumUQvbTWs5uiDgnVD6u57d89H9Ckq8viO3FJnFbbvoK5fUv4qeDn0tME5m05UZn+Fq8nK743L8ug9SMcjI484ZP4EuSWDCrOMeYDaM=
+	t=1718821227; cv=none; b=BS+OPnaz/T9LAT+2XECbl592F265RR3SONe2hFDSq8713DgzGDuZ9pP5YEF0sdt+T1tDf8quyOdIwF5gJPkNeFLDeq0zKfqMrqFzXoeTp98f/H4PlWAPUxgUTOwES1iylhLucye2NI8CRX+U2Gsv4jNRqGRASnrX3NlaZYUjUOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718821190; c=relaxed/simple;
-	bh=RMsTNCBqZwxDP7hdRlojuriaNhJGqTfA3YNcQUHC/CU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JNsHKU6Lx1faxfmG5uUUA4boZYGkgkBinl2lcqnFtwNWtDDfi+gxIVQUnowNPfMKmVF0zELpS1Qupmcr6RRsg9EfUj36SYS5CwNJMmB4DZrAuVBUSFTq1I60s0JcuAzhuxmbmrEaThR77LG4uz4RpBQnAomu8trxEcAwDD3DE5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-6e7e23b42c3so55330a12.1;
-        Wed, 19 Jun 2024 11:19:49 -0700 (PDT)
+	s=arc-20240116; t=1718821227; c=relaxed/simple;
+	bh=RlFcuST3MTYw2HhcrIt93bRlktGhL2E9Pa+qAshb+Vc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nrwVyrfEIUlW/udS97L8lA1Zh3ldV5lS77Dww3ayR24MurDE6lFUyZ89PAvdJrHMtpiyq7Z1XydfWlgR/pk5+MlZyoP0gXgL3+BASBLCZU9IvAQ9quTLM93juzmn0BJ837j2LRvDFXQGBJEh20PDOouqoQJ5c16+KlUJSpE5FQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UyQVV3m/; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f8d0a00a35so42475a34.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718821223; x=1719426023; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EEAmDmdxj2IHWsPzPWl7VVZMI4gsZPCFHp3nAK0/dQs=;
+        b=UyQVV3m/1fcKRjM21ZcHn17RogJM5/UU8Ea41Dgb8Z2wPL36J+rQ3smwnAANQVngOL
+         dIXUI9AqDZAVF27NXLZE090YmRLAl2zH+LyLfxTJ2C3q7Te2vnz5vjkXPOV+7S31mUUX
+         O1dpq7GiY2HgP8lzXFAALVPPD73tZtTkgY5BAbwpuROpk0x3ba+KzfTKTy9TeTFK6sbn
+         W3XbJBYFSqB58DNN3udAyE0yV4lg9ZOksvA6mxqzXwe6MQZD9UqrQn+mm5UVMMif+U8X
+         X7aa+xywMwYn9+CUyl62VsVQSWpobAhj0hEC+2wminpvxpsRO4U4vbluN16wp82AM/kF
+         eZzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718821188; x=1719425988;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lqdyyGhBufgRtRZ7+rM0rZt76nGjgHPleo4iuoTw0mY=;
-        b=AWOY4FYTikvHegsJbEflw+0L1bLnqXA/Dp0C/LxO3Gn9rK2bg4pm/+GZYUIjOsuuoP
-         DfIC9ruveniXKKA4ki1HM/c3NOng9dq7s/SeceoyZDizSTgppql8bjx6wPm23ImVSGUZ
-         ZfJLRvKlLXqt0MrJYk+H92Rx1h69rgN9LT+8Di/mn38xTEhEVukoJEfk5mCJ6EiCl/Ka
-         ZJOKOoDyake1qSISMqNAOmllpTn08B8nd268DlhwQvWT5XSZeZjOxmEL5ND5PrOPhmwX
-         YB5SzBcrz3B62qg62Mf0rRYbu/pWHnifPb22pE2J0d1tu7Cfraxu/LVkVCeUNRFisxEw
-         rxSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVVCnt9RL4Ac2Gx7b+/JloC1tkukXwFRpMHFXT3F6I+MiLz98uYvJuLU7PG/4xI3yMEPUSdEBIivJ3AAkozEsSm6FthiyReF6cbhX1e62ParMEWCPeX36G/Pq6dTZC8N+SP9QqF6/yo6gTKlJ4xw==
-X-Gm-Message-State: AOJu0Yw5U8alCiTzfUaTW/2oBQ0x6I4R1r4uttaEL0qN4Xa662BDBQ2C
-	6kwFR3/4lPdaP9dRxp3N6pNOl/xcgqz75RbTxH6skE2Pzh9ae/pHuz5lQl5f2OcwqZituPqnlFU
-	Cn85tL6hb3DHYqIdwDYw3NLYJMX4=
-X-Google-Smtp-Source: AGHT+IHLhpxyx+1bvSddBuy5hkbDj14/14VxVzP3tCB2fiDY3vipYm/OFB45EFiTa4Fndt/PsnlUWQHMULf5d/2RH7o=
-X-Received: by 2002:a17:90a:4944:b0:2c7:c703:ef1e with SMTP id
- 98e67ed59e1d1-2c7c703f253mr1897811a91.4.1718821188237; Wed, 19 Jun 2024
- 11:19:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718821223; x=1719426023;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EEAmDmdxj2IHWsPzPWl7VVZMI4gsZPCFHp3nAK0/dQs=;
+        b=q2zXduSyKsLvkuN/novS1W1KIbRtbg3Fj/4zK1KUMZFlfzD5Kmi0VZM4ptct5Y1dlX
+         e0PtS5eBKhmrV/z6ho/3xPtlmda9IZIIPGQIDdlAZqDcKriQFcBJpd6nofrwr/oMLKyt
+         L40z55fUoWlkUdwupS68DvUh5yBJm394ieKnogWS8BCkMYtiuYRuxf08R4b6YPLdP2RJ
+         /ubdX8emkeo2Jbz8jtkTSHrATmHBja2XOUpN7Mey03W7zVCuK4r54bcpRhpBxZZxdC01
+         Q+NzWgnDNYprBK0K+4E+hk7cbOmgWm3UfofIkCTPZduzgqflKLclfAfXRfeBCW6Cbnh3
+         F4ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWK9apcCHvS75oKRs62d2hwY45v9mn3atAn9L4yjCUO3zdP1Uu50tdKVKtcQUvWc0SGRuholVJaaaAeYwb68ktPdiS6QJlbXPjeuIXX
+X-Gm-Message-State: AOJu0YxYLQ9klA8KqkzmrbPRIf7DrvtkUkm5f+YkAdc8bsp6Kb4T5mN8
+	sD3HMl8BQnZcohVrkgOLv3wWejiVYQMAMx+KcsFmi5qylbedxKRmyoAXq+xTUKM=
+X-Google-Smtp-Source: AGHT+IE46EgTLGf5oN4IQLbetpDLGBop9HxlMQVzbGsKy4Pf+gc303cZxbeI8m5oLWrSKPVR+6EHzg==
+X-Received: by 2002:a05:6870:6494:b0:254:997e:ea4d with SMTP id 586e51a60fabf-25c94910162mr3750542fac.10.1718821223499;
+        Wed, 19 Jun 2024 11:20:23 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2569930f768sm3826912fac.41.2024.06.19.11.20.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 11:20:23 -0700 (PDT)
+Message-ID: <d7cf1a03-9a03-40e1-b9a9-f06d28c21f92@baylibre.com>
+Date: Wed, 19 Jun 2024 13:20:22 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619082042.4173621-1-howardchu95@gmail.com> <ZnLjT_m90EDtRFE0@x1>
-In-Reply-To: <ZnLjT_m90EDtRFE0@x1>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 19 Jun 2024 14:19:37 -0400
-Message-ID: <CAM9d7ci+TEXG49=-7oLfFpTakUMHikxGFc-=NhEPPG0sf-UC9g@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] perf trace: Augment enum arguments with BTF
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Howard Chu <howardchu95@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] spi: spi-axi-spi-engine: Add support for MOSI idle
+ configuration
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1718749981.git.marcelo.schmitt@analog.com>
+ <ead669c15db7cfad4034df1d743fd4088f1c2253.1718749981.git.marcelo.schmitt@analog.com>
+ <6f945701-cac0-4a56-9ca7-1daceccc5efd@baylibre.com>
+ <ZnMU-OUV2DCpS3mu@debian-BULLSEYE-live-builder-AMD64>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <ZnMU-OUV2DCpS3mu@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 6/19/24 12:27 PM, Marcelo Schmitt wrote:
+> On 06/19, David Lechner wrote:
+>> On 6/18/24 6:11 PM, Marcelo Schmitt wrote:
 
-On Wed, Jun 19, 2024 at 9:55=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Wed, Jun 19, 2024 at 04:20:37PM +0800, Howard Chu wrote:
-> > changes in v2:
-> > - Move inline landlock_add_rule c code to tests/workloads
-> > - Rename 'enum_aug_prereq' to 'check_vmlinux'
->
-> Usually the versions descriptions comes at the end, after your signature
-> line, just before the list of csets in the series.
->
-> > Augment enum arguments in perf trace, including syscall arguments and
-> > non-syscall tracepoint arguments. The augmentation is implemented using
-> > BTF.
-> >
-> > This patch series also includes a bug fix by Arnaldo Carvalho de Melo
-> > <acme@redhat.com>, which makes more syscalls to be traceable by perf tr=
-ace.
-> >
-> > Test is included.
->
-> Thanks, the patch submission is now very good, at some point you'll be
-> able to point to a git tree from where to do a pull, then have it with a
-> signed tag, etc, all this is not necessary at this point in our
-> collaboration, but as you evolve as a kernel developer, it eventually
-> will be asked from you.
->
-> And it comes with a test that introduces a 'perf test -w' workload,
-> super great!
->
-> - Arnaldo
->
-> > Howard Chu (5):
-> >   perf trace: Fix iteration of syscall ids in syscalltbl->entries
-> >   perf trace: Augment enum syscall arguments with BTF
-> >   perf trace: Augment enum tracepoint arguments with BTF
-> >   perf trace: Filter enum arguments with enum names
-> >   perf trace: Add test for enum augmentation
 
-Please make sure that your change doesn't break the build
-in case libbpf is not available.  For example, a build without
-libelf seems to be broken.
 
-  $ make NO_LIBELF=3D1
+>>> @@ -646,6 +651,9 @@ static int spi_engine_probe(struct platform_device *pdev)
+>>>  
+>>>  	host->dev.of_node = pdev->dev.of_node;
+>>>  	host->mode_bits = SPI_CPOL | SPI_CPHA | SPI_3WIRE;
+>>> +	if (ADI_AXI_PCORE_VER_MAJOR(version) >= 1 &&
+>>
+>> Currently, the major version is required to be 1, so this check is not
+>> strictly needed.
+>>
+> This is expecting the MOSI idle feature to be available on all versions from 1.3 on.
+> Will SPI-Engine always be major version 1?
 
-Thanks,
-Namhyung
+<yoda voice>Difficult to see, the future is.</yoda voice>
+
+It's fine if you want to leave it the way it is.
+
+> 
+>>> +	    ADI_AXI_PCORE_VER_MINOR(version) >= 3)
+>>> +		host->mode_bits |=  SPI_MOSI_IDLE_LOW | SPI_MOSI_IDLE_HIGH;
+>>
 
