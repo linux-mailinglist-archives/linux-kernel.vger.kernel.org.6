@@ -1,125 +1,148 @@
-Return-Path: <linux-kernel+bounces-221614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8DF090F62B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:38:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630C590F62C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46639283439
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:38:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A4C1C21E71
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A86158206;
-	Wed, 19 Jun 2024 18:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E48158214;
+	Wed, 19 Jun 2024 18:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QFIZ9FS6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DyDTbCdE"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C034315748C;
-	Wed, 19 Jun 2024 18:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043C6157E93;
+	Wed, 19 Jun 2024 18:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718822329; cv=none; b=hVFauMqb0F/IuP8duf4T+u/kOk/VWsvLD7OyNXl993fF8vdIyxRYwQOKmXqU/+0pU4tjFFL1q0OS+tMsrigHpHir8/7019moQcLWbf3ic6m7INSn/vEPUumMACpDBMK3rUQZTS+8ccE4MCH92UhPO5Fqyaggm1/FV/eWNMoanq8=
+	t=1718822373; cv=none; b=WngyvmvjvfQQopFeFseO4FkU9SIdGTNTWTBjL3RWHzWfzhIF6FbtfA2YmmCtbGorFAyxlGtLHOq6pvsgJBtxJg4pipOlo6x87SghwT+SubJrRHiz53mh8P5rvvUPyQSws46tVzdgL3zUAc0l0mo5CQLfTkvGby1fpwvZm5ixR44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718822329; c=relaxed/simple;
-	bh=CLulv+F6AfNeTOO6KvrB+UAA0kz4EaRiJ5NQ78Qp/Ik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Jw+u4kivmMawP2lOdxckXkFH1ovVDJGaxLbMm05TlAGaoHYPsc8PjqcwRcnyqdwYgzvOVxlB9vMz1oVOWZzU2XY9/f+1yVsDeAq6lrhrSH9T3vQmLiurgEN7CZikdAaiRNTgdYw9WjCOjxz73hBygc5MXJQISaVFVT7IcFt7Mo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QFIZ9FS6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9jAq7016044;
-	Wed, 19 Jun 2024 18:38:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pQi4cEGMKplahCMAtCGNOa8fyNL1P8ZRu9NQMbNyKBA=; b=QFIZ9FS6ZKtdEjJM
-	V/sG6dL5Fe1cD2bordNaC910PqXBZuqFLgJIoc0RsMrUJS0CBAf+YHjkMht1DdP2
-	az1y3pL+ThG6LKYg1eZzLrpF/3ogDhjmBrh5zih00zDGma1tr8f4Kk8sYWj5iI2/
-	KWCnCLM6+TOYc9hQkQvo9eQPXwJ74XwB6n/q68R/Gb941TslXlJ/dEjta0VpHwpe
-	k/Mx37iWxGBX99nICfSitHA3uwoHOeDqvZu+KArJ7413cmS1y7E4/cWJeyvOu2fM
-	Fs6NCOtKkztTZtiSmBIXZ1EhjVisORRzeQXUNjsW05AMBOs/zifSEMJEbTXaIe17
-	pYfJRw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuja52fgu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 18:38:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JIcWKP006906
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 18:38:32 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
- 2024 11:38:32 -0700
-Message-ID: <e91728af-83e7-453e-816f-add3b0011a66@quicinc.com>
-Date: Wed, 19 Jun 2024 11:38:31 -0700
+	s=arc-20240116; t=1718822373; c=relaxed/simple;
+	bh=ZEqVVV8hma1sBW8JEOiV4irpaUFqN8hKsPQLx0n1r24=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rdnLcbE+YlXTXuIexIHwvFu9GXIUmGfKrVSxSyd9h7ssYFM4R1PDw6MwCTK+k/PUHi6Z5qCvU1k6MPX+Xe6Y6lN5CJ42bLJzxwsokWHrJMkuB0WAhD5SOpPrQt169YT5KQ0qKOI6WjWBP+RnN7NK30G8c5R4z5qeanePtawaED0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DyDTbCdE; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-705e9e193caso100166b3a.2;
+        Wed, 19 Jun 2024 11:39:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718822371; x=1719427171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bSSF8rCLCqfCwCteTtDEL5pGKT4d+aFWwNIMPEJ041A=;
+        b=DyDTbCdE+UJKHUwswPtf94oa8qrOLF6HLVhoeoLbx7piyvGUV8w8f9nMm3iQSwqurp
+         UBqVweWY16hNIkjBe2WJcT21s/9UOZ6PoWov2jx5pzKPQORVDtWeYXLTmk9hzbXg0llu
+         SXBeHiRiytBoJW7ettE1x4ZefxxtQS8lUG67rUtW3VLkkje7spAQxhC4UrKmDqsbXlXG
+         YBMSI0PBCEOeij+cI60akS3qeVKVsFt9IBaZNIN6nd8DISsA84hiz5e6bUeXsi9AQXV4
+         vEJvDX1YDWOJJU7juJqjKlage1igsUGAFIiF9RP4uBt9TkyGJdo25LSXQ3VFjmzXDO2Z
+         GASg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718822371; x=1719427171;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bSSF8rCLCqfCwCteTtDEL5pGKT4d+aFWwNIMPEJ041A=;
+        b=FnayTHydNC0lqREKosFQL1/aQd+kFe/rxA645Elxk71Au70k2HwXG5rhBdRSY0BvNj
+         Mv452hjY2JUtbyMXKCFAKY5y+fBbgr1MF5jlec1mnWcvcjNfj1VRwX8uRq7yEEVbLtd9
+         CQvRY8lBkKlfMHYXZZTRZUGc7IJM5FzbexRfiIXoIKsDScyI2wFdzma31JreqYOVcHrj
+         He2dX1iALxYWWNoB+0fuvKtpiozOAYqGScyQsThWD/GvpD1B5i22XPb0R1SESspAVQlC
+         EtMG0bpHgMJAJm+V5vM2eEpqh8XpcPjqzh/woFOOBO/RmMuTNfgEYmntTgN1pzCSrl0w
+         cp7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVXXQ+g1e8fc6U1PI7rDA6uRlcEy1/FuEGHKKuO9I6dkP6DoT2aTXSj45Daqnk0cSCYXD8Jk4GMUlAriFBI9EoYH1rihJgkRYBII5INAalDFCDhD0mSNZn4qEZ4AsgGeSuzYVvd1T6fCtU99FUCjA==
+X-Gm-Message-State: AOJu0Ywe/heWoD/2Hb/nYJOi0RrzXSVNrFT/c7SOSD1laWzDqTfrcLSS
+	PyZgQJZQPrKYoFF6qd+G3Ne9yqo4Hc9wfgoWL+0K2nh1niaLUcSu
+X-Google-Smtp-Source: AGHT+IFJtOOlPWSGh3/opZRzsT39XE+oljsAdMMNoEFNhTior3dSrfJaeYZvt/cqYQpNizzmFULgcA==
+X-Received: by 2002:a05:6a00:2d89:b0:6f8:f020:af02 with SMTP id d2e1a72fcca58-70629d01686mr4187972b3a.34.1718822371185;
+        Wed, 19 Jun 2024 11:39:31 -0700 (PDT)
+Received: from localhost.localdomain ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cf12142bsm10798238b3a.86.2024.06.19.11.39.27
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 19 Jun 2024 11:39:30 -0700 (PDT)
+From: yskelg@gmail.com
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>
+Cc: kan.liang@linux.intel.com,
+	Yang Jihong <yangjihong1@huawei.com>,
+	Ze Gao <zegao2021@gmail.com>,
+	Leo Yan <leo.yan@linux.dev>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Austin Kim <austindh.kim@gmail.com>,
+	shjy180909@gmail.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <yskelg@gmail.com>
+Subject: [PATCH] util: constant -1 with expression of type char and allocation failure handling
+Date: Thu, 20 Jun 2024 03:38:58 +0900
+Message-ID: <20240619183857.4819-2-yskelg@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] usercopy: Convert test_user_copy to KUnit test
-To: Kees Cook <kees@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-CC: Vitor Massaru Iha <vitor@massaru.org>,
-        Ivan Orlov
-	<ivan.orlov0322@gmail.com>,
-        David Gow <davidgow@google.com>,
-        Brendan Higgins
-	<brendan.higgins@linux.dev>,
-        Rae Moar <rmoar@google.com>,
-        "Gustavo A. R.
- Silva" <gustavoars@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <kunit-dev@googlegroups.com>, <linux-hardening@vger.kernel.org>
-References: <20240612195412.make.760-kees@kernel.org>
- <20240612195921.2685842-2-kees@kernel.org>
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240612195921.2685842-2-kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: BxSyBGdf2KXEaNU80wT485Y1kHpPWMz4
-X-Proofpoint-GUID: BxSyBGdf2KXEaNU80wT485Y1kHpPWMz4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- adultscore=0 impostorscore=0 clxscore=1011 mlxscore=0 spamscore=0
- bulkscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190140
+Content-Transfer-Encoding: 8bit
 
-On 6/12/24 12:59, Kees Cook wrote:
-> Convert the runtime tests of hardened usercopy to standard KUnit tests.
-> 
-> Additionally disable usercopy_test_invalid() for systems with separate
-> address spaces (or no MMU) since it's not sensible to test for address
-> confusion there (e.g. m68k).
-> 
-> Co-developed-by: Vitor Massaru Iha <vitor@massaru.org>
-> Signed-off-by: Vitor Massaru Iha <vitor@massaru.org>
-> Link: https://lore.kernel.org/r/20200721174654.72132-1-vitor@massaru.org
-> Tested-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-> Reviewed-by: David Gow <davidgow@google.com>
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-...
-> +kunit_test_suites(&usercopy_test_suite);
-> +MODULE_AUTHOR("Kees Cook <kees@kernel.org>");
->   MODULE_LICENSE("GPL");
+From: Yunseong Kim <yskelg@gmail.com>
 
-Can you add the missing MODULE_DESCRIPTION() to remove the W=1 warning?
+This patch resolve this warning.
 
-The fix to the current file is part of:
-https://lore.kernel.org/all/20240601-md-lib-test-v1-1-a728620e37d8@quicinc.com/
+tools/perf/util/evsel.c:1620:9: error: result of comparison of constant
+-1 with expression of type 'char' is always false
+ -Werror,-Wtautological-constant-out-of-range-compare
+ 1620 |                 if (c == -1)
+      |                     ~ ^  ~~
+
+Add handling on unread_unwind_spec_debug_frame().
+This make caller find_proc_info() works well when the allocation failure.
+
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+---
+ tools/perf/util/evsel.c                  | 2 +-
+ tools/perf/util/unwind-libunwind-local.c | 5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 25857894c047..bc603193c477 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1620,7 +1620,7 @@ static int evsel__read_group(struct evsel *leader, int cpu_map_idx, int thread)
+ 
+ static bool read_until_char(struct io *io, char e)
+ {
+-	char c;
++	int c;
+ 
+ 	do {
+ 		c = io__get_char(io);
+diff --git a/tools/perf/util/unwind-libunwind-local.c b/tools/perf/util/unwind-libunwind-local.c
+index cde267ea3e99..a424eae6d308 100644
+--- a/tools/perf/util/unwind-libunwind-local.c
++++ b/tools/perf/util/unwind-libunwind-local.c
+@@ -390,6 +390,11 @@ static int read_unwind_spec_debug_frame(struct dso *dso,
+ 			char *debuglink = malloc(PATH_MAX);
+ 			int ret = 0;
+ 
++			if (debuglink == NULL) {
++				pr_err("unwind: Can't read unwind spec debug frame.\n");
++				return -ENOMEM;
++			}
++
+ 			ret = dso__read_binary_type_filename(
+ 				dso, DSO_BINARY_TYPE__DEBUGLINK,
+ 				machine->root_dir, debuglink, PATH_MAX);
+-- 
+2.44.0
+
 
