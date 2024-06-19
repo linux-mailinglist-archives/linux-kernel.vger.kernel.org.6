@@ -1,181 +1,170 @@
-Return-Path: <linux-kernel+bounces-221587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B1990F5C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:10:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88BD290F5C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34D741F22349
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:10:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C6251C2132B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EA6156F3C;
-	Wed, 19 Jun 2024 18:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C751D1DA24;
+	Wed, 19 Jun 2024 18:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="g428By9w"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lpke3Ls2"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37161DA24
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 18:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983E7156F25;
+	Wed, 19 Jun 2024 18:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718820626; cv=none; b=nnxnyKKubB/L5CZ2WDtVt2EnYmKeFSrLHDhnCzyF8PzIQB3Uea5L2WGUHhI0QfUcWfrFIx5p4Oo6d8rpTdrRd4x1FlhD7hYTn/zAJnc9JaDePMq7WXJDcTaoDOLFdESK/q04lsAE8NUkNEwDaXjba3oqKoKc41oKX32/h3Xf+7w=
+	t=1718820673; cv=none; b=FX/EiPjq0XKLFhBS4J9RAYcXZbnMPiWLyWpTCqwtb5XX6A4fyHPlz4br8/Ig6vqzIuje+A2ocbViAmRiQAZusJsJ5vZYXlYNiH8Rvo6DQeiL7yY3kglTmtz1LDOLJdGbM3zEKdE10WxlQ3qwMI7W0QUWKecx+uqWbnCwFzwcHKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718820626; c=relaxed/simple;
-	bh=0L4VujmjvSUQ8D/8+DlcznwaTpLuE26NtOHnp5kTabY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qeRk92FmjZxeVKQQjAUkY3NShrtCKj11nWeGb+u2nymVUP/+gGMDOczRF0JUsQZ9+J55tnv6RoG0auIDMzRMdavEiaysbm8YLXL6eu2/xKkwjyPpJ1AYBIloFrWhGsSAZ+MgAWj1AtPsfxZIdzxlIUWswuHLyDFRT3ZT/GPWsd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=g428By9w; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4217990f997so709735e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:10:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1718820623; x=1719425423; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ya2SP98G80gF4POSRdCxM06GYnHhJ1Zhxaj6yinM5hc=;
-        b=g428By9wpA6Ny9ZhvIz1DiUDpLUmvHOPpEuyHkKICqZj7jcfxDD4IQy7THWiqLRtbe
-         ZnJXwrqBuSroyhQIcut46tSwZ6uhVj7gpPYYQadICzkMULuN9B8u8NHI3cZRgxGaYYbN
-         +eAg907RKIvVmEYXdMoE1vPiguf/R7oT7U0loYR/JDsBpjsMihuNuaSnETGUsHn+O/GV
-         +Z87Z1nYfK2z2YiEFzzJmpzjpeVc986p/+Tga0jbruwKGed8QvwKB1JZS/ZfhDndLK0e
-         HzkYTVPN4kXnvIZUw+OH3H49fepR3pv9YF+8GRQUn3QVp6yAMbwqFJiEV0UfqOJnrgUk
-         GG8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718820623; x=1719425423;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ya2SP98G80gF4POSRdCxM06GYnHhJ1Zhxaj6yinM5hc=;
-        b=fqYMu+k7TKaGO/GB5zMNnr099UdHp4x3+bsvACNTls6a85eZTKe1K6m1o0MgXe9OAm
-         7KHqKZ7aggbNKp6isNJ7eVmb6xoc25i94Ii7mNGp5Zn4+Y0/OmQQV1vyMYFsy75kBkfA
-         BP2QiEalqyjOyQz4LEBg04/Dj/gWNc3czsz7K7mhhUZmAZQmAnVg+q9V4GU+CcyeOR5q
-         eb9qgKDx9jIlSM/SiFechR38UCiVtL0+u86mHbRksoOvsRQ56XmBU6f5Atj7tJ1foSqx
-         jHb71GUDl2srFY93BGjukKHZ6JVrBnPlV2glbYqDT3VKT60yiXMX/zXShNfd2kJaJ7uw
-         zHLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfAtxzBIqxNhJQpwaHFzsi5bp44rcJug7FKkmzGr1QoOMIEmZzEGgsecdM6hzLE2VTYumW53Pfdt68jgzyDUeRIUudxZJRl6/kj4TL
-X-Gm-Message-State: AOJu0Yz2hzwO81RTJug+vlIOH/M3HstBg7YCY0Snhb6xmhfohk4tvi2h
-	XAIFlRpuOluz2v4+y8uTweVk6vecXfaFjOM2/XNrwwUWMlI/7a0Xe6btiecMCiM=
-X-Google-Smtp-Source: AGHT+IH6d5gJc8B9ja8zpNVoAjR9hxoMamP6Brf+vsuomiK1MFsd/M3qYWReZRuunW4YBbsxpejGFw==
-X-Received: by 2002:a05:600c:211a:b0:416:7470:45ad with SMTP id 5b1f17b1804b1-42475182a8fmr22281335e9.17.1718820622993;
-        Wed, 19 Jun 2024 11:10:22 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f641a5b4sm237858165e9.41.2024.06.19.11.10.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 11:10:22 -0700 (PDT)
-Date: Wed, 19 Jun 2024 19:10:21 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-	Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	vincent.donnefort@arm.com, ke.wang@unisoc.com,
-	linux-kernel@vger.kernel.org, christian.loehle@arm.com
-Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding
- actual_cpu_capacity
-Message-ID: <20240619181021.kxcjxaqe47fkve42@airbuntu>
-References: <20240606070645.3295-1-xuewen.yan@unisoc.com>
- <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
- <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
- <20240616222003.agcz5osb2nkli75h@airbuntu>
- <CAKfTPtBikWsyPon6HweEZg5qjSP+QX=WZDQu4NHs7PUcSCqDDA@mail.gmail.com>
- <20240617105348.ebtony3ciwxhvj2w@airbuntu>
- <CAKfTPtDPCPYvCi1c_Nh+Cn01ZVS7E=tAHQeNX-mArBt3BXdjYw@mail.gmail.com>
- <20240618153931.ub5ezml3imd5mwu7@airbuntu>
- <CAB8ipk86jmb6xnEUnv_Vs5=A5EnNfnHTy3FXYZRhKhuEFKhzDw@mail.gmail.com>
+	s=arc-20240116; t=1718820673; c=relaxed/simple;
+	bh=ZXaP/pLvA4RqHZqae0ADsqFdPqlsMqC79xUjriiSz3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Y8O74M/mgBjhyxaMl1MgTpwSHR+t9qPOFg28KuAGXFPnl6RsYoSV2UVq++MgTZ43iYbgZDZ648F5Q7dqrfk9L2M7dBuR+Stq4Al5dQyLtOSHi6u6/1FFaj8QMcMz/eNDVcczqAQUVTrVpseMoaqGytOhEvpxfE49BZenlZP+yd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lpke3Ls2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9Bsmi010717;
+	Wed, 19 Jun 2024 18:11:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CrVbCF7GLKxDvvXz4Jh+wVm6bfs1xvQ++zSF7apYK6Q=; b=lpke3Ls2dBvxbY//
+	o19kEGp0j1sKEwMZM1cuwEYk/v3BWGN1HpivolMxN7i3YIgJonkGpDhV9yOxDPrM
+	tCUv+TJRGEpgeXxgkZyIkOYgoYsvGq7DiqOh8YTQLcqnu0KlfLF8MRdtuESmtq4U
+	cyk+HFxaHWfPBgmeB7HMf2Cukiv8Wo2c5bl7sbscAmKV2B6YQp9va3bplQ2sam2G
+	yexf0mrOV2ecy2otBmJB6lYBF3EklvzxYu9vW7bIVUkFnH3+wcaS/Vlxp2TBCW5l
+	XtaexCO1stmyLiav/rExp2Qrj3HPpVyUkl9uTJawks7/abXb8zNDCZ/uEbd4BnKe
+	idt5/A==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9tjgaf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 18:11:04 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JIB3K0011391
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 18:11:03 GMT
+Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
+ 2024 11:11:02 -0700
+Message-ID: <74679ab7-da92-43bc-96e8-5c6e3a1dee62@quicinc.com>
+Date: Wed, 19 Jun 2024 11:11:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAB8ipk86jmb6xnEUnv_Vs5=A5EnNfnHTy3FXYZRhKhuEFKhzDw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/14] drm/msm/hdmi: expand the HDMI_CFG macro
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David
+ Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
+ <20240522-fd-hdmi-hpd-v2-11-c30bdb7c5c7e@linaro.org>
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240522-fd-hdmi-hpd-v2-11-c30bdb7c5c7e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ah9FMWTw14ldEQO3f1xzZYNURm3aTeLD
+X-Proofpoint-ORIG-GUID: ah9FMWTw14ldEQO3f1xzZYNURm3aTeLD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ bulkscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 spamscore=0 phishscore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406190137
 
-On 06/19/24 11:05, Xuewen Yan wrote:
-> On Tue, Jun 18, 2024 at 11:39 PM Qais Yousef <qyousef@layalina.io> wrote:
-> >
-> > On 06/18/24 17:23, Vincent Guittot wrote:
-> > > On Mon, 17 Jun 2024 at 12:53, Qais Yousef <qyousef@layalina.io> wrote:
-> > > >
-> > > > On 06/17/24 11:07, Vincent Guittot wrote:
-> > > >
-> > > > > > And should effective_cpu_util() return a value higher than
-> > > > > > get_actual_cpu_capacity()?
-> > > > >
-> > > > > I don't think we should because we want to return the effective
-> > > > > utilization not the actual compute capacity.
-> > > > > Having an utilization of the cpu or group of cpus above the actual
-> > > > > capacity or the original capacity mainly means that we will have to
-> > > > > run longer
-> > > > >
-> > > > > By capping the utilization we filter this information.
-> > > > >
-> > > > > capacity orig = 800
-> > > > > util_avg = 700
-> > > > >
-> > > > > if we cap the capacity to 400 the cpu is expected to run twice longer
-> > > > > for the same amount of work to be done
-> > > >
-> > > > Okay makes sense. Wouldn't the util be 'wrong' (to what degree will depend on
-> > > > min/max freq ratio) though?
-> > > >
-> > > > We cap with arch_scale_capacity() still, I guess we know at this stage it is
-> > > > 100% wrong if we allow returning higher values?
-> > >
-> > > I think that capping utilization to max capacity generates some energy
-> > > estimation error because it filters the fact that we run longer in
-> > > some cases.
-> >
-> > Yes, I think so too and that was my first statement. But I think this is
-> > a bigger change to do separately.
-> 
-> I saw the the sched_cpu_util() was used by teo.c and cpufreq_cooling.c
-> If we change the arch_scale_capacity() to actual_cpu_capacity(), it may cause
-> some errors?
 
-The plan to revert this now.
 
+On 5/22/2024 3:51 AM, Dmitry Baryshkov wrote:
+> Expand the HDMI_CFG() macro in HDMI config description. It has no added
+> value other than hiding some boilerplate declarations.
 > 
-> For-example:
-> In teo:
-> 212 static bool teo_cpu_is_utilized(int cpu, struct teo_cpu *cpu_data)
-> 213 {
-> 214         return sched_cpu_util(cpu) > cpu_data->util_threshold;
-> 215 }
-> It may cause the teo_cpu_is_utilized() to return false forever if the
-> actual_cpu_capacity is smaller than util_threshold.
-> However, the util_threshold is frome actual_cpu_capacity.
-> 
-> In cpufreq_cooling.c:
-> May we should change:
-> 
-> diff --git a/drivers/thermal/cpufreq_cooling.c
-> b/drivers/thermal/cpufreq_cooling.c
-> index 280071be30b1..a8546d69cc10 100644
-> --- a/drivers/thermal/cpufreq_cooling.c
-> +++ b/drivers/thermal/cpufreq_cooling.c
-> @@ -164,7 +164,7 @@ static u32 get_load(struct cpufreq_cooling_device
-> *cpufreq_cdev, int cpu,
->  {
->         unsigned long util = sched_cpu_util(cpu);
-> 
-> -       return (util * 100) / arch_scale_cpu_capacity(cpu);
-> +       return (util * 100) / get_actual_cpu_capacity(cpu);
->  }
->  #else /* !CONFIG_SMP */
->  static u32 get_load(struct cpufreq_cooling_device *cpufreq_cdev, int cpu,
-> 
-> 
-> Because if still use arch_scale_cpu_capacity(), the load pct may be decreased,
-> It may affect the thermal-IPA-governor's power consideration.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-I am not sure about this one. But looks plausible. Vincent?
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+
+> ---
+>   drivers/gpu/drm/msm/hdmi/hdmi.c | 16 ++++++++--------
+>   drivers/gpu/drm/msm/hdmi/hdmi.h |  2 +-
+>   2 files changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+> index c39a1f3a7505..e160a23e962e 100644
+> --- a/drivers/gpu/drm/msm/hdmi/hdmi.c
+> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+> @@ -223,24 +223,24 @@ int msm_hdmi_modeset_init(struct hdmi *hdmi,
+>    * The hdmi device:
+>    */
+>   
+> -#define HDMI_CFG(item, entry) \
+> -	.item ## _names = item ##_names_ ## entry, \
+> -	.item ## _cnt   = ARRAY_SIZE(item ## _names_ ## entry)
+> -
+>   static const char *pwr_reg_names_8960[] = {"core-vdda"};
+>   static const char *pwr_clk_names_8960[] = {"core", "master_iface", "slave_iface"};
+>   
+>   static const struct hdmi_platform_config hdmi_tx_8960_config = {
+> -		HDMI_CFG(pwr_reg, 8960),
+> -		HDMI_CFG(pwr_clk, 8960),
+> +	.pwr_reg_names = pwr_reg_names_8960,
+> +	.pwr_reg_cnt = ARRAY_SIZE(pwr_reg_names_8960),
+> +	.pwr_clk_names = pwr_clk_names_8960,
+> +	.pwr_clk_cnt = ARRAY_SIZE(pwr_clk_names_8960),
+>   };
+>   
+>   static const char *pwr_reg_names_8x74[] = {"core-vdda", "core-vcc"};
+>   static const char *pwr_clk_names_8x74[] = {"iface", "core", "mdp_core", "alt_iface"};
+>   
+>   static const struct hdmi_platform_config hdmi_tx_8974_config = {
+> -		HDMI_CFG(pwr_reg, 8x74),
+> -		HDMI_CFG(pwr_clk, 8x74),
+> +	.pwr_reg_names = pwr_reg_names_8x74,
+> +	.pwr_reg_cnt = ARRAY_SIZE(pwr_reg_names_8x74),
+> +	.pwr_clk_names = pwr_clk_names_8x74,
+> +	.pwr_clk_cnt = ARRAY_SIZE(pwr_clk_names_8x74),
+>   };
+>   
+>   /*
+> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.h b/drivers/gpu/drm/msm/hdmi/hdmi.h
+> index 1e346e697f8e..2a98efa8b6bd 100644
+> --- a/drivers/gpu/drm/msm/hdmi/hdmi.h
+> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.h
+> @@ -89,7 +89,7 @@ struct hdmi_platform_config {
+>   	const char **pwr_reg_names;
+>   	int pwr_reg_cnt;
+>   
+> -	/* clks that need to be on for hpd: */
+> +	/* clks that need to be on: */
+>   	const char **pwr_clk_names;
+>   	int pwr_clk_cnt;
+>   };
+> 
+> -- 
+> 2.39.2
+> 
 
