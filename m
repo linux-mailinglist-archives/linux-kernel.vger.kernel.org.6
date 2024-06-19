@@ -1,169 +1,120 @@
-Return-Path: <linux-kernel+bounces-221075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7768990EB7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:55:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE9390EB80
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904171C20CB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27C701F23DCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA669143C45;
-	Wed, 19 Jun 2024 12:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088C4143C4E;
+	Wed, 19 Jun 2024 12:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="ZcEAFWRk"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.7])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CCCFC1F;
-	Wed, 19 Jun 2024 12:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.7
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PvvATBFX"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3666FC1F;
+	Wed, 19 Jun 2024 12:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718801712; cv=none; b=NeV0g3BjBkAfaSFsxeFnig/F2ACXd2xMEXEGPRahdNIDj3qCvOuK3WeTeUeyTHBmGw8hVa9BqZDmYyx38aLIPjdhlxYSnIF/VgXceaZkKUhJW1G9DONtYqSURaMJondWLWhIvATtQO+Igu9/gnENZKFue+PCTuclSrAnBBQvoHs=
+	t=1718801802; cv=none; b=V11O+xQf6G6V9l9tdqW/+PyO+p333GfhiCmjnvkaCrjYaNIYw/KkE1yryK7TuggYgNdvznMzhrT0qejLJRy/wbKpCmq5UGYtt3rNDxMD3AREen+NHizq+EBkAr4PEb2LG+r8sIbGkGAf/pZbAT+TfkwgN2PdP1RQ1XLcQ9jZ2sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718801712; c=relaxed/simple;
-	bh=yF9033MtIrZltsgP5bIC3MvhEmxrCHKUFIbtWhBiDmw=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=J7phNwzcuC+rPF+XQq6xtrvHCHKsPAKMA6uBvIQMLc/e4RPVbHDU4fguJwTIwABr1PJV6t88J+tridozRKaSVFPg4rjvZjDYZK0W5Ek37EbyiLUoY1hVCDewV7ry2I8cJdLRynC+oAuHAlBIAGyFFw8/N3v6wHl4fFCGplEHpB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=ZcEAFWRk; arc=none smtp.client-ip=220.197.31.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id; bh=BWbJKJrKISUYvlz18r
-	IPuVxukddjG6yGS92jiK8VMdY=; b=ZcEAFWRkIYOXRuPGREZuoEQj+PNYSi0amg
-	cSW0B8HdBJDzv5fbY9WWmryADS60l+TmR8RRtNs0u8JdO//qoFg4rv+mhZu7yTH/
-	6lfZ7Jq4wB4CIFbGwQSNvHH1bjx3QZSU9ckVBQQSl91j06q3BmxyOrad3OzGt8YF
-	WCnlZuxmk=
-Received: from hg-OptiPlex-7040.hygon.cn (unknown [118.242.3.34])
-	by gzga-smtp-mta-g1-1 (Coremail) with SMTP id _____wCnd28K1XJmBrxyBQ--.10118S2;
-	Wed, 19 Jun 2024 20:54:38 +0800 (CST)
-From: yangge1116@126.com
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	21cnbao@gmail.com,
-	baolin.wang@linux.alibaba.com,
-	mgorman@techsingularity.net,
-	liuzixing@hygon.cn,
-	yangge <yangge1116@126.com>
-Subject: [PATCH] mm/page_alloc: add one PCP list for THP
-Date: Wed, 19 Jun 2024 20:54:32 +0800
-Message-Id: <1718801672-30152-1-git-send-email-yangge1116@126.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID:_____wCnd28K1XJmBrxyBQ--.10118S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAFWUtF17Xw18JF1UuFWDXFb_yoWrAr18pF
-	WxJr4ayayjqryYyr1xA3Wqkr1rCwnxGFsrCrW8ury8ZwsxJFyS9a4UK3WqvF95ArW7AF48
-	XryDt34fCF4DZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UfhL5UUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOg8DG2VEw410VQAAsj
+	s=arc-20240116; t=1718801802; c=relaxed/simple;
+	bh=CV/Tc2pxa3ANa+QjAhEaKD0qTxtoiav6L/E0jjqRJCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TRqoe2L25PICzsq4llzett1ehU9KWZOktlCfHEFj9OhXuQUpUkzsHIdRNemdCYewjJQChFI/1xnBK2Sr19RuxKIxLRQKBJ9r0G4zcT8chJsaEKVJmWrYqzA1J22s9BGwHjHP4EjoWymoU99urT3JlYYR+kCb8QbhT290FlCo9Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PvvATBFX; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718801799;
+	bh=CV/Tc2pxa3ANa+QjAhEaKD0qTxtoiav6L/E0jjqRJCk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PvvATBFX0Wxgq+KNUYEvS5s5cgTMyRVf4WFkP7aAQB+TC60caSub09yxcSvVThweQ
+	 f9v/oh0xyWBBBuBxD1+ESODj9UPfP9DFA8Gusc0DQn3MrDH2rD0da17kyWUt4RuBdU
+	 lcDDNArCF3ok60MZCCaNXEu7qoqNz5rcf48oBTRqL38cgFTi0tP48pWsEdVcWiFmyI
+	 yhVzpDNuKbv+I5jEN4jKslvRKwo/HWqzB/sI0NaBcslu2q/uY0LOIoocKYFmV2RnC9
+	 tGCuWJ5XXmpU9NR/VlfSefVcxT1S4RosNeDV/UzrMMa9RZli03QZ6QIBVBA83WlBrM
+	 5sqUP75zGOD4w==
+Received: from [100.115.223.179] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 08FF73782159;
+	Wed, 19 Jun 2024 12:56:37 +0000 (UTC)
+Message-ID: <4015ded1-5ec4-4374-982e-9c7f23b43884@collabora.com>
+Date: Wed, 19 Jun 2024 15:56:37 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] arm64: dts: rockchip: Fix mic-in-differential usage
+ on rk3568-rock-3a
+To: Jonas Karlman <jonas@kwiboo.se>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Chris Zhong <zyw@rock-chips.com>, Zhang Qing <zhangqing@rock-chips.com>,
+ Chris Morgan <macromorgan@hotmail.com>,
+ Furkan Kardame <f.kardame@manjaro.org>,
+ Michael Riesch <michael.riesch@wolfvision.net>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240619-rk809-fixes-v1-0-fa93bc5313f4@collabora.com>
+ <20240619-rk809-fixes-v1-3-fa93bc5313f4@collabora.com>
+ <c35b3e80-7889-473d-8365-88436c3cb9a9@kwiboo.se>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <c35b3e80-7889-473d-8365-88436c3cb9a9@kwiboo.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: yangge <yangge1116@126.com>
+Hi Jonas,
 
-Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
-THP-sized allocations") no longer differentiates the migration type
-of pages in THP-sized PCP list, it's possible that non-movable
-allocation requests may get a CMA page from the list, in some cases,
-it's not acceptable.
+On 6/19/24 3:22 PM, Jonas Karlman wrote:
+> Hi Cristian,
+> 
+> On 2024-06-19 13:23, Cristian Ciocaltea wrote:
+>> The 'mic-in-differential' DT property supported by the RK809/RK817 audio
+>> codec driver is actually valid if prefixed with 'rockchip,':
+>>
+>>   DTC_CHK arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dtb
+>>   rk3568-rock-3a.dtb: pmic@20: codec: 'mic-in-differential' does not match any of the regexes: 'pinctrl-[0-9]+'
+>> 	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+>>
+>> Make use of the correct property name.
+>>
+>> Fixes: a84ffd2ef1ff ("arm64: dts: rockchip: Fix mic-in-differential usage on rock-3a")
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>  arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts b/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts
+>> index ebdedea15ad1..0b54dfe92d6e 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts
+>> @@ -533,7 +533,7 @@ regulator-state-mem {
+>>  		};
+>>  
+>>  		codec {
+>> -			mic-in-differential;
+>> +			rockchip,mic-in-differential;
+> 
+> If I understand the schematics correctly, only one wire is connected so
+> this board cannot really use differential signaling, and this should
+> probably instead be dropped.
 
-If a large number of CMA memory are configured in system (for
-example, the CMA memory accounts for 50% of the system memory),
-starting a virtual machine with device passthrough will get stuck.
-During starting the virtual machine, it will call
-pin_user_pages_remote(..., FOLL_LONGTERM, ...) to pin memory. Normally
-if a page is present and in CMA area, pin_user_pages_remote() will
-migrate the page from CMA area to non-CMA area because of
-FOLL_LONGTERM flag. But if non-movable allocation requests return
-CMA memory, migrate_longterm_unpinnable_pages() will migrate a CMA
-page to another CMA page, which will fail to pass the check in
-check_and_migrate_movable_pages() and cause migration endless.
-Call trace:
-pin_user_pages_remote
---__gup_longterm_locked // endless loops in this function
-----_get_user_pages_locked
-----check_and_migrate_movable_pages
-------migrate_longterm_unpinnable_pages
---------alloc_migration_target
+Thanks for pointing this out, I will drop it in v2.
 
-This problem will also have a negative impact on CMA itself. For
-example, when CMA is borrowed by THP, and we need to reclaim it
-through cma_alloc() or dma_alloc_coherent(), we must move those
-pages out to ensure CMA's users can retrieve that contigous memory.
-Currently, CMA's memory is occupied by non-movable pages, meaning
-we can't relocate them. As a result, cma_alloc() is more likely to
-fail.
-
-To fix the problem above, we add one PCP list for THP, which will
-not introduce a new cacheline for struct per_cpu_pages. THP will
-have 2 PCP lists, one PCP list is used by MOVABLE allocation, and
-the other PCP list is used by UNMOVABLE allocation. MOVABLE
-allocation contains GPF_MOVABLE, and UNMOVABLE allocation contains
-GFP_UNMOVABLE and GFP_RECLAIMABLE.
-
-Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for THP-sized allocations")
-Signed-off-by: yangge <yangge1116@126.com>
----
- include/linux/mmzone.h | 9 ++++-----
- mm/page_alloc.c        | 9 +++++++--
- 2 files changed, 11 insertions(+), 7 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index b7546dd..cb7f265 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -656,13 +656,12 @@ enum zone_watermarks {
- };
- 
- /*
-- * One per migratetype for each PAGE_ALLOC_COSTLY_ORDER. One additional list
-- * for THP which will usually be GFP_MOVABLE. Even if it is another type,
-- * it should not contribute to serious fragmentation causing THP allocation
-- * failures.
-+ * One per migratetype for each PAGE_ALLOC_COSTLY_ORDER. Two additional lists
-+ * are added for THP. One PCP list is used by GPF_MOVABLE, and the other PCP list
-+ * is used by GFP_UNMOVABLE and GFP_RECLAIMABLE.
-  */
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--#define NR_PCP_THP 1
-+#define NR_PCP_THP 2
- #else
- #define NR_PCP_THP 0
- #endif
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 8f416a0..0a837e6 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -504,10 +504,15 @@ static void bad_page(struct page *page, const char *reason)
- 
- static inline unsigned int order_to_pindex(int migratetype, int order)
- {
-+	bool __maybe_unused movable;
-+
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 	if (order > PAGE_ALLOC_COSTLY_ORDER) {
- 		VM_BUG_ON(order != HPAGE_PMD_ORDER);
--		return NR_LOWORDER_PCP_LISTS;
-+
-+		movable = migratetype == MIGRATE_MOVABLE;
-+
-+		return NR_LOWORDER_PCP_LISTS + movable;
- 	}
- #else
- 	VM_BUG_ON(order > PAGE_ALLOC_COSTLY_ORDER);
-@@ -521,7 +526,7 @@ static inline int pindex_to_order(unsigned int pindex)
- 	int order = pindex / MIGRATE_PCPTYPES;
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--	if (pindex == NR_LOWORDER_PCP_LISTS)
-+	if (pindex >= NR_LOWORDER_PCP_LISTS)
- 		order = HPAGE_PMD_ORDER;
- #else
- 	VM_BUG_ON(order > PAGE_ALLOC_COSTLY_ORDER);
--- 
-2.7.4
-
+Regards,
+Cristian
 
