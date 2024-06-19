@@ -1,163 +1,138 @@
-Return-Path: <linux-kernel+bounces-220932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E76490E956
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:25:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A4390E959
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264A31C22FB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:25:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29F691C233DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027C713C8EA;
-	Wed, 19 Jun 2024 11:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D960213D880;
+	Wed, 19 Jun 2024 11:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cDGEUrHg"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="EqkygcD9";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="YoBm1bkm"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF0E13AA44;
-	Wed, 19 Jun 2024 11:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63A413B290;
+	Wed, 19 Jun 2024 11:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718796259; cv=none; b=i+rVb3eoUYSVRa9aH9o7y1brMoMVynGfi/HqaJ2RoH3ACTcnSvr0cyztQWUJhzN0FLzVlFAei+lpurGldjKZ3/+NrUue71JeyNNEFHaaGDHpp8icrA1di5unvSNuNpdu6M/1DrHhsoDnXdbisAY5DVTFVeup6AV6///I3txRXKY=
+	t=1718796275; cv=none; b=CF4jHzEvGfd6cJYglx7SALkaz673bMcmkrCqoVHVfO5A8Qve5cbzJKc0oHSMc7EOaF5GO7LuH0/etmaMptvoSRpd2Jgg9d0mDv5+fgyavNxai9CMZIdXAhXQdzt85XDfg4rnva9Jy4FvkrNsMDESkbMd+Ib+98GOdYZ0l8xQJd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718796259; c=relaxed/simple;
-	bh=QiNpfz9gXpNGbgWK+SSf6RLJwU4D6RbIRzy7KzqMSu4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r5KyiDNJQ+2rjAN0NWnB5xpySNlbBa+kT4vaB3/144aFJplj5ETIN7ofd/NYb7GSzL1fJrXqsmPEaPTIUctLmFJIVHfe/jmdRShP6FyikmpQ1NLrq0TatqZWqhp9kAyebAv6gnz9/GpEz0n93vLRfKC5PsgSp58Q4VzvyJrTeHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cDGEUrHg; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so73318991fa.3;
-        Wed, 19 Jun 2024 04:24:17 -0700 (PDT)
+	s=arc-20240116; t=1718796275; c=relaxed/simple;
+	bh=lWyO75Xj3hzfTx0/HcDICshFRxN3psaKa4xdf5PPu2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FldbyEFZQ5XpdHaFCYD3apURDHZ5DvVaKph7GLZBeVwCXPXCGe1ilH8EM1w82T5VAbhDtbxWRlRY59KzuAXEBgKml/IJU6Ioeo6UXRK5fF9p0JmKMhNcwwU1DZDE9gSqC708YcAUz98HpMm3dNU+nXXQfq5os+Mhdx/gaUcKoyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=EqkygcD9; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=YoBm1bkm reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718796255; x=1719401055; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4AhLMVJiVMssdXrymxDZSsXEoYz8lpEaRocGgJePhUg=;
-        b=cDGEUrHgW68M0mI5vAofXCTVPuFXxNXZiBPWshQEHajFIlOt1papTvJOHR4TmEINa4
-         a5sAy1VbWDKCrQB6lw3KeTyLXXeLaIwf8eLk/ktxDTCi2fRbh7pvWeSBu+4gIC70qPo0
-         IwFwdM8e4zxmGTlvi5/bnjx0epzxxv0Dp6samdpVhRLP2oD6z8YBy7GHCBuYBp23npRQ
-         pya1/tzxNL3gKIEScKWQgdZiTN5uf/zqfQQyqnHxVork6n1Au02vryaEfOk5rFLZVWaI
-         c+2BfAlpZhzoHO9TiL9ZOd6eVbiAI+KyOwd7Gr4oH0DsOKGT9u9qbMUJK6+Se/CHfNZ6
-         RFaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718796255; x=1719401055;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4AhLMVJiVMssdXrymxDZSsXEoYz8lpEaRocGgJePhUg=;
-        b=T2YYzWlNKn+llhyF7RoouWxsF/yntXSXOoya/ZPDKlNypQoHwm0Xhm7c9jsowljGKs
-         GWox3gVWUUGSwgR0SvrLU8A2zExikOa5WWBGBe6Qw3rIuguiW6v9Rgy5jXblNbic3mYW
-         bYCI4PWnNPbS0iNBF7moC5Yga9a1TgBHW8BbVwlQp4Ght3RkQ+hCjQu8dnEgz7P9aO69
-         4zVaG7sDJiZkKMjN0NF6oXA1d7ew4liP2E/Kw7WO0ChwtbdZ3ZN1UEJUlEGjCCUty/Ub
-         5SKJA1ZMu91tQxmennJsQGVb2VJIg6VnNeUIBIgOMuKBFxUXvSlxys/B103AKvJd1E5X
-         zwXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU414d00RXPUhTyWATGT07fYu2QvLu0O+NnaPyIq5Lc7MXUhMoZGjiqZKBM9I8ahsdgkO2mL36v2KCQqAu0hevPmKtnB0NYOLLQ+cqUU+7jL+4CDtob9LTaPJ48y8UYyo2aFjYfidpG2Q==
-X-Gm-Message-State: AOJu0YwGA4k4G+R7INg/r2YElzpVbeDGXzpgQf9uGPuwJuTyKz3MFZjt
-	YbjQ/qM1nLS+6Sn4pYWkCsMWdjcWMl+jV99ntQKV/ni1Dc8zQ4EWP9RXWFLlaI3xdFBMBUoN67i
-	Z7bOCsqe58GUK559ma/itpTQWfUk=
-X-Google-Smtp-Source: AGHT+IEQww8Sc0Jg4gCddWh2kVTEqz+WZu5WTjkaJSzaRVJjX7JNi6gjqMvrxWj14/018FjLROHZoPp/GakSEWmq+uw=
-X-Received: by 2002:a2e:9b08:0:b0:2ec:21f3:b67b with SMTP id
- 38308e7fff4ca-2ec3cfd6744mr15635501fa.37.1718796255250; Wed, 19 Jun 2024
- 04:24:15 -0700 (PDT)
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1718796272; x=1750332272;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xZufrVenZZNOki6ThkT5V784LHMR0r2wNvufJAnx7Y8=;
+  b=EqkygcD932UwBC49kxJK8L2XABv+kUhV/nuzwZ6islO631K57qtacOjA
+   NSz8pf4a5J3oXTVgQchpHHwPgAb1wlzViXejgPbqWwE9tNyintw/znkmE
+   P7yk+Z5HR6GZ5Tl8ssawEZjMcUDnco2LT605G8WuL762Xic8G/CSU6oAF
+   MJAvY4aF+JyNnwVhjWPS4EwaghI8b6lm4N2Z0854lbVEwiz5EdPBdPM0n
+   XWG4BXFC31rtZbuw9GId5lp0xF+pf5VDVdKq8+E2YvSy5Z3VxRABL13oG
+   aWvZs38E3QvXqnKuQ6EJamOt/Wz7L1cYIVCKO/1OaWXcwhtzhQBset8r8
+   A==;
+X-CSE-ConnectionGUID: KtG8NCUNS6OqyLTOH1tEbw==
+X-CSE-MsgGUID: TnTC/eVQQlSgSps1kOY4xA==
+X-IronPort-AV: E=Sophos;i="6.08,250,1712613600"; 
+   d="scan'208";a="37474780"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 19 Jun 2024 13:24:29 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 00F14165949;
+	Wed, 19 Jun 2024 13:24:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1718796265;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=xZufrVenZZNOki6ThkT5V784LHMR0r2wNvufJAnx7Y8=;
+	b=YoBm1bkm65S2SF3FEZHDxxzFsGx6IuEcYgJl3WLnSg1dVr4Xgfzze1KcgAtq5O5xPYZp37
+	zLaYKOTD34GxPwkf1Dw67kHtdDhnzXx1eTQuTJqnGqv8NLqYrXlN64HeC1BfpM615LMki9
+	OjPHwJe8bq2OGs8+wZ41qBQlFX3hJg3FhTW4AHZrLMihFjrKYibvLmyLcrehel3WWMgYxB
+	TnhPg4C3ml35HPj31Klr2SatE93oIB059w1ZDQpoT9Q0dBI6ncrZENq2ZTSpeyYcOHX7EK
+	reHfywshrEjGOLSMuGxVrWLs5KjxK1XPImZjFt3clW0+iWMA9DQ2r5bcJohCUA==
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Suman Anna <s-anna@ti.com>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux@ew.tq-group.com,
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH 1/2] dt-bindings: soc: ti: pruss: allow ethernet controller in ICSSG node
+Date: Wed, 19 Jun 2024 13:24:05 +0200
+Message-ID: <20240619112406.106223-1-matthias.schiffer@ew.tq-group.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613080725.2531580-1-potin.lai.pt@gmail.com> <946f44526e3016f595bfe463cf0a7f5b4eaa084a.camel@codeconstruct.com.au>
-In-Reply-To: <946f44526e3016f595bfe463cf0a7f5b4eaa084a.camel@codeconstruct.com.au>
-From: Potin Lai <potin.lai.pt@gmail.com>
-Date: Wed, 19 Jun 2024 19:24:03 +0800
-Message-ID: <CAGfYmwVJvyEJ6sbvr=_OqNkiRSDBXn2uqMr28gN949NZd=5dcA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] pinctrl: aspeed-g6: Add NCSI pin group config
-To: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, 
-	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Patrick Williams <patrick@stwcx.xyz>, 
-	Cosmo Chou <cosmo.chou@quantatw.com>, Potin Lai <potin.lai@quantatw.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Jun 17, 2024 at 3:33=E2=80=AFPM Andrew Jeffery
-<andrew@codeconstruct.com.au> wrote:
->
-> On Thu, 2024-06-13 at 16:07 +0800, Potin Lai wrote:
-> > In the NCSI pin table, the reference clock output pin (RMIIXRCLKO) is n=
-ot
-> > needed on the management controller side.
-> >
-> > To optimize pin usage, add new NCSI pin groupis that excludes RMIIXRCLK=
-O,
-> > reducing the number of required pins.
->
-> Hmm, I'm not convinced this is specific to NCSI (and it's an
-> unfortunate mistake on my part), but we do need to call the groups
-> something different than RMII[34]. Did you have any other suggestions?
->
-I don't have better name for now.
-In ast2600 data sheet, it also mentioned "RMII" & "NCSI" together most
-of the time, is it ok to use "NCSI" as a new group name?
+While the current Device Trees for TI EVMs configure the PRUSS Ethernet
+controller as a toplevel node with names like "icssg1-eth", allowing to
+make it a subnode of the ICSSG has a number of advantages:
 
-Best regards,
-Potin
-> >
-> > Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
-> > ---
-> >  drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c b/drivers/pinct=
-rl/aspeed/pinctrl-aspeed-g6.c
-> > index 7938741136a2c..31e4e0b342a00 100644
-> > --- a/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-> > +++ b/drivers/pinctrl/aspeed/pinctrl-aspeed-g6.c
-> > @@ -249,7 +249,9 @@ PIN_DECL_2(E26, GPIOD3, RGMII3RXD3, RMII3RXER);
-> >
-> >  FUNC_GROUP_DECL(RGMII3, H24, J22, H22, H23, G22, F22, G23, G24, F23, F=
-26, F25,
-> >               E26);
-> > -FUNC_GROUP_DECL(RMII3, H24, J22, H22, H23, G23, F23, F26, F25, E26);
-> > +GROUP_DECL(RMII3, H24, J22, H22, H23, G23, F23, F26, F25, E26);
-> > +GROUP_DECL(NCSI3, J22, H22, H23, G23, F23, F26, F25, E26);
-> > +FUNC_DECL_2(RMII3, RMII3, NCSI3);
-> >
-> >  #define F24 28
-> >  SIG_EXPR_LIST_DECL_SESG(F24, NCTS3, NCTS3, SIG_DESC_SET(SCU410, 28));
-> > @@ -355,7 +357,9 @@ FUNC_GROUP_DECL(NRTS4, B24);
-> >
-> >  FUNC_GROUP_DECL(RGMII4, F24, E23, E24, E25, D26, D24, C25, C26, C24, B=
-26, B25,
-> >               B24);
-> > -FUNC_GROUP_DECL(RMII4, F24, E23, E24, E25, C25, C24, B26, B25, B24);
-> > +GROUP_DECL(RMII4, F24, E23, E24, E25, C25, C24, B26, B25, B24);
-> > +GROUP_DECL(NCSI4, E23, E24, E25, C25, C24, B26, B25, B24);
-> > +FUNC_DECL_2(RMII4, RMII4, NCSI4);
-> >
-> >  #define D22 40
-> >  SIG_EXPR_LIST_DECL_SESG(D22, SD1CLK, SD1, SIG_DESC_SET(SCU414, 8));
-> > @@ -1976,6 +1980,8 @@ static const struct aspeed_pin_group aspeed_g6_gr=
-oups[] =3D {
-> >       ASPEED_PINCTRL_GROUP(MDIO2),
-> >       ASPEED_PINCTRL_GROUP(MDIO3),
-> >       ASPEED_PINCTRL_GROUP(MDIO4),
-> > +     ASPEED_PINCTRL_GROUP(NCSI3),
-> > +     ASPEED_PINCTRL_GROUP(NCSI4),
->
-> You will need to update the binding document as well. I've poked Linus
-> W about a series I sent that re-formats the binding function and group
-> lists - it would be nice if you rework the patch on top of that:
->
-> https://lore.kernel.org/lkml/5bf8e1dddd2b958a102e7b1b9f9c080a34f9deff.cam=
-el@codeconstruct.com.au/
->
-> Cheers,
->
-> Andrew
+- It makes sense semantically - the Ethernet controller is running on
+  the ICSSG/PRUSS
+- Disabling or deleting the ICSSG node implicitly removes the Ethernet
+  controller node when it is a child node. This can be relevant on SoCs
+  like the AM64x which come in variants with and without ICSSG; e.g., on
+  the TQMa64xxL the ICSSG node will be disabled on variants without as a
+  bootloader fixup.
+  On Linux, this avoids leaving the Ethernet controller in deferred
+  state forever while waiting for the ICSSG to become available
+  (resulting in a warning on newer kernels)
+
+The node name "ethernet" is chosen as it nicely matches the regular
+"ethernet@<reg>" format of many Ethernet controller nodes, and is also
+what the prueth binding example (/schemas/net/ti,icssg-prueth.yaml) uses.
+
+Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+---
+ Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+index c402cb2928e89..89dfcf5ce8434 100644
+--- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
++++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+@@ -92,6 +92,13 @@ properties:
+     description: |
+       This property is as per sci-pm-domain.txt.
+ 
++  ethernet:
++    description: |
++      ICSSG PRUSS Ethernet. Configuration for an Ethernet controller running
++      on the PRU-ICSS.
++    $ref: /schemas/net/ti,icssg-prueth.yaml#
++    type: object
++
+ patternProperties:
+ 
+   memories@[a-f0-9]+$:
+-- 
+TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht München, HRB 105018
+Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+https://www.tq-group.com/
+
 
