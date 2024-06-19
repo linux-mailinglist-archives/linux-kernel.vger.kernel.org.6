@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-220714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06A490E5E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:38:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04C8190E5DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 019741C2150F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:38:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB3761C214AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024517A705;
-	Wed, 19 Jun 2024 08:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39BD7E78E;
+	Wed, 19 Jun 2024 08:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="r8ERr3Zw"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="EdVWQYzE"
 Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385957CF3A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385D37CF3E;
 	Wed, 19 Jun 2024 08:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718786250; cv=none; b=AXqVkr47QUQCR01PwT4HCvpw4uAQ68sxso57RKMhFJhgYoO/a4IVoAcCQax/Ipw2Y2/76AENAznEMpg+BfHb/noZ4LM4eN88FtO5pA4N/vyz4Bjv49VmU4buJjcm6/BTVZJWLj5TON6G8wdfIolcKIRn0gJoKAy17H4ba387n+s=
+	t=1718786249; cv=none; b=P0sDTBf1bEF5XH1wCrfZPp1/LB5lcLqM+dbusgarMJ8oClux0jNG38kh4yUEpzCr2wVR9Kvm56RL78VVGORIK8n9ECG3izQxdnJ0h0nrh+Nq4sFfBxB2EiVuDanCZsTtM71jltM3H77me9Rid9W/McnaX6LqEfes3proDQFPjVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718786250; c=relaxed/simple;
-	bh=UXtR4RS42xrG/bQ0m5u44ggsOqsWDIra3jHzkT/B7sQ=;
+	s=arc-20240116; t=1718786249; c=relaxed/simple;
+	bh=eKmEApCLtrBXoEas0MfyfelglNHo/OxwLXCHMlRaR9E=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a2lDJ+LmVAYwE9A3vA2EJAtrK8HiL+FCZILmp/NW2Ox+Y07i83v4PHcd1q+2uKA/t5RCFB8xL8V6DNu8iPuE9M/tZyqGoL+EXPwM7Joo+jTtedodZqxpPCwQW+GIIdc8H1aDkDUfSN93bYFtuLpi2Gm2Oxtv02SFMoSvFv4S7k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=r8ERr3Zw; arc=none smtp.client-ip=185.132.182.106
+	 MIME-Version:Content-Type; b=QFRi+eje0GdGFs+NNAikm2wu6+KvUYU3+TjWawmAnyVQMHKtfJTJ0X1z22hrzNDn8zmlOOmctbIepMki4m9UhgQz2FR0lUEvwaIpksRZH9QQ7tT9+kQ0uDgnvLjhm/yRsBrrFLhER6WctoQalZ73kz9Sys9NP6Bph/i7U1kU1Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=EdVWQYzE; arc=none smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J7P92p024131;
-	Wed, 19 Jun 2024 10:37:07 +0200
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J7K3mP024133;
+	Wed, 19 Jun 2024 10:37:04 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	HSEeHUr0hh897plAMVxrPawkWTVmj0QotMkNEu3ecZk=; b=r8ERr3ZwFZ5W+vBa
-	IeAL6GD6TQZ6GGmct/09bPVA7zZgp0dacw/5VpNQdWnH4iyYA9Pprrvf+JNkPWbH
-	qnLKAX5vrR6MlIOOa7fLkxROHuyK6BaBYyv05h1UVKJzprSTkDOmF8ZWOe7yKDHM
-	tgp5Ao0O8zZc+zlYbsPtdHl1Db+URo9TCjbVlfhffpgXP3Zr4//ctyeWz1aiaaBR
-	ezegIHoJnUsywVQfBlzV47jXlIHOXU5NlqPXImp5rdNlB9HQBlL0xmN8IP+IgwOy
-	7o0MX3SLQTt65rduzK64sGls9UFHxu6h5L6rD+euWXu7Qs6rzdnwOIatGVcnM+iP
-	dtMPhA==
+	KZgWttku0OrDv1E5xjjSYd/Hd42fWLcFhwhUgXT4EB4=; b=EdVWQYzE58jbs3eY
+	mhWhlVnXlT4cXbWtBWFaRSIi0qWJaArKvjGY8iWUE8eNWXnwi+Fv00fmQudYqIXs
+	HWqB4bxluUNG3aIBIndNXD6vLK0+SU/YodE96Cmi7N205Pni0L28ogT0JRR3NiM/
+	3Jk3faKpAgd1BKe2qySBfF+lS5oUQ/4BsFCNltdO6XQoBg8hWbgwrN6EzL5zxD1Q
+	CMT0Mq1xCS2D+PL61JZLVlAMkOp40w6pB+49fYEHfQsP2mR8zjtDtUVuYIDheSI7
+	t4m8/G7e9GZuN8kRyZx6BlaAkciMecmacl7TDNDUmNOZNMtDo3zQ+90Eq4R3k7zz
+	LFtvPA==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yuj9n23y5-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yuj9n23xm-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 10:37:07 +0200 (MEST)
+	Wed, 19 Jun 2024 10:37:03 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 419B940045;
-	Wed, 19 Jun 2024 10:37:02 +0200 (CEST)
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6FC9A4004A;
+	Wed, 19 Jun 2024 10:36:54 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4297B20FA23;
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6344E210590;
 	Wed, 19 Jun 2024 10:36:12 +0200 (CEST)
 Received: from localhost (10.48.86.232) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 19 Jun
- 2024 10:36:11 +0200
+ 2024 10:36:12 +0200
 From: Pascal Paillet <p.paillet@foss.st.com>
 To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
         Rob Herring <robh@kernel.org>,
@@ -70,9 +70,9 @@ To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
         <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>
 CC: <p.paillet@foss.st.com>, Etienne Carriere <etienne.carriere@foss.st.com>
-Subject: [PATCH 2/4] arm64: dts: st: add scmi regulators on stm32mp25
-Date: Wed, 19 Jun 2024 10:36:00 +0200
-Message-ID: <20240619083602.33007-3-p.paillet@foss.st.com>
+Subject: [PATCH 3/4] arm64: dts: st: describe power supplies for stm32mp257f-ev1 board
+Date: Wed, 19 Jun 2024 10:36:01 +0200
+Message-ID: <20240619083602.33007-4-p.paillet@foss.st.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240619083602.33007-1-p.paillet@foss.st.com>
 References: <20240619083602.33007-1-p.paillet@foss.st.com>
@@ -90,65 +90,87 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-19_02,2024-06-17_01,2024-05-17_01
 
-Add SCMI regulators description on STM32MP25.
+Describe power supplies for stm32mp257f-ev1 board.
 
 Signed-off-by: Pascal Paillet <p.paillet@foss.st.com>
 ---
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 35 ++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 43 +++++++++++++++++-----
+ 1 file changed, 34 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index 96d6de29c14c..18094dadc9c4 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -6,6 +6,7 @@
- #include <dt-bindings/clock/st,stm32mp25-rcc.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/st,stm32mp25-rcc.h>
-+#include <dt-bindings/regulator/st,stm32mp25-regulator.h>
+diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+index 18c6266532b2..979847e0ea05 100644
+--- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
++++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+@@ -7,6 +7,7 @@
+ /dts-v1/;
  
- / {
- 	#address-cells = <2>;
-@@ -75,6 +76,40 @@ scmi_reset: protocol@16 {
- 				reg = <0x16>;
- 				#reset-cells = <1>;
- 			};
-+
-+			scmi_voltd: protocol@17 {
-+				reg = <0x17>;
-+
-+				scmi_regu: regulators {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					scmi_vddio1: regulator@0 {
-+						reg = <VOLTD_SCMI_VDDIO1>;
-+						regulator-name = "vddio1";
-+					};
-+					scmi_vddio2: regulator@1 {
-+						reg = <VOLTD_SCMI_VDDIO2>;
-+						regulator-name = "vddio2";
-+					};
-+					scmi_vddio3: regulator@2 {
-+						reg = <VOLTD_SCMI_VDDIO3>;
-+						regulator-name = "vddio3";
-+					};
-+					scmi_vddio4: regulator@3 {
-+						reg = <VOLTD_SCMI_VDDIO4>;
-+						regulator-name = "vddio4";
-+					};
-+					scmi_vdd33ucpd: regulator@5 {
-+						reg = <VOLTD_SCMI_UCPD>;
-+						regulator-name = "vdd33ucpd";
-+					};
-+					scmi_vdda18adc: regulator@7 {
-+						reg = <VOLTD_SCMI_ADC>;
-+						regulator-name = "vdda18adc";
-+					};
-+				};
-+			};
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/regulator/st,stm32mp25-regulator.h>
+ #include "stm32mp257.dtsi"
+ #include "stm32mp25xf.dtsi"
+ #include "stm32mp25-pinctrl.dtsi"
+@@ -41,14 +42,6 @@ fw@80000000 {
+ 			no-map;
  		};
  	};
+-
+-	vdd_sdcard: vdd-sdcard {
+-		compatible = "regulator-fixed";
+-		regulator-name = "vdd_sdcard";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
+-		regulator-always-on;
+-	};
+ };
+ 
+ &arm_wdt {
+@@ -56,6 +49,37 @@ &arm_wdt {
+ 	status = "okay";
+ };
+ 
++&scmi_regu {
++	scmi_vddio1: regulator@0 {
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++	};
++	scmi_vddcore: regulator@11  {
++		reg = <VOLTD_SCMI_STPMIC2_BUCK2>;
++		regulator-name = "vddcore";
++	};
++	scmi_v1v8: regulator@14  {
++		reg = <VOLTD_SCMI_STPMIC2_BUCK5>;
++		regulator-name = "v1v8";
++	};
++	scmi_v3v3: regulator@16 {
++		reg = <VOLTD_SCMI_STPMIC2_BUCK7>;
++		regulator-name = "v3v3";
++	};
++	scmi_vdd_emmc: regulator@18 {
++		reg = <VOLTD_SCMI_STPMIC2_LDO2>;
++		regulator-name = "vdd_emmc";
++	};
++	scmi_vdd3v3_usb: regulator@20 {
++		reg = <VOLTD_SCMI_STPMIC2_LDO4>;
++		regulator-name = "vdd3v3_usb";
++	};
++	scmi_vdd_sdcard: regulator@23 {
++		reg = <VOLTD_SCMI_STPMIC2_LDO7>;
++		regulator-name = "vdd_sdcard";
++	};
++};
++
+ &i2c2 {
+ 	pinctrl-names = "default", "sleep";
+ 	pinctrl-0 = <&i2c2_pins_a>;
+@@ -85,7 +109,8 @@ &sdmmc1 {
+ 	disable-wp;
+ 	st,neg-edge;
+ 	bus-width = <4>;
+-	vmmc-supply = <&vdd_sdcard>;
++	vmmc-supply = <&scmi_vdd_sdcard>;
++	vqmmc-supply = <&scmi_vddio1>;
+ 	status = "okay";
+ };
  
 -- 
 2.34.1
