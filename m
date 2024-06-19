@@ -1,210 +1,139 @@
-Return-Path: <linux-kernel+bounces-220630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A9BD90E4A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:37:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C742D90E4AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 319751C21ED3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:37:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE2D41C21F18
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07797605E;
-	Wed, 19 Jun 2024 07:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2155770EF;
+	Wed, 19 Jun 2024 07:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hH0J0IcK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FnFrA/Tp"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4AD208B0;
-	Wed, 19 Jun 2024 07:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016287603A;
+	Wed, 19 Jun 2024 07:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718782623; cv=none; b=UQV1tptvxI/hxQwzZ2YI2QMYn1nx5IVXYcM5foqdk+lnVlcUCkt27+MmJihwH9Kws9MA50y5f/dXapwfdrGvOOdUfGcnL6Q3K4vp+g8fvpZsbh3GEJorOBmAMfxUVkx9wg4cSXMtAUgyCzIdW1WwwvFEVV3BLcy+wdkGMivIdjI=
+	t=1718782674; cv=none; b=lAG7aFNRjMn0YO9BKEQFU+KxkELaM7CzW7TyAl1Tz/H97+hpjKPXPxZwFpzjcCMCMaI3U7XkyJ956T3QuR896cQ4Nm27uwAHKYMj/MAzCAWU4FPCh3I4SBSO7efVZiGLeYUJ/Of/NetBteK0F5KqzeSfGvgpclkEq0cXA9o31Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718782623; c=relaxed/simple;
-	bh=f7oSllmrd35P9uGR4eisbtJTPzm/dPPuS0q8bcjDQv8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MhPll4HPpusZ4DL38SHjesR4B/y7JHskUNRjVmuTLGbcs0+0XeHCAl16JnZj06Js1chPdtpRF98BvJ1XdL2WolOVOKDClwfzfFSRT5mRcBG+zPF7vqEvFezy6nouQ6mT2rn6PLJTW/4kGdKZeFmV4E3UkCprnvt6/LE7dXO1c2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hH0J0IcK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ILbEpH007379;
-	Wed, 19 Jun 2024 07:36:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=tedI/wDgAe2P2gAwrsKDr6tK
-	yUDAAtGPLir7ppJx4as=; b=hH0J0IcKos3rnNxyMLyPbiT1gWcaGvAnOEL/aWsx
-	FqceVDJrxBXW4nuGNJswI9ADyEfBgtFZwQPvg6gRk0ESLQWCPNXXutS5TxM1osqT
-	fWxYEf72QmvA5+/rs1L4UNSJy55RCOjbBM5ELXxxoyt90IR5mb8nD4DmvoZ8Knej
-	GwaYyzowvG00oC9Q2pEgWwOslSxM7uOn79Huc83nlWfJW8lv+jx6zASy0/ncTDKV
-	2LQF6/dTb2zvv4Fxelyg7iAEEuUEI3HAPbg6Wy03ePKm+3d+wJWvRuoZjIS4+nC6
-	pcvXKNpGRSO+uCbnM6MwzARdEatEpQR/6uFpzg9szQ8P2g==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yujag0yh0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 07:36:56 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45J7asqg007860
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 07:36:54 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 19 Jun 2024 00:36:50 -0700
-Date: Wed, 19 Jun 2024 13:06:46 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Georgi Djakov <djakov@kernel.org>
-CC: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
- ability to gcc
-Message-ID: <ZnKKjomRQtJS2ZgL@hu-varada-blr.qualcomm.com>
-References: <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
- <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
- <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
- <Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com>
- <176137e5-6312-4d46-97b6-c4494bc1c61b@kernel.org>
- <ZmlAdETV0+6Md8HC@hu-varada-blr.qualcomm.com>
- <e24cfd23-6f77-46a0-b020-9cb3daef6930@kernel.org>
- <Zml4RQ5R5s3mVMnI@hu-varada-blr.qualcomm.com>
- <8e32a8be-dbbf-49ca-92a1-2fe3c8bfb571@kernel.org>
- <ZmpsOdsl9AMTSH88@hu-varada-blr.qualcomm.com>
+	s=arc-20240116; t=1718782674; c=relaxed/simple;
+	bh=QbADky3jFoLA9J0+VbVp4KVYeDfZFjbQsCjoG0GnX6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HsMbxwp3pkcQo2rf0txwYFUQj4jejdLnV2yrnYwy5ZsMa2lmhUNS+Ae+GHcp1fYxuPPGJpNpk0uiLSIMXqWHGm5kbkXfLg0H6xmenPhvRkoXKl0PuiTR9gp6B0hPtCovzLiFRC2Q0OI5Bv+D5tet2PizV3/oJv83QwfieLW5QAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FnFrA/Tp; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f44b594deeso58132175ad.2;
+        Wed, 19 Jun 2024 00:37:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718782672; x=1719387472; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xZtpkJrERAytFRPCzO4ZBi2FYjGLa3zFY5Xobeh/H7A=;
+        b=FnFrA/Tp0JPr3lXt3kTC7ZDZ0weltzVW2YPBNse6ZPY4vKX7Hjp77KBy67SDbLX5mf
+         E8hGSjg1TjLUHWJO+btRR03PSP66mTaqsEDkpKw68LyF/MbLXxzCyGpKcZyQW/gxCea4
+         MvooptHAEXi17uOa1neikzCf3tvQPndUNqc2PphzTDN1O2ld1DOC1WE507ba+8cG1Ioz
+         3DWIzWIKQXUR9It/K4NdRSR+QSJM5Tgtj2UOoc4wCPTWnxvCk3B0Hdqhj2g/5f/IDEW8
+         C9TD7H3ixPRzMIYBUz3MmN2IOmz93vS9Bwt20iL1V9yZzFemNtW/7tmo9QFoRppTIsGn
+         Acmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718782672; x=1719387472;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xZtpkJrERAytFRPCzO4ZBi2FYjGLa3zFY5Xobeh/H7A=;
+        b=JbJFBfdBWo+fcOA46nJZguPhh9awEwdWTr6CBYP96NAf3dfFEXqKbaHKoqUeiQjXVT
+         aVT3iO9cQLXlwWh0rx2kBeYqJZyifHNWAaLDEECxwkWmoypQsrNpmHvAL78Ij3qXqaFK
+         OtX3WDX9mnjXbhUNghjSpENYvH8V8lnR7kALFDoAJBURo/8+d9Z0eF6Bh6M/U7ex3lgB
+         RYRZWhF2+fuihR3v1VjcEy5/CUgOrBY/+hcjVaDVZyh6h7qvOWY6T6O2RJg2ytCgmmEh
+         8LmxX9I5HnsrVF4DqZUaQT8934sghV82vBOy7GJzVR2luQrk3Ip2z7N+KcqIpXwURufs
+         YrRA==
+X-Forwarded-Encrypted: i=1; AJvYcCX32VlfJtq1vpRUT1UNWpZVMuSYEdFmP410nnSr/w8stn8MIUius0L0fq5Rg/g4zrs4yVvfuB7vPcljxaAY945R5b57Am/yT3aalJby
+X-Gm-Message-State: AOJu0Yz00tdtSt9bsH2h7y2rtNTh6m3xOSbP3nmKIMGGf8kL5Pfg1hdn
+	/8FLtb2I4H75/zjZsUzgBrwYSmHiqS97lf0VlFTtcCvq3HgfL7cY
+X-Google-Smtp-Source: AGHT+IF+19ajajZtl58wYenVWrAt/kiJtPL/XURoEltqHCw3AppneQqbobx8Z/pbCyNiUb+yxmoGnw==
+X-Received: by 2002:a17:902:e5d0:b0:1f6:daa6:e77b with SMTP id d9443c01a7336-1f9aa96847fmr17597125ad.68.1718782672119;
+        Wed, 19 Jun 2024 00:37:52 -0700 (PDT)
+Received: from [10.125.112.52] (014136220210.static.ctinets.com. [14.136.220.210])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e5b0dfsm109745425ad.29.2024.06.19.00.37.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 00:37:51 -0700 (PDT)
+Message-ID: <e529ab0e-3b92-4e0b-bf4e-af7cd3266d18@gmail.com>
+Date: Wed, 19 Jun 2024 15:37:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZmpsOdsl9AMTSH88@hu-varada-blr.qualcomm.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: q23CxMHp9g3T2Lbye7KLJTHea_kt33mb
-X-Proofpoint-ORIG-GUID: q23CxMHp9g3T2Lbye7KLJTHea_kt33mb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 impostorscore=0
- spamscore=0 bulkscore=0 malwarescore=0 clxscore=1015 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190055
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] module: Add log information for loading module failures
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240614092519.1611533-1-a869920004@gmail.com>
+ <ZnHYA9dmtUEPLgYP@bombadil.infradead.org>
+Content-Language: en-US
+From: Yusong Gao <a869920004@gmail.com>
+In-Reply-To: <ZnHYA9dmtUEPLgYP@bombadil.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 13, 2024 at 09:19:13AM +0530, Varadarajan Narayanan wrote:
-> On Wed, Jun 12, 2024 at 03:52:51PM +0300, Georgi Djakov wrote:
-> > On 12.06.24 13:28, Varadarajan Narayanan wrote:
-> > > On Wed, Jun 12, 2024 at 11:48:17AM +0300, Georgi Djakov wrote:
-> > > > On 12.06.24 9:30, Varadarajan Narayanan wrote:
-> > > > > On Tue, Jun 11, 2024 at 02:29:48PM +0300, Georgi Djakov wrote:
-> > > > > > On 11.06.24 12:42, Varadarajan Narayanan wrote:
-> > > > > > > On Thu, Jun 06, 2024 at 04:06:01PM +0200, Konrad Dybcio wrote:
-> > > > > > > > On 8.05.2024 10:10 AM, Dmitry Baryshkov wrote:
-> > > > > > > > > On Wed, 8 May 2024 at 09:53, Varadarajan Narayanan
-> > > > > > > > > <quic_varada@quicinc.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Fri, May 03, 2024 at 04:51:04PM +0300, Georgi Djakov wrote:
-> > > > > > > > > > > Hi Varada,
-> > > > > > > > > > >
-> > > > > > > > > > > Thank you for your work on this!
-> > > > > > > > > > >
-> > > > > > > > > > > On 2.05.24 12:30, Varadarajan Narayanan wrote:
-> > > > > > > > > > > > On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
-> > > > > > > > > > > > > On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
-> > > > > > > > > > > > > > On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > On 4/18/24 11:23, Varadarajan Narayanan wrote:
-> > > > > > > > > > > > > > > > IPQ SoCs dont involve RPM in managing NoC related clocks and
-> > > > > > > > > > > > > > > > there is no NoC scaling. Linux itself handles these clocks.
-> > > > > > > > > > > > > > > > However, these should not be exposed as just clocks and align
-> > > > > > > > > > > > > > > > with other Qualcomm SoCs that handle these clocks from a
-> > > > > > > > > > > > > > > > interconnect provider.
-> > > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > > Hence include icc provider capability to the gcc node so that
-> > > > > > > > > > > > > > > > peripherals can use the interconnect facility to enable these
-> > > > > > > > > > > > > > > > clocks.
-> > > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > > > > > > > > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > > > > > > > > > > > > > > ---
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > If this is all you do to enable interconnect (which is not the case,
-> > > > > > > > > > > > > > > as this patch only satisfies the bindings checker, the meaningful
-> > > > > > > > > > > > > > > change happens in the previous patch) and nothing explodes, this is
-> > > > > > > > > > > > > > > an apparent sign of your driver doing nothing.
-> > > > > > > > > > > > > >
-> > > > > > > > > > > > > > It appears to do nothing because, we are just enabling the clock
-> > > > > > > > > > > > > > provider to also act as interconnect provider. Only when the
-> > > > > > > > > > > > > > consumers are enabled with interconnect usage, this will create
-> > > > > > > > > > > > > > paths and turn on the relevant NOC clocks.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > No, with sync_state it actually does "something" (sets the interconnect
-> > > > > > > > > > > > > path bandwidths to zero). And *this* patch does nothing functionally,
-> > > > > > > > > > > > > it only makes the dt checker happy.
-> > > > > > > > > > > >
-> >
-> > [..]
-> >
-> > >
-> > > nsscc_ipq9574 was not using icc_sync_state. After adding that, I
-> > > can see the following messages printed from icc_sync_state. I
-> > > also added a print to confirm if 'p->set(n, n);' is called.
-> >
-> > Ok, that's good! So now when all providers are using sync_state, we
-> > can go back to the initial comment from Konrad. I think you should
-> > re-check the tests that you did, as the current results just lead to
-> > more questions than answers. Maybe it was just the sync-state that
-> > was missing, or there is some other issue.
->
-> Georgi,
->
-> Thanks very much for the clarifications. Will re-test the patches
-> and update the thread.
->
-> -Varada
 
-Georgi,
 
-Tested the patches with both gcc and nsscc providers having
-'sync_state' set to icc_sync_state.
+On 6/19/24 02:54, Luis Chamberlain wrote:
+> On Fri, Jun 14, 2024 at 09:25:19AM +0000, Yusong Gao wrote:
+>> Add log information in kernel-space when loading module failures.
+>> Try to load the unsigned module and the module with bad signature
+>> when set 1 to /sys/module/module/parameters/sig_enforce.
+>>
+>> Unsigned module case:
+>> (linux) insmod unsigned.ko
+>> [   18.714661] Loading of unsigned module is rejected
+>> insmod: can't insert 'unsigned.ko': Key was rejected by service
+>> (linux)
+>>
+>> Bad signature module case:
+>> (linux) insmod bad_signature.ko
+>> insmod: can't insert 'bad_signature.ko': Key was rejected by service
+>> (linux)
+>>
+>> There have different logging behavior the bad signature case only log
+>> in user-space, add log info for fatal errors in module_sig_check().
+>>
+>> Signed-off-by: Yusong Gao <a869920004@gmail.com>
+>> ---
+>>   kernel/module/signing.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/kernel/module/signing.c b/kernel/module/signing.c
+>> index a2ff4242e623..6a6493c8f7e4 100644
+>> --- a/kernel/module/signing.c
+>> +++ b/kernel/module/signing.c
+>> @@ -113,6 +113,7 @@ int module_sig_check(struct load_info *info, int flags)
+>>   		 * unparseable signatures, and signature check failures --
+>>   		 * even if signatures aren't required.
+>>   		 */
+>> +		pr_notice("Loading module failed (errno=%d)\n", -err);
+>>   		return err;
+> 
+> I welcome pr_debug() messages but if we were to add a regular print for every
+> single type of failure we'd clutter the code, we don't want that.
+> 
+>    Luis
 
-	# dmesg | grep synced
-	[    3.029820] qcom,gcc-ipq9574 1800000.clock-controller: interconnect provider is in synced state
-	[    3.470106] qcom,nsscc-ipq9574 39b00000.clock-controller: interconnect provider is in synced state
+Thanks for your reply!
+Agreed. I'll make that change. The reason I select the notice print 
+level is because I found the codes in module_sig_check() use notice 
+level when signature enforced. In fact the pr_debug() is more suitable 
+for this scene.
 
-I can see that icc_sync_state is getting called and clocks
-related to paths with zero bandwidth are getting disabled.
-
-Will post the NSSCC patches to get the full picture.
-
--Varada
-
->
-> > > nodes. Please refer to this patch
-> > >
-> > > 	[PATCH V5 4/6] arm64: dts: qcom: ipq9574: Add PCIe PHYs and controller nodes
-> > > 	https://lore.kernel.org/linux-arm-msm/20240512082858.1806694-5-quic_devipriy@quicinc.com/
-> > >
-> > > Sorry, did not post the nsscc related patches since this base ICC
-> > > patch hasn't reached closure. The nsscc patches are very similar
-> > > to this gcc based series. Wanted to gather the issues raised in
-> > > this and address them in nsscc so that it is in a more acceptable
-> > > shape.
-> > >
-> > > Thanks
-> > > Varada
-> >
->
+BR, Yusong Gao
 
