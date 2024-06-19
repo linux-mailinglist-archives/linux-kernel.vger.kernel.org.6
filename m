@@ -1,142 +1,152 @@
-Return-Path: <linux-kernel+bounces-220580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3902290E3F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:05:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5076990E406
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D74F1C240F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:05:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BCEF1C20C40
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE6574057;
-	Wed, 19 Jun 2024 07:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QlC/PQzr"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50F474C14;
+	Wed, 19 Jun 2024 07:08:36 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B9617583
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30257441A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718780714; cv=none; b=QTxA4rYoPsteXq3zb8VeWAmAdbnGr5+gFoJLRBqW0zfrCcOzTCAeYrVr/F9XTWduGBd52kcPwjGcBVpGOXHg/THeaSn3JDy8+S7SLS9nNDIR2UzvlOxHDaneWHFyx65cRzimjcqacDEX5zSlG483juMpsO0xy1CRy60rqJdVBqo=
+	t=1718780916; cv=none; b=LYor96ApCHPcmbK8SasgEfwehHqlFOXOeMnrisUE82GA26TspB7KS78k0/pgt+XDR88UNoxv9FigLJxedXmfKW2gz+5N/7eLy2KomwgHuNWUUIRr0p12bEJgwQhAxIQV1Z72S2+WF3TBb26S+ymIarM0Bp8X4bsPnG2AxzEUoc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718780714; c=relaxed/simple;
-	bh=x5nGr+EAONrqkj6P9t/dtlrL61on+Chcpa2cnnYxLKY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hISCDKelPs29via7W2EMBDvzKPO5E69GbK2g4xMh8Io3Tx9vIuXVWhHDStZV3TyeJ8kHxUnaosRSqOhQ94R0MnndX9hfUoMkvFKl3qVmgCK1hiOqGkXoIJqcxpaf15xZMx0ljvpkYdlKVBmlrLveMaeOLIs277FUKPRyhOAsDLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QlC/PQzr; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dfab5f7e749so6037643276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 00:05:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718780712; x=1719385512; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fkApUyq4661XB0S5M024vzKYelC21nq0nL2JJnK6W80=;
-        b=QlC/PQzrSJ8sFhB9MBR/MrHzeR2KShS83G7rv9xa+IRxbtbCkIHllY7NlVS3kv7RWV
-         QBVVsfMXS+QBTV1qjeMrvAJlzLfcSzHYmg748pC97Q2J4z+XnkX9ygQn9x1WPgRQsB4x
-         /mdi53o29jqz0OU00qpYAgDQ9tBV/PpsM2FAtWZ2nLBkKw90FiEUZoWzhHTHXgrEBodc
-         j7eiDyhbOtnwjDj2+C/KFTfkvHnQGAY0AAtiQCGnPVdhZhxpOS1Ac9TFya9unKhddrMQ
-         MYi9+hDXERXc1UAgA7RzvRZK4Y724lymAhkDee/4f7VpP/XSJ2oft1qDXWBxHpFt4cwi
-         lvTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718780712; x=1719385512;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fkApUyq4661XB0S5M024vzKYelC21nq0nL2JJnK6W80=;
-        b=XNof2a2432zjRle0rrs5DYDagKzFzmOoFUdcQz/qLAS3Mhokhx/Sj9JENsQyomGEIz
-         XcWJjHs2GjljsUUhwl09qY9VqCZLHrW/C5nTpEBbWXiOoOZGrjO2ZyxJwuZUT/XAu/zn
-         rXm20CL8DhlyyT94W3hhLy0mtggR3PGI8fqwJHpAkKbr0o64asSfZWo0B1wr2Kga0tF9
-         i9LJ0eAK8Qii5eztP9KozznJxaoPK7hMI6xDAIkMw+U+iilm6vkW+AKNHxkS2UutnPKG
-         Mvmt5w8jJ/PiF81kJhzW31hrW32PP+7UK04M3TOJEKUGvNdt/haYAOab3OJQb/rtYgZo
-         EtLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyxVAGuIcaUwwM+fNPD4eYKFxiMoFZVvrpXKCbp9ltK1VB/7UFY98WMZ2kRqbdbXbdnUsn+Vhm8Bc/paqtyh/lXrzSv9LhYIS9nzPv
-X-Gm-Message-State: AOJu0Yy4SPY7DX1G8pXzAX843m1OiGZXlNjm1NSFxyxDsK2Sfqr6+5rr
-	sSXWbOxBfSNpEUBqE6iQHgniM8TfOiMQxkVb/dCfJXd7ancxIb6nMO75raN9H/ftWJw6gWziaAm
-	bhhT2lDXJ68Krx4CTDJ2+c9DIZTJuImT6E0qu2Q==
-X-Google-Smtp-Source: AGHT+IG4sbbowz2oRR6gmRouJDUmd7eUdivK4bF3a5N6Vmj6voe6Jh1AZr4utLY6DC/DcbpG2kflee5f733GsJK83/w=
-X-Received: by 2002:a25:81c6:0:b0:e02:b580:d0b with SMTP id
- 3f1490d57ef6-e02be203e4dmr2083486276.40.1718780712294; Wed, 19 Jun 2024
- 00:05:12 -0700 (PDT)
+	s=arc-20240116; t=1718780916; c=relaxed/simple;
+	bh=Cwc8S8zSetAxGH10fTCvAlXE173zRw+qacuruXD0Xp0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nvGe8ezjs5apK8spSldsLbskHCzfv2N+plzEGekhAxIP3i6zGYWmuoBaaKrZjHqI/0eudnGRdkXnXiCAT6iC3DinqrkhlCPcbHdMY2RaefT+ZEq+i2JHnYXY7Yi5MVdZ1px68oxmn3jUEC6KWvbYja2tdZeDjxQ7owu54pdOTNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sJpQk-0001ZF-Bv; Wed, 19 Jun 2024 09:08:30 +0200
+Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sJpQj-003PY5-Dv; Wed, 19 Jun 2024 09:08:29 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sJpQj-002Gg3-0z;
+	Wed, 19 Jun 2024 09:08:29 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	David Lin <yu-hao.lin@nxp.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Brian Norris <briannorris@chromium.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH] [RFC] mwifiex: Fix NULL pointer deref
+Date: Wed, 19 Jun 2024 09:08:24 +0200
+Message-Id: <20240619070824.537856-1-s.hauer@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612064731.25651-1-quic_ekangupt@quicinc.com>
- <zbpia232dh4ojfsvhcqxrp6cwfygaalu5cycdrs47pqmnrisvk@dq24nww26gkm>
- <00b2c65e-c00e-48bf-b118-4785d216cd19@quicinc.com> <CAA8EJprOf9vvdBcdX=Xem3UMFo2pmh37ooreqRX0Bzvadv_yTQ@mail.gmail.com>
- <9fc370be-89f4-4006-a4c0-1040dadfe4cd@quicinc.com>
-In-Reply-To: <9fc370be-89f4-4006-a4c0-1040dadfe4cd@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 19 Jun 2024 10:05:00 +0300
-Message-ID: <CAA8EJpoqWvL5z4cG0EBEm1eXWUQ=qP0RmedfLbqiFaOjYX7kWQ@mail.gmail.com>
-Subject: Re: [PATCH v1] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: Oded Gabbay <ogabbay@kernel.org>, srinivas.kandagatla@linaro.org, 
-	linux-arm-msm@vger.kernel.org, gregkh@linuxfoundation.org, 
-	quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, 19 Jun 2024 at 10:01, Ekansh Gupta <quic_ekangupt@quicinc.com> wrote:
->
->
->
-> On 6/19/2024 12:21 PM, Dmitry Baryshkov wrote:
-> > On Wed, 19 Jun 2024 at 09:45, Ekansh Gupta <quic_ekangupt@quicinc.com> wrote:
-> >>
-> >>
-> >> On 6/12/2024 11:58 PM, Dmitry Baryshkov wrote:
-> >>> On Wed, Jun 12, 2024 at 12:17:28PM +0530, Ekansh Gupta wrote:
-> >>>> Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
-> >>>> to be added for PD notifications and other missing features. Adding
-> >>>> and maintaining new files from within fastrpc directory would be easy.
-> >>>>
-> >>>> Example of feature that is being planned to be introduced in a new C
-> >>>> file:
-> >>>> https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
-> >>>>
-> >>>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> >>>> ---
-> >>>>  MAINTAINERS                          |  2 +-
-> >>>>  drivers/misc/Kconfig                 | 13 +------------
-> >>>>  drivers/misc/Makefile                |  2 +-
-> >>>>  drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
-> >>>>  drivers/misc/fastrpc/Makefile        |  2 ++
-> >>>>  drivers/misc/{ => fastrpc}/fastrpc.c |  0
-> >>>>  6 files changed, 21 insertions(+), 14 deletions(-)
-> >>>>  create mode 100644 drivers/misc/fastrpc/Kconfig
-> >>>>  create mode 100644 drivers/misc/fastrpc/Makefile
-> >>>>  rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
-> >>> Please consider whether it makes sense to move to drivers/accel instead
-> >>> (and possibly writing a better Kconfig entry, specifying that the driver
-> >>> is to be used to offload execution to the DSP).
-> >> Planning to keep the driver to misc/ only as part of this patch. Moving to accel/ might
-> >> introduce some conventions to be followed which might require significant changes
-> >> in driver.
-> > To me this sounds like "we are trying to avoid following the
-> > conventions by hiding in the shadows".
-> Not trying to avoid, just trying to look into this separately as the need to take ABI also in account which
-> includes current device nodes and the uapi header which is present in uapi/misc/fastrpc.h whereas I see all
-> accel driver uapi headers are part of uapi/drm/.
+When an Access Point is repeatedly started it happens that the
+interrupts handler is called with priv->wdev.wiphy being NULL, but
+dereferenced in mwifiex_parse_single_response_buf() resulting in:
 
-I'd say this depends on the accel/ maintainer's opinion.
+| Unable to handle kernel NULL pointer dereference at virtual address 0000000000000140
+| Mem abort info:
+|   ESR = 0x0000000096000004
+|   EC = 0x25: DABT (current EL), IL = 32 bits
+|   SET = 0, FnV = 0
+|   EA = 0, S1PTW = 0
+|   FSC = 0x04: level 0 translation fault
+| Data abort info:
+|   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+|   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+|   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+| user pgtable: 4k pages, 48-bit VAs, pgdp=0000000046d96000
+| [0000000000000140] pgd=0000000000000000, p4d=0000000000000000
+| Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+| Modules linked in: caam_jr caamhash_desc spidev caamalg_desc crypto_engine authenc libdes mwifiex_sdio mwifiex crct10dif_ce cdc_acm onboard_usb_hub fsl_imx8_ddr_perf imx8m_ddrc rtc_ds1307 lm75 rtc_snvs imx_sdma caam imx8mm_thermal spi_imx error imx_cpufreq_dt fuse ip_tables x_tables ipv6
+| CPU: 0 PID: 8 Comm: kworker/0:1 Not tainted 6.9.0-00007-g937242013fce-dirty #18
+| Hardware name: somemachine (DT)
+| Workqueue: events sdio_irq_work
+| pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+| pc : mwifiex_get_cfp+0xd8/0x15c [mwifiex]
+| lr : mwifiex_get_cfp+0x34/0x15c [mwifiex]
+| sp : ffff8000818b3a70
+| x29: ffff8000818b3a70 x28: ffff000006bfd8a5 x27: 0000000000000004
+| x26: 000000000000002c x25: 0000000000001511 x24: 0000000002e86bc9
+| x23: ffff000006bfd996 x22: 0000000000000004 x21: ffff000007bec000
+| x20: 000000000000002c x19: 0000000000000000 x18: 0000000000000000
+| x17: 000000040044ffff x16: 00500072b5503510 x15: ccc283740681e517
+| x14: 0201000101006d15 x13: 0000000002e8ff43 x12: 002c01000000ffb1
+| x11: 0100000000000000 x10: 02e8ff43002c0100 x9 : 0000ffb100100157
+| x8 : ffff000003d20000 x7 : 00000000000002f1 x6 : 00000000ffffe124
+| x5 : 0000000000000001 x4 : 0000000000000003 x3 : 0000000000000000
+| x2 : 0000000000000000 x1 : 0001000000011001 x0 : 0000000000000000
+| Call trace:
+|  mwifiex_get_cfp+0xd8/0x15c [mwifiex]
+|  mwifiex_parse_single_response_buf+0x1d0/0x504 [mwifiex]
+|  mwifiex_handle_event_ext_scan_report+0x19c/0x2f8 [mwifiex]
+|  mwifiex_process_sta_event+0x298/0xf0c [mwifiex]
+|  mwifiex_process_event+0x110/0x238 [mwifiex]
+|  mwifiex_main_process+0x428/0xa44 [mwifiex]
+|  mwifiex_sdio_interrupt+0x64/0x12c [mwifiex_sdio]
+|  process_sdio_pending_irqs+0x64/0x1b8
+|  sdio_irq_work+0x4c/0x7c
+|  process_one_work+0x148/0x2a0
+|  worker_thread+0x2fc/0x40c
+|  kthread+0x110/0x114
+|  ret_from_fork+0x10/0x20
+| Code: a94153f3 a8c37bfd d50323bf d65f03c0 (f940a000)
+| ---[ end trace 0000000000000000 ]---
 
->
-> Will be taking inputs from fastrpc maintainers also.
-> >> I'll write more meaningful Kconfig entry in next spin.
-> >>
->
+Fix this by adding a NULL check before dereferencing this pointer.
 
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
+---
+
+This is the most obvious fix for this problem, but I am not sure if we
+might want to catch priv->wdev.wiphy being NULL earlier in the call
+chain.
+---
+ drivers/net/wireless/marvell/mwifiex/scan.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/scan.c b/drivers/net/wireless/marvell/mwifiex/scan.c
+index 0326b121747cb..6211ae97da4b2 100644
+--- a/drivers/net/wireless/marvell/mwifiex/scan.c
++++ b/drivers/net/wireless/marvell/mwifiex/scan.c
+@@ -1843,6 +1843,9 @@ mwifiex_parse_single_response_buf(struct mwifiex_private *priv, u8 **bss_info,
+ 			return 0;
+ 		}
+ 
++		if (!priv->wdev.wiphy)
++			return 0;
++
+ 		band = BAND_G;
+ 		if (radio_type)
+ 			band = mwifiex_radio_type_to_band(*radio_type &
 -- 
-With best wishes
-Dmitry
+2.39.2
+
 
