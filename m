@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-221401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920AA90F316
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:52:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2247990F308
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24BBC28257C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:52:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BF221C21987
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D04215F326;
-	Wed, 19 Jun 2024 15:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C5F15D5DB;
+	Wed, 19 Jun 2024 15:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GBGOGqpy"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OWZMRIJe"
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9040D15A87F;
-	Wed, 19 Jun 2024 15:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2812D152170;
+	Wed, 19 Jun 2024 15:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718811975; cv=none; b=R+tvOEpAnKKle7hvezV1rSrMjUdNoXqJBPhj2SFiqmNPk4Flz6pcUXPaBJZQTRCOl0S16O7PRNj1IuK+KYHXNGDnZg+mrmmPiWgTw98iK1JVpbS8WW68Jbz2RDD5kHREvaWlLJzOkBepXlPKK7DHvrr5qBzQqPS6iROrwci0J18=
+	t=1718811972; cv=none; b=MBeQQaxIxXcjjKoTQg34HnP69cngCCuKRTHwPhnogrjsFWQBIIo0s1dRezcG7lBx06Xga8OnI/w0iFEHSXFFuDE4EF23AdAe7lTWe5vc7QLU9/jkHnXojUc99t8xp6RgKHF35rzihbRhvuaVBwz19NOivihHRif30J19jU2SLWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718811975; c=relaxed/simple;
-	bh=3WcPujpWXKuusuRXNXl0oj4iM/PsQ81qZTgoIsOSOhY=;
+	s=arc-20240116; t=1718811972; c=relaxed/simple;
+	bh=NXZcvOEnxUr1dkE9zrg8KiNNlIismJj85YQ/p8KMwMo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AinppJWQk+Xa69sZVOc1BQLWBqXBOj98gebhIvuJF4g1q6I+TElxEzy7qwLhxJITQo/jXXcc47XCOIm+EqpADoU73aW7+Al58TSfgv5m9RVxwOblm22AybNGXFMB2IFfFv8baKJRvN/rhLZzttUyOSBo0KzWMwYbDVt5CMZEtvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GBGOGqpy; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=knpOoZt/JNe5g+T8vYEgFd6+3L31Ov4cV+f9+8Wv3gbdvpcKzUpdsc8QxSfVSM13snkdl3lLlrVVbUAB2NflvpAkOo33Mtvopu0nxHPrg6LDvunXa7MvgR9BZT/ONBPPUPwMvJu901MCdLl+JEbCI6/orxaGwXEMOrqak/S/SS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OWZMRIJe; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JFR25k017473;
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JFStjf014449;
 	Wed, 19 Jun 2024 15:45:42 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
 	:to:cc:subject:date:message-id:in-reply-to:references
-	:content-transfer-encoding:mime-version; s=pp1; bh=kU/N+IjLjtGiv
-	jpGyVY04YO0GR9T1vNZaCjuWWP4qac=; b=GBGOGqpynXJjYxo0tKIHVnXjyMfLe
-	dHN+TxmZtPfm8MFrSGhVpDcFYCd8skiJtWfz9ewAIz3KAHlqyit1kCsO8as1R80h
-	8yh0GQV1D3sDRt1ziJIupCw2slxM60G7JUuZyOsoFvwI9L/75L8uWW4y8xFt29qJ
-	BvPSS6AAF9LTC35o+pbHD/ewocN/rqIr23QnBoyR29HnD6ux+kyRHo0m2M+Izq5I
-	JODaJm6LqWHWsZO+aVeXwlriGn+b2S+F+YHB2SX/H3SOuh19nEAV3HgGCS35tWfe
-	F5z4XSN58mCiWsVWxxM5H1rH7DxYJ57XzzGIDOajHNw+/vRWLjeKAZJwA==
+	:mime-version:content-transfer-encoding; s=pp1; bh=v73BMs0EqfMCw
+	xJniJdo3jdaknlggr5A1qJ50X9w6PM=; b=OWZMRIJenFRKIXmoBsRfNNP/vqp7Q
+	VM8KqR8viA6gB03Z0/Q/r/WFLzEA0oIP+pgzQBhH8aPTz03JO2OT1izE9Y/YeC4H
+	5yOOfP4yKLyMyDYvKVt93hzBdcnagHwBs9V0vQudfdeud94G+l/+2C+PWN4Po96P
+	L7Im13oCt4hAgVAKCiI1mRrnboV/5UlIDOd+4ZYVp5aLQb/Tv3RmdyOtAeLejhFi
+	AvQ6QuNIWNQipP12mMRFoOGKUStlND7JUnvEaak2/8pM1oDofllGqqL2FmbiAq/M
+	bK7puXBZafHowT2ZhTbmEAw1laLGmwpcwsGiASW7GYzyo0a/ekFv6ulAQ==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yv0p9gau4-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yv20gg1fy-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Wed, 19 Jun 2024 15:45:42 +0000 (GMT)
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45JFjfHl015754;
+Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45JFjfNR008972;
 	Wed, 19 Jun 2024 15:45:41 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yv0p9gaty-1
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yv20gg1ft-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Wed, 19 Jun 2024 15:45:41 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45JFhxil023990;
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45JEuVWH009478;
 	Wed, 19 Jun 2024 15:45:40 GMT
 Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ysp9qdype-1
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ysqgmwmkr-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Wed, 19 Jun 2024 15:45:40 +0000
 Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45JFjYUQ51904956
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45JFjY6D42205454
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Wed, 19 Jun 2024 15:45:36 GMT
 Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3501220040;
+	by IMSVA (Postfix) with ESMTP id 8AF5E2004E;
 	Wed, 19 Jun 2024 15:45:34 +0000 (GMT)
 Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D73242004E;
-	Wed, 19 Jun 2024 15:45:33 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 3A76020049;
+	Wed, 19 Jun 2024 15:45:34 +0000 (GMT)
 Received: from black.boeblingen.de.ibm.com (unknown [9.155.200.166])
 	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Jun 2024 15:45:33 +0000 (GMT)
+	Wed, 19 Jun 2024 15:45:34 +0000 (GMT)
 From: Ilya Leoshkevich <iii@linux.ibm.com>
 To: Alexander Gordeev <agordeev@linux.ibm.com>,
         Alexander Potapenko <glider@google.com>,
@@ -93,66 +93,69 @@ Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
         Roman Gushchin <roman.gushchin@linux.dev>,
         Sven Schnelle <svens@linux.ibm.com>,
         Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v5 01/37] ftrace: Unpoison ftrace_regs in ftrace_ops_list_func()
-Date: Wed, 19 Jun 2024 17:43:36 +0200
-Message-ID: <20240619154530.163232-2-iii@linux.ibm.com>
+Subject: [PATCH v5 02/37] kmsan: Make the tests compatible with kmsan.panic=1
+Date: Wed, 19 Jun 2024 17:43:37 +0200
+Message-ID: <20240619154530.163232-3-iii@linux.ibm.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20240619154530.163232-1-iii@linux.ibm.com>
 References: <20240619154530.163232-1-iii@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: DjNn8wQivNgXS7aGEy7fFO0UzqFKCQyA
-X-Proofpoint-GUID: dfntroPUBr8RU8mCueQtnLhKjRrBTJS3
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: RWsOexlj7_0iWLLyvnapnr06durS79vv
+X-Proofpoint-GUID: gZnZrvku0DfDeUyU90WAlNuPdsXG4CTD
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 clxscore=1015 mlxscore=0 spamscore=0 malwarescore=0
- adultscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190115
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0 adultscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406190115
 
-Architectures use assembly code to initialize ftrace_regs and call
-ftrace_ops_list_func(). Therefore, from the KMSAN's point of view,
-ftrace_regs is poisoned on ftrace_ops_list_func entry(). This causes
-KMSAN warnings when running the ftrace testsuite.
+It's useful to have both tests and kmsan.panic=1 during development,
+but right now the warnings, that the tests cause, lead to kernel
+panics.
 
-Fix by trusting the architecture-specific assembly code and always
-unpoisoning ftrace_regs in ftrace_ops_list_func.
-
-The issue was not encountered on x86_64 so far only by accident:
-assembly-allocated ftrace_regs was overlapping a stale partially
-unpoisoned stack frame. Poisoning stack frames before returns [1]
-makes the issue appear on x86_64 as well.
-
-[1] https://github.com/iii-i/llvm-project/commits/msan-poison-allocas-before-returning-2024-06-12/
+Temporarily set kmsan.panic=0 for the duration of the KMSAN testing.
 
 Reviewed-by: Alexander Potapenko <glider@google.com>
-Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
 ---
- kernel/trace/ftrace.c | 1 +
- 1 file changed, 1 insertion(+)
+ mm/kmsan/kmsan_test.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 65208d3b5ed9..c35ad4362d71 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -7407,6 +7407,7 @@ __ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
- void arch_ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
- 			       struct ftrace_ops *op, struct ftrace_regs *fregs)
+diff --git a/mm/kmsan/kmsan_test.c b/mm/kmsan/kmsan_test.c
+index 07d3a3a5a9c5..9bfd11674fe3 100644
+--- a/mm/kmsan/kmsan_test.c
++++ b/mm/kmsan/kmsan_test.c
+@@ -659,9 +659,13 @@ static void test_exit(struct kunit *test)
  {
-+	kmsan_unpoison_memory(fregs, sizeof(*fregs));
- 	__ftrace_ops_list_func(ip, parent_ip, NULL, fregs);
  }
- #else
+ 
++static int orig_panic_on_kmsan;
++
+ static int kmsan_suite_init(struct kunit_suite *suite)
+ {
+ 	register_trace_console(probe_console, NULL);
++	orig_panic_on_kmsan = panic_on_kmsan;
++	panic_on_kmsan = 0;
+ 	return 0;
+ }
+ 
+@@ -669,6 +673,7 @@ static void kmsan_suite_exit(struct kunit_suite *suite)
+ {
+ 	unregister_trace_console(probe_console, NULL);
+ 	tracepoint_synchronize_unregister();
++	panic_on_kmsan = orig_panic_on_kmsan;
+ }
+ 
+ static struct kunit_suite kmsan_test_suite = {
 -- 
 2.45.1
 
