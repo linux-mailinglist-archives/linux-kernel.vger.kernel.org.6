@@ -1,164 +1,122 @@
-Return-Path: <linux-kernel+bounces-221459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F5F190F3F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:20:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E5990F3F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 902B51F21C3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2495F1F21F9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862C2156644;
-	Wed, 19 Jun 2024 16:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C2315253B;
+	Wed, 19 Jun 2024 16:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r5BoTtpl"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fpD+10nz"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C53155A5F;
-	Wed, 19 Jun 2024 16:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77261CAA2;
+	Wed, 19 Jun 2024 16:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718813977; cv=none; b=XZtJ6uyXo0XsAnf/ryxbTyfNB0dMtOhkcNXQPOy/TFEh7rAuKJe31td8Ri3T/TKGImeNcTx1g2pnA5oqtemBeUBDAnJ9VUeN3cIffIMBJoB0wEztp7dwmEfHWqi5Kf+n51wx1f4n2j6BW0kW/vQPzfPNb9IVEZCCOBYP3BIvRBA=
+	t=1718814101; cv=none; b=CWFG5PmznnCXkTjLD/IB+2OoYPOewyBmTZ1G4Kctg8omiA3vYL1xtM+PG471Jwf1Woihb0QMdN8YOAaAExpQL7qtWIrYku6WIG47o31AAgjCQoaO/IXEw1nPeYtYX3OmoPRA0PXg/rc6opNvwxjOJ+9tbQMj3OWnvGn+gpD7ZHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718813977; c=relaxed/simple;
-	bh=3KvxBET2y5jKjuO29Ijw2Ch0iSqQIKcl603N9UJfkeE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=db4an2pnodf1H5B6ujj8gD1cFviAVEMOzWADEZxtho5UKZjcG7bCenTmjrAVwgGs9snrYyb8S8AEdK5W7iO2IGa6N2otdJs2xo7JzshGJ4RqFiZ/4b7KPifSBLZDk84mLeQT3dZHazBHeLe9dhQI22tJPcSr2tXvuXHJvVw1H4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=r5BoTtpl; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45JGJEr8039856;
-	Wed, 19 Jun 2024 11:19:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718813954;
-	bh=w9Hz1Zj6qVVo83JgmbjuRtdlhc6TYk982qtNVzNil4Q=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=r5BoTtplK2yVwF0yHj3i52Dz5n2BtYVppFRDtLCw9Iw9N8hVDr59Njc4c+NtGs3zt
-	 AAXioJqOXVF8ELDKoqMPSNlBGN9/hmH5hlSv+l/DYHAvgD/D8j4DCImPJBB5RTltpM
-	 RfPDanCaCOwwdvjbzsa2uPskN7182M8K8JRWxz/A=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45JGJENL007917
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 19 Jun 2024 11:19:14 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
- Jun 2024 11:19:14 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 19 Jun 2024 11:19:14 -0500
-Received: from [128.247.81.8] (ula0226330.dhcp.ti.com [128.247.81.8] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45JGJDBd057924;
-	Wed, 19 Jun 2024 11:19:13 -0500
-Message-ID: <c1b7a47e-cb05-4701-9766-d1fc13612f34@ti.com>
-Date: Wed, 19 Jun 2024 11:19:09 -0500
+	s=arc-20240116; t=1718814101; c=relaxed/simple;
+	bh=Wb0WD4M3XqUI1pCsWuGrRHCJWON7GNEsaIvp0+S9nzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lq7We+zQCSqrrg7XRsbWCs9R3Xfcadv6bakIaJAwpACZULha/ldQxUX6yfUkcHOAI4y7r615dtO7HrZBbNvF063Lz+xb+P0S7hpaWuO0H024A1rwOtZ6soSIno12oXfrbxpaldixW1VCM857jAAbyq7gXTJhA1PHROaG2yrhBjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fpD+10nz; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A489040E01F9;
+	Wed, 19 Jun 2024 16:21:37 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id mHJGS0hdo0kH; Wed, 19 Jun 2024 16:21:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718814094; bh=5TwwB1IhKj1dFD3SKZQGcZT1x75ai8seaUTmduDWBgI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fpD+10nzmCt8DRNk1h+i/P0lMVaLn/BxftAwuq6bfxkaniOR/hR3TeiSKZVKBY5nc
+	 Y83Gv5dgd1xVLSJwKOzHBsKIyvZ+Y2cnQ2GhowjY3MDfFyNJYw8HDjARSu+1ducGml
+	 Ku6Di/SWXveARAnwV2fgX69CCd0ehG31CaNuczb3dALPSuAKbwi5N+iFSHW7n4J87V
+	 4WOTameOtg1Z8uyWKSI3dDDbadoXAYLx5wcUZf9qJaByHSx7MyzJ2eS7cUeurNjTEV
+	 DPbOtCfNb2f4AO3dXmIkHP/GdVVHStJCMC+lL/rWrSw+oVr+LAlhpJ1AYssQnP+ou+
+	 s6cFTi4TZwORPzY4nWCocuE7A1A9e3ouPIQWRAIKYaLT1cC81mQE/xAYqcfnTkovc+
+	 zU8a9c/mwDN7YKJ1zog2fbxez7Krx/04a0O7W+WHqMN+b5IwNz0tSe4p+WSREMvpo3
+	 lRn+dT49PGLJKXx9W1tmiw+5vONECcz/hg8vpRiYENRjHJ9gGHgNzHzywDmC3DYtfF
+	 vOXdH/IPlPOwb1SRe4y9YbtBWZHYAx8p7YcFoDyTRXJARCJYhQQSumbvaSdlVMaK3F
+	 2kEn7bFcNSTTMQeZBDbtkyl8A4ZEeBjYjgy7VaD31vkuYr2cxEONBGtk7L04hXKfML
+	 /RgMI/77oiS6YAZpgBdCLvpE=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7610240E01A5;
+	Wed, 19 Jun 2024 16:21:29 +0000 (UTC)
+Date: Wed, 19 Jun 2024 18:21:24 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: linux-tip-commits@vger.kernel.org,
+	Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [tip: x86/urgent] x86/resctrl: Don't try to free nonexistent
+ RMIDs
+Message-ID: <20240619162124.GFZnMFhPW3wo2Avezo@fat_crate.local>
+References: <20240618140152.83154-1-Dave.Martin@arm.com>
+ <171879092443.10875.1695191697085701044.tip-bot2@tip-bot2>
+ <ZnLUVtZ3oaFjcUj9@e133380.arm.com>
+ <20240619134522.GCZnLg8pgJq9MPHS8M@fat_crate.local>
+ <ZnMBN487xiPOfpRp@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: pinctrl: pinctrl-single: Define a max count
- for "pinctrl-single,gpio-range"
-To: Nishanth Menon <nm@ti.com>, "Rob Herring (Arm)" <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
-        Linus
- Walleij <linus.walleij@linaro.org>,
-        Tony Lindgren <tony@atomide.com>
-References: <20240618165102.2380159-1-nm@ti.com>
- <171873566448.3500109.16734660300499772836.robh@kernel.org>
- <20240618185705.5fwevm7drphgvwl2@dilation>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240618185705.5fwevm7drphgvwl2@dilation>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZnMBN487xiPOfpRp@e133380.arm.com>
 
-On 6/18/24 1:57 PM, Nishanth Menon wrote:
-> On 12:34-20240618, Rob Herring wrote:
->>
->> On Tue, 18 Jun 2024 11:51:02 -0500, Nishanth Menon wrote:
->>> "pinctrl-single,gpio-range" allows us to define a dis-contiguous
->>> range of pinctrl registers that can have different mux settings for
->>> GPIO mode of operation. However, the maxItems seem to be set to 1 in
->>> processed schema for some reason. This is incorrect. For example:
->>> arch/arm64/boot/dts/hisilicon/hi6220.dtsi and others have more than
->>> one dis-contiguous range.
->>>
->>> Arbitrarily define a max 100 count to override the defaults.
->>>
->>> Signed-off-by: Nishanth Menon <nm@ti.com>
->>> ---
->>> I am not sure if I should call this RFC or not.. and if this is even the
->>> right solution.. I am on 2024.05 dt-schema for this check.
->>>
->>> I noticed this when adding gpio-ranges for am62p platform:
->>> https://gist.github.com/nmenon/7019cd2f24be47997640df5db60a7544
->>>
->>> It is possible that this is a bug in dt-schema, but I have'nt been able
->>> to track it down either.
->>>
->>> behavior seen is the following:
->>> pinctrl-single,gpio-range = <&mcu_pmx_range 0 21 7>;
->>> generates no warning
->>> However,
->>> pinctrl-single,gpio-range = <&mcu_pmx_range 0 21 7>, <&mcu_pmx_range 32 2 7>;
->>>
->>> generates "is too long" warning.
->>>
->>>
->>>   Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>
->> My bot found errors running 'make dt_binding_check' on your patch:
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml: properties:pinctrl-single,gpio-range: {'description': 'Optional list of pin base, nr pins & gpio function', '$ref': '/schemas/types.yaml#/definitions/phandle-array', 'maxItems': 100, 'items': [{'items': [{'description': 'phandle of a gpio-range node'}, {'description': 'pin base'}, {'description': 'number of pins'}, {'description': 'gpio function'}]}]} should not be valid under {'required': ['maxItems']}
->> 	hint: "maxItems" is not needed with an "items" list
->> 	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-> 
-> yes, I had expected the same, but processed schema indicates a maxItems
-> of 1 for reasons I am unable to make sense of.. will be great to have
-> some additional eyes:
-> 
+On Wed, Jun 19, 2024 at 05:03:03PM +0100, Dave Martin wrote:
+> It's still a guideline, no?  (Though I admit that common sense has to
+> apply and there are quite often good reasons to bust the limit in
+> code.)  But commit messages are not code, and don't suffer from
+> creeping indentation that eats up half of each line, so the rationale
+> is not really the same.
 
-As the warning says, setting the item count is not needed when the
-item list content (and therefore item count) is explicitly defined.
-The binding is saying there is a single item of 4 elements.
+Just do a "git log" on mainline and marvel at all the possible "formatting".
 
-"pinctrl-single,gpio-range"'s type is a single phandle-array[0]. What
-you want is an array of phandle-arrays. The length of each is usually
-set by the target of the phandle with its #*-cells property.
+The ship on being able to read commit messages with formatting that fits what
+you're expecting has long sailed.
 
-This binding is a bit of a mess, the phandle is always a pointer to
-a node with the cells length hard-coded to 3. This looks to have been done
-to allow the driver to use the function "of_parse_phandle_with_args" which
-needs a property name for to find the cell count. But that makes no sense
-as the count is always 3, the driver cannot accept any other value. The
-driver should have just looped of_get_property() 3 times but wanted to
-use the helper. So a silly driver mistake has turned into a binding issue.
+> Anyway, I was just mildly surprised, it's not a huge deal.
 
-We should drop the "pinctrl-single,gpio-range" from the binding and
-fix the driver.
+Yeah, we don't have a strict rule. And I don't think you can make everyone
+agree and then adhere to some rule for commit messages width. But hey... :-)
 
-Andrew
+> (Quoted: "Text-based e-mail should not exceed 80 columns per line of
+> text.  Consult the documentation of your e-mail client to enable proper
+> line breaks around column 78.".  No statement about commit messages,
+> and "should not exceed" is not the same as "should be wrapped to".
+> This document doesn't seem to consider how git formats text derived
+> from emails.)
 
-[0] https://patchwork.kernel.org/project/netdevbpf/patch/20220119015038.2433585-1-robh@kernel.org/
+See above.
 
-> https://gist.github.com/nmenon/7019cd2f24be47997640df5db60a7544#file-processed-schema-pinctrl
-> 
-> next-20240617 baseline
+I'm willing to consider a rule for commit messages if the majority agrees on
+some rule.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
