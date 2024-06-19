@@ -1,208 +1,156 @@
-Return-Path: <linux-kernel+bounces-221499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B806590F47B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:52:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84AA390F47C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A35F283C4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BB591F22649
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B3C155A32;
-	Wed, 19 Jun 2024 16:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E568415531B;
+	Wed, 19 Jun 2024 16:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ieg0eJR6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBYQH8nn"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1669137747;
-	Wed, 19 Jun 2024 16:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B738152792
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 16:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718815923; cv=none; b=SD9pksHw08QHiVvlhTdt36mlemtdLreS0E5NY9davrBW4QVnQ6Uim8dmEGqWrXA49WhMMGC6nDSM5/204Kat97HheCz9IgK+7jQUhGIiAg9z33IasBdz9LwHtok0LfK3tI11y6jj2QkpWG4rYdLOglz+aSTRqPb5HCiMQ/Nvmv0=
+	t=1718815972; cv=none; b=Tg6qARq3XToaQAoUI1CKIxeqsm7EPwlMYLdKlzmNrT8w5rOzNuF9qVg8OXFxoKgzfjePeLgGi3B8BzkY9G1Hoj/VCUnSaNqkAut1QaJiq9ASRmx30Pw5c135U2HPbURXYtPogi5Kkh7bxmAzxiZ1Zj4z6ABgEdKig5fVMFvAR/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718815923; c=relaxed/simple;
-	bh=Sj+WBa+DSBjxuBfeKQcqoGagHK49RQ07mDG02pVwJAg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BflphDAyBOJlJNV2vPFPwCd5Rvbtg/jxQGtE/YHMBpGQ7sekm33axpsOm+M2NMnZ2uepyZZ+ggI1cSrcRfX0evcfM/eLrwENNSIBrYmfgqKcpqc4XBosUGWHNNAdxx+R2iyx0QwqBYmbcFWukpMw3mPkpmDA70HppQCvCLpEluY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ieg0eJR6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JCd8Jt015762;
-	Wed, 19 Jun 2024 16:51:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ZtSpn6SyjwwlYrXD4q1FEaQe
-	iqwSqwW0keBRiBZEKiM=; b=Ieg0eJR65kS8XOhYgxf1jJBXXaLpiZGD5AQuoNf9
-	cHdEgWnSr2n78KTW4OeZmDmZVVgROeYtNYgUX8Kkcfgx6kZj+N2ldzmkqwSIKUdB
-	d7vrtXklWZLd4to2FX7QpzW8mvgEA10NyWOOSEvF50S4DkIneJAL3nEZtAPyT5JS
-	GdmPUCrdlISmcFv4AQehR4digo/NbO2S7VoYLF2vzVr2A6P53znkGHSzBD5tYYa5
-	tPTk4mta1bAmtkBp495ySuQnOvLe/nVez8HZy0po9wk6FkzshNqQDIsEsgxFIE0O
-	6YudOiU+zsFbiBqgt6jeEVgrvq3xKJ86Y+ZmCRjOc3pnDw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuja528hw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 16:51:51 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JGpone013566
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 16:51:50 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 19 Jun 2024 09:51:49 -0700
-Date: Wed, 19 Jun 2024 09:51:48 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Mukesh Ojha <quic_mojha@quicinc.com>
-CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        Komal Bajaj <quic_kbajaj@quicinc.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Srinivas Kandagatla
-	<srinivas.kandagatla@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH] arm64: defconfig: Enable secure QFPROM driver
-Message-ID: <ZnMMpKdsGURdgAaM@hu-bjorande-lv.qualcomm.com>
-References: <20240619105642.18947-1-quic_kbajaj@quicinc.com>
- <5582a2a0-c772-4573-9d55-2f963cb87df1@linaro.org>
- <ZnLKwqENxC4wzrUm@hu-mojha-hyd.qualcomm.com>
- <rx4kwsdzprnblczndf4t4ditxl64dztkzooqljpvz6eehuqqgy@rv745qkxmxmq>
- <ZnMJcuJ0DvDHaY4S@hu-mojha-hyd.qualcomm.com>
+	s=arc-20240116; t=1718815972; c=relaxed/simple;
+	bh=saUTJdbjvScd4ObFi1sGHb5ITwLyYc3iFqSEIUp/NHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kdUwfw0kqBo47HAtEg/mIG3uLHTkxNOCRUqJa+B0GxWicNmjoyGigHRtugvTTDyc1XjK5N6bnVZblbM+k0/odSUDeAMCFtpR39/DcKA2+5L61oxwiAw13vjbZlNQQafvRdhOH0bND8UDNzOYteHXSoJYQYM9hh24pSVsMTTzMPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBYQH8nn; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6f0c3d0792so814920466b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:52:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718815969; x=1719420769; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sg8iq1YbugOa9R8IB28lqgdNNm+1gAxq/vOOtZ57ZOo=;
+        b=SBYQH8nnjFPYYvZIsratRXkXpnSqrHWyxUKJCLzSTKaMom76I+jbKKHj2bXKGOk44u
+         5cWgFxYjnGg0oIFU/z63dP3DagEhkGfFjm/rAYE2h+FB1GW3Vrjo3MhhMRkoGWw6uTaR
+         yzZNMeo49vSCFzB+w0RqHJEA8TBKFoqgTf6XySH12ZACZ8YK4j4ZYcdydS1BzqlAPX7U
+         nsk3LRsb1HFejiOhm9pvhq+YJyy0byJONBdkM6EW3K88hV0nnbeDQBn4yqrym2mEkYfs
+         UgFOY2foLLT8L+JSuFTK4nnFdPFH7AZ18Cqavrq5RrQf8blnrdAVLm3JUX2sa7gYi1Ov
+         wi8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718815969; x=1719420769;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sg8iq1YbugOa9R8IB28lqgdNNm+1gAxq/vOOtZ57ZOo=;
+        b=CffFGpngxMza2emNO6id3+GkgBs+VbG5OcE95C/PahdyruFIVmoyaNTwN/Aj0UcB/b
+         MzqwZmRccHxCkir2txNBFNSiIMH/l6tF7s4R3OtmwslcYVMAjxt0EyvaHnGoYhqxkJt1
+         B4OSUxmSE2KbjD7Rba/hC/kC7DB0sqB7gEvIM0tvxj/o+l2TUCoJTJ9X0w3hwJuI93oN
+         g6bPJLd5CpObrax2frMpEveyKeEbHG3tj+1dAZGtqy5QkmtMFvZ3loycOuhB8IoYnuWA
+         VHszM9TafnNaj1JZ7NO9VNYi2ed3NtkTEiH1SeSMsuzKjktleJzJSm/6RrNlk0zEhDwF
+         /ohg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHD4hz1/Ow+odyBXWVR8X1SG/lGGRqxTW8HoazKbyMQzwqIqS/RNsiHNKTPHRM+zu6ZQ9YVOlZGKLdqEnKx8TMk0gPpJrZ4NDffl8X
+X-Gm-Message-State: AOJu0YxZuJyeKUhk0Ujv4SeD+4JyZ+U2u+tL/Cmcg2gZMAjhkBKqyr1S
+	FTE6D4s55VTxW+IZDPFDiC4drX2qOtv76t2fmlv5bjWnwn6dNZII
+X-Google-Smtp-Source: AGHT+IGLVc6V9yHvLlBwOaTLXlaBqSki7ZZ318wMOiFw3bNvll5UDbTnoOeAaDrDMurVE4s7u5vDlA==
+X-Received: by 2002:a17:907:808:b0:a6f:586b:6c1 with SMTP id a640c23a62f3a-a6fab7756d5mr237803466b.56.1718815968691;
+        Wed, 19 Jun 2024 09:52:48 -0700 (PDT)
+Received: from ?IPV6:2001:871:22c:6af9:d5cb:1d01:917c:4b48? ([2001:871:22c:6af9:d5cb:1d01:917c:4b48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f8f934346sm196331366b.94.2024.06.19.09.52.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 09:52:48 -0700 (PDT)
+Message-ID: <63f10133-311e-4c4c-8192-978b01b41247@gmail.com>
+Date: Wed, 19 Jun 2024 18:52:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZnMJcuJ0DvDHaY4S@hu-mojha-hyd.qualcomm.com>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: C4yrpiKk4IbeQd86rHYIvzacyxOj0FSz
-X-Proofpoint-GUID: C4yrpiKk4IbeQd86rHYIvzacyxOj0FSz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- adultscore=0 impostorscore=0 clxscore=1015 mlxscore=0 spamscore=0
- bulkscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190127
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux 6.10-rc1
+Content-Language: en-US
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Dave Airlie <airlied@gmail.com>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Rafael Wysocki <rafael@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ intel-gfx <intel-gfx@lists.freedesktop.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <CAHk-=wjQv_CSPzhjOMoOjGO3FmuHe5hzm6Ds69zZSFPa4PeuCA@mail.gmail.com>
+ <ZmrTZozoi0t/tuva@duo.ucw.cz>
+ <CAHk-=wjqHL7KjOWYBVKFewcKPWL7CJxddWfJnvL3AfOqfR8vMg@mail.gmail.com>
+ <ZmwHGviv/6J6FQLf@duo.ucw.cz>
+ <CAHk-=wigB-wVK+4=NuYJxoKLnoUXB52J5WU2hpKj2de6vGuY7g@mail.gmail.com>
+ <CAHk-=wjcdUUip96PnfC+iRjAwPHn3XKsgcohk1ad5VcckCFVKA@mail.gmail.com>
+ <ZnABbKrIzmmEoFEV@duo.ucw.cz> <ZnK2bmDFuwX8E5rY@duo.ucw.cz>
+From: Gerhard Stoiber <stoiber.gerhard@gmail.com>
+Autocrypt: addr=stoiber.gerhard@gmail.com; keydata=
+ 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
+In-Reply-To: <ZnK2bmDFuwX8E5rY@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 19, 2024 at 10:08:10PM +0530, Mukesh Ojha wrote:
-> On Wed, Jun 19, 2024 at 04:14:50PM +0300, Dmitry Baryshkov wrote:
-> > On Wed, Jun 19, 2024 at 05:40:42PM GMT, Mukesh Ojha wrote:
-> > > On Wed, Jun 19, 2024 at 01:08:48PM +0200, Krzysztof Kozlowski wrote:
-> > > > On 19/06/2024 12:56, Komal Bajaj wrote:
-> > > > > Enable the secure QFPROM driver which is used by QDU1000
-> > > > 
-> > > > Qualcomm QDU1000. You are changing kernel-wide defconfig, not some
-> > > > Qualcomm downstream stuff.
-> > > > 
-> > > > > platform for reading the secure qfprom region to get the
-> > > > > DDR channel configuration.
-> > > > > 
-> > > > > Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
-> > > > > ---
-> > > > >  arch/arm64/configs/defconfig | 1 +
-> > > > >  1 file changed, 1 insertion(+)
-> > > > > 
-> > > > > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> > > > > index 838b4466d6f6..c940437ae1b3 100644
-> > > > > --- a/arch/arm64/configs/defconfig
-> > > > > +++ b/arch/arm64/configs/defconfig
-> > > > > @@ -1575,6 +1575,7 @@ CONFIG_NVMEM_LAYERSCAPE_SFP=m
-> > > > >  CONFIG_NVMEM_MESON_EFUSE=m
-> > > > >  CONFIG_NVMEM_MTK_EFUSE=y
-> > > > >  CONFIG_NVMEM_QCOM_QFPROM=y
-> > > > > +CONFIG_NVMEM_QCOM_SEC_QFPROM=y
-> > > > 
-> > > > Module
-> > > 
-> > > Should not this be inline with what CONFIG_NVMEM_QCOM_QFPROM is having ?
-> > > Either both CONFIG_NVMEM_QCOM_QFPROM and CONFIG_NVMEM_QCOM_SEC_QFPROM
-> > > should be m or both y
-> > 
-> > Looking back in time, CONFIG_NVMEM_QCOM_QFPROM was enabled as built-in
-> > to get TSENS to work (which makes sense, we don't want the CPUs to
-> > burn). What the actual users for NVMEM_QCOM_SEC_QFPROM?
-> 
-> 
-> CONFIG_NVMEM_QCOM_QFPROM and CONFIG_NVMEM_QCOM_SEC_QFPROM are similar driver
-> for same device and only difference is register region lies in secure space
-> for the latter;
-> 
-> Currently, LLCC is the only client for CONFIG_NVMEM_QCOM_SEC_QFPROM, however
-> if someday if the region lies in non-secure space in that case, client
-> started depending on CONFIG_NVMEM_QCOM_QFPROM.
-> 
-> It reminds me, we have not yet put depends on for LLCC on NVMEM_QCOM_SEC_QFPROM
-> doing which is resulting in recursive dependency[1].
-> 
+Hello!
+>                              
+> Ideas welcome, especially some way to see what graphics is doing.
 
-Kconfig "depends on" describes build time dependencies and LLCC doesn't
-depend on NVMEM_QCOM_SEC_QFPROM.
+I'm unsure about the distro you are using but try package intel_gpu_top. 
+It displays irqs/s and a bunch of other utilization statistics.
 
-It does depend on nvmem_cell_read_u8() being defined, but as
-CONFIG_NVMEM is bool there will either be a proper implementation (=y)
-or a static inline stub (=n) of this function, so we don't need to
-describe this dependency.
 
-> It looks we need to select NVMEM_QCOM_SEC_QFPROM from QCOM_LLCC config and that
-> may not need config enablement here.
-> 
+Hope this helps.
 
-This is a runtime dependency, created through the nvmem framework by the
-relationship defined in DeviceTree. We don't describe those.
+--
+BR,
+Gerhard
 
-Regards,
-Bjorn
-
-> [1]
-> fs/sysfs/Kconfig:2:error: recursive dependency detected!
-> fs/sysfs/Kconfig:2:     symbol SYSFS is selected by CONFIGFS_FS
-> fs/configfs/Kconfig:2:  symbol CONFIGFS_FS is selected by GPIO_SIM
-> drivers/gpio/Kconfig:1884:      symbol GPIO_SIM depends on GPIOLIB
-> drivers/gpio/Kconfig:6: symbol GPIOLIB is selected by I2C_MUX_LTC4306
-> drivers/i2c/muxes/Kconfig:47:   symbol I2C_MUX_LTC4306 depends on I2C_MUX
-> drivers/i2c/Kconfig:62: symbol I2C_MUX is selected by DRM_SII902X
-> drivers/gpu/drm/bridge/Kconfig:270:     symbol DRM_SII902X depends on DRM_BRIDGE
-> drivers/gpu/drm/bridge/Kconfig:2:       symbol DRM_BRIDGE is selected by DRM_MSM
-> drivers/gpu/drm/msm/Kconfig:3:  symbol DRM_MSM depends on QCOM_LLCC
-> drivers/soc/qcom/Kconfig:47:    symbol QCOM_LLCC depends on NVMEM_QCOM_SEC_QFPROM
-> drivers/nvmem/Kconfig:230:      symbol NVMEM_QCOM_SEC_QFPROM depends on NVMEM
-> drivers/nvmem/Kconfig:2:        symbol NVMEM is selected by EEPROM_AT24
-> drivers/misc/eeprom/Kconfig:4:  symbol EEPROM_AT24 depends on SYSFS
-> For a resolution refer to Documentation/kbuild/kconfig-language.rst
-> 
-> -Mukesh
-> 
-> > 
-> > > 
-> > > -Mukesh
-> > > > 
-> > > > >  CONFIG_NVMEM_RMEM=m
-> > > > >  CONFIG_NVMEM_ROCKCHIP_EFUSE=y
-> > > > >  CONFIG_NVMEM_ROCKCHIP_OTP=y
-> > > > > --
-> > > > > 2.42.0
-> > > > > 
-> > > > 
-> > > > Best regards,
-> > > > Krzysztof
-> > > > 
-> > 
-> > -- 
-> > With best wishes
-> > Dmitry
 
