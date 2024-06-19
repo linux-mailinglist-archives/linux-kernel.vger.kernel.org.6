@@ -1,86 +1,129 @@
-Return-Path: <linux-kernel+bounces-221078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A80C90EB88
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:58:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6735D90EBCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E347F1F2157C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:58:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3180B26296
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A79A1494A6;
-	Wed, 19 Jun 2024 12:58:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFC514900C;
+	Wed, 19 Jun 2024 13:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="lbv/A1p4"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3754A14885B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D03143C4A;
+	Wed, 19 Jun 2024 13:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718801885; cv=none; b=EpghpWYD28kc/TY4/grcE6eZ7wlZbrGT9By+8cfTZSJ1E0MiCbKn3u0bqqdSpHc9tKq1iRJkC/N2ueZWKUX8iuQ0WhSze75utxqTt4D8gW3fYho2PcGULBS/m9rn/G9OcdFpelbgOqeZYxqGIfmNXUKtu0JMuTf64hsclAHpJqw=
+	t=1718802037; cv=none; b=jQw9NKdHfCLFe8EJ2w1xIToWNBiTaI9heSEBkY3HbZjbzrvzIXfL+tAOq0tk6fYl52gYBplhfUxaYvDDJXJSZ7NdqU65dfxbPSj6uKb5RQpKDbsM2BOW8NRKn0EJcD8Ij975O6k3KxOhwihuDNwG1dhldsZTs/7gn/RNBvBzpLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718801885; c=relaxed/simple;
-	bh=m8aBRy4mN7j0EJLvGv+Yo8UhHdWcXxl9dBdQ+FIgQW8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qXFHMOW93+B/iHTRtB2fk7pGWc+SnIIYMEu+c5rThjM3Imlpj3Eg4O3v/d/eqzUS/mf8yohymntqM+Swl7mVuune7IXczcC7hfKPZP70pS4/Lg5iMwRBW/4Y5xiDeLsQ3jMtnNRbXgnZBsxVtq0qtXU95gNyGUQT8uFzeReT5jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-376210a881dso6662825ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 05:58:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718801883; x=1719406683;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n8jzsiNVNmCEzQlIhhbY2JRnB5eogtT9dfAbl4/eOdI=;
-        b=WX2hiqt6ZUe1N/gFwc81uB1s+JYhXj+e9eCBRW4bk27LjRpT7XNHoMOewQg3sEe04c
-         n6omNZpcyLEB5ZtOt2w3GhZSJhxjVzdfHovmKp9kS/YL2HaeAvGR7VhXU7SbMDoUjtSr
-         LSycv1TV6X5cTOgXpmY+8I413h7WmJ92tY2j32nrv0Jl9hxyWY++JsWmqNVAAd9syDLF
-         mzyGLCG/TIMwQ0u+FrG4loP1WpNmJ2U68bz6CpnbDm7AWLRzzF8GnFiIhitV85mYzVGd
-         3+j08IVDCPaCNxVALLekfacoAWpb/yU07XHYw7PNiGzIkymJVV9bVIIlyGyh37kuJvuq
-         KmXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRNY7NUWCosUZxpfGWhqS3z1ySXZjU8/i2ulylQKj88sA75ehi3f6bX8HKfgYNca/0rbOcol+7ecm3zf7g6tKoDpuDqj11BGFZh/XJ
-X-Gm-Message-State: AOJu0YwRwjpFCo2dGe32r4XbPLHF33uGOA+53SRPPbwYaaioPCb6HCEE
-	Ml3TFtlaPimv7g0NYKyS82R/MWUptwqYM22eNst3ogif9Urq51knHgJy9tK+YU1iLfZwI52mRLi
-	XGz2Yr7CfpEOTs2RZv94TbQjQdbOFPCcYb1fPR7L8zHcv01clNUBv0F4=
-X-Google-Smtp-Source: AGHT+IHTQIMxF+lQgOg1yHEDktEZ/PM05w6V64nO7cHwtlcmnV6MAhPR7wP5+8W6eggyZfvXdsxU4hOAyMM61IJh6uSVuwle4fD5
+	s=arc-20240116; t=1718802037; c=relaxed/simple;
+	bh=wGsHVpUhx8u7UWvfdCV5T02rdiVagUfMDEdPxQUkujs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sN54QXM2X/YcqUb1VJ8MX2Q3jbS7tupKmxPHJTNvmNBmaIRu5uC25duqpkERD1M5Vm5w/uEHNuUbMT2Xp9alHG13xIOPD9hghUEKXMY4zn7HfrMKrJy6meLY8hT0c4XzacAS70V8OcnvqUuURR8vwlrj9LNHeJ8lr9poBz3klX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=lbv/A1p4; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JCUgjG015592;
+	Wed, 19 Jun 2024 14:59:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=ZTHr4jtqthDuPTM+Ut5COe
+	zygMaELP2cVjzMdgCvEqw=; b=lbv/A1p4sqIydRgO0HzEE7ugtTZXTIS2Nv8L2c
+	yt/EXiVZJrGOLSkTNwbDGqR72/JyJP4q6CWjwXDa9tWPwIwY3kmpnAng1a5u8By4
+	Qhxed0NBzF0vmO5LmxTxgGwuqrdOjX7cGNddifw4O3Jwadtl4pi6J23rpVIt5U9M
+	Ef9wBiZST9ex9Lyd/30mxtesDamO7fSS06xpfVUpCQR0w+V/+AQ9uRBGfrcUCycm
+	DuZE2duujj8R3eZaT+UipMrhZlZNYhAxjpALI6zt1OFJcxNGAfSpDVhMGH1skgF7
+	pcXAuGxUjIbqcgG6k6uSMBhXBaFgt8i8x6bATtwmoTI+OUOg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yuj9s39nw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 14:59:50 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9AA5140044;
+	Wed, 19 Jun 2024 14:59:44 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E1C31218626;
+	Wed, 19 Jun 2024 14:58:28 +0200 (CEST)
+Received: from localhost (10.48.86.164) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 19 Jun
+ 2024 14:58:28 +0200
+From: Christophe Roullier <christophe.roullier@foss.st.com>
+To: "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Christophe Roullier
+	<christophe.roullier@foss.st.com>,
+        Marek Vasut <marex@denx.de>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/3] Series DTs to deliver Ethernet for STM32MP25
+Date: Wed, 19 Jun 2024 14:58:12 +0200
+Message-ID: <20240619125815.358207-1-christophe.roullier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1383:b0:375:8f93:bbb1 with SMTP id
- e9e14a558f8ab-3761d789e2amr1304505ab.5.1718801883332; Wed, 19 Jun 2024
- 05:58:03 -0700 (PDT)
-Date: Wed, 19 Jun 2024 05:58:03 -0700
-In-Reply-To: <tencent_E56D8C9494EB5EEE52CDB8797A6E742CA10A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b2148d061b3dbf55@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: invalid-free in hci_req_sync_complete
-From: syzbot <syzbot+35ebc808442df6420eae@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
 
-Hello,
+STM32MP25 is STM32 SOC with 2 GMACs instances.
+    GMAC IP version is SNPS 5.3x.
+    GMAC IP configure with 2 RX and 4 TX queue.
+    DMA HW capability register supported
+    RX Checksum Offload Engine supported
+    TX Checksum insertion supported
+    Wake-Up On Lan supported
+    TSO supported
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Delivered Ethernet2 instance for board EV1 which is connected 
+to Realtek PHY in RGMII mode.
+Ethernet1 instance will be delivered in next step.
 
-Reported-and-tested-by: syzbot+35ebc808442df6420eae@syzkaller.appspotmail.com
+V2: - Remark from Marek (sort DT)
 
-Tested on:
+Christophe Roullier (3):
+  arm64: dts: st: add ethernet1 and ethernet2 support on stm32mp25
+  arm64: dts: st: add eth2 pinctrl entries in stm32mp25-pinctrl.dtsi
+  arm64: dts: st: enable Ethernet2 on stm32mp257f-ev1 board
 
-commit:         2ccbdf43 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b60a61980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8786f381e62940f
-dashboard link: https://syzkaller.appspot.com/bug?extid=35ebc808442df6420eae
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11174ada980000
+ arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi | 59 +++++++++++++++++++
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        | 49 +++++++++++++++
+ arch/arm64/boot/dts/st/stm32mp253.dtsi        | 51 ++++++++++++++++
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    | 24 ++++++++
+ 4 files changed, 183 insertions(+)
 
-Note: testing is done by a robot and is best-effort only.
+
+base-commit: 382d1741b5b2feffef7942dd074206372afe1a96
+-- 
+2.25.1
+
 
