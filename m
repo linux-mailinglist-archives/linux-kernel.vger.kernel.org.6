@@ -1,148 +1,158 @@
-Return-Path: <linux-kernel+bounces-220555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36B390E39A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:37:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E3190E3A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FF5E281382
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:37:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5001C23D07
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285F46F306;
-	Wed, 19 Jun 2024 06:37:21 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F886F2E6;
+	Wed, 19 Jun 2024 06:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cLYq8ZZa"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12619568A
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B256F2E2
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718779040; cv=none; b=TkZvDkUr1LGy7vLoqquSjeDRkNDRSO/+RjqhHkCi0O1lGP6ec0yj1lqWWptDjb3l+l3Ug/8EOBwPAB4ZsSoAOXjFYzgmXfVO+S/IYpS0hMZR9K9GeqsPC3x8hdWVum7OXHJQwU9XIXk0rBsESUxTWMPuxGDC05uIbd9l8JLCeGk=
+	t=1718779244; cv=none; b=rfgBhEGWAMyjVdEx6yNRrSVECV5ZjjrCN5SbFNewlhyLFlzC0b9Yz+lCNIXMtB2O/Ow+Z1hhFNssaG7Gzfw5Occa4jTIXy+u8mgIbjKc1nS/rrjqkJnBqIrZvWi1mzHKJc+LAhkcBRN0q1b1UU39PcksbOoIeYsAkE32qNwCy+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718779040; c=relaxed/simple;
-	bh=0z64VV3tdxabQq7QXHNJZwW0mSURlemtbgmNNUvtcqc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PMCeG+STE2SkJKR1UGoYSu4qQ4qtNkw5gxMwARF80rCEtb07e+9lp3jajEIs4dvQgtAf/bOfI9YAK4cG6gsHDWvDFMU+jeAtU7UKDaAHnnNksCslM5mSIkbzu8/IwkRClcAoIlhckPzzU5A1wX6yD2Bdu39aDxilWBfaJR+6n4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-37596e877e9so89654505ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:37:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718779038; x=1719383838;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lKRR7Pu4ur95ahqOkWUJajla0ZS5PHik9EHx/Q1niso=;
-        b=YjX0MfdqIqVrfp4B68ZoenLUhNRq6TI+9dlS5mtkhj8v2pK1D4oFJzqzfSzO8zURTx
-         ufPcb6ePhKLzlEK3EeZOrg6jCyjX7AlpdLubmcfREd6ETZpGmQGJWqZWcjsTX6RdHl2P
-         nkGtd/eNYXB6Gv/gleqchVWUKQsCKKqqqFrzNCZ5HlxlsntVQqAGGbrIEXRU9BxmOtqr
-         UhN4LwUSGyLpQ9hkqiOOveq0/ZLiXCseF8TMRLM8fwyA8iCP/kp11SWzr7qnNcPsF0NS
-         R2xUG6uUpsKrmkg3C1hnC/d6N6Ki2xjKS9dK/ZPsN1n/v6Lm+P86rOqq0AwqqWoe47AG
-         72DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX01RqETthdTDwUVK9RmkeMkk4ChrVSPhprs+YZN7BN1igaG+IbcG5MU5pFE0tCa8oEtMGzOSUHgRuiC9B8oTHPtUVBi7UW51dyn9HS
-X-Gm-Message-State: AOJu0Yy9JB9DTHIpVjW011G/XwogKw8gvlvg1oBJ/8bfnOwAAN04CNlP
-	8+aURbMxW4ZLOuVaqUepxCZfc3sTjJCIHriHhz9dzIhygqQRMON1FBHnryyIvFmVdkLABTR6PnQ
-	G63NAesZcB894CsTkJkvC4lhK2aIijUmc7ouacpuuYE8NRAVDLho2Xx8=
-X-Google-Smtp-Source: AGHT+IFVjj07L1AdLCCar8TpedvGivk7nJb+5deA/qD8EzAkCU8m/tTFpv4F88j0t+6hmFG8svdjcnlN9922Vb353k5um2B5lnhh
+	s=arc-20240116; t=1718779244; c=relaxed/simple;
+	bh=STW330cWe99Pche2sdfTP7cbUeC0jxLPrB02JUX1kCQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=ex7RZVsjeobcfDdVjb5b9wiuUaBq4eEoYMaH1z+4PFhZWeg3c17R4Jq5v+LIeNxch6veuLXS+TkAA2C7hfxg2sdHJYUZDDaArmBJP2wNOJzu0qPUzd7NDp/MCTjXiXfDWo04Ib6nyeQSZC13WEpAFZX2F0uSTaHcQWSci3qVJxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cLYq8ZZa; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240619064034epoutp023df654604f252a6ca92f4d84b2f3dfd3~aVJtsNw-w2571925719epoutp02-
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:40:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240619064034epoutp023df654604f252a6ca92f4d84b2f3dfd3~aVJtsNw-w2571925719epoutp02-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1718779234;
+	bh=Wxu+W8g/EmXfv0ETPHjj9NJMUXWZg033DcwmRKYmwGI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cLYq8ZZa18XWKmw2INKMxW67YflQ/vSrbETavFCyMrJHv7QAqZvl7DRaKYbSctLxW
+	 U2+1aeIqVfSFLDlM7oRANLLTueMcUDh2+/YPCLl1vhKyHZJdID1r0FABE5yDdUDYgm
+	 JYas2dFhinC5lK/1A4km9dHKx8pyVfVL1o8PqZJk=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240619064034epcas5p44be878f430423954023f921f7310a575~aVJtdSLjC0248402484epcas5p4Y;
+	Wed, 19 Jun 2024 06:40:34 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4W3vBl0jKNz4x9Q1; Wed, 19 Jun
+	2024 06:40:31 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2D.B0.10047.E5D72766; Wed, 19 Jun 2024 15:40:30 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240619063854epcas5p2d20a854d5e73a5f68f899dad45900cc0~aVIQiw8nc1860218602epcas5p2C;
+	Wed, 19 Jun 2024 06:38:54 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240619063854epsmtrp22949e38c1c7697d118ce69eece13fde0~aVIQiEFKd0989509895epsmtrp2u;
+	Wed, 19 Jun 2024 06:38:54 +0000 (GMT)
+X-AuditID: b6c32a49-1d5fa7000000273f-30-66727d5e6876
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	25.84.18846.EFC72766; Wed, 19 Jun 2024 15:38:54 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240619063853epsmtip1e5e76735e46653f78953f3af3adea342~aVIPvWxc10048100481epsmtip1a;
+	Wed, 19 Jun 2024 06:38:53 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk
+Cc: hch@infradead.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH] block: Avoid polling configuration errors
+Date: Wed, 19 Jun 2024 14:38:47 +0800
+Message-Id: <20240619063847.588031-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <693af28d-5e25-432b-ab1b-37eb9026c7cd@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20ed:b0:375:e04f:55d0 with SMTP id
- e9e14a558f8ab-3761d6665aemr1055475ab.2.1718779038231; Tue, 18 Jun 2024
- 23:37:18 -0700 (PDT)
-Date: Tue, 18 Jun 2024 23:37:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000057e4c061b386e23@google.com>
-Subject: [syzbot] [rdma?] WARNING in ib_uverbs_release_dev
-From: syzbot <syzbot+19ec7595e3aa1a45f623@syzkaller.appspotmail.com>
-To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgk+LIzCtJLcpLzFFi42LZdlhTXTeutijNYNoqK4vVd/vZLE5PWMRk
+	8av7LqPF3lvaFpd3zWGzODvhA6sDm8fmFVoel8+WevRtWcXo8XmTXABLVLZNRmpiSmqRQmpe
+	cn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtBmJYWyxJxSoFBAYnGxkr6d
+	TVF+aUmqQkZ+cYmtUmpBSk6BSYFecWJucWleul5eaomVoYGBkSlQYUJ2xp+LjxgL+ngqHvxs
+	Zm1gfMjZxcjJISFgIvF+23nGLkYuDiGB3YwSexZNZQFJCAl8YpSY99ACzr58NQem4camZ2wQ
+	DTsZJZrWtDFDOD8YJb5M2soGUsUmoCSxf8sHRhBbREBYYn9HK9hUZoEgifau9WA1wgJOEi/m
+	HGcCsVkEVCWmPuxjBbF5Bawkrm48zA6xTV7iZtd+oAUcHJwCthJ/jhVClAhKnJz5BGqkvETz
+	1tnMEOXn2CWWH3KHsF0kem8uZ4GwhSVeHd8CNVJK4vO7vWwQdr7E5O/rGSHsGol1m99B1VtL
+	/LuyhwVkLbOApsT6XfoQYVmJqafWMUGs5ZPo/f2ECSLOK7FjHoytJLHkyAqokRISvycsYoWw
+	PSSevX0HDegJjBLn99xnm8CoMAvJO7OQvDMLYfUCRuZVjJKpBcW56anFpgWGeanl8ChOzs/d
+	xAhOilqeOxjvPvigd4iRiYPxEKMEB7OSCK/TtLw0Id6UxMqq1KL8+KLSnNTiQ4ymwOCeyCwl
+	mpwPTMt5JfGGJpYGJmZmZiaWxmaGSuK8r1vnpggJpCeWpGanphakFsH0MXFwSjUwpdz7Nn9W
+	1p3nWsyzqgO7X6XUXJD83xOUmqm5f+pOjvWFXDJHJmfUajU85u/LlNfzlRYsO3jse+8MyUT7
+	wvzYo/sFC24839XO9G/VnJg4a3f5C1nbj3Iv8bKNbTnhfPpfm6v+teYnT7csc5ToEwrPffcw
+	45FF4P6lceIMrJmvo5may04+zP7yPmL3xRQ5N4adX+T5FJfzrA58yDzp9PM1TdsnyK1TWd98
+	+9gemV2CyzM2flwRobNjivLyIzrrXFeLz2ve/lPG8K/O4fM1Cz2Yv4V9upvSp9E94QtPwEPl
+	B2cPucX/d1iqr/nh9A6+f+b8c5znyUQdM1gW9HTu9SP+WfE272OcT4hPnX9IeQ+TvhJLcUai
+	oRZzUXEiAIoxMssTBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsWy7bCSnO6/mqI0g/5GbovVd/vZLE5PWMRk
+	8av7LqPF3lvaFpd3zWGzODvhA6sDm8fmFVoel8+WevRtWcXo8XmTXABLFJdNSmpOZllqkb5d
+	AlfGn4uPGAv6eCoe/GxmbWB8yNnFyMkhIWAicWPTM7YuRi4OIYHtjBKL/01ihkhISOx49IcV
+	whaWWPnvOTtE0TdGiY19c8CK2ASUJPZv+cAIYosAFe3vaGUBsZkFQiQmn33OBGILCzhJvJhz
+	HMxmEVCVmPqwD2wor4CVxNWNh9khFshL3OzaDzSTg4NTwFbiz7FCkLCQgI3EnOapzBDlghIn
+	Zz6BGi8v0bx1NvMERoFZSFKzkKQWMDKtYhRNLSjOTc9NLjDUK07MLS7NS9dLzs/dxAgOWa2g
+	HYzL1v/VO8TIxMF4iFGCg1lJhNdpWl6aEG9KYmVValF+fFFpTmrxIUZpDhYlcV7lnM4UIYH0
+	xJLU7NTUgtQimCwTB6dUA9Ne3n3nHaODzm6Om7b+H8OLEydeG+1g0j4+/fq5B8cCd6yWn3bO
+	TNXFsuB794tD1cJme4L5qmYwRk8RlJ7zW4PN3rzBQttoYcbH+PdNaUfCHhyZf9pxz8pzmn+X
+	ximeL+0secJ/Iurhmb8bLaQrvgvvq4luWB371aQ35WkoU/ebj8cOv/zg6BC0o2SdppHRde9s
+	PfuJ+43rGJd2tnkcOby1yFvhmHnIrWX2dQ4ff51S8fvIt6X451ruKo3ozP5nJf9d65vvfCtf
+	+txG4cfpXjmh6H3JIfsmbCtpn/itodbvWfLqT0pn/hlkLzt0bK3C0UOXFWMsBfy+XM2a0NHc
+	IFw6u0Ig0cEk7nnnxCkHbM2VWIozEg21mIuKEwHn3ZK7yAIAAA==
+X-CMS-MailID: 20240619063854epcas5p2d20a854d5e73a5f68f899dad45900cc0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240619063854epcas5p2d20a854d5e73a5f68f899dad45900cc0
+References: <693af28d-5e25-432b-ab1b-37eb9026c7cd@kernel.dk>
+	<CGME20240619063854epcas5p2d20a854d5e73a5f68f899dad45900cc0@epcas5p2.samsung.com>
 
-Hello,
+On 6/16/24 2:39 AM,, Jens Axboe wrote:
+>On 6/13/24 2:07 AM, Christoph Hellwig wrote:
+>>> We happily allow polled IO for async polled IO, even if the destination
+>>> queue isn't polled (or it doesn't exist). This is different than the old
+>>> sync polled support.
+>> 
+>> Yes, and for that to work we can't start returning -EOPNOTSUPP as in
+>> this patch, as BLK_QC_T_NONE an be cleared for all kinds of reasons.
+>> 
+>> So if we want some kind of error handling that people don't even
+>> bother to poll for devices where it is not supported we need that
+>> check much earlier (probably in io_uring).
+>
+>There's just no way we can do that, who knows if you'll run into a
+>polled queue or not further down the stack.
+>
+>IMHO there's nothing wrong with the current code. If you do stupid
+>things (do polled IO without having polled queues), then you get to
+>collect stupid prizes (potentially excessive CPU usage).
 
-syzbot found the following issue on:
+I think the problem is that when the user makes this incorrect configuration,
+but doesn't have any error feedback, user is unware and easy to get some wrong
+performance information. So I hope to add some feedback for the user to help
+them more easily modify the configuration.
 
-HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=179e93fe980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
-dashboard link: https://syzkaller.appspot.com/bug?extid=19ec7595e3aa1a45f623
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/27e64d7472ce/disk-2ccbdf43.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e1c494bb5c9c/vmlinux-2ccbdf43.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/752498985a5e/bzImage-2ccbdf43.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+19ec7595e3aa1a45f623@syzkaller.appspotmail.com
-
-smc: removing ib device syz0
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 51 at kernel/rcu/srcutree.c:653 cleanup_srcu_struct+0x404/0x4d0 kernel/rcu/srcutree.c:653
-Modules linked in:
-CPU: 0 PID: 51 Comm: kworker/u8:3 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Workqueue: ib-unreg-wq ib_unregister_work
-RIP: 0010:cleanup_srcu_struct+0x404/0x4d0 kernel/rcu/srcutree.c:653
-Code: 12 80 00 48 c7 03 00 00 00 00 48 83 c4 48 5b 41 5c 41 5d 41 5e 41 5f 5d e9 14 67 34 0a 90 0f 0b 90 eb e7 90 0f 0b 90 eb e1 90 <0f> 0b 90 eb db 90 0f 0b 90 eb 0a 90 0f 0b 90 eb 04 90 0f 0b 90 48
-RSP: 0018:ffffc90000bb7970 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: ffff88802a1bc980 RCX: 0000000000000002
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffe8ffffd74c58
-RBP: 0000000000000001 R08: ffffe8ffffd74c5f R09: 1ffffd1ffffae98b
-R10: dffffc0000000000 R11: fffff91ffffae98c R12: dffffc0000000000
-R13: ffff88802285b5f0 R14: ffff88802285b000 R15: ffff88802a1bc800
-FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa3852cae10 CR3: 000000000e132000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- ib_uverbs_release_dev+0x4e/0x80 drivers/infiniband/core/uverbs_main.c:136
- device_release+0x9b/0x1c0
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x231/0x480 lib/kobject.c:737
- remove_client_context+0xb9/0x1e0 drivers/infiniband/core/device.c:776
- disable_device+0x13b/0x360 drivers/infiniband/core/device.c:1282
- __ib_unregister_device+0x6d/0x170 drivers/infiniband/core/device.c:1475
- ib_unregister_work+0x19/0x30 drivers/infiniband/core/device.c:1586
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+I got your point, therefore, I'm considering whether it would be more
+resonable to not return -EOPNOTSUPP directly to stop the operation.
+Instead, we could detect this information and provide a prompt (like 
+warining?), allowing user to be aware without disrupting the original
+flow. Do you think this approach is more reasonable?
 
