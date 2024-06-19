@@ -1,142 +1,159 @@
-Return-Path: <linux-kernel+bounces-221517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0BC90F4CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:08:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5574A90F4DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBCBDB21AB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:08:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524EE1C21C9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34829155756;
-	Wed, 19 Jun 2024 17:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C669F155758;
+	Wed, 19 Jun 2024 17:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hop7xpd1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5jtBk9C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642F413C676;
-	Wed, 19 Jun 2024 17:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2211C3E;
+	Wed, 19 Jun 2024 17:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718816905; cv=none; b=VVG3p5gJxizz6+8Hia8ZpvE81+CZ+TYTZbYW5WEegk3Lh8i9Yr96IB1amL4dOIK561ADIpHLvzmMAVxNHUEFITo6S8SDz0qfTulQoy/E3fm4SVN4L5nJYcXjS1r6lgIVD5HgnRVpR0pdYQ2sMtDeZ6fzUxVztlxAVAZGExou8fs=
+	t=1718816987; cv=none; b=qXvthoJQ47aOiYhxb8aFW0Up/M0dBNo3y7L23sDm3UUamj3ZzBfOt1IXdYBNq30Wl8FIZ8Um6tGn+1HFwZF4aDZooJZZMie5le5xKjQBswXPKZ3k/SdEcYxX2NREOkAiRw+9NFdIFnok+06egx0an/We3XW6fKpzu1AqtJudSsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718816905; c=relaxed/simple;
-	bh=SWZ7+eHuaI2SFfojEvOKrp9dm7TvoJ+GzJxGVb24x40=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZVHw3A1UxcasiUhvOPiblCpDFx/ht/0O5OLWhCz6q7GAEkQPQ1/YgTrWxvJ/N3wuHGMZiaVxq3NieB76JI/iIJVtmiQY9iNkyEsQ1YCDH4MEq809oxu2v79ynLp4Q915QEM6F48qiewXSRBk2mI+i2pzBPysX6SqWDptX38XNEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hop7xpd1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83585C2BBFC;
-	Wed, 19 Jun 2024 17:08:22 +0000 (UTC)
+	s=arc-20240116; t=1718816987; c=relaxed/simple;
+	bh=9CMNUv/EbEPQ8no+tR5gxROXmRGYdqZRxr+kp5I4E3U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ej/x2oeZuQg4OMafGN2XLCr12kxevyPn97pnwmfvnTdEPtfYtsIN4chNWqlhn2mB7LW1L4kjXWnxjMBhYAvUOXaX4lmgL4Y7co7HpnjdbsCRRSz7jmMhscqt4PMqp9g8NtdXXp3JnggJ+yKJgLImuQ6NBkAp9tFZKGLGhlh8rsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5jtBk9C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E20C9C4AF07;
+	Wed, 19 Jun 2024 17:09:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718816904;
-	bh=SWZ7+eHuaI2SFfojEvOKrp9dm7TvoJ+GzJxGVb24x40=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hop7xpd1veMtb8MCw+QyS51ly+BQAe6UegfNHG+vpFzG/FH4B+SAo6uSeGLRs+FHW
-	 5+rplJKJJvTey7c4KjzTUJo0d12yN1BDdiHmiUKJXGqHLJ74d7OjDC/niZXdDw0bxy
-	 k0G3ZYZkpdvUxQ9x3AkzV31H1lVJYnd7AsIZFq5bo5O6npnfZYFEifv1l6Axkd4FMp
-	 vl7tRW+ndFn+Qkl0DrltgkdaaNLtPe9fdvVey01IJrFSdLiiLZShhq6EGDCmQ3c7xx
-	 kMHESoLBq8uTlqNJiaHmAoAldXcQh01AWv1DkWJi0pgyqvejByL+Mk1ODxB96ZFPcD
-	 VlT0sXNEFVROg==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 6.9 000/281] 6.9.6-rc1 review
-Date: Wed, 19 Jun 2024 10:08:20 -0700
-Message-Id: <20240619170820.109023-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240619125609.836313103@linuxfoundation.org>
-References: 
+	s=k20201202; t=1718816986;
+	bh=9CMNUv/EbEPQ8no+tR5gxROXmRGYdqZRxr+kp5I4E3U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=h5jtBk9Cyl/yP3iJt2RztG1vPVKNktYwJj09k79If4Cyt71eUgJFlHyR3Yn6EL3Ga
+	 5sQF2qKQk8qU7Ey1GfHrTE8sQyl5yzM2ZrZED91s+791DY4kIcxHmgcacvYSx+wFmi
+	 2o634Wf8+dkGlKKLQJzOLDU+wloO6EUAzJvj/ntRhCXZzr6QoRwkpYyjysouCLpaE2
+	 xEdTryNSl3kM4/BHua+7vJm5zvsTapWt//B6/JocQ6oN5+Ct0xiMjFK6R9pY9PgbXa
+	 Lm36+yvLQTAVC6c1Ol/u3kfa9nEjc4dDuxt5M3BRUcCxYIAdbMCdmylRaD1qLhqu0q
+	 j2cuCgjGXPoWQ==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-254f646b625so13861fac.0;
+        Wed, 19 Jun 2024 10:09:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXftWBX38KUOblJYRogJTZ+xsQcbLRR5bTBsqgdpMKPQk4gEf/kDNt4zcbWgHHyr3OVzldDVRZ5cjsmwFcvxj2RCBJ0BsOiQtfNE2RBgbegmieO/LJZNIeSaaqvPf5iPyZ5TUkmirDLPQ==
+X-Gm-Message-State: AOJu0YxejemIJaOlvuS2gsOdflwfBh7hpA3DPlTbt1P9o7E4gWXuFW3Y
+	OUYyiUQrphwc58lrjARap+5hWQ8HksIJhoNvNPV/vH0TckaaTigKNDvqL75GW+TJwz/mXHAAL22
+	3NhTBLlta44/1E2LmPteoGFu4w7g=
+X-Google-Smtp-Source: AGHT+IFnVIs7qSVlLi41292Pqa2L4YxENvIxso1hyO4nfZ7rk9IxBHHcak04fnlkplGBaApB+0YZgL1YINHD2KZ3qiw=
+X-Received: by 2002:a4a:7619:0:b0:5ba:ca8a:6598 with SMTP id
+ 006d021491bc7-5c1ad90b829mr3531916eaf.0.1718816986143; Wed, 19 Jun 2024
+ 10:09:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com> <ZnHSKiaYf2tIQo58@kf-XE>
+ <a7790c74-2bec-4a24-b6e5-223c4e1ed372@amd.com> <ZnHXfLEwk2uRbg58@kf-XE>
+ <b4d65232-b69e-419d-9b15-d0ca64b78b26@amd.com> <ZnHfNbLTgY1op3Zv@kf-XE>
+ <fb8c965a-5f1c-4975-8e7d-6f6a0eb4d02f@amd.com> <ZnHtPbszYT8afOOk@kf-XE>
+ <c6bda238-166e-4de6-b0c7-4bddfb8ef6f4@amd.com> <ZnIAX9P5XSco4cZw@kf-XE> <ZnJfmUXmU_tsb9pV@kf-XE>
+In-Reply-To: <ZnJfmUXmU_tsb9pV@kf-XE>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 19 Jun 2024 19:09:35 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gOBH7OKF3KXwxYfWkGkC45rzDguR4VmSnoZDKpm+KPSg@mail.gmail.com>
+Message-ID: <CAJZ5v0gOBH7OKF3KXwxYfWkGkC45rzDguR4VmSnoZDKpm+KPSg@mail.gmail.com>
+Subject: Re: [PATCH V3] acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
+To: Aaron Rainbolt <arainbolt@kfocus.org>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rafael@kernel.org, lenb@kernel.org, 
+	mmikowski@kfocus.org, Perry.Yuan@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Jun 19, 2024 at 6:33=E2=80=AFAM Aaron Rainbolt <arainbolt@kfocus.or=
+g> wrote:
+>
+> acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
+>
+> The _OSC is supposed to contain a bit indicating whether the hardware
+> supports CPPC v2 or not. This bit is not always set, causing CPPC v2 to
+> be considered absent. This results in severe single-core performance
+> issues with the EEVDF scheduler on heterogenous-core Intel processors.
 
-On Wed, 19 Jun 2024 14:52:39 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+While some things can be affected by this, I don't immediately see a
+connection between CPPC v2, Intel hybrid processors and EEVDF.
 
-> This is the start of the stable review cycle for the 6.9.6 release.
-> There are 281 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.6-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
+In particular, why would EEVDF alone be affected?
 
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
+Care to explain this?
 
-Tested-by: SeongJae Park <sj@kernel.org>
-
-[1] https://github.com/awslabs/damon-tests/tree/next/corr
-[2] 93f303762da5 ("Linux 6.9.6-rc1")
-
-Thanks,
-SJ
-
-[...]
-
----
-
-ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
-ok 7 selftests: damon: debugfs_rm_non_contexts.sh
-ok 8 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
-ok 9 selftests: damon: debugfs_target_ids_pid_leak.sh
-ok 10 selftests: damon: sysfs.sh
-ok 11 selftests: damon: sysfs_update_removed_scheme_dir.sh
-ok 12 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
-ok 13 selftests: damon: sysfs_update_schemes_tried_regions_wss_estimation.py
-ok 14 selftests: damon: damos_quota.py
-ok 15 selftests: damon: damos_apply_interval.py
-ok 16 selftests: damon: reclaim.sh
-ok 17 selftests: damon: lru_sort.sh
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh
-ok 12 selftests: damon-tests: build_m68k.sh
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
+> To work around this, provide a new kernel parameter, "ignore_osc_cppc_bit=
+",
+> which may be used to ignore the _OSC CPPC v2 bit and act as if the bit wa=
+s
+> enabled. This allows CPPC to be properly detected even if not "enabled" b=
+y
+> _OSC, allowing users with problematic hardware to obtain decent single-co=
+re
+> performance.
+>
+> Tested-by: Michael Mikowski <mmikowski@kfocus.org>
+> Signed-off-by: Aaron Rainbolt <arainbolt@kfocus.org>
+>
+> ---
+>
+> V2 -> V3: Move bit ignore to before switch.
+> V1 -> V2: Rewrite to work in cpc_supported_by_cpu.
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
+ion/admin-guide/kernel-parameters.txt
+> index b600df82669d..af2d8973ba3a 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2063,6 +2063,12 @@
+>                         could change it dynamically, usually by
+>                         /sys/module/printk/parameters/ignore_loglevel.
+>
+> +       ignore_osc_cppc_bit
+> +                       Assume CPPC is present and ignore the CPPC v2 bit=
+ from
+> +                       the ACPI _OSC method. This is useful for working
+> +                       around buggy firmware where CPPC is supported, bu=
+t
+> +                       _OSC incorrectly reports it as being absent.
+> +
+>         ignore_rlimit_data
+>                         Ignore RLIMIT_DATA setting for data mappings,
+>                         print warning at first misuse.  Can be changed vi=
+a
+> diff --git a/arch/x86/kernel/acpi/cppc.c b/arch/x86/kernel/acpi/cppc.c
+> index ff8f25faca3d..0ca1eac826af 100644
+> --- a/arch/x86/kernel/acpi/cppc.c
+> +++ b/arch/x86/kernel/acpi/cppc.c
+> @@ -11,8 +11,20 @@
+>
+>  /* Refer to drivers/acpi/cppc_acpi.c for the description of functions */
+>
+> +static bool ignore_osc_cppc_bit;
+> +static int __init parse_ignore_osc_cppc_bit(char *arg)
+> +{
+> +       ignore_osc_cppc_bit =3D true;
+> +       return 0;
+> +}
+> +early_param("ignore_osc_cppc_bit", parse_ignore_osc_cppc_bit);
+> +
+>  bool cpc_supported_by_cpu(void)
+>  {
+> +       if (ignore_osc_cppc_bit) {
+> +               return true;
+> +       }
+> +
+>         switch (boot_cpu_data.x86_vendor) {
+>         case X86_VENDOR_AMD:
+>         case X86_VENDOR_HYGON:
+>
 
