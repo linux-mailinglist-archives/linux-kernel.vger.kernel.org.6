@@ -1,140 +1,104 @@
-Return-Path: <linux-kernel+bounces-221128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF0A90EF45
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:43:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F8790EF47
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B3AA1C242C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:43:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 684951C208C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9F214EC42;
-	Wed, 19 Jun 2024 13:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFC314E2F5;
+	Wed, 19 Jun 2024 13:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="W/lMsG15"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DrVinK5N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC941E492;
-	Wed, 19 Jun 2024 13:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5A41E492;
+	Wed, 19 Jun 2024 13:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718804607; cv=none; b=nY6owUUYBCJ6UdynjMvFWxYGGuvPPS1gj1hQEFqWFUn5cv7G+cR8S/U1V8bAz2bJ7vNwmWIpzR38+K9sM6YtetPSj/kN/sKMylMu8kd6LrH4i2EF78oAkY3x+Z7kJZOfII81A8NOp6/Oh8elTD4Z8gHnEarU0tCGY7sUcsSLMxY=
+	t=1718804615; cv=none; b=SYRnR2y4k+wEm588dAQ9yMkrpZ/WS4rB2NJS5/CF3sJ34DZQuUV8N5F72RFTXrj07f4yOMCa4SuN7kBtclIVPvJeTlFNPCsSFqW1gDGUCG9e6m0GvSitc2nXeIWIpPn6PD4skeQu0qHVNhIhj7xs1ICjdnQkvs7i5tsUvjwempk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718804607; c=relaxed/simple;
-	bh=dUSlc6Lg5vWg8y4LNfZgdjLzNa2vJIlTrGtGI9EZzdM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BjZt/iJGTwg6+GNJ/Sh957cdAEiaMU2qwt3Y/V/w0ccuCKaaQZX4nRUC9sr35ukNyPu7an8kJ7n2t6LhG9gKB+5pWMiqAhcx2BajR6BKCbm7TEJteHm0nGHOSacLAyofUgo2jmvqapEWWg89O32xgSTi/EfeeritHiU6SXv0NwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=W/lMsG15; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: lukma@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 4722E8839C;
-	Wed, 19 Jun 2024 15:43:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1718804595;
-	bh=LxutYi9m1J9PLpwUyDonpTyGQDOBfl75a2yDTGQqVDY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=W/lMsG15BMmpqQYBrjjOOXHzK/ljzRuZaZV9LWCpGOWLSA6MRLHyMAwN2yRoaZx8p
-	 8SlcIVuLfTHY1cSZwsqIMALmsDWmgM5dV3W3go7qtYuA1tf/FxSA3pZPvuMzjOc4s3
-	 P9dBD/s218dI9X70EcgOkzZeG8czoRI6GxXY8wCSKozKKsXQy5d0PfYLCk2kFdZ1DK
-	 kJhScT7v5Mr4l6jgbVEk21g9wdkfpGH20xD+5YcFI7CrMB54WWe0EzfQ8TvUc1eZla
-	 ovnl6pqzC9j6FLfS04dn2JNlAwsBYr04V7VGvoLkX+F5ZjeNYB/Ov0H5aHrdv3uyD9
-	 ywTVU78zkMYfw==
-From: Lukasz Majewski <lukma@denx.de>
-To: Vladimir Oltean <olteanv@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Tristram.Ha@microchip.com,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	Casper Andersson <casper.casan@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH v2 net-next] net: dsa: Allow only up to two HSR HW offloaded ports for KSZ9477
-Date: Wed, 19 Jun 2024 15:42:48 +0200
-Message-Id: <20240619134248.1228443-1-lukma@denx.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1718804615; c=relaxed/simple;
+	bh=5cXu+JHFL08f9J9rX0pT6j0NjNsjkr5HoSXnkbDpJB0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=P23f3g//dDaYftAt9/KRQ8bNF0Gt0WRCnPTFtg9cjvNTAFdI9y9eyrzeHByWLx6RZhyjyz45u+z/aWTMmVrEmQ7Fg9cfw7vtP60a/d3EC0p9wm5/2L1dvHzn49mi8dXjI/qFc4aGxDUK1Yg3yyzE6YkzB1x9lVZok5aNDkS4M7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DrVinK5N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8E69C2BBFC;
+	Wed, 19 Jun 2024 13:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718804614;
+	bh=5cXu+JHFL08f9J9rX0pT6j0NjNsjkr5HoSXnkbDpJB0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DrVinK5NLi0QN/bFRVYH5asigrGLs+nbEbhk2hup4JiYhsbnsRwkqDnlaCq7ZMhqb
+	 wwu+RuUUAc7C9oQkLr9JM2IkwT8IEfdn3qehanlZ3APJbaZsDAHIZJ8IvT3JatqyPV
+	 ic0OmIW8uxnEElhOLuXJ6QR02ia3MkoUZpdxROj+kTwnWCbYQHfDBeg0QeH6zZMBhb
+	 v1TI0dbWIQeRha0HTDlna01Cb2FKiTVw8RmfSeQKvT5EIflriaOg6ZDQTRwQPMLIIY
+	 ud78XlC+zHqBpr/Tx3t9iSGEyssoXtI1rpRyoSYUubDAL2hp6qvwHdgq87ok+Zm2Pe
+	 BeVI5zjZazHVQ==
+Date: Wed, 19 Jun 2024 22:43:30 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH] fgraph: Use str_plural() in test_graph_storage_single()
+Message-Id: <20240619224330.d54d6d1ef2f2dd7b02dfd739@kernel.org>
+In-Reply-To: <20240618072014.20855-1-jiapeng.chong@linux.alibaba.com>
+References: <20240618072014.20855-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The KSZ9477 allows HSR in-HW offloading for any of two selected ports.
-This patch adds check if one tries to use more than two ports with
-HSR offloading enabled.
+On Tue, 18 Jun 2024 15:20:14 +0800
+Jiapeng Chong <jiapeng.chong@linux.alibaba.com> wrote:
 
-The problem is with RedBox configuration (HSR-SAN) - when configuring:
-ip link add name hsr0 type hsr slave1 lan1 slave2 lan2 interlink lan3 \
-	supervision 45 version 1
+> Use existing str_plural() function rather than duplicating its
+> implementation.
+> 
+> ./kernel/trace/trace_selftest.c:880:56-60: opportunity for str_plural(size).
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9349
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 
-The lan1 (port0) and lan2 (port1) are correctly configured as ports, which
-can use HSR offloading on ksz9477.
+Thanks, this looks good to me.
 
-However, when we do already have two bits set in hsr_ports, we need to
-return (-ENOTSUPP), so the interlink port (lan3) would be used with
-SW based HSR RedBox support.
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Otherwise, I do see some strange network behavior, as some HSR frames are
-visible on non-HSR network and vice versa.
 
-This causes the switch connected to interlink port (lan3) to drop frames
-and no communication is possible.
+> ---
+>  kernel/trace/trace_selftest.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
+> index adf0f436d84b..97f1e4bc47dc 100644
+> --- a/kernel/trace/trace_selftest.c
+> +++ b/kernel/trace/trace_selftest.c
+> @@ -877,7 +877,7 @@ static int __init test_graph_storage_single(struct fgraph_fixture *fixture)
+>  	int ret;
+>  
+>  	pr_cont("PASSED\n");
+> -	pr_info("Testing fgraph storage of %d byte%s: ", size, size > 1 ? "s" : "");
+> +	pr_info("Testing fgraph storage of %d byte%s: ", size, str_plural(size));
+>  
+>  	ret = init_fgraph_fixture(fixture);
+>  	if (ret && ret != -ENODEV) {
+> -- 
+> 2.20.1.7.g153144c
+> 
 
-Moreover, conceptually - the interlink (i.e. HSR-SAN port - lan3/port2)
-shall be only supported in software as it is also possible to use ksz9477
-with only SW based HSR (i.e. port0/1 -> hsr0 with offloading, port2 ->
-HSR-SAN/interlink, port4/5 -> hsr1 with SW based HSR).
 
-Fixes: 5055cccfc2d1 ("net: hsr: Provide RedBox support (HSR-SAN)")
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-
----
-Changes for v2:
-- Add more verbose description with Fixes: tag
-- Check the condition earlier and remove extra check if SoC is ksz9477
-- Add comment in the source code file
----
- drivers/net/dsa/microchip/ksz_common.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index 2818e24e2a51..72bb419e34b0 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -3906,6 +3906,13 @@ static int ksz_hsr_join(struct dsa_switch *ds, int port, struct net_device *hsr,
- 		return -EOPNOTSUPP;
- 	}
- 
-+	/* KSZ9477 can only perform HSR offloading for up to two ports */
-+	if (hweight8(dev->hsr_ports) >= 2) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "Cannot offload more than two ports - use software HSR");
-+		return -EOPNOTSUPP;
-+	}
-+
- 	/* Self MAC address filtering, to avoid frames traversing
- 	 * the HSR ring more than once.
- 	 */
 -- 
-2.20.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
