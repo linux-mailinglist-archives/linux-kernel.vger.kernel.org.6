@@ -1,145 +1,156 @@
-Return-Path: <linux-kernel+bounces-221397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0F690F30E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:51:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1074890F353
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B6D5B22638
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:51:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C0EE1F229D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C32515ECFF;
-	Wed, 19 Jun 2024 15:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF50B155756;
+	Wed, 19 Jun 2024 15:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="U8GCVwLX"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LJHNfZ7X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03FC153578;
-	Wed, 19 Jun 2024 15:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF82047779
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718811973; cv=none; b=RN//9zV0BUBc0FiRRyaH86Y+Komj52bsYsbppqCgCraXC7md7q8f0UxZpvLF8h/96RR0nYUKtGzPRBl3hA2YnWb0raC6rgC3egOAWJDOKhQKcUkMjvFB/CrVpFvRm/Gqv67o4g6HYxOYrDU2XdZYPiCg2YR1l8NDh0aJvLQjyfY=
+	t=1718812059; cv=none; b=NSqwiEvA4KFMJXnla2ucDqcm4WJXG2x2f4S3nMMdjpSgkjF/6TWtn2mhmvXAuurnWcPUL04/b3UPdOu1fsJG2vkru/Nndu3HdDU8vxdluSlbx70XRbVHUCDPQoa21pi2GCS/3k+YYV87/TWYc606/+Xoy3gYVB+shDBFOwR8iVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718811973; c=relaxed/simple;
-	bh=tnseqJ+3McwTr/FtsRT9T5uu5IPT+SyJIsZVyQtWZdM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Mw7Dmai1waXsOK7rfW1dhljnPdOp4uXU2LM7qqUjQXMR/vnE9yVKSOZspdFytmuVMTcvGFQ2fudVoJXQdZnW49pAV5il5k4SVwtXxRR+T1c0n3PXFUYVC4d/8NmjfmczIeLY6RT/ZbI/pQ+TLB/MEvjOzMAAf8m9EwUfz1/HBnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=U8GCVwLX; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JETHMj000657;
-	Wed, 19 Jun 2024 15:45:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=IRZnfl5kegw9D
-	daMeWWbTwWzCErv31wkZ0fJjvxbgdM=; b=U8GCVwLXta/mITOXuINN09W8cecMz
-	8WeR+64CRmjD3ZH6TwoQKfiRTs1jYTabDp2mEhIbrajNcg8SFtsfPVMEg0hWNSOt
-	G1BI2f9MGbm4KPNzNF+qDZmDJtnWUqmJGVNb+bWmvO+iEBORIGqQcnYkJz/fWeH9
-	WL3zr5vCHpSDOaEUA3ARgwBbZn50UPDqLcbquA5N36fm/Xj4G9LpFPTtJ6F8xN4U
-	55PcgCp+6Rc+OVaT39/23uHIjcCINNqiJJCs7N9+7zUgUZ6xnrArleLaABnsNtx8
-	X1J6XRV0aiSLddD3Y3vYH47vW7f8Zc2PjBzQ8B/MFA7Wp2kEdHtbdKiJA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yv14tg8cp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 15:45:54 +0000 (GMT)
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45JFjrsL027940;
-	Wed, 19 Jun 2024 15:45:53 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yv14tg8cg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 15:45:53 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45JFWnRV019495;
-	Wed, 19 Jun 2024 15:45:52 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ysnp1e4xk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 15:45:52 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45JFjkS217891730
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Jun 2024 15:45:48 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BC86320065;
-	Wed, 19 Jun 2024 15:45:46 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6C3D92006A;
-	Wed, 19 Jun 2024 15:45:46 +0000 (GMT)
-Received: from black.boeblingen.de.ibm.com (unknown [9.155.200.166])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Jun 2024 15:45:46 +0000 (GMT)
-From: Ilya Leoshkevich <iii@linux.ibm.com>
-To: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Vasily Gorbik <gor@linux.ibm.com>, Vlastimil Babka <vbabka@suse.cz>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>
-Subject: [PATCH v5 37/37] kmsan: Enable on s390
-Date: Wed, 19 Jun 2024 17:44:12 +0200
-Message-ID: <20240619154530.163232-38-iii@linux.ibm.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240619154530.163232-1-iii@linux.ibm.com>
-References: <20240619154530.163232-1-iii@linux.ibm.com>
+	s=arc-20240116; t=1718812059; c=relaxed/simple;
+	bh=JYrn5yh+hnO7LhELR0hV0l6YRXobPrRRbY9BLOUoMfk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AQsO0YudMn9qMKF3mYe10zSY8OnVdKQ4Is5f2z7wEAmyn9MkKM+ED9S9VBrEQ7982yuqihRKyaQ3HIlJtu0CPNokvTVS/ZP2NsN+MEy6/26MK8JX+CjNMU8P/ky1352MNxmN8IuUx/SrhJzLghVjjTFSIN/Rezs+0cSzeaVRE5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LJHNfZ7X; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718812056;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bdE1JwX4XUPlHCUNEa7GPYLNmBeA++RuMxTVFfl0GYk=;
+	b=LJHNfZ7XMiLqX+JeYyaK7wWlwjiSibPAll5PmkvH+yOBP1YNO0pVF8/59VbVSXJQwN411S
+	N41uHXshZj29GMmjIjB61ccU/0AL3ahxNnCEsLLE5StmYYi0kHHANEZ8pwwug7crUUj0fr
+	AWJy2nkWIyL4hh1UCwH6GI6063pWshA=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-295-00YaD8LBOOeai_wtbHIl7A-1; Wed, 19 Jun 2024 11:47:35 -0400
+X-MC-Unique: 00YaD8LBOOeai_wtbHIl7A-1
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-632cdb75d5aso103827747b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:47:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718812055; x=1719416855;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bdE1JwX4XUPlHCUNEa7GPYLNmBeA++RuMxTVFfl0GYk=;
+        b=bDzFixx9/Zj+K+GqorwbPlFeYmFWaqk4z5H8O4EEWRMOKdRGKBVXrS7R3myVOvs9P8
+         /OILwan5I+Zi2hcIa3K3qVHuOCfjumoLiMSCVF3EtojXnQo9Lfo+94MY7iziP/0c81X1
+         wzuUob+fcNvn0h7n/0b2TmvRRsxq4KF092y1CPha99s17ba/PP5bIDJjRDi/+vuLYWBW
+         6tMgFfQXhNR+V+KeN0M2qJp78oz7SUQgG1qS6OWTLCjNu5cjOe/Tmzf5+oaiwWxaha5R
+         rMRzLx4hMSVMKhTNcSEfZG3eFaxnR9hdtTUECHAlzECvy3mX9jS2N3fzdy4eymQy6XY5
+         YQWw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7di5W1vgwL97qbfR/wUS9Xs0KLXJ+a/LjC6uPcpJVqnWWhbj9SUa4S7tkBCIP5z049Zr73ytUwE2P5loIesjfoN5+j9ZIuoduY5HN
+X-Gm-Message-State: AOJu0Yz6i7ee1YS2hom5f6T/Ai23J/lAX+hKjn9aw0Pt/fMDbpOJdvUn
+	k692VD/6AOEyG7u7o+PtTx8kNFtbzf4DtwXcsXWcbyqemBK4sWHZ+k3ZSeoE9TH6hx2AYUZ3qCy
+	0RlsGeSYAkqBBYqXNdCBnTihvjccIiQVqDGbbJOLFE2PQz3eTXOToB7+Ts2jub2e/4DXe2NIs+w
+	Alf9mQhLuNURymtGruQBaqQN0x6ClG4J1NKfDB
+X-Received: by 2002:a81:87c6:0:b0:622:c964:7e24 with SMTP id 00721157ae682-63a8e89bed9mr28085717b3.27.1718812054980;
+        Wed, 19 Jun 2024 08:47:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGARc89i/ByokkRmsf8KW6yRGKzxLntpgug1yeSYVGWvi8wS+8L3zugBKbhE/rnCTMx3tu5/cQQG/VU5SbeX3c=
+X-Received: by 2002:a81:87c6:0:b0:622:c964:7e24 with SMTP id
+ 00721157ae682-63a8e89bed9mr28085337b3.27.1718812053908; Wed, 19 Jun 2024
+ 08:47:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: _aFS9VMZNHeI_0QG12mn39Qu-C8A8omj
-X-Proofpoint-ORIG-GUID: 2gC1WJMPx7ngoWvphwAauoxDM2L1Po19
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 suspectscore=0 mlxscore=0 clxscore=1015
- spamscore=0 mlxlogscore=764 impostorscore=0 phishscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190115
+References: <20240617-stage-vdpa-vq-precreate-v1-0-8c0483f0ca2a@nvidia.com> <20240617-stage-vdpa-vq-precreate-v1-19-8c0483f0ca2a@nvidia.com>
+In-Reply-To: <20240617-stage-vdpa-vq-precreate-v1-19-8c0483f0ca2a@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 19 Jun 2024 17:46:57 +0200
+Message-ID: <CAJaqyWc5rJT666R672f2RQZvAHxy1QdoUKRfCH_wV1F61pQ2Gg@mail.gmail.com>
+Subject: Re: [PATCH vhost 19/23] vdpa/mlx5: Use suspend/resume during VQP change
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
+	Cosmin Ratiu <cratiu@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that everything else is in place, enable KMSAN in Kconfig.
+On Mon, Jun 17, 2024 at 5:09=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+> Resume a VQ if it is already created when the number of VQ pairs
+> increases. This is done in preparation for VQ pre-creation which is
+> coming in a later patch. It is necessary because calling setup_vq() on
+> an already created VQ will return early and will not enable the queue.
+>
+> For symmetry, suspend a VQ instead of tearing it down when the number of
+> VQ pairs decreases. But only if the resume operation is supported.
+>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
 
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
-Reviewed-by: Alexander Potapenko <glider@google.com>
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
----
- arch/s390/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index c59d2b54df49..3cba4993d7c7 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -158,6 +158,7 @@ config S390
- 	select HAVE_ARCH_KASAN
- 	select HAVE_ARCH_KASAN_VMALLOC
- 	select HAVE_ARCH_KCSAN
-+	select HAVE_ARCH_KMSAN
- 	select HAVE_ARCH_KFENCE
- 	select HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
- 	select HAVE_ARCH_SECCOMP_FILTER
--- 
-2.45.1
+> ---
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
+x5_vnet.c
+> index 0e1c1b7ff297..249b5afbe34a 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -2130,14 +2130,22 @@ static int change_num_qps(struct mlx5_vdpa_dev *m=
+vdev, int newqps)
+>                 if (err)
+>                         return err;
+>
+> -               for (i =3D ndev->cur_num_vqs - 1; i >=3D 2 * newqps; i--)
+> -                       teardown_vq(ndev, &ndev->vqs[i]);
+> +               for (i =3D ndev->cur_num_vqs - 1; i >=3D 2 * newqps; i--)=
+ {
+> +                       struct mlx5_vdpa_virtqueue *mvq =3D &ndev->vqs[i]=
+;
+> +
+> +                       if (is_resumable(ndev))
+> +                               suspend_vq(ndev, mvq);
+> +                       else
+> +                               teardown_vq(ndev, mvq);
+> +               }
+>
+>                 ndev->cur_num_vqs =3D 2 * newqps;
+>         } else {
+>                 ndev->cur_num_vqs =3D 2 * newqps;
+>                 for (i =3D cur_qps * 2; i < 2 * newqps; i++) {
+> -                       err =3D setup_vq(ndev, &ndev->vqs[i], true);
+> +                       struct mlx5_vdpa_virtqueue *mvq =3D &ndev->vqs[i]=
+;
+> +
+> +                       err =3D mvq->initialized ? resume_vq(ndev, mvq) :=
+ setup_vq(ndev, mvq, true);
+>                         if (err)
+>                                 goto clean_added;
+>                 }
+>
+> --
+> 2.45.1
+>
 
 
