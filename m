@@ -1,94 +1,124 @@
-Return-Path: <linux-kernel+bounces-221737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75BA90F7E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:56:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E257B90F7E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547762862D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:56:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F645B21690
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D74115A87F;
-	Wed, 19 Jun 2024 20:53:42 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C13915A874;
+	Wed, 19 Jun 2024 20:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cuuTt6A7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="joC3bNAP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B1615A875;
-	Wed, 19 Jun 2024 20:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1107E1369AA;
+	Wed, 19 Jun 2024 20:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718830421; cv=none; b=kdh7eoqYIXT23E5jdzt1GY+mJ3wqZFqg3jvmGbGfr0e69w0x8YdVIpTh1yKooM9IefYjtVzIutgHGQaKRS3r3SCiS0b+M7jWDjI29kctl/gWCAQ36HtrS/hxG1/pvpfdVxQ0j5b2BGomAMTIew4VdI990Py0zDyFdTY/RBa5DJk=
+	t=1718830599; cv=none; b=C/KfVJQhEWmD+4WgH6Hs6e6HoMzaXJ7jfiRxhvrkkwXKza+4LuZoR0RfPLYm0Z/aFdgPZp1YEkscctso5lF8G8ygKsnM5iV+yeP9m271uvxVia7YpW2c9NBu/960K/KPjmFhthf54aX+zF7fmdX+GOPnCgm2zvn9Pi1ff8GaL7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718830421; c=relaxed/simple;
-	bh=GNFCgL0eo3F/Upeqaudb5LNHEm1jLtMNrmv0qv2nLA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J8O2NgQ6O9gujCAVdwQIGuXNC/JjeWpkywTNiIforFI5cjbSw+WkI0BpX8Uy7IcUp8CBztXYR2mQHS5nLEjo3hVYd2388/uckgvnSgo8nsHzYKj4s9KYT3obu3IB8jaOm/iAuI+XFVHE4CmQLz13Oi9ZO1BHy4av3YQnv9qKg90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 8C91C1C009C; Wed, 19 Jun 2024 22:53:37 +0200 (CEST)
-Date: Wed, 19 Jun 2024 22:53:37 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/217] 6.1.95-rc1 review
-Message-ID: <ZnNFUSCvPI/7KG1R@duo.ucw.cz>
-References: <20240619125556.491243678@linuxfoundation.org>
+	s=arc-20240116; t=1718830599; c=relaxed/simple;
+	bh=1eEzPNxd8KJw08g69nKprRZCVdo4n+CXffrWgelwV+Y=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=rSd8JIxegRI3AQz7/yjT7wm8m32B59XBidYyZx10AyzOP2JfjYfnYK/8OQCvQ8cuSOYnyedEPHZHJDook4bKV1V4PFxk6qGa58pYLhKIoYCGXBi3D2PpDifJsLCPgrRPEhUdWyo3q9cV8mzmNCiWwPnE9rXuZT7GA4F+dpY9RDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cuuTt6A7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=joC3bNAP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718830595;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=soTsYXlNCZ8l4EmfZeiFwZfgRB0mVQk3PyWpiDnSLRI=;
+	b=cuuTt6A71lUtqMb5duUm4Phh9fGokKLryZcZ7tiYJ7wcunmUQTRlcf0zhTS/xdfo2pOZL8
+	PWBe6MtsPw/ufIooI/k9/QBfhpV/IrpE0B5zro4nCG8iVGiShzDDjc/p4YHjvO4YkYGMZW
+	GvNNxkUnQhVkaTEM1pWA5+mCWVOQX9lOJHSLuxHHJs0NT44HCGZz5w4H9MVqO7KaqGMZuy
+	X5ClpPf+0U6ThFRlCj1HdHrG1YCQ3Dn7yTztV9aB6uO+YCXatzHUL9B5e49ZjXV45oTP0S
+	iw/sn+jsjMGZkGi58Muu9D8HDcpYJA3TNE26nwCHTsipQ5NBsYqwqrdA1/fKgw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718830595;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=soTsYXlNCZ8l4EmfZeiFwZfgRB0mVQk3PyWpiDnSLRI=;
+	b=joC3bNAPc7atIannZzX/NJXthvUgifXisZHdeOdW7uDyIqBzgk+Wcj172yF+oeFNL73yXB
+	YXo5NNXQQfv029BA==
+To: Linus Torvalds <torvalds@linux-foundation.org>, Tejun Heo <tj@kernel.org>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+ vschneid@redhat.com, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@kernel.org, joshdon@google.com,
+ brho@google.com, pjt@google.com, derkling@google.com, haoluo@google.com,
+ dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
+ riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
+ memxor@gmail.com, andrea.righi@canonical.com, joel@joelfernandes.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+In-Reply-To: <CAHk-=wg8APE61e5Ddq5mwH55Eh0ZLDV4Tr+c6_gFS7g2AxnuHQ@mail.gmail.com>
+Date: Wed, 19 Jun 2024 22:56:34 +0200
+Message-ID: <87ed8sps71.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gDOuMhcyTfEL1C/f"
-Content-Disposition: inline
-In-Reply-To: <20240619125556.491243678@linuxfoundation.org>
+Content-Type: text/plain
 
+Linus!
 
---gDOuMhcyTfEL1C/f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 11 2024 at 14:34, Linus Torvalds wrote:
+> On Wed, 1 May 2024 at 08:13, Tejun Heo <tj@kernel.org> wrote:
+>>
+>> This is v6 of sched_ext (SCX) patchset.
+>>
+>> During the past five months, both the development and adoption of sched_ext
+>> have been progressing briskly. Here are some highlights around adoption:
+> [...]
+>
+> I honestly see no reason to delay this any more. This whole patchset
+> was the major (private) discussion at last year's kernel maintainer
+> summit, and I don't find any value in having the same discussion
+> (whether off-list or as an actual event) at the upcoming maintainer
+> summit one year later, so to make any kind of sane progress, my
+> current plan is to merge this for 6.11.
 
-Hi!
+I was part of that discussion and sat down for quite some time with the
+sched_ext people to find a constructive way out of this situation. My
+memory might trick me, but I remember clearly that there was consensus
+to resolve this in a constructive and collaborative way.
 
-> This is the start of the stable review cycle for the 6.1.95 release.
-> There are 217 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Unfortunately I ran out of cycles after Richmond to follow up and the
+fact that Peter wrecked his shoulder and was AFK for months did not make
+it any better.
 
-CIP testing did not find any problems here:
+However, the sched_ext people did not follow up either especially not
+regarding a clean integration along the scheme I asked them for in
+November. Contrary to that the series gained more ad hoc warts.
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
+That's water under the bridge, but it clearly shows how non-constructive
+this has become.
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+So instead of "solving" this brute force and thereby proliferating the
+non-constructive situation, can you please hold off with that plan to
+merge it as is and give us three month to get this onto a collaborative
+and constructive track?
 
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+I can make cycles available to work with both sides to get this resolved
+for the benefit of everyone.
 
---gDOuMhcyTfEL1C/f
-Content-Type: application/pgp-signature; name="signature.asc"
+A clean integration will help both ends and makes both the existing code
+and the new code better and easier to maintain together. IIRC, that's
+something you yourself asked people to do in the past.
 
------BEGIN PGP SIGNATURE-----
+Thanks,
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZnNFUQAKCRAw5/Bqldv6
-8sBOAKCAFl46L0o6ySgncfy84IlpeLdEkwCgk6lw7qY/Lifqoq2waYQgt2OqisM=
-=6ulv
------END PGP SIGNATURE-----
-
---gDOuMhcyTfEL1C/f--
+	Thomas
 
