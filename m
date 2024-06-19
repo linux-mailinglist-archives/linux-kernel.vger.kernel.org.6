@@ -1,157 +1,188 @@
-Return-Path: <linux-kernel+bounces-220789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A64590E719
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:30:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C601190E71D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0FB1F21D25
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:30:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1735C281414
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45DE81734;
-	Wed, 19 Jun 2024 09:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="cSbHonGn"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0F47A715;
-	Wed, 19 Jun 2024 09:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85C87E58F;
+	Wed, 19 Jun 2024 09:32:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB9A20B34
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718789425; cv=none; b=DZEByS6vcgfq6EkmvJTjHhdmSGG50jHHjJRvaLKk8G9ES8Q35T5T8Di08sgaM8Q872F6wqooYJl98vMe/pfjirUfITDJLegkm0630NmsGoduMWy+MsLB3WVseBNHvzA24Y9VD73hs6AQmsJ2htmQZUIobz3l2kY82eDFuqBtYzI=
+	t=1718789525; cv=none; b=P1nNBxa3FizuEslqIMQPrpqIYX2sku8DAOnWbYnPDmWes6iDgD+vkDZpA5kqlP3P/29M/zd5HYwxMOvpmDPTr78xN7Q17RfgVEZdyLvpn/bQIzxd9slXfdNtOHWc62TFvFlGt1dRn3MlcwEz/dSaisx9Z05I0q+0DlZuS+09SB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718789425; c=relaxed/simple;
-	bh=7ne4ekeJPSiu9Wa/xWvMdy+2iJetKy2FB72LpR8ncLY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YBK3A/xHARiogUJ1Cv+fiFSpnX6YGa2WtEVTGTMVb7ZNJHgH7+ZiR6dI2PebGoS7IgDRQXPIwrFWphW4bTY3fqvEXelj09LCotFB2dBz/+HI2Y3LJr3jRp2NoNksYKnzbA4QofP873GxHlpDHOWw5fWtC/gkxe0w9Qc2RohrUmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=cSbHonGn; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1718789420; x=1719048620;
-	bh=zV1Qzzj1i+vpiKHlTH9zT9EGlrl+KcXNNmM1imA2OVs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=cSbHonGnWaJH37f1v+pSaKUQwYqlPPs+VtxX+8Sx2EZa4gfkG6EbZpEFL1ac6AJSJ
-	 +zm/edwto6ej3rtZoDCxktTyvEy3KwzMLuGps4gixWJId4+eIiKjM/YMAhuD6RbdTa
-	 j2RiXtPvBlCrR2Ag+uGa4Vgwq0/I7AWttYOmTjke/x5q7y7xM99zlCRi47Or+OqD4B
-	 BNKE8/RAyZk2+tGreTkAu5UwsC5NQJ1h9HMGsX3AIPaP33fOeRgCQa+6byjK08Ys5d
-	 EoE5c2uLBWYZcaqYKWiyoYziz+AMut+hOdm0vJt8NWQ+16u6mtF0WYN3hqgQ6OQor7
-	 e5Z3mWOu+o96A==
-Date: Wed, 19 Jun 2024 09:30:15 +0000
-To: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: John Hubbard <jhubbard@nvidia.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
-	kent.overstreet@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, dakr@redhat.com
-Subject: Re: [RFC 2/2] rust: sync: Add atomic support
-Message-ID: <8f23cb56-91a9-4515-a14f-4b7de70f6852@proton.me>
-In-Reply-To: <Zm_LTXm3wJhcQIwI@Boquns-Mac-mini.home>
-References: <ZmseosxVQXdsQjNB@boqun-archlinux> <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com> <79239550-dd6e-4738-acea-e7df50176487@nvidia.com> <ZmztZd9OJdLnBZs5@Boquns-Mac-mini.home> <c243bef3-e152-462f-be68-91dbf876092b@nvidia.com> <Zmz-338Ad6r4vzM-@Boquns-Mac-mini.home> <20240616155145.54371240.gary@garyguo.net> <Zm7_XWe6ciy1yN-h@Boquns-Mac-mini.home> <Zm_LTXm3wJhcQIwI@Boquns-Mac-mini.home>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 11698e3de8f944b2217c782e5cf4abe605702990
+	s=arc-20240116; t=1718789525; c=relaxed/simple;
+	bh=V1ffL/PhAeo4peyAcLvwR8276v37fCfBHyqqvQXiUew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yo3gwDpQJm8TY9oig5hO5IMoAV+JWLdRi7JktOhIQcDCWyS+72XCAsJ14L0Ygg6m0y+yrD6d1OBklIcD85D0JD4Ht2dxsteCEP2E9QPh4rL6PZCRMzkujbiKtPmK698ADnUVirXwS1DwaUxGEZm8HYnBax7AtPjyBVx8PKqsmfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D2325DA7;
+	Wed, 19 Jun 2024 02:32:26 -0700 (PDT)
+Received: from [10.1.36.163] (XHFQ2J9959.cambridge.arm.com [10.1.36.163])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 246B53F64C;
+	Wed, 19 Jun 2024 02:32:01 -0700 (PDT)
+Message-ID: <1f02756f-a753-459b-8e8b-85fbbe5c5126@arm.com>
+Date: Wed, 19 Jun 2024 10:31:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] mm: swap: mTHP swap allocator base on swap cluster
+ order
+Content-Language: en-GB
+To: Chris Li <chrisl@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Kairui Song <kasong@tencent.com>, "Huang, Ying" <ying.huang@intel.com>,
+ Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Barry Song <baohua@kernel.org>
+References: <20240619-swap-allocator-v3-0-e973a3102444@kernel.org>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240619-swap-allocator-v3-0-e973a3102444@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 17.06.24 07:36, Boqun Feng wrote:
-> On Sun, Jun 16, 2024 at 08:06:05AM -0700, Boqun Feng wrote:
-> [...]
->>>
->>> Note that crossbeam's AtomicCell is also generic, and crossbeam is used
->>> by tons of crates. As Miguel mentioned, I think it's very likely that i=
-n
->>> the future we want be able to do atomics on new types (e.g. for
->>> seqlocks perhaps). We probably don't need the non-lock-free fallback of
->>
->> Good, another design bit, thank you!
->>
->> What's our overall idea on sub-word types, like Atomic<u8> and
->> Atomic<u16>, do we plan to say no to them, or they could have a limited
->> APIs? IIUC, some operations on them are relatively sub-optimal on some
->> architectures, supporting the same set of API as i32 and i64 is probably
->> a bad idea.
->>
->> Another thing in my mind is making `Atomic<T>`
->>
->> =09pub struct Atomic<T: Send + ...> { ... }
->>
->> so that `Atomic<T>` will always be `Sync`, because quite frankly, an
->> atomic type that cannot `Sync` is pointless.
+On 19/06/2024 10:20, Chris Li wrote:
+> This is the short term solutiolns "swap cluster order" listed
+> in my "Swap Abstraction" discussion slice 8 in the recent
+> LSF/MM conference.
+> 
+> When commit 845982eb264bc "mm: swap: allow storage of all mTHP
+> orders" is introduced, it only allocates the mTHP swap entries
+> from new empty cluster list.  It has a fragmentation issue
+> reported by Barry.
+> 
+> https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp+Ah+NSgNQ@mail.gmail.com/
+> 
+> The reason is that all the empty cluster has been exhausted while
+> there are planty of free swap entries to in the cluster that is
+> not 100% free.
+> 
+> Remember the swap allocation order in the cluster.
+> Keep track of the per order non full cluster list for later allocation.
+> 
+> User impact: For users that allocate and free mix order mTHP swapping,
+> It greatly improves the success rate of the mTHP swap allocation after the
+> initial phase.
+> 
+> Barry provides a test program to show the effect:
+> https://lore.kernel.org/linux-mm/20240615084714.37499-1-21cnbao@gmail.com/
+> 
+> Without:
+> $ mthp-swapout                                                          
+> Iteration 1: swpout inc: 222, swpout fallback inc: 0, Fallback percentage: 0.00%   
+> Iteration 2: swpout inc: 219, swpout fallback inc: 0, Fallback percentage: 0.00%                                                    
+> Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback percentage: 0.00%   
+> Iteration 4: swpout inc: 219, swpout fallback inc: 0, Fallback percentage: 0.00%            
+> Iteration 5: swpout inc: 110, swpout fallback inc: 117, Fallback percentage: 51.54%                                                 
+> Iteration 6: swpout inc: 0, swpout fallback inc: 230, Fallback percentage: 100.00%          
+> Iteration 7: swpout inc: 0, swpout fallback inc: 229, Fallback percentage: 100.00% 
+> Iteration 8: swpout inc: 0, swpout fallback inc: 223, Fallback percentage: 100.00%                                                  
+> Iteration 9: swpout inc: 0, swpout fallback inc: 224, Fallback percentage: 100.00%                                                  
+> Iteration 10: swpout inc: 0, swpout fallback inc: 216, Fallback percentage: 100.00%                                                 
+> Iteration 11: swpout inc: 0, swpout fallback inc: 212, Fallback percentage: 100.00%                                                 
+> Iteration 12: swpout inc: 0, swpout fallback inc: 224, Fallback percentage: 100.00%                                                 
+> Iteration 13: swpout inc: 0, swpout fallback inc: 214, Fallback percentage: 100.00%        
+> 
+> $ mthp-swapout -s
+> Iteration 1: swpout inc: 222, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 2: swpout inc: 227, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 4: swpout inc: 224, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 5: swpout inc: 33, swpout fallback inc: 197, Fallback percentage: 85.65%
+> Iteration 6: swpout inc: 0, swpout fallback inc: 229, Fallback percentage: 100.00%
+> Iteration 7: swpout inc: 0, swpout fallback inc: 223, Fallback percentage: 100.00%
+> Iteration 8: swpout inc: 0, swpout fallback inc: 219, Fallback percentage: 100.00%
+> Iteration 9: swpout inc: 0, swpout fallback inc: 212, Fallback percentage: 100.00%
+> 
+> With:
+> $ mthp-swapout       
+> Iteration 1: swpout inc: 222, swpout fallback inc: 0, Fallback percentage: 0.00%                                                    
+> Iteration 2: swpout inc: 219, swpout fallback inc: 0, Fallback percentage: 0.00%                                                    
+> Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback percentage: 0.00%                                                    
+> Iteration 4: swpout inc: 219, swpout fallback inc: 0, Fallback percentage: 0.00%       
+> Iteration 5: swpout inc: 227, swpout fallback inc: 0, Fallback percentage: 0.00% 
+> Iteration 6: swpout inc: 230, swpout fallback inc: 0, Fallback percentage: 0.00%            
+> ...
+> Iteration 94: swpout inc: 224, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 95: swpout inc: 221, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 96: swpout inc: 229, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 97: swpout inc: 219, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 98: swpout inc: 222, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 99: swpout inc: 223, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 100: swpout inc: 224, swpout fallback inc: 0, Fallback percentage: 0.00%
+> 
+> $ mthp-swapout -s
+> Iteration 1: swpout inc: 222, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 2: swpout inc: 227, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 4: swpout inc: 224, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 5: swpout inc: 230, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 6: swpout inc: 229, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 7: swpout inc: 223, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 8: swpout inc: 219, swpout fallback inc: 0, Fallback percentage: 0.00%
+> ...
+> Iteration 94: swpout inc: 223, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 95: swpout inc: 212, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 96: swpout inc: 220, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 97: swpout inc: 220, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 98: swpout inc: 216, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 99: swpout inc: 223, swpout fallback inc: 0, Fallback percentage: 0.00%
+> Iteration 100: swpout inc: 225, swpout fallback inc: 0, Fallback percentage: 0.00%
 
-That is true, but adding semantically "unnecessary" bounds can be bad.
-This is because they infect everything that wants to use `Atomic<T>`,
-since they also need to add that bound.
+Excellent!
 
-> Also, how do we avoid this issue [1] in kernel?
+> 
+> Reported-by: Barry Song <21cnbao@gmail.com>
+> Signed-off-by: Chris Li <chrisl@kernel.org>
+> ---
+> Changes in v3:
+> - Using V1 as base.
+> - Rename "next" to "list" for the list field, suggested by Ying.
+> - Update comment for the locking rules for cluster fields and list,
+>   suggested by Ying.
+> - Allocate from the nonfull list before attempting free list, suggested
+>   by Kairui.
 
-I think that we can first go the way of my second approach (ie adding a
-private trait as a bound on `Atomic<T>` to prevent generic usage). And
-only allow primitives.
-If we then see that people would like to put their own (u8, u16) tuple
-structs into `Atomic<T>`, we have multiple options:
+Sorry I didn't follow this original conversation. But the original intent of
+having a per-cpu current cluster was to prevent interleving pages from multiple
+processes and therefore optimize IO. See commit ebc2a1a69111 ("swap: make
+cluster allocation per-cpu"). I wonder if this change could lead to a swap
+performance regression in the common order-0 case?
 
-1. Field projection:
-   Only primitives can be `load`ed and `store`ed, to access the values
-   of the tuple, one would need to project to each field and read them.
+Thanks,
+Ryan
 
-2. Disallow padding:
-   We add an `unsafe` trait that asserts there are no padding bytes in
-   there (like `NoUinit` from below) and also add a macro that
-   implements the trait safely.
-
-3. Use `MaybeUninit` under the hood:
-   I don't know if this would fix the issue entirely, since that is what
-   crossbeam currently uses (but the issue remains open).
-
-But I don't think that we should encourage large structs to be put into
-`Atomic<T>`, since that would be bad for perf, right? So I think that
-going the way of 1 would be great (if we had FP, otherwise 2 seems fine).
-
-> `atomic_load()` in C is implemented as READ_ONCE() and it's, at most
-> time, a volatile read, so the eventual code is:
->=20
->     let a: (u8, u16) =3D (1, 2);
->     let b =3D unsafe { core::ptr::read_volatile::<i32>(&a as *const _ as =
-*const i32) };
->=20
-> I know we probably ignore data race here and treat `read_volatile` as a
-> dependency read per LKMM [2]. But this is an using of uninitialized
-> data, so it's a bit different.
-
-But would we implement it this way? Or would it go through a C function?
-If we entirely do it in Rust, then yes this is bad.
-
----
-Cheers,
-Benno
-
-> We can do what https://crates.io/crates/atomic does:
->=20
-> =09pub struct Atomic<T: NoUninit + ..> { ... }
->=20
-> , where `NoUinit` means no internal padding bytes, but it loses the
-> ability to put a
->=20
-> =09#[repr(u32)]
-> =09pub enum Foo { .. }
->=20
-> into `Atomic<T>`, right? Which is probably a case you want to support?
->=20
-> Regards,
-> Boqun
->=20
-> [1]: https://github.com/crossbeam-rs/crossbeam/issues/748#issuecomment-11=
-33926617
-> [2]: tools/memory-model/Documentation/access-marking.txt
-
+> - Link to v2: https://lore.kernel.org/r/20240614-swap-allocator-v2-0-2a513b4a7f2f@kernel.org
+> 
+> Changes in v2:
+> - Abandoned.
+> - Link to v1: https://lore.kernel.org/r/20240524-swap-allocator-v1-0-47861b423b26@kernel.org
+> 
+> ---
+> Chris Li (2):
+>       mm: swap: swap cluster switch to double link list
+>       mm: swap: mTHP allocate swap entries from nonfull list
+> 
+>  include/linux/swap.h |  30 +++----
+>  mm/swapfile.c        | 248 +++++++++++++++++----------------------------------
+>  2 files changed, 95 insertions(+), 183 deletions(-)
+> ---
+> base-commit: 19b8422c5bd56fb5e7085995801c6543a98bda1f
+> change-id: 20240523-swap-allocator-1534c480ece4
+> 
+> Best regards,
 
 
