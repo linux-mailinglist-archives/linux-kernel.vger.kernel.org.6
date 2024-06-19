@@ -1,100 +1,218 @@
-Return-Path: <linux-kernel+bounces-221218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8ED90F087
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:30:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9E890F090
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A30B1C21397
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 771BF1C211FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7BD1DA4C;
-	Wed, 19 Jun 2024 14:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165FD1DFFB;
+	Wed, 19 Jun 2024 14:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWg//M8m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c/t2MPbq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C4211C92;
-	Wed, 19 Jun 2024 14:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA4B1B948;
+	Wed, 19 Jun 2024 14:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718807419; cv=none; b=he5GdUkcdRBE/oyGsGRWOgTOYVyaJAyiCxAE5SziggKMFY4XHkNwxDOGO1ugYN3ATUs3RhRbAYcW9DlMn7UpE6LWEuLn8p5Y2u0gJOBN8OUDAqLTAOaXEncg6zuk2U1GjFQh5ZhoKyCvBmhj26HDxUwLf2K1aTrcnT3eOX1gWgQ=
+	t=1718807469; cv=none; b=N0pWJjiRLsjTMDpJL9r7AbXCi8cQXYMzVJx0GSPdtSRc53xRrtXUX6s6kKI8ORsdmN8uHfuwVXGH/MOvD5EBmqsqoxEDouVG3Nx78ASjMqard36F+IWyU7VLTznMLF9nWC92RaVu6H/EnYbe5er8TzPoZXvEejWQGnQLXhWi89Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718807419; c=relaxed/simple;
-	bh=a+0NUSOGSVlxhEfU3lz45PcWwVXQlzZmLfRtSbbmWZI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SXr1QN5nC+yJFbM0pbcGJmlWo2o/qh5ADFEUWzrAj8Dac33GA3oCyoc2lU0zWGQ33oYvRXWjWYW5rrbXrqEur9BgT2JQlDZW0r7JPq6jvoImLqWnZz36ARnjZq7DdIolEkJdFCorXilSON+9kerg0PlwDrPX0wwpMWPmLdsu6mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWg//M8m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E70C32786;
-	Wed, 19 Jun 2024 14:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718807419;
-	bh=a+0NUSOGSVlxhEfU3lz45PcWwVXQlzZmLfRtSbbmWZI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=rWg//M8mvyOGSlChHhoMWSUzTOuqfyZqNE8vAkOa1hgBg5hoCt8B8z8snThzhm8Xf
-	 S7ci4GMHUQLS2CNwURTFtrHz9D985FxVPt7SGZp83OOkXdi9Y8EZ/P1ogUoMBUrTpt
-	 0lpVvVryv7lkYWiym6TF+2SbafCrYlOIyVTtKXNpOQA4ey3H4ui6UJzvQYciNqDF/7
-	 Xf8XABYfJg6/T3G+AY+O+3AqeIcUzhCXLW2QTFAcLphn25FlWKOr8aCKKfdDaVPUSB
-	 J8ezQfbDoYlKCrs5yWHNX5jFSpKVEGsRm936wkLEeDfbT/EBLWZyyc50qUgsn1ma9o
-	 S6PAbz2e41Yig==
-Date: Wed, 19 Jun 2024 16:30:15 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: =?ISO-8859-15?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-cc: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>, 
-    Benjamin Tissoires <bentiss@kernel.org>, 
-    Rahul Rameshbabu <rrameshbabu@nvidia.com>, 
-    Fabio Baltieri <fabiobaltieri@chromium.org>, 
-    Ivan Gorinov <linux-kernel@altimeter.info>, 
-    Johannes Roith <johannes@gnu-linux.rocks>, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: uclogic: avoid linking common code into multiple
- modules
-In-Reply-To: <ZmxuWKX9lFv3pHqG@fedora>
-Message-ID: <nycvar.YFH.7.76.2406191629010.24940@cbobk.fhfr.pm>
-References: <20240529094816.1859073-1-arnd@kernel.org> <ZmSi5_-4mD4AaIJW@fedora> <54c19328-35e2-4506-aa3a-a0b08813d873@app.fastmail.com> <Zmcwlt6Kfpt09tKi@fedora> <8d93cdd6-379b-48e7-8a10-9df190b12623@app.fastmail.com> <ZmxuWKX9lFv3pHqG@fedora>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1718807469; c=relaxed/simple;
+	bh=BPMMwZn6Og0jszVG/cAk8PDDmPQrHjsG2/h68r5PxxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DBFsF59eXtJxLT6n+vt01/C3gbmJ3cUSKMIQX8EYemkH79MY4LEfokf4m4DOuhj+Ko/opDg+mFq6bxZ/HlWXzcW9A3ssdXv3lnc8bawKTcL62eKY4jP2/uluFG5nwtkekma9NK+FETAVMCnFud/MBcY1zcj1oUqOgtv9y0ZyX0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c/t2MPbq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JA5G9n016085;
+	Wed, 19 Jun 2024 14:30:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WMej7sJwoexITPuS9vB+WUyYogZePWN8zXQSXbZHGJ8=; b=c/t2MPbqOLSGrOao
+	dP/r6yiiWlxbhjL8NLNexr8lzZfG7mIsF7ygRurxeXNl6eIILw6i7BudAGYqEW3n
+	s1yUInqKxfT7kx2GNjffhofrxRlCH+3AgRg8whPmp+ul2OL9OKFo7sviBz91/3iM
+	0kp6fLit3VeEqdOwXDttVzOuqKPwuLGmDAV8ND3elNeKqeZTvkXDlKsz0wceaFta
+	CvOylF/MPq+L+rqIyVDpyJH02RhoTGy0VCNYsJFqJQ/QryYsuNYHGzCpZo1TKmFJ
+	yMIvhIRJOzbHBx8FfpSEEDZfXUS2HZi00/QOR7NnaiP09BbSMEwreiXVbJGBDTb5
+	gIUwsA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuja51xju-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 14:30:47 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JEUk9q018160
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 14:30:46 GMT
+Received: from [10.216.5.74] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
+ 2024 07:30:37 -0700
+Message-ID: <15693666-edef-60c9-80e1-c74db00e07aa@quicinc.com>
+Date: Wed, 19 Jun 2024 20:00:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v14 3/4] PCI: Bring the PCIe speed to MBps logic to new
+ pcie_link_speed_to_mbps()
+Content-Language: en-US
+To: =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+	<kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, <johan+linaro@kernel.org>,
+        <bmasney@redhat.com>, <djakov@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <vireshk@kernel.org>, <quic_vbadigan@quicinc.com>,
+        <quic_skananth@quicinc.com>, <quic_nitegupt@quicinc.com>,
+        <quic_parass@quicinc.com>, <krzysztof.kozlowski@linaro.org>
+References: <20240609-opp_support-v14-0-801cff862b5a@quicinc.com>
+ <20240609-opp_support-v14-3-801cff862b5a@quicinc.com>
+ <c76624fa-1c07-1bb4-dff0-e35fe072f176@linux.intel.com>
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <c76624fa-1c07-1bb4-dff0-e35fe072f176@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: j1Vg0VY4XtheVwORlXDUtqCV06y-ub8Q
+X-Proofpoint-GUID: j1Vg0VY4XtheVwORlXDUtqCV06y-ub8Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ adultscore=0 impostorscore=0 clxscore=1011 mlxscore=0 spamscore=0
+ bulkscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406190108
 
-On Fri, 14 Jun 2024, Jos=E9 Exp=F3sito wrote:
 
-> > > Turns out that, since the last time I checked the KUnit docs,
-> > > we have "EXPORT_SYMBOL_IF_KUNIT" available now.
-> > >
-> > > I think we can use it and your final patch, without the MODULE_*
-> > > changes, could look like:
-> >=20
-> > Looks good to me, can you send that with
-> >=20
-> > Reported-by: Arnd Bergmann <arnd@arndb.de>
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
->=20
-> I couldn't add the "Reported-by" tag because check-patch throws a
-> warning if it is used without a "Closes" tag.
 
-What?
+On 6/14/2024 6:02 PM, Ilpo Järvinen wrote:
+> On Sun, 9 Jun 2024, Krishna chaitanya chundru wrote:
+> 
+>> Bring the switch case in pcie_link_speed_mbps() to new function to
+>> the header file so that it can be used in other places like
+>> in controller driver.
+>>
+>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+>> ---
+>>   drivers/pci/pci.c | 19 +------------------
+>>   drivers/pci/pci.h | 22 ++++++++++++++++++++++
+>>   2 files changed, 23 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index d2c388761ba9..6e50fa89b913 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -6027,24 +6027,7 @@ int pcie_link_speed_mbps(struct pci_dev *pdev)
+>>   	if (err)
+>>   		return err;
+>>   
+>> -	switch (to_pcie_link_speed(lnksta)) {
+>> -	case PCIE_SPEED_2_5GT:
+>> -		return 2500;
+>> -	case PCIE_SPEED_5_0GT:
+>> -		return 5000;
+>> -	case PCIE_SPEED_8_0GT:
+>> -		return 8000;
+>> -	case PCIE_SPEED_16_0GT:
+>> -		return 16000;
+>> -	case PCIE_SPEED_32_0GT:
+>> -		return 32000;
+>> -	case PCIE_SPEED_64_0GT:
+>> -		return 64000;
+>> -	default:
+>> -		break;
+>> -	}
+>> -
+>> -	return -EINVAL;
+>> +	return pcie_link_speed_to_mbps(to_pcie_link_speed(lnksta));
+> 
+> pcie_link_speed_mbps() calls pcie_link_speed_to_mbps(), seems quite
+> confusing to me. Perhaps renaming one to pcie_dev_speed_mbps() would help
+> against the almost identical naming.
+> 
+Ack I will modify in the next patch.
+> In general, I don't like moving that code into a header file, did you
+> check how large footprint the new function is (when it's not inlined)?
+> 
+I checked with and without inline and I don't see any difference in both
+cases
+aarch64-linux-gnu-size ../drivers/pci/pci.o
+    text    data     bss     dec     hex filename
+   41440    1334      64   42838    a756 ../kobj/drivers/pci/pci.o
 
-Let's ignore (or even better fix) checkpatch, this is bad behavior.
+   text    data     bss     dec     hex filename
+   41440    1334      64   42838    a756 ../kobj/drivers/pci/pci.o
 
-> Other than that, I sent v2:
-> https://lore.kernel.org/linux-input/20240614161935.230529-1-jose.exposito=
-89@gmail.com/T/
-
-I'll add Arnd's Reported-by: while applying that, credit must be given.
-
-Thanks,
-
---=20
-Jiri Kosina
-SUSE Labs
-
+- Krishna chaitanya.
+> Unrelated to this patch, it would be nice if LNKSTA register read would
+> not be needed at all here but since cur_bus_speed is what it is currently,
+> it's just wishful thinki
+> 
+>>   }
+>>   EXPORT_SYMBOL(pcie_link_speed_mbps);
+>>   
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index 1b021579f26a..391a5cd388bd 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -333,6 +333,28 @@ void pci_bus_put(struct pci_bus *bus);
+>>   	 (speed) == PCIE_SPEED_2_5GT  ?  2500*8/10 : \
+>>   	 0)
+>>   
+>> +static inline int pcie_link_speed_to_mbps(enum pci_bus_speed speed)
+>> +{
+>> +	switch (speed) {
+>> +	case PCIE_SPEED_2_5GT:
+>> +		return 2500;
+>> +	case PCIE_SPEED_5_0GT:
+>> +		return 5000;
+>> +	case PCIE_SPEED_8_0GT:
+>> +		return 8000;
+>> +	case PCIE_SPEED_16_0GT:
+>> +		return 16000;
+>> +	case PCIE_SPEED_32_0GT:
+>> +		return 32000;
+>> +	case PCIE_SPEED_64_0GT:
+>> +		return 64000;
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>> +	return -EINVAL;
+>> +}
+> 
+> 
+> 
 
