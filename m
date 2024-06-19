@@ -1,109 +1,93 @@
-Return-Path: <linux-kernel+bounces-220862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A3090E855
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:28:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1DFD90E858
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C5452831AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:28:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 332C4B21A1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1210B12BE91;
-	Wed, 19 Jun 2024 10:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FC685626;
+	Wed, 19 Jun 2024 10:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qOK7hK+Z"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Dodw+hqE"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B316F2F8
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973CC78C91
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718792876; cv=none; b=r1fVD1mBj6XVG7K8o5SM61T7BE4r/46QAwGMyyME2pQm7iX+B2ia+ZikdDVKHLLs/lAhlA2o/mc/iQrjzxCaLSJRdfKeU4yx/mBD1hEed5H0K7+k8DGYUmkBjL3lEL1GOIFY0JqgFMTGHdFkJmtu2nhGRmQXBdN7yW5Ro3saUfM=
+	t=1718793041; cv=none; b=exGO3C/MJCI+m7poTeGR0BV+Wg6xYmA2IfKJCofk7kVz42Paar9vbRLTzON9O/Tb5i1ET8P2NUdTKA4T3AZHGnFf1cyH2eQ7yXohvp4qHEbqKd5QiRJcnubE2slLQxQWG9OzbhGfDp6IpJMilFecchjpbd6ezHTYmmeFyQVl2UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718792876; c=relaxed/simple;
-	bh=i+Vh5IEf6ap5Zu7o39yGmTLNUILpgLoegwAAulUElVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uyO5kamb5tfdxOnkoUvbQW9rp4s4cSKLMcdHO8rwZMma3LuJ3F7rTPGHCr4YwH/+c2An3wytYTTmCGvVCPkP2NqwYC/5/O6J3seGTojWdK1dGQ2E4M4B5N0Jo/b2WP5F+tik9TpxMkcbU0oikLfVf4mTa4lcG58tiX4OnD2BK/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qOK7hK+Z; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-361b376236fso1354149f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:27:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718792873; x=1719397673; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2CyUIVE4d7f/WSt+yhhaSrSEXlrd5/Sf0m/XuQDZqM4=;
-        b=qOK7hK+Z/n9BG+FhA9S7J9Nn5Ec5Xp/JGVLpHoaQBM/ON9Zwv5t4FCLSQAcqsFaQHM
-         Rg6aXYLcbf+15slquCy78vFpW9QkpX7w+ItkpUvevvB1p1bfe8twJv58CtHzWkZG9sLu
-         LMWAaiQsuWaEjfeU4AtbZm+D2lOvIO0YTVMiA1TjHL11S0zYUYE9l0WJ1ewKvhYXIxXD
-         D90OUX+35n32uWzNNqGqYdpUUH2DJhJl+f4XgSeT8x7h1Cqi1TMEaMaXCYAQh8RZG4YA
-         FkzExkJonU0RDQz8AGmCJ8UJP5k/tC8hNIF8bliPbhGLl5zYVrVbIlmjSOiJh2SM7cT3
-         ToZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718792873; x=1719397673;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2CyUIVE4d7f/WSt+yhhaSrSEXlrd5/Sf0m/XuQDZqM4=;
-        b=CenMBrfR+0pQ0LJVJoKUWhm1RJYLMkInCf6vY9VK1HybApPUDEp/vCyFEbz4JE0m9T
-         Fjua4SEKQXFFh4d3NtHBIXjI39RxLV4230sENL/58JxTyfZhxQWMF3wlgm1n7n71YS/s
-         X2svdiv5NCpw9+QSEVYknweVk/nxDUoQGIci8Wstt+vKHgeL6oLrK1rHix5y2s+VMAJc
-         fWQWm/LmQ6PHdeQhR2L1xMKAtxtw7KwtJkkhjxyy7Ldm4+QHTrrye5F7GSwjcli178QF
-         K3KF01898qT8T6wmoa+5ITC1RUVpIqMvjuRs63Bab0i4qF4UokGvAa37JcNNlU9KtQXh
-         PFTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjy6PuWf+H0wMiBkGR5Xpbgemzn8U5r0ncGYE0dJR/xmzVnAEVGGOSNPO0WDgP39UlI6IwRcvKM8iB7X/N6DUlOBCetcuk+4ykXyQ9
-X-Gm-Message-State: AOJu0YyePKOI7GpgidNJ+mcaLMRpurNJoU7/sfA9caOY5rmAix0W/QSG
-	ugg1ukGtJrvOutYpZbqL220/hOntqnHVPXWLJxeB7FykFP5Iz/Lp6b5pohpTbAE=
-X-Google-Smtp-Source: AGHT+IGtec/lgCxyi9AgTK89DVz1wHvGWI1ABFZYclqKo/M9rdfeDf4DrnxhbsWhUsYeH8EB8I5HaQ==
-X-Received: by 2002:a05:6000:d41:b0:360:73f4:7937 with SMTP id ffacd0b85a97d-363171e2cffmr1500634f8f.6.1718792873117;
-        Wed, 19 Jun 2024 03:27:53 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:a784:959b:8c69:567e? ([2a05:6e02:1041:c10:a784:959b:8c69:567e])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36076515a80sm16634591f8f.76.2024.06.19.03.27.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 03:27:52 -0700 (PDT)
-Message-ID: <5f894bbd-3301-4305-ac8d-10dad1e6939d@linaro.org>
-Date: Wed, 19 Jun 2024 12:27:51 +0200
+	s=arc-20240116; t=1718793041; c=relaxed/simple;
+	bh=uWBOfNWDaWysr82LJvlFXwnZM9j18ErxE9+uXo17HHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gPXNrYGcHZ6QULD6HHd0EMB57XU83wzYw8qhVxvUatsKdM0F7aVGS9Nx7fz4nCuqgZUqUYOPtVkCVr+oRc3dc0V2B/m6eGywdaoc68JKCSiW2s40VYhMPzJTtNHdKEodiSRhKVQUC1SFJWDLVQOoP7HEU/RYSCG9jpfAfkBCFww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Dodw+hqE; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718793037;
+	bh=uWBOfNWDaWysr82LJvlFXwnZM9j18ErxE9+uXo17HHg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Dodw+hqEZzT7cQGDj+ZKzi81LYGZmNbHRAUVFDkKHPFhX8AvrHsAG7xno1PwqwMh4
+	 bABg1RI2g/mGDF/B6or+yCyyLUD9ZkSupn3PTWKIWcpt61nGKUxt/afREBfO9Dc5c0
+	 hbpxLKXvauPcpfUmnBRWKkpYkvIL2BXCI89DcPXRZduGgcI6r8KWki5u+NMN4t5FR/
+	 ssGl7SijzWzdg1MzipnnqLfHLoTR4s6TsXyzQoZKEXcOP6Kc2PjN13eBUyMj9QvkTt
+	 fOP0LWOrvrlKAH4lQIQ9TeUyoFW2IwrU3cS45Yw+uOgpSzlY5CL/vkVAX3Tla2tWDr
+	 rFdiqUDps0A0A==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4299B3780F7F;
+	Wed, 19 Jun 2024 10:30:37 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-mediatek@lists.infradead.org
+Cc: matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	fshao@chromium.org,
+	kernel@collabora.com
+Subject: [PATCH] soc: mediatek: mtk-mutex: Add MDP_TCC0 mod to MT8188 mutex table
+Date: Wed, 19 Jun 2024 12:30:34 +0200
+Message-ID: <20240619103034.110377-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] dt-bindings: thermal: convert hisilicon-thermal.txt to
- dt-schema
-To: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240618-hisilicon-thermal-dt-bindings-conversion-v4-1-7eba97fbe6d0@gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240618-hisilicon-thermal-dt-bindings-conversion-v4-1-7eba97fbe6d0@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 19/06/2024 04:31, Abdulrasaq Lawani wrote:
-> Convert the hisilicon SoCs tsensor txt bindings to dt-schema
-> 
-> Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-> ---
+MT8188's MDP3 is able to use MDP_TCC0, this mutex_mod bit does
+actually exist and it's the same as MT8195: add it to the table.
 
-Applied, thanks
+Fixes: 26bb17dae6fa ("soc: mediatek: mtk-mutex: Add support for MT8188 VPPSYS")
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/soc/mediatek/mtk-mutex.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/soc/mediatek/mtk-mutex.c b/drivers/soc/mediatek/mtk-mutex.c
+index b5af1fb5847e..01b129caf1eb 100644
+--- a/drivers/soc/mediatek/mtk-mutex.c
++++ b/drivers/soc/mediatek/mtk-mutex.c
+@@ -524,6 +524,7 @@ static const unsigned int mt8188_mdp_mutex_table_mod[MUTEX_MOD_IDX_MAX] = {
+ 	[MUTEX_MOD_IDX_MDP_PAD0] = MT8195_MUTEX_MOD_MDP_PAD0,
+ 	[MUTEX_MOD_IDX_MDP_PAD2] = MT8195_MUTEX_MOD_MDP_PAD2,
+ 	[MUTEX_MOD_IDX_MDP_PAD3] = MT8195_MUTEX_MOD_MDP_PAD3,
++	[MUTEX_MOD_IDX_MDP_TCC0] = MT8195_MUTEX_MOD_MDP_TCC0,
+ 	[MUTEX_MOD_IDX_MDP_WROT0] = MT8195_MUTEX_MOD_MDP_WROT0,
+ 	[MUTEX_MOD_IDX_MDP_WROT2] = MT8195_MUTEX_MOD_MDP_WROT2,
+ 	[MUTEX_MOD_IDX_MDP_WROT3] = MT8195_MUTEX_MOD_MDP_WROT3,
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.45.2
 
 
