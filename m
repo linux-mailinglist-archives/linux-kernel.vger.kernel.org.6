@@ -1,141 +1,155 @@
-Return-Path: <linux-kernel+bounces-220401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F127F90E12F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:18:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B896190E133
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A629B1F22C41
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:18:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 413FF1F22E31
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C9C79E0;
-	Wed, 19 Jun 2024 01:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91A96AB6;
+	Wed, 19 Jun 2024 01:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4+WH1b+"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ib1r2/ge"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BA263D0;
-	Wed, 19 Jun 2024 01:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C1A5227;
+	Wed, 19 Jun 2024 01:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718759890; cv=none; b=UiWWam8T3Q9QpRi5OhlWb/3DTcqbeMmGjJ1VFzhIgCLlQZ74Prsle5FHLkP8S8Pe3uBlyTRGjSj5EktttIMhbiVwEWfNwMFIstNnqj8jiJZQ77tu4BuvgoZ9goy+GxeNkmgS9YkNo12eK9IH8JXM1rosC3FaeFnCCrirDvvesNQ=
+	t=1718760037; cv=none; b=pUAPlG1H/xlLT1pqSEEYgM5GL2jtKSUHvtL/Lbiw4lT+c/JqUFL48gVEzQYk7CEeIDstKaAj7+sRs9yYTHVIhvuntmmoY/oSHUgARyLLvIO6E9j23jvR5fsa0dN05N/tZ5BgsrJ0b3wK8+E4sBQD5pCPBh2pcCtKUYZz76pO91E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718759890; c=relaxed/simple;
-	bh=OM+FRXFB6DpgW4Mn/lTWBgeE0bTKzqdd4rxakX3c1ho=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BfEii238pGtnEBzz2cp6Ik+vJoLnuGPt8dgUVvB3qChOmakWMhKbxrblFPJ2qZGTEYLKObGE+Oyz7SOBZt4v53SJ3XgkH1g47WW+/XHixEIvWdy6EyCHIeJNAb8QZ5kPga1Qk6da/8nDVjZ8iInRM+03CVk0EY6e/eU+TFTEtSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j4+WH1b+; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso100941921fa.1;
-        Tue, 18 Jun 2024 18:18:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718759887; x=1719364687; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ey5yiVQA8LBP/6zYkNpIcrvI4fFdl2/Q3IQajczTvLM=;
-        b=j4+WH1b+dbgoHgWISeILjkNLEnQtiyGV6pCN9cUhDE6BOtAflti221ZQKIqaRLCT+j
-         vtK3iJYo6oshgFTuZgQP5MK6OkR5NnbJPfmFto/PX110dzmC6TTXPT9UAmbOrHPMm1fU
-         CvmeGVPCTDtrU57UJe8dBGHXXwAAXBmSJOeaGRqA6xKsF8aX3WjMbvv15okPZz9JulIF
-         Dz4W9KITk7GLKcQ8pZZHEwS8XYq1fnUjHy4mc2izDI5bLCgRU3Yl+PltmkpLzat4cUOh
-         hrPfzI6CwzxKNy7fdH6zHS758nibEDuPg9kwUr2L4Kh5SDQFRjPrazgwp3QYLLVs4+LU
-         sftg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718759887; x=1719364687;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ey5yiVQA8LBP/6zYkNpIcrvI4fFdl2/Q3IQajczTvLM=;
-        b=dzw8tTQkRAD0xyMh40KBXp+XzE3N2aFqNKwzmb1u5TLKdETV1cptp+IC/64Hk0QMYd
-         NawZnXzfzA0bqvg2+S9uu0jvnwFWEEN999/5o5doafN3h0QTmxaPJ/rqQ9xkaK7FPmcj
-         9SKfssBVRZeLiB0JDS0au+X7zXQV3pEf/2wHJ/4+CgbAZU+BCy8P2CMil/DCM0w36WwN
-         n2Robs/hpbr9t3stPz17BuefuQVv0f2CGFWzqIEFdcFHTd5pNfr1M+YCmEopShIQuNVA
-         ePU1BuGqmF9GifE2TWb84UqlqKu+7pUmCvcktH9D3Qk0QxAJevqgyH2Ngn75hI/oZS7e
-         bpgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBX/bpkQl6B/o5XoHV9bz+oF/6QmIDpbf7/I6K6THQzJM1KlOrY0/3l0QlLFwaSA2smEMobSn7A8c9PrlruetEzKrysQLWm2OwmmrbCwu6YudQOCz5+MHMpsmQ8+eAyvBK90nrz2gl6w==
-X-Gm-Message-State: AOJu0Yy9/eu4iAtZSnr7SY9S4tQbGT6v79KDr5bdxy6I9s2HEjH6+U7A
-	bVe+BEzrmEmD3kBCx8P7WhXAf59bS2yqJTSK2yJ8n9H4oNfM9igy9siknG0SLCPp/QXofDuuLhT
-	uenSSigHXhr7LBILi/Rcc8khOO44=
-X-Google-Smtp-Source: AGHT+IFiTPEbVFgx6S7H+uJNwNOLjAFLVL5/Vnh5jjNpcZV25rpymoEhI57ECx4iXoR1vGPAbIVLdQm2Xan1iCOIji0=
-X-Received: by 2002:a2e:9f02:0:b0:2ea:ec52:f594 with SMTP id
- 38308e7fff4ca-2ec3ced1896mr8494161fa.29.1718759886352; Tue, 18 Jun 2024
- 18:18:06 -0700 (PDT)
+	s=arc-20240116; t=1718760037; c=relaxed/simple;
+	bh=YAOHYSF2kfOC5GvJiRI6/Eu1rzyWRuWM8z0fAkNkmgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=imYf+Rmk3F9vtRETuACfNwjykj+FCuFVpZSkJ2b7+84X4vxvBnuLUGZZQL9qv+hjlqE3jVCJRhMj9HyXL9iaVbCFq8WMtFZkEqCp7CgrUxuVR8r3W0IXc2ygP0+Q2z1idsoG2PYFNJsA6DAJDuiT45KIoRw9Hiy98my4NIk9HV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ib1r2/ge; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718760036; x=1750296036;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YAOHYSF2kfOC5GvJiRI6/Eu1rzyWRuWM8z0fAkNkmgU=;
+  b=Ib1r2/geNVCGDATEEq2Yn6dwIiE3C3ucBwAydbntblPkcp/BHGJo7QRW
+   7fNy6J4JSI9BfPLHIpJNSO1MmmBog6bnNyprk4UQETokG4R6uZbbvBg8f
+   EnW95NyeSmK+VT7LryYkij9k9BUAoMvT0oIdoBziuaroIA0kwP4o6eY4g
+   S/Tmg+RiQNu82jlvrOUff1ZizLU0NAuLiOJksjTAZRFQmGu3csYhCrzgW
+   SKFiudDVx+EEPpTy6Bkw2YL2TcNdF9ds2ZQOdf5tXNt5LKiTJRrazSsNm
+   1nxEUi469namx0O5b+QWiiBTR2IvoQKTMhhglFtMD5xFQdrz5I3W/jcYb
+   w==;
+X-CSE-ConnectionGUID: 5MZ+kRoKQy+eRIUM3hAN5A==
+X-CSE-MsgGUID: Ed7B04gtRReQjaOs8iQPHQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15805303"
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="15805303"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 18:20:35 -0700
+X-CSE-ConnectionGUID: 6V5X6AoMTPKvwSDudaZOxw==
+X-CSE-MsgGUID: sMe9BSUcRACrxbiuh7slWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="42430221"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 18 Jun 2024 18:20:32 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sJjzx-00067k-2w;
+	Wed, 19 Jun 2024 01:20:29 +0000
+Date: Wed, 19 Jun 2024 09:19:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 1/2] ASoC: codecs:lpass-wsa-macro: Fix vi feedback rate
+Message-ID: <202406190857.mozJxHDO-lkp@intel.com>
+References: <20240618-lpass-wsa-vi-v1-1-416a6f162c81@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1718268003.git.haibo1.xu@intel.com> <f1f96377b8ecd6e3183f28abf5c9ac21cb9855ea.1718268003.git.haibo1.xu@intel.com>
- <CAJve8o=8thBhU3NyTaS6sE9rQ1VR_Qf4O8FkAxpmp1q8P-6VaQ@mail.gmail.com> <20240618151820.GA2354@willie-the-truck>
-In-Reply-To: <20240618151820.GA2354@willie-the-truck>
-From: Haibo Xu <xiaobo55x@gmail.com>
-Date: Wed, 19 Jun 2024 09:17:54 +0800
-Message-ID: <CAJve8o=-bZhQS289jwxG=Aq2BOXk5OzdgPKT=nFE9yw_HYYnQQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] ACPI: NUMA: change the ACPI_NUMA to a hidden option
-To: Will Deacon <will@kernel.org>
-Cc: Haibo Xu <haibo1.xu@intel.com>, sunilvl@ventanamicro.com, arnd@arndb.de, 
-	ajones@ventanamicro.com, Catalin Marinas <catalin.marinas@arm.com>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Conor Dooley <conor.dooley@microchip.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Evan Green <evan@rivosinc.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Zong Li <zong.li@sifive.com>, 
-	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Chen Jiahao <chenjiahao16@huawei.com>, James Morse <james.morse@arm.com>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Zhao Ke <ke.zhao@shingroup.cn>, 
-	Andy Chiu <andy.chiu@sifive.com>, Marc Zyngier <maz@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Dan Williams <dan.j.williams@intel.com>, 
-	Alison Schofield <alison.schofield@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Robert Richter <rrichter@amd.com>, Yuntao Wang <ytcoode@gmail.com>, Dave Jiang <dave.jiang@intel.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618-lpass-wsa-vi-v1-1-416a6f162c81@linaro.org>
 
-On Tue, Jun 18, 2024 at 11:18=E2=80=AFPM Will Deacon <will@kernel.org> wrot=
-e:
->
-> On Mon, Jun 17, 2024 at 09:34:18PM +0800, Haibo Xu wrote:
-> > @Catalin Marinas @Huacai Chen
-> >
-> > Could you please have a look at this patch for the ACPI_NUMA config on
-> > ARM64 and LOONGARCH respectively.
-> >
-> > Thanks!
-> >
-> > On Thu, Jun 13, 2024 at 4:37=E2=80=AFPM Haibo Xu <haibo1.xu@intel.com> =
-wrote:
-> > >
-> > > x86/arm64/loongarch would select ACPI_NUMA by default and riscv
-> > > would do the same thing, so change it to a hidden option and the
-> > > select statements except for the X86_64_ACPI_NUMA can also go away.
-> > >
-> > > Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> > > Suggested-by: Sunil V L <sunilvl@ventanamicro.com>
-> > > Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
-> > > Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-> > > ---
-> > >  arch/arm64/Kconfig        | 1 -
-> > >  arch/loongarch/Kconfig    | 1 -
-> > >  drivers/acpi/numa/Kconfig | 5 +----
-> > >  3 files changed, 1 insertion(+), 6 deletions(-)
->
-> This looks fine from an arm64 perspective:
->
-> Acked-by: Will Deacon <will@kernel.org>
->
+Hi Srinivas,
 
-Thank you, Will!
+kernel test robot noticed the following build warnings:
 
-> Will
+[auto build test WARNING on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Srinivas-Kandagatla/ASoC-codecs-lpass-wsa-macro-Fix-vi-feedback-rate/20240618-221030
+base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+patch link:    https://lore.kernel.org/r/20240618-lpass-wsa-vi-v1-1-416a6f162c81%40linaro.org
+patch subject: [PATCH 1/2] ASoC: codecs:lpass-wsa-macro: Fix vi feedback rate
+config: i386-buildonly-randconfig-002-20240619 (https://download.01.org/0day-ci/archive/20240619/202406190857.mozJxHDO-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240619/202406190857.mozJxHDO-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406190857.mozJxHDO-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> sound/soc/codecs/lpass-wsa-macro.c:999:2: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
+     999 |         default:
+         |         ^
+   sound/soc/codecs/lpass-wsa-macro.c:999:2: note: insert 'break;' to avoid fall-through
+     999 |         default:
+         |         ^
+         |         break; 
+   1 warning generated.
+
+
+vim +999 sound/soc/codecs/lpass-wsa-macro.c
+
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   976  
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   977  static int wsa_macro_hw_params(struct snd_pcm_substream *substream,
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   978  			       struct snd_pcm_hw_params *params,
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   979  			       struct snd_soc_dai *dai)
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   980  {
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   981  	struct snd_soc_component *component = dai->component;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18   982  	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   983  	int ret;
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   984  
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   985  	switch (substream->stream) {
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   986  	case SNDRV_PCM_STREAM_PLAYBACK:
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   987  		ret = wsa_macro_set_interpolator_rate(dai, params_rate(params));
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   988  		if (ret) {
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   989  			dev_err(component->dev,
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   990  				"%s: cannot set sample rate: %u\n",
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   991  				__func__, params_rate(params));
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   992  			return ret;
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   993  		}
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05   994  		break;
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18   995  	case SNDRV_PCM_STREAM_CAPTURE:
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18   996  		if (dai->id == WSA_MACRO_AIF_VI)
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18   997  			wsa->pcm_rate_vi = params_rate(params);
+2881dae5fbb091 Srinivas Kandagatla 2024-06-18   998  
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05  @999  	default:
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05  1000  		break;
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05  1001  	}
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05  1002  	return 0;
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05  1003  }
+809bcbcecebff8 Srinivas Kandagatla 2020-11-05  1004  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
