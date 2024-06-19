@@ -1,130 +1,88 @@
-Return-Path: <linux-kernel+bounces-221161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F07A90EFA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:06:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B2B90EFA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08EF7B22B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EF5428221C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2257914F108;
-	Wed, 19 Jun 2024 14:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="H9mjke0j"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252021494A9;
+	Wed, 19 Jun 2024 14:06:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAA31DDD1;
-	Wed, 19 Jun 2024 14:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693C51DDD1
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 14:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718805980; cv=none; b=txWudITYL2kCZ2qsTmzZQ6efbqE/H0WjRBqeS8dW0g0iDEyjuN+3RA+XCrIO4H2+wjBZVvmR3jVEiv0k0sSbgMQHnTSKpuolV2XKXDJEXgtForkPB5V5oWsr9YOvOQJKwmqUcK4beq5DBKqGu6FXBU7PvSCKiZdw8ysO9HyWBUo=
+	t=1718805965; cv=none; b=Cma6J3nuRB7lPsAqeKo59buBf4LlcRjQSphUXM2T0U5iJ/z8wncy8al26B9mHMB+2/+GLr0BMV0Vi/ASlW9TZiL4qIjB4Tr2PsesxoAAriwug7XeW9zITndjTJwOlLLU+Snj1BwJNcWMwtp1/pQ8NLEcaNrjIfMBi7+DJQZT8FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718805980; c=relaxed/simple;
-	bh=ahSL1WyTl3cJXialu5fedyaGFKTnP0EwJfAW8b8qtDQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A34PSYDU7M8kDDDB608B/ESBq+/u4ubOxj3fpriWNpdLuL1TrFVBwcZyJWbNjkhre5HdJx2NxXDiFHeb6QsmME1YMuwA650Ie+BZzy5AStJBXAvnUFTqhmngpKke1sktTC5YDXrYIJTj7zt4m74xiEpKrV1/3vG2FHQbiwHgJPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=H9mjke0j; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 69379A00ED;
-	Wed, 19 Jun 2024 16:06:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=8KCtIFk5Jn2HULoa1bshxqf0/aEGts2U2h/0kblk5Ug=; b=
-	H9mjke0jaGcOwQkFUrqDivrKt18yWQ+RR5hNM1tApJ23cp9x+bmmVrbRnecHazlz
-	ca8H5YiGDUTyNSV+DYvjihUGQDm1x1aU6k/ZuMKvMPAtnoayuheociC4jzVctOxk
-	KOsU9yFrDIJtuz9iNoztZokSikWgNc+uXQwv+Qc6nqoBiGE8XQW1a7t3uGN6NYI0
-	dx3ax9Nl5Spi4f/j9pvp8ovesDomDIt8I6gt1PS7TvGVKE9Pq+aWEM5hKb+D3njJ
-	Ht0Rjhjcc8XEoE9nIQOQg5g2LdQpwd2FF83l1RP3HwXmjjOFahTve12+7AdIellq
-	69Uvxf7Lm1fbKBfMmT+MFGXfgUVKjAlYhhtYKWeVBLSfsQPsRBdyaeeYZ9KgaP2X
-	xa7GO/mubc3JhOel633jHHFbyxAPzVBwa5+kgs/HH3er3CJxfRLOPuk7CCUxl+Qw
-	+dPBuMefs35baSI5u9M0VksWuM4twQD7RnFN4AABsAFuShvtZ1CQmdgWgIEYL+PU
-	1mGm/N9k2GQqHVfo3cFCycokUgHoc+qWBz/+lhEKG4yLHM0oVuQWwV+YHWKS8pjO
-	DGklf/rTjTsFakIME4DuH2uR0iRAStvqxi6J9dRRb+LQRex0dKpnDexZEAPhRkMA
-	++k3KD+xUcqwY4ObGZcvcvAhdfax4DfAe7vkTbzplSo=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	<linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-Subject: [PATCH v2] rtc: interface: Add RTC offset to alarm after fix-up
-Date: Wed, 19 Jun 2024 16:04:52 +0200
-Message-ID: <20240619140451.2800578-1-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718805965; c=relaxed/simple;
+	bh=kB4lsL9Jk7hqhWXCSeLpXGnCTQYvqJXtlIDXrQmdAV8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gxdDcBSXZ7krp7ZUAvb6OMulNBJOCtc2y18bJKqhiYT6a0a9od4c+X5dinUicooX6LqWFladleD5hQ0X0veSxGOOhJIrgvGPVttfycDeBmDVK/+PmrEBH1cJeMrq3Qx4IIQw11N+dn3oGNnH9GsCSzzaP7eFxdKzsL8HS5zBjOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f12e60c050so74325239f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:06:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718805963; x=1719410763;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PxFNes5Jm5DOsCIyQ7YcMiVGoIgxFwDe6xXlvIMbJF8=;
+        b=A1JJmVnjbrx2I6xmYbWVfkqxm9f6UEYVjOm+9uONHFsK2WoVvgNBwg49HXJsGLQ9sw
+         qF9Dedf8nsuTbmHbZzQq+X7oa1B/PHVnsE0zbtlOb8bNCnBEGROfVi3C0E2R5LPWyU75
+         nGvYTrEnokrKRtkjuucB5CWk4QxpU8tAKat6JBvM9L/VUTrCrQrqItwOKL0hEeGFGqxR
+         Aeil9heOO+d9/b86Xk5stxB0VwFF8SZiJXNGprN/6uhRkn6/vCwqI5Nxc/7wuEtd1c9y
+         40EBQww/KQZEuE9uRBpfAzt0/H8pJZD1uinrQJIiUTrgm1gPh3Shwii6OXjamNn3vma5
+         Oclw==
+X-Forwarded-Encrypted: i=1; AJvYcCWh57CZj3lXYDzJoq9O7GgheOKbNcqJ3ywH+Z9HWw3pL23nWPuegm95oOhTAuCc+vu3A4HKKVjLFArrhYJllu9GEjieWcDWuYH58+gc
+X-Gm-Message-State: AOJu0YxirSXkdEFxSeTmcfzo7nt+OfItROJEZrVSK4+P0Qt8LmPSItSM
+	pU0/uNYPa0s0bilLuA5WcMC5yz2D2Bh67L1CiWqhUxI565thSMz3M+2bHXD4ZZgtyEyKRLPWBIT
+	1TuXYNJS/yeMI++8ZD493ma9YDNCoiHIOwRQAaYOwMaREOYlctnLQuaI=
+X-Google-Smtp-Source: AGHT+IEXkKWGjSC/wASvvyqgD+piXiWsSMejoV/+LLMEb4SPrrfiCz+Uv78wkaOg87txnTGNO1FVKj17WE+JPAYpnUKeEncD1pnG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a92:c564:0:b0:375:cfd0:393d with SMTP id
+ e9e14a558f8ab-3761d14694emr1752295ab.2.1718805963657; Wed, 19 Jun 2024
+ 07:06:03 -0700 (PDT)
+Date: Wed, 19 Jun 2024 07:06:03 -0700
+In-Reply-To: <d0e71ba0-d0bf-4ec2-8222-1c1b6c49353b@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e6ea9e061b3eb27f@google.com>
+Subject: Re: [syzbot] [ntfs3?] possible deadlock in attr_data_get_block
+From: syzbot <syzbot+36bb70085ef6edc2ebb9@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1718805974;VERSION=7972;MC=1526577659;ID=844469;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29916D3B546D7D67
 
-`rtc_add_offset()` is called by `__rtc_read_time()`
-and `__rtc_read_alarm()` to add the RTC's offset to
-the raw read-outs from the device drivers. However,
-in the latter case, a fix-up algorithm is run if
-the RTC device does not report a full `struct rtc_time`
-alarm value. In that case, the offset was forgot to be
-added.
+Hello,
 
-Fixes: fd6792bb022e ("rtc: fix alarm read and set offset")
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
+failed to apply patch:
+checking file fs/ntfs3/frecord.c
+patch: **** unexpected end of file in patch
 
-Notes:
-    Changes in v2:
-    * don't try to add offset to an invalid tm
 
- drivers/rtc/interface.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index 1b63111cdda2..0b23706d9fd3 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -272,14 +272,13 @@ int __rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
- 		err = rtc_read_alarm_internal(rtc, alarm);
- 		if (err)
- 			return err;
- 
- 		/* full-function RTCs won't have such missing fields */
--		if (rtc_valid_tm(&alarm->time) == 0) {
--			rtc_add_offset(rtc, &alarm->time);
--			return 0;
--		}
-+		err = rtc_valid_tm(&alarm->time);
-+		if (!err)
-+			goto done;
- 
- 		/* get the "after" timestamp, to detect wrapped fields */
- 		err = rtc_read_time(rtc, &now);
- 		if (err < 0)
- 			return err;
-@@ -377,10 +376,12 @@ int __rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
- 
- done:
- 	if (err && alarm->enabled)
- 		dev_warn(&rtc->dev, "invalid alarm value: %ptR\n",
- 			 &alarm->time);
-+	else
-+		rtc_add_offset(rtc, &alarm->time);
- 
- 	return err;
- }
- 
- int rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
--- 
-2.34.1
+Tested on:
 
+commit:         92e5605a Merge tag 'linux_kselftest-fixes-6.10-rc5' of..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
+dashboard link: https://syzkaller.appspot.com/bug?extid=36bb70085ef6edc2ebb9
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16bfe146980000
 
 
