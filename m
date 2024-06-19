@@ -1,155 +1,210 @@
-Return-Path: <linux-kernel+bounces-220576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28D590E3E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:59:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3853990E3EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78A01C20BC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3B11284793
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5C671743;
-	Wed, 19 Jun 2024 06:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501AE6F319;
+	Wed, 19 Jun 2024 07:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="elpDwQWs"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="saljTd/s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D966BB58
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1FE6139
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718780359; cv=none; b=s7qJHHPuE8BYNgo5dizcltpMzi0of6D7+cQwrL0W14UxtwVZV7uCJl3/flWh9rkLeQw5KrOIYCTtWN3f4NJYogGmxPTdT5D7uv5GF3bGrBWJLzbhcadKUdl07jA56EGDFDqhegfBmOkHi5q9dfUNz4ZvyVVxrFbQkVzG4qasKS0=
+	t=1718780450; cv=none; b=M9m2FhHSgsdNJEUsBXtPHJ4mKb0+qlJKOEMWwNUT6NLLfd4AUJXpvnFjIx2S/WvUvVX7pr6m2QJPzCxO6cQofr/1h+ZinGfcekXylUFk9LpOxoyrlLSHl6VGbKQ04rNjp9zMKDkExK/5hvvkUSYuR/KSHhS19qpg9cShjG+rjhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718780359; c=relaxed/simple;
-	bh=Ex8XoHz2m30DmPv+kgvdAZKlewAU12uHOkN9ftTBENU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=PDPdnjOYJOnPypZh0l64DD8wUysz7qCh6dTxdV11IxJPB8F0zn45LJbaVc8F0g97Oo4NiHF2/Ql1aYHeqPKLgCUoE5Q+yOBcP0DgfrwH03Is3K1f43qAP6BLbgweXovFrFek3mX7h7q9o+h03gnK/frOw9MMMJth8duCp6T3vhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=elpDwQWs; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=smartx.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-1f717ee193fso45871665ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 23:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1718780357; x=1719385157; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jzjGU5wIa+JU8cPwc97EJTnBpHZIpaLeV58Ad7PrW+0=;
-        b=elpDwQWsb7PjGQPlB9td6H3/T/5ZuTyu8wEmyKzMS8S5xc0CSeIlIPGLt5RJZJTWur
-         PWH50a4YBiPXNaBhxFO4t3gys/UyHxDPpSmeIE5N7X7q4tpE9jsUynziavYtiKCoK3Zb
-         UD8SB66wB39H5cnpRttoQfa8B0RzLAOJtSRH8AifI1xMk1qAejpUo6sWf/Qi61SEf5Z0
-         1cic+xqt5ibEWdkjuqQ23cWHBCv4boI3cRAUF6N0W8KpBKk0TX5lKUg4LrLNbNzgS9pX
-         acWBb4OBv6GSEOjugjORNWhdIiRTxQuzCKj71lVvtpXLuxYBmCR9xTdYzhj2vzDDfbMo
-         r6VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718780357; x=1719385157;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jzjGU5wIa+JU8cPwc97EJTnBpHZIpaLeV58Ad7PrW+0=;
-        b=SnjVlx/1KMJVIYibyXWrCqbsZ/3KtEvjuqAM+LGktKhd2SKmR4wjL/VVjjAm0uGFTx
-         SGYFzyEudIzVxFeJUkdcbOqrxJ9P3eRB0n9KHcnknlMTEiZ+MVzLuYj4QsCaMWz9gLnw
-         XlhxO+1/R26X8kvRtoqrUTJJRMs9eLfVjOE0ldQfC3XIJUlQV9ZPmGuj2DGZ0Zkrydwg
-         zSULER6ZjOEfLZhl/OqlHpyvq/wn/z8kL3duTq5lfSdjHffrxMihyqaL5J4BeBK3qDrJ
-         JS0lFcK9TOwZYTH/F9ILhoMgZ19M8pw2GYh/rgJx2MJ5fgcKBPwp67L+W1WmEly2qygC
-         puYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVQjbxP61NMpIeooWNREhMO6q7BmHpv28O38+jwyewEK9hXJCXhozB+/f4DZB1u16T8jf3JuGrL15W7KgUf7M6GzmBgk7YP/QaNwBV
-X-Gm-Message-State: AOJu0YzzwH48zRCCPjxxouDThFqQOCd3FDN4GLBzQhnZZD5wyEKilupo
-	IlolgzIuXnfLfG5T5vE6mUD/Z1qJwPBKv/zLoE1hzLfi294NAN/SvWJnxKPCNg4=
-X-Google-Smtp-Source: AGHT+IF0QuYNMormgx3auX8/Izc4u+XSl3cTe8yCrtE7iOzIASVVYL+Eeg/BX/XzR5adzYxi97hmXA==
-X-Received: by 2002:a17:903:32d2:b0:1f4:b9d3:adce with SMTP id d9443c01a7336-1f9aa3ec015mr20708695ad.27.1718780356839;
-        Tue, 18 Jun 2024 23:59:16 -0700 (PDT)
-Received: from smtpclient.apple ([103.172.41.206])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9b97ab2d6sm2332845ad.56.2024.06.18.23.59.14
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2024 23:59:16 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1718780450; c=relaxed/simple;
+	bh=wPbUog/DATDmQJOPIEg/tT8i2uUOLhSWvxoc0kvyq7k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KLoEzp6e9zd2NAsg25XDJEGc5eUqjS9FTEboitsGOshB0niE5TEY6IJe/VGvqMS1+N0QixbZi9ZJUCpwBm0HLyA18XJaaRUXxGYR5wnuO7XJ3HIM9l/zFBibIolpE0fz9PW0sggVUDuhF/YDkTnkTP6vKkckX+l5NT+CD+D5wXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=saljTd/s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF6AC2BBFC;
+	Wed, 19 Jun 2024 07:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718780450;
+	bh=wPbUog/DATDmQJOPIEg/tT8i2uUOLhSWvxoc0kvyq7k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=saljTd/sUGkjW86DOOXAHaPKZb2M/Fo4U8E8YKkYZ15LJFZfX6xHollfquVXYZfnd
+	 UPpp3vDvdfwxpmcunISjHVffIs5BcCNmql22gpAYx8J00cUkec4xnM84/yV8lzhvQ8
+	 dZEItioKmeow+3aGOpiUwlYLunsTu/VWnouiTp5vtSkwCabxoI0wYC/b0i18AybJkR
+	 C4BMK8nw9HCzesx5/SDtlwH6Uemax2LzIDS4I5e7P8JYtMWxcuKz+6JdwXGh0wPZWY
+	 wTuuyMosQVDvVnV8k1dq80yUk/1K30fNSOfILNsFI6Ctdaco2l3xjExl02Pf/WW3Kx
+	 3jn0hS3K5N5tQ==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH] f2fs: atomic: fix to avoid racing w/ GC
+Date: Wed, 19 Jun 2024 15:00:42 +0800
+Message-Id: <20240619070042.1197204-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.300.101.1.3\))
-Subject: Re: [PATCH] scsi: sd: Keep the discard mode stable
-From: Li Feng <fengli@smartx.com>
-In-Reply-To: <20240618084706.GB843635@p1gen4-pw042f0m.fritz.box>
-Date: Wed, 19 Jun 2024 14:58:59 +0800
-Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3F36E434-F2D4-457C-860C-4CA31EAE99DC@smartx.com>
-References: <20240614160350.180490-1-fengli@smartx.com>
- <20240617162657.GA843635@p1gen4-pw042f0m.fritz.box>
- <DBAA6B83-E60A-437C-A8D8-B854E625F6CD@smartx.com>
- <20240618084706.GB843635@p1gen4-pw042f0m.fritz.box>
-To: Benjamin Block <bblock@linux.ibm.com>
-X-Mailer: Apple Mail (2.3731.300.101.1.3)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+Case #1:
+SQLite App		GC Thread		Kworker		Shrinker
+- f2fs_ioc_start_atomic_write
 
+- f2fs_ioc_commit_atomic_write
+ - f2fs_commit_atomic_write
+  - filemap_write_and_wait_range
+  : write atomic_file's data to cow_inode
+								echo 3 > drop_caches
+								to drop atomic_file's
+								cache.
+			- f2fs_gc
+			 - gc_data_segment
+			  - move_data_page
+			   - set_page_dirty
 
-> 2024=E5=B9=B46=E6=9C=8818=E6=97=A5 16:47=EF=BC=8CBenjamin Block =
-<bblock@linux.ibm.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Tue, Jun 18, 2024 at 11:06:13AM +0800, Li Feng wrote:
->>> 2024=E5=B9=B46=E6=9C=8818=E6=97=A5 00:26=EF=BC=8CBenjamin Block =
-<bblock@linux.ibm.com> =E5=86=99=E9=81=93=EF=BC=9A
->>> On Sat, Jun 15, 2024 at 12:03:47AM +0800, Li Feng wrote:
->>>> There is a scenario where a large number of discard commands
->>>> are issued when the iscsi initiator connects to the target
->>>> and then performs a session rescan operation.=20
->>>=20
->>> Is this with just one specific target implementation? This sounds =
-like a
->>> broken/buggy target, or is there a reason why this happens in =
-general?
->>>=20
->>> And broken target sounds like device quirk, rather than impacting =
-every
->>> possible target.
->>=20
->> This is a common problem. Before sending a rescan, discard has been=20=
+						- writepages
+						 - f2fs_do_write_data_page
+						 : overwrite atomic_file's data
+						   to cow_inode
+  - f2fs_down_write(&fi->i_gc_rwsem[WRITE])
+  - __f2fs_commit_atomic_write
+  - f2fs_up_write(&fi->i_gc_rwsem[WRITE])
 
->> negotiated to UNMAP. After the rescan, there will be a short window =
-for=20
->> it to become WS16, and then it will immediately become UNMAP.=20
->> However, during this period, a small amount of discard commands=20
->> may become WS16, resulting in a strange problem.
->=20
-> Ok, interesting. Do you know why this short window happens?=20
+Case #2:
+SQLite App		GC Thread		Kworker
+- f2fs_ioc_start_atomic_write
 
-I have explained it in other emails, you can read them.
+						- __writeback_single_inode
+						 - do_writepages
+						  - f2fs_write_cache_pages
+						   - f2fs_write_single_data_page
+						    - f2fs_do_write_data_page
+						    : write atomic_file's data to cow_inode
+			- f2fs_gc
+			 - gc_data_segment
+			  - move_data_page
+			   - set_page_dirty
 
-Thanks,
-Li
+						- writepages
+						 - f2fs_do_write_data_page
+						 : overwrite atomic_file's data to cow_inode
+- f2fs_ioc_commit_atomic_write
 
->=20
->>>> There is a time
->>>> window, most of the commands are in UNMAP mode, and some
->>>> discard commands become WRITE SAME with UNMAP.
->>>>=20
->>>> The discard mode has been negotiated during the SCSI probe. If
->>>> the mode is temporarily changed from UNMAP to WRITE SAME with
->>>> UNMAP, IO ERROR may occur because the target may not implement
->>>> WRITE SAME with UNMAP. Keep the discard mode stable to fix this
->>>> issue.
->>>>=20
->>>> Signed-off-by: Li Feng <fengli@smartx.com>
->>>> ---
->=20
-> --=20
-> Best Regards, Benjamin Block        /        Linux on IBM Z Kernel =
-Development
-> IBM Deutschland Research & Development GmbH    /   =
-https://www.ibm.com/privacy
-> Vors. Aufs.-R.: Wolfgang Wendt         /        Gesch=C3=A4ftsf=C3=BChru=
-ng: David Faller
-> Sitz der Ges.: B=C3=B6blingen     /    Registergericht: AmtsG =
-Stuttgart, HRB 243294
+In above cases racing in between atomic_write and GC, previous
+data in atomic_file may be overwrited to cow_file, result in
+data corruption.
+
+This patch introduces PAGE_PRIVATE_ATOMIC_WRITE bit flag in page.private,
+and use it to indicate that there is last dirty data in atomic file,
+and the data should be writebacked into cow_file, if the flag is not
+tagged in page, we should never write data across files.
+
+Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
+Cc: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/data.c | 10 +++++++++-
+ fs/f2fs/f2fs.h |  8 +++++++-
+ 2 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 0b4f563f2361..22031b9b507c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2647,10 +2647,13 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 	struct dnode_of_data dn;
+ 	struct node_info ni;
+ 	bool ipu_force = false;
++	bool atomic_commit;
+ 	int err = 0;
+ 
+ 	/* Use COW inode to make dnode_of_data for atomic write */
+-	if (f2fs_is_atomic_file(inode))
++	atomic_commit = f2fs_is_atomic_file(inode) &&
++				page_private_atomic(fio->page);
++	if (atomic_commit)
+ 		set_new_dnode(&dn, F2FS_I(inode)->cow_inode, NULL, NULL, 0);
+ 	else
+ 		set_new_dnode(&dn, inode, NULL, NULL, 0);
+@@ -2749,6 +2752,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 	f2fs_outplace_write_data(&dn, fio);
+ 	trace_f2fs_do_write_data_page(page_folio(page), OPU);
+ 	set_inode_flag(inode, FI_APPEND_WRITE);
++	if (atomic_commit)
++		clear_page_private_atomic(page);
+ out_writepage:
+ 	f2fs_put_dnode(&dn);
+ out:
+@@ -3718,6 +3723,9 @@ static int f2fs_write_end(struct file *file,
+ 
+ 	set_page_dirty(page);
+ 
++	if (f2fs_is_atomic_file(inode))
++		set_page_private_atomic(page);
++
+ 	if (pos + copied > i_size_read(inode) &&
+ 	    !f2fs_verity_in_progress(inode)) {
+ 		f2fs_i_size_write(inode, pos + copied);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 777497919c62..35dd2d45b0ed 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1413,7 +1413,8 @@ static inline void f2fs_clear_bit(unsigned int nr, char *addr);
+  * bit 1	PAGE_PRIVATE_ONGOING_MIGRATION
+  * bit 2	PAGE_PRIVATE_INLINE_INODE
+  * bit 3	PAGE_PRIVATE_REF_RESOURCE
+- * bit 4-	f2fs private data
++ * bit 4	PAGE_PRIVATE_ATOMIC_WRITE
++ * bit 5-	f2fs private data
+  *
+  * Layout B: lowest bit should be 0
+  * page.private is a wrapped pointer.
+@@ -1423,6 +1424,7 @@ enum {
+ 	PAGE_PRIVATE_ONGOING_MIGRATION,		/* data page which is on-going migrating */
+ 	PAGE_PRIVATE_INLINE_INODE,		/* inode page contains inline data */
+ 	PAGE_PRIVATE_REF_RESOURCE,		/* dirty page has referenced resources */
++	PAGE_PRIVATE_ATOMIC_WRITE,		/* data page from atomic write path */
+ 	PAGE_PRIVATE_MAX
+ };
+ 
+@@ -2401,14 +2403,17 @@ static inline void clear_page_private_##name(struct page *page) \
+ PAGE_PRIVATE_GET_FUNC(nonpointer, NOT_POINTER);
+ PAGE_PRIVATE_GET_FUNC(inline, INLINE_INODE);
+ PAGE_PRIVATE_GET_FUNC(gcing, ONGOING_MIGRATION);
++PAGE_PRIVATE_GET_FUNC(atomic, ATOMIC_WRITE);
+ 
+ PAGE_PRIVATE_SET_FUNC(reference, REF_RESOURCE);
+ PAGE_PRIVATE_SET_FUNC(inline, INLINE_INODE);
+ PAGE_PRIVATE_SET_FUNC(gcing, ONGOING_MIGRATION);
++PAGE_PRIVATE_SET_FUNC(atomic, ATOMIC_WRITE);
+ 
+ PAGE_PRIVATE_CLEAR_FUNC(reference, REF_RESOURCE);
+ PAGE_PRIVATE_CLEAR_FUNC(inline, INLINE_INODE);
+ PAGE_PRIVATE_CLEAR_FUNC(gcing, ONGOING_MIGRATION);
++PAGE_PRIVATE_CLEAR_FUNC(atomic, ATOMIC_WRITE);
+ 
+ static inline unsigned long get_page_private_data(struct page *page)
+ {
+@@ -2440,6 +2445,7 @@ static inline void clear_page_private_all(struct page *page)
+ 	clear_page_private_reference(page);
+ 	clear_page_private_gcing(page);
+ 	clear_page_private_inline(page);
++	clear_page_private_atomic(page);
+ 
+ 	f2fs_bug_on(F2FS_P_SB(page), page_private(page));
+ }
+-- 
+2.40.1
 
 
