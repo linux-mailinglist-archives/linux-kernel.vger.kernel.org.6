@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-221082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7883390EBC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:00:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53F8E90EBF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6127D1C245B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0986C1F2127A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6ED146580;
-	Wed, 19 Jun 2024 13:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D0614D705;
+	Wed, 19 Jun 2024 13:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wVNgBQbO"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="ihpkXdXe"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7917C4C74;
-	Wed, 19 Jun 2024 13:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0916F13DB90;
+	Wed, 19 Jun 2024 13:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718802031; cv=none; b=q7OLLJJkIU+rSQvyRSub+yqRkYW9+tToZEXjvWy8JjzjSPopLb6Alv3GvHSUdEPaxwoI5JP5+DQIu7kxnnGp8cZFeelidl1d7eek04D+QNrSeHQHxuaeow5KYAz8YDScBqjdfZUJT/pxbG+SYFTsEdW1PJ29UYDl4HBpDrSyYCs=
+	t=1718802117; cv=none; b=DlHmNBwkj3ngpzsKm5sfrIbz/OjL9d32Cvxuwjk6oJo78EHdbtXb3JJgolkh9RYJKk4ked49ztK06u3wS8nBmQcnfABo+gxwHNYuLZWCmVuVKpVOV0KDoHbcFRETjNoXzlOuqQ9QEzHety51OcV2dQx8/BO0lOINQ4SyEKuzDn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718802031; c=relaxed/simple;
-	bh=ZML/omZPOzO6XxV1ymhvnEzUu9ZJCda0d53e3et/c5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GZ54HLZXc/n/YbV96kCfkXocsTJkzu+NGX/umB8jASG5KlYDVsP6rXMVG7F+e6du3rQyxn4xswpe9GbV87mU9gSq3b6K4RGdNeIoAP+q5SqjsPW2aTmF7uZUBrViocdcOoKG/rbZSaLtfmZ5KvbbORhnsOBNkM2H4NYrPTPhRbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wVNgBQbO; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45JD0Cri121258;
-	Wed, 19 Jun 2024 08:00:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718802012;
-	bh=CtL3hdspEWnH/ANp92A35C0CEx6xIW0omb+hsSqOJLs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=wVNgBQbOvcFRWclb+rmfnL0ZULNTaX/9OmqHw4Zz/ffP6Rxx/qI9Tv+9LA48A47gA
-	 luMEnrV6d/IeODBxFg3IrvyiqIjMfS5niYzC6NZyNO+Vp4YEIWmk5qAixAUuNDz6wY
-	 9e6gHuuBVgFgvDVJsJXmE7xUL7IX86Nk1qrR3dTY=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45JD0Civ041085
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 19 Jun 2024 08:00:12 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
- Jun 2024 08:00:12 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 19 Jun 2024 08:00:12 -0500
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45JD08GW125241;
-	Wed, 19 Jun 2024 08:00:09 -0500
-Message-ID: <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
-Date: Wed, 19 Jun 2024 18:30:07 +0530
+	s=arc-20240116; t=1718802117; c=relaxed/simple;
+	bh=Wqj4fkKWDCEh/pzYyA3u8TD2BiyQQ36+PhN66S75nf8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hB0rtRXazHYqdEnZ+B3E24fGpuf6Lrk1VwpOZ3YtQX3UXa3W/i3t3w4ZRLp/5sc5E2V6+C6m3iMQE/ubNZFSlG4j2iMiIjDmHcCddYVuHEEuUaPBJcsostT24YSlRtg1t7eOisD6FBW/GMum4MSrQOIkcvhV4QY4uGPHp14AW08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=ihpkXdXe; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A32EAA0B51;
+	Wed, 19 Jun 2024 15:01:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=xC0P4So+IH1EdQB9fWJmhxeSCfO4o+MbyG70cV7lM6E=; b=
+	ihpkXdXeHFk3LSVzjH9VgfW2HFy6e7K4WA8Vn0MsHeakxqZp9xTDvnbw8CxYbBCN
+	vi/zOjB36qnXkR95fcSe0OwPg/2V+DIt5lFnCx1/qV6OEa2c+lQX49NfS0R+9Mwn
+	hsVisuZRzvYZ+NqQgNPBkDj6a1mxfBCmK5qDfzB0vjHVvJmQrdkAANVRXarC/Odw
+	Qs6Sx1IQNsUjq/hbF8FEm6ESDz0Q97GEMROvXkCu6qjSSHPCwG5aAhMWz07DIBPN
+	t8DUCleKUKU1xdXVBw7u6ZYLGDlpJj4vfsnrUQSTHguUrUgLHetf8WHP12ugnLzs
+	35a90OqY/1+KKPZgd4n86asE5A/TWc+JHOluiwr1QEkURBB8uDWlHiVup49pTAiI
+	zBKVFXPCW9CuM0STk9ZUn0rJJQLltgoPrWLl5YjH2vyBxZ3Hu4fZXqiv2U3yDR0F
+	1eWy4uHPRZ4V+bDnvyp5NragSedOPBJAnqDtyJVRz0a5HCeuEniDgN70n/AA7nM0
+	TWlHidR4Y/G0yUVtZoJwwoG1ftlvIrAs+bFmuXig6Xyg5EM8tvTjAfF8xNZqoVqE
+	syAFMxKcaTn+krzyqeI43NehvQdPKfURKBvL3T/n6w1R3+om9+22syKaWANQOm+j
+	Zm8eENMnldNCLH+y/5tDs79a3p1q6cFMuI1NBvS2xBY=
+From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	<linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+Subject: [PATCH resubmit] rtc: interface: Add RTC offset to alarm after fix-up
+Date: Wed, 19 Jun 2024 15:01:16 +0200
+Message-ID: <20240619130115.2799118-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support runtime
- suspend/resume
-Content-Language: en-US
-To: "Jackson.lee" <jackson.lee@chipsnmedia.com>, <mchehab@kernel.org>,
-        <nicolas@ndufresne.ca>, <sebastian.fricke@collabora.com>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <hverkuil@xs4all.nl>, <nas.chung@chipsnmedia.com>,
-        <lafley.kim@chipsnmedia.com>, <b-brnich@ti.com>,
-        Nicolas Dufresne
-	<nicolas.dufresne@collabora.com>
-References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
- <20240617104818.221-3-jackson.lee@chipsnmedia.com>
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <20240617104818.221-3-jackson.lee@chipsnmedia.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1718802111;VERSION=7972;MC=2560499276;ID=565953;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2945A129576D7D61
 
-Hi Jackson,
+`rtc_add_offset()` is called by `__rtc_read_time()`
+and `__rtc_read_alarm()` to add the RTC's offset to
+the raw read-outs from the device drivers. However,
+in the latter case, a fix-up algorithm is run if
+the RTC device does not report a full `struct rtc_time`
+alarm value. In that case, the offset was forgot to be
+added.
 
-Thanks for the patch.
-On 17/06/24 16:18, Jackson.lee wrote:
-> From: "jackson.lee" <jackson.lee@chipsnmedia.com>
-> 
-> Add support for runtime suspend/resume in the encoder and decoder. This is
-> achieved by saving the VPU state and powering it off while the VPU idle.
-> 
-> Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
-> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
-> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Fixes: fd6792bb022e ("rtc: fix alarm read and set offset")
 
-[..]
->  static int wave5_vpu_probe(struct platform_device *pdev)
->  {
->  	int ret;
-> @@ -268,6 +301,12 @@ static int wave5_vpu_probe(struct platform_device *pdev)
->  		 (match_data->flags & WAVE5_IS_DEC) ? "'DECODE'" : "");
->  	dev_info(&pdev->dev, "Product Code:      0x%x\n", dev->product_code);
->  	dev_info(&pdev->dev, "Firmware Revision: %u\n", fw_revision);
-> +
-> +	pm_runtime_set_autosuspend_delay(&pdev->dev, 5000);
+Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+---
+ drivers/rtc/interface.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Why are we putting 5s delay for autosuspend ? Without using auto-suspend delay
-too, we can directly go to suspended state when last instance is closed and
-resume back when first instance is open.
+diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+index 1b63111cdda2..db8dffffed91 100644
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -273,12 +273,11 @@ int __rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
+ 		if (err)
+ 			return err;
+ 
+ 		/* full-function RTCs won't have such missing fields */
+ 		if (rtc_valid_tm(&alarm->time) == 0) {
+-			rtc_add_offset(rtc, &alarm->time);
+-			return 0;
++			goto done;
+ 		}
+ 
+ 		/* get the "after" timestamp, to detect wrapped fields */
+ 		err = rtc_read_time(rtc, &now);
+ 		if (err < 0)
+@@ -378,10 +377,12 @@ int __rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
+ done:
+ 	if (err && alarm->enabled)
+ 		dev_warn(&rtc->dev, "invalid alarm value: %ptR\n",
+ 			 &alarm->time);
+ 
++	rtc_add_offset(rtc, &alarm->time);
++
+ 	return err;
+ }
+ 
+ int rtc_read_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
+ {
+-- 
+2.34.1
 
-I don't think having an autosuspend delay (especially of 5s) bodes well with
-low power-centric devices such as AM62A where we would prefer to go to suspend
-state as soon as possible when the last instance is closed.
 
-Also apologies for the delay in review, this didn't caught my eye earlier as
-commit message did not mention it either.
-
-Regards
-Devarsh
 
