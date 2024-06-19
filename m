@@ -1,100 +1,169 @@
-Return-Path: <linux-kernel+bounces-221074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FEB290EB7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:54:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7768990EB7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57E251C21909
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:54:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904171C20CB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48C6143885;
-	Wed, 19 Jun 2024 12:54:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C06FC1F
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA669143C45;
+	Wed, 19 Jun 2024 12:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="ZcEAFWRk"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CCCFC1F;
+	Wed, 19 Jun 2024 12:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718801680; cv=none; b=LzKICKOca8wevUWkoeN8WHV7k13iWqznXOwDgN6D72X5P81D55yFJm7rLlVhtpN7DVgDpOTsdECSkNA6A54bg35SmOFwBcb08CL/ePlD9wALJGCgkKn8q9fkWjeO/LM22BWca4uWef5t+AYNBIm8Jrpi207NQSHrBgo1BXwi+hE=
+	t=1718801712; cv=none; b=NeV0g3BjBkAfaSFsxeFnig/F2ACXd2xMEXEGPRahdNIDj3qCvOuK3WeTeUeyTHBmGw8hVa9BqZDmYyx38aLIPjdhlxYSnIF/VgXceaZkKUhJW1G9DONtYqSURaMJondWLWhIvATtQO+Igu9/gnENZKFue+PCTuclSrAnBBQvoHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718801680; c=relaxed/simple;
-	bh=RntI/0TdKoLCLMlqDzvPcVr40RqcqOzFflQWDwxtsTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCv+ehy/vm+GM33badDrDQSna/jx9g84UzQrjikZAat3/KVVFIehRGMjQWy4YbADwmgpAMSlcvPw94lQXdpBeJro0IuMNKAaEi05I6C2u4DlscNQz703BLJdxeHsND5QSe8bHo6O+rb1qBvSJSQ7/jTpT9gub6o0306RBl33D2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BCD31042;
-	Wed, 19 Jun 2024 05:55:02 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A0CA3F6A8;
-	Wed, 19 Jun 2024 05:54:34 -0700 (PDT)
-Date: Wed, 19 Jun 2024 13:54:31 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	James Morse <james.morse@arm.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com, lcherian@marvell.com,
-	bobo.shaobowang@huawei.com,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	Peter Newman <peternewman@google.com>, dfustini@baylibre.com,
-	amitsinght@marvell.com, David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>
-Subject: Re: [PATCH] x86/resctrl: Don't try to free nonexistent RMIDs
-Message-ID: <ZnLVB1Cvy8PXhaMv@e133380.arm.com>
-References: <20240614160843.11006-1-Dave.Martin@arm.com>
- <1e3bba2e-5cf6-4a77-b92d-5c7ab1661d17@intel.com>
- <ZnAkOhFWzDqhlSyt@e133380.arm.com>
- <a37917d2-8ad9-4192-a3f8-9789193d53d6@intel.com>
- <ZnFTnzm/jctgN2wf@e133344.arm.com>
- <d476585b-3cfb-494d-b25c-4aeb6244e21d@intel.com>
- <ZnGy8B4FA+q3YkhC@e133380.arm.com>
- <f30c9a16-27b5-44ab-a55d-b2f9f3e4258e@intel.com>
+	s=arc-20240116; t=1718801712; c=relaxed/simple;
+	bh=yF9033MtIrZltsgP5bIC3MvhEmxrCHKUFIbtWhBiDmw=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=J7phNwzcuC+rPF+XQq6xtrvHCHKsPAKMA6uBvIQMLc/e4RPVbHDU4fguJwTIwABr1PJV6t88J+tridozRKaSVFPg4rjvZjDYZK0W5Ek37EbyiLUoY1hVCDewV7ry2I8cJdLRynC+oAuHAlBIAGyFFw8/N3v6wHl4fFCGplEHpB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=ZcEAFWRk; arc=none smtp.client-ip=220.197.31.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=BWbJKJrKISUYvlz18r
+	IPuVxukddjG6yGS92jiK8VMdY=; b=ZcEAFWRkIYOXRuPGREZuoEQj+PNYSi0amg
+	cSW0B8HdBJDzv5fbY9WWmryADS60l+TmR8RRtNs0u8JdO//qoFg4rv+mhZu7yTH/
+	6lfZ7Jq4wB4CIFbGwQSNvHH1bjx3QZSU9ckVBQQSl91j06q3BmxyOrad3OzGt8YF
+	WCnlZuxmk=
+Received: from hg-OptiPlex-7040.hygon.cn (unknown [118.242.3.34])
+	by gzga-smtp-mta-g1-1 (Coremail) with SMTP id _____wCnd28K1XJmBrxyBQ--.10118S2;
+	Wed, 19 Jun 2024 20:54:38 +0800 (CST)
+From: yangge1116@126.com
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	21cnbao@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	mgorman@techsingularity.net,
+	liuzixing@hygon.cn,
+	yangge <yangge1116@126.com>
+Subject: [PATCH] mm/page_alloc: add one PCP list for THP
+Date: Wed, 19 Jun 2024 20:54:32 +0800
+Message-Id: <1718801672-30152-1-git-send-email-yangge1116@126.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID:_____wCnd28K1XJmBrxyBQ--.10118S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAFWUtF17Xw18JF1UuFWDXFb_yoWrAr18pF
+	WxJr4ayayjqryYyr1xA3Wqkr1rCwnxGFsrCrW8ury8ZwsxJFyS9a4UK3WqvF95ArW7AF48
+	XryDt34fCF4DZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UfhL5UUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOg8DG2VEw410VQAAsj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f30c9a16-27b5-44ab-a55d-b2f9f3e4258e@intel.com>
 
-Hi,
+From: yangge <yangge1116@126.com>
 
-On Tue, Jun 18, 2024 at 10:08:47AM -0700, Reinette Chatre wrote:
-> Hi Dave,
-> 
-> On 6/18/24 9:16 AM, Dave Martin wrote:
-> 
-> > 
-> > Either way, I don't think this impacts the tested-ness of this patch,
-> > but please shout if you have concerns.
-> > 
-> 
-> I agree. The submission stated that it was tested on x86
-> "for the monitors-present case". When booting with
-> "rdt=!cmt,!mbmtotal,!mbmlocal" (as I did in my test) resctrl
-> is not able to discover monitoring support and it
-> thus tested the "monitors _not_ present case".
-> 
-> Reinette
+Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
+THP-sized allocations") no longer differentiates the migration type
+of pages in THP-sized PCP list, it's possible that non-movable
+allocation requests may get a CMA page from the list, in some cases,
+it's not acceptable.
 
-Ah, right.  I missed the significance of the options.
+If a large number of CMA memory are configured in system (for
+example, the CMA memory accounts for 50% of the system memory),
+starting a virtual machine with device passthrough will get stuck.
+During starting the virtual machine, it will call
+pin_user_pages_remote(..., FOLL_LONGTERM, ...) to pin memory. Normally
+if a page is present and in CMA area, pin_user_pages_remote() will
+migrate the page from CMA area to non-CMA area because of
+FOLL_LONGTERM flag. But if non-movable allocation requests return
+CMA memory, migrate_longterm_unpinnable_pages() will migrate a CMA
+page to another CMA page, which will fail to pass the check in
+check_and_migrate_movable_pages() and cause migration endless.
+Call trace:
+pin_user_pages_remote
+--__gup_longterm_locked // endless loops in this function
+----_get_user_pages_locked
+----check_and_migrate_movable_pages
+------migrate_longterm_unpinnable_pages
+--------alloc_migration_target
 
-Thanks again!
----Dave
-> 
-> 
+This problem will also have a negative impact on CMA itself. For
+example, when CMA is borrowed by THP, and we need to reclaim it
+through cma_alloc() or dma_alloc_coherent(), we must move those
+pages out to ensure CMA's users can retrieve that contigous memory.
+Currently, CMA's memory is occupied by non-movable pages, meaning
+we can't relocate them. As a result, cma_alloc() is more likely to
+fail.
+
+To fix the problem above, we add one PCP list for THP, which will
+not introduce a new cacheline for struct per_cpu_pages. THP will
+have 2 PCP lists, one PCP list is used by MOVABLE allocation, and
+the other PCP list is used by UNMOVABLE allocation. MOVABLE
+allocation contains GPF_MOVABLE, and UNMOVABLE allocation contains
+GFP_UNMOVABLE and GFP_RECLAIMABLE.
+
+Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for THP-sized allocations")
+Signed-off-by: yangge <yangge1116@126.com>
+---
+ include/linux/mmzone.h | 9 ++++-----
+ mm/page_alloc.c        | 9 +++++++--
+ 2 files changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index b7546dd..cb7f265 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -656,13 +656,12 @@ enum zone_watermarks {
+ };
+ 
+ /*
+- * One per migratetype for each PAGE_ALLOC_COSTLY_ORDER. One additional list
+- * for THP which will usually be GFP_MOVABLE. Even if it is another type,
+- * it should not contribute to serious fragmentation causing THP allocation
+- * failures.
++ * One per migratetype for each PAGE_ALLOC_COSTLY_ORDER. Two additional lists
++ * are added for THP. One PCP list is used by GPF_MOVABLE, and the other PCP list
++ * is used by GFP_UNMOVABLE and GFP_RECLAIMABLE.
+  */
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-#define NR_PCP_THP 1
++#define NR_PCP_THP 2
+ #else
+ #define NR_PCP_THP 0
+ #endif
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 8f416a0..0a837e6 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -504,10 +504,15 @@ static void bad_page(struct page *page, const char *reason)
+ 
+ static inline unsigned int order_to_pindex(int migratetype, int order)
+ {
++	bool __maybe_unused movable;
++
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 	if (order > PAGE_ALLOC_COSTLY_ORDER) {
+ 		VM_BUG_ON(order != HPAGE_PMD_ORDER);
+-		return NR_LOWORDER_PCP_LISTS;
++
++		movable = migratetype == MIGRATE_MOVABLE;
++
++		return NR_LOWORDER_PCP_LISTS + movable;
+ 	}
+ #else
+ 	VM_BUG_ON(order > PAGE_ALLOC_COSTLY_ORDER);
+@@ -521,7 +526,7 @@ static inline int pindex_to_order(unsigned int pindex)
+ 	int order = pindex / MIGRATE_PCPTYPES;
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	if (pindex == NR_LOWORDER_PCP_LISTS)
++	if (pindex >= NR_LOWORDER_PCP_LISTS)
+ 		order = HPAGE_PMD_ORDER;
+ #else
+ 	VM_BUG_ON(order > PAGE_ALLOC_COSTLY_ORDER);
+-- 
+2.7.4
+
 
