@@ -1,210 +1,141 @@
-Return-Path: <linux-kernel+bounces-220577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3853990E3EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:00:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170C390E3EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3B11284793
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:00:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AF011C23E0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501AE6F319;
-	Wed, 19 Jun 2024 07:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF9B73453;
+	Wed, 19 Jun 2024 07:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="saljTd/s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RFgQwP03"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1FE6139
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05026139;
+	Wed, 19 Jun 2024 07:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718780450; cv=none; b=M9m2FhHSgsdNJEUsBXtPHJ4mKb0+qlJKOEMWwNUT6NLLfd4AUJXpvnFjIx2S/WvUvVX7pr6m2QJPzCxO6cQofr/1h+ZinGfcekXylUFk9LpOxoyrlLSHl6VGbKQ04rNjp9zMKDkExK/5hvvkUSYuR/KSHhS19qpg9cShjG+rjhg=
+	t=1718780476; cv=none; b=lPESrFCjHUyPYGy4JdcXITOldiQ6ZpYR8MDTIl27R7JmAd+rb40ua4UuylmjmFDA5Q8a68+YkGV1PI2Em7mBGxcEWA0c93IzSyD7d0s0xcMD0vpu5qC9SpDtSLO4y0kjo9p/1pIeEwOQTaA2jNS1Nw6lKyuEB0LaXR0+GRhPjo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718780450; c=relaxed/simple;
-	bh=wPbUog/DATDmQJOPIEg/tT8i2uUOLhSWvxoc0kvyq7k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KLoEzp6e9zd2NAsg25XDJEGc5eUqjS9FTEboitsGOshB0niE5TEY6IJe/VGvqMS1+N0QixbZi9ZJUCpwBm0HLyA18XJaaRUXxGYR5wnuO7XJ3HIM9l/zFBibIolpE0fz9PW0sggVUDuhF/YDkTnkTP6vKkckX+l5NT+CD+D5wXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=saljTd/s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF6AC2BBFC;
-	Wed, 19 Jun 2024 07:00:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718780450;
-	bh=wPbUog/DATDmQJOPIEg/tT8i2uUOLhSWvxoc0kvyq7k=;
-	h=From:To:Cc:Subject:Date:From;
-	b=saljTd/sUGkjW86DOOXAHaPKZb2M/Fo4U8E8YKkYZ15LJFZfX6xHollfquVXYZfnd
-	 UPpp3vDvdfwxpmcunISjHVffIs5BcCNmql22gpAYx8J00cUkec4xnM84/yV8lzhvQ8
-	 dZEItioKmeow+3aGOpiUwlYLunsTu/VWnouiTp5vtSkwCabxoI0wYC/b0i18AybJkR
-	 C4BMK8nw9HCzesx5/SDtlwH6Uemax2LzIDS4I5e7P8JYtMWxcuKz+6JdwXGh0wPZWY
-	 wTuuyMosQVDvVnV8k1dq80yUk/1K30fNSOfILNsFI6Ctdaco2l3xjExl02Pf/WW3Kx
-	 3jn0hS3K5N5tQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH] f2fs: atomic: fix to avoid racing w/ GC
-Date: Wed, 19 Jun 2024 15:00:42 +0800
-Message-Id: <20240619070042.1197204-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1718780476; c=relaxed/simple;
+	bh=iwhtk3Ys4PDGkUU8JsKoJ12UY9H0KDkClg3X0gGe3Nk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rpVqGbKTw+TlQVJ7k26wTZIQELCZ+CEf6f7xQJNPTuEeDOjcIoJW26XizpqY0RMDYJWmk6ryrtvHi74BUHEiwAKcQbud8kd9KNCkicqdIkqwmwifr4dHqX6qhCjn7IL0saTlzPctS3HwitwOEBCx3SfQEH36n0KElSvySrSOMYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RFgQwP03; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ILa5LD009248;
+	Wed, 19 Jun 2024 07:01:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eSalXEMy4rk4VZQPH/LqjOYsYOBmGLTfbihZNli+65M=; b=RFgQwP03finQ3tEY
+	Z8gS7ciq9WhipFKSi5//kx5vCbcAw6O4JoL5ORXgDWpo9c2XpVGSOHcfktGXDW3z
+	e2OGNbKYyuQvCi0LMmGtpIbO3nnuUw8kmzye/98suKgqUuSwBS21BCwhhcDTW33q
+	RiEMJkXbiVp0LIPerdJKe+csjurJ/gQxit5McqAxTsSxS4m5DtgMa92I9/dePBD2
+	BjuSPIKvocmnmKioZE6ZtCnmo6SoNo/mGVwrMuM1uSShPfZMOlWKR1bAW2w41Pai
+	Iyc2JFIUCioGnI3RSFDBhcEO7JCbZVhk3ocXnczPnAtEO13rHekZuNZb3SSY37jZ
+	bpSwnw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9tgwpn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 07:01:05 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45J714eu010884
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 07:01:04 GMT
+Received: from [10.206.107.125] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
+ 2024 00:01:01 -0700
+Message-ID: <9fc370be-89f4-4006-a4c0-1040dadfe4cd@quicinc.com>
+Date: Wed, 19 Jun 2024 12:30:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Oded Gabbay <ogabbay@kernel.org>, <srinivas.kandagatla@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>
+References: <20240612064731.25651-1-quic_ekangupt@quicinc.com>
+ <zbpia232dh4ojfsvhcqxrp6cwfygaalu5cycdrs47pqmnrisvk@dq24nww26gkm>
+ <00b2c65e-c00e-48bf-b118-4785d216cd19@quicinc.com>
+ <CAA8EJprOf9vvdBcdX=Xem3UMFo2pmh37ooreqRX0Bzvadv_yTQ@mail.gmail.com>
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <CAA8EJprOf9vvdBcdX=Xem3UMFo2pmh37ooreqRX0Bzvadv_yTQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: hAN3G2GGXDa6xAo1OUNr57cjkTHWAKXA
+X-Proofpoint-ORIG-GUID: hAN3G2GGXDa6xAo1OUNr57cjkTHWAKXA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ bulkscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 spamscore=0 phishscore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406190050
 
-Case #1:
-SQLite App		GC Thread		Kworker		Shrinker
-- f2fs_ioc_start_atomic_write
 
-- f2fs_ioc_commit_atomic_write
- - f2fs_commit_atomic_write
-  - filemap_write_and_wait_range
-  : write atomic_file's data to cow_inode
-								echo 3 > drop_caches
-								to drop atomic_file's
-								cache.
-			- f2fs_gc
-			 - gc_data_segment
-			  - move_data_page
-			   - set_page_dirty
 
-						- writepages
-						 - f2fs_do_write_data_page
-						 : overwrite atomic_file's data
-						   to cow_inode
-  - f2fs_down_write(&fi->i_gc_rwsem[WRITE])
-  - __f2fs_commit_atomic_write
-  - f2fs_up_write(&fi->i_gc_rwsem[WRITE])
+On 6/19/2024 12:21 PM, Dmitry Baryshkov wrote:
+> On Wed, 19 Jun 2024 at 09:45, Ekansh Gupta <quic_ekangupt@quicinc.com> wrote:
+>>
+>>
+>> On 6/12/2024 11:58 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Jun 12, 2024 at 12:17:28PM +0530, Ekansh Gupta wrote:
+>>>> Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
+>>>> to be added for PD notifications and other missing features. Adding
+>>>> and maintaining new files from within fastrpc directory would be easy.
+>>>>
+>>>> Example of feature that is being planned to be introduced in a new C
+>>>> file:
+>>>> https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
+>>>>
+>>>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>>>> ---
+>>>>  MAINTAINERS                          |  2 +-
+>>>>  drivers/misc/Kconfig                 | 13 +------------
+>>>>  drivers/misc/Makefile                |  2 +-
+>>>>  drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
+>>>>  drivers/misc/fastrpc/Makefile        |  2 ++
+>>>>  drivers/misc/{ => fastrpc}/fastrpc.c |  0
+>>>>  6 files changed, 21 insertions(+), 14 deletions(-)
+>>>>  create mode 100644 drivers/misc/fastrpc/Kconfig
+>>>>  create mode 100644 drivers/misc/fastrpc/Makefile
+>>>>  rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
+>>> Please consider whether it makes sense to move to drivers/accel instead
+>>> (and possibly writing a better Kconfig entry, specifying that the driver
+>>> is to be used to offload execution to the DSP).
+>> Planning to keep the driver to misc/ only as part of this patch. Moving to accel/ might
+>> introduce some conventions to be followed which might require significant changes
+>> in driver.
+> To me this sounds like "we are trying to avoid following the
+> conventions by hiding in the shadows".
+Not trying to avoid, just trying to look into this separately as the need to take ABI also in account which
+includes current device nodes and the uapi header which is present in uapi/misc/fastrpc.h whereas I see all
+accel driver uapi headers are part of uapi/drm/.
 
-Case #2:
-SQLite App		GC Thread		Kworker
-- f2fs_ioc_start_atomic_write
-
-						- __writeback_single_inode
-						 - do_writepages
-						  - f2fs_write_cache_pages
-						   - f2fs_write_single_data_page
-						    - f2fs_do_write_data_page
-						    : write atomic_file's data to cow_inode
-			- f2fs_gc
-			 - gc_data_segment
-			  - move_data_page
-			   - set_page_dirty
-
-						- writepages
-						 - f2fs_do_write_data_page
-						 : overwrite atomic_file's data to cow_inode
-- f2fs_ioc_commit_atomic_write
-
-In above cases racing in between atomic_write and GC, previous
-data in atomic_file may be overwrited to cow_file, result in
-data corruption.
-
-This patch introduces PAGE_PRIVATE_ATOMIC_WRITE bit flag in page.private,
-and use it to indicate that there is last dirty data in atomic file,
-and the data should be writebacked into cow_file, if the flag is not
-tagged in page, we should never write data across files.
-
-Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
-Cc: Daeho Jeong <daehojeong@google.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/data.c | 10 +++++++++-
- fs/f2fs/f2fs.h |  8 +++++++-
- 2 files changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 0b4f563f2361..22031b9b507c 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2647,10 +2647,13 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- 	struct dnode_of_data dn;
- 	struct node_info ni;
- 	bool ipu_force = false;
-+	bool atomic_commit;
- 	int err = 0;
- 
- 	/* Use COW inode to make dnode_of_data for atomic write */
--	if (f2fs_is_atomic_file(inode))
-+	atomic_commit = f2fs_is_atomic_file(inode) &&
-+				page_private_atomic(fio->page);
-+	if (atomic_commit)
- 		set_new_dnode(&dn, F2FS_I(inode)->cow_inode, NULL, NULL, 0);
- 	else
- 		set_new_dnode(&dn, inode, NULL, NULL, 0);
-@@ -2749,6 +2752,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- 	f2fs_outplace_write_data(&dn, fio);
- 	trace_f2fs_do_write_data_page(page_folio(page), OPU);
- 	set_inode_flag(inode, FI_APPEND_WRITE);
-+	if (atomic_commit)
-+		clear_page_private_atomic(page);
- out_writepage:
- 	f2fs_put_dnode(&dn);
- out:
-@@ -3718,6 +3723,9 @@ static int f2fs_write_end(struct file *file,
- 
- 	set_page_dirty(page);
- 
-+	if (f2fs_is_atomic_file(inode))
-+		set_page_private_atomic(page);
-+
- 	if (pos + copied > i_size_read(inode) &&
- 	    !f2fs_verity_in_progress(inode)) {
- 		f2fs_i_size_write(inode, pos + copied);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 777497919c62..35dd2d45b0ed 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1413,7 +1413,8 @@ static inline void f2fs_clear_bit(unsigned int nr, char *addr);
-  * bit 1	PAGE_PRIVATE_ONGOING_MIGRATION
-  * bit 2	PAGE_PRIVATE_INLINE_INODE
-  * bit 3	PAGE_PRIVATE_REF_RESOURCE
-- * bit 4-	f2fs private data
-+ * bit 4	PAGE_PRIVATE_ATOMIC_WRITE
-+ * bit 5-	f2fs private data
-  *
-  * Layout B: lowest bit should be 0
-  * page.private is a wrapped pointer.
-@@ -1423,6 +1424,7 @@ enum {
- 	PAGE_PRIVATE_ONGOING_MIGRATION,		/* data page which is on-going migrating */
- 	PAGE_PRIVATE_INLINE_INODE,		/* inode page contains inline data */
- 	PAGE_PRIVATE_REF_RESOURCE,		/* dirty page has referenced resources */
-+	PAGE_PRIVATE_ATOMIC_WRITE,		/* data page from atomic write path */
- 	PAGE_PRIVATE_MAX
- };
- 
-@@ -2401,14 +2403,17 @@ static inline void clear_page_private_##name(struct page *page) \
- PAGE_PRIVATE_GET_FUNC(nonpointer, NOT_POINTER);
- PAGE_PRIVATE_GET_FUNC(inline, INLINE_INODE);
- PAGE_PRIVATE_GET_FUNC(gcing, ONGOING_MIGRATION);
-+PAGE_PRIVATE_GET_FUNC(atomic, ATOMIC_WRITE);
- 
- PAGE_PRIVATE_SET_FUNC(reference, REF_RESOURCE);
- PAGE_PRIVATE_SET_FUNC(inline, INLINE_INODE);
- PAGE_PRIVATE_SET_FUNC(gcing, ONGOING_MIGRATION);
-+PAGE_PRIVATE_SET_FUNC(atomic, ATOMIC_WRITE);
- 
- PAGE_PRIVATE_CLEAR_FUNC(reference, REF_RESOURCE);
- PAGE_PRIVATE_CLEAR_FUNC(inline, INLINE_INODE);
- PAGE_PRIVATE_CLEAR_FUNC(gcing, ONGOING_MIGRATION);
-+PAGE_PRIVATE_CLEAR_FUNC(atomic, ATOMIC_WRITE);
- 
- static inline unsigned long get_page_private_data(struct page *page)
- {
-@@ -2440,6 +2445,7 @@ static inline void clear_page_private_all(struct page *page)
- 	clear_page_private_reference(page);
- 	clear_page_private_gcing(page);
- 	clear_page_private_inline(page);
-+	clear_page_private_atomic(page);
- 
- 	f2fs_bug_on(F2FS_P_SB(page), page_private(page));
- }
--- 
-2.40.1
+Will be taking inputs from fastrpc maintainers also.
+>> I'll write more meaningful Kconfig entry in next spin.
+>>
 
 
