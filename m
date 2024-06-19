@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-221141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F9A490EF65
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:51:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B2D90EF69
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E332F1F232D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:51:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97064B24905
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B580414EC42;
-	Wed, 19 Jun 2024 13:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPfq55WT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21B614C581;
-	Wed, 19 Jun 2024 13:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED20414F9F1;
+	Wed, 19 Jun 2024 13:51:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7B914EC42;
+	Wed, 19 Jun 2024 13:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718805103; cv=none; b=QFHF350Z40yvTHfHhqT6Dl8TYUqKUQ6YvbWMFNGLNhQE2v1Mv5hz6ecYJC4IYP2LgreG1SVqEg2/0MOSqudTRuaPKIX2wPFDAU06T/8GX6X9P82q6Zo5NzV2brA9O7TKokI8Pju8A2CrVe+V8xnTYzs6hWHmQhPHvdf01A482Tc=
+	t=1718805113; cv=none; b=an2rjnLn0X1kyuYBlJq5Z5Gj7aT+ltGRGej4byk//rLoL1tHOcN4Eyh02SspIm6orWilk8WLuNylVEqh4UNSzLhGtKW2WVA3E185tpJEDfD4jy89h1s36uEuLGTN+RpdpGmB0QxM7qnICbFIk12kEPL9wF1FAOdx3VcURL8g/FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718805103; c=relaxed/simple;
-	bh=zzpgsWo6tMSadzkSdZbgz/EogbJdNEbVvnPtoToCJ2o=;
+	s=arc-20240116; t=1718805113; c=relaxed/simple;
+	bh=NcbVL8HU9Je49lLwp3mfyuRCxqqP6v2o4zytyBE5jB4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TUR8QZJ9WuQgplIPZrqwpM5VW3Fe7EGe8ytjgT+8Hq921DyBtBveEaHxdGTPpVom2fXLyFi8zDXiyzuKF3P4kns9Nqk7WaMULJYcHQ3d8eEjKZkJL5BZj4bYNGj1GqHpop+IQeIWMxLZ4YyuaD6B61VDv1aUDNqR8f+q/4KKX84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPfq55WT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D43CC2BBFC;
-	Wed, 19 Jun 2024 13:51:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718805102;
-	bh=zzpgsWo6tMSadzkSdZbgz/EogbJdNEbVvnPtoToCJ2o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RPfq55WTcKuMX7gPSvAl9i9PltoHebCJ5w3EoMzLet6C97wXyYTsW81PakejWbUI6
-	 R/UMukAe6Y+IYB0lx7yH+r7S/WbbdK2feF2l/QtD8+MFyZCFvdiIz9DOST9sz5HZ8i
-	 hJtsaG3YPnc29Klfs11n8Ybmwca4QyeHS8xd1fgPnRqo6kEqGq5vEUhWdNCNu5gUqJ
-	 K1W6fupvvPVjIitEArjzzSX7tf/K3y0yzMKdD0r/0AynWcJ4AssZ6FJ3HPAnaA9AzD
-	 gggTuZXTp5UZpvgsRVw4i0KEAS5PR+BWZiHVFQPgn30xtthMe3t2FaIfmGRCeFhbeW
-	 IE1DnPxyz3N4Q==
-Date: Wed, 19 Jun 2024 10:51:38 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] perf trace: Add test for enum augmentation
-Message-ID: <ZnLianWCCEF6ydVO@x1>
-References: <20240619082042.4173621-1-howardchu95@gmail.com>
- <20240619082042.4173621-6-howardchu95@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LLUjo3grT+yskJ+D5TLGQ/H+qa6FoRY2iv8Wv1pM6ycnKk4nqVd5PMqcEmrw+9N9ygKPWlwylUbIZ76l5P80r9ix27gmQspSPcu1cE0xYcWvfBynnoESW8KqJ090d3PxHm7+cV2E6zXc5FBq8KS8ZrlJMkx3Yo8CyW/RdSpmXSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB8071042;
+	Wed, 19 Jun 2024 06:52:13 -0700 (PDT)
+Received: from bogus (unknown [10.57.89.235])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 990903F6A8;
+	Wed, 19 Jun 2024 06:51:44 -0700 (PDT)
+Date: Wed, 19 Jun 2024 14:51:43 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+	Melody Olvera <quic_molvera@quicinc.com>,
+	Shivendra Pratap <quic_spratap@quicinc.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
+Message-ID: <20240619135143.kr2tx4ynxayc5v3a@bogus>
+References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
+ <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,180 +64,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240619082042.4173621-6-howardchu95@gmail.com>
+In-Reply-To: <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
 
-On Wed, Jun 19, 2024 at 04:20:42PM +0800, Howard Chu wrote:
-> Check for vmlinux's existence in sysfs as prerequisite.
+On Mon, Jun 17, 2024 at 10:18:09AM -0700, Elliot Berman wrote:
+> SoC vendors have different types of resets and are controlled through
+> various registers. For instance, Qualcomm chipsets can reboot to a
+> "download mode" that allows a RAM dump to be collected. Another example
+> is they also support writing a cookie that can be read by bootloader
+> during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
+> vendor reset types to be implemented without requiring drivers for every
+> register/cookie.
 > 
-> Add landlock_add_rule.c workload. Trace landlock_add_rule syscall to see
-> if the output is desirable.
+> Add support in PSCI to statically map reboot mode commands from
+> userspace to a vendor reset and cookie value using the device tree.
 > 
-> Trace the non-syscall tracepoint 'timer:hrtimer_init' and
-> 'timer:hrtimer_start', see if the 'mode' argument is augmented,
-> the 'mode' enum argument has the prefix of 'HRTIMER_MODE_'
-> in its name.
+> A separate initcall is needed to parse the devicetree, instead of using
+> psci_dt_init because mm isn't sufficiently set up to allocate memory.
 > 
-> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> ---
->  tools/perf/tests/builtin-test.c               |  1 +
->  tools/perf/tests/shell/trace_btf_enum.sh      | 57 +++++++++++++++++++
->  tools/perf/tests/tests.h                      |  1 +
->  tools/perf/tests/workloads/Build              |  1 +
->  .../perf/tests/workloads/landlock_add_rule.c  | 32 +++++++++++
->  5 files changed, 92 insertions(+)
->  create mode 100755 tools/perf/tests/shell/trace_btf_enum.sh
->  create mode 100644 tools/perf/tests/workloads/landlock_add_rule.c
-> 
-> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-> index c3d84b67ca8e..e83200415ad1 100644
-> --- a/tools/perf/tests/builtin-test.c
-> +++ b/tools/perf/tests/builtin-test.c
-> @@ -152,6 +152,7 @@ static struct test_workload *workloads[] = {
->  	&workload__sqrtloop,
->  	&workload__brstack,
->  	&workload__datasym,
-> +	&workload__landlock_add_rule,
->  };
->  
->  static int num_subtests(const struct test_suite *t)
-> diff --git a/tools/perf/tests/shell/trace_btf_enum.sh b/tools/perf/tests/shell/trace_btf_enum.sh
-> new file mode 100755
-> index 000000000000..4861983553ab
-> --- /dev/null
-> +++ b/tools/perf/tests/shell/trace_btf_enum.sh
-> @@ -0,0 +1,57 @@
-> +#!/bin/sh
-> +# perf trace enum augmentation tests
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +err=0
-> +set -e
-> +
-> +syscall="landlock_add_rule"
-> +non_syscall="timer:hrtimer_init,timer:hrtimer_start"
-> +
-> +TESTPROG="perf test -w landlock_add_rule"
-> +
-> +. "$(dirname $0)"/lib/probe.sh
-> +skip_if_no_perf_trace || exit 2
-> +
-> +check_vmlinux() {
-> +  echo "Checking if vmlinux exists"
-> +  if ! ls /sys/kernel/btf/vmlinux 1>/dev/null 2>&1
-> +  then
-> +    echo "trace+enum test [Skipped missing vmlinux BTF support]"
-> +    err=2
-> +  fi
-> +}
-> +
-> +trace_landlock() {
-> +  echo "Tracing syscall ${syscall}"
-> +  if perf trace -e $syscall $TESTPROG 2>&1 | \
-> +     grep -q -E ".*landlock_add_rule\(ruleset_fd: 11, rule_type: (LANDLOCK_RULE_PATH_BENEATH|LANDLOCK_RULE_NET_PORT), rule_attr: 0x[a-f0-9]+, flags: 45\) = -1.*"
-> +  then
-> +    err=0
-> +  else
-> +    err=1
-> +  fi
-> +}
-> +
-> +trace_non_syscall() {
-> +  echo "Tracing non-syscall tracepoint ${non-syscall}"
-> +  if perf trace -e $non_syscall --max-events=1 2>&1 | \
-> +     grep -q -E '.*timer:hrtimer_.*\(.*mode: HRTIMER_MODE_.*\)$'
-> +  then
-> +    err=0
-> +  else
-> +    err=1
-> +  fi
-> +}
-> +
-> +check_vmlinux
-> +
-> +if [ $err = 0 ]; then
-> +  trace_landlock
-> +fi
-> +
-> +if [ $err = 0 ]; then
-> +  trace_non_syscall
-> +fi
-> +
-> +exit $err
-> diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-> index 3aa7701ee0e9..69126299bb08 100644
-> --- a/tools/perf/tests/tests.h
-> +++ b/tools/perf/tests/tests.h
-> @@ -205,6 +205,7 @@ DECLARE_WORKLOAD(leafloop);
->  DECLARE_WORKLOAD(sqrtloop);
->  DECLARE_WORKLOAD(brstack);
->  DECLARE_WORKLOAD(datasym);
-> +DECLARE_WORKLOAD(landlock_add_rule);
->  
->  extern const char *dso_to_test;
->  extern const char *test_objdump_path;
-> diff --git a/tools/perf/tests/workloads/Build b/tools/perf/tests/workloads/Build
-> index a1f34d5861e3..5b12b93ecffa 100644
-> --- a/tools/perf/tests/workloads/Build
-> +++ b/tools/perf/tests/workloads/Build
-> @@ -6,6 +6,7 @@ perf-y += leafloop.o
->  perf-y += sqrtloop.o
->  perf-y += brstack.o
->  perf-y += datasym.o
-> +perf-y += landlock_add_rule.o
->  
->  CFLAGS_sqrtloop.o         = -g -O0 -fno-inline -U_FORTIFY_SOURCE
->  CFLAGS_leafloop.o         = -g -O0 -fno-inline -fno-omit-frame-pointer -U_FORTIFY_SOURCE
-> diff --git a/tools/perf/tests/workloads/landlock_add_rule.c b/tools/perf/tests/workloads/landlock_add_rule.c
-> new file mode 100644
-> index 000000000000..529b5f1ea5a7
-> --- /dev/null
-> +++ b/tools/perf/tests/workloads/landlock_add_rule.c
-> @@ -0,0 +1,32 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#include <linux/compiler.h>
-> +#include <uapi/asm-generic/unistd.h> // for __NR_landlock_add_rule
-> +#include <unistd.h>
-> +#include <linux/landlock.h>
+> Reboot mode framework is close but doesn't quite fit with the
+> design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
+> be solved but doesn't seem reasonable in sum:
+>  1. reboot mode registers against the reboot_notifier_list, which is too
+>     early to call SYSTEM_RESET2. PSCI would need to remember the reset
+>     type from the reboot-mode framework callback and use it
+>     psci_sys_reset.
+>  2. reboot mode assumes only one cookie/parameter is described in the
+>     device tree. SYSTEM_RESET2 uses 2: one for the type and one for
+>     cookie.
+>  3. psci cpuidle driver already registers a driver against the
+>     arm,psci-1.0 compatible. Refactoring would be needed to have both a
+>     cpuidle and reboot-mode driver.
+>
 
-This file was introduced on linux in 2021, unsure if it will be present
-in some of the older distros we test, I'll check with my container test
-suite.
+I need to think through it but when you first introduced the generic
+Documentation/devicetree/bindings/power/reset/reboot-mode.yaml bindings
+I also looked at drivers/power/reset/reboot-mode.c
 
-Maybe we'll have to just define those LANDLOCK_ACCESS_FS_READ_FILE,
-LANDLOCK_ACCESS_NET_CONNECT_TCP, etc as plain #define to make sure it
-builds ok with uCLibc, musl libc and older glibc.
+I assumed this extension to that binding would reuse the same and
+PSCI would just do reboot_mode_register(). I didn't expect to see these
+changes. I might have missing something but since the bindings is still
+quite generic with additional cells that act as additional cookie for
+reboot call, I still think that should be possible.
 
-- Arnaldo
+What am I missing here then ?
 
-> +#include "../tests.h"
-> +
-> +static int landlock_add_rule(int argc __maybe_unused, const char **argv __maybe_unused)
-> +{
-> +	int fd = 11;
-> +	int flags = 45;
-> +
-> +	struct landlock_path_beneath_attr path_beneath_attr = {
-> +	    .allowed_access = LANDLOCK_ACCESS_FS_READ_FILE,
-> +	    .parent_fd = 14,
-> +	};
-> +
-> +	struct landlock_net_port_attr net_port_attr = {
-> +	    .port = 19,
-> +	    .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +	};
-> +
-> +	syscall(__NR_landlock_add_rule, fd, LANDLOCK_RULE_PATH_BENEATH,
-> +		&path_beneath_attr, flags);
-> +
-> +	syscall(__NR_landlock_add_rule, fd, LANDLOCK_RULE_NET_PORT,
-> +		&net_port_attr, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +DEFINE_WORKLOAD(landlock_add_rule);
-> -- 
-> 2.45.2
-> 
+-- 
+Regards,
+Sudeep
 
