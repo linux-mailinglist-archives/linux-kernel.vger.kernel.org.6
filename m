@@ -1,131 +1,390 @@
-Return-Path: <linux-kernel+bounces-221104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 698BE90EE18
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:25:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0DE90ED12
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15F2F1F21D76
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:25:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E6D9B25D4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524A71482EE;
-	Wed, 19 Jun 2024 13:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DB61474AD;
+	Wed, 19 Jun 2024 13:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBxOc3rk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lD2auHLT"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E64143757;
-	Wed, 19 Jun 2024 13:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D164143C65
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718803529; cv=none; b=XghMO7CKivUSK/DHleEqb1i4TfSKeVMDBW0vsIwMhWc4k0lvatJFvsCTVMSWjZIeGSB+BQF2/iBHf4WeSDX6Hv/panJuh4i0oyjs7BK6+e706VNrEWzG/8CYymn2NQ3wq7xELvcCKaZovvKYE21HwVgyWbtMuiL8Mc8zNO5VMss=
+	t=1718802826; cv=none; b=TOb0fBxckSQcv8HQ56eh/woDdergmQndzfZ0zy9Ylub/+Yyiko9bC+LrpEC73jo2Bk2Tyttm0htSPocVaxs/0y8OhcmbNk0VGcRZxShLmOj2PcQ3dAzYR9Ly7nDAvORtgbkwRd2LO7JsWj+uOiAst1bJHqX/W9sWQqNd5nhRw6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718803529; c=relaxed/simple;
-	bh=CBl//lO4qFOL4+qF/5/XncehXiBwSbzhWClESpKygHg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p4ZesNmUfUUhc1h5bKgeQt8Z6eHUw8U1XM8URpnEcah99rbu+XEvTpWfxV/w2P3WFeyW1WFBQSbpoM0xBilkkYw0TSL6C0kCa4TAtVPLzGgummWdOpRW33jU+uHLFDLNNHu75H9C6VyUDoD/2tnd1Er0Z1MfDrDjLWtd3l4OsBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBxOc3rk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CD87C2BBFC;
-	Wed, 19 Jun 2024 13:25:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718803529;
-	bh=CBl//lO4qFOL4+qF/5/XncehXiBwSbzhWClESpKygHg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=KBxOc3rkLulVYUS/yi38GbU5HIewXsHaByRSrRPHh4yD1hEQfbs73Lyywsrqisjul
-	 W2K6j6Uuw6e23/aU60P5Wc7HUy5tYMxtfhKAL3mqj+NNOy3ilzxZXDKYa/c2yPQRvv
-	 mEaBUxPHk0hFbICXafyWFywDcHayO/W8QyDdIpjUVPJtyo8Qr397ZxjzRQIP0XN5Y9
-	 rtd6y2odW8P79RMndQ2WOeLLnhADrgXTkj5pgvtiahSENj044Psi88bgy7qomroEuX
-	 kQNlJIjY8ir0Q11Vq0b19w8G6xjEdctxL0qYBuVoxeHm33Tt3G7+h2WZjZnOkL8+id
-	 o6Fkfd9adLmRg==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Xu Kuohai <xukuohai@huaweicloud.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: puranjay12@gmail.com
-Subject: [PATCH] bpf, arm64: inline bpf_get_current_task/_btf() helpers
-Date: Wed, 19 Jun 2024 13:13:34 +0000
-Message-Id: <20240619131334.4297-1-puranjay@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1718802826; c=relaxed/simple;
+	bh=RbvmbYLOdTN1Un4qHqxrpTPM2JdpExyrZq/4gE2q0MU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rN4WDyHpjl4izIGfPCwtEM0I0OGFUudESHYW5UcgRgyfPIi8+CV8ZxkHDyM7ywM1xTKathpES9w2ddtKDY7YoGIoBomzJwGn0vAXBGE1ZKZs1YG5uEovG6tRqIVN2klqweBMJy+7zxajZtOZz5UrA93EULcqiULHYcs//tMBnb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lD2auHLT; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-6f98178ceb3so3662921a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 06:13:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718802822; x=1719407622; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ivs1qkflrAzWFvaDZPs9VVhewLqqdL+rqJ080vGZJVQ=;
+        b=lD2auHLT2/xEze50+hztLX3b5g3wbbtLFzzPgXxgx1D278XPUbiIhe6ERr+PZjqSBA
+         wLsZ1zvnCo3liRT6sA3fqtCbaJnnkLBKHnxRVWLjHs6pfepRoXaeVp+FQQT4HAx2Y9QM
+         vPycsH5i/wuntJOE0ZxfArM6tXbeuF6NkvbGqSHFmX9q0Ct6vk4ouNLQ3r454fvtfP6f
+         XiG3SzL1PuXAhA0oyzodp9uETXk1EcXD0xZlHWQVhXZ/5yZw1nNQEde7NQrpm15zitEM
+         gWQZ003+MpnPPHY6N9CW9V2hloXzLrN2LC/BuQ74Jl8LB8/Gmx/F+EZJ69Wc93XP81Y2
+         +GSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718802822; x=1719407622;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ivs1qkflrAzWFvaDZPs9VVhewLqqdL+rqJ080vGZJVQ=;
+        b=aCM9PasHAbMqxkAPGtA44Dkd4bVgRxR0h+n8PrSCCuHQugHcMcaRn4va53XOY7WsvX
+         6vXNgk+1KS9+S1tNhTHt5MaSvjGyJTlkGC+gAVX/wFSjNNFZ6TQQRnXkGp9U8UViGz/X
+         3Bc0HLxT9nrAIJdlpNdHvsMj55o7nS6zf6FXcGK8b5rflsFzHgli1hOOQVNTSKoGFed0
+         k4GSUdnuEYj0HDKWj07m+yDBEu7a+sTjyLy/kyH99BhYka2JePnzfN8Kd3/I5YB79lZ+
+         4S5TrFLt75ag31wsWS3bM5iBdC6TBscdiCJJzUCwUe9JoqReucJg3RBI9aFBgPn5zx+R
+         JD+g==
+X-Forwarded-Encrypted: i=1; AJvYcCX3fnMhG415Xlgr648YK9FPABY6U63pRwadbAwSfikc2nOYG57wnzKFETvtk9epyzSIEzclaR3pudsbOGuHpjQW2nkIWGR6LFuPGxU0
+X-Gm-Message-State: AOJu0YxYyBmuKjdclI9oqYXls9L89FOXAPoml8iukIbeBFmfw01odDea
+	EiJ2i0y3dUsx5c+y4DGUKJY+lgnz+DzbJR3lKafQQVNp47TUn/Uj0RQEJ8mQpkM=
+X-Google-Smtp-Source: AGHT+IGTiXqUEaPrvDuYDPma+ZzU82AzsVFd9laW0PY6g+H5Fk6mm4lYrZvrDo5NZldw4NMTs1wjdQ==
+X-Received: by 2002:a9d:77d1:0:b0:6f9:5dbf:d3af with SMTP id 46e09a7af769-70074302bbbmr2925141a34.22.1718802822490;
+        Wed, 19 Jun 2024 06:13:42 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb5b1b2de9sm2199447a34.29.2024.06.19.06.13.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 06:13:42 -0700 (PDT)
+Message-ID: <38f99355-0186-4c2f-912a-cb03d6e4823c@baylibre.com>
+Date: Wed, 19 Jun 2024 08:13:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/6] dt-bindings: iio: adc: Add AD4000
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1718749981.git.marcelo.schmitt@analog.com>
+ <34a16c6e513b32bc6111b695e1c8b467bd6993d9.1718749981.git.marcelo.schmitt@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <34a16c6e513b32bc6111b695e1c8b467bd6993d9.1718749981.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On ARM64, the pointer to task_struct is always available in the sp_el0
-register and therefore the calls to bpf_get_current_task() and
-bpf_get_current_task_btf() can be inlined into a single MRS instruction.
+On 6/18/24 6:12 PM, Marcelo Schmitt wrote:
+> Add device tree documentation for AD4000 series of ADC devices.
+> 
+> Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4000-4004-4008.pdf
+> Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4001-4005.pdf
+> Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4002-4006-4010.pdf
+> Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4003-4007-4011.pdf
+> Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
+> Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
+> Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
 
-Here is the difference before and after this change:
+Datasheets URLs are listed in the patch, so probably don't need them
+in the commit message too.
 
-Before:
+> 
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+>  .../bindings/iio/adc/adi,ad4000.yaml          | 231 ++++++++++++++++++
+>  MAINTAINERS                                   |   7 +
+>  2 files changed, 238 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> new file mode 100644
+> index 000000000000..ba50f9e0784b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> @@ -0,0 +1,231 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad4000.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices AD4000 and similar Analog to Digital Converters
+> +
+> +maintainers:
+> +  - Marcelo Schmitt <marcelo.schmitt@analog.com>
+> +
+> +description: |
+> +  Analog Devices AD4000 family of Analog to Digital Converters with SPI support.
+> +  Specifications can be found at:
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4000-4004-4008.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4001-4005.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4002-4006-4010.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4003-4007-4011.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
+> +
+> +$ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: adi,ad4000
+> +      - items:
+> +          - enum:
+> +              - adi,ad4004
+> +              - adi,ad4008
+> +          - const: adi,ad4000
+> +      - const: adi,ad4001
+> +      - items:
+> +          - enum:
+> +              - adi,ad4005
+> +          - const: adi,ad4001
+> +      - const: adi,ad4002
+> +      - items:
+> +          - enum:
+> +              - adi,ad4006
+> +              - adi,ad4010
+> +          - const: adi,ad4002
+> +      - const: adi,ad4003
+> +      - items:
+> +          - enum:
+> +              - adi,ad4007
+> +              - adi,ad4011
+> +          - const: adi,ad4003
+> +      - const: adi,ad4020
+> +      - items:
+> +          - enum:
+> +              - adi,ad4021
+> +              - adi,ad4022
+> +          - const: adi,ad4020
+> +
 
-; struct task_struct *task = bpf_get_current_task_btf();
-  54:   mov     x10, #0xffffffffffff7978        // #-34440
-  58:   movk    x10, #0x802b, lsl #16
-  5c:   movk    x10, #0x8000, lsl #32
-  60:   blr     x10          -------------->    0xffff8000802b7978 <+0>:     mrs     x0, sp_el0
-  64:   add     x7, x0, #0x0 <--------------    0xffff8000802b797c <+4>:     ret
+There are data sheets listed for adaq400x but no compatibles.
 
-After:
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 102040816 # for VIO > 2.7 V, 81300813 for VIO > 1.7 V
+> +
+> +  adi,spi-mode:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum: [ single, chain ]
+> +    description: |
+> +      This property indicates the SPI wiring configuration.
+> +
+> +      When this property is omitted, it is assumed that the device is using what
+> +      the datasheet calls "4-wire mode". This is the conventional SPI mode used
+> +      when there are multiple devices on the same bus. In this mode, the CNV
+> +      line is used to initiate the conversion and the SDI line is connected to
+> +      CS on the SPI controller.
+> +
+> +      When this property is present, it indicates that the device is using one
+> +      of the following alternative wiring configurations:
+> +
+> +      * single: The datasheet calls this "3-wire mode". (NOTE: The datasheet's
+> +        definition of 3-wire mode is NOT at all related to the standard
+> +        spi-3wire property!) This mode is often used when the ADC is the only
+> +        device on the bus. In this mode, SDI is connected to MOSI or to VIO, and
+> +        the CNV line can be connected to the CS line of the SPI controller or to
+> +        a GPIO, in which case the CS line of the controller is unused.
+> +      * chain: The datasheet calls this "chain mode". This mode is used to save
+> +        on wiring when multiple ADCs are used. In this mode, the SDI line of
+> +        one chip is tied to the SDO of the next chip in the chain and the SDI of
+> +        the last chip in the chain is tied to GND. Only the first chip in the
+> +        chain is connected to the SPI bus. The CNV line of all chips are tied
+> +        together. The CS line of the SPI controller can be used as the CNV line
+> +        only if it is active high.
+> +
+> +  '#daisy-chained-devices': true
+> +
+> +  vdd-supply:
+> +    description: A 1.8V supply that powers the chip (VDD).
+> +
+> +  vio-supply:
+> +    description:
+> +      A 1.8V to 5.5V supply for the digital inputs and outputs (VIO).
+> +
+> +  ref-supply:
+> +    description:
+> +      A 2.5 to 5V supply for the external reference voltage (REF).
+> +
+> +  cnv-gpios:
+> +    description:
+> +      The Convert Input (CNV). This input has multiple functions. It initiates
+> +      the conversions and selects the SPI mode of the device (chain or CS). In
+> +      'single' mode, this property is omitted if the CNV pin is connected to the
+> +      CS line of the SPI controller.
+> +    maxItems: 1
+> +
+> +  adi,high-z-input:
+> +    type: boolean
+> +    description:
+> +      High-Z mode allows the amplifier and RC filter in front of the ADC to be
+> +      chosen based on the signal bandwidth of interest, rather than the settling
+> +      requirements of the switched capacitor SAR ADC inputs.
+> +
+> +  adi,gain-milli:
+> +    description: |
+> +      The hardware gain applied to the ADC input (in milli units).
+> +      The gain provided by the ADC input scaler is defined by the hardware
+> +      connections between chip pins OUT+, R1K-, R1K1-, R1K+, R1K1+, and OUT-.
+> +      If not present, default to 1000 (no actual gain applied).
+> +    $ref: /schemas/types.yaml#/definitions/uint16
 
-; struct task_struct *task = bpf_get_current_task_btf();
-  54:   mrs     x7, sp_el0
+Any particular reason why this needs to be uint16 instead of the more
+common uint32?
 
-This shows around 1% performance improvement in artificial microbenchmark.
+> +    enum: [454, 909, 1000, 1900]
+> +    default: 1000
+> +
+> +  interrupts:
+> +    description:
+> +      The SDO pin can also function as a busy indicator. This node should be
+> +      connected to an interrupt that is triggered when the SDO line goes low
+> +      while the SDI line is high and the CNV line is low ('single' mode) or the
+> +      SDI line is low and the CNV line is high ('multi' mode); or when the SDO
+> +      line goes high while the SDI and CNV lines are high (chain mode),
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vdd-supply
+> +  - vio-supply
+> +  - ref-supply
+> +
+> +allOf:
+> +  # in '4-wire' mode, cnv-gpios is required, for other modes it is optional
+> +  - if:
+> +      not:
+> +        required:
+> +          - adi,spi-mode
+> +    then:
+> +      required:
+> +        - cnv-gpios
+> +  # The configuration register can only be accessed in '3-wire' mode
+> +  - if:
+> +      not:
+> +        properties:
+> +          adi,spi-mode:
+> +            contains:
+> +              enum:
+> +                - single
 
-Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
----
- arch/arm64/net/bpf_jit_comp.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+adi,spi-mode is not an array and we are only checking for one value,
+so this could be simplified to:
 
-diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-index 720336d28856..b838dab3bd26 100644
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -1244,6 +1244,13 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx,
- 			break;
- 		}
- 
-+		/* Implement helper call to bpf_get_current_task/_btf() inline */
-+		if (insn->src_reg == 0 && (insn->imm == BPF_FUNC_get_current_task ||
-+					   insn->imm == BPF_FUNC_get_current_task_btf)) {
-+			emit(A64_MRS_SP_EL0(r0), ctx);
-+			break;
-+		}
-+
- 		ret = bpf_jit_get_func_addr(ctx->prog, insn, extra_pass,
- 					    &func_addr, &func_addr_fixed);
- 		if (ret < 0)
-@@ -2581,6 +2588,8 @@ bool bpf_jit_inlines_helper_call(s32 imm)
- {
- 	switch (imm) {
- 	case BPF_FUNC_get_smp_processor_id:
-+	case BPF_FUNC_get_current_task:
-+	case BPF_FUNC_get_current_task_btf:
- 		return true;
- 	default:
- 		return false;
--- 
-2.40.1
+  properties:
+    adi,spi-mode:
+      const: single
+
+> +    then:
+> +      properties:
+> +        adi,high-z-input: false
+> +  # chain mode has lower SCLK max rate
+> +  - if:
+> +      required:
+> +        - adi,spi-mode
+> +      properties:
+> +        adi,spi-mode:
+> +          const: chain
+> +    then:
+> +      properties:
+> +        spi-max-frequency:
+> +          maximum: 50000000 # for VIO > 2.7 V, 40000000 for VIO > 1.7 V
+> +      required:
+> +        - '#daisy-chained-devices'
+> +    else:
+> +      properties:
+> +        '#daisy-chained-devices': false
+> +  # Gain property only applies to ADAQ devices
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          not:
+> +            contains:
+> +              enum:
+> +                - adi,adaq4001
+> +                - adi,adaq4003
+> +    then:
+> +      properties:
+> +        adi,gain-milli: false
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        /* Example for a AD devices */
+
+Comments are a bit redundant since it says "examples:" above and
+the type of the chip in the compatible string.
+
+> +        adc@0 {
+> +            compatible = "adi,ad4020";
+> +            reg = <0>;
+> +            spi-max-frequency = <71000000>;
+> +            vdd-supply = <&supply_1_8V>;
+> +            vio-supply = <&supply_1_8V>;
+> +            ref-supply = <&supply_5V>;
+> +            cnv-gpios = <&gpio0 88 GPIO_ACTIVE_HIGH>;
+> +        };
+> +    };
+> +  - |
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        /* Example for a ADAQ devices */
+> +        adc@0 {
+> +            compatible = "adi,adaq4003";
+> +            reg = <0>;
+> +            spi-max-frequency = <80000000>;
+> +            vdd-supply = <&supply_1_8V>;
+> +            vio-supply = <&supply_1_8V>;
+> +            ref-supply = <&supply_5V>;
+> +            adi,high-z-input;
+> +            adi,gain-milli = /bits/ 16 <454>;
+> +            adi,spi-mode = "single";
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index bff979a507ba..1f052b9cd912 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1200,6 +1200,13 @@ W:	https://ez.analog.com/linux-software-drivers
+>  F:	Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+>  F:	drivers/iio/dac/ad3552r.c
+>  
+> +ANALOG DEVICES INC AD4000 DRIVER
+> +M:	Marcelo Schmitt <marcelo.schmitt@analog.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Supported
+> +W:	https://ez.analog.com/linux-software-drivers
+> +F:	Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> +
+>  ANALOG DEVICES INC AD4130 DRIVER
+>  M:	Cosmin Tanislav <cosmin.tanislav@analog.com>
+>  L:	linux-iio@vger.kernel.org
 
 
