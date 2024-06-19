@@ -1,110 +1,157 @@
-Return-Path: <linux-kernel+bounces-220701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF6D890E586
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:32:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6065290E587
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 399F628269A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:32:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1821F229A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311047BAEC;
-	Wed, 19 Jun 2024 08:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E587D075;
+	Wed, 19 Jun 2024 08:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="l8+eKRfN"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FNxFSi5X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFDC56448;
-	Wed, 19 Jun 2024 08:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08A96CDC8
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718785935; cv=none; b=nj7MESDHs4+D2y45cpg0J1vyvH8mLi7TqxCdLHoBDHhLoDVqlQ/ukNhUqEIYrxg1DsXrYFUZXJYuXPlXegzwQBb0xACmaJggx2S86TXZRD2835k4MBmAJdTz2luf+CbQ7bbymHGvGRYQT8UdpTq4RTu+oSH3DM2QNxm4aYn9Bd8=
+	t=1718785936; cv=none; b=DvFRIg3FuGp1ksG8dpwDo5YyXmd1tIGMGcJ2vUZcouC05pQtXLzbVu86VG0mM6P/jH/r03wUnXSe7eud+iiyddWq9+IE0R1QJ/isDFLQizyEhbrUGhpIfKUYvHXgGoUj7WqtzrIBsuyj57zfiYFbT6kSbOSAl5ysjMavufV1KaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718785935; c=relaxed/simple;
-	bh=6L3CLgqlPBPjLasxNnLwmXiP78gx+9LhlT39CmIA30k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mztcUrmSFqPIAigNgonl7lhq8W9uxd375/y9gZTW1s8VPj+EHBsVhLFNjyoA6fi7WJGQeSTPkr1LFDCRn6blhjmGYXuoMiHEaC6lAiVIe1VLe92vOw8BgHga1kWBCvu/77I51ep+vgsurDugDrpOeB7vYBPxO1l2JH97i/zo1S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=l8+eKRfN; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=R2yscDCF3+dfP4Cs8Q0wqLUEmaZApVG8aLFF5tCrBu0=; b=l8+eKRfNIsFXfp/wyZ3/k43Fll
-	UNDwT6Xcx37V3IP7XEq0A2mnLZLe7Ki00Ay8C0YLUVFt4SjyYlb1gtwH2DDZ6ZlF8NSsaelTpalOe
-	d0JmJZys/ARESp+k7XtoeVaNxRISbwI1gf9tOg75zt+8QmPXW5auJfxbGIy7q3T+7WUhzhENUC0mZ
-	4qNom5NPKYWHSHEiz0G3y7V3KCF5wpFI6t7JvI5SrGhsRZ3to0SbBhU1M7To9be38P54WonUN9YCE
-	s2jtXSIB/2t9mrAsjf936r3j8NGS200YJR40vm3VOTZicERw+4glf6dCDzVHUQkwq5oiIcS4kMohm
-	WnLhmwrA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48842)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sJqjM-0007zd-1N;
-	Wed, 19 Jun 2024 09:31:48 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sJqjL-0006bp-Ee; Wed, 19 Jun 2024 09:31:47 +0100
-Date: Wed, 19 Jun 2024 09:31:47 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sky Huang <SkyLake.Huang@mediatek.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	s=arc-20240116; t=1718785936; c=relaxed/simple;
+	bh=+2joTCwEvbc7KrZi+nMHbY004XoRVtUhnAflVlD9NYU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fXuuzTNF3YOx4ViGWkiuoXnl+xM/s+O0Dt66Z0o7AbzV1827k9MYpVUz4tge341wduKDWokSQPxMfmlslCTWtvdyS6vogdVikLIDLGi9c4Ka87Ad8ihT4JvR2QWQizqtmLR7HZWejONHEtnzAkXaYJPFEuAeGK24ry9hXZcTO/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FNxFSi5X; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718785934;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SVHHXWeH5aQFZ8JdFAToDf6m3aAxA4I0hr87LTb8rSI=;
+	b=FNxFSi5XQi9Xljo0hvD4FdW11WvJwUrEzhxjEt/nqh0i6fzO6Qojmztid2O+wGltlYhmt9
+	TCGShRzFbB1/Hgn9I4V/BrhX+ZIdqITm2ddEEPvGCtKv2WIg4o2P1t+MV4xTV8zbIqKIx/
+	MeirLs9aSKV9FKOvw7OV3KdD3snN+ts=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-553-WiZ7PL65PtqmKAuadzP8eg-1; Wed,
+ 19 Jun 2024 04:32:10 -0400
+X-MC-Unique: WiZ7PL65PtqmKAuadzP8eg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CE2501955E84;
+	Wed, 19 Jun 2024 08:32:07 +0000 (UTC)
+Received: from virt-mtcollins-01.lab.eng.rdu2.redhat.com (virt-mtcollins-01.lab.eng.rdu2.redhat.com [10.8.1.196])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0C41819560AF;
+	Wed, 19 Jun 2024 08:32:04 +0000 (UTC)
+From: Shaoqin Huang <shahuang@redhat.com>
+To: Oliver Upton <oliver.upton@linux.dev>,
+	Marc Zyngier <maz@kernel.org>,
+	kvmarm@lists.linux.dev
+Cc: Shaoqin Huang <shahuang@redhat.com>,
+	James Morse <james.morse@arm.com>,
+	kvm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH net-next v7 1/5] net: phy: mediatek: Re-organize MediaTek
- ethernet phy drivers
-Message-ID: <ZnKXc/UglBxayJtv@shell.armlinux.org.uk>
-References: <20240613104023.13044-1-SkyLake.Huang@mediatek.com>
- <20240613104023.13044-2-SkyLake.Huang@mediatek.com>
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: [PATCH v10 0/3] KVM: selftests: aarch64: Introduce pmu_event_filter_test
+Date: Wed, 19 Jun 2024 04:31:53 -0400
+Message-Id: <20240619083200.1047073-1-shahuang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240613104023.13044-2-SkyLake.Huang@mediatek.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, Jun 13, 2024 at 06:40:19PM +0800, Sky Huang wrote:
-> diff --git a/drivers/net/phy/mediatek-ge-soc.c b/drivers/net/phy/mediatek/mtk-ge-soc.c
-> similarity index 99%
-> rename from drivers/net/phy/mediatek-ge-soc.c
-> rename to drivers/net/phy/mediatek/mtk-ge-soc.c
-> index f4f9412..47af872 100644
-> --- a/drivers/net/phy/mediatek-ge-soc.c
-> +++ b/drivers/net/phy/mediatek/mtk-ge-soc.c
-> @@ -1415,7 +1415,7 @@ static int mt7988_phy_probe_shared(struct phy_device *phydev)
->  	 * LED_C and LED_D respectively. At the same time those pins are used to
->  	 * bootstrap configuration of the reference clock source (LED_A),
->  	 * DRAM DDRx16b x2/x1 (LED_B) and boot device (LED_C, LED_D).
-> -	 * In practise this is done using a LED and a resistor pulling the pin
-> +	 * In practice this is done using a LED and a resistor pulling the pin
+The test is inspired by the pmu_event_filter_test which implemented by x86. On
+the arm64 platform, there is the same ability to set the pmu_event_filter
+through the KVM_ARM_VCPU_PMU_V3_FILTER attribute. So add the test for arm64.
 
-If you are moving files around, there should be no extraneous changes
-in the commit that is doing the move. This is a spelling fix, and that
-should be a separate patch (and probably should be done as the first
-patch.)
+The series first create the helper function which can be used
+for the vpmu related tests. Then, it implement the test.
 
-Thanks.
+Changelog:
+----------
+v9->v10:
+  - Remove the first_filter checking in the prepare_expected_pmce function.
+  - Add a new macro EVENT_[ALLOW|DENY] to make the definition of filter more
+  readable.
+  - Some small improvements.
+
+v8->v9:
+  - Rebased to latest kvm-arm/next.
+
+v7->v8:
+  - Rebased to kvm-arm/next.
+  - Deleted the GIC layout related staff.
+  - Fixed the checking logic in the kvm_pmu_support_events.
+
+v6->v7:
+  - Rebased to v6.9-rc3.
+
+v5->v6:
+  - Rebased to v6.9-rc1.
+  - Collect RB.
+  - Add multiple filter test.
+
+v4->v5:
+  - Rebased to v6.8-rc6.
+  - Refactor the helper function, make it fine-grained and easy to be used.
+  - Namimg improvements.
+  - Use the kvm_device_attr_set() helper.
+  - Make the test descriptor array readable and clean.
+  - Delete the patch which moves the pmu related helper to vpmu.h.
+  - Remove the kvm_supports_pmu_event_filter() function since nobody will run
+  this on a old kernel.
+
+v3->v4:
+  - Rebased to the v6.8-rc2.
+
+v2->v3:
+  - Check the pmceid in guest code instead of pmu event count since different
+  hardware may have different event count result, check pmceid makes it stable
+  on different platform.                        [Eric]
+  - Some typo fixed and commit message improved.
+
+v1->v2:
+  - Improve the commit message.                 [Eric]
+  - Fix the bug in [enable|disable]_counter.    [Raghavendra & Marc]
+  - Add the check if kvm has attr KVM_ARM_VCPU_PMU_V3_FILTER.
+  - Add if host pmu support the test event throught pmceid0.
+  - Split the test_invalid_filter() to another patch. [Eric]
+
+Shaoqin Huang (3):
+  KVM: selftests: aarch64: Add helper function for the vpmu vcpu
+    creation
+  KVM: selftests: aarch64: Introduce pmu_event_filter_test
+  KVM: selftests: aarch64: Add invalid filter test in
+    pmu_event_filter_test
+
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../kvm/aarch64/pmu_event_filter_test.c       | 352 ++++++++++++++++++
+ .../kvm/aarch64/vpmu_counter_access.c         |  32 +-
+ .../selftests/kvm/include/aarch64/vpmu.h      |  28 ++
+ 4 files changed, 387 insertions(+), 26 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c
+ create mode 100644 tools/testing/selftests/kvm/include/aarch64/vpmu.h
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.40.1
+
 
