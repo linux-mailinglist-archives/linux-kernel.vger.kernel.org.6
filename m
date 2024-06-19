@@ -1,170 +1,107 @@
-Return-Path: <linux-kernel+bounces-220890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE9490E8AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:53:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 853DA90E8B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46B141C21ED8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:53:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA7B81C22A69
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9628313664E;
-	Wed, 19 Jun 2024 10:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291FD132112;
+	Wed, 19 Jun 2024 10:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u3uSaA84"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SD0Kheyq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00C11304AD;
-	Wed, 19 Jun 2024 10:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717DE4D8B2
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718794372; cv=none; b=ivElyXwrjuPLCingVIPlw7k5Ot61WMbw+bc/WCx+XSW1jw/IG80sszGoVt3np69oZJd8+1vT1oIx9MBFbJ2XrHyUhfD7szgbdgk2CRWNkanmhZULxoruVaCOiDOQpqTwv/fPm4x9BJiKY5/+nRsLsQKMPeHXs64hhnvDb8LA4Yk=
+	t=1718794462; cv=none; b=sM87jeTEFfMNjjI0d+nBUmasPDJrv2r8oNtRsQjWsKFl8V68H7OUYT0oIkKFkbdykjYVmwEP0BiGsfwe7WM/0Ohd+/PEYWzK2BC9d2MkZyGF9SVIIn/mbJfLZpupqOqpsI8XEjt6gNgjeiTjiergk0jbkVGJGthhGROAaMuBRFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718794372; c=relaxed/simple;
-	bh=x6rRWvFLspQevsB2WpDwXMeeTixJq93OzwM4BU6/jhU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iye1lPntt+VzWKk9p8rvPu2V5b/q4YQdgi8saMK0B/YGBXZB+lrgA6t+nDWlUXoveGF3LmqqRCTseNdyQyC5SfryK8F/c5Zu4ZdFA9GpaRM/t2d5sfXs6EvLKnwaszScUW04S5bjW5akA7YsegmfC+/wqX85rb9egWmW7NJ3T0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u3uSaA84; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FF89C4AF53;
-	Wed, 19 Jun 2024 10:52:52 +0000 (UTC)
+	s=arc-20240116; t=1718794462; c=relaxed/simple;
+	bh=WLiVIcEsI1MsoU/pGfWwCO4FNjNshUkTXjY2D+QEGRM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MUDdQyVsZo0x8Enb0eXdQFWWasBe2yFL6dFBeSKKfPlwGNGRAMFNKqwu6Z5yG6JzJLpsl8N5xZq+I3G8XXmJRg18mV1iU325rKuyDTENuSOkO3nLh1stiPpYglx3SDubsOQdnVa49V56t008g2EJ6B3e4E882p1MDqOz/+ZVsNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SD0Kheyq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE351C32786;
+	Wed, 19 Jun 2024 10:54:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718794372;
-	bh=x6rRWvFLspQevsB2WpDwXMeeTixJq93OzwM4BU6/jhU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=u3uSaA84l5gVLsWmwxrOtJWM7MF0Vu51G0CMA1IUhuxDqK7DR2yRzGOKrg5XZfJyp
-	 gc1uZ0BFFh/wA26oymxl7R1SluIcT5SJ5t1Ag6XbCE5Xkm7ygActqF/NpHFUki9mlL
-	 JbLwuS31tzqYMGiroNPmsUu+jF8Vggo/jU2YswgPzfH0OUyJKD3lw6P18dgkFZl/0Y
-	 n5dvVHipC+NvVTsEaLa4yR6Z2kvQMtMEiStK1cuhhGDOlvFIk45u6nd3IWZNz0xwwZ
-	 4TMCjh7s4W1TjzGlDdladzFqHv7/kFYAVMXWKntAeSqEk/WhLSN/siYOf+znixzC+C
-	 tKhqZbYVCrBQQ==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-254939503baso511628fac.0;
-        Wed, 19 Jun 2024 03:52:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW+xyWfe5iJvRVgVyFqt4isgis/bx1GqvNReaBUFx3d2Bs/V5BKLMT0A/SQ4FC8CLEumQMio/zZ90pKkS1AOzWmnYTV9JEh8A5LOkvL1nHDzSgaiDGxtikfn8JvqiQ23io0MbJ9xYXx
-X-Gm-Message-State: AOJu0Yw5cC9ycK6vWlObCi9vyBw8HGojJgkOg5ifLzsyWlW2Fzkc2nl/
-	Vj9xnKJ9geX5rYLpu1QJ5DL79oawH5VCXXb+d/rzXM0gdStl9oc6EhPkeH/YHvcCb9loNsdaUFa
-	pKEpiZdkS8iBSDrn/g/m2Y5vwAKg=
-X-Google-Smtp-Source: AGHT+IHkfbPpplMOo0+AZF3Oi/SLUmBNejk3LQsh8tt80LEVbwbJ0RTdOmOkrR69Re/mAWO5+pPtyJBD56qHP10v7uQ=
-X-Received: by 2002:a05:6820:2210:b0:5ba:ead2:c742 with SMTP id
- 006d021491bc7-5c1ad8a198cmr2995209eaf.0.1718794371598; Wed, 19 Jun 2024
- 03:52:51 -0700 (PDT)
+	s=k20201202; t=1718794462;
+	bh=WLiVIcEsI1MsoU/pGfWwCO4FNjNshUkTXjY2D+QEGRM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=SD0Kheyq2Me0xq6d66yqChXOJfd5Vn5tqqefdyQ8dtLeW4BOCOYAtZHq9kFFZCo9f
+	 i8/+9sgsGnbEPY8J8DZaXK6L4n7/3nxPARNhHsNiLpjwCF89PCX6/8FNwpeZZMop47
+	 yv/GA0bEJWjoetNtQ6E+b/I2hOQyhUMNau151eh0dmnLBAWQAwk3rzhIM5asYHkPWI
+	 2wcvWePLpRzAHOqFG5Jo3AMvvfkIkp9ZRETOF26vP9beWWZKFPrg7Y/B6d+B1QnNDM
+	 2poWtcuRdm4I/VUdIAMosBQ/4ZMYjcixUvhVydks58D8FztUSYWXCG3dlrUi+eXup7
+	 ZGToiwKURDdrg==
+From: Mark Brown <broonie@kernel.org>
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz, 
+ pierre-louis.bossart@linux.intel.com, 13916275206@139.com, 
+ zhourui@huaqin.com, alsa-devel@alsa-project.org, i-salazar@ti.com, 
+ linux-kernel@vger.kernel.org, j-chadha@ti.com, liam.r.girdwood@intel.com, 
+ jaden-yue@ti.com, yung-chuan.liao@linux.intel.com, dipa@ti.com, 
+ yuhsuan@google.com, henry.lo@ti.com, tiwai@suse.de, baojun.xu@ti.com, 
+ soyer@irl.hu, Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com, 
+ cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com, 
+ savyasanchi.shukla@netradyne.com, flaviopr@microsoft.com, jesse-ji@ti.com, 
+ darren.ye@mediatek.com
+In-Reply-To: <20240614133646.910-1-shenghao-ding@ti.com>
+References: <20240614133646.910-1-shenghao-ding@ti.com>
+Subject: Re: [PATCH v5] ASoc: tas2781: Enable RCA-based playback without
+ DSP firmware download
+Message-Id: <171879445548.57943.2834143802060399469.b4-ty@kernel.org>
+Date: Wed, 19 Jun 2024 11:54:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618204946.1271042-1-helgaas@kernel.org>
-In-Reply-To: <20240618204946.1271042-1-helgaas@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 19 Jun 2024 12:52:39 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hZHnMbTLs3KK3ORQey=-u8SEm5H4X-eDSVzdk8s9Rn5A@mail.gmail.com>
-Message-ID: <CAJZ5v0hZHnMbTLs3KK3ORQey=-u8SEm5H4X-eDSVzdk8s9Rn5A@mail.gmail.com>
-Subject: Re: [PATCH v9 0/2] PCI: Disable AER & DPC on suspend
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-	"Oliver O'Halloran" <oohall@gmail.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
-	Chaitanya Kulkarni <kch@nvidia.com>, Christoph Hellwig <hch@lst.de>, Thomas Crider <gloriouseggroll@gmail.com>, 
-	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>, Hannes Reinecke <hare@suse.com>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-nvme@lists.infradead.org, 
-	regressions@lists.linux.dev, Bjorn Helgaas <bhelgaas@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-On Tue, Jun 18, 2024 at 10:49=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org>=
- wrote:
->
-> From: Bjorn Helgaas <bhelgaas@google.com>
->
-> This is an old series from Kai-Heng that I didn't handle soon enough.  Th=
-e
-> intent is to fix several suspend/resume issues:
->
->   - Spurious wakeup from s2idle
->     (https://bugzilla.kernel.org/show_bug.cgi?id=3D216295)
->
->   - Steam Deck doesn't resume after suspend
->     (https://bugzilla.kernel.org/show_bug.cgi?id=3D218090)
->
->   - Unexpected ACS error and DPC event when resuming after suspend
->     (https://bugzilla.kernel.org/show_bug.cgi?id=3D209149)
->
-> It seems that a glitch when the link is powered down during suspend cause=
-s
-> errors to be logged by AER.  When AER is enabled, this causes an AER
-> interrupt, and if that IRQ is shared with PME, it may cause a spurious
-> wakeup.
->
-> Also, errors logged during link power-down and power-up seem to cause
-> unwanted error reporting during resume.
->
-> This series disables AER interrupts, DPC triggering, and DPC interrupts
-> during suspend.  On resume, it clears AER and DPC error status before
-> re-enabling their interrupts.
->
-> I added a couple cosmetic changes for the v9, but this is essentially all
-> Kai-Heng's work.  I'm just posting it as a v9 because I failed to act on
-> this earlier.
->
-> Bjorn
->
-> v9:
->  - Drop pci_ancestor_pr3_present() and pm_suspend_via_firmware; do it
->    unconditionally
->  - Clear DPC status before re-enabling DPC interrupt
->
-> v8: https://lore.kernel.org/r/20240416043225.1462548-1-kai.heng.feng@cano=
-nical.com
->  - Wording.
->  - Add more bug reports.
->
-> v7:
->  - Wording.
->  - Disable AER completely (again) if power will be turned off
->  - Disable DPC completely (again) if power will be turned off
->
-> v6: https://lore.kernel.org/r/20230512000014.118942-1-kai.heng.feng@canon=
-ical.com
->
-> v5: https://lore.kernel.org/r/20230511133610.99759-1-kai.heng.feng@canoni=
-cal.com
->  - Wording.
->
-> v4: https://lore.kernel.org/r/20230424055249.460381-1-kai.heng.feng@canon=
-ical.com
-> v3: https://lore.kernel.org/r/20230420125941.333675-1-kai.heng.feng@canon=
-ical.com
->  - Correct subject.
->
-> v2: https://lore.kernel.org/r/20230420015830.309845-1-kai.heng.feng@canon=
-ical.com
->  - Only disable AER IRQ.
->  - No more AER check on PME IRQ#.
->  - Use AER helper.
->  - Only disable DPC IRQ.
->  - No more DPC check on PME IRQ#.
->
-> v1: https://lore.kernel.org/r/20220727013255.269815-1-kai.heng.feng@canon=
-ical.com
->
-> Kai-Heng Feng (2):
->   PCI/AER: Disable AER service on suspend
->   PCI/DPC: Disable DPC service on suspend
->
->  drivers/pci/pcie/aer.c | 18 +++++++++++++
->  drivers/pci/pcie/dpc.c | 60 +++++++++++++++++++++++++++++++++---------
->  2 files changed, 66 insertions(+), 12 deletions(-)
->
-> --
+On Fri, 14 Jun 2024 21:36:45 +0800, Shenghao Ding wrote:
+> In only loading RCA (Reconfigurable Architecture) binary case, no DSP
+> program will be working inside tas2563/tas2781, that is dsp-bypass mode,
+> do not support speaker protection, or audio acoustic algorithms in this
+> mode.
+> 
+> 
 
-Please feel free to add
+Applied to
 
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
-
-to both patches in the series.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
 Thanks!
+
+[1/1] ASoc: tas2781: Enable RCA-based playback without DSP firmware download
+      commit: 9f774c757e3fb2ac32dc4377e8f21f3364a8df81
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
