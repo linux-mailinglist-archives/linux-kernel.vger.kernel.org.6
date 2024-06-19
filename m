@@ -1,187 +1,173 @@
-Return-Path: <linux-kernel+bounces-220438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F0090E1BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 04:54:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E8D90E1CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 05:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 588161C21A60
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 02:54:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE36B1F234A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42524B5CD;
-	Wed, 19 Jun 2024 02:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488C452F7A;
+	Wed, 19 Jun 2024 03:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KIrbL4kZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="jlmokgAw"
+Received: from out203-205-221-236.mail.qq.com (out203-205-221-236.mail.qq.com [203.205.221.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F85A38;
-	Wed, 19 Jun 2024 02:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1440A80C;
+	Wed, 19 Jun 2024 03:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718765684; cv=none; b=BPgfyg0OGzMgJCa6UsQOLgem8dfBASWu8ds1KIKRQa4zCjBCvpTfwBOxLVFgnCHD/REQHs0jEYx/8IvSYJgBAZIJY7WEY8p9Qogz/DufwvrOzA1pgQpvxKLXMOHx76jKyEbUck5lER/noSERaw+j2mIV31G5r6FaHYCizdUUkSY=
+	t=1718766096; cv=none; b=ZLtLDj1AKQr0uUYMozImr77UPm02781iL/lZ6ntaXGjw1lGZ/ciXi0eua0U8BVGNFAl8LPc/tRV0b/tXq6TdN5htsNduXVFgkUrk9scDcFe6uxyXo2zM4EiKmwfwDxdg4RTMminTiIl6iSf33qX+ayUdx/gxd/Mz9BnP6ywLsTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718765684; c=relaxed/simple;
-	bh=ruiJuo0TcIPww1MKnKhDXKjJpEPkKk7FFb1iT/KeR1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BZ7cO9omln9venX/dP7HTOAqPLfQVf2waxipZ5GcoiBFeLDPatzbE50FKO8Lt8nrzC2edWVUNaZz9WuRhBzFXBBOXIAUmCR4wEmVsksoNrZVLvxn5/YKiHQUW5znQ7w5+eI70XW2JXrKF0CGA04yCX5MWEVxzKyWoA2nMFtVE54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KIrbL4kZ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718765682; x=1750301682;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ruiJuo0TcIPww1MKnKhDXKjJpEPkKk7FFb1iT/KeR1I=;
-  b=KIrbL4kZ3bH10kAUukPQniCzEdRyOQ4IyU5t7WNtlIwQTiGvf3ca0BsZ
-   9fbcrMsDKYWbO185AEg1vknMDv2ouTHbXLQsbEwnWIHjAsVMthbmpOBgg
-   +1hq8oTUfSEX5ggj6fT+h50/FcOK7PTCBrqH5hY9wqOYsEQe67agbSD3J
-   L7PeTGPdgE5T86ql05fMcag2IPFM5pPQktR7opC/zKQ9TYZqenjyQiNC6
-   SLuR552WBt3KnDYplhw061DoLZIi6AujCOZ7Upt3dq6FHfpnpwBF6vYOh
-   K4yaHO7xPf9JqCrKQxlbqjjftoBEvpAutfglAU8vnulaezkER4WVWJuel
-   w==;
-X-CSE-ConnectionGUID: U/8bMd1kSuCe5sCm2Q+O7A==
-X-CSE-MsgGUID: Jn7KZuO4TTe62OekxBI7yg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="27098706"
-X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
-   d="scan'208";a="27098706"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 19:54:41 -0700
-X-CSE-ConnectionGUID: REFS4McYQWKbyGSnAE9OGA==
-X-CSE-MsgGUID: ve6VOm3WTSi6RXgIBjiO6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
-   d="scan'208";a="41860800"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 18 Jun 2024 19:54:38 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sJlT1-0006Cw-34;
-	Wed, 19 Jun 2024 02:54:35 +0000
-Date: Wed, 19 Jun 2024 10:53:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Manikantan R <quic_manrav@quicinc.com>
-Subject: Re: [PATCH 2/2] ASoC: codecs:lpass-wsa-macro: Fix logic of enabling
- vi channels
-Message-ID: <202406191005.yMuWtspN-lkp@intel.com>
-References: <20240618-lpass-wsa-vi-v1-2-416a6f162c81@linaro.org>
+	s=arc-20240116; t=1718766096; c=relaxed/simple;
+	bh=vZvt+Q/LzP1eRGX/oERlVvO2kvVkxg1YNUil1WnrQXw=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version:Content-Type; b=EdP3xU1v67qsKEuxOLwiEi4OJZBr+iTO3pKQzTaEDF63dTXzA2ZsTnulI+rt2YnHy7TZMdyD8ApWpgIDv61XAp2mn5+hspOrRajR+AJVvM3P9rfrlNsHh1Zl678hw5aYk7f8znrxchJdFsE4Rac1bXtuGHYFMg525EtAL9MBH1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=jlmokgAw; arc=none smtp.client-ip=203.205.221.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1718766090;
+	bh=0hRYs10zniVh/Kbu/d3Ip8FfbIfjenzhLGf7tpfWBTQ=;
+	h=From:To:Cc:Subject:Date;
+	b=jlmokgAwNvm6ELi/DVliMXdd4BZPVnr+/36zWfmR6lUcImnu3E8fldx534Qm3sXm+
+	 Z6VqkgAylQhsasKlkupnOJMJjebZ68InT/uv30wjG9pXxIcSCO7+hlzDqLTlIclRtu
+	 LCJ5ud8BUbGSTKK1d29RcBhpSvEW5BjIVReGiWJk=
+Received: from localhost.localdomain ([203.119.160.17])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 5AB561B; Wed, 19 Jun 2024 11:01:26 +0800
+X-QQ-mid: xmsmtpt1718766086tdnz6c130
+Message-ID: <tencent_83C854981B8ACA301E4D0282AA961AC50406@qq.com>
+X-QQ-XMAILINFO: NkHKfw09D6j8tP9BJAzFHdz/bdbMa8zMAoYEa/BexjDyovkbn/YVumePIzk29d
+	 EfkwUiR5gJbHWt63KbFDQr/lIw3yNoedxroGnvXa8riBv3kyhXcpUQddxX1jiuilZeDaD/om8yY/
+	 iN37iWZr/c9EdnYD22OS5kyWvUklniIyqopW1m3hsVGQMh9LvPlUJYlm/TkdkrWHLRP4lI01fyU2
+	 VK4S0/AQXBUdsxVFqOx3czZh6yjC5GSdvkDXqoui05fI+JabUm+bQOripuZJ/wcVEfxC7/YtJO8P
+	 m3SgQz/FrVetpWcqUteJKRjR0J+cBayX6tUONZ+2WX+ymbSzAetrPg+IKHmHjJrUPtwWTXKGQWYT
+	 yEi56ZI9uYG/Colwl6w43ASylNFUgHzX0u7OxDv82p/Ela+dRZv6uPc++8mrnmmjNBzh7R0RDV68
+	 OVeBGb1hHwsHZHrgLo0pF3ImZhzZGjVR6aHR5W5Plr78tSJznyfzhJsD1pAjRRwVMWeUzxCYfWJl
+	 4n8/wl7ed8K0YqChu6pxxRgJf6Lu+eUWiOGIvao92E2lV/oaUZXKXXaIhtggSy3u+onhLQOmGpIF
+	 M+XY/ejf+wh1nQbViZXjAt0dbNG8Ox5NjN9r6v95O+gLMJ2Y7437u2cnzPrGV1TDOzMvXr7Em9i1
+	 /WGujtO4yRu13eaHggyhOZTu/40y8YiH6BJk4B3kxNrX0SxYzAgaJ1eDGVPsYcVfXV9ykyv0BAsX
+	 ZaDtsa87wY7K4obWczkfz2bb2GMeZ2ilSKK1nBqJAARULhsyoidV0b3lz9RdR7k8shP+dEDkWcJK
+	 sv1yzDgblhKhNwmiG2aK0+rVSBgXKxTH8rg1iOQtzVpuy2hvZaOTUJTvftIJaRoHzffB8xXBHK/R
+	 vmTzRXCBI64kYXIDQ+vzUxo9qg5QbDx6poC2+jpTM/OMChPxXI2n1WtLcbw8lzVNyr6JP1Dplrw9
+	 f9gKvOS0GlpL+iJbi+p6q4QQ9GhSPnIvuo6pmjil2LUwee1ZdcBQ==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Tao Zou <wodemia@foxmail.com>
+To: Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Tao Zou <wodemia@linux.alibaba.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] zh_CN/admin-guide: Add zh_CN/admin-guide/numastat.rst translation document
+Date: Wed, 19 Jun 2024 11:01:07 +0800
+X-OQ-MSGID: <20240619030107.47012-1-wodemia@foxmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618-lpass-wsa-vi-v1-2-416a6f162c81@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Srinivas,
+From: Tao Zou <wodemia@linux.alibaba.com>
 
-kernel test robot noticed the following build warnings:
+Add translation zh_CN/admin-guide/numastat.rst and link it to
+zh_CN/admin-guide/index.rst while clean its todo entry.
 
-[auto build test WARNING on 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0]
+commit 77691ee92d4a("Documentation: update numastat explanation")
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Srinivas-Kandagatla/ASoC-codecs-lpass-wsa-macro-Fix-vi-feedback-rate/20240618-221030
-base:   1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
-patch link:    https://lore.kernel.org/r/20240618-lpass-wsa-vi-v1-2-416a6f162c81%40linaro.org
-patch subject: [PATCH 2/2] ASoC: codecs:lpass-wsa-macro: Fix logic of enabling vi channels
-config: i386-buildonly-randconfig-002-20240619 (https://download.01.org/0day-ci/archive/20240619/202406191005.yMuWtspN-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240619/202406191005.yMuWtspN-lkp@intel.com/reproduce)
+Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
+--- 
+v1->v2: drop the useless label "+.. _cn_numastat:" and unnecessary "=", 
+	add a commit tag of origin document in commit description
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406191005.yMuWtspN-lkp@intel.com/
+ .../translations/zh_CN/admin-guide/index.rst  |  2 +-
+ .../zh_CN/admin-guide/numastat.rst            | 48 +++++++++++++++++++
+ 2 files changed, 49 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/translations/zh_CN/admin-guide/numastat.rst
 
-All warnings (new ones prefixed by >>):
-
-   sound/soc/codecs/lpass-wsa-macro.c:999:2: warning: unannotated fall-through between switch labels [-Wimplicit-fallthrough]
-     999 |         default:
-         |         ^
-   sound/soc/codecs/lpass-wsa-macro.c:999:2: note: insert 'break;' to avoid fall-through
-     999 |         default:
-         |         ^
-         |         break; 
->> sound/soc/codecs/lpass-wsa-macro.c:1238:6: warning: variable 'tx_reg0' set but not used [-Wunused-but-set-variable]
-    1238 |         u32 tx_reg0, tx_reg1;
-         |             ^
->> sound/soc/codecs/lpass-wsa-macro.c:1238:15: warning: variable 'tx_reg1' set but not used [-Wunused-but-set-variable]
-    1238 |         u32 tx_reg0, tx_reg1;
-         |                      ^
-   3 warnings generated.
-
-
-vim +/tx_reg0 +1238 sound/soc/codecs/lpass-wsa-macro.c
-
-0c27e978419e7e Srinivas Kandagatla 2024-06-18  1231  
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1232  static int wsa_macro_enable_vi_feedback(struct snd_soc_dapm_widget *w,
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1233  					struct snd_kcontrol *kcontrol,
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1234  					int event)
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1235  {
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1236  	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1237  	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05 @1238  	u32 tx_reg0, tx_reg1;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1239  	u32 rate_val;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1240  
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1241  	switch (wsa->pcm_rate_vi) {
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1242  	case 8000:
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1243  		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_8K;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1244  		break;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1245  	case 16000:
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1246  		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_16K;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1247  		break;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1248  	case 24000:
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1249  		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_24K;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1250  		break;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1251  	case 32000:
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1252  		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_32K;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1253  		break;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1254  	case 48000:
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1255  		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_48K;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1256  		break;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1257  	default:
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1258  		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_8K;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1259  		break;
-2881dae5fbb091 Srinivas Kandagatla 2024-06-18  1260  	}
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1261  
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1262  	if (test_bit(WSA_MACRO_TX0, &wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1263  		tx_reg0 = CDC_WSA_TX0_SPKR_PROT_PATH_CTL;
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1264  		tx_reg1 = CDC_WSA_TX1_SPKR_PROT_PATH_CTL;
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1265  	} else if (test_bit(WSA_MACRO_TX1, &wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1266  		tx_reg0 = CDC_WSA_TX2_SPKR_PROT_PATH_CTL;
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1267  		tx_reg1 = CDC_WSA_TX3_SPKR_PROT_PATH_CTL;
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1268  	}
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1269  
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1270  	switch (event) {
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1271  	case SND_SOC_DAPM_POST_PMU:
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1272  			/* Enable V&I sensing */
-0c27e978419e7e Srinivas Kandagatla 2024-06-18  1273  		wsa_macro_enable_disable_vi_feedback(component, true, rate_val);
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1274  		break;
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1275  	case SND_SOC_DAPM_POST_PMD:
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1276  		/* Disable V&I sensing */
-0c27e978419e7e Srinivas Kandagatla 2024-06-18  1277  		wsa_macro_enable_disable_vi_feedback(component, false, rate_val);
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1278  		break;
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1279  	}
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1280  
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1281  	return 0;
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1282  }
-2c4066e5d428d4 Srinivas Kandagatla 2020-11-05  1283  
-
+diff --git a/Documentation/translations/zh_CN/admin-guide/index.rst b/Documentation/translations/zh_CN/admin-guide/index.rst
+index ac2960da33e6..0db80ab830a0 100644
+--- a/Documentation/translations/zh_CN/admin-guide/index.rst
++++ b/Documentation/translations/zh_CN/admin-guide/index.rst
+@@ -68,6 +68,7 @@ Todolist:
+    cpu-load
+    cputopology
+    lockup-watchdogs
++   numastat
+    unicode
+    sysrq
+    mm/index
+@@ -109,7 +110,6 @@ Todolist:
+ *   module-signing
+ *   mono
+ *   namespaces/index
+-*   numastat
+ *   parport
+ *   perf-security
+ *   pm/index
+diff --git a/Documentation/translations/zh_CN/admin-guide/numastat.rst b/Documentation/translations/zh_CN/admin-guide/numastat.rst
+new file mode 100644
+index 000000000000..817043676c90
+--- /dev/null
++++ b/Documentation/translations/zh_CN/admin-guide/numastat.rst
+@@ -0,0 +1,48 @@
++.. SPDX-License-Identifier: GPL-2.0
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: Documentation/admin-guide/numastat.rst
++:Translator: Tao Zou <wodemia@linux.alibaba.com>
++
++
++=======================
++Numa策略命中/未命中统计
++=======================
++
++/sys/devices/system/node/node*/numastat
++
++所有数据的单位都是页面。巨页有独立的计数器。
++
++numa_hit、numa_miss和numa_foreign计数器反应了进程是否能够在他们偏好的节点上分配内存。
++如果进程成功在偏好的节点上分配内存则在偏好的节点上增加numa_hit计数，否则在偏好的节点上增
++加numa_foreign计数同时在实际内存分配的节点上增加numa_miss计数。
++
++通常，偏好的节点是进程运行所在的CPU的本地节点，但是一些限制可以改变这一行为，比如内存策略，
++因此同样有两个基于CPU本地节点的计数器。local_node和numa_hit类似，当在CPU所在的节点上分
++配内存时增加local_node计数，other_node和numa_miss类似，当在CPU所在节点之外的其他节点
++上成功分配内存时增加other_node计数。需要注意，没有和numa_foreign对应的计数器。
++
++更多细节内容:
++
++=============== ============================================================
++numa_hit        一个进程想要从本节点分配内存并且成功。
++
++numa_miss       一个进程想要从其他节点分配内存但是最终在本节点完成内存分配。
++
++numa_foreign    一个进程想要在本节点分配内存但是最终在其他节点完成内存分配。
++
++local_node      一个进程运行在本节点的CPU上并且从本节点上获得了内存。
++
++other_node      一个进程运行在其他节点的CPU上但是在本节点上获得了内存。
++
++interleave_hit  内存交叉分配策略下想要从本节点分配内存并且成功。
++=============== ============================================================
++
++你可以使用numactl软件包（http://oss.sgi.com/projects/libnuma/）中的numastat工具
++来辅助阅读。需要注意，numastat工具目前只在有少量CPU的机器上运行良好。
++
++需要注意，在有无内存节点（一个节点有CPUs但是没有内存）的系统中numa_hit，numa_miss和
++numa_foreign统计数据会被严重曲解。在当前的内核实现中，如果一个进程偏好一个无内存节点（即
++进程正在该节点的一个本地CPU上运行），实际上会从距离最近的有内存节点中挑选一个作为偏好节点。
++结果会导致相应的内存分配不会增加无内存节点上的numa_foreign计数器，并且会扭曲最近节点上的
++numa_hit、numa_miss和numa_foreign统计数据。
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.3 (Apple Git-146)
+
 
