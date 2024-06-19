@@ -1,258 +1,386 @@
-Return-Path: <linux-kernel+bounces-221572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C93C690F59D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:00:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC7890F59E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6107D282E4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:00:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74814B215FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D066156F21;
-	Wed, 19 Jun 2024 18:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7823524C4;
+	Wed, 19 Jun 2024 18:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="q4uNRpWo"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2067.outbound.protection.outlook.com [40.107.244.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGFNrZ0G"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F22F15667C;
-	Wed, 19 Jun 2024 18:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718820005; cv=fail; b=OHzGmjpSSjiXlOHzxKi1JWb/aMLWDhbaTofEZ6l8YN0IxSjfPPFAuKhPUTgGzaapc0FsDxX8V1HKYS6oaVApaiv0MCjqHD5M+XJWc+VzYOuBrAH4rTgDkuajK3NKBo1O3pzrvJ/aso6jiwN/f8vxTgTvnxFgtdNCWsKR684Pvh0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718820005; c=relaxed/simple;
-	bh=1a4eywjkySKn70e+Aovh8lkmYPlV7WhIhcXz7nSrTLk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EnYuj8aYKEDTn+pbbtsHwghMSLfOgBcaIqh9jlqhGkt1vAVna5ifwoI4YZPlhymcZr7UyKl0zlmhInTzdLDfUCBZEapj50G/jZF7YdOsMSdWPUoPW1mcp/STs/i/yO2jjVu2Hb8JfT3ENSWauDyJoPj+qPdMLmlEO5XB/R2DWNg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=q4uNRpWo; arc=fail smtp.client-ip=40.107.244.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YBAgmMXo1hsVf66A1Y1j2EhhE5C+1Y30VON2B0h8KtofgWpJ9nSSBJc836ToajnF1gCMrPIiZpw4pVeSEljoQG9aLehu8S8mAcpUBb42T7FKjFjm2MC+VdC5LC6l32VZeYKfq9qqMat+XpulBEHhO+6WFcqjSfaN5GSgwia7ccQYdYBaHCCLVo5dz1ySD4U93mSOLuZlAnWmwZZfD2aevEnkDnnDqmPFvfV5FO5u61CyiPwMRr1Cc2Yw/WY0JJfiJ+IcV+7olHK4HiXERMYWznFvXlhLacxiTp3tzw8pE5ihsQ71LFQC8ANfRlUcIIbV715juOD219qfZFUFb5Yiwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=492SlBdsSKUYlsAgveDTff2HogCvROHHKk2kXQSriH8=;
- b=i9rQjoyylC5lfy+QslKP1wcCAXiRxQ5Pva5KrM9Wdo9psPGelGLH7o/ZNzFCpyauP2fJBo8wH3QJlIvWj+5EBYTe1il7faU4PngL6fqc8Uq9iVzO5n2BN7IVsjye0h9ECmT4TXMsF69rDR4V+dq0gs3YkNECJO7Gszd+LGruqXMqLLhvv1v7bprKwhCfLVmhIVvP0uR5vI2bzIEmS6ZY1kviqcFIjqbTCBNOtMNw2NKydSR2rrCBaH2kCQ+fduVPFvATJQPMvyCCxXI38YE6ksz7MOaJGZNmtuKyS93A+NGmHf/CTH1MziLLM9J2XZolIZue+KJrwkp9ETbSSw1UjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=492SlBdsSKUYlsAgveDTff2HogCvROHHKk2kXQSriH8=;
- b=q4uNRpWofM//7qP2bzgO09GdKhbpj0DYwQPtaG9Ru2mPOt0pupRCqD1sSEVZpqUbFmX3n8LpsejWr+WoJCCO75nFHTljBIZriUhWHV8ivK0aiEbpkWkGFhrk0zMYDGXCYW9SE3qqHKXjMkGD2C4XIXz9WkBi6oEgR+Nz1pqwRsE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by CH3PR12MB9024.namprd12.prod.outlook.com (2603:10b6:610:176::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Wed, 19 Jun
- 2024 18:00:01 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.7677.030; Wed, 19 Jun 2024
- 18:00:01 +0000
-Message-ID: <7c5acc3a-5437-4cdf-bf3a-872d075d34b0@amd.com>
-Date: Wed, 19 Jun 2024 12:59:58 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/8] AMD Pstate Driver Fixes and Improvements
-To: Perry Yuan <perry.yuan@amd.com>
-Cc: rafael.j.wysocki@intel.com, viresh.kumar@linaro.org,
- gautham.shenoy@amd.com, Alexander.Deucher@amd.com, Xinmei.Huang@amd.com,
- Xiaojian.Du@amd.com, Li.Meng@amd.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1718811234.git.perry.yuan@amd.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <cover.1718811234.git.perry.yuan@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9P221CA0006.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:806:25::11) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6D34D8B4;
+	Wed, 19 Jun 2024 18:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718820027; cv=none; b=tKiiSmqnduzHbCIoX65B/qpAw61YiwVXgXepo6+/YJflFcXwbWVgzxpbthL7ejdI7vqNiBfpu6XIVnUP+aybvyEVGR2zc0dcY5FVwpcIuQ+Iyzl+Ec6fIppT3weJhzFqJnIwNLJT5pcg2TOIL3o2Og0OPvDVjLXKaOnyGm8E1JE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718820027; c=relaxed/simple;
+	bh=wezZjkXmTaWYP4rFma0MqNU85ZCBg+t5xSHBgf9Hh7o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ramc6txaQ9OAr/WhykxjVY65Z0P8Gms5lo2CVMnn4idaThSaFM2MVR+3aVSYj5CNQcc10mPWgH22OxFanMSPHk8z0j1e4POXzM/LRYrlenOZL/zR0wtIlNwcdRncHlB8tbtX3Ku116qa7WvfBXGpicGprxZQxuC73X64G8LyFzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGFNrZ0G; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-63ba688bdc9so4708627b3.1;
+        Wed, 19 Jun 2024 11:00:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718820025; x=1719424825; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KzGJzI+a1hmsk6uWkP2pSNgHohQhiQOQuiGnby56M8E=;
+        b=jGFNrZ0GLv4s7DV40jDZ07Up3zOc5/iBu37rasHDBwk/QObhOaonb+E8i94z4/QI8g
+         /74ddPNhjdBT6PHU2nVtSQ0hNQbAZNT0DDN9K+AQGKDnwdZE94efiMzl/PWcGecGnJyE
+         9vHYe0BaQEGYalNZXgXfA5ifPGZBJK0tSuPWAJ6BrOarMAEufRATz7ipYtNl9cakOBub
+         Yy5yJ7fywbWy73nJUTBdTAog2FXeoKaeyypwUGG5JvktqWa6XmzC36Ed1VoyVg2U5Ker
+         sqnHxjuzEy4AL6hlld61rHp/Jzpciic9YewgKEAisjkhjOGPn0gP8LBhTAyPupDgr9Vl
+         dVnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718820025; x=1719424825;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KzGJzI+a1hmsk6uWkP2pSNgHohQhiQOQuiGnby56M8E=;
+        b=fgYYQSCQXpRtsyQdjQswqOcn9z+vwCrY6fqxT/KowpaEAMu7B3SooWkJAZTXnK24hj
+         QMAb1apsVUqTV7oW86Pc0ym2RkonIJI8NUYheLgLHlSzJ24zasOS7Y43MnLWYgk2u9Gy
+         46pVgIw33P1+x6xEsqR9Bn+BqBjxBylGvgnmVdC8ZIlQY15Qjz5sECPjoGs4AZU+4mq2
+         yDXrw6HJnDS4kry2jp2y6Q6OkCZVBxK8wosyZ6P+u0WwjEUnw4nm96yaySthABTrokmx
+         0zG4pAqwXDiq4h1ozu9YzC4mnKZg37GSHjy4R+7PAxzbpOVZk7lRPdlGO7r+7gZIIead
+         L9dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUn7lhOtqHKVuKQYw+JgBEDIRYseCYb+Y3DKL1wC4V9+Cz2T8E5CxhH2s+X0eWJsVk55MD26hKVpCW6aBgdsgiREILMfxzedtu1qhQjVNkn7fHbiOskC4C+11LQKWLb8OFUoaw8mvIDq4rkiK2TAA==
+X-Gm-Message-State: AOJu0YyMRQWH08dPVtJiQVMb+0kcOkAYR5DHblab9xQC6VgkXkqxEBFv
+	/B6SFwgMHopQJdZGYNp4ljK8wbocGT7XsLpenEflRGHAELZh9G+4QkloYQArwIG60DmVzeFCsch
+	YL57diq48zGjjB2azQYmAR70zzhE=
+X-Google-Smtp-Source: AGHT+IGjOyzPa43saZ9QE3Zc9xZIWH73CjgCujjnd8SPWuIYHdDll8DInbhQvUufjZ3T91jYGneqX/RGOdXQ3a9IvrI=
+X-Received: by 2002:a81:a605:0:b0:62d:1eb6:87bf with SMTP id
+ 00721157ae682-63a8d3518b0mr33347287b3.5.1718820024858; Wed, 19 Jun 2024
+ 11:00:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CH3PR12MB9024:EE_
-X-MS-Office365-Filtering-Correlation-Id: bc37f70e-75f8-4931-74bb-08dc9089a396
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|366013|376011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SkI0WDU1dmZPVitTM3psSElHU2JmREFWMXBuMkFFcTQvN1F0R2ZyNXRQWDgz?=
- =?utf-8?B?VmxZeFlvMCtvbzF4U1VUVW1tOEpSOTFTTzhXcHBFZGNNWjJnTEdZVVJ6UzRs?=
- =?utf-8?B?aURFTDE3aFV5ek9EdW13Y3BZL29wYVNZLzAxTEg5My9DdENhNzNBSWFzTWVI?=
- =?utf-8?B?aUZKKzQvUXZvZG5qNDU5dTE4UVJLbmxmUDdCbUpoODR2YWJKcEh1RzNaaWdI?=
- =?utf-8?B?RVB2ZnRJQ0hFeHlHbXdFN2MvTEFnRHFqWi9seFRPdTZxZHl3c3EycWVoMEpi?=
- =?utf-8?B?cy9xQTlScDB0OXU3OEhVMnhEenRPTDU3V0E1dm1OQzVxYTVDSTkyT00vNjZ6?=
- =?utf-8?B?TDBnRVRDMFpxUU5pcnBJUVE2THRjSGYvQkdPSWdjMkNpeUdRTXZGcjNmSEtt?=
- =?utf-8?B?WkcyNWJnRUFNczhNbm5zNjlLbFV4bU1RWjFVbEJQUlpSaU0zVjFWVDZESVZX?=
- =?utf-8?B?ci9ybTl4UXo2Wk9zVTZzanpPTTRjc0JhdHNuVGsrTUxFZjdYdENhd1pVbzl6?=
- =?utf-8?B?dWtkVVhiVjFYbEVzSS95RVcwQjlUdG53SmhuTjNhMEEzYzlDWS9GM2grTU5j?=
- =?utf-8?B?NHlZWlVKMmsrT3IxUWlzUmZLNU1BR2U3MmhoZHZGWWpVc3l1dEZxcG1oUE1I?=
- =?utf-8?B?amhDOXU3cGh2MW9rdFcyWUc2TUgrWTEyTzF6OTcrbzd1N0UzQ044K3Frc2Y4?=
- =?utf-8?B?L2ZuaHpjMTY5QzhQaXVERVd1bSszZkZpOUYzT3hkbUNGSDRKMjJNaHQwbnl3?=
- =?utf-8?B?VngxREoyOTJKVTd0aXhpb0lXU2todDkyZzc1Q09kQTk5OWdOWWxPZ2M0Wm9s?=
- =?utf-8?B?UzJyMEJhSFhLYlhRRy9FVkNWZWJBdmdLc2RNUlBQSktSOWd1cWpYRzlHanZ6?=
- =?utf-8?B?MThXOGpVMWpQNlV3YnY4MXdERlVUZzBhZmxPcXl3elVRSEEzNzRjWHRnNHN4?=
- =?utf-8?B?UzFFVGxlS3lzVmJEM2p4bnRyZ1lKRDIrTjV1RW1zYmJ3V2Nzd3JOblR2Y3dw?=
- =?utf-8?B?ZWxCSDkybG9HZkVNNVpvMmVvNWM3K3BzUkVsdFdRVVo0QisyYm4rL2RTL1Ns?=
- =?utf-8?B?VlFNcTJBUUdMQ1ArTEZrdUVQNzY0ajBHbUhkN2pxVnBkVlF1SVZ1WWZPbWVB?=
- =?utf-8?B?RzdrRytZRVVwRVlBdjA3ek1OaExyVGY5K08zREZUSXNoOWd5M1J5d3hRUUhC?=
- =?utf-8?B?dm9qMTgxT1gyWnM0TC8yTjg4Z2x2aFc4M0hCZ3dvZldCeXZLak9tMzI3UEhi?=
- =?utf-8?B?ZDc5WUczaEdJWDhZMW5IaWttYllEOU0xWUZWRnRMQTJjd0drcjdvdkx0SEJs?=
- =?utf-8?B?bEg3UnRRaVZONEVEeXBtWTRJZDdLclFRNEY1L0g4WXllY2dDM3NZMXl6Z1RX?=
- =?utf-8?B?YnlpTVh3SkhxMjJIU3cvTkQwQ3k0aEYvUXZ3TDNjdlBYbkxQRHpXZGV0cHZo?=
- =?utf-8?B?VjZaMWFxeW44NXh0b0RTMk0zMzhuTHdMNDVxRXZNUHZuZjlBWlp5ZElXRG9V?=
- =?utf-8?B?V2pyTUlORG9CTjh1MUJPQU55S0dwWmwxQk5IOUdyUmhpTzBFMHcyZ0tSMXlZ?=
- =?utf-8?B?RStOcjNja01xQ0VzelpEa09xajc4QjYweFNOT0h2UEsrNFlNa0J4T0Ryckps?=
- =?utf-8?B?TUwrZ0J1Y0hidVAwWUo5cTNmYTE5UUhyTkNoNEJTd2ZGTUJmaEpXRXpsQjlq?=
- =?utf-8?Q?WOVfiVFSBzYB9Ix7kV3U?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(376011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MFpKRFR0SlJrc1NBZDVRdmV1aWZac25mS3hDaXlmdjVmQXJTZG1nT1M0NGJt?=
- =?utf-8?B?N29CSGxSUDQ4SitLaFJVRTJqWGpIbEYyMkVlckFEdEZLRGI0M3ZyNTRqaWhQ?=
- =?utf-8?B?azRrUitETzRJcENmcjh6ekQvWVFGemtaL05JM01WR1ExelpoeEJBQ2kwTHd2?=
- =?utf-8?B?dnpxSDA0YXU5cjdRRit4bXNzNFY4RG8zbUwwV0s3b1hnbFNUZVY1RlAyK1Vk?=
- =?utf-8?B?ZmI0aVN1akhaMnp5NmVyYWRjdU1LSnE2ajhGK1BBM0ZoKzVaQ1hINUNKL1ZH?=
- =?utf-8?B?S2ZtaW5EOHluK3llUUVkZDd3SGI2Y3M5a0hzeGczSTRVRnRGeiswQWlvalNW?=
- =?utf-8?B?MjErMm54Y1ZRVHY0bTNPR0N1M3JjeDlIYkdrRG1Wem05QkpHa3hmVXZMOFlK?=
- =?utf-8?B?NHdibFljWUJNQ203NkZNUVVON29KbVNRakw3ZE1zSHNONkRGUUdJVWU0SHYw?=
- =?utf-8?B?Sk9neDhIU05xUnFIemNXOGExaTZCTzlCZ2d2R0FzckpKUnZ3TlhoeldiL281?=
- =?utf-8?B?MGthSmNBMUJqa21NRHJCcWFMaTlwVmFuR2pab2lORmcra085b28reVVibXZ6?=
- =?utf-8?B?b0p6ZS9MWHJPRVFmeFgvVXF3Qm1aaUZqSkFrbkVpN3BDTkRFVy9QZk5Sdngz?=
- =?utf-8?B?MHBOT21XVFR0MWo2VjAwSkRzM1RVeGdTaXVpdGNhc3RSQVJISUVvVjRpSFNm?=
- =?utf-8?B?VHM2Q1ByNEFCd2w1TGRrNS9yZ2lCTlNuU094cU1JczJNcEdZZmgrU3c4MWMx?=
- =?utf-8?B?aFFtMzFVNUg1cHNnWlFNYStJOFUwZXNjRExQalBnNSt1SENvOXJuUFBjOHlE?=
- =?utf-8?B?QTBhZlZPYnNUbWVxa3A4OXRFcGdhTVBYT3l6RDMxcDRNV1VrRGpxaFZobm8x?=
- =?utf-8?B?T0F5akZmbG82U3FpZzA4eFAzbGhQbG9JQ2lXS3M5WEQwbU1IUFFaeERrWlg4?=
- =?utf-8?B?eHNXMm9HbXpreElOakdFU1pQRmtGK1BxMGFoTjJQbTNheDhxQ3djYUwxZ0lJ?=
- =?utf-8?B?QjBHTDZpVUMxRitUN0JBUFhpNTV3MVh2NHJGV1hJQjZrcTVVRE9OV2taMkpK?=
- =?utf-8?B?UlUrVTUyUUdSbUZzM1o0N2Z4K2xCZG5sVXlsQktIa2loMUZRSE5NbFowbEJ3?=
- =?utf-8?B?OHZIcEZVU1NHNzRvWmxDaG51ay9DQzNObCtxbCtuZ3FCUm9qWXk2N1RoZVJZ?=
- =?utf-8?B?aS9qRVkzNkJkRXdwNkF5YU00WTBqZGxETzg3Wkk2QXlTSUtLZllnS3FJQ0lo?=
- =?utf-8?B?YmR6M3NlaysvVW5oSlowSlhvYzVOdXQyNkRKWUt0bU9PSEgyeWdOQVNuemwr?=
- =?utf-8?B?WGg1RldjK3ZZTG5oMWpYb3NpbllvdTdSOGZmWTJWSkpJcUpjNGg4bytTamx0?=
- =?utf-8?B?d2JEWG5MU0doTXV6UUZWYmE4V0UzS0lDeVZMZDZjajIvK1loMTlzeU8vZW5u?=
- =?utf-8?B?TkVnS3FIblpkRExoV2hWQy9pT0ZtdTc4bXBhQ1BRRnpaRHpQbml3Ry8rWUtT?=
- =?utf-8?B?K1NjRGRhSFNKNC8yK09lQmRVZnNybjdJQ3J6aTQrL09Lc3crVGFhdWxYZ3NH?=
- =?utf-8?B?Rk53MERESFBZVnQvTENmcW0renM2ZmttUHJKcFh3VFNQOXZGNERzSWJSaU1B?=
- =?utf-8?B?dFgzb0JrRzdRdm5pTUlXVHpVT0VOT0ovYWRFOHBKUUY0U0pTQWg2bGRxdnlv?=
- =?utf-8?B?cXVZV1BYejRYTnMrY1BMVWFyU1lRcmRZMXpDNXNDUkR4S1JqeFhqeTdINDBS?=
- =?utf-8?B?KzdPd1BLS1dYYVNkYVZsMkxZWWticmMvczZDTGttSjBXLzE0MkN5cnBYYUhw?=
- =?utf-8?B?RjdRQXJTZ0NzWkpEYkRlWlZuSzV3bWFaTXpSNW1Xa0hXTG5zYmhqalNkSlY3?=
- =?utf-8?B?aVdZL0xSL0dkK3BLUEJlTTRFc0wwRFZGQXNoUXJzS2V1a3p1b3dFZnM5Uy9q?=
- =?utf-8?B?ZUdQaFpVWEw1VVhRcWFIa0ZxMVhJWE9EeXY2SVV1K2lMbXlrNFZqbG9Sblhq?=
- =?utf-8?B?dFVabTlBK2FKK2k0ekpRLzgzUXBHSEc1elhzUW5FakhOclEvYnJ3SFAxeW5u?=
- =?utf-8?B?YXRDNnZ0SW5BT2hsOXZES1dETkJGTk04Y21CTWQ0bkplNGV4RGJWdWNJWm1M?=
- =?utf-8?Q?vTkF+mrQmZIsLuUlZTPEoMpwX?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc37f70e-75f8-4931-74bb-08dc9089a396
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2024 18:00:01.0694
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s6AShsI8NJWIkGfod8LwAQ+iuXqp8kzmKElKZDEjaKGzpYa9tNw1iqPqtQNDfz6o7E8UnGLHshFBe19aAncp8w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9024
+References: <20240619082042.4173621-1-howardchu95@gmail.com>
+ <20240619082042.4173621-4-howardchu95@gmail.com> <ZnLhQLN7jI38qeJE@x1>
+In-Reply-To: <ZnLhQLN7jI38qeJE@x1>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Thu, 20 Jun 2024 02:00:16 +0800
+Message-ID: <CAH0uvojU0HYnG+69dVkNsNQZwBwp5ScJUg9Rp8s9L5QpRmzP6A@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] perf trace: Augment enum tracepoint arguments with BTF
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/19/2024 10:40, Perry Yuan wrote:
-> Hello everyone,
-> 
-> This patchset addresses critical issues and enhances performance settings for CPUs
-> with heterogeneous core types in the AMD pstate driver.
+Sure, thanks.
 
-The heterogeneous stuff was dropped from the series so this is no longer 
-accurate.  However everything else in the series is good now.
-
-I've applied this to my bleeding-edge branch at 
-https://git.kernel.org/pub/scm/linux/kernel/git/superm1/linux.git/log/?h=bleeding-edge 
-and will do some more testing on it.  I'll plan to send out a PR next 
-week with it to catch 6.11.
-
-Thanks!
-
-> Specifically, it resolves problems related to calculating the highest performance
-> and frequency on the latest CPUs with preferred cores.
-> Additionally, the patchset includes documentation improvements in amd-pstate.rst,
-> offering a comprehensive guide covering topics such as recommended reboot requirements
-> during driver switching, debugging procedures for driver loading failures.
-> 
-> Your feedback and suggestions for improvement are highly appreciated.
-> Please review the patches and provide your valuable input.
-> 
-> Thank you.
-> 
-> Best regards,
-> Perry.
-> 
-> Changes from V4:
->   * pick all the RB by and ACk by flags from Mario
->   * fix typo for patch #10 in the commit log
->   * improve the commit log for shared memory in patch #11
->   * drop hetero core type patches into another patchset
->   * drop debugging section patch for amd-pstate.rst
-> 
-> Changes from V3:
->   * add one new patch to enable shared memory type CPPC by default
->   * pick all the RB by and ACk by flags from Mario and Gautham
->   * update the patch #7 PPR link with doc id (Boris & Mario)
->   * fix the highest perf initialization issue with preferred core check
->    for patch #9 (Gautham)
->   * rework return core type and commit log for the patch #9 (Mario)
->   * address feedback for patch #5 for the debugging suggestions.(Mario)
->   * retest the patches on MSR and shared memory type CPPC systems, no regression seen.
-> 
-> Changes from V2:
->   * pick review by and ack by flags from Mario and Gautham
->   * rebase to latest linux-pm bleeding edge branch
->   * fix driver loading block issue for patch 4, make sure the warning will
->     not abort the driver loading in case there are some new family/model id.
->   * fix the driver loading sequence issue for patch 10, it allows command line
->     and kernel config option together. command line will override kconfig option.
->   * add back the AMD CPUs with Family ID 19H and Model ID range 0x70 to 0x7f to return
->     the highest perf and check others CPU core type in the following codes.
->   * run some testing on the local system.
->   * move the amd_core_type to amd-pstate.c because of the amd-pstate.h was removed lately.
-> 
-> Changes from V1:
->   * drop patch 11 which has been merged in a separate patch. (Mario)
->   * fix some typos in commit log and tile (Mario)
->   * fix the patch 11 regression issue of kernel command line (Oleksandr Natalenko)
->   * pick ack flag for patch 7 (Mario)
->   * drop patch 4 which is not recommended for user(Mario)
->   * rebase to linux-pm/bleeding-edge branch
->   * fix some build warning
->   * rework the patch 3 for CPU ID matching(Mario)
->   * address feedback for patch 5 (Mario)
->   * move the acpi pm profile after got default mode(Mario)
-> 
-> Perry Yuan (8):
->    cpufreq: amd-pstate: optimize the initial frequency values
->      verification
->    cpufreq: amd-pstate: remove unused variable nominal_freq
->    cpufreq: amd-pstate: show CPPC debug message if CPPC is not supported
->    cpufreq: amd-pstate: add debug message while CPPC is supported and
->      disabled by SBIOS
->    Documentation: PM: amd-pstate: add guided mode to the Operation mode
->    cpufreq: amd-pstate: switch boot_cpu_has() to cpu_feature_enabled()
->    cpufreq: amd-pstate: enable shared memory type CPPC by default
->    cpufreq: amd-pstate: auto-load pstate driver by default
-> 
->   Documentation/admin-guide/pm/amd-pstate.rst |   2 +-
->   drivers/cpufreq/amd-pstate.c                | 145 +++++++++++++-------
->   2 files changed, 95 insertions(+), 52 deletions(-)
-> 
-
+On Wed, Jun 19, 2024 at 9:46=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Wed, Jun 19, 2024 at 04:20:40PM +0800, Howard Chu wrote:
+> > Before:
+> >
+> > perf $ ./perf trace -e timer:hrtimer_start --max-events=3D1
+> >      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff974466c25f18, functi=
+on: 0xffffffff89da5be0, expires: 377432432256753, softexpires: 377432432256=
+753, mode: 10)
+> >
+> > After:
+> >
+> > perf $ ./perf trace -e timer:hrtimer_start --max-events=3D1
+> >      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff974466d25f18, functi=
+on: 0xffffffff89da5be0, expires: 488283834504945, softexpires: 488283834504=
+945, mode: HRTIMER_MODE_ABS_PINNED_HARD)
+> >
+> > HRTIMER_MODE_ABS_PINNED_HARD is:
+> >
+> > perf $ pahole hrtimer_mode
+> > enum hrtimer_mode {
+> >         HRTIMER_MODE_ABS             =3D 0,
+> >         HRTIMER_MODE_REL             =3D 1,
+> >         HRTIMER_MODE_PINNED          =3D 2,
+> >         HRTIMER_MODE_SOFT            =3D 4,
+> >         HRTIMER_MODE_HARD            =3D 8,
+> >         HRTIMER_MODE_ABS_PINNED      =3D 2,
+> >         HRTIMER_MODE_REL_PINNED      =3D 3,
+> >         HRTIMER_MODE_ABS_SOFT        =3D 4,
+> >         HRTIMER_MODE_REL_SOFT        =3D 5,
+> >         HRTIMER_MODE_ABS_PINNED_SOFT =3D 6,
+> >         HRTIMER_MODE_REL_PINNED_SOFT =3D 7,
+> >         HRTIMER_MODE_ABS_HARD        =3D 8,
+> >         HRTIMER_MODE_REL_HARD        =3D 9,
+> >         HRTIMER_MODE_ABS_PINNED_HARD =3D 10,
+> >         HRTIMER_MODE_REL_PINNED_HARD =3D 11,
+> > };
+> >
+> > Can also be tested by
+> >
+> > ./perf trace -e pagemap:mm_lru_insertion,timer:hrtimer_start,timer:hrti=
+mer_init,skb:kfree_skb --max-events=3D10
+> >
+> > (Chose these 4 events because they happen quite frequently.)
+> >
+> > However some enum arguments may not be contained in vmlinux BTF. To see
+> > what enum arguments are supported, use:
+> >
+> > vmlinux_dir $ bpftool btf dump file /sys/kernel/btf/vmlinux > vmlinux
+> >
+> > vmlinux_dir $  while read l; do grep "ENUM '$l'" vmlinux; done < <(grep=
+ field:enum /sys/kernel/tracing/events/*/*/format | awk '{print $3}' | sort=
+ | uniq) | awk '{print $3}' | sed "s/'\(.*\)'/\1/g"
+> > dev_pm_qos_req_type
+> > error_detector
+> > hrtimer_mode
+> > i2c_slave_event
+> > ieee80211_bss_type
+> > lru_list
+> > migrate_mode
+> > nl80211_auth_type
+> > nl80211_band
+> > nl80211_iftype
+> > numa_vmaskip_reason
+> > pm_qos_req_action
+> > pwm_polarity
+> > skb_drop_reason
+> > thermal_trip_type
+> > xen_lazy_mode
+> > xen_mc_extend_args
+> > xen_mc_flush_reason
+> > zone_type
+> >
+> > And what tracepoints have these enum types as their arguments:
+> >
+> > vmlinux_dir $ while read l; do grep "ENUM '$l'" vmlinux; done < <(grep =
+field:enum /sys/kernel/tracing/events/*/*/format | awk '{print $3}' | sort =
+| uniq) | awk '{print $3}' | sed "s/'\(.*\)'/\1/g" > good_enums
+> >
+> > vmlinux_dir $ cat good_enums
+> > dev_pm_qos_req_type
+> > error_detector
+> > hrtimer_mode
+> > i2c_slave_event
+> > ieee80211_bss_type
+> > lru_list
+> > migrate_mode
+> > nl80211_auth_type
+> > nl80211_band
+> > nl80211_iftype
+> > numa_vmaskip_reason
+> > pm_qos_req_action
+> > pwm_polarity
+> > skb_drop_reason
+> > thermal_trip_type
+> > xen_lazy_mode
+> > xen_mc_extend_args
+> > xen_mc_flush_reason
+> > zone_type
+> >
+> > vmlinux_dir $ grep -f good_enums -l /sys/kernel/tracing/events/*/*/form=
+at
+> > /sys/kernel/tracing/events/cfg80211/cfg80211_chandef_dfs_required/forma=
+t
+> > /sys/kernel/tracing/events/cfg80211/cfg80211_ch_switch_notify/format
+> > /sys/kernel/tracing/events/cfg80211/cfg80211_ch_switch_started_notify/f=
+ormat
+> > /sys/kernel/tracing/events/cfg80211/cfg80211_get_bss/format
+> > /sys/kernel/tracing/events/cfg80211/cfg80211_ibss_joined/format
+> > /sys/kernel/tracing/events/cfg80211/cfg80211_inform_bss_frame/format
+> > /sys/kernel/tracing/events/cfg80211/cfg80211_radar_event/format
+> > /sys/kernel/tracing/events/cfg80211/cfg80211_ready_on_channel_expired/f=
+ormat
+> > /sys/kernel/tracing/events/cfg80211/cfg80211_ready_on_channel/format
+> > /sys/kernel/tracing/events/cfg80211/cfg80211_reg_can_beacon/format
+> > /sys/kernel/tracing/events/cfg80211/cfg80211_return_bss/format
+> > /sys/kernel/tracing/events/cfg80211/cfg80211_tx_mgmt_expired/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_add_virtual_intf/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_auth/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_change_virtual_intf/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_channel_switch/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_connect/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_inform_bss/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_libertas_set_mesh_channel/form=
+at
+> > /sys/kernel/tracing/events/cfg80211/rdev_mgmt_tx/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_remain_on_channel/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_return_chandef/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_return_int_survey_info/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_set_ap_chanwidth/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_set_monitor_channel/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_set_radar_background/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_start_ap/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_start_radar_detection/format
+> > /sys/kernel/tracing/events/cfg80211/rdev_tdls_channel_switch/format
+> > /sys/kernel/tracing/events/compaction/mm_compaction_defer_compaction/fo=
+rmat
+> > /sys/kernel/tracing/events/compaction/mm_compaction_deferred/format
+> > /sys/kernel/tracing/events/compaction/mm_compaction_defer_reset/format
+> > /sys/kernel/tracing/events/compaction/mm_compaction_finished/format
+> > /sys/kernel/tracing/events/compaction/mm_compaction_kcompactd_wake/form=
+at
+> > /sys/kernel/tracing/events/compaction/mm_compaction_suitable/format
+> > /sys/kernel/tracing/events/compaction/mm_compaction_wakeup_kcompactd/fo=
+rmat
+> > /sys/kernel/tracing/events/error_report/error_report_end/format
+> > /sys/kernel/tracing/events/i2c_slave/i2c_slave/format
+> > /sys/kernel/tracing/events/migrate/mm_migrate_pages/format
+> > /sys/kernel/tracing/events/migrate/mm_migrate_pages_start/format
+> > /sys/kernel/tracing/events/pagemap/mm_lru_insertion/format
+> > /sys/kernel/tracing/events/power/dev_pm_qos_add_request/format
+> > /sys/kernel/tracing/events/power/dev_pm_qos_remove_request/format
+> > /sys/kernel/tracing/events/power/dev_pm_qos_update_request/format
+> > /sys/kernel/tracing/events/power/pm_qos_update_flags/format
+> > /sys/kernel/tracing/events/power/pm_qos_update_target/format
+> > /sys/kernel/tracing/events/pwm/pwm_apply/format
+> > /sys/kernel/tracing/events/pwm/pwm_get/format
+> > /sys/kernel/tracing/events/sched/sched_skip_vma_numa/format
+> > /sys/kernel/tracing/events/skb/kfree_skb/format
+> > /sys/kernel/tracing/events/thermal/thermal_zone_trip/format
+> > /sys/kernel/tracing/events/timer/hrtimer_init/format
+> > /sys/kernel/tracing/events/timer/hrtimer_start/format
+> > /sys/kernel/tracing/events/xen/xen_mc_batch/format
+> > /sys/kernel/tracing/events/xen/xen_mc_extend_args/format
+> > /sys/kernel/tracing/events/xen/xen_mc_flush_reason/format
+> > /sys/kernel/tracing/events/xen/xen_mc_issue/format
+> >
+> > Tested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> > Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> > Reviewed-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > ---
+> >  tools/perf/builtin-trace.c | 29 ++++++++++++++++++++++-------
+> >  1 file changed, 22 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > index d93f34e9af74..bd16679fb4c0 100644
+> > --- a/tools/perf/builtin-trace.c
+> > +++ b/tools/perf/builtin-trace.c
+> > @@ -1962,12 +1962,12 @@ static int trace__read_syscall_info(struct trac=
+e *trace, int id)
+> >       return err;
+> >  }
+> >
+> > -static int evsel__init_tp_arg_scnprintf(struct evsel *evsel)
+> > +static int evsel__init_tp_arg_scnprintf(struct evsel *evsel, bool *use=
+_btf)
+> >  {
+> >       struct syscall_arg_fmt *fmt =3D evsel__syscall_arg_fmt(evsel);
+> >
+> >       if (fmt !=3D NULL) {
+> > -             syscall_arg_fmt__init_array(fmt, evsel->tp_format->format=
+.fields, NULL);
+> > +             syscall_arg_fmt__init_array(fmt, evsel->tp_format->format=
+.fields, use_btf);
+> >               return 0;
+> >       }
+> >
+> > @@ -2171,7 +2171,8 @@ static size_t syscall__scnprintf_args(struct sysc=
+all *sc, char *bf, size_t size,
+> >                        * property isn't set.
+> >                        */
+> >                       if (val =3D=3D 0 && !trace->show_zeros &&
+> > -                         !(sc->arg_fmt && sc->arg_fmt[arg.idx].show_ze=
+ro))
+> > +                         !(sc->arg_fmt && sc->arg_fmt[arg.idx].show_ze=
+ro) &&
+> > +                         !(sc->arg_fmt && sc->arg_fmt[arg.idx].is_enum=
+))
+> >                               continue;
+> >
+> >                       printed +=3D scnprintf(bf + printed, size - print=
+ed, "%s", printed ? ", " : "");
+> > @@ -2877,7 +2878,7 @@ static size_t trace__fprintf_tp_fields(struct tra=
+ce *trace, struct evsel *evsel,
+> >               val =3D syscall_arg_fmt__mask_val(arg, &syscall_arg, val)=
+;
+> >
+> >               /* Suppress this argument if its value is zero and show_z=
+ero property isn't set. */
+> > -             if (val =3D=3D 0 && !trace->show_zeros && !arg->show_zero=
+)
+> > +             if (val =3D=3D 0 && !trace->show_zeros && !arg->show_zero=
+ && !arg->is_enum)
+> >                       continue;
+> >
+> >               printed +=3D scnprintf(bf + printed, size - printed, "%s"=
+, printed ? ", " : "");
+> > @@ -2885,6 +2886,15 @@ static size_t trace__fprintf_tp_fields(struct tr=
+ace *trace, struct evsel *evsel,
+> >               if (trace->show_arg_names)
+> >                       printed +=3D scnprintf(bf + printed, size - print=
+ed, "%s: ", field->name);
+> >
+> > +             if (arg->is_enum && trace->btf) {
+> > +                     size_t p =3D btf_enum_scnprintf(bf + printed, siz=
+e - printed, val, trace->btf,
+> > +                                                   field->type, arg);
+> > +                     if (p) {
+> > +                             printed +=3D p;
+> > +                             continue;
+> > +                     }
+> > +             }
+> > +
+> >               printed +=3D syscall_arg_fmt__scnprintf_val(arg, bf + pri=
+nted, size - printed, &syscall_arg, val);
+> >       }
+> >
+> > @@ -4537,7 +4547,7 @@ static void evsel__set_syscall_arg_fmt(struct evs=
+el *evsel, const char *name)
+> >       }
+> >  }
+> >
+> > -static int evlist__set_syscall_tp_fields(struct evlist *evlist)
+> > +static int evlist__set_syscall_tp_fields(struct evlist *evlist, bool *=
+use_btf)
+> >  {
+> >       struct evsel *evsel;
+> >
+> > @@ -4546,7 +4556,7 @@ static int evlist__set_syscall_tp_fields(struct e=
+vlist *evlist)
+> >                       continue;
+> >
+> >               if (strcmp(evsel->tp_format->system, "syscalls")) {
+> > -                     evsel__init_tp_arg_scnprintf(evsel);
+> > +                     evsel__init_tp_arg_scnprintf(evsel, use_btf);
+> >                       continue;
+> >               }
+> >
+> > @@ -5024,11 +5034,16 @@ int cmd_trace(int argc, const char **argv)
+> >       }
+> >
+> >       if (trace.evlist->core.nr_entries > 0) {
+> > +             bool use_btf =3D false;
+> > +
+> >               evlist__set_default_evsel_handler(trace.evlist, trace__ev=
+ent_handler);
+> > -             if (evlist__set_syscall_tp_fields(trace.evlist)) {
+> > +             if (evlist__set_syscall_tp_fields(trace.evlist, &use_btf)=
+) {
+> >                       perror("failed to set syscalls:* tracepoint field=
+s");
+> >                       goto out;
+> >               }
+> > +
+> > +             if (use_btf && trace.btf =3D=3D NULL)
+> > +                     trace__load_vmlinux_btf(&trace);
+>
+> Can we defer loading btf to when one of those tracepoints is hit?
+>
+> >       }
+> >
+> >       if (trace.sort_events) {
+> > --
+> > 2.45.2
 
