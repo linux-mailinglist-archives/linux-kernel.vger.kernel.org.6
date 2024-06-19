@@ -1,161 +1,157 @@
-Return-Path: <linux-kernel+bounces-220788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27CD990E716
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:30:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A64590E719
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3F171F22F9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:30:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0FB1F21D25
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822C47E78E;
-	Wed, 19 Jun 2024 09:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45DE81734;
+	Wed, 19 Jun 2024 09:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQuAYBh3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="cSbHonGn"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73A57E11E
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0F47A715;
+	Wed, 19 Jun 2024 09:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718789419; cv=none; b=uSZfvb8WZTQTVeIyFfh1J4Rg8ga22jgBxU8ku1m1gAN7fI8SlUrvERx7KvW0krjAAPRR2/iTvnZrj5dWX2pg2m0SgYYEFxnOvz8pLGnE1V/FtGn+zsJ6aIimAuYljmxMsY2LXcRqdo2XFQHscEz8nVM2ACMjYjDgdzJ3ZcOA3NM=
+	t=1718789425; cv=none; b=DZEByS6vcgfq6EkmvJTjHhdmSGG50jHHjJRvaLKk8G9ES8Q35T5T8Di08sgaM8Q872F6wqooYJl98vMe/pfjirUfITDJLegkm0630NmsGoduMWy+MsLB3WVseBNHvzA24Y9VD73hs6AQmsJ2htmQZUIobz3l2kY82eDFuqBtYzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718789419; c=relaxed/simple;
-	bh=/52i2IEcPby05hVZRiaMOtNwyTw57B3DcrTt2iGDjtI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NSQuHCm5LKORILW+tEiKe6eRvFx2Uwga8RPWektqrrmsorEsyrpODQG96A3J1jT8Oi7rGfYcmnm9uVsdMdUlnEgEqNYK4+ftN4f9D6jsTIxLbIeYzKvwQLObHMois5S1BKZwDdYDX99M7Q/YvoxCFcgyskeKzSXkPRJN07vAfjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bQuAYBh3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2B4EC2BBFC;
-	Wed, 19 Jun 2024 09:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718789419;
-	bh=/52i2IEcPby05hVZRiaMOtNwyTw57B3DcrTt2iGDjtI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bQuAYBh3hxaaLl5V6OZzaOk2lZmF39uMsWuo909unPVFm/qTzSD7fPnqqBaPZreNc
-	 edioBnoYgYSGoxdli6YGjWovvx3oyv0+ZpfUl5SdhTDIE5EkckIG5hcvdCKtBVdeiL
-	 mylzvyxKgCzeVuFg3RUfQxQi93NsjL+rT8Xc+f9c2A9/koJHQr+JTVNHG0FCZJ9NYU
-	 b6GzDj7QS49uUIDMySWZe+OA0S8PkRypaNqnOiZ13fXnqx95Ag1/gkV5tUVdzM8wPv
-	 zxM9oBXumIVhBbBJ2Bwrgcc7BQA0cP+AAxfdEeee6XciTTA2CQg8co3WEi5HYJhswT
-	 TLYCG2aahiDyw==
-From: Borislav Petkov <bp@kernel.org>
-To: X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Ashish Kalra <Ashish.Kalra@amd.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Michael Roth <michael.roth@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [PATCH] x86/sev: Move SEV compilation units
-Date: Wed, 19 Jun 2024 11:30:14 +0200
-Message-ID: <20240619093014.17962-1-bp@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718789425; c=relaxed/simple;
+	bh=7ne4ekeJPSiu9Wa/xWvMdy+2iJetKy2FB72LpR8ncLY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YBK3A/xHARiogUJ1Cv+fiFSpnX6YGa2WtEVTGTMVb7ZNJHgH7+ZiR6dI2PebGoS7IgDRQXPIwrFWphW4bTY3fqvEXelj09LCotFB2dBz/+HI2Y3LJr3jRp2NoNksYKnzbA4QofP873GxHlpDHOWw5fWtC/gkxe0w9Qc2RohrUmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=cSbHonGn; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1718789420; x=1719048620;
+	bh=zV1Qzzj1i+vpiKHlTH9zT9EGlrl+KcXNNmM1imA2OVs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=cSbHonGnWaJH37f1v+pSaKUQwYqlPPs+VtxX+8Sx2EZa4gfkG6EbZpEFL1ac6AJSJ
+	 +zm/edwto6ej3rtZoDCxktTyvEy3KwzMLuGps4gixWJId4+eIiKjM/YMAhuD6RbdTa
+	 j2RiXtPvBlCrR2Ag+uGa4Vgwq0/I7AWttYOmTjke/x5q7y7xM99zlCRi47Or+OqD4B
+	 BNKE8/RAyZk2+tGreTkAu5UwsC5NQJ1h9HMGsX3AIPaP33fOeRgCQa+6byjK08Ys5d
+	 EoE5c2uLBWYZcaqYKWiyoYziz+AMut+hOdm0vJt8NWQ+16u6mtF0WYN3hqgQ6OQor7
+	 e5Z3mWOu+o96A==
+Date: Wed, 19 Jun 2024 09:30:15 +0000
+To: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: John Hubbard <jhubbard@nvidia.com>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, llvm@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Alan Stern <stern@rowland.harvard.edu>, Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>, David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>, "Paul E. McKenney" <paulmck@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Daniel Lustig <dlustig@nvidia.com>, Joel Fernandes <joel@joelfernandes.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
+	kent.overstreet@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Catalin Marinas <catalin.marinas@arm.com>, torvalds@linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, dakr@redhat.com
+Subject: Re: [RFC 2/2] rust: sync: Add atomic support
+Message-ID: <8f23cb56-91a9-4515-a14f-4b7de70f6852@proton.me>
+In-Reply-To: <Zm_LTXm3wJhcQIwI@Boquns-Mac-mini.home>
+References: <ZmseosxVQXdsQjNB@boqun-archlinux> <CANiq72=JdqTRPiUfT=-YMTTN+bHeAe2Pba8nERxU3cN8Q-BEOw@mail.gmail.com> <79239550-dd6e-4738-acea-e7df50176487@nvidia.com> <ZmztZd9OJdLnBZs5@Boquns-Mac-mini.home> <c243bef3-e152-462f-be68-91dbf876092b@nvidia.com> <Zmz-338Ad6r4vzM-@Boquns-Mac-mini.home> <20240616155145.54371240.gary@garyguo.net> <Zm7_XWe6ciy1yN-h@Boquns-Mac-mini.home> <Zm_LTXm3wJhcQIwI@Boquns-Mac-mini.home>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 11698e3de8f944b2217c782e5cf4abe605702990
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
+On 17.06.24 07:36, Boqun Feng wrote:
+> On Sun, Jun 16, 2024 at 08:06:05AM -0700, Boqun Feng wrote:
+> [...]
+>>>
+>>> Note that crossbeam's AtomicCell is also generic, and crossbeam is used
+>>> by tons of crates. As Miguel mentioned, I think it's very likely that i=
+n
+>>> the future we want be able to do atomics on new types (e.g. for
+>>> seqlocks perhaps). We probably don't need the non-lock-free fallback of
+>>
+>> Good, another design bit, thank you!
+>>
+>> What's our overall idea on sub-word types, like Atomic<u8> and
+>> Atomic<u16>, do we plan to say no to them, or they could have a limited
+>> APIs? IIUC, some operations on them are relatively sub-optimal on some
+>> architectures, supporting the same set of API as i32 and i64 is probably
+>> a bad idea.
+>>
+>> Another thing in my mind is making `Atomic<T>`
+>>
+>> =09pub struct Atomic<T: Send + ...> { ... }
+>>
+>> so that `Atomic<T>` will always be `Sync`, because quite frankly, an
+>> atomic type that cannot `Sync` is pointless.
 
-A long time ago we said that we're going to move the coco stuff where it
-belongs
+That is true, but adding semantically "unnecessary" bounds can be bad.
+This is because they infect everything that wants to use `Atomic<T>`,
+since they also need to add that bound.
 
-  https://lore.kernel.org/all/Yg5nh1RknPRwIrb8@zn.tnic
+> Also, how do we avoid this issue [1] in kernel?
 
-and not keep it in arch/x86/kernel. TDX did that and SEV can't find time
-to do so. So lemme do it. If people have trouble converting their
-ongoing featuritis patches, ask me for a sed script.
+I think that we can first go the way of my second approach (ie adding a
+private trait as a bound on `Atomic<T>` to prevent generic usage). And
+only allow primitives.
+If we then see that people would like to put their own (u8, u16) tuple
+structs into `Atomic<T>`, we have multiple options:
 
-No functional changes.
+1. Field projection:
+   Only primitives can be `load`ed and `store`ed, to access the values
+   of the tuple, one would need to project to each field and read them.
 
-Cc: Ashish Kalra <Ashish.Kalra@amd.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Michael Roth <michael.roth@amd.com>
-Cc: Nikunj A Dadhania <nikunj@amd.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+2. Disallow padding:
+   We add an `unsafe` trait that asserts there are no padding bytes in
+   there (like `NoUinit` from below) and also add a macro that
+   implements the trait safely.
+
+3. Use `MaybeUninit` under the hood:
+   I don't know if this would fix the issue entirely, since that is what
+   crossbeam currently uses (but the issue remains open).
+
+But I don't think that we should encourage large structs to be put into
+`Atomic<T>`, since that would be bad for perf, right? So I think that
+going the way of 1 would be great (if we had FP, otherwise 2 seems fine).
+
+> `atomic_load()` in C is implemented as READ_ONCE() and it's, at most
+> time, a volatile read, so the eventual code is:
+>=20
+>     let a: (u8, u16) =3D (1, 2);
+>     let b =3D unsafe { core::ptr::read_volatile::<i32>(&a as *const _ as =
+*const i32) };
+>=20
+> I know we probably ignore data race here and treat `read_volatile` as a
+> dependency read per LKMM [2]. But this is an using of uninitialized
+> data, so it's a bit different.
+
+But would we implement it this way? Or would it go through a C function?
+If we entirely do it in Rust, then yes this is bad.
+
 ---
- arch/x86/boot/compressed/sev.c                      | 2 +-
- arch/x86/coco/Makefile                              | 1 +
- arch/x86/coco/sev/Makefile                          | 3 +++
- arch/x86/{kernel/sev.c => coco/sev/core.c}          | 2 +-
- arch/x86/{kernel/sev-shared.c => coco/sev/shared.c} | 0
- arch/x86/kernel/Makefile                            | 2 --
- 6 files changed, 6 insertions(+), 4 deletions(-)
- create mode 100644 arch/x86/coco/sev/Makefile
- rename arch/x86/{kernel/sev.c => coco/sev/core.c} (99%)
- rename arch/x86/{kernel/sev-shared.c => coco/sev/shared.c} (100%)
+Cheers,
+Benno
 
-diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-index 697057250faa..cd44e120fe53 100644
---- a/arch/x86/boot/compressed/sev.c
-+++ b/arch/x86/boot/compressed/sev.c
-@@ -127,7 +127,7 @@ static bool fault_in_kernel_space(unsigned long address)
- #include "../../lib/insn.c"
- 
- /* Include code for early handlers */
--#include "../../kernel/sev-shared.c"
-+#include "../../coco/sev/shared.c"
- 
- static struct svsm_ca *svsm_get_caa(void)
- {
-diff --git a/arch/x86/coco/Makefile b/arch/x86/coco/Makefile
-index c816acf78b6a..eabdc7486538 100644
---- a/arch/x86/coco/Makefile
-+++ b/arch/x86/coco/Makefile
-@@ -6,3 +6,4 @@ CFLAGS_core.o		+= -fno-stack-protector
- obj-y += core.o
- 
- obj-$(CONFIG_INTEL_TDX_GUEST)	+= tdx/
-+obj-$(CONFIG_AMD_MEM_ENCRYPT)   += sev/
-diff --git a/arch/x86/coco/sev/Makefile b/arch/x86/coco/sev/Makefile
-new file mode 100644
-index 000000000000..b89ba3fba343
---- /dev/null
-+++ b/arch/x86/coco/sev/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+obj-y += core.o
-diff --git a/arch/x86/kernel/sev.c b/arch/x86/coco/sev/core.c
-similarity index 99%
-rename from arch/x86/kernel/sev.c
-rename to arch/x86/coco/sev/core.c
-index 726d9df505e7..082d61d85dfc 100644
---- a/arch/x86/kernel/sev.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -613,7 +613,7 @@ static __always_inline void vc_forward_exception(struct es_em_ctxt *ctxt)
- }
- 
- /* Include code shared with pre-decompression boot stage */
--#include "sev-shared.c"
-+#include "shared.c"
- 
- static inline struct svsm_ca *svsm_get_caa(void)
- {
-diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/coco/sev/shared.c
-similarity index 100%
-rename from arch/x86/kernel/sev-shared.c
-rename to arch/x86/coco/sev/shared.c
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 20a0dd51700a..b22ceb9fdf57 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -142,8 +142,6 @@ obj-$(CONFIG_UNWINDER_ORC)		+= unwind_orc.o
- obj-$(CONFIG_UNWINDER_FRAME_POINTER)	+= unwind_frame.o
- obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
- 
--obj-$(CONFIG_AMD_MEM_ENCRYPT)		+= sev.o
--
- obj-$(CONFIG_CFI_CLANG)			+= cfi.o
- 
- obj-$(CONFIG_CALL_THUNKS)		+= callthunks.o
--- 
-2.43.0
+> We can do what https://crates.io/crates/atomic does:
+>=20
+> =09pub struct Atomic<T: NoUninit + ..> { ... }
+>=20
+> , where `NoUinit` means no internal padding bytes, but it loses the
+> ability to put a
+>=20
+> =09#[repr(u32)]
+> =09pub enum Foo { .. }
+>=20
+> into `Atomic<T>`, right? Which is probably a case you want to support?
+>=20
+> Regards,
+> Boqun
+>=20
+> [1]: https://github.com/crossbeam-rs/crossbeam/issues/748#issuecomment-11=
+33926617
+> [2]: tools/memory-model/Documentation/access-marking.txt
+
 
 
