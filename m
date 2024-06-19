@@ -1,129 +1,125 @@
-Return-Path: <linux-kernel+bounces-221686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F0390F737
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:53:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC8D90F739
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA0D0283840
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:53:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAB29B22EF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F4915921B;
-	Wed, 19 Jun 2024 19:53:04 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7ECE1591FC;
+	Wed, 19 Jun 2024 19:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PaJYpcmR"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5049C1876;
-	Wed, 19 Jun 2024 19:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93921876;
+	Wed, 19 Jun 2024 19:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718826783; cv=none; b=hZaCC5ZDy53/5yOYS/ZpIVRXGLZt01SRXaNVI4l1p4B6C06BuvZL0/K/2vR6IuE0G/s6EFLjIjQjb53ux2NIy2hwrWlsSbR4KYnnd3HZk96lXz0V98OmRWA2YJL43iEYIjyIXSCIR2Ju5S9OAMhuoChqKTvNtvqOXnGglcn240k=
+	t=1718826798; cv=none; b=o4t4u/HO+0bZcAIAxu73YKtNvugoB1Jy6YXhYl5TlPLRRX2Rm4jVQT9uk33BHaqYuTYm2nDorsqHBZmo+r2S8HfGRAewZJOvprtMP9MYjDvzMAtCgkgyycigjQx/j1EbDkYXwwNATaQZL2yThjqeGURZMjTRDF0S5lCD01hRIsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718826783; c=relaxed/simple;
-	bh=hAa58ykzdUm4sWV2raSDGbF4KtGeoHp4ZJ5LE2Yj+2g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PRCFfllUQwzvX6qlLY7SmbYwtOaEfyLQCbReS2nNz9S7QSVQx5OIUxHuyOSfezqBc9bNu/pvtx9+Np9EgyZB5/7esPF56Jsbkt2ENV8aJvvlo76ve2cKC/8BUwlIC5Ghe6DgBlnBAqlnF/ZiQSdXph2m55O8v00Of/ouoACiC6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e8616dc.versanet.de ([94.134.22.220] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sK1ML-0000cJ-Uc; Wed, 19 Jun 2024 21:52:45 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Johan Jonker <jbx6244@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] ARM: dts: rockchip: rk3xxx: fix emac node
-Date: Wed, 19 Jun 2024 21:52:44 +0200
-Message-ID: <24211354.RjEADstKbi@diego>
-In-Reply-To: <12f50bef-ba6e-4d96-8ced-08682c931da9@gmail.com>
-References:
- <0b889b87-5442-4fd4-b26f-8d5d67695c77@gmail.com>
- <12f50bef-ba6e-4d96-8ced-08682c931da9@gmail.com>
+	s=arc-20240116; t=1718826798; c=relaxed/simple;
+	bh=A0XJ3zxj2pli2ZWa4qkl9gsTqQ108uDa4Q9wpZWBNK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMvZ4TbCqgm2KbO1CekqWItKv8XSHw1mE5yg7fjsl0NnAOi2GNh9iJagH05kUJKa4XKbifwd8c/qU/hV3PJjy8DoWhIdGjRAwZeanw7dKWnc9DkbSXgy9B9jwpUSxqWlXnG+BJ4mgaf0gw+q+2L3mMyYaEZROBMPL4+Z/9qot7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PaJYpcmR; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f47f07acd3so1120165ad.0;
+        Wed, 19 Jun 2024 12:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718826796; x=1719431596; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aOB2A/jK1WHukX2KwddAtG4INsdzOOkmUA4oas+nXS0=;
+        b=PaJYpcmRMs9p4eTy1WBwim0QaqlK3JLf8uYPalb+j4lmdCif+CAgLGd5TK3p6Vo+cs
+         25O6kGTRvo9DK+oUnpyo2ZCKLm7L6qVF8WooBRjZ782fnisMsNzEZX9VD+ekZCB/Xwbn
+         ISUTelvi+1ehfVlf52SBOKXkmVxJUOSj9kEMasZIziT5ioZ+RGlI4DMpYi8jNYQjcjr0
+         dVMWtudCur0GriEU5AZdNFFi8//x+POBjdLVlvMguzKLL5rfH8bFKnXRrhGYI7Bjjp3k
+         GsTzfs+2IO6ufEu6eQTmWLpYR26qdbEbZ8dXRaY+2cMYbYmWhR6nqyMwQw36n2MR8nrN
+         W0tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718826796; x=1719431596;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aOB2A/jK1WHukX2KwddAtG4INsdzOOkmUA4oas+nXS0=;
+        b=saBz38A2K83YWcSGVaECgQcr48pthKvseDu1b1qa1fcM841Q7wb8Hr3IJ9nZuFY6NZ
+         TwMd1/lhJ70tQuS8nZY69klTri3Nfp+k2RYY4WV2eRH4iTKlkX9azWVHOcM0sYt8C/Iq
+         y+9OK4rVs9zLlPTkdrmPIWRAHOcatEYS43JcGIwmQa5RJ1N6Uv5oLcc4nNxQv0A2rvE9
+         4u75MBa2hefhyTLFpGrAZ2MC542Su6/oDwiFN1RC/Emawnv1+XS/7rGRIQB2WSxOCnYj
+         aMvvvVe5BYh0QYy6DrPcfsyrX5l02Ei+3IjX8DQGkwN2z6AQymDGJCGb6dnnjVnQdspg
+         xGhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVK0h/NxpydzXrbMe3CrPm342PY7xxkmB3GuBcRVuWfADPqJXBmtNx4kPPdolMGDTvmcw98w4oNIgNo0BPisbMOnouIMNRHoG07Fqm6/YZbzt1l3qv0jnMdW4Ui14+P4iBhI0jy4YI=
+X-Gm-Message-State: AOJu0Yw+IcTqPvAjJyPH6/jhwigoTIgE4NjQg4BNI9qmXhJceUeUQt9M
+	gJeUOdK/mqiyL7nSsH9iWCBg5QC6XVCdW3LUKIPr0CJxU0RjvrHU
+X-Google-Smtp-Source: AGHT+IHUBrhZZvtm6NcZr3vDMxebVh3Q4znsEMqbwmVJ447+3TCtJmTTgB/qWpr3PsAWEqL0rQfLIw==
+X-Received: by 2002:a17:902:f685:b0:1f9:b5b7:a482 with SMTP id d9443c01a7336-1f9b5b7a9cdmr22081875ad.24.1718826795861;
+        Wed, 19 Jun 2024 12:53:15 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f339fbsm120933395ad.262.2024.06.19.12.53.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 12:53:12 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 19 Jun 2024 09:53:11 -1000
+From: Tejun Heo <tj@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: viresh.kumar@linaro.org, linux-pm@vger.kernel.org, void@manifault.com,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	mingo@redhat.com, peterz@infradead.org,
+	David Vernet <dvernet@meta.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH 1/2] cpufreq_schedutil: Refactor sugov_cpu_is_busy()
+Message-ID: <ZnM3J7pvg6fyksby@slm.duckdns.org>
+References: <20240619031250.2936087-1-tj@kernel.org>
+ <20240619031250.2936087-2-tj@kernel.org>
+ <CAJZ5v0i=0QqkvjA9mnqcX6Yv-T+rQ7ZKvuF1HPJL8pG2kqicGQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0i=0QqkvjA9mnqcX6Yv-T+rQ7ZKvuF1HPJL8pG2kqicGQ@mail.gmail.com>
 
-Am Dienstag, 18. Juni 2024, 18:13:56 CEST schrieb Johan Jonker:
-> In the combined DT of rk3066a/rk3188 the emac node uses as place holder
-> the compatible string "snps,arc-emac". The last real user nSIM_700
-> of the "snps,arc-emac" compatible string in a driver was removed in 2019.
-> Rockchip emac nodes don't make use of this common fall back string.
-> In order to removed unused driver code replace this string with
-> "rockchip,rk3066-emac".
-> As we are there remove the blank lines and sort.
+Hello, Rafael.
+
+On Wed, Jun 19, 2024 at 08:45:42PM +0200, Rafael J. Wysocki wrote:
+> On Wed, Jun 19, 2024 at 5:13 AM Tejun Heo <tj@kernel.org> wrote:
+> >
+> > sugov_cpu_is_busy() is used to avoid decreasing performance level while the
+> > CPU is busy and called by sugov_update_single_freq() and
+> > sugov_update_single_perf(). Both callers repeat the same pattern to first
+> > test for uclamp and then the business. Let's refactor so that the tests
+> > aren't repeated.
+> >
+> > The new helper is named sugov_hold_freq() and tests both the uclamp
+> > exception and CPU business. No functional changes. This will make adding
+> > more exception conditions easier.
+> >
+> > Signed-off-by: Tejun Heo <tj@kernel.org>
+> > Reviewed-by: David Vernet <dvernet@meta.com>
+> > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
 > 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-I think this is fine going through the network tree together with the
-other two patches.
-
-
-> ---
+> Acked-by: Rafael J. Wysocki <rafael@kernel.org>
 > 
-> [PATCH 8/8] ARC: nSIM_700: remove unused network options
-> https://lore.kernel.org/all/20191023124417.5770-9-Eugeniy.Paltsev@synopsys.com/
-> ---
->  arch/arm/boot/dts/rockchip/rk3066a.dtsi | 4 ----
->  arch/arm/boot/dts/rockchip/rk3xxx.dtsi  | 7 ++-----
->  2 files changed, 2 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/rockchip/rk3066a.dtsi b/arch/arm/boot/dts/rockchip/rk3066a.dtsi
-> index 5e0750547ab5..3f6d49459734 100644
-> --- a/arch/arm/boot/dts/rockchip/rk3066a.dtsi
-> +++ b/arch/arm/boot/dts/rockchip/rk3066a.dtsi
-> @@ -896,7 +896,3 @@ &vpu {
->  &wdt {
->  	compatible = "rockchip,rk3066-wdt", "snps,dw-wdt";
->  };
-> -
-> -&emac {
-> -	compatible = "rockchip,rk3066-emac";
-> -};
-> diff --git a/arch/arm/boot/dts/rockchip/rk3xxx.dtsi b/arch/arm/boot/dts/rockchip/rk3xxx.dtsi
-> index f37137f298d5..e6a78bcf9163 100644
-> --- a/arch/arm/boot/dts/rockchip/rk3xxx.dtsi
-> +++ b/arch/arm/boot/dts/rockchip/rk3xxx.dtsi
-> @@ -194,17 +194,14 @@ usb_host: usb@101c0000 {
->  	};
-> 
->  	emac: ethernet@10204000 {
-> -		compatible = "snps,arc-emac";
-> +		compatible = "rockchip,rk3066-emac";
->  		reg = <0x10204000 0x3c>;
->  		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-> -
-> -		rockchip,grf = <&grf>;
-> -
->  		clocks = <&cru HCLK_EMAC>, <&cru SCLK_MAC>;
->  		clock-names = "hclk", "macref";
->  		max-speed = <100>;
->  		phy-mode = "rmii";
-> -
-> +		rockchip,grf = <&grf>;
->  		status = "disabled";
->  	};
-> 
-> --
-> 2.39.2
-> 
-> 
+> for this particular change.
 
+If the cpufreq_schedutil part of the second patch looks good to you, would
+it be okay to route together with this patch through the sched_ext tree?
 
+Thanks.
 
-
+-- 
+tejun
 
