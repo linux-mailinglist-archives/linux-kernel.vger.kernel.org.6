@@ -1,227 +1,230 @@
-Return-Path: <linux-kernel+bounces-221872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A4A90F9E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:57:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9180090F9E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9505B1C21A4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D258283BEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB47915B574;
-	Wed, 19 Jun 2024 23:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4AC15B993;
+	Wed, 19 Jun 2024 23:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="cRJXjJuO"
-Received: from KOR01-PU4-obe.outbound.protection.outlook.com (mail-eopbgr860132.outbound.protection.outlook.com [40.107.86.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="oYSLOI/7"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB101E515;
-	Wed, 19 Jun 2024 23:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.86.132
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718841417; cv=fail; b=QxFgipbkeH7HwNVtwODZ16o/X7diwPsIpaF7UCNsNl3Wfa46A7Y0BoI29i9nDlSeac8/dyl1Iyh1golmc5gC/KKcIeRUhtKuyur4HkuinqREZCTBIHojwrGWAWlrmr1xtvJoKCPqj7G4AwvYduxuKlgMQOv/md3iESpJxDVcPVM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718841417; c=relaxed/simple;
-	bh=DrK0ouYiVebzBeTPjF4QtT/50MN86amkijB/x23IY/I=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=gUgG1zdgOJ+sp9vCSbUbN2mYZ0Ko8Z03CfYofqtW01D2+gIUZXk9fIFIaWgLbuTfFGhjyK6d7kYAyf/2e1A9MSVU6xlv44lwuKLKvC3Hyg5pu2jRCo1fnukNEd1vICA/KzwvR49bCDBFj/7V2qgr5vqon30+ld120brdR2Q0b3I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=pass smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=cRJXjJuO; arc=fail smtp.client-ip=40.107.86.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chipsnmedia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g1PJdnbKxnq6ldHTapjH7sMev/5JWWhVsz6b0PM7CkMm92h2ZI0kxw3AeXpFHeOKjowuyTM0bsjFU6ycrFN6y9I8QhpFP+bGhg3Ut/yyJhBSiDcH12cr6xr4jTrO1MGmdtoPvfPA7k4bcMQ0sB+A5oMi+7iBh86pyQTdYQvNvp3df2GenNdGNy4RX1F2q4i7v4d2a3WqA7+om18+23Uxs/3/fy+Bn3QZBda3IiTp3A3/HyCQ4nrbmrDF6ZmQqmaZARRUApPqCaDfFppeOo5piiI5fkFR8lGesAsqO01y45OeI4kdviBh2w7MFr4XJmT92HATWkzJM0aEWbQnuCogXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DrK0ouYiVebzBeTPjF4QtT/50MN86amkijB/x23IY/I=;
- b=QfPkk8YACJIzF+uIEm36v0Of6DX0dfCkVY4h8abqZIvposkCPoSaVd3MUaYufTQwgNk64l/rEIqZZkpy1wAiMo5QAuu1DOKeGtFLoGfXIHHkVGhpQzPWriiShIDJ0PQxwdbw2BBMlte9XgoeSKHrVrhuJPp7Pm/8jGwMBMF0dauAhlDrhGEwo7K+Oimb++U3//hsziMPOUvHC9WKmcGEJg+3dIZp1gOMF92zIc8rff6Dxv1RtdmEM145noQm2cM3OADxzMaLy2jBVBXxYeDMANj2x4hgXYWZ6aPkTVeZ7ebtWVG6cTx59OS5BsVq1HiHjTkPw54kiPmjE4Rq7h6uFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
- header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DrK0ouYiVebzBeTPjF4QtT/50MN86amkijB/x23IY/I=;
- b=cRJXjJuOnJjyEyv1KFJwWxH9bT07FZnwh0SC9YbgsnVe1+DX0jJBmNxGCXMjjVcY/qw4IzTgni+e5uupWQMJ8hJEHPT6aMOpfm07O0y6gadP8y11YFS88HlWC8mDRWx1pMTq0bENQB7tdTYLFCk+gL6PHhAdXblpRHC+N7mBqwE=
-Received: from SE1P216MB1303.KORP216.PROD.OUTLOOK.COM (2603:1096:101:15::5) by
- SE2P216MB2316.KORP216.PROD.OUTLOOK.COM (2603:1096:101:10f::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7698.21; Wed, 19 Jun 2024 23:56:51 +0000
-Received: from SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
- ([fe80::b711:5ab1:b5a4:d01b]) by SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
- ([fe80::b711:5ab1:b5a4:d01b%4]) with mapi id 15.20.7698.020; Wed, 19 Jun 2024
- 23:56:51 +0000
-From: jackson.lee <jackson.lee@chipsnmedia.com>
-To: Devarsh Thakkar <devarsht@ti.com>, "mchehab@kernel.org"
-	<mchehab@kernel.org>, "nicolas@ndufresne.ca" <nicolas@ndufresne.ca>,
-	"sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>
-CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"hverkuil@xs4all.nl" <hverkuil@xs4all.nl>, Nas Chung
-	<nas.chung@chipsnmedia.com>, lafley.kim <lafley.kim@chipsnmedia.com>,
-	"b-brnich@ti.com" <b-brnich@ti.com>, Nicolas Dufresne
-	<nicolas.dufresne@collabora.com>
-Subject: RE: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support runtime
- suspend/resume
-Thread-Topic: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support runtime
- suspend/resume
-Thread-Index: AQHawKPhLOcR91s1hkK9DSaFUGSwxrHPD/CAgAC0SbA=
-Date: Wed, 19 Jun 2024 23:56:51 +0000
-Message-ID:
- <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
-References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
- <20240617104818.221-3-jackson.lee@chipsnmedia.com>
- <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
-In-Reply-To: <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
-Accept-Language: ko-KR, en-US
-Content-Language: ko-KR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SE1P216MB1303:EE_|SE2P216MB2316:EE_
-x-ms-office365-filtering-correlation-id: 29bd4673-d900-40d7-d9bd-08dc90bb7d33
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230037|1800799021|366013|376011|38070700015;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bnFEUW5WK3VLWm1ENDIwdmVMRmlVVWV1bTVjS1A5b2YyOEhYV2RPUE1ZVUVY?=
- =?utf-8?B?WHozbG1MQ3hidXFCUjBwZHl2aDd5dlIwVjdSZHo3WTV0bTJDUnkxYUxOSjV5?=
- =?utf-8?B?Y1Qwa0JML2gvMGdtMnRYLzErS0FLMFY1blZrU0luYTNvZTlHK2R3cFptZ1dq?=
- =?utf-8?B?aUpLWVJoQUh1Y3BlTUtvblNSMDJvd2lVWTlicmUxTlo2OE1pMFc4MGNFcFg4?=
- =?utf-8?B?MUVFa1ZLTDF0c1V2UWxaTWtDMlIrZ2dTSEU4SGV3cDRVWTBJL0IyRkREbHY1?=
- =?utf-8?B?REV0MWdaSUtoRDRuSVE5VGdyVGIvajk4dXRvVVVRb3o2aWU5UlZORFFQZjFn?=
- =?utf-8?B?VzN5UjZiL2NXRVdvZjFHUDF0aDRlOEwzMkhrdlZhL202UmFkMEVCS0JmUmti?=
- =?utf-8?B?dnVNZjhWZThLTHVUMG5TRmkwL1JlTUJpMUZTNGwvWlZ5S3o5V0tXWENFQ1Zx?=
- =?utf-8?B?UnFUaXRvTXZlNC9DWjNIZFZTaVhSOHczVkpTRWFmaEgwaG9Qbjdkc05EcnBj?=
- =?utf-8?B?ckFFNlJPZ2UwaE11NzJJcC8raEwrWjl1VUwrU0hrYXZMeEdYek9vM0ZDVTJZ?=
- =?utf-8?B?M0p5bzYyY1N1aGJEOE9YcmczMnJGRWF0cXN6MDl3dkhySDFldVEvbGRuZ0M0?=
- =?utf-8?B?UXF1OTZqUU44bExYVXlGSTM4c2NMKzBNblB1V3B3REZFdlNVODFFdnp0S3lD?=
- =?utf-8?B?YzVKQ0RRNFlRKzRORnhiWHhCeFVBZEJJaENoSHljd0Jka0JVc3BvT2FXajNn?=
- =?utf-8?B?QnM4eDQyYWZqSUgzcHR4N0srWVZCK09PRmRDeUpPb2dpektrcDVUdGpOOVJw?=
- =?utf-8?B?bkEvK2l5TExJNEcyQTVqd3BsaThZNWxXY2g4SnlpS3JXUGRQbkdrVHBHdlBp?=
- =?utf-8?B?czR1aWpyQmM5Q2lla25XY2dVa2dlV2l6RHJ0T1dwczkxZ1NTbDU1U1dCYURB?=
- =?utf-8?B?SlFiYUh2S3V1c2RjQy9pRHhNN0Frbm9iN1NRTGtuc3JCangwN1pLRDIzTC9S?=
- =?utf-8?B?N0JYV1o2ZXA1L1owcTFoUm5hazkzcXIyK2d5b3ZGL0phUlpqbUZvVXNaREM5?=
- =?utf-8?B?L2dYMGhPeEJVOXI1K3FpM09BcVZjL04yKzVBNzR4R255NTA3bjAyeEZRNGFh?=
- =?utf-8?B?SklaMCs5dy9Bb0FUSnhBQ0o5MFgyeC9sL1dPZFdyVE9YR1Vzc2ZLVTg5Z25T?=
- =?utf-8?B?d0NDQ281akRaWHY0SEptdE9CV0xBNndTWWxkSFBWd1ZiSmtxQTJNZ2g4clUy?=
- =?utf-8?B?QjUwYWh2cHdnV0l4SGFYa3F1MnByWi9kUzlUcE5pVEtUOElXSm9QRnpva3pl?=
- =?utf-8?B?RVhNeFFVK3E5S29ISzhRTWdqeE4zY283c1NNdE5xK1lQbEh1cDhNbVdML0Iz?=
- =?utf-8?B?RTBFUjNwZ2Y0bkZPMzJYUW04SmYwWTNiMEhsWmJwbEFPam9Lb2pQZkVBOS9J?=
- =?utf-8?B?Y0ZPekZJb3FrYTBieElrZ2tXS1kvMWpiR0R4K3lJaDhqbWFoWFB6SFJrVTFl?=
- =?utf-8?B?UmVGK0xZRUFLa04yU0lzZlFabjRYQXVrL1E2QUFYSzZoQ253S2hrM0xHb0I1?=
- =?utf-8?B?MGlqbzl0LzF0QnlsTzBFbDQ1eDZCRXVWdzdlYW1hVjIwZWp0THdZc1cvYjVx?=
- =?utf-8?B?NDVzSm93Yk1Cd0Jjc0IwQ3VUYVhKUUNSbTZLcmFqakxGc2UvaCsvTXdZWTFy?=
- =?utf-8?B?YjZ1a3FzS2M3R2prbVRuYWg5dEtKbkM2MDFXS2E1TmQzTmVlV0dLL3lNNWNB?=
- =?utf-8?B?WXBYaHdET3RYenk4Yk9qNGJ2akVPTFFtYVNNNzlHcHBPUmI0VlZGWTA0OGU2?=
- =?utf-8?Q?S6XzuHijzhC6YvW92L8zBp3mzVkAeOGyFfrjQ=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:ko;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SE1P216MB1303.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(376011)(38070700015);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?K3AyT2ppd0VUOEdWaEM1VjkwQlczZEVSTDYxU3lpeWVNYjl1ZUh6eTRnQzVX?=
- =?utf-8?B?YWxHYTF1aTljNHZLTFN4R3dCVGZvUGs3UnZtUmViQUtlOU5TbkIvcXY1SnlQ?=
- =?utf-8?B?RGtZeUJOZ2Q1NDAzeW1CR2hCcU9UWURqWDRENVNIb1NFTzM5eWF5SUsvWjRx?=
- =?utf-8?B?NnowdkxHVmtCTUw5YlE4TXp5SE5UVDVqMnVCL1VwVTZNbjhnQzdmZG9vSlZr?=
- =?utf-8?B?QWRuK0RaQU9maFcySi8wOTZJd2JBRWFndXJLT09aUG9EWW5MV3FyNTY2RTE1?=
- =?utf-8?B?eFB1SVAxTXFDd0xEVy9wNC9LSTRqMk9ORHp4ekJVOVpwTDRJc2RmalBDcWhU?=
- =?utf-8?B?Ry9HZnVsc00rOFRoNVNmOU9WVlo4K05QWUpwYlJpVEw3QmY3UjQ3cy9McTU4?=
- =?utf-8?B?aG5wQkQ5VGc5cnBkZDBodHY5Zmp4dGdxUzg2M1B5K2FnaXJOeUVuL25XMjJy?=
- =?utf-8?B?UTBrdmNraVNiQmZybWtFL1NLRkk0ZzFQcUNMUUNUQk5qd1ZWRXlmWDhYUk8v?=
- =?utf-8?B?TG9pS0JGbHNhaUdHWXYva2tocVlieG83U1diSHFkNGlWWCtYT0VLVGRZKzM3?=
- =?utf-8?B?clRlRkZ6aTg0dXYvcEhQQVh6djZ5Q2pRcWFCYXpJQUMrb3h3eXpyWjBjZ3JR?=
- =?utf-8?B?VHhPWW9pRWhJR3lRVDl3bHpXNkZPTU1NUmhYWnJpWk5zVi9SWHkzTmNLTlZw?=
- =?utf-8?B?dHlBUzltbTVSK2M1aXUyNHV6ZFlzaHRieCs5VTd0Qm9qOGd2NkoyVGFkWDQ1?=
- =?utf-8?B?SFhuTzV4amZERGxnSlVmVVYrdENMUVpBS1VEZFp3b0RER291eFc3YUJPbG53?=
- =?utf-8?B?LytRTUlta0VwVGFZWWxoVGkzcnB1YkttQTVBNzZwTWdIUUlJV21QOXozOE83?=
- =?utf-8?B?OHNIa2Fia25JK0U1eVViRmpTUHc0OXJUM1RJM0xjdUFwdHJFSWVqY1lscjRM?=
- =?utf-8?B?cVJxL1NGS3ZSckNUNTRkOVloVzhmaG1TM09pUFRRdTNUNlNwNldhKzl5Sm5V?=
- =?utf-8?B?RnN5bEt2VUVvQ01WUy9oc2s1YnFCakJvd2VwdGsxUlgvdEF1eTVML1E5RzJE?=
- =?utf-8?B?R08yM0xqdWpVNXBJMmVGeGlEblZKL1hFN3FMV1doSHNHLzVDR2xwQ0Fvdllq?=
- =?utf-8?B?cUc2cFZEdHlUNjFCZm9WREFFaDg4b3VKdm5SZDdFMUJ5Y1MveXJZQysrUXlv?=
- =?utf-8?B?M0JVc3hFWFhIc3pDSWxzS2U0bmYyWkY3RDdlQkFCQk45NHpaNlBMK0M2dHNL?=
- =?utf-8?B?WjlVa0ltS1BLKzV0dE5mMDA2eHlVRVRyWHlYZ0Z6enByVXJKREtrWWdOUVU0?=
- =?utf-8?B?N1pLbEJXTERCcEUybjM0a1NRVU9kd2d3MmJ6bFVoNGhpTjV2NERheDZVZXlJ?=
- =?utf-8?B?UmxoM2RrNENsRC9iaTdXN1V5VE9LWC9xc2F2MFNCSnZzUEQydEw1KzByQW41?=
- =?utf-8?B?KzJZeTU0aE1EbnA0K2xnVkJSRVR1T3ZuMlhMWmo1V1l3d3hUbGYyVWlyVlRi?=
- =?utf-8?B?bHEybzRjczRBSjYrbzc4WDM0bC9PZjhKSVVKanZEaG5jWjFQSnJSNld2N3Ra?=
- =?utf-8?B?R0liRWwrdk9SRVpjbGphRk1Ic0hwajNUVlpXUEtPUm1QOXVSVE1IYUROSFhP?=
- =?utf-8?B?Q3RoeFo1cEZLSGIzYmQvaklnaWxYa21jUUZFUFNxRFBEUzZPRndzQWtxTWQz?=
- =?utf-8?B?dlpmNXNDN1RySUJHSEs0Vk5OaG51bkZpanM1Ukg1d1JTYzlnaEwvWFgvTTRk?=
- =?utf-8?B?cFE4cWhKRzBQNUpxTllqcTVCTVBNdUp3SHgvRzNoRHB2ejFNQXpXQnJWWHRP?=
- =?utf-8?B?VFZFVkg5bHhrUTUvZmI1ZEN3S09TaWs2blhEc1RiYitNNGtMb2lsSVVDeFRZ?=
- =?utf-8?B?YWpWNzdzbktERTVJbkR2SE5JR3NhSVd5MW1xUzYyZDZNU0lJTmtpdTRDNVJl?=
- =?utf-8?B?VGYxZlRDbkN2SnVXRHdNUk1xY1JOVXlWelZ5U0ZvaFEyWjNyMlN4dDA2a0JU?=
- =?utf-8?B?eWhuTlFCWUpiQnRoaEREUE9TZU93aE11dEQrdS84VjlPTmdBQXRlL1YwK2ky?=
- =?utf-8?B?STdudDdOaFppNisvUkNUeXFIVy8xN3lYUXlIeCtRaUg5ZklZUEVhMHBRZEhF?=
- =?utf-8?Q?zq9+evZxGIee2cLbLAO0xv1eX?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F78215383B
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 23:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718841449; cv=none; b=F3A3rryMWCmQwId8pgIaLpjq2EM2+3urrXWLQWZSOTfk/hZWju2yUn+1NV5/6O9hWD03G/paqKx2ku7V1WIhSC6V/i/Y3XRWRvM7RT1ArpJHpD90dqmjJAk3NZrH/4PrRBjwCkd3ZrLovo3ODv+ZA+y8n97i83KZGGG6UYbDdDU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718841449; c=relaxed/simple;
+	bh=SQ74wkUYiydiV4kKCgWwaFdmfmpGnTrvzoti3qC9ofs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bnkvGMdibhtb7KRNEBvMAWdECeeg2QX0+Uu8hslBToOFZdOTxeL98DJ7FE5cOgTihARmXgjmpDg+Ro4TWcDlMlZSG8zyTAhDEv0cvcW/ey8bWnolj1OijdnjwQF4HbdawT3oTc/CHcYlk4r+Ymcywmq21+QuB0XSYPPMytpRSCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=oYSLOI/7; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7062c0ee254so342826b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 16:57:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1718841446; x=1719446246; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MY9gNtYxIY7P55WK3l92dSyii7grPULlgAdQCTwrkwM=;
+        b=oYSLOI/7+QIrImlbWmNS8xD8+NM9ip2qxfyVvj4CslT92VQtnFRgkyKIjfEvITkqoL
+         ju3uGcCyLz0YxM0Mo5wFzDVFSRhPYjEtuBmNPhyBovQ0GIEobQfNdWhsa/dutjzJBwSP
+         XLQTPYbF8EhSzMKSSg4e3a3C/OzlCBfeT3tKlF+8GRhO4SacSfbgFHXSX/jgDM2DlA7L
+         JagRdTVRzxXE6ydqPHAXaPww9m9gZk8Dw7D55uJyMYT7SuDTwXD8/oB02iN1qib8vbz5
+         YkN/exP9q0vdSgQIzQygS6H8Og7xo1llB8mfsdkOxB0KRXCmNN2AAH4RQ0XF5H+CruIe
+         igKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718841446; x=1719446246;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MY9gNtYxIY7P55WK3l92dSyii7grPULlgAdQCTwrkwM=;
+        b=rKBgax6XtfoUelZnuvrdJwDU0GAtFLt2egvClSNbIUb0uO/Z8duMbcWHuDGvRIBU6t
+         rYlQxsdJjAMJnhYofkO/EnHzK9fE7wf7U5hDQ18EnNCgSUXCQbeeK1iwtoy5xxiKmWed
+         D5h9v3Roe8SrvzpkYpcOgNDWCDRtUvTygCTpYT2Hf9hQvNyRxu9g0Xp3PuTq6AKP59JY
+         gJAZFdJlqa1J7NPVxTlYH72QJXfbL9JegU8tgCrTEHATLPnYzQSIPFDOlEckmBJ+EdK2
+         AjodZ1/pXejra3eizxmLKef8FK5UM1jOIBwU9apEunUmPMTBWOJIFWaXWO1aQsjkbOYO
+         S2/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVmxKSvdWEJky3QOjxdce8j+TvhMpim7gKTGF8D2B/kfInSxyRjog5Iy9uSpaAnq9YRNJ8xsJ0YfE0Ih3UnRxpB+qZXPLRh/OKYMeNt
+X-Gm-Message-State: AOJu0Yx0U69LvAJigeLUdE1d0tYG1UFCI5+MCBvQv22YwApoHfMRAZyG
+	a/rzPhIMHxxPh98jz55U/MuQsOA4frE7B0g6c8emYBXJM1fNnofNK0KJGq1lP2U=
+X-Google-Smtp-Source: AGHT+IGbUoAHmp9L8GOOQzzT1+2vkfoDoVr/n3oI76ok2wfPdsYHdImgZafKQcKFXAxghbhbD+3Plg==
+X-Received: by 2002:a05:6a20:a992:b0:1b2:3998:404 with SMTP id adf61e73a8af0-1bcbb421d05mr3401223637.4.1718841446346;
+        Wed, 19 Jun 2024 16:57:26 -0700 (PDT)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e70ae6sm123620745ad.71.2024.06.19.16.57.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 16:57:25 -0700 (PDT)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH v3 00/13] riscv: Add support for xtheadvector
+Date: Wed, 19 Jun 2024 16:57:13 -0700
+Message-Id: <20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: chipsnmedia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29bd4673-d900-40d7-d9bd-08dc90bb7d33
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2024 23:56:51.3068
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6gFyvq9okotxIdGNuBuZjT7HqNaqCjYrykLrF8nH9Ehyt8+RAcl9GysapcgkjCbAyNqo6CshwiW+7hlMn0so9PwngUjZOUc1KrCvPe2MXhQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE2P216MB2316
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFlwc2YC/12OzQ7CIBAGX8VwFgMs/cGT72E8IGztHiwGGlLT9
+ N2l9aI9zpedyc4sYSRM7HyYWcRMicJQAI4H5no7PJCTL8yUUFpUIPg09mh9RjeGyFsAD142d62
+ AFeUVsaNpy11vhXtK5ey91bNc12+oFuY/lCUXHDqsjPRNJ4W5RMoh0eBOLjzZ2srqx5e7R7Iqv
+ mmsbmsJ1td65y/L8gFE8XcF6wAAAA==
+To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>, 
+ Evan Green <evan@rivosinc.com>, Andy Chiu <andy.chiu@sifive.com>, 
+ Jessica Clarke <jrtc27@jrtc27.com>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ Charlie Jenkins <charlie@rivosinc.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, Heiko Stuebner <heiko@sntech.de>, 
+ Heiko Stuebner <heiko@sntech.de>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718841444; l=6325;
+ i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
+ bh=SQ74wkUYiydiV4kKCgWwaFdmfmpGnTrvzoti3qC9ofs=;
+ b=KgHCREa5GKguJPmSCNpSuG7+xp+IBGDhrMjH0sTJkp2zmQxlPYGDADJvJkEkfs7A1i5IVDj3W
+ g3b93uhuYWWD7oMxWTko3IuKLdNMeTsCokouiED8IGOXGzhG3ggMuPZ
+X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
+ pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
 
-SGkgRGV2YXJzaA0KDQpJZiB0aGVyZSBpcyBubyBmZWVkaW5nIGJpdHN0cmVhbXMgZHVyaW5nIGVu
-Y29kaW5nIGFuZCBkZWNvZGluZyBmcmFtZXMsIHRoZW4gZHJpdmVyJ3Mgc3RhdHVzIGlzIHN3aXRj
-aGVkIHRvIHN1c3BlbmRlZCBhdXRvbWF0aWNhbGx5IGJ5IGF1dG9zdXNwZW5kLg0KQW5kIGlmIHdl
-IGRvbuKAmXQgdXNlIGF1dG9zdXNwZW5kLCBpdCBpcyB2ZXJ5IGRpZmZpY3VsdCBmb3IgdXMgdG8g
-Y2F0Y2ggaWYgdGhlcmUgaXMgZmVlZGluZyBvciBub3Qgd2hpbGUgd29ya2luZyBhIHBpcGVsaW5l
-Lg0KU28gaXQgaXMgdmVyeSBlZmZpY2llbnQgZm9yIG1hbmFnaW5nIHBvd2VyIHN0YXR1cy4NCg0K
-SWYgdGhlIGRlbGF5IGlzIHZlcnkgZ3JlYXQgdmFsdWUsIHdlIGNhbiBhZGp1c3QgaXQuDQoNClRo
-YW5rcw0KSmFja3Nvbg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IERl
-dmFyc2ggVGhha2thciA8ZGV2YXJzaHRAdGkuY29tPg0KPiBTZW50OiBXZWRuZXNkYXksIEp1bmUg
-MTksIDIwMjQgMTA6MDAgUE0NCj4gVG86IGphY2tzb24ubGVlIDxqYWNrc29uLmxlZUBjaGlwc25t
-ZWRpYS5jb20+OyBtY2hlaGFiQGtlcm5lbC5vcmc7DQo+IG5pY29sYXNAbmR1ZnJlc25lLmNhOyBz
-ZWJhc3RpYW4uZnJpY2tlQGNvbGxhYm9yYS5jb20NCj4gQ2M6IGxpbnV4LW1lZGlhQHZnZXIua2Vy
-bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gaHZlcmt1aWxAeHM0YWxs
-Lm5sOyBOYXMgQ2h1bmcgPG5hcy5jaHVuZ0BjaGlwc25tZWRpYS5jb20+OyBsYWZsZXkua2ltDQo+
-IDxsYWZsZXkua2ltQGNoaXBzbm1lZGlhLmNvbT47IGItYnJuaWNoQHRpLmNvbTsgTmljb2xhcyBE
-dWZyZXNuZQ0KPiA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPg0KPiBTdWJqZWN0OiBS
-ZTogW1JFU0VORCBQQVRDSCB2NiAyLzRdIG1lZGlhOiBjaGlwcy1tZWRpYTogd2F2ZTU6IFN1cHBv
-cnQgcnVudGltZQ0KPiBzdXNwZW5kL3Jlc3VtZQ0KPiANCj4gSGkgSmFja3NvbiwNCj4gDQo+IFRo
-YW5rcyBmb3IgdGhlIHBhdGNoLg0KPiBPbiAxNy8wNi8yNCAxNjoxOCwgSmFja3Nvbi5sZWUgd3Jv
-dGU6DQo+ID4gRnJvbTogImphY2tzb24ubGVlIiA8amFja3Nvbi5sZWVAY2hpcHNubWVkaWEuY29t
-Pg0KPiA+DQo+ID4gQWRkIHN1cHBvcnQgZm9yIHJ1bnRpbWUgc3VzcGVuZC9yZXN1bWUgaW4gdGhl
-IGVuY29kZXIgYW5kIGRlY29kZXIuDQo+ID4gVGhpcyBpcyBhY2hpZXZlZCBieSBzYXZpbmcgdGhl
-IFZQVSBzdGF0ZSBhbmQgcG93ZXJpbmcgaXQgb2ZmIHdoaWxlIHRoZSBWUFUNCj4gaWRsZS4NCj4g
-Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IEphY2tzb24ubGVlIDxqYWNrc29uLmxlZUBjaGlwc25tZWRp
-YS5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogTmFzIENodW5nIDxuYXMuY2h1bmdAY2hpcHNubWVk
-aWEuY29tPg0KPiA+IFJldmlld2VkLWJ5OiBOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1ZnJl
-c25lQGNvbGxhYm9yYS5jb20+DQo+IA0KPiBbLi5dDQo+ID4gIHN0YXRpYyBpbnQgd2F2ZTVfdnB1
-X3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpICB7DQo+ID4gIAlpbnQgcmV0Ow0K
-PiA+IEBAIC0yNjgsNiArMzAxLDEyIEBAIHN0YXRpYyBpbnQgd2F2ZTVfdnB1X3Byb2JlKHN0cnVj
-dCBwbGF0Zm9ybV9kZXZpY2UNCj4gKnBkZXYpDQo+ID4gIAkJIChtYXRjaF9kYXRhLT5mbGFncyAm
-IFdBVkU1X0lTX0RFQykgPyAiJ0RFQ09ERSciIDogIiIpOw0KPiA+ICAJZGV2X2luZm8oJnBkZXYt
-PmRldiwgIlByb2R1Y3QgQ29kZTogICAgICAweCV4XG4iLCBkZXYtPnByb2R1Y3RfY29kZSk7DQo+
-ID4gIAlkZXZfaW5mbygmcGRldi0+ZGV2LCAiRmlybXdhcmUgUmV2aXNpb246ICV1XG4iLCBmd19y
-ZXZpc2lvbik7DQo+ID4gKw0KPiA+ICsJcG1fcnVudGltZV9zZXRfYXV0b3N1c3BlbmRfZGVsYXko
-JnBkZXYtPmRldiwgNTAwMCk7DQo+IA0KPiBXaHkgYXJlIHdlIHB1dHRpbmcgNXMgZGVsYXkgZm9y
-IGF1dG9zdXNwZW5kID8gV2l0aG91dCB1c2luZyBhdXRvLXN1c3BlbmQNCj4gZGVsYXkgdG9vLCB3
-ZSBjYW4gZGlyZWN0bHkgZ28gdG8gc3VzcGVuZGVkIHN0YXRlIHdoZW4gbGFzdCBpbnN0YW5jZSBp
-cyBjbG9zZWQNCj4gYW5kIHJlc3VtZSBiYWNrIHdoZW4gZmlyc3QgaW5zdGFuY2UgaXMgb3Blbi4N
-Cj4gDQo+IEkgZG9uJ3QgdGhpbmsgaGF2aW5nIGFuIGF1dG9zdXNwZW5kIGRlbGF5IChlc3BlY2lh
-bGx5IG9mIDVzKSBib2RlcyB3ZWxsIHdpdGgNCj4gbG93IHBvd2VyLWNlbnRyaWMgZGV2aWNlcyBz
-dWNoIGFzIEFNNjJBIHdoZXJlIHdlIHdvdWxkIHByZWZlciB0byBnbyB0bw0KPiBzdXNwZW5kIHN0
-YXRlIGFzIHNvb24gYXMgcG9zc2libGUgd2hlbiB0aGUgbGFzdCBpbnN0YW5jZSBpcyBjbG9zZWQu
-DQo+IA0KPiBBbHNvIGFwb2xvZ2llcyBmb3IgdGhlIGRlbGF5IGluIHJldmlldywgdGhpcyBkaWRu
-J3QgY2F1Z2h0IG15IGV5ZSBlYXJsaWVyIGFzDQo+IGNvbW1pdCBtZXNzYWdlIGRpZCBub3QgbWVu
-dGlvbiBpdCBlaXRoZXIuDQo+IA0KPiBSZWdhcmRzDQo+IERldmFyc2gNCg==
+xtheadvector is a custom extension that is based upon riscv vector
+version 0.7.1 [1]. All of the vector routines have been modified to
+support this alternative vector version based upon whether xtheadvector
+was determined to be supported at boot.
+
+vlenb is not supported on the existing xtheadvector hardware, so a
+devicetree property thead,vlenb is added to provide the vlenb to Linux.
+
+There is a new hwprobe key RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0 that is
+used to request which thead vendor extensions are supported on the
+current platform. This allows future vendors to allocate hwprobe keys
+for their vendor.
+
+Support for xtheadvector is also added to the vector kselftests.
+
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+
+[1] https://github.com/T-head-Semi/thead-extension-spec/blob/95358cb2cca9489361c61d335e03d3134b14133f/xtheadvector.adoc
+
+---
+This series is a continuation of a different series that was fragmented
+into two other series in an attempt to get part of it merged in the 6.10
+merge window. The split-off series did not get merged due to a NAK on
+the series that added the generic riscv,vlenb devicetree entry. This
+series has converted riscv,vlenb to thead,vlenb to remedy this issue.
+
+The original series is titled "riscv: Support vendor extensions and
+xtheadvector" [3].
+
+The series titled "riscv: Extend cpufeature.c to detect vendor
+extensions" is still under development and this series is based on that
+series! [4]
+
+I have tested this with an Allwinner Nezha board. I ran into issues
+booting the board after 6.9-rc1 so I applied these patches to 6.8. There
+are a couple of minor merge conflicts that do arrise when doing that, so
+please let me know if you have been able to boot this board with a 6.9
+kernel. I used SkiffOS [1] to manage building the image, but upgraded
+the U-Boot version to Samuel Holland's more up-to-date version [2] and
+changed out the device tree used by U-Boot with the device trees that
+are present in upstream linux and this series. Thank you Samuel for all
+of the work you did to make this task possible.
+
+[1] https://github.com/skiffos/SkiffOS/tree/master/configs/allwinner/nezha
+[2] https://github.com/smaeul/u-boot/commit/2e89b706f5c956a70c989cd31665f1429e9a0b48
+[3] https://lore.kernel.org/all/20240503-dev-charlie-support_thead_vector_6_9-v6-0-cb7624e65d82@rivosinc.com/
+[4] https://lore.kernel.org/linux-riscv/20240609-support_vendor_extensions-v2-0-9a43f1fdcbb9@rivosinc.com/
+
+---
+Changes in v3:
+- Add back Heiko's signed-off-by (Conor)
+- Mark RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0 as a bitmask
+- Link to v2: https://lore.kernel.org/r/20240610-xtheadvector-v2-0-97a48613ad64@rivosinc.com
+
+Changes in v2:
+- Removed extraneous references to "riscv,vlenb" (Jess)
+- Moved declaration of "thead,vlenb" into cpus.yaml and added
+  restriction that it's only applicable to thead cores (Conor)
+- Check CONFIG_RISCV_ISA_XTHEADVECTOR instead of CONFIG_RISCV_ISA_V for
+  thead,vlenb (Jess)
+- Fix naming of hwprobe variables (Evan)
+- Link to v1: https://lore.kernel.org/r/20240609-xtheadvector-v1-0-3fe591d7f109@rivosinc.com
+
+---
+Charlie Jenkins (12):
+      dt-bindings: riscv: Add xtheadvector ISA extension description
+      dt-bindings: cpus: add a thead vlen register length property
+      riscv: dts: allwinner: Add xtheadvector to the D1/D1s devicetree
+      riscv: Add thead and xtheadvector as a vendor extension
+      riscv: vector: Use vlenb from DT for thead
+      riscv: csr: Add CSR encodings for VCSR_VXRM/VCSR_VXSAT
+      riscv: Add xtheadvector instruction definitions
+      riscv: vector: Support xtheadvector save/restore
+      riscv: hwprobe: Add thead vendor extension probing
+      riscv: hwprobe: Document thead vendor extensions and xtheadvector extension
+      selftests: riscv: Fix vector tests
+      selftests: riscv: Support xtheadvector in vector tests
+
+Heiko Stuebner (1):
+      RISC-V: define the elements of the VCSR vector CSR
+
+ Documentation/arch/riscv/hwprobe.rst               |  10 +
+ Documentation/devicetree/bindings/riscv/cpus.yaml  |  19 ++
+ .../devicetree/bindings/riscv/extensions.yaml      |  10 +
+ arch/riscv/Kconfig.vendor                          |  26 ++
+ arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi      |   3 +-
+ arch/riscv/include/asm/cpufeature.h                |   2 +
+ arch/riscv/include/asm/csr.h                       |  13 +
+ arch/riscv/include/asm/hwprobe.h                   |   5 +-
+ arch/riscv/include/asm/switch_to.h                 |   2 +-
+ arch/riscv/include/asm/vector.h                    | 249 +++++++++++++----
+ arch/riscv/include/asm/vendor_extensions/thead.h   |  42 +++
+ .../include/asm/vendor_extensions/thead_hwprobe.h  |  18 ++
+ .../include/asm/vendor_extensions/vendor_hwprobe.h |  37 +++
+ arch/riscv/include/uapi/asm/hwprobe.h              |   3 +-
+ arch/riscv/include/uapi/asm/vendor/thead.h         |   3 +
+ arch/riscv/kernel/cpufeature.c                     |  51 +++-
+ arch/riscv/kernel/kernel_mode_vector.c             |   8 +-
+ arch/riscv/kernel/process.c                        |   4 +-
+ arch/riscv/kernel/signal.c                         |   6 +-
+ arch/riscv/kernel/sys_hwprobe.c                    |   5 +
+ arch/riscv/kernel/vector.c                         |  25 +-
+ arch/riscv/kernel/vendor_extensions.c              |  10 +
+ arch/riscv/kernel/vendor_extensions/Makefile       |   2 +
+ arch/riscv/kernel/vendor_extensions/thead.c        |  18 ++
+ .../riscv/kernel/vendor_extensions/thead_hwprobe.c |  19 ++
+ tools/testing/selftests/riscv/vector/.gitignore    |   3 +-
+ tools/testing/selftests/riscv/vector/Makefile      |  17 +-
+ .../selftests/riscv/vector/v_exec_initval_nolibc.c |  93 +++++++
+ tools/testing/selftests/riscv/vector/v_helpers.c   |  67 +++++
+ tools/testing/selftests/riscv/vector/v_helpers.h   |   7 +
+ tools/testing/selftests/riscv/vector/v_initval.c   |  22 ++
+ .../selftests/riscv/vector/v_initval_nolibc.c      |  68 -----
+ .../selftests/riscv/vector/vstate_exec_nolibc.c    |  20 +-
+ .../testing/selftests/riscv/vector/vstate_prctl.c  | 295 ++++++++++++---------
+ 34 files changed, 911 insertions(+), 271 deletions(-)
+---
+base-commit: 11cc01d4d2af304b7288251aad7e03315db8dffc
+change-id: 20240530-xtheadvector-833d3d17b423
+-- 
+- Charlie
+
 
