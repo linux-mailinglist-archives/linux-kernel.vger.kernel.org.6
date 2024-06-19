@@ -1,106 +1,85 @@
-Return-Path: <linux-kernel+bounces-220923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE0A90E93C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:22:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E636590E95C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 421041C22AE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:22:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92F211F23CE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29B713D521;
-	Wed, 19 Jun 2024 11:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CE4143720;
+	Wed, 19 Jun 2024 11:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OE0RMUMW"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="c7Q9QLop";
+	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="VO7WaQDi";
+	dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="ZZEmhqtw"
+Received: from e2i411.smtp2go.com (e2i411.smtp2go.com [103.2.141.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6B9135A6D;
-	Wed, 19 Jun 2024 11:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812CC13D265
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718796140; cv=none; b=AVD1eRwH6w9/Mftajmm2bWZnRBskPsBT/kVX73naDP6k1+C+F7JILlXg7qa0abPH6suGIwZuBEoIcoinkbs2D7kSzAyLSyiMO0x66UmzwQVHKW8rQJKWrwSnGfLGay8qdCNz120UgoprXpBJ87064LpaAufav5APVqA61fY8rMU=
+	t=1718796273; cv=none; b=aJtwMhc7o8WbmtwDoiqa7SwuimdMUTb3MbHFCNcyg3mUFmwMD5v2u30Dvu0N9Y3LJuMyUePv85d7leQKxmWUYvYqms/R9h2gp3jgndkLx00t/cSZWf08MPBq82N6zzAwZiLeOyH+/T4QQtSyCMDWdQ6GBtzeQRCmH+bF2blmUBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718796140; c=relaxed/simple;
-	bh=75uxE1jIS7U/gZgImO3O5k1fhrGtDx8xK2bnlmud6ek=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e9hG8Mu+hUCukq50a22nZ4clt1cYa/BHXO9I51GTvI3Ga5K1cl/1dV22XOcIueUPCenTro/qOFo5Rmm4+9kYiVjPUZ/Y1K4BmP0o1ZpOE6bl1Ue6jFqF5kUdGGwM2DniBsGuIZ0DsQtOj2GkG58YiAbaKIMspM47IJ1zedLY7vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OE0RMUMW; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebdfe26217so60994721fa.2;
-        Wed, 19 Jun 2024 04:22:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718796136; x=1719400936; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1We8+J1M8/iGwbEuKq9QLdgleuBIYYNVC3Jie6+7WKQ=;
-        b=OE0RMUMWjmwTtHxwSC4/QTw7VP4UWIGmzyY3G60c8oHmQcSXvGGu4pU0Tj+aAk3yPj
-         /TTAdEwqMfUAFnC8a+YXBOoaNNU2iL3V+G05cF1LQiduL9icX43CyQlHITKJb2cABUJm
-         XArxR7y3DBv2aGz96LS77mX3BV3kyUvH3ykaQ5DsFurdylle+q3Mf4Q7Y9jXRnEfp0H5
-         oUoK5sxPkUDQashXt1x3+NJavosmhcA4V0IqUiYX2g4+lqFUhQqFC1o6uf6rvYyQRA5u
-         Y5X291yrUXOlSP2aish46TVfkHTTWuJsxujUSDNJ2fmAV+2Tqh1wFJDhltWJ3FxDWNU1
-         OScA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718796136; x=1719400936;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1We8+J1M8/iGwbEuKq9QLdgleuBIYYNVC3Jie6+7WKQ=;
-        b=iT+cNrdnGcRfgzPtRn2eV6CNRohnYCP/dS28lW59LfiyTS6oEZ8nj74ajSp+0fN7Pw
-         EMLF7KcVmwDcpEMbWKeFWBOQAglIlDnAI7cW8XkEziOi5bF9yePwk2h5UaRcjsRJVup1
-         nH6HUSnbJ0+HWBzDA6dbKdFCmxiYab4ufS6welvZmEKPtiG96JA7y4SnXGSUTfdmwm2m
-         OcC5V3TMoXdhd9i8F/T8AM58whzxWEpvt41+KzPuCqRuN6H2c4aQUVWE4Cuu/JONj3gb
-         KhYE/B/5HCMUzbaj3UJ+Tq4ZwMGNAbdKmrD3/8g1uRn6vFrKjtq3bOOmOxeY9eYXJlG4
-         gvCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYzhSmLisSheX6vi4V6i7ZLOIh3wGQK+SM3YPSf4aA/fTa/6daYzDhhCc+TiesUBeLqcnymwAeDhKm6GmkA6yfU0whN3kjzDPhKmxCXwz9BzTSJgDVQU1H6QN4CXFVV5uxFkiE9Uip+LEkACdj9G3iBYs8K7IF0OLaezYgP6DRvyM3UdFP2s+LdhK9KawS0R/TAQV9de0uWp7uvPn+fsAxzuCJsGdMjadhm6UBOMJUPAxWWFOkoQibEhnCi6lnLouAg4m2cpZTSU4TILCsctSYqjYh68PK7PsyYepU+HoxiB7DDhYKPmIz2voRyAdbTkktwAYzfITCz5GLiANk+dksq9MmTN9imEIzQ8aoVn7zv3nZkTGvgiYSxeEzswzUY9SyMSfVCRsXPJc4XAt9zMV72HZW7cVa1FPToxn3RPlCqXEVrSqwzVCtlgKwjg==
-X-Gm-Message-State: AOJu0YxeHZ0KQJp3btvZ3dg98HpiQKlSe6dway4K/BCxRoQELEkVl9gy
-	x2QLEgvuw4dEAIX3Z2csXlkXaxYOHSckCCb6kYTP+DWyqnPcPc50
-X-Google-Smtp-Source: AGHT+IHY6I+1wjnfCL5bVO3aTBj0asX2DB6+TLCQy1IxnGK2EyJpAdTHcDYhDhl1lF4pI5isZiqATw==
-X-Received: by 2002:a2e:7818:0:b0:2ec:3bc4:3e36 with SMTP id 38308e7fff4ca-2ec3ceb6a56mr15076241fa.14.1718796136224;
-        Wed, 19 Jun 2024 04:22:16 -0700 (PDT)
-Received: from pc636 (host-90-233-216-238.mobileonline.telia.com. [90.233.216.238])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c78126sm19577951fa.81.2024.06.19.04.22.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 04:22:15 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 19 Jun 2024 13:22:12 +0200
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Uladzislau Rezki <urezki@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	kasan-dev <kasan-dev@googlegroups.com>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <ZnK_ZLlFM6MrdEah@pc636>
-References: <Zmrkkel0Fo4_g75a@zx2c4.com>
- <e926e3c6-05ce-4ba6-9e2e-e5f3b37bcc23@suse.cz>
- <3b6fe525-626c-41fb-8625-3925ca820d8e@paulmck-laptop>
- <6711935d-20b5-41c1-8864-db3fc7d7823d@suse.cz>
- <ZnCDgdg1EH6V7w5d@pc636>
- <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz>
- <ZnFT1Czb8oRb0SE7@pc636>
- <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
- <ZnKqPqlPD3Rl04DZ@pc636>
- <c208e95d-9aa9-476f-9dee-0242a2d6a24f@suse.cz>
+	s=arc-20240116; t=1718796273; c=relaxed/simple;
+	bh=NAutyFxSP4VjKXvLicjq/fyIJbqML+ZifForgpCt1b8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=orFNSrt0LtBd1c2gkb32J+HAJb9/As5gc2U5ZpmX41ztT0VGO9ZmKYM51Ag6Xk37waflwyB6Fhe4tE058ZXtVKP4dwtn8AIvMnxz3J/u8NnkN4ozVZg3nvdYRCeMuZInpZZ7S5wj3gARhG7MFkZSPY32XluVsOoa/0TiT65zRSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=em1174286.fjasle.eu; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=c7Q9QLop reason="unknown key version"; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=VO7WaQDi; dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=ZZEmhqtw; arc=none smtp.client-ip=103.2.141.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174286.fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=mp6320.a1-4.dyn; x=1718797161; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=yP8g0Jw2Gy5q84RTF1sYxILlGkYZB2hJ+cHDUm8IPUE=; b=c7Q9QLop80EMjgS7HDMJ3BrseU
+	ndnWuDvn9Sjr/3jdgjsRNX8PQ/xc9X1RB3giFThAvsDhsCDxQPn8Wq0j373fl8JrYPLltFaE3yxbR
+	Wp1/MfwIha0S+/DFHTohZvOErZK0yq7hacbaWd8bj1JZOVd/YqhzSSqBYLDhk2Ksv8B9bcQLoZL0y
+	xF9z00S2dW/qL97eP7bNWjEDmD917bW20ZI0jFp4I+RKtDNG4w3IrUwIvrk1uw86FbpGYzOLQgadD
+	F8gbI9x7iy5j51jwjfSmomnBJ4eJ734B7zB7f8i6GePdWQQ6ZXHidQXIX6IaQ+infDrI8a5Sb/+LY
+	9mTUStrA==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjasle.eu;
+ i=@fjasle.eu; q=dns/txt; s=s1174286; t=1718796261; h=from : subject :
+ to : message-id : date;
+ bh=yP8g0Jw2Gy5q84RTF1sYxILlGkYZB2hJ+cHDUm8IPUE=;
+ b=VO7WaQDi50K25IxobvfCv/Cam2Zquz/b4d5nrqPsZeGG5U0NDjEuwF8q9edhosVOTBaMU
+ zRkjj/bc0Di2GnHXkE8ss6fU+5gIdGmVr8qF3Lj5/V63vlYTMcyXhN0sww7IEMLCgePjUkm
+ IjkwPSfBF+8tKoVJHbOEyF288QJrGlJQ8EVQEJrlL/QCOlpI8yFtQ79QGPF6svQlvKYQgXe
+ OZZEWbitEe3y8po3MfYzTU+AP12DZ3gqh+IvQ8ICZKHE6LqBeJ0a4NVOXzwNvaLhJUmJ9xk
+ 8btjS82/W2BImqYsSd7yN8Y8iayRXdH2SPk66IBE7GzYrvwn4IE3TYrtajPg==
+Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <nicolas@fjasle.eu>)
+ id 1sJtOa-TRk6ya-D7; Wed, 19 Jun 2024 11:22:33 +0000
+Received: from [10.85.249.164] (helo=leknes.fjasle.eu)
+ by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.97.1-S2G) (envelope-from <nicolas@fjasle.eu>)
+ id 1sJtOb-4o5NDgrtWcB-kWHs; Wed, 19 Jun 2024 11:22:33 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fjasle.eu; s=mail;
+ t=1718796149; bh=NAutyFxSP4VjKXvLicjq/fyIJbqML+ZifForgpCt1b8=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=ZZEmhqtwqS2x5F5aTxHhkZ1xnS+1M6nDigDUWHMrfdZt9gqvWLN9Wi9VdXSBIJkRF
+ Qu5CXSdmsmFde40Tmouy0mogaiiWWdoirTAkdhRE3zesg8nhzWwhiZ/FsTYf95GWQ2
+ Gagqq2ObQW1vnQnDZ5s5AiEu7C3caxSlAbugzq8E=
+Received: by leknes.fjasle.eu (Postfix, from userid 1000)
+ id 995503E76F; Wed, 19 Jun 2024 13:22:28 +0200 (CEST)
+Date: Wed, 19 Jun 2024 13:22:28 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+ Sami Tolvanen <samitolvanen@google.com>,
+ Brian Norris <briannorris@chromium.org>,
+ Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH] Makefile: add comment to discourage tools/* addition for
+ kernel builds
+Message-ID: <ZnK_dHxuj9SNmH8u@fjasle.eu>
+References: <20240619062145.3967720-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,78 +88,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c208e95d-9aa9-476f-9dee-0242a2d6a24f@suse.cz>
+In-Reply-To: <20240619062145.3967720-1-masahiroy@kernel.org>
+X-Smtpcorp-Track: XM4iittdWoiQ.PibnpsphkpdX.k8-UUwSVN-6
+Feedback-ID: 1174286m:1174286a9YXZ7r:1174286sOfuMnkZRi
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
-On Wed, Jun 19, 2024 at 11:56:44AM +0200, Vlastimil Babka wrote:
-> On 6/19/24 11:51 AM, Uladzislau Rezki wrote:
-> > On Tue, Jun 18, 2024 at 09:48:49AM -0700, Paul E. McKenney wrote:
-> >> On Tue, Jun 18, 2024 at 11:31:00AM +0200, Uladzislau Rezki wrote:
-> >> > > On 6/17/24 8:42 PM, Uladzislau Rezki wrote:
-> >> > > >> +
-> >> > > >> +	s = container_of(work, struct kmem_cache, async_destroy_work);
-> >> > > >> +
-> >> > > >> +	// XXX use the real kmem_cache_free_barrier() or similar thing here
-> >> > > > It implies that we need to introduce kfree_rcu_barrier(), a new API, which i
-> >> > > > wanted to avoid initially.
-> >> > > 
-> >> > > I wanted to avoid new API or flags for kfree_rcu() users and this would
-> >> > > be achieved. The barrier is used internally so I don't consider that an
-> >> > > API to avoid. How difficult is the implementation is another question,
-> >> > > depending on how the current batching works. Once (if) we have sheaves
-> >> > > proven to work and move kfree_rcu() fully into SLUB, the barrier might
-> >> > > also look different and hopefully easier. So maybe it's not worth to
-> >> > > invest too much into that barrier and just go for the potentially
-> >> > > longer, but easier to implement?
-> >> > > 
-> >> > Right. I agree here. If the cache is not empty, OK, we just defer the
-> >> > work, even we can use a big 21 seconds delay, after that we just "warn"
-> >> > if it is still not empty and leave it as it is, i.e. emit a warning and
-> >> > we are done.
-> >> > 
-> >> > Destroying the cache is not something that must happen right away. 
-> >> 
-> >> OK, I have to ask...
-> >> 
-> >> Suppose that the cache is created and destroyed by a module and
-> >> init/cleanup time, respectively.  Suppose that this module is rmmod'ed
-> >> then very quickly insmod'ed.
-> >> 
-> >> Do we need to fail the insmod if the kmem_cache has not yet been fully
-> >> cleaned up?  If not, do we have two versions of the same kmem_cache in
-> >> /proc during the overlap time?
-> >> 
-> > No fail :) If same cache is created several times, its s->refcount gets
-> > increased, so, it does not create two entries in the "slabinfo". But i
-> > agree that your point is good! We need to be carefully with removing and
-> > simultaneous creating.
+On Wed, Jun 19, 2024 at 03:21:42PM +0900 Masahiro Yamada wrote:
+> Kbuild provides scripts/Makefile.host to build host programs used for
+> building the kernel. Unfortunately, there are two exceptions that opt
+> out of Kbuild. The build system under tools/ is a cheesy replica, and
+> is always a disaster. I was recently poked about a problem in the tools
+> build issue, which I do not maintain (and nobody maintains). [1]
 > 
-> Note that this merging may be disabled or not happen due to various flags on
-> the cache being incompatible with it. And I want to actually make sure it
-> never happens for caches being already destroyed as that would lead to
-> use-after-free (the workfn doesn't recheck the refcount in case a merge
-> would happen during the grace period)
+> Without a comment, somebody might believe this is the right location
+> because that is where objtool lives, even when a more robust Kbuild
+> syntax satisfies their needs. [2]
 > 
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -150,9 +150,10 @@ int slab_unmergeable(struct kmem_cache *s)
->  #endif
+> [1]: https://lore.kernel.org/linux-kbuild/ZnIYWBgrJ-IJtqK8@google.com/T/#m8ece130dd0e23c6f2395ed89070161948dee8457
+> [2]: https://lore.kernel.org/all/20240618200501.GA1611012@google.com/
 > 
->         /*
-> -        * We may have set a slab to be unmergeable during bootstrap.
-> +        * We may have set a cache to be unmergeable during bootstrap.
-> +        * 0 is for cache being destroyed asynchronously
->          */
-> -       if (s->refcount < 0)
-> +       if (s->refcount <= 0)
->                 return 1;
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 > 
->         return 0;
+>  Makefile | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-OK, i see such flags, SLAB_NO_MERGE. Then i was wrong, it can create two
-different slabs.
+> diff --git a/Makefile b/Makefile
+> index 471f2df86422..ba070596ad4e 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1331,6 +1331,11 @@ prepare: tools/bpf/resolve_btfids
+>  endif
+>  endif
+>  
+> +# README
+> +# The tools build system is not a part of Kbuild. Before adding yet another
+> +# tools/* here, please consider if the standard "hostprogs" syntax satisfies
+> +# your needs.
+> +
 
-Thanks!
+Perhaps add a "See Documentation/kbuild/makefiles.rst for details." ?
 
---
-Uladzislau Rezki
+I do understand the need for clarification.
+
+Acked-by: Nicolas Schier <nicolas@fjasle.eu>
 
