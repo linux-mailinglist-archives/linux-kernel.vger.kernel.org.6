@@ -1,108 +1,150 @@
-Return-Path: <linux-kernel+bounces-221122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC9D90EF30
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:40:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6FD90EF34
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C3E0B22045
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:40:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 646071F221BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5653014EC51;
-	Wed, 19 Jun 2024 13:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129B114E2DA;
+	Wed, 19 Jun 2024 13:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="h3/MJhnb"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="SPEeoP9t";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="X1i2bT+J"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F5514E2FA;
-	Wed, 19 Jun 2024 13:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB36114E2C9;
+	Wed, 19 Jun 2024 13:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718804412; cv=none; b=GPGTcE5eouuBsyOTMVJoYW+vEFAykz1nXaNY+kcm/UokCzT7PTcgTksgAfgFNBH0UfNoJo2qILnEHwQurak01i4saM8HTmnhTv9NNpYATQEku0RmTQvigcPTGkzxvyVG++anbPDlFnRoMp1Rbd5JgAEpIwFZWxSza0zch8BHLMI=
+	t=1718804463; cv=none; b=hJ5ofneEJ1UVfa1ZfeRiKYIoP7Vx68OaWA3b6p6QzNvN9tdiEt6Y8HbBEigFo1s38SCTu4ypr8VNG5udFscICMSF93q3PijS+9hV8BhVRG9KxTo3NbSgEhW22+9Acl1N8RmviIKagMu+vlOfdQnDmX0ZzyxIkEtl6DOBH7BEK4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718804412; c=relaxed/simple;
-	bh=9XTFzNenZVnBtZtYQrfLs2GuQRgQL1Y763n8xKB7jQw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pa3QKMZtIHD1flmpZtapgsJ50PqDyyBj9Ij879UfLlmCXCWQWQ7jesJ9/89G8kM7B93FkuwfQ8rBFzQ0pdCCHtJ9J9PUa7JzLgy/gbLydcuqE37Lo3GCFlkS/9ncQVH0ycZNBZkXW4cphaDmu1gpypY+l77OGiK4QXXCKfSiyL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=h3/MJhnb; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JC1C48003623;
-	Wed, 19 Jun 2024 08:40:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=ciDQ9HxYDaZTNNuigB
-	Uabs2anNyAP+09ApTmCC+FRfI=; b=h3/MJhnbfttg4psdcvGa5E01v1V6qrCRoY
-	JhIUjjpGpbnAsZOG63YaUVcli4g0+lN/6FY50yFDNnkFNZ2h7xX47YJbMrnF8dXf
-	UMbWow4OVNtUIhS5Xs/EF1PObkIT0LE+bSxaASFrxBndgUdEMVOmrdQZjhzD8KjU
-	tFYRrDiLCwLhTWA6+LSqzZ++BMdg48feDGOoF9lP2wE6eat7GMGRYBOxEkq9JN+g
-	XkxxJlkFU9BdLaIRM2/Upm2rG/IBOgNUYQHxAsNKKBab6WEVnIB6YsNuZJ37gavd
-	SnYZWqkSYqwQMmV1Ad4xAoUf2Smof3RzlnetNqEHC6bqP2KuBW1A==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3yujb10qbj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 08:40:07 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
- 2024 14:40:06 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Wed, 19 Jun 2024 14:40:06 +0100
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 0616D820248;
-	Wed, 19 Jun 2024 13:40:06 +0000 (UTC)
-Date: Wed, 19 Jun 2024 14:40:04 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Mark Brown <broonie@kernel.org>
-CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH v2 1/2] spi: cs42l43: Refactor accessing the SDCA
- extension properties
-Message-ID: <ZnLftHS7RLRRQSk/@opensource.cirrus.com>
-References: <20240619121703.3411989-1-ckeepax@opensource.cirrus.com>
- <171880144842.113265.13864100805243474696.b4-ty@kernel.org>
- <ZnLcjO67FH2weX+y@opensource.cirrus.com>
- <d7502ea4-03bd-425a-8566-9ab0a6ea32e1@sirena.org.uk>
+	s=arc-20240116; t=1718804463; c=relaxed/simple;
+	bh=3iT0uVqp/hE43nJf7cv/4HXVDWa9DxO/5qFqB/IBEt4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iRoZ9nV8r4BMpFXf8mVdgfako2iPeOp94hhCDt6xDp1wfzyXq0o6WmEYr5aBDx3bt3v+Ifk5ZUBIKTQZEg56bGwsxz2p2QrT0T2Fau2ksIBM6aS1eUNu76ZitSWpaW0zQ8UbGPQClkot9HotzuMDd9JLNpMiZnZPeFFiCI+QGI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=SPEeoP9t; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=X1i2bT+J reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1718804459; x=1750340459;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=a3p1avtfpkyJrZzVNjSPngeHAvFYfymQmXZ8Pg6h+F0=;
+  b=SPEeoP9tiJQX7U1cCQ0oPv/wKat7eWkEHRhlp6d1HUsvwHSgJwNl2SkM
+   rTqVp3GyE8IJCvE4RxOfb1weNVSD1EzBfUfI5+uMLZiDN84dKCqbgiAO9
+   yjPhiCtaybb8o4/PXjouoTYQDXEq94yxrdFMsTA9wHRZgafj1QVEYdvwu
+   8y+tHADO134XrFSNVnaxe1oLIa4NTxlTpnjzPlUVGCpshqhmDV+Gq+CgD
+   OCSWy8pAF/pfutQJlbj9YylA45lvEw9atRCr1g1Ys+pUp8LkeZJuKkNfV
+   4ITXTxxITALVzg0KMVRZ+1XHuq5LSC/naSlY+J6Uvn3bEZuhaAMNuBe6c
+   A==;
+X-CSE-ConnectionGUID: eXj6ePJ5Q5Gwr9PBa//6xw==
+X-CSE-MsgGUID: XkMx1NbvSlS/3/pjw2rKOQ==
+X-IronPort-AV: E=Sophos;i="6.08,250,1712613600"; 
+   d="scan'208";a="37478359"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 19 Jun 2024 15:40:56 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 12538166A8D;
+	Wed, 19 Jun 2024 15:40:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1718804452;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=a3p1avtfpkyJrZzVNjSPngeHAvFYfymQmXZ8Pg6h+F0=;
+	b=X1i2bT+JRLfusJy9yQPurlsBZxGjUKHbjB2UYkhw0cq1/vgS07+WrR2h7xcsGmK1kUKLN2
+	iH3wnaKSRyxQZxSapx2LA/6TBYm+hOpfcXMBQHnMXup1+3HQHVyOqGvtar7k/hKiWn13uh
+	RlVGqwLVpINzgWYwAaBnpLUEBxy8JizT3Qzis3qWDR40sgtEpRCmBJ+b3zo3VOgvXXLuHz
+	ogX/rvsQDodje8rdxF0AXYS+0B62yQZoQmt46zIoT+U7zYvFtmReWLyqLdDJjlOXz6LqL7
+	9CVKEZrUuRutHFirC9QvF6DtouMyTiCULRdfXWpqjN5AvH0X04GuMh3zUf9BFA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, Markus Niebel <Markus.Niebel@ew.tq-group.com>, Lee Jones <lee@kernel.org>, stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1 resend] MAINTAINERS: Fix 32-bit i.MX platform paths
+Date: Wed, 19 Jun 2024 15:40:54 +0200
+Message-ID: <3326703.44csPzL39Z@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <2024061933-oxidizing-backspin-8c4e@gregkh>
+References: <20240619115610.2045421-1-alexander.stein@ew.tq-group.com> <13561511.uLZWGnKmhe@steina-w> <2024061933-oxidizing-backspin-8c4e@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <d7502ea4-03bd-425a-8566-9ab0a6ea32e1@sirena.org.uk>
-X-Proofpoint-ORIG-GUID: Sq7IpnBa3qpnQ2PCmMwwP9cHqd8vbCjg
-X-Proofpoint-GUID: Sq7IpnBa3qpnQ2PCmMwwP9cHqd8vbCjg
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Jun 19, 2024 at 02:30:33PM +0100, Mark Brown wrote:
-> On Wed, Jun 19, 2024 at 02:26:36PM +0100, Charles Keepax wrote:
-> > On Wed, Jun 19, 2024 at 01:50:48PM +0100, Mark Brown wrote:
-> 
-> > > [1/2] spi: cs42l43: Refactor accessing the SDCA extension properties
-> > >       commit: 6914ee9cd1b0c91bd2fb4dbe204947c3c31259e1
-> > > [2/2] spi: cs42l43: Add speaker id support to the bridge configuration
-> > >       (no commit info)
-> 
-> > Not sure all went smoothly here. This seems to have picked up v1
-> > of the first patch and not picked up the second one.
-> 
-> That's because when I told you that the second patch didn't apply I left
-> the other one in the queue, and what you sent now didn't apply either.
+Am Mittwoch, 19. Juni 2024, 14:37:09 CEST schrieb Greg KH:
+> On Wed, Jun 19, 2024 at 02:23:36PM +0200, Alexander Stein wrote:
+> > Am Mittwoch, 19. Juni 2024, 14:18:35 CEST schrieb Greg KH:
+> > > On Wed, Jun 19, 2024 at 01:56:10PM +0200, Alexander Stein wrote:
+> > > > The original patch was created way before the .dts movement on arch=
+/arm.
+> > > > But it was patch merged after the .dts reorganization. Fix the arch=
+/arm
+> > > > paths accordingly.
+> > > >=20
+> > > > Fixes: 7564efb37346a ("MAINTAINERS: Add entry for TQ-Systems device=
+ trees and drivers")
+> > > > Cc: stable@vger.kernel.org
+> > > > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > > > ---
+> > > >  MAINTAINERS | 6 +++---
+> > > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > > >=20
+> > > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > > index c36d72143b995..762e97653aa3c 100644
+> > > > --- a/MAINTAINERS
+> > > > +++ b/MAINTAINERS
+> > > > @@ -22930,9 +22930,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
+> > > >  L:	linux@ew.tq-group.com
+> > > >  S:	Supported
+> > > >  W:	https://www.tq-group.com/en/products/tq-embedded/
+> > > > -F:	arch/arm/boot/dts/imx*mba*.dts*
+> > > > -F:	arch/arm/boot/dts/imx*tqma*.dts*
+> > > > -F:	arch/arm/boot/dts/mba*.dtsi
+> > > > +F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
+> > > > +F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
+> > > > +F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
+> > > >  F:	arch/arm64/boot/dts/freescale/fsl-*tqml*.dts*
+> > > >  F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
+> > > >  F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
+> > >=20
+> > > Why is a MAINTAINERS change needed for stable kernels?
+> >=20
+> > This fixes the original commit introducing these entries, mainlined in =
+v6.6
+> > Unfortunately that got delayed so much it was merged after commit
+> > 724ba67515320 ("ARM: dts: Move .dts files to vendor sub-directories"), =
+which
+> > was merged in v6.5.
+> > Thus the (32-Bit) arm DT paths are incorrect from the very beginning.
+>=20
+> That's fine, who is using these paths on older kernels anyway?  You
+> should always be doing development on the latest kernel tree, so they
+> shouldn't matter here.
+>=20
+> or am I missing something?
 
-Hmm... what branch are you applying this to? Pulling the patch
-off the list and git am-ing it onto your spi for-next branch
-works fine for me.
+Sure development is on newer trees, but I'm wondering if anyone uses
+scripts on that stable version evaluating this file.
+I don't mind if this is not applied to stable. Want me to send without Fixes
+and CC tag?
 
-I mean I can just resend it but presumably we will hit the same
-issue again.
+Best regards,
+Alexander
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
-Thanks,
-Charles
+
 
