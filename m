@@ -1,173 +1,144 @@
-Return-Path: <linux-kernel+bounces-221707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1253490F77D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2202490F77B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D651C21EF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:25:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 025551C21EFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F03015A863;
-	Wed, 19 Jun 2024 20:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C9F158DCC;
+	Wed, 19 Jun 2024 20:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="L9KhGDI3"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzRggGZn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D161C15921D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 20:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4B9FC0C;
+	Wed, 19 Jun 2024 20:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718828723; cv=none; b=YBebew4cfPyvduL0qPd/ki61DUCNCN1+DKjWVmfv1Vs2pJKLcDHF4pMvCXs9o0sBOwmKlBw0mj68RfDkMw9WnNE72TZ3PfDiE7OC+Js3NUy1sTvKnQNmlyShv/bBRADwO+AQP06SU+wSfHF5Nf0NQWIrfgnA5kNFsEROiJN+Oj8=
+	t=1718828720; cv=none; b=Q7wOBoue4yFMvK2VdUPVnhwkmZNjYssTvrIGSo7+8Yram+LyittCG3+5rE6saDkMS71gun8+lps8b8Nw4oO95iFmR4yGy7+CpdAnl9pdOHCVvyvrgnbxO1aaZNGDsDj3ilR4ToFwLMbrcR5EhGcUGOgGvvlZopjUIuOh5CWueKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718828723; c=relaxed/simple;
-	bh=rG9ENg+9n76Cn4HGc5+anyg5WiKL5Mt6eTESlfVDI8s=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=fAL/1o0FnWWLeGjuflDNQHfViALmKNAiVGc37zBJ6jqcDS6theUCYrvofQrd4NW/s+v+LY3wetViGW++21VFSclbca+MjC/fuQcD0hui7Xhot5jjrDH5IPxevaxDdt9rR9WPgOq8SlUWwJ7nIyNlSQHndtTuUGBO0jeuPPj9Sbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=L9KhGDI3; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-364b2f92388so51097f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:25:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718828720; x=1719433520; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NB9pQz873Cy2BI/A69NB2hPivapi5DfhwFSffll5JTM=;
-        b=L9KhGDI38mqoFcTGrQY5wbFSoZAOSeh8XowF3j72YNdHweUlxwUrdN7QZr0lQKlVmp
-         zPyAVF696AIh8kF/+6Kfv44XoNLhjlDgIUEZ78XnncBcCnvApRf3Rq0mg7/sLtsYTJN1
-         m7die/k0hgyVoOlhUlv1vBGgftRwv+aPg6mjM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718828720; x=1719433520;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NB9pQz873Cy2BI/A69NB2hPivapi5DfhwFSffll5JTM=;
-        b=L4rbTeCwWSfzlHK89F+GFiHQF51oxml08kG02/S/R5wU5kQw7jOnqWhAKSvwLYxVXE
-         w5ZbD9M/oIBSdBlb0FBo4vETND7ZXMJJn0w0Qjm1EmnWIotgoEI1wcRJm1GTM+aKYqKY
-         DYr/5m1TMTsVTDCHwKMzHXLWBE9BNLVGPyf5NYxUzgq0sLXjY5sWiCH+5kU+LA9zNMQv
-         B4KnRiPPaE+AGf1xeHEIacrziadiQhxNELGRBLS7HRrarNxuZ6SkD4nmhsCWK0hYHII2
-         i9l4lBRpgcjHF6RTzsXSWInRvUIsgQlCV3hidsx8VFwQhJsoDVW08QijKO+ZSRHM/V17
-         orNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKGQ9Ti79jF2fa3WfmTX3LNIemdNvDpsDa4TbHqSGVAj/8R9WxElwk9RPXVElGkGuGv71zDzhgvJ92zcimZtF86D/tLr98wipldSpF
-X-Gm-Message-State: AOJu0Yw0WNdBDrA75j+KWo+e55abx6VGujgFRJoSMuAFhH8IyaaRKxEn
-	yBrWgYBJ41hlcBnQZroq6GhXeWZgRUnNaqs9lUFT/1PblL4LApQW5Ke09ImjZNw9ioGrOvYLPor
-	Te8CB5Q==
-X-Google-Smtp-Source: AGHT+IEtctB5USxaXj4+r6HPBqKw1u1gAeAB26OynmmeVl8Ie7IxIhh9hRmSoN4n9u3FVCyWN4WeXg==
-X-Received: by 2002:a5d:63c7:0:b0:360:8f85:a5f1 with SMTP id ffacd0b85a97d-363170ecc19mr2740230f8f.5.1718828719843;
-        Wed, 19 Jun 2024 13:25:19 -0700 (PDT)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f4182fsm704117966b.178.2024.06.19.13.25.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 13:25:19 -0700 (PDT)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6f176c5c10so15465666b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 13:25:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW2h8sxws+M2ovPcBeKFm2B2CmPqUf3p1NKbR3NXz+bk/WYIbVsahio9BluICeOX+vG8uNTI0LNRl0XbohEH+vsXzxNszzPcJXH6m9O
-X-Received: by 2002:a17:906:d98:b0:a68:86b9:52e8 with SMTP id
- a640c23a62f3a-a6fab7d0449mr192966866b.68.1718828718630; Wed, 19 Jun 2024
- 13:25:18 -0700 (PDT)
+	s=arc-20240116; t=1718828720; c=relaxed/simple;
+	bh=0z/x4MbHkEbrGTPcfTeUJ/C6WA/I36PZC2kojq3ru0U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y29nkmjcpiDGZw26zAUaBQS1rDmAZ8wwXektfdBm510BRdhpE+awLHHrXsdM8YVsvO7wFiTmDVbAZ26kVnzQWYjR5Lw8+tdmI1nNS99yZ7MX53Kwb5htXjStaazD1CXuivS7JqYtRWKTZdryORfUV6kD5zhwevfolWYY3XBUUDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzRggGZn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5349C2BBFC;
+	Wed, 19 Jun 2024 20:25:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718828719;
+	bh=0z/x4MbHkEbrGTPcfTeUJ/C6WA/I36PZC2kojq3ru0U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UzRggGZnu1PG7nb9uFUxMW+IohcWrxAskgFAQgF0qAV/CF25ETWzCD4SaHDI8SLdl
+	 7SYbcnt+NM+8e28uSW35DH7+YYCvxIIKL5tFKW85kBwk/XbbmU41v876fKphrq7biw
+	 fqxSjDjsr8XO6GkTlrAf+C8wU0kO9GZFtkNY5pPnN65Qn3YCA0knMdlgCZtOAkaQ8s
+	 T2NTNvWlBPiBufibsmAQZr67CbUg2KUjU9+lg+6Ly93QiH2U+yOdP7wYbrKMc82gnf
+	 CBmKSkakkvgXKtiBd/xjZIhcaV2OfHX976lrKSeq3RQBhI37hnti5XvJH4pqygRq4H
+	 G2mbjjt4DmJ3A==
+From: Kees Cook <kees@kernel.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Kees Cook <kees@kernel.org>,
+	kernel test robot <lkp@intel.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	linux-hardening@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] kunit/usercopy: Disable testing on !CONFIG_MMU
+Date: Wed, 19 Jun 2024 13:25:17 -0700
+Message-Id: <20240619202511.it.861-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 19 Jun 2024 13:25:02 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whHvMbfL2ov1MRbT9QfebO2d6-xXi1ynznCCi-k_m6Q0w@mail.gmail.com>
-Message-ID: <CAHk-=whHvMbfL2ov1MRbT9QfebO2d6-xXi1ynznCCi-k_m6Q0w@mail.gmail.com>
-Subject: FYI: path walking optimizations pending for 6.11
-To: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	"the arch/x86 maintainers" <x86@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2264; i=kees@kernel.org; h=from:subject:message-id; bh=0z/x4MbHkEbrGTPcfTeUJ/C6WA/I36PZC2kojq3ru0U=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmcz6ty3U7pJ3+ihHl7H2BhHZj95uen4wpNRK9Z 3dLLGlY+JCJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZnM+rQAKCRCJcvTf3G3A JiDxEACuAwOoGKwQIEtgmI414mZiL7poZ8RdTRgD6cSwvOyPra7Yf/2KwJkUMiXrLd5ckYIMn5Y 7P1qVJF94xz7dMHVXVuNf7CgeHBtXLvP5YWCmAVHpwKBOX1YDVelLG60ylnwvg7NTEPZ/BMrx1a aFNiaNw6dqwzm0l6efBQF8kQg1fQ9kBjYQ1FJ7O98Iu1ZdX/dn7OT/5KIXndF5mxt7RWvIZ6aVP 6Q1ZGMP1D5gqz7MKRq9ob28HdzJik3g+ehFuQ0WTUXbxzrCRDPDrDiaHnIAqVaUUTcDcm4A1QIg 5hKHvUjHucwHCf8fFK20K06pXLTQ3X1dD3c/GwG3N9aVLj6jmUg7WBo1uO/SYCoDU7RNQyp2UcE yD/Nt9MhV5gKegAzPvjCx0nAvvt7Ur2EuRS0sqojHX0qjlwljwus0jqnn/42UF+ssnSPrDjw8ZX GIZnncTWtPDf64LT+YsEDWFEoI3nAgoafnNljgiCNs3N86eQaQWB0u8EMuoSID6+vvlNBPVgjOA x9Iz3e8qO9aiPm0CgZ77bng7NBx9s++fGrvZ2uZ6olo6QzZz7zXZpdkcMcSgkBQ2gEPGhuksHOA hXWQbi/q6n1u3/ngYkDyOX+Dw8t1KVGLqKn7zEqgrrnYFiWoH2hKTiK7m8urENljyRPiHbdY0Hw q9rSpWPX7HEbz
+ eA==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-I already mentioned these to Al, so he has seen most of them, because
-I wanted to make sure he was ok with the link_path_walk updates. But
-since he was ok (with a few comments), I cleaned things up and
-separated things into branches, and here's a heads-up for a wider
-audience in case anybody cares.
+Since arch_pick_mmap_layout() is an inline for non-MMU systems, disable
+this test there.
 
-This all started from me doing profiling on arm64, and just being
-annoyed by the code generation and some - admittedly mostly pretty
-darn minor - performance issues.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406160505.uBge6TMY-lkp@intel.com/
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Resending as v2 with Shuah in To:
+---
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>
+Cc: David Gow <davidgow@google.com>
+Cc: Rae Moar <rmoar@google.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kselftest@vger.kernel.org
+Cc: kunit-dev@googlegroups.com
+Cc: linux-hardening@vger.kernel.org
+Cc: linux-mm@kvack.org
+---
+ lib/kunit/user_alloc.c | 4 ++++
+ lib/usercopy_kunit.c   | 5 +++++
+ mm/util.c              | 2 ++
+ 3 files changed, 11 insertions(+)
 
-It started with the arm64 user access code, moved on to
-__d_lookup_rcu(), and then extended into link_path_walk(), which
-together end up being the most noticeable parts of path lookup.
+diff --git a/lib/kunit/user_alloc.c b/lib/kunit/user_alloc.c
+index 76d3d1345ed7..ae935df09a5e 100644
+--- a/lib/kunit/user_alloc.c
++++ b/lib/kunit/user_alloc.c
+@@ -30,6 +30,10 @@ static int kunit_attach_mm(void)
+ 	if (current->mm)
+ 		return 0;
+ 
++	/* arch_pick_mmap_layout() is only sane with MMU systems. */
++	if (!IS_ENABLED(CONFIG_MMU))
++		return -EINVAL;
++
+ 	mm = mm_alloc();
+ 	if (!mm)
+ 		return -ENOMEM;
+diff --git a/lib/usercopy_kunit.c b/lib/usercopy_kunit.c
+index 45f1e558c464..e819561a540d 100644
+--- a/lib/usercopy_kunit.c
++++ b/lib/usercopy_kunit.c
+@@ -290,6 +290,11 @@ static int usercopy_test_init(struct kunit *test)
+ 	struct usercopy_test_priv *priv;
+ 	unsigned long user_addr;
+ 
++	if (!IS_ENABLED(CONFIG_MMU)) {
++		kunit_skip(test, "Userspace allocation testing not available on non-MMU systems");
++		return 0;
++	}
++
+ 	priv = kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv);
+ 	test->priv = priv;
+diff --git a/mm/util.c b/mm/util.c
+index df37c47d9374..e70e8e439258 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -484,7 +484,9 @@ void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
+ 	clear_bit(MMF_TOPDOWN, &mm->flags);
+ }
+ #endif
++#ifdef CONFIG_MMU
+ EXPORT_SYMBOL_IF_KUNIT(arch_pick_mmap_layout);
++#endif
+ 
+ /**
+  * __account_locked_vm - account locked pages to an mm's locked_vm
+-- 
+2.34.1
 
-The user access code is mostly for strncpy_from_user() - which is the
-main way the vfs layer gets the pathnames. vfs people probably don't
-really care - arm people cc'd, although they've seen most of this in
-earlier iterations (the minor word-at-a-time tweak is new). Same goes
-for x86 people for the minor changes on that side.
-
-I've pushed out four branches based on 6.10-rc4, because I think it's
-pretty ready. But I'll rebase them if people have commentary that
-needs addressing, so don't treat them as some kind of stable base yet.
-My plan is to merge them during the next merge window unless somebody
-screams.
-
-The branches are:
-
-arm64-uaccess:
-    arm64: access_ok() optimization
-    arm64: start using 'asm goto' for put_user()
-    arm64: start using 'asm goto' for get_user() when available
-
-link_path_walk:
-    vfs: link_path_walk: move more of the name hashing into hash_name()
-    vfs: link_path_walk: improve may_lookup() code generation
-    vfs: link_path_walk: do '.' and '..' detection while hashing
-    vfs: link_path_walk: clarify and improve name hashing interface
-    vfs: link_path_walk: simplify name hash flow
-
-runtime-constants:
-    arm64: add 'runtime constant' support
-    runtime constants: add x86 architecture support
-    runtime constants: add default dummy infrastructure
-    vfs: dcache: move hashlen_hash() from callers into d_hash()
-
-word-at-a-time:
-    arm64: word-at-a-time: improve byte count calculations for LE
-    x86-64: word-at-a-time: improve byte count calculations
-
-The arm64-uaccess branch is just what it says, and makes a big
-difference in strncpy_from_user(). The "access_ok()" change is
-certainly debatable, but I think needs to be done for sanity. I think
-it's one of those "let's do it, and if it causes problems we'll have
-to fix things up" things.
-
-The link_path_walk branch is the one that changes the vfs layer the
-most, but it's really mostly just a series of "fix calling conventions
-of 'hash_name()' to be better".
-
-The runtime-constants thing most people have already seen, it just
-makes d_hash() avoid all indirect memory accesses.
-
-And word-at-a-time just fixes code generation for both arm64 and
-x86-64 to use better sequences.
-
-None of this should be a huge deal, but together they make the
-profiles for __d_lookup_rcu(), link_path_walk() and
-strncpy_from_user() look pretty much optimal.
-
-And by "optimal" I mean "within the confines of what they do".
-
-For example, making d_hash() avoid indirection just means that now
-pretty much _all_ the cost of __d_lookup_rcu() is in the cache misses
-on the hash table itself. Which was always the bulk of it. And on my
-arm64 machine, it turns out that the best optimization for the load I
-tested would be to make that hash table smaller to actually be a bit
-denser in the cache, But that's such a load-dependent optimization
-that I'm not doing this.
-
-Tuning the hash table size or data structure cacheline layouts might
-be worthwhile - and likely a bigger deal - but is _not_ what these
-patches are about.
-
-           Linus
 
