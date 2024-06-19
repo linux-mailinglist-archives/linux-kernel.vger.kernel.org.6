@@ -1,84 +1,137 @@
-Return-Path: <linux-kernel+bounces-221787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F01790F88C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:34:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C44F490F88F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038011F229FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:34:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64E832852D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF0315AD9C;
-	Wed, 19 Jun 2024 21:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2089315ADAF;
+	Wed, 19 Jun 2024 21:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3u38TBi5"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DI9iAekS"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016CE7E58C;
-	Wed, 19 Jun 2024 21:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBC455884;
+	Wed, 19 Jun 2024 21:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718832837; cv=none; b=gGLV1uAz5DcOZp0pLB/quD1Oseq1e8PvAqIedORWFyaWT25Au8dNSkUzi0aIlCqQnhHE3IEwWzCDyNQiWqZ/fiIhCjNwY392eC6UW98akMIluTnkc+vk703P+tDdLmipfj30kkrK74hl24jt5UG4nka/WkIWePT+VOYAVYAqGNM=
+	t=1718832848; cv=none; b=STXWrAMo9M2gG1/WgO+1PfwD4KKtHjb4kde+LBfFwzJyc8NccfhKwp+bdeWGsfpqBgoneddA7yjyVDasN7L10FvcFs4OC2K3aYaMRKOMq7H+2DY4Im9s42e4VcrusEs1ZxvcKMes/IlvFE3LnZL9I9iD/NV/6EbYpp7GWmoz+N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718832837; c=relaxed/simple;
-	bh=ZFETDwDmv6LvvLfjCkKzNorKWaz/5zHLwn3nwmYMaGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GR7JOGIga0y+4fQ9LVlBAkxvwv0pdjoEaqYHH7afCtuaZ/imkKg4wddOGVFqNNn3d6JM9Ex3+/5J35k/YIBJwa2Z4Bj1HGoM0QDgTdLE/dJNTWkzDfikFW7AIW4ZxjoNsn1UjlT4zH3yzl+R78F+p7/LAxNzXeyMbmNbcao8o/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3u38TBi5; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-	bh=yKwLG1tKrqHjcwlau90E4nwOFiF9kAg1uiumFhC1VnM=; b=3u38TBi5+aHvgvG4RRhluQAFXl
-	ZUGNoAxgIvVFISze1OFQf3HPtG8ga9tiCZfBwoQ+vrd5FD9lFq+QL+hwGKFCM7Tq5F+eH4vNpNRJV
-	N10EKvdRqeFKmHoDp6U8o0yCuIQeRMlkH9r61Hjtco26xfTu/aD0l4FbSDlzjB6WORh6sz/BNZTeO
-	Xdt6RJidibpnU+2DvPmFuErK3BWh47NqAXCnJ0BjK8zhEVGJJwshjlw24I74RBuhONub2rszdW5nK
-	oM8QVovIH3xpptnwS6644JsEVIf4e1j3huI25liizyTkMzEuMgAZfyNY6FAMtzWMzAFAvFq7wVOjJ
-	VEs1t5aQ==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sK2wF-00000002mnp-29IT;
-	Wed, 19 Jun 2024 21:33:55 +0000
-Message-ID: <b6dd319f-4de7-42e8-a06e-a54633590b29@infradead.org>
-Date: Wed, 19 Jun 2024 14:33:53 -0700
+	s=arc-20240116; t=1718832848; c=relaxed/simple;
+	bh=QpgxUO+NC9kg5vQa3E+qKEIvQmHTdiyzV696YvEtACY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OOWCg5l2Avfs1Dh1ew6W1sO36V9vwVpLuXlgIvBUTfw6fX9GCFXhy7OoZOxp0QPBPfs4bfH32ZRZ3KiqGfdTsI8vk9fKQuGmfsq8UoCOJaYoTO4cHKuFm7HmQmBdh61g9N9zWj0vby3vKN+UhxVhGqeWswFr4MLYH9PuSFw75Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DI9iAekS; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718832843;
+	bh=QpgxUO+NC9kg5vQa3E+qKEIvQmHTdiyzV696YvEtACY=;
+	h=From:Date:Subject:To:Cc:From;
+	b=DI9iAekSyUuT8+cYn3x7HFcCzMJsQ3WsgUwIqKK8yAEFbbFDvgUEEeESGrKIEbgaH
+	 cyo/+kj7D2mf2PltwQhN1NE/cJe3buTgdupOdyM9Gn0eEsbyZCizJAq9fOGudVCE1H
+	 hmm8IeutpXvs6CFh57DaZUlDZ9DOihDtS3i1v0vQBsbSjyAYesU6rck1iHgXA3f3eI
+	 doq6Omx4TIuJDKqKdP90OVZ4N+Wz/70aTXlcgJoa3KcQzdoVpAs3omcde9luHLy4xc
+	 RtZCEz4rWX0X/Ocj5n63+Ea69mW79rZRPmfpqwV/csePU7DZz+ZgXOz6bfN5zq6YF5
+	 AREQIIy67GqOA==
+Received: from [192.168.1.167] (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 30C603782198;
+	Wed, 19 Jun 2024 21:34:00 +0000 (UTC)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Wed, 19 Jun 2024 17:33:58 -0400
+Subject: [PATCH] kselftest: dt: Ignore nodes that have ancestors disabled
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] English fixes in vmalloced kernel stacks documentation
-To: Nir Lichtman <nir@lichtman.org>, corbet@lwn.net,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240619210707.GA3570474@lichtman.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240619210707.GA3570474@lichtman.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240619-dt-kselftest-parent-disabled-v1-1-b8f7a8778906@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAMZOc2YC/x3MQQqDQAwF0KtI1g1oKtb2KsXF1HxrqExlMkhBv
+ HsHl2/zdnIkg9Oj2ilhM7dvLGguFY1ziG+waTFJLW3dNXfWzB/HMmV45jUkxMxqHl4LlEV6CTe
+ Rq0pHpVgTJvud/XM4jj9xwYItbgAAAA==
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: kernel@collabora.com, Shuah Khan <skhan@linuxfoundation.org>, 
+ devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.13.0
 
-Hi,
+Filter out nodes that have one of its ancestors disabled as they aren't
+expected to probe.
 
-On 6/19/24 2:07 PM, Nir Lichtman wrote:
-> @@ -104,7 +104,7 @@ with PAGE_KERNEL protections.
->  
->  Thread stack allocation is initiated from clone(), fork(), vfork(),
->  kernel_thread() via kernel_clone(). Leaving a few hints for searching
-> -the code base to understand when and how thread stack is allocated.
-> +the code base to understand when and how a thread stack is allocated.
+This removes the following false-positive failures on the
+sc7180-trogdor-lazor-limozeen-nots-r5 platform:
 
-That last part is still not a sentence AFAICT. How about something like:
+/soc@0/geniqup@8c0000/i2c@894000/proximity@28
+/soc@0/geniqup@ac0000/spi@a90000/ec@0
+/soc@0/remoteproc@62400000/glink-edge/apr
+/soc@0/remoteproc@62400000/glink-edge/apr/service@3
+/soc@0/remoteproc@62400000/glink-edge/apr/service@4
+/soc@0/remoteproc@62400000/glink-edge/apr/service@4/clock-controller
+/soc@0/remoteproc@62400000/glink-edge/apr/service@4/dais
+/soc@0/remoteproc@62400000/glink-edge/apr/service@7
+/soc@0/remoteproc@62400000/glink-edge/apr/service@7/dais
+/soc@0/remoteproc@62400000/glink-edge/apr/service@8
+/soc@0/remoteproc@62400000/glink-edge/apr/service@8/routing
+/soc@0/remoteproc@62400000/glink-edge/fastrpc
+/soc@0/remoteproc@62400000/glink-edge/fastrpc/compute-cb@3
+/soc@0/remoteproc@62400000/glink-edge/fastrpc/compute-cb@4
+/soc@0/remoteproc@62400000/glink-edge/fastrpc/compute-cb@5
+/soc@0/spmi@c440000/pmic@0/pon@800/pwrkey
 
->  Thread stack allocation is initiated from clone(), fork(), vfork(),
->  kernel_thread() via kernel_clone(). These are a few hints for searching
->  the code base to understand when and how a thread stack is allocated.
+Fixes: 14571ab1ad21 ("kselftest: Add new test for detecting unprobed Devicetree devices")
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+ tools/testing/selftests/dt/test_unprobed_devices.sh | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
+diff --git a/tools/testing/selftests/dt/test_unprobed_devices.sh b/tools/testing/selftests/dt/test_unprobed_devices.sh
+index 2d7e70c5ad2d..5e3f42ef249e 100755
+--- a/tools/testing/selftests/dt/test_unprobed_devices.sh
++++ b/tools/testing/selftests/dt/test_unprobed_devices.sh
+@@ -34,8 +34,21 @@ nodes_compatible=$(
+ 		# Check if node is available
+ 		if [[ -e "${node}"/status ]]; then
+ 			status=$(tr -d '\000' < "${node}"/status)
+-			[[ "${status}" != "okay" && "${status}" != "ok" ]] && continue
++			if [[ "${status}" != "okay" && "${status}" != "ok" ]]; then
++				if [ -n "${disabled_nodes_regex}" ]; then
++					disabled_nodes_regex="${disabled_nodes_regex}|${node}"
++				else
++					disabled_nodes_regex="${node}"
++				fi
++				continue
++			fi
+ 		fi
++
++		# Ignore this node if one of its ancestors was disabled
++		if [ -n "${disabled_nodes_regex}" ]; then
++			echo "${node}" | grep -q -E "${disabled_nodes_regex}" && continue
++		fi
++
+ 		echo "${node}" | sed -e 's|\/proc\/device-tree||'
+ 	done | sort
+ 	)
+
+---
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+change-id: 20240619-dt-kselftest-parent-disabled-2282a7223d26
+
+Best regards,
 -- 
-~Randy
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
 
