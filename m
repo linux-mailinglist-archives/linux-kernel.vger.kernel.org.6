@@ -1,126 +1,136 @@
-Return-Path: <linux-kernel+bounces-221335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B0B90F214
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:26:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27BF990F21A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 412BDB23567
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B4E284160
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFC114EC56;
-	Wed, 19 Jun 2024 15:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D52114D702;
+	Wed, 19 Jun 2024 15:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IF3cdEsa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="XPW+p68K"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8BB13C676;
-	Wed, 19 Jun 2024 15:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC59513D525
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718810750; cv=none; b=kIZWjEH4RnRKytex8e8lJeS7UTC5qwdVuSw6p6ccw7zhO5DLbJNe+ivAAMlovyH9px6cgi0+waXDutfAEZkEfyq4bFE6xbQ7WmC3VzZOQLzBem77RTybXHPqB/BQKAqeQxSbveuGiz/AD3xW4v0BiHfniltQQDLav3EaKrFWRiI=
+	t=1718810861; cv=none; b=VR8RqrNx5kAHQe7p3ljoGc0CzOspw+lr6WcFtApr8fKGg8KT/9Lhy+3EjdHRM2mL34iTVGtZQYO4x8PlJtdTzfmjAXacoatwO5yS5TokNomS1R2+1uG9AfZ+KuDCtx1yD6iVfuw2OBLX+uGBwtmOqSdG4g5c9ien6oQwNGyifcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718810750; c=relaxed/simple;
-	bh=KnBRaCMJ7PQVhc64M/Jh+r8IKDFW7kujI10v4h+YJE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=s3KhIttw2ZPqVXGlbq1qhBgXepbGrlL6ByY7hyaIsr9mbDDGrp6ZqXsOGk/+Pn9NBon4JId/deQq3iVSdcFcVJaHBhk8mD8LmQTUjK/XzWsEEmdC08jUA/KLIKa5GCWK2Wu7hNCVze4YprDuCbideNFVfXFLS086F4N/X+Ky0Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IF3cdEsa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12F48C2BBFC;
-	Wed, 19 Jun 2024 15:25:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718810749;
-	bh=KnBRaCMJ7PQVhc64M/Jh+r8IKDFW7kujI10v4h+YJE0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=IF3cdEsaPJyVckqTU7FvwLKUmH9Oy6E+F7u9RoidXU2Fd2ngob66NNj6XvUIWGbtl
-	 isqDkGLUliEJyIqWZpXqgJNtKfcqx16zSO+ZWJuHypDxnQvL+acjRrOGrMMBNEgU7R
-	 DS4MYTohxoiEG03YOzhRyDDsPphFIsDGbCvEk+HJm1Dd8aOC83jNca9yCv6vfRFxBz
-	 RDphvPxp/CsIfT4WXLyLwN11pR7ZxCYBwO/ja9QX08qqncjWjSSnsrA41wFw4U56EA
-	 tlzZBoenISb2HGS8Ak6caTcFwBC4PCqsidBdoTe3g6b7rKPtD4UvtZbtYcvNnrtPNb
-	 Gpp4Slno3TpSw==
-Date: Wed, 19 Jun 2024 16:25:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jun 19
-Message-ID: <ZnL4evFtHPLHl4f7@sirena.org.uk>
+	s=arc-20240116; t=1718810861; c=relaxed/simple;
+	bh=dlVW0Zt+yD0AYF7FVIAwlp8E7GCLYrxCPZlP2ToeyWw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TZYUXEW8qR5AW8/0T/I2mWbJvzea/7RkPsZKeO4/aTYUyq8E5lgW67cbHyf48s9ebyZ8ObVA3HxFP0FG2wavJ+hloyVDFc1L25n8uFwAP+wnSxyrcjEhfDdTTe3NmIxz7T7nWzwPT1INbvh+N3uoOnizxkoCThNlFPucw+Fz9+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=XPW+p68K; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6010a.ext.cloudfilter.net ([10.0.30.248])
+	by cmsmtp with ESMTPS
+	id Jw4rsbG9gJXoqJxDhs9eKy; Wed, 19 Jun 2024 15:27:33 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id JxDgswmJEy2LPJxDgspnoj; Wed, 19 Jun 2024 15:27:32 +0000
+X-Authority-Analysis: v=2.4 cv=CZoO5qrl c=1 sm=1 tr=0 ts=6672f8e4
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=wYkD_t78qR0A:10 a=pGLkceISAAAA:8
+ a=VwQbUJbxAAAA:8 a=UpB2q-s9SAH0Zd9J5qsA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=FvJxBu1YSpxd+/VCWen78+JSc56VIImOsnuc2H9+pC4=; b=XPW+p68KqNViATw/50CcjHJeqs
+	iR2t1LTnsYC15yhdO/6Fs2o5FFz1iYsshhRXKp91gEHnzuzG49JRq9oNz+qAMy/B7EKh7SCV6vLs9
+	v4owBH/rD+Hzilp6/lvwFZRmj+W/3PAsVpnebS2jBhbLhaWUOqmBg+YmEWJfS1qtMAs8S53K9IfKt
+	OkoOkXnB5UtyR6dn5J8w2FvyDKyvJ+bmyJmC1L/cRYa29FUs1/bANOzGAeADkgz0DQmv2jJQfi0nl
+	I1vueRgsGmax2jLhEBxyo8Q+0vlZed2Yu9pVplQsaE14TU7B6CUV+uhum1KYQDECKwwH+u5zh5dZp
+	iDT0/O/w==;
+Received: from [201.172.173.139] (port=49740 helo=[192.168.15.14])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sJxDe-000rOz-1I;
+	Wed, 19 Jun 2024 10:27:30 -0500
+Message-ID: <5832065e-d998-4dc7-9df9-9186d3d26d9b@embeddedor.com>
+Date: Wed, 19 Jun 2024 09:27:28 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oG8QnXiMS9PHkCIO"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] USB: serial: garmin_gps: annotate struct garmin_packet
+ with __counted_by
+To: Nathan Chancellor <nathan@kernel.org>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Johan Hovold <johan@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kees Cook
+ <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+References: <20240619-garmin_gps_counted_by-v1-1-d8d816f085d9@gmail.com>
+ <20240619144320.GA2091442@thelio-3990X>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20240619144320.GA2091442@thelio-3990X>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sJxDe-000rOz-1I
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.14]) [201.172.173.139]:49740
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfLGhq3DtVAfqAUfCWy3v7/hGNt20Vj8W1ukHg74ftmp7gPtBLxy1gS5cH2CS19KU/QsiYvE+cdX9nXqobrvZ4I6H8Y/rIU5KyTc/E8SnqPoYDmhUVDHY
+ MqoF67mV9SfDwrJexSVQP8DM1bWrq2rhpiOk60l6brWDlMSI+t07ckuZhoJkNBe8HDvqG4ZUJhuZcUiV2nzLrQg3mYL8L3nbAD9Gc7L3fndZsRR/hnFhwldv
 
 
---oG8QnXiMS9PHkCIO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi all,
+On 19/06/24 16:43, Nathan Chancellor wrote:
+> On Wed, Jun 19, 2024 at 11:40:57AM +0200, Javier Carrasco wrote:
+>> Use the __counted_by compiler attribute for the data[] flexible array member
+>> to improve the results of array bound sanitizers.
+>>
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> ---
+>> The size is assigned before the first reference to the flexible array
+>> (see pkt_add()), which allows for a straightforward annotation without
+>> further modifications.
+> 
+> Agreed, this seems like a reasonable patch in and of itself that should
+> work:
+> 
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> 
+> It might also make sense to change the pkt allocation to use
+> struct_size() instead of open coding it?
 
-Changes since 20240618:
++1 :)
 
-The mm-everything tree gained a build failure for which I applied a
-workaround.
-
-The paulmck tree gained a build failure, I used the tree from 20240618.
-
-The kvm tree gained a conflict with the tip tree.
-
-Non-merge commits (relative to Linus' tree): 6348
- 6756 files changed, 585477 insertions(+), 116016 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm
-and a native build of tools/perf.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 377 trees (counting Linus' and 106 trees of bug
-fix patches pending for the current merge release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
---oG8QnXiMS9PHkCIO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZy+HkACgkQJNaLcl1U
-h9DesAf/YQHfqjZenYhdyj/TB8tkT0r/iD9gt+CqGtc3N2Wr5FRTMsLxUbTttubX
-Tt4hnDxDMpS8neLMO+TuwawLPMOHttJA7BTuu1s1e47h2KxF+lsak2vrm8ZdNvGO
-wN/X8WoJZ5gH8g1uXn2m3hQSlk3wLmUdUvPoiz8CU3Ku62WZ9u6V8dHlJTnNk13Q
-JwwCGT21iGi2uEU9bQ5xE7WLpwWKAseMx2itBGPRW9/C3nyFMcx2yyHPsZPpoLj2
-VFtO8Up7VC4BIdBTKE/n9DRR3yv5/iSuRXUR/1IpQgQQNE6MyPfH+np9YNs1JxvC
-qrSGx8xR2l6rC6ox2oVTmMrXi1lSeQ==
-=NFiZ
------END PGP SIGNATURE-----
-
---oG8QnXiMS9PHkCIO--
+Thanks
+--
+Gustavo
 
