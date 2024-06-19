@@ -1,183 +1,117 @@
-Return-Path: <linux-kernel+bounces-220487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F00C90E25E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:39:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87D490E26A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 06:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DD971F228E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 04:39:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE1FD1C20E9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 04:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07DE41746;
-	Wed, 19 Jun 2024 04:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203F752F6A;
+	Wed, 19 Jun 2024 04:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qgupp7Nj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B880fJrT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C32179AE;
-	Wed, 19 Jun 2024 04:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F895208A0;
+	Wed, 19 Jun 2024 04:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718771958; cv=none; b=VkGh1npDt83cx/2QIROe3lsYs31iWVyczAxHFjM/y4GsqlyE3MJfPbfE7+7c+LAGnLwcWcBqz4ENe1CifidL0qotxfXStYwlk5BOaCHqDRvtD50ivENGN9sIPj1dep4PMbJaB3fTNYAZAonwVwWJB53yyq6ARPLjMYF8pjTl6dY=
+	t=1718772269; cv=none; b=pk2dZYabQ7Eb7ONwyqdxnvNnmqp5WQeFH4avFiIYRiihWMPMHSWD1GPe8Ks5JlclkkgHpfHUw+KEtbH5Df2LrkZI5wtbbPWWOcWagDLYdwHHFn7qinE5IFi8D1Z+RJp1xu7BBV5kxhW5eCQA7W8/yGdG1gDvWyOdP9UQQARmaO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718771958; c=relaxed/simple;
-	bh=b6m98e4sk/WXMF9G7Y9dAqU8aFp5yb0EEKE+Qaz8hIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R0v/sTTpsV01YdAj/pCLQ1BgGXaiG/Ii3uP3rLqJZepvUfid80+x20RftRJRRC+NOgheIL+jv9egZF9cmnckj7peuwCgcpM7E9Pr88GZKcADEPduTiiHpiI/pOP6jMBYrkg5RGUcUYHzGjsS6e2Wj4BM2qn5HPAlCxJCjX0/j5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qgupp7Nj; arc=none smtp.client-ip=198.175.65.12
+	s=arc-20240116; t=1718772269; c=relaxed/simple;
+	bh=pGqBZ94iK6V7CP40Pp3MipCFw43itk2w6Q4lEJg//+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bILCxL5I7wBvPkdsT823lUM6blDOe4ApSHBYG447nhDI9lHMCUnYoh6fC51/JI8UUMVnI346wTXOHTTUHF9DG7gHho30//Yolp+ALW6T12bL4fisCsRN4iSdd2wHNubm3jkIhhOXdPo6nuujrDBcMucXadrYOhnUbA767505E7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B880fJrT; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718771958; x=1750307958;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=b6m98e4sk/WXMF9G7Y9dAqU8aFp5yb0EEKE+Qaz8hIs=;
-  b=Qgupp7Nj/gzDTXJlrKjWGg23NhqwrUOmsPQ4diV6ZVadDqff+vL/6m0g
-   +yCtQ39k5EdujjMFG1xpjhw3RGapbtITKdcY6VwOFoMRC8ZRNrFstYTRQ
-   QQesJvII/EBagnHzkSK3l5UZLFL/vzUh/FPkT8uLJyh5fTlsiEESSULl8
-   /Po2dpGOs/q2FuelmtqNU0lkM5hLIGGZ2boKbPUpbqYsU3fsvOtojCNMz
-   AykD16ucCWe/OssWf05xFlBzOJ5e6mvNrizTzIbgORsjoqWEjTm7OcdS3
-   cVMy6+MCkFvl8AZitSr9vVLW2JmSu1K2GQosaX3BasKtNhqmUguKSCQDy
-   g==;
-X-CSE-ConnectionGUID: pBOIqUioSYifaaNz20mazg==
-X-CSE-MsgGUID: CHOIUmNgRuSQsijAmvfSuA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="27106461"
+  t=1718772268; x=1750308268;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=pGqBZ94iK6V7CP40Pp3MipCFw43itk2w6Q4lEJg//+o=;
+  b=B880fJrTUvDmtn/mfjNLlZKSSKXPQnGEEx5/VgIIqIsvt6DGqLDjuGZk
+   CDiavjTmy1hjXOasuGbQCPMioAp2ykZrYwjpsAVOLCbaaZJseXC73RmPq
+   zZngWV3WTvpWAcwUF2xCDjfMotB7tJuBSoOVn+aqSE41k6XTLMEzUukD7
+   kKXa3UO/zAQDo8r9o6NP1+f1uRe5oCMWWwB+shmawzWL9UD8YqRB/C959
+   ug+rhOl+1QD+Ce3MEnbnRuFZ4fLG7mKAZgvK/AL5umy/0eEQFbhm4QZgW
+   irF7OkHPR2DPCGRA3j8bPOc40Tm4PkpVRFuu6Lup1uhhqmtKTLz+p+N86
+   w==;
+X-CSE-ConnectionGUID: gJCz7bqVTP2Q5qshZSU6BQ==
+X-CSE-MsgGUID: da5QOe+dROWT5EIw/o50Og==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15817635"
 X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
-   d="scan'208";a="27106461"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 21:39:17 -0700
-X-CSE-ConnectionGUID: +LbDWLEoSzS5YheUqJXteg==
-X-CSE-MsgGUID: KY5sjASnSIGN9kpDhrZDNA==
+   d="scan'208";a="15817635"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 21:44:28 -0700
+X-CSE-ConnectionGUID: W2p+cfZASme33qoWOap5hg==
+X-CSE-MsgGUID: TqbUp/k2RPqKOX+qTDgs4A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
-   d="scan'208";a="72528622"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO tlindgre-MOBL1) ([10.245.247.16])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 21:39:12 -0700
-Date: Wed, 19 Jun 2024 07:39:04 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] serial: core: Rename preferred console handling
- for match and update
-Message-ID: <ZnJg6KQeIs95UFAB@tlindgre-MOBL1>
-References: <20240618045458.14731-1-tony.lindgren@linux.intel.com>
- <20240618045458.14731-4-tony.lindgren@linux.intel.com>
- <ZnGQ8JAu2OQf0GX8@pathway.suse.cz>
+   d="scan'208";a="41915896"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
+  by fmviesa010.fm.intel.com with ESMTP; 18 Jun 2024 21:44:27 -0700
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	rui.zhang@intel.com,
+	lukasz.luba@arm.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] thermal: int340x: processor_thermal: Support shared interrupts
+Date: Tue, 18 Jun 2024 21:44:24 -0700
+Message-ID: <20240619044424.481239-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnGQ8JAu2OQf0GX8@pathway.suse.cz>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 18, 2024 at 03:51:44PM +0200, Petr Mladek wrote:
-> On Tue 2024-06-18 07:54:50, Tony Lindgren wrote:
-> > We are now matching and updating the preferred console, not adding it.
-> > Let's update the naming accordingly to avoid confusion.
-> > 
-> > --- a/drivers/tty/serial/serial_base_bus.c
-> > +++ b/drivers/tty/serial/serial_base_bus.c
-> > @@ -304,7 +305,7 @@ int serial_base_add_preferred_console(struct uart_driver *drv,
-> 
-> I was curious whether this patch renamed everything. And it seems
-> that it did not rename serial_base_add_preferred_console().
+On some systems the processor thermal device interrupt is shared with
+other PCI devices. In this case return IRQ_NONE from the interrupt
+handler when the interrupt is not for the processor thermal device.
 
-Oops, will update the naming for that too.
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Fixes: f0658708e863 ("thermal: int340x: processor_thermal: Use non MSI interrupts by default")
+Cc: <stable@vger.kernel.org> # v6.7+
+---
+This was only observed on a non production system. So not urgent.
 
-> >  	const char *port_match __free(kfree) = NULL;
-> >  	int ret;
-> >  
-> > -	ret = serial_base_add_prefcon(drv->dev_name, port->line);
-> > +	ret = serial_base_match_and_update_prefcon(drv->dev_name, port->line);
-> >  	if (ret)
-> >  		return ret;
-> >  
-> 
-> Honestly, I do not understand what are all these layers for.
-> Especially, serial_base_match_and_update_prefcon() looks suspicious:
-> 
-> static int serial_base_match_and_update_prefcon(const char *name, int idx)
-> {
-> 	const char *char_match __free(kfree) = NULL;
-> 	const char *nmbr_match __free(kfree) = NULL;
-> 	int ret;
-> 
-> 	/* Handle ttyS specific options */
-> 	if (strstarts(name, "ttyS")) {
-> 		/* No name, just a number */
-> 		nmbr_match = kasprintf(GFP_KERNEL, "%i", idx);
-> 		if (!nmbr_match)
-> 			return -ENODEV;
-> 
-> 		ret = serial_base_match_and_update_one_prefcon(nmbr_match, name, idx);
-> 		if (ret)
-> 			return ret;
-> 
-> 		/* Sparc ttya and ttyb */
-> 		ret = serial_base_add_sparc_console(name, idx);
-> 		if (ret)
-> 			return ret;
-> 	}
-> 
-> 	/* Handle the traditional character device name style console=ttyS0 */
-> 	char_match = kasprintf(GFP_KERNEL, "%s%i", name, idx);
-> 	if (!char_match)
-> 		return -ENOMEM;
-> 
-> 	return serial_base_match_and_update_one_prefcon(char_match, name, idx);
-> }
-> 
-> It seems to try whether c->devname matches a number "X", or "ttySX".
-> It even tries the sparc-specific transformations in
-> serial_base_add_sparc_console()
-> 
-> But this is the original format which does _not_ include ":".
-> It never will be stored in c->devname and will never match.
+ .../intel/int340x_thermal/processor_thermal_device_pci.c       | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Good catch, this won't do anything now with console_setup()
-checking for ":" for deferred consoles. So we should revert commit
-a0f32e2dd998 ("serial: core: Handle serial console options").
-
-> I think that it has been the case even before this patchset.
-
-For the earlier case, I tested things with serial handling removed
-from console_setup() to let the serial layer handle the quirks.
-
-With the new handling, we could just eventually defer the serial
-consoles in console_setup(), and let the serial core do the quirk
-handling. No immediate need for that though, that would be just
-longer term clean-up.
-
-> I think that we should remove these layers and check just
-> the "DEVNAME:X.Y" format, aka "%s:%d.%d" [*].
-
-Yes let's revert the quirk handling.
+diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c
+index 14e34eabc419..4a1bfebb1b8e 100644
+--- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c
++++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c
+@@ -150,7 +150,7 @@ static irqreturn_t proc_thermal_irq_handler(int irq, void *devid)
+ {
+ 	struct proc_thermal_pci *pci_info = devid;
+ 	struct proc_thermal_device *proc_priv;
+-	int ret = IRQ_HANDLED;
++	int ret = IRQ_NONE;
+ 	u32 status;
  
-> [*] It would be nice to use the same printf format "%s:%d.%d"
->     in both serial_base_device_init() and also in the functions
->     matching the devname to make it clear that these are
->     the same names. Heh, I just guess that these are the same
->     names.
+ 	proc_priv = pci_info->proc_priv;
+@@ -175,6 +175,7 @@ static irqreturn_t proc_thermal_irq_handler(int irq, void *devid)
+ 		/* Disable enable interrupt flag */
+ 		proc_thermal_mmio_write(pci_info, PROC_THERMAL_MMIO_INT_ENABLE_0, 0);
+ 		pkg_thermal_schedule_work(&pci_info->work);
++		ret = IRQ_HANDLED;
+ 	}
+ 
+ 	pci_write_config_byte(pci_info->pdev, 0xdc, 0x01);
+-- 
+2.44.0
 
-I'll do a separate clean-up patch for that, and that can then
-be used for the match() too eventually.
-
-Regards,
-
-Tony
 
