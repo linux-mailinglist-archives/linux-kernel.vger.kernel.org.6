@@ -1,285 +1,167 @@
-Return-Path: <linux-kernel+bounces-221111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F06990EE6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:29:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 977C190EE7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F9C28710B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2083D1F213AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07C014E2CD;
-	Wed, 19 Jun 2024 13:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC0614D2A2;
+	Wed, 19 Jun 2024 13:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KT2ZcKx6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="n6rxkgXi"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B1314E2F5;
-	Wed, 19 Jun 2024 13:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F45146016;
+	Wed, 19 Jun 2024 13:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718803707; cv=none; b=XoHUgIdInMU4sG94L8DrnO4QT0vZn7un7XQs1QV/06OWX2+XKp9DDPA5YRwXp5RmaE7PGJcKVVrf/TB9PmAdO42HS1GA5vpFimChCIkmkHgxspd+fikWizPjfV/i5j6BHiF0NzNk/3GozfJe4nMwG13JqO0m94VMl2ZonEQYh1M=
+	t=1718803729; cv=none; b=SX8ufe3bZN8cE8LGkO2jDNoo1HnnBBcR5gV2L5jVZoeJv46HPopZfqybqRoMujF5nZSzxAhwSmKmxloxZA84a9e7cxHskeJh7DXqmVO2YAeLBRnL/bLTEjZaHx5j9EV90lOMr/Nu2DM0GKktfswhPCPPK+qFqSI36WvwOQVLLlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718803707; c=relaxed/simple;
-	bh=q2wQ31q4JEnfnDeXHlVSXpsQVlkgKJUdKeicKGWjQGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qh11tdBW+gKDHlHzEWaqWSn5EcEvavUdyJB4Y9DHUaO7lNHBT56f0eD0vDLJogN98mFq7tOh9EBtTRifvGXrvcdiUwUdcMe33++q4RpZJyUCpyaxgz7ufLQ2wqGIlKQwyi9EHNZkqt5fUykCuBwYkduC/AAL0dy4ipdBB/5dJA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KT2ZcKx6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB6A3C4AF49;
-	Wed, 19 Jun 2024 13:28:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718803706;
-	bh=q2wQ31q4JEnfnDeXHlVSXpsQVlkgKJUdKeicKGWjQGQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KT2ZcKx6W8Zb6w/izWxY3Xm8FOXdwj8pEvRuzFfmG8W+xizt29tRyx0DwolGUX0vv
-	 W/9hzrVa1lkObVLiYy9RwshGBaHj7fg7YCGc1XiJcQi5vbIkX8LEq/TV5dlwXcAj+j
-	 sgCICaD1wMXYAHGWgGWwIi3Ak6zYK9FyV+GQ0tUkCJ5THp/0eL0mTXZH7n9YRig5sv
-	 +o4DijQQ9dlmnr2X/1PM10Xa7487Ralo1abIIrFL0ASDBUn6Nn489izklkWKfKrVE7
-	 myjp9ar3H0VPbXpQUIOAB5t7wkSicYf6iapiE3qCa6HWuGDFGT6RWoxVtPNN0TBoe6
-	 vc3h81uwIWe1A==
-Date: Wed, 19 Jun 2024 10:28:21 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: namhyung@kernel.org, irogers@google.com, peterz@infradead.org,
-	mingo@redhat.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com,
-	yangjihong1@huawei.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, sandipan.das@amd.com,
-	ananth.narayan@amd.com, santosh.shukla@amd.com
-Subject: Re: [PATCH] perf doc: Add AMD IBS usage document
-Message-ID: <ZnLc9V9UHBFvuqRg@x1>
-References: <20240619092234.1165-1-ravi.bangoria@amd.com>
+	s=arc-20240116; t=1718803729; c=relaxed/simple;
+	bh=IbU9H+DWKuJetppSWilqM1RixdWQASTCpKWygS68koc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gl8VyiaViVhDQ0Pbq0/7AbQPAl1vdYz6jAAdjwjcHbTLXy1GxNm/61fg8iTAIUtpsjp7CBrT2b7a1dXHjgEwi96hh+RxgKILqZtn5S6/9N61YzpEzjzerTsnUfTvM/BQULz2Vl5g7LxxLU1wGzDSKwWApZJlGBi7LGKw2WZmMpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=n6rxkgXi; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J1tRoI009538;
+	Wed, 19 Jun 2024 13:28:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding; s=corp-2023-11-20; bh=XqDJjEiAlVyJHw
+	kCLkG1pOnpC+qIkFOEq7vg5dbf2KI=; b=n6rxkgXipv/rLIUTrS8e7bxvz+rc51
+	rIUx/H0BEsaMOGOtFI3AtT77IC4h2lsf8xOf75Kk4AMvB+pZJy2wbWTa8P60Gm9e
+	Stu1m6PVndUSLvqeVsMsMOrZJDmWM2I+gKbo3cTSGix2C9HCAiCAmRsKcfGfOTDY
+	QrgAf4Y8RCilShs02Y9ul70/h4bVFoyElTjb+hLwIxnDTDgcUrWfwqgBVqIe6vI1
+	QgHI4vieJ3M0UOcyTw33ToucxAQleTb5V6Z8/LgqLZGPtK5e/veVHlSKyhhLlMPq
+	mP68KNYYuKhc/aDLqJktPIEju18vlKcIJ6yRh9GD60bbtQILChWwgaCA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yuja0h8ux-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Jun 2024 13:28:35 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 45JCPXv7034789;
+	Wed, 19 Jun 2024 13:28:35 GMT
+Received: from aakhoje-ol.in.oracle.com (dhcp-10-191-198-68.vpn.oracle.com [10.191.198.68])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3ys1d9jejw-1;
+	Wed, 19 Jun 2024 13:28:34 +0000
+From: Anand Khoje <anand.a.khoje@oracle.com>
+To: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc: saeedm@mellanox.com, leon@kernel.org, tariqt@nvidia.com,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        davem@davemloft.net
+Subject: [PATCH v4] net/mlx5: Reclaim max 50K pages at once
+Date: Wed, 19 Jun 2024 18:58:27 +0530
+Message-ID: <20240619132827.51306-1-anand.a.khoje@oracle.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619092234.1165-1-ravi.bangoria@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=0
+ malwarescore=0 phishscore=0 spamscore=0 mlxscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2406190101
+X-Proofpoint-ORIG-GUID: 5eObyzq1y0ZJDWpVf6dAqeL73j464ly0
+X-Proofpoint-GUID: 5eObyzq1y0ZJDWpVf6dAqeL73j464ly0
 
-On Wed, Jun 19, 2024 at 09:22:34AM +0000, Ravi Bangoria wrote:
-> Add a perf man page document that describes how to exploit AMD IBS with
-> Linux perf. Brief intro about IBS and simple one-liner examples will help
-> naive users to get started. This is not meant to be an exhaustive IBS
-> guide. User should refer latest AMD64 Architecture Programmer's Manual
-> for detailed description of IBS.
-> 
-> Usage:
-> 
->   $ man perf-amd-ibs
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> ---
->  tools/perf/Documentation/perf-amd-ibs.txt | 126 ++++++++++++++++++++++
->  tools/perf/Documentation/perf.txt         |   3 +-
->  2 files changed, 128 insertions(+), 1 deletion(-)
->  create mode 100644 tools/perf/Documentation/perf-amd-ibs.txt
-> 
-> diff --git a/tools/perf/Documentation/perf-amd-ibs.txt b/tools/perf/Documentation/perf-amd-ibs.txt
-> new file mode 100644
-> index 000000000000..d3dfa71e320c
-> --- /dev/null
-> +++ b/tools/perf/Documentation/perf-amd-ibs.txt
-> @@ -0,0 +1,126 @@
-> +perf-amd-ibs(1)
-> +===============
-> +
-> +NAME
-> +----
-> +perf-amd-ibs - Support for AMD Instruction-Based Sampling with perf tool
-> +
-> +SYNOPSIS
-> +--------
-> +[verse]
-> +'perf record' -e ibs_op//
-> +'perf record' -e ibs_fetch//
-> +
-> +DESCRIPTION
-> +-----------
-> +
-> +Instruction-Based Sampling (IBS) provides precise Instruction Pointer (IP)
-> +profiling support on AMD platforms. IBS has two independent components: IBS
-> +Op and IBS Fetch. IBS Op sampling provides information about instruction
-> +execution (micro-op execution to be precise) with details like d-cache
-> +hit/miss, d-TLB hit/miss, cache miss latency, load/store data source, branch
-> +behavior etc. IBS Fetch sampling provides information about instruction fetch
-> +with details like i-cache hit/miss, i-TLB hit/miss, fetch latency etc. IBS is
-> +per-smt-thread i.e. each SMT hardware thread contains standalone IBS units.
-> +
-> +Both, IBS Op and IBS Fetch, are exposed as PMUs by Linux and can be exploited
-> +using Linux perf utility. Following files will be created at boot time if IBS
-        the                  The
-> +is supported by the hardware and kernel.
-> +
-> +  /sys/bus/event_source/devices/ibs_op/
-> +  /sys/bus/event_source/devices/ibs_fetch/
-> +
-> +IBS Op PMU supports two events: cycles and micro ops. IBS Fetch PMU supports
-> +one event: fetch ops.
-> +
-> +IBS VS. REGULAR CORE PMU
-> +------------------------
-> +
-> +IBS gives samples with precise IP, i.e. the IP recorded with IBS sample has
-> +no skid. Whereas the IP recorded by regular core PMU will have some skid
-> +(sample was generated at IP X but perf would record it at IP X+n). Hence,
-> +regular core PMU might not help for profiling with instruction level
-> +precision. Further, IBS provides additional information about the sample in
-> +question. On the other hand, regular core PMU has it's own advantages like
-> +plethora of events, counting mode (less interference), up to 6 parallel
-> +counters, event grouping support, filtering capabilities etc.
+In non FLR context, at times CX-5 requests release of ~8 million FW pages.
+This needs humongous number of cmd mailboxes, which to be released once
+the pages are reclaimed. Release of humongous number of cmd mailboxes is
+consuming cpu time running into many seconds. Which with non preemptible
+kernels is leading to critical process starving on that cpu’s RQ.
+To alleviate this, this change restricts the total number of pages
+a worker will try to reclaim maximum 50K pages in one go.
+The limit 50K is aligned with the current firmware capacity/limit of
+releasing 50K pages at once per MLX5_CMD_OP_MANAGE_PAGES + MLX5_PAGES_TAKE
+device command.
 
-IIRC if one does:
+Our tests have shown significant benefit of this change in terms of
+time consumed by dma_pool_free().
+During a test where an event was raised by HCA
+to release 1.3 Million pages, following observations were made:
 
-   perf record -e cycles:P
+- Without this change:
+Number of mailbox messages allocated was around 20K, to accommodate
+the DMA addresses of 1.3 million pages.
+The average time spent by dma_pool_free() to free the DMA pool is between
+16 usec to 32 usec.
+           value  ------------- Distribution ------------- count
+             256 |                                         0
+             512 |@                                        287
+            1024 |@@@                                      1332
+            2048 |@                                        656
+            4096 |@@@@@                                    2599
+            8192 |@@@@@@@@@@                               4755
+           16384 |@@@@@@@@@@@@@@@                          7545
+           32768 |@@@@@                                    2501
+           65536 |                                         0
 
-on AMD systems it maps it to 
+- With this change:
+Number of mailbox messages allocated was around 800; this was to
+accommodate DMA addresses of only 50K pages.
+The average time spent by dma_pool_free() to free the DMA pool in this case
+lies between 1 usec to 2 usec.
+           value  ------------- Distribution ------------- count
+             256 |                                         0
+             512 |@@@@@@@@@@@@@@@@@@                       346
+            1024 |@@@@@@@@@@@@@@@@@@@@@@                   435
+            2048 |                                         0
+            4096 |                                         0
+            8192 |                                         1
+           16384 |                                         0
 
-   ibs_op//
+Signed-off-by: Anand Khoje <anand.a.khoje@oracle.com>
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+---
+Changes in v4:
+  - Fixed a nit in patch subject.
+---
+ drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-No?
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+index dcf58ef..06eee3a 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+@@ -608,6 +608,7 @@ enum {
+ 	RELEASE_ALL_PAGES_MASK = 0x4000,
+ };
+ 
++#define MAX_RECLAIM_NPAGES -50000
+ static int req_pages_handler(struct notifier_block *nb,
+ 			     unsigned long type, void *data)
+ {
+@@ -639,9 +640,13 @@ static int req_pages_handler(struct notifier_block *nb,
+ 
+ 	req->dev = dev;
+ 	req->func_id = func_id;
+-	req->npages = npages;
+ 	req->ec_function = ec_function;
+ 	req->release_all = release_all;
++	if (npages < MAX_RECLAIM_NPAGES)
++		req->npages = MAX_RECLAIM_NPAGES;
++	else
++		req->npages = npages;
++
+ 	INIT_WORK(&req->work, pages_work_handler);
+ 	queue_work(dev->priv.pg_wq, &req->work);
+ 	return NOTIFY_OK;
+-- 
+1.8.3.1
 
-I don't have access right now to my 5950X, so its from memory, about
-"IBS invocation from core PMUs with precise_ip set"
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=78075d947534013b4575687d19ebcbbb6d3addcd
-
-One other thing to mention is 'perf mem record' that will use ibs_op//
-as we can see in the cover letter for this perf-tools merge commit
-upstream:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9d64bf433c53cab2f48a3fff7a1f2a696bc5229a
-
-         # perf mem record -a --filter 'mem_op == load || mem_op == store, ip > 0x8000000000000000'
-         ^C[ perf record: Woken up 1 times to write data ]
-         [ perf record: Captured and wrote 2.199 MB perf.data (2913 samples) ]
-         #
-         # ls -la perf.data
-         -rw-------. 1 root root 2346486 Jan  9 18:36 perf.data
-         # perf evlist
-         ibs_op//
-         dummy:u
-         # perf evlist -v
-         ibs_op//: type: 11, size: 136, config: 0, { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|ADDR|CPU|PERIOD|IDENTIFIER|DATA_SRC|WEIGHT, read_format: ID, disabled: 1, inherit: 1, freq: 1, sample_id_all: 1
-
-Another examples available in the merge commit of when ibs_op support
-was added to 'perf c2c' and 'perf mem':
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d465bff130bf4ca17b6980abe51164ace1e0cba4
-
-Showing how you can use 'perf report -D' to extract info about these
-samples should be interesting as well:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0429796e45ec17eee26d7a59de92271c275d7666
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=291dcb98d7ee5cd719f4c5991d977794b1829c16
-
-> +EXAMPLES
-> +--------
-> +
-> +IBS Op PMU
-> +~~~~~~~~~~
-> +
-> +System-wide profile, cycles event, sampling period: 100000
-> +
-> +	$ sudo perf record -e ibs_op// -c 100000 -a
-> +
-> +Per-cpu profile (cpu10), cycles event, sampling period: 100000
-> +
-> +	$ sudo perf record -e ibs_op// -c 100000 -C 10
-> +
-> +Per-cpu profile (cpu10), cycles event, sampling freq: 1000
-> +
-> +	$ sudo perf record -e ibs_op// -F 1000 -C 10
-> +
-> +System-wide profile, uOps event, sampling period: 100000
-> +
-> +	$ sudo perf record -e ibs_op/cnt_ctl=1/ -c 100000 -a
-> +
-> +Same command, but also capture IBS register raw dump along with perf sample:
-> +
-> +	$ sudo perf record -e ibs_op/cnt_ctl=1/ -c 100000 -a --raw-samples
-> +
-> +System-wide profile, uOps event, sampling period: 100000, L3MissOnly (Zen4 onward)
-> +
-> +	$ sudo perf record -e ibs_op/cnt_ctl=1,l3missonly=1/ -c 100000 -a
-> +
-> +Per process(upstream v6.2 onward), uOps event, sampling period: 100000
-> +
-> +	$ sudo perf record -e ibs_op/cnt_ctl=1/ -c 100000 -p 1234
-> +
-> +Per process(upstream v6.2 onward), uOps event, sampling period: 100000
-> +
-> +	$ sudo perf record -e ibs_op/cnt_ctl=1/ -c 100000 -- ls
-> +
-> +To analyse recorded profile in aggregate mode
-> +
-> +	$ sudo perf report
-> +	/* Select a line and press 'a' to drill down at instruction level. */
-> +
-> +To go over each sample
-> +
-> +	$ sudo perf script
-
-Here I think it would be to have an example of such output.
-> +
-> +Raw dump of IBS registers when profiled with --raw-samples
-> +
-> +	$ sudo perf report -D
-> +	/* Look for PERF_RECORD_SAMPLE */
-
-Ditto
-
-> +
-> +IBS applied in a real world usecase
-> +
-> +~90% regression was observed in tbench with specific scheduler hint which
-> +was counter intuitive. IBS profile of good and bad run captured using perf
-> +helped in identifying exact cause of the problem:
-> +
-> +	https://lore.kernel.org/r/20220921063638.2489-1-kprateek.nayak@amd.com
-> +
-> +IBS Fetch PMU
-> +~~~~~~~~~~~~~
-> +
-> +Similar commands can be used with Fetch PMU as well.
-> +
-> +System-wide profile, fetch ops event, sampling period: 100000
-> +
-> +	$ sudo perf record -e ibs_fetch// -c 100000 -a
-> +
-> +System-wide profile, fetch ops event, sampling period: 100000, Random enable
-> +
-> +	$ sudo perf record -e ibs_fetch/rand_en=1/ -c 100000 -a
-> +
-> +etc.
-> +
-> +SEE ALSO
-> +--------
-> +
-> +linkperf:perf-record[1], linkperf:perf-script[1], linkperf:perf-report[1]
-
-perf-mem, perf-c2c
-
-> diff --git a/tools/perf/Documentation/perf.txt b/tools/perf/Documentation/perf.txt
-> index 09f516f3fdfb..cbcc2e4d557e 100644
-> --- a/tools/perf/Documentation/perf.txt
-> +++ b/tools/perf/Documentation/perf.txt
-> @@ -82,7 +82,8 @@ linkperf:perf-stat[1], linkperf:perf-top[1],
->  linkperf:perf-record[1], linkperf:perf-report[1],
->  linkperf:perf-list[1]
->  
-> -linkperf:perf-annotate[1],linkperf:perf-archive[1],linkperf:perf-arm-spe[1],
-> +linkperf:perf-amd-ibs[1], linkperf:perf-annotate[1],
-> +linkperf:perf-archive[1], linkperf:perf-arm-spe[1],
->  linkperf:perf-bench[1], linkperf:perf-buildid-cache[1],
->  linkperf:perf-buildid-list[1], linkperf:perf-c2c[1],
->  linkperf:perf-config[1], linkperf:perf-data[1], linkperf:perf-diff[1],
-> -- 
-> 2.45.2
 
