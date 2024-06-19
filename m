@@ -1,195 +1,154 @@
-Return-Path: <linux-kernel+bounces-221852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F17290F96D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:52:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF26C90F996
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 541A21F237B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:52:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52DDF1F22E10
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4E415A87D;
-	Wed, 19 Jun 2024 22:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D372715B12A;
+	Wed, 19 Jun 2024 22:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="azEIq9VU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Eq4sBvQh"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09891763EE
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 22:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3990D82869
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 22:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718837522; cv=none; b=ug4Xc+w1NtFE/bN/kI140gUntnWmx0TwGeXOBmey3BNzl66V0oRfQiGsu7NFamBsfD3JDI7ivxAPUObEgzCHUrg3WlfEKmVZVOBT1vq9+0v9/WKA23hdJ73xJL1b4tiCdOsXrHY+3/YQ5cu2b79opO0H640+yRJMNE3dK6IGZHI=
+	t=1718837790; cv=none; b=fbOqhKtniub9SAhcTeOUlVzOpvBITaoZHWGAxIviIFRUPpUG1BzjY3V4IEdtlaMF44g7k+jBLpsnzEV6K/mNRVARHKi0EcUa2mPUK2bZln/xprFcVLIPgpa7I9Fy/Cz2qF+CjPzLPYmKC+BejDEgovZjmwktfrw44UVOIyWOS38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718837522; c=relaxed/simple;
-	bh=hz/Ub6qykNJpOqlQI49DPOFgZluMHHDpuTsjeBK0Xws=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UgGbF+f6DURquTsq4sXxFzXsVHU+Rfm+oAaVc83cKZhDsFZXQN15ALdoyKphBzKzfy8VEBxmNDc99UGYlFMDoHr5f2evET7c3jwTQNk+BX6uqqhKoJW9jC37efT2FBm0/RhH/K0easxN2cMBsczWKOiKeu/XdtYfUv2XpGQTQZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=azEIq9VU; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718837520; x=1750373520;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=hz/Ub6qykNJpOqlQI49DPOFgZluMHHDpuTsjeBK0Xws=;
-  b=azEIq9VUS/goHrJLmZULmqSdXFrJV+m3Apzdo4kRbFrH4LdxRA3f+J36
-   c7HGEVhQLnGFbakz30Nu70AAP5+OG8CnaWRhnVgeqqIhK0t4k92E3xMN+
-   7ygSPws8Am36jUCJBDEEdT7Bvxlx4CdCHbbKDK+KOk2ibBDv4fOYd2rAl
-   POAyihdNFpVjEYw/kZWylVCZWnFnNgiBHzxITtXrXjwOvl9oMYW3v5pz3
-   FfmZ3Hu4D3KZLNmhLd+bw3FECKzjmF8D7PhnYj+yS4v2ar7/Hi41KdIhB
-   UeglJ0HbZjTTbZIrH6dKf3OYPiRTiEEQHRVMsvSX6i3PN6QbewfQpv96C
-   g==;
-X-CSE-ConnectionGUID: kOtJ1yMfRya4IQqsffOZbA==
-X-CSE-MsgGUID: H6mEbtIlTV2LnORU8Jk2WA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="27201114"
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="scan'208";a="27201114"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 15:51:59 -0700
-X-CSE-ConnectionGUID: JbWlesIzT/ispUxzLZmsvA==
-X-CSE-MsgGUID: 1nxtQMcrQgG7sDCCXs4Q+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="scan'208";a="41899359"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 19 Jun 2024 15:51:58 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sK49j-00074c-37;
-	Wed, 19 Jun 2024 22:51:55 +0000
-Date: Thu, 20 Jun 2024 06:51:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-Subject: drivers/net/pse-pd/pd692x0.c:1193:undefined reference to
- `firmware_upload_unregister'
-Message-ID: <202406200632.hSChnX0g-lkp@intel.com>
+	s=arc-20240116; t=1718837790; c=relaxed/simple;
+	bh=oA+sj7Djqxbrarm7I2zjgfnb3L6txQDz+HbmFlGzGUA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sJ2G20GTuQjChuSbF/qs3a0rr/pFZQB0SfOFL+mB4mRKvZ0fMpmgWIIgDbwExVThRjSiI/nr6/s4Buc20mnOxfNywA0v4q9dPYVLgdIOsFvPzLPbrWpnKpBfpgfvjr9qolqT9uXqYEFyCQ2wcLc0BtMHtL4HvbT5gTkzY3VsIms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Eq4sBvQh; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-363826fbcdeso236281f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:56:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1718837786; x=1719442586; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=i4ArltmimkgOuzhs9/gakjvhfS3EBeG4nlT8epF65b4=;
+        b=Eq4sBvQhkKxdGuVqN58QiMUHPrwF9M5TQ87OMUPXahvrdLOSEP3iYk2jJmRykyhckH
+         dNL+tb621+XZGw9MbB7gqoKm7VLNnuo/yuzWY4MsN8lFVV2IG+76dWecdbEDltuHQZcO
+         klYVDPRDaGic1rDlBLOS8BP7yk3V21P3vh0vQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718837786; x=1719442586;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i4ArltmimkgOuzhs9/gakjvhfS3EBeG4nlT8epF65b4=;
+        b=DZ+cNqE6bGHdO9YhKSh0ML63b0ZmGtQpGL1m6RwjvDZ9o13aChfTVFG9vn/NRXuXga
+         Jkr95k/4dQ00tTg82KXLweBdhOJWAvOA7fZyGGEEJzZSy8j0a3NWhr1eCMVbnCLzYZsD
+         GiN/9+MeABUadGXV3MNScJBK9324cXa/UDVWeLRBsA5/Fi0+sVIb302+Pvq+OjzURrVb
+         px+H11On2rhDjvtONssdCvjGR5dNPW0rImeMkuqcnpumregMMVXyholz7oNY7ynVsB1U
+         nEGT6oQGfLlB1BKh0wozpfYFZZP5+oRTxFho2uRz6sPzGenDAcooUoNmRU07NvI8eFHx
+         g6aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHcEVs/uuxC/I6G4yEMHyTXgh8rPop1nvTGZSDrcyqYtgDJ7Rgw2L+zg+znLCgqj2p9seHlvE09hcjENxWYdr4qOmVjeYYGxl83tKx
+X-Gm-Message-State: AOJu0YyzpZI45Mi56qs8aFHlzFP3EA7YX56jyCee96+Gbqv8aFFW/ztF
+	xCEUY+dc0aX9o0ZYlYS4AHlDA/NYLjkthOBumsQnQdlncsLl/ksK2yjtvAazYWVTPCJd07nRXQO
+	2RO4J3g==
+X-Google-Smtp-Source: AGHT+IFo09Odie2fxPiPo99fqzzjMUc6WO8H02jMmEyZ/FZgpD0erpfk4aBcIl6FYKq60dSZy2ZA7g==
+X-Received: by 2002:a05:600c:379a:b0:423:57d:77da with SMTP id 5b1f17b1804b1-42475185504mr26188665e9.24.1718837786335;
+        Wed, 19 Jun 2024 15:56:26 -0700 (PDT)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com. [209.85.128.53])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72da824sm8905593a12.29.2024.06.19.15.56.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 15:56:25 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4217926991fso3393545e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:56:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW7LUxP5ABYlSzvZ+ApCw5ux60sXB0K7fItIMiNMM8eBzoKUHpAo0AEtmlwHl5BnevKjqi1tpBSYEG0KHLFS5WUlfAVyENZOBnI9GNF
+X-Received: by 2002:a17:906:2519:b0:a6f:5a48:7b90 with SMTP id
+ a640c23a62f3a-a6fab641667mr177288966b.38.1718837763732; Wed, 19 Jun 2024
+ 15:56:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <CAHk-=wg8APE61e5Ddq5mwH55Eh0ZLDV4Tr+c6_gFS7g2AxnuHQ@mail.gmail.com>
+ <87ed8sps71.ffs@tglx> <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
+ <87bk3wpnzv.ffs@tglx>
+In-Reply-To: <87bk3wpnzv.ffs@tglx>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 19 Jun 2024 15:55:46 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
+Message-ID: <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tejun Heo <tj@kernel.org>, mingo@redhat.com, peterz@infradead.org, 
+	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
+	vschneid@redhat.com, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@kernel.org, joshdon@google.com, brho@google.com, pjt@google.com, 
+	derkling@google.com, haoluo@google.com, dvernet@meta.com, 
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com, 
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com, 
+	andrea.righi@canonical.com, joel@joelfernandes.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   e5b3efbe1ab1793bb49ae07d56d0973267e65112
-commit: 9a993845189004a923b78d0df643e47970147337 net: pse-pd: Add PD692x0 PSE controller driver
-date:   9 weeks ago
-config: i386-randconfig-006-20240620 (https://download.01.org/0day-ci/archive/20240620/202406200632.hSChnX0g-lkp@intel.com/config)
-compiler: gcc-10 (Ubuntu 10.5.0-1ubuntu1) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240620/202406200632.hSChnX0g-lkp@intel.com/reproduce)
+On Wed, 19 Jun 2024 at 15:27, Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Wed, Jun 19 2024 at 15:10, Linus Torvalds wrote:
+> >
+> > The thing is, I have seen absolutely _nothing_ in the last 9 months or
+> > so.
+>
+> Right, but that applies to both sides, no?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406200632.hSChnX0g-lkp@intel.com/
+But Thomas, this isn't a "both sides" issue.
 
-All errors (new ones prefixed by >>):
+This is a "people want to do new code and features, and the scheduler
+people ARE ACTIVELY HOLDING IT UP" issue.
 
-   ld: drivers/net/pse-pd/pd692x0.o: in function `pd692x0_i2c_remove':
->> drivers/net/pse-pd/pd692x0.c:1193:(.text+0x26): undefined reference to `firmware_upload_unregister'
-   ld: drivers/net/pse-pd/pd692x0.o: in function `pd692x0_i2c_probe':
->> drivers/net/pse-pd/pd692x0.c:1179:(.text+0x1148): undefined reference to `firmware_upload_register'
+Yes, part of that "actively holding it up" is trying to make rules for
+"you need to do this other XYZ thing to make us happy".
 
+But no, then "not doing XYZ" does *NOT* make it some "but but other side" issue.
 
-vim +1193 drivers/net/pse-pd/pd692x0.c
+This, btw, is not some new thing. It's something that has been
+discussed multiple times over the years at the maintainer summit for
+different maintainers. When people come in and propose feature X, it's
+not kosher to then say "you have to do Y first".
 
-  1108	
-  1109	static int pd692x0_i2c_probe(struct i2c_client *client)
-  1110	{
-  1111		struct pd692x0_msg msg, buf = {0}, zero = {0};
-  1112		struct device *dev = &client->dev;
-  1113		struct pd692x0_msg_ver ver;
-  1114		struct pd692x0_priv *priv;
-  1115		struct fw_upload *fwl;
-  1116		int ret;
-  1117	
-  1118		if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
-  1119			dev_err(dev, "i2c check functionality failed\n");
-  1120			return -ENXIO;
-  1121		}
-  1122	
-  1123		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-  1124		if (!priv)
-  1125			return -ENOMEM;
-  1126	
-  1127		priv->client = client;
-  1128		i2c_set_clientdata(client, priv);
-  1129	
-  1130		ret = i2c_master_recv(client, (u8 *)&buf, sizeof(buf));
-  1131		if (ret != sizeof(buf)) {
-  1132			dev_err(dev, "Failed to get device status\n");
-  1133			return -EIO;
-  1134		}
-  1135	
-  1136		/* Probe has been already run and the status dumped */
-  1137		if (!memcmp(&buf, &zero, sizeof(buf))) {
-  1138			/* Ask again the controller status */
-  1139			msg = pd692x0_msg_template_list[PD692X0_MSG_GET_SYS_STATUS];
-  1140			ret = pd692x0_sendrecv_msg(priv, &msg, &buf);
-  1141			if (ret < 0) {
-  1142				dev_err(dev, "Failed to get device status\n");
-  1143				return ret;
-  1144			}
-  1145		}
-  1146	
-  1147		if (buf.key != 0x03 || buf.sub[0] & 0x01) {
-  1148			dev_err(dev, "PSE controller error\n");
-  1149			return -EIO;
-  1150		}
-  1151		if (buf.sub[0] & 0x02) {
-  1152			dev_err(dev, "PSE firmware error. Please update it.\n");
-  1153			priv->fw_state = PD692X0_FW_BROKEN;
-  1154		} else {
-  1155			ver = pd692x0_get_sw_version(priv);
-  1156			dev_info(&client->dev, "Software version %d.%02d.%d.%d\n",
-  1157				 ver.prod, ver.maj_sw_ver, ver.min_sw_ver,
-  1158				 ver.pa_sw_ver);
-  1159	
-  1160			if (ver.maj_sw_ver < PD692X0_FW_MAJ_VER) {
-  1161				dev_err(dev, "Too old firmware version. Please update it\n");
-  1162				priv->fw_state = PD692X0_FW_NEED_UPDATE;
-  1163			} else {
-  1164				priv->fw_state = PD692X0_FW_OK;
-  1165			}
-  1166		}
-  1167	
-  1168		priv->np = dev->of_node;
-  1169		priv->pcdev.nr_lines = PD692X0_MAX_PIS;
-  1170		priv->pcdev.owner = THIS_MODULE;
-  1171		priv->pcdev.ops = &pd692x0_ops;
-  1172		priv->pcdev.dev = dev;
-  1173		priv->pcdev.types = ETHTOOL_PSE_C33;
-  1174		ret = devm_pse_controller_register(dev, &priv->pcdev);
-  1175		if (ret)
-  1176			return dev_err_probe(dev, ret,
-  1177					     "failed to register PSE controller\n");
-  1178	
-> 1179		fwl = firmware_upload_register(THIS_MODULE, dev, dev_name(dev),
-  1180					       &pd692x0_fw_ops, priv);
-  1181		if (IS_ERR(fwl))
-  1182			return dev_err_probe(dev, PTR_ERR(fwl),
-  1183					     "failed to register to the Firmware Upload API\n");
-  1184		priv->fwl = fwl;
-  1185	
-  1186		return 0;
-  1187	}
-  1188	
-  1189	static void pd692x0_i2c_remove(struct i2c_client *client)
-  1190	{
-  1191		struct pd692x0_priv *priv = i2c_get_clientdata(client);
-  1192	
-> 1193		firmware_upload_unregister(priv->fwl);
-  1194	}
-  1195	
+And yes, maybe everybody even agrees that Y would be a good thing, and
+yes, wouldn't it be lovely if somebody did it. But the people who
+wanted X didn't care about Y, and trying to get Y done by then gating
+X is simply not ok.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Now, if there was some technical argument against X itself, that would
+be one thing. But the arguments I've heard have basically fallen into
+two camps: the political one ("We don't want to do X because we simply
+don't want an extensible scheduler, because we want people to work on
+_our_ scheduler") and the tying one ("X is ok but we want Y solved
+first").
+
+I was hoping the tying argument would get solved. I saw a couple of
+half-hearted emails to that effect, and Rik at some point saying
+"maybe the problems are solvable", referring to his work from a couple
+of years ago, but again, nothing actually happened.
+
+And I don't see the argument that the way to make something happen is
+to continue to do nothing.
+
+    https://www.youtube.com/watch?v=lOTyUfOHgas
+
+Because if you are serious about making forward progress *with* the
+BPF extensions, why not merge them and actually work with that as the
+base?
+
+IOW, what is the argument for _not_ merging it?
+
+                        Linus
 
