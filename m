@@ -1,116 +1,154 @@
-Return-Path: <linux-kernel+bounces-221206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC73190F04C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:21:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99B190F050
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D0B01C20CEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B8B81F27F7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D281946F;
-	Wed, 19 Jun 2024 14:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEFD14A82;
+	Wed, 19 Jun 2024 14:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ao8Ygeue"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dl7uyhDS"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA15828DD2
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 14:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B4D15E81;
+	Wed, 19 Jun 2024 14:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718806890; cv=none; b=Va+pfWO00S8SvOaXw0zNHrEVrTw/HXe9p62O+eHifrNCxQ/PqyDi2I2bmg7TwtmVd4I7Syd7+oTPS/uJ5xcApX1YMSia81Bw382DVuc3Q6kinMHqhX4zU2nZ6DmXpcaOz5XooXY6TzX4G11j1dODC/PDVgmnhBrIVJ8KeYbWIq8=
+	t=1718806950; cv=none; b=SDyKlkWT8aQZuUXPVJi0buEa+rx6xUYLRjpCH/EsiiUMgT47o+K8wuXR6RNNvIx0+FyLrqgNOer6HHmZ5T4c4boYqN2SjFuzAMXH6UpGy1h/rVuFScK3Lq+7/APmbv6UFqumrGv4l/5NXApi2QQZY/3AoO4OQ+BiSQYxsE7xALg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718806890; c=relaxed/simple;
-	bh=jDmb7VW45DnqwAzmE0G7Yx8+dpvdynBkwVU5igS3sOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B97PzNQ+nwfFchmP8TY7jaoQZQ7sJsIlNCedGQMe8t10Q7D2hqnmQMy53/Fe3vNWhacKbxi1VDWlxtmc1AeWP8e6F3SUzYRnIiNL+5a02TayHWiUr/TZCa88HiGAmiYfeCxnRT6auucRGrUKRA8RiFDVFYIU3vvH0i9vzIwQ8ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=ao8Ygeue; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c9d70d93dbso4248566b6e.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 07:21:28 -0700 (PDT)
+	s=arc-20240116; t=1718806950; c=relaxed/simple;
+	bh=IwIM7Kg1Plaw1z4rcEPuGqh/TD8hwdP/SZqooKMtSBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=efPL5VsBk0zSzIpUmM2cRDVvlX+fI1parc3iD27EaAJHJoWVHkgwy2OTDXVoakv6fTYL4FXzEWvYx0od6fWLOR+Ki5m+ZALouhehIliLWgeUmf3BYYjYAXybrUzeVGIFOax4BnpfV3xVGG1PworvBJXBxq+dmQCcHxdKh+MbrYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dl7uyhDS; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7023b6d810bso4952653b3a.3;
+        Wed, 19 Jun 2024 07:22:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1718806888; x=1719411688; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oXd93FB8mW37LRaoaeih1f4UeSXMaaR0S6po9oPAKCU=;
-        b=ao8YgeueFzTO4hq+L8u4sJ6dQf7Cxy5xxMCUhFYkXjej6hTmg7HrBVzLrFDNRv4+Aj
-         5vbbPLQ5p5pjJh0CoAHsN4JdBjGPAroEkMMNP3U/kT8X9V3ZXUi4WwJGY3y6MrendmJm
-         wGRJhPYchGDz5lpPB5oCpkOmH0k3sDKLSZruRMzYlM01Brzc2jGbSPFqNfDnX0lGYyur
-         QMkA2xF6+Dxi5nMRvS3Avq9lgItKkpk69rGWM3z0sW0DSktKGvhB4JxBHTYm0Loy4LeO
-         fpvmVWpU1QUdk0fc+1GBiwUHaGVzBNUNJ8NkcrvuJW9j0YIKasNlOxRq4Ot8AjvtuP3y
-         nycQ==
+        d=gmail.com; s=20230601; t=1718806949; x=1719411749; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=MxKrhGAvZDqBsLSohk4oXKfHYYe8dlWMfAw5GLqLZG4=;
+        b=dl7uyhDSdWUiMv0Sl09cGbjUqYECcWnv/heJWhx5BoHGYFif7V328KvQ5LZE5OI/wf
+         ZxvnyouXomTROXU6vp4zGxXJG3mIXldyeE13v39nlH9J2je2zzYE1aIFU5X4Ezo9XPHe
+         xAhFVfKR8MOM+yUP1aTfoecg9lImGqtxpw33tXEmnlaCqc4mhLJrFeJwEp9Qe9HzeDRI
+         qbXxt0GgVklTGZB/osOfSol+TvfX2aznImKxHU9jZCLlm5Yt87jbbfD3z4exjrXHTXOs
+         BNa7w31UMXEyi4VG5vEKTvaYX+plczaQkBv7FNj/iaZfXsscjE4794JBS7taEarmASIl
+         dzJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718806888; x=1719411688;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1718806949; x=1719411749;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oXd93FB8mW37LRaoaeih1f4UeSXMaaR0S6po9oPAKCU=;
-        b=lgm2K7q8yM+2u77laOd0x2acptyb/H8Z0dq7LH5ChL+7bL1ZWl09qJ+0yo/6wrot1l
-         j1APRyv6oWnPAKyZ/N66OMyz4muGtixEwvcU6kW14kmPwi6ZuzVsS7ltuVlsOXoxHvpw
-         OWctJ57hT848nChpWqFPNnEXmofw0JnNtUBVWDb3/28jmRT8/IckwUMvWMOGq04PqsUs
-         FhUbgpyBV07hC1MbX0m34MeVPD9dU+M7Y9fG1QnakhEEieQG9KSqlYjFddZJ5PUwIpdS
-         +alTSKIGSkSqBXzk3SVP+R0Ye6dIaGgmAilJ7dpWAd69qKZTbImkLQmnLbgeXcUmbTEs
-         l5fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHZ8BuIg3nOIlad40hl8HC2hfNLDIrAkGN49Lk6BTTjjxRG9UlgkAaGvGkyZbWZHKCrJFIdWymdet06KAFWAQbdTvE7YTcWopN0v8P
-X-Gm-Message-State: AOJu0YxzcjfORQBk4rWnrunz5vqlRBgN2ffQfkjYOTzvQSecxhvF7pX3
-	090vE9zVGxYbINvEda/oll4cCSgqybIMgsuLos5ZaTSlwUgWFm5btDJZ1cC8TG8=
-X-Google-Smtp-Source: AGHT+IGeUQCBPT+VgM+BpkPpQTiytNsNv7t22Ffuk+cASd5EIDo/hVSa+fwqc195JPldb8qsFYSfsg==
-X-Received: by 2002:a05:6808:188f:b0:3d2:29d6:fe8e with SMTP id 5614622812f47-3d51b962118mr3218240b6e.8.1718806887789;
-        Wed, 19 Jun 2024 07:21:27 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444b3aec088sm454201cf.62.2024.06.19.07.21.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 07:21:26 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sJwBh-004YeT-Jx;
-	Wed, 19 Jun 2024 11:21:25 -0300
-Date: Wed, 19 Jun 2024 11:21:25 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Kalle Valo <kvalo@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
-	Jason Wang <jasowang@redhat.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	ath10k@lists.infradead.org, ath11k@lists.infradead.org,
-	iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/21] vfio/type1: Use iommu_paging_domain_alloc()
-Message-ID: <20240619142125.GI791043@ziepe.ca>
-References: <20240610085555.88197-1-baolu.lu@linux.intel.com>
- <20240610085555.88197-4-baolu.lu@linux.intel.com>
+        bh=MxKrhGAvZDqBsLSohk4oXKfHYYe8dlWMfAw5GLqLZG4=;
+        b=HjtuXqtMYF+Q/GQcmjAanJmg+3KEPXMK7ld/vyty9vAHsF7z/bXqZRpicZKt3KjTKk
+         /f4TrzIb6MKOFoXe078by84s9Il9uEQYFoT3Lxcp7fI7OHaEycy2RhKB71RUt11ernG/
+         Rjd6H9S2Y0ojXKYM7k7pOkOxcAY951rwBJfX6uR+gXHY4TMgPdc8JN8yiTKfXaCA0E5f
+         d9VFkKdMq5sDVjW/5KqaTBClDRu7sQvJqP/SXpV10y03OsIP32zsqMV7QrTgv4id+dHi
+         C7J4PG6nmXkKxm0u+IZMZkUIJb85vljQmoVcqtgCkPPp5Xy27GzU41y0MIg3iebXIrDq
+         26Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCUT7LPRETEGcp4pwxBxyAlZcEa6pgkO+LdRmIOrZHD5+hD04oZhe6IW3wqeVO7hDkVb9k6xk0S0wTbL5CDD3/QKlAdIZyZJc0/WLd5PMRyT6ZReMyRvi881gkT5a07jSjpOuM+I
+X-Gm-Message-State: AOJu0Yx0VwlaoOIOQPCr0gUZUiy3PmfB6J9ye1DOfNweBtHmfA7WpDRW
+	OOZ0r8lhdW1/b98EiNthfu44IML5smDI19fvfXqdGlmRvFMKrW8hdsYRsG00yy0=
+X-Google-Smtp-Source: AGHT+IEy8mHxmzM987zou9BKhhP9Q+SIN/FwEeYL0xtfpbf1fgldjqo9uE/Negb8dSHrcQlAFgOmnQ==
+X-Received: by 2002:a05:6a20:8b97:b0:1b7:a9d4:f503 with SMTP id adf61e73a8af0-1bcbb40dd37mr2524982637.15.1718806948489;
+        Wed, 19 Jun 2024 07:22:28 -0700 (PDT)
+Received: from [192.168.75.133] (mobile-166-172-56-136.mycingular.net. [166.172.56.136])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb917f2sm10716189b3a.189.2024.06.19.07.22.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 07:22:27 -0700 (PDT)
+Message-ID: <c72f5b46-0d43-4581-b8c7-417156118590@gmail.com>
+Date: Wed, 19 Jun 2024 15:22:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240610085555.88197-4-baolu.lu@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/217] 6.1.95-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240619125556.491243678@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20240619125556.491243678@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 10, 2024 at 04:55:37PM +0800, Lu Baolu wrote:
-> Replace iommu_domain_alloc() with iommu_paging_domain_alloc().
+
+
+On 6/19/2024 1:54 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.95 release.
+> There are 217 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/vfio/vfio_iommu_type1.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.95-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Jason
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
