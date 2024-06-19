@@ -1,480 +1,475 @@
-Return-Path: <linux-kernel+bounces-220798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A0090E73D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:45:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C1B490E73F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7471F2290E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:45:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6301C2153C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70BA80C1D;
-	Wed, 19 Jun 2024 09:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187E580C16;
+	Wed, 19 Jun 2024 09:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JtTcvLJY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Dtqes+IT"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1564A78276
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D641E61FE3
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718790331; cv=none; b=fI2J78mcqlDei0Zo0hzg8sN/H2DI6SB0vy3Sd8TvsTFXaM0ANJNY8NO4NBsJDChd1PCciI7byY09F6tAiBXvxlIQD8GSyGvmKrz0UWDbPVf8MmgYDEcN0yCW3P3K2yPMYvka5Xx3tnbbX8WxjCnjo7VNQtWTAyuh4CNt1RY6OmQ=
+	t=1718790414; cv=none; b=eursJ15C9eUjlz3t8OEAaXkNlrHeJvcrpjHXqVa+k+d9XohR1VClvZWf7J/+xyrqI9wbDvo9WqCJQCWaJK7F0IsoCq9J5wWhseEHu4cRQ/V7J9uePaZZKHmTHU0qynUfdRtTKTEOZHvFOlGoMQz8KAlGq8berHzAH1P60jd8iac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718790331; c=relaxed/simple;
-	bh=5jgnhsUy5Kli1NSQsSj3Nk8h8zvWNrUuj/LCKAOqNos=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jOumqJ12u+cWPBzr9mWacTG8iNPCOqgTvVfx02QrXgF6jlwjLinaUbhaKJhS6+amfFJ1rF5TJLDLxgfT9NJG/dHprRMgqbfrAumYHzlMIzANaD9EHBuzTsVhvp5rx9HSHlzAejP132kH/kM7SMQLh/iqTCrsGru0GGBpBXiVddc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JtTcvLJY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718790328;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=O243OS1BRlXQHpKJHhOKa16DeG5iGbOGYwgIlaIyaCc=;
-	b=JtTcvLJYCuvwRspcBKMv8IEbQcCrIkq2rjjJEsQ70jyb9Wz4tFCHA0nqK34P1G5H6JWc4o
-	jdt+5fm5VWKaj/fTwNVT8BGiWt7nQtp/JZt2njeZ8ujKADQdUlXR2h383SM6TQOIP5KHBm
-	UadqiIByv4QYgpkN9THgE5AFDkYg2vU=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-630-9qk5rLu0N4aLhvkLgkBWLw-1; Wed, 19 Jun 2024 05:45:26 -0400
-X-MC-Unique: 9qk5rLu0N4aLhvkLgkBWLw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4229bde57easo38291065e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 02:45:26 -0700 (PDT)
+	s=arc-20240116; t=1718790414; c=relaxed/simple;
+	bh=CwCUNlyBzUFkG7FuhOHeLFY55YaYDtrs+j+Gpfetg6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ll0PuhpN/V+6dvvTHMZ8H7t7TAzvSDwViDFO+nHmvAwNiHM38bXnaYtk30MTxIcMS/a50qd+ZS2swg6c7IhR3rfz054/cmgcw7agAKuD/l68Xa0PuQCfe9dRSvgnuXs5ImvTEGf4bGirGqYWyJCCNbSMftjHsbrLt/z99RvYLn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Dtqes+IT; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso81995521fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 02:46:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1718790410; x=1719395210; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=j9Gf/wKj76Or9hbcztR/hSlTOceyg0mDBQFP7DSvySc=;
+        b=Dtqes+ITTm9gG2yGnhR8hyscsS/1MimkGRVlusBuuHK6qOCW1mmjZm/m0TafpGi6sQ
+         m4pkHoI6VenA037RepfyD66zXzCxF8T4Vtoj3lvzO2XpExjUFmYyJV0AgDMuzMti6ke+
+         TF1c7LRnu97CYClV23VKzsSnbNLfd0oi/c2j93swhQ7xUjyfv5xxhaicJRKX2I1WCVoR
+         Tm8eX6Rm9SFUBfFEKawpvFXoYKv2VhZZLx8A5iA5+raw3BZQWkvPYcBlRhslGnG16tdb
+         dNRDa2EIRuSeaxCTS0o60KCTIXDT5ZTzF+SisFIWXqo1qNH/HADwh3/wRo0GrTXniGVb
+         4gpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718790325; x=1719395125;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=O243OS1BRlXQHpKJHhOKa16DeG5iGbOGYwgIlaIyaCc=;
-        b=Ds+Z81tbZZSDZttSDpvHLKNcwrxHLZnXA+yC6u+ryDcTcON105NV3dg868C+ocEVJ6
-         zszl64pA1wIKWkptBP6AjeAy08URk8R/F/PxaZ/hUgra75dKBU3Gslbsh8gERVZLq+s3
-         Dbi0yBy26o2vQ4WfGOHdQIhUyc8oYZ9ZB97zoHvertZgwhSv4aaQ3prtTha5j2iDJ1dx
-         ACPKUnuFRe3ck51qtyWVXEgR+rVSIvrk4EqY+Rd6UlxtgO/PTKhGaEERpa13msIV6g0z
-         2YcxJobNfRiAzG2A8jYMTViSMwsbJKZ+JJzi/zK68H5zavyL4426pN+kn8DPbuHREFc+
-         Wh8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXsahhs97HqN+GtKZHBXPe42Rtn/R4dOuK7rjSKyxHjSEeLHY7QOXWQW+dQkstTK8UwERk6EGJ1dY+8yMNakrz3ok1rg0zS1+WwDhgy
-X-Gm-Message-State: AOJu0YxDd4H6M1Vjx29CPltA53hyGes78icAH16J1vFr0xhcGWKm1OsW
-	PY4qS677M+LN5mmd2NwzlRCvfdQqhyBbyU/x7NSQ47VHZ6WCJtl5+27ToqRzgrS7OrIvolB7mFE
-	batIuN+69c5e4l42GQYn9mXDl9lFhS4KCMKuGkSs2EDvv3zfXyNQjsy6aZdfzZg==
-X-Received: by 2002:a05:600c:418b:b0:424:78c5:c55d with SMTP id 5b1f17b1804b1-42478c5c5e3mr5878635e9.12.1718790325105;
-        Wed, 19 Jun 2024 02:45:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGAFccat0/5fKdTmB5A+CuG5lim3ykA07VjjB36+Ceb9p2ug3FpJa59K+ioDtTzPrLitxfdyg==
-X-Received: by 2002:a05:600c:418b:b0:424:78c5:c55d with SMTP id 5b1f17b1804b1-42478c5c5e3mr5878375e9.12.1718790324528;
-        Wed, 19 Jun 2024 02:45:24 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c705:ab00:f9b6:da12:cad4:6642? (p200300cbc705ab00f9b6da12cad46642.dip0.t-ipconnect.de. [2003:cb:c705:ab00:f9b6:da12:cad4:6642])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e73bcsm254107395e9.41.2024.06.19.02.45.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 02:45:23 -0700 (PDT)
-Message-ID: <6d3687fd-e11b-4d78-9944-536bb1d731de@redhat.com>
-Date: Wed, 19 Jun 2024 11:45:22 +0200
+        d=1e100.net; s=20230601; t=1718790410; x=1719395210;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j9Gf/wKj76Or9hbcztR/hSlTOceyg0mDBQFP7DSvySc=;
+        b=BwmgnCjJD/DdOEEZhhL2YhPaTkfqLIUt1N4gEK8TZZssgHb9y56vnRRwE/92w9a/IW
+         4NCYM/pyCCf9Xk8rE858JF5EknNmQP502rJVCmIKsnYucHbDBwIDIG9RDU/GpTk9UiRX
+         dRLvfu0btcSfA1IMGyodsmMWei/wJgQUIEFifUOVIYaMulaHSfrlCU98u6y6DQoxL2+p
+         TjVOFCzm+2BEX4i/KyNLAavofqU132OlItPSHnjIiiQDvU21hZz03yVY9jN/SdsE+rOO
+         Iohvn56qyFImAtJt7/iImcpPbCKgQXJkUVg52N0luVsqQMq+7zX+FbPUgEillw0XRiGf
+         8yhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX8OEzoORkEPGRYW/FJd8ICV29t4laSG4LrOveL21MHEQ4zEtRtdmZ9YQ1zD4RptkH+GWsRv8aSJlc+wp0/CMB5XRTT5PnxtJavWJE
+X-Gm-Message-State: AOJu0YzFBCVeXUdTsv/Pt9GoWK630sHzR7n25RwmK25pQL//l1p28K8n
+	OhD5pM7lZEoEsM0sKQbLAIZdkIzr/NUTcKNwlNFyZx9qS/vYTPwIPH8omwde/to=
+X-Google-Smtp-Source: AGHT+IHN94qvZ1+Jxf1+YJfv1ViDKmyf1huWzPUf6z9OA0tMyFpO2+MeXSX0tqJTiaiKvNFPn/7CbQ==
+X-Received: by 2002:a2e:bea6:0:b0:2ec:4017:38ba with SMTP id 38308e7fff4ca-2ec40173a17mr8912291fa.44.1718790409834;
+        Wed, 19 Jun 2024 02:46:49 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855eff5f5sm112233015ad.185.2024.06.19.02.46.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 02:46:49 -0700 (PDT)
+Date: Wed, 19 Jun 2024 11:46:38 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Andrew Halaney <ahalaney@redhat.com>
+Cc: John Ogness <john.ogness@linutronix.de>,
+	Derek Barbosa <debarbos@redhat.com>, rostedt@goodmis.org,
+	senozhatsky@chromium.org, linux-rt-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, williams@redhat.com,
+	jlelli@redhat.com, lgoncalv@redhat.com, jwyatt@redhat.com,
+	aubaker@redhat.com
+Subject: Re: [BUG] printk/nbcon.c: watchdog BUG: softlockup - CPU#x stuck for
+ 78s
+Message-ID: <ZnKo_n9LJnMCPSCA@pathway.suse.cz>
+References: <ZnHF5j1DUDjN1kkq@debarbos-thinkpadt14sgen2i.remote.csb>
+ <87msni13lv.fsf@jogness.linutronix.de>
+ <dtde47mfm3amxg4mbrnbct53ehpfbekdvrjhhd6j5tzl7lulwj@zwdsvkq3orag>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Endless calls to xas_split_alloc() due to corrupted xarray entry
-To: Gavin Shan <gshan@redhat.com>, Matthew Wilcox <willy@infradead.org>,
- Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Zhenyu Zhang <zhenyzha@redhat.com>, Linux XFS
- <linux-xfs@vger.kernel.org>,
- Linux Filesystems Development <linux-fsdevel@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Shaoqin Huang <shahuang@redhat.com>, Chandan Babu R
- <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <CAJFLiB+J4mKGDOppp=1moMe2aNqeJhM9F2cD4KPTXoM6nzb5RA@mail.gmail.com>
- <ZRFbIJH47RkQuDid@debian.me> <ZRci1L6qneuZA4mo@casper.infradead.org>
- <91bceeda-7964-2509-a1f1-4a2be49ebc60@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <91bceeda-7964-2509-a1f1-4a2be49ebc60@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dtde47mfm3amxg4mbrnbct53ehpfbekdvrjhhd6j5tzl7lulwj@zwdsvkq3orag>
 
-On 30.09.23 04:12, Gavin Shan wrote:
-> Hi Matthew,
+On Tue 2024-06-18 17:52:19, Andrew Halaney wrote:
+> On Tue, Jun 18, 2024 at 09:03:00PM GMT, John Ogness wrote:
+> > Hi Derek,
+> > 
+> > On 2024-06-18, Derek Barbosa <debarbos@redhat.com> wrote:
+> > > The realtime team at Red Hat has recently backported the latest printk
+> > > changes present in 6.6-rt stable (HEAD at 20fd4439f644 printk: nbcon:
+> > > move locked_port flag to struct uart_port) to CentOS Stream 9 for
+> > > performance improvements and printk-related bugfixes.
+> > >
+> > > Since merging this said code, we've hit an interesting bug during
+> > > testing, specifically, on larger systems, a softlockup may be reported
+> > > by the watchdog when there is a heavy amount of printing to tty
+> > > devices (whether it be through printk, /dev/kmsg, etc).
+> > >
+> > > We have a modicum of reasonable suspicion to believe that
+> > > nbcon_reacquire, or some other nbcon mechanism *may* be causing such
+> > > behavior.
+> > >
+> > > Since we've succesfully reproduced this in the Kernel-ARK/Fedora-ELN
+> > > (osbuild-rt), and linux-rt-devel 6.10.rc4-rt6, we are reporting this
+> > > bug upstream.
+> > >
+> > > Anyway, here is a more in-depth description, along with some call traces.
+> > >
+> > > Description:
+> > >
+> > > On x86 systems with a large amount of logical cores (nproc ~> 60), a
+> > > softlockup can be observed with accompanying call trace when a large
+> > > amount of "printing" activity is taking place.
+> > >
+> > > As shown in the call traces appended below, during some kind of numa
+> > > balancing/numa_migration after a task_numa_fault --where a set of
+> > > processess are being migrated/swapped between two CPUs-- there is a
+> > > busy thread that is being waited on (in the order of seconds), causing
+> > > a livelock. Additional investigation of collected vmcores by toggling
+> > > panic on softlockup shows that the waiting thread may be waiting for a
+> > > thread looping with nbcon_reacquire.
+> > >
+> > > I suspect that some logic within nbcon_context_try_acquire may be a
+> > > good place to start. My understanding of the code becomes a bit fuzzy
+> > > here, so apologies in advance for any erroneous statements. As I see
+> > > it, there may be something happening during migration (or under heavy
+> > > load) in which nbcon_reacquire() is in a non-migratable or
+> > > non-preemtible state as it is attempting to regain access to a
+> > > lost/taken console. It could very well be a situation in which context
+> > > was forcefully taken from the printing thread.
+> > >
+> > > Alternatively, Andrew Halaney <ahalaney@redhat.com> suspects that it
+> > > is the loop within nbcon_kthread_func() -- since there is nothing that
+> > > would yield the task in said loop (cant_migrate()), the migrate code
+> > > would be essentially waiting forever for the aforementioned loop to
+> > > "finish". I believe in PREEMPT_RT, there would be a preemption point
+> > > here. Furthermore, in his investigation, there were signs that the
+> > > loop was just iterating up until the crash, leaving reason to believe
+> > > that task would be the culprit.
+> > >
+> > > In fact, with the following diff, we noticed this output:
+> > >
+> > > ```
+> > > ahalaney@x1gen2nano ~/git/linux-rt-devel (git)-[tags/v6.10-rc4-rt6-rebase] % git diff | cat
+> > > diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> > > index bb9689f94d30..d716b72bf2f8 100644
+> > > --- a/kernel/printk/nbcon.c
+> > > +++ b/kernel/printk/nbcon.c
+> > > @@ -1075,6 +1075,7 @@ static int nbcon_kthread_func(void *__console)
+> > >       *
+> > >       * This pairs with rcuwait_has_sleeper:A and nbcon_kthread_wake:A.
+> > >       */
+> > > +    trace_printk("Before rcuwait_wait_event()\n");
+> > >      ret = rcuwait_wait_event(&con->rcuwait,
+> > >                   nbcon_kthread_should_wakeup(con, ctxt),
+> > >                   TASK_INTERRUPTIBLE); /* LMM(nbcon_kthread_func:A) */
+> > > @@ -1086,7 +1087,10 @@ static int nbcon_kthread_func(void *__console)
+> > >      if (ret)
+> > >          goto wait_for_event;
+> > >
+> > > +    trace_printk("Starting do while(backlog) loop \n");
+> > > +    unsigned long int loop = 0;
+> > >      do {
+> > > +        trace_printk("On loop %lu\n", ++loop);
+> > >          backlog = false;
+> > >
+> > >          cookie = console_srcu_read_lock();
+> > > @@ -1121,6 +1125,7 @@ static int nbcon_kthread_func(void *__console)
+> > >          console_srcu_read_unlock(cookie);
+> > >
+> > >      } while (backlog);
+> > > +    trace_printk("End of while(backlog) loop, looped %lu times \n", loop);
+> > >
+> > >      goto wait_for_event;
+> > > ```
+> > >
+> > > The output:
+> > >
+> > > ```
+> > > [ 1681.309720] pr/ttyS0-18       21.N... 893365994us : nbcon_kthread_func: On loop 2117
+> > > [ 1681.309727] pr/ttyS0-18       21.N... 893374418us : nbcon_kthread_func: On loop 2118
+> > > [ 1681.309734] pr/ttyS0-18       21.N... 893382860us : nbcon_kthread_func: On loop 2119
+> > > (...)
+> > > [ 1681.396193] pr/ttyS0-18       21.N... 954571399us : nbcon_kthread_func: On loop 14025
+> > > [ 1681.396200] pr/ttyS0-18       21.N... 954576525us : nbcon_kthread_func: On loop 14026
+> > > [ 1681.396207] pr/ttyS0-18       21.N... 954581561us : nbcon_kthread_func: On loop 14027
+> > > [ 1681.396213] pr/ttyS0-18       21.N... 954584954us : nbcon_kthread_func: On loop 14028
+> > > [ 1681.396220] pr/ttyS0-18       21.N... 954590111us : nbcon_kthread_func: On loop 14029
+> > > [ 1681.396223] ---------------------------------
+> > > [ 1681.396230] Kernel panic - not syncing: softlockup: hung tasks
+> > > (...)
+> > > ```
+> > >
+> > > Demonstrating evidence that the nbcon kthread function is invoked
+> > > continuously up until the point of panic. I do believe that this
+> > > approach is more sound than my initial hints (or it could be more than
+> > > a handful of threads). Some traces around
+> > > serial8250_console_write_thread() also denote continuous calls without
+> > > any holdups.
+> > >
+> > > As a sidenote, we are seeing the softlockup with !CONFIG_PREEMPT_RT
+> > 
+> > This trace shows that the thread is successfully printing
+> > lines. So I doubt nbcon_reacquire() is involved here.
+> > 
+> > Assuming the ringbuffer is getting filled as fast or faster than the
+> > thread can print, then we effectively have this:
+> > 
+> > DEFINE_STATIC_SRCU(test_srcu);
+> > static DEFINE_SPINLOCK(test_lock);
+> > 
+> > static int kthread_func(void *arg)
+> > {
+> > 	unsigned long flags;
+> > 
+> > 	do {
+> > 		srcu_read_lock_nmisafe(&test_srcu);
+> > 		spin_lock_irqsave(&test_lock, flags);
+> > 		udelay(5000);  // print a line to serial
+> > 		spin_unlock_irqrestore(&test_lock, flags);
+> > 		srcu_read_unlock_nmisafe(&test_srcu);
+> > 	} while (true);
+> > 
+> > 	return 0;
+> > }
+> > 
+> > And since the thread has a nice value of -20, it will get a lot of CPU
+> > time allocated to it. Is that a problem? Shouldn't the scheduler
+> > eventually kick the task off the CPU after its timeslice is up?
 > 
-> On 9/30/23 05:17, Matthew Wilcox wrote:
->> On Mon, Sep 25, 2023 at 05:04:16PM +0700, Bagas Sanjaya wrote:
->>> On Fri, Sep 22, 2023 at 11:56:43AM +0800, Zhenyu Zhang wrote:
->>>> Hi all,
->>>>
->>>> we don't know how the xarray entry was corrupted. Maybe it's a known
->>>> issue to community.
->>>> Lets see.
->>>>
->>>> Contents
->>>> --------
->>>> 1. Problem Statement
->>>> 2. The call trace
->>>> 3. The captured data by bpftrace
->>>>
->>>>
->>>> 1. Problem Statement
->>>> --------------------
->>>> With 4k guest and 64k host, on aarch64(Ampere's Altra Max CPU) hit Call trace:
->>>>       Steps:
->>>>       1) System setup hugepages on host.
->>>>          # echo 60 > /proc/sys/vm/nr_hugepages
->>>>       2) Mount this hugepage to /mnt/kvm_hugepage.
->>>>          # mount -t hugetlbfs -o pagesize=524288K none /mnt/kvm_hugepage
->>>
->>> What block device/disk image you use to format the filesystem?
->>
->> It's hugetlbfs, Bagas.
->>
+> I trust you better than myself about this, but this is being reproduced
+> with a CONFIG_PREEMPT_DYNAMIC=y + CONFIG_PREEMPT_VOLUNTARY=y setup (so
+> essentially the current mode is VOLUNTARY). Does that actually work that
+> way for a kthread in that mode? I've been trying to reason with myself
+> on when the scheduler actually will get involved and stop the above
+> kthread_func() to run something else.
 > 
-> The hugetlbfs pages are reserved, but never used. In this way, the available
-> system memory is reduced. So it's same affect as to "mem=xxx" boot parameter.
+> > 
+> > > Some questions arise from this, as we've never encountered this in our
+> > > testing with John Ogness' console_blast (kudos to <jwyatt@redhat.com>)
+> > > and other printk torture tests that have been compiled
+> > > [here](https://gitlab.com/debarbos/printktorture).
+> > 
+> > Yes, that is odd since those tests will ensure that the printing thread
+> > never exits its printing loop because it will never catch up. So it
+> > should be the same situation.
+> > 
+> > > We are curious to understand why is it that the printing thread is
+> > > chosen by the NUMA balancer for migration/swap, and how that
+> > > interaction is handled within the code (in other words, how else would
+> > > nbcon handle a migrated printing thread?).
+> > 
+> > The nbcon console can only be owned when migration is disabled. In the
+> > case of the printing thread for serial, this is under the
+> > spin_lock_irqsave(). The NUMA balancer would only be able to migrate the
+> > thread outside of the spin_lock critical section. And outside of the
+> > spin_lock critical section, the thread does not own/hold any resources
+> > at all. So it should be no problem to migrate it.
+> > 
+> > > Our next round of tests aim to disable numa balancing on
+> > > large-multi-core-systems to determine whether it is the NUMA
+> > > mechanisms + nbcon interactions are at fault here.
+> > 
+> > I am curious if starting a kthread using the code I wrote above (with
+> > nice=-20) would cause similar issues.
+> >
 > 
->>>>       3) HugePages didn't leak when using non-existent mem-path.
->>>>          # mkdir -p /mnt/tmp
->>>>       4) Boot guest.
->>>>          # /usr/libexec/qemu-kvm \
->>>> ...
->>>>            -m 30720 \
->>>> -object '{"size": 32212254720, "mem-path": "/mnt/tmp", "qom-type":
->>>> "memory-backend-file"}'  \
->>>> -smp 4,maxcpus=4,cores=2,threads=1,clusters=1,sockets=2  \
->>>>            -blockdev '{"node-name": "file_image1", "driver": "file",
->>>> "auto-read-only": true, "discard": "unmap", "aio": "threads",
->>>> "filename": "/home/kvm_autotest_root/images/back_up_4k.qcow2",
->>>> "cache": {"direct": true, "no-flush": false}}' \
->>>> -blockdev '{"node-name": "drive_image1", "driver": "qcow2",
->>>> "read-only": false, "cache": {"direct": true, "no-flush": false},
->>>> "file": "file_image1"}' \
->>>> -device '{"driver": "scsi-hd", "id": "image1", "drive":
->>>> "drive_image1", "write-cache": "on"}' \
->>>>
->>>>       5) Wait about 1 minute ------> hit Call trace
->>>>
->>>> 2. The call trace
->>>> --------------------
->>>> [   14.982751] block dm-0: the capability attribute has been deprecated.
->>>> [   15.690043] PEFILE: Unsigned PE binary
->>>>
->>>>
->>>> [   90.135676] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
->>>> [   90.136629] rcu: 3-...0: (3 ticks this GP)
->>>> idle=e6ec/1/0x4000000000000000 softirq=6847/6849 fqs=232
->>>> [   90.137293] rcu: (detected by 2, t=6012 jiffies, g=2085, q=2539 ncpus=4)
->>>> [   90.137796] Task dump for CPU 3:
->>>> [   90.138037] task:PK-Backend      state:R  running task     stack:0
->>>>      pid:2287  ppid:1      flags:0x00000202
->>>> [   90.138757] Call trace:
->>>> [   90.138940]  __switch_to+0xc8/0x110
->>>> [   90.139203]  0xb54a54f8c5fb0700
->>>>
->>>> [  270.190849] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
->>>> [  270.191722] rcu: 3-...0: (3 ticks this GP)
->>>> idle=e6ec/1/0x4000000000000000 softirq=6847/6849 fqs=1020
->>>> [  270.192405] rcu: (detected by 1, t=24018 jiffies, g=2085, q=3104 ncpus=4)
->>>> [  270.192876] Task dump for CPU 3:
->>>> [  270.193099] task:PK-Backend      state:R  running task     stack:0
->>>>      pid:2287  ppid:1      flags:0x00000202
->>>> [  270.193774] Call trace:
->>>> [  270.193946]  __switch_to+0xc8/0x110
->>>> [  270.194336]  0xb54a54f8c5fb0700
->>>>
->>>> [ 1228.068406] ------------[ cut here ]------------
->>>> [ 1228.073011] WARNING: CPU: 2 PID: 4496 at lib/xarray.c:1010
->>>> xas_split_alloc+0xf8/0x128
->>>> [ 1228.080828] Modules linked in: binfmt_misc vhost_net vhost
->>>> vhost_iotlb tap xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT
->>>> nf_reject_ipv4 nft_compat nft_chain_nat nf_nat nf_conntrack
->>>> nf_defrag_ipv6 nf_defrag_ipv4 nf_tables nfnetlink tun bridge stp llc
->>>> qrtr rfkill sunrpc vfat fat acpi_ipmi ipmi_ssif arm_spe_pmu
->>>> ipmi_devintf arm_cmn arm_dmc620_pmu ipmi_msghandler cppc_cpufreq
->>>> arm_dsu_pmu xfs libcrc32c ast drm_shmem_helper drm_kms_helper drm
->>>> crct10dif_ce ghash_ce igb nvme sha2_ce nvme_core sha256_arm64 sha1_ce
->>>> i2c_designware_platform sbsa_gwdt nvme_common i2c_algo_bit
->>>> i2c_designware_core xgene_hwmon dm_mirror dm_region_hash dm_log dm_mod
->>>> fuse
->>>> [ 1228.137630] CPU: 2 PID: 4496 Comm: qemu-kvm Kdump: loaded Tainted:
->>>> G        W          6.6.0-rc2-zhenyzha+ #5
->>>> [ 1228.147529] Hardware name: GIGABYTE R152-P31-00/MP32-AR1-00, BIOS
->>>> F31h (SCP: 2.10.20220810) 07/27/2022
->>>> [ 1228.156820] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>>> [ 1228.163767] pc : xas_split_alloc+0xf8/0x128
->>>> [ 1228.167938] lr : __filemap_add_folio+0x33c/0x4e0
->>>> [ 1228.172543] sp : ffff80008dd4f1c0
->>>> [ 1228.175844] x29: ffff80008dd4f1c0 x28: ffffd15825388c40 x27: 0000000000000001
->>>> [ 1228.182967] x26: 0000000000000001 x25: ffffffffffffc005 x24: 0000000000000000
->>>> [ 1228.190089] x23: ffff80008dd4f270 x22: ffffffc202b00000 x21: 0000000000000000
->>>> [ 1228.197211] x20: ffffffc2007f9600 x19: 000000000000000d x18: 0000000000000014
->>>> [ 1228.204334] x17: 00000000b21b8a3f x16: 0000000013a8aa94 x15: ffffd15824625944
->>>> [ 1228.211456] x14: ffffffffffffffff x13: 0000000000000030 x12: 0101010101010101
->>>> [ 1228.218578] x11: 7f7f7f7f7f7f7f7f x10: 000000000000000a x9 : ffffd158252dd3fc
->>>> [ 1228.225701] x8 : ffff80008dd4f1c0 x7 : ffff07ffa0945468 x6 : ffff80008dd4f1c0
->>>> [ 1228.232823] x5 : 0000000000000018 x4 : 0000000000000000 x3 : 0000000000012c40
->>>> [ 1228.239945] x2 : 000000000000000d x1 : 000000000000000c x0 : 0000000000000000
->>>> [ 1228.247067] Call trace:
->>>> [ 1228.249500]  xas_split_alloc+0xf8/0x128
->>>> [ 1228.253324]  __filemap_add_folio+0x33c/0x4e0
->>>> [ 1228.257582]  filemap_add_folio+0x48/0xd0
->>>> [ 1228.261493]  page_cache_ra_order+0x214/0x310
->>>> [ 1228.265750]  ondemand_readahead+0x1a8/0x320
->>>> [ 1228.269921]  page_cache_async_ra+0x64/0xa8
->>>> [ 1228.274005]  filemap_fault+0x238/0xaa8
->>>> [ 1228.277742]  __xfs_filemap_fault+0x60/0x3c0 [xfs]
->>>> [ 1228.282491]  xfs_filemap_fault+0x54/0x68 [xfs]
->>
->> This is interesting.  This path has nothing to do with the hugetlbfs
->> filesystem you've created up above.  And, just to be clear, this is
->> on the host, not in the guest, right?
->>
+> Just in case I did something dumb, here's the module I wrote up:
 > 
-> Correct, the backtrce is seen on the host. The XFS file is used as backup
-> memory to the guest. QEMU maps the entire file as PRIVATE and the VMA has
-> been advised to huge page by madvise(MADV_HUGEPAGE). When the guest is
-> started, QEMU calls madvise(MADV_POPULATE_WRITE) to populate the VMA. Since
-> the VMA is private, there are copy-on-write page fault happening on
-> calling to madvise(MADV_POPULATE_WRITE). In the page fault handler,
-> there are readahead reuqests to be processed.
-> 
-> The backtrace, originating from WARN_ON(), is triggered when attempt to
-> allocate a huge page fails in the middle of readahead. In this specific
-> case, we're falling back to order-0 with attempt to modify the xarray
-> for this. Unfortunately, it's reported this particular scenario isn't
-> supported by xas_split_alloc().
-> 
-> 
->>>> [ 1228.377124] ------------[ cut here ]------------
->>>> [ 1228.381728] WARNING: CPU: 2 PID: 4496 at lib/xarray.c:1010
->>>> xas_split_alloc+0xf8/0x128
->>>> [ 1228.389546] Modules linked in: binfmt_misc vhost_net vhost
->>>> vhost_iotlb tap xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT
->>>> nf_reject_ipv4 nft_compat nft_chain_nat nf_nat nf_conntrack
->>>> nf_defrag_ipv6 nf_defrag_ipv4 nf_tables nfnetlink tun bridge stp llc
->>>> qrtr rfkill sunrpc vfat fat acpi_ipmi ipmi_ssif arm_spe_pmu
->>>> ipmi_devintf arm_cmn arm_dmc620_pmu ipmi_msghandler cppc_cpufreq
->>>> arm_dsu_pmu xfs libcrc32c ast drm_shmem_helper drm_kms_helper drm
->>>> crct10dif_ce ghash_ce igb nvme sha2_ce nvme_core sha256_arm64 sha1_ce
->>>> i2c_designware_platform sbsa_gwdt nvme_common i2c_algo_bit
->>>> i2c_designware_core xgene_hwmon dm_mirror dm_region_hash dm_log dm_mod
->>>> fuse
->>>> [ 1228.446348] CPU: 2 PID: 4496 Comm: qemu-kvm Kdump: loaded Tainted:
->>>> G        W          6.6.0-rc2-zhenyzha+ #5
->>>> [ 1228.456248] Hardware name: GIGABYTE R152-P31-00/MP32-AR1-00, BIOS
->>>> F31h (SCP: 2.10.20220810) 07/27/2022
->>>> [ 1228.465538] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>>> [ 1228.472486] pc : xas_split_alloc+0xf8/0x128
->>>> [ 1228.476656] lr : __filemap_add_folio+0x33c/0x4e0
->>>> [ 1228.481261] sp : ffff80008dd4f1c0
->>>> [ 1228.484563] x29: ffff80008dd4f1c0 x28: ffffd15825388c40 x27: 0000000000000001
->>>> [ 1228.491685] x26: 0000000000000001 x25: ffffffffffffc005 x24: 0000000000000000
->>>> [ 1228.498807] x23: ffff80008dd4f270 x22: ffffffc202b00000 x21: 0000000000000000
->>>> [ 1228.505930] x20: ffffffc2007f9600 x19: 000000000000000d x18: 0000000000000014
->>>> [ 1228.513052] x17: 00000000b21b8a3f x16: 0000000013a8aa94 x15: ffffd15824625944
->>>> [ 1228.520174] x14: ffffffffffffffff x13: 0000000000000030 x12: 0101010101010101
->>>> [ 1228.527297] x11: 7f7f7f7f7f7f7f7f x10: 000000000000000a x9 : ffffd158252dd3fc
->>>> [ 1228.534419] x8 : ffff80008dd4f1c0 x7 : ffff07ffa0945468 x6 : ffff80008dd4f1c0
->>>> [ 1228.541542] x5 : 0000000000000018 x4 : 0000000000000000 x3 : 0000000000012c40
->>>> [ 1228.548664] x2 : 000000000000000d x1 : 000000000000000c x0 : 0000000000000000
->>>> [ 1228.555786] Call trace:
->>>> [ 1228.558220]  xas_split_alloc+0xf8/0x128
->>>> [ 1228.562043]  __filemap_add_folio+0x33c/0x4e0
->>>> [ 1228.566300]  filemap_add_folio+0x48/0xd0
->>>> [ 1228.570211]  page_cache_ra_order+0x214/0x310
->>>> [ 1228.574469]  ondemand_readahead+0x1a8/0x320
->>>> [ 1228.578639]  page_cache_async_ra+0x64/0xa8
->>>> [ 1228.582724]  filemap_fault+0x238/0xaa8
->>>> [ 1228.586460]  __xfs_filemap_fault+0x60/0x3c0 [xfs]
->>>> [ 1228.591210]  xfs_filemap_fault+0x54/0x68 [xfs]
->>>>
->>>>
->>>>
->>>> 3. The captured data by bpftrace
->>>> (The following part is the crawl analysis of gshan@redhat.com )
->>>> --------------------
->>>> pid:  4475    task: qemu-kvm
->>>> file: /mnt/tmp/qemu_back_mem.mem-machine_mem.OdGYet (deleted)
->>>>
->>>> -------------------- inode --------------------
->>>> i_flags:               0x0
->>>> i_ino:                 67333199
->>>> i_size:                32212254720
->>>>
->>>> ----------------- address_space ----------------
->>>> flags:                 040
->>>> invalidate_lock
->>>>     count:               256
->>>>     owner:               0xffff07fff6e759c1
->>>>       pid: 4496  task: qemu-kvm
->>>>     wait_list.next:      0xffff07ffa20422e0
->>>>     wait_list.prev:      0xffff07ffa20422e0
->>>>
->>>> -------------------- xarray --------------------
->>>> entry[0]:       0xffff080f7eda0002
->>>> shift:          18
->>>> offset:         0
->>>> count:          2
->>>> nr_values:      0
->>>> parent:         0x0
->>>> slots[00]:      0xffff07ffa094546a
->>>> slots[01]:      0xffff07ffa1b09b22
->>>>
->>>> entry[1]:       0xffff07ffa094546a
->>>> shift:          12
->>>> offset:         0
->>>> count:          20
->>>> nr_values:      0
->>>> parent:         0xffff080f7eda0000
->>>> slots[00]:      0xffffffc202880000
->>>> slots[01]:      0x2
->>>>
->>>> entry[2]:       0xffffffc202880000
->>>> shift:          104
->>>> offset:         128
->>>> count:          0
->>>> nr_values:      0
->>>> parent:         0xffffffc20304c888
->>>> slots[00]:      0xffff08009a960000
->>>> slots[01]:      0x2001ffffffff
->>>>
->>>> It seems the last xarray entry ("entry[2]") has been corrupted. "shift"
->>>> becomes 104 and "offset" becomes 128, which isn't reasonable.
->>
->> Um, no.  Whatever tool you're using doesn't understand how XArrays work.
->> Fortunately, I wrote xa_dump() which does.  entry[2] does not have bit
->> 1 set, so it is an entry, not a node.  You're dereferencing a pointer to
->> a folio as if it's a pointer to a node, so no wonder it looks corrupted
->> to you.  From this, we know that the folio is at least order-6, and it's
->> probably order-9 (because I bet this VMA has the VM_HUGEPAGE flag set,
->> and we're doing PMD-sized faults).
->>
-> 
-> Indeed, entry[2] is a entry instead of a node, deferencing a folio.
-> bpftrace was used to dump the xarray. you're correct that the VMA has
-> flag VM_HUGEPAGE, set by madvise(MADV_HUGEPAGE). The order returned by
-> xas_get_order() is 13, passed to xas_split_alloc().
-> 
+> ahalaney@x1gen2nano ~/git/linux-rt-devel (git)-[tags/v6.10-rc4-rt6-rebase] % cat kernel/printk/test_thread.c                         :(
 > /*
->    * xas->xa_shift    = 0
->    * XA_CHUNK_SHIFT   = 6
->    * order            = 13      (512MB huge page size vs 64KB base page size)
->    */
-> void xas_split_alloc(struct xa_state *xas, void *entry, unsigned int order,
->                   gfp_t gfp)
-> {
->           unsigned int sibs = (1 << (order % XA_CHUNK_SHIFT)) - 1;
->           unsigned int mask = xas->xa_sibs;
+>  * Test making a kthread similar to nbcon's (under load)
+>  * to see if it also has issues with migrate_swap()
+>  */
+> #include "linux/nmi.h"
+> #include <asm-generic/delay.h>
+> #include <linux/kthread.h>
+> #include <linux/module.h>
+> #include <linux/sched.h>
 > 
->           /* XXX: no support for splitting really large entries yet */
->           if (WARN_ON(xas->xa_shift + 2 * XA_CHUNK_SHIFT < order))
->                   goto nomem;
->           :
+> DEFINE_STATIC_SRCU(test_srcu);
+> static DEFINE_SPINLOCK(test_lock);
+> static struct task_struct *kt;
+> static bool dont_stop = true;
+> 
+> static int test_thread_func(void *unused) {
+> 	unsigned long flags;
+> 
+> 	pr_info("Starting the while true loop\n");
+> 	do {
+> 		int cookie = srcu_read_lock_nmisafe(&test_srcu);
+> 		spin_lock_irqsave(&test_lock, flags);
+> 		touch_nmi_watchdog();
+> 		udelay(5000);  // print a line to serial
+> 		spin_unlock_irqrestore(&test_lock, flags);
+> 		srcu_read_unlock_nmisafe(&test_srcu, cookie);
+
+Does it help to add here?
+
+		cond_resched();
+
+> 	} while (dont_stop);
+> 
+> 	return 0;
 > }
+> 
+> static int __init test_thread_init(void) {
+> 
+> 	pr_info("Creating test_thread at -20 nice level\n");
+> 	kt = kthread_run(test_thread_func, NULL, "test_thread");
+> 	if (IS_ERR(kt)) {
+> 		pr_err("Failed to make test_thread\n");
+> 		return PTR_ERR(kt);
+> 	}
+> 	sched_set_normal(kt, -20);
+> 
+> 	return 0;
+> }
+> 
+> static void __exit test_thread_exit(void) {
+> 	dont_stop = false;
+> 	kthread_stop(kt);
+> }
+> 
+> module_init(test_thread_init);
+> module_exit(test_thread_exit);
+> MODULE_LICENSE("GPL");
+> ahalaney@x1gen2nano ~/git/linux-rt-devel (git)-[tags/v6.10-rc4-rt6-rebase] %
+> 
+> That shows a softlockup quite quickly on the CPU that thread is
+> running on (as opposed to what Derek reports, where migrate_swap() is
+> going on and the softlockup reports on the other CPU in the swapping of
+> tasks). I guess that's because of the touch_nmi_watchdog() happening
+> in serial8250_console_write_thread().
+> 
+> The below is without the touch_nmi_watchdog() in the above snippet
+> (just to show what happens as written in your reply).
+> 
+>     [   72.018480] Creating test_thread at -20 nice level
+>     [   72.018632] Starting the while true loop
+>     [   99.673116] watchdog: BUG: soft lockup - CPU#53 stuck for 26s! [test_thread:2628]
+>     [   99.673119] Modules linked in: test_thread rfkill intel_rapl_msr intel_rapl_common sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel mei_me ipmi_si kvm mei acpi_power_meter i2c_i801 mgag200 iTCO_wdt rapl acpi_ipmi i2c_algo_bit iTCO_vendor_support mxm_wmi pcspkr i2c_smbus joydev lpc_ich ioatdma intel_cstate intel_uncore ipmi_devintf ipmi_msghandler acpi_pad fuse xfs sd_mod t10_pi sg ahci crct10dif_pclmul libahci crc32_pclmul ixgbe crc32c_intel libata megaraid_sas ghash_clmulni_intel mdio dca wmi dm_mirror dm_region_hash dm_log dm_mod
+>     [   99.673159] CPU: 53 PID: 2628 Comm: test_thread Kdump: loaded Not tainted 6.10.0-rc4-rt6+ #7
+>     [   99.673162] Hardware name: Intel Corporation S2600CWR/S2600CWR, BIOS SE5C610.86B.01.01.0018.072020161249 07/20/2016
+>     [   99.673163] RIP: 0010:_raw_spin_unlock_irqrestore+0x1f/0x40
 
-Resurrecting this, because I just got aware of it.
+This is the point where the interrupts were enabled. It allowed to
+handle pending timers, including watchdog_timer_fn().
+It printed this softlockup report.
 
-I recall talking to Willy at some point about the problem of order-13 not
-being fully supported by the pagecache right now (IIRC primiarly splitting,
-which should not happen for hugetlb, which is why there it is not a
-problem). And I think we discussed just blocking that for now.
+It means that test_thread() never scheduled in the do while() loop.
 
-So we are trying to split an order-13 entry, because we ended up
-allcoating+mapping an order-13 folio previously.
-
-That's where things got wrong, with the current limitations, maybe?
-
-#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
-
-Which would translate to MAX_PAGECACHE_ORDER=13 on aarch64 with 64k.
-
-Staring at xas_split_alloc:
-
-	WARN_ON(xas->xa_shift + 2 * XA_CHUNK_SHIFT < order)
-
-I suspect we don't really support THP on systems with CONFIG_BASE_SMALL.
-So we can assume XA_CHUNK_SHIFT == 6.
-
-I guess that the maximum order we support for splitting is 12? I got confused
-trying to figure that out. ;)
+I believe that the cond_resched() would cure the problem.
 
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index e37e16ebff7a..354cd4b7320f 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -352,9 +352,12 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
-   * limit the maximum allocation order to PMD size.  I'm not aware of any
-   * assumptions about maximum order if THP are disabled, but 8 seems like
-   * a good order (that's 1MB if you're using 4kB pages)
-+ *
-+ * xas_split_alloc() does not support order-13 yet, so disable that for now,
-+ * which implies no 512MB THP on arm64 with 64k.
-   */
-  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--#define MAX_PAGECACHE_ORDER    HPAGE_PMD_ORDER
-+#define MAX_PAGECACHE_ORDER    min(HPAGE_PMD_ORDER,12)
-  #else
-  #define MAX_PAGECACHE_ORDER    8
-  #endif
+>     [   99.673179] Code: 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 c6 07 00 0f 1f 00 f7 c6 00 02 00 00 74 01 fb 65 ff 0d 09 17 9c 4a <74> 06 c3 cc cc cc cc cc 0f 1f 44 00 00 c3 cc cc cc cc cc 66 66 66
+>     [   99.673180] RSP: 0018:ffffb10887dafed0 EFLAGS: 00000246
+>     [   99.673182] RAX: 00000000e3ddc104 RBX: 0000000000000000 RCX: 0000000000001035
+>     [   99.673183] RDX: 0000000000af11a8 RSI: 0000000000000286 RDI: ffffffffc0e1b700
+>     [   99.673184] RBP: ffffb1088a4c77b0 R08: 0000000000000035 R09: 0000000000000035
+>     [   99.673185] R10: 0000000000017ffd R11: ffffffffb5649760 R12: ffff8b5f0caa4f00
+>     [   99.673186] R13: ffff8b4f87c04e80 R14: 0000000000000286 R15: ffff8b5f200e3380
+>     [   99.673187] FS:  0000000000000000(0000) GS:ffff8b6ebf880000(0000) knlGS:0000000000000000
+>     [   99.673189] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>     [   99.673190] CR2: 000055a7bd4f3b68 CR3: 0000001f35820003 CR4: 00000000001706f0
+>     [   99.673191] Call Trace:
+>     [   99.673192]  <IRQ>
+>     [   99.673193]  ? watchdog_timer_fn+0x21f/0x2a0
+>     [   99.673197]  ? __pfx_watchdog_timer_fn+0x10/0x10
+>     [   99.673198]  ? __hrtimer_run_queues+0xfa/0x270
+>     [   99.673202]  ? hrtimer_interrupt+0xf4/0x390
+>     [   99.673205]  ? __sysvec_apic_timer_interrupt+0x52/0x160
+>     [   99.673208]  ? sysvec_apic_timer_interrupt+0x6f/0x80
+>     [   99.673210]  </IRQ>
+>     [   99.673211]  <TASK>
+>     [   99.673212]  ? asm_sysvec_apic_timer_interrupt+0x1a/0x20
+>     [   99.673215]  ? __pfx_delay_tsc+0x10/0x10
+>     [   99.673221]  ? _raw_spin_unlock_irqrestore+0x1f/0x40
+>     [   99.673222]  test_thread_func+0x5e/0xff0 [test_thread]
+>     [   99.673225]  ? __pfx_test_thread_func+0x10/0x10 [test_thread]
+>     [   99.673226]  kthread+0xec/0x110
+>     [   99.673230]  ? __pfx_kthread+0x10/0x10
+>     [   99.673232]  ret_from_fork+0x3a/0x50
+>     [   99.673235]  ? __pfx_kthread+0x10/0x10
+>     [   99.673237]  ret_from_fork_asm+0x1a/0x30
+>     [   99.673239]  </TASK>
+> 
+> 
+> If you mimic that touch_nmi_watchdog() above the udelay() in the function above,
+
+The touch_nmi_watchdog() caused that watchdog_timer_fn() did not see
+that "test_thread" kthread did not schedule. By other words, it did
+hide the problem.
 
 
-I think this does not apply to hugetlb because we never end up splitting
-entries. But could this also apply to shmem + PMD THP?
+> then you have to get the system to decide to migrate. Something like:
+> 
+>     stress-ng --timeout 60000s --numa 64
+> 
+> seems to help tickle problems out. With that I got a bit different of a
+> backtrace than what Derek reported or above, but I'd guess its a similar
+> root cause:
+> 
+>     [  258.175904] Creating test_thread at -20 nice level
+>     [  258.176237] Starting the while true loop
+>     [  495.910816] INFO: task khugepaged:483 blocked for more than 122 seconds.
+>     [  495.910824]       Not tainted 6.10.0-rc4-rt6+ #7
 
--- 
-Cheers,
+This is from check_hung_task(). It means that the task
+TASK_UNINTERRUPTIBLE sleep for more than 122 second.
 
-David / dhildenb
 
+>     [  495.910827] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     [  495.910829] task:khugepaged      state:D stack:0     pid:483   tgid:483   ppid:2      flags:0x00004000
+>     [  495.910834] Call Trace:
+>     [  495.910836]  <TASK>
+>     [  495.910838]  __schedule+0x5e9/0x1420
+>     [  495.910845]  ? update_load_avg+0x1fb/0x860
+>     [  495.910851]  ? __update_curr+0x15d/0x3a0
+>     [  495.910854]  schedule+0x6d/0xf0
+>     [  495.910857]  schedule_timeout+0x32/0x1b0
+>     [  495.910860]  ? sched_clock+0x10/0x30
+>     [  495.910866]  wait_for_common+0xfe/0x1c0
+>     [  495.910869]  __flush_work+0x258/0x2d0
+
+I guess that it is the wait_for_completion() called from __flush_work().
+
+>     [  495.910875]  ? __pfx_wq_barrier_func+0x10/0x10
+>     [  495.910878]  __lru_add_drain_all+0x19d/0x1e0
+
+__lru_add_drain_all() does
+
+	for_each_cpu(cpu, &has_work)
+		flush_work(&per_cpu(lru_add_drain_work, cpu));
+
+It is most likely blocked when waiting on the CPU which is occupied
+by the "test_thread" kthread.
+
+IMHO, it is not related to a process migration. It is just yet another
+way how to get blocked by a task which is not scheduling.
+
+>     [  495.910882]  khugepaged+0x160/0xa90
+>     [  495.910887]  ? __pfx_autoremove_wake_function+0x10/0x10
+>     [  495.910892]  ? __pfx_khugepaged+0x10/0x10
+>     [  495.910894]  kthread+0xec/0x110
+>     [  495.910898]  ? __pfx_kthread+0x10/0x10
+>     [  495.910900]  ret_from_fork+0x3a/0x50
+>     [  495.910902]  ? __pfx_kthread+0x10/0x10
+>     [  495.910904]  ret_from_fork_asm+0x1a/0x30
+>     [  495.910907]  </TASK>
+> 
+> I got that once this afternoon, haven't gotten anything since (was
+> hoping to see the exact same thing as Derek with that, but oh well).
+
+Thanks a lot for proving these detailed debugging information.
+
+I think that we need to add the cond_resched() into the do-while()
+loop in nbcon_kthread_func(). Otherwise, the kthread would not
+schedule in this loop with a voluntary preemption.
+
+And it is a great catch! I haven't realized this when reviewing
+the code.
+
+Best Regards,
+Petr
 
