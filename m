@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-220622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5542390E47C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:29:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0AE290E482
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A13C1C22E2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32DBF28420C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA21577106;
-	Wed, 19 Jun 2024 07:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9D2763F7;
+	Wed, 19 Jun 2024 07:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOFSC8hP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KDDpx/f0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04D276025;
-	Wed, 19 Jun 2024 07:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C682594;
+	Wed, 19 Jun 2024 07:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718781991; cv=none; b=MOz5VRDZ4zsDBZ6Itn0U7s7XcFdLfrcZJVyjB+7SiYD9t+drp2MKXFDZ2o1W5K5fDYjqDPRmtt4iptanixCM3o8w2tM+kD/avindW5+5lUm743o2bkKkvQpI0c5tuCUYoy+ssSsLI4YgRShewaGDXQHODdw5rImfscmpCisUp0E=
+	t=1718782197; cv=none; b=N2qOjMIxjr+j7wU8coLa4kyrZzRm7x4NBVyFww3GlGp1q/zUXu3JFL5819Gpib/IeTnxoFcYweemDPPphz25f65988h51sztVIlBbKyqim2iYNko5qDnVzh8YDwCYDKXbTZwxAYXl//layHqqtkVpSCVPO3wHRUWjJUKGzhlED0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718781991; c=relaxed/simple;
-	bh=AFUnNrZ/TrPawxmlzUST/h/MD1X9W6irp/d7Nw7CZI8=;
+	s=arc-20240116; t=1718782197; c=relaxed/simple;
+	bh=1E+NlnCtf6FDTfcIULRBa8rlKaG+cIdJkekR/2DISmI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PNMB6Kd5TPNj0IRT8fdW6Iivk9pseuA0Btq5yXw9yC5ihAayqcrn5RigujDf7ydDdMskwkTD1Cx+YqT/6ZsHdbOoXbmZXTkyFZRBwtEqvv6on65e2JEYDdOASq+BNBpHahJtbAWR5KSEXg63CopIFGA0DHQCoyRoZ7AzVLqvV4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOFSC8hP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996F6C2BBFC;
-	Wed, 19 Jun 2024 07:26:25 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=KmtaigR1DPZbKsYQeBO0BDyVAZOoflwlGHCo0C/WkJzBgNqAS6zJUiXB3khRi6th0t7bfodN/CtV+5xnw14C1Be9ePRH4b07cjxtw4Lq9Ntv+4WJeiDhs/h0P+V2IhyVfc7+xDhsd2zx0Gy1Th1CFkw6cJMsKiwMqgtWQi6G7X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KDDpx/f0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C42C3C4AF1A;
+	Wed, 19 Jun 2024 07:29:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718781990;
-	bh=AFUnNrZ/TrPawxmlzUST/h/MD1X9W6irp/d7Nw7CZI8=;
+	s=k20201202; t=1718782196;
+	bh=1E+NlnCtf6FDTfcIULRBa8rlKaG+cIdJkekR/2DISmI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kOFSC8hPF3+IWT27dglmN5/XKoEj0C8Cm9p6fu+uuHVO8Q0UiWzJIQeeyumCWgUCM
-	 J/ZS0IHOqSRBBU6lqO2iHovd/WUOzjhUG7UWk57txl8kCT7pf05qQY24/58+ASKCS0
-	 oQ9pXmXEAhOYK7J88dUtT/wmI2M1bP/AioN9V+b+emtujWKScezeXYRhMSkAbm30pm
-	 ASHS+aGP7SA2H5cnc8UmeGyOtcpNqhB/iY7hlTzp7LvnspZM9NfgjcGJTR8d6YpO+Y
-	 Sw4/yXhut9UF0yhAs7aQOZblkdShckUUihSIF9p2wXChB4948Q5WHxsVRA6l0tUJJZ
-	 gIAGRpjdVv/wQ==
-Message-ID: <f3ce758b-fa9e-4eff-984e-ace10553d683@kernel.org>
-Date: Wed, 19 Jun 2024 09:26:22 +0200
+	b=KDDpx/f0P2MpRJfAlUmxvnjYcPBr4aBvc62BRxvzDFvXVCBWtTaM4lJs3VGbuRJ8z
+	 tchvDMOKkqKDk6GfVVinmttRKqLvkonMB2kJom+YfCAzKG1TCit7oVaWqEDBCmRMnQ
+	 uVbexEZhuCYYQwG+yhzoybbtcJ3sv4WrcF1LF2WuDWZRpuA32dM4tjT4j3dWbnz5be
+	 s8lRZq0ig+D4GIuhxkZxxYuHnVPgNyakuhGd34Cyu7i+Re6yqTLNd7zxoeVJX42qzL
+	 fParSYrWTBu4jo/MUUOe9s48Imhh4Us1lx4cNqMbW/2nRUoWRvA71EPQSYBqyxFXqX
+	 pX0LjXnVODyrQ==
+Message-ID: <3d193f01-2c8b-4d6c-8139-11f2d9a34d2d@kernel.org>
+Date: Wed, 19 Jun 2024 09:29:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dt-bindings: rename wm8750.yaml to wlf,wm8750.yaml
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, patches@opensource.cirrus.com,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240619070356.80759-1-animeshagarwal28@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document
+ MA35D1 SDHCI controller
+To: Shan-Chun Hung <shanchun1218@gmail.com>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ adrian.hunter@intel.com, p.zabel@pengutronix.de, pbrobinson@gmail.com,
+ serghox@gmail.com, mcgrof@kernel.org,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, forbidden405@outlook.com,
+ tmaimon77@gmail.com, andy.shevchenko@gmail.com,
+ linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ychuang3@nuvoton.com, schung@nuvoton.com
+References: <20240619054641.277062-1-shanchun1218@gmail.com>
+ <20240619054641.277062-2-shanchun1218@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,20 +107,174 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240619070356.80759-1-animeshagarwal28@gmail.com>
+In-Reply-To: <20240619054641.277062-2-shanchun1218@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/06/2024 09:03, Animesh Agarwal wrote:
-> Add vendor prefix to wlf,wm8750 dt-schema.
+On 19/06/2024 07:46, Shan-Chun Hung wrote:
+> Add binding for Nuvoton MA35D1 SDHCI controller.
 > 
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> ---
->  .../devicetree/bindings/sound/{wm8750.yaml => wlf,wm8750.yaml}  | 2 +-
+> Signed-off-by: schung <schung@nuvoton.com>
 
-Same as in other cases (why they started now?): why only one file not
-all of them? Anyway, that's not necessary.
+Since this was not tested, only limited review follows. Please test your
+future patches.
+
+> ---
+>  .../bindings/mmc/nuvoton,ma35d1-sdhci.yaml    | 106 ++++++++++++++++++
+>  1 file changed, 106 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/nuvoton,ma35d1-sdhci.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/nuvoton,ma35d1-sdhci.yaml b/Documentation/devicetree/bindings/mmc/nuvoton,ma35d1-sdhci.yaml
+> new file mode 100644
+> index 000000000000..173449360dea
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/nuvoton,ma35d1-sdhci.yaml
+> @@ -0,0 +1,106 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/nuvoton,ma35d1-sdhci.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nuvoton MA35D1 SD/SDIO/MMC Controller
+> +
+> +maintainers:
+> +  - Shan-Chun Hung <shanchun1218@gmail.com>
+> +
+> +description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +  This controller on Nuvoton MA35 family SoCs provides an interface for MMC, SD, and
+> +  SDIO types of memory cards.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+
+Drop
+
+> +      - enum:
+> +          - nuvoton,ma35d1-sdhci
+
+Blank line
+
+> +  reg:
+> +    maxItems: 1
+> +    description: The SDHCI registers
+
+Drop
+
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  pinctrl-names:
+> +    description:
+> +      Should at least contain default and state_uhs.
+
+? Contradicts constraints.
+
+> +    minItems: 1
+> +    items:
+> +      - const: default
+> +      - const: state_uhs
+> +
+> +  pinctrl-0:
+> +    description:
+> +      Should contain default/high speed pin ctrl.
+> +    maxItems: 1
+> +
+> +  pinctrl-1:
+> +    description:
+> +      Should contain uhs mode pin ctrl.
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+
+No, maxItems instead.
+
+> +    description: The SDHCI bus clock
+
+Drop
+
+> +
+> +  resets:
+> +    maxItems: 1
+> +    description:
+> +      Phandle and reset specifier pair to softreset line of sdhci.
+
+Drop
+
+> +
+> +  nuvoton,sys:
+
+1. too generic, what is sys?
+
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the syscon that configure sdhci votage stable
+
+2. typo: voltage
+
+3. Which syscon?
+
+4. Why you are not implementing regulators?
+
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - pinctrl-names
+> +  - pinctrl-0
+> +
+> +unevaluatedProperties: false
+
+Hm? And where is ref to MMC schema?
+
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
+> +    #include <dt-bindings/reset/nuvoton,ma35d1-reset.h>
+> +
+> +    soc {
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+
+Fix your indentation.
+
+Use 4 spaces for example indentation.
+
+> +        sdhci0: sdhci@40180000 {
+
+Drop label
+
+> +            compatible = "nuvoton,ma35d1-sdhci";
+> +            reg = <0x0 0x40180000 0x0 0x2000>;
+> +            interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
+> +            clocks = <&clk SDH0_GATE>;
+> +            pinctrl-names = "default";
+> +            pinctrl-0 = <&pinctrl_sdhci0>;
+> +            bus-width = <4>;
+> +            max-frequency = <100000000>;
+> +            no-1-8-v;
+> +            status = "disabled";
+
+Drop
+
+> +        };
+> +
+> +        sdhci1: sdhci@40190000 {
+
+Drop this example. One is enough.
+
+
 
 Best regards,
 Krzysztof
