@@ -1,218 +1,129 @@
-Return-Path: <linux-kernel+bounces-220865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B40290E85F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:34:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F48890E862
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4188E1C219ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2E351C22054
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9720912F5BE;
-	Wed, 19 Jun 2024 10:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7728112EBE8;
+	Wed, 19 Jun 2024 10:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="r2Su73Gb"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UOUoSeBB"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F1B78C91;
-	Wed, 19 Jun 2024 10:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4758585285
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718793265; cv=none; b=MK/5+m85Qp1hoO+lafZ3E5ESsq4JBcwOiIhc6T/PyMl3/zvwpkWhE8kZJQzAbCjXHACouff4tJnGyxuh0nwGpAMVLxiKf/xiQ+BY4vEb/dVFfof8ru4K2UhC2K8/K7v3E8b0VpMb4kPpe6qBZuC+YKkYDN5Qi4HD4WJyd8cXhWo=
+	t=1718793320; cv=none; b=hfAHMzLdL11jXoldStMhO/IIZxlq2QSScwHMXUICBWdhN+/6kfnhLD3qaOznSaEt0cjXwcYv/G+22cnVxSFuxB4WdXRmn4o7QrdHscnsZUONA14aiC1Ev49xgcfqwmvX19MQofKt/Z+JhESxhmHSmNoNx5wj7541xaNhybAB+vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718793265; c=relaxed/simple;
-	bh=PhPqKYQCQkwNWu5LZ8dFzl8sb446Y/Jiz4a2i59MxrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eg94QS9IQlCtFp7Xw7St2QumriiC/Kiuppid3jK3kci6/CArJt19gYZrAsnswCnWt34x+Tt19mc2s7KZo5Bu2i/9JgkQmp45qhYEMiHxSO4SVMGsz5liNy/I7TGneuB4bJ8Sv6YFAgCrnQ97oXV3E3fRSqN2Ee3duL7wGBXjMAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=r2Su73Gb; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=21JYkOIbkZLNfZaVuKtNV1fZ9lm08Q1ez/4bhTivuJs=; b=r2Su73GbRCbIlY2/iqWB7driHX
-	quxDMxWk0YUthRbIbspUrjyzRjLCaZv0QhdewwLqfW9gLF4ZJoP9ZBbY42LSHcRiF3e+lo0Xi9b2S
-	TDuG1upXycLH5eUOyPoLXxKevZX+gQFopQ2Vj6AqfDNWrtlMfMAFRECg15evJJCctN0PGU9iykGgt
-	if+JD5Qy8b/edoWAldiQ4tbPgIiQ27+LNPbljowhZ6nDxNFrq0x6cqtUVaRaV94OHw6GHkWfkOF49
-	o33FgEI8pig5WgD5Ab2Cdh8vUp34FKwbY1HoBNklTD2lMHZTL8XW+N0QUypd5L0fKGLdcK5GlFN+D
-	ju6zndKg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42498)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sJsdh-0008CM-1M;
-	Wed, 19 Jun 2024 11:34:05 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sJsdg-0006g3-Tz; Wed, 19 Jun 2024 11:34:04 +0100
-Date: Wed, 19 Jun 2024 11:34:04 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
-Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-	andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 4/4] net: phy: bcm-phy-lib: Implement BroadR-Reach
- link modes
-Message-ID: <ZnK0HL+pO9/2ZMKz@shell.armlinux.org.uk>
-References: <20240617113841.3694934-1-kamilh@axis.com>
- <20240617113841.3694934-5-kamilh@axis.com>
+	s=arc-20240116; t=1718793320; c=relaxed/simple;
+	bh=0GKpp7Tj8rmrANzPpFFyYQDQk5Nc6/mSbfS5ot7teh8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KhNQ3VqdVEacTif6Cz8sFWZyRyTyLNGbPQeloxbqd5Dewx0d7PCP6fNmUPKRbKO9Tmnd6ER4xQHwV2nCSgrUAodjz6zRTcrS+bWT8YUlE9u8lTHisRQ4b1IjatHZG3yu+TDo5cAxoDoHWUJqTXwKxVbAbKF6VUZXF4F7shjO2fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UOUoSeBB; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-48d75899a88so2060398137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:35:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718793318; x=1719398118; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oQeGra2iBmmyFMexo3SqyeNsqV++ufvz/AJLf19SFYk=;
+        b=UOUoSeBBkgBEqKJIEChXJ6Qnd2NBxfhw2uJecO4kBuWd7QPvH/chpP8HxLYXOeuVid
+         VEYPcMKCCxufwPspiBV+gqiJA5l1CyHdjvPWZIly4BUaZ6UG9lR0MpOvsPtwGyZnB1r5
+         jxHXWqo+CBTScDjwV8PBFyKXCZbIoxYxRg3go=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718793318; x=1719398118;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oQeGra2iBmmyFMexo3SqyeNsqV++ufvz/AJLf19SFYk=;
+        b=uDysyvXDq0eK+3u0BNaIXBbxCiD9yDH9Iu8xxQke2OwcIDcP9H6hGhz9Tjy+3515Zx
+         6RyLDbGnFHrCMCBiOipE/A26mY1UYvB9WedUQxXa2JvSJJauNlZLDZ2UZjtTazG7xm4O
+         pYCLRc8BlPcwvLBn5xmBgyTzdGdEjTM7tk34MjSpcrnIaou72gtD4W9Z/jTuAKimTmxg
+         aIxIQsO98eQq8R48k0LthauCG3ZNKBb3Od7pAE9h5P/xlFNi/DOQY+KQ5v7BA65yHoc7
+         sr3bhmiZwouYcwGgH3TNMRMBhpQKnD/CWjf8Ij1AjFarTG23C96CUY1l4ACjLrRG+ao0
+         nmJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeLZnGh1d1IvNrbUcYrOdVLAwY5Msxb6OPpLizt5ovB7XqvvHP0SO98GjG1EtJisvjEXKvZTyaEM4YLCjHnGKVZkF/gbVs/Y+uLEvT
+X-Gm-Message-State: AOJu0Yw/EjIZqaSJ10/QZwEVTVynzEcYH1ndbuP7ijp7gRdDRyztuGZ8
+	6lgpF9Y1bD1XFYi6TeXMZ70xm2TU6bCmlTnglGJhFMehPkwngf997Z9exS1czIT9aLqEek1cpZM
+	=
+X-Google-Smtp-Source: AGHT+IEZqJXfAyxxRpWG7q0ZHdry1TiKm+aMMN4yAio20QinMhBC2rf/vxZEDnlT6jamfzYrisuBGg==
+X-Received: by 2002:a05:6102:1887:b0:48d:89e2:8ff6 with SMTP id ada2fe7eead31-48f130ade13mr2294093137.23.1718793318038;
+        Wed, 19 Jun 2024 03:35:18 -0700 (PDT)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-48da4483626sm2621080137.21.2024.06.19.03.35.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 03:35:17 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-48d75899a88so2060389137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:35:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcnx6hqTqTUkNfd2pxrSjnEf65YSziYAd9w+4iEp+SC2YSK1rJQtS/Dm/nu/8Ny1YqGnSsvCQ30+cBZEdBVjIlz7s6bqo25HyY8Spg
+X-Received: by 2002:a05:6102:2926:b0:48f:19b5:2685 with SMTP id
+ ada2fe7eead31-48f19b52895mr915741137.26.1718793317187; Wed, 19 Jun 2024
+ 03:35:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240617113841.3694934-5-kamilh@axis.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20240619103034.110377-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240619103034.110377-1-angelogioacchino.delregno@collabora.com>
+From: Fei Shao <fshao@chromium.org>
+Date: Wed, 19 Jun 2024 18:34:41 +0800
+X-Gmail-Original-Message-ID: <CAC=S1nikgOVAqwHDEv5yQAQAKT4pBDwcC3zCduwf64nwtATY7Q@mail.gmail.com>
+Message-ID: <CAC=S1nikgOVAqwHDEv5yQAQAKT4pBDwcC3zCduwf64nwtATY7Q@mail.gmail.com>
+Subject: Re: [PATCH] soc: mediatek: mtk-mutex: Add MDP_TCC0 mod to MT8188
+ mutex table
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 01:38:41PM +0200, Kamil Horák - 2N wrote:
-> +int bcm_config_lre_advert(struct phy_device *phydev)
-> +{
-> +	int err;
-> +	u32 adv;
-> +
-> +	/* Only allow advertising what this PHY supports */
-> +	linkmode_and(phydev->advertising, phydev->advertising,
-> +		     phydev->supported);
+On Wed, Jun 19, 2024 at 6:30=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> MT8188's MDP3 is able to use MDP_TCC0, this mutex_mod bit does
+> actually exist and it's the same as MT8195: add it to the table.
+>
+> Fixes: 26bb17dae6fa ("soc: mediatek: mtk-mutex: Add support for MT8188 VP=
+PSYS")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
 
-Isn't this already done by phy_ethtool_ksettings_set() ?
+Reviewed-by: Fei Shao <fshao@chromium.org>
 
-        linkmode_copy(advertising, cmd->link_modes.advertising);
-...
-        /* We make sure that we don't pass unsupported values in to the PHY */
-        linkmode_and(advertising, advertising, phydev->supported);
-...
-        linkmode_copy(phydev->advertising, advertising);
-
-> diff --git a/drivers/net/phy/broadcom.c b/drivers/net/phy/broadcom.c
-> index 370e4ed45098..5e590c8f82c4 100644
-> --- a/drivers/net/phy/broadcom.c
-> +++ b/drivers/net/phy/broadcom.c
-> @@ -5,6 +5,9 @@
->   *	Broadcom BCM5411, BCM5421 and BCM5461 Gigabit Ethernet
->   *	transceivers.
->   *
-> + *	Broadcom BCM54810, BCM54811 BroadR-Reach transceivers.
-> + *
-> + *
-
-Nit: why two blank lines?
-
-> +static int bcm54811_read_abilities(struct phy_device *phydev)
-> +{
-> +	static const int modes_array[] = { ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-> +					   ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT,
-> +					   ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
-> +					   ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
-> +					   ETHTOOL_LINK_MODE_1000baseT_Half_BIT,
-> +					   ETHTOOL_LINK_MODE_100baseT_Full_BIT,
-> +					   ETHTOOL_LINK_MODE_100baseT_Half_BIT,
-> +					   ETHTOOL_LINK_MODE_10baseT_Full_BIT,
-> +					   ETHTOOL_LINK_MODE_10baseT_Half_BIT };
-
-Formatting...
-
-	static const int modes_array[] = {
-		ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-		...
-		ETHTOOL_LINK_MODE_10baseT_Half_BIT
-	};
-
-please. This avoids wrapping beyond column 80, and is to kernel coding
-standards.
-
-> +	int i, val, err;
-> +	u8 brr_mode;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(modes_array); i++)
-> +		linkmode_clear_bit(modes_array[i], phydev->supported);
-> +
-> +	err = bcm5481x_get_brrmode(phydev, &brr_mode);
-> +	if (err)
-> +		return err;
-> +
-> +	if (brr_mode) {
-> +		linkmode_set_bit_array(phy_basic_ports_array,
-> +				       ARRAY_SIZE(phy_basic_ports_array),
-> +				       phydev->supported);
-> +
-> +		val = phy_read(phydev, MII_BCM54XX_LRESR);
-> +		if (val < 0)
-> +			return val;
-> +
-> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
-> +				 phydev->supported, 1);
-
-		linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
-				 phydev->supported);
-
-...
-> +	/* Ensure LRE or IEEE register set is accessed according to the brr on/off,
-> +	 *  thus set the override
-> +	 */
-> +	return bcm_phy_write_exp(phydev, BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL,
-> +		BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL_EN |
-> +		(on ? 0 : BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL_OVERRIDE_VAL));
-
-Needless parens, wrong formatting. Consider a local variable:
-
-	val = BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL_EN;
-	if (!on)
-		val |= BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL_OVERRIDE_VAL;
-
-	return bcm_phy_write_exp(phydev,
-				 BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL, val);
-
-would be much nicer to read.
-
-> +	if (phydev->autoneg != AUTONEG_ENABLE) {
-> +		if (!phydev->autoneg_complete) {
-> +			/* aneg not yet done, reset all relevant bits */
-> +			static const int br_bits[] = { ETHTOOL_LINK_MODE_Autoneg_BIT,
-> +						       ETHTOOL_LINK_MODE_Pause_BIT,
-> +						       ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-> +						       ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT,
-> +						       ETHTOOL_LINK_MODE_100baseT1_Full_BIT };
-
-More formatting issues. Maybe consider moving these out of the function?
-
-> +			for (i = 0; i < ARRAY_SIZE(br_bits); i++)
-> +				linkmode_clear_bit(br_bits[i], phydev->lp_advertising);
-
-Formatting issue...
-
-...
-> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-> +				 phydev->lp_advertising, lrelpa & LRELPA_PAUSE_ASYM);
-> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_Pause_BIT,
-> +				 phydev->lp_advertising, lrelpa & LRELPA_PAUSE);
-> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-> +				 phydev->lp_advertising, lrelpa & LRELPA_100_1PAIR);
-> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT,
-> +				 phydev->lp_advertising, lrelpa & LRELPA_10_1PAIR);
-
-More formatting issues.
-
-> +static int bcm54811_read_status(struct phy_device *phydev)
-> +{
-> +	int err;
-> +	u8 brr_mode;
-
-Reverse Christmas tree please.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> ---
+>  drivers/soc/mediatek/mtk-mutex.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/soc/mediatek/mtk-mutex.c b/drivers/soc/mediatek/mtk-=
+mutex.c
+> index b5af1fb5847e..01b129caf1eb 100644
+> --- a/drivers/soc/mediatek/mtk-mutex.c
+> +++ b/drivers/soc/mediatek/mtk-mutex.c
+> @@ -524,6 +524,7 @@ static const unsigned int mt8188_mdp_mutex_table_mod[=
+MUTEX_MOD_IDX_MAX] =3D {
+>         [MUTEX_MOD_IDX_MDP_PAD0] =3D MT8195_MUTEX_MOD_MDP_PAD0,
+>         [MUTEX_MOD_IDX_MDP_PAD2] =3D MT8195_MUTEX_MOD_MDP_PAD2,
+>         [MUTEX_MOD_IDX_MDP_PAD3] =3D MT8195_MUTEX_MOD_MDP_PAD3,
+> +       [MUTEX_MOD_IDX_MDP_TCC0] =3D MT8195_MUTEX_MOD_MDP_TCC0,
+>         [MUTEX_MOD_IDX_MDP_WROT0] =3D MT8195_MUTEX_MOD_MDP_WROT0,
+>         [MUTEX_MOD_IDX_MDP_WROT2] =3D MT8195_MUTEX_MOD_MDP_WROT2,
+>         [MUTEX_MOD_IDX_MDP_WROT3] =3D MT8195_MUTEX_MOD_MDP_WROT3,
+> --
+> 2.45.2
+>
 
