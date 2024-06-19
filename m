@@ -1,178 +1,124 @@
-Return-Path: <linux-kernel+bounces-221437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F6F90F39B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:05:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C25C90F397
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EF661C21F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:05:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 907D51C215BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DB1150984;
-	Wed, 19 Jun 2024 16:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85D0152181;
+	Wed, 19 Jun 2024 15:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="M/8ixEAf"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="faxPgzzD"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEB81E4A1;
-	Wed, 19 Jun 2024 16:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D437111AA;
+	Wed, 19 Jun 2024 15:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812822; cv=none; b=laCTTSPyyLQJDPcii2TBTI3rSS8DzSB0WAeGX4VNWq8XCk0INVu7+a5fzZzAApGzz9pjBCUdpAQW22dwGQ1sAmFBIUDpn6KeHFC/34PIsJJ4pLiz6WOvTS25CqIq+JKUlnfYo5IvG5nQknoZ5BVC6x4E+Un4pmLKzbKrFkRDkeM=
+	t=1718812775; cv=none; b=neA/EhzOGqlWEgO1IZ25Ll9bmNasjTEv0Txb0bANyUgBljgrtMIlRvkT8Ffbw20XPBkCdeR0bn6LgeADMkrfJSTrW9ErbjWclE2iWb9n9clgJjP3ZVsu3tj+APVcNt8upVP4AyaKZFdmzMuAhvFgpKGiXeubgxKR/wyvIEuTuiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718812822; c=relaxed/simple;
-	bh=lsQELVPlsQAcUQYMeUHH/b3zV6m6tBZUonHzjKQKzk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RDzknp25+twwHzsbTwca4jAzQFLQ6F+u1v+HoAxh6THa09u/cwxUPG56phpCx02Arh0aCa6LuoD1e/Uf4xv4FffMkOjueNMFZwHD1OCRmrGEvM/BkXuTjDtZpHV7/PVrUJZpysjyK8gsHa0jgRNu8HEwxbIN+AhPKdoqzW4of/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=M/8ixEAf; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JCejEg024133;
-	Wed, 19 Jun 2024 18:00:03 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	b5I09re8UijZNQJy+2SehYcQsyJFUcqURWXJ6ZBkaI8=; b=M/8ixEAfgdzHtMR+
-	N8TAh1MnQt+6Q1wSgaIk0MsWHHff+eg/0Q3bDzDX4/WUX3QwZXwfqU5btGRjsrXQ
-	MlzIfkPsD+3zvkcHUvmfTAsXImBAsJVvL9IHs+C/4OmpHmc4XSAhVgN8kYAMMnHQ
-	rY8+O27uMpxhgCAb7Z3C03tB+BXYQmCm0yYhvBpD9FghVeQm6ux2wfyhl8X08/B+
-	Nho/lgWmpdVAouKiCTGFimgg4ynUDLriaK9rtPadjtMSuoFFTsgel7qThiqCpvHj
-	DBttaPtVA47oHb1wqE6ZvgiWkHNEkPp5foG/J3AJRq3PCeRwvdym5xSNMYgc9XkR
-	xPQsvQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yuj9n46ut-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 18:00:03 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1FAAA4002D;
-	Wed, 19 Jun 2024 17:59:53 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3B777221940;
-	Wed, 19 Jun 2024 17:59:27 +0200 (CEST)
-Received: from [10.252.1.130] (10.252.1.130) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 19 Jun
- 2024 17:59:26 +0200
-Message-ID: <8c3de47c-bd72-4560-a43b-5275f2f7a059@foss.st.com>
-Date: Wed, 19 Jun 2024 17:59:26 +0200
+	s=arc-20240116; t=1718812775; c=relaxed/simple;
+	bh=wxs+ur9+J8MZZSzMQc5JdvlOGOmrAYK2wljAKjbMBfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ivJIBDck7O6kaKHEO4K50ZKPljdDU+7JRNRrAjrTiO9VtOgHXJcVA6rKWYgrA19tlDPj8GBk9VVfuaRxRQZmqIVUZ2ROepbZucxGuxhQ+3tRTAA9Fr3kPc5xNwwp804lrmMA3fMkOdNa3IlojO0dQkr1G4Ux/UDkLB1DcMa4w3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=faxPgzzD; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57d1679ee6eso796265a12.1;
+        Wed, 19 Jun 2024 08:59:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718812772; x=1719417572; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wxs+ur9+J8MZZSzMQc5JdvlOGOmrAYK2wljAKjbMBfA=;
+        b=faxPgzzDfEnlE3m8+hPAQH8Sl+W8N0nUgY9bY5stUoz7OYKeKV7W6014zXOAm/hkVv
+         RIbjSyFKRJcZy+7hRwRjQgVm0PWjbLUGxOzw85cZCOnZgYkj2REfoXzg2sX18NOOzY8B
+         pNyfDVlizOuZuvJgdiWb2eZ+qZppJE4e/jbCPWfeS17/FNdpmp+ZOgAl1lqjbpOZwfpF
+         7ZKcJf+amogmZssUCgHHUHet/FFFnSvEdbtSRmK5Tu3W5hjTbyjX7onL8cDvzTHeNrd9
+         VA0/fZhWkXvvKJlocfrALnre0TpCcbKjvzOEipn6//VNSuBPXU/udIFXebd9tuU3ZlaA
+         DQrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718812772; x=1719417572;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wxs+ur9+J8MZZSzMQc5JdvlOGOmrAYK2wljAKjbMBfA=;
+        b=cYTtULUmRH156yqLtraCUzu6tAXCtd+4SisJAW0eqONWi5KtLaiMyYF593fJxgfH58
+         WOKgLWfMB5emsRVHIgK9beyiDDrMtLicohIkigCMVlcPBR936PsRDlZuiMjmTECYG9nN
+         xaFTYvwcLKg3yhBlwE9uo2HdKM3PikJ321tvjxHa77Za063TeNcGSYDqZM6aNBVED1K4
+         isiwKlYBJIZYfkl42Vztw/98KSsKxKRfVnW714j+ed2WDU+R0agwJeFdaO2AIQ+774XV
+         1JuF00dvpfo2fCDKW4fORhexN+7YnaMT3eQ9UAjOw5LnaE4JbJp2cDOzzmvveN1MTtnq
+         8IvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNDHU3iJ1q6Qik/aKdZJPrLQgoSqoauozh3g7i58FycsjSVRGjbsx+n9dfzRnSsi/30pvy6wlbMkpHPseTD8G4iu24EgaLE8EGK8pD+dAqFsGp46nclA8+beZ4FHrZ0TAMofcw
+X-Gm-Message-State: AOJu0YwyVumzaXvPetpdPrE7jTWtQH9QsdZq9W7bDr5ZS//KPzUonRJM
+	FBKu8ebITlmTgrn9nM9ctxinvdVf6jfjpAigCS8u1Bl+qFVekjWG
+X-Google-Smtp-Source: AGHT+IFwiQl8gIU3T1jvSVIO0jUG+gbHoSBIa5n8WNL5c8DtlDKdIO8yoYHXyE6rnmwc0Yc+Q3YIUA==
+X-Received: by 2002:a17:906:4903:b0:a6e:ab8b:aff4 with SMTP id a640c23a62f3a-a6f94e1f998mr356843066b.13.1718812771445;
+        Wed, 19 Jun 2024 08:59:31 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56fa6a1esm675359166b.216.2024.06.19.08.59.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 08:59:30 -0700 (PDT)
+Date: Wed, 19 Jun 2024 18:59:28 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Oleksij Rempel <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	Casper Andersson <casper.casan@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 net-next] net: dsa: Allow only up to two HSR HW
+ offloaded ports for KSZ9477
+Message-ID: <20240619155928.wmivi4lckjq54t3w@skbuf>
+References: <20240619134248.1228443-1-lukma@denx.de>
+ <20240619134248.1228443-1-lukma@denx.de>
+ <20240619144243.cp6ceembrxs27tfc@skbuf>
+ <20240619171057.766c657b@wsk>
+ <20240619154814.dvjcry7ahvtznfxb@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] iio: add enable and disable services to iio backend
- framework
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
-        Nuno Sa
-	<nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen
-	<lars@metafoo.de>
-CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240618160836.945242-1-olivier.moysan@foss.st.com>
- <20240618160836.945242-3-olivier.moysan@foss.st.com>
- <5b7b8a7132934b77b43ffde0650c68c1dd9a5b7e.camel@gmail.com>
-Content-Language: en-US
-From: Olivier MOYSAN <olivier.moysan@foss.st.com>
-In-Reply-To: <5b7b8a7132934b77b43ffde0650c68c1dd9a5b7e.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619154814.dvjcry7ahvtznfxb@skbuf>
 
-Hi Nuno,
+On Wed, Jun 19, 2024 at 06:48:14PM +0300, Vladimir Oltean wrote:
+> Granted, this isn't an actual functional problem, but given that you
+> are fixing a newly developed feature for net-next, and that this is API
+> that gets progressively harder to change as more devices implement
+> offloads, I would expect a more obvious signaling mechanism to exist
+> for this, and now seems a good time to do it, rather than opting for the
+> most minimal fix.
 
-On 6/19/24 07:21, Nuno Sá wrote:
-> On Tue, 2024-06-18 at 18:08 +0200, Olivier Moysan wrote:
->> Add iio_backend_disable() and iio_backend_enable() APIs to allow
->> IIO backend consumer to request backend disabling and enabling.
->>
->> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
->> ---
-> 
-> Hi Olivier,
-> 
-> small notes from me...
-> 
->>   drivers/iio/industrialio-backend.c | 26 ++++++++++++++++++++++++++
->>   include/linux/iio/backend.h        |  2 ++
->>   2 files changed, 28 insertions(+)
->>
->> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-
->> backend.c
->> index b950e30018ca..d3db048c086b 100644
->> --- a/drivers/iio/industrialio-backend.c
->> +++ b/drivers/iio/industrialio-backend.c
->> @@ -166,6 +166,32 @@ int devm_iio_backend_enable(struct device *dev, struct
->> iio_backend *back)
->>   }
->>   EXPORT_SYMBOL_NS_GPL(devm_iio_backend_enable, IIO_BACKEND);
->>   
->> +/**
->> + * iio_backend_enable - Backend enable
->> + * @dev: Consumer device for the backend
->> + * @back: Backend device
->> + *
->> + * RETURNS:
->> + * 0 on success, negative error number on failure.
->> + */
->> +int iio_backend_enable(struct device *dev, struct iio_backend *back)
->> +{
->> +	return iio_backend_op_call(back, enable);
->> +}
->> +EXPORT_SYMBOL_NS_GPL(iio_backend_enable, IIO_BACKEND);
-> 
-> We do already have devm_iio_backend_enable(). From a correctness stand point and even
-> scalability, that API should now call your new iio_backend_enable() instead of
-> directly call iio_backend_op_call(). I guess that change could be in this patch.
->
+Actually I'm not even so sure about this basic fact, that it isn't a
+functional problem already.
 
-Sure. I have updated the patch.
+xrs700x_hsr_join() has explicit checks for port 1 and 2. Obviously it
+expects those ports to be ring ports.
 
->> +
->> +/**
->> + * iio_backend_disable - Backend disable
->> + * @dev: Consumer device for the backend
->> + * @back: Backend device
->> + *
->> + */
->> +void iio_backend_disable(struct device *dev, struct iio_backend *back)
->> +{
->> +	iio_backend_void_op_call(back, disable);
->> +}
->> +EXPORT_SYMBOL_NS_GPL(iio_backend_disable, IIO_BACKEND);
->> +
-> 
-> We also have __iio_backend_disable() which is static since all users were using
-> devm_iio_backend_enable(). I understand that's not suitable for you but I would
-> instead rename the existing function to iio_backend_disable() and export it.
-> 
+But if you configure from user space ports 0 and 1 to be ring ports,
+and port 2 to be an interlink port, the kernel will accept that
+configuration. It will return -EOPNOTSUPP for port 0, falling back to
+software mode for the first ring port, then accept offload for ring
+ports 1 and 2. But it doesn't match what user space requested, because
+port 2 should be interlink...
 
-Just renaming is not sufficient. The reason is that 
-devm_add_action_or_reset() require an action with action(void *) 
-prototype. So the prototype of iio_backend_disable() has to be changed 
-to void iio_backend_disable(void *back).
-I placed the same arguments in enable and disable for symmetry, but *dev 
-is not required for time being in disable API. So it can make sense to 
-change iio_backend_disable() prototype.
-alternatively, we can call __iio_backend_disable() through this API.
-Please, let me know is you have a preference.
-
-Thanks
-Olivier
-
-> With the above changes:
-> 
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-> 
-> - Nuno Sá
-> 
+I think you really should pass the port type down to drivers and reject
+offloading interlink ports...
 
