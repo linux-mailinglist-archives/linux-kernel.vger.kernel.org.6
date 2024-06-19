@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-220759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 856F290E6B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:18:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C07B90E6BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12A19283F60
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:18:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A12AD1C21481
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C50824BB;
-	Wed, 19 Jun 2024 09:17:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98AA8172D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B77B13211D;
+	Wed, 19 Jun 2024 09:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ma4I2yeb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6278A80624;
+	Wed, 19 Jun 2024 09:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718788640; cv=none; b=SGyYE2MEBQ3sPkM9dAISfW0BsJLvaM6lWslAzp9K4rSJ7O+n8YJXlEWdqST+BlTF3p5uiuVq91k0jKsG5Hix+KB5EkTPM3f4+aVWWRQZi/5tNM1VXnrFALMR8jHFkS9VeLpZQ/rVT6Vo5MxbT9NDCvGOSC1abxuxpjX85VQHphg=
+	t=1718788652; cv=none; b=a+X7mBIEMy3oHnIv33WMvuBpemNkj+U/2i0VFbp3Hfq4T7ZnRaFYARZqzEZ6TBxip10sxfKN3VUMS1p5Whhu3kA+umXMO+ly3/IY6C/Sn2MwSNsql/pZxopd7FwvjwxDNyC0kRu4nUL6Qr6ck5ZF6xktueVyDLK9KbjJzhOpPMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718788640; c=relaxed/simple;
-	bh=R7eYwQf/V7rh6DhupXYV5jKWOqKXa9wYTQbdNnyN7AI=;
+	s=arc-20240116; t=1718788652; c=relaxed/simple;
+	bh=ZMn1mJWNRvOtuqPJLaq/lECjByX3b4m7VVnPKvYL4ZU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PivC6R853CCTxTKXqVfJ/8qbp+HIk7QBKhxHFangKAYhlbQzRyHrHRIUuXuCzsUBfoY4wfzx4HaGSDlOzwmH1v0ph5GdlerNi2o4yuVJez9WaFOedV5OP7E/UEbsfGNZwiaMQewyqvyIpvDHqrOGmtMITz/dZV0M6Je56xlzzQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 049C8DA7;
-	Wed, 19 Jun 2024 02:17:37 -0700 (PDT)
-Received: from [10.1.36.163] (XHFQ2J9959.cambridge.arm.com [10.1.36.163])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 88B963F64C;
-	Wed, 19 Jun 2024 02:17:10 -0700 (PDT)
-Message-ID: <f9f105d9-77ba-427c-9958-92710f70716b@arm.com>
-Date: Wed, 19 Jun 2024 10:17:08 +0100
+	 In-Reply-To:Content-Type; b=KtXTojjNz2+vAEq0bVY5oh+yhZbGTWibcQ3gjicziDM5GhgZpuJ9d/M0RqlLz91DbHE9iSj4acLwmo5K0ehBlImDBzsCAJVGqyQ7jX8y5L1qO6M3O3RchK9R+tG/Og1uvcHSEA6vHI+kJ/3iGcfedEjIcq9ED6G7cPxO9/I+o0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ma4I2yeb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3315C4AF1C;
+	Wed, 19 Jun 2024 09:17:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718788651;
+	bh=ZMn1mJWNRvOtuqPJLaq/lECjByX3b4m7VVnPKvYL4ZU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ma4I2yebMwlchOhx/xncA4qw4Wz4Yd7dE2hA40dgm/7/8hbROOh0QgDwaj1olaC0q
+	 9b/hRZq7evp6y0/njN3RLDJ5comLo9n4dGBggvOqBjmuXvkPWcD+1t1g5z/Efw7v0S
+	 EWCt4LUcX9kidQsmPYRGM/WVMbTtHcnoANCUTt6nT4lMjvuUNus0S2ju/7aoJtLR5A
+	 pG4SddKDXdF7JMQN7gkxL+glcdWzp9HNvpeCOAuM7Q+XxDMmVJa2dMSDbWYNZVufhe
+	 YggndZwomegBOeaaE3qxZmlFzswAD80cyPqL2EUKxrVi30SG0T+UgXnQpMbr0c1L3T
+	 LuHbupJrQGGow==
+Message-ID: <c857b188-7ee8-49a9-89c5-1d611d68bc91@kernel.org>
+Date: Wed, 19 Jun 2024 11:17:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,84 +49,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/5] Alternative mTHP swap allocator improvements
-To: "Huang, Ying" <ying.huang@intel.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com>,
- Kalesh Singh <kaleshsingh@google.com>, Barry Song <baohua@kernel.org>,
- Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240618232648.4090299-1-ryan.roberts@arm.com>
- <87tthp4cx9.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <87tthp4cx9.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Subject: Re: [PATCH v1 2/2] dt-bindings:iio:proximity: Add hx9031as binding
+To: Yasin Lee <yasin.lee.x@outlook.com>, jic23@kernel.org
+Cc: andy.shevchenko@gmail.com, lars@metafoo.de, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, nuno.a@analog.com, swboyd@chromium.org,
+ u.kleine-koenig@pengutronix.de, yasin.lee.x@gmail.com
+References: <20240511170143.7ca6a410@jic23-huawei>
+ <20240514202540.341103-1-yasin.lee.x@outlook.com>
+ <SN7PR12MB81012845A114E1FE7C49DFC3A4E32@SN7PR12MB8101.namprd12.prod.outlook.com>
+ <29fa61c3-f7c7-4769-a5eb-75783086cb9f@kernel.org>
+ <18b7ea5a-ea10-47b6-9d86-9dcec50e5f9e@kernel.org>
+ <SN7PR12MB81011220B1A9F28B70B9B7CEA4CF2@SN7PR12MB8101.namprd12.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <SN7PR12MB81011220B1A9F28B70B9B7CEA4CF2@SN7PR12MB8101.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/06/2024 08:19, Huang, Ying wrote:
-> Hi, Ryan,
+On 19/06/2024 10:38, Yasin Lee wrote:
+> Dear Krzysztof,
 > 
-> Ryan Roberts <ryan.roberts@arm.com> writes:
+> Thank you for your valuable feedback. I have made the following changes 
+> based on your suggestions, as shown inline.
 > 
->> Hi All,
->>
->> Chris has been doing great work at [1] to clean up my mess in the mTHP swap
->> entry allocator.
-> 
-> I don't think the original behavior is something like mess.  It's just
-> the first step in the correct direction.  It's straightforward and
-> obviously correctly.  Then, we can optimize it step by step with data to
-> justify the increased complexity.
 
-OK, perhaps I was over-egging it by calling it a "mess". What you're describing
-was my initial opinion too, but I saw Andrew complaining that we shouldn't be
-merging a feature if it doesn't work. This series fixes the problem in a minimal
-way - if you ignore the last patch, which is really is just a performance
-optimization and could be dropped.
+Thanks.
 
-If we can ultimately get Chris's series to 0% fallback like this one, and
-everyone is happy with the current state for v6.10, then agreed - let's
-concentrate on Chris's series for v6.11.
-
-Thanks,
-Ryan
-
-> 
->> But Barry posted a test program and results at [2] showing that
->> even with Chris's changes, there are still some fallbacks (around 5% - 25% in
->> some cases). I was interested in why that might be and ended up putting this PoC
->> patch set together to try to get a better understanding. This series ends up
->> achieving 0% fallback, even with small folios ("-s") enabled. I haven't done
->> much testing beyond that (yet) but thought it was worth posting on the strength
->> of that result alone.
->>
->> At a high level this works in a similar way to Chris's series; it marks a
->> cluster as being for a particular order and if a new cluster cannot be allocated
->> then it scans through the existing non-full clusters. But it does it by scanning
->> through the clusters rather than assembling them into a list. Cluster flags are
->> used to mark clusters that have been scanned and are known not to have enough
->> contiguous space, so the efficiency should be similar in practice.
->>
->> Because its not based around a linked list, there is less churn and I'm
->> wondering if this is perhaps easier to review and potentially even get into
->> v6.10-rcX to fix up what's already there, rather than having to wait until v6.11
->> for Chris's series? I know Chris has a larger roadmap of improvements, so at
->> best I see this as a tactical fix that will ultimately be superseeded by Chris's
->> work.
-> 
-> I don't think we need any mTHP swap entry allocation optimization to go
-> into v6.10-rcX.  There's no functionality or performance regression.
-> Per my understanding, we merge optimization when it's ready.
-> 
-> Hi, Andrew,
-> 
-> Please correct me if you don't agree.
-> 
-> [snip]
-> 
-> --
-> Best Regards,
-> Huang, Ying
+Best regards,
+Krzysztof
 
 
