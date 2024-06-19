@@ -1,136 +1,147 @@
-Return-Path: <linux-kernel+bounces-221603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07ADF90F605
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:25:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E9290F606
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0BF91F22E9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:25:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE2ECB22612
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86C2158D7A;
-	Wed, 19 Jun 2024 18:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1192B157E84;
+	Wed, 19 Jun 2024 18:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NqUHyhen"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gBaxKp5q"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AE4158868;
-	Wed, 19 Jun 2024 18:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DF015748C;
+	Wed, 19 Jun 2024 18:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718821472; cv=none; b=deDXjCWJ5DcOOByh5sfmtcF0x0S+YGb9vRSfnBVHmfCAMJC6r0kLy98qa/t/0pYJVRgC0Tk9DTVvNgwVBbq9WF97ty9r0x9F5HoJo3ApFLmTmd601gO4iq0bDcEV2ggCUUYcH6U/fWrPD4FYiaGCVYmoqV+NcJd5t/Hkkn0H0Go=
+	t=1718821544; cv=none; b=hOvcTFPHKug4NGtjpkOkhYx3T2zBMcuIBGlytjTX8GntPYrVA+QVUNJWZST/eQ6pc/dU39OO9HMcJJT35u3B+MAHuIl9PQ+TKYyTRRfJhk8OZQzE5iWuEp6nXUPC/01fY9zfZbMCMIKbbBcNThgFEibWjzq3lCDEO1MDKgbM4aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718821472; c=relaxed/simple;
-	bh=0us+3ZctGfnLIyhkBA1GQ9xbHTQ48Si0bKf9MtsSuU4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ihiSEe3DS5AzMyeA8ueniFkOgv9HmU+6j6Jt7UquP50AePHJ2RWy77iOpxBBGs4OBexUkgOcE1C1b9mov2hiHo5QFQem+aKOkzDX9uoHv53izI6D0tuvR8mLH6cmBKj/gbYB9Rc1SJOMNMusp8Ow0d6F7N9EGcRPj+D3w6EVTtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NqUHyhen; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB1CC4AF0F;
-	Wed, 19 Jun 2024 18:24:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718821472;
-	bh=0us+3ZctGfnLIyhkBA1GQ9xbHTQ48Si0bKf9MtsSuU4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=NqUHyheni7tyuN3p18yeRrmTMS3/ltHPglwGCXPxRr8Xsi7Mf1pMKMGkPKM3X3Q0t
-	 2E78GbM25d+ok4LSwRsTgafVpoNLgLsZF8WtHeM6bps18Eii9g8UJAYCto4c/dVNGP
-	 4jDDdfuYjW5h3XHAQSlr0lhdVIHItIccJYhpbGeY=
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Date: Wed, 19 Jun 2024 14:24:07 -0400
-Subject: [PATCH v2 2/2] Documentation: best practices for using Link
- trailers
+	s=arc-20240116; t=1718821544; c=relaxed/simple;
+	bh=cNU4k4Z9vt2ZVTeVLys4gCrez6b7RfRDUbs2t8p/kSA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kwbE4CPfxO5fMPS29z8/viXnWIkAcEZqeHoxfegFX838aDTm1J8OSVgEszYAbIc71rn+h42044Ww72hTxG0QOe9BBpRw3OfNAQb7m17Z9+hyzKe7T8v+PX7Qh3+RtwtgkJgk9R83Jv+qOO54IVbVV0Bo44vFi2tJTG/TsbUVJrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gBaxKp5q; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dff06b3f413so42070276.3;
+        Wed, 19 Jun 2024 11:25:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718821542; x=1719426342; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nRPhb4LcEfmXog7Vq9PBNDJLtn9KBxrQUGmQ/CKFcK8=;
+        b=gBaxKp5qqj3hVL3m7DfFdg7Gonlmb/6pR+Ps4y8cSGgbA+VT5JZ3c1DRgfBzTXooEM
+         SDm4G0Qhe9UhUcpNqLs2nov3bwzWysR1k/Cur1UWszDJOrOdnLnjf2eQCdnuaZ5Uq7X9
+         7bHLrzCyQ0HBAULtrRCC4ypkvgFNpxLV5pq2EHWREgeySD1unXbVRS5+EAA61JHhfpks
+         m6fIehZeKizByy/2e6qlJHoOnaOwS1Cx0iQUZGWA8G7i7gm73SylXfBm7Z2z+c64GxKC
+         URgUcrNYAfcIODlIlaztH/4IToUEpG7oTVEXWKSLUR2Gl+R4+osyTdKQ12h+Yo1l6VQ7
+         /Png==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718821542; x=1719426342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nRPhb4LcEfmXog7Vq9PBNDJLtn9KBxrQUGmQ/CKFcK8=;
+        b=w4pCVREHMNOjx949qGP5K/ho1p4pvujxVPIjrus1kDXCJiYbe0xiqs/LzYyDV4gx5T
+         Mmg7mILipK/dbk77AbYYUQYN4NzcKRiWoMx+t6x1MYK5+hQyc/q9xfmwr2zD4lStzwJu
+         Clm7BuG1YbGwlN7SdsbxAMg6wUoggTPAiQ4feUqyxeQrc8HYDUggUggZT7pb+7l9reiN
+         1sr0tmihbYdu7fC2XFJKr+l9QWPHIU6FDpxQ+7Syi+BFwkiTxWOxWsTUj2ZbBwzC1k3y
+         NE4gxTBsSagX+b2GNOuiUcFKsXjoC4qvLZvsO5nuOmOK1MsGbzbGzLAkRWeXrg14eQJc
+         f17g==
+X-Forwarded-Encrypted: i=1; AJvYcCU3kT7zGLyl9RFSXa3azsq/bwcqjfbuGwnNGEM470lPAKj25VO0+JRspD1J+o+VaFfSgOndplgExVg87FYrlr3z9mLB/RRTLGezBesMrPGJqbaVyv+DORwUKjym/vywvvx+JiHyurrHoKpTSteH0Q==
+X-Gm-Message-State: AOJu0YzeZaZQR0wRw9W0nId/U+m4FoG3vNp9Vb5A21pPp7W9Wt3q5BFO
+	LSKVAwLf+yxy6QMILCTQy2Kn6a/g98r8C6vHVSx+inqu6z+gSHvmCWee7s96WBgGuaOrwNvR/Jb
+	ygkGnizdC9ReR/lrldQk2KVN9ZWW6/RYgtbBQaQ==
+X-Google-Smtp-Source: AGHT+IFBqPeCafDYX98OBfIHDMdNXxq0533UQn/rqrzPYZG3GXmQAYQdzhHwVxBSZpPaRgZPDWT48kPDLYdJLzfphj0=
+X-Received: by 2002:a25:a2c1:0:b0:dfb:e1c:c799 with SMTP id
+ 3f1490d57ef6-e02bdf625f8mr3693344276.0.1718821541823; Wed, 19 Jun 2024
+ 11:25:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240619-docs-patch-msgid-link-v2-2-72dd272bfe37@linuxfoundation.org>
-References: <20240619-docs-patch-msgid-link-v2-0-72dd272bfe37@linuxfoundation.org>
-In-Reply-To: <20240619-docs-patch-msgid-link-v2-0-72dd272bfe37@linuxfoundation.org>
-To: Jonathan Corbet <corbet@lwn.net>, 
- Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>, 
- ksummit@lists.linux.dev
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2838;
- i=konstantin@linuxfoundation.org; h=from:subject:message-id;
- bh=0us+3ZctGfnLIyhkBA1GQ9xbHTQ48Si0bKf9MtsSuU4=;
- b=owGbwMvMwCW27YjM47CUmTmMp9WSGNKKlWKecivfiZ4hcSlGI0dZh6vKjVW6yebzAr7XkWl/J
- NuEHrzoKGVhEONikBVTZCnbF7spqPChh1x6jynMHFYmkCEMXJwCMJH6NIb/ldm/Z9ZJlSqaST84
- vGKH4eE/6eu0Gzb/XJlyJnHeYgOFUwx/JUNfmb+QfLnacZmZmtyX2S07pNoNSw4r13I9OJ//mLu
- UBwA=
-X-Developer-Key: i=konstantin@linuxfoundation.org; a=openpgp;
- fpr=DE0E66E32F1FDD0902666B96E63EDCA9329DD07E
+References: <20240619082042.4173621-1-howardchu95@gmail.com>
+ <ZnLjT_m90EDtRFE0@x1> <CAM9d7ci+TEXG49=-7oLfFpTakUMHikxGFc-=NhEPPG0sf-UC9g@mail.gmail.com>
+In-Reply-To: <CAM9d7ci+TEXG49=-7oLfFpTakUMHikxGFc-=NhEPPG0sf-UC9g@mail.gmail.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Thu, 20 Jun 2024 02:25:32 +0800
+Message-ID: <CAH0uvoiFvHu-iKJFNHeO1TcQHLMgo60N+1zXFQx3QrLibgEU6w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] perf trace: Augment enum arguments with BTF
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Based on multiple conversations, most recently on the ksummit mailing
-list [1], add some best practices for using the Link trailer, such as:
+On Thu, Jun 20, 2024 at 2:19=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hello,
+>
+> On Wed, Jun 19, 2024 at 9:55=E2=80=AFAM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Wed, Jun 19, 2024 at 04:20:37PM +0800, Howard Chu wrote:
+> > > changes in v2:
+> > > - Move inline landlock_add_rule c code to tests/workloads
+> > > - Rename 'enum_aug_prereq' to 'check_vmlinux'
+> >
+> > Usually the versions descriptions comes at the end, after your signatur=
+e
+> > line, just before the list of csets in the series.
+> >
+> > > Augment enum arguments in perf trace, including syscall arguments and
+> > > non-syscall tracepoint arguments. The augmentation is implemented usi=
+ng
+> > > BTF.
+> > >
+> > > This patch series also includes a bug fix by Arnaldo Carvalho de Melo
+> > > <acme@redhat.com>, which makes more syscalls to be traceable by perf =
+trace.
+> > >
+> > > Test is included.
+> >
+> > Thanks, the patch submission is now very good, at some point you'll be
+> > able to point to a git tree from where to do a pull, then have it with =
+a
+> > signed tag, etc, all this is not necessary at this point in our
+> > collaboration, but as you evolve as a kernel developer, it eventually
+> > will be asked from you.
+> >
+> > And it comes with a test that introduces a 'perf test -w' workload,
+> > super great!
+> >
+> > - Arnaldo
+> >
+> > > Howard Chu (5):
+> > >   perf trace: Fix iteration of syscall ids in syscalltbl->entries
+> > >   perf trace: Augment enum syscall arguments with BTF
+> > >   perf trace: Augment enum tracepoint arguments with BTF
+> > >   perf trace: Filter enum arguments with enum names
+> > >   perf trace: Add test for enum augmentation
+>
+> Please make sure that your change doesn't break the build
+> in case libbpf is not available.  For example, a build without
+> libelf seems to be broken.
+>
+>   $ make NO_LIBELF=3D1
+>
+> Thanks,
+> Namhyung
 
-- how to use markdown-like bracketed numbers in the commit message to
-indicate the corresponding link
-- when to use lore.kernel.org vs patch.msgid.link domains
+Thank you, I'll fix this.
 
-Cc: ksummit@lists.linux.dev
-Link: https://lore.kernel.org/20240617-arboreal-industrious-hedgehog-5b84ae@meerkat # [1]
-Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
----
- Documentation/process/maintainer-tip.rst | 30 ++++++++++++++++++++++--------
- 1 file changed, 22 insertions(+), 8 deletions(-)
-
-diff --git a/Documentation/process/maintainer-tip.rst b/Documentation/process/maintainer-tip.rst
-index 64739968afa6..ba312345d030 100644
---- a/Documentation/process/maintainer-tip.rst
-+++ b/Documentation/process/maintainer-tip.rst
-@@ -372,17 +372,31 @@ following tag ordering scheme:
- 
-  - Link: ``https://link/to/information``
- 
--   For referring to an email on LKML or other kernel mailing lists,
--   please use the lore.kernel.org redirector URL::
-+   For referring to an email posted to the kernel mailing lists, please
-+   use the lore.kernel.org redirector URL::
- 
--     https://lore.kernel.org/r/email-message@id
-+     Link: https://lore.kernel.org/email-message-id@here
- 
--   The kernel.org redirector is considered a stable URL, unlike other email
--   archives.
-+   This URL should be used when referring to relevant mailing list
-+   topics, related patch sets, or other notable discussion threads.
-+   A convenient way to associate ``Link:`` trailers with the commit
-+   message is to use markdown-like bracketed notation, for example::
- 
--   Maintainers will add a Link tag referencing the email of the patch
--   submission when they apply a patch to the tip tree. This tag is useful
--   for later reference and is also used for commit notifications.
-+     A similar approach was attempted before as part of a different
-+     effort [1], but the initial implementation caused too many
-+     regressions [2], so it was backed out and reimplemented.
-+
-+     Link: https://lore.kernel.org/some-msgid@here # [1]
-+     Link: https://bugzilla.example.org/bug/12345  # [2]
-+
-+   You can also use ``Link:`` trailers to indicate the origin of the
-+   patch when applying it to your git tree. In that case, please use the
-+   dedicated ``patch.msgid.link`` domain instead of ``lore.kernel.org``.
-+   This practice makes it possible for automated tooling to identify
-+   which link to use to retrieve the original patch submission. For
-+   example::
-+
-+     Link: https://patch.msgid.link/patch-source-message-id@here
- 
- Please do not use combined tags, e.g. ``Reported-and-tested-by``, as
- they just complicate automated extraction of tags.
-
--- 
-2.45.2
-
+Thanks,
+Howard
 
