@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-220659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FBA90E519
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EAE90E4FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A14EA2846AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF5F2844BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 07:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0955A78B50;
-	Wed, 19 Jun 2024 08:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D89F77F08;
+	Wed, 19 Jun 2024 07:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="I3aYBPwc";
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="tCb+5qj6"
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EcbHUndJ"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C7278297;
-	Wed, 19 Jun 2024 08:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578ED182DB;
+	Wed, 19 Jun 2024 07:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718784084; cv=none; b=Rcbx4jMQoqWjb75jwaN/2WTO7KTlYDv/F7KqgUaTg1xB6+JEARGceXszN+4UdlgKW7TPuOIPhxXGfk6lgAS4t6FWHGg9/d3y6+wrA/X5jqWbLadqCqfs10rrqezmj0kqJiqHFWOh/neIsV6+sdRZg0lQLkjkOlFFDuUgg0LXX8A=
+	t=1718783785; cv=none; b=DkG4V5tVaaG8yocLpVsK1RcXJWv7icdOaX+ewX7zcgAx8Kr6dwsBBSD0HnT5Txp4Yv4xf349WcVGWOe0z4l/t3j5As3NQdEN9qyqw+MSgDeJqeJmqJEnS3D9g43bQ+EK7SvQPYjfwxEK0p7zlI28GkqdXhZEIjB8Qv5gn/yJAiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718784084; c=relaxed/simple;
-	bh=PdAEo097Rs0EOuRHSnYrSWDaONVLaa5zFC8TP4Dn004=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=msG+2kHZgQJiBjtMEqPBSLPzYwDrESJ3RbBZ2tdjS++t7D/tx5HDbtWvp8AeoiznHLIl/3RNYDHs2t5+VCbK9hpYIS1AzAY+IYBgAmAoInCQEKhvIMtkWKGrIeDij1NCZtTXLnn7Ue/lGoYb5kxVcvD0GKkGBOdhRq57owAvZRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=I3aYBPwc; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=tCb+5qj6; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 337031D0F;
-	Wed, 19 Jun 2024 07:46:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1718783213;
-	bh=PdAEo097Rs0EOuRHSnYrSWDaONVLaa5zFC8TP4Dn004=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=I3aYBPwcm+ZpGLtAtXisY/W5H1xOB3HH5XeufOPvSS9z1YxrNoutxZQAXnlOLPyxh
-	 5eLw/rPSPQ+K7z4N3XrKE+F1ogwZclyBbiYU0Kn6ZTjHmyZRVYHIIREp2mDOwdHFaY
-	 N5QkvuiTT8GWGzbmV4c2fvZmmt21fpjtGBdrQzwQ=
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id D2A2A6A;
-	Wed, 19 Jun 2024 07:54:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1718783692;
-	bh=PdAEo097Rs0EOuRHSnYrSWDaONVLaa5zFC8TP4Dn004=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=tCb+5qj6BmBlvR3G2rYahlJ06oyY0Rrzq0+b7/BzEDBPyp2rPfSU1Ggnz9Ac9zh7h
-	 lSJ9dYS/xLx2xGlRS75Sp5liFRJDZfaYbqosbs646oDkBvQdVD4Tjv3doEs5zSCPWP
-	 GYjxovQSzgfe6jFMRWhupF1MV5guNZxwOOxGz4Uw=
-Received: from [192.168.211.147] (192.168.211.147) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Wed, 19 Jun 2024 10:54:52 +0300
-Message-ID: <b65e13cd-7479-4146-a6bf-cdbadab6795a@paragon-software.com>
-Date: Wed, 19 Jun 2024 10:54:51 +0300
+	s=arc-20240116; t=1718783785; c=relaxed/simple;
+	bh=MIeBYTYwehE4mdC07eH09+hgOUyMJEAzbyr59ive7Do=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=YseB37bRDcSLMbt9lJyajzNTMLWus0hm6VlgnbDgi6DeF0R593hh8K9usO/kzDTGQhMD7m3+wl1kiqhwTnLCNKNBfjMlz+AdkqGcslJVylJC0RwG3v1JqjHhrCpUR2BQtIKIOkZvnYZHj5lU7JMZRbR/kYAQb8pPp0rh9OCYfWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EcbHUndJ; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718783745; x=1719388545; i=markus.elfring@web.de;
+	bh=H6XR+KaJmJJXfpLLFejnJYIpvpaAVwGzb2OH+w8nOPE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=EcbHUndJ4aAdvM/a+7VLFlmCGR3jEhqvXiPaZ7YlwZPB2+wP6lkheRdGkLVxEJtx
+	 tI2QKk59BttXf57K+VgTceAiqymatUIMuqEgcwoXFilLoNi5wASnc42bhtlpVDqss
+	 emMnjd75MklQfNfGEf0winFX6zGuc5NpHe6oUBaFe6W/7LfRgjVf2ztRRtI4hpb+v
+	 U1M7rhEBInU6OGcXh+eE6tBTly0JeYeZB7xlJfYfSzHK5h5ajhHM3N443zJS7kvRU
+	 nazlSHxi4WwYbNurWynsSiK+SwSKHD4oL0NzjrPxVm+pg3qTs64qmf9Yqv0lPpxcH
+	 EVxUphULPDQjtkiGxQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N62uQ-1sQPo90PN2-00qu2k; Wed, 19
+ Jun 2024 09:55:45 +0200
+Message-ID: <e916a445-f7bd-4213-ac66-cf39f6c5001b@web.de>
+Date: Wed, 19 Jun 2024 09:55:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,88 +56,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Segfault running a binary in a compressed folder
-To: Linux regressions mailing list <regressions@lists.linux.dev>, Giovanni
- Santini <giovannisantini93@yahoo.it>
-CC: <ntfs3@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-References: <08d7de3c-d695-4b0c-aa5d-5b5c355007f8.ref@yahoo.it>
- <08d7de3c-d695-4b0c-aa5d-5b5c355007f8@yahoo.it>
- <0936a091-7a3a-40d7-8b87-837aed43966b@leemhuis.info>
- <bed7da51-cf89-422d-84f7-cb3d89ffbe40@yahoo.it>
- <0c871021-321b-4a44-b270-508a64be1cdd@leemhuis.info>
-Content-Language: en-US
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <0c871021-321b-4a44-b270-508a64be1cdd@leemhuis.info>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+To: Jie Gan <quic_jiegan@quicinc.com>, coresight@lists.linaro.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Konrad Dybcio <konradybcio@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Mike Leach <mike.leach@linaro.org>, Rob Herring <robh@kernel.org>,
+ Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, Song Chai
+ <quic_songchai@quicinc.com>, Tao Zhang <quic_taozha@quicinc.com>,
+ Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Trilok Soni <quic_tsoni@quicinc.com>,
+ Yuanfang Zhang <quic_yuanfang@quicinc.com>, quic_liuxin@quicinc.com,
+ quic_sijiwu@quicinc.com, quic_xinlon@quicinc.com, quic_xueqnie@quicinc.com,
+ quic_yanzl@quicinc.com, quic_yijiyang@quicinc.com, quic_yuanjiey@quicinc.com
+References: <20240618072726.3767974-3-quic_jiegan@quicinc.com>
+Subject: Re: [PATCH 2/3] coresight: Add coresight slave register driver to
+ support data filter function in sysfs mode
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240618072726.3767974-3-quic_jiegan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:a/SZS1DY+oZZXGn4gEUYqrx4lxfFFXvkMLFAROQHi13/Xbu2KfU
+ xO0q7wzNAxTkpSIPUONQX3gNWJ7IurTIjsFZKUnwQ4B8Nm+RW5tLC5f0sP6vhzLsUyO4xQy
+ CNsyo9Sascxa9W0fmXmtPnwjJXsh3ZEGi/8dUKth2JrmTd5YvOZxCxBDdaEjmUP6fe3nuN1
+ iS9P4Pz4Dz1n7rI1qLVKg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:aIh9ZjNPP3I=;7KBwd39YmURPEMZKHTMVfa3Miuf
+ ToC5Sz0ObZGAWZqSAM+SwJXIZPkZ40qbS5tygrWgajN62xN8rG8EfkwZuArzvq2n04MCtXs45
+ kRQHzIIAJ7fvMSXVzkcZje360tc3hVrUu3mSlmwOSXVAuwsHDIJbFCwA1REfkPye3VC0MeeJE
+ 5jgbw3t1QtlNPmikAPJSt9qxNRFGO/jy7bSeIZvJI+Sgfqqsfgl4/DfhkNxcdJiN8isDfZeCi
+ rkx+NzJ3vzt758VM2Z20EqzckiPuppSsV4Gn3/0Z2Dbp9sQnrVAsFrU7Z9fG1kNRtQ4M3guHR
+ 6fX6rVIj6vA+YLxLba4PFfA36TkGBNuReQF2NPc+Z9goP10vi/ZUQjwYOqY3OncAEpGfKZvhI
+ NeAwH5bPVGp/7Oe/UHe18gJXx5bfl1QRrKTsKO1rdQd4gTEZZR04oBoRvYUDpSFqBGBvsRtRa
+ fsgxhNXGkpN/kHydt20tJrStvgCPCejeuMW0DO2jloW65Btn1ZpD4ckL4Dx2vczWGgAKHDwab
+ NM6kwAtioww/PYHT7LWffM8pd9El56HuYPktj8351by8SfnmWnZ4h9T+yAe0TGAb8ckP+wlEe
+ iuwNTIZnVgG9yYYBvgnb9yG2KAYd5xlL8N6YeCkd7IM5HRxmpdQ47VZfbkO0iZauzsDn1rFLW
+ 3KjZih1ppa6nnh2O1rF+GRXddn0sjS/9NqsTgM6XkFPiJy7/lOt8P2+WHzd+B6Ur2ryBzMqfh
+ y1mLPGv2ul7GRqAJVlqTuLYEOtyyD7u/WX4ycF84TG+N8bCaJN+p0Qm9qW5fVHYekQYKOYiZ7
+ cTgZEj6+CXqEIn/QU/1XArPcid4LCwdhv7881hB5xG7kFf6XisKlczP7SeWjbW62Pv
 
-On 11.06.2024 14:15, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 11.06.24 12:55, Giovanni Santini wrote:
->> Hi Thorsten, nice to chat again!
-> :-D
->
->> I am sorry for the lack of information,
-> Happens.
->
->> this is my second bug report to
->> the kernel; the first one was via Bugzilla and I filled more information.
->>
->> Now, the missing information is:
->>
->> OS: ArchLinux
->>
->> Tested kernels: both latest Linux stable (6.9.3) and mainline (6.10rc3)
->>
->> Regression: no, I believe that this issue has been present forever.
-> Thx. Okay, in that case anyone that replies in this thread consider
-> dropping the stable and the regression lists to avoid confusion and
-> spare the subscribes of those lists a few cycles.
->
->> I realized it may have been compression-related only recently.
->> I do remember testing ntfs3 long ago and having the same issues with a
->> Ruby vendoring folder.
->>
->> Please let me know if you need more information!
-> That's up to Konstantin (or others on the ntfs3 list), who is known to
-> sometimes reply quickly, while other times only replies after quite a
-> while. We'll see what it will be here. :-D
->
-> Ciao, Thorsten
->
->> On 2024-06-11 12:04, Linux regression tracking (Thorsten Leemhuis) wrote:
->>> On 11.06.24 11:19, Giovanni Santini wrote:
->>>> I am writing to report the issue mentioned in the subject.
->>>>
->>>> Essentially, when running an executable from a compressed folder in an
->>>> NTFS partition mounted via ntfs3 I get a segfault.
->>>>
->>>> The error line I get in dmesg is:
->>>>
->>>> ntfs3: nvme0n1p5: ino=c3754, "hello" mmap(write) compressed not
->>>> supported
->>>>
->>>> I've attached a terminal script where I show my source, Makefile and how
->>>> the error appears.
->>> You CCed the regression and the stable list, but that looks odd, as you
->>> don't even mention which kernel version you used (or which worked).
->>> Could you clarify? And ideally state if mainline (e.g. 6.10-rc3) is
->>> affected as well, as the answer to the question "who is obliged to look
->>> into this" depends on it.
->>>
->>> Ciao, Thorsten
+=E2=80=A6
+> +++ b/drivers/hwtracing/coresight/coresight-csr.c
+> @@ -0,0 +1,315 @@
+=E2=80=A6
+> +static int __csr_set_etr_traceid(struct coresight_device *csdev,
+> +			uint32_t atid_offset, uint32_t traceid,
+> +			bool enable)
+> +{
+=E2=80=A6
+> +	spin_lock_irqsave(&drvdata->spin_lock, flags);
+> +	CS_UNLOCK(drvdata->base);
+=E2=80=A6
+> +	CS_LOCK(drvdata->base);
+> +	spin_unlock_irqrestore(&drvdata->spin_lock, flags);
+> +	return 0;
+> +}
+=E2=80=A6
 
-Hi Giovanni,
+Would you become interested to apply a statement like =E2=80=9Cguard(spinl=
+ock_irqsave)(&drvdata->spin_lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/spinlock.h=
+#L574
 
-ntfs3 currently does not support mmap write to compressed files,
-as indicated by the driver with
-
-   "mmap(write) compressed not supported."
-
-We are aware of this limitation and will implement this functionality in
-the future.
-
-Regards, Konstantin
+Regards,
+Markus
 
