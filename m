@@ -1,135 +1,218 @@
-Return-Path: <linux-kernel+bounces-220864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08D690E85B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:33:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B40290E85F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99E31C2192F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:33:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4188E1C219ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF20C12F5BF;
-	Wed, 19 Jun 2024 10:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9720912F5BE;
+	Wed, 19 Jun 2024 10:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VymZb0Dq"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="r2Su73Gb"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F2578C91;
-	Wed, 19 Jun 2024 10:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F1B78C91;
+	Wed, 19 Jun 2024 10:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718793189; cv=none; b=HDVr9OYqNI1E7bmUgi5VdhhpIQOi4WIfjG1rJwpKIEcFmZiA8L03nOi0bIZfYcc3yPmL66pAQaOSMCL63SswIUzCLZSeTKJpQV8LxhKqsLNYkO3zUKhidTg+pJ5pcBL0GHl619Manbn22P0eGTDOfAe1+I6uYnnvR/7sWbKWBfQ=
+	t=1718793265; cv=none; b=MK/5+m85Qp1hoO+lafZ3E5ESsq4JBcwOiIhc6T/PyMl3/zvwpkWhE8kZJQzAbCjXHACouff4tJnGyxuh0nwGpAMVLxiKf/xiQ+BY4vEb/dVFfof8ru4K2UhC2K8/K7v3E8b0VpMb4kPpe6qBZuC+YKkYDN5Qi4HD4WJyd8cXhWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718793189; c=relaxed/simple;
-	bh=UrZRPJUMF85098sOggzaqUsbYYJWPI5tGohEdROwtpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IL+8fzhTyhk+1M3i9GAB8tUgydpJeeCeXp/KogxBATxs6atPmkToYHgSDZeq9ywsK5mBVE6jLJX/khdfySLAl09nbwMdWj9/TV1hmSYQh6hJwgTTEgAC0xK6VbwIpBqGmwTlRLVqgFsbqoG0Q5Eoe7IADEOPmQPt8m6frFFb6Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VymZb0Dq; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JATtdE016633;
-	Wed, 19 Jun 2024 10:33:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
-	EmFnM2M6vINWkHXs613zLTG1TdJP9EUBcYSfppMV+yQ=; b=VymZb0DqgymUQD+t
-	U9ygY+RCVEDplpFs+wg0VDyn4wboiGPTiY6QBI2pzeqjxv4+YWI6lhvSYonPyoIm
-	b9+swAivHcFPir4Di+Bj5eHuNuq5XfP6Eb8/FL03YRZdpsvZ1enJSZc/A2/qLbJh
-	4a3HUjsCFj9aeQl/RLQinT1sF1w3saZTZv9Wgbz0Rl7OAw2ubQizWFeVp97jpfOK
-	df/szhLREn9JHiaJ5T3tCauzZnUd+K+4hQUouHAbU/YygksUz+oS8yxDdEEiE7m2
-	RwUJCMyPsYz1jAVbP3WqdAdPsnVRP8dJeOEbVbMezZeqtv4/kWDOI26ZqqVzVtrK
-	GjDMtw==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yuwm6007g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 10:33:04 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45J8exqE011027;
-	Wed, 19 Jun 2024 10:33:03 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yspsnb9gu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 10:33:03 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45JAWvJn44695938
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Jun 2024 10:32:59 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 84D052004E;
-	Wed, 19 Jun 2024 10:32:57 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 97F1020043;
-	Wed, 19 Jun 2024 10:32:56 +0000 (GMT)
-Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.171.42.81])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Wed, 19 Jun 2024 10:32:56 +0000 (GMT)
-Date: Wed, 19 Jun 2024 12:32:55 +0200
-From: Halil Pasic <pasic@linux.ibm.com>
-To: Eric Farman <farman@linux.ibm.com>
-Cc: Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Jeff Johnson
- <quic_jjohnson@quicinc.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Matthew
- Rosato <mjrosato@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>
-Subject: Re: [PATCH] s390/cio: add missing MODULE_DESCRIPTION() macros
-Message-ID: <20240619123255.4b1a6c6d.pasic@linux.ibm.com>
-In-Reply-To: <afdde0842680698276df0856dd8b896dac692b56.camel@linux.ibm.com>
-References: <20240615-md-s390-drivers-s390-cio-v1-1-8fc9584e8595@quicinc.com>
-	<064eb313-2f38-479d-80bd-14777f7d3d62@linux.ibm.com>
-	<afdde0842680698276df0856dd8b896dac692b56.camel@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1718793265; c=relaxed/simple;
+	bh=PhPqKYQCQkwNWu5LZ8dFzl8sb446Y/Jiz4a2i59MxrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eg94QS9IQlCtFp7Xw7St2QumriiC/Kiuppid3jK3kci6/CArJt19gYZrAsnswCnWt34x+Tt19mc2s7KZo5Bu2i/9JgkQmp45qhYEMiHxSO4SVMGsz5liNy/I7TGneuB4bJ8Sv6YFAgCrnQ97oXV3E3fRSqN2Ee3duL7wGBXjMAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=r2Su73Gb; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=21JYkOIbkZLNfZaVuKtNV1fZ9lm08Q1ez/4bhTivuJs=; b=r2Su73GbRCbIlY2/iqWB7driHX
+	quxDMxWk0YUthRbIbspUrjyzRjLCaZv0QhdewwLqfW9gLF4ZJoP9ZBbY42LSHcRiF3e+lo0Xi9b2S
+	TDuG1upXycLH5eUOyPoLXxKevZX+gQFopQ2Vj6AqfDNWrtlMfMAFRECg15evJJCctN0PGU9iykGgt
+	if+JD5Qy8b/edoWAldiQ4tbPgIiQ27+LNPbljowhZ6nDxNFrq0x6cqtUVaRaV94OHw6GHkWfkOF49
+	o33FgEI8pig5WgD5Ab2Cdh8vUp34FKwbY1HoBNklTD2lMHZTL8XW+N0QUypd5L0fKGLdcK5GlFN+D
+	ju6zndKg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42498)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sJsdh-0008CM-1M;
+	Wed, 19 Jun 2024 11:34:05 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sJsdg-0006g3-Tz; Wed, 19 Jun 2024 11:34:04 +0100
+Date: Wed, 19 Jun 2024 11:34:04 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 4/4] net: phy: bcm-phy-lib: Implement BroadR-Reach
+ link modes
+Message-ID: <ZnK0HL+pO9/2ZMKz@shell.armlinux.org.uk>
+References: <20240617113841.3694934-1-kamilh@axis.com>
+ <20240617113841.3694934-5-kamilh@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: kwRyS9oDx2UqRyENfPbHRtoLutxEkTs1
-X-Proofpoint-ORIG-GUID: kwRyS9oDx2UqRyENfPbHRtoLutxEkTs1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- malwarescore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- suspectscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 mlxlogscore=992
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190077
+In-Reply-To: <20240617113841.3694934-5-kamilh@axis.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, 18 Jun 2024 16:11:33 -0400
-Eric Farman <farman@linux.ibm.com> wrote:
+On Mon, Jun 17, 2024 at 01:38:41PM +0200, Kamil Horák - 2N wrote:
+> +int bcm_config_lre_advert(struct phy_device *phydev)
+> +{
+> +	int err;
+> +	u32 adv;
+> +
+> +	/* Only allow advertising what this PHY supports */
+> +	linkmode_and(phydev->advertising, phydev->advertising,
+> +		     phydev->supported);
 
-> > > +MODULE_DESCRIPTION("VFIO based Physical Subchannel device
-> > > driver");  
-> > 
-> > Halil/Mathew/Eric,
-> > Could you please comment on this ?  
-> 
-> That's what is in the prologue, and is fine.
+Isn't this already done by phy_ethtool_ksettings_set() ?
 
-Eric can you explain it to me why is the attribute "physical" appropriate
-here? I did a quick grep for "Physical Subchannel" only turned up hits
-in vfio-ccw.
+        linkmode_copy(advertising, cmd->link_modes.advertising);
+...
+        /* We make sure that we don't pass unsupported values in to the PHY */
+        linkmode_and(advertising, advertising, phydev->supported);
+...
+        linkmode_copy(phydev->advertising, advertising);
 
-My best guess is that "physical" was somehow intended to mean the
-opposite of "virtual". But actually it does not matter if our underlying
-subchannel is emulated or not, at least AFAIU.
+> diff --git a/drivers/net/phy/broadcom.c b/drivers/net/phy/broadcom.c
+> index 370e4ed45098..5e590c8f82c4 100644
+> --- a/drivers/net/phy/broadcom.c
+> +++ b/drivers/net/phy/broadcom.c
+> @@ -5,6 +5,9 @@
+>   *	Broadcom BCM5411, BCM5421 and BCM5461 Gigabit Ethernet
+>   *	transceivers.
+>   *
+> + *	Broadcom BCM54810, BCM54811 BroadR-Reach transceivers.
+> + *
+> + *
 
-Regards,
-Halil
+Nit: why two blank lines?
+
+> +static int bcm54811_read_abilities(struct phy_device *phydev)
+> +{
+> +	static const int modes_array[] = { ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
+> +					   ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT,
+> +					   ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
+> +					   ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
+> +					   ETHTOOL_LINK_MODE_1000baseT_Half_BIT,
+> +					   ETHTOOL_LINK_MODE_100baseT_Full_BIT,
+> +					   ETHTOOL_LINK_MODE_100baseT_Half_BIT,
+> +					   ETHTOOL_LINK_MODE_10baseT_Full_BIT,
+> +					   ETHTOOL_LINK_MODE_10baseT_Half_BIT };
+
+Formatting...
+
+	static const int modes_array[] = {
+		ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
+		...
+		ETHTOOL_LINK_MODE_10baseT_Half_BIT
+	};
+
+please. This avoids wrapping beyond column 80, and is to kernel coding
+standards.
+
+> +	int i, val, err;
+> +	u8 brr_mode;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(modes_array); i++)
+> +		linkmode_clear_bit(modes_array[i], phydev->supported);
+> +
+> +	err = bcm5481x_get_brrmode(phydev, &brr_mode);
+> +	if (err)
+> +		return err;
+> +
+> +	if (brr_mode) {
+> +		linkmode_set_bit_array(phy_basic_ports_array,
+> +				       ARRAY_SIZE(phy_basic_ports_array),
+> +				       phydev->supported);
+> +
+> +		val = phy_read(phydev, MII_BCM54XX_LRESR);
+> +		if (val < 0)
+> +			return val;
+> +
+> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
+> +				 phydev->supported, 1);
+
+		linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
+				 phydev->supported);
+
+...
+> +	/* Ensure LRE or IEEE register set is accessed according to the brr on/off,
+> +	 *  thus set the override
+> +	 */
+> +	return bcm_phy_write_exp(phydev, BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL,
+> +		BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL_EN |
+> +		(on ? 0 : BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL_OVERRIDE_VAL));
+
+Needless parens, wrong formatting. Consider a local variable:
+
+	val = BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL_EN;
+	if (!on)
+		val |= BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL_OVERRIDE_VAL;
+
+	return bcm_phy_write_exp(phydev,
+				 BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL, val);
+
+would be much nicer to read.
+
+> +	if (phydev->autoneg != AUTONEG_ENABLE) {
+> +		if (!phydev->autoneg_complete) {
+> +			/* aneg not yet done, reset all relevant bits */
+> +			static const int br_bits[] = { ETHTOOL_LINK_MODE_Autoneg_BIT,
+> +						       ETHTOOL_LINK_MODE_Pause_BIT,
+> +						       ETHTOOL_LINK_MODE_Asym_Pause_BIT,
+> +						       ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT,
+> +						       ETHTOOL_LINK_MODE_100baseT1_Full_BIT };
+
+More formatting issues. Maybe consider moving these out of the function?
+
+> +			for (i = 0; i < ARRAY_SIZE(br_bits); i++)
+> +				linkmode_clear_bit(br_bits[i], phydev->lp_advertising);
+
+Formatting issue...
+
+...
+> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
+> +				 phydev->lp_advertising, lrelpa & LRELPA_PAUSE_ASYM);
+> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_Pause_BIT,
+> +				 phydev->lp_advertising, lrelpa & LRELPA_PAUSE);
+> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
+> +				 phydev->lp_advertising, lrelpa & LRELPA_100_1PAIR);
+> +		linkmode_mod_bit(ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT,
+> +				 phydev->lp_advertising, lrelpa & LRELPA_10_1PAIR);
+
+More formatting issues.
+
+> +static int bcm54811_read_status(struct phy_device *phydev)
+> +{
+> +	int err;
+> +	u8 brr_mode;
+
+Reverse Christmas tree please.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
