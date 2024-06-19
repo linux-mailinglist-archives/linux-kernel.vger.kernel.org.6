@@ -1,77 +1,93 @@
-Return-Path: <linux-kernel+bounces-220661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858AC90E523
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:02:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A938F90E527
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F0ABB223A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:02:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DEFDB223AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2076D79945;
-	Wed, 19 Jun 2024 08:02:35 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535AC78C62;
+	Wed, 19 Jun 2024 08:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="Q/rXPPLA"
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2C577F12;
-	Wed, 19 Jun 2024 08:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEC173441
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718784154; cv=none; b=PQ56dboE36azl78PGDGg7jVVPnK/X1VDrNjleGcUtuEfnsB0or2YBzI5rz5bkrvmIOCgwO4HyVhqZpl0+JVZsWRg4gutjV1poG3A8iXvMGPwBeQrdKaxTDbfqoKwU5DdJ5AQAXpt4ONH+BtLsZPxwm0hl4HbSljaFIFOOWzmAE8=
+	t=1718784186; cv=none; b=skLKCUqoHmPqdAaZC+xE2OtkcNMkwuFUMxwi6tLjLQA0+6OF9sIUTnUL3nwos2l+gnCcPwopKzPOjhpcxK0+0rIg1YvPL0MBWv9FgqXmewwAGGCN7QjBRcCOBvjrgM3S0OWbY/Ydp33Yx1tYUdBtTYF4rH4hyIlI0Tl0PVm87p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718784154; c=relaxed/simple;
-	bh=z0SlEVjuMjft4IMkiONjhZcAyB+pz/y+jPbljyxtcyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mCK19a6+dUqRcYcAbTEsqdldhcjmwjj53VOIrAdNZADs+mEdW6638aQ9rJ84oLW0SdNS5kVQ/V8Jl0r0/mwC+5RyoexoZiiERUkRCC4cLEAh7vqqk05kDKmkiju6evSZX1mzOMMvYxaoJzPcd7v6KtXgaCtZ0dzMswRF222bLNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id B204868AFE; Wed, 19 Jun 2024 10:02:18 +0200 (CEST)
-Date: Wed, 19 Jun 2024 10:02:18 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	axboe@kernel.dk, sagi@grimberg.me, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
-	djwong@kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
-	snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev,
-	hare@suse.de, Himanshu Madhani <himanshu.madhani@oracle.com>
-Subject: Re: [PATCH v8 05/10] block: Add core atomic write support
-Message-ID: <20240619080218.GA4437@lst.de>
-References: <20240610104329.3555488-1-john.g.garry@oracle.com> <20240610104329.3555488-6-john.g.garry@oracle.com> <ZnCGwYomCC9kKIBY@kbusch-mbp.dhcp.thefacebook.com> <20240618065112.GB29009@lst.de> <91e9bbe3-75cf-4874-9d64-0785f7ea21d9@oracle.com> <ZnHDCYiRA9EvuLTc@kbusch-mbp.dhcp.thefacebook.com> <24b58c63-95c9-43d4-a5cb-78754c94cbfb@oracle.com>
+	s=arc-20240116; t=1718784186; c=relaxed/simple;
+	bh=X3X95GITpZLm7cdJUEI4B9MOnj7tVUmwEWSeI3Pm+Q4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NPA2zaZgBUdLAHVN04gYu5MQ3Apuyq1GKsVDq9+zkD6Zt2XIFOe3kUl5GJu54X0CtLRkpCpg7gT/JqKleEkctrdXcARw1K/RQtvvRgRBEZ5nRfxICXjTMgh8zKWgXTQGzkgYBJjqN5uibJtGJNghjr89YU520iqs2oZ9EaJiCPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=Q/rXPPLA; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id A665C1D0F;
+	Wed, 19 Jun 2024 07:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1718783703;
+	bh=xvQw66MlB8IJ+in91YVeOZwco8FULunZGBsn4p2+W2g=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Q/rXPPLAq49Rll+kaL+JBCtyLUrtGkRFgiuD6wTKnFtAeNk51GH6mnFDcmcZ3swlm
+	 uoKD9PSQPC40NCDxRFKqyONkcMFXCvoWXqeTYVcVOFPWAVd9sSeh42ckdWE2KcgeD/
+	 GDeIVBsBmYWXCU4zQzvRfBa7HAihbWVChxTrSkeo=
+Received: from [192.168.211.147] (192.168.211.147) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Wed, 19 Jun 2024 11:03:02 +0300
+Message-ID: <f6e70e2d-0881-4ced-affe-0d08cf7f9253@paragon-software.com>
+Date: Wed, 19 Jun 2024 11:03:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <24b58c63-95c9-43d4-a5cb-78754c94cbfb@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] fs/ntfs3: Fix bugs and typos
+To: Huacai Chen <chenhuacai@kernel.org>, Huacai Chen <chenhuacai@loongson.cn>
+CC: <ntfs3@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+References: <20240529064053.2741996-1-chenhuacai@loongson.cn>
+ <CAAhV-H4N6NGKJBy19zs6ciGFYHWTUTKA6X=bA_ENXTP2fr7XHA@mail.gmail.com>
+Content-Language: en-US
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <CAAhV-H4N6NGKJBy19zs6ciGFYHWTUTKA6X=bA_ENXTP2fr7XHA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-On Wed, Jun 19, 2024 at 08:59:33AM +0100, John Garry wrote:
-> In this case, I would expect NOIOB >= atomic write boundary.
+On 12.06.2024 07:48, Huacai Chen wrote:
+> Hi, Konstantin,
 >
-> Would it be sane to have a NOIOB < atomic write boundary in some other 
-> config?
+> Could you please take some time to review this series? Thank you.
 >
-> I can support these possibilities, but the code will just get more complex.
+> Huacai
+>
+> On Wed, May 29, 2024 at 2:41 PM Huacai Chen <chenhuacai@loongson.cn> wrote:
+>> When we enable NTFS3 on Loongson platforms we found some bugs and
+>> typos. So fix them.
+>>
+>> Huacai Chen(2):
+>>   fs/ntfs3: Update log->page_{mask,bits} if log->page_size changed.
+>>   fs/ntfs3: Rename the label end_reply to end_replay.
+>>
+>> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+>> ---
+>> 2.27.0
+>>
+Hi,Huacai
 
-I'd be tempted to simply not support the case where NOIOB is not a
-multiple of the atomic write boundary for now and disable atomic writes
-with a big fat warning (and a good comment in the soure code).  If users
-show up with a device that hits this and want to use atomic writes we
-can resolved it.
+We have accepted your patches and will add them to the repository shortly.
 
+Regards, Konstantin
 
