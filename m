@@ -1,122 +1,145 @@
-Return-Path: <linux-kernel+bounces-221460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E5990F3F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:21:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1116490F3F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2495F1F21F9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:21:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F8A4B23D80
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C2315253B;
-	Wed, 19 Jun 2024 16:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E161527BB;
+	Wed, 19 Jun 2024 16:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fpD+10nz"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HEloc2u/"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77261CAA2;
-	Wed, 19 Jun 2024 16:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECE01848;
+	Wed, 19 Jun 2024 16:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718814101; cv=none; b=CWFG5PmznnCXkTjLD/IB+2OoYPOewyBmTZ1G4Kctg8omiA3vYL1xtM+PG471Jwf1Woihb0QMdN8YOAaAExpQL7qtWIrYku6WIG47o31AAgjCQoaO/IXEw1nPeYtYX3OmoPRA0PXg/rc6opNvwxjOJ+9tbQMj3OWnvGn+gpD7ZHs=
+	t=1718814138; cv=none; b=XRt47QCflbTaFBlzqhgFl74I8DjJ/3zM8bImXnOqJmD5UoHt6tJq6yk/tmpV2pSHKVzm2dS6pr2LqH35MRqcP3mZ1ILD/xMzF9+KK+x8crAzrHtF55wQrIbN8y0XQ++EvauzwhhdqfZSr4QQpiAM91Ew4HpH6pfN5jGeNAQbsMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718814101; c=relaxed/simple;
-	bh=Wb0WD4M3XqUI1pCsWuGrRHCJWON7GNEsaIvp0+S9nzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lq7We+zQCSqrrg7XRsbWCs9R3Xfcadv6bakIaJAwpACZULha/ldQxUX6yfUkcHOAI4y7r615dtO7HrZBbNvF063Lz+xb+P0S7hpaWuO0H024A1rwOtZ6soSIno12oXfrbxpaldixW1VCM857jAAbyq7gXTJhA1PHROaG2yrhBjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fpD+10nz; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A489040E01F9;
-	Wed, 19 Jun 2024 16:21:37 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id mHJGS0hdo0kH; Wed, 19 Jun 2024 16:21:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718814094; bh=5TwwB1IhKj1dFD3SKZQGcZT1x75ai8seaUTmduDWBgI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fpD+10nzmCt8DRNk1h+i/P0lMVaLn/BxftAwuq6bfxkaniOR/hR3TeiSKZVKBY5nc
-	 Y83Gv5dgd1xVLSJwKOzHBsKIyvZ+Y2cnQ2GhowjY3MDfFyNJYw8HDjARSu+1ducGml
-	 Ku6Di/SWXveARAnwV2fgX69CCd0ehG31CaNuczb3dALPSuAKbwi5N+iFSHW7n4J87V
-	 4WOTameOtg1Z8uyWKSI3dDDbadoXAYLx5wcUZf9qJaByHSx7MyzJ2eS7cUeurNjTEV
-	 DPbOtCfNb2f4AO3dXmIkHP/GdVVHStJCMC+lL/rWrSw+oVr+LAlhpJ1AYssQnP+ou+
-	 s6cFTi4TZwORPzY4nWCocuE7A1A9e3ouPIQWRAIKYaLT1cC81mQE/xAYqcfnTkovc+
-	 zU8a9c/mwDN7YKJ1zog2fbxez7Krx/04a0O7W+WHqMN+b5IwNz0tSe4p+WSREMvpo3
-	 lRn+dT49PGLJKXx9W1tmiw+5vONECcz/hg8vpRiYENRjHJ9gGHgNzHzywDmC3DYtfF
-	 vOXdH/IPlPOwb1SRe4y9YbtBWZHYAx8p7YcFoDyTRXJARCJYhQQSumbvaSdlVMaK3F
-	 2kEn7bFcNSTTMQeZBDbtkyl8A4ZEeBjYjgy7VaD31vkuYr2cxEONBGtk7L04hXKfML
-	 /RgMI/77oiS6YAZpgBdCLvpE=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7610240E01A5;
-	Wed, 19 Jun 2024 16:21:29 +0000 (UTC)
-Date: Wed, 19 Jun 2024 18:21:24 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-tip-commits@vger.kernel.org,
-	Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [tip: x86/urgent] x86/resctrl: Don't try to free nonexistent
- RMIDs
-Message-ID: <20240619162124.GFZnMFhPW3wo2Avezo@fat_crate.local>
-References: <20240618140152.83154-1-Dave.Martin@arm.com>
- <171879092443.10875.1695191697085701044.tip-bot2@tip-bot2>
- <ZnLUVtZ3oaFjcUj9@e133380.arm.com>
- <20240619134522.GCZnLg8pgJq9MPHS8M@fat_crate.local>
- <ZnMBN487xiPOfpRp@e133380.arm.com>
+	s=arc-20240116; t=1718814138; c=relaxed/simple;
+	bh=IsSvs8vJzAB6QrmDJJuINQX8sXAnwZ1o3/A6u9zFI6c=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p+KqoIjm9KM/yGjPpX5f1QZIYZyPhkEjNffNCS/3kjVa51dO604d5Mtz/L/5TGz3qVrG0kE8GjEioEm6IoBO03IBtSC0FHzGDj4JjuntoHPXt2EPcldtec2q1lH+1U33Se9ClNELxwt3XRs4q/n5nIJPxovI6OQ1EOidMloEDak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HEloc2u/; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-362bc731810so1503501f8f.1;
+        Wed, 19 Jun 2024 09:22:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718814135; x=1719418935; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P8Nq2A2G674garxMhqxXT5D8eJ9itPY7dy4g98ctkCk=;
+        b=HEloc2u/RIu07aiM2LYsCylA7qOK1Pp9T2pEuuF6qvr24RfiKk8caBEkgZCX0T5dqW
+         RPG2Jt3guMS1nG348QzCfIMltDq+BPxlsvYjMQ7iCZpkI+RcBJKYbq80q+Zp8Gl0CZ1Q
+         RKjK5Xrhud9pNofq4HhR5wE7H68iVkCrlBovmlm7MR8BWcgHYIZuzO4r+2bk2HpyR2j+
+         lGpsBRZyNvuKdwRfRT1Xw4MlB9CCyFwIIzVRbbInhIAKs+rfcTmB9JjQB21v8klaXY3i
+         fl+iwxd+2zgP0AH7ZdFXBownR4LmLrzR/9cVLmrJynuWUUmFnbyT+vEw7YqcR63zEpqo
+         amBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718814135; x=1719418935;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P8Nq2A2G674garxMhqxXT5D8eJ9itPY7dy4g98ctkCk=;
+        b=IXcCY6L8UnoeonpeNSv5iGgDC2nlQ0e0JXEY9BbQbsnz8x0l4A8dDdei0w7YxKMesq
+         pH44IWzS80qvA5jBT98rYSwKS4svf/rw7FVuwPoA2MdHmlSecHcFKudEsE+TTB8ZFxUB
+         GzdiL6H1pdEtVsruoQRQqevmL8MAHaGaABd1lDqn+x3AYdIDQZ3f40P8OkcqlDykdJeB
+         7l9dT+4ElvSw1ZQPdk6A5UbItx11XBoIvkbzQt0xoWD4f9gJmiD6J8UnJNVRY2ot8iID
+         Ka8RN106psUMiy61T4WANJrulpSilRSq3MGLL4xmKJI5Z2B1ENOkH67wLDD6QIlxdaoX
+         jMXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE6kKeE6ao5d7bT7iKj2vWKDsNnRbjBc2t+rVgI7EfOE/QsJiIJNcKub/jeqbBAtXWW5QUpThzhUQtHibUIEw40DGK8rwI+jH3RaDv15k1FGWqpRcwOlBAZcEtvf90EM/g21MPkOdcziBRGUHrtg1ScuhzbyPHiVgOEOhweK+YsLTFcg==
+X-Gm-Message-State: AOJu0YyfRp+qaZs0cOjdD888N/761wUPF2wP4Ed4gCbtDXom2YJGPOVV
+	f3goA0tiJMeriGkunYnxvl6Qp2SJEgSEp+Vg8Kfud0R9DWxU8Vie
+X-Google-Smtp-Source: AGHT+IHEq2/vpeV2ZS149nVdu+6aXWdzIsTynQteI9ekppwXCQ6c7CKWhpb/9Ytanm/P3y+Q7f7bYg==
+X-Received: by 2002:adf:e9c8:0:b0:35f:3189:ddd2 with SMTP id ffacd0b85a97d-36317c79ba6mr2590075f8f.35.1718814135013;
+        Wed, 19 Jun 2024 09:22:15 -0700 (PDT)
+Received: from krava (85-193-35-215.rib.o2.cz. [85.193.35.215])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe9230sm269539285e9.17.2024.06.19.09.22.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 09:22:14 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 19 Jun 2024 18:22:12 +0200
+To: Liao Chang <liaochang1@huawei.com>
+Cc: rostedt@goodmis.org, mhiramat@kernel.org, oleg@redhat.com,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	nathan@kernel.org, peterz@infradead.org, mingo@redhat.com,
+	mark.rutland@arm.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH bpf-next] uprobes: Fix the xol slots reserved for
+ uretprobe trampoline
+Message-ID: <ZnMFtCsRCVZ6pkp8@krava>
+References: <20240619013411.756995-1-liaochang1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZnMBN487xiPOfpRp@e133380.arm.com>
+In-Reply-To: <20240619013411.756995-1-liaochang1@huawei.com>
 
-On Wed, Jun 19, 2024 at 05:03:03PM +0100, Dave Martin wrote:
-> It's still a guideline, no?  (Though I admit that common sense has to
-> apply and there are quite often good reasons to bust the limit in
-> code.)  But commit messages are not code, and don't suffer from
-> creeping indentation that eats up half of each line, so the rationale
-> is not really the same.
+On Wed, Jun 19, 2024 at 01:34:11AM +0000, Liao Chang wrote:
+> When the new uretprobe system call was added [1], the xol slots reserved
+> for the uretprobe trampoline might be insufficient on some architecture.
 
-Just do a "git log" on mainline and marvel at all the possible "formatting".
+hum, uretprobe syscall is x86_64 specific, nothing was changed wrt slots
+or other architectures.. could you be more specific in what's changed?
 
-The ship on being able to read commit messages with formatting that fits what
-you're expecting has long sailed.
+thanks,
+jirka
 
-> Anyway, I was just mildly surprised, it's not a huge deal.
-
-Yeah, we don't have a strict rule. And I don't think you can make everyone
-agree and then adhere to some rule for commit messages width. But hey... :-)
-
-> (Quoted: "Text-based e-mail should not exceed 80 columns per line of
-> text.  Consult the documentation of your e-mail client to enable proper
-> line breaks around column 78.".  No statement about commit messages,
-> and "should not exceed" is not the same as "should be wrapped to".
-> This document doesn't seem to consider how git formats text derived
-> from emails.)
-
-See above.
-
-I'm willing to consider a rule for commit messages if the majority agrees on
-some rule.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> For example, on arm64, the trampoline is consist of three instructions
+> at least. So it should mark enough bits in area->bitmaps and
+> and area->slot_count for the reserved slots.
+> 
+> [1] https://lore.kernel.org/all/20240611112158.40795-4-jolsa@kernel.org/
+> 
+> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+> ---
+>  kernel/events/uprobes.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 2816e65729ac..efd2d7f56622 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1485,7 +1485,7 @@ void * __weak arch_uprobe_trampoline(unsigned long *psize)
+>  static struct xol_area *__create_xol_area(unsigned long vaddr)
+>  {
+>  	struct mm_struct *mm = current->mm;
+> -	unsigned long insns_size;
+> +	unsigned long insns_size, slot_nr;
+>  	struct xol_area *area;
+>  	void *insns;
+>  
+> @@ -1508,10 +1508,13 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
+>  
+>  	area->vaddr = vaddr;
+>  	init_waitqueue_head(&area->wq);
+> -	/* Reserve the 1st slot for get_trampoline_vaddr() */
+> -	set_bit(0, area->bitmap);
+> -	atomic_set(&area->slot_count, 1);
+>  	insns = arch_uprobe_trampoline(&insns_size);
+> +	/* Reserve enough slots for the uretprobe trampoline */
+> +	for (slot_nr = 0;
+> +	     slot_nr < max((insns_size / UPROBE_XOL_SLOT_BYTES), 1);
+> +	     slot_nr++)
+> +		set_bit(slot_nr, area->bitmap);
+> +	atomic_set(&area->slot_count, slot_nr);
+>  	arch_uprobe_copy_ixol(area->pages[0], 0, insns, insns_size);
+>  
+>  	if (!xol_add_vma(mm, area))
+> -- 
+> 2.34.1
+> 
 
