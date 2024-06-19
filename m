@@ -1,160 +1,127 @@
-Return-Path: <linux-kernel+bounces-220866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC5FF90E861
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:35:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E654590E863
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08DE1C21B16
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:35:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9249C1F22EE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B0B12F5B6;
-	Wed, 19 Jun 2024 10:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LwmLBZ/H"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3862D78C91;
-	Wed, 19 Jun 2024 10:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF83312F392;
+	Wed, 19 Jun 2024 10:35:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3E285285
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718793307; cv=none; b=ZfgfRLZ1E25/jWjReKG6RVwACb9VBXDqTeutwt8KwPJWDGfvO0aBndWXyRxSJN2yg7XgY61KOWMpsOMx1dYPyQSCq4kL30zfY7H2DY1bdAsC63kWuJVMqt+vBdfDb+Xnp0rDTRb9/MgpSSrCRfoC8E9s/bay+vvtc1diF43nK3k=
+	t=1718793356; cv=none; b=b9u5FqK1HoCdzWjXztpXloBKrthSjMnFdzvfUaEhvvwAXHyVm6wXwuPKBgb1PIapm9gE8p+zUnGRVEiAC17r2+lKTjAbIWA2m6Eu09oFXbTufDJ49FFUXy9Ta+J0Rb/u4sss15s+oM1xDLx/m1YICrLFiXpOrcCNO/nXQnswxR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718793307; c=relaxed/simple;
-	bh=rAkZoulyRqoWcGhfxv3cdCzwzCQF6KLQPe1hqhtmVBQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QG14v0lWeLtGBU0QwUAKsSKQ+WRvd3jggRebdRwD85ACGj05GWd/vfnO+oueinW8NWbH1MhCsHO7Z1vw48zgFvJMHdYGq1Dzxqardl+3at2lz9wGhbkMm8zNHB99FbPKScRhy++kW0pdjQ0qR6fZxxBII0acTIS37Em68Nxk+vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LwmLBZ/H; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718793305; x=1750329305;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=rAkZoulyRqoWcGhfxv3cdCzwzCQF6KLQPe1hqhtmVBQ=;
-  b=LwmLBZ/HEG9lGlSclIZO8jMiiiWYz93rs4LcgDjNiryfzciSu8vq3Wl3
-   SuCtXbX/YwjyI8qQ8LFUPPVyQiCZFjxiIaivkkSpRa5mZImkGroNRkHux
-   RTEBRWeuygOxxcfjrc6UYYPwaV/hFzYN3HRkhFiYVsXdMvOpBE0eOo/3A
-   7L7g3mBnjxWjxvvlGZRsvkxPmbE/0644wnX798zBAkZU8dsfr1aTUpMO8
-   HSCPFMcGA/2a8SoF+Wx+c8R3IhODWsJ9aZyP7p4bp8Tf4ZHy4BkvilSdR
-   xGtaQ5HVYNdfRMdIOSBJNdr1Qt/ELLv0P0OGHUD0/Ntje7UfHrOGmTqOp
-   g==;
-X-CSE-ConnectionGUID: cK4+lQJPRzOFUFxuu7z+Zg==
-X-CSE-MsgGUID: 6EnvEt65QY6ERkurd+lspg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="19596813"
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="19596813"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 03:35:04 -0700
-X-CSE-ConnectionGUID: UjQFZ2qzTJ6GiLj/nm1kiA==
-X-CSE-MsgGUID: oN9ZG3u6TViQwpUipDLVZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="41987288"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 03:34:47 -0700
-Message-ID: <bc75ff55161671e4470849ed51baa547f619889d.camel@linux.intel.com>
-Subject: Re: [PATCH 0/9] Add CPU-type to topology
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Brice Goglin
-	 <brice.goglin@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org,  daniel.sneddon@linux.intel.com, tony.luck@intel.com, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Ricardo Neri
- <ricardo.neri-calderon@linux.intel.com>,  "Liang, Kan"
- <kan.liang@linux.intel.com>, Andrew Cooper <andrew.cooper3@citrix.com>
-Date: Wed, 19 Jun 2024 03:34:46 -0700
-In-Reply-To: <20240619015315.3ei5f6rovzdnxovo@desk>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
-	 <8d757ea3-87a3-4663-ac76-66b04e33e6b3@gmail.com>
-	 <20240619015315.3ei5f6rovzdnxovo@desk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1718793356; c=relaxed/simple;
+	bh=fgyCnP3qXShl7wfpqmt+wRPrDUtyovAtEM7NSslvPQ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M/Erz83vdcLLqxWyqaO6V3VETNp0JISD303BPT3CsTExcG6p+riQH9Q9xyMnLYEDPiiNOmCS6mNF8Jd4HsTP2wm1vobJwSuGZtU0X8ElJGET5hQeoftzqD3a7rbzraSoqmyMXoTR3nzTv9w6IRJOJOLuTSkIRW795ZSOvFWfsgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7F3FDA7;
+	Wed, 19 Jun 2024 03:36:17 -0700 (PDT)
+Received: from [10.57.71.86] (unknown [10.57.71.86])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCDE43F64C;
+	Wed, 19 Jun 2024 03:35:51 -0700 (PDT)
+Message-ID: <0e03afd6-46be-4fc7-a974-bf506d8e503c@arm.com>
+Date: Wed, 19 Jun 2024 11:35:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] New config added to handle 64-bit systems with 32-bit DMA
+ support
+To: Alberto Secondi <albertosecondi@gmail.com>, hch@lst.de,
+ m.szyprowski@samsung.com
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ alberto.secondi@abinsula.com, Davide Salaris <davide.salaris@abinsula.com>
+References: <20240619091737.669040-1-albertosecondi@gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240619091737.669040-1-albertosecondi@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2024-06-18 at 18:53 -0700, Pawan Gupta wrote:
-> On Tue, Jun 18, 2024 at 02:49:10PM +0200, Brice Goglin wrote:
-> > Le 17/06/2024 =C3=A0 11:11, Pawan Gupta a =C3=A9crit=C2=A0:
-> > > Hi,
-> > >=20
-> > > This series adds support for CPU-type (CPUID.1A.EAX[31-24] on
-> > > Intel) to
-> > > differentiate between hybrid variants P+E, P-only, E-only that
-> > > share the
-> > > same Family/Model/Stepping. One of the use case for CPU-type is
-> > > the
-> > > affected CPU table for CPU vulnerabilities, which can now use the
-> > > CPU-type
-> > > to filter the unaffected variants.
-> > >=20
-> > > * Patch 1 adds cpu-type to CPU topology structure and introduces
-> > > =C2=A0=C2=A0 topology_cpu_type() to get the CPU-type.
-> > >=20
-> > > * Patch 2-4 replaces usages of get_this_hybrid_cpu_type() with
-> > > =C2=A0=C2=A0 topology_cpu_type().
-> > >=20
-> > > * Patch 5-7 Updates CPU-matching infrastructure to use CPU-type.
-> > >=20
-> > > * Patch 8 cleans up the affected CPU list.
-> > >=20
-> > > * Patch 9 uses the CPU-type to exclude P-only parts from the RFDS
-> > > affected
-> > > =C2=A0=C2=A0 list.
-> >=20
-> >=20
-> > Hello
-> >=20
-> > Is there still a plan to expose this info in sysfs?
->=20
-> Sure, if it helps userspace.
->=20
-> > Userspace currently uses frequencies to guess which cores are E or
-> > P.
-> > Intel sent some patches several years ago [1], but they got
-> > abandoned
-> > nowhere as far as I know. There was also some discussion about
-> > using a
-> > "capacity" field like ARM does, but IIRC Intel didn't like the idea
-> > in
-> > the end.
->=20
-> There can be many ways to expose this information in sysfs. Like this
-> ...
->=20
-> > [1] https://lkml.org/lkml/2020/10/2/1208
->=20
-> ... exposes /sys/devices/system/cpu/types which, in hybrid parts,
-> creates a
-> subdirectory for each type of CPU. Each subdirectory contains a CPU
-> list
-> and a CPU map that user space can query.
->=20
-> The other way is to expose the CPU-type in a file:
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/sys/devices/system/cpu/c=
-puN/type
->=20
-> that could return the CPU-type of the CPU N. Is there a preference?
+On 2024-06-19 10:17 am, Alberto Secondi wrote:
+> ------ Tessian Warning ------
+> 
+> Be careful, the email's sending address "albertosecondi@gmail[.]com" has never been seen on your company's network before today
+> 
+> This warning message will be removed if you reply to or forward this email to a recipient outside of your organization.
+> 
+> ---- Tessian Warning End ----
+> 
+> From: Alberto Secondi <alberto.secondi@abinsula.com>
+> 
+> The kernel assumes that 64-bit systems have 64-bit DMA support through
+> CONFIG_ARCH_DMA_ADDR_T_64BIT. This is not always true; for example, several
+> iMX8 systems (verified on iMX8MM and iMX8MP) have DMA with only 32-bit support.
+> This results in several drivers requesting DMA_BIT_MASK(64), which causes
+> malfunctions, particularly when systems have more than 3GB of DRAM (verified
+> with the lan743x driver and iMX8 systems with 4GB of DRAM). Therefore, a new
+> config ARCH_64BIT_HAS_DMA32_ONLY was added to manage 64-bit systems with 32-bit
+> DMA, which adjusts DMA_BIT_MASK(n) accordingly.
 
-But you still have to look at frequency or caches as there are Low
-power E-cores which will have same type but different capabilities.
+No. If a system has devices naturally capable of >32-bit DMA, and memory 
+at >32-bit system physical addresses, but only a 32-bit interconnect in 
+between, that needs to be described properly in Devicetree/ACPI, not 
+hacked around with completely non-portable kernel bodges.
 
 Thanks,
-Srinivas
+Robin.
 
-
-
+> Signed-off-by: Alberto Secondi <alberto.secondi@abinsula.com>
+> Co-developed-by: Davide Salaris <davide.salaris@abinsula.com>
+> ---
+>   include/linux/dma-mapping.h | 4 ++++
+>   kernel/dma/Kconfig          | 8 ++++++++
+>   2 files changed, 12 insertions(+)
+> 
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index f693aafe221f..629220a777e3 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -74,7 +74,11 @@
+>    */
+>   #define DMA_MAPPING_ERROR		(~(dma_addr_t)0)
+>   
+> +#ifdef CONFIG_ARCH_64BIT_HAS_DMA32_ONLY
+> +#define DMA_BIT_MASK(n)	(((n) > 32) ? ((1ULL<<(32))-1) : ((1ULL<<(n))-1))
+> +#else
+>   #define DMA_BIT_MASK(n)	(((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+> +#endif
+>   
+>   #ifdef CONFIG_DMA_API_DEBUG
+>   void debug_dma_mapping_error(struct device *dev, dma_addr_t dma_addr);
+> diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig
+> index c06e56be0ca1..0a27eafed808 100644
+> --- a/kernel/dma/Kconfig
+> +++ b/kernel/dma/Kconfig
+> @@ -36,6 +36,14 @@ config NEED_DMA_MAP_STATE
+>   config ARCH_DMA_ADDR_T_64BIT
+>   	def_bool 64BIT || PHYS_ADDR_T_64BIT
+>   
+> +config ARCH_64BIT_HAS_DMA32_ONLY
+> +        bool "64bit System has DMA32 only"
+> +        depends on ARCH_DMA_ADDR_T_64BIT
+> +        default n
+> +	help
+> +	  This enables forcing the maximum DMA_BIT_MASK to 32 bits for
+> +	  64-bit systems that have DMA support limited to 32 bits.
+> +
+>   config ARCH_HAS_DMA_SET_MASK
+>   	bool
+>   
 
