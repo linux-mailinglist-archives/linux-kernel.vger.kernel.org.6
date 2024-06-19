@@ -1,159 +1,166 @@
-Return-Path: <linux-kernel+bounces-221518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5574A90F4DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6927390F4DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524EE1C21C9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:09:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D2DA1C21B27
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C669F155758;
-	Wed, 19 Jun 2024 17:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6E4155A32;
+	Wed, 19 Jun 2024 17:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5jtBk9C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FclR8giC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2211C3E;
-	Wed, 19 Jun 2024 17:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03211C3E;
+	Wed, 19 Jun 2024 17:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718816987; cv=none; b=qXvthoJQ47aOiYhxb8aFW0Up/M0dBNo3y7L23sDm3UUamj3ZzBfOt1IXdYBNq30Wl8FIZ8Um6tGn+1HFwZF4aDZooJZZMie5le5xKjQBswXPKZ3k/SdEcYxX2NREOkAiRw+9NFdIFnok+06egx0an/We3XW6fKpzu1AqtJudSsM=
+	t=1718816999; cv=none; b=JNmEWPqvTKNSxz8vMw8I47SMQSvUnPAXTuYzh/6JRX4pKzaOno9JwdpqwMAZwBgIikckanI8TPrzmwUL2Ih/GoPwMftnHlTrhISai4kxOXWipv6M9YxFFLvJe+43O72islX0nSjrPoSf/pLAip2Wq0AYDlwFcArK7l3ooi8kbiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718816987; c=relaxed/simple;
-	bh=9CMNUv/EbEPQ8no+tR5gxROXmRGYdqZRxr+kp5I4E3U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ej/x2oeZuQg4OMafGN2XLCr12kxevyPn97pnwmfvnTdEPtfYtsIN4chNWqlhn2mB7LW1L4kjXWnxjMBhYAvUOXaX4lmgL4Y7co7HpnjdbsCRRSz7jmMhscqt4PMqp9g8NtdXXp3JnggJ+yKJgLImuQ6NBkAp9tFZKGLGhlh8rsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5jtBk9C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E20C9C4AF07;
-	Wed, 19 Jun 2024 17:09:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718816986;
-	bh=9CMNUv/EbEPQ8no+tR5gxROXmRGYdqZRxr+kp5I4E3U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=h5jtBk9Cyl/yP3iJt2RztG1vPVKNktYwJj09k79If4Cyt71eUgJFlHyR3Yn6EL3Ga
-	 5sQF2qKQk8qU7Ey1GfHrTE8sQyl5yzM2ZrZED91s+791DY4kIcxHmgcacvYSx+wFmi
-	 2o634Wf8+dkGlKKLQJzOLDU+wloO6EUAzJvj/ntRhCXZzr6QoRwkpYyjysouCLpaE2
-	 xEdTryNSl3kM4/BHua+7vJm5zvsTapWt//B6/JocQ6oN5+Ct0xiMjFK6R9pY9PgbXa
-	 Lm36+yvLQTAVC6c1Ol/u3kfa9nEjc4dDuxt5M3BRUcCxYIAdbMCdmylRaD1qLhqu0q
-	 j2cuCgjGXPoWQ==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-254f646b625so13861fac.0;
-        Wed, 19 Jun 2024 10:09:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXftWBX38KUOblJYRogJTZ+xsQcbLRR5bTBsqgdpMKPQk4gEf/kDNt4zcbWgHHyr3OVzldDVRZ5cjsmwFcvxj2RCBJ0BsOiQtfNE2RBgbegmieO/LJZNIeSaaqvPf5iPyZ5TUkmirDLPQ==
-X-Gm-Message-State: AOJu0YxejemIJaOlvuS2gsOdflwfBh7hpA3DPlTbt1P9o7E4gWXuFW3Y
-	OUYyiUQrphwc58lrjARap+5hWQ8HksIJhoNvNPV/vH0TckaaTigKNDvqL75GW+TJwz/mXHAAL22
-	3NhTBLlta44/1E2LmPteoGFu4w7g=
-X-Google-Smtp-Source: AGHT+IFnVIs7qSVlLi41292Pqa2L4YxENvIxso1hyO4nfZ7rk9IxBHHcak04fnlkplGBaApB+0YZgL1YINHD2KZ3qiw=
-X-Received: by 2002:a4a:7619:0:b0:5ba:ca8a:6598 with SMTP id
- 006d021491bc7-5c1ad90b829mr3531916eaf.0.1718816986143; Wed, 19 Jun 2024
- 10:09:46 -0700 (PDT)
+	s=arc-20240116; t=1718816999; c=relaxed/simple;
+	bh=zwhIa2Tzx0+wGQlJWCxens0OIx8tCG7Ay9QzvVgv0/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CJBZWrYHA3FcIBdT9R9Zd3k94fsDdxW1X7e3EN/vhMH3hHdHLpOmnofA+k2UeJ/1gYh/TInHopNsR4noepUFprpBeKMH1j1cxYOoEVL/NIaWG0OErjq7qfb853Qlvl4UumQUqKu3Fm7c4WAToXOs7Ujx02BgO00yMjG05wLRV5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FclR8giC; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718816998; x=1750352998;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zwhIa2Tzx0+wGQlJWCxens0OIx8tCG7Ay9QzvVgv0/w=;
+  b=FclR8giC7cesWPY81GwHEQf/OURVrWzTA1N6z/t3p4pRZyzfUJAz1v7Y
+   9yUGJnzIHrV62hFNN2wYkyHPxgPrS85CiROgbUv9zdAMcyH7kCnzKuyhv
+   L6qd6wG0OOc7mxf8lN5oljlOLdfoIla45F7p3xTFwx7EP1FRnhL8/+Int
+   PUAbzHHZKPvkC/m4P0Z3HBnRLXvumTvA0XK43pLiT0YzdI1XqjB8bqY4j
+   dvrEqF7AJr74xyd0ybhgFXcKFFBMpgupYPBn3s9cwn5bYceqA18e7KFuT
+   40kLdZQW/tf3rR2vy0OZCsKrqu8aUTOZLD1KUfJaV2DP0yAwPDikabbyW
+   g==;
+X-CSE-ConnectionGUID: a3yEfC/4TR2hM+PZzWuH5w==
+X-CSE-MsgGUID: v6pNowWUQtGN6C2mwdIdew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="15745076"
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="15745076"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 10:09:57 -0700
+X-CSE-ConnectionGUID: 2inXw1JhRji7XLO7A2TBNQ==
+X-CSE-MsgGUID: 6J6WLotvRZmkXvEH4ta9Eg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="46350976"
+Received: from junlanba-mobl.ccr.corp.intel.com (HELO [10.124.229.108]) ([10.124.229.108])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 10:09:52 -0700
+Message-ID: <aa0f9982-d88a-4613-8d96-41abb6905c06@intel.com>
+Date: Thu, 20 Jun 2024 01:09:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com> <ZnHSKiaYf2tIQo58@kf-XE>
- <a7790c74-2bec-4a24-b6e5-223c4e1ed372@amd.com> <ZnHXfLEwk2uRbg58@kf-XE>
- <b4d65232-b69e-419d-9b15-d0ca64b78b26@amd.com> <ZnHfNbLTgY1op3Zv@kf-XE>
- <fb8c965a-5f1c-4975-8e7d-6f6a0eb4d02f@amd.com> <ZnHtPbszYT8afOOk@kf-XE>
- <c6bda238-166e-4de6-b0c7-4bddfb8ef6f4@amd.com> <ZnIAX9P5XSco4cZw@kf-XE> <ZnJfmUXmU_tsb9pV@kf-XE>
-In-Reply-To: <ZnJfmUXmU_tsb9pV@kf-XE>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 19 Jun 2024 19:09:35 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gOBH7OKF3KXwxYfWkGkC45rzDguR4VmSnoZDKpm+KPSg@mail.gmail.com>
-Message-ID: <CAJZ5v0gOBH7OKF3KXwxYfWkGkC45rzDguR4VmSnoZDKpm+KPSg@mail.gmail.com>
-Subject: Re: [PATCH V3] acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
-To: Aaron Rainbolt <arainbolt@kfocus.org>
-Cc: Mario Limonciello <mario.limonciello@amd.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rafael@kernel.org, lenb@kernel.org, 
-	mmikowski@kfocus.org, Perry.Yuan@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: RE: [PATCH 1/3] fs/file.c: add fast path in alloc_fd()
+To: David Laight <David.Laight@ACULAB.COM>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
+ Mateusz Guzik <mjguzik@gmail.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
+ "tim.c.chen@intel.com" <tim.c.chen@intel.com>,
+ "pan.deng@intel.com" <pan.deng@intel.com>,
+ "tianyou.li@intel.com" <tianyou.li@intel.com>, yu.ma@intel.com
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240614163416.728752-2-yu.ma@intel.com>
+ <218ccf06e7104eb580023fb69c395d3e@AcuMS.aculab.com>
+From: "Ma, Yu" <yu.ma@intel.com>
+Content-Language: en-US
+In-Reply-To: <218ccf06e7104eb580023fb69c395d3e@AcuMS.aculab.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 19, 2024 at 6:33=E2=80=AFAM Aaron Rainbolt <arainbolt@kfocus.or=
-g> wrote:
->
-> acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
->
-> The _OSC is supposed to contain a bit indicating whether the hardware
-> supports CPPC v2 or not. This bit is not always set, causing CPPC v2 to
-> be considered absent. This results in severe single-core performance
-> issues with the EEVDF scheduler on heterogenous-core Intel processors.
 
-While some things can be affected by this, I don't immediately see a
-connection between CPPC v2, Intel hybrid processors and EEVDF.
-
-In particular, why would EEVDF alone be affected?
-
-Care to explain this?
-
-> To work around this, provide a new kernel parameter, "ignore_osc_cppc_bit=
-",
-> which may be used to ignore the _OSC CPPC v2 bit and act as if the bit wa=
-s
-> enabled. This allows CPPC to be properly detected even if not "enabled" b=
-y
-> _OSC, allowing users with problematic hardware to obtain decent single-co=
-re
-> performance.
+On 6/19/2024 6:36 PM, David Laight wrote:
+> From: Yu Ma <yu.ma@intel.com>
+>> Sent: 14 June 2024 17:34
+>>
+>> There is available fd in the lower 64 bits of open_fds bitmap for most cases
+>> when we look for an available fd slot. Skip 2-levels searching via
+>> find_next_zero_bit() for this common fast path.
+>>
+>> Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
+>> free slot is available there, as:
+>> (1) The fd allocation algorithm would always allocate fd from small to large.
+>> Lower bits in open_fds bitmap would be used much more frequently than higher
+>> bits.
+>> (2) After fdt is expanded (the bitmap size doubled for each time of expansion),
+>> it would never be shrunk. The search size increases but there are few open fds
+>> available here.
+>> (3) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
+>> searching.
+>>
+>> With the fast path added in alloc_fd() through one-time bitmap searching,
+>> pts/blogbench-1.1.0 read is improved by 20% and write by 10% on Intel ICX 160
+>> cores configuration with v6.8-rc6.
+>>
+>> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+>> Signed-off-by: Yu Ma <yu.ma@intel.com>
+>> ---
+>>   fs/file.c | 9 +++++++--
+>>   1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/file.c b/fs/file.c
+>> index 3b683b9101d8..e8d2f9ef7fd1 100644
+>> --- a/fs/file.c
+>> +++ b/fs/file.c
+>> @@ -510,8 +510,13 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+>>   	if (fd < files->next_fd)
+>>   		fd = files->next_fd;
+>>
+>> -	if (fd < fdt->max_fds)
+>> +	if (fd < fdt->max_fds) {
+>> +		if (~fdt->open_fds[0]) {
+>> +			fd = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, fd);
+>> +			goto success;
+>> +		}
+>>   		fd = find_next_fd(fdt, fd);
+>> +	}
+> Hmm...
+> How well does that work when the initial fd is > 64?
 >
-> Tested-by: Michael Mikowski <mmikowski@kfocus.org>
-> Signed-off-by: Aaron Rainbolt <arainbolt@kfocus.org>
+> Since there is exactly one call to find_next_fd() and it is static and should
+> be inlined doesn't this optimisation belong inside find_next_fd().
 >
-> ---
+> Plausibly find_next_fd() just needs rewriting.
+The consideration for this fast path is as stated in commit, for 
+scenarios like fd>64, it means that fast path already worked in the 
+first 64 bits for fast return and all other times when any fd<64 gets 
+recycled and then allocated. For some cases like a process opened more 
+than 64 fds and kept occupied, the extra cost would be a conditional 
+statement which can be benefit from branch prediction, as Guzik 
+suggests, we'll copy Eric for benchmark to check the effect if it is 
+available.  For the code, it's more efficient to be here outside of 
+find_next_fd() for jumping to fast return. Besides, identified by Guzik, 
+find_next_fd() itself could be improved with inlined calls inside for 
+better performance, story for another patch :)
 >
-> V2 -> V3: Move bit ignore to before switch.
-> V1 -> V2: Rewrite to work in cpc_supported_by_cpu.
+> Or, possibly. even inside an inlinable copy of find_next_zero-bit()
+> (although a lot of callers won't be 'hot' enough for the inlined bloat
+> being worth while).
+As mentioned, current find_next_zero_bit() already has a fast path 
+inside to handle the searching size <= 64, and it has been utilized here 
+for fast return.
 >
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
-ion/admin-guide/kernel-parameters.txt
-> index b600df82669d..af2d8973ba3a 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -2063,6 +2063,12 @@
->                         could change it dynamically, usually by
->                         /sys/module/printk/parameters/ignore_loglevel.
->
-> +       ignore_osc_cppc_bit
-> +                       Assume CPPC is present and ignore the CPPC v2 bit=
- from
-> +                       the ACPI _OSC method. This is useful for working
-> +                       around buggy firmware where CPPC is supported, bu=
-t
-> +                       _OSC incorrectly reports it as being absent.
-> +
->         ignore_rlimit_data
->                         Ignore RLIMIT_DATA setting for data mappings,
->                         print warning at first misuse.  Can be changed vi=
-a
-> diff --git a/arch/x86/kernel/acpi/cppc.c b/arch/x86/kernel/acpi/cppc.c
-> index ff8f25faca3d..0ca1eac826af 100644
-> --- a/arch/x86/kernel/acpi/cppc.c
-> +++ b/arch/x86/kernel/acpi/cppc.c
-> @@ -11,8 +11,20 @@
->
->  /* Refer to drivers/acpi/cppc_acpi.c for the description of functions */
->
-> +static bool ignore_osc_cppc_bit;
-> +static int __init parse_ignore_osc_cppc_bit(char *arg)
-> +{
-> +       ignore_osc_cppc_bit =3D true;
-> +       return 0;
-> +}
-> +early_param("ignore_osc_cppc_bit", parse_ignore_osc_cppc_bit);
-> +
->  bool cpc_supported_by_cpu(void)
->  {
-> +       if (ignore_osc_cppc_bit) {
-> +               return true;
-> +       }
-> +
->         switch (boot_cpu_data.x86_vendor) {
->         case X86_VENDOR_AMD:
->         case X86_VENDOR_HYGON:
+> 	David
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
 >
 
