@@ -1,114 +1,100 @@
-Return-Path: <linux-kernel+bounces-221150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135F090EF7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:55:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E758390EF81
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFB5C1F233C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:55:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E07491C2132F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE57114F13E;
-	Wed, 19 Jun 2024 13:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C587A14F123;
+	Wed, 19 Jun 2024 13:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvKc6XLY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQ+SVYGq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A2614EC42;
-	Wed, 19 Jun 2024 13:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148C014EC42;
+	Wed, 19 Jun 2024 13:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718805333; cv=none; b=cqbA1UCHWfcStOhxCt72185ROjrmYwOH0YnN3ONjuphpRMcSkPQu+qWEvKPyw/pLFE8UX+sAeLIvmIgWx1WgWiwCO6UznDuxU2u1Kpoe7JkMMFd7mwmJnegABxZ9lwhRAvvLVDfT2MptI7zMxEa5iNVlFy9smkDu9il8BNzzS24=
+	t=1718805393; cv=none; b=Lph7eshj/4tWmc0r8q+5o9YMh39sSgauQXLPHbCmoCy0pXpAfQdoObu1ZruI1SdbOR/cJmytVAQiPhZy+g9oYa58KVVBAGQaGmlIUDXjB8a7v9+imzDpJxx6+Q8zOUvSFBQ1hkYHx4iR8S29ybrStvGs7tb5/F///bopHIg92jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718805333; c=relaxed/simple;
-	bh=sdrbWJs4C9JSQQPyUxLltmmFFyWY2dENHToMBoBCL3A=;
+	s=arc-20240116; t=1718805393; c=relaxed/simple;
+	bh=kO6IjmVeNjj5CEjr9nJQJniaZCK9I+ft04bhBCrTDpo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WaBRYxvzLlkNWQ6YfeoBQSSREni9ovkjt+gKZmf/XpYMZO6Aw5otam/2hyTbVjy2HTg22kbXLGKqWFEYK9wAXdFimOBBP1J5AT+pyMA68B9/4ucfK/WRRgm6FfKGLgR3At3ottoBXUt7ENj0Xhvzh334Ux/INrUthAYL3zXyNeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvKc6XLY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 956FAC2BBFC;
-	Wed, 19 Jun 2024 13:55:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BAJRG+2IRZ1AevNn8ohRabsP+QEQUrSqqoKkgvUIv0NXSPhJFRt6LAe+bekzLNPoidIHftQ6sSA5pFQVQzFm5qXnDBi9V94AKixicVGjPo7doNnFXQlWjGaQsLghc6UtiVEMI/4jgdgQQ9WUMtL2TTFwOMm9CNP6x0DyniniYOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQ+SVYGq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C31C2BBFC;
+	Wed, 19 Jun 2024 13:56:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718805332;
-	bh=sdrbWJs4C9JSQQPyUxLltmmFFyWY2dENHToMBoBCL3A=;
+	s=k20201202; t=1718805392;
+	bh=kO6IjmVeNjj5CEjr9nJQJniaZCK9I+ft04bhBCrTDpo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dvKc6XLYs5ghjKbTSa0puSbpeDvu1GzKXCuMjf+4VURFWhAhz+ET8UQ7+z9YGWRaa
-	 ymwUyXnAlDAj9wcElGWahjWYT/P8ZhOPzPikq4svulM+Re3Vi3LtC19lzK9veo6g9i
-	 BbNd2d+f6FGRKq37LEHRTetOFwvMBPArjkc+K9/pYqAHfFhXfT+ggp7E4aBULi4uZm
-	 8ltFxh6579SwGSSPy1RXlCsiPVKT73yefPsnrg3DWwdQs68WVNBdELFjCe7IBldmPe
-	 TQbbBNh4OTUIjtGKAYhJSXwX82FHCmXWoUIoPLUykEF2s8XEeLHN+cLpCZS0AQa7J+
-	 2Eg+AbPxgtaTQ==
-Date: Wed, 19 Jun 2024 10:55:27 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] perf trace: Augment enum arguments with BTF
-Message-ID: <ZnLjT_m90EDtRFE0@x1>
-References: <20240619082042.4173621-1-howardchu95@gmail.com>
+	b=TQ+SVYGq58VJVFZ+tqbFKeJOJQGu7BqiY/NXEt0CyaqUipQQyBens8+wJt/tqyr/L
+	 ZUBdYIc8ApdfpLn3I1jI3snSc+KSrAXIRGJlYKq2l79Hhkjhxu8tbS1FYSzu4cFhlH
+	 1A0MffOG/4QHw5gl3N//3KFjifAXWmrrZ2JCat1k0N8SyJ3/lELL/PrdoQAEkIxiIV
+	 LoAdsgCKmIF322g+m2xKIFBmD8eVDcF0Kachy/5Pjn76e1yTUqrGk8qGxC0vv1z/4g
+	 Kj5IHbmPBadu1LQVC17uA68RIIcdwZqsSTXRDkeLNli7mjU5oGBMr9VXxy7Hp1fARv
+	 n3I6MpAWgGabw==
+Date: Wed, 19 Jun 2024 14:56:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH v2 1/2] spi: cs42l43: Refactor accessing the SDCA
+ extension properties
+Message-ID: <4b967df1-9aee-424a-8318-ac08b0031f07@sirena.org.uk>
+References: <20240619121703.3411989-1-ckeepax@opensource.cirrus.com>
+ <171880144842.113265.13864100805243474696.b4-ty@kernel.org>
+ <ZnLcjO67FH2weX+y@opensource.cirrus.com>
+ <d7502ea4-03bd-425a-8566-9ab0a6ea32e1@sirena.org.uk>
+ <ZnLftHS7RLRRQSk/@opensource.cirrus.com>
+ <ZnLhbQmxyMJ9SAhq@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OUgZW01sFqGm3Td0"
+Content-Disposition: inline
+In-Reply-To: <ZnLhbQmxyMJ9SAhq@opensource.cirrus.com>
+X-Cookie: Don't I know you?
+
+
+--OUgZW01sFqGm3Td0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240619082042.4173621-1-howardchu95@gmail.com>
 
-On Wed, Jun 19, 2024 at 04:20:37PM +0800, Howard Chu wrote:
-> changes in v2:
-> - Move inline landlock_add_rule c code to tests/workloads
-> - Rename 'enum_aug_prereq' to 'check_vmlinux'
+On Wed, Jun 19, 2024 at 02:47:25PM +0100, Charles Keepax wrote:
 
-Usually the versions descriptions comes at the end, after your signature
-line, just before the list of csets in the series.
- 
-> Augment enum arguments in perf trace, including syscall arguments and
-> non-syscall tracepoint arguments. The augmentation is implemented using
-> BTF.
-> 
-> This patch series also includes a bug fix by Arnaldo Carvalho de Melo 
-> <acme@redhat.com>, which makes more syscalls to be traceable by perf trace.
-> 
-> Test is included.
+> Ah I see I think your applying to the for-6.11 branch, which is
+> missing 60980cf5b8c8 ("spi: cs42l43: Drop cs35l56 SPI speed down
+> to 11MHz"). I can send a version based not on that but might make
+> a bit of an annoying merge conflict later?
 
-Thanks, the patch submission is now very good, at some point you'll be
-able to point to a git tree from where to do a pull, then have it with a
-signed tag, etc, all this is not necessary at this point in our
-collaboration, but as you evolve as a kernel developer, it eventually
-will be asked from you.
+Like I say I haven't looked at this yet.  I will tell you if I can't
+apply it.
 
-And it comes with a test that introduces a 'perf test -w' workload,
-super great!
+--OUgZW01sFqGm3Td0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-- Arnaldo
- 
-> Howard Chu (5):
->   perf trace: Fix iteration of syscall ids in syscalltbl->entries
->   perf trace: Augment enum syscall arguments with BTF
->   perf trace: Augment enum tracepoint arguments with BTF
->   perf trace: Filter enum arguments with enum names
->   perf trace: Add test for enum augmentation
-> 
->  tools/perf/builtin-trace.c                    | 214 ++++++++++++++++--
->  tools/perf/tests/builtin-test.c               |   1 +
->  tools/perf/tests/shell/trace_btf_enum.sh      |  57 +++++
->  tools/perf/tests/tests.h                      |   1 +
->  tools/perf/tests/workloads/Build              |   1 +
->  .../perf/tests/workloads/landlock_add_rule.c  |  32 +++
->  tools/perf/util/syscalltbl.c                  |   7 +
->  tools/perf/util/syscalltbl.h                  |   1 +
->  8 files changed, 289 insertions(+), 25 deletions(-)
->  create mode 100755 tools/perf/tests/shell/trace_btf_enum.sh
->  create mode 100644 tools/perf/tests/workloads/landlock_add_rule.c
-> 
-> -- 
-> 2.45.2
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZy44sACgkQJNaLcl1U
+h9APywf9FQ3UxkcCaqcbkTYuGEL+ob52NcDguUcCMdSNxNnhp+Mo70qIrFqZUORu
+/9V8TJ6H5wl/Swj3xoGzTLnF8SNddyyVR2x+haT4HcnwcJD1fTMRg83QdjfYLW/n
+xvk/Ypp5DpiM4A2k928dIAbZa1oyxmp+tk4yZ6lGS+v7wIiMqbQZ33g/iaaaqybr
+ilJIo5y14I4Gfk5Bc0C2zHGmFLV/ZtdX5i08bA+D7uICDzMk/yubeVjE9FIpJj4U
+cn7pFt7FP8dyKbq9iNFGsTP/YMfOqHzjOehPyu0rwlvdfUwev1Kr8yyUSDOSfETG
+3R5CDGbLU4ubhi14yKZbZBUdjqxYtA==
+=95hX
+-----END PGP SIGNATURE-----
+
+--OUgZW01sFqGm3Td0--
 
