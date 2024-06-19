@@ -1,165 +1,139 @@
-Return-Path: <linux-kernel+bounces-220899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C28E590E8DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB2190E8E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8BD31C2101D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:59:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B1B91C212E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEDA1353FE;
-	Wed, 19 Jun 2024 10:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EE11369AC;
+	Wed, 19 Jun 2024 11:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aMj7GZRh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iEb/nmFb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC6F4D8B2;
-	Wed, 19 Jun 2024 10:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF93D12F5BF
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718794770; cv=none; b=SZIg1dsMuqjLBS3OegO/SyzIvKBHsmf3047FrOTtpJvSeRXSiI0VfhQOFIyrCRJBRLngXjTTHCgHWK3iI3b7VH0oE5BgK6xObl6Aha8HeUkjO0SQrO2Q8XN4ANBORRSy7wwQ1tFht75Jq3stTIguPuGS4nA6SWnDflINYOB6Sn0=
+	t=1718794996; cv=none; b=X4AHIEOvR48KSeNigFq/TptBOsItKOT/nAcAHjomS14SZ4TKWNaF6ondKvQm77qpbGRTf/zUqxDqE/dnLj5/Mo+BHuLTPafp+odM+GUe+AggeHTRcSTwXh8amsjXvk1uqdTtKfn3/Dukdku3AoPoNO3vgqu/q2+08YwJpdF8FbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718794770; c=relaxed/simple;
-	bh=9jOEVUD31Imf8SxLD+3Kml0LxxGN+C5ah7iPzoy7Hsw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aT62zCSd/x/WVGCSuGKTKhTgGbKiv491/ETnKYOoRlZPLHwn7PW7r1wXAbmx3OJLbci2j+jBdu+jv7hMHGRVoQ1eaOKVr4pAgKc5Di9ZDkafEtVPDzmqr08DxYd1BQ4GmW8O2cQn7nOpnfWP14AxhxwFS082P+lRRiqDstTLcVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aMj7GZRh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9cjDw015872;
-	Wed, 19 Jun 2024 10:59:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lGrRbSt82DV24hirvDuiK+n9P4dLi1X+Xg0imWi/zsc=; b=aMj7GZRhVUWMFzu3
-	PcyhmFqE6bKUllLn7yRECCFIbk8fiazvKpEYCfeKFKsBHt/8mGzUlSnG+ySaCUvv
-	EQoQ0zYsZWSltn8SaJwUwW03hOaTPzzQR1FbbQpyYCbP67LjOa8UQM9RSiLl3zH8
-	syWtoI7BweV/EayfH/O+LHLmy1eUJF3Ijw9gNCPtIYD7B5yb6omnA2vzT4EKrXjL
-	kRSYl8VHffkNA/md7orRYhpyF4SdoBGzLzvCdNRNIUR8COj9GV2FuGFqGpaIP8RE
-	e+HiC7AKqWIp112XzVEfPy2se9mh0Lf10a6bHbtT3LomhWJcYkmVzp2y4KscMWCr
-	mzQdsQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9x1eke-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 10:59:24 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JAxNwO027917
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 10:59:23 GMT
-Received: from [10.214.230.142] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
- 2024 03:59:20 -0700
-Message-ID: <93c75e4c-0e99-b5a7-919d-69da89cbad45@quicinc.com>
-Date: Wed, 19 Jun 2024 16:29:16 +0530
+	s=arc-20240116; t=1718794996; c=relaxed/simple;
+	bh=1bdmFYChepEqjby6FGx8U06BldFaO0w3AEyYFVmPYEo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LCZ+4+YsX69CgsAlaEOx3xaA/+hvZscpehweYxkfgC8UkABh9eKe4nhDwX/5xy0uWBNeaGY2z7I1bAZh9ajWJlzOGPtjmxsBu0rvNWSX7ozd1OytTeSZfeTPR0KKu/eWpGOO9wrgVEfjXSbaiBVoN84ADNEoWH9x58eScTQ2Cj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iEb/nmFb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718794993;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V/M7MnGXwS8uLXvNZgVDSoX5YtxoFcpHgW7L/ahwWrY=;
+	b=iEb/nmFbPREPlkwT2L1YiNacxIcuVFm8JaxaktXdjiCTQQJH2SFy1kY1lPoktCunhdUvTK
+	huasTdPLxkGvrKKpTG6wHji93K6Veusix0Sp/xgL1vEX/f2zdCjOiA6LRl2oGym2UlG4eE
+	ArWHbLMaAKINd+WznubSN88eZ6CqwnM=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-111-JekWv1S-NWykEvvmhX0Ffw-1; Wed, 19 Jun 2024 07:03:11 -0400
+X-MC-Unique: JekWv1S-NWykEvvmhX0Ffw-1
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-dfdfe3d9fc8so13031964276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 04:03:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718794991; x=1719399791;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V/M7MnGXwS8uLXvNZgVDSoX5YtxoFcpHgW7L/ahwWrY=;
+        b=DKqhMx225nCtj6gRWA+V+HiwDzLHGzRqR4xBnLSoz7atdgO33YpPDNOi4K7ZhTRFaw
+         0eFJfk8cI3JjwFdVkaDOHPPnNU86WY9X+cifiyIa+pLlYD9ML0QxxAVyPMiw8U6ojJMO
+         BjgtuBppyIlqPkptYqFBdns1qB+DrHpQPmPonRtatUceMM4rl7rw4iDVXqw3Zvcp8f0/
+         u4QKQ/sVlvdbnzUWrJ+eLe83M+mr9DypPxK2LESnkXKL3NYo67q7XkxfInqBp5Ma+H65
+         3h81dxzH787v8OFaLv4CWe6/9zvFdNhXS3WMkaIlOh0PvbEmyVdER5WVFE5cHxMHzNe7
+         y5IA==
+X-Forwarded-Encrypted: i=1; AJvYcCXe5ID/bXhTdyW8e0I2xhAMFSaq3u3+9YjhiAv7zlAzPNPqKzVSnlwCKMFnJaotAOnKvr1+8y39o5GbrrNSSq4SvkScrAB/JMlfeidp
+X-Gm-Message-State: AOJu0Yz8nz5w1JPBJQ3lH0azp/qYMInNkLzGMOhkjjiCYMIkKYl0ua5z
+	5f/VS4P7IsK2+fFqZ/teP9kfdB/MPMrRB4nO9nJhhPSZzmUFS1k5ucB7zqLwPZDmOqeQPZkRh+U
+	Hznnn2NRv1WWndf10B8CX7RReEdOPFjCY6rXHHcQjZ/sdcKPCkkXOUlzNE4CeNbra/vC4uIeCpZ
+	fGS/0/2pHw8a669qq55h0QGjQEIMYLUsDQa6TI
+X-Received: by 2002:a25:24b:0:b0:e02:c29d:7dc6 with SMTP id 3f1490d57ef6-e02c29d8011mr1449188276.43.1718794991115;
+        Wed, 19 Jun 2024 04:03:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHMuYoMspdK9W3dvJFbwMXu6A1vxVHrL7pJhY3Nas3Emxi4QlBjq10Z0XGEVO+7m9QoYNiiYNpMnoT3yoCdFRY=
+X-Received: by 2002:a25:24b:0:b0:e02:c29d:7dc6 with SMTP id
+ 3f1490d57ef6-e02c29d8011mr1449158276.43.1718794990800; Wed, 19 Jun 2024
+ 04:03:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v3] arm64: dts: qcom: qdu1000: Add secure qfprom node
-Content-Language: en-US
-To: Mukesh Ojha <quic_mojha@quicinc.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240618092711.15037-1-quic_kbajaj@quicinc.com>
- <ZnHUFVFKTP+74Iie@hu-mojha-hyd.qualcomm.com>
- <ZnKvDZGuc7hojsCj@hu-mojha-hyd.qualcomm.com>
-From: Komal Bajaj <quic_kbajaj@quicinc.com>
-In-Reply-To: <ZnKvDZGuc7hojsCj@hu-mojha-hyd.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mgrIdms6X3NR4Yz1_WchXQNAPRhbYq01
-X-Proofpoint-GUID: mgrIdms6X3NR4Yz1_WchXQNAPRhbYq01
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=924
- impostorscore=0 priorityscore=1501 suspectscore=0 mlxscore=0 adultscore=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406190081
+References: <20240617-stage-vdpa-vq-precreate-v1-0-8c0483f0ca2a@nvidia.com> <20240617-stage-vdpa-vq-precreate-v1-6-8c0483f0ca2a@nvidia.com>
+In-Reply-To: <20240617-stage-vdpa-vq-precreate-v1-6-8c0483f0ca2a@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 19 Jun 2024 13:02:34 +0200
+Message-ID: <CAJaqyWdHgpbmjtEP-tGgCiMGwrvkicjxXV8NLRZyDpRk97nkJA@mail.gmail.com>
+Subject: Re: [PATCH vhost 06/23] vdpa/mlx5: Remove duplicate suspend code
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
+	Cosmin Ratiu <cratiu@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jun 17, 2024 at 5:08=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+> Use the dedicated suspend_vqs() function instead.
+>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
 
+Reviewed-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-On 6/19/2024 3:42 PM, Mukesh Ojha wrote:
-> On Wed, Jun 19, 2024 at 12:08:13AM +0530, Mukesh Ojha wrote:
->> On Tue, Jun 18, 2024 at 02:57:11PM +0530, Komal Bajaj wrote:
->>> Add secure qfprom node and also add properties for multi channel
->>> DDR. This is required for LLCC driver to pick the correct LLCC
->>> configuration.
->>>
->>> Fixes: 6209038f131f ("arm64: dts: qcom: qdu1000: Add LLCC/system-cache-controller")
->>> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
->>> ---
->>> Changes in v3:
->>> * Addressed comment by Konrad
->>> * Added Fixes tag in commit message as suggested by Dmitry
->>> * Link to v2: https://lore.kernel.org/linux-arm-msm/20240612063424.2494-1-quic_kbajaj@quicinc.com/
->>>
->>> Changes in v2:
->>> * Minor correction in commit message
->>> * Link to v1: https://lore.kernel.org/linux-arm-msm/20240607113445.2909-1-quic_kbajaj@quicinc.com/
->>> ---
->>>   arch/arm64/boot/dts/qcom/qdu1000.dtsi | 15 +++++++++++++++
->>>   1 file changed, 15 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/qdu1000.dtsi b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
->>> index 7a77f7a55498..27f9fc87079c 100644
->>> --- a/arch/arm64/boot/dts/qcom/qdu1000.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
->>> @@ -1584,6 +1584,21 @@ system-cache-controller@19200000 {
->>>   			reg-names = "llcc0_base",
->>>   				    "llcc_broadcast_base";
->>>   			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
->>> +
->>> +			nvmem-cells = <&multi_chan_ddr>;
->>> +			nvmem-cell-names = "multi-chan-ddr";
->>> +		};
->>> +
->>> +		sec_qfprom: efuse@221c8000 {
->>> +			compatible = "qcom,qdu1000-sec-qfprom", "qcom,sec-qfprom";
->>> +			reg = <0 0x221c8000 0 0x1000>;
->>> +			#address-cells = <1>;
->>> +			#size-cells = <1>;
->>> +
->>> +			multi_chan_ddr: multi-chan-ddr@12b {
->>> +				reg = <0x12b 0x1>;
->>> +				bits = <0 2>;
->>> +			};
->>
->> LGTM, without this change, LLCC driver for QDU1000 will result in probe failure.
->>
->> Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> 
-> Just noticed, sec_qfprom driver config CONFIG_NVMEM_QCOM_SEC_QFPROM, still
-> need to be enabled.
+> ---
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+>
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
+x5_vnet.c
+> index 51630b1935f4..eca6f68c2eda 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -3355,17 +3355,12 @@ static int mlx5_vdpa_suspend(struct vdpa_device *=
+vdev)
+>  {
+>         struct mlx5_vdpa_dev *mvdev =3D to_mvdev(vdev);
+>         struct mlx5_vdpa_net *ndev =3D to_mlx5_vdpa_ndev(mvdev);
+> -       struct mlx5_vdpa_virtqueue *mvq;
+> -       int i;
+>
+>         mlx5_vdpa_info(mvdev, "suspending device\n");
+>
+>         down_write(&ndev->reslock);
+>         unregister_link_notifier(ndev);
+> -       for (i =3D 0; i < ndev->cur_num_vqs; i++) {
+> -               mvq =3D &ndev->vqs[i];
+> -               suspend_vq(ndev, mvq);
+> -       }
+> +       suspend_vqs(ndev);
+>         mlx5_vdpa_cvq_suspend(mvdev);
+>         mvdev->suspended =3D true;
+>         up_write(&ndev->reslock);
+>
+> --
+> 2.45.1
+>
 
-Thanks Mukesh for pointing out this.
-Posted the change to enable CONFIG_NVMEM_QCOM_SEC_QFPROM [1].
-[1]https://lore.kernel.org/linux-arm-msm/20240619105642.18947-1-quic_kbajaj@quicinc.com/
-
-Thanks
-Komal
-
-> 
-> -Mukesh
 
