@@ -1,149 +1,121 @@
-Return-Path: <linux-kernel+bounces-220676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4943F90E54D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:12:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FEA90E550
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AA201C2381E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:12:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4DA328532C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5CB79945;
-	Wed, 19 Jun 2024 08:11:46 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3756378C7F;
+	Wed, 19 Jun 2024 08:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FRxw+0cD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1FD78C6D;
-	Wed, 19 Jun 2024 08:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446A9763FD;
+	Wed, 19 Jun 2024 08:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718784706; cv=none; b=VodKQUgj5E2FaQxXzdlRHuusv8YkT2i6eIbxCTH7dpV7jXnr4kxgozHZhKFoK2Cbn363V/pudVPYCMhhF5vD8F5FyQ8ic6VgaWwbGtO++T+d8hiTKFjgiuSsjhHEIzM/8o02hTgtiSct5BEHQBp6ArdRqwodUQig72ma6hzWPkQ=
+	t=1718784775; cv=none; b=Hj7DLqJsuVORrah98HrV96hk9m0FpcH1+b5qV+qrIUoqkmeWYmjBFc6zyz0L5wxBAXck2xJFYvGLRIAj5/YnE2cfDSpNqSY3zUxIhwwZdH2mdbDpb8Vk+LF7/Azd8EKqREFs9WDLNWCCg9xi6B5m3Rcp93RvMHdpgAkzjNVlQcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718784706; c=relaxed/simple;
-	bh=4SIlKV9xWC8OiXcIVxQ0T6S3AYpJoIlOmn9UTDWDXPg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NieVMYyLUX/wuxTDT6hxhQrxAna6dtj3obbW6ioFB/Q7ECSyR+tsF9B/IUyec9DP3XJWXzJImzOLM4Nfj94+jQ1rVvf5anjuKLyp4bijWvFSJ/5maAE+itQm0pPtDzf6oeCLpxd9ppWsQzapcRmGnkZ0KO5b0IHdu3hqZBrLP+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W3x6B2f2tz6JB5T;
-	Wed, 19 Jun 2024 16:06:42 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 32FD9140B63;
-	Wed, 19 Jun 2024 16:11:40 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 19 Jun
- 2024 09:11:39 +0100
-Date: Wed, 19 Jun 2024 09:11:37 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, "Catalin
- Marinas" <catalin.marinas@arm.com>, <linux-acpi@vger.kernel.org>,
-	<linux-arch@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linuxarm@huawei.com>
-CC: Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>, <loongarch@lists.linux.dev>,
-	<x86@kernel.org>, Russell King <linux@armlinux.org.uk>, "Rafael J . Wysocki"
-	<rafael@kernel.org>, "Miguel Luis" <miguel.luis@oracle.com>, James Morse
-	<james.morse@arm.com>, "Salil Mehta" <salil.mehta@huawei.com>, Jean-Philippe
- Brucker <jean-philippe@linaro.org>, Hanjun Guo <guohanjun@huawei.com>, Gavin
- Shan <gshan@redhat.com>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<justin.he@arm.com>, <jianyong.wu@arm.com>
-Subject: Re: [PATCH v10 13/19] irqchip/gic-v3: Don't return errors from
- gic_acpi_match_gicc()
-Message-ID: <20240619091122.00003a9e@huawei.com>
-In-Reply-To: <20240529133446.28446-14-Jonathan.Cameron@huawei.com>
-References: <20240529133446.28446-1-Jonathan.Cameron@huawei.com>
-	<20240529133446.28446-14-Jonathan.Cameron@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718784775; c=relaxed/simple;
+	bh=d22ozv8UZzsbdeCLyzbmyCDhwksXbO4tqNyJiRNzVpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TiOtyQnu5SsJgKF1VT6WsqS39Yq9upZ7I8hDBYmZz14Q1JJGYtxW4OnZkuEEoF6q2CqNzzddwLg57iBxqXog3VvpQutCp5yziob1kkGYklpT1a9Ma3Kl9U04r9xag1hmz2pSt7fG7rgp/LfKJdVXn+wkeshcArwVqrT6IhtR3Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FRxw+0cD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 390ECC2BBFC;
+	Wed, 19 Jun 2024 08:12:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718784774;
+	bh=d22ozv8UZzsbdeCLyzbmyCDhwksXbO4tqNyJiRNzVpM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FRxw+0cDYZFJozbRUuujZdkbvcFzUBdF99vdYElj/iTAhc2AmqbsuXU4OhghUY0V2
+	 cY+wdFFl+mpsiRarjMYjdBdXpoBDovhiv5K+JJahLex4yeoYkuPRRrMJlIai0FDMoc
+	 0sCElbyU81+aJIT2xLdwj91jyQjXxJ3UF/qOa/kQ=
+Date: Wed, 19 Jun 2024 10:12:51 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Jie Gan <quic_jiegan@quicinc.com>, coresight@lists.linaro.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Konrad Dybcio <konradybcio@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Rob Herring <robh@kernel.org>,
+	Suzuki Poulouse <suzuki.poulose@arm.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Jinlong Mao <quic_jinlmao@quicinc.com>,
+	Song Chai <quic_songchai@quicinc.com>,
+	Tao Zhang <quic_taozha@quicinc.com>,
+	Tingwei Zhang <quic_tingweiz@quicinc.com>,
+	Trilok Soni <quic_tsoni@quicinc.com>,
+	Yuanfang Zhang <quic_yuanfang@quicinc.com>, quic_liuxin@quicinc.com,
+	quic_sijiwu@quicinc.com, quic_xinlon@quicinc.com,
+	quic_xueqnie@quicinc.com, quic_yanzl@quicinc.com,
+	quic_yijiyang@quicinc.com, quic_yuanjiey@quicinc.com
+Subject: Re: [PATCH 2/3] coresight: Add coresight slave register driver to
+ support data filter function in sysfs mode
+Message-ID: <2024061947-street-italics-0cdf@gregkh>
+References: <20240618072726.3767974-3-quic_jiegan@quicinc.com>
+ <e916a445-f7bd-4213-ac66-cf39f6c5001b@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e916a445-f7bd-4213-ac66-cf39f6c5001b@web.de>
 
-On Wed, 29 May 2024 14:34:40 +0100
-Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
-
-> From: James Morse <james.morse@arm.com>
+On Wed, Jun 19, 2024 at 09:55:25AM +0200, Markus Elfring wrote:
+> …
+> > +++ b/drivers/hwtracing/coresight/coresight-csr.c
+> > @@ -0,0 +1,315 @@
+> …
+> > +static int __csr_set_etr_traceid(struct coresight_device *csdev,
+> > +			uint32_t atid_offset, uint32_t traceid,
+> > +			bool enable)
+> > +{
+> …
+> > +	spin_lock_irqsave(&drvdata->spin_lock, flags);
+> > +	CS_UNLOCK(drvdata->base);
+> …
+> > +	CS_LOCK(drvdata->base);
+> > +	spin_unlock_irqrestore(&drvdata->spin_lock, flags);
+> > +	return 0;
+> > +}
+> …
 > 
-> gic_acpi_match_gicc() is only called via gic_acpi_count_gicr_regions().
-> It should only count the number of enabled redistributors, but it
-> also tries to sanity check the GICC entry, currently returning an
-> error if the Enabled bit is set, but the gicr_base_address is zero.
-> 
-> Adding support for the online-capable bit to the sanity check will
-> complicate it, for no benefit. The existing check implicitly depends on
-> gic_acpi_count_gicr_regions() previous failing to find any GICR regions
-> (as it is valid to have gicr_base_address of zero if the redistributors
-> are described via a GICR entry).
-> 
-> Instead of complicating the check, remove it. Failures that happen at
-> this point cause the irqchip not to register, meaning no irqs can be
-> requested. The kernel grinds to a panic() pretty quickly.
-> 
-> Without the check, MADT tables that exhibit this problem are still
-> caught by gic_populate_rdist(), which helpfully also prints what went
-> wrong:
-> | CPU4: mpidr 100 has no re-distributor!
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> Tested-by: Miguel Luis <miguel.luis@oracle.com>
-> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Sorry. I managed not to pick up Marc's RB form v8 and this patch is unchanged.
-https://lore.kernel.org/all/87jzkktaui.wl-maz@kernel.org/
-
-Hopefully whoever picks this up is using tooling (b4 or similar) that will get it from
-here.
-
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-
-So just patch 14 waiting for Marc to take another glance.
+> Would you become interested to apply a statement like “guard(spinlock_irqsave)(&drvdata->spin_lock);”?
+> https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/spinlock.h#L574
 
 
-> ---
->  drivers/irqchip/irq-gic-v3.c | 13 ++-----------
->  1 file changed, 2 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index 6fb276504bcc..10af15f93d4d 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -2415,19 +2415,10 @@ static int __init gic_acpi_match_gicc(union acpi_subtable_headers *header,
->  	 * If GICC is enabled and has valid gicr base address, then it means
->  	 * GICR base is presented via GICC
->  	 */
-> -	if (acpi_gicc_is_usable(gicc) && gicc->gicr_base_address) {
-> +	if (acpi_gicc_is_usable(gicc) && gicc->gicr_base_address)
->  		acpi_data.enabled_rdists++;
-> -		return 0;
-> -	}
->  
-> -	/*
-> -	 * It's perfectly valid firmware can pass disabled GICC entry, driver
-> -	 * should not treat as errors, skip the entry instead of probe fail.
-> -	 */
-> -	if (!acpi_gicc_is_usable(gicc))
-> -		return 0;
-> -
-> -	return -ENODEV;
-> +	return 0;
->  }
->  
->  static int __init gic_acpi_count_gicr_regions(void)
+Hi,
 
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
+
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
+
+thanks,
+
+greg k-h's patch email bot
 
