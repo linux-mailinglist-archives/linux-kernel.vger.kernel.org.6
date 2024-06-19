@@ -1,158 +1,141 @@
-Return-Path: <linux-kernel+bounces-220400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC5790E12B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:15:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F127F90E12F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15A2628225D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:15:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A629B1F22C41
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF107470;
-	Wed, 19 Jun 2024 01:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C9C79E0;
+	Wed, 19 Jun 2024 01:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RtPi9qxK"
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4+WH1b+"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DEB6112
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 01:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BA263D0;
+	Wed, 19 Jun 2024 01:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718759748; cv=none; b=kQ585/y0XzHRqQ/2Bbdz8XiFOI0aKsHl9Hp53ssndVFqtu802Qym25xIfm/pTmuyqFAqjrRqsUAV1GBl25jAq4uD5GVUDkqOTfTAfAtb/VNpHmAhskHFFuEsaVxFOVYEUFWF8PQyYAs5Bxl2SyH7jrWidt3WpRR9HRqhfpsuvQ0=
+	t=1718759890; cv=none; b=UiWWam8T3Q9QpRi5OhlWb/3DTcqbeMmGjJ1VFzhIgCLlQZ74Prsle5FHLkP8S8Pe3uBlyTRGjSj5EktttIMhbiVwEWfNwMFIstNnqj8jiJZQ77tu4BuvgoZ9goy+GxeNkmgS9YkNo12eK9IH8JXM1rosC3FaeFnCCrirDvvesNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718759748; c=relaxed/simple;
-	bh=wuhpJWllzquyP6xKZ60kyLvUqRhn+Hv4ZzsFsuIdsGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J8aXJM2yxdM7MU4G+yvM5EDrHGaT2McbolRvI1Q2TCKEpplH6/C89OGfyOZDaX8/e5Gy1LLqoxYGu0Dl8pyaRkiwdoZt2/EMwxXvtczXRudNki3rJ1EHPbNB6Y8W4ce/K8kQwcH4S2CX/Ng1FurSEwdS4IXEJW0YMflo3CYiXN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RtPi9qxK; arc=none smtp.client-ip=209.85.217.52
+	s=arc-20240116; t=1718759890; c=relaxed/simple;
+	bh=OM+FRXFB6DpgW4Mn/lTWBgeE0bTKzqdd4rxakX3c1ho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BfEii238pGtnEBzz2cp6Ik+vJoLnuGPt8dgUVvB3qChOmakWMhKbxrblFPJ2qZGTEYLKObGE+Oyz7SOBZt4v53SJ3XgkH1g47WW+/XHixEIvWdy6EyCHIeJNAb8QZ5kPga1Qk6da/8nDVjZ8iInRM+03CVk0EY6e/eU+TFTEtSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j4+WH1b+; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-48c52a1f1ffso2512018137.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2024 18:15:46 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso100941921fa.1;
+        Tue, 18 Jun 2024 18:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718759746; x=1719364546; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jto+2KBAammyuRDteQwTTwC96pLpNXDsN1v2Rc0adi8=;
-        b=RtPi9qxKG3aFdK3x6ljEB2Zhvo2ofSTv0OyV+dc1Iba4mJHq8yET8a/vvPaIAiVPe0
-         B8oFl4d5ts5k5QeoZNiZ4RwRMXbGISApWQz4kKPA8fE/fe5nGoCKXSOoPiWW/lhGOJDS
-         /uSjXO43rMWAyC2ow7TNME5rkEbcy422FrmeJ4nHvWMl+/V4gGojXCcbUDiE/3c3vLD0
-         iXUJWy8i+F1m3OmCz+yNiNX/RPNz0/fY5iCUaz2mNUxVD3AqvYC4pDkwoSv2IDYmYMMs
-         nSHHmxzeGFqdlDRerN5yWGy4HJUovWxxBS2Rw8BSxV9indzOTnaq1As7/nvKu4U39siU
-         RwDA==
+        d=gmail.com; s=20230601; t=1718759887; x=1719364687; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ey5yiVQA8LBP/6zYkNpIcrvI4fFdl2/Q3IQajczTvLM=;
+        b=j4+WH1b+dbgoHgWISeILjkNLEnQtiyGV6pCN9cUhDE6BOtAflti221ZQKIqaRLCT+j
+         vtK3iJYo6oshgFTuZgQP5MK6OkR5NnbJPfmFto/PX110dzmC6TTXPT9UAmbOrHPMm1fU
+         CvmeGVPCTDtrU57UJe8dBGHXXwAAXBmSJOeaGRqA6xKsF8aX3WjMbvv15okPZz9JulIF
+         Dz4W9KITk7GLKcQ8pZZHEwS8XYq1fnUjHy4mc2izDI5bLCgRU3Yl+PltmkpLzat4cUOh
+         hrPfzI6CwzxKNy7fdH6zHS758nibEDuPg9kwUr2L4Kh5SDQFRjPrazgwp3QYLLVs4+LU
+         sftg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718759746; x=1719364546;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jto+2KBAammyuRDteQwTTwC96pLpNXDsN1v2Rc0adi8=;
-        b=nibWdRN4xXZ927Vz9XFazb/RwbIryxwS5qC+8uqw6PHEEH1CJtJnn4RnFVC70fKPwy
-         6/BDotHqYMmoXRoTHExqkqucG/0wi2s2vUlS+kByBAnD/ixs0TkR9XAi8+yt6LbbaYCV
-         QBF7VW9cpHjZllKtQjwW9A+3m2yGVI3QRZ0j4jJKXBUyDmYQfCpvR3qA2xep5RhKRR7s
-         oh2jDhu+fgY+BSg6wcedfqDyhzb6NEmyo3/QrkaqCOhs3JaR0IKSE1fupevgckXD0nOc
-         xQXVWz3Ei1qj9O0ySIyPhLHxerQ/sLi9b+4DkNNIvuFbxsSd+11vKeW8I3o5G6RWVJa0
-         ZZqw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0cOh9xaWDr7+B7X+t2CQ2lAaW4DFUrirFaJSeiAhDw20gYt9DA51/wFSzuRLCZLmhOXyOLnm7oMFv/kWt5AIsmqEhghJMczFPHwmx
-X-Gm-Message-State: AOJu0YzJxb4BLzk2phZNHWXO/KL0vIDCTUggAsF5RLrG0xXXYbtq+f4j
-	A7g58/RD+eNvJP1WC4dvnHvH4ar39cQP2mhWyCNZKTyWDB1gZouT
-X-Google-Smtp-Source: AGHT+IED2RB6niiAooYbdp9OYgJJykph+uwJBnmbFgzm6IbLsEA5q6INPNth1DNzRWj7t4z3iqiZZw==
-X-Received: by 2002:a05:6102:1610:b0:48c:3c3a:55a4 with SMTP id ada2fe7eead31-48f13141063mr1547541137.35.1718759745754;
-        Tue, 18 Jun 2024 18:15:45 -0700 (PDT)
-Received: from x13.lan (2603-9001-5c02-c5bc-0000-0000-0000-1b5d.inf6.spectrum.com. [2603:9001:5c02:c5bc::1b5d])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-80d89295847sm2004918241.34.2024.06.18.18.15.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 18:15:45 -0700 (PDT)
-Date: Tue, 18 Jun 2024 21:15:43 -0400
-From: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-To: dushistov@mail.ru
-Cc: gregkh@linuxfoundation.org, skhan@linuxfoundation.org,
-	ricardo@marliere.net,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/ufs: Use LUT for dir entry types
-Message-ID: <ZnIxP2nxVaqNPbPx@x13.lan>
-References: <20240610034219.14711-1-luis.hernandez093@gmail.com>
- <0485dd2d-488a-40e9-b0f7-24236b9c00ab@web.de>
- <2024061008-granddad-aspirin-4208@gregkh>
+        d=1e100.net; s=20230601; t=1718759887; x=1719364687;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ey5yiVQA8LBP/6zYkNpIcrvI4fFdl2/Q3IQajczTvLM=;
+        b=dzw8tTQkRAD0xyMh40KBXp+XzE3N2aFqNKwzmb1u5TLKdETV1cptp+IC/64Hk0QMYd
+         NawZnXzfzA0bqvg2+S9uu0jvnwFWEEN999/5o5doafN3h0QTmxaPJ/rqQ9xkaK7FPmcj
+         9SKfssBVRZeLiB0JDS0au+X7zXQV3pEf/2wHJ/4+CgbAZU+BCy8P2CMil/DCM0w36WwN
+         n2Robs/hpbr9t3stPz17BuefuQVv0f2CGFWzqIEFdcFHTd5pNfr1M+YCmEopShIQuNVA
+         ePU1BuGqmF9GifE2TWb84UqlqKu+7pUmCvcktH9D3Qk0QxAJevqgyH2Ngn75hI/oZS7e
+         bpgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBX/bpkQl6B/o5XoHV9bz+oF/6QmIDpbf7/I6K6THQzJM1KlOrY0/3l0QlLFwaSA2smEMobSn7A8c9PrlruetEzKrysQLWm2OwmmrbCwu6YudQOCz5+MHMpsmQ8+eAyvBK90nrz2gl6w==
+X-Gm-Message-State: AOJu0Yy9/eu4iAtZSnr7SY9S4tQbGT6v79KDr5bdxy6I9s2HEjH6+U7A
+	bVe+BEzrmEmD3kBCx8P7WhXAf59bS2yqJTSK2yJ8n9H4oNfM9igy9siknG0SLCPp/QXofDuuLhT
+	uenSSigHXhr7LBILi/Rcc8khOO44=
+X-Google-Smtp-Source: AGHT+IFiTPEbVFgx6S7H+uJNwNOLjAFLVL5/Vnh5jjNpcZV25rpymoEhI57ECx4iXoR1vGPAbIVLdQm2Xan1iCOIji0=
+X-Received: by 2002:a2e:9f02:0:b0:2ea:ec52:f594 with SMTP id
+ 38308e7fff4ca-2ec3ced1896mr8494161fa.29.1718759886352; Tue, 18 Jun 2024
+ 18:18:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024061008-granddad-aspirin-4208@gregkh>
+References: <cover.1718268003.git.haibo1.xu@intel.com> <f1f96377b8ecd6e3183f28abf5c9ac21cb9855ea.1718268003.git.haibo1.xu@intel.com>
+ <CAJve8o=8thBhU3NyTaS6sE9rQ1VR_Qf4O8FkAxpmp1q8P-6VaQ@mail.gmail.com> <20240618151820.GA2354@willie-the-truck>
+In-Reply-To: <20240618151820.GA2354@willie-the-truck>
+From: Haibo Xu <xiaobo55x@gmail.com>
+Date: Wed, 19 Jun 2024 09:17:54 +0800
+Message-ID: <CAJve8o=-bZhQS289jwxG=Aq2BOXk5OzdgPKT=nFE9yw_HYYnQQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/4] ACPI: NUMA: change the ACPI_NUMA to a hidden option
+To: Will Deacon <will@kernel.org>
+Cc: Haibo Xu <haibo1.xu@intel.com>, sunilvl@ventanamicro.com, arnd@arndb.de, 
+	ajones@ventanamicro.com, Catalin Marinas <catalin.marinas@arm.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Conor Dooley <conor.dooley@microchip.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Evan Green <evan@rivosinc.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Zong Li <zong.li@sifive.com>, 
+	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	Chen Jiahao <chenjiahao16@huawei.com>, James Morse <james.morse@arm.com>, 
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Zhao Ke <ke.zhao@shingroup.cn>, 
+	Andy Chiu <andy.chiu@sifive.com>, Marc Zyngier <maz@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Dan Williams <dan.j.williams@intel.com>, 
+	Alison Schofield <alison.schofield@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Robert Richter <rrichter@amd.com>, Yuntao Wang <ytcoode@gmail.com>, Dave Jiang <dave.jiang@intel.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 10:00:18AM +0200, Greg KH wrote:
-> On Mon, Jun 10, 2024 at 09:48:09AM +0200, Markus Elfring wrote:
-> > > As per the original TODO, replacing the switch statement with a lookup
-> > > table results in more concise mapping logic and improved performance.
-> > …
-> > 
-> > Can imperative wordings be relevant for another improved change description?
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc2#n94
-> > 
-> > 
-> > …
-> > > +++ b/fs/ufs/util.h
-> > …
-> > >  static inline void
-> > >  ufs_set_de_type(struct super_block *sb, struct ufs_dir_entry *de, int mode)
-> > …
-> > > +	if (mode_index < ARRAY_SIZE(ufs_mode_to_dt))
-> > > +		de->d_u.d_44.d_type = ufs_mode_to_dt[mode_index];
-> > > +	else
-> > >  		de->d_u.d_44.d_type = DT_UNKNOWN;
-> > …
-> > 
-> > May a conditional operator expression be applied at this source code place?
-> > 
-> > Regards,
-> > Markus
-> > 
-> 
-> Hi,
-> 
-> This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-> 
-> Markus, you seem to have sent a nonsensical or otherwise pointless
-> review comment to a patch submission on a Linux kernel developer mailing
-> list.  I strongly suggest that you not do this anymore.  Please do not
-> bother developers who are actively working to produce patches and
-> features with comments that, in the end, are a waste of time.
-> 
-> Patch submitter, please ignore Markus's suggestion; you do not need to
-> follow it at all.  The person/bot/AI that sent it is being ignored by
-> almost all Linux kernel maintainers for having a persistent pattern of
-> behavior of producing distracting and pointless commentary, and
-> inability to adapt to feedback.  Please feel free to also ignore emails
-> from them.
-> 
-> thanks,
-> 
-> greg k-h's patch email bot
+On Tue, Jun 18, 2024 at 11:18=E2=80=AFPM Will Deacon <will@kernel.org> wrot=
+e:
+>
+> On Mon, Jun 17, 2024 at 09:34:18PM +0800, Haibo Xu wrote:
+> > @Catalin Marinas @Huacai Chen
+> >
+> > Could you please have a look at this patch for the ACPI_NUMA config on
+> > ARM64 and LOONGARCH respectively.
+> >
+> > Thanks!
+> >
+> > On Thu, Jun 13, 2024 at 4:37=E2=80=AFPM Haibo Xu <haibo1.xu@intel.com> =
+wrote:
+> > >
+> > > x86/arm64/loongarch would select ACPI_NUMA by default and riscv
+> > > would do the same thing, so change it to a hidden option and the
+> > > select statements except for the X86_64_ACPI_NUMA can also go away.
+> > >
+> > > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > > Suggested-by: Sunil V L <sunilvl@ventanamicro.com>
+> > > Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
+> > > Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
+> > > ---
+> > >  arch/arm64/Kconfig        | 1 -
+> > >  arch/loongarch/Kconfig    | 1 -
+> > >  drivers/acpi/numa/Kconfig | 5 +----
+> > >  3 files changed, 1 insertion(+), 6 deletions(-)
+>
+> This looks fine from an arm64 perspective:
+>
+> Acked-by: Will Deacon <will@kernel.org>
+>
 
-Hi Evgeniy,
+Thank you, Will!
 
-I am writing to follow up on my patch submission from June 9th. The patch addresses a TODO, "turn this (switch statement) into a table lookup", originally introduced on 2005-04-16. I believe the original commit message body may have not been written in the correct form and wanted to offer an improved version:
-
-"Replace the switch statement with a lookup table (LUT) as suggested in the original TODO. This change results in more concise mapping logic and improves performance.
-
-The ufs_mode_to_dt function now maps file mode bits to directory entry types using a LUT. Indices are created by right shifting the mode bits by 12 (FT_SHIFT), isolating the higher-order bits for indexing.
-
-This enhancement simplifies the code and optimizes the mapping process."
-
-Any feedback or guidance on the patch would be greatly appreciated.
-
-Thank you for your time and consideration.
-
-Best regards,
-
-Felipe
+> Will
 
