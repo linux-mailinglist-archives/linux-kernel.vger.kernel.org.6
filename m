@@ -1,137 +1,130 @@
-Return-Path: <linux-kernel+bounces-221783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B565290F87F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:28:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2040290F883
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98CA61C21E56
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:28:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBDC01F22B47
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A8B15A87E;
-	Wed, 19 Jun 2024 21:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53C915AAD5;
+	Wed, 19 Jun 2024 21:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OwF5y7Xi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r55G59yo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAAA1DA23;
-	Wed, 19 Jun 2024 21:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038431DA23;
+	Wed, 19 Jun 2024 21:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718832484; cv=none; b=pc3MzDFE8DvstfayrzGByseNhfpwOYwdWFpM+R7s8LRRSY0jJhVNZTInIYpKiWnDO/CIwiMNyY1wHseSitB+yFEGvL0U6qmum7hwn5KRqd4alW9pYteR8gKhzQFmPVFN5kaiVraT0CRaKUFaBUnspyTyeA39AY8v8uCCLwg+3WE=
+	t=1718832568; cv=none; b=GSMxjNrjXRCK4pgwFKixHyETcEu3pMzZC/Zna4DHF4lvGauuEFHDqCuvnWoxlhyqY5xZrJpJYuRs+TePVurEsUQ65uKSVh96t2iMCJgpyBaZ9TYhVB468Ds4io5XtNhkxe/20QlAprv85ewst7FsnaIOUlr/0GyDlePCbO/Ckqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718832484; c=relaxed/simple;
-	bh=7OAssoj9OLVsWv23P9hH16pO7JYZdb1nf9ARyZvLu0A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dX33k7HnG1b169yn8mIAWsFSQ+o8EaO/MvtDLGZPbCNbevyQbRluKzbbXqfGeoYEWbrqWy4dYewEUnHtBQl9jvCvDkg39Kytv4f1IZImyR2iqC3JRqr9X6knLgFnJaFhWH6pQ/+QfeE71JIVv+7PqIwbCa/w5lY+EUGsmufHQRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OwF5y7Xi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9I8GG001969;
-	Wed, 19 Jun 2024 21:27:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=22KJS395DkYRHCIqw9H8NQ
-	JIII2/9hyHBU/Ma3qGvk0=; b=OwF5y7Xib2g8dWKqzQre7H7VnJMBMSvIVh1+h7
-	QzlHUMw94EoEdmISQOO2ervPvJvlbf0NplreLcrdU44mAbR+j4AOtE/KrqnMB9Oj
-	NpJWCIk/nJiK7zYmq8JuIN4Azwb3YGLtxnqcRLsh8QvnIUM5850qhxaKnms+mQv/
-	JRRgrr7HDqPEUS8nVWJAEQWm8yMIteXIqxwJN6seiUdAxtLT0M8/8MF6CFvn0e5R
-	wguY8XhZ6zPecaljg75l6wnFI8s6nwqrizMnewABDTWxiYiTKCXUmZ6s+Pz+oqbI
-	g9v13pflGcCo3dGstoZHqyDB1J2Hp4l7ZdMAxhqwBaI8BOZw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yujag2ran-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 21:27:54 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JLRrvE022656
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 21:27:53 GMT
-Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 19 Jun 2024 14:27:53 -0700
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-To: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>
-CC: <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
-        <dan.carpenter@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/msm/dpu: protect ctl ops calls with validity checks
-Date: Wed, 19 Jun 2024 14:27:43 -0700
-Message-ID: <20240619212743.3193985-1-quic_abhinavk@quicinc.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1718832568; c=relaxed/simple;
+	bh=ZK/RJlwdXPh5HQsQ/9om81lNAfjZlF8oikBRZTzvVd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lx8W7uyRtCR879RLk/XoqM9x8YWH4fgG7qDCX5HG3YqNTOccrdUS+vCAoqhQugPQx9nFXKx6KZU3BzX063JKzMCzC95pkHkC+4hh18nW/QOpil9YR8IP1fCpyfJwHxopneMNdOVcI7+tCK1Ftyv6QD2pM3NRzFscBvxGp1T7rZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r55G59yo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 917BBC2BBFC;
+	Wed, 19 Jun 2024 21:29:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718832567;
+	bh=ZK/RJlwdXPh5HQsQ/9om81lNAfjZlF8oikBRZTzvVd8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r55G59yoDJ4xWM7nAC4KxeQ1PJGx7PmWlAz5CMhP+6X7HTohYPmhW5GYxNTIjm2MJ
+	 AbKDz0EkENmhOpHxk6kXnUrFbFAI/LPjj90N1vXsgoSFH8OnC4iBMzCmjd+N/5/FJp
+	 5ttWvYkEigzc8dUd4h77N04IRFd6LzKERb2uMNfLg4VG1jcyUfOhgzzebKoKhiZkQ/
+	 udh+vsOz4lrBy4U72iyw72N1TYyLXtLAAazEsuBQ5eRYtErLUuqpss1idDWWnYe//B
+	 hm4IR8IXi/nkywZXvmsYuFb/hTFuJacgvvx1Vzr6LJTAGKWc1ppS3PorhGfEmCNIH7
+	 nowGb9xV1Jqdg==
+Date: Wed, 19 Jun 2024 22:29:21 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, jic23@kernel.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	nuno.sa@analog.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI
+ protocol with MOSI idle configuration
+Message-ID: <0cf9576d-c50e-4730-834a-3a4ceac6a4f8@sirena.org.uk>
+References: <cover.1718749981.git.marcelo.schmitt@analog.com>
+ <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
+ <63db9349-f453-4a5b-aa09-d1857ddd8b03@baylibre.com>
+ <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: W92zjECzWAQiHOK8btOVWMm52mEXTpRJ
-X-Proofpoint-ORIG-GUID: W92zjECzWAQiHOK8btOVWMm52mEXTpRJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- clxscore=1011 impostorscore=0 suspectscore=0 adultscore=0 spamscore=0
- malwarescore=0 phishscore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406190163
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="t5VeN0A55pzNIE5b"
+Content-Disposition: inline
+In-Reply-To: <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
+X-Cookie: Don't I know you?
 
-dpu_encoder_helper_phys_cleanup() calls the ctl ops without checking if
-the ops are assigned causing discrepancy between its callers where the
-checks are performed and the API itself which does not.
 
-Two approaches can be taken: either drop the checks even in the caller
-OR add the checks even in dpu_encoder_helper_phys_cleanup().
+--t5VeN0A55pzNIE5b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Adopt the latter approach as ctl ops are assigned revision based so may not
-be always assigned.
+On Wed, Jun 19, 2024 at 03:58:00PM -0300, Marcelo Schmitt wrote:
+> On 06/19, David Lechner wrote:
+> > On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
 
-Fixes: d7d0e73f7de3 ("drm/msm/dpu: introduce the dpu_encoder_phys_* for writeback")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/464fbd84-0d1c-43c3-a40b-31656ac06456@moroto.mountain/T/
-Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+> > > +In this extension to the usual SPI protocol, the MOSI line state is specified to
+> > > +be kept high when CS is active but the controller is not clocking out data to
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index 708657598cce..7f7e6d4e974b 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -2180,9 +2180,12 @@ void dpu_encoder_helper_phys_cleanup(struct dpu_encoder_phys *phys_enc)
- 	if (ctl->ops.reset_intf_cfg)
- 		ctl->ops.reset_intf_cfg(ctl, &intf_cfg);
- 
--	ctl->ops.trigger_flush(ctl);
--	ctl->ops.trigger_start(ctl);
--	ctl->ops.clear_pending_flush(ctl);
-+	if (ctl->ops.trigger_flush)
-+		ctl->ops.trigger_flush(ctl);
-+	if (ctl->ops.trigger_start)
-+		ctl->ops.trigger_start(ctl);
-+	if (ctl->ops.clear_pending_flush)
-+		ctl->ops.clear_pending_flush(ctl);
- }
- 
- void dpu_encoder_helper_phys_setup_cdm(struct dpu_encoder_phys *phys_enc,
--- 
-2.44.0
+> > I think it would be less ambiguous to say "asserted" instead of "active".
 
+> I'm not sure. IMHO, it looks less ambiguous to say a CS is active.
+> I think the most common for CS lines is to have a CS that is active low (i.e.
+> the line is at a low voltage level when the controller is selecting the device).
+> To me, "assert" sounds closer to the idea o setting something (like a bit to 1),
+> which is the opposite of active low CS.
+> Though, no strong opinion about it.
+> I go with what the maintainers prefer.
+
+I think they're synonyms but asserted is the more common term for chip
+selects.
+
+
+> > > +#define SPI_CONTROLLER_MOSI_IDLE_LOW    BIT(8)  /* Can idle MOSI low */
+> > > +#define SPI_CONTROLLER_MOSI_IDLE_HIGH   BIT(9)  /* Can idle MOSI high */
+
+> > I don't see where these are used anywhere else in the series. They
+> > seem redundant with SPI_MOSI_IDLE_LOW and SPI_MOSI_IDLE_HIGH.
+
+> Good point.
+> They are currently not being used.
+> Comparing with what we have for SPI_CONTROLLER_MULTI_CS, I'm thinking it may be
+> handy to have dt properties to indicate controller MOSI idle capabilities.
+> Does that sound reasonable?
+
+We shouldn't need DT properties, we should just know if the controller
+supports this based on knowing what controller is, and I'd not expect it
+to depend on board wiring.
+
+--t5VeN0A55pzNIE5b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZzTbAACgkQJNaLcl1U
+h9Bzrgf9EoiodKo75yJQEuL4g09qEKn2Vt4xzbAl+sckq5RJ9OkMLe1BA4AEQT+e
+LQFBtArzEY6IjLirazsP5EHBN/YMCi/ogeOoz/5p0wCXQWOGoJTqWA69m7QJdeWN
+aDADnsapiHmCsRWOWLkuRh8O7uEXCb4COpDsKWp9cGt0iVAtkyku4Ngn6aQSvaKy
+vXmtkl+pzGYDApsC7ArQ9AexQGUojW8i/OuM2f4WxNgcR0XPm8ctV9MeXrw7Viyp
+kMB3OoVEeOQvOxS4kEL3+KwIWIRtkEC7l/8EUh9+BNJTDtll+yv+tHSOTW1Jm6c+
+07RDlnOAjW5IqiUN9/+jm1ie+q0Qnw==
+=5icn
+-----END PGP SIGNATURE-----
+
+--t5VeN0A55pzNIE5b--
 
