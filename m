@@ -1,274 +1,376 @@
-Return-Path: <linux-kernel+bounces-220734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9CA190E668
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:58:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E391890E667
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B369E1C21A2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AEF01F2360F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BAD7E776;
-	Wed, 19 Jun 2024 08:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373637E0FB;
+	Wed, 19 Jun 2024 08:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="WbQG+LYQ"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="JIE9d3Cv"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2084.outbound.protection.outlook.com [40.107.103.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28557D07E
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718787494; cv=none; b=dnKhJPLMot9tGynNmy37rr59gW0Dx+CUP8O2/e8b7K8wfbGaBd49t310/jDvVle/S0uXW1zDI+t8SBC2EjRAw7p+1rgBDethB59/AXt1VG9TvtZ+OssggIbhRlpfETmNVY9NZPjm7pikh7nrQFpreAesPSLnsEBqmzpizmoDs8U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718787494; c=relaxed/simple;
-	bh=rv2HbQXJ+ZNOdIcmtLJ/tLCPs/V13RHkfTLZowlsMyM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EHjtEZKh3wbZM2XgpTsw5x4ttOMrKrcirF2Y3MggnUpOw8O8U373bIDT4Kk6tmmhgNsw74m0CRYso1eKAZOw5gqKxeaA3bN5UTZVLrKUSZeUC8kxnnbb+iT5opjz5c+nHL/A00sHGcEYxspTRlSqsNbor++15C0viAruvh90+Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=WbQG+LYQ; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=u5dtot3z6vh7vccjkdu25dkrbe.protonmail; t=1718787488; x=1719046688;
-	bh=HJEykIBQeAFrRfaX3nx6pvcdSxMvWpR/+b2SbLtreiU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=WbQG+LYQV4puXDcd0PP7gSq5EPjVsxcZ1kL8/Q+mZQm23LBa6AwH+qbkWgHnm34oX
-	 I6/t538tExx3qzzIoJx7lZf84T2/9Hc1nbH7wSGnL96n4REk5xMmNvIzTE8B05ieSp
-	 PeucHvhB8R0tNJgK1ZUJuplRUoyp5+NcErKnwf0De7Fg9ZkKfvpBx1O9NAESzU6Z9+
-	 4jLh7pkN28tRPWZtFgwGCK7S+JC3DvZahtQ+btD/J0IPB4mJjCMZVEkWb9/+rd7+xo
-	 BJfgC6S1bNyhQKlLMEIk25948/Ueurly2H8UN7YTjnvOPoCJUyDKMs+7yyrwp4ktlm
-	 miQEfed4r14pg==
-Date: Wed, 19 Jun 2024 08:58:02 +0000
-To: Danilo Krummrich <dakr@redhat.com>, gregkh@linuxfoundation.org, rafael@kernel.org, mcgrof@kernel.org, russ.weight@linux.dev, ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com, pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] rust: add firmware abstractions
-Message-ID: <8d6f98c2-afe2-4e94-b630-96a8fa0b39cf@proton.me>
-In-Reply-To: <20240618154841.6716-3-dakr@redhat.com>
-References: <20240618154841.6716-1-dakr@redhat.com> <20240618154841.6716-3-dakr@redhat.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 5591b58e96b9dc2c505922c5bd6d1cfc55f59249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C112139B1;
+	Wed, 19 Jun 2024 08:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718787493; cv=fail; b=mrbTU6XZckba+J383G3MRWhy6vPm4todxV/uGCVXKmnqtmHIo54gmDs4w0+ixDAOvcOzvzlG5pPdi4jPX1nc8X+M07W3dHTNx3PPfN67AqTYfK0WwmySkTWtd961CBLwaEw9aHko8Fp5X813964O5OImU24WyXC/6miXhME0yJA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718787493; c=relaxed/simple;
+	bh=HlCDSD+Gjto737z50W0d6FKCq62eiKLWfQmm2pReDBs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iUr/NC61qam1CI0UaXBRcaHnbXNjsgGQQpUBtE0OktJbDEn47kAAqelZb9NkZYpm5H/ZJOfelMjS0I7Na/tEac5rCegV2XYNcNWcUcjB6yUH6VGDC7zGRH2py7iR3mPb2m5hjT8YuRknCTIl/bUfzqWVyaupbgzIywzbBTuKANM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=JIE9d3Cv; arc=fail smtp.client-ip=40.107.103.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=M7lfGpdkeXg+VK7HY6sivD5i3qLKilLmeUGOe7HwTE/YIWMfdkZ6rDcGfE954Jj3hHKY+uLwOB/rQY1JLcD1bLouMooXvEJ8ON5VL4mzryS3Wxy1VQHL4jCAZd6GhcZ4Am6djpr7mDe82uk4OTMM6ISYhoHaQKbSbcW9oNK0main74PDfzK0MBgOYp7dx1VsgOKeILef3jLlaDyArsjAG4GZS6F96KIo/aq6g36nFZszenl0ZiwLXE8BUNHj/br+h/9B2Tcg7WIKeVa3TDO3/i8DzuDD8qZaF8z9q/QgP4JixQNBOZ8QwHf+GGn5blF7SpyU1R9jlDjIXsqPKG7rOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FEM+BrA+wHEhSyS2rIT+prmu5nj9bkCHY7DgbZbx6a0=;
+ b=ZsF0wiMT2hu81MOVC1rOdATdbm6rjTcUHZnIkaybPgWbQB8jGGDOdimNrMNzSBCFOYvDn/zWDDjJZmhO14r9qocBsbDRieKHaOozth4XnOJQxLmVO7VgNFzPRYPZjX6OaKg7aFxZjp/lvNIiZoQhYheraUIIa5mEseukBk/+itylPtpVTe674F0dmwKdaycBukgncExRa72Mle0/1DnvVaQr5FfsjYiRtIJwXKEug/zG+HtAgMx66GQ/67plV839lGYimoYzfuKhasRZ22im8SIiQvlx5dIIn0M52aqJVRpSmTL3HSkEu0MOfTRCJOETtS8MJZW0nfvAIPRuWPqJUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FEM+BrA+wHEhSyS2rIT+prmu5nj9bkCHY7DgbZbx6a0=;
+ b=JIE9d3CvlJGCYqmpr8UPxGySPEFRvj+IujH+BwKUpxBhWTnn0FIU04XY77v34/LAl1V2RwzcvVgM+gcdRU0dZ/kKDWSfpr7DGRS/AHGSx0EE64KKwuVNKtnuTZ11YR1HtmbQiA5uWyhwthn/5MhvIcqMdIv1bG+0XnsEoQZqAMA=
+Received: from AM9PR04MB8604.eurprd04.prod.outlook.com (2603:10a6:20b:43b::21)
+ by PA4PR04MB7727.eurprd04.prod.outlook.com (2603:10a6:102:e0::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.18; Wed, 19 Jun
+ 2024 08:58:06 +0000
+Received: from AM9PR04MB8604.eurprd04.prod.outlook.com
+ ([fe80::e751:223e:aa3d:5827]) by AM9PR04MB8604.eurprd04.prod.outlook.com
+ ([fe80::e751:223e:aa3d:5827%3]) with mapi id 15.20.7698.017; Wed, 19 Jun 2024
+ 08:58:06 +0000
+From: Pankaj Gupta <pankaj.gupta@nxp.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+CC: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [EXT] Re: [PATCH v3 5/5] firmware: imx: adds miscdev
+Thread-Topic: [EXT] Re: [PATCH v3 5/5] firmware: imx: adds miscdev
+Thread-Index: AQHawIicdamSKXolo0+7SySlWnKHebHOC/YAgACy2FA=
+Date: Wed, 19 Jun 2024 08:58:05 +0000
+Message-ID:
+ <AM9PR04MB860454A456480393E53199E995CF2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+References: <20240617-imx-se-if-v3-0-a7d28dea5c4a@nxp.com>
+ <20240617-imx-se-if-v3-5-a7d28dea5c4a@nxp.com>
+ <c2ef0570-0392-4290-a008-df74f980f76d@infradead.org>
+In-Reply-To: <c2ef0570-0392-4290-a008-df74f980f76d@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9PR04MB8604:EE_|PA4PR04MB7727:EE_
+x-ms-office365-filtering-correlation-id: bd89a14f-10b0-41ce-d543-08dc903def3f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230037|7416011|366013|376011|1800799021|38070700015|921017;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?R7srlbLtfQP7cFd03fULZLNfvYN7taRYK8jGiXZimbOdoCS3kHOQxzCWayEN?=
+ =?us-ascii?Q?w7MW2k17XOvX24ZT94NMsWjylGEB5hzaxFYoKMxJlnDcW2dd+ofHJpUzQxVT?=
+ =?us-ascii?Q?+WbFfycWUK2T4FlHeAdCGhQWkHBjQ5PuDhYHDMJVbFyl8bya2lVomN8Cw9kx?=
+ =?us-ascii?Q?ejEfvQ2/5zrNpuKn+up0AzPod6c4Grthb5Ye6/kZN83ncPg6b7377caHGvZy?=
+ =?us-ascii?Q?VsGw8LYtsPRd39Hc5aWwDnZxkdJ98HR+ZI3JMSyrLwBkWUG+4gCVD52a8dkb?=
+ =?us-ascii?Q?jmo15u8PAHQs9UodIOfzpn0dlJzMxZAdoG/m88LLsZ/0EYBI5swsarMWMKZG?=
+ =?us-ascii?Q?Owf12AHL8VN+R5pXHkeTRdD5l2UNzkfmEVDT+C3KFLK9loXPpldBJZ2yhpPi?=
+ =?us-ascii?Q?qGRRoaBU5uqJ2Ye1nLkPGnSFAwPhL5iqbk2i9pe4l6euy2YLnk2Ac4PS39X9?=
+ =?us-ascii?Q?KWzP8x5KJ+CF++APF+iISyQyP496Jl+xvvqKBLv+ZyUkYyIc5sk1Cnuspd8m?=
+ =?us-ascii?Q?F9U4xSld511lqwpkbkn7sXaByQTzDOmQKui+VuyAWKX0fq+Sk3HPLAr0R7UM?=
+ =?us-ascii?Q?QvuTz5aQ0nbgJTWh5ze7mUqMacJMLOu9PkmSQiydPqtdaSW25IxH8n/pIene?=
+ =?us-ascii?Q?4U0aVTWbMXlRpFC1W1H/CN7U2dNCHsrxlokbluoHHdDMs4SZvZKGBWyDNe8z?=
+ =?us-ascii?Q?Qn2ClCMXncg4W4+z7UJI9hJ3BRvxXzQFh31I2ZXaEHbpp20ATm5GMx04Y1tK?=
+ =?us-ascii?Q?Iuq0QckfMHq4OdAGoVK6CQa62oIXQk4e8eyt9eMun+/kUo/iKdzD1UqkQ4fN?=
+ =?us-ascii?Q?izrvBMUbEYbYd9iJ2Xg1cs0LpJgCZU2XSLOtQ8rmk6AB2xRr/HlpL72CqxSN?=
+ =?us-ascii?Q?jcocq8hzD9rnWtB7VaA02HSduOqWSuF9Indynhidg1kgbfQ96JJ1CCVx0OZM?=
+ =?us-ascii?Q?rzO2n5ltNx26HrlqYav48I3AlNKZkSq5a4VNyZaqm8DIy/s+WObG1DfVXiwA?=
+ =?us-ascii?Q?iQbhYFwxbSLuzytTTQZ+CRMXOsfOu+BQ2Bmh4zZqCMFA2FbFhLLAaT7NN7WZ?=
+ =?us-ascii?Q?ZQIm1cXiibkZ4RYiHE4wlngFhFC3TttLjHtShVJHmzSWGvkWhKMTo8FhEvuh?=
+ =?us-ascii?Q?BJZ7sTBCutREAHQkojMWam+qkeQFwq8zhu/uMfrPfi9DJJI9kqlDoO7QHdfn?=
+ =?us-ascii?Q?m3bkIEYw4pU32wPzhq4Qn7TZ7ee3c8fiFKT12L1axeT7bQAICU+EFZMBQ/HU?=
+ =?us-ascii?Q?R375DA3R3jeJiq8F0IauZLNYW5+bU1ZftVqvqkdNtDI2z84ddFKhCOmkmG/C?=
+ =?us-ascii?Q?JPz/Df8/C99QcYGwzYIXj/piLZX5icZ0rgchan0es+qnLw=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8604.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(7416011)(366013)(376011)(1800799021)(38070700015)(921017);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?O0FZcne5jt2VDVi5z8dkSFmhVevfO26DQAr4KJQvhf4lk8tQx8X851vBnyIS?=
+ =?us-ascii?Q?I1wqfxlYirnrILBaZZPdGUeaVBPUbMNcIyrYfCFb6t4+osQrakFLnbnoNzHm?=
+ =?us-ascii?Q?25vXkL8V2MmN5D1qQIVYJOMfi3rlyzIpmMAyD3zL5ymU55Ec5eRXovFI8dPZ?=
+ =?us-ascii?Q?oN2vKa0qX7mjJDRzo3x9FgwMOhVP/VFZe/XUQmxIDw9ic1Hw1T9VceZcrVIB?=
+ =?us-ascii?Q?Udp/ilxAXXsF1NR9Tu4Nl2m1LTFy/AOx2XApQs6GctasNaAKAd78ZQ8TdYFG?=
+ =?us-ascii?Q?hR8Yx0Fkka03n4/VBEiOTRTHgR1U7QRQ+5Nt87UTWVCErEoufztS84y5ZynI?=
+ =?us-ascii?Q?Lt7ggiSMOfKm4oeF5dvblh310lahuyXsxB76f0kTQ+NsBFIW3cFpbIHdxp1i?=
+ =?us-ascii?Q?pA7+mG9s1PBUDdf1/2iZsdMgc3ag4xJeXMapbYDNGW1D7oCT4izLH2KUTTN0?=
+ =?us-ascii?Q?5DO1ytsL5xvJ6L9azIuNtD4rBIf0XzoCm8KZkmqnMEF3k4oS80gLG5OupL6W?=
+ =?us-ascii?Q?k7N/23rKCx1PIu3A59OT3QnL152tIGP94i0y7auVUNXv7DVE1M8PdbCwy1e5?=
+ =?us-ascii?Q?k88pX+NDxDbUpvixZY9fdYGAJIc+NDdy/5vo1NuCwOYmJra2Hq/W9m81ZEhx?=
+ =?us-ascii?Q?suyzIWcdQzE8vDxg4RNlb3DRbpSRe+w6DIl1/NunQqi6VPvgIgSVHrPEMD5p?=
+ =?us-ascii?Q?1RMSNinQKtjVT+S5sk5WRLbX8tccIKuJBVtE5YgPYAvle171R1ZBo7850HTS?=
+ =?us-ascii?Q?dZi2Jbv9MhkzoiPmowNPpziqj+IZCW/v4FxC/u/sZus9V2BKrb+z1YNYt/lg?=
+ =?us-ascii?Q?WYXxR1eXkAXrYWtpBsos29FbuXfo9natnajTk8OOaQ8Q5m6KgaNBzOQ7nnl9?=
+ =?us-ascii?Q?qYqs+7UqvChJ7rtE2Qwzlv9qvhAmlImMH6EFzbU+2RinZFsTK/uWXIJUsMRN?=
+ =?us-ascii?Q?W2z7tY2HEH78aJNcmOwxp609tqEa/vWI7JjG0EIiqNQFjM3iYnwtTSCDgmT3?=
+ =?us-ascii?Q?5T16Iw7hycx9LQt3Is5+l3sMMvbt7UjcyOorzj/azXQK7VqsaoXuoyrHytAz?=
+ =?us-ascii?Q?Kmn/ejElGY4UqBwwuGuR2FCbstbice4KrnA11NE/uR7uqSZJEG8awK9yqFjo?=
+ =?us-ascii?Q?sNnJvyUHERtVePRTfDkIxkK2vwVcRGLMWMnKY0kQRM0b0A3thya+nuFd4y8z?=
+ =?us-ascii?Q?9q0+0PLM6AXC691l6HJXz8NWDjfICwUtqPhJVr4BWMjgZl91QRCrVk4a9r9j?=
+ =?us-ascii?Q?RSNNUULEJXf7LbXNOVwG6nPqg7X0S/3rIbn03UFFDIxa4GeLWOF2PBN0T2Jc?=
+ =?us-ascii?Q?9Ef1l1Px+mlFf9AFYe6TMux74HnebNJUfHhKYUXDnXHUvdnKftlIb1cTVwHj?=
+ =?us-ascii?Q?fubGfRShl41IcFBTlyFPIGbpxuSzwcsRGcp/Gycs6Ydj7oKh6ELzXTwvD/H8?=
+ =?us-ascii?Q?BC43f2L+hojU0lG7N4bspfO18MJCpgqOmDi9Z1vs9MigdB4mdWHu9lpWJmer?=
+ =?us-ascii?Q?l/NltWHxMgFdvB7ESryq51Z6yEbZXe3iseqxCx8paBFvj0EXVmHq7TU8P6+x?=
+ =?us-ascii?Q?B+2mHqGlZ7PmQ3zAMmGIN06bjBFEORwryUiHDmOl?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8604.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd89a14f-10b0-41ce-d543-08dc903def3f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2024 08:58:06.0956
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: I6xIrTCOE67UerOa/mm1NA8TOrdoqN+7ku1Lah18gAxUNjT8h1Y2es7Hd/4SlFyZ6SRPjsWvNr1roQsuk3fXfQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7727
 
-On 18.06.24 17:48, Danilo Krummrich wrote:
-> Add an abstraction around the kernels firmware API to request firmware
-> images. The abstraction provides functions to access the firmware's size
-> and backing buffer.
->=20
-> The firmware is released once the abstraction instance is dropped.
->=20
-> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-> ---
->  drivers/base/firmware_loader/Kconfig |   7 ++
->  rust/bindings/bindings_helper.h      |   1 +
->  rust/kernel/firmware.rs              | 101 +++++++++++++++++++++++++++
->  rust/kernel/lib.rs                   |   2 +
->  4 files changed, 111 insertions(+)
->  create mode 100644 rust/kernel/firmware.rs
->=20
-> diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware=
-_loader/Kconfig
-> index 5ca00e02fe82..a03701674265 100644
-> --- a/drivers/base/firmware_loader/Kconfig
-> +++ b/drivers/base/firmware_loader/Kconfig
-> @@ -37,6 +37,13 @@ config FW_LOADER_DEBUG
->  =09  SHA256 checksums to the kernel log for each firmware file that is
->  =09  loaded.
->=20
-> +config RUST_FW_LOADER_ABSTRACTIONS
-> +=09bool "Rust Firmware Loader abstractions"
-> +=09depends on RUST
-> +=09depends on FW_LOADER=3Dy
-> +=09help
-> +=09  This enables the Rust abstractions for the firmware loader API.
-> +
->  if FW_LOADER
->=20
->  config FW_LOADER_PAGED_BUF
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
-per.h
-> index ddb5644d4fd9..18a3f05115cb 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -9,6 +9,7 @@
->  #include <kunit/test.h>
->  #include <linux/errname.h>
->  #include <linux/ethtool.h>
-> +#include <linux/firmware.h>
->  #include <linux/jiffies.h>
->  #include <linux/mdio.h>
->  #include <linux/phy.h>
-> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> new file mode 100644
-> index 000000000000..b55ea1b45368
-> --- /dev/null
-> +++ b/rust/kernel/firmware.rs
-> @@ -0,0 +1,101 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Firmware abstraction
-> +//!
-> +//! C header: [`include/linux/firmware.h`](srctree/include/linux/firmwar=
-e.h")
-> +
-> +use crate::{bindings, device::Device, error::Error, error::Result, str::=
-CStr};
-> +use core::ptr::NonNull;
-> +
-> +// One of the following: `bindings::request_firmware`, `bindings::firmwa=
-re_request_nowarn`,
-> +// `firmware_request_platform`, `bindings::request_firmware_direct`
-> +type FwFunc =3D
-> +    unsafe extern "C" fn(*mut *const bindings::firmware, *const i8, *mut=
- bindings::device) -> i32;
-> +
-> +/// Abstraction around a C `struct firmware`.
-> +///
-> +/// This is a simple abstraction around the C firmware API. Just like wi=
-th the C API, firmware can
-> +/// be requested. Once requested the abstraction provides direct access =
-to the firmware buffer as
-> +/// `&[u8]`. The firmware is released once [`Firmware`] is dropped.
-> +///
-> +/// # Invariants
-> +///
-> +/// The pointer is valid, and has ownership over the instance of `struct=
- firmware`.
-> +///
-> +/// Once requested, the `Firmware` backing buffer is not modified until =
-it is freed when `Firmware`
-> +/// is dropped.
 
-This can simply be "The `firmware`'s backing buffer is not modified."
-Since I interpret "Once requested" as "Once created" and you are allowed
-to break invariants as long as nobody can observe that.
 
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// # use kernel::{c_str, device::Device, firmware::Firmware};
-> +///
-> +/// # // SAFETY: *NOT* safe, just for the example to get an `ARef<Device=
->` instance
-> +/// # let dev =3D unsafe { Device::from_raw(core::ptr::null_mut()) };
-> +///
-> +/// let fw =3D Firmware::request(c_str!("path/to/firmware.bin"), &dev).u=
-nwrap();
-> +/// let blob =3D fw.data();
-> +/// ```
-> +pub struct Firmware(NonNull<bindings::firmware>);
-> +
-> +impl Firmware {
-> +    fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Resu=
-lt<Self> {
-> +        let mut fw: *mut bindings::firmware =3D core::ptr::null_mut();
-> +        let pfw: *mut *mut bindings::firmware =3D &mut fw;
-> +
-> +        // SAFETY: `pfw` is a valid pointer to a NULL initialized `bindi=
-ngs::firmware` pointer.
-> +        // `name` and `dev` are valid as by their type invariants.
-> +        let ret =3D unsafe { func(pfw as _, name.as_char_ptr(), dev.as_r=
-aw()) };
-> +        if ret !=3D 0 {
-> +            return Err(Error::from_errno(ret));
-> +        }
-> +
-> +        // SAFETY: `func` not bailing out with a non-zero error code, gu=
-arantees that `fw` is a
-> +        // valid pointer to `bindings::firmware`.
-> +        Ok(Firmware(unsafe { NonNull::new_unchecked(fw) }))
-> +    }
-> +
-> +    /// Send a firmware request and wait for it. See also `bindings::req=
-uest_firmware`.
-> +    pub fn request(name: &CStr, dev: &Device) -> Result<Self> {
-> +        Self::request_internal(name, dev, bindings::request_firmware)
-> +    }
-> +
-> +    /// Send a request for an optional firmware module. See also
-> +    /// `bindings::firmware_request_nowarn`.
-> +    pub fn request_nowarn(name: &CStr, dev: &Device) -> Result<Self> {
-> +        Self::request_internal(name, dev, bindings::firmware_request_now=
-arn)
-> +    }
-> +
-> +    fn as_raw(&self) -> *mut bindings::firmware {
-> +        self.0.as_ptr()
-> +    }
-> +
-> +    /// Returns the size of the requested firmware in bytes.
-> +    pub fn size(&self) -> usize {
-> +        // SAFETY: Safe by the type invariant.
-> +        unsafe { (*self.as_raw()).size }
-> +    }
-> +
-> +    /// Returns the requested firmware as `&[u8]`.
-> +    pub fn data(&self) -> &[u8] {
-> +        // SAFETY: Safe by the type invariant. Additionally, `bindings::=
-firmware` guarantees, if
+> -----Original Message-----
+> From: Randy Dunlap <rdunlap@infradead.org>
+> Sent: Wednesday, June 19, 2024 2:59 AM
+> To: Pankaj Gupta <pankaj.gupta@nxp.com>; Jonathan Corbet
+> <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Shawn Guo
+> <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>;
+> Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
+> <festevam@gmail.com>; Rob Herring <robh+dt@kernel.org>; Krzysztof
+> Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> Cc: linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> devicetree@vger.kernel.org; imx@lists.linux.dev; linux-arm-
+> kernel@lists.infradead.org
+> Subject: [EXT] Re: [PATCH v3 5/5] firmware: imx: adds miscdev
+>
+> Caution: This is an external email. Please take care when clicking links =
+or
+> opening attachments. When in doubt, report the message using the 'Report
+> this email' button
+>
+>
+> Hi--
+>
+> On 6/17/24 12:29 AM, Pankaj Gupta wrote:
+> > Adds the driver for communication interface to secure-enclave, for
+> > exchanging messages with NXP secure enclave HW IP(s) like EdgeLock
+> > Enclave from:
+> > - User-Space Applications via character driver.
+> >
+> > ABI documentation for the NXP secure-enclave driver.
+> >
+> > User-space library using this driver:
+> > - i.MX Secure Enclave library:
+> >   -- URL:
+> > https://gith/
+> > ub.com%2Fnxp-imx%2Fimx-secure-
+> enclave.git&data=3D05%7C02%7Cpankaj.gupta%
+> >
+> 40nxp.com%7Cd87070a111b24f3791e208dc8fdda85c%7C686ea1d3bc2b4c6fa9
+> 2cd99
+> >
+> c5c301635%7C0%7C0%7C638543429374404433%7CUnknown%7CTWFpbGZsb
+> 3d8eyJWIjo
+> >
+> iMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7
+> C%7C%
+> >
+> 7C&sdata=3DIYktUuoqdZgqHC%2FR1DbjAjQfhKDSjb%2Butki3j8LKBIk%3D&reserve
+> d=3D0
+> > ,
+> > - i.MX Secure Middle-Ware:
+> >   -- URL:
+> > https://gith/
+> > ub.com%2Fnxp-imx%2Fimx-
+> smw.git&data=3D05%7C02%7Cpankaj.gupta%40nxp.com%7
+> >
+> Cd87070a111b24f3791e208dc8fdda85c%7C686ea1d3bc2b4c6fa92cd99c5c3016
+> 35%7
+> >
+> C0%7C0%7C638543429374411486%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiM
+> C4wLjAwMD
+> >
+> AiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdat
+> a=3DGM
+> > BlK9xKKdk6dAOMAMhaPoCRGFr%2FJTeuL9omwMvV49I%3D&reserved=3D0
+> >
+> > Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
+> > ---
+> >  Documentation/ABI/testing/se-cdev |  42 +++
+> > drivers/firmware/imx/ele_common.c | 153 ++++++++-
+> >  drivers/firmware/imx/ele_common.h |   4 +
+> >  drivers/firmware/imx/se_ctrl.c    | 694
+> ++++++++++++++++++++++++++++++++++++++
+> >  drivers/firmware/imx/se_ctrl.h    |  49 +++
+> >  include/uapi/linux/se_ioctl.h     |  94 ++++++
+> >  6 files changed, 1034 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/ABI/testing/se-cdev
+> > b/Documentation/ABI/testing/se-cdev
+> > new file mode 100644
+> > index 000000000000..699525af6b86
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/se-cdev
+> > @@ -0,0 +1,42 @@
+> > +What:                /dev/<se>_mu[0-9]+_ch[0-9]+
+> > +Date:                May 2024
+> > +KernelVersion:       6.8
+> > +Contact:     linux-imx@nxp.com, pankaj.gupta@nxp.com
+> > +Description:
+> > +             NXP offers multiple hardware IP(s) for  secure-enclaves
+> > +like EdgeLock-
+>
+>                                                    for secure enclaves
+Accepted.
+>
+> > +             Enclave(ELE), SECO. The character device
+> > + file-descriptors
+>
+>                                                          file descriptors
+>
+Accepted.
+> and what is SECO?
+There are multiple NXP IP(s) for secure enclaves.
+Like: 1. EdgeLock Enclave(i.MX8ULP, i.MX9x),
+         2. SECO(i.MX8DXL),
+         3. V2X-HSM(i.MX8DXL/QXP/ULP, i.MX9x),
+         4. V2X-SHE(i.MX8DXL/QXP/ULP, i.MX9x),
 
-I would not write "Safe by ...", since it is important to know what is
-guaranteed by what. Instead I would write "self.as_raw() is valid by the
-type invariant.".
+>
+> > +             /dev/<se>_mu*_ch* are the interface between user-space
+> > + NXP's secure-
+>
+>                                                             userspace    =
+    secure
+>
+> > +             enclave shared-library and the kernel driver.
+>
+>                         shared library
+>
+Accepted.
+> > +
+> > +             The ioctl(2)-based ABI is defined and documented in
+> > +             [include]<linux/firmware/imx/ele_mu_ioctl.h>
+> > +              ioctl(s) are used primarily for:
+> > +                     - shared memory management
+> > +                     - allocation of I/O buffers
+> > +                     - get mu info
+>
+>                         - getting mu info
+>
+Accepted.
 
-> +        // successfully requested, that `bindings::firmware::data` has a=
- size of
-> +        // `bindings::firmware::size` bytes.
-> +        unsafe { core::slice::from_raw_parts((*self.as_raw()).data, self=
-.size()) }
-> +    }
-> +}
-> +
-> +impl Drop for Firmware {
-> +    fn drop(&mut self) {
-> +        // SAFETY: Safe by the type invariant.
+> > +                     - setting a dev-ctx as receiver that is slave to =
+fw
+> > +                     - get SoC info
+>
+>                         - getting SoC info
+Accepted.
 
-Ditto.
+>
+> > +
+> > +             The following file operations are supported:
+> > +
+> > +             open(2)
+> > +               Currently the only useful flags are O_RDWR.
+> > +
+> > +             read(2)
+> > +               Every read() from the opened character device context i=
+s waiting on
+> > +               wakeup_intruptible, that gets set by the registered
+> > + mailbox callback
+>
+>                   typo in that name?
+>                 or is it something that this patch series introduces?
+>
+Replaced "wakeup_intruptible" with "wait_event_interruptible".
 
----
-Cheers,
-Benno
+> > +               function; indicating a message received from the
+> > + firmware on message-
+>
+>                   function,
+>
+Accepted.
 
-> +        unsafe { bindings::release_firmware(self.as_raw()) };
-> +    }
-> +}
-> +
-> +// SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, whi=
-ch is safe to be used from
-> +// any thread.
-> +unsafe impl Send for Firmware {}
-> +
-> +// SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, ref=
-erences to which are safe to
-> +// be used from any thread.
-> +unsafe impl Sync for Firmware {}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index dd1207f1a873..7707cb013ce9 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -30,6 +30,8 @@
->  mod build_assert;
->  pub mod device;
->  pub mod error;
-> +#[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
-> +pub mod firmware;
->  pub mod init;
->  pub mod ioctl;
->  #[cfg(CONFIG_KUNIT)]
+> > +               unit.
+> > +
+> > +             write(2)
+> > +               Every write() to the opened character device context ne=
+eds to
+> acquire
+> > +               mailbox_lock, before sending message on to the message =
+unit.
+>
+>                   mailbox_lock before
+>
+Accepted.
+> > +
+> > +             close(2)
+> > +               Stops and free up the I/O contexts that was associated
+>
+>                             frees up                 that were associated
+>
+Accepted.
+> > +               with the file descriptor.
+> > +
+> > +Users:
+> https://github.c/
+> om%2Fnxp-imx%2Fimx-secure-
+> enclave.git&data=3D05%7C02%7Cpankaj.gupta%40nxp.com%7Cd87070a111b24f3
+> 791e208dc8fdda85c%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6
+> 38543429374416161%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDA
+> iLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata
+> =3DyEk2XgoKnQM6HqBqrI3Pu%2BYMSRld%2FY%2B1GCSyRgeM%2FAw%3D&rese
+> rved=3D0,
+> > +
+> https://github.c/
+> om%2Fnxp-imx%2Fimx-
+> smw.git&data=3D05%7C02%7Cpankaj.gupta%40nxp.com%7Cd87070a111b24f379
+> 1e208dc8fdda85c%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638
+> 543429374419836%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiL
+> CJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3Du
+> ND49ren%2FYcUM3kDOBRBYj6S8vbGbNDmzj2%2BZU5Xy18%3D&reserved=3D0
+> > +             crypto/skcipher,
+> > +             drivers/nvmem/imx-ocotp-ele.c
+>
+>
 > --
-> 2.45.1
->=20
-
+> ~Randy
 
