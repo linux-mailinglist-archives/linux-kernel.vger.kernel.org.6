@@ -1,151 +1,101 @@
-Return-Path: <linux-kernel+bounces-221068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5385590EB6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:49:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FFC290EB74
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01D36286E1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:49:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F03CC1F2400A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D92143877;
-	Wed, 19 Jun 2024 12:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7D614389C;
+	Wed, 19 Jun 2024 12:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WkBcJoXS"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCjG6aYr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178C1FC1F
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93B1FC1F;
+	Wed, 19 Jun 2024 12:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718801377; cv=none; b=jZit+CnO33Q7fz6mPyvQXwjUwXrTb3H0aVGqPfE8gA+b0oLh/VTLM7CaD4CY7fK45STvRSztaXYTodEBlLP9EFDpcIqjDZf+98Jt/QUaDMmduHp6eWk8rn0QDh1fvkWutvd2vMt8swhGQiVdfxWb0Rm9KPizMe7QhxTNbe2BfAo=
+	t=1718801448; cv=none; b=eP/Zh2Q9cbwU68py45inGRrw4lzXM2TXivEE2NgVrhHfsQTvMdIf0QbShxUvwIIrvdksYrzBTweMcfDKQlkPZmKq7EsWoKqktCpQ1d9yfMjKu39h3ih/bGoV9IgO+vHWt3fPjHMG0w9xPg8W4KRQiPpx1wZePscq7eXG5hGv0ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718801377; c=relaxed/simple;
-	bh=kySDQSPpiI1yjOGgLE+4Ke9klqnmb5xpWtmNOwbuToU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YsKblBa5AsQASVEBrAbxyRtNLuL4SUU3ymF+RcmebLOonvofESaRSCJcCOSa/Zcbgx38gtHGy/+OUAXLmRQvPNq6PK5guDLNPqbqd2FtDF8YeOqxXt8sFst02ntaOOBshn+sZlPfJj4gfoKHKeSeak+M2iBDsRo76Y8EWwwmHx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WkBcJoXS; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6f176c5c10so803607066b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 05:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718801374; x=1719406174; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bpjz0lX4gdiG8izGnJSD4JNeNkRMIt8R1nn+zHTjtn8=;
-        b=WkBcJoXSwO5HqNYCktdVSOyBKjN4RFYuL4BFG5mtVadGkIEy6yvgOJRsSUFn9uEFsN
-         apPj6emPUenjZyIIaGfx9cev5ar9wAjP7kyAN7PrFY41DF/a2VR8/204sX3ziw6oQTQu
-         g9E3k0ft+Hs2G9k7IFBMPIkU583zxo6F76n4tF83riTzEiAgvltEdlqrMIiiBRF6iT05
-         1xJcdpuIZ8NuFIun92Etvd+JcpxWj8ZGu7+ALbOvTGdqkh4fLaElPdUFDoB+z+d5vm9W
-         rprrlbnAtBma3INH+BDczsJzT8iwrcd7icO49r2CvxUGxhLDphhnGXFGUl1c6g2V5Kfg
-         cbQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718801374; x=1719406174;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bpjz0lX4gdiG8izGnJSD4JNeNkRMIt8R1nn+zHTjtn8=;
-        b=XRp2SGGyx13cZWIG0pwI/53ESMUI7h0nnQ8MteoSILEBbMM0UCoTJKkHJn+QvmyHyQ
-         da8ndSHMjmyv2QIi+LGMLSPX0I1hUlotgFJdfLVSP/m6ncT3N+r8ucadYK0U4k1rfoSu
-         AfqLYnmi6ItCN+NNa7FDPMhZxaaaDziF9vF6emSnC3FsulWR/G2e01yb946HvEVWx9Ue
-         1aD77Qr5JjrdKrSa1aqguJCxDAokoCXcHuJD2vKXwLH0uvvXgd4qoyk69OYSMhfcNyqv
-         k9km1z1osvqBOdkkVpWisIfHhQttz7G8vqlXy6llnBLRu4fXoy7YkljdoVPQVJAw+qwH
-         P+1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVHdMmKURm8fswu19y2b0ClHXOWbK0Au0UBgtQyrW7Jm3U9ynqSvRTFD3I4j6vb9FX+3UH4Q+JgIkrBvmE+5uIXH8fpNchQv5laVtu+
-X-Gm-Message-State: AOJu0YwiknVspU18/uj7aencA3Xtu/QTY4KBF3F6Cc3j8K4fLj8tt4OG
-	ZgnkDk2S9xj+j5wNuMefTcY9v9wKmIBp1foFRnZfRqnuiFmBkCeP
-X-Google-Smtp-Source: AGHT+IGOq/zNWszfyhqzTg/FGYYZ1XNMIHD0Ip9bIXCTfv9EGQolffnOerLXpNb3aysPvYg8WIqARw==
-X-Received: by 2002:a17:907:cc06:b0:a68:bae4:d66f with SMTP id a640c23a62f3a-a6fab615d55mr128333766b.30.1718801373990;
-        Wed, 19 Jun 2024 05:49:33 -0700 (PDT)
-Received: from f (cst-prg-30-39.cust.vodafone.cz. [46.135.30.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db6759sm660799666b.63.2024.06.19.05.49.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 05:49:33 -0700 (PDT)
-Date: Wed, 19 Jun 2024 14:49:21 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Michal Hocko <mhocko@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	kernel-team@meta.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Kyle McMartin <kyle@infradead.org>
-Subject: Re: [PATCH] mm: ratelimit oversized kvmalloc warnings instead of once
-Message-ID: <fm7buc5wqjfbpkc4vciubjttk73k7vzahohlcolztrhjqywnca@pysupztheg6i>
-References: <20240618213421.282381-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1718801448; c=relaxed/simple;
+	bh=MKPk/xGcsJ3mkq4leddfFyEcbWWZuDqiYmtRl4qAla0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bHNNG4g7KqpA2ioqd5cRftbOROUva2QEui5j5hjFeuYcCf2RwH5Qb9NcW4mPLLvG3tqML3J6/uSgJrlaH2i08k2YuGp22u4XA18wHwO3HcTWvedjSV6uhLfQjckFZFdkQgxkC0ZJbWxAxfLGJIOgzpCBSZfV8pW0Dvc4pfis9CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FCjG6aYr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AAEBC32786;
+	Wed, 19 Jun 2024 12:50:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718801448;
+	bh=MKPk/xGcsJ3mkq4leddfFyEcbWWZuDqiYmtRl4qAla0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=FCjG6aYrVO1Gzy26UZkn4XkbRaHhGbrSdq0QKhnT7G0X1k/tJOH7nSLWFZcYcjjds
+	 PCBM/ZgxUmclO83HXWNZ32CdKscjV/0JrhuJpxNs5nx8qNGV0s7GhUjLSasmm6UZjJ
+	 7J7O57r2dsXWxy1BQPQX4W4Kum3TwPSapqNDl5qDmkOv0zFmw0JOGTCWBEE32VX4EU
+	 kIixfIL2N+oHUKwqLl7V7OFYXLxgjqZdNbScnMq22vwc9x9Z+Vyih/Fadvx+wZBy9r
+	 RzPbBzKEqOv1oZiRny3D80vDhxs1B48KSNAox59JK8eQS/jOYUGAbdoUGk4FloVHez
+	 mMzv2N2ULqxvA==
+From: Mark Brown <broonie@kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: lgirdwood@gmail.com, linux-sound@vger.kernel.org, 
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ patches@opensource.cirrus.com
+In-Reply-To: <20240611132556.1557075-1-ckeepax@opensource.cirrus.com>
+References: <20240611132556.1557075-1-ckeepax@opensource.cirrus.com>
+Subject: Re: (subset) [PATCH 1/3] spi: cs42l43: Refactor accessing the SDCA
+ extension properties
+Message-Id: <171880144676.113265.5971230343895935810.b4-ty@kernel.org>
+Date: Wed, 19 Jun 2024 13:50:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240618213421.282381-1-shakeel.butt@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-On Tue, Jun 18, 2024 at 02:34:21PM -0700, Shakeel Butt wrote:
-> At the moment oversize kvmalloc warnings are triggered once using
-> WARN_ON_ONCE() macro. One issue with this approach is that it only
-> detects the first abuser and then ignores the remaining abusers which
-> complicates detecting all such abusers in a timely manner. The situation
-> becomes worse when the repro has low probability and requires production
-> traffic and thus require large set of machines to find such abusers. In
-> Mera production, this warn once is slowing down the detection of these
-> abusers. Simply replace WARN_ON_ONCE with WARN_RATELIMIT.
+On Tue, 11 Jun 2024 14:25:54 +0100, Charles Keepax wrote:
+> Refactor accessing the SDCA extension properties to make it easier to
+> access multiple properties to assist with future features. Return the
+> node itself and allow the caller to read the actual properties.
 > 
-> Reported-by: Kyle McMartin <kyle@infradead.org>
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> ---
->  mm/util.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/mm/util.c b/mm/util.c
-> index 10f215985fe5..de36344e8d53 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -649,7 +649,8 @@ void *kvmalloc_node_noprof(size_t size, gfp_t flags, int node)
->  
->  	/* Don't even allow crazy sizes */
->  	if (unlikely(size > INT_MAX)) {
-> -		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
-> +		WARN_RATELIMIT(!(flags & __GFP_NOWARN), "size = %zu > INT_MAX",
-> +			       size);
->  		return NULL;
->  	}
->  
 
-I don't think this is necessary. From the description I think interested
-parties can get away with bpftrace.
+Applied to
 
-Suppose you have an abuser of the sort and you are worried there is more
-than one.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Then this one-liner will catch *all* of them, not just the ones which
-were "lucky" to get logged with ratelimit:
-bpftrace -e 'kprobe:kvmalloc_node_noprof /arg0 > 2147483647/ { @[kstack()] = count(); }'
+Thanks!
 
-Of course adding a probe is not free, but then again kvmalloc should not
-be used often to begin with so I doubt it is going to have material
-impact in terms of performance.
+[1/3] spi: cs42l43: Refactor accessing the SDCA extension properties
+      commit: 6914ee9cd1b0c91bd2fb4dbe204947c3c31259e1
+[2/3] spi: cs42l43: Add speaker id support to the bridge configuration
+      (no commit info)
 
-While I concede it takes more effort to get this running on all affected
-machines, the result is much better than mere ratelimit. Also there is
-no need to patch the kernel.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-btw, I found drm keeps spamming kvmalloc, someone(tm) should look into
-it:
-@[
-    kvmalloc_node_noprof+5
-    drm_property_create_blob+76
-    drm_atomic_helper_dirtyfb+234
-    drm_fbdev_generic_helper_fb_dirty+509
-    drm_fb_helper_damage_work+139
-    process_one_work+376
-    worker_thread+753
-    kthread+207
-    ret_from_fork+49
-    ret_from_fork_asm+26
-, 104]: 12
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
