@@ -1,139 +1,182 @@
-Return-Path: <linux-kernel+bounces-220885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA8590E896
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:45:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4001290E89B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76935B22B86
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:45:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CDA284407
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B514282495;
-	Wed, 19 Jun 2024 10:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B5B130AFC;
+	Wed, 19 Jun 2024 10:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYPkCoIR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T4mY5J0k"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D2978C7F;
-	Wed, 19 Jun 2024 10:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AA73398B;
+	Wed, 19 Jun 2024 10:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718793910; cv=none; b=AuOMVqDG1qqVbRG5o/ZPIpG+BZipPf9NuZd/Pt2rJaZtaQe3HppKUs9j981NhiRlIiYm6lVwSg4OumDsyj2dtHzkby2dbhd88HOADmb7AYPYenfdoAaIeTZmBMjAq6RisHkUaHJCVcsWBAVrMd1Q4xXEzRFm2blR/m3gzE9KnMs=
+	t=1718794063; cv=none; b=XLdlpiiB31H3jl0/s5rJ3453kprOhKrtYG/owMNXrTXBMcz3W8EL6z5BUel9Pd+V/FFWzk7t1v/BAHugyytcNG+gArN2MlvD6hiDlu9nElPSRkzGu/9+57K5s6iLcoRbZyE0RGWT5TwVmysx4jdaks9sqjAagljjCf2pJ72GspQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718793910; c=relaxed/simple;
-	bh=m/42kz6hNTn6MqTGY9qBPMBvXRlNx8ar0bAXDpWRTU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uyVPI/l7yVYtbfACfaFVbV/2td1Xw+4+/QQHWHNF0Y24qsUc3trjTyPJxGFPDei4mZjp7IIZJXP1iCO+FlZ87f4E28oq5fh95cMjsFSIlicAYpl9xPqxm7EXQv923BcbzGQXG9PKc/nrvMHO4/VUyik7jEsx7k2mbAquiONzjDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYPkCoIR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA0EBC2BBFC;
-	Wed, 19 Jun 2024 10:45:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718793909;
-	bh=m/42kz6hNTn6MqTGY9qBPMBvXRlNx8ar0bAXDpWRTU0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hYPkCoIR708kJkT8Wq3wHe7CVObj70KadAEHmK5gDGDjGeONeSBM7tts/4s0y8M7X
-	 4fkxwFCorNcneU5wfxB083IpqAOYbpopDbACxgrqvwLbUEP5r+2TdSVjJdmgs7u9b8
-	 bRfiwWoqmovccVIvMXlVonjVMPmO3OqxypkzoQkPFuNhDvs/5pS0x99IzCN1HjfcEl
-	 HKbvld0um/3pkXpd6O33RB9sanLb5MVWZFG+oSGXMb39NFsWqUsvzmfcHJP97xEsc5
-	 18LLHWSFGoqZhf0QFNygkPyq4yj0jR5VQxQvw0b0ClNpOW9pTvnS9POo+MBu7eU/wR
-	 8iB7DwjRYqBKw==
-Date: Wed, 19 Jun 2024 11:45:04 +0100
-From: Conor Dooley <conor@kernel.org>
-To: linux-riscv@lists.infradead.org, Yangyu Chen <cyy@cyyself.name>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH RESEND v8 0/6] riscv: add initial support for
- Canaan Kendryte K230
-Message-ID: <20240619-hammock-drum-04bfc16a8ef6@spud>
-References: <tencent_22BA0425B4DF1CA1713B62E4423C1BFBF809@qq.com>
- <20240410-unwoven-march-299a9499f5f4@spud>
+	s=arc-20240116; t=1718794063; c=relaxed/simple;
+	bh=s5naf1uttC3SK4CM5eDhQozogAI6TwHH9teO5TqANBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QKYHUH47thgKMwCnBa7EdcOrluF7ZVt8t8FHp+kMKgAY/SGh1mSqFabZeMoGFXF5iTGG0jmfFPfAgZpCDV2f0qm17ZshtK2Oy8j6M9KO+HoV8me804BQGlMD2Xs+bvNgclW/U94CObb+zDJAQ42stb2cs6ahQWc1WH4m+FfiKiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T4mY5J0k; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718794059;
+	bh=s5naf1uttC3SK4CM5eDhQozogAI6TwHH9teO5TqANBA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=T4mY5J0kWd9rWAuUygLrHgEwAvT+rBy5VzRpjzulnY1JnSwLd4y1yGT8QDq/sNbfU
+	 BCLi1J9wgtKK353wEwEbhwtdUuRyoOhm92U1DpNxDSGRWbJJDeO3jD33qIsJKw7urk
+	 fbcNFGkIwxDqZaiOW8U2Lj4iXJJLXwK+bUJUYNvTVfHoT9sTA2JfIy9PwdvPRGmos8
+	 TxrmI5ClLetGkAAD1dVPJUa62ao8rdSg37awRUD5w/ugslTyegss3NBaQng+cTN5IA
+	 oGJ04vUHIs7i04HjjOO2FmEjdP5OTYXAuSYPDjPWRr0KLr3KYUegH7IRzTcSq5XpGJ
+	 SDkvSKRTe4fCQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 10A5B37821C3;
+	Wed, 19 Jun 2024 10:47:38 +0000 (UTC)
+Message-ID: <6ab278ab-b8ed-405c-8f37-fc28610eac4e@collabora.com>
+Date: Wed, 19 Jun 2024 12:47:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tviL4D2HBG1f+vga"
-Content-Disposition: inline
-In-Reply-To: <20240410-unwoven-march-299a9499f5f4@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 14/15] arm64: dts: mediatek: add display blocks support
+ for the MT8365 SoC
+To: Alexandre Mergnat <amergnat@baylibre.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Jitao Shi <jitao.shi@mediatek.com>,
+ CK Hu <ck.hu@mediatek.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20231023-display-support-v4-0-ed82eb168fb1@baylibre.com>
+ <20231023-display-support-v4-14-ed82eb168fb1@baylibre.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20231023-display-support-v4-14-ed82eb168fb1@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Il 23/05/24 14:49, Alexandre Mergnat ha scritto:
+> - Add aliases for each display components to help display drivers.
+> - Add the Display Pulse Width Modulation (DISP_PWM) to provide PWM signals
+>    for the LED driver of mobile LCM.
+> - Add the MIPI Display Serial Interface (DSI) PHY support. (up to 4-lane
+>    output)
+> - Add the display mutex support.
+> - Add the following display component support:
+>    - OVL0 (Overlay)
+>    - RDMA0 (Data Path Read DMA)
+>    - Color0
+>    - CCorr0 (Color Correction)
+>    - AAL0 (Adaptive Ambient Light)
+>    - GAMMA0
+>    - Dither0
+>    - DSI0 (Display Serial Interface)
+>    - RDMA1 (Data Path Read DMA)
+>    - DPI0 (Display Parallel Interface)
+> 
+> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> ---
+>   arch/arm64/boot/dts/mediatek/mt8365.dtsi | 336 +++++++++++++++++++++++++++++++
+>   1 file changed, 336 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8365.dtsi b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
+> index 24581f7410aa..9f88645141d6 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8365.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
+> @@ -8,6 +8,7 @@
+>   #include <dt-bindings/clock/mediatek,mt8365-clk.h>
+>   #include <dt-bindings/interrupt-controller/arm-gic.h>
+>   #include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/memory/mediatek,mt8365-larb-port.h>
+>   #include <dt-bindings/phy/phy.h>
+>   #include <dt-bindings/power/mediatek,mt8365-power.h>
+>   
 
---tviL4D2HBG1f+vga
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+..snip..
 
-On Wed, Apr 10, 2024 at 11:30:25AM +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->=20
-> On Mon, 08 Apr 2024 00:26:58 +0800, Yangyu Chen wrote:
-> > K230 is an ideal chip for RISC-V Vector 1.0 evaluation now. Add initial
-> > support for it to allow more people to participate in building drivers
-> > to mainline for it.
-> >=20
-> > This kernel has been tested upon factory SDK [1] with
-> > k230_evb_only_linux_defconfig and patched mainline opensbi [2] to skip
-> > locked pmp and successfully booted to busybox on initrd with this log [=
-3].
-> >=20
-> > [...]
->=20
-> Applied to riscv-dt-for-next, thanks!
->=20
-> [1/6] dt-bindings: riscv: Add T-HEAD C908 compatible
->       https://git.kernel.org/conor/c/64cbc46bb854
-> [2/6] dt-bindings: add Canaan K230 boards compatible strings
->       https://git.kernel.org/conor/c/b065da13ea9c
-> [3/6] dt-bindings: timer: Add Canaan K230 CLINT
->       https://git.kernel.org/conor/c/b3ae796d0a4f
-> [4/6] dt-bindings: interrupt-controller: Add Canaan K230 PLIC
->       https://git.kernel.org/conor/c/db54fda11b13
-> [5/6] riscv: dts: add initial canmv-k230 and k230-evb dts
->       https://git.kernel.org/conor/c/5db2c4dc413e
+> +
+> +		rdma1: rdma@14016000 {
+> +			compatible = "mediatek,mt8365-disp-rdma", "mediatek,mt8183-disp-rdma";
+> +			reg = <0 0x14016000 0 0x1000>;
+> +			clocks = <&mmsys CLK_MM_MM_DISP_RDMA1>;
+> +			interrupts = <GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
+> +			iommus = <&iommu M4U_PORT_DISP_RDMA1>;
+> +			mediatek,rdma-fifo-size = <2048>;
+> +			power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +					reg = <0>;
 
-After some discussion on the k1 thread
-(https://lore.kernel.org/all/ZnEOU7D00J8Jzy-1@xhacker/, https://lore.kernel=
-=2Eorg/all/ZnA6pZLkI2StP8Hh@xhacker/)
-I am going to drop this series. It's not very useful in the current
-state and there's not really been any interest from people in getting
-the platform to a more complete state. Jisheng made some good points in
-the k1 thread about the missing clock controller stuff, and I think I'm
-going to make having basic things like clocks and where applicable
-resets and pinctrl the minimum requirement for the platforms I'm looking
-after.
+Hey Alex,
 
-I've thrown these patches into my tree:
-https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/log/?h=3Dk2=
-30-basic
+only one nit here - trying to get the formatting consistent between devicetrees for
+all MediaTek SoCs.
 
-I do have one of these boards, but I'm fairly limited at the moment between
-the various linux-related and work demands on my time, so it's pretty
-unlikely that I'll do anything with it myself.
+VDOSYS/MMSYS:
+			port {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				vdosys0_ep_main: endpoint@0 {
+					reg = <0>;
+					remote-endpoint = <&ovl0_in>;
+				};
+			};
+
+RDMA/OVL/other components:
+
+			ports {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				port@0 {
+					reg = <0>;
+
+					rdma0_in: endpoint {
+						remote-endpoint = <&ovl0_out>;
+					};
+				};
+
+Can you please follow the style that I've shown up there for all of the ports
+nodes and resend the devicetree commits?
+
+P.S.: This is a paste from the MT8195 devicetree that I'll send soon, probably
+tomorrow or something along those lines.
+
+After which, the devicetree looks ok to me.
 
 Thanks,
-Conor.
+Angelo
 
---tviL4D2HBG1f+vga
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnK2sAAKCRB4tDGHoIJi
-0tt/AQCA4RD8d7i4TQVvgD4RhBPFMD7pePzjZ5RQ4rDUwNy27wD/etB+0gFOr1td
-x05pgSRoL6NCjHdw/hCWjnc1HnlZigI=
-=fu4g
------END PGP SIGNATURE-----
-
---tviL4D2HBG1f+vga--
 
