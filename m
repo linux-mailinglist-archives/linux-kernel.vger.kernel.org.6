@@ -1,129 +1,122 @@
-Return-Path: <linux-kernel+bounces-221548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C8C990F542
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:38:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1396E90F548
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15376283197
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:38:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A71042838E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3911155C8B;
-	Wed, 19 Jun 2024 17:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C03A156243;
+	Wed, 19 Jun 2024 17:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Le+a4d6X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlexAPjc"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E191E87B;
-	Wed, 19 Jun 2024 17:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4738513FD83;
+	Wed, 19 Jun 2024 17:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718818688; cv=none; b=AwLhtB5tvjwcu0PTYIuG3EUggCIzUJGWvLHnxKKWWYWDpC4zvNqRxJZ5hbZmEyPXN27ULXcl9eZ/zJ6/OLS0mr4Uy/gLQ34KcVa7XLs/U4+iCyGD6N/BPzhYgUc09PMjm1F7EmrftgwDrVj3dEykru5WdNvc8OzoYCP9zLTJ1+Q=
+	t=1718818715; cv=none; b=T2/qbn2NzYJ2HhyN1UrIss40j6sd4/fkuxkOxUq+c/RoXsmC3p/hU965hHmOOTImISoNae4f4JW6KHB2tBhq1GqRekyu5hCTPQIRbXN87ArBUKOnEx0sxBZUkEhJ6MLStJsJbB4cY5eyjVL9JP04Nf3Nf0ZUsWQCB0qGSn3Wcr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718818688; c=relaxed/simple;
-	bh=iz/AlobMihennDLjDBSOB3b35KqGkqN9E21I5uCLbNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rhXySxd3Lrgf6Z6idAs54gwiTRRDgVzUoUb9bpQxAKpnriF1rBYNuzm9DoIFtaUJTI7LWA4swvVt7OwGwYOBC2KgKFtLvkqUfEhmN+kLqB2V/uE4vvP8tV9Awh5IlHiHy+87KBXCYdR63nZ50/mDUwW+CA2S7UKCf734fNxXRe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Le+a4d6X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 629A8C4AF07;
-	Wed, 19 Jun 2024 17:38:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718818687;
-	bh=iz/AlobMihennDLjDBSOB3b35KqGkqN9E21I5uCLbNU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Le+a4d6XOT2mw/pNmzI6yNAQ565QV+A65DXkf9rKFrLZ6vKcA7iZK5EnICkKjaAeA
-	 Vez5fLEgf+XaLYbMDuzRyZV9+BBJZNYtDyCfQtp2Bna6e7D5j63lRxMDHV82iYeqS5
-	 h0CBKc056VcnmxFwWlAX5wejUmvny84OMpRmZiVboNX1YfFihovBWZGrgqICuwoQ4I
-	 /7tLlUJTLeUY/OVO1U5OZ3Cpv20D2QUPQekwZZOETV72RACKBiCbZ/tFEurr4jjj3z
-	 S4TZYwFXFIvkYJ/47uZcBzq7xi4LtxmOW7pEcvE0Pfk+joOTUjhQhfXzixqUWSxFmC
-	 zHsi1RixFavsg==
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-250495bcd4fso11727fac.1;
-        Wed, 19 Jun 2024 10:38:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX/bgdyiLLVkS80c7cTWfmSPTgcr5q/l0FynLfJUxnq7+4tJNdmsK0rBksPNd/Q3IN3ImvfRjxu+q75YoIKamodqAF10DhPbPR9cvUp5khCEKm/aFn3qT5NZVXM0wL38HndMEGcv6dX+A==
-X-Gm-Message-State: AOJu0YylucEMycTn02bUf4Gfn+WvHR6/poYpP5g+vY/l5PEZw2D8sFSe
-	WxsksjkaTrDShY+BkcOZUk7z9QDXn/MBOsFNk0AM57fMY2GRQzQ8oaD0ky1DG2bC00VUeRI1ggq
-	9IBT+l/Y5MyJENICEneCiI7gEEZA=
-X-Google-Smtp-Source: AGHT+IG0du3j5OyoqixERvV/INjfz12gnUdz/oMKsTF6nME6C7Tb5XoO+0l4Fy63xxjb61+Jmf1ZsmRQbzsC+dYQiqA=
-X-Received: by 2002:a05:6870:d154:b0:254:ecbd:1815 with SMTP id
- 586e51a60fabf-25c94e406ecmr3336486fac.5.1718818686669; Wed, 19 Jun 2024
- 10:38:06 -0700 (PDT)
+	s=arc-20240116; t=1718818715; c=relaxed/simple;
+	bh=4yMlmNu3E4RPfMYi/vUwCHzrd3B4Imj083hU/YUWekI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pm1oHGYfbew+Zm7pFWi1Uv6+hv5kVuVKaaz6Y9KLlFb0C/+XbOq4Pw7vvmlx1QEA3/aJmbGjaPSZ2k2Z0Y0Q8dZPbxVkkWvNl/hhG2evgdT10/PfXnMKeIpc8RQSezUTIku/WOjSuSa7orH+qn/E7/e0GSkcAAfdr2LQL1e6MZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RlexAPjc; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-70df2135426so30689a12.2;
+        Wed, 19 Jun 2024 10:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718818713; x=1719423513; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AwlqRmpnnTbOA8a/YYpeWoQQ9Oj2iA9/yTutC9gsceI=;
+        b=RlexAPjcA16POJxXvYNTfUD9xhKzcTKKLLy69876NfLLJcwQU1wuxc2NOQWvyttss2
+         IariaH4gpie0wGSDrJvHrMBEbsCD2hc10va8x4WATC7wnw5X1ijc71uQZgYGosXivkbp
+         dSeapBmOqkRXvT7ECZXSzA4lcworRoK9tzIsyTre3SDsQYUUOyN9S9bZrRb5rBoTXddi
+         2rBZ73IIHz7Gze65LKkm7YdwkDuIF38sv7oBhCPetZ9rXSx8tCaJzHrGc8nyGCKebmof
+         j0Vheh/lw0Rm0557596VAFzC/lXu6B9LXKqwYrr9ocNtkh6PTbKEmkFKyknIi90/yBXf
+         rLyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718818713; x=1719423513;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AwlqRmpnnTbOA8a/YYpeWoQQ9Oj2iA9/yTutC9gsceI=;
+        b=hFtfFoikKQzdsAlVQKGK0LkAzR9rCxv4QiyBSC6pi1x8ohzVLN0syfK+0nbOO1NFxs
+         Cuc97qktERwIXh2MsTe2WW5zljj3WH8Y03rZZkKO80+bbWzMQKONPxITj6arv1aLdfzc
+         vINQRrX+Ksar0VRWyoC+YTQj2GD/oL46eGBR3Il3geYUTcLYprwTSjzRr8hykQCMt4G6
+         sBr2Ls2nPHpq2uMsiTRpg4JyzL96jBAbUlLHf9+6PrFo0+r1Id2X2wFS7ye11dabzfny
+         zG9vbcf0vsVLQeuEqhDPPX2gbg9XikTby9KXTuHBbPzHdrEWyyaE+oGnGfasS4RSxmti
+         910Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVEN1NHk/dmkme5Qr+VI2qtGbfIDRJAo0lXr4Or9v6/1A4DKOBWs5z40CLPTPurl8xuXA9ThitfEGKc+jO0aX8UhuHh+sbDTAKCXj4Kisj9qGjmRPvBYTw1araDQJbfiOsjfkO+3D+HQ92cIwJ1qH2TQ7JkxJhuaal4D2SN6blyWb14dkqdxHMydXlJ3SdlsIlQjNyXywCkomuzUyxYaabNqA==
+X-Gm-Message-State: AOJu0YwLpKu5gvpAjdFZs3vBxaZ+K9Kg0LsqBES+epzSpWZNljqKoJ9y
+	wYS7Q1Q95+pTTLB8K3zpSJXeqs+j0E3IqDpugkcem1cX2DkVjNvf
+X-Google-Smtp-Source: AGHT+IGigk1SJQVkobXkIRHmXQvXlqqaw2Y/3/XxAO+442rp0W/fQMCjhA8liZPY8oQLO1GaOnawTg==
+X-Received: by 2002:a17:902:d4c1:b0:1f6:7f8f:65c7 with SMTP id d9443c01a7336-1f9aa3e9e54mr37915675ad.26.1718818713403;
+        Wed, 19 Jun 2024 10:38:33 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f01a26sm120205105ad.199.2024.06.19.10.38.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 10:38:32 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 19 Jun 2024 07:38:31 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Xavier <ghostxavier@sina.com>, Peter Hunt <pehunt@redhat.com>,
+	Petr Malat <oss@malat.biz>
+Subject: Re: [PATCH-cgroup v2 0/5] cgroup/cpuset: Fix miscellaneous issues
+Message-ID: <ZnMXl5mS5zUHp7rS@slm.duckdns.org>
+References: <20240617143945.454888-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a7790c74-2bec-4a24-b6e5-223c4e1ed372@amd.com> <ZnHXfLEwk2uRbg58@kf-XE>
- <b4d65232-b69e-419d-9b15-d0ca64b78b26@amd.com> <ZnHfNbLTgY1op3Zv@kf-XE>
- <fb8c965a-5f1c-4975-8e7d-6f6a0eb4d02f@amd.com> <ZnHtPbszYT8afOOk@kf-XE>
- <c6bda238-166e-4de6-b0c7-4bddfb8ef6f4@amd.com> <ZnIAX9P5XSco4cZw@kf-XE>
- <ZnJfmUXmU_tsb9pV@kf-XE> <CAJZ5v0gOBH7OKF3KXwxYfWkGkC45rzDguR4VmSnoZDKpm+KPSg@mail.gmail.com>
- <ZnMWnkR64Q-iq-4L@kf-XE>
-In-Reply-To: <ZnMWnkR64Q-iq-4L@kf-XE>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 19 Jun 2024 19:37:55 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hAR4ai5KjdF5vDtKOr_2Cngi9WCAi=g_JD_SXenuok1Q@mail.gmail.com>
-Message-ID: <CAJZ5v0hAR4ai5KjdF5vDtKOr_2Cngi9WCAi=g_JD_SXenuok1Q@mail.gmail.com>
-Subject: Re: [PATCH V3] acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
-To: Aaron Rainbolt <arainbolt@kfocus.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Mario Limonciello <mario.limonciello@amd.com>, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, lenb@kernel.org, 
-	mmikowski@kfocus.org, Perry.Yuan@amd.com, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617143945.454888-1-longman@redhat.com>
 
-On Wed, Jun 19, 2024 at 7:34=E2=80=AFPM Aaron Rainbolt <arainbolt@kfocus.or=
-g> wrote:
->
-> On Wed, Jun 19, 2024 at 07:09:35PM +0200, Rafael J. Wysocki wrote:
-> > On Wed, Jun 19, 2024 at 6:33=E2=80=AFAM Aaron Rainbolt <arainbolt@kfocu=
-s.org> wrote:
-> > >
-> > > acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
-> > >
-> > > The _OSC is supposed to contain a bit indicating whether the hardware
-> > > supports CPPC v2 or not. This bit is not always set, causing CPPC v2 =
-to
-> > > be considered absent. This results in severe single-core performance
-> > > issues with the EEVDF scheduler on heterogenous-core Intel processors=
-.
-> >
-> > While some things can be affected by this, I don't immediately see a
-> > connection between CPPC v2, Intel hybrid processors and EEVDF.
-> >
-> > In particular, why would EEVDF alone be affected?
-> >
-> > Care to explain this?
->
-> From what I understand, the EEVDF scheduler requires ITMT (which in turn
-> requires CPPC v2) in order to determine which cores are performance cores
-> and which cores are efficiency cores. When CPPC v2 is missing, ITMT is
-> also missing, and the scheduler no longer can figure out which cores are
-> which. Thus on a system with many efficiency cores and a few performance
-> cores, there's a pretty decent chance the scheduler will put an intensive
-> single-threaded load on an efficiency core rather than on a performance
-> core, which has obvious performance implications since efficiency cores
-> are slower than performance cores by design.
+On Mon, Jun 17, 2024 at 10:39:40AM -0400, Waiman Long wrote:
+>  v2:
+>   - Fix test_cpuset_prs.sh problems reported by test robot
+>   - Relax restriction imposed between cpuset.cpus.exclusive and
+>     cpuset.cpus of sibling cpusets.
+>   - Make cpuset.cpus.exclusive independent of cpuset.cpus. 
+>   - Update test_cpuset_prs.sh accordingly.
+>   
+>  [v1] https://lore.kernel.org/lkml/20240605171858.1323464-1-longman@redhat.com/
+> 
+> This patchset attempts to address the following cpuset issues.
+>  1) While reviewing the generate_sched_domains() function, I found a bug
+>     in generating sched domains for remote non-isolating partitions.
+>  2) Test robot had reported a test_cpuset_prs.sh test failure.
+>  3) The current exclusivity test between cpuset.cpus.exclusive and
+>     cpuset.cpus and the restriction that the set effective exclusive
+>     CPUs has to be a subset of cpuset.cpus make it harder to preconfigure
+>     the cgroup hierarchy to enable remote partition.
+> 
+> The test_cpuset_prs.sh script is updated to match changes made in this
+> patchset and was run to verify that the new code did not cause any
+> regression.
 
-So the above information should go into the changelog of your patch.
+Applied to cgroup/for-6.11.
 
-> A good example of someone else hitting this issue can be seen here:
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D218195 This issue was broug=
-ht
-> onto the LKML here:
-> https://lore.kernel.org/lkml/a106fb4733d0a3f0d6d5792705cdb5cee13731f8.cam=
-el@linux.intel.com/T/
-> Srinivas would have more info here, but I do not have his email so I can'=
-t
-> CC him on this.
+Thanks.
 
-OK, CCed.
-
-Now, please check the patch I've just posted in this thread:
-
-https://lore.kernel.org/linux-acpi/12457165.O9o76ZdvQC@rjwysocki.net/
+-- 
+tejun
 
