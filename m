@@ -1,280 +1,184 @@
-Return-Path: <linux-kernel+bounces-220749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5608390E69A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:12:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C980990E696
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEB941F21F92
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:12:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57EA52837DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C377FBA1;
-	Wed, 19 Jun 2024 09:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zhnxfwmF"
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1AB97EEF5;
+	Wed, 19 Jun 2024 09:11:53 +0000 (UTC)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AB07F460
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FC32139CD
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718788336; cv=none; b=OceKeTJOmzgr54aCPeSj6BRUU0Uz+dJ2Tu0I2Hl1OhMU7KvoOfsF3U2+k9B8CCo3xU3llMi/COfkd1qtmf2wheh2DIEvwWifc0wpx0yMMCCpn4St86LVEf2zKBwziptLbLpqVFVXB3JRewyo6emB+kRJZm7/X4GK2mPmR8Ed6yk=
+	t=1718788313; cv=none; b=fD311fzEaEpI+4rT33uKqIt0deiL6yFvNQuYoM21qntLOyMd53M8tVi837kfgDx155TrGLqh0cPuki1MaEMstmPA8Hc4Yrxtg7PGBjarDs3xH2Wm72YclKsB/ZJimxQq+DugxiZRnUBzMqo3lQ1RPFOGOjijRgDC/vUlnHuTpmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718788336; c=relaxed/simple;
-	bh=devHkRkV7shlB9En5cc49p7lL4U/8UsLhV/aO+tvt60=;
+	s=arc-20240116; t=1718788313; c=relaxed/simple;
+	bh=oFJSFMXpU5EZ7rZPZK1JRT8WtoWNFthtrmsxWh2R4Hg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CtFEpqRC6YlgGfSj4V29EPCFAhJ/VAfHV+MJQX+6Xr/QNDWWy2WBQkbfP3PE8eG+xlNqs4Tff0+lRFWDEqWRsOeeyzpEgP5zbw8f5ucrk53pRW5aOwHYLGBLOxjMT7RKLUNwWPze0EA7vsCf3KS9WKR1ZyhB2t5gVz+tplZJMGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zhnxfwmF; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-48c50e74fe6so2285405137.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 02:12:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718788333; x=1719393133; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wYkYh6+hMVb+fOYqcnMpeJBX33GChbsvZ+EqmJ1i9Cw=;
-        b=zhnxfwmFWaNH7Hos+1tqrH8ezXV2ludv7BsjJvDRtXVXZP/PkYpPbovOp3Ys0+D6Dj
-         8rhAHj1d4XPoJdrsziss9kx6dgvOcwxMoSzNRDySWhjhOitTyc+7oXHukZsG0PzcWNnu
-         eaDbYfHyRjEnY2uQ7zCEdRx5obbr3+1xDF6JBOFQjpSsXjJZjqtvToZoutYbO3HiIAOa
-         7QmrsKH2TUuJ9WqSKrA93N7eo5nut4WDCtvuWFMrBNh53ok7CY4uAv2c1dHRjK4h6Iiu
-         xBZupjo7QhzeDSkR/4ageeJzY31yjauTXU5PtfSVgBTBwQVwYUxx5WVm9MrupW5WgLKp
-         WvGg==
+	 To:Cc:Content-Type; b=nr3EkGad4ww8pmmsIpa+ftvzTWB2hrqJFMnMnYD+YGNNMmocTPuAcPGE5il/kpFEM8EExs2rWaEWZ0w0+jAL6dpY3+GwR6CGf0MmmG+ZVV7+4yqIHqhQ4p0xHftxfVq1dLytJ3KJfp8b4SoF/ChHGpR+kRJ10Crzljf0ArjvERg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4ee5662fde8so1562208e0c.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 02:11:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718788333; x=1719393133;
+        d=1e100.net; s=20230601; t=1718788311; x=1719393111;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wYkYh6+hMVb+fOYqcnMpeJBX33GChbsvZ+EqmJ1i9Cw=;
-        b=XDD0mSamG8MOrdCt9ggRLlzJqDjQF2cfnPa79bZ+ABB9j3bMiW8HH15uCsbC/LWMmP
-         y1f2ttg8Z2WvQbYvOLQvy9FzMSzsDLENx+RqFlYxbOqekpld8GkbxcREn1I6GgVq/YYG
-         Deyvk6HFIHSABfojdqxJwetTZD0j13oZF5UhWZGOLnRvi4M57pNdGxW20rNoVspf3Yil
-         E5VPjZTUVZHBHAK5SrtZuFUTC1gsUJfAlnjgGdpXYPHuxZ11uDDTRQT4nhW3Y/F0MRRv
-         +p8ao18RTbnhzDPkDwvn3a/cRuqUTQdG0Gy6uQMryPg8MD2Lu5eOzTDDVkQHOJCvl6NV
-         qKnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUA76JI2CUTRcZPde9ckNal0Ch6eAcZlHbGDeyXp9yZHMfYeOq3bolG+/VbLyRdHH6NPv7B9d4IufHqalYyKNWzYtnMXmgzggh6DBbB
-X-Gm-Message-State: AOJu0YzDz0dTj7QYFixmOcy0nfJU1orYmkaoSRsBwVEz6yOoSdTvmyCN
-	gtrunfT4nl85jYbBJEMcL+lQ1q595FLOC5s1SOZPDmYzsirtiF3AdHHqK/rBmJKMDtAeqe7Q+UN
-	6ToVaNwWA1RfKPUWnYN8LFiD+B44MNKBoHQsO
-X-Google-Smtp-Source: AGHT+IFULFV5uhgABgZzBXYJqHVOU0QqocPAW9nYgm8HwHd5Y1v9lYw0r20cKwTG9sBBXkjoh+WhigVT8vp4bpfmLgc=
-X-Received: by 2002:a67:ef8e:0:b0:48c:3c3f:3696 with SMTP id
- ada2fe7eead31-48f13015e86mr2161505137.10.1718788332754; Wed, 19 Jun 2024
- 02:12:12 -0700 (PDT)
+        bh=4fIyHxlJcCCgl75LYMwqyMjmqzj6OP0aPwZGcOjx+O4=;
+        b=vhdS/HP9x2BF8JR8Ng27YqPWxpwHEZPWdee6eTt/b5JH5O16DbKi4NGGpqFP4z+4Ch
+         0bhkuSIGA6Ss+FZKpGTkma4ZG/zHaBhg1gPJ39JpVwiQPWEtjX9XEiZnar2BLLeuSIDl
+         UaNIYrTaaNyKswEwT2nWXJnEA98Tb+19hW1QEj2p2KVOd+EQcZ6AbllDxpk1n5Vq8MlQ
+         7nzo0UplDPF56QOORfyGIyhHF7MGbB1iaBWb6LKlebUj7FzGi3FYRpEFhdKu+VMeUs23
+         uvrMhtGiZpshQJhusNhaOdEsnBkIEFwwRfFJmk3wbmk0fj8/FF/r5vXmVeecMcA2Fwvg
+         Eyjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcprJxVZB1aoxIFHGExkxqduB1Zc9QHBzWzzEEJqZ0szZxpLYQs0qWx8ZH3jpIbWpd15g2nx0JobY0dByQ/7gyuIIBBdTAnerDbfMl
+X-Gm-Message-State: AOJu0Yx8R5JvaOdi51SiZ2R2K7cQg4jdYtXVycgXDHLFsWIi070cKsiM
+	DZY4Dn5LArD7gQKhLMBox9n8kiNb6RG5xLovgiQz8pHdms1tYXvLdd796RP3NLArVOQk8cPIni1
+	H3yDJ9yq925RYKsn83jbYWwZ6NSI=
+X-Google-Smtp-Source: AGHT+IFjnX+Hn3g+YYR3b1mFHL2xyW+Lwm+EvEdbA2lohRi2wird6psc1h8B1eaR1xSaWnFeTdkFtJ2P4fk43QoK2+U=
+X-Received: by 2002:a05:6122:c88:b0:4ec:f6f2:f1cd with SMTP id
+ 71dfb90a1353d-4ef276e5110mr2246166e0c.9.1718788310620; Wed, 19 Jun 2024
+ 02:11:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
- <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com> <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
-In-Reply-To: <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Wed, 19 Jun 2024 10:11:35 +0100
-Message-ID: <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
-To: David Hildenbrand <david@redhat.com>
-Cc: John Hubbard <jhubbard@nvidia.com>, Elliot Berman <quic_eberman@quicinc.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, maz@kernel.org, kvm@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	pbonzini@redhat.com, Jason Gunthorpe <jgg@nvidia.com>
+References: <20240618232648.4090299-1-ryan.roberts@arm.com>
+In-Reply-To: <20240618232648.4090299-1-ryan.roberts@arm.com>
+From: Barry Song <baohua@kernel.org>
+Date: Wed, 19 Jun 2024 21:11:39 +1200
+Message-ID: <CAGsJ_4wx2WD+Msjhqqy7CK1gNGAQ2LGjuM5x_bNdXUOeGsz3xw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 0/5] Alternative mTHP swap allocator improvements
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Chris Li <chrisl@kernel.org>, 
+	Kairui Song <kasong@tencent.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, Hugh Dickins <hughd@google.com>, 
+	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Shuai Yuan <yuanshuai@oppo.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi John and David,
-
-Thank you for your comments.
-
-On Wed, Jun 19, 2024 at 8:38=E2=80=AFAM David Hildenbrand <david@redhat.com=
+On Wed, Jun 19, 2024 at 11:27=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.com=
 > wrote:
 >
-> Hi,
+> Hi All,
 >
-> On 19.06.24 04:44, John Hubbard wrote:
-> > On 6/18/24 5:05 PM, Elliot Berman wrote:
-> >> In arm64 pKVM and QuIC's Gunyah protected VM model, we want to support
-> >> grabbing shmem user pages instead of using KVM's guestmemfd. These
-> >> hypervisors provide a different isolation model than the CoCo
-> >> implementations from x86. KVM's guest_memfd is focused on providing
-> >> memory that is more isolated than AVF requires. Some specific examples
-> >> include ability to pre-load data onto guest-private pages, dynamically
-> >> sharing/isolating guest pages without copy, and (future) migrating
-> >> guest-private pages.  In sum of those differences after a discussion i=
-n
-> >> [1] and at PUCK, we want to try to stick with existing shmem and exten=
-d
-> >> GUP to support the isolation needs for arm64 pKVM and Gunyah.
+> Chris has been doing great work at [1] to clean up my mess in the mTHP sw=
+ap
+> entry allocator. But Barry posted a test program and results at [2] showi=
+ng that
+> even with Chris's changes, there are still some fallbacks (around 5% - 25=
+% in
+> some cases). I was interested in why that might be and ended up putting t=
+his PoC
+> patch set together to try to get a better understanding. This series ends=
+ up
+> achieving 0% fallback, even with small folios ("-s") enabled. I haven't d=
+one
+> much testing beyond that (yet) but thought it was worth posting on the st=
+rength
+> of that result alone.
 >
-> The main question really is, into which direction we want and can
-> develop guest_memfd. At this point (after talking to Jason at LSF/MM), I
-> wonder if guest_memfd should be our new target for guest memory, both
-> shared and private. There are a bunch of issues to be sorted out though .=
-..
+> At a high level this works in a similar way to Chris's series; it marks a
+> cluster as being for a particular order and if a new cluster cannot be al=
+located
+> then it scans through the existing non-full clusters. But it does it by s=
+canning
+> through the clusters rather than assembling them into a list. Cluster fla=
+gs are
+> used to mark clusters that have been scanned and are known not to have en=
+ough
+> contiguous space, so the efficiency should be similar in practice.
 >
-> As there is interest from Red Hat into supporting hugetlb-style huge
-> pages in confidential VMs for real-time workloads, and wasting memory is
-> not really desired, I'm going to think some more about some of the
-> challenges (shared+private in guest_memfd, mmap support, migration of
-> !shared folios, hugetlb-like support, in-place shared<->private
-> conversion, interaction with page pinning). Tricky.
+> Because its not based around a linked list, there is less churn and I'm
+> wondering if this is perhaps easier to review and potentially even get in=
+to
+> v6.10-rcX to fix up what's already there, rather than having to wait unti=
+l v6.11
+> for Chris's series? I know Chris has a larger roadmap of improvements, so=
+ at
+> best I see this as a tactical fix that will ultimately be superseeded by =
+Chris's
+> work.
 >
-> Ideally, we'd have one way to back guest memory for confidential VMs in
-> the future.
+> There are a few differences to note vs Chris's series:
+>
+> - order-0 fallback scanning is still allowed in any cluster; the argument=
+ in the
+>   past was that swap should always use all the swap space, so I've left t=
+his
+>   mechanism in. It is only a fallback though; first the the new per-order
+>   scanner is invoked, even for order-0, so if there are free slots in clu=
+sters
+>   already assigned for order-0, then the allocation will go there.
+>
+> - CPUs can steal slots from other CPU's current clusters; those clusters =
+remain
+>   scannable while they are current for a CPU and are only made unscannabl=
+e when
+>   no more CPUs are scanning that particular cluster.
+>
+> - I'm preferring to allocate a free cluster ahead of per-order scanning, =
+since,
+>   as I understand it, the original intent of a per-cpu current cluster wa=
+s to
+>   get pages for an application adjacent in the swap to speed up IO.
+>
+> I'd be keen to hear if you think we could get something like this into v6=
+.10 to
+> fix the mess - I'm willing to work quickly to address comments and do mor=
+e
+> testing. If not, then this is probably just a distraction and we should
+> concentrate on Chris's series.
 
-As you know, initially we went down the route of guest memory and
-invested a lot of time on it, including presenting our proposal at LPC
-last year. But there was resistance to expanding it to support more
-than what was initially envisioned, e.g., sharing guest memory in
-place migration, and maybe even huge pages, and its implications such
-as being able to conditionally mmap guest memory.
+Ryan, thank you very much for accomplishing this.
 
-To be honest, personally (speaking only for myself, not necessarily
-for Elliot and not for anyone else in the pKVM team), I still would
-prefer to use guest_memfd(). I think that having one solution for
-confidential computing that rules them all would be best. But we do
-need to be able to share memory in place, have a plan for supporting
-huge pages in the near future, and migration in the not-too-distant
-future.
+I am getting Shuai Yuan's (CC'd) help to collect the latency histogram of
+add_to_swap() for both your approach and Chris's. I will update you with
+the results ASAP.
 
-We are currently shipping pKVM in Android as it is, warts and all.
-We're also working on upstreaming the rest of it. Currently, this is
-the main blocker for us to be able to upstream the rest (same probably
-applies to Gunyah).
-
-> Can you comment on the bigger design goal here? In particular:
-
-At a high level: We want to prevent a misbehaving host process from
-crashing the system when attempting to access (deliberately or
-accidentally) protected guest memory. As it currently stands in pKVM
-and Gunyah, the hypervisor does prevent the host from accessing
-(private) guest memory. In certain cases though, if the host attempts
-to access that memory and is prevented by the hypervisor (either out
-of ignorance or out of malice), the host kernel wouldn't be able to
-recover, causing the whole system to crash.
-
-guest_memfd() prevents such accesses by not allowing confidential
-memory to be mapped at the host to begin with. This works fine for us,
-but there's the issue of being able to share memory in place, which
-implies mapping it conditionally (among others that I've mentioned).
-
-The approach we're taking with this proposal is to instead restrict
-the pinning of protected memory. If the host kernel can't pin the
-memory, then a misbehaving process can't trick the host into accessing
-it.
+I am also anticipating Chris's V3, as V1 seems quite stable, but V2 has
+caused a couple of crashes.
 
 >
-> 1) Who would get the exclusive PIN and for which reason? When would we
->     pin, when would we unpin?
-
-The exclusive pin would be acquired for private guest pages, in
-addition to a normal pin. It would be released when the private memory
-is released, or if the guest shares that memory.
-
-> 2) What would happen if there is already another PIN? Can we deal with
->     speculative short-term PINs from GUP-fast that could introduce
->     errors?
-
-The exclusive pin would be rejected if there's any other pin
-(exclusive or normal). Normal pins would be rejected if there's an
-exclusive pin.
-
-> 3) How can we be sure we don't need other long-term pins (IOMMUs?) in
->     the future?
-
-I can't :)
-
-> 4) Why are GUP pins special? How one would deal with other folio
->     references (e.g., simply mmap the shmem file into a different
->     process).
-
-Other references would crash the userspace process, but the host
-kernel can handle them, and shouldn't cause the system to crash. The
-way things are now in Android/pKVM, a userspace process can crash the
-system as a whole.
-
-> 5) Why you have to bother about anonymous pages at all (skimming over s
->     some patches), when you really want to handle shmem differently only?
-
-I'm not sure I understand the question. We use anonymous memory for pKVM.
-
-> >> To that
-> >> end, we introduce the concept of "exclusive GUP pinning", which enforc=
-es
-> >> that only one pin of any kind is allowed when using the FOLL_EXCLUSIVE
-> >> flag is set. This behavior doesn't affect FOLL_GET or any other folio
-> >> refcount operations that don't go through the FOLL_PIN path.
+> This applies on top of v6.10-rc4.
 >
-> So, FOLL_EXCLUSIVE would fail if there already is a PIN, but
-> !FOLL_EXCLUSIVE would succeed even if there is a single PIN via
-> FOLL_EXCLUSIVE? Or would the single FOLL_EXCLUSIVE pin make other pins
-> that don't have FOLL_EXCLUSIVE set fail as well?
-
-A FOLL_EXCLUSIVE would fail if there's any other pin. A normal pin
-(!FOLL_EXCLUSIVE) would fail if there's a FOLL_EXCLUSIVE pin. It's the
-PIN to end all pins!
-
-> >>
-> >> [1]: https://lore.kernel.org/all/20240319143119.GA2736@willie-the-truc=
-k/
-> >>
-> >
-> > Hi!
-> >
-> > Looking through this, I feel that some intangible threshold of "this is
-> > too much overloading of page->_refcount" has been crossed. This is a ve=
-ry
-> > specific feature, and it is using approximately one more bit than is
-> > really actually "available"...
+> [1] https://lore.kernel.org/linux-mm/20240614-swap-allocator-v2-0-2a513b4=
+a7f2f@kernel.org/
+> [2] https://lore.kernel.org/linux-mm/20240615084714.37499-1-21cnbao@gmail=
+.com/
 >
-> Agreed.
-
-We are gating it behind a CONFIG flag :)
-
-Also, since pin is already overloading the refcount, having the
-exclusive pin there helps in ensuring atomic accesses and avoiding
-races.
-
-> >
-> > If we need a bit in struct page/folio, is this really the only way? Wil=
-ly
-> > is working towards getting us an entirely separate folio->pincount, I
-> > suppose that might take too long? Or not?
+> Thanks,
+> Ryan
 >
-> Before talking about how to implement it, I think we first have to learn
-> whether that approach is what we want at all, and how it fits into the
-> bigger picture of that use case.
+> Ryan Roberts (5):
+>   mm: swap: Simplify end-of-cluster calculation
+>   mm: swap: Change SWAP_NEXT_INVALID to highest value
+>   mm: swap: Track allocation order for clusters
+>   mm: swap: Scan for free swap entries in allocated clusters
+>   mm: swap: Optimize per-order cluster scanning
 >
-> >
-> > This feels like force-fitting a very specific feature (KVM/CoCo handlin=
-g
-> > of shmem pages) into a more general mechanism that is running low on
-> > bits (gup/pup).
+>  include/linux/swap.h |  18 +++--
+>  mm/swapfile.c        | 164 ++++++++++++++++++++++++++++++++++++++-----
+>  2 files changed, 157 insertions(+), 25 deletions(-)
 >
-> Agreed.
->
-> >
-> > Maybe a good topic for LPC!
->
-> The KVM track has plenty of guest_memfd topics, might be a good fit
-> there. (or in the MM track, of course)
-
-We are planning on submitting a proposal for LPC (see you in Vienna!) :)
-
-Thanks again!
-/fuad (and elliot*)
-
-* Mistakes, errors, and unclear statements in this email are mine alone tho=
-ugh.
-
 > --
-> Cheers,
+> 2.43.0
 >
-> David / dhildenb
->
+
+Thanks
+Barry
 
