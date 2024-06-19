@@ -1,170 +1,199 @@
-Return-Path: <linux-kernel+bounces-221589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88BD290F5C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:11:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9606690F5CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C6251C2132B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:11:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD91F1C215B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C751D1DA24;
-	Wed, 19 Jun 2024 18:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB60315748F;
+	Wed, 19 Jun 2024 18:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lpke3Ls2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VubqIGNK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983E7156F25;
-	Wed, 19 Jun 2024 18:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0470B156F3C;
+	Wed, 19 Jun 2024 18:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718820673; cv=none; b=FX/EiPjq0XKLFhBS4J9RAYcXZbnMPiWLyWpTCqwtb5XX6A4fyHPlz4br8/Ig6vqzIuje+A2ocbViAmRiQAZusJsJ5vZYXlYNiH8Rvo6DQeiL7yY3kglTmtz1LDOLJdGbM3zEKdE10WxlQ3qwMI7W0QUWKecx+uqWbnCwFzwcHKw=
+	t=1718820682; cv=none; b=amjelBlPV6kZfm6iKW2dkADcbQm10onBSxLEoAVaI4wllfqazgbYi1zBk4D05KXAsHxzLWvB7Es7pA2QaqyZTkO1ouEmitoAmJ0BZZTx6jS1uGGRghp5inwy9n71GLSJsBefRoC1Wv+NYajX71huDIvjkUTZw4H5Wr0bitSBf/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718820673; c=relaxed/simple;
-	bh=ZXaP/pLvA4RqHZqae0ADsqFdPqlsMqC79xUjriiSz3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Y8O74M/mgBjhyxaMl1MgTpwSHR+t9qPOFg28KuAGXFPnl6RsYoSV2UVq++MgTZ43iYbgZDZ648F5Q7dqrfk9L2M7dBuR+Stq4Al5dQyLtOSHi6u6/1FFaj8QMcMz/eNDVcczqAQUVTrVpseMoaqGytOhEvpxfE49BZenlZP+yd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lpke3Ls2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9Bsmi010717;
-	Wed, 19 Jun 2024 18:11:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CrVbCF7GLKxDvvXz4Jh+wVm6bfs1xvQ++zSF7apYK6Q=; b=lpke3Ls2dBvxbY//
-	o19kEGp0j1sKEwMZM1cuwEYk/v3BWGN1HpivolMxN7i3YIgJonkGpDhV9yOxDPrM
-	tCUv+TJRGEpgeXxgkZyIkOYgoYsvGq7DiqOh8YTQLcqnu0KlfLF8MRdtuESmtq4U
-	cyk+HFxaHWfPBgmeB7HMf2Cukiv8Wo2c5bl7sbscAmKV2B6YQp9va3bplQ2sam2G
-	yexf0mrOV2ecy2otBmJB6lYBF3EklvzxYu9vW7bIVUkFnH3+wcaS/Vlxp2TBCW5l
-	XtaexCO1stmyLiav/rExp2Qrj3HPpVyUkl9uTJawks7/abXb8zNDCZ/uEbd4BnKe
-	idt5/A==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9tjgaf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 18:11:04 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JIB3K0011391
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 18:11:03 GMT
-Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
- 2024 11:11:02 -0700
-Message-ID: <74679ab7-da92-43bc-96e8-5c6e3a1dee62@quicinc.com>
-Date: Wed, 19 Jun 2024 11:11:02 -0700
+	s=arc-20240116; t=1718820682; c=relaxed/simple;
+	bh=eM8ZHNqn3zhJka/utQcQ6YZwZ1lRkZvcoh73c33nV2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uToAtv4NBZBc19k8fofwN9zUdvY8Rz5ycKplL6EaTUSsmFOHshZYRBESDFXnYHv9wLQcAy4u98V89rLktlzyiLtmNc5983XsKR5u+OT029mFEEhAq2X2MkCeDpDJyu6CGdaTUb/FADLUEM73fIQkkS8BilI2tzi71yfvnNQ7BrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VubqIGNK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAF04C2BBFC;
+	Wed, 19 Jun 2024 18:11:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718820681;
+	bh=eM8ZHNqn3zhJka/utQcQ6YZwZ1lRkZvcoh73c33nV2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VubqIGNKPYexo5EaGDBeMUN4CkvxOkC+s04Qt73Usm5DYSq63iX1xyNuKpMpjDQ2L
+	 hPSwvzqKYSi53jf/HZ6AxEuVA5ECX9DChgbV8B0EXCBGvENYuyptuDwlA3qKRMDAud
+	 oIEG/qzT29LhIjfxmoEoiXHIlOQa/OJo2ma/576AMUAlO0Iij13wjqS7SGH6wZL9it
+	 ooJQAspgbYNYHdYpE33I57PqYaC1UjV/EZmiyFjf3sWQ+epyqwL2NwZOaM6HnLho4c
+	 5fDyBfkqEbpPL+Z1TcjKwFJLWDyZjAU9b4t6jO5pTW+jVrQJ1x63N4UyOLAvuTSlWg
+	 Ge2emRBkit5sA==
+Date: Wed, 19 Jun 2024 19:11:16 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+	apatel@ventanamicro.com, alex@ghiti.fr, ajones@ventanamicro.com,
+	greentime.hu@sifive.com, vincent.chen@sifive.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+Message-ID: <20240619-shabby-smother-c482e771632a@spud>
+References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
+ <20240605121512.32083-3-yongxuan.wang@sifive.com>
+ <20240605-atrium-neuron-c2512b34d3da@spud>
+ <CAMWQL2gQpHPD=bPenjD+=NP47k8n26+6KP05zogxUtsD6zY6GQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/14] drm/msm/hdmi: expand the HDMI_CFG macro
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul
-	<sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David
- Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
- <20240522-fd-hdmi-hpd-v2-11-c30bdb7c5c7e@linaro.org>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240522-fd-hdmi-hpd-v2-11-c30bdb7c5c7e@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ah9FMWTw14ldEQO3f1xzZYNURm3aTeLD
-X-Proofpoint-ORIG-GUID: ah9FMWTw14ldEQO3f1xzZYNURm3aTeLD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- bulkscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 spamscore=0 phishscore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406190137
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5sQpHeJmYMJW0CIa"
+Content-Disposition: inline
+In-Reply-To: <CAMWQL2gQpHPD=bPenjD+=NP47k8n26+6KP05zogxUtsD6zY6GQ@mail.gmail.com>
 
 
+--5sQpHeJmYMJW0CIa
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 5/22/2024 3:51 AM, Dmitry Baryshkov wrote:
-> Expand the HDMI_CFG() macro in HDMI config description. It has no added
-> value other than hiding some boilerplate declarations.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Anup, Drew, Alex,
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+On Tue, Jun 18, 2024 at 06:38:13PM +0800, Yong-Xuan Wang wrote:
+> On Thu, Jun 6, 2024 at 12:55=E2=80=AFAM Conor Dooley <conor@kernel.org> w=
+rote:
+> >
+> > On Wed, Jun 05, 2024 at 08:15:08PM +0800, Yong-Xuan Wang wrote:
+> > > Add entries for the Svade and Svadu extensions to the riscv,isa-exten=
+sions
+> > > property.
+> > >
+> > > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > > ---
+> > >  .../devicetree/bindings/riscv/extensions.yaml | 30 +++++++++++++++++=
+++
+> > >  1 file changed, 30 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml =
+b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > index 468c646247aa..1e30988826b9 100644
+> > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > @@ -153,6 +153,36 @@ properties:
+> > >              ratified at commit 3f9ed34 ("Add ability to manually tri=
+gger
+> > >              workflow. (#2)") of riscv-time-compare.
+> > >
+> > > +        - const: svade
+> > > +          description: |
+> > > +            The standard Svade supervisor-level extension for raisin=
+g page-fault
+> > > +            exceptions when PTE A/D bits need be set as ratified in =
+the 20240213
+> > > +            version of the privileged ISA specification.
+> > > +
+> > > +            Both Svade and Svadu extensions control the hardware beh=
+avior when
+> > > +            the PTE A/D bits need to be set. The default behavior fo=
+r the four
+> > > +            possible combinations of these extensions in the device =
+tree are:
+> > > +            1. Neither svade nor svadu in DT: default to svade.
+> >
+> > I think this needs to be expanded on, as to why nothing means svade.
+> >
+> > > +            2. Only svade in DT: use svade.
+> >
+> > That's a statement of the obvious, right?
+> >
+> > > +            3. Only svadu in DT: use svadu.
+> >
+> > This is not relevant for Svade.
+> >
+> > > +            4. Both svade and svadu in DT: default to svade (Linux c=
+an switch to
+> > > +               svadu once the SBI FWFT extension is available).
+> >
+> > "The privilege level to which this devicetree has been provided can swi=
+tch to
+> > Svadu if the SBI FWFT extension is available".
+> >
+> > > +        - const: svadu
+> > > +          description: |
+> > > +            The standard Svadu supervisor-level extension for hardwa=
+re updating
+> > > +            of PTE A/D bits as ratified at commit c1abccf ("Merge pu=
+ll request
+> > > +            #25 from ved-rivos/ratified") of riscv-svadu.
+> > > +
+> > > +            Both Svade and Svadu extensions control the hardware beh=
+avior when
+> > > +            the PTE A/D bits need to be set. The default behavior fo=
+r the four
+> > > +            possible combinations of these extensions in the device =
+tree are:
+> >
+> > @Anup/Drew/Alex, are we missing some wording in here about it only being
+> > valid to have Svadu in isolation if the provider of the devicetree has
+> > actually turned on Svadu? The binding says "the default behaviour", but
+> > it is not the "default" behaviour, the behaviour is a must AFAICT. If
+> > you set Svadu in isolation, you /must/ have turned it on. If you set
+> > Svadu and Svade, you must have Svadu turned off?
+> >
+> > > +            1. Neither svade nor svadu in DT: default to svade.
+> > > +            2. Only svade in DT: use svade.
+> >
+> > These two are not relevant to Svadu, I'd leave them out.
+> >
+> > > +            3. Only svadu in DT: use svadu.
+> >
+> > Again, statement of the obvious?
+> >
+> > > +            4. Both svade and svadu in DT: default to svade (Linux c=
+an switch to
+> > > +               svadu once the SBI FWFT extension is available).
+> >
+> > Same here as in the Svade entry.
 
-> ---
->   drivers/gpu/drm/msm/hdmi/hdmi.c | 16 ++++++++--------
->   drivers/gpu/drm/msm/hdmi/hdmi.h |  2 +-
->   2 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
-> index c39a1f3a7505..e160a23e962e 100644
-> --- a/drivers/gpu/drm/msm/hdmi/hdmi.c
-> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
-> @@ -223,24 +223,24 @@ int msm_hdmi_modeset_init(struct hdmi *hdmi,
->    * The hdmi device:
->    */
->   
-> -#define HDMI_CFG(item, entry) \
-> -	.item ## _names = item ##_names_ ## entry, \
-> -	.item ## _cnt   = ARRAY_SIZE(item ## _names_ ## entry)
-> -
->   static const char *pwr_reg_names_8960[] = {"core-vdda"};
->   static const char *pwr_clk_names_8960[] = {"core", "master_iface", "slave_iface"};
->   
->   static const struct hdmi_platform_config hdmi_tx_8960_config = {
-> -		HDMI_CFG(pwr_reg, 8960),
-> -		HDMI_CFG(pwr_clk, 8960),
-> +	.pwr_reg_names = pwr_reg_names_8960,
-> +	.pwr_reg_cnt = ARRAY_SIZE(pwr_reg_names_8960),
-> +	.pwr_clk_names = pwr_clk_names_8960,
-> +	.pwr_clk_cnt = ARRAY_SIZE(pwr_clk_names_8960),
->   };
->   
->   static const char *pwr_reg_names_8x74[] = {"core-vdda", "core-vcc"};
->   static const char *pwr_clk_names_8x74[] = {"iface", "core", "mdp_core", "alt_iface"};
->   
->   static const struct hdmi_platform_config hdmi_tx_8974_config = {
-> -		HDMI_CFG(pwr_reg, 8x74),
-> -		HDMI_CFG(pwr_clk, 8x74),
-> +	.pwr_reg_names = pwr_reg_names_8x74,
-> +	.pwr_reg_cnt = ARRAY_SIZE(pwr_reg_names_8x74),
-> +	.pwr_clk_names = pwr_clk_names_8x74,
-> +	.pwr_clk_cnt = ARRAY_SIZE(pwr_clk_names_8x74),
->   };
->   
->   /*
-> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.h b/drivers/gpu/drm/msm/hdmi/hdmi.h
-> index 1e346e697f8e..2a98efa8b6bd 100644
-> --- a/drivers/gpu/drm/msm/hdmi/hdmi.h
-> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.h
-> @@ -89,7 +89,7 @@ struct hdmi_platform_config {
->   	const char **pwr_reg_names;
->   	int pwr_reg_cnt;
->   
-> -	/* clks that need to be on for hpd: */
-> +	/* clks that need to be on: */
->   	const char **pwr_clk_names;
->   	int pwr_clk_cnt;
->   };
-> 
-> -- 
-> 2.39.2
-> 
+> I will update the description. Thank you!
+
+Before you do, I'd love if Anup, Drew or Alex could comment on my
+question about default behaviours. They're the ones with Strong Opinions
+here about how the SBI implementation should behave, and I want to make
+sure it is correctly documented.
+
+Thanks,
+Conor.
+
+
+--5sQpHeJmYMJW0CIa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnMfRAAKCRB4tDGHoIJi
+0mxsAP9/HYbRT+IODW/JeWgB3oihF9tatXMsLPSv5zh01Chn2AD+MWUlW7+bWwkL
+TcfQ9tn4kkqaW1w3XdBd3pZdG+9wBgQ=
+=sFa3
+-----END PGP SIGNATURE-----
+
+--5sQpHeJmYMJW0CIa--
 
