@@ -1,151 +1,151 @@
-Return-Path: <linux-kernel+bounces-221067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E7790EB6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:49:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5385590EB6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AD421C24388
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:49:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01D36286E1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323A7146D53;
-	Wed, 19 Jun 2024 12:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D92143877;
+	Wed, 19 Jun 2024 12:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="Gh0OwPJM"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WkBcJoXS"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24973FC1F;
-	Wed, 19 Jun 2024 12:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178C1FC1F
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718801329; cv=none; b=UyridsYFogE+NW7xRxoLLyGvowMN/MHeNs1ezpN6luUpOFcOgj+FyYkvVhvsHvjzvfgpMu3gwUTyR1iEzduZiAGnCzNpF353ceQIIAJdrkbbcsEVIdjkl+J2RLq30cAb5b69Jhg9BCsUe+UOPcBx2fu1r5ZZo2M3Cor+oqy+OnM=
+	t=1718801377; cv=none; b=jZit+CnO33Q7fz6mPyvQXwjUwXrTb3H0aVGqPfE8gA+b0oLh/VTLM7CaD4CY7fK45STvRSztaXYTodEBlLP9EFDpcIqjDZf+98Jt/QUaDMmduHp6eWk8rn0QDh1fvkWutvd2vMt8swhGQiVdfxWb0Rm9KPizMe7QhxTNbe2BfAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718801329; c=relaxed/simple;
-	bh=ovpb/tpNJbAa81KRkPrAKIb9Ld9ugP9wa01kYPaOrGA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eRO0Lxzk5qp7M00SgFQEkLVkO7wAwfcwJLcyzutax2l281u1MxPKyNsBFr0hiCtajVL1AG9LawlXQBXo3EHTzM9m56Y4kpCYHD6LJrnyktTQXxWqJT8zHA16yVBZCK/i08qFxymdxSlQAaRwg8hd7LNL5DhLtkwRnvMHJ+PzhU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=Gh0OwPJM; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 79126A0A2C;
-	Wed, 19 Jun 2024 14:48:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=Wt13p/w7csHf7ALJ1ZJU
-	ngCivWwVWkS3QaMhdYijnps=; b=Gh0OwPJMsl6lZQdD17NcXhxqKIJWMf2unh/Z
-	tG226dRXNfgHTCVBxvNglBKsTbWe4Fw/zHfL2yuCkJPnhFSbH3jh+iEIUinnvpVb
-	MidjDfajqI6vt1UgIorJjEavhj1bHgAfz5B80qh5PGN9lcecfxaJ0XUaUtbk/7EE
-	wQ891tsmTV2y9E0O3LekeGeY1s1UuwlwUdCxW2DA5f6qZ0VcR6dE3f8nA1bZJWGs
-	DunKJ119fwDg2C2if5GDr+Sk3YBo60oLQJipOAq7ekpIMsxx0DYVfq4O+4IZqhEq
-	v/hy3GDg/O5dckC9rDpDAgAlVlAnRGn3jtvbudEQ5cHQ/aTTxtI/Q0Rr/ngeSY3j
-	OSwjl2ULTnyN3u7D2JhV4tzoxzPNkJLQDLFMV30IKSnJ3V3oJrNZY4pO3zSoXoSK
-	DqCiDn7oeBWJLEWMv63UnxZhASgQVPSBzGop8Tv+vajunyfsIlk/r8vJg2P5lSfB
-	MXbIWWEP6FiIlLOYeI6Q7iw3GXfSNCJJQf+urn2AQjGo1YLaW1b/W1PN0TeVKTwA
-	HGPYz0uMa56zq5mHvsStV/qZzU0kLZK1ifQxqZi8q9+OsqYAEfaDUMmzuNVu+5ZG
-	CV2fHPTGapp4ZEo6KB9B73ZHwxjOJbdejhVrklPPT3TjESBVdj2tbIXGHqR+O9uY
-	H6Ci27A=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>,
-	"Vladimir Oltean" <olteanv@gmail.com>, <trivial@kernel.org>, Andrew Lunn
-	<andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
-	<linux@armlinux.org.uk>
-Subject: [PATCH v2 resub 2/2] net: include: mii: Refactor: Use bit ops for ADVERTISE_* bits
-Date: Wed, 19 Jun 2024 14:46:24 +0200
-Message-ID: <20240619124622.2798613-2-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240619124622.2798613-1-csokas.bence@prolan.hu>
-References: <20240619124622.2798613-1-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1718801377; c=relaxed/simple;
+	bh=kySDQSPpiI1yjOGgLE+4Ke9klqnmb5xpWtmNOwbuToU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YsKblBa5AsQASVEBrAbxyRtNLuL4SUU3ymF+RcmebLOonvofESaRSCJcCOSa/Zcbgx38gtHGy/+OUAXLmRQvPNq6PK5guDLNPqbqd2FtDF8YeOqxXt8sFst02ntaOOBshn+sZlPfJj4gfoKHKeSeak+M2iBDsRo76Y8EWwwmHx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WkBcJoXS; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6f176c5c10so803607066b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 05:49:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718801374; x=1719406174; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bpjz0lX4gdiG8izGnJSD4JNeNkRMIt8R1nn+zHTjtn8=;
+        b=WkBcJoXSwO5HqNYCktdVSOyBKjN4RFYuL4BFG5mtVadGkIEy6yvgOJRsSUFn9uEFsN
+         apPj6emPUenjZyIIaGfx9cev5ar9wAjP7kyAN7PrFY41DF/a2VR8/204sX3ziw6oQTQu
+         g9E3k0ft+Hs2G9k7IFBMPIkU583zxo6F76n4tF83riTzEiAgvltEdlqrMIiiBRF6iT05
+         1xJcdpuIZ8NuFIun92Etvd+JcpxWj8ZGu7+ALbOvTGdqkh4fLaElPdUFDoB+z+d5vm9W
+         rprrlbnAtBma3INH+BDczsJzT8iwrcd7icO49r2CvxUGxhLDphhnGXFGUl1c6g2V5Kfg
+         cbQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718801374; x=1719406174;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bpjz0lX4gdiG8izGnJSD4JNeNkRMIt8R1nn+zHTjtn8=;
+        b=XRp2SGGyx13cZWIG0pwI/53ESMUI7h0nnQ8MteoSILEBbMM0UCoTJKkHJn+QvmyHyQ
+         da8ndSHMjmyv2QIi+LGMLSPX0I1hUlotgFJdfLVSP/m6ncT3N+r8ucadYK0U4k1rfoSu
+         AfqLYnmi6ItCN+NNa7FDPMhZxaaaDziF9vF6emSnC3FsulWR/G2e01yb946HvEVWx9Ue
+         1aD77Qr5JjrdKrSa1aqguJCxDAokoCXcHuJD2vKXwLH0uvvXgd4qoyk69OYSMhfcNyqv
+         k9km1z1osvqBOdkkVpWisIfHhQttz7G8vqlXy6llnBLRu4fXoy7YkljdoVPQVJAw+qwH
+         P+1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVHdMmKURm8fswu19y2b0ClHXOWbK0Au0UBgtQyrW7Jm3U9ynqSvRTFD3I4j6vb9FX+3UH4Q+JgIkrBvmE+5uIXH8fpNchQv5laVtu+
+X-Gm-Message-State: AOJu0YwiknVspU18/uj7aencA3Xtu/QTY4KBF3F6Cc3j8K4fLj8tt4OG
+	ZgnkDk2S9xj+j5wNuMefTcY9v9wKmIBp1foFRnZfRqnuiFmBkCeP
+X-Google-Smtp-Source: AGHT+IGOq/zNWszfyhqzTg/FGYYZ1XNMIHD0Ip9bIXCTfv9EGQolffnOerLXpNb3aysPvYg8WIqARw==
+X-Received: by 2002:a17:907:cc06:b0:a68:bae4:d66f with SMTP id a640c23a62f3a-a6fab615d55mr128333766b.30.1718801373990;
+        Wed, 19 Jun 2024 05:49:33 -0700 (PDT)
+Received: from f (cst-prg-30-39.cust.vodafone.cz. [46.135.30.39])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db6759sm660799666b.63.2024.06.19.05.49.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 05:49:33 -0700 (PDT)
+Date: Wed, 19 Jun 2024 14:49:21 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Michal Hocko <mhocko@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	kernel-team@meta.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Kyle McMartin <kyle@infradead.org>
+Subject: Re: [PATCH] mm: ratelimit oversized kvmalloc warnings instead of once
+Message-ID: <fm7buc5wqjfbpkc4vciubjttk73k7vzahohlcolztrhjqywnca@pysupztheg6i>
+References: <20240618213421.282381-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1718801324;VERSION=7972;MC=3127536313;ID=564844;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2945A129576D7D61
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240618213421.282381-1-shakeel.butt@linux.dev>
 
-Replace hex values with bit shift and __GENMASK() for readability
+On Tue, Jun 18, 2024 at 02:34:21PM -0700, Shakeel Butt wrote:
+> At the moment oversize kvmalloc warnings are triggered once using
+> WARN_ON_ONCE() macro. One issue with this approach is that it only
+> detects the first abuser and then ignores the remaining abusers which
+> complicates detecting all such abusers in a timely manner. The situation
+> becomes worse when the repro has low probability and requires production
+> traffic and thus require large set of machines to find such abusers. In
+> Mera production, this warn once is slowing down the detection of these
+> abusers. Simply replace WARN_ON_ONCE with WARN_RATELIMIT.
+> 
+> Reported-by: Kyle McMartin <kyle@infradead.org>
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> ---
+>  mm/util.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/util.c b/mm/util.c
+> index 10f215985fe5..de36344e8d53 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -649,7 +649,8 @@ void *kvmalloc_node_noprof(size_t size, gfp_t flags, int node)
+>  
+>  	/* Don't even allow crazy sizes */
+>  	if (unlikely(size > INT_MAX)) {
+> -		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
+> +		WARN_RATELIMIT(!(flags & __GFP_NOWARN), "size = %zu > INT_MAX",
+> +			       size);
+>  		return NULL;
+>  	}
+>  
 
-Cc: trivial@kernel.org
+I don't think this is necessary. From the description I think interested
+parties can get away with bpftrace.
 
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
+Suppose you have an abuser of the sort and you are worried there is more
+than one.
 
-Notes:
-    Changes since v2:
-    * Replace BIT() with bit shift, as the macro is not exported to userspace
-    * Use __GENMASK(), exported into userspace in 3c7a8e190bc5
-    
-    (yesterday I accidentally sent v1 again, this is the correct v2)
+Then this one-liner will catch *all* of them, not just the ones which
+were "lucky" to get logged with ratelimit:
+bpftrace -e 'kprobe:kvmalloc_node_noprof /arg0 > 2147483647/ { @[kstack()] = count(); }'
 
- include/uapi/linux/mii.h | 35 ++++++++++++++++++-----------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
+Of course adding a probe is not free, but then again kvmalloc should not
+be used often to begin with so I doubt it is going to have material
+impact in terms of performance.
 
-diff --git a/include/uapi/linux/mii.h b/include/uapi/linux/mii.h
-index 33e1b0c717e4..3fbc113a0f70 100644
---- a/include/uapi/linux/mii.h
-+++ b/include/uapi/linux/mii.h
-@@ -9,6 +9,7 @@
- #ifndef _UAPI__LINUX_MII_H__
- #define _UAPI__LINUX_MII_H__
- 
-+#include <linux/bits.h>
- #include <linux/types.h>
- #include <linux/ethtool.h>
- 
-@@ -69,23 +70,23 @@
- #define BMSR_100BASE4		0x8000	/* Can do 100mbps, 4k packets  */
- 
- /* Advertisement control register. */
--#define ADVERTISE_SLCT		0x001f	/* Selector bits               */
--#define ADVERTISE_CSMA		0x0001	/* Only selector supported     */
--#define ADVERTISE_10HALF	0x0020	/* Try for 10mbps half-duplex  */
--#define ADVERTISE_1000XFULL	0x0020	/* Try for 1000BASE-X full-duplex */
--#define ADVERTISE_10FULL	0x0040	/* Try for 10mbps full-duplex  */
--#define ADVERTISE_1000XHALF	0x0040	/* Try for 1000BASE-X half-duplex */
--#define ADVERTISE_100HALF	0x0080	/* Try for 100mbps half-duplex */
--#define ADVERTISE_1000XPAUSE	0x0080	/* Try for 1000BASE-X pause    */
--#define ADVERTISE_100FULL	0x0100	/* Try for 100mbps full-duplex */
--#define ADVERTISE_1000XPSE_ASYM	0x0100	/* Try for 1000BASE-X asym pause */
--#define ADVERTISE_100BASE4	0x0200	/* Try for 100mbps 4k packets  */
--#define ADVERTISE_PAUSE_CAP	0x0400	/* Try for pause               */
--#define ADVERTISE_PAUSE_ASYM	0x0800	/* Try for asymetric pause     */
--#define ADVERTISE_RESV		0x1000	/* Unused...                   */
--#define ADVERTISE_RFAULT	0x2000	/* Say we can detect faults    */
--#define ADVERTISE_LPACK		0x4000	/* Ack link partners response  */
--#define ADVERTISE_NPAGE		0x8000	/* Next page bit               */
-+#define ADVERTISE_SLCT		__GENMASK(4, 0)	/* Selector bits               */
-+#define ADVERTISE_CSMA		(1 << 0)	/* Only selector supported     */
-+#define ADVERTISE_10HALF	(1 << 5)	/* Try for 10mbps half-duplex  */
-+#define ADVERTISE_1000XFULL	(1 << 5)	/* Try for 1000BASE-X full-duplex */
-+#define ADVERTISE_10FULL	(1 << 6)	/* Try for 10mbps full-duplex  */
-+#define ADVERTISE_1000XHALF	(1 << 6)	/* Try for 1000BASE-X half-duplex */
-+#define ADVERTISE_100HALF	(1 << 7)	/* Try for 100mbps half-duplex */
-+#define ADVERTISE_1000XPAUSE	(1 << 7)	/* Try for 1000BASE-X pause    */
-+#define ADVERTISE_100FULL	(1 << 8)	/* Try for 100mbps full-duplex */
-+#define ADVERTISE_1000XPSE_ASYM	(1 << 8)	/* Try for 1000BASE-X asym pause */
-+#define ADVERTISE_100BASE4	(1 << 9)	/* Try for 100mbps 4k packets  */
-+#define ADVERTISE_PAUSE_CAP	(1 << 10)	/* Try for pause               */
-+#define ADVERTISE_PAUSE_ASYM	(1 << 11)	/* Try for asymmetric pause     */
-+#define ADVERTISE_RESV		(1 << 12)	/* Unused...                   */
-+#define ADVERTISE_RFAULT	(1 << 13)	/* Say we can detect faults    */
-+#define ADVERTISE_LPACK		(1 << 14)	/* Ack link partners response  */
-+#define ADVERTISE_NPAGE		(1 << 15)	/* Next page bit               */
- 
- #define ADVERTISE_FULL		(ADVERTISE_100FULL | ADVERTISE_10FULL | \
- 				  ADVERTISE_CSMA)
--- 
-2.34.1
+While I concede it takes more effort to get this running on all affected
+machines, the result is much better than mere ratelimit. Also there is
+no need to patch the kernel.
 
-
+btw, I found drm keeps spamming kvmalloc, someone(tm) should look into
+it:
+@[
+    kvmalloc_node_noprof+5
+    drm_property_create_blob+76
+    drm_atomic_helper_dirtyfb+234
+    drm_fbdev_generic_helper_fb_dirty+509
+    drm_fb_helper_damage_work+139
+    process_one_work+376
+    worker_thread+753
+    kthread+207
+    ret_from_fork+49
+    ret_from_fork_asm+26
+, 104]: 12
 
