@@ -1,167 +1,87 @@
-Return-Path: <linux-kernel+bounces-220878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC4290E87C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:39:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8EFE90E878
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B887B284713
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:39:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF4FD1C21A2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D5A131E4B;
-	Wed, 19 Jun 2024 10:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC01C12F5BF;
+	Wed, 19 Jun 2024 10:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EW2keoCo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ocRLht3A"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5578627D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D27B8563F
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718793564; cv=none; b=EGVYLSQfHpzsne7qeeVKQhvSyNJXNUWg5a/+EwRA1cXED7vMz/xbA6AL7OnONeceUv4Kvv6azJbtsDmaRgYnA0+959+Y8VLHqC2uIqbmGhIEnL8pDJrFHPk40X2p81WOqcvANhG0V0lNMWNUtE4Sew3ybI34//yzQc9VcnoRNSE=
+	t=1718793542; cv=none; b=X2WX/tTS+qnqiDzmMojKEyM1COPhi5v6456nI/lPSR/kO3b78DkDY4CCe+hiAi0L2nVe7UUWjkk3qU+2Vxqh4EcvnRthXVJf+7D2oflUEZkczE61EMEFFo9d6A93wSRpptLZ5/FGeM+O+UetdKgyq01sWwQpsyNpL+NwSsm0rfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718793564; c=relaxed/simple;
-	bh=NEALePxhkauIah69wkauRXHyvijSonZ/UaLFWa+B5DM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X6EbhE5EIId9nUWSV46cCCHd73BBq4xfN/TAkY4II8HwlMQNLfDVTc88mDQ7kDa1T3bYPUO2claad1vV014lNJXJWaSLECbx68gwMVGGRehF7/dwnB/XC1GrEhsMF6VCeVEbBhST/kZkIuqwr6GPER7gtaft/I/IA8tgqwKPVoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EW2keoCo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718793561;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ntUKAapeHA785LXjMEANQKksPYzHK2y/PR5/y33x83o=;
-	b=EW2keoCoTMbaf+RKzZB7T9hRi5+rGviPPOhI4WjeH+IK8pI6YSfPJDWSAPXEmNk+549S4G
-	4Zd0y3MiEuMQEppFLKfu8TFhWGICZ6MRLjx6WRmLWeKFYuaTOAMrqhrub6cch63Q4XBKzf
-	+DEIGbE3J+88ZKAFyFaNQcUWnvDHSgY=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-18-G6sZfCbcMA6Pv7zcL8TONQ-1; Wed, 19 Jun 2024 06:39:20 -0400
-X-MC-Unique: G6sZfCbcMA6Pv7zcL8TONQ-1
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-632b6ff93e4so92947197b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:39:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718793560; x=1719398360;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ntUKAapeHA785LXjMEANQKksPYzHK2y/PR5/y33x83o=;
-        b=IkvcANqYI1W3FX1/rvGqV984YWv6FqjzqrNjw6CdkYTw1dd7fs1Mm9c1qISPN6zSiz
-         3JhtMAtYqP9Icfez9FvONtO+L47N6Hzu9bNZYdjxIzfBJFRGMsvSYROfv45XLHWgk4D1
-         m6h53ptqKTESO99akmtIfWioTbbne8Q8mtaMfJ3IV6GZygBnq6M+mC6x0Zz2p10RsWE2
-         fxnii5msYVhEwE80cObMIFxjEssniMfSZ4+IHfLdrQsnyX/ogXE0pFeKNrIruchv9tcx
-         lTjsR67lseYIIyQtngYmDU5mF4x1VO25SogbQPjWYq+PJH0v3ZYbxoUVklG5b7NU3nxC
-         RUoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHGwSRUA0BbXhxwo+stsuHezostkwEQetCMzhlch/U7hmliPKdsWx9yHJYck95NrDhJuWRq30VOCJ+qtv8YU+nkihELVPkJko10jt/
-X-Gm-Message-State: AOJu0Yw+twWkNYMuQWibVf+2ZWwJ+VWS+M2LpbeYYbKz7HsVZMzHpf+4
-	+Qk6nA3Kz71PareeAK5rG9QHTZ14USbpAaXvC9gd3jVlk1ZhZXSZchm1r8zADwLOEk5bYNZS6WB
-	xI9LMlKosM6xuW5EP2mWfXQNGvn65Wef40zVQ//oU3GX2Kd9PmDBdYYjuAmOW+vfDDk5i65hT4/
-	iaBaf/4DgdjOPJYtuWHbw2ijpRMwBoGZ9nf1S4
-X-Received: by 2002:a0d:ea55:0:b0:61a:cde6:6542 with SMTP id 00721157ae682-63a8db105efmr24056997b3.16.1718793559974;
-        Wed, 19 Jun 2024 03:39:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEg7zWipQPmtNid7RqIL4gVepYj5ThwzkTg8DjTOCa3QWkSm+6Gd4MRh4PEdRTHoGg/L4a8+m/Orqicl0ajhyo=
-X-Received: by 2002:a0d:ea55:0:b0:61a:cde6:6542 with SMTP id
- 00721157ae682-63a8db105efmr24056837b3.16.1718793559741; Wed, 19 Jun 2024
- 03:39:19 -0700 (PDT)
+	s=arc-20240116; t=1718793542; c=relaxed/simple;
+	bh=cKytdYt5vbtJnQQRa+4N+SmUx0M/mlzx2FbL2XVPyFg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=UI3PhXJGfrKTq7y2WVv7v7H88LHj/xujpqP2DIF3nz65RgLgC9cdPbSqOkMBL5zXHUVotkq+Zb+ikGp3BJ2EXV4+dMVf5ncF0+Q6fD48IT1q/9xK5ZiOUSMgUL2Q8SOBanfE/a87nWyyUToo6mcV3QuHGD4MVCEs4qRkm7J0lFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ocRLht3A; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718793539;
+	bh=cKytdYt5vbtJnQQRa+4N+SmUx0M/mlzx2FbL2XVPyFg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ocRLht3A77YH0SAmLdV1Q+YwATWPugN9m56L7mBrTX1rm9juVhrUtny2eT+wwSCEP
+	 tN4xtL8tY7TIP5X4AsqTpJSv+aaa8APilFUBZoxesBw/Ao/LuvXrylbtVA+8QJ2fRt
+	 60XflptarZdLEw/aJVSXODzLowSspXomCTNxxTPDMQhIbq4gn4swrHLRsEi0Vn+wGa
+	 HmVMTEuLrkqLM2oQ7zs386TAxC9/dIgRfzGFCmgiLfWFqBPfoEJLUDGKFlgfEGn16c
+	 ic/uZxpnPh38mWiSx6IXeyb1cp82gjtiSm69kiBUp74Bihk2bOisP/Nqqp7qrflXNT
+	 h/znlx1c8yFnw==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 768263780F7F;
+	Wed, 19 Jun 2024 10:38:58 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-mediatek@lists.infradead.org, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: matthias.bgg@gmail.com, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, fshao@chromium.org, 
+ kernel@collabora.com
+In-Reply-To: <20240619103034.110377-1-angelogioacchino.delregno@collabora.com>
+References: <20240619103034.110377-1-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH] soc: mediatek: mtk-mutex: Add MDP_TCC0 mod to MT8188
+ mutex table
+Message-Id: <171879353840.114192.14898547206273336130.b4-ty@collabora.com>
+Date: Wed, 19 Jun 2024 12:38:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617-stage-vdpa-vq-precreate-v1-0-8c0483f0ca2a@nvidia.com> <20240617-stage-vdpa-vq-precreate-v1-2-8c0483f0ca2a@nvidia.com>
-In-Reply-To: <20240617-stage-vdpa-vq-precreate-v1-2-8c0483f0ca2a@nvidia.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Wed, 19 Jun 2024 12:38:43 +0200
-Message-ID: <CAJaqyWdwn+w51r8t5NO0OTQMXsjQXzB+eC8Cs8xX7Ut_sFKscg@mail.gmail.com>
-Subject: Re: [PATCH vhost 02/23] vdpa/mlx5: Make setup/teardown_vq_resources() symmetrical
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
-	Cosmin Ratiu <cratiu@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Mon, Jun 17, 2024 at 5:08=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
-> wrote:
->
-> ... by changing the setup_vq_resources() parameter.
+On Wed, 19 Jun 2024 12:30:34 +0200, AngeloGioacchino Del Regno wrote:
+> MT8188's MDP3 is able to use MDP_TCC0, this mutex_mod bit does
+> actually exist and it's the same as MT8195: add it to the table.
+> 
+> 
 
-s/parameter/parameter type/ ?
+Applied to v6.10-next/soc, thanks!
 
-Either way,
+[1/1] soc: mediatek: mtk-mutex: Add MDP_TCC0 mod to MT8188 mutex table
+      commit: 30db3d4b28990ad7897d66acc43b4f29e33abb35
 
-Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+Cheers,
+Angelo
 
->
-> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
-> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
-> ---
->  drivers/vdpa/mlx5/net/mlx5_vnet.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
-x5_vnet.c
-> index 3422da0e344b..1ad281cbc541 100644
-> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> @@ -146,7 +146,7 @@ static bool is_index_valid(struct mlx5_vdpa_dev *mvde=
-v, u16 idx)
->
->  static void free_fixed_resources(struct mlx5_vdpa_net *ndev);
->  static void init_mvqs(struct mlx5_vdpa_net *ndev);
-> -static int setup_vq_resources(struct mlx5_vdpa_dev *mvdev);
-> +static int setup_vq_resources(struct mlx5_vdpa_net *ndev);
->  static void teardown_vq_resources(struct mlx5_vdpa_net *ndev);
->
->  static bool mlx5_vdpa_debug;
-> @@ -2862,7 +2862,7 @@ static int mlx5_vdpa_change_map(struct mlx5_vdpa_de=
-v *mvdev,
->
->         if (teardown) {
->                 restore_channels_info(ndev);
-> -               err =3D setup_vq_resources(mvdev);
-> +               err =3D setup_vq_resources(ndev);
->                 if (err)
->                         return err;
->         }
-> @@ -2873,9 +2873,9 @@ static int mlx5_vdpa_change_map(struct mlx5_vdpa_de=
-v *mvdev,
->  }
->
->  /* reslock must be held for this function */
-> -static int setup_vq_resources(struct mlx5_vdpa_dev *mvdev)
-> +static int setup_vq_resources(struct mlx5_vdpa_net *ndev)
->  {
-> -       struct mlx5_vdpa_net *ndev =3D to_mlx5_vdpa_ndev(mvdev);
-> +       struct mlx5_vdpa_dev *mvdev =3D &ndev->mvdev;
->         int err;
->
->         WARN_ON(!rwsem_is_locked(&ndev->reslock));
-> @@ -2997,7 +2997,7 @@ static void mlx5_vdpa_set_status(struct vdpa_device=
- *vdev, u8 status)
->                                 goto err_setup;
->                         }
->                         register_link_notifier(ndev);
-> -                       err =3D setup_vq_resources(mvdev);
-> +                       err =3D setup_vq_resources(ndev);
->                         if (err) {
->                                 mlx5_vdpa_warn(mvdev, "failed to setup dr=
-iver\n");
->                                 goto err_driver;
->
-> --
-> 2.45.1
->
 
 
