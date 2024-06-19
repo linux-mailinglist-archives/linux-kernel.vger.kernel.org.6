@@ -1,101 +1,110 @@
-Return-Path: <linux-kernel+bounces-221655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304DE90F6D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:17:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C769290F6D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 443031C24355
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:17:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8B141C23B5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4328C158DA1;
-	Wed, 19 Jun 2024 19:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gq5epQCN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D09158D61;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F005B158D8F;
 	Wed, 19 Jun 2024 19:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xnPJP2aC"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36028475
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718824614; cv=none; b=YPL9Q7tAWUDpatP/Ekhc8ZXx5+mSzITfwKxefLYGDJwuB501HGBCVYey2PDrJ2ZZYTEJlxDtQh3U42Tb31PWVreNe4a4REt7touejO+Bz3k9S72c7EeMGKLCa+23q2BBPcp887oxNCTus3lZnJeH3OVyRnvW2ZtQPJUtXA6J8Ro=
+	t=1718824614; cv=none; b=AQdRSQ7BYS8c6V5fEJ0lo3z1hHKAsFbXdGrTjl2p61Vsa5hkRqQTFJE6UNOFgQ8TwuJkUBgp5NAwHGwF6T6I2TOhjcBq8N5eLJAp9Z066tQ0ieeBsIp10Rv4HoK66SWdWn3WUYdlaEjk5klQtto5bQPYdHp2WeQnXEchtfx7QBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718824614; c=relaxed/simple;
-	bh=/cs5OYCa2lpAA+z+y9xQeJ0jRLhe5YHXS68JWqgYx/0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N/i3oyiqk7NJg0zxD33r6rrSPEqk1aw+lMr8VHuCi5BcFb9CbBBKKeXvHhfMR4Hfnw0xB0/Rk+rIjlkND72bwIKqc1Vca+T+N4hIVSHYbl5vQWhNZLtHv98K8MCmz3zzFQtN7kddtsP22GDWYAxd6dczi/eF+VWj3CbRKPvOJU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gq5epQCN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0D92C4AF09;
-	Wed, 19 Jun 2024 19:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718824614;
-	bh=/cs5OYCa2lpAA+z+y9xQeJ0jRLhe5YHXS68JWqgYx/0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Gq5epQCN46wle97nJq0CkCwCtJ4lJyHWfYXNEDMvZhDkoZhRjDQUoI1775JovzcKT
-	 cy5es/W2HSi4PzEt/LHPnzIXDtO68NgsswFlUHhvICwjOn+3PDKXqjT9/BQVyX0Fk4
-	 oKU4NP8dT1nBjQRt2TxV9x/oHwAFDwbjiFluiayyFteiB4Uv2fETTw1VIPO6U1hn8f
-	 qzu3y+0hI0j/HI3Y2ztMbc++ku9bQxuznOcf9nUOq+3xJmFS/jIQo8mmGGcIvxM3L0
-	 cXn6JQ1uOsNtIZqoEWxW+pu2yQZLMTexemArNQPFrsuPGidwUm76AkOueLvvC7aD9L
-	 jxhWsGf1wsQQg==
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d1b8bacf67so2154b6e.2;
-        Wed, 19 Jun 2024 12:16:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUrKqNx5M5wScLVNK5byKHUV/OxwHH2CrEI/PqEIclgXtdW2Mj0X4ytARMemQNZL39Ygm4QGX55JnA8+7oSvZwBY4407hGEPDfvZ9uAEX5bQDIKhjuPzGqCxEJ52zrMpyBMXIATCDI=
-X-Gm-Message-State: AOJu0YxtHER6N87scgr25vN2WF/l4d0cux8H2mLi4ZZHdvx8VQ0vo324
-	eMH2YFQbUzJp3V/RjLCKiayRJzAgrPZwS1j+oMIwTLGY+GFNERuXs2JVnjxoXk6CJ2PBZBZp3U9
-	otFiAPP3gwPXL/sg9Ze5Jdvayu74=
-X-Google-Smtp-Source: AGHT+IEfml7ZblzBlVlSN+ywWZBraHzOqqfJ0BgNoe5hJYTnwnxJeTLHnkP/zv5sY8p388n6ccfEn2lMgH4BRGW+x3o=
-X-Received: by 2002:a05:6870:5586:b0:254:d163:c3a9 with SMTP id
- 586e51a60fabf-25c9443c7b6mr3920450fac.0.1718824613209; Wed, 19 Jun 2024
- 12:16:53 -0700 (PDT)
+	bh=bGrAT0XuX6HIRNqdaF1eFEFv7sX4k+pappk3LlTHjpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uNYZgtDUKuoJx2VE1izf0HHpv/WZF3RmMPseG/gXyqy7GwOZubHCvle1fvTnQsoXnXZvtpl28wuW5Y9DCVq+RneOLPTHHnFaeXc6pLrwyFmHoFkF32klLCq+CFB13cIE5l2BhcSpiW/s5GshP+NmLFVSR/MQL6rMS5wlxQVPM2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xnPJP2aC; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so75436a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:16:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718824611; x=1719429411; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xW27As3CyhfzKxmc2us+WS7TrU6cHg0Z4tjRes0sYro=;
+        b=xnPJP2aCDh2MMIGK+izEkA5UWO4CLVd5mTLPlKoPTP/34HHjI/IWKpQE+l6qQdUnt2
+         XIikaR6voKPDNObpX4hrWAVRBJ2v/FVhsyRDvukg/VZ9p+37qFD+syDdBJAcTu/HuQeD
+         y6hnMLLlDO3tF9R3aqFOjq07gNR5B3v3Px61LPimNpdVp1NxPvqfRSHH3dgI3YxxYBJO
+         Jr2ujzZQuHAwZfZLGLSLUupNYtqDlNBchgQa3ek5nP6jEen6Ess2kVpkFnNNYbgnWHWt
+         yTYZgiZyhJxUHMHaQT1HG9qH11h6PY9+ao9+k61mtrpZ9rPWdqdXKDMvOJv0H2DTM4nz
+         wm7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718824611; x=1719429411;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xW27As3CyhfzKxmc2us+WS7TrU6cHg0Z4tjRes0sYro=;
+        b=rgVWCf0rv1+1EqQ1ahEA/y5l8x1oyGuBlXoaLCBpF/wZqj7/IXWme8FUxKTfomjip0
+         KISOy8jeOpOS0cvrzsqrCo1DhsAapdO7OAw/3NaZr4R4GEcGqnP56cc2DebCIvp7QymF
+         kkG38N2xRYrEYljaFvLJ6z8mEiUjdQF+cvJg7DQaE0/9GWu8ErwAKP9NPJWDwSuaF/uy
+         OX6QpSNk/TsQQw3UFzQQEZiNp3P/R/6u67KgXk2B963WIsAExyANopX+Jr9oKS19GDlL
+         nrPH2AhhN5Xl9KtfJ9aJmcFInM0smjojIFO7tb8XjNZkfgZfTYW/FbDJDj9Tl/ZbVfEz
+         +lSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQY4J0DLcPnaMWw38xoqXNGC8hw6N9y2XDGaLEjOOovW096n7HUlLCrP8npEXqhXztO8XzfLsJu+6ps4zZVX6YYnDR6YODNduo8F6J
+X-Gm-Message-State: AOJu0YyqJZBKainO0m3ITdUUJi6vycQmCQQG+zoV0GC2Dzc/oU6icX9+
+	O/dFgpP3tF9rEof3Uvh2Ysb/z/RCcXnmMYzBxUTWmpTaImHSUWrjP4F7ulW+NmU=
+X-Google-Smtp-Source: AGHT+IFwU14UM0dtxkXha3cXVSm5zW59OPajkJoXmZPv7v7qen57UTQtx+vhLPPHRqijWQnwtuQjeQ==
+X-Received: by 2002:a50:ee92:0:b0:57c:6d9a:914e with SMTP id 4fb4d7f45d1cf-57d0bff1a34mr2084327a12.30.1718824610830;
+        Wed, 19 Jun 2024 12:16:50 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:9028:9df3:4dba:9578:7545:6874? ([2a00:f41:9028:9df3:4dba:9578:7545:6874])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cbbb5576csm8108656a12.89.2024.06.19.12.16.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 12:16:50 -0700 (PDT)
+Message-ID: <58025447-b916-43e6-ad07-0b11710edc3c@linaro.org>
+Date: Wed, 19 Jun 2024 21:16:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618055221.446108-1-srinivas.pandruvada@linux.intel.com>
-In-Reply-To: <20240618055221.446108-1-srinivas.pandruvada@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 19 Jun 2024 21:16:41 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jyf4A58z5mLa0xLdjQ=3uVAsopuH1CMx8yhMi8jFSVNA@mail.gmail.com>
-Message-ID: <CAJZ5v0jyf4A58z5mLa0xLdjQ=3uVAsopuH1CMx8yhMi8jFSVNA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cpufreq: intel_pstate: Update Arrow Lake hybrid
- scaling factor
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: msm8916-gplus-fl8005a: Add sound and
+ modem
+To: "Lin, Meng-Bo" <linmengbo06890@proton.me>, linux-kernel@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
+ Nikita Travkin <nikita@trvn.ru>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20240619111523.54301-1-linmengbo06890@proton.me>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240619111523.54301-1-linmengbo06890@proton.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 18, 2024 at 7:52=E2=80=AFAM Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
->
-> Arrow Lake uses the same scaling factor as Meteor Lake, so reuse the
-> same scaling factor.
->
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+
+
+On 6/19/24 13:15, Lin, Meng-Bo wrote:
+> Enable sound and modem for the GPLUS FL8005A.
+> The setup is similar to most MSM8916 devices, i.e.:
+> 
+>   - QDSP6 audio
+>   - Earpiece/headphones/microphones via digital/analog codec in
+>     MSM8916/PM8916
+>   - WWAN Internet via BAM-DMUX
+> 
+> Signed-off-by: "Lin, Meng-Bo" <linmengbo06890@proton.me>
 > ---
->  drivers/cpufreq/intel_pstate.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
-e.c
-> index 3dc9b82c43af..72d9e60369e0 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -3401,6 +3401,7 @@ static const struct x86_cpu_id intel_epp_default[] =
-=3D {
->
->  static const struct x86_cpu_id intel_hybrid_scaling_factor[] =3D {
->         X86_MATCH_VFM(INTEL_METEORLAKE_L, HYBRID_SCALING_FACTOR_MTL),
-> +       X86_MATCH_VFM(INTEL_ARROWLAKE, HYBRID_SCALING_FACTOR_MTL),
->         {}
->  };
->
-> --
 
-Applied as 6.11 material along with the [2/2], thanks!
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
 
