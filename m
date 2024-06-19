@@ -1,150 +1,124 @@
-Return-Path: <linux-kernel+bounces-220685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C9B090E562
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:19:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9005890E563
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9E41F21F8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:19:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DC7A1C212C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B3478C91;
-	Wed, 19 Jun 2024 08:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2D579950;
+	Wed, 19 Jun 2024 08:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="n3CsIwOQ"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B8sRKKI5"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46143224D4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265FC224D4;
+	Wed, 19 Jun 2024 08:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718785138; cv=none; b=J34gdpUY2K7IhzULETnuJJg8k+S3/kdKK/vKADukbsjMHaDHoNGw8LyeNNsw2wbkoHZzqFAVcrPpJvysfgv75nPcGWY4LO+bWYSx3TdtsthJ/msoeX/MAfKIq6ZLVknz73IgTypaDf9MgOuoc2eJIP7ROGV2Ya7C57yYEat6IYk=
+	t=1718785188; cv=none; b=tCydbFXFPxny3lhJesD1KalmnDsUXsyctb3K/dBG2jOdNcnAIf2NuYcfI8j/Tjrby3OeDw4c6Zv2XQmJ+ivb06kBdR8TDQPhsLpS94QjU5JBTa7F7VQI7XFVmsAaAQsjbSgNrYGPo7+EtFLRVq1zIHVz801nmncSp9GdIOCzVrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718785138; c=relaxed/simple;
-	bh=oYlLSyjsTtd58Hpnqjjem769849ygCKg/WUYhs0fxjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lZ65UkywNtTnlLM1n7OQ3APbfDZC3R7g8OY34AeZX86cNOBDu1SVx9iMzAi7e2SLevX/owbwmw/lSiTzXVwrsLoa6WCDQzPutrpyHXB5qzMM2iu/fXRM3wbxIQfXR8MSx+ik/byeOtjCs+zMgtPUknuoaICUdazZlNp31E9oFdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=n3CsIwOQ; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718785132;
-	bh=oYlLSyjsTtd58Hpnqjjem769849ygCKg/WUYhs0fxjo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n3CsIwOQjzqur/lgnMMCJeWF+WdN7WWBQdSJM8x/5Mm4LAA9KuedLEeHCp9xp8JUH
-	 lqBdEj531tJ8zD2SsMwBImswIEk8+3/xWMhKwsaPkzfBUCLl6tLyaG4phf3YZTteo4
-	 pnPU7NwMTN3Y6ieN7XAaTXGLeWr3Izry9Om11ilgSCcWKY6ADOA0Xhqir9EULW1O5m
-	 AF9aRF5CxSb+JcvLah2zSgosdnFd5mE1djnyMHXYwV1N8ISAO6ylVU0N+/AFlpB6tR
-	 p/s+kX5KFQ1h6sTDK9z1Lsv9Io23Wvn8ZwbHRcxV0L95xski/bi4vQrJ6w03SnXEGv
-	 d4g9I+9g8/dLw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 704B43782176;
-	Wed, 19 Jun 2024 08:18:51 +0000 (UTC)
-Message-ID: <1f815ff8-2b7a-48de-8b47-0bc9b3cb67ab@collabora.com>
-Date: Wed, 19 Jun 2024 10:18:50 +0200
+	s=arc-20240116; t=1718785188; c=relaxed/simple;
+	bh=U/6PaVd0sn6BuQ1Z8uJo+QV1aXzlBdtU3YjkF0Qnd9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Zx6eD4gWIzwFb3OYzh24KeWocsxk/72kOzRaYe01ygAzFvUxW/d53kZ0W9yP0Lj3QiiqjX687r3DKUW9Xc+DDL/diPjDxF/zHJ0P7k46PPZUQyzSSVLfANaKQlEN7Oq3/6qXhtKYKkNbATdPYnoT+ZNtaHG/Trs4tFmyLFzhWHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B8sRKKI5; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f6a837e9a3so40520505ad.1;
+        Wed, 19 Jun 2024 01:19:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718785186; x=1719389986; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zIsaiR0+0fhceiTdrnHdlRIEev/J+ctV391EE8b9p48=;
+        b=B8sRKKI5tN1a+04e7KcCHQU5snr/7THl20rVL9HSsL5PFiROZFoxOwN4DQ5+GSVHJu
+         mlrhDgMk/4eNgyNGm+EJMD9avem9Ny3iRJ1vhswqxuI9ZA1l17w3qzHP5l5a+svBMeEw
+         iDZAarscX688DhquF0UGyu74CD94lpiZ/NQt5S0q8RNipV8IZUrMUJNMKHcmiUtfrMy9
+         /rG2byK7yXIHod/pO5B8rky+ptALNejjV+2bFTB0P896KTOriY4NjpIxn0tNVbcDU0NW
+         f1yxlypCqhJNeLpF+oFexiuDgGGi891/QIuQuOBVWflaEsk5/EopnMtH28psHY1zsolu
+         lh2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718785186; x=1719389986;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zIsaiR0+0fhceiTdrnHdlRIEev/J+ctV391EE8b9p48=;
+        b=aETceJ5ANubOeiM/SUmUBcrPFB1SgW7R8rzkJfppdcYDnUZKVxB7MptoDOF56TxSEW
+         ZCYefegeZ59FtqL+GniGfmSNqsD9ewJ4ypP3wG1UZiTx0nObJbxF03MF8wlNk4nsngdw
+         PZ5RjKM59zV6CtYNeEghNJg+qWOe7ZyIXxFBdNLOotcKkkhba74DJxJ+qIlF03geykoc
+         073Z7nfnzH2zRkTBUsHBOPztY5DVl4mswG/Ikid6mmTxQWp9JqV5tzJPopfMYf78uTZf
+         CSwaaDuCbs5crlQtFKsHpnKDX8V4ycfh5eCxhEJly4oiLNtZ14BXEMV/xSJmDIUFDSKe
+         sE9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXBtt89wPh5QAEMiXQpv3YI+oOLdLwerZ98RLQwWmcOiKDaaoQdND5xA8Vssztbd6RiWsXaNCuaHND6tn5ES1wfaJAQka4XhzaasNH4pYtl5FiXmZivqrzBEErVex3Mr3fcbohABcSFvUt/7+ccUA==
+X-Gm-Message-State: AOJu0Yze3n8o8ILvtbuWtkinUzHI2/ktwEB9WYCgHQ8cZoT2HXz0KrUz
+	3QBfJzyTdMQJnNL8WvfSdukZaIg+TdNEdFMmieFNThrHAJajbZAz
+X-Google-Smtp-Source: AGHT+IFHjm4QqIVzAWWScaMIxReIlqu5KnL2XmtdtYV1eTUAB6vdAFn8U9TsfVwZxoP2CnacwQ3tdA==
+X-Received: by 2002:a17:902:d2c5:b0:1f7:2bfe:87a2 with SMTP id d9443c01a7336-1f9aa4734ccmr22528415ad.62.1718785186391;
+        Wed, 19 Jun 2024 01:19:46 -0700 (PDT)
+Received: from localhost.localdomain ([120.229.49.95])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f1decfsm110368105ad.250.2024.06.19.01.19.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 01:19:46 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v2 0/5] perf trace: Augment enum arguments with BTF
+Date: Wed, 19 Jun 2024 16:20:37 +0800
+Message-ID: <20240619082042.4173621-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mailbox: mtk-cmdq: Move pm_runimte_get and put to
- mbox_chan_ops API
-To: Jassi Brar <jassisinghbrar@gmail.com>,
- =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
-Cc: "linux-mediatek@lists.infradead.org"
- <linux-mediatek@lists.infradead.org>,
- =?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
- =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
-References: <20240614040133.24967-1-jason-jh.lin@mediatek.com>
- <20240614040133.24967-3-jason-jh.lin@mediatek.com>
- <CABb+yY2bwj2BcdJLGe1ZYwCrnXL3LtcePMb=wQPaBKorBSs2yA@mail.gmail.com>
- <fc92d51cc6e55301c081ea2d589e1ba6cdd295ee.camel@mediatek.com>
- <CABb+yY1L+YGjf6O9UgPYkS2gWAdo=7QoojSAUNWC_8o7XtZQSg@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CABb+yY1L+YGjf6O9UgPYkS2gWAdo=7QoojSAUNWC_8o7XtZQSg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Il 18/06/24 17:59, Jassi Brar ha scritto:
-> On Tue, Jun 18, 2024 at 3:42 AM Jason-JH Lin (林睿祥)
-> <Jason-JH.Lin@mediatek.com> wrote:
->>
->> On Mon, 2024-06-17 at 13:18 -0500, Jassi Brar wrote:
->>>
-> ......
-> 
->>> As in, how often and long are the "channel idle" periods? And when
->>> active, how many transfers/sec ?
->> Is there any debug logs in mailbox can measure this?
->>
->> This mailbox channel is use to configure display hardware in every
->> VSYNC, so the channel idle periods may be less than 16.66ms.
->>
->> It should call rx_callback() before VACTIVE, but sometimes it will be
->> dropped by mbox_flush() if the new message is coming.
->>
->>> I see every TX is acked by one RX packet. How long is the typical gap
->>> between a TX and its ack?
->>
->> Typical gap between a TX and its ack is less than 16.66ms.
->>
-> So basically the usecase is driving some display at 60Hz. And I
-> believe the display is driven
-> continuously for at least some minutes ?
-> If so, RPM between xfers is not really in effect because the
-> autosuspend delay is 100ms while you
-> get() it every 16.66ms. So all that is happening is some variables
-> changed under a spinlock.
-> I think you should consider get/put RPM in cmdq_mbox_startup() and
-> cmdq_mbox_shutdown().
-> 
-> Thanks
+changes in v2:
+- Move inline landlock_add_rule c code to tests/workloads
+- Rename 'enum_aug_prereq' to 'check_vmlinux'
 
-With at least MediaTek (but surely more than just mtk), a system that is idling
-while having display ON doesn't mean that the display is continuously refreshed
-by the CPU and with CMDQ messaging.
+Augment enum arguments in perf trace, including syscall arguments and
+non-syscall tracepoint arguments. The augmentation is implemented using
+BTF.
 
-For example, when static content is displayed on screen, the CMDQ mailbox never
-gets shut down, but no communication happens for a relatively long time; the
-overhead of actually shutting down the mailbox and setting it back up would be
-increasing latency in an unacceptable manner.
+This patch series also includes a bug fix by Arnaldo Carvalho de Melo 
+<acme@redhat.com>, which makes more syscalls to be traceable by perf trace.
 
-This is why I opted for autosuspend - it's only bringing down certain clocks for
-the CMDQ HW, adding up a bit of power saving to the mix which, for some use cases
-such as mobile devices with relatively small batteries, is definitely important.
+Test is included.
 
-I'll also briefly (and only briefly) mention that 120Hz displays are already a
-common thing and in this case the gap between TX and ACK is ~8.33ms instead, let
-alone that displays with a framerate of more than 120Hz also do exist even though
-they're less common.
+Howard Chu (5):
+  perf trace: Fix iteration of syscall ids in syscalltbl->entries
+  perf trace: Augment enum syscall arguments with BTF
+  perf trace: Augment enum tracepoint arguments with BTF
+  perf trace: Filter enum arguments with enum names
+  perf trace: Add test for enum augmentation
 
-All of the above describes a few of the reasons why autosuspend is a good choice
-here, instead of a shutdown->startup flow.
-And again - I can place some bets that PM would also be applicable to SoCs from
-other vendors as well, with most probably different benefits (but still with some
-power related benefits!) compared to MediaTek.
+ tools/perf/builtin-trace.c                    | 214 ++++++++++++++++--
+ tools/perf/tests/builtin-test.c               |   1 +
+ tools/perf/tests/shell/trace_btf_enum.sh      |  57 +++++
+ tools/perf/tests/tests.h                      |   1 +
+ tools/perf/tests/workloads/Build              |   1 +
+ .../perf/tests/workloads/landlock_add_rule.c  |  32 +++
+ tools/perf/util/syscalltbl.c                  |   7 +
+ tools/perf/util/syscalltbl.h                  |   1 +
+ 8 files changed, 289 insertions(+), 25 deletions(-)
+ create mode 100755 tools/perf/tests/shell/trace_btf_enum.sh
+ create mode 100644 tools/perf/tests/workloads/landlock_add_rule.c
 
-....And that's the reason why I think that implementing a way to cleanly perform
-this kind-of-aggressive power management in mailboxes is something that needs to
-be done.
+-- 
+2.45.2
 
-Cheers,
-Angelo
 
