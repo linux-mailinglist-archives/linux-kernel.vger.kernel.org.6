@@ -1,103 +1,87 @@
-Return-Path: <linux-kernel+bounces-221865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36FF990F9C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:26:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C5590F9CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A31D6B21F47
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB0961F2405F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1003215B558;
-	Wed, 19 Jun 2024 23:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0177F15B543;
+	Wed, 19 Jun 2024 23:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWR1s0i4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLUXXsvZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F342762C1;
-	Wed, 19 Jun 2024 23:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB511C68F;
+	Wed, 19 Jun 2024 23:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718839604; cv=none; b=o+4+Wa85SaCBGMrW5rbCmFiX4b46y1oK/s/kXrC8+zQ2BWhwdEVkT9se+i6MBaf7EWjgE96ug4duU2XsKPGGoEQOa4QQyIpwn5r/FUaWHhXty+7Mdvqhl9LqECxrRJsnXNLbFtizEszQYDXhdbmBzJOZL2KxdnkMPBgZwqs3Q7c=
+	t=1718839934; cv=none; b=GlQVQZ0VRi10+YitiDihGYQNLpGfqzYXsVEofmNqLRdSBWmDtf6YVqVop7+tl+Co66QOyy9rbg4vbUWXcrdLYliK29u7P2wp+Lbh27woQlrFRnYUvMQqiSGaFsqz2HWeQ4zb2u/8z+ypYxGoSUiQbGV43u9IFkzbM6Eg8QWa9Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718839604; c=relaxed/simple;
-	bh=LtTbeDwGyrVBMp8h9erKfHHqg9wGUZ8l9PdqfjyUg00=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a6qvkcKX9wiDAf1kd89DEVLBqEXXWs+WwdlweYS417Z55LeNIye+ezuMKeQkgPvZ2866dsp6CcB2H/RJy11vBPD2weDwC4/PhgyCkmuP6R/u+a/zopVjsNVSWLjINqcb5QWYQAhGi2tvsIuHYjeO5gaOZosy7R7/0U4DvFAROXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWR1s0i4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1150C2BBFC;
-	Wed, 19 Jun 2024 23:26:43 +0000 (UTC)
+	s=arc-20240116; t=1718839934; c=relaxed/simple;
+	bh=F4CpIzNzbBUMPI+mEbkLZg02CLmFQNk66TZ/t91MMao=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MIVg+vlE0UhEP7Gzokwy7xDU39NPrw7biDQ7KHeKVwl+7oSoCOjRsvVgFBcCozLnPZJ5RCmSPjFD3tcuqcm3fRDV9gY5OdcKtbGL5Ux8AwiR4/HiOAEEMzu5Unprjck3bf1M13S4dc+rmCfPLV60m8l/MN+9QAlvl2BZpIquzmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLUXXsvZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CC45C4AF0C;
+	Wed, 19 Jun 2024 23:32:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718839604;
-	bh=LtTbeDwGyrVBMp8h9erKfHHqg9wGUZ8l9PdqfjyUg00=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QWR1s0i4kNpNlA2Q93rqX11eyYTIQsSBgy4NsKctzXzUE6+bjwodlRwd4hGnkEh+e
-	 qiGoChcPMZT51i2dCYhk3VCOqPYuY68vRp6KerrN1P7lDbL5O/JAvR81hnlHOO1xeI
-	 DeO5vSM/eNBdQAqDo1mV0TqmXjiINvqP6DOerkjr6KNYIe4YfPrbY7GUNSJwJGZbG7
-	 c46u8Pnyt8DLHmIRbk/H15p+KLr5TquYkBArq46sQ90gpVPnd72Bii3mN6FYegNkAB
-	 UGGWZP2kcz2pYAiO5kdIuY71+v3yJMKnqlkDBpNcvyHN1vuiwjgtqm5vhyGqUgRFoo
-	 Wu7jjFwLVv5pw==
-Date: Wed, 19 Jun 2024 16:26:42 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: admiyo@os.amperecomputing.com
-Cc: Jeremy Kerr <jk@codeconstruct.com.au>, Matt Johnston
- <matt@codeconstruct.com.au>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
-Message-ID: <20240619162642.32f129c4@kernel.org>
-In-Reply-To: <20240619200552.119080-4-admiyo@os.amperecomputing.com>
-References: <20240513173546.679061-1-admiyo@os.amperecomputing.com>
-	<20240619200552.119080-1-admiyo@os.amperecomputing.com>
-	<20240619200552.119080-4-admiyo@os.amperecomputing.com>
+	s=k20201202; t=1718839933;
+	bh=F4CpIzNzbBUMPI+mEbkLZg02CLmFQNk66TZ/t91MMao=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fLUXXsvZAPE9OKsb3U0T1Wij/dHh7+TZHI6YSxmnJ31CHIL0NM1VEn2t+F9OooW7e
+	 YH1LEvqE5BltEbIzJoZEb+PJLxNBkS3j8KZeWhZmi6CubdXtB33kBy+LLmSK+Ngryr
+	 XaMRIWBR23l66F2sIo2AcL/tPysTE9P7XN8vL1rxrd0zU/hw9O7qA1qhyJI+N7hgkW
+	 v27trALBU5biyPJka64GjGcpegFsOC6t/nbhJo6FdjwuqGrX2t+wiAyQkzB8+dCacf
+	 e9ZJm2tH906glOF2cdzu6oPozbv+qiQMUmulYQh3ZiEJv4NRHanmglzAy5dIJ+C25G
+	 xnu5KsammyuBA==
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5baeab9fd60so120371eaf.2;
+        Wed, 19 Jun 2024 16:32:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUj1g9tNHPxoYG0pQMAFjqa7eRQeqmgUZSgijZGUQZ/c4W6mK4HlHbkdnWE5GPjpGaXF0n76ZetPCxRKOjOVUl1qoIhtNkcz+IbDmCA/Rb+d8U9tovRqUdwc69hgnfpuqgW7K/7G/AaWw==
+X-Gm-Message-State: AOJu0YwB01wt4B2+GW1ArZzb3o5Yi6pgrcePKx3s12N1tcDUvBDuWCM0
+	bZ/TDDqePPugP4ENWfn5NvKOXDu9r6MkUVp2aLr766r0tY3ufIWVuJiKKyqnfoWhag3EPSh7dbb
+	P1CH9zHuPjVMa/QKGWfkfEl9vv90=
+X-Google-Smtp-Source: AGHT+IHztATvBmnqgF15p6/sdSBgWtaA7Pf8BZ+Y2cUp/dd+2nIxbJC+EgJkCNcFTcQIFIugOT8rEaxmZOCNLtYCLKw=
+X-Received: by 2002:a4a:91c2:0:b0:5bb:672:4067 with SMTP id
+ 006d021491bc7-5c1adc0d1fcmr4011799eaf.7.1718839932856; Wed, 19 Jun 2024
+ 16:32:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240619161753.385508-1-chenxiaosong@chenxiaosong.com>
+In-Reply-To: <20240619161753.385508-1-chenxiaosong@chenxiaosong.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 20 Jun 2024 08:32:01 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-V80sdH2uXoDe+xqf9N-gFYTjqWtERrB+-vH0s0NUMvw@mail.gmail.com>
+Message-ID: <CAKYAXd-V80sdH2uXoDe+xqf9N-gFYTjqWtERrB+-vH0s0NUMvw@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: remove duplicate SMB2 Oplock levels definitions
+To: chenxiaosong@chenxiaosong.com
+Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, pc@manguebit.com, 
+	ronniesahlberg@gmail.com, sprasad@microsoft.com, bharathsm@microsoft.com, 
+	samba-technical@lists.samba.org, chenxiaosong@kylinos.cn, 
+	liuzhengyuan@kylinos.cn, huhai@kylinos.cn, liuyun01@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 19 Jun 2024 16:05:52 -0400 admiyo@os.amperecomputing.com wrote:
-> From: Adam Young <admiyo@amperecomputing.com>
-> 
-> Implementation of DMTF DSP:0292
-> Management Control Transport Protocol(MCTP) over
-> Platform Communication Channel(PCC) network driver.
-> 
-> MCTP devices are specified by entries in DSDT/SDST and
-> reference channels specified in the PCCT.
-> 
-> Communication with other devices use the PCC based
-> doorbell mechanism.
-
-This patch breaks allmodconfig build:
-
-drivers/net/mctp/mctp-pcc.c:116:6: warning: unused variable 'rc' [-Wunused-variable]
-  116 |         int rc;
-      |             ^~
-drivers/net/mctp/mctp-pcc.c:344:3: error: field designator 'owner' does not refer to any field in type 'struct acpi_driver'
-  344 |         .owner = THIS_MODULE,
-      |         ~^~~~~~~~~~~~~~~~~~~
-
-In addition, please make sure you don't add new checkpatch warnings,
-use:
-
-  ./scripts/checkpatch.pl --strict --max-line-length=80 $patch
-
-Please wait with the repost until next week, unless you get a review
-from Jeremy before that. When reposting start a new thread, don't
-repost in reply to previous posting. Instead add a lore link to the
-previous version, like this:
-
-https://lore.kernel.org/20240619200552.119080-1-admiyo@os.amperecomputing.com/
-
-See also:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#changes-requested
--- 
-pw-bot: cr
+2024=EB=85=84 6=EC=9B=94 20=EC=9D=BC (=EB=AA=A9) =EC=98=A4=EC=A0=84 1:18, <=
+chenxiaosong@chenxiaosong.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>
+> smb/common already have SMB2 Oplock levels definitions, remove duplicate
+> definitions in server.
+>
+> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+Applied it to #ksmbd-for-next-next.
+Thanks for your patch!
 
