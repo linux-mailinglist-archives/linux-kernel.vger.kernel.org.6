@@ -1,80 +1,108 @@
-Return-Path: <linux-kernel+bounces-221355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD5A090F260
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:40:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF91390F2BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 774FA1F233E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:40:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5993BB2619F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E564F15099A;
-	Wed, 19 Jun 2024 15:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D425153800;
+	Wed, 19 Jun 2024 15:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0tfTFKJ/"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="xAkvfHA8"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CD42D05E;
-	Wed, 19 Jun 2024 15:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F5C14E2C9;
+	Wed, 19 Jun 2024 15:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718811640; cv=none; b=fvYL0o6+/Ku/q7iC7o0pIajhJRgU2s4vaI/q4hPBRkKEbOM0cSl2e1yz3gYiu+nNRz/axxqrkhRBOwfV5JEYizVoGCCsf6WRGTDzeM0bDlNykdeHitqKYOboMsVWWHaNysW3HSb/AQW0NA1aNfn9I9RfKzhKU6UGd35veb/YXmY=
+	t=1718811688; cv=none; b=bfyl7xZmrCOcUhnbe1BLEkC56ZIcWdjtjaBRnXt7dXm62v7/RKqdKp/vrNuAyIt9hMRqnFiP1hC/vFDlN//wtUzhfS4kyX7cj46BA4y28KH9qqLl081S6uptDcfO2/6S+68lWSq0qHgrAKJb88PBkPDEl8stAgYwCJOznvGMk1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718811640; c=relaxed/simple;
-	bh=BDgZ3xDn9gxLkDVnmDBRwbhfKz7gr4CntoAHFbS/Gts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLDyHq6RcbFxAgD/TN31zvVKgiD1RSzP15z6fcnYJM7DsSwFK/5uZeQLlTi5mWAq5X656x8EkzaoSHEF3f7GU9kfV4PWFlFJTxu/M6G5AcMcA/9kr5Yj3ubWqLADTSvydDH575TODMyuBYN0bCTtRCux3fiXgKDW2nR56iwPLuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0tfTFKJ/; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=IKP7HtTH3mOIjMmVFrVD3bx20kA9x7VoTBKnsO5lB3E=; b=0tfTFKJ/mT+g/BYb8Xeh3lXaMZ
-	87SRDailod8QsckmI4C70slKv5V6QMQ4u0WyMKO6vWcch5XKw/9xJOl+hLF86AbDk+1kdGZ+5+M8g
-	LDOg+gdnjHNmRd5IP4xQDWpEq60zpKA7biAfVcWAKvgtVEyM91WZAW+7e/muqsgzoZWQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sJxQG-000Tz8-Sb; Wed, 19 Jun 2024 17:40:32 +0200
-Date: Wed, 19 Jun 2024 17:40:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Omer Shpigelman <oshpigelman@habana.ai>
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"ogabbay@kernel.org" <ogabbay@kernel.org>,
-	Zvika Yehudai <zyehudai@habana.ai>
-Subject: Re: [PATCH 09/15] net: hbl_en: add habanalabs Ethernet driver
-Message-ID: <e45e8d84-ab71-4ac9-8e97-c2ee13629dd6@lunn.ch>
-References: <20240613082208.1439968-1-oshpigelman@habana.ai>
- <20240613082208.1439968-10-oshpigelman@habana.ai>
- <20240614171618.3b65b3c9@hermes.local>
- <46806cc6-4008-467e-8ebf-cb70d1b8118c@habana.ai>
+	s=arc-20240116; t=1718811688; c=relaxed/simple;
+	bh=RT4j2J3K2cJPug7RNVsL6yX/1+8te7yz8mA1djK7REE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=l5AGffNdriOvAc7p3pqCFNAShi4sdeCjuDnZfGB6z4W7C++wXnwup75ukOch2Kx+/R16H+HV8CJtuJAmjnOLTtvpRuRwxWm2g5JsELm2vYLKzzeDZhIg7Ltp9aBgUp/yZTewGMYH05w7XhwJdLKC0XKBUKMybCBep+ATC+8SteA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=xAkvfHA8; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718811649; x=1719416449; i=markus.elfring@web.de;
+	bh=t5BuAxzFoF/+RdRA6VaLzFTyRU7lFDYKeo0DV2WDzlk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=xAkvfHA8biEeRnEi+oQhGy2Owlu6W+IcYtUieQIeml00P8MOii/yo+ZzYzY6SZzi
+	 JhSVEmlzPZyF/kQuhPOsSCHei6Hz7ijdqPzw6GaOtSTOUs0LyxTWM2E0iLxSfiyUg
+	 CxXFWOY9MtjngovgsEAX35VP/mI4FCU8aCfiNg0pCb4kLQo/1jOHMPYUNcB8I9KNY
+	 87IRiE0Ekl4kVhT7ZdYi9plPyJ6lrv6QC+OiG8ChHnN6VEPNRzjup0BhmJUtbguw9
+	 +klHjnBXkxNZYTnp4W/SZUVNsXm9oDyOz5kstthYET1wfRbKN1ugG2/pudCDK6C7g
+	 H8bUQxwdSeEKw6VBKQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N943B-1sOvN01Av9-00z95r; Wed, 19
+ Jun 2024 17:40:49 +0200
+Message-ID: <4f3ad4ae-1071-4411-9791-ee9d27cfcbf4@web.de>
+Date: Wed, 19 Jun 2024 17:40:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <46806cc6-4008-467e-8ebf-cb70d1b8118c@habana.ai>
+User-Agent: Mozilla Thunderbird
+To: Shan-Chun Hung <schung@nuvoton.com>, devicetree@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Shan-Chun Hung <shanchun1218@gmail.com>,
+ LKML <linux-kernel@vger.kernel.org>, Adrian Hunter
+ <adrian.hunter@intel.com>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Conor Dooley <conor+dt@kernel.org>, Jacky Huang <ychuang3@nuvoton.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, Peter Robinson <pbrobinson@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Sergey Khimich <serghox@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Yang Xiwen <forbidden405@outlook.com>
+References: <20240619054641.277062-1-shanchun1218@gmail.com>
+Subject: Re: [PATCH 0/2] Add support for Nuvovon MA35D1 SDHCI
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240619054641.277062-1-shanchun1218@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JHeYW0cTxhh2VTBOBK2iw7JrIrc8CacTjD4FKBl1hGqnrc+nRIi
+ uhdbk1aSRjCtkoUbXezCLmBVvhaNJeWmVdY6WMTNffK7v6HlLdQoGYDmHr3La3XPk8RCaOf
+ DuQ9gW7PJSCm/x4C/GrVxlBPnVNmrTZzgp+b0vdfOuFdBQglC4N7YwGkZg9MuLBRPCtFYcv
+ kLpNHagO+4wOXwYkb1dvw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:CjjkTc2rrZk=;SajpZgiLXLGdeK8Y/d6bvqJUNcz
+ hiHG/lWXa5DWRL0BJO7b6glIr8ZolceZc4YGZZMeRS8ZIcfQY8zaTJPJKjy5LgJ3dkbTMllCZ
+ uZ1/7pH1/ZFwi/fIyq1AQcCdIdVKcSmMQb7fDI9QCPXBXypuxMuv1beUFPGLlk3XUrJ8eW5T6
+ Y2iPE3FF9H4HDdhY+n1Twz878IDWfr5YvFkKQzTt1fGgQrk+CEvn3Q0C/GjJREyr+Ym21lpEf
+ LEj9X6BBXqKk3GVrPefoNHeg30U+7PcZzJk+6ynEL8xYcsxK3f6FL0X/CFRJ9dTvdlqnF4DGF
+ x6cjJRdYpWwZ431/hCF0epGxEfqJBec48MrweVh8qVTx2R5TuNslUOfq70i98jk7aPacDK4zM
+ iN3X/Kx66ORTXmGG+N71TlH4qSUixV8D3YdwHJTj7/Bt/qzb9XNycSB4YHXW2IDYB8ph56yb7
+ R2VIC3J3BQyz+op2U2rbTv3D+ox8RF+d3ac8/6FHwruFn/x3yEi3Fn2zEoEFnghat1BljvYJq
+ nl+LvkuYsDDFXeg61LTWO0GEcLIw6f0h5TUWPvBV+ZthfAkaXlXSxu/6ReHaEA9pLYadMZYG2
+ iZKPQ71tWwjkUwcntr7I+5576ifOX3eG8fZK+Dqs95Ad6nbzy3U9bi0gzjv9tYsjrweNxkEGs
+ pEKQip83d0gg3T0BbNAFLVSyIfo173vNkr7SSYEwmN9JONhUPfbJ9Zb9dIO32vx9WyWsQ1anO
+ NMPe6FFtmTzYzz68k4jddlQjXWbpqglT//ZQQouZWnJUAyuFldWRXHc6bgkSkTQbVC7ry1WuQ
+ INKVh1diCcseDcq/XkU1ImFI3HS1z+D1fFyaUhp4w+AGOpF00GAzRE+fbmi/zSqMdY
 
-> > Does this device require IPv4? What about users and infrastructures that use IPv6 only?
-> > IPv4 is legacy at this point.
-> 
-> Gaudi2 supports IPv4 only.
+> This patch series adds the SDHCI driver for the Nuvoton MA35D1 series
+> platform. It includes DT binding documentation, the MA35D1 SDHCI driver.
+=E2=80=A6
+>   mmc: sdhci-of-ma35d1: Add Novoton MA35D1 SDHCI driver
+=E2=80=A6
 
-Really? I guess really old stuff, SLIP from 1988 does not support
-IPv6, but i don't remember seeing anything from this century which
-does not support passing IPv6 frames over a netdev.
+Would you like to refer to a slightly different company name
+at a few message places?
 
-     Andrew
+Regards,
+Markus
 
