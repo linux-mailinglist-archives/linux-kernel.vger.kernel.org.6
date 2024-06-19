@@ -1,154 +1,177 @@
-Return-Path: <linux-kernel+bounces-221527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161B190F4FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:26:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 818CD90F510
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 168B21C22722
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:26:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C4BF1F21519
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846B715665C;
-	Wed, 19 Jun 2024 17:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EA315665A;
+	Wed, 19 Jun 2024 17:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BiSWRv0K"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXJb9Pcj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761AA339A8;
-	Wed, 19 Jun 2024 17:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FAE339A8;
+	Wed, 19 Jun 2024 17:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718817961; cv=none; b=X+Wgsz3y3R/t5i3/JdvtEnUD4NXKdJbf7Af3VkilV9U9WGEsgCs25OJROivttPSkSk4r0NwDWQFhPRTUCC8g8k52KAQccNtwzCIoj+udh3twMnzW7s5GfKyoUog4luDOU8bZopngsBMdEjzYMg4JqfkkxY6VnAjEEjjlchOumuA=
+	t=1718818051; cv=none; b=aqTcYUQXM3ao9/aSguUT7roih040MrA4BjrjeZ+06B44S59hg5LcMJJWds+wdfmDjrOe0cGkKz86xkdgqwnZCkjRV6DjjGT57ZpTPtSHLWFD7LVNTI1sEx/QOH0gcWXlOu+c+FAiBB7cFS6C5/MSWwOuDWLQPsEz72L0hUSv1Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718817961; c=relaxed/simple;
-	bh=1PyvFsSzXeMYA/yXgCcy8zJG0wnlXUA8w2TkCdy6z58=;
+	s=arc-20240116; t=1718818051; c=relaxed/simple;
+	bh=Rnex5JNhxKQCf5yHFRYCGEwnY7umcsl6iVUbeibuU4s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yg1GrQehZevxj4In1nfGOM9uzPwDpeKWV3eFe3hujCrtppEay4fRXlU0lLsYOaatk3RXBj3FqyvA9+NeZffyXXyLCNxbnq/bSIlnyFNvMEiIosdVMPlucOyQidUBCn8hlbMg6eJnIGsPQ6aN6AI5NGZEq+DkPwlAQb5HtRev38k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BiSWRv0K; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f9bf484d9fso2469875ad.1;
-        Wed, 19 Jun 2024 10:26:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718817960; x=1719422760; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sXGOM3JdNbdgfTFKvIqjEPXAgH0KOOCR0kXzcNVRFZU=;
-        b=BiSWRv0KvrthedX3IfVuDFydjGvdEwAg0TRQorOoGtxeTygAE9tqra4r9YlgfejMeN
-         NIO7eDCTd4bMwST7ba4kkhdakR+5e+ULf+JTGtPKjB8i7coEK7IabCET/tORSkFXzEfX
-         6eBOtpc10PRFrXhypQmtcj/nmL1nfO3GwSH473omBzex+xQRlFGYZq40xp/mhWxdm0uA
-         V99xk8P9+6b5MJo3uII691aAo2t6UF29D3q82I8gOVqN11w9XYWQU0N+QpJ/yyJC1vA7
-         9HV8zj4NEVO+2n5ModNHvf1j8Bgpe91z4w78xoHkE01MxHd83eBPSJPQGfLysnv4QkfP
-         t/TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718817960; x=1719422760;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sXGOM3JdNbdgfTFKvIqjEPXAgH0KOOCR0kXzcNVRFZU=;
-        b=a95iB3bImFDasiwIsGIYixZ8e5UWq4r6ldVqvWoKJ7MbXpaQRWxS++3QZUq3siXODD
-         oCX/rEb+Hi/R6Xl2atK+u37oWc9rw06pczRg+zmBbRgzhfZCENt/FduFXtGZnUu5dUka
-         fRYJCdo1A97EoNuS6fCgtPClUGP5W/aWtIuG6+yGUuYIfJCliWkh/z+gQ0BkyoCbfxmH
-         fX90IyrKGKOt0fQkRcLWxJiFfsrZgfO3ayvPaAVLPoOWVhRaTAWZAmZsGYbdxBEYnVHx
-         hgG++a+lpzdxRR1RCSdwZuggzoMe1VguTl94Zp5+TaWW8hjVAmJW6Xy6UjKLX531sqKm
-         Keuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsv/WZLswqtWNkREP5SYqZWJwLzjkJXlSlviQ4U7oJ6gkWrnVU0I8UBvSfFRvfGRxLgVbHdiWyZUb3KP4fil+SEkKbg/MMIh/r6jqfL5cHSgGOFWJMekwylf2A99t+o3QJxa0EOetYn5QxCphK6yDA6rnr9Sv/qRKJaGHsIRW62egIrgZsOJBIRHiK4YK5Lg+lkgX0DrHNChSQrFUw5g==
-X-Gm-Message-State: AOJu0YyuHJJoLYFuhfbh7OvomH6FdlhW1LTpblbUeYOrnDJcTur//4Fp
-	+qrdOPigdVDbHYaH34qlTFBdMavYollizBL+8PXkH0aEM2/b10H7
-X-Google-Smtp-Source: AGHT+IHuV4oGtzd9Wf54j/9UST/kzIl8G/wnBWGC1cMTWlztDFJDGRRTGQYT/Wn2nkMGh1SgdC/J7g==
-X-Received: by 2002:a17:902:db05:b0:1f9:a242:c3a9 with SMTP id d9443c01a7336-1f9a242c7demr59091835ad.24.1718817957624;
-        Wed, 19 Jun 2024 10:25:57 -0700 (PDT)
-Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f4ad2bsm119664875ad.285.2024.06.19.10.25.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 10:25:56 -0700 (PDT)
-Date: Wed, 19 Jun 2024 14:27:20 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] spi: spi-axi-spi-engine: Add support for MOSI
- idle configuration
-Message-ID: <ZnMU-OUV2DCpS3mu@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1718749981.git.marcelo.schmitt@analog.com>
- <ead669c15db7cfad4034df1d743fd4088f1c2253.1718749981.git.marcelo.schmitt@analog.com>
- <6f945701-cac0-4a56-9ca7-1daceccc5efd@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SS0OzkUZUu3s7KJdq8vEcZ7c/aYmOUrrdnzsuqjsxKELAXjnoZA2gJygMaCtTdv1ZusV0Q8gOvEn+e/KDpXkl8bKQbRnEZP1/tN6f2e7tsl77n/DOnVb0hjrakvg88QDfj77Q8nZra+tJiyxPiyETiO7/dxLVCxtrn1QMbiVPSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VXJb9Pcj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0590C32786;
+	Wed, 19 Jun 2024 17:27:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718818050;
+	bh=Rnex5JNhxKQCf5yHFRYCGEwnY7umcsl6iVUbeibuU4s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VXJb9PcjkY2X1Fqqmt8e/n7x1YemeoPPoWMO1Z1jq+u8gQ6qCAK3dIB+WByTnBcJ7
+	 D+EKEDfKHkfHDOoH7N9hhC53d6YaSD16alIqwYFV6O23mlePAZQluA4Pr12/OEds91
+	 4Yh2P19ekSo3vKJO4dcsyV1UFdO8bD4AhiGkq/4UlZNO1TrwHn/obVZsJsg5H4j6lS
+	 YE2xip64WqQCU3BquM6/p6V/AldfYXE+HSogTM9/72ACoM+G4TnxscIUldNNwggpHP
+	 JZuGXDahiv6TdZ3BLu7Rqbc+mYLZVqExu6Qyb+a6B3JO9pT/L+8E3KfWjwH3nQtB4J
+	 po47kbRiRbZTw==
+Date: Wed, 19 Jun 2024 18:27:26 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: Vladimir Zapolskiy <vz@mleia.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: i2c: convert to dt schema
+Message-ID: <20240619-exemplify-tabloid-9d15e5005513@spud>
+References: <20240619154941.144011-2-kanakshilledar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="RH7b0jy6yN7Cw144"
+Content-Disposition: inline
+In-Reply-To: <20240619154941.144011-2-kanakshilledar@gmail.com>
+
+
+--RH7b0jy6yN7Cw144
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6f945701-cac0-4a56-9ca7-1daceccc5efd@baylibre.com>
+Content-Transfer-Encoding: quoted-printable
 
-On 06/19, David Lechner wrote:
-> On 6/18/24 6:11 PM, Marcelo Schmitt wrote:
-> > Implement MOSI idle low and MOSI idle high to better support peripherals
-> > that request specific MOSI behavior.
-> > 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
-> >  drivers/spi/spi-axi-spi-engine.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
-> > index 0aa31d745734..787e22ae80c0 100644
-> > --- a/drivers/spi/spi-axi-spi-engine.c
-> > +++ b/drivers/spi/spi-axi-spi-engine.c
-> > @@ -41,6 +41,7 @@
-> >  #define SPI_ENGINE_CONFIG_CPHA			BIT(0)
-> >  #define SPI_ENGINE_CONFIG_CPOL			BIT(1)
-> >  #define SPI_ENGINE_CONFIG_3WIRE			BIT(2)
-> > +#define SPI_ENGINE_CONFIG_SDO_IDLE		BIT(3)
-> 
-> Calling this SPI_ENGINE_CONFIG_SDO_IDLE_HIGH would make it more
-> clear what happens when the bit is enabled.
+On Wed, Jun 19, 2024 at 09:19:36PM +0530, Kanak Shilledar wrote:
 
-Yeah, agreed. Changing to SPI_ENGINE_CONFIG_SDO_IDLE_HIGH.
+$subject is missing a prefix for the device in question.
 
-> 
-> >  
-> >  #define SPI_ENGINE_INST_TRANSFER		0x0
-> >  #define SPI_ENGINE_INST_ASSERT			0x1
-> > @@ -132,6 +133,10 @@ static unsigned int spi_engine_get_config(struct spi_device *spi)
-> >  		config |= SPI_ENGINE_CONFIG_CPHA;
-> >  	if (spi->mode & SPI_3WIRE)
-> >  		config |= SPI_ENGINE_CONFIG_3WIRE;
-> > +	if (spi->mode & SPI_MOSI_IDLE_HIGH)
-> > +		config |= SPI_ENGINE_CONFIG_SDO_IDLE;
-> > +	if (spi->mode & SPI_MOSI_IDLE_LOW)
-> > +		config &= ~SPI_ENGINE_CONFIG_SDO_IDLE;
-> >  
-> >  	return config;
-> >  }
-> > @@ -646,6 +651,9 @@ static int spi_engine_probe(struct platform_device *pdev)
-> >  
-> >  	host->dev.of_node = pdev->dev.of_node;
-> >  	host->mode_bits = SPI_CPOL | SPI_CPHA | SPI_3WIRE;
-> > +	if (ADI_AXI_PCORE_VER_MAJOR(version) >= 1 &&
-> 
-> Currently, the major version is required to be 1, so this check is not
-> strictly needed.
-> 
-This is expecting the MOSI idle feature to be available on all versions from 1.3 on.
-Will SPI-Engine always be major version 1?
+> diff --git a/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml b=
+/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+> new file mode 100644
+> index 000000000000..79d6774dd54f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/i2c/nxp,lpc1788-i2c.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP I2C controller for LPC2xxx/178x/18xx/43xx
+> +
+> +maintainers:
+> +  - Vladimir Zapolskiy <vz@mleia.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/i2c/i2c-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: nxp,lpc1788-i2c
+> +
+> +  reg:
+> +    description: physical address and length of the device registers
 
-> > +	    ADI_AXI_PCORE_VER_MINOR(version) >= 3)
-> > +		host->mode_bits |=  SPI_MOSI_IDLE_LOW | SPI_MOSI_IDLE_HIGH;
-> 
-> 
-> 
-> >  	host->bits_per_word_mask = SPI_BPW_RANGE_MASK(1, 32);
-> >  	host->max_speed_hz = clk_get_rate(spi_engine->ref_clk) / 2;
-> >  	host->transfer_one_message = spi_engine_transfer_one_message;
-> 
+Drop all of these descriptions as they're obvious, other than...
+
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description: a single interrupt specifier
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    description: clock for the device
+> +    maxItems: 1
+> +
+> +  clock-frequency:
+> +    description: the desired I2C bus clock frequency in Hz
+
+=2E.maybe this one. Otherwise this looks okay to me.
+
+Thanks,
+Conor.
+
+> +    default: 100000
+> +
+> +  resets:
+> +    description: reset for the device
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+
+These two come for free with the ref to i2c-controller.yaml :)
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include "dt-bindings/clock/lpc18xx-ccu.h"
+> +
+> +    i2c@400a1000 {
+> +        compatible =3D "nxp,lpc1788-i2c";
+> +        reg =3D <0x400a1000 0x1000>;
+> +        interrupts =3D <18>;
+> +        clocks =3D <&ccu1 CLK_APB1_I2C0>;
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +    };
+> --=20
+> 2.45.2
+>=20
+
+--RH7b0jy6yN7Cw144
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnMU/gAKCRB4tDGHoIJi
+0sGHAP4g3+hIwfKb7xaf7XuqndD2LwEcQZhcfUAKlFVfZeUqewD/flKPkwXSVu1E
+dmuDqAz/Gr5I39tTkIGwN/fx38BMvAY=
+=Ntw3
+-----END PGP SIGNATURE-----
+
+--RH7b0jy6yN7Cw144--
 
