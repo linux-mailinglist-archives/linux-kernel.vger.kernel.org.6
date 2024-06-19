@@ -1,138 +1,211 @@
-Return-Path: <linux-kernel+bounces-221574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A6690F5A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:00:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01ADF90F5A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F422A28303D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:00:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B2A2282EAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB1115748C;
-	Wed, 19 Jun 2024 18:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE99F15696F;
+	Wed, 19 Jun 2024 18:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kB4x14j4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="FOR0aRBa"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61BA15574F;
-	Wed, 19 Jun 2024 18:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA1F15252C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 18:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718820035; cv=none; b=W/4EOYh6yixDhBwu4hJ2uDjkfjxQilbUL2bYRXPCAcCvzbBd0XBqpzQWVoQ8TceF/3kGYvqGcp9OFWNQ0A9BZHbrZzqDPsHeG/Sqwxyj+HRZzYk7Lb6t5Tz3ou3lNkpZ7bYlfaQRj8S0pY7EpnpDZrmPYZ7WDGYgubbagGe/MdI=
+	t=1718820067; cv=none; b=tasa0m4Lg+sXrp9oXAzfDXJcn9KrOKv3gDznUSSgHdSaikR3Oh4hRPf47NyMAMTdX3tpa0DCbCCbACXAH9K+rcyBtLUUYGKwZBHcjZs25t7avR63hJD8MxktFm+hJdv1G8RrwipyespKeVg38jRJas0sG03K6LFcvG8yReWJ/3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718820035; c=relaxed/simple;
-	bh=37mjy5yVqXRHkWjOzmaL4AQ0ULI3pbZHbuchhXGWk2M=;
+	s=arc-20240116; t=1718820067; c=relaxed/simple;
+	bh=BnG60unWFeGgbNUtu8ana9ZwvY9i/K795NWrqHwfUzM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZpizFFLsGXfHZwI+0G5/Rv97aszyESJFctLXRSZ9dRYY6x6r6mdu6yRCn4mLHB19HJ6/5IQ4ebQkiar48qmN1ZkZ+7vaE1FxGAH1zUzTYfocZhpXE+rlpaosh+8xvJ04IkxWWS97Y1sAV9fIa5qXlf4BQK9E7trVrmzqtvlmB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kB4x14j4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 713CDC2BBFC;
-	Wed, 19 Jun 2024 18:00:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718820035;
-	bh=37mjy5yVqXRHkWjOzmaL4AQ0ULI3pbZHbuchhXGWk2M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kB4x14j4vR/tXG863iaez+td+23qfDGIXXwBzO95fgOcN/WDYbD6iTLqeG5mfHkOr
-	 tRpK8p9o/pYKUH1t2/uSNaVsni++x4+yZ8TqpLeSvcHGuWUtYgf8mQwBCJip+Pfixy
-	 ZVVVdFbAXz6orMYTTjc4TnRo7Xx2o796dhAz+ghIv347AO0TurCDSKbCYPskCKceCl
-	 q+da4duPBHB8LL+dB+KTdUWNj6ajw80aVY1Sv5RjRyeMuuQ8197Wj3xDm3daeICHyy
-	 O0eCEKg36IoitfAVntqOdAC7T6ovTnJNpxx/r1WsPtoagiLRC1hBIAGMx4nT6MvHXj
-	 D6iTmhj8PGf6w==
-Date: Wed, 19 Jun 2024 19:00:31 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Komal Bajaj <quic_kbajaj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: Re: [PATCH v2 2/2] Revert "dt-bindings: cache: qcom,llcc: correct
- QDU1000 reg entries"
-Message-ID: <20240619-commerce-sustainer-e1372304280a@spud>
-References: <20240619061641.5261-1-quic_kbajaj@quicinc.com>
- <20240619061641.5261-3-quic_kbajaj@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JJSnrWUrdIn/AfBdiNvAfidt+nLI7cr+5YUNqdKFDYm3VijCdQJlGJSJZLxGr67wrj4jlyQNyAEj0i/YC3M8LlyC+u5yfd98ROijJerjMrK4vSRwHVV59VdO3W7Fq3npauN/qGpt+IkeQgOG5ceZUlhpNTBXvcPyNfmZPFxtqsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=FOR0aRBa; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42179dafd6bso7893345e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:01:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1718820063; x=1719424863; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6rQWR8Kk65srCxlQzWBjwPKZPZa87AkqR56jJJtLENA=;
+        b=FOR0aRBarY5NqULTRsGgaJ/df/dEFybYhGfHpGhYliWA3YYg9MN7KeqwLwxucbB+F/
+         uwU9dcUgv875SDWvFuFIDjRrN/d4nHqH4pytd5LKNBdfyUb/YrOv53a2rC8yGtnHqRGE
+         eLJJMa1XPWd96J4m6aqxr4XqTaqfT1PdARZ1QrFqt1dFOpRA6zpZMXRtMHRl3ZvujSKH
+         VSUQky/CNFQ305ivU97Ottwnb6eG8aKKEJgkE7nJQHL0uN7gRJAz/goADKowuUqUMt1N
+         vaMIH4FsQGSmPFLEp+iqaxJKivVc7C32HQnmyd7rgB30+YUsx5bIPHp66JIYCrxIPWdH
+         peow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718820063; x=1719424863;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6rQWR8Kk65srCxlQzWBjwPKZPZa87AkqR56jJJtLENA=;
+        b=rBh6L84Ju03IXHWjFy4Ws5H5P4G9FCY/AOB4sbOQrJHl/VZR6szlj7k+ZuCGhn4FLB
+         TLq+9spi0hZSy/8I+W+Ty/TxcSFUTofJbMdn4jWHy7wl8JnyOSHTsiN0bDSPzMktbtpS
+         J6xiuUyrGN4Oh6Bhbt94hKegskbtXnunoJHwMWMJUJC/Iq1FlbqMbrLD4j2PcGaGY2WA
+         fPmKDWyN88kgqvoY0DgjJBx39OtymrjZswOKRbnw12+byEM06NUubR+GOrpBJ3lA8ORi
+         hsBPzBqX+rg3QWBptJsi4JRB0VtK7pjV6vu6XiFquaWI+VEmKEBRMm0qBXteoV0xHYcZ
+         D8/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW0Y20v+6f9ODTMG6QxSDKksvxjDpQnOhM3xpfIUvPux5N006MUyJwCSCQWYlzr9ATAqa8GKAjKiu0DaqCZx/MZl6NDWIhNq0NF4RLM
+X-Gm-Message-State: AOJu0YySWiNNvC1Ul9Ej19AVms7vluk5wxIEebJfZr+kqWZSO1CK8rF3
+	zRnJJX8xakyB2LOeEZeZ8BIhkZqr8MA32qn0R4fB0rStdJxM4aRkqK/xcKS64os=
+X-Google-Smtp-Source: AGHT+IEg0948q6MW5X9brHl/ckCaBQwq2ZLgOQNEPHFGfqTna2FU7CDkWTAjs06+Nxlzh6csq+H4IA==
+X-Received: by 2002:a05:600c:4506:b0:422:291:6b3e with SMTP id 5b1f17b1804b1-4246f56d2b6mr62734745e9.1.1718820063402;
+        Wed, 19 Jun 2024 11:01:03 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe92c6sm275067465e9.18.2024.06.19.11.01.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 11:01:03 -0700 (PDT)
+Date: Wed, 19 Jun 2024 19:01:02 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Xuewen Yan <xuewen.yan94@gmail.com>, Xuewen Yan <xuewen.yan@unisoc.com>,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	vincent.donnefort@arm.com, ke.wang@unisoc.com,
+	linux-kernel@vger.kernel.org, christian.loehle@arm.com
+Subject: Re: [PATCH] sched/fair: Prevent cpu_busy_time from exceeding
+ actual_cpu_capacity
+Message-ID: <20240619180102.ehh5ogh6n26vofun@airbuntu>
+References: <20240606070645.3295-1-xuewen.yan@unisoc.com>
+ <20240609225520.6gnmx2wjhxghcxfo@airbuntu>
+ <CAB8ipk-9EVgyii3SGH9GOA3Mb5oMQdn1_vLVrCsSn1FmSQieOw@mail.gmail.com>
+ <20240616222003.agcz5osb2nkli75h@airbuntu>
+ <CAKfTPtBikWsyPon6HweEZg5qjSP+QX=WZDQu4NHs7PUcSCqDDA@mail.gmail.com>
+ <20240617105348.ebtony3ciwxhvj2w@airbuntu>
+ <CAKfTPtDPCPYvCi1c_Nh+Cn01ZVS7E=tAHQeNX-mArBt3BXdjYw@mail.gmail.com>
+ <20240618153931.ub5ezml3imd5mwu7@airbuntu>
+ <CAKfTPtAgXHDjjPhNhDPZzWbPX-DNJzb5TH9DeF-cYOcEC=4igg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="VG5pAYf59PjJ9GHT"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240619061641.5261-3-quic_kbajaj@quicinc.com>
+In-Reply-To: <CAKfTPtAgXHDjjPhNhDPZzWbPX-DNJzb5TH9DeF-cYOcEC=4igg@mail.gmail.com>
 
+On 06/18/24 23:05, Vincent Guittot wrote:
+> On Tue, 18 Jun 2024 at 17:39, Qais Yousef <qyousef@layalina.io> wrote:
+> >
+> > On 06/18/24 17:23, Vincent Guittot wrote:
+> > > On Mon, 17 Jun 2024 at 12:53, Qais Yousef <qyousef@layalina.io> wrote:
+> > > >
+> > > > On 06/17/24 11:07, Vincent Guittot wrote:
+> > > >
+> > > > > > And should effective_cpu_util() return a value higher than
+> > > > > > get_actual_cpu_capacity()?
+> > > > >
+> > > > > I don't think we should because we want to return the effective
+> > > > > utilization not the actual compute capacity.
+> > > > > Having an utilization of the cpu or group of cpus above the actual
+> > > > > capacity or the original capacity mainly means that we will have to
+> > > > > run longer
+> > > > >
+> > > > > By capping the utilization we filter this information.
+> > > > >
+> > > > > capacity orig = 800
+> > > > > util_avg = 700
+> > > > >
+> > > > > if we cap the capacity to 400 the cpu is expected to run twice longer
+> > > > > for the same amount of work to be done
+> > > >
+> > > > Okay makes sense. Wouldn't the util be 'wrong' (to what degree will depend on
+> > > > min/max freq ratio) though?
+> > > >
+> > > > We cap with arch_scale_capacity() still, I guess we know at this stage it is
+> > > > 100% wrong if we allow returning higher values?
+> > >
+> > > I think that capping utilization to max capacity generates some energy
+> > > estimation error because it filters the fact that we run longer in
+> > > some cases.
+> >
+> > Yes, I think so too and that was my first statement. But I think this is
+> > a bigger change to do separately.
+> >
+> > I *think* we have another source of error, we take util/cpu_cap as a percentage
+> > of time the CPU is busy. We assume an implicit multiplication with a time
+> > period, T. I am not sure if this implicit assumption is accurate and things are
+> > aligned properly. Especially with how utilization loses the temporal info due
+> > to invariance. util can be low but actual runtime will be much longer. I'm not
+> 
+> I'm not sure to get what you mean by " how utilization loses the
+> temporal info due to invariance"
 
---VG5pAYf59PjJ9GHT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The utilization value itself doesn't tell us about the length of runtime of the
+task. But its compute capacity.
 
-On Wed, Jun 19, 2024 at 11:46:41AM +0530, Komal Bajaj wrote:
-> This reverts commit f0f99f371822c48847e02e56d6e7de507e18f186.
->=20
-> QDU1000 has 7 register regions. The earlier commit 8e2506d01231
-> ("dt-bindings: cache: qcom,llcc: Add LLCC compatible for QDU1000/QRU1000")
-> to add llcc compatible was reflecting the same, but dtsi change for
-> QDU1000 was not aligning with its binding. Later, commit f0f99f371822
-> ("dt-bindings: cache: qcom,llcc: correct QDU1000 reg entries") was merged
-> intended to fix this misalignment.
->=20
-> After the LLCC driver refactor, each LLCC bank/channel need to be
-> represented as one register space to avoid mapping to the region where
-> access is not there. Hence, revert the commit f0f99f371822 ("dt-bindings:
-> cache: qcom,llcc: correct QDU1000 reg entries") to align QDU1000 llcc
-> binding with its dtsi node.
->=20
-> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/cache/qcom,llcc.yaml | 2 +-
+> 
+> Utilization aims to estimate the number of instructions to execute
+> whatever the CPU of the system, which once divided by the compute
 
-I assume that Bjorn will apply this, I think I'm probably "meant" to
-apply patches for the cache bindings dir, but never added it to
-maintainers. I think Bjorn's been taking these via soc or w/e til now?
+Yes for the number of instructions.
 
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/cache/qcom,llcc.yaml b/Doc=
-umentation/devicetree/bindings/cache/qcom,llcc.yaml
-> index 192911696010..68ea5f70b75f 100644
-> --- a/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
-> +++ b/Documentation/devicetree/bindings/cache/qcom,llcc.yaml
-> @@ -67,7 +67,6 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> -              - qcom,qdu1000-llcc
->                - qcom,sc7180-llcc
->                - qcom,sm6350-llcc
->      then:
-> @@ -132,6 +131,7 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> +              - qcom,qdu1000-llcc
->                - qcom,sc8180x-llcc
->                - qcom,sc8280xp-llcc
->                - qcom,x1e80100-llcc
-> --
-> 2.42.0
->=20
+And yes, the *ratio* can potentially be a proxy for *percentage* of time we are
+running. But we have no idea about absolute runtime.
 
---VG5pAYf59PjJ9GHT
-Content-Type: application/pgp-signature; name="signature.asc"
+AFAIU, there's an assumption that this percentage of running time is multiplied
+by 'unidentified' period value to get a proxy of time the perf domain will run
+for. This time then multiplied by power we get the energy.
 
------BEGIN PGP SIGNATURE-----
+I am just not sure if we're losing informations with all of these
+transformations. I need to investigate more.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnMcvwAKCRB4tDGHoIJi
-0gVzAQCm8ozhkPgAC0dI/aBjyKIYtOYN5xCBkLYQAB554VCqFQEAy7dpuQpPU/PS
-afYuoyYXMTUkhc7/HdgMjFlHFZGeVg4=
-=hOZ6
------END PGP SIGNATURE-----
+And we assume a periodic time interval for which this percentage of busy time
+we say the CPU will be busy for.
 
---VG5pAYf59PjJ9GHT--
+I am not sure if at every wake up this period needs to be aligned.
+
+I think this will matter the most for calculating the base_energy.
+
+I am not sure if this makes sense :).
+
+I need to study the details more anyway and collect some data. But my worry is
+generally whether our approximate of runtime is good enough and how to improve
+it.
+
+> capacity of the OPP of a CPU will estimate how long it will take to do
+> the job. So if the capa of an OPP of a CPU is low, it will reflect
+> that the actual runtime will be much longer.  A low utilization means
+> that you don't have much instruction to execute but not the speed at
+> which you will execute them.
+
+Yes. But I am worried about actual absolute time is being approximated
+good enough or not.
+
+> 
+> Then, problems start when we cap utilization to the CPU capacity as an
+> example because we cap this temporal info.
+
+Yes. We agree on the existence of this problem.
+
+> 
+> > sure if this implicit multiplication is handling this properly. Beside due
+> > performance domains having shared CPUs, I am not sure this period is aligned
+> > across all CPUs for this implicit multiplication to work as intended.
+> 
+> It's all about average because it's too expensive if not even possible
+> to know when the instruction will be executed on the other CPUs. We
+> can only take the edge case (currently the worst case)
+
+Yes..
+
+> 
+> Beside the impact of uclamp making the selected OPP not always
+> sustainable but sometimes temporary
+> 
+> >
+> > I yet to study this properly. But I thought I'll mention it as I think this
+> > (energy estimation) is increasingly becoming an important area to improve on.
 
