@@ -1,768 +1,256 @@
-Return-Path: <linux-kernel+bounces-221306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8B690F1A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:05:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071BD90F1AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09CB5B270BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2054F1C2121B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 15:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E351534FD;
-	Wed, 19 Jun 2024 15:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9E11428E6;
+	Wed, 19 Jun 2024 15:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="L8XKfWyM"
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (mail-db5eur01on2044.outbound.protection.outlook.com [40.107.15.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cMfn6fyO"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FABA3FB8B;
-	Wed, 19 Jun 2024 15:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.15.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718809474; cv=fail; b=AkFbABlBXKYlJKfZ8UYqfZbfb6fKG4ReH1toDhZ95Oix7O1JD4tJM1J+CR2JitMO8nX8L5eCqK31q4xrdAq7jX4a4yt6iF+eT3rb1s7iQht5P9a3ttctazIq1gYoRN17Dyj6i27Yh49hi7UoyV5DVzR/wSkzIGt9+DnnAEAs0t8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718809474; c=relaxed/simple;
-	bh=qbcXrG7lYsxdX0LUBpZ9QXbM2iVDMBGtsfZoIPFc1SY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CsIBrA0adta70SzVd3pKOS9sRnOEohcAkyoJWA8WfxFHqtOBUog9ieA11qM3t5vv/7FCSHDfR7l/xpW+EKEyDbwUrzbvuaq+WEqB3oFz/iVrVrjfoK46d2W4aC8mUYLgT785cUjzg1LaKmesZ3ZYpB4k6HlmhcJDgmWP9Fe6i9w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=2n.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=L8XKfWyM; arc=fail smtp.client-ip=40.107.15.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=2n.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=A6WGSasjwAqpTRKjjWvyp3l2Gw5JLDB9sm6O3ZVZQgstWcnlXYVI4FaljBKqx8bFEOd86PiWoDwJ0XnMbk4dGTZf7VJywDBzHjQI+UYHE2kQ6zWMm9GOaffOyBi6yBAPBPj0KP9zjWUvCJ4welOyxH8msrMTfgXVasXHPzXFulkDu8OTCeSoucvGazNN5+yfjj0sWrHzA67rZ2J56jQ6WzQXguCNMHF4XYhBeImC2WoHq/ZNMYu78UZtNIAn23L2vHuRmtQ5oRo0mCIU/Kp71W8HlPg3mHXbKVXESUc8TKttGbH58zM8bQVqWQjrrVY2T0N5ohAj2th5t04kcvJQVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y3Us/9dg22hsWpiRrwJDir2yIXW5gIxKsJ1tiphoG8Q=;
- b=lJiMKbU0rCafhVWKSbdLC906ewWKy+E7XzFllcko8x+uG0soEVTQOUG84BlHhPregUbDck0//itm5tEyihHZ09OIUNaqdl4vM+bHLjczOQ75c+HFs2ZZ8HlTwxx5hzT0KZDkIQQDTrHWgieI31KHce6YuaKjrMOfZx7MyZMFPO2pomSEFdqQRjpY4pIbSbvsOc8YDI95fKvlP6CAZ2ekSSpD4dClKhWFWw3OuzHcf297tiKmTm4T/b5eivW4BL2PFJGcAabHowMxhHtLgoLJCeSH1pdkM+d3TrAzgybaQQf0w4xhMnNjhyfzi3gRLEFuTXCHJiDKuEY5k2kZYuoYUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=broadcom.com smtp.mailfrom=2n.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y3Us/9dg22hsWpiRrwJDir2yIXW5gIxKsJ1tiphoG8Q=;
- b=L8XKfWyMBf34t3FXs54+uyUqDBfNXje815d0azFsjzVlm6tc/yOTCGdSWuMC2RAlLTesR5NTOpx6+G6pgxvXXgR10ZzRySB4jgKPrQWm1Ctlmp9Bc4eUzVtBMUAoJZ+FqzrCY9XSDfBa+GoomASnJEtBV+Y2aWxMIIIJvKJKbTA=
-Received: from AM0PR02CA0228.eurprd02.prod.outlook.com (2603:10a6:20b:28f::35)
- by VI1PR02MB10268.eurprd02.prod.outlook.com (2603:10a6:800:1c6::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Wed, 19 Jun
- 2024 15:04:27 +0000
-Received: from AM4PEPF00027A64.eurprd04.prod.outlook.com
- (2603:10a6:20b:28f:cafe::3d) by AM0PR02CA0228.outlook.office365.com
- (2603:10a6:20b:28f::35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.32 via Frontend
- Transport; Wed, 19 Jun 2024 15:04:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=2n.com; dkim=none (message not signed) header.d=none;dmarc=fail
- action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of 2n.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- AM4PEPF00027A64.mail.protection.outlook.com (10.167.16.75) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Wed, 19 Jun 2024 15:04:27 +0000
-Received: from pcczc3457tyd.2n.cz.axis.com (10.0.5.60) by se-mail01w.axis.com
- (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 19 Jun
- 2024 17:04:25 +0200
-From: =?UTF-8?q?Kamil=20Hor=C3=A1k=20-=202N?= <kamilh@axis.com>
-To: <florian.fainelli@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>
-CC: <kamilh@axis.com>, <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 4/4] net: phy: bcm-phy-lib: Implement BroadR-Reach link modes
-Date: Wed, 19 Jun 2024 17:03:59 +0200
-Message-ID: <20240619150359.311459-5-kamilh@axis.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240619150359.311459-1-kamilh@axis.com>
-References: <20240619150359.311459-1-kamilh@axis.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5AC8248C
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 15:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718809560; cv=none; b=PAYG7Jm+GqK/j+euSjfgOhvwz3HRUw6Umkn4N/8yfFbyRgsjggFp9FS1Ilixrtz6XnGI1GyCPL9TbIUCDF/EgAPpzhxAmRzOaL6OiFoXmH4NhxRntqgFSL2E0H8q9lj6Z5DtMnmwS+4IkhQm3jgm9tJzrIixG/4aR9YrPYo1XAg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718809560; c=relaxed/simple;
+	bh=tLwY9nerYgklbtZLUiUqwJshhmWvCqh/VASzGUW6MQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EbocAj9epV0gWCwO/DVDjt+EAFpu7g4a03LPDbXhs2RLi7vtW44/wUaILrAfXq1O3E+dZOUZjHAQbSYXr5KbJiordkdABf6pAqoLF3cto83oaStrn57jA0V0q1Ghybo/lfRTWqiUHNpbcJBqZ2l3dpT+H4qhhD/y1D9Iz/ZJ/u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=cMfn6fyO; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-797b24b8944so614192685a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:05:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1718809558; x=1719414358; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6eEhp9f9TwsM65hAnixRr5Wc/zoW1mwVVrRZ3N/Nu9M=;
+        b=cMfn6fyOCudkeDdMqOeUbD10UQy9FhQdXaia0qHLGOdBmOH7qqBHxRQAwg7e/03e60
+         GB5TNBZW+pH7aDJvb7LAi9TievvTThZHv8Rjg9NeE0FvLkPMpHLY1wuVMlCsjYH0Zu4R
+         do+MUBwu85YFCClbxl+uQmxLj/UYwebCGi5to=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718809558; x=1719414358;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6eEhp9f9TwsM65hAnixRr5Wc/zoW1mwVVrRZ3N/Nu9M=;
+        b=qs+vJZJBbfMAsqLz8K1ROJeehVw2x8TS/XLqTv6skMjUnXAJ89wahvSRtPio6+1JfO
+         4jJ+FYbnimJUW77B4j5yQ0Ikk7CxKMv++6IC8inVZO5eOcTJxtGfy9SjcIdX3HJbIjv5
+         BHmQQGk74AgqgKKur98YKrZYUZaQG9AiIAJYaiV3qiIunYfpX4bB1q9DulV92vQh1Sga
+         AQFZlSSqLgk/mdBE+pbi/Zl+sf7z5GlPGKj9gr5GKoXnZbpxLLGeNd3EvVg2WbU4x4Yc
+         ZV5TgWp+rlNyZ+N2bkEb8PfYLlfvF+8sPllUbANhrp+pfVJ/NkenxfpPrpGSfD5NfWnD
+         QVqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAM8Ck4EmPsZHeTmyuayYXYfeTYRJnWM/98R9aNOCwd24Uo/jS0CPsd5kViLiIEZht1xG9NYuGLc7thf5map+orgNjAQig0GH/Jh9E
+X-Gm-Message-State: AOJu0YwK37Cie6tnW5Ln4TJCPZFDSTvMOG+vJlSzsVWiFguY7MQE67Rv
+	2VOX8Q7pApZy0/WJxEzNUWRnKbxPpxxPp6E6tRaq8o78u9mdjqTrSh3RgxTvEA==
+X-Google-Smtp-Source: AGHT+IG7UagzmlZOO6Yj15Xq1XJ/oK35iFWelePj44AmNtM6waZIvy+WHiuwFdxzm/cVfAHXiL0eCQ==
+X-Received: by 2002:a05:620a:4085:b0:795:6b7b:6929 with SMTP id af79cd13be357-79bb3e0dd17mr303279285a.1.1718809557689;
+        Wed, 19 Jun 2024 08:05:57 -0700 (PDT)
+Received: from [192.168.75.133] (mobile-166-172-56-136.mycingular.net. [166.172.56.136])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79a43fe24dasm379501785a.101.2024.06.19.08.05.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 08:05:57 -0700 (PDT)
+Message-ID: <85ca3410-6124-41b9-bb39-89659df16615@broadcom.com>
+Date: Wed, 19 Jun 2024 16:05:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/4] net: phy: bcm5481x: add support for BroadR-Reach
+ mode
+To: =?UTF-8?Q?Kamil_Hor=C3=A1k_-_2N?= <kamilh@axis.com>,
+ bcm-kernel-feedback-list@broadcom.com, andrew@lunn.ch, hkallweit1@gmail.com,
+ linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240619150359.311459-1-kamilh@axis.com>
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20240619150359.311459-1-kamilh@axis.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000002878f0061b3f893c"
+
+--0000000000002878f0061b3f893c
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: se-mail02w.axis.com (10.20.40.8) To se-mail01w.axis.com
- (10.20.40.7)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A64:EE_|VI1PR02MB10268:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4337e831-7f3e-4f35-06e6-08dc90711ce8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|7416011|376011|82310400023|1800799021|36860700010|921017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y3RNNXVZTDVUTTBNcThYQ21qZm1KWmFwTFlHbTlLZ0MrWkUyaWRMSHJNMmx3?=
- =?utf-8?B?bnV4cHZWU0R0MmFtNHR1N2dFb3JPbU1ycWt5c0FQTGU4dDJXdU1CUTZZdTFu?=
- =?utf-8?B?cnhRaXozcWJDYzRzSjlZeHNGMzZFYVBnSDJqUFB5c0JoQ1JSbjI5bkw0MzNh?=
- =?utf-8?B?cG9qNkJFK1pOTEdDMDBURTZLeklTM0RXTk5ZQVh5MjlqeUJYYTZPdFJEVHFm?=
- =?utf-8?B?WGZra3lsVzVvSW9hTWtpN0h4cDMxQVBYWTE2WnBvWTRxUjNmeVRVOTZuaTNi?=
- =?utf-8?B?aEFwOE94VjBhNHF2TE80ZVZIcm5NWDNQdWVRVEc5L2ZHYmYwR3NuT1oydnVn?=
- =?utf-8?B?c3p1bGI4OVFkNWxZcktBOGtpaXJkZ2oyY1A4Q2FIZVNLcENZR3Bta3g5TnBT?=
- =?utf-8?B?VFVJZnFtQjUvdUhkc2ozWlQzVE5lZnpqWnZoNlRCeEJtemg5WGFueisxNUV3?=
- =?utf-8?B?N0ZqZnpSNUJzRmwvZitsRGt5Y2RmcnNWNmt4YkFKR2Q0RytvUU1TQVdyY2ph?=
- =?utf-8?B?dCszR0F1eCsrYTVUSFM2UUFMUlpNT0xEbzVUT2tLcU05TDR0RXA4c2RETE1y?=
- =?utf-8?B?UVA0THZGZXlhajN0VDlLVjFKTlZmYkVhU3Fzb1ZvRVorZ0QvN0N1MEZCSG83?=
- =?utf-8?B?ekJKWDIyMElWMmFoejNlcHdvUENOQWI1WWo5SUhiMEdBNzd2MEt2REJsOFp0?=
- =?utf-8?B?TmtlMSt5YVVKc2dLbWp4SFcrYUZLNFBUVndQYjdiTStyRmwxUFl6WUtsU1VX?=
- =?utf-8?B?UHFxaVhVaWEvT09nckhKS3JIK0E4NktTc2ZpRnJzSElpTXZJbUFzNVRQQldv?=
- =?utf-8?B?Q3FuTGp4dDZ5c3QyUmtId3IvNEFVSEtKUWFrdlhDQzB1R1R0bCtZUE9jd0hF?=
- =?utf-8?B?K3AzUGx1ODB6SUZyQlJjNXExUUNRK2ZZRlZpenVMRE95Q3VvaGhGQ3plUGR2?=
- =?utf-8?B?UGNYbkZPdEtaZUlZTWlyWXdNZXdTSk1ZTTd3ZURFSTV1Z1ZjSmNZVDUycWFV?=
- =?utf-8?B?YlhPb21yODl1a1kzdUUwY2NFMWNpR0dOTUczS1k4eVRqNzVhRjZ3YmEwU2ZJ?=
- =?utf-8?B?NmZmVzdnaEQwNFdZMG81UE9XR3dkWlZHU3JEVXp4SjNPWFZsd1dBU0Y0ZzN1?=
- =?utf-8?B?YmNLK28wV2RwUVdiM2FmUUt6V0VLcjBUZEhlL0RjU3BtVmROU1llNktSTmFI?=
- =?utf-8?B?Q2tmZmpJa1ZBOGVaYnN6Mkxzc1JwZkpDdWQrczNmVzRweG44dDhyK2w1eWdw?=
- =?utf-8?B?T1B6QlVzbmtkdVIvb2tnNmpvN3NhbUdsQUxIQkVMMVpDSlU5R3ZwelRKZ09C?=
- =?utf-8?B?Y1hmNEtuQWh6RVArLzlybVVjTjhiUENXOVYrUzd0OXVNbFZsVm9KeURIWmln?=
- =?utf-8?B?WkIxd0pVV0lIS3VVMkJham0xRDRrZUp2Z3lJajd6ak1YZ1ZCQnJxenJRWWhM?=
- =?utf-8?B?YW1WTUJGdHJTU3ZsWDF6Ry80d2hLNkFpbVJNcTI4bDlobDhSZWJIS1Q3WUJB?=
- =?utf-8?B?QkVMTEFqUjdhcmNVMG5mNDZyOC9MWFBvVC9DT1VoNzkyN3pSa2JkKzVBWUtD?=
- =?utf-8?B?V1dqTkVIRFM0Y2lTNVFBb1VHQUt4SDFYNmVnVVVUeEM3UENwQ0FpLzZGczRD?=
- =?utf-8?B?M2NSd2tVQlpxdW54eGFWTHo3ZWJHdEVGQVp6b1VtQld5VU9JRWNkNUErdFhZ?=
- =?utf-8?B?RWdGc0QzVUY0Y1dyOUtpYmlQclczUlFOc3hyM1E5RTlqMEVScFN3ekN6aitS?=
- =?utf-8?B?VHhOMlBqbFJTTXBjeWcrNkEzY3JqSWFDTXBmZDd2OFZrL3hobjJRWXlHelVm?=
- =?utf-8?B?Y1c1VVFYOWFOdUdWajMzdEFiL3MwVHM0RTd5VDVRZGhtWnRuWkhkNmJCb1FT?=
- =?utf-8?B?WU9Ca0ZYdEZTeldBT0VETE9ZWDkra1NKcVJVTmdEUjl5YndiOW9mbEZBU1hH?=
- =?utf-8?Q?Vya0Z3F22e4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(7416011)(376011)(82310400023)(1800799021)(36860700010)(921017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2024 15:04:27.0127
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4337e831-7f3e-4f35-06e6-08dc90711ce8
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00027A64.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB10268
 
-Implement single-pair BroadR-Reach modes on bcm5481x PHY by Broadcom.
-Create set of functions alternative to IEEE 802.3 to handle configuration
-of these modes on compatible Broadcom PHYs.
 
-Signed-off-by: Kamil Horák - 2N <kamilh@axis.com>
----
- drivers/net/phy/bcm-phy-lib.c | 113 ++++++++++
- drivers/net/phy/bcm-phy-lib.h |   4 +
- drivers/net/phy/broadcom.c    | 392 ++++++++++++++++++++++++++++++++--
- 3 files changed, 491 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/net/phy/bcm-phy-lib.c b/drivers/net/phy/bcm-phy-lib.c
-index 876f28fd8256..8d431c9c398d 100644
---- a/drivers/net/phy/bcm-phy-lib.c
-+++ b/drivers/net/phy/bcm-phy-lib.c
-@@ -794,6 +794,47 @@ static int _bcm_phy_cable_test_get_status(struct phy_device *phydev,
- 	return ret;
- }
- 
-+static int bcm_setup_lre_forced(struct phy_device *phydev)
-+{
-+	u16 ctl = 0;
-+
-+	phydev->pause = 0;
-+	phydev->asym_pause = 0;
-+
-+	if (phydev->speed == SPEED_100)
-+		ctl |= LRECR_SPEED100;
-+
-+	if (phydev->duplex != DUPLEX_FULL)
-+		return -EOPNOTSUPP;
-+
-+	return phy_modify(phydev, MII_BCM54XX_LRECR, LRECR_SPEED100, ctl);
-+}
-+
-+/**
-+ * bcm_linkmode_adv_to_lre_adv_t - translate linkmode advertisement to LDS
-+ * @advertising: the linkmode advertisement settings
-+ * @return: LDS Auto-Negotiation Advertised Ability register value
-+ *
-+ * A small helper function that translates linkmode advertisement
-+ * settings to phy LDS autonegotiation advertisements for the
-+ * MII_BCM54XX_LREANAA register of Broadcom PHYs capable of LDS
-+ */
-+static u32 bcm_linkmode_adv_to_lre_adv_t(unsigned long *advertising)
-+{
-+	u32 result = 0;
-+
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT, advertising))
-+		result |= LREANAA_10_1PAIR;
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT, advertising))
-+		result |= LREANAA_100_1PAIR;
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT, advertising))
-+		result |= LRELPA_PAUSE;
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, advertising))
-+		result |= LRELPA_PAUSE_ASYM;
-+
-+	return result;
-+}
-+
- int bcm_phy_cable_test_start(struct phy_device *phydev)
- {
- 	return _bcm_phy_cable_test_start(phydev, false);
-@@ -1066,6 +1107,78 @@ int bcm_phy_led_brightness_set(struct phy_device *phydev,
- }
- EXPORT_SYMBOL_GPL(bcm_phy_led_brightness_set);
- 
-+int bcm_setup_master_slave(struct phy_device *phydev)
-+{
-+	u16 ctl = 0;
-+
-+	switch (phydev->master_slave_set) {
-+	case MASTER_SLAVE_CFG_MASTER_PREFERRED:
-+	case MASTER_SLAVE_CFG_MASTER_FORCE:
-+		ctl = LRECR_MASTER;
-+		break;
-+	case MASTER_SLAVE_CFG_SLAVE_PREFERRED:
-+	case MASTER_SLAVE_CFG_SLAVE_FORCE:
-+		break;
-+	case MASTER_SLAVE_CFG_UNKNOWN:
-+	case MASTER_SLAVE_CFG_UNSUPPORTED:
-+		return 0;
-+	default:
-+		phydev_warn(phydev, "Unsupported Master/Slave mode\n");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	return phy_modify_changed(phydev, MII_BCM54XX_LRECR, LRECR_MASTER, ctl);
-+}
-+EXPORT_SYMBOL_GPL(bcm_setup_master_slave);
-+
-+int bcm_config_lre_aneg(struct phy_device *phydev, bool changed)
-+{
-+	int err;
-+
-+	if (genphy_config_eee_advert(phydev))
-+		changed = true;
-+
-+	err = bcm_setup_master_slave(phydev);
-+	if (err < 0)
-+		return err;
-+	else if (err)
-+		changed = true;
-+
-+	if (phydev->autoneg != AUTONEG_ENABLE)
-+		return bcm_setup_lre_forced(phydev);
-+
-+	err = bcm_config_lre_advert(phydev);
-+	if (err < 0)
-+		return err;
-+	else if (err)
-+		changed = true;
-+
-+	return genphy_check_and_restart_aneg(phydev, changed);
-+}
-+EXPORT_SYMBOL_GPL(bcm_config_lre_aneg);
-+
-+/**
-+ * bcm_config_lre_advert - sanitize and advertise Long-Distance Signaling
-+ *  auto-negotiation parameters
-+ * @phydev: target phy_device struct
-+ * Return:  0 if the PHY's advertisement hasn't changed, < 0 on error,
-+ *          > 0 if it has changed
-+ *
-+ * Writes MII_BCM54XX_LREANAA with the appropriate values. The values are to be
-+ *   sanitized before, to make sure we only advertise what is supported.
-+ *  The sanitization is done already in phy_ethtool_ksettings_set()
-+ */
-+int bcm_config_lre_advert(struct phy_device *phydev)
-+{
-+	u32 adv = bcm_linkmode_adv_to_lre_adv_t(phydev->advertising);
-+
-+	/* Setup BroadR-Reach mode advertisement */
-+	return phy_modify_changed(phydev, MII_BCM54XX_LREANAA,
-+				 LRE_ADVERTISE_ALL | LREANAA_PAUSE |
-+				 LREANAA_PAUSE_ASYM, adv);
-+}
-+EXPORT_SYMBOL_GPL(bcm_config_lre_advert);
-+
- MODULE_DESCRIPTION("Broadcom PHY Library");
- MODULE_LICENSE("GPL v2");
- MODULE_AUTHOR("Broadcom Corporation");
-diff --git a/drivers/net/phy/bcm-phy-lib.h b/drivers/net/phy/bcm-phy-lib.h
-index b52189e45a84..fecdd66ad736 100644
---- a/drivers/net/phy/bcm-phy-lib.h
-+++ b/drivers/net/phy/bcm-phy-lib.h
-@@ -121,4 +121,8 @@ irqreturn_t bcm_phy_wol_isr(int irq, void *dev_id);
- int bcm_phy_led_brightness_set(struct phy_device *phydev,
- 			       u8 index, enum led_brightness value);
- 
-+int bcm_setup_master_slave(struct phy_device *phydev);
-+int bcm_config_lre_aneg(struct phy_device *phydev, bool changed);
-+int bcm_config_lre_advert(struct phy_device *phydev);
-+
- #endif /* _LINUX_BCM_PHY_LIB_H */
-diff --git a/drivers/net/phy/broadcom.c b/drivers/net/phy/broadcom.c
-index 370e4ed45098..2aaa2e8bfe49 100644
---- a/drivers/net/phy/broadcom.c
-+++ b/drivers/net/phy/broadcom.c
-@@ -5,6 +5,8 @@
-  *	Broadcom BCM5411, BCM5421 and BCM5461 Gigabit Ethernet
-  *	transceivers.
-  *
-+ *	Broadcom BCM54810, BCM54811 BroadR-Reach transceivers.
-+ *
-  *	Copyright (c) 2006  Maciej W. Rozycki
-  *
-  *	Inspired by code written by Amy Fong.
-@@ -38,6 +40,28 @@ struct bcm54xx_phy_priv {
- 	bool	wake_irq_enabled;
- };
- 
-+/* Link modes for BCM58411 PHY */
-+static const int bcm54811_linkmodes[] = {
-+	ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-+	ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT,
-+	ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
-+	ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
-+	ETHTOOL_LINK_MODE_1000baseT_Half_BIT,
-+	ETHTOOL_LINK_MODE_100baseT_Full_BIT,
-+	ETHTOOL_LINK_MODE_100baseT_Half_BIT,
-+	ETHTOOL_LINK_MODE_10baseT_Full_BIT,
-+	ETHTOOL_LINK_MODE_10baseT_Half_BIT
-+};
-+
-+/* Long-Distance Signaling (BroadR-Reach mode aneg) relevant linkmode bits */
-+static const int lds_br_bits[] = {
-+	ETHTOOL_LINK_MODE_Autoneg_BIT,
-+	ETHTOOL_LINK_MODE_Pause_BIT,
-+	ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-+	ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT,
-+	ETHTOOL_LINK_MODE_100baseT1_Full_BIT
-+};
-+
- static bool bcm54xx_phy_can_wakeup(struct phy_device *phydev)
- {
- 	struct bcm54xx_phy_priv *priv = phydev->priv;
-@@ -553,18 +577,92 @@ static int bcm54810_write_mmd(struct phy_device *phydev, int devnum, u16 regnum,
- 	return -EOPNOTSUPP;
- }
- 
--static int bcm54811_config_init(struct phy_device *phydev)
-+static int bcm5481x_get_brrmode(struct phy_device *phydev, u8 *data)
- {
--	int err, reg;
-+	int reg;
- 
--	/* Disable BroadR-Reach function. */
- 	reg = bcm_phy_read_exp(phydev, BCM54810_EXP_BROADREACH_LRE_MISC_CTL);
--	reg &= ~BCM54810_EXP_BROADREACH_LRE_MISC_CTL_EN;
--	err = bcm_phy_write_exp(phydev, BCM54810_EXP_BROADREACH_LRE_MISC_CTL,
--				reg);
--	if (err < 0)
-+
-+	*data = (reg & BCM54810_EXP_BROADREACH_LRE_MISC_CTL_EN) ? 1 : 0;
-+
-+	return 0;
-+}
-+
-+static int bcm54811_read_abilities(struct phy_device *phydev)
-+{
-+	int i, val, err;
-+	u8 brr_mode;
-+
-+	for (i = 0; i < ARRAY_SIZE(bcm54811_linkmodes); i++)
-+		linkmode_clear_bit(bcm54811_linkmodes[i], phydev->supported);
-+
-+	err = bcm5481x_get_brrmode(phydev, &brr_mode);
-+	if (err)
-+		return err;
-+
-+	if (brr_mode) {
-+		linkmode_set_bit_array(phy_basic_ports_array,
-+				       ARRAY_SIZE(phy_basic_ports_array),
-+				       phydev->supported);
-+
-+		val = phy_read(phydev, MII_BCM54XX_LRESR);
-+		if (val < 0)
-+			return val;
-+
-+		linkmode_mod_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
-+				 phydev->supported, 1);
-+		linkmode_mod_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-+				 phydev->supported,
-+				 val & LRESR_100_1PAIR);
-+		linkmode_mod_bit(ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT,
-+				 phydev->supported,
-+				 val & LRESR_10_1PAIR);
-+		return 0;
-+	}
-+
-+	return genphy_read_abilities(phydev);
-+}
-+
-+static int bcm5481x_set_brrmode(struct phy_device *phydev, bool on)
-+{
-+	int reg;
-+	int err;
-+	u16 val;
-+
-+	reg = bcm_phy_read_exp(phydev, BCM54810_EXP_BROADREACH_LRE_MISC_CTL);
-+
-+	if (on)
-+		reg |= BCM54810_EXP_BROADREACH_LRE_MISC_CTL_EN;
-+	else
-+		reg &= ~BCM54810_EXP_BROADREACH_LRE_MISC_CTL_EN;
-+
-+	err = bcm_phy_write_exp(phydev,
-+				BCM54810_EXP_BROADREACH_LRE_MISC_CTL, reg);
-+	if (err)
-+		return err;
-+
-+	/* Update the abilities based on the current brr on/off setting */
-+	err = bcm54811_read_abilities(phydev);
-+	if (err)
- 		return err;
- 
-+	/* Ensure LRE or IEEE register set is accessed according to the brr
-+	 *  on/off, thus set the override
-+	 */
-+	val = BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL_EN;
-+	if (!on)
-+		val |= BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL_OVERRIDE_VAL;
-+
-+	return bcm_phy_write_exp(phydev,
-+				 BCM54811_EXP_BROADREACH_LRE_OVERLAY_CTL, val);
-+}
-+
-+static int bcm54811_config_init(struct phy_device *phydev)
-+{
-+	struct device_node *np = phydev->mdio.dev.of_node;
-+	bool brr = false;
-+	int err, reg;
-+
- 	err = bcm54xx_config_init(phydev);
- 
- 	/* Enable CLK125 MUX on LED4 if ref clock is enabled. */
-@@ -576,29 +674,80 @@ static int bcm54811_config_init(struct phy_device *phydev)
- 			return err;
- 	}
- 
--	return err;
-+	/* Configure BroadR-Reach function. */
-+	brr = of_property_read_bool(np, "brr-mode");
-+
-+	/* With BCM54811, BroadR-Reach implies no autoneg */
-+	if (brr)
-+		phydev->autoneg = 0;
-+
-+	return bcm5481x_set_brrmode(phydev, brr);
- }
- 
--static int bcm5481_config_aneg(struct phy_device *phydev)
-+static int bcm5481x_config_delay_swap(struct phy_device *phydev)
- {
- 	struct device_node *np = phydev->mdio.dev.of_node;
--	int ret;
--
--	/* Aneg firstly. */
--	ret = genphy_config_aneg(phydev);
- 
--	/* Then we can set up the delay. */
-+	/* Set up the delay. */
- 	bcm54xx_config_clock_delay(phydev);
- 
- 	if (of_property_read_bool(np, "enet-phy-lane-swap")) {
- 		/* Lane Swap - Undocumented register...magic! */
--		ret = bcm_phy_write_exp(phydev, MII_BCM54XX_EXP_SEL_ER + 0x9,
--					0x11B);
-+		int ret = bcm_phy_write_exp(phydev,
-+					    MII_BCM54XX_EXP_SEL_ER + 0x9,
-+					    0x11B);
- 		if (ret < 0)
- 			return ret;
- 	}
- 
--	return ret;
-+	return 0;
-+}
-+
-+static int bcm5481_config_aneg(struct phy_device *phydev)
-+{
-+	u8 brr_mode;
-+	int ret;
-+
-+	ret = bcm5481x_get_brrmode(phydev, &brr_mode);
-+	if (ret)
-+		return ret;
-+
-+	/* Aneg firstly. */
-+	if (brr_mode)
-+		ret = bcm_config_lre_aneg(phydev, false);
-+	else
-+		ret = genphy_config_aneg(phydev);
-+
-+	if (ret)
-+		return ret;
-+
-+	/* Then we can set up the delay and swap. */
-+	return bcm5481x_config_delay_swap(phydev);
-+}
-+
-+static int bcm54811_config_aneg(struct phy_device *phydev)
-+{
-+	u8 brr_mode;
-+	int ret;
-+
-+	/* Aneg firstly. */
-+	ret = bcm5481x_get_brrmode(phydev, &brr_mode);
-+	if (ret)
-+		return ret;
-+
-+	if (brr_mode) {
-+		/* BCM54811 is only capable of autonegotiation in IEEE mode */
-+		phydev->autoneg = 0;
-+		ret = bcm_config_lre_aneg(phydev, false);
-+	} else {
-+		ret = genphy_config_aneg(phydev);
-+	}
-+
-+	if (ret)
-+		return ret;
-+
-+	/* Then we can set up the delay and swap. */
-+	return bcm5481x_config_delay_swap(phydev);
- }
- 
- struct bcm54616s_phy_priv {
-@@ -1062,6 +1211,211 @@ static void bcm54xx_link_change_notify(struct phy_device *phydev)
- 	bcm_phy_write_exp(phydev, MII_BCM54XX_EXP_EXP08, ret);
- }
- 
-+static int bcm_read_master_slave(struct phy_device *phydev)
-+{
-+	int cfg = MASTER_SLAVE_CFG_UNKNOWN, state;
-+	int val;
-+
-+	/* In BroadR-Reach mode we are always capable of master-slave
-+	 *  and there is no preferred master or slave configuration
-+	 */
-+	phydev->master_slave_get = MASTER_SLAVE_CFG_UNKNOWN;
-+	phydev->master_slave_state = MASTER_SLAVE_STATE_UNKNOWN;
-+
-+	val = phy_read(phydev, MII_BCM54XX_LRECR);
-+	if (val < 0)
-+		return val;
-+
-+	if ((val & LRECR_LDSEN) == 0) {
-+		if (val & LRECR_MASTER)
-+			cfg = MASTER_SLAVE_CFG_MASTER_FORCE;
-+		else
-+			cfg = MASTER_SLAVE_CFG_SLAVE_FORCE;
-+	}
-+
-+	val = phy_read(phydev, MII_BCM54XX_LRELDSE);
-+	if (val < 0)
-+		return val;
-+
-+	if (val & LDSE_MASTER)
-+		state = MASTER_SLAVE_STATE_MASTER;
-+	else
-+		state = MASTER_SLAVE_STATE_SLAVE;
-+
-+	phydev->master_slave_get = cfg;
-+	phydev->master_slave_state = state;
-+
-+	return 0;
-+}
-+
-+/* Read LDS Link Partner Ability in BroadR-Reach mode */
-+static int bcm_read_lpa(struct phy_device *phydev)
-+{
-+	int i, lrelpa;
-+
-+	if (phydev->autoneg != AUTONEG_ENABLE) {
-+		if (!phydev->autoneg_complete) {
-+			/* aneg not yet done, reset all relevant bits */
-+			for (i = 0; i < ARRAY_SIZE(lds_br_bits); i++)
-+				linkmode_clear_bit(lds_br_bits[i],
-+						   phydev->lp_advertising);
-+
-+			return 0;
-+		}
-+
-+		/* Long-Distance Signaling Link Partner Ability */
-+		lrelpa = phy_read(phydev, MII_BCM54XX_LRELPA);
-+		if (lrelpa < 0)
-+			return lrelpa;
-+
-+		linkmode_mod_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-+				 phydev->lp_advertising,
-+				 lrelpa & LRELPA_PAUSE_ASYM);
-+		linkmode_mod_bit(ETHTOOL_LINK_MODE_Pause_BIT,
-+				 phydev->lp_advertising,
-+				 lrelpa & LRELPA_PAUSE);
-+		linkmode_mod_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-+				 phydev->lp_advertising,
-+				 lrelpa & LRELPA_100_1PAIR);
-+		linkmode_mod_bit(ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT,
-+				 phydev->lp_advertising,
-+				 lrelpa & LRELPA_10_1PAIR);
-+	} else {
-+		linkmode_zero(phydev->lp_advertising);
-+	}
-+
-+	return 0;
-+}
-+
-+static int bcm_read_status_fixed(struct phy_device *phydev)
-+{
-+	int lrecr = phy_read(phydev, MII_BCM54XX_LRECR);
-+
-+	if (lrecr < 0)
-+		return lrecr;
-+
-+	phydev->duplex = DUPLEX_FULL;
-+
-+	if (lrecr & LRECR_SPEED100)
-+		phydev->speed = SPEED_100;
-+	else
-+		phydev->speed = SPEED_10;
-+
-+	return 0;
-+}
-+
-+/**
-+ * lre_update_link - update link status in @phydev
-+ * @phydev: target phy_device struct
-+ * Return:  0 on success, < 0 on error
-+ *
-+ * Description: Update the value in phydev->link to reflect the
-+ *   current link value.  In order to do this, we need to read
-+ *   the status register twice, keeping the second value.
-+ *   This is a genphy_update_link modified to work on LRE registers
-+ *   of BroadR-Reach PHY
-+ */
-+static int lre_update_link(struct phy_device *phydev)
-+{
-+	int status = 0, lrecr;
-+
-+	lrecr = phy_read(phydev, MII_BCM54XX_LRECR);
-+	if (lrecr < 0)
-+		return lrecr;
-+
-+	/* Autoneg is being started, therefore disregard BMSR value and
-+	 * report link as down.
-+	 */
-+	if (lrecr & BMCR_ANRESTART)
-+		goto done;
-+
-+	/* The link state is latched low so that momentary link
-+	 * drops can be detected. Do not double-read the status
-+	 * in polling mode to detect such short link drops except
-+	 * the link was already down.
-+	 */
-+	if (!phy_polling_mode(phydev) || !phydev->link) {
-+		status = phy_read(phydev, MII_BCM54XX_LRESR);
-+		if (status < 0)
-+			return status;
-+		else if (status & LRESR_LSTATUS)
-+			goto done;
-+	}
-+
-+	/* Read link and autonegotiation status */
-+	status = phy_read(phydev, MII_BCM54XX_LRESR);
-+	if (status < 0)
-+		return status;
-+done:
-+	phydev->link = status & LRESR_LSTATUS ? 1 : 0;
-+	phydev->autoneg_complete = status & LRESR_LDSCOMPLETE ? 1 : 0;
-+
-+	/* Consider the case that autoneg was started and "aneg complete"
-+	 * bit has been reset, but "link up" bit not yet.
-+	 */
-+	if (phydev->autoneg == AUTONEG_ENABLE && !phydev->autoneg_complete)
-+		phydev->link = 0;
-+
-+	return 0;
-+}
-+
-+static int bcm54811_read_status(struct phy_device *phydev)
-+{
-+	u8 brr_mode;
-+	int err;
-+
-+	err = bcm5481x_get_brrmode(phydev, &brr_mode);
-+
-+	if (err)
-+		return err;
-+
-+	if (brr_mode) {
-+		/* Get the status in BroadRReach mode just like
-+		 *   genphy_read_status does in normal mode
-+		 */
-+
-+		int err, old_link = phydev->link;
-+
-+		/* Update the link, but return if there was an error */
-+
-+		err = lre_update_link(phydev);
-+		if (err)
-+			return err;
-+
-+		/* why bother the PHY if nothing can have changed */
-+		if (phydev->autoneg ==
-+		    AUTONEG_ENABLE && old_link && phydev->link)
-+			return 0;
-+
-+		phydev->speed = SPEED_UNKNOWN;
-+		phydev->duplex = DUPLEX_UNKNOWN;
-+		phydev->pause = 0;
-+		phydev->asym_pause = 0;
-+
-+		err = bcm_read_master_slave(phydev);
-+		if (err < 0)
-+			return err;
-+
-+		/* Read LDS Link Partner Ability */
-+		err = bcm_read_lpa(phydev);
-+		if (err < 0)
-+			return err;
-+
-+		if (phydev->autoneg ==
-+		    AUTONEG_ENABLE && phydev->autoneg_complete) {
-+			phy_resolve_aneg_linkmode(phydev);
-+		} else if (phydev->autoneg == AUTONEG_DISABLE) {
-+			err = bcm_read_status_fixed(phydev);
-+			if (err < 0)
-+				return err;
-+		}
-+	} else {
-+		err = genphy_read_status(phydev);
-+	}
-+
-+	return err;
-+}
-+
- static struct phy_driver broadcom_drivers[] = {
- {
- 	.phy_id		= PHY_ID_BCM5411,
-@@ -1212,9 +1566,11 @@ static struct phy_driver broadcom_drivers[] = {
- 	.get_stats	= bcm54xx_get_stats,
- 	.probe		= bcm54xx_phy_probe,
- 	.config_init    = bcm54811_config_init,
--	.config_aneg    = bcm5481_config_aneg,
-+	.config_aneg    = bcm54811_config_aneg,
- 	.config_intr    = bcm_phy_config_intr,
- 	.handle_interrupt = bcm_phy_handle_interrupt,
-+	.read_status	= bcm54811_read_status,
-+	.get_features	= bcm54811_read_abilities,
- 	.suspend	= bcm54xx_suspend,
- 	.resume		= bcm54xx_resume,
- 	.link_change_notify	= bcm54xx_link_change_notify,
+On 6/19/2024 4:03 PM, Kamil Horák - 2N wrote:
+> PATCH 1 - Add the 10baseT1BRR_Full link mode
+> 
+> PATCH 2 - Add the definitions of LRE registers, necessary to use
+>     BroadR-Reach modes on the BCM5481x PHY
+> 
+> PATCH 3 - Add brr-mode flag to switch between IEEE802.3 and BroadR-Reach
+> 
+> PATCH 4 - Implementation of the BroadR-Reach modes for the Broadcom
+>     PHYs
+> 
+> Changes in v2:
+>    - Divided into multiple patches, removed useless link modes
+> 
+> Changes in v3:
+>    - Fixed uninitialized variable in bcm5481x_config_delay_swap function
+> 
+> Changes in v4:
+>    - Improved the division of functions between bcm-phy library and broadcom.c
+>    - Changed the BroadR-Reach / IEEE mode switching to device tree boolean as
+>      these modes are mutually exclusive and barely could coexist in one hardware
+>    - Made the link mode selection compatible with current ethtool (i.e. the
+>      linkmode is selected by choosing speed and master-slave)
+> 
+> Changes in v5:
+>    - Fixed the operator precedence as reported by the kernel test robot
+>    - Fixed doc of bcm_linkmode_adv_to_mii_adv_t function
+> 
+> Changes in v6:
+>    - Moved the brr-mode flag to separate commit as required by the rules for
+>      DT binding patches
+>    - Renamed some functions to make clear they handle LRE-related stuff
+>    - Reordered variable definitions to match the coding style requirements
+> 
+> Changes in v7:
+>    - Fixed the changes distribution into patches (first one was not buildable)
+> 
+> Changes in v8:
+>    - Fixed coding style and did other changes on behalf of the reviewers
+
+You got some Acked-by/Reviewed-by tags from reviewers from the previous 
+version, why were not those carried over?
 -- 
-2.39.2
+Florian
 
+--0000000000002878f0061b3f893c
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
+9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
+UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
+KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
+nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
+Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
+VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
+ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
+CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
+MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
+d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
+hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
+bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
+BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
+KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
+kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
+2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
+3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
+NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
+AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
+LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
+/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEILvNRmZqSvo8ayCe
+gUYnEsFni5rU2JJ9EIPhuO+cjmW0MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
+AQkFMQ8XDTI0MDYxOTE1MDU1OFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
+AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
+MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCvhicq5O+jLp7iqpoULktiJsWQg/gr7NSG
+k2mHqn810BNSmHmRqqzGQWnVNVKa3cHnMMpRrnRflTICDOg5HCKSVA8SWWUf6rYaU/liZ21i50Ak
+Re2jIsbsed/w2ILDboPWrmKG53P12rRL36VcxEQTlrsEKenLx0nOFSKtJZx3nB4V8TXI3ffq06Tm
+X4GQjjtyEHzydsg1k1a1zcZZxr2CJ0x+bsoAp1iQOmXyjku82X9tfaBKjUMIusn2UDyp1Xjzhp96
+obGuEJcW4DH49scSdYra4tzcRfsUDQz/gyHWzxFVdzAwUwiREsCKuz6o8sTIhv8Gr2sIC9dK2QmE
+HTzB
+--0000000000002878f0061b3f893c--
 
