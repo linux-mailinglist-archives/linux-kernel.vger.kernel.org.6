@@ -1,466 +1,301 @@
-Return-Path: <linux-kernel+bounces-220692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2634090E56C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:21:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9734A90E56A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A31771F21A32
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:21:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD0C1F22015
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 08:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7C779945;
-	Wed, 19 Jun 2024 08:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AD77B3E5;
+	Wed, 19 Jun 2024 08:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="criy/wC7"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITupTZh4"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BBD224D4
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 08:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E067EEF5;
+	Wed, 19 Jun 2024 08:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718785256; cv=none; b=ANfg5Dzd5WPq7WuCcYBY8sVJdzdmHFMRJFeDsqW3I/27FqaNKQkoIa3BtPQPggFHB52KwHDNqVH3iPi4BLGR7cssnV0MBokIxVW4rPBSh1q2gwl1gN2LAbwmh48Xils9E4pGsmJxEt8Lo098mAiivNeWJMgvkYgeKsdPi0UL5fk=
+	t=1718785205; cv=none; b=RPLhBk+MeMNmBZ/SNyti0NqCzxIcWzoMSfmVvMn91N4GMutPqWBTipmT0mgU6puP5oYxBBjf5BNmqat2IqoKBhO5JpGI9DuJkHTKL7mWFsUL9H73bLkY7rM/4qIAEIwQeqSIqAIKj8/HawYkU0vB+XQd5AmHxylLrkQ+ME4bOik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718785256; c=relaxed/simple;
-	bh=1XzMdBx9KiZ5Y3DFOztoYlLG5dQMfkCSdbxeEzHCg3I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s9SnMFbs4TL67y+exx1JsRt9Tv2rvu47PmWX1+Rp+ODQcIWTauYfTmzS1yz8f5obagHwdFL7gOW45b/ob9T5gPngKnwEHO4aIGVZBTUd3kswjJ1l3UYypfxHxTC+Ilnrq/EdEzH162LPOEpeHTdjQIo1YS4rRrQOqJIQpzRyeA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=criy/wC7; arc=none smtp.client-ip=209.85.222.53
+	s=arc-20240116; t=1718785205; c=relaxed/simple;
+	bh=/LZWj7oaqNHKukw2mT2SK+cZhXWIt6cUnNRXQtMon/w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=E9Rdg4dxYKVPQnKzLEczjKmjIO+laXYRtf9hPJ94ElF0CnqO9BALjc4uA5rQZQzOGE3s/+nA/odDAmQMHcfRWqpZJYpG8ogE+JFrknGQkeNlxAValjo+RDX//oM+n/IMv2WSxWODixu9iq0dt+T68zOxVChqEKt/r5oVMiw2sIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ITupTZh4; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-80f4f1e7cc3so433606241.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 01:20:54 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f862f7c7edso42739515ad.3;
+        Wed, 19 Jun 2024 01:20:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718785253; x=1719390053; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718785203; x=1719390003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=He+zo0Tp/RNYugMKckmaumklLbi/HraZr7oLDXy9GoY=;
-        b=criy/wC7fudJesIPqrmNt7CnkbRul9oFVKz/5CfPQHZ7+ea7fdRmyMqPgoWJsdSfY6
-         b5DbigwFD9/hdrvdzyj5H02KZff21F44/um+5xTQ9OQGS9O1nGjYSAIDfjr50yxtT6K/
-         frsrw745ppZJVdXPh/i6HJHrbd6893DSEw9ZB0E723PZCUd4F7stCokc8oGNo+lVpE14
-         OcTbDDrjIAXD51nFR/74x8uApbg/mjB88gtH9u9IRnSR4A9WLMeTbm7vw3B8n6eU/T6A
-         DFlvitlMD8B+HPMvzupmPxQI8fA1RPNNC1oEKCEUzzfa9W9l8bSBDxLeQOPES4etHh2n
-         AKMQ==
+        bh=kAYmpGaIlWdxgsMDkaG8zIxFictKgFkTjRCndchDMo8=;
+        b=ITupTZh4jZraFr5Q0S27dAQQ/8/EF8/J8EIReWlTwh2mt/YuEnzLZUGVArmT97PhGO
+         yLSeOQ4BfqNuwrLjsE2rJIaHgt4yyd/DAEUx++HM+whSB4Z17858Dm5T+XaunafqMwSI
+         91XDHWtUkr/eW6qozrAmp/Q7++hzmMDfjsJVyz3Z0OXnlt3Sf9//pxOptyrdUemKsM0X
+         613ZigSeHYRM/cnnEamIwZUseg97Zs8k6JWjVnWWU3aHmlhHKO7CEYZbGO40xf6s33bA
+         YcEsxtOGCWy8DcQLQN4Jjv+M3tGUed5XYBgNFQpYBkoTQ75lo44jmJYUQcc1kP4FEp+f
+         BBGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718785253; x=1719390053;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1718785203; x=1719390003;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=He+zo0Tp/RNYugMKckmaumklLbi/HraZr7oLDXy9GoY=;
-        b=iF9s+e4C7IzdX0249D0MrLwm/OXiW4hSp59NvJLSJM5/FE+vnMPbkJxdWO3okT3DnR
-         3T07zwJU/lxva5punSLF66SN6YjTPcr22osyzeo/bq0U2LIGnF3SNZFtO8QbqoQI9VjR
-         7lEsLGsTOGtFmyusN/s9DquLQBOB8ff8z8XA6ySM1CQf97D3xDyXQFhMYgPdFxHXE3Ih
-         D+DSRZT2Jlqoewkoz+UP+YqoKHLgOwPq/9v9fbau5C3tr/gqvGdQgaZGmHTQrvGt/ccV
-         pQ2eWQ7NObdBbRBK8xEww8UcigtW5jhReXjuKZVaIb01InNiAFndBovT6rA4XQeOPgyH
-         ztOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiHn95IGzlRA/zrpMH0O7uQsBWgU8vYoRCYk2ytnK+CVXugcOkDcvWygYLogS4nCITpYP+U3QLv1JIa3A38H9x+RtbmVUQ//bYiXEF
-X-Gm-Message-State: AOJu0Yx687iwAyYp3hlI3laZ6L9rPI5/9NEVogIJ3fN46UpS0B95gcDV
-	w7lK8g4Ewyup8p2N324635+Uvef5UDy4Ah6DF+EAwz/1tbLFToXRVsBvQitm1l9kAZa0m5PTGRy
-	bJMSN1sgoEVnoOsdkPZbZyP5pnByXmUsT
-X-Google-Smtp-Source: AGHT+IED0gDtzjRvMQIpWzZyTu8UVlVPUsyrecgQhzqb2lDXDEQzZ1IHEjrloriju+gLcFWUfpsXPzrdjfC0I9qAeUw=
-X-Received: by 2002:a05:6102:3a76:b0:48d:4dc2:9b18 with SMTP id
- ada2fe7eead31-48f130d06e4mr1987402137.33.1718785253366; Wed, 19 Jun 2024
- 01:20:53 -0700 (PDT)
+        bh=kAYmpGaIlWdxgsMDkaG8zIxFictKgFkTjRCndchDMo8=;
+        b=XWZW2FGfGAIDZnLEOf98gHqNtN1zXCOLZhpr5P11xf5XGiifopwND13mIb5eKtfokz
+         D9AxbZBdqOYQHW03shr25L+HsNw0/BengWBof3szcOnWDRMm3JpI1KZKaLXuUyZ3KR5M
+         dHJIJg/0dhYC+aAvNgYSs2erXU1Wr40CRaRHd1BY+WY6Gi3QhFuS6xQGhYK9/hJ1QcO1
+         XSrvEK3EL8xwVFCnF8g9VtgrIgUYQ5PkoyoCIBSRGaSy8vvsBdMN30fupOnO/4zpRXz3
+         msQ3nZ8MSvLjk2l50Cqq+SrdxfAQ3GlXModj64wgpqzX04FwE0IKZlBlX+b/wDdyh+Rm
+         YCUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZXqPOAmDGcMU7t59aUwNjhtCSWfbkIp2er6GVE3DMzyOoRxnvFcL+mktxn86296d2uTRmzZs4R3i5ASS3JmIDYUmt2yoO7mtL3BKyXaCco+F2SOEjwU1HrKt0vDpBhL35IwS6NH+LDf9R8oZvVw==
+X-Gm-Message-State: AOJu0YzUkL+XBoC02fk7DJCCDFDmKsSL1spPYEt1cRTNmnlNTiIaXFl+
+	wIFOQBNMSXQlE3WqSdSLX5HOt39Mb4+4T/hDjNF3AfgbohyOJFPW
+X-Google-Smtp-Source: AGHT+IFgftcucoFbUM8uwfsYsAAE572uQqDK+s6ybdqzlvlcyet5YSsOUg7O/GR6vGlt5OY27tW7Qw==
+X-Received: by 2002:a17:903:1c2:b0:1f7:1687:3062 with SMTP id d9443c01a7336-1f9aa46582dmr23615645ad.61.1718785203190;
+        Wed, 19 Jun 2024 01:20:03 -0700 (PDT)
+Received: from localhost.localdomain ([120.229.49.95])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f1decfsm110368105ad.250.2024.06.19.01.19.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 01:20:02 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v2 4/5] perf trace: Filter enum arguments with enum names
+Date: Wed, 19 Jun 2024 16:20:41 +0800
+Message-ID: <20240619082042.4173621-5-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240619082042.4173621-1-howardchu95@gmail.com>
+References: <20240619082042.4173621-1-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1717492460-19457-1-git-send-email-yangge1116@126.com>
- <CAGsJ_4zvG7gwukioZnqN+GpWHbpK1rkC0Jeqo5VFVL_RLACkaw@mail.gmail.com>
- <2e3a3a3f-737c-ed01-f820-87efee0adc93@126.com> <9b227c9d-f59b-a8b0-b353-7876a56c0bde@126.com>
- <CAGsJ_4ynfvjXsr6QFBA_7Gzk3PaO1pk+6ErKZaNCt4H+nuwiJw@mail.gmail.com>
- <4482bf69-eb07-0ec9-f777-28ce40f96589@126.com> <CAGsJ_4ytYTpvRVgR1EoazsH=QxZCDE2e8H0BeXrY-6zWFD0kCg@mail.gmail.com>
- <69414410-4e2d-c04c-6fc3-9779f9377cf2@126.com> <CAGsJ_4xHpHVKwqcSFqRQ_DxsehNh0Wp=P-MTGA2b_iy=KUW1Bw@mail.gmail.com>
- <d082f7e0-cbb9-f21a-e08d-47b5abd9e91d@126.com> <b1b108d5-0008-4681-97cc-253992e18c3b@126.com>
-In-Reply-To: <b1b108d5-0008-4681-97cc-253992e18c3b@126.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 19 Jun 2024 20:20:40 +1200
-Message-ID: <CAGsJ_4xh3Bsd8RZ9v8Am=TmFWPfo_T4UVgptq4gVH9=QOHnDvw@mail.gmail.com>
-Subject: Re: [PATCH] mm/page_alloc: skip THP-sized PCP list when allocating
- non-CMA THP-sized page
-To: Ge Yang <yangge1116@126.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, baolin.wang@linux.alibaba.com, 
-	liuzixing@hygon.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 19, 2024 at 5:35=E2=80=AFPM Ge Yang <yangge1116@126.com> wrote:
->
->
->
-> =E5=9C=A8 2024/6/18 15:51, yangge1116 =E5=86=99=E9=81=93:
-> >
-> >
-> > =E5=9C=A8 2024/6/18 =E4=B8=8B=E5=8D=882:58, Barry Song =E5=86=99=E9=81=
-=93:
-> >> On Tue, Jun 18, 2024 at 6:56=E2=80=AFPM yangge1116 <yangge1116@126.com=
-> wrote:
-> >>>
-> >>>
-> >>>
-> >>> =E5=9C=A8 2024/6/18 =E4=B8=8B=E5=8D=8812:10, Barry Song =E5=86=99=E9=
-=81=93:
-> >>>> On Tue, Jun 18, 2024 at 3:32=E2=80=AFPM yangge1116 <yangge1116@126.c=
-om> wrote:
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>> =E5=9C=A8 2024/6/18 =E4=B8=8A=E5=8D=889:55, Barry Song =E5=86=99=E9=
-=81=93:
-> >>>>>> On Tue, Jun 18, 2024 at 9:36=E2=80=AFAM yangge1116 <yangge1116@126=
-.com>
-> >>>>>> wrote:
-> >>>>>>>
-> >>>>>>>
-> >>>>>>>
-> >>>>>>> =E5=9C=A8 2024/6/17 =E4=B8=8B=E5=8D=888:47, yangge1116 =E5=86=99=
-=E9=81=93:
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> =E5=9C=A8 2024/6/17 =E4=B8=8B=E5=8D=886:26, Barry Song =E5=86=99=
-=E9=81=93:
-> >>>>>>>>> On Tue, Jun 4, 2024 at 9:15=E2=80=AFPM <yangge1116@126.com> wro=
-te:
-> >>>>>>>>>>
-> >>>>>>>>>> From: yangge <yangge1116@126.com>
-> >>>>>>>>>>
-> >>>>>>>>>> Since commit 5d0a661d808f ("mm/page_alloc: use only one PCP
-> >>>>>>>>>> list for
-> >>>>>>>>>> THP-sized allocations") no longer differentiates the migration
-> >>>>>>>>>> type
-> >>>>>>>>>> of pages in THP-sized PCP list, it's possible to get a CMA
-> >>>>>>>>>> page from
-> >>>>>>>>>> the list, in some cases, it's not acceptable, for example,
-> >>>>>>>>>> allocating
-> >>>>>>>>>> a non-CMA page with PF_MEMALLOC_PIN flag returns a CMA page.
-> >>>>>>>>>>
-> >>>>>>>>>> The patch forbids allocating non-CMA THP-sized page from
-> >>>>>>>>>> THP-sized
-> >>>>>>>>>> PCP list to avoid the issue above.
-> >>>>>>>>>
-> >>>>>>>>> Could you please describe the impact on users in the commit log=
-?
-> >>>>>>>>
-> >>>>>>>> If a large number of CMA memory are configured in the system (fo=
-r
-> >>>>>>>> example, the CMA memory accounts for 50% of the system memory),
-> >>>>>>>> starting
-> >>>>>>>> virtual machine with device passthrough will get stuck.
-> >>>>>>>>
-> >>>>>>>> During starting virtual machine, it will call
-> >>>>>>>> pin_user_pages_remote(...,
-> >>>>>>>> FOLL_LONGTERM, ...) to pin memory. If a page is in CMA area,
-> >>>>>>>> pin_user_pages_remote() will migrate the page from CMA area to
-> >>>>>>>> non-CMA
-> >>>>>>>> area because of FOLL_LONGTERM flag. If non-movable allocation
-> >>>>>>>> requests
-> >>>>>>>> return CMA memory, pin_user_pages_remote() will enter endless
-> >>>>>>>> loops.
-> >>>>>>>>
-> >>>>>>>> backtrace:
-> >>>>>>>> pin_user_pages_remote
-> >>>>>>>> ----__gup_longterm_locked //cause endless loops in this function
-> >>>>>>>> --------__get_user_pages_locked
-> >>>>>>>> --------check_and_migrate_movable_pages //always check fail and
-> >>>>>>>> continue
-> >>>>>>>> to migrate
-> >>>>>>>> ------------migrate_longterm_unpinnable_pages
-> >>>>>>>> ----------------alloc_migration_target // non-movable allocation
-> >>>>>>>>
-> >>>>>>>>> Is it possible that some CMA memory might be used by non-movabl=
-e
-> >>>>>>>>> allocation requests?
-> >>>>>>>>
-> >>>>>>>> Yes.
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>>> If so, will CMA somehow become unable to migrate, causing
-> >>>>>>>>> cma_alloc()
-> >>>>>>>>> to fail?
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> No, it will cause endless loops in __gup_longterm_locked(). If
-> >>>>>>>> non-movable allocation requests return CMA memory,
-> >>>>>>>> migrate_longterm_unpinnable_pages() will migrate a CMA page to
-> >>>>>>>> another
-> >>>>>>>> CMA page, which is useless and cause endless loops in
-> >>>>>>>> __gup_longterm_locked().
-> >>>>>>
-> >>>>>> This is only one perspective. We also need to consider the impact =
-on
-> >>>>>> CMA itself. For example,
-> >>>>>> when CMA is borrowed by THP, and we need to reclaim it through
-> >>>>>> cma_alloc() or dma_alloc_coherent(),
-> >>>>>> we must move those pages out to ensure CMA's users can retrieve th=
-at
-> >>>>>> contiguous memory.
-> >>>>>>
-> >>>>>> Currently, CMA's memory is occupied by non-movable pages, meaning =
-we
-> >>>>>> can't relocate them.
-> >>>>>> As a result, cma_alloc() is more likely to fail.
-> >>>>>>
-> >>>>>>>>
-> >>>>>>>> backtrace:
-> >>>>>>>> pin_user_pages_remote
-> >>>>>>>> ----__gup_longterm_locked //cause endless loops in this function
-> >>>>>>>> --------__get_user_pages_locked
-> >>>>>>>> --------check_and_migrate_movable_pages //always check fail and
-> >>>>>>>> continue
-> >>>>>>>> to migrate
-> >>>>>>>> ------------migrate_longterm_unpinnable_pages
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> Fixes: 5d0a661d808f ("mm/page_alloc: use only one PCP list for
-> >>>>>>>>>> THP-sized allocations")
-> >>>>>>>>>> Signed-off-by: yangge <yangge1116@126.com>
-> >>>>>>>>>> ---
-> >>>>>>>>>>      mm/page_alloc.c | 10 ++++++++++
-> >>>>>>>>>>      1 file changed, 10 insertions(+)
-> >>>>>>>>>>
-> >>>>>>>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> >>>>>>>>>> index 2e22ce5..0bdf471 100644
-> >>>>>>>>>> --- a/mm/page_alloc.c
-> >>>>>>>>>> +++ b/mm/page_alloc.c
-> >>>>>>>>>> @@ -2987,10 +2987,20 @@ struct page *rmqueue(struct zone
-> >>>>>>>>>> *preferred_zone,
-> >>>>>>>>>>             WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order
-> >>>>>>>>>> > 1));
-> >>>>>>>>>>
-> >>>>>>>>>>             if (likely(pcp_allowed_order(order))) {
-> >>>>>>>>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >>>>>>>>>> +               if (!IS_ENABLED(CONFIG_CMA) || alloc_flags &
-> >>>>>>>>>> ALLOC_CMA ||
-> >>>>>>>>>> +                                               order !=3D
-> >>>>>>>>>> HPAGE_PMD_ORDER) {
-> >>>>>>>>>> +                       page =3D rmqueue_pcplist(preferred_zon=
-e,
-> >>>>>>>>>> zone,
-> >>>>>>>>>> order,
-> >>>>>>>>>> +                                               migratetype,
-> >>>>>>>>>> alloc_flags);
-> >>>>>>>>>> +                       if (likely(page))
-> >>>>>>>>>> +                               goto out;
-> >>>>>>>>>> +               }
-> >>>>>>>>>
-> >>>>>>>>> This seems not ideal, because non-CMA THP gets no chance to use
-> >>>>>>>>> PCP.
-> >>>>>>>>> But it
-> >>>>>>>>> still seems better than causing the failure of CMA allocation.
-> >>>>>>>>>
-> >>>>>>>>> Is there a possible approach to avoiding adding CMA THP into
-> >>>>>>>>> pcp from
-> >>>>>>>>> the first
-> >>>>>>>>> beginning? Otherwise, we might need a separate PCP for CMA.
-> >>>>>>>>>
-> >>>>>>>
-> >>>>>>> The vast majority of THP-sized allocations are GFP_MOVABLE, avoid=
-ing
-> >>>>>>> adding CMA THP into pcp may incur a slight performance penalty.
-> >>>>>>>
-> >>>>>>
-> >>>>>> But the majority of movable pages aren't CMA, right?
-> >>>>>
-> >>>>>> Do we have an estimate for
-> >>>>>> adding back a CMA THP PCP? Will per_cpu_pages introduce a new
-> >>>>>> cacheline, which
-> >>>>>> the original intention for THP was to avoid by having only one
-> >>>>>> PCP[1]?
-> >>>>>>
-> >>>>>> [1]
-> >>>>>> https://patchwork.kernel.org/project/linux-mm/patch/20220624125423=
-.6126-3-mgorman@techsingularity.net/
-> >>>>>>
-> >>>>>
-> >>>>> The size of struct per_cpu_pages is 256 bytes in current code
-> >>>>> containing
-> >>>>> commit 5d0a661d808f ("mm/page_alloc: use only one PCP list for
-> >>>>> THP-sized
-> >>>>> allocations").
-> >>>>> crash> struct per_cpu_pages
-> >>>>> struct per_cpu_pages {
-> >>>>>        spinlock_t lock;
-> >>>>>        int count;
-> >>>>>        int high;
-> >>>>>        int high_min;
-> >>>>>        int high_max;
-> >>>>>        int batch;
-> >>>>>        u8 flags;
-> >>>>>        u8 alloc_factor;
-> >>>>>        u8 expire;
-> >>>>>        short free_count;
-> >>>>>        struct list_head lists[13];
-> >>>>> }
-> >>>>> SIZE: 256
-> >>>>>
-> >>>>> After revert commit 5d0a661d808f ("mm/page_alloc: use only one PCP
-> >>>>> list
-> >>>>> for THP-sized allocations"), the size of struct per_cpu_pages is
-> >>>>> 272 bytes.
-> >>>>> crash> struct per_cpu_pages
-> >>>>> struct per_cpu_pages {
-> >>>>>        spinlock_t lock;
-> >>>>>        int count;
-> >>>>>        int high;
-> >>>>>        int high_min;
-> >>>>>        int high_max;
-> >>>>>        int batch;
-> >>>>>        u8 flags;
-> >>>>>        u8 alloc_factor;
-> >>>>>        u8 expire;
-> >>>>>        short free_count;
-> >>>>>        struct list_head lists[15];
-> >>>>> }
-> >>>>> SIZE: 272
-> >>>>>
-> >>>>> Seems commit 5d0a661d808f ("mm/page_alloc: use only one PCP list fo=
-r
-> >>>>> THP-sized allocations") decrease one cacheline.
-> >>>>
-> >>>> the proposal is not reverting the patch but adding one CMA pcp.
-> >>>> so it is "struct list_head lists[14]"; in this case, the size is sti=
-ll
-> >>>> 256?
-> >>>>
-> >>>
-> >>> Yes, the size is still 256. If add one PCP list, we will have 2 PCP
-> >>> lists for THP. One PCP list is used by MIGRATE_UNMOVABLE, and the oth=
-er
-> >>> PCP list is used by MIGRATE_MOVABLE and MIGRATE_RECLAIMABLE. Is that
-> >>> right?
-> >>
-> >> i am not quite sure about MIGRATE_RECLAIMABLE as we want to
-> >> CMA is only used by movable.
-> >> So it might be:
-> >> MOVABLE and NON-MOVABLE.
-> >
-> > One PCP list is used by UNMOVABLE pages, and the other PCP list is used
-> > by MOVABLE pages, seems it is feasible. UNMOVABLE PCP list contains
-> > MIGRATE_UNMOVABLE pages and MIGRATE_RECLAIMABLE pages, and MOVABLE PCP
-> > list contains MIGRATE_MOVABLE pages.
-> >
->
-> Is the following modification feasiable?
->
-> #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -#define NR_PCP_THP 1
-> +#define NR_PCP_THP 2
-> +#define PCP_THP_MOVABLE 0
-> +#define PCP_THP_UNMOVABLE 1
->   #else
->   #define NR_PCP_THP 0
->   #endif
->
->   static inline unsigned int order_to_pindex(int migratetype, int order)
->   {
-> +       int pcp_type =3D migratetype;
-> +
->   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->          if (order > PAGE_ALLOC_COSTLY_ORDER) {
->                  VM_BUG_ON(order !=3D HPAGE_PMD_ORDER);
-> -               return NR_LOWORDER_PCP_LISTS;
-> +
-> +               if (migratetype !=3D MIGRATE_MOVABLE)
-> +                       pcp_type =3D PCP_THP_UNMOVABLE;
-> +               else
-> +                       pcp_type =3D PCP_THP_MOVABLE;
-> +
-> +               return NR_LOWORDER_PCP_LISTS + pcp_type;
->          }
->   #else
->          VM_BUG_ON(order > PAGE_ALLOC_COSTLY_ORDER);
->   #endif
->
-> -       return (MIGRATE_PCPTYPES * order) + migratetype;
-> +       return (MIGRATE_PCPTYPES * order) + pcp_type;
->   }
->
+Before:
 
-a minimum change might be, then you can drop most new code.
+perf $ ./perf trace -e timer:hrtimer_start --filter='mode!=HRTIMER_MODE_ABS_PINNED_HARD' --max-events=1
+No resolver (strtoul) for "mode" in "timer:hrtimer_start", can't set filter "(mode!=HRTIMER_MODE_ABS_PINNED_HARD) && (common_pid != 281988)"
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 120a317d0938..cfe1e0625e38 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -588,6 +588,7 @@ static void bad_page(struct page *page, const char *rea=
-son)
+After:
 
- static inline unsigned int order_to_pindex(int migratetype, int order)
+perf $ ./perf trace -e timer:hrtimer_start --filter='mode!=HRTIMER_MODE_ABS_PINNED_HARD' --max-events=1
+     0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function: 0xffffffffa77a5be0, expires: 12351248764875, softexpires: 12351248764875, mode: HRTIMER_MODE_ABS)
+
+&& and ||:
+
+perf $ ./perf trace -e timer:hrtimer_start --filter='mode != HRTIMER_MODE_ABS_PINNED_HARD && mode != HRTIMER_MODE_ABS' --max-events=1
+     0.000 Hyprland/534 timer:hrtimer_start(hrtimer: 0xffff9497801a84d0, function: 0xffffffffc04cdbe0, expires: 12639434638458, softexpires: 12639433638458, mode: HRTIMER_MODE_REL)
+
+perf $ ./perf trace -e timer:hrtimer_start --filter='mode == HRTIMER_MODE_REL || mode == HRTIMER_MODE_PINNED' --max-events=1
+     0.000 ldlck-test/60639 timer:hrtimer_start(hrtimer: 0xffffb16404ee7bf8, function: 0xffffffffa7790420, expires: 12772614418016, softexpires: 12772614368016, mode: HRTIMER_MODE_REL)
+
+Switching it up, using both enum name and integer value(--filter='mode == HRTIMER_MODE_ABS_PINNED_HARD || mode == 0'):
+
+perf $ ./perf trace -e timer:hrtimer_start --filter='mode == HRTIMER_MODE_ABS_PINNED_HARD || mode == 0' --max-events=3
+     0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function: 0xffffffffa77a5be0, expires: 12601748739825, softexpires: 12601748739825, mode: HRTIMER_MODE_ABS_PINNED_HARD)
+     0.036 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function: 0xffffffffa77a5be0, expires: 12518758748124, softexpires: 12518758748124, mode: HRTIMER_MODE_ABS_PINNED_HARD)
+     0.172 tmux: server/41881 timer:hrtimer_start(hrtimer: 0xffffb164081e7838, function: 0xffffffffa7790420, expires: 12518768255836, softexpires: 12518768205836, mode: HRTIMER_MODE_ABS)
+
+P.S.
+perf $ pahole hrtimer_mode
+enum hrtimer_mode {
+        HRTIMER_MODE_ABS             = 0,
+        HRTIMER_MODE_REL             = 1,
+        HRTIMER_MODE_PINNED          = 2,
+        HRTIMER_MODE_SOFT            = 4,
+        HRTIMER_MODE_HARD            = 8,
+        HRTIMER_MODE_ABS_PINNED      = 2,
+        HRTIMER_MODE_REL_PINNED      = 3,
+        HRTIMER_MODE_ABS_SOFT        = 4,
+        HRTIMER_MODE_REL_SOFT        = 5,
+        HRTIMER_MODE_ABS_PINNED_SOFT = 6,
+        HRTIMER_MODE_REL_PINNED_SOFT = 7,
+        HRTIMER_MODE_ABS_HARD        = 8,
+        HRTIMER_MODE_REL_HARD        = 9,
+        HRTIMER_MODE_ABS_PINNED_HARD = 10,
+        HRTIMER_MODE_REL_PINNED_HARD = 11,
+};
+
+Tested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+Reviewed-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+Signed-off-by: Howard Chu <howardchu95@gmail.com>
+---
+ tools/perf/builtin-trace.c | 89 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 76 insertions(+), 13 deletions(-)
+
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index bd16679fb4c0..1148c3edee97 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -904,11 +904,36 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
+ 	    .strtoul	= STUL_STRARRAY_FLAGS, \
+ 	    .parm	= &strarray__##array, }
+ 
+-static int btf_enum_find_entry(struct btf *btf, char *type, struct syscall_arg_fmt *arg_fmt)
++#define SCA_GETRANDOM_FLAGS syscall_arg__scnprintf_getrandom_flags
++
++static const struct btf_type *btf_find_type(struct btf *btf, char *type)
  {
-+       bool __maybe_unused movable;
- #ifdef CONFIG_CMA
-        /*
-         * We shouldn't get here for MIGRATE_CMA if those pages don't
-@@ -600,7 +601,8 @@ static inline unsigned int order_to_pindex(int
-migratetype, int order)
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-        if (order > PAGE_ALLOC_COSTLY_ORDER) {
-                VM_BUG_ON(order !=3D pageblock_order);
--               return NR_LOWORDER_PCP_LISTS;
-+               movable =3D migratetype =3D=3D MIGRATE_MOVABLE;
-+               return NR_LOWORDER_PCP_LISTS + movable;
-        }
- #else
-        VM_BUG_ON(order > PAGE_ALLOC_COSTLY_ORDER);
+ 	const struct btf_type *bt;
++	int id = btf__find_by_name(btf, type);
++
++	if (id < 0)
++		return NULL;
++
++	bt = btf__type_by_id(btf, id);
++	if (bt == NULL)
++		return NULL;
++
++	return bt;
++}
++
++struct btf_parm {
++	struct btf *btf;
++	char *type;
++};
++
++static bool syscall_arg__strtoul_btf_enum(char *bf, size_t size, struct syscall_arg *arg, u64 *val)
++{
++	struct btf_parm *bparm = arg->parm;
++	struct btf *btf = bparm->btf;
++	char *type      = bparm->type;
+ 	char enum_prefix[][16] = { "enum", "const enum" }, *ep;
+-	int id;
++	struct btf_enum *be;
++	const struct btf_type *bt;
+ 	size_t i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(enum_prefix); i++) {
+@@ -917,11 +942,38 @@ static int btf_enum_find_entry(struct btf *btf, char *type, struct syscall_arg_f
+ 			type += strlen(ep) + 1;
+ 	}
+ 
+-	id = btf__find_by_name(btf, type);
+-	if (id < 0)
+-		return -1;
++	bt = btf_find_type(btf, type);
++	if (bt == NULL)
++		return false;
+ 
+-	bt = btf__type_by_id(btf, id);
++	for (be = btf_enum(bt), i = 0; i < btf_vlen(bt); ++i, ++be) {
++		const char *name = btf__name_by_offset(btf, be->name_off);
++		int max_len = max(size, strlen(name));
++
++		if (strncmp(name, bf, max_len) == 0) {
++			*val = be->val;
++			return true;
++		}
++	}
++
++	return false;
++}
++
++#define STUL_BTF_ENUM syscall_arg__strtoul_btf_enum
++
++static int btf_enum_find_entry(struct btf *btf, char *type, struct syscall_arg_fmt *arg_fmt)
++{
++	char enum_prefix[][16] = { "enum", "const enum" }, *ep;
++	const struct btf_type *bt;
++	size_t i;
++
++	for (i = 0; i < ARRAY_SIZE(enum_prefix); i++) {
++		ep = enum_prefix[i];
++		if (strlen(type) > strlen(ep) + 1 && strstarts(type, ep))
++			type += strlen(ep) + 1;
++	}
++
++	bt = btf_find_type(btf, type);
+ 	if (bt == NULL)
+ 		return -1;
+ 
+@@ -1850,6 +1902,7 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
+ 			arg->scnprintf = SCA_FD;
+ 		} else if (strstr(field->type, "enum") && use_btf != NULL) {
+ 			*use_btf = arg->is_enum = true;
++			arg->strtoul = STUL_BTF_ENUM;
+ 		} else {
+ 			const struct syscall_arg_fmt *fmt =
+ 				syscall_arg_fmt__find_by_name(field->name);
+@@ -3776,7 +3829,8 @@ static int ordered_events__deliver_event(struct ordered_events *oe,
+ 	return __trace__deliver_event(trace, event->event);
+ }
+ 
+-static struct syscall_arg_fmt *evsel__find_syscall_arg_fmt_by_name(struct evsel *evsel, char *arg)
++static struct syscall_arg_fmt *evsel__find_syscall_arg_fmt_by_name(struct evsel *evsel, char *arg,
++								   char **type)
+ {
+ 	struct tep_format_field *field;
+ 	struct syscall_arg_fmt *fmt = __evsel__syscall_arg_fmt(evsel);
+@@ -3785,8 +3839,10 @@ static struct syscall_arg_fmt *evsel__find_syscall_arg_fmt_by_name(struct evsel
+ 		return NULL;
+ 
+ 	for (field = evsel->tp_format->format.fields; field; field = field->next, ++fmt)
+-		if (strcmp(field->name, arg) == 0)
++		if (strcmp(field->name, arg) == 0) {
++			*type = field->type;
+ 			return fmt;
++		}
+ 
+ 	return NULL;
+ }
+@@ -3824,14 +3880,14 @@ static int trace__expand_filter(struct trace *trace __maybe_unused, struct evsel
+ 			struct syscall_arg_fmt *fmt;
+ 			int left_size = tok - left,
+ 			    right_size = right_end - right;
+-			char arg[128];
++			char arg[128], *type;
+ 
+ 			while (isspace(left[left_size - 1]))
+ 				--left_size;
+ 
+ 			scnprintf(arg, sizeof(arg), "%.*s", left_size, left);
+ 
+-			fmt = evsel__find_syscall_arg_fmt_by_name(evsel, arg);
++			fmt = evsel__find_syscall_arg_fmt_by_name(evsel, arg, &type);
+ 			if (fmt == NULL) {
+ 				pr_err("\"%s\" not found in \"%s\", can't set filter \"%s\"\n",
+ 				       arg, evsel->name, evsel->filter);
+@@ -3843,9 +3899,16 @@ static int trace__expand_filter(struct trace *trace __maybe_unused, struct evsel
+ 
+ 			if (fmt->strtoul) {
+ 				u64 val;
+-				struct syscall_arg syscall_arg = {
+-					.parm = fmt->parm,
+-				};
++				struct syscall_arg syscall_arg;
++				struct btf_parm bparm;
++
++				if (fmt->is_enum) {
++					bparm.btf  = trace->btf;
++					bparm.type = type;
++					syscall_arg.parm = &bparm;
++				} else {
++					syscall_arg.parm = fmt->parm;
++				}
+ 
+ 				if (fmt->strtoul(right, right_size, &syscall_arg, &val)) {
+ 					char *n, expansion[19];
+-- 
+2.45.2
 
-
->
->
-> @@ -521,7 +529,7 @@ static inline int pindex_to_order(unsigned int pindex=
-)
->          int order =3D pindex / MIGRATE_PCPTYPES;
->
->   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -       if (pindex =3D=3D NR_LOWORDER_PCP_LISTS)
-> +       if (order > PAGE_ALLOC_COSTLY_ORDER)
->                  order =3D HPAGE_PMD_ORDER;
->   #else
->          VM_BUG_ON(order > PAGE_ALLOC_COSTLY_ORDER);
->
->
->
-> >>
-> >>>
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>>> Commit 1d91df85f399 takes a similar approach to filter, and I mai=
-nly
-> >>>>>>> refer to it.
-> >>>>>>>
-> >>>>>>>
-> >>>>>>>>>> +#else
-> >>>>>>>>>>                     page =3D rmqueue_pcplist(preferred_zone,
-> >>>>>>>>>> zone, order,
-> >>>>>>>>>>                                            migratetype,
-> >>>>>>>>>> alloc_flags);
-> >>>>>>>>>>                     if (likely(page))
-> >>>>>>>>>>                             goto out;
-> >>>>>>>>>> +#endif
-> >>>>>>>>>>             }
-> >>>>>>>>>>
-> >>>>>>>>>>             page =3D rmqueue_buddy(preferred_zone, zone, order=
-,
-> >>>>>>>>>> alloc_flags,
-> >>>>>>>>>> --
-> >>>>>>>>>> 2.7.4
-> >>>>>>>>>
-> >>>>>>>>> Thanks
-> >>>>>>>>> Barry
-> >>>>>>>>>
-> >>>>>>>
-> >>>>>>>
-> >>>>>
-> >>>
->
 
