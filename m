@@ -1,206 +1,149 @@
-Return-Path: <linux-kernel+bounces-220841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7CA90E809
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:13:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6CC790E80D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A277D1F225E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:13:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291791F23290
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF68F13B792;
-	Wed, 19 Jun 2024 10:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2534612F38B;
+	Wed, 19 Jun 2024 10:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="r/e4f2nR"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ONONyysk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FE88627D
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 10:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86D8824AE;
+	Wed, 19 Jun 2024 10:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718791939; cv=none; b=R2y01utSuSLVWcGxasg0z40pR6b7yrmmfhzw+7r2PNIceSH9bn8WCk5SapgiEq2cOO7UqNMrE+haPsUqq+1vxq0RS3ytHt/WCtTZxKdZz8/p1EIm9zf8DM4K5FuERtHLHLgg9phblS+NEwkgRkfkMxpdA7wC2pQarJeFUJIaFWQ=
+	t=1718791968; cv=none; b=Z/sqfbBGstR+CsopUDAWEkEd3SEHS6sMoTtnHI3ToI7RjaSU8/B1SQukVA/UrfL5DNTjs2oCJ2Lwhs/5aidpSZR9JNG5BEqXOac8ku7xPIodD3JEKt/j6YdayBU1cV7KlevCsMDvhyW7IDFXLkWj6b/CBe6+R7lJfnX9GBIRvMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718791939; c=relaxed/simple;
-	bh=I3iLNPbAvcDPk6Nw1QUlh23HxzYQPmXbPfOcTvZTTEE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qe/mpWMq2DPGE+cmP5vdfWHW/5HATSRJ5mO1ryZSajOeoUcJm96/d4B+JZKN81YAxe6AHNxp9lqsFJMefx1CbxbnKZwaX33ShBov5u9h2S+iVM5PDwecMyQ1yW3drSDYvf+BLfLAZQnIwSDiKF7sucE/JdN/nQwlFsSx/Gdh4d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=r/e4f2nR; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52bc29c79fdso8532982e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 03:12:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718791935; x=1719396735; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oy65aQubSD4tbmjRxefZecoIq4GXZIdFH64RPRpuevk=;
-        b=r/e4f2nRL/TLpK7+y71IbGd0fozip5whzjgE0EUL/WYPx7edHPslGtRN2K7fW2DtzS
-         6R50gqT/WMaCkQhNeiO0z4uu+EErpVgAEOsLAFzOfNmIAyqj7+cE6h2yfpnFSmqjH3F6
-         dyurt451EOHx0oKZX+Fzvv3SKaxQV2Xjk65EFqN0UR+dP6+5VE2iLLTrJjFfcdit22nK
-         +hnw2cBZrTSyHftlliviRtqJ1N3T4EBkq5VcLwdw8PE/WSZCatOGWSAJQhDbX3I5DJuY
-         CYDJodMTtvNiLKZyqg+yDBrE02tAKuDHj2W3ZvU8cgxz/eUniRTpldVz9wZLAFOL21F0
-         j0mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718791935; x=1719396735;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Oy65aQubSD4tbmjRxefZecoIq4GXZIdFH64RPRpuevk=;
-        b=eKfIcYgQVWze10Q2vnS993OGKRpoVJIxjspE3vTPVNkpc6MZQKyFTb0HwW1YJaUdnf
-         YkO9BQkqIknw9xtL+qQBPgwzObR6liRN1a76uPe1JOFqvxNgwe4p6y+kcw678wtuC7wk
-         SiuyCw/ycPeJahMGeYuZazOVxPaEqbTjJk/YZmGFZVNUC27EJ2deX7TmVSZUBt5zggSy
-         K+o1scrir5DSnngI69PbbEmkdDuVMhEM0OE2/HDzy1Af0XhvjuJmNdy61shrY6748KI/
-         +1r67kgqwDzw08XvV0LNb7xWCGCmfyNgVVYXCvSRZLdh4lvnrQr4n/0BvLlTNZjzK0T1
-         xIZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXX7yu2nmY3YYwGq3qcvi/Fgg6wi9IK4auZljj1A212gkfIYQ/IBHd6AKfzA3NebFW6b8hleJMQzv2Xxfd2OAq2ktnWOg+Z4TLd3tW0
-X-Gm-Message-State: AOJu0YzLBFIvS8iQvywC08OgyKn18fqk/uGTRdUFKkBItvN44bGmvZ3I
-	IJ/yp/kl1bZZoKiCTs5eF6upiE/OA0UpXeiFUtEs2mEdQOQ/VgGfuG1ZQQHD0W8=
-X-Google-Smtp-Source: AGHT+IElXV90COGxqoASkehEGVkVUJcHtIY55Qg2BOMAPU5KAnXGT3gOKzusHP31PljuwUXHfU62qQ==
-X-Received: by 2002:a05:6512:448:b0:52c:80fb:ee76 with SMTP id 2adb3069b0e04-52ccaa594ecmr1527652e87.58.1718791934559;
-        Wed, 19 Jun 2024 03:12:14 -0700 (PDT)
-Received: from localhost (p509153eb.dip0.t-ipconnect.de. [80.145.83.235])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe9184sm255060585e9.13.2024.06.19.03.12.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 03:12:14 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	William Breathitt Gray <wbg@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-pwm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-iio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Scherer <T.Scherer@eckelmann.de>
-Subject: [PATCH v2 5/5] pwm-stm32: Make use of parametrised register definitions
-Date: Wed, 19 Jun 2024 12:11:46 +0200
-Message-ID:  <d7ef7a6158df4ba6687233b0e00d37796b069fb3.1718791090.git.u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
-References: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
+	s=arc-20240116; t=1718791968; c=relaxed/simple;
+	bh=YPE7L3MBTVX7TNFQWGWAAbTRS5eEO4VzyhQ99y3zEWE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bRyOtAhyVtZYD7YMKWo/YPs/bvrhMRnK91G7uMqE4MRB9VKvb9tPbOhDul2N6nQAe/oKDEhHlC39TM1zLX3FCiQpD/p7qoeewuLKc+LLRVKg4zf90q5jZbiiDOa0lluvbpJQmS3ciKc5wosE+8THRRfDkQKB1RjkBJeVSmqtJcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ONONyysk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JA46Tj014872;
+	Wed, 19 Jun 2024 10:12:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=5l7P0pcQAGIo0TVfiWBIXKlO
+	X9EMst2BA4PlAJPNRa8=; b=ONONyyskoipe98S0Y5532prrhODl+sB5skDuUxid
+	RL5Lnsnl/MMLhkKuQTt3FKdT/2oNxouL9zLwllwFbC5Gx7uk8GyELsPdN6p8PzVy
+	bKujmcVtX0eTrozBdQQDMJQFakiMOBj24gic61X9z4OzFxFAtpDVifIeKewN7fpL
+	VSEU/pF53QTSR9QsBG2DGa5Jh4ZrHT80lSxH68YIysswTwpQ0yctomgmZ+QNdW11
+	SWIrRB+X9cqdrp5h4DlJns1nAiqTHF3O66vgbFJ+c6HXTvVi1TZ6H5r0+U5J/+6z
+	SLIdgHMuIleTtI+/GhztkPDeZIYpy14NmJIA8IFG7JpVrA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9x1b49-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 10:12:37 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JACa0T005320
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 10:12:36 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 19 Jun 2024 03:12:33 -0700
+Date: Wed, 19 Jun 2024 15:42:29 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Komal Bajaj <quic_kbajaj@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] arm64: dts: qcom: qdu1000: Add secure qfprom node
+Message-ID: <ZnKvDZGuc7hojsCj@hu-mojha-hyd.qualcomm.com>
+References: <20240618092711.15037-1-quic_kbajaj@quicinc.com>
+ <ZnHUFVFKTP+74Iie@hu-mojha-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3795; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=I3iLNPbAvcDPk6Nw1QUlh23HxzYQPmXbPfOcTvZTTEE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBmcq7q8zY1OOIGZ/eP/4KeEUhCpX1HQd4lcfMiE qgoW7JMHLiJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZnKu6gAKCRCPgPtYfRL+ Toq4B/43LSGZu83nHMjrJj4MVPM4vtZms21eY4jgIjU0Gvcs7NtU61MHYKGY3AQOsxCPCNc9EvE t9VLqpH3lK2V4Haw2olqbsodrKWM508IzC24LQtqaqS8f1FqyzXuKaocLu4LYI2GsxUSURmkZh9 wRXRlhUikcxngpax3XlBNCaZ5ciBR68PmvbY+C2R7MgF6K4LkKRFYLr9PvvT9Gizpxp3hfYTAvP k1TXOVJaY2Tjv7E5t+9Advu+4qK49FdWMUpbx+/GfU21s6WTNwPLWCw7Rd14FtsQ/G8ymng3Vux Ga/FXD/DKAYkCorgEQiWt4mZDuWDWL/lOX6/6dpm/p8Lg+zi
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZnHUFVFKTP+74Iie@hu-mojha-hyd.qualcomm.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: yV0sAE45rMw_uyf0F3_D_9FyZ7YNuaLv
+X-Proofpoint-GUID: yV0sAE45rMw_uyf0F3_D_9FyZ7YNuaLv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=852
+ impostorscore=0 priorityscore=1501 suspectscore=0 mlxscore=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406190075
 
-There is no semantic change, but it is a nicer on the eyes of a reader,
-because
+On Wed, Jun 19, 2024 at 12:08:13AM +0530, Mukesh Ojha wrote:
+> On Tue, Jun 18, 2024 at 02:57:11PM +0530, Komal Bajaj wrote:
+> > Add secure qfprom node and also add properties for multi channel
+> > DDR. This is required for LLCC driver to pick the correct LLCC
+> > configuration.
+> > 
+> > Fixes: 6209038f131f ("arm64: dts: qcom: qdu1000: Add LLCC/system-cache-controller")
+> > Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+> > ---
+> > Changes in v3:
+> > * Addressed comment by Konrad
+> > * Added Fixes tag in commit message as suggested by Dmitry
+> > * Link to v2: https://lore.kernel.org/linux-arm-msm/20240612063424.2494-1-quic_kbajaj@quicinc.com/
+> > 
+> > Changes in v2:
+> > * Minor correction in commit message
+> > * Link to v1: https://lore.kernel.org/linux-arm-msm/20240607113445.2909-1-quic_kbajaj@quicinc.com/
+> > ---
+> >  arch/arm64/boot/dts/qcom/qdu1000.dtsi | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/qdu1000.dtsi b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
+> > index 7a77f7a55498..27f9fc87079c 100644
+> > --- a/arch/arm64/boot/dts/qcom/qdu1000.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/qdu1000.dtsi
+> > @@ -1584,6 +1584,21 @@ system-cache-controller@19200000 {
+> >  			reg-names = "llcc0_base",
+> >  				    "llcc_broadcast_base";
+> >  			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
+> > +
+> > +			nvmem-cells = <&multi_chan_ddr>;
+> > +			nvmem-cell-names = "multi-chan-ddr";
+> > +		};
+> > +
+> > +		sec_qfprom: efuse@221c8000 {
+> > +			compatible = "qcom,qdu1000-sec-qfprom", "qcom,sec-qfprom";
+> > +			reg = <0 0x221c8000 0 0x1000>;
+> > +			#address-cells = <1>;
+> > +			#size-cells = <1>;
+> > +
+> > +			multi_chan_ddr: multi-chan-ddr@12b {
+> > +				reg = <0x12b 0x1>;
+> > +				bits = <0 2>;
+> > +			};
+> 
+> LGTM, without this change, LLCC driver for QDU1000 will result in probe failure.
+> 
+> Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
 
-	TIM_CCR1 + 4 * ch
+Just noticed, sec_qfprom driver config CONFIG_NVMEM_QCOM_SEC_QFPROM, still
+need to be enabled.
 
-encodes internal register knowledge, while
-
-	TIM_CCRx(ch + 1)
-
-keeps that information completely in the header defining the registers.
-
-While I expected this to not result in any changes in the binary, gcc 13
-(as provided by Debian in the gcc-13-arm-linux-gnueabihf 13.2.0-12cross1
-package) compiles the new version with an allmodconfig to more compact
-code:
-
-	$ source/scripts/bloat-o-meter drivers/pwm/pwm-stm32.o-pre drivers/pwm/pwm-stm32.o
-	add/remove: 0/0 grow/shrink: 0/2 up/down: 0/-488 (-488)
-	Function                                     old     new   delta
-	stm32_pwm_get_state                          968     936     -32
-	stm32_pwm_apply_locked                      1920    1464    -456
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
- drivers/pwm/pwm-stm32.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
-index a2f231d13a9f..49a76514b83e 100644
---- a/drivers/pwm/pwm-stm32.c
-+++ b/drivers/pwm/pwm-stm32.c
-@@ -360,7 +360,7 @@ static int stm32_pwm_config(struct stm32_pwm *priv, unsigned int ch,
- 	dty = mul_u64_u64_div_u64(duty_ns, clk_get_rate(priv->clk),
- 				  (u64)NSEC_PER_SEC * (prescaler + 1));
- 
--	regmap_write(priv->regmap, TIM_CCR1 + 4 * ch, dty);
-+	regmap_write(priv->regmap, TIM_CCRx(ch + 1), dty);
- 
- 	/* Configure output mode */
- 	shift = (ch & 0x1) * CCMR_CHANNEL_SHIFT;
-@@ -382,9 +382,9 @@ static int stm32_pwm_set_polarity(struct stm32_pwm *priv, unsigned int ch,
- {
- 	u32 mask;
- 
--	mask = TIM_CCER_CC1P << (ch * 4);
-+	mask = TIM_CCER_CCxP(ch + 1);
- 	if (priv->have_complementary_output)
--		mask |= TIM_CCER_CC1NP << (ch * 4);
-+		mask |= TIM_CCER_CCxNP(ch + 1);
- 
- 	regmap_update_bits(priv->regmap, TIM_CCER, mask,
- 			   polarity == PWM_POLARITY_NORMAL ? 0 : mask);
-@@ -402,9 +402,9 @@ static int stm32_pwm_enable(struct stm32_pwm *priv, unsigned int ch)
- 		return ret;
- 
- 	/* Enable channel */
--	mask = TIM_CCER_CC1E << (ch * 4);
-+	mask = TIM_CCER_CCxE(ch + 1);
- 	if (priv->have_complementary_output)
--		mask |= TIM_CCER_CC1NE << (ch * 4);
-+		mask |= TIM_CCER_CCxNE(ch);
- 
- 	regmap_set_bits(priv->regmap, TIM_CCER, mask);
- 
-@@ -422,9 +422,9 @@ static void stm32_pwm_disable(struct stm32_pwm *priv, unsigned int ch)
- 	u32 mask;
- 
- 	/* Disable channel */
--	mask = TIM_CCER_CC1E << (ch * 4);
-+	mask = TIM_CCER_CCxE(ch + 1);
- 	if (priv->have_complementary_output)
--		mask |= TIM_CCER_CC1NE << (ch * 4);
-+		mask |= TIM_CCER_CCxNE(ch + 1);
- 
- 	regmap_clear_bits(priv->regmap, TIM_CCER, mask);
- 
-@@ -493,8 +493,8 @@ static int stm32_pwm_get_state(struct pwm_chip *chip,
- 	if (ret)
- 		goto out;
- 
--	state->enabled = ccer & (TIM_CCER_CC1E << (ch * 4));
--	state->polarity = (ccer & (TIM_CCER_CC1P << (ch * 4))) ?
-+	state->enabled = ccer & TIM_CCER_CCxE(ch + 1);
-+	state->polarity = (ccer & TIM_CCER_CCxP(ch + 1)) ?
- 			  PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
- 	ret = regmap_read(priv->regmap, TIM_PSC, &psc);
- 	if (ret)
-@@ -502,7 +502,7 @@ static int stm32_pwm_get_state(struct pwm_chip *chip,
- 	ret = regmap_read(priv->regmap, TIM_ARR, &arr);
- 	if (ret)
- 		goto out;
--	ret = regmap_read(priv->regmap, TIM_CCR1 + 4 * ch, &ccr);
-+	ret = regmap_read(priv->regmap, TIM_CCRx(ch + 1), &ccr);
- 	if (ret)
- 		goto out;
- 
-@@ -702,7 +702,7 @@ static int stm32_pwm_suspend(struct device *dev)
- 	ccer = active_channels(priv);
- 
- 	for (i = 0; i < chip->npwm; i++) {
--		mask = TIM_CCER_CC1E << (i * 4);
-+		mask = TIM_CCER_CCxE(i + 1);
- 		if (ccer & mask) {
- 			dev_err(dev, "PWM %u still in use by consumer %s\n",
- 				i, chip->pwms[i].label);
--- 
-2.43.0
-
+-Mukesh
 
