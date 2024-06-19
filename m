@@ -1,139 +1,216 @@
-Return-Path: <linux-kernel+bounces-221564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D3390F586
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:54:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03CAA90F58A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A683B232D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:54:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01651F21B32
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDBB15667E;
-	Wed, 19 Jun 2024 17:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C4B156673;
+	Wed, 19 Jun 2024 17:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANVI5mqO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="on8V5Mdj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BEC15665C;
-	Wed, 19 Jun 2024 17:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8141B55884;
+	Wed, 19 Jun 2024 17:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718819632; cv=none; b=XnYU555iuxmaO7/CHv9bGAeqKSHsbaufmIUuP69OiZmoUdMYvfcXJHt2au04guPb0aW2pFRVV6REgPlZ4+/JDZgvbOtYnS28s71NC+Ir36QSN06xlNuirHE+Y28PAZ4Ixv9dp02z81cxoSqzZ488WnRFCT/UU1fegjFskqS6eGw=
+	t=1718819753; cv=none; b=DPeh+At30l1on0Uc7gBujPPKTRqoUkJcTCmnI6aGC04OtaJcOEvkMtkCwxeDNm9vZx4EqEMZqx8cS5lX/miUtte10FN6JvwOYm6eFPwAD1J10+MGK53yxw4e5SnA1tGqh1TnZOgxyYEMDskRUz28yYb7scmyHixq72ROt7t8UGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718819632; c=relaxed/simple;
-	bh=TvoeJV62zGoYqldNkeqR8u101vJVySCOKHGBfXw8UyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qAhOnzXsl4G6G302JveHx9HLJ5uZNwk5JaoAs5d98AnYPEwi2qdbuDocGQCzNdqmPnNA70V9LWM4LBe3AzggrQKxS6sdmt/FLdGkOk42klKlGQKVXV/Ojmyz9AtyOQIHuFdZltWC2iGAjd2QFyendzZCoynx7LzTM/u0/wUEwT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANVI5mqO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41A67C2BBFC;
-	Wed, 19 Jun 2024 17:53:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718819632;
-	bh=TvoeJV62zGoYqldNkeqR8u101vJVySCOKHGBfXw8UyY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ANVI5mqOYkQ1NJSm8ukNcwhNp6Rlp+Mss67jzBovfIDW4mAfFwBBcn3qLv6pbirhJ
-	 DhNj0Eg/u0r6zClTGWwPiPIHZrvsgFr2PN217dnfZOPtQTykJpX8aqBvBAkb0lqpI/
-	 8p89VlQsJrZwPiH+mRJSvZMrQMRuJFxAR9n1hz1oU+iP9F/0Ufidl4g6SEnUL+ig4j
-	 EoYHFo5Ae7EcJSze34AIrSCIYYXfwf39Urp4k1kNkFyVgbi1LUSSfqBV91umr+TlJR
-	 7CJGtaHJBW/SACzyDRKlDxU0a0FzSnF4ZoDZlBiUDleQUeiCWFlosZtiepaWEvan1r
-	 XL/86blOE8Apg==
-Date: Wed, 19 Jun 2024 18:53:47 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Andrei Simion <andrei.simion@microchip.com>
-Cc: brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, arnd@arndb.de, gregkh@linuxfoundation.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/3] dt-bindings: eeprom: at24: Add at24,mac02e4 and
- at24,mac02e6
-Message-ID: <20240619-thee-herald-82725e1526e2@spud>
-References: <20240619072231.6876-1-andrei.simion@microchip.com>
- <20240619072231.6876-4-andrei.simion@microchip.com>
+	s=arc-20240116; t=1718819753; c=relaxed/simple;
+	bh=Z1+6qCBqD/lI3lhG9lVBfnM8a0CfNx7hfksitlqxQWY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oOtkMgXqlLIgGldBvGurJtKtqZWlLxrNyHxDJMNSIEeJl/tlVkc5Ij9LUSD6RYc1It05Si2b9nYecSBofHuH6NCg+eEpaiTkbU4MBDEmjIN4UAEWc1CK3ip9O/eQeTPpLl0yRk7Mw8r4B5kFDW4xZgt3YGC2Vn8mgi8+8dMGov0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=on8V5Mdj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JA1RBS009603;
+	Wed, 19 Jun 2024 17:55:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gdemIeGUW7SntTIV0OosORE60E17h83CGJytC9LeqxU=; b=on8V5MdjvCDjTcpk
+	yFZhq2pD/saTnDBgJ703iQn9gNjwMHYO7JkKjWEeG58e0OzbcdARt3dTme5zTZ5p
+	9hdML01x45YR1+WrHbvhbL7szYIfAL3/iZBGCtg5y/1/53MaDBS4u5jlno+wz8M0
+	y769slM0NtadMXLlHO38MJnYlLvxuAGuM/qo40bMTZlaSWlDE5ROHbj5tVCCnxWz
+	bBmCit1LgkZRYa/bMKTehglIz6M8pZWBDr1GehBHQ8iz4f8X9koKjGju3gk/QsJ8
+	2izlnsKJPLQUX9qAuT+PqJtrlcpVz4HDaiIlXPLxDqd4Dci6CF80dsVN8tW5bT0v
+	vydKbg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9tjf3h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 17:55:43 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JHtgmj010303
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 17:55:42 GMT
+Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
+ 2024 10:55:42 -0700
+Message-ID: <e75f21dc-ae10-4e44-8abd-41519d34f691@quicinc.com>
+Date: Wed, 19 Jun 2024 10:55:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XRg9XVxyqsfEYao/"
-Content-Disposition: inline
-In-Reply-To: <20240619072231.6876-4-andrei.simion@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/14] drm/msm/hdmi: rename hpd_clks to pwr_clks
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        "David
+ Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
+ <20240522-fd-hdmi-hpd-v2-10-c30bdb7c5c7e@linaro.org>
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240522-fd-hdmi-hpd-v2-10-c30bdb7c5c7e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -43Aoc1x1LWU4W3UU84iX3F7Y6odMSuL
+X-Proofpoint-ORIG-GUID: -43Aoc1x1LWU4W3UU84iX3F7Y6odMSuL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ bulkscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 spamscore=0 phishscore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406190135
 
 
---XRg9XVxyqsfEYao/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2024 at 10:22:31AM +0300, Andrei Simion wrote:
-> Update regex check and add pattern to match both EEPROMs.
->=20
-> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+On 5/22/2024 3:51 AM, Dmitry Baryshkov wrote:
+> As these clocks are now used in the runtime PM callbacks, they have no
+> connection to 'HPD'. Rename corresponding fields to follow clocks
+> purpose, to power up the HDMI controller.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+
 > ---
->  Documentation/devicetree/bindings/eeprom/at24.yaml | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Documen=
-tation/devicetree/bindings/eeprom/at24.yaml
-> index 3c36cd0510de..46daa662f6e7 100644
-> --- a/Documentation/devicetree/bindings/eeprom/at24.yaml
-> +++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
-> @@ -18,7 +18,7 @@ select:
->    properties:
->      compatible:
->        contains:
-> -        pattern: "^atmel,(24(c|cs|mac)[0-9]+|spd)$"
-> +        pattern: "^atmel,(24(c|cs|mac)[0-9]+[a-z0-9]*|spd)$"
-
-Could we relax the pattern instead to make this bloat less? Would it be
-problematic to just allow "^atmel,(24(c|cs|mac)[a-z0-9]+|spd)$"?
-
->    required:
->      - compatible
-> =20
-> @@ -37,8 +37,8 @@ properties:
->        - allOf:
->            - minItems: 1
->              items:
-> -              - pattern: "^(atmel|catalyst|microchip|nxp|ramtron|renesas=
-|rohm|st),(24(c|cs|lc|mac)[0-9]+|spd)$"
-> -              - pattern: "^atmel,(24(c|cs|mac)[0-9]+|spd)$"
-> +              - pattern: "^(atmel|catalyst|microchip|nxp|ramtron|renesas=
-|rohm|st),(24(c|cs|lc|mac)[0-9]+[a-z0-9]*|spd)$"
-> +              - pattern: "^atmel,(24(c|cs|mac)[0-9]+[a-z0-9]*|spd)$"
->            - oneOf:
->                - items:
->                    pattern: c00$
-> @@ -54,6 +54,10 @@ properties:
->                    pattern: mac402$
->                - items:
->                    pattern: mac602$
-> +              - items:
-> +                  pattern: mac02e4$
-> +              - items:
-> +                  pattern: mac02e6$
->                - items:
->                    pattern: c04$
->                - items:
-> --=20
-> 2.34.1
->=20
-
---XRg9XVxyqsfEYao/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnMbKwAKCRB4tDGHoIJi
-0iCkAP9hGVTL4oDlyuUZntlpLydYFouPhAKDNehu5TTD5NYgLQD/cLfwXYsG+Ocr
-vzwmJSbyWHGsK9ASRHGkzes0xTyVoA0=
-=K/Yu
------END PGP SIGNATURE-----
-
---XRg9XVxyqsfEYao/--
+>   drivers/gpu/drm/msm/hdmi/hdmi.c | 26 +++++++++++++-------------
+>   drivers/gpu/drm/msm/hdmi/hdmi.h |  6 +++---
+>   2 files changed, 16 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+> index cc671baad87b..c39a1f3a7505 100644
+> --- a/drivers/gpu/drm/msm/hdmi/hdmi.c
+> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+> @@ -228,19 +228,19 @@ int msm_hdmi_modeset_init(struct hdmi *hdmi,
+>   	.item ## _cnt   = ARRAY_SIZE(item ## _names_ ## entry)
+>   
+>   static const char *pwr_reg_names_8960[] = {"core-vdda"};
+> -static const char *hpd_clk_names_8960[] = {"core", "master_iface", "slave_iface"};
+> +static const char *pwr_clk_names_8960[] = {"core", "master_iface", "slave_iface"};
+>   
+>   static const struct hdmi_platform_config hdmi_tx_8960_config = {
+>   		HDMI_CFG(pwr_reg, 8960),
+> -		HDMI_CFG(hpd_clk, 8960),
+> +		HDMI_CFG(pwr_clk, 8960),
+>   };
+>   
+>   static const char *pwr_reg_names_8x74[] = {"core-vdda", "core-vcc"};
+> -static const char *hpd_clk_names_8x74[] = {"iface", "core", "mdp_core", "alt_iface"};
+> +static const char *pwr_clk_names_8x74[] = {"iface", "core", "mdp_core", "alt_iface"};
+>   
+>   static const struct hdmi_platform_config hdmi_tx_8974_config = {
+>   		HDMI_CFG(pwr_reg, 8x74),
+> -		HDMI_CFG(hpd_clk, 8x74),
+> +		HDMI_CFG(pwr_clk, 8x74),
+>   };
+>   
+>   /*
+> @@ -449,17 +449,17 @@ static int msm_hdmi_dev_probe(struct platform_device *pdev)
+>   	if (ret)
+>   		return dev_err_probe(dev, ret, "failed to get pwr regulators\n");
+>   
+> -	hdmi->hpd_clks = devm_kcalloc(&pdev->dev,
+> -				      config->hpd_clk_cnt,
+> -				      sizeof(hdmi->hpd_clks[0]),
+> +	hdmi->pwr_clks = devm_kcalloc(&pdev->dev,
+> +				      config->pwr_clk_cnt,
+> +				      sizeof(hdmi->pwr_clks[0]),
+>   				      GFP_KERNEL);
+> -	if (!hdmi->hpd_clks)
+> +	if (!hdmi->pwr_clks)
+>   		return -ENOMEM;
+>   
+> -	for (i = 0; i < config->hpd_clk_cnt; i++)
+> -		hdmi->hpd_clks[i].id = config->hpd_clk_names[i];
+> +	for (i = 0; i < config->pwr_clk_cnt; i++)
+> +		hdmi->pwr_clks[i].id = config->pwr_clk_names[i];
+>   
+> -	ret = devm_clk_bulk_get(&pdev->dev, config->hpd_clk_cnt, hdmi->hpd_clks);
+> +	ret = devm_clk_bulk_get(&pdev->dev, config->pwr_clk_cnt, hdmi->pwr_clks);
+>   	if (ret)
+>   		return ret;
+>   
+> @@ -517,7 +517,7 @@ static int msm_hdmi_runtime_suspend(struct device *dev)
+>   	struct hdmi *hdmi = dev_get_drvdata(dev);
+>   	const struct hdmi_platform_config *config = hdmi->config;
+>   
+> -	clk_bulk_disable_unprepare(config->hpd_clk_cnt, hdmi->hpd_clks);
+> +	clk_bulk_disable_unprepare(config->pwr_clk_cnt, hdmi->pwr_clks);
+>   
+>   	pinctrl_pm_select_sleep_state(dev);
+>   
+> @@ -540,7 +540,7 @@ static int msm_hdmi_runtime_resume(struct device *dev)
+>   	if (ret)
+>   		goto fail;
+>   
+> -	ret = clk_bulk_prepare_enable(config->hpd_clk_cnt, hdmi->hpd_clks);
+> +	ret = clk_bulk_prepare_enable(config->pwr_clk_cnt, hdmi->pwr_clks);
+>   	if (ret)
+>   		goto fail;
+>   
+> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.h b/drivers/gpu/drm/msm/hdmi/hdmi.h
+> index ee5463eb41b6..1e346e697f8e 100644
+> --- a/drivers/gpu/drm/msm/hdmi/hdmi.h
+> +++ b/drivers/gpu/drm/msm/hdmi/hdmi.h
+> @@ -49,7 +49,7 @@ struct hdmi {
+>   	phys_addr_t mmio_phy_addr;
+>   
+>   	struct regulator_bulk_data *pwr_regs;
+> -	struct clk_bulk_data *hpd_clks;
+> +	struct clk_bulk_data *pwr_clks;
+>   	struct clk *extp_clk;
+>   
+>   	struct gpio_desc *hpd_gpiod;
+> @@ -90,8 +90,8 @@ struct hdmi_platform_config {
+>   	int pwr_reg_cnt;
+>   
+>   	/* clks that need to be on for hpd: */
+> -	const char **hpd_clk_names;
+> -	int hpd_clk_cnt;
+> +	const char **pwr_clk_names;
+> +	int pwr_clk_cnt;
+>   };
+>   
+>   struct hdmi_bridge {
+> 
+> -- 
+> 2.39.2
+> 
 
