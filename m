@@ -1,106 +1,201 @@
-Return-Path: <linux-kernel+bounces-221443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A6F990F3A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:06:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CC090F3AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C2491C2204F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:06:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6554828183F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CDD157E62;
-	Wed, 19 Jun 2024 16:03:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BDC153810;
-	Wed, 19 Jun 2024 16:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9861534E9;
+	Wed, 19 Jun 2024 16:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jq1Qxr6x"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D955381A
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 16:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812989; cv=none; b=ME6QDeLBbgBjcZycloMgeQ82IAhOtpi4+joX3eav0ouSvLj2n0PSPAXQQhCObbg70i49fnXBsKc3e0++nb1ac0KRNkmLmbJZCvXeT8ImE2sm6zbcoUU+w/oans6PjJ0lMCyCfw1VZqYe9qyZH2xd2/FeJXnY/FWSKM2Lef/B7BM=
+	t=1718813103; cv=none; b=rfsRJa3hn22jN51Cf1Fh463FI7/oyjYLFAK2GSZ4rrPR2oSkdDhEatESexTrFjpflit9Di1TZibkOW6gSMJad6rfD9eW5lrtz+EkfyoTLj7N8B+/65GWpeQfUbjEv8kBN0nfG0+m1uPN9FkYgc4ODzp9tgMojV4CA644oq986Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718812989; c=relaxed/simple;
-	bh=ISY1VHAkBH59Hhh3NWOdVMhtaP+U3MV4otA/Gltn4ZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IzBTjaMczEiu276zuf2wNmAcMOOPDboMX/KJ1YIhlF4xk9HIqvhJMw3MJRCcAY/FIMiiRUOdW1q9hdQ9ZohduKNLQUuF4aEnQQmgvQWANtdI3+0i2go/0NTemFy19/YMHoyGaXuzly7Bfsdttq1B0J33nMuuAN3cPg/R6onlQ+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3351B1042;
-	Wed, 19 Jun 2024 09:03:31 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B8EAA3F64C;
-	Wed, 19 Jun 2024 09:03:05 -0700 (PDT)
-Date: Wed, 19 Jun 2024 17:03:03 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-tip-commits@vger.kernel.org,
-	Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [tip: x86/urgent] x86/resctrl: Don't try to free nonexistent
- RMIDs
-Message-ID: <ZnMBN487xiPOfpRp@e133380.arm.com>
-References: <20240618140152.83154-1-Dave.Martin@arm.com>
- <171879092443.10875.1695191697085701044.tip-bot2@tip-bot2>
- <ZnLUVtZ3oaFjcUj9@e133380.arm.com>
- <20240619134522.GCZnLg8pgJq9MPHS8M@fat_crate.local>
+	s=arc-20240116; t=1718813103; c=relaxed/simple;
+	bh=Zk8KBM+kAiD+53BnHbeYt1t9uy6ihq6v5ohcl+/8Gdk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZRjTpU/3oiintgp4+/ILE64lUHqiceOagub+FJ/TmNYMlV82YwTVFFG2iqW1WakxCfZjH+RS1HJ0Vip/ezk3tf9T9nKKkGoyMZ3dzL2yGqeo1G4hlfvwYTn3FS5v4BsfJc3QBnVbhVkpFQaj2+fFDRINiat/83Y1zCtjcYtXp9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jq1Qxr6x; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718813100;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6qMRpfuI0FN17k1qQZ97/BIgCWj0BU7d5gGDLL6iE0E=;
+	b=Jq1Qxr6x890ioy8Q+bCJQ541OP1UllCeZItOZe0st1AV4TYbYJQ1XwwXu0tiiWWriywlNx
+	J0nk0/J9NdUkO9qy2mpuJ5Yx0WKDkxeTfMapC9wgHntmWRZBe6VjJP8G+cpkKklXHTd/ZG
+	JUauBi5rtaYAteBl0RbFO714b5h1VY0=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-359-ZhAbX2oyM96zzdWwWo-3xw-1; Wed, 19 Jun 2024 12:04:59 -0400
+X-MC-Unique: ZhAbX2oyM96zzdWwWo-3xw-1
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-627f20cff42so132539237b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:04:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718813098; x=1719417898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6qMRpfuI0FN17k1qQZ97/BIgCWj0BU7d5gGDLL6iE0E=;
+        b=p+2GAqdW2VyV5CShmQJ1NwTLPS54xOayKfcr0VgWq3KV6aG65GQze65y+EchmO8af3
+         JbLxNraSwyJcD0S1/FUQIjXVXsPop7EKm3Nh+HrPOGvribSm3AJpP/hijzE1a4q06Zbi
+         DAjSTqKdrXoomZOe+wAD25ZImSc+n0n4MuaV4Qrh04W8muDI9aFJmBvew5Y0GY3c5WpC
+         je3GwTsAr7p7chTMReB/5fNjKl9+gV67rkMdOqHiZ72vEHfNCk2WJdY7N7ZO0rqZxOmP
+         E220ztGXi0EG5sky4iDMMGLQQcB0s72mqCMQ0/QHby3TkW39Motgkc4UNZfJ6m0DU8tu
+         py5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWpMg1cupGNNHRg7CfSUfX3/wVoMfThl/3n20z6y3goBpOj771Q0s9j5kX0kVu4YE6x/hi/JQsujNCyrM8VFuzjL+tYTKFHZDvA+xpe
+X-Gm-Message-State: AOJu0Yx7Na7dE6p2wWI1EBRHbxjeKZgHKFOHTYO4/SR1cJgv/h/ESU/G
+	bUwqU260giOjDIgUD5aGBSB+juCMHKEA2y3xNgeEMekWCsM85xoWkr64xSadaQjugQhYQj6ccW4
+	+6HQ5y8sxIuMHJg914qImYrpzjf/CEloqV8hO+azT92sWNMyZXGO3v+h2sysgZDrmEHakKwb9tG
+	aj64zl2nRXXruPNVlxVBwaKsTbLFen5COuUg95
+X-Received: by 2002:a0d:c3c3:0:b0:618:2381:2404 with SMTP id 00721157ae682-63a8ffca0cdmr31982907b3.44.1718813098380;
+        Wed, 19 Jun 2024 09:04:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGOi0Bbuup1rjSY4QNqBeZr45d0/SLJoglpZcqMwzRQ4d442scS4ePsVvRRAEIzgBBpB2IayrTUCHF5plE2VAk=
+X-Received: by 2002:a0d:c3c3:0:b0:618:2381:2404 with SMTP id
+ 00721157ae682-63a8ffca0cdmr31982517b3.44.1718813098007; Wed, 19 Jun 2024
+ 09:04:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619134522.GCZnLg8pgJq9MPHS8M@fat_crate.local>
+References: <20240617-stage-vdpa-vq-precreate-v1-0-8c0483f0ca2a@nvidia.com> <20240617-stage-vdpa-vq-precreate-v1-21-8c0483f0ca2a@nvidia.com>
+In-Reply-To: <20240617-stage-vdpa-vq-precreate-v1-21-8c0483f0ca2a@nvidia.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 19 Jun 2024 18:04:21 +0200
+Message-ID: <CAJaqyWc75+ccqXUPa4GfwZsbCp+4Q49Vw6Vnsu+n1BXDdLi5Dw@mail.gmail.com>
+Subject: Re: [PATCH vhost 21/23] vdpa/mlx5: Re-create HW VQs under certain conditions
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
+	Cosmin Ratiu <cratiu@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Boris,
+On Mon, Jun 17, 2024 at 5:09=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+> There are a few conditions under which the hardware VQs need a full
+> teardown and setup:
+>
+> - VQ size changed to something else than default value. Hardware VQ size
+>   modification is not supported.
+>
+> - User turns off certain device features: mergeable buffers, checksum
+>   virtio 1.0 compliance. In these cases, the TIR and RQT need to be
+>   re-created.
+>
+> Add a needs_teardown configuration variable and set it when detecting
+> the above scenarios. On next DRIVER_OK, the resources will be torn down
+> first.
+>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> Reviewed-by: Cosmin Ratiu <cratiu@nvidia.com>
 
-On Wed, Jun 19, 2024 at 03:45:22PM +0200, Borislav Petkov wrote:
-> On Wed, Jun 19, 2024 at 01:51:34PM +0100, Dave Martin wrote:
-> > This commit message now looks a mess on a regular terminal, since git
-> > log indents the start of each line by four columns.
-> 
-> Well, we got rid of the 80 cols rule a long time ago so if you're looking at
-> kernel code in that same terminal, you're looking at a similar mess?
+Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-<bikeshed>
+> ---
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 15 +++++++++++++++
+>  drivers/vdpa/mlx5/net/mlx5_vnet.h |  1 +
+>  2 files changed, 16 insertions(+)
+>
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
+x5_vnet.c
+> index b2836fd3d1dd..d80d6b47da61 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -2390,6 +2390,7 @@ static void mlx5_vdpa_set_vq_num(struct vdpa_device=
+ *vdev, u16 idx, u32 num)
+>          }
+>
+>         mvq =3D &ndev->vqs[idx];
+> +       ndev->needs_teardown =3D num !=3D mvq->num_ent;
+>         mvq->num_ent =3D num;
+>  }
+>
+> @@ -2800,6 +2801,7 @@ static int mlx5_vdpa_set_driver_features(struct vdp=
+a_device *vdev, u64 features)
+>         struct mlx5_vdpa_dev *mvdev =3D to_mvdev(vdev);
+>         struct mlx5_vdpa_net *ndev =3D to_mlx5_vdpa_ndev(mvdev);
+>         u64 old_features =3D mvdev->actual_features;
+> +       u64 diff_features;
+>         int err;
+>
+>         print_features(mvdev, features, true);
+> @@ -2822,6 +2824,14 @@ static int mlx5_vdpa_set_driver_features(struct vd=
+pa_device *vdev, u64 features)
+>                 }
+>         }
+>
+> +       /* When below features diverge from initial device features, VQs =
+need a full teardown. */
+> +#define NEEDS_TEARDOWN_MASK (BIT_ULL(VIRTIO_NET_F_MRG_RXBUF) | \
+> +                            BIT_ULL(VIRTIO_NET_F_CSUM) | \
+> +                            BIT_ULL(VIRTIO_F_VERSION_1))
+> +
+> +       diff_features =3D mvdev->mlx_features ^ mvdev->actual_features;
+> +       ndev->needs_teardown =3D !!(diff_features & NEEDS_TEARDOWN_MASK);
+> +
+>         update_cvq_info(mvdev);
+>         return err;
+>  }
+> @@ -3038,6 +3048,7 @@ static void teardown_vq_resources(struct mlx5_vdpa_=
+net *ndev)
+>         destroy_rqt(ndev);
+>         teardown_virtqueues(ndev);
+>         ndev->setup =3D false;
+> +       ndev->needs_teardown =3D false;
+>  }
+>
+>  static int setup_cvq_vring(struct mlx5_vdpa_dev *mvdev)
+> @@ -3078,6 +3089,10 @@ static void mlx5_vdpa_set_status(struct vdpa_devic=
+e *vdev, u8 status)
+>                                 goto err_setup;
+>                         }
+>                         register_link_notifier(ndev);
+> +
+> +                       if (ndev->needs_teardown)
+> +                               teardown_vq_resources(ndev);
+> +
+>                         if (ndev->setup) {
+>                                 err =3D resume_vqs(ndev);
+>                                 if (err) {
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.h b/drivers/vdpa/mlx5/net/ml=
+x5_vnet.h
+> index 2ada29767cc5..da7318f82d2a 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.h
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.h
+> @@ -56,6 +56,7 @@ struct mlx5_vdpa_net {
+>         struct dentry *rx_dent;
+>         struct dentry *rx_table_dent;
+>         bool setup;
+> +       bool needs_teardown;
+>         u32 cur_num_vqs;
+>         u32 rqt_size;
+>         u16 default_queue_size;
+>
+> --
+> 2.45.1
+>
 
-It's still a guideline, no?  (Though I admit that common sense has to
-apply and there are quite often good reasons to bust the limit in
-code.)  But commit messages are not code, and don't suffer from
-creeping indentation that eats up half of each line, so the rationale
-is not really the same.
-
-In block text, lines near maximum length are common, but when looking at
-code OTOH, long lines are usually rare, so the file is not rendered
-unreadable without linewrap turned off or a bigger terminal.
-
-For git logs, git config core.pager 'less -S' makes things a little
-better I suppose, since that at least keeps the left-hand columns blank
-on the commit message lines, making the log easier to skim through by
-eye.  There doesn't seem to be a way to bind a key to flip line
-wrapping on and off in less at runtime, though I've not dug into it.
-
-</bikeshed>
-
-
-Anyway, I was just mildly surprised, it's not a huge deal.
-
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
-
-(Quoted: "Text-based e-mail should not exceed 80 columns per line of
-text.  Consult the documentation of your e-mail client to enable proper
-line breaks around column 78.".  No statement about commit messages,
-and "should not exceed" is not the same as "should be wrapped to".
-This document doesn't seem to consider how git formats text derived
-from emails.)
-
-Cheers
----Dave
 
