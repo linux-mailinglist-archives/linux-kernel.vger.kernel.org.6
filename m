@@ -1,111 +1,131 @@
-Return-Path: <linux-kernel+bounces-221040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C6690EB1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8F590EB1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87D191C21406
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:26:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDC3E1C210C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B704147C6E;
-	Wed, 19 Jun 2024 12:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493F812FB27;
+	Wed, 19 Jun 2024 12:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpovdgUI"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="E0k1+2Lq";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="jtFWxLql"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFBD14372C;
-	Wed, 19 Jun 2024 12:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784F913AA51;
+	Wed, 19 Jun 2024 12:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718799949; cv=none; b=kMf9nMlAvRVruZp7wj8Oe8FX0fASTsdJ3KtbUcGS5TYMUB7KCLaCrIg74Da6UdmIJBjVVk7Rq436DTTeudFOO9dloN+rUzSEfZOt7VYRsxM6sjOiomctI3w1jKmjCW9R5E3FgVPm85Pa3XWWaFtqFVtkpxYCMK9Sam51Qft5KZM=
+	t=1718800033; cv=none; b=pXnjRLcRvQgDLrii10JJSkAuFV2bsO12toO6XiqsyATNzddpGZF+OTQpq9jQt1JoKSi1eyVu6wC6m6h9IJlNDfF+gck8cT0FQ/Yn2IcFr3Brb6g/c50VHwEwr0nnoKCDyJhCYButyLq+AdYzp48QGxm3jbsBXx/jPxb3qYZsAyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718799949; c=relaxed/simple;
-	bh=dN3aur1KLnPivjvSKROXe0S3T+bzDuyLcnyHlAEifBA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cHIQwKHv7M1fYt0BSYNYHPLWBCkwdyHfeDPO936rNUBHH37MivBBVuxryNwqnZBxMBpSsISdWnyxg37Rb5zA+pQ7CU82c19Cit1tNsigrNbrmjthMzDhDH575UnNHYVzu+cqL5Bq29M6ByBDlm9UFSFnwa3FrSlZDzWAfCPeENo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SpovdgUI; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-6e4e6230f42so615565a12.0;
-        Wed, 19 Jun 2024 05:25:48 -0700 (PDT)
+	s=arc-20240116; t=1718800033; c=relaxed/simple;
+	bh=gRdkF7mZaNLgISxMnEZRh0igfQ2rhmP3se3KFsPnfPU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kQxfDs8vuLqYPAWZABJ58dCFcX3U7mbj7qfWtNCQtjdzZMXr68R1Lvw1dM9YibBTSzZIu1rbiWI6Y2Eitu/su8A4RdTZrRxlVjaMc4P1haXQTmRwFROdkfUmQWzSqDCb5uSRZYVB//N23EdgBotd4LjdE2UUd7x88YB5ZpNYhQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=E0k1+2Lq; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=jtFWxLql reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718799948; x=1719404748; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jzy0cfJzj3KP9+v6dQql4rxY9bjF/2HHnFqVEcifsp0=;
-        b=SpovdgUIWupw7dW65CB52JF4QYg2S4VJp9nV1B4oxEnFJHKTWc8zE0le2SCcGh4BNe
-         HTJrCkNq+ou9UXAkNwS/L6SkWeDvKBEl1uhKE0rlmgmYNs/MHce2SVLTfzu2tiexc+W4
-         kcEoa2rWKbvB2vspMQFyhUsMMkWS5Y26ag5/9/oD/7yXytKzg652CzT2FO0AJw1BiBHe
-         jww6UnjHBrdrJ/rj0H9cakg/A/TTOwP1Kf2ks0P93zS4gqjw/1RfMTd0du0kCkydD8S0
-         6ctX0rIwmB2XLpqkNE3DC/7kBGVBrw1jzU4mS5IqzdQhcGPCJADu1HN+lIN+ugFFtBaX
-         seaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718799948; x=1719404748;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jzy0cfJzj3KP9+v6dQql4rxY9bjF/2HHnFqVEcifsp0=;
-        b=bgYN0iuinZIKxIFp0tdadZiCo9IRQbNRk8JGadj9m8bYeW0sqjP/Cfy5gh2Z0bG9Qm
-         WPjUnO2dDF3j/1UrlehGToEZHUoRpO41PxK5Sf0Y19w4qW4s+9yb3Q1CzIwFNP4U4Nb7
-         TnuaF8Ww3qysYgi3sACCIWOjgv4z6Dsd+m8JFbxcJYspqCFLrCS8S2LgUtOs9LX7xXxy
-         wHvDQ8shTEVU9IC5WMoOwTSf8CkxKAtXlUv6eooANeczGcXDh6feykAAQfw5XSdevtWL
-         aaxeAcBkkQ6g1fSAGQe0dxzxPo3x0CU3kVvIkSdc+95auH5V0OkZPWLQO1QTfvRiXX5Y
-         fvPA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+xk6+fawEn+V8tVhZzEAARZLZhMvp0AuTFSBD8Acw+NGhzi7yREiU3akWDW+FaXXXyzt4o6e9zDS+lT39Szx0N+AxgqIeVcUqX4cdccNkpRAXv5cob4c0E47CsdKTT2QdCJWvURGd5O3onh3L/c+BryKyheVDbRAyq0JTVuX7uXuaeOTs1hYhxno=
-X-Gm-Message-State: AOJu0YxEMO/ebX2d704wjWAL/lFnfl7eUAD64cxcm5mdZ1DV0AkqolKi
-	v1jXDyRfKsfggoxRa7OFBxpM+7YPbyjHa9MtXQXGkoehu5bOgHHKQtS8NUfx1OXJbAXcuu9f8Ly
-	wII1cIyl5fl9QGfNrsRn3o24koZLBz1Jz
-X-Google-Smtp-Source: AGHT+IGau7w6zV4zA/rc/ld1ZTMOlwqdo4YNxj0NewfHBWxljs3K+qmgtk5S5kMADXNIorVJfypa+bKxBOYPbIUEiq4=
-X-Received: by 2002:a17:90a:8cf:b0:2c7:b392:8f02 with SMTP id
- 98e67ed59e1d1-2c7b3928fbemr3645967a91.23.1718799947634; Wed, 19 Jun 2024
- 05:25:47 -0700 (PDT)
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1718800030; x=1750336030;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=byQ4uziYan99fHxdyCuRDt0WvxLvcZqE4rHrS7A3/yo=;
+  b=E0k1+2LqfNTUv7zQWQudjJPb9u9kajprkqb5R6Tf50m+g4DfXBsCDq8b
+   yysw1IclrJXshVLLws8efRK/Qc4jBKYRb/ixylK4qUUNPwS1xWyyWDJqN
+   m4j0vY9B8bP+815Ob+Eq42aD19dLl8GQBuAaZUmDzWXsKarwxTGCm9nD4
+   r2HtjzmlxM86B6HbcJVt4CPd88notibsPNzisALY81qwCA7A6SamCArPV
+   465TA+CxWRPdLqHBUi8uy9RruE6bhB4ekp5wMmVRTc0aIvJ5su8guamqk
+   vtzsgiZcC89miLxKXv+Fb/ortQTYktr3jeQaLtLgcb74EFJILiH5c7PcX
+   Q==;
+X-CSE-ConnectionGUID: MeeSjGaKSr6816QEtHAzMw==
+X-CSE-MsgGUID: rpSzCAnURkGollncxAo/4w==
+X-IronPort-AV: E=Sophos;i="6.08,250,1712613600"; 
+   d="scan'208";a="37476419"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 19 Jun 2024 14:27:08 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BAA69166A94;
+	Wed, 19 Jun 2024 14:27:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1718800024; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=byQ4uziYan99fHxdyCuRDt0WvxLvcZqE4rHrS7A3/yo=;
+	b=jtFWxLqlPAtanWAeudZUrzhoGaFv1/IKXR/75+XopLBCivCCLxwQWZ1uqKVKudc4AvaRQW
+	3mhvoHCZBOvRdHTmfk9//Gwc2cd8AsT4YpxVMjZWFs85Ey/Axa4e7yz+LGUSBUfySUiIk0
+	tr7zfvLrfYTj+hpS/TjP49RmKuk1jSAzOo2zbjdFZkbMDIbPHt/utTme0H1f8ekJAIc7VR
+	SUElD14DZ8MMUiteYL0QDjPT5GQJ9cvNrWYqoIDKzb4cCSDE8hf0Hya85tf9stq6lfTroq
+	WaP9zUNQ9Tg7s4erkhvNTEAw1xcRWDMHT8VwRu8nxnqF3Fx9YYF1abKhpJvnIA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] Input: ads7846 - Use spi_device_id table
+Date: Wed, 19 Jun 2024 14:27:02 +0200
+Message-Id: <20240619122703.2081476-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240601004856.206682-1-jhubbard@nvidia.com>
-In-Reply-To: <20240601004856.206682-1-jhubbard@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 19 Jun 2024 14:25:35 +0200
-Message-ID: <CANiq72m46gN4GkfeXgykEar6OVa56ck9FmWQComd+iuf61FVSw@mail.gmail.com>
-Subject: Re: [PATCH] Makefile: rust-analyzer target: better error handling and comments
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, linux-kbuild@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sat, Jun 1, 2024 at 2:49=E2=80=AFAM John Hubbard <jhubbard@nvidia.com> w=
-rote:
->
->     Rust is not available
+As the driver supports more devices over time the single MODULE_ALIAS
+is complete and raises several warnings:
+SPI driver ads7846 has no spi_device_id for ti,tsc2046
+SPI driver ads7846 has no spi_device_id for ti,ads7843
+SPI driver ads7846 has no spi_device_id for ti,ads7845
+SPI driver ads7846 has no spi_device_id for ti,ads7873
 
-Maybe we should use the `***` notation that is used elsewhere?
+Fix this by adding a spi_device_id table and removing the manual
+MODULE_ALIAS.
 
-> 2) As long as I'm there, also add some documentation about what
-> rust-analyzer provides.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ drivers/input/touchscreen/ads7846.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Perhaps this could go in a separate patch.
+diff --git a/drivers/input/touchscreen/ads7846.c b/drivers/input/touchscreen/ads7846.c
+index d2bbb436a77df..4d13db13b9e57 100644
+--- a/drivers/input/touchscreen/ads7846.c
++++ b/drivers/input/touchscreen/ads7846.c
+@@ -1111,6 +1111,16 @@ static const struct of_device_id ads7846_dt_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(of, ads7846_dt_ids);
+ 
++static const struct spi_device_id ads7846_spi_ids[] = {
++	{ "tsc2046", 7846 },
++	{ "ads7843", 7843 },
++	{ "ads7845", 7845 },
++	{ "ads7846", 7846 },
++	{ "ads7873", 7873 },
++	{ },
++};
++MODULE_DEVICE_TABLE(spi, ads7846_spi_ids);
++
+ static const struct ads7846_platform_data *ads7846_get_props(struct device *dev)
+ {
+ 	struct ads7846_platform_data *pdata;
+@@ -1386,10 +1396,10 @@ static struct spi_driver ads7846_driver = {
+ 	},
+ 	.probe		= ads7846_probe,
+ 	.remove		= ads7846_remove,
++	.id_table	= ads7846_spi_ids,
+ };
+ 
+ module_spi_driver(ads7846_driver);
+ 
+ MODULE_DESCRIPTION("ADS7846 TouchScreen Driver");
+ MODULE_LICENSE("GPL");
+-MODULE_ALIAS("spi:ads7846");
+-- 
+2.34.1
 
-But those are nits -- if Masahiro is OK with this approach:
-
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
-
-Happy to take it too.
-
-Cheers,
-Miguel
 
