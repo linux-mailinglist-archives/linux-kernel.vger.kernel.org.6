@@ -1,177 +1,191 @@
-Return-Path: <linux-kernel+bounces-221474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C89990F42D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:38:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D03890F432
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFAF61F236E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:38:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6153D1C20AF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D61154BE5;
-	Wed, 19 Jun 2024 16:38:29 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C78215572F;
+	Wed, 19 Jun 2024 16:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O88b1a5p"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F031D54A;
-	Wed, 19 Jun 2024 16:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA631552E4;
+	Wed, 19 Jun 2024 16:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718815109; cv=none; b=ec5jHiuIaH8pnJkgJXabmoPl4ZDumPHJzbfnfM+jQwPZNeB8EdszVNnwRw93eYZl3Yh69WftSAtJTow7c5+zONN0R9uU31vHjCV/LG8AlhKmYvEh8+hecRC4B0UgVsIaPQe27bORNg+fSETCHF+z40mUpcPqubMGXfnuoR2irDE=
+	t=1718815111; cv=none; b=OgxzUFA35rq0AXg/UFbYxQLCSHXQsUr/x4F9T/DFQGkomi2PNcxIoPTQKPfR9VYHrAUpD3ztRyk79sfSJUK2gcNxbg9zNyNFc0tUZuvYrxulbosHrunLjGZ0Ku2tOuHbUekuIRc0dAu+cjquIv5y+WHz/bEPRe9lapKzYqEV838=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718815109; c=relaxed/simple;
-	bh=NHchRoi/0zQ2fsMrrnKC/Owr0Ktvs/1FYWkF5bGopZQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SxNeKJjw25TJjcW1Il8Wvm6PqiztDnVQsEGc0QhmUMKUMj0oCf1q2CjtFX4axgo2W2DqKp/ZviqVmkeSdwaUDMcGNwuZeDeVEapNKmjjVoInBU/FOexfLMyrEWzdWzB7PN8UNlZ0rLNPYXvewry9LJYRYUGXcckp8UK0IiRBc8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4W484459Dyz9v7Hl;
-	Thu, 20 Jun 2024 00:20:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id E10BE1409C9;
-	Thu, 20 Jun 2024 00:38:12 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwC3jDdgCXNmkmy9AA--.11796S2;
-	Wed, 19 Jun 2024 17:38:12 +0100 (CET)
-Message-ID: <2b335bdd5c20878e0366dcf6b62d14f73c2251de.camel@huaweicloud.com>
-Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
- akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
- alexandre.torgue@foss.st.com, mic@digikod.net, 
- linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
- linux-integrity@vger.kernel.org, wufan@linux.microsoft.com,
- pbrobinson@gmail.com,  zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
- pmatilai@redhat.com,  jannh@google.com, dhowells@redhat.com,
- jikos@kernel.org, mkoutny@suse.com,  ppavlu@suse.com, petr.vorel@gmail.com,
- mzerqung@0pointer.de, kgold@linux.ibm.com,  Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Wed, 19 Jun 2024 18:37:49 +0200
-In-Reply-To: <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
-	 <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
-	 <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
-	 <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
-	 <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1718815111; c=relaxed/simple;
+	bh=UdbBJxTG5H/XAmGhWxdvKGiRkX0+K9lYkkTsjudCe9Y=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZ0GtiMjzC7i+j8H4s+757zfLYUUURWZY6owAfUaoQ6U6EkJ9BIeIFTSGIb1v5fN4XKIddGXMy7xUVf2v05Q/SV0gLhCpTRz2H8Y6/jBOUH8Fy+pPy7RPxOnpIZhzTnEQYV8VrqTThtLolbKv4joGRjcIkcAi5hQh9Ixn0XegAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O88b1a5p; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9ZNlk005181;
+	Wed, 19 Jun 2024 16:38:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=epno3NC8+/SM/GBEpeEQJDuT
+	59p4r0Qdcc1jjNTyCDA=; b=O88b1a5pnmBJ34udW2LbvMZxXmEDsovM6SXODRaN
+	47OLWwShcYIwnIRU8k3hnF42FDHl58mnnLpR8Jd/n34rjY+hPw49te7Unq55QTQy
+	f087TLhGQ17LhPmv2T4xppZWObQRN5ch9x3Q4t0hhHLEXPDZ9b7SFl8K5Yww3IeI
+	a+x91csjWFJJUNMNB2/DJla+sSkBqlwmwZX1pHfaxO7FkGcv81vOyXerk3VVyEJQ
+	wcrKOrB+vAKEG2PzjyISkJPqZaYCAufI3Ic5tHcLYBMrjoXwutM9nkbEWAMl0VIk
+	wh9Yb+Q98b6yTjd4ZIVj8h1hpkOSyLgPR4Pzbmq6j580wg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuja7a88s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 16:38:19 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JGcHnS001798
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 16:38:17 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 19 Jun 2024 09:38:14 -0700
+Date: Wed, 19 Jun 2024 22:08:10 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Komal Bajaj
+	<quic_kbajaj@quicinc.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Will
+ Deacon" <will@kernel.org>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH] arm64: defconfig: Enable secure QFPROM driver
+Message-ID: <ZnMJcuJ0DvDHaY4S@hu-mojha-hyd.qualcomm.com>
+References: <20240619105642.18947-1-quic_kbajaj@quicinc.com>
+ <5582a2a0-c772-4573-9d55-2f963cb87df1@linaro.org>
+ <ZnLKwqENxC4wzrUm@hu-mojha-hyd.qualcomm.com>
+ <rx4kwsdzprnblczndf4t4ditxl64dztkzooqljpvz6eehuqqgy@rv745qkxmxmq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwC3jDdgCXNmkmy9AA--.11796S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF1xXw15KFyDKF1kuw1DGFg_yoW5uryfpF
-	W7K3WUKr4vqFW3Cr1Iv3W7Z3yrKrWaqr47Xrs8Jw15Arn0vr9rGr4rKF45uFykWr4Yk3W2
-	vFW2gFy7uw1DAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAI
-	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
-	CF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
-	jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQATBF1jj59oyQAAsZ
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <rx4kwsdzprnblczndf4t4ditxl64dztkzooqljpvz6eehuqqgy@rv745qkxmxmq>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TJP7JMBMUE4giihkU3MUl2wJhqV3pyCg
+X-Proofpoint-GUID: TJP7JMBMUE4giihkU3MUl2wJhqV3pyCg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
+ phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406190125
 
-On Wed, 2024-06-19 at 12:34 -0400, Paul Moore wrote:
-> On Wed, Jun 19, 2024 at 11:55=E2=80=AFAM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > On Wed, 2024-06-19 at 11:49 -0400, Paul Moore wrote:
-> > > On Wed, Jun 19, 2024 at 3:59=E2=80=AFAM Roberto Sassu
-> > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > On Tue, 2024-06-18 at 19:20 -0400, Paul Moore wrote:
-> > > > > On Mon, Apr 15, 2024 at 10:25=E2=80=AFAM Roberto Sassu
-> > > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > >=20
-> > > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > >=20
-> > > > > > Integrity detection and protection has long been a desirable fe=
-ature, to
-> > > > > > reach a large user base and mitigate the risk of flaws in the s=
-oftware
-> > > > > > and attacks.
-> > > > > >=20
-> > > > > > However, while solutions exist, they struggle to reach the larg=
-e user
-> > > > > > base, due to requiring higher than desired constraints on perfo=
-rmance,
-> > > > > > flexibility and configurability, that only security conscious p=
-eople are
-> > > > > > willing to accept.
-> > > > > >=20
-> > > > > > This is where the new digest_cache LSM comes into play, it offe=
-rs
-> > > > > > additional support for new and existing integrity solutions, to=
- make
-> > > > > > them faster and easier to deploy.
-> > > > > >=20
-> > > > > > The full documentation with the motivation and the solution det=
-ails can be
-> > > > > > found in patch 14.
-> > > > > >=20
-> > > > > > The IMA integration patch set will be introduced separately. Al=
-so a PoC
-> > > > > > based on the current version of IPE can be provided.
-> > > > >=20
-> > > > > I'm not sure we want to implement a cache as a LSM.  I'm sure it =
-would
-> > > > > work, but historically LSMs have provided some form of access con=
-trol,
-> > > > > measurement, or other traditional security service.  A digest cac=
-he,
-> > > > > while potentially useful for a variety of security related
-> > > > > applications, is not a security service by itself, it is simply a=
- file
-> > > > > digest storage mechanism.
-> > > >=20
-> > > > Uhm, currently the digest_cache LSM is heavily based on the LSM
-> > > > infrastructure:
-> > >=20
-> > > I understand that, but as I said previously, I don't believe that we
-> > > want to support a LSM which exists solely to provide a file digest
-> > > cache.  LSMs should be based around the idea of some type of access
-> > > control, security monitoring, etc.
-> > >=20
-> > > Including a file digest cache in IMA, or implementing it as a
-> > > standalone piece of kernel functionality, are still options.  If you
-> > > want to pursue this, I would suggest that including the digest cache
-> > > as part of IMA would be the easier of the two options; if it proves t=
-o
-> > > be generally useful outside of IMA, it can always be abstracted out t=
-o
-> > > a general kernel module/subsystem.
-> >=20
-> > Ok. I thought about IPE and eBPF as potential users. But if you think
-> > that adding as part of IMA would be easier, I could try to pursue that.
->=20
-> It isn't clear to me how this would interact with IPE and/or eBPF, but
-> if you believe there is value there I would encourage you to work with
-> those subsystem maintainers.  If the consensus is that a general file
-> digest cache is useful then you should pursue the digest cache as a
-> kernel subsystem, just not a LSM.
-
-Making it a kernel subsystem would likely mean replicating what the LSM
-infrastructure is doing, inode (security) blob and being notified about
-file/directory changes.
-
-I guess I will go for the IMA route...
-
-Roberto
+On Wed, Jun 19, 2024 at 04:14:50PM +0300, Dmitry Baryshkov wrote:
+> On Wed, Jun 19, 2024 at 05:40:42PM GMT, Mukesh Ojha wrote:
+> > On Wed, Jun 19, 2024 at 01:08:48PM +0200, Krzysztof Kozlowski wrote:
+> > > On 19/06/2024 12:56, Komal Bajaj wrote:
+> > > > Enable the secure QFPROM driver which is used by QDU1000
+> > > 
+> > > Qualcomm QDU1000. You are changing kernel-wide defconfig, not some
+> > > Qualcomm downstream stuff.
+> > > 
+> > > > platform for reading the secure qfprom region to get the
+> > > > DDR channel configuration.
+> > > > 
+> > > > Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+> > > > ---
+> > > >  arch/arm64/configs/defconfig | 1 +
+> > > >  1 file changed, 1 insertion(+)
+> > > > 
+> > > > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> > > > index 838b4466d6f6..c940437ae1b3 100644
+> > > > --- a/arch/arm64/configs/defconfig
+> > > > +++ b/arch/arm64/configs/defconfig
+> > > > @@ -1575,6 +1575,7 @@ CONFIG_NVMEM_LAYERSCAPE_SFP=m
+> > > >  CONFIG_NVMEM_MESON_EFUSE=m
+> > > >  CONFIG_NVMEM_MTK_EFUSE=y
+> > > >  CONFIG_NVMEM_QCOM_QFPROM=y
+> > > > +CONFIG_NVMEM_QCOM_SEC_QFPROM=y
+> > > 
+> > > Module
+> > 
+> > Should not this be inline with what CONFIG_NVMEM_QCOM_QFPROM is having ?
+> > Either both CONFIG_NVMEM_QCOM_QFPROM and CONFIG_NVMEM_QCOM_SEC_QFPROM
+> > should be m or both y
+> 
+> Looking back in time, CONFIG_NVMEM_QCOM_QFPROM was enabled as built-in
+> to get TSENS to work (which makes sense, we don't want the CPUs to
+> burn). What the actual users for NVMEM_QCOM_SEC_QFPROM?
 
 
+CONFIG_NVMEM_QCOM_QFPROM and CONFIG_NVMEM_QCOM_SEC_QFPROM are similar driver
+for same device and only difference is register region lies in secure space
+for the latter;
+
+Currently, LLCC is the only client for CONFIG_NVMEM_QCOM_SEC_QFPROM, however
+if someday if the region lies in non-secure space in that case, client
+started depending on CONFIG_NVMEM_QCOM_QFPROM.
+
+It reminds me, we have not yet put depends on for LLCC on NVMEM_QCOM_SEC_QFPROM
+doing which is resulting in recursive dependency[1].
+
+It looks we need to select NVMEM_QCOM_SEC_QFPROM from QCOM_LLCC config and that
+may not need config enablement here.
+
+[1]
+fs/sysfs/Kconfig:2:error: recursive dependency detected!
+fs/sysfs/Kconfig:2:     symbol SYSFS is selected by CONFIGFS_FS
+fs/configfs/Kconfig:2:  symbol CONFIGFS_FS is selected by GPIO_SIM
+drivers/gpio/Kconfig:1884:      symbol GPIO_SIM depends on GPIOLIB
+drivers/gpio/Kconfig:6: symbol GPIOLIB is selected by I2C_MUX_LTC4306
+drivers/i2c/muxes/Kconfig:47:   symbol I2C_MUX_LTC4306 depends on I2C_MUX
+drivers/i2c/Kconfig:62: symbol I2C_MUX is selected by DRM_SII902X
+drivers/gpu/drm/bridge/Kconfig:270:     symbol DRM_SII902X depends on DRM_BRIDGE
+drivers/gpu/drm/bridge/Kconfig:2:       symbol DRM_BRIDGE is selected by DRM_MSM
+drivers/gpu/drm/msm/Kconfig:3:  symbol DRM_MSM depends on QCOM_LLCC
+drivers/soc/qcom/Kconfig:47:    symbol QCOM_LLCC depends on NVMEM_QCOM_SEC_QFPROM
+drivers/nvmem/Kconfig:230:      symbol NVMEM_QCOM_SEC_QFPROM depends on NVMEM
+drivers/nvmem/Kconfig:2:        symbol NVMEM is selected by EEPROM_AT24
+drivers/misc/eeprom/Kconfig:4:  symbol EEPROM_AT24 depends on SYSFS
+For a resolution refer to Documentation/kbuild/kconfig-language.rst
+
+-Mukesh
+
+> 
+> > 
+> > -Mukesh
+> > > 
+> > > >  CONFIG_NVMEM_RMEM=m
+> > > >  CONFIG_NVMEM_ROCKCHIP_EFUSE=y
+> > > >  CONFIG_NVMEM_ROCKCHIP_OTP=y
+> > > > --
+> > > > 2.42.0
+> > > > 
+> > > 
+> > > Best regards,
+> > > Krzysztof
+> > > 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
