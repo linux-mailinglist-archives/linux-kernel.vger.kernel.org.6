@@ -1,180 +1,213 @@
-Return-Path: <linux-kernel+bounces-220392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B8A90E111
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:01:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69FE290E117
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:03:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA961F23312
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:01:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBA042850B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8638E6FB8;
-	Wed, 19 Jun 2024 01:01:40 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D998763D0;
+	Wed, 19 Jun 2024 01:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYr1tMf1"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC5F1C20;
-	Wed, 19 Jun 2024 01:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6590C1C20;
+	Wed, 19 Jun 2024 01:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718758900; cv=none; b=lnNPUeqadVwMEUXLuY5qHo0NAWZz6+2eNXYXJSlItji0GiEDrTsgZIl5h1zLrbtj8stzSL6xf5yv4AuAbDgRsxjqo71i0ywqYuMiSc5BU4bgGpEFz9GjyWsEE+n5dZAq2H5rbzyW/NLwAVTCz10eGuihOM3CYecJ2kVXCEj7xM0=
+	t=1718758977; cv=none; b=UdPoz1f+AJpoOywcPueQ0Xn4GIoTWat3L4IqC6pTqa55u+Nsyh7jzPkpJ1Hod0yrouv7L0fdBLdcrzPlAyrqoiTdc1RnLjoPXd8sR5IlZQ+sA3NXd+Sb62WTdtvIGSWYZ9H8y8/tY8IdHn9cFP+2m0kupBwa+BNJJX8Z9X/85Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718758900; c=relaxed/simple;
-	bh=HfrUQHKUfdTyX4Y7zj/TBDvU7xjtOZyPCFW72wYPSrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TvH0Zv+XxeQ32hFT4rFvOlYUy6EgipZH4ehJDR1qMhQlY0uMeXCfLpbaBlRzcDy1Mo+Jg5oWhKVHWN5Qo6c+57ouM5BrXYe5ulHTcKEvl1C4E/zSNFoXJucsk52BK34ecEJ2Z1ekS8khrXmxFujysHQdiCxTbDiMFJBe/4z7IvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W3lZl4w9jz1SCDV;
-	Wed, 19 Jun 2024 08:57:19 +0800 (CST)
-Received: from dggpemd100001.china.huawei.com (unknown [7.185.36.94])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0C84B18007A;
-	Wed, 19 Jun 2024 09:01:34 +0800 (CST)
-Received: from [10.67.120.108] (10.67.120.108) by
- dggpemd100001.china.huawei.com (7.185.36.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 19 Jun 2024 09:01:33 +0800
-Message-ID: <2f408257-c516-8de1-4b3a-db77b0aa816f@huawei.com>
-Date: Wed, 19 Jun 2024 09:01:33 +0800
+	s=arc-20240116; t=1718758977; c=relaxed/simple;
+	bh=N7YGPXnhSZhn97NXtwz2gQi3NQ5BSaEY4l48p6wknOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EdHLl2J2IRcjWb9QMgc49taAX8ytSxRGu3LlXlIesrlvS+ybXGl56UqBN15jvTAgxZS48zkI8zRhu3Y0ddYAEUIQoHvJIcq+Jnyv3AbRyo59tKv9KPc8LCBF+SXjKu7NzSFz381Oges8CtPh3JoOe3UDp4Faq8qo44UZUT5jF4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYr1tMf1; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c2d25b5432so4727921a91.2;
+        Tue, 18 Jun 2024 18:02:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718758975; x=1719363775; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=fbfJGoyAL7xrlfBR7yhnG1RX36GOV2vXpR2qQ6fna/4=;
+        b=GYr1tMf1QvD3Zt2yI17C4eyeIdLtwQ+xhbjjwqhs9Pbci2IAOnR+tVZlAkGhOlJ5k+
+         9PxbD6gwndGucToQx9rQFaMlUtBCfhh7Y/LEgdvPPtBfK4KRHjCNVT2Q3uhAzn+Du/ao
+         e5UiMB01VRx/NONekfx5oK1gLD4jYxivu4/bmFS8Gnn4A9xqO9Y8gfIs4KSDjkU6LwEH
+         Y0a8aPO1+ffmHfn2cDpkQBc9ZOS2jEVDaTuPvOVsDKj7JVqFnmB84Bt1jHGmh/y2vf1f
+         thWuDPYbtwvHI63LCHDwwZuProdF4G1voDsm7toLJZRW8wvvJiWPy5zFyhK93BmnBRAs
+         jjFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718758975; x=1719363775;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fbfJGoyAL7xrlfBR7yhnG1RX36GOV2vXpR2qQ6fna/4=;
+        b=romexZBwb6fKi6YA0NU1mkUHfGthm1aRdqmebD43aE4cpyMGdE2aB4BCJh4FVjpM9V
+         8fEFRXmsctyQH7RQ/fIwMS/Gc1GW2D4/0Y94xl5/WA8i4MVOsTzrjZOrO6QY405BKjmW
+         SEZWHVRsC1J4zEaGRjnpWcIcHao1jTWvtwOzlqNEuYWRLPw9RtPXFGg4EeekEs7+b7jR
+         YlFMwo/eFPXow/jT8Q9mj5a6OrCgo6cEv2gpFe+qzBNAI6cNzndykQ5EgYJn46+AUzNZ
+         C16zHk+VecaeAqjxphRUWP03mnCNmTOFHZEAjN+mGFUntOH5vWyXG1H4jezgKeizu5/H
+         2OFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTBK0LomKbZGAs5q60FPekRcBmc/GyMvZRQytz4wA8vB4jaJqTBO4qtD43avylqzNpvUssreKAbAiO/ZqIUxYDn1qwIQXRPc0OBzCVsF6XTL7sKHC58XUg3Ut9msJEhWDf+wgWOvy+nL0=
+X-Gm-Message-State: AOJu0YzmMSB/F58jSyhOIP952jFiVwBttuZn+2dJwQAm4PYOWA0sLTv5
+	/oxMvGvQo6152KQMIXegsR8x/8PqWYk/IR0ItuHfxNQQznH3VZi1
+X-Google-Smtp-Source: AGHT+IGEEWzAUBuKvfLPe/9jEsZV30FzzT8QWIM+v2OSv/MD+nPusqSe4pI1Zex4+5zTFaeA9W33Jw==
+X-Received: by 2002:a17:90b:3688:b0:2c4:e000:f811 with SMTP id 98e67ed59e1d1-2c7b5d98300mr1251936a91.49.1718758974392;
+        Tue, 18 Jun 2024 18:02:54 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4ac192848sm13468960a91.56.2024.06.18.18.02.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jun 2024 18:02:53 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <a682ab44-d623-40fe-8fee-af2a3ae5590a@roeck-us.net>
+Date: Tue, 18 Jun 2024 18:02:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v3] scsi: libsas: Fix exp-attached end device cannot be
- scanned in again after probe failed
-Content-Language: en-CA
-To: John Garry <john.g.garry@oracle.com>, <yanaijie@huawei.com>,
-	<jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-	<damien.lemoal@opensource.wdc.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>,
-	<chenxiang66@hisilicon.com>, <kangfenglong@huawei.com>
-References: <20240613122355.7797-1-yangxingui@huawei.com>
- <437c99f4-a67d-48d9-98ee-58cbbc3d19f4@oracle.com>
- <815fcddf-85cc-126e-4be1-618b5ba8f823@huawei.com>
- <bfc045d4-746e-4555-9e17-5a0be57ac787@oracle.com>
- <d590fde9-69bc-0b9c-c907-0b90838e5f94@huawei.com>
- <c4ad0886-6148-4714-b91e-3f669d438dcf@oracle.com>
-From: yangxingui <yangxingui@huawei.com>
-In-Reply-To: <c4ad0886-6148-4714-b91e-3f669d438dcf@oracle.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggpemm500020.china.huawei.com (7.185.36.49) To
- dggpemd100001.china.huawei.com (7.185.36.94)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFT PATCH v2 2/3] hwmon: (spd5118) Use spd5118 specific
+ read/write operations
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>, Armin Wolf <W_Armin@gmx.de>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ linux-kernel@vger.kernel.org, =?UTF-8?Q?Ren=C3=A9_Rebe?=
+ <rene@exactcode.de>, Stephen Horvath <s.horvath@outlook.com.au>,
+ Sasha Kozachuk <skozachuk@google.com>, John Hamrick <johnham@google.com>,
+ Chris Sarra <chrissarra@google.com>, linux-hwmon@vger.kernel.org,
+ Jean Delvare <jdelvare@suse.com>, Heiner Kallweit <hkallweit1@gmail.com>
+References: <20240618195348.1670547-1-linux@roeck-us.net>
+ <20240618195348.1670547-3-linux@roeck-us.net>
+ <a7f208df-4c9e-4fa2-9d17-80895db51182@molgen.mpg.de>
+ <661def21-b0a9-49c1-937e-8526008f529c@roeck-us.net>
+ <omsjeb6zbkcdhh4a3urjdrdeyj2kczb734tbhxwdcvngzlm7pe@dzdphvmm6asq>
+ <4755d088-7eab-47ca-923c-db1fdf3611ab@gmx.de>
+ <6845cc2d-c50b-415b-af49-bf57333ee939@molgen.mpg.de>
+ <f437519f-97c3-4811-ac04-0695a27d9b37@roeck-us.net>
+ <0b8ae7fa-e3d3-4d31-9b4b-657b15c2d19c@t-8ch.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <0b8ae7fa-e3d3-4d31-9b4b-657b15c2d19c@t-8ch.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi, John
+On 6/18/24 17:50, Thomas Weißschuh wrote:
+> On 2024-06-18 17:23:44+0000, Guenter Roeck wrote:
+>> On 6/18/24 16:39, Paul Menzel wrote:
+>>> [Cc: +Heiner]
+>>>
+>>>
+>>> Dear Armin,
+>>>
+>>>
+>>> Am 19.06.24 um 01:28 schrieb Armin Wolf:
+>>>> Am 19.06.24 um 00:28 schrieb Wolfram Sang:
+>>>>
+>>>>>> to 86 degrees C. If that doesn't work, we'll be really out of luck
+>>>>>> with that controller (or at least I don't have an idea what else to try).
+>>>>>
+>>>>> Try CCing Heiner Kallweit for ideas about the i801 controller.
+>>>
+>>>> i am not Heiner Kallweit, but i found something interesting in
+>>>> commit ba9ad2af7019 ("i2c: i801: Fix I2C Block Read on 8-Series/C220 and later").
+>>>>
+>>>> Basically, it seems that the i802 i2c controller indeed features a SPD write disable bit which blocks all writes for slave addresses 0x50-0x57.
+>>>>
+>>>> Does the i801 i2c controller driver print something like "SPD Write Disable is set" during boot?
+>>>
+>>> Nice find. Yes, it does:
+>>>
+>>
+>> Yes, definitely. I didn't have any recent datasheets, so I missed that flag.
+>> Oh well :-(.
+>>
+>>>       [    5.462605] i801_smbus 0000:00:1f.4: SPD Write Disable is set
+>>>       [    5.468399] i801_smbus 0000:00:1f.4: SMBus using PCI interrupt
+>>>
+>>
+>> Bummer. That explains the problem. It means that the BIOS effectively
+>> blocks reading the eeprom on your system (because that would require writing
+>> the page register), as well as changing temperature limits. That is really
+>> annoying, but there is nothing we can do about it. Maybe the BIOS has a
+>> configuration flag to enable or disable write protect, but I doubt it.
+> 
+> What about using 16bit addressing mode?
+> 
+>      Alternatively, at initial power on, the host can set the Table 112, “MR11” [3] = ‘1’ to address the entire 1024 bytes of
+>      non-volatile memory with 2 bytes of address and hence not required to go through page selection to address entire
+>      non-volatile memory.
+> 
+> regmap-i2c allows 16bit addresses when I2C_FUNC_SMBUS_I2C_BLOCK is supported,
+> which to me looks like it should be the case on i801 for ICH5.
+> 
 
-On 2024/6/18 23:21, John Garry wrote:
-> On 18/06/2024 14:10, yangxingui wrote:
->>>>>
->>>>>> We found that it is judged as broadcast flutter when the 
->>>>>> exp-attached end
->>>>>> device reconnects after probe failed, as follows:
->>>>>>
->>>>>> [78779.654026] sas: broadcast received: 0
->>>>>> [78779.654037] sas: REVALIDATING DOMAIN on port 0, pid:10
->>>>>> [78779.654680] sas: ex 500e004aaaaaaa1f phy05 change count has 
->>>>>> changed
->>>>>> [78779.662977] sas: ex 500e004aaaaaaa1f phy05 originated 
->>>>>> BROADCAST(CHANGE)
->>>>>> [78779.662986] sas: ex 500e004aaaaaaa1f phy05 new device attached
->>>>>> [78779.663079] sas: ex 500e004aaaaaaa1f phy05:U:8 attached: 
->>>>>> 500e004aaaaaaa05 (stp)
->>>>>> [78779.693542] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] found
->>>>>> [78779.701155] sas: done REVALIDATING DOMAIN on port 0, pid:10, 
->>>>>> res 0x0
->>>>>> [78779.707864] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
->>>>>> ...
->>>>>> [78835.161307] sas: --- Exit sas_scsi_recover_host: busy: 0 
->>>>>> failed: 0 tries: 1
->>>>>> [78835.171344] sas: sas_probe_sata: for exp-attached device 
->>>>>> 500e004aaaaaaa05 returned -19
->>>>>> [78835.180879] hisi_sas_v3_hw 0000:b4:02.0: dev[16:5] is gone
->>>>>> [78835.187487] sas: broadcast received: 0
->>>>>> [78835.187504] sas: REVALIDATING DOMAIN on port 0, pid:10
->>>>>> [78835.188263] sas: ex 500e004aaaaaaa1f phy05 change count has 
->>>>>> changed
->>>>>> [78835.195870] sas: ex 500e004aaaaaaa1f phy05 originated 
->>>>>> BROADCAST(CHANGE)
->>>>>> [78835.195875] sas: ex 500e004aaaaaaa1f rediscovering phy05
->>>>>> [78835.196022] sas: ex 500e004aaaaaaa1f phy05:U:A attached: 
->>>>>> 500e004aaaaaaa05 (stp)
->>>>>> [78835.196026] sas: ex 500e004aaaaaaa1f phy05 broadcast flutter
->>>>>> [78835.197615] sas: done REVALIDATING DOMAIN on port 0, pid:10, 
->>>>>> res 0x0
->>>>>>
->>>>>> The cause of the problem is that the related ex_phy's 
->>>>>> attached_sas_addr was
->>>>>> not cleared after the end device probe failed. In order to solve 
->>>>>> the above
->>>>>> problem, a function sas_ex_unregister_end_dev() is defined to 
->>>>>> clear the
->>>>>> ex_phy information and unregister the end device after the 
->>>>>> exp-attached end
->>>>>> device probe failed.
->>>>>
->>>>> Can you just manually clear the ex_phy's attached_sas_addr at the 
->>>>> appropiate point (along with calling sas_unregister_dev())? It 
->>>>> seems that we are using heavy-handed approach in calling 
->>>>> sas_unregister_devs_sas_addr(), which does the clearing and much more.
->>>>
->>>> I just tried it and it worked. If we only clear ex_phy's 
->>>> attached_sas_addr, there is no need to call sas_destruct_ports(). We 
->>>> are currently using sas_unregister_devs_sas_addr() which will add 
->>>> the port to sas_port_del_list, so we need to call 
->>>> sas_destruct_ports() separately to delete the port.
->>>>
->>>> Should we also delete the port after the devices probe failed?
->>>
->>> I'm not sure. Please check it.
->>>
->>> sas_fail_probe() would still call sas_unregister_dev(), as required.
->>>
->>> And you said that the sas_fail_probe() probe call would be 
->>> asynchronous to sas_revalidate_domainin(). I actually expected you to 
->>> have the new call to sas_destruct_ports() at the top of 
->>> sas_revalidate_domainin(), like v2, but it is in sas_probe_devices().
->>>
->>> Anyway, please check whether you require this additional call to 
->>> delete the port.
->>>
->> Sorry, there was something wrong with the previous process description.
->> the correct is:
->>
->> 1. REVALIDATING DOMAIN
->> 2. new device attached, create port,etc.
->> 4. done REVALIDATING DOMAIN
->> 5. @out, handle parent->port->sas_port_del_list
->> 6. sas_probe_devices()
->> 7. if device probe failed in step 6 and call 
->> sas_unregister_devs_sas_addr(), then add phy->port->list to 
->> parent->port->sas_port_del_list // port won't delete
->>
->> 8. next, REVALIDATING DOMAIN
->> 9. new device attached
->> 10. new port create failed, as port already exits.
->>
->>
->> So, v3 delete port at then end of sas_probe_devices(). And if we don't 
->> use sas_unregister_devs_sas_addr() follow your suggestion then we 
->> don't need to call sas_destruct_ports().
-> 
-> I am finding it hard to follow you now.
-I'm sorry for that. ^-^
-> 
-> Can you show the complete change which you think that we now require to 
-> fix this issue?
-> 
-Okay, I'll update a new version.
+Good idea, but it doesn't work. I can get write operations with
+16-bit register addresses to work even on piix4, but read operations
+require writing a 16-bit register address followed by byte reads (see
+regmap_i2c_smbus_i2c_read_reg16). Unfortunately, spd5118 devices
+don't auto-increment the address on byte read operations, meaning
+each byte read returns data from address 0x00 (i.e., it returns
+0x51). Try "i2cdump -y -f 0 0x50 c" and you'll see what I mean.
+Maybe there is a way around it, but I have not found it.
+
+On top of that, configuring 16-bit mode requires a write operation
+into the page register, and that is blocked.
 
 Thanks,
-Xingui
+Guenter
+
 
