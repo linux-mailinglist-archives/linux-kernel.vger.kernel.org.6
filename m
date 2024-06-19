@@ -1,183 +1,231 @@
-Return-Path: <linux-kernel+bounces-221620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECA490F648
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:46:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80F590F658
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF19E284D2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:45:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B45228526C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6157D1586F2;
-	Wed, 19 Jun 2024 18:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879DF158DC0;
+	Wed, 19 Jun 2024 18:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="olp51VWv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="gAL+o4vV"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9965A1BF37;
-	Wed, 19 Jun 2024 18:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8551586D3
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 18:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718822754; cv=none; b=JNZPgJsggcpcfrYZWKBaqsCORaYiPx25hSytz24D90E5UzLBDgYQtGu2dOcIz+BadOjmsMkJmzS0XTpGG4TlpI7rjZKnBEGGQX953FF+Av2lVYkDBJ4IT+NP/F07VgR4eVlNq0UWe/9eN+QqJ3u6TBYbtSf/MlJoDlI+GdKBswk=
+	t=1718822766; cv=none; b=lRa7R+UdoranHJt4D+PdqWRyPYV4dC+aKiGxzvmlNRamj6dWdMhngKH4lyUBLSW+6c8aL07WEYbjkPFDcPCXytsXx3nWKymSPWpb/f5i+4jZ4ZF1fNqYoSZU4AR72VV1qMDo0kCeWoR15MS8hZHLy9i9j/d+GRKFu9fv+QsCvIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718822754; c=relaxed/simple;
-	bh=LnvttFyoAWSkuawVy/9codAPfnxNDkMkJ4iJyuXHu4U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L1G9Q0Q9EwO38rEHdE/tL6qYfa1mIAWNEOeLh+53J1/ZxITLBZiqXm4aSKhEgVo8N9qJ60AXzdcKDdJYV3QK7Y2FstU+3xeLoneN8ZZrZFYjSki0AsZ0raa0jP0ZsPT3TCsQMUx1LmOIBIYIL5PaaYXBwEwkpAqVejQKuqtYpQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=olp51VWv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08E48C4AF09;
-	Wed, 19 Jun 2024 18:45:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718822754;
-	bh=LnvttFyoAWSkuawVy/9codAPfnxNDkMkJ4iJyuXHu4U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=olp51VWvhKIb+U3wldz9Dp/v31KChoierAHu85CMI/y69b52vQxdiddvOFMTAVKHR
-	 u01IegGbZbnVg6ULCnZup6NSJ/4RtdzmYXGJd2ybRDIb9O5o4GsUXDmIn8z/fGXZcS
-	 JceBYxafdv0jhPYHZkgb9/Qyr5z67HAyssWXSVf4xRpa0LlTP2jHsS3pwDmyBqP3ha
-	 HAv0SZ5mPqfMgW+gpv1sW89Z2fj/1DWiI7WX8szW8eNkzS8klqdhB8EHVv+MxN2MMx
-	 4C3ROaSBWvx7Uextb8O26EZUDkeUHrXZasPHsd2+RH6NOrI0UK/r5JXSmj5IEGADII
-	 rfaflBhmNyOyQ==
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5bae827df63so1502eaf.3;
-        Wed, 19 Jun 2024 11:45:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW/9F/e3UV3XIByQINNb8Hgdn/pzKaW73bkCMPMoWgTxH2Q4h2eiIm9MzbzrN0gR43OerPBY/ZETO8wc3saFeibbTwIHaMJSK6J0tbphevGZ0hF8VDoBhVHEH0hEk2jsgzLG+6le6g=
-X-Gm-Message-State: AOJu0YwWBtGSCTp/cgfptqkcCl3nHGyq466fav9wP8TSO21MSXPARAph
-	xdQdhe7g2/oVvSKVatlBUYQBjA1MF1hgegw/FZSkoITBuvofYvVpYmzyt55sxQ/ETy61dd82Vdq
-	b5vTTgHr0sW4jD6YYjwQSEf5ePOE=
-X-Google-Smtp-Source: AGHT+IGNKmtp8sSF77RfefKSh6NOj/ZLCbev2ggM8c8woGdyv9hH/XPACV482/vYzxoqoRVOJefsJJaAYygHx0ECG9g=
-X-Received: by 2002:a4a:bc8f:0:b0:5be:9981:bb69 with SMTP id
- 006d021491bc7-5c1adbed14dmr3732672eaf.1.1718822753279; Wed, 19 Jun 2024
- 11:45:53 -0700 (PDT)
+	s=arc-20240116; t=1718822766; c=relaxed/simple;
+	bh=xQZfBrjg8Y1IyEOd4VaZKMauy6Z5Ydh+j9RZPVg6KZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nKLMFkZHuJVvQA0shj7/ku0tsPYZOXNIru2QWCuzfPZGMqpMNL8H7rUh/UAA8thwi3HmeF4r+vIw2tivANd6zoZmjAmmaYEJWKU9QygXmBq4maLDzj2wy/GvdgiBpPuO9af2JRRNh+Uzum8a+8I+5yh6Q0jpiNxyEeXk1a1zCgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=gAL+o4vV; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-421eab59723so934115e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:46:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718822763; x=1719427563; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Of1uWBxSEjvKTQJleea6ZxhN8mHuCcwxXxdGI9uF93A=;
+        b=gAL+o4vVw3jcnhq4PUbRpC74aZANSxP2sHepAl477+dHyw3hIiYtKS9iQYOzNR/aZl
+         7jG7iLmV3Eq2lBLWWUnK6mwdZDiAlv/bi52N9kVh0HgIjWYLsLw9y/CplYlywGk3vr6y
+         jbwWpbF3OYq7oBGO3aLvdLCbprYHWo+51G/sASidqzssMBKA+L8kkhB6GGuyGhS9xZVE
+         JSaetH0dSnfHCJDTFQf5ZtPdDY0xzTK2pTGGYRjhj1zHxTUF4OPeFToRxOpMpNMHNNyK
+         pOO33h0IRjazGywi2++BR6mrtBlZK+3jLdtOMH6cxOopJbiuilV4xGuNYqMzbTENJT2D
+         5ItQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718822763; x=1719427563;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Of1uWBxSEjvKTQJleea6ZxhN8mHuCcwxXxdGI9uF93A=;
+        b=t9aEEaNosbjE/fFVeZc8RUEnZ9HZMfdCkQ/5gtzBAsfoAek45Xqd5gv/yg6rY4ExXE
+         4UfeQoY8d3AeJllZY8kOgHgUj5oh4x05Y9Nhi/5KucdA/PgVYxtGwZTDwQFGTCFmFOw2
+         3SD+E2CGuBxy8Ua43zVzN8THkj9huyMKz45xRUcT5INxIuF3pAB88P/epKhWL6ZIp2Tq
+         OwXn3/qsgaQk3cUZpdJ/KviWlQxBQcPtACvks+kxqctQOgu9AItGvXWv6JYbbPvVbAnD
+         5y8psOGxprKVUuGuxnmbSk2PgFFWJJkpo8vj1puGFqBtLjZiEqp5h1EEtRmnCz36Bl+u
+         Q/rw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFFzIbhYjeQX/tm8+bmS7XM6AQyeM5lFzB5YVne9g3K4SzaEUW150UGdt+DFwnn2+f0atfZ+xETF49nJJDxQ5aWFQWtTbDXFd+IqAT
+X-Gm-Message-State: AOJu0YxWy6DNjiXApD23RgQj/u8H5Z8jbFERzRK1BxpFLJ9KYcrOvJG7
+	1a09xhGnc2R+ULsOCttFqUCUQpt++bdGXvU8T8EZQZFZj/oG3aixSKgMjz3f0oE=
+X-Google-Smtp-Source: AGHT+IG94KmlBI+1kAFW/XzI6UK2YpoCtdBNr/zZ39tySmt8Nx0B1Rz4PfJT6D+Bu6Uwl7ILTiqtkg==
+X-Received: by 2002:a7b:cc13:0:b0:424:784c:b13b with SMTP id 5b1f17b1804b1-424784cb209mr15137645e9.13.1718822763293;
+        Wed, 19 Jun 2024 11:46:03 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:991f:deb8:4c5d:d73d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36098c8c596sm7594156f8f.14.2024.06.19.11.46.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 11:46:02 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Vinod Koul <vkoul@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>
+Cc: netdev@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH net-next 1/8] net: phy: add support for overclocked SGMII
+Date: Wed, 19 Jun 2024 20:45:42 +0200
+Message-ID: <20240619184550.34524-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240619184550.34524-1-brgl@bgdev.pl>
+References: <20240619184550.34524-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619031250.2936087-1-tj@kernel.org> <20240619031250.2936087-2-tj@kernel.org>
-In-Reply-To: <20240619031250.2936087-2-tj@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 19 Jun 2024 20:45:42 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i=0QqkvjA9mnqcX6Yv-T+rQ7ZKvuF1HPJL8pG2kqicGQ@mail.gmail.com>
-Message-ID: <CAJZ5v0i=0QqkvjA9mnqcX6Yv-T+rQ7ZKvuF1HPJL8pG2kqicGQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cpufreq_schedutil: Refactor sugov_cpu_is_busy()
-To: Tejun Heo <tj@kernel.org>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
-	void@manifault.com, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	mingo@redhat.com, peterz@infradead.org, David Vernet <dvernet@meta.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 19, 2024 at 5:13=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote:
->
-> sugov_cpu_is_busy() is used to avoid decreasing performance level while t=
-he
-> CPU is busy and called by sugov_update_single_freq() and
-> sugov_update_single_perf(). Both callers repeat the same pattern to first
-> test for uclamp and then the business. Let's refactor so that the tests
-> aren't repeated.
->
-> The new helper is named sugov_hold_freq() and tests both the uclamp
-> exception and CPU business. No functional changes. This will make adding
-> more exception conditions easier.
->
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reviewed-by: David Vernet <dvernet@meta.com>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+The Aquantia AQR115C PHY supports the Overlocked SGMII mode. In order to
+support it in the driver, extend the PHY core with the new mode bits and
+pieces.
 
-for this particular change.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/net/phy/phy-core.c |  1 +
+ drivers/net/phy/phylink.c  | 13 ++++++++++++-
+ include/linux/phy.h        |  4 ++++
+ 3 files changed, 17 insertions(+), 1 deletion(-)
 
-> ---
->  kernel/sched/cpufreq_schedutil.c | 38 +++++++++++++++-----------------
->  1 file changed, 18 insertions(+), 20 deletions(-)
->
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_sche=
-dutil.c
-> index eece6244f9d2..972b7dd65af2 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -325,16 +325,27 @@ static unsigned long sugov_iowait_apply(struct sugo=
-v_cpu *sg_cpu, u64 time,
->  }
->
->  #ifdef CONFIG_NO_HZ_COMMON
-> -static bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu)
-> +static bool sugov_hold_freq(struct sugov_cpu *sg_cpu)
->  {
-> -       unsigned long idle_calls =3D tick_nohz_get_idle_calls_cpu(sg_cpu-=
->cpu);
-> -       bool ret =3D idle_calls =3D=3D sg_cpu->saved_idle_calls;
-> +       unsigned long idle_calls;
-> +       bool ret;
-> +
-> +       /* if capped by uclamp_max, always update to be in compliance */
-> +       if (uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)))
-> +               return false;
-> +
-> +       /*
-> +        * Maintain the frequency if the CPU has not been idle recently, =
-as
-> +        * reduction is likely to be premature.
-> +        */
-> +       idle_calls =3D tick_nohz_get_idle_calls_cpu(sg_cpu->cpu);
-> +       ret =3D idle_calls =3D=3D sg_cpu->saved_idle_calls;
->
->         sg_cpu->saved_idle_calls =3D idle_calls;
->         return ret;
->  }
->  #else
-> -static inline bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu) { return =
-false; }
-> +static inline bool sugov_hold_freq(struct sugov_cpu *sg_cpu) { return fa=
-lse; }
->  #endif /* CONFIG_NO_HZ_COMMON */
->
->  /*
-> @@ -382,14 +393,8 @@ static void sugov_update_single_freq(struct update_u=
-til_data *hook, u64 time,
->                 return;
->
->         next_f =3D get_next_freq(sg_policy, sg_cpu->util, max_cap);
-> -       /*
-> -        * Do not reduce the frequency if the CPU has not been idle
-> -        * recently, as the reduction is likely to be premature then.
-> -        *
-> -        * Except when the rq is capped by uclamp_max.
-> -        */
-> -       if (!uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)) &&
-> -           sugov_cpu_is_busy(sg_cpu) && next_f < sg_policy->next_freq &&
-> +
-> +       if (sugov_hold_freq(sg_cpu) && next_f < sg_policy->next_freq &&
->             !sg_policy->need_freq_update) {
->                 next_f =3D sg_policy->next_freq;
->
-> @@ -436,14 +441,7 @@ static void sugov_update_single_perf(struct update_u=
-til_data *hook, u64 time,
->         if (!sugov_update_single_common(sg_cpu, time, max_cap, flags))
->                 return;
->
-> -       /*
-> -        * Do not reduce the target performance level if the CPU has not =
-been
-> -        * idle recently, as the reduction is likely to be premature then=
-.
-> -        *
-> -        * Except when the rq is capped by uclamp_max.
-> -        */
-> -       if (!uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)) &&
-> -           sugov_cpu_is_busy(sg_cpu) && sg_cpu->util < prev_util)
-> +       if (sugov_hold_freq(sg_cpu) && sg_cpu->util < prev_util)
->                 sg_cpu->util =3D prev_util;
->
->         cpufreq_driver_adjust_perf(sg_cpu->cpu, sg_cpu->bw_min,
-> --
-> 2.45.2
->
->
+diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
+index 15f349e5995a..7cf87cae11f0 100644
+--- a/drivers/net/phy/phy-core.c
++++ b/drivers/net/phy/phy-core.c
+@@ -138,6 +138,7 @@ int phy_interface_num_ports(phy_interface_t interface)
+ 	case PHY_INTERFACE_MODE_RXAUI:
+ 	case PHY_INTERFACE_MODE_XAUI:
+ 	case PHY_INTERFACE_MODE_1000BASEKX:
++	case PHY_INTERFACE_MODE_OCSGMII:
+ 		return 1;
+ 	case PHY_INTERFACE_MODE_QSGMII:
+ 	case PHY_INTERFACE_MODE_QUSGMII:
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index 02427378acfd..ce07d41a233f 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -128,6 +128,7 @@ static const phy_interface_t phylink_sfp_interface_preference[] = {
+ 	PHY_INTERFACE_MODE_5GBASER,
+ 	PHY_INTERFACE_MODE_2500BASEX,
+ 	PHY_INTERFACE_MODE_SGMII,
++	PHY_INTERFACE_MODE_OCSGMII,
+ 	PHY_INTERFACE_MODE_1000BASEX,
+ 	PHY_INTERFACE_MODE_100BASEX,
+ };
+@@ -180,6 +181,7 @@ static unsigned int phylink_interface_signal_rate(phy_interface_t interface)
+ 	switch (interface) {
+ 	case PHY_INTERFACE_MODE_SGMII:
+ 	case PHY_INTERFACE_MODE_1000BASEX: /* 1.25Mbd */
++	case PHY_INTERFACE_MODE_OCSGMII:
+ 		return 1250;
+ 	case PHY_INTERFACE_MODE_2500BASEX: /* 3.125Mbd */
+ 		return 3125;
+@@ -231,6 +233,7 @@ static int phylink_interface_max_speed(phy_interface_t interface)
+ 		return SPEED_1000;
+ 
+ 	case PHY_INTERFACE_MODE_2500BASEX:
++	case PHY_INTERFACE_MODE_OCSGMII:
+ 		return SPEED_2500;
+ 
+ 	case PHY_INTERFACE_MODE_5GBASER:
+@@ -515,6 +518,10 @@ static unsigned long phylink_get_capabilities(phy_interface_t interface,
+ 		caps |= MAC_1000HD | MAC_1000FD;
+ 		fallthrough;
+ 
++	case PHY_INTERFACE_MODE_OCSGMII:
++		caps |= MAC_2500FD;
++		fallthrough;
++
+ 	case PHY_INTERFACE_MODE_REVRMII:
+ 	case PHY_INTERFACE_MODE_RMII:
+ 	case PHY_INTERFACE_MODE_SMII:
+@@ -929,6 +936,7 @@ static int phylink_parse_mode(struct phylink *pl,
+ 		case PHY_INTERFACE_MODE_10GKR:
+ 		case PHY_INTERFACE_MODE_10GBASER:
+ 		case PHY_INTERFACE_MODE_XLGMII:
++		case PHY_INTERFACE_MODE_OCSGMII:
+ 			caps = ~(MAC_SYM_PAUSE | MAC_ASYM_PAUSE);
+ 			caps = phylink_get_capabilities(pl->link_config.interface, caps,
+ 							RATE_MATCH_NONE);
+@@ -1357,7 +1365,8 @@ static void phylink_mac_initial_config(struct phylink *pl, bool force_restart)
+ 
+ 	case MLO_AN_INBAND:
+ 		link_state = pl->link_config;
+-		if (link_state.interface == PHY_INTERFACE_MODE_SGMII)
++		if (link_state.interface == PHY_INTERFACE_MODE_SGMII ||
++		    link_state.interface == PHY_INTERFACE_MODE_OCSGMII)
+ 			link_state.pause = MLO_PAUSE_NONE;
+ 		break;
+ 
+@@ -3640,6 +3649,7 @@ void phylink_mii_c22_pcs_decode_state(struct phylink_link_state *state,
+ 		break;
+ 
+ 	case PHY_INTERFACE_MODE_SGMII:
++	case PHY_INTERFACE_MODE_OCSGMII:
+ 	case PHY_INTERFACE_MODE_QSGMII:
+ 		phylink_decode_sgmii_word(state, lpa);
+ 		break;
+@@ -3715,6 +3725,7 @@ int phylink_mii_c22_pcs_encode_advertisement(phy_interface_t interface,
+ 			adv |= ADVERTISE_1000XPSE_ASYM;
+ 		return adv;
+ 	case PHY_INTERFACE_MODE_SGMII:
++	case PHY_INTERFACE_MODE_OCSGMII:
+ 	case PHY_INTERFACE_MODE_QSGMII:
+ 		return 0x0001;
+ 	default:
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index e6e83304558e..73da0983d631 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -128,6 +128,7 @@ extern const int phy_10gbit_features_array[1];
+  * @PHY_INTERFACE_MODE_10GKR: 10GBASE-KR - with Clause 73 AN
+  * @PHY_INTERFACE_MODE_QUSGMII: Quad Universal SGMII
+  * @PHY_INTERFACE_MODE_1000BASEKX: 1000Base-KX - with Clause 73 AN
++ * @PHY_INTERFACE_MODE_OCSGMII: Overclocked SGMII
+  * @PHY_INTERFACE_MODE_MAX: Book keeping
+  *
+  * Describes the interface between the MAC and PHY.
+@@ -168,6 +169,7 @@ typedef enum {
+ 	PHY_INTERFACE_MODE_10GKR,
+ 	PHY_INTERFACE_MODE_QUSGMII,
+ 	PHY_INTERFACE_MODE_1000BASEKX,
++	PHY_INTERFACE_MODE_OCSGMII,
+ 	PHY_INTERFACE_MODE_MAX,
+ } phy_interface_t;
+ 
+@@ -289,6 +291,8 @@ static inline const char *phy_modes(phy_interface_t interface)
+ 		return "100base-x";
+ 	case PHY_INTERFACE_MODE_QUSGMII:
+ 		return "qusgmii";
++	case PHY_INTERFACE_MODE_OCSGMII:
++		return "ocsgmii";
+ 	default:
+ 		return "unknown";
+ 	}
+-- 
+2.43.0
+
 
