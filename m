@@ -1,139 +1,165 @@
-Return-Path: <linux-kernel+bounces-220414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D390890E16F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:53:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA89C90E174
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 03:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DF4EB2238B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:53:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F4851F235DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 01:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B6221345;
-	Wed, 19 Jun 2024 01:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569C720DC3;
+	Wed, 19 Jun 2024 01:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lDGSa2+B"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zfv2L1tF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D73818E20;
-	Wed, 19 Jun 2024 01:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353C21B812
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 01:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718762005; cv=none; b=tGz7cGeWO8v3Rg2EniQgJROLhMYc6JgVhaiVu4Y3oseA+UKg3//VKdvKLGWiLA+dauopblpqyJdEpyLTAVA1Q3863a7gzmkIJE+wMJnVkhY9WdStvjHe50AfabPtJ1ah1Y36i6pIO3tF6KlnhkXO6USZ/++UUTfUAz8u2rsupLM=
+	t=1718762198; cv=none; b=DIVFOEfYKQiN7fdcbwN8X9dpHDIDtP11zQCbqERzdG3SdJi/QQ/uJHkBSLNCB2bFC+WUkjtjiJWIDoyD9GOqnx1Yy1ZkBqk0JXMH14Pd6ym4kibI3gWlHsLqAn4w5Nx/rFYuzJMVdDUJooSTJxhArgAdduwPU+7tcvOy8CO56qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718762005; c=relaxed/simple;
-	bh=y4h/IiEH9QhlxPRAVfEhG72ug8DRAf2ofzXJM2sJ1qM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oeQyHsIH23PL4dW27TTjXWSbiBIibT1oQrJigz2YbMM7NsxR1McWtVQXo+rC636k2DzvzFH/uLpXfM28LT/9qmWUaH+C6STxwYZgQa70LFFvvINvsVC2+s1rsg/hMQjOHP6x6brQdZf5Wezw00itijcl2DzcqGXeZEbgfrz8dbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lDGSa2+B; arc=none smtp.client-ip=198.175.65.15
+	s=arc-20240116; t=1718762198; c=relaxed/simple;
+	bh=n5EwU4DGRZROLJkTn6VWg800Z3mpjBTC96wV+Ky+4HY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=KmXHeGMPs9+Ugte1NJqVVDYlxkBO1wMIlY4f3PKjqNAof9HKugAX1p/3XjScLk982p6IpbrJmLlS0te10mJoFuj2I8XeOjji5LHulGnNg7OtnUFwZqHLDOMpHivirjZYv6EFTKZU9hhfHSe0zId3dxttcCq/uEMKrt1z/SLvrIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zfv2L1tF; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718762004; x=1750298004;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=y4h/IiEH9QhlxPRAVfEhG72ug8DRAf2ofzXJM2sJ1qM=;
-  b=lDGSa2+BTjeRlCO7QZBVk9jvT/m+L6mSOOx+kaMYYdzGKmmyCbg0WW4g
-   /op5LaQxaNl03nT974jJEJmbG8ieZLTKHIrTkcnmuw14/RQFYDGNYSHMH
-   nY5SC/xuTmaCH+cuD+SqCasdrEU43pJC5edlOv17ByAVf6OBqwebUbFDp
-   3Jdnx2p39OBF2HXmVj7bwXkv6BEWjf5s+SPf6C1Zyf95QEwR3vxEtFBS/
-   vTvuoFTXjQ17pRuyK0hnE3gLqh7Bcza7sfsYnf9xpatdBOSpO6OBxEiiU
-   K7yQff5vDm9FL6TnNVXCkTATlqmVFvHdi+x8MWRqMjN4WPffzp9pYP+pD
-   Q==;
-X-CSE-ConnectionGUID: G3UI+FqiQSKdITeppl7nxA==
-X-CSE-MsgGUID: t78bVsbRRNWZ5mWeeM5fSQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="19461672"
+  t=1718762197; x=1750298197;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=n5EwU4DGRZROLJkTn6VWg800Z3mpjBTC96wV+Ky+4HY=;
+  b=Zfv2L1tF3Ag9nTm/u3UP/KhFR/zwcoOGad86qCD4IdWy/bjXbN+wh3CL
+   C/ilHBEv/kUhwU25iyHwaFkp3WZ+dYQTn9lbpMM2aKb9KtwLKEj4gvXR8
+   pg1CXr1TrdaCbb4YBA0oaVJdnO/QIuI6mUarswGXfTGRZsPANw+Ay+l1Y
+   cIsSAuH4w9FpPfedg2Mp6hcgOT7Sx2PW1/NYzitSX6PRJig82RLsiGyd7
+   tYAuMYZkAHDe6q144FmN4BlEJ3Hf0WJ9KNXxJgfEthVaDHt/qvOKiFgQH
+   8w14/wgvhRaiDvmu8ziZ0GNqCca7uVxnKDxrtAcZMDBeurZESgjgXvl/n
+   w==;
+X-CSE-ConnectionGUID: 0MkFGQtmRGKgGOc0m0qtZA==
+X-CSE-MsgGUID: 7P8h8VgrTP2QT3wvTT6rfg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="18593932"
 X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="19461672"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 18:53:23 -0700
-X-CSE-ConnectionGUID: 2/1oZ4ocRuGCLo1eL49vLg==
-X-CSE-MsgGUID: jtHcrt+CSm6csXi6+iqLjw==
+   d="scan'208";a="18593932"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 18:56:36 -0700
+X-CSE-ConnectionGUID: ZP8y2tRJR+GLYYzWDxzcCw==
+X-CSE-MsgGUID: Uzo/rQ7YQ5u00dUMe//DOQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
-   d="scan'208";a="41672159"
-Received: from cgroden-mobl.amr.corp.intel.com (HELO desk) ([10.209.70.214])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 18:53:22 -0700
-Date: Tue, 18 Jun 2024 18:53:15 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Brice Goglin <brice.goglin@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH 0/9] Add CPU-type to topology
-Message-ID: <20240619015315.3ei5f6rovzdnxovo@desk>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <8d757ea3-87a3-4663-ac76-66b04e33e6b3@gmail.com>
+X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
+   d="scan'208";a="72958898"
+Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
+  by fmviesa001.fm.intel.com with ESMTP; 18 Jun 2024 18:56:22 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/1] iommu/vt-d: Fix missed device TLB cache tag
+Date: Wed, 19 Jun 2024 09:53:45 +0800
+Message-Id: <20240619015345.182773-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8d757ea3-87a3-4663-ac76-66b04e33e6b3@gmail.com>
 
-On Tue, Jun 18, 2024 at 02:49:10PM +0200, Brice Goglin wrote:
-> Le 17/06/2024 à 11:11, Pawan Gupta a écrit :
-> > Hi,
-> > 
-> > This series adds support for CPU-type (CPUID.1A.EAX[31-24] on Intel) to
-> > differentiate between hybrid variants P+E, P-only, E-only that share the
-> > same Family/Model/Stepping. One of the use case for CPU-type is the
-> > affected CPU table for CPU vulnerabilities, which can now use the CPU-type
-> > to filter the unaffected variants.
-> > 
-> > * Patch 1 adds cpu-type to CPU topology structure and introduces
-> >    topology_cpu_type() to get the CPU-type.
-> > 
-> > * Patch 2-4 replaces usages of get_this_hybrid_cpu_type() with
-> >    topology_cpu_type().
-> > 
-> > * Patch 5-7 Updates CPU-matching infrastructure to use CPU-type.
-> > 
-> > * Patch 8 cleans up the affected CPU list.
-> > 
-> > * Patch 9 uses the CPU-type to exclude P-only parts from the RFDS affected
-> >    list.
-> 
-> 
-> Hello
-> 
-> Is there still a plan to expose this info in sysfs?
+When a domain is attached to a device, the required cache tags are
+assigned to the domain so that the related caches could be flushed
+whenever it is needed. The device TLB cache tag is created selectively 
+by checking the ats_enabled field of the device's iommu data. This
+creates an ordered dependency between attach and ATS enabling paths.
 
-Sure, if it helps userspace.
+The device TLB cache tag will not be created if device's ATS is enabled
+after the domain attachment. This causes some devices, for example
+intel_vpu, to malfunction.
 
-> Userspace currently uses frequencies to guess which cores are E or P.
-> Intel sent some patches several years ago [1], but they got abandoned
-> nowhere as far as I know. There was also some discussion about using a
-> "capacity" field like ARM does, but IIRC Intel didn't like the idea in
-> the end.
+Create device TLB cache tags for a domain as long as the ats_supported
+field of the attached device is true. In the cache invalidation paths,
+the ats_enable field is checked and the device TLB invalidation requests
+are issued only when the ATS is really enabled on the device.
 
-There can be many ways to expose this information in sysfs. Like this ...
+Fixes: 3b1d9e2b2d68 ("iommu/vt-d: Add cache tag assignment interface")
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel/cache.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-> [1] https://lkml.org/lkml/2020/10/2/1208
+diff --git a/drivers/iommu/intel/cache.c b/drivers/iommu/intel/cache.c
+index e8418cdd8331..ec6770f556b9 100644
+--- a/drivers/iommu/intel/cache.c
++++ b/drivers/iommu/intel/cache.c
+@@ -112,7 +112,7 @@ static int __cache_tag_assign_domain(struct dmar_domain *domain, u16 did,
+ 	int ret;
+ 
+ 	ret = cache_tag_assign(domain, did, dev, pasid, CACHE_TAG_IOTLB);
+-	if (ret || !info->ats_enabled)
++	if (ret || !info->ats_supported)
+ 		return ret;
+ 
+ 	ret = cache_tag_assign(domain, did, dev, pasid, CACHE_TAG_DEVTLB);
+@@ -129,7 +129,7 @@ static void __cache_tag_unassign_domain(struct dmar_domain *domain, u16 did,
+ 
+ 	cache_tag_unassign(domain, did, dev, pasid, CACHE_TAG_IOTLB);
+ 
+-	if (info->ats_enabled)
++	if (info->ats_supported)
+ 		cache_tag_unassign(domain, did, dev, pasid, CACHE_TAG_DEVTLB);
+ }
+ 
+@@ -140,7 +140,7 @@ static int __cache_tag_assign_parent_domain(struct dmar_domain *domain, u16 did,
+ 	int ret;
+ 
+ 	ret = cache_tag_assign(domain, did, dev, pasid, CACHE_TAG_NESTING_IOTLB);
+-	if (ret || !info->ats_enabled)
++	if (ret || !info->ats_supported)
+ 		return ret;
+ 
+ 	ret = cache_tag_assign(domain, did, dev, pasid, CACHE_TAG_NESTING_DEVTLB);
+@@ -157,7 +157,7 @@ static void __cache_tag_unassign_parent_domain(struct dmar_domain *domain, u16 d
+ 
+ 	cache_tag_unassign(domain, did, dev, pasid, CACHE_TAG_NESTING_IOTLB);
+ 
+-	if (info->ats_enabled)
++	if (info->ats_supported)
+ 		cache_tag_unassign(domain, did, dev, pasid, CACHE_TAG_NESTING_DEVTLB);
+ }
+ 
+@@ -309,6 +309,9 @@ void cache_tag_flush_range(struct dmar_domain *domain, unsigned long start,
+ 			info = dev_iommu_priv_get(tag->dev);
+ 			sid = PCI_DEVID(info->bus, info->devfn);
+ 
++			if (!info->ats_enabled)
++				break;
++
+ 			if (tag->pasid == IOMMU_NO_PASID)
+ 				qi_flush_dev_iotlb(iommu, sid, info->pfsid,
+ 						   info->ats_qdep, addr, mask);
+@@ -356,6 +359,9 @@ void cache_tag_flush_all(struct dmar_domain *domain)
+ 			info = dev_iommu_priv_get(tag->dev);
+ 			sid = PCI_DEVID(info->bus, info->devfn);
+ 
++			if (!info->ats_enabled)
++				break;
++
+ 			qi_flush_dev_iotlb(iommu, sid, info->pfsid, info->ats_qdep,
+ 					   0, MAX_AGAW_PFN_WIDTH);
+ 			quirk_extra_dev_tlb_flush(info, 0, MAX_AGAW_PFN_WIDTH,
+-- 
+2.34.1
 
-... exposes /sys/devices/system/cpu/types which, in hybrid parts, creates a
-subdirectory for each type of CPU. Each subdirectory contains a CPU list
-and a CPU map that user space can query.
-
-The other way is to expose the CPU-type in a file:
-
-	/sys/devices/system/cpu/cpuN/type
-
-that could return the CPU-type of the CPU N. Is there a preference?
 
