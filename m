@@ -1,158 +1,139 @@
-Return-Path: <linux-kernel+bounces-220775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 220D790E6DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:23:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FCA90E6E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDC2F1F219B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:23:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B88EC1C2165B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 09:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB4580025;
-	Wed, 19 Jun 2024 09:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78F080043;
+	Wed, 19 Jun 2024 09:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="cemrlbqu"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Af8wDKW+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665AC7D3EF
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 09:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025717FBBF;
+	Wed, 19 Jun 2024 09:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718789021; cv=none; b=lBVwkRLOc7VgOE8uhELu7z8Ot/MfCr4dNSAoYywrNcElNHDsUeSU1YMi/YlGJlYMghrN//FkZZguMH9f5omOBrLcHRUg61d1ZYeqdnM6Q2HQw80WbijpXCSfijAW/ULdxK4eG4zAzHoWdMQ8B1cVGRVxwYoM6kT3vr96XFJg9Mw=
+	t=1718789045; cv=none; b=AiHPlcp3jhGQu2uk+tY63BL0v1ImQ+xYdAHnWD2LDawsIxLmxi2zFi9uNz83P+ixTtIQ2K+ujlMknR+EqdGB+b2aTZCbj/Bjh0kALgkmIT74xfkqH11dAJ4PpioLfmHLiwFNF2b+2ctiEqVJnrk8epDwkCnVw1qmRduYCVaWnoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718789021; c=relaxed/simple;
-	bh=c6mCFLDwnEj0M0yPmsIQCRB4t/fBDoZ4qwONT/Fjbec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QXR6OSXx9s53gAC8riQhvuLE33ZuuedExRHoQeWr6KlFeI2RSrSGGOmRlMSESod8HzQyFAz4DSfXfgSzSuYRmO2ZZak7gUi8sCBt8eZL5qX4qUC4rkBYi0QKyx/JlL7mCne2TU3ZGnQnoCNsqBubKnuKCFn76xapC5zLnly3DEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=cemrlbqu; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so760259466b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 02:23:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1718789017; x=1719393817; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E02jv30Jn5KEyH9ZDrmzhOXntMuebj1OtVrel1S6NPY=;
-        b=cemrlbquzeqpeZAK2qByaFC1iCJUr6TQBSUbMHVCZPrZNxaXwLHB0QLrjoNRGGUg1q
-         uhY3IERk1r8bWmpq4DDrAG61bSCfDE1vkRbOIg7dtYecw/LelD0PtyaNNyk+nh4rjHh3
-         xynmSSlN9Gu7BrGi26GgVfBUyqpGCCN/PF7YA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718789017; x=1719393817;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E02jv30Jn5KEyH9ZDrmzhOXntMuebj1OtVrel1S6NPY=;
-        b=LbKKodCiU7rA8YdyEfNZhbXmpsRQ8C/DAk+SNQmH35NXI2ctqBcucdF8F+5djx01vl
-         AHBJetpH6hvQLkT4b5HA9TftOlOBhq8NYqqEo3aMYOyjAbZc1eUvH53lzeHZ8a0v1cfC
-         8CAFTRz1oNuRLg+Z+zIhyvH3a4PWM9kr0acFVkqHeKUOi8C7xSZ0i23diHUJHJ6BaDx4
-         jtKBo2WZLi4mGPVlp6c0gA79VXjvihMetKwtsVvofZdMuJCqV2Ex/15vpu+w4PtY70Bd
-         cuHbccc4KYKz32fujQN68a+K31zXMISWVksoBliB4bnVnjd5cXzV+0CXav6C3JG88lyR
-         ydXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJbboicbG+4uAKX+/XV1/5VfYz/JAcDddpubiAREJp5xnt4JYMfiOEDH50DAVJ22xgQBBPdEWdzAuLDkaE2rfyL+tt7CvAo1ZLwpjo
-X-Gm-Message-State: AOJu0YxJlseH6kD1x1IsNcuIGMEw/Gbr6Kz6F1n8XK2tfXu6SbtWFh8y
-	kUC8f0axbDmNkDRBYMHvXs71kDeql0uiJIw3l4ryO3WxUTme/53t7X/kRWf8/jekY5u2BFTjh8a
-	Yh3oHeLibuQnoHrWO+PJFAPaCUxRZb2vrRv2I6HesF4aNoRJMV/c=
-X-Google-Smtp-Source: AGHT+IFKQvk8lAQ+nFDkshiq3A/6mD+WFlIPkfhgxOHvbp51SeWW3bgS+ClQyEOwinwc3A2jk5hQBWZfiwOzdNFxXfc=
-X-Received: by 2002:a17:906:130a:b0:a6f:97b4:d1a5 with SMTP id
- a640c23a62f3a-a6fab648ac6mr95888166b.40.1718789016391; Wed, 19 Jun 2024
- 02:23:36 -0700 (PDT)
+	s=arc-20240116; t=1718789045; c=relaxed/simple;
+	bh=waJTkMVRq8ZHdsz40ZYfVn6e3A9zQVV3HE90JhYqJIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mMa2jIJRILbRfPYf5US1Sv0aMHFARb1AnKJyLEu3lKNBoH/b8T6c3vl37nSuVpehDpr7PDYZ+V6bUixkL2MsVGXSgx4rAjBIbXNiSFESAtylpnCMKCfJ+BlPoOe9CzV0BSfbiIiPnclxNJMUnGxyeZbnzzPcqW2rQarMslmIPio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Af8wDKW+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1C9FC2BBFC;
+	Wed, 19 Jun 2024 09:23:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718789044;
+	bh=waJTkMVRq8ZHdsz40ZYfVn6e3A9zQVV3HE90JhYqJIM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Af8wDKW+g8U/Pa+eWc0lJoQPVhRXZLHB+dMv898qRqT82Bp9DQ7mLhPJVTcniuBcd
+	 gjdJsyrkOvIBnSww7JyUAxPDJ/o9Psetq5VOHK2x6LXgEvTw6Qc8so7ObJj2gP+Zaf
+	 gxQomUYlCgXVwFp/ij9ZE+qtJRkMPFs8u4mZr/stSE5Sc5Jg87W4gXoJvsB70dDQp7
+	 cGkIzUIlcQJZ+Kltwc+pXnExBfE/mFiK7oGZie9AIVk///bKRm+6+j1n5fQ5B7VF6E
+	 6OPLW6lhwsb6CeqgkSuMctVT3Rsu8taKUlywizA1ofmNBzMfdYCCt+aG9XoD6aNuWO
+	 org9e1p9ZwdQQ==
+Message-ID: <756ba3a9-a9c3-4672-9972-45cb19f73827@kernel.org>
+Date: Wed, 19 Jun 2024 11:23:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619091737.669040-1-albertosecondi@gmail.com>
-In-Reply-To: <20240619091737.669040-1-albertosecondi@gmail.com>
-From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date: Wed, 19 Jun 2024 11:23:24 +0200
-Message-ID: <CAOf5uwk_i5yA+K=riMcP9r4V9FynRBv2+=P98xUMvmvBtJr4Mg@mail.gmail.com>
-Subject: Re: [PATCH] New config added to handle 64-bit systems with 32-bit DMA support
-To: Alberto Secondi <albertosecondi@gmail.com>
-Cc: hch@lst.de, m.szyprowski@samsung.com, robin.murphy@arm.com, 
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	alberto.secondi@abinsula.com, Davide Salaris <davide.salaris@abinsula.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: add STM32MP25 regulator bindings
+To: Pascal Paillet <p.paillet@foss.st.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Cc: Etienne Carriere <etienne.carriere@foss.st.com>
+References: <20240619083602.33007-1-p.paillet@foss.st.com>
+ <20240619083602.33007-2-p.paillet@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240619083602.33007-2-p.paillet@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Alberto
+On 19/06/2024 10:35, Pascal Paillet wrote:
+> These bindings will be used for the SCMI voltage domain.
+> 
+> Signed-off-by: Pascal Paillet <p.paillet@foss.st.com>
 
-On Wed, Jun 19, 2024 at 11:20=E2=80=AFAM Alberto Secondi
-<albertosecondi@gmail.com> wrote:
->
-> From: Alberto Secondi <alberto.secondi@abinsula.com>
->
-> The kernel assumes that 64-bit systems have 64-bit DMA support through
-> CONFIG_ARCH_DMA_ADDR_T_64BIT. This is not always true; for example, sever=
-al
-> iMX8 systems (verified on iMX8MM and iMX8MP) have DMA with only 32-bit su=
-pport.
-> This results in several drivers requesting DMA_BIT_MASK(64), which causes
-> malfunctions, particularly when systems have more than 3GB of DRAM (verif=
-ied
-> with the lan743x driver and iMX8 systems with 4GB of DRAM). Therefore, a =
-new
-> config ARCH_64BIT_HAS_DMA32_ONLY was added to manage 64-bit systems with =
-32-bit
-> DMA, which adjusts DMA_BIT_MASK(n) accordingly.
->
-> Signed-off-by: Alberto Secondi <alberto.secondi@abinsula.com>
-> Co-developed-by: Davide Salaris <davide.salaris@abinsula.com>
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+regulator: dt-bindings:
+
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
 > ---
->  include/linux/dma-mapping.h | 4 ++++
->  kernel/dma/Kconfig          | 8 ++++++++
->  2 files changed, 12 insertions(+)
->
-> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-> index f693aafe221f..629220a777e3 100644
-> --- a/include/linux/dma-mapping.h
-> +++ b/include/linux/dma-mapping.h
-> @@ -74,7 +74,11 @@
->   */
->  #define DMA_MAPPING_ERROR              (~(dma_addr_t)0)
->
-> +#ifdef CONFIG_ARCH_64BIT_HAS_DMA32_ONLY
-> +#define DMA_BIT_MASK(n)        (((n) > 32) ? ((1ULL<<(32))-1) : ((1ULL<<=
-(n))-1))
-> +#else
->  #define DMA_BIT_MASK(n)        (((n) =3D=3D 64) ? ~0ULL : ((1ULL<<(n))-1=
-))
-> +#endif
->
 
-How can this fit configuration where you want to have one Kernel image
-for several arm64 machine?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Michael
+Best regards,
+Krzysztof
 
->  #ifdef CONFIG_DMA_API_DEBUG
->  void debug_dma_mapping_error(struct device *dev, dma_addr_t dma_addr);
-> diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig
-> index c06e56be0ca1..0a27eafed808 100644
-> --- a/kernel/dma/Kconfig
-> +++ b/kernel/dma/Kconfig
-> @@ -36,6 +36,14 @@ config NEED_DMA_MAP_STATE
->  config ARCH_DMA_ADDR_T_64BIT
->         def_bool 64BIT || PHYS_ADDR_T_64BIT
->
-> +config ARCH_64BIT_HAS_DMA32_ONLY
-> +        bool "64bit System has DMA32 only"
-> +        depends on ARCH_DMA_ADDR_T_64BIT
-> +        default n
-> +       help
-> +         This enables forcing the maximum DMA_BIT_MASK to 32 bits for
-> +         64-bit systems that have DMA support limited to 32 bits.
-> +
->  config ARCH_HAS_DMA_SET_MASK
->         bool
->
-> --
-> 2.34.1
->
->
 
