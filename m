@@ -1,288 +1,195 @@
-Return-Path: <linux-kernel+bounces-221851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EABA90F96C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:51:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F17290F96D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 861251F236DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 541A21F237B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 22:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8351607A8;
-	Wed, 19 Jun 2024 22:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4E415A87D;
+	Wed, 19 Jun 2024 22:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oBxQ6Ia7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hkjarJfU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TynXPAks";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L985X4si"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="azEIq9VU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BD88286D;
-	Wed, 19 Jun 2024 22:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09891763EE
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 22:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718837388; cv=none; b=j4It1QX0ql8bzH3VdP2tqtTD1dNPOt8xp7OklR8fK4jtUftSysLkGMLIeMQl2AH9CYxjUYkDWFUeBTK54mbq3oc0PTONpeqXbu0QPdu6aQ9RQ9DCZ8dLWW6nhuNhCgvI99VFwbzfu8WnbUw5OTMo6Z6R/7PjFQlGqlOtUHx4MRg=
+	t=1718837522; cv=none; b=ug4Xc+w1NtFE/bN/kI140gUntnWmx0TwGeXOBmey3BNzl66V0oRfQiGsu7NFamBsfD3JDI7ivxAPUObEgzCHUrg3WlfEKmVZVOBT1vq9+0v9/WKA23hdJ73xJL1b4tiCdOsXrHY+3/YQ5cu2b79opO0H640+yRJMNE3dK6IGZHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718837388; c=relaxed/simple;
-	bh=lrkvm9m+5V6rPH6PUfaXjT75wU3B7FL1fWu0EmMg4jI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UB0ehRKwEkG7Q0IofgjgtfhbwqBIOG0hm+TWygaA5xRSBLtoUFrhkt1WdAwOps/1cffDjgnQHkxfE0eZsZHI4oT1HO/b9SPB1EUG7lihKrnTd0K297QU8VUlskx8F/hhqJd5b7oVpglc0RDiMQln0bu/qe88/4oP0S1aj/LpUks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oBxQ6Ia7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hkjarJfU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TynXPAks; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=L985X4si; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D50FF21A6D;
-	Wed, 19 Jun 2024 22:49:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718837385; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=En1fgwGBp3akxqcTlyA7z2SXZocSGyKqoIqkTPWBt38=;
-	b=oBxQ6Ia700L8P7MHC2ZSj7lYOClW/b+nn74PtnoV77STyNfZuJ3s/3FxFvQ5ON/6/R+4CE
-	h1v2V61d1EUmbIDPC9LkVI94UA1fx7FZyzcOsTllmIb3LpdGX+e/CqM1Qq4PPQSvsp62af
-	TuKzhlqNZ2MZIuhtI7+mCA6VvjGjO2o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718837385;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=En1fgwGBp3akxqcTlyA7z2SXZocSGyKqoIqkTPWBt38=;
-	b=hkjarJfUCCuhuk1r1+VTczH1jn0SrePROWGO6/JuDQUTIuFa3Kwopbx0FvR7OLsgc+7hff
-	PXUElSpJDIwp0hBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718837383; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=En1fgwGBp3akxqcTlyA7z2SXZocSGyKqoIqkTPWBt38=;
-	b=TynXPAkshMLovoWJEyMGcwthd+0VNECCmYJf+upAlVaI4TBVa+V6WzmLxCDjoVKizHIo8z
-	beBAnPxk8Tok4UFc8dN+SfSIuFPzGJKktIyQ5FT2rmT7UliqCKiboQSnua+P+muJ5d4aOd
-	fgXUBfIUGrD6WUh4tQSVTqKwK0xvg9Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718837383;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=En1fgwGBp3akxqcTlyA7z2SXZocSGyKqoIqkTPWBt38=;
-	b=L985X4siXKopQT7WhbmtjCdC4M0g8YD/5UflTdx8IHiUaLXCG9QyIeO73rbief4APg1G1f
-	rLISpErk9/ETi2Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B4FCC13ABD;
-	Wed, 19 Jun 2024 22:49:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +GboK4dgc2aFIAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 19 Jun 2024 22:49:43 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Thu, 20 Jun 2024 00:49:01 +0200
-Subject: [PATCH v2 7/7] mm, page_alloc: add static key for
- should_fail_alloc_page()
+	s=arc-20240116; t=1718837522; c=relaxed/simple;
+	bh=hz/Ub6qykNJpOqlQI49DPOFgZluMHHDpuTsjeBK0Xws=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UgGbF+f6DURquTsq4sXxFzXsVHU+Rfm+oAaVc83cKZhDsFZXQN15ALdoyKphBzKzfy8VEBxmNDc99UGYlFMDoHr5f2evET7c3jwTQNk+BX6uqqhKoJW9jC37efT2FBm0/RhH/K0easxN2cMBsczWKOiKeu/XdtYfUv2XpGQTQZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=azEIq9VU; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718837520; x=1750373520;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=hz/Ub6qykNJpOqlQI49DPOFgZluMHHDpuTsjeBK0Xws=;
+  b=azEIq9VUS/goHrJLmZULmqSdXFrJV+m3Apzdo4kRbFrH4LdxRA3f+J36
+   c7HGEVhQLnGFbakz30Nu70AAP5+OG8CnaWRhnVgeqqIhK0t4k92E3xMN+
+   7ygSPws8Am36jUCJBDEEdT7Bvxlx4CdCHbbKDK+KOk2ibBDv4fOYd2rAl
+   POAyihdNFpVjEYw/kZWylVCZWnFnNgiBHzxITtXrXjwOvl9oMYW3v5pz3
+   FfmZ3Hu4D3KZLNmhLd+bw3FECKzjmF8D7PhnYj+yS4v2ar7/Hi41KdIhB
+   UeglJ0HbZjTTbZIrH6dKf3OYPiRTiEEQHRVMsvSX6i3PN6QbewfQpv96C
+   g==;
+X-CSE-ConnectionGUID: kOtJ1yMfRya4IQqsffOZbA==
+X-CSE-MsgGUID: H6mEbtIlTV2LnORU8Jk2WA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="27201114"
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="27201114"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 15:51:59 -0700
+X-CSE-ConnectionGUID: JbWlesIzT/ispUxzLZmsvA==
+X-CSE-MsgGUID: 1nxtQMcrQgG7sDCCXs4Q+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="41899359"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 19 Jun 2024 15:51:58 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sK49j-00074c-37;
+	Wed, 19 Jun 2024 22:51:55 +0000
+Date: Thu, 20 Jun 2024 06:51:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>
+Subject: drivers/net/pse-pd/pd692x0.c:1193:undefined reference to
+ `firmware_upload_unregister'
+Message-ID: <202406200632.hSChnX0g-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240620-fault-injection-statickeys-v2-7-e23947d3d84b@suse.cz>
-References: <20240620-fault-injection-statickeys-v2-0-e23947d3d84b@suse.cz>
-In-Reply-To: <20240620-fault-injection-statickeys-v2-0-e23947d3d84b@suse.cz>
-To: Akinobu Mita <akinobu.mita@gmail.com>, Christoph Lameter <cl@linux.com>, 
- David Rientjes <rientjes@google.com>, Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
- Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Steven Rostedt <rostedt@goodmis.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-kernel@vger.kernel.org, 
- linux-mm@kvack.org, bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- Vlastimil Babka <vbabka@suse.cz>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4477; i=vbabka@suse.cz;
- h=from:subject:message-id; bh=lrkvm9m+5V6rPH6PUfaXjT75wU3B7FL1fWu0EmMg4jI=;
- b=owEBbQGS/pANAwAIAbvgsHXSRYiaAcsmYgBmc2CDq4C5vfd3OGsJTJXwWPnIR++a/CyqxA3pF
- yu5aRhqYhCJATMEAAEIAB0WIQR7u8hBFZkjSJZITfG74LB10kWImgUCZnNggwAKCRC74LB10kWI
- mtY9B/9F48jU4mg4DvmDG0e36QW+ooxwNCrSVM1MXSjv46DlcqK9YtApZrvOymhCnd03BmprQnE
- cTZiAw/ZIIuNLlW8D09hcNpB/oGulWuhpMehEB0iTP3UfItTOMOU1N30LODDF/abWn0v2qzp6LD
- ZtThwT/w0IM8z8/K4/oMDfoZinMXGXnFPV+b4fBbs/27R3btbUs9N3VZFkDLvC7eXmK3vAl0Bzw
- updjoZ7nNW0dqQnrOjDOl1T/DzDGQYdzGRoD3k7b3RnW8x25qFRY/ZejhS3tKEntPDl8Cg3C89i
- t0Jo4FimVrnSavpJWzGth87QCgsmpfVPo2Almyo5yxTbQ8Ee
-X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
- fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FREEMAIL_TO(0.00)[gmail.com,linux.com,google.com,kernel.org,iogearbox.net,linux.ibm.com,intel.com,davemloft.net,goodmis.org,arm.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,linux.dev,gmail.com,vger.kernel.org,kvack.org,suse.cz];
-	R_RATELIMIT(0.00)[to_ip_from(RL5nkphuxq5kxo98ppmuqoc8wo)];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Score: -6.80
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Similarly to should_failslab(), remove the overhead of calling the
-noinline function should_fail_alloc_page() with a static key that guards
-the callsite in the page allocator hotpath, and is controlled by the
-fault and error injection frameworks and bpf.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e5b3efbe1ab1793bb49ae07d56d0973267e65112
+commit: 9a993845189004a923b78d0df643e47970147337 net: pse-pd: Add PD692x0 PSE controller driver
+date:   9 weeks ago
+config: i386-randconfig-006-20240620 (https://download.01.org/0day-ci/archive/20240620/202406200632.hSChnX0g-lkp@intel.com/config)
+compiler: gcc-10 (Ubuntu 10.5.0-1ubuntu1) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240620/202406200632.hSChnX0g-lkp@intel.com/reproduce)
 
-Additionally, compile out all relevant code if neither
-CONFIG_FAIL_ALLOC_PAGE nor CONFIG_FUNCTION_ERROR_INJECTION is enabled.
-When only the latter is not enabled, make should_fail_alloc_page()
-static inline instead of noinline.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406200632.hSChnX0g-lkp@intel.com/
 
-No measurement was done other than verifying the should_fail_alloc_page
-is gone from the perf profile. A measurement with the analogical change
-for should_failslab() suggests that for a page allocator intensive
-workload there might be noticeable improvement. It also makes
-CONFIG_FAIL_ALLOC_PAGE an option suitable not only for debug kernels.
+All errors (new ones prefixed by >>):
 
-Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- include/linux/fault-inject.h |  3 ++-
- mm/fail_page_alloc.c         |  3 ++-
- mm/internal.h                |  2 ++
- mm/page_alloc.c              | 30 +++++++++++++++++++++++++++---
- 4 files changed, 33 insertions(+), 5 deletions(-)
+   ld: drivers/net/pse-pd/pd692x0.o: in function `pd692x0_i2c_remove':
+>> drivers/net/pse-pd/pd692x0.c:1193:(.text+0x26): undefined reference to `firmware_upload_unregister'
+   ld: drivers/net/pse-pd/pd692x0.o: in function `pd692x0_i2c_probe':
+>> drivers/net/pse-pd/pd692x0.c:1179:(.text+0x1148): undefined reference to `firmware_upload_register'
 
-diff --git a/include/linux/fault-inject.h b/include/linux/fault-inject.h
-index 0d0fa94dc1c8..1a782042ae80 100644
---- a/include/linux/fault-inject.h
-+++ b/include/linux/fault-inject.h
-@@ -96,8 +96,9 @@ static inline void fault_config_init(struct fault_config *config,
- 
- struct kmem_cache;
- 
-+#ifdef CONFIG_FUNCTION_ERROR_INJECTION
- bool should_fail_alloc_page(gfp_t gfp_mask, unsigned int order);
--
-+#endif
- #ifdef CONFIG_FAIL_PAGE_ALLOC
- bool __should_fail_alloc_page(gfp_t gfp_mask, unsigned int order);
- #else
-diff --git a/mm/fail_page_alloc.c b/mm/fail_page_alloc.c
-index b1b09cce9394..0906b76d78e8 100644
---- a/mm/fail_page_alloc.c
-+++ b/mm/fail_page_alloc.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/fault-inject.h>
- #include <linux/mm.h>
-+#include "internal.h"
- 
- static struct {
- 	struct fault_attr attr;
-@@ -9,7 +10,7 @@ static struct {
- 	bool ignore_gfp_reclaim;
- 	u32 min_order;
- } fail_page_alloc = {
--	.attr = FAULT_ATTR_INITIALIZER,
-+	.attr = FAULT_ATTR_INITIALIZER_KEY(&should_fail_alloc_page_active.key),
- 	.ignore_gfp_reclaim = true,
- 	.ignore_gfp_highmem = true,
- 	.min_order = 1,
-diff --git a/mm/internal.h b/mm/internal.h
-index b2c75b12014e..8539e39b02e6 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -410,6 +410,8 @@ extern char * const zone_names[MAX_NR_ZONES];
- /* perform sanity checks on struct pages being allocated or freed */
- DECLARE_STATIC_KEY_MAYBE(CONFIG_DEBUG_VM, check_pages_enabled);
- 
-+DECLARE_STATIC_KEY_FALSE(should_fail_alloc_page_active);
-+
- extern int min_free_kbytes;
- 
- void setup_per_zone_wmarks(void);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 2e22ce5675ca..b6e246acb4aa 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3008,11 +3008,35 @@ struct page *rmqueue(struct zone *preferred_zone,
- 	return page;
- }
- 
--noinline bool should_fail_alloc_page(gfp_t gfp_mask, unsigned int order)
-+#if defined(CONFIG_FUNCTION_ERROR_INJECTION) || defined(CONFIG_FAIL_PAGE_ALLOC)
-+DEFINE_STATIC_KEY_FALSE(should_fail_alloc_page_active);
-+
-+#ifdef CONFIG_FUNCTION_ERROR_INJECTION
-+noinline
-+#else
-+static inline
-+#endif
-+bool should_fail_alloc_page(gfp_t gfp_mask, unsigned int order)
- {
- 	return __should_fail_alloc_page(gfp_mask, order);
- }
--ALLOW_ERROR_INJECTION(should_fail_alloc_page, TRUE);
-+ALLOW_ERROR_INJECTION_KEY(should_fail_alloc_page, TRUE, &should_fail_alloc_page_active);
-+
-+static __always_inline bool
-+should_fail_alloc_page_wrapped(gfp_t gfp_mask, unsigned int order)
-+{
-+	if (static_branch_unlikely(&should_fail_alloc_page_active))
-+		return should_fail_alloc_page(gfp_mask, order);
-+
-+	return false;
-+}
-+#else
-+static __always_inline bool
-+should_fail_alloc_page_wrapped(gfp_t gfp_mask, unsigned int order)
-+{
-+	return false;
-+}
-+#endif
- 
- static inline long __zone_watermark_unusable_free(struct zone *z,
- 				unsigned int order, unsigned int alloc_flags)
-@@ -4430,7 +4454,7 @@ static inline bool prepare_alloc_pages(gfp_t gfp_mask, unsigned int order,
- 
- 	might_alloc(gfp_mask);
- 
--	if (should_fail_alloc_page(gfp_mask, order))
-+	if (should_fail_alloc_page_wrapped(gfp_mask, order))
- 		return false;
- 
- 	*alloc_flags = gfp_to_alloc_flags_cma(gfp_mask, *alloc_flags);
+
+vim +1193 drivers/net/pse-pd/pd692x0.c
+
+  1108	
+  1109	static int pd692x0_i2c_probe(struct i2c_client *client)
+  1110	{
+  1111		struct pd692x0_msg msg, buf = {0}, zero = {0};
+  1112		struct device *dev = &client->dev;
+  1113		struct pd692x0_msg_ver ver;
+  1114		struct pd692x0_priv *priv;
+  1115		struct fw_upload *fwl;
+  1116		int ret;
+  1117	
+  1118		if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+  1119			dev_err(dev, "i2c check functionality failed\n");
+  1120			return -ENXIO;
+  1121		}
+  1122	
+  1123		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+  1124		if (!priv)
+  1125			return -ENOMEM;
+  1126	
+  1127		priv->client = client;
+  1128		i2c_set_clientdata(client, priv);
+  1129	
+  1130		ret = i2c_master_recv(client, (u8 *)&buf, sizeof(buf));
+  1131		if (ret != sizeof(buf)) {
+  1132			dev_err(dev, "Failed to get device status\n");
+  1133			return -EIO;
+  1134		}
+  1135	
+  1136		/* Probe has been already run and the status dumped */
+  1137		if (!memcmp(&buf, &zero, sizeof(buf))) {
+  1138			/* Ask again the controller status */
+  1139			msg = pd692x0_msg_template_list[PD692X0_MSG_GET_SYS_STATUS];
+  1140			ret = pd692x0_sendrecv_msg(priv, &msg, &buf);
+  1141			if (ret < 0) {
+  1142				dev_err(dev, "Failed to get device status\n");
+  1143				return ret;
+  1144			}
+  1145		}
+  1146	
+  1147		if (buf.key != 0x03 || buf.sub[0] & 0x01) {
+  1148			dev_err(dev, "PSE controller error\n");
+  1149			return -EIO;
+  1150		}
+  1151		if (buf.sub[0] & 0x02) {
+  1152			dev_err(dev, "PSE firmware error. Please update it.\n");
+  1153			priv->fw_state = PD692X0_FW_BROKEN;
+  1154		} else {
+  1155			ver = pd692x0_get_sw_version(priv);
+  1156			dev_info(&client->dev, "Software version %d.%02d.%d.%d\n",
+  1157				 ver.prod, ver.maj_sw_ver, ver.min_sw_ver,
+  1158				 ver.pa_sw_ver);
+  1159	
+  1160			if (ver.maj_sw_ver < PD692X0_FW_MAJ_VER) {
+  1161				dev_err(dev, "Too old firmware version. Please update it\n");
+  1162				priv->fw_state = PD692X0_FW_NEED_UPDATE;
+  1163			} else {
+  1164				priv->fw_state = PD692X0_FW_OK;
+  1165			}
+  1166		}
+  1167	
+  1168		priv->np = dev->of_node;
+  1169		priv->pcdev.nr_lines = PD692X0_MAX_PIS;
+  1170		priv->pcdev.owner = THIS_MODULE;
+  1171		priv->pcdev.ops = &pd692x0_ops;
+  1172		priv->pcdev.dev = dev;
+  1173		priv->pcdev.types = ETHTOOL_PSE_C33;
+  1174		ret = devm_pse_controller_register(dev, &priv->pcdev);
+  1175		if (ret)
+  1176			return dev_err_probe(dev, ret,
+  1177					     "failed to register PSE controller\n");
+  1178	
+> 1179		fwl = firmware_upload_register(THIS_MODULE, dev, dev_name(dev),
+  1180					       &pd692x0_fw_ops, priv);
+  1181		if (IS_ERR(fwl))
+  1182			return dev_err_probe(dev, PTR_ERR(fwl),
+  1183					     "failed to register to the Firmware Upload API\n");
+  1184		priv->fwl = fwl;
+  1185	
+  1186		return 0;
+  1187	}
+  1188	
+  1189	static void pd692x0_i2c_remove(struct i2c_client *client)
+  1190	{
+  1191		struct pd692x0_priv *priv = i2c_get_clientdata(client);
+  1192	
+> 1193		firmware_upload_unregister(priv->fwl);
+  1194	}
+  1195	
 
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
