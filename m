@@ -1,87 +1,81 @@
-Return-Path: <linux-kernel+bounces-221855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF4790F99C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:04:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8B790F99E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00C5F1F224D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:04:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB9D1F22E5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 23:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E707D15B14C;
-	Wed, 19 Jun 2024 23:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="k3NiJS0N"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122BD15B145;
+	Wed, 19 Jun 2024 23:05:00 +0000 (UTC)
+Received: from irl.hu (irl.hu [95.85.9.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F73361FCF;
-	Wed, 19 Jun 2024 23:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0E961FCF;
+	Wed, 19 Jun 2024 23:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718838234; cv=none; b=BwnI0bFIa1wjc3crEu5CqLi69fz1dBKbRF24gTgdwnAsr9i/1z963ib817onL2aNJ3h3+nIOn5YD1u1JFU5HyUxX5QoD6kTqv8UthokRvEvGOZDO8S1uz36wZ57Cpc9pFsrbQFheg2BrYk5QeURTlvvMnwymk0fWdneOtg/JvWM=
+	t=1718838299; cv=none; b=B08xs1Echx7gHYwEnR0FgpA31qD3hifAdMXjRPQ0S/0DrQPZj3v+2+assvfEmnEZFc3yU4GwKaqCDkebM++Wu9j3srDJ6UF+k5J3BIIAV3uW63Hgmci7wfUwAAysfejEhKYdmregANk+FgCFxpev9yp0oR866Sqegx0RJNyRSKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718838234; c=relaxed/simple;
-	bh=dZi0Gvh+GLG/1jbOwA+xe80NGtCynRIMekgpe8wJvR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YKyYo905duyvNW/Atbq7pzm4tqWUP8Usv/yWUi6Plm6hfN/DhqNAE7mjQksYk/MrNkRDwvBzzR4O0+GovmAyWP0zwh8SHQKmZ69hwXQUOsrFsJoOufFDdigjpR1+bqIGz9NO7Mt693O6o2EeB9kELLc44WyZmR66HAQ/71J94TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=k3NiJS0N; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Ywl436OGO2QA6BpHUwKrzeOAiJO51IGPFmToE85n3MU=; b=k3NiJS0N9XxGODPMgwgmw7ub38
-	ukmXJZ+ztjxzI8/r4SpXVDrQpYUSzTJ8KGkmLSGEmtRSeeSwOWgSp6PAt+cTNRy119fiK3Tru3j0C
-	WiZMULqHyyNqzjqOVVflEMIkK7nyj+ckMeCqY9gx7eVyZE7Pc+VyD6DAzdwk/SBF9hr8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sK4Kq-000W3K-Kh; Thu, 20 Jun 2024 01:03:24 +0200
-Date: Thu, 20 Jun 2024 01:03:24 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com,
-	Andrew Halaney <ahalaney@redhat.com>, linux-arm-msm@vger.kernel.org,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/3] Add interconnect support for qcom_ethqos driver.
-Message-ID: <53708a0d-1c20-4a26-a374-461002c846b3@lunn.ch>
-References: <20240619-icc_bw_voting_from_ethqos-v1-0-6112948b825e@quicinc.com>
+	s=arc-20240116; t=1718838299; c=relaxed/simple;
+	bh=9XuT53Lp90wtkqv14CncYQI9cUDhf6Dn4IqRZ9dKl5o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AJ8cK/u8dtubfYjkvMGmeyY6lzuLiAwa5Qhoeart9xmvK/P+q+Gdh+Ep3E2A22TlqTzFMQ0WQvrgYwV+5efH9HDrw2/Gy9LBgxe/+g3ScsvbO4FHodBPVKcwJKA/+6NOcbmiqHYbVXNNEtxNqy66QgAQvmdu1xwlYQQbZhKXsIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
+Received: from fedori.lan (51b69c7d.dsl.pool.telekom.hu [::ffff:81.182.156.125])
+  (AUTH: CRAM-MD5 soyer@irl.hu, )
+  by irl.hu with ESMTPSA
+  id 000000000006FE7E.0000000066736412.002E429E; Thu, 20 Jun 2024 01:04:50 +0200
+Message-ID: <0b4f531d5eb1258709f8a584a4ef1ac14636a8db.camel@irl.hu>
+Subject: Re: [PATCH v3 1/1] media: uvcvideo: UVC minimum relative
+ pan/tilt/zoom speed fix.
+From: Gergo Koteles <soyer@irl.hu>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+  Mauro Carvalho Chehab <mchehab@kernel.org>,
+  John Bauer <johnebgood@securitylive.com>, linh.tp.vu@gmail.com,
+  linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 20 Jun 2024 01:04:49 +0200
+In-Reply-To: <CANiDSCs2MLqdNuZtcQEHhE6c8XXc=4AKNcuHNNgqJKnc9da3Hg@mail.gmail.com>
+References: <cover.1718726777.git.soyer@irl.hu>
+	 <b062c3ec615a69cbc1b154b1838df3cdc3e1282a.1718726777.git.soyer@irl.hu>
+	 <CANiDSCs2MLqdNuZtcQEHhE6c8XXc=4AKNcuHNNgqJKnc9da3Hg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619-icc_bw_voting_from_ethqos-v1-0-6112948b825e@quicinc.com>
 
-On Wed, Jun 19, 2024 at 03:41:28PM -0700, Sagar Cheluvegowda wrote:
-> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-> ---
+Hi Ricardo,
 
-You are supposed to put some text here which explains the big picture
-of this patchset. The text will also be used in the text of the git
-merge when the patchset is merged into net-next/main.
+Thanks for the review.
 
-    Andrew
+On Wed, 2024-06-19 at 08:15 +0200, Ricardo Ribalda wrote:
+>=20
+> nit: The following would probably be more correct but less clear:
+>=20
+> if  (is_relative_ptz_ctrl(xctrl->id))
+>     min =3D -max;
+> else
+>     min =3D mapping->get(mapping, UVC_GET_MIN,...)
+>=20
+> So up to you what do you/Laurent what is better ;)
+>=20
 
----
-pw-bot: cr
+>=20
+I like this better. I'll send a v4.
+
+Best regards,
+Gergo Koteles
+
 
