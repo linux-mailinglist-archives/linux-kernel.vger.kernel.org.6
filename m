@@ -1,129 +1,99 @@
-Return-Path: <linux-kernel+bounces-221562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E325390F581
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:52:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F04990F583
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E04731C2169E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:52:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1091F22174
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 17:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717FC156967;
-	Wed, 19 Jun 2024 17:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041A8156F3C;
+	Wed, 19 Jun 2024 17:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="akoSr2fv"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x26/vIWM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XMO3KI02"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F271E87B
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 17:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80AC156C69;
+	Wed, 19 Jun 2024 17:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718819570; cv=none; b=HUMWztghDGbSJNIyaYpTn8hcEURQhKYRfM3BMDnnGBq8vHGJxlTm+KWxHt30Qtcz0m3zDYOzzy+2FWzo9UdWHI9NN1XDPkKug08F50+4xXDk66z9UgC60ZajcVfukNwmci+1AFcAX/2NCPGWQ8imtzmwcSGrTX3tQu6WjYVGqeE=
+	t=1718819574; cv=none; b=g0Qt6tS8+DOkOU8+TS2oplFYGSlVo77/W9LqG9jHKR2kvnRMlbsTK4PjgqLrjGfKhEaP6Nyc9IcMJSCPum5qgCNR8LcbZ6ZK18nP5ee5cATpb2vHwYwZ2Z2j5NCCjjLiEE2c6mo64C1dpS0LDhY2DQadBrfzxGSD3qJrT1/s9Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718819570; c=relaxed/simple;
-	bh=kQndasnA2q4Zhiw3IRbkeozFbGuf3KlkxS4BizI+YOo=;
+	s=arc-20240116; t=1718819574; c=relaxed/simple;
+	bh=MkTAzWwpU7fYBjUXFaGZNFMLvsjS73BMzgeedjou7L0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FwQnTKXNxzACOqnt+w6glNQQM3ZVogOZuMKMT+U+Z5Tq/vskPdv6GrZuQ4FSI4LO/Lp+I5OSEQCT5Miz6PQ/uapTnH8WB4+4dVZNEAueN98AWlN8ylXbyVr+l44LgAWkaAuqG75Xp9Wt0bG1kNsWag2CBaZGC02KOa7LQ2wlcl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=akoSr2fv; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: mjguzik@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718819566;
+	 Content-Type:Content-Disposition:In-Reply-To; b=c1r6zmO8YGkOj/8vSKzn714klxDYODacwrj1T4nmDeaPMhtod3bBR3VaYCVPw5iDclFNjz7e3fVweA0j6b6nXfVEFIYyv1MpCb/rGUM3VSmnVrpaUdO5TPld4JMlg8gkt4NG+I04g0uandeoasrH+WUmXUuJpLmAO8I0WR+Ibrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x26/vIWM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XMO3KI02; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 19 Jun 2024 19:52:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718819570;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=G12t0zsbjBLtka1z3Edmtxikovb2H51+AQMkglEZLGo=;
-	b=akoSr2fvU73Q0cSewLCqxsWHjT3wWMthQ4WH14GMMUiok98sXGU8Y/gQX9C04DwYpcgDOv
-	Z1Y1GlEg3tyfD1OtiM2DOaf144Zxdcetx7jXL3Ov7cTn47wfrqCsNAf72CC3HSpXkqGafg
-	Ih6uyJ8AqFVjMuTPlbjqniF38dZZoBw=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: torvalds@linux-foundation.org
-X-Envelope-To: kernel-team@meta.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: kyle@infradead.org
-Date: Wed, 19 Jun 2024 10:52:41 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	kernel-team@meta.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Kyle McMartin <kyle@infradead.org>
-Subject: Re: [PATCH] mm: ratelimit oversized kvmalloc warnings instead of once
-Message-ID: <20240619175241.6i5fjkjm3sl4aaas@linux.dev>
-References: <20240618213421.282381-1-shakeel.butt@linux.dev>
- <fm7buc5wqjfbpkc4vciubjttk73k7vzahohlcolztrhjqywnca@pysupztheg6i>
+	bh=TJxbi7LprCB/g3u4kI7swUbmNmwOv06b3apNPVfkfxY=;
+	b=x26/vIWMK8qcF+R6VSIPE5xFNrmtdB1PgIcPGdF9lWbf9cIYUvJ6Xuc6v1Mvf6BnDDSN21
+	c7Dncrsa9RvUqvNCJbwIXJOYDcLGOKQA+cnYAcWol8omteaUbyQMZ2+Flpj0wFnXUpZ7Bt
+	LEUpBTcHQgEVlcVh1Tai8udVaRt69lGP36rIvYV51iFtg+0r5smbCaLUBzFx52QvSqj6ZW
+	UjkUVL52/uDXYgDDVWJrYpxsl4/3Jrms0m/aBKPJYp9xgXku7WB56HKew/d/ENFMCCW6oQ
+	2tNB9CsJISH48yYS/GkNG2EItS72+lLR+4QuH5sSw7NertREMIeZmsh6sGSD2g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718819570;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TJxbi7LprCB/g3u4kI7swUbmNmwOv06b3apNPVfkfxY=;
+	b=XMO3KI02HCkANmngXWlFL838cyZCdR486pd/jUC507OsEMv6RVXTmG1dVUzjWzzSKWjyXg
+	2SC3PMU0AildLmCw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mike Galbraith <umgwanakikbuti@gmail.com>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] zram: Replace bit spinlocks with spinlock_t for
+ PREEMPT_RT.
+Message-ID: <20240619175249.lK51lGOx@linutronix.de>
+References: <20240619150814.BRAvaziM@linutronix.de>
+ <51f64ee9-35fb-482e-aa50-e2a446dcd972@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <fm7buc5wqjfbpkc4vciubjttk73k7vzahohlcolztrhjqywnca@pysupztheg6i>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <51f64ee9-35fb-482e-aa50-e2a446dcd972@kernel.dk>
 
-On Wed, Jun 19, 2024 at 02:49:21PM +0200, Mateusz Guzik wrote:
-> On Tue, Jun 18, 2024 at 02:34:21PM -0700, Shakeel Butt wrote:
-> > At the moment oversize kvmalloc warnings are triggered once using
-> > WARN_ON_ONCE() macro. One issue with this approach is that it only
-> > detects the first abuser and then ignores the remaining abusers which
-> > complicates detecting all such abusers in a timely manner. The situation
-> > becomes worse when the repro has low probability and requires production
-> > traffic and thus require large set of machines to find such abusers. In
-> > Mera production, this warn once is slowing down the detection of these
-> > abusers. Simply replace WARN_ON_ONCE with WARN_RATELIMIT.
+On 2024-06-19 11:34:23 [-0600], Jens Axboe wrote:
+> On 6/19/24 9:08 AM, Sebastian Andrzej Siewior wrote:
+> > From: Mike Galbraith <umgwanakikbuti@gmail.com>
 > > 
-> > Reported-by: Kyle McMartin <kyle@infradead.org>
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > ---
-> >  mm/util.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > The bit spinlock disables preemption. The spinlock_t lock becomes a sleeping
+> > lock on PREEMPT_RT and it can not be acquired in this context. In this locked
+> > section, zs_free() acquires a zs_pool::lock, and there is access to
+> > zram::wb_limit_lock.
 > > 
-> > diff --git a/mm/util.c b/mm/util.c
-> > index 10f215985fe5..de36344e8d53 100644
-> > --- a/mm/util.c
-> > +++ b/mm/util.c
-> > @@ -649,7 +649,8 @@ void *kvmalloc_node_noprof(size_t size, gfp_t flags, int node)
-> >  
-> >  	/* Don't even allow crazy sizes */
-> >  	if (unlikely(size > INT_MAX)) {
-> > -		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
-> > +		WARN_RATELIMIT(!(flags & __GFP_NOWARN), "size = %zu > INT_MAX",
-> > +			       size);
-> >  		return NULL;
-> >  	}
-> >  
+> > Use a spinlock_t on PREEMPT_RT for locking and set/ clear ZRAM_LOCK bit after
+> > the lock has been acquired/ dropped.
 > 
-> I don't think this is necessary. From the description I think interested
-> parties can get away with bpftrace.
-> 
-> Suppose you have an abuser of the sort and you are worried there is more
-> than one.
-> 
-> Then this one-liner will catch *all* of them, not just the ones which
-> were "lucky" to get logged with ratelimit:
-> bpftrace -e 'kprobe:kvmalloc_node_noprof /arg0 > 2147483647/ { @[kstack()] = count(); }'
-> 
-> Of course adding a probe is not free, but then again kvmalloc should not
-> be used often to begin with so I doubt it is going to have material
-> impact in terms of performance.
-> 
-> While I concede it takes more effort to get this running on all affected
-> machines, the result is much better than mere ratelimit. Also there is
-> no need to patch the kernel.
-> 
+> The conditional code depending on CONFIG_PREEMPT_RT is nasty. Why not
+> just get rid of that and use the CONFIG_PREEMPT_RT variants for
+> everything? They are either good enough to work well in general, or it
+> should be redone such that it is.
 
-Thanks for the response and suggestion. I am inclined towards warn once
-for each unique stack trace as suggested by Michal because I think it
-would be useful in general.
+That would increase the struct size with lockdep for !RT. But it is
+probably not a concern. Also other bits (besides ZRAM_LOCK) can not be
+added but that wasn't needed in the last few years.
+Okay, let me redo it.
 
+Sebastian
 
