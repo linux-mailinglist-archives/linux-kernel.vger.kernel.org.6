@@ -1,73 +1,80 @@
-Return-Path: <linux-kernel+bounces-221691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A2D90F744
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:57:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4066990F74A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7931C211A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:57:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 310421C216F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE100159565;
-	Wed, 19 Jun 2024 19:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2FE15921B;
+	Wed, 19 Jun 2024 19:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dBLe2KBm"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CV5BdIP/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD4D158DD1
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1D754FAD
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718827042; cv=none; b=sK6v3axsGEyGVdp2uxC2nSw8XC2QzY4mW56KxYC9nvAKlwhgxrsxKEMpRIRCtbvm5v2wTfXt5btivrIyaRtw/8xOgM4HYSRVjSWWqRvxyO6HV0r6Gdl5Cb5u3apgSLD//jxOqJBRhmMiAgTCCiWuSnNc4ERsYBHROYw8CptO6bg=
+	t=1718827143; cv=none; b=gQd4DmzbHLNwcJx51RuYGDQf6tJZyJF8WbObiBOvN49ffWctV7Agv5apB3ffH8svse4xr0e99YIw9FBgNspP7p2Ygj/SHKP+9y9xZfYFUH4iTLVrPd5RxWUJQBrcPnOlVj2dClr7q+SUrF4rAG+32gUGT7lqxLaTeqSO97rftHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718827042; c=relaxed/simple;
-	bh=4me6X2bHfsq1TiQJ4WdBTA05DRCGGjpKMn1S9ccRekE=;
+	s=arc-20240116; t=1718827143; c=relaxed/simple;
+	bh=duBAs5gzjFgfPQCOjhdXawsgFb18NaldwHTBPH1/ZTI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M5VCpnUO219NCt23hXRODz/g1gjPIeBqla1ZbOwGOmdPiRHBn9P/r6dQb8QCTrQ2qpOlH3JbOx6jOnUZAk2uklE5isfxK+u5ySs5XqqyHU43x8h5aiMlVwHrBm6oc0C9WBV720mjmA3VYoIFCe8nMLEFr1t3/ei7w2Aq2KYxIYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dBLe2KBm; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2598a57b2c1so109574fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:57:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718827039; x=1719431839; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z9qBxHg+OHvtBgD9gIdkfXbSsKcI6es7NIjQNQHIQGM=;
-        b=dBLe2KBmVV8Fk7ssT10EgEzn0AQuDxDNPQP9xZSZ2nTu08oeWwRKO+3iX5voQhOv8t
-         NsueDkSkW0SvaRPDSjDcy+tVq3ckQdUc+/TStVAEdzkW0aZcLv90vOmpUYCy0WelTsYL
-         kC0yZ8fVV5PjV6n09IHhJowenLQ5KPjSCl+gNMKyH4OittG2hRt0MexqKih4sSRUKjbS
-         ffyw6kcNEWa5lfinQmTEFYhxJwJSUZ883T8t7/6L92ebhXMkb8y99MxNOllGtY5BJ04x
-         VW72C/vOoYrJOAEQ9BnTfgMkN8So11Ae4Dn31d0g3qDcWj0/6BL/qm83vu7pOvW9j6kZ
-         a9oA==
+	 In-Reply-To:Content-Type; b=p+ArG5ond+4tzbogtiv+XgJNCspwswQQM9AJg7ICijFUm19tqIPo9q2NymZylVjFD6ushYrvjF20IXbl2Ks7fLA2qIWwjVoHWZ02uKUeMVld/UhPktvCKM00ya7XuR2D79XjaNdOTI6uhl08YWFO5DyJb5TcFFbfjjd2Cbv99ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CV5BdIP/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718827140;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=RF16d+mc/aQfj+ax5CELrMPG6TejS0N3t5cXY8n35Iw=;
+	b=CV5BdIP/JOKmVRABw6lhTZQoLWwOUf3Bayol+tVWVMOdeuhOFic7A3iGXseI7K9oaqH9Fe
+	O0VXJBw8W3iVEM7i+QhIizor9be1kUtY0PI9qFtOt4e2J5kTLv3XQ0MfXLdeRGCDIgv+9a
+	Wqpv1loOXP4Ayv5W8T0yYx+p6pitpZ0=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-517-hcz3ZJdzPFer6IGOMxFiSw-1; Wed, 19 Jun 2024 15:58:58 -0400
+X-MC-Unique: hcz3ZJdzPFer6IGOMxFiSw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4217f941ca8so1174075e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:58:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718827039; x=1719431839;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z9qBxHg+OHvtBgD9gIdkfXbSsKcI6es7NIjQNQHIQGM=;
-        b=CcPs/0ZNbnAjH26YIxxjCoHnScTGrsJry6n8tZLyS/3dYuo65LjUdusJhaMRHAVQbo
-         MKjiPNUvZNeZZri3WcNaZaYQ/Te8HfD7vYBJnnO7gHlJjkG7OI1nQF4Vo7Uhyu1/2AgQ
-         47jlAJy5N4D32mI5Lx0PkGIwVfMDtbyYxjShugJFVOGMgNCHS1jmDskhsDsQDszr1Fuu
-         Y+u/HcdRVtf3yfcXuf9KwgvjhAmy3fjIwHCUOfFhjnTyzJUWvaatY6QvcGfb6F6EDlk9
-         24QTQh/b61I26Zqqqgegf+OlxaJn8wYnSk12bRHfxbUTis6X7nV3wxJ/9WnMG/p0vZt0
-         oRyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVkJayl1+fpGmssE9IbxmMI+5klxMXUTkH47gSYRhp+P8j5qaxdHJq30d5G62SwvGeJeFl+/sn81DCu1uG9rM59wbqwFCQVoJmmPm5
-X-Gm-Message-State: AOJu0Ywsu68C3znmG4PsGP0CXYLtDENmC4o5zg+PGL5wBEptFIi6Vq5B
-	XWlFsNinoZeadlHvksNUDddQhT3RzhIflheV9U8sfFHzTvDKyBb7gDuibfOVsbc=
-X-Google-Smtp-Source: AGHT+IFIUTihrHZD3I/z7TebG9AmH7Kc94UGPrYGOv57KU4OX/INgP1nt8tRMicOxEV5usreFEe6iQ==
-X-Received: by 2002:a05:6870:e2d6:b0:254:affe:5a05 with SMTP id 586e51a60fabf-25c94990ab4mr4149008fac.21.1718827039594;
-        Wed, 19 Jun 2024 12:57:19 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25983669238sm951101fac.33.2024.06.19.12.57.18
+        d=1e100.net; s=20230601; t=1718827137; x=1719431937;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RF16d+mc/aQfj+ax5CELrMPG6TejS0N3t5cXY8n35Iw=;
+        b=Q8ZIdO+gMYeimMuMCFxrSFPfQ2DZ/wSod2+gHNTXV4XslJiJaGpbkT3KUP9117nGpf
+         up9F6SlouamiCQ9AbUCldTCA7Auej8xD3HkhJguFsi3eXjxLRjeFejACz8iqB3O8XgML
+         dcTfEUcxOXYChjK/mNZa3C7nE+GaJhyGu+B/WKykHFBBEcDQq5jCTWs64o7lzax41RkP
+         K9RljC+Hd4gOVyKVpg+RzTGZMVypM88P+pAFIOr5m4LwVnFRMpbUrvmae6FeE2msgqJz
+         NF8dV0r71nXkgyIqyAeWXMGKF9NUaChmk1GcFRjZjZ+wNnRD4SL2Rh/R+9cASM9oJDXN
+         yrjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwsWCiuNfqPgoaS/1L+IvStc8QifYQTcYHEJehaxjKPlXNerVdQbOPqh4s6+MLC22dqyB7f/eo+BYjZR1JCelEIt40g0YNY/Jl9Umh
+X-Gm-Message-State: AOJu0Yy6naWhNFtR5YWomrxIo6X0zcm6T65MAjsXfRbaMre9GLKvEQp5
+	VM1j9gt2HA81iKrCY0ICw+cH4E0DAveL3Eu9EQb3LCemWCjA8zu9RZLvYwnoaY2Y9hkfEYiBruc
+	2RWRtlkMfxXSoXC51HzQA527bFZ6XD0rv/4bP82xNzdojSNCXTPkhvAPXrV104w==
+X-Received: by 2002:a5d:494f:0:b0:363:1a1:10d1 with SMTP id ffacd0b85a97d-36319a85dbfmr2465007f8f.58.1718827137393;
+        Wed, 19 Jun 2024 12:58:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGvvpq6xSJeHz1RTg0F73mLCmRqdckSJzJJiZSAhv6hEadDizab5847wMQY9j2IhyerzAz7SQ==
+X-Received: by 2002:a5d:494f:0:b0:363:1a1:10d1 with SMTP id ffacd0b85a97d-36319a85dbfmr2464996f8f.58.1718827136997;
+        Wed, 19 Jun 2024 12:58:56 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c705:ab00:f9b6:da12:cad4:6642? (p200300cbc705ab00f9b6da12cad46642.dip0.t-ipconnect.de. [2003:cb:c705:ab00:f9b6:da12:cad4:6642])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-363c795febfsm2138938f8f.104.2024.06.19.12.58.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 12:57:19 -0700 (PDT)
-Message-ID: <8d6b39c8-a00c-4440-8451-70eac566c544@baylibre.com>
-Date: Wed, 19 Jun 2024 14:57:18 -0500
+        Wed, 19 Jun 2024 12:58:56 -0700 (PDT)
+Message-ID: <75c1936b-bb08-423d-9a17-0da133cbee01@redhat.com>
+Date: Wed, 19 Jun 2024 21:58:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,137 +82,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] dt-bindings: iio: adc: Add AD4000
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
- lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- nuno.sa@analog.com, marcelo.schmitt1@gmail.com
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1718749981.git.marcelo.schmitt@analog.com>
- <34a16c6e513b32bc6111b695e1c8b467bd6993d9.1718749981.git.marcelo.schmitt@analog.com>
+Subject: Re: Endless calls to xas_split_alloc() due to corrupted xarray entry
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: Gavin Shan <gshan@redhat.com>, Bagas Sanjaya <bagasdotme@gmail.com>,
+ Zhenyu Zhang <zhenyzha@redhat.com>, Linux XFS <linux-xfs@vger.kernel.org>,
+ Linux Filesystems Development <linux-fsdevel@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Shaoqin Huang <shahuang@redhat.com>, Chandan Babu R
+ <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+References: <CAJFLiB+J4mKGDOppp=1moMe2aNqeJhM9F2cD4KPTXoM6nzb5RA@mail.gmail.com>
+ <ZRFbIJH47RkQuDid@debian.me> <ZRci1L6qneuZA4mo@casper.infradead.org>
+ <91bceeda-7964-2509-a1f1-4a2be49ebc60@redhat.com>
+ <6d3687fd-e11b-4d78-9944-536bb1d731de@redhat.com>
+ <ZnLrq4vJnfSNZ0wg@casper.infradead.org>
+ <CAHk-=who82OKiXyTiCG3rUaiicO_OB9prVvZQBzg6GDGhdp+Ew@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <34a16c6e513b32bc6111b695e1c8b467bd6993d9.1718749981.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAHk-=who82OKiXyTiCG3rUaiicO_OB9prVvZQBzg6GDGhdp+Ew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/18/24 6:12 PM, Marcelo Schmitt wrote:
-> Add device tree documentation for AD4000 series of ADC devices.
+On 19.06.24 17:48, Linus Torvalds wrote:
+> On Wed, 19 Jun 2024 at 07:31, Matthew Wilcox <willy@infradead.org> wrote:
+>>
+>> Actually, it's 11.  We can't split an order-12 folio because we'd have
+>> to allocate two levels of radix tree, and I decided that was too much
+>> work.  Also, I didn't know that ARM used order-13 PMD size at the time.
+>>
+>> I think this is the best fix (modulo s/12/11/).
 > 
-...
+> Can we use some more descriptive thing than the magic constant 11 that
+> is clearly very subtle.
+> 
+> Is it "XA_CHUNK_SHIFT * 2 - 1"
 
-> +  adi,spi-mode:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum: [ single, chain ]
-> +    description: |
-> +      This property indicates the SPI wiring configuration.
-> +
-> +      When this property is omitted, it is assumed that the device is using what
-> +      the datasheet calls "4-wire mode". This is the conventional SPI mode used
-> +      when there are multiple devices on the same bus. In this mode, the CNV
-> +      line is used to initiate the conversion and the SDI line is connected to
-> +      CS on the SPI controller.
-> +
-> +      When this property is present, it indicates that the device is using one
-> +      of the following alternative wiring configurations:
-> +
-> +      * single: The datasheet calls this "3-wire mode". (NOTE: The datasheet's
-> +        definition of 3-wire mode is NOT at all related to the standard
-> +        spi-3wire property!) This mode is often used when the ADC is the only
-> +        device on the bus. In this mode, SDI is connected to MOSI or to VIO, and
-> +        the CNV line can be connected to the CS line of the SPI controller or to
-> +        a GPIO, in which case the CS line of the controller is unused.
-> +      * chain: The datasheet calls this "chain mode". This mode is used to save
-> +        on wiring when multiple ADCs are used. In this mode, the SDI line of
-> +        one chip is tied to the SDO of the next chip in the chain and the SDI of
-> +        the last chip in the chain is tied to GND. Only the first chip in the
-> +        chain is connected to the SPI bus. The CNV line of all chips are tied
-> +        together. The CS line of the SPI controller can be used as the CNV line
-> +        only if it is active high.
-> +
+That's my best guess as well :)
 
-After reviewing the driver and going back and looking at the diagrams in [1] again,
-I think we are missing a wiring mode here. What the driver is calling "single/3-wire"
-mode is actually using 4 wires and is the wiring mode that I suggested should be
-the default since that is the only wiring configuration where we can read/write
-registers.
+> 
+> IOW, something like
+> 
+>     #define MAX_XAS_ORDER (XA_CHUNK_SHIFT * 2 - 1)
+>     #define MAX_PAGECACHE_ORDER min(HPAGE_PMD_ORDER,12)
+> 
+> except for the non-TRANSPARENT_HUGEPAGE case where it currently does
+> 
+>    #define MAX_PAGECACHE_ORDER    8
+> 
+> and I assume that "8" is just "random round value, smaller than 11"?
 
-[1]: https://lore.kernel.org/linux-iio/87058695-a1a6-4e68-87c5-accdb8451bf4@baylibre.com/
+Yes, that matches my understanding.
 
-So to recap, this is what I suggest we should do:
+Maybe to be safe for !THP as well, something ike:
 
-default unnamed mode:
++++ b/include/linux/pagemap.h
+@@ -354,11 +354,18 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+   * a good order (that's 1MB if you're using 4kB pages)
+   */
+  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
++#define WANTED_MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
+  #else
+-#define MAX_PAGECACHE_ORDER	8
++#define WANTED_MAX_PAGECACHE_ORDER	8
+  #endif
+  
++/*
++ * xas_split_alloc() does not support arbitrary orders yet. This implies no
++ * 512MB THP on arm64 with 64k.
++ */
++#define MAX_XAS_ORDER		(XA_CHUNK_SHIFT * 2 - 1)
++#define MAX_PAGECACHE_ORDER	min(MAX_XAS_ORDER, WANTED_MAX_PAGECACHE_ORDER)
++
+  /**
+   * mapping_set_large_folios() - Indicate the file supports large folios.
+   * @mapping: The file.
+-- 
+2.45.2
 
-  * Wiring:
-      ADC    HOST
-      ---    ----
-      CNV    CS (or GPIO)
-      SDI    SDO
-      SDO    SDI
-      SCLK   SCLK
-  * Requires SPI controller with SPI_MOSI_IDLE_HIGH/LOW capability
-  * Can read/write registers
-  * Can do "3-wire mode"-style reads (turbo and not turbo)
-    * Requires SPI_MOSI_IDLE_HIGH
-  * Can do "4-wire mode"-style reads (turbo and not turbo)
-    * Requires SPI_MOSI_IDLE_HIGH, SPI_CS_HIGH (or no CS and cnv-gpios)
-  * Can do "daisy-chain mode"-style reads
-    * Requires SPI_MOSI_IDLE_LOW, SPI_CS_HIGH (or no CS and cnv-gpios)
-  * #daisy-chained-devices is optional
 
-"single" mode:
+@Gavin, do you have capacity to test+prepare an official patch? Also,
+please double-check whether shmem must be fenced as well (very likely).
 
-  * Wiring: same as default except ADC SDI is hard-wired to logic high.
-  * Cannot read/write registers.
-  * Doesn't require special SPI controller (no SPI_MOSI_IDLE_HIGH/LOW)
-  * Can do "3-wire mode"-style reads (turbo and not turbo)
-  * #daisy-chained-devices is forbidden
-  * Use case: save one wire, works with any SPI controller
+This implies no PMD-sized THPs in the pagecache/shmem on arm64 with 64k.
+Could be worse, because as Willy said, they are rather rare and extremely
+unpredictable.
 
-"multi" mode:
+-- 
+Cheers,
 
-  * Wiring:
-      ADC    HOST
-      ---    ----
-      CNV    GPIO
-      SDI    CSn
-      SDO    SDI
-      SCLK   SCLK
-
-  * Cannot read/write registers.
-  * Doesn't require special SPI controller (no SPI_MOSI_IDLE_HIGH/LOW)
-  * Can do "4-wire mode"-style reads (not turbo)
-  * #daisy-chained-devices is forbidden
-  * Use case: multiple ADCs can share one CNV trigger
-
-"chain" mode:
-
-  * Wiring: same as default except ADC SDI is hard-wired to logic low.
-  * Cannot read/write registers.
-  * Doesn't require special SPI controller (no SPI_MOSI_IDLE_HIGH/LOW)
-  * Can do "daisy-chain mode"-style reads (requires CS high or cnv-gpios)
-  * #daisy-chained-devices is required
-  * Use case: save one wire, works with any SPI controller
-
----
-
-To put it more simply in the bindings though, really this property
-is just describing how the SDI pin is wired. (CNV pin wiring can be
-inferred from this property and presence or absence of cnv-gpios
-property.) So maybe better would be:
-
-  adi,sdi-pin:
-    $ref: /schemas/types.yaml#/definitions/string
-    enum: [ high, low, cs ]
-    description:
-       Describes how the ADC SDI pin is wired. When this property is
-       omitted, ADC SDI is connected to host SDO. "high" indicates
-       that the ADC SDI pin is hard-wired to logic high (VIO).
-       "low" indicates that it is hard-wired low (GND). "cs" indicates
-       that the ADC SDI pin is connected to the host CS line.
-
-And put a note about the specialized SPI controller requirements in
-the main description.
+David / dhildenb
 
 
