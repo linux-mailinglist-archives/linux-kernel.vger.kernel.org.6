@@ -1,159 +1,96 @@
-Return-Path: <linux-kernel+bounces-220975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CFF390EA03
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:47:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C5390EA06
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17F69281DC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:47:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD6971F2275F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10CA13D535;
-	Wed, 19 Jun 2024 11:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B196213D63B;
+	Wed, 19 Jun 2024 11:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qpWFYXBP"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNBe9kqa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5414D8B2;
-	Wed, 19 Jun 2024 11:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FF44D8B2;
+	Wed, 19 Jun 2024 11:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718797647; cv=none; b=p3Kgh4jl+A06pYJBW1N2YwmLuKNlo8c25+cVt27CbBHo8878vVRi7rH4BGLC3W3L2fv3DnpAP/6ITzU/bsECJZgBIYxTlR0fIJE8FWqW6UCVzw+7qcSwqppsSM9Eo5mXrw9bMrrF35l6r1KR9pvbBBKbttiI8ad/k+UTnjekroc=
+	t=1718797720; cv=none; b=M0mfhKAKFStbZg+O//Uulobp1v1oUQkKOiEgmjRHBjYaeN7EIJbdPsjguacrtDaHn3C8ZuzQJxNpnnbEc3iLSJ7H1FxdH/sAxpKj4xQuBFBs9SfmRTYVmHBz3ZDau7GGrFetKcMe0ylccbkiaTA0Bi7YAo/omRSai//GRpgff24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718797647; c=relaxed/simple;
-	bh=4aBYdd8aAGH4U0q0/YmJqtT24ak1oG6LESBEorWzHMs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P/RSnrIyW4Bul4kCyypyN3s4rFvX/BvbpLzc4SmVp6zu036SHVK9osFd09/ceFlWYUnWIhqc0+zkppcpA3uKB7rIFkpkdnLlNWps2HW2dSpOwkcCyTqQnyoJlTnxRHFmJs1DYfTvGunf03LUPUNHSznKQQODX1GTZi2EqD4dx+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qpWFYXBP; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JBT2Gb032134;
-	Wed, 19 Jun 2024 11:46:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	4aBYdd8aAGH4U0q0/YmJqtT24ak1oG6LESBEorWzHMs=; b=qpWFYXBPyhP3Tm0z
-	C/sRT45gj5nDYuSl/4f6IKTkUP8G4uVdsqfj5uy33dYu4ApM0one+39T7NLgvJhe
-	VlSyhb97xz2OCEdnTbAihlB64ND7sixn9qtNWg3ller71SWzUMTLotmOmVK59wo0
-	1TGSRdxEv6Buy2fWBhhalQQWonH3GBiTsyYE4l5TF3uqFbV/jOiC4GIDb3bm+Rrk
-	71dOWS5GYd9aT1ajgjpx/ZLBWQV6sBGsvjDrOldyO0YWdl3CBETeuo7lwaF2xdVK
-	rgmvAe9wkdUU0BkMzFmMVvsg93/YIsi4vX24zG0ZRxaf9RZVMAZES8woyzv/mUIL
-	Vq7X0Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yuxg0r1cv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 11:46:58 +0000 (GMT)
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45JBkvMU026796;
-	Wed, 19 Jun 2024 11:46:57 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yuxg0r1cq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 11:46:57 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45JBQHF2006189;
-	Wed, 19 Jun 2024 11:46:56 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ysn9uv8v8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 11:46:56 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45JBkote34538010
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Jun 2024 11:46:52 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 90CFD2004B;
-	Wed, 19 Jun 2024 11:46:50 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2858220063;
-	Wed, 19 Jun 2024 11:46:50 +0000 (GMT)
-Received: from [9.155.200.166] (unknown [9.155.200.166])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Jun 2024 11:46:50 +0000 (GMT)
-Message-ID: <ff3403a257086f09db1280c5952e6f72371b10ef.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 16/35] mm: slub: Unpoison the memchr_inv() return
- value
-From: Ilya Leoshkevich <iii@linux.ibm.com>
-To: Alexander Potapenko <glider@google.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        David
- Rientjes <rientjes@google.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Joonsoo
- Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>,
-        Masami
- Hiramatsu <mhiramat@kernel.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        Steven
- Rostedt <rostedt@goodmis.org>,
-        Vasily Gorbik <gor@linux.ibm.com>, Vlastimil
- Babka <vbabka@suse.cz>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Sven Schnelle
- <svens@linux.ibm.com>
-Date: Wed, 19 Jun 2024 13:46:50 +0200
-In-Reply-To: <CAG_fn=Uyx7ijj-igC2hgSpdzmChM0FVy46HTRXyKzNAA0OFK7A@mail.gmail.com>
-References: <20240613153924.961511-1-iii@linux.ibm.com>
-	 <20240613153924.961511-17-iii@linux.ibm.com>
-	 <CAG_fn=Uyx7ijj-igC2hgSpdzmChM0FVy46HTRXyKzNAA0OFK7A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1718797720; c=relaxed/simple;
+	bh=w5cAoAASm64T8m5tiTn2cbQG1dthfwLRAJsS/gRwIq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H0TCMKO60bKPgKpSx2UTDNMgO0OaFVslzD6PYngTmxL/oKDBdAY4otxO7n+1QLsPN1zNNxeluuqQnWTUr1R6GhcN8krrTSg/T5LUqrvw8EqpPU3yUbqgIWi+c7x/di8WxrfYU1crd0EJ+c+LmaCBMI9Ukn35oHsYziSYxwpnpNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNBe9kqa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B867C2BBFC;
+	Wed, 19 Jun 2024 11:48:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718797719;
+	bh=w5cAoAASm64T8m5tiTn2cbQG1dthfwLRAJsS/gRwIq0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XNBe9kqaZNNPx71tIPgLgXf/cuAJXpwV+qaC7uKM/aRgcTBYeBVvyZ5I6BHBpUIcN
+	 H61cQcb8bYYpVHIGUcL24i8Jw5lO1CbV4huegFSRDfakfH3AYswsQwJyhZujvZdtwn
+	 Rnvm+L67r9hNDlE+/wV7b/1ijIJLXMX0aTa6Y3fXO/B3gzCZXaDxMhNm01JwP8lfVJ
+	 kNSsmJPcmK6PFAJUxP8ZQ8mZTK/2GXpMEVLfWX8ePAmNn4Rim0L6GUbt4/tw+TG6Y9
+	 9ZJU6zHN130/bKYvDVOzzNFUBgoY+iiK3ydS/Xte0a+R0zWNB8fPWgh242UNeOI4Aq
+	 PFEtr0VhHWjKA==
+Date: Wed, 19 Jun 2024 12:48:35 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Simon Trimmer <simont@opensource.cirrus.com>,
+	linux-sound@vger.kernel.org, alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH] ASoC: cs35l56: Accept values greater than 0 as IRQ
+ numbers
+Message-ID: <3abde78c-aae9-445a-b8a0-a09e4079006b@sirena.org.uk>
+References: <20240617135338.82006-1-simont@opensource.cirrus.com>
+ <fe9dd613-8909-4c7d-a7d7-9094b75fe8fb@opensource.cirrus.com>
+ <941d2b8a-18b5-43ad-9aec-6785f841dfaa@sirena.org.uk>
+ <97da8398-599e-45cb-abb2-97cc66567628@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: tzqSr8HO345mo1Ia6Q97gqSzudRJArNH
-X-Proofpoint-GUID: ljUZ8zkZEQkiMouQPJQ5SsIz1Fy2T4Or
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- malwarescore=0 mlxlogscore=749 phishscore=0 impostorscore=0 adultscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406190084
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VR6AEZOBN5xY1cCZ"
+Content-Disposition: inline
+In-Reply-To: <97da8398-599e-45cb-abb2-97cc66567628@opensource.cirrus.com>
+X-Cookie: Don't I know you?
 
-On Tue, 2024-06-18 at 16:38 +0200, Alexander Potapenko wrote:
-> On Thu, Jun 13, 2024 at 5:39=E2=80=AFPM Ilya Leoshkevich <iii@linux.ibm.c=
-om>
-> wrote:
-> >=20
-> > Even though the KMSAN warnings generated by memchr_inv() are
-> > suppressed
-> > by metadata_access_enable(), its return value may still be
-> > poisoned.
-> >=20
-> > The reason is that the last iteration of memchr_inv() returns
-> > `*start !=3D value ? start : NULL`, where *start is poisoned. Because
-> > of
-> > this, somewhat counterintuitively, the shadow value computed by
-> > visitSelectInst() is equal to `(uintptr_t)start`.
-> >=20
-> > The intention behind guarding memchr_inv() behind
-> > metadata_access_enable() is to touch poisoned metadata without
-> > triggering KMSAN, so unpoison its return value.
->=20
-> What do you think about applying __no_kmsan_checks to these functions
-> instead?
 
-Ok, will do. The __no_kmsan_checks approach is already taken by
-"mm: kfence: Disable KMSAN when checking the canary", so we might as
-well be consistent in how we fix these issues.
+--VR6AEZOBN5xY1cCZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Jun 19, 2024 at 11:24:06AM +0100, Richard Fitzgerald wrote:
+
+> Ah, ok. Sorry, I assumed you were objecting not just overloaded.
+
+There's a latency between me deciding to apply a patch and the patch
+actually ending up in my tree - I test everything which takes time.
+
+--VR6AEZOBN5xY1cCZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZyxZIACgkQJNaLcl1U
+h9DGqAf+Jz/okBoNBuqi6pOSDONLdBYzCM2CCX1nO3m7rt43q1WNnDyHMJ/E5sEK
+Gf7KEey66EwZOp7ozj0bDUhViwBT9NTuSPgXLcf3FjdBhdn0pxXkjz3IOLQl+rcL
+2E/+9WCOfy4WxUq+5Q7EhGeGvF4Iu3e5OfSYN/jbMCb6O8+2frVt4zlpbU4ZTOCO
+tDZIctNPH125ATIdP9E1fSFSyLnOuBda8hGwpyCAUjUluwFbTvI8z6u/PLbLUXzq
+I81HRGieVpedOzVtVT8vWb6ZkmB1d9HkQT0xtWJkV3AFfdpddjd0Mhm3QWf3SPqx
+qroTq2Ew+Mq1/EPA8ouW87vzE09LlQ==
+=DIGY
+-----END PGP SIGNATURE-----
+
+--VR6AEZOBN5xY1cCZ--
 
