@@ -1,179 +1,142 @@
-Return-Path: <linux-kernel+bounces-220984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C45E90EA2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:57:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF6D90EA41
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 13:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F7BA283385
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:57:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1EC1C22195
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 11:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF82513DDC9;
-	Wed, 19 Jun 2024 11:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF58213E3FD;
+	Wed, 19 Jun 2024 11:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="klr34nXX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vox1CVvX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0E776035
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F86213D242
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718798234; cv=none; b=BLGTqWCHzwCVMtgcJntkmYNtWjl9wOsTW4k8L+7P+2mUurP3aerUEswp1xXdg3Ls3rtj4EvGL7Y1K2nLEWIuwdvYE+KidGr7Vw9Eu40vvxO4+3y2EII/l2Tbtqi7iguNh1rkLjlOltbi9hqIlr5PpSeXia7dDgqQsQgtxFnDI7A=
+	t=1718798386; cv=none; b=Ul5Xp4p7H+kwxC+h7Z9rxvOMUtLo1/hvMIEgxIthExQYlGQ+NNJJmS9hH2w/uHiyTNNPLypNYOLzB7GXewfHDxxaJ1KEG9rOnyEOPOQMxM0WA/EMNfgmbIOyNSz+5NVjzOFpZM3ZEbL8ms6EAlvrsyuiaXubHQofJn8mHZCBtmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718798234; c=relaxed/simple;
-	bh=98v0QsjuhOFlSgXs59YI6oLQih9ErGbd498Z59dGdvY=;
+	s=arc-20240116; t=1718798386; c=relaxed/simple;
+	bh=4pUXmg8tvBd4/enK6DhVVPrUAzUNxmY937r07g9IdxA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IdlL9LqzwV1CWGyjC0ZX46Q9EAokCTRbKM1j2J89luD2bxZZSlqBsiTSCJBROV2VcUerdu4yTqfrlxe6PH7HpRJCWB+PDUgI6seMQ2yUzxZlJ3YrvVd98PuI5DY4v7yAjCpSCKNSIlIYCJrOkb80qXnxeA/iZZjYSOELwHY+Do8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=klr34nXX; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718798233; x=1750334233;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=98v0QsjuhOFlSgXs59YI6oLQih9ErGbd498Z59dGdvY=;
-  b=klr34nXXkQKUgGbNSCnWKPAZ/xGX+R9020XladBomZQvQT09tep1424P
-   BOkJtm5mKHMNgml6onqlKTOhMUjGuk6f6k4Jj9jBna4nRBQ5v49RbPP8d
-   K/z9IjqADkH2iPrS3HkVGMDOVcfwJWgtF40BB037TtfQ/IQcxvogHuAq2
-   u4ScHc0c/FJ7eW5FZsqezyqx4zUBNkqRgBEomlu1KDLMee+8oxsrg/ZXR
-   e+yI64KHwYZz4QVDfMzEL786Q6EGnigiqLXta+bU8LUZu6QTfaPN7M4aw
-   761vo6M2QXOffmcrw2xlQIAmeIGACHHT3PkxKSLUC2/8aCsuDAbyfwsfZ
-   w==;
-X-CSE-ConnectionGUID: vBA7m4mOT06UjZs+++NqYw==
-X-CSE-MsgGUID: SrRtlUxzSVW3BShkRpUR4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="33278877"
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="33278877"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 04:57:12 -0700
-X-CSE-ConnectionGUID: tac/HbubTq2gjwPROTUcRQ==
-X-CSE-MsgGUID: ZLRsZ1yhTtWEXmZuK6lYZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
-   d="scan'208";a="41851288"
-Received: from stinkpipe.fi.intel.com (HELO stinkbox) ([10.237.72.74])
-  by fmviesa008.fm.intel.com with SMTP; 19 Jun 2024 04:57:04 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Wed, 19 Jun 2024 14:57:03 +0300
-Date: Wed, 19 Jun 2024 14:57:03 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	nouveau@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-	kernel-dev@igalia.com, Melissa Wen <mwen@igalia.com>,
-	alexander.deucher@amd.com, christian.koenig@amd.com,
-	Simon Ser <contact@emersion.fr>,
-	Pekka Paalanen <ppaalanen@gmail.com>, daniel@ffwll.ch,
-	Daniel Stone <daniel@fooishbar.org>,
-	'Marek =?utf-8?B?T2zFocOhayc=?= <maraeo@gmail.com>,
-	Dave Airlie <airlied@gmail.com>, Xaver Hugl <xaver.hugl@gmail.com>,
-	Joshua Ashton <joshua@froggi.es>,
-	Michel =?iso-8859-1?Q?D=E4nzer?= <michel.daenzer@mailbox.org>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>
-Subject: Re: [PATCH v6 0/8] drm: Support per-plane async flip configuration
-Message-ID: <ZnLHj6riPiqVNc2T@intel.com>
-References: <20240614153535.351689-1-andrealmeid@igalia.com>
- <lxfxqbax6azdpeamwm2qqv2tulgxrb7y3qzb4ir4myt6x5sqez@imd3yd5mbk7u>
- <ea501920-7319-46f4-98ca-cea412abf8a9@igalia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RbDPgSl7cH8Qj5OcejmSYgcvjB3ZR/oDitR0sUZImyLyKApM766E9yFAxhS1MLxoADOH5Y3TTX4h5lGyfRIIZOnwsYF5Os5bHxCvrSs6DNoKFkfShKXRVpNLhnxGgo/oo99pt2wgueVqdhbkIabMz+7UgJpAXj6DbVni8Puj3OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vox1CVvX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718798383;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PB56SY2RVpI0Q4zam47FNIcr41Z7FNuOT0Omjr+HEoo=;
+	b=Vox1CVvXWdaDyDYtg4SFxgWxXagG5NCdAHabT8IeOf2CP0AgL9d0u682m1nSjQYX9vg2Xc
+	rG77NCMgLMQ6UbhQXmWvhM+zTzghepmBd28QrUEBzcwysF50+MdA0IpoerZa5v/pf/O9yg
+	hJdLCZUqvdQGH70j+ThqiGu+R7oGGU4=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-601-enAcDaMgN0GPAY1ZP4aUQw-1; Wed, 19 Jun 2024 07:59:41 -0400
+X-MC-Unique: enAcDaMgN0GPAY1ZP4aUQw-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ebdc5ccb17so48620041fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 04:59:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718798380; x=1719403180;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PB56SY2RVpI0Q4zam47FNIcr41Z7FNuOT0Omjr+HEoo=;
+        b=WMDzxRpiqapT5Ayre6aL8yOjyHfEBFRQTDZyAmExv7GZYsjcDDnsHMS8cJz4UlsPQy
+         efWT0uDBBdQQSB1X8KQ6LQJu0+fuciJzo9yYZNNQ7CLsUpct3TWmRsKaWzI6C+WDvCLU
+         voKGUbNNPapyp+dyDG9k3v4rI+CrBmzleaPYTAKWwKIRaZNDaactTHoMld6gSEkrMgGv
+         z/FmbhLZ3UZZGSa/ORX3zdjRVeuK+poT95P9cGY1XsicSqgpmhOMeXb/NkVR1TyjyJVS
+         mtss5ozNxqBP5FhxoALUo4TP8fHa4QH7weRKRYDC5wgy9XjY9NnOV4t1vLnNDfyn3a93
+         3qyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvygwZdRnPhfpc58Z4r9VVtRE/htrhSfzGZ/klXX8TEPLsiJY+qAm3n+7gHsXsi+X/uDAgBi/FsKYmry6NlUHDaXJ7/kxELvR/jm9D
+X-Gm-Message-State: AOJu0YzRgpb8WS2/gREajqAC1AMN+dfQ5hiE6cOQ40r8kTbfa6C3SXhR
+	mBBRBNAhKC9bgTy0JUiLkrH3fr/WNF0A2so/AzI6VmLn9m+yUSYdn0MgtvPemJYdRBnMOq17WFi
+	vx6jRFqNhmkidQ7RZLXSObBbU3x1/cuRXZlzlHpgdOi9JJAlmH27LxH4G83hA1FJpX0YgMg==
+X-Received: by 2002:a2e:7a0d:0:b0:2ec:3ca1:e54c with SMTP id 38308e7fff4ca-2ec3cffc5eamr18365821fa.43.1718798379978;
+        Wed, 19 Jun 2024 04:59:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3DIwLSSt+g2QyLbF22jGNXIU73vEU43ydFOx4aD/OJAnDChOc06t7QxDe87GwALKmeKPnoQ==
+X-Received: by 2002:a2e:7a0d:0:b0:2ec:3ca1:e54c with SMTP id 38308e7fff4ca-2ec3cffc5eamr18365741fa.43.1718798379580;
+        Wed, 19 Jun 2024 04:59:39 -0700 (PDT)
+Received: from pollux ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422874e73b1sm265682115e9.45.2024.06.19.04.59.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 04:59:39 -0700 (PDT)
+Date: Wed, 19 Jun 2024 13:59:37 +0200
+From: Danilo Krummrich <dakr@redhat.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: mcgrof@kernel.org, russ.weight@linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] MAINTAINERS: add Danilo as maintainer for FIRMWARE
+ LOADER
+Message-ID: <ZnLIKfqQF1hqOjhK@pollux>
+References: <20240619001209.109227-1-dakr@redhat.com>
+ <20240619001209.109227-2-dakr@redhat.com>
+ <2024061944-abrasive-creamed-d2d9@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ea501920-7319-46f4-98ca-cea412abf8a9@igalia.com>
-X-Patchwork-Hint: comment
+In-Reply-To: <2024061944-abrasive-creamed-d2d9@gregkh>
 
-On Fri, Jun 14, 2024 at 04:37:41PM -0300, André Almeida wrote:
-> Hi Dmitry,
-> 
-> Em 14/06/2024 14:32, Dmitry Baryshkov escreveu:
-> > On Fri, Jun 14, 2024 at 12:35:27PM GMT, André Almeida wrote:
-> >> AMD hardware can do async flips with overlay planes, but currently there's no
-> >> easy way to enable that in DRM. To solve that, this patchset creates a new
-> >> drm_plane field, bool async_flip, that allows drivers to choose which plane can
-> >> or cannot do async flips. This is latter used on drm_atomic_set_property when
-> >> users want to do async flips.
-> >>
-> >> Patch 1 allows async commits with IN_FENCE_ID in any driver.
-> >>
-> >> Patches 2 to 7 have no function change. As per current code, every driver that
-> >> allows async page flips using the atomic API, allows doing it only in the
-> >> primary plane. Those patches then enable it for every driver.
-> >>
-> >> Patch 8 finally enables async flip on overlay planes for amdgpu.
-> >>
-> >> Changes from v5:
-> >> - Instead of enabling plane->async_flip in the common code, move it to driver
-> >> code.
-> >> - Enable primary plane async flip on every driver
-> >> https://lore.kernel.org/dri-devel/20240612193713.167448-1-andrealmeid@igalia.com/
-> >>
-> >> André Almeida (8):
-> >>    drm/atomic: Allow userspace to use explicit sync with atomic async
-> >>      flips
-> >>    drm: Support per-plane async flip configuration
-> >>    drm/amdgpu: Enable async flips on the primary plane
-> >>    drm: atmel-hlcdc: Enable async flips on the primary plane
-> >>    drm/i915: Enable async flips on the primary plane
-> >>    drm/nouveau: Enable async flips on the primary plane
-> >>    drm/vc4: Enable async flips on the primary plane
-> >>    drm/amdgpu: Make it possible to async flip overlay planes
-> >>
-> >>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 2 ++
-> >>   drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c         | 3 +++
-> >>   drivers/gpu/drm/drm_atomic_uapi.c                       | 8 +++++---
-> >>   drivers/gpu/drm/i915/display/i9xx_plane.c               | 3 +++
-> >>   drivers/gpu/drm/nouveau/dispnv04/crtc.c                 | 4 ++++
-> >>   drivers/gpu/drm/nouveau/dispnv50/wndw.c                 | 4 ++++
-> >>   drivers/gpu/drm/vc4/vc4_plane.c                         | 4 +++-
+On Wed, Jun 19, 2024 at 08:47:45AM +0200, Greg KH wrote:
+> On Wed, Jun 19, 2024 at 02:11:59AM +0200, Danilo Krummrich wrote:
+> > Add myself as maintainer for the firmware loader, as suggested by Luis
+> > in [1].
 > > 
-> > The main question is why only these drivers were updated.
+> > CC: Luis Chamberlain <mcgrof@kernel.org>
+> > CC: Russ Weight <russ.weight@linux.dev>
+> > CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Link: https://lore.kernel.org/rust-for-linux/ZnHkQpyiX4UKdLEt@bombadil.infradead.org/ [1]
+> > Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+> > ---
+> >  MAINTAINERS | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 38e7e0edd9b8..19e4a21e574e 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -8569,6 +8569,7 @@ F:	include/linux/arm_ffa.h
+> >  FIRMWARE LOADER (request_firmware)
+> >  M:	Luis Chamberlain <mcgrof@kernel.org>
+> >  M:	Russ Weight <russ.weight@linux.dev>
+> > +M:	Danilo Krummrich <dakr@redhat.com>
+> >  L:	linux-kernel@vger.kernel.org
+> >  S:	Maintained
+> >  F:	Documentation/firmware_class/
+> > -- 
+> > 2.45.1
 > > 
 > 
-> According to `git grep async_page_flip`, only those drivers supports 
-> async page flip. The only corner case is radeon, that does supports 
-> async but doesn't support planes.
+> These never hit a public mailing list as you provided an incorrect email
+> address for it (hint, lkml does not have a = sign in it, I fixed it up
+> for this response.)
 
-The primary plane will alwyas exist (drm_crtc_init() will create
-one for the old drivers that don't do it explicitly). So you
-should be able to convert radeon as well. And looks like some
-pre-dc amdgpu stuff is in a similar situation.
-
-That should presumably allow the old flag to be removed entirely?
-Hmm, I suppose drm_getcap() would need a bit of work to eg. go
-through all the planes to see if any of them support async flips.
+Huh! I indeed fat-fingered an additional '=' after '--cc='.
 
 > 
-> Do you know any other driver that should be updated to?
-> 
-> >>   include/drm/drm_plane.h                                 | 5 +++++
-> >>   8 files changed, 29 insertions(+), 4 deletions(-)
-> >>
-> >> -- 
-> >> 2.45.2
-> >>
-> > 
+> Please fix up and resend so that I can take them.  For obvious reasons,
+> I can't take a private email thread.
 
--- 
-Ville Syrjälä
-Intel
+Will resend.
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
+
 
