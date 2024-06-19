@@ -1,129 +1,106 @@
-Return-Path: <linux-kernel+bounces-221681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3DD090F726
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:43:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22FA90F71F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 21:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BAA81F25A46
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:43:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38802284E5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 19:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC1415AAD7;
-	Wed, 19 Jun 2024 19:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F6C158DCA;
+	Wed, 19 Jun 2024 19:42:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8MvQ1lB"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQ2whtI5"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6422B158DD9;
-	Wed, 19 Jun 2024 19:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60026156C6A;
+	Wed, 19 Jun 2024 19:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718826185; cv=none; b=uPn+o7tFxRZxr8JhL71G6BxLhd8/9aRd8g3U9ikZ9DI7PSh008hwuS1kbNcbCAJulVJMAEdN4PyQvi4ghK13mUfetbvxhROC4EzlWRuaN3BQq6QOI1h5VYXOeW4BsfMfftS6w1peE3XYlHylUcUIcw4rZzKEkauADiOVKmZ6cgs=
+	t=1718826159; cv=none; b=paBuw7yK5rdfurjd7EDcDfMTdLgpCEnGDqUXraJim625s/HIj5Ul8+jXIeUBl4DeyFKenIBSmjr+2cWgzh8M2CR22fM5wpgWVKdw2xXQQULT+cjWSKJW+N4kQ24LFnDRwjRkwTIBno35PuFyvDTuOsbaOVVj+YaCDOebC9kHmic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718826185; c=relaxed/simple;
-	bh=qCJk9bWEc+/fuCHJqn77Np+/NCaJz6B237shZlGk7wA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dlPppG5jvnLPLLa/pDk5OT71eBRFa49H+roN1KDGQFgYXAJLkfJoHSCDb7fKAjEw3PjDKrdTTIke6XGAm7NezQJV2escJRWkth3rv4tIWfxnwJ7GfWkU4j7wGEb9NQoZDDCvyTu29FwYhYQ0trpwQ28lvDIaoTI1Sqr31c0C0yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W8MvQ1lB; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1718826159; c=relaxed/simple;
+	bh=lQJgX2kqtpucEStoylm9bVUxglT3Ct/aEDAVENKWZwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vEFFHvKvmY1ZDEZjz4cRfrdbJoqDTFP5Bgsql39g9P3uHLRWXIq+h166mUzWcKj7ABzt8AfCGCyz3XvKmpx1KUxJP1USdcj7/2tjFKGtH9Cb0uCiGBR9Cj8jzZFNbtXL8giW+4spNkg7KfxEdhwtrNxkGB2KSZ2V0UKEjhabSHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mQ2whtI5; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so11749166b.2;
-        Wed, 19 Jun 2024 12:43:03 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4218008c613so1551715e9.2;
+        Wed, 19 Jun 2024 12:42:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718826182; x=1719430982; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n9z63p6lskMirNgu/7X6osNx5PNpqMrbPB+Wm9ztJrU=;
-        b=W8MvQ1lBWfT/IjO68EMrphvJqOjgvG621IQxIsh3Gs2ZqjlNiqVz7HL0YNgqRuhI62
-         xyamyR5RXBw7KE/LSrahlYd4AImhhAvFu1hgLWx86cwKy2qpj9xtyb4kjSbDUB3o+2bP
-         M8qcV0w1bHpCycf4v8AoIgw2T3yN6Ou1ukfBC496mVOmRXjte1G7u2KjPGDQwpIbh1U/
-         yLCwXXutKjTixUmCp2DVx1BcTmLfOA5Z7S1XeLbvER+ZjiPNACpktB82R31Sp/0Ulmo4
-         BvvgURBNsfrtDAO3Xpjnbgu6qcwr83dDPsuNrCyopX+q9wtFY43opmAnUHR3mkT/DtpC
-         HHsQ==
+        d=gmail.com; s=20230601; t=1718826157; x=1719430957; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1/mbiCPrwheVnyKx6Tn1g8ggM05xq8FHv37NW2n7TXw=;
+        b=mQ2whtI51oWtLJRn+bEoyoE8891+P91EIGuL4LezIYh3/0+v9AGVKa4g0hO6R535k+
+         bCuWkWCPRdho1/DkerVj1PRtDoPYMvWBV2B//8ObceCZKGVPaxC52eWR/lGjjU1D8Jse
+         CCQ1eGGBf2w+INaqxBj/Ur3CWoVfC5EGhq1mNJSyplEinq4QXWw83HaT7eGv2MpZu3F7
+         uPglPy2/iG3mG0YXxuPDHhlP+fRE3ZOoK4Z6RC4ppY99e+UL0E35yq140H/DFtSlLu3f
+         JdZQILagxapwQTLG2HhDvfAdKf1w1sp909Sx0EAw5E0QPGTlhELQf5DXgKh64Z2h+ypT
+         lpzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718826182; x=1719430982;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n9z63p6lskMirNgu/7X6osNx5PNpqMrbPB+Wm9ztJrU=;
-        b=UCZEweRik2r4ajjfY+m2M6jLPkrom1csmW26bbAcZu8pp9lJ2W0YL7AZLjhsM7MX06
-         Qi1Q0SF3/99GRburOjjnxOFN1tZv0mmEJ0FhVMWI2HlP/8FXIPa9PGzRtJEAtzD6ova/
-         SIGOKtilkaXrf28UTJJSMOy2ByuYorOWjYHneIKh6lJ7e0+VGprWJqCdqNfXroA2Icqt
-         smjm1vfY4Z7My1M9FD73RiQ2Y4gcmreacrGwCsAIDkQ2FuSXRSc5oCa61p5gGVlCrAA6
-         lELAZcs855PvIaN0wdIwy8y4rzIKkP5nCt2vWQbbMoWxbhP7MIhk3t3HPo49/0Kp2Owy
-         ajng==
-X-Forwarded-Encrypted: i=1; AJvYcCUwyyrQA+WdQ4pn1zlP580D8coUgiuyEPlngjtoIXFZsADmgZPqsZRd+wXX6q8Gw2qsnA1I/V/xHqSF1ML2BQ+XKKnBpKoKRrnieyHIMf3dHAnrfHiSta09/Hna8uGyypw+L9YsM7Q/1SqxjRFA
-X-Gm-Message-State: AOJu0YwxlZUP1nNLnYxOV6fiCplaRYP1RjhqwYft65wPgnVk/y7HWrch
-	+q2OWf0qpJxEOkK6raCIMYXyCzwWeY6np58Qr3Qzc7NdPSbidivryMM1jPcW
-X-Google-Smtp-Source: AGHT+IGhnnBv0QoNxw0IXvKXUeKA7OoxHA1cnv3LEAsfVt/4l2CCSjKit1x7O4p8BBi5/H5VF3Bmzg==
-X-Received: by 2002:a17:907:a095:b0:a6f:b34c:76eb with SMTP id a640c23a62f3a-a6fb34c7838mr180373066b.54.1718826181747;
-        Wed, 19 Jun 2024 12:43:01 -0700 (PDT)
-Received: from [127.0.1.1] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56da3385sm688365766b.24.2024.06.19.12.43.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 12:43:01 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Wed, 19 Jun 2024 21:42:45 +0200
-Subject: [PATCH v2 2/2] USB: serial: garmin_gps: use struct_size to
- allocate pkt
+        d=1e100.net; s=20230601; t=1718826157; x=1719430957;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1/mbiCPrwheVnyKx6Tn1g8ggM05xq8FHv37NW2n7TXw=;
+        b=fjiCqk6+pFwx5s+8MJ2LXwGayPY/deTZLZItol3+3iRyStFKr/EcDgvzneMKc+6zsX
+         fE0JkdBbsJ1BewcGuf0DqVkkKU11lsW8LxbhraiyapHiP6KfQhQfZBC/s/STzSit2UWC
+         c+ovK1aNqkeP1/iftOhVp49RuUGFNxpFHITq+RluqarINpg2gT8Du0ERK6jIoTrldRU7
+         xYib1z6MtE8vXxjSeDOS35B0q8w5IasYZK6LL4tN+SEnGcShOMWdmAny/aNoEKpPTj5Z
+         OcSa/18pQ4QPAdLXmhbrJnvuV3qAI/ldeuz20iJ5wh16EBJ9x34DspOhVeBu+LYlbubv
+         UltA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIicP9LcwSY7RXj/oSthqDqn60QNKufNquFqf15MtmnEI/Py2aE14mHpIlwgB2BpA3ttYnkOCJYyMHDzjPZs+0+AOt1mdvjGi6uuKTniznrQm1Vjhuy4RmR6wJte309DXl0oTd
+X-Gm-Message-State: AOJu0Yz5XJ3UqbDT2JEUlrcPAbeufTK2SoI0OkC7G5JQ+t0IiYMr1UV7
+	elVSuCffui7M9SFcvreZTz0qBDEVibQT0HB0mGBsMAPXdT33I6So
+X-Google-Smtp-Source: AGHT+IF2IxtLOJA3h18fOwP9xgKYFMBwoIc2Z3TKZGsCnjv0rzAia+DYIAtwysGmCydG9zU41wq9jw==
+X-Received: by 2002:a05:600c:2252:b0:424:798a:f808 with SMTP id 5b1f17b1804b1-424798afec4mr15726325e9.5.1718826156363;
+        Wed, 19 Jun 2024 12:42:36 -0700 (PDT)
+Received: from [192.168.0.5] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d1f6dbasm341025e9.43.2024.06.19.12.42.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 12:42:35 -0700 (PDT)
+Message-ID: <98ca94c3-d37c-4145-95a8-b2d9a36775c8@gmail.com>
+Date: Wed, 19 Jun 2024 22:43:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next v1] net: wwan: t7xx: Add debug port
+To: Jinjian Song <songjinjian@hotmail.com>
+Cc: chandrashekar.devegowda@intel.com, chiranjeevi.rapolu@linux.intel.com,
+ davem@davemloft.net, edumazet@google.com, haijun.liu@mediatek.com,
+ jinjian.song@fibocom.com, johannes@sipsolutions.net, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, loic.poulain@linaro.org,
+ m.chetan.kumar@linux.intel.com, netdev@vger.kernel.org, pabeni@redhat.com,
+ ricardo.martinez@linux.intel.com
+References: <9f934dc7-bfd6-4f3f-a52c-a33f7a662cae@gmail.com>
+ <SYBP282MB3528E219E1B7A579EE58A2B1BBCF2@SYBP282MB3528.AUSP282.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <SYBP282MB3528E219E1B7A579EE58A2B1BBCF2@SYBP282MB3528.AUSP282.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240619-garmin_gps_counted_by-v2-2-f82f10ebbf28@gmail.com>
-References: <20240619-garmin_gps_counted_by-v2-0-f82f10ebbf28@gmail.com>
-In-Reply-To: <20240619-garmin_gps_counted_by-v2-0-f82f10ebbf28@gmail.com>
-To: Johan Hovold <johan@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org, llvm@lists.linux.dev, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718826176; l=869;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=qCJk9bWEc+/fuCHJqn77Np+/NCaJz6B237shZlGk7wA=;
- b=cexK0HonegmOr1iAcrxTSFtX32J5Razx8ZpgrRL6ih52oWsn3hR9bgc/J3g0tkdX6cLrnZG8q
- eEZ8mKg7vbcBWjSIG2VzRHf37QEneJDUhAV9LGoM2IcgC4OZhrLYD1o
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Use the struct_size macro to calculate the size of the pkt, which
-includes a trailing flexible array.
+Hello Jinjian,
 
-Suggested-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/usb/serial/garmin_gps.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On 19.06.2024 13:23, Jinjian Song wrote:
+> I think I need add an ADB(Android Debug Bridge) port and a MIPC port
+> (debug for antenna tuner and noise profile) to WWAN.
 
-diff --git a/drivers/usb/serial/garmin_gps.c b/drivers/usb/serial/garmin_gps.c
-index 57df6ad183ff..6d6ec7eed87c 100644
---- a/drivers/usb/serial/garmin_gps.c
-+++ b/drivers/usb/serial/garmin_gps.c
-@@ -267,8 +267,7 @@ static int pkt_add(struct garmin_data *garmin_data_p,
- 
- 	/* process only packets containing data ... */
- 	if (data_length) {
--		pkt = kmalloc(sizeof(struct garmin_packet)+data_length,
--								GFP_ATOMIC);
-+		pkt = kmalloc(struct_size(pkt, data, data_length), GFP_ATOMIC);
- 		if (!pkt)
- 			return 0;
- 
+Yep. For now it is a best option what we have. You can do this in a 
+similar way as you already introduced the fastboot port type. And a bit 
+of documentation would be a good option as already suggested by Jakub.
 
--- 
-2.40.1
-
+--
+Sergey
 
