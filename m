@@ -1,106 +1,138 @@
-Return-Path: <linux-kernel+bounces-220823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99C090E7B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:00:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 326DE90E7B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91EE01F22CBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:00:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DA92892BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 10:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A898286D;
-	Wed, 19 Jun 2024 10:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2718249E;
+	Wed, 19 Jun 2024 10:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uubXR1cL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TcihEThj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D26082495;
-	Wed, 19 Jun 2024 10:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6258E8175E;
+	Wed, 19 Jun 2024 10:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718791233; cv=none; b=rw1r4/CH8JgieDHsmIFAoidyPsFwF7XPg0FfxUXzY21Yt4Qt18H0HTLcL3lLQsO3mQGP0V1SRapWKwmW7AgT8+jNY4BQmqWCBactpYN16uZLXX35tXnudvc6eGIcbhKRkkpmbBid7he3kv9Zzy6FV/h9dXYXO/tpm9H9jlK2HUE=
+	t=1718791247; cv=none; b=CHWqC7dLjHrGtB6rlqIx7t7PU0B1ty4PbK+STXkbLmG9YdJ2x1GJpdUgYp4DQqR2gKyeOkuOzovIwZrC5nkwAGGrrH+h2BBXI9lJsPJ8TJtIoQbMzPiFUVUzJZBEeFfMy1hpKdZlGpIEe7GX/qh2bQwZHnR4VeQLgbb1mHs5TQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718791233; c=relaxed/simple;
-	bh=07p1prsox17P+Pjb5cI/WVhoAYPvJ9nMpaaLZD3pszo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=u5mNPn9McJlveLLfHP4W6Y/ELVGO0KCk0lUZ6CLqq1hHkwDtV7QvTC2c0V+A222tl+vMAME1qXUDg4q900pW5lQrGTrHtWM08b6xjmtZKsozytUbva2VKrv0zcU5uakbt0cMzFE+Z+tBkUtuVpNRC9D42AaE3Dy0zkb6X0ZkDLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uubXR1cL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BC77CC4AF1C;
-	Wed, 19 Jun 2024 10:00:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718791232;
-	bh=07p1prsox17P+Pjb5cI/WVhoAYPvJ9nMpaaLZD3pszo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=uubXR1cL+nDsQM1Dbg0oU/m8imv5iJgEhsN3LnpQyU5FfmhzmAEbx1J/FD23xR19L
-	 QrUao6mfY5ROABrQ84CSwNe33OJFKqipdueCHGjqD1nrFB/Hc0jLAAWigVP3R4JGEi
-	 CrSn+rwXG9enf5wRPDkQ6iA7ICMc3fT4jRL7IwZhEsna/9YtCSpgN7Tl/skgIhBmxF
-	 DK5CnZQsiHFmHck0REkEFm7pV/Mgx58ZG3iVT8uARgmv6MJyRD/0aETOOyHHIyImGF
-	 CsVctdOpjqX+c+H3to2kfGhHIrnEb6/O1ICUcUw0FUIE1EVXeuibbinmaWSdFi7Av5
-	 ZST8odbotaf1Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AE513C4361B;
-	Wed, 19 Jun 2024 10:00:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718791247; c=relaxed/simple;
+	bh=eayWKS6Wu7Bqf8vNh/QlnwnY/rDj8Fs1l2UlPp8StoI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r84Nt1fdAKPXw8/CB9vEBJWpSc2mP8xUoL5EUDLeWXZtEEZrLhhLJBt7lEnwBUBBQtFRYOBOqfQCTFiElCc9w++rMP0+8KA3nw/5fF3Aa9B8qdabRX/pZlhZaN/MHi+IE6DBuvkHzmzwTOlWnnBDh2Uc/d65Rga87intDiPC4A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TcihEThj; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718791246; x=1750327246;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=eayWKS6Wu7Bqf8vNh/QlnwnY/rDj8Fs1l2UlPp8StoI=;
+  b=TcihEThjv4rH4R0OOdBrrZW+V4YUoLT6jlMmYwqS7fHGJbJVpqNarJqT
+   5fwosxa5HqyYIw9YyyKaCBGWFxfo4Wd6ccwcaX1XR1rJc586cSPCLgjN5
+   Sfi6pthmk5qMPbIjF5mh3sk25TOGeQBcTNKZ/OaGMWca+ot65bxi5KDJf
+   yff/i0atcNMV+dQtQ9Y71fa7xEjU1dpcU+coktbqFagoQf5KUmtak4EZG
+   cQG2l3/DsP1YJaAS/t82CTFyF7/VWyp5R/QCtJrsMylG8B/L6K9l/YL8X
+   2E1/HGR0l5Pt0SkBJcRq82ysiRue7VXTufzWldZe0hMXhym+c4+U2VJRT
+   g==;
+X-CSE-ConnectionGUID: qSjihEZMQNeYs1RXfNxrBw==
+X-CSE-MsgGUID: niW3AjgcT/ykYgZc+eGY2Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15849381"
+X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
+   d="scan'208";a="15849381"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 03:00:45 -0700
+X-CSE-ConnectionGUID: wc5mkL1JRqyiNrZZRxpFrw==
+X-CSE-MsgGUID: IL9k4KU/R9iAllvTymSjlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,250,1712646000"; 
+   d="scan'208";a="72608683"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.249.84])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 03:00:40 -0700
+Message-ID: <6ab8c7fd-c718-49ff-bbbb-9241293127f7@intel.com>
+Date: Wed, 19 Jun 2024 13:00:34 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v4 0/5] Enable PTP timestamping/PPS for AM65x
- SR1.0 devices
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171879123271.351.10640387100473429916.git-patchwork-notify@kernel.org>
-Date: Wed, 19 Jun 2024 10:00:32 +0000
-References: <20240617-iep-v4-0-fa20ff4141a3@siemens.com>
-In-Reply-To: <20240617-iep-v4-0-fa20ff4141a3@siemens.com>
-To: Diogo Ivo <diogo.ivo@siemens.com>
-Cc: danishanwar@ti.com, rogerq@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- richardcochran@gmail.com, nm@ti.com, vigneshr@ti.com, kristo@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- jan.kiszka@siemens.com, jacob.e.keller@intel.com, horms@kernel.org,
- linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- wojciech.drewek@intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf/x86/intel/pt: Update topa_entry base len to support
+ 52-bit physical addresses
+To: Dave Hansen <dave.hansen@intel.com>,
+ Marco Cavenati <cavenati.marco@gmail.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+ namhyung@kernel.org, mark.rutland@arm.com, jolsa@kernel.org,
+ irogers@google.com, kan.liang@linux.intel.com, tglx@linutronix.de,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com
+References: <20240618110617.22626-1-cavenati.marco@gmail.com>
+ <efc3a224-27b3-4259-a9a3-0296ccbf3e8d@intel.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <efc3a224-27b3-4259-a9a3-0296ccbf3e8d@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Mon, 17 Jun 2024 16:21:39 +0100 you wrote:
-> This patch series enables support for PTP in AM65x SR1.0 devices.
+On 18/06/24 20:59, Dave Hansen wrote:
+> On 6/18/24 04:06, Marco Cavenati wrote:
+>> Increase topa_entry base to 40 bits to accommodate page addresses in
+>> systems with 52-bit physical addresses.
+>> The Base Physical Address field (base) has a length of MAXPHYADDR - 12 as
+>> stated in Intel's SDM chapter 33.2.7.2.
+>> The maximum MAXPHYADDR is 52 as stated in SDM 4.1.4.
+>> Therefore, the maximum base bit length is 40.
 > 
-> This feature relies heavily on the Industrial Ethernet Peripheral
-> (IEP) hardware module, which implements a hardware counter through
-> which time is kept. This hardware block is the basis for exposing
-> a PTP hardware clock to userspace and for issuing timestamps for
-> incoming/outgoing packets, allowing for time synchronization.
+> This makes it sound like it's _adding_ support for larger physical
+> addresses.  It really was a bug from day one.  MAXPHYADDR has been
+> defined to be "at most 52" for a long, long time.  I think it was well
+> before 5-level paging came on the scene and actual MAXPHYADDR=52 systems
+> came along.
 > 
-> [...]
+> It probably needs to say something more along the lines of:
+> 
+> 	topa_entry->base needs to store a pfn.  It obviously needs to be
+> 	large enough to store the largest possible x86 pfn which is
+> 	MAXPHYADDR-PAGE_SIZE (52-12).  So it is 4 bits too small.
+> 
+> This isn't the only bug in the area:
+> 
+>> static void *pt_buffer_region(struct pt_buffer *buf)
+>> {
+>>         return phys_to_virt(TOPA_ENTRY(buf->cur, buf->cur_idx)->base << TOPA_SHIFT);
+>> }
+> 
+> At this point, ->base is still a 40-bit (or 36-bit before this patch)
+> type.  If it has anything in the high 12 bits, a <<TOPA_SHIFT will just
+> lose those bits.
 
-Here is the summary with links:
-  - [net-next,v4,1/5] net: ti: icssg-prueth: Enable PTP timestamping support for SR1.0 devices
-    https://git.kernel.org/netdev/net-next/c/5e1e43893be2
-  - [net-next,v4,2/5] net: ti: icss-iep: Remove spinlock-based synchronization
-    https://git.kernel.org/netdev/net-next/c/5758e03cf604
-  - [net-next,v4,3/5] dt-bindings: net: Add IEP interrupt
-    https://git.kernel.org/netdev/net-next/c/5056860cf8ea
-  - [net-next,v4,4/5] net: ti: icss-iep: Enable compare events
-    https://git.kernel.org/netdev/net-next/c/f18ad402cd8b
-  - [net-next,v4,5/5] arm64: dts: ti: iot2050: Add IEP interrupts for SR1.0 devices
-    https://git.kernel.org/netdev/net-next/c/71be1189c92b
+Yes
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> 
+> But maybe I'm reading it wrong.  If I'm right, this malfunctions at pfns
+> over 36-12=24 bits, or 64GB of RAM.  Is it possible nobody has ever
+> allocated a 'struct pt_buffer' over 64GB?  Or is this somehow tolerant
+> of reading garbage?
 
+Yes, it will go wrong with any physical address above 64GB - 1.
+i.e. the machine just needs more than 64GB of memory.
+
+However that code is used only in one place which is conditional on
+!intel_pt_validate_hw_cap(PT_CAP_topa_multiple_entries) which is true
+only for Broadwell.  Also "snapshot" (and sampling) modes are
+unaffected.
+
+Testing on a Broadwell with 400GB of memory confirmed the issue.
 
 
