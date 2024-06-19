@@ -1,95 +1,99 @@
-Return-Path: <linux-kernel+bounces-221020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3389490EAD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:21:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63FF90EAE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D236B1F246D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:21:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8F591C230C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9A313FD8D;
-	Wed, 19 Jun 2024 12:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wU8YO6+y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3951442F1;
+	Wed, 19 Jun 2024 12:19:38 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FF314F9EF;
-	Wed, 19 Jun 2024 12:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9216620B34;
+	Wed, 19 Jun 2024 12:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718799518; cv=none; b=sVzi0KfKv2Qtn+PH+CI80YJknhnSFq9JJBOBjOqCO4LwM/1VCvEBelhSCPmKNHwI8/9iwhMGjied093SY4UsP4/SmbEfEJBquwyEBwBzqoUecMOLGeRj/9yv4SuZa80U3RpI7QeVA/eTdt8jCDlCQiSg1H3eZxiivjnL2UA17QE=
+	t=1718799577; cv=none; b=qs2UQ8KIXc+h/h9+oObPGggY53yiIJ6uhAkn7hycDw888IlkgCM2oo/3PABStl8CESEFk1hcLk13565Iqtb8sc9T9qQ97Frq0o5BKNbZBqQndvCTUiKkAPWdnphtcw+hu6EzX9u7vx4GoCYOIS0QqAGLc05hlHxqD39HuX9pn9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718799518; c=relaxed/simple;
-	bh=oS16SDxq7LLevQ5fdL1wikBwb3na4x3KCVVA1PsNSXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=blWecT5cIo4s9WixoQetSYz0Q4LDgtqkKTGKO4TKRFH8zsTuupAelbfK07Jko/aWFsSDQF4TOy2HFp3SHBCV8uQHmJZr4QC8lPmFa7RNYJJvrrcCtEoiR+4VEpghFu7xkwtD78iFO4oQiPqSzguGOu3x7Ll9sYT8tlWBGCmlyoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wU8YO6+y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 522C2C32786;
-	Wed, 19 Jun 2024 12:18:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718799517;
-	bh=oS16SDxq7LLevQ5fdL1wikBwb3na4x3KCVVA1PsNSXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wU8YO6+yCaSsHwRSHnoxZ1Dof72Uie9MfShkbtQVORWO3BQlw8NkBARGtnDxhiWZZ
-	 dmhSSgmYliQJvVyCrQGyTVu3NZLRaemMfE53nZItVHx/goomfKJ2NZBYJctxGtqFdW
-	 ffVDkCs0N0WTsWyE1lLqgE6TELV6sTpgfsdadZak=
-Date: Wed, 19 Jun 2024 14:18:35 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-	Lee Jones <lee@kernel.org>, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1 resend] MAINTAINERS: Fix 32-bit i.MX platform paths
-Message-ID: <2024061920-hardwired-pry-bb81@gregkh>
-References: <20240619115610.2045421-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1718799577; c=relaxed/simple;
+	bh=C19NRnBVmI5ItD3+g3/xEnxerKXG3ag9MUgJp67rJH4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T5CL7oj+jJQtOVeXa7mLzYxJWKgO3XHBoQ/eskb2BdL6slnqmbzzWOc8uR5AClzeVHcRVKYLR3fMZ/kBMZt0NEdizA511CaKZtTDOmMvsX4gLgkeXlKeVXi+JIOn+rBB8hs4XvRu9sAAruo+hD0asBjIrfnHwTJxxEQs6oVRByU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 45JCJNVE01676424, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 45JCJNVE01676424
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Jun 2024 20:19:23 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 19 Jun 2024 20:19:23 +0800
+Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 19 Jun
+ 2024 20:19:22 +0800
+From: Hilda Wu <hildawu@realtek.com>
+To: <marcel@holtmann.org>
+CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <alex_lu@realsil.com.cn>,
+        <max.chou@realtek.com>, <kidman@realtek.com>
+Subject: [PATCH v2] Bluetooth: btrtl: Set MSFT_EXT_ADDRESS_FILTER quirk for RTL8852B
+Date: Wed, 19 Jun 2024 20:19:18 +0800
+Message-ID: <20240619121918.3273270-1-hildawu@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619115610.2045421-1-alexander.stein@ew.tq-group.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-On Wed, Jun 19, 2024 at 01:56:10PM +0200, Alexander Stein wrote:
-> The original patch was created way before the .dts movement on arch/arm.
-> But it was patch merged after the .dts reorganization. Fix the arch/arm
-> paths accordingly.
-> 
-> Fixes: 7564efb37346a ("MAINTAINERS: Add entry for TQ-Systems device trees and drivers")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> ---
->  MAINTAINERS | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c36d72143b995..762e97653aa3c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22930,9 +22930,9 @@ TQ SYSTEMS BOARD & DRIVER SUPPORT
->  L:	linux@ew.tq-group.com
->  S:	Supported
->  W:	https://www.tq-group.com/en/products/tq-embedded/
-> -F:	arch/arm/boot/dts/imx*mba*.dts*
-> -F:	arch/arm/boot/dts/imx*tqma*.dts*
-> -F:	arch/arm/boot/dts/mba*.dtsi
-> +F:	arch/arm/boot/dts/nxp/imx/imx*mba*.dts*
-> +F:	arch/arm/boot/dts/nxp/imx/imx*tqma*.dts*
-> +F:	arch/arm/boot/dts/nxp/imx/mba*.dtsi
->  F:	arch/arm64/boot/dts/freescale/fsl-*tqml*.dts*
->  F:	arch/arm64/boot/dts/freescale/imx*mba*.dts*
->  F:	arch/arm64/boot/dts/freescale/imx*tqma*.dts*
-> -- 
-> 2.34.1
-> 
-> 
+Set HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER quirk for RTL8852B.
 
-Why is a MAINTAINERS change needed for stable kernels?
+The quirk to support tracking multiple devices concurrently.
+Commit 9e14606d8f38 ("Bluetooth: msft: Extended monitor tracking by
+address filter")
+
+With this setting, when a pattern monitor detects the device, this
+feature issues an address monitor for tracking that device. Let
+pattern monitor can keep monitor new devices.
+
+Verified by Chromebook and Raspberry Pis.
+
+Signed-off-by: Hilda Wu <hildawu@realtek.com>
+---
+Change in v2:
+ - Add reference commit, commit description and verification devices.
+---
+---
+ drivers/bluetooth/btrtl.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index f2f37143c454..baa0c6119b51 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -1297,6 +1297,7 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
+ 			btrealtek_set_flag(hdev, REALTEK_ALT6_CONTINUOUS_TX_CHIP);
+ 
+ 		if (btrtl_dev->project_id == CHIP_ID_8852A ||
++		    btrtl_dev->project_id == CHIP_ID_8852B ||
+ 		    btrtl_dev->project_id == CHIP_ID_8852C)
+ 			set_bit(HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER, &hdev->quirks);
+ 
+-- 
+2.34.1
+
 
