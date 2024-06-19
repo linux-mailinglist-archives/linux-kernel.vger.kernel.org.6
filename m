@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-220995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47EA790EA78
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:10:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5A790EA7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 14:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 816C5B238DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:10:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 441461C234A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 12:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A510140E4D;
-	Wed, 19 Jun 2024 12:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D093014263B;
+	Wed, 19 Jun 2024 12:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="HH/SuoGS"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="b96uwaDA"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833FA82D9F
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C32313EFEE
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 12:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718798988; cv=none; b=p8I3V6T8RJhXHh93tMWIe2C1q1eSfYssLI1bS4G1aRns0DXCgbiNW1pNZtwhuFhKnMqpq9W/cIjWTqcTf/H4ukkVwIq54LwNPTs3u7eNnTOFyc6mTi8A2fzXqFZB0iP9TIdWZ+cpVaqzUxY3dgUBTBaDIEjQuGcsxIctqCRuWt4=
+	t=1718798990; cv=none; b=YKEw2shae7VglvJuuaXSW7dYCgEkQdeiAas6A5I4YMpBSugQFlEL7yybgCz5OGpsm+l8Q1m6knQAMRDS+NMoFy5gzSyx++chBufa0h+0Lhf2ixksIpgkEXNQjOj0FOLfk85gbz0BdTiIIc8d+n+wnXOEB2qQbZj0sC3VEPDNiGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718798988; c=relaxed/simple;
-	bh=KLqszOBKq4UmcEK8dgplUQIW8Sbc/rgdmN5Zvo5C8vo=;
+	s=arc-20240116; t=1718798990; c=relaxed/simple;
+	bh=dwRL4BzskUTNnkpIMgL22DLU9dpDbS12/wL0pywWeXI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jMrqh4A5Mlob2WuRasSbm70l4hMcsy6KmgC5NvEIzX04292qiRnvAs2MImbqw08fICAeseeXTmgf63hFlrUUyeK/Gac4AwMjcl3fqB1AXMG4Mg1+FBSjpQfvvm4FkUVfiyHb5QV1eP2sOEhAAkh4d/ld6H6ittCntZhlcEZ5xRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=HH/SuoGS; arc=none smtp.client-ip=209.85.218.43
+	 MIME-Version; b=ZV4Jt/t0biPY1xhu6gew3LtMKU3PFAJQ7N487tZLiIvE0wUDzJb8X99f3PhdvG8BoRJEjTlflE48ST4tfqe1Xj+WW8t0X8i1GfXIg8ywmgfVkkt9C5uDot9yrqc44itnlw6aufcbd/bnqHADb9VeL5d2rzZmcS2DzFNx5Y0Qi5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=b96uwaDA; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6f13dddf7eso801736366b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 05:09:46 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6269885572so123440266b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 05:09:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1718798985; x=1719403785; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1718798986; x=1719403786; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=repF/9O8y233ry+RsrFhVhQxIwnZs5AMfgnT6lVaZq8=;
-        b=HH/SuoGSfXZMTan3gmpSo/HF4q2FSJ0kzlVBGGaDVb5ofp+graaFrmv39ac42krIsz
-         Myeqwg+nRL0fWvszjQ5/TXf8KCDnyGpQOvsS05I0sjvztM94fs4EjoFX6JBpQ459jCuO
-         RjxP/SmKXglQhuFZPl9W/Nhpf5ABJ88SKO4K3XncNSRogXlY9FZ56/JxUsGHgt9kf3d8
-         7X0Q1cic8Re2xgSr04WI4cNvMo5Kk8N9KHVNL2RSOOspvzL1lMp+l1OTO0WXmMYR/zUI
-         x14jlnGEfKNSjWVN3FWUltFgF1RyPTJgtPghQjvyybmRFWJhtL+3XJhKV3Y94ZMjtyme
-         WLsw==
+        bh=l37Xgsbrk/W/CaUfhlMyXOo5T2v0G6wEI2diCQGNTyY=;
+        b=b96uwaDA9a1Qc/tVcKSVREL724fYS7Cp6PUW5QB2776XazuQc+Ys6jqLoKhyS0gnzh
+         FTWLnI7lP8E/CQvHWEzoT+/9Ognl0zEbQJyC1jTIWzYaP8kwOouKul2HzgzHpjAYZjRF
+         pa5MeY+LpgRkQx/MFju2DAq3sM+ezmoPp85AO8iHdv6OgTuHItjrcyDbIf4cOtmAQc6R
+         AOuWWSbiGNYjTdQvtafG6WRzPFnt58TYfwVPN4dpAWoFe6TiY2ZiKFkcVycCUAp2lbPQ
+         M3cepOB5wJmq5jffD2RlxqM3sDZ6PxfFvdy9KlEqjVSAdwM866gJ/cZHnoaPBBkDDHig
+         aNmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718798985; x=1719403785;
+        d=1e100.net; s=20230601; t=1718798986; x=1719403786;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=repF/9O8y233ry+RsrFhVhQxIwnZs5AMfgnT6lVaZq8=;
-        b=a+noNBkPokS73dT/HzDLc7jzNC08puOo87l5QLV8qODFCTFtuhi2zAQggENQrPuKmM
-         R11Udq+JSL/Js9T4aMqOlKOPhJ1QlOG/PqladQJpN4ikycu4QjGnVKi5ZepVt206vlAa
-         R6RBcjC+/46ThAxd9ZkQ/KRV5lsY2EKmhUF5YK5DydXC9I3/8NlbZCG89LJg4rEl09EL
-         TjFN0fgwYOnMH9l2TShpL9mVy05ecEWS/G3EYPqGbqkqBQYuTkNDsuet50MthkNvoS6g
-         011UILZuW+OwWzSyyz6Qo13WjNi39tjsQYOBQ45I8MROA90Qf4aFE1cFhvW8MqG/nYBz
-         NhPg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfHQVyqnlvhEvBVpghQlUh6URTk95rLMZycZCFPm2XTg711vVS5EPyALhITSakRAyzlBQVLBsbuiGYeRl3bBz5g3tm29pUxparQc8+
-X-Gm-Message-State: AOJu0YwRJSesYU/t3UW1y70NmhnL7zkvKE3NzFwwtKRZIHkaMVK19ndO
-	BQpljSkSARxvA0xC860dlYft2JewlF0TfwKewibH99KI0BS3E9u9YkNpEW0e2VA=
-X-Google-Smtp-Source: AGHT+IEFsYgFlNsijCDzTIVv0iYZUa1HsZiHTq3BILY+nUISrrrwCJfk4oLG1DUHWcQA7IKgxnV5zw==
-X-Received: by 2002:a17:907:c78c:b0:a6f:6063:6bab with SMTP id a640c23a62f3a-a6fab607200mr197334766b.16.1718798984925;
-        Wed, 19 Jun 2024 05:09:44 -0700 (PDT)
+        bh=l37Xgsbrk/W/CaUfhlMyXOo5T2v0G6wEI2diCQGNTyY=;
+        b=fu98Hl1FqySyxwfMWfKOlj2NiW//8qy3HXINohQYwMxbYDq4voGuZs1snsm4O+MLOZ
+         C5L2y2TLxYnrSp/KuZY9aWELbWyn+TMQpzixmqXz+6czdG/35blJFoZYdeAZy+XgRYc0
+         BARsbx/aJ65J1iMQFkb62GaJ0+gEvVok5GJaXn4743zZgT+Hv4Mr7GDpQv7siubn7+7i
+         HL9FzwPO7Kz7nrxh93b5HAH7YzjSBNqFXhAswX/8JEyqHoclK7JQfvzfCbFLeQri8RjI
+         H5nWXM+iGdI3DKoDS5q3Kwn/AmACfvbACpJ00jua+gpis6VWvINoTy2NbXOWl0rySwSr
+         WjCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnNYUGFDOhWZSjiSgB9WRQq1oyWRYxWmQfK96cu92RBGS/miBgEV/4yWqEIs4EUG9Q1sY3dOGaMGeYFzWn0WOzrjtxqLMuFnT8hlMD
+X-Gm-Message-State: AOJu0YzWCfTt01xPRxVAU0kdyzHL+MF9JMHz9nXkNyB72b6PcM2BYEbz
+	nakW90iG1djIslXbqCGCHQWEOxKD6WR7+nPWBAUafJRSUJxX9YuZtp8u5G9t/Cg=
+X-Google-Smtp-Source: AGHT+IE7mmdZtzwF3jv3n7R6o+Q3QczWuCZ6SkHDb6bjWUSTkUbSSYTk1wTyLPZI29mLO3zORsFkUw==
+X-Received: by 2002:a17:906:80cb:b0:a6f:6f98:e3dc with SMTP id a640c23a62f3a-a6f94e1f5c9mr321104066b.10.1718798986592;
+        Wed, 19 Jun 2024 05:09:46 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56da43fbsm659014066b.39.2024.06.19.05.09.43
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56da43fbsm659014066b.39.2024.06.19.05.09.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 05:09:44 -0700 (PDT)
+        Wed, 19 Jun 2024 05:09:46 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: ulf.hansson@linaro.org,
@@ -79,9 +79,9 @@ Cc: linux-pm@vger.kernel.org,
 	geert+renesas@glider.be,
 	linux-renesas-soc@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH RFC 1/3] pmdomain: core: Add a helper to power on the restart devices
-Date: Wed, 19 Jun 2024 15:09:18 +0300
-Message-Id: <20240619120920.2703605-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH RFC 2/3] watchdog: rzg2l_wdt: Keep the clocks prepared
+Date: Wed, 19 Jun 2024 15:09:19 +0300
+Message-Id: <20240619120920.2703605-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com>
@@ -95,78 +95,89 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Restart devices (e.g., watchdog) may be part of a software-controlled power
-domain. In the case of watchdog devices, if they implement the
-struct watchdog::restart() API, this is called though:
+The watchdog restart handler is called with interrupts disabled. In
+rzg2l_wdt_restart() we call clk_prepare_enable() to enable the watchdog
+clocks. The prepare part of clk_prepare_enable() may sleep. Sleep in
+atomic context should not happen. The clock drivers for all the
+micro-architectures where the RZ/G2L watchdog driver is used are not
+implementing struct clk_ops::prepare(). Even so, to be sure we are
+not hitted by this at some point, keep the watchdog clocks prepared
+and only enable them in restart handler. It is guaranteed that
+clk_enable() can be called in atomic context.
 
-kernel_restart() ->
-  machine_restart() ->
-    do_kernel_restart() ->
-      atomic_notifier_call_chain() ->
-        watchdog_restart_notifier()
-
-The watchdog_restart_notifier() is called with local interrupts disabled
-and SMP disabled (machine_restart() calls local_irq_disable() and
-smp_send_stop() before calling do_kernel_restart()).
-
-If the restart device (e.g., watchdog) is part of a software-controlled
-power domain and this domain is off at the moment of restart, we need to
-power it on before configuring the watchdog device.
-
-Add the dev_pm_genpd_resume_restart_dev() function to power on a restart
-device in these scenarios.
-
+Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
+Closes: https://lore.kernel.org/all/CAPDyKFq1+cL1M9qGY0P58ETHUZHGymxQL0w92emUJPMe7a_GxA@mail.gmail.com
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/pmdomain/core.c   | 18 ++++++++++++++++++
- include/linux/pm_domain.h |  2 ++
- 2 files changed, 20 insertions(+)
+ drivers/watchdog/rzg2l_wdt.c | 31 ++++++++++++++++++++++++++-----
+ 1 file changed, 26 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-index 83d978743659..d05bd72f6cfe 100644
---- a/drivers/pmdomain/core.c
-+++ b/drivers/pmdomain/core.c
-@@ -1540,6 +1540,24 @@ void dev_pm_genpd_resume(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(dev_pm_genpd_resume);
+diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
+index 2a35f890a288..6e3d7512f38c 100644
+--- a/drivers/watchdog/rzg2l_wdt.c
++++ b/drivers/watchdog/rzg2l_wdt.c
+@@ -166,8 +166,8 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
+ 	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+ 	int ret;
  
-+/**
-+ * dev_pm_genpd_resume_restart_dev - Try to synchronously resume the genpd for
-+ * a reset device
-+ * @dev: The reset device that is attached to the genpd, which needs to be
-+ * resumed.
-+ *
-+ * This routine should tipicaly be called for a restart device (e.g. watchdog)
-+ * that needs to be resumed during system restart phase.
-+ */
-+void dev_pm_genpd_resume_restart_dev(struct device *dev)
+-	clk_prepare_enable(priv->pclk);
+-	clk_prepare_enable(priv->osc_clk);
++	clk_enable(priv->pclk);
++	clk_enable(priv->osc_clk);
+ 
+ 	if (priv->devtype == WDT_RZG2L) {
+ 		ret = reset_control_deassert(priv->rstc);
+@@ -226,11 +226,28 @@ static const struct watchdog_ops rzg2l_wdt_ops = {
+ 	.restart = rzg2l_wdt_restart,
+ };
+ 
++static int rzg2l_clks_prepare(struct rzg2l_wdt_priv *priv)
 +{
-+	if (system_state != SYSTEM_RESTART)
-+		return;
++	int ret;
 +
-+	dev_pm_genpd_resume(dev);
++	ret = clk_prepare(priv->pclk);
++	if (ret)
++		return ret;
++
++	ret = clk_prepare(priv->osc_clk);
++	if (ret)
++		clk_unprepare(priv->pclk);
++
++	return ret;
 +}
-+EXPORT_SYMBOL_GPL(dev_pm_genpd_resume_restart_dev);
 +
- #else /* !CONFIG_PM_SLEEP */
+ static void rzg2l_wdt_pm_disable(void *data)
+ {
+-	struct watchdog_device *wdev = data;
++	struct rzg2l_wdt_priv *priv = data;
  
- #define genpd_prepare		NULL
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 71e4f0fb8867..9f8ecfa0bf3c 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -347,9 +347,11 @@ static inline void dev_pm_genpd_synced_poweroff(struct device *dev)
- #ifdef CONFIG_PM_GENERIC_DOMAINS_SLEEP
- void dev_pm_genpd_suspend(struct device *dev);
- void dev_pm_genpd_resume(struct device *dev);
-+void dev_pm_genpd_resume_restart_dev(struct device *dev);
- #else
- static inline void dev_pm_genpd_suspend(struct device *dev) {}
- static inline void dev_pm_genpd_resume(struct device *dev) {}
-+static inline void dev_pm_genpd_resume_restart_dev(struct device *dev) {}
- #endif
+-	pm_runtime_disable(wdev->parent);
++	pm_runtime_disable(priv->wdev.parent);
++	clk_unprepare(priv->osc_clk);
++	clk_unprepare(priv->pclk);
+ }
  
- /* OF PM domain providers */
+ static int rzg2l_wdt_probe(struct platform_device *pdev)
+@@ -275,6 +292,10 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
+ 
+ 	priv->devtype = (uintptr_t)of_device_get_match_data(dev);
+ 
++	ret = rzg2l_clks_prepare(priv);
++	if (ret)
++		return ret;
++
+ 	pm_runtime_enable(&pdev->dev);
+ 
+ 	priv->wdev.info = &rzg2l_wdt_ident;
+@@ -287,7 +308,7 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
+ 
+ 	watchdog_set_drvdata(&priv->wdev, priv);
+ 	dev_set_drvdata(dev, priv);
+-	ret = devm_add_action_or_reset(&pdev->dev, rzg2l_wdt_pm_disable, &priv->wdev);
++	ret = devm_add_action_or_reset(&pdev->dev, rzg2l_wdt_pm_disable, &priv);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.39.2
 
