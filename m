@@ -1,537 +1,308 @@
-Return-Path: <linux-kernel+bounces-220380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-220381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A7890E0CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 02:22:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4720A90E0CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 02:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF4271C218B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 00:22:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1EE51F2228C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 00:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738A01C20;
-	Wed, 19 Jun 2024 00:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F8C4690;
+	Wed, 19 Jun 2024 00:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQkr7HAy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vq/FGAoE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B4E15CE;
-	Wed, 19 Jun 2024 00:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718756551; cv=none; b=U8JVGrsqX1tTG7NpVg+9yHosJyW3ojoA5GNyVv74hnrb4RFMkrQkxSMsEQbplrfxaW6QW8WjIUoqVs2uZ0QY9CbJt9h7IeWdntDpxZDJjuh7pFA0YLkdFMCXrWfPKbwBrIIEnS9AI/gtslYKYgGfQDxG12JoTO4VsLYkDaySrr8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718756551; c=relaxed/simple;
-	bh=/d5csBPIDvpXVBQPgaAsVkdJ00vVtZ2uN6EJ3vJqa9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KiWeegUf+Rk90SRdLVIVs109CpZDrlNOrre6oOF5QpOiggJnPxqoCcdmjplnRKwkOp3nhZVXF3KNb6M6sNsOhgGvLIW6h17hmYsvksFw4M/MdbNPQQS/11CyJt74wacpvGaPKA/UzWBRTY6/Cz6iWSFTNFhuXmoarY+I4Gb8DZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQkr7HAy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB859C3277B;
-	Wed, 19 Jun 2024 00:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718756550;
-	bh=/d5csBPIDvpXVBQPgaAsVkdJ00vVtZ2uN6EJ3vJqa9A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZQkr7HAyl8VSRqt5v4pBuk8Pw9Piuw54cbpFP6cuukzZ/TBhGs+HznXlof4I+HIos
-	 OVfbFvccdzmczdwcXe0532XkXSOdGCH+0gf9JkXqeMpxayvomS8/ixBxjBiInzED9k
-	 L9CR0joROpJAln5hmTHiQn6LbK5Dz97649r6NCMHw1ii+SbZQksxzLn3pEMBKg5g6g
-	 7/nGB8qntrBcMvxCi7mNel0mcRw6My6iTNqWHYlr4R5vxv1YjCWqugUlIIirb1zVn8
-	 UuWROYDT5mCi39l17rCDRU7SttNSQEvZd6xgf8zOz0cwzqkUwf40BbySWlaWfGcj0R
-	 uxDUdjOaxbZ4g==
-Date: Tue, 18 Jun 2024 17:22:30 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zizhi Wo <wozizhi@huawei.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yangerkun@huawei.com
-Subject: Re: [PATCH] xfs: Avoid races with cnt_btree lastrec updates
-Message-ID: <20240619002230.GH103057@frogsfrogsfrogs>
-References: <20240618133208.1161794-1-wozizhi@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C4F6AAD;
+	Wed, 19 Jun 2024 00:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718756565; cv=fail; b=kjGGu8vBjuLshYC9Ich0RKoW/JFyLieuqUHLAQZ8X/VbA1dHfTasduOx8DU0GRANa47+7zxGsKzWmCuj9Sd92vPdUiGE9tIbeGO0u8FuE3pxrMnKEbvCZ9eAOvnAdUb0Y/UVT0YZn4hCwW22/cw/aFbpKP7bzh86WmV8NqNCF1I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718756565; c=relaxed/simple;
+	bh=GpRrcWlBHModgXZ3gUbwqqueBF5ygk6CxMB/d4xFYbI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=U+neTrpFq0W17AZIhbT2ImLHMWxgW4eBTAvA3u9F2iNcuVjWbAA00nUIaAeAI4Ym2GzzOi+PRVVJARiFaO69MAgDA1LSopuoDtji0Gg+NcBvrtXX04UAaT6hyHC+DMaU4CpVw1/d2I/b0nVBrn0lWANb4QkcatzoqkwhiHUUE/8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vq/FGAoE; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718756563; x=1750292563;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=GpRrcWlBHModgXZ3gUbwqqueBF5ygk6CxMB/d4xFYbI=;
+  b=Vq/FGAoEzIi3qj8906VXCDuncdYfw/86qHhS2Ysog9ML8nsdje0imguL
+   CrW8T3WaDmsf11GX5igPtm+0Jb+SNg4rmRSN5FBK7vaNuLhd+VQ6q0tKm
+   B8A34M8i0pF0tRMPZYDScr5cCp79tTMk44oBzszQhrRqzGCHddWxJQ3Dp
+   u+G1Y5/ZRJFuijS6/wRs3ufZbh4owSelF6oCeqYvAV1DHI17MnGB71HcI
+   LmH0wojJPlD5+PmgI7Js2syscAK+DUpq5HGtYq30doQ47PjxHwFGiz1wR
+   9WAP+8XHOZvXJ79JwKXCXwvYfr6UA430cSvlmGHUBAKiv8y626/KzjUY4
+   g==;
+X-CSE-ConnectionGUID: GUz58Vf4TlixzSS+UMLCbw==
+X-CSE-MsgGUID: 6/v5fjiySjCSFwyehOdPpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15508431"
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="15508431"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 17:22:42 -0700
+X-CSE-ConnectionGUID: SCtkA4dMT/CVTSeAqyMlzA==
+X-CSE-MsgGUID: S+QeZpjZSsGpX6SaLS4XXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,247,1712646000"; 
+   d="scan'208";a="72938277"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Jun 2024 17:22:42 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 18 Jun 2024 17:22:41 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 18 Jun 2024 17:22:41 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.173)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 18 Jun 2024 17:22:41 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lCYd3ADlQ1RjGGld7WAQf9wwfd/tcFSaz81eyO1BKMJuXCuyHXTF3kOpMVlj5J/nki5fUxdWyF2PzEg80ZumGlJPbFRHICQsKM7W5CXxcY5NYKSQ21oUOzohg2icmkzsvataghT5jj+szMch9iYLkSXcDRZoSnkp7ZsR3td39jdC3ZpXgYBR3ri9TDmh4tuTJReRk54dHW2JLX/JEiH3E4gyvhzYQAarYI3get76zZh9DmbJGBgU5ZPzv3po87flITrhUD/tAB2NW4y9KSu80IEh8zDBYqoLC7zMH1mywYuLSq0f/NXIfnEF3iJrUVj5fCPG7fm8I0qoLbrnvct7Jw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GpRrcWlBHModgXZ3gUbwqqueBF5ygk6CxMB/d4xFYbI=;
+ b=VSP4JmXcOoEqVmkjRKqUYfe3CN/UXi28P4Cn0gXnbXJiHFhZ1PmlULZ/vKvJaF433ZonBRz0oC3p0KSPOrHtZ2icFYpd2ufnooNhyKSXL4ce2YHn72niCoYdv0e42AW6KZS1C76rFyg0Ebt4gC5eyubylQiWXi4EgsLEpmDPt6Wz1u928rG/QjBnplApOOe4NXNGv7N/fmsNbHIkKD6wpTQFPfEjbr5loGNLhl+A9CaudKX069TBKMvYw1Xs2ytvOH9S8F47KL53PhF93+CQBggzrYgGQ7l9C9PMP6oSvkBhps+2a7p7ALvvCHCSyoHl/XQ1Ua0+0O/jhVGo5GYzGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by IA1PR11MB7756.namprd11.prod.outlook.com (2603:10b6:208:420::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Wed, 19 Jun
+ 2024 00:22:34 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%5]) with mapi id 15.20.7677.030; Wed, 19 Jun 2024
+ 00:22:34 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "nik.borisov@suse.com" <nik.borisov@suse.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "Hansen, Dave"
+	<dave.hansen@intel.com>, "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org"
+	<x86@kernel.org>, "peterz@infradead.org" <peterz@infradead.org>,
+	"hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>,
+	"Williams, Dan J" <dan.j.williams@intel.com>,
+	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "seanjc@google.com" <seanjc@google.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "binbin.wu@linux.intel.com"
+	<binbin.wu@linux.intel.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>
+Subject: Re: [PATCH 7/9] x86/virt/tdx: Print TDX module basic information
+Thread-Topic: [PATCH 7/9] x86/virt/tdx: Print TDX module basic information
+Thread-Index: AQHav+UN+5f7ufMUykm4ncHMs4sn3bHNjayAgACwFAA=
+Date: Wed, 19 Jun 2024 00:22:34 +0000
+Message-ID: <775bb92d9e201f5efc2a939def1ecaafdc9c6bc0.camel@intel.com>
+References: <cover.1718538552.git.kai.huang@intel.com>
+	 <f81ed362dcb88bdb60859b998d5b9a4ee258a5f3.1718538552.git.kai.huang@intel.com>
+	 <d8b657a4-ab2d-417e-be24-cbbd7ce99380@suse.com>
+In-Reply-To: <d8b657a4-ab2d-417e-be24-cbbd7ce99380@suse.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.50.3 (3.50.3-1.fc39) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|IA1PR11MB7756:EE_
+x-ms-office365-filtering-correlation-id: 467a91df-6a58-4f6b-5d7a-08dc8ff5ea59
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|366013|376011|1800799021|7416011|38070700015;
+x-microsoft-antispam-message-info: =?utf-8?B?NUNXZjZtMXptdVJ1RXZsZlRJYjZadk9kZGlpL1lTczZNZTRjTzNvdXIrQ1Q2?=
+ =?utf-8?B?eHRnTm9WVjNMc1ZHWk0xZmlVUjhqTG8wWnNzRlkzeEF1dENuTllpVmdZaTNR?=
+ =?utf-8?B?aWZ3MThKanRqTjg5aVBCSEs5Q1ZGSmVXV2ZWOE9iVEloVFI2M0tMN0FJN3I2?=
+ =?utf-8?B?K3grRGY0Yk1KKy80bmgycWhuWU5NMytSbEVDMjI5ZVFDMlg4WnZ1eHNEZC9I?=
+ =?utf-8?B?TEhSL1VYMG1pSFhMTlQ5RHV0YzE3VndqbnZFZWdsQVJXbFoycGd3bU5IazJZ?=
+ =?utf-8?B?TUFacUFmV21lbkFlQzhwU0praURhQ1dvOEQzL0Q4STNpbFdHSHdYRjMyTDR5?=
+ =?utf-8?B?NUxxRTYwYW1ydzBhSmFlQ3FOWFViOEkxeUhOYWZvYjVRUXpaUmtrQWJSSnNW?=
+ =?utf-8?B?YUdnTUpOcEw2OTE3SjhrNGRaL3JEb1VwV2luWUdzZ2VBMFBFNTkyN283UHhk?=
+ =?utf-8?B?U2RQY3h5S21hc1hncGN0UzA2WElobktoL21yVU4wVmxUT2dwb2p2bXdGMDNV?=
+ =?utf-8?B?bXJ5bHk1SklSRDNXNWh3L3BVL3pIWDlrY05ibGJxcll3cTB4Q3NTYjRvckFw?=
+ =?utf-8?B?ckpaeENYUENYRTV6bDF1NEttN0RQMWZUSm1jenZSSnhQREV2MnZCVng2YlZZ?=
+ =?utf-8?B?a0hBbkxEMUhRMVZiQzRYeXZ5QnVsdWkyS1V6bnh4SUN3VStDOFM2bGp6YUtr?=
+ =?utf-8?B?clExUi81eG9HUStiTjUvUW1aWFZXSTMwc1EyNE9IRUtwWlVoZktxZWI1ZnM4?=
+ =?utf-8?B?S1lKcHlJTkF5SjVFaTJzUW1IWHlVZXNyNmF1SjVHTWRNaGJzUW9EemhNZ2xk?=
+ =?utf-8?B?Z01NaXhDU2lvYWNIRng1ZTQ0MjhnMEtuSW8yYk9nRXpyTjJPektnSmlnRnZM?=
+ =?utf-8?B?bnpXY3dCWnJkOElVR3BNcmFDSFF1enJqREZIcC90K2VQUHEzNE4wMWhCMWNr?=
+ =?utf-8?B?VzJ3SDBndUZsZkdJS3ZwTzR4VjQwNG04RE52VUtJUWFieHNEcmRDVFNjK01G?=
+ =?utf-8?B?VU1ydzc4VnVSY083S0R2dU95R0tVWjgzaEF3MUxnL2p1b21CQmlJcUJrd2tn?=
+ =?utf-8?B?MHpVL28yenpKNVRTR0YxY2dnL0NIK1E5S25HbVJKalNzT3JuZ3VMN3F3bHpu?=
+ =?utf-8?B?TnRWM1RZcXNZSE5YcjZyL3QxVE5BVzhoeFJuUjdqbzhBa3JLeDdVUTNSazdW?=
+ =?utf-8?B?MnQxV0tzRWFWL1BwaWdlWlhTdVF5akI0SDBhM2ZCRjdMTEd6SHZWczlwWENB?=
+ =?utf-8?B?b21ZSGZkbjk5ckhJaVYzZ0hvcFU1Q29CRy9TZW4xZUM5VXk0TGkxZmFiRTBJ?=
+ =?utf-8?B?OElhMFRRd21rTkptMVM3TnQ1SXpXMndwVDRZMlcvRVpadENZTU1HSll5aWlT?=
+ =?utf-8?B?UUswNU5QcXpySElkOUU0Q1ZJUXY1U2JjelJoZmI3bnZXVmpUZnZSb3FYMFdV?=
+ =?utf-8?B?QU4yTVlvNDMydm5wcGs4TVpCN0I4aEhjN2NqcVdtekF5UVlqY3ZhY3k3U1BR?=
+ =?utf-8?B?ODIrQkVyMXBzVkQ0MFZxVTZxc2k1aFhOT2RQZU5Ja3RESlpTWFFjK3A2N05X?=
+ =?utf-8?B?dTBRUTF4Q09Vakd1dk9wdGtKRHgrMkJLME9CWG0vQ2t2b3ByYXlIUGwvQjc5?=
+ =?utf-8?B?UzRtdFRTS1Q1SmJzS3NFRmRCV0pRcForUFNsamc2TmJsQThlMUNSSGpEZldQ?=
+ =?utf-8?B?bjhDTDIyRjR2dHRiQkVHYm5lelBrN2ozeHJveWFwejJqMldmT0RLbURqeGkw?=
+ =?utf-8?B?NEthcXQ0WWdFVGM5QUI1bndMUG1SYUpxRFhVZDRaZmlGUWpUeG9aRkNURCtn?=
+ =?utf-8?Q?LK2LzdhU7A6gpeqHDzi+MEBzmMittlmUjIgDs=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021)(7416011)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UmFUS08xTDN4dThIRFhwWmZwNUlIQ0V5QkU0cnhkTVFQMCtNRHBDZnRyb2lY?=
+ =?utf-8?B?VDZKVU5zWUF5VXgrQ0ZSbFkycVFaaXZ2cHcwWWNDS2RvU3pvYjN0d2JNZ3lo?=
+ =?utf-8?B?dk9UNWltSzIwZnY4bGJoS2NSalR2NjdzS2lveHJXaUtNZjNnakVyY3FwczRj?=
+ =?utf-8?B?ajVTdXZrMkdCVDV1Q21HVmJaQmpSMjQwVHN5bGdJNUdLS0E3TVN6Q0JxcG9h?=
+ =?utf-8?B?THlPMXZ3bFFTWCtZa0NBRHJ0NWZkekxCVFhUNzg3ZEozQ3VJRmVZSmlHTTJD?=
+ =?utf-8?B?TjExbGpNVjl1MWRZajBKc2tHRE5FMGIxVXFwdmNVSi9GUnQvMmRJK284T0Vw?=
+ =?utf-8?B?RmlBd09ISU5DQkFVV05iQysyWG9sZEhXNS84SnVqWG1yOUdyU2txWXQxQXVq?=
+ =?utf-8?B?UENyVGd0bmRxb28wZFk3aTR6cWIvNDdYOEljeDI5YURLRVU5a2lCbkpYWjFN?=
+ =?utf-8?B?UTd3RkdRQXhDQkxzU2ZJYkZRNE1Ha2xXcGo0eXBpVENQMnZPZWM4NDROZWJO?=
+ =?utf-8?B?KzFSZXhFWWljMC95Y29heXpVam9EdTRqUU9pOTVuM3JuclRIVStIeDU2OVBz?=
+ =?utf-8?B?cWNvcFZUdTZvaTFYcEhuREkrSTFTSW41YVBpTUNrZFJkUGczRCtDQ1BudUhO?=
+ =?utf-8?B?NGZoSSt1N1NYcS9HaDJPYzJaSkk4Qmx6dE9Hckl5V1h4SHBpYk96QWRxSVJE?=
+ =?utf-8?B?N2RvSGF3bG9oVmJrVHdHV2RCVXU4TUtzVi94L3JNYlJxYVh6dEJBRC9rWCt2?=
+ =?utf-8?B?bTR0a0FjWEhDOWdPeG1pOCtHY240eEhScUJ3VjB2RGFnNllWZFNzT2VxaXgx?=
+ =?utf-8?B?STVzdGs2bHJscmtjOTgrTU9PSUhrUytSbCtiUHlvczd5aGdmdlozM0svRURC?=
+ =?utf-8?B?Qkl6cXdkeXB0NmlRcWFKNnFqUnR2Vk5nUjRJOEZkV05hOGhrTzVwVnA0aFlX?=
+ =?utf-8?B?TThEME9QamhtaTlSRzBwaWFVc3F1NWlJOU8rTHQweVRmRVp4cTNaQVhtN3JW?=
+ =?utf-8?B?M29DaWFZL3A1SHY2b2taRUhyL3VHeERrblUxcHY2ck5NSHVRKysyTDVxMXp3?=
+ =?utf-8?B?YWZOb3kzYjNUYUJhckk0WWdxT0xoa0xzU25ReTllU0tSWEdzZmo1UE1neUNQ?=
+ =?utf-8?B?dkNyaFU1bnBFM1lvR1pCL0kxSHl2T1pETGlZU01Ma0RmdHBvTTg4Qmltenpp?=
+ =?utf-8?B?L0hLQnp1b013elVoNDNJMnppQ1BzdTZjeHduTHZ3S3RldlZZOVMzM25Ya2py?=
+ =?utf-8?B?WkRmK3NHRm13U2FRT0oyZWMyQTdWRk95ZFhtVG92ck9KMkthbTlHZ2FKQzVr?=
+ =?utf-8?B?cW5JbC94QlpDeGxpQ2tBeU93aU1MOG9ObnMzYlFWWTlTcnJkcFJjSlhCMWFR?=
+ =?utf-8?B?c2x1MlhhN2RLYlQ5aWUvVTRwRU9YUXYxblBUVFlMRTl5R3BhaVJtMXRMRFI0?=
+ =?utf-8?B?OXFUVVpBdEc1am0rWm9wQVRzeTlSUDFkZDRURTlaTDdyWmdRSVd4ekpHNDFl?=
+ =?utf-8?B?RkVuMlE4cHJvOWNZWWxTa2tzZkJpay9ZVlFUL0gxRjNPQVg4UVlWcGZ2WVpZ?=
+ =?utf-8?B?djY4UTJVNThtQUw2TUZydWdYTlJiV0thUDBpWGdMak53VlNOeXd4ek40emN4?=
+ =?utf-8?B?Q2orTjdHUGd6cVRWdzMveEZlejVTTG5hcTA3NTFLejBnSy9CRTJPUGZCNnFI?=
+ =?utf-8?B?VEpuZ0N3Kzc3dVhCSWRxTW5wTUEwbDJsa28veFVPeUJRdlA2VTNweXdNTk14?=
+ =?utf-8?B?TCtxd0RqcExJQVhNK2grV0ZtQmJ1VnFya1VBSTdnQ1c5dFF6TkRyeFl2ZGdk?=
+ =?utf-8?B?eWVSMFRnc2RjTHgrRHBEOUY1a0NkU21zaHJYZ1VZckhiTXdjbjJ0RS9Eck9z?=
+ =?utf-8?B?RFM5UTlnRkhyTVZkWjR3b1NBNU9VR0pBZmN4Nm8vaVFvWFVYT1BiVHBFcjV1?=
+ =?utf-8?B?YWRvZjRtWGM2RHpjdTB4MkxlcVFzYzZucEFFbVVVMWdQQWVFbzczVVd2Q0pC?=
+ =?utf-8?B?NFREQjduQmlPUVduN280UGFyZmhuMHdNSjF3UmUwMUpTdTREZm5iZnhrOVgv?=
+ =?utf-8?B?ZTdKOWN6SklRbElMbERGWUVyZ2pMeXYxWjZhcFhsTmg2aTlTbXhROS9yQlUv?=
+ =?utf-8?Q?nawgTn8KQskYql/TsN7E0TC+Q?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DCE5F48702DB974FA53A100F1C4079AE@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618133208.1161794-1-wozizhi@huawei.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 467a91df-6a58-4f6b-5d7a-08dc8ff5ea59
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2024 00:22:34.0899
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9dzw96KFB6Tqgw0X7HZBdcW1W35/zBkqiFlgbYbJKcvuula0IrKXt3T3N8RSZYD9OoK3xBXl36H0HMaCOYXANA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7756
+X-OriginatorOrg: intel.com
 
-On Tue, Jun 18, 2024 at 09:32:08PM +0800, Zizhi Wo wrote:
-> A concurrent file creation and little writing could unexpectedly return
-> -ENOSPC error since there is a race window that the allocator could get
-> the wrong agf->agf_longest.
-> 
-> Write file process steps:
-> 1) Find the entry that best meets the conditions, then calculate the start
->    address and length of the remaining part of the entry after allocation.
-> 2) Delete this entry and update the agf->agf_longest.
-> 3) Insert the remaining unused parts of this entry based on the
->    calculations in 1), and update the agf->agf_longest again if necessary.
-> 
-> Create file process steps:
-> 1) Check whether there are free inodes in the inode chunk.
-> 2) If there is no free inode, check whether there has space for creating
->    inode chunks, perform the no-lock judgment first.
-> 3) If the judgment succeeds, the judgment is performed again with agf lock
->    held. Otherwire, an error is returned directly.
-> 
-> If the write process is in step 2) but not go to 3) yet, the create file
-> process goes to 2) at this time, it will be mistaken for no space,
-> resulting in the file system still has space but the file creation fails.
-> 
-> We have sent two different commits to the community in order to fix this
-> problem[1][2]. Unfortunately, both solutions have flaws. In [2], I
-> discussed with Dave and Darrick, realized that a better solution to this
-> problem requires the "last cnt record tracking" to be ripped out of the
-> generic btree code. And surprisingly, Dave directly provided his fix code.
-> This patch includes appropriate modifications based on his tmp-code to
-> address this issue.
-> 
-> The entire fix can be roughly divided into two parts:
-> 1) Delete the code related to lastrec-update in the generic btree code.
-> 2) Place the process of updating longest freespace with cntbt separately
->    to the end of the cntbt modifications. And only these two scenarios
->    need to be considered:
->    2.1) In the deletion scenario, directly update the longest to the
->         rightmost record of the cntbt.
->    2.2) In the insertion scenario, determine whether the cntbt has the
->         record that larger than the previous longest.
-> 
-> [1] https://lore.kernel.org/all/20240419061848.1032366-2-yebin10@huawei.com
-> [2] https://lore.kernel.org/all/20240604071121.3981686-1-wozizhi@huawei.com
-> 
-> Reported by: Ye Bin <yebin10@huawei.com>
-> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
-> ---
->  fs/xfs/libxfs/xfs_alloc.c       | 116 ++++++++++++++++++++++++++++++++
->  fs/xfs/libxfs/xfs_alloc_btree.c |  64 ------------------
->  fs/xfs/libxfs/xfs_btree.c       |  51 --------------
->  fs/xfs/libxfs/xfs_btree.h       |  16 ++---
->  4 files changed, 120 insertions(+), 127 deletions(-)
-> 
-> diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
-> index 6c55a6e88eba..74e40f75a278 100644
-> --- a/fs/xfs/libxfs/xfs_alloc.c
-> +++ b/fs/xfs/libxfs/xfs_alloc.c
-> @@ -465,6 +465,99 @@ xfs_alloc_fix_len(
->  	args->len = rlen;
->  }
->  
-> +/*
-> + * Determine if the cursor points to the block that contains the right-most
-> + * block of records in the by-count btree. This block contains the largest
-> + * contiguous free extent in the AG, so if we modify ia record in this block we
-
-                                                        a record
-
-> + * need to call xfs_alloc_fixup_longest() once the modifications are done to
-> + * ensure the agf->agf_longest field is kept up to date with the longest free
-> + * extent tracked by the by-count btree.
-> + */
-> +static bool
-> +xfs_alloc_cursor_at_lastrec(
-> +	struct xfs_btree_cur	*cnt_cur)
-> +{
-> +	struct xfs_btree_block	*block;
-> +	union xfs_btree_ptr	ptr;
-> +	struct xfs_buf		*bp;
-> +
-> +	block = xfs_btree_get_block(cnt_cur, 0, &bp);
-> +
-> +	xfs_btree_get_sibling(cnt_cur, block, &ptr, XFS_BB_RIGHTSIB);
-> +	if (!xfs_btree_ptr_is_null(cnt_cur, &ptr))
-> +		return false;
-> +	return true;
-> +}
-> +
-> +/*
-> + * Update the longest contiguous free extent in the AG from the by-count cursor
-> + * that is passed to us. This should be done at the end of any allocation or
-> + * freeing operation that touches the longest extent in the btree.
-> + *
-> + * Needing to update the longest extent can be determined by calling
-> + * xfs_alloc_cursor_at_lastrec() after the cursor is positioned for record
-> + * modification but before the modification begins.
-> + */
-> +static int
-> +xfs_alloc_fixup_longest(
-> +	struct xfs_btree_cur	*cnt_cur,
-> +	int			reason)
-> +{
-> +	struct xfs_perag	*pag = cnt_cur->bc_ag.pag;
-> +	struct xfs_agf		*agf;
-> +	struct xfs_buf		*bp;
-> +	struct xfs_btree_block	*block;
-> +	int			error;
-> +	int			i;
-> +	int			numrecs;
-> +
-> +	/*
-> +	 * Lookup last rec and update AGF.
-> +	 *
-> +	 * In case of LASTREC_DELREC, after called xfs_alloc_lookup_ge(), the
-> +	 * ptr is in the rightmost edge, and we need to update the last record
-> +	 * of this block as the longest free extent.
-> +	 *
-> +	 * In case of LASTREC_INSREC, because only one new record is inserted
-> +	 * each time, only need to check whether the cntbt has a record that
-> +	 * larger than the previous longest. Note that we can't update the
-> +	 * longest with xfs_alloc_get_rec() as the xfs_verify_agbno() may not
-> +	 * pass because pag->block_count is updated on the outside.
-> +	 */
-> +	error = xfs_alloc_lookup_ge(cnt_cur, 0, pag->pagf_longest + 1, &i);
-> +	if (error)
-> +		return error;
-> +
-> +	if (i == 1 || reason == LASTREC_DELREC) {
-> +		if (XFS_IS_CORRUPT(pag->pag_mount,
-> +				   i == 1 && reason == LASTREC_DELREC)) {
-> +			xfs_btree_mark_sick(cnt_cur);
-> +			return -EFSCORRUPTED;
-> +		}
-> +
-> +		block = xfs_btree_get_block(cnt_cur, 0, &bp);
-> +		numrecs = xfs_btree_get_numrecs(block);
-> +
-> +		if (numrecs) {
-> +			xfs_alloc_rec_t *rrp;
-> +
-> +			rrp = XFS_ALLOC_REC_ADDR(cnt_cur->bc_mp, block,
-> +						 numrecs);
-> +			pag->pagf_longest = be32_to_cpu(rrp->ar_blockcount);
-> +		} else {
-> +			/* empty tree */
-> +			pag->pagf_longest = 0;
-> +		}
-> +	}
-
-Hum.  Would it work if we did:
-
-	xfs_extlen_t	len;
-
-	xfs_alloc_lookup_le(cnt_cur, 0, mp->m_sb.sb_agsize, &i);
-
-	if (i)
-		xfs_alloc_get_rec(cnt_cur, ..., &len, &i);
-	if (!i)
-		len = 0;
-
-	pag->pagf_longest = len;
-
-This performs a LE lookup on the longest possible free extent (aka the
-AG size).  If we get pointed at a record, that's the longest free extent
-and we can set pag->pagf_longest to that.  If we get no record, then
-there's zero space and we can zero it.
-
-Then I think you don't need the @reason argument either.
-
---D
-
-> +
-> +	bp = cnt_cur->bc_ag.agbp;
-> +	agf = bp->b_addr;
-> +	agf->agf_longest = cpu_to_be32(pag->pagf_longest);
-> +	xfs_alloc_log_agf(cnt_cur->bc_tp, bp, XFS_AGF_LONGEST);
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * Update the two btrees, logically removing from freespace the extent
->   * starting at rbno, rlen blocks.  The extent is contained within the
-> @@ -489,6 +582,7 @@ xfs_alloc_fixup_trees(
->  	xfs_extlen_t	nflen1=0;	/* first new free length */
->  	xfs_extlen_t	nflen2=0;	/* second new free length */
->  	struct xfs_mount *mp;
-> +	bool		fixup_longest = false;
->  
->  	mp = cnt_cur->bc_mp;
->  
-> @@ -577,6 +671,10 @@ xfs_alloc_fixup_trees(
->  		nfbno2 = rbno + rlen;
->  		nflen2 = (fbno + flen) - nfbno2;
->  	}
-> +
-> +	if (xfs_alloc_cursor_at_lastrec(cnt_cur))
-> +		fixup_longest = true;
-> +
->  	/*
->  	 * Delete the entry from the by-size btree.
->  	 */
-> @@ -654,6 +752,10 @@ xfs_alloc_fixup_trees(
->  			return -EFSCORRUPTED;
->  		}
->  	}
-> +
-> +	if (fixup_longest)
-> +		return xfs_alloc_fixup_longest(cnt_cur, LASTREC_DELREC);
-> +
->  	return 0;
->  }
->  
-> @@ -1956,6 +2058,7 @@ xfs_free_ag_extent(
->  	int				i;
->  	int				error;
->  	struct xfs_perag		*pag = agbp->b_pag;
-> +	bool				fixup_longest = false;
->  
->  	bno_cur = cnt_cur = NULL;
->  	mp = tp->t_mountp;
-> @@ -2219,8 +2322,13 @@ xfs_free_ag_extent(
->  	}
->  	xfs_btree_del_cursor(bno_cur, XFS_BTREE_NOERROR);
->  	bno_cur = NULL;
-> +
->  	/*
->  	 * In all cases we need to insert the new freespace in the by-size tree.
-> +	 *
-> +	 * If this new freespace is being inserted in the block that contains
-> +	 * the largest free space in the btree, make sure we also fix up the
-> +	 * agf->agf-longest tracker field.
->  	 */
->  	if ((error = xfs_alloc_lookup_eq(cnt_cur, nbno, nlen, &i)))
->  		goto error0;
-> @@ -2229,6 +2337,8 @@ xfs_free_ag_extent(
->  		error = -EFSCORRUPTED;
->  		goto error0;
->  	}
-> +	if (xfs_alloc_cursor_at_lastrec(cnt_cur))
-> +		fixup_longest = true;
->  	if ((error = xfs_btree_insert(cnt_cur, &i)))
->  		goto error0;
->  	if (XFS_IS_CORRUPT(mp, i != 1)) {
-> @@ -2236,6 +2346,12 @@ xfs_free_ag_extent(
->  		error = -EFSCORRUPTED;
->  		goto error0;
->  	}
-> +	if (fixup_longest) {
-> +		error = xfs_alloc_fixup_longest(cnt_cur, LASTREC_INSREC);
-> +		if (error)
-> +			goto error0;
-> +	}
-> +
->  	xfs_btree_del_cursor(cnt_cur, XFS_BTREE_NOERROR);
->  	cnt_cur = NULL;
->  
-> diff --git a/fs/xfs/libxfs/xfs_alloc_btree.c b/fs/xfs/libxfs/xfs_alloc_btree.c
-> index 6ef5ddd89600..585e98e87ef9 100644
-> --- a/fs/xfs/libxfs/xfs_alloc_btree.c
-> +++ b/fs/xfs/libxfs/xfs_alloc_btree.c
-> @@ -115,67 +115,6 @@ xfs_allocbt_free_block(
->  	return 0;
->  }
->  
-> -/*
-> - * Update the longest extent in the AGF
-> - */
-> -STATIC void
-> -xfs_allocbt_update_lastrec(
-> -	struct xfs_btree_cur		*cur,
-> -	const struct xfs_btree_block	*block,
-> -	const union xfs_btree_rec	*rec,
-> -	int				ptr,
-> -	int				reason)
-> -{
-> -	struct xfs_agf		*agf = cur->bc_ag.agbp->b_addr;
-> -	struct xfs_perag	*pag;
-> -	__be32			len;
-> -	int			numrecs;
-> -
-> -	ASSERT(!xfs_btree_is_bno(cur->bc_ops));
-> -
-> -	switch (reason) {
-> -	case LASTREC_UPDATE:
-> -		/*
-> -		 * If this is the last leaf block and it's the last record,
-> -		 * then update the size of the longest extent in the AG.
-> -		 */
-> -		if (ptr != xfs_btree_get_numrecs(block))
-> -			return;
-> -		len = rec->alloc.ar_blockcount;
-> -		break;
-> -	case LASTREC_INSREC:
-> -		if (be32_to_cpu(rec->alloc.ar_blockcount) <=
-> -		    be32_to_cpu(agf->agf_longest))
-> -			return;
-> -		len = rec->alloc.ar_blockcount;
-> -		break;
-> -	case LASTREC_DELREC:
-> -		numrecs = xfs_btree_get_numrecs(block);
-> -		if (ptr <= numrecs)
-> -			return;
-> -		ASSERT(ptr == numrecs + 1);
-> -
-> -		if (numrecs) {
-> -			xfs_alloc_rec_t *rrp;
-> -
-> -			rrp = XFS_ALLOC_REC_ADDR(cur->bc_mp, block, numrecs);
-> -			len = rrp->ar_blockcount;
-> -		} else {
-> -			len = 0;
-> -		}
-> -
-> -		break;
-> -	default:
-> -		ASSERT(0);
-> -		return;
-> -	}
-> -
-> -	agf->agf_longest = len;
-> -	pag = cur->bc_ag.agbp->b_pag;
-> -	pag->pagf_longest = be32_to_cpu(len);
-> -	xfs_alloc_log_agf(cur->bc_tp, cur->bc_ag.agbp, XFS_AGF_LONGEST);
-> -}
-> -
->  STATIC int
->  xfs_allocbt_get_minrecs(
->  	struct xfs_btree_cur	*cur,
-> @@ -493,7 +432,6 @@ const struct xfs_btree_ops xfs_bnobt_ops = {
->  	.set_root		= xfs_allocbt_set_root,
->  	.alloc_block		= xfs_allocbt_alloc_block,
->  	.free_block		= xfs_allocbt_free_block,
-> -	.update_lastrec		= xfs_allocbt_update_lastrec,
->  	.get_minrecs		= xfs_allocbt_get_minrecs,
->  	.get_maxrecs		= xfs_allocbt_get_maxrecs,
->  	.init_key_from_rec	= xfs_allocbt_init_key_from_rec,
-> @@ -511,7 +449,6 @@ const struct xfs_btree_ops xfs_bnobt_ops = {
->  const struct xfs_btree_ops xfs_cntbt_ops = {
->  	.name			= "cnt",
->  	.type			= XFS_BTREE_TYPE_AG,
-> -	.geom_flags		= XFS_BTGEO_LASTREC_UPDATE,
->  
->  	.rec_len		= sizeof(xfs_alloc_rec_t),
->  	.key_len		= sizeof(xfs_alloc_key_t),
-> @@ -525,7 +462,6 @@ const struct xfs_btree_ops xfs_cntbt_ops = {
->  	.set_root		= xfs_allocbt_set_root,
->  	.alloc_block		= xfs_allocbt_alloc_block,
->  	.free_block		= xfs_allocbt_free_block,
-> -	.update_lastrec		= xfs_allocbt_update_lastrec,
->  	.get_minrecs		= xfs_allocbt_get_minrecs,
->  	.get_maxrecs		= xfs_allocbt_get_maxrecs,
->  	.init_key_from_rec	= xfs_allocbt_init_key_from_rec,
-> diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
-> index d29547572a68..a5c4af148853 100644
-> --- a/fs/xfs/libxfs/xfs_btree.c
-> +++ b/fs/xfs/libxfs/xfs_btree.c
-> @@ -1331,30 +1331,6 @@ xfs_btree_init_block_cur(
->  			xfs_btree_owner(cur));
->  }
->  
-> -/*
-> - * Return true if ptr is the last record in the btree and
-> - * we need to track updates to this record.  The decision
-> - * will be further refined in the update_lastrec method.
-> - */
-> -STATIC int
-> -xfs_btree_is_lastrec(
-> -	struct xfs_btree_cur	*cur,
-> -	struct xfs_btree_block	*block,
-> -	int			level)
-> -{
-> -	union xfs_btree_ptr	ptr;
-> -
-> -	if (level > 0)
-> -		return 0;
-> -	if (!(cur->bc_ops->geom_flags & XFS_BTGEO_LASTREC_UPDATE))
-> -		return 0;
-> -
-> -	xfs_btree_get_sibling(cur, block, &ptr, XFS_BB_RIGHTSIB);
-> -	if (!xfs_btree_ptr_is_null(cur, &ptr))
-> -		return 0;
-> -	return 1;
-> -}
-> -
->  STATIC void
->  xfs_btree_buf_to_ptr(
->  	struct xfs_btree_cur	*cur,
-> @@ -2420,15 +2396,6 @@ xfs_btree_update(
->  	xfs_btree_copy_recs(cur, rp, rec, 1);
->  	xfs_btree_log_recs(cur, bp, ptr, ptr);
->  
-> -	/*
-> -	 * If we are tracking the last record in the tree and
-> -	 * we are at the far right edge of the tree, update it.
-> -	 */
-> -	if (xfs_btree_is_lastrec(cur, block, 0)) {
-> -		cur->bc_ops->update_lastrec(cur, block, rec,
-> -					    ptr, LASTREC_UPDATE);
-> -	}
-> -
->  	/* Pass new key value up to our parent. */
->  	if (xfs_btree_needs_key_update(cur, ptr)) {
->  		error = xfs_btree_update_keys(cur, 0);
-> @@ -3617,15 +3584,6 @@ xfs_btree_insrec(
->  			goto error0;
->  	}
->  
-> -	/*
-> -	 * If we are tracking the last record in the tree and
-> -	 * we are at the far right edge of the tree, update it.
-> -	 */
-> -	if (xfs_btree_is_lastrec(cur, block, level)) {
-> -		cur->bc_ops->update_lastrec(cur, block, rec,
-> -					    ptr, LASTREC_INSREC);
-> -	}
-> -
->  	/*
->  	 * Return the new block number, if any.
->  	 * If there is one, give back a record value and a cursor too.
-> @@ -3983,15 +3941,6 @@ xfs_btree_delrec(
->  	xfs_btree_set_numrecs(block, --numrecs);
->  	xfs_btree_log_block(cur, bp, XFS_BB_NUMRECS);
->  
-> -	/*
-> -	 * If we are tracking the last record in the tree and
-> -	 * we are at the far right edge of the tree, update it.
-> -	 */
-> -	if (xfs_btree_is_lastrec(cur, block, level)) {
-> -		cur->bc_ops->update_lastrec(cur, block, NULL,
-> -					    ptr, LASTREC_DELREC);
-> -	}
-> -
->  	/*
->  	 * We're at the root level.  First, shrink the root block in-memory.
->  	 * Try to get rid of the next level down.  If we can't then there's
-> diff --git a/fs/xfs/libxfs/xfs_btree.h b/fs/xfs/libxfs/xfs_btree.h
-> index f93374278aa1..670470874630 100644
-> --- a/fs/xfs/libxfs/xfs_btree.h
-> +++ b/fs/xfs/libxfs/xfs_btree.h
-> @@ -154,12 +154,6 @@ struct xfs_btree_ops {
->  			       int *stat);
->  	int	(*free_block)(struct xfs_btree_cur *cur, struct xfs_buf *bp);
->  
-> -	/* update last record information */
-> -	void	(*update_lastrec)(struct xfs_btree_cur *cur,
-> -				  const struct xfs_btree_block *block,
-> -				  const union xfs_btree_rec *rec,
-> -				  int ptr, int reason);
-> -
->  	/* records in block/level */
->  	int	(*get_minrecs)(struct xfs_btree_cur *cur, int level);
->  	int	(*get_maxrecs)(struct xfs_btree_cur *cur, int level);
-> @@ -222,15 +216,13 @@ struct xfs_btree_ops {
->  };
->  
->  /* btree geometry flags */
-> -#define XFS_BTGEO_LASTREC_UPDATE	(1U << 0) /* track last rec externally */
-> -#define XFS_BTGEO_OVERLAPPING		(1U << 1) /* overlapping intervals */
-> +#define XFS_BTGEO_OVERLAPPING		(1U << 0) /* overlapping intervals */
->  
->  /*
-> - * Reasons for the update_lastrec method to be called.
-> + * Reasons for the xfs_alloc_fixup_longest() to be called.
->   */
-> -#define LASTREC_UPDATE	0
-> -#define LASTREC_INSREC	1
-> -#define LASTREC_DELREC	2
-> +#define LASTREC_INSREC	0
-> +#define LASTREC_DELREC	1
->  
->  
->  union xfs_btree_irec {
-> -- 
-> 2.39.2
-> 
+T24gVHVlLCAyMDI0LTA2LTE4IGF0IDE2OjUyICswMzAwLCBOaWtvbGF5IEJvcmlzb3Ygd3JvdGU6
+DQo+IA0KPiBPbiAxNi4wNi4yNCDQsy4gMTU6MDEg0YcuLCBLYWkgSHVhbmcgd3JvdGU6DQo+ID4g
+Q3VycmVudGx5IHRoZSBrZXJuZWwgZG9lc24ndCBwcmludCBhbnkgaW5mb3JtYXRpb24gcmVnYXJk
+aW5nIHRoZSBURFgNCj4gPiBtb2R1bGUgaXRzZWxmLCBlLmcuIG1vZHVsZSB2ZXJzaW9uLiAgUHJp
+bnRpbmcgc3VjaCBpbmZvcm1hdGlvbiBpcyBub3QNCj4gPiBtYW5kYXRvcnkgZm9yIGluaXRpYWxp
+emluZyB0aGUgVERYIG1vZHVsZSwgYnV0IGluIHByYWN0aWNlIHN1Y2gNCj4gPiBpbmZvcm1hdGlv
+biBpcyB1c2VmdWwsIGVzcGVjaWFsbHkgdG8gdGhlIGRldmVsb3BlcnMuDQo+IA0KPiBJdCdzIHVu
+ZGVyc3Rvb2QgdGhhdCBpdCdzIG5vdCBtYW5kYXRvcnkgdG8gcHJpbnQgYW55IGluZm9ybWF0aW9u
+LCBqdXN0IA0KPiByZW1vdmUgdGhpcyBzZW50ZW5jZSBhbmQgbGVhdmUgdGhlICJJbiBwcmFjdGlj
+ZSBzdWNoLi4uLiINCg0KV2lsbCBkby4NCg0KPiANCj4gPiANCj4gPiBGb3IgaW5zdGFuY2UsIHRo
+ZXJlIGFyZSBjb3VwbGUgb2YgdXNlIGNhc2VzIGZvciBkdW1waW5nIG1vZHVsZSBiYXNpYw0KPiA+
+IGluZm9ybWF0aW9uOg0KPiA+IA0KPiA+IDEpIFdoZW4gc29tZXRoaW5nIGdvZXMgd3JvbmcgYXJv
+dW5kIHVzaW5nIFREWCwgdGhlIGluZm9ybWF0aW9uIGxpa2UgVERYDQo+ID4gICAgIG1vZHVsZSB2
+ZXJzaW9uLCBzdXBwb3J0ZWQgZmVhdHVyZXMgZXRjIGNvdWxkIGJlIGhlbHBmdWwgWzFdWzJdLg0K
+PiA+IA0KPiA+IDIpIEZvciBMaW51eCwgd2hlbiB0aGUgdXNlciB3YW50cyB0byB1cGRhdGUgdGhl
+IFREWCBtb2R1bGUsIG9uZSBuZWVkcyB0bw0KPiA+ICAgICByZXBsYWNlIHRoZSBvbGQgbW9kdWxl
+IGluIGEgc3BlY2lmaWMgbG9jYXRpb24gaW4gdGhlIEVGSSBwYXJ0aXRpb24NCj4gPiAgICAgd2l0
+aCB0aGUgbmV3IG9uZSBzbyB0aGF0IGFmdGVyIHJlYm9vdCB0aGUgQklPUyBjYW4gbG9hZCBpdC4g
+IEhvd2V2ZXIsDQo+ID4gICAgIGFmdGVyIGtlcm5lbCBib290cywgY3VycmVudGx5IHRoZSB1c2Vy
+IGhhcyBubyB3YXkgdG8gdmVyaWZ5IGl0IGlzDQo+ID4gICAgIGluZGVlZCB0aGUgbmV3IG1vZHVs
+ZSB0aGF0IGdldHMgbG9hZGVkIGFuZCBpbml0aWFsaXplZCAoZS5nLiwgZXJyb3INCj4gPiAgICAg
+Y291bGQgaGFwcGVuIHdoZW4gcmVwbGFjaW5nIHRoZSBvbGQgbW9kdWxlKS4gIFdpdGggdGhlIG1v
+ZHVsZSB2ZXJzaW9uDQo+ID4gICAgIGR1bXBlZCB0aGUgdXNlciBjYW4gdmVyaWZ5IHRoaXMgZWFz
+aWx5Lg0KPiA+IA0KPiA+IFNvIGR1bXAgdGhlIGJhc2ljIFREWCBtb2R1bGUgaW5mb3JtYXRpb246
+DQo+ID4gDQo+ID4gICAtIFREWCBtb2R1bGUgdHlwZTogRGVidWcgb3IgUHJvZHVjdGlvbi4NCj4g
+PiAgIC0gVERYX0ZFQVRVUkVTMDogU3VwcG9ydGVkIFREWCBmZWF0dXJlcy4NCj4gPiAgIC0gVERY
+IG1vZHVsZSB2ZXJzaW9uLCBhbmQgdGhlIGJ1aWxkIGRhdGUuDQo+ID4gDQo+ID4gQW5kIGR1bXAg
+dGhlIGluZm9ybWF0aW9uIHJpZ2h0IGFmdGVyIHJlYWRpbmcgZ2xvYmFsIG1ldGFkYXRhLCBzbyB0
+aGF0DQo+ID4gdGhpcyBpbmZvcm1hdGlvbiBpcyBwcmludGVkIG5vIG1hdHRlciB3aGV0aGVyIG1v
+ZHVsZSBpbml0aWFsaXphdGlvbg0KPiA+IGZhaWxzIG9yIG5vdC4NCj4gDQo+IEluc3RlYWQgb2Yg
+cHJpbnRpbmcgdGhpcyBvbiAzIHNlcGFyYXRlIHJvd3Mgd2h5IG5vdCBwcmludCBzb21ldGhpbmcg
+bGlrZToNCj4gDQo+ICJJbml0aWFsaXNpbmcgVERYIE1vZHVsZSAkTlVNRVJJQ19WRVJTSU9OICgk
+QlVJTERfREFURSANCj4gJFBST0RVQ1RJT05fU1RBVEUpLCAkVERYX0ZFQVRVUkVTIg0KPiANCj4g
+VGhhdCB3YXk6DQo+IGEpIFlvdSBjb252ZXkgdGhlIHZlcnNpb24gaW5mb3JtYXRpb24NCj4gYikg
+WW91IGV4cGxpY2l0bHkgc3RhdGUgdGhhdCBpbml0aWFsaXNhdGlvbiBoYXMgYmVndW4gYW5kIG1h
+a2Ugbm8gDQo+IGd1YXJhbnRlZXMgdGhhdCBiZWNhdXNlIHRoaXMgaGFzIGJlZW4gcHJpbnRlZCB0
+aGUgbW9kdWxlIGlzIGluZGVlZCANCj4gcHJvcGVybHkgaW5pdGlhbGlzZWQuIEknbSB0aGlua2lu
+ZyBpZiBzb21lb25lIGNvdWxkIGJlIG1pc3Rha2VuIHRoYXQgaWYgDQo+IHRoaXMgaW5mb3JtYXRp
+b24gaXMgcHJpbnRlZCB0aGlzIHN1cmVseSBtZWFucyB0aGF0IHRoZSBtb2R1bGUgaXMgDQo+IHBy
+b3Blcmx5IHdvcmtpbmcsIHdoaWNoIGlzIG5vdCB0aGUgY2FzZS4NCg0KSWYgdGhlIG1vZHVsZSBm
+YWlscyB0byBpbml0LCB0aGVyZSB3aWxsIGJlIG1lc3NhZ2UgZXhwbGljaXRseSBzYXlpbmcgdGhh
+dA0KX2FmdGVyXyB0aGUgYWJvdmUgbWVzc2FnZS4NCg0KQnV0IGZpbmUgSSBjYW4gY2hhbmdlIHRv
+IHByaW50IGluIG9uZSBsaW5lIGxpa2UgYmVsb3c6DQoNCnZpcnQvdGR4OiBJbml0aWFsaXppbmcg
+bW9kdWxlOiBQcm9kdWN0aW9uIG1vZHVsZSwgdmVyc2lvbiAxLjUuMDAuMDAuMDQ4MSwNCmJ1aWxk
+X2RhdGUgMjAyMzAzMjMsIFREWF9GRUFUVVJFUzAgMHhmYmYNCg0KSWYgaXQgcmVhZHMgbW9yZSBj
+bGVhci4NCg0KWy4uLl0NCg0KPiA+ICAgDQo+ID4gKyNkZWZpbmUgVERfU1lTSU5GT19NQVBfTU9E
+X0lORk8oX2ZpZWxkX2lkLCBfbWVtYmVyKQlcDQo+ID4gKwlURF9TWVNJTkZPX01BUChfZmllbGRf
+aWQsIHN0cnVjdCB0ZHhfc3lzaW5mb19tb2R1bGVfaW5mbywgX21lbWJlcikNCj4gDQo+IFdoYXQn
+cyB0aGUgcG9pbnQgb2YgdGhpcyBkZWZpbmUsIHNpbXBseSB1c2UgdGhlIHJhdyBURF9TWVNJTkZP
+X01BUCANCj4gaW5zaWRlIHRoZSByZXNwZWN0aXZlIGZ1bmN0aW9uLiBJdCBkb2Vzbid0IHJlYWxs
+eSBhZGQgYW55IHZhbHVlIA0KPiBlc3BlY2lhbGx5IGV2ZXJ5dGhpbmcgaXMgZW5jYXBzdWxhdGVk
+IGluIG9uZSBmdW5jdGlvbi4gTGl0ZXJhbGx5IHlvdSBhZGQgDQo+IGl0IHNvIHRoYXQgeW91IGRv
+bid0IGhhdmUgdG8gdHlwZSAic3RydWN0IHRkeF9zeXNpbmZvX21vZHVsZV9pbmZvIiBvbiANCj4g
+ZWFjaCBvZiB0aGUgMiBsaW5lcyB0aGlzIGRlZmluZSBpcyB1c2VkLi4uDQoNCkl0IG1ha2VzIHRo
+ZSBjb2RlIHNob3J0ZXIsIHcvbyBuZWVkaW5nIHRvIHR5cGUgJ3N0cnVjdA0KdGR4X3N5c2luZm9f
+bW9kdWxlX2luZm8nIGZvciBlYWNoIG1lbWJlci4gIFRoaXMgd2F5IGlzIGFsc28gY29uc2lzdGVu
+dA0Kd2l0aCBvdGhlciBzdHJ1Y3R1cmVzIChlLmcuLCAnc3RydWN0IHRkeF9zeXNpbmZvX3RkbXJf
+aW5mbycpIHdoaWNoIGhhdmUNCm1vcmUgbWVtYmVycy4NCg0KPiANCj4gPiArDQo+ID4gK3N0YXRp
+YyBpbnQgZ2V0X3RkeF9tb2R1bGVfaW5mbyhzdHJ1Y3QgdGR4X3N5c2luZm9fbW9kdWxlX2luZm8g
+Km1vZGluZm8pDQo+ID4gK3sNCj4gPiArCXN0YXRpYyBjb25zdCBzdHJ1Y3QgZmllbGRfbWFwcGlu
+ZyBmaWVsZHNbXSA9IHsNCj4gPiArCQlURF9TWVNJTkZPX01BUF9NT0RfSU5GTyhTWVNfQVRUUklC
+VVRFUywgc3lzX2F0dHJpYnV0ZXMpLA0KPiA+ICsJCVREX1NZU0lORk9fTUFQX01PRF9JTkZPKFRE
+WF9GRUFUVVJFUzAsICB0ZHhfZmVhdHVyZXMwKSwNCj4gPiArCX07DQo+ID4gKw0KPiA+ICsJcmV0
+dXJuIHN0YnVmX3JlYWRfc3lzbWRfbXVsdGkoZmllbGRzLCBBUlJBWV9TSVpFKGZpZWxkcyksIG1v
+ZGluZm8pOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICsjZGVmaW5lIFREX1NZU0lORk9fTUFQX01PRF9W
+RVJTSU9OKF9maWVsZF9pZCwgX21lbWJlcikJXA0KPiA+ICsJVERfU1lTSU5GT19NQVAoX2ZpZWxk
+X2lkLCBzdHJ1Y3QgdGR4X3N5c2luZm9fbW9kdWxlX3ZlcnNpb24sIF9tZW1iZXIpDQo+IA0KPiBE
+SVRUTw0KDQpJIHJlYWxseSB3YW50IHRvIGF2b2lkIHR5cGluZyAnc3RydWN0IHRkeF9zeXNpbmZv
+X21vZHVsZV92ZXJzaW9uJyBmb3IgZWFjaA0Kc3RydWN0IG1lbWJlci4gIEkgZG9uJ3QgdGhpbmsg
+dXNpbmcgVERfU1lTSU5GT19NQVAoKSBkaXJlY3RseSBpcyBhbnkNCmJldHRlci4NCg0KPiANCj4g
+PiArDQo+ID4gK3N0YXRpYyBpbnQgZ2V0X3RkeF9tb2R1bGVfdmVyc2lvbihzdHJ1Y3QgdGR4X3N5
+c2luZm9fbW9kdWxlX3ZlcnNpb24gKm1vZHZlcikNCj4gPiArew0KPiA+ICsJc3RhdGljIGNvbnN0
+IHN0cnVjdCBmaWVsZF9tYXBwaW5nIGZpZWxkc1tdID0gew0KPiA+ICsJCVREX1NZU0lORk9fTUFQ
+X01PRF9WRVJTSU9OKE1BSk9SX1ZFUlNJT04sICAgIG1ham9yKSwNCj4gPiArCQlURF9TWVNJTkZP
+X01BUF9NT0RfVkVSU0lPTihNSU5PUl9WRVJTSU9OLCAgICBtaW5vciksDQo+ID4gKwkJVERfU1lT
+SU5GT19NQVBfTU9EX1ZFUlNJT04oVVBEQVRFX1ZFUlNJT04sICAgdXBkYXRlKSwNCj4gPiArCQlU
+RF9TWVNJTkZPX01BUF9NT0RfVkVSU0lPTihJTlRFUk5BTF9WRVJTSU9OLCBpbnRlcm5hbCksDQo+
+ID4gKwkJVERfU1lTSU5GT19NQVBfTU9EX1ZFUlNJT04oQlVJTERfTlVNLAkgICAgIGJ1aWxkX251
+bSksDQo+ID4gKwkJVERfU1lTSU5GT19NQVBfTU9EX1ZFUlNJT04oQlVJTERfREFURSwJICAgICBi
+dWlsZF9kYXRlKSwNCj4gPiArCX07DQo+ID4gKw0KPiA+ICsJcmV0dXJuIHN0YnVmX3JlYWRfc3lz
+bWRfbXVsdGkoZmllbGRzLCBBUlJBWV9TSVpFKGZpZWxkcyksIG1vZHZlcik7DQo+ID4gK30NCj4g
+PiANCg0KWy4uLl0NCg0KPiA+IC0tLSBhL2FyY2gveDg2L3ZpcnQvdm14L3RkeC90ZHguaA0KPiA+
+ICsrKyBiL2FyY2gveDg2L3ZpcnQvdm14L3RkeC90ZHguaA0KPiA+IEBAIC0zMSw2ICszMSwxNSBA
+QA0KPiA+ICAgICoNCj4gPiAgICAqIFNlZSBUYWJsZSAiR2xvYmFsIFNjb3BlIE1ldGFkYXRhIiwg
+VERYIG1vZHVsZSAxLjUgQUJJIHNwZWMuDQo+ID4gICAgKi8NCj4gDQo+IG5pdDoNCj4gDQo+IFtO
+b3QgcmVsYXRlZCB0byB0aGlzIHBhdGNoIGJ1dCBzdGlsbCBhIHByb2JsZW0gaW4gaXRzIG93bl0N
+Cj4gDQo+IFRob3NlIGZpZWxkcyBhcmUgZGVmaW5lZCBpbiB0aGUgZ2xvYmFsX21ldGFkYXRhLmpz
+b24gd2hpY2ggaXMgcGFydCBvZiANCj4gdGhlICAiSW50ZWwgVERYIE1vZHVsZSB2MS41IEFCSSBE
+ZWZpbml0aW9ucyIgYW5kIG5vdCB0aGUgMS41IEFCSSBzcGVjLCANCj4gYXMgdGhlIEFCSSBzcGVj
+IGlzIHRoZSBwZGYuDQoNCkkgd2lsbCB1cGRhdGUgdGhpcy4gIFRoYW5rcy4NCg==
 
