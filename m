@@ -1,276 +1,224 @@
-Return-Path: <linux-kernel+bounces-221634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76D390F67D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:50:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF8A90F67F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 20:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B98A288385
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:50:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61CD71C248B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B902A158859;
-	Wed, 19 Jun 2024 18:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D8C1BF37;
+	Wed, 19 Jun 2024 18:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQ2XuEsU"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i6vs6LLd"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8E015885C;
-	Wed, 19 Jun 2024 18:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEC8157E91
+	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 18:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718822941; cv=none; b=ugoI9aCSKiv82nELc0omicQth0TtGIkluzO1DLNuGR//VKrUZcYlK0fDtdQJS8w0EyeqRaMcJWJWd0zyiD6oqL7W9/zDMeCY4tLbZd+jDj1h+r0yLB4vLYcp6sGJj9qxavGb+64JW3P5jWzXvD3wSkI1r4VwndQQZIBXy4iC+k0=
+	t=1718823017; cv=none; b=UP37ZYAnZLJB07W6zExeGYHfWESHkzBubUy/QMrBDP0eSC13VIU9JRjc81XmE2Upk+ehH9r9sGZY/0MHrMj41sadqGMeNYpaoZxtKuA4J3nrx1mjF6MjLSs6ZtIhZnEnSWLqImyCkgA36c4M7DS9jxZLxxLtm62Ls3gQ3ZNTN9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718822941; c=relaxed/simple;
-	bh=qfTsdnJOq5fgxNKsMKUsFwWWyP0L9Eg9x4k1dvQW65E=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mPQHkp43smAe98ECZo2SV0Ez/vhwkmEY9ZUbdSrdmA0E0zOecxGTmKCXyvkgArzOzm5+RV925Qt/rzziIUEx/CwLcGXoiMbhjSy1JaUWhVjKIotwhitusNOEhdbD3foNh/p3ff72vubrGeltFgx0spS/fJH1Qr+jTOFPkiXYQjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQ2XuEsU; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42121d27861so1201965e9.0;
-        Wed, 19 Jun 2024 11:48:59 -0700 (PDT)
+	s=arc-20240116; t=1718823017; c=relaxed/simple;
+	bh=4RSq8sWW/mHJkKqBaWcW37bWPJm3MVZQNhRy+yS6AWQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LFK46HdPwamRu+DRQsT41pMMF8ONRUn0kjl4wzAdQ924UPJ0sUregPPUYdU9qCaOLBTaAnLlPqVh1gI04fYUQaAo3lGdinevmMsKSyRgzwINh/oOYaSnR/ubJAlB5un2eDXo7tAVEXF2WKLFuq8bYkpoOm9cN3JRTttj+TlHJGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i6vs6LLd; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-48da5edc11dso632038137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 11:50:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718822938; x=1719427738; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oOHV1OyPE5U8qTFJC5RPbb2z7vBlikoGyLR98RlK/24=;
-        b=cQ2XuEsU/F0gQ8nqabK0nFVaDdRJmETj42lYNgSh8sdYHcO5EgSWXQNFvLp91uS86G
-         1QXVPCj/8mBaM3Cg9qeKetrvvvVO/A/2u4kGTVYeUGiUjUg8EHUoOMwt9WuqwZCxaHgf
-         040YjfD9xX2Xq4qWUxO/1+D3EUp/8A57ieb69/ne5lupXpz5izNAjR4fF0qTYy/kGeYj
-         BEfxrW3DqyibmRsE6Zej0M8rTD2TzTqWtueVUZIhypYxHDY8KRIntXtK2gofERlY3Wx0
-         3j94BEUBf9+A9QVbIm+8tKMKWb1JHiKqGpTDXV1W1LZPjZPr3PyzUp/nsWpq4Rxh2ak2
-         pEXQ==
+        d=google.com; s=20230601; t=1718823015; x=1719427815; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uuPnBomZe0Xk2eQHT1++xcdmG4tOYlp5lhA77KrxQfM=;
+        b=i6vs6LLdDPyShkIm/z9oHSOsc/AXuparO7zitqGA2UUV14Ai36Xtaw3EGhYZANRCgS
+         NgSgajlWbDH60zJdWzq50AQOpC58fOAJEt2kG9eWcC1Mpj7tc7hRayAYU4Jppb4HJwMZ
+         hBX+zE0ZLtrPabYv3ocFgiYtKcdNBp2oiZ7EzRVLu4fgaPdEZb0WWMiiBb7/sTUQn1MT
+         +25mRHCsdLTAyPrZEsPyitUNHbSvU8YM6ZIUMUkQhR7SUlaRdEZCPVzJNcfofH3y6RjM
+         tcmpa6PfSOZ14+ooddn0O7K7bRhGOpfaWFeu/ABx4WPl3Js2uCp/8pPPMDd5IkffJZme
+         6ZTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718822938; x=1719427738;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oOHV1OyPE5U8qTFJC5RPbb2z7vBlikoGyLR98RlK/24=;
-        b=PVXhonWYxXvn9Dh9/KvGxNKbnzVQnuDvKbVC3G5Ku1VvcGvgayTIbYg/HusxlkC1+p
-         zlTbFB5XJ0/S6d11WQK8bb6+46xgY3C+GUGO6WlD1KlY13pwjWinpCy6LtZHYdtpgUT1
-         MKAOUhI8Q8j6W43Vrx5pbEV6F7sEtqw/OhoQgQU6+pcSnRUnYUkDnK2Loqf3onoz92Dp
-         HAdnqLE3H9qzC6imvkqRuM/B5c+hME7e1w371X+ydKdgl8iXwXxwnMAa1bwHsULShM+M
-         mmY080TnyIc8d9HAKjvxZ928gSvIy1cRHl9T55zs3gqdDkWxqvHxMnq+cqRix/x/JoRr
-         XaoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVe46GLTsXTpu89qWzk7itJi1hGeeL/OngngfLJUTwrEZoAbNJLy+p8ez9s7/2OaXwQyou8xQLK9rS2vh2rBKC3dudbP1UfIpaqo1dD5V7O881nyfDzHJv0PP5HhPk9AajJSiwPy81V4Gmr0GZlRqWo9PFXgOVrMojytZh3w10E/fMCdh2w
-X-Gm-Message-State: AOJu0YwZBGPcD1C/O7JCUtZERQGQcVBmLnM8zxBcO7acoLQOX1dNj53o
-	YKSAhJ26nZaXY0fSQMLDsg9gphUfM17CrSQXqbZNmDO9doftQ4gf
-X-Google-Smtp-Source: AGHT+IH5y762c8nZSaoulqdoVkVT4/6AxhiQsd0NHTfK2saKY1Pbfyy3k1Bjd9mNU/P8yp98uATQQA==
-X-Received: by 2002:a5d:4b4e:0:b0:362:ac86:4903 with SMTP id ffacd0b85a97d-36317b830c1mr2255111f8f.42.1718822938035;
-        Wed, 19 Jun 2024 11:48:58 -0700 (PDT)
-Received: from krava (85-193-35-215.rib.o2.cz. [85.193.35.215])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750f2263sm18022195f8f.83.2024.06.19.11.48.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 11:48:57 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 19 Jun 2024 20:48:55 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [RFC bpf-next 01/10] uprobe: Add session callbacks to
- uprobe_consumer
-Message-ID: <ZnMoF84ilUcEoiX5@krava>
-References: <20240604200221.377848-1-jolsa@kernel.org>
- <20240604200221.377848-2-jolsa@kernel.org>
- <CAEf4BzbzgTzvnPRJ24gdhuxN02_w8iNNFn4URh0vEp-t69oPnA@mail.gmail.com>
- <20240605175619.GH25006@redhat.com>
- <ZmDPQH2uiPYTA_df@krava>
- <ZmHn43Af4Kwlxoyc@krava>
- <CAEf4BzaFcpqFc8w6dH5oOJNKsAXZjs-KCFAXLp8TMBtS5ooo4g@mail.gmail.com>
- <ZmbePPIKqc6XuVjL@krava>
- <CAEf4BzaqDSGBbaEuOpEW5NbosgN8jE4CUE8s+-dgs-0sV6_geA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1718823015; x=1719427815;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uuPnBomZe0Xk2eQHT1++xcdmG4tOYlp5lhA77KrxQfM=;
+        b=aqBM0Bst3LP/LxIfZuCOAApNnV7y7M8BqaPEO+s3bQXVrTbhXycItZFbgZFuZYQnKh
+         bJEF/+l1KDNylpchv+uhm2bMI3DOXWcQseoEQEoB1T+tcGAp9fkZkUFJ2jtgHOuEwTW0
+         P7gdDGX5NAdX9kB2S7HjDxyGEBH/zfmlAi+M1MdMa8PrjgFU81ad6p+fo2/aVjEaHQdU
+         ZZnXVBooJPcCJlD6N3fEn6VKsfWjB/V53QDzN8LxDTVX46+4TVFjkX3iIchkimpTgkZd
+         oMtRTEj7oWKRkO7PPaC10FSRxy+RyZgMldlHbkcbBhKxA2NU/2FhpWcBfp11j9kZ8MQ5
+         nwsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnZUVduV2ElPkDCfRSxp6y4QHocfi6c6r7SlqoX0ivSToxr73zc4vpR7lOQXK8LB1OwHlb5G/VNpoxblihjXSiTfngkjravUOyqKI6
+X-Gm-Message-State: AOJu0YwTDj4Zg5kAa7YxfAwK/3aU6C230xclPyQBbdEG3GlLbt583sq3
+	r7T/Eh83GpLbwPocIlJhO98L8tYdYaCD6I3jkLK6R3EJnCVu+XcdoNBh9ZFszruCigHqbRJjpbA
+	c8FT+IpVNpVRnH5PbZc3sSAoeX2x7C82R5T7p
+X-Google-Smtp-Source: AGHT+IFNg3encb4gjg+oaKv3d96aPN2bFamfSHIp4BU7GaTZm4WYmo3NnO+PTZAYnNp35sTtfMcp8RW+oDqt4RnqEhk=
+X-Received: by 2002:a05:6102:2385:b0:48f:19af:d2a8 with SMTP id
+ ada2fe7eead31-48f19afdb73mr1689770137.11.1718823015032; Wed, 19 Jun 2024
+ 11:50:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzaqDSGBbaEuOpEW5NbosgN8jE4CUE8s+-dgs-0sV6_geA@mail.gmail.com>
+References: <000000000000dc2e3d061b3d519c@google.com> <CAOuNp5n7qaZnZ_5+kjfA6MD3QO=XDhE01G1ofN3rp72um-D2+w@mail.gmail.com>
+In-Reply-To: <CAOuNp5n7qaZnZ_5+kjfA6MD3QO=XDhE01G1ofN3rp72um-D2+w@mail.gmail.com>
+From: Marco Elver <elver@google.com>
+Date: Wed, 19 Jun 2024 20:49:37 +0200
+Message-ID: <CANpmjNO7uiz=zKmTkXGO5cn1BUDuPNC3MS7Vdgua0i2bdqeMjQ@mail.gmail.com>
+Subject: Re: [syzbot] [block?] KCSAN: data-race in block_uevent / inc_diskseq (2)
+To: Santosh Pradhan <santosh.pradhan@gmail.com>
+Cc: syzbot <syzbot+c147f9175ec6cc7bd73b@syzkaller.appspotmail.com>, axboe@kernel.dk, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 03:53:50PM -0700, Andrii Nakryiko wrote:
-> On Mon, Jun 10, 2024 at 4:06 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+On Wed, 19 Jun 2024 at 19:00, Santosh Pradhan <santosh.pradhan@gmail.com> w=
+rote:
+>
+> Hi All,
+> I guess this can be fixed by READ_ONCE(disk->diskseq) while reading
+> and WRITE_ONCE(disk->diskseq, atomic64_inc_return(&diskseq)) in
+> inc_diskseq() to avoid data race.
+>
+> I can probably send a patch if my understanding is correct.
+
+What you propose fixes the underlying data race. However, I wonder if
+there is a race condition that needs to be taken care of: whatever
+sees the string "DISKSEQ=3D<seqnum>" can end up with either the old
+value or new value (in this case 45 or 48 respectively). Is whoever
+uses this string tolerant to the value randomly changing?
+
+> Best Regards,
+> Santosh
+>
+>
+> On Wed, Jun 19, 2024 at 5:57=E2=80=AFPM syzbot
+> <syzbot+c147f9175ec6cc7bd73b@syzkaller.appspotmail.com> wrote:
 > >
-> > On Thu, Jun 06, 2024 at 09:52:39AM -0700, Andrii Nakryiko wrote:
-> > > On Thu, Jun 6, 2024 at 9:46 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> > > >
-> > > > On Wed, Jun 05, 2024 at 10:50:11PM +0200, Jiri Olsa wrote:
-> > > > > On Wed, Jun 05, 2024 at 07:56:19PM +0200, Oleg Nesterov wrote:
-> > > > > > On 06/05, Andrii Nakryiko wrote:
-> > > > > > >
-> > > > > > > so any such
-> > > > > > > limitations will cause problems, issue reports, investigation, etc.
-> > > > > >
-> > > > > > Agreed...
-> > > > > >
-> > > > > > > As one possible solution, what if we do
-> > > > > > >
-> > > > > > > struct return_instance {
-> > > > > > >     ...
-> > > > > > >     u64 session_cookies[];
-> > > > > > > };
-> > > > > > >
-> > > > > > > and allocate sizeof(struct return_instance) + 8 *
-> > > > > > > <num-of-session-consumers> and then at runtime pass
-> > > > > > > &session_cookies[i] as data pointer to session-aware callbacks?
-> > > > > >
-> > > > > > I too thought about this, but I guess it is not that simple.
-> > > > > >
-> > > > > > Just for example. Suppose we have 2 session-consumers C1 and C2.
-> > > > > > What if uprobe_unregister(C1) comes before the probed function
-> > > > > > returns?
-> > > > > >
-> > > > > > We need something like map_cookie_to_consumer().
-> > > > >
-> > > > > I guess we could have hash table in return_instance that gets 'consumer -> cookie' ?
-> > > >
-> > > > ok, hash table is probably too big for this.. I guess some solution that
-> > > > would iterate consumers and cookies made sure it matches would be fine
-> > > >
-> > >
-> > > Yes, I was hoping to avoid hash tables for this, and in the common
-> > > case have no added overhead.
+> > Hello,
 > >
-> > hi,
-> > here's first stab on that.. the change below:
-> >   - extends current handlers with extra argument rather than adding new
-> >     set of handlers
-> >   - store session consumers objects within return_instance object and
-> >   - iterate these objects ^^^ in handle_uretprobe_chain
+> > syzbot found the following issue on:
 > >
-> > I guess it could be still polished, but I wonder if this could
-> > be the right direction to do this.. thoughts? ;-)
-> 
-> Yeah, I think this is the right direction. It's a bit sad that this
-> makes getting rid of rw_sem on hot path even harder, but that's a
-> separate problem.
-> 
+> > HEAD commit:    3d54351c64e8 Merge tag 'lsm-pr-20240617' of git://git.k=
+ern..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12426cfa980=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dcd45aedbb3f=
+7637b
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dc147f9175ec6c=
+c7bd73b
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
+ebian) 2.40
 > >
-> > thanks,
-> > jirka
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/ba0a777cccff/d=
+isk-3d54351c.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/a78193318c92/vmli=
+nux-3d54351c.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/54456f3d3bfe=
+/bzImage-3d54351c.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+c147f9175ec6cc7bd73b@syzkaller.appspotmail.com
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > BUG: KCSAN: data-race in block_uevent / inc_diskseq
+> >
+> > write to 0xffff888101f05220 of 8 bytes by task 3101 on cpu 0:
+> >  inc_diskseq+0x2c/0x40 block/genhd.c:1472
+> >  disk_force_media_change+0x9f/0xf0 block/disk-events.c:297
+> >  __loop_clr_fd+0x270/0x3f0 drivers/block/loop.c:1193
+> >  loop_clr_fd drivers/block/loop.c:1276 [inline]
+> >  lo_ioctl+0xea6/0x1330 drivers/block/loop.c:1578
+> >  blkdev_ioctl+0x35f/0x450 block/ioctl.c:676
+> >  vfs_ioctl fs/ioctl.c:51 [inline]
+> >  __do_sys_ioctl fs/ioctl.c:907 [inline]
+> >  __se_sys_ioctl+0xd3/0x150 fs/ioctl.c:893
+> >  __x64_sys_ioctl+0x43/0x50 fs/ioctl.c:893
+> >  x64_sys_call+0x1581/0x2d70 arch/x86/include/generated/asm/syscalls_64.=
+h:17
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > read to 0xffff888101f05220 of 8 bytes by task 3091 on cpu 1:
+> >  block_uevent+0x31/0x50 block/genhd.c:1206
+> >  dev_uevent+0x2f3/0x380 drivers/base/core.c:2687
+> >  uevent_show+0x11e/0x210 drivers/base/core.c:2745
+> >  dev_attr_show+0x3a/0xa0 drivers/base/core.c:2437
+> >  sysfs_kf_seq_show+0x17c/0x250 fs/sysfs/file.c:59
+> >  kernfs_seq_show+0x7c/0x90 fs/kernfs/file.c:205
+> >  seq_read_iter+0x2d7/0x940 fs/seq_file.c:230
+> >  kernfs_fop_read_iter+0xc6/0x310 fs/kernfs/file.c:279
+> >  new_sync_read fs/read_write.c:395 [inline]
+> >  vfs_read+0x5e6/0x6e0 fs/read_write.c:476
+> >  ksys_read+0xeb/0x1b0 fs/read_write.c:619
+> >  __do_sys_read fs/read_write.c:629 [inline]
+> >  __se_sys_read fs/read_write.c:627 [inline]
+> >  __x64_sys_read+0x42/0x50 fs/read_write.c:627
+> >  x64_sys_call+0x27e5/0x2d70 arch/x86/include/generated/asm/syscalls_64.=
+h:1
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > value changed: 0x0000000000000045 -> 0x0000000000000048
+> >
+> > Reported by Kernel Concurrency Sanitizer on:
+> > CPU: 1 PID: 3091 Comm: udevd Not tainted 6.10.0-rc4-syzkaller-00035-g3d=
+54351c64e8 #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
+ Google 06/07/2024
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > >
 > >
 > > ---
-> > diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-> > index f46e0ca0169c..4e40e8352eac 100644
-> > --- a/include/linux/uprobes.h
-> > +++ b/include/linux/uprobes.h
-> > @@ -34,15 +34,19 @@ enum uprobe_filter_ctx {
-> >  };
+> > This report is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
 > >
-> >  struct uprobe_consumer {
-> > -       int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs);
-> > +       int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs,
-> > +                       unsigned long *data);
-> 
-> can we use __u64 here? This long vs __u64 might cause problems for BPF
-> when the host is 32-bit architecture (BPF is always 64-bit).
-
-ok
-
-> 
-> >         int (*ret_handler)(struct uprobe_consumer *self,
-> >                                 unsigned long func,
-> > -                               struct pt_regs *regs);
-> > +                               struct pt_regs *regs,
-> > +                               unsigned long *data);
-> >         bool (*filter)(struct uprobe_consumer *self,
-> >                                 enum uprobe_filter_ctx ctx,
-> >                                 struct mm_struct *mm);
+> > syzbot will keep track of this issue. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 > >
-> 
-> [...]
-> 
-> >  static int dup_utask(struct task_struct *t, struct uprobe_task *o_utask)
-> >  {
-> >         struct uprobe_task *n_utask;
-> > @@ -1756,11 +1795,11 @@ static int dup_utask(struct task_struct *t, struct uprobe_task *o_utask)
+> > If the report is already addressed, let syzbot know by replying with:
+> > #syz fix: exact-commit-title
 > >
-> >         p = &n_utask->return_instances;
-> >         for (o = o_utask->return_instances; o; o = o->next) {
-> > -               n = kmalloc(sizeof(struct return_instance), GFP_KERNEL);
-> > +               n = alloc_return_instance(o->session_cnt);
-> >                 if (!n)
-> >                         return -ENOMEM;
+> > If you want to overwrite report's subsystems, reply with:
+> > #syz set subsystems: new-subsystem
+> > (See the list of subsystem names on the web dashboard)
 > >
-> > -               *n = *o;
-> > +               memcpy(n, o, ri_size(o->session_cnt));
-> >                 get_uprobe(n->uprobe);
-> >                 n->next = NULL;
+> > If the report is a duplicate of another one, reply with:
+> > #syz dup: exact-subject-of-another-report
 > >
-> > @@ -1853,35 +1892,38 @@ static void cleanup_return_instances(struct uprobe_task *utask, bool chained,
-> >         utask->return_instances = ri;
-> >  }
+> > If you want to undo deduplication, reply with:
+> > #syz undup
 > >
-> > -static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
-> > +static struct return_instance *
-> > +prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs,
-> > +                 struct return_instance *ri, int session_cnt)
-> 
-> you have struct uprobe, why do you need to pass session_cnt? Also,
-> given return_instance is cached, it seems more natural to have
-> 
-> struct return_instance **ri as in/out parameter, and keep the function
-> itself as void
-
-I tried that, but now I think it'd be better if we just let prepare_uretprobe
-to allocate (if needed) and free ri in case it fails and do something like:
-
-       if (need_prep && !remove)
-               prepare_uretprobe(uprobe, regs, ri); /* put bp at return */
-       else
-               kfree(ri);
-
-> 
-> >  {
-> > -       struct return_instance *ri;
-> >         struct uprobe_task *utask;
-> >         unsigned long orig_ret_vaddr, trampoline_vaddr;
-> >         bool chained;
-> >
-> 
-> [...]
-> 
-> >         if (need_prep && !remove)
-> > -               prepare_uretprobe(uprobe, regs); /* put bp at return */
-> > +               ri = prepare_uretprobe(uprobe, regs, ri, uprobe->session_cnt); /* put bp at return */
-> > +       kfree(ri);
-> >
-> >         if (remove && uprobe->consumers) {
-> >                 WARN_ON(!uprobe_is_active(uprobe));
-> >                 unapply_uprobe(uprobe, current->mm);
-> >         }
-> > + out:
-> >         up_read(&uprobe->register_rwsem);
-> >  }
-> >
-> > +static struct session_consumer *
-> > +consumer_find(struct session_consumer *sc, struct uprobe_consumer *uc)
-> 
-> why can't we keep track of remaining number of session_consumer items
-> instead of using entire extra entry as a terminating element? Seems
-> wasteful and unnecessary.
-
-ok I think it's possible, will try that
-
-thanks,
-jirka
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/CAOuNp5n7qaZnZ_5%2BkjfA6MD3QO%3DXDhE01G1ofN3rp72um-D2%2Bw%=
+40mail.gmail.com.
 
