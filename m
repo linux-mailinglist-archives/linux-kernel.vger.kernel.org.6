@@ -1,114 +1,260 @@
-Return-Path: <linux-kernel+bounces-221449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E87090F3C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:13:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D69A390F3C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 18:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4226E1C217F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A64B1F22A0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2024 16:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D6614F9C4;
-	Wed, 19 Jun 2024 16:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55668152181;
+	Wed, 19 Jun 2024 16:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="g2A6W5Y1"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hZtWJDV6"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4912146D53
-	for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 16:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2479914E2C9;
+	Wed, 19 Jun 2024 16:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718813623; cv=none; b=mGxHx8AeZfRCL7w/Xerua43XKQW1ONOlEdYDyJckZbuTzsOd3u+fh5AOAYDT5RgUgvAjt+v1LbSlWH3Sv31PQzcSuAHAtWhkOEf/KvlW1Ap/V3ZNgh5IHWV8/DZ/V5uQ3xjcYruiJ3yPxE4/SBKKMgewAIBqzgowLGh4CrwniuE=
+	t=1718813633; cv=none; b=cYRwVMi8QT4dDFZf9ij2jeaGuMsYpalhvUQIiPvFMxm6bFi0dLL6yPyLrZ+i4lDgkkTfxgKXopbsV6yDZmSzBlcfOT7TxLS7ZjeyR7BYauZSBNe5gLTLCOF7cEKv50+DgX3JA7kd96e5fAAkJwMjh8zW8Imwbvhbj5EQH8oPU28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718813623; c=relaxed/simple;
-	bh=ZuNheAGDS9lyLirqvsvZEcE8a0E6ASuPQtJZ3l+RY/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OpoyItQmYBs9EH7tVRxtid0Gc8w7x+S8Ly1uieKTVFid5sT/xHkeBKFGhHGSN0OpKMa4EoJ5IwO9SQEcoFxE1RbV0wUEGsgQjoUX78s7L739ciAz3gx85nrBKv6INX224l7JFTv8O3pP1Auf578Q2Gs8Ut8uqgjNbcOrhPK73iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=g2A6W5Y1; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45JGDYSb037980;
-	Wed, 19 Jun 2024 11:13:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718813614;
-	bh=LdYSf4TpjDJaCD9ffg7q90Gif9wyFLmDS+w2UmWNTQY=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=g2A6W5Y1hOF+mhmZgCc4WBmZpSavTXtNZwgkGAswPTHnuuDgWdUzhWAG4jN71Popx
-	 5tXGJn+IR1PPcCGWOzKKr3ktldlQsae4x+FNnnJ+2BR0rUTnN9tzGYo1u9nzarZtHW
-	 oq+L1JOQefOz6k6FKWeQe6mlai0DVGTj6tjCr1DY=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45JGDXeQ004395
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 19 Jun 2024 11:13:34 -0500
-Received: from lewvowa01.ent.ti.com (10.180.75.79) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 19
- Jun 2024 11:13:33 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by lewvowa01.ent.ti.com
- (10.180.75.79) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Wed, 19 Jun
- 2024 11:13:33 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 19 Jun 2024 11:13:33 -0500
-Received: from [128.247.81.8] (ula0226330.dhcp.ti.com [128.247.81.8] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45JGDWSp056013;
-	Wed, 19 Jun 2024 11:13:33 -0500
-Message-ID: <ea70aba9-3d20-4571-8f22-417bcf54929d@ti.com>
-Date: Wed, 19 Jun 2024 11:13:28 -0500
+	s=arc-20240116; t=1718813633; c=relaxed/simple;
+	bh=q5gg3wlN1xUa6GvXUQS/Ik0u8Mxip/HY6wE9gPImDaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZhJl1DufwiYP87t4FFReHKQdy6hmjD4Tqs9Z9/OEqWfxF1J/0UMRFGOxpOQyOl+44ZjsfAqUlODN8QeA7rF2Mn/De7cYkQXI06Glns7o/2uuJZRPqJoEao64sqrXiwwJp8LFvnt7hJPiRpep1du8qHIxAJQXGqTEDGVvS3bHt6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hZtWJDV6; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QYakplpX2ykVLz/kbSetsTy/eCXPauRn2WMhcnSUh5U=; b=hZtWJDV6/74RoNLZREg3Eg1ifW
+	PlUV3M2v70xab1/+k7hwo14qthUfkAdnRIm9oM5VYCQ2HEksluneVYx42N8+dg65fFRz5uE4l25sc
+	0RfDFTo4S1K4SPVcQ7V0KxXnoS1psxbPKFml/pQBxXamEntMS+lN4waE5pSjd5BhSUIY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sJxwS-000U9w-Kg; Wed, 19 Jun 2024 18:13:48 +0200
+Date: Wed, 19 Jun 2024 18:13:48 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Omer Shpigelman <oshpigelman@habana.ai>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"ogabbay@kernel.org" <ogabbay@kernel.org>,
+	Zvika Yehudai <zyehudai@habana.ai>
+Subject: Re: [PATCH 09/15] net: hbl_en: add habanalabs Ethernet driver
+Message-ID: <2c66dc75-b321-4980-955f-7fdcd902b578@lunn.ch>
+References: <20240613082208.1439968-1-oshpigelman@habana.ai>
+ <20240613082208.1439968-10-oshpigelman@habana.ai>
+ <10902044-fb02-4328-bf88-0b386ee51c78@lunn.ch>
+ <bddb69c3-511b-4385-a67d-903e910a8b51@habana.ai>
+ <621d4891-36d7-48c6-bdd8-2f3ca06a23f6@lunn.ch>
+ <45e35940-c8fc-4f6c-8429-e6681a48b889@habana.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mailbox: omap: request shared interrupt to fix
- initialization
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Jassi Brar
-	<jassisinghbrar@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux@ew.tq-group.com>
-References: <20240619115258.108557-1-matthias.schiffer@ew.tq-group.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240619115258.108557-1-matthias.schiffer@ew.tq-group.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <45e35940-c8fc-4f6c-8429-e6681a48b889@habana.ai>
 
-On 6/19/24 6:52 AM, Matthias Schiffer wrote:
-> The TI AM64x and similar SoC families have mailboxes with two channels
-> each which share the same IRQ. The IRQ must thus be requested with
-> IRQF_SHARED, or initializing the second channel will fail.
+On Wed, Jun 19, 2024 at 07:16:20AM +0000, Omer Shpigelman wrote:
+> On 6/18/24 17:19, Andrew Lunn wrote:
+> >>>> +static u32 hbl_en_get_mtu(struct hbl_aux_dev *aux_dev, u32 port_idx)
+> >>>> +{
+> >>>> +     struct hbl_en_port *port = HBL_EN_PORT(aux_dev, port_idx);
+> >>>> +     struct net_device *ndev = port->ndev;
+> >>>> +     u32 mtu;
+> >>>> +
+> >>>> +     if (atomic_cmpxchg(&port->in_reset, 0, 1)) {
+> >>>> +             netdev_err(ndev, "port is in reset, can't get MTU\n");
+> >>>> +             return 0;
+> >>>> +     }
+> >>>> +
+> >>>> +     mtu = ndev->mtu;
+> >>>
+> >>> I think you need a better error message. All this does is access
+> >>> ndev->mtu. What does it matter if the port is in reset? You don't
+> >>> access it.
+> >>>
+> >>
+> >> This function is called from the CN driver to get the current MTU in order
+> >> to configure it to the HW, for exmaple when configuring an IB QP. The MTU
+> >> value might be changed by user while we execute this function.
+> > 
+> > Change of MTU will happen while holding RTNL. Why not simply hold RTNL
+> > while programming the hardware? That is the normal pattern for MAC
+> > drivers.
+> >
 > 
-> Fixes: 3f58c1f4206f ("mailbox: omap: Remove kernel FIFO message queuing")
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> ---
+> I can hold the RTNL lock while configuring the HW but it seems like a big
+> overhead. Configuring the HW might take some time due to QP draining or
+> cache invalidation.
 
-Looks like we found the same issue, already sent the same fix last week:
+How often does the MTU change? Once, maybe twice on boot, and never
+again? MTU change is not hot path. For slow path code, KISS is much
+better, so it is likely to be correct. 
 
-https://www.spinics.net/lists/kernel/msg5247681.html
-
->   drivers/mailbox/omap-mailbox.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> To me it seems unnecessary but if that's the common way then I'll change
+> it.
+>  
+> >>>> +static int hbl_en_change_mtu(struct net_device *netdev, int new_mtu)
+> >>>> +{
+> >>>> +     struct hbl_en_port *port = hbl_netdev_priv(netdev);
+> >>>> +     int rc = 0;
+> >>>> +
+> >>>> +     if (atomic_cmpxchg(&port->in_reset, 0, 1)) {
+> >>>> +             netdev_err(netdev, "port is in reset, can't change MTU\n");
+> >>>> +             return -EBUSY;
+> >>>> +     }
+> >>>> +
+> >>>> +     if (netif_running(port->ndev)) {
+> >>>> +             hbl_en_port_close(port);
+> >>>> +
+> >>>> +             /* Sleep in order to let obsolete events to be dropped before re-opening the port */
+> >>>> +             msleep(20);
+> >>>> +
+> >>>> +             netdev->mtu = new_mtu;
+> >>>> +
+> >>>> +             rc = hbl_en_port_open(port);
+> >>>> +             if (rc)
+> >>>> +                     netdev_err(netdev, "Failed to reinit port for MTU change, rc %d\n", rc);
+> >>>
+> >>> Does that mean the port is FUBAR?
+> >>>
+> >>> Most operations like this are expected to roll back to the previous
+> >>> working configuration on failure. So if changing the MTU requires new
+> >>> buffers in your ring, you should first allocate the new buffers, then
+> >>> free the old buffers, so that if allocation fails, you still have
+> >>> buffers, and the device can continue operating.
+> >>>
+> >>
+> >> A failure in opening a port is a fatal error. It shouldn't happen. This is
+> >> not something we wish to recover from.
+> > 
+> > What could cause open to fail? Is memory allocated?
+> > 
 > 
-> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
-> index 46747559b438f..03187c65f98bf 100644
-> --- a/drivers/mailbox/omap-mailbox.c
-> +++ b/drivers/mailbox/omap-mailbox.c
-> @@ -230,7 +230,7 @@ static int omap_mbox_startup(struct omap_mbox *mbox)
->   	int ret = 0;
->   
->   	ret = request_threaded_irq(mbox->irq, NULL, mbox_interrupt,
-> -				   IRQF_ONESHOT, mbox->name, mbox);
-> +				   IRQF_ONESHOT | IRQF_SHARED, mbox->name, mbox);
->   	if (unlikely(ret)) {
->   		pr_err("failed to register mailbox interrupt:%d\n", ret);
->   		return ret;
+> Memory is allocated but it is freed in case of a failure.
+> Port opening can fail due to other reasons as well like some HW timeout
+> while configuring the ETH QP.
+
+If the hardware timeout because the hardware is dead, there is nothing
+you can do about it. Its dead.
+
+But what about when the system is under memory pressure? You say it
+allocates memory. What happens if those allocations fail. Does
+changing the MTU take me from a working system to a dead system? It is
+good practice to not kill a working system under situations like
+memory pressure. You try to first allocate the memory you need to
+handle the new MTU, and only if successful do you free existing memory
+you no longer need. That means if you cannot allocate the needed
+memory, you still have the old memory, you can keep the old MTU and
+return -ENOMEM, and the system keeps running.
+
+> I didn't check that prior to my submit. Regarding this "no new module
+> parameters allowed" rule, is that documented anywhere?
+
+Lots of emails that fly passed on the mailing list. Maybe once every
+couple of months when a vendor tries to mainline a new driver without
+reading the mailing list for a few months to know how mainline
+actually works. I _guess_ Davem has been pushing back on module
+parameters for 10 years? Maybe more.
+
+
+> if not, is that the
+> common practice? not to try to do something that was not done recently?
+> how "recently" is defined?
+> I just want to clarify this because it's hard to handle these submissions
+> when we write some code based on existing examples but then we are
+> rejected because "we don't do that here anymore".
+> I want to avoid future cases of this mismatch.
+
+My suggestion would be to spend 30 minutes every day reading patches
+and review comment on the mailing list. Avoid making the same mistakes
+others make, especially newbies to mainline, and see what others are
+doing in the same niche as this device. 30 minutes might seem like a
+lot, but how much time did you waste implementing polling mode, now
+you are going to throw it away?
+
+> >>>> +                     ethtool_link_ksettings_add_link_mode(cmd, lp_advertising, Autoneg);
+> >>>
+> >>> That looks odd. Care to explain?
+> >>>
+> >>
+> >> The HW of all of our ports supports autoneg.
+> >> But in addition, the ports are divided to two groups:
+> >> internal: ports which are connected to other Gaudi2 ports in the same server.
+> >> external: ports which are connected to an external switch.
+> >> Only internal ports use autoneg.
+> >> The ports mask which sets each port as internal/external is fetched from
+> >> the FW on device load.
+> > 
+> > That is not what i meant. lc_advertising should indicate the link
+> > modes the peer is advertising. If this was a copper link, it typically
+> > would contain 10BaseT-Half, 10BaseT-Full, 100BaseT-Half,
+> > 100BaseT-Full, 1000BaseT-Half. Setting the Autoneg bit is pointless,
+> > since the peer must be advertising in order that lp_advertising has a
+> > value!
+> > 
+> 
+> Sorry, but I don't get this. The problem is the setting of the Autoneg bit
+> in lp_advertising? is that redundant? I see that other vendors set it too
+> in case that Autoneg was completed.
+
+
+$ ethtool eth0
+Settings for eth0:
+	Supported ports: [ TP	 MII ]
+	Supported link modes:   10baseT/Half 10baseT/Full
+	                        100baseT/Half 100baseT/Full
+	                        1000baseT/Full
+
+This is `supported`. The hardware can do these link modes.
+
+	Supported pause frame use: Symmetric Receive-only
+	Supports auto-negotiation: Yes
+
+It also support symmetric pause, and can do autoneg.
+
+	Supported FEC modes: Not reported
+	Advertised link modes:  10baseT/Half 10baseT/Full
+	                        100baseT/Half 100baseT/Full
+	                        1000baseT/Full
+	Advertised pause frame use: Symmetric Receive-only
+	Advertised auto-negotiation: Yes
+	Advertised FEC modes: Not reported
+
+This is `advertising`, and is what this device is advertising to the
+link partner. By default you copy supported into advertising, but the
+user can use ethtool -s advertise N, where N is a list of link modes,
+to change what is advertised to the link partner.
+
+	Link partner advertised link modes:  10baseT/Half 10baseT/Full
+	                                     100baseT/Half 100baseT/Full
+	                                     1000baseT/Full
+	Link partner advertised pause frame use: Symmetric
+	Link partner advertised auto-negotiation: Yes
+	Link partner advertised FEC modes: Not reported
+
+This is `lp_advertising`, what the link partner is advertising to this
+device. Once you have this, you mask lp_advertising with advertising,
+and generally pick the link mode with the highest bandwidth:
+
+	Speed: 1000Mb/s
+	Duplex: Full
+
+So autoneg resolved to 1000baseT/Full
+
+	Andrew
 
