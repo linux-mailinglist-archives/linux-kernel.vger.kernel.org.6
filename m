@@ -1,150 +1,299 @@
-Return-Path: <linux-kernel+bounces-222903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE1F910974
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:13:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63679910994
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97282811E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:13:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52461F225D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A4A1AF69D;
-	Thu, 20 Jun 2024 15:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAFF1AF696;
+	Thu, 20 Jun 2024 15:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jRHN58CI"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kawdHOy7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBC41AD486;
-	Thu, 20 Jun 2024 15:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718896419; cv=none; b=c4MtIs8/tmntNJi5lY+eaFFnbbe5jYKZANE2vEeSq1c+u3CWPCv/ffS2wKwMncrMZdMOTCQP1cbUflmqdBQICFuz9EA+NMJfm5cIu4FVIynse04F0KYQkKOKqIp/lVPONgDibLWY0eTjHt/yZX9ygKCFPhFArf9ZwrPLLBUNFj8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718896419; c=relaxed/simple;
-	bh=SV1MB+rMIhzvY5kkb5cSdZqkMnbh+I0UyxCJkYmMut4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J4a2cztfxi0nP6TUr1k4+hOhPEUhufpbpFTtxnyrSY7Vg53j2rFTUovJoaZA+nVnu+RT/4aTwkTLfsLr1UQvO3YUEH2sWytonRBdUxbexbFKKDthUUpDpE3jVtZIlujEXSwyulhx+4LRm01XYvpN0QRzefAGTEuyILA9VOTwszg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jRHN58CI; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-704313fa830so866680b3a.3;
-        Thu, 20 Jun 2024 08:13:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718896417; x=1719501217; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3nq34gHN3rCWci3z+YBG2EHSMYY20+Tz9GpEK9DzMtg=;
-        b=jRHN58CILt++yvgQuUrrwYg5ZOMByB5xAI/OhKmRwd05GL4m4Dvm/3PiZ5J8EcEHGp
-         y3BEOnh2TU+NNd6/CQdHktdoO1eWSRdTLaz6hz2NCeE/3KHo1/QN2a9lBDPhbBd6XBMg
-         Q4wkYxhSoF73FjzrD4pX/yaUR0+qeFhMyeQzrMBhEaZa8OV9onaXmeHMU0zBeQsOPAOw
-         te+GWxdDMvPJtQ6CraGeTm2XP4cHizTJMUQmnRALjTvSfpP9d/FameZTklEupY79KNR7
-         Ut1e/cQb/bHxz1FFlgxDdwq7ou2ahRWKbFwof2WudT5H4H6LrVHZcBJmHI1kQc3oXWMu
-         nq2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718896417; x=1719501217;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3nq34gHN3rCWci3z+YBG2EHSMYY20+Tz9GpEK9DzMtg=;
-        b=AF1a7T7G4kv37tEkoE+S5ajV0BxlRQJPp1qooZgbdgNXkCXkfl3EYLVxE6Yb+CE+YP
-         Jd1bzAD7byAOawgg59VrxRyeZKc4rBZ7/8C208nmE5rv2d4BTM0LI0m3Wsbmnw9JfIno
-         A9mDo+qe112D+6X1SL+vPDn6RhSoyaA/gaNqfwJu1zh3EvUkB2Lv2QBbdKdLYhwI9Ngq
-         CwQv7S/E5hQk9ufC7m0sIJViCqZca++O77F/WOBt1/NKtLjjM/6Bw6pFyQVRubR9KJvJ
-         1tM0gSEIpdcm3WL0/ZnAXDyMYRcjIPJsLDCN7dlDlVEitd6vH8RAQa7mMM0zPoa0HLeW
-         eAeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmhxvmZkp+gZssrrKmqnczB5AnVUJPXtOEiqkl8IKN0PuutXVJydJnM30vKlXEqk2bzQEDBzpkakv1YYkJ6bjHlpRcq1Dj/OdZKsGTgbw+P1mdFxJe9qLOobktt6vlXE4eFhnpgTrPi+TkzLSSw7/vnL2LZJLbxTfPLEHG1yGl5ETko6t5w1ex8aItHrxtnSPM2tPZM8AzTIGz8UYMyg==
-X-Gm-Message-State: AOJu0YwrSGNKMJsfCOBsn44gh7pM1wmHIy1B6Q3aIG7bNAgtSawISQDM
-	w4ttuxL7//u3KbtJvD4Cb9eboOQsFAY3aft6yBr5Y3hGvjeMkeBo
-X-Google-Smtp-Source: AGHT+IEubZsaogJmmRsMBzvSimjhpFhkRr9tZqbr7CaXNFD3VGPRTDC5Jd1++FZkiV0kUOtRD4sA6w==
-X-Received: by 2002:a05:6a20:4b15:b0:1b2:47f9:3814 with SMTP id adf61e73a8af0-1bcbb421fdcmr5387797637.2.1718896416389;
-        Thu, 20 Jun 2024 08:13:36 -0700 (PDT)
-Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb9195asm12420995b3a.209.2024.06.20.08.13.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 08:13:35 -0700 (PDT)
-Date: Thu, 20 Jun 2024 12:14:57 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
-	Michael.Hennerich@analog.com, jic23@kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	nuno.sa@analog.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI
- protocol with MOSI idle configuration
-Message-ID: <ZnRHcXaCIVH4zDMo@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1718749981.git.marcelo.schmitt@analog.com>
- <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
- <63db9349-f453-4a5b-aa09-d1857ddd8b03@baylibre.com>
- <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
- <0cf9576d-c50e-4730-834a-3a4ceac6a4f8@sirena.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B8F1E51E;
+	Thu, 20 Jun 2024 15:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718896579; cv=fail; b=IJA2JBJBWco5N9uwnq2Kc1kJfuCKHQy5PPVREYeS0XXKgSTYdUjwUA7OAT4bxY2zFNA0UxmkKzjCZnTjekdjE5E9WqG7FMCnTQGLxYLuyQIJ8lps6F3yLAata7RLQc/RPuhJIFxP0QXt2REIF2y20d9rKQ2zWs+z2po3EBebgC8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718896579; c=relaxed/simple;
+	bh=XlUqzL7mGf02SgrEz+q42qeCDsG3bFK97sB0yDGf1ls=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=EGNlquH7QCqL9GmEuyfOKM8iCqwNifb5/e95ODTC10B17PlqaFOflmPEFQuBvfJPJ7W49KbRZbOxvnvu7NS3Jfqb9oB8svx6gU+AegADEM43it6v9f2vkok3R2dXlpGhLBRo6HRksc842nISB+GsAzEGdXrZeoiimnnmYS8O7ZE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kawdHOy7; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718896578; x=1750432578;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=XlUqzL7mGf02SgrEz+q42qeCDsG3bFK97sB0yDGf1ls=;
+  b=kawdHOy77aoMKjxG3ftINMbEcA+rimjhMUtcNywbjMlYvz5DCG1TGD6/
+   9qqWoYH4ETa60f32i27l7fPZ7S5b7RrO0nYRZ1teFvM6V8KWO8oggZuSa
+   TbyR2L3vz6no+OcZy+FyIdDyn/nsnlYSVi5gzo825RzotaM7OE8GNmsxM
+   aBEYPJFHcq4gPxeST3l2EBiESsI0Uhr9ruUA+PLqAJldDhGGhBPyBb6aV
+   ROMQM4OTB7ayPkTnUx6Woh6KRsrSe1kQYX/yZO5/xFbnRxn5ekF3xLKiL
+   17hWxk6hgvuhHcVkoSIy/T2UUcLWZUTheXnLy5puACNRRt0qcnRQ6l4fg
+   A==;
+X-CSE-ConnectionGUID: 6iBxiiUyTyGfLMkHi3/YEA==
+X-CSE-MsgGUID: YJj1+5LIS62Tf+cSVWqZ1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="27010124"
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="27010124"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 08:16:08 -0700
+X-CSE-ConnectionGUID: lFJrIe/hTq6Fs6f5diXMug==
+X-CSE-MsgGUID: M4KVj+rhSr6ms4u3hBcDxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="42387635"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Jun 2024 08:16:03 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 20 Jun 2024 08:16:03 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 20 Jun 2024 08:16:02 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 20 Jun 2024 08:16:02 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 20 Jun 2024 08:16:02 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MBtuTyPO8lfAO1HsnQGKVrOqi3mlnaAftjNkKPdbWvWtZdrjsv2a9ECi67CAlDh5Z77SV7uwbEd5TT/3ibpjPgIIIkopZng4nRNo7I67o3nD7fXurGJ1fRvG19ZzKStt9WI1rFlNsR0twtEAuJ+QZyy3fnLW3V+Ld+GtQdvd/mn8Knlpow9z7RP/qzHb9MJypIT/gpcZ5KQr9PeUYDWjtp7SbeO9505TuvW3Rj37PFkWrF0vJFIjV1U5U0HEe5djaXcZsedO3gwx42XOrgPfSVRXJkCVyWxEW2EdWStPANQgyGS2VZLVoZs7G2hNb+o2ty3A4NTz4t9ds6rHXFmQ0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v5rVgMX5GNQwpVVpYo1HTcHQEfS9WC4R/Bo/HeLbEmA=;
+ b=HvZyAZ55Ci6dyrp+ypugpExG+FBU20fztjiEf7winYA5UNNG43TcJU9uaYxs6dauCuhUo9EfQJ4deRgumId1zvAULIgcvfmQv94MKaP3oJBBXU45NgdVc66bw4Bo1TOjvJpXmREWdc4tOuRnWfRhqN4oPFlUzATPPxx4f7Qadw6S6Q1b4bHgMTqoh2di4/z0K4DVLYUZ4EM2Jld2I8k9NH5bHUWYQYO6Cl0ZP08D5aSl+xxj4rpomxpk9hr6V7OEMRfz+AfBlWMa2RoOKV/zZWlV5SuG9DgMr2zMfCfVtrcOY77iprEnhl+1LYDotX16I2XaqYdn2GKrG3npoiPKag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
+ by BL3PR11MB6529.namprd11.prod.outlook.com (2603:10b6:208:38c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.22; Thu, 20 Jun
+ 2024 15:16:00 +0000
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.7698.017; Thu, 20 Jun 2024
+ 15:16:00 +0000
+Message-ID: <38875747-d728-4784-b8da-057d999e1fac@intel.com>
+Date: Thu, 20 Jun 2024 17:15:53 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next v2 01/14] cache: add
+ __cacheline_group_{begin,end}_aligned() (+ couple more)
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+CC: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	<intel-wired-lan@lists.osuosl.org>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
+ Abeni" <pabeni@redhat.com>, Jacob Keller <jacob.e.keller@intel.com>, "Mina
+ Almasry" <almasrymina@google.com>,
+	<nex.sw.ncis.osdt.itp.upstreaming@intel.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240620135347.3006818-1-aleksander.lobakin@intel.com>
+ <20240620135347.3006818-2-aleksander.lobakin@intel.com>
+Content-Language: en-US
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+In-Reply-To: <20240620135347.3006818-2-aleksander.lobakin@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0164.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:45::14) To MN6PR11MB8102.namprd11.prod.outlook.com
+ (2603:10b6:208:46d::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0cf9576d-c50e-4730-834a-3a4ceac6a4f8@sirena.org.uk>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|BL3PR11MB6529:EE_
+X-MS-Office365-Filtering-Correlation-Id: d923f6bd-d5b9-4e1d-3099-08dc913be497
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|366013|1800799021;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?c2p3b0ZTd1ZEMm9nZHJMZmZ0K1JaV3hjMGlISkJXVHdxSGZtZUdnNnBRMytD?=
+ =?utf-8?B?bEFDeGZXWW5nOFduT2hsTVE1OHE2ZGFZZFk0bDY4bmR6dGE4cHlNeng2Z2ZJ?=
+ =?utf-8?B?Y3NpOTRBNGRqWW9CaVVlTlkxWXhDVy9GUXV2WFRQZXZ1bDltUUdGc052M1dI?=
+ =?utf-8?B?d1p6dGJRbHgwM2FRcjE0S1VCamFwaUVVRDl3M3FnRDFlUVpMallZdW5jTVR6?=
+ =?utf-8?B?NGllZXpBSFJPWTZwdVhvQWM4TmFURTZLb1R3R1EzY3pudFVpTnB3Q2M4Uk8z?=
+ =?utf-8?B?Zll3dVdEWXkwbTk1S2FscHFoNkJPaGdWMlo3dzdZTXhIMjlGdkVseFc0RHpx?=
+ =?utf-8?B?aXEyTW1Bazg4cEZ0MG42a0tsMDZ6eEFCNGlWa25XMlREWXFaSlo4b3FTNnFt?=
+ =?utf-8?B?RVNwYitMdUNsNGlJVVFrbFM4QTdaMFdkajJZR29mZzhCd2xvd1NiaVBPZ203?=
+ =?utf-8?B?L2NGTlBxOU1MODF4elR1MEVuR3pPeUJ0MTBOSWkwaTZmYU42OEdXZThKQVlm?=
+ =?utf-8?B?Z1NKczI1R2orOUk4ZGVDZWI0ZDZHZ2pmc2JKTmpiT2p1VkYzenJpb3E2R2th?=
+ =?utf-8?B?b0l4SUh5MHUyU0RBa0x3ZG5VQ1NJa0Z5MEVldi9wYldPYUFCdFVVM01EcTJ6?=
+ =?utf-8?B?dFIyWlhxVncwbFRENWdJdy9ZM2crVWZWQkVVR2ZXY3JjeTJOT0dtcEtpYnZt?=
+ =?utf-8?B?RjZIL09IcFVRNnpkMnNCUmpuMjlDYTFDaHpGeFJqWW90Y2YvU2cydTRTS25K?=
+ =?utf-8?B?MFFQam1ZUS85SDRqRkVieDZOTkR4THB5L3V2WEUxeFRVL2lXLzMvS0xOR1FI?=
+ =?utf-8?B?R3N6bkxoSXFna2lWamc0M0ZNS0VFTzBjQk9HZERZTkxhbFpjMklVOWt0V0pB?=
+ =?utf-8?B?ZG5Sd2pCTzVTVDlLRElINHVvMjRXdDVZQ1ZkRStTbXJCbWxPMm9xem8xRzFG?=
+ =?utf-8?B?OWNEVjNOejIzQXZsNVJsakNIOVN4M0dzWnZYZzRoN1lHa2FwcUxPeGpRMDV3?=
+ =?utf-8?B?RHdaVnpJYThKeWU5L2thR0FmWnR5dUV0KzJ6VUdHc01LWXRXTG12bG9FU3Ev?=
+ =?utf-8?B?YXBlVEdLUWpWZTZTTk9hdGdBaFJYRTRMbmdtM28yd3JLb01zSSsyVHRBWHZa?=
+ =?utf-8?B?Um9xT2kzVVNBYmlodzBmSFJxUklLT1VMZXhtOE90MHFjYlh1K2FBL09mQy9v?=
+ =?utf-8?B?cVhvY25abmhuZTBqcC9XcXBkU3ZpN3NmeDZLb2pOazFuYXdXRUVXdmcrTFFL?=
+ =?utf-8?B?SDdranpybEpsZkdsWEVHbk5WUTU2ejJEQTRjNlhTU2lCZTJnV0RPZjRKaGN6?=
+ =?utf-8?B?cDY2WXpCaG16bllrbkt3ZWxkZGtsYjc5N0VQTHplUnNlQmpGc0NwdGV6Tm9l?=
+ =?utf-8?B?eEQzOGdubkFvaFV0QmNuY2RwOGJtekhSQkNlNFlwT0lGS1dLZzREQ0sxbFFs?=
+ =?utf-8?B?ZzhqT3RZR3JvOWlscGNDZE1GSEV1UTJ4S3BvRlJveGZ4MWVKQVlkd3FFVFdT?=
+ =?utf-8?B?cTNzWURmTVhuc1FYZjJzcTFXV1cyaThFRFBETHhNbjlnOUMvVkNiNm1OOWhO?=
+ =?utf-8?B?SEFieG0rdnIyZEp6NkVubGY2VmNzSURlNG0xNjQwUkJZc0pRbWUzZ2dyYzhk?=
+ =?utf-8?B?UkNBcGNjbHF5U2Erbkg5N1cyS3p5U2FyU0dzR2RzWHVvS3VMWTBpeDlOTnYx?=
+ =?utf-8?B?RDVZQitpWFhTcy9FYS9mUnRjWVhBN1BpbEI0YzBhaEoyOHNvVmg0T3hKYU5D?=
+ =?utf-8?Q?vZME74vXAtyAB1ojYFMvIQOZ4uUDV4NX4OI/cOX?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(366013)(1800799021);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bk9sQWVqbUF3TXNaYzIyb2QzVThiUy81dUdZWEhrWjNMSlhHNVBhNmwyaXlO?=
+ =?utf-8?B?Qkc1U2FKVk5CR3ZDZzdIUHNUbURlc0hnWmdnV0dNVWhsUkpZei9aOFZGS0RN?=
+ =?utf-8?B?bmY4VUYwaElUNGNZMUlrSHpjd0NPRElRb1NtR3M3eEJIcklSTjVtU0lUVVdn?=
+ =?utf-8?B?aXFNMVgwSkJRekNPYWxQV3U3azdaYm85YndxVGd6My9tRU0vd0hjTFFYME0r?=
+ =?utf-8?B?WUl2aSt6cnpGbEFjUkpja29xemhJT0ZoNEVpRllqTjdyb3ZRelVMS25XYUlS?=
+ =?utf-8?B?Z1l3SUpMcDZwOWhRNW1lSEo2QjZXTXNUTXordXMwTGV4RlIvR3FPeUt5cFF0?=
+ =?utf-8?B?VzZKbUg3cjlvSTVzajVScTEvWnlUUjcwVjZGMnE2S0UvV045N09veHVtcnI5?=
+ =?utf-8?B?clZERGhSRzA3RldibzhKMUxKQlk4UjlGWTdEWU5INURoaFhKWFR3dXg3anJV?=
+ =?utf-8?B?YUtHK21qWnhVM3FHUURlMzg1LzdBK096YlZSSnFRRTZDc2djYmhEd2s0ZFNW?=
+ =?utf-8?B?UnJFL0Q0ZzZ5WlhCS2VvcnkzaVVVeTArNnFWNTBlWlkrd3F5aUNIOUFORDk3?=
+ =?utf-8?B?ZDFuU0Q0OGpuZnF4OW1oQ1pJSFFsc1RKRld0TlY5UDR3L0tuVE5UNzdMZlN6?=
+ =?utf-8?B?ZHVkYlFIMjk3aHVsM0QxcjFjQzBKV1MxaXVWVDhKYVU3ZVExQVBOTkJRbngx?=
+ =?utf-8?B?U0ZFanVSWWJSM0xFRVkxZUVEMVcrUUVRZG9maEllWWJZeGVkWWEzUkYxTXNL?=
+ =?utf-8?B?N1dQQnpUQXR3Vi9Tc29TZzhQdTJiZkhFNmhKUnhSZnBIWWNpQ2V4dHh1NHI2?=
+ =?utf-8?B?NW5ocXc5T0JQUEZWak0wVWdtY0pOZHlmb2dWSXFpZGVwcmxPOCs2UllibG9F?=
+ =?utf-8?B?RndSWmRJck9FU2xnNFdFWFhrMWh5d3JhdXBiUFVXR3h5MUVrcG1FMklTV0RQ?=
+ =?utf-8?B?VHNBY1MrdlJHaXdZQVVTWHRxNmNueEJvWjBaUFdaM2FBRE1MZVBmZkpoRW5k?=
+ =?utf-8?B?dFBrVG96YUdRaDQ1clFYWGtsVUs0VUNHK2lwT2h5cTZTbXh3YllJcnh2UDVu?=
+ =?utf-8?B?cmxIbmlqZDNKa0ZKekZ3Y0ZCamdYWmdBNWQ3RStBMzU5b0MyTGdDdk9pU09U?=
+ =?utf-8?B?NHdsbG1OSFV4OXNxWENxdEZqMXgvOS9SMjhBdXJaWnF0elUrcGg5c3l6bE5T?=
+ =?utf-8?B?cFpONUpNelRZbDJXWSszNDRRbmZSaW0rQjR0UTJJQi9UYTJDQVZVcVYrYXNV?=
+ =?utf-8?B?TFRaYmorOEhLdGVwSzhYUVkveXF2aXZvVTNEdzJYb0I2aHVhTktJU3dIVUpi?=
+ =?utf-8?B?d3hPUWNqeHY0bFo0eEVpeXBhSkxncDJtQ0lBTVJrZko2SGtjQ2R2YjV4M3pX?=
+ =?utf-8?B?ckwyUVZVYXZjT0pkYUdzTUlxZ3FLNVVhd3g4bGVCeEIzSEI3TDFmQkZwam9r?=
+ =?utf-8?B?eFdlM1JmRGRrMU5wZ0NidDZlRm9QblJudndrRTVaOEc3YXJoSHlsWWRDSEEy?=
+ =?utf-8?B?SlpkUTNOSE5KVk8veFdIRVFYK3BKUGxWcDl2MWpIaFlWeFVOSlFITUlpbWFW?=
+ =?utf-8?B?cE1qTnM0ODhMUDVyZjhpd0xMZzJJWjBtT0h5OVJCMk8yS3YzajdTVGdnejF5?=
+ =?utf-8?B?bENvRkowZVRiaGUveVdzbHBFSXhFY1YxY000alJCN2g4L1A3Nm9ibGowVTYx?=
+ =?utf-8?B?VHBkdUhkbC9EVHdPRGk5UTdNMGRITC9kRXdWSUNtZmIrdTY5am9NbS93S2xI?=
+ =?utf-8?B?ZVV0Vm5seXZGZ3lqU2c0WXp4d3VqbkYxdjlVM2w4VHlEMkk4Yk5ydVpwckti?=
+ =?utf-8?B?RmJ5Vk9zZlRCcFcrUTRIMEszZmptenNXcU1WUjJWUXdBb29Td3RtNjVEUjhv?=
+ =?utf-8?B?UXRKK09lVUJGL1JBK2dRRWd1UmFqL2pvLzBZRzBpRE82SndudUc2SXRGY3Zz?=
+ =?utf-8?B?cncwU1lmVXFmQ2pnTHJKQ0tMdzd6UzNGVXE3dnh5Y0FxOVMyY1NCVWl4MU9h?=
+ =?utf-8?B?a2ZkSVRwaWZQNXpZZldIb1cwbEZYY0F3U1gvbU16OElUdlpxUXl0TW5vbzds?=
+ =?utf-8?B?NGNDN0xyN0pQTTY0enVIUkkyajJDZjhWSjRUYnhVWEl0Q3dud0RvRDd2WGw4?=
+ =?utf-8?B?elFGRlpIWUx3YTZlMGZFaW5qSTIxNHZROVlmRHFjNVNBQ3grS2NoajNKL2lO?=
+ =?utf-8?B?T2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d923f6bd-d5b9-4e1d-3099-08dc913be497
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 15:16:00.4916
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Aikbc1iQXXyW6UTBPzbf3vVF2WoGdc3FLVdDCD2P4T75Sj4Uno7RADOZllUCxe56j4IZ/NazBRQRhDTXggooYMCAz4A50w0AWe4ADQTkPlc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6529
+X-OriginatorOrg: intel.com
 
-On 06/19, Mark Brown wrote:
-> On Wed, Jun 19, 2024 at 03:58:00PM -0300, Marcelo Schmitt wrote:
-> > On 06/19, David Lechner wrote:
-> > > On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
+On 6/20/24 15:53, Alexander Lobakin wrote:
+> __cacheline_group_begin(), unfortunately, doesn't align the group
+> anyhow. If it is wanted, then you need to do something like
 > 
-> > > > +In this extension to the usual SPI protocol, the MOSI line state is specified to
-> > > > +be kept high when CS is active but the controller is not clocking out data to
+> __cacheline_group_begin(grp) __aligned(ALIGN)
 > 
-> > > I think it would be less ambiguous to say "asserted" instead of "active".
+> which isn't really convenient nor compact.
+> Add the _aligned() counterparts to align the groups automatically to
+> either the specified alignment (optional) or ``SMP_CACHE_BYTES``.
+> Note that the actual struct layout will then be (on x64 with 64-byte CL):
+> 
+> struct x {
+> 	u32 y;				// offset 0, size 4, padding 56
+> 	__cacheline_group_begin__grp;	// offset 64, size 0
+> 	u32 z;				// offset 64, size 4, padding 4
+> 	__cacheline_group_end__grp;	// offset 72, size 0
+> 	__cacheline_group_pad__grp;	// offset 72, size 0, padding 56
+> 	u32 w;				// offset 128
+> };
+> 
+> The end marker is aligned to long, so that you can assert the struct
+> size more strictly, but the offset of the next field in the structure
+> will be aligned to the group alignment, so that the next field won't
+> fall into the group it's not intended to.
+> 
+> Add __LARGEST_ALIGN definition and LARGEST_ALIGN() macro.
+> __LARGEST_ALIGN is the value to which the compilers align fields when
+> __aligned_largest is specified. Sometimes, it might be needed to get
+> this value outside of variable definitions. LARGEST_ALIGN() is macro
+> which just aligns a value to __LARGEST_ALIGN.
+> Also add SMP_CACHE_ALIGN(), similar to L1_CACHE_ALIGN(), but using
+> ``SMP_CACHE_BYTES`` instead of ``L1_CACHE_BYTES`` as the former
+> also accounts L2, needed in some cases.
+> 
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> ---
+>   include/linux/cache.h | 59 +++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 59 insertions(+)
+> 
 
-ack, replaced "active" by "asserted" when describing CS state for v5.
+[...]
 
-> 
-> > I'm not sure. IMHO, it looks less ambiguous to say a CS is active.
-> > I think the most common for CS lines is to have a CS that is active low (i.e.
-> > the line is at a low voltage level when the controller is selecting the device).
-> > To me, "assert" sounds closer to the idea o setting something (like a bit to 1),
-> > which is the opposite of active low CS.
-> > Though, no strong opinion about it.
-> > I go with what the maintainers prefer.
-> 
-> I think they're synonyms but asserted is the more common term for chip
-> selects.
-> 
-> 
-> > > > +#define SPI_CONTROLLER_MOSI_IDLE_LOW    BIT(8)  /* Can idle MOSI low */
-> > > > +#define SPI_CONTROLLER_MOSI_IDLE_HIGH   BIT(9)  /* Can idle MOSI high */
-> 
-> > > I don't see where these are used anywhere else in the series. They
-> > > seem redundant with SPI_MOSI_IDLE_LOW and SPI_MOSI_IDLE_HIGH.
-> 
-> > Good point.
-> > They are currently not being used.
-> > Comparing with what we have for SPI_CONTROLLER_MULTI_CS, I'm thinking it may be
-> > handy to have dt properties to indicate controller MOSI idle capabilities.
-> > Does that sound reasonable?
-> 
-> We shouldn't need DT properties, we should just know if the controller
-> supports this based on knowing what controller is, and I'd not expect it
-> to depend on board wiring.
+> +/**
+> + * __cacheline_group_begin_aligned - declare an aligned group start
+> + * @GROUP: name of the group
+> + * @...: optional group alignment
 
-Okay, though, I fail to see the need for 
-#define SPI_CONTROLLER_MOSI_IDLE_LOW    BIT(8)  /* Can idle MOSI low */
-#define SPI_CONTROLLER_MOSI_IDLE_HIGH   BIT(9)  /* Can idle MOSI high */
+didn't know that you could document "..." :)
 
-It looks like SPI_CONTROLLER bits are used to tweak controller operation in
-various ways.
-Right now, I'm not aware of any additional tweak needed to support the MOSI idle
-feature. I have tested that on Raspberry Pi with bitbang/gpio controller and on
-CoraZ7 with spi-engine and it did work fine in those setups.
-Anyway, I'm prone to implement any additional changes to make this set better.
+> + *
+> + * The following block inside a struct:
+> + *
+> + *	__cacheline_group_begin_aligned(grp);
+> + *	field a;
+> + *	field b;
+> + *	__cacheline_group_end_aligned(grp);
+> + *
+> + * will always be aligned to either the specified alignment or
+> + * ``SMP_CACHE_BYTES``.
+> + */
+> +#define __cacheline_group_begin_aligned(GROUP, ...)		\
+> +	__cacheline_group_begin(GROUP)				\
+> +	__aligned((__VA_ARGS__ + 0) ? : SMP_CACHE_BYTES)
 
-Thanks,
-Marcelo
+nice trick :) +0
+
+> +
+> +/**
+> + * __cacheline_group_end_aligned - declare an aligned group end
+> + * @GROUP: name of the group
+> + * @...: optional alignment (same as was in __cacheline_group_begin_aligned())
+> + *
+> + * Note that the end marker is aligned to sizeof(long) to allow more precise
+> + * size assertion. It also declares a padding at the end to avoid next field
+> + * falling into this cacheline.
+> + */
+> +#define __cacheline_group_end_aligned(GROUP, ...)		\
+> +	__cacheline_group_end(GROUP) __aligned(sizeof(long));	\
+> +	struct { } __cacheline_group_pad__##GROUP		\
+> +	__aligned((__VA_ARGS__ + 0) ? : SMP_CACHE_BYTES)
+> +
+>   #ifndef CACHELINE_ASSERT_GROUP_MEMBER
+>   #define CACHELINE_ASSERT_GROUP_MEMBER(TYPE, GROUP, MEMBER) \
+>   	BUILD_BUG_ON(!(offsetof(TYPE, MEMBER) >= \
+
+Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
 
