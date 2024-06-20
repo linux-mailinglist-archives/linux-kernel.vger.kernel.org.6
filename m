@@ -1,154 +1,158 @@
-Return-Path: <linux-kernel+bounces-223343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0DA911167
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:53:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE53391116B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21C8C1F20F51
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:53:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ECF21F22518
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32431B9AD1;
-	Thu, 20 Jun 2024 18:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEED31BBBC7;
+	Thu, 20 Jun 2024 18:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YioOWn6U"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c0n5sz2w"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E56B1B9AAC
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9896F1AAE17;
+	Thu, 20 Jun 2024 18:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718909397; cv=none; b=Aw4arpXSIAQOmN2VospVvMJo9cs5Rojlyz8Z+9IPfKHU5CB4Ou4NKuOyxpRvfvQb65wJohdgKHZ5lymB8uaB9RN7MrCZ0HIVWXBbOij2ejqQm7RSGdAwxlbD+o5g3XtlJYT/Vqz1HZ4jDzia5hE2ZkWplvgaEzN83RjVuhoiUJY=
+	t=1718909462; cv=none; b=fzKU6UhvB2Qexs3eoOWHBQ2XWIwlp4+gIDGS1GTKxFXfDNuof5DvuJ+Te5TCHAXhh5als8p5MjzJ7+iXAsSLH/LPwF3gxK+eunBtzbzZjuLbSXH3r2+VjNsKjmRdOSZJ0UJcOCUE8n0evc4NzPcBg5LSWa9WhGmGyKclLYuNKdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718909397; c=relaxed/simple;
-	bh=EEOS7EIr0oF/SCh1xJIN2qBgUM7JVYx1GF+XZyGF3ns=;
+	s=arc-20240116; t=1718909462; c=relaxed/simple;
+	bh=JCsw9Z71zYyh4aSb/EWUf/SrmLTo32aaxOCeejC25lQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hDi0Vs3zKeHmx4JbBiJapQvd70tJwy5i7IBm/5W+d/IQ+3wZRcstbWX8hdMbRrAlETOS7rqkajnymHwsw3YfauoXF4RqawcymmCJydxgf2GJEmZogA6oQ3trgpmxx8u64oEx88x1vJzSlPQ6KxOkX0baJEGOGswYTKF24mweaZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=YioOWn6U; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52bc27cfb14so1722304e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:49:55 -0700 (PDT)
+	 To:Cc:Content-Type; b=vFC5eX+vDPFX1y3afvH2ZPXmTK9+xhl0nq7zb2YRGjeIhbLH3J/S9E+9RMPIdjRFHiyl8PCJUDXPvhw/VDaj5/Dh+EirpK0eru4yBg++X3XknxMP3pK+p6wcOVQNIk8DDQvheRDhO/nVN/iZtATptU6u1RJvK7cFpxXc6imgi2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c0n5sz2w; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c306e87b1fso1052183a91.3;
+        Thu, 20 Jun 2024 11:51:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1718909393; x=1719514193; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718909460; x=1719514260; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hL9JXgjXmozV00hpz2FPwQ9DP76wRXOzayxL+7uvpKU=;
-        b=YioOWn6U9nZ4TX76Ae0wXINNtDpQ1+IHHfpFozSwsfOL8ziC7H+GjS5CnTae7BjWBG
-         bBwhUk26MROwxg4eoLZrme09bce9Q8EsWbw6Q6alZBaYiODStCzQYLWJqsGuwnnvokBW
-         skeMaPRQ3UAUNnm+jqorQQS+S4251DwqgqveY=
+        bh=89o8ujkIHq6PMM4aoMW4/XgYMSFc2QsW0KmDVaz6Gcw=;
+        b=c0n5sz2w0c2vPbB/ZqJe7st3Rbl+uCbSCCW7btOsoyJtzkVLKMz2859km5qHVsOOWT
+         N6fKTmGcCstQ+ejsB5EZHCr40yskpJtVj/C5t4VoAqNlsXMh+31nwVIu+d7gnsLaLa7o
+         PQqycY/gebhR2V7+yAyhXjemIntt/5W6eFwWws4vY+DLFWPRRDilqmnabcKsX50OkvMi
+         rgM2ajnvMNmX20c3muxbcmQgBa6HvaZHfWd78bxoux+XsXw8PnDntuCCbJygBYHhTCpj
+         1cv8dqxUoXplwrU6+eSok+P91OGqiPtoT+AX2Ap0WQrCjbTaCAWk6mkALa4pVg10TgVe
+         KG7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718909393; x=1719514193;
+        d=1e100.net; s=20230601; t=1718909460; x=1719514260;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hL9JXgjXmozV00hpz2FPwQ9DP76wRXOzayxL+7uvpKU=;
-        b=pLtv2jC4VmASR1p3lOlInDyEs2ee1H0hln8ScS6IRA8LTfFEJV3gj8yAI0Uc6ajNxm
-         tYPjK2SaFlXCIFgubErC7GS2n2AWj8b72Tv8uccTp2wHfygKgtyA5HKEVVW0lQkNH/Fh
-         aBfeOLUV2xMTkfvw+TmHwKHHhYm5NW9fQH7KXQILQwHG7epegnzdVEDiA8NSz81hdsuJ
-         H2oAlLyEBdKqFpjFw46altR7Y88akqVZUHBbSewTCzAvxF/J0kVZw28c49S6R5zhZTTO
-         zQYFZe1uMQRiKYpJczlliY3xZTgUzhCkeQIMYNFGTL7qNvS3d3LVnOQmbXB6aYXvhdfF
-         IJgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoEBwe67VpzSbSkX+i9AVi1JPSQ+iHeLCGVYaQme7OonNVFg/K5V4SN4tfwv0O6BETsfGjHQq+oMMvJzMVcNvSnxvbPz4LYOpBfLMh
-X-Gm-Message-State: AOJu0YxDW/2E/QG8E72cQhzdMSpjyyseiB6ABYAyJJe1IRUW4AG7ZEuH
-	bf9Fy83dw0r99EBKUHGPvkQo1KEiwEch7QRNesprJgTUDxzqi38L55/16i/hZpNDZ/lh0VOSdbE
-	TtBgai0XOFlPu6fsdTB6Z+KLjaZOspY7ScuoP
-X-Google-Smtp-Source: AGHT+IGD8CE0uw6+jpXardgoPtrej/5EyEUGjkTiM+TfGEeQBlJlNeDXxliD+R62iK29WVQ9yA6w9M3LXS5jtNT5xcw=
-X-Received: by 2002:a05:6512:124a:b0:52c:ab21:7c05 with SMTP id
- 2adb3069b0e04-52ccaa599b7mr5856580e87.67.1718909393574; Thu, 20 Jun 2024
- 11:49:53 -0700 (PDT)
+        bh=89o8ujkIHq6PMM4aoMW4/XgYMSFc2QsW0KmDVaz6Gcw=;
+        b=Be0PQwbKjPfUZgobiQvcQgthAAmhIXkc2b1A0L7/H/aVd+C+NOAKc22+sC52eRg0OH
+         WBjRD5xTxdZxy0bd5Oh4vfMlPywy1hGm2eStU1CDNdY9HkRha2m8tv3KMNVVmPLwZSEW
+         /yWs0B17cGzvwGtLs2w5KG4LI7aa0FxBO3Yj28Y9hI8DpsIkpF8Gj9+HYGRdu468aGUB
+         hWHL0lhvuBIWXWmt7ZG6G35kd30fCoENg8CCf5u7qNyNC0QZ9zVBOUBJtJXMpswh4JKB
+         5j1iT+FqvEHaOEpjPFTBi0TNkMMIIbnh55EiLTmoyKcLOk0GqUCpl2b8hx0LxoHUI10c
+         vzIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXriNkjmIFKNtK3XK5ZRZS9bNoimagDnUZR5Rpz/rwqp/3dKPUksFRhGs1snhxt95Hi9XOQAcdbOkw5kLGgM8wpSmQCEC1aDvJUgYugZ7iiHjyVuTFCYWXt+EFFwssAJcNgjBrFvBtH3lTx5pZtn34cQjFdFVHelSBWV6jEL4v9Q==
+X-Gm-Message-State: AOJu0YwMOwy8RjoKZ5fZZBXQvwystrhf7Xft2lUNMCH9I4l0wbo1G7HJ
+	7i5KT5LCaORdPBLsvsO1fuXoRgHfYyX7zcby1he8UlxcgmPNpRVD2JX/Z9sM3TbfC7ZonsTl+jO
+	wyyLeYcpjZvvoXBhA/JtAgWo5U3aGlA==
+X-Google-Smtp-Source: AGHT+IHejfXXhcSCG+8k7941Dm3EbX0ewHLJ/3VEPrjpG3OW0flhMpyIcVTUB8X7jTk9vLYpIJrEnWTTU3wycg008lE=
+X-Received: by 2002:a17:90a:1346:b0:2c3:2da1:c8bc with SMTP id
+ 98e67ed59e1d1-2c7b5af9211mr5980842a91.15.1718909459936; Thu, 20 Jun 2024
+ 11:50:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607230146.47222-1-kuntal.nayak@broadcom.com> <ZmmffoZAlP2wRQJL@calendula>
-In-Reply-To: <ZmmffoZAlP2wRQJL@calendula>
-From: Kuntal Nayak <kuntal.nayak@broadcom.com>
-Date: Thu, 20 Jun 2024 11:49:41 -0700
-Message-ID: <CAA4K+2b6fAH2jKrxJGV8xHFupS6OkaJAFCtnZqjLvYXHNFA-Xw@mail.gmail.com>
-Subject: Re: [PATCH v6.1] netfilter: nf_tables: use timestamp to check for set
- element timeout
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: stable@vger.kernel.org, gregkh@linuxfoundation.org, 
-	ajay.kaher@broadcom.com, alexey.makhalov@broadcom.com, 
-	vasavi.sirnapalli@broadcom.com, kadlec@netfilter.org, fw@strlen.de, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240618224527.3685213-1-andrii@kernel.org> <20240618224527.3685213-4-andrii@kernel.org>
+ <984d7898-d86a-4cea-9cdf-262b9ec4bc84@p183>
+In-Reply-To: <984d7898-d86a-4cea-9cdf-262b9ec4bc84@p183>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 20 Jun 2024 11:50:48 -0700
+Message-ID: <CAEf4BzaCARqfovaOL55qyjncLSo9APNUvt=hH4Quh0Y0yeq53Q@mail.gmail.com>
+Subject: Re: [PATCH v5 3/6] fs/procfs: add build ID fetching to PROCMAP_QUERY API
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
+	linux-mm@kvack.org, liam.howlett@oracle.com, surenb@google.com, 
+	rppt@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Pablo,
-
-Thank you for the update and reviewing the patch. We will wait for
-your patch to be applied to the LTS and then consume the latest 6.1
-kernel.
-
-------
-
-
-
-Best regards,
-
-Kuntal
-
-On Wed, Jun 12, 2024 at 6:15=E2=80=AFAM Pablo Neira Ayuso <pablo@netfilter.=
-org> wrote:
+On Wed, Jun 19, 2024 at 3:14=E2=80=AFAM Alexey Dobriyan <adobriyan@gmail.co=
+m> wrote:
 >
-> Hi,
+> On Tue, Jun 18, 2024 at 03:45:22PM -0700, Andrii Nakryiko wrote:
+> > The need to get ELF build ID reliably is an important aspect when
+> > dealing with profiling and stack trace symbolization, and
+> > /proc/<pid>/maps textual representation doesn't help with this.
 >
-> Thanks for your patch.
->
-> rbtree GC chunk is not correct though. In 6.1, GC runs via workqueue,
-> so the cached timestamp cannot be used in such case.
->
-> Another possibility is to pull in the patch dependency to run GC
-> synchronously.
->
-> I am preparing a batch of updates for -stable, let me pick up on your
-> patch.
->
-> Thanks.
->
-> On Fri, Jun 07, 2024 at 04:01:46PM -0700, Kuntal Nayak wrote:
-> > diff --git a/net/netfilter/nft_set_rbtree.c b/net/netfilter/nft_set_rbt=
-ree.c
-> > index 5bf5572e9..c4c92192c 100644
-> > --- a/net/netfilter/nft_set_rbtree.c
-> > +++ b/net/netfilter/nft_set_rbtree.c
-> [...]
-> > @@ -622,12 +624,14 @@ static void nft_rbtree_gc(struct work_struct *wor=
-k)
-> >       struct nft_set *set;
-> >       unsigned int gc_seq;
-> >       struct net *net;
-> > +     u64 tstamp;
-> >
-> >       priv =3D container_of(work, struct nft_rbtree, gc_work.work);
-> >       set  =3D nft_set_container_of(priv);
-> >       net  =3D read_pnet(&set->net);
-> >       nft_net =3D nft_pernet(net);
-> >       gc_seq  =3D READ_ONCE(nft_net->gc_seq);
-> > +     tstamp =3D nft_net_tstamp(net);
-> >
-> >       if (nft_set_gc_is_pending(set))
-> >               goto done;
-> > @@ -659,7 +663,7 @@ static void nft_rbtree_gc(struct work_struct *work)
-> >                       rbe_end =3D rbe;
-> >                       continue;
+> > @@ -539,6 +543,21 @@ static int do_procmap_query(struct proc_maps_priva=
+te *priv, void __user *uarg)
 > >               }
-> > -             if (!nft_set_elem_expired(&rbe->ext))
-> > +             if (!__nft_set_elem_expired(&rbe->ext, tstamp))
-> >                       continue;
+> >       }
 > >
-> >               nft_set_elem_dead(&rbe->ext);
-> > --
-> > 2.39.3
-> >
+> > +     if (karg.build_id_size) {
+> > +             __u32 build_id_sz;
+> > +
+> > +             err =3D build_id_parse(vma, build_id_buf, &build_id_sz);
+>
+> This is not your bug but build_id_parse() assumes program headers
+> immediately follow ELF header which is not guaranteed.
+
+Yes, I'm aware, and I think I stated somewhere that I want to
+fix/improve that. The thing is, current build_id_parse() was built for
+BPF under NMI context assumption, which is why it can't page in memory
+and so on (and this "build ID has to be in the first page" was a
+surprise to me, but probably just a technical shortcut to make it a
+bit easier to implement). Regardless, my plan, once this API is
+merged, is to follow up with make build_id_parse() variant that would
+work reliably under sleepable context assumptions. Hopefully that's ok
+not to bundle all that with these patches?
+
+>
+> > +      * If this field is set to non-zero value, build_id_addr should p=
+oint
+> > +      * to valid user space memory buffer of at least build_id_size by=
+tes.
+> > +      * If set to zero, build_id_addr should be set to zero as well
+> > +      */
+> > +     __u32 build_id_size;            /* in/out */
+> >       /*
+> >        * User-supplied address of a buffer of at least vma_name_size by=
+tes
+> >        * for kernel to fill with matched VMA's name (see vma_name_size =
+field
+> > @@ -519,6 +539,14 @@ struct procmap_query {
+> >        * Should be set to zero if VMA name should not be returned.
+> >        */
+> >       __u64 vma_name_addr;            /* in */
+> > +     /*
+> > +      * User-supplied address of a buffer of at least build_id_size by=
+tes
+> > +      * for kernel to fill with matched VMA's ELF build ID, if availab=
+le
+> > +      * (see build_id_size field description above for details).
+> > +      *
+> > +      * Should be set to zero if build ID should not be returned.
+> > +      */
+> > +     __u64 build_id_addr;            /* in */
+>
+> Can this be simplified to 512-bit buffer in ioctl structure?
+> BUILD_ID_SIZE_MAX is 20 which is sha1.
+
+I'd prefer not to because vma_name can't use the same trick, so we'll
+have to have this size+buffer address approach anyway. And because of
+that I'd like to have all these optional variable-length/string output
+arguments handled in a uniform way. In practice, it's really simple to
+use this from user-space, the only mildly annoying part is casting
+pointer to __u64. But as I said, for vma_name users will do this
+anyways, so not much benefit simplifying the build_id part only.
 
