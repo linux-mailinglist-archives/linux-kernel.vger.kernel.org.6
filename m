@@ -1,255 +1,363 @@
-Return-Path: <linux-kernel+bounces-222476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F6D910219
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:06:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B31791021F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47528282C07
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:06:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E4BDB212DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8231AB347;
-	Thu, 20 Jun 2024 11:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FE11AAE3C;
+	Thu, 20 Jun 2024 11:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lTd57bA7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfCXzqB3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D8B15B118;
-	Thu, 20 Jun 2024 11:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFC11A8C2E;
+	Thu, 20 Jun 2024 11:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718881563; cv=none; b=b9sdRFFfM8G4Ncr3rPHa8NGHdyr1bnePHJkk3XlbZVN5NX+2MmEOKr/iok5FXQiAQx0WS8TyVOSMsd2s9BY2ZMLj2mb7nL/LOZfdTHbs2mDaxDp4ViKeia/M6T1kICynKJC3HbzW3NAIqUndgdTizEKXbNO6oCkmQWOCR6yYEQo=
+	t=1718881607; cv=none; b=iU3sWDLOQJrS7HgXV/YWncs4gIrrYsa9hYlvhb/dTs90fqg8cNPA9BtsALkaXKFPl+w1F5QA46zGxOjOLUrJCq/e2KRU2f3iqdevZHoBGf09/Tqy+SYwZC7EL8dcOek1xvv2j5Dzu8jB/y3WQRqXep9yorS11feE6RQ5mD/c4CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718881563; c=relaxed/simple;
-	bh=bMctWlD7zukpTaZLikbgI4muHaEbgguS6iDYYVOts4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NUIL43qaAXn6cYCkTOneqQZ9NDioyzeKvbCZ1d6AwVnEWiIltLGdDya82bT47PMcFZKCyl83I+URwJH9RBhJv1HDOXvpIhjnSiU1PQb0ETW6v0ZarC2vB+wL516ZW203NiO+IVEX0qrslqAIUpQMPdbqYKieht/coBlBVUkhURI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lTd57bA7; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718881560; x=1750417560;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bMctWlD7zukpTaZLikbgI4muHaEbgguS6iDYYVOts4Y=;
-  b=lTd57bA7thh95xjPgyH+MpfU8PHTYwU8vBdmd0Am2vDuOrP4cCG5BYnN
-   kaMyIfeTv+EO++f20Wm/55jAtxyQGHOyIpPUXkERmqZZiYDNvwG/Ioel4
-   r+4Vm7mNUVVoSexL3ascjrJAhzDnEPx/9UjDwCok5vJksAQX3TkYBRn/c
-   V+3s+hQqisextPjVwaYlGU7ygWk8hmlwQMOTrJdbQdMvxGIpHL1iKOM3l
-   e/dlzq5E9voOJ0EL0RdvROzHPrdq6OSG84hnwlU/MaxEtcQCNQuU/N+A8
-   5ZOHO23M8HwpXSPIti/+nr/Nfx7rs0kGslpTCUJ+MNRDKAqgYUXtmlcW+
-   Q==;
-X-CSE-ConnectionGUID: emd/SPcmS9SLI/pWuBN0og==
-X-CSE-MsgGUID: 0kB0M/wGTq6NVWYvmWaVsg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="15680575"
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="15680575"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 04:06:00 -0700
-X-CSE-ConnectionGUID: tAiPoIFUTM6nKmUtPzXfWg==
-X-CSE-MsgGUID: HYi2uvTKQoe7+KIdfUesqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="65456940"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 20 Jun 2024 04:05:56 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sKFc2-0007YE-1a;
-	Thu, 20 Jun 2024 11:05:54 +0000
-Date: Thu, 20 Jun 2024 19:05:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	s=arc-20240116; t=1718881607; c=relaxed/simple;
+	bh=E0X4v2xdXd711tKCoPMzebTZfL+S/2gfBWVlEOfhkD8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eUeD2NRyKAkzG9p4NIo97tA1tlfIm+E1xxf5Jrie2c2iiA3HijDgw2zQsTRIqbRJahjbY3A/ef8TaWj632AeGGx690ieJmCsRgW1olZmEcenZllqIthTGJsQM8tHAcYr+u2+op5dvQGHPcs9KXTQCMVaf9fAVtgtIQ8WqiICKxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfCXzqB3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DDDFC2BD10;
+	Thu, 20 Jun 2024 11:06:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718881607;
+	bh=E0X4v2xdXd711tKCoPMzebTZfL+S/2gfBWVlEOfhkD8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rfCXzqB3iCO594F3ngygsZXiNfdGfDTMOWJaC+rzgHE7eJm4c09Mo4XMzz86rOE5l
+	 hFpX5jkctxOdy3cuizb9E24qh8qkOMRXx4ehmLP92PiZWekL4HL4oK4ST7e2cQxYep
+	 3d1Z/nAyb8gI4Hr+qni3hA7sES6RQLJJHdxaR1wcVf6ZW0piHLKBnHlQpUexvh9zGE
+	 +CWy8YVWWQyAm97QQsnAIaUBJP1ADoQJVLZSAvF4X4jGT7jtww5yO6Z2ih/5RAfsSR
+	 kWiSngtOiTCKDYBbce3WKgqIsvw3VjmTuDXdGGnrShzxlUzBeeU0T//ZNdLlqEQjL3
+	 wm+9mQEmib9kg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sKFcq-005jpu-Tc;
+	Thu, 20 Jun 2024 12:06:45 +0100
+Date: Thu, 20 Jun 2024 12:06:44 +0100
+Message-ID: <865xu3kh4r.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
-Message-ID: <202406201832.4oSZmptU-lkp@intel.com>
-References: <20240619200552.119080-4-admiyo@os.amperecomputing.com>
+Subject: Re: [RFC 10/10] KVM: arm64: nv: Add new HDFGRTR2_GROUP & HDFGRTR2_GROUP based FGU handling
+In-Reply-To: <20240620065807.151540-11-anshuman.khandual@arm.com>
+References: <20240620065807.151540-1-anshuman.khandual@arm.com>
+	<20240620065807.151540-11-anshuman.khandual@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619200552.119080-4-admiyo@os.amperecomputing.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi,
+On Thu, 20 Jun 2024 07:58:07 +0100,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> 
+> This adds new HDFGRTR2_GROUP and HDFGWTR2_GROUP groups in enum fgt_group_id
+> for FGU handling managed with HDFGRTR2_EL2 and HDFGWTR2_EL2 registers.
+> 
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Oliver Upton <oliver.upton@linux.dev>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: kvmarm@lists.linux.dev
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  arch/arm64/include/asm/kvm_arm.h        |  8 +++++
+>  arch/arm64/include/asm/kvm_host.h       |  2 ++
+>  arch/arm64/kvm/emulate-nested.c         | 14 ++++++++
+>  arch/arm64/kvm/hyp/include/hyp/switch.h | 10 ++++++
+>  arch/arm64/kvm/nested.c                 | 36 ++++++++++++++++++++
+>  arch/arm64/kvm/sys_regs.c               | 45 +++++++++++++++++++++++++
+>  6 files changed, 115 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+> index b2adc2c6c82a..b3fb368bcadb 100644
+> --- a/arch/arm64/include/asm/kvm_arm.h
+> +++ b/arch/arm64/include/asm/kvm_arm.h
+> @@ -354,6 +354,14 @@
+>  #define __HFGRTR_EL2_MASK	GENMASK(49, 0)
+>  #define __HFGRTR_EL2_nMASK	~(__HFGRTR_EL2_RES0 | __HFGRTR_EL2_MASK)
+>  
+> +#define __HDFGRTR2_EL2_RES0	HDFGRTR2_EL2_RES0
+> +#define __HDFGRTR2_EL2_MASK	(GENMASK(22, 22) | GENMASK(20, 0))
 
-kernel test robot noticed the following build warnings:
+How about bit 23? How comes you are considering all these bits as positive?
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.10-rc4 next-20240619]
-[cannot apply to horms-ipvs/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> +#define __HDFGRTR2_EL2_nMASK	~(__HDFGRTR2_EL2_RES0 | __HDFGRTR2_EL2_MASK)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Check-before-sending-MCTP-PCC-response-ACK/20240620-040816
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20240619200552.119080-4-admiyo%40os.amperecomputing.com
-patch subject: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
-config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20240620/202406201832.4oSZmptU-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240620/202406201832.4oSZmptU-lkp@intel.com/reproduce)
+Note the *nMASK* here. 'n' is for *negative*. Just look at how
+__HDFGRTR_EL2_MASK and __HDFGRTR_EL2_nMASK are written.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406201832.4oSZmptU-lkp@intel.com/
+> +
+> +#define __HDFGWTR2_EL2_RES0	HDFGWTR2_EL2_RES0
+> +#define __HDFGWTR2_EL2_MASK	(GENMASK(22, 19) | GENMASK(16, 7) | GENMASK(5, 0))
 
-All warnings (new ones prefixed by >>):
+Again, how about bit 23? Same remark for the polarity.
 
-   In file included from drivers/net/mctp/mctp-pcc.c:17:
-   include/acpi/acpi_drivers.h:72:43: warning: 'struct acpi_pci_root' declared inside parameter list will not be visible outside of this definition or declaration
-      72 | struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root);
-         |                                           ^~~~~~~~~~~~~
-   drivers/net/mctp/mctp-pcc.c: In function 'mctp_pcc_tx':
->> drivers/net/mctp/mctp-pcc.c:116:13: warning: unused variable 'rc' [-Wunused-variable]
-     116 |         int rc;
-         |             ^~
-   drivers/net/mctp/mctp-pcc.c: In function 'create_mctp_pcc_netdev':
-   drivers/net/mctp/mctp-pcc.c:223:17: error: invalid use of undefined type 'struct acpi_device'
-     223 |         acpi_dev->driver_data = mctp_pcc_dev;
-         |                 ^~
-   In file included from include/linux/printk.h:573,
-                    from include/asm-generic/bug.h:22,
-                    from arch/arc/include/asm/bug.h:30,
-                    from include/linux/bug.h:5,
-                    from include/linux/thread_info.h:13,
-                    from include/asm-generic/preempt.h:5,
-                    from ./arch/arc/include/generated/asm/preempt.h:1,
-                    from include/linux/preempt.h:79,
-                    from include/linux/spinlock.h:56,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:7,
-                    from include/linux/slab.h:16,
-                    from include/linux/resource_ext.h:11,
-                    from include/linux/acpi.h:13,
-                    from drivers/net/mctp/mctp-pcc.c:7:
-   drivers/net/mctp/mctp-pcc.c: In function 'mctp_pcc_driver_add':
-   drivers/net/mctp/mctp-pcc.c:291:22: error: invalid use of undefined type 'struct acpi_device'
-     291 |         dev_dbg(&adev->dev, "Adding mctp_pcc device for HID  %s\n",
-         |                      ^~
-   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:273:9: note: in expansion of macro '_dynamic_func_call'
-     273 |         _dynamic_func_call(fmt, __dynamic_dev_dbg,              \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:165:9: note: in expansion of macro 'dynamic_dev_dbg'
-     165 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~
-   drivers/net/mctp/mctp-pcc.c:291:9: note: in expansion of macro 'dev_dbg'
-     291 |         dev_dbg(&adev->dev, "Adding mctp_pcc device for HID  %s\n",
-         |         ^~~~~~~
-   drivers/net/mctp/mctp-pcc.c:292:17: error: implicit declaration of function 'acpi_device_hid'; did you mean 'acpi_device_dep'? [-Werror=implicit-function-declaration]
-     292 |                 acpi_device_hid(adev));
-         |                 ^~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:273:9: note: in expansion of macro '_dynamic_func_call'
-     273 |         _dynamic_func_call(fmt, __dynamic_dev_dbg,              \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:165:9: note: in expansion of macro 'dynamic_dev_dbg'
-     165 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~
-   drivers/net/mctp/mctp-pcc.c:291:9: note: in expansion of macro 'dev_dbg'
-     291 |         dev_dbg(&adev->dev, "Adding mctp_pcc device for HID  %s\n",
-         |         ^~~~~~~
-   drivers/net/mctp/mctp-pcc.c:293:22: error: implicit declaration of function 'acpi_device_handle'; did you mean 'acpi_device_dep'? [-Werror=implicit-function-declaration]
-     293 |         dev_handle = acpi_device_handle(adev);
-         |                      ^~~~~~~~~~~~~~~~~~
-         |                      acpi_device_dep
-   drivers/net/mctp/mctp-pcc.c:293:20: warning: assignment to 'acpi_handle' {aka 'void *'} from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     293 |         dev_handle = acpi_device_handle(adev);
-         |                    ^
-   In file included from include/linux/device.h:15,
-                    from include/linux/acpi.h:14:
-   drivers/net/mctp/mctp-pcc.c:297:30: error: invalid use of undefined type 'struct acpi_device'
-     297 |                 dev_err(&adev->dev, "FAILURE to lookup PCC indexes from CRS");
-         |                              ^~
-   include/linux/dev_printk.h:110:25: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                         ^~~
-   drivers/net/mctp/mctp-pcc.c:297:17: note: in expansion of macro 'dev_err'
-     297 |                 dev_err(&adev->dev, "FAILURE to lookup PCC indexes from CRS");
-         |                 ^~~~~~~
-   drivers/net/mctp/mctp-pcc.c:302:50: error: invalid use of undefined type 'struct acpi_device'
-     302 |         return create_mctp_pcc_netdev(adev, &adev->dev, inbox_index,
-         |                                                  ^~
-   drivers/net/mctp/mctp-pcc.c: At top level:
-   drivers/net/mctp/mctp-pcc.c:336:15: error: variable 'mctp_pcc_driver' has initializer but incomplete type
-     336 | static struct acpi_driver mctp_pcc_driver = {
-         |               ^~~~~~~~~~~
-   drivers/net/mctp/mctp-pcc.c:337:10: error: 'struct acpi_driver' has no member named 'name'
-     337 |         .name = "mctp_pcc",
-         |          ^~~~
-   drivers/net/mctp/mctp-pcc.c:337:17: warning: excess elements in struct initializer
-     337 |         .name = "mctp_pcc",
-         |                 ^~~~~~~~~~
-   drivers/net/mctp/mctp-pcc.c:337:17: note: (near initialization for 'mctp_pcc_driver')
-   drivers/net/mctp/mctp-pcc.c:338:10: error: 'struct acpi_driver' has no member named 'class'
-     338 |         .class = "Unknown",
-         |          ^~~~~
-   drivers/net/mctp/mctp-pcc.c:338:18: warning: excess elements in struct initializer
-     338 |         .class = "Unknown",
-         |                  ^~~~~~~~~
-   drivers/net/mctp/mctp-pcc.c:338:18: note: (near initialization for 'mctp_pcc_driver')
-   drivers/net/mctp/mctp-pcc.c:339:10: error: 'struct acpi_driver' has no member named 'ids'
-     339 |         .ids = mctp_pcc_device_ids,
-         |          ^~~
+> +#define __HDFGWTR2_EL2_nMASK	~(__HDFGWTR2_EL2_RES0 | __HDFGWTR2_EL2_MASK)
+> +
+>  /*
+>   * The HFGWTR bits are a subset of HFGRTR bits. To ensure we don't miss any
+>   * future additions, define __HFGWTR* macros relative to __HFGRTR* ones.
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 7b44e96e7270..d6fbd6ebc32d 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -239,6 +239,8 @@ enum fgt_group_id {
+>  	HDFGWTR_GROUP = HDFGRTR_GROUP,
+>  	HFGITR_GROUP,
+>  	HAFGRTR_GROUP,
+> +	HDFGRTR2_GROUP,
+> +	HDFGWTR2_GROUP = HDFGRTR2_GROUP,
+>  
+>  	/* Must be last */
+>  	__NR_FGT_GROUP_IDS__
+> diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
+> index 54090967a335..bc5ea1e60a0a 100644
+> --- a/arch/arm64/kvm/emulate-nested.c
+> +++ b/arch/arm64/kvm/emulate-nested.c
+> @@ -1724,6 +1724,9 @@ static const struct encoding_to_trap_config encoding_to_fgt[] __initconst = {
+>  	SR_FGT(SYS_AMEVCNTR0_EL0(2),	HAFGRTR, AMEVCNTR02_EL0, 1),
+>  	SR_FGT(SYS_AMEVCNTR0_EL0(1),	HAFGRTR, AMEVCNTR01_EL0, 1),
+>  	SR_FGT(SYS_AMEVCNTR0_EL0(0),	HAFGRTR, AMEVCNTR00_EL0, 1),
+> +
+> +	/* HDFGRTR2_EL2 */
+> +	SR_FGT(SYS_MDSELR_EL1,		HDFGRTR2, nMDSELR_EL1, 1),
+
+No. See the 'n' prefix on this bit?
+
+Also, where are all the other bits for the HDFRxTR2 registers?
+
+>  };
+>  
+>  static union trap_config get_trap_config(u32 sysreg)
+> @@ -1979,6 +1982,10 @@ static bool check_fgt_bit(struct kvm *kvm, bool is_read,
+>  		sr = is_read ? HDFGRTR_EL2 : HDFGWTR_EL2;
+>  		break;
+>  
+> +	case HDFGRTR2_GROUP:
+> +		sr = is_read ? HDFGRTR2_EL2 : HDFGWTR2_EL2;
+> +		break;
+> +
+>  	case HAFGRTR_GROUP:
+>  		sr = HAFGRTR_EL2;
+>  		break;
+> @@ -2053,6 +2060,13 @@ bool triage_sysreg_trap(struct kvm_vcpu *vcpu, int *sr_index)
+>  			val = __vcpu_sys_reg(vcpu, HDFGWTR_EL2);
+>  		break;
+>  
+> +	case HDFGRTR2_GROUP:
+> +		if (is_read)
+> +			val = __vcpu_sys_reg(vcpu, HDFGRTR2_EL2);
+> +		else
+> +			val = __vcpu_sys_reg(vcpu, HDFGWTR2_EL2);
+> +		break;
+> +
+>  	case HAFGRTR_GROUP:
+>  		val = __vcpu_sys_reg(vcpu, HAFGRTR_EL2);
+>  		break;
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> index 0c4de44534b7..b5944aa6d9c8 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/switch.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> @@ -89,6 +89,10 @@ static inline void __activate_traps_fpsimd32(struct kvm_vcpu *vcpu)
+>  		case HDFGWTR_EL2:					\
+>  			id = HDFGRTR_GROUP;				\
+>  			break;						\
+> +		case HDFGRTR2_EL2:					\
+> +		case HDFGWTR2_EL2:					\
+> +			id = HDFGRTR2_GROUP;				\
+> +			break;						\
+>  		case HAFGRTR_EL2:					\
+>  			id = HAFGRTR_GROUP;				\
+>  			break;						\
+> @@ -160,6 +164,8 @@ static inline void __activate_traps_hfgxtr(struct kvm_vcpu *vcpu)
+>  	CHECK_FGT_MASKS(HDFGWTR_EL2);
+>  	CHECK_FGT_MASKS(HAFGRTR_EL2);
+>  	CHECK_FGT_MASKS(HCRX_EL2);
+> +	CHECK_FGT_MASKS(HDFGRTR2_EL2);
+> +	CHECK_FGT_MASKS(HDFGWTR2_EL2);
+>  
+>  	if (!cpus_have_final_cap(ARM64_HAS_FGT))
+>  		return;
+> @@ -171,6 +177,8 @@ static inline void __activate_traps_hfgxtr(struct kvm_vcpu *vcpu)
+>  	update_fgt_traps(hctxt, vcpu, kvm, HFGITR_EL2);
+>  	update_fgt_traps(hctxt, vcpu, kvm, HDFGRTR_EL2);
+>  	update_fgt_traps(hctxt, vcpu, kvm, HDFGWTR_EL2);
+> +	update_fgt_traps(hctxt, vcpu, kvm, HDFGRTR2_EL2);
+> +	update_fgt_traps(hctxt, vcpu, kvm, HDFGWTR2_EL2);
+>  
+>  	if (cpu_has_amu())
+>  		update_fgt_traps(hctxt, vcpu, kvm, HAFGRTR_EL2);
+> @@ -200,6 +208,8 @@ static inline void __deactivate_traps_hfgxtr(struct kvm_vcpu *vcpu)
+>  	__deactivate_fgt(hctxt, vcpu, kvm, HFGITR_EL2);
+>  	__deactivate_fgt(hctxt, vcpu, kvm, HDFGRTR_EL2);
+>  	__deactivate_fgt(hctxt, vcpu, kvm, HDFGWTR_EL2);
+> +	__deactivate_fgt(hctxt, vcpu, kvm, HDFGRTR2_EL2);
+> +	__deactivate_fgt(hctxt, vcpu, kvm, HDFGWTR2_EL2);
+>  
+>  	if (cpu_has_amu())
+>  		__deactivate_fgt(hctxt, vcpu, kvm, HAFGRTR_EL2);
+> diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
+> index bae8536cbf00..ebe4e3972fed 100644
+> --- a/arch/arm64/kvm/nested.c
+> +++ b/arch/arm64/kvm/nested.c
+> @@ -384,6 +384,42 @@ int kvm_init_nv_sysregs(struct kvm *kvm)
+>  		res0 |= HDFGRTR_EL2_nPMSNEVFR_EL1;
+>  	set_sysreg_masks(kvm, HDFGRTR_EL2, res0 | HDFGRTR_EL2_RES0, res1);
+>  
+> +	/* HDFG[RW]TR2_EL2 */
+> +	res0 = res1 = 0;
+> +
+> +	/* FEAT_TRBE_MPAM is not exposed to the guest */
+> +	res0 |= HDFGRTR2_EL2_nTRBMPAM_EL1;
+
+No. We are moving away from hard-coded features, so you have to
+explicitly check it.
+
+> +
+> +	/* FEAT_SPE_FDS is not exposed to the guest */
+> +	res0 |= HDFGRTR2_EL2_nPMSDSFR_EL1;
+
+Same thing.
+
+> +
+> +	if (!kvm_has_feat_enum(kvm, ID_AA64DFR2_EL1, STEP, IMP))
+> +		res0 |= HDFGRTR2_EL2_nMDSTEPOP_EL1;
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, ITE, IMP))
+> +		res0 |= HDFGRTR2_EL2_nTRCITECR_EL1;
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, SPMU, IMP))
+> +		res0 |= (HDFGRTR2_EL2_nSPMDEVAFF_EL1 | HDFGRTR2_EL2_nSPMID |
+> +			 HDFGRTR2_EL2_nSPMSCR_EL1 | HDFGRTR2_EL2_nSPMACCESSR_EL1 |
+> +			 HDFGRTR2_EL2_nSPMCR_EL0 | HDFGRTR2_EL2_nSPMOVS |
+> +			 HDFGRTR2_EL2_nSPMINTEN | HDFGRTR2_EL2_nSPMSELR_EL0 |
+> +			 HDFGRTR2_EL2_nSPMEVTYPERn_EL0 | HDFGRTR2_EL2_nSPMEVCNTRn_EL0 |
+> +			 HDFGRTR2_EL2_nPMSSCR_EL1 | HDFGRTR2_EL2_nPMSSDATA);
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, DebugVer, V8P9))
+> +		res0 |= HDFGRTR2_EL2_nMDSELR_EL1;
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMUVer, V3P9))
+> +		res0 |= HDFGRTR2_EL2_nPMUACR_EL1;
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, PMICNTR, IMP))
+> +		res0 |= HDFGRTR2_EL2_nPMICFILTR_EL0;
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, PMICNTR, IMP))
+> +		res0 |= HDFGRTR2_EL2_nPMICNTR_EL0;
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, SEBEP, IMP))
+> +		res0 |= HDFGRTR2_EL2_nPMIAR_EL1;
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, EBEP, IMP) &&
+> +	    !kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMSS, IMP))
+> +		res0 |= HDFGRTR2_EL2_nPMECR_EL1;
+
+And all of that suffers from the same issue as in
+https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git/commit/?h=next&id=eb9d53d4a949c6d6d7c9f130e537f6b5687fedf9
 
 
-vim +/rc +116 drivers/net/mctp/mctp-pcc.c
+> +	set_sysreg_masks(kvm, HDFGRTR2_EL2, res0 | HDFGRTR2_EL2_RES0, res1);
+> +	set_sysreg_masks(kvm, HDFGWTR2_EL2, res0 | HDFGWTR2_EL2_RES0, res1);
 
-   109	
-   110	static netdev_tx_t mctp_pcc_tx(struct sk_buff *skb, struct net_device *ndev)
-   111	{
-   112		struct mctp_pcc_hdr pcc_header;
-   113		struct mctp_pcc_ndev *mpnd;
-   114		void __iomem *buffer;
-   115		unsigned long flags;
- > 116		int rc;
-   117	
-   118		ndev->stats.tx_bytes += skb->len;
-   119		ndev->stats.tx_packets++;
-   120		mpnd = netdev_priv(ndev);
-   121	
-   122		spin_lock_irqsave(&mpnd->lock, flags);
-   123		buffer = mpnd->pcc_comm_outbox_addr;
-   124		pcc_header.signature = PCC_MAGIC | mpnd->hw_addr.outbox_index;
-   125		pcc_header.flags = PCC_HEADER_FLAGS;
-   126		memcpy(pcc_header.mctp_signature, MCTP_SIGNATURE, SIGNATURE_LENGTH);
-   127		pcc_header.length = skb->len + SIGNATURE_LENGTH;
-   128		memcpy_toio(buffer, &pcc_header, sizeof(struct mctp_pcc_hdr));
-   129		memcpy_toio(buffer + sizeof(struct mctp_pcc_hdr), skb->data, skb->len);
-   130		mpnd->out_chan->mchan->mbox->ops->send_data(mpnd->out_chan->mchan,
-   131							    NULL);
-   132		spin_unlock_irqrestore(&mpnd->lock, flags);
-   133	
-   134		dev_consume_skb_any(skb);
-   135		return NETDEV_TX_OK;
-   136	}
-   137	
+How about the HDFGxTR2_EL2_RES1 bits?
+
+> +
+>  	/* Reuse the bits from the read-side and add the write-specific stuff */
+>  	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMUVer, IMP))
+>  		res0 |= (HDFGWTR_EL2_PMCR_EL0 | HDFGWTR_EL2_PMSWINC_EL0);
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index f921af014d0c..8029f408855d 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -4110,6 +4110,51 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
+>  		kvm->arch.fgu[HAFGRTR_GROUP] |= ~(HAFGRTR_EL2_RES0 |
+>  						  HAFGRTR_EL2_RES1);
+>  
+> +	/* FEAT_TRBE_MPAM is not exposed to the guest */
+> +	kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nTRBMPAM_EL1);
+
+Same thing about dynamic configuration.
+
+But more importantly, you are disabling anything *but* MPAM.  Does it
+seem right to you?
+
+> +
+> +	/* FEAT_SPE_FDS is not exposed to the guest */
+> +	kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMSDSFR_EL1);
+
+Same thing.
+
+> +
+> +	if (!kvm_has_feat_enum(kvm, ID_AA64DFR2_EL1, STEP, IMP))
+> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nMDSTEPOP_EL1);
+> +
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, ITE, IMP))
+> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nTRCITECR_EL1);
+> +
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, SPMU, IMP))
+> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nSPMDEVAFF_EL1		|
+> +						   HDFGRTR2_EL2_nSPMID			|
+> +						   HDFGRTR2_EL2_nSPMSCR_EL1		|
+> +						   HDFGRTR2_EL2_nSPMACCESSR_EL1		|
+> +						   HDFGRTR2_EL2_nSPMCR_EL0		|
+> +						   HDFGRTR2_EL2_nSPMOVS			|
+> +						   HDFGRTR2_EL2_nSPMINTEN		|
+> +						   HDFGRTR2_EL2_nSPMSELR_EL0		|
+> +						   HDFGRTR2_EL2_nSPMEVTYPERn_EL0	|
+> +						   HDFGRTR2_EL2_nSPMEVCNTRn_EL0		|
+> +						   HDFGRTR2_EL2_nPMSSCR_EL1		|
+> +						   HDFGRTR2_EL2_nPMSSDATA);
+> +
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, DebugVer, V8P9))
+> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nMDSELR_EL1);
+> +
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMUVer, V3P9))
+> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMUACR_EL1);
+> +
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, PMICNTR, IMP))
+> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMICFILTR_EL0);
+> +
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, PMICNTR, IMP))
+> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMICNTR_EL0);
+> +
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, SEBEP, IMP))
+> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMIAR_EL1);
+> +
+> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, EBEP, IMP) &&
+> +	    !kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMSS, IMP))
+> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMECR_EL1);
+> +
+
+Overall, this looks completely broken.
+
+	M.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Without deviation from the norm, progress is not possible.
 
