@@ -1,150 +1,326 @@
-Return-Path: <linux-kernel+bounces-222913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 789CF9109C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:24:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DCE9109D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3295D285917
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287BC1F24ED1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688E31AF6A1;
-	Thu, 20 Jun 2024 15:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A5C1AF6A2;
+	Thu, 20 Jun 2024 15:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="080EvxFB"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmol2VVN"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F401AE85C;
-	Thu, 20 Jun 2024 15:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2893158DCE;
+	Thu, 20 Jun 2024 15:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718897050; cv=none; b=UfbssXpT3740I/J8b19+A3mQoQs3zzb1Amwfnx2ZlYEwHVgafmYuSZoYM65zNvfWEJ5w61UWuWUO9FZTsEUDLCxDWvtRQLWKZFsQPJOefRzjQ0AC4U0QfewRaRbmACvK7BYv+Bbp7NzG1aHSEG1MeO9EeG0mjF4U85toV6K8xxQ=
+	t=1718897226; cv=none; b=et3WjhMF45UM4Cs2KbGnSJcj6Jc8eNuUTAUEcTb8tzOFYdf1Zm0pThTOa0d7rIreWn5MtNeNrp+4zIgi7pOlK2x/1F2rlySAA1WsV/amOBZtHAjZ7BkCYjx49PlhbLS8fq4liGIt8hEF/29/ZAkdoqy7LZthjsdY482+T0f/7lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718897050; c=relaxed/simple;
-	bh=qH0pcx9ew3ssWqcgy5oeN9GRicTrXQ5mf6ItNJRYD7s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kryAZJVvZHwPNb5UZN6YVDg+uTQTk7HiFDJhvoGEYfBUbllsm+lXAy9zmn8OjM7Rkj1jaYC6l+UMnAqCeVlywNQXnqD9g72QQPxIdt+69n8P0AbAdE4VdzGFuOJ6D2qmS4Ny6mlJoEac309NcyVugFCzsqRNbvtHIA9P5lOBHWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=080EvxFB; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718897047;
-	bh=qH0pcx9ew3ssWqcgy5oeN9GRicTrXQ5mf6ItNJRYD7s=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=080EvxFBpgdjOSNNxaBmNMGsHxi9ulWJXbbHzkh/Q5/V/+oeOglUMaF960trKNEEa
-	 +IEDkjxDMtEtxx/NdcXnnYkI0TnqYYLGw0fbYTnVuMg6pCicEsXgFO2h5WYdc9+j94
-	 /T7kcxuecx3xcLcAt9iir1cPR2syZN3KEIGba4IgEQ93nH3xc/rFki6SCThxthGKJf
-	 lZ5AyYWvZvnbDZKluXlA9yStFZeDqarPsUpl79cwLNcgRSdEh3RZsFULq7VrPjeVVk
-	 M551U8g7JOnO3uXAOzFAjSUBlUMNYG7hgdgkjvUzYNxGr2BRUHYBqEGj4R7pl5qXom
-	 ytIa1c9p2RC0g==
-Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2305537820B5;
-	Thu, 20 Jun 2024 15:24:06 +0000 (UTC)
-Message-ID: <0b84bd4640c4c7ff52d1452d73e1ba46f6cedd7d.camel@collabora.com>
-Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support
- runtime suspend/resume
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Devarsh Thakkar <devarsht@ti.com>, "jackson.lee"
-	 <jackson.lee@chipsnmedia.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
- "sebastian.fricke@collabora.com"
-	 <sebastian.fricke@collabora.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,  Nas Chung
- <nas.chung@chipsnmedia.com>, "lafley.kim" <lafley.kim@chipsnmedia.com>,
- "b-brnich@ti.com" <b-brnich@ti.com>
-Date: Thu, 20 Jun 2024 11:24:03 -0400
-In-Reply-To: <1cefd686-2eb2-e0b2-0b24-2c4efb0c41a1@ti.com>
-References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
-	 <20240617104818.221-3-jackson.lee@chipsnmedia.com>
-	 <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
-	 <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
-	 <bc8796ef8107507e99df079f6d7ce2575ead3cab.camel@collabora.com>
-	 <1cefd686-2eb2-e0b2-0b24-2c4efb0c41a1@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1718897226; c=relaxed/simple;
+	bh=2XrRRjYF1uqiDwFMGp264d7TNOKR4vo+7hL+13XX10o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hl7XT0XCVu9IpeA3miolUX9odzlR7WzIhFOQhrH3TM9PBaX6RfjWHblFLidAFSG0eYodUq4RgRuJFHh4g4pVv2OBFo9Orc1aQQLbyi6lUhpG9EV0FaQneQe5Dd7DK4n9RCqdd3wbv1Hs3gd5OcTAg0qSJo2utHWwSIg+hz84R5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jmol2VVN; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-48c4268adfeso336204137.1;
+        Thu, 20 Jun 2024 08:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718897224; x=1719502024; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vnZARGKyWFgO8+qiE4D0Qv1mwYwIeF0Y3Q9hF2+I9x0=;
+        b=jmol2VVNRfWDNNI6Cdd7lXG5NKYZ3iD412aZXw7N0RLfoNc9263UMZTeR+c3sSn8Hg
+         tLb2xPgCfjCNNPFWzHQhV529c+cjfmcC6bicbl59E1GSNdahuT3jaDjsufliTjNlNl3M
+         GDi22HIsUzYYNKeq8Iv5ZfyA6vdx8yzIbg/dFaMySLuIG0QmYP6eSS5COBYHVlmr+YEd
+         WbR0BRSeVGM3hhhM9WZ7GWN+UDI6l6fgcTMFKB7Y09H0WM9ZGkHTjLUoV6KflNFU9ABU
+         oxaPgnHJFlCF74p966xG2EjHXw9g83j3F1zS8G033cifM+ZQIcl7T/XWyDGUc5NnNJbW
+         1SaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718897224; x=1719502024;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vnZARGKyWFgO8+qiE4D0Qv1mwYwIeF0Y3Q9hF2+I9x0=;
+        b=KdejI8lj4EFF2a45QBTNh/BFnAFBLEyrdn50qEKXX1ZJT0KsmN5mxmjyg1miHT3OPj
+         BBDhVrpqq/CBX8BdBOt9zj0hcE9lnfTFGRpFBIgi2yaNl997rOUGkz1aVe2haq0MP1nP
+         Atw+1mFWUfJa/kRlqZE2kYEHNSX7gO2jgoo0W3GrzJB+sTH/oxPKdKWq9Fwj6qj2jZVM
+         UkC38DpElywvsQ7BP4mep3BbxAzVKeZ/famBzVUwWlUOUvCq819Q3pi8GjL83jqerEVt
+         R3EcAqrra1E0EirdhFbJhkqRcCkSq/ZrBC3U8CiesRsnw/kWOwLUrA24wd/365baJXi/
+         UBpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXaAlZCckTcXE8QNmWIJPFlE4FHAcVkjT2Ica9KWw02UetujPdOJQAD7McqtC297il2BjZ0Th9IFHbr6zo6WTAedfErKSQrInxE3WFZ2ifDDeIxw3+8VcjP9rYYH1hZeKnYWfRY/gy+oL5l1A8t2W74FEkCVD01PYdzjML8HjQWFA3uDSczZjgId9Fps1ok6iEj76zPwTKZOYJsfl8UyBPHg9AlHXkESHiVgbs=
+X-Gm-Message-State: AOJu0YyFIeZkmcg70hI1qtuZTCV0dUQVlplGP18gmx2YDsPxFXi5w9o/
+	bBG23n8+kt0QUX86XBYosDWRZwobnEI6QLgBhysaZRABre4j14FZ4bUr6wF6EsbTwT8xtQ1qxwr
+	muBkup8opF6g1iW7sIn+KEvC6J1Y=
+X-Google-Smtp-Source: AGHT+IF9wWjFT/oXYKfheDYuwzcjUvYS61Gxy7ssfcblP4Zs9P+hcLZaQLihuPc5JHmVNVvfTOriddQZXw5Y2/pPDHM=
+X-Received: by 2002:a05:6122:2515:b0:4e4:eda9:ec32 with SMTP id
+ 71dfb90a1353d-4ef2779ffb5mr6997993e0c.10.1718897222232; Thu, 20 Jun 2024
+ 08:27:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240618222403.464872-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240618222403.464872-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <a86797d6-e262-483c-92de-cfab5dfaff69@tuxon.dev>
+In-Reply-To: <a86797d6-e262-483c-92de-cfab5dfaff69@tuxon.dev>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 20 Jun 2024 16:26:36 +0100
+Message-ID: <CA+V-a8sZJhqf9TKVo7znS9HKhfRR7pBw4eWjXkQa9FC6+F41xg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] watchdog: Add Watchdog Timer driver for RZ/V2H(P)
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le jeudi 20 juin 2024 =C3=A0 20:22 +0530, Devarsh Thakkar a =C3=A9crit=C2=
-=A0:
-> Hi Jackson, Nicolas,
->=20
-> On 20/06/24 19:33, Nicolas Dufresne wrote:
-> > Hi Jackson, Devarsh,
-> >=20
-> > Le mercredi 19 juin 2024 =C3=A0 23:56 +0000, jackson.lee a =C3=A9crit=
-=C2=A0:
-> > > Hi Devarsh
-> > >=20
-> > > If there is no feeding bitstreams during encoding and decoding frames=
-, then driver's status is switched to suspended automatically by autosuspen=
-d.
-> > > And if we don=E2=80=99t use autosuspend, it is very difficult for us =
-to catch if there is feeding or not while working a pipeline.
-> > > So it is very efficient for managing power status.
-> > >=20
-> > > If the delay is very great value, we can adjust it.
-> >=20
-> > One way to resolve this, would be if someone share measurement of the s=
-uspend /
-> > resume cycle duration. With firmware (third party OS) like this, the co=
-st and
-> > duration is few order of magnitude higher then with more basic ASIC lik=
-e Hantro
-> > and other single function HW.
-> >=20
-> > Yet, 5s might be to much (but clearly safe), but getting two low may me=
-ans that
-> > we suspect "between two frames", and if that happens, we may endup with=
- various
-> > range of side effect, like reduce throughput due to suspend collisions,=
- or even
-> > worse power footprint. Some lab testing to adjust the value will be nee=
-ded, we
-> > have very little of that happening at the moment as I understood.
-> >=20
->=20
-> Okay I see the intention here is that if there is a process holding the v=
-pu
-> device handle and the input feed is stalled for some seconds due to netwo=
-rk
-> delay or CPU throughput then after a specified timeout say 5 seconds we w=
-ant
-> to suspend even if the process is still active and holding the vpu device
-> handle ? I agree then if we want to support this feature a safer/slightly
-> larger value is required to avoid frequent suspend/resume due to network
-> jitter or any other bottleneck and maybe 5s is a good value to start with=
-.
->=20
-> But if last instance is closed/stops streaming and there is no process ho=
-lding
-> the device handle anymore then I think we should suspend immediately with=
-out
-> any delay.
+Hi Claudiu,
 
-Our emails crossed each other, but see my explanation about gapless playbac=
-k
-transiton, were userspace may destroy and create a new video session. I bel=
-ieve
-5s is way too long to be honest.
+Thank you for the review.
 
-Nicolas
+On Thu, Jun 20, 2024 at 8:40=E2=80=AFAM claudiu beznea <claudiu.beznea@tuxo=
+n.dev> wrote:
+>
+> Hi, Prabhakar,
+>
+> On 19.06.2024 01:24, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add Watchdog Timer driver for RZ/V2H(P) SoC.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/watchdog/Kconfig     |   8 ++
+> >  drivers/watchdog/Makefile    |   1 +
+> >  drivers/watchdog/rzv2h_wdt.c | 248 +++++++++++++++++++++++++++++++++++
+> >  3 files changed, 257 insertions(+)
+> >  create mode 100644 drivers/watchdog/rzv2h_wdt.c
+> >
+> > diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> > index 85eea38dbdf4..3f7bcc10ccc2 100644
+> > --- a/drivers/watchdog/Kconfig
+> > +++ b/drivers/watchdog/Kconfig
+> > @@ -938,6 +938,14 @@ config RENESAS_RZG2LWDT
+> >         This driver adds watchdog support for the integrated watchdogs =
+in the
+> >         Renesas RZ/G2L SoCs. These watchdogs can be used to reset a sys=
+tem.
+> >
+> > +config RENESAS_RZV2HWDT
+> > +     tristate "Renesas RZ/V2H(P) WDT Watchdog"
+> > +     depends on ARCH_RENESAS || COMPILE_TEST
+> > +     select WATCHDOG_CORE
+> > +     help
+> > +       This driver adds watchdog support for the integrated watchdogs =
+in the
+> > +       Renesas RZ/V2H(P) SoCs. These watchdogs can be used to reset a =
+system.
+> > +
+> >  config ASPEED_WATCHDOG
+> >       tristate "Aspeed BMC watchdog support"
+> >       depends on ARCH_ASPEED || COMPILE_TEST
+> > diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+> > index 2d1117564f5b..295909a1b3b9 100644
+> > --- a/drivers/watchdog/Makefile
+> > +++ b/drivers/watchdog/Makefile
+> > @@ -86,6 +86,7 @@ obj-$(CONFIG_RENESAS_WDT) +=3D renesas_wdt.o
+> >  obj-$(CONFIG_RENESAS_RZAWDT) +=3D rza_wdt.o
+> >  obj-$(CONFIG_RENESAS_RZN1WDT) +=3D rzn1_wdt.o
+> >  obj-$(CONFIG_RENESAS_RZG2LWDT) +=3D rzg2l_wdt.o
+> > +obj-$(CONFIG_RENESAS_RZV2HWDT) +=3D rzv2h_wdt.o
+> >  obj-$(CONFIG_ASPEED_WATCHDOG) +=3D aspeed_wdt.o
+> >  obj-$(CONFIG_STM32_WATCHDOG) +=3D stm32_iwdg.o
+> >  obj-$(CONFIG_UNIPHIER_WATCHDOG) +=3D uniphier_wdt.o
+> > diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.=
+c
+> > new file mode 100644
+> > index 000000000000..08f97b4bab7f
+> > --- /dev/null
+> > +++ b/drivers/watchdog/rzv2h_wdt.c
+> > @@ -0,0 +1,248 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Renesas RZ/V2H(P) WDT Watchdog Driver
+> > + *
+> > + * Copyright (C) 2024 Renesas Electronics Corporation.
+> > + */
+> > +#include <linux/bitops.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/io.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pm_runtime.h>
+> > +#include <linux/reset.h>
+> > +#include <linux/units.h>
+> > +#include <linux/watchdog.h>
+> > +
+> > +#define WDTRR                        0x00    /* RW, 8  */
+> > +#define WDTCR                        0x02    /* RW, 16 */
+> > +#define WDTRCR                       0x06    /* RW, 8  */
+> > +
+> > +#define WDTCR_TOPS_1024              0x00
+> > +#define WDTCR_TOPS_16384     0x03
+> > +
+> > +#define WDTCR_CKS_CLK_1              0x00
+> > +#define WDTCR_CKS_CLK_256    0x50
+> > +
+> > +#define WDTCR_RPES_0         0x300
+> > +#define WDTCR_RPES_75                0x000
+> > +
+> > +#define WDTCR_RPSS_25                0x00
+> > +#define WDTCR_RPSS_100               0x3000
+> > +
+> > +#define WDTRCR_RSTIRQS         BIT(7)
+> > +
+> > +#define CLOCK_DIV_BY_256     256
+> > +
+> > +#define WDT_DEFAULT_TIMEOUT  60U
+> > +
+> > +static bool nowayout =3D WATCHDOG_NOWAYOUT;
+> > +module_param(nowayout, bool, 0);
+> > +MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (d=
+efault=3D"
+> > +              __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
+> > +
+> > +struct rzv2h_wdt_priv {
+> > +     void __iomem *base;
+> > +     struct watchdog_device wdev;
+> > +     struct reset_control *rstc;
+>
+> You can keep the pointers first to save some padding, if any.
+>
+OK.
 
->=20
-> Regards
-> Devarsh
+> > +     unsigned long oscclk_rate;
+> > +};
+> > +
+> > +static u32 rzv2h_wdt_get_cycle_usec(struct rzv2h_wdt_priv *priv,
+> > +                                 unsigned long cycle,
+> > +                                 u16 wdttime)
+> > +{
+> > +     int clock_division_ratio;
+> > +     u64 timer_cycle_us;
+> > +
+> > +     clock_division_ratio =3D CLOCK_DIV_BY_256;
+> > +
+> > +     timer_cycle_us =3D clock_division_ratio * (wdttime + 1) * MICRO;
+> > +
+> > +     return div64_ul(timer_cycle_us, cycle);
+> > +}
+> > +
+> > +static int rzv2h_wdt_ping(struct watchdog_device *wdev)
+> > +{
+> > +     struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
+> > +     unsigned long delay;
+> > +
+> > +     writeb(0x0, priv->base + WDTRR);
+> > +     writeb(0xFF, priv->base + WDTRR);
+> > +
+> > +     /*
+> > +      * Refreshing the down-counter requires up to 4 cycles
+> > +      * of the signal for counting
+> > +      */
+> > +     delay =3D 4 * rzv2h_wdt_get_cycle_usec(priv, priv->oscclk_rate, 0=
+);
+> > +     udelay(delay);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static void rzv2h_wdt_setup(struct watchdog_device *wdev, u16 wdtcr)
+> > +{
+> > +     struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
+> > +
+> > +     writew(wdtcr, priv->base + WDTCR);
+> > +
+> > +     /* LSI needs RSTIRQS to be cleared */
+> > +     writeb(readb(priv->base + WDTRCR) & ~WDTRCR_RSTIRQS, priv->base +=
+ WDTRCR);
+> > +}
+> > +
+> > +static int rzv2h_wdt_start(struct watchdog_device *wdev)
+> > +{
+> > +     pm_runtime_get_sync(wdev->parent);
+>
+> You may consider using pm_runtime_resume_and_get() which takes care of
+> failures from __pm_runtime_resume(), if any.
+>
+OK.
 
+> > +
+> > +     /*
+> > +      * WDTCR
+> > +      * - CKS[7:4] - Clock Division Ratio Select - 0101b: oscclk/256
+> > +      * - RPSS[13:12] - Window Start Position Select - 11b: 100%
+> > +      * - RPES[9:8] - Window End Position Select - 11b: 0%
+> > +      * - TOPS[1:0] - Timeout Period Select - 11b: 16384 cycles (3FFFh=
+)
+> > +      */
+> > +     rzv2h_wdt_setup(wdev, WDTCR_CKS_CLK_256 | WDTCR_RPSS_100 |
+> > +                     WDTCR_RPES_0 | WDTCR_TOPS_16384);
+> > +
+> > +     rzv2h_wdt_ping(wdev);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int rzv2h_wdt_stop(struct watchdog_device *wdev)
+> > +{
+> > +     struct rzv2h_wdt_priv *priv =3D watchdog_get_drvdata(wdev);
+> > +
+> > +     pm_runtime_put(wdev->parent);
+> > +     reset_control_reset(priv->rstc);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static const struct watchdog_info rzv2h_wdt_ident =3D {
+> > +     .options =3D WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTI=
+MEOUT,
+> > +     .identity =3D "Renesas RZ/V2H WDT Watchdog",
+> > +};
+> > +
+> > +static int rzv2h_wdt_restart(struct watchdog_device *wdev,
+> > +                          unsigned long action, void *data)
+> > +{
+> > +     rzv2h_wdt_stop(wdev);
+>
+> Calling pm_runtime_put() though this function may lead to unbalanced
+> runtime PM counter if the device is not used at this moment. I may be wro=
+ng
+> though, I'm just reading the code, anyway (see below).
+>
+Agreed, I have added a check now to call stop only if WDT is active.
+
+> > +
+> > +     pm_runtime_get_sync(wdev->parent);
+>
+> If compiled with LOCKDEP this should trigger an invalid wait context
+> (see commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+> context'") and maybe [2] for a possible fix (if it's considered ok).
+>
+I finally managed to replicate the issue and now replaced it with the
+clk_enable() api to turn ON the clocks.
+
+Cheers,
+Prabhakar
 
