@@ -1,210 +1,262 @@
-Return-Path: <linux-kernel+bounces-222689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 414DA9105BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:24:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 077CF9105C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4102C1C21017
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:23:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED6911C20B9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09EB1AD3ED;
-	Thu, 20 Jun 2024 13:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BB01AD3F0;
+	Thu, 20 Jun 2024 13:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KdLpt6kF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="Qk/sR5k4"
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AB61ACE61
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4E51ACE94;
+	Thu, 20 Jun 2024 13:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718889829; cv=none; b=aQK4gNFo3PCQnNN/CBdd5E2AUdYKBW3MF8io+WZnWoCUrTYEXovGr0aOlVgbPb71QsVonTUd+hVw0RseiXBkPeAawMx7+eTBkN5fUyuaRDEdGSzcJjfxtSZr7rSgWxjmiMeoFSdeB7ctmd3ggQ3HeBTlGSI+zILdH7UDGr9TVpE=
+	t=1718889984; cv=none; b=aegdqvDxh6PGQrjZyiuipaXdhxWUsep9nPAX1IyM1L6E9kc/YJ/Ib64lD3G4+d5IIEE+9ahSu1fVMjZBEEkjEJqnOJ9BUNN4jHcmrbHWTl4MsHqrwuYILEgycct8cngqJ35drqu0q3aJpSGYCU3ceVd3AR6+pmlnpYqOpkXfz9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718889829; c=relaxed/simple;
-	bh=PF804oOWsningKyY8X2WCmaUQpFqh6+o21ojOYTaW5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WWU9c4MQfsPLvnv1xIwQhONa9YmjSzTq7asxol/ex/ebTPEpboljnnvNFEWiWtOE4JZ/hgjzvR6JtYcV18XP5FUoiTyUAw0hrGWg8Y7Z8QS4Kmr8CyOwVY5NSjZ15JbkrI1PvfcRPr1Ankx4QsyKLFSs7rc2OTXAjp1mSC5mx1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KdLpt6kF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718889826;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H32ryajiAMQje4E0qEx+NRHYNdsGJp/lNSL+93uxA7U=;
-	b=KdLpt6kFI/bPfw0+nnIjAvbuooRphQmuJ6yhYuYJ6UL1xazdapJm1FAlZF1UJPZg/v20oB
-	Pp2+QY0hsK5Zv+gtvDqAv/NkPyB2gCjYgdHOMh1ocKCFxF5WYff9SDcDNadu/eUleMu8Vv
-	t1vGGHHvzjnAsznhntRV9r80yhkDw4s=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-412-LEnVc4KLNz2GSVYnpS9tsg-1; Thu, 20 Jun 2024 09:23:45 -0400
-X-MC-Unique: LEnVc4KLNz2GSVYnpS9tsg-1
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4410367c230so8529011cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:23:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718889824; x=1719494624;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H32ryajiAMQje4E0qEx+NRHYNdsGJp/lNSL+93uxA7U=;
-        b=a4LRYIhHz8mrFWU2FUfqLsLtJ8mR13gnk4iNSGwN2nnCdBtar9MKfPdqTqHz1iLfLm
-         I0ScbbQRQcZ5f+ocPf7kJd+x3/AXmFtBSgIO30m/SRPv6BYDScUMxwR+NjHTvEsHS7c0
-         9Q5QP73ysO7uex36UnZVetwjygV+wOTPBV+lq7kJt6kY62/gPur75fW3EZMS+6/uSuKS
-         Gy/ftuS7wVvTj3t8qFulTZfyKRvktaxeTSLwcDsQwhUc3ADqyBIrPw9CrhNs9plE3xJD
-         j4M/XZ0ddRSMmhdILSHGCCta5YXddyLuJZxC6hCcTUIY7KNkt1yvu0i8D/BG6/6Oi6Sb
-         DH4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU8WqsehaJ45K95ZAX83U8iKPIAItSN3cSigO893KOFDPIO4zwixC9XxaK7Tgxf/Hsnpfg6qep4Jfzbky1hTsdW5YIonTs3Vv1EXLpZ
-X-Gm-Message-State: AOJu0YxjxpQHeffqHBMVy77kr6H0ulGodQUdgUOQE2xQzn+dnSSRxP4D
-	2HAMdHmaIE31x0cVCa/9Qt8o9ekAxrH7eaFOxpqbmtb5mSRguGhWwtSFp8kvEBUS2AqB/XYVKSX
-	PiSf6eXAdG1BYJGD7fFMTQ+GXS3CX/irOfvzGF1PaP/skA2EOhgLCvsJcY6FQIA==
-X-Received: by 2002:a05:620a:2403:b0:795:5f71:b190 with SMTP id af79cd13be357-79bb3e57dcbmr639459185a.37.1718889824616;
-        Thu, 20 Jun 2024 06:23:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH7lR8Qj5tqxCfDCAWyzhiZxYPsaC/gvkzL3X7mSeb6vi1+5SrnEdEkb+ho0G8dGXin7KMHWQ==
-X-Received: by 2002:a05:620a:2403:b0:795:5f71:b190 with SMTP id af79cd13be357-79bb3e57dcbmr639457685a.37.1718889824265;
-        Thu, 20 Jun 2024 06:23:44 -0700 (PDT)
-Received: from [10.0.0.200] (modemcable096.103-83-70.mc.videotron.ca. [70.83.103.96])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798abe48449sm696014785a.104.2024.06.20.06.23.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 06:23:43 -0700 (PDT)
-Message-ID: <34ffbdcb-b1f9-4cee-9f55-7019a228d3f8@redhat.com>
-Date: Thu, 20 Jun 2024 09:23:42 -0400
+	s=arc-20240116; t=1718889984; c=relaxed/simple;
+	bh=skBpDlqyjwQaFn99kQpKQNX/zKajEVFtRHZv8Un2Y2o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=JsiWafaeoVTdRf89UJcTt0TZFIQbGQwrAzaYY7ZxraGZsR9vS2HXKjBuzsIgrAJGgoEnw22BhSRfJxvOqiJSHgEb4jZalNXUiqPXZGD1Hu5QJH8HPljcA20ALZZEmL8zk7zY1jEL2YUAxtXoLk2Z0Ml6JCrDDIo1YU/UnPrzmEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=Qk/sR5k4; arc=none smtp.client-ip=208.88.110.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 6C2D39C3240;
+	Thu, 20 Jun 2024 09:26:13 -0400 (EDT)
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id tWZLTMGpjfJE; Thu, 20 Jun 2024 09:26:11 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 7B16E9C5625;
+	Thu, 20 Jun 2024 09:26:11 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com 7B16E9C5625
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
+	t=1718889971; bh=j97G0da8OsHXoIQTZAx0D9lInyeaXOz7op8GRSt10VM=;
+	h=From:To:Date:Message-Id:MIME-Version;
+	b=Qk/sR5k4Lp2oSnWyvu7y0zssZpxpu+oiUtS4Cc+5D3G102f8GQvstlSr10k1LmuNV
+	 HjcTrshIvmyuktL2qf6dSyB7jo/vjeC3JeDnegVr9DvQnbvNzmF5pVfmDFIkd989CQ
+	 tUfa1NUfk4GSqwyRaBqdD4Br9LTB/wh+UDX/m2GWyjrAWXXnn1we63pLw1llMtIpvl
+	 9a7t5g42je8MJlY2iLWg1wgri6ejfevNwqhVRtKQg6KHHt4Esw2UXrwLQG+BnlKyKE
+	 I7wCu0nYSdMP6s1yw0GuM6skRsqAKdVg9hM6A6wmhd0n2B78rvWvqTSeJsdddzhqMg
+	 ekrx6qFa3mNpA==
+X-Virus-Scanned: amavis at mail.savoirfairelinux.com
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id 84fPbdbD_-bf; Thu, 20 Jun 2024 09:26:11 -0400 (EDT)
+Received: from gerard.rennes.sfl (lmontsouris-657-1-69-118.w80-15.abo.wanadoo.fr [80.15.101.118])
+	by mail.savoirfairelinux.com (Postfix) with ESMTPSA id 76F0D9C54A8;
+	Thu, 20 Jun 2024 09:26:08 -0400 (EDT)
+From: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
+	Philip-Dylan <philip-dylan.gleonec@savoirfairelinux.com>
+Subject: [PATCHv5 0/9] ASoC: fsl-asoc-card: add S/PDIF controller
+Date: Thu, 20 Jun 2024 15:25:02 +0200
+Message-Id: <20240620132511.4291-1-elinor.montmasson@savoirfairelinux.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] ice driver crash on arm64
-To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Cc: jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com, poros@redhat.com,
- netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- magnus.karlsson@intel.com
-References: <8f9e2a5c-fd30-4206-9311-946a06d031bb@redhat.com>
- <ZnQsdxzumig7CD7c@boxer>
-Content-Language: en-US, en-CA
-From: Luiz Capitulino <luizcap@redhat.com>
-In-Reply-To: <ZnQsdxzumig7CD7c@boxer>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=quoted-printable
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-06-20 09:19, Maciej Fijalkowski wrote:
-> On Tue, Jun 18, 2024 at 11:23:28AM -0400, Luiz Capitulino wrote:
->> Hi,
->>
->> We have an Ampere Mount Snow system (which is arm64) with an Intel E810-C
->> NIC plugged in. The kernel is configured with 64k pages. We're observing
->> the crash below when we run iperf3 as a server in this system and load traffic
->> from another system with the same configuration. The crash is reproducible
->> with latest Linus tree 14d7c92f:
->>
->> [  225.715759] Unable to handle kernel paging request at virtual address 0075e625f68aa42c
->> [  225.723669] Mem abort info:
->> [  225.726487]   ESR = 0x0000000096000004
->> [  225.730223]   EC = 0x25: DABT (current EL), IL = 32 bits
->> [  225.735526]   SET = 0, FnV = 0
->> [  225.738568]   EA = 0, S1PTW = 0
->> [  225.741695]   FSC = 0x04: level 0 translation fault
->> [  225.746564] Data abort info:
->> [  225.749431]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->> [  225.754906]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->> [  225.759944]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->> [  225.765250] [0075e625f68aa42c] address between user and kernel address ranges
->> [  225.772373] Internal error: Oops: 0000000096000004 [#1] SMP
->> [  225.777932] Modules linked in: xfs(E) crct10dif_ce(E) ghash_ce(E) sha2_ce(E) sha256_arm64(E) sha1_ce(E) sbsa_gwdt(E) ice(E) nvme(E) libie(E) dimlib(E) nvme_core(E) gnss(E) nvme_auth(E) ixgbe(E) igb(E) mdio(E) i2c_algo_bit(E) i2c_designware_platform(E) xgene_hwmon(E) i2c_designware_core(E) dm_mirror(E) dm_region_hash(E) dm_log(E) dm_mod(E)
->> [  225.807902] CPU: 61 PID: 7794 Comm: iperf3 Kdump: loaded Tainted: G            E      6.10.0-rc4+ #1
->> [  225.817021] Hardware name: LTHPC GR2134/MP32-AR2-LT, BIOS F31j (SCP: 2.10.20220531) 08/01/2022
->> [  225.825618] pstate: 00400009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->> [  225.832566] pc : __arch_copy_to_user+0x4c/0x240
->> [  225.837088] lr : _copy_to_iter+0x104/0x518
->> [  225.841173] sp : ffff80010978f6e0
->> [  225.844474] x29: ffff80010978f730 x28: 0000000000007388 x27: 4775e625f68aa42c
->> [  225.851597] x26: 0000000000000001 x25: 00000000000005a8 x24: 00000000000005a8
->> [  225.858720] x23: 0000000000007388 x22: ffff80010978fa60 x21: ffff80010978fa60
->> [  225.865842] x20: 4775e625f68aa42c x19: 0000000000007388 x18: 0000000000000000
->> [  225.872964] x17: 0000000000000000 x16: 0000000000000000 x15: 4775e625f68aa42c
->> [  225.880087] x14: aaa03e61c262c44f x13: 5fb01a5ebded22da x12: 415feff815830f22
->> [  225.887209] x11: 7411a8ffaab6d3d7 x10: 95af4645d12e6d70 x9 : ffffba83c2faddac
->> [  225.894332] x8 : c1cbcc6e9552ed64 x7 : dfcefe933cdc57ae x6 : 0000fffde5aa9e80
->> [  225.901454] x5 : 0000fffde5ab1208 x4 : 0000000000000004 x3 : 0000000000016180
->> [  225.908576] x2 : 0000000000007384 x1 : 4775e625f68aa42c x0 : 0000fffde5aa9e80
->> [  225.915699] Call trace:
->> [  225.918132]  __arch_copy_to_user+0x4c/0x240
->> [  225.922304]  simple_copy_to_iter+0x4c/0x78
->> [  225.926389]  __skb_datagram_iter+0x18c/0x270
->> [  225.930647]  skb_copy_datagram_iter+0x4c/0xe0
->> [  225.934991]  tcp_recvmsg_locked+0x59c/0x9a0
->> [  225.939162]  tcp_recvmsg+0x78/0x1d0
->> [  225.942638]  inet6_recvmsg+0x54/0x128
->> [  225.946289]  sock_recvmsg+0x78/0xd0
->> [  225.949766]  sock_read_iter+0x98/0x108
->> [  225.953502]  vfs_read+0x2a4/0x318
->> [  225.956806]  ksys_read+0xec/0x110
->> [  225.960108]  __arm64_sys_read+0x24/0x38
->> [  225.963932]  invoke_syscall.constprop.0+0x80/0xe0
->> [  225.968624]  do_el0_svc+0xc0/0xe0
->> [  225.971926]  el0_svc+0x48/0x1b0
->> [  225.975056]  el0t_64_sync_handler+0x13c/0x158
->> [  225.979400]  el0t_64_sync+0x1a4/0x1a8
->> [  225.983051] Code: 78402423 780008c3 910008c6 36100084 (b8404423)
->> [  225.989132] SMP: stopping secondary CPUs
->> [  225.995919] Starting crashdump kernel...
->> [  225.999829] Bye!
->>
->> I was able to find out this is actually a regression introduced in 6.3-rc1
->> and was able to bisect it down to commit:
->>
->> commit 1dc1a7e7f4108bad4af4c7c838f963d342ac0544
->> Author: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
->> Date:   Tue Jan 31 21:44:59 2023 +0100
->>
->>      ice: Centrallize Rx buffer recycling
->>
->>      Currently calls to ice_put_rx_buf() are sprinkled through
->>      ice_clean_rx_irq() - first place is for explicit flow director's
->>      descriptor handling, second is after running XDP prog and the last one
->>      is after taking care of skb.
->>
->>      1st callsite was actually only for ntc bump purpose, as Rx buffer to be
->>      recycled is not even passed to a function.
->>
->>      It is possible to walk through Rx buffers processed in particular NAPI
->>      cycle by caching ntc from beginning of the ice_clean_rx_irq().
->>
->>      To do so, let us store XDP verdict inside ice_rx_buf, so action we need
->>      to take on will be known. For XDP prog absence, just store ICE_XDP_PASS
->>      as a verdict.
->>
->>      Signed-off-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
->>      Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
->>      Reviewed-by: Alexander Lobakin <alexandr.lobakin@intel.com>
->>      Link: https://lore.kernel.org/bpf/20230131204506.219292-7-maciej.fijalkowski@intel.com
->>
->> Some interesting/important information:
->>
->>   * Issue doesn't reproduce when:
->>      - The kernel is configured w/ 4k pages
->>      - UDP is used (ie. iperf3 -c <server> -u -b 0)
->>      - legacy-rx is set
->>   * The NIC firmware is version 4.30 (we haven't figured out how to update it from arm)
->>
->> By taking a quick look at the code, ICE_LAST_OFFSET in ice_can_reuse_rx_page() seems
->> wrong since Rx buffers are 3k w/ bigger page sizes but just changing it to
->> ICE_RXBUF_3072 doesn't fix the issue.
->>
->> Could you please help taking a look?
-> 
-> Thanks for the report. I am on sick leave currently, will try to take
-> alook once I'm back.
+Hello,
 
-I'm sorry to hear that Maciej, I hope you get well soon.
+This is the v5 of the series of patches aiming to make the machine
+driver `fsl-asoc-card` compatible with S/PDIF controllers on imx boards.
+The main goal is to allow the use of S/PDIF controllers with ASRC
+modules.
 
-- Luiz
+The `imx-spdif` machine driver already has specific support for S/PDIF
+controllers but doesn't support using an ASRC with it. However, the
+`fsl-asoc-card` machine driver has the necessary code to create a sound
+card which can use an ASRC module.
+It is then possible to extend the support for S/PDIF audio cards by
+merging the `imx-spdif` driver into `fsl-asoc-card`.
+
+The first patch fixes a NULL pointer dereference in `fsl-asoc-card`
+which occurs when the function "fsl_asoc_card_audmux_init()" prints
+error logs.
+
+The next three patches adapt the `fsl-asoc-card` driver to support
+multiple codec use cases.
+The driver can get 2 codec phandles from the device tree, and
+codec-related variables are doubled.
+`for_each_codecs` macros are also used when possible to ease adding
+other multi-codec use cases in the future.
+This makes possible to use the two S/PDIF dummy codec drivers
+`spdif_receiver` and `spdif_transmitter` instead of `snd-soc-dummy`,
+which was used in `imx-spdif`.
+
+The fifth patch merges the S/PDIF support from `imx-spdif` to
+`fsl-asoc-card`.
+`fsl-asoc-card` offers the same functionalities as `imx-spdif` did, but
+this merge also extends the S/PDIF support with the possibility of using
+an ASRC.
+Compatible "fsl,imx-audio-spdif" is kept, but some DT properties have to
+be updated in device trees to match those of `fsl-asoc-card`:
+* "spdif-controller" is now "audio-cpu" in `fsl-asoc-card`.
+* "spdif-in" and "spdif-out" are now replaced by the "audio-codec"
+  property of `fsl-asoc-card`. S/PDIF specific dummy codecs should be
+  used with `fsl-asoc-card`, and therefore declared in device trees.
+
+The last four patches update the device tree bindings of
+`fsl-asoc-card`, remove the now obsolete binding of `imx-spdif`, and
+update all device trees using the `fsl,imx-audio-spdif` compatible.
+
+This series of patches was successfully built for arm64 and x86 on top
+of the latest=C2=A0"for-next" branch of the ASoC git tree on the 19th of Ju=
+ne
+2024.
+These modifications have also been tested on an i.MX8MN evaluation board
+with a linux kernel RT v6.1.26-rt8.
+
+If you have any questions or remarks about these commits, don't hesitate
+to reply to this message.
+
+Best regards,
+Elinor Montmasson
+
+Changelog:
+v4 -> v5:
+* Focus the contribution to bringing S/PDIF / ASRC support.
+* Instead of creating a new compatible for the S/PDIF `fsl-asoc-card`
+  support, merge the driver `imx-spdif` into `fsl-asoc-card`, and keep
+  the compatible. It preserves the base S/PDIF audio card support but
+  also extends it with the possibility to use an ASRC.
+  It also reduces code and driver duplication.
+* Following driver merge, adapt device trees using "fsl,imx-audio-spdif"
+  compatible.=20
+* Use more `for_each_codecs` macros in `fsl-asoc-card` when adding
+  multi-codec support.
+* Remove patches about new device-tree bindings that were not relevant
+  for an S/PDIF specific support.
+* Improve DT schema changes.
+* Move `priv->pdev` assignment earlier in "fsl_asoc_card_probe()" to fix
+  a NULL pointer dereference in "fsl_asoc_card_audmux_init()".
+* v4 patch series at :
+https://lore.kernel.org/all/20240515135411.343333-1-elinor.montmasson@savoi=
+rfairelinux.com/
+
+v3 -> v4:
+* Use the standard TDM bidings, as defined in "tdm-slot.txt", for the
+  new optional DT bindings setting the TDM slots number and width.
+* Use the clock DT bindings to optionally specify the CPU DAI system
+  clock frequency, instead of a dedicated new binding.
+* Rename the new DT binding "cpu-sysclk-dir-out" to
+  "cpu-system-clock-direction-out" to better follow the style of the
+  simple-card driver.
+* Merge TX an RX bindings for CPU DAI system-clock, to better follow the
+  style of the simple-card driver, and also as there was no use case in
+  fsl-asoc-card where TX and RX settings had to be different.
+* Add the documentation for the new bindings in the new DT schema
+  bindings documentation. Also add an example with the generic codec.
+* v3 patch series at :
+https://lore.kernel.org/alsa-devel/20231218124058.2047167-1-elinor.montmass=
+on@savoirfairelinux.com/
+
+v2 -> v3:
+* When the bitmaster or framemaster are retrieved from the device tree,
+  the driver will now compare them with the two codecs possibly given in
+  device tree, and not just the first codec.
+* Improve driver modifications to use multiple codecs for better
+  integration of future multi-codec use cases:
+    * Use `for_each_codec` macros when possible.
+    * `fsl_asoc_card_priv` struct now has 2 `codec_priv` as the driver
+      can currently retrieve 2 codec phandles from the device tree.
+* Fix subject of patch 10/10 to follow the style of the subsystem
+* v2 patch series at:
+https://lore.kernel.org/alsa-devel/20231027144734.3654829-1-elinor.montmass=
+on@savoirfairelinux.com/
+
+v1 -> v2:
+* Replace use of the dummy codec by the pair of codecs spdif_receiver /
+  spdif_transmitter.
+* Adapt how dai links codecs are used to take into account the
+  possibility for multiple codecs per link.
+* Change compatible name.
+* Adapt driver to be able to register two codecs given in the device
+  tree.
+* v1 patch series at:
+https://lore.kernel.org/alsa-devel/20230901144550.520072-1-elinor.montmasso=
+n@savoirfairelinux.com/
+
+Elinor Montmasson (9):
+  ASoC: fsl-asoc-card: set priv->pdev before using it
+  ASoC: fsl-asoc-card: add support for dai links with multiple codecs
+  ASoC: fsl-asoc-card: add second dai link component for codecs
+  ASoC: fsl-asoc-card: add compatibility to use 2 codecs in dai-links
+  ASoC: fsl-asoc-card: merge spdif support from imx-spdif.c
+  ASoC: dt-bindings: fsl-asoc-card: add compatible string for spdif
+  ASoC: dt-bindings: imx-audio-spdif: remove binding
+  arm64: dts: imx8m: update spdif sound card node properties
+  ARM: dts: imx6: update spdif sound card node properties
+
+ .../bindings/sound/fsl,imx-audio-spdif.yaml   |  66 ----
+ .../bindings/sound/fsl-asoc-card.yaml         |  30 +-
+ arch/arm/boot/dts/nxp/imx/imx6q-cm-fx6.dts    |  15 +-
+ arch/arm/boot/dts/nxp/imx/imx6q-prti6q.dts    |  15 +-
+ arch/arm/boot/dts/nxp/imx/imx6q-tbs2910.dts   |   9 +-
+ arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi |  15 +-
+ .../arm/boot/dts/nxp/imx/imx6qdl-apf6dev.dtsi |   9 +-
+ .../arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi |  15 +-
+ .../arm/boot/dts/nxp/imx/imx6qdl-cubox-i.dtsi |   9 +-
+ .../dts/nxp/imx/imx6qdl-hummingboard.dtsi     |   9 +-
+ .../boot/dts/nxp/imx/imx6qdl-sabreauto.dtsi   |   9 +-
+ .../boot/dts/nxp/imx/imx6qdl-wandboard.dtsi   |   9 +-
+ .../arm/boot/dts/nxp/imx/imx6sx-sabreauto.dts |   9 +-
+ arch/arm/boot/dts/nxp/imx/imx6sx-sdb.dtsi     |   9 +-
+ arch/arm/configs/imx_v6_v7_defconfig          |   1 -
+ arch/arm64/boot/dts/freescale/imx8mm-evk.dtsi |  15 +-
+ arch/arm64/boot/dts/freescale/imx8mn-evk.dtsi |  15 +-
+ arch/arm64/boot/dts/freescale/imx8mq-evk.dts  |  24 +-
+ arch/arm64/configs/defconfig                  |   1 -
+ sound/soc/fsl/Kconfig                         |  10 +-
+ sound/soc/fsl/Makefile                        |   2 -
+ sound/soc/fsl/fsl-asoc-card.c                 | 361 ++++++++++++------
+ sound/soc/fsl/imx-spdif.c                     | 103 -----
+ 23 files changed, 408 insertions(+), 352 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/fsl,imx-audio-s=
+pdif.yaml
+ delete mode 100644 sound/soc/fsl/imx-spdif.c
+
+--=20
+2.34.1
 
 
