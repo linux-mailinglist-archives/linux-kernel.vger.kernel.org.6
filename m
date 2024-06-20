@@ -1,63 +1,119 @@
-Return-Path: <linux-kernel+bounces-223425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16F89112BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:06:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C4A9112BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B1DF1F22A75
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:06:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85CB61F231BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F0D1BA06E;
-	Thu, 20 Jun 2024 20:06:11 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AD91B9AD1;
+	Thu, 20 Jun 2024 20:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="h5BQGbeA"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB684171A5;
-	Thu, 20 Jun 2024 20:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4584D171A5;
+	Thu, 20 Jun 2024 20:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718913970; cv=none; b=OavOKN9eQ+7jefAC0b4MJT7GGHZLC+yfYuDJM3JJD7bctUlwOdMO5+1aQNUtdFvvtAiD0VZJFK5Zlvud0SY+B7eGH7rLzYcMHuXxBEItizGwBlW35XrzNWr/FlEFM/3ycjuVotMnD0A4wo4Zm0YyE5+xR+wVhWuuO3kiKnJSzzc=
+	t=1718914110; cv=none; b=dVhlU8JTPwPLO9/XuUom4cW4Sd0WiDNcwO6rzeOCQBcv0Q1pUe6S+hSdxmi0SBKFndjhRGB21ly6MccR9nEdzbu8o25cO4uzMyI4BArqyfgWD9ksW5MCCJcKW+1dN203tL2qO55gyAMvkJZ4hqn/ejNFGrjNKksPqlhNqnTGfHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718913970; c=relaxed/simple;
-	bh=5Yady2NQRaeVLT4Z80IR3uCTqK+DNdYVwaubYSMtmtk=;
-	h=From:Subject:Date:Message-ID:To; b=QIRfZ6P/tPPKQRXXUL4SdDxGiHuY/inot5yeYQ0o+eTIJs5T6RnidU0KFjBFO+X9naJTRtD3HxgfaOVnLznxUphzMmMjdUKVGZZ4Pdt+7QCVHOplE6IgV7ja0dZjxNx6VRLU78LaFjPVujTBbhJGT5Ky6T0sclgIyFjtufA6ccM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1C85C2BD10;
-	Thu, 20 Jun 2024 20:06:09 +0000 (UTC)
-From: Clark Williams <williams@redhat.com>
-Subject: [ANNOUNCE] 6.6.34-rt33
-Date: Thu, 20 Jun 2024 20:05:06 -0000
-Message-ID: <171891390611.209712.13284847548995423479@demetrius.lan>
-To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <joseph.salisbury@canonical.com>
+	s=arc-20240116; t=1718914110; c=relaxed/simple;
+	bh=Tvkj/bdqoUYFP45H7hKuk7ko3rQMOyR47jiutyyYlAE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QdCNwVMPBuSB+Bhcqy35o+NuNxSCPCpqRD3Gk6LKgom1Kd3Nmlhj8XAFUTETyuYaeot7Wycp7AszyTv5HPsEQOXCdZob3jjIg42gO52i0AV3u60agJuzTpT0URnb/YHN3DUP0xq1Lu7RvlyM9RlAmZXmCmr0XPzPcTIE3wnN3rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=h5BQGbeA; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4218314a6c7so11489745e9.0;
+        Thu, 20 Jun 2024 13:08:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1718914107; x=1719518907; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mSP2iZb0HD34JmgOauzqp/IgCVs+s6ZTjWtbkH5tDoM=;
+        b=h5BQGbeA7CDdGsHgNxVI0kyJPpFjiADUApcIrFQKitcAMCToijJJU7Wvh2NhLKEWOZ
+         +TOQtVNZONQhmJWW2PnEjm8NuQKhUgYdzR6UtvMUfnwtt6fz0zEx2xNUx5mQ7JT1p6bq
+         lE1DC5lvvs/oCm4fxJ2hoNgbGkLZgyl6AMJ0n6fapqtKf8M4UBoR/EthaZkispkwKT6A
+         dn11FZl4NJcffpLG/RBKnVqsIY81991q9rGczPdfCfSmy5d8BjvbU9pXsnmc/keMl0PN
+         /rMZ7+lDWLdYUj3KBmHDpRaVWJP1YBacIz9oXNjhHmbiQnYcBqqDjxdM5k8r7O0dosjL
+         7oyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718914107; x=1719518907;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mSP2iZb0HD34JmgOauzqp/IgCVs+s6ZTjWtbkH5tDoM=;
+        b=SAY3YEIu+oLwIhKDPvR/V9TicarE1mbi0nWhchbqDzxSWIWTf437zrS870J3NXz6Dt
+         fQxHVLAut9qGqBju/OnINE5KifAOA0RD3gxn1ru8YqDbiXSsUac/auqHUy+XPRhXLn3u
+         IL8b9MXqvJ709vqC3LmDDyYIj4/NdvufPa8kXzuRDQnPXB9NUOASyEiwBep1D0VfOKWH
+         5AXQw21r2LJ4e3C0Aj8k1/Lq/GMZ+1Gmnjr2rp1C5laFG3Yl+f0ephub8XD5MnUQjXO0
+         0lNOIMX/Bk3M/e9qbA9E6hL9mSPMdy5NL+pTKI0o+dPyRbMEfJ7XJX4tYnZoL0oazn70
+         fxrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXXZtqQ+2NRsrCz4ahFk75+BOEN+eKNm20bvD8I1DnV3j7EViJb3Gsy+vfdzdBN4aCJvnL1UiSWr66mGtIzDTkl+66QjD0+LBK3vc8SgfHyAxcWnase/ykVrl4QWHLr/fmwcI1
+X-Gm-Message-State: AOJu0Yx+4Xk+KCrBtgS3sdHaMYCu6M1NTDZ4ICJ4B2o/E7ENaCJf5S03
+	0+dZ4o0fyLVM5ajtkRVL8jX/jNIOWVCMXlJPM+cFG5HBAJHN7qQ=
+X-Google-Smtp-Source: AGHT+IFDvmwHPF6ya/h6SYBajHbwSiLRGoU7GuFsO6xAFGn3zo4AHPt8ASzx/yBQGuzkl6D8kmXYEw==
+X-Received: by 2002:a05:600c:310a:b0:41a:b30e:42a3 with SMTP id 5b1f17b1804b1-4247529bd84mr44026355e9.37.1718914107381;
+        Thu, 20 Jun 2024 13:08:27 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4f33.dip0.t-ipconnect.de. [91.43.79.51])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0b636bsm39436615e9.6.2024.06.20.13.08.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 13:08:26 -0700 (PDT)
+Message-ID: <7796cc17-a5ee-4586-8508-4229103ca1f4@googlemail.com>
+Date: Thu, 20 Jun 2024 22:08:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.1 000/217] 6.1.95-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240619125556.491243678@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240619125556.491243678@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello RT-list!
-
-I'm pleased to announce the 6.6.34-rt33 stable release.
-
-You can get this release via the git tree at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-
-  branch: v6.6-rt
-  Head SHA1: 97aa56ace89411b363eb21b307e988626b989743
-
-Or to build 6.6.34-rt33 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.6.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.6.34.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/6.6/patch-6.6.34-rt33.patch.xz
+Am 19.06.2024 um 14:54 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.1.95 release.
+> There are 217 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
 
-Enjoy!
-Clark
+Built and booted successfully, I don't see any regressions nor any scary or suspicious 
+dmesg outout, running for an hour now. Built on dual socket Ivy Bridge Xeon E5-2697 v2.
+
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+
+Still no goal in Spain vs Italy... 🙄
+
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
