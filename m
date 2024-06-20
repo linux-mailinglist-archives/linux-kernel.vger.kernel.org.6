@@ -1,218 +1,251 @@
-Return-Path: <linux-kernel+bounces-222663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A69891057C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:10:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2402791057E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0441288085
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:10:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 203221C20845
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD18B1AD3F6;
-	Thu, 20 Jun 2024 13:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B710B1AD4B2;
+	Thu, 20 Jun 2024 13:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jye64+iQ"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2OufAtCY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jc+vu0x9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2OufAtCY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jc+vu0x9"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CD81AAE20
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68DB1AD491;
+	Thu, 20 Jun 2024 13:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718888890; cv=none; b=lsJpKA9JyxxmDYg0FIudtedqLQ9ZX3CjqxX92OZOamvr4De5b8lfX9VINUgRz3V7gHvMz2k+EqOo8UemrDchn8l8qf2IznnOD6IwmJzhSHxVl9UCv2j16Lfplw4vunDTFmWIS2Gq2OXYYKtULPMhQFvicRrGiAilnJXvHPP52gs=
+	t=1718888916; cv=none; b=f+oY4IMH6KXTjuDsRTOAx9iLVRR44J5uOZM9EJPi2f4Sap1GdC++JR3rkCl/ftuLYT2Gy27wnehYVz8Cw1FuSLacmnLxWTRtt42nthv3aJyzd2uTtRjOrrt+IKHaiT81NHFWng1pJlrdaEQzTq6cM63uFl5YBm2Hlf70rV0R0K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718888890; c=relaxed/simple;
-	bh=Nd5/hPdaVzyaCPja9J9QJBucAO/XJpZ+1uhijZYQ7fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYK+f6S7G+wcJtspOOoT4SqErCYUBWZPaHqcSqqjOQKLkhCqyduEFWi5tqCLBQmxZIYMvMBsQe6p9qtphaS0AqKzxWkyiCURyWmxboE3gLQBzP6usGZFtXMFcT579ETZQ2arq1GG4FEQmCRB9zr1xl8Y3onlXsB+Ct9g1CJ5aYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jye64+iQ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-422f7c7af49so156435e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718888887; x=1719493687; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sokuciGEMqDWfb/GyCKAbwKFQZy9XN+HQFh0M9GkJEc=;
-        b=jye64+iQUf5Q22WYI1bW2qakhtko/K6W5NB1dXd/wdVeLgH5b8VP9R3SJjkU5Xg/Qg
-         NTkGml8A1f3UfF3IVPp/XroIcpCVV0ed2h8JV7hMFZH+bWmNt7flwiPFB4zNJcOjsrfk
-         MU58yhn0vKKAJJVzwmsmdqMZLBsK0k45PsUlWtXm5MpJ2ga/UFy5m/UUfJ3iDdCkuj04
-         lAJDLk9uDGhOoiOVzhYu1UXWSQX9ok6rsgLhdh8ATjEzHBSwhkcNtqmEWEZcsot9IOAu
-         yJL4xmekP5Tt+qPD5Nmx645PRWhY6Tc+43L2Zv0dRr+gmjWnRGS2AuKsUjhCG0jv/X1y
-         cQoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718888887; x=1719493687;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sokuciGEMqDWfb/GyCKAbwKFQZy9XN+HQFh0M9GkJEc=;
-        b=lVivXvnP5BKGH/n7pQiUXf1rQ/hyGaPhZ9+cv+LkjEU21agcM/vCGV91fiOc+wzGlU
-         KAQ3YyFDR5lDOurKNj9P7BuYeslVPsaEDukBWo3HMPfRktmt3hl+FFx1TqZTaBs8TWBz
-         cheHCi9qgrGE6Co/kXXt4wVfOe46IIyrakcTiZchKoA1TzyN+k5IVINwZD1wf1SOTkfs
-         9Xem1Bgvj7vzLvrUg0cwlgb79ZVh1PSPV6ihvUxbcIuTU+QnKrfugwMIs0+cOlpbHMb1
-         inDWp7vAUOL06e6LsQm6p9dwkl7IrrldnjGazUleDFePCa+jb+Zxmx2tTj9rbK+beywk
-         WhIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUirYv9ubWURvUvd/t2BEuc/FgWzRbxlbzwKC34A0KVPAGcah4vHRmBEpy3y1e9bsPiTNc210DyOFTBC4QFMreazEKivnsYy7VV6K/A
-X-Gm-Message-State: AOJu0YxSjdbvxL60vFUYxFRreLIBsmyQS+lqRO/LAFmW23RDn+Prwis2
-	BFG1xZrYUxUIpCHB0aJvT/KOLYgTCSFCPY+xK4D26rPtdbDfFI9DZTLrZYU0BQ==
-X-Google-Smtp-Source: AGHT+IHp9bazFhbmExqFkMfkC/8CdeFqGQa/Ablhwe0BqRz1q3OFlFoqlZtJH067QyRn9E0j/SDL1Q==
-X-Received: by 2002:a05:600c:4e0c:b0:41b:8715:1158 with SMTP id 5b1f17b1804b1-424758fd22bmr3600115e9.6.1718888887221;
-        Thu, 20 Jun 2024 06:08:07 -0700 (PDT)
-Received: from google.com (205.215.190.35.bc.googleusercontent.com. [35.190.215.205])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075c6fa4esm19579496f8f.67.2024.06.20.06.08.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 06:08:06 -0700 (PDT)
-Date: Thu, 20 Jun 2024 13:08:02 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: John Hubbard <jhubbard@nvidia.com>,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-	maz@kernel.org, kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, pbonzini@redhat.com,
-	Fuad Tabba <tabba@google.com>, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
-Message-ID: <ZnQpslcah7dcSS8z@google.com>
-References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
- <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com>
- <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+	s=arc-20240116; t=1718888916; c=relaxed/simple;
+	bh=dBQz6S40WDeiGeupeskerJqcI40jAXRtHx6QdmXFSrg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WKoPXj/VbPz1rkSdqEZiskH5+aiyxecREHyivEhy9R8z/g5CNl/a1bcsXeS5ngG1qee05yYW9MELx6rQqdryqcCR2q1MR9wnuq45qEYynfJhIQDFGfGBLm3PtMoiqIsW5MkZSw8LOf+8vbdqO9jma7Q/745sx0B7DSBbdQZU5E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2OufAtCY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jc+vu0x9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2OufAtCY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jc+vu0x9; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 172E921A82;
+	Thu, 20 Jun 2024 13:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718888913; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0rJovHGmssGPw0RKMhyX09OgLWhw/Ce/UFsR3Y5KGD4=;
+	b=2OufAtCYaPNrkEXe5Tpw0zaEwbltYXnjclLQMilfSSXB68xLTaaNPR+XGO/7nLEncduMTw
+	+2xci/SuvjZm49NY8uEJYiWm5Cx/QvvSlRNOjjRTYjm+HurgEPwgtKwnn23t+WudZarvR+
+	He33pzKWD0rr4IxF2vIsc5mX10smiLE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718888913;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0rJovHGmssGPw0RKMhyX09OgLWhw/Ce/UFsR3Y5KGD4=;
+	b=Jc+vu0x9mzR2O9rn9v9FzoXKwuH30ek9Az09Yd26XR24I/ncOmB4mgkStrHmsPgD0Dz8Ox
+	o3efBBYF7y/SqHDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2OufAtCY;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Jc+vu0x9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718888913; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0rJovHGmssGPw0RKMhyX09OgLWhw/Ce/UFsR3Y5KGD4=;
+	b=2OufAtCYaPNrkEXe5Tpw0zaEwbltYXnjclLQMilfSSXB68xLTaaNPR+XGO/7nLEncduMTw
+	+2xci/SuvjZm49NY8uEJYiWm5Cx/QvvSlRNOjjRTYjm+HurgEPwgtKwnn23t+WudZarvR+
+	He33pzKWD0rr4IxF2vIsc5mX10smiLE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718888913;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0rJovHGmssGPw0RKMhyX09OgLWhw/Ce/UFsR3Y5KGD4=;
+	b=Jc+vu0x9mzR2O9rn9v9FzoXKwuH30ek9Az09Yd26XR24I/ncOmB4mgkStrHmsPgD0Dz8Ox
+	o3efBBYF7y/SqHDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C50251369F;
+	Thu, 20 Jun 2024 13:08:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5k+/L9ApdGbNQwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 20 Jun 2024 13:08:32 +0000
+Message-ID: <7f122473-3d36-401d-8df4-02d981949f00@suse.cz>
+Date: Thu, 20 Jun 2024 15:08:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/6] mm/slab: Plumb kmem_buckets into
+ __do_kmalloc_node()
+Content-Language: en-US
+To: Kees Cook <kees@kernel.org>
+Cc: "GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
+ Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ jvoisin <julien.voisin@dustri.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Xiu Jianfeng <xiujianfeng@huawei.com>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>, Jann Horn <jannh@google.com>,
+ Matteo Rizzo <matteorizzo@google.com>, Thomas Graf <tgraf@suug.ch>,
+ Herbert Xu <herbert@gondor.apana.org.au>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-hardening@vger.kernel.org, netdev@vger.kernel.org
+References: <20240619192131.do.115-kees@kernel.org>
+ <20240619193357.1333772-2-kees@kernel.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240619193357.1333772-2-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 172E921A82
+X-Spam-Score: -3.00
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[huaweicloud.com,linux.com,kernel.org,google.com,lge.com,dustri.org,linux-foundation.org,linux.dev,gmail.com,huawei.com,suug.ch,gondor.apana.org.au,vger.kernel.org,kvack.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-Hi David,
+On 6/19/24 9:33 PM, Kees Cook wrote:
+> Introduce CONFIG_SLAB_BUCKETS which provides the infrastructure to
+> support separated kmalloc buckets (in the following kmem_buckets_create()
+> patches and future codetag-based separation). Since this will provide
+> a mitigation for a very common case of exploits, enable it by default.
 
-On Wed, Jun 19, 2024 at 09:37:58AM +0200, David Hildenbrand wrote:
-> Hi,
-> 
-> On 19.06.24 04:44, John Hubbard wrote:
-> > On 6/18/24 5:05 PM, Elliot Berman wrote:
-> > > In arm64 pKVM and QuIC's Gunyah protected VM model, we want to support
-> > > grabbing shmem user pages instead of using KVM's guestmemfd. These
-> > > hypervisors provide a different isolation model than the CoCo
-> > > implementations from x86. KVM's guest_memfd is focused on providing
-> > > memory that is more isolated than AVF requires. Some specific examples
-> > > include ability to pre-load data onto guest-private pages, dynamically
-> > > sharing/isolating guest pages without copy, and (future) migrating
-> > > guest-private pages.  In sum of those differences after a discussion in
-> > > [1] and at PUCK, we want to try to stick with existing shmem and extend
-> > > GUP to support the isolation needs for arm64 pKVM and Gunyah.
-> 
-> The main question really is, into which direction we want and can develop
-> guest_memfd. At this point (after talking to Jason at LSF/MM), I wonder if
-> guest_memfd should be our new target for guest memory, both shared and
-> private. There are a bunch of issues to be sorted out though ...
-> 
-> As there is interest from Red Hat into supporting hugetlb-style huge pages
-> in confidential VMs for real-time workloads, and wasting memory is not
-> really desired, I'm going to think some more about some of the challenges
-> (shared+private in guest_memfd, mmap support, migration of !shared folios,
-> hugetlb-like support, in-place shared<->private conversion, interaction with
-> page pinning). Tricky.
-> 
-> Ideally, we'd have one way to back guest memory for confidential VMs in the
-> future.
-> 
-> 
-> Can you comment on the bigger design goal here? In particular:
-> 
-> 1) Who would get the exclusive PIN and for which reason? When would we
->    pin, when would we unpin?
-> 
-> 2) What would happen if there is already another PIN? Can we deal with
->    speculative short-term PINs from GUP-fast that could introduce
->    errors?
-> 
-> 3) How can we be sure we don't need other long-term pins (IOMMUs?) in
->    the future?
-
-Can you please clarify more about the IOMMU case?
-
-pKVM has no merged upstream IOMMU support at the moment, although
-there was an RFC a while a go [1], also there would be a v2 soon.
-
-In the patches KVM (running in EL2) will manage the IOMMUs including
-the page tables and all pages used in that are allocated from the
-kernel.
-
-These patches don't support IOMMUs for guests. However, I don't see
-why would that be different from the CPU? as once the page is pinned
-it can be owned by a guest and that would be reflected in the
-hypervisor tracking, the CPU stage-2 and IOMMU page tables as well.
-
-[1] https://lore.kernel.org/kvmarm/20230201125328.2186498-1-jean-philippe@linaro.org/
-
-Thanks,
-Mostafa
+No longer "enable it by default".
 
 > 
-> 4) Why are GUP pins special? How one would deal with other folio
->    references (e.g., simply mmap the shmem file into a different
->    process).
+> To be able to choose which buckets to allocate from, make the buckets
+> available to the internal kmalloc interfaces by adding them as the
+> first argument, rather than depending on the buckets being chosen from
+
+second argument now
+
+> the fixed set of global buckets. Where the bucket is not available,
+> pass NULL, which means "use the default system kmalloc bucket set"
+> (the prior existing behavior), as implemented in kmalloc_slab().
 > 
-> 5) Why you have to bother about anonymous pages at all (skimming over s
->    some patches), when you really want to handle shmem differently only?
-> 
-> > > To that
-> > > end, we introduce the concept of "exclusive GUP pinning", which enforces
-> > > that only one pin of any kind is allowed when using the FOLL_EXCLUSIVE
-> > > flag is set. This behavior doesn't affect FOLL_GET or any other folio
-> > > refcount operations that don't go through the FOLL_PIN path.
-> 
-> So, FOLL_EXCLUSIVE would fail if there already is a PIN, but !FOLL_EXCLUSIVE
-> would succeed even if there is a single PIN via FOLL_EXCLUSIVE? Or would the
-> single FOLL_EXCLUSIVE pin make other pins that don't have FOLL_EXCLUSIVE set
-> fail as well?
-> 
-> > > 
-> > > [1]: https://lore.kernel.org/all/20240319143119.GA2736@willie-the-truck/
-> > > 
-> > 
-> > Hi!
-> > 
-> > Looking through this, I feel that some intangible threshold of "this is
-> > too much overloading of page->_refcount" has been crossed. This is a very
-> > specific feature, and it is using approximately one more bit than is
-> > really actually "available"...
-> 
-> Agreed.
-> 
-> > 
-> > If we need a bit in struct page/folio, is this really the only way? Willy
-> > is working towards getting us an entirely separate folio->pincount, I
-> > suppose that might take too long? Or not?
-> 
-> Before talking about how to implement it, I think we first have to learn
-> whether that approach is what we want at all, and how it fits into the
-> bigger picture of that use case.
-> 
-> > 
-> > This feels like force-fitting a very specific feature (KVM/CoCo handling
-> > of shmem pages) into a more general mechanism that is running low on
-> > bits (gup/pup).
-> 
-> Agreed.
-> 
-> > 
-> > Maybe a good topic for LPC!
-> 
-> The KVM track has plenty of guest_memfd topics, might be a good fit there.
-> (or in the MM track, of course)
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+> To avoid adding the extra argument when !CONFIG_SLAB_BUCKETS, only the
+> top-level macros and static inlines use the buckets argument (where
+> they are stripped out and compiled out respectively). The actual extern
+> functions can then been built without the argument, and the internals
+> fall back to the global kmalloc buckets unconditionally.
+
+Also describes the previous implementation and not the new one?
+
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -273,6 +273,22 @@ config SLAB_FREELIST_HARDENED
+>  	  sacrifices to harden the kernel slab allocator against common
+>  	  freelist exploit methods.
+>  
+> +config SLAB_BUCKETS
+> +	bool "Support allocation from separate kmalloc buckets"
+> +	depends on !SLUB_TINY
+> +	help
+> +	  Kernel heap attacks frequently depend on being able to create
+> +	  specifically-sized allocations with user-controlled contents
+> +	  that will be allocated into the same kmalloc bucket as a
+> +	  target object. To avoid sharing these allocation buckets,
+> +	  provide an explicitly separated set of buckets to be used for
+> +	  user-controlled allocations. This may very slightly increase
+> +	  memory fragmentation, though in practice it's only a handful
+> +	  of extra pages since the bulk of user-controlled allocations
+> +	  are relatively long-lived.
+> +
+> +	  If unsure, say Y.
+
+I was wondering why I don't see the buckets in slabinfo and turns out it was
+SLAB_MERGE_DEFAULT. It would probably make sense for SLAB_MERGE_DEFAULT to
+depends on !SLAB_BUCKETS now as the merging defeats the purpose, wdyt?
+
 
