@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-223285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF4BE9110AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:20:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877209110C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEB001F21C99
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:20:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1F38B2FF84
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA861B4C5E;
-	Thu, 20 Jun 2024 18:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88341B9AA0;
+	Thu, 20 Jun 2024 18:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hP8cmgWY"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xjA7s0B6"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2365A376F5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068DD1B47B0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718907574; cv=none; b=daiwBwhiSwK7/xAJqgTCV8/9xMbOOG/PUXbkDAkhpuoP1H25mNyjDM01QpyKEl3VF5F1xJKQi2TwOAu+G6f2r5L3gCKw97JLIO6V9KDHpMcjpbFZhfLTuMEHSqbxWEPk5N9Y0lMA1vkqjR0EYewSJDmqwvQ/ce13HLQGnwf4JtA=
+	t=1718907589; cv=none; b=p070YES3aBzIfNjFI84RwN9NrKRx2jD7GPLlDl3BXcjGp0AJetabN+fXqIyHS2JpZHv7Vv5uKjTepgvOi1moP+uw9VGacyyVa3I803zNp+E5isFGuh0IfLumd5tJdFVPxkT8UZB9zDvN8BZzLc0n/3smfzTnNTVTw40QIEnuOao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718907574; c=relaxed/simple;
-	bh=mZkXOjrDPy5fAy/c3qDttEpW85/7XshGaL1Cav5BAU8=;
+	s=arc-20240116; t=1718907589; c=relaxed/simple;
+	bh=1Hm1PuYf33HbmbdPdtsg1magCLIzzg31OUB3ca8MFiQ=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=Sk8kJmyVriHa8f/RJ8j54UY2L46RiwjcCrNFe/JXoELyEDlgphsYM9UGR3fxpzeDI2M3cOZ6u+G0ugiHlmgY/jRzmJIlAvloZRoUAoc68RjDICZSk3DgfsEkg3QSHgPfoZQ7YoDqAR3lxKsF1vnpwCJp2tMxdZDFEVa6NNaqvNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hP8cmgWY; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=N/7niV9lthvwLuI/4qUaMTbxbvC5PLelwzLMrLNhi+H6mbp61jOujBLzjExndZuynplK6BCdXzowosTonXNWwe7xH45qdYREVGbJUTC61Md7zl7uJSCuzk6WARfW0c0mdwRjbUKE98Tcg2fMb1pDbCeC0oCGHHWVRYFqgsISynA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xjA7s0B6; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1f6efc8759dso13398245ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:19:21 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-63bab20bf5fso23917117b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:19:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718907561; x=1719512361; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1718907564; x=1719512364; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UFefzrmcv5A5INjxX1VOlRnfgPszEoY+xPNH9xVcTM4=;
-        b=hP8cmgWYk6H9DLJ8Xrt4/bLa1JOoaxZypJNF0IVoO8QHr3uu5G3dxGVo3OyhmKj/Hd
-         jAT3gEYQ+euf9Y3ebAnCXhMt/4dd2BurKIep9GTCAJkguWMNr+6ibaw5AajgaU1VLAfp
-         9H+so5i8frJvQJT+Hk4ogLaG4i4nixEcyb33ifT19c+WnwzgF30saBoUNJ5uojIPMxDF
-         6D37arTiK7hR/18P8fPONziFUOnwgPKm0tw0+sfdrEKf8JMtZF6LH3zv30oj4LrCep5W
-         BUS6pHtHgVdfKiaMKX5uxHunf21x+1uGd0mTu057iCFPrtzr8P2Ry5BqFhs6CA6edcae
-         xO9A==
+        bh=+WBw19TsUiIhSKxioXnuNaHvMSa0ZeBgK5mvUhV/2ZA=;
+        b=xjA7s0B6q08oYuNq0ccv2ukGixUfVkHtDopQgTFdj8IA4pn3DuDEDOFNGJQTXDKbzb
+         KCpSC2ki0kUGmWkYERL5Z4YCtDvMca3do3ZyNkVwTg28lpuAXNB7yXFGOiq0VnZh6gHy
+         6LIj9F0y7b8rHmbIK+WB8AnuCUi9RyXB6ZMuJS0zl+WtIwuOvmTDxtYOZ3TA1JGKHfGG
+         SxeyN4ii4ESRw6gLjV07GS+ljqtfrM/3yfBdJgB5EjPOLzlbgQWkx4E04adlIebG3owv
+         veHxk5DD7vce43ePXkOlGWBmLvT5gIjN26TWzu/Q7lFpaQmOsdvfF/ExunCody6XlUM3
+         rj+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718907561; x=1719512361;
+        d=1e100.net; s=20230601; t=1718907564; x=1719512364;
         h=content-transfer-encoding:cc:to:from:subject:references
          :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=UFefzrmcv5A5INjxX1VOlRnfgPszEoY+xPNH9xVcTM4=;
-        b=V+vfUBCXGUThzZAIZ67saH0YR0DTXBPnkjCjAGVmGdbBmn7bCrIGS4rgR54ApK67Nh
-         JdIi1Dr4FKxwcO7FWAbRbgoc5HWPJ76+euH7RLHBdwaOX9XhlmBPb6jKSmaQb/MtoABU
-         Ohr5IIRk8p7Vxi5FbvjYseaSNZgRdJVMn0XHEQNIXP6avrbqegRrCuP7m6LVRCFymUDl
-         rkReXJ/E0ReLA+7wRjgQKLJWp7/v4AO3wYHeaiuLsluhs1JoDSb6vbtZH2B+Jfsnn3FN
-         lsVtihQeOzVXVnGka0syvKZrjcJjU6+9s3JRS0NJwvNsPp8IKsDlrASLeIniCtreFmFY
-         UCbA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+asrGLSQE3VEhLD9mDHWMqob1KCOi7DxN4VTaaZAfXPWqYPmrafnZnJLG4pnLIZNrxhQSmkERzYejHjw7pDTpqKzTiqYU1RSm2np5
-X-Gm-Message-State: AOJu0YznnCsg6vHjbWVutNyd5F0CUdFO9aFCjN25toRzCXPtJMVcIgjU
-	qDvYP2m7yd3Q/0Q135M5K5RFQ4sSEgZdpTWAJkZ8jsl2opbZK15uNZUte50ygw+NjihMAzudhaT
-	sRSuYeQ==
-X-Google-Smtp-Source: AGHT+IE+1HExhVQj+N0Vg43bfH4BSUU2vQfEznIO2b09QjlbRSL6Y2c70As3DBydaunkrg6S+LAFpCpUORhn
+        bh=+WBw19TsUiIhSKxioXnuNaHvMSa0ZeBgK5mvUhV/2ZA=;
+        b=nmrcwlgOmnTquHiwneMX1MXuzeISKQ0P7WwhLIZzQvg1OZSfOeovu8KzTSm8fSyGpN
+         1+qa5BsXAqn3rgsQ/dhEQ2gA3NxL1BIJiVWITdDL8P0Eof72z7fqpKRsOOBCSxuhkcy8
+         1FX53yfxzBpbRNtKlZ98ZEokfgwLNNHaeFRRu+rjRhjbFcbbZwuia+D09tI8AobhwMDl
+         FjnrjUR1BmnY5w96NyimBRf1hVxm/k74azTjhry9NN+oMzd90ug/k3utYQfrfGrlW/OD
+         olZsVn0+dvFkFYkK4s1Qv3S3yowep8ICgenxWz+6jjQ6/Ejvh56RwRZ7IpF0rHPT8Msj
+         zrFw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+kxgNzbYqVBCAb7wbFWOE4ST7xAbs+2UvOL15qGFNtK4DjYqy2J86RxjYbrxfbY3XQc347PqJn4IZ0zErR57jdlkQ8BWlfZ+skfIF
+X-Gm-Message-State: AOJu0Yz4Hn17R3/62hFqUtUye8DIdfGF2YnkWya7HxidI9G3l1gU68y2
+	TNaC6t5GNtzycLDk+ltLWFBt/OlYRLSOzp+Hdmu7PORE7elO7YBUGBt4BrpM1FoHy6xxShQfOYD
+	v+JAoaQ==
+X-Google-Smtp-Source: AGHT+IEWuJp4nDi5cfRGlR60ojxK1j5i6uRPTveIJrDOu167yCdmymQCowvQudBhZADkplXsvdMQn7iDATCd
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:a6b7:dc01:68ba:649])
- (user=irogers job=sendgmr) by 2002:a17:902:e5cd:b0:1f6:917b:e064 with SMTP id
- d9443c01a7336-1f9aa3e74camr6068355ad.6.1718907561185; Thu, 20 Jun 2024
- 11:19:21 -0700 (PDT)
-Date: Thu, 20 Jun 2024 11:17:18 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:25c7:b0:62a:5309:57ed with SMTP
+ id 00721157ae682-63a8d82c687mr11742677b3.2.1718907563967; Thu, 20 Jun 2024
+ 11:19:23 -0700 (PDT)
+Date: Thu, 20 Jun 2024 11:17:19 -0700
 In-Reply-To: <20240620181752.3945845-1-irogers@google.com>
-Message-Id: <20240620181752.3945845-5-irogers@google.com>
+Message-Id: <20240620181752.3945845-6-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240620181752.3945845-1-irogers@google.com>
 X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
-Subject: [PATCH v2 04/37] perf vendor events: Update broadwell metrics add
+Subject: [PATCH v2 05/37] perf vendor events: Update broadwellde metrics add
  event counter information
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
@@ -111,29 +111,29 @@ Co-authored-by: Caleb Biggers <caleb.biggers@intel.com>
 Signed-off-by: Ian Rogers <irogers@google.com>
 Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- .../arch/x86/broadwell/bdw-metrics.json       |  80 ++---
- .../pmu-events/arch/x86/broadwell/cache.json  | 275 ++++++++++++++++++
- .../arch/x86/broadwell/counter.json           |  22 ++
- .../arch/x86/broadwell/floating-point.json    |  22 ++
- .../arch/x86/broadwell/frontend.json          |  28 ++
- .../pmu-events/arch/x86/broadwell/memory.json | 240 +++++++++++++++
- .../arch/x86/broadwell/metricgroups.json      |  11 +
- .../pmu-events/arch/x86/broadwell/other.json  |   4 +
- .../arch/x86/broadwell/pipeline.json          | 137 +++++++++
- .../arch/x86/broadwell/uncore-cache.json      |  24 ++
- .../x86/broadwell/uncore-interconnect.json    |   7 +
- .../arch/x86/broadwell/uncore-other.json      |  10 -
- .../arch/x86/broadwell/virtual-memory.json    |  38 +++
- 13 files changed, 851 insertions(+), 47 deletions(-)
- create mode 100644 tools/perf/pmu-events/arch/x86/broadwell/counter.json
- delete mode 100644 tools/perf/pmu-events/arch/x86/broadwell/uncore-other.j=
-son
+ .../arch/x86/broadwellde/bdwde-metrics.json   |  80 ++--
+ .../arch/x86/broadwellde/cache.json           |  76 ++++
+ .../arch/x86/broadwellde/counter.json         |  42 ++
+ .../arch/x86/broadwellde/floating-point.json  |  22 +
+ .../arch/x86/broadwellde/frontend.json        |  28 ++
+ .../arch/x86/broadwellde/memory.json          |  39 ++
+ .../arch/x86/broadwellde/metricgroups.json    |  11 +
+ .../arch/x86/broadwellde/other.json           |   4 +
+ .../arch/x86/broadwellde/pipeline.json        | 137 +++++++
+ .../arch/x86/broadwellde/uncore-cache.json    | 382 ++++++++++++++++++
+ .../x86/broadwellde/uncore-interconnect.json  |  70 ++++
+ .../arch/x86/broadwellde/uncore-io.json       |  62 +++
+ .../arch/x86/broadwellde/uncore-memory.json   | 322 +++++++++++++++
+ .../arch/x86/broadwellde/uncore-power.json    |  57 +++
+ .../arch/x86/broadwellde/virtual-memory.json  |  38 ++
+ 15 files changed, 1333 insertions(+), 37 deletions(-)
+ create mode 100644 tools/perf/pmu-events/arch/x86/broadwellde/counter.json
 
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/bdw-metrics.json b/to=
-ols/perf/pmu-events/arch/x86/broadwell/bdw-metrics.json
-index c20833fb1f58..af620553f958 100644
---- a/tools/perf/pmu-events/arch/x86/broadwell/bdw-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/broadwell/bdw-metrics.json
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/bdwde-metrics.json =
+b/tools/perf/pmu-events/arch/x86/broadwellde/bdwde-metrics.json
+index 826357787201..2e1380248684 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/bdwde-metrics.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/bdwde-metrics.json
 @@ -90,7 +90,7 @@
      {
          "BriefDescription": "This metric estimates fraction of slots the C=
@@ -157,8 +157,7 @@ led Denormals); the FP units are not set up to perform these operations nat=
 ively. Instead; a sequence of instructions to perform the computation on th=
 e Denormals is injected into the pipeline. Since these microcode sequences =
 might be dozens of uops long; Assists can be extremely deleterious to perfo=
-rmance and they can be avoided in many cases. Sample with: OTHER_ASSISTS.AN=
-Y",
+rmance and they can be avoided in many cases. Sample with: ASSISTS.ANY",
 @@ -100,7 +100,7 @@
          "BriefDescription": "This category represents fraction of slots wh=
 ere no uops are being delivered due to a lack of required resources for acc=
@@ -212,9 +211,9 @@ sses. Contested accesses occur when data written by one Logical Processor a=
 re read by another Logical Processor on a different Physical Core. Examples=
  of contested accesses include synchronizations such as locks; true data sh=
 aring such as modified locked variables; and false sharing. Sample with: ME=
-M_LOAD_L3_HIT_RETIRED.XSNP_HITM_PS;MEM_LOAD_L3_HIT_RETIRED.XSNP_MISS_PS. Re=
-lated metrics: tma_data_sharing, tma_false_sharing, tma_machine_clears, tma=
-_remote_cache",
+M_LOAD_L3_HIT_RETIRED.XSNP_FWD;MEM_LOAD_L3_HIT_RETIRED.XSNP_MISS. Related m=
+etrics: tma_data_sharing, tma_false_sharing, tma_machine_clears, tma_remote=
+_cache",
 @@ -181,7 +181,7 @@
          "BriefDescription": "This metric estimates fraction of cycles whil=
 e the memory subsystem was handling synchronizations due to data-sharing ac=
@@ -237,7 +236,7 @@ le the memory subsystem was handling synchronizations due to data-sharing a=
 ccesses. Data shared by multiple Logical Processors (even just read shared)=
  may cause increased access latency due to cache coherency. Excessive data =
 sharing can drastically harm multithreaded performance. Sample with: MEM_LO=
-AD_L3_HIT_RETIRED.XSNP_HIT_PS. Related metrics: tma_contested_accesses, tma=
+AD_L3_HIT_RETIRED.XSNP_NO_FWD. Related metrics: tma_contested_accesses, tma=
 _false_sharing, tma_machine_clears, tma_remote_cache",
 @@ -190,7 +190,7 @@
      {
@@ -253,7 +252,7 @@ a_backend_bound > 0.2)",
 ere the Divider unit was active. Divide and square root instructions are pe=
 rformed by the Divider unit and can take considerably longer latency than i=
 nteger or Floating Point addition; subtraction; or multiplication. Sample w=
-ith: ARITH.DIVIDER_UOPS",
+ith: ARITH.DIVIDER_ACTIVE",
 @@ -227,7 +227,7 @@
      {
          "BriefDescription": "This metric roughly estimates the fraction of=
@@ -276,7 +275,7 @@ y the operating system. This metric approximates the potential delay of dem=
 and loads missing the first-level data TLB (assuming worst case scenario wi=
 th back to back misses to different pages). This includes hitting in the se=
 cond-level TLB (STLB) as well as performing a hardware page walk on an STLB=
- miss. Sample with: MEM_UOPS_RETIRED.STLB_MISS_LOADS_PS. Related metrics: t=
+ miss. Sample with: MEM_INST_RETIRED.STLB_MISS_LOADS_PS. Related metrics: t=
 ma_dtlb_store",
 @@ -236,7 +236,7 @@
      {
@@ -298,28 +297,8 @@ y data caching; focus on improving data locality and reducing working-set s=
 ize to reduce DTLB overhead.  Additionally; consider using profile-guided o=
 ptimization (PGO) to collocate frequently-used data on the same page.  Try =
 using larger page sizes for large amounts of frequently-used data. Sample w=
-ith: MEM_UOPS_RETIRED.STLB_MISS_STORES_PS. Related metrics: tma_dtlb_load",
-@@ -245,7 +245,7 @@
-     {
-         "BriefDescription": "This metric roughly estimates how often CPU w=
-as handling synchronizations due to False Sharing",
-         "MetricExpr": "60 * OFFCORE_RESPONSE.DEMAND_RFO.L3_HIT.SNOOP_HITM =
-/ tma_info_thread_clks",
--        "MetricGroup": "DataSharing;Offcore;Snoop;TopdownL4;tma_L4_group;t=
-ma_issueSyncxn;tma_store_bound_group",
-+        "MetricGroup": "BvMS;DataSharing;Offcore;Snoop;TopdownL4;tma_L4_gr=
-oup;tma_issueSyncxn;tma_store_bound_group",
-         "MetricName": "tma_false_sharing",
-         "MetricThreshold": "tma_false_sharing > 0.05 & (tma_store_bound > =
-0.2 & (tma_memory_bound > 0.2 & tma_backend_bound > 0.2))",
-         "PublicDescription": "This metric roughly estimates how often CPU =
-was handling synchronizations due to False Sharing. False Sharing is a mult=
-ithreading hiccup; where multiple Logical Processors contend on different d=
-ata-elements mapped into the same cache line. Sample with: MEM_LOAD_L3_HIT_=
-RETIRED.XSNP_HITM_PS;OFFCORE_RESPONSE.DEMAND_RFO.L3_HIT.SNOOP_HITM. Related=
- metrics: tma_contested_accesses, tma_data_sharing, tma_machine_clears, tma=
-_remote_cache",
-@@ -255,7 +255,7 @@
+ith: MEM_INST_RETIRED.STLB_MISS_STORES_PS. Related metrics: tma_dtlb_load",
+@@ -246,7 +246,7 @@
          "BriefDescription": "This metric does a *rough estimation* of how =
 often L1D Fill Buffer unavailability limited additional L1D miss memory acc=
 ess requests to proceed",
@@ -339,7 +318,7 @@ y hierarchy level the misses are satisfied from (metric values >1 are valid=
 ). Often it hints on approaching bandwidth limits (to L2 cache; L3 cache or=
  external memory). Related metrics: tma_info_system_dram_bw_use, tma_mem_ba=
 ndwidth, tma_sq_full, tma_store_latency, tma_streaming_stores",
-@@ -292,7 +292,7 @@
+@@ -283,7 +283,7 @@
      },
      {
          "BriefDescription": "This metric approximates arithmetic floating-=
@@ -353,7 +332,7 @@ group;tma_issue2P",
          "MetricName": "tma_fp_scalar",
          "MetricThreshold": "tma_fp_scalar > 0.1 & (tma_fp_arith > 0.2 & tm=
 a_light_operations > 0.6)",
-@@ -301,7 +301,7 @@
+@@ -292,7 +292,7 @@
      },
      {
          "BriefDescription": "This metric approximates arithmetic floating-=
@@ -368,7 +347,7 @@ group;tma_issue2P",
          "MetricName": "tma_fp_vector",
          "MetricThreshold": "tma_fp_vector > 0.1 & (tma_fp_arith > 0.2 & tm=
 a_light_operations > 0.6)",
-@@ -329,7 +329,7 @@
+@@ -320,7 +320,7 @@
      {
          "BriefDescription": "This category represents fraction of slots wh=
 ere the processor's Frontend undersupplies its Backend",
@@ -379,10 +358,10 @@ ere the processor's Frontend undersupplies its Backend",
          "MetricName": "tma_frontend_bound",
          "MetricThreshold": "tma_frontend_bound > 0.15",
          "MetricgroupNoGroup": "TopdownL1",
-@@ -349,7 +349,7 @@
+@@ -340,7 +340,7 @@
      {
          "BriefDescription": "This metric represents fraction of cycles the=
- CPU was stalled due to instruction cache misses.",
+ CPU was stalled due to instruction cache misses",
          "MetricExpr": "ICACHE.IFDATA_STALL / tma_info_thread_clks",
 -        "MetricGroup": "BigFootprint;FetchLat;IcMiss;TopdownL3;tma_L3_grou=
 p;tma_fetch_latency_group",
@@ -391,8 +370,10 @@ _group;tma_fetch_latency_group",
          "MetricName": "tma_icache_misses",
          "MetricThreshold": "tma_icache_misses > 0.05 & (tma_fetch_latency =
 > 0.1 & tma_frontend_bound > 0.15)",
-         "ScaleUnit": "100%"
-@@ -388,7 +388,7 @@
+         "PublicDescription": "This metric represents fraction of cycles th=
+e CPU was stalled due to instruction cache misses. Sample with: FRONTEND_RE=
+TIRED.L2_MISS_PS;FRONTEND_RETIRED.L1I_MISS_PS",
+@@ -380,7 +380,7 @@
      },
      {
          "BriefDescription": "Actual per-core usage of the Floating Point n=
@@ -409,7 +390,7 @@ non-X87 execution units (regardless of precision or vector-width). Values >=
  1 are possible due to ([BDW+] Fused-Multiply Add (FMA) counting - common; =
 [ADL+] use all of ADD/MUL/FMA in Scalar or 128/256-bit vectors - less commo=
 n)."
-@@ -428,7 +428,7 @@
+@@ -420,7 +420,7 @@
      },
      {
          "BriefDescription": "Instructions per FP Arithmetic instruction (l=
@@ -422,7 +403,7 @@ FP_ARITH_INST_RETIRED.VECTOR)",
          "MetricGroup": "Flops;InsType",
          "MetricName": "tma_info_inst_mix_iparith",
          "MetricThreshold": "tma_info_inst_mix_iparith < 10",
-@@ -502,12 +502,12 @@
+@@ -494,12 +494,12 @@
          "MetricThreshold": "tma_info_inst_mix_ipstore < 8"
      },
      {
@@ -442,7 +423,7 @@ tma_lcp"
      {
          "BriefDescription": "Average per-core data fill bandwidth to the L=
 1 data cache [GB / sec]",
-@@ -528,7 +528,7 @@
+@@ -520,7 +520,7 @@
          "MetricName": "tma_info_memory_core_l3_cache_fill_bw_2t"
      },
      {
@@ -452,7 +433,7 @@ tma_lcp"
          "MetricExpr": "64 * L1D.REPLACEMENT / 1e9 / duration_time",
          "MetricGroup": "Mem;MemoryBW",
          "MetricName": "tma_info_memory_l1d_cache_fill_bw"
-@@ -540,7 +540,7 @@
+@@ -532,7 +532,7 @@
          "MetricName": "tma_info_memory_l1mpki"
      },
      {
@@ -462,7 +443,7 @@ tma_lcp"
          "MetricExpr": "64 * L2_LINES_IN.ALL / 1e9 / duration_time",
          "MetricGroup": "Mem;MemoryBW",
          "MetricName": "tma_info_memory_l2_cache_fill_bw"
-@@ -576,7 +576,13 @@
+@@ -568,7 +568,13 @@
          "MetricName": "tma_info_memory_l2mpki_load"
      },
      {
@@ -480,7 +461,7 @@ Y",
          "MetricExpr": "64 * LONGEST_LAT_CACHE.MISS / 1e9 / duration_time",
          "MetricGroup": "Mem;MemoryBW",
          "MetricName": "tma_info_memory_l3_cache_fill_bw"
-@@ -628,7 +634,7 @@
+@@ -620,7 +626,7 @@
          "MetricThreshold": "tma_info_memory_tlb_page_walks_utilization > 0=
 .5"
      },
@@ -492,7 +473,7 @@ Y",
 ask\\=3D1@ / 2 if #SMT_on else UOPS_EXECUTED.CYCLES_GE_1_UOP_EXEC)",
          "MetricGroup": "Cor;Pipeline;PortsUtil;SMT",
          "MetricName": "tma_info_pipeline_execute"
-@@ -647,13 +653,13 @@
+@@ -639,13 +645,13 @@
      },
      {
          "BriefDescription": "Average CPU Utilization (percentage)",
@@ -509,7 +490,7 @@ ask\\=3D1@ / 2 if #SMT_on else UOPS_EXECUTED.CYCLES_GE_1_UOP_EXEC)",
          "MetricGroup": "Summary",
          "MetricName": "tma_info_system_cpus_utilized"
      },
-@@ -748,7 +754,7 @@
+@@ -740,7 +746,7 @@
          "MetricThreshold": "tma_info_thread_uoppi > 1.05"
      },
      {
@@ -519,7 +500,7 @@ ask\\=3D1@ / 2 if #SMT_on else UOPS_EXECUTED.CYCLES_GE_1_UOP_EXEC)",
 KEN",
          "MetricGroup": "Branches;Fed;FetchBW",
          "MetricName": "tma_info_thread_uptb",
-@@ -757,7 +763,7 @@
+@@ -749,7 +755,7 @@
      {
          "BriefDescription": "This metric represents fraction of cycles the=
  CPU was stalled due to Instruction TLB (ITLB) misses",
@@ -534,9 +515,9 @@ _L3_group;tma_fetch_latency_group",
          "MetricThreshold": "tma_itlb_misses > 0.05 & (tma_fetch_latency > =
 0.1 & tma_frontend_bound > 0.15)",
          "PublicDescription": "This metric represents fraction of cycles th=
-e CPU was stalled due to Instruction TLB (ITLB) misses. Sample with: ITLB_M=
-ISSES.WALK_COMPLETED",
-@@ -775,7 +781,7 @@
+e CPU was stalled due to Instruction TLB (ITLB) misses. Sample with: FRONTE=
+ND_RETIRED.STLB_MISS_PS;FRONTEND_RETIRED.ITLB_MISS_PS",
+@@ -767,7 +773,7 @@
      {
          "BriefDescription": "This metric estimates how often the CPU was s=
 talled due to L2 cache accesses by loads",
@@ -552,8 +533,8 @@ L3_group;tma_memory_bound_group",
          "PublicDescription": "This metric estimates how often the CPU was =
 stalled due to L2 cache accesses by loads.  Avoiding cache misses (i.e. L1 =
 misses/L2 hits) can improve the latency and increase performance. Sample wi=
-th: MEM_LOAD_UOPS_RETIRED.L2_HIT_PS",
-@@ -795,7 +801,7 @@
+th: MEM_LOAD_RETIRED.L2_HIT_PS",
+@@ -787,7 +793,7 @@
          "BriefDescription": "This metric estimates fraction of cycles with=
  demand load accesses that hit the L3 cache under unloaded scenarios (possi=
 bly L3 latency limited)",
@@ -575,9 +556,27 @@ h demand load accesses that hit the L3 cache under unloaded scenarios (poss=
 ibly L3 latency limited).  Avoiding private cache misses (i.e. L2 misses/L3=
  hits) will improve the latency; reduce contention with sibling physical co=
 res and increase performance.  Note the value of this node may overlap with=
- its siblings. Sample with: MEM_LOAD_UOPS_RETIRED.L3_HIT_PS. Related metric=
-s: tma_mem_latency",
-@@ -844,7 +850,7 @@
+ its siblings. Sample with: MEM_LOAD_RETIRED.L3_HIT_PS. Related metrics: tm=
+a_mem_latency",
+@@ -829,14 +835,14 @@
+         "MetricGroup": "Offcore;TopdownL4;tma_L4_group;tma_issueRFO;tma_l1=
+_bound_group",
+         "MetricName": "tma_lock_latency",
+         "MetricThreshold": "tma_lock_latency > 0.2 & (tma_l1_bound > 0.1 &=
+ (tma_memory_bound > 0.2 & tma_backend_bound > 0.2))",
+-        "PublicDescription": "This metric represents fraction of cycles th=
+e CPU spent handling cache misses due to lock operations. Due to the microa=
+rchitecture handling of locks; they are classified as L1_Bound regardless o=
+f what memory source satisfied them. Sample with: MEM_INST_RETIRED.LOCK_LOA=
+DS_PS. Related metrics: tma_store_latency",
++        "PublicDescription": "This metric represents fraction of cycles th=
+e CPU spent handling cache misses due to lock operations. Due to the microa=
+rchitecture handling of locks; they are classified as L1_Bound regardless o=
+f what memory source satisfied them. Sample with: MEM_INST_RETIRED.LOCK_LOA=
+DS. Related metrics: tma_store_latency",
+         "ScaleUnit": "100%"
+     },
+     {
          "BriefDescription": "This metric represents fraction of slots the =
 CPU has wasted due to Machine Clears",
          "MetricConstraint": "NO_GROUP_EVENTS",
@@ -590,7 +589,7 @@ group;tma_bad_speculation_group;tma_issueMC;tma_issueSyncxn",
          "MetricThreshold": "tma_machine_clears > 0.1 & tma_bad_speculation=
  > 0.15",
          "MetricgroupNoGroup": "TopdownL2",
-@@ -854,7 +860,7 @@
+@@ -846,7 +852,7 @@
      {
          "BriefDescription": "This metric estimates fraction of cycles wher=
 e the core's performance was likely hurt due to approaching bandwidth limit=
@@ -614,7 +613,7 @@ ther non-IA devices like GPU; hence the maximum external memory bandwidth l=
 imits may or may not be approached when this metric is flagged (see Uncore =
 counters for that). Related metrics: tma_fb_full, tma_info_system_dram_bw_u=
 se, tma_sq_full",
-@@ -863,7 +869,7 @@
+@@ -855,7 +861,7 @@
      {
          "BriefDescription": "This metric estimates fraction of cycles wher=
 e the performance was likely hurt due to latency from external memory - DRA=
@@ -633,7 +632,7 @@ re the performance was likely hurt due to latency from external memory - DR=
 AM ([SPR-HBM] and/or HBM).  This metric does not aggregate requests from ot=
 her Logical Processors/Physical Cores/sockets (see Uncore counters for that=
 ). Related metrics: tma_l3_hit_latency",
-@@ -892,7 +898,7 @@
+@@ -884,7 +890,7 @@
      {
          "BriefDescription": "This metric represents fraction of cycles the=
  CPU was stalled due to Branch Resteers as a result of Branch Misprediction=
@@ -649,13 +648,14 @@ tma_branch_resteers_group;tma_issueBM",
 resteers > 0.05 & (tma_fetch_latency > 0.1 & tma_frontend_bound > 0.15))",
          "PublicDescription": "This metric represents fraction of cycles th=
 e CPU was stalled due to Branch Resteers as a result of Branch Mispredictio=
-n at execution stage. Related metrics: tma_branch_mispredicts, tma_info_bad=
-_spec_branch_misprediction_cost",
-@@ -1028,7 +1034,7 @@
+n at execution stage. Sample with: INT_MISC.CLEAR_RESTEER_CYCLES. Related m=
+etrics: tma_branch_mispredicts, tma_info_bad_spec_branch_misprediction_cost=
+",
+@@ -1017,7 +1023,7 @@
      {
          "BriefDescription": "This metric represents fraction of cycles CPU=
  executed total of 3 or more uops per cycle on all execution ports (Logical=
- Processor cycles since ICL, Physical Core cycles otherwise).",
+ Processor cycles since ICL, Physical Core cycles otherwise)",
          "MetricExpr": "(cpu@UOPS_EXECUTED.CORE\\,cmask\\=3D3@ / 2 if #SMT_=
 on else UOPS_EXECUTED.CYCLES_GE_3_UOPS_EXEC) / tma_info_core_core_clks",
 -        "MetricGroup": "PortsUtil;TopdownL4;tma_L4_group;tma_ports_utiliza=
@@ -665,8 +665,11 @@ ilization_group",
          "MetricName": "tma_ports_utilized_3m",
          "MetricThreshold": "tma_ports_utilized_3m > 0.4 & (tma_ports_utili=
 zation > 0.15 & (tma_core_bound > 0.1 & tma_backend_bound > 0.2))",
-         "ScaleUnit": "100%"
-@@ -1036,7 +1042,7 @@
+         "PublicDescription": "This metric represents fraction of cycles CP=
+U executed total of 3 or more uops per cycle on all execution ports (Logica=
+l Processor cycles since ICL, Physical Core cycles otherwise). Sample with:=
+ UOPS_EXECUTED.CYCLES_GE_3",
+@@ -1026,7 +1032,7 @@
      {
          "BriefDescription": "This category represents fraction of slots ut=
 ilized by useful work i.e. issued uops that eventually get retired",
@@ -677,7 +680,7 @@ ilized by useful work i.e. issued uops that eventually get retired",
          "MetricThreshold": "tma_retiring > 0.7 | tma_heavy_operations > 0.=
 1",
          "MetricgroupNoGroup": "TopdownL1",
-@@ -1065,7 +1071,7 @@
+@@ -1055,7 +1061,7 @@
      {
          "BriefDescription": "This metric measures fraction of cycles where=
  the Super Queue (SQ) was full taking into account all request-types and bo=
@@ -695,7 +698,7 @@ a_memory_bound > 0.2 & tma_backend_bound > 0.2))",
 e the Super Queue (SQ) was full taking into account all request-types and b=
 oth hardware SMT threads (Logical Processors). Related metrics: tma_fb_full=
 , tma_info_system_dram_bw_use, tma_mem_bandwidth",
-@@ -1093,7 +1099,7 @@
+@@ -1083,7 +1089,7 @@
          "BriefDescription": "This metric estimates fraction of cycles the =
 CPU spent handling L1D store misses",
          "MetricConstraint": "NO_GROUP_EVENTS",
@@ -715,7 +718,7 @@ issueRFO;tma_issueSL;tma_store_bound_group",
 t-of-order core performance; however; holding resources for longer time can=
  lead into undesired implications (e.g. contention on L1D fill-buffer entri=
 es - see FB_Full). Related metrics: tma_fb_full, tma_lock_latency",
-@@ -1110,7 +1116,7 @@
+@@ -1101,7 +1107,7 @@
      {
          "BriefDescription": "This metric represents fraction of cycles the=
  CPU was stalled due to new branch address clears",
@@ -732,12 +735,12 @@ eers > 0.05 & (tma_fetch_latency > 0.1 & tma_frontend_bound > 0.15))",
 e CPU was stalled due to new branch address clears. These are fetched branc=
 hes the Branch Prediction Unit was unable to recognize (e.g. first time the=
  branch is fetched or hitting BTB capacity limit) hence called Unknown Bran=
-ches. Sample with: BACLEARS.ANY",
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/cache.json b/tools/pe=
-rf/pmu-events/arch/x86/broadwell/cache.json
-index f8ee5aefccea..063ec8c2b2a1 100644
---- a/tools/perf/pmu-events/arch/x86/broadwell/cache.json
-+++ b/tools/perf/pmu-events/arch/x86/broadwell/cache.json
+ches. Sample with: FRONTEND_RETIRED.UNKNOWN_BRANCH",
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/cache.json b/tools/=
+perf/pmu-events/arch/x86/broadwellde/cache.json
+index 6784331ac1cb..315d7f041731 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/cache.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/cache.json
 @@ -1,6 +1,7 @@
  [
      {
@@ -1141,6 +1144,33 @@ or Snoop Miss (RspI)",
 @@ -353,6 +396,7 @@
      },
      {
+         "BriefDescription": "Retired load uop whose Data Source was: remot=
+e DRAM either Snoop not needed or Snoop Miss (RspI)",
++        "Counter": "0,1,2,3",
+         "Data_LA": "1",
+         "Errata": "BDE70",
+         "EventCode": "0xD3",
+@@ -363,6 +407,7 @@
+     },
+     {
+         "BriefDescription": "Retired load uop whose Data Source was: forwa=
+rded from remote cache",
++        "Counter": "0,1,2,3",
+         "Data_LA": "1",
+         "Errata": "BDE70",
+         "EventCode": "0xD3",
+@@ -373,6 +418,7 @@
+     },
+     {
+         "BriefDescription": "Retired load uop whose Data Source was: Remot=
+e cache HITM",
++        "Counter": "0,1,2,3",
+         "Data_LA": "1",
+         "Errata": "BDE70",
+         "EventCode": "0xD3",
+@@ -383,6 +429,7 @@
+     },
+     {
          "BriefDescription": "Retired load uops which data sources were loa=
 d uops missed L1 but hit FB due to preceding miss to the same cache line wi=
 th data not ready.",
@@ -1148,7 +1178,7 @@ th data not ready.",
          "Data_LA": "1",
          "EventCode": "0xD1",
          "EventName": "MEM_LOAD_UOPS_RETIRED.HIT_LFB",
-@@ -363,6 +407,7 @@
+@@ -393,6 +440,7 @@
      },
      {
          "BriefDescription": "Retired load uops with L1 cache hits as data =
@@ -1157,7 +1187,7 @@ sources.",
          "Data_LA": "1",
          "EventCode": "0xD1",
          "EventName": "MEM_LOAD_UOPS_RETIRED.L1_HIT",
-@@ -373,6 +418,7 @@
+@@ -403,6 +451,7 @@
      },
      {
          "BriefDescription": "Retired load uops misses in L1 cache as data =
@@ -1166,7 +1196,7 @@ sources.",
          "Data_LA": "1",
          "EventCode": "0xD1",
          "EventName": "MEM_LOAD_UOPS_RETIRED.L1_MISS",
-@@ -383,6 +429,7 @@
+@@ -413,6 +462,7 @@
      },
      {
          "BriefDescription": "Retired load uops with L2 cache hits as data =
@@ -1175,7 +1205,7 @@ sources.",
          "Data_LA": "1",
          "Errata": "BDM35",
          "EventCode": "0xD1",
-@@ -394,6 +441,7 @@
+@@ -424,6 +474,7 @@
      },
      {
          "BriefDescription": "Miss in mid-level (L2) cache. Excludes Unknow=
@@ -1184,7 +1214,7 @@ n data-source.",
          "Data_LA": "1",
          "EventCode": "0xD1",
          "EventName": "MEM_LOAD_UOPS_RETIRED.L2_MISS",
-@@ -404,6 +452,7 @@
+@@ -434,6 +485,7 @@
      },
      {
          "BriefDescription": "Retired load uops which data sources were dat=
@@ -1193,7 +1223,7 @@ a hits in L3 without snoops required.",
          "Data_LA": "1",
          "Errata": "BDM100",
          "EventCode": "0xD1",
-@@ -415,6 +464,7 @@
+@@ -445,6 +497,7 @@
      },
      {
          "BriefDescription": "Miss in last-level (L3) cache. Excludes Unkno=
@@ -1202,7 +1232,7 @@ wn data-source.",
          "Data_LA": "1",
          "Errata": "BDM100, BDE70",
          "EventCode": "0xD1",
-@@ -425,6 +475,7 @@
+@@ -455,6 +508,7 @@
      },
      {
          "BriefDescription": "Retired load uops.",
@@ -1210,7 +1240,7 @@ wn data-source.",
          "Data_LA": "1",
          "EventCode": "0xD0",
          "EventName": "MEM_UOPS_RETIRED.ALL_LOADS",
-@@ -435,6 +486,7 @@
+@@ -465,6 +519,7 @@
      },
      {
          "BriefDescription": "Retired store uops.",
@@ -1218,7 +1248,7 @@ wn data-source.",
          "Data_LA": "1",
          "EventCode": "0xD0",
          "EventName": "MEM_UOPS_RETIRED.ALL_STORES",
-@@ -445,6 +497,7 @@
+@@ -475,6 +530,7 @@
      },
      {
          "BriefDescription": "Retired load uops with locked access.",
@@ -1226,7 +1256,7 @@ wn data-source.",
          "Data_LA": "1",
          "Errata": "BDM35",
          "EventCode": "0xD0",
-@@ -456,6 +509,7 @@
+@@ -486,6 +542,7 @@
      },
      {
          "BriefDescription": "Retired load uops that split across a cacheli=
@@ -1235,7 +1265,7 @@ ne boundary.",
          "Data_LA": "1",
          "EventCode": "0xD0",
          "EventName": "MEM_UOPS_RETIRED.SPLIT_LOADS",
-@@ -466,6 +520,7 @@
+@@ -496,6 +553,7 @@
      },
      {
          "BriefDescription": "Retired store uops that split across a cachel=
@@ -1244,7 +1274,7 @@ ine boundary.",
          "Data_LA": "1",
          "EventCode": "0xD0",
          "EventName": "MEM_UOPS_RETIRED.SPLIT_STORES",
-@@ -476,6 +531,7 @@
+@@ -506,6 +564,7 @@
      },
      {
          "BriefDescription": "Retired load uops that miss the STLB.",
@@ -1252,7 +1282,7 @@ ine boundary.",
          "Data_LA": "1",
          "EventCode": "0xD0",
          "EventName": "MEM_UOPS_RETIRED.STLB_MISS_LOADS",
-@@ -486,6 +542,7 @@
+@@ -516,6 +575,7 @@
      },
      {
          "BriefDescription": "Retired store uops that miss the STLB.",
@@ -1260,7 +1290,7 @@ ine boundary.",
          "Data_LA": "1",
          "EventCode": "0xD0",
          "EventName": "MEM_UOPS_RETIRED.STLB_MISS_STORES",
-@@ -496,6 +553,7 @@
+@@ -526,6 +586,7 @@
      },
      {
          "BriefDescription": "Demand and prefetch data reads",
@@ -1271,7 +1301,7 @@ ine boundary.",
 ta reads. All Core Data Reads include cacheable Demands and L2 prefetchers =
 (not L3 prefetchers). Counting also covers reads due to page walks resulted=
  from any request type.",
-@@ -504,6 +562,7 @@
+@@ -534,6 +595,7 @@
      },
      {
          "BriefDescription": "Any memory transaction that reached the SQ.",
@@ -1281,7 +1311,7 @@ ta reads. All Core Data Reads include cacheable Demands and L2 prefetchers =
          "PublicDescription": "This event counts memory transactions reache=
 d the super queue including requests initiated by the core, all L3 prefetch=
 es, page walks, and so on.",
-@@ -512,6 +571,7 @@
+@@ -542,6 +604,7 @@
      },
      {
          "BriefDescription": "Cacheable and non-cacheable code read request=
@@ -1291,7 +1321,7 @@ s",
          "EventName": "OFFCORE_REQUESTS.DEMAND_CODE_RD",
          "PublicDescription": "This event counts both cacheable and non-cac=
 heable code read requests.",
-@@ -520,6 +580,7 @@
+@@ -550,6 +613,7 @@
      },
      {
          "BriefDescription": "Demand Data Read requests sent to uncore",
@@ -1301,7 +1331,7 @@ heable code read requests.",
          "PublicDescription": "This event counts the Demand Data Read reque=
 sts sent to uncore. Use it in conjunction with OFFCORE_REQUESTS_OUTSTANDING=
  to determine average latency in the uncore.",
-@@ -528,6 +589,7 @@
+@@ -558,6 +622,7 @@
      },
      {
          "BriefDescription": "Demand RFO requests including regular RFOs, l=
@@ -1311,7 +1341,7 @@ ocks, ItoM",
          "EventName": "OFFCORE_REQUESTS.DEMAND_RFO",
          "PublicDescription": "This event counts the demand RFO (read for o=
 wnership) requests including regular RFOs, locks, ItoM.",
-@@ -536,6 +598,7 @@
+@@ -566,6 +631,7 @@
      },
      {
          "BriefDescription": "Offcore requests buffer cannot take more entr=
@@ -1324,7 +1354,7 @@ he offcore requests buffer cannot take more entries for the core. This can =
 happen when the superqueue does not contain eligible entries, or when L1D w=
 riteback pending FIFO requests is full.\nNote: Writeback pending FIFO has s=
 ix entries.",
-@@ -544,6 +607,7 @@
+@@ -574,6 +640,7 @@
      },
      {
          "BriefDescription": "Offcore outstanding cacheable Core Data Read =
@@ -1333,7 +1363,7 @@ transactions in SuperQueue (SQ), queue to uncore",
          "Errata": "BDM76",
          "EventCode": "0x60",
          "EventName": "OFFCORE_REQUESTS_OUTSTANDING.ALL_DATA_RD",
-@@ -553,6 +617,7 @@
+@@ -583,6 +650,7 @@
      },
      {
          "BriefDescription": "Cycles when offcore outstanding cacheable Cor=
@@ -1342,7 +1372,7 @@ e Data Read transactions are present in SuperQueue (SQ), queue to uncore",
          "CounterMask": "1",
          "Errata": "BDM76",
          "EventCode": "0x60",
-@@ -563,6 +628,7 @@
+@@ -593,6 +661,7 @@
      },
      {
          "BriefDescription": "Cycles when offcore outstanding Demand Data R=
@@ -1351,7 +1381,7 @@ ead transactions are present in SuperQueue (SQ), queue to uncore",
          "CounterMask": "1",
          "Errata": "BDM76",
          "EventCode": "0x60",
-@@ -573,6 +639,7 @@
+@@ -603,6 +672,7 @@
      },
      {
          "BriefDescription": "Offcore outstanding demand rfo reads transact=
@@ -1360,7 +1390,7 @@ ions in SuperQueue (SQ), queue to uncore, every cycle",
          "CounterMask": "1",
          "Errata": "BDM76",
          "EventCode": "0x60",
-@@ -583,6 +650,7 @@
+@@ -613,6 +683,7 @@
      },
      {
          "BriefDescription": "Offcore outstanding code reads transactions i=
@@ -1369,7 +1399,7 @@ n SuperQueue (SQ), queue to uncore, every cycle",
          "Errata": "BDM76",
          "EventCode": "0x60",
          "EventName": "OFFCORE_REQUESTS_OUTSTANDING.DEMAND_CODE_RD",
-@@ -592,6 +660,7 @@
+@@ -622,6 +693,7 @@
      },
      {
          "BriefDescription": "Offcore outstanding Demand Data Read transact=
@@ -1378,7 +1408,7 @@ ions in uncore queue.",
          "Errata": "BDM76",
          "EventCode": "0x60",
          "EventName": "OFFCORE_REQUESTS_OUTSTANDING.DEMAND_DATA_RD",
-@@ -601,6 +670,7 @@
+@@ -631,6 +703,7 @@
      },
      {
          "BriefDescription": "Cycles with at least 6 offcore outstanding De=
@@ -1387,7 +1417,7 @@ mand Data Read transactions in uncore queue.",
          "CounterMask": "6",
          "Errata": "BDM76",
          "EventCode": "0x60",
-@@ -610,6 +680,7 @@
+@@ -640,6 +713,7 @@
      },
      {
          "BriefDescription": "Offcore outstanding RFO store transactions in=
@@ -1396,7 +1426,7 @@ mand Data Read transactions in uncore queue.",
          "Errata": "BDM76",
          "EventCode": "0x60",
          "EventName": "OFFCORE_REQUESTS_OUTSTANDING.DEMAND_RFO",
-@@ -619,6 +690,7 @@
+@@ -649,6 +723,7 @@
      },
      {
          "BriefDescription": "Offcore response can be programmed only with =
@@ -1407,1809 +1437,7 @@ f the offcore transaction.",
          "EventCode": "0xB7, 0xBB",
          "EventName": "OFFCORE_RESPONSE",
          "SampleAfterValue": "100003",
-@@ -626,6 +698,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads have =
-any response type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -635,6 +708,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -644,6 +718,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -653,6 +728,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_HIT.SNOOP_HIT_NO_FWD=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -662,6 +738,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -671,6 +748,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -680,6 +758,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_HIT.SNOOP_NOT_NEEDED=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -689,6 +768,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.SUPPLIER_NONE.ANY_SNOOP=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -698,6 +778,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.SUPPLIER_NONE.SNOOP_HIT=
-M",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -707,6 +788,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.SUPPLIER_NONE.SNOOP_HIT=
-_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -716,6 +798,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.SUPPLIER_NONE.SNOOP_MIS=
-S",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -725,6 +808,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.SUPPLIER_NONE.SNOOP_NON=
-E",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -734,6 +818,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.SUPPLIER_NONE.SNOOP_NOT=
-_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -743,6 +828,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads have any respo=
-nse type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -752,6 +838,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -761,6 +848,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -770,6 +858,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_HIT.SNOOP_HIT_NO_=
-FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -779,6 +868,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -788,6 +878,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -797,6 +888,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_HIT.SNOOP_NOT_NEE=
-DED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -806,6 +898,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.SUPPLIER_NONE.ANY_SN=
-OOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -815,6 +908,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.SUPPLIER_NONE.SNOOP_=
-HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -824,6 +918,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.SUPPLIER_NONE.SNOOP_=
-HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -833,6 +928,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.SUPPLIER_NONE.SNOOP_=
-MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -842,6 +938,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.SUPPLIER_NONE.SNOOP_=
-NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -851,6 +948,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.SUPPLIER_NONE.SNOOP_=
-NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -860,6 +958,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads have any respo=
-nse type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -869,6 +968,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -878,6 +978,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -887,6 +988,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_HIT.SNOOP_HIT_NO_=
-FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -896,6 +998,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -905,6 +1008,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -914,6 +1018,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_HIT.SNOOP_NOT_NEE=
-DED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -923,6 +1028,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.SUPPLIER_NONE.ANY_SN=
-OOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -932,6 +1038,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.SUPPLIER_NONE.SNOOP_=
-HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -941,6 +1048,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.SUPPLIER_NONE.SNOOP_=
-HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -950,6 +1058,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.SUPPLIER_NONE.SNOOP_=
-MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -959,6 +1068,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.SUPPLIER_NONE.SNOOP_=
-NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -968,6 +1078,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.SUPPLIER_NONE.SNOOP_=
-NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -977,6 +1088,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs have any response type."=
-,
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -986,6 +1098,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -995,6 +1108,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1004,6 +1118,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_HIT.SNOOP_HIT_NO_FWD"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1013,6 +1128,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1022,6 +1138,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1031,6 +1148,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_HIT.SNOOP_NOT_NEEDED"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1040,6 +1158,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.SUPPLIER_NONE.ANY_SNOOP"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1049,6 +1168,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.SUPPLIER_NONE.SNOOP_HITM=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1058,6 +1178,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.SUPPLIER_NONE.SNOOP_HIT_=
-NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1067,6 +1188,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.SUPPLIER_NONE.SNOOP_MISS=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1076,6 +1198,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.SUPPLIER_NONE.SNOOP_NONE=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1085,6 +1208,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.SUPPLIER_NONE.SNOOP_NOT_=
-NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1094,6 +1218,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs have any re=
-sponse type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1103,6 +1228,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1112,6 +1238,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1121,6 +1248,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_HIT.SNOOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1130,6 +1258,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1139,6 +1268,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1148,6 +1278,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_HIT.SNOOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1157,6 +1288,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.SUPPLIER_NONE.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1166,6 +1298,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.SUPPLIER_NONE.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1175,6 +1308,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.SUPPLIER_NONE.SNOOP_HIT_NO_=
-FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1184,6 +1318,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.SUPPLIER_NONE.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1193,6 +1328,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.SUPPLIER_NONE.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1202,6 +1338,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.SUPPLIER_NONE.SNOOP_NOT_NEE=
-DED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1211,6 +1348,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive) hav=
-e any response type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1220,6 +1358,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1229,6 +1368,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1238,6 +1378,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_HIT.SNOOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1247,6 +1388,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1256,6 +1398,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1265,6 +1408,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_HIT.SNOOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1274,6 +1418,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.SUPPLIER_NONE.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1283,6 +1428,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.SUPPLIER_NONE.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1292,6 +1438,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.SUPPLIER_NONE.SNOOP_HIT_NO_F=
-WD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1301,6 +1448,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.SUPPLIER_NONE.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1310,6 +1458,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.SUPPLIER_NONE.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1319,6 +1468,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.SUPPLIER_NONE.SNOOP_NOT_NEED=
-ED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1328,6 +1478,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads have any respons=
-e type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1337,6 +1488,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1346,6 +1498,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1355,6 +1508,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_HIT.SNOOP_HIT_NO_=
-FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1364,6 +1518,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1373,6 +1528,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1382,6 +1538,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_HIT.SNOOP_NOT_NEE=
-DED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1391,6 +1548,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.SUPPLIER_NONE.ANY_SN=
-OOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1400,6 +1558,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.SUPPLIER_NONE.SNOOP_=
-HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1409,6 +1568,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.SUPPLIER_NONE.SNOOP_=
-HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1418,6 +1578,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.SUPPLIER_NONE.SNOOP_=
-MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1427,6 +1588,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.SUPPLIER_NONE.SNOOP_=
-NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1436,6 +1598,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.SUPPLIER_NONE.SNOOP_=
-NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1445,6 +1608,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads have any response ty=
-pe.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1454,6 +1618,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1463,6 +1628,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1472,6 +1638,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_HIT.SNOOP_HIT_NO_=
-FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1481,6 +1648,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1490,6 +1658,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1499,6 +1668,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_HIT.SNOOP_NOT_NEE=
-DED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1508,6 +1678,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.SUPPLIER_NONE.ANY_SN=
-OOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1517,6 +1688,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.SUPPLIER_NONE.SNOOP_=
-HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1526,6 +1698,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.SUPPLIER_NONE.SNOOP_=
-HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1535,6 +1708,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.SUPPLIER_NONE.SNOOP_=
-MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1544,6 +1718,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.SUPPLIER_NONE.SNOOP_=
-NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1553,6 +1728,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.SUPPLIER_NONE.SNOOP_=
-NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1562,6 +1738,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs) have any=
- response type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1571,6 +1748,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1580,6 +1758,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1589,6 +1768,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.L3_HIT.SNOOP_HIT_NO_FWD"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1598,6 +1778,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1607,6 +1788,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1616,6 +1798,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.L3_HIT.SNOOP_NOT_NEEDED"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1625,6 +1808,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests have any response t=
-ype.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1634,6 +1818,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1643,6 +1828,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1652,6 +1838,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_HIT.SNOOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1661,6 +1848,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1670,6 +1858,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1679,6 +1868,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_HIT.SNOOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1688,6 +1878,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.SUPPLIER_NONE.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1697,6 +1888,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.SUPPLIER_NONE.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1706,6 +1898,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.SUPPLIER_NONE.SNOOP_HIT_NO_FW=
-D",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1715,6 +1908,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.SUPPLIER_NONE.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1724,6 +1918,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.SUPPLIER_NONE.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1733,6 +1928,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.SUPPLIER_NONE.SNOOP_NOT_NEEDE=
-D",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1742,6 +1938,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads have any response type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1751,6 +1948,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1760,6 +1958,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1769,6 +1968,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_HIT.SNOOP_HIT_NO_F=
-WD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1778,6 +1978,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1787,6 +1988,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1796,6 +1998,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_HIT.SNOOP_NOT_NEED=
-ED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1805,6 +2008,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.SUPPLIER_NONE.ANY_SNO=
-OP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1814,6 +2018,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.SUPPLIER_NONE.SNOOP_H=
-ITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1823,6 +2028,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.SUPPLIER_NONE.SNOOP_H=
-IT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1832,6 +2038,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.SUPPLIER_NONE.SNOOP_M=
-ISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1841,6 +2048,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.SUPPLIER_NONE.SNOOP_N=
-ONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1850,6 +2058,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.SUPPLIER_NONE.SNOOP_N=
-OT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1859,6 +2068,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads have any response type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1868,6 +2078,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1877,6 +2088,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1886,6 +2098,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_HIT.SNOOP_HIT_NO_F=
-WD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1895,6 +2108,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1904,6 +2118,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1913,6 +2128,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_HIT.SNOOP_NOT_NEED=
-ED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1922,6 +2138,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.SUPPLIER_NONE.ANY_SNO=
-OP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1931,6 +2148,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.SUPPLIER_NONE.SNOOP_H=
-ITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1940,6 +2158,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.SUPPLIER_NONE.SNOOP_H=
-IT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1949,6 +2168,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.SUPPLIER_NONE.SNOOP_M=
-ISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1958,6 +2178,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.SUPPLIER_NONE.SNOOP_N=
-ONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1967,6 +2188,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.SUPPLIER_NONE.SNOOP_N=
-OT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1976,6 +2198,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs have any response type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1985,6 +2208,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1994,6 +2218,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2003,6 +2228,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_HIT.SNOOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2012,6 +2238,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2021,6 +2248,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2030,6 +2258,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_HIT.SNOOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2039,6 +2268,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.SUPPLIER_NONE.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2048,6 +2278,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.SUPPLIER_NONE.SNOOP_HITM"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2057,6 +2288,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.SUPPLIER_NONE.SNOOP_HIT_N=
-O_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2066,6 +2298,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.SUPPLIER_NONE.SNOOP_MISS"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2075,6 +2308,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.SUPPLIER_NONE.SNOOP_NONE"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2084,6 +2318,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.SUPPLIER_NONE.SNOOP_NOT_N=
-EEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2093,6 +2328,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads have any response type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2102,6 +2338,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2111,6 +2348,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2120,6 +2358,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_HIT.SNOOP_HIT_NO_F=
-WD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2129,6 +2368,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2138,6 +2378,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2147,6 +2388,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_HIT.SNOOP_NOT_NEED=
-ED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2156,6 +2398,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.SUPPLIER_NONE.ANY_SNO=
-OP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2165,6 +2408,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.SUPPLIER_NONE.SNOOP_H=
-ITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2174,6 +2418,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.SUPPLIER_NONE.SNOOP_H=
-IT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2183,6 +2428,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.SUPPLIER_NONE.SNOOP_M=
-ISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2192,6 +2438,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.SUPPLIER_NONE.SNOOP_N=
-ONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2201,6 +2448,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.SUPPLIER_NONE.SNOOP_N=
-OT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2210,6 +2458,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads have any response type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2219,6 +2468,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2228,6 +2478,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2237,6 +2488,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_HIT.SNOOP_HIT_NO_F=
-WD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2246,6 +2498,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2255,6 +2508,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2264,6 +2518,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_HIT.SNOOP_NOT_NEED=
-ED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2273,6 +2528,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.SUPPLIER_NONE.ANY_SNO=
-OP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2282,6 +2538,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.SUPPLIER_NONE.SNOOP_H=
-ITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2291,6 +2548,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.SUPPLIER_NONE.SNOOP_H=
-IT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2300,6 +2558,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.SUPPLIER_NONE.SNOOP_M=
-ISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2309,6 +2568,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.SUPPLIER_NONE.SNOOP_N=
-ONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2318,6 +2578,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.SUPPLIER_NONE.SNOOP_N=
-OT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2327,6 +2588,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs have any response type.",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.ANY_RESPONSE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2336,6 +2598,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_HIT.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2345,6 +2608,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_HIT.SNOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2354,6 +2618,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_HIT.SNOOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2363,6 +2628,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_HIT.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2372,6 +2638,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_HIT.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2381,6 +2648,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_HIT.SNOOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2390,6 +2658,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.SUPPLIER_NONE.ANY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2399,6 +2668,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.SUPPLIER_NONE.SNOOP_HITM"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2408,6 +2678,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.SUPPLIER_NONE.SNOOP_HIT_N=
-O_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2417,6 +2688,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.SUPPLIER_NONE.SNOOP_MISS"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2426,6 +2698,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.SUPPLIER_NONE.SNOOP_NONE"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2435,6 +2708,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.SUPPLIER_NONE.SNOOP_NOT_N=
-EEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2444,6 +2718,7 @@
+@@ -656,6 +731,7 @@
      },
      {
          "BriefDescription": "Split locks in SQ",
@@ -3218,13 +1446,13 @@ EEDED",
          "EventName": "SQ_MISC.SPLIT_LOCK",
          "PublicDescription": "This event counts the number of split locks =
 in the super queue.",
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/counter.json b/tools/=
-perf/pmu-events/arch/x86/broadwell/counter.json
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/counter.json b/tool=
+s/perf/pmu-events/arch/x86/broadwellde/counter.json
 new file mode 100644
-index 000000000000..1be6522e2bbc
+index 000000000000..ada968d0a038
 --- /dev/null
-+++ b/tools/perf/pmu-events/arch/x86/broadwell/counter.json
-@@ -0,0 +1,22 @@
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/counter.json
+@@ -0,0 +1,42 @@
 +[
 +    {
 +        "Unit": "core",
@@ -3234,25 +1462,45 @@ index 000000000000..1be6522e2bbc
 +    {
 +        "Unit": "CBOX",
 +        "CountersNumFixed": "0",
-+        "CountersNumGeneric": "2"
++        "CountersNumGeneric": "4"
 +    },
 +    {
-+        "Unit": "ARB",
++        "Unit": "HA",
++        "CountersNumFixed": "0",
++        "CountersNumGeneric": "4"
++    },
++    {
++        "Unit": "IRP",
 +        "CountersNumFixed": "0",
 +        "CountersNumGeneric": "2"
 +    },
 +    {
-+        "Unit": "cbox_0",
-+        "CountersNumFixed": 1,
-+        "CountersNumGeneric": "0"
++        "Unit": "PCU",
++        "CountersNumFixed": "0",
++        "CountersNumGeneric": "4"
++    },
++    {
++        "Unit": "R2PCIe",
++        "CountersNumFixed": "0",
++        "CountersNumGeneric": "4"
++    },
++    {
++        "Unit": "UBOX",
++        "CountersNumFixed": "0",
++        "CountersNumGeneric": "2"
++    },
++    {
++        "Unit": "iMC",
++        "CountersNumFixed": "0",
++        "CountersNumGeneric": "4"
 +    }
 +]
 \ No newline at end of file
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/floating-point.json b=
-/tools/perf/pmu-events/arch/x86/broadwell/floating-point.json
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/floating-point.json=
+ b/tools/perf/pmu-events/arch/x86/broadwellde/floating-point.json
 index 986869252e71..9bf595af3f42 100644
---- a/tools/perf/pmu-events/arch/x86/broadwell/floating-point.json
-+++ b/tools/perf/pmu-events/arch/x86/broadwell/floating-point.json
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/floating-point.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/floating-point.json
 @@ -1,6 +1,7 @@
  [
      {
@@ -3573,11 +1821,11 @@ e SIMD_PRF subevent applies to the following instructions: VDPPS, DPPS, VPC=
 MPESTRI, PCMPESTRI, VPCMPESTRM, PCMPESTRM, VFMADD*, VFMADDSUB*, VFMSUB*, VM=
 SUBADD*, VFNMADD*, VFNMSUB*.  See the Broadwell Optimization Guide for more=
  information.",
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/frontend.json b/tools=
-/perf/pmu-events/arch/x86/broadwell/frontend.json
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/frontend.json b/too=
+ls/perf/pmu-events/arch/x86/broadwellde/frontend.json
 index bd5da39564e1..db3488abf9fc 100644
---- a/tools/perf/pmu-events/arch/x86/broadwell/frontend.json
-+++ b/tools/perf/pmu-events/arch/x86/broadwell/frontend.json
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/frontend.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/frontend.json
 @@ -1,6 +1,7 @@
  [
      {
@@ -3880,11 +2128,11 @@ s not stalled",
          "CounterMask": "1",
          "EventCode": "0x9C",
          "EventName": "IDQ_UOPS_NOT_DELIVERED.CYCLES_LE_3_UOP_DELIV.CORE",
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/memory.json b/tools/p=
-erf/pmu-events/arch/x86/broadwell/memory.json
-index b01ed47072bc..77fbfe99a522 100644
---- a/tools/perf/pmu-events/arch/x86/broadwell/memory.json
-+++ b/tools/perf/pmu-events/arch/x86/broadwell/memory.json
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/memory.json b/tools=
+/perf/pmu-events/arch/x86/broadwellde/memory.json
+index 041b6ff4062e..31a74eed2f7d 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/memory.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/memory.json
 @@ -1,6 +1,7 @@
  [
      {
@@ -4067,1853 +2315,12 @@ it store-address (STA) uops dispatched to the L1 cache.",
 @@ -194,6 +213,7 @@
      },
      {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_HIT.SNOOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -203,6 +223,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_MISS.SNOOP_HIT_NO_FW=
-D",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -212,6 +233,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -221,6 +243,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -230,6 +253,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_MISS.SNOOP_NOT_NEEDE=
-D",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -239,6 +263,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_MISS_LOCAL_DRAM.ANY_=
-SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -248,6 +273,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_MISS_LOCAL_DRAM.SNOO=
-P_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -257,6 +283,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_MISS_LOCAL_DRAM.SNOO=
-P_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -266,6 +293,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_MISS_LOCAL_DRAM.SNOO=
-P_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -275,6 +303,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_MISS_LOCAL_DRAM.SNOO=
-P_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -284,6 +313,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_MISS_LOCAL_DRAM.SNOO=
-P_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -293,6 +323,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.L3_MISS_LOCAL_DRAM.SNOO=
-P_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -302,6 +333,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_DATA_RD.SUPPLIER_NONE.SNOOP_NON=
-_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -311,6 +343,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_HIT.SNOOP_NON_DRA=
-M",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -320,6 +353,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_MISS.SNOOP_HIT_NO=
-_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -329,6 +363,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -338,6 +373,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -347,6 +383,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_MISS.SNOOP_NOT_NE=
-EDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -356,6 +393,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_MISS_LOCAL_DRAM.A=
-NY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -365,6 +403,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -374,6 +413,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -383,6 +423,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -392,6 +433,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -401,6 +443,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -410,6 +453,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -419,6 +463,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_CODE_RD.SUPPLIER_NONE.SNOOP_=
-NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -428,6 +473,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_HIT.SNOOP_NON_DRA=
-M",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -437,6 +483,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_MISS.SNOOP_HIT_NO=
-_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -446,6 +493,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -455,6 +503,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -464,6 +513,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_MISS.SNOOP_NOT_NE=
-EDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -473,6 +523,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_MISS_LOCAL_DRAM.A=
-NY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -482,6 +533,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -491,6 +543,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -500,6 +553,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -509,6 +563,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -518,6 +573,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -527,6 +583,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -536,6 +593,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_DATA_RD.SUPPLIER_NONE.SNOOP_=
-NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -545,6 +603,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_HIT.SNOOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -554,6 +613,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_MISS.SNOOP_HIT_NO_FWD=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -563,6 +623,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -572,6 +633,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -581,6 +643,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_MISS.SNOOP_NOT_NEEDED=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -590,6 +653,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_MISS_LOCAL_DRAM.ANY_S=
-NOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -599,6 +663,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_MISS_LOCAL_DRAM.SNOOP=
-_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -608,6 +673,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_MISS_LOCAL_DRAM.SNOOP=
-_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -617,6 +683,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_MISS_LOCAL_DRAM.SNOOP=
-_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -626,6 +693,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_MISS_LOCAL_DRAM.SNOOP=
-_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -635,6 +703,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_MISS_LOCAL_DRAM.SNOOP=
-_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -644,6 +713,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.L3_MISS_LOCAL_DRAM.SNOOP=
-_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -653,6 +723,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_PF_RFO.SUPPLIER_NONE.SNOOP_NON_=
-DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -662,6 +733,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_HIT.SNOOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -671,6 +743,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_MISS.SNOOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -680,6 +753,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -689,6 +763,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -698,6 +773,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_MISS.SNOOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -707,6 +783,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_MISS_LOCAL_DRAM.ANY_SNOO=
-P",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -716,6 +793,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_MISS_LOCAL_DRAM.SNOOP_HI=
-TM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -725,6 +803,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_MISS_LOCAL_DRAM.SNOOP_HI=
-T_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -734,6 +813,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_MISS_LOCAL_DRAM.SNOOP_MI=
-SS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -743,6 +823,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_MISS_LOCAL_DRAM.SNOOP_NO=
-NE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -752,6 +833,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_MISS_LOCAL_DRAM.SNOOP_NO=
-N_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -761,6 +843,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.L3_MISS_LOCAL_DRAM.SNOOP_NO=
-T_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -770,6 +853,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand & prefetch RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.ALL_RFO.SUPPLIER_NONE.SNOOP_NON_DRA=
-M",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -779,6 +863,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_HIT.SNOOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -788,6 +873,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_MISS.SNOOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -797,6 +883,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -806,6 +893,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -815,6 +903,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_MISS.SNOOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -824,6 +913,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_MISS_LOCAL_DRAM.ANY_SNOOP=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -833,6 +923,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_MISS_LOCAL_DRAM.SNOOP_HIT=
-M",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -842,6 +933,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_MISS_LOCAL_DRAM.SNOOP_HIT=
-_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -851,6 +943,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_MISS_LOCAL_DRAM.SNOOP_MIS=
-S",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -860,6 +953,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_MISS_LOCAL_DRAM.SNOOP_NON=
-E",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -869,6 +963,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_MISS_LOCAL_DRAM.SNOOP_NON=
-_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -878,6 +973,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.L3_MISS_LOCAL_DRAM.SNOOP_NOT=
-_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -887,6 +983,7 @@
-     },
-     {
-         "BriefDescription": "Counts writebacks (modified to exclusive)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.COREWB.SUPPLIER_NONE.SNOOP_NON_DRAM=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -896,6 +993,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_HIT.SNOOP_NON_DRA=
-M",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -905,6 +1003,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_MISS.SNOOP_HIT_NO=
-_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -914,6 +1013,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -923,6 +1023,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -932,6 +1033,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_MISS.SNOOP_NOT_NE=
-EDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -941,6 +1043,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_MISS_LOCAL_DRAM.A=
-NY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -950,6 +1053,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -959,6 +1063,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -968,6 +1073,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -977,6 +1083,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -986,6 +1093,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -995,6 +1103,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1004,6 +1113,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_CODE_RD.SUPPLIER_NONE.SNOOP_=
-NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1013,6 +1123,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_HIT.SNOOP_NON_DRA=
-M",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1022,6 +1133,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_MISS.SNOOP_HIT_NO=
-_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1031,6 +1143,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1040,6 +1153,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1049,6 +1163,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_MISS.SNOOP_NOT_NE=
-EDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1058,6 +1173,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_MISS_LOCAL_DRAM.A=
-NY_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1067,6 +1183,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1076,6 +1193,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1085,6 +1203,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1094,6 +1213,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1103,6 +1223,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1112,6 +1233,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.L3_MISS_LOCAL_DRAM.S=
-NOOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1121,6 +1243,7 @@
-     },
-     {
-         "BriefDescription": "Counts demand data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_DATA_RD.SUPPLIER_NONE.SNOOP_=
-NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1130,6 +1253,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.L3_HIT.SNOOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1139,6 +1263,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.L3_MISS.SNOOP_HIT_NO_FWD=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1148,6 +1273,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1157,6 +1283,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1166,6 +1293,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.L3_MISS.SNOOP_NOT_NEEDED=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1175,6 +1303,7 @@
-     },
-     {
-         "BriefDescription": "Counts all demand data writes (RFOs)",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.DEMAND_RFO.L3_MISS_LOCAL_DRAM.ANY_S=
-NOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1184,6 +1313,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_HIT.SNOOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1193,6 +1323,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_MISS.SNOOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1202,6 +1333,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1211,6 +1343,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1220,6 +1353,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_MISS.SNOOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1229,6 +1363,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_MISS_LOCAL_DRAM.ANY_SNOOP"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1238,6 +1373,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_MISS_LOCAL_DRAM.SNOOP_HITM=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1247,6 +1383,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_MISS_LOCAL_DRAM.SNOOP_HIT_=
-NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1256,6 +1393,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_MISS_LOCAL_DRAM.SNOOP_MISS=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1265,6 +1403,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_MISS_LOCAL_DRAM.SNOOP_NONE=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1274,6 +1413,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_MISS_LOCAL_DRAM.SNOOP_NON_=
-DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1283,6 +1423,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.L3_MISS_LOCAL_DRAM.SNOOP_NOT_=
-NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1292,6 +1433,7 @@
-     },
-     {
-         "BriefDescription": "Counts any other requests",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.OTHER.SUPPLIER_NONE.SNOOP_NON_DRAM"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1301,6 +1443,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_HIT.SNOOP_NON_DRAM=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1310,6 +1453,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_MISS.SNOOP_HIT_NO_=
-FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1319,6 +1463,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1328,6 +1473,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1337,6 +1483,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_MISS.SNOOP_NOT_NEE=
-DED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1346,6 +1493,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_MISS_LOCAL_DRAM.AN=
-Y_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1355,6 +1503,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1364,6 +1513,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1373,6 +1523,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1382,6 +1533,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1391,6 +1543,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1400,6 +1553,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1409,6 +1563,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_CODE_RD.SUPPLIER_NONE.SNOOP_N=
-ON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1418,6 +1573,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_HIT.SNOOP_NON_DRAM=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1427,6 +1583,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_MISS.SNOOP_HIT_NO_=
-FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1436,6 +1593,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1445,6 +1603,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1454,6 +1613,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_MISS.SNOOP_NOT_NEE=
-DED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1463,6 +1623,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_MISS_LOCAL_DRAM.AN=
-Y_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1472,6 +1633,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1481,6 +1643,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1490,6 +1653,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1499,6 +1663,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1508,6 +1673,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1517,6 +1683,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1526,6 +1693,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to L2) data =
-reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_DATA_RD.SUPPLIER_NONE.SNOOP_N=
-ON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1535,6 +1703,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_HIT.SNOOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1544,6 +1713,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_MISS.SNOOP_HIT_NO_FWD"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1553,6 +1723,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1562,6 +1733,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1571,6 +1743,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_MISS.SNOOP_NOT_NEEDED"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1580,6 +1753,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_MISS_LOCAL_DRAM.ANY_SN=
-OOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1589,6 +1763,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_MISS_LOCAL_DRAM.SNOOP_=
-HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1598,6 +1773,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_MISS_LOCAL_DRAM.SNOOP_=
-HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1607,6 +1783,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_MISS_LOCAL_DRAM.SNOOP_=
-MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1616,6 +1793,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_MISS_LOCAL_DRAM.SNOOP_=
-NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1625,6 +1803,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_MISS_LOCAL_DRAM.SNOOP_=
-NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1634,6 +1813,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.L3_MISS_LOCAL_DRAM.SNOOP_=
-NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1643,6 +1823,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to L2) R=
-FOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L2_RFO.SUPPLIER_NONE.SNOOP_NON_D=
-RAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1652,6 +1833,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_HIT.SNOOP_NON_DRAM=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1661,6 +1843,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_MISS.SNOOP_HIT_NO_=
-FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1670,6 +1853,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1679,6 +1863,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1688,6 +1873,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_MISS.SNOOP_NOT_NEE=
-DED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1697,6 +1883,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_MISS_LOCAL_DRAM.AN=
-Y_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1706,6 +1893,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1715,6 +1903,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1724,6 +1913,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1733,6 +1923,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1742,6 +1933,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1751,6 +1943,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1760,6 +1953,7 @@
-     },
-     {
-         "BriefDescription": "Counts prefetch (that bring data to LLC only)=
- code reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_CODE_RD.SUPPLIER_NONE.SNOOP_N=
-ON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1769,6 +1963,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_HIT.SNOOP_NON_DRAM=
-",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1778,6 +1973,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_MISS.SNOOP_HIT_NO_=
-FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1787,6 +1983,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1796,6 +1993,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1805,6 +2003,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_MISS.SNOOP_NOT_NEE=
-DED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1814,6 +2013,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_MISS_LOCAL_DRAM.AN=
-Y_SNOOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1823,6 +2023,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1832,6 +2033,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1841,6 +2043,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1850,6 +2053,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1859,6 +2063,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1868,6 +2073,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.L3_MISS_LOCAL_DRAM.SN=
-OOP_NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1877,6 +2083,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) data reads",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_DATA_RD.SUPPLIER_NONE.SNOOP_N=
-ON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1886,6 +2093,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_HIT.SNOOP_NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1895,6 +2103,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_MISS.SNOOP_HIT_NO_FWD"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1904,6 +2113,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_MISS.SNOOP_MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1913,6 +2123,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_MISS.SNOOP_NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1922,6 +2133,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_MISS.SNOOP_NOT_NEEDED"=
-,
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1931,6 +2143,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_MISS_LOCAL_DRAM.ANY_SN=
-OOP",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1940,6 +2153,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_MISS_LOCAL_DRAM.SNOOP_=
-HITM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1949,6 +2163,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_MISS_LOCAL_DRAM.SNOOP_=
-HIT_NO_FWD",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1958,6 +2173,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_MISS_LOCAL_DRAM.SNOOP_=
-MISS",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1967,6 +2183,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_MISS_LOCAL_DRAM.SNOOP_=
-NONE",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1976,6 +2193,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_MISS_LOCAL_DRAM.SNOOP_=
-NON_DRAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1985,6 +2203,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.L3_MISS_LOCAL_DRAM.SNOOP_=
-NOT_NEEDED",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -1994,6 +2213,7 @@
-     },
-     {
-         "BriefDescription": "Counts all prefetch (that bring data to LLC o=
-nly) RFOs",
-+        "Counter": "0,1,2,3",
-         "EventCode": "0xB7, 0xBB",
-         "EventName": "OFFCORE_RESPONSE.PF_L3_RFO.SUPPLIER_NONE.SNOOP_NON_D=
-RAM",
-         "MSRIndex": "0x1a6,0x1a7",
-@@ -2003,6 +2223,7 @@
-     },
-     {
          "BriefDescription": "Number of times RTM abort was triggered",
 +        "Counter": "0,1,2,3",
          "EventCode": "0xc9",
          "EventName": "RTM_RETIRED.ABORTED",
-         "PEBS": "2",
-@@ -2012,6 +2233,7 @@
+         "PEBS": "1",
+@@ -203,6 +223,7 @@
      },
      {
          "BriefDescription": "Number of times an RTM execution aborted due =
@@ -5923,7 +2330,7 @@ to various memory events (e.g. read/write capacity and conflicts)",
          "EventName": "RTM_RETIRED.ABORTED_MISC1",
          "PublicDescription": "Number of times an RTM abort was attributed =
 to a Memory condition (See TSX_Memory event for additional details).",
-@@ -2020,6 +2242,7 @@
+@@ -211,6 +232,7 @@
      },
      {
          "BriefDescription": "Number of times an RTM execution aborted due =
@@ -5933,7 +2340,7 @@ to various memory events (e.g., read/write capacity and conflicts).",
          "EventName": "RTM_RETIRED.ABORTED_MISC2",
          "PublicDescription": "Number of times the TSX watchdog signaled an=
  RTM abort.",
-@@ -2028,6 +2251,7 @@
+@@ -219,6 +241,7 @@
      },
      {
          "BriefDescription": "Number of times an RTM execution aborted due =
@@ -5943,7 +2350,7 @@ to HLE-unfriendly instructions",
          "EventName": "RTM_RETIRED.ABORTED_MISC3",
          "PublicDescription": "Number of times a disallowed operation cause=
 d an RTM abort.",
-@@ -2036,6 +2260,7 @@
+@@ -227,6 +250,7 @@
      },
      {
          "BriefDescription": "Number of times an RTM execution aborted due =
@@ -5952,7 +2359,7 @@ to incompatible memory type",
          "EventCode": "0xc9",
          "EventName": "RTM_RETIRED.ABORTED_MISC4",
          "PublicDescription": "Number of times a RTM caused a fault.",
-@@ -2044,6 +2269,7 @@
+@@ -235,6 +259,7 @@
      },
      {
          "BriefDescription": "Number of times an RTM execution aborted due =
@@ -5962,7 +2369,7 @@ to none of the previous 4 categories (e.g. interrupt)",
          "EventName": "RTM_RETIRED.ABORTED_MISC5",
          "PublicDescription": "Number of times RTM aborted and was not due =
 to the abort conditions in subevents 3-6.",
-@@ -2052,6 +2278,7 @@
+@@ -243,6 +268,7 @@
      },
      {
          "BriefDescription": "Number of times RTM commit succeeded",
@@ -5970,7 +2377,7 @@ to the abort conditions in subevents 3-6.",
          "EventCode": "0xc9",
          "EventName": "RTM_RETIRED.COMMIT",
          "PublicDescription": "Number of times RTM commit succeeded.",
-@@ -2060,6 +2287,7 @@
+@@ -251,6 +277,7 @@
      },
      {
          "BriefDescription": "Number of times we entered an RTM region; doe=
@@ -5980,7 +2387,7 @@ s not count nested transactions",
          "EventName": "RTM_RETIRED.START",
          "PublicDescription": "Number of times we entered an RTM region\n d=
 oes not count nested transactions.",
-@@ -2068,6 +2296,7 @@
+@@ -259,6 +286,7 @@
      },
      {
          "BriefDescription": "Counts the number of times a class of instruc=
@@ -5990,7 +2397,7 @@ count of execution, it may not always cause a transactional abort.",
          "EventCode": "0x5d",
          "EventName": "TX_EXEC.MISC1",
          "SampleAfterValue": "2000003",
-@@ -2075,6 +2304,7 @@
+@@ -266,6 +294,7 @@
      },
      {
          "BriefDescription": "Counts the number of times a class of instruc=
@@ -6001,7 +2408,7 @@ inside a transactional region",
          "EventName": "TX_EXEC.MISC2",
          "PublicDescription": "Unfriendly TSX abort triggered by  a vzeroup=
 per instruction.",
-@@ -2083,6 +2313,7 @@
+@@ -274,6 +303,7 @@
      },
      {
          "BriefDescription": "Counts the number of times an instruction exe=
@@ -6011,7 +2418,7 @@ cution caused the transactional nest count supported to be exceeded",
          "EventName": "TX_EXEC.MISC3",
          "PublicDescription": "Unfriendly TSX abort triggered by a nest cou=
 nt that is too deep.",
-@@ -2091,6 +2322,7 @@
+@@ -282,6 +312,7 @@
      },
      {
          "BriefDescription": "Counts the number of times a XBEGIN instructi=
@@ -6020,7 +2427,7 @@ on was executed inside an HLE transactional region.",
          "EventCode": "0x5d",
          "EventName": "TX_EXEC.MISC4",
          "PublicDescription": "RTM region detected inside HLE.",
-@@ -2099,6 +2331,7 @@
+@@ -290,6 +321,7 @@
      },
      {
          "BriefDescription": "Counts the number of times an HLE XACQUIRE in=
@@ -6029,7 +2436,7 @@ struction was executed inside an RTM transactional region.",
          "EventCode": "0x5d",
          "EventName": "TX_EXEC.MISC5",
          "SampleAfterValue": "2000003",
-@@ -2106,6 +2339,7 @@
+@@ -297,6 +329,7 @@
      },
      {
          "BriefDescription": "Number of times a TSX Abort was triggered due=
@@ -6039,7 +2446,7 @@ struction was executed inside an RTM transactional region.",
          "EventName": "TX_MEM.ABORT_CAPACITY_WRITE",
          "PublicDescription": "Number of times a TSX Abort was triggered du=
 e to an evicted line caused by a transaction overflow.",
-@@ -2114,6 +2348,7 @@
+@@ -305,6 +338,7 @@
      },
      {
          "BriefDescription": "Number of times a TSX line had a cache confli=
@@ -6049,7 +2456,7 @@ ct",
          "EventName": "TX_MEM.ABORT_CONFLICT",
          "PublicDescription": "Number of times a TSX line had a cache confl=
 ict.",
-@@ -2122,6 +2357,7 @@
+@@ -313,6 +347,7 @@
      },
      {
          "BriefDescription": "Number of times a TSX Abort was triggered due=
@@ -6059,7 +2466,7 @@ ict.",
          "EventName": "TX_MEM.ABORT_HLE_ELISION_BUFFER_MISMATCH",
          "PublicDescription": "Number of times a TSX Abort was triggered du=
 e to release/commit but data and address mismatch.",
-@@ -2130,6 +2366,7 @@
+@@ -321,6 +356,7 @@
      },
      {
          "BriefDescription": "Number of times a TSX Abort was triggered due=
@@ -6069,7 +2476,7 @@ e to release/commit but data and address mismatch.",
          "EventName": "TX_MEM.ABORT_HLE_ELISION_BUFFER_NOT_EMPTY",
          "PublicDescription": "Number of times a TSX Abort was triggered du=
 e to commit but Lock Buffer not empty.",
-@@ -2138,6 +2375,7 @@
+@@ -329,6 +365,7 @@
      },
      {
          "BriefDescription": "Number of times a TSX Abort was triggered due=
@@ -6080,7 +2487,7 @@ e to commit but Lock Buffer not empty.",
 T",
          "PublicDescription": "Number of times a TSX Abort was triggered du=
 e to attempting an unsupported alignment from Lock Buffer.",
-@@ -2146,6 +2384,7 @@
+@@ -337,6 +374,7 @@
      },
      {
          "BriefDescription": "Number of times a TSX Abort was triggered due=
@@ -6090,7 +2497,7 @@ e to attempting an unsupported alignment from Lock Buffer.",
          "EventName": "TX_MEM.ABORT_HLE_STORE_TO_ELIDED_LOCK",
          "PublicDescription": "Number of times a TSX Abort was triggered du=
 e to a non-release/commit store to lock.",
-@@ -2154,6 +2393,7 @@
+@@ -345,6 +383,7 @@
      },
      {
          "BriefDescription": "Number of times we could not allocate Lock Bu=
@@ -6100,11 +2507,11 @@ ffer",
          "EventName": "TX_MEM.HLE_ELISION_BUFFER_FULL",
          "PublicDescription": "Number of times we could not allocate Lock B=
 uffer.",
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/metricgroups.json b/t=
-ools/perf/pmu-events/arch/x86/broadwell/metricgroups.json
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/metricgroups.json b=
+/tools/perf/pmu-events/arch/x86/broadwellde/metricgroups.json
 index 8c808347f6da..4193c90c3459 100644
---- a/tools/perf/pmu-events/arch/x86/broadwell/metricgroups.json
-+++ b/tools/perf/pmu-events/arch/x86/broadwell/metricgroups.json
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/metricgroups.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/metricgroups.json
 @@ -5,7 +5,18 @@
      "BigFootprint": "Grouping from Top-down Microarchitecture Analysis Met=
 rics spreadsheet",
@@ -6142,11 +2549,11 @@ spreadsheet",
 adsheet",
      "DSB": "Grouping from Top-down Microarchitecture Analysis Metrics spre=
 adsheet",
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/other.json b/tools/pe=
-rf/pmu-events/arch/x86/broadwell/other.json
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/other.json b/tools/=
+perf/pmu-events/arch/x86/broadwellde/other.json
 index 1c2a5b001949..f0de6a71719b 100644
---- a/tools/perf/pmu-events/arch/x86/broadwell/other.json
-+++ b/tools/perf/pmu-events/arch/x86/broadwell/other.json
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/other.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/other.json
 @@ -1,6 +1,7 @@
  [
      {
@@ -6190,11 +2597,11 @@ f locked memory access, due to noncacheable memory, locked operation that s=
 pans two cache lines, or a page walk from the noncacheable page table. L1D =
 and L2 locks have a very high performance penalty and it is highly recommen=
 ded to avoid such access.",
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/pipeline.json b/tools=
-/perf/pmu-events/arch/x86/broadwell/pipeline.json
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/pipeline.json b/too=
+ls/perf/pmu-events/arch/x86/broadwellde/pipeline.json
 index 9a902d2160e6..c03f77539362 100644
---- a/tools/perf/pmu-events/arch/x86/broadwell/pipeline.json
-+++ b/tools/perf/pmu-events/arch/x86/broadwell/pipeline.json
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/pipeline.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/pipeline.json
 @@ -1,6 +1,7 @@
  [
      {
@@ -7572,261 +3979,7384 @@ s.",
          "CounterMask": "16",
          "EventCode": "0xC2",
          "EventName": "UOPS_RETIRED.TOTAL_CYCLES",
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/uncore-cache.json b/t=
-ools/perf/pmu-events/arch/x86/broadwell/uncore-cache.json
-index c5cc43825cb9..c4c57febdc72 100644
---- a/tools/perf/pmu-events/arch/x86/broadwell/uncore-cache.json
-+++ b/tools/perf/pmu-events/arch/x86/broadwell/uncore-cache.json
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/uncore-cache.json b=
+/tools/perf/pmu-events/arch/x86/broadwellde/uncore-cache.json
+index 56bba6d4e0f6..f5b5ae1150c3 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/uncore-cache.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/uncore-cache.json
 @@ -1,6 +1,7 @@
  [
      {
-         "BriefDescription": "L3 Lookup any request that access cache and f=
-ound line in E or S-state",
+         "BriefDescription": "Bounce Control",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA",
+         "EventName": "UNC_C_BOUNCE_CONTROL",
+         "PerPkg": "1",
+@@ -8,12 +9,14 @@
+     },
+     {
+         "BriefDescription": "Uncore Clocks",
++        "Counter": "0,1,2,3",
+         "EventName": "UNC_C_CLOCKTICKS",
+         "PerPkg": "1",
+         "Unit": "CBOX"
+     },
+     {
+         "BriefDescription": "Counter 0 Occupancy",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1F",
+         "EventName": "UNC_C_COUNTER0_OCCUPANCY",
+         "PerPkg": "1",
+@@ -22,6 +25,7 @@
+     },
+     {
+         "BriefDescription": "FaST wire asserted",
 +        "Counter": "0,1",
+         "EventCode": "0x9",
+         "EventName": "UNC_C_FAST_ASSERTED",
+         "PerPkg": "1",
+@@ -30,6 +34,7 @@
+     },
+     {
+         "BriefDescription": "Cache Lookups; Any Request",
++        "Counter": "0,1,2,3",
          "EventCode": "0x34",
-         "EventName": "UNC_CBO_CACHE_LOOKUP.ANY_ES",
+         "EventName": "UNC_C_LLC_LOOKUP.ANY",
+         "PerPkg": "1",
+@@ -39,6 +44,7 @@
+     },
+     {
+         "BriefDescription": "Cache Lookups; Data Read Request",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x34",
+         "EventName": "UNC_C_LLC_LOOKUP.DATA_READ",
+         "PerPkg": "1",
+@@ -48,6 +54,7 @@
+     },
+     {
+         "BriefDescription": "Cache Lookups; Lookups that Match NID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x34",
+         "EventName": "UNC_C_LLC_LOOKUP.NID",
+         "PerPkg": "1",
+@@ -57,6 +64,7 @@
+     },
+     {
+         "BriefDescription": "Cache Lookups; Any Read Request",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x34",
+         "EventName": "UNC_C_LLC_LOOKUP.READ",
+         "PerPkg": "1",
+@@ -66,6 +74,7 @@
+     },
+     {
+         "BriefDescription": "Cache Lookups; External Snoop Request",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x34",
+         "EventName": "UNC_C_LLC_LOOKUP.REMOTE_SNOOP",
+         "PerPkg": "1",
+@@ -75,6 +84,7 @@
+     },
+     {
+         "BriefDescription": "Cache Lookups; Write Requests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x34",
+         "EventName": "UNC_C_LLC_LOOKUP.WRITE",
+         "PerPkg": "1",
+@@ -84,6 +94,7 @@
+     },
+     {
+         "BriefDescription": "Lines Victimized; Lines in E state",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x37",
+         "EventName": "UNC_C_LLC_VICTIMS.E_STATE",
+         "PerPkg": "1",
+@@ -93,6 +104,7 @@
+     },
+     {
+         "BriefDescription": "Lines Victimized",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x37",
+         "EventName": "UNC_C_LLC_VICTIMS.F_STATE",
+         "PerPkg": "1",
+@@ -102,6 +114,7 @@
+     },
+     {
+         "BriefDescription": "Lines Victimized; Lines in S State",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x37",
+         "EventName": "UNC_C_LLC_VICTIMS.I_STATE",
+         "PerPkg": "1",
+@@ -111,6 +124,7 @@
+     },
+     {
+         "BriefDescription": "Lines Victimized",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x37",
+         "EventName": "UNC_C_LLC_VICTIMS.MISS",
+         "PerPkg": "1",
+@@ -120,6 +134,7 @@
+     },
+     {
+         "BriefDescription": "Lines Victimized; Lines in M state",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x37",
+         "EventName": "UNC_C_LLC_VICTIMS.M_STATE",
+         "PerPkg": "1",
+@@ -129,6 +144,7 @@
+     },
+     {
+         "BriefDescription": "Lines Victimized; Victimized Lines that Match=
+ NID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x37",
+         "EventName": "UNC_C_LLC_VICTIMS.NID",
+         "PerPkg": "1",
+@@ -138,6 +154,7 @@
+     },
+     {
+         "BriefDescription": "Cbo Misc; DRd hitting non-M with raw CV=3D0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x39",
+         "EventName": "UNC_C_MISC.CVZERO_PREFETCH_MISS",
+         "PerPkg": "1",
+@@ -147,6 +164,7 @@
+     },
+     {
+         "BriefDescription": "Cbo Misc; Clean Victim with raw CV=3D0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x39",
+         "EventName": "UNC_C_MISC.CVZERO_PREFETCH_VICTIM",
+         "PerPkg": "1",
+@@ -156,6 +174,7 @@
+     },
+     {
+         "BriefDescription": "Cbo Misc; RFO HitS",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x39",
+         "EventName": "UNC_C_MISC.RFO_HIT_S",
+         "PerPkg": "1",
+@@ -165,6 +184,7 @@
+     },
+     {
+         "BriefDescription": "Cbo Misc; Silent Snoop Eviction",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x39",
+         "EventName": "UNC_C_MISC.RSPI_WAS_FSE",
+         "PerPkg": "1",
+@@ -174,6 +194,7 @@
+     },
+     {
+         "BriefDescription": "Cbo Misc",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x39",
+         "EventName": "UNC_C_MISC.STARTED",
+         "PerPkg": "1",
+@@ -183,6 +204,7 @@
+     },
+     {
+         "BriefDescription": "Cbo Misc; Write Combining Aliasing",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x39",
+         "EventName": "UNC_C_MISC.WC_ALIASING",
+         "PerPkg": "1",
+@@ -192,6 +214,7 @@
+     },
+     {
+         "BriefDescription": "LRU Queue; LRU Age 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3C",
+         "EventName": "UNC_C_QLRU.AGE0",
+         "PerPkg": "1",
+@@ -201,6 +224,7 @@
+     },
+     {
+         "BriefDescription": "LRU Queue; LRU Age 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3C",
+         "EventName": "UNC_C_QLRU.AGE1",
+         "PerPkg": "1",
+@@ -210,6 +234,7 @@
+     },
+     {
+         "BriefDescription": "LRU Queue; LRU Age 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3C",
+         "EventName": "UNC_C_QLRU.AGE2",
+         "PerPkg": "1",
+@@ -219,6 +244,7 @@
+     },
+     {
+         "BriefDescription": "LRU Queue; LRU Age 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3C",
+         "EventName": "UNC_C_QLRU.AGE3",
+         "PerPkg": "1",
+@@ -228,6 +254,7 @@
+     },
+     {
+         "BriefDescription": "LRU Queue; LRU Bits Decremented",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3C",
+         "EventName": "UNC_C_QLRU.LRU_DECREMENT",
+         "PerPkg": "1",
+@@ -237,6 +264,7 @@
+     },
+     {
+         "BriefDescription": "LRU Queue; Non-0 Aged Victim",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3C",
+         "EventName": "UNC_C_QLRU.VICTIM_NON_ZERO",
+         "PerPkg": "1",
+@@ -246,6 +274,7 @@
+     },
+     {
+         "BriefDescription": "AD Ring In Use; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_C_RING_AD_USED.ALL",
+         "PerPkg": "1",
+@@ -255,6 +284,7 @@
+     },
+     {
+         "BriefDescription": "AD Ring In Use; Down",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_C_RING_AD_USED.CCW",
+         "PerPkg": "1",
+@@ -264,6 +294,7 @@
+     },
+     {
+         "BriefDescription": "AD Ring In Use; Up",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_C_RING_AD_USED.CW",
+         "PerPkg": "1",
+@@ -273,6 +304,7 @@
+     },
+     {
+         "BriefDescription": "AD Ring In Use; Down and Even",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_C_RING_AD_USED.DOWN_EVEN",
+         "PerPkg": "1",
+@@ -282,6 +314,7 @@
+     },
+     {
+         "BriefDescription": "AD Ring In Use; Down and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_C_RING_AD_USED.DOWN_ODD",
+         "PerPkg": "1",
+@@ -291,6 +324,7 @@
+     },
+     {
+         "BriefDescription": "AD Ring In Use; Up and Even",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_C_RING_AD_USED.UP_EVEN",
+         "PerPkg": "1",
+@@ -300,6 +334,7 @@
+     },
+     {
+         "BriefDescription": "AD Ring In Use; Up and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_C_RING_AD_USED.UP_ODD",
+         "PerPkg": "1",
+@@ -309,6 +344,7 @@
+     },
+     {
+         "BriefDescription": "AK Ring In Use; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1C",
+         "EventName": "UNC_C_RING_AK_USED.ALL",
+         "PerPkg": "1",
+@@ -318,6 +354,7 @@
+     },
+     {
+         "BriefDescription": "AK Ring In Use; Down",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1C",
+         "EventName": "UNC_C_RING_AK_USED.CCW",
+         "PerPkg": "1",
+@@ -327,6 +364,7 @@
+     },
+     {
+         "BriefDescription": "AK Ring In Use; Up",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1C",
+         "EventName": "UNC_C_RING_AK_USED.CW",
+         "PerPkg": "1",
+@@ -336,6 +374,7 @@
+     },
+     {
+         "BriefDescription": "AK Ring In Use; Down and Even",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1C",
+         "EventName": "UNC_C_RING_AK_USED.DOWN_EVEN",
+         "PerPkg": "1",
+@@ -345,6 +384,7 @@
+     },
+     {
+         "BriefDescription": "AK Ring In Use; Down and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1C",
+         "EventName": "UNC_C_RING_AK_USED.DOWN_ODD",
+         "PerPkg": "1",
+@@ -354,6 +394,7 @@
+     },
+     {
+         "BriefDescription": "AK Ring In Use; Up and Even",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1C",
+         "EventName": "UNC_C_RING_AK_USED.UP_EVEN",
+         "PerPkg": "1",
+@@ -363,6 +404,7 @@
+     },
+     {
+         "BriefDescription": "AK Ring In Use; Up and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1C",
+         "EventName": "UNC_C_RING_AK_USED.UP_ODD",
+         "PerPkg": "1",
+@@ -372,6 +414,7 @@
+     },
+     {
+         "BriefDescription": "BL Ring in Use; Down",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1D",
+         "EventName": "UNC_C_RING_BL_USED.ALL",
+         "PerPkg": "1",
+@@ -381,6 +424,7 @@
+     },
+     {
+         "BriefDescription": "BL Ring in Use; Down",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1D",
+         "EventName": "UNC_C_RING_BL_USED.CCW",
+         "PerPkg": "1",
+@@ -390,6 +434,7 @@
+     },
+     {
+         "BriefDescription": "BL Ring in Use; Up",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1D",
+         "EventName": "UNC_C_RING_BL_USED.CW",
+         "PerPkg": "1",
+@@ -399,6 +444,7 @@
+     },
+     {
+         "BriefDescription": "BL Ring in Use; Down and Even",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1D",
+         "EventName": "UNC_C_RING_BL_USED.DOWN_EVEN",
+         "PerPkg": "1",
+@@ -408,6 +454,7 @@
+     },
+     {
+         "BriefDescription": "BL Ring in Use; Down and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1D",
+         "EventName": "UNC_C_RING_BL_USED.DOWN_ODD",
+         "PerPkg": "1",
+@@ -417,6 +464,7 @@
+     },
+     {
+         "BriefDescription": "BL Ring in Use; Up and Even",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1D",
+         "EventName": "UNC_C_RING_BL_USED.UP_EVEN",
+         "PerPkg": "1",
+@@ -426,6 +474,7 @@
+     },
+     {
+         "BriefDescription": "BL Ring in Use; Up and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1D",
+         "EventName": "UNC_C_RING_BL_USED.UP_ODD",
+         "PerPkg": "1",
+@@ -435,6 +484,7 @@
+     },
+     {
+         "BriefDescription": "Number of LLC responses that bounced on the R=
+ing.; AD",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x5",
+         "EventName": "UNC_C_RING_BOUNCES.AD",
+         "PerPkg": "1",
+@@ -443,6 +493,7 @@
+     },
+     {
+         "BriefDescription": "Number of LLC responses that bounced on the R=
+ing.; AK",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x5",
+         "EventName": "UNC_C_RING_BOUNCES.AK",
+         "PerPkg": "1",
+@@ -451,6 +502,7 @@
+     },
+     {
+         "BriefDescription": "Number of LLC responses that bounced on the R=
+ing.; BL",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x5",
+         "EventName": "UNC_C_RING_BOUNCES.BL",
+         "PerPkg": "1",
+@@ -459,6 +511,7 @@
+     },
+     {
+         "BriefDescription": "Number of LLC responses that bounced on the R=
+ing.; Snoops of processor's cache.",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x5",
+         "EventName": "UNC_C_RING_BOUNCES.IV",
+         "PerPkg": "1",
+@@ -467,6 +520,7 @@
+     },
+     {
+         "BriefDescription": "BL Ring in Use; Any",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1E",
+         "EventName": "UNC_C_RING_IV_USED.ANY",
+         "PerPkg": "1",
+@@ -476,6 +530,7 @@
+     },
+     {
+         "BriefDescription": "BL Ring in Use; Any",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1E",
+         "EventName": "UNC_C_RING_IV_USED.DN",
+         "PerPkg": "1",
+@@ -485,6 +540,7 @@
+     },
+     {
+         "BriefDescription": "BL Ring in Use; Down",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1E",
+         "EventName": "UNC_C_RING_IV_USED.DOWN",
+         "PerPkg": "1",
+@@ -494,6 +550,7 @@
+     },
+     {
+         "BriefDescription": "BL Ring in Use; Any",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1E",
+         "EventName": "UNC_C_RING_IV_USED.UP",
+         "PerPkg": "1",
+@@ -503,6 +560,7 @@
+     },
+     {
+         "BriefDescription": "AD",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6",
+         "EventName": "UNC_C_RING_SINK_STARVED.AD",
+         "PerPkg": "1",
+@@ -511,6 +569,7 @@
+     },
+     {
+         "BriefDescription": "AK",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6",
+         "EventName": "UNC_C_RING_SINK_STARVED.AK",
+         "PerPkg": "1",
+@@ -519,6 +578,7 @@
+     },
+     {
+         "BriefDescription": "BL",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6",
+         "EventName": "UNC_C_RING_SINK_STARVED.BL",
+         "PerPkg": "1",
+@@ -527,6 +587,7 @@
+     },
+     {
+         "BriefDescription": "IV",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6",
+         "EventName": "UNC_C_RING_SINK_STARVED.IV",
+         "PerPkg": "1",
+@@ -535,6 +596,7 @@
+     },
+     {
+         "BriefDescription": "Number of cycles the Cbo is actively throttli=
+ng traffic onto the Ring in order to limit bounce traffic.",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x7",
+         "EventName": "UNC_C_RING_SRC_THRTL",
+         "PerPkg": "1",
+@@ -542,6 +604,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Arbiter Blocking Cycles; IRQ",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x12",
+         "EventName": "UNC_C_RxR_EXT_STARVED.IPQ",
+         "PerPkg": "1",
+@@ -551,6 +614,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Arbiter Blocking Cycles; IPQ",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x12",
+         "EventName": "UNC_C_RxR_EXT_STARVED.IRQ",
+         "PerPkg": "1",
+@@ -560,6 +624,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Arbiter Blocking Cycles; ISMQ_BID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x12",
+         "EventName": "UNC_C_RxR_EXT_STARVED.ISMQ_BIDS",
+         "PerPkg": "1",
+@@ -569,6 +634,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Arbiter Blocking Cycles; PRQ",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x12",
+         "EventName": "UNC_C_RxR_EXT_STARVED.PRQ",
+         "PerPkg": "1",
+@@ -578,6 +644,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Allocations; IPQ",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x13",
+         "EventName": "UNC_C_RxR_INSERTS.IPQ",
+         "PerPkg": "1",
+@@ -587,6 +654,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Allocations; IRQ",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x13",
+         "EventName": "UNC_C_RxR_INSERTS.IRQ",
+         "PerPkg": "1",
+@@ -596,6 +664,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Allocations; IRQ Rejected",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x13",
+         "EventName": "UNC_C_RxR_INSERTS.IRQ_REJ",
+         "PerPkg": "1",
+@@ -605,6 +674,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Allocations; PRQ",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x13",
+         "EventName": "UNC_C_RxR_INSERTS.PRQ",
+         "PerPkg": "1",
+@@ -614,6 +684,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Allocations; PRQ",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x13",
+         "EventName": "UNC_C_RxR_INSERTS.PRQ_REJ",
+         "PerPkg": "1",
+@@ -623,6 +694,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Internal Starvation Cycles; IPQ",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x14",
+         "EventName": "UNC_C_RxR_INT_STARVED.IPQ",
+         "PerPkg": "1",
+@@ -632,6 +704,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Internal Starvation Cycles; IRQ",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x14",
+         "EventName": "UNC_C_RxR_INT_STARVED.IRQ",
+         "PerPkg": "1",
+@@ -641,6 +714,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Internal Starvation Cycles; ISMQ",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x14",
+         "EventName": "UNC_C_RxR_INT_STARVED.ISMQ",
+         "PerPkg": "1",
+@@ -650,6 +724,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Internal Starvation Cycles; PRQ",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x14",
+         "EventName": "UNC_C_RxR_INT_STARVED.PRQ",
+         "PerPkg": "1",
+@@ -659,6 +734,7 @@
+     },
+     {
+         "BriefDescription": "Probe Queue Retries; Address Conflict",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x31",
+         "EventName": "UNC_C_RxR_IPQ_RETRY.ADDR_CONFLICT",
+         "PerPkg": "1",
+@@ -668,6 +744,7 @@
+     },
+     {
+         "BriefDescription": "Probe Queue Retries; Any Reject",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x31",
+         "EventName": "UNC_C_RxR_IPQ_RETRY.ANY",
+         "PerPkg": "1",
+@@ -677,6 +754,7 @@
+     },
+     {
+         "BriefDescription": "Probe Queue Retries; No Egress Credits",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x31",
+         "EventName": "UNC_C_RxR_IPQ_RETRY.FULL",
+         "PerPkg": "1",
+@@ -686,6 +764,7 @@
+     },
+     {
+         "BriefDescription": "Probe Queue Retries; No QPI Credits",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x31",
+         "EventName": "UNC_C_RxR_IPQ_RETRY.QPI_CREDITS",
+         "PerPkg": "1",
+@@ -695,6 +774,7 @@
+     },
+     {
+         "BriefDescription": "Probe Queue Retries; No AD Sbo Credits",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x28",
+         "EventName": "UNC_C_RxR_IPQ_RETRY2.AD_SBO",
+         "PerPkg": "1",
+@@ -704,6 +784,7 @@
+     },
+     {
+         "BriefDescription": "Probe Queue Retries; Target Node Filter",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x28",
+         "EventName": "UNC_C_RxR_IPQ_RETRY2.TARGET",
+         "PerPkg": "1",
+@@ -713,6 +794,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Request Queue Rejects; Address Confli=
+ct",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x32",
+         "EventName": "UNC_C_RxR_IRQ_RETRY.ADDR_CONFLICT",
+         "PerPkg": "1",
+@@ -722,6 +804,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Request Queue Rejects; Any Reject",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x32",
+         "EventName": "UNC_C_RxR_IRQ_RETRY.ANY",
+         "PerPkg": "1",
+@@ -731,6 +814,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Request Queue Rejects; No Egress Cred=
+its",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x32",
+         "EventName": "UNC_C_RxR_IRQ_RETRY.FULL",
+         "PerPkg": "1",
+@@ -740,6 +824,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Request Queue Rejects; No IIO Credits=
+",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x32",
+         "EventName": "UNC_C_RxR_IRQ_RETRY.IIO_CREDITS",
+         "PerPkg": "1",
+@@ -749,6 +834,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Request Queue Rejects",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x32",
+         "EventName": "UNC_C_RxR_IRQ_RETRY.NID",
+         "PerPkg": "1",
+@@ -758,6 +844,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Request Queue Rejects; No QPI Credits=
+",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x32",
+         "EventName": "UNC_C_RxR_IRQ_RETRY.QPI_CREDITS",
+         "PerPkg": "1",
+@@ -767,6 +854,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Request Queue Rejects; No RTIDs",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x32",
+         "EventName": "UNC_C_RxR_IRQ_RETRY.RTID",
+         "PerPkg": "1",
+@@ -776,6 +864,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Request Queue Rejects; No AD Sbo Cred=
+its",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x29",
+         "EventName": "UNC_C_RxR_IRQ_RETRY2.AD_SBO",
+         "PerPkg": "1",
+@@ -785,6 +874,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Request Queue Rejects; No BL Sbo Cred=
+its",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x29",
+         "EventName": "UNC_C_RxR_IRQ_RETRY2.BL_SBO",
+         "PerPkg": "1",
+@@ -794,6 +884,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Request Queue Rejects; Target Node Fi=
+lter",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x29",
+         "EventName": "UNC_C_RxR_IRQ_RETRY2.TARGET",
+         "PerPkg": "1",
+@@ -803,6 +894,7 @@
+     },
+     {
+         "BriefDescription": "ISMQ Retries; Any Reject",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x33",
+         "EventName": "UNC_C_RxR_ISMQ_RETRY.ANY",
+         "PerPkg": "1",
+@@ -812,6 +904,7 @@
+     },
+     {
+         "BriefDescription": "ISMQ Retries; No Egress Credits",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x33",
+         "EventName": "UNC_C_RxR_ISMQ_RETRY.FULL",
+         "PerPkg": "1",
+@@ -821,6 +914,7 @@
+     },
+     {
+         "BriefDescription": "ISMQ Retries; No IIO Credits",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x33",
+         "EventName": "UNC_C_RxR_ISMQ_RETRY.IIO_CREDITS",
+         "PerPkg": "1",
+@@ -830,6 +924,7 @@
+     },
+     {
+         "BriefDescription": "ISMQ Retries",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x33",
+         "EventName": "UNC_C_RxR_ISMQ_RETRY.NID",
+         "PerPkg": "1",
+@@ -839,6 +934,7 @@
+     },
+     {
+         "BriefDescription": "ISMQ Retries; No QPI Credits",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x33",
+         "EventName": "UNC_C_RxR_ISMQ_RETRY.QPI_CREDITS",
+         "PerPkg": "1",
+@@ -848,6 +944,7 @@
+     },
+     {
+         "BriefDescription": "ISMQ Retries; No RTIDs",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x33",
+         "EventName": "UNC_C_RxR_ISMQ_RETRY.RTID",
+         "PerPkg": "1",
+@@ -857,6 +954,7 @@
+     },
+     {
+         "BriefDescription": "ISMQ Retries",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x33",
+         "EventName": "UNC_C_RxR_ISMQ_RETRY.WB_CREDITS",
+         "PerPkg": "1",
+@@ -866,6 +964,7 @@
+     },
+     {
+         "BriefDescription": "ISMQ Request Queue Rejects; No AD Sbo Credits=
+",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2A",
+         "EventName": "UNC_C_RxR_ISMQ_RETRY2.AD_SBO",
+         "PerPkg": "1",
+@@ -875,6 +974,7 @@
+     },
+     {
+         "BriefDescription": "ISMQ Request Queue Rejects; No BL Sbo Credits=
+",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2A",
+         "EventName": "UNC_C_RxR_ISMQ_RETRY2.BL_SBO",
+         "PerPkg": "1",
+@@ -884,6 +984,7 @@
+     },
+     {
+         "BriefDescription": "ISMQ Request Queue Rejects; Target Node Filte=
+r",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2A",
+         "EventName": "UNC_C_RxR_ISMQ_RETRY2.TARGET",
+         "PerPkg": "1",
+@@ -893,6 +994,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Occupancy; IPQ",
++        "Counter": "0",
+         "EventCode": "0x11",
+         "EventName": "UNC_C_RxR_OCCUPANCY.IPQ",
+         "PerPkg": "1",
+@@ -902,6 +1004,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Occupancy; IRQ",
++        "Counter": "0",
+         "EventCode": "0x11",
+         "EventName": "UNC_C_RxR_OCCUPANCY.IRQ",
+         "PerPkg": "1",
+@@ -911,6 +1014,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Occupancy; IRQ Rejected",
++        "Counter": "0",
+         "EventCode": "0x11",
+         "EventName": "UNC_C_RxR_OCCUPANCY.IRQ_REJ",
+         "PerPkg": "1",
+@@ -920,6 +1024,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Occupancy; PRQ Rejects",
++        "Counter": "0",
+         "EventCode": "0x11",
+         "EventName": "UNC_C_RxR_OCCUPANCY.PRQ_REJ",
+         "PerPkg": "1",
+@@ -929,6 +1034,7 @@
+     },
+     {
+         "BriefDescription": "SBo Credits Acquired; For AD Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3D",
+         "EventName": "UNC_C_SBO_CREDITS_ACQUIRED.AD",
+         "PerPkg": "1",
+@@ -938,6 +1044,7 @@
+     },
+     {
+         "BriefDescription": "SBo Credits Acquired; For BL Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3D",
+         "EventName": "UNC_C_SBO_CREDITS_ACQUIRED.BL",
+         "PerPkg": "1",
+@@ -947,6 +1054,7 @@
+     },
+     {
+         "BriefDescription": "SBo Credits Occupancy; For AD Ring",
++        "Counter": "0",
+         "EventCode": "0x3E",
+         "EventName": "UNC_C_SBO_CREDIT_OCCUPANCY.AD",
+         "PerPkg": "1",
+@@ -956,6 +1064,7 @@
+     },
+     {
+         "BriefDescription": "SBo Credits Occupancy; For BL Ring",
++        "Counter": "0",
+         "EventCode": "0x3E",
+         "EventName": "UNC_C_SBO_CREDIT_OCCUPANCY.BL",
+         "PerPkg": "1",
+@@ -965,6 +1074,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.ALL",
+         "PerPkg": "1",
+@@ -974,6 +1084,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; Evictions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.EVICTION",
+         "PerPkg": "1",
+@@ -983,6 +1094,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; Local Memory",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.LOCAL",
+         "PerPkg": "1",
+@@ -992,6 +1104,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; Local Memory - Opcode Matched",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.LOCAL_OPCODE",
+         "PerPkg": "1",
+@@ -1001,6 +1114,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; Misses to Local Memory",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.MISS_LOCAL",
+         "PerPkg": "1",
+@@ -1010,6 +1124,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; Misses to Local Memory - Opcode =
+Matched",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.MISS_LOCAL_OPCODE",
+         "PerPkg": "1",
+@@ -1019,6 +1134,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; Miss Opcode Match",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.MISS_OPCODE",
+         "PerPkg": "1",
+@@ -1028,6 +1144,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; Misses to Remote Memory",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.MISS_REMOTE",
+         "PerPkg": "1",
+@@ -1037,6 +1154,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; Misses to Remote Memory - Opcode=
+ Matched",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.MISS_REMOTE_OPCODE",
+         "PerPkg": "1",
+@@ -1046,6 +1164,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; NID Matched",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.NID_ALL",
+         "PerPkg": "1",
+@@ -1055,6 +1174,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; NID Matched Evictions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.NID_EVICTION",
+         "PerPkg": "1",
+@@ -1064,6 +1184,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; NID Matched Miss All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.NID_MISS_ALL",
+         "PerPkg": "1",
+@@ -1073,6 +1194,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; NID and Opcode Matched Miss",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.NID_MISS_OPCODE",
+         "PerPkg": "1",
+@@ -1082,6 +1204,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; NID and Opcode Matched",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.NID_OPCODE",
+         "PerPkg": "1",
+@@ -1091,6 +1214,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; NID Matched Writebacks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.NID_WB",
+         "PerPkg": "1",
+@@ -1100,6 +1224,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; Opcode Match",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.OPCODE",
+         "PerPkg": "1",
+@@ -1109,6 +1234,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; Remote Memory",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.REMOTE",
+         "PerPkg": "1",
+@@ -1118,6 +1244,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; Remote Memory - Opcode Matched",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.REMOTE_OPCODE",
+         "PerPkg": "1",
+@@ -1127,6 +1254,7 @@
+     },
+     {
+         "BriefDescription": "TOR Inserts; Writebacks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_C_TOR_INSERTS.WB",
+         "PerPkg": "1",
+@@ -1136,6 +1264,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; Any",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.ALL",
+         "PerPkg": "1",
+@@ -1145,6 +1274,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; Evictions",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.EVICTION",
+         "PerPkg": "1",
+@@ -1154,6 +1284,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.LOCAL",
+         "PerPkg": "1",
+@@ -1163,6 +1294,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; Local Memory - Opcode Matched"=
+,
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.LOCAL_OPCODE",
+         "PerPkg": "1",
+@@ -1172,6 +1304,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; Miss All",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.MISS_ALL",
+         "PerPkg": "1",
+@@ -1181,6 +1314,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.MISS_LOCAL",
+         "PerPkg": "1",
+@@ -1190,6 +1324,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; Misses to Local Memory - Opcod=
+e Matched",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.MISS_LOCAL_OPCODE",
+         "PerPkg": "1",
+@@ -1199,6 +1334,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; Miss Opcode Match",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.MISS_OPCODE",
+         "PerPkg": "1",
+@@ -1208,6 +1344,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.MISS_REMOTE",
+         "PerPkg": "1",
+@@ -1217,6 +1354,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; Misses to Remote Memory - Opco=
+de Matched",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.MISS_REMOTE_OPCODE",
+         "PerPkg": "1",
+@@ -1226,6 +1364,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; NID Matched",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.NID_ALL",
+         "PerPkg": "1",
+@@ -1235,6 +1374,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; NID Matched Evictions",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.NID_EVICTION",
+         "PerPkg": "1",
+@@ -1244,6 +1384,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; NID Matched",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.NID_MISS_ALL",
+         "PerPkg": "1",
+@@ -1253,6 +1394,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; NID and Opcode Matched Miss",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.NID_MISS_OPCODE",
+         "PerPkg": "1",
+@@ -1262,6 +1404,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; NID and Opcode Matched",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.NID_OPCODE",
+         "PerPkg": "1",
+@@ -1271,6 +1414,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; NID Matched Writebacks",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.NID_WB",
+         "PerPkg": "1",
+@@ -1280,6 +1424,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; Opcode Match",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.OPCODE",
+         "PerPkg": "1",
+@@ -1289,6 +1434,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.REMOTE",
+         "PerPkg": "1",
+@@ -1298,6 +1444,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; Remote Memory - Opcode Matched=
+",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.REMOTE_OPCODE",
+         "PerPkg": "1",
+@@ -1307,6 +1454,7 @@
+     },
+     {
+         "BriefDescription": "TOR Occupancy; Writebacks",
++        "Counter": "0",
+         "EventCode": "0x36",
+         "EventName": "UNC_C_TOR_OCCUPANCY.WB",
+         "PerPkg": "1",
+@@ -1316,6 +1464,7 @@
+     },
+     {
+         "BriefDescription": "Onto AD Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_C_TxR_ADS_USED.AD",
+         "PerPkg": "1",
+@@ -1324,6 +1473,7 @@
+     },
+     {
+         "BriefDescription": "Onto AK Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_C_TxR_ADS_USED.AK",
+         "PerPkg": "1",
+@@ -1332,6 +1482,7 @@
+     },
+     {
+         "BriefDescription": "Onto BL Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_C_TxR_ADS_USED.BL",
+         "PerPkg": "1",
+@@ -1340,6 +1491,7 @@
+     },
+     {
+         "BriefDescription": "Egress Allocations; AD - Cachebo",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_C_TxR_INSERTS.AD_CACHE",
+         "PerPkg": "1",
+@@ -1349,6 +1501,7 @@
+     },
+     {
+         "BriefDescription": "Egress Allocations; AD - Corebo",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_C_TxR_INSERTS.AD_CORE",
+         "PerPkg": "1",
+@@ -1358,6 +1511,7 @@
+     },
+     {
+         "BriefDescription": "Egress Allocations; AK - Cachebo",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_C_TxR_INSERTS.AK_CACHE",
+         "PerPkg": "1",
+@@ -1367,6 +1521,7 @@
+     },
+     {
+         "BriefDescription": "Egress Allocations; AK - Corebo",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_C_TxR_INSERTS.AK_CORE",
+         "PerPkg": "1",
+@@ -1376,6 +1531,7 @@
+     },
+     {
+         "BriefDescription": "Egress Allocations; BL - Cacheno",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_C_TxR_INSERTS.BL_CACHE",
+         "PerPkg": "1",
+@@ -1385,6 +1541,7 @@
+     },
+     {
+         "BriefDescription": "Egress Allocations; BL - Corebo",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_C_TxR_INSERTS.BL_CORE",
+         "PerPkg": "1",
+@@ -1394,6 +1551,7 @@
+     },
+     {
+         "BriefDescription": "Egress Allocations; IV - Cachebo",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_C_TxR_INSERTS.IV_CACHE",
+         "PerPkg": "1",
+@@ -1403,6 +1561,7 @@
+     },
+     {
+         "BriefDescription": "Injection Starvation; Onto AD Ring (to core)"=
+,
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3",
+         "EventName": "UNC_C_TxR_STARVED.AD_CORE",
+         "PerPkg": "1",
+@@ -1412,6 +1571,7 @@
+     },
+     {
+         "BriefDescription": "Injection Starvation; Onto AK Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3",
+         "EventName": "UNC_C_TxR_STARVED.AK_BOTH",
+         "PerPkg": "1",
+@@ -1421,6 +1581,7 @@
+     },
+     {
+         "BriefDescription": "Injection Starvation; Onto BL Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3",
+         "EventName": "UNC_C_TxR_STARVED.BL_BOTH",
+         "PerPkg": "1",
+@@ -1430,6 +1591,7 @@
+     },
+     {
+         "BriefDescription": "Injection Starvation; Onto IV Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3",
+         "EventName": "UNC_C_TxR_STARVED.IV",
+         "PerPkg": "1",
+@@ -1439,6 +1601,7 @@
+     },
+     {
+         "BriefDescription": "BT Cycles Not Empty",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x42",
+         "EventName": "UNC_H_BT_CYCLES_NE",
+         "PerPkg": "1",
+@@ -1447,6 +1610,7 @@
+     },
+     {
+         "BriefDescription": "BT to HT Not Issued; Incoming Data Hazard",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x51",
+         "EventName": "UNC_H_BT_TO_HT_NOT_ISSUED.INCOMING_BL_HAZARD",
+         "PerPkg": "1",
+@@ -1456,6 +1620,7 @@
+     },
+     {
+         "BriefDescription": "BT to HT Not Issued; Incoming Snoop Hazard",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x51",
+         "EventName": "UNC_H_BT_TO_HT_NOT_ISSUED.INCOMING_SNP_HAZARD",
+         "PerPkg": "1",
+@@ -1465,6 +1630,7 @@
+     },
+     {
+         "BriefDescription": "BT to HT Not Issued; Incoming Data Hazard",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x51",
+         "EventName": "UNC_H_BT_TO_HT_NOT_ISSUED.RSPACKCFLT_HAZARD",
+         "PerPkg": "1",
+@@ -1474,6 +1640,7 @@
+     },
+     {
+         "BriefDescription": "BT to HT Not Issued; Incoming Data Hazard",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x51",
+         "EventName": "UNC_H_BT_TO_HT_NOT_ISSUED.WBMDATA_HAZARD",
+         "PerPkg": "1",
+@@ -1483,6 +1650,7 @@
+     },
+     {
+         "BriefDescription": "HA to iMC Bypass; Not Taken",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x14",
+         "EventName": "UNC_H_BYPASS_IMC.NOT_TAKEN",
+         "PerPkg": "1",
+@@ -1492,6 +1660,7 @@
+     },
+     {
+         "BriefDescription": "HA to iMC Bypass; Taken",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x14",
+         "EventName": "UNC_H_BYPASS_IMC.TAKEN",
+         "PerPkg": "1",
+@@ -1501,6 +1670,7 @@
+     },
+     {
+         "BriefDescription": "uclks",
++        "Counter": "0,1,2,3",
+         "EventName": "UNC_H_CLOCKTICKS",
+         "PerPkg": "1",
+         "PublicDescription": "Counts the number of uclks in the HA.  This =
+will be slightly different than the count in the Ubox because of enable/fre=
+eze delays.  The HA is on the other side of the die from the fixed Ubox ucl=
+k counter, so the drift could be somewhat larger than in units that are clo=
+ser like the QPI Agent.",
+@@ -1508,6 +1678,7 @@
+     },
+     {
+         "BriefDescription": "Direct2Core Messages Sent",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x11",
+         "EventName": "UNC_H_DIRECT2CORE_COUNT",
+         "PerPkg": "1",
+@@ -1516,6 +1687,7 @@
+     },
+     {
+         "BriefDescription": "Cycles when Direct2Core was Disabled",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x12",
+         "EventName": "UNC_H_DIRECT2CORE_CYCLES_DISABLED",
+         "PerPkg": "1",
+@@ -1524,6 +1696,7 @@
+     },
+     {
+         "BriefDescription": "Number of Reads that had Direct2Core Overridd=
+en",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x13",
+         "EventName": "UNC_H_DIRECT2CORE_TXN_OVERRIDE",
+         "PerPkg": "1",
+@@ -1532,6 +1705,7 @@
+     },
+     {
+         "BriefDescription": "Directory Lat Opt Return",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x41",
+         "EventName": "UNC_H_DIRECTORY_LAT_OPT",
+         "PerPkg": "1",
+@@ -1540,6 +1714,7 @@
+     },
+     {
+         "BriefDescription": "Directory Lookups; Snoop Not Needed",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xC",
+         "EventName": "UNC_H_DIRECTORY_LOOKUP.NO_SNP",
+         "PerPkg": "1",
+@@ -1549,6 +1724,7 @@
+     },
+     {
+         "BriefDescription": "Directory Lookups; Snoop Needed",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xC",
+         "EventName": "UNC_H_DIRECTORY_LOOKUP.SNP",
+         "PerPkg": "1",
+@@ -1558,6 +1734,7 @@
+     },
+     {
+         "BriefDescription": "Directory Updates; Any Directory Update",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xD",
+         "EventName": "UNC_H_DIRECTORY_UPDATE.ANY",
+         "PerPkg": "1",
+@@ -1567,6 +1744,7 @@
+     },
+     {
+         "BriefDescription": "Directory Updates; Directory Clear",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xD",
+         "EventName": "UNC_H_DIRECTORY_UPDATE.CLEAR",
+         "PerPkg": "1",
+@@ -1576,6 +1754,7 @@
+     },
+     {
+         "BriefDescription": "Directory Updates; Directory Set",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xD",
+         "EventName": "UNC_H_DIRECTORY_UPDATE.SET",
+         "PerPkg": "1",
+@@ -1585,6 +1764,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; op is A=
+ckCnfltWbI",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.ACKCNFLTWBI",
+         "PerPkg": "1",
+@@ -1593,6 +1773,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; All Req=
+uests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.ALL",
+         "PerPkg": "1",
+@@ -1601,6 +1782,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; Allocat=
+ions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.ALLOCS",
+         "PerPkg": "1",
+@@ -1609,6 +1791,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; Allocat=
+ions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.EVICTS",
+         "PerPkg": "1",
+@@ -1617,6 +1800,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; HOM Req=
+uests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.HOM",
+         "PerPkg": "1",
+@@ -1625,6 +1809,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; Invalid=
+ations",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.INVALS",
+         "PerPkg": "1",
+@@ -1633,6 +1818,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; op is R=
+dCode, RdData, RdDataMigratory, RdInvOwn, RdCur or InvItoE",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.READ_OR_INVITOE",
+         "PerPkg": "1",
+@@ -1641,6 +1827,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; op is R=
+spI, RspIWb, RspS, RspSWb, RspCnflt or RspCnfltWbI",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.RSP",
+         "PerPkg": "1",
+@@ -1649,6 +1836,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; op is R=
+spIFwd or RspIFwdWb for a local request",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.RSPFWDI_LOCAL",
+         "PerPkg": "1",
+@@ -1657,6 +1845,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; op is R=
+spIFwd or RspIFwdWb for a remote request",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.RSPFWDI_REMOTE",
+         "PerPkg": "1",
+@@ -1665,6 +1854,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; op is R=
+sSFwd or RspSFwdWb",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.RSPFWDS",
+         "PerPkg": "1",
+@@ -1673,6 +1863,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; op is W=
+bMtoE or WbMtoS",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.WBMTOE_OR_S",
+         "PerPkg": "1",
+@@ -1681,6 +1872,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of Hits in HitMe Cache; op is W=
+bMtoI",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_H_HITME_HIT.WBMTOI",
+         "PerPkg": "1",
+@@ -1689,6 +1881,7 @@
+     },
+     {
+         "BriefDescription": "Accumulates Number of PV bits set on HitMe Ca=
+che Hits; op is AckCnfltWbI",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x72",
+         "EventName": "UNC_H_HITME_HIT_PV_BITS_SET.ACKCNFLTWBI",
+         "PerPkg": "1",
+@@ -1697,6 +1890,7 @@
+     },
+     {
+         "BriefDescription": "Accumulates Number of PV bits set on HitMe Ca=
+che Hits; All Requests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x72",
+         "EventName": "UNC_H_HITME_HIT_PV_BITS_SET.ALL",
+         "PerPkg": "1",
+@@ -1705,6 +1899,7 @@
+     },
+     {
+         "BriefDescription": "Accumulates Number of PV bits set on HitMe Ca=
+che Hits; HOM Requests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x72",
+         "EventName": "UNC_H_HITME_HIT_PV_BITS_SET.HOM",
+         "PerPkg": "1",
+@@ -1713,6 +1908,7 @@
+     },
+     {
+         "BriefDescription": "Accumulates Number of PV bits set on HitMe Ca=
+che Hits; op is RdCode, RdData, RdDataMigratory, RdInvOwn, RdCur or InvItoE=
+",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x72",
+         "EventName": "UNC_H_HITME_HIT_PV_BITS_SET.READ_OR_INVITOE",
+         "PerPkg": "1",
+@@ -1721,6 +1917,7 @@
+     },
+     {
+         "BriefDescription": "Accumulates Number of PV bits set on HitMe Ca=
+che Hits; op is RspI, RspIWb, RspS, RspSWb, RspCnflt or RspCnfltWbI",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x72",
+         "EventName": "UNC_H_HITME_HIT_PV_BITS_SET.RSP",
+         "PerPkg": "1",
+@@ -1729,6 +1926,7 @@
+     },
+     {
+         "BriefDescription": "Accumulates Number of PV bits set on HitMe Ca=
+che Hits; op is RspIFwd or RspIFwdWb for a local request",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x72",
+         "EventName": "UNC_H_HITME_HIT_PV_BITS_SET.RSPFWDI_LOCAL",
+         "PerPkg": "1",
+@@ -1737,6 +1935,7 @@
+     },
+     {
+         "BriefDescription": "Accumulates Number of PV bits set on HitMe Ca=
+che Hits; op is RspIFwd or RspIFwdWb for a remote request",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x72",
+         "EventName": "UNC_H_HITME_HIT_PV_BITS_SET.RSPFWDI_REMOTE",
+         "PerPkg": "1",
+@@ -1745,6 +1944,7 @@
+     },
+     {
+         "BriefDescription": "Accumulates Number of PV bits set on HitMe Ca=
+che Hits; op is RsSFwd or RspSFwdWb",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x72",
+         "EventName": "UNC_H_HITME_HIT_PV_BITS_SET.RSPFWDS",
+         "PerPkg": "1",
+@@ -1753,6 +1953,7 @@
+     },
+     {
+         "BriefDescription": "Accumulates Number of PV bits set on HitMe Ca=
+che Hits; op is WbMtoE or WbMtoS",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x72",
+         "EventName": "UNC_H_HITME_HIT_PV_BITS_SET.WBMTOE_OR_S",
+         "PerPkg": "1",
+@@ -1761,6 +1962,7 @@
+     },
+     {
+         "BriefDescription": "Accumulates Number of PV bits set on HitMe Ca=
+che Hits; op is WbMtoI",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x72",
+         "EventName": "UNC_H_HITME_HIT_PV_BITS_SET.WBMTOI",
+         "PerPkg": "1",
+@@ -1769,6 +1971,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of times HitMe Cache is accesse=
+d; op is AckCnfltWbI",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_H_HITME_LOOKUP.ACKCNFLTWBI",
+         "PerPkg": "1",
+@@ -1777,6 +1980,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of times HitMe Cache is accesse=
+d; All Requests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_H_HITME_LOOKUP.ALL",
+         "PerPkg": "1",
+@@ -1785,6 +1989,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of times HitMe Cache is accesse=
+d; Allocations",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_H_HITME_LOOKUP.ALLOCS",
+         "PerPkg": "1",
+@@ -1793,6 +1998,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of times HitMe Cache is accesse=
+d; HOM Requests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_H_HITME_LOOKUP.HOM",
+         "PerPkg": "1",
+@@ -1801,6 +2007,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of times HitMe Cache is accesse=
+d; Invalidations",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_H_HITME_LOOKUP.INVALS",
+         "PerPkg": "1",
+@@ -1809,6 +2016,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of times HitMe Cache is accesse=
+d; op is RdCode, RdData, RdDataMigratory, RdInvOwn, RdCur or InvItoE",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_H_HITME_LOOKUP.READ_OR_INVITOE",
+         "PerPkg": "1",
+@@ -1817,6 +2025,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of times HitMe Cache is accesse=
+d; op is RspI, RspIWb, RspS, RspSWb, RspCnflt or RspCnfltWbI",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_H_HITME_LOOKUP.RSP",
+         "PerPkg": "1",
+@@ -1825,6 +2034,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of times HitMe Cache is accesse=
+d; op is RspIFwd or RspIFwdWb for a local request",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_H_HITME_LOOKUP.RSPFWDI_LOCAL",
+         "PerPkg": "1",
+@@ -1833,6 +2043,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of times HitMe Cache is accesse=
+d; op is RspIFwd or RspIFwdWb for a remote request",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_H_HITME_LOOKUP.RSPFWDI_REMOTE",
+         "PerPkg": "1",
+@@ -1841,6 +2052,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of times HitMe Cache is accesse=
+d; op is RsSFwd or RspSFwdWb",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_H_HITME_LOOKUP.RSPFWDS",
+         "PerPkg": "1",
+@@ -1849,6 +2061,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of times HitMe Cache is accesse=
+d; op is WbMtoE or WbMtoS",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_H_HITME_LOOKUP.WBMTOE_OR_S",
+         "PerPkg": "1",
+@@ -1857,6 +2070,7 @@
+     },
+     {
+         "BriefDescription": "Counts Number of times HitMe Cache is accesse=
+d; op is WbMtoI",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_H_HITME_LOOKUP.WBMTOI",
+         "PerPkg": "1",
+@@ -1865,6 +2079,7 @@
+     },
+     {
+         "BriefDescription": "Cycles without QPI Ingress Credits; AD to QPI=
+ Link 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x22",
+         "EventName": "UNC_H_IGR_NO_CREDIT_CYCLES.AD_QPI0",
+         "PerPkg": "1",
+@@ -1874,6 +2089,7 @@
+     },
+     {
+         "BriefDescription": "Cycles without QPI Ingress Credits; AD to QPI=
+ Link 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x22",
+         "EventName": "UNC_H_IGR_NO_CREDIT_CYCLES.AD_QPI1",
+         "PerPkg": "1",
+@@ -1883,6 +2099,7 @@
+     },
+     {
+         "BriefDescription": "Cycles without QPI Ingress Credits; BL to QPI=
+ Link 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x22",
+         "EventName": "UNC_H_IGR_NO_CREDIT_CYCLES.AD_QPI2",
+         "PerPkg": "1",
+@@ -1892,6 +2109,7 @@
+     },
+     {
+         "BriefDescription": "Cycles without QPI Ingress Credits; BL to QPI=
+ Link 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x22",
+         "EventName": "UNC_H_IGR_NO_CREDIT_CYCLES.BL_QPI0",
+         "PerPkg": "1",
+@@ -1901,6 +2119,7 @@
+     },
+     {
+         "BriefDescription": "Cycles without QPI Ingress Credits; BL to QPI=
+ Link 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x22",
+         "EventName": "UNC_H_IGR_NO_CREDIT_CYCLES.BL_QPI1",
+         "PerPkg": "1",
+@@ -1910,6 +2129,7 @@
+     },
+     {
+         "BriefDescription": "Cycles without QPI Ingress Credits; BL to QPI=
+ Link 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x22",
+         "EventName": "UNC_H_IGR_NO_CREDIT_CYCLES.BL_QPI2",
+         "PerPkg": "1",
+@@ -1919,6 +2139,7 @@
+     },
+     {
+         "BriefDescription": "HA to iMC Normal Priority Reads Issued; Norma=
+l Priority",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x17",
+         "EventName": "UNC_H_IMC_READS.NORMAL",
+         "PerPkg": "1",
+@@ -1928,6 +2149,7 @@
+     },
+     {
+         "BriefDescription": "Retry Events",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1E",
+         "EventName": "UNC_H_IMC_RETRY",
+         "PerPkg": "1",
+@@ -1935,6 +2157,7 @@
+     },
+     {
+         "BriefDescription": "HA to iMC Full Line Writes Issued; All Writes=
+",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1A",
+         "EventName": "UNC_H_IMC_WRITES.ALL",
+         "PerPkg": "1",
+@@ -1944,6 +2167,7 @@
+     },
+     {
+         "BriefDescription": "HA to iMC Full Line Writes Issued; Full Line =
+Non-ISOCH",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1A",
+         "EventName": "UNC_H_IMC_WRITES.FULL",
+         "PerPkg": "1",
+@@ -1953,6 +2177,7 @@
+     },
+     {
+         "BriefDescription": "HA to iMC Full Line Writes Issued; ISOCH Full=
+ Line",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1A",
+         "EventName": "UNC_H_IMC_WRITES.FULL_ISOCH",
+         "PerPkg": "1",
+@@ -1962,6 +2187,7 @@
+     },
+     {
+         "BriefDescription": "HA to iMC Full Line Writes Issued; Partial No=
+n-ISOCH",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1A",
+         "EventName": "UNC_H_IMC_WRITES.PARTIAL",
+         "PerPkg": "1",
+@@ -1971,6 +2197,7 @@
+     },
+     {
+         "BriefDescription": "HA to iMC Full Line Writes Issued; ISOCH Part=
+ial",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1A",
+         "EventName": "UNC_H_IMC_WRITES.PARTIAL_ISOCH",
+         "PerPkg": "1",
+@@ -1980,6 +2207,7 @@
+     },
+     {
+         "BriefDescription": "IOT Backpressure",
++        "Counter": "0,1,2",
+         "EventCode": "0x61",
+         "EventName": "UNC_H_IOT_BACKPRESSURE.HUB",
+         "PerPkg": "1",
+@@ -1988,6 +2216,7 @@
+     },
+     {
+         "BriefDescription": "IOT Backpressure",
++        "Counter": "0,1,2",
+         "EventCode": "0x61",
+         "EventName": "UNC_H_IOT_BACKPRESSURE.SAT",
+         "PerPkg": "1",
+@@ -1996,6 +2225,7 @@
+     },
+     {
+         "BriefDescription": "IOT Common Trigger Sequencer - Lo",
++        "Counter": "0,1,2",
+         "EventCode": "0x64",
+         "EventName": "UNC_H_IOT_CTS_EAST_LO.CTS0",
+         "PerPkg": "1",
+@@ -2005,6 +2235,7 @@
+     },
+     {
+         "BriefDescription": "IOT Common Trigger Sequencer - Lo",
++        "Counter": "0,1,2",
+         "EventCode": "0x64",
+         "EventName": "UNC_H_IOT_CTS_EAST_LO.CTS1",
+         "PerPkg": "1",
+@@ -2014,6 +2245,7 @@
+     },
+     {
+         "BriefDescription": "IOT Common Trigger Sequencer - Hi",
++        "Counter": "0,1,2",
+         "EventCode": "0x65",
+         "EventName": "UNC_H_IOT_CTS_HI.CTS2",
+         "PerPkg": "1",
+@@ -2023,6 +2255,7 @@
+     },
+     {
+         "BriefDescription": "IOT Common Trigger Sequencer - Hi",
++        "Counter": "0,1,2",
+         "EventCode": "0x65",
+         "EventName": "UNC_H_IOT_CTS_HI.CTS3",
+         "PerPkg": "1",
+@@ -2032,6 +2265,7 @@
+     },
+     {
+         "BriefDescription": "IOT Common Trigger Sequencer - Lo",
++        "Counter": "0,1,2",
+         "EventCode": "0x62",
+         "EventName": "UNC_H_IOT_CTS_WEST_LO.CTS0",
+         "PerPkg": "1",
+@@ -2041,6 +2275,7 @@
+     },
+     {
+         "BriefDescription": "IOT Common Trigger Sequencer - Lo",
++        "Counter": "0,1,2",
+         "EventCode": "0x62",
+         "EventName": "UNC_H_IOT_CTS_WEST_LO.CTS1",
+         "PerPkg": "1",
+@@ -2050,6 +2285,7 @@
+     },
+     {
+         "BriefDescription": "OSB Snoop Broadcast; Cancelled",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x53",
+         "EventName": "UNC_H_OSB.CANCELLED",
+         "PerPkg": "1",
+@@ -2059,6 +2295,7 @@
+     },
+     {
+         "BriefDescription": "OSB Snoop Broadcast; Local InvItoE",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x53",
+         "EventName": "UNC_H_OSB.INVITOE_LOCAL",
+         "PerPkg": "1",
+@@ -2068,6 +2305,7 @@
+     },
+     {
+         "BriefDescription": "OSB Snoop Broadcast; Local Reads",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x53",
+         "EventName": "UNC_H_OSB.READS_LOCAL",
+         "PerPkg": "1",
+@@ -2077,6 +2315,7 @@
+     },
+     {
+         "BriefDescription": "OSB Snoop Broadcast; Reads Local -  Useful",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x53",
+         "EventName": "UNC_H_OSB.READS_LOCAL_USEFUL",
+         "PerPkg": "1",
+@@ -2086,6 +2325,7 @@
+     },
+     {
+         "BriefDescription": "OSB Snoop Broadcast; Remote",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x53",
+         "EventName": "UNC_H_OSB.REMOTE",
+         "PerPkg": "1",
+@@ -2095,6 +2335,7 @@
+     },
+     {
+         "BriefDescription": "OSB Snoop Broadcast; Remote - Useful",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x53",
+         "EventName": "UNC_H_OSB.REMOTE_USEFUL",
+         "PerPkg": "1",
+@@ -2104,6 +2345,7 @@
+     },
+     {
+         "BriefDescription": "OSB Early Data Return; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x54",
+         "EventName": "UNC_H_OSB_EDR.ALL",
+         "PerPkg": "1",
+@@ -2113,6 +2355,7 @@
+     },
+     {
+         "BriefDescription": "OSB Early Data Return; Reads to Local  I",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x54",
+         "EventName": "UNC_H_OSB_EDR.READS_LOCAL_I",
+         "PerPkg": "1",
+@@ -2122,6 +2365,7 @@
+     },
+     {
+         "BriefDescription": "OSB Early Data Return; Reads to Local S",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x54",
+         "EventName": "UNC_H_OSB_EDR.READS_LOCAL_S",
+         "PerPkg": "1",
+@@ -2131,6 +2375,7 @@
+     },
+     {
+         "BriefDescription": "OSB Early Data Return; Reads to Remote I",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x54",
+         "EventName": "UNC_H_OSB_EDR.READS_REMOTE_I",
+         "PerPkg": "1",
+@@ -2140,6 +2385,7 @@
+     },
+     {
+         "BriefDescription": "OSB Early Data Return; Reads to Remote S",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x54",
+         "EventName": "UNC_H_OSB_EDR.READS_REMOTE_S",
+         "PerPkg": "1",
+@@ -2149,6 +2395,7 @@
+     },
+     {
+         "BriefDescription": "Read and Write Requests; Local InvItoEs",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1",
+         "EventName": "UNC_H_REQUESTS.INVITOE_LOCAL",
+         "PerPkg": "1",
+@@ -2158,6 +2405,7 @@
+     },
+     {
+         "BriefDescription": "Read and Write Requests; Remote InvItoEs",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1",
+         "EventName": "UNC_H_REQUESTS.INVITOE_REMOTE",
+         "PerPkg": "1",
+@@ -2167,6 +2415,7 @@
+     },
+     {
+         "BriefDescription": "Read and Write Requests; Reads",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1",
+         "EventName": "UNC_H_REQUESTS.READS",
+         "PerPkg": "1",
+@@ -2176,6 +2425,7 @@
+     },
+     {
+         "BriefDescription": "Read and Write Requests; Local Reads",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1",
+         "EventName": "UNC_H_REQUESTS.READS_LOCAL",
+         "PerPkg": "1",
+@@ -2185,6 +2435,7 @@
+     },
+     {
+         "BriefDescription": "Read and Write Requests; Remote Reads",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1",
+         "EventName": "UNC_H_REQUESTS.READS_REMOTE",
+         "PerPkg": "1",
+@@ -2194,6 +2445,7 @@
+     },
+     {
+         "BriefDescription": "Read and Write Requests; Writes",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1",
+         "EventName": "UNC_H_REQUESTS.WRITES",
+         "PerPkg": "1",
+@@ -2203,6 +2455,7 @@
+     },
+     {
+         "BriefDescription": "Read and Write Requests; Local Writes",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1",
+         "EventName": "UNC_H_REQUESTS.WRITES_LOCAL",
+         "PerPkg": "1",
+@@ -2212,6 +2465,7 @@
+     },
+     {
+         "BriefDescription": "Read and Write Requests; Remote Writes",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1",
+         "EventName": "UNC_H_REQUESTS.WRITES_REMOTE",
+         "PerPkg": "1",
+@@ -2221,6 +2475,7 @@
+     },
+     {
+         "BriefDescription": "HA AD Ring in Use; Counterclockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3E",
+         "EventName": "UNC_H_RING_AD_USED.CCW",
+         "PerPkg": "1",
+@@ -2230,6 +2485,7 @@
+     },
+     {
+         "BriefDescription": "HA AD Ring in Use; Counterclockwise and Even"=
+,
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3E",
+         "EventName": "UNC_H_RING_AD_USED.CCW_EVEN",
+         "PerPkg": "1",
+@@ -2239,6 +2495,7 @@
+     },
+     {
+         "BriefDescription": "HA AD Ring in Use; Counterclockwise and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3E",
+         "EventName": "UNC_H_RING_AD_USED.CCW_ODD",
+         "PerPkg": "1",
+@@ -2248,6 +2505,7 @@
+     },
+     {
+         "BriefDescription": "HA AD Ring in Use; Clockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3E",
+         "EventName": "UNC_H_RING_AD_USED.CW",
+         "PerPkg": "1",
+@@ -2257,6 +2515,7 @@
+     },
+     {
+         "BriefDescription": "HA AD Ring in Use; Clockwise and Even",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3E",
+         "EventName": "UNC_H_RING_AD_USED.CW_EVEN",
+         "PerPkg": "1",
+@@ -2266,6 +2525,7 @@
+     },
+     {
+         "BriefDescription": "HA AD Ring in Use; Clockwise and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3E",
+         "EventName": "UNC_H_RING_AD_USED.CW_ODD",
+         "PerPkg": "1",
+@@ -2275,6 +2535,7 @@
+     },
+     {
+         "BriefDescription": "HA AK Ring in Use; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3F",
+         "EventName": "UNC_H_RING_AK_USED.ALL",
+         "PerPkg": "1",
+@@ -2284,6 +2545,7 @@
+     },
+     {
+         "BriefDescription": "HA AK Ring in Use; Counterclockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3F",
+         "EventName": "UNC_H_RING_AK_USED.CCW",
+         "PerPkg": "1",
+@@ -2293,6 +2555,7 @@
+     },
+     {
+         "BriefDescription": "HA AK Ring in Use; Counterclockwise and Even"=
+,
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3F",
+         "EventName": "UNC_H_RING_AK_USED.CCW_EVEN",
+         "PerPkg": "1",
+@@ -2302,6 +2565,7 @@
+     },
+     {
+         "BriefDescription": "HA AK Ring in Use; Counterclockwise and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3F",
+         "EventName": "UNC_H_RING_AK_USED.CCW_ODD",
+         "PerPkg": "1",
+@@ -2311,6 +2575,7 @@
+     },
+     {
+         "BriefDescription": "HA AK Ring in Use; Clockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3F",
+         "EventName": "UNC_H_RING_AK_USED.CW",
+         "PerPkg": "1",
+@@ -2320,6 +2585,7 @@
+     },
+     {
+         "BriefDescription": "HA AK Ring in Use; Clockwise and Even",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3F",
+         "EventName": "UNC_H_RING_AK_USED.CW_EVEN",
+         "PerPkg": "1",
+@@ -2329,6 +2595,7 @@
+     },
+     {
+         "BriefDescription": "HA AK Ring in Use; Clockwise and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3F",
+         "EventName": "UNC_H_RING_AK_USED.CW_ODD",
+         "PerPkg": "1",
+@@ -2338,6 +2605,7 @@
+     },
+     {
+         "BriefDescription": "HA BL Ring in Use; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x40",
+         "EventName": "UNC_H_RING_BL_USED.ALL",
+         "PerPkg": "1",
+@@ -2347,6 +2615,7 @@
+     },
+     {
+         "BriefDescription": "HA BL Ring in Use; Counterclockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x40",
+         "EventName": "UNC_H_RING_BL_USED.CCW",
+         "PerPkg": "1",
+@@ -2356,6 +2625,7 @@
+     },
+     {
+         "BriefDescription": "HA BL Ring in Use; Counterclockwise and Even"=
+,
++        "Counter": "0,1,2,3",
+         "EventCode": "0x40",
+         "EventName": "UNC_H_RING_BL_USED.CCW_EVEN",
+         "PerPkg": "1",
+@@ -2365,6 +2635,7 @@
+     },
+     {
+         "BriefDescription": "HA BL Ring in Use; Counterclockwise and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x40",
+         "EventName": "UNC_H_RING_BL_USED.CCW_ODD",
+         "PerPkg": "1",
+@@ -2374,6 +2645,7 @@
+     },
+     {
+         "BriefDescription": "HA BL Ring in Use; Clockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x40",
+         "EventName": "UNC_H_RING_BL_USED.CW",
+         "PerPkg": "1",
+@@ -2383,6 +2655,7 @@
+     },
+     {
+         "BriefDescription": "HA BL Ring in Use; Clockwise and Even",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x40",
+         "EventName": "UNC_H_RING_BL_USED.CW_EVEN",
+         "PerPkg": "1",
+@@ -2392,6 +2665,7 @@
+     },
+     {
+         "BriefDescription": "HA BL Ring in Use; Clockwise and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x40",
+         "EventName": "UNC_H_RING_BL_USED.CW_ODD",
+         "PerPkg": "1",
+@@ -2401,6 +2675,7 @@
+     },
+     {
+         "BriefDescription": "iMC RPQ Credits Empty - Regular; Channel 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x15",
+         "EventName": "UNC_H_RPQ_CYCLES_NO_REG_CREDITS.CHN0",
+         "PerPkg": "1",
+@@ -2410,6 +2685,7 @@
+     },
+     {
+         "BriefDescription": "iMC RPQ Credits Empty - Regular; Channel 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x15",
+         "EventName": "UNC_H_RPQ_CYCLES_NO_REG_CREDITS.CHN1",
+         "PerPkg": "1",
+@@ -2419,6 +2695,7 @@
+     },
+     {
+         "BriefDescription": "iMC RPQ Credits Empty - Regular; Channel 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x15",
+         "EventName": "UNC_H_RPQ_CYCLES_NO_REG_CREDITS.CHN2",
+         "PerPkg": "1",
+@@ -2428,6 +2705,7 @@
+     },
+     {
+         "BriefDescription": "iMC RPQ Credits Empty - Regular; Channel 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x15",
+         "EventName": "UNC_H_RPQ_CYCLES_NO_REG_CREDITS.CHN3",
+         "PerPkg": "1",
+@@ -2437,6 +2715,7 @@
+     },
+     {
+         "BriefDescription": "iMC RPQ Credits Empty - Special; Channel 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x16",
+         "EventName": "UNC_H_RPQ_CYCLES_NO_SPEC_CREDITS.CHN0",
+         "PerPkg": "1",
+@@ -2446,6 +2725,7 @@
+     },
+     {
+         "BriefDescription": "iMC RPQ Credits Empty - Special; Channel 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x16",
+         "EventName": "UNC_H_RPQ_CYCLES_NO_SPEC_CREDITS.CHN1",
+         "PerPkg": "1",
+@@ -2455,6 +2735,7 @@
+     },
+     {
+         "BriefDescription": "iMC RPQ Credits Empty - Special; Channel 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x16",
+         "EventName": "UNC_H_RPQ_CYCLES_NO_SPEC_CREDITS.CHN2",
+         "PerPkg": "1",
+@@ -2464,6 +2745,7 @@
+     },
+     {
+         "BriefDescription": "iMC RPQ Credits Empty - Special; Channel 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x16",
+         "EventName": "UNC_H_RPQ_CYCLES_NO_SPEC_CREDITS.CHN3",
+         "PerPkg": "1",
+@@ -2473,6 +2755,7 @@
+     },
+     {
+         "BriefDescription": "SBo0 Credits Acquired; For AD Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x68",
+         "EventName": "UNC_H_SBO0_CREDITS_ACQUIRED.AD",
+         "PerPkg": "1",
+@@ -2482,6 +2765,7 @@
+     },
+     {
+         "BriefDescription": "SBo0 Credits Acquired; For BL Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x68",
+         "EventName": "UNC_H_SBO0_CREDITS_ACQUIRED.BL",
+         "PerPkg": "1",
+@@ -2491,6 +2775,7 @@
+     },
+     {
+         "BriefDescription": "SBo0 Credits Occupancy; For AD Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6A",
+         "EventName": "UNC_H_SBO0_CREDIT_OCCUPANCY.AD",
+         "PerPkg": "1",
+@@ -2500,6 +2785,7 @@
+     },
+     {
+         "BriefDescription": "SBo0 Credits Occupancy; For BL Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6A",
+         "EventName": "UNC_H_SBO0_CREDIT_OCCUPANCY.BL",
+         "PerPkg": "1",
+@@ -2509,6 +2795,7 @@
+     },
+     {
+         "BriefDescription": "SBo1 Credits Acquired; For AD Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x69",
+         "EventName": "UNC_H_SBO1_CREDITS_ACQUIRED.AD",
+         "PerPkg": "1",
+@@ -2518,6 +2805,7 @@
+     },
+     {
+         "BriefDescription": "SBo1 Credits Acquired; For BL Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x69",
+         "EventName": "UNC_H_SBO1_CREDITS_ACQUIRED.BL",
+         "PerPkg": "1",
+@@ -2527,6 +2815,7 @@
+     },
+     {
+         "BriefDescription": "SBo1 Credits Occupancy; For AD Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6B",
+         "EventName": "UNC_H_SBO1_CREDIT_OCCUPANCY.AD",
+         "PerPkg": "1",
+@@ -2536,6 +2825,7 @@
+     },
+     {
+         "BriefDescription": "SBo1 Credits Occupancy; For BL Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6B",
+         "EventName": "UNC_H_SBO1_CREDIT_OCCUPANCY.BL",
+         "PerPkg": "1",
+@@ -2545,6 +2835,7 @@
+     },
+     {
+         "BriefDescription": "Data beat the Snoop Responses; Local Requests=
+",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA",
+         "EventName": "UNC_H_SNOOPS_RSP_AFTER_DATA.LOCAL",
+         "PerPkg": "1",
+@@ -2554,6 +2845,7 @@
+     },
+     {
+         "BriefDescription": "Data beat the Snoop Responses; Remote Request=
+s",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA",
+         "EventName": "UNC_H_SNOOPS_RSP_AFTER_DATA.REMOTE",
+         "PerPkg": "1",
+@@ -2563,6 +2855,7 @@
+     },
+     {
+         "BriefDescription": "Cycles with Snoops Outstanding; All Requests"=
+,
++        "Counter": "0,1,2,3",
+         "EventCode": "0x8",
+         "EventName": "UNC_H_SNOOP_CYCLES_NE.ALL",
+         "PerPkg": "1",
+@@ -2572,6 +2865,7 @@
+     },
+     {
+         "BriefDescription": "Cycles with Snoops Outstanding; Local Request=
+s",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x8",
+         "EventName": "UNC_H_SNOOP_CYCLES_NE.LOCAL",
+         "PerPkg": "1",
+@@ -2581,6 +2875,7 @@
+     },
+     {
+         "BriefDescription": "Cycles with Snoops Outstanding; Remote Reques=
+ts",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x8",
+         "EventName": "UNC_H_SNOOP_CYCLES_NE.REMOTE",
+         "PerPkg": "1",
+@@ -2590,6 +2885,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Snoops Outstanding Accumulator; Local=
+ Requests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x9",
+         "EventName": "UNC_H_SNOOP_OCCUPANCY.LOCAL",
+         "PerPkg": "1",
+@@ -2599,6 +2895,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Snoops Outstanding Accumulator; Remot=
+e Requests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x9",
+         "EventName": "UNC_H_SNOOP_OCCUPANCY.REMOTE",
+         "PerPkg": "1",
+@@ -2608,6 +2905,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received; RSPCNFLCT*",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x21",
+         "EventName": "UNC_H_SNOOP_RESP.RSPCNFLCT",
+         "PerPkg": "1",
+@@ -2617,6 +2915,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received; RspI",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x21",
+         "EventName": "UNC_H_SNOOP_RESP.RSPI",
+         "PerPkg": "1",
+@@ -2626,6 +2925,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received; RspIFwd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x21",
+         "EventName": "UNC_H_SNOOP_RESP.RSPIFWD",
+         "PerPkg": "1",
+@@ -2635,6 +2935,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received; RspS",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x21",
+         "EventName": "UNC_H_SNOOP_RESP.RSPS",
+         "PerPkg": "1",
+@@ -2644,6 +2945,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received; RspSFwd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x21",
+         "EventName": "UNC_H_SNOOP_RESP.RSPSFWD",
+         "PerPkg": "1",
+@@ -2653,6 +2955,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received; Rsp*Fwd*WB",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x21",
+         "EventName": "UNC_H_SNOOP_RESP.RSP_FWD_WB",
+         "PerPkg": "1",
+@@ -2662,6 +2965,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received; Rsp*WB",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x21",
+         "EventName": "UNC_H_SNOOP_RESP.RSP_WB",
+         "PerPkg": "1",
+@@ -2671,6 +2975,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received Local; Other",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x60",
+         "EventName": "UNC_H_SNP_RESP_RECV_LOCAL.OTHER",
+         "PerPkg": "1",
+@@ -2680,6 +2985,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received Local; RspCnflct",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x60",
+         "EventName": "UNC_H_SNP_RESP_RECV_LOCAL.RSPCNFLCT",
+         "PerPkg": "1",
+@@ -2689,6 +2995,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received Local; RspI",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x60",
+         "EventName": "UNC_H_SNP_RESP_RECV_LOCAL.RSPI",
+         "PerPkg": "1",
+@@ -2698,6 +3005,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received Local; RspIFwd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x60",
+         "EventName": "UNC_H_SNP_RESP_RECV_LOCAL.RSPIFWD",
+         "PerPkg": "1",
+@@ -2707,6 +3015,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received Local; RspS",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x60",
+         "EventName": "UNC_H_SNP_RESP_RECV_LOCAL.RSPS",
+         "PerPkg": "1",
+@@ -2716,6 +3025,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received Local; RspSFwd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x60",
+         "EventName": "UNC_H_SNP_RESP_RECV_LOCAL.RSPSFWD",
+         "PerPkg": "1",
+@@ -2725,6 +3035,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received Local; Rsp*FWD*WB",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x60",
+         "EventName": "UNC_H_SNP_RESP_RECV_LOCAL.RSPxFWDxWB",
+         "PerPkg": "1",
+@@ -2734,6 +3045,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses Received Local; Rsp*WB",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x60",
+         "EventName": "UNC_H_SNP_RESP_RECV_LOCAL.RSPxWB",
+         "PerPkg": "1",
+@@ -2743,6 +3055,7 @@
+     },
+     {
+         "BriefDescription": "Stall on No Sbo Credits; For SBo0, AD Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6C",
+         "EventName": "UNC_H_STALL_NO_SBO_CREDIT.SBO0_AD",
+         "PerPkg": "1",
+@@ -2752,6 +3065,7 @@
+     },
+     {
+         "BriefDescription": "Stall on No Sbo Credits; For SBo0, BL Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6C",
+         "EventName": "UNC_H_STALL_NO_SBO_CREDIT.SBO0_BL",
+         "PerPkg": "1",
+@@ -2761,6 +3075,7 @@
+     },
+     {
+         "BriefDescription": "Stall on No Sbo Credits; For SBo1, AD Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6C",
+         "EventName": "UNC_H_STALL_NO_SBO_CREDIT.SBO1_AD",
+         "PerPkg": "1",
+@@ -2770,6 +3085,7 @@
+     },
+     {
+         "BriefDescription": "Stall on No Sbo Credits; For SBo1, BL Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6C",
+         "EventName": "UNC_H_STALL_NO_SBO_CREDIT.SBO1_BL",
+         "PerPkg": "1",
+@@ -2779,6 +3095,7 @@
+     },
+     {
+         "BriefDescription": "HA Requests to a TAD Region - Group 0; TAD Re=
+gion 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_H_TAD_REQUESTS_G0.REGION0",
+         "PerPkg": "1",
+@@ -2788,6 +3105,7 @@
+     },
+     {
+         "BriefDescription": "HA Requests to a TAD Region - Group 0; TAD Re=
+gion 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_H_TAD_REQUESTS_G0.REGION1",
+         "PerPkg": "1",
+@@ -2797,6 +3115,7 @@
+     },
+     {
+         "BriefDescription": "HA Requests to a TAD Region - Group 0; TAD Re=
+gion 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_H_TAD_REQUESTS_G0.REGION2",
+         "PerPkg": "1",
+@@ -2806,6 +3125,7 @@
+     },
+     {
+         "BriefDescription": "HA Requests to a TAD Region - Group 0; TAD Re=
+gion 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_H_TAD_REQUESTS_G0.REGION3",
+         "PerPkg": "1",
+@@ -2815,6 +3135,7 @@
+     },
+     {
+         "BriefDescription": "HA Requests to a TAD Region - Group 0; TAD Re=
+gion 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_H_TAD_REQUESTS_G0.REGION4",
+         "PerPkg": "1",
+@@ -2824,6 +3145,7 @@
+     },
+     {
+         "BriefDescription": "HA Requests to a TAD Region - Group 0; TAD Re=
+gion 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_H_TAD_REQUESTS_G0.REGION5",
+         "PerPkg": "1",
+@@ -2833,6 +3155,7 @@
+     },
+     {
+         "BriefDescription": "HA Requests to a TAD Region - Group 0; TAD Re=
+gion 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_H_TAD_REQUESTS_G0.REGION6",
+         "PerPkg": "1",
+@@ -2842,6 +3165,7 @@
+     },
+     {
+         "BriefDescription": "HA Requests to a TAD Region - Group 0; TAD Re=
+gion 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1B",
+         "EventName": "UNC_H_TAD_REQUESTS_G0.REGION7",
+         "PerPkg": "1",
+@@ -2851,6 +3175,7 @@
+     },
+     {
+         "BriefDescription": "HA Requests to a TAD Region - Group 1; TAD Re=
+gion 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1C",
+         "EventName": "UNC_H_TAD_REQUESTS_G1.REGION10",
+         "PerPkg": "1",
+@@ -2860,6 +3185,7 @@
+     },
+     {
+         "BriefDescription": "HA Requests to a TAD Region - Group 1; TAD Re=
+gion 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1C",
+         "EventName": "UNC_H_TAD_REQUESTS_G1.REGION11",
+         "PerPkg": "1",
+@@ -2869,6 +3195,7 @@
+     },
+     {
+         "BriefDescription": "HA Requests to a TAD Region - Group 1; TAD Re=
+gion 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1C",
+         "EventName": "UNC_H_TAD_REQUESTS_G1.REGION8",
+         "PerPkg": "1",
+@@ -2878,6 +3205,7 @@
+     },
+     {
+         "BriefDescription": "HA Requests to a TAD Region - Group 1; TAD Re=
+gion 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1C",
+         "EventName": "UNC_H_TAD_REQUESTS_G1.REGION9",
+         "PerPkg": "1",
+@@ -2887,6 +3215,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Cycles Full; Cycles Completely Used",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_H_TRACKER_CYCLES_FULL.ALL",
+         "PerPkg": "1",
+@@ -2896,6 +3225,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Cycles Full; Cycles GP Completely Use=
+d",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_H_TRACKER_CYCLES_FULL.GP",
+         "PerPkg": "1",
+@@ -2905,6 +3235,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Cycles Not Empty; All Requests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3",
+         "EventName": "UNC_H_TRACKER_CYCLES_NE.ALL",
+         "PerPkg": "1",
+@@ -2914,6 +3245,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Cycles Not Empty; Local Requests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3",
+         "EventName": "UNC_H_TRACKER_CYCLES_NE.LOCAL",
+         "PerPkg": "1",
+@@ -2923,6 +3255,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Cycles Not Empty; Remote Requests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3",
+         "EventName": "UNC_H_TRACKER_CYCLES_NE.REMOTE",
+         "PerPkg": "1",
+@@ -2932,6 +3265,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Occupancy Accumulator; Local InvItoE =
+Requests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_H_TRACKER_OCCUPANCY.INVITOE_LOCAL",
+         "PerPkg": "1",
+@@ -2941,6 +3275,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Occupancy Accumulator; Remote InvItoE=
+ Requests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_H_TRACKER_OCCUPANCY.INVITOE_REMOTE",
+         "PerPkg": "1",
+@@ -2950,6 +3285,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Occupancy Accumulator; Local Read Req=
+uests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_H_TRACKER_OCCUPANCY.READS_LOCAL",
+         "PerPkg": "1",
+@@ -2959,6 +3295,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Occupancy Accumulator; Remote Read Re=
+quests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_H_TRACKER_OCCUPANCY.READS_REMOTE",
+         "PerPkg": "1",
+@@ -2968,6 +3305,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Occupancy Accumulator; Local Write Re=
+quests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_H_TRACKER_OCCUPANCY.WRITES_LOCAL",
+         "PerPkg": "1",
+@@ -2977,6 +3315,7 @@
+     },
+     {
+         "BriefDescription": "Tracker Occupancy Accumulator; Remote Write R=
+equests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_H_TRACKER_OCCUPANCY.WRITES_REMOTE",
+         "PerPkg": "1",
+@@ -2986,6 +3325,7 @@
+     },
+     {
+         "BriefDescription": "Data Pending Occupancy Accumulator; Local Req=
+uests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x5",
+         "EventName": "UNC_H_TRACKER_PENDING_OCCUPANCY.LOCAL",
+         "PerPkg": "1",
+@@ -2995,6 +3335,7 @@
+     },
+     {
+         "BriefDescription": "Data Pending Occupancy Accumulator; Remote Re=
+quests",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x5",
+         "EventName": "UNC_H_TRACKER_PENDING_OCCUPANCY.REMOTE",
+         "PerPkg": "1",
+@@ -3004,6 +3345,7 @@
+     },
+     {
+         "BriefDescription": "Outbound NDR Ring Transactions; Non-data Resp=
+onses",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xF",
+         "EventName": "UNC_H_TxR_AD.HOM",
+         "PerPkg": "1",
+@@ -3013,6 +3355,7 @@
+     },
+     {
+         "BriefDescription": "AD Egress Full; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2A",
+         "EventName": "UNC_H_TxR_AD_CYCLES_FULL.ALL",
+         "PerPkg": "1",
+@@ -3022,6 +3365,7 @@
+     },
+     {
+         "BriefDescription": "AD Egress Full; Scheduler 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2A",
+         "EventName": "UNC_H_TxR_AD_CYCLES_FULL.SCHED0",
+         "PerPkg": "1",
+@@ -3031,6 +3375,7 @@
+     },
+     {
+         "BriefDescription": "AD Egress Full; Scheduler 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2A",
+         "EventName": "UNC_H_TxR_AD_CYCLES_FULL.SCHED1",
+         "PerPkg": "1",
+@@ -3040,6 +3385,7 @@
+     },
+     {
+         "BriefDescription": "AD Egress Not Empty; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x29",
+         "EventName": "UNC_H_TxR_AD_CYCLES_NE.ALL",
+         "PerPkg": "1",
+@@ -3049,6 +3395,7 @@
+     },
+     {
+         "BriefDescription": "AD Egress Not Empty; Scheduler 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x29",
+         "EventName": "UNC_H_TxR_AD_CYCLES_NE.SCHED0",
+         "PerPkg": "1",
+@@ -3058,6 +3405,7 @@
+     },
+     {
+         "BriefDescription": "AD Egress Not Empty; Scheduler 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x29",
+         "EventName": "UNC_H_TxR_AD_CYCLES_NE.SCHED1",
+         "PerPkg": "1",
+@@ -3067,6 +3415,7 @@
+     },
+     {
+         "BriefDescription": "AD Egress Allocations; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x27",
+         "EventName": "UNC_H_TxR_AD_INSERTS.ALL",
+         "PerPkg": "1",
+@@ -3076,6 +3425,7 @@
+     },
+     {
+         "BriefDescription": "AD Egress Allocations; Scheduler 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x27",
+         "EventName": "UNC_H_TxR_AD_INSERTS.SCHED0",
+         "PerPkg": "1",
+@@ -3085,6 +3435,7 @@
+     },
+     {
+         "BriefDescription": "AD Egress Allocations; Scheduler 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x27",
+         "EventName": "UNC_H_TxR_AD_INSERTS.SCHED1",
+         "PerPkg": "1",
+@@ -3094,6 +3445,7 @@
+     },
+     {
+         "BriefDescription": "AK Egress Full; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x32",
+         "EventName": "UNC_H_TxR_AK_CYCLES_FULL.ALL",
+         "PerPkg": "1",
+@@ -3103,6 +3455,7 @@
+     },
+     {
+         "BriefDescription": "AK Egress Full; Scheduler 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x32",
+         "EventName": "UNC_H_TxR_AK_CYCLES_FULL.SCHED0",
+         "PerPkg": "1",
+@@ -3112,6 +3465,7 @@
+     },
+     {
+         "BriefDescription": "AK Egress Full; Scheduler 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x32",
+         "EventName": "UNC_H_TxR_AK_CYCLES_FULL.SCHED1",
+         "PerPkg": "1",
+@@ -3121,6 +3475,7 @@
+     },
+     {
+         "BriefDescription": "AK Egress Not Empty; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x31",
+         "EventName": "UNC_H_TxR_AK_CYCLES_NE.ALL",
+         "PerPkg": "1",
+@@ -3130,6 +3485,7 @@
+     },
+     {
+         "BriefDescription": "AK Egress Not Empty; Scheduler 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x31",
+         "EventName": "UNC_H_TxR_AK_CYCLES_NE.SCHED0",
+         "PerPkg": "1",
+@@ -3139,6 +3495,7 @@
+     },
+     {
+         "BriefDescription": "AK Egress Not Empty; Scheduler 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x31",
+         "EventName": "UNC_H_TxR_AK_CYCLES_NE.SCHED1",
+         "PerPkg": "1",
+@@ -3148,6 +3505,7 @@
+     },
+     {
+         "BriefDescription": "AK Egress Allocations; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2F",
+         "EventName": "UNC_H_TxR_AK_INSERTS.ALL",
+         "PerPkg": "1",
+@@ -3157,6 +3515,7 @@
+     },
+     {
+         "BriefDescription": "AK Egress Allocations; Scheduler 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2F",
+         "EventName": "UNC_H_TxR_AK_INSERTS.SCHED0",
+         "PerPkg": "1",
+@@ -3166,6 +3525,7 @@
+     },
+     {
+         "BriefDescription": "AK Egress Allocations; Scheduler 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2F",
+         "EventName": "UNC_H_TxR_AK_INSERTS.SCHED1",
+         "PerPkg": "1",
+@@ -3175,6 +3535,7 @@
+     },
+     {
+         "BriefDescription": "Outbound DRS Ring Transactions to Cache; Data=
+ to Cache",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x10",
+         "EventName": "UNC_H_TxR_BL.DRS_CACHE",
+         "PerPkg": "1",
+@@ -3184,6 +3545,7 @@
+     },
+     {
+         "BriefDescription": "Outbound DRS Ring Transactions to Cache; Data=
+ to Core",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x10",
+         "EventName": "UNC_H_TxR_BL.DRS_CORE",
+         "PerPkg": "1",
+@@ -3193,6 +3555,7 @@
+     },
+     {
+         "BriefDescription": "Outbound DRS Ring Transactions to Cache; Data=
+ to QPI",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x10",
+         "EventName": "UNC_H_TxR_BL.DRS_QPI",
+         "PerPkg": "1",
+@@ -3202,6 +3565,7 @@
+     },
+     {
+         "BriefDescription": "BL Egress Full; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x36",
+         "EventName": "UNC_H_TxR_BL_CYCLES_FULL.ALL",
+         "PerPkg": "1",
+@@ -3211,6 +3575,7 @@
+     },
+     {
+         "BriefDescription": "BL Egress Full; Scheduler 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x36",
+         "EventName": "UNC_H_TxR_BL_CYCLES_FULL.SCHED0",
+         "PerPkg": "1",
+@@ -3220,6 +3585,7 @@
+     },
+     {
+         "BriefDescription": "BL Egress Full; Scheduler 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x36",
+         "EventName": "UNC_H_TxR_BL_CYCLES_FULL.SCHED1",
+         "PerPkg": "1",
+@@ -3229,6 +3595,7 @@
+     },
+     {
+         "BriefDescription": "BL Egress Not Empty; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_H_TxR_BL_CYCLES_NE.ALL",
+         "PerPkg": "1",
+@@ -3238,6 +3605,7 @@
+     },
+     {
+         "BriefDescription": "BL Egress Not Empty; Scheduler 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_H_TxR_BL_CYCLES_NE.SCHED0",
+         "PerPkg": "1",
+@@ -3247,6 +3615,7 @@
+     },
+     {
+         "BriefDescription": "BL Egress Not Empty; Scheduler 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_H_TxR_BL_CYCLES_NE.SCHED1",
+         "PerPkg": "1",
+@@ -3256,6 +3625,7 @@
+     },
+     {
+         "BriefDescription": "BL Egress Allocations; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x33",
+         "EventName": "UNC_H_TxR_BL_INSERTS.ALL",
+         "PerPkg": "1",
+@@ -3265,6 +3635,7 @@
+     },
+     {
+         "BriefDescription": "BL Egress Allocations; Scheduler 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x33",
+         "EventName": "UNC_H_TxR_BL_INSERTS.SCHED0",
+         "PerPkg": "1",
+@@ -3274,6 +3645,7 @@
+     },
+     {
+         "BriefDescription": "BL Egress Allocations; Scheduler 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x33",
+         "EventName": "UNC_H_TxR_BL_INSERTS.SCHED1",
+         "PerPkg": "1",
+@@ -3283,6 +3655,7 @@
+     },
+     {
+         "BriefDescription": "Injection Starvation; For AK Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6D",
+         "EventName": "UNC_H_TxR_STARVED.AK",
+         "PerPkg": "1",
+@@ -3292,6 +3665,7 @@
+     },
+     {
+         "BriefDescription": "Injection Starvation; For BL Ring",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6D",
+         "EventName": "UNC_H_TxR_STARVED.BL",
+         "PerPkg": "1",
+@@ -3301,6 +3675,7 @@
+     },
+     {
+         "BriefDescription": "HA iMC CHN0 WPQ Credits Empty - Regular; Chan=
+nel 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x18",
+         "EventName": "UNC_H_WPQ_CYCLES_NO_REG_CREDITS.CHN0",
+         "PerPkg": "1",
+@@ -3310,6 +3685,7 @@
+     },
+     {
+         "BriefDescription": "HA iMC CHN0 WPQ Credits Empty - Regular; Chan=
+nel 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x18",
+         "EventName": "UNC_H_WPQ_CYCLES_NO_REG_CREDITS.CHN1",
+         "PerPkg": "1",
+@@ -3319,6 +3695,7 @@
+     },
+     {
+         "BriefDescription": "HA iMC CHN0 WPQ Credits Empty - Regular; Chan=
+nel 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x18",
+         "EventName": "UNC_H_WPQ_CYCLES_NO_REG_CREDITS.CHN2",
+         "PerPkg": "1",
+@@ -3328,6 +3705,7 @@
+     },
+     {
+         "BriefDescription": "HA iMC CHN0 WPQ Credits Empty - Regular; Chan=
+nel 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x18",
+         "EventName": "UNC_H_WPQ_CYCLES_NO_REG_CREDITS.CHN3",
+         "PerPkg": "1",
+@@ -3337,6 +3715,7 @@
+     },
+     {
+         "BriefDescription": "HA iMC CHN0 WPQ Credits Empty - Special; Chan=
+nel 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x19",
+         "EventName": "UNC_H_WPQ_CYCLES_NO_SPEC_CREDITS.CHN0",
+         "PerPkg": "1",
+@@ -3346,6 +3725,7 @@
+     },
+     {
+         "BriefDescription": "HA iMC CHN0 WPQ Credits Empty - Special; Chan=
+nel 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x19",
+         "EventName": "UNC_H_WPQ_CYCLES_NO_SPEC_CREDITS.CHN1",
+         "PerPkg": "1",
+@@ -3355,6 +3735,7 @@
+     },
+     {
+         "BriefDescription": "HA iMC CHN0 WPQ Credits Empty - Special; Chan=
+nel 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x19",
+         "EventName": "UNC_H_WPQ_CYCLES_NO_SPEC_CREDITS.CHN2",
+         "PerPkg": "1",
+@@ -3364,6 +3745,7 @@
+     },
+     {
+         "BriefDescription": "HA iMC CHN0 WPQ Credits Empty - Special; Chan=
+nel 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x19",
+         "EventName": "UNC_H_WPQ_CYCLES_NO_SPEC_CREDITS.CHN3",
+         "PerPkg": "1",
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/uncore-interconnect=
+.json b/tools/perf/pmu-events/arch/x86/broadwellde/uncore-interconnect.json
+index 910395977a6e..58031f397168 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/uncore-interconnect.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/uncore-interconnect.json
+@@ -1,6 +1,7 @@
+ [
+     {
+         "BriefDescription": "Total Write Cache Occupancy; Any Source",
++        "Counter": "0,1",
+         "EventCode": "0x12",
+         "EventName": "UNC_I_CACHE_TOTAL_OCCUPANCY.ANY",
          "PerPkg": "1",
 @@ -10,6 +11,7 @@
      },
      {
-         "BriefDescription": "L3 Lookup any request that access cache and f=
-ound line in I-state",
+         "BriefDescription": "Total Write Cache Occupancy; Select Source",
 +        "Counter": "0,1",
-         "EventCode": "0x34",
-         "EventName": "UNC_CBO_CACHE_LOOKUP.ANY_I",
+         "EventCode": "0x12",
+         "EventName": "UNC_I_CACHE_TOTAL_OCCUPANCY.SOURCE",
          "PerPkg": "1",
 @@ -19,6 +21,7 @@
      },
      {
-         "BriefDescription": "L3 Lookup any request that access cache and f=
-ound line in M-state",
+         "BriefDescription": "Clocks in the IRP",
 +        "Counter": "0,1",
-         "EventCode": "0x34",
-         "EventName": "UNC_CBO_CACHE_LOOKUP.ANY_M",
+         "EventName": "UNC_I_CLOCKTICKS",
          "PerPkg": "1",
-@@ -28,6 +31,7 @@
-     },
-     {
-         "BriefDescription": "L3 Lookup any request that access cache and f=
-ound line in MESI-state",
-+        "Counter": "0,1",
-         "EventCode": "0x34",
-         "EventName": "UNC_CBO_CACHE_LOOKUP.ANY_MESI",
-         "PerPkg": "1",
-@@ -37,6 +41,7 @@
-     },
-     {
-         "BriefDescription": "L3 Lookup read request that access cache and =
-found line in E or S-state",
-+        "Counter": "0,1",
-         "EventCode": "0x34",
-         "EventName": "UNC_CBO_CACHE_LOOKUP.READ_ES",
-         "PerPkg": "1",
-@@ -46,6 +51,7 @@
-     },
-     {
-         "BriefDescription": "L3 Lookup read request that access cache and =
-found line in I-state",
-+        "Counter": "0,1",
-         "EventCode": "0x34",
-         "EventName": "UNC_CBO_CACHE_LOOKUP.READ_I",
-         "PerPkg": "1",
-@@ -55,6 +61,7 @@
-     },
-     {
-         "BriefDescription": "L3 Lookup read request that access cache and =
-found line in M-state",
-+        "Counter": "0,1",
-         "EventCode": "0x34",
-         "EventName": "UNC_CBO_CACHE_LOOKUP.READ_M",
-         "PerPkg": "1",
-@@ -64,6 +71,7 @@
-     },
-     {
-         "BriefDescription": "L3 Lookup read request that access cache and =
-found line in any MESI-state",
-+        "Counter": "0,1",
-         "EventCode": "0x34",
-         "EventName": "UNC_CBO_CACHE_LOOKUP.READ_MESI",
-         "PerPkg": "1",
-@@ -73,6 +81,7 @@
-     },
-     {
-         "BriefDescription": "L3 Lookup write request that access cache and=
- found line in E or S-state",
-+        "Counter": "0,1",
-         "EventCode": "0x34",
-         "EventName": "UNC_CBO_CACHE_LOOKUP.WRITE_ES",
-         "PerPkg": "1",
-@@ -82,6 +91,7 @@
-     },
-     {
-         "BriefDescription": "L3 Lookup write request that access cache and=
- found line in M-state",
-+        "Counter": "0,1",
-         "EventCode": "0x34",
-         "EventName": "UNC_CBO_CACHE_LOOKUP.WRITE_M",
-         "PerPkg": "1",
-@@ -91,6 +101,7 @@
-     },
-     {
-         "BriefDescription": "L3 Lookup write request that access cache and=
- found line in MESI-state",
-+        "Counter": "0,1",
-         "EventCode": "0x34",
-         "EventName": "UNC_CBO_CACHE_LOOKUP.WRITE_MESI",
-         "PerPkg": "1",
-@@ -100,6 +111,7 @@
-     },
-     {
-         "BriefDescription": "A cross-core snoop initiated by this Cbox due=
- to processor core memory request which hits a modified line in some proces=
-sor core.",
-+        "Counter": "0,1",
-         "EventCode": "0x22",
-         "EventName": "UNC_CBO_XSNP_RESPONSE.HITM_XCORE",
-         "PerPkg": "1",
-@@ -108,6 +120,7 @@
-     },
-     {
-         "BriefDescription": "A cross-core snoop initiated by this Cbox due=
- to processor core memory request which hits a non-modified line in some pr=
-ocessor core.",
-+        "Counter": "0,1",
-         "EventCode": "0x22",
-         "EventName": "UNC_CBO_XSNP_RESPONSE.HIT_XCORE",
-         "PerPkg": "1",
-@@ -116,6 +129,7 @@
-     },
-     {
-         "BriefDescription": "A cross-core snoop resulted from L3 Eviction =
-which misses in some processor core.",
-+        "Counter": "0,1",
-         "EventCode": "0x22",
-         "EventName": "UNC_CBO_XSNP_RESPONSE.MISS_EVICTION",
-         "PerPkg": "1",
-@@ -124,10 +138,20 @@
-     },
-     {
-         "BriefDescription": "A cross-core snoop initiated by this Cbox due=
- to processor core memory request which misses in some processor core.",
-+        "Counter": "0,1",
-         "EventCode": "0x22",
-         "EventName": "UNC_CBO_XSNP_RESPONSE.MISS_XCORE",
-         "PerPkg": "1",
-         "UMask": "0x41",
-         "Unit": "CBOX"
-+    },
-+    {
-+        "BriefDescription": "This 48-bit fixed counter counts the UCLK cyc=
-les",
-+        "Counter": "FIXED",
-+        "EventCode": "0xff",
-+        "EventName": "UNC_CLOCK.SOCKET",
-+        "PerPkg": "1",
-+        "PublicDescription": "This 48-bit fixed counter counts the UCLK cy=
-cles.",
-+        "Unit": "cbox_0"
-     }
- ]
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/uncore-interconnect.j=
-son b/tools/perf/pmu-events/arch/x86/broadwell/uncore-interconnect.json
-index 64af685274a2..99f8cc992a24 100644
---- a/tools/perf/pmu-events/arch/x86/broadwell/uncore-interconnect.json
-+++ b/tools/perf/pmu-events/arch/x86/broadwell/uncore-interconnect.json
-@@ -1,6 +1,7 @@
- [
-     {
-         "BriefDescription": "Number of entries allocated. Account for Any =
-type: e.g. Snoop, Core aperture, etc.",
-+        "Counter": "0,1",
-         "EventCode": "0x84",
-         "EventName": "UNC_ARB_COH_TRK_REQUESTS.ALL",
-         "PerPkg": "1",
-@@ -9,6 +10,7 @@
-     },
-     {
-         "BriefDescription": "Each cycle counts number of all Core outgoing=
- valid entries. Such entry is defined as valid from its allocation till fir=
-st of IDI0 or DRS0 messages is sent out. Accounts for Coherent and non-cohe=
-rent traffic.",
-+        "Counter": "0",
-         "EventCode": "0x80",
-         "EventName": "UNC_ARB_TRK_OCCUPANCY.ALL",
-         "PerPkg": "1",
-@@ -17,6 +19,7 @@
-     },
-     {
-         "BriefDescription": "Cycles with at least one request outstanding =
-is waiting for data return from memory controller. Account for coherent and=
- non-coherent requests initiated by IA Cores, Processor Graphics Unit, or L=
-LC.;",
-+        "Counter": "0",
-         "CounterMask": "1",
-         "EventCode": "0x80",
-         "EventName": "UNC_ARB_TRK_OCCUPANCY.CYCLES_WITH_ANY_REQUEST",
+         "PublicDescription": "Number of clocks in the IRP.",
 @@ -26,6 +29,7 @@
      },
      {
-         "BriefDescription": "Each cycle count number of 'valid' coherent D=
-ata Read entries that are in DirectData mode. Such entry is defined as vali=
-d when it is allocated till data sent to Core (first chunk, IDI0). Applicab=
-le for IA Cores' requests in normal case.",
-+        "Counter": "0",
-         "EventCode": "0x80",
-         "EventName": "UNC_ARB_TRK_OCCUPANCY.DRD_DIRECT",
+         "BriefDescription": "Coherent Ops; CLFlush",
++        "Counter": "0,1",
+         "EventCode": "0x13",
+         "EventName": "UNC_I_COHERENT_OPS.CLFLUSH",
          "PerPkg": "1",
 @@ -35,6 +39,7 @@
      },
      {
-         "BriefDescription": "Total number of Core outgoing entries allocat=
-ed. Accounts for Coherent and non-coherent traffic.",
+         "BriefDescription": "Coherent Ops; CRd",
 +        "Counter": "0,1",
-         "EventCode": "0x81",
-         "EventName": "UNC_ARB_TRK_REQUESTS.ALL",
+         "EventCode": "0x13",
+         "EventName": "UNC_I_COHERENT_OPS.CRD",
          "PerPkg": "1",
-@@ -43,6 +48,7 @@
+@@ -44,6 +49,7 @@
      },
      {
-         "BriefDescription": "Number of Core coherent Data Read entries all=
-ocated in DirectData mode",
+         "BriefDescription": "Coherent Ops; DRd",
 +        "Counter": "0,1",
-         "EventCode": "0x81",
-         "EventName": "UNC_ARB_TRK_REQUESTS.DRD_DIRECT",
+         "EventCode": "0x13",
+         "EventName": "UNC_I_COHERENT_OPS.DRD",
+         "PerPkg": "1",
+@@ -53,6 +59,7 @@
+     },
+     {
+         "BriefDescription": "Coherent Ops; PCIDCAHin5t",
++        "Counter": "0,1",
+         "EventCode": "0x13",
+         "EventName": "UNC_I_COHERENT_OPS.PCIDCAHINT",
+         "PerPkg": "1",
+@@ -62,6 +69,7 @@
+     },
+     {
+         "BriefDescription": "Coherent Ops; PCIRdCur",
++        "Counter": "0,1",
+         "EventCode": "0x13",
+         "EventName": "UNC_I_COHERENT_OPS.PCIRDCUR",
+         "PerPkg": "1",
+@@ -71,6 +79,7 @@
+     },
+     {
+         "BriefDescription": "Coherent Ops; PCIItoM",
++        "Counter": "0,1",
+         "EventCode": "0x13",
+         "EventName": "UNC_I_COHERENT_OPS.PCITOM",
+         "PerPkg": "1",
+@@ -80,6 +89,7 @@
+     },
+     {
+         "BriefDescription": "Coherent Ops; RFO",
++        "Counter": "0,1",
+         "EventCode": "0x13",
+         "EventName": "UNC_I_COHERENT_OPS.RFO",
+         "PerPkg": "1",
+@@ -89,6 +99,7 @@
+     },
+     {
+         "BriefDescription": "Coherent Ops; WbMtoI",
++        "Counter": "0,1",
+         "EventCode": "0x13",
+         "EventName": "UNC_I_COHERENT_OPS.WBMTOI",
+         "PerPkg": "1",
+@@ -98,6 +109,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 0; Cache Inserts of Atomic =
+Transactions as Secondary",
++        "Counter": "0,1",
+         "EventCode": "0x14",
+         "EventName": "UNC_I_MISC0.2ND_ATOMIC_INSERT",
+         "PerPkg": "1",
+@@ -107,6 +119,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 0; Cache Inserts of Read Tr=
+ansactions as Secondary",
++        "Counter": "0,1",
+         "EventCode": "0x14",
+         "EventName": "UNC_I_MISC0.2ND_RD_INSERT",
+         "PerPkg": "1",
+@@ -116,6 +129,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 0; Cache Inserts of Write T=
+ransactions as Secondary",
++        "Counter": "0,1",
+         "EventCode": "0x14",
+         "EventName": "UNC_I_MISC0.2ND_WR_INSERT",
+         "PerPkg": "1",
+@@ -125,6 +139,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 0; Fastpath Rejects",
++        "Counter": "0,1",
+         "EventCode": "0x14",
+         "EventName": "UNC_I_MISC0.FAST_REJ",
+         "PerPkg": "1",
+@@ -134,6 +149,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 0; Fastpath Requests",
++        "Counter": "0,1",
+         "EventCode": "0x14",
+         "EventName": "UNC_I_MISC0.FAST_REQ",
+         "PerPkg": "1",
+@@ -143,6 +159,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 0; Fastpath Transfers From =
+Primary to Secondary",
++        "Counter": "0,1",
+         "EventCode": "0x14",
+         "EventName": "UNC_I_MISC0.FAST_XFER",
+         "PerPkg": "1",
+@@ -152,6 +169,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 0; Prefetch Ack Hints From =
+Primary to Secondary",
++        "Counter": "0,1",
+         "EventCode": "0x14",
+         "EventName": "UNC_I_MISC0.PF_ACK_HINT",
+         "PerPkg": "1",
+@@ -161,6 +179,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 0; Prefetch TimeOut",
++        "Counter": "0,1",
+         "EventCode": "0x14",
+         "EventName": "UNC_I_MISC0.PF_TIMEOUT",
+         "PerPkg": "1",
+@@ -170,6 +189,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 1; Data Throttled",
++        "Counter": "0,1",
+         "EventCode": "0x15",
+         "EventName": "UNC_I_MISC1.DATA_THROTTLE",
+         "PerPkg": "1",
+@@ -179,6 +199,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 1",
++        "Counter": "0,1",
+         "EventCode": "0x15",
+         "EventName": "UNC_I_MISC1.LOST_FWD",
+         "PerPkg": "1",
+@@ -188,6 +209,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 1; Received Invalid",
++        "Counter": "0,1",
+         "EventCode": "0x15",
+         "EventName": "UNC_I_MISC1.SEC_RCVD_INVLD",
+         "PerPkg": "1",
+@@ -197,6 +219,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 1; Received Valid",
++        "Counter": "0,1",
+         "EventCode": "0x15",
+         "EventName": "UNC_I_MISC1.SEC_RCVD_VLD",
+         "PerPkg": "1",
+@@ -206,6 +229,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 1; Slow Transfer of E Line"=
+,
++        "Counter": "0,1",
+         "EventCode": "0x15",
+         "EventName": "UNC_I_MISC1.SLOW_E",
+         "PerPkg": "1",
+@@ -215,6 +239,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 1; Slow Transfer of I Line"=
+,
++        "Counter": "0,1",
+         "EventCode": "0x15",
+         "EventName": "UNC_I_MISC1.SLOW_I",
+         "PerPkg": "1",
+@@ -224,6 +249,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 1; Slow Transfer of M Line"=
+,
++        "Counter": "0,1",
+         "EventCode": "0x15",
+         "EventName": "UNC_I_MISC1.SLOW_M",
+         "PerPkg": "1",
+@@ -233,6 +259,7 @@
+     },
+     {
+         "BriefDescription": "Misc Events - Set 1; Slow Transfer of S Line"=
+,
++        "Counter": "0,1",
+         "EventCode": "0x15",
+         "EventName": "UNC_I_MISC1.SLOW_S",
+         "PerPkg": "1",
+@@ -242,6 +269,7 @@
+     },
+     {
+         "BriefDescription": "AK Ingress Occupancy",
++        "Counter": "0,1",
+         "EventCode": "0xA",
+         "EventName": "UNC_I_RxR_AK_INSERTS",
+         "PerPkg": "1",
+@@ -250,6 +278,7 @@
+     },
+     {
+         "BriefDescription": "UNC_I_RxR_BL_DRS_CYCLES_FULL",
++        "Counter": "0,1",
+         "EventCode": "0x4",
+         "EventName": "UNC_I_RxR_BL_DRS_CYCLES_FULL",
+         "PerPkg": "1",
+@@ -258,6 +287,7 @@
+     },
+     {
+         "BriefDescription": "BL Ingress Occupancy - DRS",
++        "Counter": "0,1",
+         "EventCode": "0x1",
+         "EventName": "UNC_I_RxR_BL_DRS_INSERTS",
+         "PerPkg": "1",
+@@ -266,6 +296,7 @@
+     },
+     {
+         "BriefDescription": "UNC_I_RxR_BL_DRS_OCCUPANCY",
++        "Counter": "0,1",
+         "EventCode": "0x7",
+         "EventName": "UNC_I_RxR_BL_DRS_OCCUPANCY",
+         "PerPkg": "1",
+@@ -274,6 +305,7 @@
+     },
+     {
+         "BriefDescription": "UNC_I_RxR_BL_NCB_CYCLES_FULL",
++        "Counter": "0,1",
+         "EventCode": "0x5",
+         "EventName": "UNC_I_RxR_BL_NCB_CYCLES_FULL",
+         "PerPkg": "1",
+@@ -282,6 +314,7 @@
+     },
+     {
+         "BriefDescription": "BL Ingress Occupancy - NCB",
++        "Counter": "0,1",
+         "EventCode": "0x2",
+         "EventName": "UNC_I_RxR_BL_NCB_INSERTS",
+         "PerPkg": "1",
+@@ -290,6 +323,7 @@
+     },
+     {
+         "BriefDescription": "UNC_I_RxR_BL_NCB_OCCUPANCY",
++        "Counter": "0,1",
+         "EventCode": "0x8",
+         "EventName": "UNC_I_RxR_BL_NCB_OCCUPANCY",
+         "PerPkg": "1",
+@@ -298,6 +332,7 @@
+     },
+     {
+         "BriefDescription": "UNC_I_RxR_BL_NCS_CYCLES_FULL",
++        "Counter": "0,1",
+         "EventCode": "0x6",
+         "EventName": "UNC_I_RxR_BL_NCS_CYCLES_FULL",
+         "PerPkg": "1",
+@@ -306,6 +341,7 @@
+     },
+     {
+         "BriefDescription": "BL Ingress Occupancy - NCS",
++        "Counter": "0,1",
+         "EventCode": "0x3",
+         "EventName": "UNC_I_RxR_BL_NCS_INSERTS",
+         "PerPkg": "1",
+@@ -314,6 +350,7 @@
+     },
+     {
+         "BriefDescription": "UNC_I_RxR_BL_NCS_OCCUPANCY",
++        "Counter": "0,1",
+         "EventCode": "0x9",
+         "EventName": "UNC_I_RxR_BL_NCS_OCCUPANCY",
+         "PerPkg": "1",
+@@ -322,6 +359,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses; Hit E or S",
++        "Counter": "0,1",
+         "EventCode": "0x17",
+         "EventName": "UNC_I_SNOOP_RESP.HIT_ES",
+         "PerPkg": "1",
+@@ -331,6 +369,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses; Hit I",
++        "Counter": "0,1",
+         "EventCode": "0x17",
+         "EventName": "UNC_I_SNOOP_RESP.HIT_I",
+         "PerPkg": "1",
+@@ -340,6 +379,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses; Hit M",
++        "Counter": "0,1",
+         "EventCode": "0x17",
+         "EventName": "UNC_I_SNOOP_RESP.HIT_M",
+         "PerPkg": "1",
+@@ -349,6 +389,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses; Miss",
++        "Counter": "0,1",
+         "EventCode": "0x17",
+         "EventName": "UNC_I_SNOOP_RESP.MISS",
+         "PerPkg": "1",
+@@ -358,6 +399,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses; SnpCode",
++        "Counter": "0,1",
+         "EventCode": "0x17",
+         "EventName": "UNC_I_SNOOP_RESP.SNPCODE",
+         "PerPkg": "1",
+@@ -367,6 +409,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses; SnpData",
++        "Counter": "0,1",
+         "EventCode": "0x17",
+         "EventName": "UNC_I_SNOOP_RESP.SNPDATA",
+         "PerPkg": "1",
+@@ -376,6 +419,7 @@
+     },
+     {
+         "BriefDescription": "Snoop Responses; SnpInv",
++        "Counter": "0,1",
+         "EventCode": "0x17",
+         "EventName": "UNC_I_SNOOP_RESP.SNPINV",
+         "PerPkg": "1",
+@@ -385,6 +429,7 @@
+     },
+     {
+         "BriefDescription": "Inbound Transaction Count; Atomic",
++        "Counter": "0,1",
+         "EventCode": "0x16",
+         "EventName": "UNC_I_TRANSACTIONS.ATOMIC",
+         "PerPkg": "1",
+@@ -394,6 +439,7 @@
+     },
+     {
+         "BriefDescription": "Inbound Transaction Count; Other",
++        "Counter": "0,1",
+         "EventCode": "0x16",
+         "EventName": "UNC_I_TRANSACTIONS.OTHER",
+         "PerPkg": "1",
+@@ -403,6 +449,7 @@
+     },
+     {
+         "BriefDescription": "Inbound Transaction Count; Read Prefetches",
++        "Counter": "0,1",
+         "EventCode": "0x16",
+         "EventName": "UNC_I_TRANSACTIONS.RD_PREF",
+         "PerPkg": "1",
+@@ -412,6 +459,7 @@
+     },
+     {
+         "BriefDescription": "Inbound Transaction Count; Reads",
++        "Counter": "0,1",
+         "EventCode": "0x16",
+         "EventName": "UNC_I_TRANSACTIONS.READS",
+         "PerPkg": "1",
+@@ -421,6 +469,7 @@
+     },
+     {
+         "BriefDescription": "Inbound Transaction Count; Writes",
++        "Counter": "0,1",
+         "EventCode": "0x16",
+         "EventName": "UNC_I_TRANSACTIONS.WRITES",
+         "PerPkg": "1",
+@@ -430,6 +479,7 @@
+     },
+     {
+         "BriefDescription": "Inbound Transaction Count; Write Prefetches",
++        "Counter": "0,1",
+         "EventCode": "0x16",
+         "EventName": "UNC_I_TRANSACTIONS.WR_PREF",
+         "PerPkg": "1",
+@@ -439,6 +489,7 @@
+     },
+     {
+         "BriefDescription": "No AD Egress Credit Stalls",
++        "Counter": "0,1",
+         "EventCode": "0x18",
+         "EventName": "UNC_I_TxR_AD_STALL_CREDIT_CYCLES",
+         "PerPkg": "1",
+@@ -447,6 +498,7 @@
+     },
+     {
+         "BriefDescription": "No BL Egress Credit Stalls",
++        "Counter": "0,1",
+         "EventCode": "0x19",
+         "EventName": "UNC_I_TxR_BL_STALL_CREDIT_CYCLES",
+         "PerPkg": "1",
+@@ -455,6 +507,7 @@
+     },
+     {
+         "BriefDescription": "Outbound Read Requests",
++        "Counter": "0,1",
+         "EventCode": "0xE",
+         "EventName": "UNC_I_TxR_DATA_INSERTS_NCB",
+         "PerPkg": "1",
+@@ -463,6 +516,7 @@
+     },
+     {
+         "BriefDescription": "Outbound Read Requests",
++        "Counter": "0,1",
+         "EventCode": "0xF",
+         "EventName": "UNC_I_TxR_DATA_INSERTS_NCS",
+         "PerPkg": "1",
+@@ -471,6 +525,7 @@
+     },
+     {
+         "BriefDescription": "Outbound Request Queue Occupancy",
++        "Counter": "0,1",
+         "EventCode": "0xD",
+         "EventName": "UNC_I_TxR_REQUEST_OCCUPANCY",
+         "PerPkg": "1",
+@@ -479,6 +534,7 @@
+     },
+     {
+         "BriefDescription": "VLW Received",
++        "Counter": "0,1",
+         "EventCode": "0x42",
+         "EventName": "UNC_U_EVENT_MSG.DOORBELL_RCVD",
+         "PerPkg": "1",
+@@ -488,6 +544,7 @@
+     },
+     {
+         "BriefDescription": "Filter Match",
++        "Counter": "0,1",
+         "EventCode": "0x41",
+         "EventName": "UNC_U_FILTER_MATCH.DISABLE",
+         "PerPkg": "1",
+@@ -497,6 +554,7 @@
+     },
+     {
+         "BriefDescription": "Filter Match",
++        "Counter": "0,1",
+         "EventCode": "0x41",
+         "EventName": "UNC_U_FILTER_MATCH.ENABLE",
+         "PerPkg": "1",
+@@ -506,6 +564,7 @@
+     },
+     {
+         "BriefDescription": "Filter Match",
++        "Counter": "0,1",
+         "EventCode": "0x41",
+         "EventName": "UNC_U_FILTER_MATCH.U2C_DISABLE",
+         "PerPkg": "1",
+@@ -515,6 +574,7 @@
+     },
+     {
+         "BriefDescription": "Filter Match",
++        "Counter": "0,1",
+         "EventCode": "0x41",
+         "EventName": "UNC_U_FILTER_MATCH.U2C_ENABLE",
+         "PerPkg": "1",
+@@ -524,6 +584,7 @@
+     },
+     {
+         "BriefDescription": "Cycles PHOLD Assert to Ack; Assert to ACK",
++        "Counter": "0,1",
+         "EventCode": "0x45",
+         "EventName": "UNC_U_PHOLD_CYCLES.ASSERT_TO_ACK",
+         "PerPkg": "1",
+@@ -533,6 +594,7 @@
+     },
+     {
+         "BriefDescription": "RACU Request",
++        "Counter": "0,1",
+         "EventCode": "0x46",
+         "EventName": "UNC_U_RACU_REQUESTS",
+         "PerPkg": "1",
+@@ -541,6 +603,7 @@
+     },
+     {
+         "BriefDescription": "Monitor Sent to T0; Correctable Machine Check=
+",
++        "Counter": "0,1",
+         "EventCode": "0x43",
+         "EventName": "UNC_U_U2C_EVENTS.CMC",
+         "PerPkg": "1",
+@@ -550,6 +613,7 @@
+     },
+     {
+         "BriefDescription": "Monitor Sent to T0; Livelock",
++        "Counter": "0,1",
+         "EventCode": "0x43",
+         "EventName": "UNC_U_U2C_EVENTS.LIVELOCK",
+         "PerPkg": "1",
+@@ -559,6 +623,7 @@
+     },
+     {
+         "BriefDescription": "Monitor Sent to T0; LTError",
++        "Counter": "0,1",
+         "EventCode": "0x43",
+         "EventName": "UNC_U_U2C_EVENTS.LTERROR",
+         "PerPkg": "1",
+@@ -568,6 +633,7 @@
+     },
+     {
+         "BriefDescription": "Monitor Sent to T0; Monitor T0",
++        "Counter": "0,1",
+         "EventCode": "0x43",
+         "EventName": "UNC_U_U2C_EVENTS.MONITOR_T0",
+         "PerPkg": "1",
+@@ -577,6 +643,7 @@
+     },
+     {
+         "BriefDescription": "Monitor Sent to T0; Monitor T1",
++        "Counter": "0,1",
+         "EventCode": "0x43",
+         "EventName": "UNC_U_U2C_EVENTS.MONITOR_T1",
+         "PerPkg": "1",
+@@ -586,6 +653,7 @@
+     },
+     {
+         "BriefDescription": "Monitor Sent to T0; Other",
++        "Counter": "0,1",
+         "EventCode": "0x43",
+         "EventName": "UNC_U_U2C_EVENTS.OTHER",
+         "PerPkg": "1",
+@@ -595,6 +663,7 @@
+     },
+     {
+         "BriefDescription": "Monitor Sent to T0; Trap",
++        "Counter": "0,1",
+         "EventCode": "0x43",
+         "EventName": "UNC_U_U2C_EVENTS.TRAP",
+         "PerPkg": "1",
+@@ -604,6 +673,7 @@
+     },
+     {
+         "BriefDescription": "Monitor Sent to T0; Uncorrectable Machine Che=
+ck",
++        "Counter": "0,1",
+         "EventCode": "0x43",
+         "EventName": "UNC_U_U2C_EVENTS.UMC",
+         "PerPkg": "1",
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/uncore-io.json b/to=
+ols/perf/pmu-events/arch/x86/broadwellde/uncore-io.json
+index 01e04daf03da..daef7accdbcb 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/uncore-io.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/uncore-io.json
+@@ -1,6 +1,7 @@
+ [
+     {
+         "BriefDescription": "Number of uclks in domain",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1",
+         "EventName": "UNC_R2_CLOCKTICKS",
+         "PerPkg": "1",
+@@ -9,6 +10,7 @@
+     },
+     {
+         "BriefDescription": "UNC_R2_IIO_CREDIT.ISOCH_QPI0",
++        "Counter": "0,1",
+         "EventCode": "0x2D",
+         "EventName": "UNC_R2_IIO_CREDIT.ISOCH_QPI0",
+         "PerPkg": "1",
+@@ -17,6 +19,7 @@
+     },
+     {
+         "BriefDescription": "UNC_R2_IIO_CREDIT.ISOCH_QPI1",
++        "Counter": "0,1",
+         "EventCode": "0x2D",
+         "EventName": "UNC_R2_IIO_CREDIT.ISOCH_QPI1",
+         "PerPkg": "1",
+@@ -25,6 +28,7 @@
+     },
+     {
+         "BriefDescription": "UNC_R2_IIO_CREDIT.PRQ_QPI0",
++        "Counter": "0,1",
+         "EventCode": "0x2D",
+         "EventName": "UNC_R2_IIO_CREDIT.PRQ_QPI0",
+         "PerPkg": "1",
+@@ -33,6 +37,7 @@
+     },
+     {
+         "BriefDescription": "UNC_R2_IIO_CREDIT.PRQ_QPI1",
++        "Counter": "0,1",
+         "EventCode": "0x2D",
+         "EventName": "UNC_R2_IIO_CREDIT.PRQ_QPI1",
+         "PerPkg": "1",
+@@ -41,6 +46,7 @@
+     },
+     {
+         "BriefDescription": "R2PCIe IIO Credit Acquired; DRS",
++        "Counter": "0,1",
+         "EventCode": "0x33",
+         "EventName": "UNC_R2_IIO_CREDITS_ACQUIRED.DRS",
+         "PerPkg": "1",
+@@ -50,6 +56,7 @@
+     },
+     {
+         "BriefDescription": "R2PCIe IIO Credit Acquired; NCB",
++        "Counter": "0,1",
+         "EventCode": "0x33",
+         "EventName": "UNC_R2_IIO_CREDITS_ACQUIRED.NCB",
+         "PerPkg": "1",
+@@ -59,6 +66,7 @@
+     },
+     {
+         "BriefDescription": "R2PCIe IIO Credit Acquired; NCS",
++        "Counter": "0,1",
+         "EventCode": "0x33",
+         "EventName": "UNC_R2_IIO_CREDITS_ACQUIRED.NCS",
+         "PerPkg": "1",
+@@ -68,6 +76,7 @@
+     },
+     {
+         "BriefDescription": "R2PCIe IIO Credits in Use; DRS",
++        "Counter": "0,1",
+         "EventCode": "0x32",
+         "EventName": "UNC_R2_IIO_CREDITS_USED.DRS",
+         "PerPkg": "1",
+@@ -77,6 +86,7 @@
+     },
+     {
+         "BriefDescription": "R2PCIe IIO Credits in Use; NCB",
++        "Counter": "0,1",
+         "EventCode": "0x32",
+         "EventName": "UNC_R2_IIO_CREDITS_USED.NCB",
+         "PerPkg": "1",
+@@ -86,6 +96,7 @@
+     },
+     {
+         "BriefDescription": "R2PCIe IIO Credits in Use; NCS",
++        "Counter": "0,1",
+         "EventCode": "0x32",
+         "EventName": "UNC_R2_IIO_CREDITS_USED.NCS",
+         "PerPkg": "1",
+@@ -95,6 +106,7 @@
+     },
+     {
+         "BriefDescription": "R2 AD Ring in Use; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x7",
+         "EventName": "UNC_R2_RING_AD_USED.ALL",
+         "PerPkg": "1",
+@@ -104,6 +116,7 @@
+     },
+     {
+         "BriefDescription": "R2 AD Ring in Use; Counterclockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x7",
+         "EventName": "UNC_R2_RING_AD_USED.CCW",
+         "PerPkg": "1",
+@@ -113,6 +126,7 @@
+     },
+     {
+         "BriefDescription": "R2 AD Ring in Use; Counterclockwise and Even"=
+,
++        "Counter": "0,1,2,3",
+         "EventCode": "0x7",
+         "EventName": "UNC_R2_RING_AD_USED.CCW_EVEN",
+         "PerPkg": "1",
+@@ -122,6 +136,7 @@
+     },
+     {
+         "BriefDescription": "R2 AD Ring in Use; Counterclockwise and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x7",
+         "EventName": "UNC_R2_RING_AD_USED.CCW_ODD",
+         "PerPkg": "1",
+@@ -131,6 +146,7 @@
+     },
+     {
+         "BriefDescription": "R2 AD Ring in Use; Clockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x7",
+         "EventName": "UNC_R2_RING_AD_USED.CW",
+         "PerPkg": "1",
+@@ -140,6 +156,7 @@
+     },
+     {
+         "BriefDescription": "R2 AD Ring in Use; Clockwise and Even",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x7",
+         "EventName": "UNC_R2_RING_AD_USED.CW_EVEN",
+         "PerPkg": "1",
+@@ -149,6 +166,7 @@
+     },
+     {
+         "BriefDescription": "R2 AD Ring in Use; Clockwise and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x7",
+         "EventName": "UNC_R2_RING_AD_USED.CW_ODD",
+         "PerPkg": "1",
+@@ -158,6 +176,7 @@
+     },
+     {
+         "BriefDescription": "AK Ingress Bounced; Dn",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x12",
+         "EventName": "UNC_R2_RING_AK_BOUNCES.DN",
+         "PerPkg": "1",
+@@ -167,6 +186,7 @@
+     },
+     {
+         "BriefDescription": "AK Ingress Bounced; Up",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x12",
+         "EventName": "UNC_R2_RING_AK_BOUNCES.UP",
+         "PerPkg": "1",
+@@ -176,6 +196,7 @@
+     },
+     {
+         "BriefDescription": "R2 AK Ring in Use; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x8",
+         "EventName": "UNC_R2_RING_AK_USED.ALL",
+         "PerPkg": "1",
+@@ -185,6 +206,7 @@
+     },
+     {
+         "BriefDescription": "R2 AK Ring in Use; Counterclockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x8",
+         "EventName": "UNC_R2_RING_AK_USED.CCW",
+         "PerPkg": "1",
+@@ -194,6 +216,7 @@
+     },
+     {
+         "BriefDescription": "R2 AK Ring in Use; Counterclockwise and Even"=
+,
++        "Counter": "0,1,2,3",
+         "EventCode": "0x8",
+         "EventName": "UNC_R2_RING_AK_USED.CCW_EVEN",
+         "PerPkg": "1",
+@@ -203,6 +226,7 @@
+     },
+     {
+         "BriefDescription": "R2 AK Ring in Use; Counterclockwise and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x8",
+         "EventName": "UNC_R2_RING_AK_USED.CCW_ODD",
+         "PerPkg": "1",
+@@ -212,6 +236,7 @@
+     },
+     {
+         "BriefDescription": "R2 AK Ring in Use; Clockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x8",
+         "EventName": "UNC_R2_RING_AK_USED.CW",
+         "PerPkg": "1",
+@@ -221,6 +246,7 @@
+     },
+     {
+         "BriefDescription": "R2 AK Ring in Use; Clockwise and Even",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x8",
+         "EventName": "UNC_R2_RING_AK_USED.CW_EVEN",
+         "PerPkg": "1",
+@@ -230,6 +256,7 @@
+     },
+     {
+         "BriefDescription": "R2 AK Ring in Use; Clockwise and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x8",
+         "EventName": "UNC_R2_RING_AK_USED.CW_ODD",
+         "PerPkg": "1",
+@@ -239,6 +266,7 @@
+     },
+     {
+         "BriefDescription": "R2 BL Ring in Use; All",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x9",
+         "EventName": "UNC_R2_RING_BL_USED.ALL",
+         "PerPkg": "1",
+@@ -248,6 +276,7 @@
+     },
+     {
+         "BriefDescription": "R2 BL Ring in Use; Counterclockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x9",
+         "EventName": "UNC_R2_RING_BL_USED.CCW",
+         "PerPkg": "1",
+@@ -257,6 +286,7 @@
+     },
+     {
+         "BriefDescription": "R2 BL Ring in Use; Counterclockwise and Even"=
+,
++        "Counter": "0,1,2,3",
+         "EventCode": "0x9",
+         "EventName": "UNC_R2_RING_BL_USED.CCW_EVEN",
+         "PerPkg": "1",
+@@ -266,6 +296,7 @@
+     },
+     {
+         "BriefDescription": "R2 BL Ring in Use; Counterclockwise and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x9",
+         "EventName": "UNC_R2_RING_BL_USED.CCW_ODD",
+         "PerPkg": "1",
+@@ -275,6 +306,7 @@
+     },
+     {
+         "BriefDescription": "R2 BL Ring in Use; Clockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x9",
+         "EventName": "UNC_R2_RING_BL_USED.CW",
+         "PerPkg": "1",
+@@ -284,6 +316,7 @@
+     },
+     {
+         "BriefDescription": "R2 BL Ring in Use; Clockwise and Even",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x9",
+         "EventName": "UNC_R2_RING_BL_USED.CW_EVEN",
+         "PerPkg": "1",
+@@ -293,6 +326,7 @@
+     },
+     {
+         "BriefDescription": "R2 BL Ring in Use; Clockwise and Odd",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x9",
+         "EventName": "UNC_R2_RING_BL_USED.CW_ODD",
+         "PerPkg": "1",
+@@ -302,6 +336,7 @@
+     },
+     {
+         "BriefDescription": "R2 IV Ring in Use; Any",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA",
+         "EventName": "UNC_R2_RING_IV_USED.ANY",
+         "PerPkg": "1",
+@@ -311,6 +346,7 @@
+     },
+     {
+         "BriefDescription": "R2 IV Ring in Use; Counterclockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA",
+         "EventName": "UNC_R2_RING_IV_USED.CCW",
+         "PerPkg": "1",
+@@ -320,6 +356,7 @@
+     },
+     {
+         "BriefDescription": "R2 IV Ring in Use; Clockwise",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA",
+         "EventName": "UNC_R2_RING_IV_USED.CW",
+         "PerPkg": "1",
+@@ -329,6 +366,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Cycles Not Empty; NCB",
++        "Counter": "0,1",
+         "EventCode": "0x10",
+         "EventName": "UNC_R2_RxR_CYCLES_NE.NCB",
+         "PerPkg": "1",
+@@ -338,6 +376,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Cycles Not Empty; NCS",
++        "Counter": "0,1",
+         "EventCode": "0x10",
+         "EventName": "UNC_R2_RxR_CYCLES_NE.NCS",
+         "PerPkg": "1",
+@@ -347,6 +386,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Allocations; NCB",
++        "Counter": "0,1",
+         "EventCode": "0x11",
+         "EventName": "UNC_R2_RxR_INSERTS.NCB",
+         "PerPkg": "1",
+@@ -356,6 +396,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Allocations; NCS",
++        "Counter": "0,1",
+         "EventCode": "0x11",
+         "EventName": "UNC_R2_RxR_INSERTS.NCS",
+         "PerPkg": "1",
+@@ -365,6 +406,7 @@
+     },
+     {
+         "BriefDescription": "Ingress Occupancy Accumulator; DRS",
++        "Counter": "0",
+         "EventCode": "0x13",
+         "EventName": "UNC_R2_RxR_OCCUPANCY.DRS",
+         "PerPkg": "1",
+@@ -374,6 +416,7 @@
+     },
+     {
+         "BriefDescription": "SBo0 Credits Acquired; For AD Ring",
++        "Counter": "0,1",
+         "EventCode": "0x28",
+         "EventName": "UNC_R2_SBO0_CREDITS_ACQUIRED.AD",
+         "PerPkg": "1",
+@@ -383,6 +426,7 @@
+     },
+     {
+         "BriefDescription": "SBo0 Credits Acquired; For BL Ring",
++        "Counter": "0,1",
+         "EventCode": "0x28",
+         "EventName": "UNC_R2_SBO0_CREDITS_ACQUIRED.BL",
+         "PerPkg": "1",
+@@ -392,6 +436,7 @@
+     },
+     {
+         "BriefDescription": "SBo0 Credits Occupancy; For AD Ring",
++        "Counter": "0",
+         "EventCode": "0x2A",
+         "EventName": "UNC_R2_SBO0_CREDIT_OCCUPANCY.AD",
+         "PerPkg": "1",
+@@ -401,6 +446,7 @@
+     },
+     {
+         "BriefDescription": "SBo0 Credits Occupancy; For BL Ring",
++        "Counter": "0",
+         "EventCode": "0x2A",
+         "EventName": "UNC_R2_SBO0_CREDIT_OCCUPANCY.BL",
+         "PerPkg": "1",
+@@ -410,6 +456,7 @@
+     },
+     {
+         "BriefDescription": "Stall on No Sbo Credits; For SBo0, AD Ring",
++        "Counter": "0,1",
+         "EventCode": "0x2C",
+         "EventName": "UNC_R2_STALL_NO_SBO_CREDIT.SBO0_AD",
+         "PerPkg": "1",
+@@ -419,6 +466,7 @@
+     },
+     {
+         "BriefDescription": "Stall on No Sbo Credits; For SBo0, BL Ring",
++        "Counter": "0,1",
+         "EventCode": "0x2C",
+         "EventName": "UNC_R2_STALL_NO_SBO_CREDIT.SBO0_BL",
+         "PerPkg": "1",
+@@ -428,6 +476,7 @@
+     },
+     {
+         "BriefDescription": "Stall on No Sbo Credits; For SBo1, AD Ring",
++        "Counter": "0,1",
+         "EventCode": "0x2C",
+         "EventName": "UNC_R2_STALL_NO_SBO_CREDIT.SBO1_AD",
+         "PerPkg": "1",
+@@ -437,6 +486,7 @@
+     },
+     {
+         "BriefDescription": "Stall on No Sbo Credits; For SBo1, BL Ring",
++        "Counter": "0,1",
+         "EventCode": "0x2C",
+         "EventName": "UNC_R2_STALL_NO_SBO_CREDIT.SBO1_BL",
+         "PerPkg": "1",
+@@ -446,6 +496,7 @@
+     },
+     {
+         "BriefDescription": "Egress Cycles Full; AD",
++        "Counter": "0",
+         "EventCode": "0x25",
+         "EventName": "UNC_R2_TxR_CYCLES_FULL.AD",
+         "PerPkg": "1",
+@@ -455,6 +506,7 @@
+     },
+     {
+         "BriefDescription": "Egress Cycles Full; AK",
++        "Counter": "0",
+         "EventCode": "0x25",
+         "EventName": "UNC_R2_TxR_CYCLES_FULL.AK",
+         "PerPkg": "1",
+@@ -464,6 +516,7 @@
+     },
+     {
+         "BriefDescription": "Egress Cycles Full; BL",
++        "Counter": "0",
+         "EventCode": "0x25",
+         "EventName": "UNC_R2_TxR_CYCLES_FULL.BL",
+         "PerPkg": "1",
+@@ -473,6 +526,7 @@
+     },
+     {
+         "BriefDescription": "Egress Cycles Not Empty; AD",
++        "Counter": "0",
+         "EventCode": "0x23",
+         "EventName": "UNC_R2_TxR_CYCLES_NE.AD",
+         "PerPkg": "1",
+@@ -482,6 +536,7 @@
+     },
+     {
+         "BriefDescription": "Egress Cycles Not Empty; AK",
++        "Counter": "0",
+         "EventCode": "0x23",
+         "EventName": "UNC_R2_TxR_CYCLES_NE.AK",
+         "PerPkg": "1",
+@@ -491,6 +546,7 @@
+     },
+     {
+         "BriefDescription": "Egress Cycles Not Empty; BL",
++        "Counter": "0",
+         "EventCode": "0x23",
+         "EventName": "UNC_R2_TxR_CYCLES_NE.BL",
+         "PerPkg": "1",
+@@ -500,6 +556,7 @@
+     },
+     {
+         "BriefDescription": "Egress CCW NACK; AD CCW",
++        "Counter": "0,1",
+         "EventCode": "0x26",
+         "EventName": "UNC_R2_TxR_NACK_CW.DN_AD",
+         "PerPkg": "1",
+@@ -509,6 +566,7 @@
+     },
+     {
+         "BriefDescription": "Egress CCW NACK; AK CCW",
++        "Counter": "0,1",
+         "EventCode": "0x26",
+         "EventName": "UNC_R2_TxR_NACK_CW.DN_AK",
+         "PerPkg": "1",
+@@ -518,6 +576,7 @@
+     },
+     {
+         "BriefDescription": "Egress CCW NACK; BL CCW",
++        "Counter": "0,1",
+         "EventCode": "0x26",
+         "EventName": "UNC_R2_TxR_NACK_CW.DN_BL",
+         "PerPkg": "1",
+@@ -527,6 +586,7 @@
+     },
+     {
+         "BriefDescription": "Egress CCW NACK; AK CCW",
++        "Counter": "0,1",
+         "EventCode": "0x26",
+         "EventName": "UNC_R2_TxR_NACK_CW.UP_AD",
+         "PerPkg": "1",
+@@ -536,6 +596,7 @@
+     },
+     {
+         "BriefDescription": "Egress CCW NACK; BL CW",
++        "Counter": "0,1",
+         "EventCode": "0x26",
+         "EventName": "UNC_R2_TxR_NACK_CW.UP_AK",
+         "PerPkg": "1",
+@@ -545,6 +606,7 @@
+     },
+     {
+         "BriefDescription": "Egress CCW NACK; BL CCW",
++        "Counter": "0,1",
+         "EventCode": "0x26",
+         "EventName": "UNC_R2_TxR_NACK_CW.UP_BL",
+         "PerPkg": "1",
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/uncore-memory.json =
+b/tools/perf/pmu-events/arch/x86/broadwellde/uncore-memory.json
+index a764234a3584..ddc83d3885ae 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/uncore-memory.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/uncore-memory.json
+@@ -1,6 +1,7 @@
+ [
+     {
+         "BriefDescription": "DRAM Activate Count; Activate due to Write",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1",
+         "EventName": "UNC_M_ACT_COUNT.BYP",
+         "PerPkg": "1",
+@@ -10,6 +11,7 @@
+     },
+     {
+         "BriefDescription": "DRAM Activate Count; Activate due to Read",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1",
+         "EventName": "UNC_M_ACT_COUNT.RD",
+         "PerPkg": "1",
+@@ -19,6 +21,7 @@
+     },
+     {
+         "BriefDescription": "DRAM Activate Count; Activate due to Write",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x1",
+         "EventName": "UNC_M_ACT_COUNT.WR",
+         "PerPkg": "1",
+@@ -28,6 +31,7 @@
+     },
+     {
+         "BriefDescription": "ACT command issued by 2 cycle bypass",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA1",
+         "EventName": "UNC_M_BYP_CMDS.ACT",
+         "PerPkg": "1",
+@@ -36,6 +40,7 @@
+     },
+     {
+         "BriefDescription": "CAS command issued by 2 cycle bypass",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA1",
+         "EventName": "UNC_M_BYP_CMDS.CAS",
+         "PerPkg": "1",
+@@ -44,6 +49,7 @@
+     },
+     {
+         "BriefDescription": "PRE command issued by 2 cycle bypass",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA1",
+         "EventName": "UNC_M_BYP_CMDS.PRE",
          "PerPkg": "1",
 @@ -52,6 +58,7 @@
      },
      {
-         "BriefDescription": "Number of Writes allocated - any write transa=
-ctions: full/partials writes and evictions.",
-+        "Counter": "0,1",
-         "EventCode": "0x81",
-         "EventName": "UNC_ARB_TRK_REQUESTS.WRITES",
+         "BriefDescription": "DRAM RD_CAS and WR_CAS Commands.; All DRAM WR=
+_CAS (w/ and w/out auto-pre)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_M_CAS_COUNT.ALL",
          "PerPkg": "1",
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/uncore-other.json b/t=
-ools/perf/pmu-events/arch/x86/broadwell/uncore-other.json
-deleted file mode 100644
-index 58be90d7cc93..000000000000
---- a/tools/perf/pmu-events/arch/x86/broadwell/uncore-other.json
-+++ /dev/null
-@@ -1,10 +0,0 @@
--[
--    {
--        "BriefDescription": "This 48-bit fixed counter counts the UCLK cyc=
-les",
--        "EventCode": "0xff",
--        "EventName": "UNC_CLOCK.SOCKET",
--        "PerPkg": "1",
--        "PublicDescription": "This 48-bit fixed counter counts the UCLK cy=
-cles.",
--        "Unit": "CLOCK"
--    }
--]
-diff --git a/tools/perf/pmu-events/arch/x86/broadwell/virtual-memory.json b=
-/tools/perf/pmu-events/arch/x86/broadwell/virtual-memory.json
+@@ -61,6 +68,7 @@
+     },
+     {
+         "BriefDescription": "DRAM RD_CAS and WR_CAS Commands.; All DRAM Re=
+ads (RD_CAS + Underfills)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_M_CAS_COUNT.RD",
+         "PerPkg": "1",
+@@ -70,6 +78,7 @@
+     },
+     {
+         "BriefDescription": "DRAM RD_CAS and WR_CAS Commands.; All DRAM RD=
+_CAS (w/ and w/out auto-pre)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_M_CAS_COUNT.RD_REG",
+         "PerPkg": "1",
+@@ -79,6 +88,7 @@
+     },
+     {
+         "BriefDescription": "DRAM RD_CAS and WR_CAS Commands.; Read CAS is=
+sued in RMM",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_M_CAS_COUNT.RD_RMM",
+         "PerPkg": "1",
+@@ -87,6 +97,7 @@
+     },
+     {
+         "BriefDescription": "DRAM RD_CAS and WR_CAS Commands.; Underfill R=
+ead Issued",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_M_CAS_COUNT.RD_UNDERFILL",
+         "PerPkg": "1",
+@@ -96,6 +107,7 @@
+     },
+     {
+         "BriefDescription": "DRAM RD_CAS and WR_CAS Commands.; Read CAS is=
+sued in WMM",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_M_CAS_COUNT.RD_WMM",
+         "PerPkg": "1",
+@@ -104,6 +116,7 @@
+     },
+     {
+         "BriefDescription": "DRAM RD_CAS and WR_CAS Commands.; All DRAM WR=
+_CAS (both Modes)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_M_CAS_COUNT.WR",
+         "PerPkg": "1",
+@@ -113,6 +126,7 @@
+     },
+     {
+         "BriefDescription": "DRAM RD_CAS and WR_CAS Commands.; DRAM WR_CAS=
+ (w/ and w/out auto-pre) in Read Major Mode",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_M_CAS_COUNT.WR_RMM",
+         "PerPkg": "1",
+@@ -122,6 +136,7 @@
+     },
+     {
+         "BriefDescription": "DRAM RD_CAS and WR_CAS Commands.; DRAM WR_CAS=
+ (w/ and w/out auto-pre) in Write Major Mode",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_M_CAS_COUNT.WR_WMM",
+         "PerPkg": "1",
+@@ -131,12 +146,14 @@
+     },
+     {
+         "BriefDescription": "DRAM Clockticks",
++        "Counter": "0,1,2,3",
+         "EventName": "UNC_M_DCLOCKTICKS",
+         "PerPkg": "1",
+         "Unit": "iMC"
+     },
+     {
+         "BriefDescription": "DRAM Precharge All Commands",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6",
+         "EventName": "UNC_M_DRAM_PRE_ALL",
+         "PerPkg": "1",
+@@ -145,6 +162,7 @@
+     },
+     {
+         "BriefDescription": "Number of DRAM Refreshes Issued",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x5",
+         "EventName": "UNC_M_DRAM_REFRESH.HIGH",
+         "PerPkg": "1",
+@@ -154,6 +172,7 @@
+     },
+     {
+         "BriefDescription": "Number of DRAM Refreshes Issued",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x5",
+         "EventName": "UNC_M_DRAM_REFRESH.PANIC",
+         "PerPkg": "1",
+@@ -163,6 +182,7 @@
+     },
+     {
+         "BriefDescription": "ECC Correctable Errors",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x9",
+         "EventName": "UNC_M_ECC_CORRECTABLE_ERRORS",
+         "PerPkg": "1",
+@@ -171,6 +191,7 @@
+     },
+     {
+         "BriefDescription": "Cycles in a Major Mode; Isoch Major Mode",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x7",
+         "EventName": "UNC_M_MAJOR_MODES.ISOCH",
+         "PerPkg": "1",
+@@ -180,6 +201,7 @@
+     },
+     {
+         "BriefDescription": "Cycles in a Major Mode; Partial Major Mode",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x7",
+         "EventName": "UNC_M_MAJOR_MODES.PARTIAL",
+         "PerPkg": "1",
+@@ -189,6 +211,7 @@
+     },
+     {
+         "BriefDescription": "Cycles in a Major Mode; Read Major Mode",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x7",
+         "EventName": "UNC_M_MAJOR_MODES.READ",
+         "PerPkg": "1",
+@@ -198,6 +221,7 @@
+     },
+     {
+         "BriefDescription": "Cycles in a Major Mode; Write Major Mode",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x7",
+         "EventName": "UNC_M_MAJOR_MODES.WRITE",
+         "PerPkg": "1",
+@@ -207,6 +231,7 @@
+     },
+     {
+         "BriefDescription": "Channel DLLOFF Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x84",
+         "EventName": "UNC_M_POWER_CHANNEL_DLLOFF",
+         "PerPkg": "1",
+@@ -215,6 +240,7 @@
+     },
+     {
+         "BriefDescription": "Channel PPD Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x85",
+         "EventName": "UNC_M_POWER_CHANNEL_PPD",
+         "PerPkg": "1",
+@@ -223,6 +249,7 @@
+     },
+     {
+         "BriefDescription": "CKE_ON_CYCLES by Rank; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x83",
+         "EventName": "UNC_M_POWER_CKE_CYCLES.RANK0",
+         "PerPkg": "1",
+@@ -232,6 +259,7 @@
+     },
+     {
+         "BriefDescription": "CKE_ON_CYCLES by Rank; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x83",
+         "EventName": "UNC_M_POWER_CKE_CYCLES.RANK1",
+         "PerPkg": "1",
+@@ -241,6 +269,7 @@
+     },
+     {
+         "BriefDescription": "CKE_ON_CYCLES by Rank; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x83",
+         "EventName": "UNC_M_POWER_CKE_CYCLES.RANK2",
+         "PerPkg": "1",
+@@ -250,6 +279,7 @@
+     },
+     {
+         "BriefDescription": "CKE_ON_CYCLES by Rank; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x83",
+         "EventName": "UNC_M_POWER_CKE_CYCLES.RANK3",
+         "PerPkg": "1",
+@@ -259,6 +289,7 @@
+     },
+     {
+         "BriefDescription": "CKE_ON_CYCLES by Rank; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x83",
+         "EventName": "UNC_M_POWER_CKE_CYCLES.RANK4",
+         "PerPkg": "1",
+@@ -268,6 +299,7 @@
+     },
+     {
+         "BriefDescription": "CKE_ON_CYCLES by Rank; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x83",
+         "EventName": "UNC_M_POWER_CKE_CYCLES.RANK5",
+         "PerPkg": "1",
+@@ -277,6 +309,7 @@
+     },
+     {
+         "BriefDescription": "CKE_ON_CYCLES by Rank; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x83",
+         "EventName": "UNC_M_POWER_CKE_CYCLES.RANK6",
+         "PerPkg": "1",
+@@ -286,6 +319,7 @@
+     },
+     {
+         "BriefDescription": "CKE_ON_CYCLES by Rank; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x83",
+         "EventName": "UNC_M_POWER_CKE_CYCLES.RANK7",
+         "PerPkg": "1",
+@@ -295,6 +329,7 @@
+     },
+     {
+         "BriefDescription": "Critical Throttle Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x86",
+         "EventName": "UNC_M_POWER_CRITICAL_THROTTLE_CYCLES",
+         "PerPkg": "1",
+@@ -303,6 +338,7 @@
+     },
+     {
+         "BriefDescription": "UNC_M_POWER_PCU_THROTTLING",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x42",
+         "EventName": "UNC_M_POWER_PCU_THROTTLING",
+         "PerPkg": "1",
+@@ -310,6 +346,7 @@
+     },
+     {
+         "BriefDescription": "Clock-Enabled Self-Refresh",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x43",
+         "EventName": "UNC_M_POWER_SELF_REFRESH",
+         "PerPkg": "1",
+@@ -318,6 +355,7 @@
+     },
+     {
+         "BriefDescription": "Throttle Cycles for Rank 0; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x41",
+         "EventName": "UNC_M_POWER_THROTTLE_CYCLES.RANK0",
+         "PerPkg": "1",
+@@ -327,6 +365,7 @@
+     },
+     {
+         "BriefDescription": "Throttle Cycles for Rank 0; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x41",
+         "EventName": "UNC_M_POWER_THROTTLE_CYCLES.RANK1",
+         "PerPkg": "1",
+@@ -336,6 +375,7 @@
+     },
+     {
+         "BriefDescription": "Throttle Cycles for Rank 0; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x41",
+         "EventName": "UNC_M_POWER_THROTTLE_CYCLES.RANK2",
+         "PerPkg": "1",
+@@ -345,6 +385,7 @@
+     },
+     {
+         "BriefDescription": "Throttle Cycles for Rank 0; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x41",
+         "EventName": "UNC_M_POWER_THROTTLE_CYCLES.RANK3",
+         "PerPkg": "1",
+@@ -354,6 +395,7 @@
+     },
+     {
+         "BriefDescription": "Throttle Cycles for Rank 0; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x41",
+         "EventName": "UNC_M_POWER_THROTTLE_CYCLES.RANK4",
+         "PerPkg": "1",
+@@ -363,6 +405,7 @@
+     },
+     {
+         "BriefDescription": "Throttle Cycles for Rank 0; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x41",
+         "EventName": "UNC_M_POWER_THROTTLE_CYCLES.RANK5",
+         "PerPkg": "1",
+@@ -372,6 +415,7 @@
+     },
+     {
+         "BriefDescription": "Throttle Cycles for Rank 0; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x41",
+         "EventName": "UNC_M_POWER_THROTTLE_CYCLES.RANK6",
+         "PerPkg": "1",
+@@ -381,6 +425,7 @@
+     },
+     {
+         "BriefDescription": "Throttle Cycles for Rank 0; DIMM ID",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x41",
+         "EventName": "UNC_M_POWER_THROTTLE_CYCLES.RANK7",
+         "PerPkg": "1",
+@@ -390,6 +435,7 @@
+     },
+     {
+         "BriefDescription": "Read Preemption Count; Read over Read Preempt=
+ion",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x8",
+         "EventName": "UNC_M_PREEMPTION.RD_PREEMPT_RD",
+         "PerPkg": "1",
+@@ -399,6 +445,7 @@
+     },
+     {
+         "BriefDescription": "Read Preemption Count; Read over Write Preemp=
+tion",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x8",
+         "EventName": "UNC_M_PREEMPTION.RD_PREEMPT_WR",
+         "PerPkg": "1",
+@@ -408,6 +455,7 @@
+     },
+     {
+         "BriefDescription": "DRAM Precharge commands.; Precharge due to by=
+pass",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_M_PRE_COUNT.BYP",
+         "PerPkg": "1",
+@@ -417,6 +465,7 @@
+     },
+     {
+         "BriefDescription": "DRAM Precharge commands.; Precharge due to ti=
+mer expiration",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_M_PRE_COUNT.PAGE_CLOSE",
+         "PerPkg": "1",
+@@ -426,6 +475,7 @@
+     },
+     {
+         "BriefDescription": "DRAM Precharge commands.; Precharges due to p=
+age miss",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_M_PRE_COUNT.PAGE_MISS",
+         "PerPkg": "1",
+@@ -435,6 +485,7 @@
+     },
+     {
+         "BriefDescription": "DRAM Precharge commands.; Precharge due to re=
+ad",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_M_PRE_COUNT.RD",
+         "PerPkg": "1",
+@@ -444,6 +495,7 @@
+     },
+     {
+         "BriefDescription": "DRAM Precharge commands.; Precharge due to wr=
+ite",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2",
+         "EventName": "UNC_M_PRE_COUNT.WR",
+         "PerPkg": "1",
+@@ -453,6 +505,7 @@
+     },
+     {
+         "BriefDescription": "Read CAS issued with HIGH priority",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA0",
+         "EventName": "UNC_M_RD_CAS_PRIO.HIGH",
+         "PerPkg": "1",
+@@ -461,6 +514,7 @@
+     },
+     {
+         "BriefDescription": "Read CAS issued with LOW priority",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA0",
+         "EventName": "UNC_M_RD_CAS_PRIO.LOW",
+         "PerPkg": "1",
+@@ -469,6 +523,7 @@
+     },
+     {
+         "BriefDescription": "Read CAS issued with MEDIUM priority",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA0",
+         "EventName": "UNC_M_RD_CAS_PRIO.MED",
+         "PerPkg": "1",
+@@ -477,6 +532,7 @@
+     },
+     {
+         "BriefDescription": "Read CAS issued with PANIC NON ISOCH priority=
+ (starved)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA0",
+         "EventName": "UNC_M_RD_CAS_PRIO.PANIC",
+         "PerPkg": "1",
+@@ -485,6 +541,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; All Banks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.ALLBANKS",
+         "PerPkg": "1",
+@@ -494,6 +551,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK0",
+         "PerPkg": "1",
+@@ -502,6 +560,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK1",
+         "PerPkg": "1",
+@@ -511,6 +570,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK10",
+         "PerPkg": "1",
+@@ -520,6 +580,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK11",
+         "PerPkg": "1",
+@@ -529,6 +590,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 12",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK12",
+         "PerPkg": "1",
+@@ -538,6 +600,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 13",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK13",
+         "PerPkg": "1",
+@@ -547,6 +610,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 14",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK14",
+         "PerPkg": "1",
+@@ -556,6 +620,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 15",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK15",
+         "PerPkg": "1",
+@@ -565,6 +630,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK2",
+         "PerPkg": "1",
+@@ -574,6 +640,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK3",
+         "PerPkg": "1",
+@@ -583,6 +650,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK4",
+         "PerPkg": "1",
+@@ -592,6 +660,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK5",
+         "PerPkg": "1",
+@@ -601,6 +670,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK6",
+         "PerPkg": "1",
+@@ -610,6 +680,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK7",
+         "PerPkg": "1",
+@@ -619,6 +690,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK8",
+         "PerPkg": "1",
+@@ -628,6 +700,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANK9",
+         "PerPkg": "1",
+@@ -637,6 +710,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank Group 0 (Banks =
+0-3)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANKG0",
+         "PerPkg": "1",
+@@ -646,6 +720,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank Group 1 (Banks =
+4-7)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANKG1",
+         "PerPkg": "1",
+@@ -655,6 +730,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank Group 2 (Banks =
+8-11)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANKG2",
+         "PerPkg": "1",
+@@ -664,6 +740,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 0; Bank Group 3 (Banks =
+12-15)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB0",
+         "EventName": "UNC_M_RD_CAS_RANK0.BANKG3",
+         "PerPkg": "1",
+@@ -673,6 +750,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; All Banks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.ALLBANKS",
+         "PerPkg": "1",
+@@ -682,6 +760,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK0",
+         "PerPkg": "1",
+@@ -690,6 +769,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK1",
+         "PerPkg": "1",
+@@ -699,6 +779,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK10",
+         "PerPkg": "1",
+@@ -708,6 +789,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK11",
+         "PerPkg": "1",
+@@ -717,6 +799,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 12",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK12",
+         "PerPkg": "1",
+@@ -726,6 +809,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 13",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK13",
+         "PerPkg": "1",
+@@ -735,6 +819,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 14",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK14",
+         "PerPkg": "1",
+@@ -744,6 +829,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 15",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK15",
+         "PerPkg": "1",
+@@ -753,6 +839,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK2",
+         "PerPkg": "1",
+@@ -762,6 +849,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK3",
+         "PerPkg": "1",
+@@ -771,6 +859,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK4",
+         "PerPkg": "1",
+@@ -780,6 +869,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK5",
+         "PerPkg": "1",
+@@ -789,6 +879,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK6",
+         "PerPkg": "1",
+@@ -798,6 +889,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK7",
+         "PerPkg": "1",
+@@ -807,6 +899,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK8",
+         "PerPkg": "1",
+@@ -816,6 +909,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANK9",
+         "PerPkg": "1",
+@@ -825,6 +919,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank Group 0 (Banks =
+0-3)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANKG0",
+         "PerPkg": "1",
+@@ -834,6 +929,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank Group 1 (Banks =
+4-7)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANKG1",
+         "PerPkg": "1",
+@@ -843,6 +939,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank Group 2 (Banks =
+8-11)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANKG2",
+         "PerPkg": "1",
+@@ -852,6 +949,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 1; Bank Group 3 (Banks =
+12-15)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB1",
+         "EventName": "UNC_M_RD_CAS_RANK1.BANKG3",
+         "PerPkg": "1",
+@@ -861,6 +959,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 2; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB2",
+         "EventName": "UNC_M_RD_CAS_RANK2.BANK0",
+         "PerPkg": "1",
+@@ -869,6 +968,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; All Banks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.ALLBANKS",
+         "PerPkg": "1",
+@@ -878,6 +978,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK0",
+         "PerPkg": "1",
+@@ -886,6 +987,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK1",
+         "PerPkg": "1",
+@@ -895,6 +997,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK10",
+         "PerPkg": "1",
+@@ -904,6 +1007,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK11",
+         "PerPkg": "1",
+@@ -913,6 +1017,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 12",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK12",
+         "PerPkg": "1",
+@@ -922,6 +1027,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 13",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK13",
+         "PerPkg": "1",
+@@ -931,6 +1037,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 14",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK14",
+         "PerPkg": "1",
+@@ -940,6 +1047,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 15",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK15",
+         "PerPkg": "1",
+@@ -949,6 +1057,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK2",
+         "PerPkg": "1",
+@@ -958,6 +1067,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK3",
+         "PerPkg": "1",
+@@ -967,6 +1077,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK4",
+         "PerPkg": "1",
+@@ -976,6 +1087,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK5",
+         "PerPkg": "1",
+@@ -985,6 +1097,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK6",
+         "PerPkg": "1",
+@@ -994,6 +1107,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK7",
+         "PerPkg": "1",
+@@ -1003,6 +1117,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK8",
+         "PerPkg": "1",
+@@ -1012,6 +1127,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANK9",
+         "PerPkg": "1",
+@@ -1021,6 +1137,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank Group 0 (Banks =
+0-3)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANKG0",
+         "PerPkg": "1",
+@@ -1030,6 +1147,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank Group 1 (Banks =
+4-7)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANKG1",
+         "PerPkg": "1",
+@@ -1039,6 +1157,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank Group 2 (Banks =
+8-11)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANKG2",
+         "PerPkg": "1",
+@@ -1048,6 +1167,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 4; Bank Group 3 (Banks =
+12-15)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB4",
+         "EventName": "UNC_M_RD_CAS_RANK4.BANKG3",
+         "PerPkg": "1",
+@@ -1057,6 +1177,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; All Banks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.ALLBANKS",
+         "PerPkg": "1",
+@@ -1066,6 +1187,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK0",
+         "PerPkg": "1",
+@@ -1074,6 +1196,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK1",
+         "PerPkg": "1",
+@@ -1083,6 +1206,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK10",
+         "PerPkg": "1",
+@@ -1092,6 +1216,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK11",
+         "PerPkg": "1",
+@@ -1101,6 +1226,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 12",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK12",
+         "PerPkg": "1",
+@@ -1110,6 +1236,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 13",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK13",
+         "PerPkg": "1",
+@@ -1119,6 +1246,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 14",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK14",
+         "PerPkg": "1",
+@@ -1128,6 +1256,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 15",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK15",
+         "PerPkg": "1",
+@@ -1137,6 +1266,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK2",
+         "PerPkg": "1",
+@@ -1146,6 +1276,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK3",
+         "PerPkg": "1",
+@@ -1155,6 +1286,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK4",
+         "PerPkg": "1",
+@@ -1164,6 +1296,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK5",
+         "PerPkg": "1",
+@@ -1173,6 +1306,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK6",
+         "PerPkg": "1",
+@@ -1182,6 +1316,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK7",
+         "PerPkg": "1",
+@@ -1191,6 +1326,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK8",
+         "PerPkg": "1",
+@@ -1200,6 +1336,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANK9",
+         "PerPkg": "1",
+@@ -1209,6 +1346,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank Group 0 (Banks =
+0-3)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANKG0",
+         "PerPkg": "1",
+@@ -1218,6 +1356,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank Group 1 (Banks =
+4-7)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANKG1",
+         "PerPkg": "1",
+@@ -1227,6 +1366,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank Group 2 (Banks =
+8-11)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANKG2",
+         "PerPkg": "1",
+@@ -1236,6 +1376,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 5; Bank Group 3 (Banks =
+12-15)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB5",
+         "EventName": "UNC_M_RD_CAS_RANK5.BANKG3",
+         "PerPkg": "1",
+@@ -1245,6 +1386,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; All Banks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.ALLBANKS",
+         "PerPkg": "1",
+@@ -1254,6 +1396,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK0",
+         "PerPkg": "1",
+@@ -1262,6 +1405,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK1",
+         "PerPkg": "1",
+@@ -1271,6 +1415,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK10",
+         "PerPkg": "1",
+@@ -1280,6 +1425,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK11",
+         "PerPkg": "1",
+@@ -1289,6 +1435,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 12",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK12",
+         "PerPkg": "1",
+@@ -1298,6 +1445,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 13",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK13",
+         "PerPkg": "1",
+@@ -1307,6 +1455,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 14",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK14",
+         "PerPkg": "1",
+@@ -1316,6 +1465,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 15",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK15",
+         "PerPkg": "1",
+@@ -1325,6 +1475,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK2",
+         "PerPkg": "1",
+@@ -1334,6 +1485,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK3",
+         "PerPkg": "1",
+@@ -1343,6 +1495,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK4",
+         "PerPkg": "1",
+@@ -1352,6 +1505,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK5",
+         "PerPkg": "1",
+@@ -1361,6 +1515,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK6",
+         "PerPkg": "1",
+@@ -1370,6 +1525,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK7",
+         "PerPkg": "1",
+@@ -1379,6 +1535,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK8",
+         "PerPkg": "1",
+@@ -1388,6 +1545,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANK9",
+         "PerPkg": "1",
+@@ -1397,6 +1555,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank Group 0 (Banks =
+0-3)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANKG0",
+         "PerPkg": "1",
+@@ -1406,6 +1565,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank Group 1 (Banks =
+4-7)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANKG1",
+         "PerPkg": "1",
+@@ -1415,6 +1575,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank Group 2 (Banks =
+8-11)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANKG2",
+         "PerPkg": "1",
+@@ -1424,6 +1585,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 6; Bank Group 3 (Banks =
+12-15)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB6",
+         "EventName": "UNC_M_RD_CAS_RANK6.BANKG3",
+         "PerPkg": "1",
+@@ -1433,6 +1595,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; All Banks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.ALLBANKS",
+         "PerPkg": "1",
+@@ -1442,6 +1605,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK0",
+         "PerPkg": "1",
+@@ -1450,6 +1614,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK1",
+         "PerPkg": "1",
+@@ -1459,6 +1624,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK10",
+         "PerPkg": "1",
+@@ -1468,6 +1634,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK11",
+         "PerPkg": "1",
+@@ -1477,6 +1644,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 12",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK12",
+         "PerPkg": "1",
+@@ -1486,6 +1654,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 13",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK13",
+         "PerPkg": "1",
+@@ -1495,6 +1664,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 14",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK14",
+         "PerPkg": "1",
+@@ -1504,6 +1674,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 15",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK15",
+         "PerPkg": "1",
+@@ -1513,6 +1684,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK2",
+         "PerPkg": "1",
+@@ -1522,6 +1694,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK3",
+         "PerPkg": "1",
+@@ -1531,6 +1704,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK4",
+         "PerPkg": "1",
+@@ -1540,6 +1714,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK5",
+         "PerPkg": "1",
+@@ -1549,6 +1724,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK6",
+         "PerPkg": "1",
+@@ -1558,6 +1734,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK7",
+         "PerPkg": "1",
+@@ -1567,6 +1744,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK8",
+         "PerPkg": "1",
+@@ -1576,6 +1754,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANK9",
+         "PerPkg": "1",
+@@ -1585,6 +1764,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank Group 0 (Banks =
+0-3)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANKG0",
+         "PerPkg": "1",
+@@ -1594,6 +1774,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank Group 1 (Banks =
+4-7)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANKG1",
+         "PerPkg": "1",
+@@ -1603,6 +1784,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank Group 2 (Banks =
+8-11)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANKG2",
+         "PerPkg": "1",
+@@ -1612,6 +1794,7 @@
+     },
+     {
+         "BriefDescription": "RD_CAS Access to Rank 7; Bank Group 3 (Banks =
+12-15)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB7",
+         "EventName": "UNC_M_RD_CAS_RANK7.BANKG3",
+         "PerPkg": "1",
+@@ -1621,6 +1804,7 @@
+     },
+     {
+         "BriefDescription": "Read Pending Queue Not Empty",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x11",
+         "EventName": "UNC_M_RPQ_CYCLES_NE",
+         "PerPkg": "1",
+@@ -1629,6 +1813,7 @@
+     },
+     {
+         "BriefDescription": "Read Pending Queue Allocations",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x10",
+         "EventName": "UNC_M_RPQ_INSERTS",
+         "PerPkg": "1",
+@@ -1637,6 +1822,7 @@
+     },
+     {
+         "BriefDescription": "VMSE MXB write buffer occupancy",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x91",
+         "EventName": "UNC_M_VMSE_MXB_WR_OCCUPANCY",
+         "PerPkg": "1",
+@@ -1644,6 +1830,7 @@
+     },
+     {
+         "BriefDescription": "VMSE WR PUSH issued; VMSE write PUSH issued i=
+n RMM",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x90",
+         "EventName": "UNC_M_VMSE_WR_PUSH.RMM",
+         "PerPkg": "1",
+@@ -1652,6 +1839,7 @@
+     },
+     {
+         "BriefDescription": "VMSE WR PUSH issued; VMSE write PUSH issued i=
+n WMM",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x90",
+         "EventName": "UNC_M_VMSE_WR_PUSH.WMM",
+         "PerPkg": "1",
+@@ -1660,6 +1848,7 @@
+     },
+     {
+         "BriefDescription": "Transition from WMM to RMM because of low thr=
+eshold; Transition from WMM to RMM because of starve counter",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xC0",
+         "EventName": "UNC_M_WMM_TO_RMM.LOW_THRESH",
+         "PerPkg": "1",
+@@ -1668,6 +1857,7 @@
+     },
+     {
+         "BriefDescription": "Transition from WMM to RMM because of low thr=
+eshold",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xC0",
+         "EventName": "UNC_M_WMM_TO_RMM.STARVE",
+         "PerPkg": "1",
+@@ -1676,6 +1866,7 @@
+     },
+     {
+         "BriefDescription": "Transition from WMM to RMM because of low thr=
+eshold",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xC0",
+         "EventName": "UNC_M_WMM_TO_RMM.VMSE_RETRY",
+         "PerPkg": "1",
+@@ -1684,6 +1875,7 @@
+     },
+     {
+         "BriefDescription": "Write Pending Queue Full Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x22",
+         "EventName": "UNC_M_WPQ_CYCLES_FULL",
+         "PerPkg": "1",
+@@ -1692,6 +1884,7 @@
+     },
+     {
+         "BriefDescription": "Write Pending Queue Not Empty",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x21",
+         "EventName": "UNC_M_WPQ_CYCLES_NE",
+         "PerPkg": "1",
+@@ -1700,6 +1893,7 @@
+     },
+     {
+         "BriefDescription": "Write Pending Queue CAM Match",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x23",
+         "EventName": "UNC_M_WPQ_READ_HIT",
+         "PerPkg": "1",
+@@ -1708,6 +1902,7 @@
+     },
+     {
+         "BriefDescription": "Write Pending Queue CAM Match",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x24",
+         "EventName": "UNC_M_WPQ_WRITE_HIT",
+         "PerPkg": "1",
+@@ -1716,6 +1911,7 @@
+     },
+     {
+         "BriefDescription": "Not getting the requested Major Mode",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xC1",
+         "EventName": "UNC_M_WRONG_MM",
+         "PerPkg": "1",
+@@ -1723,6 +1919,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; All Banks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.ALLBANKS",
+         "PerPkg": "1",
+@@ -1732,6 +1929,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK0",
+         "PerPkg": "1",
+@@ -1740,6 +1938,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK1",
+         "PerPkg": "1",
+@@ -1749,6 +1948,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK10",
+         "PerPkg": "1",
+@@ -1758,6 +1958,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK11",
+         "PerPkg": "1",
+@@ -1767,6 +1968,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 12",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK12",
+         "PerPkg": "1",
+@@ -1776,6 +1978,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 13",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK13",
+         "PerPkg": "1",
+@@ -1785,6 +1988,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 14",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK14",
+         "PerPkg": "1",
+@@ -1794,6 +1998,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 15",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK15",
+         "PerPkg": "1",
+@@ -1803,6 +2008,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK2",
+         "PerPkg": "1",
+@@ -1812,6 +2018,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK3",
+         "PerPkg": "1",
+@@ -1821,6 +2028,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK4",
+         "PerPkg": "1",
+@@ -1830,6 +2038,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK5",
+         "PerPkg": "1",
+@@ -1839,6 +2048,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK6",
+         "PerPkg": "1",
+@@ -1848,6 +2058,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK7",
+         "PerPkg": "1",
+@@ -1857,6 +2068,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK8",
+         "PerPkg": "1",
+@@ -1866,6 +2078,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANK9",
+         "PerPkg": "1",
+@@ -1875,6 +2088,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank Group 0 (Banks =
+0-3)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANKG0",
+         "PerPkg": "1",
+@@ -1884,6 +2098,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank Group 1 (Banks =
+4-7)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANKG1",
+         "PerPkg": "1",
+@@ -1893,6 +2108,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank Group 2 (Banks =
+8-11)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANKG2",
+         "PerPkg": "1",
+@@ -1902,6 +2118,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 0; Bank Group 3 (Banks =
+12-15)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB8",
+         "EventName": "UNC_M_WR_CAS_RANK0.BANKG3",
+         "PerPkg": "1",
+@@ -1911,6 +2128,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; All Banks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.ALLBANKS",
+         "PerPkg": "1",
+@@ -1920,6 +2138,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK0",
+         "PerPkg": "1",
+@@ -1928,6 +2147,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK1",
+         "PerPkg": "1",
+@@ -1937,6 +2157,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK10",
+         "PerPkg": "1",
+@@ -1946,6 +2167,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK11",
+         "PerPkg": "1",
+@@ -1955,6 +2177,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 12",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK12",
+         "PerPkg": "1",
+@@ -1964,6 +2187,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 13",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK13",
+         "PerPkg": "1",
+@@ -1973,6 +2197,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 14",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK14",
+         "PerPkg": "1",
+@@ -1982,6 +2207,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 15",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK15",
+         "PerPkg": "1",
+@@ -1991,6 +2217,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK2",
+         "PerPkg": "1",
+@@ -2000,6 +2227,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK3",
+         "PerPkg": "1",
+@@ -2009,6 +2237,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK4",
+         "PerPkg": "1",
+@@ -2018,6 +2247,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK5",
+         "PerPkg": "1",
+@@ -2027,6 +2257,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK6",
+         "PerPkg": "1",
+@@ -2036,6 +2267,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK7",
+         "PerPkg": "1",
+@@ -2045,6 +2277,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK8",
+         "PerPkg": "1",
+@@ -2054,6 +2287,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANK9",
+         "PerPkg": "1",
+@@ -2063,6 +2297,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank Group 0 (Banks =
+0-3)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANKG0",
+         "PerPkg": "1",
+@@ -2072,6 +2307,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank Group 1 (Banks =
+4-7)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANKG1",
+         "PerPkg": "1",
+@@ -2081,6 +2317,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank Group 2 (Banks =
+8-11)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANKG2",
+         "PerPkg": "1",
+@@ -2090,6 +2327,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 1; Bank Group 3 (Banks =
+12-15)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xB9",
+         "EventName": "UNC_M_WR_CAS_RANK1.BANKG3",
+         "PerPkg": "1",
+@@ -2099,6 +2337,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; All Banks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.ALLBANKS",
+         "PerPkg": "1",
+@@ -2108,6 +2347,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK0",
+         "PerPkg": "1",
+@@ -2116,6 +2356,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK1",
+         "PerPkg": "1",
+@@ -2125,6 +2366,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK10",
+         "PerPkg": "1",
+@@ -2134,6 +2376,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK11",
+         "PerPkg": "1",
+@@ -2143,6 +2386,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 12",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK12",
+         "PerPkg": "1",
+@@ -2152,6 +2396,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 13",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK13",
+         "PerPkg": "1",
+@@ -2161,6 +2406,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 14",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK14",
+         "PerPkg": "1",
+@@ -2170,6 +2416,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 15",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK15",
+         "PerPkg": "1",
+@@ -2179,6 +2426,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK2",
+         "PerPkg": "1",
+@@ -2188,6 +2436,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK3",
+         "PerPkg": "1",
+@@ -2197,6 +2446,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK4",
+         "PerPkg": "1",
+@@ -2206,6 +2456,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK5",
+         "PerPkg": "1",
+@@ -2215,6 +2466,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK6",
+         "PerPkg": "1",
+@@ -2224,6 +2476,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK7",
+         "PerPkg": "1",
+@@ -2233,6 +2486,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK8",
+         "PerPkg": "1",
+@@ -2242,6 +2496,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANK9",
+         "PerPkg": "1",
+@@ -2251,6 +2506,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank Group 0 (Banks =
+0-3)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANKG0",
+         "PerPkg": "1",
+@@ -2260,6 +2516,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank Group 1 (Banks =
+4-7)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANKG1",
+         "PerPkg": "1",
+@@ -2269,6 +2526,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank Group 2 (Banks =
+8-11)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANKG2",
+         "PerPkg": "1",
+@@ -2278,6 +2536,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 4; Bank Group 3 (Banks =
+12-15)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBC",
+         "EventName": "UNC_M_WR_CAS_RANK4.BANKG3",
+         "PerPkg": "1",
+@@ -2287,6 +2546,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; All Banks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.ALLBANKS",
+         "PerPkg": "1",
+@@ -2296,6 +2556,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK0",
+         "PerPkg": "1",
+@@ -2304,6 +2565,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK1",
+         "PerPkg": "1",
+@@ -2313,6 +2575,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK10",
+         "PerPkg": "1",
+@@ -2322,6 +2585,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK11",
+         "PerPkg": "1",
+@@ -2331,6 +2595,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 12",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK12",
+         "PerPkg": "1",
+@@ -2340,6 +2605,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 13",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK13",
+         "PerPkg": "1",
+@@ -2349,6 +2615,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 14",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK14",
+         "PerPkg": "1",
+@@ -2358,6 +2625,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 15",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK15",
+         "PerPkg": "1",
+@@ -2367,6 +2635,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK2",
+         "PerPkg": "1",
+@@ -2376,6 +2645,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK3",
+         "PerPkg": "1",
+@@ -2385,6 +2655,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK4",
+         "PerPkg": "1",
+@@ -2394,6 +2665,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK5",
+         "PerPkg": "1",
+@@ -2403,6 +2675,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK6",
+         "PerPkg": "1",
+@@ -2412,6 +2685,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK7",
+         "PerPkg": "1",
+@@ -2421,6 +2695,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK8",
+         "PerPkg": "1",
+@@ -2430,6 +2705,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANK9",
+         "PerPkg": "1",
+@@ -2439,6 +2715,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank Group 0 (Banks =
+0-3)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANKG0",
+         "PerPkg": "1",
+@@ -2448,6 +2725,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank Group 1 (Banks =
+4-7)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANKG1",
+         "PerPkg": "1",
+@@ -2457,6 +2735,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank Group 2 (Banks =
+8-11)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANKG2",
+         "PerPkg": "1",
+@@ -2466,6 +2745,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 5; Bank Group 3 (Banks =
+12-15)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBD",
+         "EventName": "UNC_M_WR_CAS_RANK5.BANKG3",
+         "PerPkg": "1",
+@@ -2475,6 +2755,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; All Banks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.ALLBANKS",
+         "PerPkg": "1",
+@@ -2484,6 +2765,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK0",
+         "PerPkg": "1",
+@@ -2492,6 +2774,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK1",
+         "PerPkg": "1",
+@@ -2501,6 +2784,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK10",
+         "PerPkg": "1",
+@@ -2510,6 +2794,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK11",
+         "PerPkg": "1",
+@@ -2519,6 +2804,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 12",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK12",
+         "PerPkg": "1",
+@@ -2528,6 +2814,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 13",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK13",
+         "PerPkg": "1",
+@@ -2537,6 +2824,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 14",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK14",
+         "PerPkg": "1",
+@@ -2546,6 +2834,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 15",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK15",
+         "PerPkg": "1",
+@@ -2555,6 +2844,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK2",
+         "PerPkg": "1",
+@@ -2564,6 +2854,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK3",
+         "PerPkg": "1",
+@@ -2573,6 +2864,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK4",
+         "PerPkg": "1",
+@@ -2582,6 +2874,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK5",
+         "PerPkg": "1",
+@@ -2591,6 +2884,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK6",
+         "PerPkg": "1",
+@@ -2600,6 +2894,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK7",
+         "PerPkg": "1",
+@@ -2609,6 +2904,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK8",
+         "PerPkg": "1",
+@@ -2618,6 +2914,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANK9",
+         "PerPkg": "1",
+@@ -2627,6 +2924,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank Group 0 (Banks =
+0-3)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANKG0",
+         "PerPkg": "1",
+@@ -2636,6 +2934,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank Group 1 (Banks =
+4-7)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANKG1",
+         "PerPkg": "1",
+@@ -2645,6 +2944,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank Group 2 (Banks =
+8-11)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANKG2",
+         "PerPkg": "1",
+@@ -2654,6 +2954,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 6; Bank Group 3 (Banks =
+12-15)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBE",
+         "EventName": "UNC_M_WR_CAS_RANK6.BANKG3",
+         "PerPkg": "1",
+@@ -2663,6 +2964,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; All Banks",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.ALLBANKS",
+         "PerPkg": "1",
+@@ -2672,6 +2974,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK0",
+         "PerPkg": "1",
+@@ -2680,6 +2983,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK1",
+         "PerPkg": "1",
+@@ -2689,6 +2993,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 10",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK10",
+         "PerPkg": "1",
+@@ -2698,6 +3003,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 11",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK11",
+         "PerPkg": "1",
+@@ -2707,6 +3013,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 12",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK12",
+         "PerPkg": "1",
+@@ -2716,6 +3023,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 13",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK13",
+         "PerPkg": "1",
+@@ -2725,6 +3033,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 14",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK14",
+         "PerPkg": "1",
+@@ -2734,6 +3043,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 15",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK15",
+         "PerPkg": "1",
+@@ -2743,6 +3053,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 2",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK2",
+         "PerPkg": "1",
+@@ -2752,6 +3063,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK3",
+         "PerPkg": "1",
+@@ -2761,6 +3073,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 4",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK4",
+         "PerPkg": "1",
+@@ -2770,6 +3083,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 5",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK5",
+         "PerPkg": "1",
+@@ -2779,6 +3093,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK6",
+         "PerPkg": "1",
+@@ -2788,6 +3103,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK7",
+         "PerPkg": "1",
+@@ -2797,6 +3113,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 8",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK8",
+         "PerPkg": "1",
+@@ -2806,6 +3123,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank 9",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANK9",
+         "PerPkg": "1",
+@@ -2815,6 +3133,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank Group 0 (Banks =
+0-3)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANKG0",
+         "PerPkg": "1",
+@@ -2824,6 +3143,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank Group 1 (Banks =
+4-7)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANKG1",
+         "PerPkg": "1",
+@@ -2833,6 +3153,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank Group 2 (Banks =
+8-11)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANKG2",
+         "PerPkg": "1",
+@@ -2842,6 +3163,7 @@
+     },
+     {
+         "BriefDescription": "WR_CAS Access to Rank 7; Bank Group 3 (Banks =
+12-15)",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xBF",
+         "EventName": "UNC_M_WR_CAS_RANK7.BANKG3",
+         "PerPkg": "1",
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/uncore-power.json b=
+/tools/perf/pmu-events/arch/x86/broadwellde/uncore-power.json
+index 320aaab53a0b..afdc636b9855 100644
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/uncore-power.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/uncore-power.json
+@@ -1,6 +1,7 @@
+ [
+     {
+         "BriefDescription": "pclk Cycles",
++        "Counter": "0,1,2,3",
+         "EventName": "UNC_P_CLOCKTICKS",
+         "PerPkg": "1",
+         "PublicDescription": "The PCU runs off a fixed 1 GHz clock.  This =
+event counts the number of pclk cycles measured while the counter was enabl=
+ed.  The pclk, like the Memory Controller's dclk, counts at a constant rate=
+ making it a good measure of actual wall time.",
+@@ -8,6 +9,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x60",
+         "EventName": "UNC_P_CORE0_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -16,6 +18,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6A",
+         "EventName": "UNC_P_CORE10_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -24,6 +27,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6B",
+         "EventName": "UNC_P_CORE11_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -32,6 +36,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6C",
+         "EventName": "UNC_P_CORE12_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -40,6 +45,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6D",
+         "EventName": "UNC_P_CORE13_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -48,6 +54,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6E",
+         "EventName": "UNC_P_CORE14_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -56,6 +63,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6F",
+         "EventName": "UNC_P_CORE15_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -64,6 +72,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x70",
+         "EventName": "UNC_P_CORE16_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -72,6 +81,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x71",
+         "EventName": "UNC_P_CORE17_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -80,6 +90,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x61",
+         "EventName": "UNC_P_CORE1_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -88,6 +99,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x62",
+         "EventName": "UNC_P_CORE2_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -96,6 +108,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x63",
+         "EventName": "UNC_P_CORE3_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -104,6 +117,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x64",
+         "EventName": "UNC_P_CORE4_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -112,6 +126,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x65",
+         "EventName": "UNC_P_CORE5_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -120,6 +135,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x66",
+         "EventName": "UNC_P_CORE6_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -128,6 +144,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x67",
+         "EventName": "UNC_P_CORE7_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -136,6 +153,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x68",
+         "EventName": "UNC_P_CORE8_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -144,6 +162,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x69",
+         "EventName": "UNC_P_CORE9_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -152,6 +171,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x30",
+         "EventName": "UNC_P_DEMOTIONS_CORE0",
+         "PerPkg": "1",
+@@ -160,6 +180,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x31",
+         "EventName": "UNC_P_DEMOTIONS_CORE1",
+         "PerPkg": "1",
+@@ -168,6 +189,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3A",
+         "EventName": "UNC_P_DEMOTIONS_CORE10",
+         "PerPkg": "1",
+@@ -176,6 +198,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3B",
+         "EventName": "UNC_P_DEMOTIONS_CORE11",
+         "PerPkg": "1",
+@@ -184,6 +207,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3C",
+         "EventName": "UNC_P_DEMOTIONS_CORE12",
+         "PerPkg": "1",
+@@ -192,6 +216,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3D",
+         "EventName": "UNC_P_DEMOTIONS_CORE13",
+         "PerPkg": "1",
+@@ -200,6 +225,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3E",
+         "EventName": "UNC_P_DEMOTIONS_CORE14",
+         "PerPkg": "1",
+@@ -208,6 +234,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x3F",
+         "EventName": "UNC_P_DEMOTIONS_CORE15",
+         "PerPkg": "1",
+@@ -216,6 +243,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x40",
+         "EventName": "UNC_P_DEMOTIONS_CORE16",
+         "PerPkg": "1",
+@@ -224,6 +252,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x41",
+         "EventName": "UNC_P_DEMOTIONS_CORE17",
+         "PerPkg": "1",
+@@ -232,6 +261,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x32",
+         "EventName": "UNC_P_DEMOTIONS_CORE2",
+         "PerPkg": "1",
+@@ -240,6 +270,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x33",
+         "EventName": "UNC_P_DEMOTIONS_CORE3",
+         "PerPkg": "1",
+@@ -248,6 +279,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x34",
+         "EventName": "UNC_P_DEMOTIONS_CORE4",
+         "PerPkg": "1",
+@@ -256,6 +288,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x35",
+         "EventName": "UNC_P_DEMOTIONS_CORE5",
+         "PerPkg": "1",
+@@ -264,6 +297,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x36",
+         "EventName": "UNC_P_DEMOTIONS_CORE6",
+         "PerPkg": "1",
+@@ -272,6 +306,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x37",
+         "EventName": "UNC_P_DEMOTIONS_CORE7",
+         "PerPkg": "1",
+@@ -280,6 +315,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x38",
+         "EventName": "UNC_P_DEMOTIONS_CORE8",
+         "PerPkg": "1",
+@@ -288,6 +324,7 @@
+     },
+     {
+         "BriefDescription": "Core C State Demotions",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x39",
+         "EventName": "UNC_P_DEMOTIONS_CORE9",
+         "PerPkg": "1",
+@@ -296,6 +333,7 @@
+     },
+     {
+         "BriefDescription": "Thermal Strongest Upper Limit Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4",
+         "EventName": "UNC_P_FREQ_MAX_LIMIT_THERMAL_CYCLES",
+         "PerPkg": "1",
+@@ -304,6 +342,7 @@
+     },
+     {
+         "BriefDescription": "OS Strongest Upper Limit Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x6",
+         "EventName": "UNC_P_FREQ_MAX_OS_CYCLES",
+         "PerPkg": "1",
+@@ -312,6 +351,7 @@
+     },
+     {
+         "BriefDescription": "Power Strongest Upper Limit Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x5",
+         "EventName": "UNC_P_FREQ_MAX_POWER_CYCLES",
+         "PerPkg": "1",
+@@ -320,6 +360,7 @@
+     },
+     {
+         "BriefDescription": "IO P Limit Strongest Lower Limit Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x73",
+         "EventName": "UNC_P_FREQ_MIN_IO_P_CYCLES",
+         "PerPkg": "1",
+@@ -328,6 +369,7 @@
+     },
+     {
+         "BriefDescription": "Cycles spent changing Frequency",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x74",
+         "EventName": "UNC_P_FREQ_TRANS_CYCLES",
+         "PerPkg": "1",
+@@ -336,6 +378,7 @@
+     },
+     {
+         "BriefDescription": "Memory Phase Shedding Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2F",
+         "EventName": "UNC_P_MEMORY_PHASE_SHEDDING_CYCLES",
+         "PerPkg": "1",
+@@ -344,6 +387,7 @@
+     },
+     {
+         "BriefDescription": "Package C State Residency - C0",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2A",
+         "EventName": "UNC_P_PKG_RESIDENCY_C0_CYCLES",
+         "PerPkg": "1",
+@@ -352,6 +396,7 @@
+     },
+     {
+         "BriefDescription": "Package C State Residency - C1E",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x4E",
+         "EventName": "UNC_P_PKG_RESIDENCY_C1E_CYCLES",
+         "PerPkg": "1",
+@@ -360,6 +405,7 @@
+     },
+     {
+         "BriefDescription": "Package C State Residency - C2E",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2B",
+         "EventName": "UNC_P_PKG_RESIDENCY_C2E_CYCLES",
+         "PerPkg": "1",
+@@ -368,6 +414,7 @@
+     },
+     {
+         "BriefDescription": "Package C State Residency - C3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2C",
+         "EventName": "UNC_P_PKG_RESIDENCY_C3_CYCLES",
+         "PerPkg": "1",
+@@ -376,6 +423,7 @@
+     },
+     {
+         "BriefDescription": "Package C State Residency - C6",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2D",
+         "EventName": "UNC_P_PKG_RESIDENCY_C6_CYCLES",
+         "PerPkg": "1",
+@@ -384,6 +432,7 @@
+     },
+     {
+         "BriefDescription": "Package C7 State Residency",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x2E",
+         "EventName": "UNC_P_PKG_RESIDENCY_C7_CYCLES",
+         "PerPkg": "1",
+@@ -392,6 +441,7 @@
+     },
+     {
+         "BriefDescription": "Number of cores in C-State; C0 and C1",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x80",
+         "EventName": "UNC_P_POWER_STATE_OCCUPANCY.CORES_C0",
+         "Filter": "occ_sel=3D1",
+@@ -401,6 +451,7 @@
+     },
+     {
+         "BriefDescription": "Number of cores in C-State; C3",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x80",
+         "EventName": "UNC_P_POWER_STATE_OCCUPANCY.CORES_C3",
+         "Filter": "occ_sel=3D2",
+@@ -410,6 +461,7 @@
+     },
+     {
+         "BriefDescription": "Number of cores in C-State; C6 and C7",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x80",
+         "EventName": "UNC_P_POWER_STATE_OCCUPANCY.CORES_C6",
+         "Filter": "occ_sel=3D3",
+@@ -419,6 +471,7 @@
+     },
+     {
+         "BriefDescription": "External Prochot",
++        "Counter": "0,1,2,3",
+         "EventCode": "0xA",
+         "EventName": "UNC_P_PROCHOT_EXTERNAL_CYCLES",
+         "PerPkg": "1",
+@@ -427,6 +480,7 @@
+     },
+     {
+         "BriefDescription": "Internal Prochot",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x9",
+         "EventName": "UNC_P_PROCHOT_INTERNAL_CYCLES",
+         "PerPkg": "1",
+@@ -435,6 +489,7 @@
+     },
+     {
+         "BriefDescription": "Total Core C State Transition Cycles",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x72",
+         "EventName": "UNC_P_TOTAL_TRANSITION_CYCLES",
+         "PerPkg": "1",
+@@ -443,6 +498,7 @@
+     },
+     {
+         "BriefDescription": "UNC_P_UFS_TRANSITIONS_RING_GV",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x79",
+         "EventName": "UNC_P_UFS_TRANSITIONS_RING_GV",
+         "PerPkg": "1",
+@@ -451,6 +507,7 @@
+     },
+     {
+         "BriefDescription": "VR Hot",
++        "Counter": "0,1,2,3",
+         "EventCode": "0x42",
+         "EventName": "UNC_P_VR_HOT_CYCLES",
+         "PerPkg": "1",
+diff --git a/tools/perf/pmu-events/arch/x86/broadwellde/virtual-memory.json=
+ b/tools/perf/pmu-events/arch/x86/broadwellde/virtual-memory.json
 index 93621e004d88..eb1d9541e26c 100644
---- a/tools/perf/pmu-events/arch/x86/broadwell/virtual-memory.json
-+++ b/tools/perf/pmu-events/arch/x86/broadwell/virtual-memory.json
+--- a/tools/perf/pmu-events/arch/x86/broadwellde/virtual-memory.json
++++ b/tools/perf/pmu-events/arch/x86/broadwellde/virtual-memory.json
 @@ -1,6 +1,7 @@
  [
      {
