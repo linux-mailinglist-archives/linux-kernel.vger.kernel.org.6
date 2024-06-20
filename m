@@ -1,160 +1,117 @@
-Return-Path: <linux-kernel+bounces-223555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F35289114C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:39:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E919114C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8859FB219B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:39:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 966761C21E79
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6667602B;
-	Thu, 20 Jun 2024 21:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B357185642;
+	Thu, 20 Jun 2024 21:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xf6bmuRc"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="La2UHS6A"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98B574BF0
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B3284D14
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718919540; cv=none; b=G+1Bl9fqSTkWtKdKZ4QVIbV/UJI/t9WQVdGNTvMBR+ajeMVloG04y+RLsOv36NRoNuqgb9OPKHeHle+JiVY+2ShZ01uAa+/oRoA9s2QXmhyQa9e8VQAWFJDeGlZ/FVbDeRpW/gKzWon8saRQpmdpopyTi7vyd4r0cV6yZj7J6rI=
+	t=1718919545; cv=none; b=RV9Rq6jRs+FJ+kbwFOF6BNuOb2T/b1u2i5qMWajh1B3d+P4sdDoZKnCK1DRVYTIPJHTqUbAzo1LZnfoNyRp3zVfHGXaPhbuGoBe62uRaK+Di/s7ZRDWlVDVaXixPB0lNxCdTL5OcAFCoN7LA4t0MteMCsKe3W8OAGwoirF6SqSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718919540; c=relaxed/simple;
-	bh=R+gP8GWTKEf6vW2sVTmz7saJ84W+0KRqig3G9hZeYTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gC6AKrSnIzM3FXfboSiHq0bRp3Hnr4VriND7x+pyZW5Dv7opqaNVg+8cb1L9tZKgjnOn9nKRyGyW0/JlB5LgCjTpPUuPurM20YJtR+gHgNp5rhMSt49gCP1yIJ+7/XH8tQJk+S+E6UqfnoltyzTtU2I3nhbniaiKYpzq3qqSJ6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xf6bmuRc; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so16565351fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:38:58 -0700 (PDT)
+	s=arc-20240116; t=1718919545; c=relaxed/simple;
+	bh=4eUDbUYwi0pZS4XXlB9XJEj7hUZz/ZHaKyzWK04Nkvw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y9+ippe7g1Y6kG1XGv/2mDSjx5kbaOwyans95OmLk+TPSmqiGYMgMwzkcNWX6g2nXaFNoIU4+LwynrYKJlcC2jsTaNwCmYc10gvU0mXtOR71BS9ilxpp7/ANoR/q3XKpAaTNIa/nRx/DVMjQmM/me8RIxzCct0w1GXODuZvPHOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=La2UHS6A; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7eb41831704so5828539f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:39:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718919537; x=1719524337; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A9KCIXUhFa5F6js3PXOw4A1bh3KoXXlrj5hfzxoF/A0=;
-        b=Xf6bmuRcIBSs6UIqrNKcuq6P1dkrjnFFEEe3i1cW2OADRLdsH+CnUKg3he6BG3fMAL
-         owLPQ8VqHXKBH8STQfZwQ/NgPSHEQsHBBb69E76Pel9XIboU0ls1aNSsnkiMNy9hyWg/
-         syOltxdCh7IYypo88M0X88oYisqlBQwde7eWQHLVMHgKDHf1+goUOOthqayXVzI4E/5x
-         3jKgDvf+SR+DwccenD+JohCVgk7ZKBqpphNpmYQ4D/xtJgoiXtzuUMSABNA+2mAjMe+R
-         AymCQ2tyzPzkVo3k2z0VfD0h682YGNWrYTPTejVaI3kD0XI+I9BR7PzuAEboxPGMoXHt
-         pXtA==
+        d=linuxfoundation.org; s=google; t=1718919543; x=1719524343; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mqHqvsSXJkneKAj++iJItugXBOlFHRP56AEPjUJ8ns4=;
+        b=La2UHS6Apu6Nnrh+vAhMZ02gMsxAqwc6jYyCN/pAlKHBnoAveFW/GnK/H/pRR/FkvG
+         wH67zFAxf9RIRmSQZxhbwxTMzZYO6INAPuvWYWuS3nN2pi8bLa7ij+MiM87LJC5pmY7X
+         7MRCz9ZW5hU2E5XfVCtvnVmG75PYW353iBVso=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718919537; x=1719524337;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A9KCIXUhFa5F6js3PXOw4A1bh3KoXXlrj5hfzxoF/A0=;
-        b=JGMvGQt9xbylEBTaZ0pggKuIoJjxMOhlUqN9Evb4AD/1sTeAeTpZcQXNj+BlomkPKh
-         eWO3t22aaK/mDdJYzcwjdQe8RYsNkBJ733DhPRh+K25R7pDVdAK2hJOD4KqfGYxTq2CX
-         CfsRzv/CP9/2w3Ij/pLdqxmUGAjXPRZPVvWJ7ceu616dvnp2DDphCsoEOBFqblHyb0xM
-         KzVTVaShOb/JBUtR2MAC9ELhoD5bW7+aBcW+Av34Vol2uo3sk6SDvgPSq0dG4Sv0jajG
-         8mhh8RmM4RYSGV9WPrq4QjN28hAaUiMZ+Xutpj+xP6rWKYMgm11A/1+z4t1APn6wwSRo
-         AH9w==
-X-Forwarded-Encrypted: i=1; AJvYcCV0LDpo3+Kl8LjvvExHa2Bss++vntkJUiL3zYkee5OOHFvBJD5LeooYSx9sJgQALUfWK7SpwmUiRn9FUiZB+Cgb8JeAte1Mgm+XkweZ
-X-Gm-Message-State: AOJu0Yyv9ESCI3o9ZI0XVn5aktcT3/If73ylP+5yAAJDzTxYhwGqmcRQ
-	lD0nZk7OaX9aTzOnVfWWr4d1edp2giB784oWJX719JgmUrY1qz74Yqg10p35PXg=
-X-Google-Smtp-Source: AGHT+IHiMxxgvNQOz2qJ9dqor7EtzwDmQRBfBf4gn70dlQm9/1P3yzhIJXB4quhP1LKkp/I04wrZuA==
-X-Received: by 2002:a2e:914b:0:b0:2ec:1c9:badb with SMTP id 38308e7fff4ca-2ec3ce7dcd8mr44568761fa.9.1718919537058;
-        Thu, 20 Jun 2024 14:38:57 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d7090f2sm319011fa.56.2024.06.20.14.38.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 14:38:56 -0700 (PDT)
-Date: Fri, 21 Jun 2024 00:38:55 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Komal Bajaj <quic_kbajaj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Melody Olvera <quic_molvera@quicinc.com>
-Subject: Re: [PATCH v3 2/4] remoteproc: qcom: q6v5: Add support for q6 rmb
- registers
-Message-ID: <o6aqjxyinwowtexwsucavwfqylx3wv3sihxvla442kskzqprbr@37rfxxzwsolg>
-References: <20240620120143.12375-1-quic_kbajaj@quicinc.com>
- <20240620120143.12375-3-quic_kbajaj@quicinc.com>
+        d=1e100.net; s=20230601; t=1718919543; x=1719524343;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mqHqvsSXJkneKAj++iJItugXBOlFHRP56AEPjUJ8ns4=;
+        b=lwW+TKkWW6gIPPhDcANClZNHOmFoiReT9bWjtU7ZAmrvl8yUPOjXNJIvbnH/zXMEZI
+         LpwzImXYn9fFzQfdTJCLxGhQtKOgaMxX18ohwGPle6RC35NLLgXrXWy+giHPDEXBTkaB
+         ZCs/unM5VceDIkBXtW7SiPQteFW2k8F3m2P6+BlurBTBgUl07tVHKOgrHX6iqY1wSN/5
+         dBkZS4Hu+XUvO7ryRqluYXzhfQGoVi/niq92nXhKnp67BNHX92sYmMYa3SFz8t1aYXTJ
+         +0avWaXuRaEdSoojLBkE7CXbduLC92kCAyOFpwtQSI6yCdOeVOQTndAME4mTVoCj7AkY
+         laew==
+X-Forwarded-Encrypted: i=1; AJvYcCVAaQtytyYKekxHo4xsXkrOd5o8wTH7x+nT6w3gZmO+zv1VN2+p83TqWPS08QBSkHpezYubkHbT+YYSqlFIsXkC1ye0IKD8FX79iJFS
+X-Gm-Message-State: AOJu0YzP7XrFJycm8MQcAhIBk3f9TFg9WeXvV+Fwr+nYKmuoYFLWt6g+
+	bHV5ok7U3/2CMgX4lOZS9oJwPjG0q4VZR/zQcgdqwskblqgnG1wW0yhAVPDx67o=
+X-Google-Smtp-Source: AGHT+IG/MKrOHHu7bE0kz3/5P963pbzGNqZC6AtUsEQh8fvGhgnXsQm99vnIjQE3jJmQk8fO52HZGw==
+X-Received: by 2002:a05:6602:3b84:b0:7eb:73f1:1357 with SMTP id ca18e2360f4ac-7f13eb9a591mr706580139f.0.1718919542734;
+        Thu, 20 Jun 2024 14:39:02 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7f391ff194dsm3069739f.23.2024.06.20.14.39.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 14:39:02 -0700 (PDT)
+Message-ID: <7475d8c8-318a-4f8c-b4a7-c2a0be59d304@linuxfoundation.org>
+Date: Thu, 20 Jun 2024 15:39:01 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620120143.12375-3-quic_kbajaj@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/217] 6.1.95-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240619125556.491243678@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240619125556.491243678@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 20, 2024 at 05:31:41PM GMT, Komal Bajaj wrote:
-> From: Melody Olvera <quic_molvera@quicinc.com>
+On 6/19/24 06:54, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.95 release.
+> There are 217 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> When attaching a running Q6, the remoteproc driver needs a way
-> to communicate with the Q6 using rmb registers, so allow the
-> rmb register to be gotten from the device tree if present.
-
-rmb or RMB? And what is it?
-
+> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
+> Anything received after that time might be too late.
 > 
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
-> ---
->  drivers/remoteproc/qcom_q6v5.h     | 8 ++++++++
->  drivers/remoteproc/qcom_q6v5_pas.c | 4 ++++
->  2 files changed, 12 insertions(+)
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.95-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
-> index 5a859c41896e..95824d5b64ce 100644
-> --- a/drivers/remoteproc/qcom_q6v5.h
-> +++ b/drivers/remoteproc/qcom_q6v5.h
-> @@ -7,6 +7,12 @@
->  #include <linux/completion.h>
->  #include <linux/soc/qcom/qcom_aoss.h>
+> thanks,
 > 
-> +#define RMB_BOOT_WAIT_REG 0x8
-> +#define RMB_BOOT_CONT_REG 0xC
-> +#define RMB_Q6_BOOT_STATUS_REG 0x10
-> +
-> +#define RMB_POLL_MAX_TIMES 250
-> +
->  struct icc_path;
->  struct rproc;
->  struct qcom_smem_stat;
-> @@ -16,6 +22,8 @@ struct qcom_q6v5 {
->  	struct device *dev;
->  	struct rproc *rproc;
-> 
-> +	void __iomem *rmb_base;
-> +
-
-Why is this a part of the common structure and is not a part of the _pas
-struct?
-
->  	struct qcom_smem_state *state;
->  	struct qmp *qmp;
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 8458bcfe9e19..b9759f6b2283 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -770,6 +770,10 @@ static int adsp_probe(struct platform_device *pdev)
->  		goto free_rproc;
->  	adsp->proxy_pd_count = ret;
-> 
-> +	adsp->q6v5.rmb_base = devm_platform_ioremap_resource_byname(pdev, "rmb");
-> +	if (IS_ERR(adsp->q6v5.rmb_base))
-> +		adsp->q6v5.rmb_base = NULL;
-> +
->  	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem, desc->load_state,
->  			     qcom_pas_handover);
->  	if (ret)
-> --
-> 2.42.0
+> greg k-h
 > 
 
--- 
-With best wishes
-Dmitry
+Compiled and booted on my test system. No dmesg regressions.
+
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
 
