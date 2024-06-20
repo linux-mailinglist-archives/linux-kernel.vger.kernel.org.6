@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-222952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2207D910AB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:51:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94F4910ABC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD937B21BBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:51:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E3CA1F21585
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28BF61B1411;
-	Thu, 20 Jun 2024 15:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6ED71AED3E;
+	Thu, 20 Jun 2024 15:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qh6fJV57"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yqqFD4t1"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F9D1AF6AA;
-	Thu, 20 Jun 2024 15:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692B21B0129
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718898702; cv=none; b=jsr3uD9GAor1sV8fHJwH9RCvuM5q2js/YDnRUAGCrWQAoLWWOY2bJwcqi7N2e1kkyJrmAZpmQI8Di43PfEwwb1eexyjVER5ATObE1on1CBALx3yCH6w603uIdmefNS8zTFYIatN2eEXGBRy4HANb5wSOmvOZPDr5MeukMu5DRHY=
+	t=1718898743; cv=none; b=iYpRXEiA7+X3QKxNx9WA7a1KYW6oLTcjdJ9Zh4G6EyC0CwRA2UhDuojcu1kiTBmArI44YV4Ucd+djdXw+lybrmCeho7ZcJA8+XbUHCaMenj1JrXF2PEOsn4jbQe3Q+BUeQ2wjGO13HDlhbwn9jA8mzwISWXo3/defkB7UWvIs9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718898702; c=relaxed/simple;
-	bh=RmRbrzCX0xVdXKh+aRXPiXagaZ3GSrOhH/SaEjJwzvU=;
+	s=arc-20240116; t=1718898743; c=relaxed/simple;
+	bh=BYNxbdP/tSiZdSJx/SObM+Ky44A9Mo1KpwOH14PHu00=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l9EKy86+Ms/FLiD0AhxPgttuN6DmIiwKcivzWNr4T0Msf4hvAPBiD5ZtoGC4zYn8ENfJ0e07zTcxPsdSbpHVQ/RCHFiorzvzrvFgdV4wdtm9ueGNlNK9IoAGH24exi+AXhW1HcIPBMsPCkPwkdxk/ja1SoJAbXJYRN6WQcghzUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qh6fJV57; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1618C2BD10;
-	Thu, 20 Jun 2024 15:51:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718898700;
-	bh=RmRbrzCX0xVdXKh+aRXPiXagaZ3GSrOhH/SaEjJwzvU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qh6fJV57VTQLFHZG14Co9eMuso937fcKn/VYf3dz4jMFmedbAb+Fuu9pgqEe5SDNH
-	 tZgxG7xDztnDNxZpuNeO0R9WVtFtJkZYQz2KAvJq/A54f3yLSoaOVp0RTAOVAUHuHT
-	 y1SgRDa+DIsg5OCrMIjW3DO2xA6PnzMW4WKd1OKgRfAf2HK/wSqSXw1bK63alHbQ4u
-	 fNgKqoEzoTaHwq70gIuHdYEoPC2Qoa/KUQ5nZDMKtkkgih5wnlH8Mgv6xddfsmiQYH
-	 8sZOWFYjqzEnfYv5OPt5zktv4Ffu93unRn1HaGbDMcK51roUyPIghkPRqJxxwjuiSx
-	 sAnRAIw/96mgw==
-Message-ID: <b304665d-71fc-4da2-8cef-b70474273c64@kernel.org>
-Date: Thu, 20 Jun 2024 17:51:28 +0200
+	 In-Reply-To:Content-Type; b=l9idd4YbjkUkV1ZekTqnV52qqe0ct/UIb7rlpwAYOLurDRPIj2E+/FSL4E/ewmAea2S3Bhp6nRaBzmS0Yvqaw1zgjueds2sMSN7O059bEVylb7QKv3KVSTcw5MRvdcrMpjoW4tro/MFMqkqw8HCGMKKgK5N15+AFFSUCKXrt6A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yqqFD4t1; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5b9794dad09so456768eaf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:52:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718898740; x=1719503540; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=A5K50mR+1xPezwh+gwNk3sB+K93FGplia3k1sTjlMTk=;
+        b=yqqFD4t1+EIUYmNn8Gfs+mA2W8etFYgFdi72afx9GQuYAJX/1wIKLRMbZ/8sfeWp8D
+         RPrmUwV7JmUy+3Z7hshgkPCSgDHBXaJas/Txstl4wAg1ftAmqTXmNKSKctroous9s2g6
+         M4pS+9my7BHYo+3HdM7jmpGl+5IJKDVo5UPUIOM1ZZ3uJVBDxd62m+rHLYV6GSNhuQmJ
+         inN5oLgpjX99O0XUxYSSw8FjQCZViKJ+K15MUyPcf/G2raJwyGimEZDsZ7hE/GA7NQMR
+         uFU5IH/47tMM9yemvsLgy7LXabR4b2qUt6VaPL0WcBqJM8hm2U0QcCMQzGxr2d+TOYlt
+         O55Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718898740; x=1719503540;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A5K50mR+1xPezwh+gwNk3sB+K93FGplia3k1sTjlMTk=;
+        b=GHJaDa6PV8XQRuWcBqPGbh3ZMa63J03giM5ZTzbd7GJ2PHEkCl7nLen1d4oXcIWvmc
+         /pXNfJA8wnV/h1ysZjelJ7LrM8tVltQZnJN5ZaIfoBd6SK8UWYkRZ3GtlD/xYDJc9xa6
+         HEPZmL26IX3mcZzDx5CWebx4yYhCAaN4QZb2jn+2RYRGJYBnR6twFX9oKlEbgbFzpRjr
+         JFnHi76qplZocuEBSXamzY+q/p1W4Oh0pn2FPDGO5P5huA8ESLK41CHm5wjwFIxBfbFs
+         hYHP+xb1SpQRDlS9hH9VLrEh9z+Q/bwyIAhsTNcDyyruRR45XfnLCcRPszapOKMM6K3E
+         uGXg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+zIYUJWDOaaAwKiQl6vy7xgLnW+siMPVXsiJZ4yhuupLbumgfmXgzWm57yyfQqsI/bqTne0NHWafzP2Dw63Jq+Ux8ycYiqLDaJpy7
+X-Gm-Message-State: AOJu0YwmKy7oMjqdrssuhhkygj7iMhstIXGVj1ESaPiUBG32Q+Z1bZ1J
+	XNMhRag3ocsuGlt4Fsr3OCtgw83f57MKiUoQOaSBsnUejLvpbaMTsiKp94hIyLs=
+X-Google-Smtp-Source: AGHT+IHncNjOje8u1WIEw9Wc86WeCNVSVv8Wbvs9UjaDytJFANc+0rllOYq/KhKNXJZkScsH5FWhpA==
+X-Received: by 2002:a05:6820:1d97:b0:5c1:b9ec:7258 with SMTP id 006d021491bc7-5c1b9ec7316mr3702687eaf.0.1718898740473;
+        Thu, 20 Jun 2024 08:52:20 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c198460ab5sm936795eaf.38.2024.06.20.08.52.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 08:52:19 -0700 (PDT)
+Message-ID: <08c09a34-af59-4387-8db9-594f30f85b7a@baylibre.com>
+Date: Thu, 20 Jun 2024 10:52:19 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,137 +75,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/23] dt-bindings: regulator: add samsung,s2dos05
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
- Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-10-e3f6662017ac@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI protocol
+ with MOSI idle configuration
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1718749981.git.marcelo.schmitt@analog.com>
+ <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
+ <63db9349-f453-4a5b-aa09-d1857ddd8b03@baylibre.com>
+ <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
+ <e7a2438a-f6a3-439e-8058-937248dd5b3f@baylibre.com>
+ <ZnRG9wgY3WIaYFyQ@debian-BULLSEYE-live-builder-AMD64>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240618-starqltechn_integration_upstream-v3-10-e3f6662017ac@gmail.com>
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <ZnRG9wgY3WIaYFyQ@debian-BULLSEYE-live-builder-AMD64>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/06/2024 15:59, Dzmitry Sankouski wrote:
-> add samsung,s2dos05 regulator binding part
+On 6/20/24 10:12 AM, Marcelo Schmitt wrote:
+> On 06/19, David Lechner wrote:
+>> On 6/19/24 1:58 PM, Marcelo Schmitt wrote:
+>>> On 06/19, David Lechner wrote:
+>>>> On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
+>>>>
+>>>>
+>>
+>> ...
+>>
+>>>>
+>>>>> +the peripheral and also when CS is inactive.
+>>>>
+>>>> As I mentioned in a previous review, I think the key detail here is that the
+>>>> MOSI line has to be in the required state during the CS line assertion
+>>>> (falling edge). I didn't really get that from the current wording. The current
+>>>> wording makes it sound like MOSI needs to be high indefinitely longer.
+>>>
+>>> It may be that we only need MOSI high just before bringing CS low. Though,
+>>> I don't see that info in the datasheets. How much time would MOSI be required
+>>> to be high prior to bringing CS low? The timing diagrams for register access and
+>>> ADC sampling in "3-wire" mode all start and end with MOSI at logical 1 (high).
+>>> I think reg access work if MOSI is brought low after CS gets low, but sample
+>>> read definitely don't work.
+>>>
+>>> From the info available in datasheets, it looks like MOSI is indeed expected 
+>>> to be high indefinitely amount of time. Except when the controller is clocking
+>>> out data to the peripheral.
+>>>
+>>> Even if find out the amount of time MOSI would be required high prior to CS low,
+>>> then we would need some sort of MOSI high/low state set with a delay prior to
+>>> active CS. That might be enough to support the AD4000 series of devices but,
+>>> would it be worth the added complexity?
+>>>
+>>
+>> It needs to happen at the same time as setting CPOL for the SCLK line for the
+>> device that is about to have the CS asserted. So I don't think we are breaking
+>> new ground here. Typically, in most datasheets I've seen they tend to say
+>> something like 2 ns before the CS change. So in most cases, I don't think
+> which datasheets? Are any of those for devices supported by the ad4000 driver?
 
-Make it a proper sentence.
+In the AD4000 datasheet, Figure 59, it shows the time needed for SDI setup
+before CS assertion, labeled as t_SSDICNV. Table 2 gives this value to be
+2 ns.
+
+So unless a SPI controller has a functional clock of > 500 MHz or somehow
+sets the SDI state and the CS assertion in the same register write this
+minimum delay will always be met. I highly suspect noting like this has
+happened before so no one ever needed to worry about the timing and it
+just works (for the similar case of CPOL).
 
 > 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
->  .../bindings/regulator/samsung,s2dos05.yaml        | 36 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 37 insertions(+)
+>> anyone bothers adding a delay. But if a longer delay was really needed for
+>> a specific peripheral, we could add a SPI xfer with no read/write that has
+>> cs_off=1 and a delay to get the correct state of both MOSI and SCLK a longer
+>> time before the CS change.
 > 
-> diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2dos05.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2dos05.yaml
-> new file mode 100644
-> index 000000000000..4b8e4389329c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/samsung,s2dos05.yaml
-> @@ -0,0 +1,36 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/regulator/samsung,s2dos05.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung S2DOS05 Power Management IC Regulators
-> +
-> +maintainers:
-> +  - Dzmitry Sankouski <dsankouski@gmail.com>
-> +
-> +description:
-> +  This is a part of device tree bindings for S2M and S5M family of Power
-> +  Management IC (PMIC).
+> I don't know if that would actually work. I have not tested doing something like that.
+> This also implies the controller will be able to start the next transfer right
+> after the first preparatory transfer ends and it will meet that inter-transfer
+> timing requirement (which I still didn't find documented anywhere).
+> I'm not convinced that would be the best way to support those devices.
 
-No, it's not.
+I did something like this in the ad7944 driver where we needed an up to
+500ns delay before asserting CS. On SPI controllers without a hardware
+sleep or FIFO, the delay will of course be much longer. But the delay
+is just a minimum delay, so longer doesn't hurt. It just affects the
+max sample rate that can be reliably achieved.
 
-> +
-> +  Has 4 LDO and 1 BUCK regulators, provides ELVDD, ELVSS, AVDD lines.
-> +
-> +  See also Documentation/devicetree/bindings/mfd/samsung,s2dos05.yaml for
-> +  additional information and example.
-> +
-> +properties:
-> +  compatible:
-> +    const: samsung,s2dos05-regulator
-
-Drop the compatible and then squash it in the MFD binding.
-
-
-> +
-> +patternProperties:
-> +  "^buck1|ldo[1-4]$":
-
-You did not test the patches.
-
-I will not continue with the review, because testing is a requirement.
-Otherwise it is just a waste of my time.
-
-
-Best regards,
-Krzysztof
 
 
