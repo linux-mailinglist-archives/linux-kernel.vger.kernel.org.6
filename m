@@ -1,112 +1,218 @@
-Return-Path: <linux-kernel+bounces-223417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9E4911292
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:52:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8189D91129B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D8781C211BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:52:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D74EDB22AA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255D31B583F;
-	Thu, 20 Jun 2024 19:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64C81B47B9;
+	Thu, 20 Jun 2024 19:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Ht++Brg+"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sqmDW9Z+"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54674778C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6103D575
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718913129; cv=none; b=DtGSi/pL0UmZKg9ShOm9etX9ll6hIUc0h6VIOyGHDXkTT5FjEWpKBHvaNR781ZbT4/o43YsF6qXS8S5EQ2zPMrxYh8GnIH7uJSqDTS49NEz5vvTAGSOfNEUO7sPgep/SiOMfaPMur5tfxGRxotVzVW5cGcak+BzBjMpg1iQHO4Y=
+	t=1718913267; cv=none; b=YAt3ex2lunlydTFJZe5OANOvT6f5cSu1QvCQPLhvR1YqPkLQC0yoN4CJQjhQ5k1ay7uvtN9LzRDW3vKU5he7AOt+ZXLxTUkfWmOBrZ8bTr/ud9ZMYrL0XUUudi8q2psk+haUhW7nmaGPMuW8BCVRQ+P9tqg3RPk7X2V3qOaeDL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718913129; c=relaxed/simple;
-	bh=Lxd0A/ymLlgq1NLAqH6gp+Tz2Z6MtWZaGRa9lnIZxqo=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nIfXWUE5/Lv5b5glNf6AB5mHim2KNcvqc/gDJNGHyPpc7TC8HdM0lzcWv5GjjSNyYuADvPn+4V/YszHIxC4hsxfNRfbjrs0NtfsFyPMKw0bO9pUaeeNJWgMbfHDo9zmKvbRayP4O5jfzTvZqbFLOMe8M6YfVc+dIMn0XWLOl0pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Ht++Brg+; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=3Qjr
-	Tfewunqmi3guALSlW/rkGvjYxvnEYinY9sCdl9Y=; b=Ht++Brg+BuUEpiUw5rpm
-	6YLa34uYyKC3yzPzEW+ondj2eSAvQ1oXGdCJwwe9uMr538fKmYdD0MFdeMnPCCXG
-	cJLwF2rqp4eprH13I05panG/+W2f3G5aSXJh/+5/6H+vAnc7ocOAtmBkiR0fF9J5
-	D9VfZUtnGKwQFUvXiIiRtX1Gr30obQEDAncuSclWHvNM5pnDnfjqeYjdNHOIFUFr
-	lco3lEySTJK5gWWGEBHZHp0LLoXMeAeOWZiY5OEUFOjeRVECGGfEnMOPpntk+twm
-	gGa+kfu0NZgQh6CoGiJa4BCwtXLJcCW/XBKuqDKeKQjRn+RK3ssiigSx+QeWrQQv
-	UA==
-Received: (qmail 1130492 invoked from network); 20 Jun 2024 21:52:01 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Jun 2024 21:52:01 +0200
-X-UD-Smtp-Session: l3s3148p1@tsT1pVcbNNRehh9j
-Date: Thu, 20 Jun 2024 21:52:00 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Michael Tretter <m.tretter@pengutronix.de>, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Subject: Re: [PATCH 1/8] media: allegro: use 'time_left' variable with
- wait_for_completion_timeout()
-Message-ID: <edc2zis66qqgmu3xqlzknzvlnqpvf2r2bk65mw4zsqlt4q5t23@ytewfthk7iyv>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Michael Tretter <m.tretter@pengutronix.de>, linux-kernel@vger.kernel.org, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org
-References: <20240603092841.9500-1-wsa+renesas@sang-engineering.com>
- <20240603092841.9500-2-wsa+renesas@sang-engineering.com>
- <ZmqwQV6Qm1kqoM8t@pengutronix.de>
+	s=arc-20240116; t=1718913267; c=relaxed/simple;
+	bh=BLZ4+99zlaXYewrSKS/BeWr6vPLy/tesWoL9XhfXIxc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tZFsVJ/zQE1kaNrhgB3tfq1Bw6xJ2ZyGKKNuTeU0SX/5kXhmOW9xIAblbsAKAw1uk2Ac7VgtrdvxHR+529KAjgK5DWIgGaxnzLl6B4eCvPbB8yfeFsJx8ANVK9ko81IT91fTFAgp+OfTN/rsExu1FM+qOKHqhAkVQlQo26eJk7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sqmDW9Z+; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4217dbeb4caso11566915e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:54:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718913264; x=1719518064; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YcaMH55LLUeG7NrepQHRnj4cJbGnKrphz5BhzNZk32g=;
+        b=sqmDW9Z+HV2blw+YAkVEFfEWEBBFATSslbjoZA0VckQ0x4NJaHS29GDV6cSSwdz9DJ
+         BzyZIlj3ucUgdMUXA4ZAb+11A03tOAoPWKyALXLD+oKZs4NjzO5Jvbpy7MJ6yw7XdR0p
+         xN768ZvWnuaxjo24BNER4syqvU5qx/zN0WG7bi5aP8Q51NBvAFy6W9iZTCVkLAnJueRd
+         J8WUKkoFqQ4KT8PrC40OMs0f+BUzUEUG4yX1lLf0Ii5suVQVKCfpKspJhFRPYg6a+YU2
+         eLIupmjLfIj0+na7q9RueBZPZQyH05oDa+HO0Eqz7kUZou5aDCYB3JTv91sPnfa0wTrQ
+         dHHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718913264; x=1719518064;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YcaMH55LLUeG7NrepQHRnj4cJbGnKrphz5BhzNZk32g=;
+        b=MLJuPr3d77pe2VQywTalsOT1lzS5fL1HACGXzLE5TcvmZ5D70MATXJaor63BL9v4Uo
+         RwnhVH4zukxDm+HR56AaUu7ilwaTG6pyrwK5KxWna1ZNfSUsdUPeG++PkcxTaTOyH4dL
+         VC93vBZvSgb/7jnMFhhvzuY8ylzC2nuLJNAMx5YHEboh6HSM9HSOXM8mbbBM+9GFQj0d
+         QpV0HtEFS2kjh0kOvPjzx25TQP1SE+hVYpJWJRzeFJYhyVvN1FtjAw9zdTAfvp02y+IV
+         XA/8h7vzdciMEWDnQpMlNiDbGPZWzoRut9nsu84TXKjXKHEvWzzwtiuB8gx15KAsBDEb
+         AK/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXcDxtsG4m3HkdgejSepJjTC3PsCoetMvO4g8cfcZFDZbzl8hG0ic97FoqOUqUF05Lp7I63QCfeVBG+c0ytt1WjRpQOdrYYYwr/BqX0
+X-Gm-Message-State: AOJu0YyZIl8vOYiiStWM5+363tMhklv6uwr9LFyylTUpyBvO+DnXe+FZ
+	IhliMXI1Zzdp5FJL4pJe6i1A8nKMfT5Iaecu/BFLC0H22w4rqoXnvIbGZhx5avFV5XlVVu4GWWl
+	X7sfBEivjDbFrrvG0m7yNXn+5YRU7I+MZgeQy
+X-Google-Smtp-Source: AGHT+IHbb0ns1VcAL2AuPsJP0VuRb7bEni14HNl55IoSwWc7cQ1UsbBgY8bSBKed9IK11uNfM7jlCgePEyPllxvYmpk=
+X-Received: by 2002:a05:600c:2252:b0:424:798a:f7f6 with SMTP id
+ 5b1f17b1804b1-424798afe74mr42769395e9.8.1718913264293; Thu, 20 Jun 2024
+ 12:54:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3wxoheqr4jg7zx7s"
-Content-Disposition: inline
-In-Reply-To: <ZmqwQV6Qm1kqoM8t@pengutronix.de>
+References: <20240620181736.1270455-1-yabinc@google.com> <CAKwvOd=ZKS9LbJExCp8vrV9kLDE_Ew+mRcFH5-sYRW_2=sBiig@mail.gmail.com>
+ <CAKwvOd=DkqejWW=CTmaSi8gqopvCsVtj+63ppuR0nw==M26imA@mail.gmail.com>
+In-Reply-To: <CAKwvOd=DkqejWW=CTmaSi8gqopvCsVtj+63ppuR0nw==M26imA@mail.gmail.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Thu, 20 Jun 2024 12:54:10 -0700
+Message-ID: <CAKwvOdm+uudyu_JrHUBBJnU_R4GYprym6HWmcYYyHoCspbcL3Q@mail.gmail.com>
+Subject: Re: [PATCH] Fix initializing a static union variable
+To: Yabin Cui <yabinc@google.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	"Ballman, Aaron" <aaron.ballman@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jun 20, 2024 at 12:47=E2=80=AFPM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> On Thu, Jun 20, 2024 at 12:31=E2=80=AFPM Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
+> >
+> > On Thu, Jun 20, 2024 at 11:17=E2=80=AFAM Yabin Cui <yabinc@google.com> =
+wrote:
+> > >
+> > > saddr_wildcard is a static union variable initialized with {}.
+> > > But c11 standard doesn't guarantee initializing all fields as
+> > > zero for this case. As in https://godbolt.org/z/rWvdv6aEx,
+> >
+> > Specifically, it sounds like C99+ is just the first member of the
+> > union, which is dumb since that may not necessarily be the largest
+> > variant.  Can you find the specific relevant wording from a pre-c23
+> > spec?
+> >
+> > > clang only initializes the first field as zero, but the bits
+> > > corresponding to other (larger) members are undefined.
+> >
+> > Oh, that sucks!
+> >
+> > Reading through the internal report on this is fascinating!  Nice job
+> > tracking down the issue!  It sounds like if we can aggressively inline
+> > the users of this partially initialized value, then the UB from
+> > control flow on the partially initialized value can result in
+> > Android's kernel network tests failing.  It might be good to include
+> > more info on "why this is a problem" in the commit message.
+> >
+> > https://godbolt.org/z/hxnT1PTWo more clearly demonstrates the issue, IM=
+O.
+> >
+> > TIL that C23 clarifies this, but clang still doesn't have the correct
+> > codegen then for -std=3Dc23.  Can you please find or file a bug about
+> > this, then add a link to it in the commit message?
+> >
+> > It might be interesting to link to the specific section of n3096 that
+> > clarifies this, or if there was a corresponding defect report sent to
+> > ISO about this.  Maybe something from
+> > https://www.open-std.org/jtc1/sc22/wg14/www/wg14_document_log.htm
+> > discusses this?
+>
+> https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3011.htm
+>
+> https://clang.llvm.org/c_status.html mentions that n3011 was addressed
+> by clang-17, but based on my godbolt link above, it seems perhaps not?
+
+Sorry, n3011 was a minor revision to
+https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2900.htm
+which is a better citation for this bug, IMO.  I still think the clang
+status page is wrong (for n2900) and that is a bug against clang that
+should be fixed (for c23), but this kernel patch still has merit
+(since the issue I'm referring to in clang is not what's leading to
+the test case failures).
+
+>
+> 6.7.10.2 of n3096 (c23) defines "empty initialization" (which wasn't
+> defined in older standards).
+>
+> Ah, reading
+>
+> n2310 (c17) 6.7.9.10:
+>
+> ```
+> If an object that has static or thread storage duration is not
+> initialized explicitly, then:
+> ...
+> =E2=80=94 if it is a union, the first named member is initialized
+> (recursively) according to these rules, and
+> any padding is initialized to zero bits;
+> ```
+>
+> Specifically, "the first named member" was a terrible mistake in the lang=
+uage.
+>
+> Yikes! Might want to quote that in the commit message.
+>
+> >
+> > Can you also please (find or) file a bug against clang about this? A
+> > compiler diagnostic would be very very helpful here, since `=3D {};` is
+> > such a common idiom.
+> >
+> > Patch LGTM, but I think more context can be provided in the commit
+> > message in a v2 that helps reviewers follow along with what's going on
+> > here.
+> >
+> > >
+> > > Signed-off-by: Yabin Cui <yabinc@google.com>
+> > > ---
+> > >  net/xfrm/xfrm_state.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+> > > index 649bb739df0d..9bc69d703e5c 100644
+> > > --- a/net/xfrm/xfrm_state.c
+> > > +++ b/net/xfrm/xfrm_state.c
+> > > @@ -1139,7 +1139,7 @@ xfrm_state_find(const xfrm_address_t *daddr, co=
+nst xfrm_address_t *saddr,
+> > >                 struct xfrm_policy *pol, int *err,
+> > >                 unsigned short family, u32 if_id)
+> > >  {
+> > > -       static xfrm_address_t saddr_wildcard =3D { };
+> > > +       static const xfrm_address_t saddr_wildcard;
+> > >         struct net *net =3D xp_net(pol);
+> > >         unsigned int h, h_wildcard;
+> > >         struct xfrm_state *x, *x0, *to_put;
+> > > --
+> > > 2.45.2.741.gdbec12cfda-goog
+> > >
+> >
+> >
+> > --
+> > Thanks,
+> > ~Nick Desaulniers
+>
+>
+>
+> --
+> Thanks,
+> ~Nick Desaulniers
 
 
---3wxoheqr4jg7zx7s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi Michael,
-
-> There is another instance of wait_for_completion_timeout() in the
-> driver, which uses tmo instead of timeout. Maybe this patch should
-> change that, too.
-
-Good point. I will update the patch (after waiting some more for review
-comments).
-
+--=20
 Thanks,
-
-   Wolfram
-
-
---3wxoheqr4jg7zx7s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ0iFwACgkQFA3kzBSg
-KbYaqw//eCYthXAFAaVKFBP+MfIxhZQtHZi1Ppq46rI4tMXIRTOXOE9dOJ9QCqjg
-EcBZRtASSONq+L8CtGGTWw37SB1chASN12JWN7Qkzn0YKy5v0Xc7fmE4XZJlHA6p
-GEmQkAIBrsY91u51byemHY+DZnQSVNHtD6CTTZiRzKkpM02pRQXrqYPuLZLF/6Xw
-p2Q7VzC2q8Mow9AE/fOMmg7KajgXGxF84HQ5njS58KF2NgKOntiJIsMOySG9zUA1
-faL9jBrdTAU+UsstcoZmYXN9kU46gxdJHC1E4QQMwv8ahHngM9TFWr05Tcw6Zzfx
-6OLQWdPvTID3QzqRazSc32tdVEcwNG4pAVHu829EaXI/ARYw/+v42IVHDFsJ6oXd
-N6yTEkbebS1/xa6qhCasuyVap2mQMQK5YI7ZezpoIeOd0UeV2xsAfMBniVGySVpR
-By1umiXcKJBdbsqlEfcpJEsSjyrJtUrxX4YiuDrBo9B+yrtP1yiDhl5ScWm/G0Pe
-WtbGSYeQfBMBFyH/oDHlvGg1P09ZshYqztoDUOFWtslAzsaG8CP7u4xUZgRQ7CtI
-W62Tox6WjRGp2LjeOFJkJdXvWIi8IWoPBmG2YDQsZpi8mJGod87IGY2Ykj22PMbt
-f+hYdF0Hr55yDT7eXmyEh8HkRDf8Pb1ytaJqkPOT0gCA9pDYql4=
-=iqhk
------END PGP SIGNATURE-----
-
---3wxoheqr4jg7zx7s--
+~Nick Desaulniers
 
