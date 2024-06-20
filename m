@@ -1,120 +1,119 @@
-Return-Path: <linux-kernel+bounces-222122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EAD390FD23
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C105C90FD24
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0935E1F22CFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59AAF282602
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D192241746;
-	Thu, 20 Jun 2024 06:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="UsCA7o0L"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F248640875;
+	Thu, 20 Jun 2024 06:56:48 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967AE3FB2C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE35C40848
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718866579; cv=none; b=bp7HBaVJYGZN2pi5oge9JctTdCgjdKndGcPOKu+T1+Nv/GAAd3LAUTeVW3fln/4iDpBlJmkdfcQfo/LmC6pxXwnQLEDdDS8ZfvguTE2VSe+lZpdlDmSAurd9AnhVfHow1rxyKTQCvck1JstGY+8PGhlBwCAmKql68/OV1rrj2NY=
+	t=1718866608; cv=none; b=pPocrM27GhNHCc5ZvyukVemMp5oz2HQP5MjQOemfnb+HGTzNix2LdYYecDUOWu0sG2xrQUZTqIRg5Pm94kv7d/v+1RCZfLskvj4Kj/t/19HRH4Myj/V1sitqYqyLB3yqikeyfW0r8CN4Gz+D33+3skwkXJ/+NYNTZM2NmFEvQ1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718866579; c=relaxed/simple;
-	bh=GldMuWD8UF3ES7MDRD00WlxvH7IBFEdp78rLq2gjygQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WKKdiWN7X6WY9mEmopdIINpMGJTLM1KOeLfBJVW74EI+Sm5e56dA/+5DO/pSwMS/+ZlTOgaWpB4aAZbL64QLIjMQ3iMCPx1OgP6waDp+N7SYquYjKDPR3Jcc9TxFhgAsnQzrk5jU0gBfY78RJbZMDbua0/qSa5DXIEuM18e0MFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=UsCA7o0L; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62a08092c4dso5429857b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 23:56:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1718866576; x=1719471376; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yab6t2QuHd3qRnOjOue/gVivXnSlhEWX5CWnQjI/lMo=;
-        b=UsCA7o0Lecv0P7JN57SD7eNydnVfZzaNoiFp8qYiJGalV0Pn5F3Q5O+MwsIPIgR/ij
-         Yt38zhmo/pmYAxzP2dkO2uWersIavKJgFzoxO7TWjhPNlar9U1B1YQpmxIKzn4U3xgZu
-         LkeWk9fQGPcJ5DFM4PIddNQThN2SHn+QL5cR0K+IBcPC1uoFwSEA56KnzSYA8XNobJuL
-         TDJ5YES5WiEuJ4n1eBHQD282F1MRCppeieBz1sUduC4NJ5ImSDcuPwM0LWOunQAcxjAW
-         uHHMZ2J8AGEIRFmYyrHJo34Ecm6Fnb/11OUoyaq09g7IWnD9icJf1mPd9zXItTNWhYdQ
-         9FcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718866576; x=1719471376;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yab6t2QuHd3qRnOjOue/gVivXnSlhEWX5CWnQjI/lMo=;
-        b=FDoRRc2ICydlW6WqrwFSfXacAAaINQYuUxGeBPoTHGRzZ+z+2Bx35beHCMXKfPXQBk
-         SEuPyY5OIwOJNVacUqMJWQZDVn/JxnuT9EjZItgX350sX5c81A84uElw3lP7ftZlaLTE
-         gclqApVAikmM7jxYYc9XVN1pFXIUGVjO2C5J/LfzXrKiUSv7pZ9JwTX3DmiDAbMWLMcx
-         wtva1561OwtUiAcAuGJ5fHgzeyxjk4e6KOy27Ei0d9SQw9t6sLWJ6l7HE/Vp4CerZcLr
-         oyc4yudvYCzdHbaAHsKI3d7G4uPTzT5BqiGfXLpZbQVmtpOPBDzKNn4hx888sLTv9oFv
-         zMeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe5YIvHVdsO2HEgp8HKoN75e+2IRnQw9YiEqBw/ldxyilbaOTnUvhfKiYADtCmYRjKUbm7w1kr6g2se+OdYqqgHCHqmud/bBnIJ67c
-X-Gm-Message-State: AOJu0Yxd0VT7ZNVeRzduD7i0A18DcR2C1ZEhMXxOToVZ2KjqWB1S7myv
-	06HOsx3ZR0m+kpggXXJ5UTYRTQFyPh+ajGcTutMry4EB3HR8+gJJuHRksTXdydbwzNxj3tVRqQD
-	OHR9eS9eKIMjfr7Yj2tHDWIVhstKRPeqkTzwdiQ==
-X-Google-Smtp-Source: AGHT+IG0lreGB6+pEOuO/acZ0C3UFNmveVZT1X0qeHrhKCfnM3oPwFhmWsMpUEJyjAhqixw1BNMGSzYp4xtyVq+feSc=
-X-Received: by 2002:a05:690c:d84:b0:630:de2f:79b3 with SMTP id
- 00721157ae682-63a8e1db2aemr61384957b3.25.1718866576455; Wed, 19 Jun 2024
- 23:56:16 -0700 (PDT)
+	s=arc-20240116; t=1718866608; c=relaxed/simple;
+	bh=6gBijgTVCVX8zCgP5AZijMGbZqyPpM1a/+bbPky5Ans=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uwl3Eae87l+2opVtHjLUsSMbgzQgw0lwNcKr0uDzgP6pxiLtXg6PakN+QFr+TUY4eS9eIdVDliGyO+UFJ9QZh7j72+GXPjxYw0N7uBZsEbvjtSZmX93KWwVrzxrvGltZKjdw3f51wcrTZgW4kdE4I46qB0db4blzEigRsOoTHfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 7ACF568AFE; Thu, 20 Jun 2024 08:56:41 +0200 (CEST)
+Date: Thu, 20 Jun 2024 08:56:41 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Meneghini <jmeneghi@redhat.com>
+Cc: kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	emilne@redhat.com, jrani@purestorage.com, randyj@purestorage.com,
+	chaitanyak@nvidia.com, hare@kernel.org
+Subject: Re: [PATCH v7 1/1] nvme-multipath: implement "queue-depth" iopolicy
+Message-ID: <20240620065641.GA22113@lst.de>
+References: <20240619163503.500844-1-jmeneghi@redhat.com> <20240619163503.500844-2-jmeneghi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620033434.3778156-1-quic_zhonhan@quicinc.com>
-In-Reply-To: <20240620033434.3778156-1-quic_zhonhan@quicinc.com>
-From: Andy Chiu <andy.chiu@sifive.com>
-Date: Thu, 20 Jun 2024 14:56:05 +0800
-Message-ID: <CABgGipUjwgj=vVC31zMwJL_ro_L94ouGJHMm=E-wSjyervchTw@mail.gmail.com>
-Subject: Re: [PATCH] riscv: signal: Remove unlikely() from WARN_ON() condition
-To: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	conor.dooley@microchip.com, ancientmodern4@gmail.com, 
-	ben.dooks@codethink.co.uk, bjorn@rivosinc.com, quic_bjorande@quicinc.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619163503.500844-2-jmeneghi@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, Jun 20, 2024 at 11:35=E2=80=AFAM Zhongqiu Han <quic_zhonhan@quicinc=
-.com> wrote:
->
-> "WARN_ON(unlikely(x))" is excessive. WARN_ON() already uses unlikely()
-> internally.
->
-> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
-> Reviewed-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> [jmeneghi: vairious changes and improvements, addressed review comments]
 
-Reviewed-by: Andy Chiu <andy.chiu@sifive.com>
+s/vairious/various/ 
 
-> ---
->  arch/riscv/kernel/signal.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-> index 5a2edd7f027e..dcd282419456 100644
-> --- a/arch/riscv/kernel/signal.c
-> +++ b/arch/riscv/kernel/signal.c
-> @@ -84,7 +84,7 @@ static long save_v_state(struct pt_regs *regs, void __u=
-ser **sc_vec)
->         datap =3D state + 1;
->
->         /* datap is designed to be 16 byte aligned for better performance=
- */
-> -       WARN_ON(unlikely(!IS_ALIGNED((unsigned long)datap, 16)));
-> +       WARN_ON(!IS_ALIGNED((unsigned long)datap, 16));
->
->         get_cpu_vector_context();
->         riscv_v_vstate_save(&current->thread.vstate, regs);
-> --
-> 2.25.1
->
+> +	if ((nvme_req(rq)->flags & NVME_MPATH_CNT_ACTIVE))
+
+No need for the double braces here.
+
+> +		WARN_ON_ONCE((atomic_dec_if_positive(&ns->ctrl->nr_active)) < 0);
+
+Overly long line.
+
+But I don't understand why you need the WARN_ON anyway.  If the value
+must always be positive there is no point in atomic_dec_if_positive.
+If misaccounting is fine there WARN_ON is counterproductive.
+
+> -static struct nvme_ns *nvme_round_robin_path(struct nvme_ns_head *head,
+> -		int node, struct nvme_ns *old)
+> +static struct nvme_ns *nvme_round_robin_path(struct nvme_ns_head *head)
+>  {
+> -	struct nvme_ns *ns, *found = NULL;
+> +	struct nvme_ns *ns, *old, *found = NULL;
+> +	int node = numa_node_id();
+> +
+> +	old = srcu_dereference(head->current_path[node], &head->srcu);
+> +	if (unlikely(!old))
+> +		return __nvme_find_path(head, node);
+
+Can you split the refactoring of the existing path selectors into a
+prep patch, please?
+
+> +static void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys,
+> +		int iopolicy)
+> +{
+> +	struct nvme_ctrl *ctrl;
+> +	int old_iopolicy = READ_ONCE(subsys->iopolicy);
+> +
+> +	if (old_iopolicy == iopolicy)
+> +		return;
+> +
+> +	WRITE_ONCE(subsys->iopolicy, iopolicy);
+
+What is the atomicy model here?  There doesn't seem to be any
+global lock protecting it?  Maybe move it into the
+nvme_subsystems_lock critical section?
+
+> +	pr_notice("%s: changed from %s to %s for subsysnqn %s\n", __func__,
+> +			nvme_iopolicy_names[old_iopolicy], nvme_iopolicy_names[iopolicy],
+> +			subsys->subnqn);
+
+The function is not really relevant here,  this should become something
+like:
+
+	pr_notice("%s: changing iopolicy from %s to %s\n",
+		subsys->subnqn,
+		nvme_iopolicy_names[old_iopolicy],
+		nvme_iopolicy_names[iopolicy]);
+
+or maybe:
+
+	dev_notice(changing iopolicy from %s to %s\n",
+		&subsys->dev,
+		nvme_iopolicy_names[old_iopolicy],
+		nvme_iopolicy_names[iopolicy]);
+
 
