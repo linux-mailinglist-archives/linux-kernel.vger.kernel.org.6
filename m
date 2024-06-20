@@ -1,82 +1,60 @@
-Return-Path: <linux-kernel+bounces-223168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81009910EEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:37:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3462C910E90
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AACB1F23005
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:37:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390D01C2224F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51461BD4E8;
-	Thu, 20 Jun 2024 17:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065D91B3F20;
+	Thu, 20 Jun 2024 17:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TCWdw6au"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XqTtOATU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4741B4C47;
-	Thu, 20 Jun 2024 17:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F551DDEE;
+	Thu, 20 Jun 2024 17:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718904751; cv=none; b=QFdmjSZknJRCSO9EElh/MyHrJG/s8v80IJTtE65SUpF43wFgEkwC7LTWO14EQphCIaqny5SZGGYe2yEkdC6YoVRTatpSYBcnovwBu2ImFLulvh5SBPU8stSSQVWYtPaFiuu8vGoUfZi6c5VK6hAceKw9IYBLgeiGcSK9rMx+pxY=
+	t=1718904683; cv=none; b=kyTwV1+D9Iei5nm2KmJ2ypkMpgcj3/eOJxHru+inD11bYukUtUvFWliyNlVYkzZc1f+iuT1R/n7RWrmLQb97JUaZHQOW8jkxi5q4wFCAxAlO8dPMsrJ17pzE88PMxr114AQO9zORC7d9AIYB/bRF7lwPf/n+si4rOgEvzxZ0cr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718904751; c=relaxed/simple;
-	bh=oFO9G2nRTwhWJIbyUtKnqB3LSa7KnG7okU5Gl/bU6lk=;
+	s=arc-20240116; t=1718904683; c=relaxed/simple;
+	bh=c07EwySV5A8jyBItyxYvOoGB6xh76nUFiW66NCfaRWE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HFrmxAfdg0AoCdS768suNqyjpL18jE3QtgNcMNO2x+z8VlVfU7n7Eb7IWRYYqn9CbHnYyZyE6RyB4tkVGqYCnVuhk4PlxRbzNY6EF4IQphXLcbVr7VTt9CYWGtEpZYOp1gIudLSBZghfl6qAurF5SzjzaKe9VAMyv+82D/rguGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TCWdw6au; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718904750; x=1750440750;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oFO9G2nRTwhWJIbyUtKnqB3LSa7KnG7okU5Gl/bU6lk=;
-  b=TCWdw6auSASFpv9dDQhhDPwllLUYzk64BJrniHpCjiqym5ET+Tl9GqK9
-   y4HnQLQpRUBaMQDGkSnYIOCD5081rrlSTTgcI/2WJ9fQJ57hENqRd/P7g
-   3kJcsJ19fNimW97ofkDsgnkgcCXH142eLeu7B9tEyFH3aWH8kgo2GEfg+
-   miiUmYpQGkMSaaS2wRTUzidb3Ajp2egyQdCe6jZZT3uSDd/QxiBUkYcxG
-   e+8nNz5pGrY/0k7QMFCv6QDqi/1+ReZunQtiLGTJ7Zf/PqTsuDgd2FWa8
-   eFjkuMdYLVLaBEl3el89hCiVMVl94v98qsdem1VAO7X970s601fTrd3Bq
-   Q==;
-X-CSE-ConnectionGUID: kMB6VdBgTvWuUIF+dZyRaw==
-X-CSE-MsgGUID: mPSaakP5T0yoMtaxZUyT8g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="19684105"
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="19684105"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 10:32:29 -0700
-X-CSE-ConnectionGUID: 718kP6xuREe79HcLq81ntA==
-X-CSE-MsgGUID: cdf+326NRLmYXOBmkXIRiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="47268510"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 20 Jun 2024 10:32:15 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sKLds-0007nc-1O;
-	Thu, 20 Jun 2024 17:32:12 +0000
-Date: Fri, 21 Jun 2024 01:31:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Anand Moon <linux.amoon@gmail.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Anand Moon <linux.amoon@gmail.com>, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] PCI: rockchip: Simplify clock handling by using
- clk_bulk*() function
-Message-ID: <202406210131.rxenHeBG-lkp@intel.com>
-References: <20240618164133.223194-2-linux.amoon@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e+r6nCzwuCSlsgXflmVcL1PbOLMeXgRJe/HZGzHhv0o3sw8Sl2+SXKtfDqQ2+MG0AcbT5qjRm6S0IgOAZdB0mix17SIH+D+Hoin8jeznjPTlR8crUlyAKrD5NESsGXEXeR1dyWbVIKeMrqbkG+72IZESpw4lQiOkXJedS63ddNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XqTtOATU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47E54C2BD10;
+	Thu, 20 Jun 2024 17:31:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718904682;
+	bh=c07EwySV5A8jyBItyxYvOoGB6xh76nUFiW66NCfaRWE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XqTtOATUvwlDYXLFMQX0a7F6u0ozKkRdNk9dpdW9p+sV9iHMSGhNwFzTuTKaVY0OS
+	 gRSCLXGMnwsH5XJNlQLjm2/Io5kfSfemcVIH22LiBX39gQOUMe2JqIE0dBEFXB7mD2
+	 Iy+RdOZe7GRR81nEm40hlDkq3y6ltI54V9BHcupMlm3Xs4QsH8EXI7t40q77uQMRvy
+	 V/W2Ind/qTVPKWTnJa9irSlCJwd6rk4yzd/rYn5eoKlZU3gmlF08ilWNC3T0HEL7lu
+	 hgyDe4q24UIqdh7JuJmFY2NxOWikW+nHAT3R9Z4wt4UF+2PzhtIntH2XM2Rj2pbZos
+	 kN0W+jAVwNb6A==
+Date: Thu, 20 Jun 2024 18:31:18 +0100
+From: Simon Horman <horms@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH net-next] net: stmmac: unexport stmmac_pltfr_init/exit()
+Message-ID: <20240620173118.GP959333@kernel.org>
+References: <20240619140119.26777-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,78 +63,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240618164133.223194-2-linux.amoon@gmail.com>
+In-Reply-To: <20240619140119.26777-1-brgl@bgdev.pl>
 
-Hi Anand,
+On Wed, Jun 19, 2024 at 04:01:19PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> These functions are only used within the compilation unit they're defined
+> in so there's no reason to export them.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-kernel test robot noticed the following build errors:
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-[auto build test ERROR on pci/next]
-[also build test ERROR on pci/for-linus linus/master v6.10-rc4 next-20240619]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Anand-Moon/PCI-rockchip-Simplify-reset-control-handling-by-using-reset_control_bulk-function/20240619-014145
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20240618164133.223194-2-linux.amoon%40gmail.com
-patch subject: [PATCH v1 1/3] PCI: rockchip: Simplify clock handling by using clk_bulk*() function
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240621/202406210131.rxenHeBG-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240621/202406210131.rxenHeBG-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406210131.rxenHeBG-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/pci/controller/pcie-rockchip-ep.c:20:
->> drivers/pci/controller/pcie-rockchip.h:311:28: error: array has incomplete element type 'struct clk_bulk_data'
-     311 |         struct  clk_bulk_data clks[ROCKCHIP_NUM_CLKS];
-         |                                   ^
-   drivers/pci/controller/pcie-rockchip.h:311:10: note: forward declaration of 'struct clk_bulk_data'
-     311 |         struct  clk_bulk_data clks[ROCKCHIP_NUM_CLKS];
-         |                 ^
-   1 error generated.
-
-
-vim +311 drivers/pci/controller/pcie-rockchip.h
-
-   298	
-   299	struct rockchip_pcie {
-   300		void	__iomem *reg_base;		/* DT axi-base */
-   301		void	__iomem *apb_base;		/* DT apb-base */
-   302		bool    legacy_phy;
-   303		struct  phy *phys[MAX_LANE_NUM];
-   304		struct	reset_control *core_rst;
-   305		struct	reset_control *mgmt_rst;
-   306		struct	reset_control *mgmt_sticky_rst;
-   307		struct	reset_control *pipe_rst;
-   308		struct	reset_control *pm_rst;
-   309		struct	reset_control *aclk_rst;
-   310		struct	reset_control *pclk_rst;
- > 311		struct  clk_bulk_data clks[ROCKCHIP_NUM_CLKS];
-   312		struct	regulator *vpcie12v; /* 12V power supply */
-   313		struct	regulator *vpcie3v3; /* 3.3V power supply */
-   314		struct	regulator *vpcie1v8; /* 1.8V power supply */
-   315		struct	regulator *vpcie0v9; /* 0.9V power supply */
-   316		struct	gpio_desc *ep_gpio;
-   317		u32	lanes;
-   318		u8      lanes_map;
-   319		int	link_gen;
-   320		struct	device *dev;
-   321		struct	irq_domain *irq_domain;
-   322		int     offset;
-   323		void    __iomem *msg_region;
-   324		phys_addr_t msg_bus_addr;
-   325		bool is_rc;
-   326		struct resource *mem_res;
-   327	};
-   328	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
