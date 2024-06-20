@@ -1,191 +1,278 @@
-Return-Path: <linux-kernel+bounces-222688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 636B99105B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:20:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00AE9105F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE803B260C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:20:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E5CAB253DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92CB1AD3EA;
-	Thu, 20 Jun 2024 13:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237CF1AD9EC;
+	Thu, 20 Jun 2024 13:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EszdFoqL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V47uWIHp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RNPECDH+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C744D1E49E;
-	Thu, 20 Jun 2024 13:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5C71AC420;
+	Thu, 20 Jun 2024 13:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718889625; cv=none; b=aolAIpeRmFWUDRQxnFSx5CshH2Ia735/6aHtaWLJUGUShzgEdZ3VkQiuHLC/EzGRY/ZzzpUeEfEulhHt2sJGJzcHbPHR2v2Q2bb8voGyngA9665osfcFZ9fjMVCgn8UKBGltM2x0T19fLZeGOMabDMzCLx92dQJ/zoDemenlpEA=
+	t=1718890053; cv=none; b=FAuI/3C8CYem6qvzstWV2yhGb+1emWE6Zx0HYy+hTiZXuEbekzV6hCIgZbcP1cmP4a+TNW0yd22JphGnK82q1/GEiiRBKWgbC5xK3cNU6yz6NM0E8D7mjGhodKtVaNfWluSKv1BCqLe+VlB+Ko+CZaS754PYBZRCkQCm8VAsTbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718889625; c=relaxed/simple;
-	bh=KEROTR005kTLhtx/k+9f7IK2AIDNVt50nsFd2BWMl30=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WmKAvwUJeaQoA6hsNOoG5hTAuyaFh15Klhmo2ein1KxFpVd5EpUpBl67xpOvCQ6I0jm31iTQ3G8BbdTpUE8QvXw8ytWDzy/kul6lwbNQYiZET2APMjx0mf5bTfcEnrUZRBwAIwZXCtuAFyAdYZdbCQ7H49J/82vGBYbo2olwAvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EszdFoqL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 063D0C2BD10;
-	Thu, 20 Jun 2024 13:20:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718889624;
-	bh=KEROTR005kTLhtx/k+9f7IK2AIDNVt50nsFd2BWMl30=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EszdFoqLBct+twlYq5PmHlR+kk91HtkmqT/p8iQvXgoRrRldYFnFXcFToGnj+uSox
-	 h2Zu62R+tYk2I6O5LtvgAbtSR7d5rAxVIu9qXKOoOJumQlm2mDE0VI1PUEJfVvupcx
-	 BdHZ55BvhPklbpe/91BZN9nA8rM/Ca1Fu270Sx5JsoF3XkUXq0+FWkDVRneDgJfH1z
-	 wZH6JCoWcYlTvOn7esMlreYOoGxFeTS2i8idbDqIOxC3meF2lsx1+Xgm5ROdTVBfy6
-	 c3T25vIdJz8aJDEwiUwJRLTjD6BAGftmdxqBtFnzx9Au/8jbkltLtoBGN+CZAU+7pZ
-	 gSVNxJUBYwisg==
-Message-ID: <bf61b47d-e375-4f52-b25c-f02a5cd9b6dd@kernel.org>
-Date: Thu, 20 Jun 2024 15:20:20 +0200
+	s=arc-20240116; t=1718890053; c=relaxed/simple;
+	bh=CxjdcEIv0fJ08chyqfNILCn9w0N8fsAYeMuExlV/wkA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=atUUthBOdp53WPZ2gg1LpjVd+YIK4mI+SHwB7zUVvpOAGT3VQfdCARINRTiXmAMS/MgtOOd94jlcrh/EbZOr6rLeHmcxcp919O0cHUgfEExBciGLDNWXaskeaN8mpoht1sGHUh8T42V94wpt0IeZ17vDtwaw7SLi9pNdZ2iNzbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V47uWIHp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RNPECDH+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718890049;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=svcLrwo/0BEWuihvEjwB8A85DForYyLw6nqijNE117I=;
+	b=V47uWIHpN87Md2A69Fizx/tHkp0lYSOSuYYaRy8RxMcYyD6M+wFILmMwHUPt4QRNMrTGoX
+	MFES91se6qG/HdWU86fNHVngZmDk4ywsUdia+pq/P57aYWXM7NQLeysm2oSAg08Zr+153f
+	BngPESkkBzmpfpngFGXPAHAarlvw4U2UvIPrfW2m/Cjtv1AVgkH5wC8VlnCXblU3jhmRjG
+	ku81jKlx5rKeInHOflfzGp54SmjUQRlMXRY8jIhjfWfvhbDVKHmjpJ+1PuviYWm/o9oxN9
+	vFRjEtYEBC+s5Bom4q5TJCbskRqOU6c9hhtOAqHbarAosI4kc3okd/5cbpYNQw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718890049;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=svcLrwo/0BEWuihvEjwB8A85DForYyLw6nqijNE117I=;
+	b=RNPECDH+OsdSCGGJDNx4umNhr0Z5zbpsJl1IyxMFmDw/agujpkmGHHhyjByhveO7MWNNMU
+	OiA7BAbqxS4BDbCQ==
+To: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH v9 net-next 00/15] locking: Introduce nested-BH locking.
+Date: Thu, 20 Jun 2024 15:21:50 +0200
+Message-ID: <20240620132727.660738-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: remoteproc: mpss: Document
- QDU1000/QRU1000 mpss devices
-To: Komal Bajaj <quic_kbajaj@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Melody Olvera <quic_molvera@quicinc.com>
-References: <20240620120143.12375-1-quic_kbajaj@quicinc.com>
- <20240620120143.12375-2-quic_kbajaj@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240620120143.12375-2-quic_kbajaj@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 20/06/2024 14:01, Komal Bajaj wrote:
-> From: Melody Olvera <quic_molvera@quicinc.com>
-> 
-> Document the compatible for the component used to boot the MPSS on the
-> QDU1000 and QRU1000 SoCs.
-> 
-> The QDU1000 and QRU1000 mpss boot process now requires the specification
-> of an RMB register space to complete the handshake needed to start or
+Disabling bottoms halves acts as per-CPU BKL. On PREEMPT_RT code within
+local_bh_disable() section remains preemtible. As a result high prior
+tasks (or threaded interrupts) will be blocked by lower-prio task (or
+threaded interrupts) which are long running which includes softirq
+sections.
 
-What is RMB?
+The proposed way out is to introduce explicit per-CPU locks for
+resources which are protected by local_bh_disable() and use those only
+on PREEMPT_RT so there is no additional overhead for !PREEMPT_RT builds.
 
-> attach the mpss.
+The series introduces the infrastructure and converts large parts of
+networking which is largest stake holder here. Once this done the
+per-CPU lock from local_bh_disable() on PREEMPT_RT can be lifted.
 
-mpss? MPSS?
+Performance testing. Baseline is net-next as of commit 93bda33046e7a
+("Merge branch'net-constify-ctl_table-arguments-of-utility-functions'")
+plus v6.10-rc1. A 10GiG link is used between two hosts. The command
+   xdp-bench redirect-cpu --cpu 3 --remote-action drop eth1 -e
 
-> 
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
-> ---
->  .../remoteproc/qcom,qdu1000-mpss-pas.yaml     | 129 ++++++++++++++++++
->  1 file changed, 129 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,qdu1000-mpss-pas.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,qdu1000-mpss-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,qdu1000-mpss-pas.yaml
-> new file mode 100644
-> index 000000000000..71c5a85b679e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,qdu1000-mpss-pas.yaml
-> @@ -0,0 +1,129 @@
-> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/qcom,qdu1000-mpss-pas.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm QDU1000 Modem Peripheral Authentication Service
-> +
-> +maintainers:
-> +  - Melody Olvera <quic_molvera@quicinc.com>
-> +  - Komal Bajaj <quic_kbajaj@quicinc.com>
-> +
-> +description:
-> +  Qualcomm QDU1000 SoC Peripheral Authentication Service loads and boots firmware
-> +  on the Qualcomm DSP Hexagon core.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,qdu1000-mpss-pas
-> +
-> +  reg:
-> +    items:
-> +      - description: Address offset and size for MPSS PAS register set
-> +      - description: Address offset and size for MPSS RMB register set
+was invoked on the receiving side with a ixgbe. The sending side uses
+pktgen_sample03_burst_single_flow.sh on i40e.
 
-10 words, 8 are entirely redundant. This cannot be anything else than
-address offset and size of some register set. Please write efficient and
-understandable code. E.g.
-"MPSS main Peripheral Authentication Service"
-"MPSS something-explain-what-is-rmb"
+Baseline:
+| eth1->?                 9,018,604 rx/s                  0 err,drop/s
+|   receive total         9,018,604 pkt/s                 0 drop/s         =
+       0 error/s
+|     cpu:7               9,018,604 pkt/s                 0 drop/s         =
+       0 error/s
+|   enqueue to cpu 3      9,018,602 pkt/s                 0 drop/s         =
+    7.00 bulk-avg
+|     cpu:7->3            9,018,602 pkt/s                 0 drop/s         =
+    7.00 bulk-avg
+|   kthread total         9,018,606 pkt/s                 0 drop/s         =
+ 214,698 sched
+|     cpu:3               9,018,606 pkt/s                 0 drop/s         =
+ 214,698 sched
+|     xdp_stats                   0 pass/s        9,018,606 drop/s         =
+       0 redir/s
+|       cpu:3                     0 pass/s        9,018,606 drop/s         =
+       0 redir/s
+|   redirect_err                  0 error/s
+|   xdp_exception                 0 hit/s
 
+perf top --sort cpu,symbol --no-children:
+|   18.14%  007  [k] bpf_prog_4f0ffbb35139c187_cpumap_l4_hash
+|   13.29%  007  [k] ixgbe_poll
+|   12.66%  003  [k] cpu_map_kthread_run
+|    7.23%  003  [k] page_frag_free
+|    6.76%  007  [k] xdp_do_redirect
+|    3.76%  007  [k] cpu_map_redirect
+|    3.13%  007  [k] bq_flush_to_queue
+|    2.51%  003  [k] xdp_return_frame
+|    1.93%  007  [k] try_to_wake_up
+|    1.78%  007  [k] _raw_spin_lock
+|    1.74%  007  [k] cpu_map_enqueue
+|    1.56%  003  [k] bpf_prog_57cd311f2e27366b_cpumap_drop
 
-...
+With this series applied:
+| eth1->?                10,329,340 rx/s                  0 err,drop/s
+|   receive total        10,329,340 pkt/s                 0 drop/s         =
+       0 error/s
+|     cpu:6              10,329,340 pkt/s                 0 drop/s         =
+       0 error/s
+|   enqueue to cpu 3     10,329,338 pkt/s                 0 drop/s         =
+    8.00 bulk-avg
+|     cpu:6->3           10,329,338 pkt/s                 0 drop/s         =
+    8.00 bulk-avg
+|   kthread total        10,329,321 pkt/s                 0 drop/s         =
+  96,297 sched
+|     cpu:3              10,329,321 pkt/s                 0 drop/s         =
+  96,297 sched
+|     xdp_stats                   0 pass/s       10,329,321 drop/s         =
+       0 redir/s
+|       cpu:3                     0 pass/s       10,329,321 drop/s         =
+       0 redir/s
+|   redirect_err                  0 error/s
+|   xdp_exception                 0 hit/s
 
-> +        glink-edge {
-> +            interrupts-extended = <&ipcc IPCC_CLIENT_MPSS
-> +                                         IPCC_MPROC_SIGNAL_GLINK_QMP
-> +                                         IRQ_TYPE_EDGE_RISING>;
-> +            mboxes = <&ipcc IPCC_CLIENT_MPSS IPCC_MPROC_SIGNAL_GLINK_QMP>;
-> +
-> +            label = "modem";
-> +            qcom,remote-pid = <2>;
-> +        };
+perf top --sort cpu,symbol --no-children:
+|   20.90%  006  [k] bpf_prog_4f0ffbb35139c187_cpumap_l4_hash
+|   12.62%  006  [k] ixgbe_poll
+|    9.82%  003  [k] page_frag_free
+|    8.73%  003  [k] cpu_map_bpf_prog_run_xdp
+|    6.63%  006  [k] xdp_do_redirect
+|    4.94%  003  [k] cpu_map_kthread_run
+|    4.28%  006  [k] cpu_map_redirect
+|    4.03%  006  [k] bq_flush_to_queue
+|    3.01%  003  [k] xdp_return_frame
+|    1.95%  006  [k] _raw_spin_lock
+|    1.94%  003  [k] bpf_prog_57cd311f2e27366b_cpumap_drop
 
-This wasn't tested.
+This diff appears to be noise.
 
-Best regards,
-Krzysztof
+v8=E2=80=A6v9 https://lore.kernel.org/all/20240619072253.504963-1-bigeasy@l=
+inutronix.de/:
+- Added a missing bpf_net_ctx_set() in busy_poll_stop() (patch #14).
+  Reported by Kurt Kanzenbach.
+
+v7=E2=80=A6v8 https://lore.kernel.org/all/20240618072526.379909-1-bigeasy@l=
+inutronix.de/:
+- Rebase on top of net-next
+
+- Collect Acked-by from Jesper Dangaard Brouer.
+
+v6=E2=80=A6v7 https://lore.kernel.org/all/20240612170303.3896084-1-bigeasy@=
+linutronix.de/:
+- The softnet_data::xmit (08/15) is moved completely for RT and not
+  limited to one member. During the review it has been noticed that the
+  `more' member requires same protection.
+  After some cleanup this might also be considered conditionally for !RT.
+
+v5=E2=80=A6v6 https://lore.kernel.org/all/20240607070427.1379327-1-bigeasy@=
+linutronix.de/:
+- bpf_redirect_info and the lists (cpu, dev, xsk map_flush_list) is now
+  initialized on first usage instead during setup time
+  (bpf_net_ctx_set()). bpf_redirect_info::kern_flags is used as
+  status to note which member require an init.
+  The bpf_redirect_info::kern_flags is moved to the end of the struct
+  (after nh) in order to be excluded from the memset() which clears
+  everything upto the the nh member.
+  This whole lazy init performed to save cycles and not to waste them to
+  memset bpf_redirect_info and init the three lists on each
+  net_rx_action()/ NAPI invocation even if BPF/redirect is not used.
+  Suggested by Jesper Dangaard Brouer.
+
+- Collect Acked-by/Review-by from PeterZ/ tglx
+
+v4=E2=80=A6v5 https://lore.kernel.org/all/20240604154425.878636-1-bigeasy@l=
+inutronix.de/:
+- Remove the guard() notation as well as __free() within the patches.
+  Patch #1 and #2 add the guard definition for local_lock_nested_bh()
+  but it remains unused with the series.
+  The __free() notation for bpf_net_ctx_clear has been removed entirely.
+
+- Collect Toke's Reviewed-by.
+
+v3=E2=80=A6v4 https://lore.kernel.org/all/20240529162927.403425-1-bigeasy@l=
+inutronix.de/:
+- Removed bpf_clear_redirect_map(), moved the comment to the caller.
+  Suggested by Toke.
+
+- The bpf_redirect_info structure is memset() each time it is assigned.
+  Suggested by Toke.
+
+- The bpf_net_ctx_set() in __napi_busy_loop() has been moved from the
+  top of the function to begin/ end of the BH-disabled section. This has
+  been done to remain in sync with other call sites.
+  After adding the memset() I've been looking at the perf-numbers in my
+  test-case and I haven't noticed an impact, the numbers are in the same
+  range with and without the change. Therefore I kept the numbers from
+  previous posting.
+
+- Collected Alexei's Acked-by.
+
+v2=E2=80=A6v3 https://lore.kernel.org/all/20240503182957.1042122-1-bigeasy@=
+linutronix.de/:
+- WARN checks checks for bpf_net_ctx_get() have been dropped and all
+  NULL checks around it. This means bpf_net_ctx_get_ri() assumes the
+  context has been set and will segfault if it is not the case.
+  Suggested by Alexei and Jesper. This should always work or always
+  segfault.
+
+- It has been suggested by Toke to embed struct bpf_net_context into
+  task_struct instead just a pointer to it. This would increase the size
+  of task_struct by 112 bytes instead just eight and Alexei didn't like
+  it due to the size impact with 1m threads. It is a pointer again.
+
+v1=E2=80=A6v2 https://lore.kernel.org/all/20231215171020.687342-1-bigeasy@l=
+inutronix.de/:
+- Jakub complained about touching networking drivers to make the
+  additional locking work. Alexei complained about the additional
+  locking within the XDP/eBFP case.
+  This led to a change in how the per-CPU variables are accessed for the
+  XDP/eBPF case. On PREEMPT_RT the variables are now stored on stack and
+  the task pointer to the structure is saved in the task_struct while
+  keeping every for !RT unchanged. This was proposed as a RFC in
+  	v1: https://lore.kernel.org/all/20240213145923.2552753-1-bigeasy@linutro=
+nix.de/
+
+  and then updated
+
+        v2: https://lore.kernel.org/all/20240229183109.646865-1-bigeasy@lin=
+utronix.de/
+	  - Renamed the container struct from xdp_storage to bpf_net_context.
+            Suggested by Toke H=C3=B8iland-J=C3=B8rgensen.
+	  - Use the container struct also on !PREEMPT_RT builds. Store the
+	    pointer to the on-stack struct in a per-CPU variable. Suggested by
+            Toke H=C3=B8iland-J=C3=B8rgensen.
+
+  This reduces the initial queue from 24 to 15 patches.
+
+- There were complains about the scoped_guard() which shifts the whole
+  block and makes it harder to review because the whole gets removed and
+  added again. The usage has been replaced with local_lock_nested_bh()+
+  its unlock counterpart.
+
+Sebastian
 
 
