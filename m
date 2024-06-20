@@ -1,106 +1,111 @@
-Return-Path: <linux-kernel+bounces-222235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A22090FEA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 153C990FEA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 140A11F2145B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B38181F21235
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BFD17D368;
-	Thu, 20 Jun 2024 08:20:23 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E6D1991B4;
+	Thu, 20 Jun 2024 08:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XMBjNsFH"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D535B05E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2302158A3E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718871622; cv=none; b=ji7WhVDABqMZc79uHOIIn99EdH1tkQJZQBhpvD/J/8grJkfE7aoUs69kE/i85/A/G/zzZW5evVuN2f9eOoduBx4XkjJdgip2VdQyEDDCU90/LdQkiM6RmR6oF1i6WQylnWrbT0AmKuHk1XOgoFO5cNa+0A2nGWCp7M8hQ9dPiIg=
+	t=1718871623; cv=none; b=s2890liplCXkrxvo7eVMcCn0c39nY/90Ee+u43jCLa1ozexoLLadixuRvkgXaRWx7jLw5qw3O9cBzujCua0iroCdeiNLfv5Ox4ESywltIPJkoAf0+FqWDrwvYIzGaSjHEgSLzOISKIjAND4E9MrKvyLOU33kzb4AqIvF4gtppks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718871622; c=relaxed/simple;
-	bh=c/wAhG39HQIP7rKsTimE3KHvTHGY6Ujr1nmu3llTxUw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=seCkuK2GqSQaKA8/nB/8mTMD4vSKo1dMP7MwF3mj8IILR1Bc7DfXa4XyOoS0xOJirhvoErsaqIKfpdyEnR46XexcQYxiScUl2SEot5MYwE7cpsJSLaVccZ+HOZgxbF3NYs+amSb8EJrCSEatugwbhOsQagHy5BtBkSDFzjUAZIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowAD3_uYt5nNmhTHMEQ--.23651S2;
-	Thu, 20 Jun 2024 16:19:58 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: richard@nod.at,
-	chengzhihao1@huawei.com,
-	s.hauer@pengutronix.de
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH v2] ubifs: add check for crypto_shash_tfm_digest
-Date: Thu, 20 Jun 2024 16:19:26 +0800
-Message-Id: <20240620081926.1135571-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718871623; c=relaxed/simple;
+	bh=B7yX7rbJbYr/mTm0lEL9vuk9v/WQvi74pV0s5CSPcDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qDjvtq4CXGD3rNQeGrGQymzAkfZKvHFbCiLkLLpKy5+U0xGWJgtB8z/HBiuKio2LvnVG7ALjAqBC2STd4+2588cQm0AM9hoD8wwetGGnAwSimy3Hq1WTcUqj5F/uCj08zVV+DkE3pw2zNzyrCTQ4u9G9R2YO4xwPZtK3C0U96VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XMBjNsFH; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52bc3130ae6so565583e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:20:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718871620; x=1719476420; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B7yX7rbJbYr/mTm0lEL9vuk9v/WQvi74pV0s5CSPcDg=;
+        b=XMBjNsFHBUenumwD5DnIx1adUHvzgD616LxC82BGFmHLRvyX35B74Az9RK5fsvjJ1T
+         T0+O7u8w2IiieexySugHQxyCmglq20KE8kAMzZh5VT8apQsVbQ2J37+y0gIgvc17UULw
+         VtDUXyQkiP+51ZEWdS78HuGoYlbnjjPEXy+Uy5EWG0oSPL6VaIuxuT+8Phj5LenD6wKQ
+         JQNrKBjYehQNMVfpLxwISSb+Zyu4RIyTX+FE/z111yNEi+nGeIjs7N1IQUM7d+5LNsWP
+         MNSf9am8EwviAG2UKxNmaj78uYqdnttvXQXaigJxnvLEWYVWpNrZ5P0kH7hb3efpjrqX
+         DsQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718871620; x=1719476420;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B7yX7rbJbYr/mTm0lEL9vuk9v/WQvi74pV0s5CSPcDg=;
+        b=ezauiaB4iCUWbPR6iItzEQPP+j6W6rN6tCosx09w0LGPbdknfb3F/UXioPLNEaU7sT
+         0gyM1/AHwok5CKAQ6DQE1GNmkfuIlsfCq7nDKZ90FDf8fzTUjTBYSot0P3rigPsGbK/B
+         cyJHwsa6KPR/jp+E2X5odjLuYmiNM99eAnOCaXk8l2QKCiwuqBbcvXLcjCoZYM31uQNB
+         8pl5d0h14s/JVnaqrXWCaYwdgAAGvsq5d0xepM655xCZU4/4iEXbndonG2gOSw0fkT6J
+         dhSLrCcoygd8NXem+91vLaJSfCoK4WIIl6UZ/cTKT3gp2g/Uv5AAJy1ppSTIXg3trpbH
+         d3uw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9TvYiAbGyXITiRnEpQwM/Kzah2xNogBLL/TCFZ5xt3dGKin9TiQn+mcX/Ry4bpVAt8w+v7O7yQVUaRLZh+Pbf6jdRRq9VsmGHdSBU
+X-Gm-Message-State: AOJu0YyPAnZG0Gvdgj7tSw2JshEPGbO+oQbf/wwk4hnmzFd/wYMFhidP
+	Ksvg+lVD3TA7dFd74cftOSMBm+b4bCPCfdxdgSuI+Kf5h8N7ItNn2YAOspupUdG9eUZ3fHbU3Th
+	oH21CKwKYcFaBIQ8MKAqMSiAAGORJR34e7ZNeiQ==
+X-Google-Smtp-Source: AGHT+IEmop4fSjADk7pSWeD8ON7nqhqCNYoCXWB9xXRFCphWhGBBKaZ3FTBp7MgrIlYFop2ThtyzgoBlAbqZbHjT0uk=
+X-Received: by 2002:a05:6512:1182:b0:52c:86d6:e8d7 with SMTP id
+ 2adb3069b0e04-52ccaa2d4a3mr2435101e87.13.1718871620038; Thu, 20 Jun 2024
+ 01:20:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAD3_uYt5nNmhTHMEQ--.23651S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xry5CryxCF4fGr18tF4ktFb_yoWDJFX_Cr
-	48Ar1fGrW8GF1kAF13Gw48Cw12g3yq9FWkWFW0vFZY9rW5CFykWwn3XrZ5GFWUuryxZFnr
-	CayvkryUGry3XjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb2AFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8ZwCF
-	04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
-	18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vI
-	r41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr
-	1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvE
-	x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUY_MsUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+References: <20240619184550.34524-1-brgl@bgdev.pl> <20240619184550.34524-9-brgl@bgdev.pl>
+ <f4af7cb3-d139-4820-8923-c90f28cca998@lunn.ch>
+In-Reply-To: <f4af7cb3-d139-4820-8923-c90f28cca998@lunn.ch>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 20 Jun 2024 10:20:08 +0200
+Message-ID: <CAMRc=MeP9o2n8AqHYNZMno5gFA94DnQCoHupYiofQLLw03bL6A@mail.gmail.com>
+Subject: Re: [PATCH net-next 8/8] net: stmmac: qcom-ethqos: add a DMA-reset
+ quirk for sa8775p-ride-r3
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vinod Koul <vkoul@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add check for the return value of crypto_shash_tfm_digest() and return
-the error if it fails in order to catch the error.
+On Wed, Jun 19, 2024 at 9:33=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Wed, Jun 19, 2024 at 08:45:49PM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > On sa8775p-ride the RX clocks from the AQR115C PHY are not available at
+> > the time of the DMA reset so we need to loop TX clocks to RX and then
+> > disable loopback after link-up. Use the provided callbacks to do it for
+> > this board.
+>
+> How does this differ to ethqos_clks_config()?
+>
 
-Fixes: 817aa094842d ("ubifs: support offline signed images")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
-Changelog:
+I'm not sure I understand the question. This function is called at
+probe/remove and suspend/resume. It's not linked to the issue solved
+here.
 
-v1 -> v2:
-
-1. Update fix tag.
----
- fs/ubifs/master.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ubifs/master.c b/fs/ubifs/master.c
-index 7adc37c10b6a..a148760fa49e 100644
---- a/fs/ubifs/master.c
-+++ b/fs/ubifs/master.c
-@@ -67,10 +67,13 @@ static int mst_node_check_hash(const struct ubifs_info *c,
- {
- 	u8 calc[UBIFS_MAX_HASH_LEN];
- 	const void *node = mst;
-+	int ret;
- 
--	crypto_shash_tfm_digest(c->hash_tfm, node + sizeof(struct ubifs_ch),
-+	ret = crypto_shash_tfm_digest(c->hash_tfm, node + sizeof(struct ubifs_ch),
- 				UBIFS_MST_NODE_SZ - sizeof(struct ubifs_ch),
- 				calc);
-+	if (ret)
-+		return ret;
- 
- 	if (ubifs_check_hash(c, expected, calc))
- 		return -EPERM;
--- 
-2.25.1
-
+Bart
 
