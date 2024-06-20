@@ -1,102 +1,208 @@
-Return-Path: <linux-kernel+bounces-222362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08B2910056
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:28:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7385991005A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6538C1F24359
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:28:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C4BE2812CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5251A00FD;
-	Thu, 20 Jun 2024 09:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B211A4F07;
+	Thu, 20 Jun 2024 09:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWxd0eGN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lchDhiMl"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B891A00D5;
-	Thu, 20 Jun 2024 09:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C6C39FD7;
+	Thu, 20 Jun 2024 09:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718875678; cv=none; b=iNrpTvVZD6jjQvlw7Q5TbuPkTvevo0yGkPXpnvCpbff2BXD6y6g4OlHCh5n4RviQnp0KJQSIQeNqnck9QITyxmFjeHAi9uoUg/Q/lRDEfLKzHKIjA3eehfH6ANF7lu50aO5xm6keJ9YB3KnAXLPxsleyDzSca5WZzfWiBxhnN+A=
+	t=1718875723; cv=none; b=ByyWVZsO8NzxrMRlrWDCDEbocAQs4sa2KDWSDrsnHV13va+uVwlKsEmo61UHgcYUIRiS6dgz592V4XTptd9FBGBWhoN+g5dIUxvaLXT9vNr6dGDBqHdaZ6389R7s2MxWVRKfaVKs70Va/vG3YDhhQ1XLpLICQRn/X3Sm1ibf/xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718875678; c=relaxed/simple;
-	bh=gLGoNiZ1NnwdYdGmQeEAfKPcxmeNXMgy1V7sgUYNc1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VLFfYGKK1pZxBqkTWM9XvnwmpP4fojXMr5R81GNcoAyNyvPyFL21Gw7NfxkiyIH/QOuFiu1LnfjmTFKVhg2qtB1LH9o/nqse57/9QKvQhvpVB+n6q84CACo2H5zhbUWCJIl8HAhmDQaf8JPoNVTYfvWBojiihBEWuLBPTnSVie0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gWxd0eGN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E669C2BD10;
-	Thu, 20 Jun 2024 09:27:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718875677;
-	bh=gLGoNiZ1NnwdYdGmQeEAfKPcxmeNXMgy1V7sgUYNc1w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gWxd0eGNkh621/xvmrPwfD2uLXwGsyMnGM9CzJV+L41kqwgMXj+Yx/z8KC9URR5AX
-	 ZGEN7bDj3OgQf1TgKu8kcnxi7nD4T4l8LTmZsXlRMQhU58sA+784j8QVLQjUR+UqGK
-	 RzgrNCfpmpcF6un6PXc35vdC12y4P9RnnwTOnVIJiyxiV2bGNjzL0tZPzQNrQ4cY2j
-	 bVxTTUh4yvrDS6o0nYDawYzsbKbNPDvSaHO+OVRT5iVMFJ0lvEDvBRriZJySqodMdi
-	 FFnv5zCpNmuff6wbaYbTiNvQnXP19oIdT2pvcBsAostx8Gah2R9CTIyvj72338N/g9
-	 +fag7uTLNLlvg==
-Date: Thu, 20 Jun 2024 10:27:53 +0100
-From: Lee Jones <lee@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	Chris Morgan <macroalpha82@gmail.com>,
-	Ryan Walklin <ryan@testtoast.com>,
-	Philippe Simons <simons.philippe@gmail.com>
-Subject: Re: [PATCH v3] mfd: axp20x: AXP717: Fix missing IRQ status registers
- range
-Message-ID: <20240620092753.GG3029315@google.com>
-References: <20240613233104.17529-1-andre.przywara@arm.com>
+	s=arc-20240116; t=1718875723; c=relaxed/simple;
+	bh=m8KQ0CG7MxsfCOUp9aL+Pw6h/7zIsptflSEXm+JmxPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GGZNWT2Twort5opb/wF5xCY0jhv3C2YTKxuyH24Vn8uK4gjIWI8jqUVmm6dfiTXEDejM6RGWJRZ+PgvFz43ugVl/6o0RQ6iWeuHinYveQmkhbV4uF22RxjMgnrE++Y8SWzHC0iQRB/peZiGHlFFtpEeU39wK7IJG8n5oaKJaz3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lchDhiMl; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K14U76025733;
+	Thu, 20 Jun 2024 09:28:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TlThF/S6qrr8QeZ5KCYrQVO1lILTdee58Eh9BRos3gc=; b=lchDhiMlIvHl0ay8
+	Vf5I+yZPaKowUdBOgfzaUNNwV0k7lUhwFUz00Ng7wi8FSfzQdjAx/lKGze2YUAOH
+	CkhbhA2smLF0SWhZ6lDTKFD6c4VRyBPpT8LaWFxMA0B04gbqwdL8yzgkXGOb5FpM
+	9YYPOLWkLy++D6SmkuJxmizimTB1x3fzOTnMS2Anu6c9Voly9ocpDutCKP3aZUxa
+	7QkLkiGRSrugFL6bH0C+Gbqh3uSTFn0HG/Lj3LkajmMi6BBQb0dbdecPhYkTP10E
+	oTKxjrqcZQy/2chTXkOifqKmg6YXqDNj1yCXLJARnxXYOxPtbrNObRt7jSMpvcMZ
+	pYkjvg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yujc4kwy5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 09:28:36 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45K9SZca008541
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 09:28:35 GMT
+Received: from [10.216.22.73] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
+ 2024 02:28:33 -0700
+Message-ID: <5b919082-f8c1-569f-a9b1-cd2cdeac8b26@quicinc.com>
+Date: Thu, 20 Jun 2024 14:58:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240613233104.17529-1-andre.przywara@arm.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] Constify struct dec_bufsize_ops and enc_bufsize_ops
+Content-Language: en-US
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <9bc4b28a55c42fa4a125c3e03d4c8b0f208550b4.1717313173.git.christophe.jaillet@wanadoo.fr>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <9bc4b28a55c42fa4a125c3e03d4c8b0f208550b4.1717313173.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: PgfO9nJlvZuP5LP7gPz5yCCchdDdSD3y
+X-Proofpoint-GUID: PgfO9nJlvZuP5LP7gPz5yCCchdDdSD3y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_07,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
+ priorityscore=1501 mlxlogscore=999 malwarescore=0 lowpriorityscore=0
+ mlxscore=0 bulkscore=0 impostorscore=0 spamscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200066
 
-On Fri, 14 Jun 2024, Andre Przywara wrote:
+Hi Christophe,
 
-> While we list the "IRQ status *and acknowledge*" registers as volatile
-> in the MFD description, they are missing from the writable range array,
-> so acknowledging any interrupts was met with an -EIO error.
-> This error propagates up, leading to the whole AXP717 driver failing to
-> probe, which is fatal to most systems using this PMIC, since most
-> peripherals refer one of the PMIC voltage rails.
-> This wasn't noticed on the initial submission, since the interrupt was
-> completely missing at this point, but the DTs now merged describe the
-> interrupt, creating the problem.
+On 6/2/2024 12:56 PM, Christophe JAILLET wrote:
+> "struct dec_bufsize_ops and "struct enc_bufsize_ops" are not modified in
+> this driver.
 > 
-> Add the five registers that hold those bits to the writable array.
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security.
 > 
-> This fixes the boot on the Anbernic systems using the AXP717 PMIC.
+> On a x86_64, with allmodconfig:
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   12494	    822	      0	  13316	   3404	drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.o
 > 
-> Fixes: b5bfc8ab2484 ("mfd: axp20x: Add support for AXP717 PMIC")
-> Reported-by: Chris Morgan <macromorgan@hotmail.com>
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   12766	    566	      0	  13332	   3414	drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> Hi,
+>  .../platform/qcom/venus/hfi_plat_bufs_v6.c    | 20 +++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
 > 
-> the patch itself is unchanged from v2 sent in April, but the commit
-> message was updated to give rationale for the Fixes: tag.
-> Please take this as a fix into v6.10.
-> 
-> Thanks,
-> Andre
-> 
->  drivers/mfd/axp20x.c | 1 +
->  1 file changed, 1 insertion(+)
+> diff --git a/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c b/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
+> index f5a655973c08..6289166786ec 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
+> +++ b/drivers/media/platform/qcom/venus/hfi_plat_bufs_v6.c
+> @@ -1063,51 +1063,51 @@ struct enc_bufsize_ops {
+>  	u32 (*persist)(void);
+>  };
+>  
+> -static struct dec_bufsize_ops dec_h264_ops = {
+> +static const struct dec_bufsize_ops dec_h264_ops = {
+>  	.scratch = h264d_scratch_size,
+>  	.scratch1 = h264d_scratch1_size,
+>  	.persist1 = h264d_persist1_size,
+>  };
+>  
+> -static struct dec_bufsize_ops dec_h265_ops = {
+> +static const struct dec_bufsize_ops dec_h265_ops = {
+>  	.scratch = h265d_scratch_size,
+>  	.scratch1 = h265d_scratch1_size,
+>  	.persist1 = h265d_persist1_size,
+>  };
+>  
+> -static struct dec_bufsize_ops dec_vp8_ops = {
+> +static const struct dec_bufsize_ops dec_vp8_ops = {
+>  	.scratch = vpxd_scratch_size,
+>  	.scratch1 = vp8d_scratch1_size,
+>  	.persist1 = vp8d_persist1_size,
+>  };
+>  
+> -static struct dec_bufsize_ops dec_vp9_ops = {
+> +static const struct dec_bufsize_ops dec_vp9_ops = {
+>  	.scratch = vpxd_scratch_size,
+>  	.scratch1 = vp9d_scratch1_size,
+>  	.persist1 = vp9d_persist1_size,
+>  };
+>  
+> -static struct dec_bufsize_ops dec_mpeg2_ops = {
+> +static const struct dec_bufsize_ops dec_mpeg2_ops = {
+>  	.scratch = mpeg2d_scratch_size,
+>  	.scratch1 = mpeg2d_scratch1_size,
+>  	.persist1 = mpeg2d_persist1_size,
+>  };
+>  
+> -static struct enc_bufsize_ops enc_h264_ops = {
+> +static const struct enc_bufsize_ops enc_h264_ops = {
+>  	.scratch = h264e_scratch_size,
+>  	.scratch1 = h264e_scratch1_size,
+>  	.scratch2 = enc_scratch2_size,
+>  	.persist = enc_persist_size,
+>  };
+>  
+> -static struct enc_bufsize_ops enc_h265_ops = {
+> +static const struct enc_bufsize_ops enc_h265_ops = {
+>  	.scratch = h265e_scratch_size,
+>  	.scratch1 = h265e_scratch1_size,
+>  	.scratch2 = enc_scratch2_size,
+>  	.persist = enc_persist_size,
+>  };
+>  
+> -static struct enc_bufsize_ops enc_vp8_ops = {
+> +static const struct enc_bufsize_ops enc_vp8_ops = {
+>  	.scratch = vp8e_scratch_size,
+>  	.scratch1 = vp8e_scratch1_size,
+>  	.scratch2 = enc_scratch2_size,
+> @@ -1186,7 +1186,7 @@ static int bufreq_dec(struct hfi_plat_buffers_params *params, u32 buftype,
+>  	u32 codec = params->codec;
+>  	u32 width = params->width, height = params->height, out_min_count;
+>  	u32 out_width = params->out_width, out_height = params->out_height;
+> -	struct dec_bufsize_ops *dec_ops;
+> +	const struct dec_bufsize_ops *dec_ops;
+>  	bool is_secondary_output = params->dec.is_secondary_output;
+>  	bool is_interlaced = params->dec.is_interlaced;
+>  	u32 max_mbs_per_frame = params->dec.max_mbs_per_frame;
+> @@ -1260,7 +1260,7 @@ static int bufreq_enc(struct hfi_plat_buffers_params *params, u32 buftype,
+>  		      struct hfi_buffer_requirements *bufreq)
+>  {
+>  	enum hfi_version version = params->version;
+> -	struct enc_bufsize_ops *enc_ops;
+> +	const struct enc_bufsize_ops *enc_ops;
+>  	u32 width = params->width;
+>  	u32 height = params->height;
+>  	bool is_tenbit = params->enc.is_tenbit;
 
-Submitted to Linus today.
+Acked-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
--- 
-Lee Jones [李琼斯]
+Regards,
+Vikash
 
