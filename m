@@ -1,63 +1,58 @@
-Return-Path: <linux-kernel+bounces-223688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F229116F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C962C9116FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0CB21F22C41
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:42:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F69F1F21909
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B44314E2CC;
-	Thu, 20 Jun 2024 23:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F4E14D45A;
+	Thu, 20 Jun 2024 23:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kY6xJHMY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Mmh1XHes"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD4F43ABC;
-	Thu, 20 Jun 2024 23:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859EA1459F2
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718926922; cv=none; b=nPnhpXPbk6RBV90qAjVe6fcd8UAE/9JvlN8G0oC8OScQLaB2QlZF5VW9LfipadVcJhd5uBFOSrMBUDev80L91YfNCDyztVXPpM1xNS9n5QtqzVmu3o9DsxJhk1j1JljdRey44Ps8uvnO+Z6Tcl1mG+xdo6B/dtSeFzEZwa5cl9o=
+	t=1718927040; cv=none; b=e1H0TKUQS8OJPYbtEwKWV3dhV6SXugzpfDo0ZXEFx8NiyJGD6SVqYOa0KCc9b2KdQ1k7LK8CpT06mJC85l00VlzIkGPWjyaBVjlQ9hRkQ2GRcFn1b53JZcihM7TQSjdrxpMvdKmg7Kp/TF1LLybJGGLXmI2fKSgv+DaLN6h+xKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718926922; c=relaxed/simple;
-	bh=tKagk+Ry0Xq7y1gXPupJbJ8JJufaVprFCQxwG+QH9Do=;
+	s=arc-20240116; t=1718927040; c=relaxed/simple;
+	bh=m6vq7fMNbPJ8y49RfcxdJ9XHAaMwQ/nP8IlMPwhiy7o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K5vHU6EB19qRj5d6Gcv6Qk5IUQT/mGO87VQQXQ59qOm3Mb6m16/4nLxMbP0LhK8UeS6i3PGAzuiQWz+dNww16MNimipjV3bbVdo1Z8PLeNKEWoIhv8/aJAIpNyez0Nc/spB1aJ1VvuBAq4UYLMdZzY1mSrUellL8Xae1Sxl19mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kY6xJHMY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F9EBC2BD10;
-	Thu, 20 Jun 2024 23:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718926922;
-	bh=tKagk+Ry0Xq7y1gXPupJbJ8JJufaVprFCQxwG+QH9Do=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=kY6xJHMYYjrm7A43Jv1pB3VNhB8nuGh9pa3ZQ2aZO/YfsbfHNuXNsBa2K/w0qGZ0M
-	 oTKSG4sefxW08qbFrgSCI1qH4fTG2N6b8UFE1GYYEvSxGM2BERZuU7CdE/xNoI4Boz
-	 C6IWhvV3etDXLDINWbwoxfM5OxLZyE7ePmLa3Budko+LfUIoLpVk0q0OGSqEOmg0rD
-	 WdekJt0+yFokykcMA6qhhDBXvLEeozDzVuQdiFkolRoDx7XUYvfLTc09rlKDw1EI/T
-	 PbhlN4ElUTaDGLyTEG2nj5kTb9qDHWfFqU0cvzd/nKtpDl74PhiWd36iVD2UuEy4Gh
-	 X2akEb2Gw9Wmw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id CECCDCE0973; Thu, 20 Jun 2024 16:42:01 -0700 (PDT)
-Date: Thu, 20 Jun 2024 16:42:01 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Josh Triplett <josh@joshtriplett.org>, kvm@vger.kernel.org,
-	rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kevin Tian <kevin.tian@intel.com>, Yan Zhao <yan.y.zhao@intel.com>,
-	Yiwei Zhang <zzyiwei@google.com>
-Subject: Re: [PATCH 4/5] KVM: x86: Ensure a full memory barrier is emitted in
- the VM-Exit path
-Message-ID: <b6d6e576-92dd-4708-93d1-372559b39818@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240309010929.1403984-1-seanjc@google.com>
- <20240309010929.1403984-5-seanjc@google.com>
- <45dade46-c45f-47f0-bfae-ae526d02651a@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YBQFqa/PrtAQM341qMLqjE0Zj9mAlYf/0NKVb/UEouGJWs9fiJbabSVrBdt0Avrf+PiFiHYC/CRPIZ3aPUX4jVYsoQUEtFeTKzo9aA44qun7RBn0kZRB/Dci6yIEFwVQ03XunbT7yMzZrea14wbscrKfVAK8BZuYPJuu37Gd4fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Mmh1XHes; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: syzbot+8992fc10a192067b8d8a@syzkaller.appspotmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718927036;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m6vq7fMNbPJ8y49RfcxdJ9XHAaMwQ/nP8IlMPwhiy7o=;
+	b=Mmh1XHesQifgS91BCVHa3GlWWJQRpOszPdw/wgvlAEYm6xq6bSO6MAxZJsOUdp1XwwFBnh
+	kiJ6qr2dmXOnrXci1El0Y98ZjBig3LwmDD2SrGNDrHj08ud1/sNS1qO/kEyoKixGvjyEcr
+	i1XByYncCl4wuIz9gxxwvm3f5laLLP0=
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: syzkaller-bugs@googlegroups.com
+Date: Thu, 20 Jun 2024 19:43:52 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+8992fc10a192067b8d8a@syzkaller.appspotmail.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] KASAN: slab-use-after-free Read in
+ bch2_fs_recovery
+Message-ID: <udyg4sx7bwsbtaj2nfnkvqtgdhprdymdpghelimpnxcft3scnd@c3ccejbtq5ze>
+References: <00000000000090adbc061b5acfd9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,37 +61,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <45dade46-c45f-47f0-bfae-ae526d02651a@redhat.com>
+In-Reply-To: <00000000000090adbc061b5acfd9@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Jun 21, 2024 at 12:38:21AM +0200, Paolo Bonzini wrote:
-> On 3/9/24 02:09, Sean Christopherson wrote:
-> > From: Yan Zhao <yan.y.zhao@intel.com>
-> > 
-> > Ensure a full memory barrier is emitted in the VM-Exit path, as a full
-> > barrier is required on Intel CPUs to evict WC buffers.  This will allow
-> > unconditionally honoring guest PAT on Intel CPUs that support self-snoop.
-> > 
-> > As srcu_read_lock() is always called in the VM-Exit path and it internally
-> > has a smp_mb(), call smp_mb__after_srcu_read_lock() to avoid adding a
-> > second fence and make sure smp_mb() is called without dependency on
-> > implementation details of srcu_read_lock().
-> 
-> Do you really need mfence or is a locked operation enough?  mfence is mb(),
-> not smp_mb().
-
-We only need smp_mb(), which is supplied by the srcu_read_lock()
-function.  For now, anyway.  If we ever figure out how to get by with
-lighter-weight ordering for srcu_read_lock(), then we will add an smp_mb()
-to smp_mb__after_srcu_read_lock() to compensate.
-
-							Thanx, Paul
-
-> Paolo
-> 
-> > +	/*
-> > +	 * Call this to ensure WC buffers in guest are evicted after each VM
-> > +	 * Exit, so that the evicted WC writes can be snooped across all cpus
-> > +	 */
-> > +	smp_mb__after_srcu_read_lock();
-> 
+#syz fix: bcachefs: Fix a UAF after write_super()
 
