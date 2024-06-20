@@ -1,117 +1,141 @@
-Return-Path: <linux-kernel+bounces-222843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93BB4910885
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:35:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E7691088A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C53A01C2312C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:35:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC0E284639
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924AA1AE087;
-	Thu, 20 Jun 2024 14:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4714A1AE0B0;
+	Thu, 20 Jun 2024 14:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="snfkNl1D"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWw+JMX/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78101ACE8B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3141ACE9C;
+	Thu, 20 Jun 2024 14:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718894099; cv=none; b=fnapRf+xDZVfCpGRq0VMN8ZHImA32VJzGRireZBaX1UdrXpbAUC1jV950AIngSIm16RnBy5baXCF+d/DdNsa/gGZQG8vsR/ZAviEsH4d9z/B+04nUZvJ+36/5Gy9oZLUViW0S3SxwF+eIN77HoFEyoCdGp3jQPrAE2IgPCGxC+E=
+	t=1718894122; cv=none; b=kS4EJjQ+Yvjprseh0NyryC5uuRxy6rCkQR7YwFdYNKisltomrcxmKNgDL450AhB918Sv4ltm7XEsdxhB5osMaHexvXJWu4lRPI4M05W08RD7IIgmhQMAJxQA9ylwKaQ4k4w0yYoYhiNXdXlFVEuAFwHw1Dg48nZeQ0yAy+Qydj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718894099; c=relaxed/simple;
-	bh=D5RnK7BiJxeSK7kH/JS+4EI6ebnBoo19useGu+m3JwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVTNF8R9rI7EVLPrjnzyHvgbedULF9z2pzSOywUMPfrvalOnJg8hTeMNnw8BbwR1xS+5VsggtWAXDXx09DLmNoA8rv1s2BrQ36OgLkCfMWwOQQ385onbSAOcsn9liaKK0W7LISthiECDu8/ZfO4F+gk/MsA4fxMt9l+E2f6tdeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=snfkNl1D; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1718894093;
-	bh=D5RnK7BiJxeSK7kH/JS+4EI6ebnBoo19useGu+m3JwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=snfkNl1DAlPP+fHE1WonbLC8aJPp6Hbp92XFGuork6G9Ox29Tg3XTeHlWR82OUgZ5
-	 gXVSG/uGtR3I26dTNtzlxYdS9o2vogCw0jiFjjRQgL+3x0m9WDIqx5GFCVTiqpcHak
-	 Xw8TUK+1OLt7r/MvKDKVmPwdKakPYdcFAhcMvQDg=
-Date: Thu, 20 Jun 2024 16:34:52 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Joel Granados <j.granados@samsung.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
- proc_handlers
-Message-ID: <169072e3-186d-4b28-891a-4c45532b3f31@t-8ch.de>
-References: <CGME20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0@eucas1p2.samsung.com>
- <20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
- <20240620103451.7c4oznlkwty53bzs@joelS2.panther.com>
+	s=arc-20240116; t=1718894122; c=relaxed/simple;
+	bh=npqeh05ryDsyIjjm50F0c9LzhQy62vbv2Gkiq4GYZ/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mqJO3AwzoI9fQHzYIC/pihYwRf/RTIGwRdEcaiua3bczp4AoI9KHVPTym2KAMRCW6itmOCPriBxHzkJ0Pd13xxHmUm2F2e9FffhhHpCBzFphOisruFkp0h6flVv+fufM+GpQUzKSJfE5VJF4UTBuMtWEYnzmab0PqORydbpykpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pWw+JMX/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5D83C2BD10;
+	Thu, 20 Jun 2024 14:35:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718894122;
+	bh=npqeh05ryDsyIjjm50F0c9LzhQy62vbv2Gkiq4GYZ/0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pWw+JMX/pZBbZERiMYq8jt3mLMHCNeyw2n+rsNU8yzEc1RmCWw7SL5IklwlwDvLyy
+	 CcpvEsCvzu/nuxvROzR45QPxqjZ5WRnuTE9Dv/2lc7T0+nx/tbSl4O9bFlDXVJrgyw
+	 nwuTpvrvfzG9UNGZloYjIX90dsxygDKlOq1MgyKy28fg3pzxGc1RC2iGsjWetEoHzX
+	 9ogBU6Je4NnmbnXz/Y8Eb15JTQ6RddyLShb/mu7w617r9GdQh4fFVIFVgeJiUlYe70
+	 /N7Sfisn8kBZj0nYGRkRJrQS/HL3p1xCyPUOlmHzvCdypvawyYWLwFQHsQoIi7oLV6
+	 GxTNCa6u5JOiA==
+Message-ID: <8d6af7e2-76f8-4daa-a751-a1abe29af103@kernel.org>
+Date: Thu, 20 Jun 2024 16:35:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240620103451.7c4oznlkwty53bzs@joelS2.panther.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] Immutable tag between the Bluetooth and pwrseq
+ branches for v6.11-rc1
+To: patchwork-bot+bluetooth@kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+ luiz.dentz@gmail.com
+Cc: marcel@holtmann.org, krzk+dt@kernel.org, linux-bluetooth@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bartosz.golaszewski@linaro.org
+References: <20240612075829.18241-1-brgl@bgdev.pl>
+ <171889385052.4585.15983645082672209436.git-patchwork-notify@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <171889385052.4585.15983645082672209436.git-patchwork-notify@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-06-20 12:34:51+0000, Joel Granados wrote:
-> On Wed, Jun 19, 2024 at 12:09:00PM +0200, Thomas Weißschuh wrote:
-> > Adapt the proc_hander function signature to make it clear that handlers
-> > are not supposed to modify their ctl_table argument.
-> > 
-> > This is also a prerequisite to moving the static ctl_table structs into
-> > read-only data.
-> > 
-> > The patch was mostly generated by coccinelle with the following script:
-> > 
-> >     @@
-> >     identifier func, ctl, write, buffer, lenp, ppos;
-> >     @@
-> > 
-> >     int func(
-> >     - struct ctl_table *ctl,
-> >     + const struct ctl_table *ctl,
-> >       int write, void *buffer, size_t *lenp, loff_t *ppos)
-> >     { ... }
-> > 
-> > In addition to the scripted changes some other changes are done:
-> > 
-> > * The "typedef proc_handler" in include/linux/sysctl.h is changed to use
-> >   the "const ctl_table".
-> > 
-> > * The prototypes of non-static handlers in header-files are adapted
-> >   to match the changes of their respective definitions.
-> > 
-> > * kernel/watchdog.c: proc_watchdog_common()
-> >   This is called from a proc_handler itself and is als calling back
-> >   into another proc_handler, making it necessary to change it as part
-> >   of the proc_handler migration.
-> > 
-> > No functional change.
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> Will test this in 0-day in [1] to avoid potential conflicts with all the
-> other stuff going into linux-next and because it does not apply cleanly to
-> sysctl-next. Don't expect any issues from 0-day as it is a
-> non-functional trivial change.
-
-Thanks!
-
-> I'll use this patch as is when the time comes during the end of the
-> merge window (at that point it should apply cleanly) and go into 
+On 20/06/2024 16:30, patchwork-bot+bluetooth@kernel.org wrote:
+> Hello:
 > 
-> @Thomas: Can I ping you during the merge window to double check that
-> there are no additional proc_handlers (without the const argument)
-> that might not be present in today's linux-next?
-
-Sure, I'll test it from time to time anyways.
-
-> Best
+> This pull request was applied to bluetooth/bluetooth-next.git (master)
+> by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 > 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/log/?h=jag/constify_proc_handlers
+> On Wed, 12 Jun 2024 09:58:29 +0200 you wrote:
+>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>
+>> Hi Marcel, Luiz,
+>>
+>> Please pull the following power sequencing changes into the Bluetooth tree
+>> before applying the hci_qca patches I sent separately.
+>>
+>> [...]
+> 
+> Here is the summary with links:
+>   - [GIT,PULL] Immutable tag between the Bluetooth and pwrseq branches for v6.11-rc1
+>     https://git.kernel.org/bluetooth/bluetooth-next/c/4c318a2187f8
+
+
+Luiz,
+
+This pulls looks wrong. Are you sure you have correct base? The diffstat
+suggests you are merging into rc2, not rc3. This will be confusing in
+merge commit. It is much safer, including possible feedback from Linus,
+if you use exactly the same base.
+
+Best regards,
+Krzysztof
+
 
