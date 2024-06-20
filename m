@@ -1,299 +1,455 @@
-Return-Path: <linux-kernel+bounces-222977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC83910B10
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:05:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1945A910B17
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6345C1F2284D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:05:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D4E1F21876
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9C71B14E2;
-	Thu, 20 Jun 2024 16:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CC11AF697;
+	Thu, 20 Jun 2024 16:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyuA3tv9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RQhKw1Ls"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D201AED4A;
-	Thu, 20 Jun 2024 16:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297191AF68A;
+	Thu, 20 Jun 2024 16:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718899511; cv=none; b=Mra56sfM6+DB9h1QrTn01BonYW49HUQgk+RiUAxYfo6a6xscw4tGWgzMomWg2ky42q1wdMoS9zFBT9CHUIYG6Weo6pdyQq3uzUdLMr+CSsMv5mfa7afCyp8uqfYe8b68qf2lcoNETpITtOpoHDJnGZkWGTbal4K2dMWIxe3udo0=
+	t=1718899557; cv=none; b=ENwDMvV+vYGx2esnEbSX9dtyo8QnQFOPTmDvK1Y0VX0WiN7wsZNseEjzijd08yCt7uhB9AH123d0xWiG5CbuN3swJAHDwPp8cwX7uh7PWYPbUq7j21s1xd74cg52MJKTq6pTfI7SYJPSJPFT9b3E7+N2Jd3gQhWO8zIhFIoFDKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718899511; c=relaxed/simple;
-	bh=VxwxD9NlRx02IyNbc/jHsn3Pas/lBfmDoifITi881bg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YQoPN7N/y+E/2it5M29JzC8R7iNkFhlvmU1nn2PbD8SuMVT+/Qg+ZuZ88AJJ3LzHxysgsc3c9iLdc1imS+c3HEc8K8VU0MgMMuIMY47g5HHgwNxJhi4vrBIRMY+jAi4sGhKO8/FJfp8JRquBRaMRYkglvYjB7pTTdlljkSSnkb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyuA3tv9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 815E2C2BD10;
-	Thu, 20 Jun 2024 16:04:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718899511;
-	bh=VxwxD9NlRx02IyNbc/jHsn3Pas/lBfmDoifITi881bg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uyuA3tv9HEGJ0cbi+XB62kPlv8bBvRWLA1xMi447pWjJl+MwiU9oRbgaGaqbAjiJm
-	 0uaW8CxfqAw5ujZj+iLTxPMLxjqoVI14D4KLfAGDCjfnGPDjKnKULYfREWZu6L13qh
-	 uoxKbtqfUE6NxpenmMBzvHw5P82UTD72luGvTOa1LBXGJo2VjX+8lxdnaFSgbxQUTo
-	 MIcU7Vxgo+h79ekBibAC/3Z2kPXJDwOkoYOM9vIz+6a/PoLRpoZa2RYLD3QsfTxhAi
-	 XECwf0XuI67epGZOHyA/sRtACxfM3MU1AWzpMB1p8raEkr3fh937YuY6+mcCCcx0C0
-	 +JI+q1MIvIkfQ==
-Message-ID: <da34df13-bc57-4142-b558-88a6628d8b81@kernel.org>
-Date: Thu, 20 Jun 2024 18:04:57 +0200
+	s=arc-20240116; t=1718899557; c=relaxed/simple;
+	bh=2SDKW4L6Q15RBL23B70Zucrxs8TmimpdU68R6G9rQX0=;
+	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
+	 Message-ID:In-Reply-To; b=rbsE8jrYGpGb+N6LtZ+eu+BQnOn7EMJ7ouPET/s5yOK0S/FeLWw5Ja1CCCimvr1N6HQm7kJ0AM5rQOwF+rLjxn55pEqL7v2VnAZ5FmtGu0qHNEZ0prqtpFqVxSipUx5aw4eGmPqFeAJAVaOJSFTFsbKCdIbrE8kk0E7i4p8HyiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RQhKw1Ls; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718899556; x=1750435556;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=2SDKW4L6Q15RBL23B70Zucrxs8TmimpdU68R6G9rQX0=;
+  b=RQhKw1LsdVq3CZpldglGUfeckHpEByzOu/3xPh/7KK86d3tDOcZvKYGi
+   hVhM6NwSPwCaG3AtqYtqRyLtN6sIC8YD3sC0B9M9RzE5Dew/svi6MGNFW
+   W8NqeawYGKBK0PxC42w8aCm5es2ij0niBoph0tuzm7RFFqfLoBkqqUh39
+   nrkQu1yM9euBODqcP+F+zsV7UNUGBbp51Gfzcr5NliCHFQCPM/PVp8wkq
+   Y2VoPZB6z8Vl9xtklqMoWmf6AtU29d//m3h+XHaia2snPfvSZEd3vhINQ
+   zVZmsfmcr9k6fVJ9TVgv/vx8hR3R7IVI5LHeNLBjf9i69bg55EhiC+D/e
+   g==;
+X-CSE-ConnectionGUID: CJQZLSkVQ4qcz7aOVB4iVA==
+X-CSE-MsgGUID: Mv5TwVKaRGKnYsEOL/dSUw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="15725360"
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="15725360"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 09:05:41 -0700
+X-CSE-ConnectionGUID: NYLIaNUqT4G7hDfBMgCHWA==
+X-CSE-MsgGUID: IcQZEVWxSj+fYIlpW4HpRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="42749926"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.246.119.97])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 20 Jun 2024 09:05:37 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To: "hpa@zytor.com" <hpa@zytor.com>, "tim.c.chen@linux.intel.com"
+ <tim.c.chen@linux.intel.com>, "linux-sgx@vger.kernel.org"
+ <linux-sgx@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "jarkko@kernel.org" <jarkko@kernel.org>, "cgroups@vger.kernel.org"
+ <cgroups@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "Mehta, Sohil"
+ <sohil.mehta@intel.com>, "tj@kernel.org" <tj@kernel.org>, "mingo@redhat.com"
+ <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, "Huang, Kai"
+ <kai.huang@intel.com>
+Cc: "mikko.ylinen@linux.intel.com" <mikko.ylinen@linux.intel.com>,
+ "seanjc@google.com" <seanjc@google.com>, "anakrish@microsoft.com"
+ <anakrish@microsoft.com>, "Zhang, Bo" <zhanb@microsoft.com>,
+ "kristen@linux.intel.com" <kristen@linux.intel.com>, "yangjie@microsoft.com"
+ <yangjie@microsoft.com>, "Li, Zhiquan1" <zhiquan1.li@intel.com>,
+ "chrisyan@microsoft.com" <chrisyan@microsoft.com>
+Subject: Re: [PATCH v15 08/14] x86/sgx: Add basic EPC reclamation flow for
+ cgroup
+References: <20240617125321.36658-1-haitao.huang@linux.intel.com>
+ <20240617125321.36658-9-haitao.huang@linux.intel.com>
+ <ecaab6953b36adb278c98b01f5eb647ff0cc9aab.camel@intel.com>
+Date: Thu, 20 Jun 2024 11:05:35 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 13/23] input: add max77705 haptic driver
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
- Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-13-e3f6662017ac@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240618-starqltechn_integration_upstream-v3-13-e3f6662017ac@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-
-On 18/06/2024 15:59, Dzmitry Sankouski wrote:
-> Add support for haptic controller on MAX77705 Multifunction
-> device.
-> 
-> This driver supports external pwm and LRA (Linear Resonant Actuator) motor.
-> User can control the haptic device via force feedback framework.
-> 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
-
-> +static int max77705_haptic_bias(struct max77705_haptic *haptic, bool on)
-> +{
-> +	int error;
-> +
-> +	error = regmap_update_bits(haptic->regmap_haptic,
-> +							   MAX77705_PMIC_REG_MAINCTRL1,
-> +							   MAX77705_MAINCTRL1_BIASEN_MASK,
-> +							   on << MAX77705_MAINCTRL1_BIASEN_SHIFT);
-> +
-> +	if (error) {
-> +		dev_err(haptic->dev, "failed to %s bias: %d\n",
-> +			on ? "enable" : "disable", error);
-> +		return error;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int max77705_haptic_configure(struct max77705_haptic *haptic,
-> +				     bool enable)
-> +{
-> +	unsigned int value, config_reg;
-> +	int error;
-> +
-> +	value = ((haptic->type << MAX77705_CONFIG2_MODE_SHIFT) |
-> +		(enable << MAX77705_CONFIG2_MEN_SHIFT) |
-> +		(haptic->mode << MAX77705_CONFIG2_HTYP_SHIFT) |
-> +		MAX77705_HAPTIC_PWM_DIVISOR_128);
-> +	config_reg = MAX77705_PMIC_REG_MCONFIG;
-> +
-> +	error = regmap_write(haptic->regmap_haptic,
-> +			     config_reg, value);
-> +	if (error) {
-> +		dev_err(haptic->dev,
-> +			"failed to update haptic config: %d\n", error);
-> +		return error;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void max77705_haptic_enable(struct max77705_haptic *haptic)
-> +{
-> +	int error;
-> +
-> +	if (haptic->enabled)
-> +		return;
-> +
-> +	error = pwm_enable(haptic->pwm_dev);
-> +	if (error) {
-> +		dev_err(haptic->dev,
-> +			"failed to enable haptic pwm device: %d\n", error);
-> +		return;
-> +	}
-> +
-> +	error = max77705_haptic_configure(haptic, true);
-> +	if (error)
-> +		goto err_enable_config;
-> +
-> +	haptic->enabled = true;
-> +
-> +	return;
-> +
-> +err_enable_config:
-> +	pwm_disable(haptic->pwm_dev);
-> +}
-> +
-> +static void max77705_haptic_disable(struct max77705_haptic *haptic)
-> +{
-> +	int error;
-> +
-> +	if (!haptic->enabled)
-> +		return;
-> +
-> +	error = max77705_haptic_configure(haptic, false);
-> +	if (error)
-> +		return;
-> +
-> +	pwm_disable(haptic->pwm_dev);
-> +	haptic->enabled = false;
-> +}
-> +
-> +static void max77705_haptic_play_work(struct work_struct *work)
-> +{
-> +	struct max77705_haptic *haptic =
-> +			container_of(work, struct max77705_haptic, work);
-> +	int error;
-> +
-> +	error = max77705_haptic_set_duty_cycle(haptic);
-> +	if (error) {
-> +		dev_err(haptic->dev, "failed to set duty cycle: %d\n", error);
-> +		return;
-> +	}
-> +
-> +	if (haptic->magnitude)
-> +		max77705_haptic_enable(haptic);
-> +	else
-> +		max77705_haptic_disable(haptic);
-> +}
-> +
-> +static int max77705_haptic_play_effect(struct input_dev *dev, void *data,
-> +				       struct ff_effect *effect)
-> +{
-> +	struct max77705_haptic *haptic = input_get_drvdata(dev);
-> +	struct pwm_args pargs;
-> +	u64 period_mag_multi;
-> +
-> +	haptic->magnitude = effect->u.rumble.strong_magnitude;
-> +	if (!haptic->magnitude)
-> +		haptic->magnitude = effect->u.rumble.weak_magnitude;
-> +
-> +	/*
-> +	 * The magnitude comes from force-feedback interface.
-> +	 * The formula to convert magnitude to pwm_duty as follows:
-> +	 * - pwm_duty = (magnitude * pwm_period) / MAX_MAGNITUDE(0xFFFF)
-> +	 */
-> +	pr_info("magnitude: %d(%x)", haptic->magnitude, haptic->magnitude);
-
-Do not use pr_xxx in your drivers. That's a generic comment so please
-apply it everywhere. Anyway driver should be silent.
+From: "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.2pn9nlapwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <ecaab6953b36adb278c98b01f5eb647ff0cc9aab.camel@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 
 
-> +	pwm_get_args(haptic->pwm_dev, &pargs);
-> +	period_mag_multi = (u64)pargs.period * haptic->magnitude;
-> +	haptic->pwm_duty = (unsigned int)(period_mag_multi >>
-> +						MAX_MAGNITUDE_SHIFT);
-> +
-> +	schedule_work(&haptic->work);
-> +
-> +	return 0;
-> +}
+On Thu, 20 Jun 2024 08:28:57 -0500, Huang, Kai <kai.huang@intel.com> wrote:
 
+>
+> On 18/06/2024 12:53 am, Huang, Haitao wrote:
+>> From: Kristen Carlson Accardi <kristen@linux.intel.com>
+>>
+>> Currently in the EPC page allocation, the kernel simply fails the
+>> allocation when the current EPC cgroup fails to charge due to its usage
+>> reaching limit.  This is not ideal. When that happens, a better way is
+>> to reclaim EPC page(s) from the current EPC cgroup (and/or its
+>> descendants) to reduce its usage so the new allocation can succeed.
+>>
+>> Add the basic building blocks to support per-cgroup reclamation.
+>>
+>> Currently the kernel only has one place to reclaim EPC pages: the global
+>> EPC LRU list.  To support the "per-cgroup" EPC reclaim, maintain an LRU
+>> list for each EPC cgroup, and introduce a "cgroup" variant function to
+>> reclaim EPC pages from a given EPC cgroup and its descendants.
+>>
+>> Currently the kernel does the global EPC reclaim in sgx_reclaim_page().
+>> It always tries to reclaim EPC pages in batch of SGX_NR_TO_SCAN (16)
+>> pages.  Specifically, it always "scans", or "isolates" SGX_NR_TO_SCAN
+>> pages from the global LRU, and then tries to reclaim these pages at once
+>> for better performance.
+>>
+>> Implement the "cgroup" variant EPC reclaim in a similar way, but keep
+>> the implementation simple: 1) change sgx_reclaim_pages() to take an LRU
+>> as input, and return the pages that are "scanned" and attempted for
+>> reclamation (but not necessarily reclaimed successfully); 2) loop the
+>> given EPC cgroup and its descendants and do the new sgx_reclaim_pages()
+>> until SGX_NR_TO_SCAN pages are "scanned".
+>> This implementation, encapsulated in sgx_cgroup_reclaim_pages(), always
+>> tries to reclaim SGX_NR_TO_SCAN pages from the LRU of the given EPC
+>> cgroup, and only moves to its descendants when there's no enough
+>> reclaimable EPC pages to "scan" in its LRU.  It should be enough for
+>> most cases.
+>
+> [...]
+>
+>> In other cases, the caller may invoke this function in a
+>> loop to ensure enough pages reclaimed for its usage. To ensure all
+>> descendant groups scanned in a round-robin fashion in those cases,
+>> sgx_cgroup_reclaim_pages() takes in a starting cgroup and returns the
+>> next cgroup that the caller can pass in as the new starting cgroup for a
+>> subsequent call.
+>
+>
+> AFAICT this part is new, and I believe this "round-robin" thing is just
+> for the "global reclaim"?  Or is it also for per-cgroup reclaim where  
+> more
+> than SGX_NR_TO_SCAN pages needs to be reclaimed?
+>
+> I wish the changelog should just point out what consumers will use this
+> new sgx_cgroup_reclaim_pages(), like:
+>
+> The sgx_cgroup_reclaim_pages() will be used in three cases:
+>
+>  1) direct/sync per-cgroup reclaim in try_charge()
+>  2) indirect/async per-cgroup reclaim triggered in try_charge()
+>  3) global reclaim
+>
+> And then describe how will they use sgx_cgroup_reclaim_pages():
+>
+> Both 1) and 2) can result in needing to reclaim more than SGX_NR_TO_SCAN
+> pages, in which case we should <fill in how to reclaim>.
+>
+> For 3), the new global reclaim should try tot match the existing global
+> reclaim behaviour, that is to try to treat all EPC pages equally.
+> <continue to explain how can sgx_cgroup_reclaim_pages() achieve this.>
+>
+> With above context, we can justify why to make sgx_cgroup_reclaim_pages()
+> in this form.
+>
+This new part is only to address the issue you raised in this thread:
+https://lore.kernel.org/lkml/op.2ndsydgywjvjmi@hhuan26-mobl.amr.corp.intel.com/
 
-> +
-> +static DEFINE_SIMPLE_DEV_PM_OPS(max77705_haptic_pm_ops,
-> +				max77705_haptic_suspend,
-> +				max77705_haptic_resume);
-> +
-> +static const struct of_device_id of_max77705_haptic_dt_match[] = {
-> +	{ .compatible = "maxim,max77705-haptic", },
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, of_max77705_haptic_dt_match);
-> +
-> +static struct platform_driver max77705_haptic_driver = {
-> +	.driver		= {
-> +		.name	= "max77705-haptic",
-> +		.pm	= pm_sleep_ptr(&max77705_haptic_pm_ops),
-> +		.of_match_table = of_max77705_haptic_dt_match,
-> +	},
-> +	.probe		= max77705_haptic_probe,
-> +	.remove_new	= max77705_haptic_remove,
-> +};
-> +module_platform_driver(max77705_haptic_driver);
-> +
-> +MODULE_AUTHOR("Dzmitry Sankouski <dsankouski@gmail.com>");
-> +MODULE_AUTHOR("Jaewon Kim <jaewon02.kim@samsung.com>");
-> +MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
+Really it has nothing to do whether global, direct/async, per-cgroup  
+contexts. They all should use the function the same way. This paragraph  
+describes the design and
+I thought the above new statements justify the reason we return 'next' so  
+it can reclaim into descedant in round-robin fashion?  No sure we need get  
+into details of different usages of the functions which are in code  
+actually?
 
-I doubt that this driver is needed. Everything is copy of max777693.
+I'll address the new global reclamation behavior later when this function  
+was actually used for that. And the difference really exists before and  
+not because of this change.
 
+>>
+>> Note, this simple implementation doesn't _exactly_ mimic the current
+>> global EPC reclaim (which always tries to do the actual reclaim in batch
+>> of SGX_NR_TO_SCAN pages): when LRUs have less than SGX_NR_TO_SCAN
+>> reclaimable pages, the actual reclaim of EPC pages will be split into
+>> smaller batches _across_ multiple LRUs with each being smaller than
+>> SGX_NR_TO_SCAN pages.
+>>
+>> A more precise way to mimic the current global EPC reclaim would be to
+>> have a new function to only "scan" (or "isolate") SGX_NR_TO_SCAN pages
+>> _across_ the given EPC cgroup _AND_ its descendants, and then do the
+>> actual reclaim in one batch.  But this is unnecessarily complicated at
+>> this stage.
+>>
+>> Alternatively, the current sgx_reclaim_pages() could be changed to
+>> return the actual "reclaimed" pages, but not "scanned" pages. However,
+>> the reclamation is a lengthy process, forcing a successful reclamation
+>> of predetermined number of pages may block the caller for too long. And
+>> that may not be acceptable in some synchronous contexts, e.g., in
+>> serving an ioctl().
+>>
+>> With this building block in place, add synchronous reclamation support
+>> in sgx_cgroup_try_charge(): trigger a call to
+>> sgx_cgroup_reclaim_pages() if the cgroup reaches its limit and the
+>> caller allows synchronous reclaim as indicated by s newly added
+>> parameter.
+>>
+>> A later patch will add support for asynchronous reclamation reusing
+>> sgx_cgroup_reclaim_pages().
+>
+> It seems you also should mention the new global reclaim will also use
+> this sgx_cgroup_reclaim_pages()?
+>
+> [...]
+>
+>> +/**
+>> + * sgx_cgroup_reclaim_pages() - reclaim EPC from a cgroup tree
+>> + * @root:	The root of cgroup tree to reclaim from.
+>> + * @start:	The descendant cgroup from which to start the tree walking.
+>> + *
+>> + * This function performs a pre-order walk in the cgroup tree under  
+>> the given
+>> + * root, starting from the node %start, or from the root if %start is  
+>> NULL. The
+>> + * function will attempt to reclaim pages at each node until a fixed  
+>> number of
+>> + * pages (%SGX_NR_TO_SCAN) are attempted for reclamation. No guarantee  
+>> of
+>> + * success on the actual reclamation process. In extreme cases, if all  
+>> pages in
+>> + * front of the LRUs are recently accessed, i.e., considered "too  
+>> young" to
+>> + * reclaim, no page will actually be reclaimed after walking the whole  
+>> tree.
+>> + *
+>> + * In some cases, a caller may want to ensure enough reclamation until  
+>> its
+>> + * specific need is met. In those cases, the caller should invoke this  
+>> function
+>> + * in a loop, and at each iteration passes in the same root and the  
+>> next node
+>> + * returned from the previous call as the new %start.
+>> + *
+>> + * Return: The next misc cgroup in the subtree to continue the  
+>> scanning and
+>> + * attempt for more reclamation from this subtree if needed.
+>
+> [...]
+>
+>> Caller must
+>> + * release the reference if the returned is not used as %start for a  
+>> subsequent
+>> + * call.
+>>
+>
+> This sentence isn't clear to me.
+>
+> First of all, release the reference "of what"?  The %start, or the one
+> returned by this function?
+>
 
-Best regards,
-Krzysztof
+will this be better?
+  * Return: A reference to next misc cgroup in the subtree to continue the
+  * scanning and attempt for more reclamation from this subtree if needed.
+  * Caller must release the returned reference if the returned is not used  
+as
+  * %start for a subsequent call.
 
+> And is it because of ...
+>
+>> + */
+>> +static struct misc_cg *sgx_cgroup_reclaim_pages(struct misc_cg *root,  
+>> struct misc_cg *start)
+>> +{
+>> +	struct cgroup_subsys_state *css_root, *pos;
+>> +	struct cgroup_subsys_state *next = NULL;
+>> +	struct sgx_cgroup *sgx_cg;
+>> +	unsigned int cnt = 0;
+>> +
+>> +	 /* Caller must ensure css_root and start ref's acquired */
+>
+> ... the caller must acquire the ref of both @css_root and @css_start, and
+> ...
+yes
+>
+>> +	css_root = &root->css;
+>> +	if (start)
+>> +		pos = &start->css;
+>> +	else
+>> +		pos = css_root;
+>> +
+>> +	while (cnt < SGX_NR_TO_SCAN) {
+>> +		sgx_cg = sgx_cgroup_from_misc_cg(css_misc(pos));
+>> +		cnt += sgx_reclaim_pages(&sgx_cg->lru);
+>> +
+>> +		rcu_read_lock();
+>> +
+>> +		next = css_next_descendant_pre(pos, css_root);
+>> +
+>> +		if (pos != css_root)
+>> +			css_put(pos);
+>
+> ... the ref is decreased internally?
+>
+
+Right.
+
+>> +
+>> +		if (!next || !css_tryget(next)) {
+>> +			/* We are done if next is NULL or not safe to continue
+>> +			 * the walk if next is dead. Return NULL and the caller
+>> +			 * determines whether to restart from root.
+>> +			 */
+>
+> Incorrect comment style.
+>
+Will fix
+>> +			rcu_read_unlock();
+>> +			return NULL;
+>> +		}
+>> +
+>> +		rcu_read_unlock();
+>> +		pos = next;
+>
+> There's no ref grab here, wouldn't the above ...
+>
+tryget() done to next
+
+> 		if (pos != css_root)
+> 			css_put(pos);
+>
+> ... decrease the ref w/o having it been increased?
+>
+>> +	}
+>> +
+>> +	return css_misc(next);
+>
+> Here AFAICT the ref isn't increased, but ...
+>
+We only return next when next && css_tryget(next), otherwise NULL.
+
+> [...]
+>
+>
+>> +/**
+>> + * sgx_cgroup_try_charge() - try to charge cgroup for a single EPC page
+>>    * @sgx_cg:	The EPC cgroup to be charged for the page.
+>> + * @reclaim:	Whether or not synchronous EPC reclaim is allowed.
+>>    * Return:
+>>    * * %0 - If successfully charged.
+>>    * * -errno - for failures.
+>>    */
+>> -int sgx_cgroup_try_charge(struct sgx_cgroup *sgx_cg)
+>> +int sgx_cgroup_try_charge(struct sgx_cgroup *sgx_cg, enum sgx_reclaim  
+>> reclaim)
+>>   {
+>> -	return misc_cg_try_charge(MISC_CG_RES_SGX_EPC, sgx_cg->cg, PAGE_SIZE);
+>> +	int ret;
+>> +	struct misc_cg *cg_next = NULL;
+>> +
+>> +	for (;;) {
+>> +		ret = __sgx_cgroup_try_charge(sgx_cg);
+>> +
+>> +		if (ret != -EBUSY)
+>> +			goto out;
+>> +
+>> +		if (reclaim == SGX_NO_RECLAIM) {
+>> +			ret = -ENOMEM;
+>> +			goto out;
+>> +		}
+>> +
+>> +		cg_next = sgx_cgroup_reclaim_pages(sgx_cg->cg, cg_next);
+>> +		cond_resched();
+>> +	}
+>> +
+>> +out:
+>> +	if (cg_next != sgx_cg->cg)
+>> +		put_misc_cg(cg_next);
+>
+> ... if I am reading correctly, here you does the put anyway.
+>
+cg_next ref is increased or it is NULL.
+Only puts the last one no longer to be passed back in to  
+sgx_cgroup_reclaim_page()
+
+>> +	return ret;
+>>   }
+>>
+>
+> And when there are more than SGX_NR_TO_SCAN pages that need to reclaim,
+> the above ...
+
+Note, all sgx_cgroup_reclaim_pages() guarantees is scanning SGX_NR_TO_SCAN  
+pages.
+>
+> 	for (;;) {
+> 		cg_next = sgx_cgroup_reclaim_pages(sgx_cg->cg, cg_next);
+> 	}
+>
+> ... actually tries to reclaim those pages from @sgx_cg _AND_ it's
+> descendants, and tries to do it _EQUALLY_.
+>
+> Is this desired, or should we always try to reclaim from the @sgx_cg
+> first, but only moves to the desendants when the @sgx_cg shouldn't be
+> reclaimed anymore?
+>
+
+we still reclaim in sgx_cg in first scan and attempt of reclaiming for  
+SGX_NR_TOS_CAN pages, but if it turns out that did not satisfy caller  
+needs, then caller goes on to reclaim from descendants by passing in  
+'next' as starting point.
+
+> Anyway, it's different from the previous behaviour.
+>
+Again, this is to fix the issue you raised. I consider it improved  
+behavior :-)
+> [...]
+>
+>> -static bool sgx_should_reclaim(unsigned long watermark)
+>> +static bool sgx_should_reclaim_global(unsigned long watermark)
+>>   {
+>>   	return atomic_long_read(&sgx_nr_free_pages) < watermark &&
+>>   	       !list_empty(&sgx_global_lru.reclaimable);
+>>   }
+>>
+>> +static void sgx_reclaim_pages_global(void)
+>> +{
+>> +	sgx_reclaim_pages(&sgx_global_lru);
+>> +}
+>> +
+>>   /*
+>>    * sgx_reclaim_direct() should be called (without enclave's mutex  
+>> held)
+>>    * in locations where SGX memory resources might be low and might be
+>> @@ -394,8 +405,8 @@ static bool sgx_should_reclaim(unsigned long  
+>> watermark)
+>>    */
+>>   void sgx_reclaim_direct(void)
+>>   {
+>> -	if (sgx_should_reclaim(SGX_NR_LOW_PAGES))
+>> -		sgx_reclaim_pages();
+>> +	if (sgx_should_reclaim_global(SGX_NR_LOW_PAGES))
+>> +		sgx_reclaim_pages_global();
+>>   }
+>>
+>
+> I wish the rename was mentioned in the changelog too.
+>
+OK
 
