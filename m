@@ -1,136 +1,184 @@
-Return-Path: <linux-kernel+bounces-223063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B09910D0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:34:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE614910D1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 223E81C2387F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:34:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95C05289298
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C791B3F31;
-	Thu, 20 Jun 2024 16:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2ERoqHj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D241BB69A;
+	Thu, 20 Jun 2024 16:31:18 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CB91AED3B;
-	Thu, 20 Jun 2024 16:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1881BB682;
+	Thu, 20 Jun 2024 16:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718901018; cv=none; b=NnPZk2WrONebqa3ZRSbzZtO0jsqNVdmlagiJkXNJO3t9Oe5jbzWTanbaQG7yOqAcuKeodzAGkfnJoSkFLdl60MYWPudbQWp/cJiRzvmpT0JrvdHv48BdeLFAS0jdQwJ0532wC5wPZ+Z4b5I1i0eLPwPTckCiyNK5MNlgAFlJ2ic=
+	t=1718901077; cv=none; b=O9YKfWSh719iYlRctzSQwOuIWawLnmW3q2291Qvwysc7GPjCc7H4bj/BNXgAodz4Jjwt1zxFvHqKidLMAZ50P2FATpVv/I8i0n5uiNhK1jEVhxHakPSISCRMAOLzGZ5IL8FNI982yu7/OrXyN8+Js7pRrUHBYFEWyIhZWtDTCOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718901018; c=relaxed/simple;
-	bh=2nApdRW4uFWIFKAeWO48GxrtOn9CEoIKmUrYIKGLbhc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y7wIDJQdPkwVV8U+RiA+zyf348HpNaPUuUA8fdMU1AWFoW6g2z0TuoXG/wY4mV1K1jqwR86IeTEVtnYaJ3//bUX52xWW1s2onkrWDo2WL+EfIJpvT9tlQBEZcqwwkNIZ679yyCrqDNIqhf+1GhHGY1Ojasid96UvpVKvif2YPd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2ERoqHj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A75CCC2BD10;
-	Thu, 20 Jun 2024 16:30:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718901018;
-	bh=2nApdRW4uFWIFKAeWO48GxrtOn9CEoIKmUrYIKGLbhc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J2ERoqHjMVj7J7iiKKY7CLQUQBWT2OD0KPDkExlb1q0FDGvMI83NKfoiUqNPrmfX0
-	 mEH4QJ1t9ti1FWWszJppGi3GHjWQq+47H+ZIBffNIHvtZJYWEUV+KLcSbWjUTMKR6f
-	 16lRiHf9HH3RbI+dskTpxeHYV+JWqU4VXvy/r5ReRto5xqMW7VRF3V0XYU5QzgoMHA
-	 kv0eeU1THmYjLlrIPAd95+WwPAkKfdYl9bypTX+2j7Qiwkk2xQqarsV+Jl8qHF45xy
-	 6u/Hpbes8H4kqOXj6LuNSUpsV56jF/modm9ZJ+zB0w0cTAF/QLIseVigYVpT2zVkJ/
-	 0V1a6nNYDRC0Q==
-Date: Thu, 20 Jun 2024 17:30:12 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] clk: thead: Add support for TH1520 AP_SUBSYS clock
- controller
-Message-ID: <20240620-pregame-statute-2b43c0547064@spud>
-References: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
- <20240619-tapping-jaundice-471811929d96@spud>
- <ZnMgKs/dUcYXiisk@x1>
+	s=arc-20240116; t=1718901077; c=relaxed/simple;
+	bh=gTgvxw4Oyi7BJ7oODAOXGz4mQfb46ayQMJtrFK+oj3E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Af5FrN3Re00zRi7sxqGe/+pdcL8sI8T0Bv9DatGhzcYQnnOCSBwBH92nv286VPEUOec4daM84tXSIblt3CLzD58XCX7wIMt+6Bs6QZYrjk1AIzjf6jMq94Nomi4hOc51PbDvmfrRG/6OeqZ8Ix/GnsvjkQ67YUCNgrRB6VkRG9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4W4ls91Zj1z9v7Hl;
+	Fri, 21 Jun 2024 00:13:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id C1E0A140857;
+	Fri, 21 Jun 2024 00:30:55 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDn9FMqWXRmDrTMAA--.33469S2;
+	Thu, 20 Jun 2024 17:30:54 +0100 (CET)
+Message-ID: <c732b1eb15141f909e99247192539b7f76e9952c.camel@huaweicloud.com>
+Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
+ akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
+ alexandre.torgue@foss.st.com, mic@digikod.net, 
+ linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+ linux-integrity@vger.kernel.org, wufan@linux.microsoft.com,
+ pbrobinson@gmail.com,  zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
+ pmatilai@redhat.com,  jannh@google.com, dhowells@redhat.com,
+ jikos@kernel.org, mkoutny@suse.com,  ppavlu@suse.com, petr.vorel@gmail.com,
+ mzerqung@0pointer.de, kgold@linux.ibm.com,  Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Thu, 20 Jun 2024 18:30:31 +0200
+In-Reply-To: <CAHC9VhSQOiC9t0qk10Lg3o6eAFdrR2QFLvCn1h2EP+P+AgdSbw@mail.gmail.com>
+References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
+	 <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
+	 <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
+	 <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
+	 <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
+	 <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
+	 <2b335bdd5c20878e0366dcf6b62d14f73c2251de.camel@huaweicloud.com>
+	 <CAHC9VhSOMLH69+q_wt2W+N9SK92KGp5n4YgzpsXMcO2u7YyaTg@mail.gmail.com>
+	 <e9114733eedff99233b1711b2b05ab85b7c19ca9.camel@huaweicloud.com>
+	 <CAHC9VhQp1wsm+2d6Dhj1gQNSD0z_Hgj0cFrVf1=Zs94LmgfK0A@mail.gmail.com>
+	 <c96db3ab0aec6586b6d55c3055e7eb9fea6bf4e3.camel@huaweicloud.com>
+	 <CAHC9VhSQOiC9t0qk10Lg3o6eAFdrR2QFLvCn1h2EP+P+AgdSbw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HSewvxSgds9cd/HB"
-Content-Disposition: inline
-In-Reply-To: <ZnMgKs/dUcYXiisk@x1>
+X-CM-TRANSID:LxC2BwDn9FMqWXRmDrTMAA--.33469S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF15tF47trW7Ar45KFW7Jwb_yoW5uw1Upa
+	yUK3WUKr4ktFy7Cwn2ya17uayS9rW5tF17Xwn8J34rAF909r12kw1IkF45uFyUWrs5Ca42
+	vF4aqry3u3s8ZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAI
+	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcV
+	CF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+	aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABF1jj596+AAAsp
 
-
---HSewvxSgds9cd/HB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jun 19, 2024 at 11:15:06AM -0700, Drew Fustini wrote:
-> On Wed, Jun 19, 2024 at 12:12:30PM +0100, Conor Dooley wrote:
-> > On Sat, Jun 15, 2024 at 06:54:29PM -0700, Drew Fustini wrote:
-> > > This series adds support for the AP sub-system clock controller in the
-> > > T-Head TH1520 [1]. Yangtao Li originally submitted this series in May
-> > > 2023 [2]. Jisheng made additional improvements and then passed on the
-> > > work in progress to me.
+On Thu, 2024-06-20 at 12:08 -0400, Paul Moore wrote:
+> On Thu, Jun 20, 2024 at 11:14=E2=80=AFAM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > On Thu, 2024-06-20 at 10:48 -0400, Paul Moore wrote:
+> > > On Thu, Jun 20, 2024 at 5:12=E2=80=AFAM Roberto Sassu
+> > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > On Wed, 2024-06-19 at 14:43 -0400, Paul Moore wrote:
+> > > > > On Wed, Jun 19, 2024 at 12:38=E2=80=AFPM Roberto Sassu
+> > > > > <roberto.sassu@huaweicloud.com> wrote:
+> > > > > >=20
+> > > > > > Making it a kernel subsystem would likely mean replicating what=
+ the LSM
+> > > > > > infrastructure is doing, inode (security) blob and being notifi=
+ed about
+> > > > > > file/directory changes.
+> > > > >=20
+> > > > > Just because the LSM framework can be used for something, perhaps=
+ it
+> > > > > even makes the implementation easier, it doesn't mean the framewo=
+rk
+> > > > > should be used for everything.
+> > > >=20
+> > > > It is supporting 3 LSMs: IMA, IPE and BPF LSM.
+> > > >=20
+> > > > That makes it a clear target for the security subsystem, and as you
+> > > > suggested to start for IMA, if other kernel subsystems require them=
+, we
+> > > > can make it as an independent subsystem.
+> > >=20
+> > > Have you discussed the file digest cache functionality with either th=
+e
+> > > IPE or BPF LSM maintainers?  While digest_cache may support these
 > >=20
-> > One thing I noticed on the dts side is that the GPIO controllers have no
-> > clocks provided. Does the AP sub-system clock controller provide their
-> > clocks too?
+> > Well, yes. I was in a discussion since long time ago with Deven and
+> > Fan. The digest_cache LSM is listed in the Use Case section of the IPE
+> > cover letter:
+> >=20
+> > https://lore.kernel.org/linux-integrity/1716583609-21790-1-git-send-ema=
+il-wufan@linux.microsoft.com/
 >=20
-> Good question. I see that dwapb_get_clks() in drivers/gpio/gpio-dwapb.c
-> does call devm_clk_bulk_get_optional() for "bus" and "db". There doesn't
-> seem to be to many in-tree examples of clocks being defined for gpio
-> controllers with compatible "snps,dw-apb-gpio", but I do see that
-> k210.dtsi defines K210_CLK_APB0 for "bus" and K210_CLK_GPIO for "db".
->=20
-> From the TH1520 System User Manual, I do see the gpio related clocks in
-> Section 4.4.2.2 AP_SUBSYS. The peripheral clock gate control register
-> (PERI_CLK_CFG) has:
->=20
-> Bit 20: GPIO3_CLK_EN
-> Bit  8: GPIO0_CLK_EN
-> Bit  7: GPIO1_CLK_EN
-> Bit  6: GPIO2_CLK_EN
->=20
-> I will add these gates to the clk-th1520-ap.c and reference them from
-> the gpio controller nodes.
->=20
-> Since each gpio controller will only have one clock, do you think I can
-> omit the clock-names property?
+> I would hope to see more than one sentence casually mentioning that
+> there might be some integration in the future.
 
-Sure, thanks for looking into this.
+Sure, I can work more with Fan to do a proper integration.
 
+> > I also developed an IPE module back in the DIGLIM days:
+> >=20
+> > https://lore.kernel.org/linux-integrity/a16a628b9e21433198c490500a98712=
+1@huawei.com/
 >=20
-> Thanks,
-> Drew
+> That looks like more of an fs-verity integration to me.  Yes, of
+> course there would be IPE changes to accept a signature/digest from a
+> digest cache, but that should be minor.
+
+True, but IPE will also benefit from not needing to specify every
+digest in the policy.
+
+Also, the design choice of attaching the digest cache to the inode
+helps LSMs like IPE that don't have a per inode cache on their own.
+Sure, IPE would have to do a digest lookup every time, but at least on
+an already populated hash table.
+
+> > As for eBPF, I just need to make the digest_cache LSM API callable by
+> > eBPF programs, very likely not requiring any change on the eBPF
+> > infrastructure itself.
 >=20
-> Link: https://git.beagleboard.org/beaglev-ahead/beaglev-ahead/-/tree/main=
-/docs
+> That's great, but it would be good to hear from KP and any other BPF
+> LSM devs that this would be desirable.
 
---HSewvxSgds9cd/HB
-Content-Type: application/pgp-signature; name="signature.asc"
+Yes, I would also like to know their opinion. They already support
+getting a file digest from IMA. Adding support for the digest_cache LSM
+is a nice complement, to make security decisions based on an
+authenticated source of reference digests (signature verification was
+not shown in the example).
 
------BEGIN PGP SIGNATURE-----
+> I still believe that this is something that should live as a service
+> outside of the LSM.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnRZFAAKCRB4tDGHoIJi
-0jhfAPsFxSm+IHVQdarF1A8PQAiZE2P45kwvHpTzuUOpbO41gwEA3g6fNgbFnrZT
-cPWAqmEQpUXzmehcdcTKzTlP4ETGrwQ=
-=Y3Yf
------END PGP SIGNATURE-----
+It will not cost me too much to plug to IMA rather than the LSM
+infrastructure, but I would rather prefer the second.
 
---HSewvxSgds9cd/HB--
+I'm not aware of equivalent facilities in the kernel that would make
+the digest_cache LSM work in the same way, so making it as an
+independent kernel subsystem seems a too big jump for me.
+
+Roberto
+
 
