@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-223462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3389B911371
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:40:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F75911373
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 588811F23AFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:40:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B91D01C21920
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE6874432;
-	Thu, 20 Jun 2024 20:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86325D8F0;
+	Thu, 20 Jun 2024 20:40:14 +0000 (UTC)
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31CB5820E;
-	Thu, 20 Jun 2024 20:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EF97406E;
+	Thu, 20 Jun 2024 20:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718916013; cv=none; b=A/BV+S93/e0nA1oS7SJkec0RwkuPiDvsczqKL6mG7EhA3gdO8F+z4QlVjcT3rrqC/hyHYTHGTU91wZ3eeTPO4YgE1pNlVhVnHJ9pbARVCoIUNZ1wroCtaM54I03J0VPMF3r2VHRboGgXgZ9Vss7vpbNEqJOhCbTLG7PbSgxCXeA=
+	t=1718916014; cv=none; b=guDgFsm0RKQa/TdpauuHR+4hlt3jXI0dNkLjNdLvBNt1RbQXY79aefrSFQXyLOb+M+7AjeuUKMtXUtLQPxGmY0JOtUwCsETeAWATN4Bkg0fypb8WdZR5FBPlWkUsUsRsTWBN3ygM1fK/Gs4EknKieAwStqdBgWfA6fMQ3fVkSHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718916013; c=relaxed/simple;
-	bh=vOHDcuwH3nby98440sRcZScWkY5AVQNOHJhIam7uaA8=;
+	s=arc-20240116; t=1718916014; c=relaxed/simple;
+	bh=VegozR4ZPsnRaHRwBGeSH3585GN1FpoETs/49C4QdUg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FJFhsP5JQeFQyQGT9tpFdGjY+R+UaWY/On8k1BTp6mePI1bAwcB4PZ6XZXyQ60uC4GwkJRdRrMHPwgFthAarOQLvP8Hh9jx01HjOUpCdakPRxlTQri3rrcWrB0mCgc+PCrpYt3k36gYkQ+XSFUuTT/m58OaW6WWs6J/3z6t7bM4=
+	 MIME-Version:Content-Type; b=ZPZd3jbQray4K5hW5EsKRqKZs3g0SULunB2Do9DMDX3vgOOp8T+wcuYvHotQFvYNu4mdSA0xf3f1QckRAKWylU6XqsH0dnSkIxaaLV0fuiWKBDqdzeRRbwxdsrB+jaxjAqbp/5llR81lIGO1HJyrczwjPDSao0tZ4EyHDA8u+lI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
@@ -32,28 +32,26 @@ Received: from i5e860cc8.versanet.de ([94.134.12.200] helo=phil.lan)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1sKOZb-0001mc-Cv; Thu, 20 Jun 2024 22:39:59 +0200
+	id 1sKOZb-0001mc-Uz; Thu, 20 Jun 2024 22:40:00 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Alexey Charkov <alchark@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>
+To: Dragan Simic <dsimic@manjaro.org>,
+	linux-rockchip@lists.infradead.org
 Cc: Heiko Stuebner <heiko@sntech.de>,
-	Diederik de Haas <didi.debian@cknow.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	jonas@kwiboo.se,
+	robh+dt@kernel.org,
+	conor+dt@kernel.org,
 	devicetree@vger.kernel.org,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	linux-rockchip@lists.infradead.org,
-	Dragan Simic <dsimic@manjaro.org>,
+	didi.debian@cknow.org,
+	alchark@gmail.com,
+	krzk+dt@kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: (subset) [PATCH v5 0/8] RK3588 and Rock 5B dts additions: thermal, OPP and fan
-Date: Thu, 20 Jun 2024 22:39:55 +0200
-Message-Id: <171891591945.88443.14666251613914983261.b4-ty@sntech.de>
+Subject: Re: [PATCH] arm64: dts: rockchip: Prepare RK3588 SoC dtsi files for per-variant OPPs
+Date: Thu, 20 Jun 2024 22:39:56 +0200
+Message-Id: <171891591943.88443.4575073298967084067.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240617-rk-dts-additions-v5-0-c1f5f3267f1e@gmail.com>
-References: <20240617-rk-dts-additions-v5-0-c1f5f3267f1e@gmail.com>
+In-Reply-To: <9ffedc0e2ca7f167d9d795b2a8f43cb9f56a653b.1717923308.git.dsimic@manjaro.org>
+References: <9ffedc0e2ca7f167d9d795b2a8f43cb9f56a653b.1717923308.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,32 +61,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Mon, 17 Jun 2024 22:28:50 +0400, Alexey Charkov wrote:
-> This enables thermal monitoring and CPU DVFS on RK3588(s), as well as
-> active cooling on Radxa Rock 5B via the provided PWM fan.
+On Sun, 9 Jun 2024 10:58:19 +0200, Dragan Simic wrote:
+> Rename the Rockchip RK3588 SoC dtsi files and, consequently, adjust their
+> contents appropriately, to prepare them for the ability to specify different
+> CPU and GPU OPPs for each of the supported RK3588 SoC variants.
 > 
-> Some RK3588 boards use separate regulators to supply CPUs and their
-> respective memory interfaces, so this is handled by coupling those
-> regulators in affected boards' device trees to ensure that their
-> voltage is adjusted in step.
+> As already discussed, [1][2][3][4] some of the RK3588 SoC variants require
+> different OPPs, and it makes more sense to have the OPPs already defined when
+> a board dts(i) file includes one of the SoC variant dtsi files (rk3588.dtsi,
+> rk3588j.dtsi or rk3588s.dtsi), rather than requiring the board dts(i) file
+> to also include a separate rk3588*-opp.dtsi file.  The choice of the SoC
+> variant is already made by the inclusion of the SoC dtsi file into the board
+> dts(i) file, and it doesn't make much sense to, effectively, allow the board
+> dts(i) file to include and use an incompatible set of OPPs for the already
+> selected RK3588 SoC variant.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/8] arm64: dts: rockchip: add thermal zones information on RK3588
-      commit: 97d61227d6bb0023a325ab2f87e4438a858207a2
-[2/8] arm64: dts: rockchip: enable thermal management on all RK3588 boards
-      commit: 4afa9056ed9e3d9ff036f3576cb137a011448295
-[3/8] arm64: dts: rockchip: add passive GPU cooling on RK3588
-      commit: d64d337f1856bd0e5cbfc60b6f0458ad4951d05e
-[4/8] arm64: dts: rockchip: enable automatic fan control on Rock 5B
-      commit: 2aab8905a843aef624565c014a34d155f8702135
-
-
-Don't worry, I'll look at the other patches too.
-Was just easier on my mind to this in blocks ;-) .
-
+[1/1] arm64: dts: rockchip: Prepare RK3588 SoC dtsi files for per-variant OPPs
+      commit: 0866aef9b478a50a4035c90428c990485e9d2d6d
 
 Best regards,
 -- 
