@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-222131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDAA90FD30
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:59:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC23190FD37
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6732F286ABB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:59:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46C51287509
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745D945C18;
-	Thu, 20 Jun 2024 06:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8305F40862;
+	Thu, 20 Jun 2024 07:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="COo/+K1y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzjLhRjk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9300444376;
-	Thu, 20 Jun 2024 06:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52F742A9E;
+	Thu, 20 Jun 2024 07:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718866726; cv=none; b=ulXSFKyp3iTdYnChg3XzpZpOp/P0UXEe0X0BRcMG2WZkM9OZ4YOILrLKaQ2L8ghwwShTG5bxzNsbwn7ze0kT39MAcYs56HZLt4mDrf0n0NOZBltKwfvlN+eqPUrSHpmjxQaSCfIJY1xuiOnB0f4XkmSmltgGq4Zy8KK131QveaY=
+	t=1718866802; cv=none; b=PXMLpYhaNOu4u1YNnR/MqUxLWRU+MFPgIY1EqfsM+K/i4qhS+10rWA1wGOx0d1Ig5FBQV8IOt3rqJyw22DYdrdnpgQtFyq5pa+kIEC71sphKXDiUHws00nCOnogd5iM+H8EayQI1QKbwc1pYXa3+478IIzAbqwbTOXchzL/6h3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718866726; c=relaxed/simple;
-	bh=9yBMGQT3FskEoD3m+isLrjIg6PS5XbX5nB7MAYL19RA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YB+2ufH2GBEAWQF7IPQUo39I0qaQvheuqgZ+lWr6aL/cQv1//nZcOXwMwSrn/+tk88Mdgl6E7LQgajjJ7dsjI97PpDbX0wEoweACXoJB0wbLKBNHjQdG9AxtmVR/F7rn734OieQoBP8NtT8TqTgwzl3hnw3o7M4XpwVYbffe0qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=COo/+K1y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55E9FC4AF07;
-	Thu, 20 Jun 2024 06:58:39 +0000 (UTC)
+	s=arc-20240116; t=1718866802; c=relaxed/simple;
+	bh=HE4eE/VkmVosNstmbIn+tAKV5jq6AjV1v5VEHF2LNhA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=klyPIFE4AyPYvwB3h+n9NVFPjcVPTqoq/hgbHTzAxZ1h91lvAVyiC7qUHSID8ANs6qitr3V1enmLh/9kQUf2kL7VMev0jBAOP1LRDFT6Wwpzt05xyDE9cDcvI+hkJWHcaN4zvN8Y+YCqueNVA7A3rj/CdYf3y8JfWyzFV1q7+p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OzjLhRjk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F288BC4AF07;
+	Thu, 20 Jun 2024 06:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718866726;
-	bh=9yBMGQT3FskEoD3m+isLrjIg6PS5XbX5nB7MAYL19RA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=COo/+K1yODAsvbzNorFC8nQpVGTTeOIsR4qgZMqWcv/MhqzX8s6gvvtiQ2Xf/nPxX
-	 LZkGQ7ClBxBoseC7BuuiN5DEtz6ll7Q652cADceeBpGiBUJrcpEVZyQwK5aVABFj2p
-	 Axin0rNNicRncCWPU3g2eGn8+ODHN1WuwOr/PsUvtsyYauiA85D1+hwFse6x/QgZZl
-	 As+FVkylDZ4JPAY5gqz0F0Ngk8NNKUBUvzbGSi3Nv9JEu3HI+NivBhTjxItXdVBsCV
-	 S/FmTDIHeSm4xxxNncD4ulMjrTu3nOlVLuitktmWmzD/z5/3qHE9p/UCEVkI6Q5UHC
-	 dKTnuBC7jfEKQ==
-Message-ID: <3b8e7a92-2b23-43cc-95c9-1a312866e465@kernel.org>
-Date: Thu, 20 Jun 2024 08:58:37 +0200
+	s=k20201202; t=1718866802;
+	bh=HE4eE/VkmVosNstmbIn+tAKV5jq6AjV1v5VEHF2LNhA=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=OzjLhRjkfXRowjEimEfl4Bs4xD4O5oRN1sr3jvxUABYEK7A6LDSCh0J5IUzLp4Tm+
+	 VBfqJouUTnY7P8pEpU+hOYp9aU9ZMYzAkAGu7YfI6Yt4os9Dg56fHTG73rqbis1UPu
+	 x8eQNc740AzJCwhnrOYZvpgpIJbpUZHSM2SxMMMXDvpq6VV/2Tma28wNKkASVxLt3c
+	 RNaCwGUz7Trs4GiLREhM8JTy5Z6F1B4sD7KJKPz362TGEp955/qlRlfntD9N13Q9XR
+	 xCvJyzbmR3fzf4ISDwRPZ8yVUcDtTzy59hijVvXzG8CdG+XnVTT+X+E4UItZcZXJuy
+	 Z3QGxOo8JT27A==
+Message-ID: <4a1c65e3-4508-4c7e-ae91-0ff0ef7a6c74@kernel.org>
+Date: Thu, 20 Jun 2024 08:59:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,27 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mmc: sdhci-of-ma35d1: Add Nuvoton MA35D1 SDHCI driver
-To: Shan-Chun Hung <shanchun1218@gmail.com>,
- Markus Elfring <Markus.Elfring@web.de>, Shan-Chun Hung <schung@nuvoton.com>,
- devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Andy Shevchenko <andy.shevchenko@gmail.com>,
- Conor Dooley <conor+dt@kernel.org>, Dragan Simic <dsimic@manjaro.org>,
- Jacky Huang <ychuang3@nuvoton.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Luis Chamberlain <mcgrof@kernel.org>, Peter Robinson <pbrobinson@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Sergey Khimich <serghox@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Yang Xiwen <forbidden405@outlook.com>
-References: <20240619054641.277062-3-shanchun1218@gmail.com>
- <af302db1-1d97-4974-9c97-de4a10100d20@web.de>
- <d0caecd9-bb53-4559-877d-671ff9f7713a@gmail.com>
-Content-Language: en-US
+Subject: Re: [PATCH] ASoC: dt-bindings: rename wm8750.yaml to wlf,wm8750.yaml
 From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Daniel Baluta <daniel.baluta@gmail.com>
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, patches@opensource.cirrus.com,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240619070356.80759-1-animeshagarwal28@gmail.com>
+ <f3ce758b-fa9e-4eff-984e-ace10553d683@kernel.org>
+ <CAEnQRZBvc6TR4Nnvp41oTKAU+EBdtuC0GnuDAGwO2MHDA8bV=Q@mail.gmail.com>
+ <ebebb17c-0247-4328-8129-24f15ef6f5c4@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -113,42 +107,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <d0caecd9-bb53-4559-877d-671ff9f7713a@gmail.com>
+In-Reply-To: <ebebb17c-0247-4328-8129-24f15ef6f5c4@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 20/06/2024 08:49, Shan-Chun Hung wrote:
-> Dear Markus,
+On 20/06/2024 08:37, Krzysztof Kozlowski wrote:
+> On 20/06/2024 08:08, Daniel Baluta wrote:
+>> On Wed, Jun 19, 2024 at 10:29 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>
+>>> On 19/06/2024 09:03, Animesh Agarwal wrote:
+>>>> Add vendor prefix to wlf,wm8750 dt-schema.
+>>>>
+>>>> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+>>>> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+>>>> ---
+>>>>  .../devicetree/bindings/sound/{wm8750.yaml => wlf,wm8750.yaml}  | 2 +-
+>>>
+>>> Same as in other cases (why they started now?): why only one file not
+>>> all of them? Anyway, that's not necessary.
+>>
+>> There is only one yaml file from wolfson which doesnt have the wlf, prefix.
+>> For consistency we think that we should rename the file :).
 > 
-> Thanks for your review.
-> 
-> On 2024/6/20 上午 12:18, Markus Elfring wrote:
->> …
->>> Signed-off-by: schung <schung@nuvoton.com>
->> Can an other personal name eventually be more appropriate here
->> (according to the Developer's Certificate of Origin)?
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc4#n438
-> I will fix it in the next version.
->>
->> …
->>> +++ b/drivers/mmc/host/sdhci-of-ma35d1.c
->>> @@ -0,0 +1,297 @@
->> …
->>> +MODULE_AUTHOR("shanchun1218@google.com");
->> …
->>
->> How do you think about to improve such information another bit?
->>
->> Regards,
->> Markus
-> I will add my name to fix it.
+> And several other files have the same issue. That's just churn. No, let
+> me be clear. Rule is for all files, not for wlf or asahi only. If you
+> want that consistency, then fix *all* files, not selected one schema.
 
-<form letter>
-Feel free to ignore all comments from Markus, regardless whether the
-suggestion is reasonable or not. This person is banned from LKML and
-several maintainers ignore Markus' feedback, because it is just a waste
-of time.
-</form letter>
+I see now Kuninori went by my previous suggestion, so this patch is not
+needed/obsolete.
 
 Best regards,
 Krzysztof
