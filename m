@@ -1,211 +1,141 @@
-Return-Path: <linux-kernel+bounces-222366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DE7910066
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:31:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0429B910068
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA24C1C21A8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:31:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8141F22824
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF45E1A4F10;
-	Thu, 20 Jun 2024 09:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E6A1A4F2D;
+	Thu, 20 Jun 2024 09:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijYZEqCY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EZGzaT/D";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bWQe+dNr";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EZGzaT/D";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bWQe+dNr"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214901A3BC9;
-	Thu, 20 Jun 2024 09:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1111A4F07;
+	Thu, 20 Jun 2024 09:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718875879; cv=none; b=gwtg0M/A27GxESFMmyWKhLSmkpRVUdEFhPnMcEUPiW/JMO5lec51vq8xyqjBqNLuEO3OTJWFp0x3XBVVaq5dD3xLl7Xg4CsAHAyNO8wwbZ0P/1b+9IJ1pid6tVFb6MmfOj/KsP8IQO5Q9OyNGnWgQCThkxC4a7tOqrRxDZHMS2I=
+	t=1718875881; cv=none; b=rPOLBwrhzZeoCdfTpyXjzVsFjX1cn0F4EJw14goDh4dOSeeDMCqC4grEKTAQ2HUuSrafz6jon2hjXi44c3yaLTM994dAHniQCQbuosDs/S7XFzy6kacKlfF10LEQc1Yac6BI1s6QxHVuFvDKXQZcsrw9fOf9T5YwMFC933sagig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718875879; c=relaxed/simple;
-	bh=YRUQLSRlPc/Dg7XX4c9Tp2yq8qiVx+MeTvOp2+K5JMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CvutXFAPtsg3N7Job0wCw3Mz8raIFw7p8py1rpvGOlQxpK6+/OoxRKm4zTcHrG3+KEeP9kxQ5tZC8z341peDAXRVzNgCZpMNJBanb2Ut2kanlZZyO3+Q1ArpBTzC6SzVjjHPCaL2b+ctv8wHkblpyC6p/tGx936hCkjrgVowwm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ijYZEqCY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00018C32781;
-	Thu, 20 Jun 2024 09:31:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718875878;
-	bh=YRUQLSRlPc/Dg7XX4c9Tp2yq8qiVx+MeTvOp2+K5JMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ijYZEqCYi5NY/2WHH5YO3D6P8J6opMRX07jnPNWIWaFuc62t2AbVyEcsrR41LiCA3
-	 9uP0iQmvdIJonfjarTxfcOQeJSMMwFAPbAdhunHJmhOo6VsO+ipt4ExoVV1ooXN9GO
-	 99f6wh7UqGiU14QEIwFpvEry2bL1YxXyfUUqzaVuPuECv/hbZ6b62wIfH8xmWux73x
-	 EwsvY7tEkK+4tfQ/Iw6wXM1ry4jjkNdQ+xsjbv6oSdULJrpdnUnvNZoLAESL+ds2vQ
-	 ZfLjHPciAj3bY09fdeMZvUbRH7hOJsMeZX81n+YsJJByxYHPV2SvHYPpjgZrCo6dPX
-	 qIVhucHgd/1Hg==
-Date: Thu, 20 Jun 2024 10:31:14 +0100
-From: Lee Jones <lee@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
-	Pavel Machek <pavel@ucw.cz>, Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>, linux-leds@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: cros_ec: Implement review comments from Lee
-Message-ID: <20240620093114.GH3029315@google.com>
-References: <20240614-cros_ec-led-review-v1-1-946f2549fac2@weissschuh.net>
+	s=arc-20240116; t=1718875881; c=relaxed/simple;
+	bh=v0UMqDXC5+SAf4JfkVwnd+K8Z7UmpjaIhgRRAQXV928=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=GcL3RftHJTzWZJN1LyLLQ3PgC5wUiOYeICCVxaxfi3iVhIDecHx7WRTeG6tblcefHd39wtVWZ6v57WE0oDTEx8cPj0JrpOsvVyUP5832nNrvDVCM6rtar44EuXSZzagSPAjN0fVOYYUx/H9W02ihlmTok+m7bCPRlkB+EudvCLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EZGzaT/D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bWQe+dNr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EZGzaT/D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bWQe+dNr; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 70B6921AAD;
+	Thu, 20 Jun 2024 09:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718875877; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idixMQpR+HA90NjHITkoUM5azVKTe8F/f+cm+VdShII=;
+	b=EZGzaT/Dg4CNMYRRYXRwUcyafXj+bAN9ILaCA+hJYdgzmBMFw/ddds+msrxIGOJ15K4PE6
+	T4gUyMqteEuwpz0G/nexoHP0rbofssSlTvSkJzFnjXCsKokyQpuHhREr1nnBNIt+B5XmJH
+	7MKKB3vbruhciuGd8/vYEEY0tJFCn2c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718875877;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idixMQpR+HA90NjHITkoUM5azVKTe8F/f+cm+VdShII=;
+	b=bWQe+dNrVZHaDm2wRS24uwyyvf4In0B/wHWtJ5eKhnhcSi++q/GS+1N+93hl5rGDnm8ELf
+	jTH2sMlybqhzLrCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718875877; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idixMQpR+HA90NjHITkoUM5azVKTe8F/f+cm+VdShII=;
+	b=EZGzaT/Dg4CNMYRRYXRwUcyafXj+bAN9ILaCA+hJYdgzmBMFw/ddds+msrxIGOJ15K4PE6
+	T4gUyMqteEuwpz0G/nexoHP0rbofssSlTvSkJzFnjXCsKokyQpuHhREr1nnBNIt+B5XmJH
+	7MKKB3vbruhciuGd8/vYEEY0tJFCn2c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718875877;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idixMQpR+HA90NjHITkoUM5azVKTe8F/f+cm+VdShII=;
+	b=bWQe+dNrVZHaDm2wRS24uwyyvf4In0B/wHWtJ5eKhnhcSi++q/GS+1N+93hl5rGDnm8ELf
+	jTH2sMlybqhzLrCA==
+Date: Thu, 20 Jun 2024 11:31:15 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: zhang warden <zhangwarden@gmail.com>
+cc: Song Liu <song@kernel.org>, Petr Mladek <pmladek@suse.com>, 
+    Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+    Joe Lawrence <joe.lawrence@redhat.com>, live-patching@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+In-Reply-To: <17FDEE20-A187-4493-BFA6-F09555B1EF6F@gmail.com>
+Message-ID: <alpine.LSU.2.21.2406201129130.5846@pobox.suse.cz>
+References: <20240520005826.17281-1-zhangwarden@gmail.com> <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz> <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com> <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz> <ZkxVlIPj9VZ9NJC4@pathway.suse.cz>
+ <CAPhsuW7bjyLvfQ-ysKE+S8x26Zv5b7jbJoyW8UiBaUfaRncKfg@mail.gmail.com> <alpine.LSU.2.21.2406071102420.29080@pobox.suse.cz> <17FDEE20-A187-4493-BFA6-F09555B1EF6F@gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240614-cros_ec-led-review-v1-1-946f2549fac2@weissschuh.net>
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -4.29
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-0.99)[-0.992];
+	NEURAL_HAM_SHORT(-0.20)[-0.995];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ZERO(0.00)[0];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
 
-Definitely not seen a commit message like that before
+Hi,
 
-> Implement review comments from Lee as requested in [0] for
-> "leds: Add ChromeOS EC driver".
-> 
-> Changes:
-> * Inline DRV_NAME string constant.
-> * Use dev_err() instead of dev_warn() to report errors.
-> * Rename cros_ec_led_probe_led() to cros_ec_led_probe_one().
-> * Make loop variable "int" where they belong.
-> * Move "Unknown LED" comment to where it belongs.
-> * Register trigger during _probe().
-> * Use module_platform_driver() and drop all the custom boilerplate.
+On Thu, 20 Jun 2024, zhang warden wrote:
 
-If you're fixing many things, then I would expect to receive many
-patches.  One patch for functional change please.  If you can reasonably
-group fixes of similar elk, then please do.  However one patch that does
-a bunch of different things is a no-go from me, sorry.
+> 
+> 
+> > On Jun 7, 2024, at 17:07, Miroslav Benes <mbenes@suse.cz> wrote:
+> > 
+> > It would be better than this patch but given what was mentioned in the 
+> > thread I wonder if it is possible to use ftrace even for this. See 
+> > /sys/kernel/tracing/trace_stat/function*. It already gathers the number of 
+> > hits.
+> > 
+> 
+> Hi, Miroslav
+> 
+> Can ftrace able to trace the function which I added into kernel by livepatching?
 
-> [0] https://lore.kernel.org/lkml/20240614093445.GF3029315@google.com/T/#m8750abdef6a968ace765645189170814196c9ce9
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
->  drivers/leds/leds-cros_ec.c | 50 +++++++++++++--------------------------------
->  1 file changed, 14 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-cros_ec.c b/drivers/leds/leds-cros_ec.c
-> index 7bb21a587713..275522b81ea5 100644
-> --- a/drivers/leds/leds-cros_ec.c
-> +++ b/drivers/leds/leds-cros_ec.c
-> @@ -14,8 +14,6 @@
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_ec_proto.h>
->  
-> -#define DRV_NAME	"cros-ec-led"
-> -
->  static const char * const cros_ec_led_functions[] = {
->  	[EC_LED_ID_BATTERY_LED]            = LED_FUNCTION_CHARGING,
->  	[EC_LED_ID_POWER_LED]              = LED_FUNCTION_POWER,
-> @@ -152,7 +150,7 @@ static int cros_ec_led_count_subleds(struct device *dev,
->  
->  		if (common_range != range) {
->  			/* The multicolor LED API expects a uniform max_brightness */
-> -			dev_warn(dev, "Inconsistent LED brightness values\n");
-> +			dev_err(dev, "Inconsistent LED brightness values\n");
->  			return -EINVAL;
->  		}
->  	}
-> @@ -176,22 +174,21 @@ static const char *cros_ec_led_get_color_name(struct led_classdev_mc *led_mc_cde
->  	return led_get_color_name(color);
->  }
->  
-> -static int cros_ec_led_probe_led(struct device *dev, struct cros_ec_device *cros_ec,
-> +static int cros_ec_led_probe_one(struct device *dev, struct cros_ec_device *cros_ec,
->  				 enum ec_led_id id)
->  {
->  	union cros_ec_led_cmd_data arg = {};
->  	struct cros_ec_led_priv *priv;
->  	struct led_classdev *led_cdev;
->  	struct mc_subled *subleds;
-> -	int ret, num_subleds;
-> -	size_t i, subled;
-> +	int i, ret, num_subleds;
-> +	size_t subled;
->  
->  	arg.req.led_id = id;
->  	arg.req.flags = EC_LED_FLAGS_QUERY;
->  	ret = cros_ec_led_send_cmd(cros_ec, &arg);
-> -	/* Unknown LED, skip */
->  	if (ret == -EINVAL)
-> -		return 0;
-> +		return 0; /* Unknown LED, skip */
->  	if (ret == -EOPNOTSUPP)
->  		return -ENODEV;
->  	if (ret < 0)
-> @@ -247,11 +244,14 @@ static int cros_ec_led_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev->parent);
->  	struct cros_ec_device *cros_ec = ec_dev->ec_dev;
-> -	int ret = 0;
-> -	size_t i;
-> +	int i, ret = 0;
-> +
-> +	ret = devm_led_trigger_register(dev, &cros_ec_led_trigger);
-> +	if (ret)
-> +		return ret;
->  
->  	for (i = 0; i < EC_LED_ID_COUNT; i++) {
-> -		ret = cros_ec_led_probe_led(dev, cros_ec, i);
-> +		ret = cros_ec_led_probe_one(dev, cros_ec, i);
->  		if (ret)
->  			break;
->  	}
-> @@ -260,38 +260,16 @@ static int cros_ec_led_probe(struct platform_device *pdev)
->  }
->  
->  static const struct platform_device_id cros_ec_led_id[] = {
-> -	{ DRV_NAME, 0 },
-> +	{ "cros-ec-led", 0 },
->  	{}
->  };
->  
->  static struct platform_driver cros_ec_led_driver = {
-> -	.driver.name	= DRV_NAME,
-> +	.driver.name	= "cros-ec-led",
->  	.probe		= cros_ec_led_probe,
->  	.id_table	= cros_ec_led_id,
->  };
-> -
-> -static int __init cros_ec_led_init(void)
-> -{
-> -	int ret;
-> -
-> -	ret = led_trigger_register(&cros_ec_led_trigger);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = platform_driver_register(&cros_ec_led_driver);
-> -	if (ret)
-> -		led_trigger_unregister(&cros_ec_led_trigger);
-> -
-> -	return ret;
-> -};
-> -module_init(cros_ec_led_init);
-> -
-> -static void __exit cros_ec_led_exit(void)
-> -{
-> -	platform_driver_unregister(&cros_ec_led_driver);
-> -	led_trigger_unregister(&cros_ec_led_trigger);
-> -};
-> -module_exit(cros_ec_led_exit);
-> +module_platform_driver(cros_ec_led_driver);
->  
->  MODULE_DEVICE_TABLE(platform, cros_ec_led_id);
->  MODULE_DESCRIPTION("ChromeOS EC LED Driver");
-> 
-> ---
-> base-commit: b6774dd948171c478c7aa19318b1d7ae9cf6d7a4
-> change-id: 20240614-cros_ec-led-review-ec93abc65933
-> 
-> Best regards,
-> -- 
-> Thomas Weißschuh <linux@weissschuh.net>
-> 
+yes, it should also work as is. I just generally recommend to use a 
+different name (prefixed for example) for the new replacement function to 
+avoid issues if you do not already do it.
 
--- 
-Lee Jones [李琼斯]
+Miroslav
 
