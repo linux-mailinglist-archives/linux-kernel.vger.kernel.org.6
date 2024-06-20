@@ -1,93 +1,112 @@
-Return-Path: <linux-kernel+bounces-222591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4142591043C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:32:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C5A91043F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DED1D1F21EEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:32:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A948B21B0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D141AC780;
-	Thu, 20 Jun 2024 12:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99011ACE85;
+	Thu, 20 Jun 2024 12:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Chl5D/i5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="lh5FwdeX"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9855F1A8C03;
-	Thu, 20 Jun 2024 12:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7773C1AC42E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718886680; cv=none; b=mAzEjOf0YOZW3jHBGQ1vuUvWPANqFvFk7GAz+TkI+ad3OTbTnEegpwoJ0z0NCJmU/FBv59qOv6GyovXQWDDKTqckRfr8S2NAr1+23sJ+bclmfHYqZoCPpiWHrgqdI6BNnEmHzsIY0LrESGl4Bt3GtHqiMv+33f03xsnED4RffSE=
+	t=1718886718; cv=none; b=U0p3cbrlFxRNP0qRSw9Wyj9zJnZMVmO1darRqk3XVrvoG4zdlvCM7kJXg+cYWYBEe7bYzUsjQf/Cqh/iN210uovmy7+xiKPSCy/PnWc3DrJ7P3nakWxED8Y3+z22Roncq3b/Rq1nG+9H30URlxvw5lnjooiu0I7Ibqw9/X0N+pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718886680; c=relaxed/simple;
-	bh=CzLQPFPgm5W33TEwVXj/lQd3pJ5PvjIpvQTILdCthP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=alOYaf6AysbOHLyOe7n9JnKaVV0UmbgGl8nEUDnV8pN/rwiqUGlQ6NM7eOdRR0+LGE8nxgStSVUplDT6vsEee06jBhmQQnQL3FdP20vDS6LdBEHT0ra7i/W4afRwx51ee3MkeSj9KbEbwWXsR5ltywiHGuIpM7rxHFmUOXBvXno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Chl5D/i5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFB4FC2BD10;
-	Thu, 20 Jun 2024 12:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718886680;
-	bh=CzLQPFPgm5W33TEwVXj/lQd3pJ5PvjIpvQTILdCthP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Chl5D/i5kxk7B9DFzveHJFZUtaQ0hXGlMDiAe6W8G80LhngfPiJjaNjSMY2MXTB4n
-	 /KA9OZEHZ7cD33jAHcnUmLoLnoCOKZAsbdOnj89z6in29pE85pfGKY+NXkgDWzlF+Q
-	 YuoB97YpkiICLUkmQiMZ7jYond+OywKpahxFflZU=
-Date: Thu, 20 Jun 2024 14:31:17 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Hillf Danton <hdanton@sina.com>,
-	syzbot <syzbot+973d01eb49b060b12e63@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] INFO: task hung in wdm_release
-Message-ID: <2024062045-improve-tidbit-ed0d@gregkh>
-References: <20240620103847.1724-1-hdanton@sina.com>
- <0044d7b1-ae7d-4d36-b730-38b06186c8bf@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1718886718; c=relaxed/simple;
+	bh=jCb6yC3LV7RS1SBbrETONCjgbXRTz+kthAeBoPZk3uE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k3wSM0xV3IZw66pt3l0jAKoC7K6nq9SOjU8Q87hroS+PpFBahqu0a8IMfE7mF0HJudvlL1FY+ekJeXZ4ExfJwAi5xyJUa6jy7cDKG2K9KdlSyAmN6GYLJnQkoVc2KhQmRzzlNunBOVt+6hpVBNO5xM9l9E9pgTSKEQyXx0SekLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=lh5FwdeX; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52bc274f438so1138102e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 05:31:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718886715; x=1719491515; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jCb6yC3LV7RS1SBbrETONCjgbXRTz+kthAeBoPZk3uE=;
+        b=lh5FwdeXYRte/hibWQKRwvHpAFYIEi4E9KdPKeus3b/NANRah3MN0ZsjBIWtkeZVh0
+         UtqMe/7gnUesKVU+fpcfpH1NdMZhbwC0GoHk/ufJj+ZiF01CPmlYhqXuKCUVHBVtdQiT
+         upTOX59tCycNV1phIJ1oeMjyveovrCUrBZokEp9V6CClnJO5C1T66xMihFPSmiFWGlDC
+         QDEfZaY6xEltKwoTSJGwGYesnt79Ti5Wjyf0U68wNTCEP58fmdr5Wis9G8rz4rqF0bl3
+         f/aOqzQKDncGmcnJ3Z2wuORCcNOFdBtZ+ByexrEqci5BjwCbDJfFcY15TnZcD8cRf2ic
+         clXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718886715; x=1719491515;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jCb6yC3LV7RS1SBbrETONCjgbXRTz+kthAeBoPZk3uE=;
+        b=N1OjN/PQWY00HoqvzWxKDqCczyaZqt530v2XNtjw9A/+MBvqqC3qkUKGbXYZVXJ9EH
+         ufosaa6GkNlbHE9pPKWUhJ7Tuirr4MqR7eZKxlZJdAuzyVEcyE5cLXsZLMokOHOhQolk
+         +C7/nigfEZ6NM6yT7WIkGxc5blIZRdLSr3B8C2FlCuwWYmbyhOLtXoY75K01LjSgQ9qi
+         JO2lkzCNUuFN4AQm0UiVJ93P53FOVcygYWIw5sRrVOICbQIfW2q6dmu5EPLf3aL6xjH1
+         beY0MF6jPxlsnQu5Aiki1SFAclY8AIdWs/uplLTBCl4jVJf6TTsmt9i5MEY09Xc4s8kC
+         f8QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmJ0F89AYK2vn+Tg9wN8WqLKlFotNfbjescJBDw7m3ez6e76tyLuaeYE+Fdq2584TA8PzgxDWvia04wA3ik2XoqOYxIyDq8rU+MDIV
+X-Gm-Message-State: AOJu0YzRF4PGfH2C2fC6oNJWThwOc9iml8CYS8IV3BFP2MDvZAn0C/54
+	US2lpG3tThVXUPDNyJuhHwzfcH1QnnAqEYHjtoJAf8d1ytOcCjIpU1iaRaj0BcWfU9acxypNziI
+	ozT8u+Q6BkpqIhwptRmHDFObDplHa+Gl6bWPZ5d6Pim9jasOGiNE=
+X-Google-Smtp-Source: AGHT+IFEBqVhz8d0V1M1pa0KZH9RCnVL/MBWmCY5jwSJkoCnbHQgQ/4ArnXiI+p5/MiLtoJrmvDlZdKPBbVkobzIYGE=
+X-Received: by 2002:a05:6512:1242:b0:52c:8837:718a with SMTP id
+ 2adb3069b0e04-52ccaa918b4mr4529720e87.43.1718886714538; Thu, 20 Jun 2024
+ 05:31:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0044d7b1-ae7d-4d36-b730-38b06186c8bf@I-love.SAKURA.ne.jp>
+References: <20240619184550.34524-1-brgl@bgdev.pl> <20240619184550.34524-9-brgl@bgdev.pl>
+ <ZnQLED/C3Opeim5q@shell.armlinux.org.uk> <ZnQPnrfoia/njFFZ@shell.armlinux.org.uk>
+In-Reply-To: <ZnQPnrfoia/njFFZ@shell.armlinux.org.uk>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 20 Jun 2024 14:31:42 +0200
+Message-ID: <CAMRc=MeNGQBMZFg3FTtcFzVKU4xMpnm0BxsAgs+++sFDpU9t_g@mail.gmail.com>
+Subject: Re: [PATCH net-next 8/8] net: stmmac: qcom-ethqos: add a DMA-reset
+ quirk for sa8775p-ride-r3
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Vinod Koul <vkoul@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 20, 2024 at 08:47:03PM +0900, Tetsuo Handa wrote:
-> On 2024/06/20 19:38, Hillf Danton wrote:
-> > On Thu, 20 Jun 2024 02:08:21 -0700
-> >> Showing all locks held in the system:
-> >> 3 locks held by kworker/u8:0/11:
-> >>  #0: ffff8880b953e7d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
-> >>  #1: ffff8880b9528948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x441/0x770 kernel/sched/psi.c:988
-> >>  #2: ffff8880754f0768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: wiphy_lock include/net/cfg80211.h:5966 [inline]
-> >>  #2: ffff8880754f0768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: cfg80211_wiphy_work+0x35/0x260 net/wireless/core.c:424
-> > 
-> > The info looks bogus given acquiring mutex with runqueue lock held.
-> 
-> Nothing wrong. Printing the backtrace and/or locks held is not atomic.
-> That is, locks held by a non current thread can change at any moment.
-> 
-> For example, the former block starting with
-> "INFO: task syz-executor320:7035 blocked for more than 142 seconds."
-> says that pid 7035 is blocked at "mutex_lock(&wdm_mutex)", but the latter
-> block starting with "Showing all locks held in the system:" says that
-> pid 7035 was holding (or trying to hold) no lock.
-> 
-> Threads were making progress slowly. Though, printk() flooding by
-> 
->   cdc_wdm 5-1:1.0: nonzero urb status received: -71
->   cdc_wdm 5-1:1.0: wdm_int_callback - 0 bytes
-> 
-> should be avoided. We need to persuade Greg to let these noisy messages reduced.
+On Thu, Jun 20, 2024 at 1:16=E2=80=AFPM Russell King (Oracle)
+<linux@armlinux.org.uk> wrote:
+>
+> On Thu, Jun 20, 2024 at 11:57:20AM +0100, Russell King (Oracle) wrote:
+> > I don't have time to go through stmmac and make any suggestions (sorry)
+> > so I can only to say NAK to this change.
+>
+> Also... where is the cover message? I don't have it, so I don't have the
+> context behind your patch series - and I haven't received all the
+> patches either.
+>
 
-Please see:
-	22f008128625 ("USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messages")
-it should have fixed this already.
+It's in lore alright:
+https://lore.kernel.org/netdev/20240619184550.34524-1-brgl@bgdev.pl/
+
+You were in TO for all the patches (as evident from lore) so maybe spam fol=
+der?
+
+Bart
 
