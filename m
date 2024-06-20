@@ -1,136 +1,93 @@
-Return-Path: <linux-kernel+bounces-222811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB6D910806
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F03B910804
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5370B1F21638
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:21:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1C61F21936
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1151AE086;
-	Thu, 20 Jun 2024 14:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87041AE0B2;
+	Thu, 20 Jun 2024 14:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rtj5r0ig"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApgRTr0h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC251AD499;
-	Thu, 20 Jun 2024 14:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C33B1AD4AF;
+	Thu, 20 Jun 2024 14:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718893241; cv=none; b=mEOT+nC5Z+YstlIWHDehqUhAIuT31SiCOYU9Ra4WBdqCpoXbWYOSItkMLHlwj9Et5xHSB93SSz3/Xky7KFJZ6Fkfd+z9MNzAibJdh/9VYr5Q+LS54gAWl56pNWXQoSnly2UqSG41OzQfQDoRSCdDVA/+HFO+vGzeDO2BURzSFIE=
+	t=1718893230; cv=none; b=t1Cswqw4JniA8z2CIFFHqQJSoZXBB/oaCcYpX5qJi78+CwhN0C1jtH2O6AWJXeVtSr8oivgwdHs+ZOCD5VQVQvl2iMShPJdf43vZcAzVJoskooc2R0mJrIzHdDWyy3DwK0VLwqZzmWoDbQOqTcnZnrg+pFjuFZIPN5SubhtzmvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718893241; c=relaxed/simple;
-	bh=H3l1v9yeYyPj1A0lN+6W/nwjuWXv/WE2qcLC1YwJUvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EWWict+/PNCmWPcGLOh0w4AqEVXhl5gYfHpKRCbX46PtEgOqvkb60wGmn22fk5Yvc5FxoAH99EG/04+FA4sDgmfMOX4fL0IJ9tsOddGUtWH+SQFhNj17OC3Ahxq5l/vrQOjpV2gnrlc4JDvaLbAimc42CSLkMTbfAvf9VsW9Xjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rtj5r0ig; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45KEKJrU104681;
-	Thu, 20 Jun 2024 09:20:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718893219;
-	bh=ymReCO7N2ADiyVC3g1gB0UJoYCRDko7LaKWU+9edZ0E=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=rtj5r0igmn7EeYVH2JH/xAicz3ZwzuSAfwQhQROXR0PvnYD4K4kU6VomIRIHt373N
-	 vuuRmidZ3cC/OmwEwJhbuT1h37ya7YPCIrz34BhhChWOc8UGe7Yp/dnJlVo1Rdvk8Z
-	 RXb1jinQjdCwpgFkiWVbWwmg/BOYSRwz7DX9eZlI=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45KEKJmC097716
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 20 Jun 2024 09:20:19 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 20
- Jun 2024 09:20:19 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 20 Jun 2024 09:20:19 -0500
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45KEKEpK092433;
-	Thu, 20 Jun 2024 09:20:15 -0500
-Message-ID: <e901967f-59df-f4b0-de51-61e542c04161@ti.com>
-Date: Thu, 20 Jun 2024 19:50:14 +0530
+	s=arc-20240116; t=1718893230; c=relaxed/simple;
+	bh=cAY4YNjsaO/pgwkfEF4denp9cphxu8+CRGJm/rhUhx0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ZsZwR5FJ1hO3tm74sC1sGHhhSl3ZxIgkFFWw89g4gnKkACtNh2aL+hIdsuwrA9/SDufMvRe0ROnXmZWIl9OLUMhOBDKXRZXyNHd31kxINKSFW0LXmKDFW2+wshDYH8seSdPj6pX1HIt30cOHff1/vt+S67rJ4DDVWsmhsa9vpio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ApgRTr0h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 95CDFC4AF09;
+	Thu, 20 Jun 2024 14:20:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718893229;
+	bh=cAY4YNjsaO/pgwkfEF4denp9cphxu8+CRGJm/rhUhx0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ApgRTr0hKC70A6GhRdGfiuAXmp4dDjy90Kkx7SiEyG34DMI+HaT4/ECv+NzqAU1lt
+	 QW9CYh14MAUuVvM/14FdJh/ksTl+dwjvEBsWBfPXkBrVlL0er5O5MoaZEsVvzqI4ON
+	 hx1+vLwx1RYhUuJtRE7KZXq3l1UCYw6gjXr7O9p00WOXb04WDDoAal4qvE0Rr8Iu8z
+	 V0Qam18pUVGhWKABoHV10Xc26JjJdLb1Uo72XEYbCw9iMnRUYi0mAqp3kqJ5eR0clv
+	 yF9Lhkez5Z4kb4uRTd3llq2xXcNbc6arCS+fT1GnbzmgyXmc6FGXu46pkNFkZ6k2cx
+	 8lVZLWND3xhnw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7F30CC39563;
+	Thu, 20 Jun 2024 14:20:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support runtime
- suspend/resume
-Content-Language: en-US
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        "jackson.lee"
-	<jackson.lee@chipsnmedia.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>
-CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-        Nas Chung
-	<nas.chung@chipsnmedia.com>,
-        "lafley.kim" <lafley.kim@chipsnmedia.com>,
-        "b-brnich@ti.com" <b-brnich@ti.com>, "Luthra, Jai" <j-luthra@ti.com>,
-        Vibhore
-	<vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>,
-        Aradhya <a-bhatia1@ti.com>, "Raghavendra, Vignesh" <vigneshr@ti.com>
-References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
- <20240617104818.221-3-jackson.lee@chipsnmedia.com>
- <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
- <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
- <SE1P216MB130382374B76CD8BC9FFCFE5EDC82@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
- <881dcea1-a592-4506-083a-9d5f3c6a8781@ti.com>
- <b2f7552d37075538e22640f7b42838d29d3f8b3e.camel@collabora.com>
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <b2f7552d37075538e22640f7b42838d29d3f8b3e.camel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Subject: Re: [PATCH net] net: usb: rtl8150 fix unintiatilzed variables in
+ rtl8150_get_link_ksettings
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171889322951.30997.6577917822297455148.git-patchwork-notify@kernel.org>
+Date: Thu, 20 Jun 2024 14:20:29 +0000
+References: <20240619132816.11526-1-oneukum@suse.com>
+In-Reply-To: <20240619132816.11526-1-oneukum@suse.com>
+To: Oliver Neukum <oneukum@suse.com>
+Cc: petkan@nucleusys.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-usb@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+5186630949e3c55f0799@syzkaller.appspotmail.com
 
-Hi Nicolas,
+Hello:
 
-On 20/06/24 19:35, Nicolas Dufresne wrote:
-> Hi Devarsh,
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed, 19 Jun 2024 15:28:03 +0200 you wrote:
+> This functions retrieves values by passing a pointer. As the function
+> that retrieves them can fail before touching the pointers, the variables
+> must be initialized.
 > 
-> Le jeudi 20 juin 2024 à 15:05 +0530, Devarsh Thakkar a écrit :
->> In my view the delayed suspend functionality is generally helpful for devices
->> where resume latencies are higher for e.g. this light sensor driver [2] uses
->> it because it takes 250ms to stabilize after resumption and I don't see this
->> being used in codec drivers generally since there is no such large resume
->> latency. Please let me know if I am missing something or there is a strong
->> reason to have delayed suspend for wave5.
+> Reported-by: syzbot+5186630949e3c55f0799@syzkaller.appspotmail.com
+> Signed-off-by: Oliver Neukum <oneukum@suse.com>
 > 
-> It sounds like you did proper scientific testing of the suspend results calls,
-> mind sharing the actual data ?
+> [...]
 
-Nopes, I did not do that but yes I agree it is good to profile and evaluate
-the trade-off but I am not expecting 250ms kind of latency. I would suggest
-Jackson to do the profiling for the resume latencies.
+Here is the summary with links:
+  - [net] net: usb: rtl8150 fix unintiatilzed variables in rtl8150_get_link_ksettings
+    https://git.kernel.org/netdev/net/c/fba383985354
 
-But perhaps a separate issue, I did notice that intention of the patchset was
-to suspend without waiting for the timeout if there is no application having a
-handle to the wave5 device but even if I close the last instance I still see
-the IP stays on for 5seconds as seen in this logs [1] and this perhaps could
-be because extra pm counter references being hold.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-[2024-06-20 12:32:50] Freeing pipeline ...
 
-and after 5 seconds..
-
-[2024-06-20 12:32:55] |   204     | AM62AX_DEV_CODEC0 | DEVICE_STATE_ON |
-[2024-06-20 12:32:56] |   204     | AM62AX_DEV_CODEC0 | DEVICE_STATE_OFF
-
-[1]: https://gist.github.com/devarsht/009075d8706001f447733ed859152d90
-
-Regards
-Devarsh
 
