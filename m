@@ -1,296 +1,262 @@
-Return-Path: <linux-kernel+bounces-223476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A55B691139B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:48:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 699E191139E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C75641C21F61
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:48:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBE401F210F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42E178C8D;
-	Thu, 20 Jun 2024 20:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D91074407;
+	Thu, 20 Jun 2024 20:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WYn0I2HR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V/TcL2gV"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF40F5915A
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 20:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4833D0C5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 20:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718916486; cv=none; b=cHbYR8YUrM/tOj4XYvkwxZMPBmbbRz7ADEOHOYqLhq3VsmQqXet7RXWOGR0Q8f9nqRMx1v5GWykw03jV7Of05ioz2vYqs34010+4AAwIZBKjt0cEiU5ABthcPyLssLOo7juS5TCBQ3i2wEn69JuhMT5wYfXdrW7pf1RCg5CcP4E=
+	t=1718916532; cv=none; b=acB9+sEqfdiQWp/+TRwgagJRngRNo9rVkAEkF+xdI54LuYbMXu9MO+HwjhPShX/Q+f8s7bBqk4oxp9EsD6hvM5BA8azevt3ycsfgZBzRzVMpb/QlkM12TBksS0fQ7Bj+sSKoJxEaWIP7rekdy4l2qh62GhA+pAsPG7kSCO9NBmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718916486; c=relaxed/simple;
-	bh=sEH3T6yutnlLK2D0OreUCPnRYL26DdDE6U/Zb8vYt2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mAKKMkbuYBrmX+1Lc6niHpamxxmPrWBv0dU9J8GR5x6gyNXMzEhahHlForTj+n4UhZD1agrwv1Cnsv00OSqz1d9U1JX65qEWIkpkXk1SxWxXEY7GdIXZn6kBDKejuCdKDd3lA1oecis5KB7BXrJZz/qmaPi1D+ifDX/VSSvAbFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WYn0I2HR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718916483;
+	s=arc-20240116; t=1718916532; c=relaxed/simple;
+	bh=l8sr5EKGzXKV3v9wUAd7IDXojMeHDATVJFsJbzgZhQw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VlvTerOGKGAvLz0X/C44ZNEHpdq56zlx3/jkUUgUk+u7j68UHNj5ApFfPHneSjtcM822v/UM768znTLodaZRNJ/yjowFBWnETjsvdwihGJCIIkkcEeiV+MNBXNKE+jIsdTr5LYORDO26XvtGOAvMi0WjBe0VMIV/atz1T1+HRow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V/TcL2gV; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: anand.ashok.dumbre@xilinx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718916527;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=725sMhwzSeqjmupxLu0hwJ7+pZtvicrTuC9XsgQTBK8=;
-	b=WYn0I2HR0/fxGHx1hZbgY7HnHIi97B1WGCO9YCgp5VCAOoraQcY8WGJVyCfVtgAcYkJF8h
-	JfgvQTQ8akHtQyMPbDu5SUMkKcOtbSRwLNxT5x1Fewxoy0RzUofK6bz+nB26qwRBhIyLdv
-	p9ZvdF8ojLJuECRgaTaRyD+4ytjZSRw=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-634-3Kw-rs4yMcOiMP0yvBOV7g-1; Thu, 20 Jun 2024 16:48:02 -0400
-X-MC-Unique: 3Kw-rs4yMcOiMP0yvBOV7g-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3621a7854b0so647591f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:48:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718916481; x=1719521281;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=725sMhwzSeqjmupxLu0hwJ7+pZtvicrTuC9XsgQTBK8=;
-        b=p3xfgPGEANCEWVZ3qmdY70khbbYcTQ937o3GMW9n5CmaI1D955lMOY5qUJ0+hvdc9H
-         PStD6CiIgzVqX3LVIRS58mGJQ+2ODYD0zyZmBUk6Rn/JXh7ttDMCfCOYYYso29pvFx4b
-         hfiggo5RmaxDYEnp+H8WMc7kr92kxpSwJthClPHBYPUwEQdOeQqIxDcwW5nVz9WyuKJF
-         sW1m8FLRGSYlcTguDSyK8oB1gThx8AgzzYX4YtqAFO9jJlK347vV5IIMddDy1+WJPo6R
-         7HiPmIPDdhf9VUHONJUe6PmDWcs0OMZe++PsmJ1y72bxGJxonv4Rx/tpc4DVVw+d33Pk
-         jLpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQdHK2EcSR0UglJwpmiVcei2lI+Vb/AZi5YAirqdhjXZbCAHJ+RzTqWViymammZrGeD/HJC80JGFngHLl7Z2UX+e7ckiuXGvfjZMMo
-X-Gm-Message-State: AOJu0YyvCpUhCCGx63BprgxYwlPRCff6/IKwg8wW+Jwc8L/gxZ7TfMbr
-	5vny+zedD78Neyc4kmc2IzfRJrzyE5atJC1Q18O+J4lRx3Q6GvXPxy7rKm+3Ev7A+EcFQTz51bg
-	Tk9YlDuxE7fBbqlcz6HtRF6T+LpzDUo9inVGgE5VGu8UlHbwx82jb6blgtz0vUA==
-X-Received: by 2002:a5d:5509:0:b0:362:e357:5ceb with SMTP id ffacd0b85a97d-363175b8d26mr4451506f8f.18.1718916480940;
-        Thu, 20 Jun 2024 13:48:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFrzrquPG/94lKhzK3aDSpYVSMtKUQthY8gwE3WdilMXHD1TiygK87vbYj5UA8qzbVrakNlew==
-X-Received: by 2002:a5d:5509:0:b0:362:e357:5ceb with SMTP id ffacd0b85a97d-363175b8d26mr4451498f8f.18.1718916480436;
-        Thu, 20 Jun 2024 13:48:00 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c719:5b00:61af:900f:3aef:3af3? (p200300cbc7195b0061af900f3aef3af3.dip0.t-ipconnect.de. [2003:cb:c719:5b00:61af:900f:3aef:3af3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-362cd0d79fdsm6839188f8f.77.2024.06.20.13.47.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 13:47:59 -0700 (PDT)
-Message-ID: <53d1e7c5-3e77-467b-be33-a618c3bb6cb3@redhat.com>
-Date: Thu, 20 Jun 2024 22:47:58 +0200
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QZD1KD5VAIcvxUWsWgoYOBeh1MyaBw1yu3aMAYmyAI0=;
+	b=V/TcL2gVH7YjREmosjMtVLHLSUHDGJp0tNxrrPDHPvDZim20qIjogc/C3eb91CmiSRA/p8
+	jAXvryvne6usR05bbt+nlETJ+mYU/XqJlxXTDvrQer4LHNzOeg0ybVTWXCQtfEC0lJyPDi
+	Soo4VX8veQ95gl2Ni5nchFRUubqxp3A=
+X-Envelope-To: linux-iio@vger.kernel.org
+X-Envelope-To: jic23@kernel.org
+X-Envelope-To: lars@metafoo.de
+X-Envelope-To: michal.simek@amd.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: sean.anderson@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
+	linux-iio@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH] iio: xilinx-ams: Add labels
+Date: Thu, 20 Jun 2024 16:48:42 -0400
+Message-Id: <20240620204842.817237-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
-To: Sean Christopherson <seanjc@google.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Fuad Tabba <tabba@google.com>,
- Christoph Hellwig <hch@infradead.org>, John Hubbard <jhubbard@nvidia.com>,
- Elliot Berman <quic_eberman@quicinc.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, maz@kernel.org, kvm@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- pbonzini@redhat.com
-References: <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
- <20240619115135.GE2494510@nvidia.com> <ZnOsAEV3GycCcqSX@infradead.org>
- <CA+EHjTxaCxibvGOMPk9Oj5TfQV3J3ZLwXk83oVHuwf8H0Q47sA@mail.gmail.com>
- <20240620135540.GG2494510@nvidia.com>
- <6d7b180a-9f80-43a4-a4cc-fd79a45d7571@redhat.com>
- <20240620142956.GI2494510@nvidia.com>
- <385a5692-ffc8-455e-b371-0449b828b637@redhat.com>
- <20240620163626.GK2494510@nvidia.com>
- <66a285fc-e54e-4247-8801-e7e17ad795a6@redhat.com>
- <ZnSRZcap1dc2_WBV@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZnSRZcap1dc2_WBV@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 20.06.24 22:30, Sean Christopherson wrote:
-> On Thu, Jun 20, 2024, David Hildenbrand wrote:
->> On 20.06.24 18:36, Jason Gunthorpe wrote:
->>> On Thu, Jun 20, 2024 at 04:45:08PM +0200, David Hildenbrand wrote:
->>>
->>>> If we could disallow pinning any shared pages, that would make life a lot
->>>> easier, but I think there were reasons for why we might require it. To
->>>> convert shared->private, simply unmap that folio (only the shared parts
->>>> could possibly be mapped) from all user page tables.
->>>
->>> IMHO it should be reasonable to make it work like ZONE_MOVABLE and
->>> FOLL_LONGTERM. Making a shared page private is really no different
->>> from moving it.
->>>
->>> And if you have built a VMM that uses VMA mapped shared pages and
->>> short-term pinning then you should really also ensure that the VM is
->>> aware when the pins go away. For instance if you are doing some virtio
->>> thing with O_DIRECT pinning then the guest will know the pins are gone
->>> when it observes virtio completions.
->>>
->>> In this way making private is just like moving, we unmap the page and
->>> then drive the refcount to zero, then move it.
->> Yes, but here is the catch: what if a single shared subpage of a large folio
->> is (validly) longterm pinned and you want to convert another shared subpage
->> to private?
->>
->> Sure, we can unmap the whole large folio (including all shared parts) before
->> the conversion, just like we would do for migration. But we cannot detect
->> that nobody pinned that subpage that we want to convert to private.
->>
->> Core-mm is not, and will not, track pins per subpage.
->>
->> So I only see two options:
->>
->> a) Disallow long-term pinning. That means, we can, with a bit of wait,
->>     always convert subpages shared->private after unmapping them and
->>     waiting for the short-term pin to go away. Not too bad, and we
->>     already have other mechanisms disallow long-term pinnings (especially
->>     writable fs ones!).
-> 
-> I don't think disallowing _just_ long-term GUP will suffice, if we go the "disallow
-> GUP" route than I think it needs to disallow GUP, period.  Like the whole "GUP
-> writes to file-back memory" issue[*], which I think you're alluding to, short-term
-> GUP is also problematic.  But unlike file-backed memory, for TDX and SNP (and I
-> think pKVM), a single rogue access has a high probability of being fatal to the
-> entire system.
+Label all the channels using names from the reference manual. Some of
+the "control" channels are duplicates of other channels. The reference
+manual describes it like:
 
-Disallowing short-term should work, in theory, because the 
-writes-to-fileback has different issues (the PIN is not the problem but 
-the dirtying).
+> The AMS register set includes several measurement registers that are
+> written to by the PS SYSMON unit using the single-channel mode
+> (sequencer off). These voltage measurements are performed using the
+> unipolar sampling circuit with a 0 to 3V range and do not have alarms
+> or minimum/maximum registers.
 
-It's more related us not allowing long-term pins for FSDAX pages, 
-because the lifetime of these pages is determined by the FS.
+So I think these really are measuring the same voltages but in a
+different location. In which case, sharing labels makes sense to me.
 
-What we would do is
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+---
 
-1) Unmap the large folio completely and make any refaults block.
--> No new pins can pop up
+ drivers/iio/adc/xilinx-ams.c | 107 +++++++++++++++++++----------------
+ 1 file changed, 59 insertions(+), 48 deletions(-)
 
-2) If the folio is pinned, busy-wait until all the short-term pins are
-    gone.
-
-3) Safely convert the relevant subpage from shared -> private
-
-Not saying it's the best approach, but it should be doable.
-
-> 
-> I.e. except for blatant bugs, e.g. use-after-free, we need to be able to guarantee
-> with 100% accuracy that there are no outstanding mappings when converting a page
-> from shared=>private.  Crossing our fingers and hoping that short-term GUP will
-> have gone away isn't enough.
-
-We do have the mapcount and the refcount that will be completely 
-reliable for our cases.
-
-folio_mapcount()==0 not mapped
-
-folio_ref_count()==1 we hold the single folio reference. (-> no mapping, 
-no GUP, no unexpected references)
-
-(folio_maybe_dma_pinned() could be used as well, but things like 
-vmsplice() and some O_DIRECT might still take references. 
-folio_ref_count() is more reliable in that regard)
-
-> 
-> [*] https://lore.kernel.org/all/cover.1683235180.git.lstoakes@gmail.com
-> 
->> b) Expose the large folio as multiple 4k folios to the core-mm.
->>
->>
->> b) would look as follows: we allocate a gigantic page from the (hugetlb)
->> reserve into guest_memfd. Then, we break it down into individual 4k folios
->> by splitting/demoting the folio. We make sure that all 4k folios are
->> unmovable (raised refcount). We keep tracking internally that these 4k
->> folios comprise a single large gigantic page.
->>
->> Core-mm can track for us now without any modifications per (previously
->> subpage,) now small folios GUP pins and page table mappings without
->> modifications.
->>
->> Once we unmap the gigantic page from guest_memfd, we recronstruct the
->> gigantic page and hand it back to the reserve (only possible once all pins
->> are gone).
->>
->> We can still map the whole thing into the KVM guest+iommu using a single
->> large unit, because guest_memfd knows the origin/relationship of these
->> pages. But we would only map individual pages into user page tables (unless
->> we use large VM_PFNMAP mappings, but then also pinning would not work, so
->> that's likely also not what we want).
-> 
-> Not being to map guest_memfd into userspace with 1GiB mappings should be ok, at
-> least for CoCo VMs.  If the guest shares an entire 1GiB chunk, e.g. for DMA or
-> whatever, then userspace can simply punch a hole in guest_memfd and allocate 1GiB
-> of memory from regular memory.  Even losing 2MiB mappings should be ok.
-> 
-> For non-CoCo VMs, I expect we'll want to be much more permissive, but I think
-> they'll be a complete non-issue because there is no shared vs. private to worry
-> about.  We can simply allow any and all userspace mappings for guest_memfd that is
-> attached to a "regular" VM, because a misbehaving userspace only loses whatever
-> hardening (or other benefits) was being provided by using guest_memfd.  I.e. the
-> kernel and system at-large isn't at risk.
-> 
->> The downside is that we won't benefit from vmemmap optimizations for large
->> folios from hugetlb, and have more tracking overhead when mapping individual
->> pages into user page tables.
-> 
-> Hmm, I suspect losing the vmemmap optimizations would be acceptable, especially
-> if we could defer the shattering until the guest actually tried to partially
-> convert a 1GiB/2MiB region, and restore the optimizations when the memory is
-> converted back.
-
-We can only shatter/collapse if there are no unexpected folio 
-references. So GUP would have to be handles as well ... so that is 
-certainly problematic.
-
+diff --git a/drivers/iio/adc/xilinx-ams.c b/drivers/iio/adc/xilinx-ams.c
+index aa05f24931f9..f051358d6b50 100644
+--- a/drivers/iio/adc/xilinx-ams.c
++++ b/drivers/iio/adc/xilinx-ams.c
+@@ -222,7 +222,7 @@ enum ams_ps_pl_seq {
+ #define PL_SEQ(x)		(AMS_PS_SEQ_MAX + (x))
+ #define AMS_CTRL_SEQ_BASE	(AMS_PS_SEQ_MAX * 3)
+ 
+-#define AMS_CHAN_TEMP(_scan_index, _addr) { \
++#define AMS_CHAN_TEMP(_scan_index, _addr, _name) { \
+ 	.type = IIO_TEMP, \
+ 	.indexed = 1, \
+ 	.address = (_addr), \
+@@ -232,9 +232,10 @@ enum ams_ps_pl_seq {
+ 	.event_spec = ams_temp_events, \
+ 	.scan_index = _scan_index, \
+ 	.num_event_specs = ARRAY_SIZE(ams_temp_events), \
++	.datasheet_name = _name, \
+ }
+ 
+-#define AMS_CHAN_VOLTAGE(_scan_index, _addr, _alarm) { \
++#define AMS_CHAN_VOLTAGE(_scan_index, _addr, _alarm, _name) { \
+ 	.type = IIO_VOLTAGE, \
+ 	.indexed = 1, \
+ 	.address = (_addr), \
+@@ -243,21 +244,24 @@ enum ams_ps_pl_seq {
+ 	.event_spec = (_alarm) ? ams_voltage_events : NULL, \
+ 	.scan_index = _scan_index, \
+ 	.num_event_specs = (_alarm) ? ARRAY_SIZE(ams_voltage_events) : 0, \
++	.datasheet_name = _name, \
+ }
+ 
+-#define AMS_PS_CHAN_TEMP(_scan_index, _addr) \
+-	AMS_CHAN_TEMP(PS_SEQ(_scan_index), _addr)
+-#define AMS_PS_CHAN_VOLTAGE(_scan_index, _addr) \
+-	AMS_CHAN_VOLTAGE(PS_SEQ(_scan_index), _addr, true)
++#define AMS_PS_CHAN_TEMP(_scan_index, _addr, _name) \
++	AMS_CHAN_TEMP(PS_SEQ(_scan_index), _addr, _name)
++#define AMS_PS_CHAN_VOLTAGE(_scan_index, _addr, _name) \
++	AMS_CHAN_VOLTAGE(PS_SEQ(_scan_index), _addr, true, _name)
+ 
+-#define AMS_PL_CHAN_TEMP(_scan_index, _addr) \
+-	AMS_CHAN_TEMP(PL_SEQ(_scan_index), _addr)
+-#define AMS_PL_CHAN_VOLTAGE(_scan_index, _addr, _alarm) \
+-	AMS_CHAN_VOLTAGE(PL_SEQ(_scan_index), _addr, _alarm)
++#define AMS_PL_CHAN_TEMP(_scan_index, _addr, _name) \
++	AMS_CHAN_TEMP(PL_SEQ(_scan_index), _addr, _name)
++#define AMS_PL_CHAN_VOLTAGE(_scan_index, _addr, _alarm, _name) \
++	AMS_CHAN_VOLTAGE(PL_SEQ(_scan_index), _addr, _alarm, _name)
+ #define AMS_PL_AUX_CHAN_VOLTAGE(_auxno) \
+-	AMS_CHAN_VOLTAGE(PL_SEQ(AMS_SEQ(_auxno)), AMS_REG_VAUX(_auxno), false)
+-#define AMS_CTRL_CHAN_VOLTAGE(_scan_index, _addr) \
+-	AMS_CHAN_VOLTAGE(PL_SEQ(AMS_SEQ(AMS_SEQ(_scan_index))), _addr, false)
++	AMS_CHAN_VOLTAGE(PL_SEQ(AMS_SEQ(_auxno)), AMS_REG_VAUX(_auxno), false, \
++			 "VAUX" #_auxno)
++#define AMS_CTRL_CHAN_VOLTAGE(_scan_index, _addr, _name) \
++	AMS_CHAN_VOLTAGE(PL_SEQ(AMS_SEQ(AMS_SEQ(_scan_index))), _addr, false, \
++			 _name)
+ 
+ /**
+  * struct ams - This structure contains necessary state for xilinx-ams to operate
+@@ -505,6 +509,12 @@ static int ams_init_device(struct ams *ams)
+ 	return 0;
+ }
+ 
++static int ams_read_label(struct iio_dev *indio_dev,
++			  struct iio_chan_spec const *chan, char *label)
++{
++	return sysfs_emit(label, "%s\n", chan->datasheet_name);
++}
++
+ static int ams_enable_single_channel(struct ams *ams, unsigned int offset)
+ {
+ 	u8 channel_num;
+@@ -1116,37 +1126,37 @@ static const struct iio_event_spec ams_voltage_events[] = {
+ };
+ 
+ static const struct iio_chan_spec ams_ps_channels[] = {
+-	AMS_PS_CHAN_TEMP(AMS_SEQ_TEMP, AMS_TEMP),
+-	AMS_PS_CHAN_TEMP(AMS_SEQ_TEMP_REMOTE, AMS_TEMP_REMOTE),
+-	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY1, AMS_SUPPLY1),
+-	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY2, AMS_SUPPLY2),
+-	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY3, AMS_SUPPLY3),
+-	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY4, AMS_SUPPLY4),
+-	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY5, AMS_SUPPLY5),
+-	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY6, AMS_SUPPLY6),
+-	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY7, AMS_SUPPLY7),
+-	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY8, AMS_SUPPLY8),
+-	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY9, AMS_SUPPLY9),
+-	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY10, AMS_SUPPLY10),
+-	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_VCCAMS, AMS_VCCAMS),
++	AMS_PS_CHAN_TEMP(AMS_SEQ_TEMP, AMS_TEMP, "Temp_LPD"),
++	AMS_PS_CHAN_TEMP(AMS_SEQ_TEMP_REMOTE, AMS_TEMP_REMOTE, "Temp_FPD"),
++	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY1, AMS_SUPPLY1, "VCC_PSINTLP"),
++	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY2, AMS_SUPPLY2, "VCC_PSINTFP"),
++	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY3, AMS_SUPPLY3, "VCC_PSAUX"),
++	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY4, AMS_SUPPLY4, "VCC_PSDDR"),
++	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY5, AMS_SUPPLY5, "VCC_PSIO3"),
++	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY6, AMS_SUPPLY6, "VCC_PSIO0"),
++	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY7, AMS_SUPPLY7, "VCC_PSIO1"),
++	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY8, AMS_SUPPLY8, "VCC_PSIO2"),
++	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY9, AMS_SUPPLY9, "PS_MGTRAVCC"),
++	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_SUPPLY10, AMS_SUPPLY10, "PS_MGTRAVTT"),
++	AMS_PS_CHAN_VOLTAGE(AMS_SEQ_VCCAMS, AMS_VCCAMS, "VCC_PSADC"),
+ };
+ 
+ static const struct iio_chan_spec ams_pl_channels[] = {
+-	AMS_PL_CHAN_TEMP(AMS_SEQ_TEMP, AMS_TEMP),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY1, AMS_SUPPLY1, true),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY2, AMS_SUPPLY2, true),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VREFP, AMS_VREFP, false),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VREFN, AMS_VREFN, false),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY3, AMS_SUPPLY3, true),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY4, AMS_SUPPLY4, true),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY5, AMS_SUPPLY5, true),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY6, AMS_SUPPLY6, true),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VCCAMS, AMS_VCCAMS, true),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VP_VN, AMS_VP_VN, false),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY7, AMS_SUPPLY7, true),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY8, AMS_SUPPLY8, true),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY9, AMS_SUPPLY9, true),
+-	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY10, AMS_SUPPLY10, true),
++	AMS_PL_CHAN_TEMP(AMS_SEQ_TEMP, AMS_TEMP, "Temp_PL"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY1, AMS_SUPPLY1, true, "VCCINT"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY2, AMS_SUPPLY2, true, "VCCAUX"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VREFP, AMS_VREFP, false, "VREFP"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VREFN, AMS_VREFN, false, "VREFN"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY3, AMS_SUPPLY3, true, "VCCBRAM"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY4, AMS_SUPPLY4, true, "VCC_PSINTLP"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY5, AMS_SUPPLY5, true, "VCC_PSINTFP"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY6, AMS_SUPPLY6, true, "VCC_PSAUX"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VCCAMS, AMS_VCCAMS, true, "VCCAMS"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_VP_VN, AMS_VP_VN, false, "VP_VN"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY7, AMS_SUPPLY7, true, "VUser0"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY8, AMS_SUPPLY8, true, "VUser1"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY9, AMS_SUPPLY9, true, "VUser2"),
++	AMS_PL_CHAN_VOLTAGE(AMS_SEQ_SUPPLY10, AMS_SUPPLY10, true, "VUser3"),
+ 	AMS_PL_AUX_CHAN_VOLTAGE(0),
+ 	AMS_PL_AUX_CHAN_VOLTAGE(1),
+ 	AMS_PL_AUX_CHAN_VOLTAGE(2),
+@@ -1166,13 +1176,13 @@ static const struct iio_chan_spec ams_pl_channels[] = {
+ };
+ 
+ static const struct iio_chan_spec ams_ctrl_channels[] = {
+-	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCC_PSPLL, AMS_VCC_PSPLL0),
+-	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCC_PSBATT, AMS_VCC_PSPLL3),
+-	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCINT, AMS_VCCINT),
+-	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCBRAM, AMS_VCCBRAM),
+-	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCAUX, AMS_VCCAUX),
+-	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_PSDDRPLL, AMS_PSDDRPLL),
+-	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_INTDDR, AMS_PSINTFPDDR),
++	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCC_PSPLL, AMS_VCC_PSPLL0, "VCC_PSPLL"),
++	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCC_PSBATT, AMS_VCC_PSPLL3, "VCC_PSBATT"),
++	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCINT, AMS_VCCINT, "VCCINT"),
++	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCBRAM, AMS_VCCBRAM, "VCCBRAM"),
++	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_VCCAUX, AMS_VCCAUX, "VCCAUX"),
++	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_PSDDRPLL, AMS_PSDDRPLL, "VCC_PSDDR_PLL"),
++	AMS_CTRL_CHAN_VOLTAGE(AMS_SEQ_INTDDR, AMS_PSINTFPDDR, "VCC_PSINTFP_DDR"),
+ };
+ 
+ static int ams_get_ext_chan(struct fwnode_handle *chan_node,
+@@ -1336,6 +1346,7 @@ static int ams_parse_firmware(struct iio_dev *indio_dev)
+ }
+ 
+ static const struct iio_info iio_ams_info = {
++	.read_label = ams_read_label,
+ 	.read_raw = &ams_read_raw,
+ 	.read_event_config = &ams_read_event_config,
+ 	.write_event_config = &ams_write_event_config,
 -- 
-Cheers,
-
-David / dhildenb
+2.35.1.1320.gc452695387.dirty
 
 
