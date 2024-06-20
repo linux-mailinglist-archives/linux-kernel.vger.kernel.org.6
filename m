@@ -1,73 +1,80 @@
-Return-Path: <linux-kernel+bounces-223353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86FE0911189
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:56:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E74A91118F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BB8B281813
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:56:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7578286CFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAD01B3F36;
-	Thu, 20 Jun 2024 18:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506461B47B0;
+	Thu, 20 Jun 2024 18:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0EVECT2X"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IWRNN+qR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5B03A28D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14B039855
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718909739; cv=none; b=H0N9jP/EVSZF9F1q6w9CeiUbObETzHtsCBQT1k7taU3SOZYwU8N7LU73JEwpnnT7xUvZ20lCcM4Jnt/mmP5qhyoxzcmXPW/n/pGeJI4QyfSC5KWF7XeDE5UrE8ux4b4R8wo5b64DMH2UXTOSy1aX3/hr/F00uw9JF56MQs0mh1g=
+	t=1718909788; cv=none; b=hsgnq2/2mJV0cqaaYZ9TzQ1kueEgEXIu6gYEXZuRhWA9/6z5EJv3bukVr+5ikDHfezcVmDAhaKW0JopPnFOokhjovQr4MfBzbpRzkqeMNbS1bn5HmB8ojfKQsjYrfRSudaTKEcjs5XfVyXMly7rIwGt9+/OVooqpg/zbK16g94Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718909739; c=relaxed/simple;
-	bh=H/R3HcK7gnjZXGR/Qc/zm33fza7/aCJqu6TNxANcPQk=;
+	s=arc-20240116; t=1718909788; c=relaxed/simple;
+	bh=mlHCB49wjiYDmiG66r5eq4RHLZiDy292FZHl+0eaxVk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mR01mBEx7osMWSv+AkX0FgbAXMgpzW+X+0y4SQBFVM6KScr1G7qSrnB93AemNS4gmtyxeou9mQPROFYq0PEfWYzrhVS/5Nnhd+xdofgmzdKaoXOyMp8MNtt4Yt89JrD7AsEfDw8FOQH8g5o2LRIlFWfX7GvVvF0fYxFvV1s8R6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0EVECT2X; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-24cbb884377so714466fac.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:55:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718909736; x=1719514536; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H/R3HcK7gnjZXGR/Qc/zm33fza7/aCJqu6TNxANcPQk=;
-        b=0EVECT2XaJC9U234mXYaAVyuzikCIduHjCVWW2HvSwy3pfchbhwSxiC+BvSCogJabr
-         Y/C1AhrZws67l4vIowRww6QEPCb1JnZoXMICAmLhcEARdwK1RqAtxupOd2ecM+iODfQ3
-         mV4Dv+4PmYJuqGIBvwKghS1cmWx2wgx2bW6tswkoQGZbcwVuDxKb2MNKpgrYOGEibVTK
-         qpxogE0VT/T9oEbbbsAfz7oQNww/ou8AEb+rVBO8p2ZbOijpC2czWW9YsLlONnLtO+WO
-         zlF0MsVkTg3U+f/RJ1Y7M9xUMvRA/yu4GAXGZqD+CQQjFz7vXTcatctRGmf3r5heyt1M
-         mmTA==
+	 In-Reply-To:Content-Type; b=jsQfG+tSgnh04nUocqL+sJ6J5lYetVOaXsYXaJLjqOQbrKKLKE02l06kTgi+byAzxgEI4118tRLu0NLZLSwfTNg2sp4agfrB81LfVZnKcT+OgHszkXR92A1nRVC6IcYigrg5FRtuYUYtDZ/aGI4Mt2T4dNNRDwrq76KNR6Wh7Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IWRNN+qR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718909785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tz3vhDYzgJOmnxmN0lX0v+RBCIFLvwwwoFW9h+9HPc8=;
+	b=IWRNN+qRqCBbi1q1ZP8pD4+cJHgeWkNeqBB4uxnr6BDCmnXg4gpsvWhs52G3ZYdxeOU2bo
+	aEPX3kNdfGXsLj7LDTkuLS3bgZ18TO/bdPSCasUMIErvrEKxfURTzjehL6+kVkgtLghtuz
+	/RQRPODjiR2DTwu3P5SSh8lw9A2+5Hw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-654-NC3A1dYkPM6ryJ6uD6iQPA-1; Thu, 20 Jun 2024 14:56:24 -0400
+X-MC-Unique: NC3A1dYkPM6ryJ6uD6iQPA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-421292df2adso9707015e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:56:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718909736; x=1719514536;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/R3HcK7gnjZXGR/Qc/zm33fza7/aCJqu6TNxANcPQk=;
-        b=YfSVSNd0+duv0OoIzHzkm2eB4argVIy6RSkycN0oQcha/Wt5q9qiZFDK+axo0kWuL6
-         kEs8NRSkRngJxgGsmG8U7w53I4DStRwyEy+/NCYEbHber0AbOGonU+vT5t827VSMronw
-         I0gM1+fM09POMg9dKhcuQXYyKUWl+6tdr0neiv5j1apgAimyyv9KM1PGwdh1yZGUDrt/
-         rHVX5y3T5ZpNIUHHXqri6yLPDTCbBR3hbgo+oba0W2w92ZcTs6/19f2PoMiyH1GjiWRY
-         cAZgyctwCMvtsiaM+9jtRHvhpdP5POKCYN5Nl+zPAdsLisf/GjvRKBe3pboXjuxzh61b
-         rzDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUivp/kwQt4tBZZc75tjdIj9jDLyTGh8GewIgQz2w3AWBfOVtWyZ/rlYDGUCEMagzuhG/ndvLsfAdhVeIfa0ftGMmQ1t65cBNdCQt2N
-X-Gm-Message-State: AOJu0YzSX9DknsXiPIutE9mMsf1gWAlkgGVIT+wvyHQ1/ScXWZkIWxfM
-	ivftNh24o2j5Cv2CzQBnVQe66HJSllBKcMtIl4GUOtVvkbOeEYcR6s/EPWJw2Pw=
-X-Google-Smtp-Source: AGHT+IEjbLNYWFvxUGbprjlhgt3Dx7QgrbGK7vK6OHqcSZukBBTza7iDnYbe14RaF0wwGAFzzqN4tA==
-X-Received: by 2002:a05:6871:592:b0:24f:ef6b:353e with SMTP id 586e51a60fabf-25c94d106f7mr7009622fac.36.1718909735864;
-        Thu, 20 Jun 2024 11:55:35 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25cd49d9a2bsm7018fac.33.2024.06.20.11.55.35
+        d=1e100.net; s=20230601; t=1718909783; x=1719514583;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tz3vhDYzgJOmnxmN0lX0v+RBCIFLvwwwoFW9h+9HPc8=;
+        b=Zb33vgGedVSicv+5TVlOzYQmy9qHkU8Cr6YLKnMJnk6T0e5lSuEtZOxLH3bg7YWkB6
+         RshPiTDTfmiq8NYAJxZe37Fs6COKzqF2wMgZyVZDvhUsnEQRuOcCgE8kR6SNe75tN2cn
+         wxOMhAMNS516z0w03d41FJDpf1D181kmnRHvllWNqL1r75hqxtaCriq9rxYQWfI6zVCj
+         gMvRPxYtiG4l4zEJzA38uUJgYUvUb7HgdLQ8TzBDlemuhQUYEZ7QaIM3IJUobbpl/I5C
+         DV4Yu2js1e6gruTNC533T7qHdG/53c+v2jwLX+rXqJF+0Ve5RdJ2RAozcGGVV2+mK2+R
+         jmog==
+X-Forwarded-Encrypted: i=1; AJvYcCX5HBiuyU/PD2ZeUjPkSnamVu9lyDvztL/6jp6tBFv7IKojUpeGY2sD3kWIfSN2QnyjW4+YtABQcbRXJnJOqZ1Tb+5kYufhBzkBKap9
+X-Gm-Message-State: AOJu0YyrIiIxR9FpoR/xkJhh0eK8Iit1TiM8+XCtM99Q7nVinlUfgSNz
+	lc4jjoNb4mkf9Usa+NCkSlL1z1I9xyeZVB9UmWu4Pr1JUlU/fTEsHzGL7iLabg4lcNFsjIcfKwb
+	vgaKpdXEzm1FZ09DMu2GYny+Wb/A65Ow2wDFgpIvSRWtqTDdoaNQRN53YyC16dx2vLBCidA==
+X-Received: by 2002:a05:600c:4289:b0:421:7b9d:5b9b with SMTP id 5b1f17b1804b1-424751748fdmr50278885e9.15.1718909783095;
+        Thu, 20 Jun 2024 11:56:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFjso4hlVy3KoUmIxVMVFm96hTQv/HmeZ6h5U+zSPT2UjiSaNyoYWu+ldHVekZrfWw9porWrA==
+X-Received: by 2002:a05:600c:4289:b0:421:7b9d:5b9b with SMTP id 5b1f17b1804b1-424751748fdmr50278595e9.15.1718909782581;
+        Thu, 20 Jun 2024 11:56:22 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c719:5b00:61af:900f:3aef:3af3? (p200300cbc7195b0061af900f3aef3af3.dip0.t-ipconnect.de. [2003:cb:c719:5b00:61af:900f:3aef:3af3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0b63b5sm36684105e9.7.2024.06.20.11.56.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 11:55:35 -0700 (PDT)
-Message-ID: <bbdd9716-3144-41e6-9558-7fb147cb0774@baylibre.com>
-Date: Thu, 20 Jun 2024 13:55:34 -0500
+        Thu, 20 Jun 2024 11:56:22 -0700 (PDT)
+Message-ID: <bf8e96be-c6e7-40c9-a914-cd022d1fd056@redhat.com>
+Date: Thu, 20 Jun 2024 20:56:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,82 +82,189 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI protocol
- with MOSI idle configuration
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
- lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- nuno.sa@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1718749981.git.marcelo.schmitt@analog.com>
- <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
- <63db9349-f453-4a5b-aa09-d1857ddd8b03@baylibre.com>
- <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
- <e7a2438a-f6a3-439e-8058-937248dd5b3f@baylibre.com>
- <ZnRG9wgY3WIaYFyQ@debian-BULLSEYE-live-builder-AMD64>
- <08c09a34-af59-4387-8db9-594f30f85b7a@baylibre.com>
- <ZnRzIb-cD_oOFkg-@debian-BULLSEYE-live-builder-AMD64>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+To: Sean Christopherson <seanjc@google.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Fuad Tabba <tabba@google.com>,
+ Christoph Hellwig <hch@infradead.org>, John Hubbard <jhubbard@nvidia.com>,
+ Elliot Berman <quic_eberman@quicinc.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, maz@kernel.org, kvm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ pbonzini@redhat.com
+References: <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com>
+ <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+ <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
+ <20240619115135.GE2494510@nvidia.com> <ZnOsAEV3GycCcqSX@infradead.org>
+ <CA+EHjTxaCxibvGOMPk9Oj5TfQV3J3ZLwXk83oVHuwf8H0Q47sA@mail.gmail.com>
+ <20240620135540.GG2494510@nvidia.com>
+ <6d7b180a-9f80-43a4-a4cc-fd79a45d7571@redhat.com>
+ <20240620142956.GI2494510@nvidia.com>
+ <385a5692-ffc8-455e-b371-0449b828b637@redhat.com>
+ <ZnRTDUqLQ4XBRykl@google.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <ZnRzIb-cD_oOFkg-@debian-BULLSEYE-live-builder-AMD64>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZnRTDUqLQ4XBRykl@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/20/24 1:21 PM, Marcelo Schmitt wrote:
-> On 06/20, David Lechner wrote:
->> On 6/20/24 10:12 AM, Marcelo Schmitt wrote:
->>> On 06/19, David Lechner wrote:
->>>> On 6/19/24 1:58 PM, Marcelo Schmitt wrote:
->>>>> On 06/19, David Lechner wrote:
->>>>>> On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
->>>>>>
->>>>>>
->>>>
->>>> ...
->>>>
-
-
->>> I don't know if that would actually work. I have not tested doing something like that.
->>> This also implies the controller will be able to start the next transfer right
->>> after the first preparatory transfer ends and it will meet that inter-transfer
->>> timing requirement (which I still didn't find documented anywhere).
->>> I'm not convinced that would be the best way to support those devices.
+On 20.06.24 18:04, Sean Christopherson wrote:
+> On Thu, Jun 20, 2024, David Hildenbrand wrote:
+>> On 20.06.24 16:29, Jason Gunthorpe wrote:
+>>> On Thu, Jun 20, 2024 at 04:01:08PM +0200, David Hildenbrand wrote:
+>>>> On 20.06.24 15:55, Jason Gunthorpe wrote:
+>>>>> On Thu, Jun 20, 2024 at 09:32:11AM +0100, Fuad Tabba wrote:
+>>>> Regarding huge pages: assume the huge page (e.g., 1 GiB hugetlb) is shared,
+>>>> now the VM requests to make one subpage private.
+>>>
+>>> I think the general CC model has the shared/private setup earlier on
+>>> the VM lifecycle with large runs of contiguous pages. It would only
+>>> become a problem if you intend to to high rate fine granual
+>>> shared/private switching. Which is why I am asking what the actual
+>>> "why" is here.
 >>
->> I did something like this in the ad7944 driver where we needed an up to
->> 500ns delay before asserting CS. On SPI controllers without a hardware
->> sleep or FIFO, the delay will of course be much longer. But the delay
->> is just a minimum delay, so longer doesn't hurt. It just affects the
->> max sample rate that can be reliably achieved.
+>> I am not an expert on that, but I remember that the way memory
+>> shared<->private conversion happens can heavily depend on the VM use case,
+> 
+> Yeah, I forget the details, but there are scenarios where the guest will share
+> (and unshare) memory at 4KiB (give or take) granularity, at runtime.  There's an
+> RFC[*] for making SWIOTLB operate at 2MiB is driven by the same underlying problems.
+> 
+> But even if Linux-as-a-guest were better behaved, we (the host) can't prevent the
+> guest from doing suboptimal conversions.  In practice, killing the guest or
+> refusing to convert memory isn't an option, i.e. we can't completely push the
+> problem into the guest
+
+Agreed!
+
+> 
+> https://lore.kernel.org/all/20240112055251.36101-1-vannapurve@google.com
+> 
+>> and that under pKVM we might see more frequent conversion, without even
+>> going to user space.
 >>
-> In ad7944_3wire_cs_mode_init_msg(), xfers[1] is prepared with spi_transfer.delay
-> which is the "delay to be introduced after this transfer before
-> (optionally) changing the chipselect status, then starting the next transfer or
-> completing this @spi_message." That should work for ad7944 because
-> it has ADC SDI physically connected to VIO in that setup.
-> For ad4000, we would want to set MOSI high (by writing 1s) such that MOSI
-> is high when CS is brought high (if I'm getting what you are suggesting).
-> But spi_transfer.delay is introduced after the transfer and before changing CS
-> so I think MOSI may return to low if the controller idles MOSI low.
-> I can't see how this would work for ad4000.
-> Other delays we have for spi_transfer (cs_change_delay, word_delay) don't seem
-> to help for this particular case either.
+>>>
+>>>> How to handle that without eventually running into a double
+>>>> memory-allocation? (in the worst case, allocating a 1GiB huge page
+>>>> for shared and for private memory).
+>>>
+>>> I expect you'd take the linear range of 1G of PFNs and fragment it
+>>> into three ranges private/shared/private that span the same 1G.
+>>>
+>>> When you construct a page table (ie a S2) that holds these three
+>>> ranges and has permission to access all the memory you want the page
+>>> table to automatically join them back together into 1GB entry.
+>>>
+>>> When you construct a page table that has only access to the shared,
+>>> then you'd only install the shared hole at its natural best size.
+>>>
+>>> So, I think there are two challenges - how to build an allocator and
+>>> uAPI to manage this sort of stuff so you can keep track of any
+>>> fractured pfns and ensure things remain in physical order.
+>>>
+>>> Then how to re-consolidate this for the KVM side of the world.
+>>
+>> Exactly!
+>>
+>>>
+>>> guest_memfd, or something like it, is just really a good answer. You
+>>> have it obtain the huge folio, and keep track on its own which sub
+>>> pages can be mapped to a VMA because they are shared. KVM will obtain
+>>> the PFNs directly from the fd and KVM will not see the shared
+>>> holes. This means your S2's can be trivially constructed correctly.
+>>>
+>>> No need to double allocate..
+>>
+>> Yes, that's why my thinking so far was:
+>>
+>> Let guest_memfd (or something like that) consume huge pages (somehow, let it
+>> access the hugetlb reserves). Preallocate that memory once, as the VM starts
+>> up: just like we do with hugetlb in VMs.
+>>
+>> Let KVM track which parts are shared/private, and if required, let it map
+>> only the shared parts to user space. KVM has all information to make these
+>> decisions.
+>>
+>> If we could disallow pinning any shared pages, that would make life a lot
+>> easier, but I think there were reasons for why we might require it. To
+>> convert shared->private, simply unmap that folio (only the shared parts
+>> could possibly be mapped) from all user page tables.
+>>
+>> Of course, there might be alternatives, and I'll be happy to learn about
+>> them. The allcoator part would be fairly easy, and the uAPI part would
+>> similarly be comparably easy. So far the theory :)
+>>
+>>>
+>>> I'm kind of surprised the CC folks don't want the same thing for
+>>> exactly the same reason. It is much easier to recover the huge
+>>> mappings for the S2 in the presence of shared holes if you track it
+>>> this way. Even CC will have this problem, to some degree, too.
+>>
+>> Precisely! RH (and therefore, me) is primarily interested in existing
+>> guest_memfd users at this point ("CC"), and I don't see an easy way to get
+>> that running with huge pages in the existing model reasonably well ...
+> 
+> This is the general direction guest_memfd is headed, but getting there is easier
+> said than done.  E.g. as alluded to above, "simply unmap that folio" is quite
+> difficult, bordering on infeasible if the kernel is allowed to gup() shared
+> guest_memfd memory.
 
-I was actually referring to ad7944_4wire_mode_init_msg().
+Right. I think ways forward are the ones stated in my mail to Jason: 
+disallow long-term GUP or expose the huge page as unmovable small folios 
+to core-mm.
 
-In the case of ad4000, the SPI controller will be required to support the
-new SPI_MOSI_IDLE_HIGH flag. So at the beginning of the message, before any
-of the individual xfers, the controller driver will configure SCLK base on
-CPOL and MOSI based on SPI_MOSI_IDLE_HIGH. Then it will do whatever the
-xfers say.
+Maybe there are other alternatives, but it all feels like we want the MM 
+to track in granularity of small pages, but map it into the KVM/IOMMU 
+page tables in large pages.
 
-For most SPI controllers in Linux, this SCLK/MOSI config will happen in
-ctlr->prepare_message() which happens before xfers are processed in
-ctlr->transfer_one_message(). In the AXI SPI Engine, the SCLK/MOSI config
-is in a separate instruction that happens before anything else in the
-message.
+-- 
+Cheers,
 
-So if the first xfer is just a delay with no read/write, the delay will
-always happen after SCLK and MOSI are configured. We don't have to write
-1s because SPI_MOSI_IDLE_HIGH already does the right thing.
+David / dhildenb
+
 
