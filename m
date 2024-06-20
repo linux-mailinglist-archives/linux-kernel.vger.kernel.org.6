@@ -1,209 +1,231 @@
-Return-Path: <linux-kernel+bounces-222024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0C790FBC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:48:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B78890FBC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8ED1F225B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:48:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023B51F22AD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366B822086;
-	Thu, 20 Jun 2024 03:48:11 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75111EF1D;
+	Thu, 20 Jun 2024 03:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j0gwxpaj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB031EF1D;
-	Thu, 20 Jun 2024 03:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C0F2D05D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 03:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718855290; cv=none; b=BX4HS5/ynbQWPkf/FvD3VVLjnZeTUUZzk6+/sERbmQyyzHajggOuxd8jBdl2dTSi6b/dnAi6p8RET8yMjDbb8teXHuZbvAwiNlHYfZ/6fo6dm4RCyOQ8l5aHlG63ytxxoULm8tfpM/vswkd3du3bx8mVCx7CcP/khUuzaIt4HtA=
+	t=1718855417; cv=none; b=AtGHeKnw8NRZ06Ji7h4tBciKciNGSS0tDbw/Y0CVEeaI+Lu2jLQLwQiRXmKMcQV/bJVKy8UsCLuBDGhBAfIwOljd+lDtEu+lMr08Krx0rtJKD5AMpIOrSX+WvjwJtnAwk+Phai0XxYSYk/YDpWhU7DAdnBgAJcwFndF6bWAKNr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718855290; c=relaxed/simple;
-	bh=u++QIcknqBae1Tp5RFrY6Vww4ZcYFF8ag5okEarV/IY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gHHlljdPj6OgaHOpoUmnmY2ZjTk+Yaqe0fSbjyGwmFpCBGKgew5++/5TU/YLTuFisZJfw6aAcRuP7Ax6qNXt84W/lyhG2h32BBKdnKBzMN1cQdlkgew7YphfJrrlT0uvB5jfAx8P67QI/r3tIaxpnC1j/YfOSuPcgV6UdLkq4n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W4RCW52rKznWnC;
-	Thu, 20 Jun 2024 11:43:03 +0800 (CST)
-Received: from dggpemd100004.china.huawei.com (unknown [7.185.36.20])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3FF5618007A;
-	Thu, 20 Jun 2024 11:47:59 +0800 (CST)
-Received: from [10.67.109.211] (10.67.109.211) by
- dggpemd100004.china.huawei.com (7.185.36.20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 20 Jun 2024 11:47:58 +0800
-Message-ID: <98381dbf-f14e-4b6c-8c96-fb6b97ed46e1@huawei.com>
-Date: Thu, 20 Jun 2024 11:47:58 +0800
+	s=arc-20240116; t=1718855417; c=relaxed/simple;
+	bh=H894Zspz5UBEiWWh6fNUgt0nJIyEJlyCKc1nNqaMzBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nR7//aJ1fnj3lySwSo6Kqve6QcZhT2VmCULHyQcyOHvoP9cLtyiN+e6PVJ9lrNT+/ZT3fBFOmw5GirN2OvsaGKPwv/JiG509kOqZUM7e/8vQsJhPL49BM2oIlvKjh30G6Sjsui527OgIa5a7O5EeQZyRHyEAXfldrx14GB7iy7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j0gwxpaj; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718855416; x=1750391416;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=H894Zspz5UBEiWWh6fNUgt0nJIyEJlyCKc1nNqaMzBE=;
+  b=j0gwxpaj6wslfEhh15LCiFhWbYrHFQahdlCkyyeegeE7GMsRaN9ccs0E
+   XDo4IBHTWcP8KjYEl0lX4D2mnouXEk8nRQzpd0dNFaMre7ueRtIkOPIom
+   orYpgcCnoK38Bxh+GpPO0BxSwldsBohi44ePGm5xC+oKipcV7eeN4fFlI
+   TrTjSGJBV50y3PVOD5nS8O572VJPR0PPoEvcxyFfIo0SKPeZ57Uk7bHuZ
+   0TFpA7SGN8S0A7jqST54cluaHBj+pWHQU1XTC2WDF9wRuicjoGe801q3i
+   LABVeTld2TLnUACw7pY/jOJ8VQ0oCjb2L8vW0Znw0PIahe307XRmKnJqg
+   A==;
+X-CSE-ConnectionGUID: qPwnjDa9TnmEpQ7gtz9npA==
+X-CSE-MsgGUID: YI5Rw9EcRHu14B8lkIqmaw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="41216477"
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="41216477"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 20:50:15 -0700
+X-CSE-ConnectionGUID: lrLOjxd3QW6249qKp9k4yQ==
+X-CSE-MsgGUID: bJtd32KSSE2wJ/C3EDchJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="42221975"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 19 Jun 2024 20:50:13 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sK8oN-0007He-1B;
+	Thu, 20 Jun 2024 03:50:11 +0000
+Date: Thu, 20 Jun 2024 11:49:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [paulmck-rcu:dev.2024.06.18a 20/34]
+ kernel/time/clocksource.c:1167:36: error: use of undeclared identifier
+ 'CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US'
+Message-ID: <202406201149.s6KWE7XP-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] randomize_kstack: Remove non-functional per-arch entropy
- filtering
-Content-Language: en-US
-To: Kees Cook <kees@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-CC: Mark Rutland <mark.rutland@arm.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Heiko Carstens
-	<hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
-	<agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, "Gustavo A.
- R. Silva" <gustavoars@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Leonardo Bras <leobras@redhat.com>, Claudio Imbrenda
-	<imbrenda@linux.ibm.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	<linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-s390@vger.kernel.org>,
-	<linux-hardening@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-References: <20240619214711.work.953-kees@kernel.org>
-From: "liuyuntao (F)" <liuyuntao12@huawei.com>
-In-Reply-To: <20240619214711.work.953-kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemd100004.china.huawei.com (7.185.36.20)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.06.18a
+head:   f29bcafffef0ecc8a5d2cdc1bbef9a6889225263
+commit: 5800c05045dbfeb8c9e571c6b47e8d7dd0d0691d [20/34] clocksource: Take advantage of always-defined CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
+config: arm-randconfig-002-20240620 (https://download.01.org/0day-ci/archive/20240620/202406201149.s6KWE7XP-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 78ee473784e5ef6f0b19ce4cb111fb6e4d23c6b2)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240620/202406201149.s6KWE7XP-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406201149.s6KWE7XP-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> kernel/time/clocksource.c:1167:36: error: use of undeclared identifier 'CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US'
+    1167 |                 if (cs->uncertainty_margin < 2 * WATCHDOG_MAX_SKEW)
+         |                                                  ^
+   kernel/time/clocksource.c:137:28: note: expanded from macro 'WATCHDOG_MAX_SKEW'
+     137 | #define WATCHDOG_MAX_SKEW (MAX_SKEW_USEC * NSEC_PER_USEC)
+         |                            ^
+   kernel/time/clocksource.c:136:23: note: expanded from macro 'MAX_SKEW_USEC'
+     136 | #define MAX_SKEW_USEC   CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
+         |                         ^
+   kernel/time/clocksource.c:1168:33: error: use of undeclared identifier 'CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US'
+    1168 |                         cs->uncertainty_margin = 2 * WATCHDOG_MAX_SKEW;
+         |                                                      ^
+   kernel/time/clocksource.c:137:28: note: expanded from macro 'WATCHDOG_MAX_SKEW'
+     137 | #define WATCHDOG_MAX_SKEW (MAX_SKEW_USEC * NSEC_PER_USEC)
+         |                            ^
+   kernel/time/clocksource.c:136:23: note: expanded from macro 'MAX_SKEW_USEC'
+     136 | #define MAX_SKEW_USEC   CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
+         |                         ^
+   kernel/time/clocksource.c:1172:44: error: use of undeclared identifier 'CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US'
+    1172 |         WARN_ON_ONCE(cs->uncertainty_margin < 2 * WATCHDOG_MAX_SKEW);
+         |                                                   ^
+   kernel/time/clocksource.c:137:28: note: expanded from macro 'WATCHDOG_MAX_SKEW'
+     137 | #define WATCHDOG_MAX_SKEW (MAX_SKEW_USEC * NSEC_PER_USEC)
+         |                            ^
+   kernel/time/clocksource.c:136:23: note: expanded from macro 'MAX_SKEW_USEC'
+     136 | #define MAX_SKEW_USEC   CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
+         |                         ^
+   3 errors generated.
 
 
+vim +/CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US +1167 kernel/time/clocksource.c
 
-On 2024/6/20 5:47, Kees Cook wrote:
-> An unintended consequence of commit 9c573cd31343 ("randomize_kstack:
-> Improve entropy diffusion") was that the per-architecture entropy size
-> filtering reduced how many bits were being added to the mix, rather than
-> how many bits were being used during the offsetting. All architectures
-> fell back to the existing default of 0x3FF (10 bits), which will consume
-> at most 1KiB of stack space. It seems that this is working just fine,
-> so let's avoid the confusion and update everything to use the default.
->
+734efb467b31e5 John Stultz      2006-06-26  1107  
+d7e81c269db899 John Stultz      2010-05-07  1108  /**
+fba9e07208c0f9 John Stultz      2015-03-11  1109   * __clocksource_update_freq_scale - Used update clocksource with new freq
+b1b73d095084e7 Kusanagi Kouichi 2011-12-19  1110   * @cs:		clocksource to be registered
+d7e81c269db899 John Stultz      2010-05-07  1111   * @scale:	Scale factor multiplied against freq to get clocksource hz
+d7e81c269db899 John Stultz      2010-05-07  1112   * @freq:	clocksource frequency (cycles per second) divided by scale
+d7e81c269db899 John Stultz      2010-05-07  1113   *
+852db46d55e85b John Stultz      2010-07-13  1114   * This should only be called from the clocksource->enable() method.
+d7e81c269db899 John Stultz      2010-05-07  1115   *
+d7e81c269db899 John Stultz      2010-05-07  1116   * This *SHOULD NOT* be called directly! Please use the
+fba9e07208c0f9 John Stultz      2015-03-11  1117   * __clocksource_update_freq_hz() or __clocksource_update_freq_khz() helper
+fba9e07208c0f9 John Stultz      2015-03-11  1118   * functions.
+d7e81c269db899 John Stultz      2010-05-07  1119   */
+fba9e07208c0f9 John Stultz      2015-03-11  1120  void __clocksource_update_freq_scale(struct clocksource *cs, u32 scale, u32 freq)
+d7e81c269db899 John Stultz      2010-05-07  1121  {
+c0e299b1a91cbd Thomas Gleixner  2011-05-20  1122  	u64 sec;
+f8935983f11050 John Stultz      2015-03-11  1123  
+f8935983f11050 John Stultz      2015-03-11  1124  	/*
+f8935983f11050 John Stultz      2015-03-11  1125  	 * Default clocksources are *special* and self-define their mult/shift.
+f8935983f11050 John Stultz      2015-03-11  1126  	 * But, you're not special, so you should specify a freq value.
+f8935983f11050 John Stultz      2015-03-11  1127  	 */
+f8935983f11050 John Stultz      2015-03-11  1128  	if (freq) {
+d7e81c269db899 John Stultz      2010-05-07  1129  		/*
+724ed53e8ac2c5 Thomas Gleixner  2011-05-18  1130  		 * Calc the maximum number of seconds which we can run before
+f8935983f11050 John Stultz      2015-03-11  1131  		 * wrapping around. For clocksources which have a mask > 32-bit
+724ed53e8ac2c5 Thomas Gleixner  2011-05-18  1132  		 * we need to limit the max sleep time to have a good
+724ed53e8ac2c5 Thomas Gleixner  2011-05-18  1133  		 * conversion precision. 10 minutes is still a reasonable
+724ed53e8ac2c5 Thomas Gleixner  2011-05-18  1134  		 * amount. That results in a shift value of 24 for a
+f8935983f11050 John Stultz      2015-03-11  1135  		 * clocksource with mask >= 40-bit and f >= 4GHz. That maps to
+362fde0410377e John Stultz      2015-03-11  1136  		 * ~ 0.06ppm granularity for NTP.
+d7e81c269db899 John Stultz      2010-05-07  1137  		 */
+362fde0410377e John Stultz      2015-03-11  1138  		sec = cs->mask;
+724ed53e8ac2c5 Thomas Gleixner  2011-05-18  1139  		do_div(sec, freq);
+724ed53e8ac2c5 Thomas Gleixner  2011-05-18  1140  		do_div(sec, scale);
+724ed53e8ac2c5 Thomas Gleixner  2011-05-18  1141  		if (!sec)
+724ed53e8ac2c5 Thomas Gleixner  2011-05-18  1142  			sec = 1;
+724ed53e8ac2c5 Thomas Gleixner  2011-05-18  1143  		else if (sec > 600 && cs->mask > UINT_MAX)
+724ed53e8ac2c5 Thomas Gleixner  2011-05-18  1144  			sec = 600;
+724ed53e8ac2c5 Thomas Gleixner  2011-05-18  1145  
+d7e81c269db899 John Stultz      2010-05-07  1146  		clocks_calc_mult_shift(&cs->mult, &cs->shift, freq,
+724ed53e8ac2c5 Thomas Gleixner  2011-05-18  1147  				       NSEC_PER_SEC / scale, sec * scale);
+f8935983f11050 John Stultz      2015-03-11  1148  	}
+2e27e793e280ff Paul E. McKenney 2021-05-27  1149  
+2e27e793e280ff Paul E. McKenney 2021-05-27  1150  	/*
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1151  	 * If the uncertainty margin is not specified, calculate it.  If
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1152  	 * both scale and freq are non-zero, calculate the clock period, but
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1153  	 * bound below at 2*WATCHDOG_MAX_SKEW, that is, 500ppm by default.
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1154  	 * However, if either of scale or freq is zero, be very conservative
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1155  	 * and take the tens-of-milliseconds WATCHDOG_THRESHOLD value
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1156  	 * for the uncertainty margin.  Allow stupidly small uncertainty
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1157  	 * margins to be specified by the caller for testing purposes,
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1158  	 * but warn to discourage production use of this capability.
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1159  	 *
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1160  	 * Bottom line:  The sum of the uncertainty margins of the
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1161  	 * watchdog clocksource and the clocksource under test will be at
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1162  	 * least 500ppm by default.  For more information, please see the
+ababe5f6bfbf3e Borislav Petkov  2024-06-12  1163  	 * comment preceding CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US above.
+2e27e793e280ff Paul E. McKenney 2021-05-27  1164  	 */
+2e27e793e280ff Paul E. McKenney 2021-05-27  1165  	if (scale && freq && !cs->uncertainty_margin) {
+2e27e793e280ff Paul E. McKenney 2021-05-27  1166  		cs->uncertainty_margin = NSEC_PER_SEC / (scale * freq);
+2e27e793e280ff Paul E. McKenney 2021-05-27 @1167  		if (cs->uncertainty_margin < 2 * WATCHDOG_MAX_SKEW)
+2e27e793e280ff Paul E. McKenney 2021-05-27  1168  			cs->uncertainty_margin = 2 * WATCHDOG_MAX_SKEW;
+2e27e793e280ff Paul E. McKenney 2021-05-27  1169  	} else if (!cs->uncertainty_margin) {
+2e27e793e280ff Paul E. McKenney 2021-05-27  1170  		cs->uncertainty_margin = WATCHDOG_THRESHOLD;
+2e27e793e280ff Paul E. McKenney 2021-05-27  1171  	}
+2e27e793e280ff Paul E. McKenney 2021-05-27  1172  	WARN_ON_ONCE(cs->uncertainty_margin < 2 * WATCHDOG_MAX_SKEW);
+2e27e793e280ff Paul E. McKenney 2021-05-27  1173  
+d65670a78cdbfa John Stultz      2011-10-31  1174  	/*
+362fde0410377e John Stultz      2015-03-11  1175  	 * Ensure clocksources that have large 'mult' values don't overflow
+362fde0410377e John Stultz      2015-03-11  1176  	 * when adjusted.
+d65670a78cdbfa John Stultz      2011-10-31  1177  	 */
+d65670a78cdbfa John Stultz      2011-10-31  1178  	cs->maxadj = clocksource_max_adjustment(cs);
+f8935983f11050 John Stultz      2015-03-11  1179  	while (freq && ((cs->mult + cs->maxadj < cs->mult)
+f8935983f11050 John Stultz      2015-03-11  1180  		|| (cs->mult - cs->maxadj > cs->mult))) {
+d65670a78cdbfa John Stultz      2011-10-31  1181  		cs->mult >>= 1;
+d65670a78cdbfa John Stultz      2011-10-31  1182  		cs->shift--;
+d65670a78cdbfa John Stultz      2011-10-31  1183  		cs->maxadj = clocksource_max_adjustment(cs);
+d65670a78cdbfa John Stultz      2011-10-31  1184  	}
+d65670a78cdbfa John Stultz      2011-10-31  1185  
+f8935983f11050 John Stultz      2015-03-11  1186  	/*
+f8935983f11050 John Stultz      2015-03-11  1187  	 * Only warn for *special* clocksources that self-define
+f8935983f11050 John Stultz      2015-03-11  1188  	 * their mult/shift values and don't specify a freq.
+f8935983f11050 John Stultz      2015-03-11  1189  	 */
+f8935983f11050 John Stultz      2015-03-11  1190  	WARN_ONCE(cs->mult + cs->maxadj < cs->mult,
+f8935983f11050 John Stultz      2015-03-11  1191  		"timekeeping: Clocksource %s might overflow on 11%% adjustment\n",
+f8935983f11050 John Stultz      2015-03-11  1192  		cs->name);
+f8935983f11050 John Stultz      2015-03-11  1193  
+fb82fe2fe85887 John Stultz      2015-03-11  1194  	clocksource_update_max_deferment(cs);
+8cc8c525ad4e7b John Stultz      2015-03-11  1195  
+45bbfe64ea564a Joe Perches      2015-05-25  1196  	pr_info("%s: mask: 0x%llx max_cycles: 0x%llx, max_idle_ns: %lld ns\n",
+8cc8c525ad4e7b John Stultz      2015-03-11  1197  		cs->name, cs->mask, cs->max_cycles, cs->max_idle_ns);
+852db46d55e85b John Stultz      2010-07-13  1198  }
+fba9e07208c0f9 John Stultz      2015-03-11  1199  EXPORT_SYMBOL_GPL(__clocksource_update_freq_scale);
+852db46d55e85b John Stultz      2010-07-13  1200  
 
-My original intent was indeed to do this, but I regret that not being 
-more explicit in the commit log..
+:::::: The code at line 1167 was first introduced by commit
+:::::: 2e27e793e280ff12cb5c202a1214c08b0d3a0f26 clocksource: Reduce clocksource-skew threshold
 
-Additionally, I've tested the stack entropy by applying the following 
-patch, the result was `Bits of stack entropy: 7` on arm64, too. It does 
-not seem to affect the entropy value, maybe removing it is OK, or there 
-may be some nuances of your intentions that I've overlooked.
+:::::: TO: Paul E. McKenney <paulmck@kernel.org>
+:::::: CC: Thomas Gleixner <tglx@linutronix.de>
 
---- a/include/linux/randomize_kstack.h
-+++ b/include/linux/randomize_kstack.h
-@@ -79,9 +79,7 @@ DECLARE_PER_CPU(u32, kstack_offset);
-  #define choose_random_kstack_offset(rand) do {                         \
-         if (static_branch_maybe(CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT, \
-                                 &randomize_kstack_offset)) {            \
--               u32 offset = raw_cpu_read(kstack_offset);               \
--               offset = ror32(offset, 5) ^ (rand);                     \
--               raw_cpu_write(kstack_offset, offset);                   \
-+               raw_cpu_write(kstack_offset, rand);                     \
-         }                                                               \
-  } while (0)
-  #else /* CONFIG_RANDOMIZE_KSTACK_OFFSET */
-
-> The prior intent of the per-architecture limits were:
-> 
->    arm64: capped at 0x1FF (9 bits), 5 bits effective
->    powerpc: uncapped (10 bits), 6 or 7 bits effective
->    riscv: uncapped (10 bits), 6 bits effective
->    x86: capped at 0xFF (8 bits), 5 (x86_64) or 6 (ia32) bits effective
->    s390: capped at 0xFF (8 bits), undocumented effective entropy
-> 
-> Current discussion has led to just dropping the original per-architecture
-> filters. The additional entropy appears to be safe for arm64, x86,
-> and s390. Quoting Arnd, "There is no point pretending that 15.75KB is
-> somehow safe to use while 15.00KB is not."
-> 
-> Co-developed-by: Yuntao Liu <liuyuntao12@huawei.com>
-> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
-> Fixes: 9c573cd31343 ("randomize_kstack: Improve entropy diffusion")
-> Link: https://lore.kernel.org/r/20240617133721.377540-1-liuyuntao12@huawei.com
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> ---
->   arch/arm64/kernel/syscall.c          | 16 +++++++---------
->   arch/s390/include/asm/entry-common.h |  2 +-
->   arch/x86/include/asm/entry-common.h  | 15 ++++++---------
->   3 files changed, 14 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
-> index ad198262b981..7230f6e20ab8 100644
-> --- a/arch/arm64/kernel/syscall.c
-> +++ b/arch/arm64/kernel/syscall.c
-> @@ -53,17 +53,15 @@ static void invoke_syscall(struct pt_regs *regs, unsigned int scno,
->   	syscall_set_return_value(current, regs, 0, ret);
->   
->   	/*
-> -	 * Ultimately, this value will get limited by KSTACK_OFFSET_MAX(),
-> -	 * but not enough for arm64 stack utilization comfort. To keep
-> -	 * reasonable stack head room, reduce the maximum offset to 9 bits.
-> +	 * This value will get limited by KSTACK_OFFSET_MAX(), which is 10
-> +	 * bits. The actual entropy will be further reduced by the compiler
-> +	 * when applying stack alignment constraints: the AAPCS mandates a
-> +	 * 16-byte aligned SP at function boundaries, which will remove the
-> +	 * 4 low bits from any entropy chosen here.
->   	 *
-> -	 * The actual entropy will be further reduced by the compiler when
-> -	 * applying stack alignment constraints: the AAPCS mandates a
-> -	 * 16-byte (i.e. 4-bit) aligned SP at function boundaries.
-> -	 *
-> -	 * The resulting 5 bits of entropy is seen in SP[8:4].
-> +	 * The resulting 6 bits of entropy is seen in SP[9:4].
->   	 */
-> -	choose_random_kstack_offset(get_random_u16() & 0x1FF);
-> +	choose_random_kstack_offset(get_random_u16());
->   }
->   
->   static inline bool has_syscall_work(unsigned long flags)
-> diff --git a/arch/s390/include/asm/entry-common.h b/arch/s390/include/asm/entry-common.h
-> index 7f5004065e8a..35555c944630 100644
-> --- a/arch/s390/include/asm/entry-common.h
-> +++ b/arch/s390/include/asm/entry-common.h
-> @@ -54,7 +54,7 @@ static __always_inline void arch_exit_to_user_mode(void)
->   static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
->   						  unsigned long ti_work)
->   {
-> -	choose_random_kstack_offset(get_tod_clock_fast() & 0xff);
-> +	choose_random_kstack_offset(get_tod_clock_fast());
->   }
->   
->   #define arch_exit_to_user_mode_prepare arch_exit_to_user_mode_prepare
-> diff --git a/arch/x86/include/asm/entry-common.h b/arch/x86/include/asm/entry-common.h
-> index 7e523bb3d2d3..fb2809b20b0a 100644
-> --- a/arch/x86/include/asm/entry-common.h
-> +++ b/arch/x86/include/asm/entry-common.h
-> @@ -73,19 +73,16 @@ static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
->   #endif
->   
->   	/*
-> -	 * Ultimately, this value will get limited by KSTACK_OFFSET_MAX(),
-> -	 * but not enough for x86 stack utilization comfort. To keep
-> -	 * reasonable stack head room, reduce the maximum offset to 8 bits.
-> -	 *
-> -	 * The actual entropy will be further reduced by the compiler when
-> -	 * applying stack alignment constraints (see cc_stack_align4/8 in
-> +	 * This value will get limited by KSTACK_OFFSET_MAX(), which is 10
-> +	 * bits. The actual entropy will be further reduced by the compiler
-> +	 * when applying stack alignment constraints (see cc_stack_align4/8 in
->   	 * arch/x86/Makefile), which will remove the 3 (x86_64) or 2 (ia32)
->   	 * low bits from any entropy chosen here.
->   	 *
-> -	 * Therefore, final stack offset entropy will be 5 (x86_64) or
-> -	 * 6 (ia32) bits.
-> +	 * Therefore, final stack offset entropy will be 7 (x86_64) or
-> +	 * 8 (ia32) bits.
->   	 */
-> -	choose_random_kstack_offset(rdtsc() & 0xFF);
-> +	choose_random_kstack_offset(rdtsc());
->   }
->   #define arch_exit_to_user_mode_prepare arch_exit_to_user_mode_prepare
->   
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
