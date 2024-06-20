@@ -1,404 +1,175 @@
-Return-Path: <linux-kernel+bounces-223682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648809116E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:34:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB509116E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C971C227EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:34:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4EC6B22389
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8628A14AD3F;
-	Thu, 20 Jun 2024 23:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A132514E2CC;
+	Thu, 20 Jun 2024 23:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FP2d6cSB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dQBRcETp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77801482ED
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220E7482ED;
+	Thu, 20 Jun 2024 23:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718926470; cv=none; b=BBkb1eErOjiowlzAWCZCabe6js0XbBafiEq0rsZNM4Der4kSoqXNYeMPCyeFQCeWEOykO8CXBatNdkf0KAlMGW0mto6P+9gbPimvjfmAfWtm+C5Ti9lAWFKMZUGmDT9ECQEe/0wwXGhclfC5iOviGT+c7/sQnV7TkfZE8rs9MHk=
+	t=1718926649; cv=none; b=OCIrMvdrebK5+OI1LLyNVuQqs+iQ3VmySdUtvFoqPoXICXZ2iz6H6Opg/OVWJdCEmoT9/c2vMt8ko2bpM6AuhuMsOXW2ETYPZORaV2Mz9dlgajnPorCavFBZ0ijoHH4Rw7jGd7M4OYZipJT7WEzQTNeLbduHp9/pkOkGLdaYVPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718926470; c=relaxed/simple;
-	bh=h+moqWorq8WvFStIQy5VbHeBGz2hkRvmvutoj2g9ghU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QSeP8HbbhmNb2aI6zvKcws7ZpsFYN8Em7+xwkLxVOFgHhDw/KmUloR4upsHn0DmVeXvM37c5BBLscmLBUt+IhHEl5DBUonXY65efq/wC1xXj1rcH/ZPMbN7VpkBYtsmIkQfXTrP9pbLkEB3+EmZpKRvulliKh2fCkulXtj/UDR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FP2d6cSB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E12EC4AF10
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718926470;
-	bh=h+moqWorq8WvFStIQy5VbHeBGz2hkRvmvutoj2g9ghU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FP2d6cSBCNJ2FYG31gdCxnZm8ZYdLIF6LM+Vewbqpac1vi8/lk+SB/ZQDd6gVqUO9
-	 fJtYZAPRH9KKKe1qckyUI30J8O77/CaafAm5CFL/iG/Gt0zyGkqis0XaHpOVTvl/0H
-	 VF5oX9UALiYzom/gTeo9+Jebqf0Aw1ZFm1AdOi1QmlhzJxMRC954FfMshLrMIO3uWJ
-	 FY5S9fB6N9c/bNbw1us+qlMKLFkZgRfvxkeKFQF/TSIHE/ZDMxZbdmK7vN9jo77UTI
-	 XYgVuM0sb/aCI0l/rLnPoGBWyqCm0W/aIYHm2XxQpJa2XL9hxgXMCeaRDD/E0CtZoT
-	 Zjut9ESCHxqkA==
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3762ef0c451so700205ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:34:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX9R27c/zdeVILvGg4I39VEdmvIESmFE1Pu5m6DOThsknio0T42xobYBRUbZUbiBJ/H8M1kanwvjT1QmrHMCMg2uRkxy6MuBp+P87Ja
-X-Gm-Message-State: AOJu0YwQQDDLlUoBKnOi0hs91CSqWg0e9c0NoufWSal/oNC5Vv88QVHY
-	Jcgis3r1VdhEazQv6imU+4Bu5tw6HaNn+d3czABHRERk02GVw/ow5U5mbvAI+zdY1T6JvqBOuwO
-	2WIbI6jqu8S7LBLUW8WU+QnxeURfavJa3oEzW
-X-Google-Smtp-Source: AGHT+IHkE6H7TRF7ZbXgZtSv58+TsNMbdTF2zyStl9uhMjCL1hM2Me4FJ+Y4JrGQFubTLf9mxa3mCd4FS8rNzUWdgTE=
-X-Received: by 2002:a92:ca0c:0:b0:375:a8a8:8e7 with SMTP id
- e9e14a558f8ab-3761d6b359cmr75324335ab.8.1718926469153; Thu, 20 Jun 2024
- 16:34:29 -0700 (PDT)
+	s=arc-20240116; t=1718926649; c=relaxed/simple;
+	bh=ahjfBUeLfeo1fxhXjHk6wp/gQtPJzH+k5Vz/WaHQqDI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JBBm5/RtQnn67muElPHrKBEVusESyG61WxrG0xZkIJwdvtScgj7iRYz7tiFnDz4hVK36aYUJSEq6O5cf2CSaZ8HFVUhy13wrt4uYcrA/6JqETNXaBcrCC+ycx425yuGAW1Uk6K83hNzyHfCy6Q55keUZ5ZO5sFABDZxHaS4zQv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dQBRcETp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KHC6IK011849;
+	Thu, 20 Jun 2024 23:37:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=3TZij88SGIKu2ouzX+gUyKRo
+	FlEWEYwTyShDW092wco=; b=dQBRcETpCCEqrmLHQgvaggunSSZtkCtm1P6GWcTJ
+	JnomayxfAacDeLm/qhaBnhUwbWpSR5IDG7hOQouwS/oxrXNYiM7GT/Rku1xlUfRq
+	v5SGp6S6N34Aqu5pO7lm/B1m4KdRC90BgKvpVhteyO2p+ltc8H54yANmEdOnlp4Y
+	ZecWkKvDh8Fq/BT9xpx6qGPJOOolHHf44ZeKfkUtgHJYTmUu02p4vUsvdDbCyrcC
+	/1QjrAKPPf6C3+vC8RcIiLnoXefNIrQu1joz0oqJQGF/PCfuyWLxbc9hIRp9w5oc
+	FFMjJly+Ob+VHQivRn9axYxWYxBjTJKr2NuJsSK/+KjQJw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrkvgw5w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 23:37:12 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KNbAx3016285
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 23:37:11 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 20 Jun 2024 16:37:10 -0700
+Date: Thu, 20 Jun 2024 16:37:09 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Sudeep Holla <sudeep.holla@arm.com>, Sebastian Reichel <sre@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Andy Yan
+	<andy.yan@rock-chips.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        "Mark
+ Rutland" <mark.rutland@arm.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Shivendra Pratap <quic_spratap@quicinc.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
+Message-ID: <20240620162547309-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
+ <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
+ <20240619135143.kr2tx4ynxayc5v3a@bogus>
+ <20240619080933071-0700.eberman@hu-eberman-lv.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620002648.75204-1-21cnbao@gmail.com>
-In-Reply-To: <20240620002648.75204-1-21cnbao@gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 20 Jun 2024 16:34:16 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuOserGkULxghiMFP=UhC_DdVaYVXZhqu6RY=SHT3mszpQ@mail.gmail.com>
-Message-ID: <CAF8kJuOserGkULxghiMFP=UhC_DdVaYVXZhqu6RY=SHT3mszpQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
- entry allocation for thp_swapout
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, shuah@kernel.org, linux-mm@kvack.org, 
-	ryan.roberts@arm.com, david@redhat.com, hughd@google.com, 
-	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
-	ying.huang@intel.com, linux-kselftest@vger.kernel.org, 
-	Barry Song <v-songbaohua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240619080933071-0700.eberman@hu-eberman-lv.qualcomm.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FPdfh-nyfdNH2V3YNMdyeKVIT0F722rp
+X-Proofpoint-ORIG-GUID: FPdfh-nyfdNH2V3YNMdyeKVIT0F722rp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_10,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 phishscore=0 mlxscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=999 priorityscore=1501 suspectscore=0 impostorscore=0
+ spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406200172
 
-Hi Barry,
+Hi Sudeep and Sebastian,
 
-Thanks for the wonderful test program.
+On Wed, Jun 19, 2024 at 08:28:06AM -0700, Elliot Berman wrote:
+> On Wed, Jun 19, 2024 at 02:51:43PM +0100, Sudeep Holla wrote:
+> > On Mon, Jun 17, 2024 at 10:18:09AM -0700, Elliot Berman wrote:
+> > > SoC vendors have different types of resets and are controlled through
+> > > various registers. For instance, Qualcomm chipsets can reboot to a
+> > > "download mode" that allows a RAM dump to be collected. Another example
+> > > is they also support writing a cookie that can be read by bootloader
+> > > during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
+> > > vendor reset types to be implemented without requiring drivers for every
+> > > register/cookie.
+> > > 
+> > > Add support in PSCI to statically map reboot mode commands from
+> > > userspace to a vendor reset and cookie value using the device tree.
+> > > 
+> > > A separate initcall is needed to parse the devicetree, instead of using
+> > > psci_dt_init because mm isn't sufficiently set up to allocate memory.
+> > > 
+> > > Reboot mode framework is close but doesn't quite fit with the
+> > > design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
+> > > be solved but doesn't seem reasonable in sum:
+> > >  1. reboot mode registers against the reboot_notifier_list, which is too
+> > >     early to call SYSTEM_RESET2. PSCI would need to remember the reset
+> > >     type from the reboot-mode framework callback and use it
+> > >     psci_sys_reset.
+> > >  2. reboot mode assumes only one cookie/parameter is described in the
+> > >     device tree. SYSTEM_RESET2 uses 2: one for the type and one for
+> > >     cookie.
+> > >  3. psci cpuidle driver already registers a driver against the
+> > >     arm,psci-1.0 compatible. Refactoring would be needed to have both a
+> > >     cpuidle and reboot-mode driver.
+> > >
+> > 
+> > I need to think through it but when you first introduced the generic
+> > Documentation/devicetree/bindings/power/reset/reboot-mode.yaml bindings
+> > I also looked at drivers/power/reset/reboot-mode.c
+> > 
+> > I assumed this extension to that binding would reuse the same and
+> > PSCI would just do reboot_mode_register(). I didn't expect to see these
+> > changes. I might have missing something but since the bindings is still
+> > quite generic with additional cells that act as additional cookie for
+> > reboot call, I still think that should be possible.
+> > 
+> > What am I missing here then ?
+> > 
+> 
+> Right, if that was only thing to "solve" to make it easy to use
+> reboot-mode framework, I agree we should update reboot mode framework to
+> work with the additional cells. There are a few other issues I mention
+> above which, when combined, make me feel that PSCI is different enough
+> from how reboot mode framework works that we shouldn't try to make PSCI
+> work with the framework. Issues #1 and #2 are pretty easy to solve
+> (whether they should be solved is different); I'm not sure a good
+> approach to issue #3.
+> 
 
-I have also used other swap test programs as well. A lot of those
-tests are harder to setup up and run.
+Does the reasoning I mention in the commit text make sense why PSCI should
+avoid using the reboot-mode.c framework?
 
-This test is very quick and simple to run. It can test some hard to
-hit corner cases for me.
+Thanks,
+Elliot
 
-I am able to reproduce the warning and the kernel oops with this test progr=
-am.
-So for me, I am using it as a functional test that my allocator did
-not produce a crash.
-In that regard, it definitely provides value as a function test.
-
-Having a fall percentage output is fine, as long as we don't fail the
-test based on performance number.
-
-I am also fine with moving the test to under tools/mm etc. I see good
-value to include the test in the tree one way or the other.
-
-
-On Wed, Jun 19, 2024 at 5:27=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> From: Barry Song <v-songbaohua@oppo.com>
->
-> Both Ryan and Chris have been utilizing the small test program to aid
-> in debugging and identifying issues with swap entry allocation. While
-> a real or intricate workload might be more suitable for assessing the
-> correctness and effectiveness of the swap allocation policy, a small
-> test program presents a simpler means of understanding the problem and
-> initially verifying the improvements being made.
->
-> Let's endeavor to integrate it into the self-test suite. Although it
-> presently only accommodates 64KB and 4KB, I'm optimistic that we can
-> expand its capabilities to support multiple sizes and simulate more
-> complex systems in the future as required.
->
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> ---
->  tools/testing/selftests/mm/Makefile           |   1 +
->  .../selftests/mm/thp_swap_allocator_test.c    | 192 ++++++++++++++++++
->  2 files changed, 193 insertions(+)
-
-Assume we want to keep it as selftest.
-You did not add your test in run_vmtests.sh.
-
-You might need something like this:
-
---- a/tools/testing/selftests/mm/run_vmtests.sh
-+++ b/tools/testing/selftests/mm/run_vmtests.sh
-@@ -418,6 +418,14 @@ CATEGORY=3D"thp" run_test ./khugepaged -s 2
-
- CATEGORY=3D"thp" run_test ./transhuge-stress -d 20
-
-+# config and swapon zram here.
-+
-+CATEGORY=3D"thp" run_test ./thp_swap_allocator_test
-+
-+CATEGORY=3D"thp" run_test ./thp_swap_allocator_test -s
-+
-+# swapoff zram here.
-+
- # Try to create XFS if not provided
- if [ -z "${SPLIT_HUGE_PAGE_TEST_XFS_PATH}" ]; then
-     if test_selected "thp"; then
-
-
-You can use the following XFS test as an example of how to setup the zram s=
-wap.
-XFS uses file system mount, you use swapon.
-
-Also you need to update the usage string in run_vmtests.sh.
-
-BTW, here is how I invoke the test runs:
-
-kselftest_override_timeout=3D500 make -C tools/testing/selftests
-TARGETS=3Dmm run_tests
-
-The time out is not for this test, it is for some other test before
-the thp_swap which exit run_vmtests.sh before hitting thp_swap. I am
-running in a VM so it is slower than native machine.
-
->  create mode 100644 tools/testing/selftests/mm/thp_swap_allocator_test.c
->
-> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftest=
-s/mm/Makefile
-> index e1aa09ddaa3d..64164ad66835 100644
-> --- a/tools/testing/selftests/mm/Makefile
-> +++ b/tools/testing/selftests/mm/Makefile
-> @@ -65,6 +65,7 @@ TEST_GEN_FILES +=3D mseal_test
->  TEST_GEN_FILES +=3D seal_elf
->  TEST_GEN_FILES +=3D on-fault-limit
->  TEST_GEN_FILES +=3D pagemap_ioctl
-> +TEST_GEN_FILES +=3D thp_swap_allocator_test
->  TEST_GEN_FILES +=3D thuge-gen
->  TEST_GEN_FILES +=3D transhuge-stress
->  TEST_GEN_FILES +=3D uffd-stress
-> diff --git a/tools/testing/selftests/mm/thp_swap_allocator_test.c b/tools=
-/testing/selftests/mm/thp_swap_allocator_test.c
-> new file mode 100644
-> index 000000000000..4443a906d0f8
-> --- /dev/null
-> +++ b/tools/testing/selftests/mm/thp_swap_allocator_test.c
-> @@ -0,0 +1,192 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * thp_swap_allocator_test
-> + *
-> + * The purpose of this test program is helping check if THP swpout
-> + * can correctly get swap slots to swap out as a whole instead of
-> + * being split. It randomly releases swap entries through madvise
-> + * DONTNEED and do swapout on two memory areas: a memory area for
-> + * 64KB THP and the other area for small folios. The second memory
-> + * can be enabled by "-s".
-> + * Before running the program, we need to setup a zRAM or similar
-> + * swap device by:
-> + *  echo lzo > /sys/block/zram0/comp_algorithm
-> + *  echo 64M > /sys/block/zram0/disksize
-> + *  echo never > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/en=
-abled
-> + *  echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/ena=
-bled
-> + *  mkswap /dev/zram0
-> + *  swapon /dev/zram0
-
-This setup needs to go into run_vmtest.sh as well.
-
-Also tear it down after the test.
-
-Chris
-
-> + * The expected result should be 0% anon swpout fallback ratio w/ or
-> + * w/o "-s".
-> + *
-> + * Author(s): Barry Song <v-songbaohua@oppo.com>
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <unistd.h>
-> +#include <string.h>
-> +#include <sys/mman.h>
-> +#include <errno.h>
-> +#include <time.h>
-> +
-> +#define MEMSIZE_MTHP (60 * 1024 * 1024)
-> +#define MEMSIZE_SMALLFOLIO (1 * 1024 * 1024)
-> +#define ALIGNMENT_MTHP (64 * 1024)
-> +#define ALIGNMENT_SMALLFOLIO (4 * 1024)
-> +#define TOTAL_DONTNEED_MTHP (16 * 1024 * 1024)
-> +#define TOTAL_DONTNEED_SMALLFOLIO (768 * 1024)
-> +#define MTHP_FOLIO_SIZE (64 * 1024)
-> +
-> +#define SWPOUT_PATH \
-> +       "/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout"
-> +#define SWPOUT_FALLBACK_PATH \
-> +       "/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout_=
-fallback"
-> +
-> +static void *aligned_alloc_mem(size_t size, size_t alignment)
-> +{
-> +       void *mem =3D NULL;
-> +
-> +       if (posix_memalign(&mem, alignment, size) !=3D 0) {
-> +               perror("posix_memalign");
-> +               return NULL;
-> +       }
-> +       return mem;
-> +}
-> +
-> +static void random_madvise_dontneed(void *mem, size_t mem_size,
-> +               size_t align_size, size_t total_dontneed_size)
-> +{
-> +       size_t num_pages =3D total_dontneed_size / align_size;
-> +       size_t i;
-> +       size_t offset;
-> +       void *addr;
-> +
-> +       for (i =3D 0; i < num_pages; ++i) {
-> +               offset =3D (rand() % (mem_size / align_size)) * align_siz=
-e;
-> +               addr =3D (char *)mem + offset;
-> +               if (madvise(addr, align_size, MADV_DONTNEED) !=3D 0)
-> +                       perror("madvise dontneed");
-> +
-> +               memset(addr, 0x11, align_size);
-> +       }
-> +}
-> +
-> +static unsigned long read_stat(const char *path)
-> +{
-> +       FILE *file;
-> +       unsigned long value;
-> +
-> +       file =3D fopen(path, "r");
-> +       if (!file) {
-> +               perror("fopen");
-> +               return 0;
-> +       }
-> +
-> +       if (fscanf(file, "%lu", &value) !=3D 1) {
-> +               perror("fscanf");
-> +               fclose(file);
-> +               return 0;
-> +       }
-> +
-> +       fclose(file);
-> +       return value;
-> +}
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +       int use_small_folio =3D 0;
-> +       int i;
-> +       void *mem1 =3D aligned_alloc_mem(MEMSIZE_MTHP, ALIGNMENT_MTHP);
-> +       void *mem2 =3D NULL;
-> +
-> +       if (mem1 =3D=3D NULL) {
-> +               fprintf(stderr, "Failed to allocate 60MB memory\n");
-> +               return EXIT_FAILURE;
-> +       }
-> +
-> +       if (madvise(mem1, MEMSIZE_MTHP, MADV_HUGEPAGE) !=3D 0) {
-> +               perror("madvise hugepage for mem1");
-> +               free(mem1);
-> +               return EXIT_FAILURE;
-> +       }
-> +
-> +       for (i =3D 1; i < argc; ++i) {
-> +               if (strcmp(argv[i], "-s") =3D=3D 0)
-> +                       use_small_folio =3D 1;
-> +       }
-> +
-> +       if (use_small_folio) {
-> +               mem2 =3D aligned_alloc_mem(MEMSIZE_SMALLFOLIO, ALIGNMENT_=
-MTHP);
-> +               if (mem2 =3D=3D NULL) {
-> +                       fprintf(stderr, "Failed to allocate 1MB memory\n"=
-);
-> +                       free(mem1);
-> +                       return EXIT_FAILURE;
-> +               }
-> +
-> +               if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_NOHUGEPAGE) !=
-=3D 0) {
-> +                       perror("madvise nohugepage for mem2");
-> +                       free(mem1);
-> +                       free(mem2);
-> +                       return EXIT_FAILURE;
-> +               }
-> +       }
-> +
-> +       for (i =3D 0; i < 100; ++i) {
-> +               unsigned long initial_swpout;
-> +               unsigned long initial_swpout_fallback;
-> +               unsigned long final_swpout;
-> +               unsigned long final_swpout_fallback;
-> +               unsigned long swpout_inc;
-> +               unsigned long swpout_fallback_inc;
-> +               double fallback_percentage;
-> +
-> +               initial_swpout =3D read_stat(SWPOUT_PATH);
-> +               initial_swpout_fallback =3D read_stat(SWPOUT_FALLBACK_PAT=
-H);
-> +
-> +               random_madvise_dontneed(mem1, MEMSIZE_MTHP, ALIGNMENT_MTH=
-P,
-> +                               TOTAL_DONTNEED_MTHP);
-> +
-> +               if (use_small_folio) {
-> +                       random_madvise_dontneed(mem2, MEMSIZE_SMALLFOLIO,
-> +                                       ALIGNMENT_SMALLFOLIO,
-> +                                       TOTAL_DONTNEED_SMALLFOLIO);
-> +               }
-> +
-> +               if (madvise(mem1, MEMSIZE_MTHP, MADV_PAGEOUT) !=3D 0) {
-> +                       perror("madvise pageout for mem1");
-> +                       free(mem1);
-> +                       if (mem2 !=3D NULL)
-> +                               free(mem2);
-> +                       return EXIT_FAILURE;
-> +               }
-> +
-> +               if (use_small_folio) {
-> +                       if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_PAGEOU=
-T) !=3D 0) {
-> +                               perror("madvise pageout for mem2");
-> +                               free(mem1);
-> +                               free(mem2);
-> +                               return EXIT_FAILURE;
-> +                       }
-> +               }
-> +
-> +               final_swpout =3D read_stat(SWPOUT_PATH);
-> +               final_swpout_fallback =3D read_stat(SWPOUT_FALLBACK_PATH)=
-;
-> +
-> +               swpout_inc =3D final_swpout - initial_swpout;
-> +               swpout_fallback_inc =3D final_swpout_fallback - initial_s=
-wpout_fallback;
-> +
-> +               fallback_percentage =3D (double)swpout_fallback_inc /
-> +                       (swpout_fallback_inc + swpout_inc) * 100;
-> +
-> +               printf("Iteration %d: swpout inc: %lu, swpout fallback in=
-c: %lu, Fallback percentage: %.2f%%\n",
-> +                               i + 1, swpout_inc, swpout_fallback_inc, f=
-allback_percentage);
-
-
-Chris
-
-> +       }
-> +
-> +       free(mem1);
-> +       if (mem2 !=3D NULL)
-> +               free(mem2);
-> +
-> +       return EXIT_SUCCESS;
-> +}
-> --
-> 2.34.1
->
->
 
