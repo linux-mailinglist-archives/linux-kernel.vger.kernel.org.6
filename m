@@ -1,356 +1,192 @@
-Return-Path: <linux-kernel+bounces-223449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881CB911336
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:30:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7441F91133A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DF72283863
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:30:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC1A3B23326
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48075D477;
-	Thu, 20 Jun 2024 20:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76C857C9C;
+	Thu, 20 Jun 2024 20:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SWO1/o6y"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h7noAxW7"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7A41D543;
-	Thu, 20 Jun 2024 20:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9104315B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 20:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718915411; cv=none; b=TrTWkmlj55W2gTjm5jCVWEmNNiFATuwQGAkLYHgOV4ggxGgeXr9tU8SFhHCAkmzGejD8zV3Hfd734t4PAeXRHgs3JJu5YvOSEA7xuzzO2lsBmY4bEWbWD0huaw7sfE9fu6RFTVkHP7cerxB7zZNRs8dLaBeS49qLD/Tqz4LOVBk=
+	t=1718915433; cv=none; b=PlqHs++Gj5wN2l4wJCIja2fxmaHVc44UFeJR1R6vUptxef+m9W1WKqI2T18P45lkuGAbGVeDc5jq9z1tI3B/Ju2qZAi9D3YAddTBVrGpmVgZp41rYjHJm/USFcTflS6AsZidSFE+rx+Hz1TUFgzQazHuDsdwzcSRIhTwelCOVpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718915411; c=relaxed/simple;
-	bh=QazVQ/fcribwkhVD95BNzQ/GCZotu+Zu2N/7mnwipvs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O1tYZM2Zt+ko7pPnVBsklodXbzMt6q1sRNEj31sMmb9XRrKUkj02Y/D5ijs6TnuujXMxTXpITEWeeAXJ57NvCpP8u+60vQxqJtZLO0Cp8ebMc+rmAf43pvG10r5Bgp/be7Nvnw0gTFijRxN9eQPwhuC+sbFN5ThJ9haRYsoYBWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SWO1/o6y; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec461d1005so10357081fa.0;
-        Thu, 20 Jun 2024 13:30:09 -0700 (PDT)
+	s=arc-20240116; t=1718915433; c=relaxed/simple;
+	bh=+DcBwBWZGYsDodZL/Y2GSfDlItZ6xAMPG7ESuqXwD3Y=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=X3NUPiAjhvwTLa3aTOgm7vcPq2Gx9E4R77KjQoyaQ4GII1CNzxkTKY5bq5yJxcVr3V7XuoMNLRIZuHrYfrlggEhanryPZzRwDPd9RBFPw/WXxtpYwDv0LSaxTodQsDp5gII8MY5sVj9yAs/LdxciNz6ydH6sgyK1V2x7gxgm+dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h7noAxW7; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dff1bcbc104so1977656276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:30:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718915408; x=1719520208; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0AaZXz6HCbDa8eUXXe1u+dAsA44D+SEYRxa0tXuHTh0=;
-        b=SWO1/o6yhNIJNjjwX9Ck67CLubA+1QQuFF9pjcX28saGGkTT7D19Pwf54h/J2VfraL
-         KxA0leAZvuotAWBK2k/fRE5Pn1nn8HgTkk+JC2EoPz457pOPZo4fLd/UYCkVq4ijtGo2
-         uDbbEqNo6hTDvU5RH66QVYESPEYit0KA4sVwbKuGqaePCzTl9dfO5tYJgw9DAQ9PWYRm
-         qf28gNm93cOPwJVIlioculPRKHSckKIO8ByJS+tSXEQgSxGHh8UPbVfJk2P4yUNh/He4
-         cRqS7c1iXMzI7k1ILpl7DOIgY18oZ/sG26QUoIE8v6eEpkmjTYs0SeM8TCruPHbyHKiU
-         Iwyg==
+        d=google.com; s=20230601; t=1718915431; x=1719520231; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xErkJFtS8pAZxrsiKGOWzCS+kBI6/sMQ5JqWLp2DsFQ=;
+        b=h7noAxW7WKUBzCrlhbbRRBh5FMJPBkPfRNBWpj6qxZVJ5RSJsk71JHdkoA/SQBAk84
+         MKr4ynHj64FLj5SwUM/Utbsk0lVCBKg6C1qui1Mm3SETpFGdDUK1fFtW47yx+Op2lVpc
+         yJsdjvTh+Dks0P32RYacgxNnd6UwOffwZJ9EYxAgQ4GA9L4fNvq4oxl7XFCRR01Eeu1k
+         Kxlf6eEYkc6/l5SZe6EfsnHa/QzLHRF6pCI2sQQNjt5LVH65t+CojDZ6nt9ikAMAOK7i
+         rGkkdWwtZd5fylUBSF5lxohYFJSJYrtriatRCZsp69Gc/41WSLQAfxfiEQBpL9WhkSK4
+         TVkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718915408; x=1719520208;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0AaZXz6HCbDa8eUXXe1u+dAsA44D+SEYRxa0tXuHTh0=;
-        b=ghlnaIm3x0Os9/jWD+K/UX1yohgvPXcJiynweEPKIG0pd5gYyr5MGzFUKN22L6fbBR
-         X05L8BUcPQ4qMYdnEyVGgYoWzkkj48eaFIKpvTMxu1D376pJCBRQIDRX0tZqDpxzE2DC
-         6CTjRZadzGmmg4g8dX/Wr8ToFrqmUj4B+PHYLk/ZSyRGmbbfGecIDCNrbwXXiSgQXbUQ
-         bHmx44gYGKoqDJehrGWSeFmO6gk3KruqLHWx8sNtBzM8X10zRe8301oDf5LKepoms7q7
-         1VCwENvkgEN0eOaY4AuPY5nypmDXbsVSxEKntkPVlc1cF2DC3QXthLDZ1tagmlVoD9n6
-         K1Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbd4BA8ugorFWAvMBNap0+G4VRYphkWDVcQv2VLZnHMYOLiN8O4+hKdkPRrXxt90SGiSedF0t6afTKwe1H9pH8eZ29FhshnNsYrW44SjqhCVnEyfelJh5eLh0dr7Jhf20f8swOBn5Lw4K2X+o12oJAp/Q6I9BdHgbGA5fS6JB6FlQRggGCGPgXPxE8m1bceMX/T6XM8A8fUoJSmxawmVb2ix7whjtyuVpL3DSucrHqPWutbfvGhsxiS12UASc/HmHudk2YGct5AjxZH5YDpnBItfZJHLx+
-X-Gm-Message-State: AOJu0YyjEheq4r6NlDLdrUpZJ48xux3CQgjDcXijj7LHR8im2GERUGMD
-	3VZW0+FeS7+weXkEbtGmMGPJWkzU9VVqi7p9zl1BaBnIVfI0HLOcSX+Iu/FOB9NgKIQOI53gQCx
-	ED89cyfNNP4uBcPCBvt7iYDWNXxg=
-X-Google-Smtp-Source: AGHT+IFk6q/dXNhXYXDhrUm+mDzeMQfdZv7VZ9OPGc51XKug052EHkQ3ljAMDvpoF6rjKSriSIZLOgYF8z96ER7Fo8Q=
-X-Received: by 2002:a05:651c:2006:b0:2ec:35a3:20bd with SMTP id
- 38308e7fff4ca-2ec35a321eemr24171601fa.22.1718915407469; Thu, 20 Jun 2024
- 13:30:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718915431; x=1719520231;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xErkJFtS8pAZxrsiKGOWzCS+kBI6/sMQ5JqWLp2DsFQ=;
+        b=g6fiBUMZdqjY3w3SldycOnjkGesPrrSjGQfva/6e6/beQr3C9vsejsgnImtvqVkcT0
+         0qn2746xMxs3Cw4v06wr32I1tXWer87g3N3k9R7tumEa29+z+RGbavL/nobtxyPWE9fx
+         h6DrpO6dz/QxcEQtxdH7dGEw1tnA1hdGhTU0hi4yj2Yk62MTWRgafKD/pwKPyH9Upuhe
+         8WNC0kjO6E377bbVnexqZlyfl4CRQnlfVPI/u2uCmYQkNCLJUOBRIAZ63PsAAOP56/tY
+         /lIXF0oqv8Y/CTFzF4h19VxpFWsfIyMgVGNRH1nL4AT11o0FKY4B0fjdu60ocBy+vgcZ
+         bP2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXwYpKo8wfkXFYmANHSnos9j3//rNrrnT6TiUmKEUjk2kUhLASaNJ4qOTJlofrYWDVA8ySk+OWfuX+CmuZGuCLtOYMbZ8GLYox0S7WM
+X-Gm-Message-State: AOJu0Yw34DLczujiynwLxQ3Cu10/+MpuWeTSbD+Aj27efrqyompR+y16
+	Isxob65Ok9vlcBsXj5c+4vynY8NGnBXuO9u+xhlxDt/C3SClqjTnS+3dOfT2VKdY+HySvzGWf3N
+	Eng==
+X-Google-Smtp-Source: AGHT+IH+qzaTVuDFz4vV+UPf7kAV7X+gFLVb8FVXbaLwLuHspIscNuw5GWE2VrrHWfEenP649+wJpEFjVek=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1007:b0:df2:eaac:d811 with SMTP id
+ 3f1490d57ef6-e02be2301e5mr447972276.10.1718915431251; Thu, 20 Jun 2024
+ 13:30:31 -0700 (PDT)
+Date: Thu, 20 Jun 2024 13:30:29 -0700
+In-Reply-To: <66a285fc-e54e-4247-8801-e7e17ad795a6@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240620173137.610345-1-dhowells@redhat.com> <20240620173137.610345-12-dhowells@redhat.com>
-In-Reply-To: <20240620173137.610345-12-dhowells@redhat.com>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 20 Jun 2024 15:29:55 -0500
-Message-ID: <CAH2r5mv_C3qKsaweAriY40D-KJzs9+8J6TFcs1oeTUKA+t__vw@mail.gmail.com>
-Subject: Re: [PATCH 11/17] cifs: Move the 'pid' from the subreq to the req
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, Matthew Wilcox <willy@infradead.org>, 
-	Jeff Layton <jlayton@kernel.org>, Gao Xiang <hsiangkao@linux.alibaba.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Marc Dionne <marc.dionne@auristor.com>, 
-	Paulo Alcantara <pc@manguebit.com>, Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
-	Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev, 
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Steve French <sfrench@samba.org>
-Content-Type: multipart/mixed; boundary="0000000000004305c8061b582e10"
+Mime-Version: 1.0
+References: <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
+ <20240619115135.GE2494510@nvidia.com> <ZnOsAEV3GycCcqSX@infradead.org>
+ <CA+EHjTxaCxibvGOMPk9Oj5TfQV3J3ZLwXk83oVHuwf8H0Q47sA@mail.gmail.com>
+ <20240620135540.GG2494510@nvidia.com> <6d7b180a-9f80-43a4-a4cc-fd79a45d7571@redhat.com>
+ <20240620142956.GI2494510@nvidia.com> <385a5692-ffc8-455e-b371-0449b828b637@redhat.com>
+ <20240620163626.GK2494510@nvidia.com> <66a285fc-e54e-4247-8801-e7e17ad795a6@redhat.com>
+Message-ID: <ZnSRZcap1dc2_WBV@google.com>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+From: Sean Christopherson <seanjc@google.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Fuad Tabba <tabba@google.com>, 
+	Christoph Hellwig <hch@infradead.org>, John Hubbard <jhubbard@nvidia.com>, 
+	Elliot Berman <quic_eberman@quicinc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>, maz@kernel.org, 
+	kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com
+Content-Type: text/plain; charset="us-ascii"
 
---0000000000004305c8061b582e10
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 20, 2024, David Hildenbrand wrote:
+> On 20.06.24 18:36, Jason Gunthorpe wrote:
+> > On Thu, Jun 20, 2024 at 04:45:08PM +0200, David Hildenbrand wrote:
+> > 
+> > > If we could disallow pinning any shared pages, that would make life a lot
+> > > easier, but I think there were reasons for why we might require it. To
+> > > convert shared->private, simply unmap that folio (only the shared parts
+> > > could possibly be mapped) from all user page tables.
+> > 
+> > IMHO it should be reasonable to make it work like ZONE_MOVABLE and
+> > FOLL_LONGTERM. Making a shared page private is really no different
+> > from moving it.
+> > 
+> > And if you have built a VMM that uses VMA mapped shared pages and
+> > short-term pinning then you should really also ensure that the VM is
+> > aware when the pins go away. For instance if you are doing some virtio
+> > thing with O_DIRECT pinning then the guest will know the pins are gone
+> > when it observes virtio completions.
+> > 
+> > In this way making private is just like moving, we unmap the page and
+> > then drive the refcount to zero, then move it.
+> Yes, but here is the catch: what if a single shared subpage of a large folio
+> is (validly) longterm pinned and you want to convert another shared subpage
+> to private?
+> 
+> Sure, we can unmap the whole large folio (including all shared parts) before
+> the conversion, just like we would do for migration. But we cannot detect
+> that nobody pinned that subpage that we want to convert to private.
+> 
+> Core-mm is not, and will not, track pins per subpage.
+> 
+> So I only see two options:
+> 
+> a) Disallow long-term pinning. That means, we can, with a bit of wait,
+>    always convert subpages shared->private after unmapping them and
+>    waiting for the short-term pin to go away. Not too bad, and we
+>    already have other mechanisms disallow long-term pinnings (especially
+>    writable fs ones!).
 
-minor update to the patch. Fix function =E2=80=98cifs_req_issue_read=E2=80=
-=99 to
-remove the warning:
-/home/smfrench/cifs-2.6/fs/smb/client/file.c:180:30: warning: unused
-variable =E2=80=98cifs_sb
-See attached.
+I don't think disallowing _just_ long-term GUP will suffice, if we go the "disallow
+GUP" route than I think it needs to disallow GUP, period.  Like the whole "GUP
+writes to file-back memory" issue[*], which I think you're alluding to, short-term
+GUP is also problematic.  But unlike file-backed memory, for TDX and SNP (and I
+think pKVM), a single rogue access has a high probability of being fatal to the
+entire system.
 
-Merged this and two more from the series tentatively into cifs-2.6.git
-for-next pending more testing/review
+I.e. except for blatant bugs, e.g. use-after-free, we need to be able to guarantee
+with 100% accuracy that there are no outstanding mappings when converting a page
+from shared=>private.  Crossing our fingers and hoping that short-term GUP will
+have gone away isn't enough.
 
-969b3010cbfc cifs: Only pick a channel once per read request
-ce5291e56081 cifs: Defer read completion
+[*] https://lore.kernel.org/all/cover.1683235180.git.lstoakes@gmail.com
 
-On Thu, Jun 20, 2024 at 12:33=E2=80=AFPM David Howells <dhowells@redhat.com=
-> wrote:
->
-> Move the reference pid from the cifs_io_subrequest struct to the
-> cifs_io_request struct as it's the same for all subreqs of a particular
-> request.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <sfrench@samba.org>
-> cc: Paulo Alcantara <pc@manguebit.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/smb/client/cifsglob.h |  2 +-
->  fs/smb/client/cifssmb.c  |  8 ++++----
->  fs/smb/client/file.c     | 10 +++-------
->  fs/smb/client/smb2pdu.c  |  4 ++--
->  4 files changed, 10 insertions(+), 14 deletions(-)
->
-> diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-> index b48d3f5e8889..bbcc552c07be 100644
-> --- a/fs/smb/client/cifsglob.h
-> +++ b/fs/smb/client/cifsglob.h
-> @@ -1495,6 +1495,7 @@ struct cifs_io_request {
->         struct netfs_io_request         rreq;
->         struct cifsFileInfo             *cfile;
->         struct TCP_Server_Info          *server;
-> +       pid_t                           pid;
->  };
->
->  /* asynchronous read support */
-> @@ -1505,7 +1506,6 @@ struct cifs_io_subrequest {
->                 struct cifs_io_request *req;
->         };
->         ssize_t                         got_bytes;
-> -       pid_t                           pid;
->         unsigned int                    xid;
->         int                             result;
->         bool                            have_xid;
-> diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-> index 25e9ab947c17..595c4b673707 100644
-> --- a/fs/smb/client/cifssmb.c
-> +++ b/fs/smb/client/cifssmb.c
-> @@ -1345,8 +1345,8 @@ cifs_async_readv(struct cifs_io_subrequest *rdata)
->         if (rc)
->                 return rc;
->
-> -       smb->hdr.Pid =3D cpu_to_le16((__u16)rdata->pid);
-> -       smb->hdr.PidHigh =3D cpu_to_le16((__u16)(rdata->pid >> 16));
-> +       smb->hdr.Pid =3D cpu_to_le16((__u16)rdata->req->pid);
-> +       smb->hdr.PidHigh =3D cpu_to_le16((__u16)(rdata->req->pid >> 16));
->
->         smb->AndXCommand =3D 0xFF;        /* none */
->         smb->Fid =3D rdata->req->cfile->fid.netfid;
-> @@ -1689,8 +1689,8 @@ cifs_async_writev(struct cifs_io_subrequest *wdata)
->         if (rc)
->                 goto async_writev_out;
->
-> -       smb->hdr.Pid =3D cpu_to_le16((__u16)wdata->pid);
-> -       smb->hdr.PidHigh =3D cpu_to_le16((__u16)(wdata->pid >> 16));
-> +       smb->hdr.Pid =3D cpu_to_le16((__u16)wdata->req->pid);
-> +       smb->hdr.PidHigh =3D cpu_to_le16((__u16)(wdata->req->pid >> 16));
->
->         smb->AndXCommand =3D 0xFF;        /* none */
->         smb->Fid =3D wdata->req->cfile->fid.netfid;
-> diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-> index 16fa1ac1ed2d..45c860f0e7fd 100644
-> --- a/fs/smb/client/file.c
-> +++ b/fs/smb/client/file.c
-> @@ -178,14 +178,8 @@ static void cifs_req_issue_read(struct netfs_io_subr=
-equest *subreq)
->         struct cifs_io_subrequest *rdata =3D container_of(subreq, struct =
-cifs_io_subrequest, subreq);
->         struct cifs_io_request *req =3D container_of(subreq->rreq, struct=
- cifs_io_request, rreq);
->         struct cifs_sb_info *cifs_sb =3D CIFS_SB(rreq->inode->i_sb);
-> -       pid_t pid;
->         int rc =3D 0;
->
-> -       if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
-> -               pid =3D req->cfile->pid;
-> -       else
-> -               pid =3D current->tgid; // Ummm...  This may be a workqueu=
-e
-> -
->         cifs_dbg(FYI, "%s: op=3D%08x[%x] mapping=3D%p len=3D%zu/%zu\n",
->                  __func__, rreq->debug_id, subreq->debug_index, rreq->map=
-ping,
->                  subreq->transferred, subreq->len);
-> @@ -199,7 +193,6 @@ static void cifs_req_issue_read(struct netfs_io_subre=
-quest *subreq)
->         }
->
->         __set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-> -       rdata->pid =3D pid;
->
->         rc =3D rdata->server->ops->async_readv(rdata);
->  out:
-> @@ -236,12 +229,15 @@ static int cifs_init_request(struct netfs_io_reques=
-t *rreq, struct file *file)
->
->         rreq->rsize =3D cifs_sb->ctx->rsize;
->         rreq->wsize =3D cifs_sb->ctx->wsize;
-> +       req->pid =3D current->tgid; // Ummm...  This may be a workqueue
->
->         if (file) {
->                 open_file =3D file->private_data;
->                 rreq->netfs_priv =3D file->private_data;
->                 req->cfile =3D cifsFileInfo_get(open_file);
->                 req->server =3D cifs_pick_channel(tlink_tcon(req->cfile->=
-tlink)->ses);
-> +               if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_RWPIDFORWARD)
-> +                       req->pid =3D req->cfile->pid;
->         } else if (rreq->origin !=3D NETFS_WRITEBACK) {
->                 WARN_ON_ONCE(1);
->                 return -EIO;
-> diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-> index e213cecd5094..2ae2dbb6202b 100644
-> --- a/fs/smb/client/smb2pdu.c
-> +++ b/fs/smb/client/smb2pdu.c
-> @@ -4621,7 +4621,7 @@ smb2_async_readv(struct cifs_io_subrequest *rdata)
->         io_parms.length =3D rdata->subreq.len;
->         io_parms.persistent_fid =3D rdata->req->cfile->fid.persistent_fid=
-;
->         io_parms.volatile_fid =3D rdata->req->cfile->fid.volatile_fid;
-> -       io_parms.pid =3D rdata->pid;
-> +       io_parms.pid =3D rdata->req->pid;
->
->         rc =3D smb2_new_read_req(
->                 (void **) &buf, &total_len, &io_parms, rdata, 0, 0);
-> @@ -4873,7 +4873,7 @@ smb2_async_writev(struct cifs_io_subrequest *wdata)
->                 .length =3D wdata->subreq.len,
->                 .persistent_fid =3D wdata->req->cfile->fid.persistent_fid=
-,
->                 .volatile_fid =3D wdata->req->cfile->fid.volatile_fid,
-> -               .pid =3D wdata->pid,
-> +               .pid =3D wdata->req->pid,
->         };
->         io_parms =3D &_io_parms;
->
->
+> b) Expose the large folio as multiple 4k folios to the core-mm.
+> 
+> 
+> b) would look as follows: we allocate a gigantic page from the (hugetlb)
+> reserve into guest_memfd. Then, we break it down into individual 4k folios
+> by splitting/demoting the folio. We make sure that all 4k folios are
+> unmovable (raised refcount). We keep tracking internally that these 4k
+> folios comprise a single large gigantic page.
+> 
+> Core-mm can track for us now without any modifications per (previously
+> subpage,) now small folios GUP pins and page table mappings without
+> modifications.
+> 
+> Once we unmap the gigantic page from guest_memfd, we recronstruct the
+> gigantic page and hand it back to the reserve (only possible once all pins
+> are gone).
+> 
+> We can still map the whole thing into the KVM guest+iommu using a single
+> large unit, because guest_memfd knows the origin/relationship of these
+> pages. But we would only map individual pages into user page tables (unless
+> we use large VM_PFNMAP mappings, but then also pinning would not work, so
+> that's likely also not what we want).
 
+Not being to map guest_memfd into userspace with 1GiB mappings should be ok, at
+least for CoCo VMs.  If the guest shares an entire 1GiB chunk, e.g. for DMA or
+whatever, then userspace can simply punch a hole in guest_memfd and allocate 1GiB
+of memory from regular memory.  Even losing 2MiB mappings should be ok.
 
---=20
-Thanks,
+For non-CoCo VMs, I expect we'll want to be much more permissive, but I think
+they'll be a complete non-issue because there is no shared vs. private to worry
+about.  We can simply allow any and all userspace mappings for guest_memfd that is
+attached to a "regular" VM, because a misbehaving userspace only loses whatever
+hardening (or other benefits) was being provided by using guest_memfd.  I.e. the
+kernel and system at-large isn't at risk.
 
-Steve
+> The downside is that we won't benefit from vmemmap optimizations for large
+> folios from hugetlb, and have more tracking overhead when mapping individual
+> pages into user page tables.
 
---0000000000004305c8061b582e10
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-cifs-Move-the-pid-from-the-subreq-to-the-req.patch"
-Content-Disposition: attachment; 
-	filename="0001-cifs-Move-the-pid-from-the-subreq-to-the-req.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lxnpuc0k0>
-X-Attachment-Id: f_lxnpuc0k0
+Hmm, I suspect losing the vmemmap optimizations would be acceptable, especially
+if we could defer the shattering until the guest actually tried to partially
+convert a 1GiB/2MiB region, and restore the optimizations when the memory is
+converted back.
 
-RnJvbSAzZjU5MTM4NTgwYmY4MDA2ZmE5OTY0MWI1ODAzZDBmNjgzNzA5ZjEwIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBEYXZpZCBIb3dlbGxzIDxkaG93ZWxsc0ByZWRoYXQuY29tPgpE
-YXRlOiBUaHUsIDIwIEp1biAyMDI0IDE4OjMxOjI5ICswMTAwClN1YmplY3Q6IFtQQVRDSF0gY2lm
-czogTW92ZSB0aGUgJ3BpZCcgZnJvbSB0aGUgc3VicmVxIHRvIHRoZSByZXEKCk1vdmUgdGhlIHJl
-ZmVyZW5jZSBwaWQgZnJvbSB0aGUgY2lmc19pb19zdWJyZXF1ZXN0IHN0cnVjdCB0byB0aGUKY2lm
-c19pb19yZXF1ZXN0IHN0cnVjdCBhcyBpdCdzIHRoZSBzYW1lIGZvciBhbGwgc3VicmVxcyBvZiBh
-IHBhcnRpY3VsYXIKcmVxdWVzdC4KClNpZ25lZC1vZmYtYnk6IERhdmlkIEhvd2VsbHMgPGRob3dl
-bGxzQHJlZGhhdC5jb20+CmNjOiBQYXVsbyBBbGNhbnRhcmEgPHBjQG1hbmd1ZWJpdC5jb20+CmNj
-OiBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPgpjYzogbGludXgtY2lmc0B2Z2VyLmtl
-cm5lbC5vcmcKY2M6IG5ldGZzQGxpc3RzLmxpbnV4LmRldgpjYzogbGludXgtZnNkZXZlbEB2Z2Vy
-Lmtlcm5lbC5vcmcKU2lnbmVkLW9mZi1ieTogU3RldmUgRnJlbmNoIDxzdGZyZW5jaEBtaWNyb3Nv
-ZnQuY29tPgotLS0KIGZzL3NtYi9jbGllbnQvY2lmc2dsb2IuaCB8ICAyICstCiBmcy9zbWIvY2xp
-ZW50L2NpZnNzbWIuYyAgfCAgOCArKysrLS0tLQogZnMvc21iL2NsaWVudC9maWxlLmMgICAgIHwg
-MTEgKysrLS0tLS0tLS0KIGZzL3NtYi9jbGllbnQvc21iMnBkdS5jICB8ICA0ICsrLS0KIDQgZmls
-ZXMgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgMTUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0
-IGEvZnMvc21iL2NsaWVudC9jaWZzZ2xvYi5oIGIvZnMvc21iL2NsaWVudC9jaWZzZ2xvYi5oCmlu
-ZGV4IDA5Nzg5OTdkZGZhNi4uNTU3YjY4ZTk5ZDBhIDEwMDY0NAotLS0gYS9mcy9zbWIvY2xpZW50
-L2NpZnNnbG9iLmgKKysrIGIvZnMvc21iL2NsaWVudC9jaWZzZ2xvYi5oCkBAIC0xNDk1LDYgKzE0
-OTUsNyBAQCBzdHJ1Y3QgY2lmc19pb19yZXF1ZXN0IHsKIAlzdHJ1Y3QgbmV0ZnNfaW9fcmVxdWVz
-dAkJcnJlcTsKIAlzdHJ1Y3QgY2lmc0ZpbGVJbmZvCQkqY2ZpbGU7CiAJc3RydWN0IFRDUF9TZXJ2
-ZXJfSW5mbwkJKnNlcnZlcjsKKwlwaWRfdAkJCQlwaWQ7CiB9OwogCiAvKiBhc3luY2hyb25vdXMg
-cmVhZCBzdXBwb3J0ICovCkBAIC0xNTA1LDcgKzE1MDYsNiBAQCBzdHJ1Y3QgY2lmc19pb19zdWJy
-ZXF1ZXN0IHsKIAkJc3RydWN0IGNpZnNfaW9fcmVxdWVzdCAqcmVxOwogCX07CiAJc3NpemVfdAkJ
-CQlnb3RfYnl0ZXM7Ci0JcGlkX3QJCQkJcGlkOwogCXVuc2lnbmVkIGludAkJCXhpZDsKIAlpbnQJ
-CQkJcmVzdWx0OwogCWJvb2wJCQkJaGF2ZV94aWQ7CmRpZmYgLS1naXQgYS9mcy9zbWIvY2xpZW50
-L2NpZnNzbWIuYyBiL2ZzL3NtYi9jbGllbnQvY2lmc3NtYi5jCmluZGV4IDI1ZTlhYjk0N2MxNy4u
-NTk1YzRiNjczNzA3IDEwMDY0NAotLS0gYS9mcy9zbWIvY2xpZW50L2NpZnNzbWIuYworKysgYi9m
-cy9zbWIvY2xpZW50L2NpZnNzbWIuYwpAQCAtMTM0NSw4ICsxMzQ1LDggQEAgY2lmc19hc3luY19y
-ZWFkdihzdHJ1Y3QgY2lmc19pb19zdWJyZXF1ZXN0ICpyZGF0YSkKIAlpZiAocmMpCiAJCXJldHVy
-biByYzsKIAotCXNtYi0+aGRyLlBpZCA9IGNwdV90b19sZTE2KChfX3UxNilyZGF0YS0+cGlkKTsK
-LQlzbWItPmhkci5QaWRIaWdoID0gY3B1X3RvX2xlMTYoKF9fdTE2KShyZGF0YS0+cGlkID4+IDE2
-KSk7CisJc21iLT5oZHIuUGlkID0gY3B1X3RvX2xlMTYoKF9fdTE2KXJkYXRhLT5yZXEtPnBpZCk7
-CisJc21iLT5oZHIuUGlkSGlnaCA9IGNwdV90b19sZTE2KChfX3UxNikocmRhdGEtPnJlcS0+cGlk
-ID4+IDE2KSk7CiAKIAlzbWItPkFuZFhDb21tYW5kID0gMHhGRjsJLyogbm9uZSAqLwogCXNtYi0+
-RmlkID0gcmRhdGEtPnJlcS0+Y2ZpbGUtPmZpZC5uZXRmaWQ7CkBAIC0xNjg5LDggKzE2ODksOCBA
-QCBjaWZzX2FzeW5jX3dyaXRldihzdHJ1Y3QgY2lmc19pb19zdWJyZXF1ZXN0ICp3ZGF0YSkKIAlp
-ZiAocmMpCiAJCWdvdG8gYXN5bmNfd3JpdGV2X291dDsKIAotCXNtYi0+aGRyLlBpZCA9IGNwdV90
-b19sZTE2KChfX3UxNil3ZGF0YS0+cGlkKTsKLQlzbWItPmhkci5QaWRIaWdoID0gY3B1X3RvX2xl
-MTYoKF9fdTE2KSh3ZGF0YS0+cGlkID4+IDE2KSk7CisJc21iLT5oZHIuUGlkID0gY3B1X3RvX2xl
-MTYoKF9fdTE2KXdkYXRhLT5yZXEtPnBpZCk7CisJc21iLT5oZHIuUGlkSGlnaCA9IGNwdV90b19s
-ZTE2KChfX3UxNikod2RhdGEtPnJlcS0+cGlkID4+IDE2KSk7CiAKIAlzbWItPkFuZFhDb21tYW5k
-ID0gMHhGRjsJLyogbm9uZSAqLwogCXNtYi0+RmlkID0gd2RhdGEtPnJlcS0+Y2ZpbGUtPmZpZC5u
-ZXRmaWQ7CmRpZmYgLS1naXQgYS9mcy9zbWIvY2xpZW50L2ZpbGUuYyBiL2ZzL3NtYi9jbGllbnQv
-ZmlsZS5jCmluZGV4IDRkYmQ4MDE2OGEyYi4uZjFmMjU3M2JiMThkIDEwMDY0NAotLS0gYS9mcy9z
-bWIvY2xpZW50L2ZpbGUuYworKysgYi9mcy9zbWIvY2xpZW50L2ZpbGUuYwpAQCAtMTc3LDE1ICsx
-NzcsOCBAQCBzdGF0aWMgdm9pZCBjaWZzX3JlcV9pc3N1ZV9yZWFkKHN0cnVjdCBuZXRmc19pb19z
-dWJyZXF1ZXN0ICpzdWJyZXEpCiAJc3RydWN0IG5ldGZzX2lvX3JlcXVlc3QgKnJyZXEgPSBzdWJy
-ZXEtPnJyZXE7CiAJc3RydWN0IGNpZnNfaW9fc3VicmVxdWVzdCAqcmRhdGEgPSBjb250YWluZXJf
-b2Yoc3VicmVxLCBzdHJ1Y3QgY2lmc19pb19zdWJyZXF1ZXN0LCBzdWJyZXEpOwogCXN0cnVjdCBj
-aWZzX2lvX3JlcXVlc3QgKnJlcSA9IGNvbnRhaW5lcl9vZihzdWJyZXEtPnJyZXEsIHN0cnVjdCBj
-aWZzX2lvX3JlcXVlc3QsIHJyZXEpOwotCXN0cnVjdCBjaWZzX3NiX2luZm8gKmNpZnNfc2IgPSBD
-SUZTX1NCKHJyZXEtPmlub2RlLT5pX3NiKTsKLQlwaWRfdCBwaWQ7CiAJaW50IHJjID0gMDsKIAot
-CWlmIChjaWZzX3NiLT5tbnRfY2lmc19mbGFncyAmIENJRlNfTU9VTlRfUldQSURGT1JXQVJEKQot
-CQlwaWQgPSByZXEtPmNmaWxlLT5waWQ7Ci0JZWxzZQotCQlwaWQgPSBjdXJyZW50LT50Z2lkOyAv
-LyBVbW1tLi4uICBUaGlzIG1heSBiZSBhIHdvcmtxdWV1ZQotCiAJY2lmc19kYmcoRllJLCAiJXM6
-IG9wPSUwOHhbJXhdIG1hcHBpbmc9JXAgbGVuPSV6dS8lenVcbiIsCiAJCSBfX2Z1bmNfXywgcnJl
-cS0+ZGVidWdfaWQsIHN1YnJlcS0+ZGVidWdfaW5kZXgsIHJyZXEtPm1hcHBpbmcsCiAJCSBzdWJy
-ZXEtPnRyYW5zZmVycmVkLCBzdWJyZXEtPmxlbik7CkBAIC0xOTksNyArMTkyLDYgQEAgc3RhdGlj
-IHZvaWQgY2lmc19yZXFfaXNzdWVfcmVhZChzdHJ1Y3QgbmV0ZnNfaW9fc3VicmVxdWVzdCAqc3Vi
-cmVxKQogCX0KIAogCV9fc2V0X2JpdChORVRGU19TUkVRX0NMRUFSX1RBSUwsICZzdWJyZXEtPmZs
-YWdzKTsKLQlyZGF0YS0+cGlkID0gcGlkOwogCiAJcmMgPSByZGF0YS0+c2VydmVyLT5vcHMtPmFz
-eW5jX3JlYWR2KHJkYXRhKTsKIG91dDoKQEAgLTIzNiwxMiArMjI4LDE1IEBAIHN0YXRpYyBpbnQg
-Y2lmc19pbml0X3JlcXVlc3Qoc3RydWN0IG5ldGZzX2lvX3JlcXVlc3QgKnJyZXEsIHN0cnVjdCBm
-aWxlICpmaWxlKQogCiAJcnJlcS0+cnNpemUgPSBjaWZzX3NiLT5jdHgtPnJzaXplOwogCXJyZXEt
-PndzaXplID0gY2lmc19zYi0+Y3R4LT53c2l6ZTsKKwlyZXEtPnBpZCA9IGN1cnJlbnQtPnRnaWQ7
-IC8vIFVtbW0uLi4gIFRoaXMgbWF5IGJlIGEgd29ya3F1ZXVlCiAKIAlpZiAoZmlsZSkgewogCQlv
-cGVuX2ZpbGUgPSBmaWxlLT5wcml2YXRlX2RhdGE7CiAJCXJyZXEtPm5ldGZzX3ByaXYgPSBmaWxl
-LT5wcml2YXRlX2RhdGE7CiAJCXJlcS0+Y2ZpbGUgPSBjaWZzRmlsZUluZm9fZ2V0KG9wZW5fZmls
-ZSk7CiAJCXJlcS0+c2VydmVyID0gY2lmc19waWNrX2NoYW5uZWwodGxpbmtfdGNvbihyZXEtPmNm
-aWxlLT50bGluayktPnNlcyk7CisJCWlmIChjaWZzX3NiLT5tbnRfY2lmc19mbGFncyAmIENJRlNf
-TU9VTlRfUldQSURGT1JXQVJEKQorCQkJcmVxLT5waWQgPSByZXEtPmNmaWxlLT5waWQ7CiAJfSBl
-bHNlIGlmIChycmVxLT5vcmlnaW4gIT0gTkVURlNfV1JJVEVCQUNLKSB7CiAJCVdBUk5fT05fT05D
-RSgxKTsKIAkJcmV0dXJuIC1FSU87CmRpZmYgLS1naXQgYS9mcy9zbWIvY2xpZW50L3NtYjJwZHUu
-YyBiL2ZzL3NtYi9jbGllbnQvc21iMnBkdS5jCmluZGV4IGUyMTNjZWNkNTA5NC4uMmFlMmRiYjYy
-MDJiIDEwMDY0NAotLS0gYS9mcy9zbWIvY2xpZW50L3NtYjJwZHUuYworKysgYi9mcy9zbWIvY2xp
-ZW50L3NtYjJwZHUuYwpAQCAtNDYyMSw3ICs0NjIxLDcgQEAgc21iMl9hc3luY19yZWFkdihzdHJ1
-Y3QgY2lmc19pb19zdWJyZXF1ZXN0ICpyZGF0YSkKIAlpb19wYXJtcy5sZW5ndGggPSByZGF0YS0+
-c3VicmVxLmxlbjsKIAlpb19wYXJtcy5wZXJzaXN0ZW50X2ZpZCA9IHJkYXRhLT5yZXEtPmNmaWxl
-LT5maWQucGVyc2lzdGVudF9maWQ7CiAJaW9fcGFybXMudm9sYXRpbGVfZmlkID0gcmRhdGEtPnJl
-cS0+Y2ZpbGUtPmZpZC52b2xhdGlsZV9maWQ7Ci0JaW9fcGFybXMucGlkID0gcmRhdGEtPnBpZDsK
-Kwlpb19wYXJtcy5waWQgPSByZGF0YS0+cmVxLT5waWQ7CiAKIAlyYyA9IHNtYjJfbmV3X3JlYWRf
-cmVxKAogCQkodm9pZCAqKikgJmJ1ZiwgJnRvdGFsX2xlbiwgJmlvX3Bhcm1zLCByZGF0YSwgMCwg
-MCk7CkBAIC00ODczLDcgKzQ4NzMsNyBAQCBzbWIyX2FzeW5jX3dyaXRldihzdHJ1Y3QgY2lmc19p
-b19zdWJyZXF1ZXN0ICp3ZGF0YSkKIAkJLmxlbmd0aCA9IHdkYXRhLT5zdWJyZXEubGVuLAogCQku
-cGVyc2lzdGVudF9maWQgPSB3ZGF0YS0+cmVxLT5jZmlsZS0+ZmlkLnBlcnNpc3RlbnRfZmlkLAog
-CQkudm9sYXRpbGVfZmlkID0gd2RhdGEtPnJlcS0+Y2ZpbGUtPmZpZC52b2xhdGlsZV9maWQsCi0J
-CS5waWQgPSB3ZGF0YS0+cGlkLAorCQkucGlkID0gd2RhdGEtPnJlcS0+cGlkLAogCX07CiAJaW9f
-cGFybXMgPSAmX2lvX3Bhcm1zOwogCi0tIAoyLjQzLjAKCg==
---0000000000004305c8061b582e10--
+> OTOH, maybe we really *need* per-page tracking and this might be the
+> simplest way forward, making GUP and friends just work naturally with it.
 
