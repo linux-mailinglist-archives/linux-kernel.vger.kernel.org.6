@@ -1,148 +1,111 @@
-Return-Path: <linux-kernel+bounces-222310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C20990FF8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0927490FF8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F822816FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:53:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94745281C31
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAC819B3F6;
-	Thu, 20 Jun 2024 08:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5571ABCA5;
+	Thu, 20 Jun 2024 08:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VZoeORcB"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X7VeeHkV"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A4F19B3E1
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A7B1AB91D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718873412; cv=none; b=bvDseFLz6DcQ/5LyeZ5BUjOAZmhamXSU+kx9MpkgAMuUmyuYSAAhyyCjFcdIWjs+7iuseYLnUwl3d1EYZ+eTX20EEWxTNX2Z2LJNKKXIIGHHcaRwdcPwrrRbbS/qxj/lkj3FuSyUPneyvhWZ2B1MwCRepDvqrDPFsKaBL7MZQd0=
+	t=1718873404; cv=none; b=Un5hLJMDvidEh78JGMzJ0MwPQVX7BRxmrlWgvnCc4iFZWigeH85A232skC91deZ7D8EFUXeTNKsydBV4L9MvnJC3igk+Nh1J1J34HkkQwcG87dqT6DA3Vl5pPVJ/+SQvmFe2pqIQ71oUDestjRcjWD7DqX2EKim9FtlkZiJdS1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718873412; c=relaxed/simple;
-	bh=QKjfRE/UdgFLDzTlyARsWElVc22hgqS+LVFD8o/b46E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bNv39xLPx1OIMaEUA6SUNPsKyfr+0BoPpFs6dl97uwvdrPm/Dbzyp2HhzhU43+jp+EKD8fOOS4tmjIwQ+i4SmOzsot372FPUzxvgTkinetnlJvOR8nES9PbfRKW8byn8webPeqcES78qxuBf7mKxli3WQV1cc9sZpabSwKgw6dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VZoeORcB; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e724bc466fso6599111fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:50:10 -0700 (PDT)
+	s=arc-20240116; t=1718873404; c=relaxed/simple;
+	bh=E/xlmU084aOXXwFw807wZImjGPqm1ANMchdMOU8QUug=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=r7+oKMZJaXU9WX0HHYo057Gf9BkGVXe2MA2rR9opdJHKgldgzyBVxPMBzsjMw2FwjG54uyulgtnHnaxniTShu9xdKvRnCpVdQG8iTMVf//1Yl9WDvbpvB0Zkq6aK0rKEiN002kpo691NIfSDtxPr052t/5a8ojPVc7/XkeFj8pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X7VeeHkV; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so67691466b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:50:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718873409; x=1719478209; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0oRTqaQV+LstrjwZixpKFYUALXmKtaF0Ow0RUXHlll0=;
-        b=VZoeORcBkOmWasPmbaocQNuKvtQyySfewfFLKuNYG1aZMgvWbGnwUYHWDtv7zqmmma
-         ET9ITRfqnyx7l6jEXnY9cgoarQEZH2tonfLY2vsgkB7p1EsenRMgTZ9RSdtdZVyLM9WS
-         q2aOkr3XEL0neF3EBi685O+2Yz7HoyheWEXaQ=
+        d=linaro.org; s=google; t=1718873401; x=1719478201; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vPUY4GnBpPiQcbABkIr/cid7Dg+9bQhVw0p/ZhNJByA=;
+        b=X7VeeHkVNnoM4c/vIDPSHLEFNAAE4h9jolRxuo4ZEwsFzcqN+IX6rwhyn8CUVcnBIK
+         Ljoq08b58s8IVqjm/YIRJqY6l/ZxLVNhufoUil9vwHs2po8Rtn7Y8FaxVL6OeAt7/0ZI
+         AcVuC9RjRbP4YPbT96GAyM3SlWQmbK6ilbUTPX9M2x6p79SJJ700XoHAigMkqt698fWF
+         CE2HNrthqHlMWLDNqMDYvVBjEVnZpYCFvhqvoKxYM4phuyg0YwnIBEU7SrlQEX8HwgT4
+         /NH0kKw1qGodIboCMVqbdaoecvAIafSn6rOgr96Fj5BQc/Dtn8eQEOCo0MtZXW//9izk
+         fICQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718873409; x=1719478209;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0oRTqaQV+LstrjwZixpKFYUALXmKtaF0Ow0RUXHlll0=;
-        b=B4JtsC0jyjzAToFP/YNrSfmKzoveoI0ndzrA/uupZVVxCrJ8h54PCcuc/HJam/NlN9
-         1LyCddXo76mJAEV5Np18+J4peaO90bHfAfK7OTom7+0oDtsZlWLLR94EyvLfE5mX47up
-         EirIl8QNaWcuD1HHGXelom/VIC4kPDVfZXU/J9FCsoTkft3ItfIYlN5KHwxYs7IF0O4i
-         X2skm6FcaW2dkL52HshOHxh9AxrEIQkXhznSZpjEpOdob3onm8W+xQcO79yaW22xC5at
-         jsNCgMRIlcJXP7Ustd/aHfftvVA+nTWFjYYIePa6uvbRQpCmlGHsMhrBWXP68GkXJ/Uv
-         a+Og==
-X-Forwarded-Encrypted: i=1; AJvYcCUBtf+/qWauncY7/FkwRNmDIHTcyY9/+ejlsMR0LTBD+J/ieBcy+piM41sZp2yRmz8RiAyryrpwUkfbcvnt+ukM6SyggHxbra1VSrtv
-X-Gm-Message-State: AOJu0YyyGF0gG+2t3klm+qNiWLuLTbUEKzCnnh9Bozm/QobbF0z45N+W
-	pRZSVb6UZLyVzYQ+W63+zseygUJWzuIH35+iKD2hLeLGw+zyL8cuX92puC4oi1SSIqKDPcy9uIp
-	K70o8uQNY2Dc7togs//5uooSbWXlnMti5Oo1p
-X-Google-Smtp-Source: AGHT+IHcXpqJLWmBKdXeI91LoMKrVXewns1BNu07e4js70I9FeW6r0+Qp26QuOLQHYvE8hHnxAzWJBo7v4Fc1y9Nr0o=
-X-Received: by 2002:a2e:2416:0:b0:2eb:e137:6584 with SMTP id
- 38308e7fff4ca-2ec3ce940bamr36303391fa.20.1718873408841; Thu, 20 Jun 2024
- 01:50:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718873401; x=1719478201;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vPUY4GnBpPiQcbABkIr/cid7Dg+9bQhVw0p/ZhNJByA=;
+        b=V3bGgfSIbrXI7OPT7qxO45NtkUGYY8E4hii0Q0IQy/459cOHJ8NsasC2P69m0h7hTw
+         ZZxwL6hKHSyvcM9B6pqgiZTuiQZIli9jfh5lJRuvqPoBXuCVKRxdNN7/O6P/BwZ2P1iz
+         UF37tfGUjnPmDCTSD5uDf394cd4FcEBk1tnObY4juuxCyY+B2HaV5MhbrAsFzgLv6Bon
+         runPFy7lbfe/xEwyWr+k30Ym4+CL/ZdkrtiOwWjryZbstaIIgZD+LC79feRVMwx2HLSD
+         z+xJni9CjBLU48A8KFBUOiIPmi4P8qJCNZERXBpTp3ZybRu7J22Ccl5cUUxuOQu/jBLD
+         mSJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVruavMrj6nBSHmsUNSOUT1InSgpxaedvrGXiTxPiwXc1KpnTKUwPOPozi4JISXbxD3hoOlnPD9E51jcSertNXxdTZwb7WyFQ2wesAN
+X-Gm-Message-State: AOJu0Ywg1o0gJa8Dqkwk0Bygx+GXT1Urh4i9euL0ZkqAhII1tDMm4VTU
+	z7UMpqDzPUxWBks8J5/ZHiuKZyrG5doQmlHOeSVi+7QlbI7RsSX/BJf7Wx057fA=
+X-Google-Smtp-Source: AGHT+IGeRQpttQkvdYS0dTEFzVkziwzBfpxbBi4M6n3CVQkw5KiESUy5y3Tp6fSmCv99sCUYOBBX3g==
+X-Received: by 2002:a17:907:c70d:b0:a6f:1045:d5e2 with SMTP id a640c23a62f3a-a6fab60b27amr291477766b.4.1718873401051;
+        Thu, 20 Jun 2024 01:50:01 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f5f377dd8sm694535966b.146.2024.06.20.01.50.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 01:50:00 -0700 (PDT)
+Date: Thu, 20 Jun 2024 11:49:57 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] tracing: Fix NULL vs IS_ERR() check in enable_instances()
+Message-ID: <9b23ea03-d709-435f-a309-461c3d747457@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620054708.2230665-1-wenst@chromium.org> <743577a0-ef60-4731-8901-daf1ae4f7f7f@suse.de>
-In-Reply-To: <743577a0-ef60-4731-8901-daf1ae4f7f7f@suse.de>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 20 Jun 2024 16:49:57 +0800
-Message-ID: <CAGXv+5G8sC0JAWg_1k-x6+XeqMSMHQDuHfhOJkJYe1OzHkdH-g@mail.gmail.com>
-Subject: Re: [PATCH] drm/mediatek: select DRM_GEM_DMA_HELPER if DRM_FBDEV_EMULATION=y
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Jun 20, 2024 at 2:37=E2=80=AFPM Thomas Zimmermann <tzimmermann@suse=
-.de> wrote:
->
-> Hi
->
-> Am 20.06.24 um 07:47 schrieb Chen-Yu Tsai:
-> > With the recent switch from fbdev-generic to fbdev-dma, the driver now
-> > requires the DRM GEM DMA helpers. This dependency is missing, and will
-> > cause a link failure if fbdev emulation is enabled.
-> >
-> > Add the missing dependency.
-> >
-> > Fixes: 0992284b4fe4 ("drm/mediatek: Use fbdev-dma")
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->
-> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
->
-> Apart from this problem, would it make sense to convert the driver's
-> management to GEM's DMA helpers? It appears there's some code
-> duplication in mtk_gem.c and these helpers.
+The trace_array_create_systems() function returns error pointers, not
+NULL.  Fix the check to match.
 
-It seems at least import_sg_table could be converted. I don't have
-the bandwidth to do a more in-depth review though.
+Fixes: e645535a954a ("tracing: Add option to use memmapped memory for trace boot instance")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ kernel/trace/trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks
-ChenYu
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 71cca10581d6..5462fb10ff64 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -10507,7 +10507,7 @@ __init static void enable_instances(void)
+ 		}
+ 
+ 		tr = trace_array_create_systems(name, NULL, addr, size);
+-		if (!tr) {
++		if (IS_ERR(tr)) {
+ 			pr_warn("Tracing: Failed to create instance buffer %s\n", curr_str);
+ 			continue;
+ 		}
+-- 
+2.43.0
 
-
-> Best regards
-> Thomas
->
-> > ---
-> > The commit this patch fixes is in drm-misc-next. Ideally this patch
-> > should be applied on top of it directly.
-> >
-> > CK, could you give your ack for it?
-> >
-> >   drivers/gpu/drm/mediatek/Kconfig | 1 +
-> >   1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/gpu/drm/mediatek/Kconfig b/drivers/gpu/drm/mediate=
-k/Kconfig
-> > index 96cbe020f493..d6449ebae838 100644
-> > --- a/drivers/gpu/drm/mediatek/Kconfig
-> > +++ b/drivers/gpu/drm/mediatek/Kconfig
-> > @@ -7,6 +7,7 @@ config DRM_MEDIATEK
-> >       depends on HAVE_ARM_SMCCC
-> >       depends on OF
-> >       depends on MTK_MMSYS
-> > +     select DRM_GEM_DMA_HELPER if DRM_FBDEV_EMULATION
-> >       select DRM_KMS_HELPER
-> >       select DRM_MIPI_DSI
-> >       select DRM_PANEL
->
-> --
-> --
-> Thomas Zimmermann
-> Graphics Driver Developer
-> SUSE Software Solutions Germany GmbH
-> Frankenstrasse 146, 90461 Nuernberg, Germany
-> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-> HRB 36809 (AG Nuernberg)
->
 
