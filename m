@@ -1,206 +1,125 @@
-Return-Path: <linux-kernel+bounces-222549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 831E291038F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:01:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C16910391
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A661F21EDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:01:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A251B1C21364
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4487317C20A;
-	Thu, 20 Jun 2024 12:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCB11A3BD3;
+	Thu, 20 Jun 2024 12:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="oCHa+B7n"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XQWy8b1E"
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAC13BBF5;
-	Thu, 20 Jun 2024 12:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3766115535A;
+	Thu, 20 Jun 2024 12:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718884850; cv=none; b=MreW8/qCl1enawpPM4i+Gpr1y1nXRo6YIJgMAle1KObW0t7QPOdnCOu9iM7ig6KSIphMxRntkvlmWrWmddY9z2WGxzPd7kvKkK0JNNDYwdgjJItwsbJxWBOL3oxwCnisXOhYOoPG6xUb6xJcg9b3rNJrESFR19TmAVVLul49XiY=
+	t=1718884874; cv=none; b=q/pIJNIZwbsVByFKuW2immLDl96IfeqMbDyi/8vNuveztkRvGYKtswlEYTUu2kpz9HGw5GgfJMVK7YJ2UcUeS9RHA9mf8pARQk/0g5tcd1M+TiyoBZf7onlLljJxqvd9GaV/Kz93XjDRUX1S7G03ZO0hYCI25UDBH6SCUeIrgZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718884850; c=relaxed/simple;
-	bh=masVgiEVrY3nzXZveTAjwT+Gixs2tnPiRl/I6A32EvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c1ImFmGVRmmcf+WN4u3ituZkIAf4du3p8ir+cUIZ88UW2nRiylU3+VlyJBBl0cJ4FS5MmXhPQ3l7Q8a5nNLzmXaKqXA6Ou+m43x/pinBFUaspoPsOG/V+lCcAO2hIE0OesjEJ6sl7Cd+xHXkQUJpXa0s5KMWojULQYBoj8RLXFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=oCHa+B7n; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: lukma@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id F0446883A6;
-	Thu, 20 Jun 2024 14:00:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1718884846;
-	bh=smox0b1pxt1sHNNDz739cx9CLIz4NaHSGdjVt/vZXh8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oCHa+B7ny7edSSXyRh6+OhhOEMfHwONRcQpCrfdUILB5JQPj9SsoHTKBaRiOYOSX3
-	 gM+9mJJ3E9bi7AW8mpyp7tkhzusC0KvUIAA4b4yTyj+6yvhgvucXLBTLKp1DaGwAb2
-	 2PmOHp8g7Ct+BHjmQG9XUvZ2izB8YkNsB55GbfkHdyG2NSVgYYzdWtjmZFmWwxwJ3l
-	 OJmlnXvPBD7UzKYCXdEt5aINlgJ7CDG7oIy+LxsaMlNxnwfzZ8luRxIK0jgwi20UXN
-	 iS0KYq4O3v4wAbhVDTCC78biEt7Pq9gG8YibzjDKL1kK9p/sXQH0aniYQvLSGdDrKf
-	 6IQg3TTRARACA==
-Date: Thu, 20 Jun 2024 14:00:44 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, Paolo Abeni
- <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "David S. Miller"
- <davem@davemloft.net>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Tristram.Ha@microchip.com, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Simon Horman <horms@kernel.org>, Dan Carpenter
- <dan.carpenter@linaro.org>, "Ricardo B. Marliere" <ricardo@marliere.net>,
- Casper Andersson <casper.casan@gmail.com>, linux-kernel@vger.kernel.org,
- Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
- Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 net-next] net: dsa: Allow only up to two HSR HW
- offloaded ports for KSZ9477
-Message-ID: <20240620140044.07191e24@wsk>
-In-Reply-To: <20240620090210.drop6jwh7e5qw556@skbuf>
-References: <20240619134248.1228443-1-lukma@denx.de>
-	<20240619134248.1228443-1-lukma@denx.de>
-	<20240619144243.cp6ceembrxs27tfc@skbuf>
-	<20240619171057.766c657b@wsk>
-	<20240619154814.dvjcry7ahvtznfxb@skbuf>
-	<20240619155928.wmivi4lckjq54t3w@skbuf>
-	<20240620095920.6035022d@wsk>
-	<20240620090210.drop6jwh7e5qw556@skbuf>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718884874; c=relaxed/simple;
+	bh=W4yL/5i1kNtJaJQhYoGE/VtURx3W0KrN7GvkKdi+Tlk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FJKPIis9xMxoY8wGisXxjtpLH2if8YKElwcwaomx0SR/lMGaNauiVxJz8lI98isb7KtK10W83pdHkn4gTkSlp5OGV38SDbOkanEVw2ADuBWqcIXXFE8nZOXMZ/u/T7E6UBHdOw9mNXPY6j2ybGHBpaJ3Rm2IzI2s37bRXqVrsGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XQWy8b1E; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-1f6a837e9a3so5351315ad.1;
+        Thu, 20 Jun 2024 05:01:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718884872; x=1719489672; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YtNJHhlV6mJ1v6W6jC+d4Qq86uRWEHCi5uCcFwKEoBw=;
+        b=XQWy8b1EFNWDroTTSggoqNZ+IFk4X0MkWNfgEYRhcb02Nz9bidjX8N8s7E8y1ZI0A7
+         yXLpoXBiJXD5Tv0Op+9fJ1phlKdTo/KazSI9T8sxafIkkJmkIRkcMYdaBTFJq0A88suC
+         1y/U0B+mTzauKgBmkKoqmAc6lkfiMKbgCuuq9QkBUvmr+3En4nXdExDHp1koe5yO8552
+         3f8nIJgy2fpRy360U8gbkW8IHdolv1D/hfVz2DisbhZT9yB5HHAE88bJAD+7iwXYd9Yk
+         sNXJyTe5nHRy22rvQPgRte5QfD5eQpxADlbljbCGTFEDve0vx4ivVJVKpdPDmx//tTIW
+         +VCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718884872; x=1719489672;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YtNJHhlV6mJ1v6W6jC+d4Qq86uRWEHCi5uCcFwKEoBw=;
+        b=n2gvUbZ87R4LVrCgTrEgRgmsCUercSwSQZ1lx+z/FXC2jO+aRq/Yo5CC2e3CkGxFHz
+         NrXZU0Qv2eEJmoSO4vQAJtHKwokyQCslvGCfSd9RDiA1EwLGeKDrxgu7qcWnkLJMNo43
+         ty5cCN5HIkoP7lHrgkQTwmrGzXTiLYFwzJnsFXdRYA2h+sQ1lErXqzA+B0NXzXXGB3fA
+         Uzd3h4C9aOlhEUo7SF2jIlruAHOimzFoFNjLkXK03EHhHZDn20eJo/+EmdAEThIpg6xQ
+         wfvMBAzAtmr9KZA/kxmhmQVDpB6KfXHChKYIAFBq9qAd4ypJQHY84QwtJwiPz3ZzXkvL
+         vixg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkcSw6ZTrOc1phD2MCL2XdXb8KQkaqMRiaUTRije7qg3RZHoRDikkN+OrSHaxSPWSBJqOCVa6jsobxwqp7cVVVE4teaeP3nXkB8oCU
+X-Gm-Message-State: AOJu0Yz9NWDajW1IuDgu4II3adnjubNYXL8O1JQSySpSl24NlMKfzJNP
+	2etPcEd5Nm6Phk7rpqp1cja8J6euwth0LumSbDgDKXiWS/CGnCQV
+X-Google-Smtp-Source: AGHT+IFONsWMnnvW8kz9aeRXrEqy7IIur28O0PLnCHzbWoz273VuTzabXuU6y5y56doY95zQ+6VOKg==
+X-Received: by 2002:a17:902:f54c:b0:1f7:92b:4e6f with SMTP id d9443c01a7336-1f9aa3ec3f5mr44204995ad.29.1718884872181;
+        Thu, 20 Jun 2024 05:01:12 -0700 (PDT)
+Received: from lhy-a01-ubuntu22.. ([106.39.42.164])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e55e54sm135628135ad.23.2024.06.20.05.01.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 05:01:11 -0700 (PDT)
+From: Huai-Yuan Liu <qq810974084@gmail.com>
+To: james.smart@broadcom.com,
+	dick.kennedy@broadcom.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	Huai-Yuan Liu <qq810974084@gmail.com>
+Subject: [PATCH V3] scsi: lpfc: Fix a possible null pointer dereference
+Date: Thu, 20 Jun 2024 20:01:01 +0800
+Message-Id: <20240620120101.419437-1-qq810974084@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/bpKHthVch+friIY0bUGyhl5";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
 
---Sig_/bpKHthVch+friIY0bUGyhl5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In function lpfc_xcvr_data_show, the memory allocation with kmalloc might
+fail, thereby making rdp_context a null pointer. In the following context 
+and functions that use this pointer, there are dereferencing operations,
+leading to null pointer dereference.
 
-Hi Vladimir,
+To fix this issue, a null pointer check should be added. If it is null, 
+just return len.
 
-> On Thu, Jun 20, 2024 at 09:59:20AM +0200, Lukasz Majewski wrote:
-> > > It will return -EOPNOTSUPP for port 0,  =20
-> >=20
-> > This comment is for xrs700x_hsr_join()? =20
->=20
-> Yes.
->=20
-> > For the ksz_hsr_join() we do explicitly check for the
-> > KSZ9477_CHIP_ID.
-> >=20
-> > I do regard this fix as a ksz9477 specific one, as there are some
-> > issues (IMHO - this is the "unexpected behaviour" case for this IC)
-> > when we add interlink to SoC VLAN.
-> >=20
-> > I don't understand why you bring up xrs700x case here? Is it to get
-> > a "broader context"? =20
->=20
-> You have the Fixes: tag set to a HSR driver change, the fix to which
-> you provide in an offloading device driver. What I'm trying to tell
-> you is to look around and see that KSZ9477 is not the only one which
-> is confused by the addition of an interlink port.
+Fixes: 479b0917e447 ("scsi: lpfc: Create a sysfs entry called lpfc_xcvr_data for transceiver info")
+Signed-off-by: Huai-Yuan Liu <qq810974084@gmail.com>
+---
+V2:
+* In patch V2, we have removed the unnecessary 'out of memory' message.
+  Thank Bart Van Assche for helpful advice.
+V3:
+* In patch V3, we return len directly instead of goto out_free_rdp.
+  Thanks to Justin Tee for his suuestion.
+---
+ drivers/scsi/lpfc/lpfc_attr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-As of now - the HSR interlink was tested with hsr_redbox.sh script with
-QEMU setup and with KSZ9477 IC with and without offloading enabled.
+diff --git a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
+index a46c73e8d7c4..7d1e38ea9e52 100644
+--- a/drivers/scsi/lpfc/lpfc_attr.c
++++ b/drivers/scsi/lpfc/lpfc_attr.c
+@@ -1907,6 +1907,8 @@ lpfc_xcvr_data_show(struct device *dev, struct device_attribute *attr,
+ 
+ 	/* Get transceiver information */
+ 	rdp_context = kmalloc(sizeof(*rdp_context), GFP_KERNEL);
++	if (!rdp_context)
++		return len;
+ 
+ 	rc = lpfc_get_sfp_info_wait(phba, rdp_context);
+ 	if (rc) {
+-- 
+2.34.1
 
-> So is XRS700X, yet
-> for another reason.
->=20
-> > > falling back to
-> > > software mode for the first ring port, then accept offload for
-> > > ring ports 1 and 2. But it doesn't match what user space
-> > > requested, because port 2 should be interlink... =20
-> >=20
-> > Please correct me if I'm wrong, but this seems to not be the case
-> > for ksz9477 - as I stated in the other mail - the ordering is
-> > correct (I've checked it). =20
->=20
-> I was never claiming it to be about KSZ9477.
-
-Ok.
-
->=20
-> > > I think you really should pass the port type down to drivers and
-> > > reject offloading interlink ports... =20
-> >=20
-> > As stated above - IMHO I do provide a fix for this particular IC
-> > (KSZ9477). With xrs700x we do have fixed ports supporting HSR (port
-> > 1,2), so there is no other choice. As a result the HSR Interlink
-> > would be supporting only SW emulation. =20
->=20
-> But there is another choice, and I think I've already explained it.
->=20
->         HSR_PT_SLAVE_A    HSR_PT_SLAVE_B      HSR_PT_INTERLINK
->  ----------------------------------------------------------------
->  user
->  space        0                 1                   2
->  requests
->  ----------------------------------------------------------------
->  XRS700X
->  driver       1                 2                   -
->  understands
->=20
-> I am bringing this as an argument for the fact that you should pass
-> the port type explicitly from HSR to the offload, and use it
-> throughout the offloading drivers. The hweight(ports) >=3D 2 happens to
-> work for KSZ9477,
-
-And hence it is added to ksz_hsr_join() function, which for now only
-checks if we use this particular IC.
-
-> but IMO misidentifies the problem as having to do
-> with the number of ports rather than the port type.
-
-In general I do understand your concerns - however, as I've stated this
-patch fixes oddity of the KSZ9477. I can test it with it.
-
-> Because of this,
-> a largely similar issue introduced by the same blamed commit but in
-> XRS700X is left unaddressed and unidentified (the fixed ports check
-> which is already present masks the fact that it's not really about
-> the ports, but their type, which must still be checked, otherwise the
-> driver has no idea what HSR wants from it).
-
-To keep it short: I do see your point, but I believe that it is out of
-the scope for this particular patch.
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/bpKHthVch+friIY0bUGyhl5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmZ0GewACgkQAR8vZIA0
-zr3HvQf/TwesLD4OLVnDP3iNXGXpc7JnWrOCDsZKTJz97a+2E05U31gZMPduitTa
-w3Ek2cw7SmmFe2DRWNf0mA73sc879gtOOHW+84ZTV68qbvIk5V0kKjoLYNXODcp9
-AknRCfbjO/X9tjG6wn/p7c0/P4/L5B9cLYoaRZkBmxDxB1xXfDoFstMJPlJcMaZ7
-w/9l52XVqhg/0eVVDXgJHBJo1iy/7Tzzi3zgoKA3azrotZXa/xRpli2SDVyzlPaY
-rOiRlRhjZxKJ8qhz6TtCCuQprKLwEVPVGNHta9MSqw3guqQ8dFSUBKqDEaCuuX7I
-rWu+Wl6pKcAqxzzOlqzKzFUpcbU55w==
-=uJPp
------END PGP SIGNATURE-----
-
---Sig_/bpKHthVch+friIY0bUGyhl5--
 
