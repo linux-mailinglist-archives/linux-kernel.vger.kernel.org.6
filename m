@@ -1,84 +1,153 @@
-Return-Path: <linux-kernel+bounces-223198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404F9910F6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:50:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B92910F82
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E00BB1F232AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:50:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F03FB2248B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5009C1B9AB1;
-	Thu, 20 Jun 2024 17:42:04 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCA51B3F3C;
-	Thu, 20 Jun 2024 17:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250A71BD4E0;
+	Thu, 20 Jun 2024 17:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s3xaxEw1"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1A91BD03E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718905323; cv=none; b=ZZiZWHkQGkEJk6n78cenkZj3RhBLreMsTkkn4KAW6TduNY1lphcKMT7d91MNNjH9nprTmKKVfz4o5SSCAVMBWEEfEsE/gYnD7+K2n++FjMzIi5wve2YtQjmU8SWnc088vSaBGOFvgOmCRytiaTMTxkewbR2j2eVhoj7SRPwoyZg=
+	t=1718905331; cv=none; b=gPe5bCfX7EKwHeVEe0YgodHDNMx9LWbvUvWBEdWlX0hjCD1ujEa85GYn7mAFk3ftt8PVLx3CZLaJxx16Ct0qvy2PL628qcA8cadxkUIbVbk3HCxmIIRc9JKSve1fBGPv3ILkgjcCYoDSngLWbkxk9Ns0XJe8LTeGUWApZivitJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718905323; c=relaxed/simple;
-	bh=+nR5QNLtGvEfCYocFDjiHDm8ngwhk+jo6AdzPgyzDdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQfez70Yig4O0WHxZWAX5qo2cyOC7MFcnFV0KdtJJwN9EImJckHBVVN6qEWdnIWa2aPcntJVb0sm/aM9nOuBm8ORWJWgriqQHTpDsJj3T5QgvCfChTcb4p1ze0PoA6wFn415F83Sfvb2OyrL8ul1zPZsDAYylrcvAvx7g9AIEwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sKLn5-0002k1-00; Thu, 20 Jun 2024 19:41:43 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 22837C0120; Thu, 20 Jun 2024 19:41:24 +0200 (CEST)
-Date: Thu, 20 Jun 2024 19:41:24 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Jonas Gorski <jonas.gorski@gmail.com>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] MIPS: Introduce config options for LLSC
- availability
-Message-ID: <ZnRpxMfs0Eql87r3@alpha.franken.de>
-References: <20240612-mips-llsc-v2-0-a42bd5562bdb@flygoat.com>
- <20240612-mips-llsc-v2-2-a42bd5562bdb@flygoat.com>
- <ZnRThFlqqyDEprGz@alpha.franken.de>
- <743a2297-ff4a-4cb3-ae61-8cd4956aa565@app.fastmail.com>
+	s=arc-20240116; t=1718905331; c=relaxed/simple;
+	bh=DJN1/0dLnS+Xs1C5uz+BTPgNljTUd6WrcnPuKPbssCA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FogupICx7TBdbD3CnJ4VgohsCnuSoGMFGRQAie6/JJZRR85M1vs3HcRSFIQAHb1hj4TwZ360sDqaYybN9LwDn3sssy8DnZEQik6hXqdHD9RHE8Pg8ls7P5IFSIKJapglEUYruxMUXDQ4k7mXR8t12xhJvk0AySfnXemdyrLiCDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s3xaxEw1; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-5e4df21f22dso976380a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:42:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718905329; x=1719510129; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h1QiIIir5vunr9vjaC2dataFjUik+pcjP4k0418uA+c=;
+        b=s3xaxEw1InKBlcPPe7/o4VUtnlfelfuKF2Om+p7oKj9Kxj7S5ZCxCuCRo9j77pGYRx
+         DdZ+pf3oRRAw2KmOMrSmz3Uv/5pUlAhCJyRIoMJlGayAvb1TVD+hRRa670pOB9cI6Orw
+         mP4zsjOp3uDF1YnhSBdYiwnxZrlzCYpOvJxNW39OVR9SOIrQE8eMvaDWdtSh/80hgCyC
+         GUfcmrh/JOx9IJstLAHwBrdih/jirNiXzJbrTKNdDylk2P7J3RAhlxamMqXMTJbaRDJ0
+         6pAVGpavg3n1JyOdj182atnLtji+jiq2CnXiLY6UdL0xtx3hcZ69NX6jIc9bxLhTCyKn
+         FcCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718905329; x=1719510129;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h1QiIIir5vunr9vjaC2dataFjUik+pcjP4k0418uA+c=;
+        b=b0r48TKgloxqwHuDyDzY8rqu/Y9sGflHAPkfeZd7GWd7J3QARIeGk/ms+puPgzwlmy
+         Xi1jFMMRrt8W2BQHSGJrKmVmEzoAWjR54IFjK6OHCOXdWTVMJ/rNHtSceo/cK3t/ElnO
+         aOoWlUI5VYwjmBQJ03waEzfNfMmb757W9Afd7iZHd3UtMiFxPMvxzD3QxHhoakVT8ikk
+         D6j8jgpcBqmZJ6ZgEANt4XeQLjAAjqcV4+WB1LnT7P3yxOG6AxH1tV2uVH1nxBkkiuEh
+         30Nc/HOIY4S7AoSWUHViWXzdJrD3or/7B1HUOyKcdMSEAGUnvE4YY8JR6CJmhTobjJqL
+         nbYg==
+X-Gm-Message-State: AOJu0Yw9ALDTtK7rlbCBb14wkAgd5+M7186e7RkDPEbVdsBF9QhaJorb
+	TrDvTKByQC4Hw2x7D/dtu+3GLc0H7C89RVC3EcNJyN6Uf4gPIuG/d/Tauqa3QqgvPt9ezyiDIps
+	cqUM9WG5fNwl9No+tpaaImXj2gdbiHqWUrUsZEaNmXqQ0FV1uTj8I5iEEVHGDwdfT2CXdiyvdkA
+	9VTTU+pE/kjy6fgtldda+fBhQ8Htrm9jh0LLuUa/H1bgch
+X-Google-Smtp-Source: AGHT+IF1woX2SNWshgADpWOWweU8r5YWNeDTkTU3tLgfRhzX8b47i80LVNOdkkpTh2ltwafKfd/PsvxThrCV
+X-Received: from jstultz-noogler2.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:600])
+ (user=jstultz job=sendgmr) by 2002:a63:e047:0:b0:659:6d57:7a5e with SMTP id
+ 41be03b00d2f7-7108ae61581mr19042a12.5.1718905327861; Thu, 20 Jun 2024
+ 10:42:07 -0700 (PDT)
+Date: Thu, 20 Jun 2024 10:41:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <743a2297-ff4a-4cb3-ae61-8cd4956aa565@app.fastmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+Message-ID: <20240620174204.1802235-1-jstultz@google.com>
+Subject: [PATCH v2] locking/rwsem: Add __always_inline annotation to
+ __down_write_common() and inlined callers
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Tim Murray <timmurray@google.com>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 20, 2024 at 05:30:48PM +0100, Jiaxun Yang wrote:
-> 
-> 
-> 在2024年6月20日六月 下午5:06，Thomas Bogendoerfer写道：
-> [...]
-> > do you have an user manual stating that the R5k bug is fixed on this CPUs ?
-> 
-> I actually investigated R5500 a little bit.
-> 
-> There is no explicit document mentioned this bug is fixed on R5500, but it's not
-> mentioned on "VR Series 64-/32-Bit Microprocessor Programming Guide" [1] either,
-> while some other hardware limitations are mentioned in that guide.
-> 
-> Plus EMMA platform, which was removed form the kernel, doesn't have
-> cpu-feature-overrides.h. This means that the platform was running with LLSC
-> enabled.
-> 
-> So I think this CPU is not affected.
+Apparently despite it being marked inline, the compiler
+may not inline __down_write_common() which makes it difficult
+to identify the cause of lock contention, as the wchan of the
+blocked function will always be listed as __down_write_common().
 
-found a preliminary datasheet and it supports your thinking;-)
+So add __always_inline annotation to the common function (as
+well as the inlined helper callers) to force it to be inlined
+so a more useful blocking function will be listed (via wchan).
 
-Thomas.
+This mirrors commit 92cc5d00a431 ("locking/rwsem: Add
+__always_inline annotation to __down_read_common() and inlined
+callers") which did the same for __down_read_common.
 
+I sort of worry that I'm playing wack-a-mole here, and talking
+with compiler people, they tell me inline means nothing, which
+makes me want to cry a little. So I'm wondering if we need to
+replace all the inlines with __always_inline, or remove them
+because either we mean something by it, or not.
+
+Cc: Tim Murray <timmurray@google.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: kernel-team@android.com
+Fixes: c995e638ccbb ("locking/rwsem: Fold __down_{read,write}*()")
+Reported-by: Tim Murray <timmurray@google.com>
+Acked-by: Waiman Long <longman@redhat.com>
+Signed-off-by: John Stultz <jstultz@google.com>
+---
+v2:
+* Add ack tags & minor tweaks to commit message
+---
+ kernel/locking/rwsem.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index c6d17aee4209..33cac79e3994 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -1297,7 +1297,7 @@ static inline int __down_read_trylock(struct rw_semaphore *sem)
+ /*
+  * lock for writing
+  */
+-static inline int __down_write_common(struct rw_semaphore *sem, int state)
++static __always_inline int __down_write_common(struct rw_semaphore *sem, int state)
+ {
+ 	int ret = 0;
+ 
+@@ -1310,12 +1310,12 @@ static inline int __down_write_common(struct rw_semaphore *sem, int state)
+ 	return ret;
+ }
+ 
+-static inline void __down_write(struct rw_semaphore *sem)
++static __always_inline void __down_write(struct rw_semaphore *sem)
+ {
+ 	__down_write_common(sem, TASK_UNINTERRUPTIBLE);
+ }
+ 
+-static inline int __down_write_killable(struct rw_semaphore *sem)
++static __always_inline int __down_write_killable(struct rw_semaphore *sem)
+ {
+ 	return __down_write_common(sem, TASK_KILLABLE);
+ }
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.45.2.741.gdbec12cfda-goog
+
 
