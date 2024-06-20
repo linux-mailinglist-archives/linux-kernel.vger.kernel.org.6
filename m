@@ -1,151 +1,127 @@
-Return-Path: <linux-kernel+bounces-223489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784B79113DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:56:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609619113EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6BE71C21722
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:56:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0909F1F21C89
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DF87711C;
-	Thu, 20 Jun 2024 20:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C2F7D417;
+	Thu, 20 Jun 2024 20:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Q1Em+ovT"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QJwHIQeJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6629E3A1CD
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 20:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE9679B99;
+	Thu, 20 Jun 2024 20:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718916982; cv=none; b=WzS5KfX7aS2y4LoOhvFs2K4ZrIu+HfW+0hEZNJZQmT3cm9FVe451QjoQXxg0uPp1LK0vrNC+l65R52boIxg6Bu22UvvvnVP70okT/f6KyudJQh7QY7CxdtZiKsqv6MlZzCQe7T8TxDR0uxp866pDhd/MWb6lQ3T8H59HZHjpupY=
+	t=1718917088; cv=none; b=kYI/Silr9UIon5hY7ZNO38N/8dAbKCkUxTg2pKmByjVO3hdO6N2TGdP6SH7oPgYhZSaCGNoZkEqz4fZWJlVrV0j1didLibQDHHGOX065ZCa86dRqdQHf2Be38XYx16CwKCezJB3EZGkkxMD6Mc0+MQ4vIdSzuX3wQKlQOpI/TWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718916982; c=relaxed/simple;
-	bh=7bmaecOL5bwpzLgvqJZsDJE8Wz4/YnnOp7I+iv3R9q0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bBgZcV7tI/MH1MmugFCrUoRiyFf2GbL2oqNBKAKpW7xBvRmpC2VxHpVr5eHVlez8KGQHmsVmhRJ6ohF/WOOeT7XWEbYi+9Hwrw2NaoSqsW8N0jWvnQqFNWjAO+dj8unji3BVTvxDw53t6O5hSoJwnVsRZSGseuQ0gGAdu+bNJHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Q1Em+ovT; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-364b2f92388so943864f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718916979; x=1719521779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tParEw4TnP3wUXcwkDyOi4Scz2rhjwIoECr/A9aobTg=;
-        b=Q1Em+ovTDiXpq6buKyKfqbO0VSOc8H2KH7eGw8WeB780V5f28n/Wt4aUrKkPRhiOmK
-         675w61ZBV25U3oZmwIuI8YeIugAYfeQXykUJOzh9RchXlLgca0d3xS+CVvxzEvpVFer6
-         SX27eKy7/mLsQRaBuRp84a6rrv1w/cEptyY+9sFnHPzNoB5Wj26u6Jax7cYt+74dsxlz
-         zx4x0a6BNL+rOCjf4oY5wBLd/NWFNlmXAkwU4dVx2uNlEWnvn/U3vMv5D8b892CKlm8X
-         prP5Agk8VCaBm9AKRzKg+LESKPCTb+y9c+E59T0x8IXirYBAlUhHGzPIVVQCcpqi6BYh
-         nzKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718916979; x=1719521779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tParEw4TnP3wUXcwkDyOi4Scz2rhjwIoECr/A9aobTg=;
-        b=WNdoXO/RmPA9wjxkUgiNqZOQNIB5rFegGFfvIsjnyAg+HR/PZothsihoe23ePObhOM
-         Hoeun8oxhnWkUbwUR4g0/bRgThN5d1BlULcm0ewIvGd/kxuwWDyQvjp4fozwc4zIt2fU
-         HhaSTfw4sMMwzlcPM3RiE31VMUEaDxXJ4N/vzplAFpaI18dVVeP6T9ZUg8k9yKrVQyZv
-         BM026u1qjUkmpeFuyxgJObdvSeW2v3/iwjZxO2Sv6lg06YeDWWAbBGAlb14x4BjyK2FM
-         dIDD3XqUnegRYL2X6AzzuYg44JukvBItgXcgMO7XKAoWLewi0rFBNvrQPXAtKrMd9tFV
-         oDPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFLtBm7uTJ9g2jrEa96LqJUXVkDdh0DV5WLFDiBR/CVsQli1QfR8XjcMyen8aQO0gt6K2wamAfLaJDdCaDPILs8bwYknAh6lPbC7qq
-X-Gm-Message-State: AOJu0YxBMp9hRK0WcjiSilcep2TOVz9Xa7wqki9nOqTH1G821tzfuUjy
-	oYaOlDHQseslQBiLzhbthZO8r4g6YR0gLp8onCIpyraMv2agraiOrhKOPOdk4RtYUNoKXM/vtMl
-	yop8=
-X-Google-Smtp-Source: AGHT+IF8t8LppDcAmDZ+UAbN2U2Xv9mXuQyfexbNH4CmjdFqAlZe48YByq17RrjbGyxJj0+YBSnHjQ==
-X-Received: by 2002:a05:6000:d52:b0:362:ad5d:4df4 with SMTP id ffacd0b85a97d-363192d0833mr4782800f8f.48.1718916978597;
-        Thu, 20 Jun 2024 13:56:18 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf56eeadsm8781966b.216.2024.06.20.13.56.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 13:56:18 -0700 (PDT)
-Date: Thu, 20 Jun 2024 22:56:15 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Fabrice Gasnier <fabrice.gasnier@foss.st.com>, 
-	William Breathitt Gray <wbg@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-pwm@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Thorsten Scherer <T.Scherer@eckelmann.de>
-Subject: Re: [PATCH v2 3/5] counter: stm32-timer-cnt: Use TIM_DIER_CCxIE(x)
- instead of TIM_DIER_CCxIE(x)
-Message-ID: <ip5aysvcuchc6q6sikghcz7vjn6zvih5r3amkvp7n7xpvncbhh@jdq5lkckeoej>
-References: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
- <126bd153a03f39e42645573eecf44ffab5354fc7.1718791090.git.u.kleine-koenig@baylibre.com>
- <20240620084451.GC3029315@google.com>
- <imyuhtcsjrbyodsndzbaqfwa4jxny25eylfdh4u4xtsiotsk5g@45l556pcrzys>
- <20240620173838.GB1318296@google.com>
+	s=arc-20240116; t=1718917088; c=relaxed/simple;
+	bh=+TqwMif2XTyhArljm9AZMoQGdPFQ3ZcSVFgU5KYqXm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qxSNyPyo7GsushqgS8KSS53fNH7fBeF7TW19DsJeqPIGKe/9kHZU+s4ZGFY8AHBaQXkVwr5KOaJy8DbJ+nblHbr2yU4BdJCIRdwffLrUjyHet/jXhdHZR4Jxy6ojsas+FPIJoU/qGV3BiJm4tad1f0+BWfj3jIwYyyMaj7hMxtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QJwHIQeJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KHBC6t025991;
+	Thu, 20 Jun 2024 20:57:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7uinE8mNlfyxFn5pejTGcwgKDlHhRITAVURCqIbmn88=; b=QJwHIQeJFbT3+Wjk
+	6/2pfeu/+pj9MBIw+GwJjulsrNDstASGn6n1G5JRsirMzNOFh0ZvNhoNGqtirUR9
+	xC3J1bl8qAJNC2mfdbm4mI8STW6DyzjW6IWGICIIO+h06/Ntfh/CHgeWzI/Yumc9
+	p62KEVBLB6OFs4JBPvRA6jwOwg6vU9YAhT76ySu4AwrZN1dTMxfqYk9WMqAmLlwj
+	sLfkWoBbOOPo3yIyXx4Gtt6HSB67jZ8EOOqYwb6MtXNLs5wf+zRcSEbh7smWHfTK
+	ETyzZqPOXgJzUOKWiLfPOXW5cdqYFC6LtZPXW2wpk+jl0EIGAHUu6osWoV2jlZqH
+	awYKuQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrkr0jy2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 20:57:49 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KKvmXf032579
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 20:57:48 GMT
+Received: from [10.110.82.141] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
+ 2024 13:57:41 -0700
+Message-ID: <5aa23f31-a4c1-6da4-9a0f-a312ec410eee@quicinc.com>
+Date: Thu, 20 Jun 2024 13:57:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ny374adlpexcdnhr"
-Content-Disposition: inline
-In-Reply-To: <20240620173838.GB1318296@google.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v5 8/9] drm/msm/hdmi: update
+ HDMI_GEN_PKT_CTRL_GENERIC0_UPDATE definition
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andrzej Hajda
+	<andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert
+ Foss <rfoss@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej
+ Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul
+	<sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>
+CC: <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240607-bridge-hdmi-connector-v5-0-ab384e6021af@linaro.org>
+ <20240607-bridge-hdmi-connector-v5-8-ab384e6021af@linaro.org>
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20240607-bridge-hdmi-connector-v5-8-ab384e6021af@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9EKDVIqvCL1um9S9-OlHj46SCl_qc9CD
+X-Proofpoint-GUID: 9EKDVIqvCL1um9S9-OlHj46SCl_qc9CD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_09,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=938 mlxscore=0 clxscore=1015 phishscore=0 priorityscore=1501
+ lowpriorityscore=0 suspectscore=0 spamscore=0 adultscore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406200153
 
 
---ny374adlpexcdnhr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hello Lee,
+On 6/7/2024 6:23 AM, Dmitry Baryshkov wrote:
+> The GENERIC0_UPDATE field is a single bit. Redefine it as boolean to
+> simplify its usage in the driver.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/registers/display/hdmi.xml | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-On Thu, Jun 20, 2024 at 06:38:38PM +0100, Lee Jones wrote:
-> Which patches need to be in the pull-request and which can be hoovered
-> up by their associated subsystems?
 
-The dependencies are as follows:
-
-	#1 <- #2 <- #3 <- #4
-	       ^
-	      #5
-
-So the practical options are (in the order of my not very strong preference):
-
- - Immutable branch with #1 - #4 (assuming William is ok to let you
-   merge #3), and then I can add #5 (and further work on the pwm-stm32
-   driver that I'm currently working on). Maybe William even doesn't
-   need to pull; I didn't check.
-
- - Immutable branch with only #1 and #2. Then William can pull and add
-   #3 and I can pull and add #5. #4 can be applied later then.
-   (I can remind about #4 in the next cycle.)
-
- - Immutable branch with #1 - #5
-   (Reminder: In that case please fixup the pwm patch's short log with
-   s/-/: /)
-   I would add this for sure to the pwm tree. I didn't even try to check
-   if it's needed for mfd and/or counter. So if you don't need it, I
-   volunteer to create that branch, but if you want to do it, that's
-   just fine, too.
-
-Best regards
-Uwe
-
---ny374adlpexcdnhr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZ0l20ACgkQj4D7WH0S
-/k6mfwf+PSqfL8bo56onxdPLgXeRSRFlGHnohlXLPJBHSNS5MN0nKoVkWb3Qrx9j
-0iMDVTrmGbfB3Bi2hVznoi3CFEaRhRzGSm0de3kSbJiXzqNacDdNVbM5WTzr38GI
-wfXotmIxx6lAnt5QMb672g2S8AVqvuO+64QzFAoStGh+BtBFcZCQmTsgQEVbWzNU
-WeMX5vPGvMwWEjjqkgnAscNxW0KGCwt1j2BlBDvxlacxSosQtjjROYl+mFaz8ii0
-1LevCg4/MxvJQd+LsXFitEFa7ObSpFku33S9mllK7EtR/pcJyrxVXn/+yRMFIWWb
-D3NxQShAbnZwVqj4+grvDGqCZKImYA==
-=nFFT
------END PGP SIGNATURE-----
-
---ny374adlpexcdnhr--
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
