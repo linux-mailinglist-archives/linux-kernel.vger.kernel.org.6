@@ -1,124 +1,253 @@
-Return-Path: <linux-kernel+bounces-223023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B48C910BFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8BDB910C01
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26AE028820B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:20:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F83D288507
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D9F1B29BD;
-	Thu, 20 Jun 2024 16:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6DC1B3723;
+	Thu, 20 Jun 2024 16:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="angWdemX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hlQYb1Rj"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD131AC76D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59261B14E9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900341; cv=none; b=BqAoFJppfWqBbdQ0VSY0bSeYFLLTJvhAKfYoHwBZfWwcxqNT3CMZFjwGG/obU6dWIYF19HdttzCKidrZjJNjrPOqooA8aRoGdPTS1oCnIQw8Il/Wc1Nhd4Y/7KncWD39EZREJWduqXSTp+1adbVj2OxgYxDaPyTHpIgKFRtDcLk=
+	t=1718900354; cv=none; b=Rf9c0JjurspYHCyHpU04ynyPZSzpBtCll1gHT/TTS91GZzwRFRvJISWEHK0UAkPCl8VKxdDemzpmMGcrAGOr3z7kaY5QiG3K6lixxq8tjvYJJG6z5LmjB82aHng5ncRO+7mpINjHR6w9JAbYTVzEXct+hgHjEZQulCjfAQa42tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900341; c=relaxed/simple;
-	bh=JtrK2Rv/djL9B2SivfQcXSQNBAlAXZsyY+YJmbs6iIo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CZ//NoV0WByubfpMu4qI17mKMf5uRRWjbcECUXiZISttcgHxm+dPn3/9hscNg9pZWgO6EquS7rm4VWg93lsYwlnItMv6/0CYY1hbmP6h5ey+LJ6KV+BEC7MJ1zVn+X0PIcep2rYkDgFXoI+3SYVOLa/cZx7pgkzTXEPH08bSEGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=angWdemX; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718900339; x=1750436339;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=JtrK2Rv/djL9B2SivfQcXSQNBAlAXZsyY+YJmbs6iIo=;
-  b=angWdemXU08K7lF2dfgzhrhhhzJADuuZTe5fWwZokeFGPJTuAIMO2qe3
-   ofRsCYYk/zE/s25NBpS7e+dFom2Mb9WmxYG33N3QlZcDL2YlLSp/FugaQ
-   XMR4nn0dClPtqEjapL6hqcH1YrrdteoPXULxUhQ4pHqYbHxJNiPeCdwfh
-   jQDpu1dNjOId7chEcFOSfQ8OOnW+WEj8NH4huOhfKktoBoebtSC4+2Pev
-   D51IN4Fj+hsSUw5wrtRJjomTGpQFNq0YS3zUKX0MvWVLAIhxMJN1RfcNn
-   V2AQYlMhAqzutDVD7Qs0jHQN7sumHJQGs6jyqRK9ToilFqyvxPU5fK+Gk
-   A==;
-X-CSE-ConnectionGUID: +Dhm900RQ8ekvBJJ1tT2TQ==
-X-CSE-MsgGUID: bD4ym05NSEqMVLnKkHvw4g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="16126710"
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="16126710"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 09:18:58 -0700
-X-CSE-ConnectionGUID: BorlomISRMC1VIumo9fjJg==
-X-CSE-MsgGUID: j/pmHWjuTtSAk4aLTWs+ng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="73501621"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 09:18:58 -0700
-Received: from [10.212.43.222] (kliang2-mobl1.ccr.corp.intel.com [10.212.43.222])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 30D0620B5705;
-	Thu, 20 Jun 2024 09:18:56 -0700 (PDT)
-Message-ID: <22c4b8dd-b4af-4a2f-ac36-61532cf726d9@linux.intel.com>
-Date: Thu, 20 Jun 2024 12:18:55 -0400
+	s=arc-20240116; t=1718900354; c=relaxed/simple;
+	bh=oVLl+XcsKvcWdYE77A2RFFRwvfhdCY0dhp5sI6AvCr8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NOY1aCiqEkAsMQ/ZEWkT6M89IBbg3vFDuy/AQdV54FA4l8yqkhs32E+w9mMfVtZiVKZB2rNQ2wS7nhrloT18Jp+CCzJPs/ncie4QPq+4uz9zXNc8FvWNMkwIJb6whXl5sgrGyfSm2ExeQ6397sh8df8a4PZK2mPIjgVkPbXBD9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hlQYb1Rj; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f9c6e59d34so9529735ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:19:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718900351; x=1719505151; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gDTwzMRp7r7igVV+ZTOkGMM8uRoM9/iMzbfcbOs3NYs=;
+        b=hlQYb1RjDm/dAQxclkDOO4GKMXYg/SoDBVBZVczfRlNf4nMiwuaF49akqzraU9rVHJ
+         7qKWNhsFEu+w3S/ayk630UuncOfiUq0OHvswtVIK4b4Csgzw/YuNdIgZck0PR8ZrefqP
+         xhjYqQd7FLZouI8R6CHc8T3RmQ0G41d4gCV1Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718900351; x=1719505151;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gDTwzMRp7r7igVV+ZTOkGMM8uRoM9/iMzbfcbOs3NYs=;
+        b=n/iLalHkJ7ObZxsx1feJCOv64i1SgilDMIo3rIhM6eOo7cvz/dnh1v6HknyXNzJfim
+         AC3hVzbkHkw024WRU3G3FnDwsmoRImCvPzp/pDM5iQCHUGpCzxMTH2Uq/9GKL9Q2MM54
+         EsCC4jiqqQoQIi+cLL/rEpjG26pQWRhkFLpgjrPZ8imitzTC4Ao3JQVOCCe7ihS/Qgw/
+         QLnNVrtv/itGQGQ4LQmDCmY4Smz0uPzZojaOT1tZRL3TnpcAw7w6FjYJnCMQbuP0AggM
+         y5ChL9s99n6QqO3aiy5lU5k+2EyDLb7RSTrAGfQlp+q99vlGElvrDucN2hCs78UXerez
+         cBZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVATTLq8Y+BgPb25jvaXxFkm5MDdOmfF4rh+5CsazVWEkIz1g4JMIIb/5fO8A6acBtxtyHAMyZgATBiDmQ7MBDhlEIvxMhOhNzyx8aD
+X-Gm-Message-State: AOJu0YyBuKo3EVQjBg13bX91wqpKyNkruvLe+pO1aYCKUFScyCQVVSAN
+	vjCTlchXOnxVF0cr99H/QRjAofuP+1ZwddEvxlynyZ/jaSpHgUzToGmZFRey
+X-Google-Smtp-Source: AGHT+IFSW1DtPmzfkyXjIzCznsvC4863obnU5C/WxGZH3fmU++B5UFx8192lW0ggQO9pfsgefF865g==
+X-Received: by 2002:a17:903:11cc:b0:1f6:ea71:34ee with SMTP id d9443c01a7336-1f9aa3ce954mr69656465ad.16.1718900351103;
+        Thu, 20 Jun 2024 09:19:11 -0700 (PDT)
+Received: from localhost (148.175.199.104.bc.googleusercontent.com. [104.199.175.148])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-1f9c72085f9sm18696855ad.79.2024.06.20.09.19.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 09:19:10 -0700 (PDT)
+From: Takaya Saeki <takayas@chromium.org>
+To: Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Junichi Uekawa <uekawa@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Takaya Saeki <takayas@chromium.org>
+Subject: [PATCH v2] filemap: add trace events for get_pages, map_pages, and fault
+Date: Thu, 20 Jun 2024 16:19:03 +0000
+Message-ID: <20240620161903.3176859-1-takayas@chromium.org>
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 08/12] perf/x86: Extend event update interface
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
- irogers@google.com, adrian.hunter@intel.com,
- alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
- ak@linux.intel.com, eranian@google.com, Sandipan Das <sandipan.das@amd.com>,
- Ravi Bangoria <ravi.bangoria@amd.com>, silviazhao
- <silviazhao-oc@zhaoxin.com>, CodyYao-oc <CodyYao-oc@zhaoxin.com>
-References: <20240618151044.1318612-1-kan.liang@linux.intel.com>
- <20240618151044.1318612-9-kan.liang@linux.intel.com>
- <20240620083810.GU31592@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240620083810.GU31592@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+To allow precise tracking of page caches accessed, add new tracepoints
+that trigger when a process actually accesses them.
 
+The ureadahead program used by ChromeOS traces the disk access of
+programs as they start up at boot up. It uses mincore(2) or the
+'mm_filemap_add_to_page_cache' trace event to accomplish this. It stores
+this information in a "pack" file and on subsequent boots, it will read
+the pack file and call readahead(2) on the information so that disk
+storage can be loaded into RAM before the applications actually need it.
 
-On 2024-06-20 4:38 a.m., Peter Zijlstra wrote:
-> On Tue, Jun 18, 2024 at 08:10:40AM -0700, kan.liang@linux.intel.com wrote:
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> The current event update interface directly reads the values from the
->> counter, but the values may not be the accurate ones users require. For
->> example, the sample read feature wants the counter value of the member
->> events when the leader event is overflow. But with the current
->> implementation, the read (event update) actually happens in the NMI
->> handler. There may be a small gap between the overflow and the NMI
->> handler. The new Intel PEBS counters snapshotting feature can provide
->> the accurate counter value in the overflow. The event update interface
->> has to be updated to apply the given accurate values.
->>
->> Pass the accurate values via the event update interface. If the value is
->> not available, still directly read the counter.
->>
->> For some cases, e.g., intel_update_topdown_event, there could be more
->> than one counter/register are read. Using u64 * rather than u64 as the
->> new parameter.
-> 
-> The stronger argument is that there is no special value to distinguish
-> between there begin an argument and there not being one. You cannot have
-> !val, because 0 might be a valid rdpmc() value.
+A problem we see is that due to the kernel's readahead algorithm that
+can aggressively pull in more data than needed (to try and accomplish
+the same goal) and this data is also recorded. The end result is that
+the pack file contains a lot of pages on disk that are never actually
+used. Calling readahead(2) on these unused pages can slow down the
+system boot up times.
 
-Indeed. I will update the description.
+To solve this, add 3 new trace events, get_pages, map_pages, and fault.
+These will be used to trace the pages are not only pulled in from disk,
+but are actually used by the application. Only those pages will be
+stored in the pack file, and this helps out the performance of boot up.
 
-Thanks,
-Kan
+With the combination of these 3 new trace events and
+mm_filemap_add_to_page_cache, we observed a reduction in the pack file
+by 7.3% - 20% on ChromeOS varying by device.
+
+Signed-off-by: Takaya Saeki <takayas@chromium.org>
+---
+Changelog between v2 and v1
+- Fix a file offset type usage by casting pgoff_t to loff_t
+- Fixed format string of dev and inode
+
+ include/trace/events/filemap.h | 84 ++++++++++++++++++++++++++++++++++
+ mm/filemap.c                   |  4 ++
+ 2 files changed, 88 insertions(+)
+
+V1:https://lore.kernel.org/all/20240618093656.1944210-1-takayas@chromium.org/
+
+diff --git a/include/trace/events/filemap.h b/include/trace/events/filemap.h
+index 46c89c1e460c..3a94bd633bf0 100644
+--- a/include/trace/events/filemap.h
++++ b/include/trace/events/filemap.h
+@@ -56,6 +56,90 @@ DEFINE_EVENT(mm_filemap_op_page_cache, mm_filemap_add_to_page_cache,
+ 	TP_ARGS(folio)
+ 	);
+ 
++DECLARE_EVENT_CLASS(mm_filemap_op_page_cache_range,
++
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++
++	TP_ARGS(mapping, index, last_index),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, i_ino)
++		__field(dev_t, s_dev)
++		__field(unsigned long, index)
++		__field(unsigned long, last_index)
++	),
++
++	TP_fast_assign(
++		__entry->i_ino = mapping->host->i_ino;
++		if (mapping->host->i_sb)
++			__entry->s_dev =
++				mapping->host->i_sb->s_dev;
++		else
++			__entry->s_dev = mapping->host->i_rdev;
++		__entry->index = index;
++		__entry->last_index = last_index;
++	),
++
++	TP_printk(
++		"dev=%d:%d ino=%lx ofs=%lld max_ofs=%lld",
++		MAJOR(__entry->s_dev),
++		MINOR(__entry->s_dev), __entry->i_ino,
++		((loff_t)__entry->index) << PAGE_SHIFT,
++		((loff_t)__entry->last_index) << PAGE_SHIFT
++	)
++);
++
++DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_get_pages,
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++	TP_ARGS(mapping, index, last_index)
++);
++
++DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_map_pages,
++	TP_PROTO(
++		struct address_space *mapping,
++		pgoff_t index,
++		pgoff_t last_index
++	),
++	TP_ARGS(mapping, index, last_index)
++);
++
++TRACE_EVENT(mm_filemap_fault,
++	TP_PROTO(struct address_space *mapping, pgoff_t index),
++
++	TP_ARGS(mapping, index),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, i_ino)
++		__field(dev_t, s_dev)
++		__field(unsigned long, index)
++	),
++
++	TP_fast_assign(
++		__entry->i_ino = mapping->host->i_ino;
++		if (mapping->host->i_sb)
++			__entry->s_dev =
++				mapping->host->i_sb->s_dev;
++		else
++			__entry->s_dev = mapping->host->i_rdev;
++		__entry->index = index;
++	),
++
++	TP_printk(
++		"dev=%d:%d ino=%lx ofs=%lld",
++		MAJOR(__entry->s_dev),
++		MINOR(__entry->s_dev), __entry->i_ino,
++		((loff_t)__entry->index) << PAGE_SHIFT
++	)
++);
++
+ TRACE_EVENT(filemap_set_wb_err,
+ 		TP_PROTO(struct address_space *mapping, errseq_t eseq),
+ 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 876cc64aadd7..39f9d7fb3d2c 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2556,6 +2556,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+ 			goto err;
+ 	}
+ 
++	trace_mm_filemap_get_pages(mapping, index, last_index);
+ 	return 0;
+ err:
+ 	if (err < 0)
+@@ -3286,6 +3287,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	if (unlikely(index >= max_idx))
+ 		return VM_FAULT_SIGBUS;
+ 
++	trace_mm_filemap_fault(mapping, index);
++
+ 	/*
+ 	 * Do we have something in the page cache already?
+ 	 */
+@@ -3652,6 +3655,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+ 	} while ((folio = next_uptodate_folio(&xas, mapping, end_pgoff)) != NULL);
+ 	add_mm_counter(vma->vm_mm, folio_type, rss);
+ 	pte_unmap_unlock(vmf->pte, vmf->ptl);
++	trace_mm_filemap_map_pages(mapping, start_pgoff, end_pgoff);
+ out:
+ 	rcu_read_unlock();
+ 
+-- 
+2.45.2.627.g7a2c4fd464-goog
 
 
