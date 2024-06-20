@@ -1,84 +1,105 @@
-Return-Path: <linux-kernel+bounces-222035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912E690FBDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:11:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B394E90FBE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B64611C21E29
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:11:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D18A1F23C5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF022C1A2;
-	Thu, 20 Jun 2024 04:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A75EC7;
+	Thu, 20 Jun 2024 04:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H3ue6Jzl"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="ga2GhdmY"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92342033E;
-	Thu, 20 Jun 2024 04:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCE1224CE
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 04:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718856709; cv=none; b=KpnzhuQeqnvt6odBYMOImRdV38n8G+5/HPwq3EwH6r2DGyETd6qoy5NyD6skzwbiAxBKJG/4bAFsbmjZCndl2FoOTlgf6zN7uROuJytiTklQnHTRoJpMHsKWQ53th3Gfrrf1H3bcekOnLqmjig0hveCW4hNGXUKM2LQtQG6gAUo=
+	t=1718856731; cv=none; b=RN9BXKVTy51iyNY5Ot5G/5c9qMHsxyLrlTA9ohJXCkMAispcv0R5cazX/FFHEHNUT0Qkclhgu58cdOWB9MYYQONKfdTuQd4yT9CQT1LAbnQjJvzibTaLIBIdssJqill3mnY1N1Y6xcvJrcMnzBuByni89c/u2KWoQsf8A8L0m8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718856709; c=relaxed/simple;
-	bh=szJbLbfPOhwn79/2zzEjC3tpHjddQcvHJWqVSq3ENWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V8eClQrKejpHVUUvJN9PcophybdoBxPueA4zMULcgltfiul5Oecs1NlZ3oLEe4VhNR/rTCHPCPKfH8SfbXOgmZaBzQMVO59j58zq28NtEHBRauYM/Lboo31RKkjeG0O6g5mwpJvniQp6mciMcdfThzCFZkAgF3WKLnorKIuCReU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=H3ue6Jzl; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=TrAuEcdbN66byLYBuONA5EHUWkXbGFGEpsYr69PtaPc=; b=H3ue6Jzleheo2WqyMSlb9v3N3C
-	3FAJDV2HUnzNVS57QJJ+B5A5JySfcoucabLcrzK8bsTCvqvXnEAJ6Xhp5ugZzhwOtFjysW9Z3YBPT
-	6NPuIIcZYj0ucO4W6Vc+VnGfbNoJd5Oef9t4Bi52ptgWz3wgRxseg5muuYnycFtp8785nrhvhqHI6
-	1HgmrOEkdDMmOVsq8rDHZTSwclNJM/UPLQRPWslgR/DqMqQX6ifKplu9WiK/EphC/VwFXj4NLm5Yx
-	IKDT4dP102TYC+4J/+IzAnADFxIVUVwPlKCDGpq/6WNmYpJL9Guft30azmsJnKY9fepm1USKrK+s0
-	Q20yf3TQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sK99E-00000003Xoi-0s0H;
-	Thu, 20 Jun 2024 04:11:44 +0000
-Date: Wed, 19 Jun 2024 21:11:44 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Fuad Tabba <tabba@google.com>, David Hildenbrand <david@redhat.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-	maz@kernel.org, kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, pbonzini@redhat.com
-Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
-Message-ID: <ZnOsAEV3GycCcqSX@infradead.org>
-References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
- <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com>
- <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
- <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
- <20240619115135.GE2494510@nvidia.com>
+	s=arc-20240116; t=1718856731; c=relaxed/simple;
+	bh=aPsYJOVzcEVzbyF9dNUx19mkstx4hNHbolSbJAhNQXk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tIbztqiC1yMPDSrFYnIguX9iAdXvjwIQFnSKlcwUxneHd24CSUc3Tfkrhl2iDTXY+yaGaZdqn2g744NN4VHGEgeefrnwuWeqMYD0gExnzanSmJgPOCANjheKM6JUNb3AN3ARwcoDnLsX3yh1sOEFfqKmrNnVXLmX8xtGQfAEXL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=ga2GhdmY; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 33E3F2C041E;
+	Thu, 20 Jun 2024 16:12:06 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1718856726;
+	bh=LjErDauhNJbMedMS8Kk9A/fllU4EgkRiXtuqKdmdTLs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ga2GhdmYiPpNeb32B7Q+TlGwDAQHMljzrc86bjZLrLGtKT9JWaVTsCqNw8z8MV5AF
+	 nOMmYJvLpjJ1tQzYeF1cYpBWFSQZ7P65sCNhzVTOhd2WAkwFY6idb31Hm9F+bCLQRC
+	 Yg6HjeRFUA+VgYUsXx7i6dO7DZkSj7SCNnpDouV2mgG2OSLT7HEK/ynPLfLcY+k+ss
+	 BJfmmz1h4eeri4xRYlm1WNCetblvPlRXzlU0RbiOfU18u6Yc5pMhckhmJc2cNVsPA1
+	 O88Ndxw6fw4AAKuS+NogCLq4314jrRY214rREJQvnaIRZGtd6lCR2o+yPnM2cnxdbB
+	 8joGF3jUy7i+g==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6673ac160000>; Thu, 20 Jun 2024 16:12:06 +1200
+Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
+	by pat.atlnz.lc (Postfix) with ESMTP id 0EA8F13ED63;
+	Thu, 20 Jun 2024 16:12:06 +1200 (NZST)
+Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
+	id 0B5F62A0FF5; Thu, 20 Jun 2024 16:12:06 +1200 (NZST)
+From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v0] net: mvpp2: fill-in dev_port attribute
+Date: Thu, 20 Jun 2024 16:12:02 +1200
+Message-ID: <20240620041202.3306780-1-aryan.srivastava@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619115135.GE2494510@nvidia.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=6673ac16 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=hHNv8qNozdUxR9ekqBsA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Wed, Jun 19, 2024 at 08:51:35AM -0300, Jason Gunthorpe wrote:
-> If you can't agree with the guest_memfd people on how to get there
-> then maybe you need a guest_memfd2 for this slightly different special
-> stuff instead of intruding on the core mm so much. (though that would
-> be sad)
+Fill this in so user-space can identify multiple ports on the same CP
+unit.
 
-Or we're just not going to support it at all.  It's not like supporting
-this weird usage model is a must-have for Linux to start with.
+Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+---
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/ne=
+t/ethernet/marvell/mvpp2/mvpp2_main.c
+index 23adf53c2aa1..7cf9a0f5b583 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -6903,6 +6903,7 @@ static int mvpp2_port_probe(struct platform_device =
+*pdev,
+ 	/* 9704 =3D=3D 9728 - 20 and rounding to 8 */
+ 	dev->max_mtu =3D MVPP2_BM_JUMBO_PKT_SIZE;
+ 	device_set_node(&dev->dev, port_fwnode);
++	dev->dev_port =3D port->id;
+=20
+ 	port->pcs_gmac.ops =3D &mvpp2_phylink_gmac_pcs_ops;
+ 	port->pcs_gmac.neg_mode =3D true;
+--=20
+2.43.2
 
 
