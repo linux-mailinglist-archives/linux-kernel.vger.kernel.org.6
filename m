@@ -1,255 +1,237 @@
-Return-Path: <linux-kernel+bounces-223034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8853910C45
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8AD4910C7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450691F21F06
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:25:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D82C1F2218B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A6A1B47C9;
-	Thu, 20 Jun 2024 16:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C5B1B9ADE;
+	Thu, 20 Jun 2024 16:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jVy4dqoG"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YMS+NiOH"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8B01B47C2
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9ACE1B9AB5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900635; cv=none; b=a+EhKmGcwkPLkasYiOEH5QFBqYgRKvsSJEy1l5sTEVdZOfSVOfNRHVZBqdGf32kMxyT3jyjf05WAjIznCRrOGGXHNHwOuHyf1YSuquiC6slAfnidCRAkdClbfk+KDW473RKPoX55nlhbUvoFkIHZooTzUPSA1+vHd5cYifm8Jiw=
+	t=1718900663; cv=none; b=uabxV97deoAzGduNVzQknmL8YptzBwbMj1K4ZZPRmIwoc3COh0DUSKNN1K+ifG0DpC77mBi2/HMrDtfl5Ed9SOZA7dZtUvVHWO14JAZAfaImzulmOqypcLTE/HF9IpNVypV8yGh2x6a4dLmNV9eg08/oEpW8k9nQOZ8l5vDeHsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900635; c=relaxed/simple;
-	bh=Fx1smBOU7+g5gN1krwDVwIdwdPcrGDOEe1sKrAvkiEY=;
+	s=arc-20240116; t=1718900663; c=relaxed/simple;
+	bh=G9HKFUhajGasiqamL48YDxw+DEmI8YzmL0Uiykg5fY4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cEuA1MagxZf595x3nt28ykt0ZIIDiC6LZBtKEw6sg0M3p4FvxBGnq9EBnzhQoGqRYraGcOGRtMUJZ6UJgW2LHv3Jm4Iiym9d2drbsh5AYh446ziY+lbk6dbeKgzTR8tqgGIlfnWY+ZsGlDoWYr37K7sTdw1pvjrM9VTtJiJB/rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jVy4dqoG; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d203d4682so1348178a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:23:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=C0YNEZtVwX9/Ar99+QXwcsmo0oIJpIL55auxIRn1l6olFhuYk5yaHmKbG3stfHAtd67jskfh7lgQkBFd1PSvDZwMgXJvPH91u64fX+2ifXF7rQxgH4WB590CVdHzAOs5LP5GI3D8jFG1YzmSWiIQEnriyKqpW9N+fouAZow90zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YMS+NiOH; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-25ca169f861so462589fac.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:24:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718900632; x=1719505432; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1718900661; x=1719505461; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LlwMIJz/BLrmB2WpkXjrpRTAkcL0lyiD4VvvoeLE5V4=;
-        b=jVy4dqoGz5c2AQMRQ+EDk9ZP0lHrRSM7yVcgWsB6xM+nc23/sUwWcuggrsHsQRCSQX
-         FvItdD9fuwFrx0ptO3i+X9cgqIWpkkkRQUC3GU9jn3g3mOk+2gnEe9Jin6i+ZBMYweev
-         pxnDTfm4sp7MZg1ghc9OAx/LjfA4bXM4eiqGLysINJXlO0gn2s/9m7ihKKC70Iwzjmb3
-         1iFsq/Fsyd7xA9yB7m8hWuXhHk1wZ+lIjPU9WrUSHokTwXKixkfsEirPJloCfqydzgbd
-         fwVkfKUMfY2tmjDWrddKQYyTC/7gnutHNEGTsZ5+xhfy9pls2+O8yUqol0MvcJC3WI/0
-         BFGA==
+        bh=Nt4TaLRiigym5jbcwq/kMWuY93Qd7TBOqg1NFwNoq6E=;
+        b=YMS+NiOHPFLEdu4YzN1VwDcS8pERi2TrlGLwDogh55nknPwdYDZDWK5pSdVBPEyYhw
+         +yCCZriIRvEWVLCfJJjSR5/C+jqMDrxJWNRc+4J/KRPMp4xJR2PeuMmdHrjuH0nb3TcI
+         p0Aj801PeKi0IbIKmfJeXFTAHW8O/muMrcDGk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718900632; x=1719505432;
+        d=1e100.net; s=20230601; t=1718900661; x=1719505461;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LlwMIJz/BLrmB2WpkXjrpRTAkcL0lyiD4VvvoeLE5V4=;
-        b=Fn0pWy1xpCRlJ4HjAjSVntakAqCJfRMxQLAmhCXOYmLJdSOwai/vjur0bUKXvAg2uc
-         hfHrGUob28WiY2EDcVr8EhmtTthzdfJ4QvKhm4/UaR51UiZGHskdOi9WRKG4u6pSuoEH
-         k4oLIyrJqYgCVEVyU4+x3hZR8Llk1MQA/4PH2yM54wMcVAoTb3kDZHZz2CGN67uOZCsF
-         E7YUFt3Bk8N50lYzXb5jj9/FDk7mhl/gMWV3ZKFwM/RXwIWSY79mz08JEJCEB/Gk87Fp
-         nHKJf2QICp6/eq+oDtQXDFLYXW2KhTzzYiQGXJpfDYt5VHMHbzgqWIwUCSFQkO19ucWa
-         r+Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBPXVHvyZRUmuKx+OQKqcY9xKNaTTtUtFZZul0gwqhDdhszHvnYR+l8iBjOrOHsrUz0A88ZMABuBXxYj5Y4scCzO+P2ZwTGdcAiP/x
-X-Gm-Message-State: AOJu0Yzqd9gWPW9rVIjlI2OWHGflsXhpbZCvXoS2HvJH/e92pds9QRiy
-	101zvg32shwAlt2p6jrGF19MgVQT/y40Mtz3NV18Pk/bdWkFyenNb0YSOacjltqHE47Osheg/Wj
-	L9sQOEHqVdDPd87SY9NEcRnTFnnwZxBqiimPiuO89M0O+WfZEBowl8Q==
-X-Google-Smtp-Source: AGHT+IEiUurqA8/vupAfbQYgfZXpGG83X+0xfR1yK7bM0GHwHo0LQaZYIH41GdenK+O+unfb1dHXnKUo8wy8Glq5Rs0=
-X-Received: by 2002:a50:99c2:0:b0:57c:ff94:c817 with SMTP id
- 4fb4d7f45d1cf-57d07e7b28bmr4498282a12.16.1718900631856; Thu, 20 Jun 2024
- 09:23:51 -0700 (PDT)
+        bh=Nt4TaLRiigym5jbcwq/kMWuY93Qd7TBOqg1NFwNoq6E=;
+        b=eJgmrdEiwebaetyE1qwyOJZTMDL1Hih1qfyrx3lVEpSakCj0uQxlg0P795fU426Vgz
+         CkU5VBcm4u4T/wf6kzWLHJxW5+OkeoQmGiSMnvbsuh6w+1QFdqf0mxgl8lcjFgNg862c
+         y7dPnn5JVwhqYYqzfHHi6iij4U70ZqYuED6p12kPQYhBtWtbqzRaDUMQYkqX1CkoaHtr
+         cpSld8+wAVOeGBmKFJaBvCfuahCPXjXn8M+Dd/4wq7uazTEYloZ2JVUiEj+z6GcZof8C
+         rL3yRxzk959zaHfRD9p5bjIhndMJSa06mVnpmED+NV+gHRa7tlp7kL9pwvCHA0wpp/dJ
+         0rmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKDmRBVpqx/pjaieNUYlmQGI+j+HuX8/HKMMafh0tgdmoxkfb+CyvCwRJo1SLv5DooQ8rXrzy2L7OYYh81xYnWPkB1dp1L/k1Daazz
+X-Gm-Message-State: AOJu0YwFA6HK9lrHESTuu4RN2HcpCfYME8Bn0XLOb+qjb7uI4iiyq/aM
+	rKYqgiXGRhSLTrULUD7qGpoBY6iqUoE0dLuSStt9thfcl9WAa96kRXN6qcADN/byUaSBRPlBJhY
+	lW2gcFPXqt7gTXVbIs5/vletzBG2Of9AvpW3B
+X-Google-Smtp-Source: AGHT+IFBpvlmEuvbahBVElIajKUVoumeP4+3qEjJukkg86pbSwvP4+dt7eZAeaxRiL+fF3GyBU2EqugxSpNNxR2hW2s=
+X-Received: by 2002:a05:6870:248a:b0:254:b781:2f5e with SMTP id
+ 586e51a60fabf-25972de7257mr3753010fac.17.1718900660925; Thu, 20 Jun 2024
+ 09:24:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619125556.491243678@linuxfoundation.org>
-In-Reply-To: <20240619125556.491243678@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 20 Jun 2024 21:53:39 +0530
-Message-ID: <CA+G9fYsnxHwaPb2YvcLJXrgPRkqJbm7w=cF6b-Ap1mQ7jHHMsA@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/217] 6.1.95-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
+References: <20240613133937.2352724-1-adrian.ratiu@collabora.com>
+ <20240613133937.2352724-2-adrian.ratiu@collabora.com> <CABi2SkXY20M24fcUgejAMuJpNZqsLxd0g1PZ-8RcvzxO6NO6cA@mail.gmail.com>
+ <202406191336.AC7F803123@keescook>
+In-Reply-To: <202406191336.AC7F803123@keescook>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Thu, 20 Jun 2024 09:24:09 -0700
+Message-ID: <CABi2SkWDwAU2ARyMVTeCqFeOXyQZn3hbkdWv-1OzzgG=MNoU8Q@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] proc: restrict /proc/pid/mem
+To: Kees Cook <kees@kernel.org>
+Cc: Adrian Ratiu <adrian.ratiu@collabora.com>, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com, 
+	inglorion@google.com, ajordanr@google.com, jorgelo@chromium.org, 
+	Guenter Roeck <groeck@chromium.org>, Doug Anderson <dianders@chromium.org>, 
+	Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Christian Brauner <brauner@kernel.org>, Jeff Xu <jeffxu@google.com>, 
+	Mike Frysinger <vapier@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 19 Jun 2024 at 18:56, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Wed, Jun 19, 2024 at 1:41=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
 >
-> This is the start of the stable review cycle for the 6.1.95 release.
-> There are 217 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> On Tue, Jun 18, 2024 at 03:39:44PM -0700, Jeff Xu wrote:
+> > Hi
+> >
+> > Thanks for the patch !
+> >
+> > On Thu, Jun 13, 2024 at 6:40=E2=80=AFAM Adrian Ratiu <adrian.ratiu@coll=
+abora.com> wrote:
+> > >
+> > > Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
+> > > after which it got allowed in commit 198214a7ee50 ("proc: enable
+> > > writing to /proc/pid/mem"). Famous last words from that patch:
+> > > "no longer a security hazard". :)
+> > >
+> > > Afterwards exploits started causing drama like [1]. The exploits
+> > > using /proc/*/mem can be rather sophisticated like [2] which
+> > > installed an arbitrary payload from noexec storage into a running
+> > > process then exec'd it, which itself could include an ELF loader
+> > > to run arbitrary code off noexec storage.
+> > >
+> > > One of the well-known problems with /proc/*/mem writes is they
+> > > ignore page permissions via FOLL_FORCE, as opposed to writes via
+> > > process_vm_writev which respect page permissions. These writes can
+> > > also be used to bypass mode bits.
+> > >
+> > > To harden against these types of attacks, distrbutions might want
+> > > to restrict /proc/pid/mem accesses, either entirely or partially,
+> > > for eg. to restrict FOLL_FORCE usage.
+> > >
+> > > Known valid use-cases which still need these accesses are:
+> > >
+> > > * Debuggers which also have ptrace permissions, so they can access
+> > > memory anyway via PTRACE_POKEDATA & co. Some debuggers like GDB
+> > > are designed to write /proc/pid/mem for basic functionality.
+> > >
+> > > * Container supervisors using the seccomp notifier to intercept
+> > > syscalls and rewrite memory of calling processes by passing
+> > > around /proc/pid/mem file descriptors.
+> > >
+> > > There might be more, that's why these params default to disabled.
+> > >
+> > > Regarding other mechanisms which can block these accesses:
+> > >
+> > > * seccomp filters can be used to block mmap/mprotect calls with W|X
+> > > perms, but they often can't block open calls as daemons want to
+> > > read/write their runtime state and seccomp filters cannot check
+> > > file paths, so plain write calls can't be easily blocked.
+> > >
+> > > * Since the mem file is part of the dynamic /proc/<pid>/ space, we
+> > > can't run chmod once at boot to restrict it (and trying to react
+> > > to every process and run chmod doesn't scale, and the kernel no
+> > > longer allows chmod on any of these paths).
+> > >
+> > > * SELinux could be used with a rule to cover all /proc/*/mem files,
+> > > but even then having multiple ways to deny an attack is useful in
+> > > case one layer fails.
+> > >
+> > > Thus we introduce four kernel parameters to restrict /proc/*/mem
+> > > access: open-read, open-write, write and foll_force. All these can
+> > > be independently set to the following values:
+> > >
+> > > all     =3D> restrict all access unconditionally.
+> > > ptracer =3D> restrict all access except for ptracer processes.
+> > >
+> > > If left unset, the existing behaviour is preserved, i.e. access
+> > > is governed by basic file permissions.
+> > >
+> > > Examples which can be passed by bootloaders:
+> > >
+> > > proc_mem.restrict_foll_force=3Dall
+> > > proc_mem.restrict_open_write=3Dptracer
+> > > proc_mem.restrict_open_read=3Dptracer
+> > > proc_mem.restrict_write=3Dall
+> > >
+> > > These knobs can also be enabled via Kconfig like for eg:
+> > >
+> > > CONFIG_PROC_MEM_RESTRICT_WRITE_PTRACE_DEFAULT=3Dy
+> > > CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_PTRACE_DEFAULT=3Dy
+> > >
+> > > Each distribution needs to decide what restrictions to apply,
+> > > depending on its use-cases. Embedded systems might want to do
+> > > more, while general-purpouse distros might want a more relaxed
+> > > policy, because for e.g. foll_force=3Dall and write=3Dall both break
+> > > break GDB, so it might be a bit excessive.
+> > >
+> > > Based on an initial patch by Mike Frysinger <vapier@chromium.org>.
+> > >
+> > It is noteworthy that ChromeOS has benefited from blocking
+> > /proc/pid/mem write since 2017 [1], owing to the patch implemented by
+> > Mike Frysinger.
+> >
+> > It is great that upstream can consider this patch, ChromeOS will use
+> > the solution once it is accepted.
+> >
+> > > Link: https://lwn.net/Articles/476947/ [1]
+> > > Link: https://issues.chromium.org/issues/40089045 [2]
+> > > Cc: Guenter Roeck <groeck@chromium.org>
+> > > Cc: Doug Anderson <dianders@chromium.org>
+> > > Cc: Kees Cook <keescook@chromium.org>
+> > > Cc: Jann Horn <jannh@google.com>
+> > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > Cc: Randy Dunlap <rdunlap@infradead.org>
+> > > Cc: Christian Brauner <brauner@kernel.org>
+> > > Cc: Jeff Xu <jeffxu@google.com>
+> > > Co-developed-by: Mike Frysinger <vapier@chromium.org>
+> > > Signed-off-by: Mike Frysinger <vapier@chromium.org>
+> > > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> >
+> > Reviewed-by: Jeff Xu <jeffxu@chromium.org>
+> > Tested-by: Jeff Xu <jeffxu@chromium.org>
+> > [1] https://chromium-review.googlesource.com/c/chromiumos/third_party/k=
+ernel/+/764773
 >
-> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
-> Anything received after that time might be too late.
+> Thanks for the testing! What settings did you use? I think Chrome OS was
+> effectively doing this?
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.1.95-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.1.y
-> and the diffstat can be found below.
+> PROC_MEM_RESTRICT_OPEN_READ_OFF=3Dy
+> CONFIG_PROC_MEM_RESTRICT_OPEN_WRITE_ALL=3Dy
+> CONFIG_PROC_MEM_RESTRICT_WRITE_ALL=3Dy
+> CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_ALL=3Dy
 >
-> thanks,
+> Though I don't see the FOLL_FORCE changes in the linked Chrome OS patch,
+> but I suspect it's unreachable with
+> CONFIG_PROC_MEM_RESTRICT_OPEN_WRITE_ALL=3Dy.
 >
-> greg k-h
+I use CONFIG_PROC_MEM_RESTRICT_WRITE_ALL=3Dy and
+did manual test writing to /proc/pid/mem using code similar to [1]
 
+The __mem_rw_block_writes check is placed ahead of
+__mem_rw_get_foll_force_flag, so it doesn't need
+CONFIG_PROC_MEM_RESTRICT_FOLL_FORCE_DEFAULT. It might be nice to call
+this out in kernel-parameters.txt.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+I didn't restrict_open_read and restrict_open_write, ChromeOS doesn't
+use those two.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+-Jeff
 
-## Build
-* kernel: 6.1.95-rc1
-* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
-* git branch: linux-6.1.y
-* git commit: 0891d95b9db39ae51c0edef73f56d41521be9fbd
-* git describe: v6.1.94-218-g0891d95b9db3
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.9=
-4-218-g0891d95b9db3
+[1] https://offlinemark.com/an-obscure-quirk-of-proc/
 
-## Test Regressions (compared to v6.1.94)
+> -Kees
 
-## Metric Regressions (compared to v6.1.94)
-
-## Test Fixes (compared to v6.1.94)
-
-## Metric Fixes (compared to v6.1.94)
-
-## Test result summary
-total: 171975, pass: 145682, fail: 3002, skip: 23038, xfail: 253
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 135 total, 135 passed, 0 failed
-* arm64: 38 total, 38 passed, 0 failed
-* i386: 29 total, 29 passed, 0 failed
-* mips: 24 total, 24 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 33 total, 33 passed, 0 failed
-* riscv: 9 total, 9 passed, 0 failed
-* s390: 12 total, 12 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 33 total, 33 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-android
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-drivers-dma-buf
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-ir
-* kselftest-kcmp
-* kselftest-kexec
-* kselftest-kvm
-* kselftest-lib
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-memory-hotplug
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mount
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-forwarding
-* kselftest-net-mptcp
-* kselftest-netfilter
-* kselftest-nsfs
-* kselftest-openat2
-* kselftest-pid_namespace
-* kselftest-pidfd
-* kselftest-proc
-* kselftest-pstore
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-splice
-* kselftest-static_keys
-* kselftest-sync
-* kselftest-sysctl
-* kselftest-tc-testing
-* kselftest-timens
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kselftest-zram
-* kunit
-* kvm-unit-tests
-* libgpiod
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+>
+> --
+> Kees Cook
 
