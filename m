@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-222202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4CEC90FE24
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:01:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438AE90FE2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F862281F18
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:01:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9E69B20ACA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4873BBCB;
-	Thu, 20 Jun 2024 08:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229C25D8F0;
+	Thu, 20 Jun 2024 08:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rLJCB/E+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qpwJiuz/"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F412139D7
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3E72139D7;
+	Thu, 20 Jun 2024 08:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718870471; cv=none; b=q6OsJ8d0nZ0CFbtZYaV2LmC0C+bFiQvcYgZTCKe4T1ckjRN1H+/KEoND+2u8FU1L4Frv6/aWZ7PUYqc8wezoeWfaMS6E3K+0m95UVnc6EV4H8slnVrMzm/bVok+rW9py65BJWFwkNeF/Yrz0gKcUPL9hUJNkkxJT9EmKAbRmkTI=
+	t=1718870486; cv=none; b=GU86acoEW7SnZoPwaWxxOSaXwxPvOUaBrJs22iuJilsSZyUBZCqe9Ms7xLvu0J7cNyXJ5h5jtupAJll/cmu7BqCX9p3fEX0rtLWMgp8/iDhCG+sswN3i4n+4EgNkU26fp4SDVHsiNQVUObdT+GiaR8A6QcQVXIa/pt5dPJUx2oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718870471; c=relaxed/simple;
-	bh=Y3La64nEZFTJ5KhlL/R90AhCl3EJVfrwS8pZpoItdNs=;
+	s=arc-20240116; t=1718870486; c=relaxed/simple;
+	bh=rhuKihUusm13Yt7WZRiQrggV9auR48Id+tI+3iKMR6k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kBAYI/HEd6C+3+CV03QliCQORww9h56KwrVSd1gAvpl5UH57EVPlFE0vmGcpns84CqhB90p8vG/pMB+CpchDYYdQYL2RCPeMUPce/dvMVBU0xXWvlgDYrWkfldzAEuLk2NpWD8lBxF6eHW+DLOvDfc8ig8n/VP8xsWaiSvP5uQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rLJCB/E+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BB17C2BD10;
-	Thu, 20 Jun 2024 08:01:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718870469;
-	bh=Y3La64nEZFTJ5KhlL/R90AhCl3EJVfrwS8pZpoItdNs=;
+	 In-Reply-To:Content-Type; b=JnzXHNnmn0hKWv8+IVle+pT3GgpVim/lACjHA63tcCYwk8LNPWJPxcCMJdEtdUNAGracx/3Z7fcKI4w4spSdv3XWhQsas6yoLMI7mRXV8Tl0lT0/P3OYuPkuG3jShdzrRu5MuoCdpao60rfQgTJFijEaERm0DwDTOSqDtAg8/v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qpwJiuz/; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718870479;
+	bh=rhuKihUusm13Yt7WZRiQrggV9auR48Id+tI+3iKMR6k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rLJCB/E+oza6ve0WtASPkLy9Z16lpaqCTtre4fZc+LU0B8XmV0PFiVznxQwk2DIAi
-	 RR0CLqzK+gukCA1QRaTcNjyphSFabRCrqUXLpRAne2oACzfZ8Oqx75WBgwDf4OI4UY
-	 56gSm9TQxy1SZ4wNVOhC3J5vf84l8EHB2CzICh1nCY2+Ibcrskjd8Jg8h1sPE7ndFr
-	 r8Dtv5zL6hLezaL2HutDGVHoWqgEB6RPDdhReW53FaWEPnmv2xvvhT+RSIRDt17MAK
-	 JkZkHnxo225ErCf1kC62Ll5jHoHFcjeZ6JLhTKxcnb2dM1VbWqwlSajumNQA/6cVqT
-	 BMzwHX4fgD3kw==
-Message-ID: <04e52097-def3-4baa-a566-8519c8a2b26d@kernel.org>
-Date: Thu, 20 Jun 2024 16:01:05 +0800
+	b=qpwJiuz/3GUiDh+pyl66iIMgpVTGYlwqM9wSwUBdC62zYV+8VAl8jBpqo0E2mtKzF
+	 7LPTXRg4+sYEfo9htAyqEBkO5gGcNXkMhbzs3eomwlMgcmHVd/f1cbnErEhtcDGn0G
+	 2/WEAw6ORtAQOA0LweJJTuXL+MN0B573w9mffSpZBEuRs1CcMqf0tGbpzw57rvfIbS
+	 9hqIdTEsowLJcDmv4aIUGCxSIKA20NxlBXDEbO9zrmbPwHRfjOtkYrWgufbMGIxF2t
+	 H1vRGdfpFu12Uu7wdUHCNHBQOSJMcIxyZfY0VS2ZcsTEv6XJgkffk44pX1cjzzkduy
+	 SYD7/xmI1/d5w==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B8B6D378205D;
+	Thu, 20 Jun 2024 08:01:18 +0000 (UTC)
+Message-ID: <a7317981-8690-4d45-81b6-cc6a63c459e0@collabora.com>
+Date: Thu, 20 Jun 2024 10:01:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,132 +56,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: (2) (2) (2) [f2fs-dev] [PATCH] Revert "f2fs: use flush command
- instead of FUA for zoned device"
-To: daejun7.park@samsung.com, "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
- Wenjie Cheng <cwjhust@gmail.com>
-Cc: "qwjhust@gmail.com" <qwjhust@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>
-References: <e0d89f10-19b0-45db-948d-4c140c2dffa7@kernel.org>
- <e2371e59-7be5-40dc-9a2a-aef90ac93b18@kernel.org>
- <2842767c-db80-407b-a5e5-2b9fa74b0d79@kernel.org>
- <20240614004841.103114-1-cwjhust@gmail.com>
- <20240620055648epcms2p11b9914d40f560fb02fa241a7d2599298@epcms2p1>
- <20240620072218epcms2p11597e482b28804dd5f66b9d42a21b22f@epcms2p1>
- <CGME20240620032223epcas2p4d6b770a8e256d140e5296df8a386418e@epcms2p3>
- <20240620075634epcms2p35d3bafffb5f60902b1df25bf3269a686@epcms2p3>
+Subject: Re: [PATCH 3/3] dt-bindings: mailbox: mediatek: Avoid clock-names on
+ MT8188 GCE
+To: Conor Dooley <conor@kernel.org>
+Cc: krzk+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+ jassisinghbrar@gmail.com, garmin.chang@mediatek.com,
+ houlong.wei@mediatek.com, Jason-ch.Chen@mediatek.com, amergnat@baylibre.com,
+ Elvis.Wang@mediatek.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com
+References: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
+ <20240619085322.66716-3-angelogioacchino.delregno@collabora.com>
+ <20240619-sleeve-citable-a3dc10e5cd4f@spud>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240620075634epcms2p35d3bafffb5f60902b1df25bf3269a686@epcms2p3>
+In-Reply-To: <20240619-sleeve-citable-a3dc10e5cd4f@spud>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 2024/6/20 15:56, Daejun Park wrote:
->> On 2024/6/20 15:22, Daejun Park wrote:
->>>> On 2024/6/20 13:56, Daejun Park wrote:
->>>>> Hi Chao,
->>>>>
->>>>>> Jaegeuk,
->>>>>>
->>>>>> Quoted commit message from commit c550e25bca66 ("f2fs: use flush command
->>>>>> instead of FUA for zoned device")
->>>>>> "
->>>>>> The block layer for zoned disk can reorder the FUA'ed IOs. Let's use flush
->>>>>> command to keep the write order.
->>>>>> "
->>>>>>
->>>>>> It seems mq-deadline use fifo queue and make queue depth of zone device
->>>>>> as 1 to IO order, so why FUA'ed write node IOs can be reordered by block
->>>>>> layer?
->>>>>
->>>>> While other writes are aligned by the mq-deadline, write with FUA is not passed
->>>>> to the scheduler but handled at the block layer.
->>>>
->>>> Hi Daejun,
->>>>
->>>> IIUC, do you mean write w/ FUA may be handled directly in below path?
->>>>
->>>> - blk_mq_submit_bio
->>>>      - op_is_flush && blk_insert_flush
->>>
->>> Hi Chao,
->>>
->>> Yes, I think the path caused an unaligned write when the zone lock was
->>> being applied by mq-deadline.
+Il 19/06/24 19:49, Conor Dooley ha scritto:
+> On Wed, Jun 19, 2024 at 10:53:22AM +0200, AngeloGioacchino Del Regno wrote:
+>> Add mediatek,mt8188-gce to the list of compatibles for which the
+>> clock-names property is not required.
+> 
+> Because, I assume, it has some internal clock? Why do either of these
+> things have no clock? Doesn't the internal logic require one?
+> 
+
+Because there's no gce0/gce1 clock, there's only an infracfg_AO clock that is
+for one GCE instance, hence there's no need to require clock-names.
+
+I can't remove the clock-names requirement from the older compatibles though,
+because the (sorry about this word) driver (eh..) gets the clock by name for
+the single GCE SoCs...
+
+...and here comes a self-NACK for this commit, I have to fix the driver and
+then stop requiring clock-names on all compatibles, instead of having this
+ugly nonsense.
+
+Self-note: gce0/gce1 clocks lookup was implemented in the driver but never
+used and never added to the binding - luckily.
+
+Sorry Conor, I just acknowledged that there's a better way of doing that.
+
+Thank you for making me re-read this stuff, I'll send the proper changes
+later today, driver change + binding change in a separate series.
+
+As for the other two commits in this series, completely unrelated to GCE,
+those are still fine, and are fixing dtbs_check warnings.
+
+Cheers,
+Angelo
+
 >>
->> But, blk_insert_flush() may return false due to policy should be
->> REQ_FSEQ_DATA or REQ_FSEQ_DATA REQ_FSEQ_POSTFLUSH, then
->> blk_mq_insert_request() after blk_insert_flush() will be called?
+>> Fixes: f2b53c295620 ("dt-bindings: mailbox: mediatek,gce-mailbox: add mt8188 compatible name")
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   .../devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml     | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
 >>
-> 
-> I was just discussing the handling of FUAs in commit c550e25bca66,
-> which is not an issue in the current code as FUAs are handled correctly.
-
-Yup, I think it needs to be reverted. :)
-
-Thanks,
-
-> 
-> Thanks,
-> 
-> 
->> Thanks,
+>> diff --git a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
+>> index cef9d7601398..55d4c34aa4b4 100644
+>> --- a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
+>> +++ b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
+>> @@ -62,7 +62,9 @@ allOf:
+>>           properties:
+>>             compatible:
+>>               contains:
+>> -              const: mediatek,mt8195-gce
+>> +              enum:
+>> +                - mediatek,mt8188-gce
+>> +                - mediatek,mt8195-gce
+>>       then:
+>>         required:
+>>           - clock-names
+>> -- 
+>> 2.45.2
 >>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>> Thanks,
->>>>> Daejun
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>> On 2024/6/14 8:48, Wenjie Cheng wrote:
->>>>>>> This reverts commit c550e25bca660ed2554cbb48d32b82d0bb98e4b1.
->>>>>>>
->>>>>>> Commit c550e25bca660ed2554cbb48d32b82d0bb98e4b1 ("f2fs: use flush
->>>>>>> command instead of FUA for zoned device") used additional flush
->>>>>>> command to keep write order.
->>>>>>>
->>>>>>> Since Commit dd291d77cc90eb6a86e9860ba8e6e38eebd57d12 ("block:
->>>>>>> Introduce zone write plugging") has enabled the block layer to
->>>>>>> handle this order issue, there is no need to use flush command.
->>>>>>>
->>>>>>> Signed-off-by: Wenjie Cheng <cwjhust@gmail.com>
->>>>>>> ---
->>>>>>>        fs/f2fs/file.c 3 +--
->>>>>>>        fs/f2fs/node.c 2 +-
->>>>>>>        2 files changed, 2 insertions(+), 3 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>>>>> index eae2e7908072..f08e6208e183 100644
->>>>>>> --- a/fs/f2fs/file.c
->>>>>>> +++ b/fs/f2fs/file.c
->>>>>>> @@ -372,8 +372,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->>>>>>>                 f2fs_remove_ino_entry(sbi, ino, APPEND_INO);
->>>>>>>                 clear_inode_flag(inode, FI_APPEND_WRITE);
->>>>>>>        flush_out:
->>>>>>> -        if ((!atomic && F2FS_OPTION(sbi).fsync_mode != FSYNC_MODE_NOBARRIER)
->>>>>>> -            (atomic && !test_opt(sbi, NOBARRIER) && f2fs_sb_has_blkzoned(sbi)))
->>>>>>> +        if (!atomic && F2FS_OPTION(sbi).fsync_mode != FSYNC_MODE_NOBARRIER)
->>>>>>>                         ret = f2fs_issue_flush(sbi, inode->i_ino);
->>>>>>>                 if (!ret) {
->>>>>>>                         f2fs_remove_ino_entry(sbi, ino, UPDATE_INO);
->>>>>>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
->>>>>>> index 144f9f966690..c45d341dcf6e 100644
->>>>>>> --- a/fs/f2fs/node.c
->>>>>>> +++ b/fs/f2fs/node.c
->>>>>>> @@ -1631,7 +1631,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
->>>>>>>                         goto redirty_out;
->>>>>>>                 }
->>>>>>>   
->>>>>>> -        if (atomic && !test_opt(sbi, NOBARRIER) && !f2fs_sb_has_blkzoned(sbi))
->>>>>>> +        if (atomic && !test_opt(sbi, NOBARRIER))
->>>>>>>                         fio.op_flags = REQ_PREFLUSH REQ_FUA;
->>>>>>>   
->>>>>>>                 /* should add to global list before clearing PAGECACHE status */
+
 
