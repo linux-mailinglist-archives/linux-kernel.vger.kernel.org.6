@@ -1,135 +1,122 @@
-Return-Path: <linux-kernel+bounces-223672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859E0911694
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:14:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A48091169A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D00C1F237AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:14:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07428283BEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10172152790;
-	Thu, 20 Jun 2024 23:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BA614F13F;
+	Thu, 20 Jun 2024 23:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KbGzKlsu"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hTvJBcuw"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D79A1514E8
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699A213777F;
+	Thu, 20 Jun 2024 23:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718925227; cv=none; b=IDktGv9b8l8ELGIZrShMVEdrRrtWjB7v9ew6Fsta/CsadmBOe7GWD1YIXKPHDERb8xFF350X0hvDYjV6pPxcwQZLXd+sqDJnmGvF39+B3jlZU1yvNvAw/GHfgNtl/l6F1Mm5JtclJ8MaLOeHqJUWqM8lcy+3G926erTe+iLplRk=
+	t=1718925238; cv=none; b=cJHSvzpchC8+Z2TDOTyt9InAvYmaMWiHFfXNgG6Onmq6ZQCpTQDYxyGZKOeeWmB9ASnxSYbWegc8BpJYMDSQ+ibzO/uDfZyIhl+Jo2tvtmyg9Uhqpb1G7T7MGLtkShOWawN3lfSUN17Jy26ZmWHBMHZzTVPcn0r3H68/YxKZ1Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718925227; c=relaxed/simple;
-	bh=OnEU/sDI6L4n4GuKABhOjlofl7NLYJUjjb44iomKIdw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BVEwHZeM4sJxaRzOks3cATpmPYhBlCAIaiP+58gZJuOS+fN0RncHXsBpoQeMQkReY0dIlzGqqK1tL5lRot2mBWA47ICXB560Jc/NV0GFqc7L5s+2ipsyxYajkL0qG/0TSGYe7NoyhCeQt3YWqQV64KRM4Di8pGJOk5K3aOgzMt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KbGzKlsu; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3d229baccc4so773557b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:13:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718925224; x=1719530024; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zz8ynrGU4z42Aj9sdj4ptAZtRt0FzTqPDvedxGwGE2Y=;
-        b=KbGzKlsuFU1MfOfM+Ae5/YotqltjV0hy5HkjLHV/b5SHJ6gHDkITlmrmHo0NkylSKw
-         5uJWeA0epi6Ym+UhRcXiV/fEgsTTJnrwrJz/3/pEMBPKK9C9Ir1YVHoaP7lDO/OSG8i1
-         /1w98jnfKtR4buUC2EU9haxz2CGUKjqBT1JQa17PpWNZ7AnAttujMQpukXYOC6Rbxuz+
-         bi2EbPqojfU1LJ2613JCd/DkZOZ/A3aw6faqLgE54g6gdW6E4LOe1lZo9kJwupOau6Hd
-         gH5C2VCe3Kt9wdoG7M90nMBr1EHIKQ5DEm/7Xe6Fb1ZYk+ZCmhTt2vLzqpx3J2q47veK
-         P1YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718925224; x=1719530024;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zz8ynrGU4z42Aj9sdj4ptAZtRt0FzTqPDvedxGwGE2Y=;
-        b=eTxL0EtGMxuETHZ7vvbEy4gCy7NuG7rEJ/Udn/KckDe1DP4IkwG5hSSREa7O0EGXvR
-         IIcmia/w2H4QKZxNnb7P/jEeobA1h011mSTXPUO7S0uCKbq2tpB3g7nZ81feHm+6slfQ
-         T+Ndwe3d9xHEoBGgU3INYIeywW6e+x7EHS8a9IC5S8a1uHHZqbU+KL0x72TBq8vr3W06
-         Gx48NsY3ApPZC/ulqnKa0WptiBAuEKhl5lCpYf/0y+8n6ZHQJxYYy1o4Y9v4/1j6oGO7
-         aYAcYDWR5sS9o5kL6qS/WjB0n8rbZVSxHz27kT79LBp9To/2YWbPFnlzXfSBUmqnnLZk
-         2bYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdB2N9xURp58oMHtG7+p4ZlZUTFAgY+is1P+Qn7TJg/H4GPu4kD+qI3FEWmzqDvMzSkiaPVYfdJ4LE7WkogWoyWfIPVvVbU45I2Xw6
-X-Gm-Message-State: AOJu0YyGdwp5ANg1jEYIv9cHIJ+asd1UceYgFrK5pzN2kOYkj+pMQfdG
-	8uOuCMGPCjy1z2wH8iBy+Vk4hSmMIK89/xpV1QyEoIuYRbgoPezJHbT8rX+ebgDUqg231713+VI
-	A
-X-Google-Smtp-Source: AGHT+IGMxuLpMKjIuYdJYrob79SDg2RZvql0ouDIgVaa+eFVMNZbWP3rPhPLCBOfG/l5X2eomxjBsA==
-X-Received: by 2002:a05:6808:300f:b0:3d2:2b8e:a7e2 with SMTP id 5614622812f47-3d51baf503fmr6570385b6e.48.1718925224517;
-        Thu, 20 Jun 2024 16:13:44 -0700 (PDT)
-Received: from localhost ([136.62.192.75])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d5344de45bsm86185b6e.3.2024.06.20.16.13.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 16:13:44 -0700 (PDT)
-From: Sam Protsenko <semen.protsenko@linaro.org>
-To: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Anand Moon <linux.amoon@gmail.com>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/6] hwrng: exynos: Enable Exynos850 support
-Date: Thu, 20 Jun 2024 18:13:39 -0500
-Message-Id: <20240620231339.1574-7-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240620231339.1574-1-semen.protsenko@linaro.org>
-References: <20240620231339.1574-1-semen.protsenko@linaro.org>
+	s=arc-20240116; t=1718925238; c=relaxed/simple;
+	bh=9HzkK7C6QP0wU1bz0WqLU2lp3y7wTd1ilGjTm87GnD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WXTrRRyHM79QtF8GI/gBtpkn7IibIH2akcLxYD8JxknXwbB+oZvEVwZW6XJtCw8JTxMzrqamz+qiJHQ/HM6iuwg5WVQv8WToYbM24IBnOy1bvDa6ss9vGZOeFlwZGmZhnnRibkR/AeBBmfKLz0+BmF1mopz7Tf4jzlDm4k6IYfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hTvJBcuw; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718925234;
+	bh=9HzkK7C6QP0wU1bz0WqLU2lp3y7wTd1ilGjTm87GnD0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hTvJBcuwQluvJb6oWZQw82YRvsdGMW08czC0IhEoBELreca39SSJrIS9dbUgnd+E/
+	 Ua3QHIXMFiXvuHOjsciB3C7Kk3QB5hQTfuuaS9JWgIqea2IbL826GqFS9QjBdTjOvx
+	 9Z9np1yOnjQCtKzptaVN4GQE7+nijeikrO6Y5pGLR+OosSszB2+uPUcTWwst/i6Mcw
+	 tsJNu1K9/sf8vz8blusGs9JJo7uJz6X3/UA89vfMk8IGIijuZTst4YdYRnGctEv4j8
+	 ooaf77QS7Wg3GoThF6tfrk/4ap/VMg82vtpuDam54f3xzeukKXd7y80PfGbwPEY0X5
+	 y71iPD8cArRvQ==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4F48B37820FA;
+	Thu, 20 Jun 2024 23:13:51 +0000 (UTC)
+Date: Thu, 20 Jun 2024 19:13:49 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Rob Herring <robh@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>
+Subject: Re: [PATCH v4 0/8] serial: qcom-geni: Overhaul TX handling to fix
+ crashes/hangs
+Message-ID: <46f57349-1217-4594-85b2-84fa3a365c0c@notapiano>
+References: <20240610222515.3023730-1-dianders@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240610222515.3023730-1-dianders@chromium.org>
 
-Add Exynos850 compatible and its driver data. It's only possible to
-access TRNG block via SMC calls in Exynos850, so specify that fact using
-EXYNOS_SMC flag in the driver data.
+On Mon, Jun 10, 2024 at 03:24:18PM -0700, Douglas Anderson wrote:
+> 
+> While trying to reproduce -EBUSY errors that our lab was getting in
+> suspend/resume testing, I ended up finding a whole pile of problems
+> with the Qualcomm GENI serial driver. I've posted a fix for the -EBUSY
+> issue separately [1]. This series is fixing all of the Qualcomm GENI
+> problems that I found.
+> 
+> As far as I can tell most of the problems have been in the Qualcomm
+> GENI serial driver since inception, but it can be noted that the
+> behavior got worse with the new kfifo changes. Previously when the OS
+> took data out of the circular queue we'd just spit stale data onto the
+> serial port. Now we'll hard lockup. :-P
+> 
+> I've tried to break this series up as much as possible to make it
+> easier to understand but the final patch is still a lot of change at
+> once. Hopefully it's OK.
+> 
+> [1] https://lore.kernel.org/r/20240530084841.v2.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: ≈Åukasz Stelmach <l.stelmach@samsung.com>
----
-Changes in v3:
-  - Added R-b tag from Krzysztof
-  - Added A-b tag from ≈Åukasz
+Hi,
 
-Changes in v2:
-  - Changed QUIRK_SMC to EXYNOS_SMC to reflect the name change in the
-    previous patch
+we've experienced issues with missing kernel messages in the serial on the
+sc7180 based platforms in our lab for a while now.
 
- drivers/char/hw_random/exynos-trng.c | 3 +++
- 1 file changed, 3 insertions(+)
+I've just run a batch of jobs that just boot and write some messages to
+/dev/kmsg on sc7180-trogdor-lazor-limozeen. Before the patch, in 18 out of
+20 runs the first message would be missing in the logs causing the test to fail.
+After the patch all 20 runs passed. So this is a clear fix, and I'm very happy
+to say goodbye to this issue. Thank you!
 
-diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
-index 9fa30583cc86..9f039fddaee3 100644
---- a/drivers/char/hw_random/exynos-trng.c
-+++ b/drivers/char/hw_random/exynos-trng.c
-@@ -320,6 +320,9 @@ static DEFINE_SIMPLE_DEV_PM_OPS(exynos_trng_pm_ops, exynos_trng_suspend,
- static const struct of_device_id exynos_trng_dt_match[] = {
- 	{
- 		.compatible = "samsung,exynos5250-trng",
-+	}, {
-+		.compatible = "samsung,exynos850-trng",
-+		.data = (void *)EXYNOS_SMC,
- 	},
- 	{ },
- };
--- 
-2.39.2
+Tested-by: NÌcolas F. R. A. Prado <nfraprado@collabora.com>
 
+FTR, this is the issue ticket in KernelCI:
+https://github.com/kernelci/kernelci-project/issues/380
+
+Thanks,
+NÌcolas
 
