@@ -1,104 +1,119 @@
-Return-Path: <linux-kernel+bounces-222017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACC7A90FBB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:36:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C526490FBB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775AC1C214AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:36:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 742F51F22844
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFD323767;
-	Thu, 20 Jun 2024 03:36:00 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FDB3C00;
-	Thu, 20 Jun 2024 03:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4ED224DC;
+	Thu, 20 Jun 2024 03:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/wlDPSr"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686EA1D52C;
+	Thu, 20 Jun 2024 03:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718854559; cv=none; b=V56ZdFFeCG8LVpTqC9MtdbkNqkVxi4aYdV03Ynq75fjdoGKB080G9ZypSqIsa/Mfvf4woHIB13itoe6Fb8C+MMn00k4mqUSLUmGiSNWQ2/8xVfctZ0U47yaub2UfBMiXWc7M85BxGwI6HzPhjl3oZ9juMiFfJ+ZAS7v61fLv5vM=
+	t=1718854795; cv=none; b=O7zvERVI1/7nMQfWLPvxRmD5EmkfwsTueM3LfIMV8FYP1+z667bOddYzpTSDVo88mZv3LsOZdTzQgOxRVPqQYUaEp2ei9MNFnkbk0sCSNrLuoU4F3KLVKJcjFFYMVUE/oAxzI+Rhf5x+VzkA/tuSd7+4WTfasTRQ4bCROkKYdPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718854559; c=relaxed/simple;
-	bh=pxEJn23nT6+sqxNt5VIguQ2SC4vykVQraEA5VugQ+mQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bfFC3hBRxDfjPB3i81Kyflc6ztpswAOu0cyOfXLepnJI1v/WyQxo2IuH5O9bgjfp7zP7h7OsrfBc3s4TZoN7cYWJUEbf+cRhVpYeMeGzjDgoNFOrn1HOyez+nizE7KXk88+IlyW6XHxRt9hClJl8InllMLdXUzLTS+MFyFCovZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8Bx3+uZo3NmSWkIAA--.18063S3;
-	Thu, 20 Jun 2024 11:35:53 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Cx78eYo3Nm6ugpAA--.35757S2;
-	Thu, 20 Jun 2024 11:35:53 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] LoongArch: KVM: Sync pending interrupt when getting ESTAT from user mode
-Date: Thu, 20 Jun 2024 11:35:52 +0800
-Message-Id: <20240620033552.2739845-1-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1718854795; c=relaxed/simple;
+	bh=Z9vrmQPcxaJWxiJw6vWOK0gXAUtCdkmcGCIFur9g8s8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=BhHzhHsHOMYMbyBvmAc7D+iDryMI/d1z3dtVk27lul703aZ+q9lIneNSR80A1ZBIOUQZzGikdip+3HWcXTFMW9pDDoEJy97O+x3z7GSjfXos73f/FFe6I557CyfzxEkzcYzXEIDN7RyacyoGkeVmMwu+qIFsqfaY4HjFVH/kol4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/wlDPSr; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70633f0812dso428047b3a.0;
+        Wed, 19 Jun 2024 20:39:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718854793; x=1719459593; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z9vrmQPcxaJWxiJw6vWOK0gXAUtCdkmcGCIFur9g8s8=;
+        b=k/wlDPSr0KsaT/qMKl4yFKvCtvS5LwlIOwnrCslXaa6oyblLTguEgoHBbKV1ni3AmX
+         VcUIu2/72RDELHKcFR/5TKEwEDDTFcbKKZZEUOneh63ASpLm8lkNVaoPIK87687Nzd62
+         unaBys3uMFGRVuvUJeqPUW2OVH3reOzW1z+NgUzYTpXfKF73NspBGZV6aFmglfUS7Efc
+         rzYHLvJ86JtSAzlaEYrjCFBOki8Cynv8lQICtw2qZkwe7XlpmH+THhVd8/lXi4bvcvgc
+         5dJBI10ZRrvdBtivsTEr9oUa80ZJjHLUl0h30Xg6DuSMBdODOUX4u9MzVNofnGJx2Ony
+         Sitg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718854793; x=1719459593;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z9vrmQPcxaJWxiJw6vWOK0gXAUtCdkmcGCIFur9g8s8=;
+        b=JMzCmE6MOWCkEUKvjitUSnNOovAzsDEhBPpC0DQqEAZZM8J7O2OmqK6OLjS0xBKYMD
+         6vH0FCw0x1/AfXXyiaCKbSaiN7xu2mdiU+kQiJCmjdoi2tAFhskD8B5R0kwMWrWJ4g66
+         2n7gGFZzk4ZCQxps25xccCsdJ/2G79sp587Usi+X5QfTchKjXOFCCAsQB6bdgcaFu7yp
+         Sgx1nyMJjSoTeatsQT1wdoRZU7avLOLYtwjOm/4mrlU9qB5swtPC+w+hQkireQh4he78
+         KwVQ7WE787KAPnOxyhVvVSV5pL7+nnH2T4zzWaok2W+yHE7+bl0QchRQcuzTfA5vt9D/
+         WRNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhrhFNRn556KyWk6Q3av1U/njGsuUxv3dOAH7s2xLKKpccjXjtb0Ww0zS7Yeebt9BeEnb0ic4kP2fYp+oKX4GDZiXZL0v1FN1lY3Z+TpGciiO5YeTpJHXlc9hKKC8bvxLqXoAqBCXd2Mf2lg==
+X-Gm-Message-State: AOJu0Yy2cfucjCe7G8emLHded7KzhgITNs2x+oXadxa9JqYgH1SPQCXd
+	76M/y1ec+YYlj0AUs2PKbFukRgdzfLKdZZzGUPzsPI3LIG71Zlmr
+X-Google-Smtp-Source: AGHT+IH8E3zhOadHjijktRjCIkt9GVpjzzB1OciH0Bu7m1LD+pd5id84ZKnBYx5ikvRd4xwag5CfFQ==
+X-Received: by 2002:a05:6a21:3389:b0:1b5:44eb:2eda with SMTP id adf61e73a8af0-1bcbb386a8cmr4994570637.5.1718854793466;
+        Wed, 19 Jun 2024 20:39:53 -0700 (PDT)
+Received: from smtpclient.apple ([205.204.117.125])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f497a1sm125202575ad.283.2024.06.19.20.39.50
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Jun 2024 20:39:53 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Cx78eYo3Nm6ugpAA--.35757S2
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] livepatch: introduce klp_func called interface
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <alpine.LSU.2.21.2406071102420.29080@pobox.suse.cz>
+Date: Thu, 20 Jun 2024 11:39:38 +0800
+Cc: Song Liu <song@kernel.org>,
+ Petr Mladek <pmladek@suse.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <17FDEE20-A187-4493-BFA6-F09555B1EF6F@gmail.com>
+References: <20240520005826.17281-1-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
+ <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
+ <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
+ <ZkxVlIPj9VZ9NJC4@pathway.suse.cz>
+ <CAPhsuW7bjyLvfQ-ysKE+S8x26Zv5b7jbJoyW8UiBaUfaRncKfg@mail.gmail.com>
+ <alpine.LSU.2.21.2406071102420.29080@pobox.suse.cz>
+To: Miroslav Benes <mbenes@suse.cz>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-Currently interrupt is posted and cleared with async mode, and it is saved
-in SW state vcpu::arch::irq_pending and vcpu::arch::irq_clear. When vcpu
-is ready to run, interrupt is synced to ESTAT CSR register from SW state
-vcpu::arch::irq_pending at guest entrance.
 
-During VM migration stage, vcpu is put into stopped state, however
-pending interrupt is not synced to ESTAT CSR register. So there will be
-interrupt lost when VCPU is stopped and migrated to other host machines.
 
-Here when ESTAT CSR register is read from VMM user mode, pending
-interrupt is synced to ESTAT also. So that VMM can get correct pending
-interrupt.
+> On Jun 7, 2024, at 17:07, Miroslav Benes <mbenes@suse.cz> wrote:
+>=20
+> It would be better than this patch but given what was mentioned in the=20=
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- arch/loongarch/kvm/vcpu.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> thread I wonder if it is possible to use ftrace even for this. See=20
+> /sys/kernel/tracing/trace_stat/function*. It already gathers the =
+number of=20
+> hits.
+>=20
 
-diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-index b747bd8bc037..81622cd055af 100644
---- a/arch/loongarch/kvm/vcpu.c
-+++ b/arch/loongarch/kvm/vcpu.c
-@@ -371,9 +371,18 @@ static int _kvm_getcsr(struct kvm_vcpu *vcpu, unsigned int id, u64 *val)
- 		return -EINVAL;
- 
- 	if (id == LOONGARCH_CSR_ESTAT) {
-+		preempt_disable();
-+		vcpu_load(vcpu);
-+		/*
-+		 * Sync pending interrupt into estat so that interrupt
-+		 * remains during migration stage
-+		 */
-+		kvm_deliver_intr(vcpu);
- 		/* ESTAT IP0~IP7 get from GINTC */
- 		gintc = kvm_read_sw_gcsr(csr, LOONGARCH_CSR_GINTC) & 0xff;
- 		*val = kvm_read_sw_gcsr(csr, LOONGARCH_CSR_ESTAT) | (gintc << 2);
-+		vcpu_put(vcpu);
-+		preempt_enable();
- 		return 0;
- 	}
- 
+Hi, Miroslav
 
-base-commit: 92e5605a199efbaee59fb19e15d6cc2103a04ec2
--- 
-2.39.3
+Can ftrace able to trace the function which I added into kernel by =
+livepatching?
 
+Regard
+Wardenjohn=
 
