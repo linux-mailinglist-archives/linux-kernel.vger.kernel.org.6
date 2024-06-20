@@ -1,140 +1,189 @@
-Return-Path: <linux-kernel+bounces-222106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691E590FCE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:41:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A2990FCDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3CA42851D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:41:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADA391F215B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA12741C6A;
-	Thu, 20 Jun 2024 06:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F613BBCB;
+	Thu, 20 Jun 2024 06:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m4/+uca+"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgsvW9D4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFB540848;
-	Thu, 20 Jun 2024 06:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB522BCF7;
+	Thu, 20 Jun 2024 06:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718865661; cv=none; b=at7bhvoCDWO9tgqaJxHs/HYzt5b95DE63MFEAOcuWg7a6ODvtqh8vfQTygy4e3UAB0RAxaEIhS4oonGH/n9+o/lriJHoQQObpqZyYqqW0f/BcBr6Rv1rOrbK6MSMmlHAtCSU249bsMKh9twu6Pg9VCUpcMihJrCMRWdjaJOqEvs=
+	t=1718865611; cv=none; b=Bm3cqlbWluVtSKUlfg3ySbpf/fdNCzx1L7zHrfKXN67rOy3qINvB9FEEQHy3sZhuw7I9pkyG1pX8OATX+2TwUsumPBqZvitGV5hgiNzX1zJzJiSnfUGh7NK+s3+t+7CCjDsSEREAe5ljzqPwu+ErYAIRvpbcHMahb1k7l3OXTiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718865661; c=relaxed/simple;
-	bh=UzzGZvEE5qzqnyqLhkrTBSAmBpUlFkIi/FE1mJkkpJ0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GpKu7lJH25TNj7sFmxpgrDpVJXphqXFQhswxL4poLFQ0qUFBh1Ugpy+6/l5AbWqPfQJCr37D0wc3QNVvenqG6U0UKvJl42ick7y3TfgkL2P2fZc57tFsmbAZruMHE8fKdk+sJMNJWKEbSNJbw+9RGXtQV1WGjUu3ndU+TZuQz6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m4/+uca+; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2bfffa3c748so485945a91.3;
-        Wed, 19 Jun 2024 23:40:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718865659; x=1719470459; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dj4QZeFx+AVC51p11hlg4kzbDA2elF0sWu+Rp1qJlwA=;
-        b=m4/+uca+AsSkt+BVHgBimm7KSElcOqANLihePTNielo5FZ0d9s5hbpRRN5nHcBuymj
-         p5pfrYRGa03XsSn8eIG85PhEs3e3TxgZez2THKDQFL4h01kDvz9BthfZIT4pn+Prcp9c
-         eQ7PWKXnDqlBnB6jiHo7fcwfkhCEv0ph1nbQRRdCec4DHpRcrVbY+obgihPzafMPXRsb
-         DTWqBhfGxLRWeN90l7RNosipbSEDCQTe7sGX4dXJOLwIdHYXbwVdj+gJrJDSHhLWneN3
-         K/2KODzptlfO/QbKby7vYDbyzWYid2AZDW7bJ0w7Og/3uNcr2FYBOm4Wj7FmNHIjHmKr
-         K/zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718865659; x=1719470459;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dj4QZeFx+AVC51p11hlg4kzbDA2elF0sWu+Rp1qJlwA=;
-        b=IxhTxfJlSngvWUZMM77Z78ipuUa7yyfhVZb7417oKrkkPnUOJ0pTSxvSQOZPQnMCaW
-         JY+ORA9vcViNafkbOcPwN+0U9OVMoMSHB3yFrG5xEQdH3HbH1UMZR2uEqPZervBURaJG
-         tvYE7z6z+YSoZmFa0fRkPQRm9lnJcVQR99c3wJYM8JVemqGrV+a2p+bPjojQV/YaL1+F
-         Wczadj2WV71+DF4959Mugz+dwgkiXGHIuJUYTaGrJBvOyKaUmFtX2j6NPCpuHkrWpGn0
-         UDrTvsVCuL5Iyl37hFjwp4eAcS7LQAxT7FPY7mB19AjJbJJfrPDf0JhhaThU12stfuTO
-         5b3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXpmkVo2KM4FPVZL0s4XLmwH90+t4QI18RIJOraHZN5hqFWPcBi0Ri2koElGD7IVqbvw/u8QAQGBf8/6Bi11Op8SlR4wGQFlk2hqPkZ
-X-Gm-Message-State: AOJu0YwGWhSrvVETK7x6k9Kw0RhbKEAn54bmVIrXuaOb8IK0iLgGULrw
-	scH/msDNxdNReUbrv35TCF426OjxsaNOteTQSmDF9PZihYVBM90M
-X-Google-Smtp-Source: AGHT+IFNC7FgO9HSN1gJ1UcHOVjndxJnOiiessKD+THr8O0UlSmH6s/UeMfmg86hakwBC98pUI/Xuw==
-X-Received: by 2002:a17:90a:ea92:b0:2c4:b300:1b4c with SMTP id 98e67ed59e1d1-2c7b5cc49f5mr4163646a91.24.1718865659045;
-        Wed, 19 Jun 2024 23:40:59 -0700 (PDT)
-Received: from localhost.localdomain ([129.146.253.192])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2c7e50f7c90sm862442a91.9.2024.06.19.23.40.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 23:40:58 -0700 (PDT)
-From: Furong Xu <0x1207@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>,
-	Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	xfr@outlook.com,
-	rock.xu@nio.com,
-	Furong Xu <0x1207@gmail.com>
-Subject: [PATCH net-next v1] net: stmmac: init more plat members from DT
-Date: Thu, 20 Jun 2024 14:40:04 +0800
-Message-Id: <20240620064004.573280-1-0x1207@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718865611; c=relaxed/simple;
+	bh=F9VZztG35SxUJvfy5B5ZE1Rpm3VmMCzAMyl2EasFXRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OqcHGT1sm9Ai7jstHj75dndPENgOjUPbW4qntLQL9uj59bJMkcgKPfF9NRNE4j3s65LmSVejK/+S6zvZKZWOhWC/M/VygGW2lSis8mEIXspHcYDa5y9vBkEkKpGawfa/eEUYiluQJpK6JvlXXPr4ZmsS896bLAa4E4wbl7qMcl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgsvW9D4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3902C4AF07;
+	Thu, 20 Jun 2024 06:40:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718865610;
+	bh=F9VZztG35SxUJvfy5B5ZE1Rpm3VmMCzAMyl2EasFXRM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YgsvW9D4vtuXWGk22nza9zaOstRIZQO9+1mEIAz9sD6BnU3kpRYyzgnOmpdbcGunR
+	 RPZ3IJvDumjAdjo4KQxLiNsWc+UaLYpEqimZoi1UwMhJe96ez2auSY24typWEBudfU
+	 E0YBXl11K+D6WSf/WM8FEjUYVkrybuVbn0kzgSQt2UIhT/u15XVpNPUhDRrcEUCB91
+	 mWoUNWKNjyDvu36jLfdACQrFRuA3LaRJjqgoWGauQ5+8phKfTFjg0JOy/SPteLaxb3
+	 i+dDpR7Rdmfjsg/O9jezT667Op/KRNYrNf3vg8B5e6CGMfm9WvVycKoMxNrNQxjanT
+	 Kuj/WBJFnZkyQ==
+Message-ID: <808f27bf-9dc7-407a-86ff-0a8fae79531c@kernel.org>
+Date: Thu, 20 Jun 2024 08:40:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/8] dt-bindings: mfd: Add img,boston-platform-regs
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+References: <20240618-boston-syscon-v3-0-c47c06647a26@flygoat.com>
+ <20240618-boston-syscon-v3-7-c47c06647a26@flygoat.com>
+ <6d3fbd07-72a0-43fd-a1e5-c39e3a833bc1@kernel.org>
+ <51557e31-0a59-4278-a8c1-25cf66fa3c3f@app.fastmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <51557e31-0a59-4278-a8c1-25cf66fa3c3f@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-A new option to init some useful members of plat_stmmacenet_data from DT.
+On 19/06/2024 13:20, Jiaxun Yang wrote:
+> 
+> 
+> 在2024年6月19日六月 上午10:28，Krzysztof Kozlowski写道：
+>> On 18/06/2024 17:11, Jiaxun Yang wrote:
+>>> This compatible has been used in arch/mips/boot/dts/img/boston.dts
+>>> for a while but never documented properly.
+>>>
+>>
+>>> diff --git a/Documentation/devicetree/bindings/mfd/img,boston-platform-regs.yaml b/Documentation/devicetree/bindings/mfd/img,boston-platform-regs.yaml
+>>> new file mode 100644
+>>> index 000000000000..79cae87c6758
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/mfd/img,boston-platform-regs.yaml
+>>> @@ -0,0 +1,74 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/mfd/img,boston-platform-regs.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Imagination Technologies Boston Platform Registers
+>>> +
+>>> +maintainers:
+>>> +  - Jiaxun Yang <jiaxun.yang@flygoat.com>
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - const: img,boston-platform-regs
+>>> +      - const: syscon
+>>> +      - const: simple-mfd
+>>
+>>
+>> Fix U-boot to populate devices instead of relying on simple-mfd.
+> 
+> Hi Krzysztof,
+> 
+> I believe U-Boot's implementation is correct. As per simple-mfd binding:
+> 
+> ```
+> simple-mfd" - this signifies that the operating system should
+>   consider all subnodes of the MFD device as separate devices akin to how
+>   "simple-bus" indicates when to see subnodes as children for a simple
+>   memory-mapped bus.
+> ```
+> 
+> This reads to me as "if you want sub nodes to be populated as devices
+> you need this."
+> 
+> In our case there are "clock" and "reset" node sub nodes which should be
+> probed as regular device, so it's true for us.
 
-Signed-off-by: Furong Xu <0x1207@gmail.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+No, you already got comment from Rob.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 54797edc9b38..b86cfb2570ab 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -497,6 +497,8 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
- 
- 	of_property_read_u32(np, "rx-fifo-depth", &plat->rx_fifo_size);
- 
-+	of_property_read_u32(np, "host-dma-width", &plat->host_dma_width);
-+
- 	plat->force_sf_dma_mode =
- 		of_property_read_bool(np, "snps,force_sf_dma_mode");
- 
-@@ -561,6 +563,8 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
- 		plat->pmt = 1;
- 		if (of_property_read_bool(np, "snps,tso"))
- 			plat->flags |= STMMAC_FLAG_TSO_EN;
-+		if (of_property_read_bool(np, "snps,no-sph"))
-+			plat->flags |= STMMAC_FLAG_SPH_DISABLE;
- 	}
- 
- 	if (of_device_is_compatible(np, "snps,dwmac-3.610") ||
-@@ -573,8 +577,11 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
- 	if (of_device_is_compatible(np, "snps,dwxgmac")) {
- 		plat->has_xgmac = 1;
- 		plat->pmt = 1;
-+		of_property_read_u32(np, "max-frame-size", &plat->maxmtu);
- 		if (of_property_read_bool(np, "snps,tso"))
- 			plat->flags |= STMMAC_FLAG_TSO_EN;
-+		if (of_property_read_bool(np, "snps,no-sph"))
-+			plat->flags |= STMMAC_FLAG_SPH_DISABLE;
- 	}
- 
- 	dma_cfg = devm_kzalloc(&pdev->dev, sizeof(*dma_cfg),
--- 
-2.34.1
+Your children depend on parent to provide IO address, so this is not
+simple-mfd. Rule for simple-mfd is that children do not rely on parent
+at all.
+
+> 
+> Linux managed to work without "simple-mfd" only because clock subsystem
+> is bypassing regular OF population process. Semantically we need this.
+
+Semantically? No, you need proper populate, not incorrect simple-mfd.
+
+> 
+> Besides Linux as upstream of devicetree source had accepted U-Boot
+> only stuff here, such as "bootph-all" property.
+
+Because bootph-all is valid and correct. Calling simple-mfd something
+which is not entirely simple-mfd is not that valid.
+
+
+Best regards,
+Krzysztof
 
 
