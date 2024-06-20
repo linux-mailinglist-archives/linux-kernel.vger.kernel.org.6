@@ -1,97 +1,131 @@
-Return-Path: <linux-kernel+bounces-222934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A445910A1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:39:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9564B910A2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B04E8B21530
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:39:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 513A22866DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14101AE0B6;
-	Thu, 20 Jun 2024 15:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BF7AP6Rc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F421B011B;
+	Thu, 20 Jun 2024 15:40:23 +0000 (UTC)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9506A1ACE94;
-	Thu, 20 Jun 2024 15:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE441ACE94;
+	Thu, 20 Jun 2024 15:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718897987; cv=none; b=iynP4O8SWYrExAL6bfCwTKzKmPt81NKEyGa7OBXgKdkPvLYyOQCPLgGi8ZTyye8CkNCiSHIQJSRFN4U8H6zjKY1n1GLeN86iFPIpsJzMXUBlieT4P8/r+vkpp3zPQ4dKDXGd28Zpn7ZG071HeYvpE1MaYN43Y0nmL3IcCJ8BO4s=
+	t=1718898023; cv=none; b=HbAf9nS9mEdkXzOAJ/n+hsGpK4qhvr/3qi55HGakZRAUkagOkX6cSylWFG27eXQqE2mBnCyIer2+LJq+m/BlRIJJDEw033jAwg9DJAg6s3qAgFD5SNpDP9fFSIQr8/PHj++QN/Z6LnDhU9vwgUmH5U905j4pl60QDDSUgsepbew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718897987; c=relaxed/simple;
-	bh=62VsBGjCS60/dcZu2tDPxW6nThjEg9CgcwxF1KZdk2A=;
-	h=Content-Type:Cc:References:Subject:To:Date:MIME-Version:From:
-	 Message-ID:In-Reply-To; b=aiwgVGa1kZkm86Cri1waqbJyKFseYWsxUnAlHyiTeNX93HflTYaDYDeYY0sMVb8fwXz4kUBIvZt3d0gdkUvuFjHJ2qohC2+UiZdL0Ju+D82FfAb1GbBMd1fbNpaHLi5TmLecC1ElLuK4rtrOXmAPIQ7Dbc7Czw4fGFPwXR76qak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BF7AP6Rc; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718897986; x=1750433986;
-  h=cc:references:subject:to:date:mime-version:
-   content-transfer-encoding:from:message-id:in-reply-to;
-  bh=62VsBGjCS60/dcZu2tDPxW6nThjEg9CgcwxF1KZdk2A=;
-  b=BF7AP6Rc0q4SG+Hh9J2zMR6NWygZbVW+Ey9tpn/e9H8hqOFURkgJvsP7
-   PF1MT+pLObdxWGH4tMrgiRgGV0OGaNqOMVK2oTqNWd0938sp6a8ZFgMkn
-   DjsvHTtU186aZot5v60SZdqWgokVeS8KoNB9G3dWVGFKsakAHqouYz/ci
-   HPYcBv6U3REkzXZxcLWFZKTeu7/QY5g1T5+VOZ64dzE3durYtmGb7szoK
-   Qv6R4UJaeO2nFBdC1tyIgdpOpAPxaqFKRRYexjZsCw3XwwA4RQdUgugR0
-   45Y6boFGDKHzqng+kQcPpm+x6oagPZHBHre/o6nMCLZE6tTmo1KsbdF5o
-   A==;
-X-CSE-ConnectionGUID: XlMAHyUjQ3+08GpLZhROdw==
-X-CSE-MsgGUID: 8jin4SFsTm+MiUurWkjvNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="16005786"
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="16005786"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 08:39:45 -0700
-X-CSE-ConnectionGUID: XW8b/AoKT0qs6sDXKUmqrg==
-X-CSE-MsgGUID: k0Zos2SWTs+mCte5EQpUlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="42393951"
-Received: from hhuan26-mobl.amr.corp.intel.com ([10.246.119.97])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/AES256-SHA; 20 Jun 2024 08:39:42 -0700
-Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
-Cc: zhiquan1.li@intel.com, kristen@linux.intel.com, seanjc@google.com,
- zhanb@microsoft.com, anakrish@microsoft.com, mikko.ylinen@linux.intel.com,
- yangjie@microsoft.com, chrisyan@microsoft.com
-References: <20240617125321.36658-1-haitao.huang@linux.intel.com>
- <20240617125321.36658-11-haitao.huang@linux.intel.com>
-Subject: Re: [PATCH v15 10/14] x86/sgx: Implement async reclamation for cgroup
-To: jarkko@kernel.org, dave.hansen@linux.intel.com, kai.huang@intel.com,
- tj@kernel.org, mkoutny@suse.com, chenridong@huawei.com,
- linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org, x86@kernel.org,
- cgroups@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- hpa@zytor.com, sohil.mehta@intel.com, tim.c.chen@linux.intel.com, "Huang,
- Haitao" <haitao.huang@linux.intel.com>
-Date: Thu, 20 Jun 2024 10:39:41 -0500
+	s=arc-20240116; t=1718898023; c=relaxed/simple;
+	bh=44UxWeJuayI3bZGqwBHbWalofDb7+ni2lz+I7HuZP18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mak7SS1QC9y1jn0j5iRwAgceFvJS5vPyo3mVm3tGLGz2Hg5ZTvPxmXzsNzXBtO2NIR99pIk8qQYqTHC25FfgrFeT3JQpWLLPVHEkQFbj0CigOhrZG70jeJVGSQB3UkkvIIvW4/Tj4vE23YNNsrQXSIt/JW8WD3WpOBzgoX3pgpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-63bf3452359so10424127b3.2;
+        Thu, 20 Jun 2024 08:40:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718898019; x=1719502819;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sH7+YxOUiDXwjwnxlowJ+B9PVdvEeRNVTnlGmm0Kww0=;
+        b=xEeC9uxbIF+dXjTO9Ny0EwsxYd3NaSmUXu1pBDUZ9jfyM7tlbcWwolISTNL0MLR7vR
+         dWxYAfGRlnlc+pUv+UOWSTBpCc+4TL9L8x8EpXDZLTZuB59miEjNWrcZp/pDPpBzWd2k
+         3DsbMoEDZlLezdxW7VFGIT48Xr22z/7F97/FSzgR23+YUNJelzF3dCxanoF1E62S2TlU
+         faBK9EgtSOzKkrQvgtfaSTcGdr9Gv821q2TIwf95pXNejvaqavQQrmzlXcZjJgzo6n1F
+         2HLllOcX/wbbfp2sdXblK/4/5XrYFaOsPhXGDHFBx+YScq2PpS8aVaVwMOhR1Gr3qjE5
+         pu8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVgDCbgsCiTndGO5Th/cPOaIESKznxoyeiqvCXZTL1x3ii9alTmUbn20WRVlA83G8XioTGgRbdAeA6+/UcJtxVwUmujEt6/ji6btX0huKS+f/OqdME1MPoUfPsHKWP5+9haKoq6x6v4axwkSYU4HgEFVv3+9QNdqvSiMUEjvLyAOwBkdoVw8XEp4LdiAPSSRGxHF+/fkWLQhWD9eqESJ21dZ9b3wctu
+X-Gm-Message-State: AOJu0YzC+VxXSgqEpTwRgcCLyqNyup4K3KlyQtKFxHqMa17se2GSFfRA
+	SzGtSuOpN/RxMxme3myGbZe0WqKB7cxyTe8ZGhaTbkPSGyS/oyZqltdpcXdD
+X-Google-Smtp-Source: AGHT+IHeLwk3RLz1ugAFOA+qTtKGY0HmYMbOxT79xAtMjZYQD1N9yD97tlJM2gGgPbaC08XmKOZqdg==
+X-Received: by 2002:a05:690c:a10:b0:631:1d44:5850 with SMTP id 00721157ae682-63a903a431cmr54698107b3.47.1718898019519;
+        Thu, 20 Jun 2024 08:40:19 -0700 (PDT)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-63118e9917asm30523987b3.60.2024.06.20.08.40.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 08:40:19 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6316253dc52so8497757b3.0;
+        Thu, 20 Jun 2024 08:40:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXe2BM8nqJh4hLDGhO98m3VPYsGhFb6YGs6xKx0OvPTmaCQhq4GuIYjgr5eAnzGMoJ6FbiCuGuLsr4UGT0HyG+rseDPos47lXtjJUo84Sat50NKyabpe3DiQQessgCmLrGOJF8Q5j7ZqlzdkjeGTGb+61R/sIorbLpOonJ/Vt4VHiDZvuBtenCv58tSe8QiBDFecgnrGw69BAACKZb1UT0fGNqqF/Us
+X-Received: by 2002:a0d:e810:0:b0:632:5b24:c0c with SMTP id
+ 00721157ae682-63a8dc08affmr55684907b3.5.1718898019011; Thu, 20 Jun 2024
+ 08:40:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-From: "Haitao Huang" <haitao.huang@linux.intel.com>
-Organization: Intel
-Message-ID: <op.2pn8gfahwjvjmi@hhuan26-mobl.amr.corp.intel.com>
-In-Reply-To: <20240617125321.36658-11-haitao.huang@linux.intel.com>
-User-Agent: Opera Mail/1.0 (Win32)
+References: <20240613091721.525266-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Jun 2024 17:40:06 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU0oFH61fHNp2txOOJi_pWihKrK=UdETrzBs-bDeULTqQ@mail.gmail.com>
+Message-ID: <CAMuHMdU0oFH61fHNp2txOOJi_pWihKrK=UdETrzBs-bDeULTqQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 3/3] mmc: renesas_sdhi: Add support for RZ/V2H(P) SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Prabhakar,
 
-> +	if (cgroup_subsys_enabled(misc_cgrp_subsys)) {
-> +		sgx_cg_wq = alloc_workqueue("sgx_cg_wq", WQ_UNBOUND | WQ_FREEZABLE,
-> +					    WQ_UNBOUND_MAX_ACTIVE);
-> +		return -ENOMEM;
+Thanks for your patch!
 
-Argh, missing if(!sgx_cg_wq), sorry for the brain fart. Tests pass only
-because I made another silly mistake in checking return of this function.
-:-(
-Haitao
+On Thu, Jun 13, 2024 at 11:17=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> The SDHI/eMMC IPs found in the RZ/V2H(P) (a.k.a. r9a09g057) are very
+> similar to those found in R-Car Gen3. However, they are not identical,
+> necessitating an SoC-specific compatible string for fine-tuning driver
+> support.
+>
+> Key features of the RZ/V2H(P) SDHI/eMMC IPs include:
+> - Voltage level control via the IOVS bit.
+> - PWEN pin support via SD_STATUS register.
+> - Lack of HS400 support.
+> - Fixed address mode operation.
+>
+> regulator support is added to control the volatage levels of SD pins
+> via sd_iovs/sd_pwen bits in SD_STATUS register.
+
+Probably I am missing something obvious in the big picture, but why
+must this be modelled as a regulator?  Can't the SDHI driver handle
+this register bit directly?
+
+Cfr. tmio_mmc_power_on(), which can use the tmio_mmc_host.set_pwr()
+callback[1] instead of/in addition to a regulator.
+
+Thanks!
+
+[1] Oh, no more users... Let's get rid of it... patch sent...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
