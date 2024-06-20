@@ -1,166 +1,320 @@
-Return-Path: <linux-kernel+bounces-222334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E611190FFD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:02:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7341690FFDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1D201C21F27
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:02:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC9CEB22CEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC0419AA6A;
-	Thu, 20 Jun 2024 09:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K6BntdGI"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4B5628;
-	Thu, 20 Jun 2024 09:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B2917CA1B;
+	Thu, 20 Jun 2024 09:04:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809D7628;
+	Thu, 20 Jun 2024 09:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718874137; cv=none; b=ibhUtGZjAReu4seLssfvPQwdYwbZnWgy95J53WdorqYaLeEcSbUNbbeUPD5Nx7gWW+OZ9vEcl3yOyIf5hk69AyKpw+sUsbYjAIGz4qKyQ3f1FKfg1jbfGlzRj4AJoKWMsfD9DOna0FNvgieypus0U7xzDduz8TAO5Yn/jnDzfoE=
+	t=1718874295; cv=none; b=FfeqFwuCfBgcN5I2GuQpksFnsKhUarStt+9VRHHqT+CGuH3lhEk6QBEd2BNFXXrJY5GLlbTl7uaEXoeopIIKbPytMhxIIitvglo/IihJm/elNuCS5zHlfxse9uzxUi2l8uvX+jnasy5CqZ57qG/BlP28e/jpn0gh9qUCraESMYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718874137; c=relaxed/simple;
-	bh=DcaHCutLUcucdupDruVjpYkFp5GMrRUdppVUXPcovpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GjTk5uXMIvzDCoeFnptrA0QHIz2cUQ9Jb6A3ksOvaGVaNuQh9PSk8ycFA0BtASR830srpZ+ICiRqZqS/a5T+UfnVSlix0Au2+icX6Zsxvf7zKsk/rBgceX+3oUD/Bc0E89nx+h1oeJ7fFf+AnirAm7xXb8VBh7V/5Ul9TdYergA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K6BntdGI; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6e43dad8ecso111610866b.1;
-        Thu, 20 Jun 2024 02:02:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718874134; x=1719478934; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=reqi4o36mn4qzlSpM+6S4dwkZbNZu42ZTuDIZ+8NfZw=;
-        b=K6BntdGIb5ZcK1eceWEIpguIQRg/QnF1PNYTzc9f/q1KzaVGpfhmxDw4bfJQHv2U8k
-         eRUE3IARQ8Ud40afix6vHroi1e1pHUN5Tsg2yIGj/bVUL0nCdFJbC1OMUKOZ0QPqteOU
-         toEW39xJVbHJMn9NOmFEI5MaPoMY/vhcUD4gBFErCXrYVCqb3KdBMPSXuSXvJ0kZWMsD
-         xl9x4Boyf0F55v+OUmvI3IKYy9AIY9uqs0OD79C2F7JB3ptNM7oHvWrup9jxGjZ/x5cD
-         aaNbcGbggLo5M4IBO5YmhTCtRXBluMuhAz86TU2L8o28pQBlJbqYnsrVoVLRZr+F+DrD
-         hb+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718874134; x=1719478934;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=reqi4o36mn4qzlSpM+6S4dwkZbNZu42ZTuDIZ+8NfZw=;
-        b=ZFpSLc90BJIzrrUjUZ8tq020xJvTDfm4qEKHqGWqnX8C1El/9QhBPGrnDf8tm9I18b
-         H2efKVQ7TVsZM9jxjgnAiWH1KUBSsGtDwGOf1no2YzeCvNIbXBhJoDCFlE+08svbuWMy
-         Qgd/P6deXvl8lYV0lfen3AoHjJtKZs7P0fjL2K5mrM/RfzEx/lmD+BzcFJFQ9V9fMR80
-         GEoysYR+4zs2nc3TeuKUJsN+RbNlP8OP3NW6cWCMQcNeECeuO/zqlzciPIZg6rWckbCF
-         11V+RWvPHslOMjtXmJFuRtL3h6QBzfWCsoGynMQJccLT/Tbx+DvDD8phjHMLCRHysCvh
-         1eIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVe60lByYhdD28m5PA1BpKUCV2w6xRkzhCML0EoCPdpHFh4E9INUuoHbd8FeVrkucwvx7BCfGK3OqbkdDu29batWDWXmQ2XtRDRz3vjUGcWkca4uwABDFy1HQROirWNWCqZcI9R
-X-Gm-Message-State: AOJu0YwqbrDcXq3k4pjS6zAPYTlgzVWpTjUR/H/Og/ZENXPi6kbFvXlJ
-	mhFWA6T4dt6pvYCCYa6c3PYHZl8uIlfcVJLGOkQdW019QVc9N06W
-X-Google-Smtp-Source: AGHT+IGwq23nKii9zi5kusaPYSdgYJYSMCNAoo2+QGm3mZizaU2pqisyJqgmA7CUbFPyDyPc9iVDmQ==
-X-Received: by 2002:a17:907:a706:b0:a6f:1600:62cb with SMTP id a640c23a62f3a-a6fa40d42eamr331477966b.3.1718874133969;
-        Thu, 20 Jun 2024 02:02:13 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f41a85sm752988366b.179.2024.06.20.02.02.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 02:02:13 -0700 (PDT)
-Date: Thu, 20 Jun 2024 12:02:10 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Oleksij Rempel <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	Casper Andersson <casper.casan@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 net-next] net: dsa: Allow only up to two HSR HW
- offloaded ports for KSZ9477
-Message-ID: <20240620090210.drop6jwh7e5qw556@skbuf>
-References: <20240619134248.1228443-1-lukma@denx.de>
- <20240619134248.1228443-1-lukma@denx.de>
- <20240619144243.cp6ceembrxs27tfc@skbuf>
- <20240619171057.766c657b@wsk>
- <20240619154814.dvjcry7ahvtznfxb@skbuf>
- <20240619155928.wmivi4lckjq54t3w@skbuf>
- <20240620095920.6035022d@wsk>
+	s=arc-20240116; t=1718874295; c=relaxed/simple;
+	bh=TXMIEnNQYiFNlFAGAyRR7XEFYFmCzRqmalkivjZ7k00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BEk5vbyA7qaOPNDyxXbvQjmNOGZm5d620BDhPpntqTuVryJlO9RZPlJVeQ3bLurvam1mSpuxBrUprSLeB6Zc9MAEwk1c6AMrKknqC6LUHBsE3mB+QNsmzwh2+pPhh8W6vsEYworkZy+Y4lqxO4C24KL8Xy88YobtBk12BXrRm20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B9EFDA7;
+	Thu, 20 Jun 2024 02:05:17 -0700 (PDT)
+Received: from [10.57.74.104] (unknown [10.57.74.104])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B70AC3F6A8;
+	Thu, 20 Jun 2024 02:04:50 -0700 (PDT)
+Message-ID: <f3c18806-34ac-41d3-8c79-d7dd6504547e@arm.com>
+Date: Thu, 20 Jun 2024 10:04:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620095920.6035022d@wsk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
+ entry allocation for thp_swapout
+Content-Language: en-GB
+To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+ shuah@kernel.org, linux-mm@kvack.org
+Cc: chrisl@kernel.org, david@redhat.com, hughd@google.com,
+ kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org,
+ ying.huang@intel.com, linux-kselftest@vger.kernel.org,
+ Barry Song <v-songbaohua@oppo.com>
+References: <20240620002648.75204-1-21cnbao@gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240620002648.75204-1-21cnbao@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 20, 2024 at 09:59:20AM +0200, Lukasz Majewski wrote:
-> > It will return -EOPNOTSUPP for port 0, 
+On 20/06/2024 01:26, Barry Song wrote:
+> From: Barry Song <v-songbaohua@oppo.com>
 > 
-> This comment is for xrs700x_hsr_join()?
-
-Yes.
-
-> For the ksz_hsr_join() we do explicitly check for the KSZ9477_CHIP_ID.
+> Both Ryan and Chris have been utilizing the small test program to aid
+> in debugging and identifying issues with swap entry allocation. While
+> a real or intricate workload might be more suitable for assessing the
+> correctness and effectiveness of the swap allocation policy, a small
+> test program presents a simpler means of understanding the problem and
+> initially verifying the improvements being made.
 > 
-> I do regard this fix as a ksz9477 specific one, as there are some
-> issues (IMHO - this is the "unexpected behaviour" case for this IC) when
-> we add interlink to SoC VLAN.
+> Let's endeavor to integrate it into the self-test suite. Although it
+> presently only accommodates 64KB and 4KB, I'm optimistic that we can
+> expand its capabilities to support multiple sizes and simulate more
+> complex systems in the future as required.
+
+I'll try to summarize the thread with Huang Ying by suggesting this test program
+is "neccessary but not sufficient" to exhaustively test the mTHP swap-out path.
+I've certainly found it useful and think it would be a valuable addition to the
+tree.
+
+That said, I'm not convinced it is a selftest; IMO a selftest should provide a
+clear pass/fail result against some criteria and must be able to be run
+automatically by (e.g.) a CI system.
+
+For the former, currently the test only fails if some API call unexpectedly
+fails. Perhaps we would need to decide on some threshold for acceptable fallback
+rate and fail if be go above that? But it's not clear how to determine such an
+appropriate threshold.
+
+For the latter, the test should be added to run_vmtests.sh. Then it will be run
+automatically as part of invocing the standard kselftest runner and the results
+will be reported in the standard TAP format. But this test also requires a very
+specific swap and mthp configuration so you would also need to automatically
+configure and restore that (either in run_vmtests.sh or in the c file).
+
+Given the probable difficulties with defining clear success criteria, perhaps it
+is better to put it in tools/mm?
+
+Thanks,
+Ryan
+
+
 > 
-> I don't understand why you bring up xrs700x case here? Is it to get a
-> "broader context"?
-
-You have the Fixes: tag set to a HSR driver change, the fix to which
-you provide in an offloading device driver. What I'm trying to tell you
-is to look around and see that KSZ9477 is not the only one which is
-confused by the addition of an interlink port. So is XRS700X, yet for
-another reason.
-
-> > falling back to
-> > software mode for the first ring port, then accept offload for ring
-> > ports 1 and 2. But it doesn't match what user space requested, because
-> > port 2 should be interlink...
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> ---
+>  tools/testing/selftests/mm/Makefile           |   1 +
+>  .../selftests/mm/thp_swap_allocator_test.c    | 192 ++++++++++++++++++
+>  2 files changed, 193 insertions(+)
+>  create mode 100644 tools/testing/selftests/mm/thp_swap_allocator_test.c
 > 
-> Please correct me if I'm wrong, but this seems to not be the case for
-> ksz9477 - as I stated in the other mail - the ordering is correct (I've
-> checked it).
+> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+> index e1aa09ddaa3d..64164ad66835 100644
+> --- a/tools/testing/selftests/mm/Makefile
+> +++ b/tools/testing/selftests/mm/Makefile
+> @@ -65,6 +65,7 @@ TEST_GEN_FILES += mseal_test
+>  TEST_GEN_FILES += seal_elf
+>  TEST_GEN_FILES += on-fault-limit
+>  TEST_GEN_FILES += pagemap_ioctl
+> +TEST_GEN_FILES += thp_swap_allocator_test
+>  TEST_GEN_FILES += thuge-gen
+>  TEST_GEN_FILES += transhuge-stress
+>  TEST_GEN_FILES += uffd-stress
+> diff --git a/tools/testing/selftests/mm/thp_swap_allocator_test.c b/tools/testing/selftests/mm/thp_swap_allocator_test.c
+> new file mode 100644
+> index 000000000000..4443a906d0f8
+> --- /dev/null
+> +++ b/tools/testing/selftests/mm/thp_swap_allocator_test.c
+> @@ -0,0 +1,192 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * thp_swap_allocator_test
+> + *
+> + * The purpose of this test program is helping check if THP swpout
+> + * can correctly get swap slots to swap out as a whole instead of
+> + * being split. It randomly releases swap entries through madvise
+> + * DONTNEED and do swapout on two memory areas: a memory area for
+> + * 64KB THP and the other area for small folios. The second memory
+> + * can be enabled by "-s".
+> + * Before running the program, we need to setup a zRAM or similar
+> + * swap device by:
+> + *  echo lzo > /sys/block/zram0/comp_algorithm
+> + *  echo 64M > /sys/block/zram0/disksize
+> + *  echo never > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
+> + *  echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enabled
+> + *  mkswap /dev/zram0
+> + *  swapon /dev/zram0
+> + * The expected result should be 0% anon swpout fallback ratio w/ or
+> + * w/o "-s".
+> + *
+> + * Author(s): Barry Song <v-songbaohua@oppo.com>
+> + */
+> +
+> +#define _GNU_SOURCE
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <unistd.h>
+> +#include <string.h>
+> +#include <sys/mman.h>
+> +#include <errno.h>
+> +#include <time.h>
+> +
+> +#define MEMSIZE_MTHP (60 * 1024 * 1024)
+> +#define MEMSIZE_SMALLFOLIO (1 * 1024 * 1024)
+> +#define ALIGNMENT_MTHP (64 * 1024)
+> +#define ALIGNMENT_SMALLFOLIO (4 * 1024)
+> +#define TOTAL_DONTNEED_MTHP (16 * 1024 * 1024)
+> +#define TOTAL_DONTNEED_SMALLFOLIO (768 * 1024)
+> +#define MTHP_FOLIO_SIZE (64 * 1024)
+> +
+> +#define SWPOUT_PATH \
+> +	"/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout"
+> +#define SWPOUT_FALLBACK_PATH \
+> +	"/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout_fallback"
+> +
+> +static void *aligned_alloc_mem(size_t size, size_t alignment)
+> +{
+> +	void *mem = NULL;
+> +
+> +	if (posix_memalign(&mem, alignment, size) != 0) {
+> +		perror("posix_memalign");
+> +		return NULL;
+> +	}
+> +	return mem;
+> +}
+> +
+> +static void random_madvise_dontneed(void *mem, size_t mem_size,
+> +		size_t align_size, size_t total_dontneed_size)
+> +{
+> +	size_t num_pages = total_dontneed_size / align_size;
+> +	size_t i;
+> +	size_t offset;
+> +	void *addr;
+> +
+> +	for (i = 0; i < num_pages; ++i) {
+> +		offset = (rand() % (mem_size / align_size)) * align_size;
+> +		addr = (char *)mem + offset;
+> +		if (madvise(addr, align_size, MADV_DONTNEED) != 0)
+> +			perror("madvise dontneed");
+> +
+> +		memset(addr, 0x11, align_size);
+> +	}
+> +}
+> +
+> +static unsigned long read_stat(const char *path)
+> +{
+> +	FILE *file;
+> +	unsigned long value;
+> +
+> +	file = fopen(path, "r");
+> +	if (!file) {
+> +		perror("fopen");
+> +		return 0;
+> +	}
+> +
+> +	if (fscanf(file, "%lu", &value) != 1) {
+> +		perror("fscanf");
+> +		fclose(file);
+> +		return 0;
+> +	}
+> +
+> +	fclose(file);
+> +	return value;
+> +}
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	int use_small_folio = 0;
+> +	int i;
+> +	void *mem1 = aligned_alloc_mem(MEMSIZE_MTHP, ALIGNMENT_MTHP);
+> +	void *mem2 = NULL;
+> +
+> +	if (mem1 == NULL) {
+> +		fprintf(stderr, "Failed to allocate 60MB memory\n");
+> +		return EXIT_FAILURE;
+> +	}
+> +
+> +	if (madvise(mem1, MEMSIZE_MTHP, MADV_HUGEPAGE) != 0) {
+> +		perror("madvise hugepage for mem1");
+> +		free(mem1);
+> +		return EXIT_FAILURE;
+> +	}
+> +
+> +	for (i = 1; i < argc; ++i) {
+> +		if (strcmp(argv[i], "-s") == 0)
+> +			use_small_folio = 1;
+> +	}
+> +
+> +	if (use_small_folio) {
+> +		mem2 = aligned_alloc_mem(MEMSIZE_SMALLFOLIO, ALIGNMENT_MTHP);
+> +		if (mem2 == NULL) {
+> +			fprintf(stderr, "Failed to allocate 1MB memory\n");
+> +			free(mem1);
+> +			return EXIT_FAILURE;
+> +		}
+> +
+> +		if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_NOHUGEPAGE) != 0) {
+> +			perror("madvise nohugepage for mem2");
+> +			free(mem1);
+> +			free(mem2);
+> +			return EXIT_FAILURE;
+> +		}
+> +	}
+> +
+> +	for (i = 0; i < 100; ++i) {
+> +		unsigned long initial_swpout;
+> +		unsigned long initial_swpout_fallback;
+> +		unsigned long final_swpout;
+> +		unsigned long final_swpout_fallback;
+> +		unsigned long swpout_inc;
+> +		unsigned long swpout_fallback_inc;
+> +		double fallback_percentage;
+> +
+> +		initial_swpout = read_stat(SWPOUT_PATH);
+> +		initial_swpout_fallback = read_stat(SWPOUT_FALLBACK_PATH);
+> +
+> +		random_madvise_dontneed(mem1, MEMSIZE_MTHP, ALIGNMENT_MTHP,
+> +				TOTAL_DONTNEED_MTHP);
+> +
+> +		if (use_small_folio) {
+> +			random_madvise_dontneed(mem2, MEMSIZE_SMALLFOLIO,
+> +					ALIGNMENT_SMALLFOLIO,
+> +					TOTAL_DONTNEED_SMALLFOLIO);
+> +		}
+> +
+> +		if (madvise(mem1, MEMSIZE_MTHP, MADV_PAGEOUT) != 0) {
+> +			perror("madvise pageout for mem1");
+> +			free(mem1);
+> +			if (mem2 != NULL)
+> +				free(mem2);
+> +			return EXIT_FAILURE;
+> +		}
+> +
+> +		if (use_small_folio) {
+> +			if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_PAGEOUT) != 0) {
+> +				perror("madvise pageout for mem2");
+> +				free(mem1);
+> +				free(mem2);
+> +				return EXIT_FAILURE;
+> +			}
+> +		}
+> +
+> +		final_swpout = read_stat(SWPOUT_PATH);
+> +		final_swpout_fallback = read_stat(SWPOUT_FALLBACK_PATH);
+> +
+> +		swpout_inc = final_swpout - initial_swpout;
+> +		swpout_fallback_inc = final_swpout_fallback - initial_swpout_fallback;
+> +
+> +		fallback_percentage = (double)swpout_fallback_inc /
+> +			(swpout_fallback_inc + swpout_inc) * 100;
+> +
+> +		printf("Iteration %d: swpout inc: %lu, swpout fallback inc: %lu, Fallback percentage: %.2f%%\n",
+> +				i + 1, swpout_inc, swpout_fallback_inc, fallback_percentage);
+> +	}
+> +
+> +	free(mem1);
+> +	if (mem2 != NULL)
+> +		free(mem2);
+> +
+> +	return EXIT_SUCCESS;
+> +}
 
-I was never claiming it to be about KSZ9477.
-
-> > I think you really should pass the port type down to drivers and
-> > reject offloading interlink ports...
-> 
-> As stated above - IMHO I do provide a fix for this particular IC
-> (KSZ9477). With xrs700x we do have fixed ports supporting HSR (port
-> 1,2), so there is no other choice. As a result the HSR Interlink would
-> be supporting only SW emulation.
-
-But there is another choice, and I think I've already explained it.
-
-        HSR_PT_SLAVE_A    HSR_PT_SLAVE_B      HSR_PT_INTERLINK
- ----------------------------------------------------------------
- user
- space        0                 1                   2
- requests
- ----------------------------------------------------------------
- XRS700X
- driver       1                 2                   -
- understands
-
-I am bringing this as an argument for the fact that you should pass the
-port type explicitly from HSR to the offload, and use it throughout the
-offloading drivers. The hweight(ports) >= 2 happens to work for KSZ9477,
-but IMO misidentifies the problem as having to do with the number of
-ports rather than the port type. Because of this, a largely similar
-issue introduced by the same blamed commit but in XRS700X is left
-unaddressed and unidentified (the fixed ports check which is already
-present masks the fact that it's not really about the ports, but their
-type, which must still be checked, otherwise the driver has no idea what
-HSR wants from it).
 
