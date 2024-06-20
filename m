@@ -1,72 +1,118 @@
-Return-Path: <linux-kernel+bounces-222619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5CF9104A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:55:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 742C99104EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A361F22721
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:55:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 696E41C23437
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237DF1ACE80;
-	Thu, 20 Jun 2024 12:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7871AD4BC;
+	Thu, 20 Jun 2024 12:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JpGKDZj0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d32EKL4Z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6575A46BF;
-	Thu, 20 Jun 2024 12:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266681AD492
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718888093; cv=none; b=Yo5Rjv4NR93/nvZtlRfau941zY3LJWHWyeOsgBFqkO2qskjhwZ1jbjkE6y8fIG/WeohK9GQ8F+y/C0qmymKWjQPcypmqNkxUa3G3DKDlieslqMRXdaSH/6d2Px/m6IUZxXy81rRp3rvw6fHSxq5hkNrQz8cgNDmUkThvUVSCzgw=
+	t=1718888173; cv=none; b=ketUIyWeu6LgQwjj4vyEo1Liu1czjq/mLhVX+Y8iYCbnlgecULNbiRtwWnxVG334GtjzGQtBxkZvJUKJuHaa1vdVUy3LDVpkqVkDHuJexaekJZELko5a2F32U6rJ3cQIDDOSLPdAJMaOy2wiPHM7XCh9Pjnrh70cN+PIXjEvWUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718888093; c=relaxed/simple;
-	bh=XxOGHy5sn3zZ32+a9hXAFXf9fhelQMqz0kS5bb7MRmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X9fmmeNLafWwtPho2fRYVDpm5d6VvhnVeSpj/gY+YuN7XN/k3NPG97sSf0EdJIon3kxVJI6tZut1Cn6xmLGLssrFEcR1x5M29JRMJ+HEFtH2xD0SSXffubz9LSdXqou2SnKA9up55zh9snIBsG34ZwkS9Kcwg02EcF4yRJOV0ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JpGKDZj0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D651CC4AF0F;
-	Thu, 20 Jun 2024 12:54:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718888092;
-	bh=XxOGHy5sn3zZ32+a9hXAFXf9fhelQMqz0kS5bb7MRmE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JpGKDZj0/FGv6QHMrTOsHcvcOWhgn2OST2EVZa6bHHLFIKcC96n4A54LM5dZJMAfY
-	 KIzSPsx0C5XbiuHIm0HCQFZ8okNYirDmpkBqot6H8zqNpuG7gerhxbaMilxcDqIAXs
-	 WTCOc3Lanl4T4Y4+yWmXgTWI8S+moi26C97KRGvPnNYdcC3wrze9LLiy7pAzS3UV/M
-	 GE+CBMtyF0lMV/93tX7/r8A7PSVdSZ4FxY0ehi+1qYAs747TrX6rSrjpjzhpCJ2cWZ
-	 nqQgCy12Q+Tn5JP0xe4rJm3YS0WABSv9sCGg7JOaSemK8unfDjEg6TyHVOHegjHXki
-	 0zJz7BXBnzXRQ==
-Date: Thu, 20 Jun 2024 13:54:48 +0100
-From: Simon Horman <horms@kernel.org>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
-	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
-Subject: Re: [net-next PATCH v5 06/10] octeontx2-pf: Get VF stats via
- representor
-Message-ID: <20240620125448.GF959333@kernel.org>
-References: <20240611162213.22213-1-gakula@marvell.com>
- <20240611162213.22213-7-gakula@marvell.com>
+	s=arc-20240116; t=1718888173; c=relaxed/simple;
+	bh=10et50jH35WKzbJAGft92Uw+63bW3vRyEyR3/dmjRo8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hvgt+9SaFgf0Iwb8XVPNXmUOU67jx30kbHExSS3/2XvmPQ0/FjLv/Fi4P6BXklbhudjrgm/1MeTLqY961hDO6bzTLV0ysc0GsI7yH9joS2M3OohuXTPHEMBQeLGMcihElifpU5wMxqAVyGEcYuRG77Z0Ld98M5K0z0qbkr/4YxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d32EKL4Z; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718888171;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Ito9Ah+hBKJWq7ZSXp0iGlPI2JE2GdQxnkVVV4tpaqA=;
+	b=d32EKL4Zkz6mARI6sxm9qD0vqmJn/8WxEshUIiFMcKmpaE0Xf9lp5rY4ZKEEyeCAfZY668
+	wOPp1WnjB2t05c+5OHOssO2D94w7h1j/sueJL7hmI8ZSQQ9nS75Y7FZPYr37t8OuZwzbUu
+	MDVEobLIeuqjw601O9djG2tXjqUtdgQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-199-BqFq2gFIMd6GpFyNA9tjVA-1; Thu,
+ 20 Jun 2024 08:56:08 -0400
+X-MC-Unique: BqFq2gFIMd6GpFyNA9tjVA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2B8D419560B6;
+	Thu, 20 Jun 2024 12:56:06 +0000 (UTC)
+Received: from RHTRH0061144.redhat.com (unknown [10.22.9.58])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F29B81956087;
+	Thu, 20 Jun 2024 12:56:02 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: netdev@vger.kernel.org
+Cc: dev@openvswitch.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pravin B Shelar <pshelar@ovn.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Stefano Brivio <sbrivio@redhat.com>,
+	=?UTF-8?q?Adri=C3=A1n=20Moreno?= <amorenoz@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Subject: [PATCH v2 net-next 0/7] selftests: net: Switch pmtu.sh to use the internal ovs script.
+Date: Thu, 20 Jun 2024 08:55:54 -0400
+Message-ID: <20240620125601.15755-1-aconole@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240611162213.22213-7-gakula@marvell.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Tue, Jun 11, 2024 at 09:52:09PM +0530, Geetha sowjanya wrote:
-> This patch add support to export VF port statistics via representor
-> netdev. Defines new mbox "NIX_LF_STATS" to fetch VF hw stats.
-> 
-> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
+Currently, if a user wants to run pmtu.sh and cover all the provided test
+cases, they need to install the Open vSwitch userspace utilities.  This
+dependency is difficult for users as well as CI environments, because the
+userspace build and setup may require lots of support and devel packages
+to be installed, system setup to be correct, and things like permissions
+and selinux policies to be properly configured.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+The kernel selftest suite includes an ovs-dpctl.py utility which can
+interact with the openvswitch module directly.  This lets developers and
+CI environments run without needing too many extra dependencies - just
+the pyroute2 python package.
+
+This series enhances the ovs-dpctl utility to provide support for set()
+and tunnel() flow specifiers, better ipv6 handling support, and the
+ability to add tunnel vports, and LWT interfaces.  Finally, it modifies
+the pmtu.sh script to call the ovs-dpctl.py utility rather than the
+typical OVS userspace utilities.
+
+Aaron Conole (7):
+  selftests: openvswitch: Support explicit tunnel port creation.
+  selftests: openvswitch: Refactor actions parsing.
+  selftests: openvswitch: Add set() and set_masked() support.
+  selftests: openvswitch: Add support for tunnel() key.
+  selftests: openvswitch: Support implicit ipv6 arguments.
+  selftests: net: Use the provided dpctl rather than the vswitchd for
+    tests.
+  selftests: net: add config for openvswitch
+
+ tools/testing/selftests/net/config            |   5 +
+ .../selftests/net/openvswitch/ovs-dpctl.py    | 366 +++++++++++++++---
+ tools/testing/selftests/net/pmtu.sh           | 145 +++++--
+ 3 files changed, 450 insertions(+), 66 deletions(-)
+
+-- 
+2.45.1
 
 
