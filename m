@@ -1,142 +1,148 @@
-Return-Path: <linux-kernel+bounces-223383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C1E911213
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:28:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA4D911217
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A88241C22072
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:28:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8B41C22669
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1FD1B9AD1;
-	Thu, 20 Jun 2024 19:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1395D1B9AD1;
+	Thu, 20 Jun 2024 19:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hW/kE7C4"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FUI6f0C1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE5B1B9ACF;
-	Thu, 20 Jun 2024 19:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDE71B4C45
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718911682; cv=none; b=rH+XH9HtHuwjr1s/rNWdHVpuTEc3O8h+fEHhBfBwciAZn8WIMI6KnKBzJHCWd8gqQwM91Zny8hl+Ro3GbC4f+HP1C30D1lhTjE6VLzVqwWMkgKgJsBfMqyOSNHRSyZpyVbIoCqoqBN+E6j/oxJ5PZa98Baj3wVd8G6A7IIAP1PY=
+	t=1718911818; cv=none; b=AsJzQ5KQ1rzCm2palnlpQmgkKrMVhPwo2yzIxaNO4/2HIcDm3+mml5YfaLndtuLT8+a/xnuKduaDAG/w/yutFi9NBC+2undArIzDHfPYgfQUic6esoQ47ZmMRZyy2isXQHVq1Y+B3gDTndLQlN6U55lgPtFvky2+djGaTyCeWc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718911682; c=relaxed/simple;
-	bh=ntrEjOsmODALKCnWVgo4eQwwcHT8pE7zobk9OYp7Ptw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iF3AB7tRMW3fh9d6TtALwKBpOiGen3bUdC4LS1xdCNeW8oMcM9iSfd2u1tV4ay5ZLwhJMw8t2Bd+N4j+ZtbDPu8oFDfzT+PM3zWf4YDhbtteGGCfWr9EWCmys7WHbOSHXlx0ILwVAu5XjBypbgonTNswejeVU1tlICAGLWq/WGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hW/kE7C4; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5295eb47b48so1589826e87.1;
-        Thu, 20 Jun 2024 12:28:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718911678; x=1719516478; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oRsYs1IwI3iTPIv617HzDl2qTN7SroiQOxU1KLc72+8=;
-        b=hW/kE7C49lHC8uzcq4Hfk10Q3eGgeo3GLLOQZaD4LAHSqAlnIeC42KLlNEQhkjaAm3
-         eF4Qzd2diyI9V7GVCkK4adkie7uspMqIUy+033+JMeLVjYFwFcFyO64PvCWhdeE7uk5c
-         SUhZJnGG0DmqwSnoYmIzJpUzgmkv4QWBQyVKLIRflaQbuKm5ac9LIcIThnZ4hPp48xsh
-         eW+gsC+GcBrE2gb9WDeVtWkVYnaLFQWBX6ZvQdtFlt5d7ScSKx1fEZatxtiINejeHns+
-         k5SrK7VASDXdxHD3zzHjSx10ZUBk8NrWHKyBurkKNB4hEB/2LR+WJcM2RxcrLoE4BtP6
-         hG5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718911678; x=1719516478;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oRsYs1IwI3iTPIv617HzDl2qTN7SroiQOxU1KLc72+8=;
-        b=n5oj5JtLWy14+YZXhdWXsNhZe1vp/ks3qr6oo153JC+qwfXpNNt8+WLfHU2OJxZrVj
-         KwHG3kA9kYh5f2eH1pBXvmUnALkxpDklAjBMvho/jCHoZdpNjF+Qjn9GYqCP9uCC2VfV
-         mR3HlxRrQ4Qh6rXL+iRDNbChqO+3eLZ2IuZiLPy0LmNJ65YJO2kECzsKz8KEVldmpDQQ
-         ZdVRymX0b39mZ2UO29fr1srCBbciE0AXLdmR2SLco5GU4nOyjWFRav1u0SYEEf1rBOlz
-         8RYrl+710ljRfmHsxHIDVqxYvr1eNgX28xH9W+zfQLRRkjhzZZcJ9qYHFf38QVMPdwaH
-         WJog==
-X-Forwarded-Encrypted: i=1; AJvYcCUZVIgtvGHqRnSBckaZwDSX1DX7+MHnmE3sL/n7ZRuzVNzL4RVkonuN2En8VaW/FgPO/HGn+soRzmVbIu7eXSTJ+N1GLwG5tNksw2iZ5dssOUqyK7kYf3UP6Ig29WkViKVDKUmdPIUfSP1aruRA
-X-Gm-Message-State: AOJu0YyHaPlRQgAzFAO8IO9s/nSM5NLEZwpFHqsaBN0z//bqAqFgHL7C
-	v1gropXYp1LJL7gQuD7pqpe1i8CWrcFCdqaDj9zgy3p7l18ds9pV
-X-Google-Smtp-Source: AGHT+IHsaA4qNguYjqXs+KQyF7cROW0q6E3VRCVuGWPsieEbg3MQ0zTg0/xYLeOxnjyAEMEp+t15oQ==
-X-Received: by 2002:a05:6512:3b9c:b0:52c:cc38:5e1f with SMTP id 2adb3069b0e04-52ccc385e5fmr5043644e87.47.1718911678306;
-        Thu, 20 Jun 2024 12:27:58 -0700 (PDT)
-Received: from fedora.. ([2a00:1370:8180:9f8c:610c:ea5a:e832:8757])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ccd251362sm506158e87.276.2024.06.20.12.27.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 12:27:57 -0700 (PDT)
-From: Pavel Skripkin <paskripkin@gmail.com>
-To: marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	luiz.dentz@gmail.com
-Cc: william.xuanziyang@huawei.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pavel Skripkin <paskripkin@gmail.com>,
-	syzbot+b2545b087a01a7319474@syzkaller.appspotmail.com
-Subject: [PATCH] bluetooth/hci: disallow setting handle bigger than HCI_CONN_HANDLE_MAX
-Date: Thu, 20 Jun 2024 22:27:47 +0300
-Message-ID: <20240620192747.45267-1-paskripkin@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718911818; c=relaxed/simple;
+	bh=Qt/f001x8Q0vKKDBE7TSU1xOBp1sWnrsaYRgABuCTXM=;
+	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
+	 Date:Message-ID; b=fqVAyDfUH7n9Lr7JeyZrI9jOeQMu+CfQht6sLdfNqQVb+okwgnkfYj5CX6VTW7zaGZhcsgOhpQu4pyCw22onO7x6tNK7BEV6JrlUcOljeztmNUq0Y6YkSx9bIwcyZbO0JjGrP9/8jHlgtoXeV691LVC66wETgt+aHYsG1zJJSYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FUI6f0C1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718911815;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uwdtAySFtKK2OLXgT+61d7SC+sWlPRojSuQ75KtZ2Nc=;
+	b=FUI6f0C1BlKurJ5u9Si4G8BSEO5GQDvIZpusJ8HiYN0vZuXOebgc6SmMNIc01W+W40zj62
+	tOU66ulr3j1V6ukmdvzKoUHkFLRWsDo+lViUDQ7NO+kIE+ASkPI84BD8qHiy0onWml0du9
+	+KdVUrgPhD/sq0Tb0hysolJ9J7im+Ic=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-124-A6ZZI-hHP42woi_qbb99ZA-1; Thu,
+ 20 Jun 2024 15:30:13 -0400
+X-MC-Unique: A6ZZI-hHP42woi_qbb99ZA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 81A401956088;
+	Thu, 20 Jun 2024 19:30:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.39.195.156])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5E2001956087;
+	Thu, 20 Jun 2024 19:30:01 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240620173137.610345-10-dhowells@redhat.com>
+References: <20240620173137.610345-10-dhowells@redhat.com> <20240620173137.610345-1-dhowells@redhat.com>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Steve French <smfrench@gmail.com>,
+    Matthew Wilcox <willy@infradead.org>,
+    Jeff Layton <jlayton@kernel.org>,
+    Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 09/17] cifs: Defer read completion
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <612370.1718911800.1@warthog.procyon.org.uk>
+Date: Thu, 20 Jun 2024 20:30:00 +0100
+Message-ID: <612371.1718911800@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Syzbot hit warning in hci_conn_del() caused by freeing handle that was
-not allocated using ida allocator.
+Oops - a bit of debugging code had got left in this patch and I forgot to
+fill out the description.  Updated patch attached.
 
-This is caused by handle bigger than HCI_CONN_HANDLE_MAX passed by
-hci_le_big_sync_established_evt(), which makes code think it's unset
-connection.
-
-Add same check for handle upper bound as in hci_conn_set_handle() to
-prevent warning.
-
-Fixes: https://syzkaller.appspot.com/bug?extid=b2545b087a01a7319474
-Reported-by: syzbot+b2545b087a01a7319474@syzkaller.appspotmail.com
-Fixes: 181a42edddf5 ("Bluetooth: Make handle of hci_conn be unique")
-Signed-off-by: Pavel Skripkin <paskripkin@gmail.com>
+David
 ---
- net/bluetooth/hci_conn.c | 15 ++++++++++++---
+cifs: Defer read completion
+
+Defer read completion from the I/O thread to the cifsiod thread so as not
+to slow down the I/O thread.  This restores the behaviour of v6.9.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <sfrench@samba.org>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/smb/client/smb2pdu.c |   15 ++++++++++++---
  1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/net/bluetooth/hci_conn.c b/net/bluetooth/hci_conn.c
-index 0c76dcde5361..080053a85b4d 100644
---- a/net/bluetooth/hci_conn.c
-+++ b/net/bluetooth/hci_conn.c
-@@ -899,8 +899,8 @@ static int hci_conn_hash_alloc_unset(struct hci_dev *hdev)
- 			       U16_MAX, GFP_ATOMIC);
+diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+index 38a06e8a0f90..e213cecd5094 100644
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@ -4484,6 +4484,16 @@ smb2_new_read_req(void **buf, unsigned int *total_len,
+ 	return rc;
  }
  
--struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst,
--			      u8 role, u16 handle)
-+static struct hci_conn *__hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst,
-+				       u8 role, u16 handle)
- {
- 	struct hci_conn *conn;
- 
-@@ -1041,7 +1041,16 @@ struct hci_conn *hci_conn_add_unset(struct hci_dev *hdev, int type,
- 	if (unlikely(handle < 0))
- 		return ERR_PTR(-ECONNREFUSED);
- 
--	return hci_conn_add(hdev, type, dst, role, handle);
-+	return __hci_conn_add(hdev, type, dst, role, handle);
++static void smb2_readv_worker(struct work_struct *work)
++{
++	struct cifs_io_subrequest *rdata =
++		container_of(work, struct cifs_io_subrequest, subreq.work);
++
++	netfs_subreq_terminated(&rdata->subreq,
++				(rdata->result == 0 || rdata->result == -EAGAIN) ?
++				rdata->got_bytes : rdata->result, true);
 +}
 +
-+struct hci_conn *hci_conn_add(struct hci_dev *hdev, int type, bdaddr_t *dst,
-+			      u8 role, u16 handle)
-+{
-+	if (handle > HCI_CONN_HANDLE_MAX)
-+		return ERR_PTR(-EINVAL);
-+
-+	return __hci_conn_add(hdev, type, dst, role, handle);
+ static void
+ smb2_readv_callback(struct mid_q_entry *mid)
+ {
+@@ -4578,9 +4588,8 @@ smb2_readv_callback(struct mid_q_entry *mid)
+ 			rdata->result = 0;
+ 	}
+ 	rdata->credits.value = 0;
+-	netfs_subreq_terminated(&rdata->subreq,
+-				(rdata->result == 0 || rdata->result == -EAGAIN) ?
+-				rdata->got_bytes : rdata->result, true);
++	INIT_WORK(&rdata->subreq.work, smb2_readv_worker);
++	queue_work(cifsiod_wq, &rdata->subreq.work);
+ 	release_mid(mid);
+ 	add_credits(server, &credits, 0);
  }
- 
- static void hci_conn_cleanup_child(struct hci_conn *conn, u8 reason)
--- 
-2.45.2
 
 
