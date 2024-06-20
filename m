@@ -1,128 +1,154 @@
-Return-Path: <linux-kernel+bounces-223342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01EEE911192
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:57:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A0DA911167
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A582EB2D538
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:52:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21C8C1F20F51
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262B41BA87D;
-	Thu, 20 Jun 2024 18:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32431B9AD1;
+	Thu, 20 Jun 2024 18:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MVFpxnuY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YioOWn6U"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEA31BA094;
-	Thu, 20 Jun 2024 18:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E56B1B9AAC
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718909364; cv=none; b=hvZWC2L1Kttc8cnMrzRq0j6Fbjz3SzSy0zHiw96aUmozxEQsJlZq4XB4PGbxgVeLCiUk3BdTYiijbbw6VL+I7zhlbT2O+OcAPOSpUIjIrblY1IdcfCnhtJMh8Cy7/3tZsIEm9i1CfHsuQlvD0f7kLRE2qdscVHbXzy1Wn+RYRcM=
+	t=1718909397; cv=none; b=Aw4arpXSIAQOmN2VospVvMJo9cs5Rojlyz8Z+9IPfKHU5CB4Ou4NKuOyxpRvfvQb65wJohdgKHZ5lymB8uaB9RN7MrCZ0HIVWXBbOij2ejqQm7RSGdAwxlbD+o5g3XtlJYT/Vqz1HZ4jDzia5hE2ZkWplvgaEzN83RjVuhoiUJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718909364; c=relaxed/simple;
-	bh=QJZpOt1LOMceNB+eu4dXjCRhvIJzEQIZT+qwmbq+i78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LVbYUoMvSyGOfQo8uXtfQgk0phC193PHOwM7ENZuS4jUDIGEQP/tPPmETcN+MyITcAQjOYFKpmPcky3Mg9nMbTodSQNzmf2BcnVAnGa+JlAE4w03Lj7jh0qkCp+LOKgCESTml/zyjXv8P1S830LkKfQGVX68jT7nDaxeyrqsmCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MVFpxnuY; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718909361; x=1750445361;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QJZpOt1LOMceNB+eu4dXjCRhvIJzEQIZT+qwmbq+i78=;
-  b=MVFpxnuYYuLl0+zk4+obi4UJH8690PhA46OgIIUoW/0/B5KoXfLqhITI
-   mQfsqHTwBc6075vnN9j3yR9HWdvemPymqCxJr2LElaw31p/T2es1Mssu8
-   OR6W+IGAcrwGVwsolRFDoawiSfrhNZYdllyP/EYeQVHwNeG9R/xxfualh
-   I9kZwEBK3KgsauxZVX/ji69XMGVgj9HpN5suBcP/krvAcmViG5RQ4aNlb
-   FqJFz0vQiOfwJHqIKFfILZTrGyLvBA4VqkS78hnLj++FU8r4yeiMXf0sQ
-   dxwNjafywcTypJeUAMm11WEDLUE1pCfKzdFS80k3CHMQLxgOoIZJymC8t
-   Q==;
-X-CSE-ConnectionGUID: e+z9d97ESPGaEq4L65jwzQ==
-X-CSE-MsgGUID: EbEbZcDVQViQVhl2zamkFg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="15620470"
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="15620470"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 11:49:20 -0700
-X-CSE-ConnectionGUID: PKCHph8YRaCCUr9ccXCaPQ==
-X-CSE-MsgGUID: fgMPy6ybS9GH7Oj6y/eFvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="42197407"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 20 Jun 2024 11:49:17 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sKMqQ-0007qP-1Q;
-	Thu, 20 Jun 2024 18:49:14 +0000
-Date: Fri, 21 Jun 2024 02:48:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pascal Paillet <p.paillet@foss.st.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, p.paillet@foss.st.com,
-	Etienne Carriere <etienne.carriere@foss.st.com>
-Subject: Re: [PATCH 4/4] arm64: stm32: enable scmi regulator for stm32
-Message-ID: <202406210259.JQqO3vyI-lkp@intel.com>
-References: <20240619083602.33007-5-p.paillet@foss.st.com>
+	s=arc-20240116; t=1718909397; c=relaxed/simple;
+	bh=EEOS7EIr0oF/SCh1xJIN2qBgUM7JVYx1GF+XZyGF3ns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hDi0Vs3zKeHmx4JbBiJapQvd70tJwy5i7IBm/5W+d/IQ+3wZRcstbWX8hdMbRrAlETOS7rqkajnymHwsw3YfauoXF4RqawcymmCJydxgf2GJEmZogA6oQ3trgpmxx8u64oEx88x1vJzSlPQ6KxOkX0baJEGOGswYTKF24mweaZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=YioOWn6U; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52bc27cfb14so1722304e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1718909393; x=1719514193; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hL9JXgjXmozV00hpz2FPwQ9DP76wRXOzayxL+7uvpKU=;
+        b=YioOWn6U9nZ4TX76Ae0wXINNtDpQ1+IHHfpFozSwsfOL8ziC7H+GjS5CnTae7BjWBG
+         bBwhUk26MROwxg4eoLZrme09bce9Q8EsWbw6Q6alZBaYiODStCzQYLWJqsGuwnnvokBW
+         skeMaPRQ3UAUNnm+jqorQQS+S4251DwqgqveY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718909393; x=1719514193;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hL9JXgjXmozV00hpz2FPwQ9DP76wRXOzayxL+7uvpKU=;
+        b=pLtv2jC4VmASR1p3lOlInDyEs2ee1H0hln8ScS6IRA8LTfFEJV3gj8yAI0Uc6ajNxm
+         tYPjK2SaFlXCIFgubErC7GS2n2AWj8b72Tv8uccTp2wHfygKgtyA5HKEVVW0lQkNH/Fh
+         aBfeOLUV2xMTkfvw+TmHwKHHhYm5NW9fQH7KXQILQwHG7epegnzdVEDiA8NSz81hdsuJ
+         H2oAlLyEBdKqFpjFw46altR7Y88akqVZUHBbSewTCzAvxF/J0kVZw28c49S6R5zhZTTO
+         zQYFZe1uMQRiKYpJczlliY3xZTgUzhCkeQIMYNFGTL7qNvS3d3LVnOQmbXB6aYXvhdfF
+         IJgg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoEBwe67VpzSbSkX+i9AVi1JPSQ+iHeLCGVYaQme7OonNVFg/K5V4SN4tfwv0O6BETsfGjHQq+oMMvJzMVcNvSnxvbPz4LYOpBfLMh
+X-Gm-Message-State: AOJu0YxDW/2E/QG8E72cQhzdMSpjyyseiB6ABYAyJJe1IRUW4AG7ZEuH
+	bf9Fy83dw0r99EBKUHGPvkQo1KEiwEch7QRNesprJgTUDxzqi38L55/16i/hZpNDZ/lh0VOSdbE
+	TtBgai0XOFlPu6fsdTB6Z+KLjaZOspY7ScuoP
+X-Google-Smtp-Source: AGHT+IGD8CE0uw6+jpXardgoPtrej/5EyEUGjkTiM+TfGEeQBlJlNeDXxliD+R62iK29WVQ9yA6w9M3LXS5jtNT5xcw=
+X-Received: by 2002:a05:6512:124a:b0:52c:ab21:7c05 with SMTP id
+ 2adb3069b0e04-52ccaa599b7mr5856580e87.67.1718909393574; Thu, 20 Jun 2024
+ 11:49:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619083602.33007-5-p.paillet@foss.st.com>
+References: <20240607230146.47222-1-kuntal.nayak@broadcom.com> <ZmmffoZAlP2wRQJL@calendula>
+In-Reply-To: <ZmmffoZAlP2wRQJL@calendula>
+From: Kuntal Nayak <kuntal.nayak@broadcom.com>
+Date: Thu, 20 Jun 2024 11:49:41 -0700
+Message-ID: <CAA4K+2b6fAH2jKrxJGV8xHFupS6OkaJAFCtnZqjLvYXHNFA-Xw@mail.gmail.com>
+Subject: Re: [PATCH v6.1] netfilter: nf_tables: use timestamp to check for set
+ element timeout
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: stable@vger.kernel.org, gregkh@linuxfoundation.org, 
+	ajay.kaher@broadcom.com, alexey.makhalov@broadcom.com, 
+	vasavi.sirnapalli@broadcom.com, kadlec@netfilter.org, fw@strlen.de, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Pascal,
+Hi Pablo,
 
-kernel test robot noticed the following build warnings:
+Thank you for the update and reviewing the patch. We will wait for
+your patch to be applied to the LTS and then consume the latest 6.1
+kernel.
 
-[auto build test WARNING on arm64/for-next/core]
-[also build test WARNING on atorgue-stm32/stm32-next robh/for-next linus/master v6.10-rc4 next-20240620]
-[cannot apply to arm-perf/for-next/perf]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+------
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Pascal-Paillet/dt-bindings-add-STM32MP25-regulator-bindings/20240619-163908
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
-patch link:    https://lore.kernel.org/r/20240619083602.33007-5-p.paillet%40foss.st.com
-patch subject: [PATCH 4/4] arm64: stm32: enable scmi regulator for stm32
-config: arm64-kismet-CONFIG_REGULATOR_ARM_SCMI-CONFIG_ARCH_STM32-0-0 (https://download.01.org/0day-ci/archive/20240621/202406210259.JQqO3vyI-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20240621/202406210259.JQqO3vyI-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406210259.JQqO3vyI-lkp@intel.com/
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for REGULATOR_ARM_SCMI when selected by ARCH_STM32
-   WARNING: unmet direct dependencies detected for REGULATOR_ARM_SCMI
-     Depends on [n]: REGULATOR [=n] && ARM_SCMI_PROTOCOL [=y] && OF [=y]
-     Selected by [y]:
-     - ARCH_STM32 [=y]
+Best regards,
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Kuntal
+
+On Wed, Jun 12, 2024 at 6:15=E2=80=AFAM Pablo Neira Ayuso <pablo@netfilter.=
+org> wrote:
+>
+> Hi,
+>
+> Thanks for your patch.
+>
+> rbtree GC chunk is not correct though. In 6.1, GC runs via workqueue,
+> so the cached timestamp cannot be used in such case.
+>
+> Another possibility is to pull in the patch dependency to run GC
+> synchronously.
+>
+> I am preparing a batch of updates for -stable, let me pick up on your
+> patch.
+>
+> Thanks.
+>
+> On Fri, Jun 07, 2024 at 04:01:46PM -0700, Kuntal Nayak wrote:
+> > diff --git a/net/netfilter/nft_set_rbtree.c b/net/netfilter/nft_set_rbt=
+ree.c
+> > index 5bf5572e9..c4c92192c 100644
+> > --- a/net/netfilter/nft_set_rbtree.c
+> > +++ b/net/netfilter/nft_set_rbtree.c
+> [...]
+> > @@ -622,12 +624,14 @@ static void nft_rbtree_gc(struct work_struct *wor=
+k)
+> >       struct nft_set *set;
+> >       unsigned int gc_seq;
+> >       struct net *net;
+> > +     u64 tstamp;
+> >
+> >       priv =3D container_of(work, struct nft_rbtree, gc_work.work);
+> >       set  =3D nft_set_container_of(priv);
+> >       net  =3D read_pnet(&set->net);
+> >       nft_net =3D nft_pernet(net);
+> >       gc_seq  =3D READ_ONCE(nft_net->gc_seq);
+> > +     tstamp =3D nft_net_tstamp(net);
+> >
+> >       if (nft_set_gc_is_pending(set))
+> >               goto done;
+> > @@ -659,7 +663,7 @@ static void nft_rbtree_gc(struct work_struct *work)
+> >                       rbe_end =3D rbe;
+> >                       continue;
+> >               }
+> > -             if (!nft_set_elem_expired(&rbe->ext))
+> > +             if (!__nft_set_elem_expired(&rbe->ext, tstamp))
+> >                       continue;
+> >
+> >               nft_set_elem_dead(&rbe->ext);
+> > --
+> > 2.39.3
+> >
 
