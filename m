@@ -1,210 +1,162 @@
-Return-Path: <linux-kernel+bounces-222777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E108910755
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:03:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449C5910732
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A909C285267
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:03:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E42582856C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7081AE096;
-	Thu, 20 Jun 2024 14:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iVSkomcz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17871AED21;
+	Thu, 20 Jun 2024 13:58:13 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3995A1AD49B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D06230358
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718892080; cv=none; b=BQzYEYOK4vZOej1F/cwgkE9YeffaqQtUddvYE32bBXaAOKOix1e30viutvtRc/rb7CglEureaDthqlSwzxilIFTcj58LUBh/VQdQTpVIGrCvvoneB5cXDM5s+eCOomYUiK8IWi045cAia7/ih1ElLYPbSgeLW7JYUwM2LVJK+kI=
+	t=1718891893; cv=none; b=DP9Atv+ThmfaW3rkNWHF/Mc7TY78ODSR8Gs3n9tEeQpZP+LFgc3zDjqjYel2T/uLTvV+wYLorc2A2Dmdo+IdnJsy1f+53PoS+I50N/8iLiMblrcZz08A8ZKQWfUsw3qj76EKlsU6flILT+PRSZKtTWwJtJFrPKpdwdPKI4FzaXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718892080; c=relaxed/simple;
-	bh=vb/tyqWoN1MW5NlK+ZcXRUCc87YzAWuAsmCMis8FO90=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y3QzV23n4n5hNgGwZdZouNmRaR11G08mxVpPgXP8m0joMLdphTppn3fy7UXkWKfW2tq6DQQemZumrb7YOhVWIk97fr0lqm6fRKx22wcb2z7etA6gBbsKPvm0q/BYu8UrtNqmBa2NGy+OI5XeENFpNxwHGABdDG2r7am3lJH7qSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iVSkomcz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718892078;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=H+/uFiCGrKYOr8f3Xm2xUT28S49p5SQ4fyxld7R6VYc=;
-	b=iVSkomczGXpTbAuazRWBy71pJYePNpqMq4IvQ2+BhLqajY1cXo/AhRd1VK0horkjjXrhUd
-	8tRDkOFuyhLCjkgjRujxKAx5oNJQtiyxT2m0/utMO0ahKd+DKceY10v0B5Ng37iJNVjUG7
-	1o8M8xInsw68vqhPOhFrxuWyDuz1Gao=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-581-fUXHUMaGN_q5ATMZYKdHyg-1; Thu, 20 Jun 2024 10:01:17 -0400
-X-MC-Unique: fUXHUMaGN_q5ATMZYKdHyg-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-52bc124ef2eso623844e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:01:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718892072; x=1719496872;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=H+/uFiCGrKYOr8f3Xm2xUT28S49p5SQ4fyxld7R6VYc=;
-        b=KB1LeYMebgAFMLSA4wuB8VEKcBCX/L14F8sn1t6jTbGbwnVRjLBZ0JQ2BBBiPBi35y
-         48abFxBf52JXq4RcIG4JfKjZY5QelEW2znCGdp3Jv8J/jkYTab1Wl2F75NBIgcQbH+GG
-         u7kuClZB/oQFhO84W/9aK+6p79X09o24Cc+K0OKygeCj8UJbTTFLhzzWB5wCT4+jvo5E
-         cQ+rqln+gF8eDU7t5y/2fxJIC6nT8138gbVXXyDDJiRSbPB8QeK19mGAYHwajAuSfLKe
-         A8fXyhXIvmbxGhAADqgWM15g2wgGB1lFN5gLJM0zbfAdQz4zzswp9oM0uTIFqUO2sqUY
-         beiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUW+vzgEgAHkBjVsbyKE6JyZJmAwlTj3faP9M118qia5ASc4Njz0/EEYe/Rc4BhisT0ZpsRynCUVEBozWzcrisUO6NNc1MGdsFqDng6
-X-Gm-Message-State: AOJu0Yy9TUc22mAFnPiQ6xYTuzdazfwUkdoK0wk2fJAG++vYQoAbkAMb
-	iXAfyRW18lW6FGbKDfZfx2RNnqbu/GhRUJRDyTLyWSYBlc32yCNLPVEdkwNzE/DQHBQnQRFGi6k
-	e/cZg8pJn8b+tzPjBvTAtgxlgYt1VHngMAPR8ZaHxtfRdGyg6GTtvDFEWXcp28w==
-X-Received: by 2002:a05:6512:348c:b0:52c:8c5b:b7d8 with SMTP id 2adb3069b0e04-52ccaa60842mr3095397e87.30.1718892072247;
-        Thu, 20 Jun 2024 07:01:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJYjbE9xh8gzOPded+ami9ji3Kn9OHGGwuOWKeuzEOUKBoz3fjdadzXWT0QtMsnTT8F0tbiA==
-X-Received: by 2002:a05:6512:348c:b0:52c:8c5b:b7d8 with SMTP id 2adb3069b0e04-52ccaa60842mr3095368e87.30.1718892071716;
-        Thu, 20 Jun 2024 07:01:11 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c719:5b00:61af:900f:3aef:3af3? (p200300cbc7195b0061af900f3aef3af3.dip0.t-ipconnect.de. [2003:cb:c719:5b00:61af:900f:3aef:3af3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d212254sm26724175e9.45.2024.06.20.07.01.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 07:01:11 -0700 (PDT)
-Message-ID: <6d7b180a-9f80-43a4-a4cc-fd79a45d7571@redhat.com>
-Date: Thu, 20 Jun 2024 16:01:08 +0200
+	s=arc-20240116; t=1718891893; c=relaxed/simple;
+	bh=vSar+Z7TnbapZ0Ek8C9awGlUmi6eTI1UlprhvZF7kQ0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QDU7eDt/In5sUmqTJrrRKrHl3AERTUUdh/doI3jVTkJLJmCj5lgRirs8KEuhySDNvvdz8EiDtXjF1gWTqkKqcxB00wEn5+nK5paMthg3va+qiEHH0Il7sHd5EIWN7TN0cirjXYGIwZJgV9XyxwO1siX2+jry+nvVpMGZBq4X2VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W4hmF25Dxz1N7vY;
+	Thu, 20 Jun 2024 21:53:49 +0800 (CST)
+Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
+	by mail.maildlp.com (Postfix) with ESMTPS id A2D1C140123;
+	Thu, 20 Jun 2024 21:58:05 +0800 (CST)
+Received: from huawei.com (10.175.113.25) by kwepemd200010.china.huawei.com
+ (7.221.188.124) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 20 Jun
+ 2024 21:58:04 +0800
+From: Zheng Zengkai <zhengzengkai@huawei.com>
+To: <jason.wessel@windriver.com>, <daniel.thompson@linaro.org>,
+	<dianders@chromium.org>
+CC: <pmladek@suse.com>, <christophe.jaillet@wanadoo.fr>,
+	<thorsten.blum@toblux.com>, <yuran.pereira@hotmail.com>,
+	<kgdb-bugreport@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+	<zhengzengkai@huawei.com>
+Subject: [PATCH RESEND] kdb: Get rid of redundant kdb_curr_task()
+Date: Thu, 20 Jun 2024 22:21:32 +0800
+Message-ID: <20240620142132.157518-1-zhengzengkai@huawei.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
-To: Jason Gunthorpe <jgg@nvidia.com>, Fuad Tabba <tabba@google.com>
-Cc: Christoph Hellwig <hch@infradead.org>, John Hubbard
- <jhubbard@nvidia.com>, Elliot Berman <quic_eberman@quicinc.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, maz@kernel.org, kvm@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- pbonzini@redhat.com
-References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
- <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com>
- <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
- <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
- <20240619115135.GE2494510@nvidia.com> <ZnOsAEV3GycCcqSX@infradead.org>
- <CA+EHjTxaCxibvGOMPk9Oj5TfQV3J3ZLwXk83oVHuwf8H0Q47sA@mail.gmail.com>
- <20240620135540.GG2494510@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240620135540.GG2494510@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200010.china.huawei.com (7.221.188.124)
 
-On 20.06.24 15:55, Jason Gunthorpe wrote:
-> On Thu, Jun 20, 2024 at 09:32:11AM +0100, Fuad Tabba wrote:
->> Hi,
->>
->> On Thu, Jun 20, 2024 at 5:11 AM Christoph Hellwig <hch@infradead.org> wrote:
->>>
->>> On Wed, Jun 19, 2024 at 08:51:35AM -0300, Jason Gunthorpe wrote:
->>>> If you can't agree with the guest_memfd people on how to get there
->>>> then maybe you need a guest_memfd2 for this slightly different special
->>>> stuff instead of intruding on the core mm so much. (though that would
->>>> be sad)
->>>
->>> Or we're just not going to support it at all.  It's not like supporting
->>> this weird usage model is a must-have for Linux to start with.
->>
->> Sorry, but could you please clarify to me what usage model you're
->> referring to exactly, and why you think it's weird? It's just that we
->> have covered a few things in this thread, and to me it's not clear if
->> you're referring to protected VMs sharing memory, or being able to
->> (conditionally) map a VM's memory that's backed by guest_memfd(), or
->> if it's the Exclusive pin.
-> 
-> Personally I think mapping memory under guest_memfd is pretty weird.
-> 
-> I don't really understand why you end up with something different than
-> normal CC. Normal CC has memory that the VMM can access and memory it
-> cannot access. guest_memory is supposed to hold the memory the VMM cannot
-> reach, right?
-> 
-> So how does normal CC handle memory switching between private and
-> shared and why doesn't that work for pKVM? I think the normal CC path
-> effectively discards the memory content on these switches and is
-> slow. Are you trying to make the switch content preserving and faster?
-> 
-> If yes, why? What is wrong with the normal CC model of slow and
-> non-preserving shared memory?
+Commit cf8e8658100d ("arch: Remove Itanium (IA-64) architecture")
+removed the only definition of macro _TIF_MCA_INIT, so kdb_curr_task()
+is actually the same as curr_task() now and becomes redundant.
 
-I'll leave the !huge page part to Fuad.
+Let's remove the definition of kdb_curr_task() and replace remaining
+calls with curr_task().
 
-Regarding huge pages: assume the huge page (e.g., 1 GiB hugetlb) is 
-shared, now the VM requests to make one subpage private. How to handle 
-that without eventually running into a double memory-allocation? (in the 
-worst case, allocating a 1GiB huge page for shared and for private memory).
+Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+---
+ kernel/debug/kdb/kdb_bt.c      |  2 +-
+ kernel/debug/kdb/kdb_main.c    | 18 ++++--------------
+ kernel/debug/kdb/kdb_private.h |  2 --
+ 3 files changed, 5 insertions(+), 17 deletions(-)
 
-In the world of RT, you want your VM to be consistently backed by 
-huge/gigantic mappings, not some weird mixture -- so I've been told by 
-our RT team.
-
-(there are more issues with huge pages in the style hugetlb, where we 
-actually want to preallocate all pages and not rely on dynamic 
-allocation at runtime when we convert back and forth between shared and 
-private)
-
+diff --git a/kernel/debug/kdb/kdb_bt.c b/kernel/debug/kdb/kdb_bt.c
+index 10b454554ab0..137ba73f56fc 100644
+--- a/kernel/debug/kdb/kdb_bt.c
++++ b/kernel/debug/kdb/kdb_bt.c
+@@ -144,7 +144,7 @@ kdb_bt(int argc, const char **argv)
+ 			kdb_ps_suppressed();
+ 		/* Run the active tasks first */
+ 		for_each_online_cpu(cpu) {
+-			p = kdb_curr_task(cpu);
++			p = curr_task(cpu);
+ 			if (kdb_bt1(p, mask, btaprompt))
+ 				return 0;
+ 		}
+diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+index 664bae55f2c9..f5f7d7fb5936 100644
+--- a/kernel/debug/kdb/kdb_main.c
++++ b/kernel/debug/kdb/kdb_main.c
+@@ -155,16 +155,6 @@ static char *__env[31] = {
+ 
+ static const int __nenv = ARRAY_SIZE(__env);
+ 
+-struct task_struct *kdb_curr_task(int cpu)
+-{
+-	struct task_struct *p = curr_task(cpu);
+-#ifdef	_TIF_MCA_INIT
+-	if ((task_thread_info(p)->flags & _TIF_MCA_INIT) && KDB_TSK(cpu))
+-		p = krp->p;
+-#endif
+-	return p;
+-}
+-
+ /*
+  * Update the permissions flags (kdb_cmd_enabled) to match the
+  * current lockdown state.
+@@ -1228,7 +1218,7 @@ static int kdb_local(kdb_reason_t reason, int error, struct pt_regs *regs,
+ 	char *cmdbuf;
+ 	int diag;
+ 	struct task_struct *kdb_current =
+-		kdb_curr_task(raw_smp_processor_id());
++		curr_task(raw_smp_processor_id());
+ 
+ 	KDB_DEBUG_STATE("kdb_local 1", reason);
+ 
+@@ -2278,7 +2268,7 @@ void kdb_ps_suppressed(void)
+ 	unsigned long cpu;
+ 	const struct task_struct *p, *g;
+ 	for_each_online_cpu(cpu) {
+-		p = kdb_curr_task(cpu);
++		p = curr_task(cpu);
+ 		if (kdb_task_state(p, "-"))
+ 			++idle;
+ 	}
+@@ -2314,7 +2304,7 @@ void kdb_ps1(const struct task_struct *p)
+ 		   kdb_task_has_cpu(p), kdb_process_cpu(p),
+ 		   kdb_task_state_char(p),
+ 		   (void *)(&p->thread),
+-		   p == kdb_curr_task(raw_smp_processor_id()) ? '*' : ' ',
++		   p == curr_task(raw_smp_processor_id()) ? '*' : ' ',
+ 		   p->comm);
+ 	if (kdb_task_has_cpu(p)) {
+ 		if (!KDB_TSK(cpu)) {
+@@ -2350,7 +2340,7 @@ static int kdb_ps(int argc, const char **argv)
+ 	for_each_online_cpu(cpu) {
+ 		if (KDB_FLAG(CMD_INTERRUPT))
+ 			return 0;
+-		p = kdb_curr_task(cpu);
++		p = curr_task(cpu);
+ 		if (kdb_task_state(p, mask))
+ 			kdb_ps1(p);
+ 	}
+diff --git a/kernel/debug/kdb/kdb_private.h b/kernel/debug/kdb/kdb_private.h
+index 548fd4059bf9..d2520d72b1f5 100644
+--- a/kernel/debug/kdb/kdb_private.h
++++ b/kernel/debug/kdb/kdb_private.h
+@@ -210,8 +210,6 @@ extern void kdb_gdb_state_pass(char *buf);
+ #define KDB_TSK(cpu) kgdb_info[cpu].task
+ #define KDB_TSKREGS(cpu) kgdb_info[cpu].debuggerinfo
+ 
+-extern struct task_struct *kdb_curr_task(int);
+-
+ #define kdb_task_has_cpu(p) (task_curr(p))
+ 
+ #define GFP_KDB (in_dbg_master() ? GFP_ATOMIC : GFP_KERNEL)
 -- 
-Cheers,
-
-David / dhildenb
+2.20.1
 
 
