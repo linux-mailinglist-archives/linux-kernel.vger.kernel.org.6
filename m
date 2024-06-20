@@ -1,154 +1,172 @@
-Return-Path: <linux-kernel+bounces-222199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89CD90FE1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:58:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D1590FE21
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E44AB212D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:58:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 223A8B23A16
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E13151016;
-	Thu, 20 Jun 2024 07:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E94154FA9;
+	Thu, 20 Jun 2024 07:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eSI3kgrX";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="U0TFmWih";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aiVC72NL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GD3Cmcsr"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="wuz8FPLd"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F951C6AF;
-	Thu, 20 Jun 2024 07:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D7C482C8;
+	Thu, 20 Jun 2024 07:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718870321; cv=none; b=clNoi5reY62QppAwO+9+kQ5gZultsY75b1+Q8XdaR+s11xlSKguUE7KKl/YSf9f/ku4m6uU+X/O4ih9+e32zscTc79NDTlc80Jm2sqJRohROldNJMMhpc9Vr2q+3DwuSmWT3NtC1sfncICgapw6ewzzCHTEwSKz1Tbl6/S4jBUk=
+	t=1718870366; cv=none; b=q8UBHfX33epPK8GjKwmX6ItAZqkOTEJjGej302zkxmGnzMUeayt0jEAjsyMyr4gYkWk/fHckAFEzcEDfgswQVA0Bw7UifsM63o4FONOic9hCFDEUwyfURAoKwwH111KrD91kDW7FhU4syUtSc+l+4802csuGpzJfcyLGHRRYP7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718870321; c=relaxed/simple;
-	bh=ss1+EZEKro2sZjXPDmzIZh1iD2THxjhpN0tqtg7dODk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GXbnPP9EeVgribjhP1wbX+Pv3rl0xrpVelFrWh62SxWwFXqafmJGO5qfh0zfwKYXePhFIR5SzcAKeDWtTrR6Bf6DpTVWj4JsQ+ssKq5O3a293gQozy4tV+uF4WiBZeTRlOIu6GDWFPLoN4ZZus/A497y3mciUwld48F1Kwo9kOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eSI3kgrX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=U0TFmWih; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aiVC72NL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GD3Cmcsr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1718870366; c=relaxed/simple;
+	bh=dzzZTbj+3nIanx4kJLX9W85fpB4mfwv7gZtKTDcQpZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ov+fR1fgG2gOOqJi2AohjeMmMFd55NPHMscLXtM9ZfkZNMA4UxT9No9y9uMi+jgO3Mwpkg8jOgHU33/zFQs3o5nG0QBNKCCYxmHTFg3ZlJJ6FMB5zdMkg9khEjHzS1wpXNm2MgWvoUJ5IDUvALuEatb+mcfHX/s9Rj45JzLL1g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=wuz8FPLd; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E662E2175B;
-	Thu, 20 Jun 2024 07:58:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718870318; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EyrXaIdP3ULci40nIjouHmuwVCbTd4pFecrGu85K7I8=;
-	b=eSI3kgrXJleHkiIdP/2m6XxnZcWfn+zH0RKAHxObCYQqi4LGMg9iKlzaMxWBdclGF1+sku
-	FxyU2GUEdb2WLUTzm1XhV4TO6WwpBB4sxs/KaTaym16EUAAGHoytYgfhaaPZHnTgNIr7br
-	+zXzlWqd9Cce1IU5ZWdkMyQS/zmnxL4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718870318;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EyrXaIdP3ULci40nIjouHmuwVCbTd4pFecrGu85K7I8=;
-	b=U0TFmWihW0QiE6iZQPyFE6bYxQQB1y4OOkh9m0tkg8VNKxBxyoSMB1Sk95kHaSDjV26kyl
-	dCILQw3AF17rhFCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=aiVC72NL;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=GD3Cmcsr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718870317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EyrXaIdP3ULci40nIjouHmuwVCbTd4pFecrGu85K7I8=;
-	b=aiVC72NLOzdGINgU/hGK0xP8yZ1gPt2Gan3xdvs9EYVFUj23O+srdI0Tvzvs6RHaX6eTwE
-	PKD/EOMM9qxz1oKFbX8ywJ63oouEQTm3psi+fbglHCC8HNL3TuRCmOh38FBXfaq7B7H94U
-	NHb2QE8bJGNoXaD+i90F8aPm2P9o7PE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718870317;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EyrXaIdP3ULci40nIjouHmuwVCbTd4pFecrGu85K7I8=;
-	b=GD3CmcsrZfgWqdJD7aPewrr5fZ8GgdFjogIdMrQMhqWI3DZMHWkqkkIJXZkuy3YJ3/lgME
-	G9U3YwCQ6WDZd6Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A702B13AC1;
-	Thu, 20 Jun 2024 07:58:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8ontJS3hc2axVwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 20 Jun 2024 07:58:37 +0000
-Date: Thu, 20 Jun 2024 09:59:03 +0200
-Message-ID: <87cyoc2gfs.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Simon Trimmer <simont@opensource.cirrus.com>
-Cc: <tiwai@suse.com>,
-	<linux-sound@vger.kernel.org>,
-	<alsa-devel@alsa-project.org>,
-	<linux-kernel@vger.kernel.org>,
-	<patches@opensource.cirrus.com>
-Subject: Re: [PATCH] ALSA: hda: cs35l56: Select SERIAL_MULTI_INSTANTIATE
-In-Reply-To: <20240619161602.117452-1-simont@opensource.cirrus.com>
-References: <20240619161602.117452-1-simont@opensource.cirrus.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 722BA87C69;
+	Thu, 20 Jun 2024 09:59:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1718870362;
+	bh=KTkD1fNt44Ouv47/6lXydN4bYu7m2SKRrnp+lNDnGMI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=wuz8FPLdkeIjHVNt2YruCxFp52hbgip6+fywecLYmmsgDB4P7t4TwKykiPsn5jgd+
+	 yYhzPCDDU+vrjlTapVYJXLjd7GGOvmF0U+tI1JFDQvENKoTngyvy7TcrillsFOAoEq
+	 EVP/G9gPdjYdQuDVaCYBAK2GsE4LB2rwAOr2InXqu2wZfJsGyXWAxMla8ncNzgyWaq
+	 6zCCcWBccBD70trEmjpcWQojIgOkeXyyYqIU2V9TiMUR3LGXw2LNo7JWjGAr9Gfirx
+	 JzvmYFdjxr3GYjn52U4pYEvIkStTnGxEwHcZxmeI76IhFybz3Wu4FoOiE1yzYhiyv/
+	 4qpq3UYMpryDg==
+Date: Thu, 20 Jun 2024 09:59:20 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, Paolo Abeni
+ <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "David S. Miller"
+ <davem@davemloft.net>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ Tristram.Ha@microchip.com, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Simon Horman <horms@kernel.org>, Dan Carpenter
+ <dan.carpenter@linaro.org>, "Ricardo B. Marliere" <ricardo@marliere.net>,
+ Casper Andersson <casper.casan@gmail.com>, linux-kernel@vger.kernel.org,
+ Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
+ Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 net-next] net: dsa: Allow only up to two HSR HW
+ offloaded ports for KSZ9477
+Message-ID: <20240620095920.6035022d@wsk>
+In-Reply-To: <20240619155928.wmivi4lckjq54t3w@skbuf>
+References: <20240619134248.1228443-1-lukma@denx.de>
+	<20240619134248.1228443-1-lukma@denx.de>
+	<20240619144243.cp6ceembrxs27tfc@skbuf>
+	<20240619171057.766c657b@wsk>
+	<20240619154814.dvjcry7ahvtznfxb@skbuf>
+	<20240619155928.wmivi4lckjq54t3w@skbuf>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/bJVD9HQ4bWNjw6GY_e=zb/k";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
+
+--Sig_/bJVD9HQ4bWNjw6GY_e=zb/k
 Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: E662E2175B
-X-Spam-Score: -5.50
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-5.50 / 50.00];
-	BAYES_HAM(-2.99)[99.96%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 19 Jun 2024 18:16:02 +0200,
-Simon Trimmer wrote:
-> 
-> The ACPI IDs used in the CS35L56 HDA drivers are all handled by the
-> serial multi-instantiate driver which starts multiple Linux device
-> instances from a single ACPI Device() node.
-> 
-> As serial multi-instantiate is not an optional part of the system add it
-> as a dependency in Kconfig so that it is not overlooked.
-> 
-> Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
+Hi Vladimir,
 
-Applied now to for-linus branch.  Thanks.
+> On Wed, Jun 19, 2024 at 06:48:14PM +0300, Vladimir Oltean wrote:
+> > Granted, this isn't an actual functional problem, but given that you
+> > are fixing a newly developed feature for net-next, and that this is
+> > API that gets progressively harder to change as more devices
+> > implement offloads, I would expect a more obvious signaling
+> > mechanism to exist for this, and now seems a good time to do it,
+> > rather than opting for the most minimal fix. =20
+>=20
+> Actually I'm not even so sure about this basic fact, that it isn't a
+> functional problem already.
+>=20
+> xrs700x_hsr_join() has explicit checks for port 1 and 2. Obviously it
+> expects those ports to be ring ports.
+
+Yes.
+
+>=20
+> But if you configure from user space ports 0 and 1 to be ring ports,
+> and port 2 to be an interlink port, the kernel will accept that
+> configuration.=20
+
+Yes.
+
+> It will return -EOPNOTSUPP for port 0,=20
+
+This comment is for xrs700x_hsr_join()?
+
+For the ksz_hsr_join() we do explicitly check for the KSZ9477_CHIP_ID.
+
+I do regard this fix as a ksz9477 specific one, as there are some
+issues (IMHO - this is the "unexpected behaviour" case for this IC) when
+we add interlink to SoC VLAN.
+
+I don't understand why you bring up xrs700x case here? Is it to get a
+"broader context"?
+
+> falling back to
+> software mode for the first ring port, then accept offload for ring
+> ports 1 and 2. But it doesn't match what user space requested, because
+> port 2 should be interlink...
+
+Please correct me if I'm wrong, but this seems to not be the case for
+ksz9477 - as I stated in the other mail - the ordering is correct (I've
+checked it).
+
+>=20
+> I think you really should pass the port type down to drivers and
+> reject offloading interlink ports...
+
+As stated above - IMHO I do provide a fix for this particular IC
+(KSZ9477). With xrs700x we do have fixed ports supporting HSR (port
+1,2), so there is no other choice. As a result the HSR Interlink would
+be supporting only SW emulation.
 
 
-Takashi
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/bJVD9HQ4bWNjw6GY_e=zb/k
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmZz4VgACgkQAR8vZIA0
+zr2kawgAwwaDitXI7l/t+aUeXBWcTmg89+6VWM7pz2V3qhSCY/+umdf6Wun5pwZd
+KBHfXjbVsKAOczCEa24Urq6jVJoopHZGk7H3VzkCDaBWKkCKtaOhwvYxS2rU2Q99
+/+lMpBipwzW6DoalZbalssP2ipsElfzPOV3fCfJTZ1LkY9lu0jHZfbUWx0BwZzgd
+tHnFyp8mXi1VUP6RKpn+bu1lACMOG6C2Vbbnio16pFP9kZonDGFAk7Yb81De31AW
+KBuXBME+Ebw8DCSc3a/V09ORYwmCntZKpS85037lOxnUNnn/qh0fd97z5ihvlTTZ
+mneGGFFo3XJq1eLBGyFiSqp+5vnUTw==
+=SFKE
+-----END PGP SIGNATURE-----
+
+--Sig_/bJVD9HQ4bWNjw6GY_e=zb/k--
 
