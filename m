@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-223689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F439116F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:42:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F229116F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 697D41C20AD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:42:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0CB21F22C41
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F55D1509BA;
-	Thu, 20 Jun 2024 23:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B44314E2CC;
+	Thu, 20 Jun 2024 23:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="dRy3d1Xo"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kY6xJHMY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDC943ABC;
-	Thu, 20 Jun 2024 23:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD4F43ABC;
+	Thu, 20 Jun 2024 23:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718926930; cv=none; b=ntXGK1RzjEQSfckpj+j5qUFfdaKIQD0Ug8JYZfiSvqhHxmSXVUXjVXv/49saBxNG8TyIBAuZhCzB9BI3HyfyQp89ZqfE8bHrwq/NcAEwHPl1VYhLmt7CoEAVtjmZTGzyRozjWftXRgVDbqYKn1L/B2nswBtWeQ6mPjnY6rr9DEI=
+	t=1718926922; cv=none; b=nPnhpXPbk6RBV90qAjVe6fcd8UAE/9JvlN8G0oC8OScQLaB2QlZF5VW9LfipadVcJhd5uBFOSrMBUDev80L91YfNCDyztVXPpM1xNS9n5QtqzVmu3o9DsxJhk1j1JljdRey44Ps8uvnO+Z6Tcl1mG+xdo6B/dtSeFzEZwa5cl9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718926930; c=relaxed/simple;
-	bh=ZUy9KkXRtxbe3yLApS1C4yViX20c0hmWF1eeEmohgAY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fv3FfCAXhFzhn1xsbwa+AdKMeY7ErokJiXW4qWG9idEi3qzNYOYM7zYNZ5YDIUr5Epk+2fxrQKnlOpMoX+2+3z7QynZ6Q4HDUHZRWCBbGN3w4eIFl9OqZeU7udn0QSl0j9Fk7gPUB3ikqQ8LFtt8aSl5//bBOOQpNZpbLPL2rY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=dRy3d1Xo; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6EA4AC0002;
-	Thu, 20 Jun 2024 23:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1718926919;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JqyvJ/RXIDEJ6K5Q9ZLLPg4KNgiAv+nZHrmU+1Tftb0=;
-	b=dRy3d1XoSgAirW+QpGaX2TNhVencRtlnrIXx9Xf35BbaDkKTW4IQyDB0iewlvhjLdAlXb7
-	ghff9GPto4i60+8ixXPrfuUv3CyicNfzGXD8XUPSOxwlzYBRl8cJtsg7NKFXu3gw7wUTvm
-	MSPH0q5ELASiyAarb6iK1THAc3B7yUoxABNQ1C/me9guRNGgpLIHjUJ/xDq95keW9WkZFx
-	XuexQhIE1ZDZHQRK4qK9QSVJuF4FmJgNcG3SVEZAweNHA9gWYkrYdIRSb786OdBS+v8m5o
-	8LBVhAWAwNrL7SUAha5Qfl3s637zGLy7zFA3JGAQ96xQlSp9z71k/ounmr6zVg==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: Gabriel Krisman Bertazi <gabriel@krisman.be>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
-  <linux-fsdevel@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] unicode: add MODULE_DESCRIPTION() macros
-In-Reply-To: <87y17vng34.fsf@mailhost.krisman.be> (Gabriel Krisman Bertazi's
-	message of "Mon, 27 May 2024 16:40:47 -0400")
-References: <20240524-md-unicode-v1-1-e2727ce8574d@quicinc.com>
-	<87y17vng34.fsf@mailhost.krisman.be>
-Date: Thu, 20 Jun 2024 19:41:50 -0400
-Message-ID: <87v823npvl.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1718926922; c=relaxed/simple;
+	bh=tKagk+Ry0Xq7y1gXPupJbJ8JJufaVprFCQxwG+QH9Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K5vHU6EB19qRj5d6Gcv6Qk5IUQT/mGO87VQQXQ59qOm3Mb6m16/4nLxMbP0LhK8UeS6i3PGAzuiQWz+dNww16MNimipjV3bbVdo1Z8PLeNKEWoIhv8/aJAIpNyez0Nc/spB1aJ1VvuBAq4UYLMdZzY1mSrUellL8Xae1Sxl19mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kY6xJHMY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F9EBC2BD10;
+	Thu, 20 Jun 2024 23:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718926922;
+	bh=tKagk+Ry0Xq7y1gXPupJbJ8JJufaVprFCQxwG+QH9Do=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=kY6xJHMYYjrm7A43Jv1pB3VNhB8nuGh9pa3ZQ2aZO/YfsbfHNuXNsBa2K/w0qGZ0M
+	 oTKSG4sefxW08qbFrgSCI1qH4fTG2N6b8UFE1GYYEvSxGM2BERZuU7CdE/xNoI4Boz
+	 C6IWhvV3etDXLDINWbwoxfM5OxLZyE7ePmLa3Budko+LfUIoLpVk0q0OGSqEOmg0rD
+	 WdekJt0+yFokykcMA6qhhDBXvLEeozDzVuQdiFkolRoDx7XUYvfLTc09rlKDw1EI/T
+	 PbhlN4ElUTaDGLyTEG2nj5kTb9qDHWfFqU0cvzd/nKtpDl74PhiWd36iVD2UuEy4Gh
+	 X2akEb2Gw9Wmw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id CECCDCE0973; Thu, 20 Jun 2024 16:42:01 -0700 (PDT)
+Date: Thu, 20 Jun 2024 16:42:01 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Josh Triplett <josh@joshtriplett.org>, kvm@vger.kernel.org,
+	rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kevin Tian <kevin.tian@intel.com>, Yan Zhao <yan.y.zhao@intel.com>,
+	Yiwei Zhang <zzyiwei@google.com>
+Subject: Re: [PATCH 4/5] KVM: x86: Ensure a full memory barrier is emitted in
+ the VM-Exit path
+Message-ID: <b6d6e576-92dd-4708-93d1-372559b39818@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240309010929.1403984-1-seanjc@google.com>
+ <20240309010929.1403984-5-seanjc@google.com>
+ <45dade46-c45f-47f0-bfae-ae526d02651a@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: gabriel@krisman.be
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <45dade46-c45f-47f0-bfae-ae526d02651a@redhat.com>
 
+On Fri, Jun 21, 2024 at 12:38:21AM +0200, Paolo Bonzini wrote:
+> On 3/9/24 02:09, Sean Christopherson wrote:
+> > From: Yan Zhao <yan.y.zhao@intel.com>
+> > 
+> > Ensure a full memory barrier is emitted in the VM-Exit path, as a full
+> > barrier is required on Intel CPUs to evict WC buffers.  This will allow
+> > unconditionally honoring guest PAT on Intel CPUs that support self-snoop.
+> > 
+> > As srcu_read_lock() is always called in the VM-Exit path and it internally
+> > has a smp_mb(), call smp_mb__after_srcu_read_lock() to avoid adding a
+> > second fence and make sure smp_mb() is called without dependency on
+> > implementation details of srcu_read_lock().
+> 
+> Do you really need mfence or is a locked operation enough?  mfence is mb(),
+> not smp_mb().
 
-> Jeff Johnson <quic_jjohnson@quicinc.com> writes:
->
->> Currently 'make W=1' reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
->>
->> Add a MODULE_DESCRIPTION() to utf8-selftest.c and utf8data.c_shipped,
->> and update mkutf8data.c to add a MODULE_DESCRIPTION() to any future
->> generated utf8data file.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->> Note that I verified that REGENERATE_UTF8DATA creates a file with
->> the correct MODULE_DESCRIPTION(), but that file has significantly
->> different contents than utf8data.c_shipped using the current:
->> https://www.unicode.org/Public/UNIDATA/UCD.zip
->
-> Thanks for reporting this.  I'll investigate and definitely regenerate
-> the file.
+We only need smp_mb(), which is supplied by the srcu_read_lock()
+function.  For now, anyway.  If we ever figure out how to get by with
+lighter-weight ordering for srcu_read_lock(), then we will add an smp_mb()
+to smp_mb__after_srcu_read_lock() to compensate.
 
-Now that I investigated it, I realized there is perhaps a
-misunderstanding and not an issue. I just tried regenerating utf8data.c
-and the file is byte-per-byte equal utf8data_shipped.c, so all is
-good.
+							Thanx, Paul
 
-Considering the link you posted, I suspect you used the latest
-unicode version and not version 12.1, which we support.  So there is no
-surprise the files won't match.
-
-> The patch is good, I'll apply it to the unicode code tree
-> following the fix to the above issue.
-
-Applied!
-
-ty,
-
--- 
-Gabriel Krisman Bertazi
+> Paolo
+> 
+> > +	/*
+> > +	 * Call this to ensure WC buffers in guest are evicted after each VM
+> > +	 * Exit, so that the evicted WC writes can be snooped across all cpus
+> > +	 */
+> > +	smp_mb__after_srcu_read_lock();
+> 
 
