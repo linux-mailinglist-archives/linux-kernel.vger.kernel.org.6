@@ -1,107 +1,133 @@
-Return-Path: <linux-kernel+bounces-223692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F9DC911701
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:45:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C37911706
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A741F22DF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E1731F23440
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8389212FB31;
-	Thu, 20 Jun 2024 23:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0501714EC6D;
+	Thu, 20 Jun 2024 23:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BqqSd20J"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ovVCw6wk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DB12C6BD
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CB55820E;
+	Thu, 20 Jun 2024 23:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718927135; cv=none; b=k6UhBE7TpqIWLKNLdti7quw+8SmeQtRG7ow+rBQtAUTAeQZeP2/6MtiUU7l5jbxUIBd7Dds9SJqZOwiU6MUsmspDrJ32/rOMCPUwQSLieKR0tnzOwbqjEXISdTuPO8obNn18REPC5gW4vY6XVsG4B4sDY+QuaL61CPKHgt+1Qik=
+	t=1718927307; cv=none; b=gcmwVxLQNXZYNBROFLq3TciQlEjHtdgOKXQYKAzyP+kIdER358sSipbzv95t5H5rJkCBtxEuZKdlXKQS7Yi01XZDELglyVZYfu73PwO6iBrAEy03yLusoPIp8NLBp/puJlqWHjLLDdqHl2yAgvxl3r17a0KWl1PdSQt5wODCwaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718927135; c=relaxed/simple;
-	bh=Hxv50V6qKoPoHFKLzsXUD9bm+zoJz7iYpw+/42X7oVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OD9aKIwTB0IjLyy6UuH1yaqqlF5kW/1FgfR8cMIx7azg8R9rrF+enfL5gyzGmUNG3qfLKsgxlJiclEOIAk8DbEEQZD9ozNxVM1kA+rlnqeLkkUI/o4Z8u4xur/60STWfMU8MD98i54kDexVzMz0zg8qIPvWT8qavM6b5CgpYvP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BqqSd20J; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=Agm5lrgmHEP7loQjJluZoCv5RFGcAJzpjP8iSVW6hxg=; b=BqqSd20JWvF382rg2Siw/5kl9o
-	wgSkan6pDvNDL8kHtahonGkKAtgZWwfPpngl0vMAztXzm+C7a8xWQPpMG7bCjShuRFb8WICU4zdn4
-	SpJRQZQsAlrUE7XdPhsCQsrzNvE+bMVX7EiDMY81Mh0CwMvu5cnA/8JOgFrOcZTyz6bRcW3bHqSPa
-	OdnrZrTspmk8P02QnxY5bybTXHGR+qIVlItLKEPXuSm1fpNlkoEDG3fqLuoy5X8KZD4UEgMClo2+I
-	uLwiFPwxVuFCCy7p9wnkkRKnvU2OJo16PyGXldqduu7NwtJurZNQDnj/txL1tsGcWopuCARBRnXF3
-	9B7hBmCw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sKRT9-000000079QJ-2o0n;
-	Thu, 20 Jun 2024 23:45:31 +0000
-Date: Thu, 20 Jun 2024 16:45:31 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Joel Granados <j.granados@samsung.com>, Kees Cook <kees@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
- proc_handlers
-Message-ID: <ZnS_G9H5xTsUmhLI@bombadil.infradead.org>
-References: <20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
+	s=arc-20240116; t=1718927307; c=relaxed/simple;
+	bh=K9A4waJ6QXZxdccuDR+Mur9FbJzzjKX3VejoGo5Y2J8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kS8CDgAL3aA2eZt0ExsMsrrCTatRpE5JkbcwMw0veivMdDUpFfCbvFfEK1NFhqD4ZbfQgg/ckKBE0uyYE4hHFmR38v6h2LOfqSkOfevob8SYE4W302YzRrjm+uFmvScLL5qtDJxNTsRn4xSnruowuAsHf+xLJmqBCWQpbfP5E5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ovVCw6wk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KHAooY012954;
+	Thu, 20 Jun 2024 23:48:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	44pzIQEQy0lJSh3B76Z91ATHmOFB+uMzHLgQXY1EFFA=; b=ovVCw6wkIhoh2sXG
+	oXbVr1+/5b7Qpg8JQw+wCnm6UetNjN7BdeSHOzllO2Dk3ZDQkScF3tLmi+4YxAqQ
+	b2Am58PZ/NxhJtjEp183MDssxyDpz06QTMO4f0OBsewzPVLc1tgGF0i1Ja3FqLG8
+	BiZoQpbC/7+YvXMsWaVD4Zx/RZXnypAuFGIqUZrfeyHwxpTiSof1bgdhPeC+Ff63
+	iP4u9OzCczlla3lo1UcnA0s+IX4qZggYL7xbpTdJt5md5DRnIgkJaeqchtgV0Mex
+	vs0VanMsTiLBXUI2RdpT8FzlDeCxK/hxDcmMyf89V4rAHBb58DY8jREvct5r52Jx
+	HHhVKQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrkkgxt4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 23:48:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KNmLim011487
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 23:48:21 GMT
+Received: from [10.48.244.93] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
+ 2024 16:48:21 -0700
+Message-ID: <a42047c6-067a-455d-b32a-a715ef41b004@quicinc.com>
+Date: Thu, 20 Jun 2024 16:48:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] unicode: add MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Gabriel Krisman Bertazi <gabriel@krisman.be>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240524-md-unicode-v1-1-e2727ce8574d@quicinc.com>
+ <87y17vng34.fsf@mailhost.krisman.be> <87v823npvl.fsf@mailhost.krisman.be>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <87v823npvl.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BfDDNSqnyV6uS9fuYgvV_YwkYsYZ7uUH
+X-Proofpoint-ORIG-GUID: BfDDNSqnyV6uS9fuYgvV_YwkYsYZ7uUH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_10,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1011
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 mlxlogscore=852
+ bulkscore=0 phishscore=0 spamscore=0 malwarescore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406200174
 
-On Wed, Jun 19, 2024 at 12:09:00PM +0200, Thomas Weiﬂschuh wrote:
-> Adapt the proc_hander function signature to make it clear that handlers
-> are not supposed to modify their ctl_table argument.
+On 6/20/2024 4:41 PM, Gabriel Krisman Bertazi wrote:
 > 
-> This is also a prerequisite to moving the static ctl_table structs into
-> read-only data.
+>> Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+>>
+>>> Currently 'make W=1' reports:
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
+>>>
+>>> Add a MODULE_DESCRIPTION() to utf8-selftest.c and utf8data.c_shipped,
+>>> and update mkutf8data.c to add a MODULE_DESCRIPTION() to any future
+>>> generated utf8data file.
+>>>
+>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>>> ---
+>>> Note that I verified that REGENERATE_UTF8DATA creates a file with
+>>> the correct MODULE_DESCRIPTION(), but that file has significantly
+>>> different contents than utf8data.c_shipped using the current:
+>>> https://www.unicode.org/Public/UNIDATA/UCD.zip
+>>
+>> Thanks for reporting this.  I'll investigate and definitely regenerate
+>> the file.
 > 
-> The patch was mostly generated by coccinelle with the following script:
+> Now that I investigated it, I realized there is perhaps a
+> misunderstanding and not an issue. I just tried regenerating utf8data.c
+> and the file is byte-per-byte equal utf8data_shipped.c, so all is
+> good.
 > 
->     @@
->     identifier func, ctl, write, buffer, lenp, ppos;
->     @@
+> Considering the link you posted, I suspect you used the latest
+> unicode version and not version 12.1, which we support.  So there is no
+> surprise the files won't match.
 > 
->     int func(
->     - struct ctl_table *ctl,
->     + const struct ctl_table *ctl,
->       int write, void *buffer, size_t *lenp, loff_t *ppos)
->     { ... }
+>> The patch is good, I'll apply it to the unicode code tree
+>> following the fix to the above issue.
 > 
-> In addition to the scripted changes some other changes are done:
+> Applied!
 > 
-> * The "typedef proc_handler" in include/linux/sysctl.h is changed to use
->   the "const ctl_table".
+> ty,
 > 
-> * The prototypes of non-static handlers in header-files are adapted
->   to match the changes of their respective definitions.
-> 
-> * kernel/watchdog.c: proc_watchdog_common()
->   This is called from a proc_handler itself and is als calling back
->   into another proc_handler, making it necessary to change it as part
->   of the proc_handler migration.
-> 
-> No functional change.
-> 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-
-  Luis
+yes, I was using current data.
+thanks for taking the patch -- two more files to color green in my spreadsheet :)
 
