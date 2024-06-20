@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-222565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6DB99103BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:08:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A619103A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60413B239EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:08:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336B01C21F7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F791AC248;
-	Thu, 20 Jun 2024 12:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005311AB34A;
+	Thu, 20 Jun 2024 12:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bZxaAYBC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SRobeOtx"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543DD200AF;
-	Thu, 20 Jun 2024 12:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD318175E;
+	Thu, 20 Jun 2024 12:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718885221; cv=none; b=B7SmsvCqDyAGRJWo0VcHQUiXNoUnAmsSonBUqNFiDcICWNoX2oQ3dW0kO7uAVEjJwpKQLqIQVNDcKA+wtcV6JssBffwLLVV3vxQ0NqsvP7WWsHtgWW9BUV2DRe8p2TDU2x4BBrK2ngZVnDO3Oc5NIvPnZTOXHsSZ7TkRgi5sWW8=
+	t=1718885051; cv=none; b=lzAmetBQ/dYbuzG2dCJnCOdFJmlfluSDFZ9GgtFLza5gNbc9C0vwRjJyXl/hHhMtvVT4kHFzqK7EWnoDB/Y/8Dx4s4xh9+NjzRW6TOirlC9/5Y9CFItgEGCeEQ4jHH5OLkIAMN+Q/IpUkgI6+gN2YDyXUaBNDdb40L4Kj6nT34U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718885221; c=relaxed/simple;
-	bh=Z4bogofBSjUBHeVLbNfk6/w/dahyWIukANXHmllsefs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=djP7bGJenpdUYR74BeNSk4aYoMrDZSPKB+0XfD06StuyHYBBhc1dpzbb5K9zZt4FXkJeiR+ldePkwHbHLXTplNC8gFnomrfeuvc1jJbbLvBEil3WLCu57hDySeV7yIVamXfDi/wxuD9QjD0r9ruvI3I0TPx4WILMQbD4zJ6jUa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bZxaAYBC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K9vBgw030712;
-	Thu, 20 Jun 2024 12:06:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MFzLjaFykxAotrpgUnHI/D6/KiqH/EA4lmWMvGHyS+8=; b=bZxaAYBCo0t8zSVm
-	2uWSjquqHapUM0lMUGm3VYoeIlokAx5nEw6s27pRWiIJT8EaR0fiFrE9UL2hXE/1
-	VSEAQqokpDUahfgFYiET9AUJDmOwTDXC5lTol2Ah7S18UQNVlGyxM1JEhx/c75No
-	2hjkSqAPVSKvCbRVwzqlVPWPyVzt/CocmGQZmCoUvRwuOT/160F69Ihfpzs04fMI
-	EYd287+S7nKmTt5EDtYQBhvq8bmO+4ALHauIIeAF/0pz+WS7PjuQuBGTH+JfrhqE
-	fyNbE0FFzHGqH2AraIPNE4InpZsNCggSxUNNE15v6L09KvCMPoJSaPDaap4nj05f
-	Yc0zCg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yv6hn1r1v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 12:06:57 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KC6uE9027604
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 12:06:56 GMT
-Received: from hu-kbajaj-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 20 Jun 2024 05:06:52 -0700
-From: Komal Bajaj <quic_kbajaj@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Melody Olvera
-	<quic_molvera@quicinc.com>,
-        Komal Bajaj <quic_kbajaj@quicinc.com>
-Subject: [PATCH v3 4/4] remoteproc: qcom_q6v5_pas: Add QDU1000/QRU1000 mpss compatible
-Date: Thu, 20 Jun 2024 17:31:43 +0530
-Message-ID: <20240620120143.12375-5-quic_kbajaj@quicinc.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20240620120143.12375-1-quic_kbajaj@quicinc.com>
-References: <20240620120143.12375-1-quic_kbajaj@quicinc.com>
+	s=arc-20240116; t=1718885051; c=relaxed/simple;
+	bh=jw9jn4dsIGLF70lLXk4kCoM1lWPV9Zpcd6bZKLpofrc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZF2VgWTsR6FBX3zey/CZMW1Pr+AoTGdE4aaxxTAs7bppkkdI0wVX6gCeQtr6dPcWMLEdiQTb1BBds+QeM33HtTpfsNKocytguT7J7QGK+X/iVSQfzUaifzUB2Gz2e731eI8lcisCs+GPCHq3GvWv/zf72Ha/VDnrGIOxsVSmTws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SRobeOtx; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6efacd25ecso42599266b.1;
+        Thu, 20 Jun 2024 05:04:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718885048; x=1719489848; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/AaUc3ZkhsIxWpW3uI+GcMRAhaupihujWoCiEujg0ys=;
+        b=SRobeOtxEUNwmHHRglxJag5r+wCE1L+fqtRlg21dOznmEFsEducRmj7ug8xHe0P3vN
+         DVL0b29BSErp6qwMByKVhIasTAFKuHzhRdvhOUNe4Xyk+gEp7cfDoHMVxgtlOASIp4ss
+         l6UMyFlL77WDk/LwUwzpPH/FA2GMSRZqdUS/i38Y07IEKTbkyoUJpd7hUSFHxYkOR78m
+         iqvdZuHOTkSIoQes3Z0vEEeJEXEa+UUe9dLyZ8oKHW4zgRFroM12YAv0f7Oxeqxi7hrh
+         SvMjXR7Mw9N0JW8ZOkTS9S8/QYd6Zur+gVlOK4qwVcHLH0c9HM2amrG5zP3Hni/aHSPO
+         QyvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718885048; x=1719489848;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/AaUc3ZkhsIxWpW3uI+GcMRAhaupihujWoCiEujg0ys=;
+        b=O4sTg5fmDfjh9O1ecvNAtlyktPujJxOssO/Hv1fS3YIeE1JBvQ/PbvpD3IpdldlghE
+         KzBaaXgB2Uh2IN4maBMtNxTuGLtnJXmiHKmOtPAz/GQg5fFWmspjprwtGOJ8mUHh6SZu
+         oQqON4bOCxjyttwGUojb9dNq61sNdXWD+g0Urz2hIYKAWTdsOAyJovW+5s2Bx+sircwZ
+         R1Dt+fFWmQS2byMVDLztiuQDs2MsnVMwyIbWv0heHvN2FqQE+FHZcJsBCUwOfT4p42+b
+         rf97rxTVMefa1fmYAYtKuYv1iUCEY1p5MvQW+5mYA8cmqGMcdT3wpqdnvHNr7WNbg9eW
+         djrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRFak3Q1Gw9hYR1CD9BkJDi2v8RLq0Wy2Qr1tHuyA1l4apjLcnz2//RxXfOY6EVRBANY9fTG+zIdc/+7JUOabbJyEhBtOKGeVBmy9LQDTyvBWW/Dz1oLhzQMKT3JnSpJ1Em6eZJjk9gxb3Uw==
+X-Gm-Message-State: AOJu0YwaL8R96SEnABf0TjzImmwbfpzUqDx2HlGEahcCL55p0TtXu4WM
+	gNxU3pX/nlvNAosN36M2S1ylcW2EmBgQMz64PbcjyhBjYslR7KYP
+X-Google-Smtp-Source: AGHT+IFjrLuRYiY96Fj5RfuW1qRweYOeuU8hS/E7k/WB3LJHzg63yG9kRBFVsuL+fxsUXIBU0EpGzA==
+X-Received: by 2002:a50:9f2b:0:b0:57c:a7dc:b0dc with SMTP id 4fb4d7f45d1cf-57d07e0d41cmr3736382a12.4.1718885047803;
+        Thu, 20 Jun 2024 05:04:07 -0700 (PDT)
+Received: from f.. (cst-prg-30-39.cust.vodafone.cz. [46.135.30.39])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d2376ccb3sm667397a12.74.2024.06.20.05.04.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 05:04:07 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] vfs: reorder checks in may_create_in_sticky
+Date: Thu, 20 Jun 2024 14:03:59 +0200
+Message-ID: <20240620120359.151258-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,45 +82,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NOKW4OqSe_3M1EyIDZMwcwqub5SvmCO9
-X-Proofpoint-GUID: NOKW4OqSe_3M1EyIDZMwcwqub5SvmCO9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_07,2024-06-20_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- mlxlogscore=999 impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406200087
 
-Add the compatible for the mpss found in the QDU1000 and QRU1000
-SoCs. These platforms require the driver to complete a modem
-handshake using the RMB registers provided.
+The routine is called for all directories on file creation and weirdly
+postpones the check if the dir is sticky to begin with. Instead it first
+checks fifos and regular files (in that order), while avoidably pulling
+globals.
 
-Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+No functional changes.
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/namei.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 32d45c18e15e..d543fa2572f8 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -1432,6 +1432,7 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
- 	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
- 	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
-+	{ .compatible = "qcom,qdu1000-mpss-pas", .data = &sm8550_mpss_resource },
- 	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sm8250_adsp_resource},
- 	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
- 	{ .compatible = "qcom,sc7280-adsp-pas", .data = &sm8350_adsp_resource},
---
-2.42.0
+diff --git a/fs/namei.c b/fs/namei.c
+index 63d1fb06da6b..b1600060ecfb 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1246,9 +1246,9 @@ static int may_create_in_sticky(struct mnt_idmap *idmap,
+ 	umode_t dir_mode = nd->dir_mode;
+ 	vfsuid_t dir_vfsuid = nd->dir_vfsuid;
+ 
+-	if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
+-	    (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
+-	    likely(!(dir_mode & S_ISVTX)) ||
++	if (likely(!(dir_mode & S_ISVTX)) ||
++	    (S_ISREG(inode->i_mode) && !sysctl_protected_regular) ||
++	    (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos) ||
+ 	    vfsuid_eq(i_uid_into_vfsuid(idmap, inode), dir_vfsuid) ||
+ 	    vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid()))
+ 		return 0;
+-- 
+2.43.0
 
 
