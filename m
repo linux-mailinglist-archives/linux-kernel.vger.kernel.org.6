@@ -1,93 +1,189 @@
-Return-Path: <linux-kernel+bounces-222975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B497910AFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E1FD910B03
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B952A1F21A93
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:04:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 480F31F21316
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DEC1B1422;
-	Thu, 20 Jun 2024 16:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA451B14F6;
+	Thu, 20 Jun 2024 16:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xy3osjYt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H5PjkJ7x"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE921B0109;
-	Thu, 20 Jun 2024 16:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52231B1410
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718899460; cv=none; b=iZHRvxrT/XpcAcWZm193b8t2tHY9ozD+LAHgKa8vRkgSO8Blr2RVkwmNfr6n/bBCD8WJWwCcfPY6AvQKyHKlNTm7rNvzpdoDaUZNO+OtqUjZLb/qsMBmGa1OCJLyOdHEFaeEpBRE2973g7GjOpftUqt0b1Lqbwb8LSCM4MljW2I=
+	t=1718899473; cv=none; b=etEYfRseCrf9ovqvN/zoi+ojhfDADQcajnMjGHEKsVztsVc69HbSzBxP4rn+h0NkNgIF2X2MAKlgZEARGS3jehjW1CkeA7qHofcUKZGA/1g2DYhg63OHnR/NL5TYktEXsRvtDIPgNB682WBygowx49IykMb7bFaAPJi29JVC5Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718899460; c=relaxed/simple;
-	bh=74NqYGGd8KI2bPBP3+dGSQ19ivy6M2TEhoWU0GlnEqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I0a9NIop+8UABlRY+/XAxLcuPa0wouXrIW9MIFQAL0XxI7Snvza57ihcuaaVmVh09adUD1VeDN0v8ZJ9luKYlPxRMD2ZhplXyeXI7lmcGRu9MfKKIXU0hFF2frRVl8AZWKHV0MB0o568h6f973ikLsU0i8z1t8SwnLnkZ3bIKbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xy3osjYt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75606C2BD10;
-	Thu, 20 Jun 2024 16:04:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718899459;
-	bh=74NqYGGd8KI2bPBP3+dGSQ19ivy6M2TEhoWU0GlnEqQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xy3osjYtMtOv4n09wrrbA58sHtdDM5j3mppgOlwztKVRvcZbLJ8V+c2QRGV5gFIQK
-	 WsL653mUf8ApZamFXXs8y99CwtwjAQ66Ol/fWzbXnCbAHtmhovKiJRn/XoalzylSxW
-	 HXoXyFFyPyRQg4/iEwfaSgTPDSLPgvHIvws/b9wd6fVPdc2qCk8MWXECCVcqMlUd4h
-	 s8k+5afIc9MoZwaYkDuYpbchseBbQcMdHx4fylQ1OSJry4ieXEThPuVQmvA//Of0yQ
-	 qvlWsf25O5wm6CRPrNFry++sfoW6+mGxpBQv/ZjNMthpBIhFIt1q/fwgTfpH2UB/b+
-	 6XzMT2PN1emBw==
-Date: Thu, 20 Jun 2024 17:04:15 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	jikos@kernel.org, benjamin.tissoires@redhat.co, dianders@google.com,
-	hsinyi@google.com, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: display: panel-simple-dsi: add
- Starry-er88577 DSI panel bindings
-Message-ID: <20240620-purgatory-used-9cf35fbc10c2@spud>
-References: <20240620115245.31540-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240620115245.31540-2-lvzhaoxiong@huaqin.corp-partner.google.com>
+	s=arc-20240116; t=1718899473; c=relaxed/simple;
+	bh=L+sRaUROFLiedBrG2sWDIkuJ5o3pE63VZuzrZpIf2Fc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=smtovBT55Hfmnpq6xuvhgEwmqPiMshSk2+LeGfZ0C4St2Oux017To6Mrfg5dC8ups3MJ8LjhI0HkuG/MKyG7FqaFuvpc6byH1wFMWB90PyMCglkGD3vlyj9HuNBdIJQkZyHuYjwF+j1PnBVEp+74sDcWLMpf2RHlLy9q4bj8w2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H5PjkJ7x; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c7a68c3a85so1183954a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:04:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718899471; x=1719504271; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GM34BWwCNXiLOvG2mLkdqlEK4NIZT0q6djBzomdsWyE=;
+        b=H5PjkJ7xfs83q10hkyTRCTnHarYxN6jsat87cynb3dCvPgi97F1+2vVjd+mGIZCJ+/
+         3vbj6W/DaEKbIvMf3gz5vWKIMC5pHHEcOPDq3JfrUtsW1mUEGxD4P5LFLpTmdVQ430jA
+         ipeL2Y5xYBNg67xC5Y08wZufdFWCPJL5Yy3fQNCCellnWrU20Cvu5aYoI9KYeQ/16YhW
+         DbmvY9D0LUs4ano+MrVwYvKYfXKdvs2e+hAN2WvwKsYF4cXcdEeUDE/m34dLYkQ/HzVw
+         UsINpLhKM6cNRPgntd0qVsDFXrrlw04ULYcx3k74Z1JWPtlwGY/T9csxZmLAFXaRMIVi
+         B68A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718899471; x=1719504271;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GM34BWwCNXiLOvG2mLkdqlEK4NIZT0q6djBzomdsWyE=;
+        b=dzjxmizCLxoOKrsvmb9zqANKxrZPJmYP8ndBsBPArJslL0t0r6TmXFAmSDJ9ImGh74
+         LaEsHQF8evL+zDA+PywuekQjYa10MXxbo7P4G0tPsbAY6qJQFIxIrZboFcJNpZvCHiBd
+         YnOqoemFi5HXoArZghpFgA52+CAy+F1til8UbmK+VlrCQiejKOADsBW6c2gHeiNT6wLs
+         mi/chCsJ8T+p09UlTAluhosCKZSxxJQHMSW+MDXA3QIPDdC/cqdmATc36qG9d7ix2fIU
+         OzZWBc/oU8zlBDLa0PlWY2zIBQwUB4soXcgQhZuCXTlS4nlcUDwNURc7PXLFo4S0ji7E
+         Z5cA==
+X-Forwarded-Encrypted: i=1; AJvYcCUI9/LQSgHeFBp7SL2jFl2hzzQFF0+j4Kg2GrWtbEVc9JLhGHCfn9OOPXnN47UUcRUAVQr2NaGG0zCgWBE2OLvUVSS79hXvKtc6LOQe
+X-Gm-Message-State: AOJu0Yw7bpEv8E31YJ0r2rL0vLIfIpbNHeCEpY5ifZSHAjKjm8L4JjuL
+	d8luVk3/sWye1N9vEHpukPkP3a61XDF3jyAbmCTz68Etg3OvBuGnQA9Pb8U/2AJrDVJbhTIolEb
+	GZg==
+X-Google-Smtp-Source: AGHT+IEQboNcvlNMXMXTQphakoihDkY0lsVfoV/sk/4m49kyvfsdiCALpaLxGs2jQVK54zSq5Uy3vdD10AI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:fa8d:b0:2c2:ff46:312a with SMTP id
+ 98e67ed59e1d1-2c7b5d647d3mr16281a91.4.1718899470904; Thu, 20 Jun 2024
+ 09:04:30 -0700 (PDT)
+Date: Thu, 20 Jun 2024 09:04:29 -0700
+In-Reply-To: <385a5692-ffc8-455e-b371-0449b828b637@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zWqryNqb5LRpYLSv"
-Content-Disposition: inline
-In-Reply-To: <20240620115245.31540-2-lvzhaoxiong@huaqin.corp-partner.google.com>
+Mime-Version: 1.0
+References: <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com>
+ <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com> <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
+ <20240619115135.GE2494510@nvidia.com> <ZnOsAEV3GycCcqSX@infradead.org>
+ <CA+EHjTxaCxibvGOMPk9Oj5TfQV3J3ZLwXk83oVHuwf8H0Q47sA@mail.gmail.com>
+ <20240620135540.GG2494510@nvidia.com> <6d7b180a-9f80-43a4-a4cc-fd79a45d7571@redhat.com>
+ <20240620142956.GI2494510@nvidia.com> <385a5692-ffc8-455e-b371-0449b828b637@redhat.com>
+Message-ID: <ZnRTDUqLQ4XBRykl@google.com>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+From: Sean Christopherson <seanjc@google.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, Fuad Tabba <tabba@google.com>, 
+	Christoph Hellwig <hch@infradead.org>, John Hubbard <jhubbard@nvidia.com>, 
+	Elliot Berman <quic_eberman@quicinc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>, maz@kernel.org, 
+	kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com
+Content-Type: text/plain; charset="us-ascii"
 
+On Thu, Jun 20, 2024, David Hildenbrand wrote:
+> On 20.06.24 16:29, Jason Gunthorpe wrote:
+> > On Thu, Jun 20, 2024 at 04:01:08PM +0200, David Hildenbrand wrote:
+> > > On 20.06.24 15:55, Jason Gunthorpe wrote:
+> > > > On Thu, Jun 20, 2024 at 09:32:11AM +0100, Fuad Tabba wrote:
+> > > Regarding huge pages: assume the huge page (e.g., 1 GiB hugetlb) is shared,
+> > > now the VM requests to make one subpage private.
+> > 
+> > I think the general CC model has the shared/private setup earlier on
+> > the VM lifecycle with large runs of contiguous pages. It would only
+> > become a problem if you intend to to high rate fine granual
+> > shared/private switching. Which is why I am asking what the actual
+> > "why" is here.
+> 
+> I am not an expert on that, but I remember that the way memory
+> shared<->private conversion happens can heavily depend on the VM use case,
 
---zWqryNqb5LRpYLSv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, I forget the details, but there are scenarios where the guest will share
+(and unshare) memory at 4KiB (give or take) granularity, at runtime.  There's an
+RFC[*] for making SWIOTLB operate at 2MiB is driven by the same underlying problems.
 
-On Thu, Jun 20, 2024 at 07:52:44PM +0800, Zhaoxiong Lv wrote:
-> This add the bindings for the 1280x800 TFT LCD Starry-er88577 DSI panel
-> to panel-simple-dsi.
->=20
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+But even if Linux-as-a-guest were better behaved, we (the host) can't prevent the
+guest from doing suboptimal conversions.  In practice, killing the guest or
+refusing to convert memory isn't an option, i.e. we can't completely push the
+problem into the guest
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+https://lore.kernel.org/all/20240112055251.36101-1-vannapurve@google.com
 
---zWqryNqb5LRpYLSv
-Content-Type: application/pgp-signature; name="signature.asc"
+> and that under pKVM we might see more frequent conversion, without even
+> going to user space.
+> 
+> > 
+> > > How to handle that without eventually running into a double
+> > > memory-allocation? (in the worst case, allocating a 1GiB huge page
+> > > for shared and for private memory).
+> > 
+> > I expect you'd take the linear range of 1G of PFNs and fragment it
+> > into three ranges private/shared/private that span the same 1G.
+> > 
+> > When you construct a page table (ie a S2) that holds these three
+> > ranges and has permission to access all the memory you want the page
+> > table to automatically join them back together into 1GB entry.
+> > 
+> > When you construct a page table that has only access to the shared,
+> > then you'd only install the shared hole at its natural best size.
+> > 
+> > So, I think there are two challenges - how to build an allocator and
+> > uAPI to manage this sort of stuff so you can keep track of any
+> > fractured pfns and ensure things remain in physical order.
+> > 
+> > Then how to re-consolidate this for the KVM side of the world.
+> 
+> Exactly!
+> 
+> > 
+> > guest_memfd, or something like it, is just really a good answer. You
+> > have it obtain the huge folio, and keep track on its own which sub
+> > pages can be mapped to a VMA because they are shared. KVM will obtain
+> > the PFNs directly from the fd and KVM will not see the shared
+> > holes. This means your S2's can be trivially constructed correctly.
+> > 
+> > No need to double allocate..
+> 
+> Yes, that's why my thinking so far was:
+> 
+> Let guest_memfd (or something like that) consume huge pages (somehow, let it
+> access the hugetlb reserves). Preallocate that memory once, as the VM starts
+> up: just like we do with hugetlb in VMs.
+> 
+> Let KVM track which parts are shared/private, and if required, let it map
+> only the shared parts to user space. KVM has all information to make these
+> decisions.
+> 
+> If we could disallow pinning any shared pages, that would make life a lot
+> easier, but I think there were reasons for why we might require it. To
+> convert shared->private, simply unmap that folio (only the shared parts
+> could possibly be mapped) from all user page tables.
+> 
+> Of course, there might be alternatives, and I'll be happy to learn about
+> them. The allcoator part would be fairly easy, and the uAPI part would
+> similarly be comparably easy. So far the theory :)
+> 
+> > 
+> > I'm kind of surprised the CC folks don't want the same thing for
+> > exactly the same reason. It is much easier to recover the huge
+> > mappings for the S2 in the presence of shared holes if you track it
+> > this way. Even CC will have this problem, to some degree, too.
+>
+> Precisely! RH (and therefore, me) is primarily interested in existing
+> guest_memfd users at this point ("CC"), and I don't see an easy way to get
+> that running with huge pages in the existing model reasonably well ...
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnRS/wAKCRB4tDGHoIJi
-0qliAQDqRjWAXDaYu4eZpMN2pRQts2JnHENHQFIjDChsjCLm1QEA4sxFd8eJwhRV
-ZQR4YvYWx2E6sQz8c+CSLYkRt05INAU=
-=Xqyj
------END PGP SIGNATURE-----
-
---zWqryNqb5LRpYLSv--
+This is the general direction guest_memfd is headed, but getting there is easier
+said than done.  E.g. as alluded to above, "simply unmap that folio" is quite
+difficult, bordering on infeasible if the kernel is allowed to gup() shared
+guest_memfd memory.
 
