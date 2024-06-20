@@ -1,226 +1,122 @@
-Return-Path: <linux-kernel+bounces-222848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7DA910894
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:38:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861A3910896
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEE44B20A78
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:38:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B72EB1C2160A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C221AE09D;
-	Thu, 20 Jun 2024 14:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F121AE84E;
+	Thu, 20 Jun 2024 14:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iJnC5K7k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="j4vF8nVK"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB061ACE8B;
-	Thu, 20 Jun 2024 14:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3352F1ACE8B;
+	Thu, 20 Jun 2024 14:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718894306; cv=none; b=Lo8Qn2sevZfH6ljHUIjdvLMlFVbyyMHuRYgeB0ahrcb5vBB0OfHiwhhID1ARILmHsieYdOoyMY0eIgoNKHgUm9BQgX+DjN30+n98lTrJP3ePQTHTlD329Tk6tXop1lWSeY3zi95JArjgyQL8cJvWhcGZPsCrLbSlgbD9wuiRUSE=
+	t=1718894312; cv=none; b=sZW+iNWaoUVCQ0Q9n7/cbLDAYDvKkXh1EOsmnikJg1kDlwCB9Pcz1Q93UrPoZ1JC/o/Og+B0ZCR8VbUHNL82GjagX4DWd+H+CUM2WMHugq251MtPS/q+NSi/xiW2+vYropbl5pByneLuIwFd5l2n53TLdifAysVqXJfYtTe2o/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718894306; c=relaxed/simple;
-	bh=fX8g97LeC90KHKI/LLjp+hRyWlk9uj+GqpfJJOyBbcc=;
+	s=arc-20240116; t=1718894312; c=relaxed/simple;
+	bh=tZlQbUj16o+komoUZHpuCRxfeio3fPY3NSRXruhs/ag=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p4qIBuDQO/0jMEYXlJfJKLbAMio43j/zF3Vx75jROo/UVdB7gAKrm/tw76MqGTOhAaJ0Egtbzd/ZuVH15u9rpmy1KG7Gw08hHWIwDSDTAttu/fzoL9jYUFcN5uDvpdZu0Bs2g5kh/BIVgaRwm2XNxuNbtd11VKXs5sVxn0s6T7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iJnC5K7k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D286C2BD10;
-	Thu, 20 Jun 2024 14:38:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718894305;
-	bh=fX8g97LeC90KHKI/LLjp+hRyWlk9uj+GqpfJJOyBbcc=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=YXgN8NnXsCX4/VOs2LI+knvdD+M5Nef5q6iLIYRSCjmxDFovJ9frZNxhVybzr7mm5s8FJPx0yzkxZO5U98vw4B/O57P5x7w0H6IEAFQWk4tup6Lp804rMYbhCba7XQghb21yUR/NyxkWEaU85Cord0BkMbgETHcoWz67R8u/H3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=j4vF8nVK; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1718894308;
+	bh=tZlQbUj16o+komoUZHpuCRxfeio3fPY3NSRXruhs/ag=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iJnC5K7kvbDkPc5c9MC6MXXohWivvhN8t1DD6N3k7dGgULVDGuD7c+Tn52hslw04p
-	 6J9Nn0EL0a6vgR3eDxsbC6IZ4EZkyolaDQCLpis//NNnkgxsAAGsRkKUjA/Cc7C+4N
-	 +0sF77lm7kff2eJuZR5cX5sCOHldmQTFtfmOD/Vw=
-Date: Thu, 20 Jun 2024 16:38:22 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 05/10] rust: add `Revocable` type
-Message-ID: <2024062032-simple-lunchbox-bf1b@gregkh>
-References: <20240618234025.15036-1-dakr@redhat.com>
- <20240618234025.15036-6-dakr@redhat.com>
+	b=j4vF8nVKQJ+H/uoL2ehBmxvq25MXs8x9N4hjaGIv6lINOaon3iY4FavMaXJgdAk2o
+	 VH4IIptiaFYhE84C8AC7AL5WweoUlvdbWsHe/Yv8I2KjoXSkmripTFt+HK3UthBQop
+	 KbzBzrSvVPV3dD7kFFtzzR0dAK/2CC4ioTTDUAf8=
+Date: Thu, 20 Jun 2024 16:38:27 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, linux-leds@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: cros_ec: Implement review comments from Lee
+Message-ID: <478e23df-800a-40c6-b972-2af2d535b1ae@t-8ch.de>
+References: <20240614-cros_ec-led-review-v1-1-946f2549fac2@weissschuh.net>
+ <20240620093114.GH3029315@google.com>
+ <5708f5c6-65fe-4bf9-8d08-6dbb77e21a9d@t-8ch.de>
+ <20240620122741.GL3029315@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240618234025.15036-6-dakr@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240620122741.GL3029315@google.com>
 
-On Wed, Jun 19, 2024 at 01:39:51AM +0200, Danilo Krummrich wrote:
-> From: Wedson Almeida Filho <wedsonaf@gmail.com>
+On 2024-06-20 13:27:41+0000, Lee Jones wrote:
+> On Thu, 20 Jun 2024, Thomas Weißschuh wrote:
 > 
-> Revocable allows access to objects to be safely revoked at run time.
+> > Hi Lee,
+> > 
+> > On 2024-06-20 10:31:14+0000, Lee Jones wrote:
+> > > Definitely not seen a commit message like that before
+> > 
+> > I assumed that this patch would be squashed into the original commit.
+> > 
+> > My question in which form you wanted the changes should have included
+> > "incremental series".
 > 
-> This is useful, for example, for resources allocated during device probe;
-> when the device is removed, the driver should stop accessing the device
-> resources even if another state is kept in memory due to existing
-> references (i.e., device context data is ref-counted and has a non-zero
-> refcount after removal of the device).
-
-We are getting into the "removed" vs. "unbound" terminology again here
-:(
-
-How about this change in the text:
-	This is useful, for example, for resources allocated during
-	a device probe call; and need to be not accessed after the
-	device remove call.
-
-I am guessing this is an attempt to tie into something much like the
-devm api, right?  If so, why not call it that?  Why name it something
-different?  Revocable seems not tied to a device, and you REALLY want
-this to be tied to the lifetime model of a struct device ownership of a
-driver.  You don't want it tied to anything else that might come in as
-part of another path into that driver (i.e. through a device node
-access), right?
-
-
-
-
+> Incremental means on top.
 > 
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-> ---
->  rust/kernel/lib.rs       |   1 +
->  rust/kernel/revocable.rs | 209 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 210 insertions(+)
->  create mode 100644 rust/kernel/revocable.rs
+> A lot of maintainers don't support history re-writes, but I've reserved
+> that right since forever, so I can squash it if you like.
+
+If it is already visible somewhere and a squash would inconvenience
+anybody I'll resend it.
+But if not I'd be happy about a squash.
+
+(I couldn't and still can't find the public tree where driver is in)
+
+> > > > Implement review comments from Lee as requested in [0] for
+> > > > "leds: Add ChromeOS EC driver".
+> > > > 
+> > > > Changes:
+> > > > * Inline DRV_NAME string constant.
+> > > > * Use dev_err() instead of dev_warn() to report errors.
+> > > > * Rename cros_ec_led_probe_led() to cros_ec_led_probe_one().
+> > > > * Make loop variable "int" where they belong.
+> > > > * Move "Unknown LED" comment to where it belongs.
+> > > > * Register trigger during _probe().
+> > > > * Use module_platform_driver() and drop all the custom boilerplate.
+> > > 
+> > > If you're fixing many things, then I would expect to receive many
+> > > patches.  One patch for functional change please.  If you can reasonably
+> > > group fixes of similar elk, then please do.  However one patch that does
+> > > a bunch of different things is a no-go from me, sorry.
+> > 
+> > Absolutely, if these changes are to end up as actual commits then they
+> > need to look different.
+> > I'll resend them as proper series.
+> > 
+> > > > [0] https://lore.kernel.org/lkml/20240614093445.GF3029315@google.com/T/#m8750abdef6a968ace765645189170814196c9ce9
+> > > > 
+> > > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > > > ---
+> > > >  drivers/leds/leds-cros_ec.c | 50 +++++++++++++--------------------------------
+> > > >  1 file changed, 14 insertions(+), 36 deletions(-)
+> > 
+> > <snip>
+> > 
+> > Sorry for the confusion,
+> > Thomas
 > 
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 98e1a1425d17..601c3d3c9d54 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -43,6 +43,7 @@
->  pub mod net;
->  pub mod prelude;
->  pub mod print;
-> +pub mod revocable;
->  mod static_assert;
->  #[doc(hidden)]
->  pub mod std_vendor;
-> diff --git a/rust/kernel/revocable.rs b/rust/kernel/revocable.rs
-> new file mode 100644
-> index 000000000000..3d13e7b2f2e8
-> --- /dev/null
-> +++ b/rust/kernel/revocable.rs
-> @@ -0,0 +1,209 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Revocable objects.
-> +//!
-> +//! The [`Revocable`] type wraps other types and allows access to them to be revoked. The existence
-> +//! of a [`RevocableGuard`] ensures that objects remain valid.
-> +
-> +use crate::{
-> +    bindings,
-> +    init::{self},
-> +    prelude::*,
-> +    sync::rcu,
-
-Ah, this is why you wanted rcu.  Note that the devm api today does NOT
-use rcu, so why use it here?  What is that going to get you?  Why not
-keep it simple for now and then, if you REALLY want to use rcu, you can
-at a later time, after ensuring that it will be a benefit.
-
-
-> +};
-> +use core::{
-> +    cell::UnsafeCell,
-> +    marker::PhantomData,
-> +    mem::MaybeUninit,
-> +    ops::Deref,
-> +    ptr::drop_in_place,
-> +    sync::atomic::{AtomicBool, Ordering},
-> +};
-> +
-> +/// An object that can become inaccessible at runtime.
-> +///
-> +/// Once access is revoked and all concurrent users complete (i.e., all existing instances of
-> +/// [`RevocableGuard`] are dropped), the wrapped object is also dropped.
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// # use kernel::revocable::Revocable;
-> +///
-> +/// struct Example {
-> +///     a: u32,
-> +///     b: u32,
-> +/// }
-> +///
-> +/// fn add_two(v: &Revocable<Example>) -> Option<u32> {
-> +///     let guard = v.try_access()?;
-> +///     Some(guard.a + guard.b)
-> +/// }
-> +///
-> +/// let v = Box::pin_init(Revocable::new(Example { a: 10, b: 20 }), GFP_KERNEL).unwrap();
-> +/// assert_eq!(add_two(&v), Some(30));
-> +/// v.revoke();
-> +/// assert_eq!(add_two(&v), None);
-> +/// ```
-> +///
-> +/// Sample example as above, but explicitly using the rcu read side lock.
-> +///
-> +/// ```
-> +/// # use kernel::revocable::Revocable;
-> +/// use kernel::sync::rcu;
-> +///
-> +/// struct Example {
-> +///     a: u32,
-> +///     b: u32,
-> +/// }
-> +///
-> +/// fn add_two(v: &Revocable<Example>) -> Option<u32> {
-> +///     let guard = rcu::read_lock();
-> +///     let e = v.try_access_with_guard(&guard)?;
-> +///     Some(e.a + e.b)
-> +/// }
-> +///
-> +/// let v = Box::pin_init(Revocable::new(Example { a: 10, b: 20 }), GFP_KERNEL).unwrap();
-> +/// assert_eq!(add_two(&v), Some(30));
-> +/// v.revoke();
-> +/// assert_eq!(add_two(&v), None);
-> +/// ```
-> +#[pin_data(PinnedDrop)]
-> +pub struct Revocable<T> {
-> +    is_available: AtomicBool,
-> +    #[pin]
-> +    data: MaybeUninit<UnsafeCell<T>>,
-> +}
-> +
-> +// SAFETY: `Revocable` is `Send` if the wrapped object is also `Send`. This is because while the
-> +// functionality exposed by `Revocable` can be accessed from any thread/CPU, it is possible that
-> +// this isn't supported by the wrapped object.
-> +unsafe impl<T: Send> Send for Revocable<T> {}
-> +
-> +// SAFETY: `Revocable` is `Sync` if the wrapped object is both `Send` and `Sync`. We require `Send`
-> +// from the wrapped object as well because  of `Revocable::revoke`, which can trigger the `Drop`
-> +// implementation of the wrapped object from an arbitrary thread.
-> +unsafe impl<T: Sync + Send> Sync for Revocable<T> {}
-> +
-> +impl<T> Revocable<T> {
-> +    /// Creates a new revocable instance of the given data.
-> +    pub fn new(data: impl PinInit<T>) -> impl PinInit<Self> {
-
-Don't you want to tie this to a struct device?  If not, why not?  If so,
-why not do it here?
-
-thanks,
-
-greg k-h
+> -- 
+> Lee Jones [李琼斯]
 
