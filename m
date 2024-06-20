@@ -1,184 +1,112 @@
-Return-Path: <linux-kernel+bounces-222437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788E691018A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:35:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4CD191018F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C52A1C211F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:35:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 625B32836E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A4F1AAE0D;
-	Thu, 20 Jun 2024 10:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEE41AAE13;
+	Thu, 20 Jun 2024 10:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OWadIRwr"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b3teWYsk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C592594
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A442A18EFEC
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718879702; cv=none; b=pYMlrqTh5E0sSSgnK3KizE1lxmqWmUQJqtNKkGaE9tKV72TmUytvo/g8M5OVqNzE/IgzDGRvRPh3TZ4j/xbG0Mjo09P3l4iwID08jYeD5hlPB8O8RkAUfaXWHN9oXdCECZS4DhOaN8UY0K75xpeZ10OL3+EsBvZvg0FkjBWktP0=
+	t=1718879870; cv=none; b=nm6EHZZCydZ7a45eytd/WRXZU8161OaoFI8zBq6xea8ex+ToaUVW9r6kvK/3Nx2377qofoiWQH2yXwHkOlMCaAIds/00H4a2+ivGJmhsgrYmIbk9gXkNfg1t5FzS5kOuIyClQCXFLGoVykzDx/sJwpjeGDCUMhl5jmdo6oKdmGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718879702; c=relaxed/simple;
-	bh=lCyupJdafA3dXGgAIhEV7XI5qV1P7+a/6Gib3SE/mrc=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=JeV3OZ8+F1OdFXOngdQYu/SOUVoPTeCy1zj0p+vvq6CvzMiRax9GR2DonvIOaEudjwCtXb1x2i+/D+Hja0UpgYF8gy32+Qavu9SJ+FWPZjUNUBc0dygap/Zj5MF9m8m99dDh3I45shUCGQxwhv/ULsZBhwgVVX4GitC4h1qv/Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OWadIRwr; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240620103457euoutp01aba6dcb4c80017490606b000d08a2a88~ar-pZOKqX2475024750euoutp01p
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:34:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240620103457euoutp01aba6dcb4c80017490606b000d08a2a88~ar-pZOKqX2475024750euoutp01p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718879697;
-	bh=K2XlRvGpvnjCHdsUkw4csbNzLzNzCgYTkIMsnQI6LhY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=OWadIRwrnG8ERyR0Z72rwC52Hh68ItuCMqk9n4bEJ3kO4W8sznq3VjIKYokUdUz5+
-	 aPqyAzT20RGMp35Cpb0rqWyeR/Rcitr3xSBp2qGhTwTIerXmUV/HenpDUghiHf7wV1
-	 XFcVB41NB8gzPsdTAKEBACQJfJLTXidN6CfSLfaM=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240620103457eucas1p2e6f09a2914a058897fdf1250de5d47ae~ar-pPMDkt1317913179eucas1p27;
-	Thu, 20 Jun 2024 10:34:57 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 1F.DA.09620.1D504766; Thu, 20
-	Jun 2024 11:34:57 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240620103456eucas1p1578e3a4017dcd11c6d48b6022a3522ce~ar-oroHTg0858808588eucas1p1G;
-	Thu, 20 Jun 2024 10:34:56 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240620103456eusmtrp2ce837deca67868d4554386c61f582368~ar-orAU0P3267132671eusmtrp2y;
-	Thu, 20 Jun 2024 10:34:56 +0000 (GMT)
-X-AuditID: cbfec7f5-d31ff70000002594-96-667405d1f90f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id E9.39.08810.0D504766; Thu, 20
-	Jun 2024 11:34:56 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240620103456eusmtip2311da91bb4412085b8730b0b2d192bc1~ar-obUxW_0676706767eusmtip2O;
-	Thu, 20 Jun 2024 10:34:56 +0000 (GMT)
-Received: from localhost (106.210.248.242) by CAMSVWEXC01.scsc.local
-	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Thu, 20 Jun 2024 11:34:55 +0100
-Date: Thu, 20 Jun 2024 12:34:51 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
- proc_handlers
-Message-ID: <20240620103451.7c4oznlkwty53bzs@joelS2.panther.com>
+	s=arc-20240116; t=1718879870; c=relaxed/simple;
+	bh=fjCT+vC9WCmYZJSsbTUGXVqbsk0mxJMwSWRAQaj7ft0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OT1Mmfm5ozIB50WtLp0BFoiUVidtGauAlzNnOxDw8qAUHNqJumSaCH/qkymvLv984JJPsG2nxORr5+xWSnDkm00YlS1+UdA9hajN7wb9uZ6neX0OBbU4IC+NHt7ifQi+XTfxQdEq506/2uNxcZQvJRcIxm4pFDV+CduDn5SMRtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b3teWYsk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718879867;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fjCT+vC9WCmYZJSsbTUGXVqbsk0mxJMwSWRAQaj7ft0=;
+	b=b3teWYskSwbBC/hRKJ3zkZl05eEWRYmh47J+Yw1t/lLY6AsLqcC6QM6iMZIGRyzQuIJxgN
+	peFEdZ0/4Gf64ma3FBo5Qzztg8kWdQ+fOZ2rlmT2Yb7Ia/2eo9Dp/l+5Yuur8fv/gshFFK
+	9y+OsC/006ouauWBuJFO2huCpsZNEnA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-20-Fd1mNQJpP9-7xMIncwIweg-1; Thu,
+ 20 Jun 2024 06:37:43 -0400
+X-MC-Unique: Fd1mNQJpP9-7xMIncwIweg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4A3F519560AA;
+	Thu, 20 Jun 2024 10:37:40 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.26])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E32BA3000218;
+	Thu, 20 Jun 2024 10:37:32 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 20 Jun 2024 12:36:08 +0200 (CEST)
+Date: Thu, 20 Jun 2024 12:36:00 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: hw_breakpoint: Save privilege of access control
+ via ptrace
+Message-ID: <20240620103600.GD30070@redhat.com>
+References: <20240618071010.11214-1-yangtiezhu@loongson.cn>
+ <20240619151524.GB24240@redhat.com>
+ <9cc6d314-2431-c1b5-3d46-63c0ac80ed4d@loongson.cn>
+ <20240620090807.GC30070@redhat.com>
+ <93d96e55-c180-444a-9b3f-f96db5f9e37d@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRmVeSWpSXmKPExsWy7djPc7oXWUvSDOZ8F7SYs34Nm8W6t+dZ
-	LS7vmsNm8fvHMyaLGxOeMjqwemxa1cnmcWLGbxaPz5vkPPq7j7EHsERx2aSk5mSWpRbp2yVw
-	ZUy+3sZcsI2/Yv/O6cwNjJN5uhg5OSQETCQ239vK3sXIxSEksIJR4valdlYI5wujxJ3dfxgh
-	nM+MEoeWnmeFaXn79iwLRGI5o0Tb68uscFUdT/ewgFQJCWxllGi65gxiswioSrxcdZsJxGYT
-	0JE4/+YOM4gtImAjsfLbZ7DlzAKTGCU2nL8GtkJYIEbifP8WsCJeAQeJnRuuQNmCEidnPgFb
-	wCygJ3Fj6hS2LkYOIFtaYvk/DoiwvETz1tlg5ZwCvhLbVlxjhrhaWeLLpzdQdq3E2mNnwPZK
-	CDzgkGjsbmeESLhIzJn1nB3CFpZ4dXwLlC0j8X/nfCaIhsmMEvv/fYDqXs0osazxKxNElbVE
-	y5UnUB2OEotvtLGDXCchwCdx460gxHV8EpO2TWeGCPNKdLQJTWBUmYXktVlIXpuF8NosJK8t
-	YGRZxSieWlqcm55abJyXWq5XnJhbXJqXrpecn7uJEZhqTv87/nUH44pXH/UOMTJxMB5ilOBg
-	VhLhfd5VlCbEm5JYWZValB9fVJqTWnyIUZqDRUmcVzVFPlVIID2xJDU7NbUgtQgmy8TBKdXA
-	JDkhpnh6t/1SGx/btmWLE8XPFy70+bDLaen5vrST9bFCt2oeFy23F1+rtUForuzs2tuP5vYu
-	KNp1w68rv3+O6PyI3cmuwZd/Fra0GnT3lucXmzB+esV9+CLL2zlvP5i3vnz55pnhcybDYkex
-	MMV565oyzYPDnv/3N3G+xNUn0fOmSK5B+NOZrWzXvgnOC2KdvNd+OfP0Rvk76zIMDxVq3bws
-	085qJPBuJfvj+4UbU/WbLq+6ukbt80W53HLmD4u/rRGWmxgbH/VukQWXmmmcuBkziw5vlZGA
-	KOf3Os5Zr55dmFu56177nzSZHWcy3r04uqZst8qTC5LKLfdiLQ33aiTOWLiz1OvRmu1fGm9H
-	KrEUZyQaajEXFScCANEdcXSkAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsVy+t/xe7oXWEvSDOZd1bCYs34Nm8W6t+dZ
-	LS7vmsNm8fvHMyaLGxOeMjqwemxa1cnmcWLGbxaPz5vkPPq7j7EHsETp2RTll5akKmTkF5fY
-	KkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZUy+3sZcsI2/Yv/O6cwNjJN5
-	uhg5OSQETCTevj3L0sXIxSEksJRR4sGvN8wQCRmJjV+uskLYwhJ/rnWxQRR9ZJQ4Pns+VMdW
-	RolLU86zg1SxCKhKvFx1mwnEZhPQkTj/5g7YJBEBG4mV3z6zgzQwC0xilJh25jAjSEJYIEbi
-	fP8WsCJeAQeJnRuuMENMXcAo8f/TCVaIhKDEyZlPWEBsZgE9iRtTpwDdwQFkS0ss/8cBEZaX
-	aN46G2wOp4CvxLYV16BeUJb48gnmnVqJV/d3M05gFJmFZOosJFNnIUydhWTqAkaWVYwiqaXF
-	uem5xYZ6xYm5xaV56XrJ+bmbGIGRuO3Yz807GOe9+qh3iJGJg/EQowQHs5II7/OuojQh3pTE
-	yqrUovz4otKc1OJDjKbAMJrILCWanA9MBXkl8YZmBqaGJmaWBqaWZsZK4ryeBR2JQgLpiSWp
-	2ampBalFMH1MHJxSDUzpv/Mk+4TOrwgQ9jySmvq/72dbrfy7S2w/Vxu4TEtuvPr7Lu9HM8Ej
-	O3x4mRaukfm/Q2n5VqHmqA1d0tMOO7amSMRJHd+TnFfk5nwyrOPLhA8qrDNXPSo3vv9I5Ojy
-	nYL3jhyaxSst5r/NqXDCDObrhg/59GXVOt/OzM8VvtZxNW4pfz9v8pptj9XmNn0oSJ93/Mw7
-	fr1lF4zO/879+Xmy18GbuvNtnz6Y5yiwYYKFb3+7g72U28dlvbXHJnhe/nLf0OnkAiZxJ6VS
-	/omTZdTqahb3TXv0JUfC1/sotwB31krrW9kRByRFP9jOaxFtWLUj8HHWUZVC/ek1B81/HXVh
-	FbodP1tWJWT7qnc9hoJKLMUZiYZazEXFiQBsVivlTQMAAA==
-X-CMS-MailID: 20240620103456eucas1p1578e3a4017dcd11c6d48b6022a3522ce
-X-Msg-Generator: CA
-X-RootMTR: 20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0
-References: <CGME20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0@eucas1p2.samsung.com>
-	<20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
+In-Reply-To: <93d96e55-c180-444a-9b3f-f96db5f9e37d@loongson.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, Jun 19, 2024 at 12:09:00PM +0200, Thomas Weiﬂschuh wrote:
-> Adapt the proc_hander function signature to make it clear that handlers
-> are not supposed to modify their ctl_table argument.
-> 
-> This is also a prerequisite to moving the static ctl_table structs into
-> read-only data.
-> 
-> The patch was mostly generated by coccinelle with the following script:
-> 
->     @@
->     identifier func, ctl, write, buffer, lenp, ppos;
->     @@
-> 
->     int func(
->     - struct ctl_table *ctl,
->     + const struct ctl_table *ctl,
->       int write, void *buffer, size_t *lenp, loff_t *ppos)
->     { ... }
-> 
-> In addition to the scripted changes some other changes are done:
-> 
-> * The "typedef proc_handler" in include/linux/sysctl.h is changed to use
->   the "const ctl_table".
-> 
-> * The prototypes of non-static handlers in header-files are adapted
->   to match the changes of their respective definitions.
-> 
-> * kernel/watchdog.c: proc_watchdog_common()
->   This is called from a proc_handler itself and is als calling back
->   into another proc_handler, making it necessary to change it as part
->   of the proc_handler migration.
-> 
-> No functional change.
-> 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-Will test this in 0-day in [1] to avoid potential conflicts with all the
-other stuff going into linux-next and because it does not apply cleanly to
-sysctl-next. Don't expect any issues from 0-day as it is a
-non-functional trivial change.
+Again, I can't really comment, I know almost nothing about perf, but
 
-I'll use this patch as is when the time comes during the end of the
-merge window (at that point it should apply cleanly) and go into 
+On 06/20, Tiezhu Yang wrote:
+>
+> On 06/20/2024 05:08 PM, Oleg Nesterov wrote:
+> >
+> >But to me the very idea of arm64-specific and "kernel only" member in
+> >perf_event_attr looks a bit strange.
+>
+> I noticed that there is a similar arm64-specific change in
+> commit 09519ec3b19e ("perf: Add perf_event_attr::config3")
 
-@Thomas: Can I ping you during the merge window to double check that
-there are no additional proc_handlers (without the const argument)
-that might not be present in today's linux-next?
+but this is another thing even if I have no idea what .config3 means.
 
-Best
+If nothing else, what do you think, say, tools/perf can do with ->bp_priv?
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/log/?h=jag/constify_proc_handlers
+What should sys_perf_event_open() do if bp_priv != 0 comes from user space?
 
--- 
+Nevermind, please forget, I leave this to you and maintainers.
 
-Joel Granados
+Oleg.
+
 
