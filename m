@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-222010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FDB790FBA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:24:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E8B90FBA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 422E81C20FF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:24:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8030D282E3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0802BD0F;
-	Thu, 20 Jun 2024 03:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D39224CE;
+	Thu, 20 Jun 2024 03:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FpGmzYaK"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Nrv6QlIA"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BDD2B9BE
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 03:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7111EF01
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 03:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718853842; cv=none; b=jwGLHAPGZdXGDiZx7ptsfQTD7+ZCUhDZxzP0vR0swSdR39uNcGBe+VrXmQOEl8dKQCsyxgeb3Vyveafp6d6p6DORxHGXjyTswwtZ3Y28XXkf1eL7r3vDrK7tUQEuCuhYtTZIp7dPCDEYo55CWgJC1c6mXcqvjQEWFfRiU3G46JY=
+	t=1718853856; cv=none; b=ES6OiOk8TStyumQmoPs4u6BG1eC/DeSNSPJBcs/EE33aSFtjvTT5ovPCpDlGi2O2uiZUwvFxhbxljb+nR42i3bkeOaLsyOI71VP41LbHX3HTO4WxU5Mm0GjHo4aJWnzbSX+dIYQ1pHsKEpEtmfNNXjvs3xTqrcmeoCthmg11XrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718853842; c=relaxed/simple;
-	bh=mEBCIXa5EJ2/Xre+pRcasNn+K2u0XmoKc4bUUj4NvhI=;
+	s=arc-20240116; t=1718853856; c=relaxed/simple;
+	bh=7GOdlpxAnTIQz9LWIEh1ljv/lbMR4nQOh5qOOSCyJ/Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qaqeY0wurXfymRc5e7K84GttIVid5gCLrwef5vFVCUNoIgJ1lRveU253GSpDjb51Khmm9/lT5H4SZ36wzgYso2xnEGntAwm4wX1SvSByvqFKWXPxiahLJW6J9oyhc/AC5fzXWW9IrjotAnpK1HtxMQkgss/GZAje1nJTboHcUi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FpGmzYaK; arc=none smtp.client-ip=91.218.175.180
+	 MIME-Version; b=fgCGteBS+dybQ8rVFXS4HJycI1vOtXc2aIlmpUPbGnwTSPIGLtetAr+N1L/MFBjjaF8rr/6sv6myQFT591eEZ4oWDpNoatWk1FD+AiN87nIkFJrB1KBI3hjgTzUNhVjKC35QvbHw8zTPqAVEN74TcNZ2ElkFXJMMwv1GnxTfmzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Nrv6QlIA; arc=none smtp.client-ip=91.218.175.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Envelope-To: viro@zeniv.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718853839;
+	t=1718853852;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SUmHFYVsSdRNn5kuyX1XQfBw/O2XJKBxeFC/8akhqcc=;
-	b=FpGmzYaKBkuMDo7Iq/S0iQT3ZIiFEx5kW+x8bcs0MiYI57ry6AMOyq+TRv5jAD1kBs6EOP
-	5wmZSNNZXohmoVrx/q4DXXHe7xJuJktrLHwXwAjdtfdih+WsCyZuBsGQTM3uQ7356ly02p
-	sGXcDWAZ7Rmpvo91AFFeSa5dR4IyRLk=
+	bh=A63/JYmEm04bcb67Y5GvfbOJO1Si9x3i8LU8CU9/NzY=;
+	b=Nrv6QlIAtbJvAFP+1oXsWRC1DeAN0TlBs4uI3DH3HwTzcNNBje/scSBAkpzTT6rFblCnQH
+	Z5/DdY0cbMS/kJZTAFid8gPYIBuCQKl7D3n3fBLTyH2teuQvCTgBKzCn/UV25b8ooruBBx
+	ZIa0cTwwe/Hrn5YVJjlMii3j2sO4IfI=
 X-Envelope-To: brauner@kernel.org
 X-Envelope-To: jaegeuk@kernel.org
 X-Envelope-To: chao@kernel.org
@@ -64,9 +64,9 @@ Cc: Jan Kara <jack@suse.cz>,
 	linux-f2fs-devel@lists.sourceforge.net,
 	youling.tang@linux.dev,
 	Youling Tang <tangyouling@kylinos.cn>
-Subject: [PATCH 2/3] f2fs: Use in_group_or_capable() helper
-Date: Thu, 20 Jun 2024 11:23:34 +0800
-Message-Id: <20240620032335.147136-2-youling.tang@linux.dev>
+Subject: [PATCH 3/3] fuse: Use in_group_or_capable() helper
+Date: Thu, 20 Jun 2024 11:23:35 +0800
+Message-Id: <20240620032335.147136-3-youling.tang@linux.dev>
 In-Reply-To: <20240620032335.147136-1-youling.tang@linux.dev>
 References: <20240620032335.147136-1-youling.tang@linux.dev>
 Precedence: bulk
@@ -84,40 +84,24 @@ Use the in_group_or_capable() helper function to simplify the code.
 
 Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 ---
- fs/f2fs/acl.c  | 3 +--
- fs/f2fs/file.c | 4 +---
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ fs/fuse/acl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index ec2aeccb69a3..8bffdeccdbc3 100644
---- a/fs/f2fs/acl.c
-+++ b/fs/f2fs/acl.c
-@@ -219,8 +219,7 @@ static int f2fs_acl_update_mode(struct mnt_idmap *idmap,
- 		return error;
- 	if (error == 0)
- 		*acl = NULL;
--	if (!vfsgid_in_group_p(i_gid_into_vfsgid(idmap, inode)) &&
--	    !capable_wrt_inode_uidgid(idmap, inode, CAP_FSETID))
-+	if (!in_group_or_capable(idmap, inode, i_gid_into_vfsgid(idmap, inode)))
- 		mode &= ~S_ISGID;
- 	*mode_p = mode;
- 	return 0;
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5c0b281a70f3..7a23434963d1 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -923,10 +923,8 @@ static void __setattr_copy(struct mnt_idmap *idmap,
- 		inode_set_ctime_to_ts(inode, attr->ia_ctime);
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
--		vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
+diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
+index 3d192b80a561..04cfd8fee992 100644
+--- a/fs/fuse/acl.c
++++ b/fs/fuse/acl.c
+@@ -146,8 +146,8 @@ int fuse_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		 * be stripped.
+ 		 */
+ 		if (fc->posix_acl &&
+-		    !vfsgid_in_group_p(i_gid_into_vfsgid(&nop_mnt_idmap, inode)) &&
+-		    !capable_wrt_inode_uidgid(&nop_mnt_idmap, inode, CAP_FSETID))
++		    !in_group_or_capable(&nop_mnt_idmap, inode,
++					 i_gid_into_vfsgid(&nop_mnt_idmap, inode)))
+ 			extra_flags |= FUSE_SETXATTR_ACL_KILL_SGID;
  
--		if (!vfsgid_in_group_p(vfsgid) &&
--		    !capable_wrt_inode_uidgid(idmap, inode, CAP_FSETID))
-+		if (!in_group_or_capable(idmap, inode, i_gid_into_vfsgid(idmap, inode)))
- 			mode &= ~S_ISGID;
- 		set_acl_inode(inode, mode);
- 	}
+ 		ret = fuse_setxattr(inode, name, value, size, 0, extra_flags);
 -- 
 2.34.1
 
