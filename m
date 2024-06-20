@@ -1,117 +1,77 @@
-Return-Path: <linux-kernel+bounces-223193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A24910FD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:00:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B91910F5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A6C0B255FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:48:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31B791C23E50
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF851BBBC0;
-	Thu, 20 Jun 2024 17:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47AF1BBBDD;
+	Thu, 20 Jun 2024 17:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Jgvr+GaG"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEZpg7BC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820BB1B4C2A;
-	Thu, 20 Jun 2024 17:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4271DDEE;
+	Thu, 20 Jun 2024 17:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718905155; cv=none; b=tSUm3CXEAqNbXOj0zWw7fHJFaxo3jwSsz4i/dzZuTxJZwIs1ACbOHYYBv7/+k1Qff8iViaFLCL4ZaUIZ2m9DXT0/r2M646iuS/xbOR/iG5gsPA/k6Fn9rhAe7NxXjQlJFcctO6ubrZ7+MwLX4NbTf7gRAoDoJUsFNvruvT7Xt2M=
+	t=1718905240; cv=none; b=Er7S4rro5Q/ekfkNAyrBApQtoxv0dunBld4T73yERVi5+PB622812bH9uKEFZl+nm6a29NNRY5cNcf/zaIor3xCNZaUxMzlM0TFJiF2NSR2LsTSMLZx9HelO0F39EmMhdKxh55oLIaREHLGC6ooYht6DQwNhQ0MVtpa8L0UYYi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718905155; c=relaxed/simple;
-	bh=YTk3Lm9Ov1kYYHSEDrF0pg5GItvYrx4G0xmDmP2GC7w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=F7LKZtgjmBN6KyEU3+yV7pbL7AIZ9x0oV8TZRoZMgIMWldu9ZpidOHGytq12nzuQL6YrGXvpGix9mBfxnvSgEQjzDaQNJm1UqqkkVeDQngXPfVNbzkHGdsVywLgZDo7W9UwvLH8c5dF0w6bT96fgFALep65slS0jZuEyzi4h4xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Jgvr+GaG; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 30CA71BF205;
-	Thu, 20 Jun 2024 17:39:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718905145;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YTk3Lm9Ov1kYYHSEDrF0pg5GItvYrx4G0xmDmP2GC7w=;
-	b=Jgvr+GaGJcOUHSVi29h34AVdwARGliz2lLi7NaRdFKrRMW2OVjEwlGi3L8MThZEu3T805v
-	rDng0iNK6hr2kv5yfCcrDuvqet1rU0F6RHIICrZ+FAY5fruHVwG9xiFFUh5QsFKO2Z/8sh
-	l2AWBagV0wn7qcQ6W9N2xMoAaC8isPyhTw1oV91bTGtl5LnAFwpdT5e9UbGknSlxpd6a8M
-	9xvtlwark/NwQaNb8iaxcrgKE6VrFPPgNJ+/C5kOKto6NN+HGpNccIU9XpZ7Q7eeA1EW9r
-	dE1FoLrhZrZR+qV5y0n19g5Lv2Iew7X+8NlVwWKsu+T+6aLgzHVSDhQnLo5GRQ==
+	s=arc-20240116; t=1718905240; c=relaxed/simple;
+	bh=T/yfp30QLkswItvLIjhSZVSRq/qaXupa+HCdhVeqDI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KRaOmfc87zaXnYztv7LEdDbKN9yarHIYYSOc1AEP33Jkmj/4jPutr4zVviWWyCcROp/oBDDsN+8WnerCLU4Ymif4j/oCGTBT8M0KBkLzV0gS4jH/cO0mJyRgYe1i9l2he8HT2QzXnbZKb2j+htsJZV8byv9Yx5Z6N671IO1grtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEZpg7BC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F10EEC2BD10;
+	Thu, 20 Jun 2024 17:40:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718905239;
+	bh=T/yfp30QLkswItvLIjhSZVSRq/qaXupa+HCdhVeqDI4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NEZpg7BCWLS3xa4vyX7apo4QMY8P36A7LzltzwEENCRmPe0dCeRU+bssqRinXpt2v
+	 k4/F0A8xqMjUbOtgM+D2UUyzpny5Vn2mCfAVZv1eYPIO6PQWksyZBp56/STVoIiEwO
+	 T59sJeka0OBoj9ROKGo21i72GXM7edotFvFkDgLFDPe3TAc/Lpo7O2PsaLI1ss1gL7
+	 V3vGsuyJzZwkG3en0g4tbS0EnWJKzLpb1XRmk5ELXLErYhECh3I79dwIqUiXYkRLyS
+	 LxtCQTDwik+hyF+8qCBZmj2iShEN+F5afjPpgRtpyKNrmZjWFS04Yg//UilHd+PLMq
+	 PLzeiUeQXjwlw==
+Date: Thu, 20 Jun 2024 18:40:34 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH] net/mlx5: Lag, Remove NULL check before dev_{put, hold}
+Message-ID: <20240620174034.GQ959333@kernel.org>
+References: <20240619035357.45567-1-jiapeng.chong@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 20 Jun 2024 19:39:03 +0200
-Message-Id: <D2510PQUKXWM.24TOHQBNTC7Y5@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v2 01/11] dt-bindings: clock: mobileye,eyeq5-clk: drop
- bindings
-Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Philipp Zabel" <p.zabel@pengutronix.de>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Lee
- Jones" <lee@kernel.org>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-X-Mailer: aerc 0.17.0
-References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
- <20240503-mbly-olb-v2-1-95ce5a1e18fe@bootlin.com>
- <ee278102-f4b8-4ca0-879e-f83cd54efbd0@linaro.org>
- <13ed1865-d702-47b6-b186-d5f060103280@linaro.org>
- <D13I8TFIF77X.2EFWZ14LM2H6N@bootlin.com>
- <fd0228f2-2f41-4194-b804-7a90ea3a6091@linaro.org>
-In-Reply-To: <fd0228f2-2f41-4194-b804-7a90ea3a6091@linaro.org>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619035357.45567-1-jiapeng.chong@linux.alibaba.com>
 
-Hello Krzysztof,
+On Wed, Jun 19, 2024 at 11:53:57AM +0800, Jiapeng Chong wrote:
+> The call netdev_{put, hold} of dev_{put, hold} will check NULL, so there
+> is no need to check before using dev_{put, hold}, remove it to silence
+> the warning:
+> 
+> ./drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c:1518:2-10: WARNING: NULL check before dev_{put, hold} functions is not needed.
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9361
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 
-On Tue May 7, 2024 at 5:34 PM CEST, Krzysztof Kozlowski wrote:
-> On 07/05/2024 17:07, Th=C3=A9o Lebrun wrote:
-> > Proposal from Stephen Boyd of using auxiliary devices makes sense, that
-> > could be the future direction of this series. It won't change the
-> > dt-bindings aspect of it, only the driver implementations.
-> >=20
-> > [0]: https://lore.kernel.org/lkml/daa732cb31d947c308513b535930c729.sboy=
-d@kernel.org/
-> > [1]: https://lore.kernel.org/lkml/20240124151405.GA930997-robh@kernel.o=
-rg/
->
-> So after Robs comment above, you still pushed the wrong approach and now
-> you revert it?
-
-Yes. The gist of it is that I had misunderstood the messages. Mostly, I
-did not understand how to implement separate Linux driver with the
-desired devicetree structure (no subnode on the syscon for each
-feature). I was missing knowledge about Linux infrastructure allowing
-for that. MFD and auxdevs are two approaches, with auxdevs being
-preferred.
-
-The latest revision finally takes those comments into account.
-
-Thanks Krzysztof,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
