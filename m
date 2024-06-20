@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-222109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60DEA90FCF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:43:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ECAA90FCF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CADCA281736
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:43:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C3411C23845
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A6B3D575;
-	Thu, 20 Jun 2024 06:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0BF3DBBF;
+	Thu, 20 Jun 2024 06:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVwr/rlS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="bmspK5ym"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573863BBE8;
-	Thu, 20 Jun 2024 06:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F181F2BAF3
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718865795; cv=none; b=tkFbpsWDMKlUn7EJuDC0jkSzIctQzJOCZz1uJEqXgwTmOA3sQZ1+OXoMJ46mAka1C1lsHKPhxlRRbTAi01ces09ttHH+hcVkEf28AXuLPJk6qDi5F4T2u4j/KAoWBHJDJzt2b2YQ14zEGG8FNA9vsllbnzRwYv0oIqIbGcRoVww=
+	t=1718865831; cv=none; b=ffryjYs3vDLGenADl9H8+AVq2cxiHSkqK+j9410M1CE6oVT6r578Oxz6xB8JCBJc2fS7KFkGII1ajIQQj9RG1njZ2hjYIujz/vb/U6g6gsI8DCgCrkUMj25RXFDmCO/jX0EReOlzAlZ4hARAnCEsXkEY16WT8L5i9Gt7oIyN+QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718865795; c=relaxed/simple;
-	bh=YoNtDkLra8F30tKubQqPMfHzyI20CRQwhBnryvteyto=;
+	s=arc-20240116; t=1718865831; c=relaxed/simple;
+	bh=uE/uN6UQI8ULkWeXH2hrpTUuDXf9ezQJl6Unmy5CsLM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FPWJlgCGlYDD1JveucHHd5HT3Q+DhY3BcxnmXeM0K76pDT1QPqU7AmReEM25+4KTtyPR2dTP/mIZIBeNjerpTZm/2eYRwym3DbGMS/bn21Zy5KEsl7u2mXGeAZjlMXbQhtkEH3YVGqUAo4SeYeA6+V7EyHvpCWtdTpZp0Q6n7s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVwr/rlS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B433C4AF08;
-	Thu, 20 Jun 2024 06:43:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718865794;
-	bh=YoNtDkLra8F30tKubQqPMfHzyI20CRQwhBnryvteyto=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iVwr/rlSEhW0YZDsd215GusyWQuzpQMvkXq63PLoZoFw58Gabg5ziX1faq30K2K8t
-	 Gj2cn8V1xlHml38BcoPBj5jrKUZj7bNS3Y+468s5/RHME94/oETs7gO5+qpLzUCl7O
-	 nyz43PDWoOouZ5t015zAbu7aUM2o8LLfBqyPjTKkQxsdDjweYYwjtDvaH7mQ9bNw3c
-	 AI4w18D8U88j4HIXSVyQ2C7uqZB1J1GKuzDErge5l20T/NOnbmsB9ouIhii5HGqX8B
-	 y5moPMckPnnlPmVoYt/Bn6FdP60KzMi5DvRQiGLKyvkv9W4NzOFR2BjAKsMcDmJbWw
-	 nw4CTKpoeifgw==
-Message-ID: <ff22c3db-db5d-4fb8-ba18-4e82044ce9a2@kernel.org>
-Date: Thu, 20 Jun 2024 08:43:09 +0200
+	 In-Reply-To:Content-Type; b=gFIyu4wgJr1ZSRjZY6ZEDObJo5giOaKtD5sJJw+Cv5XhynBNEwWSu8NCCWyTrrCabZMoYyWQcKQOS+FWv37VBl3hfbCHhbz6g8s5HrL5qrm2vpE8gqmQef7YtY8PiTEfEr/1F31xdFr97ZWgL+JUvFTeVFaKw+FHrIqgF6PTyOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=bmspK5ym; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f9a78c6c5dso4964425ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 23:43:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shopee.com; s=shopee.com; t=1718865829; x=1719470629; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8YwiZn1PGDETwbHuEaIKOoV4wrE/8n3ka9pPww3cXT0=;
+        b=bmspK5ymTQLkNK1z7Nl4rtUnQUxfSla0LkWomn7dk7ZeL0iCYq82cx46jZGOY/XKx5
+         UMkWHfDwBCQJS4pmA5xDEWY8Wut1/FF+AMY5NUU5t2hZ2jOSuHIeA/xNATHNbYLnkp8C
+         l7uvy7GA8/gkYh8FgKzjbhdUeDW3gFlwtG6/vA9GRDpCIZNLomIKX0ZDiPS4icIj6l8b
+         5cBf5e4ybxkgS7plKNXWJC+KBooPduqr81AzqYfKBD8bBLpXb0ITaEz5X0ET29Gq/g/P
+         iU2d/uzl0gG8wecElR1piIe2faaKU7l1EBt47sl5Qn+SCgHMcksxJTO+A2UfU3c2qDth
+         rvJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718865829; x=1719470629;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8YwiZn1PGDETwbHuEaIKOoV4wrE/8n3ka9pPww3cXT0=;
+        b=NhPYMnNsUzZSHtQxDL/fA8RuZwOJqWCQRMPo9561kf0chZH6qZsPgnAOxt7NRrdVdw
+         2wDCWDJy0b9NWclK/brRliSzPSG01VfEMil05LVpd074I5FV1L6Yb+3O7ugvLjnFINLC
+         GFcgEmqpGZIN/deVY1QFwZEce6bs9ZgyahvJ8J9vGdGx7fsS01GxLOlMM9td9hAJxXM+
+         mgFGA5KyV4AU/GjrBIH0YtNGxeErS/7ZGCjwiOSTt+pFcHneQfYXLGbm1sHesFdls+G6
+         vuZG/n+aTIowtowxSx0rATZ0PB3yg0s8N2sINezmfwthkFDGS89HA25g/R5Let6kyzf9
+         aP7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV7PR2gSVo6NVPTh7KnREvsOwgEdZYvQvSddRTyTPb/3j3byip4fkqss3ZOTow8V3OLQqrXJvPhLBk1WdDJxNuGwoxB0VQ1ifzOGF51
+X-Gm-Message-State: AOJu0YwM/vjNiux6rVMaTxzZgpKZWrHacIRxQ+6qrkNCCJQ9Y8HRlTIC
+	LDuxyjpra+x1udV7TjA4R40asHe0WrvuDEZb7BPD/L3251dx0OULrZFLh+ibrGc=
+X-Google-Smtp-Source: AGHT+IGd34NqtNaGuPMB/ROhKNjgz2OeNbmesm9iNVtJ7V7/gYkRhinqnM9f3iddiqpR8hP9iR8/yQ==
+X-Received: by 2002:a17:903:22d1:b0:1f6:e20f:86ab with SMTP id d9443c01a7336-1f9aa44c98cmr47315875ad.40.1718865829286;
+        Wed, 19 Jun 2024 23:43:49 -0700 (PDT)
+Received: from [10.54.24.59] ([143.92.118.3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9b000bffdsm26431565ad.107.2024.06.19.23.43.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 23:43:48 -0700 (PDT)
+Message-ID: <2cf34c6b-4653-4f48-9a5f-43b484ed629e@shopee.com>
+Date: Thu, 20 Jun 2024 14:43:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,79 +75,162 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/8] dt-bindings: mips: img: Add devices binding
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Paul Burton <paulburton@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org
-References: <20240618-boston-syscon-v3-0-c47c06647a26@flygoat.com>
- <20240618-boston-syscon-v3-8-c47c06647a26@flygoat.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240618-boston-syscon-v3-8-c47c06647a26@flygoat.com>
+Subject: Re: [RFC] fuse: do not generate interrupt requests for fatal signals
+To: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240613040147.329220-1-haifeng.xu@shopee.com>
+ <CAJfpegsGOsnqmKT=6_UN=GYPNpVBU2kOjQraTcmD8h4wDr91Ew@mail.gmail.com>
+ <a8d0c5da-6935-4d28-9380-68b84b8e6e72@shopee.com>
+ <CAJfpegsvzDg6fUy9HGUaR=7x=LdzOet4fowPvcbuOnhj71todg@mail.gmail.com>
+ <20240617-vanille-labil-8de959ba5756@brauner>
+From: Haifeng Xu <haifeng.xu@shopee.com>
+In-Reply-To: <20240617-vanille-labil-8de959ba5756@brauner>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 18/06/2024 17:11, Jiaxun Yang wrote:
-> Add devices binding for various Imagination Technologies
-> MIPS based Platforms.
+
+
+On 2024/6/17 15:25, Christian Brauner wrote:
+> On Fri, Jun 14, 2024 at 12:01:39PM GMT, Miklos Szeredi wrote:
+>> On Thu, 13 Jun 2024 at 12:44, Haifeng Xu <haifeng.xu@shopee.com> wrote:
+>>
+>>> So why the client doesn't get woken up?
+>>
+>> Need to find out what the server (lxcfs) is doing.  Can you do a
+>> strace of lxcfs to see the communication on the fuse device?
 > 
-> Remove old documents.
-> 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
-> v3: Remove old bindings, they are not relavant any more.
->     Booting protocol stuff is covered by spec.
-> ---
+> Fwiw, I'm one of the orignal authors and maintainers of LXCFS so if you
+> have specific questions, I may be able to help.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thanks. All server threads of lcxfs wokrs fine now.
 
-Best regards,
-Krzysztof
+So can we add another interface to abort those dead request?
+If the client thread got killed and wait for relpy, but the fuse sever didn't 
+send reply for some unknown reason，we can use this interface to wakeup the client thread.
 
+
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 97ac994ff78f..b171d03171e7 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -44,6 +44,17 @@ static ssize_t fuse_conn_abort_write(struct file *file, const char __user *buf,
+ 	return count;
+ }
+
++static ssize_t fuse_abort_dead_requests_write(struct file *file, const char __user *buf,
++				     size_t count, loff_t *ppos)
++{
++	struct fuse_conn *fc = fuse_ctl_file_conn_get(file);
++	if (fc) {
++		fuse_abort_dead_requests(fc);
++		fuse_conn_put(fc);
++	}
++	return count;
++}
++
+ static ssize_t fuse_conn_waiting_read(struct file *file, char __user *buf,
+ 				      size_t len, loff_t *ppos)
+ {
+@@ -186,6 +197,12 @@ static const struct file_operations fuse_ctl_abort_ops = {
+ 	.llseek = no_llseek,
+ };
+
++static const struct file_operations fuse_ctl_abort_dead_requests_ops = {
++	.open = nonseekable_open,
++	.write = fuse_abort_dead_requests_write,
++	.llseek = no_llseek,
++};
++
+ static const struct file_operations fuse_ctl_waiting_ops = {
+ 	.open = nonseekable_open,
+ 	.read = fuse_conn_waiting_read,
+@@ -274,7 +291,10 @@ int fuse_ctl_add_conn(struct fuse_conn *fc)
+ 				 1, NULL, &fuse_conn_max_background_ops) ||
+ 	    !fuse_ctl_add_dentry(parent, fc, "congestion_threshold",
+ 				 S_IFREG | 0600, 1, NULL,
+-				 &fuse_conn_congestion_threshold_ops))
++				 &fuse_conn_congestion_threshold_ops) ||
++	    !fuse_ctl_add_dentry(parent, fc, "abort_dead_requests",
++				 S_IFREG | 0200, 1, NULL,
++				 &fuse_ctl_abort_dead_requests_ops))
+ 		goto err;
+
+ 	return 0;
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 5fb830ad860d..77b54c5ea9bd 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -2249,6 +2249,49 @@ void fuse_abort_conn(struct fuse_conn *fc)
+ }
+ EXPORT_SYMBOL_GPL(fuse_abort_conn);
+
++void fuse_abort_dead_requests(struct fuse_conn *fc)
++{
++	spin_lock(&fc->lock);
++	if (fc->connected) {
++		struct fuse_dev *fud;
++		struct fuse_req *req, *next;
++		LIST_HEAD(to_end);
++		unsigned int i;
++
++		list_for_each_entry(fud, &fc->devices, entry) {
++			struct fuse_pqueue *fpq = &fud->pq;
++
++			spin_lock(&fpq->lock);
++
++			for (i = 0; i < FUSE_PQ_HASH_SIZE; i++) {
++				list_for_each_entry_safe(req, next, &fpq->processing[i], list) {
++					if (test_bit(FR_INTERRUPTED, &req->flags)) {
++						struct list_head *head = &req->waitq.head;
++						struct wait_queue_entry *wq;
++
++						list_for_each_entry(wq, head, entry) {
++							if (__fatal_signal_pending(wq->private)) {
++								list_move_tail(&req->list, &to_end);
++								break;
++							}
++						}
++
++					}
++
++				}
++			}
++
++			spin_unlock(&fpq->lock);
++		}
++
++		spin_unlock(&fc->lock);
++		end_requests(&to_end);
++	} else {
++		spin_unlock(&fc->lock);
++	}
++
++}
++
+ void fuse_wait_aborted(struct fuse_conn *fc)
+ {
+ 	/* matches implicit memory barrier in fuse_drop_waiting() */
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index f23919610313..fc8b5a7d1d0a 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -45,7 +45,7 @@
+ #define FUSE_NAME_MAX 1024
+
+ /** Number of dentries for each connection in the control filesystem */
+-#define FUSE_CTL_NUM_DENTRIES 5
++#define FUSE_CTL_NUM_DENTRIES 6
+
+ /** List of active connections */
+ extern struct list_head fuse_conn_list;
+@@ -1167,6 +1167,9 @@ void fuse_request_end(struct fuse_req *req);
+ void fuse_abort_conn(struct fuse_conn *fc);
+ void fuse_wait_aborted(struct fuse_conn *fc);
+
++/* Abort dead requests */
++void fuse_abort_dead_requests(struct fuse_conn *fc);
++
+ /**
+  * Invalidate inode attributes
+  */
 
