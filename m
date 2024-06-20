@@ -1,277 +1,151 @@
-Return-Path: <linux-kernel+bounces-223509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC84C91143D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:18:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF3F91143F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EED601C211A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:18:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D88AEB21BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054487710E;
-	Thu, 20 Jun 2024 21:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F65F78C8E;
+	Thu, 20 Jun 2024 21:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="qOqKFpzH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mObbYhUw"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D7jtiCIJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAE31C680;
-	Thu, 20 Jun 2024 21:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AD1757F6
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718918272; cv=none; b=eki78AsNMhBg8aJFYgZ+vG2AQX4gn/883yk13quTOI51ZaIiQ5r/CIqmoygGpyt6585aBmk7OvpBVRnQvgY36DUbkQ4UKFthR1I9Njuu2V7ebJCo8FZJX1vcWivjstJ/zNIoHiFwBWhGF8ENpK9pBRATX4nRmufTm7CLhOP3s+M=
+	t=1718918287; cv=none; b=jgLxVOIJT+9jUl+xsQeVqXkvt2r1gAyG4kfxgCU97Aq9zT4G7cESTluqx2M2MWTB9t6zyjWtdXMA0rrRfqNfdTGOBz/yt7DU/PrRA6dbddoEOtubsR6GdciYXlidtu5gzsKchcZUYHiynrcLvouKqVb1uakEwCpuIAkMa7LhmSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718918272; c=relaxed/simple;
-	bh=T2gwHDdc9Tod8b6ktA6VzB1vpXhcZb4a8lvBsxKXk14=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=WQigrP8/fUi2LG47rT3tvdLfgxNQ8FTqlfiYqZZZf+j21fDQESRoF65H0+fr0mxICzAYVJ4MquB5ndnW+r2XXR9bTtP+6DIM4xV9+zGrUZHshKsZ5tFbayEHocLW1xnQu3HX8CyMEY8tDpFNJFMDmXj47S3CJsFS7cJqDz+72iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=qOqKFpzH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mObbYhUw; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id F0AF9138010C;
-	Thu, 20 Jun 2024 17:17:48 -0400 (EDT)
-Received: from imap41 ([10.202.2.91])
-  by compute2.internal (MEProxy); Thu, 20 Jun 2024 17:17:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1718918268; x=1719004668; bh=LAJs70sW5j
-	F761s2Vy7XDvqb/IgHN1Sn0OrYklHiPlY=; b=qOqKFpzHAIJqkhW691+ydiuNOL
-	mTLlrzPAqEiNAC91yj1yiPVrPllfi0JhY0haDbMfVmy8Mi0A10rtf6qLyrSV7xH6
-	xBSDTqBM+duo/FWm3N4HvebxdLkm+5GHOhVtZ6dDNKjNK+8I7NxkCfymHmlhGufz
-	pxAVmu3RTZ7lYdyxgQQrDp+lcIEC12X19wjmZWzFQXFW6z+NYR1RbZ9/L8d7EZ09
-	kvLlN9QNQRgJqjFsloTv045RUUJuWKnsLsM/avuJwbvAQedLYqIE0458L9oraSE4
-	qSzQ1L1bme8vK+hl1pXtBC3unlk9naDEuyeLiGFuyIyL1L6/GMEiWdYjGZbQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1718918268; x=1719004668; bh=LAJs70sW5jF761s2Vy7XDvqb/IgH
-	N1Sn0OrYklHiPlY=; b=mObbYhUwL+H03anOcCxQZGsOjvW31oY8Snh4yJAyn9Ph
-	pJR90lagSw46cIWZOFLF7iU4EfkoLfMuoPGqG6mmjbPHzK6pOHvi5ITvyb6bfS/m
-	w+ACZO8bEyv96e6cA8XsW0cTT8GeVMh0y7wmP+GxWFUShLVu1JBKa6552yw18mbC
-	AchsnSyRszr0islGwAdLLjYfTDYsmiy9YQ4z3HFIlxB5ONslmfdxlMXNjdX13F8t
-	ENJTTJ1g3BbbXiiW5BUR9d+KszO+pV3oVu6GPhmUL4H+WxXueyQ3zeE2NlS58FE/
-	uPeS4dkpnG3XeCBVJIajtysVUB4t8FXdAjwcIB67LQ==
-X-ME-Sender: <xms:fJx0ZkNPgjdETLhwgRxjoq5scfOnBF-JNtn6p7S1qCsCrjZTKAnZfg>
-    <xme:fJx0Zq8NbCmt4CidPcRQx0U2skC2VZWIGm6lmt-6A8gJ5j4HWoOsAOGo3W5_uBg-G
-    G5npgS836ECy_Rikzg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefvddgudeiudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdfn
-    uhhkvgculfhonhgvshdfuceolhhukhgvsehljhhonhgvshdruggvvheqnecuggftrfgrth
-    htvghrnhepleffveevfffhueetteetveetleetuddugfejvdeljeetteelhfeiiedugfev
-    leefnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghv
-X-ME-Proxy: <xmx:fJx0ZrRlAQ7S91LTLbQTFDVpkC-lGKXRHZapG0GUgNrKzzuDaBrexg>
-    <xmx:fJx0Zstxy1aJGpS5Bn8t-aUjcpS3FWL5jR1XX1LpsVxi2n7Rglm5IQ>
-    <xmx:fJx0ZseZQ-p9K5C6XweCDq81MCBdUDJJ6x_bPeP7Li3xlDPeE3BurQ>
-    <xmx:fJx0Zg3gS1F1Sdxd9u4UqsbLzXD47mF7I-yGLYxqpmV6T3or026CDw>
-    <xmx:fJx0ZhEpZS_eVEfJDgLNfu1SNN40h2dLNzYwhS5_v0J1YnFh94sYZjLQ>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1BADD2340080; Thu, 20 Jun 2024 17:17:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718918287; c=relaxed/simple;
+	bh=aqMJYuRKRhwOwpKdDy+zCFLnsS3ZxHbcjVfA1b4He7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lAnMidhA1yKp5349BthErX8QlzoOjUbRnWz5g686u0FOcybUQBZ4n/1/po+kM8fIiTLoNrVY/JKbpC96RNz6oPgkyfDKcdtCv0tH3N7gRhKRi4ygnizknW1FQ1MfIafvRejMC31mnkLIIEvahjh/PaMAgM29ESUAr7OIrdbj20k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D7jtiCIJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718918285;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=RSXrjWzW3gVvVNp1m2KmnwPUIOWOjjIbSVU9Qc45xpQ=;
+	b=D7jtiCIJkdqiSsBiwPW3miuept8NxR5gCs5nOPBTv7mW4xBIwJnBk/UY1nq5FvzsKfLVGE
+	CxPNZAY07qxMdx2KMo01Is25wTwBquLsajLNyCXU7MUCVo72mLWaBXr4EZFpXHvRTjlNA/
+	5cuecvzLhRaMWE0UESMbPUeTCia5bkc=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-551-z2vfRE4pPDSPYfU8ZBC93A-1; Thu, 20 Jun 2024 17:18:01 -0400
+X-MC-Unique: z2vfRE4pPDSPYfU8ZBC93A-1
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-57d0524060dso593448a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:18:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718918280; x=1719523080;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RSXrjWzW3gVvVNp1m2KmnwPUIOWOjjIbSVU9Qc45xpQ=;
+        b=Va5xHXRVHDbcgPzrcM37TrINLiZr0eChd+v+h5BIxPuFwuB4bGWc+ZcUiHALYp+mId
+         ZXV1d++CXk5iSPzDb51Y3cJAdO+qGBs1QmsZEk7572uUs9abjo2X6ScThf5lS5HR/2H0
+         nnG1GzMT/E8P+jmOJ7PnQbvZIs8G4pc6Mx7/3lOaLCrub80+ziLXewg9SKIv8WmgReXQ
+         brvGG24ea2zxqsw8F3hFuV4i+j+33pisOOY2ZFu3jYrjSynOk6VOw+KbMneD8jOihCBU
+         ApusXHaKUiWPxfUxsAvkHm2DJc+WQyce6i8aOcwUdmS6SjpSYMPsRXRXY6OSIjVx+pwW
+         9pJA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4EtAMceTWTqIpUtPIMa9LtjnmsPh0DMIJbC9+muKIhlyFI4n8Q5a19X99kuRoUHLQGEW+S3boe5i/+OVjqcsGfcXqHJxsT01MfYyM
+X-Gm-Message-State: AOJu0Yw1wIZl1pnVQX/IPOv0LmiVnNp6360ZgS5FBcwnitqaPHpqhWBF
+	pJtKU2ww4ku0YcpFhddPhw1/78PHgeIcCts8ZofY2CBARF6+2rifIq4fX9eDcJdELu7UudNfu8W
+	QbVg6rSvt9qf0Ydagkh9IenzaigbPgzAlZFQsjW0Wm6l13HT0tbrGi/0s8jrZMA==
+X-Received: by 2002:a17:907:c088:b0:a6f:fbc:b3f3 with SMTP id a640c23a62f3a-a6fab779addmr366570366b.47.1718918280553;
+        Thu, 20 Jun 2024 14:18:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGqybkFobBPot124+7bNKhMErELwzAtFobjqhKi4Uh6LFD3fi31huAdSQejQmd5Cxr2SwAxmQ==
+X-Received: by 2002:a17:907:c088:b0:a6f:fbc:b3f3 with SMTP id a640c23a62f3a-a6fab779addmr366569766b.47.1718918280139;
+        Thu, 20 Jun 2024 14:18:00 -0700 (PDT)
+Received: from [192.168.10.81] ([151.62.196.71])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a6fcf42a650sm10970666b.43.2024.06.20.14.17.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 14:17:59 -0700 (PDT)
+Message-ID: <5a2b21ce-2554-4ee8-bff1-76231ea77703@redhat.com>
+Date: Thu, 20 Jun 2024 23:17:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <19cb366a-e6d8-4608-98c9-0fad389363ee@app.fastmail.com>
-In-Reply-To: <20240620082223.20178-3-dev@doubly.so>
-References: <20240620082223.20178-1-dev@doubly.so>
- <20240620082223.20178-3-dev@doubly.so>
-Date: Fri, 21 Jun 2024 09:17:27 +1200
-From: "Luke Jones" <luke@ljones.dev>
-To: "Devin Bayer" <dev@doubly.so>, corentin.chary@gmail.com
-Cc: "Hans de Goede" <hdegoede@redhat.com>,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-api@vger.kernel.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH 2/2] platform/x86: asus-wmi: support newer fan_boost_mode dev_id
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: Remove duplicated zero clear with dirty_bitmap
+ buffer
+To: maobibo <maobibo@loongson.cn>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240613125407.1126587-1-maobibo@loongson.cn>
+ <115973a9-caa6-4d53-a477-dea2d2291598@wanadoo.fr>
+ <fb2da53e-791d-aef7-4dbb-dcf054675f9b@loongson.cn>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <fb2da53e-791d-aef7-4dbb-dcf054675f9b@loongson.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 20 Jun 2024, at 8:22 PM, Devin Bayer wrote:
-> Support changing the fan mode (silent, performance, standard). I reused
-> the existing fan_boost_mode sysfs entry.
+On 6/14/24 04:45, maobibo wrote:
+> I do not know whether KVM_DIRTY_LOG_INITIALLY_SET should be enabled on 
+> LoongArch. If it is set, write protection for second MMU will start one 
+> by one in function kvm_arch_mmu_enable_log_dirty_pt_masked() when dirty 
+> log is cleared if it is set, else write protection will start in 
+> function kvm_arch_commit_memory_region() when flag of memslot is changed.
 > 
-> Signed-off-by: Devin Bayer <dev@doubly.so>
-> ---
-> drivers/platform/x86/asus-wmi.c            | 87 ++++++++++++++++++++--
-> include/linux/platform_data/x86/asus-wmi.h |  1 +
-> 2 files changed, 82 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index 5585f15e7920..e27b8f86d57b 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -73,7 +73,6 @@ module_param(fnlock_default, bool, 0444);
-> #define NOTIFY_LID_FLIP_ROG 0xbd
->  
-> #define ASUS_WMI_FNLOCK_BIOS_DISABLED BIT(0)
-> -#define ASUS_WMI_DEVID_CAMERA_LED 0x00060079
+> I do not see the obvious benefits between these two write protect 
+> stages. Can anyone give me any hints?
 
-Be careful not to introduce extraneous changes.
+The advantage is that you get (a lot) fewer vmexits to set the dirty 
+bitmap, and that write protection is not done in a single expensive 
+step.  Instead it is done at the time that userspace first clears the 
+bits in the dirty bitmap.  It provides much better performance.
 
->  
-> #define ASUS_MID_FAN_DESC "mid_fan"
-> #define ASUS_GPU_FAN_DESC "gpu_fan"
-> @@ -94,6 +93,10 @@ module_param(fnlock_default, bool, 0444);
-> #define ASUS_FAN_BOOST_MODE_SILENT_MASK 0x02
-> #define ASUS_FAN_BOOST_MODES_MASK 0x03
->  
-> +#define ASUS_FAN_BOOST_MODE2_NORMAL 0
-> +#define ASUS_FAN_BOOST_MODE2_SILENT 1
-> +#define ASUS_FAN_BOOST_MODE2_OVERBOOST 2
-> +
-> #define ASUS_THROTTLE_THERMAL_POLICY_DEFAULT 0
-> #define ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST 1
-> #define ASUS_THROTTLE_THERMAL_POLICY_SILENT 2
-> @@ -268,6 +271,7 @@ struct asus_wmi {
-> int agfn_pwm;
->  
-> bool fan_boost_mode_available;
-> + u32 fan_boost_mode_dev_id;
-> u8 fan_boost_mode_mask;
-> u8 fan_boost_mode;
->  
-> @@ -3019,14 +3023,14 @@ static int asus_wmi_fan_init(struct asus_wmi *asus)
->  
-> /* Fan mode *******************************************************************/
->  
-> -static int fan_boost_mode_check_present(struct asus_wmi *asus)
-> +static int fan_boost_mode1_check_present(struct asus_wmi *asus)
-> {
-> u32 result;
-> int err;
->  
-> - asus->fan_boost_mode_available = false;
-> + asus->fan_boost_mode_dev_id = ASUS_WMI_DEVID_FAN_BOOST_MODE;
->  
-> - err = asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_FAN_BOOST_MODE,
-> + err = asus_wmi_get_devstate(asus, asus->fan_boost_mode_dev_id,
->     &result);
-> if (err) {
-> if (err == -ENODEV)
-> @@ -3044,16 +3048,87 @@ static int fan_boost_mode_check_present(struct asus_wmi *asus)
-> return 0;
-> }
->  
-> +static int fan_boost_mode2_check_present(struct asus_wmi *asus)
-> +{
-> + u32 result;
-> + int err;
-> +
-> + asus->fan_boost_mode_mask = ASUS_FAN_BOOST_MODES_MASK;
-> + asus->fan_boost_mode_dev_id = ASUS_WMI_DEVID_FAN_BOOST_MODE2;
-> +
-> + err = asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_FAN_BOOST_MODE2,
-> +     &result);
-> + if (err) {
-> + if (err == -ENODEV)
-> + return 0;
-> + else
-> + return err;
-> + }
-> +
-> + if (! (result & ASUS_WMI_DSTS_PRESENCE_BIT))
-> + return 0;
-> +
-> + asus->fan_boost_mode_available = true;
-> +
-> + if (result & ASUS_FAN_BOOST_MODE2_SILENT) {
-> + asus->fan_boost_mode = ASUS_FAN_BOOST_MODE_SILENT;
-> + } else if(result & ASUS_FAN_BOOST_MODE2_OVERBOOST) {
-> + asus->fan_boost_mode = ASUS_FAN_BOOST_MODE_OVERBOOST;
-> + } else {
-> + asus->fan_boost_mode = ASUS_FAN_BOOST_MODE_NORMAL;
-> + }
-> +
-> + return 0;
-> +}
-> +
-> +static int fan_boost_mode_check_present(struct asus_wmi *asus)
-> +{
-> + int err;
-> +
-> + asus->fan_boost_mode_available = false;
-> +
-> + err = fan_boost_mode1_check_present(asus);
-> + if (err)
-> + return err;
-> +
-> + if (!asus->fan_boost_mode_available) {
-> + err = fan_boost_mode2_check_present(asus);
-> + }
-> +
-> + return err;
-> +}
-> +
-> static int fan_boost_mode_write(struct asus_wmi *asus)
-> {
-> u32 retval;
-> u8 value;
-> + u8 hw_value;
-> int err;
->  
-> value = asus->fan_boost_mode;
->  
-> - pr_info("Set fan boost mode: %u\n", value);
-> - err = asus_wmi_set_devstate(ASUS_WMI_DEVID_FAN_BOOST_MODE, value,
-> + /* transform userspace values into hardware values */
-> + if(asus->fan_boost_mode_dev_id == ASUS_WMI_DEVID_FAN_BOOST_MODE2) {
-> + switch(value) {
-> + case ASUS_FAN_BOOST_MODE_SILENT:
-> + hw_value = ASUS_FAN_BOOST_MODE2_SILENT;
-> + break;
-> + case ASUS_FAN_BOOST_MODE_OVERBOOST:
-> + hw_value = ASUS_FAN_BOOST_MODE2_OVERBOOST;
-> + break;
-> + case ASUS_FAN_BOOST_MODE_NORMAL:
-> + hw_value = ASUS_FAN_BOOST_MODE2_NORMAL;
-> + break;
-> + default:
-> + return -EINVAL;
-> +
-> + }
-> + } else {
-> + hw_value = value;
-> + }
-> +
-> + pr_info("Set fan boost mode: user=%u hw=%u\n", value, hw_value);
-> + err = asus_wmi_set_devstate(asus->fan_boost_mode_dev_id, hw_value,
->     &retval);
->  
-> sysfs_notify(&asus->platform_device->dev.kobj, NULL,
-> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-> index b3c35e33f1e7..62982f67d632 100644
-> --- a/include/linux/platform_data/x86/asus-wmi.h
-> +++ b/include/linux/platform_data/x86/asus-wmi.h
-> @@ -65,6 +65,7 @@
-> /* Writing a brightness re-enables the screen if disabled */
-> #define ASUS_WMI_DEVID_SCREENPAD_LIGHT 0x00050032
-> #define ASUS_WMI_DEVID_FAN_BOOST_MODE 0x00110018
-> +#define ASUS_WMI_DEVID_FAN_BOOST_MODE2 0x00110019
-> #define ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY 0x00120075
->  
-> /* Misc */
-> -- 
-> 2.45.2
-> 
-> 
+Paolo
 
-
-Thank you for the work on this. But I must point out that the same 0x00110019 method has already been submitted as a patch to work with the existing "throttle_thermal" functionality, which itself is also tied to platoform_profile class support.
-
-See https://lore.kernel.org/platform-driver-x86/20240609144849.2532-1-mohamed.ghanmi@supcom.tn/T/#mcd18e74676084e21d5c15af84bc08d8c6b375fb9
-
-If you could submit only the first patch instead please?
 
