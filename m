@@ -1,239 +1,178 @@
-Return-Path: <linux-kernel+bounces-223203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FDE910F7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:53:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA903910F7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8181F23092
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:53:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0121C238E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D011B47D6;
-	Thu, 20 Jun 2024 17:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809531B3F08;
+	Thu, 20 Jun 2024 17:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHCvVsuc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LMYqw+l4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0914B1B0115;
-	Thu, 20 Jun 2024 17:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AA61B0115
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718905995; cv=none; b=nKf89cBdUlsN83cpbaA1LpbOik1JOJkAE1feD1N8a0wNWIW+Kmp1xT4jqp5SNzYQcHQxgCgBFJQZ1Ztqjwb7dEvjuCTppaDDMXMB25cM8rgHXvtXDeI7iLe9eKHmVBbIfjRyCsqwoSL3GeqedPO+5RxFEYWwF6p8rDNqB8d/d3Q=
+	t=1718906079; cv=none; b=PuESay8sivA/La12DC+WrmzNeZR3lAOvghkQEaYWrE6b0T5FIQgx9Awbqi8me6lPEWpgpDtbEKKIccxFOM3P6truuvrk3BtnCiiOGM2xS6LESNEPjx2N9dbt7x4TRYXNA/LbSP1WC9kPc/mEKrOUXF5mng3ytEY9tZvZv/TLr9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718905995; c=relaxed/simple;
-	bh=nVG7CVpLhAJO3U2nmGpfdbLsgF0BfMyDx1IhqJCBzJY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XpJ8FaJkHngjpmJVPh2kcTAClzCmKhC+zqLZUB9rsveseDd2/GiNr+/p3hH1rLouaI83DUq33rTzP7T6PmIJUBFKe7aD++N6tmCESfOXuYLM7O7b7dPlWzMsbbii2LIz+Avu5w7BGxLZ7fyTczp1CTR9Bi7uIqlcMiMhHu9NXps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHCvVsuc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C569C2BD10;
-	Thu, 20 Jun 2024 17:53:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718905994;
-	bh=nVG7CVpLhAJO3U2nmGpfdbLsgF0BfMyDx1IhqJCBzJY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cHCvVsuckNDuV+P2qAL99lS1BzEE39qOp8rnJwRNVHyjqe1RctfwmXSRThCUq+f1N
-	 o/5uNmt5YXBj/Rbz69Bbgx/SMnGm4GzCS8zYGdxlAMbS0oppObtl5HsQqDzimrIJjf
-	 FNATuBPTRC0dpnswt5U8b1LwYuydgBlU1b+krBi3VwYHz9aonmaUUsSfae1xMOZDES
-	 OWAlE6wU0xnzceKsM80biktmbw0nAXF9nKpHO9BD94x8WqjVzaDx/iT/BAvftGdHay
-	 NfPRYpsK5VC4uKz0IOTvDGBM+/L99ZUCkn2OIbL5ky14ch2nb/jabH8Eekg6/HUtCy
-	 Czh03Ta1xofkw==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-25075f3f472so71283fac.2;
-        Thu, 20 Jun 2024 10:53:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXL6WkjhDUgv4JMSsKgF0wGFWsCtrLXugWGqjtzJNwMGUElcPKwqQJbCT1W63hvg3ROXZwphK5TRsyPI8MpdD4FZZDwrozFqdwtCCFyN1WHd0WEh7nVo09AOf6J+7hRx3i6igmxL4U=
-X-Gm-Message-State: AOJu0YwsflepiP0ec93sDg7cBXSPIBzR1BGVyziNvqCgKeLSL6UsKd11
-	Yxm9WkYrmoHEnMIa9HYXKktYoucpU6DhKqwZrEac7sfKs3PWTQzvqpqXqbIq6eyeIPEP4UGZBvo
-	RHbAGwVCIOS32azTP5wtgdL6XICc=
-X-Google-Smtp-Source: AGHT+IHkJ6Wnwd2XfY78wAp+KV5TjKEz07L4rQL4orBKwMGWGqhR2kxJXq7Ldwfmq+2AYOl1JB8tljyfTRhj4wj0+4s=
-X-Received: by 2002:a05:6870:e0cd:b0:254:d417:351f with SMTP id
- 586e51a60fabf-25c948e316emr5988362fac.1.1718905993735; Thu, 20 Jun 2024
- 10:53:13 -0700 (PDT)
+	s=arc-20240116; t=1718906079; c=relaxed/simple;
+	bh=zCusKJ1SI9Ee0S3KZGJciSMp8Ai3Fbfbm9n4tYlgihQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J/mVTQpf7A/D9daH8MYlAkNH7zkcy7rHGGxOmCDD1HzB+eUtrf52YwHtA4TbFyrFvfpDPBg7jFWtMA/ZSwSRrYj5zudrxKAx7DfyrZ5wZl5/WGaz8gMCuNMOfuDqq5UNBCXS9+hoytX0e5ETCWukzeE3vIxDHdudjqECPwWP0jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LMYqw+l4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718906077;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jMgpiO7XXJbbO8j3ZAhY3Lys2PBBjFpdYx0jJM8Zwkw=;
+	b=LMYqw+l4/DxZXMx76KTtqBs6dPZd29zIq75IFZTOqkxUcn09uq93IcUBHywlMzTGLI3v5s
+	OJRGcYR3EV6kphvB7cNQ5B4peMA01Df2lx7Oxf7LaguGnQTKfPWBSI/D//BgLZ+zyPOlaj
+	1ZC0io7XtXwbkN1C48Jaz83uCO8ajlY=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-193-CQAyhTLRM0OCviwsiz3tag-1; Thu,
+ 20 Jun 2024 13:54:33 -0400
+X-MC-Unique: CQAyhTLRM0OCviwsiz3tag-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0D19A19560BE;
+	Thu, 20 Jun 2024 17:54:32 +0000 (UTC)
+Received: from [10.22.34.111] (unknown [10.22.34.111])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1F09E3000218;
+	Thu, 20 Jun 2024 17:54:29 +0000 (UTC)
+Message-ID: <d4ae4b0a-b3a4-40db-87e3-c9a493408172@redhat.com>
+Date: Thu, 20 Jun 2024 13:54:29 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619081520.259971-1-perry.yuan@amd.com> <39014142-2232-4d8c-a51d-1c10a2278ad6@amd.com>
-In-Reply-To: <39014142-2232-4d8c-a51d-1c10a2278ad6@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 20 Jun 2024 19:53:02 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gCVoGtoOnXGy7YVBSgahLrLQ-OJoMhYDk1B3jGtNAmnQ@mail.gmail.com>
-Message-ID: <CAJZ5v0gCVoGtoOnXGy7YVBSgahLrLQ-OJoMhYDk1B3jGtNAmnQ@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: update to sysfs_emit for safer buffer handling
-To: Mario Limonciello <mario.limonciello@amd.com>, Perry Yuan <perry.yuan@amd.com>
-Cc: rafael.j.wysocki@intel.com, viresh.kumar@linaro.org, 
-	Borislav.Petkov@amd.com, gautham.shenoy@amd.com, Alexander.Deucher@amd.com, 
-	Xinmei.Huang@amd.com, Xiaojian.Du@amd.com, Li.Meng@amd.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/1] nvme-multipath: implement "queue-depth" iopolicy
+To: Christoph Hellwig <hch@lst.de>
+Cc: kbusch@kernel.org, sagi@grimberg.me, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org, emilne@redhat.com, jrani@purestorage.com,
+ randyj@purestorage.com, chaitanyak@nvidia.com, hare@kernel.org
+References: <20240619163503.500844-1-jmeneghi@redhat.com>
+ <20240619163503.500844-2-jmeneghi@redhat.com> <20240620065641.GA22113@lst.de>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <20240620065641.GA22113@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, Jun 19, 2024 at 10:00=E2=80=AFPM Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
-> On 6/19/2024 03:15, Perry Yuan wrote:
-> > Replaced sprintf and scnprintf with sysfs_emit and sysfs_emit_at in the
-> > cpufreq driver. This ensures safer buffer handling and consistency with
-> > sysfs interfaces. Updated show_scaling_available_governors and related
-> > functions for compliance with the new API.
-> >
-> > Signed-off-by: Perry Yuan <perry.yuan@amd.com>
->
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+On 6/20/24 02:56, Christoph Hellwig wrote:
+>> [jmeneghi: vairious changes and improvements, addressed review comments]
 
-Applied as 6.11 material with some edits in the changelog, thanks!
+>> -static struct nvme_ns *nvme_round_robin_path(struct nvme_ns_head *head,
+>> -		int node, struct nvme_ns *old)
+>> +static struct nvme_ns *nvme_round_robin_path(struct nvme_ns_head *head)
+>>   {
+>> -	struct nvme_ns *ns, *found = NULL;
+>> +	struct nvme_ns *ns, *old, *found = NULL;
+>> +	int node = numa_node_id();
+>> +
+>> +	old = srcu_dereference(head->current_path[node], &head->srcu);
+>> +	if (unlikely(!old))
+>> +		return __nvme_find_path(head, node);
+> 
+> Can you split the refactoring of the existing path selectors into a
+> prep patch, please?
 
-> > ---
-> >   drivers/cpufreq/cpufreq.c | 37 ++++++++++++++++++-------------------
-> >   1 file changed, 18 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > index e1a4730f4f8c..e76d8e2b4c87 100644
-> > --- a/drivers/cpufreq/cpufreq.c
-> > +++ b/drivers/cpufreq/cpufreq.c
-> > @@ -608,7 +608,7 @@ EXPORT_SYMBOL_GPL(cpufreq_policy_transition_delay_u=
-s);
-> >   static ssize_t show_boost(struct kobject *kobj,
-> >                         struct kobj_attribute *attr, char *buf)
-> >   {
-> > -     return sprintf(buf, "%d\n", cpufreq_driver->boost_enabled);
-> > +     return sysfs_emit(buf, "%d\n", cpufreq_driver->boost_enabled);
-> >   }
-> >
-> >   static ssize_t store_boost(struct kobject *kobj, struct kobj_attribut=
-e *attr,
-> > @@ -738,7 +738,7 @@ static struct cpufreq_governor *cpufreq_parse_gover=
-nor(char *str_governor)
-> >   static ssize_t show_##file_name                             \
-> >   (struct cpufreq_policy *policy, char *buf)          \
-> >   {                                                   \
-> > -     return sprintf(buf, "%u\n", policy->object);    \
-> > +     return sysfs_emit(buf, "%u\n", policy->object); \
-> >   }
-> >
-> >   show_one(cpuinfo_min_freq, cpuinfo.min_freq);
-> > @@ -759,11 +759,11 @@ static ssize_t show_scaling_cur_freq(struct cpufr=
-eq_policy *policy, char *buf)
-> >
-> >       freq =3D arch_freq_get_on_cpu(policy->cpu);
-> >       if (freq)
-> > -             ret =3D sprintf(buf, "%u\n", freq);
-> > +             ret =3D sysfs_emit(buf, "%u\n", freq);
-> >       else if (cpufreq_driver->setpolicy && cpufreq_driver->get)
-> > -             ret =3D sprintf(buf, "%u\n", cpufreq_driver->get(policy->=
-cpu));
-> > +             ret =3D sysfs_emit(buf, "%u\n", cpufreq_driver->get(polic=
-y->cpu));
-> >       else
-> > -             ret =3D sprintf(buf, "%u\n", policy->cur);
-> > +             ret =3D sysfs_emit(buf, "%u\n", policy->cur);
-> >       return ret;
-> >   }
-> >
-> > @@ -797,9 +797,9 @@ static ssize_t show_cpuinfo_cur_freq(struct cpufreq=
-_policy *policy,
-> >       unsigned int cur_freq =3D __cpufreq_get(policy);
-> >
-> >       if (cur_freq)
-> > -             return sprintf(buf, "%u\n", cur_freq);
-> > +             return sysfs_emit(buf, "%u\n", cur_freq);
-> >
-> > -     return sprintf(buf, "<unknown>\n");
-> > +     return sysfs_emit(buf, "<unknown>\n");
-> >   }
-> >
-> >   /*
-> > @@ -808,12 +808,11 @@ static ssize_t show_cpuinfo_cur_freq(struct cpufr=
-eq_policy *policy,
-> >   static ssize_t show_scaling_governor(struct cpufreq_policy *policy, c=
-har *buf)
-> >   {
-> >       if (policy->policy =3D=3D CPUFREQ_POLICY_POWERSAVE)
-> > -             return sprintf(buf, "powersave\n");
-> > +             return sysfs_emit(buf, "powersave\n");
-> >       else if (policy->policy =3D=3D CPUFREQ_POLICY_PERFORMANCE)
-> > -             return sprintf(buf, "performance\n");
-> > +             return sysfs_emit(buf, "performance\n");
-> >       else if (policy->governor)
-> > -             return scnprintf(buf, CPUFREQ_NAME_PLEN, "%s\n",
-> > -                             policy->governor->name);
-> > +             return sysfs_emit(buf, "%s\n", policy->governor->name);
-> >       return -EINVAL;
-> >   }
-> >
-> > @@ -872,7 +871,7 @@ static ssize_t show_scaling_available_governors(str=
-uct cpufreq_policy *policy,
-> >       struct cpufreq_governor *t;
-> >
-> >       if (!has_target()) {
-> > -             i +=3D sprintf(buf, "performance powersave");
-> > +             i +=3D sysfs_emit(buf, "performance powersave");
-> >               goto out;
-> >       }
-> >
-> > @@ -881,11 +880,11 @@ static ssize_t show_scaling_available_governors(s=
-truct cpufreq_policy *policy,
-> >               if (i >=3D (ssize_t) ((PAGE_SIZE / sizeof(char))
-> >                   - (CPUFREQ_NAME_LEN + 2)))
-> >                       break;
-> > -             i +=3D scnprintf(&buf[i], CPUFREQ_NAME_PLEN, "%s ", t->na=
-me);
-> > +             i +=3D sysfs_emit_at(buf, i, "%s ", t->name);
-> >       }
-> >       mutex_unlock(&cpufreq_governor_mutex);
-> >   out:
-> > -     i +=3D sprintf(&buf[i], "\n");
-> > +     i +=3D sysfs_emit_at(buf, i, "\n");
-> >       return i;
-> >   }
-> >
-> > @@ -895,7 +894,7 @@ ssize_t cpufreq_show_cpus(const struct cpumask *mas=
-k, char *buf)
-> >       unsigned int cpu;
-> >
-> >       for_each_cpu(cpu, mask) {
-> > -             i +=3D scnprintf(&buf[i], (PAGE_SIZE - i - 2), "%u ", cpu=
-);
-> > +             i +=3D sysfs_emit_at(buf, i, "%u ", cpu);
-> >               if (i >=3D (PAGE_SIZE - 5))
-> >                       break;
-> >       }
-> > @@ -903,7 +902,7 @@ ssize_t cpufreq_show_cpus(const struct cpumask *mas=
-k, char *buf)
-> >       /* Remove the extra space at the end */
-> >       i--;
-> >
-> > -     i +=3D sprintf(&buf[i], "\n");
-> > +     i +=3D sysfs_emit_at(buf, i, "\n");
-> >       return i;
-> >   }
-> >   EXPORT_SYMBOL_GPL(cpufreq_show_cpus);
-> > @@ -946,7 +945,7 @@ static ssize_t store_scaling_setspeed(struct cpufre=
-q_policy *policy,
-> >   static ssize_t show_scaling_setspeed(struct cpufreq_policy *policy, c=
-har *buf)
-> >   {
-> >       if (!policy->governor || !policy->governor->show_setspeed)
-> > -             return sprintf(buf, "<unsupported>\n");
-> > +             return sysfs_emit(buf, "<unsupported>\n");
-> >
-> >       return policy->governor->show_setspeed(policy, buf);
-> >   }
-> > @@ -960,8 +959,8 @@ static ssize_t show_bios_limit(struct cpufreq_polic=
-y *policy, char *buf)
-> >       int ret;
-> >       ret =3D cpufreq_driver->bios_limit(policy->cpu, &limit);
-> >       if (!ret)
-> > -             return sprintf(buf, "%u\n", limit);
-> > -     return sprintf(buf, "%u\n", policy->cpuinfo.max_freq);
-> > +             return sysfs_emit(buf, "%u\n", limit);
-> > +     return sysfs_emit(buf, "%u\n", policy->cpuinfo.max_freq);
-> >   }
-> >
-> >   cpufreq_freq_attr_ro_perm(cpuinfo_cur_freq, 0400);
->
->
+Yes, I can do that.
+
+>> +static void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys,
+>> +		int iopolicy)
+>> +{
+>> +	struct nvme_ctrl *ctrl;
+>> +	int old_iopolicy = READ_ONCE(subsys->iopolicy);
+>> +
+>> +	if (old_iopolicy == iopolicy)
+>> +		return;
+>> +
+>> +	WRITE_ONCE(subsys->iopolicy, iopolicy);
+> 
+> What is the atomicy model here?  There doesn't seem to be any
+> global lock protecting it?  Maybe move it into the
+> nvme_subsystems_lock critical section?
+
+Good question.  I didn't write this code. Yes, I agree this looks racy. Updates to the subsys->iopolicy variable are not atomic. 
+They don't need to be. The process of changing the iopolicy doesn't need to be synchronized and each CPU's cache will be updated 
+lazily. This was done to avoid the expense of adding (another) atomic read the io path.
+
+So really, the nvme_subsystems_lock only protects the list_entrys in &nvme_subsystems. I can move the WRITE_ONCE() update to 
+after the lock, but then were did the caller - nvme_subsys_iopolicy_update() - get it's reference for the nvme_subsystem* from? 
+And there's no lock or synchronization on the read side.
+
+The subsys->iopolicy has always been unprotected. It's been that way from since before this change.
+
+At least... that's my read of the code.
+
+>> +	pr_notice("%s: changed from %s to %s for subsysnqn %s\n", __func__,
+>> +			nvme_iopolicy_names[old_iopolicy], nvme_iopolicy_names[iopolicy],
+>> +			subsys->subnqn);
+> 
+> The function is not really relevant here,  this should become something
+> like:
+> 
+> 	pr_notice("%s: changing iopolicy from %s to %s\n",
+> 		subsys->subnqn,
+> 		nvme_iopolicy_names[old_iopolicy],
+> 		nvme_iopolicy_names[iopolicy]);
+
+How about:
+
+pr_notice("Changed iopolicy from %s to %s for subsysnqn %s\n",
+                 nvme_iopolicy_names[old_iopolicy],
+                 nvme_iopolicy_names[iopolicy],
+                 subsys->subnqn);
+
+
+> or maybe:
+> 
+> 	dev_notice(changing iopolicy from %s to %s\n",
+> 		&subsys->dev,
+> 		nvme_iopolicy_names[old_iopolicy],
+> 		nvme_iopolicy_names[iopolicy]);
+> 
+
+The dev_notice will only spit out the nvme controller number (e.g. nvme5c5n3) and that's not very helpful to the user. I want to 
+include the subsystemNQN because that's easily visible and something the user can see on both the storage and the host.
+
+Example:
+
+root:resultsF > echo "round-robin" > /sys/class/nvme-subsystem/nvme-subsys11/iopolicy
+[Thu Jun 20 13:42:59 2024] Changed iopolicy from queue-depth to round-robin for subsysnqn 
+nqn.1992-08.com.netapp:sn.2b82d9b13bb211ee8744d039ea989119:subsystem.SS104a
+
+root:resultsF > nvme list-subsys | grep -A 8 nqn.1992-08.com.netapp:sn.2b82d9b13bb211ee8744d039ea989119:subsystem.SS104a
+nvme-subsys11 - NQN=nqn.1992-08.com.netapp:sn.2b82d9b13bb211ee8744d039ea989119:subsystem.SS104a
+                 hostnqn=nqn.2014-08.org.nvmexpress:uuid:4c4c4544-0034-5310-8057-b2c04f355333
+                 iopolicy=round-robin
+\
+  +- nvme8 tcp traddr=172.18.60.14,trsvcid=4420,src_addr=172.18.60.4 live
+  +- nvme17 tcp traddr=172.18.50.15,trsvcid=4420,src_addr=172.18.50.3 live
+  +- nvme12 tcp traddr=172.18.60.16,trsvcid=4420,src_addr=172.18.60.4 live
+  +- nvme10 tcp traddr=172.18.50.13,trsvcid=4420,src_addr=172.18.50.3 live
+
+/John
+
 
