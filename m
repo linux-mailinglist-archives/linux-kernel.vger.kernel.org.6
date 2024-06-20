@@ -1,71 +1,72 @@
-Return-Path: <linux-kernel+bounces-223673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE3BC911696
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 859E0911694
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BC691F233A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:15:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D00C1F237AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3883615534E;
-	Thu, 20 Jun 2024 23:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10172152790;
+	Thu, 20 Jun 2024 23:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cCzDoFSP"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KbGzKlsu"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52B414F9EE
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D79A1514E8
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718925228; cv=none; b=b/p41gRcWhinIEPDOJgkHQIfV0lVlnuu4EqvVyzgcj4hupJlJXEMzuP0+wzVJQ5Wm/8smTU35/QOTVkzlUxkKURpfReHWnz/WkXdObVeCYKcUVnUSf9nfdmzsNUmTKUiLx2vhidyTNJjnaZeLdWj07xmYrXcCPyUk1J9XBMccJ8=
+	t=1718925227; cv=none; b=IDktGv9b8l8ELGIZrShMVEdrRrtWjB7v9ew6Fsta/CsadmBOe7GWD1YIXKPHDERb8xFF350X0hvDYjV6pPxcwQZLXd+sqDJnmGvF39+B3jlZU1yvNvAw/GHfgNtl/l6F1Mm5JtclJ8MaLOeHqJUWqM8lcy+3G926erTe+iLplRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718925228; c=relaxed/simple;
-	bh=30eDQdfMwhvrBKYWwgNh+8f2Q3FWPQHYNWjPpfke1EQ=;
+	s=arc-20240116; t=1718925227; c=relaxed/simple;
+	bh=OnEU/sDI6L4n4GuKABhOjlofl7NLYJUjjb44iomKIdw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uAS3c9PSIuw0NDBlSd+PWamrO0ltSysCXIiijDT6yda78uMPkrJPNEnBjClQCpXnFKpA4OJF2E/FgnOTgVMe1HaemiT8jVZJBVIaFUcZk9UEKdNv9fQxHNEeUPEwttg2LUdyTOZDMg5XsxFPt3F0+KwJF/ga3sPqaSbmEqTD+V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cCzDoFSP; arc=none smtp.client-ip=209.85.161.45
+	 MIME-Version:Content-Type; b=BVEwHZeM4sJxaRzOks3cATpmPYhBlCAIaiP+58gZJuOS+fN0RncHXsBpoQeMQkReY0dIlzGqqK1tL5lRot2mBWA47ICXB560Jc/NV0GFqc7L5s+2ipsyxYajkL0qG/0TSGYe7NoyhCeQt3YWqQV64KRM4Di8pGJOk5K3aOgzMt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KbGzKlsu; arc=none smtp.client-ip=209.85.167.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5c1acd482e4so767276eaf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:13:44 -0700 (PDT)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3d229baccc4so773557b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:13:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1718925224; x=1719530024; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RkNkM6mewnoLT1ZDzP6dyIrgO4uv3nwMETptakYX1vA=;
-        b=cCzDoFSP6+D5BsEC9SIaxTQhlpqYQCpV3n3eczsiT+cJne7c48L6cwBIgKEt8ugvI9
-         B4v+WlscflbHPTPoWTKQEFQOheQZJCiqRP1xXLH2kDmy1RPBooZ+wUwe1L2w3Qw8gsga
-         uVHG93d7eBvFthDCJuxEUsG66vopvqseznf1dvXK8MMoE+U6QBSxf5YjjtEl1Vy7OGYL
-         gu1Ymz3M2e+yOVCrzrU2DBqrR+mM7yVqH/8gLF0EaOrMvypK8vriEIag7zL6DVBBJ+O3
-         TkqK9B+sgBVwgRmxslZbBi+TNM1WzVNVfGqW8umdkfOsp9UVDlTfuPQkXmKqdvDGfqMI
-         9j/A==
+        bh=Zz8ynrGU4z42Aj9sdj4ptAZtRt0FzTqPDvedxGwGE2Y=;
+        b=KbGzKlsuFU1MfOfM+Ae5/YotqltjV0hy5HkjLHV/b5SHJ6gHDkITlmrmHo0NkylSKw
+         5uJWeA0epi6Ym+UhRcXiV/fEgsTTJnrwrJz/3/pEMBPKK9C9Ir1YVHoaP7lDO/OSG8i1
+         /1w98jnfKtR4buUC2EU9haxz2CGUKjqBT1JQa17PpWNZ7AnAttujMQpukXYOC6Rbxuz+
+         bi2EbPqojfU1LJ2613JCd/DkZOZ/A3aw6faqLgE54g6gdW6E4LOe1lZo9kJwupOau6Hd
+         gH5C2VCe3Kt9wdoG7M90nMBr1EHIKQ5DEm/7Xe6Fb1ZYk+ZCmhTt2vLzqpx3J2q47veK
+         P1YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1718925224; x=1719530024;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RkNkM6mewnoLT1ZDzP6dyIrgO4uv3nwMETptakYX1vA=;
-        b=tOKmR2yxD2BfdSL4RA1QirFbjsU2P+SMtwXaabJI5whX4qCx6U2Odv59BfI6kAtH/g
-         JNfK5fW36drze/r8jzF40x9XjM1khm635XPQKlB6S5cJRCHyLwkOR1NTAPYqHS2rwDMh
-         ivARIo3FCumdKz0gUEIJgOa6ymH4s/ce+EDwaMgX5k2S1mnjzgtgCPkmb/YG0vxXR809
-         TTQxklvKxJRnfhuSStUk6FpilqL7HqbyHVIbUe/e1D6F1rQGWDkSRf0LIu8ch+wkNZ1i
-         zJ9/O4Izeh29o41E4yvYZtKXWGL/2asrMBoajlDz92wStie7c4M5WjOwCTHiYr9evXt1
-         vnMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsIO21wKI/NZCw1mvlIdu90q9UI/oJB/dLnoxnadeqyFnVC/MEK26JPc27QxzsLcVw/cUh/mSG7/udhNbi4/WyGh6faEPioXJBwDuF
-X-Gm-Message-State: AOJu0YwHIdC52Tv0s+/fqs0bZoyOzDxBLvxtr01O5dIdKevomHqmqVwi
-	xJlVy8rlDEDJCB9FBunHLvRVXJcugvOKnhWRUmmfBiFVjOGv0qReXVzlbdddGMw=
-X-Google-Smtp-Source: AGHT+IGfkOlBFdyPdZRGs6qV8pLK9RhP7EnEMBcc7d5J9xrNECGWhpxHFFlYHN0jJINI3/NMS9s1qA==
-X-Received: by 2002:a4a:3c11:0:b0:5bb:1ae0:17f0 with SMTP id 006d021491bc7-5c1ba65aa73mr5170181eaf.6.1718925223835;
-        Thu, 20 Jun 2024 16:13:43 -0700 (PDT)
+        bh=Zz8ynrGU4z42Aj9sdj4ptAZtRt0FzTqPDvedxGwGE2Y=;
+        b=eTxL0EtGMxuETHZ7vvbEy4gCy7NuG7rEJ/Udn/KckDe1DP4IkwG5hSSREa7O0EGXvR
+         IIcmia/w2H4QKZxNnb7P/jEeobA1h011mSTXPUO7S0uCKbq2tpB3g7nZ81feHm+6slfQ
+         T+Ndwe3d9xHEoBGgU3INYIeywW6e+x7EHS8a9IC5S8a1uHHZqbU+KL0x72TBq8vr3W06
+         Gx48NsY3ApPZC/ulqnKa0WptiBAuEKhl5lCpYf/0y+8n6ZHQJxYYy1o4Y9v4/1j6oGO7
+         aYAcYDWR5sS9o5kL6qS/WjB0n8rbZVSxHz27kT79LBp9To/2YWbPFnlzXfSBUmqnnLZk
+         2bYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdB2N9xURp58oMHtG7+p4ZlZUTFAgY+is1P+Qn7TJg/H4GPu4kD+qI3FEWmzqDvMzSkiaPVYfdJ4LE7WkogWoyWfIPVvVbU45I2Xw6
+X-Gm-Message-State: AOJu0YyGdwp5ANg1jEYIv9cHIJ+asd1UceYgFrK5pzN2kOYkj+pMQfdG
+	8uOuCMGPCjy1z2wH8iBy+Vk4hSmMIK89/xpV1QyEoIuYRbgoPezJHbT8rX+ebgDUqg231713+VI
+	A
+X-Google-Smtp-Source: AGHT+IGMxuLpMKjIuYdJYrob79SDg2RZvql0ouDIgVaa+eFVMNZbWP3rPhPLCBOfG/l5X2eomxjBsA==
+X-Received: by 2002:a05:6808:300f:b0:3d2:2b8e:a7e2 with SMTP id 5614622812f47-3d51baf503fmr6570385b6e.48.1718925224517;
+        Thu, 20 Jun 2024 16:13:44 -0700 (PDT)
 Received: from localhost ([136.62.192.75])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c1d6b7d691sm22699eaf.4.2024.06.20.16.13.43
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d5344de45bsm86185b6e.3.2024.06.20.16.13.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 16:13:43 -0700 (PDT)
+        Thu, 20 Jun 2024 16:13:44 -0700 (PDT)
 From: Sam Protsenko <semen.protsenko@linaro.org>
 To: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -80,9 +81,9 @@ Cc: Anand Moon <linux.amoon@gmail.com>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/6] hwrng: exynos: Add SMC based TRNG operation
-Date: Thu, 20 Jun 2024 18:13:38 -0500
-Message-Id: <20240620231339.1574-6-semen.protsenko@linaro.org>
+Subject: [PATCH v3 6/6] hwrng: exynos: Enable Exynos850 support
+Date: Thu, 20 Jun 2024 18:13:39 -0500
+Message-Id: <20240620231339.1574-7-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240620231339.1574-1-semen.protsenko@linaro.org>
 References: <20240620231339.1574-1-semen.protsenko@linaro.org>
@@ -95,257 +96,39 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On some Exynos chips like Exynos850 the access to Security Sub System
-(SSS) registers is protected with TrustZone, and therefore only possible
-from EL3 monitor software. The Linux kernel is running in EL1, so the
-only way for the driver to obtain TRNG data is via SMC calls to EL3
-monitor. Implement such SMC operation and use it when EXYNOS_SMC flag is
-set in the corresponding chip driver data.
+Add Exynos850 compatible and its driver data. It's only possible to
+access TRNG block via SMC calls in Exynos850, so specify that fact using
+EXYNOS_SMC flag in the driver data.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Łukasz Stelmach <l.stelmach@samsung.com>
 ---
 Changes in v3:
-  - Added appropriate error messages for the case when init SMC command fails
+  - Added R-b tag from Krzysztof
+  - Added A-b tag from Łukasz
 
 Changes in v2:
-  - Used the "reversed Christmas tree" style in the variable declaration
-    block in exynos_trng_do_read_smc()
-  - Renamed .quirks to .flags in the driver structure
-  - Added Krzysztof's R-b tag
+  - Changed QUIRK_SMC to EXYNOS_SMC to reflect the name change in the
+    previous patch
 
- drivers/char/hw_random/exynos-trng.c | 140 +++++++++++++++++++++++++--
- 1 file changed, 130 insertions(+), 10 deletions(-)
+ drivers/char/hw_random/exynos-trng.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
-index 6ef2ee6c9804..9fa30583cc86 100644
+index 9fa30583cc86..9f039fddaee3 100644
 --- a/drivers/char/hw_random/exynos-trng.c
 +++ b/drivers/char/hw_random/exynos-trng.c
-@@ -10,6 +10,7 @@
-  * Krzysztof Kozłowski <krzk@kernel.org>
-  */
- 
-+#include <linux/arm-smccc.h>
- #include <linux/clk.h>
- #include <linux/crypto.h>
- #include <linux/delay.h>
-@@ -22,6 +23,7 @@
- #include <linux/mod_devicetable.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/property.h>
- 
- #define EXYNOS_TRNG_CLKDIV		0x0
- 
-@@ -44,16 +46,41 @@
- #define EXYNOS_TRNG_FIFO_LEN		8
- #define EXYNOS_TRNG_CLOCK_RATE		500000
- 
-+/* Driver feature flags */
-+#define EXYNOS_SMC			BIT(0)
-+
-+#define EXYNOS_SMC_CALL_VAL(func_num)			\
-+	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,		\
-+			   ARM_SMCCC_SMC_32,		\
-+			   ARM_SMCCC_OWNER_SIP,		\
-+			   func_num)
-+
-+/* SMC command for DTRNG access */
-+#define SMC_CMD_RANDOM			EXYNOS_SMC_CALL_VAL(0x1012)
-+
-+/* SMC_CMD_RANDOM: arguments */
-+#define HWRNG_INIT			0x0
-+#define HWRNG_EXIT			0x1
-+#define HWRNG_GET_DATA			0x2
-+#define HWRNG_RESUME			0x3
-+
-+/* SMC_CMD_RANDOM: return values */
-+#define HWRNG_RET_OK			0x0
-+#define HWRNG_RET_RETRY_ERROR		0x2
-+
-+#define HWRNG_MAX_TRIES			100
-+
- struct exynos_trng_dev {
- 	struct device	*dev;
- 	void __iomem	*mem;
- 	struct clk	*clk;	/* operating clock */
- 	struct clk	*pclk;	/* bus clock */
- 	struct hwrng	rng;
-+	unsigned long	flags;
+@@ -320,6 +320,9 @@ static DEFINE_SIMPLE_DEV_PM_OPS(exynos_trng_pm_ops, exynos_trng_suspend,
+ static const struct of_device_id exynos_trng_dt_match[] = {
+ 	{
+ 		.compatible = "samsung,exynos5250-trng",
++	}, {
++		.compatible = "samsung,exynos850-trng",
++		.data = (void *)EXYNOS_SMC,
+ 	},
+ 	{ },
  };
- 
--static int exynos_trng_do_read(struct hwrng *rng, void *data, size_t max,
--			       bool wait)
-+static int exynos_trng_do_read_reg(struct hwrng *rng, void *data, size_t max,
-+				   bool wait)
- {
- 	struct exynos_trng_dev *trng = (struct exynos_trng_dev *)rng->priv;
- 	int val;
-@@ -70,7 +97,40 @@ static int exynos_trng_do_read(struct hwrng *rng, void *data, size_t max,
- 	return max;
- }
- 
--static int exynos_trng_init(struct hwrng *rng)
-+static int exynos_trng_do_read_smc(struct hwrng *rng, void *data, size_t max,
-+				   bool wait)
-+{
-+	struct arm_smccc_res res;
-+	unsigned int copied = 0;
-+	u32 *buf = data;
-+	int tries = 0;
-+
-+	while (copied < max) {
-+		arm_smccc_smc(SMC_CMD_RANDOM, HWRNG_GET_DATA, 0, 0, 0, 0, 0, 0,
-+			      &res);
-+		switch (res.a0) {
-+		case HWRNG_RET_OK:
-+			*buf++ = res.a2;
-+			*buf++ = res.a3;
-+			copied += 8;
-+			tries = 0;
-+			break;
-+		case HWRNG_RET_RETRY_ERROR:
-+			if (!wait)
-+				return copied;
-+			if (++tries >= HWRNG_MAX_TRIES)
-+				return copied;
-+			cond_resched();
-+			break;
-+		default:
-+			return -EIO;
-+		}
-+	}
-+
-+	return copied;
-+}
-+
-+static int exynos_trng_init_reg(struct hwrng *rng)
- {
- 	struct exynos_trng_dev *trng = (struct exynos_trng_dev *)rng->priv;
- 	unsigned long sss_rate;
-@@ -103,6 +163,24 @@ static int exynos_trng_init(struct hwrng *rng)
- 	return 0;
- }
- 
-+static int exynos_trng_init_smc(struct hwrng *rng)
-+{
-+	struct exynos_trng_dev *trng = (struct exynos_trng_dev *)rng->priv;
-+	struct arm_smccc_res res;
-+	int ret = 0;
-+
-+	arm_smccc_smc(SMC_CMD_RANDOM, HWRNG_INIT, 0, 0, 0, 0, 0, 0, &res);
-+	if (res.a0 != HWRNG_RET_OK) {
-+		dev_err(trng->dev, "SMC command for TRNG init failed (%d)\n",
-+			(int)res.a0);
-+		ret = -EIO;
-+	}
-+	if ((int)res.a0 == -1)
-+		dev_info(trng->dev, "Make sure LDFW is loaded by your BL\n");
-+
-+	return ret;
-+}
-+
- static int exynos_trng_probe(struct platform_device *pdev)
- {
- 	struct exynos_trng_dev *trng;
-@@ -112,21 +190,29 @@ static int exynos_trng_probe(struct platform_device *pdev)
- 	if (!trng)
- 		return ret;
- 
-+	platform_set_drvdata(pdev, trng);
-+	trng->dev = &pdev->dev;
-+
-+	trng->flags = (unsigned long)device_get_match_data(&pdev->dev);
-+
- 	trng->rng.name = devm_kstrdup(&pdev->dev, dev_name(&pdev->dev),
- 				      GFP_KERNEL);
- 	if (!trng->rng.name)
- 		return ret;
- 
--	trng->rng.init = exynos_trng_init;
--	trng->rng.read = exynos_trng_do_read;
- 	trng->rng.priv = (unsigned long)trng;
- 
--	platform_set_drvdata(pdev, trng);
--	trng->dev = &pdev->dev;
-+	if (trng->flags & EXYNOS_SMC) {
-+		trng->rng.init = exynos_trng_init_smc;
-+		trng->rng.read = exynos_trng_do_read_smc;
-+	} else {
-+		trng->rng.init = exynos_trng_init_reg;
-+		trng->rng.read = exynos_trng_do_read_reg;
- 
--	trng->mem = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(trng->mem))
--		return PTR_ERR(trng->mem);
-+		trng->mem = devm_platform_ioremap_resource(pdev, 0);
-+		if (IS_ERR(trng->mem))
-+			return PTR_ERR(trng->mem);
-+	}
- 
- 	pm_runtime_enable(&pdev->dev);
- 	ret = pm_runtime_resume_and_get(&pdev->dev);
-@@ -170,12 +256,31 @@ static int exynos_trng_probe(struct platform_device *pdev)
- 
- static void exynos_trng_remove(struct platform_device *pdev)
- {
-+	struct exynos_trng_dev *trng = platform_get_drvdata(pdev);
-+
-+	if (trng->flags & EXYNOS_SMC) {
-+		struct arm_smccc_res res;
-+
-+		arm_smccc_smc(SMC_CMD_RANDOM, HWRNG_EXIT, 0, 0, 0, 0, 0, 0,
-+			      &res);
-+	}
-+
- 	pm_runtime_put_sync(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- }
- 
- static int exynos_trng_suspend(struct device *dev)
- {
-+	struct exynos_trng_dev *trng = dev_get_drvdata(dev);
-+	struct arm_smccc_res res;
-+
-+	if (trng->flags & EXYNOS_SMC) {
-+		arm_smccc_smc(SMC_CMD_RANDOM, HWRNG_EXIT, 0, 0, 0, 0, 0, 0,
-+			      &res);
-+		if (res.a0 != HWRNG_RET_OK)
-+			return -EIO;
-+	}
-+
- 	pm_runtime_put_sync(dev);
- 
- 	return 0;
-@@ -183,6 +288,7 @@ static int exynos_trng_suspend(struct device *dev)
- 
- static int exynos_trng_resume(struct device *dev)
- {
-+	struct exynos_trng_dev *trng = dev_get_drvdata(dev);
- 	int ret;
- 
- 	ret = pm_runtime_resume_and_get(dev);
-@@ -191,6 +297,20 @@ static int exynos_trng_resume(struct device *dev)
- 		return ret;
- 	}
- 
-+	if (trng->flags & EXYNOS_SMC) {
-+		struct arm_smccc_res res;
-+
-+		arm_smccc_smc(SMC_CMD_RANDOM, HWRNG_RESUME, 0, 0, 0, 0, 0, 0,
-+			      &res);
-+		if (res.a0 != HWRNG_RET_OK)
-+			return -EIO;
-+
-+		arm_smccc_smc(SMC_CMD_RANDOM, HWRNG_INIT, 0, 0, 0, 0, 0, 0,
-+			      &res);
-+		if (res.a0 != HWRNG_RET_OK)
-+			return -EIO;
-+	}
-+
- 	return 0;
- }
- 
 -- 
 2.39.2
 
