@@ -1,173 +1,135 @@
-Return-Path: <linux-kernel+bounces-223089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E75E910D68
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:44:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED5C3910D6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 088EB1F21C25
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:44:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974801F21926
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9293B1B150D;
-	Thu, 20 Jun 2024 16:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCBB156256;
+	Thu, 20 Jun 2024 16:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NorucK+F"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PJ1h6khn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A36C1AC765
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3191B29C9;
+	Thu, 20 Jun 2024 16:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718901853; cv=none; b=WLAa23E1ZO9bkIB8I+vbpFMyEQlY7zlGugvhpi5u3nGIJFyPgYZigyhGygHLE10hhJWYKriVgl01MH3NQMKK1uqpfXrLWmBskv6V5FGGEZRiqzEQ9OoGoek5ks9C5dAVu4pVkRCASbehncCVwWecUz2UqT10Cxnl+HWpUt3EZkk=
+	t=1718901908; cv=none; b=jPYUM7FrELbldn5DcnYWXzhmrJobGHWX/BRZEASr3Z+r2X9f866kZ86Zd6Ry+Tc0GKG64yre8DL7qgVv/7smVN0vqJVI3qg2uCzfxiCccNHxkpzhJiDbJr83X+LVQGDxKLHjhZArs8DOKb2glFnH7SOpXAISzIbyWErN5wsNu90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718901853; c=relaxed/simple;
-	bh=76J+gcIMqVtrd1dnHd8BqIFVfLrshWfX+0uF+47IVNA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UkXxsoXB3h5m/x6u79OAgCIRkHTqzC0L8IQS7IRLXH4irD9n8hNeEQoeqKE8B/U2GvJKof9YlgcGG56hHKoia+Y2VBwbVTxbV7KsbGNbKCjlbjGmy7U5egkOtjmOXd//ufSXW4ehuNW2JnBrq3zbUc7fUZLDd6oVpnU+QmBCzYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NorucK+F; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6f9a7120d9dso596177a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:44:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718901849; x=1719506649; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C9VDkwL+Cj1v/F1tGicEGCYp7P9Va7Bog3dfkmqgF+k=;
-        b=NorucK+FGhjQHAYaGPB89DWlEVuunUZNllzEXJW0A/olYepjkiUlmIEOTrdnyGj8AU
-         o6dDv4VzDGy7t/qZzoNbP9wUzLZ3z1g6hp6ID7ZVS0RMTreeFwIy6u3I4SJbM2+0Y5M/
-         T5xsBkuvC+YuH+udqpRK3nl3n/Pv7V3n4SSICuJw3oX2p9L4ko/X0CiblNkafnv5w1Kt
-         wipdJe79Bz3rR0+5qBuu7oyjzRmWbcs7NmLcNUutXeJYPQQqg7CxBu9VwZG++cUQLpWq
-         CRHK/RFMrcxxUozoHzHh25DCeegeoV1R2SsmQVmbmWESkM3v7DFe1Fri3AhYUUJxNSPU
-         eCvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718901849; x=1719506649;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C9VDkwL+Cj1v/F1tGicEGCYp7P9Va7Bog3dfkmqgF+k=;
-        b=kZVFh8DCqHKuq/rw7FGTo749aZp2na/DQnHY3Qw33gNEx/N28nlZEkzxzoBm9QGPIb
-         AtHPZ1y6ifddB38J+q9492uj6ye29V6REINwtx7p828gDhq/HtUJjGMFF3RCUGkC0ey4
-         exy0AwCuEFA4A76dp7h7s+s5MBWANISxwXWgYRWX7Y4hx8Ae69g/HIslhM6jyiK2HY7n
-         PXAIp9jYuE4g+VW5hh5za0Y3P7OnrATyhlEliYfPQtchQTZ4PFm7cWGNMUdU5BwZA8mq
-         uG7tFTy5uS6Q9xuWYQNGxcSfBfIGL5/qfIEHLPJqJkaAjmHCom0vT8kuyNLfYFMm32gG
-         cH+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXrkFr/j66Er/Xt/6Qc01rqNkvi2AU45NzRGJ4u01foVE+cVdJ9y1cgb/FAKYPJVVdHS6zvGToidxmV6ko5Q1YUWlI49KXhtDvtKcHv
-X-Gm-Message-State: AOJu0YwetZ62FaAfHHw+CT2MrHHhb2kU/iOCivkG68f1vHpKtJf7Qjgn
-	w69Rzdvf2lSbVBgbvMlHtjPK1QCsPIoV6SIj9GZFkeW0gJiJihcWYEACt+xCqrY=
-X-Google-Smtp-Source: AGHT+IGmJO4WMFk5+tOgWThlf9Q5w5q4lByYO+901JreOLMbEyPeiwC8JLJrQVUJLWnjqc3VTClsWQ==
-X-Received: by 2002:a05:6830:4112:b0:6f0:486a:6029 with SMTP id 46e09a7af769-700743fb532mr7476132a34.22.1718901846886;
-        Thu, 20 Jun 2024 09:44:06 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb5afaa06asm2594140a34.6.2024.06.20.09.44.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 09:44:06 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: axi-spi-engine: fix sleep calculation
-Date: Thu, 20 Jun 2024 11:43:58 -0500
-Message-ID: <20240620-spi-axi-spi-engine-fix-sleep-time-v1-1-b20b527924a0@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1718901908; c=relaxed/simple;
+	bh=vVAQVLcIYSa9eKUMNQkbbxD4BD0WbXW8qmYkhqRBZDg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VR+/WNLOr0+dAg0la+NS/AXpn6dpUOK4L3bje58v2BCTHY1Som8fPIAhrChgt5KURjGwmwwtXZojSFEkzuOP3WqXQR+pZmiJJgckCmMsShHcrRofvEOcrWj16CTljlJga8Z9ZE63MZqxDQA1n9Hb8Ak05QCmpJK1OFThzAi4DX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PJ1h6khn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KDmVKX024469;
+	Thu, 20 Jun 2024 16:45:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	D4y4wSWdSO3Oxbz63so7MxqnXDBzW59kH6MAtjsENG0=; b=PJ1h6khn2lRI90zS
+	vgcjuxRfqsorMYx3vjRFy/2T9tI2tu38bnE7DWghGq0psMBD/jf9oZ+IUdhIAb8Y
+	N2U2bVEbMEMbk4jMravy+Wc0wclt3K6LQwNzOExXEJk3N/DMMOEt5QrbjiW4UW6A
+	oWtZJAsO6gFRh2rLnPZ8E3K6I8Aqdg71x7OkbtU+y7GJy/szYd/lktQvka0haBNm
+	L6khRJYxNgGoXzkaNuLa/sf3bYzrQfS9Uts5z3cgKnnulQMsCK3esC6gudhNLMHH
+	O+gFwcEyDwkZxxlMnHman8xRvlxKdf9vnhEQj0NO9ucNeo6BRvLL7jqluKrXTDzC
+	5Ol0sA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvnmh8f49-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 16:45:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KGj2fV003704
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 16:45:02 GMT
+Received: from [10.48.244.93] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
+ 2024 09:45:02 -0700
+Message-ID: <bd6c0b05-fe43-4405-bce1-ad765ec6c4d3@quicinc.com>
+Date: Thu, 20 Jun 2024 09:45:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.12.4
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] string: kunit: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook
+	<keescook@chromium.org>, Andy Shevchenko <andy@kernel.org>
+CC: <linux-hardening@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240531-md-lib-string-v1-1-2738cf057d94@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240531-md-lib-string-v1-1-2738cf057d94@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4TpuorCMh3GZwf_EuqVXC_4sQCc6DPXm
+X-Proofpoint-GUID: 4TpuorCMh3GZwf_EuqVXC_4sQCc6DPXm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_08,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ adultscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 mlxlogscore=999
+ suspectscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200120
 
-The sleep calculation was not taking into account increased delay when
-the SPI device is not running at the maximum SCLK frequency.
+On 5/31/2024 4:07 PM, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/string_kunit.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/string_helpers_kunit.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  lib/string_helpers_kunit.c | 1 +
+>  lib/string_kunit.c         | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/lib/string_helpers_kunit.c b/lib/string_helpers_kunit.c
+> index f88e39fd68d6..c853046183d2 100644
+> --- a/lib/string_helpers_kunit.c
+> +++ b/lib/string_helpers_kunit.c
+> @@ -625,4 +625,5 @@ static struct kunit_suite string_helpers_test_suite = {
+>  
+>  kunit_test_suites(&string_helpers_test_suite);
+>  
+> +MODULE_DESCRIPTION("Test cases for string helpers module");
+>  MODULE_LICENSE("Dual BSD/GPL");
+> diff --git a/lib/string_kunit.c b/lib/string_kunit.c
+> index 2a812decf14b..c919e3293da6 100644
+> --- a/lib/string_kunit.c
+> +++ b/lib/string_kunit.c
+> @@ -633,4 +633,5 @@ static struct kunit_suite string_test_suite = {
+>  
+>  kunit_test_suites(&string_test_suite);
+>  
+> +MODULE_DESCRIPTION("Test cases for string functions");
+>  MODULE_LICENSE("GPL v2");
+> 
+> ---
+> base-commit: b050496579632f86ee1ef7e7501906db579f3457
+> change-id: 20240531-md-lib-string-d987d813b344
+> 
 
-Rounding down when one SCLK tick was the same as the instruction
-execution time was fine, but it rounds down too much when SCLK is
-slower. This changes the rounding to round up instead while still
-taking into account the instruction execution time so that small
-delays remain accurate.
-
-Fixes: be9070bcf670 ("spi: axi-spi-engine: fix sleep ticks calculation")
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/spi/spi-axi-spi-engine.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
-index 3231f67ae265..103a68bd4f19 100644
---- a/drivers/spi/spi-axi-spi-engine.c
-+++ b/drivers/spi/spi-axi-spi-engine.c
-@@ -169,16 +169,20 @@ static void spi_engine_gen_xfer(struct spi_engine_program *p, bool dry,
- }
- 
- static void spi_engine_gen_sleep(struct spi_engine_program *p, bool dry,
--				 int delay_ns, u32 sclk_hz)
-+				 int delay_ns, int inst_ns, u32 sclk_hz)
- {
- 	unsigned int t;
- 
--	/* negative delay indicates error, e.g. from spi_delay_to_ns() */
--	if (delay_ns <= 0)
-+	/*
-+	 * Negative delay indicates error, e.g. from spi_delay_to_ns(). And if
-+	 * delay is less that the instruction execution time, there is no need
-+	 * for an extra sleep instruction since the instruction execution time
-+	 * will already cover the required delay.
-+	 */
-+	if (delay_ns < 0 || delay_ns <= inst_ns)
- 		return;
- 
--	/* rounding down since executing the instruction adds a couple of ticks delay */
--	t = DIV_ROUND_DOWN_ULL((u64)delay_ns * sclk_hz, NSEC_PER_SEC);
-+	t = DIV_ROUND_UP_ULL((u64)(delay_ns - inst_ns) * sclk_hz, NSEC_PER_SEC);
- 	while (t) {
- 		unsigned int n = min(t, 256U);
- 
-@@ -225,10 +229,16 @@ static void spi_engine_compile_message(struct spi_message *msg, bool dry,
- 	struct spi_device *spi = msg->spi;
- 	struct spi_controller *host = spi->controller;
- 	struct spi_transfer *xfer;
--	int clk_div, new_clk_div;
-+	int clk_div, new_clk_div, inst_ns;
- 	bool keep_cs = false;
- 	u8 bits_per_word = 0;
- 
-+	/*
-+	 * Take into account instruction execution time for more accurate sleep
-+	 * times, especially when the delay is small.
-+	 */
-+	inst_ns = DIV_ROUND_UP(NSEC_PER_SEC, host->max_speed_hz);
-+
- 	clk_div = 1;
- 
- 	spi_engine_program_add_cmd(p, dry,
-@@ -257,7 +267,7 @@ static void spi_engine_compile_message(struct spi_message *msg, bool dry,
- 
- 		spi_engine_gen_xfer(p, dry, xfer);
- 		spi_engine_gen_sleep(p, dry, spi_delay_to_ns(&xfer->delay, xfer),
--				     xfer->effective_speed_hz);
-+				     inst_ns, xfer->effective_speed_hz);
- 
- 		if (xfer->cs_change) {
- 			if (list_is_last(&xfer->transfer_list, &msg->transfers)) {
-@@ -267,7 +277,7 @@ static void spi_engine_compile_message(struct spi_message *msg, bool dry,
- 					spi_engine_gen_cs(p, dry, spi, false);
- 
- 				spi_engine_gen_sleep(p, dry, spi_delay_to_ns(
--					&xfer->cs_change_delay, xfer),
-+					&xfer->cs_change_delay, xfer), inst_ns,
- 					xfer->effective_speed_hz);
- 
- 				if (!list_next_entry(xfer, transfer_list)->cs_off)
-
----
-base-commit: 3f685a501f2ee00111ce930e9a210b9eab5e759d
-change-id: 20240620-spi-axi-spi-engine-fix-sleep-time-6f0b7c147a0f
+I don't see this in linux-next yet so following up to see if anything else is
+needed to get this merged.
 
