@@ -1,143 +1,105 @@
-Return-Path: <linux-kernel+bounces-223661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7C691164F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3668691164B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 529C5282EAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:06:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9204282F79
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD3D1514F3;
-	Thu, 20 Jun 2024 23:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFE014C580;
+	Thu, 20 Jun 2024 23:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="amjSPbYL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qxjrTbV8"
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dGsfH1Gp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F671514C1;
-	Thu, 20 Jun 2024 23:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D8782D83;
+	Thu, 20 Jun 2024 23:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718924757; cv=none; b=JxIsfl2UVub7AQ4WgXZkEkI8j5kaDFm89J5NiVQSq74qs+fa765B5ouHpMFo6a4eR5rfXcZsX5352M+BiL5fET4uEUbMd4naE+zQM5SmsozGOC6FO/4z2gAoMC6FlNTxqUazvGQPI2+8FGxpxj4OOjm5UnX+eRhboFi2T0gIkFA=
+	t=1718924741; cv=none; b=ejrbX45lgDc7C5JxvicTPnxJMlAUtsLS342p7U7Z+n5acDvFbSNdCLvYHcTjE1eTlioHiXoVm0px/pHlC6cIm6Y6w985Yyi2uCKctFdq8O9CornZKBLNBE8cKS1Q7VDYIdKcfRXS0gXMBkgMqRrcxpcLOE+KeWawcDUj4JPGtRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718924757; c=relaxed/simple;
-	bh=qBeP3zKgaUNajNc5TuQI9NMG9HHbRrv9VtA7XsDn+cM=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=NbwROaLST8X/R6qvCduJEon9suYxi6IeKATZh9Ne3RJpjtFAeUVEBULwysNx6aqBk0QQ9W7iSf52p2OS17y/JB2xDK5godgu4+i3Na/IcF3GQIw7Mfplruj40zcPJ6B1uZxs+oyRko/6a4T+YC9uSrLANcChUo27CB94elrMtnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=amjSPbYL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qxjrTbV8; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 261961380091;
-	Thu, 20 Jun 2024 19:05:55 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Thu, 20 Jun 2024 19:05:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1718924755;
-	 x=1719011155; bh=lJvwRObkqepJ/eFRhDZJKsA8X9QNkeFY0zl3fB3CH4I=; b=
-	amjSPbYLTKM/oFWdZLy/Di3z6NxyLlszXB3ZBeNZRRhi4VSkA4TCFmZLboYFaAxm
-	ZTnw8+X3T66xdgF9R+EdwwHZtLl+V73itVYXtRLNsgvpM1Zd04g0OAi2zf3CP52E
-	7GMN0tPSRwQoXMsrKS9zhX9XVEJ5B2aswk8Yk0WQpUkV3VqO5U6GYU8sbJvDymyp
-	nVZK17byP5zW48YvR33KTghn93NzSxRHYWd1Fm3L2Ir6Z81QhE3DJuGB2YRG2d1D
-	dIVxXdjXu/+iFM/sJsObNKQJOecFVzTO82yM3T308KX0B6WuAuzkXlotF5qbWv25
-	MT0iefACeAPlNvDn1pSqFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718924755; x=
-	1719011155; bh=lJvwRObkqepJ/eFRhDZJKsA8X9QNkeFY0zl3fB3CH4I=; b=q
-	xjrTbV8Y0ni+q0sdR2/wZz48LCgvlvbSYhO6G17tX0iaHT7RunPTjKSRnxSMnqoE
-	hgYtkT243+DgHSbOOwPhXem4Y/ALulQKBy6GfVdZdrHOjpgx1FmDDJntt8tJW7+V
-	Dhb+qxUaLPae0VVGYxm9k3YdLqfYG0+jhMmCUyAU5OMU+yz0jXpCJ4XK4gR7TIjd
-	NiLM/oXCN7Dz35xakfVFCOItbtCDWw7pk8hERCROgwavvT7iJ5ilpf7Qh9IXG1oT
-	YF3BZl6Hj8iFksd38OjhI5gWSQ1DcF0LfkTmu66fsvypGT3hWsQHVZlHwT7E9dIo
-	dTdFql+GaQlXtOYgiGylA==
-X-ME-Sender: <xms:0rV0Zrwei8At13GjnKT69g2VROqzGGQbLepcG2Z6NczRndQopadHLA>
-    <xme:0rV0ZjQaH55kH5MzhAqBUpN-r9TT9lM-rNkdGx42vP1Ru0pE6baUHhN7H32oLAOUo
-    ITFuyEHSL47ecZeXaY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeffedgudelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:0rV0ZlU4GXy-Qh08Jpqzw3el2o6mY4J564OlimL14cSqDHrEHpYsHQ>
-    <xmx:0rV0ZljGmGiz7FbIBtKTYeIvCcJxERG0z2FG14O8B66xnOMmEo4Nog>
-    <xmx:0rV0ZtBHozD7EApxq9YHeGK_zX0tC-M5soXaB81e4txiOmSQdoGglg>
-    <xmx:0rV0ZuIPsXzD8yDgoN_nQfYi597AyD4WzXs3hUuzlfH1IZx3T4CVTQ>
-    <xmx:07V0ZvxQcD7qS6fhLOjfMn7RIol0lbIFDrYoYXicaL7Gk4pDz7rMF_E1>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1EF2136A0074; Thu, 20 Jun 2024 19:05:54 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718924741; c=relaxed/simple;
+	bh=SaOaFRr/ohEIO5+x2sHjKUAw9989Q79otM9vhPABR3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JBdkHgR1PAa7QZZJrG9d22mqZe6ThcwRYtlL8QnqJnYXjEdig8HsVSAzQtZKp0p440mJDOGIjKe+baXDwMLWyFBxCNddz3ZuF17O0BEbI1VTnpnR2BdrG0nfTc3bG3p6STuoAETTNsAcNGYc5IfWYHLVyfeDa55xOwfWoz5aQnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dGsfH1Gp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32575C2BD10;
+	Thu, 20 Jun 2024 23:05:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718924740;
+	bh=SaOaFRr/ohEIO5+x2sHjKUAw9989Q79otM9vhPABR3c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dGsfH1GpHmQGHTfZ1l4tF8Yc8IR5UiRboDTNredObqxtOQx82e5s0tzE5UQ3HRdti
+	 YEn9NRju/HM5BF130UGn7A/JtXSjes40KzIwRc9JuVBmqI+8j7E1dPyQ28nSZcPIyG
+	 TOptG9SYCZtxheOmn5MCrlB4o/pGRyWPoX1UppgceSz8O/DTcsfVNH4ydUcWt+i5IJ
+	 oqlDDSWtyhj2zce34mKlyDG9TYhoG/y5KLT8TEJYWtVuC7gL+IKxBIvHGJphOe3KMf
+	 rP0msnieHjZGex3A1fC77vPMeqWKD0e19wRR09Ly11BI6lTQHNI85BCFts6ZIC+fOW
+	 QUnaqIuN62HjA==
+Date: Fri, 21 Jun 2024 01:05:37 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Sergiu Moga <sergiu.moga@microchip.com>, 
+	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+	Doug Anderson <dianders@chromium.org>, Enric Balletbo i Serra <eballetbo@kernel.org>, 
+	Ricardo =?utf-8?Q?Ca=C3=B1uelo?= <ricardo.canuelo@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Vignesh R <vigneshr@ti.com>, 
+	Kamal Dasu <kamal.dasu@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Chris Brandt <chris.brandt@renesas.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	linux-omap@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, stable@vger.kernel.org
+Subject: Re: [PATCH 0/7] dt-bindings: i2c: few fixes and cleanups
+Message-ID: <qru4aqjphjnjpo6yjxl2oznhlz774iv77u4u7u4jldnmlanps5@vpzxntuz6arp>
+References: <20240620-dt-bindings-i2c-clean-v1-0-3a1016a95f9d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <ff6fe06d-6209-4e34-9cc8-eb516fa4ffae@app.fastmail.com>
-In-Reply-To: <ZnRtYFr5HFffyK7E@alpha.franken.de>
-References: <20240511104341.151550-1-aleksandar.rikalo@syrmia.com>
- <ZnRtYFr5HFffyK7E@alpha.franken.de>
-Date: Fri, 21 Jun 2024 00:05:32 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Aleksandar Rikalo" <aleksandar.rikalo@syrmia.com>
-Cc: "Aleksandar Rikalo" <arikalo@gmail.com>,
- "Chao-ying Fu" <cfu@wavecomp.com>,
- "Daniel Lezcano" <daniel.lezcano@linaro.org>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Greg Ungerer" <gerg@kernel.org>, "Hauke Mehrtens" <hauke@hauke-m.de>,
- "Ilya Lipnitskiy" <ilya.lipnitskiy@gmail.com>, linux-kernel@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- "Marc Zyngier" <maz@kernel.org>,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Serge Semin" <fancer.lancer@gmail.com>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Tiezhu Yang" <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v4 00/14] MIPS: Support I6500 multi-cluster configuration
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240620-dt-bindings-i2c-clean-v1-0-3a1016a95f9d@linaro.org>
 
+Cześć Krzysztof,
 
+On Thu, Jun 20, 2024 at 01:34:48PM GMT, Krzysztof Kozlowski wrote:
+> Few fixes for I2C controller schemas. The third patch (atmel,at91sam)
+> depends on first, so I suggest not splitting this into fixes branch but
+> take as is via next branch.
+> 
+> Best regards,
+> Krzysztof
+> 
+> ---
+> Krzysztof Kozlowski (7):
+>       dt-bindings: i2c: atmel,at91sam: correct path to i2c-controller schema
+>       dt-bindings: i2c: google,cros-ec-i2c-tunnel: correct path to i2c-controller schema
 
-=E5=9C=A82024=E5=B9=B46=E6=9C=8820=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
-=8D=886:56=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
-> On Sat, May 11, 2024 at 12:43:27PM +0200, Aleksandar Rikalo wrote:
->> Taken from Paul Burton MIPS repo with minor changes from Chao-ying Fu.
->> Tested with 64r6el_defconfig on Boston board in 2 cluster/2 VPU and
->> 1 cluster/4 VPU configurations.
->
-> which existing CPUs can use this ?
+merged to i2c/i2c-host-fixes
 
-Besides Boston are some multi cluster I6500 systems in wild, including F=
-ungible F1,
-which comes with 52 cores in data panel.
+>       dt-bindings: i2c: atmel,at91sam: drop unneeded address/size-cells
+>       dt-bindings: i2c: nvidia,tegra20: drop unneeded address/size-cells
+>       dt-bindings: i2c: samsung,s3c2410: drop unneeded address/size-cells
+>       dt-bindings: i2c: ti,omap4: reference i2c-controller.yaml schema
+>       dt-bindings: i2c: adjust indentation in DTS example to coding style
 
-Those vendors show no interest on mainline kernel support though.
+merged to i2c/i2c-host
 
->
-> Thomas.
->
-> --=20
-> Crap can work. Given enough thrust pigs will fly, but it's not necessa=
-rily a
-> good idea.                                                [ RFC1925, 2=
-.3 ]
-
---=20
-- Jiaxun
+Thanks,
+Andi
 
