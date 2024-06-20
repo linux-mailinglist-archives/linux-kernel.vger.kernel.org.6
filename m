@@ -1,120 +1,113 @@
-Return-Path: <linux-kernel+bounces-222330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 028F390FFC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:00:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF74590FFCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FC04281ECA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:00:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D7B91C21BAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CE719DF7B;
-	Thu, 20 Jun 2024 09:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44ABB19DF88;
+	Thu, 20 Jun 2024 09:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="RXdVMOvU"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XnLui9VW"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C4E46426;
-	Thu, 20 Jun 2024 09:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206B9159571
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718874033; cv=none; b=lb4ny+eCn81vHTMbd8xZCV13hLIg6h1XBBs/PWNZNiG1/Omq5Xyji/XgYSsV4nlgUSlvzccUcPgJ+KC22n0ohWWnBXzHmQW4S9o3aPQREjOK+50v+alw4CIJ2igL2423Vb+/POKKlCgQuw3BNIlS6K2lkD8odTVGmBc90MY5NOc=
+	t=1718874078; cv=none; b=A4Hvo4bYGY/FXWsLel37kbqHPw6HzBP4Gr1xL3GpkMF2LGAhidFbWuT8XpSRv6G+BHL8uMVK51BCnV5kMgYjchvBf0n+hfmIKGNV2We70Snixs7y9mp1BlSk/Hsh1CwCzcWBABHoaxwMk2dVY0RNfCgy24O9FT6n44nyxrW8UKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718874033; c=relaxed/simple;
-	bh=WUzxI6t79r6gnwI4tifBVLKDeA34ObvBVLljTtoAA/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tb2jX0sSA208qgAL8zA7vTKQ/LKqmoHSyihrjSJKO/45RAJ4iqYl3hWc8lIYvefJWvFPoed49NN5Ca5wxGJtC0SOR99PdMkwMTq/V6e6U86h3Jx1gkz1Py7YSNbQ000kY03MLPbyll4vYmkW6yRpXZfq5/a3ARtg4OstURU79s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=RXdVMOvU; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=p8Vz3ZIFAxJUslr3jeGWvyTGoo/lwPYvqRqFu8M667M=; t=1718874032;
-	x=1719306032; b=RXdVMOvUnogl1XlzQhXs8C4xB9Jyy9R8ax5vAVMf/jH9Mgcj/jypoczbXG0Y/
-	zvspr51rfNj5wIh1cbmPuhdFfNhWPlTybdG4cxAGZPJgqw3WWuNhCkh8SfPMGeGWLT9S7SruwkPli
-	vpI+m13aIdKNWxYDThPhL8OQUYiQFBi7C/FwHFH/VSLFSQbhKdJHrNF0m401OzkjGCw+hF/BAqLi5
-	RMkeJl+HmBImMBB7R2TWPQF71AfJh8i5dldqYvq6vX4SfBjEvkGYV88cghss+ZTvBtmVeSlNGFxg8
-	QpRSMqhax4+I/ej0Szl4XyUTSDyEyCAYF/av+iwzLYD0+OKJVw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sKDef-0007yq-CM; Thu, 20 Jun 2024 11:00:29 +0200
-Message-ID: <eeade9cf-d30d-4c7a-ab42-97b9459268d0@leemhuis.info>
-Date: Thu, 20 Jun 2024 11:00:28 +0200
+	s=arc-20240116; t=1718874078; c=relaxed/simple;
+	bh=wvjuFU7W414jubVBbYupAK//Gvt1g9N5iqVrvVU/lM8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kFDTyCDG8T+v7plhjxNAWr34XwZWPC1jmxUHuAUKdnXxOBavtkmyazlviIbsFT80UMl04Y90IVL8ln0pMWkojPtOXTkCf0N1XoDrFfjBbfrvqnVcSFwCSFV4YjI/60cyZdt4E1E5aDX4vlfAEJvanDa2W44D+5/TIUJupzHoAcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XnLui9VW; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-24c9f892aeaso344414fac.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 02:01:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718874076; x=1719478876; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wvjuFU7W414jubVBbYupAK//Gvt1g9N5iqVrvVU/lM8=;
+        b=XnLui9VWTe1N11xn3OXvZYAM3HMsKklvlHKph5Ei28zTpbjcPSOqxbilJ84OARqbnK
+         2IToaYZFHnFBA1q+K236pT3qjBCBAMttuXkpTg/a/MDI6KIv1it1QrlwOAxWEuzl+ZyL
+         C2PBhXyQbBWyS+L41HcJI4U5pQSZQ7GOlGsHGjOX1DAkUm7TmiJ6rTCYpawcUgCuTfEB
+         1KkFuPf5PS3f3+Ra+oqIij/s59mRY5AhQXQlWxY8JfHXDbh9c9RugimCQmlnhzBPkB4d
+         44SY6dhutzp+MtfR238JdYjzuqCWBHqVXoMuBi2m6YmNcwUmb/iTUh2zrgAHhL5Lse/I
+         h4Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718874076; x=1719478876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wvjuFU7W414jubVBbYupAK//Gvt1g9N5iqVrvVU/lM8=;
+        b=qr/38nyNJ58c5/WPvsY6YMAd1+svvOmLVT+Q9Q6rhE4iEdocP7UbGS0ZLWOPFY1jWC
+         QhlPQDI9FO8rNozgWhv3ZjycZUYUtF2IS/w2p1u/Ma2qypbLL2iTjnSyKJnyqILxpPda
+         +w3+WUnVS/nHmkveaHq3T+wv/zLA36cHO9+4IGyxEbNrrlPvjlgEQv4254AvwaA10uUF
+         9gIHjP2IiVLsFsObq/EktTIQNMLmUM2su4R1tPc9hXfxKj55lJIFtyc7V8Z+0lR5chDd
+         olZbImGLydE8FnYbd1QEAkqA3VyEBFiECcWe/Gn9TaR66Mls/+icfOHTrXF13Q3jGQI9
+         7zWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcHDmmzkq1F/mvkVYTo7mNWEdKiDWBQcmdD16hh7o1wJLl6DkI2AkaDjkw12s3ty1fozgBvaYWq5mwd3De51rD7qYzyjF3f8qVm8N1
+X-Gm-Message-State: AOJu0YzkeKOMTtUloL93Z8XC+Jng/BqJgJ71LCCfZav4WFgXWit+/SiU
+	A1mjpTD7+bOGluheP10iUGz04ZLkzlFjrQdL79sgLOCwbU4ZslylQmfSIUv2ACdpy2j4KPVLl+a
+	iwuLvkC1uxzN5GSMqOCAoFzSegu6VxWkgJ3fC
+X-Google-Smtp-Source: AGHT+IEdmrRM4Gbu+d4I3hoRKq+4aL4Fg6hfbxGg0ziYrJZB/rZ9bgxi2fl+hGtqtzvIL6W2TRHW+Qf+Zm5AY3puluQ=
+X-Received: by 2002:a05:6870:3a0f:b0:259:f03c:4e91 with SMTP id
+ 586e51a60fabf-25c949cd968mr4093311fac.8.1718874075898; Thu, 20 Jun 2024
+ 02:01:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: verify/bisect: Fix rendered version URL
-To: Diederik de Haas <didi.debian@cknow.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240620081355.11549-1-didi.debian@cknow.org>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: en-US, de-DE
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <20240620081355.11549-1-didi.debian@cknow.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1718874032;4585ba94;
-X-HE-SMSGID: 1sKDef-0007yq-CM
+References: <20240619154530.163232-1-iii@linux.ibm.com> <20240619154530.163232-18-iii@linux.ibm.com>
+In-Reply-To: <20240619154530.163232-18-iii@linux.ibm.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Thu, 20 Jun 2024 11:00:39 +0200
+Message-ID: <CAG_fn=VbO5m18MU6v4-YCbC03dBuBGBRTzi7sEvZCL6vSDG=9w@mail.gmail.com>
+Subject: Re: [PATCH v5 17/37] mm: slub: Disable KMSAN when checking the
+ padding bytes
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Pekka Enberg <penberg@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Sven Schnelle <svens@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 20.06.24 10:13, Diederik de Haas wrote:
-> -   https://docs.kernel.org/admin-guide/verify-bugs-and-bisect-regressions.rst.html
-> +   https://docs.kernel.org/admin-guide/verify-bugs-and-bisect-regressions.html
-
-Many thx.
-
-Reviewed-by: Thorsten Leemhuis <linux@leemhuis.info>
-
-Ciao, Thorsten
+On Wed, Jun 19, 2024 at 5:45=E2=80=AFPM Ilya Leoshkevich <iii@linux.ibm.com=
+> wrote:
+>
+> Even though the KMSAN warnings generated by memchr_inv() are suppressed
+> by metadata_access_enable(), its return value may still be poisoned.
+>
+> The reason is that the last iteration of memchr_inv() returns
+> `*start !=3D value ? start : NULL`, where *start is poisoned. Because of
+> this, somewhat counterintuitively, the shadow value computed by
+> visitSelectInst() is equal to `(uintptr_t)start`.
+>
+> One possibility to fix this, since the intention behind guarding
+> memchr_inv() behind metadata_access_enable() is to touch poisoned
+> metadata without triggering KMSAN, is to unpoison its return value.
+> However, this approach is too fragile. So simply disable the KMSAN
+> checks in the respective functions.
+>
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
 
