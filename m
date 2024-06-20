@@ -1,216 +1,160 @@
-Return-Path: <linux-kernel+bounces-223554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28FB9114C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:38:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35289114C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86DB8283625
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:38:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8859FB219B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D6674BF0;
-	Thu, 20 Jun 2024 21:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6667602B;
+	Thu, 20 Jun 2024 21:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g9UpyW1B"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xf6bmuRc"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF68C7602B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98B574BF0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718919523; cv=none; b=fUZ4bBXgqc73UrDk0FOMFn/+RoCeFCTatlyDM9edmedM3POLI8+mhPHYNiYw4wJeF4njhuvR8XTY78di+BOmm12naXmu+VZhgiu56zUAd1ZFw9CY1vzTMF5fluffVHCPYnoMV1ecOfSXjS3LKTYykTF7ygmcL1R0Xur63fp/PHM=
+	t=1718919540; cv=none; b=G+1Bl9fqSTkWtKdKZ4QVIbV/UJI/t9WQVdGNTvMBR+ajeMVloG04y+RLsOv36NRoNuqgb9OPKHeHle+JiVY+2ShZ01uAa+/oRoA9s2QXmhyQa9e8VQAWFJDeGlZ/FVbDeRpW/gKzWon8saRQpmdpopyTi7vyd4r0cV6yZj7J6rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718919523; c=relaxed/simple;
-	bh=rqttPFpgpdaPfltUEIWArBxugu0a4VlOcZsClzfwyYY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BybDA6H6YGwXMrcJtxTPNF2en8uxvYhiB54It424IIU39ID4CUX/g57rTEhnUPyQiF1Dx8hDfk1VsavROyN3I2VKer6Zv+Asjm7MSHMIZ/U8sP0+xRtK4c64uxN/ldXDPfxkV7hejqJV3x1avbv0q/OXLPGdsXFyjNLJHgPcaUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g9UpyW1B; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718919519;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P7aMkAmRZxTuVx1sGr/rCjZ2e5+4RAngXxQuvmrxA14=;
-	b=g9UpyW1BS+LA6Td0D56v3C9mWDrMpoH2o8+5n+PRGrHlYC/FMjJjHBN00dQ+ML2DzA3hFB
-	CVZPQl9DKhQBwZrHzW9uPn4Ka81+RWmRD9QY92cLjOr6hLoWzu3Pl4yPBv6zTsKu0B5jqG
-	WCC7KsnNCPntxG7W3Ms2HQUX92VAkWI=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-436-JLlvXH4gMqy5EelBsp6e3g-1; Thu, 20 Jun 2024 17:38:38 -0400
-X-MC-Unique: JLlvXH4gMqy5EelBsp6e3g-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-362a0c1041dso657055f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:38:37 -0700 (PDT)
+	s=arc-20240116; t=1718919540; c=relaxed/simple;
+	bh=R+gP8GWTKEf6vW2sVTmz7saJ84W+0KRqig3G9hZeYTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gC6AKrSnIzM3FXfboSiHq0bRp3Hnr4VriND7x+pyZW5Dv7opqaNVg+8cb1L9tZKgjnOn9nKRyGyW0/JlB5LgCjTpPUuPurM20YJtR+gHgNp5rhMSt49gCP1yIJ+7/XH8tQJk+S+E6UqfnoltyzTtU2I3nhbniaiKYpzq3qqSJ6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xf6bmuRc; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so16565351fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:38:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718919537; x=1719524337; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A9KCIXUhFa5F6js3PXOw4A1bh3KoXXlrj5hfzxoF/A0=;
+        b=Xf6bmuRcIBSs6UIqrNKcuq6P1dkrjnFFEEe3i1cW2OADRLdsH+CnUKg3he6BG3fMAL
+         owLPQ8VqHXKBH8STQfZwQ/NgPSHEQsHBBb69E76Pel9XIboU0ls1aNSsnkiMNy9hyWg/
+         syOltxdCh7IYypo88M0X88oYisqlBQwde7eWQHLVMHgKDHf1+goUOOthqayXVzI4E/5x
+         3jKgDvf+SR+DwccenD+JohCVgk7ZKBqpphNpmYQ4D/xtJgoiXtzuUMSABNA+2mAjMe+R
+         AymCQ2tyzPzkVo3k2z0VfD0h682YGNWrYTPTejVaI3kD0XI+I9BR7PzuAEboxPGMoXHt
+         pXtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718919516; x=1719524316;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P7aMkAmRZxTuVx1sGr/rCjZ2e5+4RAngXxQuvmrxA14=;
-        b=vM79KJiTp4mk0u+ScfiBetaGLryXhtatqpHdpAsdEhe2TuKiD0xBghqBRoO8wptO0i
-         kxxXI4PwXPr0EIeESKZY4uGiFG9c7eQgjKAIDzN5lQFodVCSR8eXxrYk4AcHt5xHJRod
-         4JU9iNNbq2UZ9CaxdKGaahG93ZNlKS2b1yNnozr+0wLDln+joNKUCzRx3ZNVPrYKyeTb
-         XUdQ/dYcspmzmqN5KVEXF9/Ye7buWiJPg/tuynTenJ9amcVggxQV9mkHGIGI38h6tjQF
-         +9qzX3lsGHufk2jcSfRL9Ilr2186Ts1SfrqVpW/Jccayrgc/Q/p771x6QtRif82P2xa6
-         TXsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwbNhl4ZRwuC1U2mpgePv+IEvCPeeDtQDB8lTJRokyX6kVec8Q4UbF+/GcmDvlymoIZ09p9CM8/W13bCGnG+ImfEK80sB+TU5+mPkD
-X-Gm-Message-State: AOJu0YzeUQcWzwslGIO0I4V2KDWJ9FDSz58+kbJJ3Y0Rv2CILYVxnXkX
-	+QE3FrVXclFJnzZs1Kk0hWAN7uKvmwmCDeUUhGeCXzaVExWu1hH2/9Kej7z8wnvJjLz+uMnrkNK
-	jts/+cfY2lZcKm/DX0HknBg4NpsXKwOYs0AN0Wz6Bh53AoFUmzo9+iYcDxAHfsAjZZ0LfhbL83e
-	hv3c5+/WIBG5S9yV//hAGi56QhJk9i5Ax1y0L0tf2ji1XX
-X-Received: by 2002:adf:a1c3:0:b0:35f:1d3c:4084 with SMTP id ffacd0b85a97d-363175b8117mr5214929f8f.25.1718919516016;
-        Thu, 20 Jun 2024 14:38:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHeszHwlXgdEM1NO99w4ms9jc7VT304ZceaMczZNwXUGQLu/wTYm3HMYNQYukZIoWZJZLO79yyRTjGY+fKY3Bw=
-X-Received: by 2002:adf:a1c3:0:b0:35f:1d3c:4084 with SMTP id
- ffacd0b85a97d-363175b8117mr5214921f8f.25.1718919515666; Thu, 20 Jun 2024
- 14:38:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718919537; x=1719524337;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A9KCIXUhFa5F6js3PXOw4A1bh3KoXXlrj5hfzxoF/A0=;
+        b=JGMvGQt9xbylEBTaZ0pggKuIoJjxMOhlUqN9Evb4AD/1sTeAeTpZcQXNj+BlomkPKh
+         eWO3t22aaK/mDdJYzcwjdQe8RYsNkBJ733DhPRh+K25R7pDVdAK2hJOD4KqfGYxTq2CX
+         CfsRzv/CP9/2w3Ij/pLdqxmUGAjXPRZPVvWJ7ceu616dvnp2DDphCsoEOBFqblHyb0xM
+         KzVTVaShOb/JBUtR2MAC9ELhoD5bW7+aBcW+Av34Vol2uo3sk6SDvgPSq0dG4Sv0jajG
+         8mhh8RmM4RYSGV9WPrq4QjN28hAaUiMZ+Xutpj+xP6rWKYMgm11A/1+z4t1APn6wwSRo
+         AH9w==
+X-Forwarded-Encrypted: i=1; AJvYcCV0LDpo3+Kl8LjvvExHa2Bss++vntkJUiL3zYkee5OOHFvBJD5LeooYSx9sJgQALUfWK7SpwmUiRn9FUiZB+Cgb8JeAte1Mgm+XkweZ
+X-Gm-Message-State: AOJu0Yyv9ESCI3o9ZI0XVn5aktcT3/If73ylP+5yAAJDzTxYhwGqmcRQ
+	lD0nZk7OaX9aTzOnVfWWr4d1edp2giB784oWJX719JgmUrY1qz74Yqg10p35PXg=
+X-Google-Smtp-Source: AGHT+IHiMxxgvNQOz2qJ9dqor7EtzwDmQRBfBf4gn70dlQm9/1P3yzhIJXB4quhP1LKkp/I04wrZuA==
+X-Received: by 2002:a2e:914b:0:b0:2ec:1c9:badb with SMTP id 38308e7fff4ca-2ec3ce7dcd8mr44568761fa.9.1718919537058;
+        Thu, 20 Jun 2024 14:38:57 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d7090f2sm319011fa.56.2024.06.20.14.38.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 14:38:56 -0700 (PDT)
+Date: Fri, 21 Jun 2024 00:38:55 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Komal Bajaj <quic_kbajaj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Melody Olvera <quic_molvera@quicinc.com>
+Subject: Re: [PATCH v3 2/4] remoteproc: qcom: q6v5: Add support for q6 rmb
+ registers
+Message-ID: <o6aqjxyinwowtexwsucavwfqylx3wv3sihxvla442kskzqprbr@37rfxxzwsolg>
+References: <20240620120143.12375-1-quic_kbajaj@quicinc.com>
+ <20240620120143.12375-3-quic_kbajaj@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614234607.1405974-1-seanjc@google.com>
-In-Reply-To: <20240614234607.1405974-1-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 20 Jun 2024 23:38:24 +0200
-Message-ID: <CABgObfamcK6x4+ZihsNN7q8OCww4MC1i8J-L+B=q7bth1Oimbg@mail.gmail.com>
-Subject: Re: [kvm-unit-tests GIT PULL] x86: Fixes, cleanups, and new tests
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620120143.12375-3-quic_kbajaj@quicinc.com>
 
-On Sat, Jun 15, 2024 at 1:46=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> Please pull a smattering of x86 changes, most of which have been sitting =
-around
-> on-list for quite some time.  There are still quite a few KUT x86 series =
-that
-> want attention, but they are all quite large and exceeded what little rev=
-iew
-> time I have for KUT :-/
+On Thu, Jun 20, 2024 at 05:31:41PM GMT, Komal Bajaj wrote:
+> From: Melody Olvera <quic_molvera@quicinc.com>
+> 
+> When attaching a running Q6, the remoteproc driver needs a way
+> to communicate with the Q6 using rmb registers, so allow the
+> rmb register to be gotten from the device tree if present.
 
-Pulled, thanks.
+rmb or RMB? And what is it?
 
-Paolo
+> 
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+> ---
+>  drivers/remoteproc/qcom_q6v5.h     | 8 ++++++++
+>  drivers/remoteproc/qcom_q6v5_pas.c | 4 ++++
+>  2 files changed, 12 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
+> index 5a859c41896e..95824d5b64ce 100644
+> --- a/drivers/remoteproc/qcom_q6v5.h
+> +++ b/drivers/remoteproc/qcom_q6v5.h
+> @@ -7,6 +7,12 @@
+>  #include <linux/completion.h>
+>  #include <linux/soc/qcom/qcom_aoss.h>
+> 
+> +#define RMB_BOOT_WAIT_REG 0x8
+> +#define RMB_BOOT_CONT_REG 0xC
+> +#define RMB_Q6_BOOT_STATUS_REG 0x10
+> +
+> +#define RMB_POLL_MAX_TIMES 250
+> +
+>  struct icc_path;
+>  struct rproc;
+>  struct qcom_smem_stat;
+> @@ -16,6 +22,8 @@ struct qcom_q6v5 {
+>  	struct device *dev;
+>  	struct rproc *rproc;
+> 
+> +	void __iomem *rmb_base;
+> +
 
-> Note, the posted interrupt test fails due to KVM bugs, patches posted:
-> https://lore.kernel.org/all/20240607172609.3205077-1-seanjc@google.com
->
-> The following changes since commit a68956b3fb6f5f308822b20ce0ff8e02db1f73=
-75:
->
->   gitlab-ci: Always save artifacts (2024-06-05 12:49:58 +0200)
->
-> are available in the Git repository at:
->
->   https://github.com/kvm-x86/kvm-unit-tests.git tags/kvm-x86-2024.06.14
->
-> for you to fetch changes up to ee1d79c3f0f871bf78f20930cb1a2441f28ac027:
->
->   nVMX: Verify KVM actually loads the value in HOST_PAT into the PAT MSR =
-(2024-06-11 06:41:23 -0700)
->
-> ----------------------------------------------------------------
-> x86 fixes, cleanups, and new testcases:
->
->  - Add a testcase to verify that KVM doesn't inject a triple fault (or an=
-y
->    other "error") if a nested VM is run with an EP4TA pointing MMIO.
->
->  - Play nice with CR4.CET in test_vmxon_bad_cr()
->
->  - Force emulation when testing MSR_IA32_FLUSH_CMD to workaround an issue=
- where
->    Skylake CPUs don't follow the architecturally defined behavior, and so=
- that
->    the test doesn't break if/when new bits are supported by future CPUs.
->
->  - Rework the async #PF test to support IRQ-based page-ready notification=
-s.
->
->  - Fix a variety of issues related to adaptive PEBS.
->
->  - Add several nested VMX tests for virtual interrupt delivery and posted
->    interrupts.
->
->  - Ensure PAT is loaded with the default value after the nVMX PAT tests
->    (failure to do so was causing tests to fail due to all memory being UC=
-).
->
->  - Misc cleanups.
->
-> ----------------------------------------------------------------
-> Alejandro Jimenez (1):
->       x86: vmexit: Allow IPI test to be accelerated by SVM AVIC
->
-> Dan Wu (1):
->       x86/asyncpf: Update async page fault test for IRQ-based "page ready=
-"
->
-> Jack Wang (1):
->       x86/msr: Fix typo in output SMR
->
-> Jim Mattson (1):
->       nVMX: Enable x2APIC mode for virtual-interrupt delivery tests
->
-> Marc Orr (3):
->       nVMX: test nested "virtual-interrupt delivery"
->       nVMX: test nested EOI virtualization
->       nVMX: add self-IPI tests to vmx_basic_vid_test
->
-> Mingwei Zhang (3):
->       x86: Add FEP support on read/write register instructions
->       x86: msr: testing MSR_IA32_FLUSH_CMD reserved bits only in KVM emul=
-ation
->       x86/pmu: Clear mask in PMI handler to allow delivering subsequent P=
-MIs
->
-> Oliver Upton (1):
->       nVMX: add test for posted interrupts
->
-> Sean Christopherson (9):
->       nVMX: Use helpers to check for WB memtype and 4-level EPT support
->       nVMX: Use setup_dummy_ept() to configure EPT for test_ept_eptp() te=
-st
->       nVMX: Add a testcase for running L2 with EP4TA that points at MMIO
->       x86/pmu: Enable PEBS on fixed counters iff baseline PEBS is support
->       x86/pmu: Iterate over adaptive PEBS flag combinations
->       x86/pmu: Test adaptive PEBS without any adaptive counters
->       x86/pmu: Add a PEBS test to verify the host LBRs aren't leaked to t=
-he guest
->       nVMX: Ensure host's PAT is loaded at the end of all VMX tests
->       nVMX: Verify KVM actually loads the value in HOST_PAT into the PAT =
-MSR
->
-> Yang Weijiang (3):
->       nVMX: Exclude CR4.CET from the test_vmxon_bad_cr()
->       nVMX: Rename union vmx_basic and related global variable
->       nVMX: Introduce new vmx_basic MSR feature bit for vmx tests
->
->  lib/x86/apic.h       |   5 +
->  lib/x86/asm/bitops.h |   8 +
->  lib/x86/desc.h       |  30 +++-
->  lib/x86/pmu.h        |   6 +-
->  lib/x86/processor.h  |  24 ++-
->  x86/asyncpf.c        | 154 ++++++++++------
->  x86/msr.c            |  23 ++-
->  x86/pmu.c            |   1 +
->  x86/pmu_pebs.c       | 110 +++++++-----
->  x86/unittests.cfg    |  19 +-
->  x86/vmx.c            |  50 +++---
->  x86/vmx.h            |   7 +-
->  x86/vmx_tests.c      | 497 +++++++++++++++++++++++++++++++++++++++++++++=
-+++---
->  13 files changed, 755 insertions(+), 179 deletions(-)
->
+Why is this a part of the common structure and is not a part of the _pas
+struct?
 
+>  	struct qcom_smem_state *state;
+>  	struct qmp *qmp;
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 8458bcfe9e19..b9759f6b2283 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -770,6 +770,10 @@ static int adsp_probe(struct platform_device *pdev)
+>  		goto free_rproc;
+>  	adsp->proxy_pd_count = ret;
+> 
+> +	adsp->q6v5.rmb_base = devm_platform_ioremap_resource_byname(pdev, "rmb");
+> +	if (IS_ERR(adsp->q6v5.rmb_base))
+> +		adsp->q6v5.rmb_base = NULL;
+> +
+>  	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem, desc->load_state,
+>  			     qcom_pas_handover);
+>  	if (ret)
+> --
+> 2.42.0
+> 
+
+-- 
+With best wishes
+Dmitry
 
