@@ -1,410 +1,467 @@
-Return-Path: <linux-kernel+bounces-223626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC5419115B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:25:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A4929115B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:27:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773B11F226CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:25:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F26283EFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17C5139CE5;
-	Thu, 20 Jun 2024 22:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6F913CF82;
+	Thu, 20 Jun 2024 22:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="E6GllXk/"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2040.outbound.protection.outlook.com [40.107.94.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PlN4QvvM"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0A314F9EE
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718922255; cv=fail; b=MYemTxOmpCIbqJc7qXTLJtTPYUkvC0GiVyt04YIqTe4C+i3Mxr8kdF26Xne87RSRuLDDYS5RB6ZFfJf0+NwDeUQVDA65QnlUG+sUa/2AqwvyOJVrkYOaD3JZCQxMRzYhU16ZfzgM8VgCdpWQu7qVme38iZVu5vFBY0uD8z1QGfs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718922255; c=relaxed/simple;
-	bh=//X+ceCgmDZ9pDa+fSwMI67J6zWoEq/kcKyPK8d7DGI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UI27ovJxE9sd2m0GKGc+bsIldYtSJCeHQ19lbU9kbAODyal57w9vESDRTd7TtO6DA0/M1NLS/kdAf7dxRkSe73fX1Wjm0P11ES+Z3Q+kbC1MenOQpHkwWaUz2SXXJzL/Dpm3CQwqPEth9jw55z8MHveqi2qyJK95j960MxGqQ+0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=E6GllXk/; arc=fail smtp.client-ip=40.107.94.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZBdWoil/qRPx2hKkS8eIO+rPrVWufUwqgEhOffw6ttl0HOcwwgvTPComJt0Km5EuZeaPL7ULMRgrEDpSrW8mkaiCTnHZ2LmDcnr7YRDSQqG3bY/XxkNyPFX15614MMyfslRh5P/fCLlgLJauoRa5sdoSL4hf/9NtUt2Y8S4AZ4aV51cnUzN5Y/G06vsLyOSCAInAzLkPWesknOmj1zKCNaLx3umJnaqlZpZklQpujMi1YB/kWNYSNHunpLM7gm1JOhgapotK/uWmts9UKaVVINklmafAG/bgVrMq4n7kZcBHNt6Z125p3LIK3/QWtWTPoyKR4YrpYSBErgViIrtCsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2J+bxF4RMF54exgJCXjn4Sm2+fnJVGvuauyYNYQGI/w=;
- b=PKR7zUBHceCE9qIRiS8N7Nd1Q1SE9bm0K/HlVvysR2EfHm3Bapy1SQesmtsIMSDlW4tPfhP4zIbOC71QEakdt2eqRkmfpsF8kEsv80BsqfLUra6ywJgy84bHOzAqLpLxfcYAcrd3kq3/g/vXwQV5m7yNxheLNi3slL5oU4EvLg9wAYXicw2UZ/4D/Xloy5fqaP/iEywaA6yut9ffv4bPDhCc7xaFIc0zkYjrf9gi7eoBFOf/Ib0p3u2eqBu8j9G400IFuk8N1ukK3tyKq/r1/UmRG1g9jTmsah36mP/AeGM9QxdfzOmPTUzPMkFDW0hI0X1avpxiZhSqvHHDCvMt5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2J+bxF4RMF54exgJCXjn4Sm2+fnJVGvuauyYNYQGI/w=;
- b=E6GllXk/VshSdZflQuD0Ki7nQqJtCuasI1T057XfHa9iovCQs34vDW0khJG4eBqMuelKWHl/oylNZCDYKvBXESxeXEdpKt3W4RfYjeKnXO6bGDC7vrFZFHWPfCvBNPpOTFssoYsB2Q+y47LpKUTC9cUkPB9fxPDrO53RUoLrSJo=
-Received: from CH0PR04CA0055.namprd04.prod.outlook.com (2603:10b6:610:77::30)
- by IA1PR12MB6578.namprd12.prod.outlook.com (2603:10b6:208:3a2::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Thu, 20 Jun
- 2024 22:24:09 +0000
-Received: from CH1PEPF0000AD78.namprd04.prod.outlook.com
- (2603:10b6:610:77:cafe::4) by CH0PR04CA0055.outlook.office365.com
- (2603:10b6:610:77::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.33 via Frontend
- Transport; Thu, 20 Jun 2024 22:24:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000AD78.mail.protection.outlook.com (10.167.244.56) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Thu, 20 Jun 2024 22:24:09 +0000
-Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Jun
- 2024 17:24:08 -0500
-From: Ashish Kalra <Ashish.Kalra@amd.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>
-CC: <rafael@kernel.org>, <hpa@zytor.com>, <peterz@infradead.org>,
-	<adrian.hunter@intel.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	<jun.nakajima@intel.com>, <rick.p.edgecombe@intel.com>,
-	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <seanjc@google.com>,
-	<kai.huang@intel.com>, <bhe@redhat.com>, <kirill.shutemov@linux.intel.com>,
-	<bdas@redhat.com>, <vkuznets@redhat.com>, <dionnaglaze@google.com>,
-	<anisinha@redhat.com>, <jroedel@suse.de>, <ardb@kernel.org>,
-	<dyoung@redhat.com>, <kexec@lists.infradead.org>,
-	<linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v9 3/3] x86/snp: Convert shared memory back to private on kexec
-Date: Thu, 20 Jun 2024 22:23:59 +0000
-Message-ID: <f6c0ddfd15579674bc234d6e1b84e92768531050.1718920799.git.ashish.kalra@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1718920799.git.ashish.kalra@amd.com>
-References: <20240614095904.1345461-1-kirill.shutemov@linux.intel.com> <cover.1718920799.git.ashish.kalra@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265B14D8BA
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718922412; cv=none; b=t5XEvD84go6lW5p2Jd0iL5xm0gaA1GD/eOpSRPGRIPIPjniO4hohHAevm0qsZRICjvjlsghBW8GEWkTsxM7Jk7rf4YOV9hdbOvOLLylqBmg4eyyjShIM6MvabhOGRmMK0Sz3wK9w6H2VCU3U1HrI5okUImDSKuHTVfnaehH0KrU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718922412; c=relaxed/simple;
+	bh=FvUHI+VUbK9QvsBm0bUl9KFIjIfQs/TyEdHPFXxDj4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CadambhQ4NbUyLuc8YdWqy+4+VBKTkY4iwxFdZiRoLyLHC0FAm19szhK8LWZ57LrwcDbTUhYbCobrhyS4XP8KXd9fE676qTvKGnX62r7EFpdmn7mVJmHDGQ57gxSEzQ5RH6QEzeynLvP6032arOoXtmUNzJU7veWebMpm6REKZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PlN4QvvM; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4405dffca81so31121cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:26:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718922410; x=1719527210; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sTQciniatudASSh/6rh//JH84EfR5Y6t7KHyoww6Cck=;
+        b=PlN4QvvMvblvlHfu7LUodGSgCa1iMRiHyyodFjBDqguxTjWdTEi5XzGB5pMfqeQyZ0
+         IsV91VWIIMjgfW5rPF3ScXVIdZti7Ixsv3N14EPGCwGWlNyoEiOpjt+EI3BxQwFf842k
+         7cUVYqHVcp9HpcFjqpZoSa0aCslyYPB8y3V7SbvF/+vEi8eBr+jPxQ/ZhBNpvsXppwkI
+         g49UD0H9BNTN4PwcDUf0BcSerEpiYikz6E4cvBKP8qQy9UnFqytzu4mvwiw0uMZmZb/k
+         jPB4XRI8gaVaCglDDntHTXpWKVDw9aHn8f1GncbuoXZebFWI9GcnraBbHbA24doe0lXm
+         +aZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718922410; x=1719527210;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sTQciniatudASSh/6rh//JH84EfR5Y6t7KHyoww6Cck=;
+        b=bbeiiKm8CMj+3ffIGYxQQNfuLJCDHyDf5JBYZdF0GERd2qeizdS17YXhxl0KND5ifB
+         a4NKFSGEToQSLPaHDiY7U1OKDOdnRpY1f0czvsz265taj5AwAeWCVGeYNy7QNHAR9rFg
+         nftrWgABfE6YiM4mCcEdu1cvpeaHmTQadCNNixQ9Wx/A1rYV2AeINKYV6HHL0kCqEEEn
+         XP6ExY6p3fCoHjFbg9DUOlyKFg7JC3gz6Y53wXwjeAPMsko3+Pjw/0+MoH4gfgELYFye
+         awq/eRzxImN79UHwmlnjFc7BGFIpvpmoQf7ly8r1n5UEb7oTHyIsCrlJlXgrNltpejzy
+         zjYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxF9dzudva3atAy4VRUZ4pBshMD9hoDz7iAzLMaILawJgqIYrCD8TziCaZm1AD5tqM/83ceNoDVZB6SYPF8yr0OFGPUZwKIrnRpCUy
+X-Gm-Message-State: AOJu0YzBo2Vdrg62AzJ00WPmZqq2iYyQSo5SFKEgRbf2FMUlhrOGsukv
+	xv76QWfo/gTgaZvOe6NcZJKozaF+zmq+lUXpbl0SURFZww00IT8KDZvPm9TrqS1zgeAaRJ9hH5b
+	9Wn2uiysT+wf8KtXK1iLdB9jxs/pPmCKq00HE
+X-Google-Smtp-Source: AGHT+IHP9NqnX7jOV5DLU9ldDrGPi2k69+82XFA4dAlwWgh6EoZ6XzZ1TesibjCtk0IQ1Tgx25DCvYwEcrFNPq1ySxY=
+X-Received: by 2002:a05:622a:14c7:b0:440:3996:84aa with SMTP id
+ d75a77b69052e-444c35dcf49mr458631cf.15.1718922409979; Thu, 20 Jun 2024
+ 15:26:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD78:EE_|IA1PR12MB6578:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5df3d160-d4bb-4cbf-59e8-08dc9177b498
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|1800799021|82310400023|36860700010|7416011|376011;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ghQmLF7frqupN2+g978ZLQhj8iulSpLFDTuCTvlynsk/tjZc4Qs8PinZEFiR?=
- =?us-ascii?Q?M+/tseywL29IIwMLkNP4/AyToyH+R455X3WflVekAOyZQjxuTDca+Heb1oIr?=
- =?us-ascii?Q?MDNdPVHZOXQ/ZPDw7RL9/raOGndgy4BTWEZput/yB+8Bs8B4Wsk90yl0xWXS?=
- =?us-ascii?Q?DeaVla4NYPyexkKjVO7DHz2f483x8DoPEcaQFEfyUv6FUzNL5Je09rgkAZGq?=
- =?us-ascii?Q?qg58QtHh/IHKASN065W5He8k8Kf8mHRqu9gOwC9sBRigAiVzTML9ALQDuCFI?=
- =?us-ascii?Q?tuuBaUDPbRiI/r6Gkg1DpKofdQ0szRYG32zKrIfNSgbnuoj7+EkF8OOT/XO/?=
- =?us-ascii?Q?V1ftEMSi/TaOldZ0sHOu/ETf55/mqNMv3V51k6pqW/C3/7BfmQK8494xZGIT?=
- =?us-ascii?Q?sn6mtnix+YGJ6WaZaC+H70cGPMONYrXFTNjy78+MKt709Xu8T+0mQrNZTEQr?=
- =?us-ascii?Q?FTmLom4sZvpsPCwM+qDWlzkMgqozBbfC8Doz0AeeCtrrK8O3r4DQ1BF6UBrI?=
- =?us-ascii?Q?v0hY0AGMZ3nNOYd3+k4D5NEYDjw2QdVecZjrJrncdhgxWzCDg9yk16daeFc4?=
- =?us-ascii?Q?9/P6QIS35tKSnzp+u+jRQtx58nF/CZVhXJYLvEkuICJkPNohkfv1xUj3roBC?=
- =?us-ascii?Q?czYj7QSejlkM1u9M8ZlwrDTJWyrLp4K0pkGMpdoI4HL82aGGa5+y8Mqx1vb6?=
- =?us-ascii?Q?7BzR/aCfkMQkBDuTpcWOJ9hxbCWPMzgMlmCYQV0pqQ9j6XHeUvk3iHR24UyD?=
- =?us-ascii?Q?rqY8NHpOWrazD/X94OFkDWuppewS2TWaclYeSj/lLF7fvQVSjtwBitmPHuIR?=
- =?us-ascii?Q?31v7o+EQ1ViiznAtHhoLK+oabYjcGx0fT2fTpkU8FJuhANperwUerwoxYkSp?=
- =?us-ascii?Q?clzA2MkwGw0i+7sLiJs+zrDeTH+OzpQR9htFIA1v7fOgk9Ekxmn4W1UukOXj?=
- =?us-ascii?Q?OdzoaHUTeFTMr3AOpCdRuUkAwiUt1wXRGSy8C8P8m2yh737jOT98bwQkP4+K?=
- =?us-ascii?Q?ZJ9VdLBj7T9tmSvqZ5K4bexG+1I3PwJJ6FNkweB6TtBKBVAUZTqD0/GNCfFt?=
- =?us-ascii?Q?tJeWFxPwVE7d4/XPPr0NuxkYW1tJX7tzeOMspcZkOz1KdpUfCmfimrJO2OS2?=
- =?us-ascii?Q?vpNeFi8enV/RgeZHAJiNTU3xTZAFFVgIqmnxiExy2DuXhODkn1cjoxJ9JIyP?=
- =?us-ascii?Q?9IpRP5WZcb/R4dSY66cpA2XexVhhUGjm++33Al38P7caVnVele24N59kEAS+?=
- =?us-ascii?Q?0sm0XJ63rci1o6uxUYRtGba94833MYEWBY8/zlBE2LhMrk9zqyv9DPA36mFX?=
- =?us-ascii?Q?NH7v83kw31Bbnyfbfb1gzLzE0OlKKZR7iw9Q5snJzDiIn43FxpCipXNptrrZ?=
- =?us-ascii?Q?3ynUpRmY39HG2chE3pXdSskksbKJSU18QvCA19J42ivvFDpLFw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(82310400023)(36860700010)(7416011)(376011);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 22:24:09.6161
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5df3d160-d4bb-4cbf-59e8-08dc9177b498
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD78.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6578
+References: <20240619083200.1047073-1-shahuang@redhat.com> <20240619083200.1047073-3-shahuang@redhat.com>
+In-Reply-To: <20240619083200.1047073-3-shahuang@redhat.com>
+From: Raghavendra Rao Ananta <rananta@google.com>
+Date: Thu, 20 Jun 2024 15:26:35 -0700
+Message-ID: <CAJHc60xi7UsLubLUek-sCq9yMyk+R0typEaMB73G+ch+EQrB_Q@mail.gmail.com>
+Subject: Re: [PATCH v10 2/3] KVM: selftests: aarch64: Introduce pmu_event_filter_test
+To: Shaoqin Huang <shahuang@redhat.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, kvmarm@lists.linux.dev, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ashish Kalra <ashish.kalra@amd.com>
+Hi Shaoqin,
 
-SNP guests allocate shared buffers to perform I/O. It is done by
-allocating pages normally from the buddy allocator and converting them
-to shared with set_memory_decrypted().
+On Wed, Jun 19, 2024 at 1:33=E2=80=AFAM Shaoqin Huang <shahuang@redhat.com>=
+ wrote:
+>
+> Introduce pmu_event_filter_test for arm64 platforms. The test configures
+> PMUv3 for a vCPU, and sets different pmu event filters for the vCPU, and
+> check if the guest can see those events which user allow and can't use
+> those events which use deny.
+>
+> This test refactor the create_vpmu_vm() and make it a wrapper for
+> __create_vpmu_vm(), which allows some extra init code before
+> KVM_ARM_VCPU_PMU_V3_INIT.
+>
+> And this test use the KVM_ARM_VCPU_PMU_V3_FILTER attribute to set the
+> pmu event filter in KVM. And choose to filter two common event
+> branches_retired and instructions_retired, and let the guest to check if
+> it see the right pmceid register.
+>
+> Signed-off-by: Shaoqin Huang <shahuang@redhat.com>
+> ---
+>  tools/testing/selftests/kvm/Makefile          |   1 +
+>  .../kvm/aarch64/pmu_event_filter_test.c       | 314 ++++++++++++++++++
+>  2 files changed, 315 insertions(+)
+>  create mode 100644 tools/testing/selftests/kvm/aarch64/pmu_event_filter_=
+test.c
+>
+> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftes=
+ts/kvm/Makefile
+> index ac280dcba996..2110b49e7a84 100644
+> --- a/tools/testing/selftests/kvm/Makefile
+> +++ b/tools/testing/selftests/kvm/Makefile
+> @@ -153,6 +153,7 @@ TEST_GEN_PROGS_aarch64 +=3D aarch64/aarch32_id_regs
+>  TEST_GEN_PROGS_aarch64 +=3D aarch64/debug-exceptions
+>  TEST_GEN_PROGS_aarch64 +=3D aarch64/hypercalls
+>  TEST_GEN_PROGS_aarch64 +=3D aarch64/page_fault_test
+> +TEST_GEN_PROGS_aarch64 +=3D aarch64/pmu_event_filter_test
+>  TEST_GEN_PROGS_aarch64 +=3D aarch64/psci_test
+>  TEST_GEN_PROGS_aarch64 +=3D aarch64/set_id_regs
+>  TEST_GEN_PROGS_aarch64 +=3D aarch64/smccc_filter
+> diff --git a/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c =
+b/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c
+> new file mode 100644
+> index 000000000000..308b8677e08e
+> --- /dev/null
+> +++ b/tools/testing/selftests/kvm/aarch64/pmu_event_filter_test.c
+> @@ -0,0 +1,314 @@
+> +
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * pmu_event_filter_test - Test user limit pmu event for guest.
+> + *
+> + * Copyright (c) 2023 Red Hat, Inc.
+> + *
+> + * This test checks if the guest only see the limited pmu event that use=
+rspace
+> + * sets, if the guest can use those events which user allow, and if the =
+guest
+> + * can't use those events which user deny.
+> + * This test runs only when KVM_CAP_ARM_PMU_V3, KVM_ARM_VCPU_PMU_V3_FILT=
+ER
+> + * is supported on the host.
+> + */
+> +#include <kvm_util.h>
+> +#include <processor.h>
+> +#include <vgic.h>
+> +#include <vpmu.h>
+> +#include <test_util.h>
+> +#include <perf/arm_pmuv3.h>
+> +
+> +struct pmu_common_event_ids {
+> +       uint64_t pmceid0;
+> +       uint64_t pmceid1;
+> +} max_pmce, expected_pmce;
+> +
+> +struct vpmu_vm {
+> +       struct kvm_vm *vm;
+> +       struct kvm_vcpu *vcpu;
+> +       int gic_fd;
+> +};
+> +
+> +static struct vpmu_vm vpmu_vm;
+> +
+> +#define FILTER_NR 10
+> +
+> +struct test_desc {
+> +       const char *name;
+> +       struct kvm_pmu_event_filter filter[FILTER_NR];
+> +};
+> +
+> +#define __DEFINE_FILTER(base, num, act)                \
+> +       ((struct kvm_pmu_event_filter) {        \
+> +               .base_event     =3D base,         \
+> +               .nevents        =3D num,          \
+> +               .action         =3D act,          \
+> +       })
+> +
+> +#define DEFINE_FILTER(base, act) __DEFINE_FILTER(base, 1, act)
+> +
+> +#define EVENT_ALLOW(event)     DEFINE_FILTER(event, KVM_PMU_EVENT_ALLOW)
+> +#define EVENT_DENY(event)      DEFINE_FILTER(event, KVM_PMU_EVENT_DENY)
+> +
+> +static void guest_code(void)
+> +{
+> +       uint64_t pmceid0 =3D read_sysreg(pmceid0_el0);
+> +       uint64_t pmceid1 =3D read_sysreg(pmceid1_el0);
+> +
+> +       GUEST_ASSERT_EQ(expected_pmce.pmceid0, pmceid0);
+> +       GUEST_ASSERT_EQ(expected_pmce.pmceid1, pmceid1);
+> +
+> +       GUEST_DONE();
+> +}
+> +
+> +static void guest_get_pmceid(void)
+> +{
+> +       max_pmce.pmceid0 =3D read_sysreg(pmceid0_el0);
+> +       max_pmce.pmceid1 =3D read_sysreg(pmceid1_el0);
+> +
+> +       GUEST_DONE();
+> +}
+> +
+> +static void run_vcpu(struct kvm_vcpu *vcpu)
+> +{
+> +       struct ucall uc;
+> +
+> +       while (1) {
+> +               vcpu_run(vcpu);
+> +               switch (get_ucall(vcpu, &uc)) {
+> +               case UCALL_DONE:
+> +                       return;
+> +               case UCALL_ABORT:
+> +                       REPORT_GUEST_ASSERT(uc);
+> +                       break;
+> +               default:
+> +                       TEST_FAIL("Unknown ucall %lu", uc.cmd);
+> +               }
+> +       }
+> +}
+> +
+> +static void set_pmce(struct pmu_common_event_ids *pmce, int action, int =
+event)
+> +{
+> +       int base =3D 0;
+> +       uint64_t *pmceid =3D NULL;
+> +
+> +       if (event >=3D 0x4000) {
+> +               event -=3D 0x4000;
+> +               base =3D 32;
+> +       }
+> +
+> +       if (event >=3D 0 && event <=3D 0x1F) {
+> +               pmceid =3D &pmce->pmceid0;
+> +       } else if (event >=3D 0x20 && event <=3D 0x3F) {
+> +               event -=3D 0x20;
+> +               pmceid =3D &pmce->pmceid1;
+> +       } else {
+> +               return;
+> +       }
+> +
+> +       event +=3D base;
+> +       if (action =3D=3D KVM_PMU_EVENT_ALLOW)
+> +               *pmceid |=3D BIT(event);
+> +       else
+> +               *pmceid &=3D ~BIT(event);
+> +}
+> +
+> +static inline bool is_valid_filter(struct kvm_pmu_event_filter *filter)
+> +{
+> +       return filter && filter->nevents !=3D 0;
+> +}
+> +
+> +static void prepare_expected_pmce(struct kvm_pmu_event_filter *filter)
+> +{
+> +       struct pmu_common_event_ids pmce_mask =3D { ~0, ~0 };
+> +       int i;
+> +
+> +       if (is_valid_filter(filter) && filter->action =3D=3D KVM_PMU_EVEN=
+T_ALLOW)
+> +               memset(&pmce_mask, 0, sizeof(pmce_mask));
+> +
+> +       while (is_valid_filter(filter)) {
+> +               for (i =3D 0; i < filter->nevents; i++)
+> +                       set_pmce(&pmce_mask, filter->action,
+> +                                filter->base_event + i);
+> +               filter++;
+> +       }
+> +
+> +       expected_pmce.pmceid0 =3D max_pmce.pmceid0 & pmce_mask.pmceid0;
+> +       expected_pmce.pmceid1 =3D max_pmce.pmceid1 & pmce_mask.pmceid1;
+> +}
+> +
+> +static void pmu_event_filter_init(struct kvm_pmu_event_filter *filter)
+> +{
+> +       while (is_valid_filter(filter)) {
+> +               kvm_device_attr_set(vpmu_vm.vcpu->fd,
+> +                                   KVM_ARM_VCPU_PMU_V3_CTRL,
+> +                                   KVM_ARM_VCPU_PMU_V3_FILTER,
+> +                                   filter);
+> +               filter++;
+> +       }
+> +}
+> +
+> +/* Create a VM that has one vCPU with PMUv3 configured. */
+> +static void create_vpmu_vm_with_filter(void *guest_code,
+> +                                      struct kvm_pmu_event_filter *filte=
+r)
+> +{
+> +       uint64_t irq =3D 23;
+> +
+> +       /* The test creates the vpmu_vm multiple times. Ensure a clean st=
+ate */
+> +       memset(&vpmu_vm, 0, sizeof(vpmu_vm));
+> +
+> +       vpmu_vm.vm =3D vm_create(1);
+> +       vpmu_vm.vcpu =3D vm_vcpu_add_with_vpmu(vpmu_vm.vm, 0, guest_code)=
+;
+> +       vpmu_vm.gic_fd =3D vgic_v3_setup(vpmu_vm.vm, 1, 64);
+> +       __TEST_REQUIRE(vpmu_vm.gic_fd >=3D 0,
+> +                      "Failed to create vgic-v3, skipping");
+> +
+> +       pmu_event_filter_init(filter);
+> +
+> +       /* Initialize vPMU */
+> +       vpmu_set_irq(vpmu_vm.vcpu, irq);
+> +       vpmu_init(vpmu_vm.vcpu);
+> +}
+> +
+> +static void create_vpmu_vm(void *guest_code)
+> +{
+> +       create_vpmu_vm_with_filter(guest_code, NULL);
+> +}
+> +
+> +static void destroy_vpmu_vm(void)
+> +{
+> +       close(vpmu_vm.gic_fd);
+> +       kvm_vm_free(vpmu_vm.vm);
+> +}
+> +
+> +static void run_test(struct test_desc *t)
+> +{
+> +       pr_info("Test: %s\n", t->name);
+> +
+> +       create_vpmu_vm_with_filter(guest_code, t->filter);
+> +       prepare_expected_pmce(t->filter);
+> +       sync_global_to_guest(vpmu_vm.vm, expected_pmce);
+> +
+> +       run_vcpu(vpmu_vm.vcpu);
+> +
+> +       destroy_vpmu_vm();
+> +}
+> +
+> +static struct test_desc tests[] =3D {
+> +       {
+> +               .name =3D "without_filter",
+> +               .filter =3D {
+> +                       { 0 }
+> +               },
+> +       },
+> +       {
+> +               .name =3D "member_allow_filter",
+> +               .filter =3D {
+> +                       EVENT_ALLOW(ARMV8_PMUV3_PERFCTR_SW_INCR),
+> +                       EVENT_ALLOW(ARMV8_PMUV3_PERFCTR_INST_RETIRED),
+> +                       EVENT_ALLOW(ARMV8_PMUV3_PERFCTR_BR_RETIRED),
+> +                       { 0 },
+> +               },
+> +       },
+> +       {
+> +               .name =3D "member_deny_filter",
+> +               .filter =3D {
+> +                       EVENT_DENY(ARMV8_PMUV3_PERFCTR_SW_INCR),
+> +                       EVENT_DENY(ARMV8_PMUV3_PERFCTR_INST_RETIRED),
+> +                       EVENT_DENY(ARMV8_PMUV3_PERFCTR_BR_RETIRED),
+> +                       { 0 },
+> +               },
+> +       },
+> +       {
+> +               .name =3D "not_member_deny_filter",
+> +               .filter =3D {
+> +                       EVENT_DENY(ARMV8_PMUV3_PERFCTR_SW_INCR),
+> +                       { 0 },
+> +               },
+> +       },
+> +       {
+> +               .name =3D "not_member_allow_filter",
+> +               .filter =3D {
+> +                       EVENT_ALLOW(ARMV8_PMUV3_PERFCTR_SW_INCR),
+> +                       { 0 },
+> +               },
+> +       },
+> +       {
+> +               .name =3D "deny_chain_filter",
+> +               .filter =3D {
+> +                       EVENT_DENY(ARMV8_PMUV3_PERFCTR_CHAIN),
+> +                       { 0 },
+> +               },
+> +       },
+> +       {
+> +               .name =3D "deny_cpu_cycles_filter",
+> +               .filter =3D {
+> +                       EVENT_DENY(ARMV8_PMUV3_PERFCTR_CPU_CYCLES),
+> +                       { 0 },
+> +               },
+> +       },
+> +       {
+> +               .name =3D "cancel_allow_filter",
+> +               .filter =3D {
+> +                       EVENT_ALLOW(ARMV8_PMUV3_PERFCTR_CPU_CYCLES),
+> +                       EVENT_DENY(ARMV8_PMUV3_PERFCTR_CPU_CYCLES),
+> +               },
+> +       },
+> +       {
+> +               .name =3D "cancel_deny_filter",
+> +               .filter =3D {
+> +                       EVENT_DENY(ARMV8_PMUV3_PERFCTR_CPU_CYCLES),
+> +                       EVENT_ALLOW(ARMV8_PMUV3_PERFCTR_CPU_CYCLES),
+> +               },
+> +       },
+> +       {
+> +               .name =3D "multiple_filter",
+> +               .filter =3D {
+> +                       __DEFINE_FILTER(0x0, 0x10, KVM_PMU_EVENT_ALLOW),
+> +                       __DEFINE_FILTER(0x6, 0x3, KVM_PMU_EVENT_DENY),
+> +               },
+> +       },
+> +       { 0 }
+> +};
+> +
+> +static void run_tests(void)
+> +{
+> +       struct test_desc *t;
+> +
+> +       for (t =3D &tests[0]; t->name; t++)
+> +               run_test(t);
+> +}
+> +
+> +static int used_pmu_events[] =3D {
+> +       ARMV8_PMUV3_PERFCTR_BR_RETIRED,
+> +       ARMV8_PMUV3_PERFCTR_INST_RETIRED,
+> +       ARMV8_PMUV3_PERFCTR_CHAIN,
+> +       ARMV8_PMUV3_PERFCTR_CPU_CYCLES,
+> +};
+> +
+> +static bool kvm_pmu_support_events(void)
+> +{
+> +       struct pmu_common_event_ids used_pmce =3D { 0, 0 };
+> +
+> +       create_vpmu_vm(guest_get_pmceid);
+> +
+> +       memset(&max_pmce, 0, sizeof(max_pmce));
+> +       sync_global_to_guest(vpmu_vm.vm, max_pmce);
+> +       run_vcpu(vpmu_vm.vcpu);
+> +       sync_global_from_guest(vpmu_vm.vm, max_pmce);
+> +       destroy_vpmu_vm();
+> +
+> +       for (int i =3D 0; i < ARRAY_SIZE(used_pmu_events); i++)
+> +               set_pmce(&used_pmce, KVM_PMU_EVENT_ALLOW, used_pmu_events=
+[i]);
+> +
+> +       return ((max_pmce.pmceid0 & used_pmce.pmceid0) =3D=3D used_pmce.p=
+mceid0) &&
+> +              ((max_pmce.pmceid1 & used_pmce.pmceid1) =3D=3D used_pmce.p=
+mceid1);
+> +}
+> +
+> +int main(void)
+> +{
+> +       TEST_REQUIRE(kvm_has_cap(KVM_CAP_ARM_PMU_V3));
+> +       TEST_REQUIRE(kvm_pmu_support_events());
+> +
+> +       run_tests();
+> +}
+> --
+> 2.40.1
+>
+>
+Reviewed-by: Raghavendra Rao Ananta <rananta@google.com>
 
-The second kernel has no idea what memory is converted this way. It only
-sees E820_TYPE_RAM.
-
-Accessing shared memory via private mapping will cause unrecoverable RMP
-page-faults.
-
-On kexec walk direct mapping and convert all shared memory back to
-private. It makes all RAM private again and second kernel may use it
-normally. Additionally for SNP guests convert all bss decrypted section
-pages back to private.
-
-The conversion occurs in two steps: stopping new conversions and
-unsharing all memory. In the case of normal kexec, the stopping of
-conversions takes place while scheduling is still functioning. This
-allows for waiting until any ongoing conversions are finished. The
-second step is carried out when all CPUs except one are inactive and
-interrupts are disabled. This prevents any conflicts with code that may
-access shared memory.
-
-Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
----
- arch/x86/coco/sev/core.c      | 168 ++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/sev.h    |   4 +
- arch/x86/mm/mem_encrypt_amd.c |   2 +
- 3 files changed, 174 insertions(+)
-
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index 082d61d85dfc..0ce96123b684 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -42,6 +42,8 @@
- #include <asm/apic.h>
- #include <asm/cpuid.h>
- #include <asm/cmdline.h>
-+#include <asm/pgtable.h>
-+#include <asm/set_memory.h>
- 
- #define DR7_RESET_VALUE        0x400
- 
-@@ -92,6 +94,9 @@ static struct ghcb *boot_ghcb __section(".data");
- /* Bitmap of SEV features supported by the hypervisor */
- static u64 sev_hv_features __ro_after_init;
- 
-+/* Last address to be switched to private during kexec */
-+static unsigned long kexec_last_addr_to_make_private;
-+
- /* #VC handler runtime per-CPU data */
- struct sev_es_runtime_data {
- 	struct ghcb ghcb_page;
-@@ -1010,6 +1015,169 @@ void snp_accept_memory(phys_addr_t start, phys_addr_t end)
- 	set_pages_state(vaddr, npages, SNP_PAGE_STATE_PRIVATE);
- }
- 
-+static bool set_pte_enc(pte_t *kpte, int level, void *va)
-+{
-+	pte_t new_pte;
-+
-+	if (pte_none(*kpte))
-+		return false;
-+
-+	/*
-+	 * Change the physical page attribute from C=0 to C=1. Flush the
-+	 * caches to ensure that data gets accessed with the correct C-bit.
-+	 */
-+	if (pte_present(*kpte))
-+		clflush_cache_range(va, page_level_size(level));
-+
-+	new_pte = __pte(cc_mkenc(pte_val(*kpte)));
-+	set_pte_atomic(kpte, new_pte);
-+
-+	return true;
-+}
-+
-+static bool make_pte_private(pte_t *pte, unsigned long addr, int pages, int level)
-+{
-+	struct sev_es_runtime_data *data;
-+	struct ghcb *ghcb;
-+
-+	data = this_cpu_read(runtime_data);
-+	ghcb = &data->ghcb_page;
-+
-+	/* Check for GHCB for being part of a PMD range. */
-+	if ((unsigned long)ghcb >= addr &&
-+	    (unsigned long)ghcb <= (addr + (pages * PAGE_SIZE))) {
-+		/*
-+		 * Ensure that the current cpu's GHCB is made private
-+		 * at the end of unshared loop so that we continue to use the
-+		 * optimized GHCB protocol and not force the switch to
-+		 * MSR protocol till the very end.
-+		 */
-+		pr_debug("setting boot_ghcb to NULL for this cpu ghcb\n");
-+		kexec_last_addr_to_make_private = addr;
-+		return true;
-+	}
-+
-+	if (!set_pte_enc(pte, level, (void *)addr))
-+		return false;
-+
-+	snp_set_memory_private(addr, pages);
-+
-+	return true;
-+}
-+
-+static void unshare_all_memory(void)
-+{
-+	unsigned long addr, end;
-+
-+	/*
-+	 * Walk direct mapping and convert all shared memory back to private,
-+	 */
-+
-+	addr = PAGE_OFFSET;
-+	end  = PAGE_OFFSET + get_max_mapped();
-+
-+	while (addr < end) {
-+		unsigned long size;
-+		unsigned int level;
-+		pte_t *pte;
-+
-+		pte = lookup_address(addr, &level);
-+		size = page_level_size(level);
-+
-+		/*
-+		 * pte_none() check is required to skip physical memory holes in direct mapped.
-+		 */
-+		if (pte && pte_decrypted(*pte) && !pte_none(*pte)) {
-+			int pages = size / PAGE_SIZE;
-+
-+			if (!make_pte_private(pte, addr, pages, level)) {
-+				pr_err("Failed to unshare range %#lx-%#lx\n",
-+				       addr, addr + size);
-+			}
-+
-+		}
-+
-+		addr += size;
-+	}
-+	__flush_tlb_all();
-+
-+}
-+
-+static void unshare_all_bss_decrypted_memory(void)
-+{
-+	unsigned long vaddr, vaddr_end;
-+	unsigned int level;
-+	unsigned int npages;
-+	pte_t *pte;
-+
-+	vaddr = (unsigned long)__start_bss_decrypted;
-+	vaddr_end = (unsigned long)__start_bss_decrypted_unused;
-+	npages = (vaddr_end - vaddr) >> PAGE_SHIFT;
-+	for (; vaddr < vaddr_end; vaddr += PAGE_SIZE) {
-+		pte = lookup_address(vaddr, &level);
-+		if (!pte || !pte_decrypted(*pte) || pte_none(*pte))
-+			continue;
-+
-+		set_pte_enc(pte, level, (void *)vaddr);
-+	}
-+	vaddr = (unsigned long)__start_bss_decrypted;
-+	snp_set_memory_private(vaddr, npages);
-+}
-+
-+/* Stop new private<->shared conversions */
-+void snp_kexec_begin(void)
-+{
-+	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
-+		return;
-+
-+	if (!IS_ENABLED(CONFIG_KEXEC_CORE))
-+		return;
-+	/*
-+	 * Crash kernel reaches here with interrupts disabled: can't wait for
-+	 * conversions to finish.
-+	 *
-+	 * If race happened, just report and proceed.
-+	 */
-+	if (!set_memory_enc_stop_conversion())
-+		pr_warn("Failed to stop shared<->private conversions\n");
-+}
-+
-+/* Walk direct mapping and convert all shared memory back to private */
-+void snp_kexec_finish(void)
-+{
-+	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
-+		return;
-+
-+	if (!IS_ENABLED(CONFIG_KEXEC_CORE))
-+		return;
-+
-+	unshare_all_memory();
-+
-+	unshare_all_bss_decrypted_memory();
-+
-+	if (kexec_last_addr_to_make_private) {
-+		unsigned long size;
-+		unsigned int level;
-+		pte_t *pte;
-+
-+		/*
-+		 * Switch to using the MSR protocol to change this cpu's
-+		 * GHCB to private.
-+		 * All the per-cpu GHCBs have been switched back to private,
-+		 * so can't do any more GHCB calls to the hypervisor beyond
-+		 * this point till the kexec kernel starts running.
-+		 */
-+		boot_ghcb = NULL;
-+		sev_cfg.ghcbs_initialized = false;
-+
-+		pr_debug("boot ghcb 0x%lx\n", kexec_last_addr_to_make_private);
-+		pte = lookup_address(kexec_last_addr_to_make_private, &level);
-+		size = page_level_size(level);
-+		set_pte_enc(pte, level, (void *)kexec_last_addr_to_make_private);
-+		snp_set_memory_private(kexec_last_addr_to_make_private, (size / PAGE_SIZE));
-+	}
-+}
-+
- static int snp_set_vmsa(void *va, void *caa, int apic_id, bool make_vmsa)
- {
- 	int ret;
-diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-index ac5886ce252e..56e723bc63e2 100644
---- a/arch/x86/include/asm/sev.h
-+++ b/arch/x86/include/asm/sev.h
-@@ -348,6 +348,8 @@ u64 snp_get_unsupported_features(u64 status);
- u64 sev_get_status(void);
- void sev_show_status(void);
- void snp_update_svsm_ca(void);
-+void snp_kexec_finish(void);
-+void snp_kexec_begin(void);
- 
- #else	/* !CONFIG_AMD_MEM_ENCRYPT */
- 
-@@ -384,6 +386,8 @@ static inline u64 snp_get_unsupported_features(u64 status) { return 0; }
- static inline u64 sev_get_status(void) { return 0; }
- static inline void sev_show_status(void) { }
- static inline void snp_update_svsm_ca(void) { }
-+static inline void snp_kexec_finish(void) { }
-+static inline void snp_kexec_begin(void) { }
- 
- #endif	/* CONFIG_AMD_MEM_ENCRYPT */
- 
-diff --git a/arch/x86/mm/mem_encrypt_amd.c b/arch/x86/mm/mem_encrypt_amd.c
-index 86a476a426c2..9a2cb740772e 100644
---- a/arch/x86/mm/mem_encrypt_amd.c
-+++ b/arch/x86/mm/mem_encrypt_amd.c
-@@ -467,6 +467,8 @@ void __init sme_early_init(void)
- 	x86_platform.guest.enc_status_change_finish  = amd_enc_status_change_finish;
- 	x86_platform.guest.enc_tlb_flush_required    = amd_enc_tlb_flush_required;
- 	x86_platform.guest.enc_cache_flush_required  = amd_enc_cache_flush_required;
-+	x86_platform.guest.enc_kexec_begin	     = snp_kexec_begin;
-+	x86_platform.guest.enc_kexec_finish	     = snp_kexec_finish;
- 
- 	/*
- 	 * AMD-SEV-ES intercepts the RDMSR to read the X2APIC ID in the
--- 
-2.34.1
-
+- Raghavendra
 
