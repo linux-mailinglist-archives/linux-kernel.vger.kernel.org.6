@@ -1,157 +1,133 @@
-Return-Path: <linux-kernel+bounces-223084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387DF910D5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:42:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCA1910D5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E226E1F22AC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:42:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39B54287268
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB861B29A2;
-	Thu, 20 Jun 2024 16:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74141B14FA;
+	Thu, 20 Jun 2024 16:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h+Djnr/9"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ls1z8Am1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0171B1436;
-	Thu, 20 Jun 2024 16:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA711B14E9;
+	Thu, 20 Jun 2024 16:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718901735; cv=none; b=bX3vlan/ha0tUF9BVritgivZf02udYxY0qDYlqOFb5QtWboFNuRhmI5CmqEGWsMmYvsHgzqZssmhAbl7seKnSm5Jvy/6EYzrye2fET6soRD1n4of6b5N2tSfovf3OhOHGHvY1C/BxIb+1MTp2LwTqn5FEFYypehhaiyC9ZUj3ao=
+	t=1718901781; cv=none; b=ieiWybvKa1ap6vzm9B9vW7qeQhsvGddqSiw1hadN+0YlVyE/vxUE6be7z1hi3RFg+efJ4lGz73QcHoh9KaCVxiCwNQbK813PWO1oe12WLlMhAzWC3DeJ6BFQLlnmmoUGdIj4pJlUcZ3DcHocwns9RwBIEPsOYBPm6D7FH7MjtSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718901735; c=relaxed/simple;
-	bh=FfRRl+rsm+XdgwUHVha+tPzWG2zp10p4W/7/pDVEpW4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cQFzV+9xgjB7MzavoDXbq9abBKHW4GECZVzPITftRO8Vf0pkjBmBzgifbTbn9EMLb74Zxc3Wt5k7KL6j8UEXJ687uNxOJvjou8XdmPm4irDZF+KkjaaSySvYyPWf+27Qg3KONVwlpXIieSol/Gom/aburCbVDFifXGcrUfldIfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h+Djnr/9; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ec4a11a297so5453501fa.0;
-        Thu, 20 Jun 2024 09:42:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718901731; x=1719506531; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MvPWAGvnBNSgSHBYq/LlacrTlJVn4K7wbKBfHfFlQnU=;
-        b=h+Djnr/9nbePqhx18uANs11PllFw6CBysip6ENd3kYDiZUz6WCyoVeJqfUfHSl99GH
-         ZyQowyHQcmjemcMFIWWXYFfC7LIS8Gc5NN9O9YDVzuj9hnJd163UFBRPrn6lKc/QZyVQ
-         u2rGXJqi7ioVppVj8PE9CTvrO1KLLP+aI35EW/mmeQyBGYO5cQHdWKyih+LZKdoQojr0
-         QxzfR8g+IFr1WifBvKpUuMzLFWULyB8Blr4MmmEhUstFu/+Z+JyVJMNd4XNHBJzlJWzH
-         ceY2Tb12xL1Q37v7Ki7vsov/5CN7duTB2AyXceKyJirhEpgRQ/1LxZUI3yCz1SV3kTeN
-         1uUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718901731; x=1719506531;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MvPWAGvnBNSgSHBYq/LlacrTlJVn4K7wbKBfHfFlQnU=;
-        b=jay48Verfxc4CQISGMOCro5Ru3jtTLOpyrIMgnZBR9vubOoDMYw7B4QtaA9fYTrD0P
-         LV9EKmn9Redn9zhvMv63R+FdMP/SydIcpwrKBt1PXAsLKzKWZHoqZgoAyaGSLfhuPkI9
-         0upN36HtvjmaHOHt1fuWs2Dh8IAvNXipzg9bi8aae1iIgVp4Jg5evnTxsLu0Na7QbZ9R
-         4fejgSlXapMDC5RRT7VDjci6AdLJwPpD5acRsHl7aay67InXAfg7B5a+1URqNyFknw/B
-         6ScepRG2ALtGsE/PZ5yBGjD2B61PX/HBTCG7E9H4rI7ThfE0fKYw4dSmsrsSfALOlk9C
-         EggA==
-X-Forwarded-Encrypted: i=1; AJvYcCXK2G9GMkpKooGQdnZBWJ5NIb/dZzBA8rRGSSWL9VqF/XAeffWFYWFABcDUCDU7tWp8MOj1iY3GD+MTfpKF7VBp9+q7gh95sufOdx8FkH3/Yt5YNyvdDm9w6dS9guhXfIl6GIJbBHNCN7Rrwg==
-X-Gm-Message-State: AOJu0YyokwBRdtB8dH0cJ5mxTfBwWXlwZ9iBn21rCiR3l9qSn+4A4PJm
-	C0vbRdSHmlf74IjPjoO15BMmptMxz85l+VFzQCVo/XujCz5sz8Ckx4MdbKAoLM768arG2xSvsM8
-	Mu8tOu3jM5Yxj3op7DIlIfMnCvzo=
-X-Google-Smtp-Source: AGHT+IFlO0TjFwAgwe7jW4uv3d0LZl69UkHI5u0XxEuqIMBFANIynjGf5rVmxXcoSuPa4ro4jZJLuLzDKYolw72m6ao=
-X-Received: by 2002:a2e:be8c:0:b0:2ec:3dd4:75f9 with SMTP id
- 38308e7fff4ca-2ec3dd476d9mr46118991fa.35.1718901731039; Thu, 20 Jun 2024
- 09:42:11 -0700 (PDT)
+	s=arc-20240116; t=1718901781; c=relaxed/simple;
+	bh=HT/ZBy9Xmd6m8pI02Qj94fqFj2FB4s9hC7/NHHPNE54=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=WdkFRkwo35KJ8sy9m8RZKfn+Z9RgzwAyXWaiP8wAfbrGG2tsmeejjI7BPG4XqDmHz9Iho78GSeMC7wTuzvvPTpZQgAIpS8Aad6HSwnqZBAhW+Y5QjQM95FyEwFzAK55zk76va4QzghVD2CghJLjKnlXeM1j378gJTRTf4O8vlBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ls1z8Am1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KAcY9r011376;
+	Thu, 20 Jun 2024 16:42:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=1n3k6Rb+BKNEXxUiaweAV2
+	r6d1TevLnFz/g5L7Yd+bE=; b=Ls1z8Am1seC2RN46nBOUEk5HvTwRhLHglj7xIS
+	42B/S0LAuDPvcaeFTD9OBoqehPXM+eMhp7/g3wSsNnDy0Byxf2JZpn9uRWv9dlX6
+	Sj4wfd4VAio18r2245CZL6cUS32lfpBmqqFJPMwwlXECbH+BVMxdQj4crfsXQ3wd
+	eKDTotJpebasroLAPaTJy9RVhlp//hapblKAvxvT9HrKs1WX8Mjr7P68Tw+GATv0
+	Myo6Pg0wntsYsDL0kiOSl0DE9USsVLWf3f/5wonxNCei1OqPXHGjqWG5veugKkz7
+	8ORUgbiYr6JymTCYnjzQEdnzrp0FCHq1HcLooAf8TGf+poQg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvjumrvf3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 16:42:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KGgKxK031858
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 16:42:20 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
+ 2024 09:42:20 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 20 Jun 2024 09:42:18 -0700
+Subject: [PATCH v2] nvme-apple: add missing MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619212743.3193985-1-quic_abhinavk@quicinc.com> <CAA8EJpowTONWNQH+Sqe1w1eL85Ty4tw8_Qkc1yToQu9s17Tokw@mail.gmail.com>
-In-Reply-To: <CAA8EJpowTONWNQH+Sqe1w1eL85Ty4tw8_Qkc1yToQu9s17Tokw@mail.gmail.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 20 Jun 2024 09:41:59 -0700
-Message-ID: <CAF6AEGsQLqf96g9iaUqB1D6zcay8csvUH7oyirTd04x+bUzvYA@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm/dpu: protect ctl ops calls with validity checks
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, freedreno@lists.freedesktop.org, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	quic_jesszhan@quicinc.com, dan.carpenter@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240620-md-nvme-apple-v2-1-72e9d7151a1f@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOpbdGYC/3WNQQ6CMBBFr0Jm7ZiCgMDKexgWbRllElqwhQZDu
+ LuFvcuX/P/eBp4ck4cm2cBRYM+jjZBdEtC9tG9C7iJDJrJcFDeBpkMbDKGcpoGQBHWqVnWl8wL
+ iZ3L04vX0PdvISnpC5aTV/WEZ2C4rGulncse8Zz+P7nvWQ3qc/oVCiimqSt21LMq6LMXjs7Bmq
+ 696NNDu+/4DC2sVuMsAAAA=
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+        "Alyssa
+ Rosenzweig" <alyssa@rosenzweig.io>,
+        Keith Busch <kbusch@kernel.org>, "Jens
+ Axboe" <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg
+	<sagi@grimberg.me>
+CC: <asahi@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Eric Curtin <ecurtin@redhat.com>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Xw8EQqg3_YaURzeNrtii9JX-O_Nr7YPr
+X-Proofpoint-GUID: Xw8EQqg3_YaURzeNrtii9JX-O_Nr7YPr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_07,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ mlxlogscore=999 bulkscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
+ adultscore=0 lowpriorityscore=0 clxscore=1011 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406200119
 
-On Thu, Jun 20, 2024 at 6:08=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Thu, 20 Jun 2024 at 00:27, Abhinav Kumar <quic_abhinavk@quicinc.com> w=
-rote:
-> >
-> > dpu_encoder_helper_phys_cleanup() calls the ctl ops without checking if
-> > the ops are assigned causing discrepancy between its callers where the
-> > checks are performed and the API itself which does not.
-> >
-> > Two approaches can be taken: either drop the checks even in the caller
-> > OR add the checks even in dpu_encoder_helper_phys_cleanup().
-> >
-> > Adopt the latter approach as ctl ops are assigned revision based so may=
- not
-> > be always assigned.
->
-> NAK, these calls are always assigned. Please make sure that they are
-> documented as required and drop offending checks.
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvme/host/nvme-apple.o
 
-agreed, I'd rather see the obvious crash if somehow a required
-callback didn't get set up, than a subtle/silent problem.  It is
-easier to debug that way.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-BR,
--R
+Reviewed-by: Eric Curtin <ecurtin@redhat.com>
+Reviewed-by: Sven Peter <sven@svenpeter.dev>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+Changes in v2:
+- Don't see this is linux-next yet so rebased to 6.10-rc4 (no patch change)
+- Picked up the Reviewed-by tags
+- Link to v1: https://lore.kernel.org/r/20240530-md-nvme-apple-v1-1-b8b7ca569660@quicinc.com
+---
+ drivers/nvme/host/apple.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> >
-> > Fixes: d7d0e73f7de3 ("drm/msm/dpu: introduce the dpu_encoder_phys_* for=
- writeback")
-> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Closes: https://lore.kernel.org/all/464fbd84-0d1c-43c3-a40b-31656ac0645=
-6@moroto.mountain/T/
-> > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> > ---
-> >  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 9 ++++++---
-> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/=
-drm/msm/disp/dpu1/dpu_encoder.c
-> > index 708657598cce..7f7e6d4e974b 100644
-> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > @@ -2180,9 +2180,12 @@ void dpu_encoder_helper_phys_cleanup(struct dpu_=
-encoder_phys *phys_enc)
-> >         if (ctl->ops.reset_intf_cfg)
-> >                 ctl->ops.reset_intf_cfg(ctl, &intf_cfg);
-> >
-> > -       ctl->ops.trigger_flush(ctl);
-> > -       ctl->ops.trigger_start(ctl);
-> > -       ctl->ops.clear_pending_flush(ctl);
-> > +       if (ctl->ops.trigger_flush)
-> > +               ctl->ops.trigger_flush(ctl);
-> > +       if (ctl->ops.trigger_start)
-> > +               ctl->ops.trigger_start(ctl);
-> > +       if (ctl->ops.clear_pending_flush)
-> > +               ctl->ops.clear_pending_flush(ctl);
-> >  }
-> >
-> >  void dpu_encoder_helper_phys_setup_cdm(struct dpu_encoder_phys *phys_e=
-nc,
-> > --
-> > 2.44.0
-> >
->
->
-> --
-> With best wishes
-> Dmitry
+diff --git a/drivers/nvme/host/apple.c b/drivers/nvme/host/apple.c
+index dd6ec0865141..0cfa39361d3b 100644
+--- a/drivers/nvme/host/apple.c
++++ b/drivers/nvme/host/apple.c
+@@ -1602,4 +1602,5 @@ static struct platform_driver apple_nvme_driver = {
+ module_platform_driver(apple_nvme_driver);
+ 
+ MODULE_AUTHOR("Sven Peter <sven@svenpeter.dev>");
++MODULE_DESCRIPTION("Apple ANS NVM Express device driver");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+change-id: 20240530-md-nvme-apple-e0edb9b98c45
+
 
