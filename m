@@ -1,141 +1,104 @@
-Return-Path: <linux-kernel+bounces-222667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 705FF910588
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:12:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D0F91058C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D78B281A1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:12:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9B97B263A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3511ACE97;
-	Thu, 20 Jun 2024 13:11:49 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88591AD402;
+	Thu, 20 Jun 2024 13:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="LImavZfu"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801A81ACE81;
-	Thu, 20 Jun 2024 13:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E541ACE7C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718889109; cv=none; b=m0Bb3j5Aa9OT85ywEk4/pAqI91Fu+GHuCo2A9rzlXAXGKfUxIXF/IUtq/LEBKRll8cHqzaFGgTljMSY/FXCYqQItsffthKpYB4IB84zoa8MnGj6B5mIzWbp5oZpXFK+onO9RtQ45P7lMF+mcGBgib23WyF4OkMeVTuh1UP2t+B8=
+	t=1718889127; cv=none; b=pGp802Q5bnbXybsZEtd2om/6BNRk7KX0GN8D/41d0QbT9MoADKIQaUenhNqNzwAtKxWpRQucUMLuA4YfLhRmTAbM3DIoUrpu27VenV2v7Tta2efRoNpWoGs0efuc4UQLH4X3ejDJKJfeBn39r4S/GkhMg5hnyoVpxo9jx7HNfH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718889109; c=relaxed/simple;
-	bh=KquCfc0e5jrKrmjpwVd+GhjdiZ1fZXcuvxYZaZ8SeLg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NKtyq8Xo+wvo0BcT3tkhzmPF5G9bORA6WVUdMs1yLfCEpz/9eC+NXxhzAzFVvq7QcysQjKuDqK2q+mR/CgCioSXxuzifUx8xkoHYD3ePQPWvwvvtN/hTWEbRAVsYt3wwVf1i9cc18atqVbE7GmwnYGUimQ7gtAK1R7QXlRuXGP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W4gnt4GWqz6K9TT;
-	Thu, 20 Jun 2024 21:10:10 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id CA89C14058E;
-	Thu, 20 Jun 2024 21:11:43 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 20 Jun
- 2024 14:11:43 +0100
-Date: Thu, 20 Jun 2024 14:11:42 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <dan.j.williams@intel.com>, <ira.weiny@intel.com>, <dave@stgolabs.net>,
-	<dave.jiang@intel.com>, <alison.schofield@intel.com>, <ming4.li@intel.com>,
-	<vishal.l.verma@intel.com>, <jim.harris@samsung.com>,
-	<ilpo.jarvinen@linux.intel.com>, <ardb@kernel.org>,
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <Yazen.Ghannam@amd.com>,
-	<Robert.Richter@amd.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	<linux-pci@vger.kernel.org>
-Subject: Re: [RFC PATCH 8/9] PCI/AER: Export
- pci_aer_unmask_internal_errors()
-Message-ID: <20240620141142.00005cf0@Huawei.com>
-In-Reply-To: <20240617200411.1426554-9-terry.bowman@amd.com>
-References: <20240617200411.1426554-1-terry.bowman@amd.com>
-	<20240617200411.1426554-9-terry.bowman@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718889127; c=relaxed/simple;
+	bh=5QobGKcMzWS0L/imv386TX9RQ22yKwBKkNioynEKs3U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hmgGvmYU4VtB4Igscxn5ygFe3KImWpAVXSO/xl0Qz1vD3hZhctkWF092FN4xdcBQnJZGCQZ/DG+CUYxahjRyqCr1LR7zN0Bypcp1BIPSjTJNjFU+kRF5nXUbTaCC/DkckEq5NziBKV4EZWX7tdcur8ayVj5d1rK2y04oCQ+pi28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=LImavZfu; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KASrTw027624;
+	Thu, 20 Jun 2024 06:11:58 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=OAkMbYlZ3HVuDROEb9uqOGw
+	BlriAuNGM+bvkvRBxTIs=; b=LImavZfuHc2DSNVqQ5H2FE2lDHgcroqED8cKubC
+	n7opL6r5Le8kSu+zTc5x/8AKn3cNl6gfxS3V2+Oh6RFBKOK/lxTixivex0ALQEIR
+	HqWvGG+NHIkaQlFgQKx80d3dVJniAe1kyEndSRQfBETcuGUvo5fRwlIs48X5EJne
+	PAHKujTu2ZwJd6vZkr7QMaKrOcPprdKawHLhcB7wMia2T2G9WJMIyWI0GXIn9FWo
+	LClCLFlXVYAIwegGPH5KQzYvdzT+a1kG5FTLs/IDVVENBmqar1j4mLmxMkYtz4Vm
+	YAbwgKFy6U4G9y9gN+8oTQNmhEa6o5S7ZJPW64V5Py98fIg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3yvjq0gkr7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 06:11:57 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 20 Jun 2024 06:11:55 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 20 Jun 2024 06:11:55 -0700
+Received: from IPBU-BLR-SERVER1.marvell.com (IPBU-BLR-SERVER1.marvell.com [10.28.8.41])
+	by maili.marvell.com (Postfix) with ESMTP id 10A673F70C3;
+	Thu, 20 Jun 2024 06:11:52 -0700 (PDT)
+From: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+To: <will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <sgoutham@marvell.com>, <gcherian@marvell.com>,
+        Gowthami Thiagarajan
+	<gthiagarajan@marvell.com>
+Subject: [PATCH v5 0/3] Marvell Odyssey uncore performance monitor support
+Date: Thu, 20 Jun 2024 18:41:46 +0530
+Message-ID: <20240620131149.590748-1-gthiagarajan@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: rtp5BQEb5BWfMxOpvfN7AjIT9SiOFM1L
+X-Proofpoint-GUID: rtp5BQEb5BWfMxOpvfN7AjIT9SiOFM1L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_07,2024-06-20_04,2024-05-17_01
 
-On Mon, 17 Jun 2024 15:04:10 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
+Odyssey is a 64 bit ARM based SoC with multiple performance monitor
+units for various blocks.
 
-> AER correctable internal errors (CIE) and AER uncorrectable internal
-> errors (UIE) are disabled through the AER mask register by default.[1]
-> 
-> CXL PCIe ports use the CIE/UIE to report RAS errors and as a result
-> need CIE/UIE enabled.[2]
-> 
-> Change pci_aer_unmask_internal_errors() function to be exported for
-> the CXL driver and other drivers to use.
+This series of patches introduces support for uncore performance monitor
+units (PMUs) on the Marvell Odyssey platform. The PMUs covered in this
+series include the DDR PMU and LLC-TAD PMU.
 
-I've perhaps forgotten the end conclusion, but I thought there was
-a request to just try enabling this in general and mask it out only
-for known broken devices?
+v4->v5:
+- Fixed warnings.
 
-Admittedly that's a more daring path, so maybe I hallucinated it!
+Gowthami Thiagarajan (3):
+  perf/marvell: Refactor to extract platform data - no functional change
+  perf/marvell: perf/marvell: Odyssey DDR Performance monitor support
+  perf/marvell : Odyssey LLC-TAD performance monitor support
 
-> 
-> [1] PCI6.0 - 7.8.4.3 Uncorrectable
-> [2] CXL3.1 - 12.2.2 CXL Root Ports, Downstream Switch Ports, and Upstream
->              Switch Ports
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-> ---
->  drivers/pci/pcie/aer.c | 3 ++-
->  include/linux/aer.h    | 6 ++++++
->  2 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 4dc03cb9aff0..d7a1982f0c50 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -951,7 +951,7 @@ static bool find_source_device(struct pci_dev *parent,
->   * Note: AER must be enabled and supported by the device which must be
->   * checked in advance, e.g. with pcie_aer_is_native().
->   */
-> -static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
-> +void pci_aer_unmask_internal_errors(struct pci_dev *dev)
->  {
->  	int aer = dev->aer_cap;
->  	u32 mask;
-> @@ -964,6 +964,7 @@ static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
->  	mask &= ~PCI_ERR_COR_INTERNAL;
->  	pci_write_config_dword(dev, aer + PCI_ERR_COR_MASK, mask);
->  }
-> +EXPORT_SYMBOL_GPL(pci_aer_unmask_internal_errors);
->  
->  static bool is_cxl_mem_dev(struct pci_dev *dev)
->  {
-> diff --git a/include/linux/aer.h b/include/linux/aer.h
-> index 4b97f38f3fcf..a4fd25ea0280 100644
-> --- a/include/linux/aer.h
-> +++ b/include/linux/aer.h
-> @@ -50,6 +50,12 @@ static inline int pci_aer_clear_nonfatal_status(struct pci_dev *dev)
->  static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
->  #endif
->  
-> +#ifdef CONFIG_PCIEAER_CXL
-> +void pci_aer_unmask_internal_errors(struct pci_dev *dev);
-> +#else
-> +static inline void pci_aer_unmask_internal_errors(struct pci_dev *dev) { }
-> +#endif
-> +
->  void pci_print_aer(struct pci_dev *dev, int aer_severity,
->  		    struct aer_capability_regs *aer);
->  int cper_severity_to_aer(int cper_severity);
+ drivers/perf/marvell_cn10k_ddr_pmu.c | 530 +++++++++++++++++++++++----
+ drivers/perf/marvell_cn10k_tad_pmu.c |  66 +++-
+ 2 files changed, 521 insertions(+), 75 deletions(-)
+
+-- 
+2.25.1
 
 
