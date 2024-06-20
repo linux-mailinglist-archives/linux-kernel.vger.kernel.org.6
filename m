@@ -1,253 +1,105 @@
-Return-Path: <linux-kernel+bounces-222223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7EAB90FE73
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:16:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F63D90FE9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DA5A282404
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:15:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4346D1F23C3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A562317C9E1;
-	Thu, 20 Jun 2024 08:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024F819D094;
+	Thu, 20 Jun 2024 08:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eQhJKfA0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qzwhm4Ss";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eQhJKfA0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qzwhm4Ss"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2iSSOuOA"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BE817C20E;
-	Thu, 20 Jun 2024 08:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B8319CCF8
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718871327; cv=none; b=UcXZUvNH2xyya9Q3jxbK2oDcaV5Twsoyvy/QENuodHdK+RhzDCSODz+U/gPiM0d5YSnE05APYi/jT67m8OEnH3LGRoxuO+tQc7wz3iwpVpn4rrFube4oL+MQ+zAB9QqyuRga8yiZJVHoigNgqJIi7ngQU+9yyblo4Ey0KVjKLuk=
+	t=1718871386; cv=none; b=ONZSJ6d1EvQbi8c8up4wv9v0btFXtvb+GxRsoQBJnKkXl6O96yf/53GOdCVow2DNcCbdAwV/dijosrDQ9vaNgnpKau/Q9o1N7lML7TrowaJpdhg9NfsWgwcLglEaqHjo1L+36wEoHZvZ7sSWLMBBV2vKl0YU137psMhGx3oaru8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718871327; c=relaxed/simple;
-	bh=QoBdvFlgD+GxqQfKbtckHEldF3KPTKZGhO7MM8rrU2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AzeSi4BFY/DkMEQTjU8vrTTEDd6oB644fHtrLVVHfxoROB5YlL+2ss1I/tOa+Xtm7eKmddYh0NtBSXZggENszO2hq4ASrUx9H+SFdoZPksJ7hHKXe44+FPY645IQkEMszu+Ks8zS+sLWOl564oDDBcDngooSiSdTUdQmr8BsQ9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eQhJKfA0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qzwhm4Ss; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eQhJKfA0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qzwhm4Ss; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7473421A82;
-	Thu, 20 Jun 2024 08:15:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718871323; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Fvlm3C5vCJy0iEYaOW+YAnAFu3fK55puTAJQWNbdkm8=;
-	b=eQhJKfA07fvgSF2znsRBUXYjn6epcJCX/c1rMfIPmrVVEmCNk/8ysqfzX3alyoirCZciLd
-	1XbUodF49yiurilr6AAci7zKf0vseDpg63ioux95o59Gb0Gy/IYTgwekG23XaCmcnqxiAy
-	sXvZQHWYmlPK/dcnq5dzlLRerauiDIU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718871323;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Fvlm3C5vCJy0iEYaOW+YAnAFu3fK55puTAJQWNbdkm8=;
-	b=qzwhm4SsbhIOIRVqjyQtt07xqic8p3Z6buw21YU+1BxhxQSwiW+8SBdbyRqFhMy75Km5r+
-	KmZ1rFxhzQ2j8QDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=eQhJKfA0;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qzwhm4Ss
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718871323; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Fvlm3C5vCJy0iEYaOW+YAnAFu3fK55puTAJQWNbdkm8=;
-	b=eQhJKfA07fvgSF2znsRBUXYjn6epcJCX/c1rMfIPmrVVEmCNk/8ysqfzX3alyoirCZciLd
-	1XbUodF49yiurilr6AAci7zKf0vseDpg63ioux95o59Gb0Gy/IYTgwekG23XaCmcnqxiAy
-	sXvZQHWYmlPK/dcnq5dzlLRerauiDIU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718871323;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Fvlm3C5vCJy0iEYaOW+YAnAFu3fK55puTAJQWNbdkm8=;
-	b=qzwhm4SsbhIOIRVqjyQtt07xqic8p3Z6buw21YU+1BxhxQSwiW+8SBdbyRqFhMy75Km5r+
-	KmZ1rFxhzQ2j8QDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 51A4213AC1;
-	Thu, 20 Jun 2024 08:15:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id f06QExvlc2aMXQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 20 Jun 2024 08:15:23 +0000
-Message-ID: <08b38709-16f1-44d5-9808-b135e290d2b7@suse.cz>
-Date: Thu, 20 Jun 2024 10:15:23 +0200
+	s=arc-20240116; t=1718871386; c=relaxed/simple;
+	bh=dft9k4QwVExtZF9VSHXeFnA6FpkqOsI1kNGDVc3SntM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y4HEgXfDiTbe7IF5hXTai2hixyb8NKH5rSOKtmxgeiGhZySsoJJ4M889GXpRjs7mMtl9XurWK4UuDxTIhYaXshEdef/K17zIDlvRpo0mRkwVj08PBz2plMydEirfmE0tzOHvLOM6dP6xgp0C/0H3BM1BIP8RpV/yzPzsUCyX/f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2iSSOuOA; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6b5136965a7so2122986d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:16:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718871383; x=1719476183; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dft9k4QwVExtZF9VSHXeFnA6FpkqOsI1kNGDVc3SntM=;
+        b=2iSSOuOAH3soyq+uvu7LCrAOdIcXdgkvo1xwzMtJW0z+FjyOhO9zR0q5nlgUCxTs0C
+         Oh8QB4Kgs9qJFJCVPqSuUljttuW5QaPe8SqOHsj4r87kWfMFtB+kSRpl66TT8q/RDPm4
+         /mFqLJ+HxAjmMvT28ONTxe2XpRuKDImlJKTfVQWepoMrG9Wc3ZbGt+xvuzWfbO6D575H
+         L83NZlTHRRzamKaEq0Fi7F2fSFuFvXnTzxNbn7sJnSdSt9WOeO4JUQt3f1utCEHMB2lS
+         9rzPsLwcDsylmMiVceraGj94uknu3PYN1SePqlVzrKjZwfwMpU4ql5OKGZmfUexWgn10
+         +hsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718871383; x=1719476183;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dft9k4QwVExtZF9VSHXeFnA6FpkqOsI1kNGDVc3SntM=;
+        b=QZvwpvjo7f9zAt0HtquiBsl3lQht5m1Myfae9acud8iDv5J4LsvOyEJ2wQga80Djlp
+         53vJD/VHhi7BHQBzhozc/xFFtr61LNPgYdTX74U9silRV4tPc4EA+1C/CTniE+JFIRK3
+         L1pmJE78iOi6LWoGCZKV7IdP9ITHIQoCKr7ALPaXAK6qbeagk+jKHsNyzHh5jfYqacD0
+         fHLzbYzE0dOs+bKda9GqDXP9HIncpZg5Iy5k+s3To02CpVyfxtsxyKa+KiT0HFQOQP51
+         EGNS92ElOy4nXKj4jgK9hUiMSGIcIyxPXFmoOxzsMRQTQqqC7zz/6xE9AszntnxmP0AN
+         g28Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUzyUL0ZvNb2arH0Qzd8cqEw4dsfz6r942V2iFJPzG9TzkKbYz57qsF/8CXhbrbNEwB1XJCHsDpaQwQMSheSU32sxcqQoxkRLMcJ3qH
+X-Gm-Message-State: AOJu0YykfU2hZnr6vREiZU6PHLpfg6dhZLWd+dzdB0Nck0QFimdpL+BE
+	jS4RVbAVgaVNjZykI0kPpFvNud640WDvzBGb7a+fsNbqUpjOHgrk9hGOtjPtODYpZrP94grHsFo
+	nJ+gyeW5MpjVWZonIEg2IrerUwLLKu2wTjrWO
+X-Google-Smtp-Source: AGHT+IE5Z0Cd5ZP1M5xJnwi7ge1Xv70m2SCP04JaV06E3n16w03DHPIGim1lZXVI8vYMw81NuCMEEgRnPM+mT8nDGyU=
+X-Received: by 2002:a0c:ea85:0:b0:6b4:f980:9f2b with SMTP id
+ 6a1803df08f44-6b501e2487fmr52257526d6.15.1718871383512; Thu, 20 Jun 2024
+ 01:16:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] bpf: do not create bpf_non_sleepable_error_inject
- list when unnecessary
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, Christoph Lameter <cl@linux.com>,
- David Rientjes <rientjes@google.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
- "David S. Miller" <davem@davemloft.net>,
- Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
- linux-mm <linux-mm@kvack.org>, bpf <bpf@vger.kernel.org>,
- linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
-References: <20240620-fault-injection-statickeys-v2-0-e23947d3d84b@suse.cz>
- <20240620-fault-injection-statickeys-v2-5-e23947d3d84b@suse.cz>
- <CAADnVQLKRAa5_-JUEZwwbrbySDekVdSgEp0UqgqbVfqsgfYjQg@mail.gmail.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <CAADnVQLKRAa5_-JUEZwwbrbySDekVdSgEp0UqgqbVfqsgfYjQg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[gmail.com,linux.com,google.com,kernel.org,iogearbox.net,linux.ibm.com,intel.com,davemloft.net,goodmis.org,arm.com,linux.dev,vger.kernel.org,kvack.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 7473421A82
-X-Spam-Flag: NO
-X-Spam-Score: -3.00
-X-Spam-Level: 
+References: <20240619154530.163232-1-iii@linux.ibm.com> <20240619154530.163232-35-iii@linux.ibm.com>
+In-Reply-To: <20240619154530.163232-35-iii@linux.ibm.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Thu, 20 Jun 2024 10:15:46 +0200
+Message-ID: <CAG_fn=VfeugzYZ05O-XCo5GJA9m2S76VrwS7yc3uPYM6zUpKXQ@mail.gmail.com>
+Subject: Re: [PATCH v5 34/37] s390/uaccess: Add the missing
+ linux/instrumented.h #include
+To: Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Pekka Enberg <penberg@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Sven Schnelle <svens@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/20/24 3:18 AM, Alexei Starovoitov wrote:
-> On Wed, Jun 19, 2024 at 3:49 PM Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->> When CONFIG_FUNCTION_ERROR_INJECTION is disabled,
->> within_error_injection_list() will return false for any address and the
->> result of check_non_sleepable_error_inject() denylist is thus redundant.
->> The bpf_non_sleepable_error_inject list thus does not need to be
->> constructed at all, so #ifdef it out.
->>
->> This will allow to inline functions on the list when
->> CONFIG_FUNCTION_ERROR_INJECTION is disabled as there will be no BTF_ID()
->> reference for them.
->>
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
->> ---
->>  kernel/bpf/verifier.c | 15 +++++++++++++++
->>  1 file changed, 15 insertions(+)
->>
->> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
->> index 77da1f438bec..5cd93de37d68 100644
->> --- a/kernel/bpf/verifier.c
->> +++ b/kernel/bpf/verifier.c
->> @@ -21044,6 +21044,8 @@ static int check_attach_modify_return(unsigned long addr, const char *func_name)
->>         return -EINVAL;
->>  }
->>
->> +#ifdef CONFIG_FUNCTION_ERROR_INJECTION
->> +
->>  /* list of non-sleepable functions that are otherwise on
->>   * ALLOW_ERROR_INJECTION list
->>   */
->> @@ -21061,6 +21063,19 @@ static int check_non_sleepable_error_inject(u32 btf_id)
->>         return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_id);
->>  }
->>
->> +#else /* CONFIG_FUNCTION_ERROR_INJECTION */
->> +
->> +/*
->> + * Pretend the denylist is empty, within_error_injection_list() will return
->> + * false anyway.
->> + */
->> +static int check_non_sleepable_error_inject(u32 btf_id)
->> +{
->> +       return 0;
->> +}
->> +
->> +#endif
-> 
-> The comment reads like this is an optimization, but it's a mandatory
-> ifdef since should_failslab() might not be found by resolve_btfid
-> during the build.
-> Please make it clear in the comment.
-
-The comment just tried to explain why the return value is 0 and not 1 (which
-would be also somewhat logical) but ok, will make it more clear.
+On Wed, Jun 19, 2024 at 5:45=E2=80=AFPM Ilya Leoshkevich <iii@linux.ibm.com=
+> wrote:
+>
+> uaccess.h uses instrument_get_user() and instrument_put_user(), which
+> are defined in linux/instrumented.h. Currently we get this header from
+> somewhere else by accident; prefer to be explicit about it and include
+> it directly.
+>
+> Suggested-by: Alexander Potapenko <glider@google.com>
+> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Reviewed-by: Alexander Potapenko <glider@google.com>
 
