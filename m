@@ -1,320 +1,171 @@
-Return-Path: <linux-kernel+bounces-222335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7341690FFDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:05:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81DD290FFE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC9CEB22CEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:05:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0372B1F238BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B2917CA1B;
-	Thu, 20 Jun 2024 09:04:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809D7628;
-	Thu, 20 Jun 2024 09:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A573628;
+	Thu, 20 Jun 2024 09:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QJJvqQHT"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521C47C6C9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718874295; cv=none; b=FfeqFwuCfBgcN5I2GuQpksFnsKhUarStt+9VRHHqT+CGuH3lhEk6QBEd2BNFXXrJY5GLlbTl7uaEXoeopIIKbPytMhxIIitvglo/IihJm/elNuCS5zHlfxse9uzxUi2l8uvX+jnasy5CqZ57qG/BlP28e/jpn0gh9qUCraESMYs=
+	t=1718874338; cv=none; b=DGcecoFw277623Q5ZYQshrUSYyHdsIc+fZudR8aWV3Gb4+GKb9lPPhnLRV7T0rUcCC3YIF+WaaA+CN3EWEWgEfMu5bepakoxlEhwc/uWW4kzLOicsEj4HSoGM/mTwI7v8qcvrHo3h+ICMI+9y9FcOORLPtODMpUBKyK1G3lph/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718874295; c=relaxed/simple;
-	bh=TXMIEnNQYiFNlFAGAyRR7XEFYFmCzRqmalkivjZ7k00=;
+	s=arc-20240116; t=1718874338; c=relaxed/simple;
+	bh=jkKEq5JT+Lrrhve6Owgp68jjvCNnaECDynRqPxfxNt4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BEk5vbyA7qaOPNDyxXbvQjmNOGZm5d620BDhPpntqTuVryJlO9RZPlJVeQ3bLurvam1mSpuxBrUprSLeB6Zc9MAEwk1c6AMrKknqC6LUHBsE3mB+QNsmzwh2+pPhh8W6vsEYworkZy+Y4lqxO4C24KL8Xy88YobtBk12BXrRm20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B9EFDA7;
-	Thu, 20 Jun 2024 02:05:17 -0700 (PDT)
-Received: from [10.57.74.104] (unknown [10.57.74.104])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B70AC3F6A8;
-	Thu, 20 Jun 2024 02:04:50 -0700 (PDT)
-Message-ID: <f3c18806-34ac-41d3-8c79-d7dd6504547e@arm.com>
-Date: Thu, 20 Jun 2024 10:04:49 +0100
+	 In-Reply-To:Content-Type; b=jOg+r2PJGE/mN71n1ORp4uLc1u1qQ54DiA/yrVsmUL4+OynkE+dYBpQwabBSs4HINa3AWvHJ+T5m5cJUHJm8IJTMrWilNV8ykqkV0GcoaTCYYTPvsNm7j0WVTd/fp/0amYUmDbF1wDKhRW5VKrcMx6yEHGx0MbVtQfWO7XBkc+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QJJvqQHT; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: leon@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718874334;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UvFo5cd3E4KERCkesw8BgsGhNxyquIalxzKIE9JjvGY=;
+	b=QJJvqQHTAHPtgcEoyYsp9kFBQqiswzb48TDSfzE/FHaez1zP0Hd3i+oy8qIe03ZB+kkBc5
+	hiMoakj3Vo9O9PeXkYTjpp12EBINz97SlmaVH743rkUpKUKT3QhPgsWfZJmWk7sqqLVbKd
+	vMNyfag0OyDFpJ+Ih22gQKl4GBB+Zk0=
+X-Envelope-To: syzbot+19ec7595e3aa1a45f623@syzkaller.appspotmail.com
+X-Envelope-To: jgg@ziepe.ca
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-rdma@vger.kernel.org
+X-Envelope-To: netdev@vger.kernel.org
+X-Envelope-To: syzkaller-bugs@googlegroups.com
+Message-ID: <ef2c01b5-d38b-4409-bbd4-0484564657c9@linux.dev>
+Date: Thu, 20 Jun 2024 17:05:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
- entry allocation for thp_swapout
-Content-Language: en-GB
-To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
- shuah@kernel.org, linux-mm@kvack.org
-Cc: chrisl@kernel.org, david@redhat.com, hughd@google.com,
- kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org,
- ying.huang@intel.com, linux-kselftest@vger.kernel.org,
- Barry Song <v-songbaohua@oppo.com>
-References: <20240620002648.75204-1-21cnbao@gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240620002648.75204-1-21cnbao@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [syzbot] [rdma?] WARNING in ib_uverbs_release_dev
+To: Leon Romanovsky <leon@kernel.org>
+Cc: syzbot <syzbot+19ec7595e3aa1a45f623@syzkaller.appspotmail.com>,
+ jgg@ziepe.ca, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+ netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <000000000000057e4c061b386e23@google.com>
+ <20240619091557.GM4025@unreal>
+ <94d36dd5-313b-46b3-8d43-95016175d273@linux.dev>
+ <20240619174802.GP4025@unreal>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20240619174802.GP4025@unreal>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 20/06/2024 01:26, Barry Song wrote:
-> From: Barry Song <v-songbaohua@oppo.com>
+在 2024/6/20 1:48, Leon Romanovsky 写道:
+> On Wed, Jun 19, 2024 at 10:16:20PM +0800, Zhu Yanjun wrote:
+>> 在 2024/6/19 17:15, Leon Romanovsky 写道:
+>>> On Tue, Jun 18, 2024 at 11:37:18PM -0700, syzbot wrote:
+>>>> Hello,
+>>>>
+>>>> syzbot found the following issue on:
+>>>>
+>>>> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+>>>> git tree:       upstream
+>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=179e93fe980000
+>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
+>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=19ec7595e3aa1a45f623
+>>>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>>>>
+>>>> Unfortunately, I don't have any reproducer for this issue yet.
+>>>>
+>>>> Downloadable assets:
+>>>> disk image: https://storage.googleapis.com/syzbot-assets/27e64d7472ce/disk-2ccbdf43.raw.xz
+>>>> vmlinux: https://storage.googleapis.com/syzbot-assets/e1c494bb5c9c/vmlinux-2ccbdf43.xz
+>>>> kernel image: https://storage.googleapis.com/syzbot-assets/752498985a5e/bzImage-2ccbdf43.xz
+>>>>
+>>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>>> Reported-by: syzbot+19ec7595e3aa1a45f623@syzkaller.appspotmail.com
+>>>>
+>>>> smc: removing ib device syz0
+>>>> ------------[ cut here ]------------
+>>>> WARNING: CPU: 0 PID: 51 at kernel/rcu/srcutree.c:653 cleanup_srcu_struct+0x404/0x4d0 kernel/rcu/srcutree.c:653
+>>>> Modules linked in:
+>>>> CPU: 0 PID: 51 Comm: kworker/u8:3 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+>>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+>>>> Workqueue: ib-unreg-wq ib_unregister_work
+>>>> RIP: 0010:cleanup_srcu_struct+0x404/0x4d0 kernel/rcu/srcutree.c:653
+>>>> Code: 12 80 00 48 c7 03 00 00 00 00 48 83 c4 48 5b 41 5c 41 5d 41 5e 41 5f 5d e9 14 67 34 0a 90 0f 0b 90 eb e7 90 0f 0b 90 eb e1 90 <0f> 0b 90 eb db 90 0f 0b 90 eb 0a 90 0f 0b 90 eb 04 90 0f 0b 90 48
+>>>> RSP: 0018:ffffc90000bb7970 EFLAGS: 00010202
+>>>> RAX: 0000000000000001 RBX: ffff88802a1bc980 RCX: 0000000000000002
+>>>> RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffe8ffffd74c58
+>>>> RBP: 0000000000000001 R08: ffffe8ffffd74c5f R09: 1ffffd1ffffae98b
+>>>> R10: dffffc0000000000 R11: fffff91ffffae98c R12: dffffc0000000000
+>>>> R13: ffff88802285b5f0 R14: ffff88802285b000 R15: ffff88802a1bc800
+>>>> FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> CR2: 00007fa3852cae10 CR3: 000000000e132000 CR4: 0000000000350ef0
+>>>> Call Trace:
+>>>>    <TASK>
+>>>>    ib_uverbs_release_dev+0x4e/0x80 drivers/infiniband/core/uverbs_main.c:136
+>>>>    device_release+0x9b/0x1c0
+>>>>    kobject_cleanup lib/kobject.c:689 [inline]
+>>>>    kobject_release lib/kobject.c:720 [inline]
+>>>>    kref_put include/linux/kref.h:65 [inline]
+>>>>    kobject_put+0x231/0x480 lib/kobject.c:737
+>>>>    remove_client_context+0xb9/0x1e0 drivers/infiniband/core/device.c:776
+>>>>    disable_device+0x13b/0x360 drivers/infiniband/core/device.c:1282
+>>>>    __ib_unregister_device+0x6d/0x170 drivers/infiniband/core/device.c:1475
+>>>>    ib_unregister_work+0x19/0x30 drivers/infiniband/core/device.c:1586
+>>>>    process_one_work kernel/workqueue.c:3231 [inline]
+>>>>    process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
+>>>>    worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+>>>>    kthread+0x2f2/0x390 kernel/kthread.c:389
+>>>>    ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+>>>>    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>>>>    </TASK>
+>>>
+>>> I see that this is caused by call to ib_unregister_device_queued() as a
+>>> response to NETDEV_UNREGISTER event, but we don't flush anything before.
+>>> How can we be sure that ib_device is not used anymore?
+>>
+>> Hi, Leon
+>>
+>> This is the console output:
+>>
+>> https://syzkaller.appspot.com/x/log.txt?x=179e93fe980000
+>>
+>>  From the above link, it seems that other devices or subsystems failed
+>> firstly, then caused this call trace to appear. When other problem occurred,
+>> the whole kernel system was in mess state.So it is not weird that some
+>> problems occurred.
 > 
-> Both Ryan and Chris have been utilizing the small test program to aid
-> in debugging and identifying issues with swap entry allocation. While
-> a real or intricate workload might be more suitable for assessing the
-> correctness and effectiveness of the swap allocation policy, a small
-> test program presents a simpler means of understanding the problem and
-> initially verifying the improvements being made.
-> 
-> Let's endeavor to integrate it into the self-test suite. Although it
-> presently only accommodates 64KB and 4KB, I'm optimistic that we can
-> expand its capabilities to support multiple sizes and simulate more
-> complex systems in the future as required.
+> Which devices/subsystems failed? I grepped the log and don't see
+> anything suspicious, before first "------------[ cut here ]------------"
+> sentence.
 
-I'll try to summarize the thread with Huang Ying by suggesting this test program
-is "neccessary but not sufficient" to exhaustively test the mTHP swap-out path.
-I've certainly found it useful and think it would be a valuable addition to the
-tree.
+Need the script to check this problem. It is an interesting problem.
 
-That said, I'm not convinced it is a selftest; IMO a selftest should provide a
-clear pass/fail result against some criteria and must be able to be run
-automatically by (e.g.) a CI system.
-
-For the former, currently the test only fails if some API call unexpectedly
-fails. Perhaps we would need to decide on some threshold for acceptable fallback
-rate and fail if be go above that? But it's not clear how to determine such an
-appropriate threshold.
-
-For the latter, the test should be added to run_vmtests.sh. Then it will be run
-automatically as part of invocing the standard kselftest runner and the results
-will be reported in the standard TAP format. But this test also requires a very
-specific swap and mthp configuration so you would also need to automatically
-configure and restore that (either in run_vmtests.sh or in the c file).
-
-Given the probable difficulties with defining clear success criteria, perhaps it
-is better to put it in tools/mm?
-
-Thanks,
-Ryan
-
+Zhu Yanjun
 
 > 
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> ---
->  tools/testing/selftests/mm/Makefile           |   1 +
->  .../selftests/mm/thp_swap_allocator_test.c    | 192 ++++++++++++++++++
->  2 files changed, 193 insertions(+)
->  create mode 100644 tools/testing/selftests/mm/thp_swap_allocator_test.c
-> 
-> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-> index e1aa09ddaa3d..64164ad66835 100644
-> --- a/tools/testing/selftests/mm/Makefile
-> +++ b/tools/testing/selftests/mm/Makefile
-> @@ -65,6 +65,7 @@ TEST_GEN_FILES += mseal_test
->  TEST_GEN_FILES += seal_elf
->  TEST_GEN_FILES += on-fault-limit
->  TEST_GEN_FILES += pagemap_ioctl
-> +TEST_GEN_FILES += thp_swap_allocator_test
->  TEST_GEN_FILES += thuge-gen
->  TEST_GEN_FILES += transhuge-stress
->  TEST_GEN_FILES += uffd-stress
-> diff --git a/tools/testing/selftests/mm/thp_swap_allocator_test.c b/tools/testing/selftests/mm/thp_swap_allocator_test.c
-> new file mode 100644
-> index 000000000000..4443a906d0f8
-> --- /dev/null
-> +++ b/tools/testing/selftests/mm/thp_swap_allocator_test.c
-> @@ -0,0 +1,192 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * thp_swap_allocator_test
-> + *
-> + * The purpose of this test program is helping check if THP swpout
-> + * can correctly get swap slots to swap out as a whole instead of
-> + * being split. It randomly releases swap entries through madvise
-> + * DONTNEED and do swapout on two memory areas: a memory area for
-> + * 64KB THP and the other area for small folios. The second memory
-> + * can be enabled by "-s".
-> + * Before running the program, we need to setup a zRAM or similar
-> + * swap device by:
-> + *  echo lzo > /sys/block/zram0/comp_algorithm
-> + *  echo 64M > /sys/block/zram0/disksize
-> + *  echo never > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
-> + *  echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enabled
-> + *  mkswap /dev/zram0
-> + *  swapon /dev/zram0
-> + * The expected result should be 0% anon swpout fallback ratio w/ or
-> + * w/o "-s".
-> + *
-> + * Author(s): Barry Song <v-songbaohua@oppo.com>
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <unistd.h>
-> +#include <string.h>
-> +#include <sys/mman.h>
-> +#include <errno.h>
-> +#include <time.h>
-> +
-> +#define MEMSIZE_MTHP (60 * 1024 * 1024)
-> +#define MEMSIZE_SMALLFOLIO (1 * 1024 * 1024)
-> +#define ALIGNMENT_MTHP (64 * 1024)
-> +#define ALIGNMENT_SMALLFOLIO (4 * 1024)
-> +#define TOTAL_DONTNEED_MTHP (16 * 1024 * 1024)
-> +#define TOTAL_DONTNEED_SMALLFOLIO (768 * 1024)
-> +#define MTHP_FOLIO_SIZE (64 * 1024)
-> +
-> +#define SWPOUT_PATH \
-> +	"/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout"
-> +#define SWPOUT_FALLBACK_PATH \
-> +	"/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout_fallback"
-> +
-> +static void *aligned_alloc_mem(size_t size, size_t alignment)
-> +{
-> +	void *mem = NULL;
-> +
-> +	if (posix_memalign(&mem, alignment, size) != 0) {
-> +		perror("posix_memalign");
-> +		return NULL;
-> +	}
-> +	return mem;
-> +}
-> +
-> +static void random_madvise_dontneed(void *mem, size_t mem_size,
-> +		size_t align_size, size_t total_dontneed_size)
-> +{
-> +	size_t num_pages = total_dontneed_size / align_size;
-> +	size_t i;
-> +	size_t offset;
-> +	void *addr;
-> +
-> +	for (i = 0; i < num_pages; ++i) {
-> +		offset = (rand() % (mem_size / align_size)) * align_size;
-> +		addr = (char *)mem + offset;
-> +		if (madvise(addr, align_size, MADV_DONTNEED) != 0)
-> +			perror("madvise dontneed");
-> +
-> +		memset(addr, 0x11, align_size);
-> +	}
-> +}
-> +
-> +static unsigned long read_stat(const char *path)
-> +{
-> +	FILE *file;
-> +	unsigned long value;
-> +
-> +	file = fopen(path, "r");
-> +	if (!file) {
-> +		perror("fopen");
-> +		return 0;
-> +	}
-> +
-> +	if (fscanf(file, "%lu", &value) != 1) {
-> +		perror("fscanf");
-> +		fclose(file);
-> +		return 0;
-> +	}
-> +
-> +	fclose(file);
-> +	return value;
-> +}
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +	int use_small_folio = 0;
-> +	int i;
-> +	void *mem1 = aligned_alloc_mem(MEMSIZE_MTHP, ALIGNMENT_MTHP);
-> +	void *mem2 = NULL;
-> +
-> +	if (mem1 == NULL) {
-> +		fprintf(stderr, "Failed to allocate 60MB memory\n");
-> +		return EXIT_FAILURE;
-> +	}
-> +
-> +	if (madvise(mem1, MEMSIZE_MTHP, MADV_HUGEPAGE) != 0) {
-> +		perror("madvise hugepage for mem1");
-> +		free(mem1);
-> +		return EXIT_FAILURE;
-> +	}
-> +
-> +	for (i = 1; i < argc; ++i) {
-> +		if (strcmp(argv[i], "-s") == 0)
-> +			use_small_folio = 1;
-> +	}
-> +
-> +	if (use_small_folio) {
-> +		mem2 = aligned_alloc_mem(MEMSIZE_SMALLFOLIO, ALIGNMENT_MTHP);
-> +		if (mem2 == NULL) {
-> +			fprintf(stderr, "Failed to allocate 1MB memory\n");
-> +			free(mem1);
-> +			return EXIT_FAILURE;
-> +		}
-> +
-> +		if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_NOHUGEPAGE) != 0) {
-> +			perror("madvise nohugepage for mem2");
-> +			free(mem1);
-> +			free(mem2);
-> +			return EXIT_FAILURE;
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < 100; ++i) {
-> +		unsigned long initial_swpout;
-> +		unsigned long initial_swpout_fallback;
-> +		unsigned long final_swpout;
-> +		unsigned long final_swpout_fallback;
-> +		unsigned long swpout_inc;
-> +		unsigned long swpout_fallback_inc;
-> +		double fallback_percentage;
-> +
-> +		initial_swpout = read_stat(SWPOUT_PATH);
-> +		initial_swpout_fallback = read_stat(SWPOUT_FALLBACK_PATH);
-> +
-> +		random_madvise_dontneed(mem1, MEMSIZE_MTHP, ALIGNMENT_MTHP,
-> +				TOTAL_DONTNEED_MTHP);
-> +
-> +		if (use_small_folio) {
-> +			random_madvise_dontneed(mem2, MEMSIZE_SMALLFOLIO,
-> +					ALIGNMENT_SMALLFOLIO,
-> +					TOTAL_DONTNEED_SMALLFOLIO);
-> +		}
-> +
-> +		if (madvise(mem1, MEMSIZE_MTHP, MADV_PAGEOUT) != 0) {
-> +			perror("madvise pageout for mem1");
-> +			free(mem1);
-> +			if (mem2 != NULL)
-> +				free(mem2);
-> +			return EXIT_FAILURE;
-> +		}
-> +
-> +		if (use_small_folio) {
-> +			if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_PAGEOUT) != 0) {
-> +				perror("madvise pageout for mem2");
-> +				free(mem1);
-> +				free(mem2);
-> +				return EXIT_FAILURE;
-> +			}
-> +		}
-> +
-> +		final_swpout = read_stat(SWPOUT_PATH);
-> +		final_swpout_fallback = read_stat(SWPOUT_FALLBACK_PATH);
-> +
-> +		swpout_inc = final_swpout - initial_swpout;
-> +		swpout_fallback_inc = final_swpout_fallback - initial_swpout_fallback;
-> +
-> +		fallback_percentage = (double)swpout_fallback_inc /
-> +			(swpout_fallback_inc + swpout_inc) * 100;
-> +
-> +		printf("Iteration %d: swpout inc: %lu, swpout fallback inc: %lu, Fallback percentage: %.2f%%\n",
-> +				i + 1, swpout_inc, swpout_fallback_inc, fallback_percentage);
-> +	}
-> +
-> +	free(mem1);
-> +	if (mem2 != NULL)
-> +		free(mem2);
-> +
-> +	return EXIT_SUCCESS;
-> +}
+>>
+>> To be simple, the root cause is not in RDMA subsystem.
+>>
+>> I will continue to delve into this problem.
+>>
+>> Zhu Yanjun
+>>>
+>>> Thanks
+>>
 
 
