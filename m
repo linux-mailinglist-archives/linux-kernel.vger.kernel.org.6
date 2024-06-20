@@ -1,127 +1,155 @@
-Return-Path: <linux-kernel+bounces-222089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F132E90FCAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:29:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EAF090FCB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27022B23B84
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:29:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B5E4283024
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909473BB48;
-	Thu, 20 Jun 2024 06:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D81B38FA5;
+	Thu, 20 Jun 2024 06:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W+wzj8Qw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MPXYH5HE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF8F1CFA9;
-	Thu, 20 Jun 2024 06:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AF226AFB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718864960; cv=none; b=rD3H1tuUSTVB2ct/IVHYVx1Oj6huU/cyvOAL/K5/m/q/oKrsw+gTnBqGWreHi5OldxDtOSCIqVbd8/TB7MhTqyUx80os+UknaYwbvfmIamnfzC26N1+V3DSXrGi0/EJ0c629ZrViUIvRC1HVxs59MSYV4cvfjLVob8RmBLbG6y8=
+	t=1718865133; cv=none; b=f4G+ozdh7eH68hSHfdLKV+EiIze317SULYYLLMmvLk0ZQtv5e8rJflaVzA0ynqYXcCiTAmuPcDb0Q4iF+JisQTPcP3YiQxlxAHYuEOVbTwkdKOFSFqYCWh7EFaTm+fAIzOWb8nawUcXqNSMsb4AGDIi1m49wseXlHj8veIVfkso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718864960; c=relaxed/simple;
-	bh=AJU+IcQK9TNFEQT1vsa902xQ13yY9qya1GOcSpNF5Ec=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=cb0rdK/WoNYkhzjQGQdgezkLfNd7Ty+wSWzXxnkvrY354Oh4mXXATPLNCq+U4TMhqcOYszrVwuXxiUq3JENZMTDEYYWWVQJx4EsadbzuQxX/8Ys888Pgq6rwHLW1GQ8dBTL5WxiMkqZlxkSKgk9H7/hCwyMQYIbqZsmz+PXVBw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W+wzj8Qw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K1NcKF024459;
-	Thu, 20 Jun 2024 06:29:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=+iJ+ZcNNMMRRyKHxGbCQrp
-	ouL0wP99StKm757wGOd9o=; b=W+wzj8QwzY3J/GDwd0vsGFgW4scH805NqRnJSB
-	MsmUkG83WXzVzdP7nbtRtp5Lg+et3hgdYiUZuOsC2XkVfs7QO/snt5BaC1X00Thd
-	5uGjI7HAnqNotM1GDqoCs62YLqexpOF1YmOZu03qdec+LwU1IkYNTphl7YblNV+k
-	JQhG/GA8WZ8IIwNmrpf34rSOZ9r2L5pdaeUEEW56IjW+7heuFwmbgUAIWV1RGN/g
-	Fvp3uzpFrW8JlvdnakDzrc/fDwTUSfJqkswl3dkcxi5POihq/xLwHClA3EibSjAD
-	nurLevnkk0AKDhwKkNYikEHPlrhhYNPbilpQu1BGpE1Pq9Hg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvaqbrhee-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 06:29:05 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45K6T4Um007576
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 06:29:04 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
- 2024 23:29:03 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 19 Jun 2024 23:29:02 -0700
-Subject: [PATCH] drm/tests: add drm_hdmi_state_helper_test
- MODULE_DESCRIPTION()
+	s=arc-20240116; t=1718865133; c=relaxed/simple;
+	bh=+Wnn24Xlpa6rae18wbizkFcb2MAtnQ/iXJt1icI1Q0A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r2CsYMUBtU+LGTLOpyv4g3lr7yeVVaXlWEdbzLEiqRrhLknh3gr/h7B9Yu7GXYCW7EQGiQJHGq6g9p5LZOeHRqpIcYirJMwFs8ntTBpvbJW4LY7CIomit2C4xUHXR1PcFb6u/PPzyZXYPIRfJZqeqGOaE2sXSy+3JyAmkdAlimU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MPXYH5HE; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718865133; x=1750401133;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+Wnn24Xlpa6rae18wbizkFcb2MAtnQ/iXJt1icI1Q0A=;
+  b=MPXYH5HENwPcteHLVYu2ogTCbt0zKP5SFX18kOcJMzR2X5/wp8P5SsD+
+   n1z5BoRX0w19UDHFDdthPSwcWthkBMXsgW/Z5K7lH4RCRxLiKNlQ21WiC
+   mw3/4QbxYPAnwq2se7wISHDUhDfbdZsL08th3BuUPpBC5gMO8M6DUAum5
+   sOJLLRz6pF8ak/DhEjGC0/u/eHLWtJNVR23/atgo5ip4zHxHso+tNQ8Hz
+   Zq/kknFihlRjsJ+S8ChyrZ0qKaTrGdyH/aGGZgIkC1wkYhvjPZUbJfaEw
+   5KN2a9h7SZVN8RePIHVd09BXnQKoI1c62l2wTs7/rf9qIIEzYrJXUS0ni
+   Q==;
+X-CSE-ConnectionGUID: MkfVTWuLT8yfs2O40dSuQA==
+X-CSE-MsgGUID: hOCsJYGBR5Ok49DIkW/S2A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="38334032"
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="38334032"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 23:32:12 -0700
+X-CSE-ConnectionGUID: 8xLW16KfRteWdLWvkDkhdw==
+X-CSE-MsgGUID: 5cU3Uf+mS5GF7QFugpHoDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="42242042"
+Received: from unknown (HELO allen-box.sh.intel.com) ([10.239.159.127])
+  by fmviesa009.fm.intel.com with ESMTP; 19 Jun 2024 23:32:09 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v2 1/1] iommu/vt-d: Fix missed device TLB cache tag
+Date: Thu, 20 Jun 2024 14:29:40 +0800
+Message-Id: <20240620062940.201786-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240619-md-drm-tests-drm_hdmi_state_helper_test-v1-1-41c5fe2fdb4a@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAC3Mc2YC/x2NUQrDIBAFrxL2uwvRlqT2KqWIiWsVGhN2pQRC7
- l7t3xsezBwgxIkEHt0BTN8kac0V1KWDObr8Jky+Muhe3/pBGVw8el6wkBRpy0a/JCvFFbKRPhu
- xbR+OehxIm3C/KgPVtjGFtP9Lz1flyQnhxC7PsfmbM6yMmfYC5/kDtF1hyZgAAAA=
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Dave Stevenson
-	<dave.stevenson@raspberrypi.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gx46bUwopQ1zNNN4zwehclrcZ-GSZXR_
-X-Proofpoint-ORIG-GUID: gx46bUwopQ1zNNN4zwehclrcZ-GSZXR_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_04,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406200045
+Content-Transfer-Encoding: 8bit
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_hdmi_state_helper_test.o
+When a domain is attached to a device, the required cache tags are
+assigned to the domain so that the related caches can be flushed
+whenever it is needed. The device TLB cache tag is created based
+on whether the ats_enabled field of the device's iommu data is set.
+This creates an ordered dependency between cache tag assignment and
+ATS enabling.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+The device TLB cache tag would not be created if device's ATS is
+enabled after the cache tag assignment. This causes devices with PCI
+ATS support to malfunction.
 
-Fixes: eb66d34d793e ("drm/tests: Add output bpc tests")
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+The ATS control is exclusively owned by the iommu driver. Hence, move
+cache_tag_assign_domain() after PCI ATS enabling to make sure that the
+device TLB cache tag is created for the domain.
+
+Fixes: 3b1d9e2b2d68 ("iommu/vt-d: Add cache tag assignment interface")
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 ---
- drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/iommu/intel/iommu.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-index 2d3abc71dc16..34ee95d41f29 100644
---- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-+++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
-@@ -1740,4 +1740,5 @@ kunit_test_suites(
- );
+Change log:
+v2:
+- Reverting the order instead of adding unnecessary run-time overhead.
+
+v1:
+- https://lore.kernel.org/linux-iommu/20240619015345.182773-1-baolu.lu@linux.intel.com/
+
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 2e9811bf2a4e..fd11a080380c 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -2114,12 +2114,6 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
+ 	if (ret)
+ 		return ret;
  
- MODULE_AUTHOR("Maxime Ripard <mripard@kernel.org>");
-+MODULE_DESCRIPTION("Kunit test for drm_hdmi_state_helper functions");
- MODULE_LICENSE("GPL");
-
----
-base-commit: b9578c49456340ca4d3c7ddbaca054ffc2b51bc1
-change-id: 20240619-md-drm-tests-drm_hdmi_state_helper_test-7276e29f8319
+-	ret = cache_tag_assign_domain(domain, dev, IOMMU_NO_PASID);
+-	if (ret) {
+-		domain_detach_iommu(domain, iommu);
+-		return ret;
+-	}
+-
+ 	info->domain = domain;
+ 	spin_lock_irqsave(&domain->lock, flags);
+ 	list_add(&info->link, &domain->devices);
+@@ -2137,15 +2131,21 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
+ 	else
+ 		ret = intel_pasid_setup_second_level(iommu, domain, dev, IOMMU_NO_PASID);
+ 
+-	if (ret) {
+-		device_block_translation(dev);
+-		return ret;
+-	}
++	if (ret)
++		goto out_block_translation;
+ 
+ 	if (sm_supported(info->iommu) || !domain_type_is_si(info->domain))
+ 		iommu_enable_pci_caps(info);
+ 
++	ret = cache_tag_assign_domain(domain, dev, IOMMU_NO_PASID);
++	if (ret)
++		goto out_block_translation;
++
+ 	return 0;
++
++out_block_translation:
++	device_block_translation(dev);
++	return ret;
+ }
+ 
+ /**
+-- 
+2.34.1
 
 
