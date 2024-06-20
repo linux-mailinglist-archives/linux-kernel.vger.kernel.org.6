@@ -1,106 +1,185 @@
-Return-Path: <linux-kernel+bounces-222956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AA32910AC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:55:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B986910AD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4121B21471
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC46D1C23371
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75FB1AF6BF;
-	Thu, 20 Jun 2024 15:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98831B1405;
+	Thu, 20 Jun 2024 15:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s12qsjrg"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EmYuXbLu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA281AF695
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDE61B0131;
+	Thu, 20 Jun 2024 15:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718898921; cv=none; b=KhDhAEqfOQutFqu0KXqTR7LuLx+vS1EqvwHYAYV01Tb3mzXMiegcgMa4+U8vr7ogLCGobyDD9MdiCX9G+luHL0d3wo4XQKPFYe6WUBTJbEKeY8Rj2Wl9knLd/zl18At5UjloLdMVXAYqZbsKk13K3IX7VzS4e6cZjp60shWKRZw=
+	t=1718899138; cv=none; b=HmmD9Kc/tKREGabTn3pKcUj3j00OVLGGbC3TDMvauajgsp3Vnhgvx/xFU3d7/prKHktcjFDYL9NmTboP9N5XoP59CBTUKGTy4Z1yJnIWSFKGIRJFs9oH97CUJrdt4fprPXa/NOKi3QM2cspO6hiEl5ZntWL/CXv0flKpqqtJ838=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718898921; c=relaxed/simple;
-	bh=Q4JBCnhSJq4oqfZIw7dzs3bChMGSgFx7uu84eklMR7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mwPHIZS2liFWjoQTHFlMwAk+oV3rGIIE/AxDlluMgIm/Efab1PsCWYY8DhscfG34DGmTVDHFzp+Pr27jBTCzz9NGH9erCWc/4GWqivdPfOlyj4HqQovFAElzk9YFyhYH3hlukfsgYtkdOMLcThZIebmU5dGudEf6pleOFYfHXOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s12qsjrg; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6ef793f4b8so106849466b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:55:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718898918; x=1719503718; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Q4JBCnhSJq4oqfZIw7dzs3bChMGSgFx7uu84eklMR7U=;
-        b=s12qsjrgolFYEp42rffnCVAzXO0UZaQ+veKzonJwyK8mp8wMcd072Bc8g6090b6FVD
-         YHK174y4FCBz2SLHVheUHg2U22U1ra8QLwVwnML5014ys3+VXypOhyeD3LKiHoKDt59E
-         wZpzl37vueXU0B8K1zVgQDOaxVBortLRdBjNF4x8truP7jzsihWegrq1RrpaEP/SikPf
-         cdr2EwLKZMNmoeW85Yi9M0vT5gzjuD/PHFuj1+8SOAbt3T3WCV77PGasY3HbMQ1CbTX5
-         32OqT+1Q0HOfr1zqeShghHvbLm8P9cAJAa+sMZ1x7V/DoSlSPeDdmmfnwonjLWl1JPof
-         CHOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718898918; x=1719503718;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q4JBCnhSJq4oqfZIw7dzs3bChMGSgFx7uu84eklMR7U=;
-        b=T/X4j+iT7lVIlD0axEM3ilQ8ZyYZwqdIvfcnvYFKVh6RyyFNiGfPytQc2aQghIfXqt
-         ReMUzhEI0+0tPeV4HyZf9amPOkzbIEPn4qogSoRuD/mplQfsRnzJ/qikeZQzMLmJJKoC
-         +AaSvAuPwm9pHyhucAjJDRo9NrW64euV1Qv85TAHEGSVx/jHjkxgBPIQUGdvKivDtHWl
-         FgsF28bBo7R8encYN2MPPjYs/921GvIjrRFvd6kQDF2v+LnXGZBWqUQfuQKDS7Zssxb3
-         EASLtnooTQ6CMxwOC096rtFCW8hLnfOW6UNQk9Pr3x/AQYZE4sOqzYBYJRKwRsGi0KA2
-         SYGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMMhujNeSEW61InyicQ3f2nP2mn8Huok4PtxUX+K7uxqtsjdXZXOLuX59UhK3ko5b8gksH1fClTPnZr+/4yX5Yx7+1vnoF7W8gP5/c
-X-Gm-Message-State: AOJu0YxbwCR3DBJ6Gk2qskpCzuH9vU5n0I5ViOadA6dcsN6QK/D/KWwx
-	ILZg7uokMIQy83hT7lbE6tw8gnbzDPlCT3Db/EYm9DGANNA2lCzKXtmBqCvPq2Y=
-X-Google-Smtp-Source: AGHT+IFYBlhlHfbiK0XROGgqygoHfOv7JX4uyejkwsNd3c+EAa8G3GJAtqdIkY1sIMVpfzVV0sIZTg==
-X-Received: by 2002:a17:907:d30e:b0:a6f:ad2c:af7 with SMTP id a640c23a62f3a-a6fad2c0b2emr322816866b.2.1718898917692;
-        Thu, 20 Jun 2024 08:55:17 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:9090:3594:a722:64b5:78a3:68f3? ([2a00:f41:9090:3594:a722:64b5:78a3:68f3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56fa6756sm781569266b.217.2024.06.20.08.55.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 08:55:17 -0700 (PDT)
-Message-ID: <d525c5dc-f4b4-42ca-93e4-d45068d896b6@linaro.org>
-Date: Thu, 20 Jun 2024 17:55:15 +0200
+	s=arc-20240116; t=1718899138; c=relaxed/simple;
+	bh=sWSXWB4N7t/4NgW/qJPLeZiznzbwX6q7yzTv728kcDE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lhevtw0YfgKV4wSQNOsz9m1/3dD8AU012Z4Sg0OmjhwjCM4S9bFVeXFHgNd4BHUehGIoTCUPiN6pkoXkg1fPwRAp8Sk6G7j9snaCdMZT8T89FsV2HjXfcIaj82CFCWSqex/QZVzc0BDJtitXHBEvbjL+sleRyIwhT7+N8y3GLIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EmYuXbLu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 58EC9C2BD10;
+	Thu, 20 Jun 2024 15:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718899138;
+	bh=sWSXWB4N7t/4NgW/qJPLeZiznzbwX6q7yzTv728kcDE=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=EmYuXbLu1/20fopNdDUbO5tEHmgQybhiDTRdta3hJQSkrQCavjGrPbNxQ9WHsYGoJ
+	 U7sjc1mvkM9X7Wq6lSq08RphDY+DbIgjiRISmdnrsAnued5rdyv+/MvMPAJheBgNzO
+	 AZVff29KUIBNs/EimnS1hnFe2BVwT+BzCl7VyxtWp0R0QhgLFrPTgvRFeyTJwahya7
+	 ThpZnG8/Syed7HP0251DDSADLcjQ1Fg6J4D5iPvLfwsr4yNc/RKHwfFBoCLe9kj4U3
+	 s93Xb9MJUYNgOdgEIOGv1HMMlNZ049Z5/NPUVA3vwaqA4gYDngYff6LXZFTJmKERGK
+	 a9AfM8cx3x26Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E08C2BA1A;
+	Thu, 20 Jun 2024 15:58:58 +0000 (UTC)
+From: Koakuma via B4 Relay <devnull+koachan.protonmail.com@kernel.org>
+Date: Thu, 20 Jun 2024 22:56:00 +0700
+Subject: [PATCH] sparc/build: Make all compiler flags also clang-compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/7] Enable CPR for IPQ9574
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org,
- angelogioacchino.delregno@collabora.com, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, ulf.hansson@linaro.org,
- quic_sibis@quicinc.com, quic_rjendra@quicinc.com, luca@z3ntu.xyz,
- abel.vesa@linaro.org, quic_rohiagar@quicinc.com, danila@jiaxyga.com,
- otto.pflueger@abscue.de, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20240620081427.2860066-1-quic_varada@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240620081427.2860066-1-quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240620-sparc-cflags-v1-1-bba7d0ff7d42@protonmail.com>
+X-B4-Tracking: v=1; b=H4sIAA9RdGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMyMD3eKCxKJk3eS0nMT0Yt1U8zSjlKSkFJMkyxQloJaCotS0zAqwcdG
+ xtbUA5qLBpV4AAAA=
+To: "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ glaubitz@physik.fu-berlin.de
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, Koakuma <koachan@protonmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1718899135; l=4329;
+ i=koachan@protonmail.com; s=20240620; h=from:subject:message-id;
+ bh=TPTX/hXnvGP/7Q/0XONtbbKGd6MWmhWh/U9alDskK+Y=;
+ b=lh38GZIlN9C76lksV8Ck1O5eb0K5JSJr87+5/LTH1ly8d2aesSmDXIyPPuZubaHwQx4txD/2i
+ V2CnGn0gKQnCyMM56PYtjZ0z2keC5F7xp5LyBJQ5E3rmZffWNPuf8jl
+X-Developer-Key: i=koachan@protonmail.com; a=ed25519;
+ pk=UA59FS3yiAA1cnAAUZ1rehTmr6skh95PgkNRBLcoKCg=
+X-Endpoint-Received: by B4 Relay for koachan@protonmail.com/20240620 with
+ auth_id=174
+X-Original-From: Koakuma <koachan@protonmail.com>
+Reply-To: koachan@protonmail.com
+
+From: Koakuma <koachan@protonmail.com>
+
+Remove flags not supported by clang and make sure that all the flags
+used are portable between clang and GCC.
+
+The reasoning for removing the -fcall-used* ones is as follows:
+
+In the (normal) 32-bit ABI, %g5 and %g7 is normally reserved, and in
+the 64-bit ABI, %g7 is the reserved one.
+Linux turns them into volatile registers by the way of -fcall-used-*,
+but on the other hand, omitting the flags shouldn't be harmful;
+compilers will now simply refuse to touch them, and any assembly
+code that happens to touch them would still work like usual (because
+Linux' conventions already treats them as volatile anyway).
+
+Signed-off-by: Koakuma <koachan@protonmail.com>
+---
+Hello~
+
+This changes the CFLAGS for building the SPARC kernel so that it can be
+built with clang, as a follow up from the discussion in this thread:
+
+https://lore.kernel.org/lkml/JAYB7uS-EdLABTR4iWZdtFOVa5MvlKosIrD_cKTzgeozCOGRM7lhxeLigFB1g3exX445I_W5VKB-tAzl2_G1zCVJRQjp67ODfsSqiZWOZ9o=@protonmail.com/T/#u
+
+The changes are removal of various `-fcall-used-*` flags, and changing
+`-mv8plus` to `-mcpu=v9`:
+
+- `-fcall-used-*` flags should be safe to remove; the compiler will
+  stop using the registers specified as temporaries, but it is a safe
+  change wrt. the ABI. Assembly code can still use those registers
+  as needed.
+  It does bring a theoretical possible slowdown due to the compiler
+  having less registers to work with, but in practice - in my case,
+  at least - it seems to not make any difference with daily usage.
+
+- More trivial is to change `-mv8plus` -> `-mcpu=v9`.
+  This should be safe too since the kernel seems to require a V9
+  processor to run anyway, so I'm changing the flag to one that is
+  portable between GCC and clang.
+
+Also, as stated in the thread, building with these changes still result
+in a working kernel, at least for Sun T5120 and qemu virtual machines.
+
+On the LLVM side, the effort for building Linux/SPARC is tracked here:
+https://github.com/llvm/llvm-project/issues/40792
+---
+ arch/sparc/Makefile      | 4 ++--
+ arch/sparc/vdso/Makefile | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/sparc/Makefile b/arch/sparc/Makefile
+index 757451c3ea1d..7318a8b452c3 100644
+--- a/arch/sparc/Makefile
++++ b/arch/sparc/Makefile
+@@ -29,7 +29,7 @@ UTS_MACHINE    := sparc
+ # versions of gcc.  Some gcc versions won't pass -Av8 to binutils when you
+ # give -mcpu=v8.  This silently worked with older bintutils versions but
+ # does not any more.
+-KBUILD_CFLAGS  += -m32 -mcpu=v8 -pipe -mno-fpu -fcall-used-g5 -fcall-used-g7
++KBUILD_CFLAGS  += -m32 -mcpu=v8 -pipe -mno-fpu
+ KBUILD_CFLAGS  += -Wa,-Av8
+ 
+ KBUILD_AFLAGS  += -m32 -Wa,-Av8
+@@ -45,7 +45,7 @@ export BITS   := 64
+ UTS_MACHINE   := sparc64
+ 
+ KBUILD_CFLAGS += -m64 -pipe -mno-fpu -mcpu=ultrasparc -mcmodel=medlow
+-KBUILD_CFLAGS += -ffixed-g4 -ffixed-g5 -fcall-used-g7 -Wno-sign-compare
++KBUILD_CFLAGS += -ffixed-g4 -ffixed-g5 -Wno-sign-compare
+ KBUILD_CFLAGS += -Wa,--undeclared-regs
+ KBUILD_CFLAGS += $(call cc-option,-mtune=ultrasparc3)
+ KBUILD_AFLAGS += -m64 -mcpu=ultrasparc -Wa,--undeclared-regs
+diff --git a/arch/sparc/vdso/Makefile b/arch/sparc/vdso/Makefile
+index 243dbfc4609d..929140facabf 100644
+--- a/arch/sparc/vdso/Makefile
++++ b/arch/sparc/vdso/Makefile
+@@ -46,7 +46,7 @@ CFL := $(PROFILING) -mcmodel=medlow -fPIC -O2 -fasynchronous-unwind-tables -m64
+        -fno-omit-frame-pointer -foptimize-sibling-calls \
+        -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
+ 
+-SPARC_REG_CFLAGS = -ffixed-g4 -ffixed-g5 -fcall-used-g5 -fcall-used-g7
++SPARC_REG_CFLAGS = -ffixed-g4 -ffixed-g5
+ 
+ $(vobjs): KBUILD_CFLAGS := $(filter-out $(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) $(SPARC_REG_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
+ 
+@@ -86,7 +86,7 @@ KBUILD_CFLAGS_32 += -fno-stack-protector
+ KBUILD_CFLAGS_32 += $(call cc-option, -foptimize-sibling-calls)
+ KBUILD_CFLAGS_32 += -fno-omit-frame-pointer
+ KBUILD_CFLAGS_32 += -DDISABLE_BRANCH_PROFILING
+-KBUILD_CFLAGS_32 += -mv8plus
++KBUILD_CFLAGS_32 += -mcpu=v9
+ $(obj)/vdso32.so.dbg: KBUILD_CFLAGS = $(KBUILD_CFLAGS_32)
+ 
+ $(obj)/vdso32.so.dbg: FORCE \
+
+---
+base-commit: 92e5605a199efbaee59fb19e15d6cc2103a04ec2
+change-id: 20240620-sparc-cflags-e7f2dbbd4b9d
+
+Best regards,
+-- 
+Koakuma <koachan@protonmail.com>
 
 
-
-On 6/20/24 10:14, Varadarajan Narayanan wrote:
-> This series tries to enable CPR on IPQ9574, that implements
-> CPRv4. Since [1] is older, faced few minor issues. Those are
-> addressed in [2].
-
-Thanks Varadarajan, should things go well I'll resend CPR3 next
-week and then review this.
-
-Konrad
 
