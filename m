@@ -1,121 +1,97 @@
-Return-Path: <linux-kernel+bounces-223117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD23C910DFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:05:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4F2D910E03
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F71E28630B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:05:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 907AC286CB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5461B3735;
-	Thu, 20 Jun 2024 17:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7921B3F2B;
+	Thu, 20 Jun 2024 17:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="SQ2wA1Uv"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxwbJctm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626421ABCBB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60B51B375A;
+	Thu, 20 Jun 2024 17:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718903126; cv=none; b=kEgJSpjaIvVLnQfmVl5oPOgJzfsi5mxl52OqkQL1qOQSnikwRWvPrBAC6PqJ7otYnKzgUfZsTSr/sOuLqMnQN438aBygthNOm3Kxu5jYmqu1ts+Wt59RulMVlCMwajo3yMJTppl6spqCM36HEBpgrvH2Y72e3yWR9FFClj3tML8=
+	t=1718903129; cv=none; b=h77ZpcYfn00VrSsGrHSu0OuF2KkNzfPjLMdXSrO7TbHOpLBWYht7ipDwsy3PyQWcpfw05uCoFeqtwKOFo1mzmxze0Ni2Vb2u/4mFn5lkO+igKsRexoiM7QZT+12S/THxW79zEP4I8/crWda5kguR6CnPMOAdS1oNvLjP+N0oEXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718903126; c=relaxed/simple;
-	bh=V9vbedrO0h4dfaGDqH9asqdRuXK1RwmHacUkIr2CNKg=;
+	s=arc-20240116; t=1718903129; c=relaxed/simple;
+	bh=dEOA48ijsQW6/PEVP2tDx2FHmbFwZ3VWxLbybt5q2Gc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFa2fGZ7NOuM2U0A4NN+PJUpfF11yukqSjzVTGPAsmV+YzqeJFZ7sRuDG/aCUXJdRiOH2GM6QDkmiBZHELk75VrdIn4qZMDrxkUyraCnuqcEXoGjLB4iLVCOZmYHW6jY1M+VGSIPL3k6lZ+1PMJcKcqiHfMuEqQ6u3a5Ov3ZvPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=SQ2wA1Uv; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f8395a530dso8967545ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:05:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1718903124; x=1719507924; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4E89UTgs/5r5atSnFCInRbSVBNWxc0zHVVFCoSblkK4=;
-        b=SQ2wA1UvJo+FxGdiQB820HLc/ezBD8k0bFseMWkqbCWGLNf4pGZvFKbSKpIc4adzBg
-         XyBw4CiaSU4v6PpIgY9r4d8adyWCjzCjhLAJfLSY4cph0WgzHEQc93JRlxUDAkGGOzfj
-         rWTaaaqtVdet7lygYfrTvATC4KAFZ6bNhW253aPn0K+7kkJ91I1ucWCSGPuCRnmd8dba
-         WJsDkMaKDr0i+i4s5GZ7bMBk/vkdf5PRRP8iqm5DvvdAYrI7nrG0HwvJZA98wfI/QfjP
-         aa00Yf7KaWfHjXwUBJ2hTPzAxPlsyDGpfnlFiotE3yQnQR48vUhyLw4zcosQGHfLChI/
-         fBYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718903124; x=1719507924;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4E89UTgs/5r5atSnFCInRbSVBNWxc0zHVVFCoSblkK4=;
-        b=iqfuLLGO89QGFMEF8RVh8j5aB8L5pE7302L3Zp095wdVVwKPlLBIbVXNJnFx0rNOst
-         tEEEEAdGLRWKC+c/lmkZPCXZoChvTvzXmCVgBUgWKAq4TtEZ2o6g5qEaB1mBSK7v5sJb
-         PwTha6FnPboxMRl1hyNAhc66yOuH6YYHGckWX6AmMU+FM5M+B5tzuvfbspEh+fJU3EeG
-         the4KI5tYs++leo1OGybxNzd5/BDG6bT9bokHukwzY4x0HoiEmQSey0OqeLrpSOb3rAf
-         l9Vk6QSYaUuY02T+bxM17E1J6yaPYFnxdQ1nxnSKk4ESVDZi8jwCXqaJ+qfkxEpayHb7
-         7bjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtdL797b0CyyqQIBOEEcMwDXBa2XKPAmudyKqe5Ic5hAZaPlxcWPcmK5CX0qiNtwslmeTngYUb0MyI7tXFI2r3QnWiUYMOcQoCYCj7
-X-Gm-Message-State: AOJu0YwXy5y23eryFyTG546FrEJQI+aUkBHCVP5OQxQHJb7h9g/inlqd
-	qxIzngrFrElq9i4cRSPSlsjUs/gOERn8PGtaSunA0Mz8MJywShpapL/foobGDxI=
-X-Google-Smtp-Source: AGHT+IHnO0PhojcD/q5JTTxQb+zxwVYaNBwpbOMTUxU2qhG2GuUiEPiNiJ0WLvWdxuAzdO/MlAP2Kg==
-X-Received: by 2002:a17:902:d4c7:b0:1f7:17c2:118b with SMTP id d9443c01a7336-1f9aa3e9e49mr59538365ad.27.1718903123621;
-        Thu, 20 Jun 2024 10:05:23 -0700 (PDT)
-Received: from x1 ([2601:1c2:1802:170:4a35:79ce:6499:e43c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9acc04adcsm39635605ad.204.2024.06.20.10.05.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 10:05:23 -0700 (PDT)
-Date: Thu, 20 Jun 2024 10:05:20 -0700
-From: Drew Fustini <drew@pdp7.com>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Drew Fustini <dfustini@tenstorrent.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: thead: update Maintainer
-Message-ID: <ZnRhUOSB+/hMSs2x@x1>
-References: <20240620162522.386-1-jszhang@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W+r1YjwaihhvyxFUUXXC9oRjXBAOrhLvI0Gjv+9giV6opBHT8/fvfrjCvUola+PEbbtud+047/ZXX2vQuvEwCFSp8rIP1b6hBpACrCUfZT1Aj1JeGEcm/XLWaapR8KTAaz0XTsOuPquDvOt2/c4stBkRaIQh9cyTbCt5CsWs6x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxwbJctm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84F37C32786;
+	Thu, 20 Jun 2024 17:05:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718903129;
+	bh=dEOA48ijsQW6/PEVP2tDx2FHmbFwZ3VWxLbybt5q2Gc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sxwbJctmVpQc2cHDrejJwmRLLgiN4/IqvoqHWnjbNTTcfGeWUf120kJOYRM0+b/D8
+	 aYzVnvBpcjwsiNJV4vwKU9T8UzfZJ5xbjZkFWtqqapxNJUmbfPiX+lLvLBZWNM/XR4
+	 snmtxbaocXFVtbJ+wNaqTSF5Sdyz3Md94Atsi2ClD2lTyWs9feke0eA4lFS2aI3HdU
+	 mx7y84Itr0OR06oAcI9xOGeb4MvgRsYtuib57M/REcT0vztdoLGGSnXGUb2oXg7yXP
+	 DhTbM1NgGaHRgGhJpo+O1EJWqrwL1HsY60AQWEPtbJk1br8M75OGeFegWRgan6dRgg
+	 l+/18t4+nEiew==
+Date: Thu, 20 Jun 2024 18:05:22 +0100
+From: Lee Jones <lee@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com,
+	Paul Cercueil <paul@crapouillou.net>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-iio@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+	linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Julia Lawall <julia.lawall@inria.fr>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [v11 3/7] iio: core: Add new DMABUF interface infrastructure
+Message-ID: <20240620170522.GU3029315@google.com>
+References: <202406191014.9JAzwRV6-lkp@intel.com>
+ <c25aab0d-48f6-4754-b514-d6caf8d51fd1@web.de>
+ <ZnRUSaHJhz7XLcKa@matsya>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240620162522.386-1-jszhang@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZnRUSaHJhz7XLcKa@matsya>
 
-On Fri, Jun 21, 2024 at 12:25:22AM +0800, Jisheng Zhang wrote:
-> Due to personal reasons, I can't maintain T-Head SoCs any more. At the
-> same time, I would nominate Drew Fustini as Maintainer. Drew contributed
-> the sdhci support of TH1520 in the past, and is working on the clk
-> parts. I believe he will look after T-Head SoCs.
+On Thu, 20 Jun 2024, Vinod Koul wrote:
+
+> On 20-06-24, 12:45, Markus Elfring wrote:
+> > …
+> > > All errors (new ones prefixed by >>):
+> > >
+> > >>> drivers/iio/industrialio-buffer.c:1715:3: error: cannot jump from this goto statement to its label
+> > >     1715 |                 goto err_dmabuf_unmap_attachment;
+> > …
+> > 
+> > Which software design options would you like to try out next
+> > so that such a questionable compilation error message will be avoided finally?
 > 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index aacccb376c28..b5f5506815d6 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19315,7 +19315,7 @@ F:	drivers/perf/riscv_pmu_legacy.c
->  F:	drivers/perf/riscv_pmu_sbi.c
->  
->  RISC-V THEAD SoC SUPPORT
-> -M:	Jisheng Zhang <jszhang@kernel.org>
-> +M:	Drew Fustini <drew@pdp7.com>
->  M:	Guo Ren <guoren@kernel.org>
->  M:	Fu Wei <wefu@redhat.com>
->  L:	linux-riscv@lists.infradead.org
-> -- 
-> 2.43.0
-> 
+> The one where all emails from Markus go to dev/null
 
-Acked-by: Drew Fustini <drew@pdp7.com>
+Play nice please.
 
-Jisheng - thanks for your efforts thus far and I'm happy to take over.
+  Documentation/process/code-of-conduct.rst
 
-Drew
+-- 
+Lee Jones [李琼斯]
 
