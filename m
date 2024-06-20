@@ -1,58 +1,87 @@
-Return-Path: <linux-kernel+bounces-222902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCCCF910970
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:12:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2A9910969
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF90C1C21E13
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:12:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D721F21AE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC361AE0B3;
-	Thu, 20 Jun 2024 15:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D608E1AF6A2;
+	Thu, 20 Jun 2024 15:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pm4w85L1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yhtgg3v5"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270591AED5A;
-	Thu, 20 Jun 2024 15:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905D81AED5D;
+	Thu, 20 Jun 2024 15:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718896307; cv=none; b=Y9V0UFsK9RJxXqMDFMaFh4oTjWljUE+9fCSF8MKWIuSTj0NFuYr5wkAH5hjp939ZJpGdRYQVfHS2eHXlah9Le90xTIXQvTt4iKe1Rm64jzGtkZNwEhnJzMStP/FnlS/8TarsdwRJTslZcCOKEX8N8wrr3HxR15kheNHXnEJLSyY=
+	t=1718896297; cv=none; b=FTuyyI3SNviGYGH3qa74OBwEtjveOunbwTwLlTBCnPqH6smuZJU52hts1yoqarippHrBx3jj0SPamh/Lz+FT47o0cZ2fn45E1NO/lPRSIQdHxX1/GXf2IRRoI7gC2zqURALYnyp0W94UJ1y8oyG671CSzw0LOefbYj9JGVH9ebc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718896307; c=relaxed/simple;
-	bh=BQJCcQtirxB2NsQ9DEZ7h6l2NY6z1Y7N7Zei18H96NA=;
+	s=arc-20240116; t=1718896297; c=relaxed/simple;
+	bh=AU2dIZOHA33jaIyUvKlqFneAYvUEREDs1Wy0TpNk3V4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNifMgGvUUbU1epflmNps6dXT6Pxvt0nG4ZVwT8/2lwZCXlt0yco80jyPbnqgH1jczL9EU4LP7hgeXo5g/SNVnD0Ue/KkE/9xuoAFUUiIeSaoQ8Wz5oBsqyqx2qhpp4f56vN4Wwm+md02EWCC3yHzJFfsPztqnpeYR3QRCGixK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pm4w85L1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2828AC2BD10;
-	Thu, 20 Jun 2024 15:11:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718896306;
-	bh=BQJCcQtirxB2NsQ9DEZ7h6l2NY6z1Y7N7Zei18H96NA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pm4w85L1UGEkJWoArD+dGELBdp3Fz2jkqrARACgDuB954rSkvT7sqEqrPx82yRvnA
-	 A4Aj7j95BEwuCtgHHJMwbEqQTE6K0A66rqEPwWhsUgopEpoK2r1IjFZJ1riQda1t2X
-	 GxWqs7ZyqjOSHr/dZvdghRN2y14Pew6nOC+Ngxd4=
-Date: Thu, 20 Jun 2024 17:11:43 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 09/10] rust: pci: add basic PCI device / driver
- abstractions
-Message-ID: <2024062011-property-hypnotist-e652@gregkh>
-References: <20240618234025.15036-1-dakr@redhat.com>
- <20240618234025.15036-10-dakr@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rX+bdsyv6jhAZKbAO4o18rLpaN/n/VsOw1hrZJjIqhXHRp6CGvHySOWnbSTUTlWE8IIKUiZDe2dy6XTbWqUBvbU3bDJtbW7WbqBsYx/7QabuoBQwyM4iOpwgF6sP0dSeqTIP7m5bR8xphroMjrQLohl6kbfRhNsecq0xhp0bX3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yhtgg3v5; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f64ecb1766so7676875ad.1;
+        Thu, 20 Jun 2024 08:11:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718896295; x=1719501095; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BdniuxfIoQMZx6rcrd4+VjHCkWj3zAequC6HSfgqfnY=;
+        b=Yhtgg3v5GmfjMzouzJ72dHVciGUj5vyesKnm98lnFabnaVcsXxH1vJglowpQWoR7II
+         yqmRahMazLeKchn+OF62mnNUczn50mWjbyq3yHthmNlazMf38CLUv32Q4cqPZLVccc1a
+         VotAYSD8N5rQV2JVbPhvf6iuj3nTqLL0AtMsnUKpxAQREWCGF/Heyx/FARJ4ske1PUD0
+         8SNJvUDtWjcswHJL+VNnT+Y5aAYak3iFNEmAuPa5h5+qBBoHQQRd32gw2nwj9LBY3Dn6
+         j+H6B6D/uIXPTxa2+HF4A4DK2XeYRfKfOfHBoG4gK7K57P+/+Vvyi5TvxDU/nZY4INLP
+         980Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718896295; x=1719501095;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BdniuxfIoQMZx6rcrd4+VjHCkWj3zAequC6HSfgqfnY=;
+        b=oQAdKtqyZGFHawmGhXWENvdiOtDYpNaV0jsQiGP7FZ7VZJBdEF5EFsWm9O+jy59F1G
+         QS+D38Ms1K6zTPzPWYXCFVklbdkhDeodBYD1fO0HxUTRslMC/vWUMuuQUakJWXiDQ/mV
+         HkaXb6O0QhjK0v2ceCR0igLIU6KRDu+1N6mI1OKfZy7CnSe/aBhNKm8DUbk27AW3bb2g
+         iQD9rLP9Pqdf77lGC1kl5SAvEQDHRhRmTa87vwsyDa7sloCy8aS544w9bYCWHGV+TfOd
+         VOqNITfSQMDq++9Jq2I+xLLTikr8nzqexTWzXAehyPs0aqRbQoXPEJJAvUjhdO/xS9pm
+         9//Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVIehVjDKNAgH4RScBz/Y2BmE+XHRTk13UlvHgdUez7kpdxoFsEy0eaLQnKwELBSkACxUTjtx0nZv8EnQ0Jsk1KLKyOfcut+4l2yYousD265nYvBBRyE1ZjldScnB++L0qc2yaYpgHPVJUO1ZYFm/DlPd4Gf/g8j+JeT3WI5aEP59TvTAxRf4miA7i3t/jO+oidip5pnzMkApCNumG8AQ==
+X-Gm-Message-State: AOJu0YyWFhT4Maa5XzeNwyrmpT4pvKmuGdfnvWlMvpvOLFnLIdGrJTpa
+	qsDy2YSvY560Hq1xkYiT0uo+VAbpWAbNNGPlK9LeVOqvFaRrxQEU
+X-Google-Smtp-Source: AGHT+IHuss2h79Pd0GhHTa2pZZiFuRTtvqKi7+4t8bFj0/hlwRCcSWFghn7T2PJ1oidcm3JN1GN8SQ==
+X-Received: by 2002:a17:902:e812:b0:1f6:7f20:d988 with SMTP id d9443c01a7336-1f9aa44fd68mr67061095ad.42.1718896294631;
+        Thu, 20 Jun 2024 08:11:34 -0700 (PDT)
+Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f8575b119bsm137589065ad.27.2024.06.20.08.11.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 08:11:33 -0700 (PDT)
+Date: Thu, 20 Jun 2024 12:12:55 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI
+ protocol with MOSI idle configuration
+Message-ID: <ZnRG9wgY3WIaYFyQ@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1718749981.git.marcelo.schmitt@analog.com>
+ <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
+ <63db9349-f453-4a5b-aa09-d1857ddd8b03@baylibre.com>
+ <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
+ <e7a2438a-f6a3-439e-8058-937248dd5b3f@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,255 +90,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240618234025.15036-10-dakr@redhat.com>
+In-Reply-To: <e7a2438a-f6a3-439e-8058-937248dd5b3f@baylibre.com>
 
-On Wed, Jun 19, 2024 at 01:39:55AM +0200, Danilo Krummrich wrote:
-> +/// Abstraction for bindings::pci_device_id.
-> +#[derive(Clone, Copy)]
-> +pub struct DeviceId {
-> +    /// Vendor ID
-> +    pub vendor: u32,
-> +    /// Device ID
-> +    pub device: u32,
-> +    /// Subsystem vendor ID
-> +    pub subvendor: u32,
-> +    /// Subsystem device ID
-> +    pub subdevice: u32,
-> +    /// Device class and subclass
-> +    pub class: u32,
-> +    /// Limit which sub-fields of the class
-> +    pub class_mask: u32,
-> +}
+On 06/19, David Lechner wrote:
+> On 6/19/24 1:58 PM, Marcelo Schmitt wrote:
+> > On 06/19, David Lechner wrote:
+> >> On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
+> >>
+> >>
+> 
+> ...
+> 
+> >>
+> >>> +the peripheral and also when CS is inactive.
+> >>
+> >> As I mentioned in a previous review, I think the key detail here is that the
+> >> MOSI line has to be in the required state during the CS line assertion
+> >> (falling edge). I didn't really get that from the current wording. The current
+> >> wording makes it sound like MOSI needs to be high indefinitely longer.
+> > 
+> > It may be that we only need MOSI high just before bringing CS low. Though,
+> > I don't see that info in the datasheets. How much time would MOSI be required
+> > to be high prior to bringing CS low? The timing diagrams for register access and
+> > ADC sampling in "3-wire" mode all start and end with MOSI at logical 1 (high).
+> > I think reg access work if MOSI is brought low after CS gets low, but sample
+> > read definitely don't work.
+> > 
+> > From the info available in datasheets, it looks like MOSI is indeed expected 
+> > to be high indefinitely amount of time. Except when the controller is clocking
+> > out data to the peripheral.
+> > 
+> > Even if find out the amount of time MOSI would be required high prior to CS low,
+> > then we would need some sort of MOSI high/low state set with a delay prior to
+> > active CS. That might be enough to support the AD4000 series of devices but,
+> > would it be worth the added complexity?
+> > 
+> 
+> It needs to happen at the same time as setting CPOL for the SCLK line for the
+> device that is about to have the CS asserted. So I don't think we are breaking
+> new ground here. Typically, in most datasheets I've seen they tend to say
+> something like 2 ns before the CS change. So in most cases, I don't think
+which datasheets? Are any of those for devices supported by the ad4000 driver?
 
-Note, this is exported to userspace, why can't you use the C structure
-that's already defined for you?  This is going to get tricky over time
-for the different busses, please use what is already there.
+> anyone bothers adding a delay. But if a longer delay was really needed for
+> a specific peripheral, we could add a SPI xfer with no read/write that has
+> cs_off=1 and a delay to get the correct state of both MOSI and SCLK a longer
+> time before the CS change.
 
-And question, how are you guaranteeing the memory layout of this
-structure here?  Will rust always do this with no holes and no
-re-arranging?
-
-> +impl DeviceId {
-> +    const PCI_ANY_ID: u32 = !0;
-> +
-> +    /// PCI_DEVICE macro.
-> +    pub const fn new(vendor: u32, device: u32) -> Self {
-> +        Self {
-> +            vendor,
-> +            device,
-> +            subvendor: DeviceId::PCI_ANY_ID,
-> +            subdevice: DeviceId::PCI_ANY_ID,
-> +            class: 0,
-> +            class_mask: 0,
-> +        }
-> +    }
-> +
-> +    /// PCI_DEVICE_CLASS macro.
-> +    pub const fn with_class(class: u32, class_mask: u32) -> Self {
-> +        Self {
-> +            vendor: DeviceId::PCI_ANY_ID,
-> +            device: DeviceId::PCI_ANY_ID,
-> +            subvendor: DeviceId::PCI_ANY_ID,
-> +            subdevice: DeviceId::PCI_ANY_ID,
-> +            class,
-> +            class_mask,
-> +        }
-> +    }
-
-Why just these 2 subsets of the normal PCI_DEVICE* macros?
-
-> +
-> +    /// PCI_DEVICE_ID macro.
-> +    pub const fn to_rawid(&self, offset: isize) -> bindings::pci_device_id {
-
-PCI_DEVICE_ID is defined to be "0x02" in pci_regs.h, I don't think you
-want that duplication here, right?
-
-> +        bindings::pci_device_id {
-> +            vendor: self.vendor,
-> +            device: self.device,
-> +            subvendor: self.subvendor,
-> +            subdevice: self.subdevice,
-> +            class: self.class,
-> +            class_mask: self.class_mask,
-> +            driver_data: offset as _,
-> +            override_only: 0,
-> +        }
-> +    }
-> +}
-> +
-> +// SAFETY: `ZERO` is all zeroed-out and `to_rawid` stores `offset` in `pci_device_id::driver_data`.
-> +unsafe impl RawDeviceId for DeviceId {
-> +    type RawType = bindings::pci_device_id;
-> +
-> +    const ZERO: Self::RawType = bindings::pci_device_id {
-> +        vendor: 0,
-> +        device: 0,
-> +        subvendor: 0,
-> +        subdevice: 0,
-> +        class: 0,
-> +        class_mask: 0,
-> +        driver_data: 0,
-> +        override_only: 0,
-
-This feels rough, why can't the whole memory chunk be set to 0 for any
-non-initialized values?  What happens if a new value gets added to the C
-side, how will this work here?
-
-> +    };
-> +}
-> +
-> +/// Define a const pci device id table
-> +///
-> +/// # Examples
-> +///
-> +/// See [`Driver`]
-> +///
-> +#[macro_export]
-> +macro_rules! define_pci_id_table {
-> +    ($data_type:ty, $($t:tt)*) => {
-> +        type IdInfo = $data_type;
-> +        const ID_TABLE: $crate::device_id::IdTable<'static, $crate::pci::DeviceId, $data_type> = {
-> +            $crate::define_id_array!(ARRAY, $crate::pci::DeviceId, $data_type, $($t)* );
-> +            ARRAY.as_table()
-> +        };
-> +    };
-> +}
-> +pub use define_pci_id_table;
-> +
-> +/// The PCI driver trait.
-> +///
-> +/// # Example
-> +///
-> +///```
-> +/// # use kernel::{bindings, define_pci_id_table, pci, sync::Arc};
-> +///
-> +/// struct MyDriver;
-> +/// struct MyDeviceData;
-> +///
-> +/// impl pci::Driver for MyDriver {
-> +///     type Data = Arc<MyDeviceData>;
-> +///
-> +///     define_pci_id_table! {
-> +///         (),
-> +///         [ (pci::DeviceId::new(bindings::PCI_VENDOR_ID_REDHAT,
-> +///                               bindings::PCI_ANY_ID as u32),
-> +///            None)
-> +///         ]
-> +///     }
-> +///
-> +///     fn probe(
-> +///         _pdev: &mut pci::Device,
-> +///         _id_info: Option<&Self::IdInfo>
-> +///     ) -> Result<Self::Data> {
-> +///         Err(ENODEV)
-> +///     }
-> +///
-> +///     fn remove(_data: &Self::Data) {
-> +///     }
-> +/// }
-> +///```
-> +/// Drivers must implement this trait in order to get a PCI driver registered. Please refer to the
-> +/// `Adapter` documentation for an example.
-> +pub trait Driver {
-> +    /// Data stored on device by driver.
-> +    ///
-> +    /// Corresponds to the data set or retrieved via the kernel's
-> +    /// `pci_{set,get}_drvdata()` functions.
-> +    ///
-> +    /// Require that `Data` implements `ForeignOwnable`. We guarantee to
-> +    /// never move the underlying wrapped data structure.
-> +    ///
-> +    /// TODO: Use associated_type_defaults once stabilized:
-> +    ///
-> +    /// `type Data: ForeignOwnable = ();`
-> +    type Data: ForeignOwnable;
-
-Does this mean this all can be 'static' in memory and never dynamically
-allocated?  If so, good, if not, why not?
-
-> +
-> +    /// The type holding information about each device id supported by the driver.
-> +    ///
-> +    /// TODO: Use associated_type_defaults once stabilized:
-> +    ///
-> +    /// type IdInfo: 'static = ();
-> +    type IdInfo: 'static;
-
-What does static mean here?
-
-> +
-> +    /// The table of device ids supported by the driver.
-> +    const ID_TABLE: IdTable<'static, DeviceId, Self::IdInfo>;
-> +
-> +    /// PCI driver probe.
-> +    ///
-> +    /// Called when a new platform device is added or discovered.
-
-This is not a platform device
-
-> +    /// Implementers should attempt to initialize the device here.
-> +    fn probe(dev: &mut Device, id: Option<&Self::IdInfo>) -> Result<Self::Data>;
-> +
-> +    /// PCI driver remove.
-> +    ///
-> +    /// Called when a platform device is removed.
-
-This is not a platform device.
-
-> +    /// Implementers should prepare the device for complete removal here.
-> +    fn remove(data: &Self::Data);
-
-No suspend?  No resume?  No shutdown?  only probe/remove?  Ok, baby
-steps are nice :)
-
-
-> +}
-> +
-> +/// The PCI device representation.
-> +///
-> +/// A PCI device is based on an always reference counted `device:Device` instance. Cloning a PCI
-> +/// device, hence, also increments the base device' reference count.
-> +#[derive(Clone)]
-> +pub struct Device(ARef<device::Device>);
-> +
-> +impl Device {
-> +    /// Create a PCI Device instance from an existing `device::Device`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `dev` must be an `ARef<device::Device>` whose underlying `bindings::device` is a member of
-> +    /// a `bindings::pci_dev`.
-> +    pub unsafe fn from_dev(dev: ARef<device::Device>) -> Self {
-> +        Self(dev)
-> +    }
-> +
-> +    fn as_raw(&self) -> *mut bindings::pci_dev {
-> +        // SAFETY: Guaranteed by the type invaraints.
-> +        unsafe { container_of!(self.0.as_raw(), bindings::pci_dev, dev) as _ }
-> +    }
-> +
-> +    /// Enable the Device's memory.
-> +    pub fn enable_device_mem(&self) -> Result {
-> +        // SAFETY: Safe by the type invariants.
-> +        let ret = unsafe { bindings::pci_enable_device_mem(self.as_raw()) };
-> +        if ret != 0 {
-> +            Err(Error::from_errno(ret))
-> +        } else {
-> +            Ok(())
-> +        }
-> +    }
-> +
-> +    /// Set the Device's master.
-> +    pub fn set_master(&self) {
-> +        // SAFETY: Safe by the type invariants.
-> +        unsafe { bindings::pci_set_master(self.as_raw()) };
-> +    }
-
-Why just these 2 functions?  Just an example, or you don't need anything
-else yet?
-
-thanks,
-
-greg k-h
+I don't know if that would actually work. I have not tested doing something like that.
+This also implies the controller will be able to start the next transfer right
+after the first preparatory transfer ends and it will meet that inter-transfer
+timing requirement (which I still didn't find documented anywhere).
+I'm not convinced that would be the best way to support those devices.
 
