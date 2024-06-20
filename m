@@ -1,95 +1,161 @@
-Return-Path: <linux-kernel+bounces-221910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AEAF90FA68
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:40:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D57D590FA6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18CA4B21D1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:40:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58543282C78
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A329AD55;
-	Thu, 20 Jun 2024 00:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94794C9B;
+	Thu, 20 Jun 2024 00:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5Z5FezS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Paz43CAW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5464C9B;
-	Thu, 20 Jun 2024 00:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F1118E;
+	Thu, 20 Jun 2024 00:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718844028; cv=none; b=ftVqunsrsEKMsjxrjtkAaVs1jiUQ8zQjTmur5l1gpkublvZnmDA0qO3A9uvt/F9DTG2ExASvDG3mNP2HpAN7KZFVEy9Z/SaeQnpvCLwRRrTFCEw4/6S7w9faJAa9N94VNL/6w+zI+IHhVdNPYG9uLF1Pn/bnzYqBt3Jt1E26gQA=
+	t=1718844382; cv=none; b=HURIfbmulw7kiNRXxPR3tm4feVw1a+MRFaGmm8yJfGk1d8uOgkNWUwc4+u7+BG3SrtzJKNzSCjsoJlC/Q7UkNam+XvN4qWpD/miXP5wTXHd7igVdgZWudUlz6p2U2s1LWKA1t0Cdy52JT7m+dEc7UOCw3+jhvDVB0N0Ez+4or80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718844028; c=relaxed/simple;
-	bh=CzLboDBZKDjvYors6xyq/z7Jk/vz+3Gph2Jp5+WVIXk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=lHmFm5TEVDHyHEfvweh/K8/js/24Rg5HcGZtfknLBjBxw5E137h3yj5l7s5pUonW2yhCNXewtBeN+qLxzUV7nDB/dqIi8UlyX5hz+y9Rm9mUTNNmN5yQ/ftn4HNcsEBXEB7GNR1C5xUCqgAnbaa2geuJufi0OycqAoicG66+Ch4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5Z5FezS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 14F26C4AF0B;
-	Thu, 20 Jun 2024 00:40:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718844028;
-	bh=CzLboDBZKDjvYors6xyq/z7Jk/vz+3Gph2Jp5+WVIXk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=P5Z5FezSGtVjXJqwzXRSA6IB5m7TwI4KXbtf7xXRhm/wUXCKyi9ljqWXxZgWRC7bx
-	 dvvHO1VLyO8YWxrKPGBY0xD/UaaLYhbk7Qd+4K0qkvTfanQwRcce1Lc7KJS3bVejYo
-	 6YlH4q+Rynlh5diOCjKS12E9BG86glHQhua1fXsDJPtIZJZZKxA+JIe7w7wf4lXvJv
-	 4iK3T5yMvBpU/r3tdzvMhCXSmfcWFRhUmw2jnTc+TsoHWxsLr6oeQzngHBFhXFboH6
-	 Iyays9tRWueZe8nh/naa7B2fDfzQoc+OnAH/TfnaKb3BVsVds7uEmhrur7y8yBLOdP
-	 ZVCbHYjNkgAiw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 04FE8C39563;
-	Thu, 20 Jun 2024 00:40:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718844382; c=relaxed/simple;
+	bh=Oe+CueodMhyXAAT3zVm/KoN3H449VGK1MN7mCKRitow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WcRcqZKbHQGVNXZ/5wgj1AlgUTv4DPjSJRT3u1SWoebFzTz9QkyIPY5rPrAifPTFnOKtq1nMPdI06hEE5yk1qUyRXzPPamdi/KX3GDLzCHwXk5+Km/bLj+E5VyCRno9fzjDgESpLcTGp5fhk38wdJX2Y8Hpfb5UhJMV9ef2XhhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Paz43CAW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JLlgud031194;
+	Thu, 20 Jun 2024 00:46:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tyw48aqYA3gCdB0J0LJP7goqQaUPXUvvK0gWp2XyaVA=; b=Paz43CAWJmCIUlTt
+	HC6M66LbRS98h6xMnj3f6J8rF/bBjYOgnD7LKPCEABWVEosPcyo9UFimDJO7m90C
+	RAIUW92RIR4kNMNAGw6++73MX8Jomn/3LnvoRqOEx0CwVx7yIn4c3PxlDWKLK5n6
+	NC6Se8W+e8ZF2y7pHBI9j/wUH7HtD5DY6XHahkmywwWLs0XFnAiEowAdybMhkh+3
+	XDMfhT+fiLA87XoOn09k83/Jn5NS/hEuuu9A4+e9xar4vF7fhlx0dvIgEINB+CSa
+	pzye7z2Kc0Fh1FaIuDl9Gi5Zy5BITLDWHBNNdi1qMMmFWgnWzV3g3dkidySUuWr4
+	XOryZA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yv7jeg8t6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 00:46:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45K0kGhs018017
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 00:46:16 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
+ 2024 17:46:11 -0700
+Message-ID: <04517096-38a0-465f-86f7-7e8c7de702a2@quicinc.com>
+Date: Thu, 20 Jun 2024 08:46:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 3/4] arm64: dts: qcom: add base AIM300 dtsi
+To: Konrad Dybcio <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <dmitry.baryshkov@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        Fenglin Wu
+	<quic_fenglinw@quicinc.com>
+References: <20240618072202.2516025-1-quic_tengfan@quicinc.com>
+ <20240618072202.2516025-4-quic_tengfan@quicinc.com>
+ <7eb1c459-90d2-4b49-a226-0ced8216cee6@linaro.org>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <7eb1c459-90d2-4b49-a226-0ced8216cee6@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v1 net-next] net: hsr: cosmetic: Remove extra white space
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171884402801.27924.15889374790179078400.git-patchwork-notify@kernel.org>
-Date: Thu, 20 Jun 2024 00:40:28 +0000
-References: <20240618125817.1111070-1-lukma@denx.de>
-In-Reply-To: <20240618125817.1111070-1-lukma@denx.de>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: kuba@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- wojciech.drewek@intel.com, edumazet@google.com, olteanv@gmail.com,
- davem@davemloft.net, o.rempel@pengutronix.de, Tristram.Ha@microchip.com,
- bigeasy@linutronix.de, r-gunasekaran@ti.com, horms@kernel.org,
- Arvid.Brodin@xdin.com, dan.carpenter@linaro.org, ricardo@marliere.net,
- casper.casan@gmail.com, linux-kernel@vger.kernel.org, liuhangbin@gmail.com,
- tanggeliang@kylinos.cn, shuah@kernel.org, syoshida@redhat.com
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: h_Xi4y-Z7yZY-idzn1LXuK9V1mPXDwmP
+X-Proofpoint-ORIG-GUID: h_Xi4y-Z7yZY-idzn1LXuK9V1mPXDwmP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=763
+ clxscore=1015 priorityscore=1501 impostorscore=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 adultscore=0 bulkscore=0 suspectscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406200004
 
-Hello:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 18 Jun 2024 14:58:17 +0200 you wrote:
-> This change just removes extra (i.e. not needed) white space in
-> prp_drop_frame() function.
+On 6/19/2024 3:06 AM, Konrad Dybcio wrote:
 > 
-> No functional changes.
 > 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> On 6/18/24 09:22, Tengfei Fan wrote:
+>> AIM300 Series is a highly optimized family of modules designed to
+>> support AIoT applications. It integrates QCS8550 SoC, UFS and PMIC
+>> chip etc.
+>> Here is a diagram of AIM300 SoM:
+>>            +----------------------------------------+
+>>            |AIM300 SoM                              |
+>>            |                                        |
+>>            |                           +-----+      |
+>>            |                      |--->| UFS |      |
+>>            |                      |    +-----+      |
+>>            |                      |                 |
+>>            |                      |                 |
+>>       3.7v |  +-----------------+ |    +---------+  |
+>>    ---------->|       PMIC      |----->| QCS8550 |  |
+>>            |  +-----------------+      +---------+  |
+>>            |                      |                 |
+>>            |                      |                 |
+>>            |                      |    +-----+      |
+>>            |                      |--->| ... |      |
+>>            |                           +-----+      |
+>>            |                                        |
+>>            +----------------------------------------+
+>>
+>> Co-developed-by: Fenglin Wu <quic_fenglinw@quicinc.com>
+>> Signed-off-by: Fenglin Wu <quic_fenglinw@quicinc.com>
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
 > 
 > [...]
+> 
+>> +&ufs_mem_hc {
+>> +    reset-gpios = <&tlmm 210 GPIO_ACTIVE_LOW>;
+>> +    vcc-supply = <&vreg_l17b_2p5>;
+>> +    vcc-max-microamp = <1300000>;
+>> +    vccq-supply = <&vreg_l1g_1p2>;
+>> +    vccq-max-microamp = <1200000>;
+>> +    vdd-hba-supply = <&vreg_l3g_1p2>;
+> 
+> These regulators should generally have:
+> 
+> regulator-allow-set-load;
+> regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+>                             RPMH_REGULATOR_MODE_HPM>;
+> 
+> although the current setup you have never lets them exit HPM
+> 
+> Konrad
 
-Here is the summary with links:
-  - [v1,net-next] net: hsr: cosmetic: Remove extra white space
-    https://git.kernel.org/netdev/net-next/c/89f5e607772b
+I understand your point is that these settings need to be added to 
+allthe child regulator nodes of regulators-0, regulators-1, 
+regulators-2, regulators-3, regulators-4 and regulators-5. Is that correct?
 
-You are awesome, thank you!
+
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thx and BRs,
+Tengfei Fan
 
