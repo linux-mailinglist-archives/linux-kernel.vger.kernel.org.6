@@ -1,215 +1,106 @@
-Return-Path: <linux-kernel+bounces-222879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FA5910914
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:55:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92EE2910923
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF041F2374E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:55:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C49551C214AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CD51AED35;
-	Thu, 20 Jun 2024 14:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308311B1416;
+	Thu, 20 Jun 2024 14:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IFXUIUXG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C6dL2nQl"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE79F1AE87B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266381B140D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718895297; cv=none; b=HwmJOyuPmRPr/58Gn1O2c93Dtso2VnoWQ/b1JMhzYhvOrQRF9B3y5CkTt2+fXabFoG3ytsCd6wdULt+Nu6NlrIaOoseZyl6V3iRBpGQrJWSDQbdyTxx96WBDuB5dCBWJqHZOV2q37k1eXZkIiQaZPgUlMZG/ohtNbg55/mA946U=
+	t=1718895387; cv=none; b=H5ISG9naJtEPSfD2SfBqINAX5kxVHJ1yDNlfopTrJG99FWYXB/WwA0JPSvPVkCFAWME7gpaAHN49OauIfJrmo8bsJqnV/f3vHcTfIj1D+a98PdVmNfYarcTg0MGHEov3m0V44cP3oQXu3Zw282g8pjAqei9lb0zzt4CM/OQtjTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718895297; c=relaxed/simple;
-	bh=+mc4hdmKVY2EQaTK2A4CHHL4RF7cnX8tckscxTNdMBc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tQYw1G+0Nhkew7ga9khpMvZJepA3KldqfNTowwJh5aU9nO9RpHxXIIrvKoRw2yswCs3MDTQQZLlvPDA1zTouojgTY5BME2j6GRzbYi9v6VitlOu6VQBVCpiKg+dXpo224ir8bUGY+wP12WDWxFoWksMuUBGq21zab2u3xRJhgv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IFXUIUXG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718895294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yt6kXaMST49pKLabNO81NG5Y01PoCbKhbgnCP+N4TNw=;
-	b=IFXUIUXGFwXviqrhCdVCrC15x6J8k8xqnDqW77h8OUWVGJWfv3aRRM91PWvZpZESBi5ahC
-	vv5DvYjqHto7VK0zaftvwD1a7c8IOgDJyelnWO0wVtULGa86FqVxuLDqJxAQHHnse26nrO
-	v9Qd+buY4UHoorPCnKoSwVg9k0s/OnM=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-644-zsBj2URBMPWOF0QVtMNxLw-1; Thu,
- 20 Jun 2024 10:54:50 -0400
-X-MC-Unique: zsBj2URBMPWOF0QVtMNxLw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0AEA819560BD;
-	Thu, 20 Jun 2024 14:54:49 +0000 (UTC)
-Received: from [10.22.9.18] (unknown [10.22.9.18])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5556C19560AE;
-	Thu, 20 Jun 2024 14:54:47 +0000 (UTC)
-Message-ID: <b511173c-53fe-4a93-8030-d99ed1b65bd6@redhat.com>
-Date: Thu, 20 Jun 2024 10:54:46 -0400
+	s=arc-20240116; t=1718895387; c=relaxed/simple;
+	bh=og0uhEaGRnjHIeZZ+4t2qH0VJYHDPegPVDBAqTISp4Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Hx7r5tT3h2GS4cq8zdY9k1ZVKhSOGj4c6U7JJjl4aEwot9zgJ3c5mxFvq4F8qdoEDVhSGf6JSDiuCMns7Z0Zm/9k/g1CTlCwhEAKipXm/x8Ajv0Uye9EK+cPz6WGlgRcqqnQpVzlLPFzIBnHexIyAluR7mnzlEC4LzR4w40Rj+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=C6dL2nQl; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f9885d5c04so8919355ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718895385; x=1719500185; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G9oSfSdf1z67I0KtQRjOtLB51pCoRgY/UrBbJg+NXAY=;
+        b=C6dL2nQlkEF/cGFVvGJz1MuEOW7lgd9o7oKYXxXjj3Nzy22iykfv0PVKJrwvBlg7QR
+         aTpoRIP7dG7CnvLc5ZGquAWdSCHNxC4VuOqTOpiN8JA0Y/NlSiOWXW4uuPMpnddRUlYT
+         J+WOwcymDhWbu+1hi7PB8pFNP42/zszpTGbm4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718895385; x=1719500185;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G9oSfSdf1z67I0KtQRjOtLB51pCoRgY/UrBbJg+NXAY=;
+        b=bTgDbdwJEgB8Dg52Bb8iQZEnPd/4i9kZIYF7893BXoNY2muXnfUMd9OzLtCuOtbHDJ
+         mcAz1H1aMIXCDTddzmc/feGNmKJJ68jdRNC2Eg8/XD/cVHiwAHaV2blpgKyNGTaq2JpK
+         QJmv8FJlLGRH3siX7LteoxN/C0V3bpYI3yGxq6xT4qphVzMUE/HetwXtcH7MaUOxxv5d
+         9v0q9nCiVk5OWaVMJprKwyt2LMJqObb8VGB5i2DKcxhF8e0F9e27SpMO3/8KP5s9p7GA
+         crjdY+3+V2YbPXPmsCwMlSP/QgXj/h39Z8BBcW8k2cqy2D7LrOc5/EIn6CF/EEpX77yk
+         nUqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOOgQ1d7/+Or9ywO6oBiczqjQhBm1SCTCC02lRnc+v+xa3Kvpsc8/a9dHQNazKarWsqAa/iJBPafZ5JgdcL2aI3WyfzsrhiHOa2Zcc
+X-Gm-Message-State: AOJu0YyFfIG1KKU5RQEXo3/ErnViW/nhXG/5faDnK9aiL3lQkL7Ag1TS
+	AgyTxLFVx7IGeAIJzx6OYCuu+ym9ssjSHkcE2D+bfLAY9ApbMaFKjrZT9LVT1Q==
+X-Google-Smtp-Source: AGHT+IGvWrm3Tv2FDZs0pJA9F4+SMsaHh0/HqnibcqOGLHKEUuScOl3L9viWc0DKtKRzX/yyt8s5KA==
+X-Received: by 2002:a17:902:ec8f:b0:1f7:13b1:753f with SMTP id d9443c01a7336-1f9aa3dd88amr65229765ad.22.1718895385480;
+        Thu, 20 Jun 2024 07:56:25 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:66d:f48d:817f:91ec])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e55e82sm138378885ad.22.2024.06.20.07.56.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 07:56:23 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
+ Tejas Vipin <tejasvipin76@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+ tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240612163946.488684-1-tejasvipin76@gmail.com>
+References: <20240612163946.488684-1-tejasvipin76@gmail.com>
+Subject: Re: [PATCH v3] drm/panel: truly-nt35521: transition to mipi_dsi
+ wrapped functions
+Message-Id: <171889538321.1493372.4537499331018724639.b4-ty@chromium.org>
+Date: Thu, 20 Jun 2024 07:56:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 v4 1/2] Union-Find: add a new module in kernel library
-To: Xavier <xavier_qy@163.com>, mkoutny@suse.com
-Cc: lizefan.x@bytedance.com, tj@kernel.org, hannes@cmpxchg.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240603123101.590760-1-ghostxavier@sina.com>
- <20240620085233.205690-1-xavier_qy@163.com>
- <20240620085233.205690-2-xavier_qy@163.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240620085233.205690-2-xavier_qy@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mailer: b4 0.13.0
 
-On 6/20/24 04:52, Xavier wrote:
-> This patch implements a union-find data structure in the kernel library,
-> which includes operations for allocating nodes, freeing nodes,
-> finding the root of a node, and merging two nodes.
->
-> Signed-off-by: Xavier <xavier_qy@163.com>
-> ---
->   MAINTAINERS                |  7 +++++++
->   include/linux/union_find.h | 30 ++++++++++++++++++++++++++++++
->   lib/Makefile               |  2 +-
->   lib/union_find.c           | 38 ++++++++++++++++++++++++++++++++++++++
->   4 files changed, 76 insertions(+), 1 deletion(-)
->   create mode 100644 include/linux/union_find.h
->   create mode 100644 lib/union_find.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d6c90161c7..602d8c6f42 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -23054,6 +23054,13 @@ F:	drivers/cdrom/cdrom.c
->   F:	include/linux/cdrom.h
->   F:	include/uapi/linux/cdrom.h
->   
-> +UNION-FIND
-> +M:	Xavier <xavier_qy@163.com>
-> +L:	linux-kernel@vger.kernel.org
-> +S:	Maintained
-> +F:	include/linux/union_find.h
-> +F:	lib/union_find.c
-> +
->   UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER
->   R:	Alim Akhtar <alim.akhtar@samsung.com>
->   R:	Avri Altman <avri.altman@wdc.com>
-> diff --git a/include/linux/union_find.h b/include/linux/union_find.h
-> new file mode 100644
-> index 0000000000..67e9f62bb3
-> --- /dev/null
-> +++ b/include/linux/union_find.h
-> @@ -0,0 +1,30 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __LINUX_UNION_FIND_H
-> +#define __LINUX_UNION_FIND_H
-> +#include <linux/slab.h>
-> +
-> +/* Define a union-find node struct */
-> +struct uf_node {
-> +	struct uf_node *parent;
-> +	unsigned int rank;
-> +};
-> +
-> +/* Allocate nodes and initialize to 0 */
-> +static inline struct uf_node *uf_nodes_alloc(unsigned int node_num)
-> +{
-> +	return kzalloc(sizeof(struct uf_node) * node_num, GFP_KERNEL);
-> +}
-> +
-> +/* Free nodes*/
-> +static inline void uf_nodes_free(struct uf_node *nodes)
-> +{
-> +	kfree(nodes);
-> +}
-> +
-> +/* find the root of a node*/
-> +struct uf_node *uf_find(struct uf_node *node);
-> +
-> +/* Merge two intersecting nodes */
-> +void uf_union(struct uf_node *node1, struct uf_node *node2);
-> +
-> +#endif /*__LINUX_UNION_FIND_H*/
-> diff --git a/lib/Makefile b/lib/Makefile
-> index 3b17690456..e1769e6f03 100644
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -34,7 +34,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
->   	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
->   	 earlycpio.o seq_buf.o siphash.o dec_and_lock.o \
->   	 nmi_backtrace.o win_minmax.o memcat_p.o \
-> -	 buildid.o objpool.o
-> +	 buildid.o objpool.o union_find.o
->   
->   lib-$(CONFIG_PRINTK) += dump_stack.o
->   lib-$(CONFIG_SMP) += cpumask.o
-> diff --git a/lib/union_find.c b/lib/union_find.c
-> new file mode 100644
-> index 0000000000..2f77bae1ca
-> --- /dev/null
-> +++ b/lib/union_find.c
-> @@ -0,0 +1,38 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/union_find.h>
 
-I would suggest that you briefly document what is a union-find algorithm 
-and data structure and what is it good for.
+On Wed, 12 Jun 2024 22:09:42 +0530, Tejas Vipin wrote:
+> Use functions introduced in commit 966e397e4f60 ("drm/mipi-dsi: Introduce
+> mipi_dsi_*_write_seq_multi()") and commit f79d6d28d8fe
+> ("drm/mipi-dsi: wrap more functions for streamline handling") for the
+> sony tulip truly nt35521 panel.
+> 
+> 
 
-Cheers,
-Longman
+Applied, thanks!
 
-> +
-> +struct uf_node *uf_find(struct uf_node *node)
-> +{
-> +	struct uf_node *parent;
-> +
-> +	if (!node->parent) {
-> +		node->parent = node;
-> +		return node;
-> +	}
-> +
-> +	/*Find the root node and perform path compression at the same time*/
-> +	while (node->parent != node) {
-> +		parent = node->parent;
-> +		node->parent = parent->parent;
-> +		node = parent;
-> +	}
-> +	return node;
-> +}
-> +
-> +/*Function to merge two sets, using union by rank*/
-> +void uf_union(struct uf_node *node1, struct uf_node *node2)
-> +{
-> +	struct uf_node *root1 = uf_find(node1);
-> +	struct uf_node *root2 = uf_find(node2);
-> +
-> +	if (root1 != root2) {
-> +		if (root1->rank < root2->rank) {
-> +			root1->parent = root2;
-> +		} else if (root1->rank > root2->rank) {
-> +			root2->parent = root1;
-> +		} else {
-> +			root2->parent = root1;
-> +			root1->rank++;
-> +		}
-> +	}
-> +}
+[1/1] drm/panel: truly-nt35521: transition to mipi_dsi wrapped functions
+      commit: c62b4fc4b9b86ab35e5c4236f2053ce21ee81ebc
+
+Best regards,
+-- 
+Douglas Anderson <dianders@chromium.org>
 
 
