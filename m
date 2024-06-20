@@ -1,136 +1,115 @@
-Return-Path: <linux-kernel+bounces-222251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF7290FEDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:32:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D47790FEF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D4401C22B5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:32:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BF5CB216F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5821990C0;
-	Thu, 20 Jun 2024 08:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395A81A4F34;
+	Thu, 20 Jun 2024 08:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XyYTlwGF"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G212jt7J"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3675FEDB;
-	Thu, 20 Jun 2024 08:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081231A4F1D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718872328; cv=none; b=mHH8grbCtPm1OrAe6BD+8ZTp3BBOlh2PA4IVNHnnq8hm+HoaZ3SEXfn0lZFCtbkF9HdW8fM00GhEeYKG/wvxy17dqK2nMQBYL6D2rbqENCT4o175u13vqMV+m+kifx4hU39UQA+5N+ZrKAB8Br8eGsCJEG7G/QGX3BTOF+m2IAE=
+	t=1718872371; cv=none; b=C2ZXcQPQOoyvpfU6dd+Ah3iJoE5/E2726yN0gPFPmM+/2o8XP8jS24bw9viwPiSEv05Hr9QgimAM3aErQBDKh+iq0JAhaeqdOTTD6IPRnFI9ueFKG2gfu5axBgj9UkWiO1K6rMqRjmtHAeU8akdv9FQsyOHkHuBALcSwipJqoHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718872328; c=relaxed/simple;
-	bh=YWsA2phAgUUjPGZaztk9I/TT/+G7BhuRV9evuqqJKOA=;
+	s=arc-20240116; t=1718872371; c=relaxed/simple;
+	bh=zYuEkiCJucpYi9fRM2FoKLYinOCDZ54ScNQjYNexUm8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RRZatpA+WstF3GBCp9OUJrOs7luQrGZCeDk8gzLXNSr60dgL67PDVZzp56URW+D1CtHIT8yGkDJ97IcajJRlCTyrO5MZxj+EU961lGLIFhHWCAPJUtguOMorH2K76jpidC2NMtTt81kBLtSmKLO+ECKEl1lRGEYaAsy3BbXvbUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XyYTlwGF; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c327a0d4c9so1247596a91.1;
-        Thu, 20 Jun 2024 01:32:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=eu87fLgT7bD7WUWxNHO9JkB7TFZeTTAQynWmZ24uAGYFcPivRolhT3HzY61x8z9E2wIIKpXETTUm4DLxHoajjkPphBmCMo5Fw8gNxhZ4e0PG5XSuo32KQPa2rf9KJKwHFX8XXkvBofu8gkeeZWMeFH1rIZKFwVbzX+NFNSeC55o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G212jt7J; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-48efb6873cfso206859137.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:32:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718872326; x=1719477126; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1718872369; x=1719477169; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Pr8Ujvslsv5sAsWX/9nOEEKoUg3IW2eQ+NTKLQgKvLk=;
-        b=XyYTlwGFE+XqXZD+/5EhQ7af+76ERXTgSOSvPMKZLSnvfG0vR0Flt6UUhJ9f3AJSex
-         amp3LRPPW9nJWlj3F5IMu/aMtx6HdnsWxlUHmQ9xC2wcZjxDYZi34cHPDg+2USqbXtcR
-         aBdwqmSRQU9WMTKVOxzKEw0nFO2pHtMrkcz1jBSnIGi0WpwTJbfz/iow2TQ0u7FgmMs4
-         eZNbia1lhMNEZvQiMwfr9VGfnmSbJ8F6+2YFE0NYhyH5kFLLypTA0Jbuvo3W3cAn0Yuf
-         jCML4eY21JBgyrzcgTcnmJeC+8LRqby8tIlThmIv+hyspG7gwX3QpItUvybg6I8KbkQZ
-         RMwg==
+        bh=XOmkUEX+QPpwIw/PNe7ONbml5f/DeYQ311Q9vb1DpME=;
+        b=G212jt7JI6T34Sw7K7aIrZj2TGimRHLgCi9fX3KbKwlIPx2NT66U+xVeQNqji8rLh0
+         UtrJ7w5uNVWsWN2zVe0GUT+zfoLXgfxBZbY4kCUaQrbRE00IeN3FVn9tKKP9/eE4En+L
+         emgYJPLlnBbOfzhtQalH/A7FN2YloXIjopcw5dnthhFYR+M2LlF//b7nhRmj5SptuevS
+         hOEDqYy3NuptpWqsSJFAQCzv0/ZhPaHGLjCKCwMe4Mjigab1dJ1+Y3x1dOWWL/Nfb/TO
+         cKv/MebuxP7FdUtCy9ZrOzWa71EJkLvDxxHu2zA/uGDgkkwMZgHYK9hjAlaxrcrQJso3
+         yF/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718872326; x=1719477126;
+        d=1e100.net; s=20230601; t=1718872369; x=1719477169;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Pr8Ujvslsv5sAsWX/9nOEEKoUg3IW2eQ+NTKLQgKvLk=;
-        b=HEhvHqlsMfodRV35b9SYL5rQ5W56Bn4/RBkpcO4V3gkjwQ1+OEMiWsO8GwWDj9yRgu
-         tw2pUQr1X6oseCAoeaF+PiO/fZljTRBHEG94th/yl7P0FbedTQFzWqh1i16GGSVKa2/z
-         43jlWzZKF0WZUvT0WxhWduFce7xFvz9TD5MSfTlUupjeauNW5AOOHGciqKCDsCt/F6Vu
-         PO+u4d+gGocRN2sy//pfGqqSCozb4pd4xwl/zsTr4y0WI1rr7qIDZLC4ogh6Ej+DZ4gF
-         jsLtxUCx1EUUi4rTqIxLvZ+XW1TeY/6DkimpW5gC/+N9INZdkNvQ2PaUfcNB/cEC571u
-         m4TA==
-X-Forwarded-Encrypted: i=1; AJvYcCX02cIJgMHW3cZRRCNXOiyuok5e0aOHGcaDY9zm28tEMXm5uFFdspysmlnRMg21OJAu8/BdnkoJUkvCxp1Iyht6LVWGxr6HqXHgfYEiTA8EUWCJO8g6voTI7KBCXUgiXPlSOcBUXcLtsQ+vaybavWRVPl3ze+eoLU0RREw+vLmptuHNjkgaDezuN8s=
-X-Gm-Message-State: AOJu0YxliLNmbs1HjeKS+l5wpW3pDGlV7WbejYOsjesAV8/UfaxkIBgx
-	OqnUeR2wVj3F3YyR5aMToVHuIW5HUNNZffNev9Dl/0zYw74yGJmSZ4XXqTCn3l6ujApV+Zl0VWS
-	qUFvKqNjje+ldBtZ9K717boFZ+j8=
-X-Google-Smtp-Source: AGHT+IESD4smgPwpXrdb7RRqONV6KXkwjtJhArdlSbDbSHSmsOz692YJj5kuyxsawEY7HSmisNZpcQXukL8qtXcbC6Y=
-X-Received: by 2002:a17:90a:f281:b0:2c4:f32c:6b with SMTP id
- 98e67ed59e1d1-2c7b3ba85abmr7285513a91.19.1718872326480; Thu, 20 Jun 2024
- 01:32:06 -0700 (PDT)
+        bh=XOmkUEX+QPpwIw/PNe7ONbml5f/DeYQ311Q9vb1DpME=;
+        b=LXeLsi4bXR5ak3QVHG1CA2euiJlaJr2KSysr+MT2u0jYOiff9nObgXsHiHpt/w/Tl1
+         w7BBvlJKf4GcsWKNxCVqnY6CCXvQtTFdFhYZOZdDbD05ygBM60iIPJv76IFW1rxUOtHD
+         lVX+l44bmI1ZekptCeYUR9BdXT6GGCU9Fi6VFl+85YJhUvSy4Xs55aeauXm9sUow9UNb
+         F/FYPSKez7BQdFM8RM/d9FebrGyHB1zxSaluQSoIwWtKwZO4jyOOg/X8be07SbRGv2XQ
+         07QL78Pg02EgLyq4j1glWogkrEJOlelhlZ8qzR2RUyoaZhFbUW59OCXEg4US7CVJK9L0
+         2t5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX6foPfUJ55DI599PF76oW42XdDMg2EIu3em1f63SmxSZ6w+KGZFEueRU2+Z8bVnmCTEmN26mDrP4POPODKDDmWTJ1mhQ5TkB+kJlP3
+X-Gm-Message-State: AOJu0YxI8jGTd4n4QiAYedaz/NChGFCSlBkuTY+ejv+0eCtH5K5PUTUl
+	TC35zTEWfRDxYyX98Be7whxbG4vzdrBYJPkDme+Dq75vE52wk9QPfkTUZ3G6aVw/evM4qKUuZuW
+	QLwUMydfeO9830bTWo3wIkk6cdrcLMtr2T9JAlOBeKifUOvpY0A==
+X-Google-Smtp-Source: AGHT+IHi0WRCyy0hfXntdP9fOgJics6qo6yRFtxu5900HRgUIkalDbX6u/kMOlWrMNVOe5jOJ37CCErOZk8PCBkiM20=
+X-Received: by 2002:a05:6102:26ca:b0:48d:87f9:e529 with SMTP id
+ ada2fe7eead31-48f130cf92emr6024383137.29.1718872368720; Thu, 20 Jun 2024
+ 01:32:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240601004856.206682-1-jhubbard@nvidia.com> <CANiq72m46gN4GkfeXgykEar6OVa56ck9FmWQComd+iuf61FVSw@mail.gmail.com>
- <4262dee7-b6fb-449c-9de8-7d6404912338@nvidia.com>
-In-Reply-To: <4262dee7-b6fb-449c-9de8-7d6404912338@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 20 Jun 2024 10:31:53 +0200
-Message-ID: <CANiq72n=mFF5+MxAmOwNS+ZOGo=H199MX_5nPiZTKchFK+Gn6g@mail.gmail.com>
-Subject: Re: [PATCH] Makefile: rust-analyzer target: better error handling and comments
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, linux-kbuild@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+ <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com> <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+ <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
+ <20240619115135.GE2494510@nvidia.com> <ZnOsAEV3GycCcqSX@infradead.org>
+In-Reply-To: <ZnOsAEV3GycCcqSX@infradead.org>
+From: Fuad Tabba <tabba@google.com>
+Date: Thu, 20 Jun 2024 09:32:11 +0100
+Message-ID: <CA+EHjTxaCxibvGOMPk9Oj5TfQV3J3ZLwXk83oVHuwf8H0Q47sA@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>, David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>, 
+	Elliot Berman <quic_eberman@quicinc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>, maz@kernel.org, 
+	kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 20, 2024 at 8:13=E2=80=AFAM John Hubbard <jhubbard@nvidia.com> =
-wrote:
+Hi,
+
+On Thu, Jun 20, 2024 at 5:11=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
+g> wrote:
 >
-> What exactly did you have in mind for how that should look? The
-> "make rustavailable" target has some leading *** and some bare
-> statements, so I'm not quite sure exactly how to lay it out:
+> On Wed, Jun 19, 2024 at 08:51:35AM -0300, Jason Gunthorpe wrote:
+> > If you can't agree with the guest_memfd people on how to get there
+> > then maybe you need a guest_memfd2 for this slightly different special
+> > stuff instead of intruding on the core mm so much. (though that would
+> > be sad)
+>
+> Or we're just not going to support it at all.  It's not like supporting
+> this weird usage model is a must-have for Linux to start with.
 
-I was thinking something like:
+Sorry, but could you please clarify to me what usage model you're
+referring to exactly, and why you think it's weird? It's just that we
+have covered a few things in this thread, and to me it's not clear if
+you're referring to protected VMs sharing memory, or being able to
+(conditionally) map a VM's memory that's backed by guest_memfd(), or
+if it's the Exclusive pin.
 
-    ***
-    *** Rust is not available.
-    ***
-
-(the `***` prefix is used also in other similar scripts and by Make itself)=
-.
-
-However, thinking about it a bit more, we should perhaps just let
-`rust_is_available.sh` tell the user why it fails, since it is likely
-the next step the user would do anyway:
-
-    $ make LLVM=3D1 rust-analyzer
-    ***
-    *** Rust compiler 'rustc' is too old.
-    ***   Your version:    1.62.0
-    ***   Minimum version: 1.78.0
-    ***
-    ***
-    *** Please see Documentation/rust/quick-start.rst for details
-    *** on how to set up the Rust support.
-    ***
-    make[1]: *** [linux/Makefile:1973: rust-analyzer] Error 1
-    make: *** [Makefile:240: __sub-make] Error 2
-
-What do you think? Then there is no need for extra output here and the
-patch becomes simpler too.
-
-The bare statement we have there for the successful case was mainly so
-that the explicit `make rustavailable` did not look empty if there was
-no issue, i.e. we don't print anything extra when there is an error
-(and if we wanted to print something for the failure case, then we
-should probably do it in the script, rather than here).
-
-Cheers,
-Miguel
+Thank you,
+/fuad
 
