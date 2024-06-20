@@ -1,177 +1,126 @@
-Return-Path: <linux-kernel+bounces-222588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1133A910432
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:31:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6F191042F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91991B217D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:31:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 122241F21E1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152C31AD3FD;
-	Thu, 20 Jun 2024 12:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FCA1ACE9D;
+	Thu, 20 Jun 2024 12:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ek6xzTqf"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uyYxtf5f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214021991DC;
-	Thu, 20 Jun 2024 12:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBFE01AC229;
+	Thu, 20 Jun 2024 12:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718886598; cv=none; b=C55UluH0JIh5eYJqL3+scGdLy8lOL4cjEv9xe0epZ7OCbpgeDPl/rr1KJVD9KyxVkzzo7LHSxKuZ5IZYlEIwTHyj8mXdIDbl+2dtI7ybM+Wvd2hIbjwwWdkt4CfK3EnD9cUYtvDMlq4M1827D2dUzN9n+MtU8I7e4gtFwQlYqmc=
+	t=1718886597; cv=none; b=GBRDyBVzHGxkvOQDgSJo6WzvKWeZbQSmlrNRSfcTbBpXiA1hqNLOYDUNY0sMAi5fpqNGugV1ffusw4NNKqgZS1bIRJJA5g/gfntb3ZOA60N1XlgYS8E7krPDyS3xC144Od3xWGbXFsagncxvDfobBs32UjkVgaCLW/trj8o7plU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718886598; c=relaxed/simple;
-	bh=+Q6wp3tvbGNSDlHVAa4xeJsGtjsBnA9MkZEq3IT5n9Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=S/01H1zjRWxifQeSXFfEuBBLgt/GhbA/9RxicCjl0w0uPqIYdb7RncfDmUlV73i6oMllyqaWOgZA38wsuGu5v4/2AsynsATi4Z6COkH1wE0R6cazRJiINXqJRKo6ZXL8a7J8g6TdP9Mr4YT0FfatxUKMHo2UY4bFpvnM8P2mPac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ek6xzTqf; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KBPmD6010899;
-	Thu, 20 Jun 2024 12:29:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	+Q6wp3tvbGNSDlHVAa4xeJsGtjsBnA9MkZEq3IT5n9Y=; b=Ek6xzTqf60gxulMp
-	nGl7f1Bk5jxKrSPstTCQOplQhgiCyYm6KJDLg6pIXQrJX2tRUY75kMk7FjrppokB
-	kv0F3CwVOwf/Th7kSb41Kmp49kL3D0WhJ8i7wR5QEEzSo7bzrOPLuoC4/6JyTDdb
-	0zv+BYCIOveZD30Cd+Yc+QNJ6geN4XSKp9BV51bkHWb81dHhIDx2LmMGNmr/0DyS
-	i6cYAUcuZQ4r2eibpz9zpMs/ZafMCfoGtXSbwoqRcVAjswyyZzk8hw7n8tZf5LbR
-	vULBsRb0832efMrX4dCClS09JSQWjAOfVupSAvwq6Om61TJ10kVos/UOiNBorUSU
-	cyb7yQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvg2s8pcn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 12:29:50 +0000 (GMT)
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45KCTnsm008184;
-	Thu, 20 Jun 2024 12:29:50 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvg2s8pck-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 12:29:49 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45KAfdNP011037;
-	Thu, 20 Jun 2024 12:29:49 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yspsnnre2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 12:29:49 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45KCThpR51249462
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Jun 2024 12:29:45 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 670EA2004D;
-	Thu, 20 Jun 2024 12:29:43 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E97E20040;
-	Thu, 20 Jun 2024 12:29:43 +0000 (GMT)
-Received: from dilbert5.boeblingen.de.ibm.com (unknown [9.152.212.201])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 20 Jun 2024 12:29:43 +0000 (GMT)
-Message-ID: <af89c1a0cd8ad8e729b7675e7fa3abd6f97201e7.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 2/3] vfio/pci: Tolerate oversized BARs by disallowing
- mmap
-From: Gerd Bayer <gbayer@linux.ibm.com>
-To: Niklas Schnelle <schnelle@linux.ibm.com>,
-        Christoph Hellwig
-	 <hch@infradead.org>
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-        Gerald Schaefer
- <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily
- Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle
- <svens@linux.ibm.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Jason
- Gunthorpe <jgg@ziepe.ca>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Date: Thu, 20 Jun 2024 14:29:38 +0200
-In-Reply-To: <ecbd75e7c9a96ac38846a17917339d2cae6fe74c.camel@linux.ibm.com>
-References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
-	 <20240529-vfio_pci_mmap-v3-2-cd217d019218@linux.ibm.com>
-	 <20240618095134.41478bbf.alex.williamson@redhat.com>
-	 <ZnKEuCP7o6KurJvq@infradead.org>
-	 <76a840711f7c073e52149107aa62045c462d7033.camel@linux.ibm.com>
-	 <ZnOrlB6fqYC4S-RJ@infradead.org>
-	 <ecbd75e7c9a96ac38846a17917339d2cae6fe74c.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40app1) 
+	s=arc-20240116; t=1718886597; c=relaxed/simple;
+	bh=TbXzmIvEO7TjjoHW3NdmWzbgPUbd6HxMNpznqg0zLUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TL9944OsR2e4jC0GnC021/MrEC+fdfSrOLdQexwKAzkU1tGkvRSk4cT0OnHA3F9KSu1OyKfMKlHl3Eq8mYzGXUxJNgc6DcLgsxnwAebvVdKvES7U0JqUROS9aKig+zQ1xU4mRebBDvknz6h1w5TP+mdnaPVOkCSNpu/kKT7jx8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uyYxtf5f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8B8C2BD10;
+	Thu, 20 Jun 2024 12:29:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718886596;
+	bh=TbXzmIvEO7TjjoHW3NdmWzbgPUbd6HxMNpznqg0zLUI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uyYxtf5f9af/GSBjoWdLh0kD+eKh3XfeErWbdm7wMgVmh8r0tFM3nTNhzKLG8PitN
+	 h+uA3y2BoOThihevb1dlLDH/vGEfgWNdggjpfzcP48aUZw52muSvTR8XMmI6VHu6Cy
+	 8IL8J8nDCkw5OkKiWYylDmD2Qv2/Yxs6uVMQLxQ8=
+Date: Thu, 20 Jun 2024 14:29:53 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+	Miaohe Lin <linmiaohe@huawei.com>, Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	David Hildenbrand <david@redhat.com>,
+	Cgroups <cgroups@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>, jbeulich@suse.com,
+	LTP List <ltp@lists.linux.it>
+Subject: Re: [PATCH 6.9 000/281] 6.9.6-rc1 review
+Message-ID: <2024062028-caloric-cost-2ab9@gregkh>
+References: <20240619125609.836313103@linuxfoundation.org>
+ <CA+G9fYtPV3kskAyc4NQws68-CpBrV+ohxkt1EEaAN54Dh6J6Uw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: m4aU38zbebI3mNAamlD0p9X44SbPrTgw
-X-Proofpoint-ORIG-GUID: OcVkhUfOJcornAzFBu1IslYqSOp7JJM8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_07,2024-06-20_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- clxscore=1011 impostorscore=0 lowpriorityscore=0 malwarescore=0
- adultscore=0 suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- mlxlogscore=837 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406200089
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtPV3kskAyc4NQws68-CpBrV+ohxkt1EEaAN54Dh6J6Uw@mail.gmail.com>
 
-On Thu, 2024-06-20 at 14:06 +0200, Niklas Schnelle wrote:
-> On Wed, 2024-06-19 at 21:09 -0700, Christoph Hellwig wrote:
-> > On Wed, Jun 19, 2024 at 12:56:47PM +0200, Niklas Schnelle wrote:
-> > > In short, the ISM BAR 0 is stupidly large but this is
-> > > intentional. It not fitting in the VMAP is simply the least crazy
-> > > filter I could come up with to keep the ISM device from causing
-> > > trouble for use of vfio-pci mmap() for other, normal, PCI
-> > > devices.
-> >=20
-> > Then maybe add a PCI quirk to prevent mapping it.=C2=A0 This would also
-> > affect the sysfs resource0 file unless I'm missing something.
-> >=20
->=20
-> The resource<N> files are globally disabled on s390x due to lack of
-> HAVE_PCI_MMAP/ARCH_GENERIC_PCI_MMAP_RESOURCE at the moment. I might
-> change that in the future with a analogous argument as for
-> VFIO_PCI_MMAP but for its not there. Once we add it we of course need
-> the same special ISM treatment there too.
->=20
-> Looking at the existing PCI quirks I don't see anything that would
-> fit so I'm guessing you would want to add a new quirk? As I
-> understand it we would then have to export something like a
-> is_pci_mmap_broken(pdev) function while currently the only quirk
-> function that seems to be exported is pxi_fixup_device(). But then
-> what happens if CONFIG_PCI_QUIRKS=3Dn? Also the header comment in
-> drivers/pci/quirks.c says that platform specific devices shouldn't go
-> in there and ISM is platform specific.
+On Thu, Jun 20, 2024 at 05:21:09PM +0530, Naresh Kamboju wrote:
+> On Wed, 19 Jun 2024 at 18:41, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.9.6 release.
+> > There are 281 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.6-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> There are two major issues on arm64 Juno-r2 on Linux stable-rc 6.9.6-rc1
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> 1)
+> The LTP controllers cgroup_fj_stress test cases causing kernel crash
+> on arm64 Juno-r2 with
+> compat mode testing with stable-rc 6.9 kernel.
+> 
+> In the recent past I have reported this issues on Linux mainline.
+> 
+> LTP: fork13: kernel panic on rk3399-rock-pi-4 running mainline 6.10.rc3
+>   - https://lore.kernel.org/all/CA+G9fYvKmr84WzTArmfaypKM9+=Aw0uXCtuUKHQKFCNMGJyOgQ@mail.gmail.com/
+> 
+> it goes like this,
+>   Unable to handle kernel NULL pointer dereference at virtual address
+>   ...
+>   Insufficient stack space to handle exception!
+>   end Kernel panic - not syncing: kernel stack overflow
+> 
+> 2)
+> The LTP controllers cgroup_fj_stress test suite causing kernel oops on
+> arm64 Juno-r2 (with the clang-night build toolchain).
+>   Unable to handle kernel NULL pointer dereference at virtual address
+> 0000000000000009
+>   Internal error: Oops: 0000000096000044 [#1] PREEMPT SMP
+>   pc : xprt_alloc_slot+0x54/0x1c8
+>   lr : xprt_alloc_slot+0x30/0x1c8
 
-I took a cursory look at that file as well and arrived at a similar
-conclusion that drivers/pci/quirks.c (as is) does not sound like a good
-match for the required functionality
+And these are regressions?  Any chance to run 'git bisect'?
 
+thanks,
 
-> Instead of exporting IOREMAP_START/IOREMAP_END maybe there is another
-> reasonable maximum resource length? Or maybe we could create a size_t
-> ioremap_area_size() helper similar to is_ioremap_addr() but not
-> inlined. The latter already uses IOREMAP_START/IOREMAP_END so not
-> sure how that works when IOREMAP_END is not exported?
-
-But seeing how the PCI quirks filter against Vendor and Device ID,
-I just had the idea if it would make sense to create a similar
-infrastructure in the form of VFIO PCI quirks - and simply reject mmap
-on ISM devices regardless of the size of iomap'able address spaces?
-Sound rather coarse-grained, though...
-
-> Thanks,
-> Niklas
-
-Just a thought,
-Gerd
+greg k-h
 
