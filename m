@@ -1,143 +1,142 @@
-Return-Path: <linux-kernel+bounces-223065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE353910D12
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:35:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58376910D14
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E991F22510
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:35:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 898D61C23ABD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A361BA867;
-	Thu, 20 Jun 2024 16:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FF01BA88F;
+	Thu, 20 Jun 2024 16:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fpcDoxmh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="hNLxRoxR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VUGOWjv2"
+Received: from wfhigh7-smtp.messagingengine.com (wfhigh7-smtp.messagingengine.com [64.147.123.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C991A1B1500;
-	Thu, 20 Jun 2024 16:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E1F1BA889;
+	Thu, 20 Jun 2024 16:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718901053; cv=none; b=qL9e0wquftXALdv9DLNwGBaS6RtGd5xDcH7vIh/F0IDEhl3LxETCB034gKqwFmfREnf2KrJhfe8JEZdaeISqgXFutTH40minDsoK7fmEPv7A2HA5OxaNHUkJhAODFfgdz4OvleHkXO7svT3eMT8bsIkwdcu2DmdtGsM74Vrz70Y=
+	t=1718901070; cv=none; b=cXl4MyQjel5R8qicUw2p8pB/Ob8fsV/QaNgCphJdo6i8WHYBemjDNjBTgqnA/0R+2bVHHrIKK5w2+ioWf7Juqp861ooznx7l+FDydyrPQf0vF6dLWAiWIPIftUI74T1lDtc0DkRTNtFvQhov1+nNhU3gpl144VVNNnpAQo0Ds3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718901053; c=relaxed/simple;
-	bh=+u20+PzQw0ydTGvhxZkg0M/CZ1MW4ZV07QKlmdkZH9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GIeqKThDF5IpxBtQ9qFYV9vN+qx715BvSL2rG4vITxAhrgNHaVSsJfYejCP0aknvQ5ToCX+dvv3WTyAmEzSZ2Q57KXxih55YHKWR4hGNKfK8Uhb2IVUyFV6mWuzsv1giz1JXrlqLdtGn1/byb+yMqhrKYZqREZa7FucU4e4kI+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fpcDoxmh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B15EC2BD10;
-	Thu, 20 Jun 2024 16:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718901053;
-	bh=+u20+PzQw0ydTGvhxZkg0M/CZ1MW4ZV07QKlmdkZH9c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fpcDoxmhms7zCAojcmv/RYq8amuLtl7ctEBD7zQhfbjW7+P8jmXqkou3HRrlVlZb7
-	 qYze12R0q8VIC64JI2zqHYNHsKkTWq5FDGrl8aZADPgnv4scthWEesv3iVgNjopql8
-	 KjHezkm5GuBt5xFg30ugfxRRImANN6sWHEAf0KXygq1ydZmdZ+9rBnbcrFOT6nMOoc
-	 j7Pf5kBzBYriCkkIuGAcfwiPeLYN59qvgvCua5fa56a5zX7iDDkL9QGgm+5hsw5yfi
-	 QLEqJNvH3RUjLyJcUQAFLiXUZgI9M2wj9DdxqjNPeeZuHj7YMSmhbwHzhh6qWY3Aof
-	 NGLV5yR/cROXQ==
-Date: Thu, 20 Jun 2024 17:30:48 +0100
-From: Simon Horman <horms@kernel.org>
-To: "Nemanov, Michael" <michael.nemanov@ti.com>
-Cc: Sabeeh Khan <sabeeh-khan@ti.com>, Kalle Valo <kvalo@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 11/17] wifi: cc33xx: Add init.c, init.h
-Message-ID: <20240620163048.GK959333@kernel.org>
-References: <20240609182102.2950457-1-michael.nemanov@ti.com>
- <20240609182102.2950457-12-michael.nemanov@ti.com>
- <20240615085133.GA234885@kernel.org>
- <8dbb30be-3c0c-43c9-8f7a-dbfeeca3837e@ti.com>
+	s=arc-20240116; t=1718901070; c=relaxed/simple;
+	bh=xMb013uPEOBTWMmM5zBsJ8UlvQ2ArjFJ+gwip7i51Z0=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=qETYUKnZcpcQFLao7nIyov7P7Pf8ZmzthJqyo73PpN4EgWrVYahDqSqAyJpmWaTQR5IhQrTjMn5FaecNO3TJWnNda1k7lCrQrn1djC/Syn9f/xwUBaFVJjlHq19UfJdU3Z9tIvNEALJMAd5NYU5nE7Lo81mkvIvJymD70Ecbx+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=hNLxRoxR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VUGOWjv2; arc=none smtp.client-ip=64.147.123.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 5EF341800131;
+	Thu, 20 Jun 2024 12:31:07 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Thu, 20 Jun 2024 12:31:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1718901066;
+	 x=1718987466; bh=tvZfZePdD8ufJsjGr1KQrYgsonsCq0tGwrSVJY/6Mmc=; b=
+	hNLxRoxRW4mVdw7y1u/WTiTWqNZ8+YhBwV57h6TpiXs0UMVlqAHZHukwDJQ5ZqZB
+	SUIYCzxeDRYVeX3WwqSJDuMAlBxNTGKuI7hBRKBz5mqGPUT5rM0iK19n4QUV6B8f
+	1Z7cQFBpvAGWTP04Zoh4SKyZRyGZi6OWAzj5s7R1h7mnjzoc5nSC3T2hMk+UmIkh
+	pqJ7EQKFmkpOHiqkDdf78kWcTbWKpCXGrk8guXqWg9Vy0zoJlz5EIRNg3V+g4CKH
+	xOpoffIs7DHSezlpodhM+UK6Bh08wnWcCca01swpxIBi7lUyuXOIxwpRzCBWo+Yt
+	gCG6kKh3Z10zZ1sgeYL3pA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718901066; x=
+	1718987466; bh=tvZfZePdD8ufJsjGr1KQrYgsonsCq0tGwrSVJY/6Mmc=; b=V
+	UGOWjv2PQpdAbjzA0oGq8n1vbOfXU4uuJ0KJLB0guPfMB+KtOqQoDKjBY5O3W5vT
+	cAaXA7zbGUTF7ejntpwqUiJBD2EbJZ6KcpRIWVoOgCL4NRw4kYwH3hcghygPlXDJ
+	EofeYKaRyAkg6DUUgVklSCOT29yVVIb5qNkH6PDs9G9yCfkUogjldBMVc4tvQa93
+	QcAIfPZpmgkJUVNMkNN59miiKSLUQp0Kvww6G/VcZLudNYnRDkBY1mwr8J7CYHa1
+	Ch2by9SAytnDVemv6DhvQsKVj/VK300fplqKwvmQ+XEf8D0fquMRHg6cupiSs94R
+	RDPV5I7l5paqZHLkvTNYw==
+X-ME-Sender: <xms:Sll0ZqRk_7TkioOfUiv1wHY7hUnazbtMGg4_aC8rXSFrwhetUjRe0A>
+    <xme:Sll0ZvxNT8wZsnCesFH9tZ5s7tQMGTX2F1vuMyZVYosJ4XMhNI2N5bM8cF7wRA-YY
+    g5YzK5lxGLkr7TNCvM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefvddguddtfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
+    lfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtg
+    homheqnecuggftrfgrthhtvghrnhepgeeitddvvdffheegleekudfffffgkeeiteffiedt
+    keekkeevgfefleeijeelkefhnecuffhomhgrihhnpegtihhpuhhnihhtvggurdgtohhmne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgig
+    uhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:Sll0Zn30hKE9zHofCAaDgDKnApMnpbcdq0BjV6zkRxLPC9asFxeslg>
+    <xmx:Sll0ZmDTY0eyQ6SnDPl3tb1igIBK0Sk86k5FlKMF9aN-pAlbHdKdyA>
+    <xmx:Sll0ZjgELW5NXBybaVFaH8ei6hsAL5YAI05ELIgqQiiAaxdh3JyV3g>
+    <xmx:Sll0Ziq4e09G3NQVYjhIMFKGIePzGkSD82TdFjAxK7G7ZKZPuS-Abg>
+    <xmx:Sll0ZjfLcpxT8lnGFUpi_bcy2Fbq1vqc7k9P_DmID4WBWltuf3IYipZ9>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 5A9BE36A0074; Thu, 20 Jun 2024 12:31:06 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8dbb30be-3c0c-43c9-8f7a-dbfeeca3837e@ti.com>
+Message-Id: <743a2297-ff4a-4cb3-ae61-8cd4956aa565@app.fastmail.com>
+In-Reply-To: <ZnRThFlqqyDEprGz@alpha.franken.de>
+References: <20240612-mips-llsc-v2-0-a42bd5562bdb@flygoat.com>
+ <20240612-mips-llsc-v2-2-a42bd5562bdb@flygoat.com>
+ <ZnRThFlqqyDEprGz@alpha.franken.de>
+Date: Thu, 20 Jun 2024 17:30:48 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: "Jonas Gorski" <jonas.gorski@gmail.com>,
+ "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] MIPS: Introduce config options for LLSC availability
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 20, 2024 at 11:40:31AM +0300, Nemanov, Michael wrote:
-> On 6/15/2024 11:51 AM, Simon Horman wrote:
-> ...
-> 
-> > 
-> > Hi Michael,
-> > 
-> > allmodconfig builds on x86_64 with gcc-13 flag the following:
-> > 
-> > In file included from ./include/linux/string.h:374,
-> >                   from ./include/linux/bitmap.h:13,
-> >                   from ./include/linux/cpumask.h:13,
-> >                   from ./arch/x86/include/asm/paravirt.h:21,
-> >                   from ./arch/x86/include/asm/irqflags.h:60,
-> >                   from ./include/linux/irqflags.h:18,
-> >                   from ./include/linux/spinlock.h:59,
-> >                   from ./include/linux/mmzone.h:8,
-> >                   from ./include/linux/gfp.h:7,
-> >                   from ./include/linux/firmware.h:8,
-> >                   from drivers/net/wireless/ti/cc33xx/init.c:6:
-> > In function 'fortify_memcpy_chk',
-> >      inlined from 'cc33xx_init_vif_specific' at drivers/net/wireless/ti/cc33xx/init.c:156:2:
-> > ./include/linux/fortify-string.h:580:25: warning: call to '__read_overflow2_field' declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Wattribute-warning]
-> >    580 |                         __read_overflow2_field(q_size_field, size);
-> >        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > In function 'fortify_memcpy_chk',
-> >      inlined from 'cc33xx_init_vif_specific' at drivers/net/wireless/ti/cc33xx/init.c:157:2:
-> > ./include/linux/fortify-string.h:580:25: warning: call to '__read_overflow2_field' declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Wattribute-warning]
-> >    580 |                         __read_overflow2_field(q_size_field, size);
-> >        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >    CC [M]  drivers/net/wireless/ti/cc33xx/rx.o
-> > 
-> > I believe that this is because the destination for each of the two memcpy()
-> > calls immediately above is too narrow - 1 structure wide instead of 4 or 8.
-> > 
-> > I think this can be resolved by either using:
-> > 1. struct_group in .../cc33xx/conf.h:struct conf_tx_settings
-> >     to wrap ac_conf0 ... ac_conf3, and separately tid_conf0 ... tid_conf7.
-> > 2. Using arrays for ac_conf and tid_conf in
-> >     .../cc33xx/conf.h:struct conf_tx_settings, in which case perhaps
-> >     .../wlcore/conf.h:struct conf_tx_settings can be reused somehow
-> >     (I did not check closely)?
-> > 
-> 
-> Thank you for checking. I agree this code should be rewritten so it is more
-> clear and w/o any warnings. Will fix.
-> 
-> I was unsuccessful reproducing the warning on my end. Tried with GCC 13.2.0
-> (ARCH=x86_64, allmodconfig) and Arm GNU Toolchain 13.2 (ARCH=arm,
-> allmodconfig) and only got errors in scan.c which I assume you refer to
-> below (will also be fixed).
 
-Hi Michael,
 
-I tried this again with GCC 13.2.0 on x86_64 with allmodconfig.
-And I was able to see this with a W=1 (make W=1) build.
+=E5=9C=A82024=E5=B9=B46=E6=9C=8820=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8B=E5=
+=8D=885:06=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
+[...]
+> do you have an user manual stating that the R5k bug is fixed on this C=
+PUs ?
 
-I don't think it is an important detail, but for reference,
-I am using the compiler here, on an x86_64 host.
-https://mirrors.edge.kernel.org/pub/tools/crosstool/
+I actually investigated R5500 a little bit.
 
-> > Similar errors are flagged elsewhere in this series.
-> > Please take a look at allmodconfig builds and make sure
-> > no warnings are introduced.
-> > 
-> > Lastly, more related to the series as a whole than this patch in
-> > particular, please consider running checkpatch.pl --codespell
-> 
-> Sure, will add checkpatch.pl --codespell to my tests.
+There is no explicit document mentioned this bug is fixed on R5500, but =
+it's not
+mentioned on "VR Series 64-/32-Bit Microprocessor Programming Guide" [1]=
+ either,
+while some other hardware limitations are mentioned in that guide.
 
-Great, thanks.
+Plus EMMA platform, which was removed form the kernel, doesn't have
+cpu-feature-overrides.h. This means that the platform was running with L=
+LSC
+enabled.
+
+So I think this CPU is not affected.
+
+[1]: https://repo.oss.cipunited.com/archives/docs/NEC/U10710EJ5V0AN00.pdf
+>
+> Thomas.
+>
+> --=20
+> Crap can work. Given enough thrust pigs will fly, but it's not necessa=
+rily a
+> good idea.                                                [ RFC1925, 2=
+.3 ]
+
+--=20
+- Jiaxun
 
