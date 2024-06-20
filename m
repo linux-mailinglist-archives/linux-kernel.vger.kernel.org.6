@@ -1,153 +1,125 @@
-Return-Path: <linux-kernel+bounces-222571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448CF9103DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:21:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E41029103DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:21:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE8C61F21A66
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:21:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F8F282D90
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1541E1ABCD2;
-	Thu, 20 Jun 2024 12:21:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741501ABCCB;
+	Thu, 20 Jun 2024 12:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAC9DEY9"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CC446BF
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEA146BF
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718886072; cv=none; b=qSjuIqvQsNVUQA/1HoboC/JeWpwTvxm1cF5PK7giR4hh1xIkKzQbG6p++1rxHVskH/9nhG0d+8OTMzRkZWb+dAtkz13WZDwPsIOUz1nToa54YdjHEbNU7q992SBy1GOvqFHOMCm0j1tWyhEt5voT6AQHyBWKOkIplOs2qh69hP8=
+	t=1718886103; cv=none; b=LIRGsXfVqER+7IF4AvHNrX9g0Pv8gCjA9U+rM+dImkeN2rn5OyLEg2qFj6tKDXdWMkaq2rjOl8i3f+yGWVP/p5tkc2ujt8yRo7qtt17TmXu2sXkkn4k1bOfJbPC7gDTWlJhIBmsBCQxJPOfLBABzHgbOaciTqh81TRn4eeBmkJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718886072; c=relaxed/simple;
-	bh=pDLcbdt48mR4rRqS0d+K99sMBmIQnr8vwVop5yMPZ/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MyqGih/ZGvdLKyYZXrDQpfQ+XUP+kZoqSiwERvN7fP64bE7IhpPrrzxpKGZJlUcliSdKgvNW4Gkdo4eXeAuUP1A6apVZk+D5/DT7sFQ7aIUbvUCucWQ6zuBirTHbyrq/8dznp/Clbu0sJjqUB8mKzvuXMuKKhtU/9XtFV1V3wGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sKGmd-0005Iq-GU; Thu, 20 Jun 2024 14:20:55 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sKGmb-003hPJ-Ie; Thu, 20 Jun 2024 14:20:53 +0200
-Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 41E2D2ED9C4;
-	Thu, 20 Jun 2024 12:20:53 +0000 (UTC)
-Date: Thu, 20 Jun 2024 14:20:53 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent MAILHOL <mailhol.vincent@wanadoo.fr>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Thomas Kopp <thomas.kopp@microchip.com>, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/3] can: hi311x: simplify with
- spi_get_device_match_data()
-Message-ID: <20240620-imaginary-sepia-gibbon-048a32-mkl@pengutronix.de>
-References: <20240606142424.129709-1-krzysztof.kozlowski@linaro.org>
- <CAMZ6RqKCWzzbd-P7rOMEryd=31pdD_PJJvtQFYcmS+wAf8q+CQ@mail.gmail.com>
+	s=arc-20240116; t=1718886103; c=relaxed/simple;
+	bh=WcKOv7PY5d+xPKn5yCGxcolYNJ1WpaLxbZ4JsCBO8yc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pyFgatXoGOzE+nAK8GjiMskj3aBNiOKblm1b3cBNT+V9U7KnTAnIF351N8104PA7vWnBOKoK/lavIs8V6c+v6YmY8E4Rec4T3xTm6wTgTO+secfh1pq4HvIfOQ56jPLLLpCQ/yjqKZvrt5x0NDDgaN70sWzxYOBfpoVRcnwAC8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mAC9DEY9; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70631cd9e50so683689b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 05:21:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718886102; x=1719490902; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XBS1AMhLDhTumK33C3908n6EvwlZ7BmKQIgA6mDuKXI=;
+        b=mAC9DEY96SDwRXy9uHcnHO32NfWMJxsITGSJmgtCPXtwylopP9CErJTTqYZXe75gPq
+         5JjaS6QMlCPze6SHRohbIOV65RShu6yVLZQbout4MzortsjfAXeNdcRhD8ZmPj+jhTXV
+         I2BH/oGS4aKtD0swdxdkq99uUIEEFq3ai8nopuXp4D7RIcLIzJroHzYwXOa6VNqu1kjZ
+         dx6324hFRY5I9IljiMkyreoBbLZs829iGGhE3BjAUCPFPXW5aXx1FztCkDW3npHtrfXL
+         VclTY9Kvf2nuZNbmi39gyW9rO8aPKDIYm96GRjs8p4m8Lkrak6PHFB5H7RaaQWC3GAEH
+         eSXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718886102; x=1719490902;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XBS1AMhLDhTumK33C3908n6EvwlZ7BmKQIgA6mDuKXI=;
+        b=Yx3AvttKjILy3YX/vH7L32wbL5kovGzngU6JhYgHPCYyOSJq31RhKCZcWxaMK/9EcE
+         0bKokLWp/GLOxFLETz8cDyoKC9yuqBNKxXTswNDrlGcwENN7/OLNu47GgNohPTwEge8Z
+         P/nUuH2f5NH6da/Uewt8MHLZNbZJW5+APEMRH3E9SQ0+0k28C7p5cpz7YipvnpgKJdjb
+         13LTYPd/ELT/+zCZhiOeUW9o0C4NrqEv48ZPQMIizW0wfg2+D7OE0x/EfyIOf1HsABjb
+         IsbJlBicA9WPTo2IcUWFEguN4XORUJMhZjVSiajFw3LHyDgukO6uQYrV+ireoRgoPSAK
+         NOEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXVsncJ3KelhHXHAA8xb9s2Ezu+J9HLmjcd6Nv95pwNh7vSOeu2UB5q3lmmLeCl2/W1GntNnTkQIeQmlfHdTR8iImrYhp0bBLoKzwx
+X-Gm-Message-State: AOJu0YxWPayZdtq1L/DAp+0kUGvRAIPDpQodhwVXMCKMzVdPmlcJcrPF
+	yklPHSUqUncLqqQs3czPynOLMa0Q/0blXDbzYVZUS6AFrw5jxjDD
+X-Google-Smtp-Source: AGHT+IEZoRkDMCj3Y9QFI9+Shy3ZbsxWCR1UBXpiYlnmNJQ6tE2CzaTopi+87JJ6Cu3vTiMjQddHvw==
+X-Received: by 2002:a05:6a00:124f:b0:706:3ba3:a192 with SMTP id d2e1a72fcca58-7063ba3a6c5mr3335763b3a.22.1718886101652;
+        Thu, 20 Jun 2024 05:21:41 -0700 (PDT)
+Received: from localhost.localdomain ([14.22.11.163])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb6dfcasm12688725b3a.172.2024.06.20.05.21.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 05:21:41 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: akpm@linux-foundation.org,
+	brauner@kernel.org
+Cc: axboe@kernel.dk,
+	oleg@redhat.com,
+	tandersen@netflix.com,
+	willy@infradead.org,
+	mjguzik@gmail.com,
+	alexjlzheng@tencent.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH] mm: optimize the redundant loop of mm_update_owner_next()
+Date: Thu, 20 Jun 2024 20:21:24 +0800
+Message-Id: <20240620122123.3877432-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="klzengf2dxnhd3i4"
-Content-Disposition: inline
-In-Reply-To: <CAMZ6RqKCWzzbd-P7rOMEryd=31pdD_PJJvtQFYcmS+wAf8q+CQ@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
---klzengf2dxnhd3i4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When mm_update_owner_next() is racing with swapoff (try_to_unuse()) or /proc or
+ptrace or page migration (get_task_mm()), it is impossible to find an
+appropriate task_struct in the loop whose mm_struct is the same as the target
+mm_struct.
 
-On 07.06.2024 12:26:13, Vincent MAILHOL wrote:
-> Hi Krzysztof,
->=20
-> On Thu. 6 Jun. 2024 =C3=A0 23:24, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
-> > Use spi_get_device_match_data() helper to simplify a bit the driver.
->=20
-> Thanks for this clean up.
->=20
-> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > ---
-> >  drivers/net/can/spi/hi311x.c | 7 +------
-> >  1 file changed, 1 insertion(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/net/can/spi/hi311x.c b/drivers/net/can/spi/hi311x.c
-> > index e1b8533a602e..5d2c80f05611 100644
-> > --- a/drivers/net/can/spi/hi311x.c
-> > +++ b/drivers/net/can/spi/hi311x.c
-> > @@ -830,7 +830,6 @@ static int hi3110_can_probe(struct spi_device *spi)
-> >         struct device *dev =3D &spi->dev;
-> >         struct net_device *net;
-> >         struct hi3110_priv *priv;
-> > -       const void *match;
-> >         struct clk *clk;
-> >         u32 freq;
-> >         int ret;
-> > @@ -874,11 +873,7 @@ static int hi3110_can_probe(struct spi_device *spi)
-> >                 CAN_CTRLMODE_LISTENONLY |
-> >                 CAN_CTRLMODE_BERR_REPORTING;
-> >
-> > -       match =3D device_get_match_data(dev);
-> > -       if (match)
-> > -               priv->model =3D (enum hi3110_model)(uintptr_t)match;
-> > -       else
-> > -               priv->model =3D spi_get_device_id(spi)->driver_data;
-> > +       priv->model =3D (enum hi3110_model)spi_get_device_match_data(sp=
-i);
->=20
-> Here, you are dropping the (uintptr_t) cast. Casting a pointer to an
-> enum type can trigger a zealous -Wvoid-pointer-to-enum-cast clang
-> warning, and the (uintptr_t) cast is the defacto standard to silence
-> such warnings, thus the double (enum hi3110_model)(uintptr_t) cast in
-> the initial version.
+If the above race condition is combined with the stress-ng-zombie and
+stress-ng-dup tests, such a long loop can easily cause a Hard Lockup in
+write_lock_irq() for tasklist_lock.
 
-I've re-added the intermediate cast to uintptr_t while applying.
+Recognize this situation in advance and exit early.
 
-Thanks,
-Marc
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+---
+ kernel/exit.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+diff --git a/kernel/exit.c b/kernel/exit.c
+index f95a2c1338a8..81fcee45d630 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -484,6 +484,8 @@ void mm_update_next_owner(struct mm_struct *mm)
+ 	 * Search through everything else, we should not get here often.
+ 	 */
+ 	for_each_process(g) {
++		if (atomic_read(&mm->mm_users) <= 1)
++			break;
+ 		if (g->flags & PF_KTHREAD)
+ 			continue;
+ 		for_each_thread(g, c) {
+-- 
+2.41.0
 
---klzengf2dxnhd3i4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZ0HqIACgkQKDiiPnot
-vG87Lwf9EzzimSKKSgtFXoq2HO8VnuxBP+DjBq8rr0kvKOmwRNIqSF872gMkSwFI
-iLjNLKkfnxe3IwGAdk7lzRG/iyk6IUul/pNk/WD1ZUY9TAF7Rm0RxIlGnDTFFxuE
-pF3JlzBMTyv+p8e2Yqslkuvx9UIHKdVX0bfglLfyVDnVrfZjHtuS7fDNSNbtRiNJ
-2MxXMnjT+seoCKodHScZksNVilcjR6F0ieR2J40vZo+ihsTpuziYiZ4/z7qUQgS0
-3MChr23NDRvSQdMuh48jp8l8k6r3eWi5lgF+Ps0mKruHXMZk3xMWXh/kjuWSxHsZ
-fXhR9WjSzF0IsAfUUVBopTc4TMvlhw==
-=U3TR
------END PGP SIGNATURE-----
-
---klzengf2dxnhd3i4--
 
