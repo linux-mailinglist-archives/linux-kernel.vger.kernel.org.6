@@ -1,118 +1,154 @@
-Return-Path: <linux-kernel+bounces-222099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E9890FCC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:35:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC13E90FCBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D8391C2303D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:35:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8054D1F217E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09F63BBF1;
-	Thu, 20 Jun 2024 06:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="T/HLxz6k"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6993E364AE;
+	Thu, 20 Jun 2024 06:33:29 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50152E620;
-	Thu, 20 Jun 2024 06:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E6126AFB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718865293; cv=none; b=JPJz2pEK8HoVwvLoGycLiLXWzQpVZH46Mn4EuzPGMMgxgfNEBAO1wvKqlCi03aOCVDLTUDwjhTy4262RIcbwVL0Dvbp5RNPLjUTunTdgy5KufLJnbBbJLpS1afmXZp87MDwloAuTIFqXqM/hikt8JjoVmtYSlX2/zP50LAaP9KA=
+	t=1718865209; cv=none; b=Z4iRj+WpAoYIBB2iHUvsQnVQH8CxKcvRT3ulV6NcYQrxltMIszghxCHoD77fluFvWHIy8bYbJtSe4Hjbiv+lbCA4JVqcaMHrmmFO0tp0xlWobEFPjDfsGWdD9Ts+41SZCEKWzcit+jfSsbnQuvK6fF/TtT2KV6734w6Puq7v+D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718865293; c=relaxed/simple;
-	bh=SrHVASrlu3Ppa9f14DtCPP4A2oJ+yIy9bAmDdRN3DF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IQKAxUMEVQo7aUnqO/GMMNzfj2Zj3LQ1PBmTXOgmizXbck76NrRgdcQPJxqkfSXC/pzO0OHufFjjCJLqbZlbHvdb5oG4+Ocv7ZJRzyteVGEmXo2SJmQr5rez9hLojMTN4A2tWuFsbQJgFQh3bDop5LCA8IALq/sbra8hQJHiKjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=T/HLxz6k; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6fbe639a76so83807666b.1;
-        Wed, 19 Jun 2024 23:34:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1718865290; x=1719470090; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l7QKZPgQMRj4pucTx2/beNO5zVyd86YGn11PumdUlU4=;
-        b=T/HLxz6kESlm8EqONueDrwTRBSMJ+7+d+rKZ1zclVYrbh5r1+K5M+73AFUlgcuT803
-         KIXkmpOTvrbCvWooXZROASqVEWqWCIHHLtjtseDRkbN4hQl0oKimdK19G1nba76MxJ09
-         nteN/lcg0LALI6hsYang1MFlpnC0DTAfwHH1qEayTXATYT5A2XLrVL7corsBl7VrRDlJ
-         QKMBWk6CZHoXXbsjEpapx4KowcYmgq6Qv50Si66L55sfbcPvjCqtjZ6jF0jQpbV+HGLV
-         LJhNuztEesPVG+2jVR7Zj/D/TZI4yFSBsyLjIVKYaiYsgdMAgY7kk2bWdpT0p4R3pT+9
-         g7vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718865290; x=1719470090;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l7QKZPgQMRj4pucTx2/beNO5zVyd86YGn11PumdUlU4=;
-        b=qbsmUv0PSS7fPkWij0f/Y0ONPIA/gbnarF29ZYvKakMsbAb1HMP+8DoUr4STao6EmP
-         UnkpWL9m2BU4vd1qEADWxc8i+DU48uF2SROMvYeps8mqW/b590tsu3qvQqH6FUCQjKR/
-         AM2I4LSOmArdQtvp49ZuKv4veXqF+4CA0YpoLuim26cUW+f2lxfo9RuzqE8YSroTttJ1
-         lhGZR3MhB5NEVoJ9epgsdDOv04xIaBfGrpeVctXb6Ag2GCeEghyx/o0LYb5I8WTBd5W5
-         iDkV55Mxkg7SAY0QXnBXY9Fo3yLQnO+hAVIwiDaiv5pS+RE7XxTMIhO7uOqTj2PMU15r
-         UITQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDXe6wo/mG8FY2WdEAXhtylEbbYM/pz9g6CS78vRntmbJDV3AKIV6KBlAH8e7pq2lCEGuE8AKkTpBQVSkd/TIiDcGDKJdJ9O0WLwj6NK6LKSTGD5+eH7hjEbDeVDBld4dq13X/
-X-Gm-Message-State: AOJu0YxC4PJJZ9C9ONmnJ1xJFhh+lO/rlDgAeTdY3MnnaodR0J6hubwb
-	86eU7WlwM1ntpNxixgeb26JKAf/JkQy5+fBiiDFwGwBWdGGy1x4=
-X-Google-Smtp-Source: AGHT+IG7OWw7lWn5SQ/ID1IIwKfRWUNNqhkxSK6c5AJaiuo89mo3Hkwe+HCpcggg9gxEagYRrEf8QA==
-X-Received: by 2002:a17:907:c283:b0:a6f:506d:2cf6 with SMTP id a640c23a62f3a-a6fa438e013mr296201866b.26.1718865289693;
-        Wed, 19 Jun 2024 23:34:49 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b4f33.dip0.t-ipconnect.de. [91.43.79.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ecdce5sm728062466b.108.2024.06.19.23.34.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 23:34:49 -0700 (PDT)
-Message-ID: <57c50994-80e5-492b-99a4-97a7cd05bfbe@googlemail.com>
-Date: Thu, 20 Jun 2024 08:34:47 +0200
+	s=arc-20240116; t=1718865209; c=relaxed/simple;
+	bh=djDtqmKbWE43ZmKEyGgUp90Vv60j3Wv2QasU7cUbGM4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c5YiSgd8BgSvCCJwHiG7yH7Y1wzWkCI/27B44WxSx7qemea4QRnBMWdF9Z0jji4TfebwchWrmg1SpwvykTR69q87UQEHgHvXbQETXcyPGms+zKCcXfw0woe/6bKCqyD4i8DZNyP22vleH0u6UP0WucDdEPui12ky4AL9aMloKxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W4VtN3wlGznWCZ;
+	Thu, 20 Jun 2024 14:28:28 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 42BB8140120;
+	Thu, 20 Jun 2024 14:33:24 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
+ (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 20 Jun
+ 2024 14:33:23 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <mark.rutland@arm.com>,
+	<dianders@chromium.org>, <swboyd@chromium.org>, <sumit.garg@linaro.org>,
+	<frederic@kernel.org>, <scott@os.amperecomputing.com>,
+	<misono.tomohiro@fujitsu.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH RESEND v2] arm64: smp: Fix missing IPI statistics
+Date: Thu, 20 Jun 2024 14:36:00 +0800
+Message-ID: <20240620063600.573559-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.9 000/281] 6.9.6-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240619125609.836313103@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240619125609.836313103@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-Am 19.06.2024 um 14:52 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.9.6 release.
-> There are 281 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
-> Anything received after that time might be too late.
+commit 83cfac95c018 ("genirq: Allow interrupts to be excluded from
+/proc/interrupts") is to avoid IPIs appear twice in /proc/interrupts.
+But the commit 331a1b3a836c ("arm64: smp: Add arch support for backtrace
+using pseudo-NMI") and commit 2f5cd0c7ffde("arm64: kgdb: Implement
+kgdb_roundup_cpus() to enable pseudo-NMI roundup") set CPU_BACKTRACE and
+KGDB_ROUNDUP IPIs "IRQ_HIDDEN" flag but not show them in
+arch_show_interrupts(), which cause the interrupt kstat_irqs accounting
+is missing in display.
 
-Builds, boots and works fine w/o regressions on my 2-socket Ivy Bridge Xeon E5-2697 v2 server.
+Before this patch, CPU_BACKTRACE and KGDB_ROUNDUP IPIs are missing:
+	/ # cat /proc/interrupts
+	           CPU0       CPU1       CPU2       CPU3
+	 11:        466        600        309        332     GICv3  27 Level     arch_timer
+	 13:         24          0          0          0     GICv3  33 Level     uart-pl011
+	 15:         64          0          0          0     GICv3  78 Edge      virtio0
+	 16:          0          0          0          0     GICv3  79 Edge      virtio1
+	 17:          0          0          0          0     GICv3  34 Level     rtc-pl031
+	 18:          3          3          3          3     GICv3  23 Level     arm-pmu
+	 19:          0          0          0          0 9030000.pl061   3 Edge      GPIO Key Poweroff
+	IPI0:         7         14          9         26       Rescheduling interrupts
+	IPI1:       354         93        233        255       Function call interrupts
+	IPI2:         0          0          0          0       CPU stop interrupts
+	IPI3:         0          0          0          0       CPU stop (for crash dump) interrupts
+	IPI4:         0          0          0          0       Timer broadcast interrupts
+	IPI5:         1          0          0          0       IRQ work interrupts
+	Err:          0
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+After this pacth, CPU_BACKTRACE and KGDB_ROUNDUP IPIs are displayed:
+	/ # cat /proc/interrupts
+	           CPU0       CPU1       CPU2       CPU3
+	 11:        393        281        532        449     GICv3  27 Level     arch_timer
+	 13:         15          0          0          0     GICv3  33 Level     uart-pl011
+	 15:         64          0          0          0     GICv3  78 Edge      virtio0
+	 16:          0          0          0          0     GICv3  79 Edge      virtio1
+	 17:          0          0          0          0     GICv3  34 Level     rtc-pl031
+	 18:          2          2          2          2     GICv3  23 Level     arm-pmu
+	 19:          0          0          0          0 9030000.pl061   3 Edge      GPIO Key Poweroff
+	IPI0:        11         19          4         23       Rescheduling interrupts
+	IPI1:       279        347        222         72       Function call interrupts
+	IPI2:         0          0          0          0       CPU stop interrupts
+	IPI3:         0          0          0          0       CPU stop (for crash dump) interrupts
+	IPI4:         0          0          0          0       Timer broadcast interrupts
+	IPI5:         1          0          0          1       IRQ work interrupts
+	IPI6:         0          0          0          0       CPU backtrace interrupts
+	IPI7:         0          0          0          0       KGDB roundup interrupts
+	Err:          0
 
-Beste Grüße,
-Peter Schneider
+Fixes: 331a1b3a836c ("arm64: smp: Add arch support for backtrace using pseudo-NMI")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Suggested-by: Doug Anderson <dianders@chromium.org>
+---
+v2:
+- Report them in arch_show_interrupts().
+- Add suggested-by.
+- Update the commit message.
+---
+ arch/arm64/kernel/smp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index 31c8b3094dd7..5de85dccc09c 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -767,13 +767,15 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+ 	}
+ }
+ 
+-static const char *ipi_types[NR_IPI] __tracepoint_string = {
++static const char *ipi_types[MAX_IPI] __tracepoint_string = {
+ 	[IPI_RESCHEDULE]	= "Rescheduling interrupts",
+ 	[IPI_CALL_FUNC]		= "Function call interrupts",
+ 	[IPI_CPU_STOP]		= "CPU stop interrupts",
+ 	[IPI_CPU_CRASH_STOP]	= "CPU stop (for crash dump) interrupts",
+ 	[IPI_TIMER]		= "Timer broadcast interrupts",
+ 	[IPI_IRQ_WORK]		= "IRQ work interrupts",
++	[IPI_CPU_BACKTRACE]	= "CPU backtrace interrupts",
++	[IPI_KGDB_ROUNDUP]	= "KGDB roundup interrupts",
+ };
+ 
+ static void smp_cross_call(const struct cpumask *target, unsigned int ipinr);
+@@ -784,7 +786,7 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+ {
+ 	unsigned int cpu, i;
+ 
+-	for (i = 0; i < NR_IPI; i++) {
++	for (i = 0; i < MAX_IPI; i++) {
+ 		seq_printf(p, "%*s%u:%s", prec - 1, "IPI", i,
+ 			   prec >= 4 ? " " : "");
+ 		for_each_online_cpu(cpu)
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+2.34.1
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
