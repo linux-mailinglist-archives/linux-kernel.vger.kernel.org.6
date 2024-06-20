@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-223075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6227910D30
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:37:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F7CA910D37
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CBC328573B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:37:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C51CCB266A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EE81B3725;
-	Thu, 20 Jun 2024 16:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771041B3738;
+	Thu, 20 Jun 2024 16:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Su1JKTTH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfTvYjMI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645431AD9D4;
-	Thu, 20 Jun 2024 16:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74061AE0AC;
+	Thu, 20 Jun 2024 16:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718901372; cv=none; b=DbKt9m931mpErcg3YAY11Ro73bSPTKYaoYXdLbyiAP1D1tU+8Aq+530jKivjHg9/fiCxEFgzD1NibF/k9NcMPS4WbnHnG2y8KktCSIfpixW2HGBbBeNjuFGvKxBgR6VB8UJEi8OSpr17tEA/3NaTswCexlRTlH0EROSwzCC6Ypc=
+	t=1718901391; cv=none; b=SSLV3t8NJPtmr7BjGahorrX2B0oxT3tIuvXjMENjkS6CrGjQMQXE261kCxy4m2vuj0XuuIWW7tok+4KabGvljY3pd41Ai5DKDidnb7fTS4Vsz5zF87rlFx9miwOEZGSl1/eS/n2S5S8Sbz15AIiMGS+FiNIW+Uf550MCMUMvL10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718901372; c=relaxed/simple;
-	bh=l1TvjLPrJTYofRPpCNcrodu+EIOZwX3eoQtBRAXBzr4=;
+	s=arc-20240116; t=1718901391; c=relaxed/simple;
+	bh=n/wJMdVVW764EMyC9g1orsXzaXY8/n571R9I+PD3W3I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UnM8JQDfttUK9P2rI3MxEVuqiQXgo1HMrGMs5c6aKboCdmvrw1+yxT87v9yAXdfIu0MECVWcfbx7xotisawXBXWdOoMmyG0w28glf36sPYZ6FDcu1CPzDkPQys8t4Sd6cIwJhINZYSuKkpD9sYaYV4Wn0HAN2lG7CDEYWXywd7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Su1JKTTH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 542A8C2BD10;
-	Thu, 20 Jun 2024 16:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718901371;
-	bh=l1TvjLPrJTYofRPpCNcrodu+EIOZwX3eoQtBRAXBzr4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMUnMptSpiLRsoLb/70Qpn+MfxtG8UJUeyJ4qiyHIEiVSluHegRh3Eji+2QEeVU44wy05icLFoqDkF1jKgPMF12zH7L6+/l8L7JXNn43W4VO0Vd1fDn3zcW9WqxHiTBrZvAjdHSw+viKz69yeTF0iTKqAFjQT2OI1HzNZqxjD9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lfTvYjMI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DCBDC2BD10;
+	Thu, 20 Jun 2024 16:36:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718901391;
+	bh=n/wJMdVVW764EMyC9g1orsXzaXY8/n571R9I+PD3W3I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Su1JKTTHfki2+9lhXVN13HfNaqziBzw8iCUZZPhzC7CCNCpTe77hoZDb2jv43K9OQ
-	 uDpBS6qabvcfqkJPF5mTcA0Fr8NAYE2GEbuN3qt7ripYPvcC991kbu/oOZLz5UePyw
-	 krUEOXOd2dWc6Xlyzh939vw54hjkMks9vVXT/YJc=
-Date: Thu, 20 Jun 2024 18:36:08 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 01/10] rust: pass module name to `Module::init`
-Message-ID: <2024062010-change-clubhouse-b16c@gregkh>
-References: <20240618234025.15036-1-dakr@redhat.com>
- <20240618234025.15036-2-dakr@redhat.com>
- <2024062038-backroom-crunchy-d4c9@gregkh>
- <ZnRUXdMaFJydAn__@cassiopeiae>
+	b=lfTvYjMIL5ljrgcqoGOQtmrldMne0zWfSmrp3OAAQdE2DjqUwSnn6XNdMaL/SHW4u
+	 rlZWCjsf5PUlDzvO+7td+8+GageNcyvMKkhV4xMuov+Oj18ytAWXotafT+RKDiiusH
+	 H+FYLsbLH1bPbpNOAMoox2GaT53eujW8PUO9wLF4g04/HuiR71MsqurE53Pf2Zt0qF
+	 HewvG7DLabtX9ul8DhHAy7/sNjmlRXFp3pFSzGxR5dUoekzAY6z6aPfquacjBwmqUZ
+	 hYUpGsSnfmb/apiM3lV3Es15yOH//gAy4oVr8sWaT/oRlr7yKwweRbbDzmNzoRBplf
+	 zRg+dxs7TR0lw==
+Date: Thu, 20 Jun 2024 22:06:26 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>, conor@kernel.org, kishon@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	frank.li@nxp.com, conor+dt@kernel.org,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de, imx@lists.linux.dev
+Subject: Re: [PATCH v7 2/2] phy: freescale: imx8qm-hsio: Add i.MX8QM HSIO PHY
+ driver support
+Message-ID: <ZnRailvwM1hMtyFD@matsya>
+References: <1716962565-2084-1-git-send-email-hongxing.zhu@nxp.com>
+ <1716962565-2084-3-git-send-email-hongxing.zhu@nxp.com>
+ <2f15baba-68b5-4e99-bdb5-6d2e05b7688b@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,129 +63,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZnRUXdMaFJydAn__@cassiopeiae>
+In-Reply-To: <2f15baba-68b5-4e99-bdb5-6d2e05b7688b@roeck-us.net>
 
-On Thu, Jun 20, 2024 at 06:10:05PM +0200, Danilo Krummrich wrote:
-> On Thu, Jun 20, 2024 at 04:19:48PM +0200, Greg KH wrote:
-> > On Wed, Jun 19, 2024 at 01:39:47AM +0200, Danilo Krummrich wrote:
-> > > In a subsequent patch we introduce the `Registration` abstraction used
-> > > to register driver structures. Some subsystems require the module name on
-> > > driver registration (e.g. PCI in __pci_register_driver()), hence pass
-> > > the module name to `Module::init`.
+On 20-06-24, 09:30, Guenter Roeck wrote:
+> On Wed, May 29, 2024 at 02:02:45PM +0800, Richard Zhu wrote:
+> > Add i.MX8QM HSIO PHY driver support.
 > > 
-> > I understand the need/want here, but it feels odd that you have to
-> > change anything to do it.
+> > i.MX8QM HSIO has three lane PHY instances, and can be bound to the
+> > following controllers in the different use cases listed in below table.
+> > - two lanes capable PCIEA controller.
+> > - one lane PCIEB controller.
+> > - AHCI SATA controller.
 > > 
-> > > 
-> > > Signed-off-by: Danilo Krummrich <dakr@redhat.com>
-> > > ---
-> > >  rust/kernel/lib.rs           | 14 ++++++++++----
-> > >  rust/kernel/net/phy.rs       |  2 +-
-> > >  rust/macros/module.rs        |  3 ++-
-> > >  samples/rust/rust_minimal.rs |  2 +-
-> > >  samples/rust/rust_print.rs   |  2 +-
-> > >  5 files changed, 15 insertions(+), 8 deletions(-)
-> > > 
-> > > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> > > index a791702b4fee..5af00e072a58 100644
-> > > --- a/rust/kernel/lib.rs
-> > > +++ b/rust/kernel/lib.rs
-> > > @@ -71,7 +71,7 @@ pub trait Module: Sized + Sync + Send {
-> > >      /// should do.
-> > >      ///
-> > >      /// Equivalent to the `module_init` macro in the C API.
-> > > -    fn init(module: &'static ThisModule) -> error::Result<Self>;
-> > > +    fn init(name: &'static str::CStr, module: &'static ThisModule) -> error::Result<Self>;
+> > i.MX8QM HSIO PHYs support the following use cases.
+> > +----------------------------------------------------+
+> > |                               | Lane0| Lane1| Lane2|
+> > |-------------------------------|------|------|------|
+> > | use case 1: PCIEAX2SATA       | PCIEA| PCIEA| SATA |
+> > |-------------------------------|------|------|------|
+> > | use case 2: PCIEAX2PCIEB      | PCIEA| PCIEA| PCIEB|
+> > |-------------------------------|------|------|------|
+> > | use case 3: PCIEAPCIEBSATA    | PCIEA| PCIEB| SATA |
+> > +----------------------------------------------------+
 > > 
-> > Why can't the name come directly from the build system?  Why must it be
-> > passed into the init function of the module "class"?  What is it going
-> > to do with it?
+> > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
 > 
-> The name does come from the build system, that's where `Module::init` gets it
-> from.
-> 
-> > 
-> > A PCI, or other bus, driver "knows" it's name already by virtue of the
-> > build system, so it can pass that string into whatever function needs
-> 
-> Let's take pci_register_driver() as example.
-> 
-> ```
-> #define pci_register_driver(driver)		\
-> 	__pci_register_driver(driver, THIS_MODULE, KBUILD_MODNAME)
-> ```
-> 
-> In C drivers this works because (1) it's a macro and (2) it's called directly
-> from the driver code.
-> 
-> In Rust, for very good reasons, we have abstractions for C APIs, hence the
-> actual call to __pci_register_driver() does not come from code within the
-> module, but from the PCI Rust abstraction `Module::init` calls into instead.
+> Building alpha:allmodconfig ... failed
+> --------------
+> Error log:
+> drivers/phy/freescale/phy-fsl-imx8qm-hsio.c: In function 'imx_hsio_set_mode':
+> drivers/phy/freescale/phy-fsl-imx8qm-hsio.c:459:15: error: implicit declaration of function 'FIELD_PREP'
 
-I don't understand those reasons, sorry.
+It should be fixed in -next tomorrow. I have applied a patch for that
 
-> Consequently, we have to pass things through. This also isn't new, please note
-> that the current code already does the same thing: `Module::init` (without this
-> patch) is already declared as
-> 
-> `fn init(module: &'static ThisModule) -> error::Result<Self>`
-> passing through `ThisModule` for the exact same reason.
-
-Yeah, and I never quite understood that either :)
-
-> Please also note that in the most common case (one driver per module) we don't
-> see any of this anyway.
-
-True, but someone has to review and most importantly, maintain, this
-glue code.
-
-> Just like the C macro module_pci_driver(), Rust drivers can use the
-> `module_pci_driver!` macro.
-> 
-> Example from Nova:
-> 
-> ```
->     kernel::module_pci_driver! {
->         // The driver type that implements the corresponding probe() and
->         // remove() driver callbacks.
->         type: NovaDriver,
->         name: "Nova",
->         author: "Danilo Krummrich",
->         description: "Nova GPU driver",
->         license: "GPL v2",
->     }
-> ```
-
-As I said when you implemented this fun macro, don't do this yet.
-
-We added these "helper" macros WAY late in the development cycle of the
-driver model, AFTER we were sure we got other parts right.  There is no
-need to attempt to implement all of what you can do in C today in Rust,
-in fact, I would argue that we don't want to do that, just to make
-things simpler to review the glue code, which is the most important part
-here to get right!
-
-Changing drivers later, to take advantage of code savings like this
-macro can be done then, not just yet.  Let's get this understood and
-right first, no need to be tricky or complex.
-
-And, as I hinted at before, I don't think we should be doing this at all
-just yet either.  I still think a small "C shim" layer to wrap the
-struct pci driver up and pass the calls to the rust portion of the
-module is better to start with, it both saves you time and energy so
-that you can work on what you really want to do (i.e. a driver in rust)
-and not have to worry about the c bindings as that's the "tricky" part
-that is stopping you from getting your driver work done.
-
-After all, it's not the pci driver model code that is usually the tricky
-bits to verify in C, it's the whole rest of the mess.  Stick with a
-small C file, with just the pci driver structure and device ids, and
-then instantiate your rust stuff when probe() is called, and clean up
-when release() is called.
-
-I can provide an example if needed.
-
-thanks,
-
-greg k-h
+-- 
+~Vinod
 
