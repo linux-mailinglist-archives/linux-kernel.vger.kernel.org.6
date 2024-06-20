@@ -1,171 +1,156 @@
-Return-Path: <linux-kernel+bounces-223352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD55E911185
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86FE0911189
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF7AA1C20924
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BB8B281813
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5CD1BA07E;
-	Thu, 20 Jun 2024 18:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDAD01B3F36;
+	Thu, 20 Jun 2024 18:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gp6eNAqI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0EVECT2X"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E58381B8;
-	Thu, 20 Jun 2024 18:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5B03A28D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718909671; cv=none; b=iop0XipZ5y96d1I5aOvEpMwjclmWslF7kWDyBqO9K23HVPu877aNNgORusBCN5gEnIUYZjKNvznWkOACs8Ta8QSM9vieHAiquioq/zwk0qykY9AKK7BdRHW6BlV/1tBXwgYdR7IABhxF4kR5wyc8raBnS4awDHgmVhgiIZLCnmM=
+	t=1718909739; cv=none; b=H0N9jP/EVSZF9F1q6w9CeiUbObETzHtsCBQT1k7taU3SOZYwU8N7LU73JEwpnnT7xUvZ20lCcM4Jnt/mmP5qhyoxzcmXPW/n/pGeJI4QyfSC5KWF7XeDE5UrE8ux4b4R8wo5b64DMH2UXTOSy1aX3/hr/F00uw9JF56MQs0mh1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718909671; c=relaxed/simple;
-	bh=irInUIXYcnVbTI7ZN+P72B/uLw4QMucaS01AdF/42Eg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AeyLWUF8saPX4/6/4FhjeWy2hoMiBOio+3I1pbJMIQPLGBofVHIcR/K8TKoEfc9U84Qto3B1f/7mpuCiNKLIZJESunS315Pk0FqziVE4HJDTycx5JDf6pujeVpThas5FAs87nc2cFEu7tNUwMBEn/hL64lStzePu0Mkclh5zlgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gp6eNAqI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC2D7C32786;
-	Thu, 20 Jun 2024 18:54:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718909670;
-	bh=irInUIXYcnVbTI7ZN+P72B/uLw4QMucaS01AdF/42Eg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gp6eNAqIPyGLiPbiV0Qu6r4RvLzCvXDfeHg1l5u6Lj4fqtpVlopL4Wo/Tw3gTVhp2
-	 c1WUHBMwKI1oqSfGKEI5k86f0alIltlVgu22U34GIPD6OvhpklgaONTjuHKiJY/u2p
-	 SpvL/g+/zSYsKOnbS2FiVkBbohNE+/W+C/sTc68FGqDY7wNIWoUrUn2xAFkZof4hN7
-	 GOdJA8+hRTgIf8VX50MsQ8d91l7S5N58nyR1k932gRhNcHx0tBCyVY25mJm3D2iliu
-	 Xnuz3P5/gBez+6LWP0Nt8UFYr1octCbPQwL/Z1malrMErf/VaholdctTl/xtow5SaI
-	 pzlxFCLAb3uhw==
-Date: Thu, 20 Jun 2024 11:54:30 -0700
-From: Kees Cook <kees@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: "GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	jvoisin <julien.voisin@dustri.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
-	Thomas Graf <tgraf@suug.ch>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-hardening@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v5 4/6] mm/slab: Introduce kmem_buckets_create() and
- family
-Message-ID: <202406201147.8152CECFF@keescook>
-References: <20240619192131.do.115-kees@kernel.org>
- <20240619193357.1333772-4-kees@kernel.org>
- <cc301463-da43-4991-b001-d92521384253@suse.cz>
+	s=arc-20240116; t=1718909739; c=relaxed/simple;
+	bh=H/R3HcK7gnjZXGR/Qc/zm33fza7/aCJqu6TNxANcPQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mR01mBEx7osMWSv+AkX0FgbAXMgpzW+X+0y4SQBFVM6KScr1G7qSrnB93AemNS4gmtyxeou9mQPROFYq0PEfWYzrhVS/5Nnhd+xdofgmzdKaoXOyMp8MNtt4Yt89JrD7AsEfDw8FOQH8g5o2LRIlFWfX7GvVvF0fYxFvV1s8R6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0EVECT2X; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-24cbb884377so714466fac.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:55:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718909736; x=1719514536; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H/R3HcK7gnjZXGR/Qc/zm33fza7/aCJqu6TNxANcPQk=;
+        b=0EVECT2XaJC9U234mXYaAVyuzikCIduHjCVWW2HvSwy3pfchbhwSxiC+BvSCogJabr
+         Y/C1AhrZws67l4vIowRww6QEPCb1JnZoXMICAmLhcEARdwK1RqAtxupOd2ecM+iODfQ3
+         mV4Dv+4PmYJuqGIBvwKghS1cmWx2wgx2bW6tswkoQGZbcwVuDxKb2MNKpgrYOGEibVTK
+         qpxogE0VT/T9oEbbbsAfz7oQNww/ou8AEb+rVBO8p2ZbOijpC2czWW9YsLlONnLtO+WO
+         zlF0MsVkTg3U+f/RJ1Y7M9xUMvRA/yu4GAXGZqD+CQQjFz7vXTcatctRGmf3r5heyt1M
+         mmTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718909736; x=1719514536;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H/R3HcK7gnjZXGR/Qc/zm33fza7/aCJqu6TNxANcPQk=;
+        b=YfSVSNd0+duv0OoIzHzkm2eB4argVIy6RSkycN0oQcha/Wt5q9qiZFDK+axo0kWuL6
+         kEs8NRSkRngJxgGsmG8U7w53I4DStRwyEy+/NCYEbHber0AbOGonU+vT5t827VSMronw
+         I0gM1+fM09POMg9dKhcuQXYyKUWl+6tdr0neiv5j1apgAimyyv9KM1PGwdh1yZGUDrt/
+         rHVX5y3T5ZpNIUHHXqri6yLPDTCbBR3hbgo+oba0W2w92ZcTs6/19f2PoMiyH1GjiWRY
+         cAZgyctwCMvtsiaM+9jtRHvhpdP5POKCYN5Nl+zPAdsLisf/GjvRKBe3pboXjuxzh61b
+         rzDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUivp/kwQt4tBZZc75tjdIj9jDLyTGh8GewIgQz2w3AWBfOVtWyZ/rlYDGUCEMagzuhG/ndvLsfAdhVeIfa0ftGMmQ1t65cBNdCQt2N
+X-Gm-Message-State: AOJu0YzSX9DknsXiPIutE9mMsf1gWAlkgGVIT+wvyHQ1/ScXWZkIWxfM
+	ivftNh24o2j5Cv2CzQBnVQe66HJSllBKcMtIl4GUOtVvkbOeEYcR6s/EPWJw2Pw=
+X-Google-Smtp-Source: AGHT+IEjbLNYWFvxUGbprjlhgt3Dx7QgrbGK7vK6OHqcSZukBBTza7iDnYbe14RaF0wwGAFzzqN4tA==
+X-Received: by 2002:a05:6871:592:b0:24f:ef6b:353e with SMTP id 586e51a60fabf-25c94d106f7mr7009622fac.36.1718909735864;
+        Thu, 20 Jun 2024 11:55:35 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25cd49d9a2bsm7018fac.33.2024.06.20.11.55.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 11:55:35 -0700 (PDT)
+Message-ID: <bbdd9716-3144-41e6-9558-7fb147cb0774@baylibre.com>
+Date: Thu, 20 Jun 2024 13:55:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cc301463-da43-4991-b001-d92521384253@suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI protocol
+ with MOSI idle configuration
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1718749981.git.marcelo.schmitt@analog.com>
+ <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
+ <63db9349-f453-4a5b-aa09-d1857ddd8b03@baylibre.com>
+ <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
+ <e7a2438a-f6a3-439e-8058-937248dd5b3f@baylibre.com>
+ <ZnRG9wgY3WIaYFyQ@debian-BULLSEYE-live-builder-AMD64>
+ <08c09a34-af59-4387-8db9-594f30f85b7a@baylibre.com>
+ <ZnRzIb-cD_oOFkg-@debian-BULLSEYE-live-builder-AMD64>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <ZnRzIb-cD_oOFkg-@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 20, 2024 at 03:56:27PM +0200, Vlastimil Babka wrote:
-> On 6/19/24 9:33 PM, Kees Cook wrote:
-> > Dedicated caches are available for fixed size allocations via
-> > kmem_cache_alloc(), but for dynamically sized allocations there is only
-> > the global kmalloc API's set of buckets available. This means it isn't
-> > possible to separate specific sets of dynamically sized allocations into
-> > a separate collection of caches.
-> > 
-> > This leads to a use-after-free exploitation weakness in the Linux
-> > kernel since many heap memory spraying/grooming attacks depend on using
-> > userspace-controllable dynamically sized allocations to collide with
-> > fixed size allocations that end up in same cache.
-> > 
-> > While CONFIG_RANDOM_KMALLOC_CACHES provides a probabilistic defense
-> > against these kinds of "type confusion" attacks, including for fixed
-> > same-size heap objects, we can create a complementary deterministic
-> > defense for dynamically sized allocations that are directly user
-> > controlled. Addressing these cases is limited in scope, so isolating these
-> > kinds of interfaces will not become an unbounded game of whack-a-mole. For
-> > example, many pass through memdup_user(), making isolation there very
-> > effective.
-> > 
-> > In order to isolate user-controllable dynamically-sized
-> > allocations from the common system kmalloc allocations, introduce
-> > kmem_buckets_create(), which behaves like kmem_cache_create(). Introduce
-> > kmem_buckets_alloc(), which behaves like kmem_cache_alloc(). Introduce
-> > kmem_buckets_alloc_track_caller() for where caller tracking is
-> > needed. Introduce kmem_buckets_valloc() for cases where vmalloc fallback
-> > is needed.
-> > 
-> > This can also be used in the future to extend allocation profiling's use
-> > of code tagging to implement per-caller allocation cache isolation[1]
-> > even for dynamic allocations.
-> > 
-> > Memory allocation pinning[2] is still needed to plug the Use-After-Free
-> > cross-allocator weakness, but that is an existing and separate issue
-> > which is complementary to this improvement. Development continues for
-> > that feature via the SLAB_VIRTUAL[3] series (which could also provide
-> > guard pages -- another complementary improvement).
-> > 
-> > Link: https://lore.kernel.org/lkml/202402211449.401382D2AF@keescook [1]
-> > Link: https://googleprojectzero.blogspot.com/2021/10/how-simple-linux-kernel-memory.html [2]
-> > Link: https://lore.kernel.org/lkml/20230915105933.495735-1-matteorizzo@google.com/ [3]
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> >  include/linux/slab.h | 13 ++++++++
-> >  mm/slab_common.c     | 78 ++++++++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 91 insertions(+)
-> > 
-> > diff --git a/include/linux/slab.h b/include/linux/slab.h
-> > index 8d0800c7579a..3698b15b6138 100644
-> > --- a/include/linux/slab.h
-> > +++ b/include/linux/slab.h
-> > @@ -549,6 +549,11 @@ void *kmem_cache_alloc_lru_noprof(struct kmem_cache *s, struct list_lru *lru,
-> >  
-> >  void kmem_cache_free(struct kmem_cache *s, void *objp);
-> >  
-> > +kmem_buckets *kmem_buckets_create(const char *name, unsigned int align,
-> > +				  slab_flags_t flags,
-> > +				  unsigned int useroffset, unsigned int usersize,
-> > +				  void (*ctor)(void *));
-> 
-> I'd drop the ctor, I can't imagine how it would be used with variable-sized
-> allocations.
+On 6/20/24 1:21 PM, Marcelo Schmitt wrote:
+> On 06/20, David Lechner wrote:
+>> On 6/20/24 10:12 AM, Marcelo Schmitt wrote:
+>>> On 06/19, David Lechner wrote:
+>>>> On 6/19/24 1:58 PM, Marcelo Schmitt wrote:
+>>>>> On 06/19, David Lechner wrote:
+>>>>>> On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
+>>>>>>
+>>>>>>
+>>>>
+>>>> ...
+>>>>
 
-I've kept it because for "kmalloc wrapper" APIs, e.g. devm_kmalloc(),
-there is some "housekeeping" that gets done explicitly right now that I
-think would be better served by using a ctor in the future. These APIs
-are variable-sized, but have a fixed size header, so they have a
-"minimum size" that the ctor can still operate on, etc.
 
-> Probably also "align" doesn't make much sense since we're just
-> copying the kmalloc cache sizes and its implicit alignment of any
-> power-of-two allocations.
+>>> I don't know if that would actually work. I have not tested doing something like that.
+>>> This also implies the controller will be able to start the next transfer right
+>>> after the first preparatory transfer ends and it will meet that inter-transfer
+>>> timing requirement (which I still didn't find documented anywhere).
+>>> I'm not convinced that would be the best way to support those devices.
+>>
+>> I did something like this in the ad7944 driver where we needed an up to
+>> 500ns delay before asserting CS. On SPI controllers without a hardware
+>> sleep or FIFO, the delay will of course be much longer. But the delay
+>> is just a minimum delay, so longer doesn't hurt. It just affects the
+>> max sample rate that can be reliably achieved.
+>>
+> In ad7944_3wire_cs_mode_init_msg(), xfers[1] is prepared with spi_transfer.delay
+> which is the "delay to be introduced after this transfer before
+> (optionally) changing the chipselect status, then starting the next transfer or
+> completing this @spi_message." That should work for ad7944 because
+> it has ADC SDI physically connected to VIO in that setup.
+> For ad4000, we would want to set MOSI high (by writing 1s) such that MOSI
+> is high when CS is brought high (if I'm getting what you are suggesting).
+> But spi_transfer.delay is introduced after the transfer and before changing CS
+> so I think MOSI may return to low if the controller idles MOSI low.
+> I can't see how this would work for ad4000.
+> Other delays we have for spi_transfer (cs_change_delay, word_delay) don't seem
+> to help for this particular case either.
 
-Yeah, that's probably true. I kept it since I wanted to mirror
-kmem_cache_create() to make this API more familiar looking.
+I was actually referring to ad7944_4wire_mode_init_msg().
 
-> I don't think any current kmalloc user would
-> suddenly need either of those as you convert it to buckets, and definitely
-> not any user converted automatically by the code tagging.
+In the case of ad4000, the SPI controller will be required to support the
+new SPI_MOSI_IDLE_HIGH flag. So at the beginning of the message, before any
+of the individual xfers, the controller driver will configure SCLK base on
+CPOL and MOSI based on SPI_MOSI_IDLE_HIGH. Then it will do whatever the
+xfers say.
 
-Right, it's not needed for either the explicit users nor the future
-automatic users. But since these arguments are available internally,
-there seems to be future utility,  it's not fast path, and it made things
-feel like the existing API, I'd kind of like to keep it.
+For most SPI controllers in Linux, this SCLK/MOSI config will happen in
+ctlr->prepare_message() which happens before xfers are processed in
+ctlr->transfer_one_message(). In the AXI SPI Engine, the SCLK/MOSI config
+is in a separate instruction that happens before anything else in the
+message.
 
-But all that said, if you really don't want it, then sure I can drop
-those arguments. Adding them back in the future shouldn't be too
-much churn.
-
--- 
-Kees Cook
+So if the first xfer is just a delay with no read/write, the delay will
+always happen after SCLK and MOSI are configured. We don't have to write
+1s because SPI_MOSI_IDLE_HIGH already does the right thing.
 
