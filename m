@@ -1,85 +1,84 @@
-Return-Path: <linux-kernel+bounces-222572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41029103DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:21:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF289103E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F8F282D90
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B68F0282C8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741501ABCCB;
-	Thu, 20 Jun 2024 12:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA0C1AC248;
+	Thu, 20 Jun 2024 12:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAC9DEY9"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKvSNuFS"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEA146BF
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A14FC0C;
+	Thu, 20 Jun 2024 12:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718886103; cv=none; b=LIRGsXfVqER+7IF4AvHNrX9g0Pv8gCjA9U+rM+dImkeN2rn5OyLEg2qFj6tKDXdWMkaq2rjOl8i3f+yGWVP/p5tkc2ujt8yRo7qtt17TmXu2sXkkn4k1bOfJbPC7gDTWlJhIBmsBCQxJPOfLBABzHgbOaciTqh81TRn4eeBmkJg=
+	t=1718886203; cv=none; b=AUfOI8wcnS8p09Kf+yDd82JZ1IIPdKTGrKme9WdZj5wGFtWmeib8JRSZp4jSH6g8lAJ4LqscmAX63uQmXCzpu71pj8GaShoBCN3HHk7PRs7OhP+s3f5U165qzx7hbtv6pHrDGOtSIiHq8L62PfTmORwSZWGsZP8zCT9OMVJilbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718886103; c=relaxed/simple;
-	bh=WcKOv7PY5d+xPKn5yCGxcolYNJ1WpaLxbZ4JsCBO8yc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pyFgatXoGOzE+nAK8GjiMskj3aBNiOKblm1b3cBNT+V9U7KnTAnIF351N8104PA7vWnBOKoK/lavIs8V6c+v6YmY8E4Rec4T3xTm6wTgTO+secfh1pq4HvIfOQ56jPLLLpCQ/yjqKZvrt5x0NDDgaN70sWzxYOBfpoVRcnwAC8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mAC9DEY9; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1718886203; c=relaxed/simple;
+	bh=1m34kSCng+QMH73UT8NpRyVZiaxjG7pMPeqXTPrJAGc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xc7ws3K01dilQ0tUeO/QBoPja4jj6oSDsBXgrE9U4WVmeEtMalgVxcuNav0N+5wGZigeXrLVSZRHW8yTyL6jH1r6CjG6yeKPBcJsnmuB4nqx1EvxL6V/Kw0Rq4IW7Wm4sjlMiWp0R/MYVUo4eNQNbWkL0avVwupkxPO3Wi1k9Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TKvSNuFS; arc=none smtp.client-ip=209.85.214.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70631cd9e50so683689b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 05:21:42 -0700 (PDT)
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-1f6a837e9a3so5523145ad.1;
+        Thu, 20 Jun 2024 05:23:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718886102; x=1719490902; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718886201; x=1719491001; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XBS1AMhLDhTumK33C3908n6EvwlZ7BmKQIgA6mDuKXI=;
-        b=mAC9DEY96SDwRXy9uHcnHO32NfWMJxsITGSJmgtCPXtwylopP9CErJTTqYZXe75gPq
-         5JjaS6QMlCPze6SHRohbIOV65RShu6yVLZQbout4MzortsjfAXeNdcRhD8ZmPj+jhTXV
-         I2BH/oGS4aKtD0swdxdkq99uUIEEFq3ai8nopuXp4D7RIcLIzJroHzYwXOa6VNqu1kjZ
-         dx6324hFRY5I9IljiMkyreoBbLZs829iGGhE3BjAUCPFPXW5aXx1FztCkDW3npHtrfXL
-         VclTY9Kvf2nuZNbmi39gyW9rO8aPKDIYm96GRjs8p4m8Lkrak6PHFB5H7RaaQWC3GAEH
-         eSXQ==
+        bh=jAPCa0MvFiAPsj7YHALM2ydyfWyLdEGMk4YW4r8hjMY=;
+        b=TKvSNuFSEYG93NFweHAsRUlb7GXuFln+KZUIAfqcGTON99tBfhSLXNhBR5GnljE68o
+         fnWz6LFfjN0+5kG7WLt+1lIoNniMLLdyC1QyhurY3dhCVSKtN5Rws1vhM9rn/sG51Xcv
+         12dC6M3cJcp+PJIbsWR0nIMHZf79SozL+//wshrs4b8uMKf/T1bNyZZBVS4qfqnmnotB
+         rfgBFFM/Z+j+8u4VAvmfsFuAU58W7QGXgL6Ijs4ytM1t/Um2iGW2tUMiDA1jgHG2RRXG
+         CVkS9pnz5GeuF6jgrjTfsW41t52/hXmsiqtTOUOe5aM7n4u85nWxzGH/IXB1XWRnKBQ3
+         2NNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718886102; x=1719490902;
+        d=1e100.net; s=20230601; t=1718886201; x=1719491001;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XBS1AMhLDhTumK33C3908n6EvwlZ7BmKQIgA6mDuKXI=;
-        b=Yx3AvttKjILy3YX/vH7L32wbL5kovGzngU6JhYgHPCYyOSJq31RhKCZcWxaMK/9EcE
-         0bKokLWp/GLOxFLETz8cDyoKC9yuqBNKxXTswNDrlGcwENN7/OLNu47GgNohPTwEge8Z
-         P/nUuH2f5NH6da/Uewt8MHLZNbZJW5+APEMRH3E9SQ0+0k28C7p5cpz7YipvnpgKJdjb
-         13LTYPd/ELT/+zCZhiOeUW9o0C4NrqEv48ZPQMIizW0wfg2+D7OE0x/EfyIOf1HsABjb
-         IsbJlBicA9WPTo2IcUWFEguN4XORUJMhZjVSiajFw3LHyDgukO6uQYrV+ireoRgoPSAK
-         NOEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXVsncJ3KelhHXHAA8xb9s2Ezu+J9HLmjcd6Nv95pwNh7vSOeu2UB5q3lmmLeCl2/W1GntNnTkQIeQmlfHdTR8iImrYhp0bBLoKzwx
-X-Gm-Message-State: AOJu0YxWPayZdtq1L/DAp+0kUGvRAIPDpQodhwVXMCKMzVdPmlcJcrPF
-	yklPHSUqUncLqqQs3czPynOLMa0Q/0blXDbzYVZUS6AFrw5jxjDD
-X-Google-Smtp-Source: AGHT+IEZoRkDMCj3Y9QFI9+Shy3ZbsxWCR1UBXpiYlnmNJQ6tE2CzaTopi+87JJ6Cu3vTiMjQddHvw==
-X-Received: by 2002:a05:6a00:124f:b0:706:3ba3:a192 with SMTP id d2e1a72fcca58-7063ba3a6c5mr3335763b3a.22.1718886101652;
-        Thu, 20 Jun 2024 05:21:41 -0700 (PDT)
-Received: from localhost.localdomain ([14.22.11.163])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb6dfcasm12688725b3a.172.2024.06.20.05.21.39
+        bh=jAPCa0MvFiAPsj7YHALM2ydyfWyLdEGMk4YW4r8hjMY=;
+        b=C2KN+3skUud5iJ85G11HZbOoL0+3cA9a3DW4Hk6FUJW/97y2ijgjoNY7CF0cqDEPrN
+         S/0O73E+6Y+bQQbWmyvnyfkU1JYSAoQ0DXRPdDnGbED7R9nIfv+9BtLW97PXDClKoo7u
+         lQUAIEDC4pnBbxUqMpwqAy1+Y2tSgQ4cmT/kP7yc1zBaVeaBGgdwsuE87brL06+g5nwF
+         Xz5gGZi77oTf2xq2pReNtHzqtr/2f/RGpmb0LvJhmY80OlgwPudBz2Pvzoo15olyuElo
+         EtecKwow01oJNsO3DQu6sUmYvWihahuUp6IhsDRnenanSnlZOdQ5Nqn1Y9u/aauHhJHT
+         LegQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaWmyPtBoagLQ9/kwAVEwPCUV0RIB00XWrnTKwP1XvINI2N7LjMyK/5rm3R48NNn9LxMsRk2/aS0LKah4ZGsVMMRAHh/gxqQV5VmObFS1YesKD6/S6PX2aIjoshkSlKoxsiNZ3
+X-Gm-Message-State: AOJu0Yw1h7kPY2dJeTaDJZ6BTzaitozUsnmogmaY/d5LxTAGFkEf72E0
+	CWHtAFlgP2d9LpjgCN2gUGl24LK5qao/scXv6LOOP46mKDnECqIs
+X-Google-Smtp-Source: AGHT+IGbs8FFmVep1Hv/BZX9eKbKKpz0IFFRCOFjuUSzjm5eR9dX4BHr3DlLx8gsPJlwRZfm2n49+Q==
+X-Received: by 2002:a17:902:b187:b0:1f6:1780:f7b1 with SMTP id d9443c01a7336-1f9aa3d23camr35948275ad.17.1718886201023;
+        Thu, 20 Jun 2024 05:23:21 -0700 (PDT)
+Received: from lhy-a01-ubuntu22.. ([106.39.42.164])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e55e77sm136344235ad.12.2024.06.20.05.23.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 05:21:41 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: akpm@linux-foundation.org,
-	brauner@kernel.org
-Cc: axboe@kernel.dk,
-	oleg@redhat.com,
-	tandersen@netflix.com,
-	willy@infradead.org,
-	mjguzik@gmail.com,
-	alexjlzheng@tencent.com,
+        Thu, 20 Jun 2024 05:23:20 -0700 (PDT)
+From: Huai-Yuan Liu <qq810974084@gmail.com>
+To: jes@trained-monkey.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-hippi@sunsite.dk,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH] mm: optimize the redundant loop of mm_update_owner_next()
-Date: Thu, 20 Jun 2024 20:21:24 +0800
-Message-Id: <20240620122123.3877432-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.39.3
+	baijiaju1990@gmail.com,
+	Huai-Yuan Liu <qq810974084@gmail.com>
+Subject: [PATCH V2] hippi: fix possible buffer overflow caused by bad DMA value in rr_start_xmit()
+Date: Thu, 20 Jun 2024 20:23:11 +0800
+Message-Id: <20240620122311.424811-1-qq810974084@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,38 +87,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+The value rrpriv->info->tx_ctrl is stored in DMA memory, and it is
+assigned to txctrl, so txctrl->pi can be modified at any time by malicious
+hardware. Becausetxctrl->pi is assigned to index, buffer overflow may
+occur when the code "rrpriv->tx_skbuff[index]" is executed.
 
-When mm_update_owner_next() is racing with swapoff (try_to_unuse()) or /proc or
-ptrace or page migration (get_task_mm()), it is impossible to find an
-appropriate task_struct in the loop whose mm_struct is the same as the target
-mm_struct.
+To address this issue, the index should be checked.
 
-If the above race condition is combined with the stress-ng-zombie and
-stress-ng-dup tests, such a long loop can easily cause a Hard Lockup in
-write_lock_irq() for tasklist_lock.
-
-Recognize this situation in advance and exit early.
-
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+Fixes: f33a7251c825 ("hippi: switch from 'pci_' to 'dma_' API")
+Signed-off-by: Huai-Yuan Liu <qq810974084@gmail.com>
 ---
- kernel/exit.c | 2 ++
- 1 file changed, 2 insertions(+)
+V2:
+* In patch V2, we remove the first condition in if statement and use
+  netdev_err() instead of printk().
+  Thanks Paolo Abeni for helpful advice.
+---
+ drivers/net/hippi/rrunner.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index f95a2c1338a8..81fcee45d630 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -484,6 +484,8 @@ void mm_update_next_owner(struct mm_struct *mm)
- 	 * Search through everything else, we should not get here often.
- 	 */
- 	for_each_process(g) {
-+		if (atomic_read(&mm->mm_users) <= 1)
-+			break;
- 		if (g->flags & PF_KTHREAD)
- 			continue;
- 		for_each_thread(g, c) {
+diff --git a/drivers/net/hippi/rrunner.c b/drivers/net/hippi/rrunner.c
+index aa8f828a0ae7..6b0056ced922 100644
+--- a/drivers/net/hippi/rrunner.c
++++ b/drivers/net/hippi/rrunner.c
+@@ -1440,6 +1440,11 @@ static netdev_tx_t rr_start_xmit(struct sk_buff *skb,
+ 	txctrl = &rrpriv->info->tx_ctrl;
+ 
+ 	index = txctrl->pi;
++	if (index >= TX_RING_ENTRIES) {
++		netdev_err(dev, "invalid index value %02x\n", index);
++		spin_unlock_irqrestore(&rrpriv->lock, flags);
++		return NETDEV_TX_BUSY;
++	}
+ 
+ 	rrpriv->tx_skbuff[index] = skb;
+ 	set_rraddr(&rrpriv->tx_ring[index].addr,
 -- 
-2.41.0
+2.34.1
 
 
