@@ -1,234 +1,231 @@
-Return-Path: <linux-kernel+bounces-222056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B6990FC3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:38:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E995B90FC41
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6989B21D42
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:38:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D3671F2440F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073CD37703;
-	Thu, 20 Jun 2024 05:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BC7374FA;
+	Thu, 20 Jun 2024 05:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b="C7hLEIQp"
-Received: from cluster-b.mailcontrol.com (cluster-b.mailcontrol.com [85.115.56.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mySVW1cx"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9F81EEFC;
-	Thu, 20 Jun 2024 05:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.115.56.190
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718861913; cv=fail; b=N5TyDAixakoDOq0DawmczhH9du4eZk/CKR4S+6oDFms1vLTfMwWSfDI+8fgv/YichArzF/afkFN7u56Raih0bbwRG5mPB0c2YDR8alMP6j8nRGpQarUheGLlLAC8ah62oETZEjbAw9dTH44Nlf/CoBxQLUQ2EETPGZGWAQ6iMKU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718861913; c=relaxed/simple;
-	bh=XZp8GsIWmqrqkwBWUKG5J83MyW111BgUzA4SkrATAWo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=gc2RzaW8LZ51ZtK61EavSOYw0WQN6YMFEvtlMpCnsaigv15GuEeFGmxODug3Qwu1J/Xa07uqXGnJk639ITixuZQn2PU2ZoaTDYRPAZKWORhkCrIDwUP4LDO3P5w33EYffhSnq/l92UzutqNHFpdz0N81e1hD61uEyM8i4tbPh+8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai; spf=pass smtp.mailfrom=habana.ai; dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b=C7hLEIQp; arc=fail smtp.client-ip=85.115.56.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=habana.ai
-Received: from rly12b.srv.mailcontrol.com (localhost [127.0.0.1])
-	by rly12b.srv.mailcontrol.com (MailControl) with ESMTP id 45K5c1SW072492;
-	Thu, 20 Jun 2024 06:38:01 +0100
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by rly12b.srv.mailcontrol.com (MailControl) id 45K5bUq4069052;
-	Thu, 20 Jun 2024 06:37:30 +0100
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05lp2105.outbound.protection.outlook.com [104.47.17.105])
-	by rly12b-eth0.srv.mailcontrol.com (envelope-sender oshpigelman@habana.ai) (MIMEDefang) with ESMTP id 45K5bQ6N068717
-	(TLS bits=256 verify=OK); Thu, 20 Jun 2024 06:37:30 +0100 (BST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EoaEDShKoZWaLrr6MdAFWNE4b4GEeGIZMNe9m/yL9YQsICm4N7Gnrb9BvwSs8JMom0Tp4YnH4cL+wFaOhgyRU4+hzyqByVtazggfYD84jSx687/20MoaYrBRadwOyJn/vjTFnZwauXTjeI3tkhioCCnChXvVam8wm6cLyYbuj/XQ0Buxb3D6gA8UxrXtXWHvRewpeCGwVd1lqkRQvsFsM1W9yNHUEQ96DxEpZvotdmZj59M3oqOfYO6mlsKtjmUZdkF1V9ehF4Z224mMxP8kjT65TC4I+pkx8EAJvF3PPkfVvo15/e2hqt8K4VcJiZlTU51A/gYoSfrIlOp0qwjlUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XZp8GsIWmqrqkwBWUKG5J83MyW111BgUzA4SkrATAWo=;
- b=YV5R9DzB5DAiXPP44Lpp4suJwZ+C6E2wHJGTZgoAkNlqXUKdfh2wZnnSltKZxUfIM/BPCPdNuML1mmXkRD3O333od/Y9EfaAtQs9/PKxq3VlN1B9udJ5pV4IdivhaeEvzy9LiqxHDDreGVTupyFgfaNSjjwLUUXApqxgAYBIz7GwrldI7oeGIAWBAx1b5CrLTBOzhe1Ahm2oc8QRtAm3OYeuPp/Ej1IYooYWENZ4PDnviK4S3To7cVF8f9EnMTvn5oRtSccCl4uJwgbWe8jRtNSvGBPS+uteIlRonUiyufTsUC4zxGUAXQxR21c0vlsxFdKimoJGb5VWRMWAZJa36A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
- dkim=pass header.d=habana.ai; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=habana.ai;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XZp8GsIWmqrqkwBWUKG5J83MyW111BgUzA4SkrATAWo=;
- b=C7hLEIQpNx9p7B/aYHD+tAddU8rt8soZ8IClht+qib32WOB/B6w0XGVFpFMFb6AQQNUhKfzVv/q/HjiRiNgmdgq7fkgXte3WofSfgpHR4R7Qq25hUZrQ/Oz2siZRAqXR5aNu+bM7L1eSgclHtQ/74jN27rm/XQfzdKJzc/wytrIZkhVMVgEyJG6wT2wIYKEtDSz96yYdOm9dcb82KH45pQ24sedr4SayIMTUEJkovhn/55dHMtE7q0ibOl+5mxN+XQXvcRY0fTXLt/K5QNJ8phf0C8akuk8O+5LSck5/O4AE4qa9vHA6pCeoQQYQahGEXMBELTHts1HDP7XsK11HKg==
-Received: from PAWPR02MB9149.eurprd02.prod.outlook.com (2603:10a6:102:33d::18)
- by DBBPR02MB10484.eurprd02.prod.outlook.com (2603:10a6:10:536::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Thu, 20 Jun
- 2024 05:37:24 +0000
-Received: from PAWPR02MB9149.eurprd02.prod.outlook.com
- ([fe80::90a0:a4f0:72e9:58b9]) by PAWPR02MB9149.eurprd02.prod.outlook.com
- ([fe80::90a0:a4f0:72e9:58b9%3]) with mapi id 15.20.7698.020; Thu, 20 Jun 2024
- 05:37:24 +0000
-From: Omer Shpigelman <oshpigelman@habana.ai>
-To: Jiri Pirko <jiri@resnulli.us>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "ogabbay@kernel.org" <ogabbay@kernel.org>,
-        Zvika Yehudai <zyehudai@habana.ai>
-Subject: Re: [PATCH 00/15] Introduce HabanaLabs network drivers
-Thread-Topic: [PATCH 00/15] Introduce HabanaLabs network drivers
-Thread-Index: AQHavWrOHdFR+8fSVk+C2dO8fV1D97HPUfIAgADbEoA=
-Date: Thu, 20 Jun 2024 05:37:24 +0000
-Message-ID: <51444704-76fb-4755-9382-79900bcfa6fc@habana.ai>
-References: <20240613082208.1439968-1-oshpigelman@habana.ai>
- <ZnMITvpbjHR3cHGY@nanopsycho.orion>
-In-Reply-To: <ZnMITvpbjHR3cHGY@nanopsycho.orion>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=habana.ai;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAWPR02MB9149:EE_|DBBPR02MB10484:EE_
-x-ms-office365-filtering-correlation-id: 34d3cf03-10a5-438b-f23a-08dc90eb103f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230037|1800799021|366013|41320700010|38070700015;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?VDg0Ky9COG95enRTSjRIS0QzSXV3bWgwOVRNak4ybjFEWUpOMlE1SmkrNUhM?=
- =?utf-8?B?UUpENHE2UURyUER1UWp5aDArVjBld3lGOElTNUROeXBRQVRYMTlJZWVJVVRS?=
- =?utf-8?B?Y3UzOTB2MndzTTNSQUhLQXd2TGVoWnp2ZXdDRUI0amQ1a3FINy9SbDJKN3hI?=
- =?utf-8?B?aS83YndlNTd4ek5JMjFQWkQrMTc3TEpWaGRkeTFNMTNCeHR2L25Ga2V5OGk2?=
- =?utf-8?B?d094YnY2K2FQTmhuQkRhUnlZZEtRVUV1Zmhyb1o0VVRBYTV4V1lLNmxMWmhT?=
- =?utf-8?B?L0dyUCs5SWRLOXNubTJyS2pKdW5iWWo3eHBBTjA1YURCc2dwOHNKOFExdVN5?=
- =?utf-8?B?TW1yS2FEQVp4RTJ2aG5WUlp1TEpTL21wVGtvUjZIbEN0aHp2dDdHZ25MWjlv?=
- =?utf-8?B?REppOElqb2VlbE5GWTQwNWhiRmpxdGVycUpKQWNSb0JKZ0JCeXVyWTdUZUJx?=
- =?utf-8?B?ZkRCT1hucTA2WlFXN1A2bStQRHFwWTFJMytlK1RMcE1RTE5paTdKaWpRNmEw?=
- =?utf-8?B?UURGdnN4ZnAyOGlVdm85cFlGWjMyLy85RkVubmlndFBXM3NIMGRqU2w3TWNz?=
- =?utf-8?B?bHpaZnIrUTZJUHNSSGIrWS8xQ1ZwNWU2YVFnUE5kVUZlRDMybUwweW9ZcWpa?=
- =?utf-8?B?ZUdmTDUxV3ZpZ3JrdDc5NDVjbFNyNEx4MEZ3cVNFR2hOOFAxUFFEZGVpZW9W?=
- =?utf-8?B?SHFLbWhZc2E3aG5MVWZUT3pVQUlLcnhEUitIR2FPZSs0dTk2ZDVxN29lMWpS?=
- =?utf-8?B?WXI5NEE1dGNkVjVweGtDSjg0RDBsNWN2RmNmMmF4eGVsVHhwYXBETGljaDM1?=
- =?utf-8?B?Ykdxalhnd1FWUW1SRkF4SFNYUEtkcHBvR1lhOW52WHVuc2ZmRklYYUNkT1RL?=
- =?utf-8?B?YmJJMmZmYlEvV2Jva0hid3FUdThpb3dxc0t5VHAxdU9qNTJDVk02Qlo2Skt4?=
- =?utf-8?B?R2JHamMwZG5abXZDOE5YNUVWbmdEL2FEYlI4ZSs0TGtYQ2w0ZW9KMjBZeDhQ?=
- =?utf-8?B?K2wrcmZLbGcxUXBxL3k0bkRBdWQvMDhyMFlJb1VJektacHBYNlU5bVkyTjRN?=
- =?utf-8?B?ZUFxRWhpYkcyVUNDUy9aOEQvLzEyUFVDaGIremVrYXdjQUFyZXA4QnJDYWtX?=
- =?utf-8?B?c3I0Wm1lWUFMWUZLM0E4UG8xcGZwQ1J3dVJ1bzR5ajNYK2luY09pb08rWTFB?=
- =?utf-8?B?bFNpWGwvaitYNENWdjVuVk1RSGI2N2pJQVBCcUcvTVNtY0hMRWNaZTR4QmxY?=
- =?utf-8?B?K21TTFhRemFYSzc4bTZUUTJySmFBSythYTBlekcyRFZvQk14ZkdWNHltdXZR?=
- =?utf-8?B?SmM3eXFHREs3ZktoM1ZXenVMMS8vem5KUEJUdlVUMUlZUnhoTWpqY2UvdDZH?=
- =?utf-8?B?S0Z1aHdBNEIzZVIvVVZ6VkZZNHZ6R0xSRXc5S1NydmNSSTFXdU5BVThROG1i?=
- =?utf-8?B?c2NSYmxPb2lRcVJ0QVB6L2tmNXFBLzc0ZU5GUDRja1Q5WWRZZmY0R0NPMUpO?=
- =?utf-8?B?anYwS2dCQ3FrUG5qUEQ2dzI5RGczVEYyUVhJdjBWZXFRNUlGSFNHOTY1ZGt2?=
- =?utf-8?B?dmNlcVFFa3pETnBUdHQ5c28vRUxQZWR0c1doSjRncVQvRnVORkg2TDVlMzZi?=
- =?utf-8?B?WitBMDhtYnBkWVB3YkF5NTlPYkZKa2pIYm0rU0diaTRMbFdNQUEzaThRaGRX?=
- =?utf-8?B?VklxVWJUYjc0dXRxYk83SUJTODRDVi85NUV6L3d4R1JLTFg1a1R6K3VpMHV3?=
- =?utf-8?B?MC9XTlRzeHRWbGZkWFFXb1pLeXVYTmJFWlI0a0NVblkzYU90bFNGaFptNXEw?=
- =?utf-8?Q?BroAP/4laJw437FMhIqchtcoYUuLx96boALsg=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR02MB9149.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(41320700010)(38070700015);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?L1F5bFovd1IrdEE4MVRqdnNTMVphNjV3c0hsRFdDTDEwS2tOTmZRamdhb2s3?=
- =?utf-8?B?NTAxY2x3dDQ3V0VEdFhLeGpDaEZZc0dXMG4zQlgvVFg3SS9ad3Q0U2dYaFpB?=
- =?utf-8?B?dFZNelF6cDE3R1lwb2VnWXQ3NlNTTkVhdnVJbU8vRCtRK0RTTlhLTzZJczdl?=
- =?utf-8?B?V3I3UGE4dGQ0OHoyYkUyVVJLeW5PaC8vZklGU2lwdGRTSnp6U0JVbC9WZ21j?=
- =?utf-8?B?bFJQWGx1c1AvTGNuTWM2bHUvR0Y4aGxYd29jYk5rVVdvTzBxSFZBNkhqVEdo?=
- =?utf-8?B?YU9vd3lkWUZlbHUrdEd5MTNZNzdzM1JzZnZNdkF1UXNleUJlRDdKNVV1enh2?=
- =?utf-8?B?ZlIvV1p0RmpRSVdtV0dMbnVjU2JWNnlHa1h2T0JvOEl6YUE4SWc2VXhzUWM1?=
- =?utf-8?B?WDMzSGxoVWUwRWVnbzhYeENsY0I3RWpLOWoxRjk1bjZHZXVzQnJ6dk83TDRK?=
- =?utf-8?B?MVM4TncyL21xLy8wbUhmNDBscklYa3E0MFZsM1ZySTZuNDhWVmNoY2VBeUdQ?=
- =?utf-8?B?bjM3a29PU1p4dnNwOWdUYjdOOVFwNTBtMXNlVW9LQ0Y2OEFMYzh5Qm1OYWl3?=
- =?utf-8?B?VWhQQVdJakxwN2ZNZ0NyRTF4Tmp1ODAyQTFqbGZJdmh5RXdJMHhmS3d6OHBS?=
- =?utf-8?B?Y3VuMmxBekNkSlREL3NLbnlxLzRWZXIvUTZqRkx2RkFYQ05QS0laRHVKR0VK?=
- =?utf-8?B?RWlKeGNNS1lZamRDQXdTaDMrUVVVRU1YeEkyczAzaHVJY1V0U0hOKzNEdFNY?=
- =?utf-8?B?TWdBdk9iTzJ0NG9BSktUdHBzbzhYR3Z2SllUeDVTK2dlTDhpWVU5c1RGTWY1?=
- =?utf-8?B?WTJ2dTloSzJpTytWQ2pMQ3luNlIrQVQ3QTlqNitzMERZYVdxMmVPV3N1ZFZ0?=
- =?utf-8?B?ZVJqWE51ZDFmeGkzS0M2VU1rc2ZkbVl6TjVKdVB5dGEvclJqMzZ6dTVkaENo?=
- =?utf-8?B?VGo1cFRib2VkT0txUnRWdDQzVHNkVlZmSWRTYXgyY3lrY3g4ZWJVQ0ZuNU12?=
- =?utf-8?B?SW5aWFdtaG1TNU0reVlvZDZyMFlXdkptdzgycFpFakdCSUNDbG9jditVMU1V?=
- =?utf-8?B?dHlQNjN6OWFFd3BrVWxpSGVvUW9qZGR4WEhwcXBERk1FNjNodnNOLzkxTmRQ?=
- =?utf-8?B?N2RoWFk5d2wvOUNMQURxNHBYeVVxeENxOU9RZHdSMC9tQXVMcVdDcnZhRzZu?=
- =?utf-8?B?azBWVDNRU0FURnJmeDIrMk5HSW44MHZiS2ZuZkhIZCtTY0U0Z1NYNnBzdXNU?=
- =?utf-8?B?bm1OY04rRTJ6ZjhuZW1wODZQZXRtK25GMDBVQXM1ZnBQZ1NJUEhqcm5kZlNo?=
- =?utf-8?B?Smc3MkJKZXF3SUNXNGlrU3JSZ3pFZDg2OHRqZUlFdlN0bUs1RTJ0M0lGMzBR?=
- =?utf-8?B?eHhEM25kMXB6ZHpSenlCWHBrK0ZTREdsV1J3Y1VHU1FVbU82Q01vb1JlUnlt?=
- =?utf-8?B?c3pGNDJ0SmwzNEppUnd4YXJzRUhhZWorSTdoRGowVHZJM29ESlFwei9senA2?=
- =?utf-8?B?VnI3alJSWkhRaUVGdmxsNFV3cXVCc1pScGFWMUhFYU5uREE5ai9meXBqeHUr?=
- =?utf-8?B?bUozeXE2clRvNlNWWGVGRkNzaHIrMnhHalJrcnhTd0EvNG9xRmhTbkVUSkh6?=
- =?utf-8?B?ZFcrUk5xdUZ5c3RxVER1a0FtRjVoZnBQMk8wMWx2TmtwMDczeERMeXRuRW5t?=
- =?utf-8?B?SGI5d3A1ZGRmRWh0RE5sZWhyN1FpUkFWUnkyT2lVVzN6SWJWUGV0cEpGMFIw?=
- =?utf-8?B?K3E1SVZ1TmJ1N2E4THUxY2dUVkd2MHRNcG4zN2plWFQxSTAxa1dRMk1wdjNy?=
- =?utf-8?B?K2g2QzNoUnRWWVg1dkdWU2hHRzZaQVVGZmZvVG92c0VWV0RXTFBrMGxPWEJJ?=
- =?utf-8?B?TWs2VEFvRS8vMXA4MTk3bGNhSEo3VFVSb1BiR0R1alR0V1ZzWU1JelRGTVN4?=
- =?utf-8?B?QmZSR2hWWHVndUJJY211cEFWdUpzbytxWDd5azFMa01raExnRjJiMFNpaHFr?=
- =?utf-8?B?cUdjQmxVaXJNaW1ObXFtS1hYamM3WDFROHp6M0FPdjJ6cFQ1bnU4alhpUG1r?=
- =?utf-8?B?YUpKUE82YkZwMUJpaHpuSzFaUkpEcDNuMzRicUprSGVpdno2aXg2VTNuVFZY?=
- =?utf-8?Q?yi23hQ/UKiwb6IXdTwB/M9iNy?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4E305D0FE866A548B6F5B858D8B5E75F@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93421EA71;
+	Thu, 20 Jun 2024 05:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718862086; cv=none; b=Dm+r+eQNAl1gor7DNg2wlYVqT/gChv46yprMJh4Zo674IeOUvpLialKgo3KZY+DDiX2hJ8FGRGcNaqdc4mOWowPCQ8v1BTHUUDMOyH3MZNQBI7eMmQSWmxg6oWAz08S1CKU303/92VvThR1nx0Z+n8J57iCvJPlA1vplas3+5VE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718862086; c=relaxed/simple;
+	bh=5PbD/NUrILlrkSj1u/WhdhVs9SOw6kDNC9L98HbJnfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oV6kW4PihW4eL95hTq52eQat7+6xjcux6PA/nlbMZnR1RBvgOQLlsc4ql8Z2wJRh2KGJWHQ3E77s9hTaUDyVKZ4N/lqEBCyORHzllstd4ynDaqyx1wf7LhPJI6t0NVDCDEBaDyW0GCY+yanoQpEWCz7//dgtjaLKAZvtL3qAWcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mySVW1cx; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f70131063cso4350045ad.2;
+        Wed, 19 Jun 2024 22:41:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718862084; x=1719466884; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EUCkBVDNqTCYli0tHuV20EHuXsuSalyg9yJLDBT4Mrs=;
+        b=mySVW1cxWtTNzPJH5HbWJUDHZ5WUWQa6EOBq0HtplJxEbyuRrzzQR2P7eOWdi4COhB
+         5DhEu3Didvroq/WwHfSWjFuMb6/HVH7B+3mgu5iVu9X+mVN8Z4ZSg6cidx+54KhxSK+n
+         fy9AYKCu6zHj8AU5/pU9Z7mYGAF5G3Qq02VFM3WzKIpW3XQMneCYqsz7pVY3eqyWFoCE
+         YT6Gw62p/5a/oh2mhwNc5QMNMJO8hVHgrS1nXDxO/BAMMw5LG0GCW/mH8KbmLMuTYip7
+         QjsS/qR5KKKYf9JvK6bxQ/EVhPuj1Qpq9SyJnoLNCnMSmJQrz6Kwxi2ZG9ApGuQ7W6/W
+         01Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718862084; x=1719466884;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EUCkBVDNqTCYli0tHuV20EHuXsuSalyg9yJLDBT4Mrs=;
+        b=jbniHeMP09Wq9VrzWKJ0Boq03Xee7q6SSxLhnefndHq0J/TovHKcxI3AIVvUu9z9YN
+         aygkyuATrzUzGsrMcNjiEj4LZYyJ+gAmOxsTcJNQ7IJW3WnvBC15+pRuBV6ma5+D00X5
+         WeIdac4xXy3McKQc0NKxxbiJD6My9Oxq0n1fVvuByqkupAPQIANPX/d8JB7JMCJczvo3
+         8hEsqWTyvr+6OxD5WBIok9oWILSYqJX/c4+f9hxyspRolhSl1OtmATQTs15PtNGzM2ie
+         +0zoapkYk0HbN3M+6WRny5x1U8S0hAGGwta+L068HM/pal0nfW48ikOUte8uEmZJjNTk
+         pvdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvPp2YhnpaLpg2qJsXfpSjkpk7n6fYOEqI2sT/YpE2gm5XOtT/JxFgn3noD1l65s9rR0d+12ieO7zacPAf83Zm2eMqcgeE55hfnsIJ880l0Yr8HaBdu4EHJbpsO1Zdc0cUSv+6la2UlfpliL005lQFNHuxGmINNEEbauYdcGI3/vuEnA==
+X-Gm-Message-State: AOJu0YxV2Au3qTaqn5Wy1/iS+0wfiU36bztkhmeNTagkSEomNYGBsGKB
+	bB2wP+dPX9cO/elS8zu+TIEIEk1efvjRn4fznUf1053NzxStpeDS
+X-Google-Smtp-Source: AGHT+IFicQsd0bCNrGNVn8OY/A2pZ3wyoEByUh12CbH4nmjbSka2gCDSl2i8xqZ7q1ZkR6ASqUH9ag==
+X-Received: by 2002:a17:902:e74e:b0:1f6:ef5a:7740 with SMTP id d9443c01a7336-1f9aa3f821cmr48603365ad.34.1718862084172;
+        Wed, 19 Jun 2024 22:41:24 -0700 (PDT)
+Received: from ga401ii.. ([2401:4900:1cc8:6da5:5a28:6118:91d6:c407])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1f9c68077a0sm7845555ad.98.2024.06.19.22.41.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 22:41:23 -0700 (PDT)
+From: Kanak Shilledar <kanakshilledar@gmail.com>
+To: 
+Cc: Kanak Shilledar <kanakshilledar@gmail.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] dt-bindings: i2c: nxp,lpc1788-i2c: convert to dt schema
+Date: Thu, 20 Jun 2024 11:10:20 +0530
+Message-ID: <20240620054024.43627-2-kanakshilledar@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	+5JzyQ7PRq4/CZRSDHj1Nzx3+3KI16czX+3fMlv0IQwtvQsKH515gpeTemh6LBj9d262DQxSCOEhMWw6GV6hcDyablx7Nzw17/5IZeGOrmwTO/8PGodezvPKEvAYTXkIaxPVGTKRXzeq8cWgPsM+wQWrDKN9H3VXzjcyg6yZZxS8piAiTFDhzmtjiBt4JVmRAO8+4se5yJCTynYHN9vYoq//9TvqVQn1H1lTCnFF2DWz9O+9iTs4dPN06H2HtNqUA/t/wJZR0WRkqSxeNXe+3+0iUJoj7uBHVZIAx69L9Fmy9E5SDJuUuJGD4/xyNIa9IKC8nLEjZ4WFV1e0U4vNWgJ8Erw76fofhHsi1/4iXuRL9qkOUSJo+28kKySQMcwUx/7VsOMgozqKZE3cyaFbP4Bsr93aqVpuxBWPFosklQYm73zRLbB2bQwQ+OYtZYPBynBafm50ONPSG41Q/rUQRpy7BDHnHz8cEYd2YouUdR7zG6MsjAfy/d3MDkR3+saeMjNhO+L91oKfM07lq/JXo/aXC3aXCjZHrTDdrGHNzd/UQ5BVwezyOV2eTNW+wu597jrdXvBzc1D4sy7KXqwg3U28tON2fgEM+RKFNl0hq82t2dXhD5gnv9Tg0qGvhk9r
-X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAWPR02MB9149.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34d3cf03-10a5-438b-f23a-08dc90eb103f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2024 05:37:24.3812
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7IscZc5F1TDDr3ku6j2ZooDkn1Am5oIlYoNjM6gDFG31i0HvfzqymleORJNYSaSrvYkc/8xsVkFSBE0+a+j0tA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR02MB10484
-X-MailControlDKIMCheck: cGFzcyBoYWJhbmEuYWkgW3Bhc3Nd
-X-MailControl-OutInfo: MTcxODg2MTg4MzpGUEtleTEucHJpdjrYXyK5JBkcor6MEP+i1C5o9GdhelwgieUH4fud7G3CX3vfOdWIyTC6UEIuCCV6rRrr2QClsd8QeP/i6Uh7WGOKldBbJSEZBzDn5DBNiXTlbdbzw65O1GYlpMyecP67Md4YcnQHNHHUbjhJpgVv6+eD7M5ZZ05E/WTlUN7I8+u8kMVPeHYHbqLO6HMcCAij9Y1b0mgqHRh1oxN3x7S8AmDM19BNWK3iSl6r953Xr6KFDU/BF5dbACh8qonaZArJtfNmyOtryWjfOpViNwhx/l6QjGt1PdfJeivCBptyR8VS+EvCYw9hHFVIqSYsrZoxNe+6gbpaQP+NmyZey7HK6uVJ
-X-Scanned-By: MailControl 44278.2145 (www.mailcontrol.com) on 10.66.1.122
+Content-Transfer-Encoding: 8bit
 
-T24gNi8xOS8yNCAxOTozMywgSmlyaSBQaXJrbyB3cm90ZToNCj4gW1lvdSBkb24ndCBvZnRlbiBn
-ZXQgZW1haWwgZnJvbSBqaXJpQHJlc251bGxpLnVzLiBMZWFybiB3aHkgdGhpcyBpcyBpbXBvcnRh
-bnQgYXQgaHR0cHM6Ly9ha2EubXMvTGVhcm5BYm91dFNlbmRlcklkZW50aWZpY2F0aW9uIF0NCj4g
-DQo+IFRodSwgSnVuIDEzLCAyMDI0IGF0IDEwOjIxOjUzQU0gQ0VTVCwgb3NocGlnZWxtYW5AaGFi
-YW5hLmFpIHdyb3RlOg0KPj4gVGhpcyBwYXRjaCBzZXQgaW1wbGVtZW50cyB0aGUgSGFiYW5hTGFi
-cyBuZXR3b3JrIGRyaXZlcnMgZm9yIEdhdWRpMiBBU0lDDQo+PiB3aGljaCBpcyBkZXNpZ25lZCBm
-b3Igc2NhbGluZyBvZiBBSSBuZXVyYWwgbmV0d29ya3MgdHJhaW5pbmcuDQo+PiBUaGUgcGF0Y2gg
-c2V0IGluY2x1ZGVzIHRoZSBjb21tb24gY29kZSB3aGljaCBpcyBzaGFyZWQgYnkgYWxsIEdhdWRp
-IEFTSUNzDQo+PiBhbmQgdGhlIEdhdWRpMiBBU0lDIHNwZWNpZmljIGNvZGUuIE5ld2VyIEFTSUNz
-IGNvZGUgd2lsbCBiZSBmb2xsb3dlZC4NCj4+IEFsbCBvZiB0aGVzZSBuZXR3b3JrIGRyaXZlcnMg
-YXJlIG1vZGVsZWQgYXMgYW4gYXV4aWxpYXJ5IGRldmljZXMgdG8gdGhlDQo+PiBwYXJlbnQgZHJp
-dmVyLg0KPj4NCj4+IFRoZSBuZXdseSBhZGRlZCBkcml2ZXJzIGFyZSBDb3JlIE5ldHdvcmsgKENO
-KSwgRXRoZXJuZXQgYW5kIEluZmluaUJhbmQuDQo+PiBBbGwgb2YgdGhlc2UgZHJpdmVycyBhcmUg
-YmFzZWQgb24gdGhlIGV4aXN0aW5nIGhhYmFuYWxhYnMgZHJpdmVyIHdoaWNoDQo+PiBzZXJ2ZXMg
-YXMgdGhlIGNvbXB1dGUgZHJpdmVyIGFuZCB0aGUgZW50aXJlIHBsYXRmb3JtLg0KPj4gVGhlIGhh
-YmFuYWxhYnMgZHJpdmVyIHByb2JlcyB0aGUgbmV0d29yayBkcml2ZXJzIHdoaWNoIGNvbmZpZ3Vy
-ZSB0aGUNCj4+IHJlbGV2YW50IE5JQyBIVyBvZiB0aGUgZGV2aWNlLiBJbiBhZGRpdGlvbiwgaXQg
-Y29udGludW91c2x5IGNvbW11bmljYXRlcw0KPj4gd2l0aCB0aGUgQ04gZHJpdmVyIGZvciBwcm92
-aWRpbmcgc29tZSBzZXJ2aWNlcyB3aGljaCBhcmUgbm90IE5JQyBzcGVjaWZpYw0KPj4gZS5nLiBQ
-Q0ksIE1NVSwgRlcgY29tbXVuaWNhdGlvbiBldGMuDQo+Pg0KPj4gU2VlIHRoZSBkcml2ZXJzIHNj
-aGVtZSBhdDoNCj4+IERvY3VtZW50YXRpb24vbmV0d29ya2luZy9kZXZpY2VfZHJpdmVycy9ldGhl
-cm5ldC9pbnRlbC9oYmwucnN0DQo+Pg0KPj4gVGhlIENOIGRyaXZlciBpcyBib3RoIGEgcGFyZW50
-IGFuZCBhIHNvbiBkcml2ZXIuIEl0IHNlcnZlcyBhcyB0aGUgY29tbW9uDQo+PiBsYXllciBvZiBt
-YW55IHNoYXJlZCBvcGVyYXRpb25zIHRoYXQgYXJlIHJlcXVpcmVkIGJ5IGJvdGggRU4gYW5kIElC
-DQo+PiBkcml2ZXJzLg0KPj4NCj4+IFRoZSBHYXVkaTIgTklDIEhXIGlzIGNvbXBvc2VkIG9mIDQ4
-IHBoeXNpY2FsIGxhbmVzLCA1NkdicHMgZWFjaC4gRWFjaCBwYWlyDQo+PiBvZiBsYW5lcyByZXBy
-ZXNlbnQgYSAxMDBHYnBzIGxvZ2ljYWwgcG9ydC4NCj4gDQo+IFdoYXQgZG8geW91IG1lYW4gYnkg
-ImxvZ2ljYWwgcG9ydCI/IElzIGl0IGEgc2VwYXJhdGUgbmV0ZGV2aWNlLiBTbyB5b3UNCj4gaGF2
-ZSAyNCBuZXRkZXZpY2VzIHZpc2libGUgb24gdGhlIHN5c3RlbT8gSG93IHRoZSBwaHlzaWNhbCBw
-b3J0L3BvcnRzDQo+IGxvb2sgbGlrZT8gSG93IGRvIHlvdSBtb2RlbCB0aGF0IGluIGRldmxpbms/
-IERvIHlvdSBzdXBwb3J0IHBvcnQNCj4gc3BsaXR0aW5nPw0KPiANCg0KSSBmaXJzdCBkZXNjcmli
-ZWQgb3VyIEhXLiBJdCBpcyBjb21wb3NlZCBvZiA0OCBwaHlzaWNhbCBsYW5lcy4gQnV0IGVhY2gN
-Cm5ldGRldmljZSAobWVhbmluZyBhICJsb2dpY2FsIHBvcnQiKSBpcyBtYXBwZWQgdG8gYSBwYWly
-IG9mIHRoZXNlLCBzbyB3ZQ0KZW5kIHVwIHdpdGggMjQgbmV0ZGV2aWNlcyB2aXNpYmxlIG9uIHRo
-ZSBzeXN0ZW0uDQpUZWNobmljYWxseSB3ZSBjb3VsZCB3b3JrIGluIGEgbW9kZSB3aGVyZSB3ZSBo
-YXZlIDQ4IG5ldGRldmljZXMgdmlzaWJsZSBvbg0KdGhlIHN5c3RlbSBhbmQgZWFjaCBuZXRkZXZp
-Y2UgaXMgbWFwcGVkIHRvIGEgc2luZ2xlIHBoeXNpY2FsIGxhbmUsIGJ1dCB3ZQ0KaGF2ZSBubyB1
-c2UgY2FzZSBmb3IgdGhhdC4NCldlIGFyZSBub3QgaW50ZXJhZ3RlZCB0byBkZXZsaW5rLCB3ZSBk
-aWRuJ3QgZmluZCBhIG5lZWQgZm9yIHRoYXQgaW4gb3VyDQp1c2UgY2FzZXMuDQo=
+Convert the NXP I2C controller for LPC2xxx/178x/18xx/43xx
+to newer DT schema. Created DT schema based on the .txt file
+which had `compatible`, `reg`, `interrupts`, `clocks`,
+`#address-cells` and `#size-cells` as required properties.
+
+Additional changes to the original .txt binding
+- added maintainer from the MAINTAINERS file.
+- added resets property required by the corresponding DTS files.
+
+Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+---
+Changes in v2:
+- updated subject line to include device name.
+- changed removed description from properties except `clock-frequency`.
+- updated MAINTAINERS to track this file.
+---
+ .../devicetree/bindings/i2c/i2c-lpc2k.txt     | 33 -----------
+ .../bindings/i2c/nxp,lpc1788-i2c.yaml         | 56 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 57 insertions(+), 34 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt b/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
+deleted file mode 100644
+index 4101aa621ad4..000000000000
+--- a/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
++++ /dev/null
+@@ -1,33 +0,0 @@
+-NXP I2C controller for LPC2xxx/178x/18xx/43xx
+-
+-Required properties:
+- - compatible: must be "nxp,lpc1788-i2c"
+- - reg: physical address and length of the device registers
+- - interrupts: a single interrupt specifier
+- - clocks: clock for the device
+- - #address-cells: should be <1>
+- - #size-cells: should be <0>
+-
+-Optional properties:
+-- clock-frequency: the desired I2C bus clock frequency in Hz; in
+-  absence of this property the default value is used (100 kHz).
+-
+-Example:
+-i2c0: i2c@400a1000 {
+-	compatible = "nxp,lpc1788-i2c";
+-	reg = <0x400a1000 0x1000>;
+-	interrupts = <18>;
+-	clocks = <&ccu1 CLK_APB1_I2C0>;
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-};
+-
+-&i2c0 {
+-	clock-frequency = <400000>;
+-
+-	lm75@48 {
+-		compatible = "nxp,lm75";
+-		reg = <0x48>;
+-	};
+-};
+-
+diff --git a/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml b/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+new file mode 100644
+index 000000000000..8caafe48edb6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/nxp,lpc1788-i2c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP I2C controller for LPC2xxx/178x/18xx/43xx
++
++maintainers:
++  - Vladimir Zapolskiy <vz@mleia.com>
++
++allOf:
++  - $ref: /schemas/i2c/i2c-controller.yaml#
++
++properties:
++  compatible:
++    const: nxp,lpc1788-i2c
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-frequency:
++    description: the desired I2C bus clock frequency in Hz
++    default: 100000
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - "#address-cells"
++  - "#size-cells"
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include "dt-bindings/clock/lpc18xx-ccu.h"
++
++    i2c@400a1000 {
++        compatible = "nxp,lpc1788-i2c";
++        reg = <0x400a1000 0x1000>;
++        interrupts = <18>;
++        clocks = <&ccu1 CLK_APB1_I2C0>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cf9c9221c388..920e4f28b5ae 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2374,7 +2374,7 @@ ARM/LPC18XX ARCHITECTURE
+ M:	Vladimir Zapolskiy <vz@mleia.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
++F:	Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+ F:	arch/arm/boot/dts/nxp/lpc/lpc43*
+ F:	drivers/i2c/busses/i2c-lpc2k.c
+ F:	drivers/memory/pl172.c
+-- 
+2.45.2
+
 
