@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-223259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2F391104B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:11:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B23910FF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CFEF1C24100
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:11:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E62D8288A64
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F5F1BBBFD;
-	Thu, 20 Jun 2024 18:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A011C0DE3;
+	Thu, 20 Jun 2024 17:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="O0Uira2h"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7UlnWPU"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7A01B47D5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24DA1C007E;
+	Thu, 20 Jun 2024 17:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718906432; cv=none; b=C+PPJvolhxwQcbr7RelV9ACv9qdOI+D9cyl2KBT/gZg4uMBgOn59mbnkKmOJxhLai3Fc2uFwfptFHeD+zv6H4mSbQCxMas65u6f7UCPJJY4d/sx819jMJQEfrHiXiIWlHNljPON12tNZO5/EXIiPWsbK+4AVRTo9jpiLXwpFtuY=
+	t=1718906279; cv=none; b=rJXMwiavEGLrNR5XPWLrWxBMEQ4ck5iimJHiSTV9YKFstZeVorwltw+Dg0J6wW58OGP5eZOUJbzHIRNwNNVo8KUboioBCmcO6wwN6IJxjMPA8RofcyG5c1KkrA4Zj8hU4yDFcr3dY6DL49fKa4uy0dcjp8H0s3ScnFJ9HQoKabE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718906432; c=relaxed/simple;
-	bh=6sE8+DXCGSp6H4fp7z/fe9qbBtCAiv4r4DBp6uCAyRw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=szwTi0RLkWpdbi3XEzhcajMGldeCu3S28kjyq0kbvxbp+QR0hIDLLmS1tRoGKmX9CM1eeRR9NVeHNUPc2Upsf7pG+wIqDgdOSaSD9kQbLOm9GOjzrVGqWTFVk/ZXv1KE1NaoY5W4UgeL2XAHNxrLPHzepmyCMxIaszHDu9jQY4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=O0Uira2h; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52c85a7f834so1550382e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:00:30 -0700 (PDT)
+	s=arc-20240116; t=1718906279; c=relaxed/simple;
+	bh=FZM6CosxQTAEV5PQ+/KRibOjH9YQS1OMFOTTqUFKpt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=c3oiB6K01w4kVVpykEAqRvOK5xgqAF5+uoM55C06nGXFG41Kt/uSx2Sgn9yKRewHVGQD5danNOdfcGuX480051LhLxoQ7yA9geDJmhc0+jGJair1ehs66WKe1jPV7aX80CY5wYGpf95ZP0k5NdBberd/qNvUyJpGAhzPTiCMBHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c7UlnWPU; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7041e39a5beso983263b3a.3;
+        Thu, 20 Jun 2024 10:57:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1718906428; x=1719511228; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718906278; x=1719511078; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tVPBRJfKHWyc96AOmdAfEJ3BssO+zu7Jq4tEfUKaFJs=;
-        b=O0Uira2h/0BWoXwR/9PQl1ZPb3GhlNsGDHduq7IPiesCpqVtxGL62huQi3qKTwatE+
-         DK9xn6j4nST56aLrM083hG6trthFx53Omyy/RODp4FJlsEnPcxfE4NGXJ4C1fy8mt99x
-         M4GPKy9rkwKxyRGWuEKbtp/m1pKQdU14MD0GIS/ifHJGWw/cbtrgu+E5FKkB+ka0KazI
-         bcwuQDIg8ipxRXhCA0+pojtR3XXrsEtuhQ3lgqnzCIxVqB3iuBk2lmuOkCgNcvogsa/e
-         GpMMc9mWEvx1FQNHI66INd0jn72aQb/0aml/muX/vHBXMglBCrgJjpOCLR/oq7xp1sLu
-         clvQ==
+        bh=jBNHO7SGyRYGtIlT3hp756CkWMYdfL+ybrdFx5N+b+g=;
+        b=c7UlnWPUUeUtVJwNjx5kaf5cEPYr8gJT/g6NqoxuM2c8u99lOEM7WG946Gmskbsixe
+         ET3g/tjhaRsHUgUTXKZs9j/joP73X4itynY146LlhwPyg0+LSquleQy5t6PaLOxtJWej
+         1kchOVnLY85P2W2EOiYOD9Uku3EvaDNtES7wQWoS7sSGn70Dl9Omk86BwdgIIe6pOT4T
+         RxY8ywVw0F76TUrExceypvNASojCuWxPH2NYV9qzM3nrMZ810vAHWMrYqv+q1saNAJDG
+         mKHw876SetKlhauXdG1+VfIyCKyNzV4KrqsOTrnGB3aScpVHnkhXjcufYy54ElKDH/DM
+         9PpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718906428; x=1719511228;
+        d=1e100.net; s=20230601; t=1718906278; x=1719511078;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tVPBRJfKHWyc96AOmdAfEJ3BssO+zu7Jq4tEfUKaFJs=;
-        b=ihQl+AoyQdSHE9Iw49Dna5tstBdUx9WQsID8JFjN79864SoazEeR5g23mkozu3ZwmG
-         ooV0Xex8St7UX0IjuZd59LkiGeOIZAg8wd1BlzquX9FtK2k3QkJ0vKehHtKQckacdJQS
-         S9XhXTELssMSD4t6bSE5o+0GFXc5muT8Z8nwNCiczFOwhRMSwx4ia9FARjEyJbuqsAM9
-         uVP76xfS6/MdGljLqbwPYA49ABmTqr76VUvhRsJHMxwRFLoyYi49e34kGEoq9HpW80M9
-         pJaxYcLbg2VsPbXHGVqiu4Pyxkei2LZVmAbB7aNXzCOpJwM3Vw6i5eebyPDmNCg8RYcV
-         cOfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIpz930ybMJGLaWKA4XWxAV9MwAJCjNVYvctx/j/TykQXbJ7FKdxJXy8QvG//Eg4tn31KitGqYcRRYvX84BFsLXUf5PupPW55l4UBj
-X-Gm-Message-State: AOJu0YwVsWdT61tYEIP0ywBeqS6H2yM7SdS/ytfzUC26Zll11FPVFeTI
-	ejTxehxqbP4ui8JKNZfPfyhouNJ1byiqhsO/qGNcayitm0tWV/9GNMNGYdr6jk8=
-X-Google-Smtp-Source: AGHT+IFVaUnSlA61/1PdUe+3ctCyCQUmvx5dNR8/UMkHsGGn+PNCWFlaBmoRzTkawVAPhFlr29t8ZQ==
-X-Received: by 2002:ac2:4466:0:b0:52b:f2ab:1303 with SMTP id 2adb3069b0e04-52ccaa5bd8dmr3307793e87.28.1718906428467;
-        Thu, 20 Jun 2024 11:00:28 -0700 (PDT)
-Received: from localhost.localdomain ([91.216.213.152])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f42e80sm781370766b.186.2024.06.20.11.00.26
+        bh=jBNHO7SGyRYGtIlT3hp756CkWMYdfL+ybrdFx5N+b+g=;
+        b=i2B7aQ2weAwynSUoCNN7YXTcMU5Ofn+hDZkh+J+zCRZzEY7sRCUq+OhANb/SzXxnOE
+         y+G1TLWqfGaUr+Yfn6sJ+vIC852ENSjJm2tKgBPv7QyGCOmE6xlZ3OyjO450sXCGi6Tp
+         RDZ/SbRgMdwiX1MPJwn5v6drEUwxTfnuaJ7zDQlCBSTzSoCxFU/rO3VIQNVrJTFLxxgY
+         W3jHzR+cKCOvyQ/X5pAYni0BczdN7c/MPVsEgDS5t/4+q8+HpVdZ37fstrl6sP/NbeOj
+         86gaIespaql+Mz8Y5fv9uh7FE+nfRvQUWBOauDIpbY9HQRVlaKvRx6R1rg7nukHRxxE5
+         CW1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXzy5klCf48bSgj1DFSs9kihsjUnUfiPg8JS1P7HapQbvMJH0S5nBUrljyu1osodXcGgb4MN420V9DQfHMEI1IxFu7412E1k/pL5A==
+X-Gm-Message-State: AOJu0YxnekfiQOsxHeLfImEok8UecXoWHD7Hmguo3XEiK95lVTgEBo2M
+	u8k50saptDA/I6XVAwCQQZMODnKyjNnAYM330giPZDRyy2Gp+G/QvMeCB192gJI=
+X-Google-Smtp-Source: AGHT+IEkRJptF+yJLHlQoKp30dUDbXDqMnSMJA9iS2RvxoRFsvlFT1i8S85A1astV7Xk0uWHBXz5XA==
+X-Received: by 2002:a05:6a20:c120:b0:1b6:dffa:d6e4 with SMTP id adf61e73a8af0-1bcbb451678mr5750153637.4.1718906277953;
+        Thu, 20 Jun 2024 10:57:57 -0700 (PDT)
+Received: from localhost ([216.228.127.128])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb92c89sm12586864b3a.213.2024.06.20.10.57.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 11:00:28 -0700 (PDT)
-From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"J.M.B. Downing" <jonathan.downing@nautel.com>,
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Yangtao Li <frank.li@vivo.com>,
-	Li Zetao <lizetao1@huawei.com>,
-	Chancel Liu <chancel.liu@nxp.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	alsa-devel@alsa-project.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Cc: Markus Elfring <Markus.Elfring@web.de>
-Subject: [Patch v4 08/10] mtd: rawnand: lpx32xx: Request DMA channels using DT entries
-Date: Thu, 20 Jun 2024 19:56:39 +0200
-Message-Id: <20240620175657.358273-9-piotr.wojtaszczyk@timesys.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
-References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
+        Thu, 20 Jun 2024 10:57:57 -0700 (PDT)
+From: Yury Norov <yury.norov@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
+	Kashyap Desai <kashyap.desai@broadcom.com>,
+	Sumit Saxena <sumit.saxena@broadcom.com>,
+	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+	"James E.J. Bottomley" <jejb@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Nilesh Javali <njavali@marvell.com>,
+	Manish Rangankar <mrangankar@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	mpi3mr-linuxdrv.pdl@broadcom.com,
+	linux-scsi@vger.kernel.org
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Jan Kara <jack@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: [PATCH v4 17/40] scsi: qedi: optimize qedi_get_task_idx() by using find_and_set_bit()
+Date: Thu, 20 Jun 2024 10:56:40 -0700
+Message-ID: <20240620175703.605111-18-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240620175703.605111-1-yury.norov@gmail.com>
+References: <20240620175703.605111-1-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -115,60 +102,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move away from pl08x platform data towards device tree.
+qedi_get_task_idx() opencodes find_and_set_bit(). Simplify it and make the
+whole function a simiple almost one-liner.
 
-Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+CC: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Yury Norov <yury.norov@gmail.com>
 ---
-Changes for v4:
-- This patch is new in v4
+ drivers/scsi/qedi/qedi_main.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
- drivers/mtd/nand/raw/lpc32xx_mlc.c | 10 +---------
- drivers/mtd/nand/raw/lpc32xx_slc.c | 10 +---------
- 2 files changed, 2 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/lpc32xx_mlc.c b/drivers/mtd/nand/raw/lpc32xx_mlc.c
-index 677fcb03f9be..e504e3c5af11 100644
---- a/drivers/mtd/nand/raw/lpc32xx_mlc.c
-+++ b/drivers/mtd/nand/raw/lpc32xx_mlc.c
-@@ -574,15 +574,7 @@ static int lpc32xx_dma_setup(struct lpc32xx_nand_host *host)
- 	struct mtd_info *mtd = nand_to_mtd(&host->nand_chip);
- 	dma_cap_mask_t mask;
+diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
+index cd0180b1f5b9..a6e63a6c25fe 100644
+--- a/drivers/scsi/qedi/qedi_main.c
++++ b/drivers/scsi/qedi/qedi_main.c
+@@ -5,6 +5,7 @@
+  */
  
--	if (!host->pdata || !host->pdata->dma_filter) {
--		dev_err(mtd->dev.parent, "no DMA platform data\n");
--		return -ENOENT;
--	}
--
--	dma_cap_zero(mask);
--	dma_cap_set(DMA_SLAVE, mask);
--	host->dma_chan = dma_request_channel(mask, host->pdata->dma_filter,
--					     "nand-mlc");
-+	host->dma_chan = dma_request_chan(mtd->dev.parent, "rx-tx");
- 	if (!host->dma_chan) {
- 		dev_err(mtd->dev.parent, "Failed to request DMA channel\n");
- 		return -EBUSY;
-diff --git a/drivers/mtd/nand/raw/lpc32xx_slc.c b/drivers/mtd/nand/raw/lpc32xx_slc.c
-index 1c5fa855b9f2..f83a31411bde 100644
---- a/drivers/mtd/nand/raw/lpc32xx_slc.c
-+++ b/drivers/mtd/nand/raw/lpc32xx_slc.c
-@@ -721,15 +721,7 @@ static int lpc32xx_nand_dma_setup(struct lpc32xx_nand_host *host)
- 	struct mtd_info *mtd = nand_to_mtd(&host->nand_chip);
- 	dma_cap_mask_t mask;
+ #include <linux/module.h>
++#include <linux/find_atomic.h>
+ #include <linux/pci.h>
+ #include <linux/kernel.h>
+ #include <linux/if_arp.h>
+@@ -1824,20 +1825,13 @@ int qedi_get_task_idx(struct qedi_ctx *qedi)
+ {
+ 	s16 tmp_idx;
  
--	if (!host->pdata || !host->pdata->dma_filter) {
--		dev_err(mtd->dev.parent, "no DMA platform data\n");
--		return -ENOENT;
--	}
+-again:
+-	tmp_idx = find_first_zero_bit(qedi->task_idx_map,
+-				      MAX_ISCSI_TASK_ENTRIES);
++	tmp_idx = find_and_set_bit(qedi->task_idx_map, MAX_ISCSI_TASK_ENTRIES);
+ 
+ 	if (tmp_idx >= MAX_ISCSI_TASK_ENTRIES) {
+ 		QEDI_ERR(&qedi->dbg_ctx, "FW task context pool is full.\n");
+ 		tmp_idx = -1;
+-		goto err_idx;
+ 	}
+ 
+-	if (test_and_set_bit(tmp_idx, qedi->task_idx_map))
+-		goto again;
 -
--	dma_cap_zero(mask);
--	dma_cap_set(DMA_SLAVE, mask);
--	host->dma_chan = dma_request_channel(mask, host->pdata->dma_filter,
--					     "nand-slc");
-+	host->dma_chan = dma_request_chan(mtd->dev.parent, "rx-tx");
- 	if (!host->dma_chan) {
- 		dev_err(mtd->dev.parent, "Failed to request DMA channel\n");
- 		return -EBUSY;
+-err_idx:
+ 	return tmp_idx;
+ }
+ 
 -- 
-2.25.1
+2.43.0
 
 
