@@ -1,226 +1,297 @@
-Return-Path: <linux-kernel+bounces-223502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD08911429
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:14:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A56991142C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA8C71F22DA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C16F1C2091E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C8413664C;
-	Thu, 20 Jun 2024 21:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="epLlO/wD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209EC140E30;
+	Thu, 20 Jun 2024 21:13:34 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69288139CE5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718918007; cv=fail; b=ROUN+s6xvKAW+UQSGfTAp/nrDFFw7rmgWfDQxO4SAPjR/AZorpq1cXMtk55tGWLC6m9PXZubvFt9vwoGAYNtXx2ubnyE50B7nLIElBQeT0RpkQyQMKawwbmmYb+u5yel3ZHGodR9SQanHZO7sDP4oT5XsfkURPReO/8DGGQVlNQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718918007; c=relaxed/simple;
-	bh=JZ2qtiCUPZZMmNcadcwOPTUXDsLWs540P16aQOJmpio=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PDDfg5JIviljCTr5BQTtapn82fnAckCrNpTjWv91ul+bg3Muo0zTboQpBr2oojMk4bykWRtI6Sa+XlcmcrTVl1alH4VWP71A2NEom4oo5nfxmWIlSh7zRyD+e47ZmiRhHaZmoiI0wowVez0haEmQ0yXFY3VBew78dcgcLHOxcnA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=epLlO/wD; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718918005; x=1750454005;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=JZ2qtiCUPZZMmNcadcwOPTUXDsLWs540P16aQOJmpio=;
-  b=epLlO/wDdWWcub5iEOhxNnHyVXX2+N/nHuBEkSILoPSymKxBoilqeNcf
-   71/jNOxP0S79S767AOesDtley/OzeKE2r7Lg7eyuWeGuM7XVXGsBkP0OE
-   IdkgpHHLKN+o7rkmtJ6pnvUF3NJONxO5cTxx3DYW8zxDANMp8pXeOSycF
-   aqHDikZTF3MKjtQgwOfov22PGk83h+1WGc4A0ODFzG0qjpPsKUpI+Goeg
-   w3XYTcb5SMwnZ08PjmbsjXX7kJZHiapYVwb1MXtOo51rgYv970EwgTnlR
-   vpSSDVJAutqIIhWDxU95WTmNBubKNUrVZG0RVmC5UM/caZ6d0398TPw6j
-   w==;
-X-CSE-ConnectionGUID: 6B5p02v+QzmFdfCCXVGlyg==
-X-CSE-MsgGUID: 8nXmO+wsSqiJiDFulPA/Jg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="33473930"
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="33473930"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 14:13:25 -0700
-X-CSE-ConnectionGUID: ImGOycAtR86jreki3Pko3A==
-X-CSE-MsgGUID: 1ajpSEuQSU+SdssSVCz+Rw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="46719064"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Jun 2024 14:13:25 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 20 Jun 2024 14:13:24 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 20 Jun 2024 14:13:24 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 20 Jun 2024 14:13:24 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IfbpYuD5QMoGSBdiTJasPhaM7qP3izP8UYrQEu5qfEY0oEcAax/IREVshvu1dM5ZZ6zMPBCaSHf7B/6oa2Hfu7nOfmInZ4yS9PzA7q10uyo6zxDihFtedbYA1+Lk00Vi9kK2CfaONnqrFfnXA9Rr8vgM47wvXlFC+MMHAAsmQBHAB2pckymnORWQhO4qbi2tcmQNLe8l2FjpicR0pi4OvApi1yvQg3+YZx4fCaIVrZTlCv2UmX/16wTpKnZKXxpSLNklfe/MeXxQu4Wz1hiXrlWIwwDUfUtAt4J7/sfX9UJ6ht5Kfktr+mSg5lJS/8yc+UCJp3CVVnNylOroCfxdmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2Ng7Rg4opEEtyi3sya2E3wHLICKK5dUtBgnULrejsXg=;
- b=nfTW+N5ahmwyvSJr8JXvNDCXvbu25k73eeHf8vVMNpoiVGPx87mrJHjX6Ep+SXWTtKCthCzyjBCXy6CU18dbuUxEqWspm/XVjnP++WUTNnGGXqYyPj1Yt+oXb2dg7dYh5WYMaYpKr2ICScVD+wQ6ix/0illThvb/cZc7bzCn+kRr5zNqAvDjKUrZMtG46ET60BsHrm9qE+cDZvYzbpJTihCaQYKVVG9dkG7YnmLSmY5+/BQCTVRUpW2xxuC9zoL5iRJT9iCz5GQIrMMg2Dg2r4CdfvjKRS+EPkXqfdpjlLjUo4SC+Y2F5uLl/Vqvxo33Ak2rNbqLInjMx9eohtVziA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by PH8PR11MB6878.namprd11.prod.outlook.com (2603:10b6:510:22a::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Thu, 20 Jun
- 2024 21:13:17 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7698.017; Thu, 20 Jun 2024
- 21:13:16 +0000
-Message-ID: <4f9ef07d-2930-4994-92e5-8a1dc4b047ad@intel.com>
-Date: Thu, 20 Jun 2024 14:13:14 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 02/18] x86/resctrl: Prepare to split rdt_domain
- structure
-To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-	"Maciej Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
-	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
-	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
-	<Dave.Martin@arm.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20240610183528.349198-1-tony.luck@intel.com>
- <20240610183528.349198-3-tony.luck@intel.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <20240610183528.349198-3-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR03CA0143.namprd03.prod.outlook.com
- (2603:10b6:303:8c::28) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABAD7C6EB;
+	Thu, 20 Jun 2024 21:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718918013; cv=none; b=Fi8ioAiVfqRbVPtQYS6qCFqhA0QZ22y+sXDwyj7v4ERXzmvWHTXlkoLriYyk9qDa3DYhm2CQs0quWovjLJsH2fbnBYTvM5XeXKdOMcT1kx8abwYvjnojdZDCByKqnvDxRoWrA+MdKr4p+/nozE4TYbn4Aa5v4ptw0V7IjKTC9n0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718918013; c=relaxed/simple;
+	bh=Dp2GZavLhHcBZK10vk+hzuD37zn4qR0z/2JselQ9tPA=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=FjTgzoiwkaCm9R+zjPjI7GrckDrwRZcF1yRRh160jzKvCnv5cTUPzCo+6i9LWlSor4IcaoGWhP0XNerOf+o2yf5IfM3NmWAs+t1s/U+sd2UuxUojAIeDtlAWEyl5S9xpdBgE1qBYgKXVWM6DsAwuSxREzFiOe6bAMxF/o3lOBFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu; spf=pass smtp.mailfrom=artur-rojek.eu; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=artur-rojek.eu
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C8BAC60003;
+	Thu, 20 Jun 2024 21:13:27 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH8PR11MB6878:EE_
-X-MS-Office365-Filtering-Correlation-Id: c4668a8c-9a08-404d-59d4-08dc916dcd98
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|376011|366013;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Zm91dUgrR010Ti9qYzBnMmJTSjJZZ3Z6aVZHOXB0MFUzckp3SDNZeHV6d3hj?=
- =?utf-8?B?THpGZi9JQVR5ak4rTnZ6WW8zUGdaKzI5OFAxcDZzSmhOdVhxM2xoMkNPVFJM?=
- =?utf-8?B?TFpvdlNYYjNBV2JpL04wdjh4SUZrTUZqbDZOU0c0L2FxS3YwdFFSMUpUTlQ5?=
- =?utf-8?B?a0J5c2RlUWt1bW10aTBvcXFrbHB4NGxTdUdhOXYxZ0J4dVBXM09kQUJjUHk3?=
- =?utf-8?B?ZXpEbXZKUW9LUkJod1JpZDR1OWxyMTVKVjZjQzYzbEE5SS84N1N1WmQ1dVFv?=
- =?utf-8?B?TUQvR0ZiT1NybktFRkc5WGhGZThEcnlqdlB3VHMzeVpFQy95UUt3WXFpY2tW?=
- =?utf-8?B?Y3FQUmtwb1dGL25WTmxWYzl6NWoxZHBNN1Y2MnZoSHREZDNzSnk3cGVvWmFu?=
- =?utf-8?B?cDBMVUFoVDFOVXFyQytQRVUxc3RoZkQ5QlhjR3BFVW5tR24rS0xzZVczaHBn?=
- =?utf-8?B?RElJZnVPeHIxUE5zU1pEZ2ZDRmZMUWdQL1lOQ0ZQZWJ6Uy9icDRDeXJsdWNn?=
- =?utf-8?B?a09lMFBvZGhxV2kvVHJxTStyaHdUZ3JMbW5qZUpHanh4SWpOVGxUMWFFbUhW?=
- =?utf-8?B?aDdYTVRjbTB6dHluaHQ3UFE3bHl3cnpIaGhseG5NUzNrU3B3cmwwdGd5UHRY?=
- =?utf-8?B?YlZtZmpEcmNRVTNCdVJjUDJvcEZOTHRWTDhPL0ZVaGFHZHgwU1dtNmI2M3Q1?=
- =?utf-8?B?bGRyYklEeHBxRTBNZ3JYNHhLYVplZ2g2SjArQTR3UzJmTlBDWk5iSkFPQkF3?=
- =?utf-8?B?ZDdUN1AvaHY2Q1JvSm1nRDN4T0NkYnp6MmxJU3RXbjJaU0RrNDIrZ2VFMGkw?=
- =?utf-8?B?dy9EL0MydmVIQTUvTVBDaFZwZ2lIcEVuVEhFY3RER2FJSVRSZEl1ZUUvZEJB?=
- =?utf-8?B?ZXJhdVhSaGJYd3ZTcEZLdURyb2NMM2JxU0JMbGwzTlRKVkVaTjU3Ris0aFBw?=
- =?utf-8?B?TmRGOXZuNEtIZVhOVTdVWTFkdGhORjlZWjhCNG9kRXB4UFFqSVNGRkZtNC9R?=
- =?utf-8?B?VWdNYWxFTXBmTXFiNk9RS3d0MmVoSFkwek0wbFkzVHpJY3BmTGNPVVJ2aXVY?=
- =?utf-8?B?bUFDUElzNkhMNms3M0VrSkliYW54RTV2T0pGQmw0akx6ZnZtVzNlRFBERGM0?=
- =?utf-8?B?VHV4NHg4UUREVW5zS0JDakpGa3lDZDgwQUp3bGQ3amZPMmIrYStUK0JjNE01?=
- =?utf-8?B?THA3YmFLYktoVGZYMkwrdllaL083SktZc3EvanhDS0h2RHNFUG5NdWFWeUJx?=
- =?utf-8?B?RkJmUS9TZWsrQWVJRnoxK3E1OHVYSTA2Q25Ga1BaRFJVVVJrd3FieUZTcnlq?=
- =?utf-8?B?VjVmVGxyK2c4a2NuRjFBUFFmMDhXNmlZTndDc09kK0hjMmZWZmxTRmVEeXB4?=
- =?utf-8?B?SDBhYUpOaXp0bUt0QnliUWFXVjJ6OVYybjBMUDlCR2t3anJQb0hWajJjMnFr?=
- =?utf-8?B?enQveTIxNHFKMFJkZXFlQ2VIZS9JSFpaWmYyRFdBb3BuV0tOcURuOVN2dFBa?=
- =?utf-8?B?WlBHN2pteno2SEw1LzFSZ3hZS3VySWdId0w3dU1QcnpHNlcwcHpVMXZGVHFm?=
- =?utf-8?B?R2ZtVDk3cHZlNGplRVdHQUxUemVveUZwYU5oZ1VadXlnOGRMUnlQS0lYanNr?=
- =?utf-8?B?WDZpRVQvditwYjdieGliQ2pZQ20rdER2NWZXZWpaVDQ3MmI5RlQrWkx6S2ow?=
- =?utf-8?B?Q2lwRjlPTzIyVHBuRkkwK1NTMVFZY2QvTWNoTlQ2K1YvK1U1VDNQT0MyaUI5?=
- =?utf-8?Q?PTjwZjmeLoSzEtWewaLudew9YEV5tl6q+d1JDQJ?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(366013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RmVXMmlmKzR0Nkt3QWFFQXpWU1V3aUh0T1c1VENLdkUvRFgreENiSVE1bmJj?=
- =?utf-8?B?anFGUkpObjQxNHJIZXhQd0lxZzRvMnhya1ltWldBY0QvM21rSWpIM3ZEaThr?=
- =?utf-8?B?bzZKZk1WZXpndTFYUlNOV21tUkUxUGhsc0JXWGh3VjBqSnZRUCt6SytwS2dp?=
- =?utf-8?B?UXZ2TmdjZzdqQzNFN0xkWWFqQXBERlNzaFo4SEVJWGFPQVJobnp0a1pLTW5L?=
- =?utf-8?B?S3pDdWMwSCttVG9lVTlxQnpqY2xMeG15NUtxYnJvMVBjNk05OHNtNTJpc0JI?=
- =?utf-8?B?dVFYK2NzS25OU0JzWlZLRDh6azdYaUdUOVI0RzVET1QrUXBxL01uNm9JY1Jj?=
- =?utf-8?B?QmRaQWRqRFJLa1FxWG9tdVdZNVRncnA3MGxIUHZEY2hLZ0NENy9aMmZtNTZ2?=
- =?utf-8?B?TFd1R0VORGxrRER3eWNFcTZHMUFYZnIrcEhrc3lpMHBlM0ZPMWZxUHRnMHFO?=
- =?utf-8?B?WUFoOGVPY3pJMUdndFgzT1lmREhSRVJGSFR4ZzdlZGZNMDh2dDZubWdKdis0?=
- =?utf-8?B?MVM5SWROaEZlUkhuejFNK1RCNGRkY01sOFdCcWU2RGR0aG1SM3hQY2dVYzYr?=
- =?utf-8?B?YmdLNDEzMEFXNEZnNUt2cjFMVWxVQ0Fud1ZHWDQxaDIxWHVIci82VnN0bGp5?=
- =?utf-8?B?M1BJbUNLSWszZ1N5cEdjY05QWVZ1WGNPdE1sZ2FSbENJSzYyR2F2YVNMR3B1?=
- =?utf-8?B?dFh2UkF3emowbk1UL2lqOUxldmE3aXp3cFlMK0s1WEJtNk5PRGJmQkxsS0ty?=
- =?utf-8?B?Ny9jQTFkRkxPLy9TQmQzY042SzM4cXo5Q3FTSDRhVWdmSmg3NUNGdTEwTm1j?=
- =?utf-8?B?VlhtdXVHbW1NNEZRam02TmRxZ2JMaVRnZEFaY2FHU1RnYm9hLzhzS1o4Z2hM?=
- =?utf-8?B?eTkySDBsK21KUWlLWnlSZ21kZ3NUakVFU1NIRUZQdHRObTRCSVVsL1V1TFcy?=
- =?utf-8?B?WnpyV0p1REltSmxoenBIdFBhd2hlLzMwcC9WaGsrQ1lmaU1HK0tRZ1JhblBI?=
- =?utf-8?B?dG9CZ2pEMFNISzJNRnZJWDhVYnNsZ282M1lVYXRlVGlnM2VjcVVzMlZFUWw1?=
- =?utf-8?B?ZXJrT204aGRFeC8zazhZTVdIR3M2Q2VDTTJKcjZmS2o1TVBjMjVNNm9MNzA0?=
- =?utf-8?B?Z3gyR25RSjlhWncwQm5YVnJ1dUhtU2t4Y0lJc3dld3A4VmFxZ3F6Y2N0dmlF?=
- =?utf-8?B?UlFlS2FlSEVtNkN5MU9FNzdmZUpodC9SV2EwZDFRWVZ5TWl4M0k1SWxFVFVT?=
- =?utf-8?B?SW9MRXZHdjRDeFRTT2NPaVZGdnpyNFkrbkp4d3FoZU9peXJBRURHU0d0aXFv?=
- =?utf-8?B?dE1zYUxMSGVOZ2J2NllMdkhtTkJjVVZKYzEyZlY1U1czMXRUWk9Lc2YrWnJG?=
- =?utf-8?B?OE1LU3I4dVNqZm9zTExPRjc4U1FGLy9oV2RmUnZVSmZZNWlWUFNLOTJib2Y5?=
- =?utf-8?B?cVI4aTdhT3ZrVzl2ajRrM2QyVC91ME8yN1dQL1FpbVdDMlRCZ1hIRHZaa2h1?=
- =?utf-8?B?eis3a0pFNHpXZmhTd3lHb1dOMzhXVklKS0VERVpIUmhVUzJyanIvOFU1aGl0?=
- =?utf-8?B?eGplMmZkbGRydnFTYUt4YkRsT3J0bFJQdEp6MHdhSEdLVEdKUTU2Q095WlBx?=
- =?utf-8?B?Ym1KbWpUanlLZlZVcFplUk9tdHhESjB6N3IvTThPVUlTZzVzWG9ZbFcwYTZo?=
- =?utf-8?B?UGQ3NjdJQ1gzL01NZDhwRVNHbm9pMVppSVhrYnR6Zmhod3hJZFRJalpTU3JF?=
- =?utf-8?B?SjFkRlY0Tm1SNXNMalhJRkE0NHJ0dDJUVHJrMWMyaFRyblc2SjFsOXJnYlZ5?=
- =?utf-8?B?ekU2dHpwUlRWSkZSbk90MmV5eHV4U1MzcFN0YlFjYitZMExmbmJyeWw4ODVG?=
- =?utf-8?B?QW8xS3pKWFFSU2JIa1Z5R090cnl3dS8xUHhxbVN1MzBNR3BibzNSdGgrOWpV?=
- =?utf-8?B?bzFMRVJUSjhkTnVTMDdWUVJ0V0tIRVpZRUNjTlpHaUdtb0xsdkFHdHdzSUc1?=
- =?utf-8?B?aTZiVmk1L1dxa0VVa2l6akZ3YWlGQmZvdjIrVllqZDNoUm9mT0xLS1doUWYz?=
- =?utf-8?B?YXBWc2s2QWgyOHJLVVpQVlloWVE4cDR4Um5yMFJOYlhHQ0tYZEFRZ2N1Tlps?=
- =?utf-8?B?Z2EwanVPOS8vTmJ4QVRYZEZyTzFmeG9lUktLd3lNbW0wM0hJUFF6V3d0Qktz?=
- =?utf-8?B?L3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4668a8c-9a08-404d-59d4-08dc916dcd98
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 21:13:16.7731
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TY2vKrSoCpRVKwUTvG8Fhg6DKRKcksYzdp/vcpbsQ6FZL98o1Jf1GgE6JoPPtmSSCrldaiMf2qtMhxrfKwNBsJBplIq1lZZex/+kNQKs5rE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6878
-X-OriginatorOrg: intel.com
+Date: Thu, 20 Jun 2024 23:13:27 +0200
+From: Artur Rojek <contact@artur-rojek.eu>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>,
+ Chris Morgan <macromorgan@hotmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Input: adc-joystick - move axes data into the main
+ structure
+In-Reply-To: <ZmkrgTlxNwm_oHxv@google.com>
+References: <ZmkrgTlxNwm_oHxv@google.com>
+Message-ID: <af45d1dd82b6abf5ec3633fdef5093d2@artur-rojek.eu>
+X-Sender: contact@artur-rojek.eu
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: contact@artur-rojek.eu
 
-Hi Tony,
+Hi Dmitry,
 
-On 6/10/24 11:35 AM, Tony Luck wrote:
-> The rdt_domain structure is used for both control and monitor features.
-> It is about to be split into separate structures for these two usages
-> because the scope for control and monitoring features for a resource
-> will be different for future resources.
+On 2024-06-12 07:00, Dmitry Torokhov wrote:
+> There is no need to allocate axes information separately from the main
+> joystick structure so let's fold the allocation and also drop members
+> (such as range, flat and fuzz) that are only used during initialization
+> of the device.
 > 
-> To allow for common code that scans a list of domains looking for a
-> specific domain id, move all the common fields ("list", "id", "cpu_mask")
-> into their own structure within the rdt_domain structure.
-> 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 > ---
+> 
+> v2:
+> 
+> - fixed issue with uninitialized "axes" in adc_joystick_set_axes()
+>   pointed out by Dan Carpenter
+> - fixed issue with checking wrong variable in adc_joystick_probe()
+>   pointed out by Dan Carpenter
+> 
+>  drivers/input/joystick/adc-joystick.c | 113 ++++++++++++++------------
+>  1 file changed, 60 insertions(+), 53 deletions(-)
+> 
+> diff --git a/drivers/input/joystick/adc-joystick.c 
+> b/drivers/input/joystick/adc-joystick.c
+> index 916e78e4dc9f..1e30cbcd8c61 100644
+> --- a/drivers/input/joystick/adc-joystick.c
+> +++ b/drivers/input/joystick/adc-joystick.c
+> @@ -15,19 +15,15 @@
+> 
+>  struct adc_joystick_axis {
+>  	u32 code;
+> -	s32 range[2];
+> -	s32 fuzz;
+> -	s32 flat;
+>  	bool inverted;
+>  };
+> 
+>  struct adc_joystick {
+>  	struct input_dev *input;
+>  	struct iio_cb_buffer *buffer;
+> -	struct adc_joystick_axis *axes;
+>  	struct iio_channel *chans;
+> -	int num_chans;
+> -	bool polled;
+> +	unsigned int num_chans;
+> +	struct adc_joystick_axis axes[] __counted_by(num_chans);
+>  };
+> 
+>  static int adc_joystick_invert(struct input_dev *dev,
+> @@ -135,9 +131,11 @@ static void adc_joystick_cleanup(void *data)
+> 
+>  static int adc_joystick_set_axes(struct device *dev, struct 
+> adc_joystick *joy)
+>  {
+> -	struct adc_joystick_axis *axes;
+> +	struct adc_joystick_axis *axes = joy->axes;
+>  	struct fwnode_handle *child;
+> -	int num_axes, error, i;
+> +	s32 range[2], fuzz, flat;
+> +	unsigned int num_axes;
+> +	int error, i;
+> 
+>  	num_axes = device_get_child_node_count(dev);
+>  	if (!num_axes) {
+> @@ -151,10 +149,6 @@ static int adc_joystick_set_axes(struct device 
+> *dev, struct adc_joystick *joy)
+>  		return -EINVAL;
+>  	}
+> 
+> -	axes = devm_kmalloc_array(dev, num_axes, sizeof(*axes), GFP_KERNEL);
+> -	if (!axes)
+> -		return -ENOMEM;
+> -
+>  	device_for_each_child_node(dev, child) {
+>  		error = fwnode_property_read_u32(child, "reg", &i);
+>  		if (error) {
+> @@ -176,29 +170,25 @@ static int adc_joystick_set_axes(struct device 
+> *dev, struct adc_joystick *joy)
+>  		}
+> 
+>  		error = fwnode_property_read_u32_array(child, "abs-range",
+> -						       axes[i].range, 2);
+> +						       range, 2);
+>  		if (error) {
+>  			dev_err(dev, "abs-range invalid or missing\n");
+>  			goto err_fwnode_put;
+>  		}
+> 
+> -		if (axes[i].range[0] > axes[i].range[1]) {
+> +		if (range[0] > range[1]) {
+>  			dev_dbg(dev, "abs-axis %d inverted\n", i);
+>  			axes[i].inverted = true;
+> -			swap(axes[i].range[0], axes[i].range[1]);
+> +			swap(range[0], range[1]);
+>  		}
+> 
+> -		fwnode_property_read_u32(child, "abs-fuzz", &axes[i].fuzz);
+> -		fwnode_property_read_u32(child, "abs-flat", &axes[i].flat);
+> +		fwnode_property_read_u32(child, "abs-fuzz", &fuzz);
+> +		fwnode_property_read_u32(child, "abs-flat", &flat);
+> 
+>  		input_set_abs_params(joy->input, axes[i].code,
+> -				     axes[i].range[0], axes[i].range[1],
+> -				     axes[i].fuzz, axes[i].flat);
+> -		input_set_capability(joy->input, EV_ABS, axes[i].code);
+> +				     range[0], range[1], fuzz, flat);
+>  	}
+> 
+> -	joy->axes = axes;
+> -
+>  	return 0;
+> 
+>  err_fwnode_put:
+> @@ -206,23 +196,49 @@ static int adc_joystick_set_axes(struct device 
+> *dev, struct adc_joystick *joy)
+>  	return error;
+>  }
+> 
+> +
+> +/*
+> + * Count how many channels we got. NULL terminated.
+> + * Do not check the storage size if using polling.
+> + */
+> +static int adc_joystick_count_channels(struct device *dev,
+> +				       const struct iio_channel *chans,
+> +				       bool polled,
+> +				       unsigned int *num_chans)
 
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+You forgot to assign *num_chans = i; at the end of this function,
+which leaves it uninitialized in the caller context.
 
-Reinette
+> +{
+> +	int bits;
+> +	int i;
+> +
+
+Let's move that "NULL terminated." comment here, since it's about the
+for loop.
+
+With the above comments addressed:
+Acked-by: Artur Rojek <contact@artur-rojek.eu>
+
+Cheers,
+Artur
+
+> +	for (i = 0; chans[i].indio_dev; i++) {
+> +		if (polled)
+> +			continue;
+> +		bits = chans[i].channel->scan_type.storagebits;
+> +		if (!bits || bits > 16) {
+> +			dev_err(dev, "Unsupported channel storage size\n");
+> +			return -EINVAL;
+> +		}
+> +		if (bits != chans[0].channel->scan_type.storagebits) {
+> +			dev_err(dev, "Channels must have equal storage size\n");
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	return i;
+> +}
+> +
+>  static int adc_joystick_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> +	struct iio_channel *chans;
+>  	struct adc_joystick *joy;
+>  	struct input_dev *input;
+> +	unsigned int poll_interval = 0;
+> +	unsigned int num_chans;
+>  	int error;
+> -	int bits;
+> -	int i;
+> -	unsigned int poll_interval;
+> -
+> -	joy = devm_kzalloc(dev, sizeof(*joy), GFP_KERNEL);
+> -	if (!joy)
+> -		return -ENOMEM;
+> 
+> -	joy->chans = devm_iio_channel_get_all(dev);
+> -	if (IS_ERR(joy->chans)) {
+> -		error = PTR_ERR(joy->chans);
+> +	chans = devm_iio_channel_get_all(dev);
+> +	error = PTR_ERR_OR_ZERO(chans);
+> +	if (error) {
+>  		if (error != -EPROBE_DEFER)
+>  			dev_err(dev, "Unable to get IIO channels");
+>  		return error;
+> @@ -236,28 +252,19 @@ static int adc_joystick_probe(struct 
+> platform_device *pdev)
+>  	} else if (poll_interval == 0) {
+>  		dev_err(dev, "Unable to get poll-interval\n");
+>  		return -EINVAL;
+> -	} else {
+> -		joy->polled = true;
+>  	}
+> 
+> -	/*
+> -	 * Count how many channels we got. NULL terminated.
+> -	 * Do not check the storage size if using polling.
+> -	 */
+> -	for (i = 0; joy->chans[i].indio_dev; i++) {
+> -		if (joy->polled)
+> -			continue;
+> -		bits = joy->chans[i].channel->scan_type.storagebits;
+> -		if (!bits || bits > 16) {
+> -			dev_err(dev, "Unsupported channel storage size\n");
+> -			return -EINVAL;
+> -		}
+> -		if (bits != joy->chans[0].channel->scan_type.storagebits) {
+> -			dev_err(dev, "Channels must have equal storage size\n");
+> -			return -EINVAL;
+> -		}
+> -	}
+> -	joy->num_chans = i;
+> +	error = adc_joystick_count_channels(dev, chans, poll_interval != 0,
+> +					    &num_chans);
+> +	if (error)
+> +		return error;
+> +
+> +	joy = devm_kzalloc(dev, struct_size(joy, axes, num_chans), 
+> GFP_KERNEL);
+> +	if (!joy)
+> +		return -ENOMEM;
+> +
+> +	joy->chans = chans;
+> +	joy->num_chans = num_chans;
+> 
+>  	input = devm_input_allocate_device(dev);
+>  	if (!input) {
+> @@ -273,7 +280,7 @@ static int adc_joystick_probe(struct 
+> platform_device *pdev)
+>  	if (error)
+>  		return error;
+> 
+> -	if (joy->polled) {
+> +	if (poll_interval != 0) {
+>  		input_setup_polling(input, adc_joystick_poll);
+>  		input_set_poll_interval(input, poll_interval);
+>  	} else {
+> --
+> 2.45.2.505.gda0bf45e8d-goog
+
 
