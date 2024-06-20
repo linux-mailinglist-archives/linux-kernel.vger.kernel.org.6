@@ -1,407 +1,236 @@
-Return-Path: <linux-kernel+bounces-222262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C315190FEF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:35:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE6490FEF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B50481C20C36
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:35:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 230291C209C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3691A00EB;
-	Thu, 20 Jun 2024 08:33:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D3D19EED6;
-	Thu, 20 Jun 2024 08:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E1E1A3BD3;
+	Thu, 20 Jun 2024 08:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XExCbvbF"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305A1EDB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718872410; cv=none; b=fleisCbj2M2xSbXBkvSxJQVRJiXRkmhC1IeMAa6nccQwejtMMr/rSW2K/KN0I6gDXqpcGfxKwEdjFG7igpnnx/E1SAZBzMQbMkpb5jS338G+nRtL/QnTGo/hn8kSTQ675khYT5PpAGVOZycJKqfXj4hN8ca1CZQCPbGksqUhsaw=
+	t=1718872420; cv=none; b=Fd03zvZrpR/VVN60MHdT9BIITZQmT+RySCAfhGg4R5RyFoI4ZblwuxK1OKRgTO6bRrj6EdxTTGBZVW3C08wTXyFBnEWZ3SUyajcWRSYMiOYSOTksltyiJ1mTIGWGii6A9C+cB4ceA/Hp4wO1x6Xp3WCEELHawcKEDoRCbG3MBJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718872410; c=relaxed/simple;
-	bh=4sCayta4Xgqg0rpdM1WQ6ZP96jaFXpewsU5omKUbGk8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=M7ioFHrmFaNJ5f/t3zdtn9FzfqbBJ9ry6YYXtwmfN1GqyUko8wbYQ3Mp+E+UpG6ENWv6YICPO7QLnWDGtY5yZlRN0j9UUTzei5rn3wt90SPgqzcjxPJeBbkXN1snqWoF700P5D6L99E7rYfJUKGJJ/jS9A9D5eKqSlGvJjug7Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3BBDBDA7;
-	Thu, 20 Jun 2024 01:33:51 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C169B3F64C;
-	Thu, 20 Jun 2024 01:33:24 -0700 (PDT)
-Message-ID: <b31a73f6-b5fe-4ea8-8259-652b344a4cff@arm.com>
-Date: Thu, 20 Jun 2024 09:33:24 +0100
+	s=arc-20240116; t=1718872420; c=relaxed/simple;
+	bh=mKIH8VnmavGZbtbsQSzKmnqw6Vs6IGl4hPjAk1+cbR4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UfSbKtivAujd1WWNmX1BcwKk43BX+7pLaNBoJ9+VBrZ3OcD6770AQ6O7UwFkI3ecwKzQ58wsQtBCdwU1C9ethX2RX/e1HNp4AkXxct7FcY9DXGylI85snc5lqwDQXu6S/aAbx9HPOOpVquli7Qaum9MC0//c8ofbEOtciWV5GJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XExCbvbF; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6b06b78e716so4010006d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:33:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718872418; x=1719477218; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eZbdM0CxTH317iSXQAcaPR6qww8Y1BrNhZlyqW4F0P8=;
+        b=XExCbvbFPRdz3pP810TG6wI7yMsiippB0Vk+j0KuGz2Mx1dw21Un/YN1wIQKMF2xcf
+         UXpH/6wDJ5aKn7cxc7b8sAovjWgPO5isrnhlGOB6OKDJ9+gfKACXvWcUTdbhl6nIhO8U
+         bXT5/eF5zRnEGCS4DpIl2Wy2ZYpuIkBTYgTcu6wtdWviENBjmJJCx9v8ez8ISB6jdFHJ
+         6DgWLl4Ve2sZgCMH/QW1ILf8rHLPj2+c0Vd9ERczJzodMSuAopUNKWqmxS+kqN5tS/1R
+         pde976PtNgWeZ+uzfCE2SLiEFgcx8IDQZK2afBtB+KH/yifoCoHeNOMxl1OE+KRu+TuU
+         hDMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718872418; x=1719477218;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eZbdM0CxTH317iSXQAcaPR6qww8Y1BrNhZlyqW4F0P8=;
+        b=htv0GRIPi6UezWt4xjsQGWZ5iqOIdMLDHiJ4QhsvfeAethTQyUSjsNvPU7eak56M4K
+         2HPilUGG1F1vai3knzVDKotWlBhLiaNSpZEJgCHjZjLHskh5d+P0Ww70AHn1m11odhvR
+         n7r9m5IfF8x6aavgup2hzayQO76Ln6m5vLQX8CwFfk+c8uTB6t2gNHzGb27zADVMweU2
+         w/Nnl6Ty9w15XUycpTzGTRvKSXFvCkyx6LwVaOMSExmMgG/7rIWJoyaNOdyWaIMlsMaU
+         Ftk/rAMLXEeHscGjq8/WdqzXdixIFHwR93ZPNsPrYUPWikHZe32S8x4XO3NpM/QH1wk4
+         shtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlLYZSXd34H5jAeHaKuC2WRMxiaFN9HRsJftVL+EmTFojGBArtSESi4yOgBN9eRrB9pwo4Jglhgq0TbcV+QZoPEVBe3NKBHdquNym1
+X-Gm-Message-State: AOJu0YzbxEDIooyYhqWQH5a5fJ4xgHaeOHyscZrPP36dM1Lc+qYsQpK3
+	n2HzLlZC4Slm+40JkK2SjQtpa9sk1x2uqr1phkJKLEM2PtchU7G/iCvKlNp7xoTW76CjgpBGuHf
+	sKBa2p3T+AetZ5LhhXouGhrMqekk=
+X-Google-Smtp-Source: AGHT+IHMXqSWRTBO6gCHHzNgpymBs/tO7JwH3tmswJuxf6bXw5SnGPcIDCXJ3dQmz1AYgwfT2a6e8Gu7aVFe4Vtri6M=
+X-Received: by 2002:ad4:58b0:0:b0:6b0:7fc4:7744 with SMTP id
+ 6a1803df08f44-6b501e48e81mr44918136d6.29.1718872418029; Thu, 20 Jun 2024
+ 01:33:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/perf: Handle perftool-testsuite_probe testcases
- fail when kernel debuginfo is not present
-From: James Clark <james.clark@arm.com>
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- linux-perf-users <linux-perf-users@vger.kernel.org>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Kajol Jain <kjain@linux.ibm.com>,
- Disha Goel <disgoel@linux.vnet.ibm.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>, Ian Rogers <irogers@google.com>,
- Namhyung Kim <namhyung@kernel.org>
-References: <20240617122121.7484-1-atrajeev@linux.vnet.ibm.com>
- <588beeaf-2015-40f4-a34b-e36556e20707@arm.com>
- <DA51C986-34EE-4849-B9C4-DB69E2ECF75C@linux.vnet.ibm.com>
- <5a0edf86-fe42-41d6-aa9a-8e88c1ad3f4c@arm.com>
-Content-Language: en-US
-In-Reply-To: <5a0edf86-fe42-41d6-aa9a-8e88c1ad3f4c@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240617231137.80726-1-21cnbao@gmail.com> <20240617231137.80726-3-21cnbao@gmail.com>
+ <f9cb01c2-967f-406c-9304-5e31a82b6b0f@redhat.com>
+In-Reply-To: <f9cb01c2-967f-406c-9304-5e31a82b6b0f@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 20 Jun 2024 20:33:26 +1200
+Message-ID: <CAGsJ_4yuBJW578sL5dsKvWP2A=x54zV5b+qbwfy9vj8rFiQM1Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] mm: use folio_add_new_anon_rmap() if folio_test_anon(folio)==false
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, 
+	linux-kernel@vger.kernel.org, mhocko@suse.com, ryan.roberts@arm.com, 
+	shy828301@gmail.com, surenb@google.com, v-songbaohua@oppo.com, 
+	willy@infradead.org, ying.huang@intel.com, yosryahmed@google.com, 
+	yuzhao@google.com, Shuai Yuan <yuanshuai@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jun 20, 2024 at 7:46=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 18.06.24 01:11, Barry Song wrote:
+> > From: Barry Song <v-songbaohua@oppo.com>
+> >
+> > For the !folio_test_anon(folio) case, we can now invoke folio_add_new_a=
+non_rmap()
+> > with the rmap flags set to either EXCLUSIVE or non-EXCLUSIVE. This acti=
+on will
+> > suppress the VM_WARN_ON_FOLIO check within __folio_add_anon_rmap() whil=
+e initiating
+> > the process of bringing up mTHP swapin.
+> >
+> >   static __always_inline void __folio_add_anon_rmap(struct folio *folio=
+,
+> >                   struct page *page, int nr_pages, struct vm_area_struc=
+t *vma,
+> >                   unsigned long address, rmap_t flags, enum rmap_level =
+level)
+> >   {
+> >           ...
+> >           if (unlikely(!folio_test_anon(folio))) {
+> >                   VM_WARN_ON_FOLIO(folio_test_large(folio) &&
+> >                                    level !=3D RMAP_LEVEL_PMD, folio);
+> >           }
+> >           ...
+> >   }
+> >
+> > It also improves the code=E2=80=99s readability. Currently, all new ano=
+nymous
+> > folios calling folio_add_anon_rmap_ptes() are order-0. This ensures
+> > that new folios cannot be partially exclusive; they are either entirely
+> > exclusive or entirely shared.
+> >
+> > Suggested-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> > Tested-by: Shuai Yuan <yuanshuai@oppo.com>
+> > ---
+> >   mm/memory.c   |  8 ++++++++
+> >   mm/swapfile.c | 13 +++++++++++--
+> >   2 files changed, 19 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 1f24ecdafe05..620654c13b2f 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -4339,6 +4339,14 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+> >       if (unlikely(folio !=3D swapcache && swapcache)) {
+> >               folio_add_new_anon_rmap(folio, vma, address, RMAP_EXCLUSI=
+VE);
+> >               folio_add_lru_vma(folio, vma);
+> > +     } else if (!folio_test_anon(folio)) {
+> > +             /*
+> > +              * We currently only expect small !anon folios, for which=
+ we now
+> > +              * that they are either fully exclusive or fully shared. =
+If we
+> > +              * ever get large folios here, we have to be careful.
+> > +              */
+> > +             VM_WARN_ON_ONCE(folio_test_large(folio));
+> > +             folio_add_new_anon_rmap(folio, vma, address, rmap_flags);
+> >       } else {
+> >               folio_add_anon_rmap_ptes(folio, page, nr_pages, vma, addr=
+ess,
+> >                                       rmap_flags);
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index ae1d2700f6a3..69efa1a57087 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -1908,8 +1908,17 @@ static int unuse_pte(struct vm_area_struct *vma,=
+ pmd_t *pmd,
+> >               VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
+> >               if (pte_swp_exclusive(old_pte))
+> >                       rmap_flags |=3D RMAP_EXCLUSIVE;
+> > -
+> > -             folio_add_anon_rmap_pte(folio, page, vma, addr, rmap_flag=
+s);
+> > +             /*
+> > +              * We currently only expect small !anon folios, for which=
+ we now that
+> > +              * they are either fully exclusive or fully shared. If we=
+ ever get
+> > +              * large folios here, we have to be careful.
+> > +              */
+> > +             if (!folio_test_anon(folio)) {
+> > +                     VM_WARN_ON_ONCE(folio_test_large(folio));
+>
+> (comment applies to both cases)
+>
+> Thinking about Hugh's comment, we should likely add here:
+>
+> VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
+>
+> [the check we are removing from __folio_add_anon_rmap()]
+>
+> and document for folio_add_new_anon_rmap() in patch #1, that when
+> dealing with folios that might be mapped concurrently by others, the
+> folio lock must be held.
+
+I assume you mean something like the following for patch#1?
+
+diff --git a/mm/rmap.c b/mm/rmap.c
+index df1a43295c85..20986b25f1b2 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1394,7 +1394,8 @@ void folio_add_anon_rmap_pmd(struct folio
+*folio, struct page *page,
+  *
+  * Like folio_add_anon_rmap_*() but must only be called on *new* folios.
+  * This means the inc-and-test can be bypassed.
+- * The folio does not have to be locked.
++ * The folio doesn't necessarily need to be locked while it's
+exclusive unless two threads
++ * map it concurrently. However, the folio must be locked if it's shared.
+  *
+  * If the folio is pmd-mappable, it is accounted as a THP.
+  */
+@@ -1406,6 +1407,7 @@ void folio_add_new_anon_rmap(struct folio
+*folio, struct vm_area_struct *vma,
+        int nr_pmdmapped =3D 0;
+
+        VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
++       VM_WARN_ON_FOLIO(!exclusive && !folio_test_locked(folio), folio);
+        VM_BUG_ON_VMA(address < vma->vm_start ||
+                        address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
+        __folio_set_swapbacked(folio);
 
 
-
-On 18/06/2024 11:44, James Clark wrote:
-> 
-> 
-> On 17/06/2024 17:47, Athira Rajeev wrote:
->>
->>
->>> On 17 Jun 2024, at 8:30 PM, James Clark <james.clark@arm.com> wrote:
->>>
->>>
->>>
->>> On 17/06/2024 13:21, Athira Rajeev wrote:
->>>> Running "perftool-testsuite_probe" fails as below:
->>>>
->>>> ./perf test -v "perftool-testsuite_probe"
->>>> 83: perftool-testsuite_probe  : FAILED
->>>>
->>>> There are three fails:
->>>>
->>>> 1. Regexp not found: "\s*probe:inode_permission(?:_\d+)?\s+\(on inode_permission(?:[:\+][0-9A-Fa-f]+)?@.+\)"
->>>>   -- [ FAIL ] -- perf_probe :: test_adding_kernel :: listing added probe :: perf probe -l (output regexp parsing)
->>>>
->>>
->>> On a machine where NO_DEBUGINFO gets set, this one skips for me. But on
->>> a machine where there _is_ debug info this test still fails.
->>>
->>> But in both cases the probe looks like it was added successfully. So I'm
->>> wondering if this one does need to be skipped, or it's just always
->>> failing? Do you have this test passing anywhere where there is debug info?
->>>
->>> The list command looks like it successfully lists the probe for me in
->>> both cases, it just doesn't have an address on the end:
->>>
->>> perf list 'probe:*'
->>>
->>>   probe:inode_permission (on inode_permission)
->>>
->>> Does the missing address mean anything or is it just not handled
->>> properly by the test?
->>>
->>> Ironically the machine that _does_ pass the debug info test also prints
->>> this, but it looks like it still adds and lists the probe correctly:
->>>
->>>  perf probe -l probe:*
->>>
->>>  Failed to find debug information for address 0xffff80008047ac30
->>>    probe:inode_permission (on inode_permission)
->>
->> Hi James,
->>
->> Thanks for checking this patch.
->>
->> In environment where kernel is compiled with debuginfo:
->>
->> 1) Add probe point
->>
->> # ./perf probe --add inode_permission
->> Added new event:
->>   probe:inode_permission (on inode_permission)
->>
->> You can now use it in all perf tools, such as:
->>
->> perf record -e probe:inode_permission -aR sleep 1
->>
->>
->> 2) Check using perf probe -l
->>
->> # ./perf probe -l
->> probe:inode_permission (on inode_permission:2@fs/namei.c)
->>
->> With debuginfo, the result has additional info.
->>  The test looks for matching pattern "\s*probe:inode_permission(?:_\d+)?\s+\(on inode_permission(?:[:\+][0-9A-Fa-f]+)?@.+\)” in result
->> where it is expecting "inode_permission:2@fs/namei.c” . The “@fs/namei.c” info needs debuginfo here.
->>
-> 
-> Hi Athira,
-> 
-> Maybe there is a real bug and this patch is ok to go in and we should leave
-> it as failing. Probe -L shows there is debug info available for inode_permission:
-> 
->    $ ./perf probe -L inode_permission
-> 
->   <inode_permission@linux/fs/namei.c:0>
->       0  int inode_permission(struct mnt_idmap *idmap,
->                              struct inode *inode, int mask)
->   ... more source code ...
-> 
-> But probe -l has an error which could be related to the following
-> line not showing the filename details:
-> 
->   $ ./perf probe -l
->   
->   Failed to find debug information for address 0xffff80008047ac30
->     probe:inode_permission (on inode_permission)
-> 
-> I'm running a clang kernel and sometimes I see issues with debug
-> info or toolchain stuff, that could be the reason.
-> 
->> The function I am using in patch to check for debuginfo (skip_if_no_debuginfo) is from "tests/shell/lib/probe_vfs_getname.sh"
->>
->> skip_if_no_debuginfo() {
->>         add_probe_vfs_getname -v 2>&1 | grep -E -q "^(Failed to find the path for the kernel|Debuginfo-analysis is not supported)|(file has no debug information)" && return 2
->>         return 1
->> }
->>
->> So the debuginfo test passes in your case since the log has "Failed to find debug information” which is not present in above grep string. 
->>
-> 
-> It passes because there is debug info for getname_flags() which is what the
-> debug info check looks for. After some greps and seds it ultimately does this
-> which succeeds:
-> 
->  $ perf probe "vfs_getname=getname_flags:72 pathname=result->name:string"
-> 
->  Added new event:
->     probe:vfs_getname    (on getname_flags:72 with pathname=result->name:string)
-> 
-> "Failed to find debug information for address" is only ever printed
-> with "perf probe -l" when there are probes added. The stderr
-> of that command is never piped into any grep anyway, which is why I
-> see it on the test output.
-> 
-> So "probe -L" is working but "probe -l" isn't. Ultimately it looks like a real
-> issue and we should leave the failure in.
-> 
-
-To avoid confusion, by leave it in I mean this debuginfo patch is ok and
-the failure I'm seeing is caused by something else.
-
-Reviewed-by: James Clark <james.clark@arm.com>
-
->> James,
->>
->> Only “perf probe -l” subtest fails with debuginfo enabled or other two subtests as well? Can you also share result on how other two subtests behaves ? 
->>
->> 1. Fail 2 :
->>    perf probe -nf --max-probes=512 -a 'vfs_* $params’
->>   
->>
->> 2. Fail 3 :
->>   perf probe 'vfs_read somenonexistingrandomstuffwhichisalsoprettylongorevenlongertoexceed64'
->>
-> 
-> Here's the full output:
-> 
-> $ sudo ./perf test -vvv "testsuite_probe"
->  84: perftool-testsuite_probe:
-> --- start ---
-> test child forked, pid 4872
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: adding probe inode_permission :: 
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: adding probe inode_permission :: -a
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: adding probe inode_permission :: --add
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: listing added probe :: perf list
-> Failed to find debug information for address 0xffff80008047ac30
-> Regexp not found: "\s*probe:inode_permission(?:_\d+)?\s+\(on inode_permission(?:[:\+][0-9A-Fa-f]+)?@.+\)"
-> -- [ FAIL ] -- perf_probe :: test_adding_kernel :: listing added probe :: perf probe -l (output regexp parsing)
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: using added probe
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: deleting added probe
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: listing removed probe (should NOT be listed)
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: dry run :: adding probe
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: force-adding probes :: first probe adding
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: force-adding probes :: second probe adding (without force)
-> Failed to find debug information for address 0xffff80008047ac30
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: force-adding probes :: second probe adding (with force)
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: using doubled probe
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: removing multiple probes
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: wildcard adding support
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: non-existing variable
-> -- [ PASS ] -- perf_probe :: test_adding_kernel :: function with retval :: add
-> Regexp not found: "^\[\s+perf\s+record:\s+Woken up [0-9\.]+ times? to write data\s+\].*$"
-> Regexp not found: "^\[\s+perf\s+record:\s+Captured and wrote [0-9\.]+\s*MB\s+(?:[\w\+\.-]*(?:(?:[\w\+\.-]+)?(?:\/[\w\+\.-]+)+)?\/)?perf\.data(?:\.\d+)?\s*\(~?[0-9\.]+ samples\)\s+\].*$"
-> -- [ FAIL ] -- perf_probe :: test_adding_kernel :: function with retval :: record (command exitcode + output regexp parsing)
-> zero-sized data (/tmp/perftool-testsuite_probe.VMU/perf_probe/perf.data), nothing to do!
-> Regexp not found: "\s*cat\s+[0-9\.]+\s+\[[0-9\.]+\]\s+[0-9\.]+:\s+probe:inode_permission\w*:\s+\([0-9A-Fa-f]+\s+<\-\s+[0-9A-Fa-f]+\)\s+arg1=[0-9A-Fa-f]+"
-> -- [ FAIL ] -- perf_probe :: test_adding_kernel :: function argument probing :: script (command exitcode + output regexp parsing)
-> ## [ FAIL ] ## perf_probe :: test_adding_kernel SUMMARY :: 3 failures found
-> ---- end(-1) ----
->  84: perftool-testsuite_probe                                        : FAILED!
-> 
-> 
->>
->> Also since you mentioned this gets skipped when debuginfo is not enabled, curious to know what is debuginfo message from your setup with debuginfo disabled.
->>
-> 
->   $ sudo ./perf probe -L getname_flags
->   Failed to find the path for the kernel: Invalid ELF file
->     Error: Failed to show lines.
-> 
->> Thanks again for checking.
->>
->> Athira
->>
->>>
->>
->>
->>>
->>>> 2. Regexp not found: "probe:vfs_mknod"
->>>>   Regexp not found: "probe:vfs_create"
->>>>   Regexp not found: "probe:vfs_rmdir"
->>>>   Regexp not found: "probe:vfs_link"
->>>>   Regexp not found: "probe:vfs_write"
->>>>   -- [ FAIL ] -- perf_probe :: test_adding_kernel :: wildcard adding support (command exitcode + output regexp parsing)
->>>>
->>>> 3. Regexp not found: "Failed to find"
->>>>   Regexp not found: "somenonexistingrandomstuffwhichisalsoprettylongorevenlongertoexceed64"
->>>>   Regexp not found: "in this function|at this address"
->>>>   Line did not match any pattern: "The /boot/vmlinux file has no debug information."
->>>>   Line did not match any pattern: "Rebuild with CONFIG_DEBUG_INFO=y, or install an appropriate debuginfo package."
->>>>
->>>> These three tests depends on kernel debug info.
->>>> 1. Fail 1 expects file name along with probe which needs debuginfo
->>>> 2. Fail 2 :
->>>>    perf probe -nf --max-probes=512 -a 'vfs_* $params'
->>>>    Debuginfo-analysis is not supported.
->>>>     Error: Failed to add events.
->>>>
->>>> 3. Fail 3 :
->>>>   perf probe 'vfs_read somenonexistingrandomstuffwhichisalsoprettylongorevenlongertoexceed64'
->>>>   Debuginfo-analysis is not supported.
->>>>   Error: Failed to add events.
->>>>
->>>> There is already helper function skip_if_no_debuginfo in
->>>> lib/probe_vfs_getname.sh which does perf probe and returns
->>>> "2" if debug info is not present. Use the skip_if_no_debuginfo
->>>> function and skip only the three tests which needs debuginfo
->>>> based on the result.
->>>>
->>>> With the patch:
->>>>
->>>>    83: perftool-testsuite_probe:
->>>>   --- start ---
->>>>   test child forked, pid 3927
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: adding probe inode_permission ::
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: adding probe inode_permission :: -a
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: adding probe inode_permission :: --add
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: listing added probe :: perf list
->>>>   Regexp not found: "\s*probe:inode_permission(?:_\d+)?\s+\(on inode_permission(?:[:\+][0-9A-Fa-f]+)?@.+\)"
->>>>   -- [ SKIP ] -- perf_probe :: test_adding_kernel :: 2 2 Skipped due to missing debuginfo :: testcase skipped
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: using added probe
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: deleting added probe
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: listing removed probe (should NOT be listed)
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: dry run :: adding probe
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: force-adding probes :: first probe adding
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: force-adding probes :: second probe adding (without force)
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: force-adding probes :: second probe adding (with force)
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: using doubled probe
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: removing multiple probes
->>>>   Regexp not found: "probe:vfs_mknod"
->>>>   Regexp not found: "probe:vfs_create"
->>>>   Regexp not found: "probe:vfs_rmdir"
->>>>   Regexp not found: "probe:vfs_link"
->>>>   Regexp not found: "probe:vfs_write"
->>>>   -- [ SKIP ] -- perf_probe :: test_adding_kernel :: 2 2 Skipped due to missing debuginfo :: testcase skipped
->>>>   Regexp not found: "Failed to find"
->>>>   Regexp not found: "somenonexistingrandomstuffwhichisalsoprettylongorevenlongertoexceed64"
->>>>   Regexp not found: "in this function|at this address"
->>>>   Line did not match any pattern: "The /boot/vmlinux file has no debug information."
->>>>   Line did not match any pattern: "Rebuild with CONFIG_DEBUG_INFO=y, or install an appropriate debuginfo package."
->>>>   -- [ SKIP ] -- perf_probe :: test_adding_kernel :: 2 2 Skipped due to missing debuginfo :: testcase skipped
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: function with retval :: add
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: function with retval :: record
->>>>   -- [ PASS ] -- perf_probe :: test_adding_kernel :: function argument probing :: script
->>>>   ## [ PASS ] ## perf_probe :: test_adding_kernel SUMMARY
->>>>   ---- end(0) ----
->>>>   83: perftool-testsuite_probe                                        : Ok
->>>>
->>>> Only the three specific tests are skipped and remaining
->>>> ran successfully.
->>>>
->>>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
->>>> ---
->>>> .../shell/base_probe/test_adding_kernel.sh    | 31 +++++++++++++++++--
->>>> 1 file changed, 28 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/tools/perf/tests/shell/base_probe/test_adding_kernel.sh b/tools/perf/tests/shell/base_probe/test_adding_kernel.sh
->>>> index 63bb8974b38e..187dc8d4b163 100755
->>>> --- a/tools/perf/tests/shell/base_probe/test_adding_kernel.sh
->>>> +++ b/tools/perf/tests/shell/base_probe/test_adding_kernel.sh
->>>> @@ -21,8 +21,18 @@
->>>> THIS_TEST_NAME=`basename $0 .sh`
->>>> TEST_RESULT=0
->>>>
->>>> +# shellcheck source=lib/probe_vfs_getname.sh
->>>> +. "$(dirname "$0")/../lib/probe_vfs_getname.sh"
->>>> +
->>>> TEST_PROBE=${TEST_PROBE:-"inode_permission"}
->>>>
->>>> +# set NO_DEBUGINFO to skip testcase if debuginfo is not present
->>>> +# skip_if_no_debuginfo returns 2 if debuginfo is not present
->>>> +skip_if_no_debuginfo
->>>> +if [ $? -eq 2 ]; then
->>>> + NO_DEBUGINFO=1
->>>> +fi
->>>> +
->>>> check_kprobes_available
->>>> if [ $? -ne 0 ]; then
->>>> print_overall_skipped
->>>> @@ -67,7 +77,12 @@ PERF_EXIT_CODE=$?
->>>> ../common/check_all_patterns_found.pl "\s*probe:${TEST_PROBE}(?:_\d+)?\s+\(on ${TEST_PROBE}(?:[:\+]$RE_NUMBER_HEX)?@.+\)" < $LOGS_DIR/adding_kernel_list-l.log
->>>> CHECK_EXIT_CODE=$?
->>>>
->>>> -print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "listing added probe :: perf probe -l"
->>>> +if [ $NO_DEBUGINFO ] ; then
->>>> + print_testcase_skipped $NO_DEBUGINFO $NO_DEBUGINFO "Skipped due to missing debuginfo"
->>>> +else
->>>> + print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "listing added probe :: perf probe -l"
->>>> +fi
->>>> +
->>>> (( TEST_RESULT += $? ))
->>>>
->>>>
->>>> @@ -208,7 +223,12 @@ PERF_EXIT_CODE=$?
->>>> ../common/check_all_patterns_found.pl "probe:vfs_mknod" "probe:vfs_create" "probe:vfs_rmdir" "probe:vfs_link" "probe:vfs_write" < $LOGS_DIR/adding_kernel_adding_wildcard.err
->>>> CHECK_EXIT_CODE=$?
->>>>
->>>> -print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "wildcard adding support"
->>>> +if [ $NO_DEBUGINFO ] ; then
->>>> + print_testcase_skipped $NO_DEBUGINFO $NO_DEBUGINFO "Skipped due to missing debuginfo"
->>>> +else
->>>> + print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "wildcard adding support"
->>>> +fi
->>>> +
->>>> (( TEST_RESULT += $? ))
->>>>
->>>>
->>>> @@ -232,7 +252,12 @@ CHECK_EXIT_CODE=$?
->>>> ../common/check_no_patterns_found.pl "$RE_SEGFAULT" < $LOGS_DIR/adding_kernel_nonexisting.err
->>>> (( CHECK_EXIT_CODE += $? ))
->>>>
->>>> -print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "non-existing variable"
->>>> +if [ $NO_DEBUGINFO ]; then
->>>> + print_testcase_skipped $NO_DEBUGINFO $NO_DEBUGINFO "Skipped due to missing debuginfo"
->>>> +else
->>>> + print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "non-existing variable"
->>>> +fi
->>>> +
->>>> (( TEST_RESULT += $? ))
->>>>
->>>>
->>
-> 
+>
+> > +                     folio_add_new_anon_rmap(folio, vma, addr, rmap_fl=
+ags);
+> > +             } else {
+> > +                     folio_add_anon_rmap_pte(folio, page, vma, addr, r=
+map_flags);
+> > +             }
+> >       } else { /* ksm created a completely new copy */
+> >               folio_add_new_anon_rmap(folio, vma, addr, RMAP_EXCLUSIVE)=
+;
+> >               folio_add_lru_vma(folio, vma);
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
