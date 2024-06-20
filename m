@@ -1,166 +1,277 @@
-Return-Path: <linux-kernel+bounces-223633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFEDE9115CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:43:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1EF39115CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FCA01C20D72
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:43:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C69C1F239DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D787407A;
-	Thu, 20 Jun 2024 22:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5540513D278;
+	Thu, 20 Jun 2024 22:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Xuh6wHzl"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E6S3uP6t"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109A46F2F1
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9A55FEE4;
+	Thu, 20 Jun 2024 22:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718923410; cv=none; b=a3g5HX9QHooNARhIWs4bx9BOyFNaS/vDHB1u50Q4p9tcv0TBkvrcg75NYnyMg8Yn64kyQEEcY7EFhOcQWR8jx95MvR8leK9H7CAcGd6DIVyMlSiUtnsoK4W9ovc3Mory2ffBgFXOS8X9vAtqedXuutAaP2aMbRr88u+XF1YE684=
+	t=1718923534; cv=none; b=qId7xZ5X8Pq2K0UqfX1keZdG3vx9vtCiplon4JPELXu/yrAaEVHiyoutMidyLAxEH5WAbHaAcLr1vEHrcVNKNCBq0cbXfu9eOlKOMwVe06/7rfQaM2jv2sDF/yBZzps0Z4ZKi3euUy1DmJrtfJu+zMDX5kP1BcB/URDG/mWx+eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718923410; c=relaxed/simple;
-	bh=Bfe2AgnXI7qc1eB42tP3sJ3GNIZuodteiRtnzVol0M4=;
+	s=arc-20240116; t=1718923534; c=relaxed/simple;
+	bh=QW6EneRYCvq4hKgo60WKJgekOPm3qGdx/dlnJ0LDfPs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HV5BNF6hDcicN8Pyx5xo37ugI4NaWx3QgmosbKsUppnTRF7rqItjqYg3yGOEMJdZEgo52fHTjLLKglRhljIjj6/VbMeaDPJaPmOyJMS5Nhr+x4DyuBjioVgBWSySO0Cf0QZHHUdJJjGmtKY8dnsCDFi3HSnS/FVl258FS1tarYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Xuh6wHzl; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ec17eb4493so20475991fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:43:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=UHdyD8fSyRq52/hvVgHmGoabt+eC+QX1JyHm5UXCvC++RYz6CwKytsmTMwV9/DSMTafVm3fqSB+oNHveeQqer3GFkg3akGjITpW5ShUVopfARIkExTBjoHeOr5DqlIplugnKPTEvPHecMvigBz7eIjQU25GA5UK6mRSgsa4Q+vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E6S3uP6t; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-79bc769b014so79738685a.1;
+        Thu, 20 Jun 2024 15:45:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718923407; x=1719528207; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cLIJyrB/gnFlAkantfHrGOHAaqRt3DpcOw/9lCMmFlk=;
-        b=Xuh6wHzlzPecf/xTL0rb1TirFDtPYEh56jd8SxwYo2xMciOt0gj2PywNeWP165Nm8l
-         C+RsFLMQOSQjcIlbv9UJoeIl3pnqlr6kWhCrQUBDUaM75UsUznqzd3hjJTMsSV2FnN/T
-         6H2aLEKT6FW0pGNinr6Z2IFWhMSbrmixvCL98=
+        d=gmail.com; s=20230601; t=1718923530; x=1719528330; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lnmrlYlrxRh9vivFD+6NtUoULUx1ZAai45xa/zONLMY=;
+        b=E6S3uP6t9oxqbb9AL6IhuODAzsSIKKLR4AkYihOTQ1wRAPb34qvhGrMa0k0pJtIjJ0
+         4Wg3SOGTGxECQvZgDm+47bwHi/sOBgh6f5IFnDBOb3G6fqdNfkYE1oU2QxH52zVd+F5K
+         BV4Laph3DPuG5jPJs/JP49O4Av7sV1tVTRWa1KscEDeypv5ZasNMFKvRWJ13dDovrXVS
+         TX8Vyyc5oOLBwxkrDG5fmdIsiwvtJbn0Ye9yEj271lK98VmDnBOlpg6XcurS/1G102ov
+         uEAzwPespRIpK/RnZNPbCqWgz14LttBXL7STd+xqhj4poluThhDn5iFubujD6OcOOooQ
+         Kh7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718923407; x=1719528207;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cLIJyrB/gnFlAkantfHrGOHAaqRt3DpcOw/9lCMmFlk=;
-        b=FLZlBE6HYAlAqq3rO0Vo0Uw9J/5HnG1dwyYvif/X2T3LW0k06AAu+2fQpJ6GPdCoeh
-         LFvPb9yeZLb/zL4j5UW60F9gK5dnG+w1AcfyZQxKxOS8QZdm1HXcrYtDrr180rdZ30YK
-         99iSs+LYuO6ttvsBkiDF0b14NGvhjsH2fOPEH1v3hqhFh1LEjXp7mWdF5oIBxep7Q3Ix
-         vEmwh7RlIlVppjeZUfENOT0B9qb0VQCImggWTL/XStdSd1LHbDgPDm7d8BG7GhdgwgiP
-         TAtZt4BaSERgJAN9IRweRnQcUoQ4VHodUGCFbE8/TED090veTH/434rjlwZoB3lK781W
-         NVIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNIzUR89shqTGGAqCQp0BNozd9IlLqk8Pr2BhN/etQ3IQeuvyjIv3kLEa4Rxs1BTs/SFWZg78d2QlK5qWkcLj3gb5WwAtHC/U7q4gJ
-X-Gm-Message-State: AOJu0YyM/LQq+ImEB+tiQzGEoFI+OItBd2+mc5sEuT0q05VpWv/RHWIp
-	Oo5Ufk7zR9VGD/tU0/qwihtVCWzerIT5qqpKM9kjxqFERCem+MLKrrKTQd8HE8OhQ9bvdQZBaMD
-	ir0xYuA==
-X-Google-Smtp-Source: AGHT+IFxOKsIbj9oyvHY+n6UWwCNqVMMC5JX4HzNrCpS1GPZr150aPAVXlAt9TraFa8ciTOi76Ct7g==
-X-Received: by 2002:a2e:9241:0:b0:2eb:e56c:c90a with SMTP id 38308e7fff4ca-2ec3cff96f2mr52947301fa.43.1718923407046;
-        Thu, 20 Jun 2024 15:43:27 -0700 (PDT)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com. [209.85.128.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48b29dsm17057766b.78.2024.06.20.15.43.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 15:43:26 -0700 (PDT)
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-421d32fda86so16997855e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:43:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUPW8WmF+KMvdwZB1QE8g7erbkImFmdiH3KVH+Nh0cZo6jA3jvlpJgi1pOEv834RHsTW84E4Lpw1j6QWGCmrrEdjBRxWDY1uQ9kQn3k
-X-Received: by 2002:ac2:5f93:0:b0:52b:e7ff:32b with SMTP id
- 2adb3069b0e04-52ccaa32fbdmr4812180e87.23.1718923384950; Thu, 20 Jun 2024
- 15:43:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718923530; x=1719528330;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lnmrlYlrxRh9vivFD+6NtUoULUx1ZAai45xa/zONLMY=;
+        b=HTW30hl5FnEdMljYRwoIFveL0HtkdSWVNsmgG3SGlYxPJGnivwx0ytBZnLHedLhsQ7
+         dXrXTDSx9bKAkA8UEljIQw1F9u7ycqXxpSA1l1sxBZRLFxhoceU9upzbqojbDrmS9Tzn
+         DJ7pch+93p6P40EQ4eReiyM+pXLN1W4lBEYNVBuHT3S4g4zdgJ56ef8v4UnXQ3mprDBm
+         OZgdFrshGQDiHEIUTEgv9MAaTOQZfSKVbuGrxIRjGpzoXyGWoXR5tVA6q5uQqFEcyv9L
+         0Ef1qJzyMZNUt4Vt0c6XqVD+bsdJZm6CKkPr0wp5HOLmpC30ltKDfofi2pEqZW+b6Aja
+         8P7g==
+X-Forwarded-Encrypted: i=1; AJvYcCV9pU7TItQhZJPG/i4OkmUkju4UeDbgaKS/HubrrtBCUhHykuKOl7FzivhRhTrFVG/odQevCd9t47lrWjJshqiKLqXDpnDoOAbvLN5Db3Zva2UB3BmPNKc1cXabWgGfIr7gPL8ly19X
+X-Gm-Message-State: AOJu0Yzc1TQ237ZwH3ciTrFYbPoytZTitJdboT3GYFbGtP1e3nqR0CNU
+	LhxhBJ3LpHmH/UTQVJnQujuLTZBCQTStFbj93A0saFc7ILK4coMKe3jJzn5nt7Evon2ZL4UWD38
+	VrjeeeI8ryB/ognz8D48xLL4lAmA=
+X-Google-Smtp-Source: AGHT+IHUHiKhuO3lflJiK1mEtBHHQQANwPa3f18lchzyH5vGRdVxN8b4X5W0wRN32prRqb0Z1SVcif1uQeeWXATBtg8=
+X-Received: by 2002:ad4:420c:0:b0:6b2:b997:6513 with SMTP id
+ 6a1803df08f44-6b5019b852emr115022296d6.7.1718923530320; Thu, 20 Jun 2024
+ 15:45:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wg8APE61e5Ddq5mwH55Eh0ZLDV4Tr+c6_gFS7g2AxnuHQ@mail.gmail.com>
- <87ed8sps71.ffs@tglx> <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
- <87bk3wpnzv.ffs@tglx> <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
- <878qz0pcir.ffs@tglx> <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
- <CAHk-=wgjbNLRtOvcmeEUtBQyJtYYAtvRTROBy9GHeF1Quszfgg@mail.gmail.com>
- <ZnRptXC-ONl-PAyX@slm.duckdns.org> <ZnSp5mVp3uhYganb@slm.duckdns.org>
-In-Reply-To: <ZnSp5mVp3uhYganb@slm.duckdns.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 20 Jun 2024 15:42:48 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjFPLqo7AXu8maAGEGnOy6reUg-F4zzFhVB0Kyu22h7pw@mail.gmail.com>
-Message-ID: <CAHk-=wjFPLqo7AXu8maAGEGnOy6reUg-F4zzFhVB0Kyu22h7pw@mail.gmail.com>
-Subject: Re: [PATCH sched_ext/for-6.11] sched, sched_ext: Replace
- scx_next_task_picked() with sched_class->switch_class()
-To: Tejun Heo <tj@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
-	vschneid@redhat.com, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	martin.lau@kernel.org, joshdon@google.com, brho@google.com, pjt@google.com, 
-	derkling@google.com, haoluo@google.com, dvernet@meta.com, 
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com, 
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com, 
-	andrea.righi@canonical.com, joel@joelfernandes.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com
+References: <20240608155316.451600-1-flintglass@gmail.com> <CAKEwX=PsmuPQUvrsOO7a+JGd=gDmjP5_XDGD+z-0R6dBea+BOg@mail.gmail.com>
+ <CAPpoddcgmZs6=s1MrzLgOAJxoVW5_bLa4CGxHq3KhF3GOi8VBw@mail.gmail.com>
+ <CAJD7tkYD+y54-KYEotWspRdNL_AC0SxE147tR+dSLvY-=9jJyg@mail.gmail.com> <CAPpodddcGsK=0Xczfuk8usgZ47xeyf4ZjiofdT+ujiyz6V2pFQ@mail.gmail.com>
+In-Reply-To: <CAPpodddcGsK=0Xczfuk8usgZ47xeyf4ZjiofdT+ujiyz6V2pFQ@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Thu, 20 Jun 2024 15:45:17 -0700
+Message-ID: <CAKEwX=NFAh95smCyJidENLytQjU8xDbosqahM6OOzYrnmJ5ojg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] mm: zswap: global shrinker fix and proactive shrink
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 20 Jun 2024 at 15:15, Tejun Heo <tj@kernel.org> wrote:
+On Wed, Jun 19, 2024 at 6:03=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
+> wrote:
 >
-> The changes are straightforward and the code looks better afterwards.
-> However, when !CONFIG_SCHED_CLASS_EXT, this just ends up adding an unused
-> hook which is unlikely to be useful to other sched_classes. We can #ifdef
-> the op with CONFIG_SCHED_CLASS_EXT but then I'm not sure the code
-> necessarily looks better afterwards.
+> Hello,
+>
+> Sorry for the late reply. I am currently investigating a
+> responsiveness issue I found while benchmarking with this series,
+> possibly related to concurrent zswap writeback and pageouts.
+>
+> This series cannot be applied until the root cause is identified,
+> unfortunately. Thank you all for taking the time to review.
+>
+> The responsiveness issue was confirmed with 6.10-rc2 with all 3
+> patches applied. Without patch 3, it still happens but is less likely.
+>
+> When allocating much larger memory than zswap can buffer, and
+> writeback and rejection by pool_limit_hit happen simultaneously, the
+> system stops responding. I do not see this freeze when zswap is
+> disabled or when there is no pool_limit_hit. The proactive shrinking
+> itself seems to work as expected as long as the writeback and pageout
+> do not occur simultaneously.
+>
+> I suspect this issue exists in current code but was not visible
+> without this series since the global shrinker did not writeback
+> considerable amount of pages.
+>
+>
+> 2024=E5=B9=B46=E6=9C=8815=E6=97=A5(=E5=9C=9F) 7:48 Nhat Pham <nphamcs@gma=
+il.com>:
+> >
+> > BTW, I'm curious. Have you experimented with increasing the pool size?
+> > That 20% number is plenty for our use cases, but maybe yours need a
+> > different cap?
+> >
+>
+> Probably we can allocate a bit more zswap pool size. But that will
+> keep more old pages once the pool limit is hit. If we can ensure no
+> pool limit hits and zero writeback by allocating more memory, I will
+> try the same amount of zramswap.
+>
+> > Also, have you experimented with the dynamic zswap shrinker? :) I'm
+> > actually curious how it works out in the small machine regime, with
+> > whatever workload you are running.
+> >
+>
+> It seems the dynamic shrinker is trying to evict all pages. That does
+> not fit to my use case that prefer balanced swapin and swapout
+> performance
 
-So honestly, if people _really_ care about performance here, then I
-think that in the long run the right thing to do is
+Hmm not quite. As you have noted earlier, it (tries to) shrink the
+unprotected pages only,
 
- - expose all the DEFINE_SCHED_CLASS() definitions in a header file
+>
+>
+> 2024=E5=B9=B46=E6=9C=8815=E6=97=A5(=E5=9C=9F) 9:20 Yosry Ahmed <yosryahme=
+d@google.com>:
+> > >
+> > > 1.
+> > > The visible issue is that pageout/in operations from active processes
+> > > are slow when zswap is near its max pool size. This is particularly
+> > > significant on small memory systems, where total swap usage exceeds
+> > > what zswap can store. This means that old pages occupy most of the
+> > > zswap pool space, and recent pages use swap disk directly.
+> >
+> > This should be a transient state though, right? Once the shrinker
+> > kicks in it should writeback the old pages and make space for the hot
+> > ones. Which takes us to our next point.
+> >
+> > >
+> > > 2.
+> > > This issue is caused by zswap keeping the pool size near 100%. Since
+> > > the shrinker fails to shrink the pool to accept_thr_percent and zswap
+> > > rejects incoming pages, rejection occurs more frequently than it
+> > > should. The rejected pages are directly written to disk while zswap
+> > > protects old pages from eviction, leading to slow pageout/in
+> > > performance for recent pages on the swap disk.
+> >
+> > Why is the shrinker failing? IIUC the first two patches fixes two
+> > cases where the shrinker stumbles upon offline memcgs, or memcgs with
+> > no zswapped pages. Are these cases common enough in your use case that
+> > every single time the shrinker runs it hits MAX_RECLAIM_RETRIES before
+> > putting the zswap usage below accept_thr_percent?
+> >
+> > This would be surprising given that we should be restarting the
+> > shrinker with every swapout attempt until we can accept pages again.
+> >
+> > I guess one could construct a malicious case where there are some
+> > sticky offline memcgs, and all the memcgs that actually have zswap
+> > pages come after it in the iteration order.
+> >
+> > Could you shed more light about this? What does the setup look like?
+> > How many memcgs there are, how many of them use zswap, and how many
+> > offline memcgs are you observing?
+> >
+>
+> Example from ubuntu 22.04 using zswap:
+> root@ctl:~# find /sys/fs/cgroup/ -wholename
+> \*service/memory.zswap.current | xargs grep . | wc
+>      31      31    2557
+> root@ctl:~# find /sys/fs/cgroup/ -wholename
+> \*service/memory.zswap.current | xargs grep ^0 | wc
+>      11      11     911
+>
+> This indicates 11 out of 31 services have no pages in zswap. Without
+> patch 2, shrink_worker() aborts shrinking in the second tree walk,
+> before evicting about 40 pages from the services. The number varies,
+> but I think it is common to see a few memcg that has no zswap pages
+>
+> > I am not saying we shouldn't fix these problems anyway, I am just
+> > trying to understand how we got into this situation to begin with.
+> >
+> > >
+> > > 3.
+> > > If the pool size were shrunk proactively, rejection by pool limit hit=
+s
+> > > would be less likely. New incoming pages could be accepted as the poo=
+l
+> > > gains some space in advance, while older pages are written back in th=
+e
+> > > background. zswap would then be filled with recent pages, as expected
+> > > in the LRU logic.
+> >
+> > I suspect if patches 1 and 2 fix your problem, the shrinker invoked
+> > from reclaim should be doing this sort of "proactive shrinking".
+> >
+> > I agree that the current hysteresis around accept_thr_percent is not
+> > good enough, but I am surprised you are hitting the pool limit if the
+> > shrinker is being run during reclaim.
+> >
+> > >
+> > > Patch 1 and 2 make the shrinker reduce the pool to accept_thr_percent=
+.
+> > > Patch 3 makes zswap_store trigger the shrinker before reaching the ma=
+x
+> > > pool size. With this series, zswap will prepare some space to reduce
+> > > the probability of problematic pool_limit_hit situation, thus reducin=
+g
+> > > slow reclaim and the page priority inversion against LRU.
+> > >
+> > > 4.
+> > > Once proactive shrinking reduces the pool size, pageouts complete
+> > > instantly as long as the space prepared by shrinking can store the
+> > > direct reclaim. If an admin sees a large pool_limit_hit, lowering
+> > > accept_threshold_percent will improve active process performance.
+> >
+> > I agree that proactive shrinking is preferable to waiting until we hit
+> > pool limit, then stop taking in pages until the acceptance threshold.
+> > I am just trying to understand whether such a proactive shrinking
+> > mechanism will be needed if the reclaim shrinker for zswap is being
+> > used, how the two would work together.
+>
+> For my workload, the dynamic shrinker (reclaim shrinker) is disabled.
+> The proposed global shrinker and the existing dynamic shrinker are
+> both proactive, but their goals are different.
+>
+> The global shrinker starts shrinking when the zswap pool exceeds
+> accept_thr_percent + 1%, then stops when it reaches
+> accept_thr_percent. Pages below accept_thr_percent are protected from
+> shrinking.
+>
+> The dynamic shrinker starts shrinking based on memory pressure
+> regardless of the zswap pool size, and stops when the LRU size is
+> reduced to 1/4. Its goal is to wipe out all pages from zswap. It
+> prefers swapout performance only.
+>
+> I think the current LRU logic decreases nr_zswap_protected too quickly
+> for my workload. In zswap_lru_add(), nr_zswap_protected is reduced to
+> between 1/4 and 1/8 of the LRU size. Although zswap_folio_swapin()
+> increments nr_zswap_protected when page-ins of evicted pages occur
+> later, this technically has no effect while reclaim is in progress.
+>
+> While zswap_store() and zswap_lru_add() are called, the dynamic
+> shrinker is likely running due to the pressure. The dynamic shrinker
+> reduces the LRU size to 1/4, and then a few subsequent zswap_store()
+> calls reduce the protected count to 1/4 of the LRU size. The stored
+> pages will be reduced to zero through a few shrinker_scan calls.
 
- - rename for_each_class() to FOR_EACH_CLASS() and make it unroll the
-whole damn loop statically
+Ah this is a fair point. We've been observing this in
+production/experiments as well - there's seems to be a positive
+correlation between zswpout rate and zswap_written_back rate. Whenever
+there's a spike in zswpout, you also see a spike in writtenback pages
+too - looks like the flood of zswpout weaken zswap's lru protection,
+which is not quite the intended effect.
 
-which would turn the indirect branches into actual direct branches,
-and would statically just remove any "if (!class->zyz)" conditionals.
-
-Pretty? No. But it probably wouldn't be hugely ugly either, and
-honestly, looking at the existing for_each_class() uses (and the one
-single "for_class_range()" one), they are so small and the number of
-classes is so small that unrolling the loop entirely doesn't sound
-bad.
-
-It wouldn't help deal with *this* case (since it's a "call variable
-class"), but considering that the current __pick_next_task()
-
- (a) special-cases one class as-is
-
- (b) does a "for_each_class()" and calls an indirect call for each
-when that doesn't trigger
-
-I would claim that people don't care enough about this that one test
-for a NULL 'switch_class' function would be worth worrying about.
-
-Btw, indirect calls are now expensive enough that when you have only a
-handful of choices, instead of a variable
-
-        class->some_callback(some_arguments);
-
-you might literally be better off with a macro that does
-
-       #define call_sched_fn(class, name, arg...) switch (class) { \
-        case &fair_name_class: fair_name_class.name(arg); break; \
-        ... unroll them all here..
-
-which then just generates a (very small) tree of if-statements.
-
-Again, this is entirely too ugly to do unless people *really* care.
-But for situations where you have a small handful of cases known at
-compile-time, it's not out of the question, and it probably does
-generate better code.
-
-NOTE NOTE NOTE! This is a comp[letely independent aside, and has
-nothing to do with sched_ext except for the very obvious indirect fact
-that sched_ext would be one of the classes in this kind of code.
-
-And yes, I suspect it is too ugly to actually do this.
-
-            Linus
+We're working to improve this situation. We have a couple of ideas
+floating around, none of which are too complicated to implement, but
+need experiments to validate before sending upstream :)
 
