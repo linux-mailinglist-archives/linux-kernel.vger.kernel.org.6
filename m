@@ -1,363 +1,184 @@
-Return-Path: <linux-kernel+bounces-222477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B31791021F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:06:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7041D910227
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E4BDB212DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:06:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5BF81F21CA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FE11AAE3C;
-	Thu, 20 Jun 2024 11:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55A61AB356;
+	Thu, 20 Jun 2024 11:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfCXzqB3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SMuTJexp"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFC11A8C2E;
-	Thu, 20 Jun 2024 11:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528A421A19;
+	Thu, 20 Jun 2024 11:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718881607; cv=none; b=iU3sWDLOQJrS7HgXV/YWncs4gIrrYsa9hYlvhb/dTs90fqg8cNPA9BtsALkaXKFPl+w1F5QA46zGxOjOLUrJCq/e2KRU2f3iqdevZHoBGf09/Tqy+SYwZC7EL8dcOek1xvv2j5Dzu8jB/y3WQRqXep9yorS11feE6RQ5mD/c4CU=
+	t=1718881687; cv=none; b=WFlhSW4swFGwwz2yITuTSGW2uu535cOWLi44SMIoRXLDR7nj7Fuk375rI7cWYgyW0HYYOyYhJ0Sz1p4iH2XZDdqxh6gEwcChHHUdj2egQkGuBlBKDOxY3sjqy79j6HNMZFN4aXwhuEennhYNvjcX5R3FC/iWRFP7tFfP4tUOjP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718881607; c=relaxed/simple;
-	bh=E0X4v2xdXd711tKCoPMzebTZfL+S/2gfBWVlEOfhkD8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eUeD2NRyKAkzG9p4NIo97tA1tlfIm+E1xxf5Jrie2c2iiA3HijDgw2zQsTRIqbRJahjbY3A/ef8TaWj632AeGGx690ieJmCsRgW1olZmEcenZllqIthTGJsQM8tHAcYr+u2+op5dvQGHPcs9KXTQCMVaf9fAVtgtIQ8WqiICKxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rfCXzqB3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DDDFC2BD10;
-	Thu, 20 Jun 2024 11:06:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718881607;
-	bh=E0X4v2xdXd711tKCoPMzebTZfL+S/2gfBWVlEOfhkD8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rfCXzqB3iCO594F3ngygsZXiNfdGfDTMOWJaC+rzgHE7eJm4c09Mo4XMzz86rOE5l
-	 hFpX5jkctxOdy3cuizb9E24qh8qkOMRXx4ehmLP92PiZWekL4HL4oK4ST7e2cQxYep
-	 3d1Z/nAyb8gI4Hr+qni3hA7sES6RQLJJHdxaR1wcVf6ZW0piHLKBnHlQpUexvh9zGE
-	 +CWy8YVWWQyAm97QQsnAIaUBJP1ADoQJVLZSAvF4X4jGT7jtww5yO6Z2ih/5RAfsSR
-	 kWiSngtOiTCKDYBbce3WKgqIsvw3VjmTuDXdGGnrShzxlUzBeeU0T//ZNdLlqEQjL3
-	 wm+9mQEmib9kg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sKFcq-005jpu-Tc;
-	Thu, 20 Jun 2024 12:06:45 +0100
-Date: Thu, 20 Jun 2024 12:06:44 +0100
-Message-ID: <865xu3kh4r.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC 10/10] KVM: arm64: nv: Add new HDFGRTR2_GROUP & HDFGRTR2_GROUP based FGU handling
-In-Reply-To: <20240620065807.151540-11-anshuman.khandual@arm.com>
-References: <20240620065807.151540-1-anshuman.khandual@arm.com>
-	<20240620065807.151540-11-anshuman.khandual@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1718881687; c=relaxed/simple;
+	bh=u8NWosi2Lfda1VfSjmVjhQi59L4+kIJps6GW/2+SxCI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q0kbQtZjL/zl3xzgZX1FjyKBfUSznyJfkZt3vtUtWGtnIEl8507CWPHKUHBWB35UZ4WY8mQEg2rzO7VCbURR9UgjuCEsUBKoAQUgxLvaks96rNTBsjjn+BvePZWp68+Owfokq78Wyxco8GaJyV/QGvdwFd6+R7RY5ebTrriIXxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SMuTJexp; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-158-144-210.elisa-laajakaista.fi [91.158.144.210])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2570C66F;
+	Thu, 20 Jun 2024 13:07:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1718881665;
+	bh=u8NWosi2Lfda1VfSjmVjhQi59L4+kIJps6GW/2+SxCI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=SMuTJexp2Jhc4PklTL2y7U89jOYvIuLaeClmA7s2oRvHhVA/SBjI9Zqz5NQLWbTG1
+	 FgVvAiwfV+zqOCKtEINMnQszIpPsbGsJYffy3PzJ2N3lGQcaPMmyWT6b3ybkgFp1DT
+	 EoZqyfWocwoxaA7h7F3Pq+/3QUrJwGVsY+VkK5aA=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v2 0/4] media: raspberrypi: Support RPi5's CFE
+Date: Thu, 20 Jun 2024 14:07:49 +0300
+Message-Id: <20240620-rp1-cfe-v2-0-b8b48fdba3b3@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIUNdGYC/2WP0U7DMAxFf6XKMy5J2rWlQoj/QHtIE3fzRJISZ
+ 9XQtH8n6wQvPF776vj4KhgTIYuxuoqEKzHFUIJ+qoQ9mnBAIFey0FK3slEtpEWBnRFUq6dOD1O
+ vVStKe0k402UjfexLPhLnmL438Kru01/G8MdYFUgwtnMvnZxnrd07OTQcwxRNcrWNXuxvD3bCr
+ 3ORy48DYjKMUPae8lh9UjhfwKMjA5zNAZ+94YzpruWR2WxfjNXrJrBrlBxkL/u6aXfdAApOxsY
+ l1j4GR/8M3orC7Qe1uywiJwEAAA==
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Naushir Patuck <naush@raspberrypi.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ 20240531080707.34568-1-jacopo.mondi@ideasonboard.com
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4295;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=u8NWosi2Lfda1VfSjmVjhQi59L4+kIJps6GW/2+SxCI=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBmdA2NZBmM5pX3EATZVL9ApWxEjJmQvvPKcEH9i
+ PVKm0iJwA2JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZnQNjQAKCRD6PaqMvJYe
+ 9YohD/4rtkOMnOUmEuoBWMa9wW+Zqc8fhkItKCHRfTq+KPTUgya7Q5Iiien2AvnaDmYUWdiTzmT
+ geVbQG8O7iKkbuK7bQamyS6sokcPzBdbX1xKk7uwWEKkORaaQGfuTuqQAHdlU6bqlz18SbYeC34
+ Gg35T9h5G5eqEYrK1zN8BSudEQmNnZk/a27nTicTBTEzZpojo+2kYHtkqRrvDlH+I6kz6EmkWi6
+ b4ZEy2WP2jDKrbaQUUNiErb1VkdmQdOTqlkhBGPlAyXp0cNxSJKgnkj+UJifMfzF5YBPza+8l/o
+ q3AlI173/j+smJgjFv218mtj4GSVTxo53X++ws4WYOdOZaTVwY2Z58DM+7zsM3F05+hKOPbUBFP
+ YqXPDMeND+t1BJ7nR315qRnVPIZy9l/AExeFUF5q198+rsfhAOMHjD/2sbpsBIBTjd/u3YezQ9P
+ qIEKgpljofHTqzjqiQJoDERU0vKYU9cN5wuhwpDdgWC3T9nh/oSy/2uUq/Kg+rZuT9612fCecsK
+ rPD/lM22qNeDmqnAJBK7EiEWiDj+j3YFvaOhskv3LHr10J6YPRRs34+ZUtmKS1sQTGClMWQPknI
+ OLFVRqKM0j2pVGfdfuksuy/MDcFmDTn+JFwV1kzIrUG9dzOtPTFxtXspaF9JW7Cfy+hY/JUs/hx
+ ecKgDgz5PgRuG7w==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On Thu, 20 Jun 2024 07:58:07 +0100,
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> 
-> This adds new HDFGRTR2_GROUP and HDFGWTR2_GROUP groups in enum fgt_group_id
-> for FGU handling managed with HDFGRTR2_EL2 and HDFGWTR2_EL2 registers.
-> 
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: kvmarm@lists.linux.dev
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->  arch/arm64/include/asm/kvm_arm.h        |  8 +++++
->  arch/arm64/include/asm/kvm_host.h       |  2 ++
->  arch/arm64/kvm/emulate-nested.c         | 14 ++++++++
->  arch/arm64/kvm/hyp/include/hyp/switch.h | 10 ++++++
->  arch/arm64/kvm/nested.c                 | 36 ++++++++++++++++++++
->  arch/arm64/kvm/sys_regs.c               | 45 +++++++++++++++++++++++++
->  6 files changed, 115 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-> index b2adc2c6c82a..b3fb368bcadb 100644
-> --- a/arch/arm64/include/asm/kvm_arm.h
-> +++ b/arch/arm64/include/asm/kvm_arm.h
-> @@ -354,6 +354,14 @@
->  #define __HFGRTR_EL2_MASK	GENMASK(49, 0)
->  #define __HFGRTR_EL2_nMASK	~(__HFGRTR_EL2_RES0 | __HFGRTR_EL2_MASK)
->  
-> +#define __HDFGRTR2_EL2_RES0	HDFGRTR2_EL2_RES0
-> +#define __HDFGRTR2_EL2_MASK	(GENMASK(22, 22) | GENMASK(20, 0))
+This series adds support to the CFE hardware block on RaspberryPi 5. The
+CFE (Camera Front End) contains a CSI-2 receiver and Front End, a small
+ISP.
 
-How about bit 23? How comes you are considering all these bits as positive?
+This series is based on linux-media-stage with Jacopo's "[PATCH v9 0/8]
+media: raspberrypi: Add support for PiSP Back End".
 
-> +#define __HDFGRTR2_EL2_nMASK	~(__HDFGRTR2_EL2_RES0 | __HDFGRTR2_EL2_MASK)
+To run this, you need the basic RPi5 kernel support plus relevant dts
+changes to enable the cfe and camera. My work branch with everything
+needed to run CFE can be found from:
 
-Note the *nMASK* here. 'n' is for *negative*. Just look at how
-__HDFGRTR_EL2_MASK and __HDFGRTR_EL2_nMASK are written.
+git://git.kernel.org/pub/scm/linux/kernel/git/tomba/linux.git rp1-cfe
 
-> +
-> +#define __HDFGWTR2_EL2_RES0	HDFGWTR2_EL2_RES0
-> +#define __HDFGWTR2_EL2_MASK	(GENMASK(22, 19) | GENMASK(16, 7) | GENMASK(5, 0))
+A few notes about the patches:
 
-Again, how about bit 23? Same remark for the polarity.
+- The original work was done by RaspberryPi, mostly by Naushir Patuck.
+- The second video node only sets V4L2_CAP_META_CAPTURE instead of both
+  V4L2_CAP_META_CAPTURE and V4L2_CAP_META_CAPTURE like the other nodes.
+  This is a temporary workaround for userspace (libcamera), and
+  hopefully can be removed soon.
 
-> +#define __HDFGWTR2_EL2_nMASK	~(__HDFGWTR2_EL2_RES0 | __HDFGWTR2_EL2_MASK)
-> +
->  /*
->   * The HFGWTR bits are a subset of HFGRTR bits. To ensure we don't miss any
->   * future additions, define __HFGWTR* macros relative to __HFGRTR* ones.
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 7b44e96e7270..d6fbd6ebc32d 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -239,6 +239,8 @@ enum fgt_group_id {
->  	HDFGWTR_GROUP = HDFGRTR_GROUP,
->  	HFGITR_GROUP,
->  	HAFGRTR_GROUP,
-> +	HDFGRTR2_GROUP,
-> +	HDFGWTR2_GROUP = HDFGRTR2_GROUP,
->  
->  	/* Must be last */
->  	__NR_FGT_GROUP_IDS__
-> diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
-> index 54090967a335..bc5ea1e60a0a 100644
-> --- a/arch/arm64/kvm/emulate-nested.c
-> +++ b/arch/arm64/kvm/emulate-nested.c
-> @@ -1724,6 +1724,9 @@ static const struct encoding_to_trap_config encoding_to_fgt[] __initconst = {
->  	SR_FGT(SYS_AMEVCNTR0_EL0(2),	HAFGRTR, AMEVCNTR02_EL0, 1),
->  	SR_FGT(SYS_AMEVCNTR0_EL0(1),	HAFGRTR, AMEVCNTR01_EL0, 1),
->  	SR_FGT(SYS_AMEVCNTR0_EL0(0),	HAFGRTR, AMEVCNTR00_EL0, 1),
-> +
-> +	/* HDFGRTR2_EL2 */
-> +	SR_FGT(SYS_MDSELR_EL1,		HDFGRTR2, nMDSELR_EL1, 1),
+I have tested this with:
+- A single IMX219 sensor connected to the RPi5's CSI-2 port
+- Arducam's UB960 FPD-Link board with four imx219 sensors connected
 
-No. See the 'n' prefix on this bit?
+ Tomi
 
-Also, where are all the other bits for the HDFRxTR2 registers?
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+---
+Changes in v2:
+- Change the compatible string back to raspberrypi,rp1-cfe from raspberrypi,rpi5-rp1-cfe
+- Drop the references to rp1 headers in the DT binding example. This
+  allows compiling the example without the rp1 support.
+- Fix missing remap lines for mono formats
+- Fix csi2_pad_set_fmt() so that the format can be changed back to the
+  sink's format from 16-bit or compressed format.
+- Link to v1: https://lore.kernel.org/r/20240318-rp1-cfe-v1-0-ac6d960ff22d@ideasonboard.com
 
->  };
->  
->  static union trap_config get_trap_config(u32 sysreg)
-> @@ -1979,6 +1982,10 @@ static bool check_fgt_bit(struct kvm *kvm, bool is_read,
->  		sr = is_read ? HDFGRTR_EL2 : HDFGWTR_EL2;
->  		break;
->  
-> +	case HDFGRTR2_GROUP:
-> +		sr = is_read ? HDFGRTR2_EL2 : HDFGWTR2_EL2;
-> +		break;
-> +
->  	case HAFGRTR_GROUP:
->  		sr = HAFGRTR_EL2;
->  		break;
-> @@ -2053,6 +2060,13 @@ bool triage_sysreg_trap(struct kvm_vcpu *vcpu, int *sr_index)
->  			val = __vcpu_sys_reg(vcpu, HDFGWTR_EL2);
->  		break;
->  
-> +	case HDFGRTR2_GROUP:
-> +		if (is_read)
-> +			val = __vcpu_sys_reg(vcpu, HDFGRTR2_EL2);
-> +		else
-> +			val = __vcpu_sys_reg(vcpu, HDFGWTR2_EL2);
-> +		break;
-> +
->  	case HAFGRTR_GROUP:
->  		val = __vcpu_sys_reg(vcpu, HAFGRTR_EL2);
->  		break;
-> diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
-> index 0c4de44534b7..b5944aa6d9c8 100644
-> --- a/arch/arm64/kvm/hyp/include/hyp/switch.h
-> +++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
-> @@ -89,6 +89,10 @@ static inline void __activate_traps_fpsimd32(struct kvm_vcpu *vcpu)
->  		case HDFGWTR_EL2:					\
->  			id = HDFGRTR_GROUP;				\
->  			break;						\
-> +		case HDFGRTR2_EL2:					\
-> +		case HDFGWTR2_EL2:					\
-> +			id = HDFGRTR2_GROUP;				\
-> +			break;						\
->  		case HAFGRTR_EL2:					\
->  			id = HAFGRTR_GROUP;				\
->  			break;						\
-> @@ -160,6 +164,8 @@ static inline void __activate_traps_hfgxtr(struct kvm_vcpu *vcpu)
->  	CHECK_FGT_MASKS(HDFGWTR_EL2);
->  	CHECK_FGT_MASKS(HAFGRTR_EL2);
->  	CHECK_FGT_MASKS(HCRX_EL2);
-> +	CHECK_FGT_MASKS(HDFGRTR2_EL2);
-> +	CHECK_FGT_MASKS(HDFGWTR2_EL2);
->  
->  	if (!cpus_have_final_cap(ARM64_HAS_FGT))
->  		return;
-> @@ -171,6 +177,8 @@ static inline void __activate_traps_hfgxtr(struct kvm_vcpu *vcpu)
->  	update_fgt_traps(hctxt, vcpu, kvm, HFGITR_EL2);
->  	update_fgt_traps(hctxt, vcpu, kvm, HDFGRTR_EL2);
->  	update_fgt_traps(hctxt, vcpu, kvm, HDFGWTR_EL2);
-> +	update_fgt_traps(hctxt, vcpu, kvm, HDFGRTR2_EL2);
-> +	update_fgt_traps(hctxt, vcpu, kvm, HDFGWTR2_EL2);
->  
->  	if (cpu_has_amu())
->  		update_fgt_traps(hctxt, vcpu, kvm, HAFGRTR_EL2);
-> @@ -200,6 +208,8 @@ static inline void __deactivate_traps_hfgxtr(struct kvm_vcpu *vcpu)
->  	__deactivate_fgt(hctxt, vcpu, kvm, HFGITR_EL2);
->  	__deactivate_fgt(hctxt, vcpu, kvm, HDFGRTR_EL2);
->  	__deactivate_fgt(hctxt, vcpu, kvm, HDFGWTR_EL2);
-> +	__deactivate_fgt(hctxt, vcpu, kvm, HDFGRTR2_EL2);
-> +	__deactivate_fgt(hctxt, vcpu, kvm, HDFGWTR2_EL2);
->  
->  	if (cpu_has_amu())
->  		__deactivate_fgt(hctxt, vcpu, kvm, HAFGRTR_EL2);
-> diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
-> index bae8536cbf00..ebe4e3972fed 100644
-> --- a/arch/arm64/kvm/nested.c
-> +++ b/arch/arm64/kvm/nested.c
-> @@ -384,6 +384,42 @@ int kvm_init_nv_sysregs(struct kvm *kvm)
->  		res0 |= HDFGRTR_EL2_nPMSNEVFR_EL1;
->  	set_sysreg_masks(kvm, HDFGRTR_EL2, res0 | HDFGRTR_EL2_RES0, res1);
->  
-> +	/* HDFG[RW]TR2_EL2 */
-> +	res0 = res1 = 0;
-> +
-> +	/* FEAT_TRBE_MPAM is not exposed to the guest */
-> +	res0 |= HDFGRTR2_EL2_nTRBMPAM_EL1;
+---
+Tomi Valkeinen (4):
+      media: uapi: Add meta formats for PiSP FE config and stats
+      dt-bindings: media: Add bindings for raspberrypi,rp1-cfe
+      media: raspberrypi: Add support for RP1-CFE
+      media: admin-guide: Document the Raspberry Pi CFE (rp1-cfe)
 
-No. We are moving away from hard-coded features, so you have to
-explicitly check it.
+ .../admin-guide/media/raspberrypi-rp1-cfe.dot      |   27 +
+ .../admin-guide/media/raspberrypi-rp1-cfe.rst      |   78 +
+ Documentation/admin-guide/media/v4l-drivers.rst    |    1 +
+ .../bindings/media/raspberrypi,rp1-cfe.yaml        |   98 +
+ .../userspace-api/media/v4l/meta-formats.rst       |    1 +
+ .../userspace-api/media/v4l/metafmt-pisp-fe.rst    |   39 +
+ MAINTAINERS                                        |    8 +
+ drivers/media/platform/raspberrypi/Kconfig         |    1 +
+ drivers/media/platform/raspberrypi/Makefile        |    1 +
+ drivers/media/platform/raspberrypi/rp1-cfe/Kconfig |   14 +
+ .../media/platform/raspberrypi/rp1-cfe/Makefile    |    6 +
+ .../media/platform/raspberrypi/rp1-cfe/cfe-fmts.h  |  332 +++
+ .../media/platform/raspberrypi/rp1-cfe/cfe-trace.h |  196 ++
+ drivers/media/platform/raspberrypi/rp1-cfe/cfe.c   | 2526 ++++++++++++++++++++
+ drivers/media/platform/raspberrypi/rp1-cfe/cfe.h   |   43 +
+ drivers/media/platform/raspberrypi/rp1-cfe/csi2.c  |  583 +++++
+ drivers/media/platform/raspberrypi/rp1-cfe/csi2.h  |   89 +
+ drivers/media/platform/raspberrypi/rp1-cfe/dphy.c  |  175 ++
+ drivers/media/platform/raspberrypi/rp1-cfe/dphy.h  |   27 +
+ .../media/platform/raspberrypi/rp1-cfe/pisp-fe.c   |  581 +++++
+ .../media/platform/raspberrypi/rp1-cfe/pisp-fe.h   |   53 +
+ drivers/media/v4l2-core/v4l2-ioctl.c               |    2 +
+ .../uapi/linux/media/raspberrypi/pisp_fe_config.h  |  273 +++
+ .../linux/media/raspberrypi/pisp_fe_statistics.h   |   64 +
+ include/uapi/linux/videodev2.h                     |    2 +
+ 25 files changed, 5220 insertions(+)
+---
+base-commit: 954ee38d40c98001cfdc570c4d5e90bcbc456ce1
+change-id: 20240314-rp1-cfe-142b628b7214
+prerequisite-message-id: <20240531080707.34568-1-jacopo.mondi@ideasonboard.com>
+prerequisite-patch-id: 42749883104fffad151e25d8127eb84800d7e9ca
+prerequisite-patch-id: 433ce52b6b1b72f2c29e4474d72cd5106b73c075
+prerequisite-patch-id: b9b3006cd03bb4e41e03f735d97e19081a32be02
+prerequisite-patch-id: abeb8c40020f0ca6140afc141e535abc86a4773b
+prerequisite-patch-id: 4ddf121ee47eeadeb370a5fbabc82ca6f6caa23b
+prerequisite-patch-id: ee469d3c346f55483733a04d89e87d02126501cc
+prerequisite-patch-id: 9467d5cd306aa29842128294a5f76f184b72eab7
+prerequisite-patch-id: e6dbee90dfbd984bd55cbe3db56d9d8de4dc86ae
 
-> +
-> +	/* FEAT_SPE_FDS is not exposed to the guest */
-> +	res0 |= HDFGRTR2_EL2_nPMSDSFR_EL1;
-
-Same thing.
-
-> +
-> +	if (!kvm_has_feat_enum(kvm, ID_AA64DFR2_EL1, STEP, IMP))
-> +		res0 |= HDFGRTR2_EL2_nMDSTEPOP_EL1;
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, ITE, IMP))
-> +		res0 |= HDFGRTR2_EL2_nTRCITECR_EL1;
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, SPMU, IMP))
-> +		res0 |= (HDFGRTR2_EL2_nSPMDEVAFF_EL1 | HDFGRTR2_EL2_nSPMID |
-> +			 HDFGRTR2_EL2_nSPMSCR_EL1 | HDFGRTR2_EL2_nSPMACCESSR_EL1 |
-> +			 HDFGRTR2_EL2_nSPMCR_EL0 | HDFGRTR2_EL2_nSPMOVS |
-> +			 HDFGRTR2_EL2_nSPMINTEN | HDFGRTR2_EL2_nSPMSELR_EL0 |
-> +			 HDFGRTR2_EL2_nSPMEVTYPERn_EL0 | HDFGRTR2_EL2_nSPMEVCNTRn_EL0 |
-> +			 HDFGRTR2_EL2_nPMSSCR_EL1 | HDFGRTR2_EL2_nPMSSDATA);
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, DebugVer, V8P9))
-> +		res0 |= HDFGRTR2_EL2_nMDSELR_EL1;
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMUVer, V3P9))
-> +		res0 |= HDFGRTR2_EL2_nPMUACR_EL1;
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, PMICNTR, IMP))
-> +		res0 |= HDFGRTR2_EL2_nPMICFILTR_EL0;
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, PMICNTR, IMP))
-> +		res0 |= HDFGRTR2_EL2_nPMICNTR_EL0;
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, SEBEP, IMP))
-> +		res0 |= HDFGRTR2_EL2_nPMIAR_EL1;
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, EBEP, IMP) &&
-> +	    !kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMSS, IMP))
-> +		res0 |= HDFGRTR2_EL2_nPMECR_EL1;
-
-And all of that suffers from the same issue as in
-https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git/commit/?h=next&id=eb9d53d4a949c6d6d7c9f130e537f6b5687fedf9
-
-
-> +	set_sysreg_masks(kvm, HDFGRTR2_EL2, res0 | HDFGRTR2_EL2_RES0, res1);
-> +	set_sysreg_masks(kvm, HDFGWTR2_EL2, res0 | HDFGWTR2_EL2_RES0, res1);
-
-How about the HDFGxTR2_EL2_RES1 bits?
-
-> +
->  	/* Reuse the bits from the read-side and add the write-specific stuff */
->  	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMUVer, IMP))
->  		res0 |= (HDFGWTR_EL2_PMCR_EL0 | HDFGWTR_EL2_PMSWINC_EL0);
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index f921af014d0c..8029f408855d 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -4110,6 +4110,51 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
->  		kvm->arch.fgu[HAFGRTR_GROUP] |= ~(HAFGRTR_EL2_RES0 |
->  						  HAFGRTR_EL2_RES1);
->  
-> +	/* FEAT_TRBE_MPAM is not exposed to the guest */
-> +	kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nTRBMPAM_EL1);
-
-Same thing about dynamic configuration.
-
-But more importantly, you are disabling anything *but* MPAM.  Does it
-seem right to you?
-
-> +
-> +	/* FEAT_SPE_FDS is not exposed to the guest */
-> +	kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMSDSFR_EL1);
-
-Same thing.
-
-> +
-> +	if (!kvm_has_feat_enum(kvm, ID_AA64DFR2_EL1, STEP, IMP))
-> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nMDSTEPOP_EL1);
-> +
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, ITE, IMP))
-> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nTRCITECR_EL1);
-> +
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, SPMU, IMP))
-> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nSPMDEVAFF_EL1		|
-> +						   HDFGRTR2_EL2_nSPMID			|
-> +						   HDFGRTR2_EL2_nSPMSCR_EL1		|
-> +						   HDFGRTR2_EL2_nSPMACCESSR_EL1		|
-> +						   HDFGRTR2_EL2_nSPMCR_EL0		|
-> +						   HDFGRTR2_EL2_nSPMOVS			|
-> +						   HDFGRTR2_EL2_nSPMINTEN		|
-> +						   HDFGRTR2_EL2_nSPMSELR_EL0		|
-> +						   HDFGRTR2_EL2_nSPMEVTYPERn_EL0	|
-> +						   HDFGRTR2_EL2_nSPMEVCNTRn_EL0		|
-> +						   HDFGRTR2_EL2_nPMSSCR_EL1		|
-> +						   HDFGRTR2_EL2_nPMSSDATA);
-> +
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, DebugVer, V8P9))
-> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nMDSELR_EL1);
-> +
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMUVer, V3P9))
-> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMUACR_EL1);
-> +
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, PMICNTR, IMP))
-> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMICFILTR_EL0);
-> +
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, PMICNTR, IMP))
-> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMICNTR_EL0);
-> +
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, SEBEP, IMP))
-> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMIAR_EL1);
-> +
-> +	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, EBEP, IMP) &&
-> +	    !kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMSS, IMP))
-> +		kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nPMECR_EL1);
-> +
-
-Overall, this looks completely broken.
-
-	M.
-
+Best regards,
 -- 
-Without deviation from the norm, progress is not possible.
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
 
