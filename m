@@ -1,108 +1,108 @@
-Return-Path: <linux-kernel+bounces-223335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E540691114C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:50:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99AE911149
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C54E6B2BCA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:49:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05EE81C209DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631411BB6A3;
-	Thu, 20 Jun 2024 18:39:54 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D596E1BD4E0;
+	Thu, 20 Jun 2024 18:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CkMm5lia"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D811B9AB0;
-	Thu, 20 Jun 2024 18:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5709D1BBBC7
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718908793; cv=none; b=Hpimxcz5IUeUoe3IgYNw9+F0XcNTelcpRKOWN0tgJftTD3n4qKDmS/pxRIkyGBqFjXHUreNwEtcnlAyjtqnOC3BIc1/qkpk/NbH0c1/I22SimY/w2vWgrAz6cpjzae/hAH6b7PshB4BkDrbPi5tbQfsOti31WGGaBpQnHP/yZzc=
+	t=1718908858; cv=none; b=U4pvj/Mn2rZcnPjDdvg4QGzM5PWTSUtikUXtk2Fj+nOyLkLwgZRtIY6zua4tRkSicC5+YA/omvKSG25sHo+px3jwi94v4vLpglrN5C+Fkq16okgbWjdq/hWVMW3TULrDtxCWXFcnrjB3go+kt9m9nhnoXEIY354D4cU2PTxCQ6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718908793; c=relaxed/simple;
-	bh=ect3o+WXx/8Mtj30Y52UBbKc1pPxHH6COoSG4HKXAqk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AT6BeatEXw3Qa9kyOGvUayYwLB25LDBLra6diB2ScXfY1WUIKzC/jEIK8z0XkVV4j6uu1pEuzlJ1WPd9QoZcVdX+5obXysB0NubNTKsVMfGQHOIDEvOrQFMp9yUVf76HXVJ5tfkyQvue7fc0KvHHtKXq2El5epw2O7MXTbc6pRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e860cc8.versanet.de ([94.134.12.200] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sKMhF-0000W2-Ed; Thu, 20 Jun 2024 20:39:45 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Sebastian Kropatsch <seb-dev@mail.de>
-Cc: linux-rockchip@lists.infradead.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] arm64: dts: rockchip: Fix regulators,
- gmac and naming on NanoPi R6C/R6S
-Date: Thu, 20 Jun 2024 20:39:44 +0200
-Message-ID: <2396550.3c9HiEOlIg@diego>
-In-Reply-To: <20240612205056.397204-3-seb-dev@mail.de>
-References:
- <20240612205056.397204-1-seb-dev@mail.de>
- <20240612205056.397204-3-seb-dev@mail.de>
+	s=arc-20240116; t=1718908858; c=relaxed/simple;
+	bh=Hr5kf+KXUvVcZoZOEH/mAZ6//f97ICQ9E+f2pvMUTSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y0/oiCqmzM+aGvKAcYW/a2GeVqhH3bMK2GcHIllN2d2nkYe31eQMnstp99TzoQ391tEexA27se90SyWnCS+RrET4jnzWbn3lLXAhfyvfiYyJXl/LiFIxyPG9T1V/+NevFxwhLDAr5cbw5VneqtoL/oQy86hATsp+63j6v5yTGHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CkMm5lia reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BB2F240E01F9;
+	Thu, 20 Jun 2024 18:40:52 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id TmAqgIDiYFoY; Thu, 20 Jun 2024 18:40:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718908848; bh=luUoOSmN1ADHg7u6e8/IxhLsxS0MKrrmjs19vHwCzHk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CkMm5liah2Zejz4iLV/myxckHlyrHM0mMGuxqTxb95Yi5eovrydxv4eqKJvk17eD1
+	 mbU5jxPM6OOYGwBcMSahsoP3ukVMDhZNPRAj/v216i6qMtyW27beBP6M4QBwBZfrxS
+	 lGyoR2+E/k9hvMoMqkQn9YAEZ2PVdXfFF4jfgwvzQ6Z2tdmA4VS9j/sufJT/1Bt5o0
+	 QScT38swfT9TdF/QD4SdT6Qz89LjhcJQirK38s/mwfKpCKaKJM75d16/K60MnIfFXx
+	 sB31LCHJS7+qNLYmLCIDEfdx2HTE/S6RWHFmLbHQPJ5UgVS86q20KN5CQm5E9IhVUj
+	 VrjK4oL1SjmfOQNrp+cNN2703NaXrtR/eUbNk5NFjX6+eNHvF6SbBa6CVZeufuidi/
+	 mXTw22qajxWqaBpv/OaRR9TxVgGMpvw3SW3/KUfSajFOAcjr8f7uxxjTzrvgAuavT2
+	 iFT//hjiM+gYZ3bzzBX4hz2Xzz8rc22Cyn+n5cvnN9Kdh2x2KbaJVE43aj6hXPxGbp
+	 My+7+KhgLNzVFq4I97yr+XGej9gCGmL5ueDgo/KgRApgEJCTMVtOnlodk3VL/gcew9
+	 ZUfjRCq1yz7qIRUwSV6KLbwHtuchESdiH4dGOa5BnAGH9R1AsYMPRFx/MUu9uGWZBX
+	 VpzZYc+BKne0T1yHu/pNOIGs=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B3BD440E01D6;
+	Thu, 20 Jun 2024 18:40:43 +0000 (UTC)
+Date: Thu, 20 Jun 2024 20:40:42 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Borislav Petkov <bp@kernel.org>,
+	Sean Christopherson <seanjc@google.com>, X86 ML <x86@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] x86/cpufeatures: Flip the /proc/cpuinfo appearance
+ logic
+Message-ID: <20240620184042.GLZnR3qkVxuZYhSQr6@fat_crate.local>
+References: <20240618113840.24163-1-bp@kernel.org>
+ <D9E4D244-1E56-441E-AF6C-2822AC9A2C25@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <D9E4D244-1E56-441E-AF6C-2822AC9A2C25@zytor.com>
+Content-Transfer-Encoding: quoted-printable
 
-Am Mittwoch, 12. Juni 2024, 22:48:11 CEST schrieb Sebastian Kropatsch:
-> Fix the alphabetical ordering in some nodes and rename some regulators
-> and pins to match the schematics [1][2] as well as to adhere to
-> preferred naming schemes.
+On Wed, Jun 19, 2024 at 01:11:17AM -0700, H. Peter Anvin wrote:
+> Or use a marker like =3D instead of =E2=80=9Dxxx" to explicitly expose =
+it under the
+> same name.
+>=20
+> For extra credit fix up the ones where the user space name is different=
+ so
+> duplication isn't needed in so many places.
 
-General rule of thumb, when you need an "and" in your subject or a list
-like the above - you definitly want to split the change into multiple
-commits.
+I actually prefer when it is absolutely unambiguous and explicit what goe=
+s
+into /proc/cpuinfo - no special characters and other magic.
 
-> In addition to that:
-> * vcc_3v3_sd_s0: Fix voltage to be 3.3V
-> * vcc3v3_pcie:
->     - Move to NanoPi R6C, this power switch is not available on R6S
->     - Fix vin-supply (is vcc_5v0 per schematics)
->     - Add gpios/pincrtl to enable power
+But we can talk about future improvements later - this should simply flip=
+ the
+logic and nothing else.
 
-this defnitly needs its own patch
+Thx.
 
-> * vcc5v0_usb: Remove this regulator since according to the schematics,
+--=20
+Regards/Gruss,
+    Boris.
 
-this too
-
-> * vcc5v0_host_20 and vcc5v0_usb_otg0 are directly powered by vcc_5v0
-
-this could be grouped together with the 3.3v change
-
-> * gmac1: Add rx_delay of 0 (no delay since phy-mode = "rgmii-rxid")
-
-with rxid mode, why is the rx_delay needed at all?
-Shouldn't this just work without the property?
-
-> * rgmii_phy1: Add phy-supply as seen in schematics
-
-separate patch
-
-> * pcie2*:
->     - Add pinctrl reset pins
->     - Update vpcie3v3-supply to match the schematics
-
-separate patch
-
-> * sdhci: Add vmmc-supply and vqmmc-supply
-
-separate patch
-
-
-Heiko
-
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
