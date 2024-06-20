@@ -1,103 +1,91 @@
-Return-Path: <linux-kernel+bounces-222668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BEB991058B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 356C6910576
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12B49285972
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:12:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFCE8287F23
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E2F1ACE6D;
-	Thu, 20 Jun 2024 13:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143B71AE0AD;
+	Thu, 20 Jun 2024 13:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="TECxJkAU"
-Received: from smtp68.iad3b.emailsrvr.com (smtp68.iad3b.emailsrvr.com [146.20.161.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzEhankm"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D081A3BD1;
-	Thu, 20 Jun 2024 13:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05F91ACE73;
+	Thu, 20 Jun 2024 13:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718889124; cv=none; b=ZJ4AMqUbMANZ5MrDAiahmqHa7wrMtLEE1zGQMFcoEkBkA9Y24Qj8jSUFO/6m95Im370FeWoJBTKsbHI0JhA7s/BIld33/qqupkNarFMFgWP4IcJqhXlDNt9OKG6/K4zx0XGMICTie3SpSwkeLhj1fUtLcMiDuKa/0HlJUqYeQEs=
+	t=1718888734; cv=none; b=sRmn86r8vT2PF9o2JVUCD9wlCGXdD5YAthPuDvGUM6V1Tv6oKHxyHC8hSQunUtmqHThYcV2zBOr+dmW/85rl4qMk7JHo9UBESt+yKY2ogjp7web21M/Oit8nsaAp6ed7Ho/9J7gqt+pKlSC2p0eVu1+rwZlgm2uf413KZJLTAfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718889124; c=relaxed/simple;
-	bh=HoXdi8YDPzKPfOk1K5QZ/YKUnApGodxvc1GCh+obPAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZcDB7GRasJov6d1Q/JK/5PIyOnnCJPR/bKMislwm00muvePIDZjeMnel4ztOVfq0BdgbUfNe8e+ORXTGIgzkou4iUqCiKS0SpU3E9D94yixEa+L8w+5D0tRU0IECi78/ywAmixkrZ238lqbrSrT+epFwIk6ni3S0P9R5u4m2e1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=TECxJkAU; arc=none smtp.client-ip=146.20.161.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1718888732;
-	bh=HoXdi8YDPzKPfOk1K5QZ/YKUnApGodxvc1GCh+obPAw=;
-	h=From:To:Subject:Date:From;
-	b=TECxJkAUhfOnkyBBG9EzZbRLXNJPdWxo6jiuwOj/PgyqgbnHhVLwp60G+wf7I5IhT
-	 +n0Row+sswvq3d+bCzNaSQuC64B9skUvoP0yUr1ZOfcg62LiLN+YjVOKnwuwzyFlhN
-	 xDUqGzu1di2PRwYA1T8Y7EwP5WUzniVNSeBG1B5Q=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp1.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 5A368602EE;
-	Thu, 20 Jun 2024 09:05:31 -0400 (EDT)
-From: Ian Abbott <abbotti@mev.co.uk>
-To: linux-rtc@vger.kernel.org
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-kernel@vger.kernel.org,
-	Ian Abbott <abbotti@mev.co.uk>,
-	stable@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH] rtc: ds1343: Force SPI chip select to be active high
-Date: Thu, 20 Jun 2024 14:05:14 +0100
-Message-ID: <20240620130514.14875-1-abbotti@mev.co.uk>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718888734; c=relaxed/simple;
+	bh=CW67Odk2NxNyxJ4qAmclOWnaii9SeIs9/lx3f071QpU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gOsNapn94IvR8RkxHRCKDLB1e9Pwt3MLb8zXug429Uxw8ajQ6nhPdscM3J+cpb8efFuw9g1nfs89yaaqUtww6Iv35ZQeuPNzgVSIR8gNIaxVSHY5qW+u+t00DX+cltE39xmucHdDuWsZL97STmR4ofaIkYvz10sNH6U4Ew1rVrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzEhankm; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52c815e8e9eso883144e87.0;
+        Thu, 20 Jun 2024 06:05:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718888731; x=1719493531; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4gb+FfeqRWMVLQI7Jm/m9Je3kgzXobOl5Gw0fKArWds=;
+        b=XzEhankm+B++zX8JYSW2onhe4I6NjZQKaCNxq1UVfghOzU5dG2Dy371jE+v1DfQNFb
+         TLkeYkquoeIsaCBQ+xoRpCU5uHeTeQgrCfSsPJs763v9v/JVYaLhB9Hru/OJ6+l/pg00
+         UVm3KO/MqeRb5E4th40Sr09wlgxJl9C+NzxdD/MQCCl+flhR00TahwM4am6ApnKZIkkA
+         b2CpbqSG1lgOOrg9hNI/3EXnG5kMut2C/xlogPJOuNxuj2dQY06fA/7iJ/kUPp13b+MW
+         3N6HYjTEobc24ofaaEC1xi5R5VYIe2Rl4Y0Fzpvtw8eNxHhe7tTrGK3Ctxprbc8aVdM+
+         UJjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718888731; x=1719493531;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4gb+FfeqRWMVLQI7Jm/m9Je3kgzXobOl5Gw0fKArWds=;
+        b=mLumgY9AXhgV0hccMC8XGCQhRuDtBIUEyZPf1F9oJCJirMp6p3S85vX00EE9o5scYl
+         Wzf0yEhLs1j0gxLrTjBXRvdcwNAZJC/x1an1KAlurETjqzGCooKStSwUGrQao6PIK+3/
+         diBMW9dDiMMsdR91UaW0jgRtaFlv3FV0rfG2Q6Xqw+UMzRyXyhevnxpB0JgBiW1ZUF+p
+         wkCY03UWZreWznnfj9vGg0GQgWoB4NgEqcQ5PkNyeRFDs9sRW3+mkgnI+y9y1k+08X1a
+         QLlMK1lw6Bo8d0lFAdiDqZG9w3DfPeV3i2SQM7xs6ZOcQ98GpIfYL29uxtgBe41+szJx
+         3tow==
+X-Forwarded-Encrypted: i=1; AJvYcCVcsBHAymRvWNRAlq9T80/Ik8e5fpWam/yuZBkfAVJjdLU2nyChdjjfdS9k5Bc5kXFO5p+Lw2TjMVvFSaGpzh9sQmLriwtuftzBO6jxfnq4g1SArPu6bQOn2bS/QY1t6E8Av3ONbrQE6lPRNC2/uK09jP7Ws4Ha+NLVWmOhknZ1ptmA/Vw=
+X-Gm-Message-State: AOJu0YxGr1iyfOkoLLC0wZVhRjTtReWjyXGvtuG9BsDctYUFa1dK23Ai
+	WLzVoTLT95Z70GrPB8i88owdZXoQt3C0BRpMIIuP/y9CnKHnuS+B1RXSpF6+Em8W4OiEh/RZbYh
+	ADf+u1MfptbHHGlkRXurYOlUI0lA=
+X-Google-Smtp-Source: AGHT+IFduh5eLCvTJMpJK3rEGrdpp83bWcNoB0yrWk7/vzPFsnPNLOCACN0J0Nj/s5pdi/SGQz/m2OcOqytXmSu/guw=
+X-Received: by 2002:a05:6512:48ce:b0:52c:8420:59b with SMTP id
+ 2adb3069b0e04-52ccaa54e7dmr3301811e87.49.1718888730609; Thu, 20 Jun 2024
+ 06:05:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: 69f7c04b-1112-4442-97ad-644fb5228c58-1-1
+References: <20240611132134.31269-1-bavishimithil@gmail.com>
+ <20240611164951.51754ffc@aktux> <CAGzNGRmoSawz7yHGzHS8PeQwRAsnnORLMPrrNBLupNdaOkUeHw@mail.gmail.com>
+ <CAGzNGRnnZWJP6CF1X6SXus2QCwUA763=qHUAy6c6Ny6_FFd7GQ@mail.gmail.com> <CAGzNGRk3dwGEsQbrN4LZfKwDGTncHpKEcf2cLepUkRYBO4yn5Q@mail.gmail.com>
+In-Reply-To: <CAGzNGRk3dwGEsQbrN4LZfKwDGTncHpKEcf2cLepUkRYBO4yn5Q@mail.gmail.com>
+From: Mithil <bavishimithil@gmail.com>
+Date: Thu, 20 Jun 2024 18:35:18 +0530
+Message-ID: <CAGzNGRmMqFm55r3FdhKHuYej1pENfaO0az6sb2_1P6+r65M-yQ@mail.gmail.com>
+Subject: Re: [PATCH v1] ARM: dts: twl6032: Add DTS file for TWL6032 PMIC
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, 
+	Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-omap@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Commit 3b52093dc917 ("rtc: ds1343: Do not hardcode SPI mode flags")
-bit-flips (^=) the existing SPI_CS_HIGH setting in the SPI mode during
-device probe.  This will set it to the wrong value if the spi-cs-high
-property has been set in the devicetree node.  Just force it to be set
-active high and get rid of some commentary that attempted to explain why
-flipping the bit was the correct choice.
-
-Fixes: 3b52093dc917 ("rtc: ds1343: Do not hardcode SPI mode flags")
-Cc: <stable@vger.kernel.org> # 5.6+
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
----
- drivers/rtc/rtc-ds1343.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/rtc/rtc-ds1343.c b/drivers/rtc/rtc-ds1343.c
-index ed5a6ba89a3e..484b5756b55c 100644
---- a/drivers/rtc/rtc-ds1343.c
-+++ b/drivers/rtc/rtc-ds1343.c
-@@ -361,13 +361,10 @@ static int ds1343_probe(struct spi_device *spi)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	/* RTC DS1347 works in spi mode 3 and
--	 * its chip select is active high. Active high should be defined as
--	 * "inverse polarity" as GPIO-based chip selects can be logically
--	 * active high but inverted by the GPIO library.
-+	/*
-+	 * RTC DS1347 works in spi mode 3 and its chip select is active high.
- 	 */
--	spi->mode |= SPI_MODE_3;
--	spi->mode ^= SPI_CS_HIGH;
-+	spi->mode |= SPI_MODE_3 | SPI_CS_HIGH;
- 	spi->bits_per_word = 8;
- 	res = spi_setup(spi);
- 	if (res)
+Hello, how should we go ahead with this?
 -- 
-2.43.0
-
+Best Regards,
+Mithil
 
