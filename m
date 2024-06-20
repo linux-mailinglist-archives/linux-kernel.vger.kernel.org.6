@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-222873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC2B910906
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:53:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4C891090A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEB961C208EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:53:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19F471C21878
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7651AED47;
-	Thu, 20 Jun 2024 14:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD09A1AED46;
+	Thu, 20 Jun 2024 14:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mj4qRAQJ"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0jRFSQUo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02701AE87C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031D81AE0B3;
+	Thu, 20 Jun 2024 14:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718895181; cv=none; b=qWoUaIWSKFFbfx2OHTpgdZGvWJHMWnHkKs3+792Nt8vYlnPPQ7IuFyQltTcEeTohdyYJNRbk3yX82gyrojy7dexfe0qTwfsFzhJGnrf0D7gY6+CqrbuTZudo+a+jj28DfSt+NlYXXU7KsR+Z+GDxrU/nSgOpQ5D0NAmWDtFIZn0=
+	t=1718895204; cv=none; b=ajoIfP3COIkmXldbLo6s+ctVFMXgZtPxTw7OFl6r7HCOG2EgoXij1j5htDDzTpYfHS2T5cEMHKwnlIMPggAaqgue/yBCbwueg7Y62iAgcL+xjwi7KJAh6Qk5i9dMOEX1vdN/+hgOdSEmD73INzcc7Lo8jgzX2nq97H863pZG/5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718895181; c=relaxed/simple;
-	bh=cOjlLG7J6uNFSBufcYc1U6uO2TdqNqn9wVWkYk95jjo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fjp87S/apwtc494mx5H+kpQ+Sc9xUWYD3zcQd32QKBB7U+fmeE6bL+zMYNGGuIDeJ8JhaPZ1nZAFLNoswNBdocC4KBrchoqZWzRQ3MuguyWXAUB3L5rk0P4poHlUXlSoWArAS81fhvTiy7MgBjR9m78UjjH3GDJ8tsL0FP9Dt2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mj4qRAQJ; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-63036fa87dbso8243397b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:52:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718895178; x=1719499978; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qCNEYn05yS9gykrfyaJDjrazGTz47gbZUOuJaEqz7AQ=;
-        b=Mj4qRAQJ2Wx5lLhhpLxAQFkU3cYGQB2F6Hum+kp+9EhQTIRbkIt6eMTyMUPKeaqnTv
-         0Dd0hxRQpRJ0ayAaZFEWNqJKf+v+6czaYyhkSKePJBD0erUSKj5ENB5otFFOMYnxeMTe
-         SxsMkigkfuVbHFswgLVP+91M9n89kGcDi3MgN3vUwqm0jho665jzA2zxEX2BaEv8IHNs
-         Kn5QkS2DFyISLU8KfPYx9lBxByYvfdPwEmqU04PjFL0Cff4CWv4/dGZPlacA0zVoEvbo
-         hxH51qFUSAlIbgWay8sdMtxzKzyPFt3ZWMb3kdp53iz8E1C1O1hdYmAe2kgxN/TSMXlO
-         En0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718895178; x=1719499978;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qCNEYn05yS9gykrfyaJDjrazGTz47gbZUOuJaEqz7AQ=;
-        b=meOq+CvMTU0uCjNKHIVQv8V9ZPv0XL8H/W4WVWtVaYbPw/2ZosIrt/yet8ka+eh05S
-         5KeY/FkJy8odqVhVjPWWbbYFmO6e3wbvvFRS/2Re6YnWkj/91obGaNyYHMqLmo0UBdFG
-         1390Sp7rm3XcdTM6xLgJ+LrVtvAgRgD7zNfNxV9E+4nQWVCdtCAcoq6cl1HzbyG0UJoi
-         MCVsTUrJdi1fLqByncrNfnN0yiUUyBnOkPH1MXLVtqRVxYM/njroCxcFI/FetOprQq+/
-         Z7tLBAtCNGhvD1pYbGi5YqUQxtTzIhPUbBQqadK9fji3hILShjjZcaqZsKOsZWCqa4u7
-         NN7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXWhrBn66F4Xoi+T+8p71pDbmIFBvhPu8wAR5nWZBPbyIOoFDMIvNu3ReWsQWHgDSy5b1iH3nc5ECW07CiecElKiuShVrTXo4EsJk01
-X-Gm-Message-State: AOJu0YwmdniYuV+yIg/3abhDa66GCuypNnrBMTj0p05f3Qou8PLrrboJ
-	P5WWB/CsP7aJzhwgRwXaQadi31k+Q0b1jr2Bx64jLR6Dv3lbbU4F1WErs/anJJllTQWWSvsXdpF
-	cv/4bi8SFQeZ9Jh9o3zm3V4xq6mnOLLOKYggcmg==
-X-Google-Smtp-Source: AGHT+IF40pdsLHGJGXsUitmodarquEe+C+A7BtlyIVzKzW3fRxNf20I0BvEb3GK+3HmTvwvssyu3em+pUpOJ1efXyLE=
-X-Received: by 2002:a81:e30d:0:b0:61b:e61e:8988 with SMTP id
- 00721157ae682-63949fecfc4mr58602707b3.18.1718895177927; Thu, 20 Jun 2024
- 07:52:57 -0700 (PDT)
+	s=arc-20240116; t=1718895204; c=relaxed/simple;
+	bh=avc6OvD0XCRHJMx1PZPh4isAaMtN3R3Nbi8f+bLT0vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ScxutoJ+M3WhALDImS7kjmgMjZaJ1kRNifeW+rYE7XCem8KLyt32AkeNvWFZDMof6c9Iy/c0ThfIQOg9bjxgT4pD/tP+dZQIFPgiLAv1mA0R1uj5O7qdD4glM+WpJwv5Qdk2+Yy3m/gg1U32y60zHRfZGq7RaktyPXhofyRce/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0jRFSQUo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFF21C2BD10;
+	Thu, 20 Jun 2024 14:53:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718895203;
+	bh=avc6OvD0XCRHJMx1PZPh4isAaMtN3R3Nbi8f+bLT0vw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0jRFSQUo2GH5KBK6nnRNsJ9n69tAf0RM3ZBbZ+QAWvYJOYe8HF4TJ4Vj31K3ipY4Y
+	 U77I0HEdeLHXNN7CiZ4CoyrdO+1J9eK8Tx+vkqnI+mCjK5okTt+7kNIjPxKXJXv14I
+	 8bwXdBDuqTY95EHpjkIy91ln8oexJYQdYd+V5fa8=
+Date: Thu, 20 Jun 2024 16:53:20 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 07/10] rust: add `io::Io` base type
+Message-ID: <2024062040-wannabe-composer-91bc@gregkh>
+References: <20240618234025.15036-1-dakr@redhat.com>
+ <20240618234025.15036-8-dakr@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612075829.18241-1-brgl@bgdev.pl> <171889385052.4585.15983645082672209436.git-patchwork-notify@kernel.org>
- <8d6af7e2-76f8-4daa-a751-a1abe29af103@kernel.org> <CABBYNZJ5z91HExR-dkwrEPoF1pEGbkAP0X6tpftEGz-kd7vdsw@mail.gmail.com>
-In-Reply-To: <CABBYNZJ5z91HExR-dkwrEPoF1pEGbkAP0X6tpftEGz-kd7vdsw@mail.gmail.com>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Thu, 20 Jun 2024 16:52:46 +0200
-Message-ID: <CACMJSevy9w9L3c9fmbZcwO2BdmtJiQmHBTqJSiSXUs-fcmEqAQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Immutable tag between the Bluetooth and pwrseq
- branches for v6.11-rc1
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, patchwork-bot+bluetooth@kernel.org, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, marcel@holtmann.org, krzk+dt@kernel.org, 
-	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618234025.15036-8-dakr@redhat.com>
 
-On Thu, 20 Jun 2024 at 16:44, Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> Hi Krzysztof,
->
-> On Thu, Jun 20, 2024 at 10:35=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel=
-.org> wrote:
-> >
-> > On 20/06/2024 16:30, patchwork-bot+bluetooth@kernel.org wrote:
-> > > Hello:
-> > >
-> > > This pull request was applied to bluetooth/bluetooth-next.git (master=
-)
-> > > by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-> > >
-> > > On Wed, 12 Jun 2024 09:58:29 +0200 you wrote:
-> > >> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >>
-> > >> Hi Marcel, Luiz,
-> > >>
-> > >> Please pull the following power sequencing changes into the Bluetoot=
-h tree
-> > >> before applying the hci_qca patches I sent separately.
-> > >>
-> > >> [...]
-> > >
-> > > Here is the summary with links:
-> > >   - [GIT,PULL] Immutable tag between the Bluetooth and pwrseq branche=
-s for v6.11-rc1
-> > >     https://git.kernel.org/bluetooth/bluetooth-next/c/4c318a2187f8
-> >
-> >
-> > Luiz,
-> >
-> > This pulls looks wrong. Are you sure you have correct base? The diffsta=
-t
-> > suggests you are merging into rc2, not rc3. This will be confusing in
-> > merge commit. It is much safer, including possible feedback from Linus,
-> > if you use exactly the same base.
->
-> So you are saying I need to rebase? I usually only rebase when it
-> comes the time to do a pull-request using net-next as a base since
-> that is where bluetooth-next normally lands.
->
+On Wed, Jun 19, 2024 at 01:39:53AM +0200, Danilo Krummrich wrote:
+> I/O memory is typically either mapped through direct calls to ioremap()
+> or subsystem / bus specific ones such as pci_iomap().
+> 
+> Even though subsystem / bus specific functions to map I/O memory are
+> based on ioremap() / iounmap() it is not desirable to re-implement them
+> in Rust.
 
-Technically you're all set - you pulled rc3 together with my tag. But
-if you pulled rc3 separately and then my tag, the merge commit for the
-latter would look much cleaner.
+Why not?
 
-And for the record: you don't need to rebase anything. Does net-next
-require you to? That would be weird. I assume they also are based on
-one of the RC tags. You almost never should rebase on top of an rc,
-instead you merge it into your branch and send the PR starting from
-the latest rc tag. Git is smart and will figure it out. You may be
-afraid you'll "lose" some commits because you will not see it in the
-immediate git log. That's true, they will be buried underneath the
-pile of Merge commits from upstream, but worry not: git will always
-find all commits missing from upstream when you do `git request-pull`.
+> Instead, implement a base type for I/O mapped memory, which generically
+> provides the corresponding accessors, such as `Io::readb` or
+> `Io:try_readb`.
 
-Bart
+It provides a subset of the existing accessors, one you might want to
+trim down for now, see below...
 
-> > Best regards,
-> > Krzysztof
-> >
->
->
-> --
-> Luiz Augusto von Dentz
+> +/* io.h */
+> +u8 rust_helper_readb(const volatile void __iomem *addr)
+> +{
+> +	return readb(addr);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_readb);
+
+<snip>
+
+You provide wrappers for a subset of what io.h provides, why that
+specific subset?
+
+Why not just add what you need, when you need it?  I doubt you need all
+of these, and odds are you will need more.
+
+> +u32 rust_helper_readl_relaxed(const volatile void __iomem *addr)
+> +{
+> +	return readl_relaxed(addr);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_readl_relaxed);
+
+I know everyone complains about wrapper functions around inline
+functions, so I'll just say it again, this is horrid.  And it's going to
+hurt performance, so any rust code people write is not on a level
+playing field here.
+
+Your call, but ick...
+
+> +#ifdef CONFIG_64BIT
+> +u64 rust_helper_readq_relaxed(const volatile void __iomem *addr)
+> +{
+> +	return readq_relaxed(addr);
+> +}
+> +EXPORT_SYMBOL_GPL(rust_helper_readq_relaxed);
+> +#endif
+
+Rust works on 32bit targets in the kernel now?
+
+> +macro_rules! define_read {
+> +    ($(#[$attr:meta])* $name:ident, $try_name:ident, $type_name:ty) => {
+> +        /// Read IO data from a given offset known at compile time.
+> +        ///
+> +        /// Bound checks are performed on compile time, hence if the offset is not known at compile
+> +        /// time, the build will fail.
+
+offsets aren't know at compile time for many implementations, as it
+could be a dynamically allocated memory range.  How is this going to
+work for that?  Heck, how does this work for DT-defined memory ranges
+today?
+
+thanks,
+
+greg k-h
 
