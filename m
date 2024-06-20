@@ -1,146 +1,105 @@
-Return-Path: <linux-kernel+bounces-221983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C99A90FB62
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:41:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CAAF90FB65
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B096283D3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8A781F229F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964B41CFA9;
-	Thu, 20 Jun 2024 02:41:43 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E431CD16;
+	Thu, 20 Jun 2024 02:49:13 +0000 (UTC)
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.124.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C4E1C680;
-	Thu, 20 Jun 2024 02:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A77E57E;
+	Thu, 20 Jun 2024 02:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.124.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718851303; cv=none; b=jp/1Whibdn4sv9bvDpRflEDhhq6JMLL1/pMTaag7QeOHrc3rD926dPUHHUS5Qn2LQPGMQzWIR34XonHfWz4tOJez/hG4RQdqQckMGEN37sspNdNpfF7ookp7KMyO+BuFDAL99EYEkyRupv35S/RY6xc9xxZ+tk7mWZAP/qKxUwY=
+	t=1718851753; cv=none; b=VqKN6ss/9TFTPMGR8BaFImHY9TX7E+/pAeR7MSs7kfUkKnqlzray/iB9qJ5vN/wuSYIALVFljURpBFWUk+byL2jfhjYj7DRPTB6iQEaiLeOsHFG4oYhTeUVBCGNyrc3Nv+DcxkiChe/b4rMYmuhrLFweO21udPsSl23wzbRF/2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718851303; c=relaxed/simple;
-	bh=zlT+RN2y05WjaAuWzKTrbl1RWoP7avKxWPuu6j9IFY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QrZKG/QFVpsvvFMphNon0D1EqSoSRFzlSgd1G88wjqLitzHfYEYonqj/UV/3OhpEzIhwi88YOKHIjtGAeWDHS4+MK6P5ok6RjOM97dPcLEHnnlwOWPKKbhHKKaM6Wh221ALIwlOjc7/Ql1cJ3o4fg43XTvVuA16IZddQhxROk/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4W4PrJ0cwyz4f3jMH;
-	Thu, 20 Jun 2024 10:41:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 826911A0568;
-	Thu, 20 Jun 2024 10:41:30 +0800 (CST)
-Received: from [10.67.111.192] (unknown [10.67.111.192])
-	by APP4 (Coremail) with SMTP id gCh0CgBXCgjZlnNmZ5a6AQ--.63178S2;
-	Thu, 20 Jun 2024 10:41:30 +0800 (CST)
-Message-ID: <e329fdce-8c2f-4bc2-88e1-b079ec382eef@huaweicloud.com>
-Date: Thu, 20 Jun 2024 10:41:29 +0800
+	s=arc-20240116; t=1718851753; c=relaxed/simple;
+	bh=Y/rDw2bzCXwt+Sd6tTdo6KTXR1kTgawHQy3Q4jGSmAQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=pSlzxCOrJ4dYga5gkNb2QUlNqdtWRqKDllA1OyW9/UXgAKGxrcLQJkn0BxWc6QygtEMg2SF4rXy94yhc3j16q6Io6WCBin/F2IdnFJ2JFwodoQd7UE42HmnM1sDxNlWnkA7OaBx31fa/ivmqMaucE6WYCkdFDsg7cBrWpTXuxNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=114.132.124.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
+X-QQ-mid: bizesmtp89t1718851638tsf77eb2
+X-QQ-Originating-IP: Cnxcf0yE6w+MsvywbXobZi1OIKdeiMnOlWen8+fPLAs=
+Received: from HX01040082.powercore.com.cn ( [14.19.141.254])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 20 Jun 2024 10:47:16 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 16810093544147674005
+From: Jinglin Wen <jinglin.wen@shingroup.cn>
+To: mpe@ellerman.id.au
+Cc: npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	naveen.n.rao@linux.ibm.com,
+	masahiroy@kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Jinglin Wen <jinglin.wen@shingroup.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] powerpc: Fix unnecessary copy to 0 when kernel is booted at address 0.
+Date: Thu, 20 Jun 2024 10:41:50 +0800
+Message-Id: <20240620024150.14857-1-jinglin.wen@shingroup.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240617023509.5674-1-jinglin.wen@shingroup.cn>
+References: <20240617023509.5674-1-jinglin.wen@shingroup.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bpf, arm64: inline bpf_get_current_task/_btf() helpers
-Content-Language: en-US
-To: Puranjay Mohan <puranjay@kernel.org>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, bpf@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: puranjay12@gmail.com
-References: <20240619131334.4297-1-puranjay@kernel.org>
-From: Xu Kuohai <xukuohai@huaweicloud.com>
-In-Reply-To: <20240619131334.4297-1-puranjay@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBXCgjZlnNmZ5a6AQ--.63178S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF1fZw1fZr4rKF1rCryDKFg_yoW8Zw17pw
-	s3CrsIk3yqq34jgay7Jw4DZr1Ykw4kJ3y3KFy5K3y0kayFvry5Gw15Kw4fCFZ5Ary0qa13
-	Z39F9FsYkw1DJaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
-X-CM-SenderInfo: 50xn30hkdlqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz5a-2
 
-On 6/19/2024 9:13 PM, Puranjay Mohan wrote:
-> On ARM64, the pointer to task_struct is always available in the sp_el0
-> register and therefore the calls to bpf_get_current_task() and
-> bpf_get_current_task_btf() can be inlined into a single MRS instruction.
-> 
-> Here is the difference before and after this change:
-> 
-> Before:
-> 
-> ; struct task_struct *task = bpf_get_current_task_btf();
->    54:   mov     x10, #0xffffffffffff7978        // #-34440
->    58:   movk    x10, #0x802b, lsl #16
->    5c:   movk    x10, #0x8000, lsl #32
->    60:   blr     x10          -------------->    0xffff8000802b7978 <+0>:     mrs     x0, sp_el0
->    64:   add     x7, x0, #0x0 <--------------    0xffff8000802b797c <+4>:     ret
-> 
-> After:
-> 
-> ; struct task_struct *task = bpf_get_current_task_btf();
->    54:   mrs     x7, sp_el0
-> 
-> This shows around 1% performance improvement in artificial microbenchmark.
->
+According to the code logic, when the kernel is loaded to address 0,
+no copying operation should be performed, but it is currently being
+done.
 
-I think it would be better if more detailed data could be provided.
+This patch fixes the issue where the kernel code was incorrectly
+duplicated to address 0 when booting from address 0.
 
-> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
-> ---
->   arch/arm64/net/bpf_jit_comp.c | 9 +++++++++
->   1 file changed, 9 insertions(+)
-> 
-> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-> index 720336d28856..b838dab3bd26 100644
-> --- a/arch/arm64/net/bpf_jit_comp.c
-> +++ b/arch/arm64/net/bpf_jit_comp.c
-> @@ -1244,6 +1244,13 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx,
->   			break;
->   		}
->   
-> +		/* Implement helper call to bpf_get_current_task/_btf() inline */
-> +		if (insn->src_reg == 0 && (insn->imm == BPF_FUNC_get_current_task ||
-> +					   insn->imm == BPF_FUNC_get_current_task_btf)) {
-> +			emit(A64_MRS_SP_EL0(r0), ctx);
-> +			break;
-> +		}
-> +
->   		ret = bpf_jit_get_func_addr(ctx->prog, insn, extra_pass,
->   					    &func_addr, &func_addr_fixed);
->   		if (ret < 0)
-> @@ -2581,6 +2588,8 @@ bool bpf_jit_inlines_helper_call(s32 imm)
->   {
->   	switch (imm) {
->   	case BPF_FUNC_get_smp_processor_id:
-> +	case BPF_FUNC_get_current_task:
-> +	case BPF_FUNC_get_current_task_btf:
->   		return true;
->   	default:
->   		return false;
+Fixes: b270bebd34e3 ("powerpc/64s: Run at the kernel virtual address earlier in boot")
+Signed-off-by: Jinglin Wen <jinglin.wen@shingroup.cn>
+Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: <stable@vger.kernel.org>
+---
 
-Acked-by: Xu Kuohai <xukuohai@huawei.com>
+v2:
+  - According to 87le336c6k.fsf@mail.lhotse, improve this patch.
+v1:
+  - 20240617023509.5674-1-jinglin.wen@shingroup.cn
+
+ arch/powerpc/kernel/head_64.S | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
+index 4690c219bfa4..63432a33ec49 100644
+--- a/arch/powerpc/kernel/head_64.S
++++ b/arch/powerpc/kernel/head_64.S
+@@ -647,8 +647,9 @@ __after_prom_start:
+  * Note: This process overwrites the OF exception vectors.
+  */
+ 	LOAD_REG_IMMEDIATE(r3, PAGE_OFFSET)
+-	mr.	r4,r26			/* In some cases the loader may  */
+-	beq	9f			/* have already put us at zero */
++	mr	r4,r26			/* Load the virtual source address into r4 */
++	cmpld	r3,r4			/* Check if source == dest */
++	beq	9f			/* If so skip the copy  */
+ 	li	r6,0x100		/* Start offset, the first 0x100 */
+ 					/* bytes were copied earlier.	 */
+ 
+-- 
+2.25.1
 
 
