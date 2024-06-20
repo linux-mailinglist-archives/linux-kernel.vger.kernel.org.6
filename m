@@ -1,108 +1,157 @@
-Return-Path: <linux-kernel+bounces-223273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 423D1911086
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:15:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80B0911091
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1611F23BD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:15:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D0E1C241AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2243A1B9AC6;
-	Thu, 20 Jun 2024 18:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373441BE876;
+	Thu, 20 Jun 2024 18:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FcIls2yS"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4pltnY0Y"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C719C1B29B1
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001711BA096
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 18:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718906731; cv=none; b=ObCkp40bMA23w9vB8OecvUyJvS/vit2c+iw2gzOB+7LxKDMomegTEJGCOdr9HKm4wzSJHsu42SfbB/Ezo3urHk9D3EMRfso49CjKSqm7oZ0DIIK0IljY68l8PmfrE0bYTEZQrOxO1vu+WwYINosBoDOHMl315zxoWBZFgPeHIKo=
+	t=1718906886; cv=none; b=iLssL5HhBmMWoOXotUH5ZjAPswXTf2zPaDCvtlYdykZ5HI1TiXAUR7ZPY9LbIbmtbi3nrhCZPk5VMkgTMvNUUgNwNWc3E4kWcqtOHVPmCcRi9D2dpAZ00JBZQ61H+Kqfn+St4DWnIBC6GcluUjaLCpSS8cN4Tv3QUQbldZwUAqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718906731; c=relaxed/simple;
-	bh=/UyRgHfm+sZS+tI1rHL6/bgIgJ35C5s0UbiOdadK2DQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CODu65B1V9TuW3DO6u+2qym1Seyyc9QVmfLhP1Uzh22EIfyNEYvumcm8RDIdkMS8wa2RUrTb9JC57StEAKukEM9a/fsGK3iypvwcQTuvRGlqGFE1H+Gt0mx55o3ycV3wR0z4H6JiaDsNCL9R7sO7nk8tXg8FptYqeUfyOyS9TJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FcIls2yS; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7064afd7011so439169b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:05:26 -0700 (PDT)
+	s=arc-20240116; t=1718906886; c=relaxed/simple;
+	bh=AiSUFmCvXmOIY11aG7P0jqpokdtXDCdMyccJlMzbZrY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ouhl4MKTFlKNZMiOtQW51LBnNYNH44zPD6gvAruEfwEh2sduDo6BFpUxm7d6nwG2xRxBj62zEsHRb11yN+joB7so+aXP7EUh9rRQH1ol7fCD8ieKZKy1NED0c7Vu99yf+3OPDrwBHCuVRKqEu57N7ClVCOAWXoP+Q4kuxS3IK5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4pltnY0Y; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-375fc24a746so11655ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:08:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718906726; x=1719511526; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AyAepGt8zwC+Uy9TBQ5kec4y0GaIIr8mJzAf1XxO3g8=;
-        b=FcIls2ySv07eS1sSqfmhMVLmlXp5q0AYvXBwL8v77Yg1azs+IY8RlYm8fCdMJSwi33
-         3+m5JNJsbqDIoYfSlUkVtnevOawIXqOmMsRx8hmaGrh7uorRG14ckY6ZJb1PcL3LMf5/
-         ABRIwxfI/s9zmELcHNfQIqmVb7H/CwRTRkW0k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718906726; x=1719511526;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1718906884; x=1719511684; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AyAepGt8zwC+Uy9TBQ5kec4y0GaIIr8mJzAf1XxO3g8=;
-        b=NbgRoZmSUAdtoN1FXL8MuAzZIsFHi9cDqS2GulOlfkZFStkOHsfN47/GeP9+WihzqY
-         XjGQfLMpnspToWhuOaBQBoV7vw6lKSHSqxjdqlGTpjAjtuY/zbzBBpo5CkVnObR8t4ll
-         Nq1aOdbwc6cy71CFtMRdaB05h/CE66c9Z8w+s8CA3qcx2SL/vd0EzbgjnlMPFQrbQQal
-         tOJVwRsm11oomX2F20cQdW5C6+egE0emo3R6p2gONj0yEWXKn9NKkFzhrpNDh5YJjVjr
-         vR3TCzkB1HzRN3Htq8qSWdKIRSkIi/sPZNMX/z5r6CmrWe0Cqn0TnmxohK2+m+9xr2r1
-         U5cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUj+9uAPUx/ke2RVaVQ/dOjT73Eh4vEdWphqqOblbEvSaPlvbyX/BuEQWR265eVc/yb/UIbe/jiiG2RJHk+CwVlM406WlEpeyebyjZF
-X-Gm-Message-State: AOJu0YxZvEKyAXJgIPyjPm/1MURLY9Ygr90exdyS2wW/5h9YqWSqmInS
-	wDcrJ/RehqA66s8PccjfpDWqiIegUoXqyCBUZmSoig+YJ+Ryel0q+jgE2QGdmQ==
-X-Google-Smtp-Source: AGHT+IFtxCTApS5PLIaX0tBJ9IiKUk5qiPoyB9ue7cA9nZarmfct92p63kyAz41a4pryyVQqjS1i0g==
-X-Received: by 2002:aa7:8b50:0:b0:705:972a:53f with SMTP id d2e1a72fcca58-70629c5bcf1mr6759832b3a.18.1718906725954;
-        Thu, 20 Jun 2024 11:05:25 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:3c9c:a224:3ec6:17d2])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-705ccb6bf4fsm12605308b3a.169.2024.06.20.11.05.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 11:05:25 -0700 (PDT)
-Date: Thu, 20 Jun 2024 11:05:24 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>, David Lin <yu-hao.lin@nxp.com>
-Subject: Re: [PATCH] wifi: mwifiex: increase max_num_akm_suites
-Message-ID: <ZnRvZMQJUr4APwUU@google.com>
-References: <20240530130156.1651174-1-s.hauer@pengutronix.de>
+        bh=boOOgjA2cYx+WRs+FXruMxLj/lb0birCa2UkibJY+OY=;
+        b=4pltnY0YSdMtfBO6JNJQx3edd+EbdMeBBPIZnvkbcCOTXqwE0kiNIK94/iKzAXVbzb
+         jDogKkEXJvD/Yc/BPeW7TtcKEdM4WLy/zqb26u6EBruMeLQZG6NKtaEBxZMwREOU3tKl
+         NjOcvBzgcHxFsYBRd0kaCZ/bJNblJNgbshac9WHq9kYeTLndmaK/hxomOlmlwlzwokW7
+         RwDsSxn/0tU4doWMoxP89Gu1PpVDsrrVROWCbYBNuNbivPeROQz1p9ArJCZ5NtKk2Yzz
+         btaVKnNh5ehCyb4Y3u4JpeJSqClWa6OIDbYNF1oM081YWJtQiDlnXaS8ulF90z2+mtaV
+         QM1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718906884; x=1719511684;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=boOOgjA2cYx+WRs+FXruMxLj/lb0birCa2UkibJY+OY=;
+        b=OJjHLRJ6Ren1c8a1E+/wLKG+5ZWqQTFXXmDak3VdVNOt1C8Yw/qrponpahmuDwv0cO
+         M0yVboL/+FvSEwp+Vvmsz32Mge8iwtgiMgUujuhYOxc/f91XzET3D4WRn5TLBArRTxlL
+         raEeWnzeCPlZB0Aazlrv7EBSszPtOTwoRNSkxoyePztaeMgfhdxPbbCZSOhJPkgUpTqq
+         zcBxztacTa1eVUZnTPm4QY+J4bgnXbbbzhIvvPI2C7vYbufCiWfo7csfJ+Y0i101eChh
+         MzvRPC9Vum0i36gqjjmsS70/20f3mR0qbT8RUCkbeKS8SEzb4iMuymv+RoN1zLV0SdVW
+         mjGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUJ3cllpdH17QfXxbeWmDS8cUmO2wbf+1r9KPVEXgnZ501xMgIGtZI8WJEQzvPckE/rNxEEacVvQ8gXHg7dtwg1LaCyvC6ImdCw5ON
+X-Gm-Message-State: AOJu0YwmulXzHydMmjLZ1t/sTOTM2kKKmI/VnxFEDJYRkbTzuhVS+t64
+	SwmVQktYScHhQ9gq/8mS5yOkSYI6MT1tGwMXblB8rasnHaA9j0Vz+EFmWmLTKy88w8sUr3BF2yh
+	bzuMNhKvkukp6v6H8bKETDsd7JvTQ1OE8Lsep
+X-Google-Smtp-Source: AGHT+IHpxw0aH2Kn0lYlHD9maAaOsFDpR+FzuRFUpUCA6/zf78WxdostPFIWO5RhK6uC2MEo8LVy36QxkLBAh68cAlA=
+X-Received: by 2002:a92:90c:0:b0:375:9743:9f4 with SMTP id e9e14a558f8ab-3762e5dbbbdmr270055ab.0.1718906884043;
+ Thu, 20 Jun 2024 11:08:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530130156.1651174-1-s.hauer@pengutronix.de>
+References: <20240614230146.3783221-1-irogers@google.com> <20240614230146.3783221-14-irogers@google.com>
+ <00ac4787-c290-424f-8461-7ba300a4c1a9@linux.intel.com>
+In-Reply-To: <00ac4787-c290-424f-8461-7ba300a4c1a9@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 20 Jun 2024 11:07:52 -0700
+Message-ID: <CAP-5=fVzr5a85DO1ZMstj6AXTEfkawphT6RY7oT38mbbGCLr8A@mail.gmail.com>
+Subject: Re: [PATCH v1 13/37] perf vendor events: Update grandridge events and
+ add counter information
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Weilin Wang <weilin.wang@intel.com>, 
+	Caleb Biggers <caleb.biggers@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sascha,
+On Tue, Jun 18, 2024 at 6:45=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.c=
+om> wrote:
+>
+>
+> On 2024-06-14 7:01 p.m., Ian Rogers wrote:
+> > Update events from v1.01 to v1.02.
+>
+> The subject has a typo. It should be "perf vendor events: Update
+> graniterapids events and add counter information", not grandridge.
 
-On Thu, May 30, 2024 at 03:01:56PM +0200, Sascha Hauer wrote:
-> The maximum number of AKM suites will be set to two if not specified by
-> the driver. Set it to CFG80211_MAX_NUM_AKM_SUITES to let userspace
-> specify up to ten AKM suites in the akm_suites array.
-> 
-> Without only the first two AKM suites will be used, further ones are
-> ignored.
-> 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
-> 
-> Current wpa_supplicant/hostapd only put a maximum of two into the
-> akm_suites array as well, a patch changing this can be found here:
-> http://lists.infradead.org/pipermail/hostap/2024-May/042720.html
+Thanks, will fix in v2.
 
-Thanks for the patches and research.
+Ian
 
-Possibly dumb question: what's unique about mwifiex here? Everything you
-describe above sounds applicable to all drivers, IIUC, and I don't see
-any other driver that touches max_num_akm_suites.
-
-Brian
+> Thanks,
+> Kan
+>
+> >
+> > Bring in the event updates v1.02:
+> > https://github.com/intel/perfmon/commit/0ff9f681bd07d0e84026c52f4941d21=
+b1cd4c171
+> >
+> > Add counter information. The most recent RFC patch set using this
+> > information:
+> > https://lore.kernel.org/lkml/20240412210756.309828-1-weilin.wang@intel.=
+com/
+> >
+> > There are over 1000 new events.
+> >
+> > Co-authored-by: Weilin Wang <weilin.wang@intel.com>
+> > Co-authored-by: Caleb Biggers <caleb.biggers@intel.com>
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  .../arch/x86/graniterapids/cache.json         |  825 ++++
+> >  .../arch/x86/graniterapids/counter.json       |   77 +
+> >  .../x86/graniterapids/floating-point.json     |  242 ++
+> >  .../arch/x86/graniterapids/frontend.json      |  469 ++-
+> >  .../arch/x86/graniterapids/memory.json        |  175 +-
+> >  .../arch/x86/graniterapids/other.json         |  150 +-
+> >  .../arch/x86/graniterapids/pipeline.json      | 1009 ++++-
+> >  .../arch/x86/graniterapids/uncore-cache.json  | 3674 +++++++++++++++++
+> >  .../arch/x86/graniterapids/uncore-cxl.json    |   31 +
+> >  .../graniterapids/uncore-interconnect.json    | 1849 +++++++++
+> >  .../arch/x86/graniterapids/uncore-io.json     | 1901 +++++++++
+> >  .../arch/x86/graniterapids/uncore-memory.json |  449 ++
+> >  .../arch/x86/graniterapids/uncore-power.json  |   11 +
+> >  .../x86/graniterapids/virtual-memory.json     |  159 +
+> >  tools/perf/pmu-events/arch/x86/mapfile.csv    |    2 +-
+> >  15 files changed, 10975 insertions(+), 48 deletions(-)
+> >  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/counte=
+r.json
+> >  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/floati=
+ng-point.json
+> >  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore=
+-cache.json
+> >  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore=
+-cxl.json
+> >  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore=
+-interconnect.json
+> >  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore=
+-io.json
+> >  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore=
+-memory.json
+> >  create mode 100644 tools/perf/pmu-events/arch/x86/graniterapids/uncore=
+-power.json
 
