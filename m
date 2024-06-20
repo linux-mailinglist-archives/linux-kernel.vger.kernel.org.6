@@ -1,277 +1,134 @@
-Return-Path: <linux-kernel+bounces-223634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1EF39115CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:45:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 423C49115D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C69C1F239DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:45:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E06281F23875
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5540513D278;
-	Thu, 20 Jun 2024 22:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C5D142E78;
+	Thu, 20 Jun 2024 22:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E6S3uP6t"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jzDuUyQG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9A55FEE4;
-	Thu, 20 Jun 2024 22:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5324D79949;
+	Thu, 20 Jun 2024 22:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718923534; cv=none; b=qId7xZ5X8Pq2K0UqfX1keZdG3vx9vtCiplon4JPELXu/yrAaEVHiyoutMidyLAxEH5WAbHaAcLr1vEHrcVNKNCBq0cbXfu9eOlKOMwVe06/7rfQaM2jv2sDF/yBZzps0Z4ZKi3euUy1DmJrtfJu+zMDX5kP1BcB/URDG/mWx+eQ=
+	t=1718923669; cv=none; b=CzkGQmJMWZ8eqsktGXK4K47asKhjogkx4ayaZ5anF3OF1R1zM2cpCSyPFpNDURD50aFiI9DZ1NxQlXviMBxEWPhVx5YT2nhUQPr8X/Ye8phXNVwhFTB7kOMC+uSP2ROhkPoWaYMwux5qXwIbnpex3g/xGB+iMoPmumqeeerzwRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718923534; c=relaxed/simple;
-	bh=QW6EneRYCvq4hKgo60WKJgekOPm3qGdx/dlnJ0LDfPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UHdyD8fSyRq52/hvVgHmGoabt+eC+QX1JyHm5UXCvC++RYz6CwKytsmTMwV9/DSMTafVm3fqSB+oNHveeQqer3GFkg3akGjITpW5ShUVopfARIkExTBjoHeOr5DqlIplugnKPTEvPHecMvigBz7eIjQU25GA5UK6mRSgsa4Q+vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E6S3uP6t; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-79bc769b014so79738685a.1;
-        Thu, 20 Jun 2024 15:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718923530; x=1719528330; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lnmrlYlrxRh9vivFD+6NtUoULUx1ZAai45xa/zONLMY=;
-        b=E6S3uP6t9oxqbb9AL6IhuODAzsSIKKLR4AkYihOTQ1wRAPb34qvhGrMa0k0pJtIjJ0
-         4Wg3SOGTGxECQvZgDm+47bwHi/sOBgh6f5IFnDBOb3G6fqdNfkYE1oU2QxH52zVd+F5K
-         BV4Laph3DPuG5jPJs/JP49O4Av7sV1tVTRWa1KscEDeypv5ZasNMFKvRWJ13dDovrXVS
-         TX8Vyyc5oOLBwxkrDG5fmdIsiwvtJbn0Ye9yEj271lK98VmDnBOlpg6XcurS/1G102ov
-         uEAzwPespRIpK/RnZNPbCqWgz14LttBXL7STd+xqhj4poluThhDn5iFubujD6OcOOooQ
-         Kh7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718923530; x=1719528330;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lnmrlYlrxRh9vivFD+6NtUoULUx1ZAai45xa/zONLMY=;
-        b=HTW30hl5FnEdMljYRwoIFveL0HtkdSWVNsmgG3SGlYxPJGnivwx0ytBZnLHedLhsQ7
-         dXrXTDSx9bKAkA8UEljIQw1F9u7ycqXxpSA1l1sxBZRLFxhoceU9upzbqojbDrmS9Tzn
-         DJ7pch+93p6P40EQ4eReiyM+pXLN1W4lBEYNVBuHT3S4g4zdgJ56ef8v4UnXQ3mprDBm
-         OZgdFrshGQDiHEIUTEgv9MAaTOQZfSKVbuGrxIRjGpzoXyGWoXR5tVA6q5uQqFEcyv9L
-         0Ef1qJzyMZNUt4Vt0c6XqVD+bsdJZm6CKkPr0wp5HOLmpC30ltKDfofi2pEqZW+b6Aja
-         8P7g==
-X-Forwarded-Encrypted: i=1; AJvYcCV9pU7TItQhZJPG/i4OkmUkju4UeDbgaKS/HubrrtBCUhHykuKOl7FzivhRhTrFVG/odQevCd9t47lrWjJshqiKLqXDpnDoOAbvLN5Db3Zva2UB3BmPNKc1cXabWgGfIr7gPL8ly19X
-X-Gm-Message-State: AOJu0Yzc1TQ237ZwH3ciTrFYbPoytZTitJdboT3GYFbGtP1e3nqR0CNU
-	LhxhBJ3LpHmH/UTQVJnQujuLTZBCQTStFbj93A0saFc7ILK4coMKe3jJzn5nt7Evon2ZL4UWD38
-	VrjeeeI8ryB/ognz8D48xLL4lAmA=
-X-Google-Smtp-Source: AGHT+IHUHiKhuO3lflJiK1mEtBHHQQANwPa3f18lchzyH5vGRdVxN8b4X5W0wRN32prRqb0Z1SVcif1uQeeWXATBtg8=
-X-Received: by 2002:ad4:420c:0:b0:6b2:b997:6513 with SMTP id
- 6a1803df08f44-6b5019b852emr115022296d6.7.1718923530320; Thu, 20 Jun 2024
- 15:45:30 -0700 (PDT)
+	s=arc-20240116; t=1718923669; c=relaxed/simple;
+	bh=VVG0u6kJx6gy9QOoxI0WCnMXxw0wTHsd0ZhQUmx+USY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mRmmIuyuFDCd55xpGC9COrhv+USOcDApPYmeWjQz7EsJItYhS7jot0fyyJaOUGNshuRbMIaOuaZhQAu9aT2DPHwMqcvJcED/hjmAXllm83ODX77/aw1mJ+bOfDZBDRDLElRpYnzwteJq6Ff0MkYF3+lWiLcMq7YHJfRSvVsZ+rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jzDuUyQG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KHL5uN010657;
+	Thu, 20 Jun 2024 22:47:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=UzU1DFJ4xrF/xX5fZgyh2T96
+	UuT9FhaFK+d/7JtKvNI=; b=jzDuUyQGbn/J5EKIcYa/VYyT6OqYGWRl6bqvdfBm
+	3wqaJ1kW3cK+p3bp+S8gDKtYC2fjQKzeafmoZOdNL5jgDJAlv5dHmWM3iYx6boFC
+	k3gtvbWxU1U6uPELCKJJklxknTxfqq857nvR8yrOnU0E9WFI57Y3Bp5sAlzTgSxP
+	0f1K34rmJ/hg4RCtOtL9GNcM1T599TPeJFAUNzYoeb8Xd6afUpkGpFgfo8YHSuak
+	Ygf1FYljOGhG+Cu69kI4+siX7WaQyk9h1FQpyeb6AY3tfs5IsyMmfEppO7aK18nC
+	IBAAIYcIebPJBK0YN1PA30VlduHppw5LISHTDmfqwYJtMw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrrc8stu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 22:47:26 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KMlORB009447
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 22:47:24 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 20 Jun 2024 15:47:24 -0700
+Date: Thu, 20 Jun 2024 15:47:23 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+        <maz@kernel.org>, <kvm@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <pbonzini@redhat.com>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+Message-ID: <20240620140516768-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+ <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com>
+ <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+ <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
+ <20240619115135.GE2494510@nvidia.com>
+ <ZnOsAEV3GycCcqSX@infradead.org>
+ <CA+EHjTxaCxibvGOMPk9Oj5TfQV3J3ZLwXk83oVHuwf8H0Q47sA@mail.gmail.com>
+ <20240620135540.GG2494510@nvidia.com>
+ <6d7b180a-9f80-43a4-a4cc-fd79a45d7571@redhat.com>
+ <20240620142956.GI2494510@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240608155316.451600-1-flintglass@gmail.com> <CAKEwX=PsmuPQUvrsOO7a+JGd=gDmjP5_XDGD+z-0R6dBea+BOg@mail.gmail.com>
- <CAPpoddcgmZs6=s1MrzLgOAJxoVW5_bLa4CGxHq3KhF3GOi8VBw@mail.gmail.com>
- <CAJD7tkYD+y54-KYEotWspRdNL_AC0SxE147tR+dSLvY-=9jJyg@mail.gmail.com> <CAPpodddcGsK=0Xczfuk8usgZ47xeyf4ZjiofdT+ujiyz6V2pFQ@mail.gmail.com>
-In-Reply-To: <CAPpodddcGsK=0Xczfuk8usgZ47xeyf4ZjiofdT+ujiyz6V2pFQ@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 20 Jun 2024 15:45:17 -0700
-Message-ID: <CAKEwX=NFAh95smCyJidENLytQjU8xDbosqahM6OOzYrnmJ5ojg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/3] mm: zswap: global shrinker fix and proactive shrink
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240620142956.GI2494510@nvidia.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rmA4Wwy_3KWwSQd6c-bmt4HkSHSDNN4N
+X-Proofpoint-ORIG-GUID: rmA4Wwy_3KWwSQd6c-bmt4HkSHSDNN4N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_10,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 mlxlogscore=771 spamscore=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 adultscore=0 mlxscore=0 suspectscore=0
+ malwarescore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406200166
 
-On Wed, Jun 19, 2024 at 6:03=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
-> wrote:
->
-> Hello,
->
-> Sorry for the late reply. I am currently investigating a
-> responsiveness issue I found while benchmarking with this series,
-> possibly related to concurrent zswap writeback and pageouts.
->
-> This series cannot be applied until the root cause is identified,
-> unfortunately. Thank you all for taking the time to review.
->
-> The responsiveness issue was confirmed with 6.10-rc2 with all 3
-> patches applied. Without patch 3, it still happens but is less likely.
->
-> When allocating much larger memory than zswap can buffer, and
-> writeback and rejection by pool_limit_hit happen simultaneously, the
-> system stops responding. I do not see this freeze when zswap is
-> disabled or when there is no pool_limit_hit. The proactive shrinking
-> itself seems to work as expected as long as the writeback and pageout
-> do not occur simultaneously.
->
-> I suspect this issue exists in current code but was not visible
-> without this series since the global shrinker did not writeback
-> considerable amount of pages.
->
->
-> 2024=E5=B9=B46=E6=9C=8815=E6=97=A5(=E5=9C=9F) 7:48 Nhat Pham <nphamcs@gma=
-il.com>:
-> >
-> > BTW, I'm curious. Have you experimented with increasing the pool size?
-> > That 20% number is plenty for our use cases, but maybe yours need a
-> > different cap?
-> >
->
-> Probably we can allocate a bit more zswap pool size. But that will
-> keep more old pages once the pool limit is hit. If we can ensure no
-> pool limit hits and zero writeback by allocating more memory, I will
-> try the same amount of zramswap.
->
-> > Also, have you experimented with the dynamic zswap shrinker? :) I'm
-> > actually curious how it works out in the small machine regime, with
-> > whatever workload you are running.
-> >
->
-> It seems the dynamic shrinker is trying to evict all pages. That does
-> not fit to my use case that prefer balanced swapin and swapout
-> performance
+On Thu, Jun 20, 2024 at 11:29:56AM -0300, Jason Gunthorpe wrote:
+> On Thu, Jun 20, 2024 at 04:01:08PM +0200, David Hildenbrand wrote:
+> > Regarding huge pages: assume the huge page (e.g., 1 GiB hugetlb) is shared,
+> > now the VM requests to make one subpage private. 
+> 
+> I think the general CC model has the shared/private setup earlier on
+> the VM lifecycle with large runs of contiguous pages. It would only
+> become a problem if you intend to to high rate fine granual
+> shared/private switching. Which is why I am asking what the actual
+> "why" is here.
+> 
 
-Hmm not quite. As you have noted earlier, it (tries to) shrink the
-unprotected pages only,
+I'd let Fuad comment if he's aware of any specific/concrete Anrdoid
+usecases about converting between shared and private. One usecase I can
+think about is host providing large multimedia blobs (e.g. video) to the
+guest. Rather than using swiotlb, the CC guest can share pages back with
+the host so host can copy the blob in, possibly using H/W accel. I
+mention this example because we may not need to support shared/private
+conversions at granularity finer than huge pages. The host and guest can
+negotiate the minimum size that can be converted and you never run into
+issue where subpages of a folio are differently shared. I can't think of
+a usecase where we need such granularity for converting private/shared.
 
->
->
-> 2024=E5=B9=B46=E6=9C=8815=E6=97=A5(=E5=9C=9F) 9:20 Yosry Ahmed <yosryahme=
-d@google.com>:
-> > >
-> > > 1.
-> > > The visible issue is that pageout/in operations from active processes
-> > > are slow when zswap is near its max pool size. This is particularly
-> > > significant on small memory systems, where total swap usage exceeds
-> > > what zswap can store. This means that old pages occupy most of the
-> > > zswap pool space, and recent pages use swap disk directly.
-> >
-> > This should be a transient state though, right? Once the shrinker
-> > kicks in it should writeback the old pages and make space for the hot
-> > ones. Which takes us to our next point.
-> >
-> > >
-> > > 2.
-> > > This issue is caused by zswap keeping the pool size near 100%. Since
-> > > the shrinker fails to shrink the pool to accept_thr_percent and zswap
-> > > rejects incoming pages, rejection occurs more frequently than it
-> > > should. The rejected pages are directly written to disk while zswap
-> > > protects old pages from eviction, leading to slow pageout/in
-> > > performance for recent pages on the swap disk.
-> >
-> > Why is the shrinker failing? IIUC the first two patches fixes two
-> > cases where the shrinker stumbles upon offline memcgs, or memcgs with
-> > no zswapped pages. Are these cases common enough in your use case that
-> > every single time the shrinker runs it hits MAX_RECLAIM_RETRIES before
-> > putting the zswap usage below accept_thr_percent?
-> >
-> > This would be surprising given that we should be restarting the
-> > shrinker with every swapout attempt until we can accept pages again.
-> >
-> > I guess one could construct a malicious case where there are some
-> > sticky offline memcgs, and all the memcgs that actually have zswap
-> > pages come after it in the iteration order.
-> >
-> > Could you shed more light about this? What does the setup look like?
-> > How many memcgs there are, how many of them use zswap, and how many
-> > offline memcgs are you observing?
-> >
->
-> Example from ubuntu 22.04 using zswap:
-> root@ctl:~# find /sys/fs/cgroup/ -wholename
-> \*service/memory.zswap.current | xargs grep . | wc
->      31      31    2557
-> root@ctl:~# find /sys/fs/cgroup/ -wholename
-> \*service/memory.zswap.current | xargs grep ^0 | wc
->      11      11     911
->
-> This indicates 11 out of 31 services have no pages in zswap. Without
-> patch 2, shrink_worker() aborts shrinking in the second tree walk,
-> before evicting about 40 pages from the services. The number varies,
-> but I think it is common to see a few memcg that has no zswap pages
->
-> > I am not saying we shouldn't fix these problems anyway, I am just
-> > trying to understand how we got into this situation to begin with.
-> >
-> > >
-> > > 3.
-> > > If the pool size were shrunk proactively, rejection by pool limit hit=
-s
-> > > would be less likely. New incoming pages could be accepted as the poo=
-l
-> > > gains some space in advance, while older pages are written back in th=
-e
-> > > background. zswap would then be filled with recent pages, as expected
-> > > in the LRU logic.
-> >
-> > I suspect if patches 1 and 2 fix your problem, the shrinker invoked
-> > from reclaim should be doing this sort of "proactive shrinking".
-> >
-> > I agree that the current hysteresis around accept_thr_percent is not
-> > good enough, but I am surprised you are hitting the pool limit if the
-> > shrinker is being run during reclaim.
-> >
-> > >
-> > > Patch 1 and 2 make the shrinker reduce the pool to accept_thr_percent=
-.
-> > > Patch 3 makes zswap_store trigger the shrinker before reaching the ma=
-x
-> > > pool size. With this series, zswap will prepare some space to reduce
-> > > the probability of problematic pool_limit_hit situation, thus reducin=
-g
-> > > slow reclaim and the page priority inversion against LRU.
-> > >
-> > > 4.
-> > > Once proactive shrinking reduces the pool size, pageouts complete
-> > > instantly as long as the space prepared by shrinking can store the
-> > > direct reclaim. If an admin sees a large pool_limit_hit, lowering
-> > > accept_threshold_percent will improve active process performance.
-> >
-> > I agree that proactive shrinking is preferable to waiting until we hit
-> > pool limit, then stop taking in pages until the acceptance threshold.
-> > I am just trying to understand whether such a proactive shrinking
-> > mechanism will be needed if the reclaim shrinker for zswap is being
-> > used, how the two would work together.
->
-> For my workload, the dynamic shrinker (reclaim shrinker) is disabled.
-> The proposed global shrinker and the existing dynamic shrinker are
-> both proactive, but their goals are different.
->
-> The global shrinker starts shrinking when the zswap pool exceeds
-> accept_thr_percent + 1%, then stops when it reaches
-> accept_thr_percent. Pages below accept_thr_percent are protected from
-> shrinking.
->
-> The dynamic shrinker starts shrinking based on memory pressure
-> regardless of the zswap pool size, and stops when the LRU size is
-> reduced to 1/4. Its goal is to wipe out all pages from zswap. It
-> prefers swapout performance only.
->
-> I think the current LRU logic decreases nr_zswap_protected too quickly
-> for my workload. In zswap_lru_add(), nr_zswap_protected is reduced to
-> between 1/4 and 1/8 of the LRU size. Although zswap_folio_swapin()
-> increments nr_zswap_protected when page-ins of evicted pages occur
-> later, this technically has no effect while reclaim is in progress.
->
-> While zswap_store() and zswap_lru_add() are called, the dynamic
-> shrinker is likely running due to the pressure. The dynamic shrinker
-> reduces the LRU size to 1/4, and then a few subsequent zswap_store()
-> calls reduce the protected count to 1/4 of the LRU size. The stored
-> pages will be reduced to zero through a few shrinker_scan calls.
+Jason, do you have scenario in mind? I couldn't tell if we now had a
+usecase or are brainstorming a solution to have a solution.
 
-Ah this is a fair point. We've been observing this in
-production/experiments as well - there's seems to be a positive
-correlation between zswpout rate and zswap_written_back rate. Whenever
-there's a spike in zswpout, you also see a spike in writtenback pages
-too - looks like the flood of zswpout weaken zswap's lru protection,
-which is not quite the intended effect.
+Thanks,
+Elliot
 
-We're working to improve this situation. We have a couple of ideas
-floating around, none of which are too complicated to implement, but
-need experiments to validate before sending upstream :)
 
