@@ -1,156 +1,184 @@
-Return-Path: <linux-kernel+bounces-222436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD52910189
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:34:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 788E691018A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34490B21C78
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:34:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C52A1C211F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490C41AAE19;
-	Thu, 20 Jun 2024 10:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A4F1AAE0D;
+	Thu, 20 Jun 2024 10:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O4LgYgwk"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OWadIRwr"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5467617CA1B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C592594
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718879660; cv=none; b=BXBJHXjycvB5WZFc0D3MwqCc68Ec6Erj313DJ4U4lXft50Z1Ftm1puAZ4/u72KGedobIcFiDgzh1mi8dSTNuMzIoimHlo/IZ4blRmr12kdEm4O2T08+vqaGRtrhzLLLfJeBckkHeQfAtGAFMnHObSbJjUGgJbGuL5agzFDadcWk=
+	t=1718879702; cv=none; b=pYMlrqTh5E0sSSgnK3KizE1lxmqWmUQJqtNKkGaE9tKV72TmUytvo/g8M5OVqNzE/IgzDGRvRPh3TZ4j/xbG0Mjo09P3l4iwID08jYeD5hlPB8O8RkAUfaXWHN9oXdCECZS4DhOaN8UY0K75xpeZ10OL3+EsBvZvg0FkjBWktP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718879660; c=relaxed/simple;
-	bh=YNOkYJNBVLQ0eueIapzEgiAefpctePBYXUzNH0ucuBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwzOYbMh1va5U4R0qbeB/Nl9834Hl/SD/ZYjVAivFa+7vf5J0LSUIV82LcRKcZwYw2XyfQk4GJth1zjootctt6royWgIrDS9WgLKDnLNL51RYERTbvFkNWYygY0O7d1Ea1isyIVZOQ6umKxIvNsnDCT9WgWJ3QGkeEB20Es5Tx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O4LgYgwk; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57cbc2a2496so807445a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 03:34:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718879655; x=1719484455; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UH1RftmHG3Vs+kyJjdp6FaijzaNseaKDxHW9Q4uMarM=;
-        b=O4LgYgwk8Awj0VHeb9P3YjDruI99pZGB+PtBkXIDhyFXoDZXbHoi3r9V4qiZQRmzGU
-         clGhbTBa3YLuCLRoq5wSIEBZUgO2ceAuHKGNQLLmpRN4lnpeBgNU+7s6VgY601Jdpgrc
-         Y3R4BRKvtp+u5hVYJ5wfnvXACS8O/La4saI4GNoWcz0U23YlPEm5QJ6YyekWWj+e0Qfn
-         XnO+8zOYY1lze8tIupeEitLJIS4nw6H2YZqaP5eKAPALQY7zXVfUCShO5vEDtjYTfPyU
-         Tg0Ye8O2en/ckemwd+BDFUDjj8wWphis+Ou1n2MslE0iptr1Y5TjkGFQJhaAiChrnsca
-         i4DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718879655; x=1719484455;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UH1RftmHG3Vs+kyJjdp6FaijzaNseaKDxHW9Q4uMarM=;
-        b=UqPfQZi/Ti4LrP4+KsJlBa2+TDRgksQ/9xUevTGxweQEXIo6xt/F/VPIpO7QV4EzH+
-         CS6HuH6HyHPUQ00SKCJUzdnjEVzlPz4iWESh8hxdlSrPMju4BruTHRAGT5I84fi97+4m
-         b+Z2fDppb4j7e0Nv5B0fW4UVOJIe6GJVAfm/8w7+5vykuf2MQbxCgngyZL9I3d0sQhXB
-         i4At2JFKf85Ec09wyY/mEEg0xbCXwu3hK1wtNQVYUMUsyWIGkWbXAR+hDDm7MNvbatqP
-         uo22zQR2qSg24KfzjxGblTLy7QrTgJywBlljcRptPLBar3km9pMmZpFep2gGv3iK+C8T
-         Abww==
-X-Forwarded-Encrypted: i=1; AJvYcCVGRPuGvZtfB+5EFdF++9UgGTZmtsDwBgEy8gZiDJSJXwU+QnbZkdXB/lTFVmeIEtm0AHwtm0yi6LW4F3zdbWLhrnIJgua8B73cOrId
-X-Gm-Message-State: AOJu0YzU1CLBTnCNga81YS6SHhuhPirmR88QWHzR8du8yqL/1WM1QVZG
-	D+fo5ab7nppTbUXNptNoKYEcvI6CR2+p9fKR4OSq1N417kKSaPEpCkR0SOMqUBg=
-X-Google-Smtp-Source: AGHT+IEywqbKty6de7BGaA3EekB8lHCg+TqJCCgL/r5vpSNbTS3dSW25wQhhnMyvzNmMNB+yuXEXOw==
-X-Received: by 2002:a17:906:e214:b0:a6f:6721:b065 with SMTP id a640c23a62f3a-a6fab643f94mr316617366b.32.1718879654465;
-        Thu, 20 Jun 2024 03:34:14 -0700 (PDT)
-Received: from localhost (p200300f65f283b00ca876ee5dd3d1e3b.dip0.t-ipconnect.de. [2003:f6:5f28:3b00:ca87:6ee5:dd3d:1e3b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ecd5bfsm750320466b.113.2024.06.20.03.34.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 03:34:13 -0700 (PDT)
-Date: Thu, 20 Jun 2024 12:34:12 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Fabrice Gasnier <fabrice.gasnier@foss.st.com>, 
-	William Breathitt Gray <wbg@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-pwm@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Thorsten Scherer <T.Scherer@eckelmann.de>
-Subject: Re: [PATCH v2 3/5] counter: stm32-timer-cnt: Use TIM_DIER_CCxIE(x)
- instead of TIM_DIER_CCxIE(x)
-Message-ID: <imyuhtcsjrbyodsndzbaqfwa4jxny25eylfdh4u4xtsiotsk5g@45l556pcrzys>
-References: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
- <126bd153a03f39e42645573eecf44ffab5354fc7.1718791090.git.u.kleine-koenig@baylibre.com>
- <20240620084451.GC3029315@google.com>
+	s=arc-20240116; t=1718879702; c=relaxed/simple;
+	bh=lCyupJdafA3dXGgAIhEV7XI5qV1P7+a/6Gib3SE/mrc=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=JeV3OZ8+F1OdFXOngdQYu/SOUVoPTeCy1zj0p+vvq6CvzMiRax9GR2DonvIOaEudjwCtXb1x2i+/D+Hja0UpgYF8gy32+Qavu9SJ+FWPZjUNUBc0dygap/Zj5MF9m8m99dDh3I45shUCGQxwhv/ULsZBhwgVVX4GitC4h1qv/Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OWadIRwr; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240620103457euoutp01aba6dcb4c80017490606b000d08a2a88~ar-pZOKqX2475024750euoutp01p
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:34:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240620103457euoutp01aba6dcb4c80017490606b000d08a2a88~ar-pZOKqX2475024750euoutp01p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1718879697;
+	bh=K2XlRvGpvnjCHdsUkw4csbNzLzNzCgYTkIMsnQI6LhY=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=OWadIRwrnG8ERyR0Z72rwC52Hh68ItuCMqk9n4bEJ3kO4W8sznq3VjIKYokUdUz5+
+	 aPqyAzT20RGMp35Cpb0rqWyeR/Rcitr3xSBp2qGhTwTIerXmUV/HenpDUghiHf7wV1
+	 XFcVB41NB8gzPsdTAKEBACQJfJLTXidN6CfSLfaM=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240620103457eucas1p2e6f09a2914a058897fdf1250de5d47ae~ar-pPMDkt1317913179eucas1p27;
+	Thu, 20 Jun 2024 10:34:57 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 1F.DA.09620.1D504766; Thu, 20
+	Jun 2024 11:34:57 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240620103456eucas1p1578e3a4017dcd11c6d48b6022a3522ce~ar-oroHTg0858808588eucas1p1G;
+	Thu, 20 Jun 2024 10:34:56 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240620103456eusmtrp2ce837deca67868d4554386c61f582368~ar-orAU0P3267132671eusmtrp2y;
+	Thu, 20 Jun 2024 10:34:56 +0000 (GMT)
+X-AuditID: cbfec7f5-d31ff70000002594-96-667405d1f90f
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id E9.39.08810.0D504766; Thu, 20
+	Jun 2024 11:34:56 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240620103456eusmtip2311da91bb4412085b8730b0b2d192bc1~ar-obUxW_0676706767eusmtip2O;
+	Thu, 20 Jun 2024 10:34:56 +0000 (GMT)
+Received: from localhost (106.210.248.242) by CAMSVWEXC01.scsc.local
+	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Thu, 20 Jun 2024 11:34:55 +0100
+Date: Thu, 20 Jun 2024 12:34:51 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
+ proc_handlers
+Message-ID: <20240620103451.7c4oznlkwty53bzs@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hl7obtkvuj2dllak"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
-In-Reply-To: <20240620084451.GC3029315@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRmVeSWpSXmKPExsWy7djPc7oXWUvSDOZ8F7SYs34Nm8W6t+dZ
+	LS7vmsNm8fvHMyaLGxOeMjqwemxa1cnmcWLGbxaPz5vkPPq7j7EHsERx2aSk5mSWpRbp2yVw
+	ZUy+3sZcsI2/Yv/O6cwNjJN5uhg5OSQETCQ239vK3sXIxSEksIJR4valdlYI5wujxJ3dfxgh
+	nM+MEoeWnmeFaXn79iwLRGI5o0Tb68uscFUdT/ewgFQJCWxllGi65gxiswioSrxcdZsJxGYT
+	0JE4/+YOM4gtImAjsfLbZ7DlzAKTGCU2nL8GtkJYIEbifP8WsCJeAQeJnRuuQNmCEidnPgFb
+	wCygJ3Fj6hS2LkYOIFtaYvk/DoiwvETz1tlg5ZwCvhLbVlxjhrhaWeLLpzdQdq3E2mNnwPZK
+	CDzgkGjsbmeESLhIzJn1nB3CFpZ4dXwLlC0j8X/nfCaIhsmMEvv/fYDqXs0osazxKxNElbVE
+	y5UnUB2OEotvtLGDXCchwCdx460gxHV8EpO2TWeGCPNKdLQJTWBUmYXktVlIXpuF8NosJK8t
+	YGRZxSieWlqcm55abJyXWq5XnJhbXJqXrpecn7uJEZhqTv87/nUH44pXH/UOMTJxMB5ilOBg
+	VhLhfd5VlCbEm5JYWZValB9fVJqTWnyIUZqDRUmcVzVFPlVIID2xJDU7NbUgtQgmy8TBKdXA
+	JDkhpnh6t/1SGx/btmWLE8XPFy70+bDLaen5vrST9bFCt2oeFy23F1+rtUForuzs2tuP5vYu
+	KNp1w68rv3+O6PyI3cmuwZd/Fra0GnT3lucXmzB+esV9+CLL2zlvP5i3vnz55pnhcybDYkex
+	MMV565oyzYPDnv/3N3G+xNUn0fOmSK5B+NOZrWzXvgnOC2KdvNd+OfP0Rvk76zIMDxVq3bws
+	085qJPBuJfvj+4UbU/WbLq+6ukbt80W53HLmD4u/rRGWmxgbH/VukQWXmmmcuBkziw5vlZGA
+	KOf3Os5Zr55dmFu56177nzSZHWcy3r04uqZst8qTC5LKLfdiLQ33aiTOWLiz1OvRmu1fGm9H
+	KrEUZyQaajEXFScCANEdcXSkAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsVy+t/xe7oXWEvSDOZd1bCYs34Nm8W6t+dZ
+	LS7vmsNm8fvHMyaLGxOeMjqwemxa1cnmcWLGbxaPz5vkPPq7j7EHsETp2RTll5akKmTkF5fY
+	KkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZUy+3sZcsI2/Yv/O6cwNjJN5
+	uhg5OSQETCTevj3L0sXIxSEksJRR4sGvN8wQCRmJjV+uskLYwhJ/rnWxQRR9ZJQ4Pns+VMdW
+	RolLU86zg1SxCKhKvFx1mwnEZhPQkTj/5g7YJBEBG4mV3z6zgzQwC0xilJh25jAjSEJYIEbi
+	fP8WsCJeAQeJnRuuMENMXcAo8f/TCVaIhKDEyZlPWEBsZgE9iRtTpwDdwQFkS0ss/8cBEZaX
+	aN46G2wOp4CvxLYV16BeUJb48gnmnVqJV/d3M05gFJmFZOosJFNnIUydhWTqAkaWVYwiqaXF
+	uem5xYZ6xYm5xaV56XrJ+bmbGIGRuO3Yz807GOe9+qh3iJGJg/EQowQHs5II7/OuojQh3pTE
+	yqrUovz4otKc1OJDjKbAMJrILCWanA9MBXkl8YZmBqaGJmaWBqaWZsZK4ryeBR2JQgLpiSWp
+	2ampBalFMH1MHJxSDUzpv/Mk+4TOrwgQ9jySmvq/72dbrfy7S2w/Vxu4TEtuvPr7Lu9HM8Ej
+	O3x4mRaukfm/Q2n5VqHmqA1d0tMOO7amSMRJHd+TnFfk5nwyrOPLhA8qrDNXPSo3vv9I5Ojy
+	nYL3jhyaxSst5r/NqXDCDObrhg/59GXVOt/OzM8VvtZxNW4pfz9v8pptj9XmNn0oSJ93/Mw7
+	fr1lF4zO/879+Xmy18GbuvNtnz6Y5yiwYYKFb3+7g72U28dlvbXHJnhe/nLf0OnkAiZxJ6VS
+	/omTZdTqahb3TXv0JUfC1/sotwB31krrW9kRByRFP9jOaxFtWLUj8HHWUZVC/ek1B81/HXVh
+	FbodP1tWJWT7qnc9hoJKLMUZiYZazEXFiQBsVivlTQMAAA==
+X-CMS-MailID: 20240620103456eucas1p1578e3a4017dcd11c6d48b6022a3522ce
+X-Msg-Generator: CA
+X-RootMTR: 20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0
+References: <CGME20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0@eucas1p2.samsung.com>
+	<20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
 
+On Wed, Jun 19, 2024 at 12:09:00PM +0200, Thomas Weiﬂschuh wrote:
+> Adapt the proc_hander function signature to make it clear that handlers
+> are not supposed to modify their ctl_table argument.
+> 
+> This is also a prerequisite to moving the static ctl_table structs into
+> read-only data.
+> 
+> The patch was mostly generated by coccinelle with the following script:
+> 
+>     @@
+>     identifier func, ctl, write, buffer, lenp, ppos;
+>     @@
+> 
+>     int func(
+>     - struct ctl_table *ctl,
+>     + const struct ctl_table *ctl,
+>       int write, void *buffer, size_t *lenp, loff_t *ppos)
+>     { ... }
+> 
+> In addition to the scripted changes some other changes are done:
+> 
+> * The "typedef proc_handler" in include/linux/sysctl.h is changed to use
+>   the "const ctl_table".
+> 
+> * The prototypes of non-static handlers in header-files are adapted
+>   to match the changes of their respective definitions.
+> 
+> * kernel/watchdog.c: proc_watchdog_common()
+>   This is called from a proc_handler itself and is als calling back
+>   into another proc_handler, making it necessary to change it as part
+>   of the proc_handler migration.
+> 
+> No functional change.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+Will test this in 0-day in [1] to avoid potential conflicts with all the
+other stuff going into linux-next and because it does not apply cleanly to
+sysctl-next. Don't expect any issues from 0-day as it is a
+non-functional trivial change.
 
---hl7obtkvuj2dllak
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'll use this patch as is when the time comes during the end of the
+merge window (at that point it should apply cleanly) and go into 
 
-Hello Lee,
+@Thomas: Can I ping you during the merge window to double check that
+there are no additional proc_handlers (without the const argument)
+that might not be present in today's linux-next?
 
-On Thu, Jun 20, 2024 at 09:44:51AM +0100, Lee Jones wrote:
-> On Wed, 19 Jun 2024, Uwe Kleine-K=F6nig wrote:
->=20
-> > These two defines have the same purpose and this change doesn't
-> > introduce any differences in drivers/counter/stm32-timer-cnt.o.
-> >=20
-> > The only difference between the two is that
-> >=20
-> > 	TIM_DIER_CC_IE(1) =3D=3D TIM_DIER_CC2IE
-> >=20
-> > while
-> >=20
-> > 	TIM_DIER_CCxIE(1) =3D=3D TIM_DIER_CC1IE
-> >=20
-> > . That makes it necessary to have an explicit "+ 1" in the user code,
-> > but IMHO this is a good thing as this is the code locatation that
-> > "knows" that for software channel 1 you have to use TIM_DIER_CC2IE
-> > (because software guys start counting at 0, while the relevant hardware
-> > designer started at 1).
-> >=20
-> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
-> > ---
-> >  drivers/counter/stm32-timer-cnt.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> Did you drop William's Ack on purpose?
+Best
 
-Yes, because a) I was unsure what he didn't like about the subject, and
-(more importantly) b) I split the patch in question. I should have
-written that in the cover letter, sorry.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git/log/?h=jag/constify_proc_handlers
 
-(Note I only announced to have fixed the subject prefix of the pwm
-patch. I assume you won't include that in your pull request, but if you
-do, please do s/-/: / on it. That's another thing I failed with for this
-series.)
+-- 
 
-Best regards
-Uwe
-
---hl7obtkvuj2dllak
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZ0BaEACgkQj4D7WH0S
-/k7t4gf/cOIyz4Nagjp9u3Qrvbjo6uKDr5UNTBYW/l4HOKdCzRn2Ay7aWf5oRPOh
-ZES1YQ1qZfU016yI+Uo1glCjmYvLuqCUeAh10hdBbTG62MHpUZoQG6KjL2Xv5+x/
-FpsgfO77RerGDLZ4eUEH57XolCnRK76HAyDGLUp07GOU/xuDpGLmu6vh+Q+7m3Uu
-A3IrKXrN9x8RDbO1Dl6Hm2Qpw+wbvZtlyTS/Zua+nKtO8lGpGkWtv3eJnnnupHQt
-RJDvkplZy1uB3W+4x1cU/AKRtUphn94+DAaoWAHu82hamy3s3xiuS9n1aq5W4l8h
-AtKCcSvaXottQP+Nm85Lr7Y1srvioQ==
-=TbiZ
------END PGP SIGNATURE-----
-
---hl7obtkvuj2dllak--
+Joel Granados
 
