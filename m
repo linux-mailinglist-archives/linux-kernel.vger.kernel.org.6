@@ -1,217 +1,404 @@
-Return-Path: <linux-kernel+bounces-223681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4649C9116E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:34:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 648809116E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C85E71F228D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:34:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C971C227EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2650149C65;
-	Thu, 20 Jun 2024 23:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8628A14AD3F;
+	Thu, 20 Jun 2024 23:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UW5s1Egy"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FP2d6cSB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB2178C67
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77801482ED
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718926458; cv=none; b=EBbT+qT1M7j7VXWWYDgnzuY17rdu3bgdJewcdwz04KTLhWjhl9hr6sQfiaIDPIDtTx1e3Hdau52SmemSr2tzVJnJmVLt6Tj5TdIrX3pYKwGmTGsuhom+Ob5hcvGVUU4U0L7HFPf0LAg5pfs5vyoZM1cmyv5QY2C55r9qQQgzoag=
+	t=1718926470; cv=none; b=BBkb1eErOjiowlzAWCZCabe6js0XbBafiEq0rsZNM4Der4kSoqXNYeMPCyeFQCeWEOykO8CXBatNdkf0KAlMGW0mto6P+9gbPimvjfmAfWtm+C5Ti9lAWFKMZUGmDT9ECQEe/0wwXGhclfC5iOviGT+c7/sQnV7TkfZE8rs9MHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718926458; c=relaxed/simple;
-	bh=YzCAiEQpfg/g/kJuQO+uwqiy6/kqbKxaI1i2Ujvp+5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U9bTi+BbtsRNjCLRImMnsRbRDg4RVY9k/6Fyhmd4uNO+NlatlJD8K0zkO/NeU2LQJRGT0xdl2F10Ti4ZFiBkkGGamddyy2wLDgcgItHufrPUQ8kT/2k8ioXdEqxRRLCvgv9nkAeU5ffH0L2fmhmIVrMASr15y+fMkIc0kP8ps+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UW5s1Egy; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7061d37dc9bso1266179b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:34:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718926456; x=1719531256; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7XfksNSVifcZsxGv6eaETaFbtJmM8Uyclp22FAxA2lE=;
-        b=UW5s1EgyWjUFxPhvDD/oxPOf3CaXhaJAew7OeBrGXL8OuSYOgQg8UhEo5OGFxn0558
-         AFSN1PI18xurbHKMb4otFbjDglrr0OUhppLrXNwLw3oHGAl6CQT5yj8lur1TG7uRK5mc
-         22zsZNJSlMt31MSYz9qrRTII4JLYW5Ewbcthbr9VelBd8oaUlEagz8Z4NFO4xHqBFbdC
-         Uvs5DINlUG1Gno5AW+EMjNdcWlNlq0eQi2CArHvpTwLx2lUxYju3i1ofbLStgIc9SKVL
-         IW/RKKJAhuR8hd53sqmS6vqTihOwqok/rRT6ezIi1WscOnX7nS174976iZknTEbOU4sO
-         SbkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718926456; x=1719531256;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7XfksNSVifcZsxGv6eaETaFbtJmM8Uyclp22FAxA2lE=;
-        b=Vy1/ZF6IXdmeXulVCLXHWaXcAig3uL4MdjgHyR/YMujTjZR1kcrebO0r46IW1ZK+5i
-         zhtVtpx5dShI3cksOun0bai+rmlU3xJiofe66L5o0leXAk559yv8+myNYjRvUB5YZRrJ
-         fyaWSWyJPGjnlmAaZgFBdV+yJPqwJ2TVeRY7qED26UKEkzu5Sqg8CLeQVaDa52btwpgL
-         VWptNOQ1Xui8t1Ytt2SiJLuTL5OnDbqiesSGtsFVwBgMwZGoTJQwvQ3Smjzk1F7SuZne
-         H74NQUOd8oZ51TpI8mnxufq8iVOuqmfXT08RqYp82PfmMktlVu0bUH/PuZCsKheV8fcs
-         vQ1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUNIJrDYgTT2mkreTU3CebyT/iC5b5/HxZQayf1dDTEptl5/YvqeBQdeOJyl3pwrhqoDatztzSfBrGL/pnlsvXeeFcXwq9s2ps+PMrZ
-X-Gm-Message-State: AOJu0YyEtW/GkAyXPBP16NgdjfRsYq5HHDfxw/azLgzEY2Rz1Nv5/Ycd
-	8DTK/GQ6Nx547ZOj8Z91myxnTs/V6JKUdnyp14+fNFvAbEy0C5mcJvtdslI4MoErCPLoFEonNog
-	SsQ==
-X-Google-Smtp-Source: AGHT+IE7kWnNs02QXbSIStlmhOJow1svDh0NpTLzx34/evD0hCRr64S7MEEV3tkbVh+cTtvFamswSw==
-X-Received: by 2002:a05:6a20:3ba9:b0:1b2:be25:b5b0 with SMTP id adf61e73a8af0-1bcbb4190famr7404322637.20.1718926455516;
-        Thu, 20 Jun 2024 16:34:15 -0700 (PDT)
-Received: from google.com (148.98.83.34.bc.googleusercontent.com. [34.83.98.148])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065126563esm191150b3a.101.2024.06.20.16.34.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 16:34:14 -0700 (PDT)
-Date: Thu, 20 Jun 2024 23:34:11 +0000
-From: Igor Pylypiv <ipylypiv@google.com>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/4] ata: libata-scsi: Report valid sense data for ATA
- PT if present
-Message-ID: <ZnS8c3qN21NAkrOy@google.com>
-References: <20240614191835.3056153-1-ipylypiv@google.com>
- <20240614191835.3056153-4-ipylypiv@google.com>
- <ZnAUy5C-DXEuliSm@ryzen.lan>
- <ZnDHZWZQFtUmwtwE@google.com>
- <ZnQ7i0D4syhhI_hO@ryzen.lan>
+	s=arc-20240116; t=1718926470; c=relaxed/simple;
+	bh=h+moqWorq8WvFStIQy5VbHeBGz2hkRvmvutoj2g9ghU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QSeP8HbbhmNb2aI6zvKcws7ZpsFYN8Em7+xwkLxVOFgHhDw/KmUloR4upsHn0DmVeXvM37c5BBLscmLBUt+IhHEl5DBUonXY65efq/wC1xXj1rcH/ZPMbN7VpkBYtsmIkQfXTrP9pbLkEB3+EmZpKRvulliKh2fCkulXtj/UDR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FP2d6cSB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E12EC4AF10
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:34:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718926470;
+	bh=h+moqWorq8WvFStIQy5VbHeBGz2hkRvmvutoj2g9ghU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FP2d6cSBCNJ2FYG31gdCxnZm8ZYdLIF6LM+Vewbqpac1vi8/lk+SB/ZQDd6gVqUO9
+	 fJtYZAPRH9KKKe1qckyUI30J8O77/CaafAm5CFL/iG/Gt0zyGkqis0XaHpOVTvl/0H
+	 VF5oX9UALiYzom/gTeo9+Jebqf0Aw1ZFm1AdOi1QmlhzJxMRC954FfMshLrMIO3uWJ
+	 FY5S9fB6N9c/bNbw1us+qlMKLFkZgRfvxkeKFQF/TSIHE/ZDMxZbdmK7vN9jo77UTI
+	 XYgVuM0sb/aCI0l/rLnPoGBWyqCm0W/aIYHm2XxQpJa2XL9hxgXMCeaRDD/E0CtZoT
+	 Zjut9ESCHxqkA==
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3762ef0c451so700205ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:34:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX9R27c/zdeVILvGg4I39VEdmvIESmFE1Pu5m6DOThsknio0T42xobYBRUbZUbiBJ/H8M1kanwvjT1QmrHMCMg2uRkxy6MuBp+P87Ja
+X-Gm-Message-State: AOJu0YwQQDDLlUoBKnOi0hs91CSqWg0e9c0NoufWSal/oNC5Vv88QVHY
+	Jcgis3r1VdhEazQv6imU+4Bu5tw6HaNn+d3czABHRERk02GVw/ow5U5mbvAI+zdY1T6JvqBOuwO
+	2WIbI6jqu8S7LBLUW8WU+QnxeURfavJa3oEzW
+X-Google-Smtp-Source: AGHT+IHkE6H7TRF7ZbXgZtSv58+TsNMbdTF2zyStl9uhMjCL1hM2Me4FJ+Y4JrGQFubTLf9mxa3mCd4FS8rNzUWdgTE=
+X-Received: by 2002:a92:ca0c:0:b0:375:a8a8:8e7 with SMTP id
+ e9e14a558f8ab-3761d6b359cmr75324335ab.8.1718926469153; Thu, 20 Jun 2024
+ 16:34:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZnQ7i0D4syhhI_hO@ryzen.lan>
+References: <20240620002648.75204-1-21cnbao@gmail.com>
+In-Reply-To: <20240620002648.75204-1-21cnbao@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 20 Jun 2024 16:34:16 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuOserGkULxghiMFP=UhC_DdVaYVXZhqu6RY=SHT3mszpQ@mail.gmail.com>
+Message-ID: <CAF8kJuOserGkULxghiMFP=UhC_DdVaYVXZhqu6RY=SHT3mszpQ@mail.gmail.com>
+Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
+ entry allocation for thp_swapout
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, shuah@kernel.org, linux-mm@kvack.org, 
+	ryan.roberts@arm.com, david@redhat.com, hughd@google.com, 
+	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
+	ying.huang@intel.com, linux-kselftest@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 20, 2024 at 04:24:11PM +0200, Niklas Cassel wrote:
-> On Mon, Jun 17, 2024 at 11:31:49PM +0000, Igor Pylypiv wrote:
-> > On Mon, Jun 17, 2024 at 12:49:47PM +0200, Niklas Cassel wrote:
-> > > On Fri, Jun 14, 2024 at 07:18:34PM +0000, Igor Pylypiv wrote:
-> > > > Do not generate sense data from ATA status/error registers
-> > > > if valid sense data is already present.
-> > > > 
-> > > > Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-> > > > ---
-> > > >  drivers/ata/libata-scsi.c | 17 +++++++++++------
-> > > >  1 file changed, 11 insertions(+), 6 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> > > > index 79e8103ef3a9..4bfe47e7d266 100644
-> > > > --- a/drivers/ata/libata-scsi.c
-> > > > +++ b/drivers/ata/libata-scsi.c
-> > > > @@ -858,12 +858,17 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
-> > > >  	unsigned char *desc = sb + 8;
-> > > >  	u8 sense_key, asc, ascq;
-> > > 
-> > > Like I suggested in the earlier patch,
-> > > 
-> > > can't you do a:
-> > > 
-> > > if (qc->flags & ATA_QCFLAG_SENSE_VALID)
-> > > 	return;
-> > > 
-> > > here instead?
-> > > 
-> > 
-> > We need to populate the "ATA Status Return sense data descriptor" as per SAT-5
-> > "Table 209 — ATA command results". By returning early we are skipping the code
-> > that copies ATA output fields into descriptor/fixed sense data buffer.
-> 
-> We might get sense data from the drive.
-> If we use REQUEST SENSE DATA EXT, we will get SK/ASC/ASCQ,
-> we will then call scsi_build_sense_buffer() which will generate
-> sense data in either the descriptor format or the fixed format,
-> based on the D_SENSE bit, which is set in the control mode page.
-> 
-> The user can toggle this bit, see:
-> https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/ata/libata-scsi.c#L3691-L3694
-> 
-> But by default it is 0:
-> https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/ata/libata-scsi.c#L86
-> which means fixed format.
-> 
-> This all seems to be in accordance with
-> "Table 209 — Returned sense data with the CK_COND bit set to one"
-> in sat6r1.
-> 
-> 
-> 
-> When calling scsi_build_sense_buffer(), we supply:
-> scsi_build_sense_buffer(dev->flags & ATA_DFLAG_D_SENSE,
->                         cmd->sense_buffer, tf.lbah,
->                         tf.lbam, tf.lbal);
-> 
-> so we do not supply the STATUS and ERROR fields when building the sense data.
-> 
-> This seems fine, since SCSI has no knowledge of ATA status or ATA error.
-> 
-> 
-> However, for ATA-passthrough commands, ATA status and ATA error fields
-> are part of either the COMMAND-SPECIFIC information in the fixed format
-> case, or part for the descriptor format, in case of the descriptor type
-> being ATA Status Return sense data descriptor.
-> 
-> 
-> So what I think we should do:
-> 1) Keep the sense data if it exists, and fill in
->    the ATA status and ATA error at the correct offset (depending on if
->    the existing sense data is in fixed format or descriptor format).
-> 2) If there doesn't exist any sense data, generate it, including the
->    ATA passthru command specific fields (ATA status and ATA error).
->    This is basically what ata_gen_passthru_sense() does today.
+Hi Barry,
+
+Thanks for the wonderful test program.
+
+I have also used other swap test programs as well. A lot of those
+tests are harder to setup up and run.
+
+This test is very quick and simple to run. It can test some hard to
+hit corner cases for me.
+
+I am able to reproduce the warning and the kernel oops with this test progr=
+am.
+So for me, I am using it as a functional test that my allocator did
+not produce a crash.
+In that regard, it definitely provides value as a function test.
+
+Having a fall percentage output is fine, as long as we don't fail the
+test based on performance number.
+
+I am also fine with moving the test to under tools/mm etc. I see good
+value to include the test in the tree one way or the other.
+
+
+On Wed, Jun 19, 2024 at 5:27=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
 >
+> From: Barry Song <v-songbaohua@oppo.com>
+>
+> Both Ryan and Chris have been utilizing the small test program to aid
+> in debugging and identifying issues with swap entry allocation. While
+> a real or intricate workload might be more suitable for assessing the
+> correctness and effectiveness of the swap allocation policy, a small
+> test program presents a simpler means of understanding the problem and
+> initially verifying the improvements being made.
+>
+> Let's endeavor to integrate it into the self-test suite. Although it
+> presently only accommodates 64KB and 4KB, I'm optimistic that we can
+> expand its capabilities to support multiple sizes and simulate more
+> complex systems in the future as required.
+>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> ---
+>  tools/testing/selftests/mm/Makefile           |   1 +
+>  .../selftests/mm/thp_swap_allocator_test.c    | 192 ++++++++++++++++++
+>  2 files changed, 193 insertions(+)
 
-Yes! That's exactly what I was trying to do with the horrible empty if in
-ata_gen_passthru_sense(). Factoring out ATA status and ATA error population
-into a separate function makes the code more readable and less error-prone.
+Assume we want to keep it as selftest.
+You did not add your test in run_vmtests.sh.
 
-I'll make the change in v2.
+You might need something like this:
 
-Thank you!
-Igor
+--- a/tools/testing/selftests/mm/run_vmtests.sh
++++ b/tools/testing/selftests/mm/run_vmtests.sh
+@@ -418,6 +418,14 @@ CATEGORY=3D"thp" run_test ./khugepaged -s 2
 
-> 
-> So something like this:
-> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> index bb4d30d377ae..a0687eb28ff7 100644
-> --- a/drivers/ata/libata-scsi.c
-> +++ b/drivers/ata/libata-scsi.c
-> @@ -1645,9 +1645,17 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
->          * asc,ascq = ATA PASS-THROUGH INFORMATION AVAILABLE
->          */
->         if (((cdb[0] == ATA_16) || (cdb[0] == ATA_12)) &&
-> -           ((cdb[2] & 0x20) || need_sense))
-> -               ata_gen_passthru_sense(qc);
-> -       else if (need_sense)
-> +           ((cdb[2] & 0x20) || need_sense)) {
-> +               if ((qc->flags & ATA_QCFLAG_SENSE_VALID)) {
-> +                       /*
-> +                        * ATA PASS-THROUGH commands also need to fill in the
-> +                        * command specific ATA status and ATA error fields.
-> +                        */
-> +                       ata_fill_passthru_specific_sense_fields(qc);
-> +               } else {
-> +                       ata_gen_passthru_sense(qc);
+ CATEGORY=3D"thp" run_test ./transhuge-stress -d 20
+
++# config and swapon zram here.
++
++CATEGORY=3D"thp" run_test ./thp_swap_allocator_test
++
++CATEGORY=3D"thp" run_test ./thp_swap_allocator_test -s
++
++# swapoff zram here.
++
+ # Try to create XFS if not provided
+ if [ -z "${SPLIT_HUGE_PAGE_TEST_XFS_PATH}" ]; then
+     if test_selected "thp"; then
+
+
+You can use the following XFS test as an example of how to setup the zram s=
+wap.
+XFS uses file system mount, you use swapon.
+
+Also you need to update the usage string in run_vmtests.sh.
+
+BTW, here is how I invoke the test runs:
+
+kselftest_override_timeout=3D500 make -C tools/testing/selftests
+TARGETS=3Dmm run_tests
+
+The time out is not for this test, it is for some other test before
+the thp_swap which exit run_vmtests.sh before hitting thp_swap. I am
+running in a VM so it is slower than native machine.
+
+>  create mode 100644 tools/testing/selftests/mm/thp_swap_allocator_test.c
+>
+> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftest=
+s/mm/Makefile
+> index e1aa09ddaa3d..64164ad66835 100644
+> --- a/tools/testing/selftests/mm/Makefile
+> +++ b/tools/testing/selftests/mm/Makefile
+> @@ -65,6 +65,7 @@ TEST_GEN_FILES +=3D mseal_test
+>  TEST_GEN_FILES +=3D seal_elf
+>  TEST_GEN_FILES +=3D on-fault-limit
+>  TEST_GEN_FILES +=3D pagemap_ioctl
+> +TEST_GEN_FILES +=3D thp_swap_allocator_test
+>  TEST_GEN_FILES +=3D thuge-gen
+>  TEST_GEN_FILES +=3D transhuge-stress
+>  TEST_GEN_FILES +=3D uffd-stress
+> diff --git a/tools/testing/selftests/mm/thp_swap_allocator_test.c b/tools=
+/testing/selftests/mm/thp_swap_allocator_test.c
+> new file mode 100644
+> index 000000000000..4443a906d0f8
+> --- /dev/null
+> +++ b/tools/testing/selftests/mm/thp_swap_allocator_test.c
+> @@ -0,0 +1,192 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * thp_swap_allocator_test
+> + *
+> + * The purpose of this test program is helping check if THP swpout
+> + * can correctly get swap slots to swap out as a whole instead of
+> + * being split. It randomly releases swap entries through madvise
+> + * DONTNEED and do swapout on two memory areas: a memory area for
+> + * 64KB THP and the other area for small folios. The second memory
+> + * can be enabled by "-s".
+> + * Before running the program, we need to setup a zRAM or similar
+> + * swap device by:
+> + *  echo lzo > /sys/block/zram0/comp_algorithm
+> + *  echo 64M > /sys/block/zram0/disksize
+> + *  echo never > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/en=
+abled
+> + *  echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/ena=
+bled
+> + *  mkswap /dev/zram0
+> + *  swapon /dev/zram0
+
+This setup needs to go into run_vmtest.sh as well.
+
+Also tear it down after the test.
+
+Chris
+
+> + * The expected result should be 0% anon swpout fallback ratio w/ or
+> + * w/o "-s".
+> + *
+> + * Author(s): Barry Song <v-songbaohua@oppo.com>
+> + */
+> +
+> +#define _GNU_SOURCE
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <unistd.h>
+> +#include <string.h>
+> +#include <sys/mman.h>
+> +#include <errno.h>
+> +#include <time.h>
+> +
+> +#define MEMSIZE_MTHP (60 * 1024 * 1024)
+> +#define MEMSIZE_SMALLFOLIO (1 * 1024 * 1024)
+> +#define ALIGNMENT_MTHP (64 * 1024)
+> +#define ALIGNMENT_SMALLFOLIO (4 * 1024)
+> +#define TOTAL_DONTNEED_MTHP (16 * 1024 * 1024)
+> +#define TOTAL_DONTNEED_SMALLFOLIO (768 * 1024)
+> +#define MTHP_FOLIO_SIZE (64 * 1024)
+> +
+> +#define SWPOUT_PATH \
+> +       "/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout"
+> +#define SWPOUT_FALLBACK_PATH \
+> +       "/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout_=
+fallback"
+> +
+> +static void *aligned_alloc_mem(size_t size, size_t alignment)
+> +{
+> +       void *mem =3D NULL;
+> +
+> +       if (posix_memalign(&mem, alignment, size) !=3D 0) {
+> +               perror("posix_memalign");
+> +               return NULL;
+> +       }
+> +       return mem;
+> +}
+> +
+> +static void random_madvise_dontneed(void *mem, size_t mem_size,
+> +               size_t align_size, size_t total_dontneed_size)
+> +{
+> +       size_t num_pages =3D total_dontneed_size / align_size;
+> +       size_t i;
+> +       size_t offset;
+> +       void *addr;
+> +
+> +       for (i =3D 0; i < num_pages; ++i) {
+> +               offset =3D (rand() % (mem_size / align_size)) * align_siz=
+e;
+> +               addr =3D (char *)mem + offset;
+> +               if (madvise(addr, align_size, MADV_DONTNEED) !=3D 0)
+> +                       perror("madvise dontneed");
+> +
+> +               memset(addr, 0x11, align_size);
+> +       }
+> +}
+> +
+> +static unsigned long read_stat(const char *path)
+> +{
+> +       FILE *file;
+> +       unsigned long value;
+> +
+> +       file =3D fopen(path, "r");
+> +       if (!file) {
+> +               perror("fopen");
+> +               return 0;
+> +       }
+> +
+> +       if (fscanf(file, "%lu", &value) !=3D 1) {
+> +               perror("fscanf");
+> +               fclose(file);
+> +               return 0;
+> +       }
+> +
+> +       fclose(file);
+> +       return value;
+> +}
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +       int use_small_folio =3D 0;
+> +       int i;
+> +       void *mem1 =3D aligned_alloc_mem(MEMSIZE_MTHP, ALIGNMENT_MTHP);
+> +       void *mem2 =3D NULL;
+> +
+> +       if (mem1 =3D=3D NULL) {
+> +               fprintf(stderr, "Failed to allocate 60MB memory\n");
+> +               return EXIT_FAILURE;
+> +       }
+> +
+> +       if (madvise(mem1, MEMSIZE_MTHP, MADV_HUGEPAGE) !=3D 0) {
+> +               perror("madvise hugepage for mem1");
+> +               free(mem1);
+> +               return EXIT_FAILURE;
+> +       }
+> +
+> +       for (i =3D 1; i < argc; ++i) {
+> +               if (strcmp(argv[i], "-s") =3D=3D 0)
+> +                       use_small_folio =3D 1;
+> +       }
+> +
+> +       if (use_small_folio) {
+> +               mem2 =3D aligned_alloc_mem(MEMSIZE_SMALLFOLIO, ALIGNMENT_=
+MTHP);
+> +               if (mem2 =3D=3D NULL) {
+> +                       fprintf(stderr, "Failed to allocate 1MB memory\n"=
+);
+> +                       free(mem1);
+> +                       return EXIT_FAILURE;
 > +               }
-> +       } else if (need_sense)
->                 ata_gen_ata_sense(qc);
->         else
->                 /* Keep the SCSI ML and status byte, clear host byte. */
-> 
-> 
-> Kind regards,
-> Niklas
-> 
-> 
-> 
-> 
+> +
+> +               if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_NOHUGEPAGE) !=
+=3D 0) {
+> +                       perror("madvise nohugepage for mem2");
+> +                       free(mem1);
+> +                       free(mem2);
+> +                       return EXIT_FAILURE;
+> +               }
+> +       }
+> +
+> +       for (i =3D 0; i < 100; ++i) {
+> +               unsigned long initial_swpout;
+> +               unsigned long initial_swpout_fallback;
+> +               unsigned long final_swpout;
+> +               unsigned long final_swpout_fallback;
+> +               unsigned long swpout_inc;
+> +               unsigned long swpout_fallback_inc;
+> +               double fallback_percentage;
+> +
+> +               initial_swpout =3D read_stat(SWPOUT_PATH);
+> +               initial_swpout_fallback =3D read_stat(SWPOUT_FALLBACK_PAT=
+H);
+> +
+> +               random_madvise_dontneed(mem1, MEMSIZE_MTHP, ALIGNMENT_MTH=
+P,
+> +                               TOTAL_DONTNEED_MTHP);
+> +
+> +               if (use_small_folio) {
+> +                       random_madvise_dontneed(mem2, MEMSIZE_SMALLFOLIO,
+> +                                       ALIGNMENT_SMALLFOLIO,
+> +                                       TOTAL_DONTNEED_SMALLFOLIO);
+> +               }
+> +
+> +               if (madvise(mem1, MEMSIZE_MTHP, MADV_PAGEOUT) !=3D 0) {
+> +                       perror("madvise pageout for mem1");
+> +                       free(mem1);
+> +                       if (mem2 !=3D NULL)
+> +                               free(mem2);
+> +                       return EXIT_FAILURE;
+> +               }
+> +
+> +               if (use_small_folio) {
+> +                       if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_PAGEOU=
+T) !=3D 0) {
+> +                               perror("madvise pageout for mem2");
+> +                               free(mem1);
+> +                               free(mem2);
+> +                               return EXIT_FAILURE;
+> +                       }
+> +               }
+> +
+> +               final_swpout =3D read_stat(SWPOUT_PATH);
+> +               final_swpout_fallback =3D read_stat(SWPOUT_FALLBACK_PATH)=
+;
+> +
+> +               swpout_inc =3D final_swpout - initial_swpout;
+> +               swpout_fallback_inc =3D final_swpout_fallback - initial_s=
+wpout_fallback;
+> +
+> +               fallback_percentage =3D (double)swpout_fallback_inc /
+> +                       (swpout_fallback_inc + swpout_inc) * 100;
+> +
+> +               printf("Iteration %d: swpout inc: %lu, swpout fallback in=
+c: %lu, Fallback percentage: %.2f%%\n",
+> +                               i + 1, swpout_inc, swpout_fallback_inc, f=
+allback_percentage);
+
+
+Chris
+
+> +       }
+> +
+> +       free(mem1);
+> +       if (mem2 !=3D NULL)
+> +               free(mem2);
+> +
+> +       return EXIT_SUCCESS;
+> +}
+> --
+> 2.34.1
+>
+>
 
