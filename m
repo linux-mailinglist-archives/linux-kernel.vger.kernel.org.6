@@ -1,90 +1,119 @@
-Return-Path: <linux-kernel+bounces-223406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B522C911277
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:47:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB1591127F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7C1F1C22FF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677ED285DE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313D91BA07C;
-	Thu, 20 Jun 2024 19:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DFA1BA06F;
+	Thu, 20 Jun 2024 19:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iF7Jf0V6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snFugIF/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5100B43156;
-	Thu, 20 Jun 2024 19:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B183944393;
+	Thu, 20 Jun 2024 19:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718912807; cv=none; b=QzrFgoXJiFyIZBnsyZeTY48xHNFVvrQkKW7/UMq9N4R6aftIHPXC7A/FqtN48sdlOfwUAyqDLiue2iLJ1+KDqKRyQJdbVjJMikcHRgao6AbypL4ZXzH5Aq08zokj80WAmy0YkLgJUI8NAjHTmZfTduJ/l2WMfxGzVvGK6un3lPw=
+	t=1718912838; cv=none; b=iVvTVUBZE8XzjtsfL36ULLFd6QQ08v2TZwDVMeWxyeTceI/RfrUh51wGCyqk30v8mxjjHA5IaLbTKZ4NeH3ln3OOzag/NbjQElDAdQyRKJIvtOuBCAReY233Ifvw9nmAe7cYFQ+jWTTx0FI7JV2wupVpK5VdQgEkLP9f+4udjBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718912807; c=relaxed/simple;
-	bh=NOXrZZ78IGZVhFJah42haGiQhcKtgPlchliubLibNbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q2uEVNB7LWxOpMk7t9EiACMxIKJV97ACnBn0XfK342r+p+S+kXS/ni1wGNLYtfSlwnRyP2W021zXy5hwmh0kUN0QsFE7DENeH0VdchtUrc4Dc+5mD1V167HUo9rPMwDF19YsEapnaKEeagIUXS6TQFl8KUZLtq3VdMi+QJaCP58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iF7Jf0V6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D58F6C2BD10;
-	Thu, 20 Jun 2024 19:46:43 +0000 (UTC)
+	s=arc-20240116; t=1718912838; c=relaxed/simple;
+	bh=D+e2m26VHYUG/Lo1gKaeNxI1GFfU9WexaAsiXpn5YYI=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=SMVtjwTdeDVBwAgGEzn1/anIMAd43GUoHKd8YnkdrydWw4yl+FgeaCkeuNmHUApbuKZWJLmX/K/r/9V7Jcze5mHEsvw7RQmbYWRNckcuNA0OLo8eR6Ytimg6LvjJpn58oVHKuki9xPWZk6bqklx55hqzHm4CTpBkweGRTV6WJ24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snFugIF/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD0CC2BD10;
+	Thu, 20 Jun 2024 19:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718912805;
-	bh=NOXrZZ78IGZVhFJah42haGiQhcKtgPlchliubLibNbQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iF7Jf0V6MxMlfrr5Rgpz7hsN47YbOthkjXFvJso/wh76d7mGGy7OuHpHvTuiSXzQx
-	 dv//qW5Xxsd3CpYXOBgfZznlroKttBOwPJz3r47EHcsL5cF8eRuK5Tfcas30TmFyls
-	 Tr1uUb5KjKCdnNO3zm0C254rZFe5QeK7ngeONnl5FwUln1Rwst9PvqjEIUxUfrZL+3
-	 993k0ImdQ8LalafeFDgz8knEEnBOIMMFVeUvuJvGZSSFhb+80jqfB/o02kb959m/fm
-	 N6rEEvbwS5SAkyii0YsbFb3yNNkDWCmwwMitjTkHXxIJKPomps4I11fbaW0rfb18Tj
-	 6aCxakGyMlmAA==
-Date: Thu, 20 Jun 2024 13:46:41 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
-	djwong@kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
-	snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev,
-	hare@suse.de
-Subject: Re: [Patch v9 07/10] block: Add fops atomic write support
-Message-ID: <ZnSHIWVeMlpZ-OJb@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240620125359.2684798-1-john.g.garry@oracle.com>
- <20240620125359.2684798-8-john.g.garry@oracle.com>
+	s=k20201202; t=1718912838;
+	bh=D+e2m26VHYUG/Lo1gKaeNxI1GFfU9WexaAsiXpn5YYI=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=snFugIF/AqgJy+pEn7auwBHqcgy7Pe3AUcf+drxFEmAqZGIg4UnWBdqoK6m6CwAsz
+	 EkiwhgZjP3d7GOm7e8ou0XhSc1T7L3lMeaa/T1AEIXbfpSX2iywkxq4avE0e0+m91t
+	 dLOvf7FI8ULn1u+pmBL4hCtE4SXPle6UjAxOchsCgdgfWHkHmUV9bzREB8NNPkOJPP
+	 5LWC2Wixht1KdskG7sSDxZfktWP8GWsK507Mj2+LEuf+K4sBHxeRyzFxXz2SDbZ0t9
+	 K6+mi92KIySVFO89b+DEvfdkNsCh+2E7uNs9B8beQA9nGHp8USIGgcbWKanPLsl5s8
+	 j+fvNo+PZMXHQ==
+Date: Thu, 20 Jun 2024 13:47:17 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620125359.2684798-8-john.g.garry@oracle.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, linux-sound@vger.kernel.org, 
+ Stephen Boyd <sboyd@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+ Arnd Bergmann <arnd@arndb.de>, Jaroslav Kysela <perex@perex.cz>, 
+ dmaengine@vger.kernel.org, Chancel Liu <chancel.liu@nxp.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Richard Weinberger <richard@nod.at>, 
+ Michael Turquette <mturquette@baylibre.com>, Takashi Iwai <tiwai@suse.com>, 
+ Mark Brown <broonie@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ linux-kernel@vger.kernel.org, Markus Elfring <Markus.Elfring@web.de>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org, 
+ Yangtao Li <frank.li@vivo.com>, 
+ "J.M.B. Downing" <jonathan.downing@nautel.com>, 
+ linux-mtd@lists.infradead.org, Liam Girdwood <lgirdwood@gmail.com>, 
+ devicetree@vger.kernel.org, Li Zetao <lizetao1@huawei.com>, 
+ linux-i2c@vger.kernel.org, Russell King <linux@armlinux.org.uk>, 
+ alsa-devel@alsa-project.org, Vinod Koul <vkoul@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240620175657.358273-3-piotr.wojtaszczyk@timesys.com>
+References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
+ <20240620175657.358273-3-piotr.wojtaszczyk@timesys.com>
+Message-Id: <171891283706.3289677.3213379285370562671.robh@kernel.org>
+Subject: Re: [Patch v4 02/10] dt-bindings: dma: Add lpc32xx DMA mux binding
 
-On Thu, Jun 20, 2024 at 12:53:56PM +0000, John Garry wrote:
-> Support atomic writes by submitting a single BIO with the REQ_ATOMIC set.
-> 
-> It must be ensured that the atomic write adheres to its rules, like
-> naturally aligned offset, so call blkdev_dio_invalid() ->
-> blkdev_atomic_write_valid() [with renaming blkdev_dio_unaligned() to
-> blkdev_dio_invalid()] for this purpose. The BIO submission path currently
-> checks for atomic writes which are too large, so no need to check here.
-> 
-> In blkdev_direct_IO(), if the nr_pages exceeds BIO_MAX_VECS, then we cannot
-> produce a single BIO, so error in this case.
-> 
-> Finally set FMODE_CAN_ATOMIC_WRITE when the bdev can support atomic writes
-> and the associated file flag is for O_DIRECT.
 
-Looks good.
+On Thu, 20 Jun 2024 19:56:33 +0200, Piotr Wojtaszczyk wrote:
+> LPC32XX SoCs use pl080 dma controller which have few request signals
+> multiplexed between peripherals. This binding describes how devices can
+> use the multiplexed request signals.
+> 
+> Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+> ---
+> Changes for v4:
+> - This patch is new in v4
+> 
+>  .../bindings/dma/nxp,lpc3220-dmamux.yaml      | 56 +++++++++++++++++++
+>  MAINTAINERS                                   |  9 +++
+>  2 files changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/nxp,lpc3220-dmamux.yaml
+> 
 
-Reviewed-by: Keith Busch <kbusch@kernel.org>
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/dma/nxp,lpc3220-dmamux.example.dtb: /example-0/syscon@40004000: failed to match any schema with compatible: ['nxp,lpc3220-creg', 'syscon', 'simple-mfd']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240620175657.358273-3-piotr.wojtaszczyk@timesys.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
