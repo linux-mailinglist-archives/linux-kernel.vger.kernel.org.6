@@ -1,142 +1,150 @@
-Return-Path: <linux-kernel+bounces-222912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF3E9109B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:23:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789CF9109C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 821F71F2398C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:23:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3295D285917
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E67B1B0118;
-	Thu, 20 Jun 2024 15:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688E31AF6A1;
+	Thu, 20 Jun 2024 15:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XFfkYknu"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="080EvxFB"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092F91AD486;
-	Thu, 20 Jun 2024 15:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F401AE85C;
+	Thu, 20 Jun 2024 15:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718896984; cv=none; b=dSKd1ZW1TA5HtO6t1ycE1vSbsIcUOT6BYv0IzMxncV03o5OFqOyt4s2lVBBosXABs0LjPBOxWaomrBTrB2Cs4OCT0wePMPoBchQGrPipGUljTqzHBUkD8cCX1atxkI/FhAoSVArMu5FBYMxqHi0QM7YODBeakKAZtUUC4LCJqDA=
+	t=1718897050; cv=none; b=UfbssXpT3740I/J8b19+A3mQoQs3zzb1Amwfnx2ZlYEwHVgafmYuSZoYM65zNvfWEJ5w61UWuWUO9FZTsEUDLCxDWvtRQLWKZFsQPJOefRzjQ0AC4U0QfewRaRbmACvK7BYv+Bbp7NzG1aHSEG1MeO9EeG0mjF4U85toV6K8xxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718896984; c=relaxed/simple;
-	bh=icVkyLRQtfBnDXDL5T2LXmtHl0A/8wSSZwGGLKNXhas=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X2GL2goGAGCQc69zI/R58h9gsJLDyGjrewXcThiWLtVmM3v+B38qu6bGcrziDMLdKK2Hut4bOCVJYINIgwmofNGN5uYxgn68AyUwTr6RWaKlmJ56abOsAdL4cw4Htysn9x9gBHHwP7zn68oS/vjHRHDTbfGhcZw/nhCIAtggNA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XFfkYknu; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ec4a35baddso4478711fa.0;
-        Thu, 20 Jun 2024 08:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718896981; x=1719501781; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6IFvd1gKY4Gen8SxIO8TYuBrF9aZdJ83hdWMC4Gaxh4=;
-        b=XFfkYknuOi0oOOBjBxCAgbGn35ajAJV2RhUrIap/cOgQiagpTVUUlPTswqCncTIMO6
-         4kI+x25iUW9MI/CVqDJl+YrjEwaAaatNYWBFbK3iQnFM2I7TRXx4/V/nBplxCHzyKSI5
-         6bbX/5XxMmPxmT9fI6vvJXLcZY4+74cQVhnFiJVFhWM8cVyR9FX2HEye8prj6bJCXA+q
-         M48xdNYa+XIc2BWqQLWKtnKPfTMBAH7WL2a3RAnHlnHLyKUVdsFq8pcZJsbIcBZCtK4l
-         PWoDBbqOHxcvh30Mf6IyXbbyplVbBEaPrGMaRgZ0aXZTLOXIKjoyuIavDbA5yuV729vs
-         /zEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718896981; x=1719501781;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6IFvd1gKY4Gen8SxIO8TYuBrF9aZdJ83hdWMC4Gaxh4=;
-        b=BMlpt0z6Bgj+5zfxwY9cK5CTPAcz3cnnNH2TJVvPxfdsGMHLoP+VPkJPo1jnNreQOz
-         kUpc4vGHNi6xZrvg67ZWxhQ2VArfWaiOqgGl/tkfNRRJS374LxA3v92xW/dZtl69f6CT
-         jZ2hGer971+WgfWExeB+YgiOw45YW/opgpZqg+7yymHnASPUfgdb5WwSgzkLTf+DpGMX
-         W+7V2+W0smDkTx++bAIhcJwlZyEqLAivoWoU6quZBk+FJHRFLv/LNKv9uWI+qYDNOd4S
-         iiSnTigKjDAX6Cav+F2flacIaiN+r0W0/r1WDlTvheOw56HrRHVyoV3li4BhHB8IvyZ/
-         XaWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGEZG8vBLAm6wRvDP30DEThRX8/BqYBGWiVY0/jhs5hfSeZQBHm2aORD0ALwg6g1149aJxlptYyGdLV6b2B/YWtNxKq4yj48KPTmx4V1tWp42fB55pwWUOlZYE6XXpsAHg3++qCwgtgbvRKxqd3/rSnLDEsnz/Ok8qDgjihd+Wx9hvatB7DnyU
-X-Gm-Message-State: AOJu0YzI20DgsucVi+DdF6Cx5ROHLVue6KIK1xIYj7mLfIrHBbTXy1Rg
-	sHh25bK9LUAqjx93B9Shx0y7azHk9xiTYgovOvlle5ZVDBhjYUOn
-X-Google-Smtp-Source: AGHT+IGikVgh8XgKRUtNVxnsSti1UHJwJALTtFYTQFJq7dc9FzLzcT/571ge3KDX9VdgIBKtjqeFjw==
-X-Received: by 2002:a2e:9915:0:b0:2eb:e25a:34e5 with SMTP id 38308e7fff4ca-2ec3cfe69eamr35766021fa.34.1718896980462;
-        Thu, 20 Jun 2024 08:23:00 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:1:6960:9f76:b012:ddc2:11de? ([2a01:e0a:1:6960:9f76:b012:ddc2:11de])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0b63a9sm29408395e9.9.2024.06.20.08.22.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 08:23:00 -0700 (PDT)
-Message-ID: <ec4eeab6-ce32-4a2f-a32c-dfd95cdd9ccd@gmail.com>
-Date: Thu, 20 Jun 2024 17:22:59 +0200
+	s=arc-20240116; t=1718897050; c=relaxed/simple;
+	bh=qH0pcx9ew3ssWqcgy5oeN9GRicTrXQ5mf6ItNJRYD7s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kryAZJVvZHwPNb5UZN6YVDg+uTQTk7HiFDJhvoGEYfBUbllsm+lXAy9zmn8OjM7Rkj1jaYC6l+UMnAqCeVlywNQXnqD9g72QQPxIdt+69n8P0AbAdE4VdzGFuOJ6D2qmS4Ny6mlJoEac309NcyVugFCzsqRNbvtHIA9P5lOBHWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=080EvxFB; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718897047;
+	bh=qH0pcx9ew3ssWqcgy5oeN9GRicTrXQ5mf6ItNJRYD7s=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=080EvxFBpgdjOSNNxaBmNMGsHxi9ulWJXbbHzkh/Q5/V/+oeOglUMaF960trKNEEa
+	 +IEDkjxDMtEtxx/NdcXnnYkI0TnqYYLGw0fbYTnVuMg6pCicEsXgFO2h5WYdc9+j94
+	 /T7kcxuecx3xcLcAt9iir1cPR2syZN3KEIGba4IgEQ93nH3xc/rFki6SCThxthGKJf
+	 lZ5AyYWvZvnbDZKluXlA9yStFZeDqarPsUpl79cwLNcgRSdEh3RZsFULq7VrPjeVVk
+	 M551U8g7JOnO3uXAOzFAjSUBlUMNYG7hgdgkjvUzYNxGr2BRUHYBqEGj4R7pl5qXom
+	 ytIa1c9p2RC0g==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2305537820B5;
+	Thu, 20 Jun 2024 15:24:06 +0000 (UTC)
+Message-ID: <0b84bd4640c4c7ff52d1452d73e1ba46f6cedd7d.camel@collabora.com>
+Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support
+ runtime suspend/resume
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Devarsh Thakkar <devarsht@ti.com>, "jackson.lee"
+	 <jackson.lee@chipsnmedia.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
+ "sebastian.fricke@collabora.com"
+	 <sebastian.fricke@collabora.com>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,  Nas Chung
+ <nas.chung@chipsnmedia.com>, "lafley.kim" <lafley.kim@chipsnmedia.com>,
+ "b-brnich@ti.com" <b-brnich@ti.com>
+Date: Thu, 20 Jun 2024 11:24:03 -0400
+In-Reply-To: <1cefd686-2eb2-e0b2-0b24-2c4efb0c41a1@ti.com>
+References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
+	 <20240617104818.221-3-jackson.lee@chipsnmedia.com>
+	 <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
+	 <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+	 <bc8796ef8107507e99df079f6d7ce2575ead3cab.camel@collabora.com>
+	 <1cefd686-2eb2-e0b2-0b24-2c4efb0c41a1@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/9] Add CPU-type to topology
-Content-Language: en-US
-To: Dave Hansen <dave.hansen@intel.com>,
- srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, daniel.sneddon@linux.intel.com, tony.luck@intel.com,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <8d757ea3-87a3-4663-ac76-66b04e33e6b3@gmail.com>
- <20240619015315.3ei5f6rovzdnxovo@desk>
- <bc75ff55161671e4470849ed51baa547f619889d.camel@linux.intel.com>
- <0021f5f2-67c5-4b20-939d-48c9c1c60cdb@gmail.com>
- <1b99017a-6964-46de-ba3a-09552e7cf072@intel.com>
-From: Brice Goglin <brice.goglin@gmail.com>
-In-Reply-To: <1b99017a-6964-46de-ba3a-09552e7cf072@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Le 20/06/2024 à 17:06, Dave Hansen a écrit :
+Le jeudi 20 juin 2024 =C3=A0 20:22 +0530, Devarsh Thakkar a =C3=A9crit=C2=
+=A0:
+> Hi Jackson, Nicolas,
+>=20
+> On 20/06/24 19:33, Nicolas Dufresne wrote:
+> > Hi Jackson, Devarsh,
+> >=20
+> > Le mercredi 19 juin 2024 =C3=A0 23:56 +0000, jackson.lee a =C3=A9crit=
+=C2=A0:
+> > > Hi Devarsh
+> > >=20
+> > > If there is no feeding bitstreams during encoding and decoding frames=
+, then driver's status is switched to suspended automatically by autosuspen=
+d.
+> > > And if we don=E2=80=99t use autosuspend, it is very difficult for us =
+to catch if there is feeding or not while working a pipeline.
+> > > So it is very efficient for managing power status.
+> > >=20
+> > > If the delay is very great value, we can adjust it.
+> >=20
+> > One way to resolve this, would be if someone share measurement of the s=
+uspend /
+> > resume cycle duration. With firmware (third party OS) like this, the co=
+st and
+> > duration is few order of magnitude higher then with more basic ASIC lik=
+e Hantro
+> > and other single function HW.
+> >=20
+> > Yet, 5s might be to much (but clearly safe), but getting two low may me=
+ans that
+> > we suspect "between two frames", and if that happens, we may endup with=
+ various
+> > range of side effect, like reduce throughput due to suspend collisions,=
+ or even
+> > worse power footprint. Some lab testing to adjust the value will be nee=
+ded, we
+> > have very little of that happening at the moment as I understood.
+> >=20
+>=20
+> Okay I see the intention here is that if there is a process holding the v=
+pu
+> device handle and the input feed is stalled for some seconds due to netwo=
+rk
+> delay or CPU throughput then after a specified timeout say 5 seconds we w=
+ant
+> to suspend even if the process is still active and holding the vpu device
+> handle ? I agree then if we want to support this feature a safer/slightly
+> larger value is required to avoid frequent suspend/resume due to network
+> jitter or any other bottleneck and maybe 5s is a good value to start with=
+.
+>=20
+> But if last instance is closed/stops streaming and there is no process ho=
+lding
+> the device handle anymore then I think we should suspend immediately with=
+out
+> any delay.
 
-> On 6/19/24 14:25, Brice Goglin wrote:
->> Good point. From this patch series, I understand that the current kernel
->> side doesn't care about these different E-cores. However it might be
->> good to expose them as different cpu-types (or better name) to userspace ?
->>
->> Something like type 0 = P-core, 1 = normal E-core, 2 = low power E-core ?
-> The first priority here is getting the kernel to comprehend these types
-> for architectural purposes: when there are functional differences
-> between the cores.
->
-> Let's get that in place, first.  Then we can discuss the possibility of
-> new ABI in the area.
+Our emails crossed each other, but see my explanation about gapless playbac=
+k
+transiton, were userspace may destroy and create a new video session. I bel=
+ieve
+5s is way too long to be honest.
 
-Agreed.
+Nicolas
 
-> Did the ARM folks ever do a sysfs ABI for big.LITTLE?  I don't see
-> anything obvious in Documentation/ABI/testing/sysfs-devices-system-cpu.
-
-As far as I know, they only have the "capacity" field in sysfs cpu files
-that reports a higher number for the equivalent of P-core:
-
- From testing/sysfs-devices-system-cpu:
-
-What:           /sys/devices/system/cpu/cpuX/cpu_capacity
-Date:           December 2016
-Contact:        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Description:    information about CPUs heterogeneity.
-
-                 cpu_capacity: capacity of cpuX.
-
-I don't know how it's calculated but I've never seen it report something wrong.
-On Android/ARM phones, big cores usually have 1024 and small cores something
-between 400 and 500.
-Where there are 3 types of cores, they report 1024, 500-800 about ~250.
-
-Brice
+>=20
+> Regards
+> Devarsh
 
 
