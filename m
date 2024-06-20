@@ -1,111 +1,117 @@
-Return-Path: <linux-kernel+bounces-223585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94352911522
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:51:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7200D911523
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45D161F21E49
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:51:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1F4BB22BCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AE28005C;
-	Thu, 20 Jun 2024 21:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6AF07E107;
+	Thu, 20 Jun 2024 21:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b="fYXhP9XW"
-Received: from shout12.mail.de (shout12.mail.de [62.201.172.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Nh6stBS6"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB852E859;
-	Thu, 20 Jun 2024 21:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.201.172.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97EB2E859
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718920279; cv=none; b=D9hedBRr+Me09CLyVEBckGZXZVHp4vnWitSCzUXfl1wpDIjmPI5F4srex0EfVl4LCAJdwCWtWhBOgz9JKqSIwKn7y+ucl1d+r/fI+aMVDG1Y0oY+iQYIxeQfzadSvh3ktrajJXw8//p45zBu5TOTB3lPyP7VF1L/eE8EF1dKErU=
+	t=1718920319; cv=none; b=JeIqgpykQUBcK3+19Xo9nwqT4I/tBVcaJxYx7aKJu2Gu13AJ/eINhklaivto5G+/JpxY1VLcWq1bKVQab1UpMK8cGyViA3DLFvKtryDtQCs5KtffxHiw3HxrIeuu6h8zu8u+JdXL0neKkt89cqmaBF3fr0z6uX6sqfqsCTvM7DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718920279; c=relaxed/simple;
-	bh=jS4tGX7Yr+F4Pgav2Qb5MERvvFle9VrE1JzJPH9w6gw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eNTcuXX12D+rgWXGE0FTYpAo0vejQNwDACS1o7a3zWYNER8zT9HPzmNnwIz1uopZBx9UrWbJ10UXzwPX7+bHmnCvzPMjfEQVIZeVp/936owQbj2j/kwNKGJaB3pcFU1O+z3gyEcRoHO6yhPLaWTrxCkkatYrUKDhWUQMuLniTFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de; spf=pass smtp.mailfrom=mail.de; dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b=fYXhP9XW; arc=none smtp.client-ip=62.201.172.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.de
-Received: from shout02.mail.de (unknown [10.0.120.222])
-	by shout12.mail.de (Postfix) with ESMTPS id 52E40240AE7;
-	Thu, 20 Jun 2024 23:51:16 +0200 (CEST)
-Received: from postfix01.mail.de (postfix01.bt.mail.de [10.0.121.125])
-	by shout02.mail.de (Postfix) with ESMTP id 31768240E86;
-	Thu, 20 Jun 2024 23:51:16 +0200 (CEST)
-Received: from smtp01.mail.de (smtp03.bt.mail.de [10.0.121.213])
-	by postfix01.mail.de (Postfix) with ESMTP id 12B7C80102;
-	Thu, 20 Jun 2024 23:51:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mail.de;
-	s=mailde202009; t=1718920276;
-	bh=jS4tGX7Yr+F4Pgav2Qb5MERvvFle9VrE1JzJPH9w6gw=;
-	h=Message-ID:Date:Subject:To:Cc:From:From:To:CC:Subject:Reply-To;
-	b=fYXhP9XWv8R9NfFyLu0p9bECXAvkCoG4tyq8CP7rG1v5IXS6ngMg8+4KGjyvD9mtI
-	 KV7gCoiQfTOwCW6cCR9nQ3ZP4cNRo/zTq+hPc9DDXdQV485NhL4RMdxr8xai66jyXw
-	 Julp268jMYuAEbxy8rhDXTkunfszXMInjK3BqxXHbH+ipgA0tlubvqYHioU8X3cp3c
-	 mjDy7VGxhvkyYqmF3ubRJKBTEhM7QgOdvOrAr/9eWRHc5Z3hf0KWzbeWhlHeEDDPiJ
-	 5sQ61TOjhMrjt2TtDOjWtqPZ/3qYP3hrOymgkpOruzRi4oXghwyrO/lOyVhQ5y2j+J
-	 pzTHuhS4Ppfrg==
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by smtp01.mail.de (Postfix) with ESMTPSA id 84B272409AB;
-	Thu, 20 Jun 2024 23:51:15 +0200 (CEST)
-Message-ID: <7cc3d7c4-d0c9-45f3-ada9-d0e0d3fe7cc2@mail.de>
-Date: Thu, 20 Jun 2024 23:51:14 +0200
+	s=arc-20240116; t=1718920319; c=relaxed/simple;
+	bh=eohaQg2wy+qFRl/Bx6buNH8vUBbAThN7OyYl0y+jxeI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YmF5+BklZ71V9fxsLg0Aljjs3LTVPvu/NDQAc+6Bi2hEwMkUD1LZtjH0tZD88ckeKr7/0jogybHT9Sf1rOT5EJS2+3//WlyEjNqDFkDnT5x4ZEha2B5dCmH5ENX4w6vr8dxXM6A2TptrNPyEw6Q8bMhmjSf0mJwmxC11nn5hbiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Nh6stBS6; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7955dc86cacso84426585a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718920314; x=1719525114; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QZzH//nXAtElviGoUe90rmWXbPaKRBBQ6SrYSrvwBbs=;
+        b=Nh6stBS6W8JzJ6NGKRgY8IEC9FjohNdbuq6cm3kEHEnHnEXLGWmAx6CsHgkCSfwcjY
+         KjS7SSpuSQro7IDr5LlZ1PImICWZ+ptIF5n7GqZYIRxJLeofvR6gFMvlU/se/Cdl2fmW
+         ZF9ghSZw6D4WMuB8zhIOUG5cS72KZYuD0jDsk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718920314; x=1719525114;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QZzH//nXAtElviGoUe90rmWXbPaKRBBQ6SrYSrvwBbs=;
+        b=e8ofRp7yctm0IZSsc83G8rf7qn2+fIlMbZGluZ4jyspF4KefTbLB5rppbmFSmVIxtC
+         5rdDa/hbpjDo0Gp9G3Ksikqt+7wZ1wV6YHQ3VaUQDxulAuqVKAwyI5Ohg1X+QO7oTs97
+         XyHi3Se/wMh2w8BRUv8+1g6we8E8liTSG7d94xh5Ch1rbOa/+KsHZTNhEy24vsg2SZgd
+         IaNnZwhaOMC7cZ8mizH8Z3PW4bchHp9BgaHF18lCv0OKvl4nrZ/jwularstWaDDynMs9
+         cYmuIGRn9+oSwuAYXbjVG9fEbufjMimw/paL2DG6Ky6FG//07ASy4UwxGGksOgIibYwt
+         zSuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHrc/Pw92qUyLuSHycsDsIxNtqjIgtrdowafMJDVtA0PM1BhkFIgbYBedSBcu8nhpaso1M6aT4q4f1jkn1NtCfVlPy/tPqOT6JlP0w
+X-Gm-Message-State: AOJu0YzXcmAH+9zn+asCB+ttV24PyYJV2BfHghXVvu3aLRWqB8o7Y+N6
+	pZO5IoWcWlyFOHDOjVXSRYtxfNkdz+hfcd0Ik3gYjIQ9aiwotjevaC9dj6z7EA/IiVFhtyQBY+o
+	=
+X-Google-Smtp-Source: AGHT+IEK87oz9AhOuIIJyt63xYLTNnesVAk4ZNT2BunlGew4b6dCo3hZeW0YEWmF5jKg6DbNFo5wfw==
+X-Received: by 2002:a05:620a:2a07:b0:795:48dd:f1a with SMTP id af79cd13be357-79bb3e1ba29mr669066885a.15.1718920314553;
+        Thu, 20 Jun 2024 14:51:54 -0700 (PDT)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com. [209.85.160.172])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce92e6b4sm14719985a.100.2024.06.20.14.51.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 14:51:54 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-44056f72257so122211cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:51:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWqYRq8J6Jx8595DCbo1KV96ZpyfBiEJAmpH12oPze5b++T/bUUA2M8kyi8GCU6Olw1rP+DBAmp7jNfSi9vgsaRo+2knVPilgQRYaRp
+X-Received: by 2002:a05:622a:134b:b0:440:1fbb:9b0c with SMTP id
+ d75a77b69052e-444c3613a46mr257681cf.29.1718920313033; Thu, 20 Jun 2024
+ 14:51:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/5] arm64: dts: rockchip: Improve LEDs on NanoPi R6C/R6S
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240612205056.397204-1-seb-dev@mail.de>
- <20240612205056.397204-4-seb-dev@mail.de> <2564239.kdYZ1jHi8b@diego>
-From: Sebastian Kropatsch <seb-dev@mail.de>
-In-Reply-To: <2564239.kdYZ1jHi8b@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-purgate: clean
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate-type: clean
-X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate: clean
-X-purgate-size: 1112
-X-purgate-ID: 154282::1718920275-4EE221F9-E6050407/0/0
+References: <20240620-jag-fix_gdb_py_symlinks-v1-1-36a0f0217fbf@samsung.com>
+In-Reply-To: <20240620-jag-fix_gdb_py_symlinks-v1-1-36a0f0217fbf@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 20 Jun 2024 14:51:41 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=U3=d91J+Jw50=xKexhyKYjUQQ_WXQ_UdOTZeou4_=n3A@mail.gmail.com>
+Message-ID: <CAD=FV=U3=d91J+Jw50=xKexhyKYjUQQ_WXQ_UdOTZeou4_=n3A@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: scripts/gdb: bring the "abspath" back
+To: j.granados@samsung.com
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, Kieran Bingham <kbingham@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 20.06.2024 um 20:42 schrieb Heiko Stübner:
-> Am Mittwoch, 12. Juni 2024, 22:48:12 CEST schrieb Sebastian Kropatsch:
->> DT validation doesn't like the 'linux,default-trigger = "stmmac-0:01:link"'
->> properties, since "*:link" is not a valid value according to
->> [Documentation/devicetree/bindings/leds/common.yaml]. These LEDs do
->> have the specific purpose to show if an Ethernet link is up though.
->> There is one LED for each Ethernet port and they are labeled WAN and
->> LAN.
->> Using the 'linux,default-trigger' like this does work perfectly fine
->> with this solution. I could not find another way to achieve this. Please
->> let me know if there is a better way.
->> Maybe it would also be valid to add an entry to the DT bindings file to
->> allow "*:link" as a value for 'linux,default-trigger'?
-> 
-> correct. If needed, things should be added to binding.
+Hi,
 
-Alright, I'll add this to the binding at
-[Documentation/devicetree/bindings/leds/common.yaml]
+On Thu, Jun 20, 2024 at 12:48=E2=80=AFPM Joel Granados via B4 Relay
+<devnull+j.granados.samsung.com@kernel.org> wrote:
+>
+> From: Joel Granados <j.granados@samsung.com>
+>
+> Use the "abspath" call when symlinking the gdb python scripts in
+> scripts/gdb/linux. This call is needed to avoid broken links when
+> running the scripts_gdb target on a different build directory
+> (O=3Dbuilddir).
+>
+> Fixes: 659bbf7e1b08 ("kbuild: scripts/gdb: Replace missed $(srctree)/$(sr=
+c) w/ $(src)")
+> Signed-off-by: Joel Granados <j.granados@samsung.com>
+> ---
+>  scripts/gdb/linux/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Should this be a completely separate patch or is it preferred
-to add a patch to this NanoPi patch series?
+Ah, good call. Yeah, this makes sense to me and also seems to produce
+reasonable symlinks. Sorry for not coming up with this originally.
 
-Cheers,
-Sebastian
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Tested-by: Douglas Anderson <dianders@chromium.org>
 
