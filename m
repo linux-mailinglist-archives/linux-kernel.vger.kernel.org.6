@@ -1,147 +1,297 @@
-Return-Path: <linux-kernel+bounces-222085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F43190FCA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:25:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 638F890FCA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 683601C231A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:25:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA466285DA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6ECF3BBCE;
-	Thu, 20 Jun 2024 06:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7843C485;
+	Thu, 20 Jun 2024 06:25:23 +0000 (UTC)
 Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36EF2D05D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54DF628
 	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718864722; cv=none; b=ljw0GNAQnPQm7VtZ3eWn4baiHka8wJUSLgonWQojsyVf91GRPHEPdbIzu6xzkmYKVa4LCy0kw0u6u2AjWvq2RvCmRtR+gusI3okOEkzOqvPXD9svvJ9o+xjVCmdyXfZ0H4mwfRb6EsRwa1AcUlzPbulvkzho8v1Czz1OC6lKgsk=
+	t=1718864722; cv=none; b=c0iostZ8WfhDfu8QKtMZSjK08EjYj61gb89suIbtsGYPX9RDAyHqAOxHZigCXN5bH5zkZo159u/cm29/k7iCYITJ0lm+rJ+H486I6Pwc37Tiw3zRwR8OJL2OO4dS8AWTfxS6exjiL2XqvOGLgN1FVNcxBiJATu/Yujf8KazHzUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718864722; c=relaxed/simple;
-	bh=6Ls4XYrTe5Xr7nKooWf65gclYifriyDk8xedY6uwVXY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MH2zjLbEJp9tUdtF3XWM7MeXcvWNreyH70itn9hBV69Dle8CaoEvjh5Zr9KGssecw6MrNKssq3zeEgAGgqgjCJGnV9xJ7C36iYuCG+ByD2sPdqK1Z5IsOMenQ7SJp9NWtLM7BMuOSbxc+IpUY2ohoqRufIcUuNCcVrKtPJpk8YA=
+	bh=fULNwszqJaEApS1a+eE+vu/noDOAwwjIjKgLNouY4gc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=t2LlrCYvzpUcCeJmakU3eE4XVb4I3zJndXxHYEdsIOGCZQqZREwL/eHHqa5zNK15gbJi4GF7Z+/myz9rn83hJDVnGR2cFIPfv1zKfznSt55/O+galVXviREfS44MXG8FEz11fAHuoZGgRPJPpr6YF970mCJvyLbW1tzLqnn7ytA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-37620c0fa67so5553995ab.1
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-375e45a4110so5855175ab.1
         for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 23:25:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1718864720; x=1719469520;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9AkqDmFbOYmP7G8PlT0VReaJo1PdTS/f1hBoRWmc/Xs=;
-        b=NJp1E7YwA22VWw73wkqlZrjJ1KIy00lVTKd8DVBdRo9iGTTtJCucAQUfmpFYrykYfm
-         4I+MBpZusJHxs6Hkejr9/whK0biYbHJckyq8XXezOknRkDYY9s3cGcYbJkCfcEm4dKRU
-         Wu+ka9U8wyRPUEqH7imfBZtSBwK6XhvEXyqnTgiHwPr01o3eFBcdcmSOM//4Zif61k56
-         hzQDhSofR6M31VmXfyYm6XQVfI5t6F8m88JDwKbqH9DX2RWTUNAOJjImphWb9W9pRIB7
-         mRj7gOupYPfZfvpOKng8N3ic4K7b4F5KnmPDcGYtQ2tn0O8kZ13eFqxOLRVN/lDlazYp
-         URRw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8rW8+38lwfpHnARP76BFUCm0VTyZMAOK12L8SWszaTc3+HTWcJMxFXrmhk2WB1hhxdBtzx/9KWPsoFD84Ln3xlBX7ktO5Ab0HjsOz
-X-Gm-Message-State: AOJu0Yy7ErQ7RCqAw05FLS5j7qOfRrfRTXFYjH4584eeh2uZOq66PbcE
-	XcO/oLbU2OQAhk55/3NvxytllFbshISRRReR5Yim06cv5P3gqm781uh9GcZghzvdFSJvDb1+nGe
-	rgHKxozIxEu2NTn0vFrGBpv5T7kukUc4wunicyUDcVcI/68zze4/S/BM=
-X-Google-Smtp-Source: AGHT+IElMrpy4IljIE819J4nSDomF7NiLzLJce/SlkO3ussCk682pBZZZOBr5+0JsjnyjbFLiGBg3hQR7Oa4vl3KnbY8VGA0TfEm
+        bh=MMC8+QM0WZZQXmx3OoC9rnCZbTY4EqDYux1G2JqKRCU=;
+        b=Em+KgcZxVQ5xHA7fJz+z1HuZfrAtFIno/ZhvtIkZAapy1645dDJGEfam/VgRNa0BIc
+         uclhVtK+EviagMI6S9TYY21dRWTa52tHQkcDlB44KNNRetdoL2de3ysKifrHLyILEoT4
+         1D/TsP4/HwFmEHbQbKnFv6xyEE5qVEQccztBwTmci2vKyskC2jWMLNsg4B80sG7JNg7b
+         D32ip1bhq3d6O97B4dPHcC0RnMfGLtS3JFQh7Zg89Kx2+z6ORQFkVSq6LgRIZZAkwq9a
+         nuzpt1keAUXXlkNd/JOjF8+3KkHdo4eVLiiZ1j/92tOmmKbsTqhVoFXzHojoeSIzpOn/
+         qpcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiw4Dp0pHv4d2j8YmzcpSK5omWgUDD4xpKnK7Cv/zVodUKDZzzKMeMzJwfVgncbXr3td5U9CgxBXRBEFTPDasf5XYQ+b2vs5e1GwEG
+X-Gm-Message-State: AOJu0YxfaY1sqeS/lqsF0ssG72z8voMQqjNBZpo+ja7b9x/4lRnQZ+9z
+	+S9PkL251tAhKX/T4Ifmz2BjcS8JUhIq1jpqPCOGOVOjTlr1tjD0NuO+jJAHuTtZ4BRJGAXfpcE
+	DOeTsTRgWOHA7Ov3Uyve+PDiWTGkUFmtbsl5nYKEg8I9F0IuItvau7+U=
+X-Google-Smtp-Source: AGHT+IEP6O4RwCTqovH5Zw4ats9W/rcbd2NCNhZhmEoKi9g5sjCBSuDlOWb27QMDOZlrKiJSNmozd8zPCvmBsHmOd7pzt+nZJDST
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c85:b0:374:70ae:e86e with SMTP id
- e9e14a558f8ab-3761d77047amr2864395ab.6.1718864719966; Wed, 19 Jun 2024
+X-Received: by 2002:a05:6e02:1d12:b0:375:8fed:7e74 with SMTP id
+ e9e14a558f8ab-3761d75f2f0mr2817515ab.5.1718864719738; Wed, 19 Jun 2024
  23:25:19 -0700 (PDT)
 Date: Wed, 19 Jun 2024 23:25:19 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000d0237061b4c6108@google.com>
-Subject: [syzbot] [rdma?] WARNING in gid_table_release_one
-From: syzbot <syzbot+a35b4afb1f00c45977d0@syzkaller.appspotmail.com>
-To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000098a89061b4c61a9@google.com>
+Subject: [syzbot] [jfs?] possible deadlock in diAllocAG
+From: syzbot <syzbot+70d7737fe34ba0f39ccd@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    a957267fa7e9 Add linux-next specific files for 20240611
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15a085de980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9a880e96898e79f8
-dashboard link: https://syzkaller.appspot.com/bug?extid=a35b4afb1f00c45977d0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15d7c1de980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=81c0d76ceef02b39
+dashboard link: https://syzkaller.appspot.com/bug?extid=70d7737fe34ba0f39ccd
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6451759a606b/disk-a957267f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7f635dbe5b8a/vmlinux-a957267f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/33eafd1b8aec/bzImage-a957267f.xz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/13cdb5bfbafa/vmlinux-2ccbdf43.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7a14f5d07f81/bzImage-2ccbdf43.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a35b4afb1f00c45977d0@syzkaller.appspotmail.com
+Reported-by: syzbot+70d7737fe34ba0f39ccd@syzkaller.appspotmail.com
 
-infiniband syz1: ib_query_port failed (-19)
-infiniband syz1: Couldn't set up InfiniBand P_Key/GID cache
-------------[ cut here ]------------
-GID entry ref leak for dev syz1 index 0 ref=1
-WARNING: CPU: 1 PID: 12182 at drivers/infiniband/core/cache.c:809 release_gid_table drivers/infiniband/core/cache.c:806 [inline]
-WARNING: CPU: 1 PID: 12182 at drivers/infiniband/core/cache.c:809 gid_table_release_one+0x33f/0x4d0 drivers/infiniband/core/cache.c:886
-Modules linked in:
-CPU: 1 PID: 12182 Comm: syz-executor.2 Not tainted 6.10.0-rc3-next-20240611-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:806 [inline]
-RIP: 0010:gid_table_release_one+0x33f/0x4d0 drivers/infiniband/core/cache.c:886
-Code: 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 75 3e 41 8b 0c 24 48 c7 c7 40 2b a7 8c 48 89 de 44 89 fa e8 e2 2b d0 f8 90 <0f> 0b 90 90 e9 d3 fe ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
-RSP: 0018:ffffc9000301efe8 EFLAGS: 00010246
-RAX: 5c9e4656a81bd600 RBX: ffff88802919e6a0 RCX: 0000000000040000
-RDX: ffffc90003581000 RSI: 000000000003b835 RDI: 000000000003b836
-RBP: ffff8880294ed0d8 R08: ffffffff81552c42 R09: fffffbfff1c39b10
-R10: dffffc0000000000 R11: fffffbfff1c39b10 R12: ffff88801a3b7d00
-R13: ffff8880294ed000 R14: 1ffff1100529da1b R15: 0000000000000000
-FS:  00007fe09bba36c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b32824000 CR3: 0000000060abc000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0 Not tainted
+------------------------------------------------------
+syz-executor.0/7415 is trying to acquire lock:
+ffff88806b966788 (&jfs_ip->commit_mutex){+.+.}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2519 [inline]
+ffff88806b966788 (&jfs_ip->commit_mutex){+.+.}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
+ffff88806b966788 (&jfs_ip->commit_mutex){+.+.}-{3:3}, at: diAllocAG+0xc59/0x2300 fs/jfs/jfs_imap.c:1666
+
+but task is already holding lock:
+ffff88806b9666f8 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2474 [inline]
+ffff88806b9666f8 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
+ffff88806b9666f8 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocAG+0xa99/0x2300 fs/jfs/jfs_imap.c:1666
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&jfs_ip->rdwrlock/1){++++}-{3:3}:
+       down_read_nested+0x9e/0x330 kernel/locking/rwsem.c:1651
+       diAllocExt fs/jfs/jfs_imap.c:1914 [inline]
+       diAllocAG+0x235/0x2300 fs/jfs/jfs_imap.c:1666
+       diAlloc+0x8f7/0x1a70 fs/jfs/jfs_imap.c:1587
+       ialloc+0x84/0x9e0 fs/jfs/jfs_inode.c:56
+       jfs_mkdir+0x244/0xb30 fs/jfs/namei.c:225
+       vfs_mkdir+0x57d/0x860 fs/namei.c:4131
+       do_mkdirat+0x301/0x3a0 fs/namei.c:4154
+       __do_sys_mkdirat fs/namei.c:4169 [inline]
+       __se_sys_mkdirat fs/namei.c:4167 [inline]
+       __ia32_sys_mkdirat+0x84/0xb0 fs/namei.c:4167
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #2 (&(imap->im_aglock[index])){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       diFree+0x2ff/0x2770 fs/jfs/jfs_imap.c:886
+       jfs_evict_inode+0x3d4/0x4b0 fs/jfs/inode.c:156
+       evict+0x2ed/0x6c0 fs/inode.c:667
+       iput_final fs/inode.c:1741 [inline]
+       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       shrink_kill fs/dcache.c:1048 [inline]
+       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+       super_cache_scan+0x32a/0x550 fs/super.c:221
+       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+       shrink_slab_memcg mm/shrinker.c:548 [inline]
+       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+       shrink_one+0x493/0x7c0 mm/vmscan.c:4790
+       shrink_many mm/vmscan.c:4851 [inline]
+       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
+       shrink_node mm/vmscan.c:5910 [inline]
+       kswapd_shrink_node mm/vmscan.c:6720 [inline]
+       balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
+       kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
+       kthread+0x2c1/0x3a0 kernel/kthread.c:389
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
+       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
+       might_alloc include/linux/sched/mm.h:334 [inline]
+       slab_pre_alloc_hook mm/slub.c:3891 [inline]
+       slab_alloc_node mm/slub.c:3981 [inline]
+       __do_kmalloc_node mm/slub.c:4121 [inline]
+       __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
+       kmalloc_noprof include/linux/slab.h:664 [inline]
+       __jfs_set_acl+0xaa/0x1a0 fs/jfs/acl.c:80
+       jfs_set_acl+0x256/0x330 fs/jfs/acl.c:115
+       set_posix_acl+0x25c/0x320 fs/posix_acl.c:955
+       vfs_set_acl+0x53d/0x940 fs/posix_acl.c:1134
+       do_set_acl+0xd9/0x1b0 fs/posix_acl.c:1279
+       do_setxattr+0xeb/0x170 fs/xattr.c:626
+       setxattr+0x15d/0x180 fs/xattr.c:652
+       path_setxattr+0x179/0x1e0 fs/xattr.c:671
+       __do_sys_setxattr fs/xattr.c:687 [inline]
+       __se_sys_setxattr fs/xattr.c:683 [inline]
+       __ia32_sys_setxattr+0xc0/0x160 fs/xattr.c:683
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #0 (&jfs_ip->commit_mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       diNewIAG fs/jfs/jfs_imap.c:2519 [inline]
+       diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
+       diAllocAG+0xc59/0x2300 fs/jfs/jfs_imap.c:1666
+       diAlloc+0x8f7/0x1a70 fs/jfs/jfs_imap.c:1587
+       ialloc+0x84/0x9e0 fs/jfs/jfs_inode.c:56
+       jfs_mkdir+0x244/0xb30 fs/jfs/namei.c:225
+       vfs_mkdir+0x57d/0x860 fs/namei.c:4131
+       do_mkdirat+0x301/0x3a0 fs/namei.c:4154
+       __do_sys_mkdirat fs/namei.c:4169 [inline]
+       __se_sys_mkdirat fs/namei.c:4167 [inline]
+       __ia32_sys_mkdirat+0x84/0xb0 fs/namei.c:4167
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+other info that might help us debug this:
+
+Chain exists of:
+  &jfs_ip->commit_mutex --> &(imap->im_aglock[index]) --> &jfs_ip->rdwrlock/1
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&jfs_ip->rdwrlock/1);
+                               lock(&(imap->im_aglock[index]));
+                               lock(&jfs_ip->rdwrlock/1);
+  lock(&jfs_ip->commit_mutex);
+
+ *** DEADLOCK ***
+
+5 locks held by syz-executor.0/7415:
+ #0: ffff888059e4c420 (sb_writers#14){.+.+}-{0:0}, at: filename_create+0x10d/0x530 fs/namei.c:3893
+ #1: ffff88806b967480 (&type->i_mutex_dir_key#10/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
+ #1: ffff88806b967480 (&type->i_mutex_dir_key#10/1){+.+.}-{3:3}, at: filename_create+0x1c2/0x530 fs/namei.c:3900
+ #2: ffff888066090920 (&(imap->im_aglock[index])){+.+.}-{3:3}, at: diAlloc+0xb9c/0x1a70 fs/jfs/jfs_imap.c:1370
+ #3: ffff888066090890 (&imap->im_freelock){+.+.}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2457 [inline]
+ #3: ffff888066090890 (&imap->im_freelock){+.+.}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
+ #3: ffff888066090890 (&imap->im_freelock){+.+.}-{3:3}, at: diAllocAG+0x782/0x2300 fs/jfs/jfs_imap.c:1666
+ #4: ffff88806b9666f8 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2474 [inline]
+ #4: ffff88806b9666f8 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
+ #4: ffff88806b9666f8 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocAG+0xa99/0x2300 fs/jfs/jfs_imap.c:1666
+
+stack backtrace:
+CPU: 0 PID: 7415 Comm: syz-executor.0 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
 Call Trace:
  <TASK>
- ib_device_release+0xd0/0x1b0 drivers/infiniband/core/device.c:498
- device_release+0x99/0x1c0
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x22f/0x480 lib/kobject.c:737
- rxe_net_add+0x93/0xd0 drivers/infiniband/sw/rxe/rxe_net.c:543
- rxe_newlink+0xde/0x1a0 drivers/infiniband/sw/rxe/rxe.c:197
- nldev_newlink+0x5d0/0x640 drivers/infiniband/core/nldev.c:1778
- rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
- rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
- ___sys_sendmsg net/socket.c:2639 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe09ae7cea9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe09bba30c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fe09afb3f80 RCX: 00007fe09ae7cea9
-RDX: 0000000000000000 RSI: 00000000200002c0 RDI: 0000000000000005
-RBP: 00007fe09aeebff4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fe09afb3f80 R15: 00007ffc7e55f608
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ diNewIAG fs/jfs/jfs_imap.c:2519 [inline]
+ diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
+ diAllocAG+0xc59/0x2300 fs/jfs/jfs_imap.c:1666
+ diAlloc+0x8f7/0x1a70 fs/jfs/jfs_imap.c:1587
+ ialloc+0x84/0x9e0 fs/jfs/jfs_inode.c:56
+ jfs_mkdir+0x244/0xb30 fs/jfs/namei.c:225
+ vfs_mkdir+0x57d/0x860 fs/namei.c:4131
+ do_mkdirat+0x301/0x3a0 fs/namei.c:4154
+ __do_sys_mkdirat fs/namei.c:4169 [inline]
+ __se_sys_mkdirat fs/namei.c:4167 [inline]
+ __ia32_sys_mkdirat+0x84/0xb0 fs/namei.c:4167
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf7312579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5f04418 EFLAGS: 00000296 ORIG_RAX: 0000000000000128
+RAX: ffffffffffffffda RBX: 00000000ffffff9c RCX: 0000000020000040
+RDX: 00000000000001ff RSI: 0000000000000000 RDI: 00000000000000fc
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
  </TASK>
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
 
 
 ---
