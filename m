@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-222900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2A9910969
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:11:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F49910978
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:14:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D721F21AE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:11:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E1A281591
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D608E1AF6A2;
-	Thu, 20 Jun 2024 15:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0781AF69F;
+	Thu, 20 Jun 2024 15:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yhtgg3v5"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G4KL8xx1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905D81AED5D;
-	Thu, 20 Jun 2024 15:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EA81AE0AC;
+	Thu, 20 Jun 2024 15:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718896297; cv=none; b=FTuyyI3SNviGYGH3qa74OBwEtjveOunbwTwLlTBCnPqH6smuZJU52hts1yoqarippHrBx3jj0SPamh/Lz+FT47o0cZ2fn45E1NO/lPRSIQdHxX1/GXf2IRRoI7gC2zqURALYnyp0W94UJ1y8oyG671CSzw0LOefbYj9JGVH9ebc=
+	t=1718896463; cv=none; b=q3Yk8MPyN8TjeZt10+Tu3JAtd/y998kqaapKFyPi8qRTq+yf+odG+sjch7+ZrTqbCahCisz5WQNhLCdzSb/gLHhmdJJiGSyKlwmkFQCvcd8/bmCKYD9AO4BPYmPan1q77HV87wc8F7i/4JsLU1vt9d3Tz8vxCLq/6Sw+OoRw84g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718896297; c=relaxed/simple;
-	bh=AU2dIZOHA33jaIyUvKlqFneAYvUEREDs1Wy0TpNk3V4=;
+	s=arc-20240116; t=1718896463; c=relaxed/simple;
+	bh=hchd0yzgV/Lu9QC2uQ3ylV/jLOxjSf3niBC2u+cVng8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rX+bdsyv6jhAZKbAO4o18rLpaN/n/VsOw1hrZJjIqhXHRp6CGvHySOWnbSTUTlWE8IIKUiZDe2dy6XTbWqUBvbU3bDJtbW7WbqBsYx/7QabuoBQwyM4iOpwgF6sP0dSeqTIP7m5bR8xphroMjrQLohl6kbfRhNsecq0xhp0bX3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yhtgg3v5; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f64ecb1766so7676875ad.1;
-        Thu, 20 Jun 2024 08:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718896295; x=1719501095; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BdniuxfIoQMZx6rcrd4+VjHCkWj3zAequC6HSfgqfnY=;
-        b=Yhtgg3v5GmfjMzouzJ72dHVciGUj5vyesKnm98lnFabnaVcsXxH1vJglowpQWoR7II
-         yqmRahMazLeKchn+OF62mnNUczn50mWjbyq3yHthmNlazMf38CLUv32Q4cqPZLVccc1a
-         VotAYSD8N5rQV2JVbPhvf6iuj3nTqLL0AtMsnUKpxAQREWCGF/Heyx/FARJ4ske1PUD0
-         8SNJvUDtWjcswHJL+VNnT+Y5aAYak3iFNEmAuPa5h5+qBBoHQQRd32gw2nwj9LBY3Dn6
-         j+H6B6D/uIXPTxa2+HF4A4DK2XeYRfKfOfHBoG4gK7K57P+/+Vvyi5TvxDU/nZY4INLP
-         980Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718896295; x=1719501095;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BdniuxfIoQMZx6rcrd4+VjHCkWj3zAequC6HSfgqfnY=;
-        b=oQAdKtqyZGFHawmGhXWENvdiOtDYpNaV0jsQiGP7FZ7VZJBdEF5EFsWm9O+jy59F1G
-         QS+D38Ms1K6zTPzPWYXCFVklbdkhDeodBYD1fO0HxUTRslMC/vWUMuuQUakJWXiDQ/mV
-         HkaXb6O0QhjK0v2ceCR0igLIU6KRDu+1N6mI1OKfZy7CnSe/aBhNKm8DUbk27AW3bb2g
-         iQD9rLP9Pqdf77lGC1kl5SAvEQDHRhRmTa87vwsyDa7sloCy8aS544w9bYCWHGV+TfOd
-         VOqNITfSQMDq++9Jq2I+xLLTikr8nzqexTWzXAehyPs0aqRbQoXPEJJAvUjhdO/xS9pm
-         9//Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVIehVjDKNAgH4RScBz/Y2BmE+XHRTk13UlvHgdUez7kpdxoFsEy0eaLQnKwELBSkACxUTjtx0nZv8EnQ0Jsk1KLKyOfcut+4l2yYousD265nYvBBRyE1ZjldScnB++L0qc2yaYpgHPVJUO1ZYFm/DlPd4Gf/g8j+JeT3WI5aEP59TvTAxRf4miA7i3t/jO+oidip5pnzMkApCNumG8AQ==
-X-Gm-Message-State: AOJu0YyWFhT4Maa5XzeNwyrmpT4pvKmuGdfnvWlMvpvOLFnLIdGrJTpa
-	qsDy2YSvY560Hq1xkYiT0uo+VAbpWAbNNGPlK9LeVOqvFaRrxQEU
-X-Google-Smtp-Source: AGHT+IHuss2h79Pd0GhHTa2pZZiFuRTtvqKi7+4t8bFj0/hlwRCcSWFghn7T2PJ1oidcm3JN1GN8SQ==
-X-Received: by 2002:a17:902:e812:b0:1f6:7f20:d988 with SMTP id d9443c01a7336-1f9aa44fd68mr67061095ad.42.1718896294631;
-        Thu, 20 Jun 2024 08:11:34 -0700 (PDT)
-Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f8575b119bsm137589065ad.27.2024.06.20.08.11.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 08:11:33 -0700 (PDT)
-Date: Thu, 20 Jun 2024 12:12:55 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=hjt4rMs7sqH9mCN225Xx6nZ49uWTQJz9OQT3P9o6N04pgNBpj+gTPlzZtK0Z9mupyWd4d2Jck/mX0iTQBMAnKsUFZrRPv/bt+MQ6DxKlKUdrNGrTdcesGNSgqlLz4/00wrA7k7XOLEl/2+CKx16fLqf1Kn8xXktyZPluiSotTDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G4KL8xx1; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718896461; x=1750432461;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hchd0yzgV/Lu9QC2uQ3ylV/jLOxjSf3niBC2u+cVng8=;
+  b=G4KL8xx1wlRWPmhDPyB3s35Y4wemuEKGYdD/ZV8Kghp1Ysg88tj8CbiO
+   1An2EMJrFa6kcZeIHxbdZOS1g4rrpVUo6ptYA1lGK3PzdGzK85TgAYsVM
+   VcjVIc0j2etD311/QFg1437vbwrjjyez1yTpNmd0GHZbESC7TSn0Wuc09
+   Ted4k+adK7OpZUkMx9BUTdWVrHsWLj32Pe4kx40+NJ7+NrnbRPo3GxvNd
+   kT9RaqeU8/WY1t0/9JW8bBRT8pzJvnloZ60zp9X9OvRM/xrRFjF76TRei
+   IpjDMmAWbHbDDPyonzBMlx9FIK8VFPcT235lWXbehkehmpDIaJ+jZRY4F
+   w==;
+X-CSE-ConnectionGUID: H82ERXWYSSWnsRHIT9Xdfg==
+X-CSE-MsgGUID: z+jiZ9hrSTKjymliJJTTTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="15756670"
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="15756670"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 08:14:10 -0700
+X-CSE-ConnectionGUID: OkY8lUvwSuq2jPMqeWG5wA==
+X-CSE-MsgGUID: /JRLTXRCQlGqqL3nnQ75FQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="42213460"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 20 Jun 2024 08:14:08 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sKJUD-0007hU-2G;
+	Thu, 20 Jun 2024 15:14:05 +0000
+Date: Thu, 20 Jun 2024 23:13:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI
- protocol with MOSI idle configuration
-Message-ID: <ZnRG9wgY3WIaYFyQ@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1718749981.git.marcelo.schmitt@analog.com>
- <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
- <63db9349-f453-4a5b-aa09-d1857ddd8b03@baylibre.com>
- <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
- <e7a2438a-f6a3-439e-8058-937248dd5b3f@baylibre.com>
+Subject: Re: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
+Message-ID: <202406202206.9e7oGmfh-lkp@intel.com>
+References: <20240619200552.119080-4-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,56 +83,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e7a2438a-f6a3-439e-8058-937248dd5b3f@baylibre.com>
+In-Reply-To: <20240619200552.119080-4-admiyo@os.amperecomputing.com>
 
-On 06/19, David Lechner wrote:
-> On 6/19/24 1:58 PM, Marcelo Schmitt wrote:
-> > On 06/19, David Lechner wrote:
-> >> On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
-> >>
-> >>
-> 
-> ...
-> 
-> >>
-> >>> +the peripheral and also when CS is inactive.
-> >>
-> >> As I mentioned in a previous review, I think the key detail here is that the
-> >> MOSI line has to be in the required state during the CS line assertion
-> >> (falling edge). I didn't really get that from the current wording. The current
-> >> wording makes it sound like MOSI needs to be high indefinitely longer.
-> > 
-> > It may be that we only need MOSI high just before bringing CS low. Though,
-> > I don't see that info in the datasheets. How much time would MOSI be required
-> > to be high prior to bringing CS low? The timing diagrams for register access and
-> > ADC sampling in "3-wire" mode all start and end with MOSI at logical 1 (high).
-> > I think reg access work if MOSI is brought low after CS gets low, but sample
-> > read definitely don't work.
-> > 
-> > From the info available in datasheets, it looks like MOSI is indeed expected 
-> > to be high indefinitely amount of time. Except when the controller is clocking
-> > out data to the peripheral.
-> > 
-> > Even if find out the amount of time MOSI would be required high prior to CS low,
-> > then we would need some sort of MOSI high/low state set with a delay prior to
-> > active CS. That might be enough to support the AD4000 series of devices but,
-> > would it be worth the added complexity?
-> > 
-> 
-> It needs to happen at the same time as setting CPOL for the SCLK line for the
-> device that is about to have the CS asserted. So I don't think we are breaking
-> new ground here. Typically, in most datasheets I've seen they tend to say
-> something like 2 ns before the CS change. So in most cases, I don't think
-which datasheets? Are any of those for devices supported by the ad4000 driver?
+Hi,
 
-> anyone bothers adding a delay. But if a longer delay was really needed for
-> a specific peripheral, we could add a SPI xfer with no read/write that has
-> cs_off=1 and a delay to get the correct state of both MOSI and SCLK a longer
-> time before the CS change.
+kernel test robot noticed the following build warnings:
 
-I don't know if that would actually work. I have not tested doing something like that.
-This also implies the controller will be able to start the next transfer right
-after the first preparatory transfer ends and it will meet that inter-transfer
-timing requirement (which I still didn't find documented anywhere).
-I'm not convinced that would be the best way to support those devices.
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.10-rc4 next-20240619]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Check-before-sending-MCTP-PCC-response-ACK/20240620-040816
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20240619200552.119080-4-admiyo%40os.amperecomputing.com
+patch subject: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
+config: arm64-kismet-CONFIG_ACPI-CONFIG_MCTP_TRANSPORT_PCC-0-0 (https://download.01.org/0day-ci/archive/20240620/202406202206.9e7oGmfh-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20240620/202406202206.9e7oGmfh-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406202206.9e7oGmfh-lkp@intel.com/
+
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for ACPI when selected by MCTP_TRANSPORT_PCC
+   WARNING: unmet direct dependencies detected for ACPI
+     Depends on [n]: ARCH_SUPPORTS_ACPI [=n]
+     Selected by [y]:
+     - MCTP_TRANSPORT_PCC [=y] && NETDEVICES [=y] && MCTP [=y]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
