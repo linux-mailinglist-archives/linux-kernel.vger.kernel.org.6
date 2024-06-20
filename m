@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-223019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB5C910BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:18:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A61910BE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918441F21574
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:18:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A09CD1F21A4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00491CD3D;
-	Thu, 20 Jun 2024 16:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ED31B3737;
+	Thu, 20 Jun 2024 16:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RLc65xT4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jMOUnED4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2AE1AD48C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812001B14E6;
+	Thu, 20 Jun 2024 16:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900267; cv=none; b=I2AxCdaKTDn8Mm4uyZT3pbrZ3DvUMHj90gslV2T2E0Iosko9YxhbKvwUgswYDWyB44XWo1wH8s+HbeMyaL2ICN7629T5gQsNy9u14wHcz+77uFLhUntjLjya1lBpxALL6iKhuSb4w+lHRD5H/NwFz4pRwAc05ZIOa8vVfdz3Pu0=
+	t=1718900288; cv=none; b=AUXn1Am+oT1w4eAFV4OtkjuMhW5TGGz+XExoPvzkUHjXqVydBW4Gg1FrNdAesxGNvDzuNxjIPHBcshdcMuhL/ga9Uuz+V6bvplP3uRCq9Yp5zCbyurvClKm83rNldBo0Ccb2TVs6dRl5ffNNmegXnNu4RjStwFQIUbqR4gmsI9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900267; c=relaxed/simple;
-	bh=OB7U7lqMLVcERbuFIMmlZujrMO1sCqLLsyifTmFy0QQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VYBb1zJJJQH/lgrnA/+I4bJOJ4D9gMLBun86Jox2Sf9M2adbkzzgLmKZOqReqXXHgAkZ+ihmshYbl8mIaXOz8BfhC+Dk5Cr5n6sWaaLdP8BtqM2upAkQS7ETt5fQCL9GHd07hTQdQDGQ6vnmBtnYPXP+O3FUPaJcMCkyrxHIWpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RLc65xT4; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718900266; x=1750436266;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=OB7U7lqMLVcERbuFIMmlZujrMO1sCqLLsyifTmFy0QQ=;
-  b=RLc65xT4CObI7p7wYP92bY5pevH7MAQC5RU7SwPMFRlKjaH7JuoVfVRd
-   G9M33NhDnhN6wb4ac3mU0Rzv+/QFkeG8MOxZ305Nfbkk7CFbX2AQdejGR
-   lQwhg1KlBaKAumVSLutuuhbb9h+btxJnsvUpE7LlPC1zgYcb7YD2WoTq0
-   W03DijEOPahpyZFboVAyMBcIe7YKbWRPreQwOcLf/C+e+/07WXUYRlHBj
-   fj5VnnLRFxTET0ZKykpwWO+wuYgryBbXdYQqbP86O8zDvhhFvayeMVv+p
-   ofUPvJSv3GnUy5xsXUechg81dW74JPlI7XPS71kuuQGEZMr/TW1FfyI9s
-   g==;
-X-CSE-ConnectionGUID: 2Iueos+8T22j5593fY7uTQ==
-X-CSE-MsgGUID: mUr5wFIGTSyRb+Qaff1P+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="41299767"
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="41299767"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 09:17:45 -0700
-X-CSE-ConnectionGUID: vPkJ9EWwS6yjslZYhtwXqA==
-X-CSE-MsgGUID: vlgl6N+4QYKUTNSogEf+Yg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="42198624"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 09:17:45 -0700
-Received: from [10.212.43.222] (kliang2-mobl1.ccr.corp.intel.com [10.212.43.222])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id CFFB820B5703;
-	Thu, 20 Jun 2024 09:17:43 -0700 (PDT)
-Message-ID: <2cc9a843-a532-49b1-9d53-b1544ccb740e@linux.intel.com>
-Date: Thu, 20 Jun 2024 12:17:42 -0400
+	s=arc-20240116; t=1718900288; c=relaxed/simple;
+	bh=1dFUQMCGHMZ3LH1izFqUEiTLo9GXkX0FPQTOZy4JQLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=X4JwbZHuR3an8YRIiBleNbKkhiXvJCnaHEEaSuwOlO/Cequ7n17NxW303wXl/TvXj3fnLqdS8SlOf2K/YoRPOzU4FUw1faQHSmRzM51UIFyrGuJ+nxhIe6lIfRkgzizEppZWTZpHJePntgHFJb2Am2/Tiq54gO7b7w+na58cAHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jMOUnED4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KDmDh7024158;
+	Thu, 20 Jun 2024 16:17:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	av3bSper8XkT24kJs48B9E2HUSJzvcJCEJjAApE39x4=; b=jMOUnED4vp+wo05D
+	4McItidBwVJpHr/Cbn4xX/L+A3ufy+62FguwPoTjFDs7KIjJzyvYSiE77Y150yGB
+	1R8mYt2nkNovr+XXA54CtWXpDl6RBTaumvCAcCX1tu6qXM0Bw0OGcJ6pABTuNPyi
+	4KKO/I/UzA0d0Gbh++qhxtDL9plcW51JNeKSBHbx9gw5b9NV0u2LQhkm93KTY/j2
+	2XiWazIR5a/l8Nd3QfEr5rYAwcsGg6RYV/MlbInhvRuAv7CpLz055sesC6SzlcdX
+	ialkYun0VYHmj1iRMNfn9tYrSRJlfLvsnnINctS49JAN4ZOz5EDkTxEJYIhhtSyT
+	kdinXA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvnmh8d7r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 16:17:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KGHq1n019100
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 16:17:52 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
+ 2024 09:17:51 -0700
+Message-ID: <0284e6be-a176-48a6-a99b-82ed4ad1a910@quicinc.com>
+Date: Thu, 20 Jun 2024 09:17:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,54 +64,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 07/12] perf/x86/intel: Support Perfmon MSRs
- aliasing
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
- irogers@google.com, adrian.hunter@intel.com,
- alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
- ak@linux.intel.com, eranian@google.com
-References: <20240618151044.1318612-1-kan.liang@linux.intel.com>
- <20240618151044.1318612-8-kan.liang@linux.intel.com>
- <20240620080224.GT31592@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH] fs: nfs: add missing MODULE_DESCRIPTION() macros
+To: Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker
+	<anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton
+	<jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia
+	<kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+        Tom Talpey
+	<tom@talpey.com>, Christian Brauner <brauner@kernel.org>,
+        "Alexander Viro,"
+	<viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240527-md-fs-nfs-v1-1-64a15e9b53a6@quicinc.com>
 Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240620080224.GT31592@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240527-md-fs-nfs-v1-1-64a15e9b53a6@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: p8-5mBJJaexEwGfLCKtSoV561Moqotdh
+X-Proofpoint-GUID: p8-5mBJJaexEwGfLCKtSoV561Moqotdh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_07,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ adultscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011 mlxlogscore=999
+ suspectscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200117
 
-
-
-On 2024-06-20 4:02 a.m., Peter Zijlstra wrote:
-> On Tue, Jun 18, 2024 at 08:10:39AM -0700, kan.liang@linux.intel.com wrote:
->> @@ -6179,6 +6181,11 @@ static void intel_pmu_check_extra_regs(struct extra_reg *extra_regs)
->>  	}
->>  }
->>  
->> +static inline int intel_pmu_addr_offset(int index, bool eventsel)
->> +{
->> +	return MSR_IA32_PMC_STEP * index;
->> +}
+On 5/27/24 10:58, Jeff Johnson wrote:
+> Fix the 'make W=1' warnings:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs_common/nfs_acl.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs_common/grace.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfs.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv2.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv3.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
 > 
-> This should have v6 in the name or somesuch... no?
-
-Sure, I will add V6 in the name.
-
-Thanks,
-Kan
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>   fs/nfs/inode.c         | 1 +
+>   fs/nfs/nfs2super.c     | 1 +
+>   fs/nfs/nfs3super.c     | 1 +
+>   fs/nfs/nfs4super.c     | 1 +
+>   fs/nfs_common/grace.c  | 1 +
+>   fs/nfs_common/nfsacl.c | 1 +
+>   6 files changed, 6 insertions(+)
 > 
->>  static const struct { enum hybrid_pmu_type id; char *name; } intel_hybrid_pmu_type_map[] __initconst = {
->>  	{ hybrid_small, "cpu_atom" },
->>  	{ hybrid_big, "cpu_core" },
->> @@ -7153,6 +7160,14 @@ __init int intel_pmu_init(void)
->>  		pr_cont("full-width counters, ");
->>  	}
->>  
->> +	/* Support V6+ MSR Aliasing */
->> +	if (x86_pmu.version >= 6) {
->> +		x86_pmu.perfctr = MSR_IA32_PMC_GP0_CTR;
->> +		x86_pmu.eventsel = MSR_IA32_PMC_GP0_CFG_A;
->> +		x86_pmu.fixedctr = MSR_IA32_PMC_FX0_CTR;
->> +		x86_pmu.addr_offset = intel_pmu_addr_offset;
->> +	}
+> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+> index acef52ecb1bb..57c473e9d00f 100644
+> --- a/fs/nfs/inode.c
+> +++ b/fs/nfs/inode.c
+> @@ -2538,6 +2538,7 @@ static void __exit exit_nfs_fs(void)
+>   
+>   /* Not quite true; I just maintain it */
+>   MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
+> +MODULE_DESCRIPTION("NFS client support");
+>   MODULE_LICENSE("GPL");
+>   module_param(enable_ino64, bool, 0644);
+>   
+> diff --git a/fs/nfs/nfs2super.c b/fs/nfs/nfs2super.c
+> index 467f21ee6a35..b1badc70bd71 100644
+> --- a/fs/nfs/nfs2super.c
+> +++ b/fs/nfs/nfs2super.c
+> @@ -26,6 +26,7 @@ static void __exit exit_nfs_v2(void)
+>   	unregister_nfs_version(&nfs_v2);
+>   }
+>   
+> +MODULE_DESCRIPTION("NFSv2 client support");
+>   MODULE_LICENSE("GPL");
+>   
+>   module_init(init_nfs_v2);
+> diff --git a/fs/nfs/nfs3super.c b/fs/nfs/nfs3super.c
+> index 8a9be9e47f76..20a80478449e 100644
+> --- a/fs/nfs/nfs3super.c
+> +++ b/fs/nfs/nfs3super.c
+> @@ -27,6 +27,7 @@ static void __exit exit_nfs_v3(void)
+>   	unregister_nfs_version(&nfs_v3);
+>   }
+>   
+> +MODULE_DESCRIPTION("NFSv3 client support");
+>   MODULE_LICENSE("GPL");
+>   
+>   module_init(init_nfs_v3);
+> diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
+> index 8da5a9c000f4..b29a26923ce0 100644
+> --- a/fs/nfs/nfs4super.c
+> +++ b/fs/nfs/nfs4super.c
+> @@ -332,6 +332,7 @@ static void __exit exit_nfs_v4(void)
+>   	nfs_dns_resolver_destroy();
+>   }
+>   
+> +MODULE_DESCRIPTION("NFSv4 client support");
+>   MODULE_LICENSE("GPL");
+>   
+>   module_init(init_nfs_v4);
+> diff --git a/fs/nfs_common/grace.c b/fs/nfs_common/grace.c
+> index 1479583fbb62..8f034aa8c88b 100644
+> --- a/fs/nfs_common/grace.c
+> +++ b/fs/nfs_common/grace.c
+> @@ -139,6 +139,7 @@ exit_grace(void)
+>   }
+>   
+>   MODULE_AUTHOR("Jeff Layton <jlayton@primarydata.com>");
+> +MODULE_DESCRIPTION("lockd and nfsv4 grace period control");
+>   MODULE_LICENSE("GPL");
+>   module_init(init_grace)
+>   module_exit(exit_grace)
+> diff --git a/fs/nfs_common/nfsacl.c b/fs/nfs_common/nfsacl.c
+> index 5a5bd85d08f8..ea382b75b26c 100644
+> --- a/fs/nfs_common/nfsacl.c
+> +++ b/fs/nfs_common/nfsacl.c
+> @@ -29,6 +29,7 @@
+>   #include <linux/nfs3.h>
+>   #include <linux/sort.h>
+>   
+> +MODULE_DESCRIPTION("NFS ACL support");
+>   MODULE_LICENSE("GPL");
+>   
+>   struct nfsacl_encode_desc {
+> 
+> ---
+> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+> change-id: 20240527-md-fs-nfs-42f19eb60b50
+> 
+
+Adding core fs maintainers.
+Following up to see if anything else is needed to get this merged.
+
 
