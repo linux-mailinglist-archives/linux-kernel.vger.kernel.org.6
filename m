@@ -1,183 +1,214 @@
-Return-Path: <linux-kernel+bounces-222558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6568C9103A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:05:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F709103B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F3871C21DE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62E64282537
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC751AAE2E;
-	Thu, 20 Jun 2024 12:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C6E1AC785;
+	Thu, 20 Jun 2024 12:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WgcTr6Yf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YOwNy6Er"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32611A00C2
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119D48175E;
+	Thu, 20 Jun 2024 12:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718885092; cv=none; b=uTWEM252JY5fN/TMTVduv6BpxdeR2dSCCYxEN5ocewRy2bC348eekR5vQIaOAYApKbe3a4HPU7S3T1HtlbDGWyhqTrFkZ3DUMBWtStIgGRGP0aDwMSzwre5gprmRq2BGNh7Z0a56AvV3VALoSt7S9u3D7oUywZcNVtO9SHcMwew=
+	t=1718885210; cv=none; b=jV15DNzwluPuYlWEu/A4qi5qXMgRifYtB7c/rAXJJkR50XewqnQ3j0NhGseEaOUUAcgQoEdqR6T4KBhU17bkU3wuFdqnb5WF6UuAh3EyccDcyfUHSOzxZxArvQZGlVnJVSYSBkgcMmzZz263QppHmmsy7COrDCp25dYwA5eUEQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718885092; c=relaxed/simple;
-	bh=p8i4kgsSXiThvs104+IQObiSdDnBCcWSCkYwC99CoHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X5y60W4Bqbl5bVPuQFR2zPIBYmxVcT0+JTiXOaNEt6WEBaSazINwAIO+5OW4d4JauAB3jWh/CKFAybylVtYC8eagE/S4qIyL6sgGRSoS+r3pdMgl5Fm6tJ9Mv6nTs1Uad0S7p5km3iU57F377iU/+JoGJRDjWiKNn9oiorFRHfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WgcTr6Yf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718885089;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tBTGVX4bvUyxrx4ohv02xbwKgf7bYjyve7BA15u6MEQ=;
-	b=WgcTr6Yf3k2FAAr40bYTv0O/9YmB8SdpRxpLx+szww0HM9tIHC82ZFZvXgzNvOsxSz0r/g
-	CN+kancUfcaCLP2y06SLINv4lQ6fkM7mG5RMtrPbuuOhfk9r34eMx2n66qB+4QcNNdsg7d
-	jeUqN/M+BHl6kW8ijChEcoTnuNFW6ZY=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-362-YFrvsQQvNS-zacy7seOvog-1; Thu, 20 Jun 2024 08:04:48 -0400
-X-MC-Unique: YFrvsQQvNS-zacy7seOvog-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6b22e2dfa6cso10729126d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 05:04:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718885087; x=1719489887;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tBTGVX4bvUyxrx4ohv02xbwKgf7bYjyve7BA15u6MEQ=;
-        b=LVuTaN+f95siWZRez2HNRWxMp4EASUyMoexQVUUSex7lPROxW0SyeDDRlkmEdZMRCg
-         wRn0KP6N2pXBGtuCx6x5lOuJD34g6M0E8SW9LMmWf2La7a8rvDTR0dvi4dcTjyjj9BgU
-         6OxkSrOJWv464lw3ehZ3qwnGUExZpBQ7X3MrNSSaictLZXsqIBMWPNJr/W8MLbuCX+4K
-         kvq2lEpz850jgswd4rET+ZOJs3neBzpOSjmmH50G6fuNUn+B57l35bNrakHN6XzHBJfM
-         DIQwNcmRIOoUOcanpN/IKsJi6WLwVidKPsCpFaAcCFWsFCA/F5FF2U2xB7iXo4C3wfcQ
-         Z+2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWmm1Cjk0lI/pf4QRWt1snFgCjiyswCMLc0q7cd2z7iSCksT7JzMSFZimiCQmJ9hh/Al0dDm0T4zNvswBhdTkI/Mt7EetdD1NcXPTZv
-X-Gm-Message-State: AOJu0YxRwDKHcNybzjTl4LU8QYfcjWMmx0D6dh78zzhr5Uvq2YDSY8BX
-	t9Epjy8b7p8TJojhgZG0uoFFGF6xFoLNwijyN3DrCjMOL+qEz/8UH/a/d+yNp9lx8lNNFGiV1ge
-	wKwBhDEHIYlcnXVeXahRj+qGmLTnAgJGYbYFOiR/YVTNwkaqvClclH/G5OztX0k8zuinEvQ==
-X-Received: by 2002:ad4:5c8b:0:b0:6b5:6f9:9207 with SMTP id 6a1803df08f44-6b506f9925dmr56113936d6.20.1718885087367;
-        Thu, 20 Jun 2024 05:04:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGXBwop604Y5LJHb0b34gI7Je4i9x8IkF784us5Ea9E+Z1DVF2QvWsWClXZaaHI9SoMFqaGOw==
-X-Received: by 2002:ad4:5c8b:0:b0:6b5:6f9:9207 with SMTP id 6a1803df08f44-6b506f9925dmr56113586d6.20.1718885086970;
-        Thu, 20 Jun 2024 05:04:46 -0700 (PDT)
-Received: from [10.26.1.93] ([66.187.232.136])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bc266c496sm84674985a.20.2024.06.20.05.04.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 05:04:46 -0700 (PDT)
-Message-ID: <4aff3fb4-cf1b-4c09-918a-3c4252a34bd6@redhat.com>
-Date: Thu, 20 Jun 2024 08:04:45 -0400
+	s=arc-20240116; t=1718885210; c=relaxed/simple;
+	bh=YcOQMnUGOll2T9P5B0BTqi4hNY9cmP0ib2UkDRJOtdM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cxwEK0gl9oc/zHrqFoqyTBFWliAjHdUbP98Jw7KXZTbqsqA88R3DMY6gE36j2leo+3p2I1NfTpEHl/KiEVj+JRGt8Vqs0dYhpEyFUGHuDAEB7r+942Gqpdokjle4OhoNeLyfuTiuDIbScZWFivymbAoKQ/KQYsGuT3cFpLN5DUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YOwNy6Er; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KBxMFG018194;
+	Thu, 20 Jun 2024 12:06:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	3nHXdBeQK4wTfCVubrwrziJsRRxybuQIzhP44f+g4Z8=; b=YOwNy6ErD1RsCaBs
+	sFLoLwpmbpUvBuDlFRqqJG2Teja1l8iGq7PTSzwA0M+ZsYwnwyMt55R0KqeNBF+R
+	/1rq5ouTkTreXC9XriH/TFV1X3Fl3FR+0x5OoXUEI21ef76eSyheAyn3d7c8Gta3
+	oRk8+8Rkv1O9XJKLTMeL6/QE5qfHVzoudZiPQcZ3jJoYiUSOjCxdlU7ZFlgAR8EF
+	xRsSaY2nTLt/GP4Gd4KxakyLsgwNx6uMcW3K0F2S/0dDQ+ZhO8a2XTPD/rCzb9+P
+	+/F/6v7TPZwWpVZeEXT58An40mqRfNt53Tpuu0eu5CrMJqLlKc88CcIh4dzQtq5m
+	dy203w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvm1400pr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 12:06:40 +0000 (GMT)
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45KC36eh026269;
+	Thu, 20 Jun 2024 12:06:39 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvm1400pn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 12:06:39 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45KACKHR019495;
+	Thu, 20 Jun 2024 12:06:38 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ysnp1nwtn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 12:06:38 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45KC6ZGQ7733894
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Jun 2024 12:06:37 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9791C58068;
+	Thu, 20 Jun 2024 12:06:33 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C7C1F58054;
+	Thu, 20 Jun 2024 12:06:30 +0000 (GMT)
+Received: from [9.171.74.145] (unknown [9.171.74.145])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Jun 2024 12:06:30 +0000 (GMT)
+Message-ID: <ecbd75e7c9a96ac38846a17917339d2cae6fe74c.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 2/3] vfio/pci: Tolerate oversized BARs by disallowing
+ mmap
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+        Gerald Schaefer
+ <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle
+ <svens@linux.ibm.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>,
+        Matthew Rosato
+ <mjrosato@linux.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Date: Thu, 20 Jun 2024 14:06:29 +0200
+In-Reply-To: <ZnOrlB6fqYC4S-RJ@infradead.org>
+References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
+	 <20240529-vfio_pci_mmap-v3-2-cd217d019218@linux.ibm.com>
+	 <20240618095134.41478bbf.alex.williamson@redhat.com>
+	 <ZnKEuCP7o6KurJvq@infradead.org>
+	 <76a840711f7c073e52149107aa62045c462d7033.camel@linux.ibm.com>
+	 <ZnOrlB6fqYC4S-RJ@infradead.org>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: Do not enable ACPI SPCR console by default on arm64
-To: Liu Wei <liuwei09@cestc.cn>, sudeep.holla@arm.com,
- Will Deacon <will@kernel.org>
-Cc: catalin.marinas@arm.com, guohanjun@huawei.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, rafael@kernel.org
-References: <20240530015332.7305-1-liuwei09@cestc.cn>
- <cb4c5fd0-9629-4362-918a-cb044eb9e558@redhat.com>
- <20240618152923.GB2354@willie-the-truck>
- <20240618164024.tehpbscax47jkluj@bogus>
-Content-Language: en-US
-From: Prarit Bhargava <prarit@redhat.com>
-In-Reply-To: <20240618164024.tehpbscax47jkluj@bogus>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: E7UrQA2-DXnhowYQNDMq2MBeJAUW1nvf
+X-Proofpoint-GUID: W5ZOa8ZInFEMGYCDjcKD3NwJagn2Lily
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_07,2024-06-20_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ bulkscore=0 clxscore=1015 adultscore=0 phishscore=0 suspectscore=0
+ mlxscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=689 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200085
 
-On 6/18/24 23:43, Liu Wei wrote:
-> From: Sudeep Holla <sudeep.holla@arm.com>
-> 
-> On Tue, Jun 18, 2024 at 04:29:24PM +0100, Will Deacon wrote:
->>> On Thu, May 30, 2024 at 09:06:17AM -0400, Prarit Bhargava wrote:
->>>> On 5/29/24 21:53, Liu Wei wrote:
->>>>> Consistency with x86 and loongarch, don't enable ACPI SPCR console
->>>>> by default on arm64
->>>>>
->>>>> Signed-off-by: Liu Wei <liuwei09@cestc.cn>
->>>>> ---
->>>>>    arch/arm64/kernel/acpi.c | 3 ++-
->>>>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
->>>>> index dba8fcec7f33..1deda3e5a0d2 100644
->>>>> --- a/arch/arm64/kernel/acpi.c
->>>>> +++ b/arch/arm64/kernel/acpi.c
->>>>> @@ -227,7 +227,8 @@ void __init acpi_boot_table_init(void)
->>>>>    		if (earlycon_acpi_spcr_enable)
->>>>>    			early_init_dt_scan_chosen_stdout();
->>>>>    	} else {
->>>>> -		acpi_parse_spcr(earlycon_acpi_spcr_enable, true);
->>>>> +		/* Do not enable ACPI SPCR console by default */
->>>>> +		acpi_parse_spcr(earlycon_acpi_spcr_enable, false);
->>>>>    		if (IS_ENABLED(CONFIG_ACPI_BGRT))
->>>>>    			acpi_table_parse(ACPI_SIG_BGRT, acpi_parse_bgrt);
->>>>>    	}
->>>>
->>>> It's been a while, and the status of arm hardware may have changed. IIRC the
->>>> choice to force enable this is that most arm hardware is headless and this
->>>> was a _required_ option for booting.
->>>>
->>>> I'm not sure if that's still the case as it's been a long time.
->>>>
->>>> Can anyone from the ARM community provide an approval here?
->>>
->>> I don't have a strong opinion either way, but adding the Arm ACPI folks
->>> in case they care.
->>>
->>> Having said that, if the only rationale for this patch is consistency
->>> with other architectures, then I think I'd lean towards leaving the
->>> behaviour as-is so we don't give users a nasty surprise on their next
->>> kernel upgrade.
->>>
->>
->> +1, I am concerned about breaking existing behaviour on the platforms
->> in the wild. Also many platforms running ACPI would have already used
->> console cmdline parameter if SPCR is not their choice for the console.
->> So I don't see the need to align with other arch default behaviour here,
->> we can revisit if someone shouts with a real reason as why cmdline option
->> is not viable.
-> 
-> For varying privacy and security reasons, sometimes we would like to
-> completely silence the serial console output, and only enable it through
-> cmdline when needed.
-> 
+On Wed, 2024-06-19 at 21:09 -0700, Christoph Hellwig wrote:
+> On Wed, Jun 19, 2024 at 12:56:47PM +0200, Niklas Schnelle wrote:
+> > In short, the ISM BAR 0 is stupidly large but this is intentional. It
+> > not fitting in the VMAP is simply the least crazy filter I could come
+> > up with to keep the ISM device from causing trouble for use of vfio-pci
+> > mmap() for other, normal, PCI devices.
+>=20
+> Then maybe add a PCI quirk to prevent mapping it.  This would also
+> affect the sysfs resource0 file unless I'm missing something.
+>=20
 
-FWIW, I understand that concern but the feedback you're receiving is 
-that there are many existing systems that depend on this behavior. 
-Breaking users for your concerns is not a good idea.
+The resource<N> files are globally disabled on s390x due to lack of
+HAVE_PCI_MMAP/ARCH_GENERIC_PCI_MMAP_RESOURCE at the moment. I might
+change that in the future with a analogous argument as for
+VFIO_PCI_MMAP but for its not there. Once we add it we of course need
+the same special ISM treatment there too.
 
-Perhaps a solution is to add yet-another-config-option, or add a kernel 
-parameter to disable the SPCR console on ARM?
+Looking at the existing PCI quirks I don't see anything that would fit
+so I'm guessing you would want to add a new quirk? As I understand it
+we would then have to export something like a is_pci_mmap_broken(pdev)
+function while currently the only quirk function that seems to be
+exported is pxi_fixup_device(). But then what happens if
+CONFIG_PCI_QUIRKS=3Dn? Also the header comment in drivers/pci/quirks.c
+says that platform specific devices shouldn't go in there and ISM is
+platform specific.
 
-Something like "acpi=nospcr"?
+Instead of exporting IOREMAP_START/IOREMAP_END maybe there is another
+reasonable maximum resource length? Or maybe we could create a size_t
+ioremap_area_size() helper similar to is_ioremap_addr() but not
+inlined. The latter already uses IOREMAP_START/IOREMAP_END so not sure
+how that works when IOREMAP_END is not exported?
 
-P.
-
-> On ARM, it is difficult because SPCR is enabled by default.
-> 
-> Thanks for your patience,
-> Liu Wei
-> 
->>
->> --
->> Regards,
->> Sudeep
-> 
-> 
-> 
-> 
-
+Thanks,
+Niklas
 
