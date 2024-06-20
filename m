@@ -1,142 +1,205 @@
-Return-Path: <linux-kernel+bounces-222660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043CA91056F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:09:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80E2910572
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B30B1C21039
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:09:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9791F21732
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868031B375D;
-	Thu, 20 Jun 2024 13:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257671AE08A;
+	Thu, 20 Jun 2024 13:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rn01+XQV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Er8bmFWI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20631ACE7F;
-	Thu, 20 Jun 2024 13:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DD31ACE85
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718888648; cv=none; b=ONMFnws3+ygcn6fE6uWXbgTUcEPtwrAQOrx8MjVxbXei9d/78Y1XTNpfdOKqtu0sm3epLbqsZ5PgZ9JfIqL+HqL1ocNK4DlvUf4DWQxF3MVbKlDapG8w1fJ5Uu9W+Gmm0jRnuA9UIOn+GghW5V930AHs+JVlpawBwXQVjvBJSPQ=
+	t=1718888704; cv=none; b=SRvqawsPCgntyk2oBNhPwu4lMbQGIfoQZMbw6K3Om8UbAW2UqoHaFmjZhYCLvvsjNZCjTFKYLe1czDMJFp0NaWHAJEZUPqIA9AFZPHgOmEgte3gYIBdSpZxj67sK0LsVxqqKQIbBqnRMw6drnAB/w2AjV8xVTSMJ31MZjTlEg1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718888648; c=relaxed/simple;
-	bh=KxrT3UVj8PRk2cbBOHYEf2xQYsyGdNtZoNIhfJxp/rE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n/jlz8S0cpNwM8TgEq4mRxXZMWZGgh6zwrrCzeOQ6KmQH6kMZ2l21Zlp3XJjSSJKVAEXWwTDPXks6DQ+05UC/GOhHlDKYnueRsqLFNCPW4VGnZ+acNU+GDKGqat7osf1zETFcSBNE1n23+1Ol8fvcoPSsDq+WaZxYyYj1mxDnX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rn01+XQV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F552C4AF10;
-	Thu, 20 Jun 2024 13:04:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718888648;
-	bh=KxrT3UVj8PRk2cbBOHYEf2xQYsyGdNtZoNIhfJxp/rE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rn01+XQVZHQZwEkjljYELTuenWlJ7KE+DLaXzEKjZrzl2j9RVj5K1tbz4KIUQZFN/
-	 qA/zNpgPMziNEdluQINMzb1MSjyXWKsDor72iEFynciUZdPHzhkxQGLCno0ICkHPZw
-	 74KCvUGv5tmdcu8Pg2YkVPaTvRLxV6/uys5hIHfTtQdzwEgyQMGBntjS6BvX3HhfkQ
-	 5ZWLM2AZvwLuCwtav4LW8pSicJfmTxiBPzlZcWrizCMa5nMh2WKQe81TdOnogwiOm/
-	 64bADmj2RmdJBz1gsWLOALcDVAku4SnxVksjyv99H8ohswnbMq4N7HEDxJSO/Oh5u7
-	 FzFSf+bpRxZAQ==
-Date: Thu, 20 Jun 2024 14:04:01 +0100
-From: Will Deacon <will@kernel.org>
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Andrew Halaney <ahalaney@redhat.com>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Clark <robdclark@chromium.org>, linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/adreno: De-spaghettify the use of memory barriers
-Message-ID: <20240620130400.GA4750@willie-the-truck>
-References: <20240508-topic-adreno-v1-1-1babd05c119d@linaro.org>
- <20240514183849.6lpyplifero5u35r@hu-akhilpo-hyd.qualcomm.com>
- <ae4a77wt3kc73ejshptldqx6ugzrqguyq7etbbu54y4avhbdlt@qyt4r6gma7ev>
- <20240516145005.gdksmvxp35m45ifh@hu-akhilpo-hyd.qualcomm.com>
- <5vyrmxvkurdstqfiatxfqcqljwyiswda2vpkea27ighb2eqbav@n24yzdykbc23>
- <20240604144055.GE20384@willie-the-truck>
- <20240618161158.qpqbv77tqveo5g6l@hu-akhilpo-hyd.qualcomm.com>
+	s=arc-20240116; t=1718888704; c=relaxed/simple;
+	bh=2IAyNZnC98g3I3C/asGtHAo0qZn8Ytw+IP3P2W+a0IU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=gbUebxWiu8KkiVIqm4sPufu8zDzS8WN0Cq0jHJZ+HgQr+VsvwdyY1x0gY+K7aad15VIx8o8sYgpjuDsC4CgvyZ6sIViMQp9b357cBXFjZxj5Vql+4HqsR3jTleQqHBnrq02KqruWGj8ZZCP7PPYOlYViVr83H8k/iaNrqmm5DEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Er8bmFWI; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718888702; x=1750424702;
+  h=date:from:to:cc:subject:message-id;
+  bh=2IAyNZnC98g3I3C/asGtHAo0qZn8Ytw+IP3P2W+a0IU=;
+  b=Er8bmFWI+bcXn+LYfVbqL+N7V/BNQMRN0CEfu+siybD2REpvv2xsX6aI
+   uBcOZAYbxWIgw+nzF7NigwmQ3GGzD4XhQIgcdlTFFo6/IfhkWkElRQkBK
+   WG42ytrBNVID4rkIA6umEWh1KciSd/2gXqNMqe+DTHG85c5BYFrLNaKc0
+   z8PEn88HRz07N86MqdLSUp+vGf9JM4J8ZIdOaPsMElUr+VJC2hM/Ucw+r
+   aGgh6dEjFhdtgzJTHpOYqnlK9EKAHGnZiNq4M6f6BOy7//qMY6AQ3Lpos
+   SrJul6JssjHDZeMn1uqArX+H0JnpWxuQVmijhQ+VfvRK3XlvY3XTgaxjC
+   A==;
+X-CSE-ConnectionGUID: Xg5bswgNSwm0tPxYzZCdSw==
+X-CSE-MsgGUID: 5F7pQS95SJSagrWhTiX3RQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="27283712"
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="27283712"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 06:05:02 -0700
+X-CSE-ConnectionGUID: gnaYTiFjQvKOcGYsAQQbXg==
+X-CSE-MsgGUID: Ea20yFmrQKGXzCc+LMFh7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="42695742"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 20 Jun 2024 06:05:00 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sKHTG-0007cc-1N;
+	Thu, 20 Jun 2024 13:04:58 +0000
+Date: Thu, 20 Jun 2024 21:04:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/sev] BUILD SUCCESS
+ 99ef9f59847cab1f9091cd4b9d7efbee0ae4fc86
+Message-ID: <202406202155.OPN2VH7t-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618161158.qpqbv77tqveo5g6l@hu-akhilpo-hyd.qualcomm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, Jun 18, 2024 at 09:41:58PM +0530, Akhil P Oommen wrote:
-> On Tue, Jun 04, 2024 at 03:40:56PM +0100, Will Deacon wrote:
-> > On Thu, May 16, 2024 at 01:55:26PM -0500, Andrew Halaney wrote:
-> > > On Thu, May 16, 2024 at 08:20:05PM GMT, Akhil P Oommen wrote:
-> > > > On Thu, May 16, 2024 at 08:15:34AM -0500, Andrew Halaney wrote:
-> > > > > If I understand correctly, you don't need any memory barrier.
-> > > > > writel()/readl()'s are ordered to the same endpoint. That goes for all
-> > > > > the reordering/barrier comments mentioned below too.
-> > > > > 
-> > > > > device-io.rst:
-> > > > > 
-> > > > >     The read and write functions are defined to be ordered. That is the
-> > > > >     compiler is not permitted to reorder the I/O sequence. When the ordering
-> > > > >     can be compiler optimised, you can use __readb() and friends to
-> > > > >     indicate the relaxed ordering. Use this with care.
-> > > > > 
-> > > > > memory-barriers.txt:
-> > > > > 
-> > > > >      (*) readX(), writeX():
-> > > > > 
-> > > > > 	    The readX() and writeX() MMIO accessors take a pointer to the
-> > > > > 	    peripheral being accessed as an __iomem * parameter. For pointers
-> > > > > 	    mapped with the default I/O attributes (e.g. those returned by
-> > > > > 	    ioremap()), the ordering guarantees are as follows:
-> > > > > 
-> > > > > 	    1. All readX() and writeX() accesses to the same peripheral are ordered
-> > > > > 	       with respect to each other. This ensures that MMIO register accesses
-> > > > > 	       by the same CPU thread to a particular device will arrive in program
-> > > > > 	       order.
-> > > > > 
-> > > > 
-> > > > In arm64, a writel followed by readl translates to roughly the following
-> > > > sequence: dmb_wmb(), __raw_writel(), __raw_readl(), dmb_rmb(). I am not
-> > > > sure what is stopping compiler from reordering  __raw_writel() and __raw_readl()
-> > > > above? I am assuming iomem cookie is ignored during compilation.
-> > > 
-> > > It seems to me that is due to some usage of volatile there in
-> > > __raw_writel() etc, but to be honest after reading about volatile and
-> > > some threads from gcc mailing lists, I don't have a confident answer :)
-> > > 
-> > > > 
-> > > > Added Will to this thread if he can throw some light on this.
-> > > 
-> > > Hopefully Will can school us.
-> > 
-> > The ordering in this case is ensured by the memory attributes used for
-> > ioremap(). When an MMIO region is mapped using Device-nGnRE attributes
-> > (as it the case for ioremap()), the "nR" part means "no reordering", so
-> > readX() and writeX() to that region are ordered wrt each other.
-> 
-> But that avoids only HW reordering, doesn't it? What about *compiler reordering* in the
-> case of a writel following by a readl which translates to:
-> 	1: dmb_wmb()
-> 	2: __raw_writel() -> roughly "asm volatile('str')
-> 	3: __raw_readl() -> roughly "asm volatile('ldr')
-> 	4: dmb_rmb()
-> 
-> Is the 'volatile' keyword sufficient to avoid reordering between (2) and (3)? Or
-> do we need a "memory" clobber to inhibit reordering?
-> 
-> This is still not clear to me even after going through some compiler documentions.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/sev
+branch HEAD: 99ef9f59847cab1f9091cd4b9d7efbee0ae4fc86  x86/sev: Allow non-VMPL0 execution when an SVSM is present
 
-I don't think the compiler should reorder volatile asm blocks wrt each
-other.
+elapsed time: 3070m
 
-Will
+configs tested: 113
+configs skipped: 2
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+arc                   randconfig-001-20240619   gcc-13.2.0
+arc                   randconfig-002-20240619   gcc-13.2.0
+arm                         assabet_defconfig   clang-15
+arm                            hisi_defconfig   gcc-13.2.0
+arm                   randconfig-001-20240619   clang-19
+arm                   randconfig-002-20240619   clang-19
+arm                   randconfig-003-20240619   clang-19
+arm                   randconfig-004-20240619   gcc-13.2.0
+arm                         s3c6400_defconfig   gcc-13.2.0
+arm                         s5pv210_defconfig   gcc-13.2.0
+arm                       versatile_defconfig   gcc-13.2.0
+arm64                 randconfig-001-20240619   clang-19
+arm64                 randconfig-002-20240619   clang-19
+arm64                 randconfig-003-20240619   clang-19
+arm64                 randconfig-004-20240619   clang-19
+csky                  randconfig-001-20240619   gcc-13.2.0
+csky                  randconfig-002-20240619   gcc-13.2.0
+hexagon               randconfig-001-20240619   clang-15
+hexagon               randconfig-002-20240619   clang-19
+i386         buildonly-randconfig-001-20240619   clang-18
+i386         buildonly-randconfig-002-20240619   clang-18
+i386         buildonly-randconfig-003-20240619   clang-18
+i386         buildonly-randconfig-004-20240619   clang-18
+i386         buildonly-randconfig-005-20240619   gcc-7
+i386         buildonly-randconfig-006-20240619   gcc-7
+i386                  randconfig-001-20240619   gcc-7
+i386                  randconfig-002-20240619   gcc-7
+i386                  randconfig-003-20240619   clang-18
+i386                  randconfig-004-20240619   gcc-7
+i386                  randconfig-005-20240619   clang-18
+i386                  randconfig-006-20240619   gcc-9
+i386                  randconfig-011-20240619   clang-18
+i386                  randconfig-012-20240619   clang-18
+i386                  randconfig-013-20240619   gcc-13
+i386                  randconfig-014-20240619   clang-18
+i386                  randconfig-015-20240619   clang-18
+i386                  randconfig-016-20240619   gcc-13
+loongarch             randconfig-001-20240619   gcc-13.2.0
+loongarch             randconfig-002-20240619   gcc-13.2.0
+m68k                        mvme16x_defconfig   gcc-13.2.0
+mips                      pic32mzda_defconfig   gcc-13.2.0
+nios2                 randconfig-001-20240619   gcc-13.2.0
+nios2                 randconfig-002-20240619   gcc-13.2.0
+openrisc                          allnoconfig   gcc-13.2.0
+openrisc                            defconfig   gcc-13.2.0
+parisc                            allnoconfig   gcc-13.2.0
+parisc                              defconfig   gcc-13.2.0
+parisc                generic-64bit_defconfig   gcc-13.2.0
+parisc                randconfig-001-20240619   gcc-13.2.0
+parisc                randconfig-002-20240619   gcc-13.2.0
+parisc64                            defconfig   gcc-13.2.0
+powerpc                           allnoconfig   gcc-13.2.0
+powerpc                     asp8347_defconfig   clang-17
+powerpc                      ep88xc_defconfig   gcc-13.2.0
+powerpc                    mvme5100_defconfig   gcc-13.2.0
+powerpc               randconfig-001-20240619   gcc-13.2.0
+powerpc               randconfig-002-20240619   clang-15
+powerpc               randconfig-003-20240619   gcc-13.2.0
+powerpc64             randconfig-001-20240619   gcc-13.2.0
+powerpc64             randconfig-002-20240619   gcc-13.2.0
+powerpc64             randconfig-003-20240619   clang-19
+riscv                             allnoconfig   gcc-13.2.0
+riscv                               defconfig   clang-19
+riscv                 randconfig-001-20240619   clang-15
+riscv                 randconfig-002-20240619   clang-19
+s390                              allnoconfig   clang-19
+s390                                defconfig   clang-19
+s390                  randconfig-001-20240619   clang-19
+s390                  randconfig-002-20240619   gcc-13.2.0
+sh                                allnoconfig   gcc-13.2.0
+sh                                  defconfig   gcc-13.2.0
+sh                        edosk7760_defconfig   gcc-13.2.0
+sh                    randconfig-001-20240619   gcc-13.2.0
+sh                    randconfig-002-20240619   gcc-13.2.0
+sparc                             allnoconfig   gcc-13.2.0
+sparc                               defconfig   gcc-13.2.0
+sparc64                             defconfig   gcc-13.2.0
+sparc64               randconfig-001-20240619   gcc-13.2.0
+sparc64               randconfig-002-20240619   gcc-13.2.0
+um                                allnoconfig   clang-17
+um                                  defconfig   clang-19
+um                             i386_defconfig   gcc-13
+um                    randconfig-001-20240619   clang-19
+um                    randconfig-002-20240619   clang-19
+um                           x86_64_defconfig   clang-15
+x86_64       buildonly-randconfig-001-20240619   clang-18
+x86_64       buildonly-randconfig-002-20240619   clang-18
+x86_64       buildonly-randconfig-003-20240619   gcc-11
+x86_64       buildonly-randconfig-004-20240619   clang-18
+x86_64       buildonly-randconfig-005-20240619   clang-18
+x86_64       buildonly-randconfig-006-20240619   gcc-13
+x86_64                randconfig-001-20240619   gcc-13
+x86_64                randconfig-002-20240619   clang-18
+x86_64                randconfig-003-20240619   gcc-8
+x86_64                randconfig-004-20240619   clang-18
+x86_64                randconfig-005-20240619   clang-18
+x86_64                randconfig-006-20240619   gcc-13
+x86_64                randconfig-011-20240619   gcc-13
+x86_64                randconfig-012-20240619   gcc-13
+x86_64                randconfig-013-20240619   gcc-13
+x86_64                randconfig-014-20240619   clang-18
+x86_64                randconfig-015-20240619   clang-18
+x86_64                randconfig-016-20240619   gcc-11
+x86_64                randconfig-071-20240619   clang-18
+x86_64                randconfig-072-20240619   clang-18
+x86_64                randconfig-073-20240619   gcc-9
+x86_64                randconfig-074-20240619   gcc-9
+x86_64                randconfig-075-20240619   clang-18
+x86_64                randconfig-076-20240619   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                          iss_defconfig   gcc-13.2.0
+xtensa                randconfig-001-20240619   gcc-13.2.0
+xtensa                randconfig-002-20240619   gcc-13.2.0
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
