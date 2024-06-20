@@ -1,79 +1,82 @@
-Return-Path: <linux-kernel+bounces-223589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2B891152D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:52:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587F1911534
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD7F0B23CEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:52:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5AB8283BE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B677413C8F0;
-	Thu, 20 Jun 2024 21:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBDA84D13;
+	Thu, 20 Jun 2024 21:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n2EaCf9V"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKMXSHPV"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BFC7711C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD2459148;
+	Thu, 20 Jun 2024 21:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718920350; cv=none; b=ceKZR71WJkQ57p4kqoT+37PGNlAuWNA3IWh/X4rsnTVtQ24xUhsNwRKf6/hYhUeiJ5zgjZR6A0+kiAwLLan6nDozWPYaZFcuw6iaca/34rLA3ZLM6eSzlIriWmc4LR9JzkU7jmkCATWXspUKMKlMZHbHCEEqFkN2p5IYedNZHAU=
+	t=1718920684; cv=none; b=V4Sh4pop6OlRGX2QqXM+AkaYYmP8PteNGCnLYbES6nkSaoQq/Y5ISTNwowNFLP21R9bIE4DBo6qsoRez84oPF1qh4FbNAS1RVZ0JGfQndbd7zeHnI108QomSuU1Orrdn5jWwCEJPgJNFSLuLO+Wsm2/h+qmGN1xdnGFkc7ZDGG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718920350; c=relaxed/simple;
-	bh=2FOyLV4GHpaRKVhoA1ma37Hm1gVaMz3AaJAjd68LFVk=;
+	s=arc-20240116; t=1718920684; c=relaxed/simple;
+	bh=beYmCT+ltRjbD4/v+kRgI7K1zSXG/s6cP+YEOZspq7A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uzlElXsUB56VcD1JEp7oNMmnAM6oNag3NeMJEwYyZMqRRocdRTiuC/ZllR8BfBY0WQmVUNG7rpzNlM9EjUiBNcAD77286ToQgCGJQk8f7A7kbCNJxHqa/W864MiA7RzVGFGsFilWtHf0FrZCO5OofkFrKCprzS/Urj8S4djsnhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n2EaCf9V; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6e5fd488d9fso979732a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:52:29 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BT2AWKOBBWRtcqZDWdJA/NIB98awhctDCortfynrgZdN7txiuH8d321CJmKT73yPJgUt/kTDn1Fm2WvqECBoAzJSN5MRKl2SuWZMVJtsPMRqA1+i0afs5Ja+dgadIP/SyXGZIYdh4lbgVrbVJGorkV7v/50oYRh1APiQKRw3QFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKMXSHPV; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f6da06ba24so10397335ad.2;
+        Thu, 20 Jun 2024 14:58:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718920349; x=1719525149; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718920683; x=1719525483; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lCL4DWciTGqSOmHD8n1CyNNo7VlBsdmCzTAXVKMjDJI=;
-        b=n2EaCf9V/XTiE+7PDfrAFgWaKIHgsu5fp0f9YMuOMYOL15+jLpiQ+LeauGEYCoL/zv
-         bXjN6iev56oCwlzPwsjMPmyouoNaRA0G+lEnsh+NT+ScSuYhTfeTZO/gByO+OTVEcpVN
-         dJI+XQLw36tMy4Aa+L3HS+/RSfgGE+xv3AIN8=
+        bh=gfB3QZ8xBZzZ655uwkS4EQea5sVZRz3H+t/hBs6DLOg=;
+        b=nKMXSHPV56YBLjC9vXDzWqRe6gRrtge2jA17RpqzOtlWOqQ0JZZCIlpDnArGJK5gy9
+         U5A1AFS/y9NO78t387dqe5Ezyo+o+zFkx08waie3VWlD/WmLafQOcPrWwPUE0Pdtjzn1
+         6LWXOVFCHSAuTnOA4HP4+MjWBDFICiEmXPIleutifjRF96Bsmaq9NRL0bFcyeh0uBumm
+         wUA9JOLmOWzq+kA5vnjxSIXdSX4ITekiplhQ03wldgLu1+s9VpPzuwMcniARq2XERJHZ
+         eCSiqvUmkg4F59Lgp2RxYvbDw7qnepR/N0vEffIz/mpG1U4LohtL6qwxnwma/q8vFUyo
+         j5dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718920349; x=1719525149;
+        d=1e100.net; s=20230601; t=1718920683; x=1719525483;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lCL4DWciTGqSOmHD8n1CyNNo7VlBsdmCzTAXVKMjDJI=;
-        b=XADh9zasP+6+hY/yWO8xBsMnNuWglCvsObfxL93N91V+QFMXG3bEPtBk7fsF9g+TPk
-         hGxemsznBU3whJLCmyBIZeXr8Qns10qWPPB1UdXgChYvYIms1tdVSK+ORPH3jzoF4tRP
-         gxSHkK1kI5TqIPywlIfchtNM6IxFU+/tjVBVOTVAHGFSZMfOYYfzkRIzoLqQtnLE+4XM
-         FA+8FgI23+2Fby98dcYqC40M9f5LZCZWrNHFent977xAn7Ai+yZ+rOBeh62hEcJmKlpy
-         znhaD0/I8zZWQ4JCdupwt6/I9OKUbrOXBbY/NTKeSxbgajp3cmuXHr/HNSU6V9OdHDfY
-         OvkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCtqBTD6EO2wzpPREcLhXvr5IDFAO13UFSQX3KWh3k8AfrhLpXZvHaME8p3cnyFcVRfDII6fwiY3mqkcYhJDy2vvow7fIY195vZgga
-X-Gm-Message-State: AOJu0YwUbY5jocjocKSzaqYkGZ2WOxbeqwbGef8VBlkSOjyfBnQ/b+7e
-	nbyTJK0tyMBijZMFIkgTUNL9JgOk6HyCj/TF8npefU/gfdXheS8ACZQbqJ867w==
-X-Google-Smtp-Source: AGHT+IHzj7E2DV9mWLZX2bC2IeG9DDRDVXzNRRvfAMdRITbMPcicfgr6+OovcGC2P61uVydjRIhiOw==
-X-Received: by 2002:a17:90a:db86:b0:2c7:7e23:63d8 with SMTP id 98e67ed59e1d1-2c7b5d905dfmr6708191a91.44.1718920348710;
-        Thu, 20 Jun 2024 14:52:28 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:3c9c:a224:3ec6:17d2])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2c819a79ff4sm168294a91.17.2024.06.20.14.52.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 14:52:28 -0700 (PDT)
-Date: Thu, 20 Jun 2024 14:52:26 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH] Makefile: add comment to discourage tools/* addition for
- kernel builds
-Message-ID: <ZnSkmmpCY2Aj5VpU@google.com>
-References: <20240619062145.3967720-1-masahiroy@kernel.org>
+        bh=gfB3QZ8xBZzZ655uwkS4EQea5sVZRz3H+t/hBs6DLOg=;
+        b=wbBBRdtHs+j6cQ7hN9BvscPjEHRQpVCmhcOZwLzFhgEzbpv5PDxgNF/g0mNPU6vrPI
+         DA60zJ/9eMp3isWVolh4FgoFi8fdk2K9yanrDriOlVo0TSL5olODGNe6PGuSLvkHMhPF
+         q6D2wGLpMAL1EkxaNxNE3HNH0Uy3XSOkAXKctIC+3lt+NXg2eVRX15GHxPIMNMw7dqbz
+         KLe9tY6GqUYgUazPvsUZ9CEa8UqeqfbGnN2OJYy1leViwnoKWJLhImScgT7fEN5Dl//M
+         sma6ZgCafKCzpol8FY+BoWlFrseEbZqLrzV7TTB+O92XzQAPQ4QIVNOIBF22VvJ22RFu
+         fyJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUou8TCrFmY9aK4vtrSIr0VVj7c4Wz78YzvFgBCLCmkrfMxajCFDbUVgxIcAwc5DKnQinn12b8VRTYm+unk7U5y9dtBHRlYjG7HYHAs4NeYSZ7fxpGJaPflSZ9eSvBsSpFSix/cE19Evs3I9x1ELhE0T1XMdYayhxkfzppjZlNv6F8nP/V/+67A1aw=
+X-Gm-Message-State: AOJu0YyDrqdRsX35dqAQfhUbOYXkQ0zP0H2TZxyhpb5yW5iM3+2DbiuH
+	6RI9QDc952ZYVs7iIREswDpvyUQgocEkNV2UYmC3kSSBnlh5rdWAWtgyFg==
+X-Google-Smtp-Source: AGHT+IHhfKN93+OlEKnOu65UteLFJfwRWhteLznYzQcgnpXqLZVg54gJbJBGs701omSJzURRA+pxbg==
+X-Received: by 2002:a17:902:d484:b0:1f6:eb56:7831 with SMTP id d9443c01a7336-1f9aa47c414mr76645005ad.63.1718920682510;
+        Thu, 20 Jun 2024 14:58:02 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:36d9:2b1f:59f:8e9e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3d507csm922165ad.192.2024.06.20.14.58.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 14:58:02 -0700 (PDT)
+Date: Thu, 20 Jun 2024 14:57:59 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/2] Input: ims-pcu - annotate struct ims_pcu_flash_fmt
+ with __counted_by
+Message-ID: <ZnSl50-Q9GCFHe_P@google.com>
+References: <20240619-ims-pcu-counted_by-v1-0-3ee0ead2e57d@gmail.com>
+ <20240619-ims-pcu-counted_by-v1-1-3ee0ead2e57d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,95 +85,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240619062145.3967720-1-masahiroy@kernel.org>
+In-Reply-To: <20240619-ims-pcu-counted_by-v1-1-3ee0ead2e57d@gmail.com>
 
-On Wed, Jun 19, 2024 at 03:21:42PM +0900, Masahiro Yamada wrote:
-> Kbuild provides scripts/Makefile.host to build host programs used for
-> building the kernel. Unfortunately, there are two exceptions that opt
-> out of Kbuild. The build system under tools/ is a cheesy replica, and
-> is always a disaster. I was recently poked about a problem in the tools
-> build issue, which I do not maintain (and nobody maintains). [1]
-
-(Side note: I hope I haven't placed undue burden on you; I understood
-you don't maintain tools/ and that it didn't use Kbuild. I only "poked"
-you because the original bug report I was replying to had you and
-linux-kbuild on CC already. And I appreciate your engagement, even if
-the bugs are due to intentional forking.)
-
-But anyway, I agree that clearer documentation and recommendations could
-be helpful here. To that end, some dumb questions below, as I'm not sure
-if this fully serves its purpose as-is:
-
-> Without a comment, somebody might believe this is the right location
-> because that is where objtool lives, even when a more robust Kbuild
-> syntax satisfies their needs. [2]
+On Wed, Jun 19, 2024 at 11:13:21PM +0200, Javier Carrasco wrote:
+> Use the __counted_by compiler attribute for the data[] flexible array
+> member to improve the results of array bound sanitizers.
 > 
-> [1]: https://lore.kernel.org/linux-kbuild/ZnIYWBgrJ-IJtqK8@google.com/T/#m8ece130dd0e23c6f2395ed89070161948dee8457
-> [2]: https://lore.kernel.org/all/20240618200501.GA1611012@google.com/
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  Makefile | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Makefile b/Makefile
-> index 471f2df86422..ba070596ad4e 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1331,6 +1331,11 @@ prepare: tools/bpf/resolve_btfids
->  endif
->  endif
->  
-> +# README
-> +# The tools build system is not a part of Kbuild. Before adding yet another
-> +# tools/* here, please consider if the standard "hostprogs" syntax satisfies
-> +# your needs.
-> +
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Some clarifying questions / statements-as-questions:
+Applied, thank you.
 
-* nothing in tools/ uses Kbuild, right? (even stuff that uses KBUILD_*
-  names is just an imitative port, right?)
-* not everything in tools/ is actually promoted to a high-level target,
-  that affects this top-level Makefile. Are you only concerned about
-  stuff that pretends to be integrated in the top-level kernel Makefile?
-  (If not, then it seems like placing the README comments only in this
-  Makefile is a poor choice.)
-* is the "standard hostprogs" recommendation a general recommendation,
-  for all sorts of kept-in-the-kernel-tree host tools? Is the
-  recommendation to "use Kbuild" or to "avoid putting your tool in
-  tools/*"? Is it possible (recommended?) to plumb Kbuild stuff into
-  tools/, even if other parts won't migrate?
-
-As is, I can't tell if this is telling people to avoid adding new stuff
-to tools/ entirely, or just to only add to tools/ if you're able to
-remain completely isolated from the rest of the kernel build -- as soon
-as you want to play some part in the Kbuild-covered part of the tree,
-you need to use Kbuild.
-
-If I'm inferring the right answers to the above, then maybe an improved
-wording could be something like:
-
-"The tools build system is not a part of Kbuild and tends to introduce
-its own unique issues. If you need to integrate a new tool into Kbuild,
-please consider locating that tool outside the tools/ tree and using the
-standard Kbuild "hostprogs" syntax instead of adding a new tools/* entry
-here."
-
-It's possible I'm playing mental acrobatics here in my reading too.
-
-Either way, I think this is a good trajectory:
-
-Reviewed-by: Brian Norris <briannorris@chromium.org>
-
-Regards,
-Brian
-
->  PHONY += resolve_btfids_clean
->  
->  resolve_btfids_O = $(abspath $(objtree))/tools/bpf/resolve_btfids
-> -- 
-> 2.43.0
-> 
+-- 
+Dmitry
 
