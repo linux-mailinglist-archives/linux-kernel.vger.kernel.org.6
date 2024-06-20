@@ -1,62 +1,81 @@
-Return-Path: <linux-kernel+bounces-222587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C6F191042F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:31:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A75B910435
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 122241F21E1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:31:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 333541C2113A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FCA1ACE9D;
-	Thu, 20 Jun 2024 12:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD631ABCB5;
+	Thu, 20 Jun 2024 12:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uyYxtf5f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b="aXp0SCno"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBFE01AC229;
-	Thu, 20 Jun 2024 12:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E101AD499
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718886597; cv=none; b=GBRDyBVzHGxkvOQDgSJo6WzvKWeZbQSmlrNRSfcTbBpXiA1hqNLOYDUNY0sMAi5fpqNGugV1ffusw4NNKqgZS1bIRJJA5g/gfntb3ZOA60N1XlgYS8E7krPDyS3xC144Od3xWGbXFsagncxvDfobBs32UjkVgaCLW/trj8o7plU=
+	t=1718886616; cv=none; b=oDF5DIBPrZPRQJ7r2A5r5xyCXPl8ulVV47jVh22LvjTpRzFwbYj9z+u6drhpJswGUZgtvAFR/JSjWxEzoEttpif3PAwnGXQzJ3HJltbCMuGzSBmFD6Hqm3pBegYCwSPXDHQtiWNNivdO+EXsecRx3VaZXjh4W/iS+S68ojLh/ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718886597; c=relaxed/simple;
-	bh=TbXzmIvEO7TjjoHW3NdmWzbgPUbd6HxMNpznqg0zLUI=;
+	s=arc-20240116; t=1718886616; c=relaxed/simple;
+	bh=UpeE/DXkO/iG0fuoDqe54X/XOy1qooPFONL7bavexrw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TL9944OsR2e4jC0GnC021/MrEC+fdfSrOLdQexwKAzkU1tGkvRSk4cT0OnHA3F9KSu1OyKfMKlHl3Eq8mYzGXUxJNgc6DcLgsxnwAebvVdKvES7U0JqUROS9aKig+zQ1xU4mRebBDvknz6h1w5TP+mdnaPVOkCSNpu/kKT7jx8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uyYxtf5f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8B8C2BD10;
-	Thu, 20 Jun 2024 12:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718886596;
-	bh=TbXzmIvEO7TjjoHW3NdmWzbgPUbd6HxMNpznqg0zLUI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ekrDCGeQIyAOF+AY7mXNd5PL/f6uwzNXj0M/L7D3MOltoZuvYO/+FpWMhCWyrnpxqr43v8iT78PBmGfTiB7pL6/wpYFajWjizPRw6bhWhGO9rvAp1oOXrspIReccJSzP7RKrn3bJ2flHB4cPM/Yh+MOGq2jfmefqvMK2eRQ5Dy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b=aXp0SCno; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-70df213542bso589391a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 05:30:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718886613; x=1719491413;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:dkim-signature:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oHMzHVKWhLHFRTFoXNvAkGLFcNNzxK81u0mLsBL7Zsw=;
+        b=ZYBFAWZNumaLbvEgeSlWtnd2QzBuNDpvec6TE46rqqI7K+MiOufyVJE8QnDr8keLLS
+         NMPYKiesnh8pRiWtv/P0wSjcE9svzWHxis9EkkTpUKht62wHPqQfRsdHLvlwyP7PmAu9
+         u4Ncx2djo6C1Vu6lJWBjy2CANr1SvNEMa15KQew7cIJhI+glM0NylwmdoICGpkjIZRwJ
+         RMhuYbhBQLY6OjABOQn+Qw+mGslnH9yI7iMK5ZDW/Yuwl3xm/NaAzFyzTkYvy/jnwJCX
+         4Uyq4FTaGjPlqUdxRDEhZHiUFSP7lExLVrIXtdesI0JCk2V40wPGbN7XBV0hwThezi4K
+         KurA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGaT/WFQZjAB/lpfqloE4NIT1r+pTOVGLSJENmK3PvvYfa6QxN6F3Yznj3U0B5T7LrCe36UFGxogFWBQSPulEV7wLqGyGnyCZ3U8eR
+X-Gm-Message-State: AOJu0YyH9cJgtNCMgH4RLiIdK40f10X7oDHUVJkCB4C16TZ+lq8LzJk9
+	Et71tAcKLWlozcOPIjJTzkhrYMy4mT18fLBGVX4NTt0lJOsSf1qe
+X-Google-Smtp-Source: AGHT+IG2sObKQlJRXnm0zIOzZdnUzQkHNGXDXN4ljr7fpHYK1vVZLwAZQXoaLia921hIfW/T+oFYXA==
+X-Received: by 2002:a05:6a20:3ca8:b0:1af:f8bd:1e4e with SMTP id adf61e73a8af0-1bcbb621263mr6188164637.62.1718886612218;
+        Thu, 20 Jun 2024 05:30:12 -0700 (PDT)
+Received: from mail.marliere.net (marliere.net. [24.199.118.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ce93deafsm12346665ad.74.2024.06.20.05.30.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 05:30:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marliere.net; s=2024;
+	t=1718886610; bh=UpeE/DXkO/iG0fuoDqe54X/XOy1qooPFONL7bavexrw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uyYxtf5f9af/GSBjoWdLh0kD+eKh3XfeErWbdm7wMgVmh8r0tFM3nTNhzKLG8PitN
-	 h+uA3y2BoOThihevb1dlLDH/vGEfgWNdggjpfzcP48aUZw52muSvTR8XMmI6VHu6Cy
-	 8IL8J8nDCkw5OkKiWYylDmD2Qv2/Yxs6uVMQLxQ8=
-Date: Thu, 20 Jun 2024 14:29:53 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
-	Miaohe Lin <linmiaohe@huawei.com>, Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	David Hildenbrand <david@redhat.com>,
-	Cgroups <cgroups@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>, jbeulich@suse.com,
-	LTP List <ltp@lists.linux.it>
-Subject: Re: [PATCH 6.9 000/281] 6.9.6-rc1 review
-Message-ID: <2024062028-caloric-cost-2ab9@gregkh>
-References: <20240619125609.836313103@linuxfoundation.org>
- <CA+G9fYtPV3kskAyc4NQws68-CpBrV+ohxkt1EEaAN54Dh6J6Uw@mail.gmail.com>
+	b=aXp0SCnogf1kctICBTqw7Z8wi6UuwmLy9v+eiQO0w9gmS8JLoACVhp0mBfR7v4iT5
+	 bmEmeXw/RPFdoNoagxpXuY+dklCEBgsHq++DNTFYlEFnZEgzcTVRlP+J9TlhQ5PJ8s
+	 KevqhZDdguQkINjtGu47lua2VPPVb2/EachWZQa6Dod4vUDuDb83t0nuDSRyzvV/18
+	 ELp/w2Wp6wO+ewKae2r7fSouIbEJDRs1otLKuv937IRlgNR06ElV+eRW+gXkVlF+6M
+	 AR1Z9s1pHpSPZcrp/jaDL8jjYfSj9rxnG2iXb7VLS35Jg3k7bQBwYucnbmS6nMNxiL
+	 AxU2ybJSP1AiQ==
+Date: Thu, 20 Jun 2024 09:30:01 -0300
+From: "Ricardo B. Marliere" <ricardo@marliere.net>
+To: Amit Vadhavana <av2082000@gmail.com>
+Cc: srinivas.kandagatla@linaro.org, alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org, rbmarliere@gmail.com,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH v2] slimbus: Fix struct and documentation alignment in
+ stream.c
+Message-ID: <f64523f0-db39-4e3a-85a6-1a3cb07e2d08@marliere.net>
+References: <20240616203231.43724-1-av2082000@gmail.com>
+ <d6cd7441-53f2-4c88-a361-729e3abe81c1@marliere.net>
+ <CAPMW_r+sPGF5=+=edLY81X+Cd4bMWKFJw3sDd0mzaZEM9b75BQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,62 +84,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYtPV3kskAyc4NQws68-CpBrV+ohxkt1EEaAN54Dh6J6Uw@mail.gmail.com>
+In-Reply-To: <CAPMW_r+sPGF5=+=edLY81X+Cd4bMWKFJw3sDd0mzaZEM9b75BQ@mail.gmail.com>
 
-On Thu, Jun 20, 2024 at 05:21:09PM +0530, Naresh Kamboju wrote:
-> On Wed, 19 Jun 2024 at 18:41, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.9.6 release.
-> > There are 281 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.6-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> There are two major issues on arm64 Juno-r2 on Linux stable-rc 6.9.6-rc1
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> 1)
-> The LTP controllers cgroup_fj_stress test cases causing kernel crash
-> on arm64 Juno-r2 with
-> compat mode testing with stable-rc 6.9 kernel.
-> 
-> In the recent past I have reported this issues on Linux mainline.
-> 
-> LTP: fork13: kernel panic on rk3399-rock-pi-4 running mainline 6.10.rc3
->   - https://lore.kernel.org/all/CA+G9fYvKmr84WzTArmfaypKM9+=Aw0uXCtuUKHQKFCNMGJyOgQ@mail.gmail.com/
-> 
-> it goes like this,
->   Unable to handle kernel NULL pointer dereference at virtual address
->   ...
->   Insufficient stack space to handle exception!
->   end Kernel panic - not syncing: kernel stack overflow
-> 
-> 2)
-> The LTP controllers cgroup_fj_stress test suite causing kernel oops on
-> arm64 Juno-r2 (with the clang-night build toolchain).
->   Unable to handle kernel NULL pointer dereference at virtual address
-> 0000000000000009
->   Internal error: Oops: 0000000096000044 [#1] PREEMPT SMP
->   pc : xprt_alloc_slot+0x54/0x1c8
->   lr : xprt_alloc_slot+0x30/0x1c8
+Hi Amit,
 
-And these are regressions?  Any chance to run 'git bisect'?
+On 19 Jun 24 23:28, Amit Vadhavana wrote:
+> Hi Ricardo,
+> 
+> I have rebuilt it again, and there are no any warnings or errors.
 
-thanks,
+Thanks for checking, FWIW:
 
-greg k-h
+Reviewed-by: Ricardo B. Marliere <ricardo@marliere.net>
+
+BTW, I received this message plus another two empty ones. Please check
+your settings. Also, make sure not to top-post [1].
+
+Best regards,
+-	Ricardo.
+
+
+[1] https://en.wikipedia.org/wiki/Posting_style#Top-posting
+
+
+
+> 
+> Thanks
+> Amit v
 
