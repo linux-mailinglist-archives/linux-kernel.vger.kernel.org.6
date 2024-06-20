@@ -1,259 +1,166 @@
-Return-Path: <linux-kernel+bounces-222332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5E790FFCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:01:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E611190FFD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0C0E1C21ABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:01:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1D201C21F27
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842D719DF46;
-	Thu, 20 Jun 2024 09:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC0419AA6A;
+	Thu, 20 Jun 2024 09:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TK2WAbC/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K6BntdGI"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D082E19AA6A
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4B5628;
+	Thu, 20 Jun 2024 09:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718874054; cv=none; b=YrEpL3UbS6UUXfNoMFVBgbItzIEWU6H4yezcf//ujioLlt4TO/Z8hRS626uqWDxSU2BhDl3dN1C/cLPKB8D2B+zBeno9oXu5lBM4CMSCWpY5l3RBiLi5FjhwxNxFoHPf106oCY7L4/WGNuCjXNWXme7TA0n2/e7e73kQMPYa+sw=
+	t=1718874137; cv=none; b=ibhUtGZjAReu4seLssfvPQwdYwbZnWgy95J53WdorqYaLeEcSbUNbbeUPD5Nx7gWW+OZ9vEcl3yOyIf5hk69AyKpw+sUsbYjAIGz4qKyQ3f1FKfg1jbfGlzRj4AJoKWMsfD9DOna0FNvgieypus0U7xzDduz8TAO5Yn/jnDzfoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718874054; c=relaxed/simple;
-	bh=goWA/GhwWrrFrWZffN97ckNSsmx1+Ao/Qkn5wo9lWEA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oSXa4DIaueEDRCcSwKXQHjI/mFV9YQEJkCLEJrW3/C085AqqvY0aheiMo5cVRaEZhwGaXCC1HUPYacSgxcP9I6EsJZzZL7dRXSd9rbtt1kcgOApVzm+grncpjqvCDwQGfe6xIO69fSYy+q6Fr1fn5PXTJZos7nMCPlT2EIhil1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TK2WAbC/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718874051;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9X/I36k5SWaheNfC/42dOzlw6jEc4rfuDMkNMoqwybI=;
-	b=TK2WAbC/CT/vGw6bjUBUZncotU+7zKD4s762MvVnk9XBcFY0Jh+s6naDlhKCrcPEXJfvhv
-	rgfERnjR4HPM9euEXIy+HwiwJZD3mMFjmudR1wTL8pbJQRCjqArWBgTInh9qNL6Xm+/SVN
-	KubqJUoCXk/d07tE0+sszFpll/bo5MM=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-269--maP2vwfPnWi3UUE702bEQ-1; Thu, 20 Jun 2024 05:00:48 -0400
-X-MC-Unique: -maP2vwfPnWi3UUE702bEQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4217a6a00d8so4832545e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 02:00:48 -0700 (PDT)
+	s=arc-20240116; t=1718874137; c=relaxed/simple;
+	bh=DcaHCutLUcucdupDruVjpYkFp5GMrRUdppVUXPcovpQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GjTk5uXMIvzDCoeFnptrA0QHIz2cUQ9Jb6A3ksOvaGVaNuQh9PSk8ycFA0BtASR830srpZ+ICiRqZqS/a5T+UfnVSlix0Au2+icX6Zsxvf7zKsk/rBgceX+3oUD/Bc0E89nx+h1oeJ7fFf+AnirAm7xXb8VBh7V/5Ul9TdYergA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K6BntdGI; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6e43dad8ecso111610866b.1;
+        Thu, 20 Jun 2024 02:02:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718874134; x=1719478934; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=reqi4o36mn4qzlSpM+6S4dwkZbNZu42ZTuDIZ+8NfZw=;
+        b=K6BntdGIb5ZcK1eceWEIpguIQRg/QnF1PNYTzc9f/q1KzaVGpfhmxDw4bfJQHv2U8k
+         eRUE3IARQ8Ud40afix6vHroi1e1pHUN5Tsg2yIGj/bVUL0nCdFJbC1OMUKOZ0QPqteOU
+         toEW39xJVbHJMn9NOmFEI5MaPoMY/vhcUD4gBFErCXrYVCqb3KdBMPSXuSXvJ0kZWMsD
+         xl9x4Boyf0F55v+OUmvI3IKYy9AIY9uqs0OD79C2F7JB3ptNM7oHvWrup9jxGjZ/x5cD
+         aaNbcGbggLo5M4IBO5YmhTCtRXBluMuhAz86TU2L8o28pQBlJbqYnsrVoVLRZr+F+DrD
+         hb+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718874047; x=1719478847;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9X/I36k5SWaheNfC/42dOzlw6jEc4rfuDMkNMoqwybI=;
-        b=HYujztJwwhPJ0xb91YJeJh2e5zQ1Lt3vqHYrgd2KjVf3vSfJ+6AaHbpmi7NyKgKmI5
-         ygLSEcKKjzT+WuXph1QgYUPg63O44d7bTvYHkQP35wRGBBb9+4GiuvEU6U8HAMp6k9P6
-         HMLOBMS/22GKrNycPbCF1GO9SqgBvy6nkYiJE5OcaX2KJACJ68K1knDtlpRPBN+JqtzI
-         nq9jZDETmmmugvxjaJeoAk09YVG3ci4x8+Qj/8jNf6hKCljupiEw2BCkzPBjWc0PSUDa
-         6m+ZDRsP6XiF/04723gZ0fRETteWzCVgVlIbbNR7p8lHO3SVdM1EATovlsKmOgJl8Ki/
-         uczg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMqrTP9F9eXHSgF/bu6MlBAdKiR+11VnozTTlxFxqheE4J5Jhm+Htr0ntjzVgJ1Adip9qZI1tPY7KGqR7PT46IFflJ4eEkN3luqf0H
-X-Gm-Message-State: AOJu0YyYTc7FAP39wQfsJpEltZ7r7ndz1J7nMsrSHpt+GNkT3jOO415L
-	Ftu+QT0ZhTpnzhBebkvwI9YCBA19UwKZuF8yozRSumQ9KTOpcJvEKeL+BMUVTMGbeGc9P9eOQro
-	w5BtmFyRpGKsTiEOJOoVQEaLjCVwvpV+uXQPcuP+rVMI++cMkJYjUut0ZMlfbsA==
-X-Received: by 2002:a05:600c:2252:b0:424:798a:f7f2 with SMTP id 5b1f17b1804b1-424798afd71mr26045095e9.3.1718874047392;
-        Thu, 20 Jun 2024 02:00:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHG3895woTA6InJys+Ae/6783ZPh2VzIdoDlDRU2iq840wYkAZ9w8f8sci8YmejvT5y7gagHA==
-X-Received: by 2002:a05:600c:2252:b0:424:798a:f7f2 with SMTP id 5b1f17b1804b1-424798afd71mr26044825e9.3.1718874046959;
-        Thu, 20 Jun 2024 02:00:46 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c719:5b00:61af:900f:3aef:3af3? (p200300cbc7195b0061af900f3aef3af3.dip0.t-ipconnect.de. [2003:cb:c719:5b00:61af:900f:3aef:3af3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d208e08sm17944335e9.35.2024.06.20.02.00.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 02:00:46 -0700 (PDT)
-Message-ID: <26aa1ad6-fcdd-4fe2-b763-6938555f93db@redhat.com>
-Date: Thu, 20 Jun 2024 11:00:45 +0200
+        d=1e100.net; s=20230601; t=1718874134; x=1719478934;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=reqi4o36mn4qzlSpM+6S4dwkZbNZu42ZTuDIZ+8NfZw=;
+        b=ZFpSLc90BJIzrrUjUZ8tq020xJvTDfm4qEKHqGWqnX8C1El/9QhBPGrnDf8tm9I18b
+         H2efKVQ7TVsZM9jxjgnAiWH1KUBSsGtDwGOf1no2YzeCvNIbXBhJoDCFlE+08svbuWMy
+         Qgd/P6deXvl8lYV0lfen3AoHjJtKZs7P0fjL2K5mrM/RfzEx/lmD+BzcFJFQ9V9fMR80
+         GEoysYR+4zs2nc3TeuKUJsN+RbNlP8OP3NW6cWCMQcNeECeuO/zqlzciPIZg6rWckbCF
+         11V+RWvPHslOMjtXmJFuRtL3h6QBzfWCsoGynMQJccLT/Tbx+DvDD8phjHMLCRHysCvh
+         1eIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVe60lByYhdD28m5PA1BpKUCV2w6xRkzhCML0EoCPdpHFh4E9INUuoHbd8FeVrkucwvx7BCfGK3OqbkdDu29batWDWXmQ2XtRDRz3vjUGcWkca4uwABDFy1HQROirWNWCqZcI9R
+X-Gm-Message-State: AOJu0YwqbrDcXq3k4pjS6zAPYTlgzVWpTjUR/H/Og/ZENXPi6kbFvXlJ
+	mhFWA6T4dt6pvYCCYa6c3PYHZl8uIlfcVJLGOkQdW019QVc9N06W
+X-Google-Smtp-Source: AGHT+IGwq23nKii9zi5kusaPYSdgYJYSMCNAoo2+QGm3mZizaU2pqisyJqgmA7CUbFPyDyPc9iVDmQ==
+X-Received: by 2002:a17:907:a706:b0:a6f:1600:62cb with SMTP id a640c23a62f3a-a6fa40d42eamr331477966b.3.1718874133969;
+        Thu, 20 Jun 2024 02:02:13 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f41a85sm752988366b.179.2024.06.20.02.02.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 02:02:13 -0700 (PDT)
+Date: Thu, 20 Jun 2024 12:02:10 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Oleksij Rempel <o.rempel@pengutronix.de>, Tristram.Ha@microchip.com,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	Casper Andersson <casper.casan@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Woojung Huh <woojung.huh@microchip.com>,
+	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 net-next] net: dsa: Allow only up to two HSR HW
+ offloaded ports for KSZ9477
+Message-ID: <20240620090210.drop6jwh7e5qw556@skbuf>
+References: <20240619134248.1228443-1-lukma@denx.de>
+ <20240619134248.1228443-1-lukma@denx.de>
+ <20240619144243.cp6ceembrxs27tfc@skbuf>
+ <20240619171057.766c657b@wsk>
+ <20240619154814.dvjcry7ahvtznfxb@skbuf>
+ <20240619155928.wmivi4lckjq54t3w@skbuf>
+ <20240620095920.6035022d@wsk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
-To: Fuad Tabba <tabba@google.com>
-Cc: John Hubbard <jhubbard@nvidia.com>,
- Elliot Berman <quic_eberman@quicinc.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, maz@kernel.org, kvm@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- pbonzini@redhat.com, Jason Gunthorpe <jgg@nvidia.com>
-References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
- <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com>
- <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
- <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
- <489d1494-626c-40d9-89ec-4afc4cd0624b@redhat.com>
- <CA+EHjTzuqd5PYdZzAGWTjH+EyhomCeGSaFvDjgZfU7GUAWqu9A@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CA+EHjTzuqd5PYdZzAGWTjH+EyhomCeGSaFvDjgZfU7GUAWqu9A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620095920.6035022d@wsk>
 
->> Yes, and I think we might have to revive that discussion, unfortunately.
->> I started thinking about this, but did not reach a conclusion. Sharing
->> my thoughts.
->>
->> The minimum we might need to make use of guest_memfd (v1 or v2 ;) ) not
->> just for private memory should be:
->>
->> (1) Have private + shared parts backed by guest_memfd. Either the same,
->>       or a fd pair.
->> (2) Allow to mmap only the "shared" parts.
->> (3) Allow in-place conversion between "shared" and "private" parts.
+On Thu, Jun 20, 2024 at 09:59:20AM +0200, Lukasz Majewski wrote:
+> > It will return -EOPNOTSUPP for port 0, 
 > 
-> These three were covered (modulo bugs) in the guest_memfd() RFC I'd
-> sent a while back:
-> 
-> https://lore.kernel.org/all/20240222161047.402609-1-tabba@google.com/
+> This comment is for xrs700x_hsr_join()?
 
-I remember there was a catch to it (either around mmap or pinning 
-detection -- or around support for huge pages in the future; maybe these 
-count as BUGs :) ).
+Yes.
 
-I should probably go back and revisit the whole thing, I was only CCed 
-on some part of it back then.
+> For the ksz_hsr_join() we do explicitly check for the KSZ9477_CHIP_ID.
+> 
+> I do regard this fix as a ksz9477 specific one, as there are some
+> issues (IMHO - this is the "unexpected behaviour" case for this IC) when
+> we add interlink to SoC VLAN.
+> 
+> I don't understand why you bring up xrs700x case here? Is it to get a
+> "broader context"?
 
-> 
->> (4) Allow migration of the "shared" parts.
-> 
-> We would really like that too, if they allow us :)
-> 
->> A) Convert shared -> private?
->> * Must not be GUP-pinned
->> * Must not be mapped
->> * Must not reside on ZONE_MOVABLE/MIGRATE_CMA
->> * (must rule out any other problematic folio references that could
->>      read/write memory, might be feasible for guest_memfd)
->>
->> B) Convert private -> shared?
->> * Nothing to consider
->>
->> C) Map something?
->> * Must not be private
-> 
-> A,B and C were covered (again, modulo bugs) in the RFC.
-> 
->> For ordinary (small) pages, that might be feasible.
->> (ZONE_MOVABLE/MIGRATE_CMA might be feasible, but maybe we could just not
->> support them initially)
->>
->> The real fun begins once we want to support huge pages/large folios and
->> can end up having a mixture of "private" and "shared" per huge page. But
->> really, that's what we want in the end I think.
-> 
-> I agree.
-> 
->> Unless we can teach the VM to not convert arbitrary physical memory
->> ranges on a 4k basis to a mixture of private/shared ... but I've been
->> told we don't want that. Hm.
->>
->>
->> There are two big problems with that that I can see:
->>
->> 1) References/GUP-pins are per folio
->>
->> What if some shared part of the folio is pinned but another shared part
->> that we want to convert to private is not? Core-mm will not provide the
->> answer to that: the folio maybe pinned, that's it. *Disallowing* at
->> least long-term GUP-pins might be an option.
-> 
-> Right.
-> 
->> To get stuff into an IOMMU, maybe a per-fd interface could work, and
->> guest_memfd would track itself which parts are currently "handed out",
->> and with which "semantics" (shared vs. private).
->>
->> [IOMMU + private parts might require that either way? Because, if we
->> dissallow mmap, how should that ever work with an IOMMU otherwise].
-> 
-> Not sure if IOMMU + private makes that much sense really, but I think
-> I might not really understand what you mean by this.
+You have the Fixes: tag set to a HSR driver change, the fix to which
+you provide in an offloading device driver. What I'm trying to tell you
+is to look around and see that KSZ9477 is not the only one which is
+confused by the addition of an interlink port. So is XRS700X, yet for
+another reason.
 
-A device might be able to access private memory. In the TDX world, this 
-would mean that a device "speaks" encrypted memory.
-
-At the same time, a device might be able to access shared memory. Maybe 
-devices can do both?
-
-What do do when converting between private and shared? I think it 
-depends on various factors (e.g., device capabilities).
-
-[...]
-
->> I recall quite some details with memory renting or so on pKVM ... and I
->> have to refresh my memory on that.
+> > falling back to
+> > software mode for the first ring port, then accept offload for ring
+> > ports 1 and 2. But it doesn't match what user space requested, because
+> > port 2 should be interlink...
 > 
-> I really would like to get to a place where we could investigate and
-> sort out all of these issues. It would be good to know though, what,
-> in principle (and not due to any technical limitations), we might be
-> allowed to do and expand guest_memfd() to do, and what out of
-> principle is off the table.
+> Please correct me if I'm wrong, but this seems to not be the case for
+> ksz9477 - as I stated in the other mail - the ordering is correct (I've
+> checked it).
 
-As Jason said, maybe we need a revised model that can handle
-[...] private+shared properly.
+I was never claiming it to be about KSZ9477.
 
--- 
-Cheers,
+> > I think you really should pass the port type down to drivers and
+> > reject offloading interlink ports...
+> 
+> As stated above - IMHO I do provide a fix for this particular IC
+> (KSZ9477). With xrs700x we do have fixed ports supporting HSR (port
+> 1,2), so there is no other choice. As a result the HSR Interlink would
+> be supporting only SW emulation.
 
-David / dhildenb
+But there is another choice, and I think I've already explained it.
 
+        HSR_PT_SLAVE_A    HSR_PT_SLAVE_B      HSR_PT_INTERLINK
+ ----------------------------------------------------------------
+ user
+ space        0                 1                   2
+ requests
+ ----------------------------------------------------------------
+ XRS700X
+ driver       1                 2                   -
+ understands
+
+I am bringing this as an argument for the fact that you should pass the
+port type explicitly from HSR to the offload, and use it throughout the
+offloading drivers. The hweight(ports) >= 2 happens to work for KSZ9477,
+but IMO misidentifies the problem as having to do with the number of
+ports rather than the port type. Because of this, a largely similar
+issue introduced by the same blamed commit but in XRS700X is left
+unaddressed and unidentified (the fixed ports check which is already
+present masks the fact that it's not really about the ports, but their
+type, which must still be checked, otherwise the driver has no idea what
+HSR wants from it).
 
