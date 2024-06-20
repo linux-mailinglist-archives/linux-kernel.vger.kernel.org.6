@@ -1,495 +1,114 @@
-Return-Path: <linux-kernel+bounces-222910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D6FE910998
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:16:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6249109A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E6D1C218F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:16:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4759E2828C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2081B011B;
-	Thu, 20 Jun 2024 15:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CB41AF69C;
+	Thu, 20 Jun 2024 15:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YZVch/qq"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="sUUclGKp"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E98C1AF6B3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AE51AB91B;
+	Thu, 20 Jun 2024 15:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718896584; cv=none; b=PF1VOFjvpkMma4xiut4+awTy6lhXdgWPj6rCN51aYIGhJsPCdgsWPR3K2fJkqhckIHoZ9pLDYpmQbwBQuWuSbcIOlB3Fk5kzb08x56vvFs87WiOv6vLwqPP+jEd2bF276tB7rMNJst0sSaLwc6J5KFsgylzqS82zE43wspGMgYw=
+	t=1718896849; cv=none; b=NbSPb0oT/+uAVRVAUH9/Xc1GkIqrpHtqcW8X+LccpS/62Mc850YRh4qInBIo/+XelabLFFpbXPBayD817HLZw04mur4GBpqYkEX26QiO6HdZ2eiyzvQ9u52VKNmo0y3FrxA/5sgNdhd0557JB3t+aPAF1UCLWYgfertqrJON1n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718896584; c=relaxed/simple;
-	bh=KRHMtLJrF+j4+GXIMITBdynXNl/Y+VeIHS0AQJgTEBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YAX9JaVcBh//RHPVSh3G3NmKMWxkf4V6Rw8ZRCFs5Qbp8+xBEsdyR1/EXrEP2tZooy5YeEi3xo/+YXQBQY8Joa9QYhOJj3GzffaYeDtxHR5YrTdgzSe4yoN96Q2uP+DNZ2vHjnbJChs/1Ol4LJAS3L85hNaeXHLxOz+4NCl+vTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YZVch/qq; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52bc29c79fdso1111749e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:16:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718896581; x=1719501381; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QczbahY8mobXaJEZMcLZwiI4MMRcFJ224ASCceiqP1s=;
-        b=YZVch/qqT1lDZTTh3NblhKkT6lUEOQURhalXQmJ4aNnCXVNiw3gVV8SXMISm47aB5H
-         KHBSI57HwqQ07cE+DhM7LxqlgL5ZNkBLx6aVp0AJdWePSyWS5ZhEd78j54SxL2BN9Egg
-         1kZUP2+AqpFMs/62JukK/22NPaK+Kg5eUx/Yy2qPxxXDhGp/epJ8Wk8xYt/Vb3fMNSIU
-         mxW6d+c+Vn9C0j/gCR5vAMQVQ+lEQK9HDkfvWt4lptN7SKeptMxjFyseTmoVq5Quh7un
-         wE3jDKE74i4xdixOL8EkmpZntXAETteivm1fy2GwBqYKv0u6npJRFeJUXeSaChYiJRzu
-         OFwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718896581; x=1719501381;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QczbahY8mobXaJEZMcLZwiI4MMRcFJ224ASCceiqP1s=;
-        b=i5UE3+HIzKMgeh85uWXWCxG/O7ZFRT1CpCtF6pU7smn4jwYL9swbFmH8RiIk2MDHAt
-         RgN/bCN2Br9ZO+f408HWVclTvetJhpdyf2exyHCfGT1a7mSUzi/18MoQfnplk0OXPohT
-         pcZC4Wzl2aDMNABjAcOUhwzVME4+jqwk7BOGlUHi9x2h5oW2B56o+XCBu159+CgXN0dZ
-         4oFfMa2BV1dfTurPA39iP3XX64tj6vLHYh9hlta7glfNqYgozAFPwXPdK8Qtap4tnwYL
-         10+QW503yUfyknQf29/9B0jC52/NbNJLQTR93IgGiKyjm0jlh5OvOnPPmD2mr51MPIfP
-         Izyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXogGGIRGzO4I1ulyFfHG04SRtxPsvxxYAOF3c5zZWw/UeEm3xMkMLAtggtE7ARHG693FCMTU4FZ7+ov9ItKkkppMqjt5m3BFD32N5V
-X-Gm-Message-State: AOJu0YwpGIRL9aB9MPkCW3JX3O8pqM0HWyrzVsucm6h+zdFfp7FG62+Q
-	nyPL2GIXjZCSJL0Qzp6gkSlo5ZDoxzvOYTEz+WUq/I+VtvHXUQ1fV1DSc/r6VpM=
-X-Google-Smtp-Source: AGHT+IGscRI/bwMTqNox27PJIvo6iwRNWan3tUIVDnHv6SnwjilhAds1ngg2KWSBnVtn2aaKj0qiOw==
-X-Received: by 2002:a05:6512:39cd:b0:52b:7a44:e17b with SMTP id 2adb3069b0e04-52ccaa2a8eemr5144165e87.13.1718896580684;
-        Thu, 20 Jun 2024 08:16:20 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca288e6dfsm2101164e87.307.2024.06.20.08.16.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 08:16:20 -0700 (PDT)
-Date: Thu, 20 Jun 2024 18:16:18 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	angelogioacchino.delregno@collabora.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, ulf.hansson@linaro.org, quic_sibis@quicinc.com, 
-	quic_rjendra@quicinc.com, luca@z3ntu.xyz, abel.vesa@linaro.org, quic_rohiagar@quicinc.com, 
-	danila@jiaxyga.com, otto.pflueger@abscue.de, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v1 7/7] dts: arm64: qcom: ipq9574: Enable CPR
-Message-ID: <x3jznckxbnqz6lxbqpdgmevw7dppsuqiqs56vugeyxhbcmw2m4@fyk6mzrtg5b7>
-References: <20240620081427.2860066-1-quic_varada@quicinc.com>
- <20240620081427.2860066-8-quic_varada@quicinc.com>
+	s=arc-20240116; t=1718896849; c=relaxed/simple;
+	bh=E8yNo1vOo/HwpMWWw1NgaDiavOWuLS7spU2l7cCMN8I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XNkFlqotQrdbwHLGHfz3GxYejABUU8tw0dgq/3lXqQDkunNh7j+VnYN6623UYrKWikpryf1dOpctsNyUqQvLApQibJMUz40V0zHVDtW3kUX9VQopZSyPMYVBDoqerd05C/N7mCpcimQ6OHRHW8Ckevi0dAR73TWF5lc38iUy9PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=sUUclGKp; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718896846;
+	bh=E8yNo1vOo/HwpMWWw1NgaDiavOWuLS7spU2l7cCMN8I=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=sUUclGKpZsWCBXCUee0dz6Bbh6pIV8byvX5w2lUt4SCveucbiFVvS9zwzdAPGjUEi
+	 +mduAPp0qcEoY9V+5Kdb6ml7A6UWfw5ZKJUZf5T0Ja2wWO5YDM/IT65jlaErgU+Ytg
+	 Bk2DJDGrLCHCQNsSG8KuxDDMTWRR1R2tT9yhiv3tjygdcibnQ5RfhuqtZTh4T9huCL
+	 GeGnuCq8irkfK38SGltrUmYq2ESGAcYJ21ib1nXVlw+sru88SRFTrBoE5R3Th6OYkl
+	 opY2B0yO2vJnHhz7BlXRfx+0FqWP+CzQJUJrrA/lCPQ/zSqyR699p6jFyoNZy6YKtY
+	 ojgLYuH0OzQvA==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id DE2B237820B5;
+	Thu, 20 Jun 2024 15:20:44 +0000 (UTC)
+Message-ID: <d2a020024a0af609392649aac1ce037225d5e524.camel@collabora.com>
+Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support
+ runtime suspend/resume
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: "Jackson.lee" <jackson.lee@chipsnmedia.com>, mchehab@kernel.org, 
+	sebastian.fricke@collabora.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	hverkuil@xs4all.nl, nas.chung@chipsnmedia.com, lafley.kim@chipsnmedia.com, 
+	b-brnich@ti.com
+Date: Thu, 20 Jun 2024 11:20:41 -0400
+In-Reply-To: <20240617104818.221-3-jackson.lee@chipsnmedia.com>
+References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
+	 <20240617104818.221-3-jackson.lee@chipsnmedia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620081427.2860066-8-quic_varada@quicinc.com>
 
-On Thu, Jun 20, 2024 at 01:44:27PM GMT, Varadarajan Narayanan wrote:
-> Add CPR, RPMPD, OPP table nodes as applicable to IPQ9574 to
-> enable CPR functionality on IPQ9574.
+Hi,
 
-Please document your CPU opp table changes in the commit message. You
-have added 792 MHz, dropped 1200 MHz. At least we need to know what's
-going on.
+one more thing I notice below when comparing with Hantro ...
 
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 269 ++++++++++++++++++++++++--
->  1 file changed, 252 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> index 04ba09a9156c..439ee5accc47 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> @@ -11,6 +11,7 @@
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/reset/qcom,ipq9574-gcc.h>
->  #include <dt-bindings/thermal/thermal.h>
-> +#include <dt-bindings/power/qcom-rpmpd.h>
->  
->  / {
->  	interrupt-parent = <&intc>;
-> @@ -42,8 +43,9 @@ CPU0: cpu@0 {
->  			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
->  			clock-names = "cpu";
->  			operating-points-v2 = <&cpu_opp_table>;
-> -			cpu-supply = <&ipq9574_s1>;
->  			#cooling-cells = <2>;
-> +			power-domains = <&apc_cprh 0>;
-> +			power-domain-names = "perf";
->  		};
->  
->  		CPU1: cpu@1 {
-> @@ -55,8 +57,9 @@ CPU1: cpu@1 {
->  			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
->  			clock-names = "cpu";
->  			operating-points-v2 = <&cpu_opp_table>;
-> -			cpu-supply = <&ipq9574_s1>;
->  			#cooling-cells = <2>;
-> +			power-domains = <&apc_cprh 0>;
-> +			power-domain-names = "perf";
->  		};
->  
->  		CPU2: cpu@2 {
-> @@ -68,8 +71,9 @@ CPU2: cpu@2 {
->  			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
->  			clock-names = "cpu";
->  			operating-points-v2 = <&cpu_opp_table>;
-> -			cpu-supply = <&ipq9574_s1>;
->  			#cooling-cells = <2>;
-> +			power-domains = <&apc_cprh 0>;
-> +			power-domain-names = "perf";
->  		};
->  
->  		CPU3: cpu@3 {
-> @@ -81,8 +85,9 @@ CPU3: cpu@3 {
->  			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
->  			clock-names = "cpu";
->  			operating-points-v2 = <&cpu_opp_table>;
-> -			cpu-supply = <&ipq9574_s1>;
->  			#cooling-cells = <2>;
-> +			power-domains = <&apc_cprh 0>;
-> +			power-domain-names = "perf";
->  		};
->  
->  		L2_0: l2-cache {
-> @@ -105,58 +110,111 @@ memory@40000000 {
->  		reg = <0x0 0x40000000 0x0 0x0>;
->  	};
->  
-> +	cprh_opp_table: opp-table-cprh {
-> +		compatible = "operating-points-v2-qcom-level";
-> +
-> +		cprh_opp0: opp-0 {
-> +			opp-level = <1>;
-> +			qcom,opp-fuse-level = <1>;
-> +			qcom,opp-cloop-vadj = <0>;
-> +			qcom,opp-oloop-vadj = <0>;
-> +		};
-> +
-> +		cprh_opp1: opp-1 {
-> +			opp-level = <2>;
-> +			qcom,opp-fuse-level = <1>;
-> +			qcom,opp-cloop-vadj = <0>;
-> +			qcom,opp-oloop-vadj = <0>;
-> +		};
-> +
-> +		cprh_opp2: opp-2 {
-> +			opp-level = <3>;
-> +			qcom,opp-fuse-level = <1>;
-> +			qcom,opp-cloop-vadj = <0>;
-> +			qcom,opp-oloop-vadj = <0>;
-> +		};
-> +
-> +		cprh_opp3: opp-3 {
-> +			opp-level = <4>;
-> +			qcom,opp-fuse-level = <2>;
-> +			qcom,opp-cloop-vadj = <0>;
-> +			qcom,opp-oloop-vadj = <0>;
-> +		};
-> +
-> +		cprh_opp4: opp-4 {
-> +			opp-level = <5>;
-> +			qcom,opp-fuse-level = <2>;
-> +			qcom,opp-cloop-vadj = <0>;
-> +			qcom,opp-oloop-vadj = <0>;
-> +		};
-> +
-> +		cprh_opp5: opp-5 {
-> +			opp-level = <6>;
-> +			qcom,opp-fuse-level = <3>;
-> +			qcom,opp-cloop-vadj = <0>;
-> +			qcom,opp-oloop-vadj = <0>;
-> +		};
-> +
-> +		cprh_opp6: opp-6 {
-> +			opp-level = <7>;
-> +			qcom,opp-fuse-level = <4>;
-> +			qcom,opp-cloop-vadj = <0>;
-> +			qcom,opp-oloop-vadj = <0>;
-> +		};
-> +	};
-> +
->  	cpu_opp_table: opp-table-cpu {
->  		compatible = "operating-points-v2-kryo-cpu";
->  		opp-shared;
->  		nvmem-cells = <&cpu_speed_bin>;
->  
-> +		opp-792000000 {
-> +			opp-hz = /bits/ 64 <792000000>;
-> +			opp-supported-hw = <0x0>;
-> +			clock-latency-ns = <200000>;
-> +			required-opps = <&cprh_opp0>;
-> +		};
-> +
->  		opp-936000000 {
->  			opp-hz = /bits/ 64 <936000000>;
-> -			opp-microvolt = <725000>;
->  			opp-supported-hw = <0xf>;
->  			clock-latency-ns = <200000>;
-> +			required-opps = <&cprh_opp1>;
->  		};
->  
->  		opp-1104000000 {
->  			opp-hz = /bits/ 64 <1104000000>;
-> -			opp-microvolt = <787500>;
-> -			opp-supported-hw = <0xf>;
-> -			clock-latency-ns = <200000>;
-> -		};
-> -
-> -		opp-1200000000 {
-> -			opp-hz = /bits/ 64 <1200000000>;
-> -			opp-microvolt = <862500>;
->  			opp-supported-hw = <0xf>;
->  			clock-latency-ns = <200000>;
-> +			required-opps = <&cprh_opp2>;
->  		};
->  
->  		opp-1416000000 {
->  			opp-hz = /bits/ 64 <1416000000>;
-> -			opp-microvolt = <862500>;
->  			opp-supported-hw = <0x7>;
->  			clock-latency-ns = <200000>;
-> +			required-opps = <&cprh_opp3>;
->  		};
->  
->  		opp-1488000000 {
->  			opp-hz = /bits/ 64 <1488000000>;
-> -			opp-microvolt = <925000>;
->  			opp-supported-hw = <0x7>;
->  			clock-latency-ns = <200000>;
-> +			required-opps = <&cprh_opp4>;
->  		};
->  
->  		opp-1800000000 {
->  			opp-hz = /bits/ 64 <1800000000>;
-> -			opp-microvolt = <987500>;
->  			opp-supported-hw = <0x5>;
->  			clock-latency-ns = <200000>;
-> +			required-opps = <&cprh_opp5>;
->  		};
->  
->  		opp-2208000000 {
->  			opp-hz = /bits/ 64 <2208000000>;
-> -			opp-microvolt = <1062500>;
->  			opp-supported-hw = <0x1>;
->  			clock-latency-ns = <200000>;
-> +			required-opps = <&cprh_opp6>;
->  		};
->  	};
->  
-> @@ -182,6 +240,40 @@ glink-edge {
->  			rpm_requests: rpm-requests {
->  				compatible = "qcom,rpm-ipq9574";
->  				qcom,glink-channels = "rpm_requests";
-> +
-> +				rpmpd: power-controller {
-> +					compatible = "qcom,ipq9574-rpmpd";
-> +					#power-domain-cells = <1>;
-> +					operating-points-v2 = <&rpmpd_opp_table>;
-> +
-> +					rpmpd_opp_table: opp-table {
-> +						compatible = "operating-points-v2";
-> +
-> +						rpmpd_opp_svs: opp1 {
+Le lundi 17 juin 2024 =C3=A0 19:48 +0900, Jackson.lee a =C3=A9crit=C2=A0:
+> From: "jackson.lee" <jackson.lee@chipsnmedia.com>
+>=20
 
-Where are these nodes going to be used?
+[...]
 
-> +							opp-level = <RPM_SMD_LEVEL_SVS>;
-> +						};
-> +
-> +						rpmpd_opp_svs_plus: opp2 {
-> +							opp-level = <RPM_SMD_LEVEL_SVS_PLUS>;
-> +						};
-> +
-> +						rpmpd_opp_nom: opp3 {
-> +							opp-level = <RPM_SMD_LEVEL_NOM>;
-> +						};
-> +
-> +						rpmpd_opp_nom_plus: opp4 {
-> +							opp-level = <RPM_SMD_LEVEL_NOM_PLUS>;
-> +						};
-> +
-> +						rpmpd_opp_turbo: opp5 {
-> +							opp-level = <RPM_SMD_LEVEL_TURBO>;
-> +						};
-> +
-> +						rpmpd_opp_turbo_high: opp6 {
-> +							opp-level = <RPM_SMD_LEVEL_TURBO_HIGH>;
-> +						};
-> +					};
-> +				};
->  			};
->  		};
->  	};
-> @@ -252,6 +344,95 @@ cpu_speed_bin: cpu-speed-bin@15 {
->  				reg = <0x15 0x2>;
->  				bits = <7 2>;
->  			};
-> +
-> +			cpr_efuse_speedbin: speedbin@5 {
-> +				reg = <0x5 0x8>;
-> +				bits = <0 3>;
-> +			};
-> +
-> +			cpr_fuse_revision: cpr-fusing-rev@7 {
-> +				reg = <0x7 0x8>;
-> +				bits = <1 5>;
-> +			};
-> +
-> +			/* CPR Ring Oscillator: Power Cluster */
-> +			cpr_ro_sel0_pwrcl: rosel0-pwrcl@358 {	/* ROSEL_SVS */
-> +				reg = <0x358 0x1>;
-> +				bits = <4 4>;
-> +			};
-> +
-> +			cpr_ro_sel1_pwrcl: rosel1-pwrcl@358 {	/* ROSEL_NOM */
-> +				reg = <0x358 0x1>;
-> +				bits = <0 4>;
-> +			};
-> +
-> +			cpr_ro_sel2_pwrcl: rosel2-pwrcl@350 {	/* ROSEL_TUR */
-> +				reg = <0x350 0x1>;
-> +				bits = <4 4>;
-> +			};
-> +
-> +			cpr_ro_sel3_pwrcl: rosel3-pwrcl@350 {	/* ROSEL_STUR */
-> +				reg = <0x350 0x1>;
-> +				bits = <0 4>;
-> +			};
-> +
-> +			/* CPR Init Voltage: Power Cluster */
-> +			cpr_init_voltage0_pwrcl: ivolt0-pwrcl@343 {	/* VOLT_SVS */
-> +				reg = <0x343 0x1>;
-> +				bits = <0 6>;
-> +			};
-> +
-> +			cpr_init_voltage1_pwrcl: ivolt1-pwrcl@342 {	/* VOLT_NOM */
-> +				reg = <0x342 0x1>;
-> +				bits = <2 6>;
-> +			};
-> +
-> +			cpr_init_voltage2_pwrcl: ivolt2-pwrcl@341 {	/* VOLT_TUR */
-> +				reg = <0x341 0x2>;
-> +				bits = <4 6>;
-> +			};
-> +
-> +			cpr_init_voltage3_pwrcl: ivolt3-pwrcl@340 {	/* VOLT_STUR */
-> +				reg = <0x340 0x2>;
-> +				bits = <6 6>;
-> +			};
-> +
-> +			/* CPR Target Quotients: Power Cluster */
-> +			cpr_quot0_pwrcl: quot0-pwrcl@354 {	/* QUOT_VMIN_SVS */
-> +				reg = <0x354 0x2>;
-> +				bits = <0 12>;
-> +			};
-> +
-> +			cpr_quot1_pwrcl: quot1-pwrcl@352 {	/* QUOT_VMIN_NOM */
-> +				reg = <0x352 0x2>;
-> +				bits = <4 12>;
-> +			};
-> +
-> +			cpr_quot2_pwrcl: quot2-pwrcl@351 {	/* QUOT_VMIN_TUR */
-> +				reg = <0x351 0x2>;
-> +				bits = <0 12>;
-> +			};
-> +
-> +			cpr_quot3_pwrcl: quot3-pwrcl@355 {	/* QUOT_VMIN_STUR */
-> +				reg = <0x355 0x2>;
-> +				bits = <4 12>;
-> +			};
-> +
-> +			/* CPR Quotient Offsets: Power Cluster */
-> +			cpr_quot_offset1_pwrcl: qoff1-pwrcl@34e {	/* QUOT_OFFSET_NOM_SVS */
-> +				reg = <0x34e 0x1>;
-> +				bits = <0 8>;
-> +			};
-> +
-> +			cpr_quot_offset2_pwrcl: qoff2-pwrcl@34d {	/* QUOT_OFFSET_TUR_NOM */
-> +				reg = <0x34d 0x1>;
-> +				bits = <0 8>;
-> +			};
-> +
-> +			cpr_quot_offset3_pwrcl: qoff0-pwrcl@34c {	/* QUOT_OFFSET_STUR_TUR */
-> +				reg = <0x34c 0x1>;
-> +				bits = <0 8>;
-> +			};
->  		};
->  
->  		cryptobam: dma-controller@704000 {
-> @@ -639,6 +820,60 @@ usb_0_dwc3: usb@8a00000 {
->  			};
->  		};
->  
-> +		apc_cprh: power-controller@b018000 {
-> +			compatible = "qcom,ipq9574-cprh", "qcom,cprh";
-> +			reg = <0x0b018000 0x4000>,
-> +			      <0x00048000 0x4000>;
-> +
-> +			clocks = <&gcc GCC_RBCPR_CLK>;
-> +
-> +			interrupts = <GIC_SPI 15 IRQ_TYPE_EDGE_RISING>;
-> +			vdd-supply = <&ipq9574_s1>;
-> +
-> +			/* Set the CPR clock here, it needs to match XO */
-> +			assigned-clocks = <&gcc GCC_RBCPR_CLK>;
-> +			assigned-clock-rates = <24000000>;
-> +
-> +			operating-points-v2 = <&cprh_opp_table>;
-> +			power-domains = <&rpmpd IPQ9574_VDDAPC>;
-> +			#power-domain-cells = <1>;
-> +
-> +			nvmem-cells = <&cpr_efuse_speedbin>,
-> +				      <&cpr_fuse_revision>,
-> +				      <&cpr_quot0_pwrcl>,
-> +				      <&cpr_quot1_pwrcl>,
-> +				      <&cpr_quot2_pwrcl>,
-> +				      <&cpr_quot3_pwrcl>,
-> +				      <&cpr_quot_offset1_pwrcl>,
-> +				      <&cpr_quot_offset2_pwrcl>,
-> +				      <&cpr_quot_offset3_pwrcl>,
-> +				      <&cpr_init_voltage0_pwrcl>,
-> +				      <&cpr_init_voltage1_pwrcl>,
-> +				      <&cpr_init_voltage2_pwrcl>,
-> +				      <&cpr_init_voltage3_pwrcl>,
-> +				      <&cpr_ro_sel0_pwrcl>,
-> +				      <&cpr_ro_sel1_pwrcl>,
-> +				      <&cpr_ro_sel2_pwrcl>,
-> +				      <&cpr_ro_sel3_pwrcl>;
-> +			nvmem-cell-names = "cpr_speed_bin",
-> +					   "cpr_fuse_revision",
-> +					   "cpr0_quotient1",
-> +					   "cpr0_quotient2",
-> +					   "cpr0_quotient3",
-> +					   "cpr0_quotient4",
-> +					   "cpr0_quotient_offset2",
-> +					   "cpr0_quotient_offset3",
-> +					   "cpr0_quotient_offset4",
-> +					   "cpr0_init_voltage1",
-> +					   "cpr0_init_voltage2",
-> +					   "cpr0_init_voltage3",
-> +					   "cpr0_init_voltage4",
-> +					   "cpr0_ring_osc1",
-> +					   "cpr0_ring_osc2",
-> +					   "cpr0_ring_osc3",
-> +					   "cpr0_ring_osc4";
-> +		};
-> +
->  		intc: interrupt-controller@b000000 {
->  			compatible = "qcom,msm-qgic2";
->  			reg = <0x0b000000 0x1000>,  /* GICD */
-> -- 
-> 2.34.1
-> 
+> =20
+>  err_enc_unreg:
+> @@ -295,6 +334,9 @@ static void wave5_vpu_remove(struct platform_device *=
+pdev)
+>  		hrtimer_cancel(&dev->hrtimer);
+>  	}
+> =20
+> +	pm_runtime_put_sync(&pdev->dev);
 
--- 
-With best wishes
-Dmitry
+I don't know if its strictly needed, but I noticed that Hantro calls
+pm_runtime_dont_use_autosuspend() in its remove function. Can you check if =
+this
+is strictly needed, we don't want anything to call again later if we are
+removing the module, so better check.
+
+Nicolas
+
+> +	pm_runtime_disable(&pdev->dev);
+> +
+>  	mutex_destroy(&dev->dev_lock);
+>  	mutex_destroy(&dev->hw_lock);
+>  	clk_bulk_disable_unprepare(dev->num_clks, dev->clks);
+> @@ -320,6 +362,7 @@ static struct platform_driver wave5_vpu_driver =3D {
+>  	.driver =3D {
+>  		.name =3D VPU_PLATFORM_DEVICE_NAME,
+>  		.of_match_table =3D of_match_ptr(wave5_dt_ids),
+> +		.pm =3D &wave5_pm_ops,
+>  		},
+>  	.probe =3D wave5_vpu_probe,
+>  	.remove_new =3D wave5_vpu_remove,
+
 
