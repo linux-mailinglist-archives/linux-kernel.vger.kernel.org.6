@@ -1,162 +1,148 @@
-Return-Path: <linux-kernel+bounces-222308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568B690FF85
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:53:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C20990FF8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 495FA1C21699
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:53:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F822816FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192C91AB524;
-	Thu, 20 Jun 2024 08:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAC819B3F6;
+	Thu, 20 Jun 2024 08:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G7Gj16yM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VZoeORcB"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA45B19AD82
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A4F19B3E1
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718873401; cv=none; b=HW3waFOZBgOQzavAclcUMQg/fLxp+SRld9pO1RUV9CbzXbYDEhn9hClea4WE6R7uOyeMziso2c02Yn4Cko2apnwXZEMO2+AYgKcjvT2nxL+whzqH0z/ZtNUnVj1iRpFHKFO2sY4l3+8HZB4csfRPs0Vd2D2p1jqCvcqOnKtbSlQ=
+	t=1718873412; cv=none; b=bvDseFLz6DcQ/5LyeZ5BUjOAZmhamXSU+kx9MpkgAMuUmyuYSAAhyyCjFcdIWjs+7iuseYLnUwl3d1EYZ+eTX20EEWxTNX2Z2LJNKKXIIGHHcaRwdcPwrrRbbS/qxj/lkj3FuSyUPneyvhWZ2B1MwCRepDvqrDPFsKaBL7MZQd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718873401; c=relaxed/simple;
-	bh=bzculCUZfSMGCYqXnDb6dR+6gSGS8cxRKKu9enu6sOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GRMyhFmVY7qZGDr0vrFB4L/pgPVQRYC6yp7YPKIBdWTvCJWnC0Dx1FxI+FXncIQ7h5VYgzQze0NsfSfLqtVSSKqagheoTEoSVlB8WZKuaeZlB1oqc+4ZSA+iRyOnc5Ha8hOug5dFepjerfpyBDhaEmkw0VDfo3vncwj2BfDSqKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G7Gj16yM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718873398;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=11iF2QK5flj/EkneGZ7Z1E7DadmY5aiwT25VCdi5z3s=;
-	b=G7Gj16yMTHkmOBMjn/GM5krT2BCuCTxV38q4LuASQpPgEpBbjMbSKcyPO+xefxX3NQmqBW
-	S7iyhZX/qLy6+GmgOre8D06graMraQGMh5DMAdenNEQLLBpzxg/kmM2J6qdQ7r4kBzGDti
-	+J095+YLa2LVl6W8ajaD1PaDbUxjTWQ=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-R8wVTYEPOEGiqmE2rt59XA-1; Thu, 20 Jun 2024 04:49:57 -0400
-X-MC-Unique: R8wVTYEPOEGiqmE2rt59XA-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-795589ae41fso112706685a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:49:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718873396; x=1719478196;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1718873412; c=relaxed/simple;
+	bh=QKjfRE/UdgFLDzTlyARsWElVc22hgqS+LVFD8o/b46E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bNv39xLPx1OIMaEUA6SUNPsKyfr+0BoPpFs6dl97uwvdrPm/Dbzyp2HhzhU43+jp+EKD8fOOS4tmjIwQ+i4SmOzsot372FPUzxvgTkinetnlJvOR8nES9PbfRKW8byn8webPeqcES78qxuBf7mKxli3WQV1cc9sZpabSwKgw6dA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VZoeORcB; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e724bc466fso6599111fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:50:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718873409; x=1719478209; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=11iF2QK5flj/EkneGZ7Z1E7DadmY5aiwT25VCdi5z3s=;
-        b=rDt6NuOQkAF8AL9eGSuJJqqpMc3o82mUPMrPISVr8k+pTk0+rDLXHVu+QCW0VvI+HD
-         UTRFf0tdpXcBn0+SFarBuWCSijAnj7BFJBslSHonB3at+bXA579om+6Ws6KY9d4kMuDi
-         ZSa+tdCyrAthzneLgXGayGhJCqAt23DQzYZ134pXGj1FsNK+tQgKDB+WKEf/ddNr1Frx
-         cMaQKr66674G7oeIUceUeVEQWuyYtch6WcL7BxZFUyPMDW1d23Tzp1QyMyrCBZaEzott
-         c4iCjkm/23wfxh8gdm3Kk9ScQMpVUrlsdrjvCkRpzfmkBc0D9ky9IMaa/L1Zt6Bn6PfE
-         8YZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQko0yPkI9q/nsusGrGCUY+jDtizhseNKjpL6knslbkfTImhcQooFIR/ox0G2Izo7xLyid9nFhUwmum33CoGPvcM5QlUk1rXZFD7JG
-X-Gm-Message-State: AOJu0Yxb2Z3MttqkE0/0BaoyU5oZNKV7zwm8cyq0n5dhYX3QvBwpPBvJ
-	/8lE9eb5iVrHWcrwm3VXppSPT1ueZQxnutaii7GDsvrcDNIKxQCXml8fexyibuSpF/guKjBW4ID
-	4javN134shmd8M3MOLCNYaSuUvCuKf+Ut9WIzKKN90a8hxiAI6jVAQFL/ku5WQg==
-X-Received: by 2002:a05:620a:4016:b0:795:5ab3:ba5b with SMTP id af79cd13be357-79bb3e3acc9mr487928985a.32.1718873396709;
-        Thu, 20 Jun 2024 01:49:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEMWNNkzfAixl8czMPiKE9yMZGywPk4gvxEmIU6adP1ZFuF5GVoBwIIFYUdC+82dqVjHbKhFA==
-X-Received: by 2002:a05:620a:4016:b0:795:5ab3:ba5b with SMTP id af79cd13be357-79bb3e3acc9mr487927185a.32.1718873396388;
-        Thu, 20 Jun 2024 01:49:56 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.3.168])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-798aacae6e3sm677075785a.10.2024.06.20.01.49.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 01:49:55 -0700 (PDT)
-Date: Thu, 20 Jun 2024 10:49:51 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Wander Lairson Costa <wander@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	"open list:SCHEDULER" <linux-kernel@vger.kernel.org>,
-	rrendec@redhat.com
-Subject: Re: [PATCH] sched/deadline: fix task_struct reference leak
-Message-ID: <ZnPtL055-NxMwMKl@jlelli-thinkpadt14gen4.remote.csb>
-References: <20240618201940.94955-1-wander@redhat.com>
+        bh=0oRTqaQV+LstrjwZixpKFYUALXmKtaF0Ow0RUXHlll0=;
+        b=VZoeORcBkOmWasPmbaocQNuKvtQyySfewfFLKuNYG1aZMgvWbGnwUYHWDtv7zqmmma
+         ET9ITRfqnyx7l6jEXnY9cgoarQEZH2tonfLY2vsgkB7p1EsenRMgTZ9RSdtdZVyLM9WS
+         q2aOkr3XEL0neF3EBi685O+2Yz7HoyheWEXaQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718873409; x=1719478209;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0oRTqaQV+LstrjwZixpKFYUALXmKtaF0Ow0RUXHlll0=;
+        b=B4JtsC0jyjzAToFP/YNrSfmKzoveoI0ndzrA/uupZVVxCrJ8h54PCcuc/HJam/NlN9
+         1LyCddXo76mJAEV5Np18+J4peaO90bHfAfK7OTom7+0oDtsZlWLLR94EyvLfE5mX47up
+         EirIl8QNaWcuD1HHGXelom/VIC4kPDVfZXU/J9FCsoTkft3ItfIYlN5KHwxYs7IF0O4i
+         X2skm6FcaW2dkL52HshOHxh9AxrEIQkXhznSZpjEpOdob3onm8W+xQcO79yaW22xC5at
+         jsNCgMRIlcJXP7Ustd/aHfftvVA+nTWFjYYIePa6uvbRQpCmlGHsMhrBWXP68GkXJ/Uv
+         a+Og==
+X-Forwarded-Encrypted: i=1; AJvYcCUBtf+/qWauncY7/FkwRNmDIHTcyY9/+ejlsMR0LTBD+J/ieBcy+piM41sZp2yRmz8RiAyryrpwUkfbcvnt+ukM6SyggHxbra1VSrtv
+X-Gm-Message-State: AOJu0YyyGF0gG+2t3klm+qNiWLuLTbUEKzCnnh9Bozm/QobbF0z45N+W
+	pRZSVb6UZLyVzYQ+W63+zseygUJWzuIH35+iKD2hLeLGw+zyL8cuX92puC4oi1SSIqKDPcy9uIp
+	K70o8uQNY2Dc7togs//5uooSbWXlnMti5Oo1p
+X-Google-Smtp-Source: AGHT+IHcXpqJLWmBKdXeI91LoMKrVXewns1BNu07e4js70I9FeW6r0+Qp26QuOLQHYvE8hHnxAzWJBo7v4Fc1y9Nr0o=
+X-Received: by 2002:a2e:2416:0:b0:2eb:e137:6584 with SMTP id
+ 38308e7fff4ca-2ec3ce940bamr36303391fa.20.1718873408841; Thu, 20 Jun 2024
+ 01:50:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618201940.94955-1-wander@redhat.com>
+References: <20240620054708.2230665-1-wenst@chromium.org> <743577a0-ef60-4731-8901-daf1ae4f7f7f@suse.de>
+In-Reply-To: <743577a0-ef60-4731-8901-daf1ae4f7f7f@suse.de>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 20 Jun 2024 16:49:57 +0800
+Message-ID: <CAGXv+5G8sC0JAWg_1k-x6+XeqMSMHQDuHfhOJkJYe1OzHkdH-g@mail.gmail.com>
+Subject: Re: [PATCH] drm/mediatek: select DRM_GEM_DMA_HELPER if DRM_FBDEV_EMULATION=y
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wander,
+On Thu, Jun 20, 2024 at 2:37=E2=80=AFPM Thomas Zimmermann <tzimmermann@suse=
+.de> wrote:
+>
+> Hi
+>
+> Am 20.06.24 um 07:47 schrieb Chen-Yu Tsai:
+> > With the recent switch from fbdev-generic to fbdev-dma, the driver now
+> > requires the DRM GEM DMA helpers. This dependency is missing, and will
+> > cause a link failure if fbdev emulation is enabled.
+> >
+> > Add the missing dependency.
+> >
+> > Fixes: 0992284b4fe4 ("drm/mediatek: Use fbdev-dma")
+> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+>
+> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+>
+> Apart from this problem, would it make sense to convert the driver's
+> management to GEM's DMA helpers? It appears there's some code
+> duplication in mtk_gem.c and these helpers.
 
-On 18/06/24 17:19, Wander Lairson Costa wrote:
-> During the execution of the following stress test with linux-rt:
-> 
-> stress-ng --cyclic 30 --timeout 30 --minimize --quiet
-> 
-> kmemleak frequently reported a memory leak concerning the task_struct:
-> 
-> unreferenced object 0xffff8881305b8000 (size 16136):
->   comm "stress-ng", pid 614, jiffies 4294883961 (age 286.412s)
->   object hex dump (first 32 bytes):
->     02 40 00 00 00 00 00 00 00 00 00 00 00 00 00 00  .@..............
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   debug hex dump (first 16 bytes):
->     53 09 00 00 00 00 00 00 00 00 00 00 00 00 00 00  S...............
->   backtrace:
->     [<00000000046b6790>] dup_task_struct+0x30/0x540
->     [<00000000c5ca0f0b>] copy_process+0x3d9/0x50e0
->     [<00000000ced59777>] kernel_clone+0xb0/0x770
->     [<00000000a50befdc>] __do_sys_clone+0xb6/0xf0
->     [<000000001dbf2008>] do_syscall_64+0x5d/0xf0
->     [<00000000552900ff>] entry_SYSCALL_64_after_hwframe+0x6e/0x76
-> 
-> The issue occurs in start_dl_timer(), which increments the task_struct
-> reference count and sets a timer. The timer callback, dl_task_timer,
-> is supposed to decrement the reference count upon expiration. However,
-> if enqueue_task_dl() is called before the timer expires and cancels it,
-> the reference count is not decremented, leading to the leak.
-> 
-> This patch fixes the reference leak by ensuring the task_struct
-> reference count is properly decremented when the timer is canceled.
-> 
-> Signed-off-by: Wander Lairson Costa <wander@redhat.com>
-> ---
->  kernel/sched/deadline.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index c75d1307d86d..5953f89bfa96 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -1805,7 +1805,9 @@ static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
->  			 * problem if it fires concurrently: boosted threads
->  			 * are ignored in dl_task_timer().
->  			 */
-> -			hrtimer_try_to_cancel(&p->dl.dl_timer);
-> +			if (hrtimer_try_to_cancel(&p->dl.dl_timer) == 1 &&
-> +			    !dl_server(&p->dl))
-> +				put_task_struct(p);
+It seems at least import_sg_table could be converted. I don't have
+the bandwidth to do a more in-depth review though.
 
-Wonder if this deserves a little comment saying that if the timer
-callback was running (hrtimer_try_to_cancel() returns -1) it will
-eventually call put_task_struct(). Other than that, the fix makes sense
-to me.
+Thanks
+ChenYu
 
-Oh, another thing is that I believe we should add 'Fixes: feff2e65efd8d
-("sched/deadline: Unthrottle PI boosted threads while enqueuing")' in
-the changelog, shouldn't we?
 
-Thanks,
-Juri
-
+> Best regards
+> Thomas
+>
+> > ---
+> > The commit this patch fixes is in drm-misc-next. Ideally this patch
+> > should be applied on top of it directly.
+> >
+> > CK, could you give your ack for it?
+> >
+> >   drivers/gpu/drm/mediatek/Kconfig | 1 +
+> >   1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/gpu/drm/mediatek/Kconfig b/drivers/gpu/drm/mediate=
+k/Kconfig
+> > index 96cbe020f493..d6449ebae838 100644
+> > --- a/drivers/gpu/drm/mediatek/Kconfig
+> > +++ b/drivers/gpu/drm/mediatek/Kconfig
+> > @@ -7,6 +7,7 @@ config DRM_MEDIATEK
+> >       depends on HAVE_ARM_SMCCC
+> >       depends on OF
+> >       depends on MTK_MMSYS
+> > +     select DRM_GEM_DMA_HELPER if DRM_FBDEV_EMULATION
+> >       select DRM_KMS_HELPER
+> >       select DRM_MIPI_DSI
+> >       select DRM_PANEL
+>
+> --
+> --
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Frankenstrasse 146, 90461 Nuernberg, Germany
+> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+> HRB 36809 (AG Nuernberg)
+>
 
