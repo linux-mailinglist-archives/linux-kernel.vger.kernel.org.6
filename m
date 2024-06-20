@@ -1,105 +1,131 @@
-Return-Path: <linux-kernel+bounces-222036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B394E90FBE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:12:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1FAB90FBE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D18A1F23C5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:12:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B509284939
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A75EC7;
-	Thu, 20 Jun 2024 04:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5362BAF3;
+	Thu, 20 Jun 2024 04:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="ga2GhdmY"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Bm2UzDzt"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCE1224CE
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 04:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFF42230F;
+	Thu, 20 Jun 2024 04:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718856731; cv=none; b=RN9BXKVTy51iyNY5Ot5G/5c9qMHsxyLrlTA9ohJXCkMAispcv0R5cazX/FFHEHNUT0Qkclhgu58cdOWB9MYYQONKfdTuQd4yT9CQT1LAbnQjJvzibTaLIBIdssJqill3mnY1N1Y6xcvJrcMnzBuByni89c/u2KWoQsf8A8L0m8I=
+	t=1718856748; cv=none; b=SToClQ6wATn3M0GnS+8IiqOMvT7NfCVmUjih/JTQFXmHmsO/0ORrzjGp2oAQxLz7EDXHCLH/WwIfSvrYMGG2S6x4hDEKtqP3hsJaDmhub6HOLk4GIl7MnKVJWrC2jgFlp3bUH9IFYvIcKu//SXHYBAQXssfAP9QT9RT7KTH794U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718856731; c=relaxed/simple;
-	bh=aPsYJOVzcEVzbyF9dNUx19mkstx4hNHbolSbJAhNQXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tIbztqiC1yMPDSrFYnIguX9iAdXvjwIQFnSKlcwUxneHd24CSUc3Tfkrhl2iDTXY+yaGaZdqn2g744NN4VHGEgeefrnwuWeqMYD0gExnzanSmJgPOCANjheKM6JUNb3AN3ARwcoDnLsX3yh1sOEFfqKmrNnVXLmX8xtGQfAEXL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=ga2GhdmY; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 33E3F2C041E;
-	Thu, 20 Jun 2024 16:12:06 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1718856726;
-	bh=LjErDauhNJbMedMS8Kk9A/fllU4EgkRiXtuqKdmdTLs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ga2GhdmYiPpNeb32B7Q+TlGwDAQHMljzrc86bjZLrLGtKT9JWaVTsCqNw8z8MV5AF
-	 nOMmYJvLpjJ1tQzYeF1cYpBWFSQZ7P65sCNhzVTOhd2WAkwFY6idb31Hm9F+bCLQRC
-	 Yg6HjeRFUA+VgYUsXx7i6dO7DZkSj7SCNnpDouV2mgG2OSLT7HEK/ynPLfLcY+k+ss
-	 BJfmmz1h4eeri4xRYlm1WNCetblvPlRXzlU0RbiOfU18u6Yc5pMhckhmJc2cNVsPA1
-	 O88Ndxw6fw4AAKuS+NogCLq4314jrRY214rREJQvnaIRZGtd6lCR2o+yPnM2cnxdbB
-	 8joGF3jUy7i+g==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6673ac160000>; Thu, 20 Jun 2024 16:12:06 +1200
-Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
-	by pat.atlnz.lc (Postfix) with ESMTP id 0EA8F13ED63;
-	Thu, 20 Jun 2024 16:12:06 +1200 (NZST)
-Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
-	id 0B5F62A0FF5; Thu, 20 Jun 2024 16:12:06 +1200 (NZST)
-From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v0] net: mvpp2: fill-in dev_port attribute
-Date: Thu, 20 Jun 2024 16:12:02 +1200
-Message-ID: <20240620041202.3306780-1-aryan.srivastava@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1718856748; c=relaxed/simple;
+	bh=vQaW55DmtGePf4eGnJYX06yy4tM3bf4Sc6nVqjUHZ+w=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NE+KVbpRaVnsPE5fRoZN49wEKUlsiT9H2XJNSp8pMXg3LW1BPWJbixy6+LyLtjCO5PFCdnaQq3m60WgO5W1+U+Tts5iSu1pP0HtIitTOTtj4ehx4caXUafSqqfk73kqJstqVlnM76+7La7MwN/nxsK9ZZF8q+OgW//owd9v06f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Bm2UzDzt; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K2BN80011674;
+	Wed, 19 Jun 2024 21:12:18 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=rl5w2pkRDEESVU7+xLhhQfbli
+	58CwfHcSuehWCZKp08=; b=Bm2UzDztj7Q6uScrYq+Iw+9BKKZVZhH9qdWjuJP0j
+	ajdyJ9Vw5Bcs2NQp+WavnW5bVxeEJOujiooYjSa0gVnGHT7nY63FAjUiskw1xH87
+	JrrFKD1CFlz6z06FqhaHWgKOXfovl8IO6CL8DQb+0IeEK9V2/NsrJPilM4sIr+xr
+	eFM94eb6QcDTvPWam0LwT1+kGFMEUDvh31NY2VcicGRB5tZrv45vNUWguKlVPfxK
+	wtmZqy0jkhugWwlHQf91cCXSyBl0WY645aNqAlroWey1pwq1wjLc1mFykdzcPeau
+	eucsKDuNSoEWorQX/F8t8GX9ilNtTr7UFhkAp/61O3K/Q==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3yvbdy89g2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 21:12:18 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 19 Jun 2024 21:12:17 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 19 Jun 2024 21:12:17 -0700
+Received: from hyd1403.caveonetworks.com (unknown [10.29.37.84])
+	by maili.marvell.com (Postfix) with SMTP id 9C8DC3F7078;
+	Wed, 19 Jun 2024 21:12:13 -0700 (PDT)
+Date: Thu, 20 Jun 2024 09:42:12 +0530
+From: Linu Cherian <lcherian@marvell.com>
+To: James Clark <james.clark@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <coresight@lists.linaro.org>,
+        <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <sgoutham@marvell.com>,
+        <gcherian@marvell.com>, <suzuki.poulose@arm.com>,
+        <mike.leach@linaro.org>
+Subject: Re: [PATCH v9 3/7] coresight: core: Add provision for panic callbacks
+Message-ID: <20240620041212.GD125816@hyd1403.caveonetworks.com>
+References: <20240605081725.622953-1-lcherian@marvell.com>
+ <20240605081725.622953-4-lcherian@marvell.com>
+ <739d24fc-b557-4ef9-875d-d1a800f6c4db@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=6673ac16 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=hHNv8qNozdUxR9ekqBsA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <739d24fc-b557-4ef9-875d-d1a800f6c4db@arm.com>
+X-Proofpoint-ORIG-GUID: MJ1kf9lziui8jwzNy0I1ANNdGu6gm4sg
+X-Proofpoint-GUID: MJ1kf9lziui8jwzNy0I1ANNdGu6gm4sg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_01,2024-06-19_01,2024-05-17_01
 
-Fill this in so user-space can identify multiple ports on the same CP
-unit.
+On 2024-06-05 at 21:39:17, James Clark (james.clark@arm.com) wrote:
+> 
+> 
+> On 05/06/2024 09:17, Linu Cherian wrote:
+> > Panic callback handlers allows coresight device drivers to sync
+> > relevant trace data and trace metadata to reserved memory
+> > regions so that they can be retrieved later in the subsequent
+> > boot or in the crashdump kernel.
+> > 
+> > Signed-off-by: Linu Cherian <lcherian@marvell.com>
+> > Reviewed-by: James Clark <james.clark@arm.com>
+> > ---
+> > Changelog from v8:
+> > Added Reviewed-by tag.
+> > 
+> >  drivers/hwtracing/coresight/coresight-core.c | 37 ++++++++++++++++++++
+> >  include/linux/coresight.h                    | 12 +++++++
+> >  2 files changed, 49 insertions(+)
+> > 
+> 
+> [...]
+> 
+> >  static int __init coresight_init(void)
+> >  {
+> >  	int ret;
+> > @@ -1377,6 +1408,10 @@ static int __init coresight_init(void)
+> >  	if (ret)
+> >  		goto exit_bus_unregister;
+> >  
+> > +	/* Register function to be called for panic */
+> > +	ret = atomic_notifier_chain_register(&panic_notifier_list,
+> > +					     &coresight_notifier);
+> > +
+> 
+> ret isn't checked here
 
-Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
----
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 1 +
- 1 file changed, 1 insertion(+)
+Ack.
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/ne=
-t/ethernet/marvell/mvpp2/mvpp2_main.c
-index 23adf53c2aa1..7cf9a0f5b583 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -6903,6 +6903,7 @@ static int mvpp2_port_probe(struct platform_device =
-*pdev,
- 	/* 9704 =3D=3D 9728 - 20 and rounding to 8 */
- 	dev->max_mtu =3D MVPP2_BM_JUMBO_PKT_SIZE;
- 	device_set_node(&dev->dev, port_fwnode);
-+	dev->dev_port =3D port->id;
-=20
- 	port->pcs_gmac.ops =3D &mvpp2_phylink_gmac_pcs_ops;
- 	port->pcs_gmac.neg_mode =3D true;
---=20
-2.43.2
-
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
