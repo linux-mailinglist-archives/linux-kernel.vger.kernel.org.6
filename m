@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-222125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA12F90FD28
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:58:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741EF90FD29
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E55E1F24D57
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:58:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A0F81F259BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8BD42076;
-	Thu, 20 Jun 2024 06:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5924344376;
+	Thu, 20 Jun 2024 06:58:27 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEDB40861
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537A644C64
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718866702; cv=none; b=q46v+EFONlKV21KoKm76spGQunWtS7lomPrUA3uzugC3WmVQCpHfGzQwaMGD5v6EDvdZEmttkA9z1AY5iIiuL+sjqqs8P0dtzhUutC7+n+s1UivHnP8xXb8HSFXYJieSfz/9K0sc7f4f+qrr+avarIHV+TuOqygs/G9gV0hTVRs=
+	t=1718866706; cv=none; b=mFm9kXl8/iiwBPaBH4mHa4vXa4W+hsnr3g8RnuxKm0YwWRaxitokmowP0LkZNZKB/Yt2Fx6WbVPfM7LRIPiTgcvzqB9ahm39cspbdxhJJrq+PN9albQbhBSkOjp/Yu8MDNJrC0wYCGFxEvCueFBDpxDGNAaPyo1xIaMkYLKziP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718866702; c=relaxed/simple;
-	bh=1rR+8QkTlT15Poze9vyELDpz5YZygGThR/Hy7mySGVU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BM/mnHi7CtIqxx21kNLS1GM4TwwNcVNFjbGWWMk/9ukZ4xrYqh3BcwNhWyogNIKU2eaOTdwXCUOHWWdF+K7tMPUJPO1GtX2p24dDV7foyTkl1R5oW22TDm3bLxrPe7xMk0ForhiPDVtw5DH8zSP8TfCyWZWR9sfBJgIb7T5XeuY=
+	s=arc-20240116; t=1718866706; c=relaxed/simple;
+	bh=rAWzQoKLawDmEfaA88cxGcCrCsJwwjtuG5tBfPZ0+gI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=AfKN6zR9MjxAPfriTP0VZOlsD6+2fPtzRE5ppTDG++5+Mh/8Hb5N/I9zrwsyrV/gJ0Rs3DtP7Acd1qIl7VewvWPcuLLeSo5zpoTnv15kWf0u5VT81r1JaXa24xHBAt222eroH5pAReeynbXI+QpzAeS2jcykY+USxPLbA318cow=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB1D4DA7;
-	Wed, 19 Jun 2024 23:58:42 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8EB01DA7;
+	Wed, 19 Jun 2024 23:58:48 -0700 (PDT)
 Received: from a077893.arm.com (unknown [10.163.46.59])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 761973F73B;
-	Wed, 19 Jun 2024 23:58:14 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F29793F73B;
+	Wed, 19 Jun 2024 23:58:18 -0700 (PDT)
 From: Anshuman Khandual <anshuman.khandual@arm.com>
 To: linux-arm-kernel@lists.infradead.org,
 	maz@kernel.org
@@ -43,10 +44,12 @@ Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
 	Mark Brown <broonie@kernel.org>,
 	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [RFC 00/10] KVM: arm64: Enable fine grained undefined for MDSELR_EL1
-Date: Thu, 20 Jun 2024 12:27:57 +0530
-Message-Id: <20240620065807.151540-1-anshuman.khandual@arm.com>
+Subject: [RFC 01/10] arm64/sysreg: Update ID_AA64MMFR0_EL1 register
+Date: Thu, 20 Jun 2024 12:27:58 +0530
+Message-Id: <20240620065807.151540-2-anshuman.khandual@arm.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240620065807.151540-1-anshuman.khandual@arm.com>
+References: <20240620065807.151540-1-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,81 +58,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-MDSELR_EL1 register access is essential while enabling latest HW breakpoint
-via the arch feature FEAT_DebugV8P9. During our previous discussion on this
-[1], it was also observed that MDSELR_EL1 access needs to be managed across
-various KVM host-guest code paths via the new fine grained trap based UNDEF
-mechanism. Besides MDSELR_EL1 access is managed via FEAT_FGT2 based fine
-grained registers.
+This updates ID_AA64MMFR0_EL1.FGT and ID_AA64MMFR0_EL1.PARANGE register
+fields as per the definitions based on DDI0601 2024-03.
 
-This series has been carved out from the original breakpoint series just to
-enable MSELR_EL1 access via fine grained trap control.
-
-All the initial sysreg updates or additions are required while configuring
-HDFGRTR2_EL2 and HDFGWTR2_EL2 registers in the last two patches.
-
-This series has been very lightly tested - boots with KVM without warnings
-or errors. I am not entirely sure how these fine grained bits would behave
-in various paths. The idea is to get the series into discussion, learn and
-change as required. All reviews, feedbacks and pointers really appreciated.
-
-Questions and Challenges:
-
-- TRBIDR_EL1.MPAM needs to be probed for setting HDFGRTR2_EL2_nTRBMPAM_EL1
-  but kvm_has_feat() does not operate a non-ID register which causes build
-  warnings. The same problem exists for probing PMSIDR_EL1.FDS which is
-  needed for setting HDFGRTR2_EL2_nPMSDSFR_EL1 as well. Currently both the
-  bits mentioned earlier are set, assuming the features are not present in
-  nested virtualization. Do we need some new helpers to probe these non-ID
-  registers as well ?
-
-- At present both HDFGRTR2_EL2 and HDFGWTR2_EL2 based accesses are enabled
-  (MDSELR_E1 was dependent on them) but then there are some more FEAT_FGT2
-  registers such HFGRTR2_EL2, HFGWTR2_EL2 and HFGITR2_EL2. Should those be
-  handled in this series as well ?
-
-- Probably an entry is needed for SYS_MDSELR_EL1 in encoding_to_fgt[] table
-  inside the file arch/arm64/kvm/emulate-nested.c, but while trying to test
-  features for all individual bits in HDFGRTR2_EL2, it seemed a lot of new
-  register definitions from various features need to be added as well, thus
-  expanding the scope further. Should all required new system registers be
-  added for completeness ?
-
-[1] https://lore.kernel.org/all/20240405080008.1225223-1-anshuman.khandual@arm.com/
-
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: James Morse <james.morse@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>
 Cc: Mark Brown <broonie@kernel.org>
 Cc: linux-arm-kernel@lists.infradead.org
-Cc: kvmarm@lists.linux.dev
 Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+ arch/arm64/tools/sysreg | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Anshuman Khandual (10):
-  arm64/sysreg: Update ID_AA64MMFR0_EL1 register
-  arm64/sysreg: Update ID_AA64DFR0_EL1 register
-  arm64/sysreg: Add register fields for ID_AA64DFR2_EL1
-  arm64/sysreg: Add register fields for HDFGRTR2_EL2
-  arm64/sysreg: Add register fields for HDFGWTR2_EL2
-  arm64/sysreg: Add register fields for MDSELR_EL1
-  arm64/sysreg: Add register fields for PMSID_EL1
-  arm64/sysreg: Add register fields for TRBIDR_EL1
-  KVM: arm64: nv: Enable HDFGRTR2_EL2 & HDFGWTR2_EL2 access from virtual EL2
-  KVM: arm64: nv: Add new HDFGRTR2_GROUP & HDFGRTR2_GROUP based FGU handling
-
- arch/arm64/include/asm/kvm_arm.h        |   8 ++
- arch/arm64/include/asm/kvm_host.h       |   5 ++
- arch/arm64/include/asm/vncr_mapping.h   |   2 +
- arch/arm64/kvm/emulate-nested.c         |  14 +++
- arch/arm64/kvm/hyp/include/hyp/switch.h |  10 +++
- arch/arm64/kvm/nested.c                 |  36 ++++++++
- arch/arm64/kvm/sys_regs.c               |  47 ++++++++++
- arch/arm64/tools/sysreg                 | 115 ++++++++++++++++++++++--
- 8 files changed, 232 insertions(+), 5 deletions(-)
-
+diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+index a4c1dd4741a4..b50dd7568c0d 100644
+--- a/arch/arm64/tools/sysreg
++++ b/arch/arm64/tools/sysreg
+@@ -1556,6 +1556,7 @@ EndEnum
+ UnsignedEnum	59:56	FGT
+ 	0b0000	NI
+ 	0b0001	IMP
++	0b0010	FGT2
+ EndEnum
+ Res0	55:48
+ UnsignedEnum	47:44	EXS
+@@ -1617,6 +1618,7 @@ Enum	3:0	PARANGE
+ 	0b0100	44
+ 	0b0101	48
+ 	0b0110	52
++	0b0111	56
+ EndEnum
+ EndSysreg
+ 
 -- 
 2.25.1
 
