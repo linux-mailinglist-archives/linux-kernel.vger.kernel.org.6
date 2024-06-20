@@ -1,87 +1,75 @@
-Return-Path: <linux-kernel+bounces-221931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFF9890FAC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:05:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B1E90FAC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 759EC2831C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:05:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9226B21E60
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5483212E78;
-	Thu, 20 Jun 2024 01:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD83CC2FC;
+	Thu, 20 Jun 2024 01:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="I5RqrGVT"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdoQK9oW"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B572D531
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A375B66F;
+	Thu, 20 Jun 2024 01:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718845531; cv=none; b=mpntsTc9VbpgTWeLRFbWzXdPPZoc4RdzWYZniVpTiKePc8eQbzpMAjpEeNvH9mauEuxCuk1mPW1s6Wv57w2zqoXqSULBJzii+iY16R9lZUzqChpAhcqEwOBng8xGpxuzRcG5B5v1HSi3uw6teF1vkDqYLU4hdz6X3ZT5aXvp2VE=
+	t=1718845573; cv=none; b=nW0Vuxo74QAkHrULLER8LDa8OkDlcYlu2xH3hQzrqGpLvJolS1qoQRoKvpeTVxMkHrVUxiMV9VckKhFL1Eoz2dzgvpGUwImS6S4bXPI5hHv84HRXItYBZTdoet1f4fQkPf5ifXeOLDTpxo7tnbdXLRrg+lxjua1Nk+gYhK+jdpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718845531; c=relaxed/simple;
-	bh=o+AtFRKSppPVchIcAIk8QIOiTYfGveuSXbYBE9byyqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YpIRj2OP24Qc4ccyC82+ZeQHBYxoIwNuJl2V8XEIfp4RloRwYstHJAFt8h22KCdtndShP79Mg+iolAf2DWv4vhY5Yp59CA0A/04m4GxcO+5QBpvMizL/swniawsMtBPHCL7n+q5JT9WlLpvy5uzJ3X5Zm29ukDRWL8l/BYJx3qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=I5RqrGVT; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7eee5740aceso10777439f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 18:05:29 -0700 (PDT)
+	s=arc-20240116; t=1718845573; c=relaxed/simple;
+	bh=XWYx27UmafWuFbWiTtsE4igQ4zUHPxoYRnZ6WZ8yrE0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pVXVb/2LrOrTW2OF5KNaeSIELY7muZ0chkAjey2AYTIUo0Yute4GbRqWTMNWWdKNa8qkWZh5IfskxOYh8MNmfpWk9zY3m05qDJDRHAz7lNBW/zcAU5uvosVRBStmnwp8iL8bDntPdP4iShNku0H58HoOJugt4CDpr2+/BMujZ+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bdoQK9oW; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-795a4fde8bfso26625685a.2;
+        Wed, 19 Jun 2024 18:06:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1718845529; x=1719450329; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qbSKc+TrggUrHTort2/p62nHWU+tnCEwH+LIOaDUnMY=;
-        b=I5RqrGVTQ1jV9PG8nwDy0sX5HXJia0KHbPxH1S8jzy4Q11HkoMx9CTZTtwHWnXKD/y
-         tfG5x18ua3/HXERRb13rzw7j+BYBtHQGgKuxHHfdlnLMPSpveqAN6UfKU/5gW73E14Na
-         dT9lpmGBfnYh+VWkf9lILUWvzeqq7WAy0gPruWl8JKULQhAk2upS9vvyTmzaUJMXtZx1
-         6RqUu16tYoKM+gUIrys8LB/aCBfz4Kjc71Ui/MYCUmYYTuJ2DeTmxepMYMxpvQumVDC0
-         V+UIVA8LqPrSvtGP/HYxaNE4M5CeFtrRMKyYVjUBmNw/XxSJGxVLnU+u6utOn++OtdWk
-         Tetw==
+        d=gmail.com; s=20230601; t=1718845569; x=1719450369; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6wpPiYeL2EwFNXkIhI80dJKwE6Zivlyp3bhXMwUhM+k=;
+        b=bdoQK9oWxLIZUOshMY/pQfvzot/HIXi81IHTTNja9wKKIZWcBxxZAIb3Y05wkE686p
+         Y5bZzuBbthM+3DAbmCPV9eUKncsgV+mymBD2SJ7nIdT6g4jO/GiBXAoV6bCRLxyCOYlu
+         3UTNzF+TOr4x0ANpkuVMnTgyt2v15oMt0gcUD/YEJvOp73scDae4ddNUZW61NHiOIN+j
+         ULaE/rF2lnA94iq76VUh6Ylw1ZwUS9QymPRyKdSknVz43tBW54Jm/8lSTeL9baho7shi
+         kGO/+vLB878Gogz0WRdN/c6zOnnGZMb736O5P0TJTuwQyi983vzvlQRmxr1FJvpWO9M1
+         tc4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718845529; x=1719450329;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qbSKc+TrggUrHTort2/p62nHWU+tnCEwH+LIOaDUnMY=;
-        b=ihzi3Ygvq75pnQtVFxJX9FiPogaf2+Toz0DJbTK5TuHdyqsm8YC7J9eSceqWeShw/3
-         UUevt0P75PDCaJ3GLuv2DmNFcwFILYdS4M5wuvd4ivugy+5U0T9p3s0IJY7tbaqYrzH7
-         wYFuS/SE2ClJZ5VQ70A/iYdFFQmMfFvAufqe94+WpsYhdvuVjjH7r1LZ1JzOIhbQNpOL
-         5feflRmcdlBxcERIo56xkNUALRhWTtbgYgrvvmegqdzmCYOGmuEVxQVa8w6oK2+6RvKi
-         ANcRqhmQfGfLxBvOtoNeocdp56RQUOmv2Yi0V+cs14UtYt42inHU2KJ2qDBAjqhKIbb6
-         h7EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnkKTx5ABIvbcFD8g4qDgnFaGv7fiklM5sCwmgo8qk9ie4aVGKvKK+WfcHbO5UWHiUd69C80C+tb9FGtM8L5BxYcMqmvfTKSpW2Ff2
-X-Gm-Message-State: AOJu0Yxd6Npp8Zxp84RotNsbu5KlbvJUh7HvSwuW6pq68ONNE7HyOjX3
-	d32XE9tLPFywIh4n9GtJcMIyPQDi7/9WxR0Cu+g6kQOUZl+FOmoaVwzyJJEA5ms=
-X-Google-Smtp-Source: AGHT+IFWukuy+yK0xWq0jQOureLprn4ZulWF8/CzRIJtzl9V0bK6pRZbTWtBrXeLa/MkYQC02Cg15g==
-X-Received: by 2002:a05:6602:6b84:b0:7eb:687f:66a5 with SMTP id ca18e2360f4ac-7f13ee8fc06mr435515539f.21.1718845529168;
-        Wed, 19 Jun 2024 18:05:29 -0700 (PDT)
-Received: from kf-XE ([2607:fb91:111c:4643:212e:5310:572e:1126])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7ebdb74cd1asm358910539f.0.2024.06.19.18.05.27
+        d=1e100.net; s=20230601; t=1718845569; x=1719450369;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6wpPiYeL2EwFNXkIhI80dJKwE6Zivlyp3bhXMwUhM+k=;
+        b=RWFJWiGFD0lbhxkbiD5n98O8X/HKboZhZYgvS2Z+8ANn7HJWTy6uyVy/JtCggQXVLQ
+         qC868dZ9sqs38CuhS7NX1cMcKGzvDTW7FGQevACqHYVzuPDodrZ9Q35OYU35oqaD9IfY
+         94BxK/p0yKH5Rk9CkK4wg5/dTBe4BdoNBtTUbNBsF+2R+rq0GGbHN4whNs3DW+Sq6c++
+         oInuQphOrZ0FD3ESYGaDrPQhybxDewnFoyDbDrHy2dzXxZ99r3ycLVi8414BqUkNn3mV
+         +UnOuGrUaCoELB6koj6zmMsJkSyITCHFnrI72hYJ0SF4vbyknYzKYLfmumEysNoV1nGo
+         bAcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhpKZOwuaksHgkqDxM13iWtZZmd/PUIzA7OoZwmVayuk32RAsCBLOWB/+4caHH3AniwlPDZpRnrDLUm+FEQaOn//d55DhNmrjOL3AkyxBnc+pUy+uMfFaoS/JE4buExAF4zpXDce6ztQ==
+X-Gm-Message-State: AOJu0Yy3+EtAkE1rhuD7cFZyEw2no19FWajM5cN0VG8I54mzjJ12Bzmh
+	TWERgMv0nWezFux1Hh5/7yFHZ9UlMPCVdbho0nzGx3xZOwU54EwVS8iwFw==
+X-Google-Smtp-Source: AGHT+IHxmI07umFiT7bdwV+BcXkVbeoc1xnI//JAyoBo+kUk0173ojfx7oRmFR4MUPRZhhFv9LGQ+A==
+X-Received: by 2002:a05:620a:2552:b0:79a:2613:9b40 with SMTP id af79cd13be357-79bb3ebe6c9mr461671185a.50.1718845569459;
+        Wed, 19 Jun 2024 18:06:09 -0700 (PDT)
+Received: from laptop (drmons0560w-142-163-86-219.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.163.86.219])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-798ab5b6df9sm649571685a.67.2024.06.19.18.06.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 18:05:28 -0700 (PDT)
-Date: Wed, 19 Jun 2024 20:05:25 -0500
-From: Aaron Rainbolt <arainbolt@kfocus.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lenb@kernel.org, mmikowski@kfocus.org, Perry.Yuan@amd.com,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH V3] acpi: Allow ignoring _OSC CPPC v2 bit via kernel
- parameter
-Message-ID: <ZnOAVWdBanvocb4D@kf-XE>
-References: <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com>
- <ZnJfmUXmU_tsb9pV@kf-XE>
- <CAJZ5v0gOBH7OKF3KXwxYfWkGkC45rzDguR4VmSnoZDKpm+KPSg@mail.gmail.com>
- <12457165.O9o76ZdvQC@rjwysocki.net>
- <ZnNQF0ussBRSAt1g@kf-XE>
- <ZnNZgxDaXoCqkkJq@kf-XE>
+        Wed, 19 Jun 2024 18:06:08 -0700 (PDT)
+Date: Wed, 19 Jun 2024 22:06:08 -0300
+From: Mark Watson <markus.c.watson@gmail.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: misc: axi-fifo: Add binding for AXI-Stream FIFO
+Message-ID: <ZnOAgM+zacF6u1x7@laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,50 +78,242 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZnNZgxDaXoCqkkJq@kf-XE>
 
-OK, we have done thorough benchmarking of the two patches. In summary,
-they both seem to provide exactly the same performance improvements.
-My initial worry that Rafael's patch didn't deliver the same performance
-improvements was unfounded.
+This resolves a checkpatch warning in drivers/staging/axis-fifo
+regarding a missing devie-tree binding. The full warning is included
+below.
 
-The following are the single-core and multi-core scores from running
-Geekbench 5 multiple times on a Carbon Systems Iridium 16 system. The
-first batch of tests was done with an Ubuntu kernel built with with my V3
-proposed patch, while the second batch was done with a kernel build with
-Rafael's proposed patch.
+WARNING: DT compatible string "xlnx,axi-fifo-mm-s-4.1" appears
+un-documented -- check ./Documentation/devicetree/bindings/
++       { .compatible = "xlnx,axi-fifo-mm-s-4.1", },
 
-Links to the Geekbench 5 reports can be shared if needed.
+Signed-off-by: Mark Watson <markus.c.watson@gmail.com>
+---
+ .../bindings/misc/xlnx,axi-fifo-mm-s-4.1.yaml | 214 ++++++++++++++++++
+ 1 file changed, 214 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s-4.1.yaml
 
-_OSC CPPC bit ignore patch (written by Aaron Rainbolt):
-Kernel parameter 'ignore_osc_cppc_bit' set in
-'/etc/default/grub.d/kfocus.cfg'.
-'/sys/devices/system/cpu/cpu*/acpi_cppc' and
-'/proc/sys/kernel/sched_itmt_enabled' both present
+diff --git a/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s-4.1.yaml b/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s-4.1.yaml
+new file mode 100644
+index 000000000000..cfb335752054
+--- /dev/null
++++ b/Documentation/devicetree/bindings/misc/xlnx,axi-fifo-mm-s-4.1.yaml
+@@ -0,0 +1,214 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/misc/xlnx,axi-fifo-mm-s-4.1.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Xilinx AXI-Stream FIFO v4.1 IP core
++
++description: |
++  The Xilinx AXI-Stream FIFO v4.1 IP core has read and write AXI-Stream FIFOs,
++  the contents of which can be accessed from the AXI4 memory-mapped interface.
++  This is useful for transferring data from a processor into the FPGA fabric.
++  The driver creates a character device that can be read/written to with
++  standard open/read/write/close operations.
++
++  See Xilinx PG080 document for IP details.
++
++  Currently supports only store-forward mode with a 32-bit AXI4-Lite
++  interface.
++
++  DOES NOT support:
++    - cut-through mode
++    - AXI4 (non-lite)
++
++properties:
++  compatible:
++    const: xlnx,axi-fifo-mm-s-4.1
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-names:
++    items:
++      - const: interrupt
++
++  interrupt-parent:
++    $ref: /schemas/types.yaml#/definitions/phandle
++
++  xlnx,axi-str-rxd-protocol:
++    const: XIL_AXI_STREAM_ETH_DATA
++
++  xlnx,axi-str-rxd-tdata-width:
++    const: 0x20
++
++  xlnx,axi-str-txc-protocol:
++    const: XIL_AXI_STREAM_ETH_CTRL
++
++  xlnx,axi-str-txc-tdata-width:
++    const: 0x20
++
++  xlnx,axi-str-txd-protocol:
++    const: XIL_AXI_STREAM_ETH_DATA
++
++  xlnx,axi-str-txd-tdata-width:
++    const: 0x20
++
++  xlnx,axis-tdest-width:
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  xlnx,axis-tid-width:
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  xlnx,axis-tuser-width:
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  xlnx,data-interface-type:
++    const: 0x0
++
++  xlnx,has-axis-tdest:
++    const: 0x0
++
++  xlnx,has-axis-tid:
++    const: 0x0
++
++  xlnx,has-axis-tkeep:
++    const: 0x1
++
++  xlnx,has-axis-tstrb:
++    const: 0x0
++
++  xlnx,has-axis-tuser:
++    const: 0x0
++
++  xlnx,rx-fifo-depth:
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  xlnx,rx-fifo-pe-threshold:
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  xlnx,rx-fifo-pf-threshold:
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  xlnx,s-axi-id-width:
++    const: 0x4
++
++  xlnx,s-axi4-data-width:
++    const: 0x20
++
++  xlnx,select-xpm:
++    const: 0x0
++
++  xlnx,tx-fifo-depth:
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  xlnx,tx-fifo-pe-threshold:
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  xlnx,tx-fifo-pf-threshold:
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  xlnx,use-rx-cut-through:
++    const: 0x0
++
++  xlnx,use-rx-data:
++    const: 0x1
++
++  xlnx,use-tx-ctrl:
++    const: 0x0
++
++  xlnx,use-tx-cut-through:
++    const: 0x0
++
++  xlnx,use-tx-data:
++    const: 0x1
++
++  xlnx,tx-max-pkt-size:
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  xlnx,rx-min-pkt-size:
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - interrupt-parent
++  - xlnx,axi-str-rxd-protocol
++  - xlnx,axi-str-rxd-tdata-width
++  - xlnx,axi-str-txc-protocol
++  - xlnx,axi-str-txc-tdata-width
++  - xlnx,axi-str-txd-protocol
++  - xlnx,axi-str-txd-tdata-width
++  - xlnx,axis-tdest-width
++  - xlnx,axis-tid-width
++  - xlnx,axis-tuser-width
++  - xlnx,data-interface-type
++  - xlnx,has-axis-tdest
++  - xlnx,has-axis-tid
++  - xlnx,has-axis-tkeep
++  - xlnx,has-axis-tstrb
++  - xlnx,has-axis-tuser
++  - xlnx,rx-fifo-depth
++  - xlnx,rx-fifo-pe-threshold
++  - xlnx,rx-fifo-pf-threshold
++  - xlnx,s-axi-id-width
++  - xlnx,s-axi4-data-width
++  - xlnx,select-xpm
++  - xlnx,tx-fifo-depth
++  - xlnx,tx-fifo-pe-threshold
++  - xlnx,tx-fifo-pf-threshold
++  - xlnx,use-rx-cut-through
++  - xlnx,use-rx-data
++  - xlnx,use-tx-ctrl
++  - xlnx,use-tx-cut-through
++  - xlnx,use-tx-data
++  - xlnx,tx-max-pkt-size
++  - xlnx,rx-min-pkt-size
++
++additionalProperties: false
++
++examples:
++  - |
++    axi_fifo_mm_s_0: axi_fifo_mm_s@43c00000 {
++      compatible = "xlnx,axi-fifo-mm-s-4.1";
++      interrupt-names = "interrupt";
++      interrupt-parent = <&intc>;
++      interrupts = <0 29 4>;
++      reg = <0x43c00000 0x10000>;
++      xlnx,axi-str-rxd-protocol = "XIL_AXI_STREAM_ETH_DATA";
++      xlnx,axi-str-rxd-tdata-width = <0x20>;
++      xlnx,axi-str-txc-protocol = "XIL_AXI_STREAM_ETH_CTRL";
++      xlnx,axi-str-txc-tdata-width = <0x20>;
++      xlnx,axi-str-txd-protocol = "XIL_AXI_STREAM_ETH_DATA";
++      xlnx,axi-str-txd-tdata-width = <0x20>;
++      xlnx,axis-tdest-width = <0x4>;
++      xlnx,axis-tid-width = <0x4>;
++      xlnx,axis-tuser-width = <0x4>;
++      xlnx,data-interface-type = <0x0>;
++      xlnx,has-axis-tdest = <0x0>;
++      xlnx,has-axis-tid = <0x0>;
++      xlnx,has-axis-tkeep = <0x1>;
++      xlnx,has-axis-tstrb = <0x0>;
++      xlnx,has-axis-tuser = <0x0>;
++      xlnx,rx-fifo-depth = <0x200>;
++      xlnx,rx-fifo-pe-threshold = <0x2>;
++      xlnx,rx-fifo-pf-threshold = <0x1fb>;
++      xlnx,s-axi-id-width = <0x4>;
++      xlnx,s-axi4-data-width = <0x20>;
++      xlnx,select-xpm = <0x0>;
++      xlnx,tx-fifo-depth = <0x8000>;
++      xlnx,tx-fifo-pe-threshold = <0x200>;
++      xlnx,tx-fifo-pf-threshold = <0x7ffb>;
++      xlnx,use-rx-cut-through = <0x0>;
++      xlnx,use-rx-data = <0x0>;
++      xlnx,use-tx-ctrl = <0x0>;
++      xlnx,use-tx-cut-through = <0x0>;
++      xlnx,use-tx-data = <0x1>;
++      xlnx,tx-max-pkt-size = <257>;
++      xlnx,rx-min-pkt-size = <255>;
++    };
+-- 
+2.34.1
 
-| Run | Single | Multi  |
-| --- | ------ | ------ |
-|  01 |   1874 |  10475 |
-|  02 |   1831 |  10132 |
-|  03 |   1858 |  10348 |
-|  04 |   1848 |  10370 |
-|  05 |   1831 |  10413 |
-| --- | ------ | ------ |
-| AVG |   1848 |  10348 |
-
-
-intel_pstate CPPC override patch (written by Rafael Wysocki):
-No special kernel parameters set.
-'/sys/devices/system/cpu/cpu*/acpi_cppc' ABSENT,
-'/proc/sys/kernel/sched_itmt_enabled' present
-
-| Run | Single | Multi  |
-| --- | ------ | ------ |
-|  01 |   1820 |  10310 |
-|  02 |   1870 |  10303 |
-|  03 |   1867 |  10420 |
-|  04 |   1844 |  10283 |
-|  05 |   1835 |  10451 |
-| --- | ------ | ------ |
-| AVG |   1847 |  10353 |
 
