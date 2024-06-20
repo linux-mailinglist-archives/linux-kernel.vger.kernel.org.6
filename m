@@ -1,263 +1,415 @@
-Return-Path: <linux-kernel+bounces-222190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0C0490FE0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:53:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7359790FE0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 875782858A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:53:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAE1AB24B9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB1B4CDE0;
-	Thu, 20 Jun 2024 07:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D424F5579F;
+	Thu, 20 Jun 2024 07:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="laXTw2uy";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="laXTw2uy"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aTp0faAw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAF11803A
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4334454FA9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718869986; cv=none; b=TNtyKZD6vQJgzqnLwQcH3y9Pf92O1U9uMCw4XBy1AWJil1V/dVozeL1TPQDSci0Cm15oWjvsbxMM/EhKBFBrcADCcwWPLfCZbx1LMXSbn9j/nQsV/Y6Zf8Q+CxVCiJZHJhdBNTnQclnbxp4/8i22+3tyLZ3u6H4gYoxC3waUPS4=
+	t=1718870027; cv=none; b=FFUrXyloFph/Qn58cePeZg/Nt5H2et27Pj6sF/JvzZ1rNQXT7JdMlqJyEoCSEkFD0SpjhxXXwg7TvbXNBWtWvtMIoTy3Vh8kzyX2COStOpHnyi1AvgMMxEOQ0nGxlERROwQdF2gGTv4hfebWjaoAqr9dsQBRKLT5pXBaruAacd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718869986; c=relaxed/simple;
-	bh=2Lx3fb2qM0HSVlO5lsSa5ng+qNH+zf/aS95u8UrovtA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dbio9UVLybQsFHtdkBpHf4NN4eIftXeiofr9PAk+CYAD87Pu7B97bLDmdPdv7DM8pjPguTFCmASEKRIWMSSSmUVANn2mb8qEjEZR4Nd58Bo86lcBfjxpgWlmzMCRepCLP3inXA2GbLOqsUYkZJCIjpCZVXSyEtAGDCTLmv3QTCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=laXTw2uy; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=laXTw2uy; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2B3A71F7DF;
-	Thu, 20 Jun 2024 07:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718869983; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2Lx3fb2qM0HSVlO5lsSa5ng+qNH+zf/aS95u8UrovtA=;
-	b=laXTw2uygLkQi18KaiwSPi/C648zqUtlFvXfvNG4joHt3sOGYkhVV49oIt5JluecXoPttw
-	Y79FOMnwh6QnfIq9aFyPksjoahd4+ZXHJ3FRMxa2E0kwCfmZVfuwPGjX9HgHwwSzY+Ivz6
-	86XwyBJhr5Vfxb6S9fz7uc++59Ha0s4=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1718869983; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2Lx3fb2qM0HSVlO5lsSa5ng+qNH+zf/aS95u8UrovtA=;
-	b=laXTw2uygLkQi18KaiwSPi/C648zqUtlFvXfvNG4joHt3sOGYkhVV49oIt5JluecXoPttw
-	Y79FOMnwh6QnfIq9aFyPksjoahd4+ZXHJ3FRMxa2E0kwCfmZVfuwPGjX9HgHwwSzY+Ivz6
-	86XwyBJhr5Vfxb6S9fz7uc++59Ha0s4=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 00A7A13AC1;
-	Thu, 20 Jun 2024 07:53:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZmrTOd7fc2avVQAAD6G6ig
-	(envelope-from <jgross@suse.com>); Thu, 20 Jun 2024 07:53:02 +0000
-Message-ID: <769040d1-fc9c-47a7-a4b5-93c693472624@suse.com>
-Date: Thu, 20 Jun 2024 09:53:02 +0200
+	s=arc-20240116; t=1718870027; c=relaxed/simple;
+	bh=egP8PfsmkXE0b5YHhCEEg93oJxAOxwrcE17xLU9yMQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=vBG9HhWJId4kqiqQ4XyJgTqWA+uJH4LoGfJY1+WdQygfLR4o7m6pbQyfRZwBah0cLB3YiBw0sTCWtVQBIem19N8ZgpjiUjtK5s+xGm4L81IaxrSn0UhAxOZdWoJRsO1nOKGnd7EcXgvREHfB/cO9xhEyBfUWoZSny4Ec3SpDroI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aTp0faAw; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718870025; x=1750406025;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=egP8PfsmkXE0b5YHhCEEg93oJxAOxwrcE17xLU9yMQ4=;
+  b=aTp0faAwgWqHokXbdY6r92lKbu3v3LGRySMonlAClEm6KCWG0hGheVgb
+   dC4epnhk9XW4n2Q4A4Q6VCBYdYWFUM8NzAi1Bqskc8BLSYtdf8kS2Qrd+
+   eMKohzBmH4cEmQ5sbGpSGlYYIEzHxB7f1un7Ct0CLE9ZneS6qHnTPFtZL
+   y0J4xPua8VV0t79ZaMywLf/h115gLRk7CjJIULn3NbF6ErU6BdF4lW6GN
+   D2Qnr1cL4GucpQAMqCpQOaecLhIgx/TCHjTPc4vjuir/RLmtQ/IPMXKHb
+   idLt78W3kwvbYgb+DZzoXDaGzxzKvEcFJAAQMeij5Oa13HLRUJj+LI0Re
+   A==;
+X-CSE-ConnectionGUID: GN8wvpBQRtec/gEi5Yzj0A==
+X-CSE-MsgGUID: oExu2IuQQG69iu87Vf/ZGA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="15541598"
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="15541598"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 00:53:45 -0700
+X-CSE-ConnectionGUID: ZsUpqSfCQoyZFpdXws+4XQ==
+X-CSE-MsgGUID: mAy14uA4RhWRb3/Ww1ECnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="46613628"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 20 Jun 2024 00:53:42 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sKCc0-0007Qb-2F;
+	Thu, 20 Jun 2024 07:53:40 +0000
+Date: Thu, 20 Jun 2024 15:53:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>
+Subject: kernel/kcov.c:635:32: error: 'KCOV_MODE_REMOTE' undeclared
+Message-ID: <202406201538.SMBucNWT-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: CVE-2021-47573: xen/blkfront: harden blkfront against event
- channel storms
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "security@xenproject.org" <security@xenproject.org>
-References: <2024061911-CVE-2021-47573-5c43@gregkh>
-Content-Language: en-US
-From: Juergen Gross <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <2024061911-CVE-2021-47573-5c43@gregkh>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------j3hN9eeATgtjVffEXelPx0kI"
-X-Spam-Score: -0.81
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-0.81 / 50.00];
-	NEURAL_SPAM_LONG(3.36)[0.959];
-	BAYES_HAM(-3.00)[99.99%];
-	SIGNED_PGP(-2.00)[];
-	MIME_BASE64_TEXT_BOGUS(1.00)[];
-	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
-	NEURAL_HAM_SHORT(-0.18)[-0.907];
-	MIME_BASE64_TEXT(0.10)[];
-	MIME_UNKNOWN(0.10)[application/pgp-keys];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
-	RCPT_COUNT_THREE(0.00)[4];
-	HAS_ATTACHMENT(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------j3hN9eeATgtjVffEXelPx0kI
-Content-Type: multipart/mixed; boundary="------------VKkVo3g0zsLHMhHvm5zxVSUf";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "security@xenproject.org" <security@xenproject.org>
-Message-ID: <769040d1-fc9c-47a7-a4b5-93c693472624@suse.com>
-Subject: Re: CVE-2021-47573: xen/blkfront: harden blkfront against event
- channel storms
-References: <2024061911-CVE-2021-47573-5c43@gregkh>
-In-Reply-To: <2024061911-CVE-2021-47573-5c43@gregkh>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e5b3efbe1ab1793bb49ae07d56d0973267e65112
+commit: 01c8f9806bde438ca1c8cbbc439f0a14a6694f6c kcov: don't lose track of remote references during softirqs
+date:   5 days ago
+config: x86_64-randconfig-014-20240202 (https://download.01.org/0day-ci/archive/20240620/202406201538.SMBucNWT-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240620/202406201538.SMBucNWT-lkp@intel.com/reproduce)
 
---------------VKkVo3g0zsLHMhHvm5zxVSUf
-Content-Type: multipart/mixed; boundary="------------jFH8UU63r1614VFZ7n0U0DHm"
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406201538.SMBucNWT-lkp@intel.com/
 
---------------jFH8UU63r1614VFZ7n0U0DHm
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+All errors (new ones prefixed by >>):
 
-T24gMTkuMDYuMjQgMTY6NTQsIEdyZWcgS3JvYWgtSGFydG1hbiB3cm90ZToNCj4gRGVzY3Jp
-cHRpb24NCj4gPT09PT09PT09PT0NCj4gDQo+IEluIHRoZSBMaW51eCBrZXJuZWwsIHRoZSBm
-b2xsb3dpbmcgdnVsbmVyYWJpbGl0eSBoYXMgYmVlbiByZXNvbHZlZDoNCj4gDQo+IHhlbi9i
-bGtmcm9udDogaGFyZGVuIGJsa2Zyb250IGFnYWluc3QgZXZlbnQgY2hhbm5lbCBzdG9ybXMN
-Cj4gDQo+IFRoZSBYZW4gYmxrZnJvbnQgZHJpdmVyIGlzIHN0aWxsIHZ1bG5lcmFibGUgZm9y
-IGFuIGF0dGFjayB2aWEgZXhjZXNzaXZlDQo+IG51bWJlciBvZiBldmVudHMgc2VudCBieSB0
-aGUgYmFja2VuZC4gRml4IHRoYXQgYnkgdXNpbmcgbGF0ZWVvaSBldmVudA0KPiBjaGFubmVs
-cy4NCj4gDQo+IFRoaXMgaXMgcGFydCBvZiBYU0EtMzkxDQo+IA0KPiBUaGUgTGludXgga2Vy
-bmVsIENWRSB0ZWFtIGhhcyBhc3NpZ25lZCBDVkUtMjAyMS00NzU3MyB0byB0aGlzIGlzc3Vl
-Lg0KDQpXaGVuIGlzc3VpbmcgWFNBLTM5MSB0aGUgWGVuIHNlY3VyaXR5IHRlYW0gYWxyZWFk
-eSBhc3NpZ25lZCBDVkUtMjAyMS0yODcxMQ0KdG8gdGhpcyBpc3N1ZS4NCg0KDQpKdWVyZ2Vu
-DQo=
---------------jFH8UU63r1614VFZ7n0U0DHm
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+         |                     ^~
+   include/asm-generic/rwonce.h:55:27: note: in definition of macro '__WRITE_ONCE'
+      55 |         *(volatile typeof(x) *)&(x) = (val);                            \
+         |                           ^
+   kernel/kcov.c:363:9: note: in expansion of macro 'WRITE_ONCE'
+     363 |         WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
+         |         ^~~~~~~~~~
+   kernel/kcov.c:363:21: error: 'struct task_struct' has no member named 'kcov_mode'
+     363 |         WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
+         |                     ^~
+   include/asm-generic/rwonce.h:55:34: note: in definition of macro '__WRITE_ONCE'
+      55 |         *(volatile typeof(x) *)&(x) = (val);                            \
+         |                                  ^
+   kernel/kcov.c:363:9: note: in expansion of macro 'WRITE_ONCE'
+     363 |         WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
+         |         ^~~~~~~~~~
+   kernel/kcov.c:363:34: error: 'KCOV_MODE_DISABLED' undeclared (first use in this function); did you mean 'KCOV_DISABLE'?
+     363 |         WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
+         |                                  ^~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:55:40: note: in definition of macro '__WRITE_ONCE'
+      55 |         *(volatile typeof(x) *)&(x) = (val);                            \
+         |                                        ^~~
+   kernel/kcov.c:363:9: note: in expansion of macro 'WRITE_ONCE'
+     363 |         WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
+         |         ^~~~~~~~~~
+   kernel/kcov.c:365:10: error: 'struct task_struct' has no member named 'kcov'
+     365 |         t->kcov = NULL;
+         |          ^~
+   kernel/kcov.c:366:10: error: 'struct task_struct' has no member named 'kcov_size'
+     366 |         t->kcov_size = 0;
+         |          ^~
+   kernel/kcov.c:367:10: error: 'struct task_struct' has no member named 'kcov_area'
+     367 |         t->kcov_area = NULL;
+         |          ^~
+   kernel/kcov.c: In function 'kcov_task_reset':
+   kernel/kcov.c:373:10: error: 'struct task_struct' has no member named 'kcov_sequence'
+     373 |         t->kcov_sequence = 0;
+         |          ^~
+   kernel/kcov.c:374:10: error: 'struct task_struct' has no member named 'kcov_handle'
+     374 |         t->kcov_handle = 0;
+         |          ^~
+   kernel/kcov.c: At top level:
+   kernel/kcov.c:377:6: error: redefinition of 'kcov_task_init'
+     377 | void kcov_task_init(struct task_struct *t)
+         |      ^~~~~~~~~~~~~~
+   In file included from kernel/kcov.c:24:
+   include/linux/kcov.h:96:20: note: previous definition of 'kcov_task_init' with type 'void(struct task_struct *)'
+      96 | static inline void kcov_task_init(struct task_struct *t) {}
+         |                    ^~~~~~~~~~~~~~
+   kernel/kcov.c: In function 'kcov_task_init':
+   kernel/kcov.c:380:10: error: 'struct task_struct' has no member named 'kcov_handle'
+     380 |         t->kcov_handle = current->kcov_handle;
+         |          ^~
+   kernel/kcov.c:380:33: error: 'struct task_struct' has no member named 'kcov_handle'
+     380 |         t->kcov_handle = current->kcov_handle;
+         |                                 ^~
+   kernel/kcov.c: In function 'kcov_reset':
+   kernel/kcov.c:386:22: error: 'KCOV_MODE_INIT' undeclared (first use in this function)
+     386 |         kcov->mode = KCOV_MODE_INIT;
+         |                      ^~~~~~~~~~~~~~
+   kernel/kcov.c: At top level:
+   kernel/kcov.c:434:6: error: redefinition of 'kcov_task_exit'
+     434 | void kcov_task_exit(struct task_struct *t)
+         |      ^~~~~~~~~~~~~~
+   include/linux/kcov.h:97:20: note: previous definition of 'kcov_task_exit' with type 'void(struct task_struct *)'
+      97 | static inline void kcov_task_exit(struct task_struct *t) {}
+         |                    ^~~~~~~~~~~~~~
+   kernel/kcov.c: In function 'kcov_task_exit':
+   kernel/kcov.c:439:17: error: 'struct task_struct' has no member named 'kcov'
+     439 |         kcov = t->kcov;
+         |                 ^~
+   kernel/kcov.c: In function 'kcov_open':
+   kernel/kcov.c:515:22: error: 'KCOV_MODE_DISABLED' undeclared (first use in this function); did you mean 'KCOV_DISABLE'?
+     515 |         kcov->mode = KCOV_MODE_DISABLED;
+         |                      ^~~~~~~~~~~~~~~~~~
+         |                      KCOV_DISABLE
+   kernel/kcov.c: In function 'kcov_get_mode':
+   kernel/kcov.c:532:24: error: 'KCOV_MODE_TRACE_PC' undeclared (first use in this function); did you mean 'KCOV_TRACE_PC'?
+     532 |                 return KCOV_MODE_TRACE_PC;
+         |                        ^~~~~~~~~~~~~~~~~~
+         |                        KCOV_TRACE_PC
+   kernel/kcov.c: In function 'kcov_ioctl_locked':
+   kernel/kcov.c:593:35: error: 'KCOV_MODE_INIT' undeclared (first use in this function)
+     593 |                 if (kcov->mode != KCOV_MODE_INIT || !kcov->area)
+         |                                   ^~~~~~~~~~~~~~
+   kernel/kcov.c:596:41: error: 'struct task_struct' has no member named 'kcov'
+     596 |                 if (kcov->t != NULL || t->kcov != NULL)
+         |                                         ^~
+   kernel/kcov.c:612:43: error: 'struct task_struct' has no member named 'kcov'
+     612 |                 if (unused != 0 || current->kcov != kcov)
+         |                                           ^~
+   kernel/kcov.c:624:41: error: 'struct task_struct' has no member named 'kcov'
+     624 |                 if (kcov->t != NULL || t->kcov != NULL)
+         |                                         ^~
+   kernel/kcov.c:634:18: error: 'struct task_struct' has no member named 'kcov'
+     634 |                 t->kcov = kcov;
+         |                  ^~
+   kernel/kcov.c:635:18: error: 'struct task_struct' has no member named 'kcov_mode'
+     635 |                 t->kcov_mode = KCOV_MODE_REMOTE;
+         |                  ^~
+>> kernel/kcov.c:635:32: error: 'KCOV_MODE_REMOTE' undeclared (first use in this function)
+     635 |                 t->kcov_mode = KCOV_MODE_REMOTE;
+         |                                ^~~~~~~~~~~~~~~~
+   kernel/kcov.c:672:26: error: 'struct task_struct' has no member named 'kcov_handle'
+     672 |                         t->kcov_handle = remote_arg->common_handle;
+         |                          ^~
+   kernel/kcov.c: In function 'kcov_ioctl':
+   kernel/kcov.c:710:35: error: 'KCOV_MODE_DISABLED' undeclared (first use in this function); did you mean 'KCOV_DISABLE'?
+     710 |                 if (kcov->mode != KCOV_MODE_DISABLED) {
+         |                                   ^~~~~~~~~~~~~~~~~~
+         |                                   KCOV_DISABLE
+   kernel/kcov.c:717:30: error: 'KCOV_MODE_INIT' undeclared (first use in this function)
+     717 |                 kcov->mode = KCOV_MODE_INIT;
+         |                              ^~~~~~~~~~~~~~
+   kernel/kcov.c: In function 'kcov_mode_enabled':
+   kernel/kcov.c:803:25: error: 'KCOV_IN_CTXSW' undeclared (first use in this function)
+     803 |         return (mode & ~KCOV_IN_CTXSW) != KCOV_MODE_DISABLED;
+         |                         ^~~~~~~~~~~~~
+   kernel/kcov.c:803:43: error: 'KCOV_MODE_DISABLED' undeclared (first use in this function); did you mean 'KCOV_DISABLE'?
+     803 |         return (mode & ~KCOV_IN_CTXSW) != KCOV_MODE_DISABLED;
+         |                                           ^~~~~~~~~~~~~~~~~~
+         |                                           KCOV_DISABLE
+   kernel/kcov.c: In function 'kcov_remote_softirq_start':
+   kernel/kcov.c:811:27: error: 'struct task_struct' has no member named 'kcov_mode'
+     811 |         mode = READ_ONCE(t->kcov_mode);
+         |                           ^~
+   include/linux/compiler_types.h:467:23: note: in definition of macro '__compiletime_assert'
+     467 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:487:9: note: in expansion of macro '_compiletime_assert'
+     487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |                            ^~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
+      49 |         compiletime_assert_rwonce_type(x);                              \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   kernel/kcov.c:811:16: note: in expansion of macro 'READ_ONCE'
+     811 |         mode = READ_ONCE(t->kcov_mode);
+         |                ^~~~~~~~~
+   kernel/kcov.c:811:27: error: 'struct task_struct' has no member named 'kcov_mode'
+     811 |         mode = READ_ONCE(t->kcov_mode);
+         |                           ^~
+   include/linux/compiler_types.h:467:23: note: in definition of macro '__compiletime_assert'
+     467 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:487:9: note: in expansion of macro '_compiletime_assert'
+     487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |                            ^~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
+      49 |         compiletime_assert_rwonce_type(x);                              \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   kernel/kcov.c:811:16: note: in expansion of macro 'READ_ONCE'
+     811 |         mode = READ_ONCE(t->kcov_mode);
+         |                ^~~~~~~~~
+   kernel/kcov.c:811:27: error: 'struct task_struct' has no member named 'kcov_mode'
+     811 |         mode = READ_ONCE(t->kcov_mode);
+         |                           ^~
+   include/linux/compiler_types.h:467:23: note: in definition of macro '__compiletime_assert'
+     467 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:487:9: note: in expansion of macro '_compiletime_assert'
+     487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |                            ^~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
+      49 |         compiletime_assert_rwonce_type(x);                              \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   kernel/kcov.c:811:16: note: in expansion of macro 'READ_ONCE'
+     811 |         mode = READ_ONCE(t->kcov_mode);
+         |                ^~~~~~~~~
+   kernel/kcov.c:811:27: error: 'struct task_struct' has no member named 'kcov_mode'
+     811 |         mode = READ_ONCE(t->kcov_mode);
+         |                           ^~
+   include/linux/compiler_types.h:467:23: note: in definition of macro '__compiletime_assert'
+     467 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:487:9: note: in expansion of macro '_compiletime_assert'
+     487 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |                            ^~~~~~~~~~~~~
 
------BEGIN PGP PUBLIC KEY BLOCK-----
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+vim +/KCOV_MODE_REMOTE +635 kernel/kcov.c
 
---------------jFH8UU63r1614VFZ7n0U0DHm--
+   574	
+   575	static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+   576				     unsigned long arg)
+   577	{
+   578		struct task_struct *t;
+   579		unsigned long flags, unused;
+   580		int mode, i;
+   581		struct kcov_remote_arg *remote_arg;
+   582		struct kcov_remote *remote;
+   583	
+   584		switch (cmd) {
+   585		case KCOV_ENABLE:
+   586			/*
+   587			 * Enable coverage for the current task.
+   588			 * At this point user must have been enabled trace mode,
+   589			 * and mmapped the file. Coverage collection is disabled only
+   590			 * at task exit or voluntary by KCOV_DISABLE. After that it can
+   591			 * be enabled for another task.
+   592			 */
+   593			if (kcov->mode != KCOV_MODE_INIT || !kcov->area)
+   594				return -EINVAL;
+   595			t = current;
+   596			if (kcov->t != NULL || t->kcov != NULL)
+   597				return -EBUSY;
+   598			mode = kcov_get_mode(arg);
+   599			if (mode < 0)
+   600				return mode;
+   601			kcov_fault_in_area(kcov);
+   602			kcov->mode = mode;
+   603			kcov_start(t, kcov, kcov->size, kcov->area, kcov->mode,
+   604					kcov->sequence);
+   605			kcov->t = t;
+   606			/* Put either in kcov_task_exit() or in KCOV_DISABLE. */
+   607			kcov_get(kcov);
+   608			return 0;
+   609		case KCOV_DISABLE:
+   610			/* Disable coverage for the current task. */
+   611			unused = arg;
+   612			if (unused != 0 || current->kcov != kcov)
+   613				return -EINVAL;
+   614			t = current;
+   615			if (WARN_ON(kcov->t != t))
+   616				return -EINVAL;
+   617			kcov_disable(t, kcov);
+   618			kcov_put(kcov);
+   619			return 0;
+   620		case KCOV_REMOTE_ENABLE:
+   621			if (kcov->mode != KCOV_MODE_INIT || !kcov->area)
+   622				return -EINVAL;
+   623			t = current;
+   624			if (kcov->t != NULL || t->kcov != NULL)
+   625				return -EBUSY;
+   626			remote_arg = (struct kcov_remote_arg *)arg;
+   627			mode = kcov_get_mode(remote_arg->trace_mode);
+   628			if (mode < 0)
+   629				return mode;
+   630			if ((unsigned long)remote_arg->area_size >
+   631			    LONG_MAX / sizeof(unsigned long))
+   632				return -EINVAL;
+   633			kcov->mode = mode;
+   634			t->kcov = kcov;
+ > 635		        t->kcov_mode = KCOV_MODE_REMOTE;
+   636			kcov->t = t;
+   637			kcov->remote = true;
+   638			kcov->remote_size = remote_arg->area_size;
+   639			spin_lock_irqsave(&kcov_remote_lock, flags);
+   640			for (i = 0; i < remote_arg->num_handles; i++) {
+   641				if (!kcov_check_handle(remote_arg->handles[i],
+   642							false, true, false)) {
+   643					spin_unlock_irqrestore(&kcov_remote_lock,
+   644								flags);
+   645					kcov_disable(t, kcov);
+   646					return -EINVAL;
+   647				}
+   648				remote = kcov_remote_add(kcov, remote_arg->handles[i]);
+   649				if (IS_ERR(remote)) {
+   650					spin_unlock_irqrestore(&kcov_remote_lock,
+   651								flags);
+   652					kcov_disable(t, kcov);
+   653					return PTR_ERR(remote);
+   654				}
+   655			}
+   656			if (remote_arg->common_handle) {
+   657				if (!kcov_check_handle(remote_arg->common_handle,
+   658							true, false, false)) {
+   659					spin_unlock_irqrestore(&kcov_remote_lock,
+   660								flags);
+   661					kcov_disable(t, kcov);
+   662					return -EINVAL;
+   663				}
+   664				remote = kcov_remote_add(kcov,
+   665						remote_arg->common_handle);
+   666				if (IS_ERR(remote)) {
+   667					spin_unlock_irqrestore(&kcov_remote_lock,
+   668								flags);
+   669					kcov_disable(t, kcov);
+   670					return PTR_ERR(remote);
+   671				}
+   672				t->kcov_handle = remote_arg->common_handle;
+   673			}
+   674			spin_unlock_irqrestore(&kcov_remote_lock, flags);
+   675			/* Put either in kcov_task_exit() or in KCOV_DISABLE. */
+   676			kcov_get(kcov);
+   677			return 0;
+   678		default:
+   679			return -ENOTTY;
+   680		}
+   681	}
+   682	
 
---------------VKkVo3g0zsLHMhHvm5zxVSUf--
-
---------------j3hN9eeATgtjVffEXelPx0kI
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmZz394FAwAAAAAACgkQsN6d1ii/Ey9e
-3gf+P0j8uNSesWyZymiHizgcQy2msXtluAhtkvHi2qRV9Gfqw7gYcABSmigX5q3IpsRjCG5EdQhd
-N7vFvpm8TWUUD+yjuw1vZYoGLP7W4GmW9HhVADtTzDMNtlsMvtgTvHwKn1MXluSfwIz/HEnW/N6f
-feyjt0fcB79iXlxU1BIcYIm/FngHrPcvKxfpFitOT1wfo4Q2efzIq+bUVaxtngVpF15XFWRHRIk/
-O4GuIPITa41yLjDmdY5jBCpAC0Yslf+Dge6wmvqMfuphsY3OwqiT5XAcZ3xCfgj96olaEJIm8LID
-jQ2P14JLX3k6BMh7JI87iQeMSlZmZ1r2n49kzV+MXg==
-=LrLh
------END PGP SIGNATURE-----
-
---------------j3hN9eeATgtjVffEXelPx0kI--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
