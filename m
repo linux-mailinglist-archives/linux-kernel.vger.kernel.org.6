@@ -1,245 +1,289 @@
-Return-Path: <linux-kernel+bounces-222323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C52190FFAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:57:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F2B490FFA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA81D1F210CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 686221C2150E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C394619DF8A;
-	Thu, 20 Jun 2024 08:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149E31AB340;
+	Thu, 20 Jun 2024 08:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="BZf2uBSZ"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F282C2D05D;
-	Thu, 20 Jun 2024 08:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gUexj9wG"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33CC1A8C2C;
+	Thu, 20 Jun 2024 08:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718873711; cv=none; b=hHb3gnO8ky92uN3dIJLGYaytf0G/6wyC0EzIef88UoyUtbsYQ0c3uazFABvcQGP83k4yidlm7b1uDyV72WXXCfSsfplOa7Iv8suCcFkdwWs0wjk86BPz2sqVENRRj8e0KQTLn3qBZ7Wbby0m3LvknjKGwQTwAKnlLDYgNZcHYqU=
+	t=1718873564; cv=none; b=ZQFZS4/s+lGLK8trPCJnhGccXrIkmHjiGto8kaTyNjB/Ge4G1MHsiKHxaU6s8WvR6z6z5HD9wkufUiaOWkPI8jWip9cxFHcnRUTVVBqhlZhdOQZzV2rSCk7ggmx9TtTEPScbGn1bG5zT324vCaLrwBE5ys/7Attwd6wvyda6J50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718873711; c=relaxed/simple;
-	bh=Zte5JUNqWfYMzsUShAtYW3hHHTnmNIinQoLo7kExpMU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GtG8cK/C837sqeZR9DdBToo5bUxPY0cjCoEksrJQHobg3k0/KSElqTibHDw6deFgkFBsCpwSqVhOu85WJIySs4KeHfdrf/6933qPlYTQKfWFV/Kb56xUpVktEOxr+46FpNuNJuWD0JlS2kffBXODINI/Vq/KHRUQ7nqh/MSCiiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=BZf2uBSZ; arc=none smtp.client-ip=45.254.50.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=f4H86
-	bcCOfTgkY5Xt2BTUJ/8giKcEdQStQuqAfO5dp8=; b=BZf2uBSZXrBHtEgFYvLkO
-	nVgboCNiFOQHEnRh0IDaI9uvdRMjLNQRHr8wVn0h5+NMF24f7KjCdhpH9rrf/AnX
-	1tqNoUnjJhEphMmmFo5UUhejiLXjck4cBmhG65OLhIU0cXTLnqFs4nRoKi7uaUUE
-	c0+AOWFqk9kJPXT6Hy66Rg=
-Received: from localhost (unknown [101.132.132.191])
-	by gzga-smtp-mta-g0-4 (Coremail) with SMTP id _____wDn5JjV7XNmrecAJA--.9351S2;
-	Thu, 20 Jun 2024 16:52:38 +0800 (CST)
-From: Xavier <xavier_qy@163.com>
-To: longman@redhat.com,
-	mkoutny@suse.com
-Cc: lizefan.x@bytedance.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xavier <xavier_qy@163.com>
-Subject: [PATCH v4 v4 2/2] cpuset: use Union-Find to optimize the merging of cpumasks
-Date: Thu, 20 Jun 2024 16:52:33 +0800
-Message-Id: <20240620085233.205690-3-xavier_qy@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240620085233.205690-1-xavier_qy@163.com>
-References: <20240603123101.590760-1-ghostxavier@sina.com>
- <20240620085233.205690-1-xavier_qy@163.com>
+	s=arc-20240116; t=1718873564; c=relaxed/simple;
+	bh=HP9KicQFilSfkAaELgJDPIgGIs/+VeUvKvHLO7SwbR8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:References; b=DX+Nv1aSyX/j++vfe+6Vb2lVu0ma+UjxNfBM4oHFlJaNhxmx0fgfiC9SnZb4oEJC90S8lzbkHAmELCT32dOg8m6C1cleL2KUzGMY9x+bRYiCAWy5ohFPmNvNuN4GJ9QxClq0DWOuHjdAv61lRYmEGCoaQXO9oL05P9ihcuY/9c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gUexj9wG; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240620085239euoutp01994618d3d91d1c23e9c54c48a5591237~aqmVIkNRK0673506735euoutp01k;
+	Thu, 20 Jun 2024 08:52:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240620085239euoutp01994618d3d91d1c23e9c54c48a5591237~aqmVIkNRK0673506735euoutp01k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1718873559;
+	bh=pcmdDxVon4nXj2k/OPa/eCxaXyT++SrGLV2FW+Ib2wU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gUexj9wGhyD6JK6ITlSIYmC5RfcBwK+nesS7YqvPiIOi/EAnjihHuzPiJihmCMxLK
+	 h+wKCYSDdbg3gQYjmxTF3HSV8DRFiRicC9TnaCmIElfOfb/7LZiOXA60IRLDZ1WN/Y
+	 Xzfp22fXjvufk6dCVBR6s0aWIpmx9CthDAJt9pjs=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240620085239eucas1p12fe900919588a06442230f6ea982b248~aqmU_u8lD3066630666eucas1p1E;
+	Thu, 20 Jun 2024 08:52:39 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id A2.49.09624.7DDE3766; Thu, 20
+	Jun 2024 09:52:39 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240620085239eucas1p1d49a6bae77e1fc857e4459f87c619a83~aqmUldGCJ1175011750eucas1p17;
+	Thu, 20 Jun 2024 08:52:39 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240620085239eusmtrp1d00c270ffaf6a67c8f3f5d10ecb96f03~aqmUktXkg2329323293eusmtrp1N;
+	Thu, 20 Jun 2024 08:52:39 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-09-6673edd76d9e
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 95.07.08810.7DDE3766; Thu, 20
+	Jun 2024 09:52:39 +0100 (BST)
+Received: from localhost (unknown [106.120.51.111]) by eusmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240620085238eusmtip126b4ed11f10492c445ef3bb682b99695~aqmUWhcd00284502845eusmtip1N;
+	Thu, 20 Jun 2024 08:52:38 +0000 (GMT)
+From: Lukasz Stelmach <l.stelmach@samsung.com>
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,  Rob Herring
+	<robh@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Anand Moon
+	<linux.amoon@gmail.com>,  Olivia Mackall <olivia@selenic.com>,  Herbert Xu
+	<herbert@gondor.apana.org.au>,  Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,  linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] hwrng: exynos: Improve coding style
+Date: Thu, 20 Jun 2024 10:52:38 +0200
+In-Reply-To: <20240618204523.9563-3-semen.protsenko@linaro.org> (Sam
+	Protsenko's message of "Tue, 18 Jun 2024 15:45:18 -0500")
+Message-ID: <oypijdfrt8t2qx.fsf%l.stelmach@samsung.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn5JjV7XNmrecAJA--.9351S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAFWfur4kKFyUZFWUJrW3Awb_yoWrurW5pF
-	s3Cay2qrWrJryUGwsYk3y8Z34SkaykJa1Utw13Gw1fArnrA3Z29a40qFs5KayUuFyDCr1U
-	uF9xKr47Wr1UKFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UadgZUUUUU=
-X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiZRYEEGXAmg963wABsz
+Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
+	protocol="application/pgp-signature"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAKsWRmVeSWpSXmKPExsWy7djPc7rX3xanGTz6pWDxYN42Nos1e88x
+	Wcw/co7VovuVjMXLWffYLDY9vsZqcf/eTyaLy7vmsFnMOL+PyWLdxlvsFvfP9DBa/N+zg93i
+	ed8+Jgdej52z7rJ7bDug6rFpVSebx51re9g8Ni+p9+jbsorRo+/lBkaPz5vkAjiiuGxSUnMy
+	y1KL9O0SuDKeL3vPXnBPs6L55jv2Bsb9Sl2MnBwSAiYSS6/9Yeti5OIQEljBKHHq+zxWCOcL
+	o8Sk6QugMp8ZJb5MP8YG03JtyW1GEFtIYDmjRN83Z4iiF4wS5/YvAyri4GAT0JNYuzYCpEYE
+	yFw38xU7iM0ssI9ZYtPfQJASYQF7iZmLOUHCLAKqEvO/trOAjOEUaGCUWDDxGStIglfAXOLF
+	7fdgu0QFLCWOb21ng4gLSpyc+YQFYmauxMzzbxhBmiUEtnNKbDt5ix1kgYSAi8SJZTYQNwtL
+	vDq+hR3ClpE4PbmHBaK+nVGi6cpCVghnAqPE544mJogqa4k7535BfewoceXYSTaIoXwSN94K
+	Qizmk5i0bTozRJhXoqNNCKJaRWJd/x4WCFtKovfVCkYI20Pi9rGt0NCdxCjx/+tm1gmMCrOQ
+	/DMLyT+zgMYyC2hKrN+lDxHWlli28DUzhG0rsW7de5YFjKyrGMVTS4tz01OLDfNSy/WKE3OL
+	S/PS9ZLzczcxAhPe6X/HP+1gnPvqo94hRiYOxkOMKkDNjzasvsAoxZKXn5eqJML7vKsoTYg3
+	JbGyKrUoP76oNCe1+BCjNAeLkjivaop8qpBAemJJanZqakFqEUyWiYNTqoFpwiHt7yybk86E
+	LXVcZlhrwTTRt3qpblrGIi6miIc6MVMFbuysP197/tqx/+cvml95a1S4UNjt2I/p8U2B/tHu
+	3eo7PAL5ztgoGh/4EtLNl7bv69tlCXPn267eOd8hwGEHl6rxp/hJpg+Uf+5bXxzxSnT/GfeI
+	Xf9CuDdviM3jf7nDRJPd3/hgy6UM3vW7p0m32b098FjGOjhnCveOEB6lh5Z9Xauk0k6cfTE/
+	8dUOVsFtXL+vzVq8Pvn+PIsT6pMWbFdSK52rILzlo09abo7Xmn3nxPzYGqfMs99apZBYtma9
+	9dM/XLunHZldbNjS6z931t2qstczHv5lNp9WumjCJ75OLS/D/DNblcwPZ7/ZpsRSnJFoqMVc
+	VJwIAIwe7GPzAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBIsWRmVeSWpSXmKPExsVy+t/xu7rX3xanGbxpZbF4MG8bm8WaveeY
+	LOYfOcdq0f1KxuLlrHtsFpseX2O1uH/vJ5PF5V1z2CxmnN/HZLFu4y12i/tnehgt/u/ZwW7x
+	vG8fkwOvx85Zd9k9th1Q9di0qpPN4861PWwem5fUe/RtWcXo0fdyA6PH501yARxRejZF+aUl
+	qQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehnPl71nL7inWdF8
+	8x17A+N+pS5GTg4JAROJa0tuM3YxcnEICSxllJi4/C17FyMHUEJKYuXcdIgaYYk/17rYIGqe
+	MUpsPzCJDaSGTUBPYu3aCJAaESBz3cxX7CA1zAIHmSUuPe5hAqkRFrCXmLmYE6RGSMBOYsXr
+	9ewgNouAqsT8r+0sIPWcAg2MEgsmPmMFSfAKmEu8uP2eEcQWFbCUOL61nQ0iLihxcuYTFhCb
+	WSBb4uvq58wTGAVmIUnNQpKaBbSaWUBTYv0ufYiwtsSyha+ZIWxbiXXr3rMsYGRdxSiSWlqc
+	m55bbKhXnJhbXJqXrpecn7uJERit24793LyDcd6rj3qHGJk4GA8xqgB1Ptqw+gKjFEtefl6q
+	kgjv866iNCHelMTKqtSi/Pii0pzU4kOMpkC/TWSWEk3OB6aRvJJ4QzMDU0MTM0sDU0szYyVx
+	Xs+CjkQhgfTEktTs1NSC1CKYPiYOTqkGphkGD98dO+CkGLtb8UeAf3HdloxWbwblOTPvSUfO
+	PBy77WnMQeU7/u/SXiW73w8LOTGpwDp7Tmg50waFD62XdJluuKWZuH+1tws91n3uZJNeGnOr
+	7+ef2Ytni4pv03z1LUehZHuQffp+3vmHy6c5rOJKNuyysD2cnZTobG4vdn3pCkXVvZHTV3sF
+	bXngKDE1NOFU0s4tCRlNT5WcVV7brWLxPrTfbGvLxAXBRzNTJdecP9Ru0SMbnJp6TCVFUl10
+	b6yb57Vu7rqZh+dx/j6RmLN8g1O7t07G+f07ZjEs2lwqL+orU36MYUowS9bOiJBALb2HF8P/
+	yU75vOvwC/Z9FixLZt+uEO13mZ+bNXGiEktxRqKhFnNRcSIAgY8NWWsDAAA=
+X-CMS-MailID: 20240620085239eucas1p1d49a6bae77e1fc857e4459f87c619a83
+X-Msg-Generator: CA
+X-RootMTR: 20240620085239eucas1p1d49a6bae77e1fc857e4459f87c619a83
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240620085239eucas1p1d49a6bae77e1fc857e4459f87c619a83
+References: <20240618204523.9563-3-semen.protsenko@linaro.org>
+	<CGME20240620085239eucas1p1d49a6bae77e1fc857e4459f87c619a83@eucas1p1.samsung.com>
 
-The process of constructing scheduling domains
- involves multiple loops and repeated evaluations, leading to numerous
- redundant and ineffective assessments that impact code efficiency.
+--=-=-=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Here, we use Union-Find to optimize the merging of cpumasks. By employing
-path compression and union by rank, we effectively reduce the number of
-lookups and merge comparisons.
+It was <2024-06-18 wto 15:45>, when Sam Protsenko wrote:
+> Fix obvious style issues. Some of those were found with checkpatch, and
+> some just contradict the kernel coding style guide.
+>
+> No functional change.
+>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+> Changes in v2:
+>   - Added Krzysztof's R-b tag
+>
+>  drivers/char/hw_random/exynos-trng.c | 61 +++++++++++++---------------
+>  1 file changed, 29 insertions(+), 32 deletions(-)
+>
 
-Signed-off-by: Xavier <xavier_qy@163.com>
----
- kernel/cgroup/cpuset.c | 95 +++++++++++++++---------------------------
- 1 file changed, 34 insertions(+), 61 deletions(-)
+Acked-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index fe76045aa5..7e527530f8 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -45,6 +45,7 @@
- #include <linux/cgroup.h>
- #include <linux/wait.h>
- #include <linux/workqueue.h>
-+#include <linux/union_find.h>
- 
- DEFINE_STATIC_KEY_FALSE(cpusets_pre_enable_key);
- DEFINE_STATIC_KEY_FALSE(cpusets_enabled_key);
-@@ -172,9 +173,6 @@ struct cpuset {
- 	 */
- 	int attach_in_progress;
- 
--	/* partition number for rebuild_sched_domains() */
--	int pn;
--
- 	/* for custom sched domain */
- 	int relax_domain_level;
- 
-@@ -1007,7 +1005,7 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	struct cpuset *cp;	/* top-down scan of cpusets */
- 	struct cpuset **csa;	/* array of all cpuset ptrs */
- 	int csn;		/* how many cpuset ptrs in csa so far */
--	int i, j, k;		/* indices for partition finding loops */
-+	int i, j;		/* indices for partition finding loops */
- 	cpumask_var_t *doms;	/* resulting partition; i.e. sched domains */
- 	struct sched_domain_attr *dattr;  /* attributes for custom domains */
- 	int ndoms = 0;		/* number of sched domains in result */
-@@ -1015,6 +1013,8 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	struct cgroup_subsys_state *pos_css;
- 	bool root_load_balance = is_sched_load_balance(&top_cpuset);
- 	bool cgrpv2 = cgroup_subsys_on_dfl(cpuset_cgrp_subsys);
-+	struct uf_node *nodes;
-+	int nslot_update;
- 
- 	doms = NULL;
- 	dattr = NULL;
-@@ -1102,40 +1102,31 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	if (root_load_balance && (csn == 1))
- 		goto single_root_domain;
- 
--	for (i = 0; i < csn; i++)
--		csa[i]->pn = i;
--	ndoms = csn;
-+	nodes = uf_nodes_alloc(csn);
-+	if (!nodes)
-+		goto done;
- 
--restart:
--	/* Find the best partition (set of sched domains) */
-+	/* Merge overlapping cpusets */
- 	for (i = 0; i < csn; i++) {
--		struct cpuset *a = csa[i];
--		int apn = a->pn;
--
--		for (j = 0; j < csn; j++) {
--			struct cpuset *b = csa[j];
--			int bpn = b->pn;
--
--			if (apn != bpn && cpusets_overlap(a, b)) {
--				for (k = 0; k < csn; k++) {
--					struct cpuset *c = csa[k];
--
--					if (c->pn == bpn)
--						c->pn = apn;
--				}
--				ndoms--;	/* one less element */
--				goto restart;
--			}
-+		for (j = i + 1; j < csn; j++) {
-+			if (cpusets_overlap(csa[i], csa[j]))
-+				uf_union(&nodes[i], &nodes[j]);
- 		}
- 	}
- 
-+	/* Count the total number of domains */
-+	for (i = 0; i < csn; i++) {
-+		if ((nodes[i].parent == &nodes[i]) || !nodes[i].parent)
-+			ndoms++;
-+	}
-+
- 	/*
- 	 * Now we know how many domains to create.
- 	 * Convert <csn, csa> to <ndoms, doms> and populate cpu masks.
- 	 */
- 	doms = alloc_sched_domains(ndoms);
- 	if (!doms)
--		goto done;
-+		goto free;
- 
- 	/*
- 	 * The rest of the code, including the scheduler, can deal with
-@@ -1159,47 +1150,29 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	}
- 
- 	for (nslot = 0, i = 0; i < csn; i++) {
--		struct cpuset *a = csa[i];
--		struct cpumask *dp;
--		int apn = a->pn;
--
--		if (apn < 0) {
--			/* Skip completed partitions */
--			continue;
--		}
--
--		dp = doms[nslot];
--
--		if (nslot == ndoms) {
--			static int warnings = 10;
--			if (warnings) {
--				pr_warn("rebuild_sched_domains confused: nslot %d, ndoms %d, csn %d, i %d, apn %d\n",
--					nslot, ndoms, csn, i, apn);
--				warnings--;
--			}
--			continue;
--		}
--
--		cpumask_clear(dp);
--		if (dattr)
--			*(dattr + nslot) = SD_ATTR_INIT;
-+		nslot_update = 0;
- 		for (j = i; j < csn; j++) {
--			struct cpuset *b = csa[j];
--
--			if (apn == b->pn) {
--				cpumask_or(dp, dp, b->effective_cpus);
-+			if (uf_find(&nodes[j]) == &nodes[i]) {
-+				struct cpumask *dp = doms[nslot];
-+
-+				if (i == j) {
-+					nslot_update = 1;
-+					cpumask_clear(dp);
-+					if (dattr)
-+						*(dattr + nslot) = SD_ATTR_INIT;
-+				}
-+				cpumask_or(dp, dp, csa[j]->effective_cpus);
- 				cpumask_and(dp, dp, housekeeping_cpumask(HK_TYPE_DOMAIN));
- 				if (dattr)
--					update_domain_attr_tree(dattr + nslot, b);
--
--				/* Done with this partition */
--				b->pn = -1;
-+					update_domain_attr_tree(dattr + nslot, csa[j]);
- 			}
- 		}
--		nslot++;
-+		if (nslot_update)
-+			nslot++;
- 	}
- 	BUG_ON(nslot != ndoms);
--
-+free:
-+	uf_nodes_free(nodes);
- done:
- 	kfree(csa);
- 
--- 
-2.45.2
+> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_rando=
+m/exynos-trng.c
+> index 0ed5d22fe667..88a5088ed34d 100644
+> --- a/drivers/char/hw_random/exynos-trng.c
+> +++ b/drivers/char/hw_random/exynos-trng.c
+> @@ -23,45 +23,41 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>=20=20
+> -#define EXYNOS_TRNG_CLKDIV         (0x0)
+> -
+> -#define EXYNOS_TRNG_CTRL           (0x20)
+> -#define EXYNOS_TRNG_CTRL_RNGEN     BIT(31)
+> -
+> -#define EXYNOS_TRNG_POST_CTRL      (0x30)
+> -#define EXYNOS_TRNG_ONLINE_CTRL    (0x40)
+> -#define EXYNOS_TRNG_ONLINE_STAT    (0x44)
+> -#define EXYNOS_TRNG_ONLINE_MAXCHI2 (0x48)
+> -#define EXYNOS_TRNG_FIFO_CTRL      (0x50)
+> -#define EXYNOS_TRNG_FIFO_0         (0x80)
+> -#define EXYNOS_TRNG_FIFO_1         (0x84)
+> -#define EXYNOS_TRNG_FIFO_2         (0x88)
+> -#define EXYNOS_TRNG_FIFO_3         (0x8c)
+> -#define EXYNOS_TRNG_FIFO_4         (0x90)
+> -#define EXYNOS_TRNG_FIFO_5         (0x94)
+> -#define EXYNOS_TRNG_FIFO_6         (0x98)
+> -#define EXYNOS_TRNG_FIFO_7         (0x9c)
+> -#define EXYNOS_TRNG_FIFO_LEN       (8)
+> -#define EXYNOS_TRNG_CLOCK_RATE     (500000)
+> -
+> +#define EXYNOS_TRNG_CLKDIV		0x0
+> +
+> +#define EXYNOS_TRNG_CTRL		0x20
+> +#define EXYNOS_TRNG_CTRL_RNGEN		BIT(31)
+> +
+> +#define EXYNOS_TRNG_POST_CTRL		0x30
+> +#define EXYNOS_TRNG_ONLINE_CTRL		0x40
+> +#define EXYNOS_TRNG_ONLINE_STAT		0x44
+> +#define EXYNOS_TRNG_ONLINE_MAXCHI2	0x48
+> +#define EXYNOS_TRNG_FIFO_CTRL		0x50
+> +#define EXYNOS_TRNG_FIFO_0		0x80
+> +#define EXYNOS_TRNG_FIFO_1		0x84
+> +#define EXYNOS_TRNG_FIFO_2		0x88
+> +#define EXYNOS_TRNG_FIFO_3		0x8c
+> +#define EXYNOS_TRNG_FIFO_4		0x90
+> +#define EXYNOS_TRNG_FIFO_5		0x94
+> +#define EXYNOS_TRNG_FIFO_6		0x98
+> +#define EXYNOS_TRNG_FIFO_7		0x9c
+> +#define EXYNOS_TRNG_FIFO_LEN		8
+> +#define EXYNOS_TRNG_CLOCK_RATE		500000
+>=20=20
+>  struct exynos_trng_dev {
+> -	struct device    *dev;
+> -	void __iomem     *mem;
+> -	struct clk       *clk;
+> -	struct hwrng rng;
+> +	struct device	*dev;
+> +	void __iomem	*mem;
+> +	struct clk	*clk;
+> +	struct hwrng	rng;
+>  };
+>=20=20
+>  static int exynos_trng_do_read(struct hwrng *rng, void *data, size_t max,
+>  			       bool wait)
+>  {
+> -	struct exynos_trng_dev *trng;
+> +	struct exynos_trng_dev *trng =3D (struct exynos_trng_dev *)rng->priv;
+>  	int val;
+>=20=20
+>  	max =3D min_t(size_t, max, (EXYNOS_TRNG_FIFO_LEN * 4));
+> -
+> -	trng =3D (struct exynos_trng_dev *)rng->priv;
+> -
+>  	writel_relaxed(max * 8, trng->mem + EXYNOS_TRNG_FIFO_CTRL);
+>  	val =3D readl_poll_timeout(trng->mem + EXYNOS_TRNG_FIFO_CTRL, val,
+>  				 val =3D=3D 0, 200, 1000000);
+> @@ -122,7 +118,7 @@ static int exynos_trng_probe(struct platform_device *=
+pdev)
+>=20=20
+>  	trng->rng.init =3D exynos_trng_init;
+>  	trng->rng.read =3D exynos_trng_do_read;
+> -	trng->rng.priv =3D (unsigned long) trng;
+> +	trng->rng.priv =3D (unsigned long)trng;
+>=20=20
+>  	platform_set_drvdata(pdev, trng);
+>  	trng->dev =3D &pdev->dev;
+> @@ -175,7 +171,7 @@ static int exynos_trng_probe(struct platform_device *=
+pdev)
+>=20=20
+>  static void exynos_trng_remove(struct platform_device *pdev)
+>  {
+> -	struct exynos_trng_dev *trng =3D  platform_get_drvdata(pdev);
+> +	struct exynos_trng_dev *trng =3D platform_get_drvdata(pdev);
+>=20=20
+>  	clk_disable_unprepare(trng->clk);
+>=20=20
+> @@ -204,7 +200,7 @@ static int exynos_trng_resume(struct device *dev)
+>  }
+>=20=20
+>  static DEFINE_SIMPLE_DEV_PM_OPS(exynos_trng_pm_ops, exynos_trng_suspend,
+> -			 exynos_trng_resume);
+> +				exynos_trng_resume);
+>=20=20
+>  static const struct of_device_id exynos_trng_dt_match[] =3D {
+>  	{
+> @@ -225,6 +221,7 @@ static struct platform_driver exynos_trng_driver =3D {
+>  };
+>=20=20
+>  module_platform_driver(exynos_trng_driver);
+> +
+>  MODULE_AUTHOR("=C5=81ukasz Stelmach");
+>  MODULE_DESCRIPTION("H/W TRNG driver for Exynos chips");
+>  MODULE_LICENSE("GPL v2");
 
+=2D-=20
+=C5=81ukasz Stelmach
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAmZz7dYACgkQsK4enJil
+gBBw3QgAheqPc/spzIa3FzV4IkXxMMieQGeC8cFONbvNuC6beSyL2S4JakUCDh1U
+YRB0oiKYdTLtD3PsipkWfqMIU5XDx8ElygxT9uWtH9smZk9UBSdpxQNNk9XWx0b6
+sEsYFusIFA5WLJrn0hxHXWkUXMpVlqqJCyB1Jd15AM0Z/RphVd+M8v+UTB5Ghrmg
+/GxzRUHBZ9xfTsaq6/VbBR+BoTyUPP9T18le59L6D83hJfxdmEdJtqJ0V4O1b6SO
+YdrRJGGP5su4p1zedtEkywivHJukIdTZooZEngJnXHzKrKKQ7/BZeH7j9NpPqL6W
+7mbAyYFk90AhnFqXr44I86FyeHPJ8Q==
+=gpkX
+-----END PGP SIGNATURE-----
+--=-=-=--
 
