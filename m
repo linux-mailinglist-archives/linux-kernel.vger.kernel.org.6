@@ -1,349 +1,229 @@
-Return-Path: <linux-kernel+bounces-222493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75101910263
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:19:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B80EC910266
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA13F285784
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:19:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1437FB21787
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C101AB538;
-	Thu, 20 Jun 2024 11:19:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7891AB526;
-	Thu, 20 Jun 2024 11:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250621AB539;
+	Thu, 20 Jun 2024 11:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sco1L1Qu"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBF51AB531;
+	Thu, 20 Jun 2024 11:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718882371; cv=none; b=m2QKpbGTx6UhCknDYn5ZqnNt2erUHacPsd6K0q+jw9CAarEbjibqv2otW/0/6Brny/JCsGUv+/j1hu14NHSl1pSn3G+9LXdM/y228am6g2GFWZM+WldEJOyO20oku+9KybxLGPDYVXYGUGGDISYEfgYfCXUcPzzLAXJ2cbtS6nQ=
+	t=1718882409; cv=none; b=LtZdZgYtxgXTI5cYpvw6VDRnL++cjyFFr4osRe9N++zCsHi1BwLjuO/b+VVNZOHD7b2WqZu4J4W/ogm4f+DWHu92I0wNre/x1bKnWbc6v09aUqCNSedFigIaM6xzdI0VBkeynIsLwmvLvD2+P1gHlq6+SJeAlg5m/i8WjRQG6v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718882371; c=relaxed/simple;
-	bh=f+CnU4MXZp1EmCmIKnSNwvu5mVRSW2WU5/dEUBkkfYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o29pNYRf5i2mxBRAO4CV1/l/bzOFI48wwAVEPyKKtvDhVn0aNT27UeCAGo6ag+Ycc65IfXjWBj/vs9Bb7LwxWe6xktLBjK5q2k2+1GQnS6ICikf4KRTVCH6bO3EcKzItcrlqcvl7AwfUJH7TpSfcEe89AE1QQkLI0+jxy5KRusg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71948DA7;
-	Thu, 20 Jun 2024 04:19:50 -0700 (PDT)
-Received: from arm.com (e127648.arm.com [10.1.27.54])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D9993F6A8;
-	Thu, 20 Jun 2024 04:19:24 -0700 (PDT)
-Date: Thu, 20 Jun 2024 12:19:23 +0100
-From: Christian Loehle <christian.loehle@arm.com>
-To: Doug Smythies <dsmythies@telus.net>
-Cc: rafael@kernel.org, vincent.guittot@linaro.org, qyousef@layalina.io,
-	peterz@infradead.org, daniel.lezcano@linaro.org,
-	ulf.hansson@linaro.org, anna-maria@linutronix.de,
-	kajetan.puchalski@arm.com, lukasz.luba@arm.com,
-	dietmar.eggemann@arm.com, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 0/3] cpuidle: teo: Fixing utilization and intercept
- logic
-Message-ID: <20240620111923.wmse37qqtxi6ffzx@e127648.arm.com>
-References: <20240611112413.1241352-1-christian.loehle@arm.com>
- <004a01dac04c$314c4360$93e4ca20$@telus.net>
- <20240618111729.hqywobxh3gm7rfgq@e127648.arm.com>
- <005701dac1a4$6ae1c830$40a55890$@telus.net>
+	s=arc-20240116; t=1718882409; c=relaxed/simple;
+	bh=Qvc2VsIeV/KOshYOTSuDHzfWS7c7S6Xphxjq5XUCf8Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oT6DjxACdy6A6ZEv4ZA6TmjSYoqZxGJal8ncYkro7vGF4SZC9+2KXdExlhlqPIVid3zqwAZg7ltSe+v0um5WAeYUXGNg3MTAj79F/xONS4um5VJQ7LmrBz7Jggrsw0DWLpaXhSNxPVnlhKpNuif9BXUPNP4kAeUnRkGnTXZwdqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sco1L1Qu; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KALHcM006405;
+	Thu, 20 Jun 2024 11:19:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	YZXiRJkZp+S7FTPMS+D2ZuQxPKOUSyTFYbKHne7ZT5o=; b=sco1L1Qul3NLmvY7
+	3RniI9GgoDivy+1t0YiTaU5LzOQYP8MWZ15udgMNUlnsaeaKHTSdeQ9ptYS5n2E8
+	E12n3lFzpEaA5qlMa1LnXjs5YqL/ioiYOS3UxPUapD4QrgVPsCC0Wgkat0p1NR3k
+	mL3qDZVeW4N1WxsMt7+TUkGECIfoHkn2X+4O3t6R1546fRC4Y+wWHjf3nuahdBkj
+	KRwDFWK/kBfcQuVXI52ZZ9ocdkr2j1wUmCgpbqfvakTrwRjO7Zbjj4bWNVlbu0vC
+	AJiOYF2O+R05518H5atdjdAEf0vZu/ideRwacyZ2a3Xem4LueOoXDCYdEDaAhU5q
+	zvmQyQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvhtw88ww-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 11:19:40 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45KBJek8028469;
+	Thu, 20 Jun 2024 11:19:40 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvhtw88ws-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 11:19:40 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45KB7Xek009425;
+	Thu, 20 Jun 2024 11:19:39 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ysqgn53a7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 11:19:38 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45KBJXvd57016618
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Jun 2024 11:19:35 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6EA3F2004D;
+	Thu, 20 Jun 2024 11:19:33 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CDB2220040;
+	Thu, 20 Jun 2024 11:19:32 +0000 (GMT)
+Received: from [9.155.200.166] (unknown [9.155.200.166])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Jun 2024 11:19:32 +0000 (GMT)
+Message-ID: <aaef3e0fe22ad9074de84717f36f316204ae088c.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 33/37] s390/uaccess: Add KMSAN support to put_user()
+ and get_user()
+From: Ilya Leoshkevich <iii@linux.ibm.com>
+To: Alexander Potapenko <glider@google.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+        Andrew Morton
+ <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        David
+ Rientjes <rientjes@google.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Joonsoo
+ Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>,
+        Masami
+ Hiramatsu <mhiramat@kernel.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        Steven
+ Rostedt <rostedt@goodmis.org>,
+        Vasily Gorbik <gor@linux.ibm.com>, Vlastimil
+ Babka <vbabka@suse.cz>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Sven Schnelle
+ <svens@linux.ibm.com>
+Date: Thu, 20 Jun 2024 13:19:32 +0200
+In-Reply-To: <CAG_fn=V8Tt28LE9FtoYkos=5XG4zP_tDP1mF1COfEhAMg2ULqQ@mail.gmail.com>
+References: <20240619154530.163232-1-iii@linux.ibm.com>
+	 <20240619154530.163232-34-iii@linux.ibm.com>
+	 <CAG_fn=V8Tt28LE9FtoYkos=5XG4zP_tDP1mF1COfEhAMg2ULqQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <005701dac1a4$6ae1c830$40a55890$@telus.net>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: IrkS3GjvPqTFqcgU2dJPG6AOUTabmxFK
+X-Proofpoint-GUID: QnnWeFxfRe5FVGujes4q0S_lbJThwNlL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_07,2024-06-20_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ suspectscore=0 adultscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=807 phishscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406200074
 
-On Tue, Jun 18, 2024 at 10:24:46AM -0700, Doug Smythies wrote:
-> Hi Christian,
->
-> Thank you for your reply.
+On Thu, 2024-06-20 at 10:36 +0200, Alexander Potapenko wrote:
+> On Wed, Jun 19, 2024 at 5:45=E2=80=AFPM Ilya Leoshkevich <iii@linux.ibm.c=
+om>
+> wrote:
+> >=20
+> > put_user() uses inline assembly with precise constraints, so Clang
+> > is
+> > in principle capable of instrumenting it automatically.
+> > Unfortunately,
+> > one of the constraints contains a dereferenced user pointer, and
+> > Clang
+> > does not currently distinguish user and kernel pointers. Therefore
+> > KMSAN attempts to access shadow for user pointers, which is not a
+> > right
+> > thing to do.
+>=20
+> By the way, how does this problem manifest?
+> I was expecting KMSAN to generate dummy shadow accesses in this case,
+> and reading/writing 1-8 bytes from dummy shadow shouldn't be a
+> problem.
+>=20
+> (On the other hand, not inlining the get_user/put_user functions is
+> probably still faster than retrieving the dummy shadow, so I'm fine
+> either way)
 
-Thank you for taking the time!
+We have two problems here: not only clang can't distinguish user and
+kernel pointers, the KMSAN runtime - which is supposed to clean that
+up - can't do that either due to overlapping kernel and user address
+spaces on s390. So the instrumentation ultimately tries to access the
+real shadow.
 
->
-> On 2024.06.18 03:54 Christian Loehle wrote:
-> > On Sun, Jun 16, 2024 at 05:20:43PM -0700, Doug Smythies wrote:
-> >> On 2024.06.11 04:24 Christian Loehle wrote:
-> >>
-> >> ...
-> >> > Happy for anyone to take a look and test as well.
-> >> ...
-> >>
-> >> I tested the patch set.
-> >> I do a set of tests adopted over some years now.
-> >> Readers may recall that some of the tests search over a wide range of operating conditions looking for areas to focus on in more
-> detail.
-> >> One interesting observation is that everything seems to run much slower than the last time I did this, last August, Kernel
-> 6.5-rc4.
-> >>
-> >
-> > Thank you very much Doug, that is helpful indeed!
-> >
-> >> Test system:
-> >> Processor: Intel(R) Core(TM) i5-10600K CPU @ 4.10GHz (6 cores, 2 thread per core, 12 CPUs)
-> >> CPU Frequency scaling driver: intel_pstate
-> >> HWP (HardWare Pstate) control: Disabled
-> >> CPU frequency scaling governor: Performance
-> >> Idle states: 4: name : description:
-> >>    state0/name:POLL		desc:CPUIDLE CORE POLL IDLE
-> >>    state1/name:C1_ACPI		desc:ACPI FFH MWAIT 0x0
-> >>    state2/name:C2_ACPI		desc:ACPI FFH MWAIT 0x30
-> >>    state3/name:C3_ACPI		desc:ACPI FFH MWAIT 0x60
-> >
-> > What are target residencies and exit latencies?
->
-> Of course. Here:
->
-> /sys/devices/system/cpu/cpu1/cpuidle/state0/residency:0
-> /sys/devices/system/cpu/cpu1/cpuidle/state1/residency:1
-> /sys/devices/system/cpu/cpu1/cpuidle/state2/residency:360
-> /sys/devices/system/cpu/cpu1/cpuidle/state3/residency:3102
->
-> /sys/devices/system/cpu/cpu1/cpuidle/state0/latency:0
-> /sys/devices/system/cpu/cpu1/cpuidle/state1/latency:1
-> /sys/devices/system/cpu/cpu1/cpuidle/state2/latency:120
-> /sys/devices/system/cpu/cpu1/cpuidle/state3/latency:1034
+I forgot what the consequences of that were exactly, so I reverted the
+patch and now I get:
 
-Thanks,
-what am I missing here that these are two different sets of states?
+Unable to handle kernel pointer dereference in virtual kernel address
+space
+Failing address: 000003fed25fa000 TEID: 000003fed25fa403
+Fault in home space mode while using kernel ASCE.
+AS:0000000005a70007 R3:00000000824d8007 S:0000000000000020=20
+Oops: 0010 ilc:2 [#1] SMP=20
+Modules linked in:
+CPU: 3 PID: 1 Comm: init Tainted: G    B            N 6.10.0-rc4-
+g8aadb00f495e #11
+Hardware name: IBM 3931 A01 704 (KVM/Linux)
+Krnl PSW : 0704c00180000000 000003ffe288975a (memset+0x3a/0xa0)
+           R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
+Krnl GPRS: 0000000000000000 000003fed25fa180 000003fed25fa180
+000003ffe28897a6
+           0000000000000007 000003ffe0000000 0000000000000000
+000002ee06e68190
+           000002ee06f19000 000003fed25fa180 000003ffd25fa180
+000003ffd25fa180
+           0000000000000008 0000000000000000 000003ffe17262e0
+0000037ee000f730
+Krnl Code: 000003ffe288974c: 41101100           la      %r1,256(%r1)
+           000003ffe2889750: a737fffb           brctg =20
+%r3,000003ffe2889746
+          #000003ffe2889754: c03000000029       larl  =20
+%r3,000003ffe28897a6
+          >000003ffe288975a: 44403000           ex      %r4,0(%r3)
+           000003ffe288975e: 07fe               bcr     15,%r14
+           000003ffe2889760: a74f0001           cghi    %r4,1
+           000003ffe2889764: b9040012           lgr     %r1,%r2
+           000003ffe2889768: a784001c           brc   =20
+8,000003ffe28897a0
+Call Trace:
+ [<000003ffe288975a>] memset+0x3a/0xa0=20
+([<000003ffe17262bc>] kmsan_internal_set_shadow_origin+0x21c/0x3a0)
+ [<000003ffe1725fb6>] kmsan_internal_unpoison_memory+0x26/0x30=20
+ [<000003ffe1c1c646>] create_elf_tables+0x13c6/0x2620=20
+ [<000003ffe1c0ebaa>] load_elf_binary+0x50da/0x68f0 =20
+ [<000003ffe18c41fc>] bprm_execve+0x201c/0x2f40=20
+ [<000003ffe18bff9a>] kernel_execve+0x2cda/0x2d00=20
+ [<000003ffe49b745a>] kernel_init+0x9ba/0x1630=20
+ [<000003ffe000cd5c>] __ret_from_fork+0xbc/0x180=20
+ [<000003ffe4a1907a>] ret_from_fork+0xa/0x30=20
+Last Breaking-Event-Address:
+ [<000003ffe2889742>] memset+0x22/0xa0
+Kernel panic - not syncing: Fatal exception: panic_on_oops
 
->
-> >> Ilde driver: intel_idle
-> >> Idle governor: as per individual test
-> >> Kernel: 6.10-rc2 and with V1 and V2 patch sets (1000 Hz tick rate)
-> >> Legend:
-> >>    teo: unmodified 6.10-rc2
-> >>    menu:
-> >>    ladder:
-> >>    cl: Kernel 6.10-rc2 + Christian Loehle patch set V1
-> >>    clv2: Kernel 6.10-rc2 + Christian Loehle patch set V2
-> >> System is extremely idle, other than the test work.
-> >
-> > If you don't mind spinning up another one, I'd be very curious about
-> > results from just the Util-awareness revert (i.e. v2 1/3).
-> > If not I'll try to reproduce your tests.
->
-> I will, but not today.
+So is_bad_asm_addr() returned false for a userspace address.
+Why? Because it happened to collide with the kernel modules area:
+precisely the effect of overlapping.
 
-Thank you.
+VMALLOC_START: 0x37ee0000000
+VMALLOC_END:   0x3a960000000
+MODULES_VADDR: 0x3ff60000000
+Address:       0x3ffd157a580
+MODULES_END:   0x3ffe0000000
 
-> I have never been a fan of Util-awareness.
+Now the question is, why do we crash when accessing shadow for modules?
+I'll need to investigate, this does not look normal. But even if that
+worked, we clearly wouldn't want userspace accesses to pollute module
+shadow, so I think we need this patch in its current form.
 
-Well if you want to elaborate on that I guess now is the time and
-here is the place. ;)
-
->
-> >> Test 1: 2 core ping pong sweep:
-> >>
-> >> Pass a token between 2 CPUs on 2 different cores.
-> >> Do a variable amount of work at each stop.
-> >
-> > Hard to interpret the results here, as state residencies would be the
-> > most useful one, but from the results I assume that residencies are
-> > calculated over all possible CPUs, so 4/6 CPUs are pretty much idle
-> > the entire time, resulting in >75% state3 residency overall.
->
-> It would be 10 of 12 CPUs are idle and 4 of 6 cores.
-
-Of course, my bad.
-
-> But fair enough, the residency stats are being dominated by the idle CPUs.
-> I usually look at the usage in conjunction with the residency percentages.
-> At 10 minutes (20 second sample period):
-> teo entered idle state 3 517 times ; clv2 was 1,979,541 times
-> At 20 minutes:
-> teo entered idle state 3 525 times ; clv2 was 3,011,263 times
-> Anyway, I could hack something to just use data from the 2 CPUs involved.
-
-Your method works, just a bit awkward, I guess I'm spoiled in that
-regard :)
-(Shameless plug:
-https://tooling.sites.arm.com/lisa/latest/trace_analysis.html#lisa.analysis.idle.IdleAnalysis.plot_cpu_idle_state_residency
-)
->
-> >> Purpose: To utilize the shallowest idle states
-> >> and observe the transition from using more of 1
-> >> idle state to another.
-> >>
-> >> Results relative to teo (negative is better):
-> >>		menu		ladder		clv2		cl
-> >> average	-2.09%		11.11%		2.88%		1.81%
-> >> max		10.63%		33.83%		9.45%		10.13%
-> >> min		-11.58%		6.25%		-3.61%		-3.34%
-> >>
-> >> While there are a few operating conditions where clv2 performs better than teo, overall it is worse.
-> >>
-> >> Further details:
-> >> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/2-1/2-core-pp-relative.png
-> >> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/2-1/2-core-pp-data.png
-> >> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/2-1/perf/
-> >>
-> >> Test 2: 6 core ping pong sweep:
-> >>
-> >> Pass a token between 6 CPUs on 6 different cores.
-> >> Do a variable amount of work at each stop.
-> >>
-> >
-> > My first guess would've been that this is the perfect workload for the
-> > very low utilization threshold, but even teo has >40% state3 residency
-> > consistently here.
->
-> There are still 6 idle CPUs.
-> I'll try a 12 CPUs using each core twice type sweep test,
-> but I think I settled on 6 because it focused on what I wanted for results.
-
-I see, again, my bad.
-
->
-> >> Purpose: To utilize the midrange idle states
-> >> and observe the transitions between use of
-> >> idle states.
-> >>
-> >> Note: This test has uncertainty in an area where the performance is bi-stable for all idle governors,
-> >> transitioning between much less power and slower performance and much more power and higher performance.
-> >> On either side of this area, the differences between all idle governors are negligible.
-> >> Only data from before this area (from results 1 t0 95) was included in the below results.
-> >
-> > I see and agree with your interpretation. Difference in power between
-> > all tested seems to be negligible during that window. Interestingly
-> > the residencies of idle states seem to be very different, like ladder
-> > being mostly in deepest state3. Maybe total package power is too coarse
-> > to show the differences for this test.
-> >
-> >> Results relative to teo (negative is better):
-> >>		menu	ladder	cl	clv2
-> >> average	0.16%	4.32%	2.54%	2.64%
-> >> max		0.92%	14.32%	8.78%	8.50%
-> >> min		-0.44%	0.27%	0.09%	0.05%
-> >>
-> >> One large clv2 difference seems to be excessive use of the deepest idle state,
-> >> with corresponding 100% hit rate on the "Idle State 3 was to deep" metric.
-> >> Example (20 second sample time):
-> >>
-> >> teo: Idle state 3 entries: 600, 74.33% were to deep or 451. Processor power was 38.0 watts.
-> >> clv2: Idle state 3 entries: 4,375,243, 100.00% were to deep or 4,375,243. Processor power was 40.6 watts.
-> >> clv2 loop times were about 8% worse than teo.
-> >
-> > Some of the idle state 3 residencies seem to be >100% at the end here,
-> > not sure what's up with that.
->
-> The test is over and the system is completely idle.
-> And yes, there are 4 calculations that come out > 100%, the worst being 100.71%,
-> with a total sum over all idle states of 100.79%.
-> I can look into it if you want but have never expected the numbers to be that accurate.
-
-Hopefully it's just some weird rounding thing, it just looks strange.
-
->
-> >> Further details:
-> >> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/6-1/6-core-pp-data-detail-a.png
-> >> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/6-1/6-core-pp-data-detail-b.png
-> >> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/6-1/6-core-pp-data.png
-> >> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/6-1/perf/
-> >>
-> >> Test 3: sleeping ebizzy - 128 threads.
-> >>
-> >> Purpose: This test has given interesting results in the past.
-> >> The test varies the sleep interval between record lookups.
-> >> The result is varying usage of idle states.
-> >>
-> >> Results: relative to teo (negative is better):
-> >>		menu	clv2	ladder	cl
-> >> average	0.06%	0.38%	0.81%	0.35%
-> >> max		2.53%	3.20%	5.00%	2.87%
-> >> min		-2.13%	-1.66%	-3.30%	-2.13%
-> >>
-> >> No strong conclusion here, from just the data.
-> >> However, clv2 seems to use a bit more processor power, on average.
-> >
-> > Not sure about that, from the residencies ladder and teo should be
-> > decisive losers in terms of power. While later in the test teo seems
-> > to be getting worse in power it doesn't quite reflect the difference
-> > in states.
-> > E.g. clv2 finishing with 65% state2 residency while teo has 40%, but
-> > I'll try to get per-CPU power measurements on this one.
-> > Interestingly ladder is a clear winner if anything, if that is reliable
-> > as a result that could indicate a too aggressive tick stop from the
-> > other governors, but cl isn't that much better than clv2 here, even
-> > though it stops the tick less aggressively.
->
-> I agree with what you are saying.
-> It is a shorter test at only 25 minutes.
-> It might be worth trying the test again with more strict attention to
-> stabilizing the system thermally before each test.
-> The processor power will vary by a few watts for the exact same load
-> as a function of processor package temperature and coolant (my system is
-> water cooled) temperature and can take 20 to 30 minutes to settle.
->
-> Reference:
-> http://smythies.com/~doug/linux/idle/teo-util3/temperature/thermal-stabalization-time.png
->
-> >>
-> >> Further details:
-> >
-> > Link is missing, but I found
-> > http://smythies.com/~doug/linux/idle/teo-util3/ebizzy/
-> > from browsing your page.
->
-> Yes, I accidently hit "Send" on my original email before it was actually finished.
-> But, then I was tired and thought "close enough".
->
-> >> Test4: adrestia wakeup latency tests. 500 threads.
-> >>
-> >> Purpose: The test was reported in 2023.09 by the kernel test robot and looked
-> >> both interesting and gave interesting results, so I added it to the tests I run.
-> >
-> > http://smythies.com/~doug/linux/idle/teo-util3/adrestia/periodic/perf/
-> > So interestingly we can see, what I would call, the misbehavior of teo
-> > here, with teo skipping state2 and state3 entirely. You would expect
-> > a power regression here, but it doesn't translate into package power
-> > anyway.
-> >
-> >>
-> >> Results:
-> >> teo:wakeup cost (periodic, 20us): 3130nSec reference
-> >> clv2:wakeup cost (periodic, 20us): 3179nSec +1.57%
-> >> cl:wakeup cost (periodic, 20us): 3206nSec +2.43%
-> >> menu:wakeup cost (periodic, 20us): 2933nSec -6.29%
-> >> ladder:wakeup cost (periodic, 20us): 3530nSec +12.78%
-> >
-> > Is this measured as wakeup latency?
-> > I can't find much info about the test setup here, do you mind sharing
-> > something on it?
->
-> I admit to being vague on this one, and I'll need some time to review.
-> The notes I left for myself last September are here:
-> http://smythies.com/~doug/linux/idle/teo-util2/adrestia/README.txt
-
-Thanks!
-
->
-> >> No strong conclusion here, from just the data.
-> >> However, clv2 seems to use a bit more processor power, on average.
-> >> teo: 69.72 watts
-> >> clv2: 72.91 watts +4.6%
-> >> Note 1: The first 5 minutes of the test powers were discarded to allow for thermal stabilization.
->
-> which might not have been long enough, see the thermal notes above.
->
-> >> Note 2: More work is required for this test, because the teo one actually took longer to execute, due to more outlier results
-> than the other tests.
->
-> >> There were several other tests run but are not written up herein.
-> >>
-> > Because results are on par for all? Or inconclusive / not reproducible?
->
-> Yes, because nothing of significance was observed or the test was more or less a repeat of an already covered test.
-> Initially, I had a mistake in my baseline teo tests, and a couple of the not written up tests have still not been re-run with the
-> proper baseline.
-
-Thank you for testing, that's what I hoped.
-
-Kind Regards,
-Christian
+[...]
 
