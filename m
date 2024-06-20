@@ -1,105 +1,107 @@
-Return-Path: <linux-kernel+bounces-223691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABEE8911700
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F9DC911701
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 569E31F21647
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:44:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A741F22DF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C7614D45A;
-	Thu, 20 Jun 2024 23:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8389212FB31;
+	Thu, 20 Jun 2024 23:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vgVJWSIL"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BqqSd20J"
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCAF1459F2;
-	Thu, 20 Jun 2024 23:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DB12C6BD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718927054; cv=none; b=OzNDSycCf0SF2a8EF9vNGLs14el6fmu6v6j3wuSUmlj0AM/fEwRZ3IGG0p2A06IgEodh08aeyMublYMsrA2JP3cFxToPgDlCredXpeYF1Es1cdHReLXhhV+q6p9fJYYfziLJ5nwsa3628Z72ZF6IiUghnJsx36+/wCo/p2Lm6fY=
+	t=1718927135; cv=none; b=k6UhBE7TpqIWLKNLdti7quw+8SmeQtRG7ow+rBQtAUTAeQZeP2/6MtiUU7l5jbxUIBd7Dds9SJqZOwiU6MUsmspDrJ32/rOMCPUwQSLieKR0tnzOwbqjEXISdTuPO8obNn18REPC5gW4vY6XVsG4B4sDY+QuaL61CPKHgt+1Qik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718927054; c=relaxed/simple;
-	bh=Br/LIGP/W7ancnLuPn4+olOcv67Djp3dUyhu2uV1J3M=;
+	s=arc-20240116; t=1718927135; c=relaxed/simple;
+	bh=Hxv50V6qKoPoHFKLzsXUD9bm+zoJz7iYpw+/42X7oVs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ohb0BvhiIG19rd+FwFYhN8GvfT2rZdQZR4FbExnFnhR9XQRqB3pREKAA+eKopHjKUf8UzvAggpZjfIWz4jScfk+N0ABg92u4ygAGROgSaEFNmsk8ulO7RfDwMyjFYLfK/pSQvkqZSPRbgJL9ZL6S0UMbnUhTITWfJ9KxdCM2P04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vgVJWSIL; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=OD9aKIwTB0IjLyy6UuH1yaqqlF5kW/1FgfR8cMIx7azg8R9rrF+enfL5gyzGmUNG3qfLKsgxlJiclEOIAk8DbEEQZD9ozNxVM1kA+rlnqeLkkUI/o4Z8u4xur/60STWfMU8MD98i54kDexVzMz0zg8qIPvWT8qavM6b5CgpYvP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BqqSd20J; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DLwRv8BOS4/4ytu2UjnpHES9HQWbhLlUdznZ3C/ypxY=; b=vgVJWSILghNAk6BFzvpy8+ycCj
-	ZNmGrsocEB+GZ9CxOpV8miAT/VHjcSzwrWq/cWGPx6aJDqrC+4t1DuvAWbQFZQTBKi/CjZ8+mFowj
-	HKDp6PEvTvVVeJfBdggeVF+lhFQOtCOs2TQd0o6x2r0xUOctnzRPDiKLXuGrFddpPLVm09V4uTNGl
-	MPe94Z9x1cno9wycb13rV+X7q24NaJN+Ey6OpSe/RgtKRvB3hM97Us7jFzigym3hDKL6JvOs+9a7K
-	2c3vGYlKT5Ywzd+WzGB84wJ2JpFTHV7a6YYhXkA+z5aqaJiB20SHLs0nDUco6PcYUAogrjgmSedz1
-	HufUgq9w==;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=Agm5lrgmHEP7loQjJluZoCv5RFGcAJzpjP8iSVW6hxg=; b=BqqSd20JWvF382rg2Siw/5kl9o
+	wgSkan6pDvNDL8kHtahonGkKAtgZWwfPpngl0vMAztXzm+C7a8xWQPpMG7bCjShuRFb8WICU4zdn4
+	SpJRQZQsAlrUE7XdPhsCQsrzNvE+bMVX7EiDMY81Mh0CwMvu5cnA/8JOgFrOcZTyz6bRcW3bHqSPa
+	OdnrZrTspmk8P02QnxY5bybTXHGR+qIVlItLKEPXuSm1fpNlkoEDG3fqLuoy5X8KZD4UEgMClo2+I
+	uLwiFPwxVuFCCy7p9wnkkRKnvU2OJo16PyGXldqduu7NwtJurZNQDnj/txL1tsGcWopuCARBRnXF3
+	9B7hBmCw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sKRRr-000000079Fw-1Jfe;
-	Thu, 20 Jun 2024 23:44:11 +0000
-Date: Thu, 20 Jun 2024 16:44:11 -0700
+	id 1sKRT9-000000079QJ-2o0n;
+	Thu, 20 Jun 2024 23:45:31 +0000
+Date: Thu, 20 Jun 2024 16:45:31 -0700
 From: Luis Chamberlain <mcgrof@kernel.org>
-To: Yusong Gao <a869920004@gmail.com>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] module: Add log information for loading module
- failures
-Message-ID: <ZnS-y94qwA1Wmlo8@bombadil.infradead.org>
-References: <20240619083037.1070310-1-a869920004@gmail.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Joel Granados <j.granados@samsung.com>, Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
+ proc_handlers
+Message-ID: <ZnS_G9H5xTsUmhLI@bombadil.infradead.org>
+References: <20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240619083037.1070310-1-a869920004@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Wed, Jun 19, 2024 at 08:30:37AM +0000, Yusong Gao wrote:
-> Add log information in kernel-space when loading module failures.
-> Try to load the unsigned module and the module with bad signature
-> when set 1 to /sys/module/module/parameters/sig_enforce.
+On Wed, Jun 19, 2024 at 12:09:00PM +0200, Thomas Weiﬂschuh wrote:
+> Adapt the proc_hander function signature to make it clear that handlers
+> are not supposed to modify their ctl_table argument.
 > 
-> Unsigned module case:
-> (linux) insmod unsigned.ko
-> [   18.714661] Loading of unsigned module is rejected
-> insmod: can't insert 'unsigned.ko': Key was rejected by service
-> (linux)
+> This is also a prerequisite to moving the static ctl_table structs into
+> read-only data.
 > 
-> Bad signature module case:
-> (linux) insmod bad_signature.ko
-> insmod: can't insert 'bad_signature.ko': Key was rejected by service
-> (linux)
+> The patch was mostly generated by coccinelle with the following script:
 > 
-> There have different logging behavior the bad signature case only log
-> in user-space, add log info for fatal errors in module_sig_check().
+>     @@
+>     identifier func, ctl, write, buffer, lenp, ppos;
+>     @@
 > 
-> Signed-off-by: Yusong Gao <a869920004@gmail.com>
-> ---
-> V2: Change print level from notice to debug.
-> ---
->  kernel/module/signing.c | 1 +
->  1 file changed, 1 insertion(+)
+>     int func(
+>     - struct ctl_table *ctl,
+>     + const struct ctl_table *ctl,
+>       int write, void *buffer, size_t *lenp, loff_t *ppos)
+>     { ... }
 > 
-> diff --git a/kernel/module/signing.c b/kernel/module/signing.c
-> index a2ff4242e623..b0c7b30e4d89 100644
-> --- a/kernel/module/signing.c
-> +++ b/kernel/module/signing.c
-> @@ -113,6 +113,7 @@ int module_sig_check(struct load_info *info, int flags)
->  		 * unparseable signatures, and signature check failures --
->  		 * even if signatures aren't required.
->  		 */
-> +		pr_debug("Loading module failed (errno=%d)\n", -err);
+> In addition to the scripted changes some other changes are done:
+> 
+> * The "typedef proc_handler" in include/linux/sysctl.h is changed to use
+>   the "const ctl_table".
+> 
+> * The prototypes of non-static handlers in header-files are adapted
+>   to match the changes of their respective definitions.
+> 
+> * kernel/watchdog.c: proc_watchdog_common()
+>   This is called from a proc_handler itself and is als calling back
+>   into another proc_handler, making it necessary to change it as part
+>   of the proc_handler migration.
+> 
+> No functional change.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
 
-There are so many debug message, this doesn't help explain why, ie, tha
-this is a signature issue.
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
   Luis
 
