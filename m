@@ -1,91 +1,82 @@
-Return-Path: <linux-kernel+bounces-223608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5B891157E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:17:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4862911581
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 688C12835A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:17:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13CD1B20E9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29FC84D12;
-	Thu, 20 Jun 2024 22:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5624B139580;
+	Thu, 20 Jun 2024 22:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZMydTXX"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="dkTMPl2Z"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081A836126
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E657236126
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718921826; cv=none; b=NbiWsr7LfkZYMh77ohgmDCKJWbiUJP9ZI1ksUIkzXvijkRf0EXpEPgXrdbzXp2YHQyzeSZ/hJPdrG5kQfQFfVbIbW+AuqLftiOFuO3heckCR4OJg19VlS7E05s7NxkqEBkgMFdD1e+S+Dk1QunaleDO027tuUn/i2ohVCCca9aM=
+	t=1718921952; cv=none; b=duUFWdyGvWXNALGTz15CsX6ui9pHg4ZISkKqi0Dr3mCGJIm73RidgAf9JLkTbrRrz8eqfShS3/adRCNpx1yMzDEYEphxuKpfY4XCZKIm3zYAVYuJzIc6OdEVEugzwRabI6rhVhEMZNtMKvmqhJ8JNPGAlPxz0aWVtjUcEs/bWEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718921826; c=relaxed/simple;
-	bh=kfw1yLN+QRSOwj3b9gkGVMCB9C1YIzlL/GDA9CWAVxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WRCxeoEoIf3cViFhx3lYWtBa/4jro76B1Pki5Wb+gthh40N284lJ8z+WQKwn/pCKiVEb6VIAktgCkGJvbXvBaoUqkXqEzXRd4prB2lbHvpDu0HXTFpDCBBXDt4ooCqjaT8IQw6glISA1kij2JY94KnZk1uP43blEVvyvJCoIox4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LZMydTXX; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec4e565d2eso299941fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:17:04 -0700 (PDT)
+	s=arc-20240116; t=1718921952; c=relaxed/simple;
+	bh=EgLIeqznyOPTSJ5z6m8OsrbxN79BJFzPw3f2c5ZHDRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nmlm36KP9rzY3YYboUJG8Se8ldga8XHyLsyLcfMftZsO2ftyJ06bk5e6UIIpbLylwwN7TOL7OIH1cgB0k7XIiK1S41a90wISUZfGoZfS0GW9WkY4pNG0QgMJ4rb27wZTzT4hE2er5+9nHQCICFRgQrRZcTh1H1y5FmiIozw+OXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=dkTMPl2Z; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5bae81effd1so730139eaf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:19:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718921823; x=1719526623; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UgRdH6j7DUCb+zgLlAkqo1mbZKrdFkN7NmGemmI69Mo=;
-        b=LZMydTXXliVSSdHz91VcJJ3/p5yzIeiLsKOXtHHdzADHDjh0JgK9DmhOiFiO0qy56o
-         0sKkWrg927SZabE3Jz/cRgvrZ4JBXK/a4T3hRscziQdicAoP71yLZ1Rxk1cq2g+TrfZq
-         uKPH03Gv+YkObN2w4I4rAC68rx9kLwbckBbnqTgp0FtQRSGIbXRJ0sofbADcmJ4D0KAS
-         FemFpxyYfe6YYB/2ldH2MTg/2w1G/sG1zUWTyYLgR3QjHr4zm5C4UhnXCXcyz56Jvr6T
-         6OLP++oI6CMXnPFNaskUoPOkZVGKRqzG76XKfH280qNyf3V1W4wqqaJyyGgXEYdL9Cws
-         GVHA==
+        d=cloudflare.com; s=google09082023; t=1718921950; x=1719526750; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8CXkaBTtnkZYe8FKNmQUlJrq+bqc8/5T0kpTwXzA8v4=;
+        b=dkTMPl2Z/CHsXCT1RFEvERm/SacDhS9UhhfyPiA+SX8bjFfZUqd8VubfZTNDMioK6/
+         t+5Ud3iY/Hsbf66HuOsxKyKK3GEnHIdOQerWDjRFwxzH74lTfBCMUZHJYT9aYHkTTc7d
+         VJLIdTBUwiXyraea4QQskcRv+l56VRq6rZOKQAOY7enPcBwHZWly4BF3Naqc1tvB3e69
+         pVuY9Ze/0Fc+RN4BWjml+sJsSPC0q3clnkekV8YW9BWfTarhEcmFT0YeFcn6+2ExhvX+
+         OxtSXWCjOnRHyqcQbmwaRadmo8ISoNveiuH4ZKEQuEbvWW4jiCCS1s4/dkkq1gXZKKfR
+         ScwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718921823; x=1719526623;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UgRdH6j7DUCb+zgLlAkqo1mbZKrdFkN7NmGemmI69Mo=;
-        b=jrZ+rjuaTI0J9kVRV18bTkJ2LSnSEmF1wj7vLMsswWGJiEFmtqVg3TFbIkOIYVwK38
-         3jPHPRJ9Z8m0NrrXlgylihZ4FJLLQv2dsdHJGvQUO7a7K/W8yP/Lw1hm3RLOUrtJbC1f
-         sotXoSZRGrXXD3C3cL6h2Bis/5TxHs3b7aowZ84f8vB5zNNPycs4e38G6rU/9WuNmdrF
-         EkOPAAUca/G5vDpOoO2PDTI1by0Pi+5wQ5iEuJess0gL+XqZL3CyMUTUUzOvoIea3OqR
-         aUMapyjGS0n+AtfkbulD3LOSliqtkuZQkle1s0MUfEm5Mx+VQzcW0Xbwkuo9hlAah4UW
-         kplw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4C0CuDdR7fb5G4k8C5veFGhJfu45kAb4dehyjOL2za0HlSK4OTRlhKDiLATnZ7neUliRApq4I1v1nD5ss2YqtcXeqxg3OhlUgHmUw
-X-Gm-Message-State: AOJu0Yy6NP2t8YOACpKKauvmzsk3etDvhHKwT0No5a6UwL+skUOrC/xw
-	fNYESITAZ7ZpuTLW98Yyrxu8CzUk7CBREBSOASdrGTogInRgeuSMF+hLh1IEsWs=
-X-Google-Smtp-Source: AGHT+IE93loPZY8t+qpr1EOLX6L8UuNIadiY+NRCLEISi9+lkOYFgSNULvv5TbnvPEp081aaMmtqTg==
-X-Received: by 2002:a2e:b0f6:0:b0:2ec:1f9f:a879 with SMTP id 38308e7fff4ca-2ec3cecae0fmr43261131fa.31.1718921823111;
-        Thu, 20 Jun 2024 15:17:03 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d708862sm409371fa.35.2024.06.20.15.17.02
+        d=1e100.net; s=20230601; t=1718921950; x=1719526750;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8CXkaBTtnkZYe8FKNmQUlJrq+bqc8/5T0kpTwXzA8v4=;
+        b=YROzsr0tr91syu2bCVzp6t0ji2XzCI06FOBhh5d6yceZtTvEN31qkd2jPi+36dWE8d
+         Q2ow7Erzxj1jExrDWhEQmOfP8R3M1uikRnUjSKYFJTVbmvsK/nOwkAAJfhNk2tCgGE6E
+         m78/GJljWC8knmg27kUxoDkmPA15CQL8ALKfnEk5pDIXSkyx4ky6aAJ+3J9QFCkMxloN
+         md2iaJVqU2+DQFwZvbd3OtPZ3rYdy7+bRuyuxXHMhZc1o0+7cj2MmGlXnU82OiHz7PWN
+         gii/dvoVMWu67348TV5WmsfT8mjvG4CURp6gNtYrIirS+HZRL8NH+eRXSWIUqeIISJBh
+         vDtg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzp1y5uGfvvLvazM6dJThL8T8EvT1UXYEiSOW5GrN+cQN1UHByamh+sHdqAu+G7hLA3i9ZT/uuLynRuYbSCFX/MhUeYrAI8AO0UPFx
+X-Gm-Message-State: AOJu0YzlwYkrNOwiSZLssmcvxVk0UaM3TrhtF6yEri3ZQQZTlQlgVNIt
+	TP1i147Kxbyul2IiNVS4hTE9Dnq7PsmABl3/uSYM3+zcb8QpLeeyID9E9Y7audE=
+X-Google-Smtp-Source: AGHT+IEn/e1JCoI6n9QjJCApJJIiV/04yUlZRh2THSU//mSCMbMWyTjDtNzzp65OpwjNG+jObfWH4Q==
+X-Received: by 2002:a05:6358:5e08:b0:19f:3a23:880 with SMTP id e5c5f4694b2df-1a1fd5259e3mr837090755d.23.1718921949881;
+        Thu, 20 Jun 2024 15:19:09 -0700 (PDT)
+Received: from debian.debian ([2a09:bac5:7a49:19cd::292:40])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce8b1297sm17704285a.43.2024.06.20.15.19.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 15:17:02 -0700 (PDT)
-Date: Fri, 21 Jun 2024 01:17:01 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/9] drm/msm/hdmi: turn mode_set into atomic_enable
-Message-ID: <hj5xktzlbcrrbqsz2l3men5gmawzeszusixryhjbhm4g7gej7q@tcqvslat4wy4>
-References: <20240607-bridge-hdmi-connector-v5-0-ab384e6021af@linaro.org>
- <20240607-bridge-hdmi-connector-v5-5-ab384e6021af@linaro.org>
- <f34c4210-fd59-9d27-0987-3345631c9e35@quicinc.com>
- <xymopystyfjj3hpqes3uiw2g3dqynxzvz23snrbfzf2judgxnt@j4nmpcbuy7a4>
- <6d416e1a-1069-8355-e9f3-d2732df081a3@quicinc.com>
- <il2bg6bsu4nu4lpztzwo2rfonttiy64grxcsn7n4uybn3eui77@jxyzd744ksva>
- <8dd4a43e-d83c-1f36-21ff-61e13ff751e7@quicinc.com>
+        Thu, 20 Jun 2024 15:19:09 -0700 (PDT)
+Date: Thu, 20 Jun 2024 15:19:07 -0700
+From: Yan Zhai <yan@cloudflare.com>
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	linux-kernel@vger.kernel.org, yan@cloudflare.com
+Subject: [RFC net-next 0/9] xdp: allow disable GRO per packet by XDP
+Message-ID: <cover.1718919473.git.yan@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,126 +85,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8dd4a43e-d83c-1f36-21ff-61e13ff751e7@quicinc.com>
 
-On Thu, Jun 20, 2024 at 03:05:16PM GMT, Abhinav Kumar wrote:
-> 
-> 
-> On 6/20/2024 2:24 PM, Dmitry Baryshkov wrote:
-> > On Thu, Jun 20, 2024 at 01:49:33PM GMT, Abhinav Kumar wrote:
-> > > 
-> > > 
-> > > On 6/20/2024 1:32 PM, Dmitry Baryshkov wrote:
-> > > > On Thu, Jun 20, 2024 at 01:27:15PM GMT, Abhinav Kumar wrote:
-> > > > > 
-> > > > > 
-> > > > > On 6/7/2024 6:23 AM, Dmitry Baryshkov wrote:
-> > > > > > The mode_set callback is deprecated, it doesn't get the
-> > > > > > drm_bridge_state, just mode-related argumetns. Turn it into the
-> > > > > > atomic_enable callback as suggested by the documentation.
-> > > > > > 
-> > > > > 
-> > > > > mode_set is deprecated but atomic_mode_set is not.
-> > > > 
-> > > > There is no atomic_mode_set() in drm_bridge_funcs. Also:
-> > > > 
-> > > 
-> > > Please excuse me. I thought since encoder has atomic_mode_set(), bridge has
-> > > one too.
-> > > 
-> > > > * This is deprecated, do not use!
-> > > > * New drivers shall set their mode in the
-> > > > * &drm_bridge_funcs.atomic_enable operation.
-> > > > 
-> > > 
-> > > Yes I saw this note but it also says "new drivers" and not really enforcing
-> > > migrating existing ones which are using modeset to atomic_enable.
-> > 
-> > Well, deprecated functions are supposed to be migrated.
-> > 
-> 
-> Along with rest of the pieces of the driver :)
+Software GRO is currently controlled by a single switch, i.e.
 
-Step by step :-)
+  ethtool -K dev gro on|off
 
-> 
-> > > My concern is that today the timing engine setup happens in encoder's
-> > > enable() and the hdmi's timing is programmed in mode_set().
-> > > 
-> > > Ideally, we should program hdmi's timing registers first before the
-> > > encoder's timing.
-> > > 
-> > > Although timing engine is not enabled yet, till post_kickoff, this is
-> > > changing the sequence.
-> > > 
-> > > If this really required for rest of this series?
-> > 
-> > No, it was just worth doing it as I was doing conversion to atomic_*
-> > anyway. I can delay this patch for now.
-> > 
-> > Two questions:
-> > 
-> > 1) Are you sure regarding the HDMI timing registers vs INTF order? I
-> > observe the underrun issues while changing modes on db820c.
-> > 
-> 
-> Yes this is the order I see in the docs:
-> 
-> 1) setup HDMI PHY and PLL
-> 2) setup HDMI video path correctly (HDMI timing registers)
-> 3) setup timing generator to match the HDMI video in (2)
-> 4) Enable timing engine
+However, this is not always desired. When GRO is enabled, even if the
+kernel cannot GRO certain traffic, it has to run through the GRO receive
+handlers with no benefit.
 
-Thanks!
+There are also scenarios that turning off GRO is a requirement. For
+example, our production environment has a scenario that a TC egress hook
+may add multiple encapsulation headers to forwarded skbs for load
+balancing and isolation purpose. The encapsulation is implemented via
+BPF. But the problem arises then: there is no way to properly offload a
+double-encapsulated packet, since skb only has network_header and
+inner_network_header to track one layer of encapsulation, but not two.
+On the other hand, not all the traffic through this device needs double
+encapsulation. But we have to turn off GRO completely for any ingress
+device as a result.
 
-> 
-> This change is mixing up the order of (2) and (3).
-> 
-> > 2) What should be the order between programming of the HDMI timing
-> > engine and HDMI PHY?
-> > 
-> 
-> Mentioned above.
-> 
-> > What would be your opinion on moving HDMI timing programming to
-> > atomic_pre_enable? (the exact place depends on the answer on the second
-> > question).
-> > 
-> 
-> So
-> 
-> -> bridge->pre_enable() : Do HDMI timing programming
-> -> encoder->atomic_enable() : Do timing engine programming
-> -> post_kickoff() does timing engine enable
-> 
-> This matches the steps I wrote above.
-> 
-> Hence this is fine from my PoV.
+A natural approach to make this more flexible is to use XDP to control
+GRO behavior. But current semantic gap between XDP buffer/frame and socket
+buffer requires some new primitives.
 
-Ack, I'll skip this patch for now and repost it separately (moving the
-code to pre_enable function).
+This change set proposes a control bit gro_disabled on skbs to determine
+if GRO should work on an skb or not. To manipulate this bit, we
+introduce a new XDP kfunc bpf_xdp_disable_gro as well as generic helpers
+xdp_frame/buff_fixup_skb_offloading.
 
-> 
-> > > 
-> > > > > 
-> > > > > I would rather use atomic_mode_set because moving to atomic_enable() would
-> > > > > be incorrect.
-> > > > > 
-> > > > > That would be called after encoder's enable and hence changes the sequence.
-> > > > > That was not the intention of this patch.
-> > > > > 
-> > > > > NAK.
-> > > > > 
-> > > > > > Acked-by: Maxime Ripard <mripard@kernel.org>
-> > > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > ---
-> > > > > >     drivers/gpu/drm/msm/hdmi/hdmi_bridge.c | 33 ++++++++++++++++++++++++++-------
-> > > > > >     1 file changed, 26 insertions(+), 7 deletions(-)
-> > > > 
-> > > > 
-> > 
+The expected working flow is that:
+* XDP program examines packets and can call bpf_xdp_disable_gro to
+  disable GRO on a packet
+* Device drivers need to call xdp_buff_fixup_skb_offloading (or
+  equivalent version for xdp_frame), to check if skb->gro_disabled
+  needs to be set.
+* The kernel will elide GRO later if this bit is used.
+
+Initially we only modified a few drivers for demonstration purpose. The
+driver side changes is optional and also incremental depending on
+vendors' agenda. Any suggestions are welcome!
+
+Jesper Dangaard Brouer (1):
+  mlx5: move xdp_buff scope one level up
+
+Yan Zhai (8):
+  skb: introduce gro_disabled bit
+  xdp: add XDP_FLAGS_GRO_DISABLED flag
+  xdp: implement bpf_xdp_disable_gro kfunc
+  bnxt: apply XDP offloading fixup when building skb
+  ice: apply XDP offloading fixup when building skb
+  veth: apply XDP offloading fixup when building skb
+  mlx5: apply XDP offloading fixup when building skb
+  bpf: selftests: test disabling GRO by XDP
+
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c     |   4 +
+ drivers/net/ethernet/intel/ice/ice_txrx.c     |   2 +
+ drivers/net/ethernet/intel/ice/ice_xsk.c      |   6 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en.h  |   6 +-
+ .../ethernet/mellanox/mlx5/core/en/xsk/rx.c   |  10 +-
+ .../ethernet/mellanox/mlx5/core/en/xsk/rx.h   |   6 +-
+ .../net/ethernet/mellanox/mlx5/core/en_rx.c   | 117 ++++++++++-------
+ drivers/net/veth.c                            |   4 +
+ include/linux/netdevice.h                     |   9 +-
+ include/linux/skbuff.h                        |  10 ++
+ include/net/xdp.h                             |  38 +++++-
+ include/net/xdp_sock_drv.h                    |   2 +-
+ net/Kconfig                                   |  10 ++
+ net/core/gro.c                                |   2 +-
+ net/core/gro_cells.c                          |   2 +-
+ net/core/skbuff.c                             |   4 +
+ net/core/xdp.c                                |  27 +++-
+ tools/testing/selftests/bpf/config            |   1 +
+ .../selftests/bpf/prog_tests/xdp_offloading.c | 122 ++++++++++++++++++
+ .../selftests/bpf/progs/xdp_offloading.c      |  50 +++++++
+ 20 files changed, 369 insertions(+), 63 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/xdp_offloading.c
+ create mode 100644 tools/testing/selftests/bpf/progs/xdp_offloading.c
 
 -- 
-With best wishes
-Dmitry
+2.30.2
+
+
 
