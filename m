@@ -1,122 +1,187 @@
-Return-Path: <linux-kernel+bounces-223028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736FA910C19
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:22:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE4F910C29
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5F1283012
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:22:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C8081F21D1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16961B14E9;
-	Thu, 20 Jun 2024 16:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10F01B3736;
+	Thu, 20 Jun 2024 16:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jOx7eYfG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XC1XYPkS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58381CD3D;
-	Thu, 20 Jun 2024 16:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E325E1B29C6;
+	Thu, 20 Jun 2024 16:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900536; cv=none; b=SSYoHxH+S4wLaC4W1oZbHBm+lWo+IHbaz9D8WK7kjeOuGm/3M2UOCi7hqgecobEC7Xyp7UTJ9Mtgml1nLujacPcB3f+BJk5FdihztplvXypJjpepzrbOD+siCVIWHUU4RBxihNO77F6SyltbrcdBL0ge7FGa7KBOdDuTU0lGhe8=
+	t=1718900616; cv=none; b=DYwCH91wjXbamxsHHFuFiBwLRNsfSm2+kyVQU+brawzwa7WlKlJwoTTsdtdB3kXXB97OTlEOlXski419akZYZAnLRTFP+k8j0rfXWb8aquBu1RfxRDY+ZvehKtLUwd/lZ8RySDIKVZnYokr+Kn3FZt77n/fR4Fim+jOZIFcZVlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900536; c=relaxed/simple;
-	bh=ssJliKc5kNtUyUtknPdOclEvUOLH+104ZebK/uc38CI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=F7ORG2kyXxrEGOGi0ttBjkaw8J0c0ViWFsqX4USSdKmBJE4Uh3+43RGFSTqjXw87ZLvN2WEDZzKeKDlTSXY+9p2lPH/wsxOrrwqIbgNdOTPK7cTzTWrmw24AAfhyZnDxc9X6YFfwc9x9NKX2d4dfGNJvSY3Zr9j8Rq7+w9DmejA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jOx7eYfG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K9vXRa003612;
-	Thu, 20 Jun 2024 16:22:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hhGpsxMxzPNoapl7cqpvoCRjNe/ydCSjVn5o6h1MEu0=; b=jOx7eYfGaCbY5pPh
-	PU+XzdAGyBjuNJh9BhWB6mHmDbc8ETjF3tIBCJI+nJwNgWu8LV1cvgxI1z6jHMLr
-	GkpETrTgkA7Dw/XMf3WueG88YxPtraRbz1NlUmoRtGYSamfdEfmXV1OWyT42O0C3
-	V+bRn0ChDOkdPRA4kaB0tgE4l/sxVgn8TqneiplzztakibGkDALk8es/KgU6YTBK
-	i0qg4G1deu6wbcTzaoJRQ35BUkU5JJhyvDLRV1gjEh2eIpmHW64qL5VljiF5yGc7
-	fav6XDU2IMgtWcgwzAW6Xll1fZvSZyQpjhf/bd8t1MDYQo1Vz0yNwn5pmuKmSLl8
-	EuaDmg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvaqbswx4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 16:22:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KGM0XL001765
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 16:22:00 GMT
-Received: from [10.48.244.93] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
- 2024 09:21:59 -0700
-Message-ID: <66425403-66fc-4250-9642-5b29dc821b39@quicinc.com>
-Date: Thu, 20 Jun 2024 09:21:59 -0700
+	s=arc-20240116; t=1718900616; c=relaxed/simple;
+	bh=c2+3nT3Fz2YE3y2yTCQ/lqf84edhGpnQvBt5hH6hrrc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qQK2KQiOcxxrzCEsfKQ2qhAMidttfu7IDYwEZyvOAyX79regfuRag7GMcryofO737LpJ7lL3MVEJxe55xm3HO2X+DIJyymeA6r1pXdfKR3c3uZHrfvN6yckdFh8yq2+0N8BZr/Hjy8vkkteTD6fkdfHeKJFPBJb2TWl5isMYtHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XC1XYPkS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C294C32786;
+	Thu, 20 Jun 2024 16:23:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718900615;
+	bh=c2+3nT3Fz2YE3y2yTCQ/lqf84edhGpnQvBt5hH6hrrc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XC1XYPkSMkLHnz9abDPwB+ZF9PlO95SQ+oHvZ5uCctS66b+uYGD9F2IRJX7pEtMkc
+	 tv1ySBBzxr5W7wpTOSPmwFLPSaG8DZ+VHBfx2P4XohH/2B5Ig5ZAdTDxK0UXwPOa9f
+	 kgG01VSndf2XvLA6qgkIX+rPcLDIj4cedf9ebxSx7WytcpCCbPGct3kqyatbZdmobi
+	 VeFKF+urVmNd2v+/KXJBz8itdjWMHDfq1hlwgrSDbn0Mq69GGfKJxQF+5Zd1+MyiaZ
+	 tJ0Pd6jm0rAgBQhogByTNSzjJmQ0Xpzjvie1YBoPoSwU/RqtdxmBuhM5TomoNaluGz
+	 sj55VopFCAeAw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org,
+	Helge Deller <deller@gmx.de>,
+	linux-parisc@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	sparclinux@vger.kernel.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	Brian Cain <bcain@quicinc.com>,
+	linux-hexagon@vger.kernel.org,
+	Guo Ren <guoren@kernel.org>,
+	linux-csky@vger.kernel.org,
+	Heiko Carstens <hca@linux.ibm.com>,
+	linux-s390@vger.kernel.org,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	linux-sh@vger.kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	libc-alpha@sourceware.org,
+	musl@lists.openwall.com,
+	ltp@lists.linux.it
+Subject: [PATCH 00/15] linux system call fixes
+Date: Thu, 20 Jun 2024 18:23:01 +0200
+Message-Id: <20240620162316.3674955-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: test: add MODULE_DESCRIPTION()
-Content-Language: en-US
-To: John Johansen <john.johansen@canonical.com>,
-        Paul Moore
-	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"
-	<serge@hallyn.com>
-CC: <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9ntzmUJzd46cMdm1GDexHpmHrfFSoAvk
-X-Proofpoint-ORIG-GUID: 9ntzmUJzd46cMdm1GDexHpmHrfFSoAvk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_07,2024-06-20_04,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406200118
+Content-Transfer-Encoding: 8bit
 
-On 5/29/2024 6:21 PM, Jeff Johnson wrote:
-> Fix the 'make W=1' warning:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in security/apparmor/apparmor_policy_unpack_test.o
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  security/apparmor/policy_unpack_test.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
-> index 5c9bde25e56d..874fcf97794e 100644
-> --- a/security/apparmor/policy_unpack_test.c
-> +++ b/security/apparmor/policy_unpack_test.c
-> @@ -604,4 +604,5 @@ static struct kunit_suite apparmor_policy_unpack_test_module = {
->  
->  kunit_test_suite(apparmor_policy_unpack_test_module);
->  
-> +MODULE_DESCRIPTION("KUnit tests for AppArmor's policy unpack");
->  MODULE_LICENSE("GPL");
-> 
-> ---
-> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-> change-id: 20240529-md-apparmor_policy_unpack_test-7657c4f11591
-> 
+From: Arnd Bergmann <arnd@arndb.de>
 
-Following up to see if anything else is needed to get this merged.
+I'm working on cleanup series for Linux system call handling, trying to
+unify some of the architecture specific code there among other things.
+
+In the process, I came across a number of bugs that are ABI relevant,
+so I'm trying to merge these first. I found all of these by inspection,
+not by running the code, so any extra review would help. I assume some
+of the issues were already caught by existing LTP tests, while for others
+we could add a test. Again, I did not check what is already there.
+
+The sync_file_range and fadvise64_64 changes on sh, csky and hexagon
+are likely to also require changes in the libc implementation.
+
+Once the patches are reviewed, I plan to merge my changes as bugfixes
+through the asm-generic tree, but architecture maintainers can also
+pick them up directly to speed up the bugfix.
+
+     Arnd
+
+Cc: linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org
+Cc: Helge Deller <deller@gmx.de>
+Cc: linux-parisc@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Andreas Larsson <andreas@gaisler.com>
+Cc: sparclinux@vger.kernel.org
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Naveen N. Rao <naveen.n.rao@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Brian Cain <bcain@quicinc.com>
+Cc: linux-hexagon@vger.kernel.org
+Cc: Guo Ren <guoren@kernel.org>
+Cc: linux-csky@vger.kernel.org
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org
+Cc: Rich Felker <dalias@libc.org>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: linux-sh@vger.kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: libc-alpha@sourceware.org
+Cc: musl@lists.openwall.com
+Cc: ltp@lists.linux.it
+
+Arnd Bergmann (15):
+  ftruncate: pass a signed offset
+  syscalls: fix compat_sys_io_pgetevents_time64 usage
+  mips: fix compat_sys_lseek syscall
+  sparc: fix old compat_sys_select()
+  sparc: fix compat recv/recvfrom syscalls
+  parisc: use correct compat recv/recvfrom syscalls
+  parisc: use generic sys_fanotify_mark implementation
+  powerpc: restore some missing spu syscalls
+  sh: rework sync_file_range ABI
+  csky, hexagon: fix broken sys_sync_file_range
+  hexagon: fix fadvise64_64 calling conventions
+  s390: remove native mmap2() syscall
+  syscalls: mmap(): use unsigned offset type consistently
+  asm-generic: unistd: fix time32 compat syscall handling
+  linux/syscalls.h: add missing __user annotations
+
+ arch/arm64/include/asm/unistd32.h         |   2 +-
+ arch/csky/include/uapi/asm/unistd.h       |   1 +
+ arch/csky/kernel/syscall.c                |   2 +-
+ arch/hexagon/include/asm/syscalls.h       |   6 +
+ arch/hexagon/include/uapi/asm/unistd.h    |   1 +
+ arch/hexagon/kernel/syscalltab.c          |   7 +
+ arch/loongarch/kernel/syscall.c           |   2 +-
+ arch/microblaze/kernel/sys_microblaze.c   |   2 +-
+ arch/mips/kernel/syscalls/syscall_n32.tbl |   2 +-
+ arch/mips/kernel/syscalls/syscall_o32.tbl |   4 +-
+ arch/parisc/Kconfig                       |   1 +
+ arch/parisc/kernel/sys_parisc32.c         |   9 -
+ arch/parisc/kernel/syscalls/syscall.tbl   |   6 +-
+ arch/powerpc/kernel/syscalls/syscall.tbl  |   6 +-
+ arch/riscv/kernel/sys_riscv.c             |   4 +-
+ arch/s390/kernel/syscall.c                |  27 ---
+ arch/s390/kernel/syscalls/syscall.tbl     |   2 +-
+ arch/sh/kernel/sys_sh32.c                 |  11 ++
+ arch/sh/kernel/syscalls/syscall.tbl       |   3 +-
+ arch/sparc/kernel/sys32.S                 | 221 ----------------------
+ arch/sparc/kernel/syscalls/syscall.tbl    |   8 +-
+ arch/x86/entry/syscalls/syscall_32.tbl    |   2 +-
+ fs/open.c                                 |   4 +-
+ include/asm-generic/syscalls.h            |   2 +-
+ include/linux/compat.h                    |   2 +-
+ include/linux/syscalls.h                  |  20 +-
+ include/uapi/asm-generic/unistd.h         | 146 +++++++++-----
+ 27 files changed, 160 insertions(+), 343 deletions(-)
+ create mode 100644 arch/hexagon/include/asm/syscalls.h
+
+-- 
+2.39.2
+
 
