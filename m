@@ -1,236 +1,253 @@
-Return-Path: <linux-kernel+bounces-221963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DC590FB27
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:01:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A872290FB2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390251F226D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:01:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF258B21084
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF95B376F5;
-	Thu, 20 Jun 2024 02:00:44 +0000 (UTC)
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2128.outbound.protection.outlook.com [40.107.215.128])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB570182AE;
+	Thu, 20 Jun 2024 02:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ckXixJUK"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8DA282E2;
-	Thu, 20 Jun 2024 02:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.128
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718848844; cv=fail; b=tDS1hnolktag/3H2BhvI3drLtQwBFFT9ty4fnDR1bfxNmHfzy3gKUNGMXCtcTBlh9B/VPRefZAVUOnzK8QjHDnXmCv0IXOCP5qYBFW5HLeB+5dTv92bRpv033gg18z8MaIpg6N5JBZ9t5so00T8dtOQwuoBzUCJVLESbdZcWjh4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718848844; c=relaxed/simple;
-	bh=xJW+5hOAMUkFPGt28SK7hB1xyqMVx/KvSZ7fT2KIDzA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sV6AnqpYvZccy1w03OxrAGkUtcnIjj2LKrqRbLh8KTDO/cn0NN4qchad44Z8YlohFR/zm7VM+aSAtrhMsUE3jAKXQ1Lu2gEV35eOe+L/4V5ecSfwPzooLgwdQAIjGmGyqiV6iSwd7xOmq0oTQaLZJ6RpbDiOjsTu0hIA9DLNGvU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.215.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fFufsblirz2lMH2CycigsI8yd5EDLYFUQg/hrlDtA75WH9Jecjg1h3YNIeRGste3EM/nG9exizCjKWmRPj4ljHSDJebP5bRmQsfa8Wj2DNe6pGXRubjUUCGUlFRrJT1/3xcDtFY5UAs1FiCSSsji5J/NnyNOqxrOSUqQkDbHFLI9Uuhn/uVl4Y6E/Y4uaJpuqF+kGAVcAZdhwP71h4bEyDCTB1AWqUIZoxNZQDsXN9q2xoxRocIXbxYunFpbp8Blr/pOXCLWtsMxOMmDa/hb0vX58IklL44nT0fEkkPT8CtnUFbwORCXCrZr6tY538GKsVEmNDIbUvXIC2vC+KKFBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U6hbGoEs9Vr71hwrQ+0VzO3tMCpU/yX3mus5cqX6VQ8=;
- b=cEs8HzxhNamXOm/VM/WMn8xYgwsh/fmyRGqjSTnItrbWgavGGtDHMf5+EZgYbicZVl3x2AWBB3oae1Celqi/0CSJXVxiXnEKFtgBEUxiBedn8fBvusYZDnnL/LwKMrAgKni1yegPEmoVeBi6WiXwPKAR1LLV7klSuas8XOZjyACoM20m+osLUK+1pgtJJpgD6c6S00ojgAMPOEKDg+qga5qLa6VpH+jC9mqMjZYTLEA5I4k6EICeIc1ZydM2AVaSdglyE6TxAgJw3Fw/O1+wVhWyN5D7K4jqAn0uVWzsJeyLE1y8KtkC/MH05w29wsmESHGedDJzGURROymY8/AyBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
- dkim=pass header.d=wesion.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wesion.com;
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
- by JH0PR03MB7323.apcprd03.prod.outlook.com (2603:1096:990:11::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Thu, 20 Jun
- 2024 02:00:37 +0000
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0%6]) with mapi id 15.20.7677.029; Thu, 20 Jun 2024
- 02:00:37 +0000
-From: Jacobe Zang <jacobe.zang@wesion.com>
-To: arend.vanspriel@broadcom.com
-Cc: kvalo@kernel.org,
-	duoming@zju.edu.cn,
-	bhelgaas@google.com,
-	minipli@grsecurity.net,
-	linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
-	megi@xff.cz,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	nick@khadas.com,
-	efectn@protonmail.com,
-	jagan@edgeble.ai,
-	dsimic@manjaro.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jacobe Zang <jacobe.zang@wesion.com>
-Subject: [PATCH v1 3/3] net: wireless: brcmfmac: Add support for AP6275P
-Date: Thu, 20 Jun 2024 10:00:15 +0800
-Message-Id: <20240620020015.4021696-4-jacobe.zang@wesion.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240620020015.4021696-1-jacobe.zang@wesion.com>
-References: <20240620020015.4021696-1-jacobe.zang@wesion.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0185.apcprd04.prod.outlook.com
- (2603:1096:4:14::23) To TYZPR03MB7001.apcprd03.prod.outlook.com
- (2603:1096:400:26a::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCE41BDD0;
+	Thu, 20 Jun 2024 02:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718849057; cv=none; b=kpkw+7TqC7Kf+/w5GXZXkHGLKe1QzGD9/G+VXVeieTqGKCw0S9uQPMoK/gXOxbbLJckrCIDGOt3kuy8yen8Mu7XrU+VvJvCuYIhyCsrmV5z1ymXXjTW3M7BmK9wnXp5amdGeDsusqIaHNDIWwx/R3EMB1HcTGZ6RWZ3pE8iN8mE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718849057; c=relaxed/simple;
+	bh=W95vJRsdR9kjIHZqmPeoWP9lomjKv6MGJ35IR8aW08E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mbu0hLEjua6JcySlXXKO3pph3Tf/eFEePF2ZyHB795GWu5xFz/GODIn5jOgJybo5iF/YaANJ3WrtA438CFH4zI28L5Ec05Ueh0koJ9LUvu91NDi8hUMNG1TMFoEBV8FfEFIF8I+dYydFa+TgAoOrPeovFwQLS38oePiWh0U6Ehs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ckXixJUK; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-80b755c6c06so118097241.2;
+        Wed, 19 Jun 2024 19:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718849055; x=1719453855; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jhmMCJlWLT6P0x0JEVsA2CFzvtPsQuWVwbgag5ghfwE=;
+        b=ckXixJUKGyQ9bZ7gG0Kymq2ChiZ+UAzvHJhq1tqBNeA+Yeyjc0zE21mPXHEh4RPnpc
+         e11/LnuayRc/OtBZRbMPVwmGXfxVwWlYWeb9HA5PQVVB6IRY+5QIJSCdSGaU+hEynpjO
+         G8buXu6d6F8BtAwgdR5UVrFAYCcWwwvw3HUIkR97pazP3QFXGT9E6d6ERvfNi7+FOQNt
+         8KH1HUxLsNvSFqT5AJCInxlxo/w+vs3J8zgYvA8yrETuOsmmVkDxwCDkdIZ57K8PIz2M
+         eRAemKoI4zq5CKvOaoENsZxJWKix0dnsBsOehbtxTfkJi+ABfD6bKiw0hmELeSnZFiTp
+         9IWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718849055; x=1719453855;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jhmMCJlWLT6P0x0JEVsA2CFzvtPsQuWVwbgag5ghfwE=;
+        b=w3Vpozk8xwURHsU0cbVCFmVlH6RGGF2sdOvW4LJ54kTV8hmO/QAeE3UTq+gj9Wffp7
+         eZ2isQL/riC+eR5VKtJ/frgEb7lG/NlqfwrOTNWa6dURdzal2N8x1iKOMk86UF2S2hU6
+         S/pKepDmScrsXVyRFiZbZVMc0oBGO2iqcJLe9UKqobG45UR3nS9VHArg/tj9IWGYcxSR
+         dVOsycUFJlvQ4QfAy7Hw9+uBO60aeJlfCY9ZWM+JkZYvGGlmZomil+BrqKpXkrA2Bm/r
+         0s+ioUOO7Ab8mm7YQ7PofKJ148gSuT8npzUmY5ajNcnfrnKd02OnwAAqKTKbzDhL5TAz
+         Nd0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXk3DjLFFoLs1r+2mSDCSEt5WKZ2h6ZT4U3o5uly0mYxxIggFkVkqjB/RrUOXDPUgWN5R6EXVe6GKcJrTOquHBN9rVqjqYpY0zcTSJnTfOjnhEV13bUlUnklvYvYssl2sxUqcBReSA+M7kSbpDU
+X-Gm-Message-State: AOJu0Yw5Sa48zRCELnFVAgsfSdyhsyYYjZf6ICXtRh5tg/5nP8mmJu71
+	Kt1NHMv9N9fhje/BynO04pI+n8IiMw7uvBkZUlqK85rXC2t4+ksomxFGlZR1UsBFTA+u5rMC6co
+	L9Xsz6iUTTcwXAznrPLRTugRJ6Qw=
+X-Google-Smtp-Source: AGHT+IGWMX6GIQMKhSTglWLeOPg1r0KL1VIJVatQqACDfbph/Dm/svF8qriPsm3BUQO0wRsDfIBQ+vY4BH5McdG6U1A=
+X-Received: by 2002:a05:6102:4c46:b0:48f:1d57:9b with SMTP id
+ ada2fe7eead31-48f1d5700f5mr2656379137.26.1718849054960; Wed, 19 Jun 2024
+ 19:04:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR03MB7001:EE_|JH0PR03MB7323:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46453918-9b87-4954-2289-08dc90ccc73e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|1800799021|52116011|366013|376011|7416011|38350700011;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?krYlmyyAyhxcgjUe+S0xXL8S49r8oANhVx/+ECJyyd8UfSntPwPTkzPB1cGa?=
- =?us-ascii?Q?zh2tZl2gn8nDcBu7+2TunpF5b9noOG/waaISUXpiPhCM5t4MOE4bBlwClVkm?=
- =?us-ascii?Q?C6JMs75ziL40FRDXv65PTE7BbpK76EojgtxIBxhltPM8v5ZLmUgzwUCkc1aV?=
- =?us-ascii?Q?jXUP89bIsCpWwMTNaYPOMkjTHNxYQt/+/GeckFerQLZsMnlpnd/WWEc8spRx?=
- =?us-ascii?Q?hMkuD6MPpOGX6WKoRWG9rWq+Ak9S1vkjLIKa/AZ1AuLlhQ18DcpmKBRPTjXh?=
- =?us-ascii?Q?s/CklVpNIoSin8caJok26UGgqt5jAyYaJ1UwXSap7z25WKRq0hJHGkdKOBpB?=
- =?us-ascii?Q?5LLw9fzcEhsZBh6MT0iLrgfQBj4u7Iw2/V5asdUDowaErTatXcV7jOKtcA7e?=
- =?us-ascii?Q?R2H9YI3ffr5kCWF2f/FJUgkFVWE/oguvEz570rXTi/MUul2NmruT/XyuhcBf?=
- =?us-ascii?Q?TZm4WIi4zYfsBD6c8+wRdgZ2NFeOXrKDpyxgrizX39EwdN6bYS+/V+Prbq1Z?=
- =?us-ascii?Q?h/F3vT1c7mjlWV/qThq5XBE3AatsK60Mjr0ISWt1KPXM/A9UfujhEhm+AeUU?=
- =?us-ascii?Q?D6QQVxRJ8QLHBuy6NIjHf6o6BQsiHRweJoS/p1CXHiSl2FSMd1ldoRP8YBu4?=
- =?us-ascii?Q?AHXB6shE9FEoB41KPGLoW2DE+t4jqfot26ERNQ7/P3x6pNwDnFpjJlP5mS30?=
- =?us-ascii?Q?1FpSBSkyhhYogroAQ1Wznk2KovI2FhrlicNXPQW8/oobtgH5NS6fpJadwLiZ?=
- =?us-ascii?Q?+qTiXXWFS0uZ7ASRUray16pQeMPVdhqAXtEGH602zuoGgEHmlYTyvXNkuxjq?=
- =?us-ascii?Q?Ut0kNst9ywXr/PUoIQUmKQv9RiH16eg97iO/jR4OmM94/uFJVANlX07Srev4?=
- =?us-ascii?Q?/PgLk9PM5K6NXL9AjNLAjcBks5P4WiKXNgwYzpCTuUMf6vKh2ymc2yIdYh5B?=
- =?us-ascii?Q?lVBRkeMbWi9goy7ivuiMP1dJtzE/XFx0V1R0Egpr+t4XSVjdIpNL4ByPVha9?=
- =?us-ascii?Q?+0MXCN5GvbKLQgVh93FcZXboaQPYN1Mgf8vCSLAY9ROdMWrmrv7m/mWo/McR?=
- =?us-ascii?Q?SMb/5Z5fvPGpsn/EUvLgESUWVTC/KsTC+29VJBKRQCPot3wcI5o0vAclL/0K?=
- =?us-ascii?Q?diL4H7NgS4TtKxc3T1js1RAHZAwMe+QstR9/TQ6DvbEDysXQRIWQ2/8iFDye?=
- =?us-ascii?Q?i13YzgBYXxgn0Eyf0cX2DSaV6BJhymgJgkMl4MgJfJ1mCuG6wKPTmeczTxAr?=
- =?us-ascii?Q?O4iygmCclnbSVjkrlZ4d1iqwRo8V+t+dXNJx0LdWKWhMvdBpYBZhO9JNfilG?=
- =?us-ascii?Q?pp0DQ0Kuo2r/hAD1Vmo0wwu58mBJKgxtZAn1dWLfCEF260TeM4Uqy7rYTFXp?=
- =?us-ascii?Q?qNrwNJU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(52116011)(366013)(376011)(7416011)(38350700011);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6fGwhQi3QihAEmZ6okwKe8fG0sCEHU6swgO232K63o7O3FN2wH4d1d0XJMVS?=
- =?us-ascii?Q?QeDSfhe+BfVCfILHOC7cWzWzfcoQBJ6gmNzmj0tVOADV3V+hlZEiIYnL/iiM?=
- =?us-ascii?Q?L4mKYj58jKMRb7nNJ5vqm4pXfPFA6oWuMXHIIa8PzzWeqUhwHdFhyAPiTiy4?=
- =?us-ascii?Q?osxWToZ/mtjfsyi6lby39QLMANZokkvaxIuebA/WQd1Ktcy3E76RrjeRixv+?=
- =?us-ascii?Q?YEBoOag55PsV2njR1EGN3FLBiHaJzI29iniiDGjW9ryHjMC+ipjIa2z2zpZC?=
- =?us-ascii?Q?y2nRSvIF1FHjWXuLRmCopdnVOqz4/h28oQAa0wyEEUtFza30JG5oGcxyGYNj?=
- =?us-ascii?Q?nbCFMLebfCswdf8Hk9KsuTyJwFVf0Wl7WqX/3244SS3T7c8VZDqTLwA4iTkY?=
- =?us-ascii?Q?0yebLj7AiF0K54qejXYXh9QvM+qFs8SRRYqLpZq2AdweXajtul7QIMi7eyjD?=
- =?us-ascii?Q?LbzQkFJWpttb9SHroDr9LVT4pYsicXtge/NmeUjFP28p/sHkdOtLBEw2+Dod?=
- =?us-ascii?Q?RdQ0j6AEGotJDpp/Krw0qs9Z0JSyHBKHokbq0+ViHlKw49mDe5ROO/lalGnK?=
- =?us-ascii?Q?3/FbIlna6vRpQkuQsGL7Fwu5eKqlZmVGWUkyW5tLVrZi3IPdChU5nY0h/WSf?=
- =?us-ascii?Q?N9qm8UDQVj2/2vwPv5K4hrUjDevnjwqNJCcEog6tk9TZDMKAkOynMoB1E7zC?=
- =?us-ascii?Q?AAejd7kStucvrbLnT6v5hZzxqfEnXgJCX89BiuiNqKLseQ2bAkt/MSZarRDZ?=
- =?us-ascii?Q?9wrxLDo3ry8Y2cLcY3gjHw0rphMdAXgEdgP9cH8pjxh87L4o9YKEpwHC5wQl?=
- =?us-ascii?Q?OOMwGbkWRnLRgZw73hAWch/5JcHriwChvv4Yfq9l1wCwb4psyGNnnJo5zZb9?=
- =?us-ascii?Q?xGKBFz637tCeykbHtjlQA3tHR/zRf3afpNIRNI336sNcw3B/PE1mTd+nQ0aV?=
- =?us-ascii?Q?j0+GcWg9GP169QkLys+0YCKKzO4K6j0Dr4Jc1lJx4pNh2oMtFHefX1BLYv85?=
- =?us-ascii?Q?4uueqOtyU2S0PYfdU7Ao/Sp2TtTk1TbItAm1eON2I4b4lnmL1nSvMcPSMO+d?=
- =?us-ascii?Q?WEQjEj0x3CiHsDS31d/dvFDR4yHqDtx2IGk5h63ohVzbZ+dn7KFAQGWakKo9?=
- =?us-ascii?Q?ZdVe/u1SbpyIyTxdsvlwz73wCnd61AzSeLMVDMh3NjuQDVcCshHQZe8fEYad?=
- =?us-ascii?Q?LvQUyaW3CLO809uv9soo9p/nAJhKHZdSRJ6CtFqeRrEqLJQmsFf3KtLH2OuW?=
- =?us-ascii?Q?mIBWI+M8/vJ8Mr7CIUS0aFI1uTGnbYJsDauWz8TpeITqaB5Lf5c/I3z1lbTc?=
- =?us-ascii?Q?o7P2RwD03rhLmJ1QhCCjNNpUzlCjpsELS/SZEvkqgi6I9GmBQDxPz1JwpgHL?=
- =?us-ascii?Q?YQFMxEiMWYch6c//73bzr5W1uO5O8FBU0w0D4Vk8lXutHqhbz19NtU1LAOPu?=
- =?us-ascii?Q?jiTIeBGdN3nGukgGD88ZEPxk7GcZ5LVgjiu0L/jNPtf3WTt1hl2DqdFtridB?=
- =?us-ascii?Q?9WaY5YonRzv2FFWBG1SSMtAWP7E8ICQz6Ikj4cd97DZrjms2M0HqXmR7Etey?=
- =?us-ascii?Q?8Xi7Vfnmkci0P58hmFT/lVoJzOs6nOhTdzo76NOl?=
-X-OriginatorOrg: wesion.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46453918-9b87-4954-2289-08dc90ccc73e
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 02:00:37.1366
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YKAryeTOiiOeVp7EfePtAGQ8sddXyadTVCmnvjnJcihw0vv0fIAd4GCjLX5l85Sqar6/MqSdDjCXIyyV+RjO6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB7323
+References: <20240620002648.75204-1-21cnbao@gmail.com> <87zfrg2xce.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87zfrg2xce.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 20 Jun 2024 14:04:03 +1200
+Message-ID: <CAGsJ_4wS1PbGpfi5oWw4qRgs49kcdyTb42PA+35vBC1oA8Jsbg@mail.gmail.com>
+Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
+ entry allocation for thp_swapout
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: akpm@linux-foundation.org, shuah@kernel.org, linux-mm@kvack.org, 
+	ryan.roberts@arm.com, chrisl@kernel.org, david@redhat.com, hughd@google.com, 
+	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This module features BCM43752A2 chipset. The firmware requires
-randomness seeding, so enabled it.
+On Thu, Jun 20, 2024 at 1:55=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
+wrote:
+>
+> Barry Song <21cnbao@gmail.com> writes:
+>
+> > From: Barry Song <v-songbaohua@oppo.com>
+> >
+> > Both Ryan and Chris have been utilizing the small test program to aid
+> > in debugging and identifying issues with swap entry allocation. While
+> > a real or intricate workload might be more suitable for assessing the
+> > correctness and effectiveness of the swap allocation policy, a small
+> > test program presents a simpler means of understanding the problem and
+> > initially verifying the improvements being made.
+> >
+> > Let's endeavor to integrate it into the self-test suite. Although it
+> > presently only accommodates 64KB and 4KB, I'm optimistic that we can
+> > expand its capabilities to support multiple sizes and simulate more
+> > complex systems in the future as required.
+>
+> IIUC, this is a performance test program instead of functionality test
+> program.  Does it match the purpose of the kernel selftest?
 
-Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c      | 5 ++++-
- .../net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h    | 2 ++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+I have a differing perspective. I maintain that the functionality is
+not functioning
+as expected. Despite having all the necessary resources for allocation, fai=
+lure
+persists, indicating a lack of functionality.
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-index f241e1757d7e3..add317731126c 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-@@ -71,6 +71,7 @@ BRCMF_FW_CLM_DEF(4377B3, "brcmfmac4377b3-pcie");
- BRCMF_FW_CLM_DEF(4378B1, "brcmfmac4378b1-pcie");
- BRCMF_FW_CLM_DEF(4378B3, "brcmfmac4378b3-pcie");
- BRCMF_FW_CLM_DEF(4387C2, "brcmfmac4387c2-pcie");
-+BRCMF_FW_CLM_DEF(43752, "brcmfmac43752-pcie");
- 
- /* firmware config files */
- MODULE_FIRMWARE(BRCMF_FW_DEFAULT_PATH "brcmfmac*-pcie.txt");
-@@ -105,6 +106,7 @@ static const struct brcmf_firmware_mapping brcmf_pcie_fwnames[] = {
- 	BRCMF_FW_ENTRY(BRCM_CC_43664_CHIP_ID, 0xFFFFFFF0, 4366C),
- 	BRCMF_FW_ENTRY(BRCM_CC_43666_CHIP_ID, 0xFFFFFFF0, 4366C),
- 	BRCMF_FW_ENTRY(BRCM_CC_4371_CHIP_ID, 0xFFFFFFFF, 4371),
-+	BRCMF_FW_ENTRY(BRCM_CC_43752_CHIP_ID, 0xFFFFFFFF, 43752),
- 	BRCMF_FW_ENTRY(BRCM_CC_4377_CHIP_ID, 0xFFFFFFFF, 4377B3), /* revision ID 4 */
- 	BRCMF_FW_ENTRY(BRCM_CC_4378_CHIP_ID, 0x0000000F, 4378B1), /* revision ID 3 */
- 	BRCMF_FW_ENTRY(BRCM_CC_4378_CHIP_ID, 0xFFFFFFE0, 4378B3), /* revision ID 5 */
-@@ -1721,7 +1723,7 @@ static int brcmf_pcie_download_fw_nvram(struct brcmf_pciedev_info *devinfo,
- 		memcpy_toio(devinfo->tcm + address, nvram, nvram_len);
- 		brcmf_fw_nvram_free(nvram);
- 
--		if (devinfo->otp.valid) {
-+		if (devinfo->otp.valid || devinfo->ci->chip == BRCM_CC_43752_CHIP_ID) {
- 			size_t rand_len = BRCMF_RANDOM_SEED_LENGTH;
- 			struct brcmf_random_seed_footer footer = {
- 				.length = cpu_to_le32(rand_len),
-@@ -2710,6 +2712,7 @@ static const struct pci_device_id brcmf_pcie_devid_table[] = {
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4366_5G_DEVICE_ID, BCA),
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4371_DEVICE_ID, WCC),
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_43596_DEVICE_ID, CYW),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_43752_DEVICE_ID, WCC),
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4377_DEVICE_ID, WCC),
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4378_DEVICE_ID, WCC),
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4387_DEVICE_ID, WCC),
-diff --git a/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h b/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-index 44684bf1b9acc..c1e22c589d85e 100644
---- a/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-@@ -52,6 +52,7 @@
- #define BRCM_CC_43664_CHIP_ID		43664
- #define BRCM_CC_43666_CHIP_ID		43666
- #define BRCM_CC_4371_CHIP_ID		0x4371
-+#define BRCM_CC_43752_CHIP_ID		43752
- #define BRCM_CC_4377_CHIP_ID		0x4377
- #define BRCM_CC_4378_CHIP_ID		0x4378
- #define BRCM_CC_4387_CHIP_ID		0x4387
-@@ -94,6 +95,7 @@
- #define BRCM_PCIE_4366_5G_DEVICE_ID	0x43c5
- #define BRCM_PCIE_4371_DEVICE_ID	0x440d
- #define BRCM_PCIE_43596_DEVICE_ID	0x4415
-+#define BRCM_PCIE_43752_DEVICE_ID	0x449d
- #define BRCM_PCIE_4377_DEVICE_ID	0x4488
- #define BRCM_PCIE_4378_DEVICE_ID	0x4425
- #define BRCM_PCIE_4387_DEVICE_ID	0x4433
--- 
-2.34.1
+>
+> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> > ---
+> >  tools/testing/selftests/mm/Makefile           |   1 +
+> >  .../selftests/mm/thp_swap_allocator_test.c    | 192 ++++++++++++++++++
+> >  2 files changed, 193 insertions(+)
+> >  create mode 100644 tools/testing/selftests/mm/thp_swap_allocator_test.=
+c
+> >
+> > diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selfte=
+sts/mm/Makefile
+> > index e1aa09ddaa3d..64164ad66835 100644
+> > --- a/tools/testing/selftests/mm/Makefile
+> > +++ b/tools/testing/selftests/mm/Makefile
+> > @@ -65,6 +65,7 @@ TEST_GEN_FILES +=3D mseal_test
+> >  TEST_GEN_FILES +=3D seal_elf
+> >  TEST_GEN_FILES +=3D on-fault-limit
+> >  TEST_GEN_FILES +=3D pagemap_ioctl
+> > +TEST_GEN_FILES +=3D thp_swap_allocator_test
+> >  TEST_GEN_FILES +=3D thuge-gen
+> >  TEST_GEN_FILES +=3D transhuge-stress
+> >  TEST_GEN_FILES +=3D uffd-stress
+> > diff --git a/tools/testing/selftests/mm/thp_swap_allocator_test.c b/too=
+ls/testing/selftests/mm/thp_swap_allocator_test.c
+> > new file mode 100644
+> > index 000000000000..4443a906d0f8
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/mm/thp_swap_allocator_test.c
+> > @@ -0,0 +1,192 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + * thp_swap_allocator_test
+> > + *
+> > + * The purpose of this test program is helping check if THP swpout
+> > + * can correctly get swap slots to swap out as a whole instead of
+> > + * being split. It randomly releases swap entries through madvise
+> > + * DONTNEED and do swapout on two memory areas: a memory area for
+> > + * 64KB THP and the other area for small folios. The second memory
+> > + * can be enabled by "-s".
+> > + * Before running the program, we need to setup a zRAM or similar
+> > + * swap device by:
+> > + *  echo lzo > /sys/block/zram0/comp_algorithm
+> > + *  echo 64M > /sys/block/zram0/disksize
+> > + *  echo never > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/=
+enabled
+> > + *  echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/e=
+nabled
+> > + *  mkswap /dev/zram0
+> > + *  swapon /dev/zram0
+> > + * The expected result should be 0% anon swpout fallback ratio w/ or
+> > + * w/o "-s".
+> > + *
+> > + * Author(s): Barry Song <v-songbaohua@oppo.com>
+> > + */
+> > +
+> > +#define _GNU_SOURCE
+> > +#include <stdio.h>
+> > +#include <stdlib.h>
+> > +#include <unistd.h>
+> > +#include <string.h>
+> > +#include <sys/mman.h>
+> > +#include <errno.h>
+> > +#include <time.h>
+> > +
+> > +#define MEMSIZE_MTHP (60 * 1024 * 1024)
+> > +#define MEMSIZE_SMALLFOLIO (1 * 1024 * 1024)
+> > +#define ALIGNMENT_MTHP (64 * 1024)
+> > +#define ALIGNMENT_SMALLFOLIO (4 * 1024)
+> > +#define TOTAL_DONTNEED_MTHP (16 * 1024 * 1024)
+> > +#define TOTAL_DONTNEED_SMALLFOLIO (768 * 1024)
+> > +#define MTHP_FOLIO_SIZE (64 * 1024)
+> > +
+> > +#define SWPOUT_PATH \
+> > +     "/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout"
+> > +#define SWPOUT_FALLBACK_PATH \
+> > +     "/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout_=
+fallback"
+> > +
+> > +static void *aligned_alloc_mem(size_t size, size_t alignment)
+> > +{
+> > +     void *mem =3D NULL;
+> > +
+> > +     if (posix_memalign(&mem, alignment, size) !=3D 0) {
+> > +             perror("posix_memalign");
+> > +             return NULL;
+> > +     }
+> > +     return mem;
+> > +}
+> > +
+> > +static void random_madvise_dontneed(void *mem, size_t mem_size,
+> > +             size_t align_size, size_t total_dontneed_size)
+> > +{
+> > +     size_t num_pages =3D total_dontneed_size / align_size;
+> > +     size_t i;
+> > +     size_t offset;
+> > +     void *addr;
+> > +
+> > +     for (i =3D 0; i < num_pages; ++i) {
+> > +             offset =3D (rand() % (mem_size / align_size)) * align_siz=
+e;
+> > +             addr =3D (char *)mem + offset;
+> > +             if (madvise(addr, align_size, MADV_DONTNEED) !=3D 0)
+> > +                     perror("madvise dontneed");
+>
+> IIUC, this simulates align_size (generally 64KB) swap-in.  That is, it
+> simulate the effect of large size swap-in when it's not available in
+> kernel.  If we have large size swap-in in kernel in the future, this
+> becomes unnecessary.
+>
+> Additionally, we have not reached the consensus that we should always
+> swap-in with swapped-out size.  So, I suspect that this test may not
+> reflect real situation in the future.  Although it doesn't reflect
+> current situation too.
 
+Disagree again. releasing the whole mTHP swaps is the best case. Even in
+the best-case scenario, if we fail, it raises concerns for handling potenti=
+ally
+more challenging situations.
+
+I don't find it hard to incorporate additional features into this test
+program to simulate more intricate scenarios.
+
+>
+> > +
+> > +             memset(addr, 0x11, align_size);
+> > +     }
+> > +}
+> > +
+>
+> [snip]
+>
+> --
+> Best Regards,
+> Huang, Ying
+
+Thanks
+Barry
 
