@@ -1,48 +1,74 @@
-Return-Path: <linux-kernel+bounces-222148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE2A90FD60
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:15:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224A090FD62
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BA921F22674
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B0581C240EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B11F44366;
-	Thu, 20 Jun 2024 07:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7274778C;
+	Thu, 20 Jun 2024 07:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lexina.in header.i=@lexina.in header.b="nep78odR"
-Received: from mx.adeep.su (mx.adeep.su [185.250.0.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aqVfhEU0"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE392582;
-	Thu, 20 Jun 2024 07:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.250.0.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9D442A9E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718867726; cv=none; b=apjizbS1Lqv3gQbSG/ps9mBq6rw70z3saXXqcBJdL7gWyggfehmELfAPrEUAk4Y4Rz2h7wRdvhT8gDP1yoRGeuzrA7nPSssY3We0yzjxfTJT5HMtlHA5isuBoEeaP2350AttaGtzCb37KC2S7068XfIjaUB2v6W0MMJtheFhen4=
+	t=1718867729; cv=none; b=nxs2P60198mKes95Yc2OPYaD0xEdxtFtQ0O+1xsTJWs+3o3pbRrLgJKpWLGwkL8HPfCUP0uogsU+C1hcj7WTTTm+U8qeigYJnjf8UnxUcNAZRci1Nqqn+N+YZo1Snpvc+BDkxQ/Na+vRaNQBl2CGtM/MSbHCWrXZ3NQm/t55500=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718867726; c=relaxed/simple;
-	bh=IcyYdfYiiQmPyGKImIiSXfQv9WUKdIW5Dqeg5Xl7rVE=;
+	s=arc-20240116; t=1718867729; c=relaxed/simple;
+	bh=/sBKTEB/+4nUWaHQwaQ+QIV9S7PevpPSW2SIq5xDhsg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LDXoAsDkYTM7qsmwZTn5LIki1pJTsTOl0LBoyrz3NP86lHi6EpPmBCffV15jx3feB1bz9cYW+oJA2eXAMYA9VDlLL6dQaznmAwkRfbDYyCxsmmFDv3lecfDdBjQfd0IqGUCJnmR4ncZO3dUdtYyNMRLoYzLp2XXUEufq9fIOuLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lexina.in; spf=pass smtp.mailfrom=lexina.in; dkim=pass (2048-bit key) header.d=lexina.in header.i=@lexina.in header.b=nep78odR; arc=none smtp.client-ip=185.250.0.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lexina.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lexina.in
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8930A3C58C;
-	Thu, 20 Jun 2024 10:14:57 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lexina.in; s=dkim;
-	t=1718867710; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=FSfsG4wFQaSQRKS7ZW04On8EVVzNoCP8c5oRfY9w5uM=;
-	b=nep78odRMFIcA7g6A9dVwUfphlJ8JoSl34cYyDkihxS1AeFR8/7BDc8c/rZKHmT5CSIoDK
-	Skg7k6jZBEZNuOimLXsANvaEw3TTGsGRmSx6vMH4gPiC1ZLAQTOvHuFO6MtoIpxGRiDkuF
-	HqS4uwQzUSQBjJo/Jg+LFX7/qiCojUZatT0RzbhHlSZf4F7K+JOPmY1rdcTNW9Dv4/jCVE
-	J4xaIN/wnZi55NAi37HO+Nv/av0dgZm6Gsxw/eAkDZ/d4q4OYcTyTPFdiQ5AL9Usyb6UQp
-	+W/+1D5XECx5df5yH0xwoIP4CbMLzm48VOL8fh9VX+rJ5nV/1pj/RpaCM8pbng==
-Message-ID: <3e939ec0-f38b-468b-a897-80be207c1bdd@lexina.in>
-Date: Thu, 20 Jun 2024 10:14:57 +0300
+	 In-Reply-To:Content-Type; b=l9bMBciEGm3Q+B8sDZKNwk61FoZeF8ooyxuIVPnvy4BYT0HKfY5Bl6z7gC1EWTjxysCZ0faDwBSnwBmtQWDj6UTj7ctvUxKt2SRxFPrgeAtgmH3eSmQfSJZvqAEVqVXIKy1yxM73c7wt5hlA+i3xM7JczHOp+b30o4zfr7ef3iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aqVfhEU0; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-362f62ae4c5so297815f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 00:15:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718867725; x=1719472525; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=YOQPbikfuVDQuYYOBMdu0+m07SFpdwRjMBfJOBJZzTY=;
+        b=aqVfhEU07D1q3KA6bVAUopMO9KGCEELTSOvD+duFCOTH/sKBjHDMVjkn6SkyIvVAid
+         3MUEkAOdCSskRO8gdMmn5zXuRCX/uA+k2EItthq1RFx11McUKrxwMnlPENsPywl1y1HU
+         0dHC5SLWt/uh0XtBbry5MvNDcD8HSRASrDADs4EllizSOMb3UqJ2rNKLfeYe54iZTlEM
+         kOt16w7yVGiFR2ib1IA7BhuuAGcGGti8TgoFIkgXoOtmsZWS/Rvbx7tkdNubZJckML0X
+         ApYu+qJmmIG5SG9ir29As3pElau3c5FqG2ddhGMjw/pftD2gRJCR9LckwDnkLdPFZ84w
+         7vow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718867725; x=1719472525;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YOQPbikfuVDQuYYOBMdu0+m07SFpdwRjMBfJOBJZzTY=;
+        b=LHo/lzrt1318hphPzOUxKSM2mxsUyOfcc/iRw4weNKgwfaGEsBPJovdxfHBUcVShrb
+         5JgYQxqpFFSktmuXauGhbAmvrrVuQC6OhqSFnoRROoWXIFDkphb8HCvHqxsFTrhXauXb
+         U934fEv9Kvff6XKvXqcgtHNA2Vh7zbD3+zRK0la7axmUynl924NrIntaqFrdgaMGtblR
+         TxvUhDJaX8Q+1dCx+QcBJFNbhlk+2tP6qDHdcvEy3gXuajN9yQ+NIAPLfzt62jJbk75i
+         ls6m4105EB8m0Qd+kdqebkNwdr3wA/JW19ArIrPFUuCyIUsykM/ds9oZphBQITi8/be0
+         vU9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXMBBJYblZYaMGK4Mlva86PXCnIoEuIBIY4xsiEQms6dzfbt+xJ0XnGyttMEjcUzd0AxMfAQTCAG49B7MfDwYC0AXF4sNlkJ3HqXdiU
+X-Gm-Message-State: AOJu0Yw6XsPwBNDLCVlvYTmXpZfUHfciKibXgR178MwuUqFoeKeYYE+T
+	lMnNtvsVCQAR428w9/KOFJQMVUW6pv9za4fEw2hLD77NfarDi65VEWr2vvkrfs0=
+X-Google-Smtp-Source: AGHT+IEGQyEXaoW5eLHwTmEBudyzkdUgYkrq1xqgYSqKziMbPzOY4Yr8g/vysNLPiNBdD2QRTxrCVQ==
+X-Received: by 2002:adf:db49:0:b0:362:56c2:adb4 with SMTP id ffacd0b85a97d-36256c2ba0amr6300681f8f.18.1718867725501;
+        Thu, 20 Jun 2024 00:15:25 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0ca20esm14782095e9.27.2024.06.20.00.15.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 00:15:24 -0700 (PDT)
+Message-ID: <21320239-2991-4ec8-97a9-f1e6da249685@linaro.org>
+Date: Thu, 20 Jun 2024 09:15:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,170 +76,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] dt-bindings: arm: amlogic:
- amlogic,meson-gx-ao-secure: add secure-monitor property
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org
-References: <20240610084032.3096614-1-adeep@lexina.in>
- <20240610084032.3096614-4-adeep@lexina.in>
- <20240610-dropout-compress-6d6a9b749524@spud>
- <4866f6d4-2e3c-40c7-a8cb-ba4e422ffef6@lexina.in>
- <20240611-undying-earthy-00236ac251aa@spud>
- <20240613164244.GA1999034-robh@kernel.org>
- <c0d18fef-be65-461e-948f-c25e757199a5@lexina.in>
- <20240617-sulfate-posture-1619f1cdf090@spud>
-Content-Language: ru
-From: Viacheslav <adeep@lexina.in>
-Autocrypt: addr=adeep@lexina.in; keydata=
- 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
-In-Reply-To: <20240617-sulfate-posture-1619f1cdf090@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Subject: Re: [PATCH v2 2/2] dt-bindings: pinctrl: aspeed,ast2600-pinctrl: add
+ NCSI group
+To: Potin Lai <potin.lai.pt@gmail.com>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
+Cc: linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Patrick Williams <patrick@stwcx.xyz>, Cosmo Chou <cosmo.chou@quantatw.com>,
+ Potin Lai <potin.lai@quantatw.com>
+References: <20240620012512.3109518-1-potin.lai.pt@gmail.com>
+ <20240620012512.3109518-3-potin.lai.pt@gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240620012512.3109518-3-potin.lai.pt@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-17/06/2024 19.57, Conor Dooley пишет:
-> On Mon, Jun 17, 2024 at 11:21:30AM +0300, Viacheslav wrote:
->> Thanks for review.
->>
->> 13/06/2024 19.42, Rob Herring wrote:
->>> On Tue, Jun 11, 2024 at 07:07:28PM +0100, Conor Dooley wrote:
->>>> On Tue, Jun 11, 2024 at 01:25:11PM +0300, Viacheslav wrote:
->>>>> Hi!
->>>>>
->>>>> 10/06/2024 19.08, Conor Dooley wrote:
->>>>>> On Mon, Jun 10, 2024 at 11:39:49AM +0300, Viacheslav Bocharov wrote:
->>>>>>> Add secure-monitor property to schema for meson-gx-socinfo-sm driver.
->>>>>>
->>>>>> "bindings are for hardware, not drivers". Why purpose does the "secure
->>>>>> monitor" serve that the secure firmware needs a reference to it?
->>>>>
->>>>> This driver is an extension to the meson-gx-socinfo driver: it supplements
->>>>> information obtained from the register with information from the
->>>>> SM_GET_CHIP_ID secure monitor call. Due to the specifics of the module
->>>>> loading order, we cannot do away with meson-gx-socinfo, as it is used for
->>>>> platform identification in some drivers. Therefore, the extended information
->>>>> is formatted as a separate driver, which is loaded after the secure-monitor
->>>>> driver.
->>>>
->>>> Please stop talking about drivers, this is a binding which is about
->>>> hardware. Please provide, in your next version, a commit message that
->>>> justifies adding this property without talking about driver probing
->>>> order etc, and instead focuses on what service the "secure monitor"
->>>> provides etc.
->>>
->>> To put it another way, how many secure monitors does 1 system have?
->>
->> One per system in current device tree.
+On 20/06/2024 03:25, Potin Lai wrote:
+> In the NCSI pin table, the reference clock output pin (RMIIXRCLKO) is not
+> needed on the management controller side.
 > 
-> One per system, or one is currently described per system, but more might
-> be added later?
+> Add NCSI group to distinguish the pin group between RMII and NCSI.
 
-it turns out to be one per system. It's either there or it's not.
+Bindings go before users.
 
-> 
->>> What do you do if the property is not present? You didn't make it
->>> required which is good because that would be an ABI break.
->>
->> We need an indication of the ability to use the secure-monitor to obtain
->> additional information within the soc driver. It seemed to me that using an
->> explicit reference to the secure-monitor is the best choice.
->>
->>>
->>> You only need a link in DT if there are different possible providers or
->>> some per consumer information to describe (e.g. an interrupt number or
->>> clock ID). You don't have the latter and likely there is only 1 possible
->>> provider.
->>
->> Would replacing the reference to sm with an option, for example,
->> use-secure-monitor = <1>; look more appropriate in this case?
-> 
-> Perhaps a silly question, but (provided there's only one per system, why
-> can't the secure-monitor driver expose a function that you can call to get
-> a reference to the system-monitor? I did something similar before with
-> a call to in mpfs_sys_controller_get() mpfs_rng_probe(). Granted,
-> mpfs-rng is probed from software so it's slightly different to your
-> case, but the principle is the same and it's not unheard of for code in
-> drivers/soc to expose interfaces to other drivers like this. You can
-> just call a function like that, and know whether there's a secure
-> monitor, without having to retrofit a DT property.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-That could be an option. But again, nothing prevents me from searching 
-for the secure-monitor node throughout the entire DT array.
 
-The question is more about something else, let me try to explain from 
-the beginning:
+---
 
-We currently have a soc driver that uses only the register to get basic 
-information and it must be loaded early because other modules' behavior 
-depends on its information.
-There is an option to supplement the register information with 
-information from the secure-monitor.
-For this, we had to write a new driver that uses the same register 
-information as a fallback but can wait for the secure-monitor driver to 
-load and add its information to soc.
-It seemed logical to me to keep the DT structure the same and just add a 
-reference to the secure-monitor (or as a second option, create a 
-variable indicating support) for those SoCs that have been tested and 
-can provide this information.
-Not all Amlogic SoCs support this call, in some (mostly newer 
-generations of SoCs), this call returns incorrect information and we and 
-colleagues are still figuring out what has changed. But most established 
-platforms support this.
-We could add this information retrieval to the secure-monitor itself, 
-but that would be a completely different story and would not constitute 
-a soc driver.
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
 
-In the end, we need information about the support of the secure-monitor 
-call for obtaining information for the soc driver. In my opinion, this 
-can only be done by specifying it in the DT in specific files for 
-Amlogic platforms: either by referencing the SM or by an option that 
-allows checking the SM.
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
-> 
-> Thanks,
-> Conor.
-> 
-> 
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
+
+Best regards,
+Krzysztof
+
 
