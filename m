@@ -1,122 +1,98 @@
-Return-Path: <linux-kernel+bounces-222491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C356C910251
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:15:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C4891025B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6905DB21BDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:15:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA1AA283FC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7894D1A4F09;
-	Thu, 20 Jun 2024 11:15:23 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B419B1AB502;
+	Thu, 20 Jun 2024 11:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="z2ZUPDwp"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A011AAE11;
-	Thu, 20 Jun 2024 11:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D6A1AAE04;
+	Thu, 20 Jun 2024 11:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718882123; cv=none; b=ATE9Z0sskS27i06PiEfPtrpRz+3Zq/ht6yIw7y+vIA/K7hKzM3uYkKikY4Mj2xiPJA79PZcKmJtQ7vV6oBIH2FhIouSSjlVnAxPY+LtbNdA8J+hohJ+8GxFwsoZc6T0vMlFuBWerBQkxJxEFHVML27zbPk5aXAQRZ33B+1a2ErU=
+	t=1718882224; cv=none; b=lhBzvawV0U9DI7BmOQIgWdGZ0NUvZ3RedYzjtijZEa+u9CxOuP7RG0+2a1bgUpfathDNCYgUXLvggIIJv2orZZKXtNa2yDCfjxCi1B9vI9MktAKG1OeKxK1DynSXl+AQCEZ76SCqezRuJB4aOeg0QgyD7DyUDFXinDlhshh8GbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718882123; c=relaxed/simple;
-	bh=8/Se5HsIJIn0bf7XIDA1NA5bOEV8j/nuQs1YIB1bZYI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kiaIMClun1v10D/EjGxbBCRhRwOZxUqliLQ6ZnA4VXe+yqtXpwxmKiw9AT+qa0BjqXo1s7uyCO8zZRSNTnprpuAPcLCfoR9h3rukWaqwGHbrvsNDHMJd96uAz0gLOXA8DL3vPObmrXKKnVn9NzSSdV7NvRcWQzimRRlrcE+3MSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W4dCY1nQdz6K9JD;
-	Thu, 20 Jun 2024 19:13:45 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6808E140D1D;
-	Thu, 20 Jun 2024 19:15:18 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 20 Jun
- 2024 12:15:17 +0100
-Date: Thu, 20 Jun 2024 12:15:17 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Huang Ying <ying.huang@intel.com>
-CC: Dan Williams <dan.j.williams@intel.com>, Dave Jiang
-	<dave.jiang@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Alison Schofield
-	<alison.schofield@intel.com>, Andrew Morton <akpm@linux-foundation.org>,
-	Bharata B Rao <bharata@amd.com>, Alistair Popple <apopple@nvidia.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, Davidlohr Bueso
-	<dave@stgolabs.net>, Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny
-	<ira.weiny@intel.com>
-Subject: Re: [PATCH v3 3/3] cxl/region: Simplify cxl_region_nid()
-Message-ID: <20240620121517.00006e3e@Huawei.com>
-In-Reply-To: <20240618084639.1419629-4-ying.huang@intel.com>
-References: <20240618084639.1419629-1-ying.huang@intel.com>
-	<20240618084639.1419629-4-ying.huang@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718882224; c=relaxed/simple;
+	bh=O3S3VWzVD9fmlc1C98JuAN49aTJ5hu9MtYUiaKsL+PA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sV3pvXW6p/ZAuGmBwFTtPIgqbanklK87ESYg+5qsDxfrPnXCNHyptulvJLVJ+GSEY1yey1gIlDTDscGdfSDxg6vsrGyI7p1Sxv6DubmdSOSSpGUbHQVGrwJZcgHZmDXj5p+408c35lhCTEwDPosum2AvyMNHXWKLS8QL8ZvidQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=z2ZUPDwp; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=gYwDGJKYUQsFHOxIe5ojcNSki2ui6Az95zkeQzes4OQ=; b=z2ZUPDwpThPLjzeOrfmPFi8xJi
+	aVCwWcqk0NwvJDy9sFsIWrob3/2IXt86ZDoxERZ/hfJbNNl0fhYCzwZKqLKsbeGscXIcMt3lHKyYe
+	tbTZzvN/xkGLxM2dJiXo5wM6uYrUJ6DAyQl1++cXHJ2ybCueKMZh1A+eYzqJZNVp/YS37igoWD+Ac
+	d67Kib2+skIRYavuLpj+w8ePYzM2utwzAaa8f4e1zp4Yy3KXLUYtk7HxCmwozxyGpov59hcCkpzPz
+	qyKex2+vpMq/y/3HQt/KrptW4x0pk/GR2VxIKE+EhO2QG7pPtiuOn0WxTqnSgsOz9cfFwSCiS+M0R
+	hLD1yr2g==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60730)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sKFmX-0001ew-2C;
+	Thu, 20 Jun 2024 12:16:45 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sKFmY-0007cc-Pr; Thu, 20 Jun 2024 12:16:46 +0100
+Date: Thu, 20 Jun 2024 12:16:46 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH net-next 8/8] net: stmmac: qcom-ethqos: add a DMA-reset
+ quirk for sa8775p-ride-r3
+Message-ID: <ZnQPnrfoia/njFFZ@shell.armlinux.org.uk>
+References: <20240619184550.34524-1-brgl@bgdev.pl>
+ <20240619184550.34524-9-brgl@bgdev.pl>
+ <ZnQLED/C3Opeim5q@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnQLED/C3Opeim5q@shell.armlinux.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, 18 Jun 2024 16:46:39 +0800
-Huang Ying <ying.huang@intel.com> wrote:
+On Thu, Jun 20, 2024 at 11:57:20AM +0100, Russell King (Oracle) wrote:
+> I don't have time to go through stmmac and make any suggestions (sorry)
+> so I can only to say NAK to this change.
 
-> The node ID of the region can be gotten via resource start address
-> directly.  This simplifies the implementation of cxl_region_nid().
-> 
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Suggested-by: Alison Schofield <alison.schofield@intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Bharata B Rao <bharata@amd.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> ---
->  drivers/cxl/core/region.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index dc15ceba7ab7..605efe3562c6 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -2309,15 +2309,13 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
->  static int cxl_region_nid(struct cxl_region *cxlr)
->  {
->  	struct cxl_region_params *p = &cxlr->params;
-> -	struct cxl_endpoint_decoder *cxled;
-> -	struct cxl_decoder *cxld;
-> +	struct resource *res;
->  
->  	guard(rwsem_read)(&cxl_region_rwsem);
-> -	cxled = p->targets[0];
-> -	if (!cxled)
-> +        res = p->res;
+Also... where is the cover message? I don't have it, so I don't have the
+context behind your patch series - and I haven't received all the
+patches either.
 
-Odd indent - I think spaces rather than tab.  Otherwise seems reasonable.
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-
-> +	if (!res)
->  		return NUMA_NO_NODE;
-> -	cxld = &cxled->cxld;
-> -	return phys_to_target_node(cxld->hpa_range.start);
-> +	return phys_to_target_node(res->start);
->  }
->  
->  static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
