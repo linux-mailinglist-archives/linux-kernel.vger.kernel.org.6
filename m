@@ -1,210 +1,177 @@
-Return-Path: <linux-kernel+bounces-222750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3095D9106D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:53:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B8169106E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AFF01C21B77
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:53:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA532826A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA321AD4AD;
-	Thu, 20 Jun 2024 13:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3416F1AD4BE;
+	Thu, 20 Jun 2024 13:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iAWXOVWD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bcvhT40C"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602167C6C9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480131AC782;
+	Thu, 20 Jun 2024 13:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718891606; cv=none; b=FupbpfMhLnbTa98kn5d6xVBnHiJ+bCZdOM9Qa4ZMYMZKGHeJs26kyzpDI2HGyxbIcavQ9DLQJSULAWH98eoUVZWHu0ZmsEyx3aWSvuDtCKPR5dW5qaiOtxzgEKqDOQmT3Dgc61lQA2/v9ggUgiACQsXg22fFaOIYmuluTfByPto=
+	t=1718891784; cv=none; b=C3uRtDDPJdpeJ2IeJDI4XW9v7GNJbZfrx2NBM8yiCwF0TgPKBDY8eQyL9xp4HFjvDp1Q7/jxsc6hMFv3xfUFJoT5S+oGmDM5dDPtoCqXh8a00NqAsGhT5pn55e30COsXb0ojCIiPnj7657pNKma/vBDW6OcmmL8wEv34frHjveY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718891606; c=relaxed/simple;
-	bh=w/uFHP8P1yGlPABbo121/TIN5IJtqMpUp1kMqb3444Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F6uoiKNpkp5mSB3ZDrYQk04g4yc6AY1Nal0O6mm+PXL2bZ9lNVW+VnFnqNSZqsjlFz+3bqGOcWgu0oGCFdXTGdO4w5uIG106G+aMe7HzaacuSW4hTiiWSaWZJ7gSo4VGh8vYyoIkacjwSuAKkmtqmTM55Qr53R+KZIAI1dPmFe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iAWXOVWD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718891604;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PNBVAgBh1qUdde5v1fyOGhK2OpFLFOvWHKPem6oZyJM=;
-	b=iAWXOVWDKDuWNk9Uz/KEcSEt/rQYC9yV/CS8/g+VDFc6OVVCIv9q7QNxjVEXgclFfa+k/V
-	aw4uvZLIx+4rWJevaOBgLT3uhDRMTwkkNRYMSt2Pv5eVBeo2Ci7do/wSdNbQIUqBQo/7VM
-	uR4/XZZn2QY20/EUi+udApuM9ILWITs=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-425-poXGml8QNeiG28_Qtf64Bw-1; Thu, 20 Jun 2024 09:53:23 -0400
-X-MC-Unique: poXGml8QNeiG28_Qtf64Bw-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42181c64596so6910985e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:53:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718891602; x=1719496402;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PNBVAgBh1qUdde5v1fyOGhK2OpFLFOvWHKPem6oZyJM=;
-        b=R52orpYw5JYB5d/VC3qEQob4zLN8KokxRGoGxrGSNWiKUZ5rlFEU+i8lgfipW6frIw
-         xgTniLFJzJw/WMdlNIceAhKdzmJN0rijailH74VI9CtMZ4De25CFE42eJgjVUjEjryYv
-         WeWk9UKmGd/iHYsy55PFmSHsTG0awsQq7rP6JWG4dYv9KtihL/r063HqPmUcBwZqx45/
-         WDBfbSBn6bovNid7Zpl1Ss+eIKY8cTnlUSOzDa8TbVXxzeHM9ma+p2Rl+QapWpDq8+uk
-         D/z761T1ljw+ve9+2NEzj3JOjX+AQaQwNlE2KwG1XdlHUV9SELU0S1Hsz4KaoI4SLsH/
-         GA+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXKrNimN93yGihVbF84WYysAvbKAIqzBBIZmkaRdEDojeVNFOOlMxvZYdTnGWLu7qMbinwNzh9yCoL1iqKqK1Tf71pbxaUH8gFcjDsP
-X-Gm-Message-State: AOJu0YxUqgQfET8aI85AjY4fH6ggKYygFF5QHon9oT111r3WExRbTNgg
-	qiQnQ7ONK+M94wSjc1zgHdeFuxaGcYFx1j0oJUNrdXhzfplPtAtppALdoVyCJhgMARpAiH6DeqD
-	c67+K8PcSBvFUq95PNZ7HV4N8oNqzewc2f/XckV7y6I1KXuaviHU/ufZQsx+xLw==
-X-Received: by 2002:a05:600c:4b19:b0:422:fdae:b687 with SMTP id 5b1f17b1804b1-42475184342mr40094325e9.17.1718891601887;
-        Thu, 20 Jun 2024 06:53:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUrpDltGw0aYmrvP64jp8sAeYweHTuRQ1JJCRsyM56PxufV1oTqD+YVHKFqzFB9JfU965xsw==
-X-Received: by 2002:a05:600c:4b19:b0:422:fdae:b687 with SMTP id 5b1f17b1804b1-42475184342mr40093895e9.17.1718891601373;
-        Thu, 20 Jun 2024 06:53:21 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c719:5b00:61af:900f:3aef:3af3? (p200300cbc7195b0061af900f3aef3af3.dip0.t-ipconnect.de. [2003:cb:c719:5b00:61af:900f:3aef:3af3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-364a5b38996sm2003695f8f.3.2024.06.20.06.53.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 06:53:20 -0700 (PDT)
-Message-ID: <36a38846-0250-4ac2-b2d0-c72e00d6898d@redhat.com>
-Date: Thu, 20 Jun 2024 15:53:18 +0200
+	s=arc-20240116; t=1718891784; c=relaxed/simple;
+	bh=l5CCEC9MovHn87sutgB7KfaIHIgWDh73rpUM0x5SHjk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WD8zLDsVl3dKamPVuBk5tSO7U1EfW15d2rjmj8KE0/fe+Sjc+6M6LGYaGZKbCmKo1hW5kaODxqVAyo1meuUaVv7pL1crv+G+fppqCcWrmGT+4H2r2/P4C3ujdkvJ0yvBcajumZ6V6P8RO3KHveAclaTyyYyfruFETO/FnH8L5Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bcvhT40C; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718891783; x=1750427783;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=l5CCEC9MovHn87sutgB7KfaIHIgWDh73rpUM0x5SHjk=;
+  b=bcvhT40CHtBl6PpB1lCcAhffoZcJ6ARETHjS6fd4hAnwARkMJge0fv4g
+   cirJRv258Q00FDUTSunzRCEA0jr/ZXJZrrUjy8P2I5tm1/IAS7v2FHEja
+   oBvOpmYkITaS7Qkyf0D0UWrRu0/KUlc0PgrDCDAVa6V4LOrTktZG9WQUS
+   uVHw4z6druDsVOLEgJyqE8R9CFaJNHgljIVroN38ZIX6zzeKtKsKAeA68
+   KojOzCT9V7mEUH/CKhFQwuMSZn9PkwJlcJJFjrR22NZFEBpBFiFjc42iQ
+   +ButB2Zw+Rrxe5XnXEm572BN3ftnjzoWv7F5iaTlG4FW1W6Fr+hTYlbw2
+   A==;
+X-CSE-ConnectionGUID: swKrtWD/RZmJzIypXFmQZw==
+X-CSE-MsgGUID: 9/eKUE9YRsWA4vp2uPuufw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="15987766"
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="15987766"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 06:56:22 -0700
+X-CSE-ConnectionGUID: LgJEYDKKSF+XcN9BD0ATpA==
+X-CSE-MsgGUID: DzuNFawVSnGs6JO2uwcUWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="46772031"
+Received: from newjersey.igk.intel.com ([10.102.20.203])
+  by fmviesa004.fm.intel.com with ESMTP; 20 Jun 2024 06:56:18 -0700
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+To: intel-wired-lan@lists.osuosl.org
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Mina Almasry <almasrymina@google.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH iwl-next v2 00/14] idpf: XDP chapter I: convert Rx to libeth
+Date: Thu, 20 Jun 2024 15:53:33 +0200
+Message-ID: <20240620135347.3006818-1-aleksander.lobakin@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.9 000/281] 6.9.6-rc1 review
-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org, Miaohe Lin <linmiaohe@huawei.com>,
- Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>,
- Cgroups <cgroups@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, jbeulich@suse.com,
- LTP List <ltp@lists.linux.it>
-References: <20240619125609.836313103@linuxfoundation.org>
- <CA+G9fYtPV3kskAyc4NQws68-CpBrV+ohxkt1EEaAN54Dh6J6Uw@mail.gmail.com>
- <2024062028-caloric-cost-2ab9@gregkh>
- <CA+G9fYsr0=_Yzew1uyUtrZ7ayZFYqmaNzAwFZJPjFnDXZEwYcQ@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CA+G9fYsr0=_Yzew1uyUtrZ7ayZFYqmaNzAwFZJPjFnDXZEwYcQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20.06.24 15:14, Naresh Kamboju wrote:
-> On Thu, 20 Jun 2024 at 17:59, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
->>
->> On Thu, Jun 20, 2024 at 05:21:09PM +0530, Naresh Kamboju wrote:
->>> On Wed, 19 Jun 2024 at 18:41, Greg Kroah-Hartman
->>> <gregkh@linuxfoundation.org> wrote:
->>>>
->>>> This is the start of the stable review cycle for the 6.9.6 release.
->>>> There are 281 patches in this series, all will be posted as a response
->>>> to this one.  If anyone has any issues with these being applied, please
->>>> let me know.
->>>>
->>>> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
->>>> Anything received after that time might be too late.
->>>>
->>>> The whole patch series can be found in one patch at:
->>>>          https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.6-rc1.gz
->>>> or in the git tree and branch at:
->>>>          git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
->>>> and the diffstat can be found below.
->>>>
->>>> thanks,
->>>>
->>>> greg k-h
->>>
->>> There are two major issues on arm64 Juno-r2 on Linux stable-rc 6.9.6-rc1
->>>
->>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->>>
->>> 1)
->>> The LTP controllers cgroup_fj_stress test cases causing kernel crash
->>> on arm64 Juno-r2 with
->>> compat mode testing with stable-rc 6.9 kernel.
->>>
->>> In the recent past I have reported this issues on Linux mainline.
->>>
->>> LTP: fork13: kernel panic on rk3399-rock-pi-4 running mainline 6.10.rc3
->>>    - https://lore.kernel.org/all/CA+G9fYvKmr84WzTArmfaypKM9+=Aw0uXCtuUKHQKFCNMGJyOgQ@mail.gmail.com/
->>>
->>> it goes like this,
->>>    Unable to handle kernel NULL pointer dereference at virtual address
->>>    ...
->>>    Insufficient stack space to handle exception!
->>>    end Kernel panic - not syncing: kernel stack overflow
->>>
+XDP for idpf is currently 5 chapters:
+* convert Rx to libeth (this);
+* convert Tx and stats to libeth;
+* generic XDP and XSk code changes, libeth_xdp;
+* actual XDP for idpf via libeth_xdp;
+* XSk for idpf (^).
 
-How is that related to 6.9.6-rc1? That report is from mainline (6.10.rc3).
+Part I does the following:
+* splits &idpf_queue into 4 (RQ, SQ, FQ, CQ) and puts them on a diet;
+* ensures optimal cacheline placement, strictly asserts CL sizes;
+* moves currently unused/dead singleq mode out of line;
+* reuses libeth's Rx ptype definitions and helpers;
+* uses libeth's Rx buffer management for both header and payload;
+* eliminates memcpy()s and coherent DMA uses on hotpath, uses
+  napi_build_skb() instead of in-place short skb allocation.
 
-Can you share a similar kernel dmesg output from  the issue on 6.9.6-rc1?
+Most idpf patches, except for the queue split, removes more lines
+than adds.
+Expect far better memory utilization and +5-8% on Rx depending on
+the case (+17% on skb XDP_DROP :>).
 
+Alexander Lobakin (14):
+  cache: add __cacheline_group_{begin,end}_aligned() (+ couple more)
+  page_pool: use __cacheline_group_{begin,end}_aligned()
+  libeth: add cacheline / struct layout assertion helpers
+  idpf: stop using macros for accessing queue descriptors
+  idpf: split &idpf_queue into 4 strictly-typed queue structures
+  idpf: avoid bloating &idpf_q_vector with big %NR_CPUS
+  idpf: strictly assert cachelines of queue and queue vector structures
+  idpf: merge singleq and splitq &net_device_ops
+  idpf: compile singleq code only under default-n CONFIG_IDPF_SINGLEQ
+  idpf: reuse libeth's definitions of parsed ptype structures
+  idpf: remove legacy Page Pool Ethtool stats
+  libeth: support different types of buffers for Rx
+  idpf: convert header split mode to libeth + napi_build_skb()
+  idpf: use libeth Rx buffer management for payload buffer
+
+ drivers/net/ethernet/intel/Kconfig            |   13 +-
+ drivers/net/ethernet/intel/idpf/Kconfig       |   26 +
+ drivers/net/ethernet/intel/idpf/Makefile      |    3 +-
+ include/net/page_pool/types.h                 |   22 +-
+ drivers/net/ethernet/intel/idpf/idpf.h        |   11 +-
+ .../net/ethernet/intel/idpf/idpf_lan_txrx.h   |    2 +
+ drivers/net/ethernet/intel/idpf/idpf_txrx.h   |  734 +++++----
+ include/linux/cache.h                         |   59 +
+ include/net/libeth/cache.h                    |   66 +
+ include/net/libeth/rx.h                       |   19 +
+ .../net/ethernet/intel/idpf/idpf_ethtool.c    |  152 +-
+ drivers/net/ethernet/intel/idpf/idpf_lib.c    |   88 +-
+ drivers/net/ethernet/intel/idpf/idpf_main.c   |    1 +
+ .../ethernet/intel/idpf/idpf_singleq_txrx.c   |  306 ++--
+ drivers/net/ethernet/intel/idpf/idpf_txrx.c   | 1412 +++++++++--------
+ .../net/ethernet/intel/idpf/idpf_virtchnl.c   |  178 ++-
+ drivers/net/ethernet/intel/libeth/rx.c        |  132 +-
+ net/core/page_pool.c                          |    3 +-
+ 18 files changed, 1824 insertions(+), 1403 deletions(-)
+ create mode 100644 drivers/net/ethernet/intel/idpf/Kconfig
+ create mode 100644 include/net/libeth/cache.h
+
+---
+From v1[0]:
+*  *: pick Reviewed-bys from Jake;
+* 01: new, add generic __cacheline_group_{begin,end}_aligned() and
+      a couple more cache macros;
+* 02: new, make use of new macros from 01;
+* 03: use macros from 01 (no more struct_group()), leave only
+      aggressive assertions here;
+* 07: adjust to the changes made in 01 and 03;
+      fix typos in the kdocs;
+* 13: fix typos in the commit message (Jakub);
+* 14: fix possible unhandled null skb (Simon, static checker).
+
+From RFC[1]:
+*  *: add kdocs where needed and fix the existing ones to build cleanly;
+      fix minor checkpatch and codespell warnings;
+      add RBs from Przemek;
+* 01: fix kdoc script to understand new libeth_cacheline_group() macro;
+      add an additional assert for queue struct alignment;
+* 02: pick RB from Mina;
+* 06: make idpf_chk_linearize() static as it's now used only in one file;
+* 07: rephrase the commitmsg: HW supports it, but never wants;
+* 08: fix crashes on some configurations (Mina);
+* 11: constify header buffer pointer in idpf_rx_hsplit_wa().
+
+Testing hints: basic Rx regression tests (+ perf and memory usage
+before/after if needed).
+
+[0] https://lore.kernel.org/netdev/20240528134846.148890-1-aleksander.lobakin@intel.com
+[1] https://lore.kernel.org/netdev/20240510152620.2227312-1-aleksander.lobakin@intel.com
 -- 
-Cheers,
-
-David / dhildenb
+2.45.2
 
 
