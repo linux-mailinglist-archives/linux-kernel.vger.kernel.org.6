@@ -1,120 +1,94 @@
-Return-Path: <linux-kernel+bounces-223004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B65D4910B96
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:13:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2483C910B9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EEC72874A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:13:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 538371C24A30
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEB01B14EF;
-	Thu, 20 Jun 2024 16:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72701B14F4;
+	Thu, 20 Jun 2024 16:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XoHSjzSq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sL1Zmpak"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7713BB50;
-	Thu, 20 Jun 2024 16:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0668A3BB50;
+	Thu, 20 Jun 2024 16:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900026; cv=none; b=s3bqIYXJwb1EvO4rjnZgL/NisjQpMDQE39ECOgvnmAJDtt8ceEmAXMQzqT/lgJntHCtjI/2BwXSLZghzYATPqYX8kwnVJ9Z+tcWTnVomAl2LoeN18FnhjUpNppx0KiBUgEV0/oieUmpXwADkCl87Jfxvwe2yLaryYf7Q69YhtHU=
+	t=1718900060; cv=none; b=cS5oFSXrRfqv+L3vdLrJF+qa5UXwDRkg088eJh4dAhovc/tpv2eP5nCqQhBgDzzYl46Bw3eHHCYvGUREuaYbqxrJ1kUx5xYTkOqMhH5znSUoIZyWmsFgu5KZIMsUs7otyYQZ19G6gD3JdtyDd6IGuYqjh/HlnhB31/lwy67TxOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900026; c=relaxed/simple;
-	bh=OXkO016wMCWKZEPrcn0q2ULLa+4o64CIGf2MO9OVFKs=;
+	s=arc-20240116; t=1718900060; c=relaxed/simple;
+	bh=+GHT9WcvwhnXq3uv4PeG/J2phcFuK0s3zZGAxE9Vr94=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NMv6NHMQx9MoWGAORnGb2cys+N/olKq2Jv0F8xLHR4kmfMmlK/d7WiM3mbTpOW3M8B+rtkagvyYkTjdUVRU7JnQXcc/+HxJQ1Hz7Qlt9uW9TVvcI8xmF5NJlyp6AWGpup6gevuilmsZQs08pebz+FTUIP3bn5ZmEnvqkhCOupoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XoHSjzSq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B720C2BD10;
-	Thu, 20 Jun 2024 16:13:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZU6BZ7st+yZ4kOe6C69O10bL5gN7KLmI/CjhTdWoOcmR+2JpBGRji+9hd8SnWvQJhfgQ/N8heQEu7SoSTzo05qJnqgvKvE64orN8Ng/yNa9yOtGoZnBI8QGVUpXPUEfPTTBF6jB+67wYbf7v90LSioUketL4KbWFwPkxfHALjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sL1Zmpak; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71A0EC2BD10;
+	Thu, 20 Jun 2024 16:14:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718900025;
-	bh=OXkO016wMCWKZEPrcn0q2ULLa+4o64CIGf2MO9OVFKs=;
+	s=k20201202; t=1718900059;
+	bh=+GHT9WcvwhnXq3uv4PeG/J2phcFuK0s3zZGAxE9Vr94=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XoHSjzSql0shKa7qinh7FZBL6kqMBbKqpV7iVzU3iYf/4nW1TrYdn6DClw+vb2/y0
-	 ANBUK3llKqB1s8XCrMyTPcqZcG2QtGoJO61K7yUI5VcnY7eVLR6RgDLB63TvYR+CGw
-	 cRTFqCFy2kOsOVYYo+XOc6+faZdHbh+f4fGiqZQUNfXckDpQkChTAXvx1rMisor+bw
-	 UjZWtnZ88cKGci/4YWzY8WVdZkIavmLqcb4z+hsmoWeiZT7CwMo2rGgB4Y8RbYxtvs
-	 35BIC3qV9re6yk+MQEvPoUZkDT+2neTmV2bLLOulqbQEBsRzFGbN0t5TcX773amSFs
-	 2q2Omrro/quIA==
-Date: Thu, 20 Jun 2024 17:13:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Gowans, James" <jgowans@amazon.com>
-Cc: "rppt@kernel.org" <rppt@kernel.org>,
-	"linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-	"jbeulich@suse.com" <jbeulich@suse.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the memblock tree with the origin
- tree
-Message-ID: <db13f2b7-88da-42db-85ed-d78cdd5f6c62@sirena.org.uk>
-References: <ZnRQv-EVf2LQ1Cjv@sirena.org.uk>
- <eb58b1b2f84444acde3f9e25219fa40c73c499f8.camel@amazon.com>
+	b=sL1Zmpak4E6ksK9u+PVo5VdVvcL+kvWyI8ZQX46xQpOe6Xj/v/RqajdHhXoBlKJkF
+	 qhLB8HB641YNFZpDspRhNRiHPITXDqpNsDMIzE9VXAF5rHa4cuV6t6zFAX4UdAng3L
+	 DIwe6PgCD/V+PohEOjfcntpY7b3Q7K83LgVtTnMIjZqdXxgpfmU8Wt8tt0C/evsUvs
+	 TaeySm/znVYAg0k3/1iTkaXClkLqDU2GpOl+o26hMvFKKSLIhMTMHZ2JaKoc4UxzSj
+	 SIPZqV1xTJ8CbvLuEo1Dd2oZl3yRRbPNDhBbqjhzUk0iJvKW4zkaMX93RbVpw4L37b
+	 fGyPyCy4hGmsg==
+Date: Thu, 20 Jun 2024 17:14:15 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	jikos@kernel.org, benjamin.tissoires@redhat.co, dianders@google.com,
+	hsinyi@google.com, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] dt-bindings: display: panel: Add compatible for
+ kingdisplay-kd101ne3
+Message-ID: <20240620-shiny-germless-d5b8d532c9d1@spud>
+References: <20240620080509.18504-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <20240620080509.18504-3-lvzhaoxiong@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IrRq9jtI5uaLbfFM"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="aDlbeZ9BUzsTHd9G"
 Content-Disposition: inline
-In-Reply-To: <eb58b1b2f84444acde3f9e25219fa40c73c499f8.camel@amazon.com>
-X-Cookie: You're already carrying the sphere!
+In-Reply-To: <20240620080509.18504-3-lvzhaoxiong@huaqin.corp-partner.google.com>
 
 
---IrRq9jtI5uaLbfFM
+--aDlbeZ9BUzsTHd9G
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 20, 2024 at 04:07:45PM +0000, Gowans, James wrote:
-> On Thu, 2024-06-20 at 16:54 +0100, Mark Brown wrote:
+On Thu, Jun 20, 2024 at 04:05:07PM +0800, Zhaoxiong Lv wrote:
+> The kingdisplay-kd101ne3 is a 10.1" WXGA TFT-LCD panel with
+> jadard-jd9365da controller. Hence, we add a new compatible
+> with panel specific config.
+>=20
+> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
 
-> > + 	if (WARN_ONCE(nid =3D=3D MAX_NUMNODES, "Usage of MAX_NUMNODES is dep=
-recated. Use NUMA_NO_NODE instead\n"))
-> > + 		nid =3D NUMA_NO_NODE;
-> > +=20
-> >  -	/*
-> >  -	 * Detect any accidental use of these APIs after slab is ready, as at
-> >  -	 * this moment memblock may be deinitialized already and its
-> >  -	 * internal data may be destroyed (after execution of memblock_free_=
-all)
-> >  -	 */
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> This looks like you're deleting the check from the
-> memblock_alloc_range()? The intention of
-> commit 94ff46de4a738 ("memblock: Move late alloc warning down to phys all=
-oc")
-> was to *add* this check here.
-
-Huh, git showed the add/add conflict weirdly then (it looked like an
-add/remove) and I wasn't paying enough attention.  Sorry about that.
-
-> Do you have a link where I can see the final repo?
-> I'm not seeing it here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/=
-mm/memblock.c
-
-The merge is still running, it'll appear whenever -next is released
-today.
-
---IrRq9jtI5uaLbfFM
+--aDlbeZ9BUzsTHd9G
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ0VTQACgkQJNaLcl1U
-h9Dovgf/SE8QVlTpey7KF/FSzIq0nyQ6+ye8Ujco5s/1tJxqps43leBVgsihFXJW
-NhwocVg7L54xin6QBQU4kJiJ7kwA1gW1fS53KA4TpkK30liC1dkDUC0LFuFgwjqc
-RhVuG1oVbcg+u9Nz4XQO4PN0JI+6dXJUSp/oxB8tt9OkVHY0rLsaeH/uT14ghlmc
-5dmv6Y0o3o7ebNBMtSXB17L3xrJGcY/HZNPllmHj276kSDxWne1CH7IfyR6AHhMG
-fnpyVOYDCnZh9BvYk5uTCkyCuALMMkK7NftEQqekgIRq7j9eW+GutwFu233w3ztc
-IBfmIbyQ/4mMrq9v7GDPx+CufMPRXA==
-=ls+v
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnRVVwAKCRB4tDGHoIJi
+0ncSAP43WLQQ6LFeUx/1Ug5lQcZ4fs4MmDPdXIqCNU8WuIBgmAEAxXbKXm2s74+Q
+2TWp6pYecg8Oo+td+P35lDWuiEil0wo=
+=6avv
 -----END PGP SIGNATURE-----
 
---IrRq9jtI5uaLbfFM--
+--aDlbeZ9BUzsTHd9G--
 
