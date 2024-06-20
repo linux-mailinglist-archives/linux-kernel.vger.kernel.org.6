@@ -1,197 +1,168 @@
-Return-Path: <linux-kernel+bounces-223666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E95911675
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:11:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C8391168C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA20E1C2279F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:11:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E5FC28367C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1A914A4C8;
-	Thu, 20 Jun 2024 23:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DA215251B;
+	Thu, 20 Jun 2024 23:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uczZss8T"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2073.outbound.protection.outlook.com [40.107.93.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dq2OSXcn"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D471422D5;
-	Thu, 20 Jun 2024 23:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718925101; cv=fail; b=tms0O4pAffF8ViO9BnW5/x/XU36h/buGp0O9aerEU/4dDPe/ViCjsicwSYEsZ2KVLGVWeqonTt0XjEYFkHmrfsaJEn2ir/dauY0q/FSUZI8jhWEuNzmQo4gLg/xN1T23wPQORQqLjGKy3US+wgQw9x5+JharYNDMbpcTMgQcMd8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718925101; c=relaxed/simple;
-	bh=en88DzFweWVf1WNwRMTV09u1VsCl/1qH/1V1NlJGb+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DC/ZqznwEddgd5i7hZO6X+0Dkze8Y6D5A+ArDT0IWVVhurBZsWUIrR6FC10BUdv8wJhHkGfKdi/jpj2wd5J3+WwWQsOkGa29TDNBXhiDdx/VL4uaM0+mbsopkWPH11r8aZg+eP4nSAh5+xUxW0vMCwDSODMRtfnLYI7XSJOEVCI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uczZss8T; arc=fail smtp.client-ip=40.107.93.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XYgW0aSo+m9YSJnt6Oss7vz/Y1c2nL+k9Q2mpzAz0QmpCp6pFdoN0GUwvta6SX8EyAhZzNZsCjcpSgofQ71ss91em2stW60/a8blz/cMONLFhISq8/7TNmf8CB+0SoM4pm9hKYKlkGuEB/DPmm/PwyvY7BUliINGPArvt4Iv8SODqpB0aVUFmide08V8EgbxgqjImcbfT4aTDkhYTo834DCscyNK0CQTCCG2TFMMVXoFBn6283h/pCpbw9g0sRX6pdkyHwPG/RcgaueY86n5PsbixdBhqP9elwe3Z9OY+fMTMA7y7DuDCUP9iC5hNSi8iTYYEbo2LenpAH/9XQO9XA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3QUG8o2x4KoTXZg+DxKhZB8v2C0KFM98ikBqhwz+O3A=;
- b=hItaKjS0Q+poCZuPrkhmXVazu+JElGzPkYN886EynhzUfl9rxy0ij/dKuE6If8uddFPZYH9Wnv1nxFLlQ5aFa1VCx+qKmeSDxgkbFlk141nWsM4AbAD5iHfF2MSTgQOkLAXuapcEnNWSN2psBcbS+YKqCP14ZSGej1D2IQBNOVJFtrn598YRE2QrSm3AF535RYcpCYcAw7usZ8yn4Kr19VvzKHBaSjU0LIV3+IRlgz6XuRoXScdcUBDpVos+DfyFzzTw57r2s7UnBDgZ+Bkn3hPMAG4RekOHmnvDG237spE5Ngd2h0M6G3Vhf6hwEsezPRq4Bgsgr5hNEJokv9Kk+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3QUG8o2x4KoTXZg+DxKhZB8v2C0KFM98ikBqhwz+O3A=;
- b=uczZss8T+uRawr8ko3cJCctvQlfadKOm1C/5tRnQc2cT0/0o2ON5HAKoipZy7BCAC/2ljtQeY4+aHYALdEmfsZa7uS2Eh/OdzI3LCyMAlViyFDpFplF6lM2urNeid7D0Nz+ZdOiE4lCX2NzYOwRxy9RY5faBzo2E42v6JcNu/0pCf2nttrXNUU0KUo8wobi38z4wst7RmhozgMme693/BZsAJsCZm8mkyGjZW/Rhsuk3ANyGL7AZ0JQqmWw0Ghx7HabLibeUIp90ASfyO0OOWnTdwm5r7gjpJoA4IqKeJ97YmjyMcs6n6j43q09sL5vbOIAjeroao14ePjKlDlmK+A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by PH7PR12MB6884.namprd12.prod.outlook.com (2603:10b6:510:1ba::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Thu, 20 Jun
- 2024 23:11:36 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%5]) with mapi id 15.20.7677.030; Thu, 20 Jun 2024
- 23:11:35 +0000
-Date: Thu, 20 Jun 2024 20:11:33 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-	maz@kernel.org, kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, pbonzini@redhat.com
-Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
-Message-ID: <20240620231133.GN2494510@nvidia.com>
-References: <20240619115135.GE2494510@nvidia.com>
- <ZnOsAEV3GycCcqSX@infradead.org>
- <CA+EHjTxaCxibvGOMPk9Oj5TfQV3J3ZLwXk83oVHuwf8H0Q47sA@mail.gmail.com>
- <20240620135540.GG2494510@nvidia.com>
- <6d7b180a-9f80-43a4-a4cc-fd79a45d7571@redhat.com>
- <20240620142956.GI2494510@nvidia.com>
- <385a5692-ffc8-455e-b371-0449b828b637@redhat.com>
- <20240620163626.GK2494510@nvidia.com>
- <66a285fc-e54e-4247-8801-e7e17ad795a6@redhat.com>
- <ZnSRZcap1dc2_WBV@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnSRZcap1dc2_WBV@google.com>
-X-ClientProxiedBy: MN2PR16CA0044.namprd16.prod.outlook.com
- (2603:10b6:208:234::13) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24D6143865
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718925225; cv=none; b=hradkQKFjkcreYmRYN6ssOUekNOcGkX+TWDui0dGO6b7GhVEPPbpjPmDuZJx9PXWJ3Fk5f+Hdi/MLyaAksHYuvZdCKkbwRPio0DDexk4Itc2PKqxmgfFK4UCpSOaS+Uae8IXzypS5kTgWzNT9SvQ1X7VijhI+L4nuKypmF7jIOw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718925225; c=relaxed/simple;
+	bh=7FK5A+P6y84XNMixDpkIf7uj9kSH1cgpl+CxUYDO8Vk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QEGjuT2GDndy59k60CfLS593mviSAGgCPtK4bLwJiHnEIKAOr/bhRbxcEMHpJx8Q1fLyHPNTlNyaoZ3UAGu/xK6kQLnM3GsG/Tjv1VFqGOiTz0GHnO9UHBgoKF2Cd7xwaZdLE6M7FsUfGqf9vF3lRAam01AmEHPlQIx5KIf1HqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dq2OSXcn; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6f97a4c4588so865179a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:13:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718925220; x=1719530020; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NpwkSv9KEC+Z0xSBroaOsC+eSM7dr3lxu3/BMAtc54s=;
+        b=dq2OSXcnAbDwSQT+YWK/8VTgpWCzgPwNPi4RJoVl+6cYnxnZ7tNu5OL8SNTqs+S+0+
+         cIVDPm9GDNsALkx2L0yK+C49F4d4XaPUlJ9+Gko25ClWCjhlgCUd8VEcyBJ+58zQShJH
+         qexLCMeXuDo5jIAVoRoXKzgwmHbiR6T/O6VAYhPkD6fq5wKm5deUP+88TSlurt/CMXyv
+         exDTki1ol7kc8dlWo33sjdiPJx5AEzWzkMBDORF1plUoQEk9nxIgE40y7F8nHm1Quajq
+         JU7Lx2bXj4nV+xmvX0FC30zIcAecC0mDA181CKKiYsknKXySiYvoEJcAjvEOrYwyHJfg
+         F92g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718925220; x=1719530020;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NpwkSv9KEC+Z0xSBroaOsC+eSM7dr3lxu3/BMAtc54s=;
+        b=X35kNgkKZRQlyBaWYKToxj6Kn2Cogn4KTcj1/oavV2QJMWlOm5ESOoc27TYpdquVd7
+         9+w7dCyIERz21kAmsJuP+BdNGeD6bszjEGctoR/UMf6YwFLXJRskLtcsdyh/wmKpThfA
+         24r8JzokSdfrQwu9ePugx7/yI04dArNQ+uYfzZQNbe1TNmWAz58F6t0g5lrWNiJ5sULl
+         bFhacdhOXQJB+9O9v9qYug2WZsPYOyy9+HdkOzXLqmiS5Y+UYF8yBE79YBn2D42kotn+
+         9/hZqK7C1vj7mc/Y21uhWF/D92Onz/+65rciMGVdpxXYwG7oNHCeubDQ7dLBfbG/yJgX
+         hxxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWrCVb0Iue5GM1SpKGmmWIt10Oae9wHPXlD1Bk+a/VpaAqWrzS5Don1LxeNH0EhCjLhFlyeOXMKsEF3rUV/kJbnWLoKRRLkAvckO8D
+X-Gm-Message-State: AOJu0Yy1Q72QNCIBa8YIc64DKmajBwCwzX5l/K18+UF4of92qu0w/+kX
+	ZdEY5Vvkz2p9ptdKaa3xyis+pdO03XhTQ4pPy/2qH2y1pHgKiAXEakMoIe6FyaM=
+X-Google-Smtp-Source: AGHT+IEzPzN/aMnfj5b73omu5ib7OPwkka1Y2/64FBGQsxHICvhZtCMGfoJmvMptfycgLlXfEvq8pw==
+X-Received: by 2002:a9d:6510:0:b0:6fd:6240:9dba with SMTP id 46e09a7af769-70074ebf134mr6416843a34.16.1718925219979;
+        Thu, 20 Jun 2024 16:13:39 -0700 (PDT)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7009c5df34fsm89509a34.3.2024.06.20.16.13.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 16:13:39 -0700 (PDT)
+From: Sam Protsenko <semen.protsenko@linaro.org>
+To: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/6] hwrng: exynos: Add support for Exynos850
+Date: Thu, 20 Jun 2024 18:13:33 -0500
+Message-Id: <20240620231339.1574-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|PH7PR12MB6884:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71f58d01-9b9d-4cee-2395-08dc917e548b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|376011|1800799021;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1LucShqRHgIKy0OMUZ7qIZ4kBN53H2Bn/A/JXLAE/aCmx+SHjUNJdm3O2S4y?=
- =?us-ascii?Q?BQ6O/r7wlOCdyj3nofq+EPggVEbURjzEZzUcMY3MnO4wn3ncJJ0tDCXZpU5j?=
- =?us-ascii?Q?/xvFeShnZcwlwqITOwrlBw/ppUs/trHTUPDSMykO/c0DUcd/sicda7BImTGz?=
- =?us-ascii?Q?mIn3VwTuQ+QLtH8ZRoePaDjeHcGC0CLDPO1duApt2tbUtc3c80Dihykf6ywL?=
- =?us-ascii?Q?rmDiqgp5JwQAsShXktCdXe9vcO2wF50sOWii8gFIXhdLt1pc3m2mhv+5afjH?=
- =?us-ascii?Q?BX4vK+1yzEugrwEJCB6hACLcE56utb1PmuRKIsUYCzJ7cW8xwLLNffCxk3cz?=
- =?us-ascii?Q?3dJj9li6B7GQoOZtRy7dSueHcEPGmsdSRfVLCNRxQU1Jo87UHD5+DuMDw266?=
- =?us-ascii?Q?RXjd2bED/hWykJ8xChKL3UF1SONDzKbpMLB+2qLMS6xy6KG+1i3Mbn4EZw3X?=
- =?us-ascii?Q?5yIorTui78exaWzvxEd2xiLP0WazMoqDRcPzsbAFY6Xw/YjEWExg5og9w1jr?=
- =?us-ascii?Q?j+ZLPW15OPU4mS7OZp8ztcCQOS+mVX28IXyNmCe60+atc736llRvvMa/q09w?=
- =?us-ascii?Q?bArzo5KQ7x+AfVNokM81vkVgMtGHpMmp9Uh4wr2kt4qLFJBAlKFa2pUlgd+w?=
- =?us-ascii?Q?VXbQGl/LkMEIY1sAXDXMW5mGXf5ZWLEWUDaW9AJL7tUQeb/JaSgjBJYiepFD?=
- =?us-ascii?Q?dwSUYE8PKn+s4axeFyJU80brVWxggcRKfiWG9dZN6yhtrWImdWsy3fVdBfCP?=
- =?us-ascii?Q?wOxJLXUc2bGyyo7+ALaHzfDye0KoRwa3zzwbJbTiEsEuj+u0Plwiv9SMr4x8?=
- =?us-ascii?Q?EMlePwjXMTY3VXYWWuN20H50I3FbieqTAtcR/hEtNMgOtpE0RKFrrzXx3CE+?=
- =?us-ascii?Q?k0bdYuBPy1ugvpAs4CZAcZC/JS2fHW26/B9pSPPDGhiNnI0ABuj8OQFLbL3A?=
- =?us-ascii?Q?sQWSddLYkZttwjl9ODb+kMYBC9SVm7MC1EN4tGX6Fh/UNbKE2ZrwFvAJovcA?=
- =?us-ascii?Q?VUP+Tau/RR7V0hi0H6KezWSVG5yJDUOcmjfpjTo3Q7wY6IrtD3GwfqZdPhEF?=
- =?us-ascii?Q?yk4INQTas+ihRUBWbqUX3Rq3u2K46bJHx+jXUN4IHgLVtwwUL5Dk1gnGfs+p?=
- =?us-ascii?Q?S8oteeJpS4t4omZ6aBcVwsjFiJV+qQ5Bg9nhcCrp3QmNY8SAo4Yhkao/bHXD?=
- =?us-ascii?Q?D27rg+lc8qccSTB67K5udyf532vKsrb0pKQXxgsiZRvzIajNDPFQP561FJYj?=
- =?us-ascii?Q?n5GzDbiof4Ar93fQ945037E3XX4aehNW0mmBEFLawgEXSOyNpiD8yFRjhkuj?=
- =?us-ascii?Q?ZVHFedCj3Z8HHX41F9E5kxa/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fQgy+g9KVtg5FTAeVvUJM6xY7ghdONtrYjRAWJ/PHoUdre8RW361ZpbuDLbh?=
- =?us-ascii?Q?+uKKKIgonKpu1HJJUD3Tbv/+Ae7CyITNEwbtOieF+0I9/GOfHOtTAz3h01++?=
- =?us-ascii?Q?DVy7fHo0I7pOI4xmiT91mfI/pah7foyReblyq2usQRkdEIShIQaMbIP5KLkN?=
- =?us-ascii?Q?RkSqyltK7vJDuXpPFazGnjNrrXes4BTOuC1vDRwnVw9IccvGh4V1lXBfsvSV?=
- =?us-ascii?Q?W7X0YmOISKcvwJ4JNpW5Kd88dWd/No/i1Xog9vcr7pWQYDK6SgA4J86zyyHy?=
- =?us-ascii?Q?5L9TcKNrgqLnHHIb4wPGfTYq5mhudiiAfq/6Hi57u7CLk5KPgZVWaL7VYko9?=
- =?us-ascii?Q?xK9zHthyW9WmK+9u2xDR8ZiD6qnmU6C0iCVxCaakDrfCMevmC/l4aO2ppFZy?=
- =?us-ascii?Q?NrPzVTYxPpEi70fGY7cr3ema+4tNlQ7f0BWQbvIrSg3GsS+JQoJMiCfjdNcS?=
- =?us-ascii?Q?DRIQyVNxUkQF8G332uUikHzilwYHkirD8TIuMQKn1Exu9MXnwM7UGNcilfrU?=
- =?us-ascii?Q?6Tx2fmgjikKCrG5UzBpzkDTZhHhKGHnMfYNy6XLGEhnqEY26BmQfnhfjoQ4Z?=
- =?us-ascii?Q?dWRlZ7gcmyz8RO988xEQyxu4z27RiIvN2YbU3usu9VB5mSlT1TbFERxI0Ak6?=
- =?us-ascii?Q?LzOYow+E9x+wDi7UFfWroIlKLoojWbhpvVa4dYMDX6siVN4cqrvXAS+t9x8c?=
- =?us-ascii?Q?BC3r+NOFK+2KA3GcF/0EDmfjoo5Ek9+xwS1DoM318qoQ39bKrpVxwXhAt+rI?=
- =?us-ascii?Q?mXmodXr+RYcEUAG46m1FCI0g605b0dzn6gR38+1KrB7hHeaCCWPc/FxG2b3v?=
- =?us-ascii?Q?mfOxpusydXKb3rpefbEoioD268UbLA5VOsCGMZZabsL8+FoQmhAtCOF6nE5h?=
- =?us-ascii?Q?RcebjhyGtACw31aXV26yulpZ7auX/QGFofJPGtfKPzRpoF9WxGKc1C+Ef7i2?=
- =?us-ascii?Q?/GnXO1phZhThkhPt0W2HF3plrJEFO1YweOqJaHVPbq9ZBvcN4hKAvfEAJZkV?=
- =?us-ascii?Q?Nw7OcSbqyeHvYLNK6XfdHy8/vV6JmauFKEvSkqglqpFp0NDftDQs50vQjJRd?=
- =?us-ascii?Q?CRZHmSRubppJO7T7FMf1653D91l3DEZR7FOw4e07TvmMm8SEnzSsSi3EWKve?=
- =?us-ascii?Q?VdrjG6bj4/lAYn2RdNg9tUQDZVkyCxX+QwOooeJURbqhuWPvXjMIrHz6CaiR?=
- =?us-ascii?Q?+1SsIrswiMll+qAiG0CXjpk2kwKN6EhIpnQzydJF0kLCw6/MAH2qfZXp0mtO?=
- =?us-ascii?Q?iAPyxW9DyLbhC6rpbGMQgmyJ5yivs01qfi0YieZG8UECGxHJbvntfAiFy4Vk?=
- =?us-ascii?Q?j2S8ox2TM85iFiUzrpLG8Uo+62lRiwPeOP+sIsFixmL7ea8Zno76+s/haVV+?=
- =?us-ascii?Q?KRmM36+YBvUSu+etDeM3C5DlZVJ3QmuBc0XRXSWnmFaGs7cVppKfBF2H395T?=
- =?us-ascii?Q?9ZwHRk7BkO5A++9TXQfJpO0YU7fHbK6Qo8RsMNbi8a8UPDefhps0bRSpRyjV?=
- =?us-ascii?Q?4fjnvZSJ51Lf0LICFqqhm6cPzIisc+wZd2dlI075yYdEAfPDnRJ0aoaJV2m8?=
- =?us-ascii?Q?Sw16mnwY/O4En8LtC/e/Na5XZZyx4qLdddc0TaxH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71f58d01-9b9d-4cee-2395-08dc917e548b
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 23:11:35.1280
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6ch1hsacQnDVGowEX+UPOllAMzGVoWIEX63NPEOXdbh+Jtcl7rI/4yRIz67QlW0h
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6884
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 20, 2024 at 01:30:29PM -0700, Sean Christopherson wrote:
-> I.e. except for blatant bugs, e.g. use-after-free, we need to be able to guarantee
-> with 100% accuracy that there are no outstanding mappings when converting a page
-> from shared=>private.  Crossing our fingers and hoping that short-term GUP will
-> have gone away isn't enough.
+Exynos850 has True Random Number Generator (TRNG) block which is very
+similar to Exynos5250 for which the driver already exists
+(exynos-trng.c). There are two differences though:
+  1. Additional SSS PCLK clock has to be enabled to make TRNG registers
+     accessible.
+  2. All SSS registers (including TRNG area) are protected with
+     TrustZone and can only be accessed from EL3 monitor. So the
+     corresponding SMC calls have to be used instead to interact with
+     TRNG block.
 
-To be clear it is not crossing fingers. If the page refcount is 0 then
-there are no references to that memory anywhere at all. It is 100%
-certain.
+This patch series enables TRNG support on Exynos850 SoC. It was tested
+on the E850-96 board running Debian rootfs like this:
 
-It may take time to reach zero, but when it does it is safe.
+    8<-------------------------------------------------------------->8
+    # cat /sys/devices/virtual/misc/hw_random/rng_current
+    12081400.rng
 
-Many things rely on this property, including FSDAX.
+    # dd if=/dev/hwrng bs=100000 count=1 > /dev/null
+    ...
+    122KB/s
 
-> For non-CoCo VMs, I expect we'll want to be much more permissive, but I think
-> they'll be a complete non-issue because there is no shared vs. private to worry
-> about.  We can simply allow any and all userspace mappings for guest_memfd that is
-> attached to a "regular" VM, because a misbehaving userspace only loses whatever
-> hardening (or other benefits) was being provided by using guest_memfd.  I.e. the
-> kernel and system at-large isn't at risk.
+    # apt install rng-tools5
+    # rngtest -c 1000 < /dev/hwrng
+    ...
+    rngtest: starting FIPS tests...
+    rngtest: bits received from input: 20000032
+    rngtest: FIPS 140-2 successes: 1000
+    rngtest: FIPS 140-2 failures: 0
+    rngtest: FIPS 140-2(2001-10-10) Monobit: 0
+    rngtest: FIPS 140-2(2001-10-10) Poker: 0
+    rngtest: FIPS 140-2(2001-10-10) Runs: 0
+    rngtest: FIPS 140-2(2001-10-10) Long run: 0
+    rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+    rngtest: input channel speed: (min=941.855; avg=965.515;
+             max=968.236)Kibits/s
+    rngtest: FIPS tests speed: (min=49.542; avg=52.886;
+             max=53.577)Mibits/s
+    rngtest: Program run time: 20590194 microseconds
+    8<-------------------------------------------------------------->8
 
-It does seem to me like guest_memfd should really focus on the private
-aspect.
+SMC commands added in this series require LDFW (Loadable Firmware) to be
+loaded by the bootloader. In case of E850-96 board, at the moment only
+the LittleKernel based bootloader [1] is able to load LDFW. It is
+expected to be added into U-Boot port soon as well. See [2] for more
+details.
 
-If we need normal memfd enhancements of some kind to work better with
-KVM then that may be a better option than turning guest_memfd into
-memfd.
+[1] https://gitlab.com/Linaro/96boards/e850-96/lk
+[2] https://docs.u-boot.org/en/latest/board/samsung/e850-96.html
 
-Jason
+Changes in v3:
+  - Rebased on top of the most recent linux-next
+  - Removed dts patch (7/7) from the series, as suggested by Krzysztof
+  - Addressed all review comments for v2 series
+
+Changes in v2:
+  - Removed the patch for renaming the dt-bindings doc file
+  - Added the patch for using devm_clk_get_enabled() to get the clock
+  - Addressed all review comments for v1 series
+
+Sam Protsenko (6):
+  dt-bindings: rng: Add Exynos850 support to exynos-trng
+  hwrng: exynos: Improve coding style
+  hwrng: exynos: Use devm_clk_get_enabled() to get the clock
+  hwrng: exynos: Implement bus clock control
+  hwrng: exynos: Add SMC based TRNG operation
+  hwrng: exynos: Enable Exynos850 support
+
+ .../bindings/rng/samsung,exynos5250-trng.yaml |  40 +++-
+ drivers/char/hw_random/exynos-trng.c          | 225 +++++++++++++-----
+ 2 files changed, 206 insertions(+), 59 deletions(-)
+
+-- 
+2.39.2
+
 
