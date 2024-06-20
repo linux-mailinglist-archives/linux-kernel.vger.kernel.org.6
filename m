@@ -1,212 +1,110 @@
-Return-Path: <linux-kernel+bounces-222470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D33D9101F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:52:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E05D9101F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B43D1F22DE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:52:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1C772821FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8611AAE0F;
-	Thu, 20 Jun 2024 10:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6251AAE0A;
+	Thu, 20 Jun 2024 10:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XtSt6r5n"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2079.outbound.protection.outlook.com [40.107.220.79])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EZIzyRo0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D4E80617
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718880599; cv=fail; b=hI8uzE2FhPH/nbvXFIvThdq1pOlsu3b2Y+y8QB3RVNyYat85+uDz/KN60ATfHUZVZBOftXxYItWak0Nh0y1wOSWit2SiL6tvNvDOmLSJ0tPwXD/EhWyqhqn6bhTIm4Ux+wXtGbsekYrJPyoQaAL1k4MudSEtuWSMMYkN95zNegc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718880599; c=relaxed/simple;
-	bh=frrQpEyYIwgXZWdn6C0Vzo2VYxi8yQdeqMJA71opZt8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bQtuODvTb3YtsLXJH6D1pStgidN3aAX+vdT27Wb8/KasRsPqbcAoDj7lLpd8Q60qF6bhTQSbQLeafa9sAxomgHuugBUiV8o2aciGH6nRlHz7if8Hf1t6UdFiT5QnBQIAhbVXDpeFkCOv9JTCp5iJoenmWHdohlVLL4g0eKSpOzA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XtSt6r5n; arc=fail smtp.client-ip=40.107.220.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dJN0IvhOww85MrGyEr0Wjm2VEDS5Lv5vlYd+5LcyAsBoO3NRhRv8RzOEiBEFaJbCoYFzAMgpbyHfnpwbbxdpCdwiM6LlVA8rLF9w2Mu9Ap1jXGymIY+yTC6Os1cOjvsNLy7tt6TSB9vR9zzFfw0xqaG7c3epQuI5EGDwe1gPhIzNrtSkfiy1Il/iT4a8QUVRAdSdxDX/t77YqB/Pmddj74UovyMFM27+l6ghewyGv6gklHbCu9kI2qIdDLrUjXKaDaSFTR22jUNqiQHrPqoK+GY4huwwsWLibTpWviXpwYQAHaUwZgT4TtKKwvPgCaiDKGJiOo9Y1rcbT9mCZMG/6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=znr0S+gZu97w+AshjVfv2Q68iJxzEtsh9N67NCZFcRc=;
- b=DFUx+5mGpfmGo/9Hh5/+HkitryHcxVO2fbr2k8pCT3lHP0kGDOo7rUPKz5PNztWZrbbg68vCAYxE2JQ8z4W1UE6ON4u07na8C5XEwQJISVHslZso98T/SYz8WEAkOeKfc7XgIDjms6BzH6WoNgQpmIdhk+YES25qQZO5p92CdUcmCVhT2sl7Y1sIF7v/IZD3qN8yq1hWQtufGPVs1lSkPkHGSszz+1zh9A0DffFLVvIyLRNFtRSRyRQ4hIQOVupiitx6EtNH6EG5q3uCw//tPsZw1zZ7KZplctJhvUpj0WG83IRho/ZBR4ouEYICH/gSbCkrx1z97E5eCzNlN6Ifww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=znr0S+gZu97w+AshjVfv2Q68iJxzEtsh9N67NCZFcRc=;
- b=XtSt6r5nduQxeM+R7VMxId7Nm/AG8EkVJCN6QS2VJdol3z+U8dbKiglJc+6bxyyu+g4Pv/n6kExgU8lh9GrgbSTZ1tjVN6Zsb9R0lRu05oKwwa/uqwFlYjWHlJX4O/E2dbDe8FnVhJpunJRJOiQERBm3b9QNypcA+OTO0cmxLlA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- DM4PR12MB5772.namprd12.prod.outlook.com (2603:10b6:8:63::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7698.19; Thu, 20 Jun 2024 10:49:55 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5%7]) with mapi id 15.20.7698.020; Thu, 20 Jun 2024
- 10:49:55 +0000
-Message-ID: <657c7e03-91ef-4765-be7c-1f57eb45e467@amd.com>
-Date: Thu, 20 Jun 2024 16:19:46 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] iommu/vt-d: Fix missed device TLB cache tag
-To: Baolu Lu <baolu.lu@linux.intel.com>, "Tian, Kevin"
- <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240619015345.182773-1-baolu.lu@linux.intel.com>
- <20240619164620.GN791043@ziepe.ca>
- <1dfb467d-f25a-4270-8a36-a048f061e2aa@linux.intel.com>
- <BN9PR11MB5276F76798E61D231D861A2F8CC82@BN9PR11MB5276.namprd11.prod.outlook.com>
- <976d4054-6306-4325-a112-5cf69b0c6f34@linux.intel.com>
- <bdbb40da-faa5-4321-a58b-5fcffcbc818c@amd.com>
- <8c78f966-539c-4c81-92a6-32d32bb10e8b@linux.intel.com>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <8c78f966-539c-4c81-92a6-32d32bb10e8b@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0141.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:bf::21) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB526F2E4
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718880828; cv=none; b=ZkMdv/4CuEcCdCu59XyXLSo12U9KaQMw94LgGWLHI4CNl8a6tOcSt+hK8N1KRIPHkzAPMB6Dd9YCEdy2whmp7uZ5IE5ELpvEUu3xl7IbDhh9Gb9Qlxq9d47hqxJt8uQSaBYI/S3fuyJWXeivJMu+ig60WuYBPWVJ4NI6NM0kh6k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718880828; c=relaxed/simple;
+	bh=YhVNZVJotcrbQnNA0C2ERjJ5On3FcuCmck5hLWMIyPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H7DTMULjV0F6uulUIqHFucK4N/zIVW8hvI0y3qNwNLcaxHr7JNek1TAr1nQsyPbKChx7WZk75DE4FeJC3wC2Vw+8oKJVLmJgBVdQswpnfW7TUUy+DwyTKGHffJbwEb8AXaqpbFp6xYBbOSO9CQoRxNtWMQjh6jDOjqDp6zvKB+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EZIzyRo0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718880826;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YhVNZVJotcrbQnNA0C2ERjJ5On3FcuCmck5hLWMIyPk=;
+	b=EZIzyRo0d13x5gIKpEXTG3TMlcP/m6lp/VRMxRMKu0VsNUuIO3j755bSe7DklXhNgRxaPU
+	AlQJgJZWaUwmwZhrRgsXnRG3ynj89zlk6/UrT5Zh2JrIkBhZt2368yxNYWRSrc5Bh9aZGd
+	ggkzoeyD3KYclTPULooPggRuTYub4rI=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-205-cEh00LHwMS2gzgbBqp2q3A-1; Thu,
+ 20 Jun 2024 06:53:43 -0400
+X-MC-Unique: cEh00LHwMS2gzgbBqp2q3A-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C2B4C19560B0;
+	Thu, 20 Jun 2024 10:53:40 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.26])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D396F1955E80;
+	Thu, 20 Jun 2024 10:53:35 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 20 Jun 2024 12:52:09 +0200 (CEST)
+Date: Thu, 20 Jun 2024 12:52:03 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Liao, Chang" <liaochang1@huawei.com>
+Cc: jolsa@kernel.org, rostedt@goodmis.org, mhiramat@kernel.org,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	nathan@kernel.org, peterz@infradead.org, mingo@redhat.com,
+	mark.rutland@arm.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH bpf-next] uprobes: Fix the xol slots reserved for
+ uretprobe trampoline
+Message-ID: <20240620105203.GE30070@redhat.com>
+References: <20240619013411.756995-1-liaochang1@huawei.com>
+ <20240619143852.GA24240@redhat.com>
+ <7cfa9f1f-d9ce-b6bb-3fe0-687fae9c77c4@huawei.com>
+ <20240620083602.GB30070@redhat.com>
+ <f0678e11-dd59-2e9b-56d5-cb28a20ffac7@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|DM4PR12MB5772:EE_
-X-MS-Office365-Filtering-Correlation-Id: ca62b156-7d41-4557-a37d-08dc9116b868
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|376011|366013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bWRkbWdVM1liSnNDYjd0NEVydzFjZ0Fzc1pvejdpdXVwclgweTJITG1EZmZv?=
- =?utf-8?B?SWZBRTgralI0clRXQmEyR3NmNDhadktQV0svSk1YalRkZEg0eDFaVm5jVlVi?=
- =?utf-8?B?V2hkaVZteUgyaHJnQzJ0ZU1kL3gvZG9IK3RyYXNXSTk3d0xnVy9CQnJEdFYr?=
- =?utf-8?B?ZTF0cHlVdzN1WVpJTVFhR1drL2pVdERVRHZla3Z3V2gxRVM5b2N4cDdkWmtk?=
- =?utf-8?B?eWZNYzRhSy84K1puY2o4SzgvKzZtWEM1TURSTXJ6WDNZV1loZjBtaFI5VllV?=
- =?utf-8?B?WW8rVzQwZ1J6OWVad1lyU2dvS0NOdFV5Qll5VWFDeTdESFZnVDRNT0tmL1c4?=
- =?utf-8?B?dUZvODA4OVhIRytNbDU2ejdjMEV5cHlmcEgzdkhDNUpKbGttVXlUd3FuaExO?=
- =?utf-8?B?cXg3SThKTXMvUFptSU9QVEcwM2V1U1EvRHV4WVpIendsTW1MN2NUNFFFZTVX?=
- =?utf-8?B?ZHBwRXNmWWZoelNsZjFqdk5iK2xsQU80TjNnaVYydWFhQkJldmF2Zm9xZVk2?=
- =?utf-8?B?N0RGNUdOVk5wcGhobVNSMEJ5anE2RnZIYXIwZ2FUN2pWYW9pMlNYd3hwcjZy?=
- =?utf-8?B?a2VFcWs5U2FjUlZoRW1Lb2wvQmN5cWdabWZaMUN4T3htdTM2Y0NjbnkrR2hy?=
- =?utf-8?B?U2NEVWdlTE9RK2phY0lpWWhTaDdZTzNHVEt3QXBIQ1ppK1NYSlpkanJGOFpq?=
- =?utf-8?B?K3BsSVVGWG0zUFA2MUpEVlZLd1ZrTXJRMUNISTU1NjRYSmhlOG1UTFZtNDlG?=
- =?utf-8?B?QUlnQmh3b0gwdFJtaktpVHpUZkVoYXpWOHBvSlhLemJRdzI0dHpJa1dLUDZV?=
- =?utf-8?B?SllZc0hqeGRyYStsNXFiRjdMQ1ZsMTk1QyttS1FzdGpvRXRMMHVCUG4zSEJj?=
- =?utf-8?B?bUphMlhFR2d4dkRnanUzS1ZtQ0RaYmlFQWhSdVBkQ2RvUWZnZ2EzMnQvREZO?=
- =?utf-8?B?QXhYZDRlQnhPeHIzN2E2eHNWVTlWejYydVBqWS9nOWV2TGxTVy92RjJNVnBH?=
- =?utf-8?B?Mk56ZHhNN0VBNTJqNXZtb1d1NmcvSUFES3F6b3liekJQSDRkbFFSVUNZU1Jw?=
- =?utf-8?B?RFZZVGtzeU1zRkZhUXJyTUlGelo1dzhwVHlGci9qUWZWM1EwZ283RWw3WC9o?=
- =?utf-8?B?ZG40bFgwMW9zdy9VcFpxUTRpZlRXbjFPaUowK1kzTTZiU3l6VHZVY2d5OEdX?=
- =?utf-8?B?dURPZTllVWt0akNUUnp5MEl3Q1pZdzZxK2FuRFNhcE9VTU1YY2lndDl2d3FF?=
- =?utf-8?B?V3loT21XWDFDc0hoNUlXOTJaNDVsbmRJZmJnSlFPdERQK1NHTUVkZjF3cmRi?=
- =?utf-8?B?ZWRvYU9HMm1VWXRiNlI3bzBxK0ZIMFlRUVJoMHNQSXI4SXJRYnRBZFFHanNN?=
- =?utf-8?B?OXRkSFVJcWNwK0d3aS9uNlhsVFRpTGZHNWVOMVZWdm5QdC9Ob2ptYjJrU09X?=
- =?utf-8?B?MUs3cG1RQThTVTl2YXNobld2Z1dLMncrYlNucGxlWFpVUHNJZGJ0aUV2NWhO?=
- =?utf-8?B?Wm1BbnU0bzdVbUhkcWdLcEFOY1lwUzkrVzlha21QRGdrZXYxcHRzS005WnZx?=
- =?utf-8?B?T1k3Q25DYVI3aGcvRldOcU1lcTRQNVJiRjhmcTZyWERYelBMclpPUzRmczhm?=
- =?utf-8?B?K3ZGWkw1M0FTUGo4SC9seTY2MC9mTHZrMXBsaXNaY3pudDE5RjEzSHJOdTRW?=
- =?utf-8?Q?wA3Uj8tg3tQBN9byX8NZ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(366013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?T0Fvb2ZYbnZJd2huRUlaZFk5NGgvdGZWZ3NIOTNaUHU4bnl1YjB4VHZxSVNu?=
- =?utf-8?B?R05VVWhwZlpkeC9WMVlMTFgrTjYzQi9QdWErRDMxQk9sM1RZaWRoNFp2Sm9D?=
- =?utf-8?B?K2tOUWpSZUFseGY5Q0dJUUQ4N2orT1Q3ZnliVWJwbFFZV3hOZVBPWjZnakZk?=
- =?utf-8?B?cDAxMzJMdG9rMlJSd0dLUm1kcVNqMEZnbHBmdDRVZFVCSnVKODNhTUo5Tkpz?=
- =?utf-8?B?KzZiTkJzZmhNZ29EV1NCdk1UeGZpdzN0TzgwU1krR0lPQnRJdGNLQUNZQzRU?=
- =?utf-8?B?R2wwRk4wQTY0WW5SclRaa2Q1T041QTNjQjlOMFFpWDBkS3Y0a3Zudjl1dnNO?=
- =?utf-8?B?ckRJc1M1WGpVb050aXgza0duTGoxMC8yY3N1ZXhVU0o0QWxzWTBwZDhxY1Zz?=
- =?utf-8?B?cGRMeE1SbGZpUnhnWlBHZWxLc1ZoaElNSFZyMGJuNG9JcHJvbkUvOTVLZ3Rs?=
- =?utf-8?B?RlBhYkJ5R0Y1c3pJUW9nSEU2RzRaSUVrMmpOUllHelA1LzJwNHk3YkU5a1dB?=
- =?utf-8?B?Rk5HTHo0cHUrb1pmOU5xRTNCOGlZcy9IaFgrRStQT3NYcWlhVWlYWjdXQnUz?=
- =?utf-8?B?azlEcnphWVEyR1hzZVZwMkxvK2Vkdm9BSndZMTRKbzQwR3NLd2E2RFNrMnV6?=
- =?utf-8?B?RUw2UUFTRWcwUjNDU3Y4OHZlNFQ2ZCthRWVTSWthbXBYNlJwQzFHUVBlK2pz?=
- =?utf-8?B?Z3pjd3NsSWpJOE9xUGs4MFJFNXNuT0xVcnNuRmpqT0JVbjVqVGZ3eVczMHJF?=
- =?utf-8?B?b09zUDZ1SE42SEpqcVQyY0puZUdBbERsQytyZXhOM0xtWTJEN0Y5d1VYWG9Q?=
- =?utf-8?B?TzUza0FNUDY1ckZnSXRyQXYxaFZHMzJlM1RwajhkQ0p5T282YzZoMXBET3d4?=
- =?utf-8?B?dnhoTFNybm5QcDZ5UVhNUTNiZXJJd2UrWDA5VWltTitzeXRDTmV6VUdabDc5?=
- =?utf-8?B?d2VReHh4Z1dNK0JWMGI5WmlnOXkvWU9ic2l3UGVxRENPbjJHbW1TNXlKZk5T?=
- =?utf-8?B?Y3ErWjlnbUR5TmxXbi8rOW5UaDh1L3Ryb1dxK3JrL3lRczZSUnVUQ0ptUnZS?=
- =?utf-8?B?Z3ozeWk2cU0wQkx6cDhYV3Vkc1JoMWlkS2pKUStjZTV4NzI4NHFLbkRVZ0pR?=
- =?utf-8?B?WDRiUTZpVkptMW01ajRMNjl1cFV5Sm51UzJrYzRMdUVNb25ISG9vTisveFFI?=
- =?utf-8?B?aFEvc3dMVm5zYVVSZk11dlFIajVtWjVOSTI4Vk1OU0Z6djVjZ1MzaEVOSTVP?=
- =?utf-8?B?Z3RYMDQwYUlSSFBEcno5YnFhU1NHd2pJSTM2TnljM2Q4RTY1ZmNUVEtzY3BP?=
- =?utf-8?B?WG1jNDVsOVhFS1ovZ1A1cnB1bWVQMjFxcTF2bGlwdjVnemFmaDVVcjE0VnZK?=
- =?utf-8?B?b3poSnJmR2JUOGJNRFY1RVJucnR3SWE1clR6KzRLVzhBaG9LWkNCZVVsd2M3?=
- =?utf-8?B?MGtKVWtMdzJ4RmlxN0o5QXJHcTFDcHVzWC9XSm9WZlVCMkQxV2hNRDZnZ1Fi?=
- =?utf-8?B?cy91Z0ZzaXBRUGpYTGFpNXk1ZU5XV1JMS1hZNHlnOGZUMlRlWjV6Q3FHWnp1?=
- =?utf-8?B?SHg0ZFNKeCsyRmJVT0VJVjE2aEg1emtLRnRxTWxUUitJc09oRUs0eGFaYUw4?=
- =?utf-8?B?TldzZnYxa3ZOVWlRK1FJTndLVHljSUI0bUlEVnNjRkc5citkdzBxM1RRUVdS?=
- =?utf-8?B?QnlrYXhuRFZOd2t5NnJtc29SU3VXV25NNjc4anBsMVRUZXdFYkZvcjY2b0V6?=
- =?utf-8?B?UVEwODAxUkpaSldWa1hIYlNodzhHeGZOUCtlekhBa0xGZGJ0emlacVhYb29i?=
- =?utf-8?B?QUltcktQRGJmRW9lT0lPRGsvK29QeWw2bk9uMjJHWElnbUtlNmpxK25MKy9o?=
- =?utf-8?B?S0ZMSzRubE01ejVZOUR6amVGOHU5MCs5TUhFTVUxLzRrdU83bzBmcUxPbzZL?=
- =?utf-8?B?U0FPdzlGczRlRVVBVExFU2RiN0xrQXcyZmp0czRIcE1HVFhBeWtKeGlnblMv?=
- =?utf-8?B?N0lSTHdmck1PbmJhaGZ0Q0xYL0hKNnAvOThPN1BHRkNXendLNjF4U3NSUTMx?=
- =?utf-8?B?Q09VR3U2akN6ZDVEd0dUV3Q0azVwTDFMTWlmRlRvR1RzZHJSbWFlbUFXekRX?=
- =?utf-8?Q?PkZOx1jLAey4nZZDXqjDMN02f?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca62b156-7d41-4557-a37d-08dc9116b868
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 10:49:55.2264
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oHL8ab3Lpf5VOIUiFAgUS0nlhYFOdDZE4k0vJcIFNI3Znu3i+RqwUyzxvS4Jy7j8uKiVOLKAgBAdXXTC8fNAkQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5772
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f0678e11-dd59-2e9b-56d5-cb28a20ffac7@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi,
+On 06/20, Liao, Chang wrote:
+>
+> 在 2024/6/20 16:36, Oleg Nesterov 写道:
+> > On 06/20, Liao, Chang wrote:
+> >>
+> >> However, when i asm porting uretprobe trampoline to arm64
+> >> to explore its benefits on that architecture, i discovered the problem that
+> >> single slot is not large enought for trampoline code.
+> >
+> > Ah, but then I'd suggest to make the changelog more clear. It looks as
+> > if the problem was introduced by the patch from Jiri. Note that we was
+> > confused as well ;)
+>
+> Perhaps i should use 'RFC' in the subject line, instead of 'PATCH'?
 
+Well. IMO the changelog should explain that the current code is correct,
+but you are going to change arm64 and arch_uprobe_trampoline(psize) on
+arm64 can return with *psize > UPROBE_XOL_SLOT_BYTES.
 
-On 6/20/2024 11:57 AM, Baolu Lu wrote:
-> On 2024/6/20 13:54, Vasant Hegde wrote:
->> On 6/20/2024 8:43 AM, Baolu Lu wrote:
->>> On 6/20/24 11:04 AM, Tian, Kevin wrote:
->>>>> From: Baolu Lu<baolu.lu@linux.intel.com>
->>>>> Sent: Thursday, June 20, 2024 8:50 AM
->>>>>
+Oleg.
 
-
-.../...
-
->>>>
->>>> seems that for all domain attaches above is coded in a wrong order
->>>> as ats is enabled after the cache tag is assigned.
->>> Yes, exactly. But simply changing the order isn't future-proof,
->>> considering ATS control will eventually be moved out of iommu drivers.
->> [Unrelated to this patch]
->>
->> You mean ATS setup will be moved to individual device driver? Is there any
->> reason for that?
-> 
-> Not exactly to individual device drivers, but it should be out of the
-> iommu drivers.
-> 
-> https://lore.kernel.org/linux-iommu/BL1PR12MB51441FC4303BD0442EDB7A9CF7FFA@BL1PR12MB5144.namprd12.prod.outlook.com/
-
-Got it. Thanks.
-
-I remember of this discussion. May be we can provide API from IOMMU driver so
-that individual driver can enable/disable ATS (like iommu_dev_enable_feature()).
-
--Vasant
 
