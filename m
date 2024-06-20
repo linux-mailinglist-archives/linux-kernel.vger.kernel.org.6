@@ -1,69 +1,68 @@
-Return-Path: <linux-kernel+bounces-223870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E3B9119B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D52B9119BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 224941C22A83
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:47:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711901C21EF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FE813E022;
-	Fri, 21 Jun 2024 04:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED7F14C580;
+	Fri, 21 Jun 2024 04:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gypKUVDQ"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="famBotpb"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61146130ADA
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AED13D509
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718945214; cv=none; b=tVZsFOXWjxZYQki9mCta59+4tztMkRb0z4X25ITnzmaoN8CCW4Hocm0Hgv1bZK50MrkwYihGSr+LFOaBRS5p4qR3mksojrJ6YMVmOyNyjYe5DAx+/oAufR2AtKARWo4iNrohQZzkmuyXuict5BLnZ5LX4F1IZSxO53uPtpUzT9c=
+	t=1718945216; cv=none; b=TOEDiUdMi4cPAAxsAz2c9UcTfN378AUuWgYVHJ+s2/yZS8zUluaSsvoy2Sod9bBDppmk5eRj9o73pIC1u5D5+nrFV41zdLnf+H080H3wuc5mVH7ENmcmJ5iPZM0ulq5r+8i9YsINAErxSjsU9x/+88+1+4xAYuwRJ/Mq0VFcSOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718945214; c=relaxed/simple;
-	bh=eg31BoRkeTJON7zXV4K1jhgM/v2n2k+KGM9iQFc0N64=;
+	s=arc-20240116; t=1718945216; c=relaxed/simple;
+	bh=16MhtMxKDZcpnZf3ioCOy4a13qt3L50A9IKwXb5/1Ts=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MUSlydx6OPnl8hS3dJEvdNCwmmRVio3j9RCTEZLBEwHpn9AezAmjDWWPcI4G5Mks7c/L+F9ZpyHSIMv11Tulp4BWlY6zqE8AoW0Oqe0R3Mu3cWY6he8gnpEHYOgDibR7vqb3ddea61xMd0mHT0TeR2uEvDjahSxFre0bTjjDKLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gypKUVDQ; arc=none smtp.client-ip=209.85.214.173
+	 MIME-Version; b=mduzvPB6DuFWDelRE8WAh1bRTIRsa/s+/LdyF+0lM2DpdnlgDfAgyb93VtoYjjeAv+Ijoafne4N00wm5Wet18hqCMAVnYvCOvRR1VDHLjyENolxFVnlsfbODkx9YvekcR44GWui6+n5E/m1iXPkPZKSRa2BZV0XHV4IP0GNgvgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=famBotpb; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f6fabe9da3so13471285ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:46:52 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f9b364faddso14440955ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:46:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718945212; x=1719550012; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1718945214; x=1719550014; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qs6kToBk8YjSTiZsPQaIgz5b7g4VfXjvffstHMdxZFU=;
-        b=gypKUVDQI7Ffbl1Wnu5kXb6vzVS7KgCFDOg35Gvy3gOBUINWAXQs1iw6d3VvzEAi+m
-         GQqiTDnctqGGfcHg/1x5jvz73sFrhJUH4+jIG8mgC4uJdhcr9HJzVWjw+x9Tz0sC6aIS
-         r1v0OK7YXl3hutUpZJXjrCWMOimuDKiwaAafI=
+        bh=LSAH0M+p9QRAU7e73G9yxB5HQZ3+B+UK81pFfBELJCU=;
+        b=famBotpbRQSNGOMQlo6EMShOfHLsaKFlbHNVBjMiqXi+aEv58eD8J3yaauUo96228F
+         U2aIvXO9rmkkrT98FqwSXoNuFX/OK9AWXuZQt0N7rHHMhJiTclvDe99KMSVlu1JptFS4
+         wmsr1YAN/If1y15dxUmjeBnVj2TQZvq2Po4ms=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718945212; x=1719550012;
+        d=1e100.net; s=20230601; t=1718945214; x=1719550014;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qs6kToBk8YjSTiZsPQaIgz5b7g4VfXjvffstHMdxZFU=;
-        b=xMo7Yx5FlCzILbaZJA0Kn6AeJQsMoTOIjf1UjkW5FUfvAvUGk2RkSOtBoek9qkfyQo
-         AKq1KPplrEuG9YleEGuETJEccXrxzdPXNFrM7ZnXpJo0Ht7cxIKxwiZsvKrXaeiY/YKA
-         9OOyX10iAzQqcN1V8GUJXul01v69Nb44iGV6ETWmmk04xqAwQuNNiGBdBq1NeNWiCkUf
-         4/kTvGqK+AVEVuKJydjVgt3+PqyPSv+1UEZW1U+LVrty5/M0CCBpwqf4Qip1kutU34HS
-         quNURYFORksSe+YmvhOba81tLufZmq1Ai7HO36oOcL6KObJDaK63MpNkvU9MSquWKqg8
-         dm4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW3kf2W+Ap73psYUQOAmN9msK41kmYkow5zTho0g3I8ee2T9DWs1v9X/KLxdQisFZ148tYQel049hkqLNs6XnbFzRdgwDT+Wtfjp/a9
-X-Gm-Message-State: AOJu0Ywh7+2jlX/vAXVX7Gkv+KQiE7Z85IKLyZotKbGEHQDs/LrFyjgO
-	BjQRXuSlvIw/L75WjMXrgFY88FcHC+88DQBT/2KqHmT3I34AV69Pen74VxtdYDEDluyLVgvtNBc
-	=
-X-Google-Smtp-Source: AGHT+IGBWYpF1pYJ9+icaGVYwbZfvFF5d0o4lVQn5+tcG9E+8MIgi+4DUMl+GZROA3IqIr4GWwFgNA==
-X-Received: by 2002:a17:902:ecd0:b0:1f9:eb2e:d32 with SMTP id d9443c01a7336-1f9eb2e0ffamr10912895ad.22.1718945211680;
-        Thu, 20 Jun 2024 21:46:51 -0700 (PDT)
+        bh=LSAH0M+p9QRAU7e73G9yxB5HQZ3+B+UK81pFfBELJCU=;
+        b=VRmGYpwnO8h5ETxvk+l+KxJFy/mlRAC8q84iSrPRag5b2WI7tHJbCwfXQwJBfyeCdM
+         96Fvc7cRnulNMsiHhok44rnqM+bo5AEZeG/HJ8Szr6YKskStgHv3s5Su/dwmi13z2qxu
+         9KECeSVexlw+N0vpysOij4kmey0kWvbCyRt97EnCrPOIGw7alHIMnJdiFmeF2tH6TCHl
+         R7fyl0YtKHmUfkTFZdQhquyF5y0V29hY1rKv6GWOQbbkcz+XhPzTXbcPMbpBlVVa/gcf
+         hZJM5PjGPmBehQYPVxcf2/j+iOUTZXV6rd1+a/3XYiWrfpu4o1Bju9zbaLTRT/i6JVm+
+         JVng==
+X-Forwarded-Encrypted: i=1; AJvYcCU5I0VHXmXATOM0c8RV8s7Z+HXMByOzy6wz0K8RAATLYG6vzKh/Ii2srCBXRmS9iEDV0eu/ogOFG4f/rTjK7P6NIFoZnJNYHDlKW/xh
+X-Gm-Message-State: AOJu0YzGg+KsLVRdBy/Sgfn6IdqTKTldCUoE8SFcZMrXwOb70adNRpst
+	aBnpJsd84oqsWV08/mmV1uH4I2ajZKmDIn41jOT9RngoPwEWsOkPS8wsTKIDRg==
+X-Google-Smtp-Source: AGHT+IEtoZcjZRs4Z2hN3BH58jpAvugCjNxXZr2Faov/subK0weBwx3axbvKSoceK3U++yd30EP7Yw==
+X-Received: by 2002:a17:903:1cf:b0:1f7:3379:1c71 with SMTP id d9443c01a7336-1f9aa3ebf53mr82891885ad.27.1718945214189;
+        Thu, 20 Jun 2024 21:46:54 -0700 (PDT)
 Received: from mstaudt.tok.corp.google.com ([2401:fa00:8f:203:3c9:e095:f93c:9c3c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbb5aa5sm4780755ad.271.2024.06.20.21.46.49
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbb5aa5sm4780755ad.271.2024.06.20.21.46.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 21:46:51 -0700 (PDT)
+        Thu, 20 Jun 2024 21:46:53 -0700 (PDT)
 From: Max Staudt <mstaudt@chromium.org>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>,
 	Bingbu Cao <bingbu.cao@intel.com>,
@@ -74,9 +73,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	Ricardo Ribalda <ribalda@chromium.org>,
 	Max Staudt <mstaudt@chromium.org>
-Subject: [PATCH v1 2/3] staging: media: ipu3: Return buffers outside of needless locking
-Date: Thu, 20 Jun 2024 23:45:42 +0900
-Message-ID: <20240620145820.3910239-3-mstaudt@chromium.org>
+Subject: [PATCH v1 3/3] staging: media: ipu3: Stop streaming in inverse order of starting
+Date: Thu, 20 Jun 2024 23:45:43 +0900
+Message-ID: <20240620145820.3910239-4-mstaudt@chromium.org>
 X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
 In-Reply-To: <20240620145820.3910239-1-mstaudt@chromium.org>
 References: <20240620145820.3910239-1-mstaudt@chromium.org>
@@ -88,33 +87,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In imgu_vb2_start_streaming()'s error path, imgu_return_all_buffers()
-is outside the streaming_lock and after the call to
-video_device_pipeline_stop().
+imgu_vb2_stop_streaming() did not order shutdown items in the inverse
+order and count of what imgu_vb2_start_streaming() does. Consequently,
+v6.7's new WARN_ON in call_s_stream() started screaming because it was
+called multiple times on the entire pipe, yet it should only be called
+when the pipe is interrupted by any first node being taken offline.
 
-Let's apply the same order in imgu_vb2_stop_streaming() as well.
+This reorders streamoff to be the inverse of streamon, and uses
+analogous conditions to decide when and how often to call additional
+teardown functions.
+
+v4l2_subdev_call(s_stream, 0) remains outside the streaming_lock,
+analogously to imgu_vb2_start_streaming().
 
 Signed-off-by: Max Staudt <mstaudt@chromium.org>
 ---
- drivers/staging/media/ipu3/ipu3-v4l2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/media/ipu3/ipu3-v4l2.c | 36 +++++++++++++++++++++-----
+ 1 file changed, 29 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/staging/media/ipu3/ipu3-v4l2.c b/drivers/staging/media/ipu3/ipu3-v4l2.c
-index 541556037c42..3ff390b04e1a 100644
+index 3ff390b04e1a..e7aee7e3db5b 100644
 --- a/drivers/staging/media/ipu3/ipu3-v4l2.c
 +++ b/drivers/staging/media/ipu3/ipu3-v4l2.c
-@@ -556,10 +556,10 @@ static void imgu_vb2_stop_streaming(struct vb2_queue *vq)
- 			imgu->streaming = false;
- 	}
+@@ -535,29 +535,51 @@ static void imgu_vb2_stop_streaming(struct vb2_queue *vq)
+ 		container_of(vq, struct imgu_video_device, vbq);
+ 	int r;
+ 	unsigned int pipe;
++	bool stop_streaming = false;
  
--	imgu_return_all_buffers(imgu, node, VB2_BUF_STATE_ERROR);
++	/* Verify that the node had been setup with imgu_v4l2_node_setup() */
+ 	WARN_ON(!node->enabled);
+ 
+ 	pipe = node->pipe;
+ 	dev_dbg(dev, "Try to stream off node [%u][%u]", pipe, node->id);
+-	imgu_pipe = &imgu->imgu_pipe[pipe];
+-	r = v4l2_subdev_call(&imgu_pipe->imgu_sd.subdev, video, s_stream, 0);
+-	if (r)
+-		dev_err(&imgu->pci_dev->dev,
+-			"failed to stop subdev streaming\n");
+ 
++	/*
++	 * When the first node of a streaming setup is stopped, the entire
++	 * pipeline needs to stop before individual nodes are disabled.
++	 * Perform the inverse of the initial setup.
++	 *
++	 * Part 1 - s_stream on the entire pipeline
++	 */
+ 	mutex_lock(&imgu->streaming_lock);
+-	/* Was this the first node with streaming disabled? */
+ 	if (imgu->streaming) {
+ 		/* Yes, really stop streaming now */
+ 		dev_dbg(dev, "IMGU streaming is ready to stop");
+ 		r = imgu_s_stream(imgu, false);
+ 		if (!r)
+ 			imgu->streaming = false;
++		stop_streaming = true;
+ 	}
+-
  	mutex_unlock(&imgu->streaming_lock);
  
++	/* Part 2 - s_stream on subdevs
++	 *
++	 * If we call s_stream multiple times, Linux v6.7's call_s_stream()
++	 * WARNs and aborts. Thus, disable all pipes at once, and only once.
++	 */
++	if (stop_streaming) {
++		for_each_set_bit(pipe, imgu->css.enabled_pipes,
++				 IMGU_MAX_PIPE_NUM) {
++			imgu_pipe = &imgu->imgu_pipe[pipe];
++
++			r = v4l2_subdev_call(&imgu_pipe->imgu_sd.subdev,
++					     video, s_stream, 0);
++			if (r)
++				dev_err(&imgu->pci_dev->dev,
++					"failed to stop subdev streaming\n");
++		}
++	}
++
++	/* Part 3 - individual node teardown */
  	video_device_pipeline_stop(&node->vdev);
-+	imgu_return_all_buffers(imgu, node, VB2_BUF_STATE_ERROR);
+ 	imgu_return_all_buffers(imgu, node, VB2_BUF_STATE_ERROR);
  }
- 
- /******************** v4l2_ioctl_ops ********************/
 -- 
 2.45.2.627.g7a2c4fd464-goog
 
