@@ -1,142 +1,100 @@
-Return-Path: <linux-kernel+bounces-223339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D0D911154
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:51:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E231911156
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35212283721
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 578D628230B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAB11B4C4B;
-	Thu, 20 Jun 2024 18:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A111BA07B;
+	Thu, 20 Jun 2024 18:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XJ8wt9bD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hA1VS0ps"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uK+JbPGH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128BB38389;
-	Thu, 20 Jun 2024 18:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345481B3731;
+	Thu, 20 Jun 2024 18:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718909157; cv=none; b=E25UTHqE67xlVCatQmCxoQHk9jHF2o5uRG2PM7aJmdGqAZTyxq5rYEzonvSncxTBcqzVSXmhdKEYTUKmIycvSBmZ0ae2dQJbyoix26k2zrQIedXHKAYbKTmE0q9o6SiwvrnlPFtS0W17k7xMqEwcAcj0dPxYhJ6L5unsIFN1GI0=
+	t=1718909203; cv=none; b=nGLwwT2uK7b/2SRa7M8QXH1lufZcy49/pexOY0UCTi7lzSHsNxMdGcfyTBCp+Zs5fYNuGFr1dXCXVyKF1+dB8MmDVSDrisO9o4dIhXQaKSoPSnycVWdi7aUQAUXPShTsD3hDFa4sFmPvkzT8BxofOSev7uC9f6pa4jFNRswsf6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718909157; c=relaxed/simple;
-	bh=wY+4CyvaDlwldDVaLoGpDs/ojADaVXDaA4pyAkvKSKg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=CTof+4WWGnOH4jzJ91qvnHFfVJeon0SVwsjEY1TnR8YcqBKf6yG1oBm+hIRBZ4ggThb49IikO4lWZp4CH7nNb1ZDuUln3DKxieq4+AeD3knd1Lg7FRQS59pJX5BcbmYjiPNW8WBDP1fD30BnuRX+IRbq6ByVsOxGGVDUxb6XkmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XJ8wt9bD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hA1VS0ps; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 20 Jun 2024 18:45:52 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1718909152;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4SuBNIBz8C0hSgawS+mYo0y1zvu1KO2bpIYfQtCr/7I=;
-	b=XJ8wt9bDsWAV+FvWZx7Yk9QEfQHPOJb4AObIlYkHrnF4Lm0Ug4oZ9I1XXy3QYZLqiB4d7d
-	rtNczY+rXCF3slxHmHqSODQnPR7CnZKSGCAeWii11wN8GpqGYxwyfSyuuk5XrGw8sqkeNo
-	67CiXeVbBsxNYogNdGXnMcI2Uphv/exFrJeOVrXVayFo1UEc3ph7ed3FXh7nkvjd8veuYD
-	2TQGTTiRVxK+cB30yJ0SLzm7WkK8+/w/Q+XgSpAtsYz4MVmyp+uZBzUcZQAS+kdRN8rqE1
-	mkD+EpZukyFIdyE3iG7gP9u37K2SACRfesweHil+45aw5rEbHZQ4zMJRwiHeWA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1718909152;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4SuBNIBz8C0hSgawS+mYo0y1zvu1KO2bpIYfQtCr/7I=;
-	b=hA1VS0ps6pKUmygHHL64RU1lBkWidS0F/kYhGlcw7iSxsnstuYvNkdlxmaLhvl37XRBgnv
-	YIteeFs4Ah0FzvAg==
-From:
- tip-bot2 for Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/sev] virt: sev-guest: Mark driver struct with __refdata to
- prevent section mismatch
-Cc: u.kleine-koenig@pengutronix.de, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
- Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3C4a81b0e87728a58904283e2d1f18f73abc69c2a1=2E17117?=
- =?utf-8?q?48999=2Egit=2Eu=2Ekleine-koenig=40pengutronix=2Ede=3E?=
-References: =?utf-8?q?=3C4a81b0e87728a58904283e2d1f18f73abc69c2a1=2E171174?=
- =?utf-8?q?8999=2Egit=2Eu=2Ekleine-koenig=40pengutronix=2Ede=3E?=
+	s=arc-20240116; t=1718909203; c=relaxed/simple;
+	bh=I3joilslbsTLNhXOXgFwVeASkXdC28bcARNwfLKI8vY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TX6Gxbjv4i4MgiaplJcqyeAozLEYu2l85dpAGmYfgyOh4JlnBPTU/gdA3vPpEcuclneH7L4PoG3c8jD5JPOF3Le5xZ1AFCCFsjKEGHSKqoVxJbo5AJV+z0VFVx+G5zS+JKszIUsJxmGgtqfgL/qMYsew22fjlZ61Xkc4ue4fD8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uK+JbPGH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4DA0C2BD10;
+	Thu, 20 Jun 2024 18:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718909202;
+	bh=I3joilslbsTLNhXOXgFwVeASkXdC28bcARNwfLKI8vY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uK+JbPGHAN8r05cRgDkZQTsmELs6UZrtg2JBK9smm3uLdlJWaL4l8aS7al4jNu+KH
+	 /arX2rg8N8O+LOODJDJpA4nAiXuxMMUW6iA4EVO4/ycET4EkJgK/mk+60vIHHQ5yHS
+	 hLptnexYsErWkzpNLBnPe1HzGVCqUa5vrp2wILiLY3mQCVw8e2SV2KAkTvOcr5/OQi
+	 ByPyQKnQ/3VCumQRaojNgAwFL9ARtQzSFzh7a4rmVhdqno8D9OHj+R+rxGWkY7zrmT
+	 vGOSOUhoQYBJfCnvP65Ry+c2yGG55UMEI3PLXUCSGOu47ziiF1T6VQhMgkVBClpw6W
+	 ECXKB8H5QyJqw==
+Date: Thu, 20 Jun 2024 11:46:42 -0700
+From: Kees Cook <kees@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	jvoisin <julien.voisin@dustri.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
+	Thomas Graf <tgraf@suug.ch>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-hardening@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v5 2/6] mm/slab: Plumb kmem_buckets into
+ __do_kmalloc_node()
+Message-ID: <202406201144.289A1A14@keescook>
+References: <20240619192131.do.115-kees@kernel.org>
+ <20240619193357.1333772-2-kees@kernel.org>
+ <7f122473-3d36-401d-8df4-02d981949f00@suse.cz>
+ <88954479-01a3-4bbe-8558-1a71b11503f8@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171890915224.10875.8611592654168813177.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88954479-01a3-4bbe-8558-1a71b11503f8@suse.cz>
 
-The following commit has been merged into the x86/sev branch of tip:
+On Thu, Jun 20, 2024 at 03:37:31PM +0200, Vlastimil Babka wrote:
+> On 6/20/24 3:08 PM, Vlastimil Babka wrote:
+> > On 6/19/24 9:33 PM, Kees Cook wrote:
+> > I was wondering why I don't see the buckets in slabinfo and turns out it was
+> > SLAB_MERGE_DEFAULT. It would probably make sense for SLAB_MERGE_DEFAULT to
+> > depends on !SLAB_BUCKETS now as the merging defeats the purpose, wdyt?
+> 
+> Hm I might have been just blind, can see them there now. Anyway it probably
+> doesn't make much sense to have SLAB_BUCKETS and/or RANDOM_KMALLOC_CACHES
+> together with SLAB_MERGE_DEFAULT?
 
-Commit-ID:     3991b04d4870fd334b77b859a8642ca7fb592603
-Gitweb:        https://git.kernel.org/tip/3991b04d4870fd334b77b859a8642ca7fb5=
-92603
-Author:        Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-AuthorDate:    Fri, 29 Mar 2024 22:54:41 +01:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Thu, 20 Jun 2024 20:28:50 +02:00
+It's already handled so that the _other_ caches can still be merged if
+people want it. See new_kmalloc_cache():
 
-virt: sev-guest: Mark driver struct with __refdata to prevent section mismatch
+#ifdef CONFIG_RANDOM_KMALLOC_CACHES
+        if (type >= KMALLOC_RANDOM_START && type <= KMALLOC_RANDOM_END)
+                flags |= SLAB_NO_MERGE;
+#endif
 
-As described in the added code comment, a reference to .exit.text is ok for
-drivers registered via module_platform_driver_probe(). Make this explicit to
-prevent the following section mismatch warning:
-
-  WARNING: modpost: drivers/virt/coco/sev-guest/sev-guest: section mismatch i=
-n reference: \
-    sev_guest_driver+0x10 (section: .data) -> sev_guest_remove (section: .exi=
-t.text)
-
-that triggers on an allmodconfig W=3D1 build.
-
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.int=
-el.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Link: https://lore.kernel.org/r/4a81b0e87728a58904283e2d1f18f73abc69c2a1.1711=
-748999.git.u.kleine-koenig@pengutronix.de
----
- drivers/virt/coco/sev-guest/sev-guest.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/virt/coco/sev-guest/sev-guest.c b/drivers/virt/coco/sev-=
-guest/sev-guest.c
-index 3752288..f714009 100644
---- a/drivers/virt/coco/sev-guest/sev-guest.c
-+++ b/drivers/virt/coco/sev-guest/sev-guest.c
-@@ -1203,8 +1203,13 @@ static void __exit sev_guest_remove(struct platform_de=
-vice *pdev)
-  * This driver is meant to be a common SEV guest interface driver and to
-  * support any SEV guest API. As such, even though it has been introduced
-  * with the SEV-SNP support, it is named "sev-guest".
-+ *
-+ * sev_guest_remove() lives in .exit.text. For drivers registered via
-+ * module_platform_driver_probe() this is ok because they cannot get unbound
-+ * at runtime. So mark the driver struct with __refdata to prevent modpost
-+ * triggering a section mismatch warning.
-  */
--static struct platform_driver sev_guest_driver =3D {
-+static struct platform_driver sev_guest_driver __refdata =3D {
- 	.remove_new	=3D __exit_p(sev_guest_remove),
- 	.driver		=3D {
- 		.name =3D "sev-guest",
+-- 
+Kees Cook
 
