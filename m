@@ -1,222 +1,401 @@
-Return-Path: <linux-kernel+bounces-223511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B3E911444
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:19:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C98A911445
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84D5A1F24117
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:19:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6520284B73
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C247710E;
-	Thu, 20 Jun 2024 21:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0D176041;
+	Thu, 20 Jun 2024 21:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="aj1IXv9S"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2019.outbound.protection.outlook.com [40.92.42.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ispxu9fc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893FA1C680;
-	Thu, 20 Jun 2024 21:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8026C1C680
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718918337; cv=fail; b=Zh/jzupvveAM2ishu2hVeDZ/lli5MRmARhoXiJP8lr4PkSvuQ1U5XyyHsj7k42Knn/nyrs3SySSdBKHNCPP0I+pbGvD98/fTqPvp8BH4Qx0/M9wWYFFilMM5wj3RhXn8TllTQnI30/dX87QCwvsfq4ZjeRwV8SW5TsSgF76u0SM=
+	t=1718918398; cv=fail; b=u3bp2kSAq0rTceRCd0I/mUmVHycEwuCxeeYmRbuniqWEU80iCXje0MASeBAEzjIcSOFBnUrUs4/f1hdxEN9G8faMSMaOx66mCFIpJiOkRv5KT/1+sSlUMylAgTKrbSPvRQeF2GRVxtv+SxpVt7ZozFap475OeSfxU+szrnDEIY4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718918337; c=relaxed/simple;
-	bh=RG0EFKyBkQFjcSwe9tJrPCjAg/4g2iedLSOx7mMkIz8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hvvBP11qh8d6hJ+e/p9R+M9siappJUFxIlAJZeudVMxPUiRY9Sd/tKy1QDTIbTCLnCEE4t3swsCIVSjcMfPb52Xzi4VpnSuh/+ce/iyUlUdr49HVBxkfmCaxCQCP/IAHjFo5GLctKcFAJgx07WmDTwIrUZ+UFTdxO3FlwEE3+U0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=aj1IXv9S; arc=fail smtp.client-ip=40.92.42.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	s=arc-20240116; t=1718918398; c=relaxed/simple;
+	bh=rYKx6R1Ii3k4jhyQF4ABfvWbVnwlviGDm/zv5hqAAP4=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DAIC7MSrkZoR+BHZNZJK+CRx2PiJziUxPWpSenBIzZYNU9vd9tG+/YwLmsZrnVwBKtNzzcs9fJ3b4xatjT9COVvcgKheN+/65bGhX6mMftWk++TdYtSPoRUQltzmt5MdauLFz8GPZov4t3fP5PQC2fLtEi5oLsO5h5NAaZ1ksPU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ispxu9fc; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718918396; x=1750454396;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=rYKx6R1Ii3k4jhyQF4ABfvWbVnwlviGDm/zv5hqAAP4=;
+  b=ispxu9fcSRvSLGQ/IYGwpk3tNr5lf21heDgGyNpeMP2d6OspGwjTkLBW
+   OJ/bfiZMnnOZM761YrPScS/tMnlaXeR9hcRja235BCE7+EGjCZa6n6EDz
+   u6Y2UXy1MnSD4UVLbpaEuhrImu0jOY9RreT0lzH32AuaRtvm49DfXxDB7
+   dLzeSCANAmQte+MdsrF8JpcC8BzvkEUol/TPsgRNHUTJsmyJ3ofVn+78F
+   HFANBlgJ/etdnfRTHk6mpqdPxDRDYKgF1rZRXZPUx/6daB4skbCakGwMx
+   7ipc/qxIHS4sWl+EhQUspdHSt7JAgMD9UhTxfIp9FkwF8JtebogOKNecg
+   w==;
+X-CSE-ConnectionGUID: 8GrGLS1NRT+Dr6p5zvxzsQ==
+X-CSE-MsgGUID: /erL/E5LQkeC30pUDz4dlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="16043934"
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="16043934"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 14:19:56 -0700
+X-CSE-ConnectionGUID: k8FDVwfzScSRPHkQq7kFDA==
+X-CSE-MsgGUID: paDjQ4TJTPqPYedRsSLcMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="43056443"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Jun 2024 14:19:55 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 20 Jun 2024 14:19:54 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 20 Jun 2024 14:19:54 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 20 Jun 2024 14:19:54 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.169)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 20 Jun 2024 14:19:54 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IbRCzca0UWoLkf6xhUIW0yajx09Jie3osT5Gm+N0VES1gcvpl8UDm43xqMx60kRc7O7eZMeZKxCTLQ2h7y6q+ZZQ1cRfN/JyUfvOaMdLHz4CfL67ljpXeibYVxY/ZoMeYOTzuY8KhKZN8t1uYoX2RbRH+xDN3Nah/uquLxkdbFPeB+Nk9FTj6oyCNXRKSKFJBfvu46Pg57cEjfirCGY7X8Hn4yMEKHLbkpGIuSI/k5oeIcZsM9pi0NgnzUM9FM4WsmL0qlIybzb4Xuy42xBDalJ3aa792Z10iIUg62/m4vOyQfmuDrz2JAzie99PY6WiLQqw4QyN4kr4IAQISwyWfA==
+ b=h71REtqRDcWsjkfgjUa32zG381WhewfuQMyqY6WX+PBTCU/KrPlu8eHbRjVyI6pdsYO+XYV0XHz31mB7JdMW5vqjDgg8pMpfeGdKoli4HnUHoPFV+3BWSnzsgnzqTnG5AMrg1tZJ/BYpwjTfauiienGl4+g7JISpWqiWDjhivXHOZ9GiUURd+lQutdq2hsMv2XTCAU2Z6rzMQMM9lAHlGBN/4kzTrHS+VYW3cZNcfUfPWjaMKnR6TXP3T2BPVvN8XVnwo3QlOtB9U8QbO8vcWCLcJd3AuSg2MVVHl+euBcvHNjb6eM2eZhSVU9xFLzMrgTkRH5OW6KunuScx55qKtg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mSy9QMBNQP/U+R6aui3seFdCy+AghuNQtAA7JGI4P44=;
- b=hdCABA1HoXNWpyS0hd6YmN/aMlP4mTfVD9ERwaIzYTr7qN2NBgh7ciKrOdjQblcEMhJeWlXtGlDF8GiuQgWitsJkpoRLRMyLqPPjc1f1iwUgzU1LRZev3lba1w2erLC89QdMH6gKy3xacH5YLvketlkDF1b4zqqfs3LIekRZzjkBNwHNJPe56pHSnU4iCBLyGv/HxVyfPyLkdpXBuyLLnbqP3eR2j8mAzEmMrVZNauofGPRFZRCBlIbNXvMNhXgerUdEduXd5PY6vd77yGAYepg+OA9uK6oddnP8/mzlgARyi46aQZjN82VZ1AjwG3gD/7SLDoBMklkRriuPeFUVFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mSy9QMBNQP/U+R6aui3seFdCy+AghuNQtAA7JGI4P44=;
- b=aj1IXv9SqOHZZ8opQhhFc1azXcrbjNt3g5PNwBdLgDP8AWFc6vnjhFhemJ9VN5MBW4tIUfg6jEivDDLtGk2uID8RyThA/z8pKHaTirxrgmax12JmIVr2az8T+2qzFE53WgVWJqYsaCo2W9vpv7Q9kxX+/yB253ibBDvlQbYfE6iq5gHbYo/oNyAT376ieXOYU+KoyXqhpS0r55zhedH9JKor7d3340SPKwksXskZRFyAxzJEh4aSWDaAyRVBeTak/zDZOzeNwOabBQCCB0pmm8jgbiLA+7Z6t3M6Mih8lGJxduoud9JCDOwEYXhimxzr4GgdO83l/IDBK0XSf37S4A==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by SA6PR02MB10598.namprd02.prod.outlook.com (2603:10b6:806:406::15) with
+ bh=IfYjuWZpSEGKAT0njhJn1e2Hu+kdtgIt4EqS4oNZ89w=;
+ b=PgMWAiLVk2GAe9PONtujOXbCSrvpznBd9c/xQAhrSd4WTjF5OdfqReAz5umcExaJUcFUorimBl7W1UL9HyTPb6mwRvzEeBwMAm6vPEsvK1CJ1UcUENzLwXDA0XnS4UnG//xC319Xl8pPN9KioE+qy4lkcJLT1/Z7EQWv5fwhSEKm7odljKiuRH1oAeoke3XdGe1BBnlY+e5bpeY2EWNE3jOQAlCzHAPASGQll2c94DJs+bh4ECTjb0/fsBPK/kEFL0OTR7H8bdY7TyWcHJdO3tN4434zOnxRzYBLeS65OOldtCTz/SneT3kjehO0SrVWyLQvh0lz3x7YJysTCSG+pg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by CY8PR11MB7924.namprd11.prod.outlook.com (2603:10b6:930:7a::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Thu, 20 Jun
- 2024 21:18:52 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7698.017; Thu, 20 Jun 2024
- 21:18:52 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Dexuan Cui <decui@microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, "H. Peter
- Anvin" <hpa@zytor.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "open
- list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>, "open
- list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-CC: "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] clocksource: hyper-v: Use lapic timer in a TDX VM without
- paravisor
-Thread-Topic: [PATCH] clocksource: hyper-v: Use lapic timer in a TDX VM
- without paravisor
-Thread-Index: AQHawd9ON2/Wh7TteU6ShycRrBy/N7HRJy7w
-Date: Thu, 20 Jun 2024 21:18:52 +0000
-Message-ID:
- <SN6PR02MB4157C155D258F9DE76650E3FD4C82@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240619002504.3652-1-decui@microsoft.com>
-In-Reply-To: <20240619002504.3652-1-decui@microsoft.com>
-Accept-Language: en-US
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Thu, 20 Jun
+ 2024 21:19:50 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7698.017; Thu, 20 Jun 2024
+ 21:19:49 +0000
+Message-ID: <d261c249-177f-44a5-9715-26ec647b1ae8@intel.com>
+Date: Thu, 20 Jun 2024 14:19:46 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 06/18] x86/resctrl: Introduce snc_nodes_per_l3_cache
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Maciej
+ Wieczor-Retman <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20240610183528.349198-1-tony.luck@intel.com>
+ <20240610183528.349198-7-tony.luck@intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
 Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [aN4dhZWAuLQP+BictPgnadaTKELhVCdu]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SA6PR02MB10598:EE_
-x-ms-office365-filtering-correlation-id: 8df7bf81-d5b0-490c-f297-08dc916e95e5
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199025|3412199022|102099029|440099025;
-x-microsoft-antispam-message-info:
- 8eW3tPHp9vN1uOCCBRhjm2zqy+5cB4XlEuuHkItEYJCECO7wj3y+Q+CWkOBd1+AuT54MLErHEAT1zA63W3IlNSf+tAvlX1eD6b+zqfZuTIlzQ1OHPnT+vTBgol9Lwxa9Cdl4l8PM8huOTw52KMp8jKS/bW7XIsrCuzR4uiU80bp+Q4bG1SQfx/Ui/Z5CcAZc1SG7M42zgFzwixp4mI+u9lRwE+jSowwAvxR8j7H7q9kH2qg6XZ052DWZesslx+gglNqH12Wi8FHMwgfwm0gI0cWtKQ4PQdEX3PSXEyhHpt61BD8+3FDL+Lolb5f92bKAIfi5wqQ1EUlKbFGckuVYGe//d0MD7PfMNBzKDby1lBUbkY6UQkDcNi16mUw4Gfa1ckfDM3BhWOPDpacZc2BowyNg6SmQW+cvrgN54y//gdYjT6sTNU3q3QtPVHUxLvstz+mfkM4gjV9pioTahizA+ZYbQO/yMOyxCgycxMvNtA2ajSFpGhdfFLxCwcGYSbWVWZmToLZVc3VlDrfar8XWdc2Hgf1qY/DpByIgfMOXiwCWpOs9oy53JC3OxT/xXh0P
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?8SimNfLz23u+YGM387F/8YPMRI7KhibASm8YKvL49CijKVcmRhTiiKMkirV3?=
- =?us-ascii?Q?+k5MXE9WV4b+Enz89zMeaMlfmtHY990J2F/Szn1XiPJcy6uJazAlHoBXtvXO?=
- =?us-ascii?Q?Xv6vDXvtEX1kZTp4MbNrKlEachfPJZA2r9P2BmpIX9guyVeSMY8SkoSB+P1X?=
- =?us-ascii?Q?xUTLjlTe4UL08kX0xnfNW3jmhNHCU92Es7WeDFPwNtdDVbDJmWzNlcwR1a9d?=
- =?us-ascii?Q?o00wCel6nC+TsgeYe9DjD8ignXrr+RQ48O1L7TN/7LO1WhQPqUJDOEa2wxtM?=
- =?us-ascii?Q?0bZxypxnHXpwr9RfRfcGXlmxWBTEfXbC1wHrXdYK4putb/DT7AX9GXA/fbX3?=
- =?us-ascii?Q?+GgUxzCdLZM33WOtJ6Elzjv1MVhB7PetG04vID8hKlgTsEIMicxLa0EhN0Ur?=
- =?us-ascii?Q?TWrikAea818LGXTMEpvMakOYd5XoJmHaI/U43em69aJyke5h9a98tFNYQVwE?=
- =?us-ascii?Q?m156eiLa3nOlFVKDw/vK9WhnVNRGVyrMC7SFRBa19dJEfr3ZrcLncPaEfOZb?=
- =?us-ascii?Q?wIMMdCO6PZbPNN0OcS+/+wKNr1cpUx72yj555EG1A9TAiS68ESe0FXrDGj+2?=
- =?us-ascii?Q?57l7sjTDGEM8uxgvefGnMTaxYgqQlXG4ki2NuNzQK2lOMM22gdMd53xVzlg6?=
- =?us-ascii?Q?B4xvm05mSHINLOj/yiwyZZFdJ9FOa5x+pti2E7rh7JH3tQFKpHQIS7MViemy?=
- =?us-ascii?Q?iKpGbinDi5y3r0zn0r2v4RMsPiYJ0MTPgVep+x6IBk4F0mgYFodH6tDZk1LP?=
- =?us-ascii?Q?TTBsY0vFobHATQRwbeLD8DoH3dMt8ml/kOaYtDQeMDn2xcRbEdG/TYlYJ8Cl?=
- =?us-ascii?Q?3YM9+8kX2K47VpCNpv7jOx/5aN5JNoiv5EMzobAtotnGxsQJAGsKPrDh9FRo?=
- =?us-ascii?Q?Ohh19ZimH30sF5oqzFcMdt7YlhR7w0QQSFGsvN5PTDAWswBzo09iJIA/7neP?=
- =?us-ascii?Q?tGxsy6853rkRhXGhSfkhvn2Sdis82oP15fY8I0k6Q1JBswMPlqf7ufo69jEs?=
- =?us-ascii?Q?ihj2Qyp3Oj+iaLH+I11NW7EF/+eQOZ3cdwI4XloQJBvjca7GHODN+TP5TRyw?=
- =?us-ascii?Q?iVpK3DJBa95+/fZYNLW+AvFZKdS2r8bJ/9/iKsPxkSQoncU1046BzE0NqQ7B?=
- =?us-ascii?Q?GPcKAT9GZW4yO34PrRzAP8bAfiPHNPZJqaaxD3etKikG5MRdMx9fBmnk73Es?=
- =?us-ascii?Q?EX98qqZBsg1zspRCSADp62S0Xi5zstAu3LTU302XqxKm4sgfBbami7Ve55Q?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240610183528.349198-7-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0025.namprd03.prod.outlook.com
+ (2603:10b6:303:8f::30) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CY8PR11MB7924:EE_
+X-MS-Office365-Filtering-Correlation-Id: d41de05c-8adc-48cc-d0cd-08dc916eb7c5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|366013|376011;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?dUFyblhMSlhSNkZzV2xjZ2g3Mmpyb01YVFM3UjM5V3ZUL1R1SU5BQm1GVW1s?=
+ =?utf-8?B?eGVHQWlSUlYvTWFzaTVOOGZPTm53cTFQKytTeUtLOTdVN1lxUHRwNVA4dWJi?=
+ =?utf-8?B?QjdPRG1yMU81ZksyRC8zbkhmb2xwbjlpMUtnLzN0RDNrazJacW5GRGpOSGt2?=
+ =?utf-8?B?bGp0TkdxUmFTeEN1SVV2UkZnOVdQUFpNeUw0NDQranhOclBPV2hNNzEvSGtm?=
+ =?utf-8?B?MlB4VnJDQUFjbHVsZU9sTjZ3U1h6U0RRTFVxOEZvdFFUQWZ4UUtzOEpFc1pa?=
+ =?utf-8?B?eHVlcnltc0I3QXdpczZiaFVLN29KellXTzBycUVSWThvcTh0SEVwZUpkdlI4?=
+ =?utf-8?B?ZVdFeVVNYzNzUFdkMGpnUzdXYzJhTXNmRmRVRnpQWXh2RUtyTmh3MXJmYlcz?=
+ =?utf-8?B?KzJDNXQ2aGVMdGZlWU1BWDJ6TGZEbGpIdVBaVkxCaklSRFNrWXV1bHBOMnVy?=
+ =?utf-8?B?bmFlTmlDT2pIZEJYclRCaGkyUDd6M3k3NWlQb0p4bERkUkxnS2M3OWhxVHBq?=
+ =?utf-8?B?K0ZEalk0NTIxOURBM1o4NE1tS09PTjhRY2JIa2JwaGQ4WEozNVJEeDJ1VjJw?=
+ =?utf-8?B?MW4vY1RFTDZBR0xoTFVSQ28yVnN1OUtBUVNORHRHRHl1SHprYmxrWFJNRC82?=
+ =?utf-8?B?Ymc2TGMvampzOENiWGFUNU9UVWRLc3NHYWNkdXZOWC85ZTc3bVNhTHhGSklM?=
+ =?utf-8?B?NnV0UEZKRHRmWnA4S0NWRmtRYUpsaGtERkU2RlVWY2pZUTFqdkwrdDBwT3V4?=
+ =?utf-8?B?dWkvd0k5SmcrazBWMk9Rd0hQeGhqdmpLU1RhK2dBQ1VJZ013ZHZhejk3V2dS?=
+ =?utf-8?B?VjRlcmtxTWczNTI2N1h5RWE4b0FBSjZnOHIrTFVVNHBmYzg3Z2xGTlhiRDFR?=
+ =?utf-8?B?YUsyQ2FkeTVjS1dZcFpsd3cwcHgwcnRxSnhodEFwNk1sSmJ6cDZDcWRvV0tQ?=
+ =?utf-8?B?czdmTjNvT3Z4cE13cktLeTZYdjQ5WnliZHdNNkY1UDhSa3Vzd3BFSkdsRWhr?=
+ =?utf-8?B?TnJ2aEZaWGRPeDNUdUVOWG83cnN0MjdUWXV6WHdzVzZFVGE0M0dvbEpyZEJO?=
+ =?utf-8?B?VTI3ZWVWeWpCeEpDU2pIMjhHR01HNXErbTNyMzA2ci8rcWpVOWtJREErZ1Q3?=
+ =?utf-8?B?dWtWTnJET1NtV0hJSFdJUkNDY0wwR0p1eE1wcUtPOHgyTHZ4N0xOU2hhbjdr?=
+ =?utf-8?B?SklwNjNkU3ZZRlYvYk1FS3dtRC9Bcnd5Y08wa0ZjTE9ob1NESGcybm5YM1ND?=
+ =?utf-8?B?aDU3Q2FUOE5HTUZBTVIrWmFJdmd1NkhpOVB4TFNvNVcrUnVCQTN3NWkrTzBl?=
+ =?utf-8?B?Tk15V09qQy9LNUkxZFgybjdnTnNOYjlVUjJYbmhtTGI3enAyeWdrRGpxM3Bm?=
+ =?utf-8?B?ejFIWFB0QlBUUjZadUFERStMUWtaYXI2RVlxaUs0UmNOemFONDlDTEtweEVa?=
+ =?utf-8?B?cEJ0L0JyMVN2ZFVvOElaVU44MkhadS9DWWxyS3lra0NISzdPZkFPL21kNmtH?=
+ =?utf-8?B?cVVSbWJydFdFSEZDTFdIWEg1M1ZVeG4rWEQwTUd1dEhzTmlWdUwrWEhvajRR?=
+ =?utf-8?B?SjJUQlQrQm44U3l4VUQvVnM2c1RnNW5Ic0V3eDhCUXQyaFZWVkRHcU91YW9m?=
+ =?utf-8?B?aXhkRWQyRnh4MlNEb3V0bUJ6NTJHa1J3bTRiUTlmckpORFUvMGd2RGRSMDJK?=
+ =?utf-8?B?bnlLaU9YQ1JVUzM0Y2xhK29VSnlvYitiQW53QVFKTGNkeTlCVEVNQlN5UlV4?=
+ =?utf-8?Q?zeIADUA8C5HlyofmrqyEGJG90szw+jZLY97mV7W?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(376011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?REZ2VGNPMC9reUZwZ1ZvMjNteVVsM2ZVQjlLM29kdHZETHFMRjRaWFQ1VnN1?=
+ =?utf-8?B?TFp4bmNGTkxVbkt2K0FwaVRtcTIyaUxlQXNrNlRWR1FsbDYrZ1N4YWY1c2Vj?=
+ =?utf-8?B?M0ViNFlYeWQ0aGwvOWpTOGprbFRpYzhDWXAxWUtweStUNVZmK0RPYW1DdE9I?=
+ =?utf-8?B?ZXVrRnJ4SzFzb0hlOExGY0tGcEhBL1hXRVk2Z1VCRjk5SktleEVXSE1zUEtr?=
+ =?utf-8?B?aDZlRElyQkxZNDlndkdSWDZ6NkhZcmZETk9meFFUV2p2T0RUV3IrclVZckF1?=
+ =?utf-8?B?L2RneGFJMWVIZ0c5UU53Si9EbEs0U2hHeEZyT0JPTGpBUzNwdVhzTXRZMzVm?=
+ =?utf-8?B?RUdKLzg1MmczT2FvdTBHTGlvSFd3UEhvMXQ2TXh1Ri96eTcyOXVkRHA1SVI3?=
+ =?utf-8?B?NkZ2NG1ESXhwWVJwak1HSlVSREVJVCtuSHJDTkdxRStOL0JLNmNPRE9LUDls?=
+ =?utf-8?B?UXhFKzdtejJIUWl5YUFobEZpMnI4T0d5ZXY3WXdIUktBVzNlelBWd1FzQ1Vw?=
+ =?utf-8?B?dk0yUXgwRWpiV3E5MFZOZEdja3l4YWZqdUlvTktLV0FMUEFNWU8xVE1Eb1dz?=
+ =?utf-8?B?UjBaUUdmWHhzMDdINmJaY2ZzQmNlMWZZL1hsSjYyKzl6bzRJaHhWVHk5bWlC?=
+ =?utf-8?B?dnJQMlgyWkVLTXN4Wm1KQUFqaXdtRkVXN1RoejBvMW9oWHpFTjlZODFaVTZI?=
+ =?utf-8?B?ZG1DekgxTlV4dENBcEs4VEhaWE9ieWhEdXdSUFNMSW92bDU2V2Q3czRxbnk1?=
+ =?utf-8?B?UENGeXRsZCsyTUxnMDBVWmpxUUZXMUF5Z1pNbGFpbDdUOHg3MElYbXhzeTZH?=
+ =?utf-8?B?SmRmY2pOcHNOYllPcWxReEs0SlpyUlM0MzNkT1JWUTBpam1XSG5nRjU0NkQy?=
+ =?utf-8?B?Unp2NXpFZklRT21oRFhKK2g5dk1UQkJFanIzSHpVbDM5QXlCTXY1cUtEM2x3?=
+ =?utf-8?B?ZFdHaHUrYytpallqd3RSNjZBdHRIRXFkSTRHVTB2QjFLVTJYSCsvdmNCWmVF?=
+ =?utf-8?B?cVIzcTcwbDY4dEJYcGNGRGhxNWtNQjZOVURqTGh5TmhGWHNpUkdHbEoxN2VQ?=
+ =?utf-8?B?Q293b2R2eXJhby95b3BkWmphbjI2MzgzdWRMZmNTLyt1ZWJLN2dwQU9qTitX?=
+ =?utf-8?B?RFU0cWp3ODZNVFJZV3E1bnlsVy82UmVZSTN5dU02U3BsdUxHYUhOWVF5VWk0?=
+ =?utf-8?B?NWxaQkE4YktMRnI2c2xpK2NRakpVRlRRNUZHVjBWbTZFdHpNWW5CVldLVWxC?=
+ =?utf-8?B?azM1Z3VzbmN4VHlicVhZc2ZUVUs1SnB3ZFYvUDdGc0tJakpwWlVOQjcyTTBx?=
+ =?utf-8?B?V1NMRzJkQ2xHZktRVnQzOGYwOUovNngvMjJyZGJ4WnpuOTZ5VUgzUzViV0Za?=
+ =?utf-8?B?L1lDa2xub1lKT0s4KzR4UlljNlB2akdwVnk5Y3N3ay82NnYyS3ovTXBxSUNx?=
+ =?utf-8?B?ejhiSWxvQXo4ZWNSMDdFVmd6QUxJZzNKVTYxTXNFSHNpMEFSRmY4S2pyMHBx?=
+ =?utf-8?B?UllRd2ZhbGhCRFFmTGhycXE0SWZ4QVBSb0hPMDlDRFRvcDRjbnhoWWVuZERT?=
+ =?utf-8?B?UWs2RDF5bG1tQ0h5WllTQUpyTVVDUEZvVGdnSzZYUVVabDlRdEFCK0VGcXRk?=
+ =?utf-8?B?WUtiSERQMmRLQ05yNnlEWnZtMEcyNmNVQ3hnNjBTYTVOdGVJS044bHhGQXBK?=
+ =?utf-8?B?NnowMjg0ZjZqWlRqZDBNNzVOZXlmVURQK2txcXhNbTV2dTAwUkJLRldGQkZD?=
+ =?utf-8?B?bmowVTdFRGsxNXlVbERKRU1xSFZibUhjTXNKRCt4MWtIcENZWlJSMUZFSHp0?=
+ =?utf-8?B?RmtvN04xcXd1NnVXbWh5UXFWTEV1T0krdWpybDk1QXpIcUxZWHllRmo2SG5N?=
+ =?utf-8?B?UE5KcWlHaXQwM1I2ZUJWcU94bzJRb1NoQkgzMnhPTm5LUFI2T2dRK3NiSFN4?=
+ =?utf-8?B?Nkp5UDBSOWo0dlZDSCt0S0JZRUQrMlV2eFJtbVRVWjJEK2tyRzQ0QTcwbTZJ?=
+ =?utf-8?B?UWd5Situd3VoQ2JSbmhwa2ZUakNRbWtxTTJ1d1dKM2grNTA0MkFGOUdrVDhP?=
+ =?utf-8?B?TEg4eWdvL2pKeWtwNHE0ekxiTmpVcjRIQ0FYMWRIaHFhZmUvaFZwNEhxMU1Z?=
+ =?utf-8?B?Ri81S29nWURhY0FTSjZyeFFjOW9VMXBvN2JQUGE5V3dpNjVwK0owMXNHOEs4?=
+ =?utf-8?B?cmc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d41de05c-8adc-48cc-d0cd-08dc916eb7c5
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8df7bf81-d5b0-490c-f297-08dc916e95e5
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2024 21:18:52.7055
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 21:19:49.6706
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR02MB10598
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eyunviu/x6CSGVFmy3asgAu5kg2UnSMi/O43FHXPBviHaCy1J39bFm00NfSJkLrJb3HyLMGh6VSM/qUAdbjluR/C50r0h0ld4EppRIQbg/U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7924
+X-OriginatorOrg: intel.com
 
-From: Dexuan Cui <decui@microsoft.com> Sent: Tuesday, June 18, 2024 5:25 PM
->=20
-> In a TDX VM without paravisor, currently the default timer is the Hyper-V
-> timer, which depends on the slow VM Reference Counter MSR: the Hyper-V TS=
-C
-> page is not enabled in such a VM because the VM uses Invariant TSC as a
-> better clocksource and it's challenging to mark the Hyper-V TSC page shar=
-ed
-> in very early boot.
->=20
-> Lower the rating of the Hyper-V timer so the local APIC timer becomes the
-> the default timer in such a VM. This change should cause no perceivable
-> performance difference.
->=20
-> Cc: stable@vger.kernel.org # 6.6+
-> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Hi Tony,
+
+On 6/10/24 11:35 AM, Tony Luck wrote:
+> Intel Sub-NUMA Cluster (SNC) is a feature that subdivides the CPU cores
+> and memory controllers on a socket into two or more groups. These are
+> presented to the operating system as NUMA nodes.
+> 
+> This may enable some workloads to have slightly lower latency to memory
+> as the memory controller(s) in an SNC node are electrically closer to the
+> CPU cores on that SNC node. This cost may be offset by lower bandwidth
+> since the memory accesses for each core can only be interleaved between
+> the memory controllers on the same SNC node.
+> 
+> Resctrl monitoring on an Intel system depends upon attaching RMIDs to tasks
+> to track L3 cache occupancy and memory bandwidth. There is an MSR that
+> controls how the RMIDs are shared between SNC nodes.
+> 
+> The default mode divides them numerically. E.g. when there are two SNC
+> nodes on a socket the lower number half of the RMIDs are given to the
+> first node, the remainder to the second node. This would be difficult
+> to use with the Linux resctrl interface as specific RMID values assigned
+> to resctrl groups are not visible to users.
+> 
+> RMID sharing mode divides the physical RMIDs evenly between SNC nodes
+> but uses a logical RMID in the IA32_PQR_ASSOC MSR. For example a system
+> with 200 physical RMIDs (as enumerated by CPUID leaf 0xF) that has two
+> SNC nodes per L3 cache instance would have 100 logical RMIDs available
+> for Linux to use. A task running on SNC node 0 with RMID 5 would
+> accumulate LLC occupancy and MBM bandwidth data in physical RMID 5.
+> Another task using RMID 5, but running on SNC node 1 would accumulate
+> data in physical RMID 105.
+> 
+> Even with this renumbering SNC mode requires several changes in resctrl
+> behavior for correct operation.
+> 
+> Add a static global to arch/x86/kernel/cpu/resctrl/monitor.c to indicate
+> how many SNC domains share an L3 cache instance.  Initialize this to
+> "1". Runtime detection of SNC mode will adjust this value.
+> 
+> Update all places to take appropriate action when SNC mode is enabled:
+> 1) The number of logical RMIDs per L3 cache available for use is the
+>     number of physical RMIDs divided by the number of SNC nodes.
+> 2) Likewise the "mon_scale" value must be divided by the number of SNC
+>     nodes.
+> 3) Add a function to convert from logical RMID values (assigned to
+>     tasks and loaded into the IA32_PQR_ASSOC MSR on context switch)
+>     to physical RMID values to load into IA32_QM_EVTSEL MSR when
+>     reading counters on each SNC node.
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
 > ---
->  arch/x86/kernel/cpu/mshyperv.c     |  6 +++++-
->  drivers/clocksource/hyperv_timer.c | 16 +++++++++++++++-
->  2 files changed, 20 insertions(+), 2 deletions(-)
->=20
-> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyper=
-v.c
-> index e0fd57a8ba840..745af47ca0459 100644
-> --- a/arch/x86/kernel/cpu/mshyperv.c
-> +++ b/arch/x86/kernel/cpu/mshyperv.c
-> @@ -449,9 +449,13 @@ static void __init ms_hyperv_init_platform(void)
->  			ms_hyperv.hints &=3D ~HV_X64_APIC_ACCESS_RECOMMENDED;
->=20
->  			if (!ms_hyperv.paravisor_present) {
-> -				/* To be supported: more work is required.  */
-> +				/* Use Invariant TSC as a better clocksource. */
-
-I got confused by this comment, partly because I've forgotten the
-meaning of the ms_hyperv.feature flags. :-( Perhaps you could be
-more explicit in the comment and say "Mark the Hyper-V TSC page
-feature as disabled in a TDX VM so that the Invariant TSC, which is
-a better clocksource anyway, is used instead."
-
->  				ms_hyperv.features &=3D ~HV_MSR_REFERENCE_TSC_AVAILABLE;
->=20
-> +				/* Use the Ref Counter in case Invariant TSC is unavailable. */
-> +				if (!(ms_hyperv.features & HV_ACCESS_TSC_INVARIANT))
-> +					pr_warn("Hyper-V: Invariant TSC is unavailable\n");
-
-The above comment was even more confusing, because the code block
-doesn't do anything except print a message. The code doesn't force
-the use of the Ref Counter. I'd suggest something like: "The Invariant
-TSC is expected to be available, but if not, print a warning message.
-The slower Hyper-V MSR-based Ref Counter should end up being
-the clocksource."
-
-Michael
-
+>   arch/x86/kernel/cpu/resctrl/monitor.c | 56 ++++++++++++++++++++++++---
+>   1 file changed, 50 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+> index 89d7e6fcbaa1..f2fd35d294f2 100644
+> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
+> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+> @@ -97,6 +97,8 @@ unsigned int resctrl_rmid_realloc_limit;
+>   
+>   #define CF(cf)	((unsigned long)(1048576 * (cf) + 0.5))
+>   
+> +static int snc_nodes_per_l3_cache = 1;
 > +
->  				/* HV_MSR_CRASH_CTL is unsupported. */
->  				ms_hyperv.misc_features &=3D ~HV_FEATURE_GUEST_CRASH_MSR_AVAILABLE;
->=20
-> diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyp=
-erv_timer.c
-> index b2a080647e413..99177835cadec 100644
-> --- a/drivers/clocksource/hyperv_timer.c
-> +++ b/drivers/clocksource/hyperv_timer.c
-> @@ -137,7 +137,21 @@ static int hv_stimer_init(unsigned int cpu)
->  	ce->name =3D "Hyper-V clockevent";
->  	ce->features =3D CLOCK_EVT_FEAT_ONESHOT;
->  	ce->cpumask =3D cpumask_of(cpu);
-> -	ce->rating =3D 1000;
-> +
-> +	/*
-> +	 * Lower the rating of the Hyper-V timer in a TDX VM without paravisor,
-> +	 * so the local APIC timer (lapic_clockevent) is the default timer in
-> +	 * such a VM. The Hyper-V timer is not preferred in such a VM because
-> +	 * it depends on the slow VM Reference Counter MSR (the Hyper-V TSC
-> +	 * page is not enbled in such a VM because the VM uses Invariant TSC
-> +	 * as a better clocksource and it's challenging to mark the Hyper-V
-> +	 * TSC page shared in very early boot).
-> +	 */
-> +	if (!ms_hyperv.paravisor_present && hv_isolation_type_tdx())
-> +		ce->rating =3D 90;
-> +	else
-> +		ce->rating =3D 1000;
-> +
->  	ce->set_state_shutdown =3D hv_ce_shutdown;
->  	ce->set_state_oneshot =3D hv_ce_set_oneshot;
->  	ce->set_next_event =3D hv_ce_set_next_event;
-> --
-> 2.25.1
->=20
+>   /*
+>    * The correction factor table is documented in Documentation/arch/x86/resctrl.rst.
+>    * If rmid > rmid threshold, MBM total and local values should be multiplied
+> @@ -185,7 +187,43 @@ static inline struct rmid_entry *__rmid_entry(u32 idx)
+>   	return entry;
+>   }
+>   
+> -static int __rmid_read(u32 rmid, enum resctrl_event_id eventid, u64 *val)
+> +/*
+> + * When Sub-NUMA Cluster (SNC) mode is not enabled (as indicated by
+> + * "snc_nodes_per_l3_cache  == 1") no translation of the RMID value is
 
+(nit: same unnecessary space as in code)
+
+> + * needed. The physical RMID is the same as the logical RMID.
+> + *
+> + * On a platform with SNC mode enabled, Linux enables RMID sharing mode
+> + * via MSR 0xCA0 (see the "RMID Sharing Mode" section in the "Intel
+> + * Resource Director Technology Architecture Specification" for a full
+> + * description of RMID sharing mode).
+> + *
+> + * In RMID sharing mode there are fewer "logical RMID" values available
+> + * to accumulate data ("physical RMIDs" are divided evenly between SNC
+> + * nodes that share an L3 cache). Linux creates an rdt_mon_domain for
+> + * each SNC node.
+> + *
+> + * The value loaded into IA32_PQR_ASSOC is the "logical RMID".
+> + *
+> + * Data is collected independently on each SNC node and can be retrieved
+> + * using the "physical RMID" value computed by this function and loaded
+> + * into IA32_QM_EVTSEL. @cpu can be any CPU in the SNC node.
+> + *
+> + * The scope of the IA32_QM_EVTSEL and IA32_QM_CTR MSRs is at the L3
+> + * cache.  So a "physical RMID" may be read from any CPU that shares
+> + * the L3 cache with the desired SNC node, not just from a CPU in
+> + * the specific SNC node.
+> + */
+> +static int logical_rmid_to_physical_rmid(int cpu, int lrmid)
+
+It is not clear to me where we are in the discussion about the naming. If
+the "logical" vs "physical" becomes an issue then perhaps the "logical" can
+just be dropped? Resulting in just "rmid_to_phys_rmid()" (to match with
+__rmid_read_phys()) ? I'm ok with what you have here also.
+
+> +{
+> +	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
+> +
+> +	if (snc_nodes_per_l3_cache  == 1)
+
+(nit: extra space here)
+
+> +		return lrmid;
+> +
+> +	return lrmid + (cpu_to_node(cpu) % snc_nodes_per_l3_cache) * r->num_rmid;
+> +}
+> +
+> +static int __rmid_read_phys(u32 prmid, enum resctrl_event_id eventid, u64 *val)
+>   {
+>   	u64 msr_val;
+>   
+> @@ -197,7 +235,7 @@ static int __rmid_read(u32 rmid, enum resctrl_event_id eventid, u64 *val)
+>   	 * IA32_QM_CTR.Error (bit 63) and IA32_QM_CTR.Unavailable (bit 62)
+>   	 * are error bits.
+>   	 */
+> -	wrmsr(MSR_IA32_QM_EVTSEL, eventid, rmid);
+> +	wrmsr(MSR_IA32_QM_EVTSEL, eventid, prmid);
+>   	rdmsrl(MSR_IA32_QM_CTR, msr_val);
+>   
+>   	if (msr_val & RMID_VAL_ERROR)
+> @@ -233,14 +271,17 @@ void resctrl_arch_reset_rmid(struct rdt_resource *r, struct rdt_mon_domain *d,
+>   			     enum resctrl_event_id eventid)
+>   {
+>   	struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
+> +	int cpu = cpumask_any(&d->hdr.cpu_mask);
+>   	struct arch_mbm_state *am;
+> +	u32 prmid;
+>   
+>   	am = get_arch_mbm_state(hw_dom, rmid, eventid);
+>   	if (am) {
+>   		memset(am, 0, sizeof(*am));
+>   
+> +		prmid = logical_rmid_to_physical_rmid(cpu, rmid);
+>   		/* Record any initial, non-zero count value. */
+> -		__rmid_read(rmid, eventid, &am->prev_msr);
+> +		__rmid_read_phys(prmid, eventid, &am->prev_msr);
+>   	}
+>   }
+>   
+> @@ -275,8 +316,10 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
+>   {
+>   	struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
+>   	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
+> +	int cpu = cpumask_any(&d->hdr.cpu_mask);
+>   	struct arch_mbm_state *am;
+>   	u64 msr_val, chunks;
+> +	u32 prmid;
+>   	int ret;
+>   
+>   	resctrl_arch_rmid_read_context_check();
+> @@ -284,7 +327,8 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
+>   	if (!cpumask_test_cpu(smp_processor_id(), &d->hdr.cpu_mask))
+>   		return -EINVAL;
+>   
+> -	ret = __rmid_read(rmid, eventid, &msr_val);
+> +	prmid = logical_rmid_to_physical_rmid(cpu, rmid);
+> +	ret = __rmid_read_phys(prmid, eventid, &msr_val);
+>   	if (ret)
+>   		return ret;
+>   
+> @@ -1022,8 +1066,8 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+>   	int ret;
+>   
+>   	resctrl_rmid_realloc_limit = boot_cpu_data.x86_cache_size * 1024;
+> -	hw_res->mon_scale = boot_cpu_data.x86_cache_occ_scale;
+> -	r->num_rmid = boot_cpu_data.x86_cache_max_rmid + 1;
+> +	hw_res->mon_scale = boot_cpu_data.x86_cache_occ_scale / snc_nodes_per_l3_cache;
+> +	r->num_rmid = (boot_cpu_data.x86_cache_max_rmid + 1) / snc_nodes_per_l3_cache;
+>   	hw_res->mbm_width = MBM_CNTR_WIDTH_BASE;
+>   
+>   	if (mbm_offset > 0 && mbm_offset <= MBM_CNTR_WIDTH_OFFSET_MAX)
+
+Apart from the two spacing related nits this looks good to me.
+
+| Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+
+Reinette
 
