@@ -1,137 +1,157 @@
-Return-Path: <linux-kernel+bounces-223082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72208910D52
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:42:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387DF910D5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE4C1F22808
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:42:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E226E1F22AC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4091B1509;
-	Thu, 20 Jun 2024 16:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB861B29A2;
+	Thu, 20 Jun 2024 16:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjPJZ7a+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h+Djnr/9"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C781AD4B9;
-	Thu, 20 Jun 2024 16:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0171B1436;
+	Thu, 20 Jun 2024 16:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718901709; cv=none; b=ugLqtmNV4p1eHnLEIULF1R0D8vTyhdZlMxcKf/OlsDBq8p0TImzsbyyb7J3mPxEPv/idlPBx9qyY040cKNDQa5P8WIJIITwFL0/zVYvXOXYXlP2wYbTNxEwm3Ki/sXJWWasWuDK7SuNBB96APK9vtNl3H7uW7LLhiLSoyTAKR3k=
+	t=1718901735; cv=none; b=bX3vlan/ha0tUF9BVritgivZf02udYxY0qDYlqOFb5QtWboFNuRhmI5CmqEGWsMmYvsHgzqZssmhAbl7seKnSm5Jvy/6EYzrye2fET6soRD1n4of6b5N2tSfovf3OhOHGHvY1C/BxIb+1MTp2LwTqn5FEFYypehhaiyC9ZUj3ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718901709; c=relaxed/simple;
-	bh=JbcfIOO5HqOQfYsdak5ItbpLoQQ6woDUCr1zHls2zpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QEODgi4SVZ4cAqZeGLrHxT9WMuPKmeHgYHZ9SGdaJADPnF4NorDn/bOnvygMJmnLjnhWdo6X+SMvrWY0LlJzYhZAuLu21+tIIVjxNwlP5WgxfZALa4UPKTPPdQeoLTV7SlO1MeB6XmsUnE26qeJMrE7AVHtzP+wAvL0OkcVFpD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BjPJZ7a+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBF95C2BD10;
-	Thu, 20 Jun 2024 16:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718901709;
-	bh=JbcfIOO5HqOQfYsdak5ItbpLoQQ6woDUCr1zHls2zpc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BjPJZ7a+4rnATZyDn2NDQG5PEIpapGxvOa3AftMhhDUWH9FV5KkRjwyYpicPKO4tu
-	 uCtc1RLALs+nAboIpnk2hziGg2Uw7DSdP08oOJk0lx38nJry96QgMcDVmQsqTAiruB
-	 jN5vtzrHwTL003vZHDXmF67BOb4tjZtYidfxeNdbwnPkZDymYeyeLXwQwsjBKn3n9h
-	 Dos8W2geWIZbgu30MHms8WzRO8vgZ9gGrPKKzOLpKcCbRLJUMWYbweXnTbTf1Omdo8
-	 /+QCgPrcFMIq2oBnuY+KMZWQPadAiJrwGSdD0rrqqDDlQjkqjf6b4I8ZsytoobrKz0
-	 Ju7ABqk0DesLA==
-Date: Thu, 20 Jun 2024 17:41:43 +0100
-From: Simon Horman <horms@kernel.org>
-To: "Karumanchi, Vineeth" <vineeth.karumanchi@amd.com>
-Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	linux@armlinux.org.uk, vadim.fedorenko@linux.dev, andrew@lunn.ch,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, git@amd.com
-Subject: Re: [PATCH net-next v6 3/4] net: macb: Add ARP support to WOL
-Message-ID: <20240620164143.GL959333@kernel.org>
-References: <20240617070413.2291511-1-vineeth.karumanchi@amd.com>
- <20240617070413.2291511-4-vineeth.karumanchi@amd.com>
- <20240618105659.GL8447@kernel.org>
- <616a10c5-9c72-4221-a181-6251e808b9b8@amd.com>
+	s=arc-20240116; t=1718901735; c=relaxed/simple;
+	bh=FfRRl+rsm+XdgwUHVha+tPzWG2zp10p4W/7/pDVEpW4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cQFzV+9xgjB7MzavoDXbq9abBKHW4GECZVzPITftRO8Vf0pkjBmBzgifbTbn9EMLb74Zxc3Wt5k7KL6j8UEXJ687uNxOJvjou8XdmPm4irDZF+KkjaaSySvYyPWf+27Qg3KONVwlpXIieSol/Gom/aburCbVDFifXGcrUfldIfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h+Djnr/9; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ec4a11a297so5453501fa.0;
+        Thu, 20 Jun 2024 09:42:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718901731; x=1719506531; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MvPWAGvnBNSgSHBYq/LlacrTlJVn4K7wbKBfHfFlQnU=;
+        b=h+Djnr/9nbePqhx18uANs11PllFw6CBysip6ENd3kYDiZUz6WCyoVeJqfUfHSl99GH
+         ZyQowyHQcmjemcMFIWWXYFfC7LIS8Gc5NN9O9YDVzuj9hnJd163UFBRPrn6lKc/QZyVQ
+         u2rGXJqi7ioVppVj8PE9CTvrO1KLLP+aI35EW/mmeQyBGYO5cQHdWKyih+LZKdoQojr0
+         QxzfR8g+IFr1WifBvKpUuMzLFWULyB8Blr4MmmEhUstFu/+Z+JyVJMNd4XNHBJzlJWzH
+         ceY2Tb12xL1Q37v7Ki7vsov/5CN7duTB2AyXceKyJirhEpgRQ/1LxZUI3yCz1SV3kTeN
+         1uUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718901731; x=1719506531;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MvPWAGvnBNSgSHBYq/LlacrTlJVn4K7wbKBfHfFlQnU=;
+        b=jay48Verfxc4CQISGMOCro5Ru3jtTLOpyrIMgnZBR9vubOoDMYw7B4QtaA9fYTrD0P
+         LV9EKmn9Redn9zhvMv63R+FdMP/SydIcpwrKBt1PXAsLKzKWZHoqZgoAyaGSLfhuPkI9
+         0upN36HtvjmaHOHt1fuWs2Dh8IAvNXipzg9bi8aae1iIgVp4Jg5evnTxsLu0Na7QbZ9R
+         4fejgSlXapMDC5RRT7VDjci6AdLJwPpD5acRsHl7aay67InXAfg7B5a+1URqNyFknw/B
+         6ScepRG2ALtGsE/PZ5yBGjD2B61PX/HBTCG7E9H4rI7ThfE0fKYw4dSmsrsSfALOlk9C
+         EggA==
+X-Forwarded-Encrypted: i=1; AJvYcCXK2G9GMkpKooGQdnZBWJ5NIb/dZzBA8rRGSSWL9VqF/XAeffWFYWFABcDUCDU7tWp8MOj1iY3GD+MTfpKF7VBp9+q7gh95sufOdx8FkH3/Yt5YNyvdDm9w6dS9guhXfIl6GIJbBHNCN7Rrwg==
+X-Gm-Message-State: AOJu0YyokwBRdtB8dH0cJ5mxTfBwWXlwZ9iBn21rCiR3l9qSn+4A4PJm
+	C0vbRdSHmlf74IjPjoO15BMmptMxz85l+VFzQCVo/XujCz5sz8Ckx4MdbKAoLM768arG2xSvsM8
+	Mu8tOu3jM5Yxj3op7DIlIfMnCvzo=
+X-Google-Smtp-Source: AGHT+IFlO0TjFwAgwe7jW4uv3d0LZl69UkHI5u0XxEuqIMBFANIynjGf5rVmxXcoSuPa4ro4jZJLuLzDKYolw72m6ao=
+X-Received: by 2002:a2e:be8c:0:b0:2ec:3dd4:75f9 with SMTP id
+ 38308e7fff4ca-2ec3dd476d9mr46118991fa.35.1718901731039; Thu, 20 Jun 2024
+ 09:42:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <616a10c5-9c72-4221-a181-6251e808b9b8@amd.com>
+References: <20240619212743.3193985-1-quic_abhinavk@quicinc.com> <CAA8EJpowTONWNQH+Sqe1w1eL85Ty4tw8_Qkc1yToQu9s17Tokw@mail.gmail.com>
+In-Reply-To: <CAA8EJpowTONWNQH+Sqe1w1eL85Ty4tw8_Qkc1yToQu9s17Tokw@mail.gmail.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Thu, 20 Jun 2024 09:41:59 -0700
+Message-ID: <CAF6AEGsQLqf96g9iaUqB1D6zcay8csvUH7oyirTd04x+bUzvYA@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/dpu: protect ctl ops calls with validity checks
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, freedreno@lists.freedesktop.org, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	quic_jesszhan@quicinc.com, dan.carpenter@linaro.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Vineeth,
+On Thu, Jun 20, 2024 at 6:08=E2=80=AFAM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Thu, 20 Jun 2024 at 00:27, Abhinav Kumar <quic_abhinavk@quicinc.com> w=
+rote:
+> >
+> > dpu_encoder_helper_phys_cleanup() calls the ctl ops without checking if
+> > the ops are assigned causing discrepancy between its callers where the
+> > checks are performed and the API itself which does not.
+> >
+> > Two approaches can be taken: either drop the checks even in the caller
+> > OR add the checks even in dpu_encoder_helper_phys_cleanup().
+> >
+> > Adopt the latter approach as ctl ops are assigned revision based so may=
+ not
+> > be always assigned.
+>
+> NAK, these calls are always assigned. Please make sure that they are
+> documented as required and drop offending checks.
 
-On Thu, Jun 20, 2024 at 09:29:01PM +0530, Karumanchi, Vineeth wrote:
-> Hi Simon,
-> 
-> On 6/18/2024 4:26 PM, Simon Horman wrote:
-> > On Mon, Jun 17, 2024 at 12:34:12PM +0530, Vineeth Karumanchi wrote:
+agreed, I'd rather see the obvious crash if somehow a required
+callback didn't get set up, than a subtle/silent problem.  It is
+easier to debug that way.
 
-...
+BR,
+-R
 
-> > > @@ -5290,6 +5289,14 @@ static int __maybe_unused macb_suspend(struct device *dev)
-> > >   		macb_writel(bp, TSR, -1);
-> > >   		macb_writel(bp, RSR, -1);
-> > > +		tmp = (bp->wolopts & WAKE_MAGIC) ? MACB_BIT(MAG) : 0;
-> > > +		if (bp->wolopts & WAKE_ARP) {
-> > > +			tmp |= MACB_BIT(ARP);
-> > > +			/* write IP address into register */
-> > > +			tmp |= MACB_BFEXT(IP,
-> > > +					 (__force u32)(cpu_to_be32p((uint32_t *)&ifa->ifa_local)));
-> > 
-> > Hi Vineeth and Harini,
-> > 
-> > I guess I must be reading this wrong, beause I am confused
-> > by the intent of the endeness handling above.
-> > 
-> > * ifa->ifa_local is a 32-bit big-endian value
-> > 
-> > * It's address is cast to a 32-bit host-endian pointer
-> > 
-> >    nit: I think u32 would be preferable to uint32_t; this is kernel code.
-> > 
-> > * The value at this address is then converted to a host byte order value.
-> > 
-> >    nit: Why is cpu_to_be32p() used here instead of the more commonly used
-> >         cpu_to_be32() ?
-> > 
-> >    More importantly, why is a host byte order value being converted from
-> >    big-endian to host byte order?
-> > 
-> > * The value returned by cpu_to_be32p, which is big-endian, because
-> >    that is what that function does, is then cast to host-byte order.
-> > 
-> > 
-> > So overall we have:
-> > 
-> > 1. Cast from big endian to host byte order
-> > 2. Conversion from host byte order to big endian
-> >     (a bytes-swap on litte endian hosts; no-op on big endian hosts)
-> > 3. Cast from big endian to host byte oder
-> > 
-> > All three of these steps seem to warrant explanation.
-> > And the combination is confusing to say the least.
-> > 
-> 
-> tmp |= MACB_BFEXT(IP, be32_to_cpu(ifa->ifa_local));
-> 
-> The above snippet will address above points.
-> Consider the ip address is : 11.11.70.78
-> 
-> 1. ifa->ifa_local : returns be32 -> 0x4E460b0b
-> 2. be32_to_cpu(ifa->ifa_local) : converts be32 to host byte order u32:
-> 0x0b0b464e
-> 
-> There are no sparse errors as well.
-> I will make the change, please let me know your suggestions/thoughts.
-
-Thanks for your response, your proposal looks good to me.
-
+> >
+> > Fixes: d7d0e73f7de3 ("drm/msm/dpu: introduce the dpu_encoder_phys_* for=
+ writeback")
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes: https://lore.kernel.org/all/464fbd84-0d1c-43c3-a40b-31656ac0645=
+6@moroto.mountain/T/
+> > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> > ---
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 9 ++++++---
+> >  1 file changed, 6 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/=
+drm/msm/disp/dpu1/dpu_encoder.c
+> > index 708657598cce..7f7e6d4e974b 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > @@ -2180,9 +2180,12 @@ void dpu_encoder_helper_phys_cleanup(struct dpu_=
+encoder_phys *phys_enc)
+> >         if (ctl->ops.reset_intf_cfg)
+> >                 ctl->ops.reset_intf_cfg(ctl, &intf_cfg);
+> >
+> > -       ctl->ops.trigger_flush(ctl);
+> > -       ctl->ops.trigger_start(ctl);
+> > -       ctl->ops.clear_pending_flush(ctl);
+> > +       if (ctl->ops.trigger_flush)
+> > +               ctl->ops.trigger_flush(ctl);
+> > +       if (ctl->ops.trigger_start)
+> > +               ctl->ops.trigger_start(ctl);
+> > +       if (ctl->ops.clear_pending_flush)
+> > +               ctl->ops.clear_pending_flush(ctl);
+> >  }
+> >
+> >  void dpu_encoder_helper_phys_setup_cdm(struct dpu_encoder_phys *phys_e=
+nc,
+> > --
+> > 2.44.0
+> >
+>
+>
+> --
+> With best wishes
+> Dmitry
 
