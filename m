@@ -1,179 +1,108 @@
-Return-Path: <linux-kernel+bounces-223334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FDBB911143
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:49:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E540691114C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC151C21402
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:49:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C54E6B2BCA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6171BA876;
-	Thu, 20 Jun 2024 18:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4mzUIph"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631411BB6A3;
+	Thu, 20 Jun 2024 18:39:54 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA55C1AAE17;
-	Thu, 20 Jun 2024 18:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D811B9AB0;
+	Thu, 20 Jun 2024 18:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718908715; cv=none; b=P0M4egX1rTD0YtY70/CsRoVFDaUHwyK5BTZuhtrHozavVhNiVfkLCkbxkdeSac6y5MIHm65sLOoG6D1SVWYLqZm0JB+cafID16kQ81F2lj/y3jOYQEUWcLQVP35bEcgwwkNWWIsGC54AiRhYy2nCkJY6+5CbGtklDB/iotciYpY=
+	t=1718908793; cv=none; b=Hpimxcz5IUeUoe3IgYNw9+F0XcNTelcpRKOWN0tgJftTD3n4qKDmS/pxRIkyGBqFjXHUreNwEtcnlAyjtqnOC3BIc1/qkpk/NbH0c1/I22SimY/w2vWgrAz6cpjzae/hAH6b7PshB4BkDrbPi5tbQfsOti31WGGaBpQnHP/yZzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718908715; c=relaxed/simple;
-	bh=bt0gQE1+V2HRT08t/BZzlfDOsm+kbAKYPtp191A9SSc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mWjW8FW/m5N+oju4yRv43jL1cQHGIJja+aF9ijcMFy7MdHnMN6iuLuvFPqeDYQLr2Y3jmdOQZJo5wV1DNuOERX1/sD/PHNZUfEk62PEow7ey1wvR9uMSo9LdjxgtFNwtMyU5GcSLuZHoSbcH14C1H9pchzYK38ZsYxA4p7vsWSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4mzUIph; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46471C2BD10;
-	Thu, 20 Jun 2024 18:38:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718908715;
-	bh=bt0gQE1+V2HRT08t/BZzlfDOsm+kbAKYPtp191A9SSc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W4mzUIphC+bsGyWWVINjJ+zyi2TYr+n1ojFGjsI8XWbK2zNhXlv1Nx8qG243WOG1j
-	 SP+qRwr/3cCBXWOZJyJ5jtDpC9RymL1zO+H8oGQZMTN9HwTMKzmWkG4Bdo7uwrN4fc
-	 Ksfxhz7OZtJi542XD73eeU5TCJha8pxUCpw8QzPr6BT6PGiDwvbYk6wGHaq88zc0Nu
-	 g2GYoUzzlpjTWzYWwandJUjit9KugI72A6XPga/pvfKAeZ9/4SKLgUNWuDuNmaGzzB
-	 rmi1hv1JFv1nNx9XhhT5Clg0dC4YMIwFit8yctnF0ZOnlBofbCqae/5n+6OKjM+Dq0
-	 l+k19n0IFRmbw==
-Date: Thu, 20 Jun 2024 11:38:34 -0700
-From: Kees Cook <kees@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: linux@armlinux.org.uk, ardb@kernel.org, arnd@arndb.de, afd@ti.com,
-	akpm@linux-foundation.org, rmk+kernel@armlinux.org.uk,
-	linus.walleij@linaro.org, eric.devolder@oracle.com, robh@kernel.org,
-	masahiroy@kernel.org, palmer@rivosinc.com, samitolvanen@google.com,
-	xiao.w.wang@intel.com, alexghiti@rivosinc.com, nathan@kernel.org,
-	jan.kiszka@siemens.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	Alexander Popov <alex.popov@linux.com>
-Subject: Re: [PATCH] ARM: Add support for STACKLEAK gcc plugin
-Message-ID: <202406201136.A441E0B7@keescook>
-References: <20240620131649.886995-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1718908793; c=relaxed/simple;
+	bh=ect3o+WXx/8Mtj30Y52UBbKc1pPxHH6COoSG4HKXAqk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AT6BeatEXw3Qa9kyOGvUayYwLB25LDBLra6diB2ScXfY1WUIKzC/jEIK8z0XkVV4j6uu1pEuzlJ1WPd9QoZcVdX+5obXysB0NubNTKsVMfGQHOIDEvOrQFMp9yUVf76HXVJ5tfkyQvue7fc0KvHHtKXq2El5epw2O7MXTbc6pRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860cc8.versanet.de ([94.134.12.200] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sKMhF-0000W2-Ed; Thu, 20 Jun 2024 20:39:45 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Sebastian Kropatsch <seb-dev@mail.de>
+Cc: linux-rockchip@lists.infradead.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] arm64: dts: rockchip: Fix regulators,
+ gmac and naming on NanoPi R6C/R6S
+Date: Thu, 20 Jun 2024 20:39:44 +0200
+Message-ID: <2396550.3c9HiEOlIg@diego>
+In-Reply-To: <20240612205056.397204-3-seb-dev@mail.de>
+References:
+ <20240612205056.397204-1-seb-dev@mail.de>
+ <20240612205056.397204-3-seb-dev@mail.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620131649.886995-1-ruanjinjie@huawei.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Jun 20, 2024 at 09:16:49PM +0800, Jinjie Ruan wrote:
-> Add the STACKLEAK gcc plugin to arm32 by adding the helper used by
-> stackleak common code: on_thread_stack(). It initialize the stack with the
-> poison value before returning from system calls which improves the kernel
-> security. Additionally, this disables the plugin in EFI stub code and
-> decompress code, which are out of scope for the protection.
+Am Mittwoch, 12. Juni 2024, 22:48:11 CEST schrieb Sebastian Kropatsch:
+> Fix the alphabetical ordering in some nodes and rename some regulators
+> and pins to match the schematics [1][2] as well as to adhere to
+> preferred naming schemes.
 
-Oh very cool! Thanks for sending this!
+General rule of thumb, when you need an "and" in your subject or a list
+like the above - you definitly want to split the change into multiple
+commits.
 
-> Before the test on Qemu versatilepb board:
-> 	# echo STACKLEAK_ERASING  > /sys/kernel/debug/provoke-crash/DIRECT
-> 	lkdtm: Performing direct entry STACKLEAK_ERASING
-> 	lkdtm: XFAIL: stackleak is not supported on this arch (HAVE_ARCH_STACKLEAK=n)
-> 
-> After:
-> 	# echo STACKLEAK_ERASING  > /sys/kernel/debug/provoke-crash/DIRECT
-> 	lkdtm: Performing direct entry STACKLEAK_ERASING
-> 	lkdtm: stackleak stack usage:
-> 	  high offset: 80 bytes
-> 	  current:     280 bytes
-> 	  lowest:      696 bytes
-> 	  tracked:     696 bytes
-> 	  untracked:   192 bytes
-> 	  poisoned:    7220 bytes
-> 	  low offset:  4 bytes
-> 	lkdtm: OK: the rest of the thread stack is properly erased
-> 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  arch/arm/Kconfig                      | 1 +
->  arch/arm/boot/compressed/Makefile     | 1 +
->  arch/arm/include/asm/stacktrace.h     | 5 +++++
->  arch/arm/kernel/entry-common.S        | 3 +++
->  drivers/firmware/efi/libstub/Makefile | 3 ++-
->  5 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 036381c5d42f..b211b7f5a138 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -86,6 +86,7 @@ config ARM
->  	select HAVE_ARCH_PFN_VALID
->  	select HAVE_ARCH_SECCOMP
->  	select HAVE_ARCH_SECCOMP_FILTER if AEABI && !OABI_COMPAT
-> +	select HAVE_ARCH_STACKLEAK
->  	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
->  	select HAVE_ARCH_TRACEHOOK
->  	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if ARM_LPAE
-> diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-> index 6bca03c0c7f0..945b5975fce2 100644
-> --- a/arch/arm/boot/compressed/Makefile
-> +++ b/arch/arm/boot/compressed/Makefile
-> @@ -9,6 +9,7 @@ OBJS		=
->  
->  HEAD	= head.o
->  OBJS	+= misc.o decompress.o
-> +CFLAGS_decompress.o += $(DISABLE_STACKLEAK_PLUGIN)
->  ifeq ($(CONFIG_DEBUG_UNCOMPRESS),y)
->  OBJS	+= debug.o
->  AFLAGS_head.o += -DDEBUG
-> diff --git a/arch/arm/include/asm/stacktrace.h b/arch/arm/include/asm/stacktrace.h
-> index 360f0d2406bf..a9b4b72ed241 100644
-> --- a/arch/arm/include/asm/stacktrace.h
-> +++ b/arch/arm/include/asm/stacktrace.h
-> @@ -26,6 +26,11 @@ struct stackframe {
->  #endif
->  };
->  
-> +static inline bool on_thread_stack(void)
-> +{
-> +	return !(((unsigned long)(current->stack) ^ current_stack_pointer) & ~(THREAD_SIZE - 1));
-> +}
-> +
->  static __always_inline
->  void arm_get_current_stackframe(struct pt_regs *regs, struct stackframe *frame)
->  {
-> diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
-> index 5c31e9de7a60..f379c852dcb7 100644
-> --- a/arch/arm/kernel/entry-common.S
-> +++ b/arch/arm/kernel/entry-common.S
-> @@ -119,6 +119,9 @@ no_work_pending:
->  
->  	ct_user_enter save = 0
->  
-> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> +	bl	stackleak_erase_on_task_stack
-> +#endif
->  	restore_user_regs fast = 0, offset = 0
->  ENDPROC(ret_to_user_from_irq)
->  ENDPROC(ret_to_user)
-> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-> index 06f0428a723c..20d8a491f25f 100644
-> --- a/drivers/firmware/efi/libstub/Makefile
-> +++ b/drivers/firmware/efi/libstub/Makefile
-> @@ -27,7 +27,8 @@ cflags-$(CONFIG_ARM64)		+= -fpie $(DISABLE_STACKLEAK_PLUGIN) \
->  cflags-$(CONFIG_ARM)		+= -DEFI_HAVE_STRLEN -DEFI_HAVE_STRNLEN \
->  				   -DEFI_HAVE_MEMCHR -DEFI_HAVE_STRRCHR \
->  				   -DEFI_HAVE_STRCMP -fno-builtin -fpic \
-> -				   $(call cc-option,-mno-single-pic-base)
-> +				   $(call cc-option,-mno-single-pic-base) \
-> +				   $(DISABLE_STACKLEAK_PLUGIN)
->  cflags-$(CONFIG_RISCV)		+= -fpic -DNO_ALTERNATIVE -mno-relax
->  cflags-$(CONFIG_LOONGARCH)	+= -fpie
+> In addition to that:
+> * vcc_3v3_sd_s0: Fix voltage to be 3.3V
+> * vcc3v3_pcie:
+>     - Move to NanoPi R6C, this power switch is not available on R6S
+>     - Fix vin-supply (is vcc_5v0 per schematics)
+>     - Add gpios/pincrtl to enable power
 
-This looks very straight forward! If an ARM person can Ack this, I could
-carry it via the hardening tree. Otherwise, it should probably go via
-rmk's patch tracker?
+this defnitly needs its own patch
 
--Kees
+> * vcc5v0_usb: Remove this regulator since according to the schematics,
 
--- 
-Kees Cook
+this too
+
+> * vcc5v0_host_20 and vcc5v0_usb_otg0 are directly powered by vcc_5v0
+
+this could be grouped together with the 3.3v change
+
+> * gmac1: Add rx_delay of 0 (no delay since phy-mode = "rgmii-rxid")
+
+with rxid mode, why is the rx_delay needed at all?
+Shouldn't this just work without the property?
+
+> * rgmii_phy1: Add phy-supply as seen in schematics
+
+separate patch
+
+> * pcie2*:
+>     - Add pinctrl reset pins
+>     - Update vpcie3v3-supply to match the schematics
+
+separate patch
+
+> * sdhci: Add vmmc-supply and vqmmc-supply
+
+separate patch
+
+
+Heiko
+
+
 
