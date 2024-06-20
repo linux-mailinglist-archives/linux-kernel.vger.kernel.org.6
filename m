@@ -1,176 +1,228 @@
-Return-Path: <linux-kernel+bounces-222285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD5F90FF35
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:46:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF6390FF43
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25668B26214
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:46:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E284284A5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852671AB8E4;
-	Thu, 20 Jun 2024 08:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F8C1A4F3B;
+	Thu, 20 Jun 2024 08:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="P5d6FVCA"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b="n92wkLHv"
+Received: from cluster-b.mailcontrol.com (cluster-b.mailcontrol.com [85.115.56.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599A019DF71;
-	Thu, 20 Jun 2024 08:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718873009; cv=none; b=caqxhQkTh36XCeKbts/R5VBd+T8RcyyFLAxvhchH6VviUHeAf0HTZ+uXciI3CrwuCp3eUImHe3ZCxKMF6ggjeUmlJcMv/ULYdCBNrJAuQk2aZcZrore+FMJ/IwsRc4eBlObKv9wgCLWMakng1sWqRay+UGlwWIQ5Lv4cNGJssmM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718873009; c=relaxed/simple;
-	bh=TsOTJsXOEnVharVSeCupIbwL7W/Y+vDaQQnvOUY6CMY=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version:Content-Type; b=V9BCgMhVDsJ1SWn3nCxMBb1DuJaVxuIdCL1ePuOvcRGSS1nAtnvtyR4/jgBDm9nOrwFpa7Mpf3KBNuWo6nC6/TdYFUV2k9qU65PXa0zV2hTdFCmJwT8k/axZmpxtjW/8y12Ybfw3sYo5d54D33bdCRb5kg0YVzhCmCr8Rx/LcX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=P5d6FVCA; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1718872995;
-	bh=FGlwTX7JS0brarckQg49dCoIerp11+y1/d+gT6mkM+s=;
-	h=From:To:Cc:Subject:Date;
-	b=P5d6FVCAOj1ockYlezDI69Bs3R4AqWBatkssl9Oxri3FxLM7OBLfIZQhDUXi4mjqX
-	 w2usOPQuS4zG3DfHeDr1b9M409Vmbu+3AclT4Jl4uIVsfmcpgV11hzZlgnOjwung1A
-	 uN3ZJ8cDkWiW25WW2kt6keyI884tdwkDfL3iWtDM=
-Received: from localhost.localdomain ([203.119.160.30])
-	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
-	id ACC87E15; Thu, 20 Jun 2024 16:43:12 +0800
-X-QQ-mid: xmsmtpt1718872992tubi3c2zy
-Message-ID: <tencent_AB1A2D84652D748A2290F5305B94D4612307@qq.com>
-X-QQ-XMAILINFO: NGsJ5Fy+2UsS6JkGEwNv3B2kTyx3ePqvfLeK6X3k8mUl2Ks+wBoycLUK8/SOzM
-	 wRHWyBGQcX2JBlDMjJ3RqL6TxhtnnbmaH8va/Rbx2TPsZ4spBbJ11SUhqONKhhYoQIysIXDQNwwT
-	 QLpaiV8k3iRzfZNrap6lEKgvSFQA1fvhviMM6fqltGBt6xFYWsObdC1LY9Wj+PQS0+89wcsFXqHG
-	 550ghq6nOz3xz2X+yXyA3vMoF3iBbVe9qN3k2Mpvf4L75w0z5GqDfOKahP5BMKCxO/PgSqFYJO/o
-	 AGQEYf+AzIhpC+fKZjACAyGrLGws4NlERtrBQaqgj7fVc3QgJQdz8ngiUbX5L5jD2yHrSvgJsZtA
-	 SzDOvCD7DDPT2iyrBckWbbmBJYmM3qnHUaO+ioEUyytmfnGTsdkxkzNKcI5HqBpl7GE+Vrk5La6j
-	 FyD2lK0O2kx1+tAPXNbRiBqKPvVRg8TK5ZPoSoljtsj/scHj5W3Mr09SodHrWn0/UkTebhzTzbGc
-	 5SPl2vDGRa/7MvGjSexn1eQ6K4rx9J11PZenWibEQfI256U2A6qn/VH50vlrm5N4D7m7YdFAKzfJ
-	 UFP+0c+czRqOqxYlIJe3jfvi6FAT3PU8T0hQXKhGEOVKJSpmO8mP3ezggCcIfgLAU0PVSUMppmq9
-	 t4NYB9ziLWA6zy3CrxKwkAlFro3GChbj2JIMHksjfGyQqMnVSlCdqRrr7z8QD522QfXM6BEQHxrF
-	 Nkqh6MSSJKv3tLRlXMkfrVjyTPR8iJ6LDefR0mSRHA/dsiPFR+KBg8UBcEzbOWoCr9wbGXfBR9Wb
-	 93QV526EdbgU0GcIrkWMxBHjQD8z9JQKfNl/OjckFYg32zSMeeq8dzX73Q/aZ+TgVx1pRlspb2Ey
-	 aFt/xmHBhuhgFIHF1jDOWqoHE6o2Oe6ynzhHM00RcaopNs0mgZhrBpfsCQnxuqId89mvMfVwGFJD
-	 yFMKEfpHOIxQAFDMHN8G11UizOX8RyOCLuIu6r08Ej28IfTwvFSPn3aZ/09ps+ruS804jxY1g=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Tao Zou <wodemia@foxmail.com>
-To: Alex Shi <alexs@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Tao Zou <wodemia@linux.alibaba.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] zh_CN/admin-guide: Add zh_CN/admin-guide/numastat.rst translation document
-Date: Thu, 20 Jun 2024 16:43:09 +0800
-X-OQ-MSGID: <20240620084310.23823-1-wodemia@foxmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E9919939B;
+	Thu, 20 Jun 2024 08:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.115.56.190
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718873084; cv=fail; b=bxvPR9yATjHD1/5eGXhNWZDOepHONI4+m4xzTCPcz1KCmIcDL+D7yUgaEg4V4W5IFsgRW8jgr1ofyd7Ufc2K2N4rYny4gyUQOJTWX92YtXriudKlXToD6Rvn6oyoQPY0CHdnm5kt3HEcRiCU5zAgrGMBDI3lonsCJ6j+XxTMsqg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718873084; c=relaxed/simple;
+	bh=WIOjH6Xs1PkVDxqaS5UKN/c6Exoq7xXzjkWtmHVYoZE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OE2fcUjknfSwZud8XYGyxaOOG96vj3MpT09tpV7z9dQ4cJLscZBcgLA9C4K9ar7M43nPHTfJR3dEtjSHe985TccQIpbyHqRpAGiRyyXbFuuRvOGoS0cqSugrRDGEp7l4oZT7KRYqca1wPrafkcZzIlALjuXnGzxCv5wtpwyhdrs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai; spf=pass smtp.mailfrom=habana.ai; dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b=n92wkLHv; arc=fail smtp.client-ip=85.115.56.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=habana.ai
+Received: from rly16b.srv.mailcontrol.com (localhost [127.0.0.1])
+	by rly16b.srv.mailcontrol.com (MailControl) with ESMTP id 45K8iRRx157051;
+	Thu, 20 Jun 2024 09:44:27 +0100
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by rly16b.srv.mailcontrol.com (MailControl) id 45K8hcec140056;
+	Thu, 20 Jun 2024 09:43:38 +0100
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04lp2046.outbound.protection.outlook.com [104.47.14.46])
+	by rly16b-eth0.srv.mailcontrol.com (envelope-sender oshpigelman@habana.ai) (MIMEDefang) with ESMTP id 45K8haYV138521
+	(TLS bits=256 verify=OK); Thu, 20 Jun 2024 09:43:38 +0100 (BST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kBxSPPJr5GEgiFqw+8ZigppoAD8qQHI9yEDHypBWuViTohUzRcxU2LxwvLVm5cZaFzCrBLafwkQaBC5do08KVQ8C545im8pyujkubFjLuR6wHbmtQOO/+QHxENioPXLg2xdjU5ZdbS8CXQyBitALAfXiT+FiXhOwmnZWlrGXJHyBBqc08fUradmRfEisrkS2S1AWNOUvQEle4kHLH6jbHSRW9Jmtu1KPZczvLCANA9iCC7mXM2uV2R6DJKfFEPgbrXerzBBg9SqR3rDMaaUtoJ/HmCXT7f53s3JonZKQAyJcz5F7ErVxxXY6NtFxYtkdC9XwIJtSTjWEfQr0wPYeAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WIOjH6Xs1PkVDxqaS5UKN/c6Exoq7xXzjkWtmHVYoZE=;
+ b=H0GC/T4u8sg9hv6HpN8x/ocv/LNPBjGivNfizGBnFjeiK4rd43y/H8vBoYYPB+KnLjqCyDEPBMe8Ik6A3RyP09FGkBvy33r2e9u6lP7OeHlEyylwaGOAuHL/xR3hgmVn1B/wsEIUD54xXEYEvHRWzW7THpgmns29M4bEXDrCrhAC13qA+7GyowSRg/UNhcOvV9u1KSWRISUhCtPJKF3qczVQpN5KMz7biAlS/SOJppDQw+DEiTAp3KY0gUthyW+fKfKoWDTaycKEyPaQfrCJYSGo6JkbRHwIQQu+ZfX/swjP7hckWeUJ9bbNuouALQ/8BTzmcqmd5YndIOh2WItu0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
+ dkim=pass header.d=habana.ai; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=habana.ai;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WIOjH6Xs1PkVDxqaS5UKN/c6Exoq7xXzjkWtmHVYoZE=;
+ b=n92wkLHvrE/C7lUUHws0NiVB4a9G7P2F0nJZkHbIN+XE1JNMlTBWXbi/CY94aoDhFzo1Jd/u/b5rlHAJf+IM+GuWHd+wyf38Jbs9U5+9suRz6AEzgNSw3HyBMAdyT9qKMfkujNWpbijnHsPh0NRckCy8lfOfmQpHo0eoMpIIONeWXvXd9JJHoZtmv0ihdUfQELC6co7tQ0iYnuw+8EyqqXOqt08ZQdd5SgqFz8ZTbC1apxwhkS9+24onIsaoQS5zXr7ZQvDLF53vjSv2TDl5dv6T4I0eJqiV3R71zNhP9vTxoDFH4P6PbnTiqw65JsjGaTGDH2KzZuRQaEqT0+yqxA==
+Received: from PAWPR02MB9149.eurprd02.prod.outlook.com (2603:10a6:102:33d::18)
+ by PAWPR02MB9782.eurprd02.prod.outlook.com (2603:10a6:102:2ed::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Thu, 20 Jun
+ 2024 08:43:34 +0000
+Received: from PAWPR02MB9149.eurprd02.prod.outlook.com
+ ([fe80::90a0:a4f0:72e9:58b9]) by PAWPR02MB9149.eurprd02.prod.outlook.com
+ ([fe80::90a0:a4f0:72e9:58b9%3]) with mapi id 15.20.7698.020; Thu, 20 Jun 2024
+ 08:43:34 +0000
+From: Omer Shpigelman <oshpigelman@habana.ai>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: Andrew Lunn <andrew@lunn.ch>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org"
+	<linux-rdma@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>,
+        "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        Zvika Yehudai <zyehudai@habana.ai>
+Subject: Re: [PATCH 09/15] net: hbl_en: add habanalabs Ethernet driver
+Thread-Topic: [PATCH 09/15] net: hbl_en: add habanalabs Ethernet driver
+Thread-Index: 
+ AQHavWrQgrJbi1vMQEmkq/v8mH9idrHGPFGAgAbik4CAAHs1AIABHDsAgACHbwCAASNEgA==
+Date: Thu, 20 Jun 2024 08:43:34 +0000
+Message-ID: <5cb11774-a710-4edc-a55c-c529b0114ca4@habana.ai>
+References: <20240613082208.1439968-1-oshpigelman@habana.ai>
+ <20240613082208.1439968-10-oshpigelman@habana.ai>
+ <10902044-fb02-4328-bf88-0b386ee51c78@lunn.ch>
+ <bddb69c3-511b-4385-a67d-903e910a8b51@habana.ai>
+ <621d4891-36d7-48c6-bdd8-2f3ca06a23f6@lunn.ch>
+ <45e35940-c8fc-4f6c-8429-e6681a48b889@habana.ai>
+ <20240619082104.2dcdcd86@kernel.org>
+In-Reply-To: <20240619082104.2dcdcd86@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=habana.ai;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAWPR02MB9149:EE_|PAWPR02MB9782:EE_
+x-ms-office365-filtering-correlation-id: 6286859c-6aea-4a25-7452-08dc91051202
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230037|366013|1800799021|41320700010|38070700015;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?UEF4d2o0VURFd3BEZHArbm1aMW40bXNiL3ZEUTJ1am84bzdpK0VhMWdQTkxy?=
+ =?utf-8?B?TURCWWh0L3k0SE5RUG56WEFwZUpuRVdTSlFEVXRxZUcwcm9TV0d3WmtUekky?=
+ =?utf-8?B?V1dhYTdOQlBYMTlFTjdMczhxbVBnVitTUDlaaUlvTUMzeUUwQTljTU84ZEJ3?=
+ =?utf-8?B?cWFQZFJaYjI0WkxpbXpLczc1ZDBrMEJuUC9mT0FwWHl2VitIZkdrMjhzcmZN?=
+ =?utf-8?B?ZWd0c2g1OExsZlVJS1pNNVMzWkhVYW9TUCtXQkF4cEhOUE5yVzFKK3VneVE2?=
+ =?utf-8?B?TEhxc0s3eTF0LzJ3M2djTEFRcXg0M2lka0JEdG5DbDNvc2YraTM2Y2diSmZh?=
+ =?utf-8?B?MTg1SkxKYkFsN3NlYWxVaDZPL2RVcmF1aitrM2pYR3hlUGFNRnJCL25VNTlC?=
+ =?utf-8?B?MUhFN0h3LzlLTktSQTBrVWdiNGNmUjR2aUowZkp6YTR6QXoySFBxZmEyMEtH?=
+ =?utf-8?B?OUU1TnRIL1cwdFRyNlJ4bDR2eHJWVVpKcjM3STNScEVodWFCanhLaTNmMnpx?=
+ =?utf-8?B?VWZINXN6RWpDVzErTkJhU2lVb3NHdkwwMXNObUVuL1RSQTNhMExlRnhycWRu?=
+ =?utf-8?B?bEt0T1Y0c1ZLeXJWN0crQ2xYV1dFclk0THlyN09TOW9wNkZENmI5WDIyY2hR?=
+ =?utf-8?B?WmZZcnRxV0I3RnU3WkVDMGc5MXAvTEt2aEw5M3NIY0tTLzZHOXB4cHNEa0lE?=
+ =?utf-8?B?TTczalR5ZTVhcFIyd2NSRmVNSGwwOFdpT0w4bGg5dW1YdUs2dy8reUpTMFov?=
+ =?utf-8?B?NC9BblJ0djIyeGUwaXN3eVE0RURwc3pWTjF3MWwrK1NOUFR2OU5NWTlKalRt?=
+ =?utf-8?B?WCs2cVE2VERYNVNjSE1leEVibEJLQjhucTBkbkl1ZTZUc3p0d1NoNmFyTGNO?=
+ =?utf-8?B?ME9OZzR2ZkhSWWFQVk96UEpRZGtRdDQyYWhxc1BIVk5seEp6U2FabjJpOUN2?=
+ =?utf-8?B?cmZjdktNWUpwMDhyamtITEs2cXNwQVhJS3FZYXBNd3pVbHhDZVJlcVBzRldC?=
+ =?utf-8?B?aFMrVFo0QmRwcG9BU0FaSU9EWVM3czl5eDM5V210UFM1OW54eWY2ZmJLVDg4?=
+ =?utf-8?B?MGdxSmZ2ZFI4c1FkdDJPb0R4bjVXZ1lJTzZVbUFNbTRGVGFmZlE1bFZnOWVu?=
+ =?utf-8?B?UnJ0SEdJK25aZDhVbzR3VWVwcEtsZXhHZU94azFZV3U1NWZxSlkvNnJWRXM0?=
+ =?utf-8?B?bHNzZVNxRHVobHgrRGdKSFBPcHFLSTM0K05DNDM0d2t3TWRBMHhZMThHYnhL?=
+ =?utf-8?B?NWtpU2haV3lqNERtNitYVGFqNEIzMzN4U25FdGlQV0ZGY2NBeXE1U0doS1o4?=
+ =?utf-8?B?TkFXUnN3TGtCWEZNMFFjNlZ1ZkVnUVZvREZtTnNaVHlNZUM2ZnY3OEEwR1RW?=
+ =?utf-8?B?TzluZVQwZ0Y1M2JkNy93VHgxK280REpIYUJMWVIxemdKYXRpR2tsMDBrUlRY?=
+ =?utf-8?B?RVVnM05sTFF4TmpJVUNvbnY5RGdWM3RNN1QyL0R1eFFjaGxScUlMZE9qYlpx?=
+ =?utf-8?B?OGU5U1hZaXdNbml4L1IxZnhCdXhhQk5KdFVSekpyKzk5a1c4MzBZdVg2N1A5?=
+ =?utf-8?B?dG55TWg1ZThJcWRSTmxTclNMUi9Vek41RU8zc1JvNzNzOFEycC9lZTdna0Ri?=
+ =?utf-8?B?RXp0S0tBVmtNbWpFWGIxcUFCMVg0ZlI3UmlCbmlyOFlrMlFqOFVJQ0cvSll1?=
+ =?utf-8?B?UVd0d1Fod2oxNzJqa2lnOUtzN1dwR2c4amRhUDg5dFIwV3dnZVFLT3A3OTE0?=
+ =?utf-8?B?ZzE1d3JhVDZjYUkzdElRQ3JrSnNnbmhkQmViUW5pOGN5WFZhMnZWNERmS2Jr?=
+ =?utf-8?Q?aXjjNzd8TVbdrMa+UyArrFNo6Fae1vY11+lsg=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR02MB9149.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(1800799021)(41320700010)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?M1FIY21RVjZuTTBJU1Q5cko5RFVIWlVuS1hOSWZLSTRCUkxiR1ZjZmFkRFpz?=
+ =?utf-8?B?cW0ydngyaWtCcU8xYm80SkNJTDBpZ3F1Qk1mclo2ZElpQVlZT25ENm1WMGQ0?=
+ =?utf-8?B?ZlA1TTJhNk5VSW43TEpOYko4ZGpGYUpUd2ordHR6dlQ4MUZIU0RqeU9WRTE5?=
+ =?utf-8?B?ZHFoT2kzMUs3V2FrSDU5Y3kxL3c5K2ZqdnhPdGlrMzFKd1kwL1VIRmFGVmF3?=
+ =?utf-8?B?eVdSWFpnL3QwdmplWlh4R1p3dnpXNFErVmlpMlJQWFZLSmRjZlVVM3ZCY3RI?=
+ =?utf-8?B?MDJpbDRNTzdlWGwrNGJpaE53TG1zYkQyWXFUamFaaXJQWS9oVGg5K0ZyK25U?=
+ =?utf-8?B?cFRHM2ZPa0xPN2llb2orWWllT3M5WWtxNmpwci9IazZMVmFGSkFmaG9wTVdZ?=
+ =?utf-8?B?VXdMNHJxV3pCOXJRV1IyOTNVM3A5ODlpY2xNR3EvS1dZVjlzTFNPVnpGSjRI?=
+ =?utf-8?B?L1YxdytjWExWN0l3NC9GcHNPVVdCQktlaW54NEppdU5jLzNBejdLd0VCQTBv?=
+ =?utf-8?B?RXN2YjFGK2d5WHNVQXo0TWlGOGw2UmIzOWFGcmpjcmkwK3cvOEpXQUxHOFBG?=
+ =?utf-8?B?TlRITDJFT3M4Z3l2QVFkWmpsanNKVnMwZ3hJRzNPdGt4ZGNad2JIZUpSUThF?=
+ =?utf-8?B?S1dFYXp2OVVqWEptZGIzV2Z3SDJsL1pvR210VTZmU3ZqelVLVEN1ZXZkRTRs?=
+ =?utf-8?B?ZjhQK2NjZHc0WC9QdFhyR09tU0FkMnp4Q29rUjVZWE1QVnNjUnVzZ2R6bTQv?=
+ =?utf-8?B?amFrRWZ4bVFabER2M0xiQW1JN1JQME1oMzBNZkZFY0NreFlvUHo1cFF6NzQ2?=
+ =?utf-8?B?STVpRVg3MzJHd0h6d21nUGxUN2tURDBYbFlBS2tzV0tNd1ZPV2xrOFRzMGNa?=
+ =?utf-8?B?dkl4OWVkVGFlSzdXYUhaM1ExZ1VnYWNRTExFcXBseWdlUnd1eVB6bkYvcndu?=
+ =?utf-8?B?ZDlWamJrZnBGZHJzZExxMnNVZk1KTE91UVo4YlhRN0R3dmp6R0FwbnNiZjFC?=
+ =?utf-8?B?Sm9JYWtYbzBMV0hiUVVuSGI5bDgxOE1JSWJKNEJqbUF6blovSmprWE9YVFJ1?=
+ =?utf-8?B?NFNHMi9qYy8rdjkzTHEwbzhRcjd0WHRiSUF2RTROeXROemxIQStWdXBRdTBH?=
+ =?utf-8?B?cHI2Y0s3N0ljZTlvQkdJRzJiZmtZOHIxUnd4U3NhUXBYVURxWnRPZmtvbk54?=
+ =?utf-8?B?aVV5a2pjU21Od2t5UWxIYml0K3ZKVThrMTByS0lGZlM0RC9teS9rOGo3TVdz?=
+ =?utf-8?B?ZStsTjhBemdWTHYwUFM4djlVSmRQb241VStEbnVtd2ZPeklEZ2w0U29LYVFZ?=
+ =?utf-8?B?bjRFb08ydS83cHgvYVUwdVEzb3h1a2dhVU5RQUM2Z2liU29lQlZDWlNDa0FH?=
+ =?utf-8?B?OEtjWnhrNlNVTVhCeDlYMjhRV2VkcVROZW1VMHdTbWVZSGwzZ2lWSHhTbHpv?=
+ =?utf-8?B?MnNXZC9xd0lvc1MvWjVaVHFoU2RZRUtNQUtwTVNGSVlJYVNPWVhYbzVFV0xV?=
+ =?utf-8?B?WkpXKys5Zm5DL1BEN1VSUDBFZzZockkzZEdiaXl3VkJWenMyakFlTkZTRVpy?=
+ =?utf-8?B?RXp0QnRORGJ5YnM5UGZPRlduWjdEdVZxZHA2dTZ2eERFTDVoSzZQblVoRmUz?=
+ =?utf-8?B?UEV2ZW41SEZSbUtGaWlSazZNYVNLa1V2V0lMaGNjenpXR29rSFRHRUhLQTlq?=
+ =?utf-8?B?azhqZUNGcGs4aVZJci90UzN3SW81ekFZNXFsbEdkYlRKaGdCZWpjOStUZWZk?=
+ =?utf-8?B?aXNvR2NtbVhWeHJydWsvVngrdG45Z05EVWZJWnl4RnpFTGZMR0N0WFV5N1Nn?=
+ =?utf-8?B?c0RkNFpmbHN2TDFOcHRtajZoM1JnUFJmREk5ZGRXcXRqOG0zTEZhMmJDU05v?=
+ =?utf-8?B?MnMvYzV6SUpnMHNDdnB5UXRCWkhNN2RFOVdNbHZWSmljcVNFODhOSVBGMzln?=
+ =?utf-8?B?UkNYaFRIR0hEQjRqOE55NGxxY2FnZmZmSmxsT28wT2VheGpqK1krdU5HbzBo?=
+ =?utf-8?B?U0hzTXEwYWQ0cjFwWmJJNDlWUi9Lclo4UU96TDFyZDk3VmovNTFCM1MweHZp?=
+ =?utf-8?B?RldEZ3gzdGM0R2xRL1NqZFp3N1RCWXBsR1pwQ1VGMGZubUVxcWZoYk4xMkRl?=
+ =?utf-8?Q?YTKISrWAbQoAD7lxCuivD8cMG?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6D3BC203FBCE4646BBFE6CE82A51A5D4@eurprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	Zkbg8C3H226PDCljs3Gk4f2BoEmsLWCa7DbKcvH57TqWntNf4RccxU6f73o4N8xNG6a02BFZNLK2++ttBSXtq6kzrCQQMFCMD7P8/aqBT6n10OxaG6YClwNetxRDARUarTEg6TDuzccadDc0rNMmrE6greNPnP8L+ZfhyoBrWoCJEZxez1oaprJdm1nIv1ZR3Sdv4dQ3AwlPQuiHioDVkQvJrmI9Fqrv78SOJ8ZKDzCvNs+/mney/z60rPnVWa/zcNrZqzKNMa553bH7Sr9Qd1R81ME98t+mkLBULe5pks9R+Bl/fHGYGRiFk8wphbtF5Omyu2HznSCj0ctTq1CJnT+7raF29ybgf3gUKBw4wBKR4nxe+UNQXG+1z78ApkxS71ANMAqeVECsCTDn62XD/oiGb6d94HVijZALgLYu+WCiF0CaGzLW7BqUqStfRiSDUA0DszM/YCky5hXF0q86REvU2j45XaWsTv0Gmj9Yy8xlckDvCs1djuXvVWgEk7e7um2YX8CrGIvXypLQWBJuDFbzKA0jpvuSy02nBsbuGjI2fH9s0Xzq2YfHCTAymuAPgXS6tCvK+nbvuBKgseemNxH6XtY92ZPhkN6I754TmPKy7Hpm/snsWVg4F9EUgvnY
+X-OriginatorOrg: habana.ai
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAWPR02MB9149.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6286859c-6aea-4a25-7452-08dc91051202
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2024 08:43:34.2549
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hEnXCs1OG87s15wz2ZVZwjEzu+PwLzF44WLfdHSQOOse0rghMvTBFiXHzTnDT1IijsUEvh7478IoQJwodK2Q8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR02MB9782
+X-MailControlDKIMCheck: cGFzcyBoYWJhbmEuYWkgW3Bhc3Nd
+X-MailControl-OutInfo: MTcxODg3MzA2OTpGUEtleTEucHJpdjpT+UoKwbV7AA32XWZmbS4ok7R2U3hV0GLRLWgECCUOyMW7oiWEd5DTD5ZaAkhZVcSRshlE4C0Jw56LzeOYbjXCPisG8ByMNYboSB+iigTFD+hX9iHSjWjlJWhKrAmRTwFBT/VhtLpuRconI8134kCaCUltOYVw0hVdyHoI1rls6Pi5aTDqp3oI0mPaU5ZU8ZQ/QHRLjxKY1dHCxNVuEcMx5eT7wfufbnMniqr5Q+sUHPfOoFIB+REAlbw1UDPxIY9GPi/D78+2phlZ2xwJ18h00VoxpTRcC15JWnlk0SJJsy2QUc29aiJEovvNPdD3mm88oRzF1KKrXDRoNRXqDnnH
+X-Scanned-By: MailControl 44278.2145 (www.mailcontrol.com) on 10.66.1.126
 
-From: Tao Zou <wodemia@linux.alibaba.com>
-
-Add translation zh_CN/admin-guide/numastat.rst and link it to
-zh_CN/admin-guide/index.rst while clean its todo entry.
-
-commit 77691ee92d4a ("Documentation: update numastat explanation")
-
-Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
-Reviewed-by: Yanteng Si <siyanteng@loongson.cn>
-Reviewed-by: Alex Shi <alexs@kernel.org>
----
-v3->v4: replace "在有无内存节点" with "在包含无内存节点" 
-v2->v3: add space in origin commit tag
-v1->v2: drop the useless label "+.. _cn_numastat:" and unnecessary "=",
-	add a commit tag of origin document in commit description
- .../translations/zh_CN/admin-guide/index.rst  |  2 +-
- .../zh_CN/admin-guide/numastat.rst            | 48 +++++++++++++++++++
- 2 files changed, 49 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/translations/zh_CN/admin-guide/numastat.rst
-
-diff --git a/Documentation/translations/zh_CN/admin-guide/index.rst b/Documentation/translations/zh_CN/admin-guide/index.rst
-index ac2960da33e6..0db80ab830a0 100644
---- a/Documentation/translations/zh_CN/admin-guide/index.rst
-+++ b/Documentation/translations/zh_CN/admin-guide/index.rst
-@@ -68,6 +68,7 @@ Todolist:
-    cpu-load
-    cputopology
-    lockup-watchdogs
-+   numastat
-    unicode
-    sysrq
-    mm/index
-@@ -109,7 +110,6 @@ Todolist:
- *   module-signing
- *   mono
- *   namespaces/index
--*   numastat
- *   parport
- *   perf-security
- *   pm/index
-diff --git a/Documentation/translations/zh_CN/admin-guide/numastat.rst b/Documentation/translations/zh_CN/admin-guide/numastat.rst
-new file mode 100644
-index 000000000000..c0f54d9a6b05
---- /dev/null
-+++ b/Documentation/translations/zh_CN/admin-guide/numastat.rst
-@@ -0,0 +1,48 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/admin-guide/numastat.rst
-+:Translator: Tao Zou <wodemia@linux.alibaba.com>
-+
-+
-+=======================
-+Numa策略命中/未命中统计
-+=======================
-+
-+/sys/devices/system/node/node*/numastat
-+
-+所有数据的单位都是页面。巨页有独立的计数器。
-+
-+numa_hit、numa_miss和numa_foreign计数器反应了进程是否能够在他们偏好的节点上分配内存。
-+如果进程成功在偏好的节点上分配内存则在偏好的节点上增加numa_hit计数，否则在偏好的节点上增
-+加numa_foreign计数同时在实际内存分配的节点上增加numa_miss计数。
-+
-+通常，偏好的节点是进程运行所在的CPU的本地节点，但是一些限制可以改变这一行为，比如内存策略，
-+因此同样有两个基于CPU本地节点的计数器。local_node和numa_hit类似，当在CPU所在的节点上分
-+配内存时增加local_node计数，other_node和numa_miss类似，当在CPU所在节点之外的其他节点
-+上成功分配内存时增加other_node计数。需要注意，没有和numa_foreign对应的计数器。
-+
-+更多细节内容:
-+
-+=============== ============================================================
-+numa_hit        一个进程想要从本节点分配内存并且成功。
-+
-+numa_miss       一个进程想要从其他节点分配内存但是最终在本节点完成内存分配。
-+
-+numa_foreign    一个进程想要在本节点分配内存但是最终在其他节点完成内存分配。
-+
-+local_node      一个进程运行在本节点的CPU上并且从本节点上获得了内存。
-+
-+other_node      一个进程运行在其他节点的CPU上但是在本节点上获得了内存。
-+
-+interleave_hit  内存交叉分配策略下想要从本节点分配内存并且成功。
-+=============== ============================================================
-+
-+你可以使用numactl软件包（http://oss.sgi.com/projects/libnuma/）中的numastat工具
-+来辅助阅读。需要注意，numastat工具目前只在有少量CPU的机器上运行良好。
-+
-+需要注意，在包含无内存节点（一个节点有CPUs但是没有内存）的系统中numa_hit、numa_miss和
-+numa_foreign统计数据会被严重曲解。在当前的内核实现中，如果一个进程偏好一个无内存节点（即
-+进程正在该节点的一个本地CPU上运行），实际上会从距离最近的有内存节点中挑选一个作为偏好节点。
-+结果会导致相应的内存分配不会增加无内存节点上的numa_foreign计数器，并且会扭曲最近节点上的
-+numa_hit、numa_miss和numa_foreign统计数据。
--- 
-2.39.3 (Apple Git-146)
-
+T24gNi8xOS8yNCAxODoyMSwgSmFrdWIgS2ljaW5za2kgd3JvdGU6DQo+IFtTb21lIHBlb3BsZSB3
+aG8gcmVjZWl2ZWQgdGhpcyBtZXNzYWdlIGRvbid0IG9mdGVuIGdldCBlbWFpbCBmcm9tIGt1YmFA
+a2VybmVsLm9yZy4gTGVhcm4gd2h5IHRoaXMgaXMgaW1wb3J0YW50IGF0IGh0dHBzOi8vYWthLm1z
+L0xlYXJuQWJvdXRTZW5kZXJJZGVudGlmaWNhdGlvbiBdDQo+IA0KPiBPbiBXZWQsIDE5IEp1biAy
+MDI0IDA3OjE2OjIwICswMDAwIE9tZXIgU2hwaWdlbG1hbiB3cm90ZToNCj4+Pj4gQXJlIHlvdSBy
+ZWZlcnJpbmcgdG8gZ2V0X21vZHVsZV9lZXByb21fYnlfcGFnZSgpPyBpZiBzbywgdGhlbiBpdCBp
+cyBub3QNCj4+Pj4gc3VwcG9ydGVkIGJ5IG91ciBGVywgd2UgcmVhZCB0aGUgZW50aXJlIGRhdGEg
+b24gZGV2aWNlIGxvYWQuDQo+Pj4+IEhvd2V2ZXIsIEkgY2FuIGhpZGUgdGhhdCBiZWhpbmQgdGhl
+IG5ldyBBUEkgYW5kIHJldHVybiBvbmx5IHRoZQ0KPj4+PiByZXF1ZXN0ZWQgcGFnZSBpZiB0aGF0
+J3MgdGhlIGludGVudGlvbi4NCj4+Pg0KPj4+IFdlbGwsIGlmIHlvdXIgZmlybXdhcmUgaXMgc28g
+bGltaXRlZCwgdGhlbiB5b3UgbWlnaHQgYXMgd2VsbCBzdGljayB0bw0KPj4+IHRoZSBvbGQgQVBJ
+LCBhbmQgbGV0IHRoZSBjb3JlIGRvIHRoZSBjb252ZXJzaW9uIHRvIHRoZSBsZWdhY3kNCj4+PiBj
+b2RlLiBCdXQgaSdtIHN1cnByaXNlZCB5b3UgZG9uJ3QgYWxsb3cgYWNjZXNzIHRvIHRoZSB0ZW1w
+ZXJhdHVyZQ0KPj4+IHNlbnNvcnMsIHJlY2VpdmVkIHNpZ25hbCBzdHJlbmd0aCwgdm9sdGFnZXMg
+ZXRjLCB3aGljaCBjb3VsZCBiZQ0KPj4+IGV4cG9ydGVkIHZpYSBIV01PTi4NCj4+DQo+PiBJJ2xs
+IHN0aWNrIHRvIHRoZSBvbGQgQVBJLg0KPj4gUmVnYXJpbmcgdGhlIHNlbnNvcnMsIG91ciBjb21w
+dXRlIGRyaXZlciAodW5kZXIgYWNjZWwvaGFiYW5hbGFicykgZXhwb3J0cw0KPj4gdGhlbSB2aWEg
+SFdNT04uDQo+IA0KPiBZb3Ugc3VwcG9ydCA0MDBHLCB5b3UgcmVhbGx5IG5lZWQgdG8gZ2l2ZSB0
+aGUgdXNlciB0aGUgYWJpbGl0eQ0KPiB0byBhY2Nlc3MgaGlnaGVyIHBhZ2VzLg0KDQpBY3R1YWxs
+eSB0aGUgMjAwRyBhbmQgNDAwRyBtb2RlcyBpbiB0aGUgZXRodG9vbCBjb2RlIHNob3VsZCBiZSBy
+ZW1vdmVkDQpmcm9tIHRoaXMgcGF0Y2ggc2V0LiBUaGV5IGFyZSBub3QgcmVsZXZhbnQgZm9yIEdh
+dWRpMi4gSSdsbCBmaXggaXQgaW4gdGhlDQpuZXh0IHZlcnNpb24uDQo=
 
