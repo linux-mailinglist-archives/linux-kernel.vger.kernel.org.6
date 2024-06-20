@@ -1,85 +1,173 @@
-Return-Path: <linux-kernel+bounces-222216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22A290FE58
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:09:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E5A90FE5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A82CB230A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:09:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953011F24992
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195A0173357;
-	Thu, 20 Jun 2024 08:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEBF172BCB;
+	Thu, 20 Jun 2024 08:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wax9kbsb"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GFVwhq9v"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2804A16F857;
-	Thu, 20 Jun 2024 08:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF5515251B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718870951; cv=none; b=avcdM2gO9EX7ogCheqf7/lyLxtd5m9CmnLBiUTEXCntFUCF3PoCgkWoWpNnThxi9zc4WhJkg1JgmUb42t1gwUMnxAmJfOMpVLF9C0Ip23w9y4XsMlPB2dcdFlLaW+09IhAuYM3jcTq4fIpoaOiTxlTaWpzJIaOxm90fMlN6Be74=
+	t=1718871073; cv=none; b=QH5oNQD9VuCKwGHfYqYKr/HVjdqpvLGKq0inwLsgSLeRn7gB65FCEcJwh46RsldCN+VhrwhU3KKmQ92hYySvzMPcjisiCv1YkIiZm2j33uOI4fnfeaDqiH7J3YLWP7+1xjvQx1KW2Whos7cckAvtPIuHwzmXMG3WzuhcOf0KK20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718870951; c=relaxed/simple;
-	bh=tNd5kAQQ6BHYFQdW/Qq5UxZejqIDHg2m3FuyRDnq+8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdUG5GXk7W20kwYTqtyAheBplHW2hGbNGtD9Ya3HqE+OFzaqibrJiHQrOobV2oeFVSPg8ntaDsrGuBLm0OcFVD+ZzboqQsjaRSyIM8F327XXTiw/gfbLLp0q9aJ2Z4HlwAA0ujqk6ZIPSfg6D4tnXetItZR4G5Pa8cBEXM32tjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wax9kbsb; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XE6kznpYga8rkUPgu+YFYh3IX4ghmGe4Vm92oGUX9UE=; b=wax9kbsbeXsL81bO/yk37aFllh
-	uPE7tBs/akLfAlj9FZUA8usbjNZnOyTsLEgIlVWoUCIhs7TJqZb5zaIdDHNg7c2oo/GFh5sSnPWFi
-	3ng/YV0AR7pfFoh7ttxboYCx77c+Gdv+wVRQqiYVZrNMP8PcEUL9LSUx70A9s32iEtmDr+Et6OhoP
-	S180LT1jXF0SaTFaKTQdqdjagqxIVpd1neMjeCS9ukUSCQoN73JTStWO55HfD3bko37UfgXGnqzVN
-	GNM3XJ1Vz4pnWY41Oh08TSuIG43DYbJCay1nh2uKvsBXSwLHPIyPSb74TwUo58MjGbJImuPZyAxge
-	BMzh6VXA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sKCqy-000000045te-42G2;
-	Thu, 20 Jun 2024 08:09:08 +0000
-Date: Thu, 20 Jun 2024 01:09:08 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: shaozongfan <shaozongfan@kylinos.cn>
-Cc: chandan.babu@oracle.com, djwong@kernel.org, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: fix a NULL pointer problem
-Message-ID: <ZnPjpCovlQq7_ptP@infradead.org>
-References: <20240620074312.646085-1-shaozongfan@kylinos.cn>
+	s=arc-20240116; t=1718871073; c=relaxed/simple;
+	bh=Iq+O/VvPJY4UcpXtqyBEMgk+6K5n2GAJhKggQXI2HOs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R/pIk3vbfiETwKoVs6vkh2dhwckfxaE3oaCg+9EBGh9M1Pg1DqE+UUB42M7zfsdO6wywLJu8G1QuU+k5M3XVVDqJPY3fwW95nX0rmwb/i/SuPZANNiMNaF0KqmZoRAWanB/ch/P9xpdSePY3pCjwHmcs7mAGiGlCoAhK7PQFK04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GFVwhq9v; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718871066; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=gLiv3pyD1fElUB0wAQIjj/qFPDkPz4q0no5seMRSoi8=;
+	b=GFVwhq9v8AwXDI8sGyvgk9tgICkaugROqblE1QHhymgASGU9fn6sa9B8wKZqryYPEcCoGX8NcS5vaLx0RrW5of5JXZQ2c94yWPVQjEsAhsqz5svAqN+Odcpq3IyPkTUBh4p0A8L7MxXLyMq5gkLKUXSKfDi8O4pqpMlCmB43z3g=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W8qf3Sp_1718871054;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W8qf3Sp_1718871054)
+          by smtp.aliyun-inc.com;
+          Thu, 20 Jun 2024 16:11:05 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: harry.wentland@amd.com
+Cc: sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH] drm/amd/display: Remove redundant code and semicolons
+Date: Thu, 20 Jun 2024 16:10:52 +0800
+Message-Id: <20240620081052.56439-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620074312.646085-1-shaozongfan@kylinos.cn>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 20, 2024 at 03:43:13PM +0800, shaozongfan wrote:
-> when a process using getdents64() api to get a Folder inside
-> the file directory,meantime other process delete the file
-> directory.it would cause an error like this:
+No functional modification involved.
 
-Can you share your reproducer?
+./drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c:3171:2-3: Unneeded semicolon.
+./drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c:3185:2-3: Unneeded semicolon.
+./drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c:3200:2-3: Unneeded semicolon.
 
->  	if (ctx->pos <= dotdot_offset) {
-> -		ino = xfs_dir2_sf_get_parent_ino(sfp);
-> +		sfp1 = sfp;
-> +		if (sfp1 == NULL)
-> +			return 0;
-> +		ino = xfs_dir2_sf_get_parent_ino(sfp1);
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9365
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ .../dml21/src/dml2_core/dml2_core_shared.c    | 46 +++++++++----------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
-This looks ... odd.  Assigning one pointer variable to another
-doesn't revalidate anything.  And xfs_dir2_sf_getdents is called
-with the iolock held, which should prevent xfs_idestroy_fork
-from racing with it.  And if for some reason it doesn't we need
-to fix the synchronization.
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
+index cfa4c4475821..1a9895b1833f 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
+@@ -3142,62 +3142,62 @@ static unsigned int dml_get_tile_block_size_bytes(enum dml2_swizzle_mode sw_mode
+ {
+ 	switch (sw_mode) {
+ 	case (dml2_sw_linear):
+-		return 256; break;
++		return 256;
+ 	case (dml2_sw_256b_2d):
+-		return 256; break;
++		return 256;
+ 	case (dml2_sw_4kb_2d):
+-		return 4096; break;
++		return 4096;
+ 	case (dml2_sw_64kb_2d):
+-		return 65536; break;
++		return 65536;
+ 	case (dml2_sw_256kb_2d):
+-		return 262144; break;
++		return 262144;
+ 	case (dml2_gfx11_sw_linear):
+-		return 256; break;
++		return 256;
+ 	case (dml2_gfx11_sw_64kb_d):
+-		return 65536; break;
++		return 65536;
+ 	case (dml2_gfx11_sw_64kb_d_t):
+-		return 65536; break;
++		return 65536;
+ 	case (dml2_gfx11_sw_64kb_d_x):
+-		return 65536; break;
++		return 65536;
+ 	case (dml2_gfx11_sw_64kb_r_x):
+-		return 65536; break;
++		return 65536;
+ 	case (dml2_gfx11_sw_256kb_d_x):
+-		return 262144; break;
++		return 262144;
+ 	case (dml2_gfx11_sw_256kb_r_x):
+-		return 262144; break;
++		return 262144;
+ 	default:
+ 		DML2_ASSERT(0);
+ 		return 256;
+-	};
++	}
+ }
+ 
+ const char *dml2_core_internal_bw_type_str(enum dml2_core_internal_bw_type bw_type)
+ {
+ 	switch (bw_type) {
+ 	case (dml2_core_internal_bw_sdp):
+-		return("dml2_core_internal_bw_sdp"); break;
++		return("dml2_core_internal_bw_sdp");
+ 	case (dml2_core_internal_bw_dram):
+-		return("dml2_core_internal_bw_dram"); break;
++		return("dml2_core_internal_bw_dram");
+ 	case (dml2_core_internal_bw_max):
+-		return("dml2_core_internal_bw_max"); break;
++		return("dml2_core_internal_bw_max");
+ 	default:
+-		return("dml2_core_internal_bw_unknown"); break;
+-	};
++		return("dml2_core_internal_bw_unknown");
++	}
+ }
+ 
+ const char *dml2_core_internal_soc_state_type_str(enum dml2_core_internal_soc_state_type dml2_core_internal_soc_state_type)
+ {
+ 	switch (dml2_core_internal_soc_state_type) {
+ 	case (dml2_core_internal_soc_state_sys_idle):
+-		return("dml2_core_internal_soc_state_sys_idle"); break;
++		return("dml2_core_internal_soc_state_sys_idle");
+ 	case (dml2_core_internal_soc_state_sys_active):
+-		return("dml2_core_internal_soc_state_sys_active"); break;
++		return("dml2_core_internal_soc_state_sys_active");
+ 	case (dml2_core_internal_soc_state_svp_prefetch):
+-		return("dml2_core_internal_soc_state_svp_prefetch"); break;
++		return("dml2_core_internal_soc_state_svp_prefetch");
+ 	case dml2_core_internal_soc_state_max:
+ 	default:
+-		return("dml2_core_internal_soc_state_unknown"); break;
+-	};
++		return("dml2_core_internal_soc_state_unknown");
++	}
+ }
+ 
+ static bool dml_is_vertical_rotation(enum dml2_rotation_angle Scan)
+-- 
+2.20.1.7.g153144c
 
 
