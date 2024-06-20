@@ -1,127 +1,136 @@
-Return-Path: <linux-kernel+bounces-222789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46939910795
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:09:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DED9910799
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 760D01C21147
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:09:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 376EE285766
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C45B1AD9D8;
-	Thu, 20 Jun 2024 14:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D391AD9D3;
+	Thu, 20 Jun 2024 14:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEJuulX0"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNW5f+4b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575F11ACE61;
-	Thu, 20 Jun 2024 14:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FED1AD9CC
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718892540; cv=none; b=szf6/dgYklX1qT6iwD2D4n4WDevFy8OlLm4gew89SCO9DL/NrnTU9oVSWOt7SStO1DsecEtW28YNjZauh3gQFusIO10Sq2hsx4k4X4juS9EBoH14PO33Xa58j7H+70A+6O8bXBwT9kH/YlXcx+bCV97vAKIO2dgBpwwDZJU7mdk=
+	t=1718892558; cv=none; b=kbIGaZlbABKv1dRcYo0wi0XAixJQES/XABHH5KzY1XAM/bGXX2HTXZnEmWZSqI2EQtVH9OsQhR1Kc/oQxcoxOTpS1GKAIZbCPJq+vGBp1E14mrpc1h4Fzz9mt1mKrAEBhYzfKY3adiyg7vg6rqK687PJENc9EmVvJOR2PxATwrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718892540; c=relaxed/simple;
-	bh=bkoariQAFK5nzptqulE5lD4Ceq9ZNl7I/5y71MtF05E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uRWDFYXVJgofUc/UORUt0WtSPE3OaRk42bo5qtFx2gSjltRT2BY7ni5PumDUE2auzaWk8T4zMaljOnBoc0hMtiY6r5lP9uo2hwq1UtTGU+Vsnbv4ELNhqLCLKFPm2HN7GgkoCEWaylCKNg8lec7ilwbfg/1AC+IBpAmD5k5HwEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEJuulX0; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70623ec42c2so759508b3a.0;
-        Thu, 20 Jun 2024 07:08:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718892539; x=1719497339; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bkoariQAFK5nzptqulE5lD4Ceq9ZNl7I/5y71MtF05E=;
-        b=aEJuulX0jjYaqSnZkVAkKwhLoW87T9LVCZe4XV/JMH0kAxX2TQe7CvbbXb0pPFh4Qh
-         +Wj3iqMc3vhY0GVy+3DBebyU+P4pbHwBmFzcbPuvJDrHpIZuWfO7zJuMuSr4Dd5eWfla
-         zRIvmNivP3W84FN5sTdIkmY6OdKRPiu4pQ5yh/CobGFteOOZXunB1IEh4Bw4vcJeEaVz
-         rSidujIA+e54/QNVC0swlr7eVppkYnNpvO9IEY3eVnc6STcg363E9SweA68rfaSviwGI
-         gTTZdwo2/ezB8YYQMF3MRXlPdand6UgS8XjJA+6ohfUEnr8bH1QcnwJ5TyHxNGkIgZ/5
-         Ufwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718892539; x=1719497339;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bkoariQAFK5nzptqulE5lD4Ceq9ZNl7I/5y71MtF05E=;
-        b=uNbUYik8ey499IUjzk1secF4EmwmYX1Q3Y0P7QpiM2iDy6j/44rfPMBbbKXShvtYt4
-         wvj0oyJ7DGfW+MUXBaeSdr6EG/NysS4E7UtdjKmlBAEE50dJG0eOMU4vLTiiRBQS4gMK
-         LVa2YE4e38TOOU5pGQQ/wcJQ6G2FsPkgg9jWZ9DUi+R26B5xbiJbH6f5XSOdtIG//IMe
-         QPEOfTAiZjsmbNbDcf1q5QAl2SR9zC6U2JgCtyU8d1aGPR3derLzLmvRL8CltoUpP+8n
-         goyD6Jm1r6agkiAu24KVQITYdRZHHOP9fUy6enELFSgdb1TaspSim8qPh7TndFpx322L
-         ojbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQnPlSh5BOGXeQypkP5KwA5h7T4l5YQtnQcgYh4mqXyJb9ej9AwpbhNwL9/SX7e6n8LgAwKdnoT3KgfChsYOAy+QYkJvBawh2gaGf4dLLsBQPyGH0MWdl1lrFMqxPvRqAlk4HdKc7tiW+o220wdLTZP2iR0a8xBRpx+DZ0uAT/2F2ATpBy1sVRIrGJccoS9zCTtkhsgsZDbQ5pwtDH0JU1Fill0YA51f+TWS+uJ32STFxJ+uFTJlW3mnE=
-X-Gm-Message-State: AOJu0Yy8Sscwz/pBGRDjfLZXc2ZYnnUx0VtgNrit0abBjF07uiqyn0nV
-	L9ck7xooPLgWezdHTs4A5H2fdw0M0cr1W38v+2cmeBDegD/XCMlW
-X-Google-Smtp-Source: AGHT+IEWi/i9vtD/HvCPbZdrn1cy8dwPBWfdCTrVuHryTftlO8XzUts6A/QV130K6XeOnU1kYBckXA==
-X-Received: by 2002:a05:6a00:4f06:b0:705:995c:3e30 with SMTP id d2e1a72fcca58-706290abf4fmr7801065b3a.17.1718892538504;
-        Thu, 20 Jun 2024 07:08:58 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc987743sm12800997b3a.90.2024.06.20.07.08.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 07:08:58 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id AFD9C1824D9E0; Thu, 20 Jun 2024 21:08:55 +0700 (WIB)
-Date: Thu, 20 Jun 2024 21:08:55 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Paul Cercueil <paul@crapouillou.net>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Vinod Koul <vkoul@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Nuno Sa <nuno.sa@analog.com>,
-	linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v12 6/7] Documentation: iio: Document high-speed DMABUF
- based API
-Message-ID: <ZnQ398_ZtYpo-JLS@archie.me>
-References: <20240620122726.41232-1-paul@crapouillou.net>
- <20240620122726.41232-7-paul@crapouillou.net>
+	s=arc-20240116; t=1718892558; c=relaxed/simple;
+	bh=Mb47V/TtEOTke3i6u+2FiWov3PpilA3tj3biR8NUCHE=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=WLhmVbvwa2mu1sutLTVqA2RKhnsghdIYRyB90cdm3XoQupb33yvpZLjFCrZ6IxrORweQeEpWn5M4SGyELEGYBISfy1AyV4/OtCc84hxyd0gh8zQfeB4D9y9a0q/HQP06+2pAcnsM70EZP9iEm78PSADVrhx1Kdf+uc5zcj1dWvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNW5f+4b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78886C2BD10;
+	Thu, 20 Jun 2024 14:09:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718892557;
+	bh=Mb47V/TtEOTke3i6u+2FiWov3PpilA3tj3biR8NUCHE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qNW5f+4bhHEwW0qLaY3V4ZmgpgyPR/5voNTZycSXO3vvzj5v2O7pi7do0PvO5xcog
+	 IKZe2IHTWQ0Utcz725ZsO+fZSuJOJMOiIcqpETafnUNoTHf9ZRvAuhu2QHBtaJ+lWt
+	 uinsRk4bnZO88HEpWZOb6PCy+rVeRrU0dR9885KDqrk6yDCzuHO2Dr/NDNybWKFK3G
+	 3iuvsyc4fJVvzYIZGZI445r4QotmSA1hBOkZR0d017Os/lP0FKHGrn5Em35KAvroZp
+	 2r+g2MSfTcocKi1Qn57px9yjInEFICuzBZxx1egp2AY/zVAjcV7Ec/xjKF1Z2vijBD
+	 H2YrHzj+UZCYw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OmuTAUrc7S676QKv"
-Content-Disposition: inline
-In-Reply-To: <20240620122726.41232-7-paul@crapouillou.net>
+Date: Thu, 20 Jun 2024 16:09:13 +0200
+From: Michael Walle <mwalle@kernel.org>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh
+ Raghavendra <vigneshr@ti.com>, Linus Walleij <linus.walleij@linaro.org>,
+ linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, e9hack
+ <e9hack@gmail.com>
+Subject: Re: [PATCH] mtd: spi-nor: winbond: fix w25q128 regression
+In-Reply-To: <mafs04j9ng1ay.fsf@kernel.org>
+References: <20240610074809.2180535-1-mwalle@kernel.org>
+ <76f8be4e-3050-4ae6-93b4-9524a0689022@linaro.org>
+ <D233KUGR81P5.1BJ8JSACE7C6A@kernel.org> <mafs04j9ng1ay.fsf@kernel.org>
+Message-ID: <91d155ab7526c14e882f7b88a129fbcd@kernel.org>
+X-Sender: mwalle@kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
+>>> > Commit 83e824a4a595 ("mtd: spi-nor: Correct flags for Winbond w25q128")
+>>> 
+>>> That commit did:
+>>> -       { "w25q128", INFO(0xef4018, 0, 64 * 1024, 256)
+>>> -               NO_SFDP_FLAGS(SECT_4K) },
+>>> +       { "w25q128", INFO(0xef4018, 0, 0, 0)
+>>> +               PARSE_SFDP
+>>> +               FLAGS(SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB) },
+>>> 
+> [...]
+>>> > diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
+>>> > index ca67bf2c46c3..6b6dec6f8faf 100644
+>>> > --- a/drivers/mtd/spi-nor/winbond.c
+>>> > +++ b/drivers/mtd/spi-nor/winbond.c
+>>> > @@ -105,7 +105,9 @@ static const struct flash_info winbond_nor_parts[] = {
+>>> >  	}, {
+>>> >  		.id = SNOR_ID(0xef, 0x40, 0x18),
+>>> >  		.name = "w25q128",
+>>> > +		.size = SZ_16M,
+>>> >  		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+>>> > +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+>>> 
+>>> and here you add dual and quad to trigger SFDP parsing I guess. All 
+>>> fine
+>>> if the old flash supports dual and quad read. But please update the
+>>> commit message describing the intention. With that ACK. Would be good 
+>>> to
+>>> have this merged soon.
+>> 
+>> Right. It's not because it will trigger the SFDP parsing, but
+>> because that what was tested by Esben. We're lucky that this will
+>> trigger the SFDP parsing ;) I'll explain that in more detail and add
+>> a Link: to the bug report mail.
+> 
+> Should we treat this flash similar to the Macronix ones Esben sent out
+> patches for [0]? It seems that there are some old parts without SFDP
+> support and new ones with SFDP support. From your comment in [1]:
+> 
+>> This is an entry matching various flash families from Winbond, see my
+>> reply in v1. I'm not sure we should remove these as we could break the
+>> older ones, which might or might not have SFDP tables. We don't know.
+> 
+> Since the entry matches multiple families, do _all_ of them support 
+> dual
+> and quad read? If not, attempting to enable dual or quad reads on them
+> can cause problems.
 
---OmuTAUrc7S676QKv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I rely on the information Helmut provided. Also the w25q64 and the 
+w25q256
+both have these flags set. So I'd say it's less likely the 128 doesn't
+support it.
 
-On Thu, Jun 20, 2024 at 02:27:25PM +0200, Paul Cercueil wrote:
-> Document the new DMABUF based API.
->=20
+> Also, for parts that _do_ have SFDP available, won't it be better to 
+> use
+> the information in SFDP instead of our hard-coded ones anyway? Using
+> SPI_NOR_TRY_SFDP here would let us do that.
 
-LGTM, thanks!
+Sure, but this is about fixing the referenced commit. A later patch will
+then move that to TRY_SFDP. We can't fix this regression by introducing
+new code IMHO. This seems to be the easiest fix.
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+-michael
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---OmuTAUrc7S676QKv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZnQ37gAKCRD2uYlJVVFO
-o/r8AQCIFAAnhfXKSkVIpjhII/qaXwnWsgfL4cVfExJmpumexgD/Ri4NWMVAfeiY
-yXZE6Mz87M0muGonVU4ld7vLcryHOwE=
-=A0ev
------END PGP SIGNATURE-----
-
---OmuTAUrc7S676QKv--
+> 
+> [0] 
+> https://lore.kernel.org/linux-mtd/20240603-macronix-mx25l3205d-fixups-v2-0-ff98da26835c@geanix.com/
+> [1] 
+> https://lore.kernel.org/linux-mtd/0525440a652854a2a575256cd07d3559@walle.cc/
 
