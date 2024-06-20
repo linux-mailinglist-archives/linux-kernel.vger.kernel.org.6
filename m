@@ -1,198 +1,173 @@
-Return-Path: <linux-kernel+bounces-223409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B18911282
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:48:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1BB91128B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 485A3286C21
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:48:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0F6CB2796E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1D61B4C35;
-	Thu, 20 Jun 2024 19:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D541BA863;
+	Thu, 20 Jun 2024 19:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e1ccJKNO"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ceUta9yT"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5E613AF9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4302D61B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718912876; cv=none; b=In1AUagCcVtPwZEH84v0KmEJ/KxRJwGNobLOfeoCElniZJ5xRcsZW0q7JPA2Cy/T+wOo0G7YzLmynWyB7hXR1v7q4F0k+FL8Mq3zX2T6gULYxUzxn6jACg3Ql9+Z6rByv1UWUpMrKraMlPeWGufh5pvAUcbZou6W6ApJNsyDqfU=
+	t=1718912886; cv=none; b=pl6h2O5y1EShyWKKazA2NpilXfVqYA7YIYzxe8Bytfd0PuWZazZEtSHzwsq/IS2tboNODFQ4TaYxKoXAZsZplZB4xWuuon/gpdfhKg6Bu1WPzdIAjSe0Iwp2SHSXN64exTaDUE67fDKYBVECkhCFrQMEoN1Xpn+TROFZ0kQ3pNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718912876; c=relaxed/simple;
-	bh=862VnKCkNLOQBFx4YiOtMqgmmlHiFEVEMCgVVYka2b0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z/rH1Yv+sI/N/Ms0MTT14++NKK+V4EtL3Cw+kPw/3u6bqlQ5K/HhDHLtXigsL3u7EnIeVt6rrrKd1lyHoVyPV8XLYouTN67hpLW0y49W1BEWipqOJNtgljzdK4GeiTcfFCi2Q3FgJOiZ7YaPWac3fRXqxgQm9dqm5wJLnJJgMEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e1ccJKNO; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-364a3d5d901so928447f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:47:54 -0700 (PDT)
+	s=arc-20240116; t=1718912886; c=relaxed/simple;
+	bh=awUqwE93wXcTKvo7ol88UKTqegDT1C9qpGNi09weIsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KZK5nezGHOM2C5AcXw6LLhpb2Co0KPZuIM+7wznpeIN2Azyq8QNSBT8uReCQS8qZ7smt2CofR1BNsCMe1ruRrSi34CGj+IKVCtgzgb3XoZ01mc6vAzzVQygPOs+fj1Id8n1juJIG/4XRK5k42L4CrF/KwFSvkgrxNByvOe0YwZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ceUta9yT; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f6b0a40721so9712175ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:48:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718912873; x=1719517673; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RNc529DGB2kuH106Zk8B0JpwUGAF1N0DtZphSOYR/oA=;
-        b=e1ccJKNOJt2tzyXSUx2TkoB/EjTqYkTSxTzqaVWiqO5gYrGz3zyzsnNHOAxycDlxJH
-         Oqowd+uu2DIZW5haxf7TvLOLuu0AD0sZU/F19P0eZ26CppDnmWQBoOC4ljir8Dy1h+la
-         23WiafSbHkMiet7XTD3QrGDqHM8lq+RN3pyHZqWRGoQExFPQpkd5IkqKuZTsaO4ToMAP
-         XpExof24tzYUjLGlTG9R/SXVCb00TfY+o8uIiug814DBxGcjlz+EOyHh9aVCCeqQ4obF
-         kuntbGzTyt2+7VL6NQY8V9BbEdLtDpgWiIgq/TWU8IvUTXnNSzyPTnr0GPc9KLFyycY9
-         D2DA==
+        d=chromium.org; s=google; t=1718912884; x=1719517684; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z3gaAAA9tFzbTfrmb6ppBykngzDxoq0Px2MEPQ4ymLY=;
+        b=ceUta9yTbf9Mqsk+Eiz+3nzwUsvOYtrT5LSwDmxVIVCUj52gRtg0h5AKXV4Za6iUwa
+         PbCxrjbyh2PIGBbIwv2MrAvhpvuROkcCatw/yuw96tijQg6VQo8nU9eZmbJNcij81DKN
+         aGfgcSl8IRhW/oCfzBHEy0kqdS6uaQXTv3bZo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718912873; x=1719517673;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RNc529DGB2kuH106Zk8B0JpwUGAF1N0DtZphSOYR/oA=;
-        b=tbN9P/kjykgLg2lHOkmpSqCd1Nfp8/WNkK21d6It6o4mue+7Wh8/78LqXiMYG4mEu6
-         9PbPJM0k+TD1MagijbVTON7+st9b9jaPBcW0KQXS9cqTS7U8lKG/0PjsHu/TzjxiC30q
-         gCa4yyyvdBUhiV4dXd/h8/xNotduMgPa3HCnc7zRpY/Pt+UEqbfktwhQRlZKyiB1Dipu
-         3s+bwKcDUx3546DI0GvHpCVyQBRcBIm4fmGxrTwzQzYyQlK9CBuUSFCMxbm0PjRp+Dft
-         RG0yfWlP7KO64greFUdK7OTKjo3Hm+ZUU8iTzc3ctEDbvFC+25GjC+uve9U/F11R2Oq+
-         Q75Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWVRjSPGq3NNSetoCApJQfubP3PL0JZTfUr6qEjpu3Gx9/u4JRaWWQgBsTxcqGHuMsTp3H1lyRP3DhkxWKsos8zdVVP0z7YmeqoWwYr
-X-Gm-Message-State: AOJu0YwpNGp0REn65sPtS7dv+3hRlmb5+L+tctwz6Wq76ki+vyP+Ag6I
-	c8lthoPvJX9OXz9vg23xPdyI23EFOMAM+XyBRgwc8lNTzTFQpL1EFpk/bWPV0TdmC3nhc7oc5L/
-	gJNuY5n+Xha43qX9V1k5EAhJN0R48JQbtN2a1
-X-Google-Smtp-Source: AGHT+IGrPdVcwRWI9jIOBc7bAbM6sVLQ+zmTwl426aeO1W5z9G541aNdbPXNTDAPA+cczAeOT5b6A7edctQRuwcrJCE=
-X-Received: by 2002:a05:6000:1fa4:b0:365:862f:21c8 with SMTP id
- ffacd0b85a97d-365862f260bmr1468996f8f.53.1718912872814; Thu, 20 Jun 2024
- 12:47:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718912884; x=1719517684;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z3gaAAA9tFzbTfrmb6ppBykngzDxoq0Px2MEPQ4ymLY=;
+        b=qyaoriCi4ypEtR/ErbjhAwa75Xa9vyr8b1Zp9TI2rU+dJletWxf9DR3Z0iZX9SSuJw
+         tkEADFKaDfqCH+WMb2a+xvqroCvS9qCjWIVS/nrjs7CWSOfOFiv42TKKa0U43dhYFqpa
+         jBJVs6rCC3RyBMSgFUrF/Lmq2s7gz3fby7QjfHds3UwZau9zb/4AE61pLpCycjB6eY8T
+         +CpFgGsutdLlm+H0K5422VrJZfVQD243cqYXTqLfNubzOfdrxoDlYzG++pj4ZwB5TaBb
+         uDjOEPvO4Ya3CbxTNmQRmhk/frYjxVfrTRr7qrzakHp492m+RzIpsmAeaT21ZJ1+BwZw
+         t0Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhi0i0K5C3BxofUpqkMaPf1zDMlvdC5XQ8UzdFJU7LnkhCCzZGYJxAZYfEUhNbVYlJpV4DTK8h2nErO4zwsTJyAaxA4g+R1kaep7ur
+X-Gm-Message-State: AOJu0YzUoL3Mk0A6H0QhBYblDSRjwnZjiBe8nT2uLIPtv/BPqysUMR/Y
+	dFk7otB5GJ6NOI6g/h4I3z/LB9JVlYrr5H3rfk+fmZ9EfxrWY1wqGxiiEwIWsg==
+X-Google-Smtp-Source: AGHT+IEwL8sWyeO+AO4RDSEBECQdktpgu8GHQ417gFO1L6pv/TF+6VFPQWQRBNh6mAnIj3O6xdidjg==
+X-Received: by 2002:a17:902:ee86:b0:1f7:2051:c816 with SMTP id d9443c01a7336-1f9aa40521dmr60222285ad.35.1718912883581;
+        Thu, 20 Jun 2024 12:48:03 -0700 (PDT)
+Received: from localhost ([2620:15c:9d:2:3c9c:a224:3ec6:17d2])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-1f9eb323636sm10805ad.102.2024.06.20.12.48.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 12:48:03 -0700 (PDT)
+Date: Thu, 20 Jun 2024 12:48:01 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, David Lin <yu-hao.lin@nxp.com>,
+	Francesco Dolcini <francesco@dolcini.it>
+Subject: Re: [PATCH] [RFC] mwifiex: Fix NULL pointer deref
+Message-ID: <ZnSHcZttq79cJS3l@google.com>
+References: <20240619070824.537856-1-s.hauer@pengutronix.de>
+ <87wmmll5mf.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620181736.1270455-1-yabinc@google.com> <CAKwvOd=ZKS9LbJExCp8vrV9kLDE_Ew+mRcFH5-sYRW_2=sBiig@mail.gmail.com>
-In-Reply-To: <CAKwvOd=ZKS9LbJExCp8vrV9kLDE_Ew+mRcFH5-sYRW_2=sBiig@mail.gmail.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Thu, 20 Jun 2024 12:47:42 -0700
-Message-ID: <CAKwvOd=DkqejWW=CTmaSi8gqopvCsVtj+63ppuR0nw==M26imA@mail.gmail.com>
-Subject: Re: [PATCH] Fix initializing a static union variable
-To: Yabin Cui <yabinc@google.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	"Ballman, Aaron" <aaron.ballman@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wmmll5mf.fsf@kernel.org>
 
-On Thu, Jun 20, 2024 at 12:31=E2=80=AFPM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Thu, Jun 20, 2024 at 11:17=E2=80=AFAM Yabin Cui <yabinc@google.com> wr=
-ote:
+Hi Sascha,
+
+On Wed, Jun 19, 2024 at 11:05:28AM +0300, Kalle Valo wrote:
+> Sascha Hauer <s.hauer@pengutronix.de> writes:
+> 
+> > When an Access Point is repeatedly started it happens that the
+> > interrupts handler is called with priv->wdev.wiphy being NULL, but
+> > dereferenced in mwifiex_parse_single_response_buf() resulting in:
 > >
-> > saddr_wildcard is a static union variable initialized with {}.
-> > But c11 standard doesn't guarantee initializing all fields as
-> > zero for this case. As in https://godbolt.org/z/rWvdv6aEx,
->
-> Specifically, it sounds like C99+ is just the first member of the
-> union, which is dumb since that may not necessarily be the largest
-> variant.  Can you find the specific relevant wording from a pre-c23
-> spec?
->
-> > clang only initializes the first field as zero, but the bits
-> > corresponding to other (larger) members are undefined.
->
-> Oh, that sucks!
->
-> Reading through the internal report on this is fascinating!  Nice job
-> tracking down the issue!  It sounds like if we can aggressively inline
-> the users of this partially initialized value, then the UB from
-> control flow on the partially initialized value can result in
-> Android's kernel network tests failing.  It might be good to include
-> more info on "why this is a problem" in the commit message.
->
-> https://godbolt.org/z/hxnT1PTWo more clearly demonstrates the issue, IMO.
->
-> TIL that C23 clarifies this, but clang still doesn't have the correct
-> codegen then for -std=3Dc23.  Can you please find or file a bug about
-> this, then add a link to it in the commit message?
->
-> It might be interesting to link to the specific section of n3096 that
-> clarifies this, or if there was a corresponding defect report sent to
-> ISO about this.  Maybe something from
-> https://www.open-std.org/jtc1/sc22/wg14/www/wg14_document_log.htm
-> discusses this?
-
-https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3011.htm
-
-https://clang.llvm.org/c_status.html mentions that n3011 was addressed
-by clang-17, but based on my godbolt link above, it seems perhaps not?
-
-6.7.10.2 of n3096 (c23) defines "empty initialization" (which wasn't
-defined in older standards).
-
-Ah, reading
-
-n2310 (c17) 6.7.9.10:
-
-```
-If an object that has static or thread storage duration is not
-initialized explicitly, then:
+> > | Unable to handle kernel NULL pointer dereference at virtual address 0000000000000140
 ...
-=E2=80=94 if it is a union, the first named member is initialized
-(recursively) according to these rules, and
-any padding is initialized to zero bits;
-```
-
-Specifically, "the first named member" was a terrible mistake in the langua=
-ge.
-
-Yikes! Might want to quote that in the commit message.
-
->
-> Can you also please (find or) file a bug against clang about this? A
-> compiler diagnostic would be very very helpful here, since `=3D {};` is
-> such a common idiom.
->
-> Patch LGTM, but I think more context can be provided in the commit
-> message in a v2 that helps reviewers follow along with what's going on
-> here.
->
+> > | pc : mwifiex_get_cfp+0xd8/0x15c [mwifiex]
+> > | lr : mwifiex_get_cfp+0x34/0x15c [mwifiex]
+> > | sp : ffff8000818b3a70
+> > | x29: ffff8000818b3a70 x28: ffff000006bfd8a5 x27: 0000000000000004
+> > | x26: 000000000000002c x25: 0000000000001511 x24: 0000000002e86bc9
+> > | x23: ffff000006bfd996 x22: 0000000000000004 x21: ffff000007bec000
+> > | x20: 000000000000002c x19: 0000000000000000 x18: 0000000000000000
+> > | x17: 000000040044ffff x16: 00500072b5503510 x15: ccc283740681e517
+> > | x14: 0201000101006d15 x13: 0000000002e8ff43 x12: 002c01000000ffb1
+> > | x11: 0100000000000000 x10: 02e8ff43002c0100 x9 : 0000ffb100100157
+> > | x8 : ffff000003d20000 x7 : 00000000000002f1 x6 : 00000000ffffe124
+> > | x5 : 0000000000000001 x4 : 0000000000000003 x3 : 0000000000000000
+> > | x2 : 0000000000000000 x1 : 0001000000011001 x0 : 0000000000000000
+> > | Call trace:
+> > |  mwifiex_get_cfp+0xd8/0x15c [mwifiex]
+> > |  mwifiex_parse_single_response_buf+0x1d0/0x504 [mwifiex]
+> > |  mwifiex_handle_event_ext_scan_report+0x19c/0x2f8 [mwifiex]
+> > |  mwifiex_process_sta_event+0x298/0xf0c [mwifiex]
+> > |  mwifiex_process_event+0x110/0x238 [mwifiex]
+> > |  mwifiex_main_process+0x428/0xa44 [mwifiex]
+> > |  mwifiex_sdio_interrupt+0x64/0x12c [mwifiex_sdio]
+> > |  process_sdio_pending_irqs+0x64/0x1b8
+> > |  sdio_irq_work+0x4c/0x7c
+> > |  process_one_work+0x148/0x2a0
+> > |  worker_thread+0x2fc/0x40c
+> > |  kthread+0x110/0x114
+> > |  ret_from_fork+0x10/0x20
+> > | Code: a94153f3 a8c37bfd d50323bf d65f03c0 (f940a000)
+> > | ---[ end trace 0000000000000000 ]---
 > >
-> > Signed-off-by: Yabin Cui <yabinc@google.com>
+> > Fix this by adding a NULL check before dereferencing this pointer.
+> >
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> >
 > > ---
-> >  net/xfrm/xfrm_state.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > >
-> > diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-> > index 649bb739df0d..9bc69d703e5c 100644
-> > --- a/net/xfrm/xfrm_state.c
-> > +++ b/net/xfrm/xfrm_state.c
-> > @@ -1139,7 +1139,7 @@ xfrm_state_find(const xfrm_address_t *daddr, cons=
-t xfrm_address_t *saddr,
-> >                 struct xfrm_policy *pol, int *err,
-> >                 unsigned short family, u32 if_id)
-> >  {
-> > -       static xfrm_address_t saddr_wildcard =3D { };
-> > +       static const xfrm_address_t saddr_wildcard;
-> >         struct net *net =3D xp_net(pol);
-> >         unsigned int h, h_wildcard;
-> >         struct xfrm_state *x, *x0, *to_put;
-> > --
-> > 2.45.2.741.gdbec12cfda-goog
-> >
->
->
-> --
-> Thanks,
-> ~Nick Desaulniers
+> > This is the most obvious fix for this problem, but I am not sure if we
+> > might want to catch priv->wdev.wiphy being NULL earlier in the call
+> > chain.
+> 
+> I haven't looked at the call but the symptoms sound like that either we
+> are enabling the interrupts too early or there's some kind of locking
+> problem so that an other cpu doesn't see the change.
 
+I agree with Kalle that there's a different underlying bug involved, and
+(my conclusion:) we shouldn't whack-a-mole the NULL pointer without
+addressing the underlying problem.
 
+Looking a bit closer (and without much other context to go on): I believe 
+that one potential underlying problem is the complete lack of locking
+between cfg80211 entry points (such as mwifiex_add_virtual_intf() or
+mwifiex_cfg80211_change_virtual_intf()) and most stuff in the main loop
+(mwifiex_main_process()). The former call sites only hold the wiphy
+lock, and the latter tends to ... mostly not hold any locks, but rely on
+sequentialization with itself, and using its |main_proc_lock| for setup
+and teardown. It's all really bad and ready to fall down like a house of
+cards at any moment. Unfortunately, no one has spent time on
+rearchitecting this driver.
 
---=20
-Thanks,
-~Nick Desaulniers
+So it's possible that mwifiex_process_event() (mwifiex_get_priv_by_id()
+/ mwifiex_get_priv()) is getting a hold of a not-fully-initialized
+'priv' structure.
+
+BTW, in case I can reproduce and poke at your scenario, what exactly
+is your test case? Are you just starting / killing / restarting hostapd
+in a loop? Are you running a full network manager stack that's doing
+something more complex (e.g., initiating scans)? Can you reproduce with
+some more targeted set of `iw` commands? (`iw phy ... interface add ...;
+iw dev ... del`) Is there anything else interesting in the dmesg logs?
+(Some of the worst behaviors in this driver come when we see command
+timeouts and mwifiex_reinit_sw(), for example.)
+
+Or barring that, can you get some kind of trace of the nl80211 command
+sequence, so it's clearer which command(s) are involved leading up to
+the problem?
+
+Brian
 
