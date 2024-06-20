@@ -1,100 +1,215 @@
-Return-Path: <linux-kernel+bounces-222594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0292D910448
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:33:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B2191044E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12C651C228C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:33:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EE50B213A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF6E1AC453;
-	Thu, 20 Jun 2024 12:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9EA1AC45C;
+	Thu, 20 Jun 2024 12:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VdEx+bYz"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b="RygCIeaJ"
+Received: from cmx-mtlrgo001.bell.net (mta-mtl-003.bell.net [209.71.208.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACF01AB34A
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B3C1ABCCB;
+	Thu, 20 Jun 2024 12:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.71.208.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718886831; cv=none; b=hAc4u0Yc5kthDeFBnhb7kht/EUDKZkFMywFy47EY+yrFfyxCs7KWZS7xbj2h8VkkVBxpdAUJswRe5smavG2Fn2zWv/CrnoDribJm7NEmN/IJMt7qjrgUO8JC0MgyIFBRsKhwKqAd/IgvUO2xOvo0xJPSN/ohugE9x13XqH3+iSQ=
+	t=1718887031; cv=none; b=RR51Ix0Zo/0/Tw+agklW7HxCi7sMw8VUHkaPKM4LSVMX/0mFPDRXPkSkPLN+ClQ6+ej2O6kZbn66VE+j304ZdWs9KNNNL+xgYvFNKarucSKm6fbxLto15jMV+2OuX9zZpMj/e4Ctv3fEhUhGfHx6lHMAYh+K7sTIZ42qNWdrymw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718886831; c=relaxed/simple;
-	bh=EkIBmSmII12BjQwFyVyLSIrxf7sKE/dZhVwJFRfaUV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8Po1YB8IJs7W1qt2Ef1fmrAOnMF8dy0ouvfQd89Nlom7QtBYxu9gW7YpLkkZ07sDbiF/kVSpblMuFab266VCpqBo78Gx/WKg/gSuu5lVfySDq0wl2qqIEMQBu6UhUJjB2WIDN6tq6ndqM/Q3kByZqIgOezDvaZ7qr4OpyeZXEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VdEx+bYz; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cKyiy07FYL92EG3cVRyZSbgppLEe98eSJ1TVo2XVpxc=; b=VdEx+bYzwCm/fS5kntwsy9xHHF
-	CA+FCb2bu/v1Av3wRkT6C8+/9rwqMXREarYz2+xAQkLUQvlS0RcMBzuVpeD3rNokgbkDmL+KML2XS
-	R5YQiVTj9BBd18q4kXihl9TLrNWKg2fjb6EEuuwZKZSUW3tN1BleZFRka8xSBagVy+PGVh3QDEZRu
-	3uCy59zpvw8BBYH5GgYhDpV6SVwnwaEOJrfA+ZjqOCIDjcgMF8x2dXJar72nytQf4zlzeqZCnxaUJ
-	C4Sdrha2sL1/7ABVKjfCCdK8wu4ZaAS4pxuk9uKUIH+LUj7bVl11KJecvitSFPDhIGgXNd0Q7GEZA
-	8QeWudmQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sKGyw-000000063dK-3nGL;
-	Thu, 20 Jun 2024 12:33:39 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 42B06300CB9; Thu, 20 Jun 2024 14:33:38 +0200 (CEST)
-Date: Thu, 20 Jun 2024 14:33:38 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/preempt: Bypass setting same mode for
- sched_dynamic_update()
-Message-ID: <20240620123338.GX31592@noisy.programming.kicks-ass.net>
-References: <20240620121020.869707-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1718887031; c=relaxed/simple;
+	bh=TwYXTim1EBWvEA7mE58LOjtZB9EcSGR2jHy4iH3A0Fs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EqaA5Y5BTnTOyMaurrRhAXNS5EMVZRz/VHSV7mkCzvojtht/jgKBJkhQ7Ek7YzMbHNE/zcfpu6+kIWSG6ZeFAQjuLjApGTxd+GW6TARpEvYUUF6i0NjpGP9sZ3prT0EMPt0mE9afGu0MjKYrUHKjvIlEOh1V0+WVVHXCy5KjYSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net; spf=pass smtp.mailfrom=bell.net; dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b=RygCIeaJ; arc=none smtp.client-ip=209.71.208.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bell.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bell.net; s=selector1; t=1718887029; 
+        bh=+E/2zxxAWIItKbBMB1r1Hy5Fzry+6EIG2lPlZEid8eU=;
+        h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type;
+        b=RygCIeaJgUOuGdGJ/8IoIpYJmfUzBj5fkcY3tRkMMw6X5LjLVcaVefXQVDqi3OsEhUSopawk3IbhEv3wEqCCBOxLl+3pkphokePdMP1w819DTX7y7tVyxDwqapld/g3Sd6TfMqWRwgRw2kJ2QQkaG80vWW2v8xNg5BsuRJuijUpmNiFw2LTgKzLofglGiTkTaj+5ZQiVFWRTb1Vb1RtcFsx91i2pzUiyYYgxNF7CuDfIvzwmGqejrW/F0aYnHBIuO37CZvagMbOQSEHb+BT3kuoP0V6ik3X7VXRXFACARQXJ54oxZur9MYpRE33MLyd1pvZ68WktgZyyrPX67mcSIQ==
+X-RG-SOPHOS: Clean
+X-RG-VADE-SC: 0
+X-RG-VADE: Clean
+X-RG-Env-Sender: dave.anglin@bell.net
+X-RG-Rigid: 66730BD900259CFB
+X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedvledrfeefvddgheegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuuefgnffnpdfqfgfvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheplfhohhhnucffrghvihguucetnhhglhhinhcuoegurghvvgdrrghnghhlihhnsegsvghllhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeelffffjeehgffgueehleegfeegueeigedtkeffgeduueetffegffejudekgfeunecukfhppeejtddrhedvrdduiedvrdeijeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhephhgvlhhopegludelvddrudeikedrvddrgeelngdpihhnvghtpeejtddrhedvrdduiedvrdeijedpmhgrihhlfhhrohhmpegurghvvgdrrghnghhlihhnsegsvghllhdrnhgvthdpnhgspghrtghpthhtohepjedprhgtphhtthhopegrrhgusgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrvhgvrdgrnhhglhhinhessggvlhhlrdhnvghtpdhrtghpthhtohepuggvlhhlvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhvghrsggvrhhtsehgohhnughorhdrrghprghnrgdrohhrghdrrghupdhrtghpthhtoheplhhinhhugidqtghrhihpthhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+	vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-RazorGate-Vade-Verdict: clean 0
+X-RazorGate-Vade-Classification: clean
+Received-SPF: softfail (cmx-mtlrgo001.bell.net: domain bell.net does not
+ designate 70.52.162.67 as permitted sender) identity=mailfrom;
+ receiver=cmx-mtlrgo001.bell.net; client-ip=70.52.162.67;
+ envelope-from=dave.anglin@bell.net; helo=[192.168.2.49];
+Received: from [192.168.2.49] (70.52.162.67) by cmx-mtlrgo001.bell.net (authenticated as dave.anglin@bell.net)
+        id 66730BD900259CFB; Thu, 20 Jun 2024 08:34:11 -0400
+Message-ID: <1381b751-18cf-4872-99ec-17b4b629d3ef@bell.net>
+Date: Thu, 20 Jun 2024 08:34:10 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620121020.869707-1-ruanjinjie@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto: xor - fix template benchmarking
+To: Helge Deller <deller@kernel.org>, Herbert Xu
+ <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org,
+ Ard Biesheuvel <ardb@kernel.org>, linux-parisc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <ZnMWDdKJHfYQLDzS@p100>
+Content-Language: en-US
+From: John David Anglin <dave.anglin@bell.net>
+Autocrypt: addr=dave.anglin@bell.net; keydata=
+ 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
+ T70V9SSrl2hiw38vRzsl
+In-Reply-To: <ZnMWDdKJHfYQLDzS@p100>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 20, 2024 at 08:10:20PM +0800, Jinjie Ruan wrote:
-> If the preempt mode to set is same with current preempt mode, there is no
-> need to update all the `cond_resched`, `might_resched`, `preempt_schedule`,
-> `preempt_schedule_notrace` and `irqentry_exit_cond_resched` state.
+On 2024-06-19 1:31 p.m., Helge Deller wrote:
+> Commit c055e3eae0f1 ("crypto: xor - use ktime for template benchmarking")
+> switched from using jiffies to ktime-based performance benchmarking.
+>
+> This works nicely on machines which have a fine-grained ktime()
+> clocksource as e.g. x86 machoines with TSC.
+> But other machines, e.g. my 4-way HP PARISC server, don't have such
+> fine-grained clocksources, which is why it seems that 800 xor loops
+> take zero seconds, which then calculates in the logs as:
+>
+>   xor: measuring software checksum speed
+>      8regs           : -1018167296 MB/sec
+>      8regs_prefetch  : -1018167296 MB/sec
+>      32regs          : -1018167296 MB/sec
+>      32regs_prefetch : -1018167296 MB/sec
+>
+> Fix this with some small modifications to the existing code to improve
+> the algorithm to always produce correct results without introducing
+> major delays for architectures with a fine-grained ktime()
+> clocksource:
+> a) Delay start of the timing until ktime() just advanced. On machines
+> with a fast ktime() this should be just one additional ktime() call.
+> b) Count the number of loops. Run at minimum 800 loops and finish
+> earliest when the ktime() counter has progressed.
+>
+> With that the throughput can now be calculated more accurately under all
+> conditions.
+>
+> Fixes: c055e3eae0f1 ("crypto: xor - use ktime for template benchmarking")
+> Signed-off-by: Helge Deller <deller@gmx.de>
+You can add my "Tested-by".
 
-IIRC this actively breaks things, also this is a super slow path, nobody
-should care.
+I wonder if prefetch versions are implemented correctly on parisc:
 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  kernel/sched/core.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index bcf2c4cc0522..eb409901c64c 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -8777,6 +8777,9 @@ static bool klp_override;
->  
->  static void __sched_dynamic_update(int mode)
->  {
-> +	if (mode == preempt_dynamic_mode)
-> +		return;
-> +
->  	/*
->  	 * Avoid {NONE,VOLUNTARY} -> FULL transitions from ever ending up in
->  	 * the ZERO state, which is invalid.
-> -- 
-> 2.34.1
-> 
+[   29.353868] xor: measuring software checksum speed
+[   29.360030]    8regs           :  2266 MB/sec
+[   29.368031]    8regs_prefetch  :  2076 MB/sec
+[   29.376031]    32regs          :  2259 MB/sec
+[   29.384031]    32regs_prefetch :  2075 MB/sec
+[   29.384080] xor: using function: 8regs (2266 MB/sec)
+
+>
+> diff --git a/crypto/xor.c b/crypto/xor.c
+> index 8e72e5d5db0d..29b4c0fd89d7 100644
+> --- a/crypto/xor.c
+> +++ b/crypto/xor.c
+> @@ -83,33 +83,29 @@ static void __init
+>   do_xor_speed(struct xor_block_template *tmpl, void *b1, void *b2)
+>   {
+>   	int speed;
+> -	int i, j;
+> -	ktime_t min, start, diff;
+> +	unsigned long reps;
+> +	ktime_t min, start, t0;
+>   
+>   	tmpl->next = template_list;
+>   	template_list = tmpl;
+>   
+>   	preempt_disable();
+>   
+> -	min = (ktime_t)S64_MAX;
+> -	for (i = 0; i < 3; i++) {
+> -		start = ktime_get();
+> -		for (j = 0; j < REPS; j++) {
+> -			mb(); /* prevent loop optimization */
+> -			tmpl->do_2(BENCH_SIZE, b1, b2);
+> -			mb();
+> -		}
+> -		diff = ktime_sub(ktime_get(), start);
+> -		if (diff < min)
+> -			min = diff;
+> -	}
+> +	t0 = ktime_get();
+> +	/* delay start until time has advanced */
+> +	do { start = ktime_get(); } while (start == t0);
+> +	reps = 0;
+> +	do {
+> +		mb(); /* prevent loop optimization */
+> +		tmpl->do_2(BENCH_SIZE, b1, b2);
+> +		mb();
+> +	} while (reps++ < REPS || (t0 = ktime_get()) == start);
+> +	min = ktime_sub(t0, start);
+>   
+>   	preempt_enable();
+>   
+>   	// bytes/ns == GB/s, multiply by 1000 to get MB/s [not MiB/s]
+> -	if (!min)
+> -		min = 1;
+> -	speed = (1000 * REPS * BENCH_SIZE) / (unsigned int)ktime_to_ns(min);
+> +	speed = (1000 * reps * BENCH_SIZE) / (unsigned int)ktime_to_ns(min);
+>   	tmpl->speed = speed;
+>   
+>   	pr_info("   %-16s: %5d MB/sec\n", tmpl->name, speed);
+>
+
+
+-- 
+John David Anglin  dave.anglin@bell.net
+
 
