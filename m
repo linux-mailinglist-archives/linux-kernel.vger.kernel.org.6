@@ -1,194 +1,224 @@
-Return-Path: <linux-kernel+bounces-223628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51859115B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:27:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B8F59115BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D779E1C221DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:27:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7061282107
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EFE13777F;
-	Thu, 20 Jun 2024 22:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1779513DDAE;
+	Thu, 20 Jun 2024 22:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EpJG02OZ"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ldaDGIyB"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423F155880
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B752A78C8E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718922425; cv=none; b=t0sT7Hchg8pEDiYa7fj+5+OhbirIvF4SBuaLSEYIaX2sWRdgjhqCid9acw3LA0cbDzQRCuUiU3VAVJHj70zMUvkQ/FX8RX+nx0S5Ap7ttu80iXaJ8wTidwxNDg94qUWFUy1W3yMihJ8qDj3NUUzOZ8+/8nGO368xR9tiUlt+jrg=
+	t=1718922634; cv=none; b=LwS2EgW0Nj1HWVVRxkB4NSJ2nIRl39Gm7uknowtHJ7Ge/TCNoWuoPGPI3owO0H5YDOeJKZAlpv4thwx1KoWg32dg+Z8DIk2TmuyQh9UK/eKr7uRfyAKQNfNpl/UZWB6Wy/0SGQIS1WvjvgrlDl+7phfm6o8yUtXkL4ykP6HduY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718922425; c=relaxed/simple;
-	bh=pGNaopACUYYHsOMoxW/mbJ43qGuxp2QbW8pwqwjs5Oo=;
+	s=arc-20240116; t=1718922634; c=relaxed/simple;
+	bh=qU/CK7cK2ztIubEiOnDLG3FhSQGWI8q05/wnLRMya7c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A/eHc8irytyyLpdAZviqk8f8863wB7fZnkxZdNgoODiZezfCxy6A+6jBTNakCW3dlSHFh7RmuTELoLGifGLxMAz0injMFpSY0IqYDy7ZjYtoklxjRPVgnQ4Loi/XlrIMViF+x5cpwUnyOzf3l4oNDETnyuACGN3jOPZutgBxvZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EpJG02OZ; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-63bf3452359so14244857b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:27:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=UinFUfYzkiFrRh8WPdqaUlAValQ2KMBjyWcnnre/bT6Dg4IYxF1m1Jlk9iukiUFPvJ+fxbdgJUz5z8KnOQi1cuqNOk95a8DYwRcyU2OMyHZ5hnLY2xSWTFy0eT4HfLfKUiExQ8Nfht6HWDfIICfIU7gbZN0CIBI4VtljbspakmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ldaDGIyB; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-375bb80e5b8so17625ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:30:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718922421; x=1719527221; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1718922631; x=1719527431; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EzdFJfzdHX4fxEYrmnqjujELtIjoZxiiSu3te+CIyHA=;
-        b=EpJG02OZ4OM4LFlFzEFbXkjA6yaI5r4juWuxoqJ9c3NdCCi/Uia/M7vePW9aJ0E3qf
-         AklXsunRJJ6o51LBl2N0tjUfWM82M786sEMtEqQy499mZeWXW3coTry5JJxZqq9WeTY4
-         kyGPppsfvVvo9HanpLRl1ssOwxf0a6Vs0TNqw=
+        bh=zHREBPCUIs8n+I6KtcDeDKXi3C09zaSei5HzCaoQhXU=;
+        b=ldaDGIyBvF6wDNkosaJ+hgro8FvJeadsCQP3rIOCRZ9OZ36+IkbsIKQpOdnwh3ou8G
+         syTScZJIW/zBzuSHM3SGawhMcpw8+f0ppw8zLQ+gbFWFFJPNz627hT/dq/nuA+d5eGs7
+         +93+UDvrEbbRqx/bWooE0skUu9ENoFEsIqlH7+JkABeb9t9VXhtRjCpqjUyxu82f/Y1D
+         02erSUOoki57n3Yk/pYxqUXb55Ine+PnZnxeUuEB6+DqoHdQnt6a6/xHcV6pJ9HbBM9r
+         jBzuAX+ZghWUtK3bpYdO/rfAn3t7xS/fe9luRyb1oEDsNhAue5aX6Z6+3GQ6hH2PYHKi
+         vPEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718922421; x=1719527221;
+        d=1e100.net; s=20230601; t=1718922631; x=1719527431;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EzdFJfzdHX4fxEYrmnqjujELtIjoZxiiSu3te+CIyHA=;
-        b=xQU73F4krbu38qeywBDLLTLJb9a+KdDbYa370Gy8iI94MySQO7HV0XLxHjX6JzfoDc
-         p7KGlPZiOH00G6dB0EZuFdMPqJ/ReIaKJsr862vd0LYj3wXs/Bq5BHirMO9yP9OsVWD9
-         uYzl8jnxbHaq/qbCtFJJ75V7T2OiCKY4Uy+3bO9SKd7y8aKy5T4cuSOy0zsV0Fytd9Gs
-         hkyJM46qpcpo/sb8OnrUGU3mKX/Aiy0O7WOjGCH8EpK3E47newoqy+zUygs+qqvKP45P
-         nwR3J7nlhGouiK6YMUAA/ibJ9tsXwYXUEFbrnkERA3u/v5lg2AE+XmpcQyr0N7TvIjr7
-         KJZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIDUQZS8c9emIKicx/TJNWFMWSRZVC3Gpbqefh0/f52aF5BZUA7o+JigfZ3m28QGMI2D6TF0HZBxpLiRAEzkINC3R+qbC/5MwKytef
-X-Gm-Message-State: AOJu0YyuyBl6v/97x65kUocZWI1n7J1Ru/kZuhGpV4WoTexelZ0iH7Yj
-	BE3+ZPs3I1yunlV0Q2rlUDrKCzFgagmV++4V8ytHkrXbk5bDexjM6CN/w7ugpF3E4JMteyuHvsQ
-	=
-X-Google-Smtp-Source: AGHT+IFkm0XA8FNLpBbzXx29OS4TK1kfwUb5sx8mUuDmIa6vrZK7sTjhjp4xmj6GqUD8UU/NUfenhw==
-X-Received: by 2002:a05:690c:c8d:b0:63b:c16e:a457 with SMTP id 00721157ae682-63bc16ea5bemr49400087b3.13.1718922420440;
-        Thu, 20 Jun 2024 15:27:00 -0700 (PDT)
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com. [209.85.160.169])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ef30d53sm883376d6.81.2024.06.20.15.26.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 15:26:59 -0700 (PDT)
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-443580f290dso49531cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:26:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXuHf3KVvoN+JQIlHiUNoQ8PBYcxe1ABOQVQDbAPOQ7/ZqKrOSRxsdlifvKCJMRmHrq4yhAks8HY4eZkZN0IJayeI+jhA5G9VObhGuY
-X-Received: by 2002:ac8:7c43:0:b0:444:938e:5ce0 with SMTP id
- d75a77b69052e-444c1775541mr1333581cf.0.1718922418815; Thu, 20 Jun 2024
- 15:26:58 -0700 (PDT)
+        bh=zHREBPCUIs8n+I6KtcDeDKXi3C09zaSei5HzCaoQhXU=;
+        b=nvL69tYqKDJlv+EebEdqYtSNEcXv5p01/3KqwHo0RkVT7xNgvM9OL18Vx+KDe7DFWd
+         UKAPewrHZKsXyo8+Su1tC9gpMOGUrO21fpXXZiF8ju5H2Mu2HRrYkv+GWYg6bxFQZ2PV
+         iberdw21OXKIGESbJOX1BTGO9IOhdpBcsPUxLJGspqU9erEgmX2g7hMCcMAH9GEn0jlZ
+         UHZl3C2luEcrUCFvM/ql/0AxQSx7qZ0yRUbUV7r6MPySMgYgWGAQcx4PVuT5VuJvlpWk
+         CLhpcnm4PJqbqTW9wYFdEYlUOchzti7AV1QXZ/helq+V3gPwA5/Z9eOxI1uXomJACf9o
+         GawQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqDYoBrYhVvbqzavtX9ITTorqTxLuDWY9mRwH3M01VwjjNPP8Vcu6/oq4VlPqXed96BTrNPxHA3Pf657OAymF8bwyPGnokbeC/i8in
+X-Gm-Message-State: AOJu0YzbbZWD1LzTgQIVDGj3MiUDpdOX9xkY8sL05t7IR0OMKb1ubvhr
+	qMUe0G6f4SZVwJJE9MxpQcQRPGJMyG/lDX57n9QNAIoqyA+1krFZOWIP4zzit6Be4CX4UyoMZst
+	+4WTHq2tDk/VMKor+AYcqLemR9Get0rVJGIrS
+X-Google-Smtp-Source: AGHT+IG3QZzSrTWr7FqOD3AtuM1SKP3sfyODhN7mg13aomMD50DF/jtHQSYwrOACQW7sSeuYOA45Mb+PEMZtdzwhpq8=
+X-Received: by 2002:a92:dc10:0:b0:375:9e2b:a832 with SMTP id
+ e9e14a558f8ab-3762f4f3869mr453635ab.21.1718922630941; Thu, 20 Jun 2024
+ 15:30:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620063417.573467-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240620063417.573467-1-ruanjinjie@huawei.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 20 Jun 2024 15:26:43 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UvwopskN3J_dhHsna143uG=Dh0YO=NO+9DHX-a4t7+RA@mail.gmail.com>
-Message-ID: <CAD=FV=UvwopskN3J_dhHsna143uG=Dh0YO=NO+9DHX-a4t7+RA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: smp: Fix missing IPI statistics
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, mark.rutland@arm.com, 
-	swboyd@chromium.org, sumit.garg@linaro.org, frederic@kernel.org, 
-	scott@os.amperecomputing.com, misono.tomohiro@fujitsu.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240619083200.1047073-1-shahuang@redhat.com> <20240619083200.1047073-2-shahuang@redhat.com>
+In-Reply-To: <20240619083200.1047073-2-shahuang@redhat.com>
+From: Raghavendra Rao Ananta <rananta@google.com>
+Date: Thu, 20 Jun 2024 15:30:18 -0700
+Message-ID: <CAJHc60zNNsaALEV6XPdwuTZo1_0y2dT--MLMad0ar5Htt8jCtQ@mail.gmail.com>
+Subject: Re: [PATCH v10 1/3] KVM: selftests: aarch64: Add helper function for
+ the vpmu vcpu creation
+To: Shaoqin Huang <shahuang@redhat.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, kvmarm@lists.linux.dev, 
+	Eric Auger <eric.auger@redhat.com>, James Morse <james.morse@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Shaoqin
 
-On Wed, Jun 19, 2024 at 11:31=E2=80=AFPM Jinjie Ruan <ruanjinjie@huawei.com=
-> wrote:
+On Wed, Jun 19, 2024 at 1:32=E2=80=AFAM Shaoqin Huang <shahuang@redhat.com>=
+ wrote:
 >
-> commit 83cfac95c018 ("genirq: Allow interrupts to be excluded from
-> /proc/interrupts") is to avoid IPIs appear twice in /proc/interrupts.
-> But the commit 331a1b3a836c ("arm64: smp: Add arch support for backtrace
-> using pseudo-NMI") and commit 2f5cd0c7ffde("arm64: kgdb: Implement
-> kgdb_roundup_cpus() to enable pseudo-NMI roundup") set CPU_BACKTRACE and
-> KGDB_ROUNDUP IPIs "IRQ_HIDDEN" flag but not show them in
-> arch_show_interrupts(), which cause the interrupt kstat_irqs accounting
-> is missing in display.
+> Create a vcpu with vpmu would be a common requirement for the vpmu test,
+> so add the helper function for the vpmu vcpu creation. And use those
+> helper function in the vpmu_counter_access.c test.
 >
-> Before this patch, CPU_BACKTRACE and KGDB_ROUNDUP IPIs are missing:
->         / # cat /proc/interrupts
->                    CPU0       CPU1       CPU2       CPU3
->          11:        466        600        309        332     GICv3  27 Le=
-vel     arch_timer
->          13:         24          0          0          0     GICv3  33 Le=
-vel     uart-pl011
->          15:         64          0          0          0     GICv3  78 Ed=
-ge      virtio0
->          16:          0          0          0          0     GICv3  79 Ed=
-ge      virtio1
->          17:          0          0          0          0     GICv3  34 Le=
-vel     rtc-pl031
->          18:          3          3          3          3     GICv3  23 Le=
-vel     arm-pmu
->          19:          0          0          0          0 9030000.pl061   =
-3 Edge      GPIO Key Poweroff
->         IPI0:         7         14          9         26       Rescheduli=
-ng interrupts
->         IPI1:       354         93        233        255       Function c=
-all interrupts
->         IPI2:         0          0          0          0       CPU stop i=
-nterrupts
->         IPI3:         0          0          0          0       CPU stop (=
-for crash dump) interrupts
->         IPI4:         0          0          0          0       Timer broa=
-dcast interrupts
->         IPI5:         1          0          0          0       IRQ work i=
-nterrupts
->         Err:          0
+> Use this chance to delete the meaningless ASSERT about the pmuver,
+> because KVM does not advertise an IMP_DEF PMU to guests.
 >
-> After this pacth, CPU_BACKTRACE and KGDB_ROUNDUP IPIs are displayed:
->         / # cat /proc/interrupts
->                    CPU0       CPU1       CPU2       CPU3
->          11:        393        281        532        449     GICv3  27 Le=
-vel     arch_timer
->          13:         15          0          0          0     GICv3  33 Le=
-vel     uart-pl011
->          15:         64          0          0          0     GICv3  78 Ed=
-ge      virtio0
->          16:          0          0          0          0     GICv3  79 Ed=
-ge      virtio1
->          17:          0          0          0          0     GICv3  34 Le=
-vel     rtc-pl031
->          18:          2          2          2          2     GICv3  23 Le=
-vel     arm-pmu
->          19:          0          0          0          0 9030000.pl061   =
-3 Edge      GPIO Key Poweroff
->         IPI0:        11         19          4         23       Rescheduli=
-ng interrupts
->         IPI1:       279        347        222         72       Function c=
-all interrupts
->         IPI2:         0          0          0          0       CPU stop i=
-nterrupts
->         IPI3:         0          0          0          0       CPU stop (=
-for crash dump) interrupts
->         IPI4:         0          0          0          0       Timer broa=
-dcast interrupts
->         IPI5:         1          0          0          1       IRQ work i=
-nterrupts
->         IPI6:         0          0          0          0       CPU backtr=
-ace interrupts
->         IPI7:         0          0          0          0       KGDB round=
-up interrupts
->         Err:          0
+> No functional changes intended.
 >
-> Fixes: 331a1b3a836c ("arm64: smp: Add arch support for backtrace using ps=
-eudo-NMI")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> Suggested-by: Doug Anderson <dianders@chromium.org>
+> Reviewed-by: Eric Auger <eric.auger@redhat.com>
+> Signed-off-by: Shaoqin Huang <shahuang@redhat.com>
 > ---
-> v2:
-> - Report them in arch_show_interrupts().
-> - Add suggested-by.
-> - Update the commit message.
-> ---
->  arch/arm64/kernel/smp.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  .../kvm/aarch64/vpmu_counter_access.c         | 32 ++++---------------
+>  .../selftests/kvm/include/aarch64/vpmu.h      | 28 ++++++++++++++++
+>  2 files changed, 34 insertions(+), 26 deletions(-)
+>  create mode 100644 tools/testing/selftests/kvm/include/aarch64/vpmu.h
+>
+> diff --git a/tools/testing/selftests/kvm/aarch64/vpmu_counter_access.c b/=
+tools/testing/selftests/kvm/aarch64/vpmu_counter_access.c
+> index d31b9f64ba14..68da44198719 100644
+> --- a/tools/testing/selftests/kvm/aarch64/vpmu_counter_access.c
+> +++ b/tools/testing/selftests/kvm/aarch64/vpmu_counter_access.c
+> @@ -16,6 +16,7 @@
+>  #include <processor.h>
+>  #include <test_util.h>
+>  #include <vgic.h>
+> +#include <vpmu.h>
+>  #include <perf/arm_pmuv3.h>
+>  #include <linux/bitfield.h>
+>
+> @@ -407,18 +408,8 @@ static void guest_code(uint64_t expected_pmcr_n)
+>  /* Create a VM that has one vCPU with PMUv3 configured. */
+>  static void create_vpmu_vm(void *guest_code)
+>  {
+> -       struct kvm_vcpu_init init;
+> -       uint8_t pmuver, ec;
+> -       uint64_t dfr0, irq =3D 23;
+> -       struct kvm_device_attr irq_attr =3D {
+> -               .group =3D KVM_ARM_VCPU_PMU_V3_CTRL,
+> -               .attr =3D KVM_ARM_VCPU_PMU_V3_IRQ,
+> -               .addr =3D (uint64_t)&irq,
+> -       };
+> -       struct kvm_device_attr init_attr =3D {
+> -               .group =3D KVM_ARM_VCPU_PMU_V3_CTRL,
+> -               .attr =3D KVM_ARM_VCPU_PMU_V3_INIT,
+> -       };
+> +       uint8_t ec;
+> +       uint64_t irq =3D 23;
+>
+>         /* The test creates the vpmu_vm multiple times. Ensure a clean st=
+ate */
+>         memset(&vpmu_vm, 0, sizeof(vpmu_vm));
+> @@ -430,26 +421,15 @@ static void create_vpmu_vm(void *guest_code)
+>                                         guest_sync_handler);
+>         }
+>
+> -       /* Create vCPU with PMUv3 */
+> -       vm_ioctl(vpmu_vm.vm, KVM_ARM_PREFERRED_TARGET, &init);
+> -       init.features[0] |=3D (1 << KVM_ARM_VCPU_PMU_V3);
+> -       vpmu_vm.vcpu =3D aarch64_vcpu_add(vpmu_vm.vm, 0, &init, guest_cod=
+e);
+> +       vpmu_vm.vcpu =3D vm_vcpu_add_with_vpmu(vpmu_vm.vm, 0, guest_code)=
+;
+>         vcpu_init_descriptor_tables(vpmu_vm.vcpu);
+>         vpmu_vm.gic_fd =3D vgic_v3_setup(vpmu_vm.vm, 1, 64);
+>         __TEST_REQUIRE(vpmu_vm.gic_fd >=3D 0,
+>                        "Failed to create vgic-v3, skipping");
+>
+> -       /* Make sure that PMUv3 support is indicated in the ID register *=
+/
+> -       vcpu_get_reg(vpmu_vm.vcpu,
+> -                    KVM_ARM64_SYS_REG(SYS_ID_AA64DFR0_EL1), &dfr0);
+> -       pmuver =3D FIELD_GET(ARM64_FEATURE_MASK(ID_AA64DFR0_EL1_PMUVer), =
+dfr0);
+> -       TEST_ASSERT(pmuver !=3D ID_AA64DFR0_EL1_PMUVer_IMP_DEF &&
+> -                   pmuver >=3D ID_AA64DFR0_EL1_PMUVer_IMP,
+> -                   "Unexpected PMUVER (0x%x) on the vCPU with PMUv3", pm=
+uver);
+> -
+>         /* Initialize vPMU */
+> -       vcpu_ioctl(vpmu_vm.vcpu, KVM_SET_DEVICE_ATTR, &irq_attr);
+> -       vcpu_ioctl(vpmu_vm.vcpu, KVM_SET_DEVICE_ATTR, &init_attr);
+> +       vpmu_set_irq(vpmu_vm.vcpu, irq);
+> +       vpmu_init(vpmu_vm.vcpu);
+>  }
+>
+>  static void destroy_vpmu_vm(void)
+> diff --git a/tools/testing/selftests/kvm/include/aarch64/vpmu.h b/tools/t=
+esting/selftests/kvm/include/aarch64/vpmu.h
+> new file mode 100644
+> index 000000000000..5ef6cb011e41
+> --- /dev/null
+> +++ b/tools/testing/selftests/kvm/include/aarch64/vpmu.h
+> @@ -0,0 +1,28 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#include <kvm_util.h>
+> +
+> +static inline struct kvm_vcpu *vm_vcpu_add_with_vpmu(struct kvm_vm *vm,
+> +                                                    uint32_t vcpu_id,
+> +                                                    void *guest_code)
+> +{
+> +       struct kvm_vcpu_init init;
+> +
+> +       /* Create vCPU with PMUv3 */
+> +       vm_ioctl(vm, KVM_ARM_PREFERRED_TARGET, &init);
+> +       init.features[0] |=3D (1 << KVM_ARM_VCPU_PMU_V3);
+> +
+> +       return aarch64_vcpu_add(vm, 0, &init, guest_code);
+> +}
+> +
+> +static void vpmu_set_irq(struct kvm_vcpu *vcpu, int irq)
+> +{
+> +       kvm_device_attr_set(vcpu->fd, KVM_ARM_VCPU_PMU_V3_CTRL,
+> +                           KVM_ARM_VCPU_PMU_V3_IRQ, &irq);
+> +}
+> +
+> +static void vpmu_init(struct kvm_vcpu *vcpu)
+> +{
+> +       kvm_device_attr_set(vcpu->fd, KVM_ARM_VCPU_PMU_V3_CTRL,
+> +                           KVM_ARM_VCPU_PMU_V3_INIT, NULL);
+> +}
+> --
+> 2.40.1
+>
+>
+Reviewed-by: Raghavendra Rao Ananta <rananta@google.com>
 
-Personally I don't find a ton of value in having the "CPU backtrace
-interrupts" and "KGDB roundup interrupts" reported, but I agree that
-if someone does find value in having them reported that this is the
-best way. I guess that means a light:
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+- Raghavendra
 
