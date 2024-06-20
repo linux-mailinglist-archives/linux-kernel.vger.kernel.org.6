@@ -1,290 +1,249 @@
-Return-Path: <linux-kernel+bounces-222741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B08F910696
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:44:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460D79106A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 784A11F22B21
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:44:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B900E2827E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E621AD407;
-	Thu, 20 Jun 2024 13:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CF91AD407;
+	Thu, 20 Jun 2024 13:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cfOWApQC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uA+M7Iz5"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D741ACE9B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2A348CCD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718891040; cv=none; b=WtoWwDV2KnhTzCfaOhdMbSQlbB7yC4+5VqMqyW/iGlxyXt6++hOfYEq4TcoGBn962otKoQ09gCjMDWz00kd/Pnp9dKoLat938dD450RYzLIAyo7cLUSXBOwnoiIY6yTDawR7Tg/f/dlNn4mZFDC9EWpu9axBGGzU1CUQ2ByFubY=
+	t=1718891136; cv=none; b=u9SZW2UUllF0oJ9zyGODZDjECE5dU7eM61PNkrMOHFbdXzUC62fkEq7I/gb2Lc+WuvHi0AdC8jBEXngHyQ0uLSkKc53S9dXUqIUwRVtQCvEC6Ev6WmtuN+0EYEGCBgDdJNMrHBxnfRYkJsZlNDqlh7D6WP+3tJstoaSEqPO7iz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718891040; c=relaxed/simple;
-	bh=wzysBm79HIEbj0CNaTQJ1XR8YRMdkvWprIPf7NgrEKU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ticHj64UbOA+8AOED/qLAFZwz9y8mV4sSc3/aOTXZ3e189LZWfDdZYEPxFVXItpoJlLmphmHznY21+Puia9LIJMUK03bor3y90gqdWjmMj4+bPDRiogDOp2ps73KU5LPsrXFMoAB8j+I4xQLhx92/nevWNS2ajn9imO7Wqaq6kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cfOWApQC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718891037;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1jAszQAYlHYicapGa42NWSvrVwmXsJz9TNE/V+NbdTg=;
-	b=cfOWApQCAd9FnGRQUODKP5sPEuT8w8WrA8m+0OHVCQXwN+QTNWPJlat8oExgRscMqrSCu4
-	xz+1ZiUJ6/Ths4cw++sA/Sg2NRuCyb4xcybh8BRE8xHXEt+nRNfcBFolzpPaKpKg3dbYo+
-	R6TwuvMBEcNdMf1O1ED/P+N3kmup4Oo=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-402-deKNx0iZMcqVk_sAWr8HVA-1; Thu, 20 Jun 2024 09:43:55 -0400
-X-MC-Unique: deKNx0iZMcqVk_sAWr8HVA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4247d49a373so5820445e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:43:55 -0700 (PDT)
+	s=arc-20240116; t=1718891136; c=relaxed/simple;
+	bh=HOjfoGYreKZnZpmuXZ6Au7dPhxY8jwB/HRh9r1yOKuY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PqENaUxohGbOa05C3/S+WQAmqZnBeP8wQnUWs4W0Z4Zj+QlMEY+gF7Qw556jc1HmTvFQdcSUO/H4aRBdWFlzEghD3TMkzliITvDaE3eW4EKH8pPVC0ssnEtKE+HTSKWNSqPmKeUDxrWcGAP0ctxy0W/8dRD7e5PYPag/4WcpIdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uA+M7Iz5; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2c8062f9097so219325a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:45:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718891134; x=1719495934; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+AyU6deXfzId3iNKD+aWWyaHFp57zQswubmQIVn5Jzc=;
+        b=uA+M7Iz5FNwrCHyvli96A1wDFgR/3cNVOY3r9/c6TYYPwGdcWT+ztuyZk8E4ubOC49
+         UE3caoFXse4Lodc0ugwh0tK3xffJMNwqnT7AnXsanxqpEYaC/MdqInziyRXNsILGrmg9
+         F1j9Lq5D8pi+t8Hmgev0MwEfT1pyjtPDUZuNhHWLHDeZLhyX7qbeuZsfx3kMhZG50iBi
+         2OTaSvpRlXSgUgmgIIXqxa9IErBGfxCzCgEMWjf32RIYNwzZqRBu3SusUr1MBkyI35sU
+         OfftVIoGtk2J+5EFXiWYhbN1pGG3MmVIRyJGATW6FJTUuWzjZDnSPHzBsuhb1COTVHJM
+         nT4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718891034; x=1719495834;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1jAszQAYlHYicapGa42NWSvrVwmXsJz9TNE/V+NbdTg=;
-        b=a814/xsYW5ULsnO+vIdH4eNEQgX7I3RI1m3H189ZmtpmfmRP7mOvg8TkdeRBevDHj4
-         xBlvuEcOwDH9rT9WgSMEK320I2d7PfdoymFdODmJc+z5FmBy1bylvI2V/PtfiI2+L21U
-         viw2rgiesK4CYs0JKZzQ+QtbW3lv8AXH9v5Qro/KGdKXzvyU5W9Tzucrftkr+NKTnZMd
-         TKujMYg0ch59IFja7q2kHfDdgWAQFcDksLFoRCPXzAMKfyzyN8zaedo/wjOa+ten6kNY
-         M//bzQz6Vt2SIRTiIkk7YjscREOtT3756tV0+mD60zr1KlBGUdUmohokBurxHQ6+oHml
-         EVvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjB4ugs15LlRgGF45prsXVolAXXZ8coQ6U/H3auEVRzKeU3ATbc6M/S2ADqh3ehtFiT8Dvq7pIiqeHIOCKlsPXvAtBhCeeIYEVTspH
-X-Gm-Message-State: AOJu0YyY6tOtKeCdD4bK3LjIU3j2JoL+v8tbSK0B1oeHkyFvgZcE9RnZ
-	KT1vxmIBWqvZbsv6YQ+iFSEzPFgkPcpEq7EfsDAOlotr8uQCIeIOZTI2PSOVWgkpsAL4E0z07iZ
-	8Go+7ZyepHZLubu2wFA9xXGCuxmuydkfViQJ1z03McH1HelavyCbC4kP5VwhBvA==
-X-Received: by 2002:a05:600c:15d4:b0:421:6b83:2a65 with SMTP id 5b1f17b1804b1-4247517f468mr37482755e9.17.1718891034669;
-        Thu, 20 Jun 2024 06:43:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNGjj3F0CdG+CLUuBJfG3PX6oV1qE2c5L763mFcKwgz9pHGqfw4r7TTvXi41ejJkavfIQFjA==
-X-Received: by 2002:a05:600c:15d4:b0:421:6b83:2a65 with SMTP id 5b1f17b1804b1-4247517f468mr37482455e9.17.1718891034218;
-        Thu, 20 Jun 2024 06:43:54 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:4b3f:ee94:abf:b8ff:feee:998b? ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d208b6bsm26585705e9.32.2024.06.20.06.43.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 06:43:53 -0700 (PDT)
-Message-ID: <df627771-72c7-4532-87da-3a132ad17f83@redhat.com>
-Date: Thu, 20 Jun 2024 15:43:52 +0200
+        d=1e100.net; s=20230601; t=1718891134; x=1719495934;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+AyU6deXfzId3iNKD+aWWyaHFp57zQswubmQIVn5Jzc=;
+        b=S04/vNgRCNO6pYvkDj+UgLozuTyRuHPueNlJ+m5yo6rmECrzfkULE+2TJeEyOq86h5
+         NFsWb7K/1HgytIWUneqKxQ1eay85RSAbO/qfcdRDmM7z0803ADoOz24/HoZ+ujbD5Hdp
+         ZT/wVk6R7NVZD/t+J7LxoXZqVigQ30HJLLYL92PKX/gs9N7BjP6MYiEY0INCrPIZ2bX6
+         nk5mfF/VsswVzjAeMd0pMNhJrNWye69I1aKunAw0iqyHMDxfsG5oGxU2zT6WzSUMGOF7
+         udTVlppCO0lAv3HAKpIh1YHU2yybpG+JUkEOzpFOOZB+8LcZ+d8iUT1CCzd0J+lwDh2h
+         mW3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVnIx8I99BJlT/Y9glNDNo/WfUYFdir68/1MbiZx6D5omtjkaS/ZQ0dBy817u0jGbssSMGxtVm6bjWrHS7S34ULdliili2zKUzsP5Hs
+X-Gm-Message-State: AOJu0YzwWPHqKsVUmtNcFr+wk4aKrS426NG7E4LY8mN5Gg3x6Qnph0aC
+	buxK6yDCsAoBBYa5IiNdI1f38NUXVAHoA4V/eHKzDL9fCZ0yHmJ31DuZ5nqdwbnqAH+loUVaNrC
+	f5A7sCg8fbRkLW0wWxHg5IS3xMck24cHJVIF8bA==
+X-Google-Smtp-Source: AGHT+IEkbgWtIlRKsROVwMbvn+u4Dmp8R8VC3/t3xQgVOWqEyZY+N2hzOnvpDO7pwbuCzv9Q70Ne5sdfjJ1A5HhtY00=
+X-Received: by 2002:a17:90a:f402:b0:2c3:11fb:a163 with SMTP id
+ 98e67ed59e1d1-2c7b57f374cmr5673149a91.6.1718891134163; Thu, 20 Jun 2024
+ 06:45:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] rust: add firmware abstractions
-To: Gary Guo <gary@garyguo.net>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, mcgrof@kernel.org,
- russ.weight@linux.dev, ojeda@kernel.org, alex.gaynor@gmail.com,
- wedsonaf@gmail.com, boqun.feng@gmail.com, bjorn3_gh@protonmail.com,
- benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com,
- airlied@gmail.com, fujita.tomonori@gmail.com, pstanner@redhat.com,
- ajanulgu@redhat.com, lyude@redhat.com, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240618154841.6716-1-dakr@redhat.com>
- <20240618154841.6716-3-dakr@redhat.com> <20240620143611.7995e0bb@eugeo>
-Content-Language: en-US
-From: Danilo Krummrich <dakr@redhat.com>
-Organization: RedHat
-In-Reply-To: <20240620143611.7995e0bb@eugeo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240508223456.4189689-1-joshdon@google.com>
+In-Reply-To: <20240508223456.4189689-1-joshdon@google.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 20 Jun 2024 15:45:23 +0200
+Message-ID: <CAKfTPtAVg7_p4rXXfiO1=F1pjvAbL9V26qjHvtp2S6qBpp6LuQ@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: prevent unbounded task iteration in load balance
+To: Josh Don <joshdon@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
+	Zhang Qiao <zhangqiao22@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/20/24 15:36, Gary Guo wrote:
-> On Tue, 18 Jun 2024 17:48:35 +0200
-> Danilo Krummrich <dakr@redhat.com> wrote:
-> 
->> Add an abstraction around the kernels firmware API to request firmware
->> images. The abstraction provides functions to access the firmware's size
->> and backing buffer.
->>
->> The firmware is released once the abstraction instance is dropped.
->>
->> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
->> ---
->>   drivers/base/firmware_loader/Kconfig |   7 ++
->>   rust/bindings/bindings_helper.h      |   1 +
->>   rust/kernel/firmware.rs              | 101 +++++++++++++++++++++++++++
->>   rust/kernel/lib.rs                   |   2 +
->>   4 files changed, 111 insertions(+)
->>   create mode 100644 rust/kernel/firmware.rs
->>
->> diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware_loader/Kconfig
->> index 5ca00e02fe82..a03701674265 100644
->> --- a/drivers/base/firmware_loader/Kconfig
->> +++ b/drivers/base/firmware_loader/Kconfig
->> @@ -37,6 +37,13 @@ config FW_LOADER_DEBUG
->>   	  SHA256 checksums to the kernel log for each firmware file that is
->>   	  loaded.
->>   
->> +config RUST_FW_LOADER_ABSTRACTIONS
->> +	bool "Rust Firmware Loader abstractions"
->> +	depends on RUST
->> +	depends on FW_LOADER=y
->> +	help
->> +	  This enables the Rust abstractions for the firmware loader API.
->> +
->>   if FW_LOADER
->>   
->>   config FW_LOADER_PAGED_BUF
->> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
->> index ddb5644d4fd9..18a3f05115cb 100644
->> --- a/rust/bindings/bindings_helper.h
->> +++ b/rust/bindings/bindings_helper.h
->> @@ -9,6 +9,7 @@
->>   #include <kunit/test.h>
->>   #include <linux/errname.h>
->>   #include <linux/ethtool.h>
->> +#include <linux/firmware.h>
->>   #include <linux/jiffies.h>
->>   #include <linux/mdio.h>
->>   #include <linux/phy.h>
->> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
->> new file mode 100644
->> index 000000000000..b55ea1b45368
->> --- /dev/null
->> +++ b/rust/kernel/firmware.rs
->> @@ -0,0 +1,101 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Firmware abstraction
->> +//!
->> +//! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h")
->> +
->> +use crate::{bindings, device::Device, error::Error, error::Result, str::CStr};
->> +use core::ptr::NonNull;
->> +
->> +// One of the following: `bindings::request_firmware`, `bindings::firmware_request_nowarn`,
->> +// `firmware_request_platform`, `bindings::request_firmware_direct`
->> +type FwFunc =
->> +    unsafe extern "C" fn(*mut *const bindings::firmware, *const i8, *mut bindings::device) -> i32;
->> +
->> +/// Abstraction around a C `struct firmware`.
->> +///
->> +/// This is a simple abstraction around the C firmware API. Just like with the C API, firmware can
->> +/// be requested. Once requested the abstraction provides direct access to the firmware buffer as
->> +/// `&[u8]`. The firmware is released once [`Firmware`] is dropped.
->> +///
->> +/// # Invariants
->> +///
->> +/// The pointer is valid, and has ownership over the instance of `struct firmware`.
->> +///
->> +/// Once requested, the `Firmware` backing buffer is not modified until it is freed when `Firmware`
->> +/// is dropped.
->> +///
->> +/// # Examples
->> +///
->> +/// ```
->> +/// # use kernel::{c_str, device::Device, firmware::Firmware};
->> +///
->> +/// # // SAFETY: *NOT* safe, just for the example to get an `ARef<Device>` instance
->> +/// # let dev = unsafe { Device::from_raw(core::ptr::null_mut()) };
->> +///
->> +/// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev).unwrap();
->> +/// let blob = fw.data();
->> +/// ```
->> +pub struct Firmware(NonNull<bindings::firmware>);
->> +
->> +impl Firmware {
->> +    fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Self> {
->> +        let mut fw: *mut bindings::firmware = core::ptr::null_mut();
->> +        let pfw: *mut *mut bindings::firmware = &mut fw;
->> +
->> +        // SAFETY: `pfw` is a valid pointer to a NULL initialized `bindings::firmware` pointer.
->> +        // `name` and `dev` are valid as by their type invariants.
->> +        let ret = unsafe { func(pfw as _, name.as_char_ptr(), dev.as_raw()) };
-> 
-> This is line is unsound if this function is called with an arbitrary
-> FwFunc, therefore the safety comment should also mention that `func`
-> cannot be an arbitrary function and it must be one of
-> `request_firmware`, `firmware_request_nowarn`,
-> `firmware_request_platform`, `request_firmware_direct`, and this is
+Hi Josh,
 
-This is documented in the type definition of `FwFunc`. We can link to this invariant though
-and explicitly mark it as such. Does that make sense?
+sorry for the delay
 
-- Danilo
+On Thu, 9 May 2024 at 00:35, Josh Don <joshdon@google.com> wrote:
+>
+> b0defa7ae03ec changed the load balancing logic to ignore env.max_loop if
+> all tasks examined to that point were pinned. The goal of the patch was
+> to make it more likely to be able to detach a task buried in a long list
+> of pinned tasks. However, this has the unfortunate side effect of
+> creating an O(n) iteration in detach_tasks(), as we now must fully
+> iterate every task on a cpu if all or most are pinned. Since this load
+> balance code is done with rq lock held, and often in softirq context, it
+> is very easy to trigger hard lockups. We observed such hard lockups with
+> a user who affined O(10k) threads to a single cpu.
+>
+> My initial suggestion to Vincent was to revert the original patch and
+> instead bump sched_nr_migrate. However, he pointed out that we do still
+> want to have a limit on the number of tasks we actually detach (which is
+> an expensive operation), but still allow a deeper search.
+>
+> As a result of the above, this patch now separates the number of tasks
+> we migrate from the number of tasks we can search. Now, the search limit
+> can be raised while keeping the nr_migrate fixed.
 
-> true because the function is not public and all users in the file
-> satisfy this safety precondition.
-> 
-> 
->> +        if ret != 0 {
->> +            return Err(Error::from_errno(ret));
->> +        }
->> +
->> +        // SAFETY: `func` not bailing out with a non-zero error code, guarantees that `fw` is a
->> +        // valid pointer to `bindings::firmware`.
->> +        Ok(Firmware(unsafe { NonNull::new_unchecked(fw) }))
->> +    }
->> +
->> +    /// Send a firmware request and wait for it. See also `bindings::request_firmware`.
->> +    pub fn request(name: &CStr, dev: &Device) -> Result<Self> {
->> +        Self::request_internal(name, dev, bindings::request_firmware)
->> +    }
->> +
->> +    /// Send a request for an optional firmware module. See also
->> +    /// `bindings::firmware_request_nowarn`.
->> +    pub fn request_nowarn(name: &CStr, dev: &Device) -> Result<Self> {
->> +        Self::request_internal(name, dev, bindings::firmware_request_nowarn)
->> +    }
->> +
->> +    fn as_raw(&self) -> *mut bindings::firmware {
->> +        self.0.as_ptr()
->> +    }
->> +
->> +    /// Returns the size of the requested firmware in bytes.
->> +    pub fn size(&self) -> usize {
->> +        // SAFETY: Safe by the type invariant.
->> +        unsafe { (*self.as_raw()).size }
->> +    }
->> +
->> +    /// Returns the requested firmware as `&[u8]`.
->> +    pub fn data(&self) -> &[u8] {
->> +        // SAFETY: Safe by the type invariant. Additionally, `bindings::firmware` guarantees, if
->> +        // successfully requested, that `bindings::firmware::data` has a size of
->> +        // `bindings::firmware::size` bytes.
->> +        unsafe { core::slice::from_raw_parts((*self.as_raw()).data, self.size()) }
->> +    }
->> +}
->> +
->> +impl Drop for Firmware {
->> +    fn drop(&mut self) {
->> +        // SAFETY: Safe by the type invariant.
->> +        unsafe { bindings::release_firmware(self.as_raw()) };
->> +    }
->> +}
->> +
->> +// SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, which is safe to be used from
->> +// any thread.
->> +unsafe impl Send for Firmware {}
->> +
->> +// SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, references to which are safe to
->> +// be used from any thread.
->> +unsafe impl Sync for Firmware {}
->> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
->> index dd1207f1a873..7707cb013ce9 100644
->> --- a/rust/kernel/lib.rs
->> +++ b/rust/kernel/lib.rs
->> @@ -30,6 +30,8 @@
->>   mod build_assert;
->>   pub mod device;
->>   pub mod error;
->> +#[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
->> +pub mod firmware;
->>   pub mod init;
->>   pub mod ioctl;
->>   #[cfg(CONFIG_KUNIT)]
-> 
+Thanks for your patch.
 
+I went back in the archive to remember how I came up with this patch.
+I thought that it was fixing a problem raised by
+zhangqiao22@huawei.com but my memory was wrong and it isn't. Instead
+it's fixing a theoretical case described in the email thread:
+https://lore.kernel.org/lkml/20220818083133.GA536@vingu-book/
+
+So I wonder if it's worth adding a new debugfs entry for a case that
+nobody might have ever faced or at least complained about. I know that
+I asked you to go in this direction whereas you were originally
+proposing a revert. After more time to think about this, I'm no longer
+convinced that it's worth adding a new debugfs interface finally.
+
+I put some comments below but maybe it would be better to simply
+revert b0defa7ae03ec as nobody yet complains with this problem so far.
+Let see what other will say or if someone finally faced the problem
+but a revert may finally be a better option.
+
+>
+> Signed-off-by: Josh Don <joshdon@google.com>
+> ---
+>  kernel/sched/core.c  |  3 ++-
+>  kernel/sched/debug.c |  1 +
+>  kernel/sched/fair.c  | 19 ++++++++++++++-----
+>  kernel/sched/sched.h |  1 +
+>  4 files changed, 18 insertions(+), 6 deletions(-)
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index db4be4921e7f..820ffa9bbcfe 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -144,10 +144,11 @@ __read_mostly int sysctl_resched_latency_warn_once = 1;
+>  #endif /* CONFIG_SCHED_DEBUG */
+>
+>  /*
+> - * Number of tasks to iterate in a single balance run.
+> + * Max number of tasks we can move/iterate in a single balance run.
+>   * Limited because this is done with IRQs disabled.
+>   */
+>  const_debug unsigned int sysctl_sched_nr_migrate = SCHED_NR_MIGRATE_BREAK;
+> +const_debug unsigned int sysctl_sched_migrate_search_depth = SCHED_NR_MIGRATE_BREAK;
+>
+>  __read_mostly int scheduler_running;
+>
+> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+> index 168eecc209b4..d1701c98f996 100644
+> --- a/kernel/sched/debug.c
+> +++ b/kernel/sched/debug.c
+> @@ -356,6 +356,7 @@ static __init int sched_init_debug(void)
+>         debugfs_create_file("tunable_scaling", 0644, debugfs_sched, NULL, &sched_scaling_fops);
+>         debugfs_create_u32("migration_cost_ns", 0644, debugfs_sched, &sysctl_sched_migration_cost);
+>         debugfs_create_u32("nr_migrate", 0644, debugfs_sched, &sysctl_sched_nr_migrate);
+> +       debugfs_create_u32("migrate_search_depth", 0644, debugfs_sched, &sysctl_sched_migrate_search_depth);
+>
+>         mutex_lock(&sched_domains_mutex);
+>         update_sched_domain_debugfs();
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 34fe6e9490c2..b4b26f39dd45 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8764,6 +8764,9 @@ struct lb_env {
+>         unsigned int            loop_break;
+>         unsigned int            loop_max;
+>
+> +       unsigned int            num_detached;
+> +       unsigned int            detach_max;
+> +
+>         enum fbq_type           fbq_type;
+>         enum migration_type     migration_type;
+>         struct list_head        tasks;
+> @@ -9044,11 +9047,11 @@ static int detach_tasks(struct lb_env *env)
+>
+>                 env->loop++;
+>                 /*
+> -                * We've more or less seen every task there is, call it quits
+> -                * unless we haven't found any movable task yet.
+> +                * Call it quits if we're going to exceed our search limit;
+> +                * we can't search indefinitely even if we've not found a
+> +                * migratable task yet.
+>                  */
+> -               if (env->loop > env->loop_max &&
+> -                   !(env->flags & LBF_ALL_PINNED))
+> +               if (env->loop > env->loop_max)
+>                         break;
+>
+>                 /* take a breather every nr_migrate tasks */
+> @@ -9116,6 +9119,9 @@ static int detach_tasks(struct lb_env *env)
+>                 list_add(&p->se.group_node, &env->tasks);
+>
+>                 detached++;
+> +               env->num_detached++;
+
+Do we really need env->num_detached field ? Can't we save remove it
+and set env->detach_max = sysctl_sched_nr_migrate - ld_moved
+
+> +               if (env->num_detached >= env->detach_max)
+> +                       break;
+>
+>  #ifdef CONFIG_PREEMPTION
+>                 /*
+> @@ -11287,6 +11293,9 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+>         env.src_cpu = busiest->cpu;
+>         env.src_rq = busiest;
+>
+> +       env.num_detached = 0;
+> +       env.detach_max = sysctl_sched_nr_migrate;
+> +
+>         ld_moved = 0;
+>         /* Clear this flag as soon as we find a pullable task */
+>         env.flags |= LBF_ALL_PINNED;
+> @@ -11297,7 +11306,7 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+>                  * still unbalanced. ld_moved simply stays zero, so it is
+>                  * correctly treated as an imbalance.
+>                  */
+> -               env.loop_max  = min(sysctl_sched_nr_migrate, busiest->nr_running);
+> +               env.loop_max  = min(sysctl_sched_migrate_search_depth, busiest->nr_running);
+>
+>  more_balance:
+
+ +               env->detach_max = sysctl_sched_nr_migrate - ld_moved
+
+>                 rq_lock_irqsave(busiest, &rf);
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index e58a54bda77d..1597175d5f0b 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -2539,6 +2539,7 @@ extern void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags);
+>
+>  extern const_debug unsigned int sysctl_sched_nr_migrate;
+>  extern const_debug unsigned int sysctl_sched_migration_cost;
+> +extern const_debug unsigned int sysctl_sched_migrate_search_depth;
+>
+>  extern unsigned int sysctl_sched_base_slice;
+>
+> --
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
+>
 
