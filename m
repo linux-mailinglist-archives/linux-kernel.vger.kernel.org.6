@@ -1,213 +1,212 @@
-Return-Path: <linux-kernel+bounces-222931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477AB910A14
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:39:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF9EE910A18
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F10C828642F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:39:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39797285EB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674711AED3F;
-	Thu, 20 Jun 2024 15:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A0E1B010F;
+	Thu, 20 Jun 2024 15:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5lC8AtR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYsc2dZn"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA641ACE94;
-	Thu, 20 Jun 2024 15:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6F21AF6B7
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718897931; cv=none; b=aN+L5dAaXrr+9J+i8QUmee18hyy0c5c8dPQIWYCLIV2SqHUmnjY4rO7a8NJ1TOb8P8A5dWKss5AhWmdwO8gvSXh2SOJMigwsoRfTyEnlFtEYJ1OMd4O+kvNtucIWq0AjPeaz25YRZqqGUXMkTqPApsAKRVjJ1XfVPGJYG/7577M=
+	t=1718897947; cv=none; b=VfYkSivDiGXM/bbJTFwZJYryr2PIsvpxAArVbqI+6pi4/m3WrGuTfoqDKI0leREJ8qFNhMrDd0l6BKxohcL4s/jiQBCt+x2Fqj1j2AHGOCJt/NllAiy13mity2bRP62+kIi3qDR5lFsh9wXzEJljT/lnf4Mxng+vXB5cr/w45oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718897931; c=relaxed/simple;
-	bh=gIGt6nQrz3liDlRiYwAFDqmb/cxCjQJDPRDrDirgIIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p+FZYLg5R106zMZH6asYZgYPT0OQPz/LUEXeullMSmkUeS/dCFxFgrdirGoDLleJWVqZXwHAUu7uYgZFVJqsrOgtafQ0F9iwnFzLrHQFsC3QcDlhOM+40/TNlzKXz7qVkadN2mbXV96o5mx6b4qABI3ww+DHE6bL9ltpX2kughA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5lC8AtR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34AE2C2BD10;
-	Thu, 20 Jun 2024 15:38:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718897931;
-	bh=gIGt6nQrz3liDlRiYwAFDqmb/cxCjQJDPRDrDirgIIo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X5lC8AtRacT76ZEG4zMfuEZUKEKTpekECOHpU5MY2I/EZO1QL2vUnvXBcqGV/n1Ac
-	 WvclRPE1115f0kXPVsOy0KRv07fTVLr3ptVLBSoaeW2WtfWMz3wAJippdXgvsyQ318
-	 kML1endfmYR5n7zy2ZTCutzmR637HsCeGr8T9sJpAeo4FsL+DzgyGTiSB2RZtECxf4
-	 8NTZj383zMt/xV0LgbVvnPIX4Y+2LObBFCatwHSLZpoL/D0UHiyN+z9VCOnZ1JjSqy
-	 qNVsO3HY+6apV1zIP1hyzPaViP5XdIK4YbuWhjqlUQ4WszJuGpnzPSwJDQK8YgCTDy
-	 ycyS48jIwgzJQ==
-Date: Thu, 20 Jun 2024 16:38:46 +0100
-From: Lee Jones <lee@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 04/20] leds: leds-lp55xx: generalize probe/remove
- functions
-Message-ID: <20240620153846.GN3029315@google.com>
-References: <20240616215226.2112-1-ansuelsmth@gmail.com>
- <20240616215226.2112-5-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1718897947; c=relaxed/simple;
+	bh=1V9gNsQjKpv2yYe/rkkbiCZy1LW3+Gs4HPJP/SDy7Ls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qGFHqrZQInGHzvM08mbV9W9SPi2aLspVjEhfQVguhA+mYdK8qupqTyWoph1kunL8nMM944KYQHaYBlhZ1mW97VNoQsTPcAEamwKE1K2SP1eMOntBhdtJKlf6E9usIaGMmGC8YYMbeeDITv2HDlvZPOHIX6DEfruby2m43GVnqos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UYsc2dZn; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f480624d0fso8123805ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:39:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718897945; x=1719502745; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tZiM+YF32yo4nDHQ3wUnYbNN+W5ZP8TEo860NNMId04=;
+        b=UYsc2dZnHMnVXGqyuRDnRtf4qHMP6REURkrZH/mLT3LPbLOt/Wl3ZmeRMdwisDLdEY
+         k94gH++NTXOAEf1XA25gDbbLYzrau28uREM/+hUFJeg/V0XLqSwaRqibmS5nMkno4d8c
+         0LNEHyHnwcg1XReWfg++E9Vw7BOI48lRGBKG90QP8/eUEKdio8e2CF+A6WGgxCaNdM6H
+         eZS5gCc+WWTL6WY39xCVZXd3Eqf9CpZwMx11fPuE4UBrFiVMyjJJXm7JQez2EIbtymIB
+         p39ozT0WONZuHPQ6oCJ35K5lywlNcPthZ9/ch/sD6HXWtFWBNyTtbarqOwyoXBZWcYlF
+         QFyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718897945; x=1719502745;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tZiM+YF32yo4nDHQ3wUnYbNN+W5ZP8TEo860NNMId04=;
+        b=vlbyQSBLgNOkA3uoJHZmr8NgE6ORDOGA8fIT6Ue74SSskNA1DHv2oblLOEqd4mQjN0
+         rGfAHy9XM1ACwLst23iQnBXJ88mF9zM/kH9SYjXmKtO9shzgT2eKOqtIe/N90LEFoxDx
+         uAYvitzNnY4QR8hwf0TT7OIw9WGaf+3LCKj7yBEb3DfRvFlCuSDTPpkl/XhOmWr4P0DV
+         2DFSVF1trBdBw2RZth0624zKy6xSA5Jd+kfzBnZqghGHQ/M0c3ZwwksEAsDBttvTzpKr
+         dBEcnPH0OUsEFHAOT2FTAdTnFkH5+zuz71YDD+NgDHU8zVP9Ux4aYxmig2Jbgle3esr5
+         8Oyg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6ZIQ5nzuDjv+npbzmEPM2MV6C2Wm0iqPu+1qppqp17o7otzhvYea0Er3CKtZ2xtFhdBUyfNJ8Cs5AuSUeIXmr5wJG+wXzXBd6Z8eq
+X-Gm-Message-State: AOJu0YwhezNu1LY5lkOSAvs/pCw3+s654GeQ5m7ri5U3xAHwgfbXUbbQ
+	t8pbhfCLx5n8Sewp35cXh/8OJH10QGFxWjkIVxX2tQ5kGetwJ12qUuSmJlVaf7wQZw/eqHU5TOQ
+	DmDUUt/5Mhvr45GGjPUUrZ0Qe+wU=
+X-Google-Smtp-Source: AGHT+IFs4cCXaYXfPLL4tEu5sHew2ZyfUuFoMGlVDGBf4hJXj5XH8xm9DX67le0YENHbSqeP4ZMKfz7PIq6kLoBgW/o=
+X-Received: by 2002:a17:902:d382:b0:1f8:6776:7ab7 with SMTP id
+ d9443c01a7336-1f9aa412402mr50450385ad.24.1718897945494; Thu, 20 Jun 2024
+ 08:39:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240616215226.2112-5-ansuelsmth@gmail.com>
+References: <20240620081052.56439-1-jiapeng.chong@linux.alibaba.com>
+In-Reply-To: <20240620081052.56439-1-jiapeng.chong@linux.alibaba.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 20 Jun 2024 11:38:54 -0400
+Message-ID: <CADnq5_NevWHt2p17WipaAmw1q-CzxCe_shYwSe3iLBx7KDV1zg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: Remove redundant code and semicolons
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
+	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
+	airlied@gmail.com, daniel@ffwll.ch, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Abaci Robot <abaci@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 16 Jun 2024, Christian Marangi wrote:
+Applied.  Thanks!
 
-> Now that stop_all_engine is generalized, probe and remove function are
-> the same across every lp55xx based LED driver and can be generalized.
-> 
-> To permit to use a common probe, make use of the OF match_data and i2c
-> driver_data value to store the device_config struct specific for the
-> LED.
-> 
-> Also drop the now unused exported symbol in lp55xx-common and make them
-> static.
-> 
-> Update any lp55xx based LED driver to use the new generic probe/remove.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Alex
+
+On Thu, Jun 20, 2024 at 5:07=E2=80=AFAM Jiapeng Chong
+<jiapeng.chong@linux.alibaba.com> wrote:
+>
+> No functional modification involved.
+>
+> ./drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_share=
+d.c:3171:2-3: Unneeded semicolon.
+> ./drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_share=
+d.c:3185:2-3: Unneeded semicolon.
+> ./drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_share=
+d.c:3200:2-3: Unneeded semicolon.
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D9365
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 > ---
->  drivers/leds/leds-lp5521.c        |  81 +-------------------
->  drivers/leds/leds-lp5523.c        |  85 ++-------------------
->  drivers/leds/leds-lp5562.c        |  80 +------------------
->  drivers/leds/leds-lp55xx-common.c | 123 +++++++++++++++++++++++-------
->  drivers/leds/leds-lp55xx-common.h |  21 +----
->  drivers/leds/leds-lp8501.c        |  81 +-------------------
->  6 files changed, 119 insertions(+), 352 deletions(-)
-
-[...]
-
-> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-> index 2cbc5b302fd4..7e623e4e565c 100644
-> --- a/drivers/leds/leds-lp55xx-common.c
-> +++ b/drivers/leds/leds-lp55xx-common.c
-> @@ -32,6 +32,8 @@
->  /* External clock rate */
->  #define LP55XX_CLK_32K			32768
->  
-> +static void lp55xx_deinit_device(struct lp55xx_chip *chip);
-
-No forward declarations please.  Move the function.
-> +
->  static struct lp55xx_led *cdev_to_lp55xx_led(struct led_classdev *cdev)
+>  .../dml21/src/dml2_core/dml2_core_shared.c    | 46 +++++++++----------
+>  1 file changed, 23 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
+_core_shared.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dm=
+l2_core_shared.c
+> index cfa4c4475821..1a9895b1833f 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_s=
+hared.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_s=
+hared.c
+> @@ -3142,62 +3142,62 @@ static unsigned int dml_get_tile_block_size_bytes=
+(enum dml2_swizzle_mode sw_mode
 >  {
->  	return container_of(cdev, struct lp55xx_led, cdev);
-> @@ -49,7 +51,7 @@ static struct lp55xx_led *mcled_cdev_to_led(struct led_classdev_mc *mc_cdev)
->  
->  static void lp55xx_wait_opmode_done(struct lp55xx_chip *chip)
->  {
-> -	struct lp55xx_device_config *cfg = chip->cfg;
-> +	const struct lp55xx_device_config *cfg = chip->cfg;
->  	int __always_unused ret;
->  	u8 val;
->  
-> @@ -69,7 +71,7 @@ static void lp55xx_wait_opmode_done(struct lp55xx_chip *chip)
->  
->  void lp55xx_stop_all_engine(struct lp55xx_chip *chip)
->  {
-> -	struct lp55xx_device_config *cfg = chip->cfg;
-> +	const struct lp55xx_device_config *cfg = chip->cfg;
->  
->  	lp55xx_write(chip, cfg->reg_op_mode.addr, LP55xx_MODE_DISABLE_ALL_ENG);
->  	lp55xx_wait_opmode_done(chip);
-> @@ -78,7 +80,7 @@ EXPORT_SYMBOL_GPL(lp55xx_stop_all_engine);
->  
->  static void lp55xx_reset_device(struct lp55xx_chip *chip)
->  {
-> -	struct lp55xx_device_config *cfg = chip->cfg;
-> +	const struct lp55xx_device_config *cfg = chip->cfg;
->  	u8 addr = cfg->reset.addr;
->  	u8 val  = cfg->reset.val;
->  
-> @@ -88,7 +90,7 @@ static void lp55xx_reset_device(struct lp55xx_chip *chip)
->  
->  static int lp55xx_detect_device(struct lp55xx_chip *chip)
->  {
-> -	struct lp55xx_device_config *cfg = chip->cfg;
-> +	const struct lp55xx_device_config *cfg = chip->cfg;
->  	u8 addr = cfg->enable.addr;
->  	u8 val  = cfg->enable.val;
->  	int ret;
-> @@ -111,7 +113,7 @@ static int lp55xx_detect_device(struct lp55xx_chip *chip)
->  
->  static int lp55xx_post_init_device(struct lp55xx_chip *chip)
->  {
-> -	struct lp55xx_device_config *cfg = chip->cfg;
-> +	const struct lp55xx_device_config *cfg = chip->cfg;
->  
->  	if (!cfg->post_init_device)
->  		return 0;
-> @@ -176,7 +178,7 @@ static int lp55xx_set_mc_brightness(struct led_classdev *cdev,
->  {
->  	struct led_classdev_mc *mc_dev = lcdev_to_mccdev(cdev);
->  	struct lp55xx_led *led = mcled_cdev_to_led(mc_dev);
-> -	struct lp55xx_device_config *cfg = led->chip->cfg;
-> +	const struct lp55xx_device_config *cfg = led->chip->cfg;
->  
->  	led_mc_calc_color_components(&led->mc_cdev, brightness);
->  	return cfg->multicolor_brightness_fn(led);
-> @@ -187,7 +189,7 @@ static int lp55xx_set_brightness(struct led_classdev *cdev,
->  			     enum led_brightness brightness)
->  {
->  	struct lp55xx_led *led = cdev_to_lp55xx_led(cdev);
-> -	struct lp55xx_device_config *cfg = led->chip->cfg;
-> +	const struct lp55xx_device_config *cfg = led->chip->cfg;
->  
->  	led->brightness = (u8)brightness;
->  	return cfg->brightness_fn(led);
-> @@ -197,7 +199,7 @@ static int lp55xx_init_led(struct lp55xx_led *led,
->  			struct lp55xx_chip *chip, int chan)
->  {
->  	struct lp55xx_platform_data *pdata = chip->pdata;
-> -	struct lp55xx_device_config *cfg = chip->cfg;
-> +	const struct lp55xx_device_config *cfg = chip->cfg;
->  	struct device *dev = &chip->cl->dev;
->  	int max_channel = cfg->max_channel;
->  	struct mc_subled *mc_led_info;
-> @@ -459,10 +461,10 @@ bool lp55xx_is_extclk_used(struct lp55xx_chip *chip)
+>         switch (sw_mode) {
+>         case (dml2_sw_linear):
+> -               return 256; break;
+> +               return 256;
+>         case (dml2_sw_256b_2d):
+> -               return 256; break;
+> +               return 256;
+>         case (dml2_sw_4kb_2d):
+> -               return 4096; break;
+> +               return 4096;
+>         case (dml2_sw_64kb_2d):
+> -               return 65536; break;
+> +               return 65536;
+>         case (dml2_sw_256kb_2d):
+> -               return 262144; break;
+> +               return 262144;
+>         case (dml2_gfx11_sw_linear):
+> -               return 256; break;
+> +               return 256;
+>         case (dml2_gfx11_sw_64kb_d):
+> -               return 65536; break;
+> +               return 65536;
+>         case (dml2_gfx11_sw_64kb_d_t):
+> -               return 65536; break;
+> +               return 65536;
+>         case (dml2_gfx11_sw_64kb_d_x):
+> -               return 65536; break;
+> +               return 65536;
+>         case (dml2_gfx11_sw_64kb_r_x):
+> -               return 65536; break;
+> +               return 65536;
+>         case (dml2_gfx11_sw_256kb_d_x):
+> -               return 262144; break;
+> +               return 262144;
+>         case (dml2_gfx11_sw_256kb_r_x):
+> -               return 262144; break;
+> +               return 262144;
+>         default:
+>                 DML2_ASSERT(0);
+>                 return 256;
+> -       };
+> +       }
 >  }
->  EXPORT_SYMBOL_GPL(lp55xx_is_extclk_used);
->  
-> -int lp55xx_init_device(struct lp55xx_chip *chip)
-> +static int lp55xx_init_device(struct lp55xx_chip *chip)
+>
+>  const char *dml2_core_internal_bw_type_str(enum dml2_core_internal_bw_ty=
+pe bw_type)
 >  {
->  	struct lp55xx_platform_data *pdata;
-> -	struct lp55xx_device_config *cfg;
-> +	const struct lp55xx_device_config *cfg;
->  	struct device *dev = &chip->cl->dev;
->  	int ret = 0;
->  
-> @@ -512,9 +514,8 @@ int lp55xx_init_device(struct lp55xx_chip *chip)
->  err:
->  	return ret;
+>         switch (bw_type) {
+>         case (dml2_core_internal_bw_sdp):
+> -               return("dml2_core_internal_bw_sdp"); break;
+> +               return("dml2_core_internal_bw_sdp");
+>         case (dml2_core_internal_bw_dram):
+> -               return("dml2_core_internal_bw_dram"); break;
+> +               return("dml2_core_internal_bw_dram");
+>         case (dml2_core_internal_bw_max):
+> -               return("dml2_core_internal_bw_max"); break;
+> +               return("dml2_core_internal_bw_max");
+>         default:
+> -               return("dml2_core_internal_bw_unknown"); break;
+> -       };
+> +               return("dml2_core_internal_bw_unknown");
+> +       }
 >  }
-> -EXPORT_SYMBOL_GPL(lp55xx_init_device);
->  
-> -void lp55xx_deinit_device(struct lp55xx_chip *chip)
-> +static void lp55xx_deinit_device(struct lp55xx_chip *chip)
+>
+>  const char *dml2_core_internal_soc_state_type_str(enum dml2_core_interna=
+l_soc_state_type dml2_core_internal_soc_state_type)
 >  {
->  	struct lp55xx_platform_data *pdata = chip->pdata;
->  
-> @@ -524,12 +525,11 @@ void lp55xx_deinit_device(struct lp55xx_chip *chip)
->  	if (pdata->enable_gpiod)
->  		gpiod_set_value(pdata->enable_gpiod, 0);
+>         switch (dml2_core_internal_soc_state_type) {
+>         case (dml2_core_internal_soc_state_sys_idle):
+> -               return("dml2_core_internal_soc_state_sys_idle"); break;
+> +               return("dml2_core_internal_soc_state_sys_idle");
+>         case (dml2_core_internal_soc_state_sys_active):
+> -               return("dml2_core_internal_soc_state_sys_active"); break;
+> +               return("dml2_core_internal_soc_state_sys_active");
+>         case (dml2_core_internal_soc_state_svp_prefetch):
+> -               return("dml2_core_internal_soc_state_svp_prefetch"); brea=
+k;
+> +               return("dml2_core_internal_soc_state_svp_prefetch");
+>         case dml2_core_internal_soc_state_max:
+>         default:
+> -               return("dml2_core_internal_soc_state_unknown"); break;
+> -       };
+> +               return("dml2_core_internal_soc_state_unknown");
+> +       }
 >  }
-> -EXPORT_SYMBOL_GPL(lp55xx_deinit_device);
-
--- 
-Lee Jones [李琼斯]
+>
+>  static bool dml_is_vertical_rotation(enum dml2_rotation_angle Scan)
+> --
+> 2.20.1.7.g153144c
+>
 
