@@ -1,177 +1,92 @@
-Return-Path: <linux-kernel+bounces-222180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 464AB90FDF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:44:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A6090FDF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCFF4B23A24
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:44:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 681F51F250DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761DE4F211;
-	Thu, 20 Jun 2024 07:43:53 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F124D8BA;
+	Thu, 20 Jun 2024 07:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IMtFr/mX"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9806345C18;
-	Thu, 20 Jun 2024 07:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8974D131
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718869433; cv=none; b=e4vCL90LTHoKk88MwCz8VCuRAVTr0y+3ahKpbHNbUq1kCEWwvUGjA6MNYNRZKExNtEapj0ik7TLRb10Mju4iJmawGlZLFeKS1Hrxp9WoiUkrp3P/8hAeYD0ZWaJ7escfMnoVPLmUkuKEAZOIuO0w2xK+FunWWrlo75oBIWDCGGA=
+	t=1718869454; cv=none; b=MXhSKJ7Aell7ZLEB7udSaXuKYY2oZkL86QdUrQtxu/uD/pn6fOvoGhl0punOK7ru0jyevWTU67at5ukGSLBrptZS8+qIDu6RU+c0YVG0JJtAYQcyfdg0KqwAx74dUlth0HF9lPNsL3Ks1zZ0LLGfxlXkH622Vtj7PEi1cJUdMo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718869433; c=relaxed/simple;
-	bh=2wZuP2tGNgUyHH0sO6Iikxk/kDANcJqGrqJ9vQBGR2Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZUFqK4TQ5cFhjrkhhLZJH3bjgLsARBhOXCzKZQsStpx2kkL2nTW2ElCc+MVazdsn3YdihsExAbmKUevPFFgj/hlLYBXdec5SuEQh0OTihWRRHwIOobQRaFL813udpMg2vodL0uVXR1Ng4HDG6Wif/oLh1UAcCm/4aJ7HbZuZFog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: cd3f94202ed811ef9305a59a3cc225df-20240620
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:1823fc96-0938-45f2-86a2-8f5271a1870a,IP:20,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:15
-X-CID-INFO: VERSION:1.1.38,REQID:1823fc96-0938-45f2-86a2-8f5271a1870a,IP:20,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:15
-X-CID-META: VersionHash:82c5f88,CLOUDID:f45b09256ab3039538acd0274731d486,BulkI
-	D:240620153437FZVNTPXL,BulkQuantity:1,Recheck:0,SF:66|38|24|72|19|44|102,T
-	C:nil,Content:0,EDM:-3,IP:-2,URL:11|1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:n
-	il,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_ULN
-X-UUID: cd3f94202ed811ef9305a59a3cc225df-20240620
-Received: from node4.com.cn [(39.156.73.12)] by mailgw.kylinos.cn
-	(envelope-from <shaozongfan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 416432350; Thu, 20 Jun 2024 15:43:36 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 0E56516002081;
-	Thu, 20 Jun 2024 15:43:36 +0800 (CST)
-X-ns-mid: postfix-6673DDA7-866860212
-Received: from localhost.localdomain (unknown [172.30.110.47])
-	by node4.com.cn (NSMail) with ESMTPA id 8047316002081;
-	Thu, 20 Jun 2024 07:43:35 +0000 (UTC)
-From: shaozongfan <shaozongfan@kylinos.cn>
-To: chandan.babu@oracle.com,
-	djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shaozongfan <shaozongfan@kylinos.cn>
-Subject: [PATCH] xfs: fix a NULL pointer problem
-Date: Thu, 20 Jun 2024 15:43:13 +0800
-Message-Id: <20240620074312.646085-1-shaozongfan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718869454; c=relaxed/simple;
+	bh=3j7e9PJPpJnC7/ySgQZmC2Q4r3+A3/w2hZAUUdju4BM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MDHbM4iQ5s7Uj1F0kOMRHh7kc9jK2DwsMK3X/Cg/cBw6LscwvP8grAWaSUmq8BFnKsx8Yknnh/xY2+6bLE8JmCnrbOqTBYk94aKd5R6FeGsNJnBAladYzjY0/vdLcS/V6MTtHyAI/KgOAB8rTDobW1C5fqKGgqmGc0+RY3nM3Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IMtFr/mX; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ITCJvqqKSa/x8Jaju7HDhd2cI01OMCbEj0IxKyM+MYo=; b=IMtFr/mXRdtnl2/LY++jO8p1zI
+	oKxlk3KF87FC9s68OU0/+1qY4qZYvTXR2OPYjOOYQreVSIUYsgFW4HTfzu/bnitcE8KXCZskJ7wWs
+	5s7rpambmt4schH4CnGmF6yDIYZO0uS6PlradecGBfQwhdxJRlRR0pjkiaxylCjIoI5Qi86/R4Ozt
+	vVYz6ySW55Yih6bpdJ6SzSFT17T37Jz9TwOzILyCqxcwOD8xBHTwToNDayyfxlhTgpC9G4npgfiQ+
+	EbPmRoU4/ppdxl40q+qonfUXRk6VjKeMaHgGENHyphE4DqUH8ss/4Gf4qAFxsol8zP1a3tZTQEPzs
+	WmWtcp4Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sKCSg-00000005mwj-2l1p;
+	Thu, 20 Jun 2024 07:44:02 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4861A300CB9; Thu, 20 Jun 2024 09:44:02 +0200 (CEST)
+Date: Thu, 20 Jun 2024 09:44:02 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+	ak@linux.intel.com, eranian@google.com,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: Re: [RESEND PATCH 05/12] perf/x86: Add config_mask to represent
+ EVENTSEL bitmask
+Message-ID: <20240620074402.GS31592@noisy.programming.kicks-ass.net>
+References: <20240618151044.1318612-1-kan.liang@linux.intel.com>
+ <20240618151044.1318612-6-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618151044.1318612-6-kan.liang@linux.intel.com>
 
-when a process using getdents64() api to get a Folder inside
-the file directory,meantime other process delete the file
-directory.it would cause an error like this:
+On Tue, Jun 18, 2024 at 08:10:37AM -0700, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> Different vendors may support different fields in EVENTSEL MSR, such as
+> Intel would introduce new fields umask2 and eq bits in EVENTSEL MSR
+> since Perfmon version 6. However, a fixed mask X86_RAW_EVENT_MASK is
+> used to filter the attr.config.
+> 
 
-[  100.640099] Unable to handle kernel NULL pointer dereference at virtua=
-l address 0000000000000001
-[  100.641246] Mem abort info:
-[  100.641636]   ESR =3D 0x96000007
-[  100.642057]   Exception class =3D DABT (current EL), IL =3D 32 bits
-[  100.642815]   SET =3D 0, FnV =3D 0
-[  100.643235]   EA =3D 0, S1PTW =3D 0
-[  100.643664] Data abort info:
-[  100.644063]   ISV =3D 0, ISS =3D 0x00000007
-[  100.644574]   CM =3D 0, WnR =3D 0
-[  100.644984] user pgtable: 64k pages, 48-bit VAs, pgdp =3D 000000001351=
-05a5
-[  100.645876] [0000000000000001] pgd=3D00000001ac6b0003, pud=3D00000001a=
-c6b0003, pmd=3D00000001aad30003, pte=3D0000000000000000
-[  100.647204] Internal error: Oops: 96000007 [#1] SMP
-[  100.647843] Modules linked in: binfmt_misc fuse devlink xt_CHECKSUM ip=
-t_MASQUERADE ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_rejec=
-t_ipv4 xt_conntrack ebtable_nat ip6table_nat nf_nat_ipv6 ip6table_mangle =
-tun bridge ip6table_raw ip6table_security stp llc iptable_nat nf_nat_ipv4=
- nf_nat iptable_mangle iptable_raw iptable_security nf_conntrack nf_defra=
-g_ipv6 nf_defrag_ipv4 rfkill ip_set nfnetlink ebtable_filter ebtables ip6=
-table_filter ip6_tables iptable_filter sch_fq_codel sunrpc vfat fat ip_ta=
-bles sr_mod cdrom virtio_gpu virtio_console virtio_net virtio_scsi net_fa=
-ilover failover dm_mirror dm_region_hash dm_log gb
-[  100.654877] Process getdents (pid: 6455, stack limit =3D 0x00000000a82=
-41109)
-[  100.655759] CPU: 0 PID: 6455 Comm: getdents Kdump: loaded Tainted: P  =
-         OE     4.19.90-25.10.v2101.ky10.aarch64 #1
-[  100.657418] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/=
-2015
-[  100.658484] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[  100.659297] pc : xfs_dir2_sf_get_parent_ino+0x1c/0x30
-[  100.660093] lr : xfs_dir2_sf_getdents.isra.0+0xd8/0x248
-[  100.660922] sp : ffff80016eda3bd0
-[  100.661476] x29: ffff80016eda3bd0 x28: ffff800167c4d900
-[  100.662310] x27: 0000000000000000 x26: 0000000000000000
-[  100.663149] x25: 0000000000000000 x24: ffff800174ca5000
-[  100.663980] x23: 000000000000000a x22: 0000000000000000
-[  100.664822] x21: ffff800161337780 x20: ffff8001437b8000
-[  100.665647] x19: 0000000000000000 x18: 0000000000000000
-[  100.666482] x17: 0000000000000001 x16: 0000000000000000
-[  100.667328] x15: 0000000000000000 x14: 0000000000000000
-[  100.668159] x13: 0000000000000000 x12: 0000000000000000
-[  100.668985] x11: 0000000000000000 x10: 0000000000000000
-[  100.669816] x9 : 0000000000000000 x8 : 0000000000000000
-[  100.670643] x7 : 0000000000000000 x6 : ffff8001704a6414
-[  100.671517] x5 : 0000000000000004 x4 : 0000000004195704
-[  100.672355] x3 : 000000000000002e x2 : 0000000000000001
-[  100.673181] x1 : 0000000000000002 x0 : ffff0000084cda20
-[  100.674007] Call trace:
-[  100.674427]  xfs_dir2_sf_get_parent_ino+0x1c/0x30
-[  100.675168]  xfs_dir2_sf_getdents.isra.0+0xd8/0x248
-[  100.675943]  xfs_readdir+0x184/0x1d0
-[  100.676522]  xfs_file_readdir+0x40/0x50
-[  100.677149]  iterate_dir+0x8c/0x1a8
-[  100.677717]  ksys_getdents64+0xb4/0x348
-[  100.678335]  __arm64_sys_getdents64+0x28/0x38
-[  100.679027]  el0_svc_common+0x78/0x130
-[  100.679640]  el0_svc_handler+0x38/0x78
-[  100.680249]  el0_svc+0x8/0x1b0
-[  100.680756] Code: aa0003f3 aa1e03e0 d503201f 91000a61 (39400660)
-[  100.681720] SMP: stopping secondary CPUs
-[  100.684250] Starting crashdump kernel...
-[  100.684868] Bye!
+> @@ -1231,6 +1233,11 @@ static inline int x86_pmu_num_counters_fixed(struct pmu *pmu)
+>  	return hweight64(hybrid(pmu, fixed_cntr_mask64));
+>  }
+>  
+> +static inline u64 x86_pmu_get_event_config(struct perf_event *event)
+> +{
+> +	return event->attr.config & hybrid(event->pmu, config_mask);
+> +}
 
-Signed-off-by: shaozongfan <shaozongfan@kylinos.cn>
----
- fs/xfs/xfs_dir2_readdir.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/fs/xfs/xfs_dir2_readdir.c b/fs/xfs/xfs_dir2_readdir.c
-index 9f3ceb461515..db6c910cad96 100644
---- a/fs/xfs/xfs_dir2_readdir.c
-+++ b/fs/xfs/xfs_dir2_readdir.c
-@@ -51,7 +51,7 @@ xfs_dir2_sf_getdents(
- 	struct xfs_mount	*mp =3D dp->i_mount;
- 	xfs_dir2_dataptr_t	off;		/* current entry's offset */
- 	xfs_dir2_sf_entry_t	*sfep;		/* shortform directory entry */
--	xfs_dir2_sf_hdr_t	*sfp;		/* shortform structure */
-+	xfs_dir2_sf_hdr_t	*sfp, *sfp1;		/* shortform structure */
- 	xfs_dir2_dataptr_t	dot_offset;
- 	xfs_dir2_dataptr_t	dotdot_offset;
- 	xfs_ino_t		ino;
-@@ -93,7 +93,10 @@ xfs_dir2_sf_getdents(
- 	 * Put .. entry unless we're starting past it.
- 	 */
- 	if (ctx->pos <=3D dotdot_offset) {
--		ino =3D xfs_dir2_sf_get_parent_ino(sfp);
-+		sfp1 =3D sfp;
-+		if (sfp1 =3D=3D NULL)
-+			return 0;
-+		ino =3D xfs_dir2_sf_get_parent_ino(sfp1);
- 		ctx->pos =3D dotdot_offset & 0x7fffffff;
- 		if (!dir_emit(ctx, "..", 2, ino, DT_DIR))
- 			return 0;
---=20
-2.25.1
-
+Seriously, we're going to be having such major event encoding
+differences between cores on a single chip?
 
