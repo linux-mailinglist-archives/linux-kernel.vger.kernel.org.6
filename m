@@ -1,154 +1,224 @@
-Return-Path: <linux-kernel+bounces-222892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A84D910943
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:06:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E725910953
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7491F2556F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:06:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE06C1F23678
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEB91AF688;
-	Thu, 20 Jun 2024 15:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596081AF694;
+	Thu, 20 Jun 2024 15:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dqvxlAHk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="GqqaXCVa"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7643F1ACE94;
-	Thu, 20 Jun 2024 15:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44801AED5D
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718896007; cv=none; b=qcEaMv3sXNPlW6Hhb8ha0KmRjvG9pJU1Jle+fUvxeox6mpKuozXqstyf4F+PiHqd50GDRSAwyDLQ/6u2+Gy2HAS35o2RJqIjwKLO5LxldebfJubeVwogiv+ZizR0Z0nyiiYpJNcnq+nrwfg2BKASRtmvm7vfc0cH7fJUvXkQ7eA=
+	t=1718896105; cv=none; b=ZhDuyctoa9l7ZwgOQP7du6Mrg5jyshs2+aL/oBrwvlYL9zsuM5787sTs0jDdI+GgeCqGptSFLFsQ8BeokvXqXIFHXTb5EeoVf/82Rw6NZ7re/mmtJq/ctWH10WIWzPtRFhYpaLV+3qRddtPnr2Fx5aVINsMb6Y/ppYJqYv0Xon8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718896007; c=relaxed/simple;
-	bh=ed/xn1fU6JjQTrIiEBjf8dyuhmUDQHuxYh4o0DIqoMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nl+Je2mQqNBjithmm+Mj6zkyQ0q/9yW2TdWALBob0I9/dTozAt28wdkeWL6rgniq7zn6Lm3lfFLuwMsCPlh0va/bfh3eNqfbUAuy8yybPiQ0yS+1sNl+LwSYHbemkwW41v9+4HKYQWfzT8vF2EdCml28jFwvQjWkCeKVM4J2H/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dqvxlAHk; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718896006; x=1750432006;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ed/xn1fU6JjQTrIiEBjf8dyuhmUDQHuxYh4o0DIqoMU=;
-  b=dqvxlAHkIZAAqnt5kKtZ6HdR+4RwZXmXVDz6OODj+am2TnYYEslKKp3i
-   69H4HdIP0C5em8/D0IVRBQzDqIrLQtN3knjFZ3vLdyVg31aSUJl3YLviA
-   /ByHSnGKhlQI6wO0hlvGn0afefcjmCz6cddPiTPxqe2YO610xBMjKHqHh
-   ulSoHESForfeUxgWooSqYgvu2iHV5XnEB+wwrBTPbLMEE1/o62knCRRN4
-   vwJ3f/JvnxYw4xkJD12QgcV61OWYgFgY5H9gu8JE7MwpHYcEGWGxOb1tc
-   pfNWmw785MvXNUL59V0CQqtyEc5+f+P4qH8oXVN4WpSFDkOJcf99mASd2
-   g==;
-X-CSE-ConnectionGUID: a18qrktbQFyLxbWVjfTVPQ==
-X-CSE-MsgGUID: A2ocguk1SreAne1EaC2VwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="27008525"
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="27008525"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 08:06:13 -0700
-X-CSE-ConnectionGUID: VWRy/8V3RGehZ8d4gd5lJQ==
-X-CSE-MsgGUID: WdHXzhEnTba4SjG473V2qg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="42385046"
-Received: from bmurrell-mobl.amr.corp.intel.com (HELO [10.124.221.1]) ([10.124.221.1])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 08:06:09 -0700
-Message-ID: <1b99017a-6964-46de-ba3a-09552e7cf072@intel.com>
-Date: Thu, 20 Jun 2024 08:06:11 -0700
+	s=arc-20240116; t=1718896105; c=relaxed/simple;
+	bh=3GCO67NxDPt/aRdmgDv+rRG/eFuwvr1m3sNphXchNBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oCQn7ebc9M/giFD2czGEGH/KFEelCvZjcb7GaCB37Em7HiAWA0ZPKlfnNPbAMz05YJv/eo2T6RsiJ94N+IhFyFDvIYuGfLGh7Fkr1mx7QGJX+8qNk4hvtCoFRtG+ST6flzXC6RZ2rrzNN5nIHoM560G+H1Tl4NUkIUGhrQHYL5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=GqqaXCVa; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52c84a21c62so1133547e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:08:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1718896101; x=1719500901; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fqbQ4/LSvNlTgwrSsCzQO6vX4yTeMNAEcNKnVo99eKc=;
+        b=GqqaXCVaA/At21hDYMwjUk2HnOUCVzZLz7k2glJuyPhLS5RGOXi/ZShxyWQTNnlvXj
+         SPjrH1BYLKqS1CpQxTzSOI27nhAtG4PFep44gJNmpJzNDhFV1UFmE6eRB3IWYZs++JUQ
+         dmw9NgBnBJ1g9SsKntumlf5GBmecF6p9qFzMuOP4zPAhvVnbvOhvaaDtviFsFnGP++lh
+         VocMFD5Dmnt0K3uh0enK51rz5pEgT3eCKi8KjF/OFxo4vLnCyYWJ9JjGOFrQURjJN68s
+         AG/hgblJFcvXpUdK9J2f2fq2rAzIF/dK4Le5BaFP9F81jMwLH9/LwBnzIOiZVV+Tn6lq
+         hvqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718896101; x=1719500901;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fqbQ4/LSvNlTgwrSsCzQO6vX4yTeMNAEcNKnVo99eKc=;
+        b=iOyfIQhRYl3Cxv9te9IjOBS23Z7yM1cFPB1IKD6ZySBQOpjNQ3j3IubeYmk5i04dDG
+         dy7W7g2czy0ExIBNJK5UCRjwWSKfIycF+KswBTMLtpiZYoWoZ2rPuyH8x64qL8dm+ns2
+         +wBYPo9u6lIGqEVX1iQyaUjvwb9HQPQ4LjNAQSAXtWR02ZPNSNV6LlRzJUb8FE5QTEGj
+         jMquAAchoinb8ZasbK1rE1AyIQUjhtRqWIlHTLCGjHFzHsVNJYOcf56imqhjJrYMSq7t
+         H+1e0qRCVeU3vQYtm8j65kraDTL1YHv9HIQP7JsmHZ8OI3MiMNwWq7HkzSzS8KkGgABn
+         ZvbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCR0pHoI7FkucPJ54CXO6kBVuGAghOCVQQb4i9MdQCc6WLyzpgKuWUQ1phW6J6m0nPRlBTMZKjxxlCIM2+8Nxhnk9dRjDLuYp+nDq/
+X-Gm-Message-State: AOJu0YytNL0DJjptKcLD4KJxuL8+QxtTVXx6PkRqPw+UUFx0VUVzgSXU
+	ntpcQI/e+PCMRPhDE3PFv9FlKIJi3F2/Zc1pTE3UYxzT47vaEhxdLHRjh75ZaMU3r2hnyL96Qoq
+	QQmoSlni8XXKPgEm2Pq2stzJFUT8PhO27mWFoSg==
+X-Google-Smtp-Source: AGHT+IHk5geEKnYo5/gFE32I0p9kd/apddmgSDY5fMi4jrRdd+DMk3xtL+dIfzBKUvGjuEK0uQvbBTZ0nLC+IZ8WU2I=
+X-Received: by 2002:a19:5e49:0:b0:52c:a574:28f2 with SMTP id
+ 2adb3069b0e04-52ccaa5d013mr3420657e87.26.1718896100763; Thu, 20 Jun 2024
+ 08:08:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/9] Add CPU-type to topology
-To: Brice Goglin <brice.goglin@gmail.com>,
- srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, daniel.sneddon@linux.intel.com, tony.luck@intel.com,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <8d757ea3-87a3-4663-ac76-66b04e33e6b3@gmail.com>
- <20240619015315.3ei5f6rovzdnxovo@desk>
- <bc75ff55161671e4470849ed51baa547f619889d.camel@linux.intel.com>
- <0021f5f2-67c5-4b20-939d-48c9c1c60cdb@gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <0021f5f2-67c5-4b20-939d-48c9c1c60cdb@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240222094006.1030709-1-apatel@ventanamicro.com>
+ <20240222094006.1030709-2-apatel@ventanamicro.com> <CAJM55Z9hGKo4784N3s3DhWw=nMRKZKcmvZ58x7uVBghExhoc9A@mail.gmail.com>
+ <CAK9=C2WP2+gKScUFuoE9782gjSfnDtcLAw01eCwram3LMAStBg@mail.gmail.com>
+ <CAJM55Z8ti-ePT0t714h1Za9X3Ns3=Fw0pCu3NZ=7eT76JU_p5g@mail.gmail.com>
+ <CAAhSdy1pesbdTfWnFURMJRcy2ujjX+cXtt-cfLDj2CQf2Ua_gw@mail.gmail.com> <CAJM55Z_=94+aMv=ywhih44eF0pR2WXiyx3FcrwRaX6tZto4gpQ@mail.gmail.com>
+In-Reply-To: <CAJM55Z_=94+aMv=ywhih44eF0pR2WXiyx3FcrwRaX6tZto4gpQ@mail.gmail.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Thu, 20 Jun 2024 20:38:09 +0530
+Message-ID: <CAK9=C2XWjtWtV1WbQrX4Cg8KyzjVevMjG18YTgQJbZxi61BFjg@mail.gmail.com>
+Subject: Re: [PATCH v14 01/18] irqchip/sifive-plic: Convert PLIC driver into a
+ platform driver
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc: Anup Patel <anup@brainfault.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Frank Rowand <frowand.list@gmail.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org, 
+	Saravana Kannan <saravanak@google.com>, Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org, 
+	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
+	Atish Patra <atishp@atishpatra.org>, linux-riscv@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Andrew Jones <ajones@ventanamicro.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/19/24 14:25, Brice Goglin wrote:
-> Good point. From this patch series, I understand that the current kernel
-> side doesn't care about these different E-cores. However it might be
-> good to expose them as different cpu-types (or better name) to userspace ?
-> 
-> Something like type 0 = P-core, 1 = normal E-core, 2 = low power E-core ?
+On Thu, Jun 20, 2024 at 6:40=E2=80=AFPM Emil Renner Berthing
+<emil.renner.berthing@canonical.com> wrote:
+>
+> Anup Patel wrote:
+> > On Wed, Jun 19, 2024 at 11:16=E2=80=AFPM Emil Renner Berthing
+> > <emil.renner.berthing@canonical.com> wrote:
+> > >
+> > > Anup Patel wrote:
+> > > > On Tue, Jun 18, 2024 at 7:00=E2=80=AFPM Emil Renner Berthing
+> > > > <emil.renner.berthing@canonical.com> wrote:
+> > > > >
+> > > > > Anup Patel wrote:
+> > > > > > The PLIC driver does not require very early initialization so c=
+onvert
+> > > > > > it into a platform driver.
+> > > > > >
+> > > > > > After conversion, the PLIC driver is probed after CPUs are brou=
+ght-up
+> > > > > > so setup cpuhp state after context handler of all online CPUs a=
+re
+> > > > > > initialized otherwise PLIC driver crashes for platforms with mu=
+ltiple
+> > > > > > PLIC instances.
+> > > > > >
+> > > > > > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> > > > >
+> > > > > Hi Anup,
+> > > > >
+> > > > > Sorry for the late reply to the mailing list, but ever since 6.9 =
+where this was
+> > > > > applied my Allwinner D1 based boards no longer boot. This is the =
+log of my
+> > > > > LicheeRV Dock booting plain 6.10-rc4, locking up and then rebooti=
+ng due to the
+> > > > > the watchdog timing out:
+> > > > >
+> > > > > https://pastebin.com/raw/nsbzgEKW
+> > > > >
+> > > > > On 6.10-rc4 I can bring the same board to boot by reverting this =
+patch and all
+> > > > > patches building on it. Eg.:
+> > > > >
+> > > > >   git revert e306a894bd51 a7fb69ffd7ce abb720579490 \
+> > > > >              956521064780 a15587277a24 6c725f33d67b \
+> > > > >              b68d0ff529a9 25d862e183d4 8ec99b033147
+> > > >
+> > > > Does your board boot with only SBI timer driver enabled ?
+> > >
+> > > I'm not 100% sure this is what you mean, but with this change I can d=
+isable
+> > > CONFIG_SUN4I_TIMER:
+> > >
+> > > diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> > > index f51bb24bc84c..0143545348eb 100644
+> > > --- a/arch/riscv/Kconfig.socs
+> > > +++ b/arch/riscv/Kconfig.socs
+> > > @@ -39,7 +39,6 @@ config ARCH_SUNXI
+> > >         bool "Allwinner sun20i SoCs"
+> > >         depends on MMU && !XIP_KERNEL
+> > >         select ERRATA_THEAD
+> > > -       select SUN4I_TIMER
+> > >         help
+> > >           This enables support for Allwinner sun20i platform hardware=
+,
+> > >           including boards based on the D1 and D1s SoCs.
+> > >
+> > >
+> > > But unfortunately the board still doesn't boot:
+> > > https://pastebin.com/raw/AwRxcfeu
+> >
+> > I think we should enable debug prints in DD core and see
+> > which device is not getting probed due to lack of a provider.
+> >
+> > Just add "#define DEBUG" at the top in drivers/base/core.c
+> > and boot again with "loglevel=3D8" kernel parameter (along with
+> > the above change).
+>
+> With the above changes this is what I get:
+> https://pastebin.com/raw/JfRrEahT
 
-The first priority here is getting the kernel to comprehend these types
-for architectural purposes: when there are functional differences
-between the cores.
+You should see prints like below which show producer consumer
+relation:
 
-Let's get that in place, first.  Then we can discuss the possibility of
-new ABI in the area.
+[    0.214589] /soc/rtc@101000 Linked as a fwnode consumer to /soc/plic@c00=
+0000
+[    0.214966] /soc/serial@10000000 Linked as a fwnode consumer to
+/soc/plic@c000000
+[    0.215443] /soc/virtio_mmio@10008000 Linked as a fwnode consumer
+to /soc/plic@c000000
+[    0.216041] /soc/virtio_mmio@10007000 Linked as a fwnode consumer
+to /soc/plic@c000000
+[    0.216482] /soc/virtio_mmio@10006000 Linked as a fwnode consumer
+to /soc/plic@c000000
+[    0.216868] /soc/virtio_mmio@10005000 Linked as a fwnode consumer
+to /soc/plic@c000000
+[    0.217477] /soc/virtio_mmio@10004000 Linked as a fwnode consumer
+to /soc/plic@c000000
+[    0.217949] /soc/virtio_mmio@10003000 Linked as a fwnode consumer
+to /soc/plic@c000000
+[    0.218595] /soc/virtio_mmio@10002000 Linked as a fwnode consumer
+to /soc/plic@c000000
+[    0.219280] /soc/virtio_mmio@10001000 Linked as a fwnode consumer
+to /soc/plic@c000000
+[    0.219908] /soc/plic@c000000 Linked as a fwnode consumer to
+/cpus/cpu@0/interrupt-controller
+[    0.220800] /soc/plic@c000000 Linked as a fwnode consumer to
+/cpus/cpu@1/interrupt-controller
+[    0.221323] /soc/plic@c000000 Linked as a fwnode consumer to
+/cpus/cpu@2/interrupt-controller
+[    0.221838] /soc/plic@c000000 Linked as a fwnode consumer to
+/cpus/cpu@3/interrupt-controller
+[    0.222347] /soc/clint@2000000 Linked as a fwnode consumer to
+/cpus/cpu@0/interrupt-controller
+[    0.222769] /soc/clint@2000000 Linked as a fwnode consumer to
+/cpus/cpu@1/interrupt-controller
+[    0.223864] /soc/clint@2000000 Linked as a fwnode consumer to
+/cpus/cpu@2/interrupt-controller
+[    0.224370] /soc/clint@2000000 Linked as a fwnode consumer to
+/cpus/cpu@3/interrupt-controller
+[    0.225217] /soc/pci@30000000 Linked as a fwnode consumer to
+/soc/plic@c000000
 
-Did the ARM folks ever do a sysfs ABI for big.LITTLE?  I don't see
-anything obvious in Documentation/ABI/testing/sysfs-devices-system-cpu.
+To get further prints, I suggest enabling SBI_HVC console and use
+"console=3Dhvc0" as kernel parameter.
 
-
+Regards,
+Anup
 
