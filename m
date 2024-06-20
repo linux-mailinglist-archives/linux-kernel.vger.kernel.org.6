@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-222205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E26A90FE2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:02:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1980490FE2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B4F71C20D9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:02:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1515284252
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F5C4315B;
-	Thu, 20 Jun 2024 08:02:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2981C3EA64;
+	Thu, 20 Jun 2024 08:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f+tzcQ94"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1025B2139D7
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2548B4315B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718870524; cv=none; b=F2ttVn5S21F9dulVj4JBgmpYFh8Ym0nNWx9g9iWv5pu4S72HiJa0RrZIJwa8xI5hWtb+ILgWDHeJyaCQSHN/osX58+4F/WxR5Vsfr1FhiJQCe+pmEtAuiFjkskN1ospis64NyV3SgIOxtwfLQofE1uML73br/G27s2GBQ/G7UWc=
+	t=1718870556; cv=none; b=gD6nLtES7XJtbPr3a9rkX0lMYftANrBJoyG1iGM/vbm4dqHFStRh9XnUn4NkCTHyFy1PCunn/Mf702LT0YHyfrJH865ETo9/SvHRzoh+tTa/w342yd4Yould/qI5Spe5yEG8AzxSPgpZY6uT0mLtiQLPD1IY+VPic7HEKrr/XHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718870524; c=relaxed/simple;
-	bh=PA/HI5rU4uPp01IVlceLhi1UarqzruXrsue5Gr466UU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=O6UoSHUrhp1Vm3uSqb/5PrHB0m/QNaTYScJIN/wRuvvXLg1dq+vuxKw9sDPaHRR5Q8cWAijFxUCnJtkX+BQpsg1oNmGXyLutLeafRlqhxqQJEvHYgYM9a+RyPZDGWMw7Bg/00hgN2l0r8VaB39Ukr2w83nKDw6TtoyP7U6hkfUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-37624b27e27so6213045ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:02:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718870522; x=1719475322;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lwSfaNcF5zY3Ol42a15Zv9ifiw08n590E8hBhuNKH7c=;
-        b=EVIeziB8r5WCvoPS/7EfddVYIsAkiFc/84tcgR5zYFoCMWnOLnwPOMfxDvLWhqnXkQ
-         Oxl/M30Oxkq7WqsfEXaPL39PyI2NsEa9hp1Il3rQ6vaCTNLDYOKC9Xd+8tMZaStfD3dK
-         WAznSBFzJZhp+gOemlqR7HGK92PQ8qQDQurU768HV3VDk/xnuo/C+KUnUvCX1tKW814d
-         WDS/yOrZD6l4oLFn5Y/XPvS1hHIXxRk6f8tL+rcV3nD4WIZIT/lggjZe+nBd6k2KThRf
-         ps85Dk2ewsQdCmCwE17T/bmQa2Pi4NcswElt2+ronAhDNQfMRowa46z+8xtd/cIhxwuD
-         ynqw==
-X-Gm-Message-State: AOJu0YxAdKnN61nfoneTDSwCq9y4xGI8mSWxstxmf8OxhWUmODbPMGKT
-	veSQWvWGEuVbr/1yh73x92tR8P8vTQHuZjlx2SmJMUXgv3noBimsKj3lhM5nB7miX7EFwjO0JMW
-	d+wYUahd6L8RKMUSkZyT66SG3ZEZD2wPi7VACBRAJopJcqAixwBmac/A=
-X-Google-Smtp-Source: AGHT+IG/9ypkqDEvVbQq8YkYBg/332ntiXOu/rnGp8xljFy7vg17NfkmQd4d75utank7aWzPNK6N15a2YmKm0qsgcfjlf2gRGBM4
+	s=arc-20240116; t=1718870556; c=relaxed/simple;
+	bh=IHUls6ItjNQh5odUpzDFCIXCNghFgeY93zk0eWdZGPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sRHAFHESvXr3klzshDdmA9Obr2KhDRutgKr0lRRO/R7Ux6LB8zWjNfBeNLc83WoRanVM8Ve1Bti1AAA4w9ah9fjhkikWkfVvPV3rJiGHh1BSz8U4DYuGhgVJzMPJy0BQvVtuVHcUXeVirJFrc5fQeDpvUTWjs+PemS66bBdxBII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f+tzcQ94; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PGcRkBZh7GybbNP2925RL87fLil4R3yLPY8D4vpU4Bw=; b=f+tzcQ94dNTfq0458sq+YoQJOC
+	CtxyIx9EUBuiBMXbmlRcu4dZZ3CgI2XeYOGhYSSATUPmB9ZGyrypLHsumWMOYtlJB9ShmMZcnbLXH
+	zbL2H5XtGRi+sbBvEqC+IQY5O2hNIABCzjU/GHA49robtNmLj8//vyjnJqCgvAtmwHrgqu6Dx5PNK
+	/piTSnxxFs6e/vtkyncKPy6UT7Wq5UBvFyRybTszrnyfMd2/t7TpL9ncLzzv9klpp/JFXff6jTVvA
+	rs0H+3zwry+/WYYxi/MHKjC/0IqV/ZKiaivOvFRDEBEeDxVPn2CGbbk3a9JmNJenoeZC/EMMeQiwV
+	oEpysGyQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sKCkT-00000005o5V-22ie;
+	Thu, 20 Jun 2024 08:02:25 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D842E300CB9; Thu, 20 Jun 2024 10:02:24 +0200 (CEST)
+Date: Thu, 20 Jun 2024 10:02:24 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+	ak@linux.intel.com, eranian@google.com
+Subject: Re: [RESEND PATCH 07/12] perf/x86/intel: Support Perfmon MSRs
+ aliasing
+Message-ID: <20240620080224.GT31592@noisy.programming.kicks-ass.net>
+References: <20240618151044.1318612-1-kan.liang@linux.intel.com>
+ <20240618151044.1318612-8-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12eb:b0:375:9522:1831 with SMTP id
- e9e14a558f8ab-3761d749acdmr2511915ab.4.1718870522216; Thu, 20 Jun 2024
- 01:02:02 -0700 (PDT)
-Date: Thu, 20 Jun 2024 01:02:02 -0700
-In-Reply-To: <PN2PR01MB489157F204C812E350B53303FCC82@PN2PR01MB4891.INDPRD01.PROD.OUTLOOK.COM>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e46014061b4dba56@google.com>
-Subject: Re: [syzbot] [net?] [bpf?] KMSAN: uninit-value in sock_hash_delete_elem
-From: syzbot <syzbot+c33bff5d5da1391df027@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	wojciech.gladysz@infogain.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618151044.1318612-8-kan.liang@linux.intel.com>
 
-Hello,
+On Tue, Jun 18, 2024 at 08:10:39AM -0700, kan.liang@linux.intel.com wrote:
+> @@ -6179,6 +6181,11 @@ static void intel_pmu_check_extra_regs(struct extra_reg *extra_regs)
+>  	}
+>  }
+>  
+> +static inline int intel_pmu_addr_offset(int index, bool eventsel)
+> +{
+> +	return MSR_IA32_PMC_STEP * index;
+> +}
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in sock_hash_delete_elem
+This should have v6 in the name or somesuch... no?
 
-=====================================================
-BUG: KMSAN: uninit-value in spin_lock_bh include/linux/spinlock.h:356 [inline]
-BUG: KMSAN: uninit-value in sock_hash_delete_elem+0x490/0x690 net/core/sock_map.c:939
- spin_lock_bh include/linux/spinlock.h:356 [inline]
- sock_hash_delete_elem+0x490/0x690 net/core/sock_map.c:939
- ____bpf_map_delete_elem kernel/bpf/helpers.c:77 [inline]
- bpf_map_delete_elem+0x5c/0x80 kernel/bpf/helpers.c:73
- ___bpf_prog_run+0x13fe/0xe0f0 kernel/bpf/core.c:2011
- __bpf_prog_run32+0xb2/0xe0 kernel/bpf/core.c:2250
- bpf_dispatcher_nop_func include/linux/bpf.h:1233 [inline]
- __bpf_prog_run include/linux/filter.h:667 [inline]
- bpf_prog_run include/linux/filter.h:674 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2396 [inline]
- bpf_trace_run3+0x201/0x500 kernel/trace/bpf_trace.c:2438
- __bpf_trace_block_bio_remap+0x34/0x50 include/trace/events/block.h:507
- trace_block_bio_remap include/trace/events/block.h:507 [inline]
- blk_partition_remap block/blk-core.c:571 [inline]
- submit_bio_noacct+0x2449/0x2800 block/blk-core.c:762
- submit_bio+0x58a/0x5b0 block/blk-core.c:879
- submit_bh_wbc+0x81e/0x890 fs/buffer.c:2804
- submit_bh fs/buffer.c:2809 [inline]
- write_dirty_buffer+0x1ac/0x1f0 fs/buffer.c:2822
- flush_descriptor fs/jbd2/revoke.c:657 [inline]
- jbd2_journal_write_revoke_records+0x1c0b/0x1c80 fs/jbd2/revoke.c:562
- jbd2_journal_commit_transaction+0x1949/0xa620 fs/jbd2/commit.c:551
- kjournald2+0x494/0x900 fs/jbd2/journal.c:201
- kthread+0x3e2/0x540 kernel/kthread.c:388
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:243
-
-Local variable stack created at:
- __bpf_prog_run32+0x43/0xe0 kernel/bpf/core.c:2250
- bpf_dispatcher_nop_func include/linux/bpf.h:1233 [inline]
- __bpf_prog_run include/linux/filter.h:667 [inline]
- bpf_prog_run include/linux/filter.h:674 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2396 [inline]
- bpf_trace_run3+0x201/0x500 kernel/trace/bpf_trace.c:2438
-
-CPU: 0 PID: 4418 Comm: jbd2/sda1-8 Not tainted 6.9.0-rc1-syzkaller-00257-ge478cf26c556 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-=====================================================
-
-
-Tested on:
-
-commit:         e478cf26 Merge branch 'bpf-fix-a-couple-of-test-failur..
-git tree:       https://linux.googlesource.com/linux/kernel/git/torvalds/linux
-console output: https://syzkaller.appspot.com/x/log.txt?x=1663af02980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e2599baf258ef795
-dashboard link: https://syzkaller.appspot.com/bug?extid=c33bff5d5da1391df027
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+>  static const struct { enum hybrid_pmu_type id; char *name; } intel_hybrid_pmu_type_map[] __initconst = {
+>  	{ hybrid_small, "cpu_atom" },
+>  	{ hybrid_big, "cpu_core" },
+> @@ -7153,6 +7160,14 @@ __init int intel_pmu_init(void)
+>  		pr_cont("full-width counters, ");
+>  	}
+>  
+> +	/* Support V6+ MSR Aliasing */
+> +	if (x86_pmu.version >= 6) {
+> +		x86_pmu.perfctr = MSR_IA32_PMC_GP0_CTR;
+> +		x86_pmu.eventsel = MSR_IA32_PMC_GP0_CFG_A;
+> +		x86_pmu.fixedctr = MSR_IA32_PMC_FX0_CTR;
+> +		x86_pmu.addr_offset = intel_pmu_addr_offset;
+> +	}
 
