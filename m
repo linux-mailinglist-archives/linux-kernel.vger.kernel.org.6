@@ -1,102 +1,63 @@
-Return-Path: <linux-kernel+bounces-223424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58E329112B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:04:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16F89112BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1469B283ECF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B1DF1F22A75
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B2B1B4C4C;
-	Thu, 20 Jun 2024 20:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWVfraYr"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F0D1BA06E;
+	Thu, 20 Jun 2024 20:06:11 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322C7171A5;
-	Thu, 20 Jun 2024 20:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB684171A5;
+	Thu, 20 Jun 2024 20:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718913868; cv=none; b=Ax8K8YBaum8/1sUkcwszmb/OWZth2PrmpVTsn1sQ7sTBvmV2tR+TrzrF8JOM7kH3nI1V8nBvBDOBoEwHfyhKzZe7dbEeCzVlR05ZHp4FmIE+0mGQtTYjYMcvrQybtDnf+I/o5AVkl2ZpSEneAQYd0a5rcFrFhx98ixdECp8572A=
+	t=1718913970; cv=none; b=OavOKN9eQ+7jefAC0b4MJT7GGHZLC+yfYuDJM3JJD7bctUlwOdMO5+1aQNUtdFvvtAiD0VZJFK5Zlvud0SY+B7eGH7rLzYcMHuXxBEItizGwBlW35XrzNWr/FlEFM/3ycjuVotMnD0A4wo4Zm0YyE5+xR+wVhWuuO3kiKnJSzzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718913868; c=relaxed/simple;
-	bh=i1+lFti4q62gs06dv0Dq9S7mXtSlBrfDTt60vscmQ14=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=R0C9U+OiEd6CnXWB+1mXqZHc2ijg5XTdDrmpJppk4ggjaDqAIsC/rri/34XfoITAc/ZIUS9EkET6mkEZu489ulAlfqJir7wamhD/9fQrYMfTVg2LnSPGxe4+7W9qi2r6QwHysOgQGBLoVMLxyKD7Bi8P+F3vhKuYIOY6kpy/mmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWVfraYr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AADD9C2BD10;
-	Thu, 20 Jun 2024 20:04:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718913867;
-	bh=i1+lFti4q62gs06dv0Dq9S7mXtSlBrfDTt60vscmQ14=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uWVfraYrMvoBDRrb5/hLmNgYb0aekbpkXsma6j3QGJXlcxgZ2tKPyhVHA7Ta+Shh0
-	 ZPjrHGz/+FIQpsi1sTQ+kWuWWblKoLuXcumnHrLg3vDHil5hiTqB9YTqnSK3aK+Hkk
-	 TgN46GdowUal/9JpQMUuarlWHXPEIoHEQgBgys7M0KZUprnQL1agUMouKP6vdVurAW
-	 Gjghht4K3obDNiicBry6zN5/la8lGcHWhLciGbrvzoM1zFbTCu5tfjtUhBkVbKiWdx
-	 pTdwT1obJCCzR2daexWMHpo5BBv0yDLsiT+QtuOs1wN01EzAfsNsiX/CHAGBCGYyoS
-	 M2MlCF9rQNaog==
-From: Mark Brown <broonie@kernel.org>
-To: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, git@amd.com, 
- amitrkcian2002@gmail.com
-In-Reply-To: <20240617153837.29861-1-amit.kumar-mahapatra@amd.com>
-References: <20240617153837.29861-1-amit.kumar-mahapatra@amd.com>
-Subject: Re: [PATCH 1/1] spi: spi-cadence: Enable spi refclk in slave mode
-Message-Id: <171891386642.202395.16718359762665726069.b4-ty@kernel.org>
-Date: Thu, 20 Jun 2024 21:04:26 +0100
+	s=arc-20240116; t=1718913970; c=relaxed/simple;
+	bh=5Yady2NQRaeVLT4Z80IR3uCTqK+DNdYVwaubYSMtmtk=;
+	h=From:Subject:Date:Message-ID:To; b=QIRfZ6P/tPPKQRXXUL4SdDxGiHuY/inot5yeYQ0o+eTIJs5T6RnidU0KFjBFO+X9naJTRtD3HxgfaOVnLznxUphzMmMjdUKVGZZ4Pdt+7QCVHOplE6IgV7ja0dZjxNx6VRLU78LaFjPVujTBbhJGT5Ky6T0sclgIyFjtufA6ccM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1C85C2BD10;
+	Thu, 20 Jun 2024 20:06:09 +0000 (UTC)
+From: Clark Williams <williams@redhat.com>
+Subject: [ANNOUNCE] 6.6.34-rt33
+Date: Thu, 20 Jun 2024 20:05:06 -0000
+Message-ID: <171891390611.209712.13284847548995423479@demetrius.lan>
+To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <joseph.salisbury@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
 
-On Mon, 17 Jun 2024 21:08:37 +0530, Amit Kumar Mahapatra wrote:
-> When spi-cadence is configured as a slave, it requires the SPI refclk to
-> detect the synchronization start condition while communicating with the
-> master. However, the spi-cadence driver never enables the SPI refclk in
-> slave mode, causing the refclk to remain disabled if the
-> "clk_ignore_unused" kernel parameter is not passed through bootargs.
-> As a result, the slave cannot detect data sent by the master, leading to
-> communication failure. Update driver to enable the SPI refclk in both
-> master and slave configurations.
-> 
-> [...]
+Hello RT-list!
 
-Applied to
+I'm pleased to announce the 6.6.34-rt33 stable release.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+You can get this release via the git tree at:
 
-Thanks!
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-[1/1] spi: spi-cadence: Enable spi refclk in slave mode
-      commit: 78b05172b42d14a4c6fc6b75b31590b8977900dc
+  branch: v6.6-rt
+  Head SHA1: 97aa56ace89411b363eb21b307e988626b989743
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Or to build 6.6.34-rt33 directly, the following patches should be applied:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.6.tar.xz
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.6.34.xz
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+  https://www.kernel.org/pub/linux/kernel/projects/rt/6.6/patch-6.6.34-rt33.patch.xz
 
-Thanks,
-Mark
 
+Enjoy!
+Clark
 
