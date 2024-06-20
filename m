@@ -1,293 +1,380 @@
-Return-Path: <linux-kernel+bounces-222340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0529090FFF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:08:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D53290FFF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EF6B283B1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:08:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18BDB1F21FBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520EE19FA7E;
-	Thu, 20 Jun 2024 09:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OLHSYPwt"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1032219D094;
+	Thu, 20 Jun 2024 09:08:25 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ACE19DF46
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B80F176221
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718874507; cv=none; b=KKsM7Cu+kdTTP97m5OyiAtlEVwJ+Audzo+NKRbBKbh/S5mo9+278hlFsrMbkRYM3XvbUJfPH7uIAyRx4UcQ/iOMgMm1PLxon+46KuSWU0SOgRHPeTy4jl66HX7i4kvWad7f7+DqMvvAYESeg230Z44VG82boYfHxeaDvTu+7ROc=
+	t=1718874504; cv=none; b=Ea1uxnEEm4efc7hHpZ5brWFzn9T6SjBEgOGkzHNQlB3+SqpB92X7vACB6yxFgruQokgecg7V5SBc3bvhUT1XWN6+z/JwvMnRFulR3IAGD6ffpqX6k3HilVPhWzBL+ZOGoT8eTmkF8NtuwhrXhLnqu7rxmNiDhUoNm5fCBGW44j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718874507; c=relaxed/simple;
-	bh=Uf/DRFaK4xkStOOOomLsrlUHxyWX9dj5leuLl5H+864=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Eu6sCGavfbDJGWKGbRNPRbTuaIv4XAU8nhnlzEpDsPsI3JL+I8XMOPwggJj3yDkUQh3F82j8EBlutvh879wzgCrrvDFOfES2cIN0xTf6rdzPv2xbDPLIL6iLc0xvHZJa3TCXufZKSbtAdQjf/7Qn+6aswsyHxuQTJuyfCNcH3oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OLHSYPwt; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57cc1c00ba6so629290a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 02:08:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718874503; x=1719479303; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/HqSY3GOs/15VIJ9Rt+TiaY5fHiC8UUyqPG+GopX0FQ=;
-        b=OLHSYPwt1WiH1wux5wyzX+q9HjzS2/eguV0pa/semL6DpOwu2nWAP+zuVLC49BYBbi
-         9XRbxDR6WekZi4qmqYd8k+wmdUZkcnbJBs4RxzEfh+PbcjN/bN1o53eMRH0IJG1WZGIH
-         OfMrFeCkWHg0hAlkhWY8LQ+BOimQlqW3hZUjgYO38vxD5qVgD5UJeg45dJayEtxZ8SDR
-         AUTf8OhS25Y9M5No2+j44cH8eCjC6CtwS5oicL1wAuWV3UZpCCaR/Tae5FQFumo3kqGA
-         EwnHNBGzh7YW79SDYeSuCBMZfdHqqn+qVujHBiTLAivxkXSascD2/b6HMNmC5KITEgFW
-         ghyA==
+	s=arc-20240116; t=1718874504; c=relaxed/simple;
+	bh=RSzsSzCpc7P9raMm7NlFu3anSnHVxrrthjMHzdxpzRg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MZ3qjRBCNJ4rNzDL973mviw0PwVYp42/ReHOPKkjo11QbmWGlnsUFcPxvT6iSl9y8KoexzWCIgfEdiYQslVRILztbJNH7caB0yr5RwaUAL9A9RSUWnyP/lUpR7Tu4yz4ct2et4kHt+FOfw2fkVn8RYKYYC6S/s0Uz5BKskCvA6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-376147797ddso7422545ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 02:08:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718874503; x=1719479303;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/HqSY3GOs/15VIJ9Rt+TiaY5fHiC8UUyqPG+GopX0FQ=;
-        b=pJ6x7vOvFfWRqiBqhQIgKczaHSvO+pdc/6y0P8+CK4Jn7iPFcykqAH4m/VRYAoM9RA
-         1SL7SyDsIVdqjhGjBJlHCWrFN2GpH45o3dZRcW4bjpVMPpQVvDx3ieP9N6rRkTiqY7Df
-         aBsO7ZSXRXL9fi7K1yqwmT7B5ViZDP689nR1FGoqcSQab7GToX2MHyXRoaM6zezNo2BG
-         izF15QZAGlZH94FaN/TTwUV6KxLDGpRf/ju5v5he8Z+4Kp0aXCK9M4NKv/SW4873fJ1V
-         +Ujr+MNooUQRUmk8A4ICVYuKAMkX07cJeAVIOB39/GX7kaDGXSGiP4yxQZLMuNTeG8Xb
-         zVeg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/0B4kQ2K2RNbaumG2kzqIAgCBSVvRj8vQcqTmxrmf+5T4bhs2/4S7OifscLr6h3DHpBxCBn7rt+kDEXcLKMRhiGhii09E4a1+F8+4
-X-Gm-Message-State: AOJu0YwWw4UNS7V2TtKj/JSg8Rn92JM1axXBit6Sedkku2Ou51o4LB4x
-	yx6cN1MlQjJBHkunFPrHIPlxw/9+tePfp06vBjlQhSKOs/7C+1qB8rFsr/KFS9iSGdG3Zcjv1vg
-	B5NrQvsiqmpqK3iy2bZ0NLyP9Ot6OhhGWHW4oMw==
-X-Google-Smtp-Source: AGHT+IHO5sP2gbpxBB+AMGd4wNamE9Q721oKfWv/dUroSShvJU+KFMT4kGHIsnxr8NwAqlWGAJQN7rLag50g2h0cmh4=
-X-Received: by 2002:a50:ee92:0:b0:57c:765b:83a3 with SMTP id
- 4fb4d7f45d1cf-57d0bff1a13mr2919665a12.25.1718874502424; Thu, 20 Jun 2024
- 02:08:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718874501; x=1719479301;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vJrw9A7rHEBRMICr3ppgDN1cORq1He91u4mw7Mw1cCU=;
+        b=gR3LTIIfUaVLFMMM6IMqXtwwcUTdg2BoUIFIWf1I4hRanRHQxPcU1C5GQT001esz03
+         crEaOJdF3wWNitt9FfZWynoKaSXJ8I3Ye4jKlT3NDufcVg1vrunMkHUGOuEqtimYCEZT
+         cgiWdEyVEXPCZNqccJWjPfXbdqeVPxXCICzzVCEq8WegW+MfJ+tbusbpM4rSsK9A3Hwe
+         yeKVfuPTaM1UhndeEtHXRyYkjsDewwH4WIISCKF9oiyRh80qDQnwK64bJ4l6/yZiIwwj
+         PyjRBMeqrL17jPyxT9qRVrhZ0dSGvviHvY4qLAJ97X8tVdI90JNMPJnXaSpoXQEbZ9Ud
+         mlPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSiI+F4AVmv8x3IPrmuVkykodMYKh43L8LcYK4stoxI3E993Stmf5nN2Hpwl4cHYXPojj7Ugo9ESLnANMmVJrHI27q+Z5TktbvzVfU
+X-Gm-Message-State: AOJu0YwxLu1JJ89YngJt/r4ux4EJkD57QQEjaqJdap6DL5U57KFYLtOv
+	GP1JpRH2YmiDn2di7uUSVL6k2oS9yT46/bW7coLeCRDuKBxzqgsZsfAAdlWZcUtJj3ZH8TA+2aG
+	q5b7E0zfnbuRDu63H0gDtzNg8sxjQDNGfuDQkaqs4gBfFUpy+Jv6RZgQ=
+X-Google-Smtp-Source: AGHT+IGBgcJSV1PiSNNKCUci2n3ViSLiJat3LC5ZwHNnR1vjJxlLS3YgaXoV87PkBV+WicoeT2NX7uRd/VYhCL9mqsqjG0mIGqfM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614145609.25432-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240614145609.25432-3-lvzhaoxiong@huaqin.corp-partner.google.com> <xiv3rvzpx7l2esosggybp6pheoa4zg3ew6vnhjxewnmvkdy73o@jflkmq77lxxn>
-In-Reply-To: <xiv3rvzpx7l2esosggybp6pheoa4zg3ew6vnhjxewnmvkdy73o@jflkmq77lxxn>
-From: zhaoxiong lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Date: Thu, 20 Jun 2024 17:08:11 +0800
-Message-ID: <CA+6=WdQpLMQBti_1WBQ9h09fRSf74o0m4YrJqDOqzDAYJ0EyOA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] drm/panel: starry-er88577: add new panel driver
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
-	benjamin.tissoires@redhat.co, dianders@google.com, hsinyi@google.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1c8c:b0:375:dad7:a664 with SMTP id
+ e9e14a558f8ab-3761d7c4a0bmr2713545ab.6.1718874501276; Thu, 20 Jun 2024
+ 02:08:21 -0700 (PDT)
+Date: Thu, 20 Jun 2024 02:08:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000ff9cb061b4ea872@google.com>
+Subject: [syzbot] [usb?] INFO: task hung in wdm_release
+From: syzbot <syzbot+973d01eb49b060b12e63@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-hi Dmitry
+Hello,
 
-We checked the panel-boe-th101mb31ig002-28a.c driver. Although the
-init_code is similar, the IC does not seem to be the same from the
-name, and our panel and timing are also different.
+syzbot found the following issue on:
 
-On Sat, Jun 15, 2024 at 1:25=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Fri, Jun 14, 2024 at 10:56:09PM GMT, Zhaoxiong Lv wrote:
-> > The bias IC of this starry-er88577 panel is placed
-> > on the panel side, so when the panel is powered on,
-> > there is no need to control AVDD and AVEE in the driver,
-> > only 3.3v and reset are needed.
-> >
-> > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com=
->
-> >
-> > ---
-> >
-> > Chage since V3:
-> >
-> > -  Separate Starry-er88577 from the panel-kingdisplay-kd101ne3 driver.
-> > -  Use mipi_dsi_dcs_set_display_on_multi().
-> > -  Use mipi_dsi_dcs_exit_sleep_mode_multi() and mipi_dsi_msleep().
-> >
-> > v2: https://lore.kernel.org/all/20240601084528.22502-5-lvzhaoxiong@huaq=
-in.corp-partner.google.com/
-> >
-> > Chage since V2:
-> >
-> > -  Add compatible for Starry er88577 in panel-kingdisplay-kd101ne3 driv=
-ers.
-> > ---
-> >  drivers/gpu/drm/panel/Kconfig                |   9 +
-> >  drivers/gpu/drm/panel/Makefile               |   1 +
-> >  drivers/gpu/drm/panel/panel-starry-er88577.c | 343 +++++++++++++++++++
-> >  3 files changed, 353 insertions(+)
-> >  create mode 100644 drivers/gpu/drm/panel/panel-starry-er88577.c
-> >
-> > diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kcon=
-fig
-> > index e54f6f5604ed..a52aa2552ab8 100644
-> > --- a/drivers/gpu/drm/panel/Kconfig
-> > +++ b/drivers/gpu/drm/panel/Kconfig
-> > @@ -781,6 +781,15 @@ config DRM_PANEL_SITRONIX_ST7789V
-> >         Say Y here if you want to enable support for the Sitronix
-> >         ST7789V controller for 240x320 LCD panels
-> >
-> > +config DRM_PANEL_STARRY_ER88577
-> > +     tristate "Starry er88577 panel"
-> > +     depends on OF
-> > +     depends on DRM_MIPI_DSI
-> > +     depends on BACKLIGHT_CLASS_DEVICE
-> > +     help
-> > +       Say Y if you want to enable support for panels based on the
-> > +       Starry er88577 controller.
-> > +
-> >  config DRM_PANEL_SONY_ACX565AKM
-> >       tristate "Sony ACX565AKM panel"
-> >       depends on GPIOLIB && OF && SPI
-> > diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Mak=
-efile
-> > index f0203f6e02f4..ecd843a6dc6e 100644
-> > --- a/drivers/gpu/drm/panel/Makefile
-> > +++ b/drivers/gpu/drm/panel/Makefile
-> > @@ -81,6 +81,7 @@ obj-$(CONFIG_DRM_PANEL_SHARP_LS060T1SX01) +=3D panel-=
-sharp-ls060t1sx01.o
-> >  obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7701) +=3D panel-sitronix-st7701.o
-> >  obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7703) +=3D panel-sitronix-st7703.o
-> >  obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7789V) +=3D panel-sitronix-st7789v.o
-> > +obj-$(CONFIG_DRM_PANEL_STARRY_ER88577) +=3D panel-starry-er88577.o
-> >  obj-$(CONFIG_DRM_PANEL_SYNAPTICS_R63353) +=3D panel-synaptics-r63353.o
-> >  obj-$(CONFIG_DRM_PANEL_SONY_ACX565AKM) +=3D panel-sony-acx565akm.o
-> >  obj-$(CONFIG_DRM_PANEL_SONY_TD4353_JDI) +=3D panel-sony-td4353-jdi.o
-> > diff --git a/drivers/gpu/drm/panel/panel-starry-er88577.c b/drivers/gpu=
-/drm/panel/panel-starry-er88577.c
-> > new file mode 100644
-> > index 000000000000..a8250a464883
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/panel/panel-starry-er88577.c
-> > @@ -0,0 +1,343 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Panels based on the JD9365DA display controller.
-> > + * Author: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-> > + */
-> > +
-> > +#include <linux/delay.h>
-> > +#include <linux/gpio/consumer.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/regulator/consumer.h>
-> > +
-> > +#include <drm/drm_connector.h>
-> > +#include <drm/drm_crtc.h>
-> > +#include <drm/drm_mipi_dsi.h>
-> > +#include <drm/drm_panel.h>
-> > +
-> > +#include <video/mipi_display.h>
-> > +#include <drm/drm_probe_helper.h>
-> > +
-> > +struct starry_panel;
-> > +
-> > +struct panel_desc {
-> > +     const struct drm_display_mode *modes;
-> > +     unsigned int bpc;
-> > +     unsigned long mode_flags;
-> > +     enum mipi_dsi_pixel_format format;
-> > +     const struct panel_init_cmd *init_cmds;
-> > +     int (*init)(struct starry_panel *starry);
-> > +     unsigned int lanes;
-> > +     bool discharge_on_disable;
-> > +     bool lp11_before_reset;
-> > +     unsigned int power_off_delay_ms;
-> > +};
-> > +
-> > +struct starry_panel {
-> > +     struct drm_panel base;
-> > +     struct mipi_dsi_device *dsi;
-> > +
-> > +     const struct panel_desc *desc;
-> > +
-> > +     enum drm_panel_orientation orientation;
-> > +     struct regulator *vccio;
-> > +     struct gpio_desc *reset;
-> > +};
-> > +
-> > +static int starry_er88577_init(struct starry_panel *starry)
-> > +{
-> > +     struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D starry->dsi =
-};
-> > +
-> > +     /* T5:HWreset to init_code >=3D 120ms */
-> > +     mipi_dsi_msleep(dsi_ctx, 120);
-> > +
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe0, 0xab, 0xba);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe1, 0xba, 0xab);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb1, 0x10, 0x01, 0x47, 0x=
-ff);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb2, 0x0c, 0x14, 0x04, 0x=
-50, 0x50, 0x14);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb3, 0x56, 0x53, 0x00);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb4, 0x33, 0x30, 0x04);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb6, 0xb0, 0x00, 0x00, 0x=
-10, 0x00, 0x10, 0x00);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb8, 0x05, 0x12, 0x29, 0x=
-49, 0x40);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb9, 0x7c, 0x61, 0x4f, 0x=
-42, 0x3e, 0x2d, 0x31,
-> > +                                  0x1a, 0x33, 0x33, 0x33, 0x52, 0x40, =
-0x47, 0x38, 0x34, 0x26,
-> > +                                  0x0e, 0x06, 0x7c, 0x61, 0x4f, 0x42, =
-0x3e, 0x2d, 0x31, 0x1a,
-> > +                                  0x33, 0x33, 0x33, 0x52, 0x40, 0x47, =
-0x38, 0x34, 0x26, 0x0e,
-> > +                                  0x06);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc0, 0xcc, 0x76, 0x12, 0x=
-34, 0x44, 0x44, 0x44,
-> > +                                  0x44, 0x98, 0x04, 0x98, 0x04, 0x0f, =
-0x00, 0x00, 0xc1);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc1, 0x54, 0x94, 0x02, 0x=
-85, 0x9f, 0x00, 0x6f,
-> > +                                  0x00, 0x54, 0x00);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc2, 0x17, 0x09, 0x08, 0x=
-89, 0x08, 0x11, 0x22,
-> > +                                  0x20, 0x44, 0xff, 0x18, 0x00);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc3, 0x87, 0x47, 0x05, 0x=
-05, 0x1c, 0x1c, 0x1d,
-> > +                                  0x1d, 0x02, 0x1e, 0x1e, 0x1f, 0x1f, =
-0x0f, 0x0f, 0x0d, 0x0d,
-> > +                                  0x13, 0x13, 0x11, 0x11, 0x24);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc4, 0x06, 0x06, 0x04, 0x=
-04, 0x1c, 0x1c, 0x1d,
-> > +                                  0x1d, 0x02, 0x1e, 0x1e, 0x1f, 0x1f, =
-0x0e, 0x0e, 0x0c, 0x0c,
-> > +                                  0x12, 0x12, 0x10, 0x10, 0x24);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc8, 0x21, 0x00, 0x31, 0x=
-42, 0x34, 0x16);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xca, 0xcb, 0x43);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xcd, 0x0e, 0x4b, 0x4b, 0x=
-20, 0x19, 0x6b, 0x06,
-> > +                                  0xb3);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd2, 0xe3, 0x2b, 0x38, 0x=
-08);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd4, 0x00, 0x01, 0x00, 0x=
-0e, 0x04, 0x44, 0x08,
-> > +                                  0x10, 0x00, 0x00, 0x00);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xe6, 0x80, 0x09, 0xff, 0x=
-ff, 0xff, 0xff, 0xff,
-> > +                                  0xff);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0x12, 0x03, 0x20, 0x=
-00, 0xff);
-> > +     mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf3, 0x00);
->
-> This looks pretty close to panel-boe-th101mb31ig002-28a.c
->
-> > +
-> > +     mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> > +
->
->
-> --
-> With best wishes
-> Dmitry
+HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10cb5954980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
+dashboard link: https://syzkaller.appspot.com/bug?extid=973d01eb49b060b12e63
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a2cbfe980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=125f8ada980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/93525a95fe83/disk-2ccbdf43.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b9b895227ea2/vmlinux-2ccbdf43.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e825248a8e73/bzImage-2ccbdf43.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+973d01eb49b060b12e63@syzkaller.appspotmail.com
+
+INFO: task syz-executor320:7035 blocked for more than 142 seconds.
+      Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor320 state:D
+ stack:24416 pid:7035  tgid:7034  ppid:5154   flags:0x00004002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ wdm_release+0x52/0x470 drivers/usb/class/cdc-wdm.c:764
+ __fput+0x406/0x8b0 fs/file_table.c:422
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0xa27/0x27e0 kernel/exit.c:874
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1023
+ get_signal+0x16a1/0x1740 kernel/signal.c:2909
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7feafc194719
+RSP: 002b:00007feafc13f228 EFLAGS: 00000246
+ ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007feafc21b1a8 RCX: 00007feafc194719
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007feafc21b1a8
+RBP: 00007feafc21b1a0 R08: 00007feafc13f6c0 R09: 00007feafc13f6c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007feafc21b1ac
+R13: 0023776172646968 R14: 6469682f7665642f R15: 00007ffc872c23c8
+ </TASK>
+INFO: task syz-executor320:7039 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor320 state:D
+ stack:26384 pid:7039  tgid:7038  ppid:5155   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ rpm_resume+0x504/0x1670 drivers/base/power/runtime.c:834
+ rpm_resume+0x8fe/0x1670 drivers/base/power/runtime.c:892
+ __pm_runtime_resume+0x120/0x180 drivers/base/power/runtime.c:1172
+ pm_runtime_resume_and_get include/linux/pm_runtime.h:430 [inline]
+ usb_autopm_get_interface+0x22/0xf0 drivers/usb/core/driver.c:1819
+ wdm_open+0x218/0x550 drivers/usb/class/cdc-wdm.c:730
+ usb_open+0x225/0x300 drivers/usb/core/file.c:47
+ chrdev_open+0x5b0/0x630 fs/char_dev.c:414
+ do_dentry_open+0x95a/0x1720 fs/open.c:955
+ do_open fs/namei.c:3650 [inline]
+ path_openat+0x289f/0x3280 fs/namei.c:3807
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_openat fs/open.c:1436 [inline]
+ __se_sys_openat fs/open.c:1431 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7feafc193370
+RSP: 002b:00007feafc13ed80 EFLAGS: 00000293
+ ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007feafc193370
+RDX: 0000000000000002 RSI: 00007feafc13ee10 RDI: 00000000ffffff9c
+RBP: 00007feafc13ee10 R08: 0000000000000000 R09: 00007feafc13eb97
+R10: 0000000000000000 R11: 0000000000000293 R12: 00007feafc21b1ac
+R13: 0023776172646968 R14: 6469682f7665642f R15: 00007ffc872c23c8
+ </TASK>
+INFO: task syz-executor320:7046 blocked for more than 145 seconds.
+      Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor320 state:D
+ stack:27360 pid:7046  tgid:7040  ppid:5153   flags:0x00000006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ wdm_open+0x56/0x550 drivers/usb/class/cdc-wdm.c:715
+ usb_open+0x225/0x300 drivers/usb/core/file.c:47
+ chrdev_open+0x5b0/0x630 fs/char_dev.c:414
+ do_dentry_open+0x95a/0x1720 fs/open.c:955
+ do_open fs/namei.c:3650 [inline]
+ path_openat+0x289f/0x3280 fs/namei.c:3807
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_openat fs/open.c:1436 [inline]
+ __se_sys_openat fs/open.c:1431 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1431
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7feafc193370
+RSP: 002b:00007feafc11dd80 EFLAGS: 00000293
+ ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007feafc193370
+RDX: 0000000000000002 RSI: 00007feafc11de10 RDI: 00000000ffffff9c
+RBP: 00007feafc11de10 R08: 0000000000000000 R09: 00007feafc11db97
+R10: 0000000000000000 R11: 0000000000000293 R12: 00007feafc21b1bc
+R13: 0023776172646968 R14: 6469682f7665642f R15: 00007ffc872c23c8
+ </TASK>
+INFO: task syz-executor320:7043 blocked for more than 146 seconds.
+      Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor320 state:D stack:25712 pid:7043  tgid:7042  ppid:5156   flags:0x00000006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ wdm_open+0x56/0x550 drivers/usb/class/cdc-wdm.c:715
+ usb_open+0x225/0x300 drivers/usb/core/file.c:47
+ chrdev_open+0x5b0/0x630 fs/char_dev.c:414
+ </TASK>
+
+Showing all locks held in the system:
+3 locks held by kworker/u8:0/11:
+ #0: ffff8880b953e7d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
+ #1: ffff8880b9528948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x441/0x770 kernel/sched/psi.c:988
+ #2: ffff8880754f0768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: wiphy_lock include/net/cfg80211.h:5966 [inline]
+ #2: ffff8880754f0768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: cfg80211_wiphy_work+0x35/0x260 net/wireless/core.c:424
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
+7 locks held by kworker/1:1/45:
+ #0: ffff8880186e6948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff8880186e6948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc90000b57d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc90000b57d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffff888023f67190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1009 [inline]
+ #2: ffff888023f67190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1fe/0x5150 drivers/usb/core/hub.c:5849
+ #3: ffff88801aeaf190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1009 [inline]
+ #3: ffff88801aeaf190 (&dev->mutex){....}-{3:3}, at: usb_remote_wakeup drivers/usb/core/hub.c:3840 [inline]
+ #3: ffff88801aeaf190 (&dev->mutex){....}-{3:3}, at: hub_port_connect_change drivers/usb/core/hub.c:5647 [inline]
+ #3: ffff88801aeaf190 (&dev->mutex){....}-{3:3}, at: port_event drivers/usb/core/hub.c:5821 [inline]
+ #3: ffff88801aeaf190 (&dev->mutex){....}-{3:3}, at: hub_event+0x2117/0x5150 drivers/usb/core/hub.c:5903
+ #4: ffff888023fba518 (&port_dev->status_lock){+.+.}-{3:3}, at: usb_lock_port drivers/usb/core/hub.c:3206 [inline]
+ #4: ffff888023fba518 (&port_dev->status_lock){+.+.}-{3:3}, at: usb_port_resume+0x2cc/0x2210 drivers/usb/core/hub.c:3764
+ #5: ffff8880231af468 (hcd->address0_mutex){+.+.}-{3:3}, at: usb_reset_and_verify_device+0x319/0x1440 drivers/usb/core/hub.c:6120
+ #6: ffffffff8ef1eed0 (ehci_cf_port_reset_rwsem){.+.+}-{3:3}, at: hub_port_reset+0x1f8/0x1b30 drivers/usb/core/hub.c:3021
+2 locks held by getty/4851:
+ #0: ffff88802d9000a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900031432f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
+6 locks held by kworker/0:3/5160:
+ #0: ffff8880186e6948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff8880186e6948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc90004147d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc90004147d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffff888023fcf190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1009 [inline]
+ #2: ffff888023fcf190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1fe/0x5150 drivers/usb/core/hub.c:5849
+ #3: ffff88802401a518 (&port_dev->status_lock){+.+.}-{3:3}, at: usb_lock_port drivers/usb/core/hub.c:3206 [inline]
+ #3: ffff88802401a518 (&port_dev->status_lock){+.+.}-{3:3}, at: hub_port_connect drivers/usb/core/hub.c:5418 [inline]
+ #3: ffff88802401a518 (&port_dev->status_lock){+.+.}-{3:3}, at: hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ #3: ffff88802401a518 (&port_dev->status_lock){+.+.}-{3:3}, at: port_event drivers/usb/core/hub.c:5821 [inline]
+ #3: ffff88802401a518 (&port_dev->status_lock){+.+.}-{3:3}, at: hub_event+0x25b6/0x5150 drivers/usb/core/hub.c:5903
+ #4: ffff88802301b668 (hcd->address0_mutex){+.+.}-{3:3}, at: hub_port_connect drivers/usb/core/hub.c:5419 [inline]
+ #4: ffff88802301b668 (hcd->address0_mutex){+.+.}-{3:3}, at: hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ #4: ffff88802301b668 (hcd->address0_mutex){+.+.}-{3:3}, at: port_event drivers/usb/core/hub.c:5821 [inline]
+ #4: ffff88802301b668 (hcd->address0_mutex){+.+.}-{3:3}, at: hub_event+0x25f4/0x5150 drivers/usb/core/hub.c:5903
+ #5: ffffffff8ef1eed0 (ehci_cf_port_reset_rwsem){.+.+}-{3:3}, at: hub_port_reset+0x1f8/0x1b30 drivers/usb/core/hub.c:3021
+6 locks held by kworker/0:4/5186:
+ #0: ffff8880186e6948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
+ #0: ffff8880186e6948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
+ #1: ffffc900042e7d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
+ #1: ffffc900042e7d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
+ #2: ffff888023fbf190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1009 [inline]
+ #2: ffff888023fbf190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1fe/0x5150 drivers/usb/core/hub.c:5849
+ #3: 
+ffff888023fca518 (&port_dev->status_lock){+.+.}-{3:3}, at: usb_lock_port drivers/usb/core/hub.c:3206 [inline]
+ffff888023fca518 (&port_dev->status_lock){+.+.}-{3:3}, at: hub_port_connect drivers/usb/core/hub.c:5418 [inline]
+ffff888023fca518 (&port_dev->status_lock){+.+.}-{3:3}, at: hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ffff888023fca518 (&port_dev->status_lock){+.+.}-{3:3}, at: port_event drivers/usb/core/hub.c:5821 [inline]
+ffff888023fca518 (&port_dev->status_lock){+.+.}-{3:3}, at: hub_event+0x25b6/0x5150 drivers/usb/core/hub.c:5903
+ #4: ffff8880238acd68 (hcd->address0_mutex){+.+.}-{3:3}, at: hub_port_connect drivers/usb/core/hub.c:5419 [inline]
+ #4: ffff8880238acd68 (hcd->address0_mutex){+.+.}-{3:3}, at: hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ #4: ffff8880238acd68 (hcd->address0_mutex){+.+.}-{3:3}, at: port_event drivers/usb/core/hub.c:5821 [inline]
+ #4: ffff8880238acd68 (hcd->address0_mutex){+.+.}-{3:3}, at: hub_event+0x25f4/0x5150 drivers/usb/core/hub.c:5903
+ #5: ffff8880b943e7d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
+7 locks held by kworker/1:6/5373:
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xfde/0x1020 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 4532 Comm: klogd Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:lock_is_held_type+0x5/0x190 kernel/locking/lockdep.c:5810
+Code: 90 90 eb b5 e8 2c fc ff ff 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 55 <41> 57 41 56 41 55 41 54 53 48 83 ec 10 65 48 8b 04 25 28 00 00 00
+RSP: 0018:ffffc9000304f820 EFLAGS: 00000086
+RAX: 0000000000000000 RBX: ffff8880b943f538 RCX: ffffc9000304f900
+RDX: 0000000000000010 RSI: 00000000ffffffff RDI: ffff8880b943e7d8
+RBP: 0000000000000010 R08: ffffffff8fad50af R09: 1ffffffff1f5aa15
+R10: dffffc0000000000 R11: fffffbfff1f5aa16 R12: ffff8880b943e7c0
+R13: ffff88807c71da00 R14: ffff8880b943e7c0 R15: dffffc0000000000
+FS:  00007f923e470380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055d767cc7e98 CR3: 000000007b90c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ lock_is_held include/linux/lockdep.h:231 [inline]
+ lockdep_assert_rq_held kernel/sched/sched.h:1397 [inline]
+ ttwu_do_activate+0x9d/0x7e0 kernel/sched/core.c:3778
+ ttwu_queue kernel/sched/core.c:4057 [inline]
+ try_to_wake_up+0x884/0x1470 kernel/sched/core.c:4378
+ autoremove_wake_function+0x16/0x110 kernel/sched/wait.c:384
+ __wake_up_common kernel/sched/wait.c:89 [inline]
+ __wake_up_common_lock+0x130/0x1e0 kernel/sched/wait.c:106
+ sock_def_readable+0x20f/0x5b0 net/core/sock.c:3353
+ unix_dgram_sendmsg+0x148e/0x1f80 net/unix/af_unix.c:2116
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ __sys_sendto+0x3a4/0x4f0 net/socket.c:2192
+ __do_sys_sendto net/socket.c:2204 [inline]
+ __se_sys_sendto net/socket.c:2200 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2200
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f923e5d29b5
+Code: 8b 44 24 08 48 83 c4 28 48 98 c3 48 98 c3 41 89 ca 64 8b 04 25 18 00 00 00 85 c0 75 26 45 31 c9 45 31 c0 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 7a 48 8b 15 44 c4 0c 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffd088564d8 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f923e5d29b5
+RDX: 000000000000008b RSI: 00005563a644c180 RDI: 0000000000000003
+RBP: 00005563a6447910 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000004000 R11: 0000000000000246 R12: 0000000000000013
+R13: 00007f923e760212 R14: 00007ffd088565d8 R15: 0000000000000000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
