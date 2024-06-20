@@ -1,90 +1,57 @@
-Return-Path: <linux-kernel+bounces-222314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10D490FF9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:55:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF8C90FFA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B99BB239F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:55:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8181B1F219FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3248A42040;
-	Thu, 20 Jun 2024 08:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0913F1AB50B;
+	Thu, 20 Jun 2024 08:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y8nO+F8W"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5BE3D994;
-	Thu, 20 Jun 2024 08:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oK0gWrkh"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6F319AD7E;
+	Thu, 20 Jun 2024 08:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718873560; cv=none; b=aQ8zinRtLxFin7//pcymwFHprkpxR/QBhNZ+3jReeAtgj/MPeOrA+eFZE1kqrwP+7PdDFqlRbw0jUeL5dMfotA6/PvDK4COR4fgESuVjDfxm8mYghDfw8Gq24OREDZ04pprApLUA3ro9xpJPteceKKuuuAOuNhN3Y/zAeQ5zTTg=
+	t=1718873602; cv=none; b=OnSMIYQVyUkhpFX0ZQcKZiU/leMtYKuSVi0bdaldYy32dPk/azjgUsqa6B1xsHZ6GO+jMkc7uoynTakSTBMEK/roI5ql3PZ4Cp0rsa5q8b2U89atFVCWZVXYtrevewU1vU0X1E/GUIZkNkJmCYhd6QXdTTL6W3LiZvf5cg+mHXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718873560; c=relaxed/simple;
-	bh=cfW8+iR+f2HC19SB2sEKjqX8/oAWZeHnmAqWL+6fR1E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MnqaE4HwmGSP5FLZasTPllbzpmAXJj7y6Q3nfvvgSW+Oi3d0Y1NjImJ1at3gp1mrh0thF/8owaagOF7WVC0l0smdbMZ22zYvovrdLlOUjohO3NSoDSiHYeKgLGNAMr0QE/NOc5ODRPanYcs6IhRLwFXZ1E5yRGv0YqjujATvMHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y8nO+F8W; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7152e097461so53525a12.1;
-        Thu, 20 Jun 2024 01:52:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718873558; x=1719478358; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eB/cLhg3WSWwUi9V50hFyuG/XhsXVW1cGn/by2rdEtI=;
-        b=Y8nO+F8WTmmsoOdoDKGIo6imj1qjy3R8whP4UNXIeWcrRygKQsNM6S5tUUNnGPnvh8
-         hruxhPGka9DPRXsRTHWVZM7ViHdpoFuk7ydfmx7SX8rBAWP664DquL8Vld0rnpnzJZpS
-         G2Jy0n7HZsxMvvfyWfVcGHv/M+4JA67DhZG/foJhJmIikCBuHNVObtXFEmIXWcCCYeCO
-         pSf6tVcKZcTuw1GuFyP6b4o+5sSvEN9l+ab0erC63rbgzacLCccxsp9zw4PW0xuJKKDA
-         dfnGc3r+qypsatQsEqI/XL2TObP2ogc2h+I9pdWVIjlPOUuTihw7L7/LT2Tta/Ok5SpJ
-         HoHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718873558; x=1719478358;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eB/cLhg3WSWwUi9V50hFyuG/XhsXVW1cGn/by2rdEtI=;
-        b=Sq3lKYe/dmcYkLOqxPeuGmGxH9s8o7JDk4uLcQgadWlAIga5j1sXE9Pu6OR4xjKRw9
-         HrtgZYXb6VKuXGeibYEEMvA+Z8/WDB5zTO7KIxnnbWQbS2bkva78/UsDY8kG64Dd34/o
-         PANz6uVvDLHScQ/AsmzlG6f13ZS67HOrObdstgDzwBa4RLMO3jp+KdyTkZRgGp8/8F07
-         4cwqL69bMW2wIAkGHEBFL1xL9sfq8OPVwbe/DJmb8E+z7OfLDHgJtkQpevOthLQxQB0i
-         1bf2UWIeWN/w+0Qpb7nUaZZWe5X1phI9TEw/fXxJarMNp2ZT2QG0LR8liw9HcJLZF4cN
-         TXkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPSpnulV9OQCLu0RrR5L3CttJDwJiqqrlRvd+/4QrTG7YRYi4YhHWUop52wzOOUAiSXd62DS0AhUNihSLOhnEtVNcPY0kn5DOBadd6
-X-Gm-Message-State: AOJu0YwxtiRUsrTh4M+DBLiooujpi6HoE160FDumWsR68ztEdGRWZPJP
-	KUA5eFbzfWoXW+PfC/aE/QAenpAUWsycp6ccYYxOLU6fukytxZFq
-X-Google-Smtp-Source: AGHT+IEmKmHEsNjSGrqpoUKBQw6eg+ckhuujPTMdS+oAOp1CeIUP6o8hfE4wARCQsHOeFNPFZkI2zg==
-X-Received: by 2002:a17:90a:f281:b0:2c4:f32c:6b with SMTP id 98e67ed59e1d1-2c7b3ba85abmr7335661a91.19.1718873557978;
-        Thu, 20 Jun 2024 01:52:37 -0700 (PDT)
-Received: from localhost.localdomain ([129.146.253.192])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2c7e4ff8affsm1133215a91.11.2024.06.20.01.52.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 01:52:37 -0700 (PDT)
-From: Furong Xu <0x1207@gmail.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>,
-	Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1718873602; c=relaxed/simple;
+	bh=bwpHiqfV3NR9ZNI5PhU7nc3iTqkQEhyq1Z4buAeV7pE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=trTT2ARx7u89gdTe+16DRTbTOYbWA+RYwgwBcxDPsMP+RZTswQdAbA7IZQKnW2lRXmI23rxiqsymjCse7Q8G9WXqTM2ASMy6fmlDOZ5tRR8OtiuYFkyJtIjHfOSmCWQCl/OB0onnQJlzUYuSGvACf7u8+dM1m1xGnWWXI4Uwkhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oK0gWrkh; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=5sH8h
+	xhoOeNYDft5EdEon6W33nt0SARFkjDRTog6ETM=; b=oK0gWrkhZmY56FLE4hy9w
+	MbFVSwYh4ABTgF2LZa2y+DpTHVASdeTd07Ka+gNhjV1TjW6JS5dVH4eQBldVcdem
+	e4OlET5vEKBeUdShS5U3DJfXngb42WOV9EW6yF2FbJAUI393s/7iPewcvCPg4Z2g
+	/ot+dnBv7mTRXUeJC64PO4=
+Received: from localhost (unknown [101.132.132.191])
+	by gzga-smtp-mta-g2-1 (Coremail) with SMTP id _____wDnLxfS7XNmCTWKBg--.31671S2;
+	Thu, 20 Jun 2024 16:52:34 +0800 (CST)
+From: Xavier <xavier_qy@163.com>
+To: longman@redhat.com,
+	mkoutny@suse.com
+Cc: lizefan.x@bytedance.com,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	cgroups@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	xfr@outlook.com,
-	rock.xu@nio.com,
-	Furong Xu <0x1207@gmail.com>
-Subject: [PATCH net-next v1] net: stmmac: xgmac: increase length limit of descriptor ring
-Date: Thu, 20 Jun 2024 16:52:00 +0800
-Message-Id: <20240620085200.583709-1-0x1207@gmail.com>
+	Xavier <xavier_qy@163.com>
+Subject: [PATCH v4 v4 0/2] cpuset: use Union-Find to optimize
+Date: Thu, 20 Jun 2024 16:52:31 +0800
+Message-Id: <20240620085233.205690-1-xavier_qy@163.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240603123101.590760-1-ghostxavier@sina.com>
+References: <20240603123101.590760-1-ghostxavier@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,77 +59,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnLxfS7XNmCTWKBg--.31671S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtw43WF18tw47Kr4xtFyUAwb_yoW3Xrg_Xa
+	48Za4qk3WjgFn2gayrKF9IqFW2k3y0gwn5C3WDJF4UXF17JrsxGw1kJFZrZry7XF1kJr43
+	JF15tr4Fqr1qgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xREgAwJUUUUU==
+X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiYwEEEGV4I1gq4AABsb
 
-DWXGMAC CORE supports a ring length of 65536 descriptors, bump max length
-from 1024 to 65536
+Hi all,
 
-Signed-off-by: Furong Xu <0x1207@gmail.com>
----
- .../net/ethernet/stmicro/stmmac/dwxgmac2.h    |  2 ++
- .../ethernet/stmicro/stmmac/stmmac_ethtool.c  | 24 +++++++++++++++----
- 2 files changed, 22 insertions(+), 4 deletions(-)
+According to Michal's suggestion, I have divided the patch into two
+ separate submissions.
+Kindly review.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-index 6a2c7d22df1e..264f4f876c74 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-@@ -11,6 +11,8 @@
- 
- /* Misc */
- #define XGMAC_JUMBO_LEN			16368
-+#define XGMAC_DMA_MAX_TX_SIZE		65536
-+#define XGMAC_DMA_MAX_RX_SIZE		65536
- 
- /* MAC Registers */
- #define XGMAC_TX_CONFIG			0x00000000
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
-index 18468c0228f0..3ae465c5a712 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
-@@ -491,9 +491,16 @@ static void stmmac_get_ringparam(struct net_device *netdev,
- 				 struct netlink_ext_ack *extack)
- {
- 	struct stmmac_priv *priv = netdev_priv(netdev);
-+	u32 dma_max_rx_size = DMA_MAX_RX_SIZE;
-+	u32 dma_max_tx_size = DMA_MAX_TX_SIZE;
- 
--	ring->rx_max_pending = DMA_MAX_RX_SIZE;
--	ring->tx_max_pending = DMA_MAX_TX_SIZE;
-+	if (priv->plat->has_xgmac) {
-+		dma_max_rx_size = XGMAC_DMA_MAX_RX_SIZE;
-+		dma_max_tx_size = XGMAC_DMA_MAX_TX_SIZE;
-+	}
-+
-+	ring->rx_max_pending = dma_max_rx_size;
-+	ring->tx_max_pending = dma_max_tx_size;
- 	ring->rx_pending = priv->dma_conf.dma_rx_size;
- 	ring->tx_pending = priv->dma_conf.dma_tx_size;
- }
-@@ -503,12 +510,21 @@ static int stmmac_set_ringparam(struct net_device *netdev,
- 				struct kernel_ethtool_ringparam *kernel_ring,
- 				struct netlink_ext_ack *extack)
- {
-+	struct stmmac_priv *priv = netdev_priv(netdev);
-+	u32 dma_max_rx_size = DMA_MAX_RX_SIZE;
-+	u32 dma_max_tx_size = DMA_MAX_TX_SIZE;
-+
-+	if (priv->plat->has_xgmac) {
-+		dma_max_rx_size = XGMAC_DMA_MAX_RX_SIZE;
-+		dma_max_tx_size = XGMAC_DMA_MAX_TX_SIZE;
-+	}
-+
- 	if (ring->rx_mini_pending || ring->rx_jumbo_pending ||
- 	    ring->rx_pending < DMA_MIN_RX_SIZE ||
--	    ring->rx_pending > DMA_MAX_RX_SIZE ||
-+	    ring->rx_pending > dma_max_rx_size ||
- 	    !is_power_of_2(ring->rx_pending) ||
- 	    ring->tx_pending < DMA_MIN_TX_SIZE ||
--	    ring->tx_pending > DMA_MAX_TX_SIZE ||
-+	    ring->tx_pending > dma_max_tx_size ||
- 	    !is_power_of_2(ring->tx_pending))
- 		return -EINVAL;
- 
+By the way,I changed my email from "ghostxavier@sina.com" to "xavier_qy@163.com"
+because the previous one was inconvenient to use.
+
+Best Regards,
+Xavier
+
+patch (2):
+  Union-Find: add a new module in kernel library
+  cpuset: use Union-Find to optimize the merging of cpumasks
+
+ MAINTAINERS                |  7 +++
+ include/linux/union_find.h | 30 ++++++++++++
+ kernel/cgroup/cpuset.c     | 95 ++++++++++++++------------------------
+ lib/Makefile               |  2 +-
+ lib/union_find.c           | 38 +++++++++++++++
+ 5 files changed, 110 insertions(+), 62 deletions(-)
+ create mode 100644 include/linux/union_find.h
+ create mode 100644 lib/union_find.c
+
 -- 
-2.34.1
+2.45.2
 
 
