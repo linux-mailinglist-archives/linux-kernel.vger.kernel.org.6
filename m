@@ -1,130 +1,134 @@
-Return-Path: <linux-kernel+bounces-222501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B39C910285
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:28:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A89BD91028C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20B511F2157E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:28:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33DEAB21780
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7DF1AB8F1;
-	Thu, 20 Jun 2024 11:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BQ0Pt91t"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8C11AB8EA;
+	Thu, 20 Jun 2024 11:31:11 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4777821A19;
-	Thu, 20 Jun 2024 11:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8616878C9C;
+	Thu, 20 Jun 2024 11:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718882880; cv=none; b=REQFnCPxXXGBHr4/hGLOIcik/QZIPmpoVAAQ6mCNBdAXDN4c2yNwC6haoUOwx9/y67pHI5uh2MtzQ+uRQ6YYkOMd+YLmm2CuqLjrjtOhUdH6bWadDCyw01C3lCXlMf/j3V3An9QIl43pt4cbYlF7LzKo3bhG2EHEqdh+iF1Lrcw=
+	t=1718883070; cv=none; b=VJRUzpE+Jjl7ZqlKhQWkOZ5jQ0CXTtEY5l4YLWTbYCuRvp9zNC8RR84JfCXuAad8nNBWeTYnXEFXmmstTnMQD6jsDC6nbAuMWxLvQPE2kQeQbTqhiEEyk9WS927s+tQwgW+TsBclZFHZ3AsdPxrMx+cCuPnG3In86naP9cf6Q/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718882880; c=relaxed/simple;
-	bh=N7VLxM5t+CIQt6m++a1ea9Ploo5fC/7kJqS0HoGv4Mc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jiIVlx9KRVpImNrkHhIYafcKocpL5kUVIxrMGzYB2R4MTEek2dec80ehup5HU79jlAT1aq5bhhyjP72S3qjactnJo2ZRRx3GAgAJa9Pycdwk/PitC9/LDQduNlVtCLYjcHdY437xzKkx8FBs7txe2XJllVwuGaziw8ys+oRBuRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BQ0Pt91t; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K9v5l1030590;
-	Thu, 20 Jun 2024 11:27:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=N7VLxM5t+CIQt6m++a1ea9
-	Ploo5fC/7kJqS0HoGv4Mc=; b=BQ0Pt91th1kh2tj/K5pnR49vzZ1HuDqsJyxe4h
-	HEnR6L6RexG10ATq7C8v3jHpLc6GaYG8YwZBZ2mEt1YCkTH8kn+zsvF+L3fFV2qN
-	FhwIxSoGQ1upnoeMtcy6eiqZJI82337zRrY9TtLyqVEfyb4E0O77k+66THerOa26
-	8UkGejsCUdGBfIBkv0OBZGJ+yCv3A60RBPF8nSi85LXOs0qj6CDslvFmIpm4Nx0U
-	wD3ju+aZ+TqmeaBMLjL1IvvJdP3sBGsMk5Q9ZjF2SCgITS+3cPA7pdTJxdrGSiVK
-	mAFcKq7rKLDsc5p60hO6oQrkwLMn0KiTkiNKGqGH/g0wINMQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yv6hn1n2r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 11:27:41 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KBReUA020527
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 11:27:40 GMT
-Received: from hu-kbajaj-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 20 Jun 2024 04:27:35 -0700
-From: Komal Bajaj <quic_kbajaj@quicinc.com>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <quic_mojha@quicinc.com>,
-        Komal Bajaj
-	<quic_kbajaj@quicinc.com>
-Subject: [PATCH v2] arm64: defconfig: Enable secure QFPROM driver
-Date: Thu, 20 Jun 2024 16:57:16 +0530
-Message-ID: <20240620112716.1339-1-quic_kbajaj@quicinc.com>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1718883070; c=relaxed/simple;
+	bh=ngXGENhKJ5ubOJfWmkGWNflPB0T6h1OvqocKXTMdnEY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dBt6mm2cvI6BaoXC0UNnOoyPz1lFo7MQMlM0BIBhWNIq2EcZWCQFuSJJBDI/fObtFJWh9IpEUDwEPg+I0/qxtu0ZWUIOoR51EQWrax/8ChZWOOCpI+1X/b1mQvw1MDsUb6EhEAaA7T4fmKoMqouv9fgZNfcGgp0MDBdZ980YvYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W4dbX34SNz6JB7h;
+	Thu, 20 Jun 2024 19:31:04 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2D3C31400D9;
+	Thu, 20 Jun 2024 19:31:06 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 20 Jun
+ 2024 12:31:05 +0100
+Date: Thu, 20 Jun 2024 12:31:04 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dan.j.williams@intel.com>, <ira.weiny@intel.com>, <dave@stgolabs.net>,
+	<dave.jiang@intel.com>, <alison.schofield@intel.com>, <ming4.li@intel.com>,
+	<vishal.l.verma@intel.com>, <jim.harris@samsung.com>,
+	<ilpo.jarvinen@linux.intel.com>, <ardb@kernel.org>,
+	<sathyanarayanan.kuppuswamy@linux.intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <Yazen.Ghannam@amd.com>,
+	<Robert.Richter@amd.com>, Bjorn Helgaas <bhelgaas@google.com>,
+	<linux-pci@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/9] PCI/AER: Call AER CE handler before clearing
+ AER CE status register
+Message-ID: <20240620123104.000029cf@Huawei.com>
+In-Reply-To: <20240617200411.1426554-3-terry.bowman@amd.com>
+References: <20240617200411.1426554-1-terry.bowman@amd.com>
+	<20240617200411.1426554-3-terry.bowman@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1mtQuxNnR0zAtqkB1TFwj7Dd_046U3Cu
-X-Proofpoint-GUID: 1mtQuxNnR0zAtqkB1TFwj7Dd_046U3Cu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_07,2024-06-20_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- mlxlogscore=994 impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406200082
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Enable the secure QFPROM driver used by Qualcomm QDU1000
-platform to read the secure qfprom region allowing LLCC driver
-to get the DDR channel configuration.
+On Mon, 17 Jun 2024 15:04:04 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-Currently, LLCC is the only user of secure QFPROM, and hence
-setting CONFIG_NVMEM_QCOM_SEC_QFPROM as module to the convenience
-of LLCC module.
+> The AER service driver clears the AER correctable error (CE) status before
+> calling the correctable error handler. This results in the error's status
+> not correctly reflected if read from the CE handler.
+> 
+> The AER CE status is needed by the portdrv's CE handler. The portdrv's
+> CE handler is intended to only call the registered notifier callbacks
+> if the CE error status has correctable internal error (CIE) set.
+> 
+> This is not a problem for AER uncorrrectbale errors (UCE). The UCE status
 
-Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
----
-Changes in v2:
-* Setting the CONFIG_NVMEM_QCOM_SEC_QFPROM as module
-* Modified the commit message to mention the need for driver enablement
-* Link to v1: https://lore.kernel.org/all/20240619105642.18947-1-quic_kbajaj@quicinc.com/
----
+uncorrectable
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> is still present in the AER capability and available for reading, if
+> needed, when the UCE handler is called.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 838b4466d6f6..2f280d7f5a79 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1575,6 +1575,7 @@ CONFIG_NVMEM_LAYERSCAPE_SFP=m
- CONFIG_NVMEM_MESON_EFUSE=m
- CONFIG_NVMEM_MTK_EFUSE=y
- CONFIG_NVMEM_QCOM_QFPROM=y
-+CONFIG_NVMEM_QCOM_SEC_QFPROM=m
- CONFIG_NVMEM_RMEM=m
- CONFIG_NVMEM_ROCKCHIP_EFUSE=y
- CONFIG_NVMEM_ROCKCHIP_OTP=y
---
-2.42.0
+I'm seeing the clear in the DPC path for UCE. For other cases is
+it a side effect of the reset?
+
+> 
+> Change the order of clearing the CE status and calling the CE handler.
+> Make it to call the CE handler first and then clear the CE status
+> after returning.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linux-pci@vger.kernel.org
+Seems reasonable, but many gremlins around the ordering in these
+flows, so I'm to particularly confident. With that in mind.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huwei.com>
+
+> ---
+>  drivers/pci/pcie/aer.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index ac6293c24976..4dc03cb9aff0 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -1094,9 +1094,6 @@ static void pci_aer_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+>  		 * Correctable error does not need software intervention.
+>  		 * No need to go through error recovery process.
+>  		 */
+> -		if (aer)
+> -			pci_write_config_dword(dev, aer + PCI_ERR_COR_STATUS,
+> -					info->status);
+>  		if (pcie_aer_is_native(dev)) {
+>  			struct pci_driver *pdrv = dev->driver;
+>  
+> @@ -1105,6 +1102,10 @@ static void pci_aer_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+>  				pdrv->err_handler->cor_error_detected(dev);
+>  			pcie_clear_device_status(dev);
+>  		}
+> +		if (aer)
+> +			pci_write_config_dword(dev, aer + PCI_ERR_COR_STATUS,
+> +					info->status);
+> +
+>  	} else if (info->severity == AER_NONFATAL)
+>  		pcie_do_recovery(dev, pci_channel_io_normal, aer_root_reset);
+>  	else if (info->severity == AER_FATAL)
 
 
