@@ -1,107 +1,86 @@
-Return-Path: <linux-kernel+bounces-222361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF27910055
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:27:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B98E0910051
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 522A41C21E3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:27:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D8992840F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9011A3BD1;
-	Thu, 20 Jun 2024 09:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F150C1A4F19;
+	Thu, 20 Jun 2024 09:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VG3sM/5k"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UecRRRRo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E3839FD7;
-	Thu, 20 Jun 2024 09:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3141A4F04
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718875655; cv=none; b=iq/uA32K5XQBdava3es3c8XLRHR1Eemn9CJttxuVtXeiN/qeVrMVH7mIjc25+yxfprPdsU14lNziGaZn7R2wFnPiipXT4wFZMPZ6oV1Sm7f0tqOzRWM1K2iaRSxTuZ6O5CUuZ/eGJ3uBj7ccyOAkbl15vYDgS+cSicQdybblCLo=
+	t=1718875643; cv=none; b=FSjKgaAjEtTmOXfhtaZcOcd5pQ+QsQNHGadnGjMkIjS4aznOr9zHJkqmfX88hXWQIsAHV4OJ2qc2PEFejW6SoptrBAwS2o9/HejrlTQNXPh60539EiWrri3VYIP5yxJMelC4YYdYexlbSSMezV+3RpTB34H0laZv0lhQ7Y8eu14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718875655; c=relaxed/simple;
-	bh=hvfhnE/muE98gjio2LyB472pR3X4Ufwfd+z4XtSVIgU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RWF+8sVFany0jmllKb4PEboGLgD4D/1iI1V9iAosQfNtdO1XPT2XIUL2Vmob6zhZnuhhdKoTEyyl4WXBRH9LKjKDgrCckwRF6DDDOD08k7WJznWb2L9bQTZi39EzrH1C1Yf7OoeV3EHa0vuGvGOgd+SdqF8yHwwd8hos+OFiOe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VG3sM/5k; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5c1a6685cd5so279357eaf.1;
-        Thu, 20 Jun 2024 02:27:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718875652; x=1719480452; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nm/VoVgKpuIt9wlpzE70lBkyxmtr1Al/puqNbp58SbQ=;
-        b=VG3sM/5k/V0ELXLW4MGQ/tA9hhxXAnr1z9//KbE8V3MDee24LrzopeB8jhDE1vFxeJ
-         L7GoD23nSF14aI17+o71c58TobjZXFDTbMNV1ckVcHvGsMotte5sblpxVIWYzR4rvvoA
-         ptp4VGbQ0W7epHzlL5jdCwXWHkGlqZF0+G85rKs/gEPUW19AX2tLgcCPGNczm6Hb8vEd
-         gE920VrJOVj3j4/GQT/jPCIrexQ28AkBCC5GP5TD0uqfDqD3D6OWoInWbI5jIsNZqoZQ
-         W11zADrCCuSm3kx+16R4ox+hx3JR4Ajc7N5ePFBXQjYPvOeEp8heiqhWZckcDZDuC8ob
-         cXXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718875652; x=1719480452;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nm/VoVgKpuIt9wlpzE70lBkyxmtr1Al/puqNbp58SbQ=;
-        b=NBbVzlp20amiyoxDQXEsW3p3Sby3ZH04cg+ckGWGedGsxoqlmwPf4H7ujrtXMNK7vh
-         1Fn5alSNbsqHx5QgguGT5XeS7uJrgxrLIA9Mhd8igt39pCPrWmorH3ae8ZoiM+TgWN5Y
-         ZPnkfNjrnte6BPdEENeIb0lhBOQbwNZfHpe8Css4Fe5aR9fy06zJs0ra8DZbrFW+JIrX
-         krfptvmKCs3MFu8W7GOHawoo1JZBu/CTazrBZoYxJzT27SrKL1v69Z63g9GUc9jm1hr/
-         06gyAjMeI4rMbUK38NPx9MQtQ5C6lkcuVrS/AciBJq9SuIqb7jAvXVydnQMQOqsm0sBj
-         fCgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzqDVJSXijsRMZ3w1s6zGFSaTm1NxNFa1ZrOshoMtf4Zzi89hDW6q+cDe2pqxJ+XWhcQa+tO4ZYaLuxN9MIQi6+4maDl5JWLJPU+SrMl9Ex3Y3GK8DrhbsLOUtWzRgnic8R1gdl4bLxhp55G5VM/rkM5U2hNZVtQAWMr0kLt1eTF+O+7RexhTcOEjJ6KPgnKawoa/acpeJUS1vVEWI+0c+Ds4+4cb5lvUW
-X-Gm-Message-State: AOJu0YzZ9yUyOWzVIh0aS709IA5RZv/WGxEW8u4kIeM/Jsrb9k2CvMfG
-	n99dwiugY8ptSGpaF5/bPx3fzti3M4zR0geM5NBY8x2Ej2Czaa5vksyw8q8a8Y8GffqbvsqCxX4
-	ospwoZUxbm9x1o3tg5tTpv75nhPI=
-X-Google-Smtp-Source: AGHT+IE6JPnR/0edcyF0AErTnEcB/SkvCIQ4Q7vWXQTFelcVP3vGKG4q1ks+vXYWLHHO4nWzVrEeJAZGfC1wLGlRDr0=
-X-Received: by 2002:a4a:db76:0:b0:5c1:b95a:eccc with SMTP id
- 006d021491bc7-5c1b95aeda9mr3040540eaf.2.1718875652572; Thu, 20 Jun 2024
- 02:27:32 -0700 (PDT)
+	s=arc-20240116; t=1718875643; c=relaxed/simple;
+	bh=bCHCLMYOaomOQpn263u5xjMYWxTXqR46pUfCRYFERUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ke8rBogWwsmT8fBZbaVnkKF2OzB0vJECXsIWtIv0KREEj09yEFtAIQBSnI8OWOcVrUtZqDxefls5z0KjtKBHTCB9QDal/LBQ/GXomZbN/qeusH30SQCPp1U0hIlb+CojBYyAo9Ti++ik1l5S/8uIh6MzeMTi5waZwTufxcWLAfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UecRRRRo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32E8DC4AF07;
+	Thu, 20 Jun 2024 09:27:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718875642;
+	bh=bCHCLMYOaomOQpn263u5xjMYWxTXqR46pUfCRYFERUo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=UecRRRRodgp++UZYOO/JOcS0Qkflc+g194DHdgUOaWgfk5FNoAEgju1stZLycScP7
+	 Mz6IYBeWrA8VruCHureT39K3DnTExBwCbRY62r7x7TjerQrGghYKDFsnZwRHTNE1vm
+	 ecqQTvept11n1PfpgNbl1l5k9fIqK1mUe1h5eEGE9U0xS1QI5J1CGPPyjMv96NK+GA
+	 VNxZOVUYvJcDCAYhKu6LHj12mnUk0cd8yJu51AGrm82Sm9mQCpAuO3IGH+CoTp1H3l
+	 QARzaaTdZ+n7VgPt3qbfaHHOT1V3EkBbA1GV64DZ8IxhB5FPTokcI94nNNMUThOzIe
+	 SmhbKajBZaBbA==
+Date: Thu, 20 Jun 2024 10:27:19 +0100
+From: Lee Jones <lee@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] MFD fixes for v6.10 
+Message-ID: <20240620092719.GF3029315@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618204523.9563-1-semen.protsenko@linaro.org> <20240618204523.9563-5-semen.protsenko@linaro.org>
-In-Reply-To: <20240618204523.9563-5-semen.protsenko@linaro.org>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Thu, 20 Jun 2024 14:57:17 +0530
-Message-ID: <CANAwSgS_EjzPpxvz22TjD9dm3cF8Pd1zVXBqCm6bcci-oDL+Hw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] hwrng: exynos: Implement bus clock control
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Sam,
+Good morning Linus,
 
-On Wed, 19 Jun 2024 at 02:15, Sam Protsenko <semen.protsenko@linaro.org> wrote:
->
-> Some SoCs like Exynos850 might require the SSS bus clock (PCLK) to be
-> enabled in order to access TRNG registers. Add and handle the optional
-> PCLK clock accordingly to make it possible.
->
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
-> Changes in v2:
->   - Used devm_clk_get_optional_enabled() to avoid calling
->     clk_prepare_enable() for PCLK
->
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-Reviewed-by: Anand Moon <linux.amoon@gmail.com>
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-Thanks
+are available in the Git repository at:
 
--Anand
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/lee/mfd tags/mfd-fixes-6.10
+
+for you to fetch changes up to 68f860426d500cfb697b505799244c7dfff604b1:
+
+  mfd: axp20x: AXP717: Fix missing IRQ status registers range (2024-06-14 08:43:39 +0100)
+
+----------------------------------------------------------------
+ - Bug Fixes
+   - Fix AXP717 PMIC probe and by extension it's consumers
+
+----------------------------------------------------------------
+Andre Przywara (1):
+      mfd: axp20x: AXP717: Fix missing IRQ status registers range
+
+ drivers/mfd/axp20x.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+-- 
+Lee Jones [李琼斯]
 
