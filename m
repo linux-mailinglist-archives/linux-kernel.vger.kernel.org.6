@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-223652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DAB991160E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:56:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B907A91160D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62F3EB227F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:56:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CC97B22AED
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC833152E12;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C7615250A;
 	Thu, 20 Jun 2024 22:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nknPfNbC"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N80MIUB5"
 Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43B6143746
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528E914A4C8
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718924130; cv=none; b=uLiFR5K8TxqaUBbPFboTWQx14joQJVQfDnYsuaWmeyomZKBNFlZBMgtwM18vAlYuS7VrX0xNrDzdlSGMFpqbFH7pHRLkK29aNAjrt1+OuAr9LkHAnDfqad8fRunTz4jE+Kf8E6hKPHYfzKwLBhU5Uacm47c9CEvpOxRN0XzVNoY=
+	t=1718924130; cv=none; b=bjW59YcClcJcAFIjWLZs6EhuFz2rCfjq4na+jeHtP8zP8fAF4sOUcvD0nc550EuvppDwrzOxLDqaodbPj6xW7SqDRspVyioK9IFrrjX1w7ZDuRrj+fgKZMsRarmF0TQjCgQaJBfyKY9dz7zYQG5+uF7c2J1St8EIPH5UISnPNVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718924130; c=relaxed/simple;
-	bh=42Enl7rJ+JieEa2j+TC+Pkbg3DYxAPRfCHYi64Mdal8=;
+	bh=5JJ0FuTmJ51m3GFnw66fokeLW92y7ep22LnE63sLqV4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fGIM/piRl8uSFtQrxL5s+5Jp0lAt3KAGB7/KqH2nxbTLJNnBhww9f+dasjD1n/6HHb06z4JmZmpgaBU30f7X2XO9okBdFaXkIwBS9dk52BLyO1o5uwkPZRo5jBKgCUilJRa/qJl8ly2YwmAJElP4Ct5LQs4eUNZmAw0LG6fd28k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nknPfNbC; arc=none smtp.client-ip=209.85.208.171
+	 In-Reply-To:To:Cc; b=Nn1qKGoven7LUOYf5PgHQ3JUw0zdCEXAIj4IzIp0azubl+H/RxceH2a3ZQgER6i/x80UiHiZtysgPXq/3LmoC6znO3t9rd1F3AtiLhMk7hDeg6v0Xh5uByMPZV2kwRgiu5VO4TT0Znqw1vtj1vZIXWIitURktgBWc5HS14jI0Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N80MIUB5; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec4a11a297so8468161fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:55:27 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec3f875e68so16710981fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:55:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1718924126; x=1719528926; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=71+mH5Floh82G3AnJlaDTvShrwKqWGqG0Bz3hMtCxBI=;
-        b=nknPfNbCjNrToZbJkCqZyksLCuMzHyZmAUfMaWJ3BwjtaQGcoNUdUavZpaZILjMuXy
-         rezLd3nhIcXWTVZ00rzZzkjVa4zGfVb5tiRVtx1BboeRmGusPngKxkfY96D0DZ0I7P3X
-         SMopLFdzMtSWhdBO3Xrf02BFXZZub19EqGPzwzBbrXj0YW0KsXGUGkxOa1EJMDfsZQsM
-         svtYQJ+zTabd/y+xsd4lG2Bl8XfYwLsGPW1iEokTvJpnaEROIKD1RD8GHt7LXqSvUuYq
-         rQMh0riQAnWQ4rnaZuVqxsbldqY+LCziefsO0OHz2276vA65F4ud0o+7na6ChjwZaCdV
-         njUA==
+        bh=EQohNPpaTb5KYVE0BZu3/ef4lat3R4WjEfszMMJQNKU=;
+        b=N80MIUB5+2q6R87c4+soEPY0/k1hd/AyuaiX4oyMjRurtONCYTe8WCzgZtGpBA0MEv
+         LmvtQPhLZZDFaJoEhpG6+lqnWrNKoUYaK50U4nIe6pnm0BpCAGU8om5PQ1PFAK3xp5tY
+         XyLS+jwwaCQHNM5U9PPw2ViFag1XLpmTEsLHuIhRj86rpecR46TFIgjzHqf9L0DHIzT9
+         n2BfR2hPmqOdvXyg3SM8poo5kDXLcK7DyQ+6cskHXQHZcRHR+axLp2riFAUC0CSINgor
+         BvlF3ZKlhLoNk2n5ixCYDcpX+8GfbS8a0vsn7H3RpAMa9RMQqoJrvIFFV2x45+lxRvYo
+         FaCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1718924126; x=1719528926;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=71+mH5Floh82G3AnJlaDTvShrwKqWGqG0Bz3hMtCxBI=;
-        b=TQIanBsZ4oX9dh+nGsOfZMKny7npawJfUNPRShIWrTTNuqwDSLfIdLjIDsQN9tf7dk
-         4t3apEloDDEKvk1pwgnJJti0jr564kDiGTt4FoSRWcY9Dnvo2VCldM9uPjBtA3bcFh/H
-         Z2JvLu39XI+avho8O2tLY7nd3HDRn1wPpAPq2pjx6JdoMNMkhaTV++JU4H7l64S6aZ1Z
-         mIahGJaPoFmItYkLP0PvxS1oyMkSHjpU4SNlb4H0DfaPkGopClh7wGxYAqGyJw+nDsjY
-         S7/U2K7+6mehV8qUcicm55U8pPGA0Pj3uFFP4bti4hqO66ezPtE5k9Lv6GFgOoZpAyTK
-         rEAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdve8qoBDp14yhcO3a/14Inq4CAEcsk3rNwRqxFB/PchDAsYEzzhEuulZU6uLlds+eSU7qN0c4joJL4nLigPIqP0D6QiIqy4PN84ZX
-X-Gm-Message-State: AOJu0YzmpSEZP39bW5lxfEn8DiohtZw/0pOnzkE0xaYaKUmBa5Uyd247
-	/MwYlYlc2zpW0Dgd+DY77P/YcuKKJKxpwFwGaIga+j1iB/ZThzOyKwy/I3gFK9s=
-X-Google-Smtp-Source: AGHT+IFZM+I+YtVh64S4lDZ2udWYywALAsQznYgcpbJetOLRC5X51Yoe0ZNnbkCPl3SnLSja0Yx9VQ==
-X-Received: by 2002:a2e:818e:0:b0:2eb:e3a7:8b with SMTP id 38308e7fff4ca-2ec3ced134amr43741981fa.26.1718924125887;
-        Thu, 20 Jun 2024 15:55:25 -0700 (PDT)
+        bh=EQohNPpaTb5KYVE0BZu3/ef4lat3R4WjEfszMMJQNKU=;
+        b=qcU2C4gwEDSe6KzU1SUAlSZCKb2xIGZUja2BQEjGuhKUo9cdFm22hBE//nvbBoEzDV
+         1kiynmgY2qBFwGeu7Pw+ADjcHXyrkCJiQJrYNjkysxOjz9vAiiZkFSOcM6J6/I28+Pwm
+         Gxkbc8bA5+KkHhWdGomKuf8PUu5Bivk6u+8aqx0KiBHUTVZxSxwWdWYlDzhN7i3UOYaI
+         OErt+wS92CmvLpTJeSy3n2YAq/0CAWJ9AYUWQy8x1nJvv/jRZWGHjaB5KQn/qf3+BSdg
+         tm64QP0h8I/ewnoVYOHaIQAaxLGlXYdR7FHZqObDjOgXXn7fE0ovWGZJ37IaAw1M/kGn
+         DPvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXh7MKv+h0wucLHBBuGcdK6OmkB/ReKR0XhOyTOzVxed0J3K+KTwc9ZNVE1XRi7nlx8Y4TBxYQfI3L2aoShricXxV3elBsC4frbOejk
+X-Gm-Message-State: AOJu0Ywqet5qNQySbNuq+FWIeorAZq9A43fwO0nVc4o+UPjgnAFKlo9F
+	bD+4lvMNgGT1pJZDOJ/bssuRGsVY5ZUy+MN8VM2PtsM72rjAigZHnQhKIWL3YK8=
+X-Google-Smtp-Source: AGHT+IHiX4zKNBalbolTrJjjqJsWAjc1/tOmVInlXcwDg2oe43Um4+0q1bXe0brVi/wRnLVylxIuGA==
+X-Received: by 2002:a2e:9e16:0:b0:2ea:e98e:4399 with SMTP id 38308e7fff4ca-2ec3cfd74b1mr42903741fa.36.1718924126551;
+        Thu, 20 Jun 2024 15:55:26 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d60126fsm510461fa.20.2024.06.20.15.55.25
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d60126fsm510461fa.20.2024.06.20.15.55.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 15:55:25 -0700 (PDT)
+        Thu, 20 Jun 2024 15:55:26 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 21 Jun 2024 01:55:23 +0300
-Subject: [PATCH v2 4/7] usb: typec: ucsi: rework command execution
- functions
+Date: Fri, 21 Jun 2024 01:55:24 +0300
+Subject: [PATCH v2 5/7] usb: typec: ucsi: inline ucsi_read_message_in
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240621-ucsi-rework-interface-v2-4-a399ff96bf88@linaro.org>
+Message-Id: <20240621-ucsi-rework-interface-v2-5-a399ff96bf88@linaro.org>
 References: <20240621-ucsi-rework-interface-v2-0-a399ff96bf88@linaro.org>
 In-Reply-To: <20240621-ucsi-rework-interface-v2-0-a399ff96bf88@linaro.org>
 To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
@@ -90,201 +89,74 @@ Cc: Nikita Travkin <nikita@trvn.ru>,
  linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
  linux-arm-kernel@lists.infradead.org
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4449;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1606;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=42Enl7rJ+JieEa2j+TC+Pkbg3DYxAPRfCHYi64Mdal8=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmdLNZW1iosGP2/ESy5WgAGVEoe8PqaPXapLjv8
- Z5ef9DvoauJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnSzWQAKCRCLPIo+Aiko
- 1ccECACV/t1O7ibAb++EUfbXBQHS1BVPzE5BfW10D8XOLBh4Y71iTfBan0XZMR56o+hvJy1B9Un
- TOtp0zCUfQMQKPEUE79oVfhEP9Mm+fBKLvLx4uIyvOsEA0FpLA9kwFLUC086n/8zEsa0Llcvjib
- wFwaHncYK92DaNRJaJ6dDPUHV0jk3rdY5b2rcGbymUfniut3PZJZ0azC5ckc5SjbVI7dqS8q9N9
- dv/mNa8u9muxna9inYtyRMJrFPiAioRycDC7vtAOpkz/c5AHvWPFSzHJjilKSi28Lwyk1WQ5BJX
- rJ+TYTACbKFBmMVjJ8A655Zjq34XmFx+wIewFisYIdqB3AdQ
+ bh=5JJ0FuTmJ51m3GFnw66fokeLW92y7ep22LnE63sLqV4=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmdLNaDofb3amsRcu0qvjDc9UZGAvmIhod3B7mD
+ g3oylyO/0iJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnSzWgAKCRCLPIo+Aiko
+ 1QtNCACdBMXW0rp0duCVy1o696WTIt9Z8/8Fok4J2crdv8mHpLp/GVcEY0Ukoxe3RlnwPD/5UVu
+ kxoogwkMVQAh4Dr1qvYAFY/Kte2dVgLzhY1tvMt+mBGza88/7dXk0fuXBKuqQooTBylLFIV/j3l
+ LOozQbRYT9JrdTJ7epm7qs1OjKBfmG9qrKZ5hIf2Y6mhXA43e40xiBqBY+fwfjpWaJn+uUQTcpe
+ jMIL3J/BU7/NkWKmtt9ADgm+4sxLJaPHfAwIAJQA5sMmD0kssmK79YxPf6lZNt3mI8OYZUkNC67
+ Luoqk+ml0bImb8JxFgJ+JbQXLrTnXwVtQgWJD25MA+/Nbgkv
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Rework command execution code to remove recursive calls of
-ucsi_exec_command. This also streamlines the sync_control / read(CCI)
-read (MESSAGE_IN) sequence, allowing further rework of the command code.
+There is no need to have a separate wrapper for reading MESSAGE_IN data,
+inline it to ucsi_run_command().
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/usb/typec/ucsi/ucsi.c | 134 ++++++++++++++++++++----------------------
- 1 file changed, 64 insertions(+), 70 deletions(-)
+ drivers/usb/typec/ucsi/ucsi.c | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 81b459b26b74..58d9602bd752 100644
+index 58d9602bd752..4ba22323dbf9 100644
 --- a/drivers/usb/typec/ucsi/ucsi.c
 +++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -63,25 +63,74 @@ static int ucsi_acknowledge(struct ucsi *ucsi, bool conn_ack)
- 	return ucsi->ops->sync_control(ucsi, ctrl);
- }
+@@ -36,19 +36,6 @@
+  */
+ #define UCSI_SWAP_TIMEOUT_MS	5000
  
--static int ucsi_exec_command(struct ucsi *ucsi, u64 command);
--
--static int ucsi_read_error(struct ucsi *ucsi)
-+static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
-+			    void *data, size_t size, bool conn_ack)
- {
--	u16 error;
- 	int ret;
- 
--	ret = ucsi_exec_command(ucsi, UCSI_GET_ERROR_STATUS);
--	if (ret < 0)
-+	*cci = 0;
-+
-+	ret = ucsi->ops->sync_control(ucsi, command);
-+	if (ret)
- 		return ret;
- 
--	ret = ucsi_read_message_in(ucsi, &error, sizeof(error));
-+	ret = ucsi->ops->read_cci(ucsi, cci);
- 	if (ret)
- 		return ret;
- 
--	ret = ucsi_acknowledge(ucsi, false);
-+	if (*cci & UCSI_CCI_BUSY)
-+		return -EBUSY;
-+
-+	if (!(*cci & UCSI_CCI_COMMAND_COMPLETE))
-+		return -EIO;
-+
-+	if (*cci & UCSI_CCI_NOT_SUPPORTED) {
-+		if (ucsi_acknowledge(ucsi, false) < 0)
-+			dev_err(ucsi->dev,
-+				"ACK of unsupported command failed\n");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (*cci & UCSI_CCI_ERROR) {
-+		/* Acknowledge the command that failed */
-+		ret = ucsi_acknowledge(ucsi, false);
-+		return ret ? ret : -EIO;
-+	}
-+
-+	if (data) {
-+		ret = ucsi_read_message_in(ucsi, data, size);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = ucsi_acknowledge(ucsi, conn_ack);
- 	if (ret)
- 		return ret;
- 
-+	return 0;
-+}
-+
-+static int ucsi_read_error(struct ucsi *ucsi)
-+{
-+	u16 error;
-+	u32 cci;
-+	int ret;
-+
-+	ret = ucsi_run_command(ucsi, UCSI_GET_ERROR_STATUS, &cci,
-+			       &error, sizeof(error), false);
-+
-+	if (cci & UCSI_CCI_BUSY) {
-+		ret = ucsi_run_command(ucsi, UCSI_CANCEL, &cci, NULL, 0, false);
-+
-+		return ret ? ret : -EBUSY;
-+	}
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	if (cci & UCSI_CCI_ERROR)
-+		return -EIO;
-+
- 	switch (error) {
- 	case UCSI_ERROR_INCOMPATIBLE_PARTNER:
- 		return -EOPNOTSUPP;
-@@ -121,78 +170,23 @@ static int ucsi_read_error(struct ucsi *ucsi)
- 	return -EIO;
- }
- 
--static int ucsi_exec_command(struct ucsi *ucsi, u64 cmd)
+-static int ucsi_read_message_in(struct ucsi *ucsi, void *buf,
+-					  size_t buf_size)
 -{
--	u32 cci;
--	int ret;
+-	/*
+-	 * Below UCSI 2.0, MESSAGE_IN was limited to 16 bytes. Truncate the
+-	 * reads here.
+-	 */
+-	if (ucsi->version <= UCSI_VERSION_1_2)
+-		buf_size = clamp(buf_size, 0, 16);
 -
--	ret = ucsi->ops->sync_control(ucsi, cmd);
--	if (ret)
--		return ret;
--
--	ret = ucsi->ops->read_cci(ucsi, &cci);
--	if (ret)
--		return ret;
--
--	if (cmd != UCSI_CANCEL && cci & UCSI_CCI_BUSY)
--		return ucsi_exec_command(ucsi, UCSI_CANCEL);
--
--	if (!(cci & UCSI_CCI_COMMAND_COMPLETE))
--		return -EIO;
--
--	if (cci & UCSI_CCI_NOT_SUPPORTED) {
--		if (ucsi_acknowledge(ucsi, false) < 0)
--			dev_err(ucsi->dev,
--				"ACK of unsupported command failed\n");
--		return -EOPNOTSUPP;
--	}
--
--	if (cci & UCSI_CCI_ERROR) {
--		/* Acknowledge the command that failed */
--		ret = ucsi_acknowledge(ucsi, false);
--		if (ret)
--			return ret;
--
--		if (cmd == UCSI_GET_ERROR_STATUS)
--			return -EIO;
--
--		return ucsi_read_error(ucsi);
--	}
--
--	if (cmd == UCSI_CANCEL && cci & UCSI_CCI_CANCEL_COMPLETE) {
--		ret = ucsi_acknowledge(ucsi, false);
--		return ret ? ret : -EBUSY;
--	}
--
--	return UCSI_CCI_LENGTH(cci);
+-	return ucsi->ops->read_message_in(ucsi, buf, buf_size);
 -}
 -
- static int ucsi_send_command_common(struct ucsi *ucsi, u64 command,
- 				    void *data, size_t size, bool conn_ack)
+ static int ucsi_acknowledge(struct ucsi *ucsi, bool conn_ack)
  {
--	u8 length;
-+	u32 cci;
- 	int ret;
+ 	u64 ctrl;
+@@ -70,6 +57,13 @@ static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
  
- 	mutex_lock(&ucsi->ppm_lock);
+ 	*cci = 0;
  
--	ret = ucsi_exec_command(ucsi, command);
--	if (ret < 0)
--		goto out;
--
--	length = ret;
--
--	if (data) {
--		ret = ucsi_read_message_in(ucsi, data, size);
--		if (ret)
--			goto out;
-+	ret = ucsi_run_command(ucsi, command, &cci, data, size, conn_ack);
-+	if (cci & UCSI_CCI_BUSY) {
-+		ret = ucsi_run_command(ucsi, UCSI_CANCEL, &cci, NULL, 0, false);
-+		return ret ? ret : -EBUSY;
++	/*
++	 * Below UCSI 2.0, MESSAGE_IN was limited to 16 bytes. Truncate the
++	 * reads here.
++	 */
++	if (ucsi->version <= UCSI_VERSION_1_2)
++		size = clamp(size, 0, 16);
++
+ 	ret = ucsi->ops->sync_control(ucsi, command);
+ 	if (ret)
+ 		return ret;
+@@ -98,7 +92,7 @@ static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
  	}
  
--	ret = ucsi_acknowledge(ucsi, conn_ack);
--	if (ret)
--		goto out;
-+	if (cci & UCSI_CCI_ERROR)
-+		return ucsi_read_error(ucsi);
- 
--	ret = length;
--out:
- 	mutex_unlock(&ucsi->ppm_lock);
- 	return ret;
- }
+ 	if (data) {
+-		ret = ucsi_read_message_in(ucsi, data, size);
++		ret = ucsi->ops->read_message_in(ucsi, data, size);
+ 		if (ret)
+ 			return ret;
+ 	}
 
 -- 
 2.39.2
