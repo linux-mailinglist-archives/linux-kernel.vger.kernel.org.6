@@ -1,149 +1,273 @@
-Return-Path: <linux-kernel+bounces-222191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 212BC90FE0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:53:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C8490FE0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84E35B24398
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:53:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A021F22FB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A97645026;
-	Thu, 20 Jun 2024 07:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EBC482C8;
+	Thu, 20 Jun 2024 07:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VSD7g5Yb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sJmwN0wa"
-Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="EcWkhLZa";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="EcWkhLZa"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BBB54F8C;
-	Thu, 20 Jun 2024 07:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967CF44376
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718870025; cv=none; b=M41PvD4G/yeRDwY2pdrKJz2zlvjI4dfIxSbfvS2WsIwmR5rrM2XpBwIQNYsmbxCq4ABgClUtjbwRXA+jDDGIQg4gz5dBnhsbexnYWlZSe5oCjU6//y+yshcdeRyzCJt7eT4E/Hi7xS88s4yFvEruCC9divJt7NMyUKXt5kcIJvU=
+	t=1718870055; cv=none; b=nKXjC18brVsYO7uoQIcpYytiGWHUrzaww8cqxKvGfDGGtB+vM84UjlgpF6OSiWAyUzQuMB+wXUbZzVOJ+X9Dear3v1WX7q4M2OLXye7+fjY63uO1VxiLmwmKKHfZM1QwVzMIYc2T/g4oyURmUPpmURg6vyuweestLG+1ToPk1nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718870025; c=relaxed/simple;
-	bh=hyjUwqEc6gxyJBfvSnAM1gIpZjZ/aGGHuLR1CBy2jAY=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=Lto9JXDAoufSiDZHItJAl1AQL6ckGOI+D0b+rCTuCKQAkq3RvORrf+cwRbXgGuwsXv9EBFWIKCKtCvX4YxhKx/ml8QheOPHxo+yIRhoyvUAwCMSszHpKCdix+NzEqqA6cEnrXkFnWGN3XAN03iaS/X09c55AguKz6Agcruhm5Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VSD7g5Yb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=sJmwN0wa; arc=none smtp.client-ip=64.147.123.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id 0D2951C000CC;
-	Thu, 20 Jun 2024 03:53:41 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Thu, 20 Jun 2024 03:53:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718870021; x=1718956421; bh=JHeenBGKjo
-	00Vy0Wx71C86ZiG2/JTmE9tVuHD5MJIGk=; b=VSD7g5YbPKYvbulY+H627IMewJ
-	S+zKo7lxSktkGbThFsKKNVcWFKUtZd/foreDwev/pCcboYVqMzg5kC2Iw/p5X/ka
-	hSxV3fiKFDFW6mHgzsKC9DnknS5dsJ1nWodOHvD0YbsE6hnUfECajYGB7MSQ6yOx
-	1GS5J6qhRAbMEpvtf0Y/AYIqijHaJ5iWxbgn54qbIfiTJQbqKJno536uaRINu5Vo
-	YckPP5HmfVJtKQvGqqJdoF8Zxp0kvImXxJ7VdK+DQv9hLGQHXwePEw8kQvb1gx7U
-	su1mrta0Eja8MWshos+8sc9PrsDTgJq5lY6baR+AvQ0DkUGJ5KtjRCtqnFMA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1718870021; x=1718956421; bh=JHeenBGKjo00Vy0Wx71C86ZiG2/J
-	TmE9tVuHD5MJIGk=; b=sJmwN0waefIXKVlS9ErM0QVu/7TH+k/XcfXRLRtwNAnR
-	xhDTK09nxxe9FFVqbhUT8jtRDiVDqGSyMyy+ZrcWlmPxuGQd4Ss6/OjLXgjatBfq
-	WtBimqZ5nCAXST5rLTYUZVyukGCk/R2Y8Z2Qcet0+dkOSNILj/8BgL4Io06A3nGH
-	bq/uSi24hbPrJxTMPqzYmnhHduB/G5G25IF6hfkb6f8QTYWl6BUewSeuI7fltckp
-	i2GV+OSTZlyWBNLDlf7Jb1H8vEGfSPUPySXsrK/W99RsY9uIJGdxLfC+BYuBnDBt
-	He0rcqsJtH3vX6/TjJCA2dE+1voUvGCNZnzbL2QVCA==
-X-ME-Sender: <xms:BeBzZrKzcjBNJ2D7__NVxUuuxTky0NMIRUBiQvZHoLwvvJ9A3b2i2A>
-    <xme:BeBzZvKKVvpu1asPsegM4rsdpk4g21HLA3J0aB4MyrRpsRoji2MmrQbw0dGAzbacX
-    aQC9ppZTccL9FC_70U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefuddguddvjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
-    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:BeBzZjvtJkL2HZj6b8aCbSlmOzmrp_XB5mlLWkrgvxKetOTOcIWs5Q>
-    <xmx:BeBzZkZw_UQQSYMGw5uqmU3RSE6Y7B6zqiMN362VZeH-UT6Rr0Pw4g>
-    <xmx:BeBzZiZ2k4NWImSL7PMFZLgQ8DT2Udi6Dou84_aDYEQZTirwdE-_GQ>
-    <xmx:BeBzZoAO3uFgPTKFG_fyNkgvjhFq5515LaxpsXNdul6S1SU5zetelA>
-    <xmx:BeBzZq61IOVH689eS_bzwno3WyCR4KVp7aQnGzlPan68K8UPkkKDvrVl>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 0866FB6008D; Thu, 20 Jun 2024 03:53:41 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718870055; c=relaxed/simple;
+	bh=P7/+lWzHgZeKdWGvD7a4fP7RpHgrjhCEKqJsQEY3em4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F8fMx9/q5uTQpJpZ+ur7fEbrcUe/UrUCopfyzbIYpJru6K10wy1vN4K/Z2aOQjIHM6Dc2LWZLX2rZsLRqPNbbQfNakwVDDGjCMtGiQN6DT0ohYgo12entZWAN5Xqo536KDxb9augN7NYWvrxWMzUAs2IEvM0/V3+7YdCT7nqD24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=EcWkhLZa; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=EcWkhLZa; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D62761F7DF;
+	Thu, 20 Jun 2024 07:54:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718870051; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=P7/+lWzHgZeKdWGvD7a4fP7RpHgrjhCEKqJsQEY3em4=;
+	b=EcWkhLZabLcmM0tJePc4RT9iKqNibw7M9d/xsUcxG3R2fVmXaegQfbb9mkTOX7ByknAkaT
+	VC5SiyxJlguYufkFn/Yi/d88AL45c10ze/THv6OHJ/uA6tU6c3wtW0frUOin3ZepkFm4vR
+	plLaF7X6t6XkppPLnrgi6VZe2MZksxg=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=EcWkhLZa
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1718870051; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=P7/+lWzHgZeKdWGvD7a4fP7RpHgrjhCEKqJsQEY3em4=;
+	b=EcWkhLZabLcmM0tJePc4RT9iKqNibw7M9d/xsUcxG3R2fVmXaegQfbb9mkTOX7ByknAkaT
+	VC5SiyxJlguYufkFn/Yi/d88AL45c10ze/THv6OHJ/uA6tU6c3wtW0frUOin3ZepkFm4vR
+	plLaF7X6t6XkppPLnrgi6VZe2MZksxg=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B086C13AC1;
+	Thu, 20 Jun 2024 07:54:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +bR6KSPgc2YKVgAAD6G6ig
+	(envelope-from <jgross@suse.com>); Thu, 20 Jun 2024 07:54:11 +0000
+Message-ID: <87d1ece9-246f-4e53-bb7d-4cd965d56dbd@suse.com>
+Date: Thu, 20 Jun 2024 09:54:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <90b46873-f60f-4ece-bef6-b8eed3b68ac1@app.fastmail.com>
-In-Reply-To: 
- <CAHk-=whHvMbfL2ov1MRbT9QfebO2d6-xXi1ynznCCi-k_m6Q0w@mail.gmail.com>
-References: 
- <CAHk-=whHvMbfL2ov1MRbT9QfebO2d6-xXi1ynznCCi-k_m6Q0w@mail.gmail.com>
-Date: Thu, 20 Jun 2024 09:53:20 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Christian Brauner" <brauner@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- "the arch/x86 maintainers" <x86@kernel.org>,
- "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- "Alexei Starovoitov" <ast@kernel.org>
-Subject: Re: FYI: path walking optimizations pending for 6.11
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: CVE-2021-47574: xen/netfront: harden netfront against event
+ channel storms
+To: cve@kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "security@xenproject.org" <security@xenproject.org>
+References: <2024061914-CVE-2021-47574-18b4@gregkh>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <2024061914-CVE-2021-47574-18b4@gregkh>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------P5af3ICXxhudAj2VT9lCjNrx"
+X-Rspamd-Queue-Id: D62761F7DF
+X-Spam-Score: -7.38
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-7.38 / 50.00];
+	BAYES_HAM(-3.00)[99.98%];
+	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+	SIGNED_PGP(-2.00)[];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	NEURAL_HAM_LONG(-0.99)[-0.986];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_BASE64_TEXT(0.10)[];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	HAS_ATTACHMENT(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On Wed, Jun 19, 2024, at 22:25, Linus Torvalds wrote:
-> The arm64-uaccess branch is just what it says, and makes a big
-> difference in strncpy_from_user(). The "access_ok()" change is
-> certainly debatable, but I think needs to be done for sanity. I think
-> it's one of those "let's do it, and if it causes problems we'll have
-> to fix things up" things.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------P5af3ICXxhudAj2VT9lCjNrx
+Content-Type: multipart/mixed; boundary="------------tD01G24BIYf5FncXX4lLgzK6";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: cve@kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "security@xenproject.org" <security@xenproject.org>
+Message-ID: <87d1ece9-246f-4e53-bb7d-4cd965d56dbd@suse.com>
+Subject: Re: CVE-2021-47574: xen/netfront: harden netfront against event
+ channel storms
+References: <2024061914-CVE-2021-47574-18b4@gregkh>
+In-Reply-To: <2024061914-CVE-2021-47574-18b4@gregkh>
 
-I'm a bit worried about the access_ok() being so different from
-the other architectures, after I previously saw all the ways
-it could go wrong because of subtle differences.
+--------------tD01G24BIYf5FncXX4lLgzK6
+Content-Type: multipart/mixed; boundary="------------54DGkQ0yZK5xiKabO1E4iiJg"
 
-I don't mind making the bit that makes the untagging
-unconditional, and I can see how this improves code
-generation. I've tried comparing your version against
-the more conventional
+--------------54DGkQ0yZK5xiKabO1E4iiJg
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-static inline int access_ok(const void __user *p, unsigned long size)
-{
-        return likely(__access_ok(untagged_addr(p), size));
-}
+T24gMTkuMDYuMjQgMTY6NTQsIEdyZWcgS3JvYWgtSGFydG1hbiB3cm90ZToNCj4gRGVzY3Jp
+cHRpb24NCj4gPT09PT09PT09PT0NCj4gDQo+IEluIHRoZSBMaW51eCBrZXJuZWwsIHRoZSBm
+b2xsb3dpbmcgdnVsbmVyYWJpbGl0eSBoYXMgYmVlbiByZXNvbHZlZDoNCj4gDQo+IHhlbi9u
+ZXRmcm9udDogaGFyZGVuIG5ldGZyb250IGFnYWluc3QgZXZlbnQgY2hhbm5lbCBzdG9ybXMN
+Cj4gDQo+IFRoZSBYZW4gbmV0ZnJvbnQgZHJpdmVyIGlzIHN0aWxsIHZ1bG5lcmFibGUgZm9y
+IGFuIGF0dGFjayB2aWEgZXhjZXNzaXZlDQo+IG51bWJlciBvZiBldmVudHMgc2VudCBieSB0
+aGUgYmFja2VuZC4gRml4IHRoYXQgYnkgdXNpbmcgbGF0ZWVvaSBldmVudA0KPiBjaGFubmVs
+cy4NCj4gDQo+IEZvciBiZWluZyBhYmxlIHRvIGRldGVjdCB0aGUgY2FzZSBvZiBubyByeCBy
+ZXNwb25zZXMgYmVpbmcgYWRkZWQgd2hpbGUNCj4gdGhlIGNhcnJpZXIgaXMgZG93biBhIG5l
+dyBsb2NrIGlzIG5lZWRlZCBpbiBvcmRlciB0byB1cGRhdGUgYW5kIHRlc3QNCj4gcnNwX2Nv
+bnMgYW5kIHRoZSBudW1iZXIgb2Ygc2VlbiB1bmNvbnN1bWVkIHJlc3BvbnNlcyBhdG9taWNh
+bGx5Lg0KPiANCj4gVGhpcyBpcyBwYXJ0IG9mIFhTQS0zOTENCg0KV2hlbiBpc3N1aW5nIFhT
+QS0zOTEgdGhlIFhlbiBzZWN1cml0eSB0ZWFtIGFscmVhZHkgYXNzaWduZWQgQ1ZFLTIwMjEt
+Mjg3MTINCnRvIHRoaXMgaXNzdWUuDQoNCg0KSnVlcmdlbg0K
+--------------54DGkQ0yZK5xiKabO1E4iiJg
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-Using gcc-13.2, I see your version is likely better in all
-cases, but not by much: for the constant-length case, it
-saves only one instruction (combining the untagging with the
-limit), while for a variable length it avoids a branch.
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-On a 24MB kernel image, I see this add up to a size difference
-of 12KB, while the total savings from avoiding the conditional
-untagging are 76KB.
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-Do you see a measurable performance difference between your
-version and the one above?
+--------------54DGkQ0yZK5xiKabO1E4iiJg--
 
-On a related note, I see that there is one caller of
-__access_ok() in common code, and this was added in
-d319f344561d ("mm: Fix copy_from_user_nofault().").
-I think that one should just go back to using access_ok()
-after your 6ccdc91d6af9 ("x86: mm: remove
-architecture-specific 'access_ok()' define"). In the
-current version, it otherwise misses the untagging
-on arm64.
+--------------tD01G24BIYf5FncXX4lLgzK6--
 
-    Arnd
+--------------P5af3ICXxhudAj2VT9lCjNrx
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmZz4CMFAwAAAAAACgkQsN6d1ii/Ey8B
+4gf+JcXKYTPHEMzS+0imXUOPJbBGWsjjw6QDy97HDkaNoSosCfnYGc1XJz4Ml9U0bukVgsylgYfq
+cZYwr50VLlFj+FKuCYfqvyBYVKdJhNXQYFbSiyCi77t6jfHpL+sySbUDQaWCXzFCsImomahso+dZ
+hxKe47wwfyxQqLEyKdNFZxkcekqsoMVL62Om8K17DlOm/CTTB5B8ifglokEAEVu1uxP3eC/mw8qr
+VNU9e0pQOtvhD2XvrPrCO5Yc92DBX/v1ucdPCiHKySCRIezdfBx9W9uVwF1+MHlXP4mZGAtWt2C/
+dtcxMr6Mr3BEcNcTLXEGH6kRMDzWm6NyDNJ1dthynQ==
+=vOKx
+-----END PGP SIGNATURE-----
+
+--------------P5af3ICXxhudAj2VT9lCjNrx--
 
