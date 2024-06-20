@@ -1,154 +1,137 @@
-Return-Path: <linux-kernel+bounces-222095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC13E90FCBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:33:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F3490FCD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8054D1F217E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:33:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A64402859E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6993E364AE;
-	Thu, 20 Jun 2024 06:33:29 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F463BBF5;
+	Thu, 20 Jun 2024 06:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzCyR8Vh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E6126AFB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBA71946F;
+	Thu, 20 Jun 2024 06:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718865209; cv=none; b=Z4iRj+WpAoYIBB2iHUvsQnVQH8CxKcvRT3ulV6NcYQrxltMIszghxCHoD77fluFvWHIy8bYbJtSe4Hjbiv+lbCA4JVqcaMHrmmFO0tp0xlWobEFPjDfsGWdD9Ts+41SZCEKWzcit+jfSsbnQuvK6fF/TtT2KV6734w6Puq7v+D8=
+	t=1718865442; cv=none; b=uKPwy3aaUkVLpMA/ZmuPYlQUn1ik6GbNprPdka1BEtbR9HzHkGJXaH9AngXnt7nfU+/CNBXUzsYNOVqzUIVBAbyX9NilMR/Zpg6TMW+7sDYBpvKbxuBDe52PXx5KsXOkM5S0Phe6iRicHV3VPWKdXJ+/mPwHoKZe69YPYMig5QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718865209; c=relaxed/simple;
-	bh=djDtqmKbWE43ZmKEyGgUp90Vv60j3Wv2QasU7cUbGM4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c5YiSgd8BgSvCCJwHiG7yH7Y1wzWkCI/27B44WxSx7qemea4QRnBMWdF9Z0jji4TfebwchWrmg1SpwvykTR69q87UQEHgHvXbQETXcyPGms+zKCcXfw0woe/6bKCqyD4i8DZNyP22vleH0u6UP0WucDdEPui12ky4AL9aMloKxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W4VtN3wlGznWCZ;
-	Thu, 20 Jun 2024 14:28:28 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 42BB8140120;
-	Thu, 20 Jun 2024 14:33:24 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 20 Jun
- 2024 14:33:23 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <mark.rutland@arm.com>,
-	<dianders@chromium.org>, <swboyd@chromium.org>, <sumit.garg@linaro.org>,
-	<frederic@kernel.org>, <scott@os.amperecomputing.com>,
-	<misono.tomohiro@fujitsu.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH RESEND v2] arm64: smp: Fix missing IPI statistics
-Date: Thu, 20 Jun 2024 14:36:00 +0800
-Message-ID: <20240620063600.573559-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718865442; c=relaxed/simple;
+	bh=3wZ8z1BqXx7wiDffBy8DwIW3zBd2GZ2P4pl0TgqT9ag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bke3EjBvHvmJGlvKmab9OY83u9lQIBLqk9lqGPIMtGHAWiCmaC9+UUrIbog3bb1W0eV4rGx7AAXYACC24+eZ+Job24OhE6NVwhP2FWhM3uNCOlPre8qnttWVu6MJmjKsfhyamCdhfqDvPbcCaROeQHyUZYjy1FTLAvw2Do+kxMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzCyR8Vh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FFF4C4AF08;
+	Thu, 20 Jun 2024 06:37:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718865441;
+	bh=3wZ8z1BqXx7wiDffBy8DwIW3zBd2GZ2P4pl0TgqT9ag=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VzCyR8Vhu2eW5EZHLfJiKsPj+x3uRND6nHT9h/yQMmCHvken3pRSDQryJ2MRaoRJ6
+	 rrOuUKs8SBNW4xQD4ETZd6V8zQhNiCWEPo69WPdAl3MlHgcKjRpf6SdPAvNADG24Xg
+	 GfX7cGvgotFvn51dEVrdN2Y/UySPkTzpnTI/wgjNaD6Kj+dLWb7P7JjtzacnUeMvwD
+	 K3kE27rUUzSlr25VoPhYtEgg1Ibs7tug7RIDQ0sz8DTcSxHuTzvOE7F9itvBYdDTIR
+	 MF/heWGl4lpKJim4MWiJY+SGTMIndCupKefuFzLCyxOJ2ml7OoFR79+9Ue4n3j4crR
+	 viMTcdmeFThfg==
+Message-ID: <ebebb17c-0247-4328-8129-24f15ef6f5c4@kernel.org>
+Date: Thu, 20 Jun 2024 08:37:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: dt-bindings: rename wm8750.yaml to wlf,wm8750.yaml
+To: Daniel Baluta <daniel.baluta@gmail.com>
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, patches@opensource.cirrus.com,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240619070356.80759-1-animeshagarwal28@gmail.com>
+ <f3ce758b-fa9e-4eff-984e-ace10553d683@kernel.org>
+ <CAEnQRZBvc6TR4Nnvp41oTKAU+EBdtuC0GnuDAGwO2MHDA8bV=Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAEnQRZBvc6TR4Nnvp41oTKAU+EBdtuC0GnuDAGwO2MHDA8bV=Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemi100008.china.huawei.com (7.221.188.57)
 
-commit 83cfac95c018 ("genirq: Allow interrupts to be excluded from
-/proc/interrupts") is to avoid IPIs appear twice in /proc/interrupts.
-But the commit 331a1b3a836c ("arm64: smp: Add arch support for backtrace
-using pseudo-NMI") and commit 2f5cd0c7ffde("arm64: kgdb: Implement
-kgdb_roundup_cpus() to enable pseudo-NMI roundup") set CPU_BACKTRACE and
-KGDB_ROUNDUP IPIs "IRQ_HIDDEN" flag but not show them in
-arch_show_interrupts(), which cause the interrupt kstat_irqs accounting
-is missing in display.
+On 20/06/2024 08:08, Daniel Baluta wrote:
+> On Wed, Jun 19, 2024 at 10:29 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 19/06/2024 09:03, Animesh Agarwal wrote:
+>>> Add vendor prefix to wlf,wm8750 dt-schema.
+>>>
+>>> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+>>> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+>>> ---
+>>>  .../devicetree/bindings/sound/{wm8750.yaml => wlf,wm8750.yaml}  | 2 +-
+>>
+>> Same as in other cases (why they started now?): why only one file not
+>> all of them? Anyway, that's not necessary.
+> 
+> There is only one yaml file from wolfson which doesnt have the wlf, prefix.
+> For consistency we think that we should rename the file :).
 
-Before this patch, CPU_BACKTRACE and KGDB_ROUNDUP IPIs are missing:
-	/ # cat /proc/interrupts
-	           CPU0       CPU1       CPU2       CPU3
-	 11:        466        600        309        332     GICv3  27 Level     arch_timer
-	 13:         24          0          0          0     GICv3  33 Level     uart-pl011
-	 15:         64          0          0          0     GICv3  78 Edge      virtio0
-	 16:          0          0          0          0     GICv3  79 Edge      virtio1
-	 17:          0          0          0          0     GICv3  34 Level     rtc-pl031
-	 18:          3          3          3          3     GICv3  23 Level     arm-pmu
-	 19:          0          0          0          0 9030000.pl061   3 Edge      GPIO Key Poweroff
-	IPI0:         7         14          9         26       Rescheduling interrupts
-	IPI1:       354         93        233        255       Function call interrupts
-	IPI2:         0          0          0          0       CPU stop interrupts
-	IPI3:         0          0          0          0       CPU stop (for crash dump) interrupts
-	IPI4:         0          0          0          0       Timer broadcast interrupts
-	IPI5:         1          0          0          0       IRQ work interrupts
-	Err:          0
+And several other files have the same issue. That's just churn. No, let
+me be clear. Rule is for all files, not for wlf or asahi only. If you
+want that consistency, then fix *all* files, not selected one schema.
 
-After this pacth, CPU_BACKTRACE and KGDB_ROUNDUP IPIs are displayed:
-	/ # cat /proc/interrupts
-	           CPU0       CPU1       CPU2       CPU3
-	 11:        393        281        532        449     GICv3  27 Level     arch_timer
-	 13:         15          0          0          0     GICv3  33 Level     uart-pl011
-	 15:         64          0          0          0     GICv3  78 Edge      virtio0
-	 16:          0          0          0          0     GICv3  79 Edge      virtio1
-	 17:          0          0          0          0     GICv3  34 Level     rtc-pl031
-	 18:          2          2          2          2     GICv3  23 Level     arm-pmu
-	 19:          0          0          0          0 9030000.pl061   3 Edge      GPIO Key Poweroff
-	IPI0:        11         19          4         23       Rescheduling interrupts
-	IPI1:       279        347        222         72       Function call interrupts
-	IPI2:         0          0          0          0       CPU stop interrupts
-	IPI3:         0          0          0          0       CPU stop (for crash dump) interrupts
-	IPI4:         0          0          0          0       Timer broadcast interrupts
-	IPI5:         1          0          0          1       IRQ work interrupts
-	IPI6:         0          0          0          0       CPU backtrace interrupts
-	IPI7:         0          0          0          0       KGDB roundup interrupts
-	Err:          0
-
-Fixes: 331a1b3a836c ("arm64: smp: Add arch support for backtrace using pseudo-NMI")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Suggested-by: Doug Anderson <dianders@chromium.org>
----
-v2:
-- Report them in arch_show_interrupts().
-- Add suggested-by.
-- Update the commit message.
----
- arch/arm64/kernel/smp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-index 31c8b3094dd7..5de85dccc09c 100644
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -767,13 +767,15 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
- 	}
- }
- 
--static const char *ipi_types[NR_IPI] __tracepoint_string = {
-+static const char *ipi_types[MAX_IPI] __tracepoint_string = {
- 	[IPI_RESCHEDULE]	= "Rescheduling interrupts",
- 	[IPI_CALL_FUNC]		= "Function call interrupts",
- 	[IPI_CPU_STOP]		= "CPU stop interrupts",
- 	[IPI_CPU_CRASH_STOP]	= "CPU stop (for crash dump) interrupts",
- 	[IPI_TIMER]		= "Timer broadcast interrupts",
- 	[IPI_IRQ_WORK]		= "IRQ work interrupts",
-+	[IPI_CPU_BACKTRACE]	= "CPU backtrace interrupts",
-+	[IPI_KGDB_ROUNDUP]	= "KGDB roundup interrupts",
- };
- 
- static void smp_cross_call(const struct cpumask *target, unsigned int ipinr);
-@@ -784,7 +786,7 @@ int arch_show_interrupts(struct seq_file *p, int prec)
- {
- 	unsigned int cpu, i;
- 
--	for (i = 0; i < NR_IPI; i++) {
-+	for (i = 0; i < MAX_IPI; i++) {
- 		seq_printf(p, "%*s%u:%s", prec - 1, "IPI", i,
- 			   prec >= 4 ? " " : "");
- 		for_each_online_cpu(cpu)
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
