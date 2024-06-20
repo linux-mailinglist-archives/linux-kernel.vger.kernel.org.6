@@ -1,189 +1,89 @@
-Return-Path: <linux-kernel+bounces-222033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9848690FBD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:10:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F3B190FBD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4958C1F23697
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:10:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C061F220B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52C8374FA;
-	Thu, 20 Jun 2024 04:10:08 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AFB2B9BB;
+	Thu, 20 Jun 2024 04:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jq1KRo9e"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A194B1DA4E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 04:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64901DA4E;
+	Thu, 20 Jun 2024 04:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718856608; cv=none; b=G9tSbROGhYavbHlTcyhWGkXBdb/Qwt4btuC/ZqgpSnbpMw4YyLR0ZAt+cbWsaR2U6E6mX9cPSAjySkXqFMue8UBlXbUJtr1Kk983XXhSkdJD0FWvJlM9YaHc4PjsuuXzpjmLXf7UbAVPEh5PXmBdogytSlZGXzyp0hqsUE1k98A=
+	t=1718856600; cv=none; b=UZI7sasZ7hITIs9dyJbgm2MiiUrBgkJjbs32JsECbsg3FrYmtorA1AMX4NONzPLaO/ugTWWz1U41d7vf6uJbCq9HeC102F30u8cTWMQbF4eLSJAuP+aK1SXA0mLQNxdGul1AVxd1MPQkmDBycebqF4MCbeA4btva5+XbEatLKfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718856608; c=relaxed/simple;
-	bh=wD2TP6CDuh4Bq+NcZ//Ls5kwrvCEIa35VKHZxdUfXPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QXUEbsjodMHjx/qMNRm1PHuz+QcZxGNo9TkjwJ32COe5JWbAea2+3YEFHXRPwIk07F5Gxz5SQfVyHq5KF/pWEGOcZUUK8vPa//azboiAwc9BaxtJAONN2/WLESnXUQHB45wfk4n+AawnbSwHag9x1IIN+nDiwaOtTJYksNMQxh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W4RKC3Z37z1N837;
-	Thu, 20 Jun 2024 11:47:59 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4D6EA18007E;
-	Thu, 20 Jun 2024 11:52:15 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 20 Jun 2024 11:52:14 +0800
-Message-ID: <eeb78b0e-73cf-37ae-d780-08ae6b8211ac@huawei.com>
-Date: Thu, 20 Jun 2024 11:52:13 +0800
+	s=arc-20240116; t=1718856600; c=relaxed/simple;
+	bh=iJsMX5524mFToCj+FEJuOmHaWKE/c+jREBhQLu3dJtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G9PGl3pX+kOwAUNBPL31aNpbtkF3UHR1Gn4RQVQkfRz9OpDWGj6UeZGo72d4HVKonz1XlDDfFyqrGrFfxqQr/ASlkwUfmQP3SsM02Jxgu9NDGfZ74Gb0rhrXf8vdc5QBPkp/s1f6Y9pGQu2FO0MzGigqRNpmNGf0gOHMELiSq3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jq1KRo9e; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6TOQyDostt3/ZLFBNjYuARI255CyBwhymG/tQVPb5MQ=; b=jq1KRo9eNQ6B6sSpElNd5FGuvB
+	WinOEbu13YF1b33fbKP6UzVCwc2ZPR31/wBIq/cUcc39DM1xXDZ78NS85+5oLAiz6WbisrFcEyLj/
+	NNf0V5hFrlXq81tZFpdtGmsTjCBQNFubyLW+UFZWKao3m14dn6LgmfnBLXWKarDOjCuVRXaqpY0xV
+	Un6u65+ki/nDFa+woHzsgSjOMWt0zi5CdKXUPfmaD3LW3fAXpEyLZBab0xiuZ0Q8yHONE5HHJuKRD
+	AzGxUqSjBlg+cTkOvOuzT/QP7H/+WA1pxAqYw5mNq+piAndW0FvcBwJ9lt5NB9cfffAYRvH5P+eoi
+	kfQSyn1g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sK97U-00000003XWT-0RzC;
+	Thu, 20 Jun 2024 04:09:56 +0000
+Date: Wed, 19 Jun 2024 21:09:56 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerd Bayer <gbayer@linux.ibm.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] vfio/pci: Tolerate oversized BARs by disallowing
+ mmap
+Message-ID: <ZnOrlB6fqYC4S-RJ@infradead.org>
+References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
+ <20240529-vfio_pci_mmap-v3-2-cd217d019218@linux.ibm.com>
+ <20240618095134.41478bbf.alex.williamson@redhat.com>
+ <ZnKEuCP7o6KurJvq@infradead.org>
+ <76a840711f7c073e52149107aa62045c462d7033.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] arm64: smp: Fix missing IPI statistics
-To: Will Deacon <will@kernel.org>
-CC: <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
-	<dianders@chromium.org>, <swboyd@chromium.org>, <sumit.garg@linaro.org>,
-	<frederic@kernel.org>, <scott@os.amperecomputing.com>,
-	<misono.tomohiro@fujitsu.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240607074716.4068975-1-ruanjinjie@huawei.com>
- <20240619133258.GA3526@willie-the-truck>
-Content-Language: en-US
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20240619133258.GA3526@willie-the-truck>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <76a840711f7c073e52149107aa62045c462d7033.camel@linux.ibm.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Wed, Jun 19, 2024 at 12:56:47PM +0200, Niklas Schnelle wrote:
+> In short, the ISM BAR 0 is stupidly large but this is intentional. It
+> not fitting in the VMAP is simply the least crazy filter I could come
+> up with to keep the ISM device from causing trouble for use of vfio-pci
+> mmap() for other, normal, PCI devices.
 
+Then maybe add a PCI quirk to prevent mapping it.  This would also
+affect the sysfs resource0 file unless I'm missing something.
 
-On 2024/6/19 21:32, Will Deacon wrote:
-> On Fri, Jun 07, 2024 at 03:47:16PM +0800, Jinjie Ruan wrote:
->> commit 83cfac95c018 ("genirq: Allow interrupts to be excluded from
->> /proc/interrupts") is to avoid IPIs appear twice in /proc/interrupts.
->> But the commit 331a1b3a836c ("arm64: smp: Add arch support for backtrace
->> using pseudo-NMI") and commit 2f5cd0c7ffde("arm64: kgdb: Implement
->> kgdb_roundup_cpus() to enable pseudo-NMI roundup") set CPU_BACKTRACE and
->> KGDB_ROUNDUP IPIs "IRQ_HIDDEN" flag but not show them in
->> arch_show_interrupts(), which cause the interrupt kstat_irqs accounting
->> is missing in display.
->>
->> Fixes: 331a1b3a836c ("arm64: smp: Add arch support for backtrace using pseudo-NMI")
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>  arch/arm64/kernel/smp.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
->> index 31c8b3094dd7..7f9a5cf0f3b8 100644
->> --- a/arch/arm64/kernel/smp.c
->> +++ b/arch/arm64/kernel/smp.c
->> @@ -1039,7 +1039,8 @@ void __init set_smp_ipi_range(int ipi_base, int n)
->>  		}
->>  
->>  		ipi_desc[i] = irq_to_desc(ipi_base + i);
->> -		irq_set_status_flags(ipi_base + i, IRQ_HIDDEN);
->> +		if (i < NR_IPI)
->> +			irq_set_status_flags(ipi_base + i, IRQ_HIDDEN);
->>  	}
-> 
-> Please can you show the contents of /proc/interrupts before and after
-> this patch and put that in the commit message? I'm not seeing how the
-> two new IPIs get picked up by arch_show_interrupts().
-
-
-Before this patch, CPU_BACKTRACE and KGDB_ROUNDUP IPIs are missing as below:
-
-/ # cat /proc/interrupts
-           CPU0       CPU1       CPU2       CPU3
- 11:        463        656        243        654     GICv3  27 Level
-arch_timer
- 13:         14          0          0          0     GICv3  33 Level
-uart-pl011
- 17:          0          0          0          0   ITS-MSI 16384 Edge
-  virtio2-config
- 18:          0          5          0          0   ITS-MSI 16385 Edge
-  virtio2-input
- 19:         68          0          0          0     GICv3  78 Edge
-virtio0
- 20:          0          0          0          0     GICv3  79 Edge
-virtio1
- 21:          0          0          0          0     GICv3  34 Level
-rtc-pl031
- 22:          2          2          2          2     GICv3  23 Level
-arm-pmu
- 23:          0          0          0          0   ITS-MSI 32768 Edge
-  virtio3-config
- 24:          0          0          0          0   ITS-MSI 32769 Edge
-  virtio3-requests
- 25:          0          0          0          0 9030000.pl061   3 Edge
-    GPIO Key Poweroff
-IPI0:        15         13          5         21       Rescheduling
-interrupts
-IPI1:       385        129        282        194       Function call
-interrupts
-IPI2:         0          0          0          0       CPU stop interrupts
-IPI3:         0          0          0          0       CPU stop (for
-crash dump) interrupts
-IPI4:         0          0          0          0       Timer broadcast
-interrupts
-IPI5:         1          0          0          0       IRQ work interrupts
-Err:          0
-
-
-After this patch the hwirq6/7 IPI is also displayed:
-
-/ # cat /proc/interrupts
-           CPU0       CPU1       CPU2       CPU3
-  7:          0          0          0          0     GICv3   6 Edge      IPI
-  8:          0          0          0          0     GICv3   7 Edge      IPI
- 11:        414        433        424        422     GICv3  27 Level
-arch_timer
- 13:         21          0          0          0     GICv3  33 Level
-uart-pl011
- 17:          0          0          0          0   ITS-MSI 16384 Edge
-  virtio2-config
- 18:          0          6          0          0   ITS-MSI 16385 Edge
-  virtio2-input
- 19:         60          0          0          0     GICv3  78 Edge
-virtio0
- 20:          0          0          0          0     GICv3  79 Edge
-virtio1
- 21:          0          0          0          0     GICv3  34 Level
-rtc-pl031
- 22:          3          3          3          3     GICv3  23 Level
-arm-pmu
- 23:          0          0          0          0   ITS-MSI 32768 Edge
-  virtio3-config
- 24:          0          0          0          0   ITS-MSI 32769 Edge
-  virtio3-requests
- 25:          0          0          0          0 9030000.pl061   3 Edge
-    GPIO Key Poweroff
-IPI0:        15         13         19         12       Rescheduling
-interrupts
-IPI1:       241        162        328        252       Function call
-interrupts
-IPI2:         0          0          0          0       CPU stop interrupts
-IPI3:         0          0          0          0       CPU stop (for
-crash dump) interrupts
-IPI4:         0          0          0          0       Timer broadcast
-interrupts
-IPI5:         0          1          0          0       IRQ work interrupts
-Err:          0
-
-
-> 
-> Thanks,
-> 
-> Will
 
