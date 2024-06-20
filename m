@@ -1,110 +1,106 @@
-Return-Path: <linux-kernel+bounces-223471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A7391138F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:43:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D8391138C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6FEE1C21920
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:43:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D65DC284AEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED71978C8C;
-	Thu, 20 Jun 2024 20:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="k/jVziH/"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E128C745EF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C7558AC3;
 	Thu, 20 Jun 2024 20:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bC7Jnas5"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1AE5A4E9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 20:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718916138; cv=none; b=gQ/rgU8cFLiXLtKmc4y5+KA/TNWMubhd8jAwNtD8RPg9rc8ojg1gP05nUdq9CntmKEd35yJiffZEbgDtjyvnt1oZsfR3YJtKKV2r2+eTni+W4RRTGd6i2X6qbpHZZeu8q+/+z1gAUI4kjdHFIM0kwysha7F39IZTkHv8aEb35wE=
+	t=1718916134; cv=none; b=Y1T7APQFj9sRlBvEa+mmn7xIN8qQXnXwhW0Vg/7jj6PI/JgUZtH4doTR94G0q9jCSLm4GRz5qHBIujnv468NrnQ+7l9NTmYAXdHHs6o5DxcNCwBVBBeWWESuASZ6krr19PVPpQ43KgC6yF6fHTS9cCJ8jUljnaGJjJLGEiw4+ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718916138; c=relaxed/simple;
-	bh=DrXA93yem7kpSAQKXAZ3duAKOyOncZJfLxoceIbKyEU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BaXF4ROcoO+Oq8EXylgfnG5Et/K3W95fRlxYOvlYQUg7RBq18FjUoVfa4fs27QtPxtFTbTMAUHUIqA2oL0b5wKEVca9wsP68z2c3ypp4lMbcDqqwsrH2J1Y/udbio4iEbpjmnJBp1U1xqXhR3eR8UxPeJby6m5grwWGr0Y7AEC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=k/jVziH/; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1718916126; x=1719520926; i=wahrenst@gmx.net;
-	bh=EG3q4S6KfzEyj8HzO3hFQtrkMippDMNTA053axxrKEE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=k/jVziH/A9lB9staHsYGtiPPbPTqy9iPZ/oGYX+n2Qhlz19VheB19G46SOgTiyc4
-	 nQ3rg7VQaahl5rXosNv11Id4LGpENZpZeQyCBZC0SVRse0IgHjQt4jlwMkE95jFT8
-	 5he3w+3tXKjMxbehKd7mE+YlHkWxnOt4GjlnZpZZ1rptzPZNkhFMqe+vjzfN4KVof
-	 8mjVIO/wKdnogm5Je8Yfx5DtD7XylKeDLWp41oqddyURYuoCwIJVjw1umo/8Yt4Ar
-	 9CWYLPAzMSxbnQym4RLvhDLW6flBkBNuAyesaLv41OH3lASaylEsHutAvAfxQHXdW
-	 /BTQvI0M3ch+Tfv2ZQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N0G1d-1sXEYT3EmN-00vWej; Thu, 20
- Jun 2024 22:42:06 +0200
-Message-ID: <c4c9f013-3cff-47dd-9adb-76b30925d8c7@gmx.net>
-Date: Thu, 20 Jun 2024 22:42:05 +0200
+	s=arc-20240116; t=1718916134; c=relaxed/simple;
+	bh=rZTYzdCvbBVM72bJ3BfGpq2tUtYH+usxtmwVz5R+FIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A05iBpZ3hIbbcaZtKctHd/nx5bXZ24QzSr7Xao32UU/DhSML3o/LCa49BV68+dWlnLut0i6QPwoV/+tyZ4e53vrnr9HeZQqVhdMK2FOvsl/beQf/klVmA0HJgdD4VxqZrMVVrVIcUn/U/9ye4pvbvVMONan1UgGw1Hb0nLE2cuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bC7Jnas5; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec4a35baa7so6024721fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:42:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718916131; x=1719520931; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6K5OP7x7yq5Q0DYuXqAaTFJPJUMdV4vBwX3KqhQElbE=;
+        b=bC7Jnas5Qo+CvGeVWWd+dNA/ZCzrR7DK1VbveLiWnzIx2cHaUXdGSaYTsUIFUzqJiR
+         9E753WZ3E0WxaiCIEQWNwrDv7uIKqPp4mZo+xTnTjX58j8PuszEwzZEMs6uVsFuNoLUt
+         FuPMlFt54f58RJ5x0nd/i+1Le5suy8PwgO1j2qzPnuLioWGVpKFa43iIp5zG5/a3AJoz
+         Xx7USY2knvgAWsPw3FmBpBtzsjuY7ZM7PVgC9USw4s3ZEN909mChwcjgQ3wR8C0iQsEf
+         zmVbTyCnrG1B8HMOuU1PjnuvOEdlZ/2wFu4mBdIr8RS/C2HfEZSIrGXTovpK9mBgaXan
+         LPhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718916131; x=1719520931;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6K5OP7x7yq5Q0DYuXqAaTFJPJUMdV4vBwX3KqhQElbE=;
+        b=CIWN8a4qrzy0vFar8ySe5j3eZsMLOjD6oHixpiCIxR77wdBLJbNgizFSnmZ5WjX3He
+         9KSV7Mbo/nIS8U6GoAyuZGzIwr60ZE6N1LtxEY6VBs+LQzxORKN3haoxFuhx+bGFQ4Az
+         esb4J3M+82yFQNFcQCoZnYHBidVVPt9F2zZYV4uqqDC+mLbr5VNQE1kUmJheRYmyPBiQ
+         eZGi1sOpuQe2Eozkv1pxzhc418cPE2G5L5heyKy7jE7PwpH9pl9WvA6OsmF8dDXfYb/b
+         HvaWQKX9t7xvpqi8AayedkYXWOvRp7v1u8SbnzYbjvlYJeYezLTF6b7o32nvmXwNXu9/
+         dQAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU575LYz9ZIv2UiRIL90BX03qFJOelY6zauC9D8uSvyM9R1l+vhBY8S5G8e21k9QCq9VW50sEV32QGeKhCU+W9bOBeiTfwlUrmX72uk
+X-Gm-Message-State: AOJu0YyjP1jiy+nz+XLkEivA6XjZZ1XpyO7xi5ScxrwCghzJy2CwIWiP
+	Ggq9lUDQj3PNUl3WD/ch/c3mrNEIRCPJkwGHpIvYn3vT5k8IjC9gqlzQwp4j8RM=
+X-Google-Smtp-Source: AGHT+IHa++EtjUUyDrE9RDcUSFkXO7DWuSSI9krY6EtnVLoSOEWveJuA9bY90htEUz1EKaY81P3z4w==
+X-Received: by 2002:a2e:998c:0:b0:2eb:d9d9:6ea5 with SMTP id 38308e7fff4ca-2ec3cff4a6dmr17759271fa.26.1718916131531;
+        Thu, 20 Jun 2024 13:42:11 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d600c1bsm167431fa.8.2024.06.20.13.42.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 13:42:11 -0700 (PDT)
+Date: Thu, 20 Jun 2024 23:42:09 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Luca Weiss <luca@lucaweiss.eu>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] arm64: dts: qcom: msm8976: Use mboxes in smsm node
+Message-ID: <5zxq7j2a2juahsy3svlog6zvjkycejmlj7zqesgtllxiw4iw5s@2zwrllvtnidi>
+References: <20240619-smsm-mbox-dts-v1-0-268ab7eef779@lucaweiss.eu>
+ <20240619-smsm-mbox-dts-v1-5-268ab7eef779@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: vc04_services: use 'time_left' variable with
- wait_for_completion_timeout()
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, linux-staging@lists.linux.dev,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20240620182538.5497-2-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240620182538.5497-2-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:/PljUOGvJb5w8aUzifp/ONdkuICeeisq9ZwvMRafKV8lcmjZWFX
- apZF2FTuaiktuGVagxQwkm3/aoMHdH62lGFaDIIP8ciq1X1KpxcSCa4BDGPKzPaLV5nKgdM
- L/2sTE6WY4PgRgDHno6GcaENyVtdIfHtfubjy6eGkSFKxtXapAWPUwGXzwk4xwyALLbCiuC
- ARs4SZDufYA0dB4SfOpkA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:5ZAmFN1SBZY=;AGP+r+deZj0yLQcTBNsKBn+fj+n
- 83I5Kx1re2qxug3jkU80zRLRynjfqUiaWiupb9zcB9muGNjc4dv47ZnkV5BmiE3ZHHp9Fcgd9
- aLkp6NgfJwiS5Ha7SWY9c252mwTEiYhdLL9O/HIT2VQ40XgA/lbLHA+NGJihuYrq/W0/v+Pfm
- V//h6sBX2c1zUgMWUwWZnM24iTdVSlGwM08wusOoP9WtfiPGGaHs6OHOdsUON6S3oVyf7nlHO
- W+U0+jh8U99khbKngdZYNSeIeEFWOoC02Zh7EvyP1wRpl02vD+irl5bafiBb+YSOh7J4ooKD4
- tO+LCWQK2PJPnrin1s1x/P4gcdxiNfj5TpwfAH2n6slx2nIvpemClP2AYKoFmlf0qAUJOsHLq
- 7aN6BMQcccS7s14hIVMaPFSY1QNf7gtok0GnhCBmLUL2Co5VX0MQ0uDHfFh4WbTtKd5nrmAFo
- FKsk8RlinzAUSFX+leUbZm0rh0Btvzb6SB9z6k/WEVccPTYiCC+hFh0LaQSFzlPhd0AurRnY4
- GSOcUNruqXvxyGUjtPe7g7o5CV145tF66sMMXVNwOxFMwk9WXcghkg0JWL6XOWtfxvg8QHvH3
- qhkwu4nwQMlPVBQZi8vpEkwfA207KBjqG+pykswt4HfKpQVtuy+hNIR7lsu/MG50zx2LCDfje
- zrAr5VhZr2Y68T3+Qq+XYEUkmMsNnE1RhJYVJasl7cLZc/df4o28vHyXa/c4m/4HaxPhUR+cy
- jn4Oc8GWcZJf4I8y4ji8FKpNTdn1uSIAsn3BOimK0wPul0SsfnY7mBev9ACd+uzGEvGfAD5cD
- 3ZWhcq6U1g7xEF72bVXUJU5M0DYKsATQNueJoEuuDVMgo=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619-smsm-mbox-dts-v1-5-268ab7eef779@lucaweiss.eu>
 
-Am 20.06.24 um 20:25 schrieb Wolfram Sang:
-> There is a confusing pattern in the kernel to use a variable named
-> 'timeout' to store the result of wait_for_completion_timeout() causing
-> patterns like:
->
->          timeout = wait_for_completion_timeout(...)
->          if (!timeout) return -ETIMEDOUT;
->
-> with all kinds of permutations. Use 'time_left' as a variable to make the
-> code self explaining.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+On Wed, Jun 19, 2024 at 06:42:31PM GMT, Luca Weiss wrote:
+> With the smsm bindings and driver finally supporting mboxes, switch to
+> that and stop using apcs as syscon.
+> 
+> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8976.dtsi | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
 
-Thanks
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
+-- 
+With best wishes
+Dmitry
 
