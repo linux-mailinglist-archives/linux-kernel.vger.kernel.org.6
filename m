@@ -1,98 +1,86 @@
-Return-Path: <linux-kernel+bounces-222857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E899108AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:43:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C379108C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36CF11F23220
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:43:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3E671C2167D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17971AE849;
-	Thu, 20 Jun 2024 14:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="C4ODGsL/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2461A1AE08E;
-	Thu, 20 Jun 2024 14:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6F71AE09E;
+	Thu, 20 Jun 2024 14:46:00 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D448176255;
+	Thu, 20 Jun 2024 14:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718894582; cv=none; b=BBYAEyDXgqdy/THhyV+khsL6UICt7aH9IqTn4q8G3jL5rwC+oR4ztOxJ5twdk7xNHQdA6PHxPG2RtPaQMjKYr369onJime7VhpEkdGSFU7ehFzwS73OZTb0YBWicHDny6yumLhNFmYnYf/wX1OA+5VsNL5elN+fkgpGc+gfNEiM=
+	t=1718894759; cv=none; b=Ve+wY+CXoYWXaAVRdsgpgAL9Mm8V43e1SjHkG83xIZ7SzLRHj89wSWOlgfmu2fOmP52Y5+hn57KIKGBDqqniVVKFKOW6jkfDzSWGusqjiqcJaPh+RvuS1BpYf1m1243hhSewDNOl1+4lo0LKhcGkkxMfcrLyAF/bMvw+bW1gxjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718894582; c=relaxed/simple;
-	bh=LB3eFZ3LD9tM/98Tylvu0XN9sQddU39XYStL0neHiwM=;
+	s=arc-20240116; t=1718894759; c=relaxed/simple;
+	bh=uL73iW/sBxwetobM0anVhjrpZe0qhCcB/4/aFNL5+ok=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fo8SB5TOZ7w3XZIatCleTh3jatOXxypXxsMlR+Pcv5Q1Jdz24+k+yeVA4Xi01rjcZimcTv+eU544qkXseNywjI+SvLMkBJcmD+EuBN4Nwzr8X3ajLBIsc/pW5mWSV+twntduLPZsBTbS7SeNj5kMtC/1XWPfhgJq2VcrmuMJEkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=C4ODGsL/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 460B6C32786;
-	Thu, 20 Jun 2024 14:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718894581;
-	bh=LB3eFZ3LD9tM/98Tylvu0XN9sQddU39XYStL0neHiwM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C4ODGsL/Ef11xCq326gF8VzwNYux96j10sxORRX03a7v0QYRyFY9D7GVy/vHiNCNG
-	 lVjILevGVjfbLKQMSK8iMFUE+K5h5ioXx4S8rnCZMoYY1lGSfRuHS6/j5mgCLbCXwo
-	 bEtPuqSnV9/u16G4yr9PUjaFdHbe0UbdQrFvXHvU=
-Date: Thu, 20 Jun 2024 16:42:59 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	Wedson Almeida Filho <wedsonaf@google.com>
-Subject: Re: [PATCH v2 06/10] rust: add `dev_*` print macros.
-Message-ID: <2024062030-babble-financial-7043@gregkh>
-References: <20240618234025.15036-1-dakr@redhat.com>
- <20240618234025.15036-7-dakr@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qwn5+3u6Ut+jkPwayZj6Dz4e+BEL+vBJJRRdeLeA2Z9A07twFD8BysCdBEEvGsKfFnSyEUmvJlf6AdFu+d5V4ENitjg6xDEF7whVct/wJzmIXV9AHlcmmsNzAaRoLa99FR23y9yu3W7P3fvtetyvqGgZSUGRd/9st6lBGDyj6Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sKJ2m-0000tN-00; Thu, 20 Jun 2024 16:45:44 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id BEB89C031A; Thu, 20 Jun 2024 16:43:31 +0200 (CEST)
+Date: Thu, 20 Jun 2024 16:43:31 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH fixes 1/4] MIPS: mipsmtregs: Fix target register for MFTC0
+Message-ID: <ZnRAEzRQpfm7yHHc@alpha.franken.de>
+References: <20240616-mips-mt-fixes-v1-0-83913e0e60fc@flygoat.com>
+ <20240616-mips-mt-fixes-v1-1-83913e0e60fc@flygoat.com>
+ <859402a6-4e31-4029-a6ad-87c3be4d3fdd@app.fastmail.com>
+ <14cc8572-406e-47c4-a590-540d6c69466b@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240618234025.15036-7-dakr@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <14cc8572-406e-47c4-a590-540d6c69466b@app.fastmail.com>
 
-On Wed, Jun 19, 2024 at 01:39:52AM +0200, Danilo Krummrich wrote:
-> From: Wedson Almeida Filho <wedsonaf@google.com>
+On Wed, Jun 19, 2024 at 12:37:48PM +0100, Jiaxun Yang wrote:
 > 
-> Implement `dev_*` print macros for `device::Device`.
 > 
-> They behave like the macros with the same names in C, i.e., they print
-> messages to the kernel ring buffer with the given level, prefixing the
-> messages with corresponding device information.
+> 在2024年6月19日六月 下午12:32，Jiaxun Yang写道：
+> > 在2024年6月16日六月 下午2:25，Jiaxun Yang写道：
+> >> Target register of mftc0 should be __res instead of $1, this is
+> >> a leftover from old .insn code.
+> >>
+> >> Fixes: dd6d29a61489 ("MIPS: Implement microMIPS MT ASE helpers")
+> >> Cc: stable@vger.kernel.org
+> >> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> >
+> > Hi Thomas,
+> >
+> > I saw you sent mips-fixes_6.10_1 pull request but this series is
+> > not included in that PR while one of my later patch is included.
+> >
+> > If you think the whole series is not fit for fixes tree then please
+> > at least let this series go through fixes tree. There are many MT
+>                     ^ Sorry I meant patch.
 
-Nice, but one issue:
+sorry I've missed the fixes tag. As the rest looks like a lot of re-shuffling
+I'd prefer to just place the first patch to mips-fixes and the rest to
+mips-next.
 
-> +    /// Prints a debug-level message (level 7) prefixed with device information.
-> +    ///
-> +    /// More details are available from [`dev_dbg`].
-> +    ///
-> +    /// [`dev_dbg`]: crate::dev_dbg
-> +    pub fn pr_dbg(&self, args: fmt::Arguments<'_>) {
-> +        if cfg!(debug_assertions) {
+Thomas.
 
-That should not be an issue here.  debug_assertions is something
-independent of dev_dbg() calls.  You made this a Rust-only thing, that
-doesn't tie properly into the existing dynamic printk functionality by
-having yet-another-way to turn this on/off, right?
-
-So just remove the check please.
-
-And if you want to send this as a single patch after fixing this, I'll
-be glad to add it to the tree now, as it's "obviously" correct :)
-
-thanks,
-
-greg k-h
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
