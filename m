@@ -1,134 +1,106 @@
-Return-Path: <linux-kernel+bounces-222955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D7B910AC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:54:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA32910AC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D342810ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:54:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4121B21471
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783F41B012B;
-	Thu, 20 Jun 2024 15:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75FB1AF6BF;
+	Thu, 20 Jun 2024 15:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqWR3Stg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s12qsjrg"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA550171A5;
-	Thu, 20 Jun 2024 15:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA281AF695
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718898883; cv=none; b=Uwn8Iu2sPtdju6dA8P0Sk8OhJjCFXw8eg8cWxEjJ0OZbP8YbUHHuc2ayApZrPmeFNnBaJ6lRFILG4ECGm8DP4QdgFSTHPZF0OczMu6l+73U59DihwIQr+Fh5Y+qzbOex2y6H2WqkQTyyIN9CF+x0+R+Uo3E1TbjQdB6RQt81Uo0=
+	t=1718898921; cv=none; b=KhDhAEqfOQutFqu0KXqTR7LuLx+vS1EqvwHYAYV01Tb3mzXMiegcgMa4+U8vr7ogLCGobyDD9MdiCX9G+luHL0d3wo4XQKPFYe6WUBTJbEKeY8Rj2Wl9knLd/zl18At5UjloLdMVXAYqZbsKk13K3IX7VzS4e6cZjp60shWKRZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718898883; c=relaxed/simple;
-	bh=2tp22RCvOuiLWgdRY2kEpdBuhkrIPjuRZalWBGnpZY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CxSHcEArshHXyyzU7J2fSZtzfvxPTKHO4YOfTmAtR4njZxWAM9HWl4M3pa8REJIsgon/4xoK35H91+kEwMeUhP/RalgW8lGGQmBj3ZgK1Xe3lZnQDmmhywhpVQugEAG+0cQGvUPUB3cLqzrpXNOKEE3Gnz329vYsObSCZhBzgOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqWR3Stg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24467C2BD10;
-	Thu, 20 Jun 2024 15:54:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718898883;
-	bh=2tp22RCvOuiLWgdRY2kEpdBuhkrIPjuRZalWBGnpZY4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tqWR3Stgd3tUBuWRK2Blx0UXTQrcMnTn7oHlTUxpvayEVqo7c/SUtSweqejJ56Eqi
-	 R+1p2boO/QTu2owP7Z7tzP7BQWXC9Anm59m1L12QJhOTAOmz8ZCOJJh5Iw2hTIuD29
-	 Vx2AV2EtGYBg+4A4wd+kmIuM99cliewxTlOlCO52sK9SroniZOyKjgD9uXEqCRm1qg
-	 7U/93UVlq34jBwxogTTWtjkuUaoubGUCEGWGk3OwPDZWJy9dXjSydb7dp9pKiVimS3
-	 CZ+LQ3w0fFT7JXS+3E8sUopsKCItxOZI1Efhgra7EN60Vi5ZgcOZ11a4EdzcHupG1h
-	 oMD+nRyGjWFDw==
-Date: Thu, 20 Jun 2024 16:54:39 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: James Gowans <jgowans@amazon.com>, Jan Beulich <jbeulich@suse.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the memblock tree with the origin tree
-Message-ID: <ZnRQv-EVf2LQ1Cjv@sirena.org.uk>
+	s=arc-20240116; t=1718898921; c=relaxed/simple;
+	bh=Q4JBCnhSJq4oqfZIw7dzs3bChMGSgFx7uu84eklMR7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mwPHIZS2liFWjoQTHFlMwAk+oV3rGIIE/AxDlluMgIm/Efab1PsCWYY8DhscfG34DGmTVDHFzp+Pr27jBTCzz9NGH9erCWc/4GWqivdPfOlyj4HqQovFAElzk9YFyhYH3hlukfsgYtkdOMLcThZIebmU5dGudEf6pleOFYfHXOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s12qsjrg; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6ef793f4b8so106849466b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718898918; x=1719503718; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Q4JBCnhSJq4oqfZIw7dzs3bChMGSgFx7uu84eklMR7U=;
+        b=s12qsjrgolFYEp42rffnCVAzXO0UZaQ+veKzonJwyK8mp8wMcd072Bc8g6090b6FVD
+         YHK174y4FCBz2SLHVheUHg2U22U1ra8QLwVwnML5014ys3+VXypOhyeD3LKiHoKDt59E
+         wZpzl37vueXU0B8K1zVgQDOaxVBortLRdBjNF4x8truP7jzsihWegrq1RrpaEP/SikPf
+         cdr2EwLKZMNmoeW85Yi9M0vT5gzjuD/PHFuj1+8SOAbt3T3WCV77PGasY3HbMQ1CbTX5
+         32OqT+1Q0HOfr1zqeShghHvbLm8P9cAJAa+sMZ1x7V/DoSlSPeDdmmfnwonjLWl1JPof
+         CHOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718898918; x=1719503718;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q4JBCnhSJq4oqfZIw7dzs3bChMGSgFx7uu84eklMR7U=;
+        b=T/X4j+iT7lVIlD0axEM3ilQ8ZyYZwqdIvfcnvYFKVh6RyyFNiGfPytQc2aQghIfXqt
+         ReMUzhEI0+0tPeV4HyZf9amPOkzbIEPn4qogSoRuD/mplQfsRnzJ/qikeZQzMLmJJKoC
+         +AaSvAuPwm9pHyhucAjJDRo9NrW64euV1Qv85TAHEGSVx/jHjkxgBPIQUGdvKivDtHWl
+         FgsF28bBo7R8encYN2MPPjYs/921GvIjrRFvd6kQDF2v+LnXGZBWqUQfuQKDS7Zssxb3
+         EASLtnooTQ6CMxwOC096rtFCW8hLnfOW6UNQk9Pr3x/AQYZE4sOqzYBYJRKwRsGi0KA2
+         SYGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMMhujNeSEW61InyicQ3f2nP2mn8Huok4PtxUX+K7uxqtsjdXZXOLuX59UhK3ko5b8gksH1fClTPnZr+/4yX5Yx7+1vnoF7W8gP5/c
+X-Gm-Message-State: AOJu0YxbwCR3DBJ6Gk2qskpCzuH9vU5n0I5ViOadA6dcsN6QK/D/KWwx
+	ILZg7uokMIQy83hT7lbE6tw8gnbzDPlCT3Db/EYm9DGANNA2lCzKXtmBqCvPq2Y=
+X-Google-Smtp-Source: AGHT+IFYBlhlHfbiK0XROGgqygoHfOv7JX4uyejkwsNd3c+EAa8G3GJAtqdIkY1sIMVpfzVV0sIZTg==
+X-Received: by 2002:a17:907:d30e:b0:a6f:ad2c:af7 with SMTP id a640c23a62f3a-a6fad2c0b2emr322816866b.2.1718898917692;
+        Thu, 20 Jun 2024 08:55:17 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:9090:3594:a722:64b5:78a3:68f3? ([2a00:f41:9090:3594:a722:64b5:78a3:68f3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56fa6756sm781569266b.217.2024.06.20.08.55.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 08:55:17 -0700 (PDT)
+Message-ID: <d525c5dc-f4b4-42ca-93e4-d45068d896b6@linaro.org>
+Date: Thu, 20 Jun 2024 17:55:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="J5Vnv3MRBTlrDgal"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/7] Enable CPR for IPQ9574
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org,
+ angelogioacchino.delregno@collabora.com, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, ulf.hansson@linaro.org,
+ quic_sibis@quicinc.com, quic_rjendra@quicinc.com, luca@z3ntu.xyz,
+ abel.vesa@linaro.org, quic_rohiagar@quicinc.com, danila@jiaxyga.com,
+ otto.pflueger@abscue.de, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20240620081427.2860066-1-quic_varada@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240620081427.2860066-1-quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---J5Vnv3MRBTlrDgal
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On 6/20/24 10:14, Varadarajan Narayanan wrote:
+> This series tries to enable CPR on IPQ9574, that implements
+> CPRv4. Since [1] is older, faced few minor issues. Those are
+> addressed in [2].
 
-Today's linux-next merge of the memblock tree got a conflict in:
+Thanks Varadarajan, should things go well I'll resend CPR3 next
+week and then review this.
 
-  mm/memblock.c
-
-between commit:
-
-  e0eec24e2e199 ("memblock: make memblock_set_node() also warn about use of=
- MAX_NUMNODES")
-
-=66rom the origin tree and commit:
-
-  94ff46de4a738 ("memblock: Move late alloc warning down to phys alloc")
-
-=66rom the memblock tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc mm/memblock.c
-index e81fb68f7f888,692dc551c0fde..0000000000000
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@@ -1441,6 -1446,20 +1439,9 @@@ phys_addr_t __init memblock_alloc_range
-  	enum memblock_flags flags =3D choose_memblock_flags();
-  	phys_addr_t found;
- =20
-+ 	if (WARN_ONCE(nid =3D=3D MAX_NUMNODES, "Usage of MAX_NUMNODES is depreca=
-ted. Use NUMA_NO_NODE instead\n"))
-+ 		nid =3D NUMA_NO_NODE;
-+=20
- -	/*
- -	 * Detect any accidental use of these APIs after slab is ready, as at
- -	 * this moment memblock may be deinitialized already and its
- -	 * internal data may be destroyed (after execution of memblock_free_all)
- -	 */
- -	if (WARN_ON_ONCE(slab_is_available())) {
- -		void *vaddr =3D kzalloc_node(size, GFP_NOWAIT, nid);
- -
- -		return vaddr ? virt_to_phys(vaddr) : 0;
- -	}
- -
-  	if (!align) {
-  		/* Can't use WARNs this early in boot on powerpc */
-  		dump_stack();
-
---J5Vnv3MRBTlrDgal
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ0UL4ACgkQJNaLcl1U
-h9DOGQf/ROe7zNja31gTL++T7XT9JbYwuPY65LY/F0wSSfRZeuWmJYd5UWhx87Q9
-yIEd9bK32FJ6aThN5B6LdFYWtgsBwd4TkiVapYn3KKPX3qTr43cIL0Z4kz3uLPUC
-cXJg5unc0jtT3o1gC7f5KgEnUHjZGZYoMRByhValUaQ4A+mFPatRAFEJpRoU59W1
-hWrJ8qyhIQMAAj0xi51mCbFGPLYwppdvKvtrwYrpL+5ssEoe94n/aO2+JvueIN3g
-MMmOhskEv126QluNsQbnV80bURIS9bnmCKcERgrwtR9C4ThHb1NTk5PHRpmzS50g
-Q0xoNrXKXoRQu3fdBNFkZMkfxnQ0Ow==
-=/JZ/
------END PGP SIGNATURE-----
-
---J5Vnv3MRBTlrDgal--
+Konrad
 
