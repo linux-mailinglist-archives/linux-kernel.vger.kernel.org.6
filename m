@@ -1,816 +1,471 @@
-Return-Path: <linux-kernel+bounces-223205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58019910F7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:55:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE0D910F98
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC20282A67
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30C8B1F237A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F361B3F20;
-	Thu, 20 Jun 2024 17:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1570E1B5814;
+	Thu, 20 Jun 2024 17:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rY9ykHav"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PqyjojpX"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A744D1B0115;
-	Thu, 20 Jun 2024 17:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00321B3F2F;
+	Thu, 20 Jun 2024 17:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718906147; cv=none; b=YGWwHgfbQu1s7JaCWKeRiDW2gB31epv6YpwVdlDd7DQSdiXRnj8suwr8+isr42hKK+H81VHCgUT3CjhN5EYH0d8yil1a3o1Df6DnYW/qnH/G3FM7hH7QZzHEGm4uZb/JSRJiiuLVwFdpviPY+73qCPGH9NJ3y8YFihfYBEq0mL8=
+	t=1718906230; cv=none; b=iP4ATLyF+W2KFA35NfSbFo7ThN1BM9AwuYMv6F7N+mgnYPfn0t6KMWVbjm4uqWSrBKrPJ6zy4+xejo5ySkqXxQC5XdurHQ9fAZWNPT3Q+26BHQYSGpN+sFUm6kGwngxyWq3ChP6mfLUEaRZ0MH7e7xlXWvPtPgckH1c+W80+A+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718906147; c=relaxed/simple;
-	bh=0qll+KNXLwRhILffgw+Zst9glUGT0/HBOVPwCKCxjnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kNTxqf4qDgu3oto/fbQNB5ixDsgMeOUXh5evks/zG0fiHfOL7DzL8bSnzpC4xzS7d0Nrvcteyh7SAvxixO9roLHg6ebzDGDMe989+f7rgsHjKAj6897FD92pure78IWSBBykS2VWAlUE2UuM/swGvi+XhlXm47gN6h/ZA1eqb7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rY9ykHav; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0718C2BD10;
-	Thu, 20 Jun 2024 17:55:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718906147;
-	bh=0qll+KNXLwRhILffgw+Zst9glUGT0/HBOVPwCKCxjnY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rY9ykHavyDlx/Nhm4MyMMAgjzkNTaOek5IfK5TM4A7gJ/s9sMb0nsTYdVJLK+z+2f
-	 gUEn1kDtf2S0vstHp1UXWVaW7YuTsVYmMsECUM+iDqC+LoEkOnP1Lho+024KAlQ8br
-	 1/BlQjTv7BRZwNolLjrbJGBG774Kv9tEsmlZQ1dcqCKqlD0w3RIOgHMFyfFqaxWYg1
-	 4pEETHA2Sa8lEk6Xre/Q9Kd9xeBNP5Jq8afl2TlaYUcQ6iUGc0CBlupIZ+WffZHQ/7
-	 G9hKPvZrKaDCGRgROr94R8LW4R43zNXvBOEfTVrlgotM/hAS1ceZkHwcnV7apMW/15
-	 a5TAOI4WTkyMw==
-Date: Thu, 20 Jun 2024 18:55:43 +0100
-From: Lee Jones <lee@kernel.org>
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-Cc: pavel@ucw.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] leds: Add LED1202 I2C driver
-Message-ID: <20240620175543.GC1318296@google.com>
-References: <ZnGMAK9bd3pZjWmG@admins-Air>
+	s=arc-20240116; t=1718906230; c=relaxed/simple;
+	bh=+v4jjUj1lwOTsz8Mxp1G6htBOFCIigsWgsHI5ysa1Ss=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pWjLvqzN/KTRpyj3Xp3sqLFyRnP6GvzI4JJSQDuU0DJjHlLtSuDghSPM6JOVN1sAt4DL4R0dJkhDLexvU3p4Zk/LtWF/icNXQJPjXk1RnPrzUwFduKgp8QTFauVl7gPEh+4YlqCFXuwS7FKVnT6gBm8Mt/ehGi/cj184J1ZWS0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PqyjojpX; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7062c11d0d1so1107834b3a.1;
+        Thu, 20 Jun 2024 10:57:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718906228; x=1719511028; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W47tS6B8wqIVT2qpvRqiOMMzdBB5xZ547KnoaR9dSwQ=;
+        b=PqyjojpX1b4mgz2H6+lYPRp07fFU2sCPoV03VK1toFN3hNvHH0OZ29cw4r4EYltvsT
+         d/NZHXJfPT0+PGADyQHuIcju+T05jil/ldHZIoA5MXkbAMyDdY3AnF/Qc36Dt0hs+Fiu
+         vE6PteNhgGh+xKLl6fhgraTms7BgS30RwpmWfG5XQ/+NYkxj+gjSMSxBNDP0Ca7Se3Wa
+         GRfCJQ/D6K3hY6bucltqdTX5ZkKVpwQ9J5tK6atcCQtWl9Al6y1/dwor7tLSrLGIUNy4
+         eTdoU95nb1v1wkc+naz0Zap3noT6UR2X0DpdZnpDALP4d9fLE7o58WfSkRhd50za2Unk
+         PGvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718906228; x=1719511028;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W47tS6B8wqIVT2qpvRqiOMMzdBB5xZ547KnoaR9dSwQ=;
+        b=xOm83k1b3T2P7061m/GC8EoL8iC9N3yIRgp915MVoWjtIwhudItffPScrNCNljR5k9
+         uca7c+oKtfDfIZ2uBkrTi/fUf8EDnv3HPZB9kE5PXnSlueghLclJ3uRyMttHKc9/9J6w
+         K4SNM9VwnD19ZDc5+dk1DsrUmtRbQGUD2hQGb0hYR+vv3kzS3E6Ca2zGUQ2p++Xecfw2
+         UBB6dc84AeS12CbX27jetAsiultuhGOv6NjLuOcuu75uXudUsKmII7vI7cemDgYJnCBO
+         YVjCN53nI2G1cKzobX5/iVn4eByIUsqUNbivcwLlGfqSRTwAbiqC+ZJthOw/YZb1BznV
+         Du6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUmPEpinUDxQ/e7osRM5IgmXW0CNXEZ2CJmzXzCkmMwKmBQnaMbWaDPpnohwC73rTeKCBatyIrWpX9KRlR8ywVf4sFqMjy9aixvy/BTguu2BfuqNx0v/KMakGKhE42hCj57XCpXvC/Oe92xe75+9u+YlEUdshVYNrYYPlplyNUUOVHIEBTUz2E4o91gP/EQ4gScQN5VBK/Dp6RcZ9N/ZxyyOeWZ4l8yGaKEzkyALLvmZaRtmuwm3pnk+iovfNtouZxmcmR9E4ZASWWB/YH27rZZwRdGGLgBtWib327scpTEx/nh8svNY8w+qP471Zw9CIFJrKIwMLZtvWWSDyQskWu6cx3qMqMitkA9uV21RXHzlGLTMlDGXuWcvmuOrL49dFBVu/PUplXttjLYawjSPloNiLEv9yZIVB167y+bHK5YGBsf5Mgcg/VxPOgdoiy3iZThHn4/49/yMxlwcx75qV+4F6N4JhGd/v7iBrtX3hiWaX805W6KpgLh1yvCIoRAkmGfL4zYccwXYTlzrx22fMDGhzPRLnhIECX/gVpMuGRQ1tXj3XlUrC/78Bue+aGQBkYJapRiHrQRZRl9m4W3YMi+sHp32dm3WytFndm+BzMNyFBWob3tku2ElOulzjQw+XZsgeDUlLbJ2KbWxTsWbGfjNq5BqM5eolT8uTqSrnPi7hLTctNoEfUQYBGTHYZO48CJGVOn82gV8NcJgweO2bIasUbiKvCmTmpeg0pT64N01358IJNrWRTDm3truR0VXfJ5M6hYgA==
+X-Gm-Message-State: AOJu0YyrGxD4iiAqrh4f6mHA/PYhBsRMQALVJ44xPWjvtc/Me1PTxzj+
+	TQr8QREdTH92HpO3yjciemxhwK7dUsjgO5tn7d4WfvEnnI4AB3M2Wy8Db1lzsC0=
+X-Google-Smtp-Source: AGHT+IETPnhQIIAFAn3PVCfwnEc7SkEbk6ro/qDz0Ch8QyPc2IoUZATwJ2GjFRkYml1JLqHQ4RqduQ==
+X-Received: by 2002:a05:6a00:1712:b0:704:12fc:7b30 with SMTP id d2e1a72fcca58-70629c565e1mr5514020b3a.17.1718906227709;
+        Thu, 20 Jun 2024 10:57:07 -0700 (PDT)
+Received: from localhost ([216.228.127.128])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb6b11bsm12644924b3a.154.2024.06.20.10.57.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 10:57:07 -0700 (PDT)
+From: Yury Norov <yury.norov@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"James E.J. Bottomley" <jejb@linux.ibm.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	"Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+	Akinobu Mita <akinobu.mita@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Disseldorp <ddiss@suse.de>,
+	Edward Cree <ecree.xilinx@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Gregory Greenman <gregory.greenman@intel.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Hugh Dickins <hughd@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jens Axboe <axboe@kernel.dk>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Kalle Valo <kvalo@kernel.org>,
+	Karsten Graul <kgraul@linux.ibm.com>,
+	Karsten Keil <isdn@linux-pingi.de>,
+	Kees Cook <keescook@chromium.org>,
+	Leon Romanovsky <leon@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Martin Habets <habetsm.xilinx@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Oliver Neukum <oneukum@suse.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ping-Ke Shih <pkshih@realtek.com>,
+	Rich Felker <dalias@libc.org>,
+	Rob Herring <robh@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Shuai Xue <xueshuai@linux.alibaba.com>,
+	Stanislaw Gruszka <stf_xl@wp.pl>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Wenjia Zhang <wenjia@linux.ibm.com>,
+	Will Deacon <will@kernel.org>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	alsa-devel@alsa-project.org,
+	ath10k@lists.infradead.org,
+	dmaengine@vger.kernel.org,
+	iommu@lists.linux.dev,
+	kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-media@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-net-drivers@amd.com,
+	linux-pci@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	mpi3mr-linuxdrv.pdl@broadcom.com,
+	netdev@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	x86@kernel.org
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Jan Kara <jack@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: [PATCH v4 00/40] lib/find: add atomic find_bit() primitives
+Date: Thu, 20 Jun 2024 10:56:23 -0700
+Message-ID: <20240620175703.605111-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZnGMAK9bd3pZjWmG@admins-Air>
 
-I'm going do a very quick once through of this one.
+--- 
 
-There is a lot of work to do.
+This v4 moves new API to separate headers, as adding stuff to find.h
+concerns people, particularly Linus. It also adds few more conversions
+alongside other cosmetic changes. See full changelog below.
 
-> The LED1202 is a 12-channel low quiescent 
+---
 
-Please line wrap at 70-something chars not 40
+Add helpers around test_and_{set,clear}_bit() to allow searching for
+clear or set bits and flipping them atomically.
 
-> current LED driver. The output current can 
-> be adjusted separately for each channel by 
-> 8-bit analog (current sink input) and 
-> 12-bit digital (PWM) dimming control.
-> 
-> The LED1202 implements 12 low-side current 
-> generators with independent dimming control.
-> Internal volatile memory allows the user 
-> to store up to 8 different patterns, each 
-> pattern is a particular output configuration 
-> in terms of PWM duty-cycle (on 4096 steps).
-> Analog dimming (on 256 steps) is 
-> per channel but common to all patterns.
-> 
-> Each active=1 device tree LED node will
-> have a corresponding entry in /sys/class/leds
-> with the label name.
-> The brightness property corresponds to the
-> per channel analog dimming, while the 
-> patterns[1-8] to the PWM dimming control.
-> 
-> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-> ---
-> 
-> Changes in v2:
->   - Fix build error for device_attribute modes
-> 
->  drivers/leds/Kconfig        |  10 +
->  drivers/leds/Makefile       |   1 +
->  drivers/leds/leds-led1202.c | 617 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 628 insertions(+)
->  create mode 100644 drivers/leds/leds-led1202.c
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 05e6af88b88c..c65f2b1bbe30 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -899,6 +899,16 @@ config LEDS_LM36274
->  	  Say Y to enable the LM36274 LED driver for TI LMU devices.
->  	  This supports the LED device LM36274.
->  
-> +config LEDS_LED1202
-> +	tristate "LED Support for LED1202 I2C chips"
-> +	depends on LEDS_CLASS
-> +	depends on I2C
-> +	depends on OF
-> +	help
-> +	  Say Y to enable support for LEDs connected to LED1202
-> +	  LED driver chips accessed via the I2C bus.
-> +	  Supported devices include LED1202.
-> +
->  config LEDS_TPS6105X
->  	tristate "LED support for TI TPS6105X"
->  	depends on LEDS_CLASS
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index effdfc6f1e95..80423fa8818e 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -36,6 +36,7 @@ obj-$(CONFIG_LEDS_IP30)			+= leds-ip30.o
->  obj-$(CONFIG_LEDS_IPAQ_MICRO)		+= leds-ipaq-micro.o
->  obj-$(CONFIG_LEDS_IS31FL319X)		+= leds-is31fl319x.o
->  obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
-> +obj-$(CONFIG_LEDS_LED1202)		+= leds-led1202.o
->  obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
->  obj-$(CONFIG_LEDS_LM3532)		+= leds-lm3532.o
->  obj-$(CONFIG_LEDS_LM3533)		+= leds-lm3533.o
-> diff --git a/drivers/leds/leds-led1202.c b/drivers/leds/leds-led1202.c
-> new file mode 100644
-> index 000000000000..4e82f0e66168
-> --- /dev/null
-> +++ b/drivers/leds/leds-led1202.c
-> @@ -0,0 +1,617 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Simple LED driver for ST LED1202 chip
+Using atomic search primitives allows to implement lockless bitmap
+handling where only individual bits are touched by concurrent processes,
+and where people now have to protect their bitmaps to search for a free
+or set bit due to the lack of atomic searching routines.
 
-Just a simple 600+ line driver?
+The typical lock-protected bit allocation may look like this:
 
-ST as in STMicroelectronics?
+	unsigned long alloc_bit()
+	{
+		unsigned long bit;
 
-Please make that clear in the header and in the Kconfig entry.
+		spin_lock(bitmap_lock);
+		bit = find_first_zero_bit(bitmap, nbits);
+		if (bit < nbits)
+			__set_bit(bit, bitmap);
+		spin_unlock(bitmap_lock);
 
-> + * Copyright (C) 2024 Remote-Tech Ltd. UK
-> + */
+		return bit;
+	}
 
-New line here.
+	void free_bit(unsigned long bit)
+	{
+		spin_lock(bitmap_lock);
+		__clear_bit(bit, bitmap);
+		spin_unlock(bitmap_lock);
+	}
 
-> +#include <linux/module.h>
-> +#include <linux/string.h>
-> +#include <linux/ctype.h>
-> +#include <linux/leds.h>
-> +#include <linux/err.h>
-> +#include <linux/i2c.h>
-> +#include <linux/slab.h>
-> +#include <linux/gpio.h>
-> +#include <linux/delay.h>
-> +
-> +#define DRIVER_NAME "led-driver-1202"
+Now with atomic find_and_set_bit(), the above can be implemented
+lockless, directly by using it and atomic clear_bit().
 
-Remove this and user dev_err() instead.
+Patches 36-40 do this in few places in the kernel where the
+transition is clear. There is likely more candidates for
+refactoring.
 
-> +#define DRIVER_VERSION "0.0.1"
+The other important case is when people opencode atomic search
+or atomic traverse on the maps with the patterns looking like:
 
-Remove this entirely, it's useless.
+	for (idx = 0; idx < nbits; idx++)
+		if (test_and_clear_bit(idx, bitmap))
+			do_something(idx);
 
-> +
-> +#define LL1202_MAX_LEDS 12
-> +
-> +#define LL1202_DEVICE_ID 0x00
-> +#define LL1202_DEV_ENABLE 0x01
-> +#define LL1202_CHAN_ENABLE_LOW 0x02
-> +#define LL1202_CHAN_ENABLE_HIGH 0x03
-> +#define LL1202_CONFIG_REG 0x04
-> +#define LL1202_ILED_REG0 0x09
-> +#define LL1202_PATTERN_REP 0x15
-> +#define LL1202_PATTERN_DUR 0x16
-> +#define LL1202_PATTERN_PWM 0x1E
-> +#define LL1202_CLOCK_REG 0xE0
+Or like this:
 
-Tab out the values so they line up.
+	do {
+		bit = find_first_bit(bitmap, nbits);
+		if (bit >= nbits)
+			return nbits;
 
-> +struct ll1202_led {
-> +	struct led_classdev led_cdev;
-> +	struct ll1202_chip *chip;
-> +	int led_num;
-> +	char name[32];
+	} while (!test_and_clear_bit(bit, bitmap));
 
-Define this and all magic numbers.
+	return bit;
 
-> +	int is_active;
-> +};
-> +
-> +struct ll1202_chip {
-> +	struct i2c_client *client;
-> +	struct mutex lock;
-> +	struct ll1202_led leds[LL1202_MAX_LEDS];
-> +};
-> +
-> +static struct ll1202_led *cdev_to_ll1202_led(struct led_classdev *cdev)
-> +{
-> +	return container_of(cdev, struct ll1202_led, led_cdev);
-> +}
-> +
-> +static int ll1202_read_reg(struct ll1202_chip *chip, int reg, uint8_t *val)
-> +{
-> +	int ret = i2c_smbus_read_byte_data(chip->client, reg);
+In both cases, the opencoded loop may be converted to a single function
+or iterator call. Correspondingly:
 
-Separate the declaration and the function call.
+	for_each_test_and_clear_bit(idx, bitmap, nbits)
+		do_something(idx);
 
-> +
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	*val = (uint8_t)ret;
-> +	return 0;
-> +}
-> +
-> +static int ll1202_write_reg(struct ll1202_chip *chip, int reg, uint8_t val)
+Or:
+	return find_and_clear_bit(bitmap, nbits);
 
-What's "ll"?
+Obviously, the less routine code people have to write themself, the
+less probability to make a mistake. The patch #33 fixes one such
+mistake.
 
-> +{
-> +	return i2c_smbus_write_byte_data(chip->client, reg, val);
-> +}
-> +
-> +static int ll1202_get_channel(struct device *dev)
-> +{
-> +	struct device_node *np = dev->parent->of_node, *child;
-> +	int err, ret = -1;
+The new API is not only a handy helpers - it also resolves a non-trivial
+issue of using non-atomic find_bit() together with atomic
+test_and_{set,clear)_bit().
 
-What is -1?
+The trick is that find_bit() implies that the bitmap is a regular
+non-volatile piece of memory, and compiler is allowed to use such
+optimization techniques like re-fetching memory instead of caching it.
 
-> +	for_each_child_of_node(np, child) {
-> +		if (strncmp(dev->kobj.name,
-> +			    of_get_property(child, "label", NULL),
-> +			    strnlen(dev->kobj.name, MAX_INPUT)) == 0) {
+For example, find_first_bit() is implemented like:
 
-Pull all of these embedded functions out.
+      for (idx = 0; idx * BITS_PER_LONG < sz; idx++) {
+              val = addr[idx];
+              if (val) {
+                      sz = min(idx * BITS_PER_LONG + __ffs(val), sz);
+                      break;
+              }
+      }
 
-> +			err = of_property_read_u32(child, "reg", &ret);
-> +			if (err) {
-> +				of_node_put(child);
-> +				pr_err(DRIVER_NAME
-> +				       ": Failed to read property %s", child->name);
-> +				return ret;
-> +			}
-> +			break;
-> +		}
-> +	}
-> +	return ret;
-> +}
-> +
-> +static ssize_t ll1202_show_all_registers(struct device *dev,
-> +					 struct device_attribute *devattr,
-> +					 char *buf)
-> +{
-> +	struct ll1202_chip *chip = dev_get_drvdata(dev);
-> +	uint8_t reg_value = 0;
-> +	int ret, i;
-> +	char *bufp = buf;
-> +
-> +	mutex_lock(&chip->lock);
-> +
-> +	for (i = LL1202_DEVICE_ID; i <= LL1202_CLOCK_REG; i++) {
-> +		ret = ll1202_read_reg(chip, i, &reg_value);
-> +		if (ret != 0)
-> +			dev_err(&chip->client->dev,
-> +				"Reading register [0x%x] failed.\n", i);
-> +
-> +		bufp += snprintf(bufp, PAGE_SIZE, "Addr[0x%x] = 0x%x\n", i,
-> +				 reg_value);
-> +	}
-> +
-> +	mutex_unlock(&chip->lock);
-> +	return strlen(buf);
-> +}
+On register-memory architectures, like x86, compiler may decide to
+access memory twice - first time to compare against 0, and second time
+to fetch its value to pass it to __ffs().
 
-Does this have any real world use?
+When running find_first_bit() on volatile memory, the memory may get
+changed in-between, and for instance, it may lead to passing 0 to
+__ffs(), which is an undefined behaviour. This is a potentially
+dangerous call.
 
-> +static ssize_t
-> +ll1202_show_patt_sequence_repetition(struct device *dev,
-> +				     struct device_attribute *attr, char *buf)
-> +{
-> +	struct ll1202_chip *chip = dev_get_drvdata(dev);
-> +	unsigned int ret;
-> +	uint8_t reg_value;
-> +	char *bufp = buf;
-> +
-> +	mutex_lock(&chip->lock);
-> +	ret = ll1202_read_reg(chip, LL1202_PATTERN_REP, &reg_value);
-> +	if (ret != 0)
-> +		dev_err(&chip->client->dev, "Reading register [0x%x] failed\n", LL1202_PATTERN_REP);
-> +	mutex_unlock(&chip->lock);
-> +	bufp += snprintf(bufp, PAGE_SIZE,
-> +			 "Pattern sequence register, repetition value = %d (times)\n",
-> +			 reg_value);
-> +	return strlen(buf);
-> +}
-> +
-> +static ssize_t
-> +ll1202_store_patt_sequence_repetition(struct device *dev,
-> +				      struct device_attribute *attr,
-> +				      const char *buf, size_t count)
-> +{
-> +	struct ll1202_chip *chip = dev_get_drvdata(dev);
-> +	unsigned int ret;
-> +	unsigned long duration;
-> +
-> +	if (!count)
-> +		return -EINVAL;
-> +
-> +	ret = kstrtoul(buf, 10, &duration);
-> +	if (ret) {
-> +		dev_err(&chip->client->dev, "sscanf failed with error :%d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	mutex_lock(&chip->lock);
-> +	ret = ll1202_write_reg(chip, LL1202_PATTERN_REP, duration);
-> +	if (ret != 0)
-> +		dev_err(&chip->client->dev, "Writing register [0x%x] failed\n",
-> +			LL1202_PATTERN_REP);
-> +	mutex_unlock(&chip->lock);
-> +	return count;
-> +}
-> +
-> +static int ll1202_prescalar_to_miliamps(uint8_t reg_value)
-> +{
-> +	return reg_value * 20 / 255;
+find_and_clear_bit() as a wrapper around test_and_clear_bit()
+naturally treats underlying bitmap as a volatile memory and prevents
+compiler from such optimizations.
 
-Define _all_ magic numbers.
+Now that KCSAN is catching exactly this type of situations and warns on
+undercover memory modifications. We can use it to reveal improper usage
+of find_bit(), and convert it to atomic find_and_*_bit() as appropriate.
 
-> +}
-> +
-> +static int ll1202_prescalar_to_miliseconds(uint8_t reg_value)
-> +{
-> +	return reg_value * 5660 / 255;
-> +}
-> +
-> +static ssize_t ll1202_show_channel_mA_current(struct device *dev,
-> +					      struct device_attribute *attr,
-> +					      char *buf)
-> +{
-> +	struct ll1202_chip *chip = dev_get_drvdata(dev->parent);
-> +	unsigned int ret;
-> +	uint8_t reg_value;
-> +	char *bufp = buf;
-> +	int led_num = ll1202_get_channel(dev);
-> +
-> +	if (led_num < 0 || led_num >= LL1202_MAX_LEDS) {
-> +		dev_err(&chip->client->dev,
-> +			"Invalid register [0x%x] (out of range)\n",
-> +			led_num);
-> +	}
-> +	mutex_lock(&chip->lock);
-> +	ret = ll1202_read_reg(chip, LL1202_ILED_REG0 + led_num, &reg_value);
-> +	if (ret != 0)
-> +		dev_err(&chip->client->dev, "Reading analog dimming register [0x%x] failed\n",
-> +			led_num);
-> +	mutex_unlock(&chip->lock);
-> +	bufp += snprintf(bufp, PAGE_SIZE, "Channel[%d] = %d mA\n", led_num,
-> +			 ll1202_prescalar_to_miliamps(reg_value));
-> +	return strlen(buf);
+In some cases concurrent operations with plain find_bit() are acceptable.
+For example:
 
-Space out the code properly - this is really tough to read.
+ - two threads running find_*_bit(): safe wrt ffs(0) and returns correct
+   value, because underlying bitmap is unchanged;
+ - find_next_bit() in parallel with set or clear_bit(), when modifying
+   a bit prior to the start bit to search: safe and correct;
+ - find_first_bit() in parallel with set_bit(): safe, but may return wrong
+   bit number;
+ - find_first_zero_bit() in parallel with clear_bit(): same as above.
 
-> +}
-> +
-> +static int ll1202_channel_activate(struct ll1202_led *led)
-> +{
-> +	struct ll1202_chip *chip;
-> +	uint8_t reg_chan_low, reg_chan_high;
-> +	int ret = 0;
-> +
-> +	chip = led->chip;
-> +	if (led->is_active) {
+In last 2 cases find_bit() may not return a correct bit number, but
+it may be OK if caller requires any (not exactly the first) set or clear
+bit, correspondingly.
 
-Reverse this logic and unindent this block.
+In such cases, KCSAN may be safely silenced with data_race(). But in most
+cases where KCSAN detects concurrency we should carefully review the code
+and likely protect critical sections or switch to atomic find_and_bit(),
+as appropriate.
 
-> +		mutex_lock(&chip->lock);
-> +
-> +		ret = ll1202_read_reg(chip, LL1202_CHAN_ENABLE_LOW,
-> +				      &reg_chan_low);
-> +		if (ret < 0) {
-> +			dev_err(&chip->client->dev,
-> +				"Failed reading register [0x%x]\n", LL1202_CHAN_ENABLE_LOW);
-> +		}
-> +
-> +		ret = ll1202_read_reg(chip, LL1202_CHAN_ENABLE_HIGH,
-> +				      &reg_chan_high);
-> +		if (ret < 0) {
-> +			dev_err(&chip->client->dev,
-> +				"Failed reading register [0x%x]\n", LL1202_CHAN_ENABLE_HIGH);
-> +		}
-> +
-> +		reg_chan_low = reg_chan_low | BIT(led->led_num);
-> +		ret = ll1202_write_reg(chip, LL1202_CHAN_ENABLE_LOW,
-> +				       reg_chan_low);
-> +		if (ret < 0) {
-> +			dev_err(&chip->client->dev,
-> +				"Failed writing to register [0x%x]\n", LL1202_CHAN_ENABLE_LOW);
-> +		}
-> +		reg_chan_high = reg_chan_high | (BIT(led->led_num) >> 7);
-> +		ret = ll1202_write_reg(chip, LL1202_CHAN_ENABLE_HIGH,
-> +				       reg_chan_high);
-> +		if (ret < 0) {
-> +			dev_err(&chip->client->dev,
-> +				"Failed writing to register [0x%x]\n", LL1202_CHAN_ENABLE_HIGH);
-> +		}
+This patch adds the following atomic primitives:
 
-Provide a comment as to why this cycle needs to be done twice.
+	find_and_set_bit(addr, nbits);
+	find_and_set_next_bit(addr, nbits, start);
+	...
 
-> +		mutex_unlock(&chip->lock);
-> +	}
-> +	return ret;
-> +}
-> +
-> +#define LL1202_PWM_PATTERN_ATTR(pattern)                                          \
+Here find_and_{set,clear} part refers to the corresponding
+test_and_{set,clear}_bit function. Suffixes like _wrap or _lock
+derive their semantics from corresponding find() or test() functions.
 
-No chance!
+For brevity, the naming omits the fact that we search for zero bit in
+find_and_set, and correspondingly search for set bit in find_and_clear
+functions.
 
-Where else do you see code like this?
+The patch also adds iterators with atomic semantics, like
+for_each_test_and_set_bit(). Here, the naming rule is to simply prefix
+corresponding atomic operation with 'for_each'.
 
-> +	static ssize_t ll1202_show_pwm_pattern##pattern(                          \
-> +		struct device *dev, struct device_attribute *attr, char *buf)     \
-> +	{                                                                         \
-> +		struct ll1202_chip *chip = dev_get_drvdata(dev->parent);          \
-> +		uint8_t duration = 0;                                             \
-> +		uint8_t reg_value_l = 0;                                          \
-> +		uint8_t reg_value_h = 0;                                          \
-> +		uint16_t reg_value = 0;                                           \
-> +		int ret;                                                          \
-> +		char *bufp = buf;                                                 \
-> +		int led_num = ll1202_get_channel(dev);                            \
-> +		if (led_num < 0 || led_num >= LL1202_MAX_LEDS) {                  \
-> +			dev_err(&chip->client->dev,                               \
-> +				"Invalid register [0x%x] (out of range)\n",  \
-> +				led_num);                                         \
-> +		}                                                                 \
-> +		mutex_lock(&chip->lock);                                          \
-> +		ret = ll1202_read_reg(                                            \
-> +			chip,                                                     \
-> +			(LL1202_PATTERN_PWM + (led_num * 2) + 0x18 * pattern),    \
-> +			&reg_value_l);                                            \
-> +		if (ret != 0)                                                     \
-> +			dev_err(&chip->client->dev,                               \
-> +				"Reading pattern PWM register [0x%x] failed\n", led_num);     \
-> +		ret = ll1202_read_reg(chip,                                       \
-> +				      (LL1202_PATTERN_PWM + 0x1 +                 \
-> +				       (led_num * 2) + 0x18 * pattern),           \
-> +				      &reg_value_h);                              \
-> +		if (ret != 0)                                                     \
-> +			dev_err(&chip->client->dev,                               \
-> +				"Reading pattern PWM register [0x%x] failed\n", led_num);     \
-> +		reg_value = (uint16_t)reg_value_h << 8 | reg_value_l;             \
-> +		ret = ll1202_read_reg(chip, (LL1202_PATTERN_DUR + pattern),       \
-> +				      &duration);                                 \
-> +		if (ret != 0)                                                     \
-> +			dev_err(&chip->client->dev,                               \
-> +				"Reading pattern durating register [0x%x] failed\n", led_num);     \
-> +		bufp += snprintf(                                                 \
-> +			bufp, PAGE_SIZE,                                          \
-> +			"Pattern[%d][cs%d]: PWM = 0x%03X; DURATION = %d ms\n",    \
-> +			pattern, led_num, reg_value,                              \
-> +			ll1202_prescalar_to_miliseconds(duration));               \
-> +		mutex_unlock(&chip->lock);                                        \
-> +		return strlen(buf);                                               \
-> +	}                                                                         \
-> +	static ssize_t ll1202_store_pwm_pattern##pattern(                         \
-> +		struct device *dev, struct device_attribute *attr,                \
-> +		const char *buf, size_t count)                                    \
-> +	{                                                                         \
-> +		struct ll1202_chip *chip = dev_get_drvdata(dev->parent);          \
-> +		unsigned int ret, reg_value;                                      \
-> +		unsigned long duration;                                           \
-> +		char buf_u8[16];                                                  \
-> +		uint8_t reg_value_l = 0;                                          \
-> +		uint8_t reg_value_h = 0;                                          \
-> +		int led_num = ll1202_get_channel(dev);                            \
-> +		if (led_num < 0 || led_num >= LL1202_MAX_LEDS) {                  \
-> +			dev_err(&chip->client->dev,                               \
-> +				"Invalid register [0x%x] (out of range)\n",  \
-> +				led_num);                                         \
-> +			return count;                                             \
-> +		}                                                                 \
-> +		if (!count)                                                       \
-> +			return -EINVAL;                                           \
-> +		ret = sscanf(buf, "%X %s", &reg_value, buf_u8);                   \
-> +		if (ret == 0) {                                                   \
-> +			dev_err(&chip->client->dev,                               \
-> +				"sscanf failed with error :%d\n", ret);           \
-> +			return ret;                                               \
-> +		}                                                                 \
-> +		ret = kstrtoul(buf_u8, 10, &duration);                            \
-> +		if (ret)                                                          \
-> +			return ret;                                               \
-> +		reg_value_l = (uint8_t)reg_value;                                 \
-> +		reg_value_h = (uint8_t)(reg_value >> 8);                          \
-> +		mutex_lock(&chip->lock);                                          \
-> +		ret = ll1202_write_reg(                                           \
-> +			chip,                                                     \
-> +			(LL1202_PATTERN_PWM + (led_num * 2) + 0x18 * pattern),    \
-> +			(uint8_t)reg_value_l);                                    \
-> +		if (ret != 0)                                                     \
-> +			dev_err(&chip->client->dev,                               \
-> +				"Writing to register [0x%x] failed, value %d\n",  \
-> +				LL1202_PATTERN_PWM + (led_num * 2) +              \
-> +					0x18 * pattern,                           \
-> +				reg_value_l);                                     \
-> +		ret = ll1202_write_reg(chip,                                      \
-> +				       (LL1202_PATTERN_PWM + 0x1 +                \
-> +					(led_num * 2) + 0x18 * pattern),          \
-> +				       (uint8_t)reg_value_h);                     \
-> +		if (ret != 0)                                                     \
-> +			dev_err(&chip->client->dev,                               \
-> +				"Writing to register [0x%x] failed, value %d\n",  \
-> +				(LL1202_PATTERN_PWM + 0x1 + (led_num * 2) +       \
-> +				 0x18 * pattern),                                 \
-> +				reg_value_h);                                     \
-> +		ret = ll1202_write_reg(chip, (LL1202_PATTERN_DUR + pattern),      \
-> +				       (u8)duration);                             \
-> +		if (ret != 0)                                                     \
-> +			dev_err(&chip->client->dev,                               \
-> +				"Writing to register [0x%x] failed, value %d\n", \
-> +				(LL1202_PATTERN_DUR + pattern), (u8)duration);    \
-> +		ret = ll1202_write_reg(chip, LL1202_CONFIG_REG,                   \
-> +				       (0xC0 | pattern));                         \
-> +		if (ret != 0) {                                                   \
-> +			dev_err(&chip->client->dev,                               \
-> +				"Failed writing to reg [0x%x]\n", LL1202_CONFIG_REG);     \
-> +		}                                                                 \
-> +		mutex_unlock(&chip->lock);                                        \
-> +		ll1202_channel_activate(&chip->leds[led_num]);                    \
-> +		return count;                                                     \
-> +	}                                                                         \
-> +	static struct device_attribute dev_attr_led_pwm_pattern##pattern = {		\
-> +	.attr = {							\
-> +	.name = __stringify(pwm_pattern##pattern),					\
-> +	.mode =  00444 | 00200,						\
-> +	},								\
-> +	.show = ll1202_show_pwm_pattern##pattern,				\
-> +	.store = ll1202_store_pwm_pattern##pattern,				\
-> +}
-> +
-> +LL1202_PWM_PATTERN_ATTR(0);
-> +LL1202_PWM_PATTERN_ATTR(1);
-> +LL1202_PWM_PATTERN_ATTR(2);
-> +LL1202_PWM_PATTERN_ATTR(3);
-> +LL1202_PWM_PATTERN_ATTR(4);
-> +LL1202_PWM_PATTERN_ATTR(5);
-> +LL1202_PWM_PATTERN_ATTR(6);
-> +LL1202_PWM_PATTERN_ATTR(7);
+This series is not aimed on performance, but some performance
+implications are considered.
 
-We already have global helpers for this type of thing.
+In [1] Jan reported 2% slowdown in a single-thread search test when
+switching find_bit() function to treat bitmaps as volatile arrays. On
+the other hand, kernel robot in the same thread reported +3.7% to the
+performance of will-it-scale.per_thread_ops test.
 
-> +static DEVICE_ATTR(led_device_regsdump, 00444, ll1202_show_all_registers,
-> +		   NULL);
-> +static DEVICE_ATTR(patt_sequence_repetition, 00444 | 00200,
-> +		   ll1202_show_patt_sequence_repetition,
-> +		   ll1202_store_patt_sequence_repetition);
-> +static DEVICE_ATTR(current_mA, 00444, ll1202_show_channel_mA_current, NULL);
-> +
-> +static struct attribute *led_attrs[] = {
-> +	&dev_attr_led_device_regsdump.attr,
-> +	&dev_attr_patt_sequence_repetition.attr,
-> +	NULL,
-> +};
-> +
-> +static struct attribute *led_group_attrs[] = {
-> +	&dev_attr_led_pwm_pattern0.attr, &dev_attr_led_pwm_pattern1.attr,
-> +	&dev_attr_led_pwm_pattern2.attr, &dev_attr_led_pwm_pattern3.attr,
-> +	&dev_attr_led_pwm_pattern4.attr, &dev_attr_led_pwm_pattern5.attr,
-> +	&dev_attr_led_pwm_pattern6.attr, &dev_attr_led_pwm_pattern7.attr,
-> +	&dev_attr_current_mA.attr,	 NULL,
-> +};
-> +
-> +static struct attribute_group attr_group = {
-> +	.attrs = led_attrs,
-> +};
-> +
-> +static struct attribute_group attr_pat_group = {
-> +	.attrs = led_group_attrs,
-> +};
-> +
-> +static const struct attribute_group *ll1202_groups[] = { &attr_pat_group,
-> +							 NULL };
-> +
-> +static void ll1202_brightness_set(struct led_classdev *led_cdev,
-> +				  enum led_brightness value)
-> +{
-> +	struct ll1202_led *led = cdev_to_ll1202_led(led_cdev);
-> +	struct ll1202_chip *chip = led->chip;
-> +	int ret;
-> +
-> +	mutex_lock(&chip->lock);
-> +	ret = ll1202_write_reg(chip, LL1202_ILED_REG0 + led->led_num, value);
-> +	if (ret != 0)
-> +		dev_err(&chip->client->dev, "Reading register [0x%x] failed\n",
-> +			LL1202_ILED_REG0 + led->led_num);
-> +	mutex_unlock(&chip->lock);
-> +}
-> +
-> +static enum led_brightness ll1202_brightness_get(struct led_classdev *led_cdev)
-> +{
-> +	struct ll1202_led *led = cdev_to_ll1202_led(led_cdev);
-> +	struct ll1202_chip *chip = led->chip;
-> +	uint8_t reg_value;
-> +	int ret;
-> +
-> +	mutex_lock(&chip->lock);
-> +	ret = ll1202_read_reg(chip, LL1202_ILED_REG0 + led->led_num,
-> +			      &reg_value);
-> +	if (ret != 0)
-> +		dev_err(&chip->client->dev, "Reading register [0x%x] failed\n",
-> +			LL1202_ILED_REG0 + led->led_num);
-> +
-> +	mutex_unlock(&chip->lock);
-> +	return reg_value;
-> +}
-> +
-> +static int ll1202_dt_init(struct ll1202_chip *chip)
-> +{
-> +	struct device_node *np = chip->client->dev.of_node, *child;
-> +	struct ll1202_led *led;
-> +	int err, reg;
-> +
-> +	for_each_child_of_node(np, child) {
-> +		err = of_property_read_u32(child, "reg", &reg);
-> +		if (err) {
-> +			of_node_put(child);
-> +			pr_err(DRIVER_NAME ": Failed to get child node");
-> +			return err;
-> +		}
-> +		if (reg < 0 || reg >= LL1202_MAX_LEDS) {
-> +			of_node_put(child);
-> +			pr_err(DRIVER_NAME ": Invalid register value [0x%x] (out of range)", reg);
-> +			return -EINVAL;
-> +		}
-> +
-> +		led = &chip->leds[reg];
-> +		led->led_cdev.name = of_get_property(child, "label", NULL) ?:
-> +					     child->name;
-> +
-> +		err = of_property_read_u32(child, "active", &led->is_active);
-> +		if (err) {
-> +			of_node_put(child);
-> +			pr_err(DRIVER_NAME ": Failed to get child node");
-> +			return err;
-> +		}
-> +
-> +		led->led_cdev.brightness_set = ll1202_brightness_set;
-> +		led->led_cdev.brightness_get = ll1202_brightness_get;
-> +		led->led_cdev.groups = ll1202_groups;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int ll1202_setup(struct ll1202_chip *chip)
-> +{
-> +	int ret;
-> +
-> +	mutex_lock(&chip->lock);
-> +	ret = ll1202_write_reg(chip, LL1202_DEV_ENABLE, 0x1);
-> +	if (ret < 0) {
-> +		dev_err(&chip->client->dev, "Failed writing to register [0x%x]\n",
-> +			LL1202_DEV_ENABLE);
-> +	}
-> +	mutex_unlock(&chip->lock);
-> +	usleep_range(6500, 10000);
-> +	mutex_lock(&chip->lock);
-> +	ret = ll1202_write_reg(chip, LL1202_DEV_ENABLE, 0x80);
-> +	if (ret < 0) {
-> +		dev_err(&chip->client->dev, "Failed writing to register [0x%x]\n",
-> +			LL1202_DEV_ENABLE);
-> +	}
-> +	mutex_unlock(&chip->lock);
-> +	usleep_range(6500, 10000);
-> +	mutex_lock(&chip->lock);
-> +	ret = ll1202_write_reg(chip, LL1202_PATTERN_REP, 0xFF);
-> +	if (ret < 0) {
-> +		dev_err(&chip->client->dev, "Failed writing to register [0x%x]\n",
-> +			LL1202_PATTERN_REP);
-> +		return ret;
-> +	}
-> +	mutex_unlock(&chip->lock);
-> +	return ret;
-> +}
-> +
-> +static int ll1202_probe(struct i2c_client *client)
-> +{
-> +	struct ll1202_chip *chip;
-> +	struct ll1202_led *led;
-> +	int ret, err;
-> +	int i;
-> +
-> +	pr_info(DRIVER_NAME ": (I2C) " DRIVER_VERSION "\n");
-> +
-> +	if (!i2c_check_functionality(client->adapter,
-> +				     I2C_FUNC_SMBUS_BYTE_DATA)) {
-> +		dev_err(&client->dev, "SMBUS Byte Data not Supported\n");
-> +		return -EIO;
-> +	}
-> +
-> +	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
-> +	if (!chip)
-> +		return -ENOMEM;
-> +
-> +	i2c_set_clientdata(client, chip);
-> +
-> +	mutex_init(&chip->lock);
-> +	chip->client = client;
-> +
-> +	/* Device tree setup */
-> +	ret = ll1202_dt_init(chip);
-> +	if (ret < 0)
-> +		goto exit;
-> +
-> +	/* Configuration setup */
-> +	ret = ll1202_setup(chip);
-> +	if (ret < 0)
-> +		goto exit;
-> +
-> +	for (i = 0; i < LL1202_MAX_LEDS; i++) {
-> +		led = &chip->leds[i];
-> +		led->chip = chip;
-> +		led->led_num = i;
-> +		if (led->is_active) {
-> +			err = led_classdev_register(&client->dev,
-> +						    &led->led_cdev);
-> +			if (err < 0) {
-> +				pr_err(DRIVER_NAME
-> +				       ": Failed to register LED class dev");
-> +				goto exit;
-> +			}
-> +		}
-> +	}
-> +
-> +	ret = sysfs_create_group(&client->dev.kobj, &attr_group);
-> +	if (ret) {
-> +		dev_err(&client->dev,
-> +			"Failed to create sysfs group for ll1202\n");
-> +		goto err_setup;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_setup:
-> +	for (i = 0; i < LL1202_MAX_LEDS; i++)
-> +		led_classdev_unregister(&chip->leds[i].led_cdev);
-> +exit:
-> +	mutex_destroy(&chip->lock);
-> +	devm_kfree(&client->dev, chip);
-> +	return ret;
-> +}
-> +
-> +static void ll1202_remove(struct i2c_client *client)
-> +{
-> +	struct ll1202_chip *dev = i2c_get_clientdata(client);
-> +	int i;
-> +
-> +	for (i = 0; i < LL1202_MAX_LEDS; i++)
-> +		led_classdev_unregister(&dev->leds[i].led_cdev);
-> +
-> +	sysfs_remove_group(&client->dev.kobj, &attr_group);
-> +
-> +	mutex_destroy(&dev->lock);
-> +	devm_kfree(&client->dev, dev->leds);
-> +	devm_kfree(&client->dev, dev);
-> +}
-> +
-> +static const struct i2c_device_id ll1202_id[] = {
-> +	{ DRIVER_NAME "-i2c", 0 },
-> +	{}
-> +};
-> +
-> +MODULE_DEVICE_TABLE(i2c, ll1202_id);
-> +
-> +static const struct of_device_id ll1202_dt_ids[] = {
-> +	{
-> +		.compatible = "st,led1202",
-> +	},
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, ll1202_dt_ids);
-> +
-> +static struct i2c_driver ll1202_driver = {
-> +	.driver = {
-> +		.name = "ll1202",
-> +		.of_match_table = of_match_ptr(ll1202_dt_ids),
-> +	},
-> +	.probe = ll1202_probe,
-> +	.remove = ll1202_remove,
-> +	.id_table = ll1202_id,
-> +};
-> +
-> +module_i2c_driver(ll1202_driver);
-> +
-> +MODULE_AUTHOR("Remote Tech LTD");
-> +MODULE_DESCRIPTION("LED1202 : 12-channel constant current LED driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.25.1
-> 
+Assuming that our compilers are sane and generate better code against
+properly annotated data, the above discrepancy doesn't look weird. When
+running on non-volatile bitmaps, plain find_bit() outperforms atomic
+find_and_bit(), and vice-versa.
+
+So, all users of find_bit() API, where heavy concurrency is expected,
+are encouraged to switch to atomic find_and_bit() as appropriate.
+
+The 1st patch of this series adds atomic find_and_bit() API, 2nd adds
+a basic test for new API, and all the following patches spread it over
+the kernel.
+
+[1] https://lore.kernel.org/lkml/634f5fdf-e236-42cf-be8d-48a581c21660@alu.unizg.hr/T/#m3e7341eb3571753f3acf8fe166f3fb5b2c12e615
+
+---
+v1: https://lore.kernel.org/netdev/20231118155105.25678-29-yury.norov@gmail.com/T/
+v2: https://lore.kernel.org/all/20231204185101.ddmkvsr2xxsmoh2u@quack3/T/
+v3: https://lore.kernel.org/linux-pci/ZX4bIisLzpW8c4WM@yury-ThinkPad/T/
+v4:
+ - drop patch v3-24: not needed after null_blk refactoring;
+ - add patch 34: "MIPS: sgi-ip27: optimize alloc_level()";
+ - add patch 35: "uprobes: optimize xol_take_insn_slot()";
+ - add patches 36-40: get rid of locking scheme around bitmaps;
+ - move new API to separate headers, to not bloat bitmap.h @ Linus;
+ - patch #1: adjust comments to allow returning >= @size;
+ - rebase the series on top of current master.
+
+Yury Norov (40):
+  lib/find: add atomic find_bit() primitives
+  lib/find: add test for atomic find_bit() ops
+  lib/sbitmap; optimize __sbitmap_get_word() by using find_and_set_bit()
+  watch_queue: optimize post_one_notification() by using
+    find_and_clear_bit()
+  sched: add cpumask_find_and_set() and use it in __mm_cid_get()
+  mips: sgi-ip30: optimize heart_alloc_int() by using find_and_set_bit()
+  sparc: optimize alloc_msi() by using find_and_set_bit()
+  perf/arm: use atomic find_bit() API
+  drivers/perf: optimize ali_drw_get_counter_idx() by using
+    find_and_set_bit()
+  dmaengine: idxd: optimize perfmon_assign_event()
+  ath10k: optimize ath10k_snoc_napi_poll()
+  wifi: rtw88: optimize the driver by using atomic iterator
+  KVM: x86: hyper-v: optimize and cleanup kvm_hv_process_stimers()
+  PCI: hv: Optimize hv_get_dom_num() by using find_and_set_bit()
+  scsi: core: optimize scsi_evt_emit() by using an atomic iterator
+  scsi: mpi3mr: optimize the driver by using find_and_set_bit()
+  scsi: qedi: optimize qedi_get_task_idx() by using find_and_set_bit()
+  powerpc: optimize arch code by using atomic find_bit() API
+  iommu: optimize subsystem by using atomic find_bit() API
+  media: radio-shark: optimize the driver by using atomic find_bit() API
+  sfc: optimize the driver by using atomic find_bit() API
+  tty: nozomi: optimize interrupt_handler()
+  usb: cdc-acm: optimize acm_softint()
+  RDMA/rtrs: optimize __rtrs_get_permit() by using
+    find_and_set_bit_lock()
+  mISDN: optimize get_free_devid()
+  media: em28xx: cx231xx: optimize drivers by using find_and_set_bit()
+  ethernet: rocker: optimize ofdpa_port_internal_vlan_id_get()
+  bluetooth: optimize cmtp_alloc_block_id()
+  net: smc: optimize smc_wr_tx_get_free_slot_index()
+  ALSA: use atomic find_bit() functions where applicable
+  m68k: optimize get_mmu_context()
+  microblaze: optimize get_mmu_context()
+  sh: mach-x3proto: optimize ilsel_enable()
+  MIPS: sgi-ip27: optimize alloc_level()
+  uprobes: optimize xol_take_insn_slot()
+  scsi: sr: drop locking around SR index bitmap
+  KVM: PPC: Book3s HV: drop locking around kvmppc_uvmem_bitmap
+  wifi: mac80211: drop locking around ntp_fltr_bmap
+  mailbox: bcm-flexrm: simplify locking scheme
+  powerpc/xive: drop locking around IRQ map
+
+ MAINTAINERS                                  |   2 +
+ arch/m68k/include/asm/mmu_context.h          |  12 +-
+ arch/microblaze/include/asm/mmu_context_mm.h |  12 +-
+ arch/mips/sgi-ip27/ip27-irq.c                |  13 +-
+ arch/mips/sgi-ip30/ip30-irq.c                |  13 +-
+ arch/powerpc/kvm/book3s_hv_uvmem.c           |  33 +-
+ arch/powerpc/mm/book3s32/mmu_context.c       |  11 +-
+ arch/powerpc/platforms/pasemi/dma_lib.c      |  46 +--
+ arch/powerpc/platforms/powernv/pci-sriov.c   |  13 +-
+ arch/powerpc/sysdev/xive/spapr.c             |  34 +-
+ arch/sh/boards/mach-x3proto/ilsel.c          |   5 +-
+ arch/sparc/kernel/pci_msi.c                  |  10 +-
+ arch/x86/kvm/hyperv.c                        |  41 +--
+ drivers/dma/idxd/perfmon.c                   |   9 +-
+ drivers/infiniband/ulp/rtrs/rtrs-clt.c       |  16 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu.h        |  11 +-
+ drivers/iommu/msm_iommu.c                    |  19 +-
+ drivers/isdn/mISDN/core.c                    |  10 +-
+ drivers/mailbox/bcm-flexrm-mailbox.c         |  21 +-
+ drivers/media/radio/radio-shark.c            |   6 +-
+ drivers/media/radio/radio-shark2.c           |   6 +-
+ drivers/media/usb/cx231xx/cx231xx-cards.c    |  17 +-
+ drivers/media/usb/em28xx/em28xx-cards.c      |  38 +--
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c    |  18 +-
+ drivers/net/ethernet/rocker/rocker_ofdpa.c   |  12 +-
+ drivers/net/ethernet/sfc/rx_common.c         |   5 +-
+ drivers/net/ethernet/sfc/siena/rx_common.c   |   5 +-
+ drivers/net/ethernet/sfc/siena/siena_sriov.c |  15 +-
+ drivers/net/wireless/ath/ath10k/snoc.c       |  10 +-
+ drivers/net/wireless/realtek/rtw88/pci.c     |   6 +-
+ drivers/net/wireless/realtek/rtw89/pci.c     |   6 +-
+ drivers/pci/controller/pci-hyperv.c          |   8 +-
+ drivers/perf/alibaba_uncore_drw_pmu.c        |  11 +-
+ drivers/perf/arm-cci.c                       |  25 +-
+ drivers/perf/arm-ccn.c                       |  11 +-
+ drivers/perf/arm_dmc620_pmu.c                |  10 +-
+ drivers/perf/arm_pmuv3.c                     |   9 +-
+ drivers/scsi/mpi3mr/mpi3mr_os.c              |  22 +-
+ drivers/scsi/qedi/qedi_main.c                |  10 +-
+ drivers/scsi/scsi_lib.c                      |   8 +-
+ drivers/scsi/sr.c                            |  15 +-
+ drivers/tty/nozomi.c                         |   6 +-
+ drivers/usb/class/cdc-acm.c                  |   6 +-
+ include/linux/cpumask_atomic.h               |  20 ++
+ include/linux/find.h                         |   4 -
+ include/linux/find_atomic.h                  | 324 +++++++++++++++++++
+ kernel/events/uprobes.c                      |  15 +-
+ kernel/sched/sched.h                         |  15 +-
+ kernel/watch_queue.c                         |   7 +-
+ lib/find_bit.c                               |  86 +++++
+ lib/sbitmap.c                                |  47 +--
+ lib/test_bitmap.c                            |  62 ++++
+ net/bluetooth/cmtp/core.c                    |  11 +-
+ net/smc/smc_wr.c                             |  11 +-
+ sound/pci/hda/hda_codec.c                    |   8 +-
+ sound/usb/caiaq/audio.c                      |  14 +-
+ 56 files changed, 747 insertions(+), 493 deletions(-)
+ create mode 100644 include/linux/cpumask_atomic.h
+ create mode 100644 include/linux/find_atomic.h
 
 -- 
-Lee Jones [李琼斯]
+2.43.0
+
 
