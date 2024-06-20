@@ -1,163 +1,209 @@
-Return-Path: <linux-kernel+bounces-223012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5441A910BC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:17:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 711A0910BC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 765361C2410D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:17:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD0B1F22A98
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57ED71B29C8;
-	Thu, 20 Jun 2024 16:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFr5LJbs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827EF1B151F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DAF61B1506;
 	Thu, 20 Jun 2024 16:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C0e008+T"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B779015B0E5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900206; cv=none; b=Luua2Tx5xYSeoLEmXxV1y9TX8EWiM46ou2+Xnk4uIlE2Lz3v15jcjXjwiAD2jCjJbcaMP/6RVX9E2SSbQ9OSsfVkB4bIjQrJtsD+9XgiYcUJXVisy52ZV3ZqVxsGPvvUAVkdJVXKAyupuRoGp4Ayn81OsHAwP1aZHCyKQODoGZ4=
+	t=1718900205; cv=none; b=GrIThWI4uwOEKVOsA1SXWTKw/wM8Xuis+znKd2JS8fUcHSmCP6KCZdzbGFvEjeESnDevFL7FzEstltuQxnTGq1/oxrfuuP+oGLMmSZnNUH7tx2uvo9qucOTUShy5pJ3J65F1s2yRaI24j6sUcBrSxBydhSDXLAGZcmVbpmy5tA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900206; c=relaxed/simple;
-	bh=MlmWkVEKzTwzyTEHRJjRJM3FETRdl85oGzHJ0HQkxVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LEQGDqURe0uW70HaiKhxlK8U6IxOGmiOBbYeTgBA6y+jOI6r/EPDwbE+5HEIWUfBSPi/N8I8aKDYPfSufIwlnITPe/nNceUb+ix7LvrW/WW+cjUCLKHAz3acWIlvZDC7lHuud9u1D7xrMRVpfhlM4wMskP/A8mMeVO7VCyrBONM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFr5LJbs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37BA7C4AF07;
-	Thu, 20 Jun 2024 16:16:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718900206;
-	bh=MlmWkVEKzTwzyTEHRJjRJM3FETRdl85oGzHJ0HQkxVg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZFr5LJbskoDfbvpN0PmNGIwnRLrx6lgUgzxwXrODA0+ngJDKTh6hyTFYU3x4Vn7Z0
-	 g/QrWGCMv8hC7MYVpJfI+fJHWQaohBTaSXsEcavDwrfkIvinxEy3NIBwI/XLYg40Hr
-	 u0qCsGjaUYtXt3ywzot+3gPptjbi5c6Uoy7d5YCQsoiLAdzco5WyuKtMYJUCi+sTfz
-	 3OPp9gZRQaEsRaco717MH4O/smJ+3Gi1fJJu9RRUfru2hjczI1PfvOLQ5hl/IUTEqp
-	 Lbd3/rkNlX16ixSzxH2gAmm+MBReO+ulBNh37fGfsilU5kM5nq+mqZIStbaWZgpHiO
-	 X/OvA3s/0b+Pw==
-Date: Thu, 20 Jun 2024 17:16:40 +0100
-From: Conor Dooley <conor@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>, krzk+dt@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	conor+dt@kernel.org, matthias.bgg@gmail.com,
-	jassisinghbrar@gmail.com, garmin.chang@mediatek.com,
-	houlong.wei@mediatek.com, Jason-ch.Chen@mediatek.com,
-	amergnat@baylibre.com, Elvis.Wang@mediatek.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH 3/3] dt-bindings: mailbox: mediatek: Avoid clock-names on
- MT8188 GCE
-Message-ID: <20240620-prize-cavalier-01460bf50050@spud>
-References: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
- <20240619085322.66716-3-angelogioacchino.delregno@collabora.com>
- <20240619-sleeve-citable-a3dc10e5cd4f@spud>
- <a7317981-8690-4d45-81b6-cc6a63c459e0@collabora.com>
- <20240620-district-bullring-c028e0183925@wendy>
- <c154527b-90c3-4834-a4a0-cff4524de5f1@collabora.com>
+	s=arc-20240116; t=1718900205; c=relaxed/simple;
+	bh=3F25YNJFqKhy4bYsXBenLOYPz74lQQHcEZxBGefIBRw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jGGJ9R6iOshgGtCW8DavGH3u9/N4TfhNIniklz5xB0Wtq4erq5po7ESjyxqq4qV/d6fSGp59jleTDmAgeDgjzrLyzPlcruYDqOlWtlER/QE2V0wqLFtukqRVWeKSubN+xjWNeivMmCOc+t3JCq/imZSfmPsKjstT7zy/dq0w5Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C0e008+T; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-63bab20b9f4so16663467b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:16:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718900203; x=1719505003; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BCZKNDHzfJBJVhIBZvZUEBrTAzEooayjC9bbFQcCP8A=;
+        b=C0e008+T5bVLspMJrKa2RUGHNY7Br9p/8ytOj93JwAgxKIT58c4P9DmV5T1VALFb2c
+         lDUdSEdMfLsGLkiQ6LRthy0mLN7u3HyHpJ5eb8XsvVt0crl33e3vAbTZx9seq/tP0U0g
+         td3wkRjfsMwj5r2D8Gt8jVO6Q/3oLGkcE11Z5siumCeH30FIxfmL/qZNaFLfGWlSyLoe
+         3uDQfCkMeVTARk9yqLuyBx4UPPXgTYWGrwS0+ENoT9etQVSKVYnQ7//VaUrQ80dgCZzN
+         5JjUA4WLd76rtKZb6aZUMfJPXnzZ2kjz3X/hLdK6EVaW49UgZbFULS0qun6p/QnPIoYQ
+         jUrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718900203; x=1719505003;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BCZKNDHzfJBJVhIBZvZUEBrTAzEooayjC9bbFQcCP8A=;
+        b=YQQYeg9ycWz/4EhvPDflRu2WmtN2o6ne0gIZsdOOFLEWrPRfA42CKB+XLzOtRvcIHi
+         8Np/zM1ehEDmoJWgJufJVsIhOXI9JvF6kHTVFxhiZfqIapIfLpZdoMD9LHJdNMxxOi2Q
+         01IAeMkecnS2xix6n9OFiSgv560fmgq53qgPr5qHwrltp7kRs0XELBbslmnPe37mQ+Ny
+         QqrrGVolOJQtrQW5mjhNfKC5dP4Dm4Ajzjjqvjmp8I8LTRvglFOXYNtB2rRYnszzK6WD
+         9a9b5XNhyTYZkhp14+V3b8x0eGYa9kVpxi989yhyHPPvkmXhAtM+iv2EOaB2DWmwULfv
+         V4CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVnkXY5D+6YrVwALhrhc1qp52pSCyFVeHovlwW3aE3DDL3mkRPNS3jJviUi1srgAoumcWmIdoO0ZJ3ogMbaCY61P1zTluHoijAfee9
+X-Gm-Message-State: AOJu0Yz9a3hiBV1TWb039rHHfH8DJiDti3wTWjAKmOZH6YO1JsCJZZ8H
+	KdgZ4D6NnKGJo8M+UAP6u26wLI+Bv8BkDFLy5IM3wrSnoDPz8RbmPqNb6V7VoExTkdRi8cLsk3e
+	mhg==
+X-Google-Smtp-Source: AGHT+IHAW5Cu6uLeC2DeFrvw8mg2Wa8Sr6zlHDRn6IX74FBYp/Cbjsm3VmzOc1NPaMgFbVqucolfGz2nfUI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:ab33:0:b0:df4:d6ca:fed0 with SMTP id
+ 3f1490d57ef6-e02be133adfmr219127276.4.1718900202676; Thu, 20 Jun 2024
+ 09:16:42 -0700 (PDT)
+Date: Thu, 20 Jun 2024 09:16:41 -0700
+In-Reply-To: <20240619182128.4131355-2-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jbOS/vXohNu3Z1I1"
-Content-Disposition: inline
-In-Reply-To: <c154527b-90c3-4834-a4a0-cff4524de5f1@collabora.com>
+Mime-Version: 1.0
+References: <20240619182128.4131355-1-dapeng1.mi@linux.intel.com> <20240619182128.4131355-2-dapeng1.mi@linux.intel.com>
+Message-ID: <ZnRV6XrKkVwZB2TN@google.com>
+Subject: Re: [PATCH 1/2] KVM: x86/pmu: Define KVM_PMC_MAX_GENERIC for platform independence
+From: Sean Christopherson <seanjc@google.com>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>, 
+	Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, 
+	Like Xu <like.xu.linux@gmail.com>, Jinrong Liang <cloudliang@tencent.com>, 
+	Dapeng Mi <dapeng1.mi@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Thu, Jun 20, 2024, Dapeng Mi wrote:
+> The existing macro, KVM_INTEL_PMC_MAX_GENERIC, ambiguously represents the
+> maximum supported General Purpose (GP) counter number for both Intel and
+> AMD platforms. This could lead to issues if AMD begins to support more GP
+> counters than Intel.
+> 
+> To resolve this, a new platform-independent macro, KVM_PMC_MAX_GENERIC,
+> is introduced to represent the maximum GP counter number across all x86
+> platforms.
+> 
+> No logic changes are introduced in this patch.
+> 
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h | 9 +++++----
+>  arch/x86/kvm/svm/pmu.c          | 2 +-
+>  arch/x86/kvm/vmx/pmu_intel.c    | 2 ++
+>  3 files changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 57440bda4dc4..18137be6504a 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -534,11 +534,12 @@ struct kvm_pmc {
+>  
+>  /* More counters may conflict with other existing Architectural MSRs */
+>  #define KVM_INTEL_PMC_MAX_GENERIC	8
+> -#define MSR_ARCH_PERFMON_PERFCTR_MAX	(MSR_ARCH_PERFMON_PERFCTR0 + KVM_INTEL_PMC_MAX_GENERIC - 1)
+> -#define MSR_ARCH_PERFMON_EVENTSEL_MAX	(MSR_ARCH_PERFMON_EVENTSEL0 + KVM_INTEL_PMC_MAX_GENERIC - 1)
+> +#define KVM_AMD_PMC_MAX_GENERIC	6
+> +#define KVM_PMC_MAX_GENERIC		KVM_INTEL_PMC_MAX_GENERIC
 
---jbOS/vXohNu3Z1I1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Since we're changing the macro, maybe take the opportunity to use a better name?
+E.g. KVM_MAX_NR_GP_COUNTERS?  And then in a follow-up patch, give fixed counters
+the same treatment, e.g. KVM_MAX_NR_FIXED_COUNTERS.  Or maybe KVM_MAX_NR_GP_PMCS
+and KVM_MAX_NR_FIXED_PMCS?
 
-On Thu, Jun 20, 2024 at 10:32:36AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 20/06/24 10:22, Conor Dooley ha scritto:
-> > On Thu, Jun 20, 2024 at 10:01:18AM +0200, AngeloGioacchino Del Regno wr=
-ote:
-> > > Il 19/06/24 19:49, Conor Dooley ha scritto:
-> > > > On Wed, Jun 19, 2024 at 10:53:22AM +0200, AngeloGioacchino Del Regn=
-o wrote:
-> > > > > Add mediatek,mt8188-gce to the list of compatibles for which the
-> > > > > clock-names property is not required.
-> > > >=20
-> > > > Because, I assume, it has some internal clock? Why do either of the=
-se
-> > > > things have no clock? Doesn't the internal logic require one?
-> > > >=20
-> > >=20
-> > > Because there's no gce0/gce1 clock, there's only an infracfg_AO clock=
- that is
-> > > for one GCE instance, hence there's no need to require clock-names.
-> >=20
-> > clock-names, d'oh. I misread that completely yesterday.
-> >=20
-> > > I can't remove the clock-names requirement from the older compatibles=
- though,
-> > > because the (sorry about this word) driver (eh..) gets the clock by n=
-ame for
-> > > the single GCE SoCs...
-> > >=20
-> > > ...and here comes a self-NACK for this commit, I have to fix the driv=
-er and
-> > > then stop requiring clock-names on all compatibles, instead of having=
- this
-> > > ugly nonsense.
-> >=20
-> > Is it not worth keeping the clock names, even if ugly or w/e, because
-> > things have been done that way for a while?
->=20
-> It's worth allowing clock-names, but *requiring* that is unnecessary beca=
-use
-> there is, and there will always be, only one clock...!
+> +#define MSR_ARCH_PERFMON_PERFCTR_MAX	(MSR_ARCH_PERFMON_PERFCTR0 + KVM_PMC_MAX_GENERIC - 1)
+> +#define MSR_ARCH_PERFMON_EVENTSEL_MAX	(MSR_ARCH_PERFMON_EVENTSEL0 + KVM_PMC_MAX_GENERIC - 1)
 
-Right, dunno if I misread you earlier or misunderstood. Fighting fires
-at work and replying to mails mid bisection is what I am going to blame
-;)
+And I'm very, very tempted to say we should simply delete these two, along with
+MSR_ARCH_PERFMON_FIXED_CTR_MAX, and just open code the "end" MSR in the one user.
+Especially since "KVM" doesn't appear anyone in the name, i.e. because the names
+misrepresent KVM's semi-arbitrary max as the *architectural* max.
 
-> > Also, what does U-Boot do on these systems to get the clocks?
-> >=20
->=20
-> U-Boot doesn't support GCE at all (no driver - at least upstream)...!
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 6ad19d913d31..547dfe40d017 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7432,17 +7432,20 @@ static void kvm_probe_msr_to_save(u32 msr_index)
+                     intel_pt_validate_hw_cap(PT_CAP_num_address_ranges) * 2))
+                        return;
+                break;
+-       case MSR_ARCH_PERFMON_PERFCTR0 ... MSR_ARCH_PERFMON_PERFCTR_MAX:
++       case MSR_ARCH_PERFMON_PERFCTR0 ...
++            MSR_ARCH_PERFMON_PERFCTR0 + KVM_MAX_NR_GP_COUNTERS - 1:
+                if (msr_index - MSR_ARCH_PERFMON_PERFCTR0 >=
+                    kvm_pmu_cap.num_counters_gp)
+                        return;
+                break;
+-       case MSR_ARCH_PERFMON_EVENTSEL0 ... MSR_ARCH_PERFMON_EVENTSEL_MAX:
++       case MSR_ARCH_PERFMON_EVENTSEL0 ...
++            MSR_ARCH_PERFMON_EVENTSEL0 + KVM_MAX_NR_GP_COUNTERS - 1:
+                if (msr_index - MSR_ARCH_PERFMON_EVENTSEL0 >=
+                    kvm_pmu_cap.num_counters_gp)
+                        return;
+                break;
+-       case MSR_ARCH_PERFMON_FIXED_CTR0 ... MSR_ARCH_PERFMON_FIXED_CTR_MAX:
++       case MSR_ARCH_PERFMON_FIXED_CTR0 ...
++            MSR_ARCH_PERFMON_FIXED_CTR0 + KVM_MAR_NR_FIXED_COUNTERS - 1:
+                if (msr_index - MSR_ARCH_PERFMON_FIXED_CTR0 >=
+                    kvm_pmu_cap.num_counters_fixed)
+                        return;
 
-Running LIFO through my mailbox today, seeing this after the other
-mail..
+>  #define KVM_PMC_MAX_FIXED	3
+>  #define MSR_ARCH_PERFMON_FIXED_CTR_MAX	(MSR_ARCH_PERFMON_FIXED_CTR0 + KVM_PMC_MAX_FIXED - 1)
+> -#define KVM_AMD_PMC_MAX_GENERIC	6
+>  
+>  struct kvm_pmu {
+>  	u8 version;
+> @@ -554,7 +555,7 @@ struct kvm_pmu {
+>  	u64 global_status_rsvd;
+>  	u64 reserved_bits;
+>  	u64 raw_event_mask;
+> -	struct kvm_pmc gp_counters[KVM_INTEL_PMC_MAX_GENERIC];
+> +	struct kvm_pmc gp_counters[KVM_PMC_MAX_GENERIC];
+>  	struct kvm_pmc fixed_counters[KVM_PMC_MAX_FIXED];
+>  
+>  	/*
+> diff --git a/arch/x86/kvm/svm/pmu.c b/arch/x86/kvm/svm/pmu.c
+> index 6e908bdc3310..2fca247798eb 100644
+> --- a/arch/x86/kvm/svm/pmu.c
+> +++ b/arch/x86/kvm/svm/pmu.c
+> @@ -218,7 +218,7 @@ static void amd_pmu_init(struct kvm_vcpu *vcpu)
+>  	int i;
+>  
+>  	BUILD_BUG_ON(KVM_AMD_PMC_MAX_GENERIC > AMD64_NUM_COUNTERS_CORE);
+> -	BUILD_BUG_ON(KVM_AMD_PMC_MAX_GENERIC > INTEL_PMC_MAX_GENERIC);
+> +	BUILD_BUG_ON(KVM_AMD_PMC_MAX_GENERIC > KVM_PMC_MAX_GENERIC);
+>  
+>  	for (i = 0; i < KVM_AMD_PMC_MAX_GENERIC ; i++) {
+>  		pmu->gp_counters[i].type = KVM_PMC_GP;
+> diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
+> index fb5cbd6cbeff..a4b0bee04596 100644
+> --- a/arch/x86/kvm/vmx/pmu_intel.c
+> +++ b/arch/x86/kvm/vmx/pmu_intel.c
+> @@ -570,6 +570,8 @@ static void intel_pmu_init(struct kvm_vcpu *vcpu)
+>  	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+>  	struct lbr_desc *lbr_desc = vcpu_to_lbr_desc(vcpu);
+>  
+> +	BUILD_BUG_ON(KVM_INTEL_PMC_MAX_GENERIC > KVM_PMC_MAX_GENERIC);
 
->=20
-> > > Self-note: gce0/gce1 clocks lookup was implemented in the driver but =
-never
-> > > used and never added to the binding - luckily.
-> > >=20
-> > > Sorry Conor, I just acknowledged that there's a better way of doing t=
-hat.
-> > >=20
-> > > Thank you for making me re-read this stuff, I'll send the proper chan=
-ges
-> > > later today, driver change + binding change in a separate series.
-> > >=20
-> > > As for the other two commits in this series, completely unrelated to =
-GCE,
-> > > those are still fine, and are fixing dtbs_check warnings.
->=20
->=20
+Rather than BUILD_BUG_ON() for both Intel and AMD, can't we just do?
 
---jbOS/vXohNu3Z1I1
-Content-Type: application/pgp-signature; name="signature.asc"
+#define KVM_MAX_NR_GP_COUNTERS max(KVM_INTEL_PMC_MAX_GENERIC, KVM_AMD_PMC_MAX_GENERIC)
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnRV6AAKCRB4tDGHoIJi
-0iPkAP9KYQ34Wxhe6bOZwHhYtdnsKdrRh0kI6IDFCx77qgbTEAD+OG9IT9Zrd+R1
-2LwxBUbA8JNIZOP3VtParnm8vK8h6wM=
-=QiGH
------END PGP SIGNATURE-----
-
---jbOS/vXohNu3Z1I1--
+> +
+>  	for (i = 0; i < KVM_INTEL_PMC_MAX_GENERIC; i++) {
+>  		pmu->gp_counters[i].type = KVM_PMC_GP;
+>  		pmu->gp_counters[i].vcpu = vcpu;
+> -- 
+> 2.34.1
+> 
 
