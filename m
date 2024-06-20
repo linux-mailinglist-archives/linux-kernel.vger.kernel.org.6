@@ -1,145 +1,117 @@
-Return-Path: <linux-kernel+bounces-222585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FD8910429
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:30:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 750929103F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E56282F9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:30:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280CC1F21E70
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760211AD9F4;
-	Thu, 20 Jun 2024 12:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4977F1AC43D;
+	Thu, 20 Jun 2024 12:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="M26+S+ZB"
-Received: from aposti.net (aposti.net [89.234.176.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTlRBJ0c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9601AC765;
-	Thu, 20 Jun 2024 12:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.234.176.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8600B1AC24E;
+	Thu, 20 Jun 2024 12:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718886529; cv=none; b=AmWl7n388rIK32GhbIVpPROir897tCBLrTfk/ht1HSBrGP5naPSyZrDfxwXKovopcMasg9d3iUPJxqg1VSnJrM0TTYkZNjl17DanWqPM9mCeXoUOcCbSZNYbjfe61q433CUgZsSp2JzI8dBX+sGVCsYP2Sc6yyIZHVJZUbvNpvQ=
+	t=1718886466; cv=none; b=fzRlPE2OZ5YE1UIYkQLrZb5Dx9xB0OSUxiYs1zD5PaqshDu0iM7zjPhOl6jrFnLdZuuVCAUhWnbP4mqmShrgfNmqBYRKtRDDH+LUki1xeBa6ZKYa75pADfV+9nt4h6dUIIU9qeiog73qPpSo+2FqKAhseEvpZNZZlqC2NH+HO+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718886529; c=relaxed/simple;
-	bh=X7I9QTXjWXLV5adf+VLzAIKVei/MuLCImpBgdp5MFW0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VJm4QqVvSbDSffl1kMYhJQ0ANJWaZX3IImdkQ9+W80V410nLF3KyZC4xmxws9TK0Dw5T4ZL15tTskCJGZX+BQ/NOz+CFwi5tMF2M4UMxVna6pjtW4A3TGnX/XgVAFlnFzcdN7au33Rze6kH4V5I3ndJqZbWZEk2NaZqwRvYjTvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=M26+S+ZB; arc=none smtp.client-ip=89.234.176.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-	s=mail; t=1718886469;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3ohuxApLNdhOX7LZ/v+Xu3NNVbPIJcpf85Dd0wZ/o3s=;
-	b=M26+S+ZB7da4Tf54WshO20DXN4NdDv+ZKNPYgCJbP05fpECQBaQS+sxffHumo5a5Xd9qMC
-	G9142wxy8t61XicEf4R3sQHKLHGiLjHDjMniZjQLfiiAlQ1OUy5Uf6ay2EA46BBPV8ZUXi
-	zzC1qP6ig5jK22F+tbIrOI4l/Si+H8I=
-From: Paul Cercueil <paul@crapouillou.net>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Vinod Koul <vkoul@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Nuno Sa <nuno.sa@analog.com>,
-	linux-iio@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	Paul Cercueil <paul@crapouillou.net>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH v12 7/7] Documentation: dmaengine: Document new dma_vec API
-Date: Thu, 20 Jun 2024 14:27:26 +0200
-Message-ID: <20240620122726.41232-8-paul@crapouillou.net>
-In-Reply-To: <20240620122726.41232-1-paul@crapouillou.net>
-References: <20240620122726.41232-1-paul@crapouillou.net>
+	s=arc-20240116; t=1718886466; c=relaxed/simple;
+	bh=d3uDdynGfOkk0mbmcQ+FLr+9NUSGH+fNkufeZ4WI608=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ao+vlcj7C2NBdHUOEkFyDpM8qvnXWD8evhSeiRgbv+WBaSnAE/gh9nzuxfBxS0qc4ZD9/jj7NBrkUU69gYWupdCiThN22+DHX7vLu6fhBvc+HTzINH2/xo4aWajwvo9noGlsQEB84nzbKpH2rdnpZ2z0HDJPmrPgbEzy2r+tW/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTlRBJ0c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E84DC2BD10;
+	Thu, 20 Jun 2024 12:27:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718886466;
+	bh=d3uDdynGfOkk0mbmcQ+FLr+9NUSGH+fNkufeZ4WI608=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DTlRBJ0cwfOGL9atmnuGvX1/fnNlWgOZTnTN+9Xv6uyX2sMavDNKzoHmXcYysq376
+	 n4/+EkLTlHwV2wuRwOwG8uoT132+MBWOBSP1NkzPpLbwwdmhJwDajVSeScevsW20pR
+	 xhuiSmi3hc6tOVQYqSxHapmVlzJONBjxYnPhIufj7Pz0LKhBcyB0bNKX0OE7rx3JW7
+	 /w7xtvjISIL/BXtsr5Cp2sg/qRHZL1AoA7ILhz4b5LX77OIcsih83QmnfB/6vFxiKe
+	 krQqJmHxTfuRCNBFeUibI/eVD5YH7eC6SVAr6j43vQsqMeXd19kgZwS6iXAqQu+v58
+	 vC0lNTaNoZBUg==
+Date: Thu, 20 Jun 2024 13:27:41 +0100
+From: Lee Jones <lee@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Pavel Machek <pavel@ucw.cz>, Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>, linux-leds@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: cros_ec: Implement review comments from Lee
+Message-ID: <20240620122741.GL3029315@google.com>
+References: <20240614-cros_ec-led-review-v1-1-946f2549fac2@weissschuh.net>
+ <20240620093114.GH3029315@google.com>
+ <5708f5c6-65fe-4bf9-8d08-6dbb77e21a9d@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5708f5c6-65fe-4bf9-8d08-6dbb77e21a9d@t-8ch.de>
 
-Document the dmaengine_prep_peripheral_dma_vec() API function, the
-device_prep_peripheral_dma_vec() backend function, and the dma_vec
-struct.
+On Thu, 20 Jun 2024, Thomas Weißschuh wrote:
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> Hi Lee,
+> 
+> On 2024-06-20 10:31:14+0000, Lee Jones wrote:
+> > Definitely not seen a commit message like that before
+> 
+> I assumed that this patch would be squashed into the original commit.
+> 
+> My question in which form you wanted the changes should have included
+> "incremental series".
 
----
-v11: New patch
----
- Documentation/driver-api/dmaengine/client.rst   |  9 +++++++++
- Documentation/driver-api/dmaengine/provider.rst | 10 ++++++++++
- 2 files changed, 19 insertions(+)
+Incremental means on top.
 
-diff --git a/Documentation/driver-api/dmaengine/client.rst b/Documentation/driver-api/dmaengine/client.rst
-index ecf139f73da4..d491e385d61a 100644
---- a/Documentation/driver-api/dmaengine/client.rst
-+++ b/Documentation/driver-api/dmaengine/client.rst
-@@ -80,6 +80,10 @@ The details of these operations are:
- 
-   - slave_sg: DMA a list of scatter gather buffers from/to a peripheral
- 
-+  - peripheral_dma_vec: DMA an array of scatter gather buffers from/to a
-+    peripheral. Similar to slave_sg, but uses an array of dma_vec
-+    structures instead of a scatterlist.
-+
-   - dma_cyclic: Perform a cyclic DMA operation from/to a peripheral till the
-     operation is explicitly stopped.
- 
-@@ -102,6 +106,11 @@ The details of these operations are:
- 		unsigned int sg_len, enum dma_data_direction direction,
- 		unsigned long flags);
- 
-+     struct dma_async_tx_descriptor *dmaengine_prep_peripheral_dma_vec(
-+		struct dma_chan *chan, const struct dma_vec *vecs,
-+		size_t nents, enum dma_data_direction direction,
-+		unsigned long flags);
-+
-      struct dma_async_tx_descriptor *dmaengine_prep_dma_cyclic(
- 		struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
- 		size_t period_len, enum dma_data_direction direction);
-diff --git a/Documentation/driver-api/dmaengine/provider.rst b/Documentation/driver-api/dmaengine/provider.rst
-index ceac2a300e32..3085f8b460fa 100644
---- a/Documentation/driver-api/dmaengine/provider.rst
-+++ b/Documentation/driver-api/dmaengine/provider.rst
-@@ -433,6 +433,12 @@ supported.
-     - residue: Provides the residue bytes of the transfer for those that
-       support residue.
- 
-+- ``device_prep_peripheral_dma_vec``
-+
-+  - Similar to ``device_prep_slave_sg``, but it takes a pointer to a
-+    array of ``dma_vec`` structures, which (in the long run) will replace
-+    scatterlists.
-+
- - ``device_issue_pending``
- 
-   - Takes the first transaction descriptor in the pending queue,
-@@ -544,6 +550,10 @@ dma_cookie_t
- - Not really relevant any more since the introduction of ``virt-dma``
-   that abstracts it away.
- 
-+dma_vec
-+
-+- A small structure that contains a DMA address and length.
-+
- DMA_CTRL_ACK
- 
- - If clear, the descriptor cannot be reused by provider until the
+A lot of maintainers don't support history re-writes, but I've reserved
+that right since forever, so I can squash it if you like.
+
+> > > Implement review comments from Lee as requested in [0] for
+> > > "leds: Add ChromeOS EC driver".
+> > > 
+> > > Changes:
+> > > * Inline DRV_NAME string constant.
+> > > * Use dev_err() instead of dev_warn() to report errors.
+> > > * Rename cros_ec_led_probe_led() to cros_ec_led_probe_one().
+> > > * Make loop variable "int" where they belong.
+> > > * Move "Unknown LED" comment to where it belongs.
+> > > * Register trigger during _probe().
+> > > * Use module_platform_driver() and drop all the custom boilerplate.
+> > 
+> > If you're fixing many things, then I would expect to receive many
+> > patches.  One patch for functional change please.  If you can reasonably
+> > group fixes of similar elk, then please do.  However one patch that does
+> > a bunch of different things is a no-go from me, sorry.
+> 
+> Absolutely, if these changes are to end up as actual commits then they
+> need to look different.
+> I'll resend them as proper series.
+> 
+> > > [0] https://lore.kernel.org/lkml/20240614093445.GF3029315@google.com/T/#m8750abdef6a968ace765645189170814196c9ce9
+> > > 
+> > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > > ---
+> > >  drivers/leds/leds-cros_ec.c | 50 +++++++++++++--------------------------------
+> > >  1 file changed, 14 insertions(+), 36 deletions(-)
+> 
+> <snip>
+> 
+> Sorry for the confusion,
+> Thomas
+
 -- 
-2.43.0
-
+Lee Jones [李琼斯]
 
