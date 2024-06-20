@@ -1,324 +1,416 @@
-Return-Path: <linux-kernel+bounces-222745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942A49106AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0D69106B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1F66B228EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:48:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 708C51C20C9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB191AD488;
-	Thu, 20 Jun 2024 13:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E279B1AD491;
+	Thu, 20 Jun 2024 13:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EtSj5dij"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2048.outbound.protection.outlook.com [40.107.101.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B2mEuSe9"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4201AAE20;
-	Thu, 20 Jun 2024 13:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718891332; cv=fail; b=uPNd4LdszHjn2yT/me5JOxBJcvkb4/fxyRvf/RsKiKeCb6uma/GOlP6uv/nB3+1S2D5FgJUSQpyaqOgLfW5fBZm9TnTmp9lKgjnZtPUjns2hkODWigIFo/BC9LDcioNy882jK3j37jUAfIaSw0jYfrmf45iswSiMAqoF6668Ay0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718891332; c=relaxed/simple;
-	bh=eatYgpHw51qlq+CTp+VIq63wuRg7lZGmBVvVGYKFgBw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=M+aEfJlVzvWAAf6xTfDxctur7VWtawVmr2M9yOVX40P/kP69RTcIk9WIhxRMAy2niMopznqraYpYkJ3kqDVd3GRuY65IIbdtFZO51SWrQn1hzm7q/NTbJrN08jPjoRpVcMOQ0eEOXktJVncvoecxClFQD7vxG7zJWnlFZgB07rs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EtSj5dij; arc=fail smtp.client-ip=40.107.101.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZRkkqod/np8IfmZPuqHvJJztnhXUXu1vCUtS1FT37Emd9HD7MT+4EMG0ZzxWc1ILmkRh7Udq/suOJ+iRu1LSthEFm7VHnOP3T8XMZUcD9dnEQgvU21IjGq3pT1Jlb/4ofz9sCyvO8A4Ve0drPhpMAHqqkGtGwS25VGBqXwvYpDHpPKB17G+dVpRO6We19W7nwywqHD9g8N9fHRRp28mQdeyK5O+hOKABOOzB52m9XAyXjQ4gler5rvGP7H9k7BFBA23cinva3RVUnEC4xu/jrad/VTk5yZH8ClsCPwgfMMWcM8bvCo4rpfXYG+D1xI+u74S/0hPOxsdeBSw5XPjPgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OUo1jXLrGBdwuvDPgTYrv33EI8fl2RYMlzyDurTJ2GU=;
- b=lKFSXEIaJPnsNgmeCl9D5+DPe8UoorySt76EGp/qqd5+KNXm+WR4TDzUlgm5jn0wMOwCcIPcvue/XYS3moP1HzhElZbRvadltf6TeU8bv3tlzJiboVcwTYBv/EafIeOKEU6XzaJm7Vg51bsl7Z5z0sAs6V0rEBTEl9ExMV3Agt4gYI6DsdVSDsuk5Gld8CgvQoXDUczOcpSmtJeb4jsZjmAZQ3gP4j2+TnKpF9JASt/Gr8Bg3eF6i/vWSl29sQaUQZz96oH/5PSBQKcws5rXoHQmCfVPLUGD60JnXJ3ZQYq5evan+Mb0M8/45dCbiKLjtjbwoN8E7bQF7UbTdyh2iQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OUo1jXLrGBdwuvDPgTYrv33EI8fl2RYMlzyDurTJ2GU=;
- b=EtSj5dijjoA7kQmr5jRjXK1A5m98AjzTCO8WCTwpD3PGaEG7rpchwyO6mgIMeZovXblGnZqrIAN1idybhGul5QUKuB98PuxLDjwGaO5JyolYEHB8806EUCDvtCrCsXUcdwu4JxA3wxwFqk/0/ueDb9aQjMkcz814lT/+yNdTh8k=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by IA0PR12MB7721.namprd12.prod.outlook.com (2603:10b6:208:433::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Thu, 20 Jun
- 2024 13:48:46 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%5]) with mapi id 15.20.7698.017; Thu, 20 Jun 2024
- 13:48:46 +0000
-Message-ID: <16e22ce2-6567-458f-a9a6-6bd79dfb9a23@amd.com>
-Date: Thu, 20 Jun 2024 08:48:41 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v4 15/19] x86/resctrl: Add the interface to unassign ABMC
- counter
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
- kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
- jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-References: <cover.1716552602.git.babu.moger@amd.com>
- <1964d74c24b041e5c9589040701a6f6aaa839e19.1716552602.git.babu.moger@amd.com>
- <333339e1-5b94-4fac-8d18-f18c7780e6e1@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <333339e1-5b94-4fac-8d18-f18c7780e6e1@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN6PR05CA0010.namprd05.prod.outlook.com
- (2603:10b6:805:de::23) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6866C1AC782
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718891370; cv=none; b=DfTjhGDkFb2jTv3VUo/ZQzO5byYXSTKpmE2drfvHdrZiG3YkBkOTihlzxqu6ZYIOMhvh+YvmbFEZi3nSPedpDO96IxAOMkTcRPIhUbPTESH0ZVn/BRLob4SKpS/KsoGUU3dmBG9r6wFVOr1GFoAgon4Mejz8HbinD6pMHIAwLVc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718891370; c=relaxed/simple;
+	bh=o32N+eytD2zL0y4gsfGboQLUMFeo8g9DH2cWeaKHgbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M+sanvW0YNwwvyl28gj6qLBKkdoeppRCLX9g80F4ZKIaZK4YPRtFHcCwe6IlJ8ojQmG3Bywpp1RwH8f8V7YnKnlMm4Zu/k3j60sbBv54A081ynvPEas6p17mTaSW+bvncg35MNj3uTyX4eFCFJnVSsnsYU/17Pb18z26FNWIJpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B2mEuSe9; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6f8ebbd268so337081666b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:49:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718891366; x=1719496166; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RHokNqWDcZyjkEYXD8HUJkvq4qXFJ0UCeMUkTUv94RQ=;
+        b=B2mEuSe9Lf4jSVCQp/PnlC0GjoBWk5Lu0UkYyApEG1cvKF1cw98gMKT2BHGRLesJVT
+         WQaUBS/+dlM5Sj3bwFNPK+UozEKuAYUulUJmGdkYBPRthAmfz5kod+3e3XKiE3fsw0HF
+         AVdm3Wv9nG5/F0Il14bsYVim4o0E62kUG54+5GupVc0NJ2Q3/Rc31gq5+4OFonsKqsPQ
+         r735vbUkZS+1/Fu678VElFaz+ZDDwn55iYxOZkmEPaTGkfOHGBJQQQ/uvwpwu3GxdwdH
+         Q6CbwpMO0aXch5rKy6++CsCAe1iwhaWH8noblPXqkTs3XyTF0h4d6oauiLjodYY+NZf3
+         Qnow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718891366; x=1719496166;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RHokNqWDcZyjkEYXD8HUJkvq4qXFJ0UCeMUkTUv94RQ=;
+        b=BhkUIZojeFUhzvdtKzGxPF9blFtOItXLJpVEVKaJGKlD3qakYXcWctThoaI9bJo28H
+         TVCJQz17cnCEtUeDpmQCe8pDa5tKQg4T5B5fEmC3S7wt0/wtubJNXLAls/H5RRaqXRsi
+         uvjs06Qm0exOi8rrf5P0N1eEMQcQb9IdLqCcIpo6JtNaj+WApiV6/C9ELiy9jFOGMDBS
+         pbkukkmk4QNmSwbFhMa0TppJWq5nT+mnr951jS5fEoblhKq6Dyqks03tl8BiCu07EwSr
+         6hUizKFOFsG59EQrq7VjN/hCusePki399ym1zs+ut1Gri1Lo6W4omZEIcT5KKZdmbMGL
+         hPCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVy1A6SpIpOC+rGpw98FpyQWoSSZf2d3lf3I/9aNxjnlLI0M3oyGx+ob03rJ/ORGP1S5lJzBydlZcWTZvRDCMoGKf6NiJG97Evnegrh
+X-Gm-Message-State: AOJu0YwlVPNLqUA5Et5AqTZb8jPPRlexqh3WPU8HJz6IkZZSqnEzkXzi
+	gbN53LO8qHENM1EE+UCliUhuKKS5+Az3Sq0RBSu4HV/iOlnP3maJm40QQb+Bk4g=
+X-Google-Smtp-Source: AGHT+IEdOMuoR76TY+TyOaDptGKznyVC6XlczNzpcVSNxmOWU8x6zKnfPGcpPPOBGZl3Rc/ELq8SAw==
+X-Received: by 2002:a17:907:8b98:b0:a6f:b6c3:fb2e with SMTP id a640c23a62f3a-a6fb6c41f0cmr275408166b.0.1718891365565;
+        Thu, 20 Jun 2024 06:49:25 -0700 (PDT)
+Received: from ?IPV6:2a02:8109:aa0d:be00::ebdd? ([2a02:8109:aa0d:be00::ebdd])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f788f46c6sm523513766b.23.2024.06.20.06.49.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 06:49:25 -0700 (PDT)
+Message-ID: <c71e1543-6957-4aa6-98fa-160b3bd29c78@linaro.org>
+Date: Thu, 20 Jun 2024 15:49:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|IA0PR12MB7721:EE_
-X-MS-Office365-Filtering-Correlation-Id: 49716e96-7ab6-4219-126c-08dc912fb4fa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|376011|7416011|366013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dnUrcTlGSkxERklZei9PUHJjaVVWSXpHMVA1QTVranI5b0dINmoreTZpS0Fi?=
- =?utf-8?B?TjB3Y0wrcUIrdktzMlpQUjRaMkNCeStwVGQ4UjNnbHRiWWVPMDFUZCszZnc2?=
- =?utf-8?B?bGNwZFRUUnA3SzhLTy83N2E5SkVhQmIvN0pFdEJMR3dCMUpoU2thbjJyOXVu?=
- =?utf-8?B?MjlBZXIzQWF6U3hBMXJQa0FLOEdWd3ovRVdtOWxBNmZ5UzFHaldibnFUTm9u?=
- =?utf-8?B?R0VHMWR3T25TYUgrV0JBbWlPR25VZlc3dndJeFZ3aTFsTlVVZ0pSZDVWRW9E?=
- =?utf-8?B?eDB5S0ZhdkcyVktjQVE4bG5Uc3Zoczg2TFgrWitXNlBpTDc1TUVQMmdFaHB1?=
- =?utf-8?B?a0JRME9yTlRZdVFFcDhLWGNkUHh0L3laQ3ExUTE4L05LNWw4RDNHdFhBK3RU?=
- =?utf-8?B?T1hYTTNwVHUxajBrMDRyZnJDWExSZDlTelhmSy9LWCtRVUltQ1lPVG1HOUlR?=
- =?utf-8?B?cVF6RExnNlFTNHhhZHVUMkxxTVNCMkRrdGw3b2dSRHJuWHdHS1ZqNklJTVhU?=
- =?utf-8?B?ZmxQdDNISC9wY0paRWJ1VjhXdEJ0VXhmdy8wSGFBWEFFdHVuTWZEVXVGOGw2?=
- =?utf-8?B?Y2RXOEF3enk4eWF5NFBQSHdjMklXMUxpUkVwUHdrQllhMWNkQnRoRGdiQnh2?=
- =?utf-8?B?T05yLzI4VjQ0STN0WmgrK3V4R1ZKRjlpcHZVaTRiWEZLdkplRjhSS2F1WWN2?=
- =?utf-8?B?SXh0Nk5kd0hHWEhPUE5xKzhsMjNUbEd6RHRIcFJ6ZnoyNEFnSndWandPemp1?=
- =?utf-8?B?Z1I3TitwdnUrNy9PckZpUTBkdW1KVHlXSWhCSzhzajFPY0kzWFg5UGVXMFVv?=
- =?utf-8?B?aFhtM1dOeGg0T3J5ZUpkRFBycGZBa1BBY1RpdEw1Umh5QkMxMHU2OUlNZnhF?=
- =?utf-8?B?MDFsRlhHSEVmejJmRGNGanAwRWJ2NEk1ZU1tUHhiS04vY0cvcHNzb3FKejFH?=
- =?utf-8?B?eVdacnd3SWtYc3g4RCtubXFUdER2ZEtyaldtTzlyMjd5S3F5ZEc5RnFBamRm?=
- =?utf-8?B?Zk5xMFJPbk9MSnZST3FZeVpPcGdBdjBmQmkzeWphaFlMS3NnSGFoNVBPZVYz?=
- =?utf-8?B?UVM2bGJVaVoydm9oYlhZc2Yvdlc0Rm81MkVRNWk1Zk5YdWxIeVVRbk82OTlD?=
- =?utf-8?B?QmFlZEZRM01oMStXTDZnM1g1NkhieE9mS1N4UDNrQjQvdm1YcEZMcmhFYWtU?=
- =?utf-8?B?U1lrNlJKSlduQ2JXS0ZYeEw4TTJyZllVMGl6MlhCQmpXR2ZHRUVPV3dTTzJk?=
- =?utf-8?B?aXFEa1d3K3JwTGhPbmNHRy90ZFRsNEFvdkpnK3dRVGdlQlZCd0tiY1U2TWsx?=
- =?utf-8?B?L1F5eXFCY3I4aGdzdEV6bFhsWUNvRFRSbjBWb1E4akFiNnRlRFVwYmQxakoy?=
- =?utf-8?B?K3VMWDFHL3p6SVQ3a0t0KzBjbjk5RnhSYldhV1VrYkJ6S1ZRZXV2YThkOGFD?=
- =?utf-8?B?NC9UTmNSWnhIelJlZkhXT2lIRlM0cXQ3VGkxUTNnSmJHLzN0Ni83Q1BrdEZl?=
- =?utf-8?B?c1YwWnEyTmx6NnFybU9hZEV2N0VFaUNXWHpCTW9TVk1PWEZZa3RQaklJYWUz?=
- =?utf-8?B?ODlkTEFBSmp4Rk5ZNk95aDFhSUllc2RuM1Z4ZmRQTHJuVzZmZ2Q5NEtBeDgz?=
- =?utf-8?B?VG95TXR1TkNZVUNVOXlKaG9QTG50dm45Y3B1NitDZkxqc1BsT0RYa3liRWVN?=
- =?utf-8?B?clNmcm95ejgxclVRZ050a1BwVHl3VThDZllHRmFtaFE2eVZ4aS85UEt3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(7416011)(366013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ai8xM3NQdlBpMmVkRllzS2VMK2R5SkV4V0lQUm8wRlZNTURLU3J5NU4rWFM2?=
- =?utf-8?B?a1p2NnQ5b2VBenJCakJUV1h2L24rUEZpeVcvNS9IY2VFb2pvOVpGMGNTM3Br?=
- =?utf-8?B?S2VWZmUwTERvNjN2YVkvaS9JaFVENk1uRkRxK2dReTQ1eFRiTnlieFZiZ2lC?=
- =?utf-8?B?cWw3T0FHb0JlL296cEd5U1ZIR0ZWSGsxb0haanUyeVJoeGY5djJheERmUFpr?=
- =?utf-8?B?a21NRFc0NlJGWU1RTkdia0hHdFUzRFdyenVLTkMvUmVSb0NrQjRJTXdJQVFs?=
- =?utf-8?B?QzdUODN3b3NZUDB4dlRRbzIrQ2doTC92SXZacXptalNOMHYvZ2xneDNmazFn?=
- =?utf-8?B?aVRNclpET2ZzdFMxV2R4S3dZS0FGUUkyR0FRUmw2eUlyWStFb3JKSzcrc2Fl?=
- =?utf-8?B?T0xBckMrd3BnMDBESjhBbzhWV2hvaGM3QXZGdkd2TEVkU0swOTNpVFhia0p1?=
- =?utf-8?B?bkx5Q1VCZDI4Q01TUVJFcTZvbVBxMGlSOXF6YU9FUGdNekg1MkltaGtHcjhh?=
- =?utf-8?B?RHRpYWxhRFF4dkxzVXA5SHFlT2lpaW0rZFdHdkdXQlNoWnhlVGlOVjE1QWVk?=
- =?utf-8?B?a2F0VnUyajRiTGdwdStBSnhqeHVzOGx5WTZyV25vWlRWUVZJRXZtcS92T3hE?=
- =?utf-8?B?cmFPR0MzaFQ0YTNpVHg5WHJ2cXRxUXBZRjNrOXRmSGVlKzRYUW9ZN0tKN1or?=
- =?utf-8?B?MEwweTJvVEYveEluNzl5d1ZsZTBQS1pmL0hxcEN6VzNibm4xNjhDdmpEV0hH?=
- =?utf-8?B?QVE0WjMvOXZhMk90VjdzZFVmbXpZNVVkVUJFQ29iNzhidCszcndQaVZXNThW?=
- =?utf-8?B?Zlh6cWxZakJSb1l2Qm9KcU5OSXRyYW5FOFpzTXhCYi9TYkdLN3o3MC9QeVpo?=
- =?utf-8?B?bncydGE2ZS9QUmZ1NHFNTUxidUhXaHU3R3JEUHkxT3FHSkFGQzUvditYY0sz?=
- =?utf-8?B?bzE4RXpVTXBEQVdiWU1tKzE3QkcyNmRIQWEvQ3dyVGFTSVBwZmMyZ1dCVXNn?=
- =?utf-8?B?SEdzK3IzU0c0Zm1iT1dXdTlaamJNSUhkV2NBUEpmeFk1ZHl1aXhxWEVzbUIv?=
- =?utf-8?B?TmRGMzJlWFZja0J6WWRYbmJIdXdRU0JzVXBUME1aUStFeVNUcmJJdk5Eb0tQ?=
- =?utf-8?B?cjEzOVJVZWhETHZXOVJ5MUVYbFFnTXRSMmpNQThKcUpsZzBkUkdwWVlydENt?=
- =?utf-8?B?MU9iRnRWeHcxRXk3ZlFIRmVBZyt2U2NmSFFtSzE3SlFKWHh1L3AxQ1lIdzBE?=
- =?utf-8?B?MjB6dWhiS3RvUWhuTDVlUzlPOXJzUzlBOWdMditKZHhKRU8rM2VnYkVubFVT?=
- =?utf-8?B?SE9rQzMrQzdFVWRUVndFckRZOW45dTV0UmV1N2x2WnBUeS9tK1BYd3M5NXEw?=
- =?utf-8?B?QXN5YnZ2M2pVcFErbUZYRDlkY29SMUZxVmw5Y2NKbkNNekt3N2VVc1pySHZP?=
- =?utf-8?B?OU1LdDdUZEU1WE13dU1kNkhlMnJrZVJtMmNNSjNJeGY4a3ZtVENJUkJuaDJk?=
- =?utf-8?B?OExFZmlxajBnY0J4MW9ZZEcyVDdSV2ora3E0U3ZHNGFtM2RXTlJYWHdRdzVj?=
- =?utf-8?B?OGkrQmdoMUgrMDNLa3lCNTNiSHk4MW9wa005MzFvU0M1RTZPMFc4aGlNcjdP?=
- =?utf-8?B?T3RvVElnN1lVTkRRT2VqcUsyaEpsKzhmWVIwV3VIUjdBTkJ5WDJGcS9FVVly?=
- =?utf-8?B?MzRTMHRTWnVabkFrbXd6VGgvMGQwc1Fsa2lxanM2VzV5aDhlZEpScGhjQXBp?=
- =?utf-8?B?T2FuZzNkVGZZbHc0L2lrcjRrVnE1bUZLMlZveUJyZHdjYkF2R0Qva0VWb3RR?=
- =?utf-8?B?R1BxamRjSElVMS9xajA4M1ZibjFzOS9xV2NERVVjclk3UXFEYlJ5b2JLS1la?=
- =?utf-8?B?cS9pOEptcTBST05kWUNmcmtaSzNrYktqWjhsS1RIRjVjN1BWV2hIdlJYVll5?=
- =?utf-8?B?RjVmYkNiWFV5MHNKd29Vc0MwRHgxckRzMndmOUlaTzloS0FoQnJ4TmtxUldr?=
- =?utf-8?B?Z052UlYvSTJPSVJlZFlTOUhHTmhOSXRRVUM4bkRJSFh1NVVxYXpzR21rekg0?=
- =?utf-8?B?cW81NGF2QU43clpNa0dzWHJ2OFJsb0JJSEFCcEdKbmtHZmdPVXp3V2NuSkY5?=
- =?utf-8?Q?pD9I=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49716e96-7ab6-4219-126c-08dc912fb4fa
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 13:48:46.7476
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zDaL0LxFYHtpPTAXP+8ZmedIJN4IUKFJvndYkKcRmePNXiNiVYz66r8DR9z0ikKf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7721
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 2/4] arm64: dts: qcom: qcs8550: introduce qcs8550 dtsi
+To: Tengfei Fan <quic_tengfan@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, dmitry.baryshkov@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20240618072202.2516025-1-quic_tengfan@quicinc.com>
+ <20240618072202.2516025-3-quic_tengfan@quicinc.com>
+ <44e24399-6efa-41ed-8871-12180dd03e10@linaro.org>
+ <c265d22e-c246-4c9f-b6ff-7a350468e28c@quicinc.com>
+Content-Language: en-US
+From: Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <c265d22e-c246-4c9f-b6ff-7a350468e28c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Reinette,
 
-On 6/13/24 20:49, Reinette Chatre wrote:
-> Hi Babu,
+
+On 20/06/2024 15:40, Tengfei Fan wrote:
 > 
-> On 5/24/24 5:23 AM, Babu Moger wrote:
->> Hardware provides a limited number of ABMC counters. Once all the
->> counters are exhausted, counters need to be freed for new assignments.
+> 
+> On 6/18/2024 6:06 PM, Caleb Connolly wrote:
+>> HI Tengfei,
 >>
->> Provide the interface to unassign the counter.
+>> On 18/06/2024 09:22, Tengfei Fan wrote:
+>>> QCS8550 is derived from SM8550. The difference between SM8550 and
+>>> QCS8550 is QCS8550 doesn't have modem RF system. QCS8550 is mainly used
+>>> in IoT products.
+>>> QCS8550 firmware has different memory map compared to SM8550.
+>>> The memory map will be runtime added through bootloader.
+>>> There are 3 types of reserved memory regions here:
+>>> 1. Firmware related regions which aren't shared with kernel.
+>>>      The device tree source in kernel doesn't need to have node to 
+>>> indicate
+>>> the firmware related reserved information. Bootloader converys the
+>>> information by updating devicetree at runtime.
+>>>      This will be described as: UEFI saves the physical address of the
+>>> UEFI System Table to dts file's chosen node. Kernel read this table and
+>>> add reserved memory regions to efi config table. Current reserved memory
+>>> region may have reserved region which was not yet used, release note of
+>>> the firmware have such kind of information.
+>>> 2. Firmware related memory regions which are shared with Kernel
+>>>      The device tree source in the kernel needs to include nodes that
+>>> indicate fimware-related shared information. A label name is suggested
+>>> because this type of shared information needs to be referenced by
+>>> specific drivers for handling purposes.
+>>>      Unlike previous platforms, QCS8550 boots using EFI and describes
+>>> most reserved regions in the ESRT memory map. As a result, reserved
+>>> memory regions which aren't relevant to the kernel(like the hypervisor
+>>> region) don't need to be described in DT.
+>>> 3. Remoteproc regions.
+>>>      Remoteproc regions will be reserved and then assigned to subsystem
+>>> firmware later.
+>>> Here is a reserved memory map for this platform:
+>>>   0x80000000 +-------------------+
+>>>              |                   |
+>>>              | Firmware Related  |
+>>>              |                   |
+>>>   0x8a800000 +-------------------+
+>>>              |                   |
+>>>              | Remoteproc Region |
+>>>              |                   |
+>>>   0xa7000000 +-------------------+
+>>>              |                   |
+>>>              | Kernel Available  |
+>>>              |                   |
+>>>   0xd4d00000 +-------------------+
+>>>              |                   |
+>>>              | Firmware Related  |
+>>>              |                   |
+>>> 0x100000000 +-------------------+
+>>>
+>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/qcs8550.dtsi | 162 ++++++++++++++++++++++++++
+>>>   1 file changed, 162 insertions(+)
+>>>   create mode 100644 arch/arm64/boot/dts/qcom/qcs8550.dtsi
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/qcs8550.dtsi 
+>>> b/arch/arm64/boot/dts/qcom/qcs8550.dtsi
+>>> new file mode 100644
+>>> index 000000000000..07b314834d88
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/qcom/qcs8550.dtsi
+>>> @@ -0,0 +1,162 @@
+>>> +// SPDX-License-Identifier: BSD-3-Clause
+>>> +/*
+>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All 
+>>> rights reserved.
+>>> + */
+>>> +
+>>> +#include "sm8550.dtsi"
+>>> +
+>>> +/delete-node/ &reserved_memory;
+>>> +
+>>> +/ {
+>>> +    reserved_memory: reserved-memory {
+>>> +        #address-cells = <2>;
+>>> +        #size-cells = <2>;
+>>> +        ranges;
+>>> +
+>>> +
+>>> +        /* These are 3 types of reserved memory regions here:
+>>> +         * 1. Firmware related regions which aren't shared with kernel.
+>>> +         *     The device tree source in kernel doesn't need to have 
+>>> node to
+>>> +         * indicate the firmware related reserved information. 
+>>> Bootloader
+>>> +         * conveys the information by updating devicetree at runtime.
+>>> +         *     This will be described as: UEFI saves the physical 
+>>> address of
+>>> +         * the UEFI System Table to dts file's chosen node. Kernel 
+>>> read this
+>>> +         * table and add reserved memory regions to efi config 
+>>> table. Current
+>>> +         * reserved memory region may have reserved region which was 
+>>> not yet
+>>> +         * used, release note of the firmware have such kind of 
+>>> information.
+>>
+>> This is a lot of implementation detail about UEFI, I'd imagine that 
+>> anyone curious can go read the relevant docs instead. It's a lot of 
+>> words just to say "Firmware regions which the kernel doesn't need to 
+>> know about which are not included in the EFI provided memory map."
 > 
-> Please write a proper changelog. This needs information that explains
-> what this patch does and why.
-
-Sure. Will elaborate on this.
+> 
+> The following update will be applied to this point:
+> 
+> 1. Firmware related regions which aren't shared with kernel.
+>       Firmware regions which the kernel doesn't need to know about which 
+> are not included in the EFI provided memory map.
+> 
+> 
+>>> +         * 2. Firmware related memory regions which are shared with 
+>>> Kernel
+>>> +         *     The device tree source in the kernel needs to include 
+>>> nodes
+>>> +         * that indicate fimware-related shared information. A label 
+>>> name
+>>> +         * is suggested because this type of shared information 
+>>> needs to
+>>> +         * be referenced by specific drivers for handling purposes.
+>>
+>> "Firmware regions the kernel DOES need to know about, which are 
+>> described in the reserved-memory node".
+> 
+> The following update will be applied to this point:
+> 
+> 2. Firmware related memory regions which are shared with Kernel
+> 
+> Firmware regions the kernel does need to know about, which are described 
+> in the reserved-memory node.
+> 
+>>> +         *     Unlike previous platforms, QCS8550 boots using EFI 
+>>> and describes
+>>> +         * most reserved regions in the ESRT memory map. As a 
+>>> result, reserved
+>>> +         * memory regions which aren't relevant to the kernel(like 
+>>> the hypervisor
+>>> +         ( region) don't need to be described in DT.
+>>
+>> These would fall under (1) "firmware the kernel doesn't need to know 
+>> about"
+> 
+> This will be removed from its current position.
+> 
+>>> +         * 3. Remoteproc regions.
+>>> +         *     Remoteproc regions will be reserved and then assigned to
+>>> +         * subsystem firmware later.
+>>
+>> How do these differ from those described in (2)?
+> 
+> This point will do the following update:
+> 
+> 3. Remoteproc regions
+> 
+>     Remoteproc regions will be reserved and then assigned to subsystem 
+> firmware later.
+> 
+>     Remoteproc regions can be loaded either in a fixed form or in a 
+> relocatable form, depending on the platform.
 > 
 >>
->> The feature details are documented in the APM listed below [1].
->> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
->>      Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable
->> Bandwidth
->>      Monitoring (ABMC).
+>> I think this comment is trying to describe too much at once. You're 
+>> trying to describe what the different types of reserved memory are, 
+>> how the kernel learns about them, and how this differs from previous 
+>> platforms all at once. I think you should tackle these points separately:
 >>
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
->> ---
->> v4: Added domain specific unassign feature.
->>      Few name changes.
+>> First describe the types of reserved memory and how the kernel learns 
+>> about them (my suggestions above). Then describe the differences with 
+>> previous platforms (like the hypervisor example)
 >>
->> v3: Removed the static from the prototype of rdtgroup_unassign_abmc.
->>      The function is not called directly from user anymore. These
->>      changes are related to global assignment interface.
+>> Thanks and regards,
+> 
+> Your previous suggestion will be incorporated here as follows:
+> 
+> Unlike previous platforms, QCS8550 boots using EFI and describes most 
+> reserved regions in the ESRT memory map. As a result, reserved memory 
+> regions which aren't relevant to the kernel(like the hypervisor region) 
+> don't need to be described in DT.
+> 
+> Is it reasonable to place it here?
+
+Thanks great, thanks a lot :)
+> 
+> Thanks!
+> 
+>>> +         * Here is a reserved memory map for this platform:
+>>> +         *  0x80000000 +-------------------+
+>>> +         *             |                   |
+>>> +         *             | Firmware Related  |
+>>> +         *             |                   |
+>>> +         *  0x8a800000 +-------------------+
+>>> +         *             |                   |
+>>> +         *             | Remoteproc Region |
+>>> +         *             |                   |
+>>> +         *  0xa7000000 +-------------------+
+>>> +         *             |                   |
+>>> +         *             | Kernel Available  |
+>>> +         *             |                   |
+>>> +         *  0xd4d00000 +-------------------+
+>>> +         *             |                   |
+>>> +         *             | Firmware Related  |
+>>> +         *             |                   |
+>>> +         * 0x100000000 +-------------------+
+>>> +         */
+>>> +
+>>> +        aop_image_mem: aop-image-region@81c00000 {
+>>> +            reg = <0x0 0x81c00000 0x0 0x60000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        aop_cmd_db_mem: aop-cmd-db-region@81c60000 {
+>>> +            compatible = "qcom,cmd-db";
+>>> +            reg = <0x0 0x81c60000 0x0 0x20000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        aop_config_mem: aop-config-region@81c80000 {
+>>> +            no-map;
+>>> +            reg = <0x0 0x81c80000 0x0 0x20000>;
+>>> +        };
+>>> +
+>>> +        smem_mem: smem-region@81d00000 {
+>>> +            compatible = "qcom,smem";
+>>> +            reg = <0x0 0x81d00000 0x0 0x200000>;
+>>> +            hwlocks = <&tcsr_mutex 3>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        adsp_mhi_mem: adsp-mhi-region@81f00000 {
+>>> +            reg = <0x0 0x81f00000 0x0 0x20000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        mpss_mem: mpss-region@8a800000 {
+>>> +            reg = <0x0 0x8a800000 0x0 0x10800000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        q6_mpss_dtb_mem: q6-mpss-dtb-region@9b000000 {
+>>> +            reg = <0x0 0x9b000000 0x0 0x80000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        ipa_fw_mem: ipa-fw-region@9b080000 {
+>>> +            reg = <0x0 0x9b080000 0x0 0x10000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        ipa_gsi_mem: ipa-gsi-region@9b090000 {
+>>> +            reg = <0x0 0x9b090000 0x0 0xa000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        gpu_micro_code_mem: gpu-micro-code-region@9b09a000 {
+>>> +            reg = <0x0 0x9b09a000 0x0 0x2000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        spss_region_mem: spss-region@9b100000 {
+>>> +            reg = <0x0 0x9b100000 0x0 0x180000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        spu_secure_shared_memory_mem: 
+>>> spu-secure-shared-memory-region@9b280000 {
+>>> +            reg = <0x0 0x9b280000 0x0 0x80000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        camera_mem: camera-region@9b300000 {
+>>> +            reg = <0x0 0x9b300000 0x0 0x800000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        video_mem: video-region@9bb00000 {
+>>> +            reg = <0x0 0x9bb00000 0x0 0x700000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        cvp_mem: cvp-region@9c200000 {
+>>> +            reg = <0x0 0x9c200000 0x0 0x700000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        cdsp_mem: cdsp-region@9c900000 {
+>>> +            reg = <0x0 0x9c900000 0x0 0x2000000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        q6_cdsp_dtb_mem: q6-cdsp-dtb-region@9e900000 {
+>>> +            reg = <0x0 0x9e900000 0x0 0x80000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        q6_adsp_dtb_mem: q6-adsp-dtb-region@9e980000 {
+>>> +            reg = <0x0 0x9e980000 0x0 0x80000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        adspslpi_mem: adspslpi-region@9ea00000 {
+>>> +            reg = <0x0 0x9ea00000 0x0 0x4080000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        mpss_dsm_mem: mpss_dsm_region@d4d00000 {
+>>> +            reg = <0x0 0xd4d00000 0x0 0x3300000>;
+>>> +            no-map;
+>>> +        };
+>>> +    };
+>>> +};
 >>
->> v2: No changes.
->> ---
->>   arch/x86/kernel/cpu/resctrl/internal.h |  2 ++
->>   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 42 ++++++++++++++++++++++++++
->>   2 files changed, 44 insertions(+)
->>
->> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h
->> b/arch/x86/kernel/cpu/resctrl/internal.h
->> index a88c8fc5e4df..e16244895350 100644
->> --- a/arch/x86/kernel/cpu/resctrl/internal.h
->> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
->> @@ -660,6 +660,8 @@ void arch_domain_mbm_evt_config(struct rdt_hw_domain
->> *hw_dom);
->>   int resctrl_arch_assign(struct rdt_domain *d, u32 evtid, u32 rmid,
->>               u32 ctr_id, u32 closid, bool enable);
->>   int resctrl_grp_assign(struct rdtgroup *rdtgrp, u32 evtid);
->> +int resctrl_grp_unassign(struct rdtgroup *rdtgrp, u32 evtid);
->> +void num_cntrs_free(u32 ctr_id);
->>   void rdt_staged_configs_clear(void);
->>   bool closid_allocated(unsigned int closid);
->>   int resctrl_find_cleanest_closid(void);
->> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> index 48df76499a04..5ea1e58c7201 100644
->> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> @@ -216,6 +216,11 @@ static int assign_cntrs_alloc(void)
->>       return ctr_id;
->>   }
->>   +void num_cntrs_free(u32 ctr_id)
-> 
-> The name does not reflect what it does. It neither frees the "num_cntrs"
-> information
-> nor does it free "num_cntrs" of counters. How about "mon_cntr_free()"?
-
-Sure. If we change the name of num_cntrs to mbm_cntrs, then we can change
-to mbm_cntr_free().
-Here is the comments on name change.
-https://lore.kernel.org/lkml/62fe683f-3a4c-4280-8770-d2aaff478d33@amd.com/
-
-
-> 
-> 
->> +{
->> +    __set_bit(ctr_id, &num_cntrs_free_map);
->> +}
->> +
->>   /**
->>    * rdtgroup_mode_by_closid - Return mode of resource group with closid
->>    * @closid: closid if the resource group
->> @@ -1931,6 +1936,43 @@ int resctrl_grp_assign(struct rdtgroup *rdtgrp,
->> u32 evtid)
->>       return 0;
->>   }
->>   +int resctrl_grp_unassign(struct rdtgroup *rdtgrp, u32 evtid)
-> 
-> Same comment wrt namespace. Also this function needs a description.
-
-Sure.
-
-> 
->> +{
->> +    struct rdt_resource *r =
->> &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
->> +    struct rdt_domain *d;
->> +    u32 mon_state;
->> +    int index;
->> +
->> +    index = mon_event_config_index_get(evtid);
->> +    if (index == INVALID_CONFIG_INDEX) {
->> +        pr_warn_once("Invalid event id %d\n", evtid);
->> +        return -EINVAL;
->> +    }
->> +
->> +    if (evtid == QOS_L3_MBM_TOTAL_EVENT_ID) {
->> +        mon_state = ASSIGN_TOTAL;
->> +    } else if (evtid == QOS_L3_MBM_LOCAL_EVENT_ID) {
->> +        mon_state = ASSIGN_LOCAL;
->> +    } else {
->> +        rdt_last_cmd_puts("Invalid event id\n");
->> +        return -EINVAL;
->> +    }
->> +
->> +    if (rdtgrp->mon.mon_state & mon_state) {
->> +        list_for_each_entry(d, &r->domains, list)
->> +            resctrl_arch_assign(d, evtid, rdtgrp->mon.rmid,
->> +                        rdtgrp->mon.ctr_id[index],
->> +                        rdtgrp->closid, 0);
->> +
->> +        /* Update the counter bitmap */
->> +        num_cntrs_free(rdtgrp->mon.ctr_id[index]);
->> +    }
->> +
->> +    rdtgrp->mon.mon_state &= ~mon_state;
->> +
->> +    return 0;
->> +}
->> +
->>   /* rdtgroup information files for one cache resource. */
->>   static struct rftype res_common_files[] = {
->>       {
-> 
-> 
-> Reinette
 > 
 
 -- 
-Thanks
-Babu Moger
+// Caleb (they/them)
 
