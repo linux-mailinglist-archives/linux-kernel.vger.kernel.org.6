@@ -1,79 +1,73 @@
-Return-Path: <linux-kernel+bounces-223251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645199110CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:25:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A001911036
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C3C5B2E4F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:09:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEF941F21A89
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EB91D0F41;
-	Thu, 20 Jun 2024 17:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E221BA899;
+	Thu, 20 Jun 2024 17:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dEus66wz"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gj9vD1Sj"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9861BA899;
-	Thu, 20 Jun 2024 17:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C961D0F4F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718906338; cv=none; b=Dc8Tla66NiZShYo3jO94oDGiCBj2A3hJXkc5xoTNDKmtiFOxF0XmJi7ijagWXZXPCHyLanvidyqyY3MPakG7alFlrKPs8g2rWU+d67SQrvAZdihNEuQ/VRqtHTLo+xOdrVGam9ddn1QwE+NykdLrxJk5n9xXJ0M+bvp7W4QwJAs=
+	t=1718906340; cv=none; b=F+sBc1IgvCMq1I5/c8muZJzUQZZy8uHxkdeeZY6tLaRRFOFglPEXWsbKqztfpt42eVrZsUGrXiYpQ4dpFIG3f3ZYdQECmsAL0AATNVoyn2M6aylAjVHrxenejFMjiojboKUAI5ssO93FKs0wjoBWcrQB8w0hr1K/QdJ1lyU4Kbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718906338; c=relaxed/simple;
-	bh=ywt5jQ7AnfZyxoNrW7FHAEolpYpDtzMcqsRhreJJnKI=;
+	s=arc-20240116; t=1718906340; c=relaxed/simple;
+	bh=43PCcVjF9LLFxFCfleFm+1u6w23B3SV5aS208ZW0XBo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Tbqe6TOxm5luTdJduiv/USd+K5Xgx82rsdD18ejVhPq/Bcv46EKRARJx/UvmLYvSmL1zZEs8YgH2JmTYeMAGp388MmejwXYhFz5wFHCTDFdyj/t5XeRGjz7MXx3jI73knoOLojCqdygsioErNz/HQXXO51bvzxp4P5a0keoEduw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dEus66wz; arc=none smtp.client-ip=209.85.214.174
+	 MIME-Version; b=HBIEhJDguYFnWdclQdavgyaCwypCtapKBi83oz3Z6Ls/bkMBGiZp53hJgxFdSR/r3gaxxpGHLxZwL1Zo+VOW0ppYfYGYA2Yv0R0f6gsPXVER4VgZyP7SIUIkIJJdcqWP8b4QaCaIhe8HaZbrtf8sMe2G/yy10icqZOIxIKj6wlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gj9vD1Sj; arc=none smtp.client-ip=209.85.215.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f9de13d6baso4405965ad.2;
-        Thu, 20 Jun 2024 10:58:56 -0700 (PDT)
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-6eab07ae82bso830769a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:58:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718906336; x=1719511136; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718906339; x=1719511139; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GsYMR7W/oLrUdYReWrdeZFpoa0VAudVSEYOx4NZUcFc=;
-        b=dEus66wzbWLc6RKjs0qC7OoUuC5V6/s/atRec+t6lUIXOFRzMd8T/eqcN81nPbsjDY
-         mIRVwZiKVCaElOkuzU8ptFn1SLvpxrs0ld5rmZLAC5MfsT5CwPTpGqG2lzGaIYz0Q8HE
-         WUMkBghlOH4JinHau8u7O0Ngoa8IGdJpFewZ4/zbT8ALhvW0K3bqkbKwB+AcOK3YTDnp
-         rs+UmyxUkWpe+MS6WwWRlFa3N/wBsPtXJtcvVkLPvuEHE0pJke7YiTmHoLkBGQ5FT5pN
-         buqbL9TILLHJWoTs2gCFkvfsXls4w/bnWvgN+DJWWkjflPUfQZ5yhI7cawuKCD27SQbn
-         D+Rg==
+        bh=2ipwGbR+ze0Ay3Tr6YsAi2mpOH1rdNvZeMvAJD4j/30=;
+        b=Gj9vD1SjxHxZ+TirGvC0rVtBrKM6JbbeWL69QgCnI6sW8p6uEwo5tWtu4UmoHWeeI7
+         EE7Kn34oVvKwx3OZ47TTv4Poc/P4dCgzZLpKuPmWBGer3UG1t8iGgPOWPaphUou/o1jx
+         ouD1zbpmS3PG7CawAmLx/LvE67yoEhgCb+xfr3RRNgKJjB70IPRnaUpN+aIwUU7RBtJe
+         C63Nt+nIg8Acm5uvUOE5fOa8FW+o11L/OI3xe2sO66lU5j8nAL9ZN8KUDFpMwCeYNY0S
+         L3G6r61YO/n85ifEnOu8PEbS/c/rWy7O7AreCWY+HdTObOSZQB+NGogUTGO5S5OESsBL
+         8VDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718906336; x=1719511136;
+        d=1e100.net; s=20230601; t=1718906339; x=1719511139;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GsYMR7W/oLrUdYReWrdeZFpoa0VAudVSEYOx4NZUcFc=;
-        b=XpLnJUFZ12lyS/evw3swl/z0EoaYLIAQe9Uq1uem/XrCFIcg2WzCkpYy0Hp+5WXRyC
-         4H6nm+kuTu/F51C+WFjV7NTiU0/r9XFCbOoGya+WCDNhQtLm4OBREsPDYjSAGM6VEGNR
-         WO5vqcEEYbAe8YjrWNvvjgVWvccs30hm/V/vk4w82G3Unbj1WV6Nj2LW6jP2o+kxe+H9
-         MtUUOHtP5oA0LbixVUMwkjDPhAIxkA5XnZt8cqKoiNi4TMnN+yXcXkG26Hu3mYeQ453A
-         hB4/tHlTTkJ72++CSONZZAXqpg0li0V4j9qzuY8oIwKQPw2RGCwXTH6I0GDxRz8gGOch
-         tqAA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/SGolH4yNufbE03jgZV53WU708Czwqn5hgTBMZ0tzpmPZewSX7KlUGGzKJGaRuDdhVncbJBFvXFThEN0jgbj+g4MKQ+NC
-X-Gm-Message-State: AOJu0YwOiPruEIGEnCX+at4LGQhwrmGAl9FiZhmKdE7TGmHEGi3+W5Qk
-	bjt4sacaxVYxk6lOP+dSTYAE0QstB3Ml5GrNTnvPSqYOfO0XOcHmMd0dOQ5egyE=
-X-Google-Smtp-Source: AGHT+IEcVgYYT890Ph3UgqxZ7WCGlaQv51dFbcwu7r/mkJrr17cMFG1OvZ8xQ71txPYDVC9RQU4wXg==
-X-Received: by 2002:a17:902:f64c:b0:1f7:38a2:f1e6 with SMTP id d9443c01a7336-1f9aa473e72mr69121615ad.43.1718906336023;
-        Thu, 20 Jun 2024 10:58:56 -0700 (PDT)
+        bh=2ipwGbR+ze0Ay3Tr6YsAi2mpOH1rdNvZeMvAJD4j/30=;
+        b=DWw3kXrvE5G7fjVUBK/LQs057Nh1kN388cDkPonMM489Xul5oicfQdEzwNRtMUrGQ1
+         /hmUyHHMrSvoAo9EMNEYNf+J9+XPUHdJvy1gc0adhqEQ/JmQ4/efLOQxbhLPWUyOQVo8
+         XbJAdITbp2mi2pb5Fx+MpQM3P1rajwsKsX4RQAuTRzCGYVYHYs2JbbPSfQ6Vrdck3nGL
+         rdp0EmBMI7lkMaWmtWArQvI7Ubahl7UVCAPIudNLUEnOiCO/hj9UErYFoR75T0kyMPvb
+         T0bachnOiwGosXoQK/JINk4P5reYtN1P0ax+NRgI5N1MrO8vRQkdWoNJEA6jAJN357Mg
+         JTnA==
+X-Gm-Message-State: AOJu0Yx54c0uAlP1E80Ie+iofd2aKHUSxsG4T5a+mzhC1GVl87UxmHQ2
+	hnquTyhqrgCeJyE+p/iiQ6FJkpHOblR9qQHzMXp1w0KiXBdx1pjspBcMZYK3DVw=
+X-Google-Smtp-Source: AGHT+IEfVgCYhizW2aBSpfFWamrwpAlGma5UzQVQzhVAXMNPxrw0Ml+8Pulc0jdTKXgia5DGvnGynA==
+X-Received: by 2002:a17:90b:e89:b0:2c7:b17c:dfc3 with SMTP id 98e67ed59e1d1-2c7b5b569aemr5726138a91.15.1718906338696;
+        Thu, 20 Jun 2024 10:58:58 -0700 (PDT)
 Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9b5b7a994sm35821215ad.177.2024.06.20.10.58.54
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e55e1846sm2010484a91.28.2024.06.20.10.58.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 10:58:55 -0700 (PDT)
+        Thu, 20 Jun 2024 10:58:58 -0700 (PDT)
 From: Yury Norov <yury.norov@gmail.com>
 To: linux-kernel@vger.kernel.org,
-	Michael Chan <michael.chan@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
+	Jassi Brar <jassisinghbrar@gmail.com>
 Cc: Yury Norov <yury.norov@gmail.com>,
 	Alexey Klimov <alexey.klimov@linaro.org>,
 	Bart Van Assche <bvanassche@acm.org>,
@@ -83,9 +77,9 @@ Cc: Yury Norov <yury.norov@gmail.com>,
 	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
 	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
 	Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH v4 38/40] wifi: mac80211: drop locking around ntp_fltr_bmap
-Date: Thu, 20 Jun 2024 10:57:01 -0700
-Message-ID: <20240620175703.605111-39-yury.norov@gmail.com>
+Subject: [PATCH v4 39/40] mailbox: bcm-flexrm: simplify locking scheme
+Date: Thu, 20 Jun 2024 10:57:02 -0700
+Message-ID: <20240620175703.605111-40-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240620175703.605111-1-yury.norov@gmail.com>
 References: <20240620175703.605111-1-yury.norov@gmail.com>
@@ -97,66 +91,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The driver operates on individual bits of the bitmap. Now that we have
-atomic find_and_set_bit() helper, we can move the map manipulation out
-of ntp_fltr_lock-protected area.
+Use atomic find_and_set_bit() and drop locking around
+ring->requests_bmap.
 
 Signed-off-by: Yury Norov <yury.norov@gmail.com>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ drivers/mailbox/bcm-flexrm-mailbox.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index c437ca1c0fd3..5f4c3449570d 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -51,6 +51,7 @@
- #include <linux/bitmap.h>
- #include <linux/cpu_rmap.h>
- #include <linux/cpumask.h>
+diff --git a/drivers/mailbox/bcm-flexrm-mailbox.c b/drivers/mailbox/bcm-flexrm-mailbox.c
+index b1abc2a0c971..7aca533a1068 100644
+--- a/drivers/mailbox/bcm-flexrm-mailbox.c
++++ b/drivers/mailbox/bcm-flexrm-mailbox.c
+@@ -23,6 +23,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/dmapool.h>
+ #include <linux/err.h>
 +#include <linux/find_atomic.h>
- #include <net/pkt_cls.h>
- #include <net/page_pool/helpers.h>
- #include <linux/align.h>
-@@ -5616,17 +5617,16 @@ static int bnxt_init_l2_filter(struct bnxt *bp, struct bnxt_l2_filter *fltr,
- 			       struct bnxt_l2_key *key, u32 idx)
- {
- 	struct hlist_head *head;
-+	int bit_id;
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/mailbox_controller.h>
+@@ -989,21 +990,17 @@ static int flexrm_new_request(struct flexrm_ring *ring,
+ 	msg->error = 0;
  
- 	ether_addr_copy(fltr->l2_key.dst_mac_addr, key->dst_mac_addr);
- 	fltr->l2_key.vlan = key->vlan;
- 	fltr->base.type = BNXT_FLTR_TYPE_L2;
- 	if (fltr->base.flags) {
--		int bit_id;
--
--		bit_id = bitmap_find_free_region(bp->ntp_fltr_bmap,
--						 bp->max_fltr, 0);
--		if (bit_id < 0)
-+		bit_id = find_and_set_bit(bp->ntp_fltr_bmap, bp->max_fltr);
-+		if (bit_id >= bp->max_fltr)
- 			return -ENOMEM;
+ 	/* If no requests possible then save data pointer and goto done. */
+-	spin_lock_irqsave(&ring->lock, flags);
+-	reqid = bitmap_find_free_region(ring->requests_bmap,
+-					RING_MAX_REQ_COUNT, 0);
+-	spin_unlock_irqrestore(&ring->lock, flags);
+-	if (reqid < 0)
++	reqid = find_and_set_bit(ring->requests_bmap, RING_MAX_REQ_COUNT);
++	if (reqid >= RING_MAX_REQ_COUNT)
+ 		return -ENOSPC;
 +
- 		fltr->base.sw_id = (u16)bit_id;
- 		bp->ntp_fltr_count++;
+ 	ring->requests[reqid] = msg;
+ 
+ 	/* Do DMA mappings for the message */
+ 	ret = flexrm_dma_map(ring->mbox->dev, msg);
+ 	if (ret < 0) {
+ 		ring->requests[reqid] = NULL;
+-		spin_lock_irqsave(&ring->lock, flags);
+-		bitmap_release_region(ring->requests_bmap, reqid, 0);
+-		spin_unlock_irqrestore(&ring->lock, flags);
++		clear_bit(reqid, ring->requests_bmap);
+ 		return ret;
  	}
-@@ -14396,13 +14396,11 @@ int bnxt_insert_ntp_filter(struct bnxt *bp, struct bnxt_ntuple_filter *fltr,
- 	struct hlist_head *head;
- 	int bit_id;
  
--	spin_lock_bh(&bp->ntp_fltr_lock);
--	bit_id = bitmap_find_free_region(bp->ntp_fltr_bmap, bp->max_fltr, 0);
--	if (bit_id < 0) {
--		spin_unlock_bh(&bp->ntp_fltr_lock);
-+	bit_id = find_and_set_bit(bp->ntp_fltr_bmap, bp->max_fltr);
-+	if (bit_id >= bp->max_fltr)
- 		return -ENOMEM;
--	}
+@@ -1063,9 +1060,7 @@ static int flexrm_new_request(struct flexrm_ring *ring,
+ 	if (exit_cleanup) {
+ 		flexrm_dma_unmap(ring->mbox->dev, msg);
+ 		ring->requests[reqid] = NULL;
+-		spin_lock_irqsave(&ring->lock, flags);
+-		bitmap_release_region(ring->requests_bmap, reqid, 0);
+-		spin_unlock_irqrestore(&ring->lock, flags);
++		clear_bit(reqid, ring->requests_bmap);
+ 	}
  
-+	spin_lock_bh(&bp->ntp_fltr_lock);
- 	fltr->base.sw_id = (u16)bit_id;
- 	fltr->base.type = BNXT_FLTR_TYPE_NTUPLE;
- 	fltr->base.flags |= BNXT_ACT_RING_DST;
+ 	return ret;
+@@ -1130,9 +1125,7 @@ static int flexrm_process_completions(struct flexrm_ring *ring)
+ 
+ 		/* Release reqid for recycling */
+ 		ring->requests[reqid] = NULL;
+-		spin_lock_irqsave(&ring->lock, flags);
+-		bitmap_release_region(ring->requests_bmap, reqid, 0);
+-		spin_unlock_irqrestore(&ring->lock, flags);
++		clear_bit(reqid, ring->requests_bmap);
+ 
+ 		/* Unmap DMA mappings */
+ 		flexrm_dma_unmap(ring->mbox->dev, msg);
 -- 
 2.43.0
 
