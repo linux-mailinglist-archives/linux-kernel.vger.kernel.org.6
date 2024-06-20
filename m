@@ -1,94 +1,127 @@
-Return-Path: <linux-kernel+bounces-222985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9B0910B43
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:08:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A78D910B4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA1AD2883FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:08:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 185F728896F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0C01B1411;
-	Thu, 20 Jun 2024 16:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878FE1B29C4;
+	Thu, 20 Jun 2024 16:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1p0gYgTO"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="d9ABL+ei"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789531B142C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371631B1511;
+	Thu, 20 Jun 2024 16:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718899650; cv=none; b=Jd5+u/iNxkbdmYCDzCUIeExs9vNvBy1limo2KBtPD4VSzGVjJxOih/1y2QoK9Svs1cYju/wD2+UTdLIfnzyrMKD3U69SzfvhkU6Z+h5sIp5bdTp/dB7mGF5np8ipErsOJHdZxfEp1Cve8tMWtl6NussxdrOPfTKsNB9iS6KSxNs=
+	t=1718899678; cv=none; b=Qtu7dheu895y69RirQjWO38DxabIMy6RHLgcnzjQ0w4uIo2/x0puA9DIN5pXp/HXYctQXb3Q8/eokFRclgih/j7UHUej4U4hK4owp/ry13ZENsvPaIpIT0MK1yFyy/zirrKuUhW0euUeqtnn2NUIPnjs8Fv83fG2EPJ+jsBVZvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718899650; c=relaxed/simple;
-	bh=4++AFWBTLhEgMK5+HoqIjWqYXjyf7UksZRedIh8PzcM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sCu36kaII3qLwPSOZdFzfLD57WM/p39wRMQJSCYoB7BKVJ+9zEhZRHw0vbs7CoD31PoXsbxK6sHHMrjmU4U9ejCzmAfMO/tX+2T0HiAAmSY5MnJFcdJRivwF2C9km5xP7vHy3YD4iJYI8RSoCyNJ8GYJRkz/zSO8MZkPtTtv8PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1p0gYgTO; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2c7a6ce23c2so1182239a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:07:29 -0700 (PDT)
+	s=arc-20240116; t=1718899678; c=relaxed/simple;
+	bh=vMXo+8er/KnPPGbK0OQOgR3Y4wbJNNQMeqCWRXZVaPU=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Kl3xxxvRBHWMLpmzqO9+IKAsEqsI8KPYB336CAIOKES9e5t5G8js7qa49GVKVNBSyA+tBC6bZMGJ1N78anhmnnr7duDfudNPykol1ANIy85qeVh2HPYY0dGHXFxzPgXcuymKnYdpKIEQlOC/wvxUKoDPOZBiv+qVor3qeeCOfrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=d9ABL+ei; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718899649; x=1719504449; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4++AFWBTLhEgMK5+HoqIjWqYXjyf7UksZRedIh8PzcM=;
-        b=1p0gYgTO3lav3l8Z7O39Y0sQqdWQTAXGh8h+BsLGN1dIBoUXyFknqKeEJMvrvzGNtY
-         aPm36Y9T6XuQUzao70xqtqFa4AxwNbGfUOxIJbt9kxd0Ru7N5x6fk9TDnPE6mbdNLYmM
-         AMfgkR4ki+pQ7r2x+u+BCrorcE1kqeP9YPrDi0EodR6KvfO28GaRmLB19emFq5ksPGX8
-         sZhyFT9kZ4QcnM7IQ+rJ+WClDy3oJONmJq73Bi569JYSj77KCA29SHoYRbwG6Ejfia5S
-         AlhVrtwK1SMlzSQmlO8tSMp8KPvajIMublH2SXHQmAPxmobLbH/YMHASDexL/ca8R6HR
-         ST8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718899649; x=1719504449;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4++AFWBTLhEgMK5+HoqIjWqYXjyf7UksZRedIh8PzcM=;
-        b=QbuGEM4mvL/Ocgq0GkC8i9133xtPwjUp2XdXd+VRbUNY+TLEv/xl1q3Y1nTw4vZewA
-         0RtFo0I+W0LtJa/A1n5qNNi7xmKXpqBKdVDB+pzSoK9otHSXdqQ+Vf2wcTLHlaHWKdLN
-         61y3gkkUfc5yF4M4nneYm3ZdAUqSAhU4srd9WVuS2fBLeHxDIny963ZQze6cErmhVm6l
-         L3cv8bL4GvFLzJQ1DpMQd2Oyfw7c4QyD/X7nRzW+9Fm31W1rDox+OhMc0nJyPxK+BXrD
-         M6IndaPM/C602+xpT4SG3ggcnAT7pTZtp6aYtT2V08LnSmM4Bcuw+Wkbl/+4tQURKyjs
-         2NIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrHvi1ENsvZAaHD5AgKcg/0th4YZ9KB4FGi/yYyuf5AIVjQi1gM2PU5dwcrKd36z59EW3tmTIpZZ5q89FCZTODsJvMLQ/StVpJXJIJ
-X-Gm-Message-State: AOJu0Yy+ksD2D2HQFrADSz9Pbfqs8rKpz9PCL1AXivIWjAtxgVOxuYnm
-	D8tKtvp3D7EU7WY/fmlxcBEI3hax2hoOVH83Et14/SiwPDkMvXcLAUaD5EPO74hG01YrWYOXkpJ
-	Xfg==
-X-Google-Smtp-Source: AGHT+IGZjZFiRlw7O6PqskT9mtZGQXA4gu55zTf3jYNykdeO/HXMtMxOpQ0oZSgNwiH2VyC1b8F1sCdYgeE=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:1150:b0:2c2:ebde:ca6a with SMTP id
- 98e67ed59e1d1-2c7b5db32demr14855a91.9.1718899648688; Thu, 20 Jun 2024
- 09:07:28 -0700 (PDT)
-Date: Thu, 20 Jun 2024 09:07:27 -0700
-In-Reply-To: <20240619182128.4131355-1-dapeng1.mi@linux.intel.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1718899677; x=1750435677;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=vMXo+8er/KnPPGbK0OQOgR3Y4wbJNNQMeqCWRXZVaPU=;
+  b=d9ABL+eioUt5w6c4Rs8EHUgsNkRt1WkPmuTz06vBtfulDLYXNUAa/aAu
+   WvoDiC1nHOfTa/ld276dJxGudYFvI7j8IsAdCIl4I9sJEZu4jxWuiTpTh
+   uwdWwkyti3og7f3xoKW7QfS9lg3Ya4udkP02xhDSHi4RB++A34XlfOBVZ
+   c=;
+X-IronPort-AV: E=Sophos;i="6.08,252,1712620800"; 
+   d="scan'208";a="408980017"
+Subject: Re: linux-next: manual merge of the memblock tree with the origin tree
+Thread-Topic: linux-next: manual merge of the memblock tree with the origin tree
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 16:07:53 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:4102]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.23.209:2525] with esmtp (Farcaster)
+ id db4fc33e-7e1c-4db1-aaf1-d1d67f363403; Thu, 20 Jun 2024 16:07:52 +0000 (UTC)
+X-Farcaster-Flow-ID: db4fc33e-7e1c-4db1-aaf1-d1d67f363403
+Received: from EX19D014EUC003.ant.amazon.com (10.252.51.184) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 20 Jun 2024 16:07:45 +0000
+Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
+ EX19D014EUC003.ant.amazon.com (10.252.51.184) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 20 Jun 2024 16:07:45 +0000
+Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
+ EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
+ 15.02.1258.034; Thu, 20 Jun 2024 16:07:45 +0000
+From: "Gowans, James" <jgowans@amazon.com>
+To: "broonie@kernel.org" <broonie@kernel.org>, "rppt@kernel.org"
+	<rppt@kernel.org>
+CC: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+	"jbeulich@suse.com" <jbeulich@suse.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Thread-Index: AQHawypHT4hIOONPdEuIzJZkPab/U7HQ0aEA
+Date: Thu, 20 Jun 2024 16:07:45 +0000
+Message-ID: <eb58b1b2f84444acde3f9e25219fa40c73c499f8.camel@amazon.com>
+References: <ZnRQv-EVf2LQ1Cjv@sirena.org.uk>
+In-Reply-To: <ZnRQv-EVf2LQ1Cjv@sirena.org.uk>
+Accept-Language: en-ZA, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2574A97B080BF14B8E1870213DB416C5@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240619182128.4131355-1-dapeng1.mi@linux.intel.com>
-Message-ID: <ZnRTv-dswVUr0hzZ@google.com>
-Subject: Re: [PATCH 0/2] KVM vPMU code refine
-From: Sean Christopherson <seanjc@google.com>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>, 
-	Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, 
-	Like Xu <like.xu.linux@gmail.com>, Jinrong Liang <cloudliang@tencent.com>, 
-	Dapeng Mi <dapeng1.mi@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 
-On Thu, Jun 20, 2024, Dapeng Mi wrote:
-> This small patchset refines KVM vPMU code and relevant selftests.
-> Patch 1/2 defines new macro KVM_PMC_MAX_GENERIC to avoid the Intel
-> specific macro KVM_INTEL_PMC_MAX_GENERIC to be used in vPMU x86 common
-> code. Patch 2/2 reduces the verbosity of "Random seed" messages to avoid
-> the hugh number of messages to flood the regular output of selftests.
-
-In the future, please post these as separate patches, they are completely unrelated.
+SGkgTWFyaywNCg0KT24gVGh1LCAyMDI0LTA2LTIwIGF0IDE2OjU0ICswMTAwLCBNYXJrIEJyb3du
+IHdyb3RlOg0KPiBIaSBhbGwsDQo+IA0KPiBUb2RheSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhl
+IG1lbWJsb2NrIHRyZWUgZ290IGEgY29uZmxpY3QgaW46DQo+IA0KPiAgIG1tL21lbWJsb2NrLmMN
+Cj4gDQo+IGJldHdlZW4gY29tbWl0Og0KPiANCj4gICBlMGVlYzI0ZTJlMTk5ICgibWVtYmxvY2s6
+IG1ha2UgbWVtYmxvY2tfc2V0X25vZGUoKSBhbHNvIHdhcm4gYWJvdXQgdXNlIG9mIE1BWF9OVU1O
+T0RFUyIpDQo+IA0KPiBmcm9tIHRoZSBvcmlnaW4gdHJlZSBhbmQgY29tbWl0Og0KPiANCj4gICA5
+NGZmNDZkZTRhNzM4ICgibWVtYmxvY2s6IE1vdmUgbGF0ZSBhbGxvYyB3YXJuaW5nIGRvd24gdG8g
+cGh5cyBhbGxvYyIpDQo+IA0KPiBmcm9tIHRoZSBtZW1ibG9jayB0cmVlLg0KPiANCj4gSSBmaXhl
+ZCBpdCB1cCAoc2VlIGJlbG93KSBhbmQgY2FuIGNhcnJ5IHRoZSBmaXggYXMgbmVjZXNzYXJ5LiBU
+aGlzDQo+IGlzIG5vdyBmaXhlZCBhcyBmYXIgYXMgbGludXgtbmV4dCBpcyBjb25jZXJuZWQsIGJ1
+dCBhbnkgbm9uIHRyaXZpYWwNCj4gY29uZmxpY3RzIHNob3VsZCBiZSBtZW50aW9uZWQgdG8geW91
+ciB1cHN0cmVhbSBtYWludGFpbmVyIHdoZW4geW91ciB0cmVlDQo+IGlzIHN1Ym1pdHRlZCBmb3Ig
+bWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50IHRvIGNvbnNpZGVyIGNvb3BlcmF0aW5nDQo+IHdp
+dGggdGhlIG1haW50YWluZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55
+IHBhcnRpY3VsYXJseQ0KPiBjb21wbGV4IGNvbmZsaWN0cy4NCj4gDQo+IGRpZmYgLS1jYyBtbS9t
+ZW1ibG9jay5jDQo+IGluZGV4IGU4MWZiNjhmN2Y4ODgsNjkyZGM1NTFjMGZkZS4uMDAwMDAwMDAw
+MDAwMA0KPiAtLS0gYS9tbS9tZW1ibG9jay5jDQo+ICsrKyBiL21tL21lbWJsb2NrLmMNCj4gQEBA
+IC0xNDQxLDYgLTE0NDYsMjAgKzE0MzksOSBAQEAgcGh5c19hZGRyX3QgX19pbml0IG1lbWJsb2Nr
+X2FsbG9jX3JhbmdlDQo+ICAgCWVudW0gbWVtYmxvY2tfZmxhZ3MgZmxhZ3MgPSBjaG9vc2VfbWVt
+YmxvY2tfZmxhZ3MoKTsNCj4gICAJcGh5c19hZGRyX3QgZm91bmQ7DQo+ICAgDQo+ICsgCWlmIChX
+QVJOX09OQ0UobmlkID09IE1BWF9OVU1OT0RFUywgIlVzYWdlIG9mIE1BWF9OVU1OT0RFUyBpcyBk
+ZXByZWNhdGVkLiBVc2UgTlVNQV9OT19OT0RFIGluc3RlYWRcbiIpKQ0KPiArIAkJbmlkID0gTlVN
+QV9OT19OT0RFOw0KPiArIA0KPiAgLQkvKg0KPiAgLQkgKiBEZXRlY3QgYW55IGFjY2lkZW50YWwg
+dXNlIG9mIHRoZXNlIEFQSXMgYWZ0ZXIgc2xhYiBpcyByZWFkeSwgYXMgYXQNCj4gIC0JICogdGhp
+cyBtb21lbnQgbWVtYmxvY2sgbWF5IGJlIGRlaW5pdGlhbGl6ZWQgYWxyZWFkeSBhbmQgaXRzDQo+
+ICAtCSAqIGludGVybmFsIGRhdGEgbWF5IGJlIGRlc3Ryb3llZCAoYWZ0ZXIgZXhlY3V0aW9uIG9m
+IG1lbWJsb2NrX2ZyZWVfYWxsKQ0KPiAgLQkgKi8NCj4gIC0JaWYgKFdBUk5fT05fT05DRShzbGFi
+X2lzX2F2YWlsYWJsZSgpKSkgew0KPiAgLQkJdm9pZCAqdmFkZHIgPSBremFsbG9jX25vZGUoc2l6
+ZSwgR0ZQX05PV0FJVCwgbmlkKTsNCj4gIC0NCj4gIC0JCXJldHVybiB2YWRkciA/IHZpcnRfdG9f
+cGh5cyh2YWRkcikgOiAwOw0KPiAgLQl9DQo+ICAtDQoNClRoaXMgbG9va3MgbGlrZSB5b3UncmUg
+ZGVsZXRpbmcgdGhlIGNoZWNrIGZyb20gdGhlDQptZW1ibG9ja19hbGxvY19yYW5nZSgpPyBUaGUg
+aW50ZW50aW9uIG9mDQpjb21taXQgOTRmZjQ2ZGU0YTczOCAoIm1lbWJsb2NrOiBNb3ZlIGxhdGUg
+YWxsb2Mgd2FybmluZyBkb3duIHRvIHBoeXMgYWxsb2MiKQ0Kd2FzIHRvICphZGQqIHRoaXMgY2hl
+Y2sgaGVyZS4NCg0KRG8geW91IGhhdmUgYSBsaW5rIHdoZXJlIEkgY2FuIHNlZSB0aGUgZmluYWwg
+cmVwbz8NCkknbSBub3Qgc2VlaW5nIGl0IGhlcmU6DQpodHRwczovL2dpdC5rZXJuZWwub3JnL3B1
+Yi9zY20vbGludXgva2VybmVsL2dpdC9uZXh0L2xpbnV4LW5leHQuZ2l0L3RyZWUvbW0vbWVtYmxv
+Y2suYw0KDQpKRw0KPiAgIAlpZiAoIWFsaWduKSB7DQo+ICAgCQkvKiBDYW4ndCB1c2UgV0FSTnMg
+dGhpcyBlYXJseSBpbiBib290IG9uIHBvd2VycGMgKi8NCj4gICAJCWR1bXBfc3RhY2soKTsNCg0K
 
