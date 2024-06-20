@@ -1,201 +1,583 @@
-Return-Path: <linux-kernel+bounces-222566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657FA9103BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:08:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA8F9103C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6952B1C210D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:08:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7850C1F2230C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5EF1AD489;
-	Thu, 20 Jun 2024 12:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nTxmPx2v"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F151ABCC3;
+	Thu, 20 Jun 2024 12:08:43 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58801AC226;
-	Thu, 20 Jun 2024 12:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7D617B429;
+	Thu, 20 Jun 2024 12:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718885225; cv=none; b=T0ayVCfb7wxouNcJt4IQHINT8T/dg+WJhu/xpBHI5rrs9CWN7br8nk5mCcTKLj8la+aBw5NYRJ/05sXSeWR15VOBIKBAB+/z+1h9ypA8oPGvwxBrIzDt4qLWnNOAaHKhE45FlV3NLabu7p9sUKWervh0c6idbs3bfpKBV2JlaOU=
+	t=1718885322; cv=none; b=MNvQIwcGR/YjxMYvCvGhKeeQRolkVcYS2HkNB3cijy9lWC0lIG/PUmiRNA4MR9iCOGwj8dGywOngyzXLzd0OZjjbOT+7ZwuzKcwPXVW5UaBaDpRe5d9zbuLtuXqKMoXIOVIBPZ5/vdVIKIbBkMFn0P4EZmxM6NpAdI2kri4zc3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718885225; c=relaxed/simple;
-	bh=k7Sw6mMBgL6PEDVJl8Wgs/XytYkQCpWipayNGhYraYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMvQ9ABYD8YFoztOdfoxHNQX9BbgeE55scLmaPfIDwR4a6fM/GYC1dtRPmPPvdtoc8IGOWRy50JDgtcgC81GJD36xknG4gtWtzP5Ou43DuEgXRZ1UEslKrbtqldrSxa/aKvhIeVaGQNmjXPiYtMUimkX2MaR98Z0BbtHbRVhk+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nTxmPx2v; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52bc035a7ccso856800e87.2;
-        Thu, 20 Jun 2024 05:07:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718885222; x=1719490022; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bdJE30S2Vadyj3WLYb1jiaxf0LmQe94InZQcowugJGw=;
-        b=nTxmPx2vzYh0G1iIYV1PHi5aZEGEPkJcRFVrOuvSJu2q/5sUaIVJqCcs/AzgqqWNjn
-         VqNqBE+5RSaWht06bPSnCqoPRq2a09dbyvqTscUTAMK6kRE5SsZR42wreOQy17VA4sXu
-         rEF8jGbY6tOdDkOwrKpKhSh+gCwIz7frXdpVUE44PDYccZWuyEwOGG+KYQKC+WfT+sBX
-         I3arjnDM9NWQUoKTgVC5AN0mS4PMfm3sGcs8g3gm+D9GWOt2/zg4WOqmJn40GDRPEEZB
-         Q5A8IeraYT9fN3ENGCKzCBdvaRcvnJM6ueqrDfvQf0wZDT+XRhRKFcjdPEPCjYr4i17k
-         vFCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718885222; x=1719490022;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bdJE30S2Vadyj3WLYb1jiaxf0LmQe94InZQcowugJGw=;
-        b=oKz/4ElfhL7gqmB6C+McqTt0VMm3c4z1Pt+O8JG2NV0ejQ7bdnsrA6ldw97k4aS7bq
-         uHZ3Q8StkedjglTs6vUKNTyQGVdw4U3hGiMnUWi4Sy/NMmwlyR4OTTlsME9m8ZuJBvIE
-         YYxdiGDNtwsI+7gsaT3fcc8CIDprsApHQdYLRCE7KRuw7zbsxOyehKEfyWCe2rEXswAP
-         NCUGIPnCo1fPIoWA2Lfq240oim4RT/ZPxRGRV7L6lkKD5I5ZYPRom6r/dQSmqcfeKz1O
-         KehhpdMbUI7+qYt4QewOXTEkg03a0Vi2SI5kG6XNd17vfPFklGGWTCsdPxKd81kjMoYq
-         0NXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWghwNQQ7O9jd/0n9NkW0LBoy/HbT9+0eB0ogUzt/QrLaxnl7/Sm8JJg2s5ZwG/h6foTM3WH92nkq6epd85Wy+hcvWMP+XRjVCBhTiaO/6chJLKZ+Vqzo8cDpB9V8VUwTirKLnF
-X-Gm-Message-State: AOJu0YzukzDLhZDqfVSKM+V5QxFjBl2QP3+u/WnVbfepwiHDkgnaUBHc
-	5Jes9Kn1gPKes2uoltpR8+PeELyTR65QNcbnLmj0HQvv6qqFYk2t
-X-Google-Smtp-Source: AGHT+IH7EA7ojjgOEAN9QY2Sip1uTsB7157OhZwJSe0fvPLVID47wVVFWRpzV0KqBSbzftOZME6SoQ==
-X-Received: by 2002:a05:6512:3b8b:b0:52c:ce4a:3a8a with SMTP id 2adb3069b0e04-52cce4a3b5emr2366093e87.1.1718885221604;
-        Thu, 20 Jun 2024 05:07:01 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2825863sm2016905e87.55.2024.06.20.05.07.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 05:07:01 -0700 (PDT)
-Date: Thu, 20 Jun 2024 15:06:57 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Joao Pinto <jpinto@synopsys.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, xfr@outlook.com, rock.xu@nio.com
-Subject: Re: [PATCH net-next v1] net: stmmac: xgmac: increase length limit of
- descriptor ring
-Message-ID: <e3yzigcfbbkowias54nijvejc36hbcvfgjgbodycka3kfoqqek@46gktho2hwwt>
-References: <20240620085200.583709-1-0x1207@gmail.com>
+	s=arc-20240116; t=1718885322; c=relaxed/simple;
+	bh=k/hBmGffR/8FG8yAj00B670WBvkrDKB18J3Awx3t6UE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mtup86OJ8kko/+4S/7XF7C/map+OmA+lMSRDE6kzMkl7r1bt1Od5mlacXen/xkUKwve6uPwBrXJ90ldbPihYxrY3wZ2ZxN/NA+nn4+ZjodOBH7luaptNPYpbk+gBtXy1CTOsoLcdgeXpphIV6ZGvtF6zdnifGOZVSS4H6W+AjeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B2DC2BD10;
+	Thu, 20 Jun 2024 12:08:38 +0000 (UTC)
+Message-ID: <d9c511e7-cf5b-449a-8116-bead72580b6d@xs4all.nl>
+Date: Thu, 20 Jun 2024 14:08:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620085200.583709-1-0x1207@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 11/13] staging: media: starfive: Add ISP params video
+ device
+To: Changhuang Liang <changhuang.liang@starfivetech.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Ming Qian <ming.qian@nxp.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Mingjia Zhang <mingjia.zhang@mediatek.com>, Marvin Lin <milkfafa@gmail.com>
+Cc: Jack Zhu <jack.zhu@starfivetech.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+References: <20240402100011.13480-1-changhuang.liang@starfivetech.com>
+ <20240402100011.13480-12-changhuang.liang@starfivetech.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20240402100011.13480-12-changhuang.liang@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Furong
-
-On Thu, Jun 20, 2024 at 04:52:00PM +0800, Furong Xu wrote:
-> DWXGMAC CORE supports a ring length of 65536 descriptors, bump max length
-> from 1024 to 65536
-
-What XGMAC IP-core version are you talking about? The DW XGMAC
-IP-core databooks I have define the upper limit much lesser than that.
-
-Do you understand that specifying 65K descriptors will cause a huge
-amount of memory consumed, right? Each descriptor is equipped with at
-least 1-page buffer. If QoS/XGMAC SPH is enabled then each descriptor
-is equipped with a second buffer. So 65K-descriptor will cause
-allocation of at least 65536 * (4 * 4) bytes + 65536 * PAGE_SIZE
-bytes. So it's ~256MB for the smallest possible 4K-pages. Not to
-mention that there can be more than one queue, two buffers assigned to
-each descriptor and more than a single page allocated for each buffer
-in case of jumbos. All of that will multiply the basic ~256MB memory
-consumption.
-
-Taking all of the above into account, what is the practical reason of
-having so many descriptors allocated? Are you afraid your CPU won't
-keep up with some heavy incoming traffic?
-
-Just a note about GMACs. The only GMAC having the ring-length limited
-is DW QoS Eth (v4.x/v5.x). It may have up to 1K descriptors in the
-ring. DW GMAC v3.73a doesn't have the descriptors array length constraint.
-The last descriptor is marked by a special flag TDESC0.21 and
-RDESC1.15, after meeting which the DMA-engine gets back to the first
-descriptor in the ring.
-
--Serge(y)
-
+On 02/04/2024 12:00, Changhuang Liang wrote:
+> Add ISP params video device to write ISP parameters for 3A.
 > 
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 > ---
->  .../net/ethernet/stmicro/stmmac/dwxgmac2.h    |  2 ++
->  .../ethernet/stmicro/stmmac/stmmac_ethtool.c  | 24 +++++++++++++++----
->  2 files changed, 22 insertions(+), 4 deletions(-)
+>  drivers/staging/media/starfive/camss/Makefile |   2 +
+>  .../staging/media/starfive/camss/stf-camss.c  |  23 +-
+>  .../staging/media/starfive/camss/stf-camss.h  |   3 +
+>  .../media/starfive/camss/stf-isp-params.c     | 238 ++++++++++++++++++
+>  .../staging/media/starfive/camss/stf-isp.h    |   4 +
+>  .../staging/media/starfive/camss/stf-output.c |  83 ++++++
+>  .../staging/media/starfive/camss/stf-output.h |  22 ++
+>  7 files changed, 374 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/staging/media/starfive/camss/stf-isp-params.c
+>  create mode 100644 drivers/staging/media/starfive/camss/stf-output.c
+>  create mode 100644 drivers/staging/media/starfive/camss/stf-output.h
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-> index 6a2c7d22df1e..264f4f876c74 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-> @@ -11,6 +11,8 @@
+> diff --git a/drivers/staging/media/starfive/camss/Makefile b/drivers/staging/media/starfive/camss/Makefile
+> index 411b45f3fb52..077165cbba7a 100644
+> --- a/drivers/staging/media/starfive/camss/Makefile
+> +++ b/drivers/staging/media/starfive/camss/Makefile
+> @@ -9,6 +9,8 @@ starfive-camss-objs += \
+>  		stf-capture.o \
+>  		stf-isp.o \
+>  		stf-isp-hw-ops.o \
+> +		stf-isp-params.o \
+> +		stf-output.o \
+>  		stf-video.o
 >  
->  /* Misc */
->  #define XGMAC_JUMBO_LEN			16368
-> +#define XGMAC_DMA_MAX_TX_SIZE		65536
-> +#define XGMAC_DMA_MAX_RX_SIZE		65536
->  
->  /* MAC Registers */
->  #define XGMAC_TX_CONFIG			0x00000000
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
-> index 18468c0228f0..3ae465c5a712 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
-> @@ -491,9 +491,16 @@ static void stmmac_get_ringparam(struct net_device *netdev,
->  				 struct netlink_ext_ack *extack)
+>  obj-$(CONFIG_VIDEO_STARFIVE_CAMSS) += starfive-camss.o
+> diff --git a/drivers/staging/media/starfive/camss/stf-camss.c b/drivers/staging/media/starfive/camss/stf-camss.c
+> index 3fe4e3332719..20eef0daccbe 100644
+> --- a/drivers/staging/media/starfive/camss/stf-camss.c
+> +++ b/drivers/staging/media/starfive/camss/stf-camss.c
+> @@ -127,6 +127,7 @@ static int stfcamss_register_devs(struct stfcamss *stfcamss)
 >  {
->  	struct stmmac_priv *priv = netdev_priv(netdev);
-
-> +	u32 dma_max_rx_size = DMA_MAX_RX_SIZE;
-> +	u32 dma_max_tx_size = DMA_MAX_TX_SIZE;
+>  	struct stf_capture *cap_yuv = &stfcamss->captures[STF_CAPTURE_YUV];
+>  	struct stf_capture *cap_scd = &stfcamss->captures[STF_CAPTURE_SCD];
+> +	struct stf_output *output = &stfcamss->output;
+>  	struct stf_isp_dev *isp_dev = &stfcamss->isp_dev;
+>  	int ret;
 >  
-> -	ring->rx_max_pending = DMA_MAX_RX_SIZE;
-> -	ring->tx_max_pending = DMA_MAX_TX_SIZE;
-> +	if (priv->plat->has_xgmac) {
-> +		dma_max_rx_size = XGMAC_DMA_MAX_RX_SIZE;
-> +		dma_max_tx_size = XGMAC_DMA_MAX_TX_SIZE;
+> @@ -137,13 +138,20 @@ static int stfcamss_register_devs(struct stfcamss *stfcamss)
+>  		return ret;
+>  	}
+>  
+> -	ret = stf_capture_register(stfcamss, &stfcamss->v4l2_dev);
+> +	ret = stf_output_register(stfcamss, &stfcamss->v4l2_dev);
+>  	if (ret < 0) {
+>  		dev_err(stfcamss->dev,
+>  			"failed to register capture: %d\n", ret);
+>  		goto err_isp_unregister;
+>  	}
+>  
+> +	ret = stf_capture_register(stfcamss, &stfcamss->v4l2_dev);
+> +	if (ret < 0) {
+> +		dev_err(stfcamss->dev,
+> +			"failed to register capture: %d\n", ret);
+> +		goto err_out_unregister;
 > +	}
 > +
-> +	ring->rx_max_pending = dma_max_rx_size;
-> +	ring->tx_max_pending = dma_max_tx_size;
-
-Do you understand the consequence of this change, right?
-De
-
->  	ring->rx_pending = priv->dma_conf.dma_rx_size;
->  	ring->tx_pending = priv->dma_conf.dma_tx_size;
+>  	ret = media_create_pad_link(&isp_dev->subdev.entity, STF_ISP_PAD_SRC,
+>  				    &cap_yuv->video.vdev.entity, 0, 0);
+>  	if (ret)
+> @@ -158,13 +166,23 @@ static int stfcamss_register_devs(struct stfcamss *stfcamss)
+>  
+>  	cap_scd->video.source_subdev = &isp_dev->subdev;
+>  
+> +	ret = media_create_pad_link(&output->video.vdev.entity, 0,
+> +				    &isp_dev->subdev.entity, STF_ISP_PAD_SINK_PARAMS,
+> +				    0);
+> +	if (ret)
+> +		goto err_rm_links1;
+> +
+>  	return ret;
+>  
+> +err_rm_links1:
+> +	media_entity_remove_links(&cap_scd->video.vdev.entity);
+>  err_rm_links0:
+>  	media_entity_remove_links(&isp_dev->subdev.entity);
+>  	media_entity_remove_links(&cap_yuv->video.vdev.entity);
+>  err_cap_unregister:
+>  	stf_capture_unregister(stfcamss);
+> +err_out_unregister:
+> +	stf_output_unregister(stfcamss);
+>  err_isp_unregister:
+>  	stf_isp_unregister(&stfcamss->isp_dev);
+>  
+> @@ -175,14 +193,17 @@ static void stfcamss_unregister_devs(struct stfcamss *stfcamss)
+>  {
+>  	struct stf_capture *cap_yuv = &stfcamss->captures[STF_CAPTURE_YUV];
+>  	struct stf_capture *cap_scd = &stfcamss->captures[STF_CAPTURE_SCD];
+> +	struct stf_output *output = &stfcamss->output;
+>  	struct stf_isp_dev *isp_dev = &stfcamss->isp_dev;
+>  
+> +	media_entity_remove_links(&output->video.vdev.entity);
+>  	media_entity_remove_links(&isp_dev->subdev.entity);
+>  	media_entity_remove_links(&cap_yuv->video.vdev.entity);
+>  	media_entity_remove_links(&cap_scd->video.vdev.entity);
+>  
+>  	stf_isp_unregister(&stfcamss->isp_dev);
+>  	stf_capture_unregister(stfcamss);
+> +	stf_output_unregister(stfcamss);
 >  }
-> @@ -503,12 +510,21 @@ static int stmmac_set_ringparam(struct net_device *netdev,
->  				struct kernel_ethtool_ringparam *kernel_ring,
->  				struct netlink_ext_ack *extack)
->  {
-> +	struct stmmac_priv *priv = netdev_priv(netdev);
-> +	u32 dma_max_rx_size = DMA_MAX_RX_SIZE;
-> +	u32 dma_max_tx_size = DMA_MAX_TX_SIZE;
+>  
+>  static int stfcamss_subdev_notifier_bound(struct v4l2_async_notifier *async,
+> diff --git a/drivers/staging/media/starfive/camss/stf-camss.h b/drivers/staging/media/starfive/camss/stf-camss.h
+> index ae49c7031ab7..3f84f1a1e997 100644
+> --- a/drivers/staging/media/starfive/camss/stf-camss.h
+> +++ b/drivers/staging/media/starfive/camss/stf-camss.h
+> @@ -21,6 +21,7 @@
+>  #include "stf-buffer.h"
+>  #include "stf-isp.h"
+>  #include "stf-capture.h"
+> +#include "stf-output.h"
+>  
+>  enum stf_port_num {
+>  	STF_PORT_DVP = 0,
+> @@ -55,6 +56,7 @@ struct stfcamss {
+>  	struct device *dev;
+>  	struct stf_isp_dev isp_dev;
+>  	struct stf_capture captures[STF_CAPTURE_NUM];
+> +	struct stf_output output;
+>  	struct v4l2_async_notifier notifier;
+>  	void __iomem *syscon_base;
+>  	void __iomem *isp_base;
+> @@ -132,4 +134,5 @@ static inline void stf_syscon_reg_clear_bit(struct stfcamss *stfcamss,
+>  	value = ioread32(stfcamss->syscon_base + reg);
+>  	iowrite32(value & ~bit_mask, stfcamss->syscon_base + reg);
+>  }
 > +
-> +	if (priv->plat->has_xgmac) {
-> +		dma_max_rx_size = XGMAC_DMA_MAX_RX_SIZE;
-> +		dma_max_tx_size = XGMAC_DMA_MAX_TX_SIZE;
+>  #endif /* STF_CAMSS_H */
+> diff --git a/drivers/staging/media/starfive/camss/stf-isp-params.c b/drivers/staging/media/starfive/camss/stf-isp-params.c
+> new file mode 100644
+> index 000000000000..dbf50f31709e
+> --- /dev/null
+> +++ b/drivers/staging/media/starfive/camss/stf-isp-params.c
+> @@ -0,0 +1,238 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * stf-isp-params.c
+> + *
+> + * StarFive Camera Subsystem - V4L2 device node
+> + *
+> + * Copyright (C) 2021-2023 StarFive Technology Co., Ltd.
+> + */
+> +
+> +#include <media/videobuf2-dma-contig.h>
+> +
+> +#include "stf-camss.h"
+> +#include "stf-video.h"
+> +
+> +static inline struct stfcamss_buffer *
+> +to_stfcamss_buffer(struct vb2_v4l2_buffer *vbuf)
+> +{
+> +	return container_of(vbuf, struct stfcamss_buffer, vb);
+> +}
+> +
+> +static int stf_isp_params_queue_setup(struct vb2_queue *q,
+> +				      unsigned int *num_buffers,
+> +				      unsigned int *num_planes,
+> +				      unsigned int sizes[],
+> +				      struct device *alloc_devs[])
+> +{
+
+Add:
+
+        if (*nplanes)
+                return sizes[0] < sizeof(struct jh7110_isp_params_buffer ? -EINVAL : 0;
+
+> +	*num_planes = 1;
+> +	sizes[0] = sizeof(struct jh7110_isp_params_buffer);
+> +
+> +	return 0;
+> +}
+> +
+> +static int stf_isp_params_buf_init(struct vb2_buffer *vb)
+> +{
+> +	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+> +	struct stfcamss_buffer *buffer = to_stfcamss_buffer(vbuf);
+> +	dma_addr_t *paddr;
+> +
+> +	paddr = vb2_plane_cookie(vb, 0);
+> +	buffer->addr[0] = *paddr;
+> +	buffer->vaddr = vb2_plane_vaddr(vb, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static int stf_isp_params_buf_prepare(struct vb2_buffer *vb)
+> +{
+> +	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+> +
+> +	if (sizeof(struct jh7110_isp_params_buffer) > vb2_plane_size(vb, 0))
+> +		return -EINVAL;
+> +
+> +	vb2_set_plane_payload(vb, 0, sizeof(struct jh7110_isp_params_buffer));
+> +
+> +	vbuf->field = V4L2_FIELD_NONE;
+> +
+> +	return 0;
+> +}
+> +
+> +static void stf_isp_params_buf_queue(struct vb2_buffer *vb)
+> +{
+> +	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+> +	struct stfcamss_video *video = vb2_get_drv_priv(vb->vb2_queue);
+> +	struct stfcamss_buffer *buffer = to_stfcamss_buffer(vbuf);
+> +
+> +	video->ops->queue_buffer(video, buffer);
+> +}
+> +
+> +static void stf_isp_params_stop_streaming(struct vb2_queue *q)
+> +{
+> +	struct stfcamss_video *video = vb2_get_drv_priv(q);
+> +
+> +	video->ops->flush_buffers(video, VB2_BUF_STATE_ERROR);
+> +}
+> +
+> +static const struct vb2_ops stf_isp_params_vb2_q_ops = {
+> +	.queue_setup     = stf_isp_params_queue_setup,
+> +	.wait_prepare    = vb2_ops_wait_prepare,
+> +	.wait_finish     = vb2_ops_wait_finish,
+> +	.buf_init        = stf_isp_params_buf_init,
+> +	.buf_prepare     = stf_isp_params_buf_prepare,
+> +	.buf_queue       = stf_isp_params_buf_queue,
+> +	.stop_streaming  = stf_isp_params_stop_streaming,
+> +};
+> +
+> +static int stf_isp_params_init_format(struct stfcamss_video *video)
+> +{
+> +	video->active_fmt.fmt.meta.dataformat = V4L2_META_FMT_STF_ISP_PARAMS;
+> +	video->active_fmt.fmt.meta.buffersize = sizeof(struct jh7110_isp_params_buffer);
+> +
+> +	return 0;
+> +}
+> +
+> +static int stf_isp_params_querycap(struct file *file, void *fh,
+> +				   struct v4l2_capability *cap)
+> +{
+> +	strscpy(cap->driver, "starfive-camss", sizeof(cap->driver));
+> +	strscpy(cap->card, "Starfive Camera Subsystem", sizeof(cap->card));
+> +
+> +	return 0;
+> +}
+> +
+> +static int stf_isp_params_enum_fmt(struct file *file, void *priv,
+> +				   struct v4l2_fmtdesc *f)
+> +{
+> +	struct stfcamss_video *video = video_drvdata(file);
+> +
+> +	if (f->index > 0 || f->type != video->type)
+> +		return -EINVAL;
+> +
+> +	f->pixelformat = video->active_fmt.fmt.meta.dataformat;
+> +	return 0;
+> +}
+> +
+> +static int stf_isp_params_g_fmt(struct file *file, void *fh, struct v4l2_format *f)
+> +{
+> +	struct stfcamss_video *video = video_drvdata(file);
+> +	struct v4l2_meta_format *meta = &f->fmt.meta;
+> +
+> +	if (f->type != video->type)
+> +		return -EINVAL;
+> +
+> +	meta->dataformat = video->active_fmt.fmt.meta.dataformat;
+> +	meta->buffersize = video->active_fmt.fmt.meta.buffersize;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct v4l2_ioctl_ops stf_isp_params_ioctl_ops = {
+> +	.vidioc_querycap                = stf_isp_params_querycap,
+> +	.vidioc_enum_fmt_meta_out	= stf_isp_params_enum_fmt,
+> +	.vidioc_g_fmt_meta_out          = stf_isp_params_g_fmt,
+> +	.vidioc_s_fmt_meta_out          = stf_isp_params_g_fmt,
+> +	.vidioc_try_fmt_meta_out        = stf_isp_params_g_fmt,
+> +	.vidioc_reqbufs                 = vb2_ioctl_reqbufs,
+> +	.vidioc_querybuf                = vb2_ioctl_querybuf,
+> +	.vidioc_qbuf                    = vb2_ioctl_qbuf,
+> +	.vidioc_expbuf                  = vb2_ioctl_expbuf,
+> +	.vidioc_dqbuf                   = vb2_ioctl_dqbuf,
+> +	.vidioc_create_bufs             = vb2_ioctl_create_bufs,
+> +	.vidioc_prepare_buf             = vb2_ioctl_prepare_buf,
+> +	.vidioc_streamon                = vb2_ioctl_streamon,
+> +	.vidioc_streamoff               = vb2_ioctl_streamoff,
+> +};
+> +
+> +static const struct v4l2_file_operations stf_isp_params_fops = {
+> +	.owner          = THIS_MODULE,
+> +	.unlocked_ioctl = video_ioctl2,
+> +	.open           = v4l2_fh_open,
+> +	.release        = vb2_fop_release,
+> +	.poll           = vb2_fop_poll,
+> +	.mmap           = vb2_fop_mmap,
+> +	.read           = vb2_fop_read,
+
+This isn't needed since no read support is indicated in q->io_modes.
+
+Note: I see that this is also set in stf_vid_fops, but it can be dropped
+there as well. Please make a separate patch for that change.
+
+> +};
+> +
+> +static void stf_isp_params_release(struct video_device *vdev)
+> +{
+> +	struct stfcamss_video *video = video_get_drvdata(vdev);
+> +
+> +	media_entity_cleanup(&vdev->entity);
+> +
+> +	mutex_destroy(&video->q_lock);
+> +	mutex_destroy(&video->lock);
+> +}
+> +
+> +int stf_isp_params_register(struct stfcamss_video *video,
+> +			    struct v4l2_device *v4l2_dev,
+> +			    const char *name)
+> +{
+> +	struct video_device *vdev = &video->vdev;
+> +	struct vb2_queue *q;
+> +	struct media_pad *pad = &video->pad;
+> +	int ret;
+> +
+> +	mutex_init(&video->q_lock);
+> +	mutex_init(&video->lock);
+> +
+> +	q = &video->vb2_q;
+> +	q->drv_priv = video;
+> +	q->mem_ops = &vb2_dma_contig_memops;
+> +	q->ops = &stf_isp_params_vb2_q_ops;
+> +	q->type = video->type;
+> +	q->io_modes = VB2_DMABUF | VB2_MMAP;
+> +	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
+> +	q->buf_struct_size = sizeof(struct stfcamss_buffer);
+> +	q->dev = video->stfcamss->dev;
+> +	q->lock = &video->q_lock;
+> +	q->min_queued_buffers = STFCAMSS_MIN_BUFFERS;
+> +	ret = vb2_queue_init(q);
+> +	if (ret < 0) {
+> +		dev_err(video->stfcamss->dev,
+> +			"Failed to init vb2 queue: %d\n", ret);
+> +		goto err_mutex_destroy;
 > +	}
 > +
->  	if (ring->rx_mini_pending || ring->rx_jumbo_pending ||
->  	    ring->rx_pending < DMA_MIN_RX_SIZE ||
-> -	    ring->rx_pending > DMA_MAX_RX_SIZE ||
-> +	    ring->rx_pending > dma_max_rx_size ||
->  	    !is_power_of_2(ring->rx_pending) ||
->  	    ring->tx_pending < DMA_MIN_TX_SIZE ||
-> -	    ring->tx_pending > DMA_MAX_TX_SIZE ||
-> +	    ring->tx_pending > dma_max_tx_size ||
->  	    !is_power_of_2(ring->tx_pending))
->  		return -EINVAL;
+> +	pad->flags = MEDIA_PAD_FL_SOURCE;
+> +	ret = media_entity_pads_init(&vdev->entity, 1, pad);
+> +	if (ret < 0) {
+> +		dev_err(video->stfcamss->dev,
+> +			"Failed to init video entity: %d\n", ret);
+> +		goto err_mutex_destroy;
+> +	}
+> +
+> +	ret = stf_isp_params_init_format(video);
+> +	if (ret < 0) {
+> +		dev_err(video->stfcamss->dev,
+> +			"Failed to init format: %d\n", ret);
+> +		goto err_media_cleanup;
+> +	}
+> +	vdev->ioctl_ops = &stf_isp_params_ioctl_ops;
+> +	vdev->device_caps = V4L2_CAP_META_OUTPUT;
+> +	vdev->fops = &stf_isp_params_fops;
+> +	vdev->device_caps |= V4L2_CAP_STREAMING | V4L2_CAP_IO_MC;
+> +	vdev->vfl_dir = VFL_DIR_TX;
+> +	vdev->release = stf_isp_params_release;
+> +	vdev->v4l2_dev = v4l2_dev;
+> +	vdev->queue = &video->vb2_q;
+> +	vdev->lock = &video->lock;
+> +	strscpy(vdev->name, name, sizeof(vdev->name));
+> +
+> +	video_set_drvdata(vdev, video);
+> +
+> +	ret = video_register_device(vdev, VFL_TYPE_VIDEO, -1);
+> +	if (ret < 0) {
+> +		dev_err(video->stfcamss->dev,
+> +			"Failed to register video device: %d\n", ret);
+> +		goto err_media_cleanup;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_media_cleanup:
+> +	media_entity_cleanup(&vdev->entity);
+> +err_mutex_destroy:
+> +	mutex_destroy(&video->lock);
+> +	mutex_destroy(&video->q_lock);
+> +	return ret;
+> +}
+> diff --git a/drivers/staging/media/starfive/camss/stf-isp.h b/drivers/staging/media/starfive/camss/stf-isp.h
+> index eca3ba1ade75..76ea943bfe98 100644
+> --- a/drivers/staging/media/starfive/camss/stf-isp.h
+> +++ b/drivers/staging/media/starfive/camss/stf-isp.h
+> @@ -474,4 +474,8 @@ void stf_set_scd_addr(struct stfcamss *stfcamss,
+>  		      dma_addr_t yhist_addr, dma_addr_t scd_addr,
+>  		      enum stf_isp_type_scd type_scd);
 >  
-> -- 
-> 2.34.1
-> 
-> 
+> +int stf_isp_params_register(struct stfcamss_video *video,
+> +			    struct v4l2_device *v4l2_dev,
+> +			    const char *name);
+> +
+>  #endif /* STF_ISP_H */
+> diff --git a/drivers/staging/media/starfive/camss/stf-output.c b/drivers/staging/media/starfive/camss/stf-output.c
+> new file mode 100644
+> index 000000000000..8eaf4979cafa
+> --- /dev/null
+> +++ b/drivers/staging/media/starfive/camss/stf-output.c
+> @@ -0,0 +1,83 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * StarFive Camera Subsystem - output device
+> + *
+> + * Copyright (C) 2023 StarFive Technology Co., Ltd.
+> + */
+> +
+> +#include "stf-camss.h"
+> +
+> +static inline struct stf_output *to_stf_output(struct stfcamss_video *video)
+> +{
+> +	return container_of(video, struct stf_output, video);
+> +}
+> +
+> +static int stf_output_queue_buffer(struct stfcamss_video *video,
+> +				   struct stfcamss_buffer *buf)
+> +{
+> +	struct stf_output *output = to_stf_output(video);
+> +	struct stf_v_buf *v_bufs = &output->buffers;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&v_bufs->lock, flags);
+> +	stf_buf_add_ready(v_bufs, buf);
+> +	spin_unlock_irqrestore(&v_bufs->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int stf_output_flush_buffers(struct stfcamss_video *video,
+> +				    enum vb2_buffer_state state)
+> +{
+> +	struct stf_output *output = to_stf_output(video);
+> +	struct stf_v_buf *v_bufs = &output->buffers;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&v_bufs->lock, flags);
+> +	stf_buf_flush(v_bufs, state);
+> +	spin_unlock_irqrestore(&v_bufs->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct stfcamss_video_ops stf_output_ops = {
+> +	.queue_buffer = stf_output_queue_buffer,
+> +	.flush_buffers = stf_output_flush_buffers,
+> +};
+> +
+> +static void stf_output_init(struct stfcamss *stfcamss, struct stf_output *out)
+> +{
+> +	out->buffers.state = STF_OUTPUT_OFF;
+> +	out->buffers.buf[0] = NULL;
+> +	out->buffers.buf[1] = NULL;
+> +	out->buffers.active_buf = 0;
+> +	INIT_LIST_HEAD(&out->buffers.pending_bufs);
+> +	INIT_LIST_HEAD(&out->buffers.ready_bufs);
+> +	spin_lock_init(&out->buffers.lock);
+> +
+> +	out->video.stfcamss = stfcamss;
+> +	out->video.type = V4L2_BUF_TYPE_META_OUTPUT;
+> +}
+> +
+> +void stf_output_unregister(struct stfcamss *stfcamss)
+> +{
+> +	struct stf_output *output = &stfcamss->output;
+> +
+> +	if (!video_is_registered(&output->video.vdev))
+> +		return;
+> +
+> +	media_entity_cleanup(&output->video.vdev.entity);
+> +	vb2_video_unregister_device(&output->video.vdev);
+> +}
+> +
+> +int stf_output_register(struct stfcamss *stfcamss,
+> +			struct v4l2_device *v4l2_dev)
+> +{
+> +	struct stf_output *output = &stfcamss->output;
+> +
+> +	output->video.ops = &stf_output_ops;
+> +	stf_output_init(stfcamss, output);
+> +	stf_isp_params_register(&output->video, v4l2_dev, "output_params");
+> +
+> +	return 0;
+> +}
+> diff --git a/drivers/staging/media/starfive/camss/stf-output.h b/drivers/staging/media/starfive/camss/stf-output.h
+> new file mode 100644
+> index 000000000000..d3591a0b609b
+> --- /dev/null
+> +++ b/drivers/staging/media/starfive/camss/stf-output.h
+> @@ -0,0 +1,22 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Starfive Camera Subsystem driver
+> + *
+> + * Copyright (C) 2023 StarFive Technology Co., Ltd.
+> + */
+> +
+> +#ifndef STF_OUTPUT_H
+> +#define STF_OUTPUT_H
+> +
+> +#include "stf-video.h"
+> +
+> +struct stf_output {
+> +	struct stfcamss_video video;
+> +	struct stf_v_buf buffers;
+> +};
+> +
+> +int stf_output_register(struct stfcamss *stfcamss,
+> +			struct v4l2_device *v4l2_dev);
+> +void stf_output_unregister(struct stfcamss *stfcamss);
+> +
+> +#endif
+
+Regards,
+
+	Hans
 
