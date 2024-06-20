@@ -1,172 +1,127 @@
-Return-Path: <linux-kernel+bounces-222091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1B790FCB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:30:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F132E90FCAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D9051C23AC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:30:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27022B23B84
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC483BBCB;
-	Thu, 20 Jun 2024 06:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909473BB48;
+	Thu, 20 Jun 2024 06:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LiB0GFQO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W+wzj8Qw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C91E3D3B8;
-	Thu, 20 Jun 2024 06:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF8F1CFA9;
+	Thu, 20 Jun 2024 06:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718864984; cv=none; b=hYwL3i0v5gWxzKICIhGKbe5NcZLWZpE0ppFdskaILtFR5N2vXtjbF7SQ7a1MLdEsoMz/KjjtywgUWHUF2hvwbV0KLOOuNcPdY1ZcgK6M8rfqjass2wEzJ5O0g2631rcqaDtpvY2uz8je9VCfijV1MVZkvaDc29r8+90kTm6zlsA=
+	t=1718864960; cv=none; b=rD3H1tuUSTVB2ct/IVHYVx1Oj6huU/cyvOAL/K5/m/q/oKrsw+gTnBqGWreHi5OldxDtOSCIqVbd8/TB7MhTqyUx80os+UknaYwbvfmIamnfzC26N1+V3DSXrGi0/EJ0c629ZrViUIvRC1HVxs59MSYV4cvfjLVob8RmBLbG6y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718864984; c=relaxed/simple;
-	bh=+ifqHEMdiknxEzGlwAtc+V5/msMnN6CtvpwhXeolp3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iPyQu9pPPwZ5rkc6mKf9beH+uSpdLzo9+I/jPPELXuhy865PpIaXh0/J56lSSAn/Z+MQs7oLaR1z/cPJzzTV1ZW6X4TtRwci8ab0P7F4kdEhGrM1ioLUneMeYMj2nFxRfuzG+W0jBtAXY8pAU63MTfgTIBxiUm8g05f3URvreV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LiB0GFQO; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718864981; x=1750400981;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+ifqHEMdiknxEzGlwAtc+V5/msMnN6CtvpwhXeolp3Y=;
-  b=LiB0GFQOrXez3xszeeSDRirftem/YgJfmk5hi6L3jXq7QfLqJHKTO3cR
-   3RwCQ1NfOKIkjSk+Q5xgl4W9kyjp9V7qTNPs0ku3VFjVc5j2Ua2Ur/+Ye
-   JGmwwBhiByg5USFhEAMQd8F/xECOqBNQdC1wLSRikZnXQtPYbRT+V0bf/
-   Pq0GAOznB3EB3cyf2vWX2Jec8/c1hPnxCludQQ0mQWVwfgKG+QlZEH4wk
-   y6dySlNIgorSCF+aV5iRY0xj0+kUzd0yrVszKVIF3LM3E1F2oIKH7EYKE
-   kEYOTRmP3VT5O2840NLAqXDwzZZFPwiybWBTf1AwgTtYPaqIbTolwnnWh
-   w==;
-X-CSE-ConnectionGUID: QPeoLFMvSYC0BAkxDzbSIA==
-X-CSE-MsgGUID: PMVNZATbQLykaAeR0hIThg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="15795363"
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="scan'208";a="15795363"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 23:29:40 -0700
-X-CSE-ConnectionGUID: NtJzaDOFRCCIzXGdFcXiJw==
-X-CSE-MsgGUID: dcWuGTf9ROOwgMy3GGFnlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="scan'208";a="42800402"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 19 Jun 2024 23:29:36 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sKBIc-0007O9-07;
-	Thu, 20 Jun 2024 06:29:34 +0000
-Date: Thu, 20 Jun 2024 14:28:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrei Simion <andrei.simion@microchip.com>, brgl@bgdev.pl,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, arnd@arndb.de, gregkh@linuxfoundation.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea@microchip.com>,
-	Andrei Simion <andrei.simion@microchip.com>
-Subject: Re: [PATCH 2/3] ARM: dts: at91: at91-sama7g5ek: add EEPROMs
-Message-ID: <202406201413.tFxSruVt-lkp@intel.com>
-References: <20240619072231.6876-3-andrei.simion@microchip.com>
+	s=arc-20240116; t=1718864960; c=relaxed/simple;
+	bh=AJU+IcQK9TNFEQT1vsa902xQ13yY9qya1GOcSpNF5Ec=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=cb0rdK/WoNYkhzjQGQdgezkLfNd7Ty+wSWzXxnkvrY354Oh4mXXATPLNCq+U4TMhqcOYszrVwuXxiUq3JENZMTDEYYWWVQJx4EsadbzuQxX/8Ys888Pgq6rwHLW1GQ8dBTL5WxiMkqZlxkSKgk9H7/hCwyMQYIbqZsmz+PXVBw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W+wzj8Qw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K1NcKF024459;
+	Thu, 20 Jun 2024 06:29:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+iJ+ZcNNMMRRyKHxGbCQrp
+	ouL0wP99StKm757wGOd9o=; b=W+wzj8QwzY3J/GDwd0vsGFgW4scH805NqRnJSB
+	MsmUkG83WXzVzdP7nbtRtp5Lg+et3hgdYiUZuOsC2XkVfs7QO/snt5BaC1X00Thd
+	5uGjI7HAnqNotM1GDqoCs62YLqexpOF1YmOZu03qdec+LwU1IkYNTphl7YblNV+k
+	JQhG/GA8WZ8IIwNmrpf34rSOZ9r2L5pdaeUEEW56IjW+7heuFwmbgUAIWV1RGN/g
+	Fvp3uzpFrW8JlvdnakDzrc/fDwTUSfJqkswl3dkcxi5POihq/xLwHClA3EibSjAD
+	nurLevnkk0AKDhwKkNYikEHPlrhhYNPbilpQu1BGpE1Pq9Hg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvaqbrhee-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 06:29:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45K6T4Um007576
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 06:29:04 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 19 Jun
+ 2024 23:29:03 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Wed, 19 Jun 2024 23:29:02 -0700
+Subject: [PATCH] drm/tests: add drm_hdmi_state_helper_test
+ MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619072231.6876-3-andrei.simion@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240619-md-drm-tests-drm_hdmi_state_helper_test-v1-1-41c5fe2fdb4a@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAC3Mc2YC/x2NUQrDIBAFrxL2uwvRlqT2KqWIiWsVGhN2pQRC7
+ l7t3xsezBwgxIkEHt0BTN8kac0V1KWDObr8Jky+Muhe3/pBGVw8el6wkBRpy0a/JCvFFbKRPhu
+ xbR+OehxIm3C/KgPVtjGFtP9Lz1flyQnhxC7PsfmbM6yMmfYC5/kDtF1hyZgAAAA=
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Dave Stevenson
+	<dave.stevenson@raspberrypi.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gx46bUwopQ1zNNN4zwehclrcZ-GSZXR_
+X-Proofpoint-ORIG-GUID: gx46bUwopQ1zNNN4zwehclrcZ-GSZXR_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_04,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
+ priorityscore=1501 malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200045
 
-Hi Andrei,
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_hdmi_state_helper_test.o
 
-kernel test robot noticed the following build warnings:
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-[auto build test WARNING on 0c52056d9f77508cb6d4d68d3fc91c6c08ec71af]
+Fixes: eb66d34d793e ("drm/tests: Add output bpc tests")
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrei-Simion/eeprom-at24-avoid-adjusting-offset-for-24AA025E-48-64/20240619-153030
-base:   0c52056d9f77508cb6d4d68d3fc91c6c08ec71af
-patch link:    https://lore.kernel.org/r/20240619072231.6876-3-andrei.simion%40microchip.com
-patch subject: [PATCH 2/3] ARM: dts: at91: at91-sama7g5ek: add EEPROMs
-config: arm-randconfig-004-20240620 (https://download.01.org/0day-ci/archive/20240620/202406201413.tFxSruVt-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240620/202406201413.tFxSruVt-lkp@intel.com/reproduce)
+diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+index 2d3abc71dc16..34ee95d41f29 100644
+--- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
++++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+@@ -1740,4 +1740,5 @@ kunit_test_suites(
+ );
+ 
+ MODULE_AUTHOR("Maxime Ripard <mripard@kernel.org>");
++MODULE_DESCRIPTION("Kunit test for drm_hdmi_state_helper functions");
+ MODULE_LICENSE("GPL");
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406201413.tFxSruVt-lkp@intel.com/
+---
+base-commit: b9578c49456340ca4d3c7ddbaca054ffc2b51bc1
+change-id: 20240619-md-drm-tests-drm_hdmi_state_helper_test-7276e29f8319
 
-dtcheck warnings: (new ones prefixed by >>)
->> arch/arm/boot/dts/microchip/at91-sama7g5ek.dts:407.22-425.5: Warning (avoid_unnecessary_addr_size): /soc/flexcom@e2818000/i2c@600/eeprom@52: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-   arch/arm/boot/dts/microchip/at91-sama7g5ek.dts:427.22-445.5: Warning (avoid_unnecessary_addr_size): /soc/flexcom@e2818000/i2c@600/eeprom@53: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-
-vim +407 arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
-
-   394	
-   395	&flx8 {
-   396		atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_TWI>;
-   397		status = "okay";
-   398	
-   399		i2c8: i2c@600 {
-   400			pinctrl-names = "default";
-   401			pinctrl-0 = <&pinctrl_i2c8_default>;
-   402			i2c-analog-filter;
-   403			i2c-digital-filter;
-   404			i2c-digital-filter-width-ns = <35>;
-   405			status = "okay";
-   406	
- > 407			eeprom0: eeprom@52 {
-   408				compatible = "atmel,24mac02e4";
-   409				reg = <0x52>;
-   410				#address-cells = <1>;
-   411				#size-cells = <1>;
-   412				size = <256>;
-   413				pagesize = <16>;
-   414				vcc-supply = <&vdd_3v3>;
-   415	
-   416				nvmem-layout {
-   417					compatible = "fixed-layout";
-   418					#address-cells = <1>;
-   419					#size-cells = <1>;
-   420	
-   421					eeprom0_eui48: eui48@fa {
-   422						reg = <0xfa 0x6>;
-   423					};
-   424				};
-   425			};
-   426	
-   427			eeprom1: eeprom@53 {
-   428				compatible = "atmel,24mac02e4";
-   429				reg = <0x53>;
-   430				#address-cells = <1>;
-   431				#size-cells = <1>;
-   432				size = <256>;
-   433				pagesize = <16>;
-   434				vcc-supply = <&vdd_3v3>;
-   435	
-   436				nvmem-layout {
-   437					compatible = "fixed-layout";
-   438					#address-cells = <1>;
-   439					#size-cells = <1>;
-   440	
-   441					eeprom1_eui48: eui48@fa {
-   442						reg = <0xfa 0x6>;
-   443					};
-   444				};
-   445			};
-   446		};
-   447	};
-   448	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
