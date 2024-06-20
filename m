@@ -1,108 +1,90 @@
-Return-Path: <linux-kernel+bounces-223210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2842B910FC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:59:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA0B910FDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D37BA287BFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:59:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48EDD1F22E92
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2125F1BC067;
-	Thu, 20 Jun 2024 17:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24B31BD916;
+	Thu, 20 Jun 2024 17:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="Ef2yOdoP"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N6Ax8TWK"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7D31BA87D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9DB1B4C3B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718906240; cv=none; b=eMCm8zGJ2vHLhQLlqxDMA9npvQUOSUuEAdLz5QsgM/FzOtrGxtn99ytq60g3jB1gSnb5DH0cww+9WB+QwqC347gOwp+ZmbDr3oQgG11FPaZMOcj2e0L7WiybBCnCLGG4Pj9dPLV50934Enpv4ffws9SzQ7NiS+s0QNoBpdqVUI4=
+	t=1718906253; cv=none; b=Qu5sRwoQc2KLFUYwXu1HhMy4yBVSQsWG6ThcyfPYnLs3J4TEvHUbiDPe5B6mam+/K64X90ikNvtrfuCdr35RfN+pMWzXPpzL5nxsMg1dshZJ6JMeDxsbHUaKihl8MMaYqJqPgVWsvCoiFMG1hqdbfJXEHFnzY0HUdBQVz9WU22w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718906240; c=relaxed/simple;
-	bh=lL5HxCJiZymjowcOr7xVA2M7Te/xs6i3j2oxZgMh+rs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f63EbqVpAZRa9OAQT4iARcmYNe9SjdNCXT+XU0z/yCimPdrM0mh5xEjGqaJAhqKqGrrwnlOCDXNRrUyts5zW4M3sZQUK4luKgkfBi4KJIeuEEsfKF/kOInLekzIYqhFfFusNwj6hQHV9LeWWJIhKqWkm7HtOaZySGHAqFIn/BEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=Ef2yOdoP; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6fc30e3237so128642566b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:57:16 -0700 (PDT)
+	s=arc-20240116; t=1718906253; c=relaxed/simple;
+	bh=1N1SZwR+ksGwCPMDZYiDQ+lz9Ae8zgclHhUvA9YDZ20=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DtXgYyjkBBcj69xisbMKGXGYOb6p3Bg5exRrk2qm447AytwDU3+JBCUN06hdRtSeOk5BX/XcoSWVzP08smCzHiMSheL/DWIG5phfzEpOO/xv9FSf1V7iw33r30NJ69vzv+p9E6N9BvZS051g36dkkKp1zYh6+r4Zw3f34csDcYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N6Ax8TWK; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2c80637d8adso437377a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:57:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1718906235; x=1719511035; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UP/GNN9hhxz4nMUGrLaNfWrPk3mVaVMWtBi9huNJxPk=;
-        b=Ef2yOdoPvdrdIdPhr5LQiCJ0I9SLxjRSKaL/OqYMX5sqAZCEuTYZ7p/dgSstRd9dBo
-         453/Yyxx0wzRqZnwLXEhOVZlIMMOGUCt9mtMNngn1z/AFwrxtSyZeZigZvfq7nDB88xV
-         bfv/JdkfvxqG+JcOdNlu83TuBlMu8F15agYsQp6cQBRiayP82/3wP2Zfym+grexo+RbH
-         33uSmqeotVnrH7QfBwkcsJPqVTYCS6ltvJkZVCpj529Q28XwqxMs+LKs1pdi2dvKdODM
-         dBTtra4ZW7mcWHzmYzVTyIVE19mJcpcSI3bWWiS5kWd408yqD4I5puVMvo6ZbWc9XIqN
-         69lw==
+        d=gmail.com; s=20230601; t=1718906251; x=1719511051; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6bzcYC+7QMJSAq6nbwz/pdTxPIFYLtbDE2ea+6aoErY=;
+        b=N6Ax8TWK/5S7LFzNubmvjXIcFaltUm246RwutTt8uHNolawsptLejpXv1wJNVcH7hi
+         KtU7lYy7vHO89A4F3nsYvoIQws8gZtFISVipwoEstwMIf9ZqeLx1RFbE+0GtejXiiO+K
+         LhKmOhM2rJxJi8XazSM93P+6VQ5/sgkEFvqYWjMsYohuO3Ru1IMCBAhZ7AMPOso5dwDl
+         e/csIfKmJn3PltsOYLUvZ+RmjZuExUbN0hu/UOsnsRbnCf8OBYXiXkCJGtQnifNWcFOb
+         pIrdnchl1EmsqcUUSVWrjBc6DV3nXu2uum/e32jAth3tSFT3MeGDGljCYKNZmbj5R+OB
+         5eUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718906235; x=1719511035;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UP/GNN9hhxz4nMUGrLaNfWrPk3mVaVMWtBi9huNJxPk=;
-        b=DKKMQH1O6f6wlY4Ba37LKAPaEN5khz9WeL12G2aqW3YZeHYxeVTT/ft4TUH7N1AsLA
-         5M0pqJQ7iLieZPDygZMYhc+fQr8ZnK4AyBaWq8QqyYBgvHBbwH71elGPtVLMj6pWBpQm
-         UKkaOMxQxSvilp4TgqCOHX24pB+HrF7wFGOH3AIlbu7azlzNzeRfPoa+BSZip6w082Rv
-         tgCIRVqBf4aYOG+auIy95Ag2YUlIvmu8M744nvS39gk5nEMmL+nE7+TzfKPwysocq/Kf
-         Hy5VfL7xipIicF9bKzTAeI7ZHRhmYeLCyP4yRbuQk7DVpb5/e5b+Dh8vmEHm+8rnMWsD
-         FjnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVac+Uj8R6AtgAP5ahfTU3QZDoiLVn8oMEHSLfA8jw21+szM58hELsTX0t+BVpNm20XWLzQj2ND8OHJfEtt99RnjLhgOTMi3DULi1pD
-X-Gm-Message-State: AOJu0Yw6bpXSmCMhzpPPGjG5IU8hfSlluiQJTifOGcfwFXNSAD7+BR5j
-	f4LC8ya7F4jj8ATW5qjToQq+QJGKV4NuPPqBQUrqcf0qGLjaApnS9Vtx7eOh4+8=
-X-Google-Smtp-Source: AGHT+IHwzCxasTWecNI2BQg/1Mqv76qvz0pqMMUj9hgHTBodTuDhBkY00q2aX9YgUG43J9U17WwHFQ==
-X-Received: by 2002:a17:906:a09:b0:a6e:f7bf:712e with SMTP id a640c23a62f3a-a6fab618973mr379689666b.27.1718906235388;
-        Thu, 20 Jun 2024 10:57:15 -0700 (PDT)
-Received: from localhost.localdomain ([91.216.213.152])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f42e80sm781370766b.186.2024.06.20.10.57.13
+        d=1e100.net; s=20230601; t=1718906251; x=1719511051;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6bzcYC+7QMJSAq6nbwz/pdTxPIFYLtbDE2ea+6aoErY=;
+        b=gHjqF/iQzF4fu6vwdPhvGpvf87Dm/HIxUiPHAb5UysLOUEjmPWTWd5UUv/HtkPApoM
+         D2FZc+3OfwJblVA8M8CNYIqW1R+F4qd0yYQ9KnjwpHH0V3zrUTYF/43VLjFb5e/s6Q+H
+         +wLoh6wheKitjf3tSPKG/INSatTnghnk9e5DL7TLOAdevmDe+yofRP1g7TsrvY4/PlPL
+         PDsJBa/NlfHd1QhV3ZjlHezNoTvjqJZoXu1uzUr9C31Iw66C6duER98VCZmCUEJpk85x
+         hTwPe5ngleB9V7TiHq/EenXsrl2gPk7Vt+ON7Te/XK2ufYoOqfTSsb9gA1fcaIkN1zNB
+         NlUw==
+X-Gm-Message-State: AOJu0YwSS/o0sDcwL5I3rSpcFTXMnZpKPNQDPzLguy+nh2QYVParbgsl
+	E5BhtJcfINA2s1eaFrkMWgGKdIAS5+eFRmKfFOjrNcq4phw674lpWx23IBR3OBg=
+X-Google-Smtp-Source: AGHT+IGzyYHmrHK4/S/CrwdNkwiA+pUDJ3yDivu3+UrGd8HpzK6oOgREUf8KUPo9rqfklDv5mSyQmQ==
+X-Received: by 2002:a17:90b:4d8a:b0:2c8:84b:8286 with SMTP id 98e67ed59e1d1-2c8084b834dmr1256023a91.37.1718906251564;
+        Thu, 20 Jun 2024 10:57:31 -0700 (PDT)
+Received: from localhost ([216.228.127.128])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e53e0743sm2004328a91.15.2024.06.20.10.57.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 10:57:14 -0700 (PDT)
-From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"J.M.B. Downing" <jonathan.downing@nautel.com>,
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Yangtao Li <frank.li@vivo.com>,
-	Li Zetao <lizetao1@huawei.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Chancel Liu <chancel.liu@nxp.com>,
-	dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	alsa-devel@alsa-project.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Cc: Markus Elfring <Markus.Elfring@web.de>
-Subject: [Patch v4 00/10] Add audio support for LPC32XX CPUs
-Date: Thu, 20 Jun 2024 19:56:31 +0200
-Message-Id: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 20 Jun 2024 10:57:31 -0700 (PDT)
+From: Yury Norov <yury.norov@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Jan Kara <jack@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: [PATCH v4 08/40] perf/arm: use atomic find_bit() API
+Date: Thu, 20 Jun 2024 10:56:31 -0700
+Message-ID: <20240620175703.605111-9-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240620175703.605111-1-yury.norov@gmail.com>
+References: <20240620175703.605111-1-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,50 +93,163 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This pach set is to bring back audio to machines with a LPC32XX CPU.
-The legacy LPC32XX SoC used to have audio spport in linux 2.6.27.
-The support was dropped due to lack of interest from mainaeners.
+Simplify subsystem by use atomic find_bit() or atomic API where
+applicable.
 
-Piotr Wojtaszczyk (10):
-  dt-bindings: dma: pl08x: Add dma-cells description
-  dt-bindings: dma: Add lpc32xx DMA mux binding
-  ASoC: dt-bindings: lpc32xx: Add lpc32xx i2s DT binding
-  ARM: dts: lpc32xx: Add missing dma and i2s properties
-  clk: lpc32xx: initialize regmap using parent syscon
-  dmaengine: Add dma router for pl08x in LPC32XX SoC
-  ARM: lpc32xx: Remove pl08x platform data in favor for device tree
-  mtd: rawnand: lpx32xx: Request DMA channels using DT entries
-  ASoC: fsl: Add i2s and pcm drivers for LPC32xx CPUs
-  i2x: pnx: Use threaded irq to fix warning from del_timer_sync()
+CC: Will Deacon <will@kernel.org>
+Signed-off-by: Yury Norov <yury.norov@gmail.com>
+---
+ drivers/perf/arm-cci.c        | 25 +++++++------------------
+ drivers/perf/arm-ccn.c        | 11 +++--------
+ drivers/perf/arm_dmc620_pmu.c | 10 +++-------
+ drivers/perf/arm_pmuv3.c      |  9 +++------
+ 4 files changed, 16 insertions(+), 39 deletions(-)
 
- .../devicetree/bindings/dma/arm-pl08x.yaml    |   7 +
- .../bindings/dma/nxp,lpc3220-dmamux.yaml      |  56 +++
- .../bindings/sound/nxp,lpc3220-i2s.yaml       |  73 ++++
- MAINTAINERS                                   |  21 +
- arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi        |  53 ++-
- arch/arm/mach-lpc32xx/phy3250.c               |  54 ---
- drivers/clk/Kconfig                           |   1 +
- drivers/clk/nxp/clk-lpc32xx.c                 |  10 +-
- drivers/dma/Kconfig                           |   9 +
- drivers/dma/Makefile                          |   1 +
- drivers/dma/lpc32xx-dmamux.c                  | 195 +++++++++
- drivers/i2c/busses/i2c-pnx.c                  |   4 +-
- drivers/mtd/nand/raw/lpc32xx_mlc.c            |  10 +-
- drivers/mtd/nand/raw/lpc32xx_slc.c            |  10 +-
- sound/soc/fsl/Kconfig                         |   7 +
- sound/soc/fsl/Makefile                        |   2 +
- sound/soc/fsl/lpc3xxx-i2s.c                   | 376 ++++++++++++++++++
- sound/soc/fsl/lpc3xxx-i2s.h                   |  79 ++++
- sound/soc/fsl/lpc3xxx-pcm.c                   |  73 ++++
- 19 files changed, 954 insertions(+), 87 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/nxp,lpc3220-dmamux.yaml
- create mode 100644 Documentation/devicetree/bindings/sound/nxp,lpc3220-i2s.yaml
- create mode 100644 drivers/dma/lpc32xx-dmamux.c
- create mode 100644 sound/soc/fsl/lpc3xxx-i2s.c
- create mode 100644 sound/soc/fsl/lpc3xxx-i2s.h
- create mode 100644 sound/soc/fsl/lpc3xxx-pcm.c
-
+diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
+index c76bac668dea..4c5d23942352 100644
+--- a/drivers/perf/arm-cci.c
++++ b/drivers/perf/arm-cci.c
+@@ -4,6 +4,7 @@
+ // Author: Punit Agrawal <punit.agrawal@arm.com>, Suzuki Poulose <suzuki.poulose@arm.com>
+ 
+ #include <linux/arm-cci.h>
++#include <linux/find_atomic.h>
+ #include <linux/io.h>
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
+@@ -318,12 +319,9 @@ static int cci400_get_event_idx(struct cci_pmu *cci_pmu,
+ 		return CCI400_PMU_CYCLE_CNTR_IDX;
+ 	}
+ 
+-	for (idx = CCI400_PMU_CNTR0_IDX; idx <= CCI_PMU_CNTR_LAST(cci_pmu); ++idx)
+-		if (!test_and_set_bit(idx, hw->used_mask))
+-			return idx;
+-
+-	/* No counters available */
+-	return -EAGAIN;
++	idx = find_and_set_next_bit(hw->used_mask, CCI_PMU_CNTR_LAST(cci_pmu) + 1,
++							CCI400_PMU_CNTR0_IDX);
++	return idx < CCI_PMU_CNTR_LAST(cci_pmu) + 1 ? idx : -EAGAIN;
+ }
+ 
+ static int cci400_validate_hw_event(struct cci_pmu *cci_pmu, unsigned long hw_event)
+@@ -792,13 +790,8 @@ static int pmu_get_event_idx(struct cci_pmu_hw_events *hw, struct perf_event *ev
+ 	if (cci_pmu->model->get_event_idx)
+ 		return cci_pmu->model->get_event_idx(cci_pmu, hw, cci_event);
+ 
+-	/* Generic code to find an unused idx from the mask */
+-	for (idx = 0; idx <= CCI_PMU_CNTR_LAST(cci_pmu); idx++)
+-		if (!test_and_set_bit(idx, hw->used_mask))
+-			return idx;
+-
+-	/* No counters available */
+-	return -EAGAIN;
++	idx = find_and_set_bit(hw->used_mask, CCI_PMU_CNTR_LAST(cci_pmu) + 1);
++	return idx < CCI_PMU_CNTR_LAST(cci_pmu) + 1 ? idx : -EAGAIN;
+ }
+ 
+ static int pmu_map_event(struct perf_event *event)
+@@ -851,12 +844,8 @@ static void pmu_free_irq(struct cci_pmu *cci_pmu)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < cci_pmu->nr_irqs; i++) {
+-		if (!test_and_clear_bit(i, &cci_pmu->active_irqs))
+-			continue;
+-
++	for_each_test_and_clear_bit(i, &cci_pmu->active_irqs, cci_pmu->nr_irqs)
+ 		free_irq(cci_pmu->irqs[i], cci_pmu);
+-	}
+ }
+ 
+ static u32 pmu_read_counter(struct perf_event *event)
+diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
+index 86ef31ac7503..bd66d90dfda6 100644
+--- a/drivers/perf/arm-ccn.c
++++ b/drivers/perf/arm-ccn.c
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <linux/ctype.h>
++#include <linux/find_atomic.h>
+ #include <linux/hrtimer.h>
+ #include <linux/idr.h>
+ #include <linux/interrupt.h>
+@@ -580,15 +581,9 @@ static const struct attribute_group *arm_ccn_pmu_attr_groups[] = {
+ 
+ static int arm_ccn_pmu_alloc_bit(unsigned long *bitmap, unsigned long size)
+ {
+-	int bit;
+-
+-	do {
+-		bit = find_first_zero_bit(bitmap, size);
+-		if (bit >= size)
+-			return -EAGAIN;
+-	} while (test_and_set_bit(bit, bitmap));
++	int bit = find_and_set_bit(bitmap, size);
+ 
+-	return bit;
++	return bit < size ? bit : -EAGAIN;
+ }
+ 
+ /* All RN-I and RN-D nodes have identical PMUs */
+diff --git a/drivers/perf/arm_dmc620_pmu.c b/drivers/perf/arm_dmc620_pmu.c
+index 7e5f1d4fca0f..f41cc2ee9564 100644
+--- a/drivers/perf/arm_dmc620_pmu.c
++++ b/drivers/perf/arm_dmc620_pmu.c
+@@ -16,6 +16,7 @@
+ #include <linux/cpumask.h>
+ #include <linux/device.h>
+ #include <linux/errno.h>
++#include <linux/find_atomic.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/kernel.h>
+@@ -303,13 +304,8 @@ static int dmc620_get_event_idx(struct perf_event *event)
+ 		end_idx = DMC620_PMU_MAX_COUNTERS;
+ 	}
+ 
+-	for (idx = start_idx; idx < end_idx; ++idx) {
+-		if (!test_and_set_bit(idx, dmc620_pmu->used_mask))
+-			return idx;
+-	}
+-
+-	/* The counters are all in use. */
+-	return -EAGAIN;
++	idx = find_and_set_next_bit(dmc620_pmu->used_mask, end_idx, start_idx);
++	return idx < end_idx ? idx : -EAGAIN;
+ }
+ 
+ static inline
+diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
+index 23fa6c5da82c..f3b20a3b1d9c 100644
+--- a/drivers/perf/arm_pmuv3.c
++++ b/drivers/perf/arm_pmuv3.c
+@@ -17,6 +17,7 @@
+ #include <linux/acpi.h>
+ #include <linux/bitfield.h>
+ #include <linux/clocksource.h>
++#include <linux/find_atomic.h>
+ #include <linux/of.h>
+ #include <linux/perf/arm_pmu.h>
+ #include <linux/perf/arm_pmuv3.h>
+@@ -903,13 +904,9 @@ static irqreturn_t armv8pmu_handle_irq(struct arm_pmu *cpu_pmu)
+ static int armv8pmu_get_single_idx(struct pmu_hw_events *cpuc,
+ 				    struct arm_pmu *cpu_pmu)
+ {
+-	int idx;
++	int idx = find_and_set_next_bit(cpuc->used_mask, cpu_pmu->num_events, ARMV8_IDX_COUNTER0);
+ 
+-	for (idx = ARMV8_IDX_COUNTER0; idx < cpu_pmu->num_events; idx++) {
+-		if (!test_and_set_bit(idx, cpuc->used_mask))
+-			return idx;
+-	}
+-	return -EAGAIN;
++	return idx < cpu_pmu->num_events ? idx : -EAGAIN;
+ }
+ 
+ static int armv8pmu_get_chain_idx(struct pmu_hw_events *cpuc,
 -- 
-2.25.1
+2.43.0
 
 
