@@ -1,74 +1,89 @@
-Return-Path: <linux-kernel+bounces-221952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE1C90FB07
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:41:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5C590FB08
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280B21F22244
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:41:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E02E0283A09
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC38413ACC;
-	Thu, 20 Jun 2024 01:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JpvXOGQO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9603814F6C;
+	Thu, 20 Jun 2024 01:41:46 +0000 (UTC)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D3118EB0;
-	Thu, 20 Jun 2024 01:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D228813AF2
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718847667; cv=none; b=m3V0GxoeJ2Mtu0FhjwOJJE8CzTNTAkB9T44fKTJjc4IgOE8Deul8KwZPuRxpY3tpzybw/1PZQSU6nmg2pjLY9cMxkuOrcxUWEDCQ8wsI3iRs9LOqJHpmURz7aoaHIipuvEy3mwmVWBOYqc23NpnGEXEZCz2uHbI7gx2c+NY3KqA=
+	t=1718847706; cv=none; b=BUJ0TruUFgiTvw77a/YS3XgxhaNAukuEuDe30yDY4AIgeNxyKairhqke83jBPl4CHg/IZGiS2HkVw88MfK/+g/Ix6UABh+cmfNmXb3sSOtVSFGwcwRKf1eRjd0oJ5s/MSpPO2LXvWDeyyC+32rUn597Qhc21nX7VTen0KEwA2zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718847667; c=relaxed/simple;
-	bh=K88cdgONoxCP4Mq8HbQumsBZXKRfVsYIC6AsnXC2rfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Duo+rrnZ55IohoPkExiqXQ8ik2KF5bORqBhIJlYJwTrNhp9D90HaWFroMUo6Y514q+s4Cf3bKzCxL/7INLU5QGsd7Pew6PSeFCvKmDsMk55QRy4DwhRiQmHsk/c4A0nYnWbzprtTcktZvwkd3YqxW2wBXjbS0Fo8h1CEfEzKP6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JpvXOGQO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1600BC32786;
-	Thu, 20 Jun 2024 01:41:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718847666;
-	bh=K88cdgONoxCP4Mq8HbQumsBZXKRfVsYIC6AsnXC2rfQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JpvXOGQO5oSHHF6JtDdTq29NtD4heeX3mh84O7+5qYUXc9ZBOTOVI4PqgBkB146Ak
-	 I3T1mp37D9sZpbIFWFCtW7GI+RGqcMPdyXeed5G4JnU85x3g3wSQeIWbLjmQYDc6Rd
-	 1fH4AQGwRUB8CODF2Qw3mczX6OApHmLHdd3d2GgDIa/R84phKADTEZwiLleloh6eO4
-	 tmoX3xaB+alWAO1dZoZeg+kVFmYNRHNSW+XungwfOJqa9VAlOUzbjGpsjeVrl1hdil
-	 ELd4LAK+McFvvXmvkzhhp8cLkucqOt4poy51B8p5fgjluS3kh368XIsT51D9zpP3z/
-	 9AJ741UnLxMnA==
-Date: Wed, 19 Jun 2024 18:41:05 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
-Cc: Andrew Lunn <andrew@lunn.ch>, Marek =?UTF-8?B?QmVow7pu?=
- <kabel@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Vladimir
- Oltean <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] net: dsa: mv88e6xxx: Add FID map cache
-Message-ID: <20240619184105.05d8e925@kernel.org>
-In-Reply-To: <20240620002826.213013-1-aryan.srivastava@alliedtelesis.co.nz>
-References: <20240620002826.213013-1-aryan.srivastava@alliedtelesis.co.nz>
+	s=arc-20240116; t=1718847706; c=relaxed/simple;
+	bh=jSbBfnFEVkBHUkb9NCpVaXYf/HDwlV39lAtQS5Vewtw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gmosG3trvs9xb7h9tD7DfdC2cfwXao0wZ7plYPjaTp+yDhACS6eRuQ3P6oe//lfthwUCsrr5rkJzqZqKXGYDTWRy01l9A6AUYERE56fH4iWW+8qprsSwB1OGkMjxZKVFL0rLUDApnjRq8ZZQPHrZBZx+S/4Ben3N7jR61/NcciQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com; spf=pass smtp.mailfrom=chenxiaosong.com; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chenxiaosong.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chenxiaosong.com
+X-QQ-mid: bizesmtp84t1718847689tomiice7
+X-QQ-Originating-IP: IM73d26sDbCFwrMMCr7FHKDf1VjP0fTxeWun6rBOf4w=
+Received: from [192.168.3.231] ( [116.128.244.171])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 20 Jun 2024 09:41:27 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8005467843438064961
+Message-ID: <4CBA9B648A28A133+4e64e193-72b9-456b-a399-62abda2ba7fd@chenxiaosong.com>
+Date: Thu, 20 Jun 2024 09:41:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ksmbd: remove duplicate SMB2 Oplock levels definitions
+To: Namjae Jeon <linkinjeon@kernel.org>, sfrench@samba.org
+Cc: senozhatsky@chromium.org, tom@talpey.com, linux-cifs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pc@manguebit.com, ronniesahlberg@gmail.com,
+ sprasad@microsoft.com, bharathsm@microsoft.com,
+ samba-technical@lists.samba.org, chenxiaosong@kylinos.cn,
+ liuzhengyuan@kylinos.cn, huhai@kylinos.cn, liuyun01@kylinos.cn
+References: <20240619161753.385508-1-chenxiaosong@chenxiaosong.com>
+ <CAKYAXd-V80sdH2uXoDe+xqf9N-gFYTjqWtERrB+-vH0s0NUMvw@mail.gmail.com>
+Content-Language: en-US
+From: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+In-Reply-To: <CAKYAXd-V80sdH2uXoDe+xqf9N-gFYTjqWtERrB+-vH0s0NUMvw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:chenxiaosong.com:qybglogicsvrsz:qybglogicsvrsz4a-0
 
-On Thu, 20 Jun 2024 12:28:26 +1200 Aryan Srivastava wrote:
-> +static int mv88e6xxx_atu_new(struct mv88e6xxx_chip *chip, u16 *fid)
-> +{
-> +	int err;
+Hi Namjae and Steve:
 
-err is unused in this function. Please make sure you look at:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
-before reposting
--- 
-pw-bot: cr
+By the way, is there any update on the KSMBD Feature Status [1]?
+
+Thanks,
+ChenXiaoSong.
+
+[1] 
+https://github.com/torvalds/linux/blob/master/Documentation/filesystems/smb/ksmbd.rst#ksmbd-feature-status
+
+在 2024/6/20 07:32, Namjae Jeon 写道:
+> 2024년 6월 20일 (목) 오전 1:18, <chenxiaosong@chenxiaosong.com>님이 작성:
+>>
+>> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>>
+>> smb/common already have SMB2 Oplock levels definitions, remove duplicate
+>> definitions in server.
+>>
+>> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>> Signed-off-by: ChenXiaoSong <chenxiaosong@chenxiaosong.com>
+> Applied it to #ksmbd-for-next-next.
+> Thanks for your patch!
+> 
+
 
