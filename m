@@ -1,134 +1,98 @@
-Return-Path: <linux-kernel+bounces-222502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89BD91028C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:31:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8067491028D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33DEAB21780
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:31:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14655283DA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8C11AB8EA;
-	Thu, 20 Jun 2024 11:31:11 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8616878C9C;
-	Thu, 20 Jun 2024 11:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5EC1AB534;
+	Thu, 20 Jun 2024 11:31:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC60B40858;
+	Thu, 20 Jun 2024 11:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718883070; cv=none; b=VJRUzpE+Jjl7ZqlKhQWkOZ5jQ0CXTtEY5l4YLWTbYCuRvp9zNC8RR84JfCXuAad8nNBWeTYnXEFXmmstTnMQD6jsDC6nbAuMWxLvQPE2kQeQbTqhiEEyk9WS927s+tQwgW+TsBclZFHZ3AsdPxrMx+cCuPnG3In86naP9cf6Q/E=
+	t=1718883101; cv=none; b=Wn8i4ukvZYWcS4ajV921nSivvRB1PlfVg5doaTi9eElikwLRBlIY8LuYiu1DERC0pP3nnRQuEE1Dik0bTfOpvatd7/xBX0r59AFXBpoknWVgFFgnN6c3DBez3TnzXp9v8surq0I8DiiWTBnxyxQBIe9mZLRbzOz2fJMWM6wwQi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718883070; c=relaxed/simple;
-	bh=ngXGENhKJ5ubOJfWmkGWNflPB0T6h1OvqocKXTMdnEY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dBt6mm2cvI6BaoXC0UNnOoyPz1lFo7MQMlM0BIBhWNIq2EcZWCQFuSJJBDI/fObtFJWh9IpEUDwEPg+I0/qxtu0ZWUIOoR51EQWrax/8ChZWOOCpI+1X/b1mQvw1MDsUb6EhEAaA7T4fmKoMqouv9fgZNfcGgp0MDBdZ980YvYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W4dbX34SNz6JB7h;
-	Thu, 20 Jun 2024 19:31:04 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2D3C31400D9;
-	Thu, 20 Jun 2024 19:31:06 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 20 Jun
- 2024 12:31:05 +0100
-Date: Thu, 20 Jun 2024 12:31:04 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <dan.j.williams@intel.com>, <ira.weiny@intel.com>, <dave@stgolabs.net>,
-	<dave.jiang@intel.com>, <alison.schofield@intel.com>, <ming4.li@intel.com>,
-	<vishal.l.verma@intel.com>, <jim.harris@samsung.com>,
-	<ilpo.jarvinen@linux.intel.com>, <ardb@kernel.org>,
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <Yazen.Ghannam@amd.com>,
-	<Robert.Richter@amd.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	<linux-pci@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/9] PCI/AER: Call AER CE handler before clearing
- AER CE status register
-Message-ID: <20240620123104.000029cf@Huawei.com>
-In-Reply-To: <20240617200411.1426554-3-terry.bowman@amd.com>
-References: <20240617200411.1426554-1-terry.bowman@amd.com>
-	<20240617200411.1426554-3-terry.bowman@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718883101; c=relaxed/simple;
+	bh=2EUsRJP1y8Ffm/L1rJ/hNw8Xvk/M9bkzEuSmMifuQyI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VqjEZSauL2aJGqw7rL7tW9Iv5miLEvrK9mtfES/c8ffYweeq3Y3p1WfA7n50p8LkjdHNBZB7x5XI4KWZ0Ul+GU8A4rcsWM0i2IYHCUq5CatNQlPNinnAZaJpTF4fuHKjyMwSMtc530XJ6wfSH7pWvhebD0PLx8Ak1NuFZyHgHd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95142DA7;
+	Thu, 20 Jun 2024 04:32:03 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 65CDC3F6A8;
+	Thu, 20 Jun 2024 04:31:37 -0700 (PDT)
+Message-ID: <3ab8410a-6c74-4dc1-997d-7b1a00fba877@arm.com>
+Date: Thu, 20 Jun 2024 12:31:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: hw_breakpoint: Save privilege of access control
+ via ptrace
+To: Oleg Nesterov <oleg@redhat.com>, Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240618071010.11214-1-yangtiezhu@loongson.cn>
+ <20240619151524.GB24240@redhat.com>
+ <9cc6d314-2431-c1b5-3d46-63c0ac80ed4d@loongson.cn>
+ <20240620090807.GC30070@redhat.com>
+ <93d96e55-c180-444a-9b3f-f96db5f9e37d@loongson.cn>
+ <20240620103600.GD30070@redhat.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <20240620103600.GD30070@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Mon, 17 Jun 2024 15:04:04 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
 
-> The AER service driver clears the AER correctable error (CE) status before
-> calling the correctable error handler. This results in the error's status
-> not correctly reflected if read from the CE handler.
+
+On 20/06/2024 11:36, Oleg Nesterov wrote:
+> Again, I can't really comment, I know almost nothing about perf, but
 > 
-> The AER CE status is needed by the portdrv's CE handler. The portdrv's
-> CE handler is intended to only call the registered notifier callbacks
-> if the CE error status has correctable internal error (CIE) set.
+> On 06/20, Tiezhu Yang wrote:
+>>
+>> On 06/20/2024 05:08 PM, Oleg Nesterov wrote:
+>>>
+>>> But to me the very idea of arm64-specific and "kernel only" member in
+>>> perf_event_attr looks a bit strange.
+>>
+>> I noticed that there is a similar arm64-specific change in
+>> commit 09519ec3b19e ("perf: Add perf_event_attr::config3")
 > 
-> This is not a problem for AER uncorrrectbale errors (UCE). The UCE status
+> but this is another thing even if I have no idea what .config3 means.
+> 
+> If nothing else, what do you think, say, tools/perf can do with ->bp_priv?
 
-uncorrectable
+Yeah, including the tools side change in the same series might help to
+explain. It's not obvious what the end goal is from the commit message.
 
-> is still present in the AER capability and available for reading, if
-> needed, when the UCE handler is called.
-
-I'm seeing the clear in the DPC path for UCE. For other cases is
-it a side effect of the reset?
+Thanks
+James
 
 > 
-> Change the order of clearing the CE status and calling the CE handler.
-> Make it to call the CE handler first and then clear the CE status
-> after returning.
+> What should sys_perf_event_open() do if bp_priv != 0 comes from user space?
 > 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-Seems reasonable, but many gremlins around the ordering in these
-flows, so I'm to particularly confident. With that in mind.
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huwei.com>
-
-> ---
->  drivers/pci/pcie/aer.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> Nevermind, please forget, I leave this to you and maintainers.
 > 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index ac6293c24976..4dc03cb9aff0 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1094,9 +1094,6 @@ static void pci_aer_handle_error(struct pci_dev *dev, struct aer_err_info *info)
->  		 * Correctable error does not need software intervention.
->  		 * No need to go through error recovery process.
->  		 */
-> -		if (aer)
-> -			pci_write_config_dword(dev, aer + PCI_ERR_COR_STATUS,
-> -					info->status);
->  		if (pcie_aer_is_native(dev)) {
->  			struct pci_driver *pdrv = dev->driver;
->  
-> @@ -1105,6 +1102,10 @@ static void pci_aer_handle_error(struct pci_dev *dev, struct aer_err_info *info)
->  				pdrv->err_handler->cor_error_detected(dev);
->  			pcie_clear_device_status(dev);
->  		}
-> +		if (aer)
-> +			pci_write_config_dword(dev, aer + PCI_ERR_COR_STATUS,
-> +					info->status);
-> +
->  	} else if (info->severity == AER_NONFATAL)
->  		pcie_do_recovery(dev, pci_channel_io_normal, aer_root_reset);
->  	else if (info->severity == AER_FATAL)
-
+> Oleg.
+> 
+> 
 
