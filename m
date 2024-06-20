@@ -1,156 +1,179 @@
-Return-Path: <linux-kernel+bounces-222302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A293290FF77
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:51:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDBDC90FF74
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FCFA2828F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:51:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBAC71C2133A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974F01AAE23;
-	Thu, 20 Jun 2024 08:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B17F1AAE0B;
+	Thu, 20 Jun 2024 08:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="dv3k7Rea"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Rzrybw1f";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="WMgubCCb"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA992582;
-	Thu, 20 Jun 2024 08:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7646F2582;
+	Thu, 20 Jun 2024 08:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718873360; cv=none; b=jtmYYQadIG55RIQO6EoVS/gwq7IsV9YHiQgN4lTHELik7dGZLD6tznCrIZzgV8hPD9ImZVUE3lBRzjdyGEvX2l4jWFQLGaajbHpvrJEYRuwRSt43egIAH+3iyZqWF85uaNOEfq6nLHTMpPW7Tcko4JX7pP1pUQ3g3ic7I4+U1WI=
+	t=1718873350; cv=none; b=b3ao7TPHo98qviIJ/Dgm+0Bu+C2oWeXhR0osDsHouFB2CZfVswxMiAmSzzgyvrR3LG50OJSLIQ/NUUmkpGpAjx0ldvDgQqgr5uS17mwOGt2VhOFfnz1nlY/hBHpmy+S8bfRc2YF7rWaP2iTgTux8a/GhtIWGVjFzuL+O//NpDKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718873360; c=relaxed/simple;
-	bh=jNfkDMRcO2oeeYKSJDzxCHJCMTTV67C3zqxJqxPPYYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r/tpR4dn9cjltW2pGV06epKesf0YxmHNUaKJdM8ec+7uikIRDU8VN6JX7BNRtXNpvU4azLGiZMy2lM50meftA+9hY5PpaIjPZp21iEcYg7GXRxaH5H8cS5Ws4FwZ2Fzdo/VxJgJB+4nX3HvaJ68kgDJJpf5OCiyM5y5S6FG0jXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=dv3k7Rea; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 645CA40E021A;
-	Thu, 20 Jun 2024 08:49:14 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Uv5zLkmrO5Np; Thu, 20 Jun 2024 08:49:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1718873350; bh=6EyIcoUfttVVNnxBX/AUr5QBtwGzWzGdL+5OK4EVuC0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dv3k7ReanBgHyjpkkVskT8jnbh35c6C2llvNvCgDKnvCWxNqlEIEDzBCnQ/Ub2TLN
-	 GKDDKWT6DRo1EtsdPgO7lzjTjr+ZwBP/BCi5BGfrYnTI4P7sfZkrQD0ksrdTWPfhEx
-	 ArhQtF4JrfMhr6fkc2C0FaoXBT9BjxIgXX58RfiUqWn5Ie5Pmz8rTpcS3/YAPMKSfm
-	 xxBT8SIIoSuSC/vF2crSp8+d8ARufM/0KFiWnT94OPkOAn+XiY7IlMCsPVTgseo4z/
-	 Npsg9zKJ+LX6Ah6Djv7RApCNZKTuchEANiXkv2CVMnHqSTBSbr4IPtchC3kBxYDmuX
-	 oCFtMmjjhgj5S0KdP3FiW1iriC2bzBAGssXhxu6lGU+Kx5PXl+wD2lCaQodtH4QNOt
-	 WNEsDudjN7V7PO5YqNagT4qrQ8GuiqI9oYC6Bu7llRw8eTWTk/NcBOigDjTGYfzldm
-	 RuYOrhFBrlyOac7rKMSbPqHLaHMStoHz7oKa83/fmu3qAqGUWF1vWaDjZm3LN9Oalx
-	 Anu7G/KJXBv6q3x/3K947gmdEaVMMf5MAbH6qz1Hd12JkSjMx24Ax9iPMBxo5uSY67
-	 VccROMPvyeOtCyCrWMXTIgfapeJSU/J3ghYBS6NCtHRZNVjTsSatnNmjpTCxL0dNpi
-	 608HV6WbwiemcHMmWr984C9A=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 706FA40E01A5;
-	Thu, 20 Jun 2024 08:49:05 +0000 (UTC)
-Date: Thu, 20 Jun 2024 10:48:53 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org, kernel test robot <lkp@intel.com>,
-	Sean Christopherson <seanjc@google.com>, x86@kernel.org
-Subject: Re: [tip: x86/alternatives] x86/alternatives, kvm: Fix a couple of
- CALLs without a frame pointer
-Message-ID: <20240620084853.GAZnPs9Q94aakywkUn@fat_crate.local>
-References: <171878639288.10875.12927337921927674667.tip-bot2@tip-bot2>
+	s=arc-20240116; t=1718873350; c=relaxed/simple;
+	bh=kSLxkWTBi+7p1x6D2l+GqdxuiwvhFd858T/X56MUp54=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HnTCkpR0oyaNBXWpy8ma+EJMdTmvmESKIGSe6bE4Cki4CuLde0ikkaNyJz9TYbipRjgbCtaf5GT+mv++CUJrpQRchrvxhVY5263gtDJqc0oPnS+cwV+4RDDfOaiV618Gk9+icuI3fpLxzNXl70j5MN5yIRce7ty6uspe/0sks8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Rzrybw1f; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=WMgubCCb reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1718873347; x=1750409347;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=kSLxkWTBi+7p1x6D2l+GqdxuiwvhFd858T/X56MUp54=;
+  b=Rzrybw1fCFpjD88tfgJZ6zfGARhOwGLj6fa2jKUXmYTHO8/zDLT9BEAb
+   fHhAZLv+G9899zmPWLmZGdabSHVOh9+TEhZCU4W5t2aUxEQZTMPJgZhLz
+   QLl1MZ+tVC8HjY6QbGwhQDvbtSbJBEWnvGWtlwNIF0bx+04WyCx4Pz1Ia
+   4sFj7IoXkDGUve1LPfVpaMKGaeCyeSbMQZGU9Cnhni4LrP4Cn9X5haS0i
+   WgVEmt8OFymoByguguWISDE4ZPEI0jGk3OZ4S8mk759KD9pqMBNWFtFdn
+   87fDX/5EXQV1mCxzOOoDf53g1ws+rUuE6LHsFu6zhPO8yuDMxuKowMdkp
+   A==;
+X-CSE-ConnectionGUID: dJCJucXNRfiB1+9RADoZhw==
+X-CSE-MsgGUID: zVz13cV6QeSxXfhCK+cVKw==
+X-IronPort-AV: E=Sophos;i="6.08,251,1712613600"; 
+   d="scan'208";a="37493611"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 20 Jun 2024 10:49:04 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8134B160F46;
+	Thu, 20 Jun 2024 10:48:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1718873340;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=kSLxkWTBi+7p1x6D2l+GqdxuiwvhFd858T/X56MUp54=;
+	b=WMgubCCbkT2bV4NGe0ZxAgqPvP52bL1LgN+51fY5mRVepiyGhAN4vOE5T45HrGJhfXqWRS
+	GXav3uf0CiRtaduYaKn+a0CCD9lrWdOsA4eBfzkpEla1tpYcpYUIHffsMATiAIN2X2csWq
+	ZlhXaNarYE/qT3hbX5HT2hjaec3vz1IBZ9OEqk+4hOVEpuHNc/KrrSdvkM49D6SqpbGvVI
+	9knB9l72sstJ8zcyi5YYp0u6pYQpS9GqmU8daMMxHpqZDN6yCGSeDinDj4r3YFcueHymz7
+	FhiPybmpqddAgOLNCYwIT/OhWaCwo0Maabrvlmm4jYJdj0I5YhxWLmpcVIOHtw==
+Message-ID: <7adcd6789fb33fef10b7349934374e2cfb5ad164.camel@ew.tq-group.com>
+Subject: Re: [PATCH 1/2] dt-bindings: soc: ti: pruss: allow ethernet
+ controller in ICSSG node
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, Vignesh Raghavendra
+ <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Suman Anna
+ <s-anna@ti.com>
+Date: Thu, 20 Jun 2024 10:48:59 +0200
+In-Reply-To: <14bebdc5-3239-47fe-b8cc-68daba278d73@kernel.org>
+References: <20240619112406.106223-1-matthias.schiffer@ew.tq-group.com>
+	 <89880cda-1140-4ed5-a67f-2201c2825447@kernel.org>
+	 <99cc7afbb891de890ff051606f7a120f796e0fbc.camel@ew.tq-group.com>
+	 <14bebdc5-3239-47fe-b8cc-68daba278d73@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <171878639288.10875.12927337921927674667.tip-bot2@tip-bot2>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Jun 19, 2024 at 08:39:52AM -0000, tip-bot2 for Borislav Petkov (AMD) wrote:
-> The following commit has been merged into the x86/alternatives branch of tip:
-> 
-> Commit-ID:     93f78dadee5e56ae48aff567583d503868aa3bf2
-> Gitweb:        https://git.kernel.org/tip/93f78dadee5e56ae48aff567583d503868aa3bf2
-> Author:        Borislav Petkov (AMD) <bp@alien8.de>
-> AuthorDate:    Tue, 18 Jun 2024 21:57:27 +02:00
-> Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-> CommitterDate: Wed, 19 Jun 2024 10:33:25 +02:00
-> 
-> x86/alternatives, kvm: Fix a couple of CALLs without a frame pointer
-> 
-> objtool complains:
-> 
->   arch/x86/kvm/kvm.o: warning: objtool: .altinstr_replacement+0xc5: call without frame pointer save/setup
->   vmlinux.o: warning: objtool: .altinstr_replacement+0x2eb: call without frame pointer save/setup
-> 
-> Make sure rSP is an output operand to the respective asm() statements.
-> 
-> The test_cc() hunk courtesy of peterz. Also from him add some helpful
-> debugging info to the documentation.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202406141648.jO9qNGLa-lkp@intel.com/
-> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-> Acked-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/include/asm/alternative.h      |  2 +-
->  arch/x86/kernel/alternative.c           |  2 +-
->  arch/x86/kvm/emulate.c                  |  2 +-
->  tools/objtool/Documentation/objtool.txt | 19 +++++++++++++++++++
->  4 files changed, 22 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-> index 89fa50d..8cff462 100644
-> --- a/arch/x86/include/asm/alternative.h
-> +++ b/arch/x86/include/asm/alternative.h
-> @@ -248,7 +248,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
->   */
->  #define alternative_call(oldfunc, newfunc, ft_flags, output, input...)	\
->  	asm_inline volatile(ALTERNATIVE("call %c[old]", "call %c[new]", ft_flags) \
-> -		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
-> +		: output, ASM_CALL_CONSTRAINT : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
+On Thu, 2024-06-20 at 10:29 +0200, Krzysztof Kozlowski wrote:
+>=20
+>=20
+> On 20/06/2024 10:26, Matthias Schiffer wrote:
+> > On Thu, 2024-06-20 at 09:24 +0200, Krzysztof Kozlowski wrote:
+> > > On 19/06/2024 13:24, Matthias Schiffer wrote:
+> > > > While the current Device Trees for TI EVMs configure the PRUSS Ethe=
+rnet
+> > > > controller as a toplevel node with names like "icssg1-eth", allowin=
+g to
+> > > > make it a subnode of the ICSSG has a number of advantages:
+> > >=20
+> > > What is ICSSG? The sram or ti,prus from the ethernet schema?
+> >=20
+> > ICSSG (Industrial Communication Subsystem (Group?)) is the main device =
+described by the
+> > ti,pruss.yaml binding (ICSS and PRUSS are different variants of similar=
+ IP cores); it is the
+> > container for the individual PRU, TXPRU and RTU cores which are referen=
+ced by the ti,prus
+> > node of the Ethernet schema.
+> >=20
+> > The entirety of PRU, TXPRU and RTU cores of one ICSSG, each with its ow=
+n firmware, forms one
+> > Ethernet controller, which is not quite a hardware device, but also not=
+ a fully virtual software
+> > device.
+>=20
+> So it is not really child of ICSSG.
+>=20
+> >=20
+> > The Ethernet controller only exists through the various ICSS subcores, =
+so it doesn't have an MMIO
+> > address of its own. As described, the existing Device Trees define it a=
+s a toplevel non-MMIO node;
+> > we propose to allow it as a non-MMIO child node of the ICSSG container =
+instead.
+> >=20
+> > If you consider moving the ethernet node into the ICSSG node a bad appr=
+oach, we will drop this patch
+> > and try to find a different solution to our issue (the Ethernet device =
+staying in deferred state
+> > forever when the ICSSG node is disabled on Linux).
+>=20
+> Just disable the ethernet. That's the expected behavior, I don't get
+> what is the problem here.
 
-Yeah, this doesn't fly currently:
+If the disabling happens as a fixup in the bootloader, it needs to know the=
+ name of the Ethernet
+controller node (or iterate through the DTB to find references to the disab=
+led ICSSG node).
 
-https://lore.kernel.org/r/202406200507.AXxJ6Bmw-lkp@intel.com
+The name is currently not used for anything, and not specified in the bindi=
+ng doc; the example uses
+"ethernet", which is too unspecific, as there can be multiple ICSSG/PRUs, w=
+ith each running a
+separate Ethernet controller.
 
-because those atomic64_32.h macros do
+Existing Device trees use "icssgX-eth" for an Ethernet controller running o=
+n the ICSSG with label
+"&icssgX", but labels are a source concept and don't exist in the compiled =
+DTB by default.
 
-        alternative_atomic64(set, /* no output */,
-                             "S" (v), "b" (low), "c" (high)
+I do have an idea for an alternative approach that does not need changes to=
+ the DT bindings: The PRU
+Ethernet driver could detect that the referenced ti,prus are disabled and n=
+ot just waiting to be
+probed and then fail with ENODEV instead of EPROBE_DEFER.
 
-so without an output, it ends up becoming:
+Best regards,
+Matthias
 
-asm __inline volatile("# ALT: oldinstr\n" ... ".popsection\n" : , "+r" (current_stack_pointer) : [old] "i" ...
 
-note the preceding ",".
+>=20
+>=20
+> Best regards,
+> Krzysztof
+>=20
 
-And I can't do "output..." macro argument with ellipsis and paste with "##
-output" because "input..." already does that. :-\
-
-So I am not sure what to do here. Removing the ASM_CALL_CONSTRAINT works,
-let's see whether it passes build tests.
-
-Or add dummy output arguments to the three atomic macros which have no
-output?
-
-Hm.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
