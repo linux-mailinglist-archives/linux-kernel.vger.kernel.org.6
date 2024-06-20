@@ -1,118 +1,110 @@
-Return-Path: <linux-kernel+bounces-222270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DF590FF10
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:39:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7C6590FF06
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70DCD1C216CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87CC01F213BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1410A19A291;
-	Thu, 20 Jun 2024 08:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5603219A291;
+	Thu, 20 Jun 2024 08:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FTu61AyA"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LAbMTxU3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA583A1AC;
-	Thu, 20 Jun 2024 08:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A2A54720
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718872787; cv=none; b=GK+vTXsNAwnrKR4RFRlBUn/WhSzMLYJ9UGaODdJSQ8w24S98IT3a/IjAY2zUo0bNiEY5YM+y+SUrYJ6AMQIc2h85sHHvblmYrOZZl2deBs5AwCqBKqnml6KLMyu5PXPHkmjhaLV9rebq3UXS9VeSo1406K/R7u+DnMHz4jOC4oc=
+	t=1718872668; cv=none; b=djJum5mB+kI9pKlgFz2ySDYd+JzC228+O0+8SVUfXm/KBeVQ8gyau5m3SMyCkhHB1eSpoCiPzjoKaaHcttV81Gbqx7e805ILZORHHn8kcoQ9fjOGPTXX1WFQL5mQIEGtt+n+7IrNFdhBucn4mhsNWmXS7svbgeMTKPRi3AWVY5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718872787; c=relaxed/simple;
-	bh=ZrwZHFV+13ewVv1PIPqaUmU6Uz5D5zivApM1jrH5YHw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bi3Gn86qL4yrvqaDW9DRxOywTy8X9KEcaAzJOeH94Z9tYMRsFM2VeSlMp9LEmF5WvvIjxT9IdLJLZlx+liT9eOKCZqd3Ll0/xigWaTtCxtw5PieBVdbl/dqyD51Z5tQ+dk2eFth5LUbgcoUaoRlfuilAfju19Rdek0Gs7qQZh+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FTu61AyA; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718872781; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=hBHfXWhYwtiI+dnajvheMQQED9ly6NUkKrwTjHsfaKk=;
-	b=FTu61AyA0kUYSK0o62iJ2o1Q+PNe38Bims6OfnBVi2uEI/TfA4W373USMWFAAGYPD38hi4f6bCwD/wmdb0ra3u09o7lu/Sqzaozh0FH65yYlmq89fzOyhvfvs9xx4+ejgArvaMMA9MCFL0/IHs3bkItRyEkm7E5kqJvza1emSWA=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=hengqi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W8qghtv_1718872459;
-Received: from 30.221.149.144(mailfrom:hengqi@linux.alibaba.com fp:SMTPD_---0W8qghtv_1718872459)
-          by smtp.aliyun-inc.com;
-          Thu, 20 Jun 2024 16:34:22 +0800
-Message-ID: <36b94f6f-befb-45d5-b56a-9871b10c2b0f@linux.alibaba.com>
-Date: Thu, 20 Jun 2024 16:34:18 +0800
+	s=arc-20240116; t=1718872668; c=relaxed/simple;
+	bh=E2Ju9fp2WTW1iR8HjEuO5MAtycedFCSY0cqdWH009NQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=em7P1KRdVA6fuFvfKz0614w5phuXARvWXEpuPuquJsd2R3ZwpxJpZ6xk0CkHBmO4st60mlwh30eRPO/5Uj05phgmU3fE0OxBNMBlDnZmYVmyLNGfz51kdLATxRrIsfMuFb+3xf3U1EDO7QW8X2jw4GQYxtDiT1ARZXfZ4CgxHrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LAbMTxU3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718872666;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SToOFzrIKhKXuIiPgWYwTICjEcUL7XQf34Si3tl9FLg=;
+	b=LAbMTxU3oqIYgmiedcSu9Z98Hf6qWuBIv3Z9sFrv7deYPVZ6sHyl46lVSl5KZFM5e4Uy3f
+	wpioiJmR6sfZWEb09ZG39qkmG2omXz65BIXhPr+aqURCk3HuqktnutpWNY2R/lVtfGv0yf
+	IsrwbMJvEypcm+l9ZyMfzpghIx4zapY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-159-et_w7DOJNQurUU5Y8eXvqw-1; Thu,
+ 20 Jun 2024 04:37:42 -0400
+X-MC-Unique: et_w7DOJNQurUU5Y8eXvqw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8358519560B2;
+	Thu, 20 Jun 2024 08:37:40 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.26])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 1FD841956087;
+	Thu, 20 Jun 2024 08:37:34 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 20 Jun 2024 10:36:08 +0200 (CEST)
+Date: Thu, 20 Jun 2024 10:36:02 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Liao, Chang" <liaochang1@huawei.com>
+Cc: jolsa@kernel.org, rostedt@goodmis.org, mhiramat@kernel.org,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	nathan@kernel.org, peterz@infradead.org, mingo@redhat.com,
+	mark.rutland@arm.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH bpf-next] uprobes: Fix the xol slots reserved for
+ uretprobe trampoline
+Message-ID: <20240620083602.GB30070@redhat.com>
+References: <20240619013411.756995-1-liaochang1@huawei.com>
+ <20240619143852.GA24240@redhat.com>
+ <7cfa9f1f-d9ce-b6bb-3fe0-687fae9c77c4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: virtio: unify code to init stats
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- virtualization@lists.linux.dev, netdev@vger.kernel.org,
- Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
-References: <fb91a4ec2224c36adda854314940304d708d59ef.1718869408.git.mst@redhat.com>
-From: Heng Qi <hengqi@linux.alibaba.com>
-In-Reply-To: <fb91a4ec2224c36adda854314940304d708d59ef.1718869408.git.mst@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7cfa9f1f-d9ce-b6bb-3fe0-687fae9c77c4@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-
-在 2024/6/20 下午3:44, Michael S. Tsirkin 写道:
-> Moving initialization of stats structure into
-> __free_old_xmit reduces the code size slightly.
-> It also makes it clearer that this function shouldn't
-> be called multiple times on the same stats struct.
+On 06/20, Liao, Chang wrote:
 >
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->
-> Especially important now that Jiri's patch for BQL has been merged.
-> Lightly tested.
->
->   drivers/net/virtio_net.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 283b34d50296..c2ce8de340f7 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -383,6 +383,8 @@ static void __free_old_xmit(struct send_queue *sq, bool in_napi,
->   	unsigned int len;
->   	void *ptr;
->   
-> +	stats->bytes = stats->packets = 0;
-> +
->   	while ((ptr = virtqueue_get_buf(sq->vq, &len)) != NULL) {
->   		++stats->packets;
->   
-> @@ -828,7 +830,7 @@ static void virtnet_rq_unmap_free_buf(struct virtqueue *vq, void *buf)
->   
->   static void free_old_xmit(struct send_queue *sq, bool in_napi)
->   {
-> -	struct virtnet_sq_free_stats stats = {0};
-> +	struct virtnet_sq_free_stats stats;
->   
->   	__free_old_xmit(sq, in_napi, &stats);
->   
-> @@ -979,7 +981,7 @@ static int virtnet_xdp_xmit(struct net_device *dev,
->   			    int n, struct xdp_frame **frames, u32 flags)
->   {
->   	struct virtnet_info *vi = netdev_priv(dev);
-> -	struct virtnet_sq_free_stats stats = {0};
-> +	struct virtnet_sq_free_stats stats;
->   	struct receive_queue *rq = vi->rq;
->   	struct bpf_prog *xdp_prog;
->   	struct send_queue *sq;
+> However, when i asm porting uretprobe trampoline to arm64
+> to explore its benefits on that architecture, i discovered the problem that
+> single slot is not large enought for trampoline code.
 
-Reviewed-by: Heng Qi <hengqi@linux.alibaba.com>
+Ah, but then I'd suggest to make the changelog more clear. It looks as
+if the problem was introduced by the patch from Jiri. Note that we was
+confused as well ;)
 
-Thanks.
+And,
 
+	+	/* Reserve enough slots for the uretprobe trampoline */
+	+	for (slot_nr = 0;
+	+	     slot_nr < max((insns_size / UPROBE_XOL_SLOT_BYTES), 1);
+	+	     slot_nr++)
+
+this doesn't look right. Just suppose that insns_size = UPROBE_XOL_SLOT_BYTES + 1.
+I'd suggest DIV_ROUND_UP(insns_size, UPROBE_XOL_SLOT_BYTES).
+
+And perhaps it would be better to send this change along with
+uretprobe_trampoline_for_arm64 ?
+
+Oleg.
 
 
