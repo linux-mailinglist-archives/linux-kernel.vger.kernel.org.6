@@ -1,163 +1,95 @@
-Return-Path: <linux-kernel+bounces-222485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE51910240
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9BC991023D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73BC7282DC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:11:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44D59282FC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98261AB355;
-	Thu, 20 Jun 2024 11:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dk+EwCbV"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2811AB35E;
+	Thu, 20 Jun 2024 11:11:01 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CF921A19;
-	Thu, 20 Jun 2024 11:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4344921A19;
+	Thu, 20 Jun 2024 11:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718881883; cv=none; b=t0M7FnTW6ApUqfj3cRTgrNLyeNB2wc18hXHdkHnI+EBir83gz4L1yA0dCB54kAF4uDGOIcemVm4KVkv3b6nOZiphbLBQM3+VLtEn1UA6rUgB3e4eh6tdzIEvrweCWUVRh33VgUZdyw+/8jmfhbZOTq7NT2xw3T0ulv4VcBDcTc4=
+	t=1718881861; cv=none; b=nQfR5MvQtJ8YSPBcjeADQ3twvg2ngXPYo3wZHvvLrhWM8ZicMZS9PPbIek0ml+Wvhij3JGi2Ed0Yr236KcQEWFsfwvij+4FxqR7NeaCTTskdGfUyAh+cq8A15sqjd/0D3uexJFYFvEMJHUApSNstB0Cf/qYIYabx40lmqPpqVZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718881883; c=relaxed/simple;
-	bh=95Ij0vKrYrGH00SkqoNbXKVDvTZtqsyiEyaQ1r0dl68=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=julO2FVFwfEpx3aFDT37Pn552V/anGEtnxYBNrYGlrtwcOCz4zp2vECQG7EHpZWpuPv1BvQd05oymOfNE6qfOw20iyCSsMo+/3Gy1hGDylWpk3cH0/eSQgYARZa/Jg4M1OfjjYpdd5JeIaeEVqQfqXKsMrZj10EzwOyEEL5TIT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dk+EwCbV; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718881880; x=1750417880;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=95Ij0vKrYrGH00SkqoNbXKVDvTZtqsyiEyaQ1r0dl68=;
-  b=dk+EwCbV+PzKTLnNIk+bx8zi3NGr71q5DnXv+ehlqzf7OmfJ2pbbd8BP
-   eTW9mvpU3DPuYwybpgRjlRHWu+41wUNCgrouPIubpmMA1MUGTeQzzIrBJ
-   YYth8NcJNnORqDrPmktCHD97nsyoj6lYqh+o17JB1YKHxSTSHfGPX121F
-   4p9ptbkQ/ZvekiPGimH55vhw6ftNv1JG65T71bDzyOEMefMoEaIdVymHR
-   Ox2zwIkDYT9wzXk+69EDjI4OGeK5VOxJHnwrqYOvcL6eTII2QUpwaHHmu
-   /RPmYcun1VXxLD8wq7b/qTH/jHXW+09FhUYJPk8BMSZ1jW4tZC4881+dC
-   A==;
-X-CSE-ConnectionGUID: gqLzAYtPQQ2L5OyNG4B4Sw==
-X-CSE-MsgGUID: vm2+jEyqQ6GzAavsNlO9Ng==
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="asc'?scan'208";a="28263518"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Jun 2024 04:11:19 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 20 Jun 2024 04:10:53 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex04.mchp-main.com (10.10.85.152)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Thu, 20 Jun 2024 04:10:51 -0700
-Date: Thu, 20 Jun 2024 12:10:32 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: <Andrei.Simion@microchip.com>
-CC: <conor@kernel.org>, <brgl@bgdev.pl>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <Nicolas.Ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>, <arnd@arndb.de>,
-	<gregkh@linuxfoundation.org>, <linux-i2c@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/3] dt-bindings: eeprom: at24: Add at24,mac02e4 and
- at24,mac02e6
-Message-ID: <20240620-bulge-sturdy-cd0f92f05de2@wendy>
-References: <20240619072231.6876-1-andrei.simion@microchip.com>
- <20240619072231.6876-4-andrei.simion@microchip.com>
- <20240619-thee-herald-82725e1526e2@spud>
- <0d57b14b-48d1-4629-92f4-74934c6ecdeb@microchip.com>
+	s=arc-20240116; t=1718881861; c=relaxed/simple;
+	bh=oAJ1pIuzNb7mCEYBEZI8DX7Yo/eyUY8sZrVK2CeKW+A=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CTeyaP/PzYUDdnKlVE6nYt5H1ZNGJi1mMRenaXtE3N2A/Fru/Y2rvl2S18rMz/XN0T352JU33SBNXmw1vIDfW7yq00Lywuw1CsskP+odVodCrX3LZf4dv5sJvcprA6/sDasccByJFrKZZTHWsj4Dkqqt6Y9a3ZbeB/AX/5VsHHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W4d8F1wX3z6JBHw;
+	Thu, 20 Jun 2024 19:10:53 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id EFD3214058E;
+	Thu, 20 Jun 2024 19:10:54 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 20 Jun
+ 2024 12:10:54 +0100
+Date: Thu, 20 Jun 2024 12:10:53 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Huang Ying <ying.huang@intel.com>
+CC: Dan Williams <dan.j.williams@intel.com>, Dave Jiang
+	<dave.jiang@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Alison Schofield
+	<alison.schofield@intel.com>, Andrew Morton <akpm@linux-foundation.org>,
+	Bharata B Rao <bharata@amd.com>, Alistair Popple <apopple@nvidia.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, Davidlohr Bueso
+	<dave@stgolabs.net>, Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny
+	<ira.weiny@intel.com>
+Subject: Re: [PATCH v3 1/3] cxl/region: Fix a race condition in memory
+ hotplug notifier
+Message-ID: <20240620121053.00002bed@Huawei.com>
+In-Reply-To: <20240618084639.1419629-2-ying.huang@intel.com>
+References: <20240618084639.1419629-1-ying.huang@intel.com>
+	<20240618084639.1419629-2-ying.huang@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="YJZ0paq/YzbEpWyV"
-Content-Disposition: inline
-In-Reply-To: <0d57b14b-48d1-4629-92f4-74934c6ecdeb@microchip.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
---YJZ0paq/YzbEpWyV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 18 Jun 2024 16:46:37 +0800
+Huang Ying <ying.huang@intel.com> wrote:
 
-On Thu, Jun 20, 2024 at 10:45:58AM +0000, Andrei.Simion@microchip.com wrote:
-> On 19.06.2024 20:53, Conor Dooley wrote:
-> >> Update regex check and add pattern to match both EEPROMs.
-> >>
-> >> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
-> >> ---
-> >>  Documentation/devicetree/bindings/eeprom/at24.yaml | 10 +++++++---
-> >>  1 file changed, 7 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Docu=
-mentation/devicetree/bindings/eeprom/at24.yaml
-> >> index 3c36cd0510de..46daa662f6e7 100644
-> >> --- a/Documentation/devicetree/bindings/eeprom/at24.yaml
-> >> +++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
-> >> @@ -18,7 +18,7 @@ select:
-> >>    properties:
-> >>      compatible:
-> >>        contains:
-> >> -        pattern: "^atmel,(24(c|cs|mac)[0-9]+|spd)$"
-> >> +        pattern: "^atmel,(24(c|cs|mac)[0-9]+[a-z0-9]*|spd)$"
->=20
-> > Could we relax the pattern instead to make this bloat less? Would it be
-> > problematic to just allow "^atmel,(24(c|cs|mac)[a-z0-9]+|spd)$"?
->=20
-> I) "^atmel,(24(c|cs|mac)[a-z0-9]+|spd)$" :
-> The first pattern does not specify where the digits must occur within
-> the alphanumeric sequence that follows 24c, 24cs, or 24mac. It allows
-> the sequence to be all letters, all digits, or any mix thereof.
->=20
-> II) "^atmel,(24(c|cs|mac)[0-9]+[a-z0-9]*|spd)$" :
-> The second pattern specifically requires that at least one digit appears
-> immediately after 24c, 24cs, or 24mac, and only after this digit can
-> letters appear.
+> In the memory hotplug notifier function of the CXL region,
+> cxl_region_perf_attrs_callback(), the node ID is obtained by checking
+> the host address range of the region. However, the address range
+> information is not available when the region is registered in
+> devm_cxl_add_region(). Additionally, this information may be removed
+> or added under the protection of cxl_region_rwsem during runtime. If
+> the memory notifier is called for nodes other than that backed by the
+> region, a race condition may occur, potentially leading to a NULL
+> dereference or an invalid address range.
+> 
+> The race condition is addressed by checking the availability of the
+> address range information under the protection of cxl_region_rwsem. To
+> enhance code readability and use guard(), the relevant code has been
+> moved into a newly added function: cxl_region_nid().
+> 
+> Fixes: 067353a46d8c ("cxl/region: Add memory hotplug notifier for cxl region")
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Looks good to me and matches similar cases.  Thanks for the detailed patch
+description btw
 
-> As hypothetical example :
-> atmel,24cabc would match the first pattern but not the second because
-> there are no digits immediately following 24c.
-> atmel,24c123 would match both patterns because there are digits
-> immediately following 24c, and the first pattern doesn't care about
-> the position of the digits within the alphanumeric sequence.
->=20
-> In case of at24,mac02e4 and at24,mac02e6 match both patterns.
->=20
-> Let me know your thoughts.
-
-Basically my reasoning here is that both patterns are very permissive
-(although one clearly more than the other) and do not stop people from
-creating compatibles that do not correspond to a real device, so I felt
-that the more complex regex didn't really provide enough benefit
-compared to keeping the regex simpler.
-
-> I agree to change the pattern as you suggest.
-
-:+1:
-
-
-
---YJZ0paq/YzbEpWyV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnQOKAAKCRB4tDGHoIJi
-0lggAQCYXfW9bQInGc1FKpTgtaCJ+HWNt14cEZjcpipzDaoOhgEAjLO9TIQb3XLn
-9ifpQlSmibEvLdi8Nfjj7sqeoIJrqQs=
-=CrCj
------END PGP SIGNATURE-----
-
---YJZ0paq/YzbEpWyV--
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
