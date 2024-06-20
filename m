@@ -1,119 +1,81 @@
-Return-Path: <linux-kernel+bounces-222018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C526490FBB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:40:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F3890FBB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 742F51F22844
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:40:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADAE71F22349
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4ED224DC;
-	Thu, 20 Jun 2024 03:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CF122F1E;
+	Thu, 20 Jun 2024 03:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/wlDPSr"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686EA1D52C;
-	Thu, 20 Jun 2024 03:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ok3V7Js0"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFADF200C3;
+	Thu, 20 Jun 2024 03:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718854795; cv=none; b=O7zvERVI1/7nMQfWLPvxRmD5EmkfwsTueM3LfIMV8FYP1+z667bOddYzpTSDVo88mZv3LsOZdTzQgOxRVPqQYUaEp2ei9MNFnkbk0sCSNrLuoU4F3KLVKJcjFFYMVUE/oAxzI+Rhf5x+VzkA/tuSd7+4WTfasTRQ4bCROkKYdPU=
+	t=1718854997; cv=none; b=r0pM++bKsRxFk2LqhEsTaB+/SjCpiXndYnouLlurdxTVu2MwO59NM23yQlLAbX+SCeI36+sN5yOuHOKH+HjF2ALWGwevcbmrJRvwg1jJ8td7YTvGQhhpsAcvt5QLpBGJ3+pRWzo2mDKPFR4itqd4pUeX3uJGcR/5PAECQVDxYeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718854795; c=relaxed/simple;
-	bh=Z9vrmQPcxaJWxiJw6vWOK0gXAUtCdkmcGCIFur9g8s8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=BhHzhHsHOMYMbyBvmAc7D+iDryMI/d1z3dtVk27lul703aZ+q9lIneNSR80A1ZBIOUQZzGikdip+3HWcXTFMW9pDDoEJy97O+x3z7GSjfXos73f/FFe6I557CyfzxEkzcYzXEIDN7RyacyoGkeVmMwu+qIFsqfaY4HjFVH/kol4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/wlDPSr; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70633f0812dso428047b3a.0;
-        Wed, 19 Jun 2024 20:39:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718854793; x=1719459593; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z9vrmQPcxaJWxiJw6vWOK0gXAUtCdkmcGCIFur9g8s8=;
-        b=k/wlDPSr0KsaT/qMKl4yFKvCtvS5LwlIOwnrCslXaa6oyblLTguEgoHBbKV1ni3AmX
-         VcUIu2/72RDELHKcFR/5TKEwEDDTFcbKKZZEUOneh63ASpLm8lkNVaoPIK87687Nzd62
-         unaBys3uMFGRVuvUJeqPUW2OVH3reOzW1z+NgUzYTpXfKF73NspBGZV6aFmglfUS7Efc
-         rzYHLvJ86JtSAzlaEYrjCFBOki8Cynv8lQICtw2qZkwe7XlpmH+THhVd8/lXi4bvcvgc
-         5dJBI10ZRrvdBtivsTEr9oUa80ZJjHLUl0h30Xg6DuSMBdODOUX4u9MzVNofnGJx2Ony
-         Sitg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718854793; x=1719459593;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z9vrmQPcxaJWxiJw6vWOK0gXAUtCdkmcGCIFur9g8s8=;
-        b=JMzCmE6MOWCkEUKvjitUSnNOovAzsDEhBPpC0DQqEAZZM8J7O2OmqK6OLjS0xBKYMD
-         6vH0FCw0x1/AfXXyiaCKbSaiN7xu2mdiU+kQiJCmjdoi2tAFhskD8B5R0kwMWrWJ4g66
-         2n7gGFZzk4ZCQxps25xccCsdJ/2G79sp587Usi+X5QfTchKjXOFCCAsQB6bdgcaFu7yp
-         Sgx1nyMJjSoTeatsQT1wdoRZU7avLOLYtwjOm/4mrlU9qB5swtPC+w+hQkireQh4he78
-         KwVQ7WE787KAPnOxyhVvVSV5pL7+nnH2T4zzWaok2W+yHE7+bl0QchRQcuzTfA5vt9D/
-         WRNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhrhFNRn556KyWk6Q3av1U/njGsuUxv3dOAH7s2xLKKpccjXjtb0Ww0zS7Yeebt9BeEnb0ic4kP2fYp+oKX4GDZiXZL0v1FN1lY3Z+TpGciiO5YeTpJHXlc9hKKC8bvxLqXoAqBCXd2Mf2lg==
-X-Gm-Message-State: AOJu0Yy2cfucjCe7G8emLHded7KzhgITNs2x+oXadxa9JqYgH1SPQCXd
-	76M/y1ec+YYlj0AUs2PKbFukRgdzfLKdZZzGUPzsPI3LIG71Zlmr
-X-Google-Smtp-Source: AGHT+IH8E3zhOadHjijktRjCIkt9GVpjzzB1OciH0Bu7m1LD+pd5id84ZKnBYx5ikvRd4xwag5CfFQ==
-X-Received: by 2002:a05:6a21:3389:b0:1b5:44eb:2eda with SMTP id adf61e73a8af0-1bcbb386a8cmr4994570637.5.1718854793466;
-        Wed, 19 Jun 2024 20:39:53 -0700 (PDT)
-Received: from smtpclient.apple ([205.204.117.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f497a1sm125202575ad.283.2024.06.19.20.39.50
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Jun 2024 20:39:53 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1718854997; c=relaxed/simple;
+	bh=jHeoHdPqeSGrptWXQ33oLMFjvBaKeMx9VvpQowy5jRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rzPkWzuT/kLsuypd+lCNXrXXmrmLxQSPckCT/AtWCQbT3XohNuL/tI3VFd3CaPIQmyIThRoXFiwQYkaICokwVyB5skQ/BGAAFcdL0WKCF9JtDolA3QQtbt1pB56ZcSNA0KAHzycDPnq5EdEO4jAjPAzdzBHD9Xw7Z9m6dp2i0Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ok3V7Js0; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1131)
+	id 2BB0820B7004; Wed, 19 Jun 2024 20:43:15 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2BB0820B7004
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1718854995;
+	bh=oOJU1IXLqEglf++fZEc8wq61lqzir2jQjaIDNqEfOH4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ok3V7Js0aduGkrNUFHf0wKEx1Z/JP8pxpfTk2zm+xKpP+ajWdOQ/WSPvAfD4aah7X
+	 pofxcAUcctu5XbQjX1A2byfSG40qxQa504FF7GdrCDwoPg+R0Hs5DHplTcM3p+g6Qi
+	 ULyz8LPyDV4gfc8ZSmLqj07DevT6kNYFDe+l0XBg=
+Date: Wed, 19 Jun 2024 20:43:15 -0700
+From: Kelsey Steele <kelseysteele@linux.microsoft.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/217] 6.1.95-rc1 review
+Message-ID: <20240620034315.GA2251@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20240619125556.491243678@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH] livepatch: introduce klp_func called interface
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <alpine.LSU.2.21.2406071102420.29080@pobox.suse.cz>
-Date: Thu, 20 Jun 2024 11:39:38 +0800
-Cc: Song Liu <song@kernel.org>,
- Petr Mladek <pmladek@suse.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>,
- Joe Lawrence <joe.lawrence@redhat.com>,
- live-patching@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <17FDEE20-A187-4493-BFA6-F09555B1EF6F@gmail.com>
-References: <20240520005826.17281-1-zhangwarden@gmail.com>
- <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz>
- <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com>
- <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz>
- <ZkxVlIPj9VZ9NJC4@pathway.suse.cz>
- <CAPhsuW7bjyLvfQ-ysKE+S8x26Zv5b7jbJoyW8UiBaUfaRncKfg@mail.gmail.com>
- <alpine.LSU.2.21.2406071102420.29080@pobox.suse.cz>
-To: Miroslav Benes <mbenes@suse.cz>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619125556.491243678@linuxfoundation.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
+On Wed, Jun 19, 2024 at 02:54:03PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.95 release.
+> There are 217 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
+> Anything received after that time might be too late.
+> 
+No regressions found on WSL (x86 and arm64).
 
+Built, booted, and reviewed dmesg.
 
-> On Jun 7, 2024, at 17:07, Miroslav Benes <mbenes@suse.cz> wrote:
->=20
-> It would be better than this patch but given what was mentioned in the=20=
+Thank you. :)
 
-> thread I wonder if it is possible to use ftrace even for this. See=20
-> /sys/kernel/tracing/trace_stat/function*. It already gathers the =
-number of=20
-> hits.
->=20
-
-Hi, Miroslav
-
-Can ftrace able to trace the function which I added into kernel by =
-livepatching?
-
-Regard
-Wardenjohn=
+Tested-by: Kelsey Steele <kelseysteele@linux.microsoft.com> 
 
