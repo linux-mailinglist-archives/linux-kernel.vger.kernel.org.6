@@ -1,141 +1,142 @@
-Return-Path: <linux-kernel+bounces-223332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FDB391113B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:47:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05EA91113D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D965A1F2181E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:47:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A748282A4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB65A1BE254;
-	Thu, 20 Jun 2024 18:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQghWg9q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7305A1BE860;
+	Thu, 20 Jun 2024 18:35:00 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1988C1BD006;
-	Thu, 20 Jun 2024 18:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750FD1B4C35;
+	Thu, 20 Jun 2024 18:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718908464; cv=none; b=WSugg8Wb/2s9TfWvUy/jF8dkD0+low0+3ySq1vizqWMsfElyYQhJznWWZ3tzbzK3mL4E6userBlMpCy1KY9ZxKYtTbHu35PliDHWOPpri7ZDm1KpMFqG737a7mMgV4pq8nFSc/0SL1bU/9UOHxEWcNPZlaf04Hp90+/umY/x8NY=
+	t=1718908500; cv=none; b=Vy3X4vNGxasa0p2tZO4gB+gw1/UIeXuNiTf00SNfQnH42twIOe+9/Hj3OuWizlciqFraeODp0h3vqJ1CQ9aah6NU+lyq6GdIIiotJlUz1URnd3IoGPcTcGWVusdw3HONVSVhxN8zBMOg97iHufzO6GNiMeIlIBMYsaQxHlKXBKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718908464; c=relaxed/simple;
-	bh=X8RvfZsDwX1HuokLfVZANOU/YZgt7uFrJznkcLH5SG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RmH/YRHaGMYRB5+Jic9713BdZZEazVJNWLYFyQ6p9dSNWvZsYqHlR+0TgoE7TI8/nvAPa3Y4FswFne4gBMLLoUzyY5+0ZsFVyn23z0eCNgPpAdh7W0uWDjbDr6VBrI/OcNPXpZHLONe3qHTN7kZ8Ze52912jrX2QHLe58h670Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQghWg9q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78444C4AF16;
-	Thu, 20 Jun 2024 18:34:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718908463;
-	bh=X8RvfZsDwX1HuokLfVZANOU/YZgt7uFrJznkcLH5SG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GQghWg9qBgi4835TbD+dPoOdmgJcCwq9mlXvsmUA5UqG5jEoEuaxyHuX9X2YcRouC
-	 A1Nv9w5Rl2T/rNm14ozxUBc5HEkT3vHZtpk43c5gEDldDEstHPZb61w9H5czlvEyTD
-	 bDCooPk7HICkrbcdtJ3uNbfyoUw3LCrUAwjPDLOkM4pgbe7y38CgotR9e4Z4c0ZWwE
-	 VBuJar8XPjHFYFcmhXr17Sv64Hps4i0NIjiDJahymIKgcpuM/LBkPzHZ/w+opZY+JG
-	 rZBzohwRkUmMAnkTypKTuwVJM1flNglFcrWA53kdh4PjqTK5SiIfiPh9Y4PE6GqMGe
-	 VijAp1Lor/9vA==
-Date: Thu, 20 Jun 2024 11:34:22 -0700
-From: Kees Cook <kees@kernel.org>
-To: "liuyuntao (F)" <liuyuntao12@huawei.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Leonardo Bras <leobras@redhat.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] randomize_kstack: Remove non-functional per-arch entropy
- filtering
-Message-ID: <202406201127.17CE526F0@keescook>
-References: <20240619214711.work.953-kees@kernel.org>
- <98381dbf-f14e-4b6c-8c96-fb6b97ed46e1@huawei.com>
+	s=arc-20240116; t=1718908500; c=relaxed/simple;
+	bh=tPAZ0xHBfoomsrxImrhJ+gY9MeQqc/CDLx78nd8mDlA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MK7yDEBgKpz6EPNq1q+tMmP3guWDbhLRmwlfwtX29ZzihzvSAjZhqyRH8smlCrt8WEI3Wcxdjy7npKESZ+w+fWMeLL88ninUGmVMJdu1IsRGKHvJpftOuNZPZgDGjo0nuJ2S1M7cdhCGfWX6lF8iciDmSSaOO4jn39gfL7hr8t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860cc8.versanet.de ([94.134.12.200] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sKMcT-0000Sm-1A; Thu, 20 Jun 2024 20:34:49 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Sebastian Kropatsch <seb-dev@mail.de>
+Cc: linux-rockchip@lists.infradead.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 1/5] arm64: dts: rockchip: Add common definitions for NanoPi R6C
+ and R6S
+Date: Thu, 20 Jun 2024 20:34:47 +0200
+Message-ID: <3392879.RL5eaSpR8r@diego>
+In-Reply-To: <20240612205056.397204-2-seb-dev@mail.de>
+References:
+ <20240612205056.397204-1-seb-dev@mail.de>
+ <20240612205056.397204-2-seb-dev@mail.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <98381dbf-f14e-4b6c-8c96-fb6b97ed46e1@huawei.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Jun 20, 2024 at 11:47:58AM +0800, liuyuntao (F) wrote:
+Am Mittwoch, 12. Juni 2024, 22:48:10 CEST schrieb Sebastian Kropatsch:
+> The FriendlyElec NanoPi R6C and R6S are quite similar boards,
+> although they differ in:
+> - M.2 M-Key connector vs second RTL8125BG Ethernet port
+> - One of the LEDs has a different function on each board
+> - 12-pin GPIO FPC vs 30-pin GPIO header
+> - R6S has a PWM-based IR receiver while the R6C has not
+> - R6S has a 5V fan connector while the R6C has not
 > 
+> Refactor their DT files by adding a common definitions file to
+> improve differentiation clarity between both boards and to make
+> hardware-specific DT changes easier in the long run.
+> Do not introduce any functional changes.
 > 
-> On 2024/6/20 5:47, Kees Cook wrote:
-> > An unintended consequence of commit 9c573cd31343 ("randomize_kstack:
-> > Improve entropy diffusion") was that the per-architecture entropy size
-> > filtering reduced how many bits were being added to the mix, rather than
-> > how many bits were being used during the offsetting. All architectures
-> > fell back to the existing default of 0x3FF (10 bits), which will consume
-> > at most 1KiB of stack space. It seems that this is working just fine,
-> > so let's avoid the confusion and update everything to use the default.
-> > 
+> Signed-off-by: Sebastian Kropatsch <seb-dev@mail.de>
+> ---
+>  ...-nanopi-r6s.dts => rk3588s-nanopi-r6.dtsi} |   7 +-
+>  .../boot/dts/rockchip/rk3588s-nanopi-r6c.dts  |   2 +-
+>  .../boot/dts/rockchip/rk3588s-nanopi-r6s.dts  | 756 +-----------------
+>  3 files changed, 7 insertions(+), 758 deletions(-)
+>  copy arch/arm64/boot/dts/rockchip/{rk3588s-nanopi-r6s.dts => rk3588s-nanopi-r6.dtsi} (99%)
 > 
-> My original intent was indeed to do this, but I regret that not being more
-> explicit in the commit log..
-> 
-> Additionally, I've tested the stack entropy by applying the following patch,
-> the result was `Bits of stack entropy: 7` on arm64, too. It does not seem to
-> affect the entropy value, maybe removing it is OK, or there may be some
-> nuances of your intentions that I've overlooked.
-> 
-> --- a/include/linux/randomize_kstack.h
-> +++ b/include/linux/randomize_kstack.h
-> @@ -79,9 +79,7 @@ DECLARE_PER_CPU(u32, kstack_offset);
->  #define choose_random_kstack_offset(rand) do {                         \
->         if (static_branch_maybe(CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT, \
->                                 &randomize_kstack_offset)) {            \
-> -               u32 offset = raw_cpu_read(kstack_offset);               \
-> -               offset = ror32(offset, 5) ^ (rand);                     \
-> -               raw_cpu_write(kstack_offset, offset);                   \
-> +               raw_cpu_write(kstack_offset, rand);                     \
->         }                                                               \
->  } while (0)
->  #else /* CONFIG_RANDOMIZE_KSTACK_OFFSET */
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts b/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6.dtsi
+> similarity index 99%
+> copy from arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts
+> copy to arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6.dtsi
+> index 4fa644ae510c..e68d4071400e 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6s.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6.dtsi
+> @@ -1,4 +1,7 @@
+>  // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Common devicetree definitions for the NanoPi R6C and R6S
+> + */
+>  
+>  /dts-v1/;
+>  
+> @@ -8,9 +11,6 @@
+>  #include "rk3588s.dtsi"
+>  
+>  / {
+> -	model = "FriendlyElec NanoPi R6S";
+> -	compatible = "friendlyarm,nanopi-r6s", "rockchip,rk3588s";
+> -
+>  	aliases {
+>  		ethernet0 = &gmac1;
+>  		mmc0 = &sdmmc;
+> @@ -74,7 +74,6 @@ lan1_led: led-2 {
+>  		};
+>  
+>  		lan2_led: led-3 {
+> -			label = "lan2_led";
+>  			gpios = <&gpio1 RK_PC4 GPIO_ACTIVE_HIGH>;
+>  			pinctrl-names = "default";
+>  			pinctrl-0 = <&lan2_led_pin>;
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts b/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
+> index 497bbb57071f..ccc5e4627517 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-nanopi-r6c.dts
+> @@ -2,7 +2,7 @@
+>  
+>  /dts-v1/;
+>  
+> -#include "rk3588s-nanopi-r6s.dts"
+> +#include "rk3588s-nanopi-r6.dtsi"
+>  
+>  / {
+>  	model = "FriendlyElec NanoPi R6C";
 
-I blame the multiple applications of the word "entropy" in this feature. :)
+you didn't add a label for that led here.
 
-So, there's both:
+Though I think it might very well be much nicer to just define the led
+with differing function in each board separately.
 
-- "how many bits CAN be randomized?" (i.e. within what range can all
-  possible stack offsets be?)
+Especially as the phandle in the new dtsi now still reference the removed
+label.
 
-and
 
-- "is the randomization predictable?" (i.e. is the distribution of
-  selected positions with the above range evenly distributed?)
+Heiko
 
-Commit 9c573cd31343 ("randomize_kstack: Improve entropy diffusion") was
-trying to improve the latter, but accidentally also grew the former.
-This patch is just trying to clean all this up now.
 
-Thanks for testing! And I'm curious as to why arm64's stack offset
-entropy is 7 for you when we're expecting it to be 6. Anyway, that's not
-a problem I don't think. Just a greater offset range than expected.
 
--Kees
-
--- 
-Kees Cook
 
