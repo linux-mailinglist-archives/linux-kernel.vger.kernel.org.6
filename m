@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-223236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA43A911026
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:08:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75BCD911015
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AA97B2D776
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:06:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A61711C2506B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514041C9EDC;
-	Thu, 20 Jun 2024 17:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E891CCCC6;
+	Thu, 20 Jun 2024 17:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EqRe5MAa"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7tf5tcQ"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482671C9EDA;
-	Thu, 20 Jun 2024 17:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AD51CCCA5;
+	Thu, 20 Jun 2024 17:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718906302; cv=none; b=WEkVXSS0O6J4JbImOWi4c03DedfYYuHtQFcDTipGp6qn1V84kUvRoc7kVZspimoFGrdV5CEhndPgCpb4C9npDQmqSWSQve0XUvEh54Q6qEDrUIIbg6GIsLhGvwDVjG+SW9Z1XlV9wSSIRRvPkFtRPDUH/2gw/jvPlYEdqteNakk=
+	t=1718906306; cv=none; b=Jiv6ZMxUMQHZO56erfKSCitcqnobr5Xtphw36L3fhL/fzhHM2jp/6T3VmdYzyWSkZkJrda1oYqijHw1QLNoWHv7GpP2g1RS/4P/TqqTiRnuc9PcsHY0JuSZQbLcDlyMBxfBMiyZZczJ8ykOVFqLNVqx671cu9q2vcXhw01/X36c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718906302; c=relaxed/simple;
-	bh=K4IWdyliZkmZhKKSV+eGfL58Im2XzxDJDCPSFOZ4NNI=;
+	s=arc-20240116; t=1718906306; c=relaxed/simple;
+	bh=JZiYOORmljoK1sw2ane9GWAOBNpWFrHsg6e0OWJ8vSI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lXG2mF28Dk9BBopB7AVgMSBsxUN/K/JpPpm6KAHsGnjjEOzv9oS/HU8LkWe+RE9Im8bLcxw/De89A1R2+IZQMEIzjdgzMpp7Lrzr4f1zsJWxpItf6wPyoL4+vUmrU1ayNaoBVYnqa/fKkVxGAxSYCaHG/eu1vSYn8y4lUrwwLyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EqRe5MAa; arc=none smtp.client-ip=209.85.215.181
+	 MIME-Version; b=t3+OpDNxvhlse8w6M6ItVukiFyBm1GVud4FILQ45j8qPTQguMhW7ZYAuMMwaJaKHDwFbK+bMLgwIauC1+fmp1cXy+NGIk9upAM1q5GLFXrDNqtMl7Txd00BAc5bSUM3i25AaQy2pIyaPlduGOaHys7ulxw8+0o0nCVNlLSUS6zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7tf5tcQ; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-711b1512aeaso940415a12.3;
-        Thu, 20 Jun 2024 10:58:21 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f99fe4dc5aso10187265ad.0;
+        Thu, 20 Jun 2024 10:58:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718906301; x=1719511101; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718906303; x=1719511103; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lti5kgcPeWhIYDqzEsD33v78UGifs1rdopCyxCRLYNo=;
-        b=EqRe5MAaHm1RKGWNTbNGuIXjFJJZCh9XYH9QoC00WbkQwvh8ZDyDqTUa1SRJNhmd5U
-         HOaxOLn9M4HqXWgJG0a4Wr7p7bWnkeeqt5NF3pplLwOW653UKkQVF82UDyFUKi//FnN6
-         4AojZw0PMDdSScD1/iLic10nrlO1wLs6OWfZEZL+17Uw7Ffjb3ys15ga4d8YbOi5vFku
-         M0vJw6+h3M8ks/nRVxnBHRZjtktyck9NxLB2L6zN4y/2Eg/QiBArb0+JYK46J2EP/dJz
-         9WFHWW5zOUjpuU6Yy1InJVZKcBVlnrwaM06ITWld7lEWgdXQhhI6HKtFb01BxUpU3Qga
-         VVWA==
+        bh=ML3sp6993QhuntHDiwMgBg5++AU4tTHxgPTWBrSRxD4=;
+        b=Q7tf5tcQdUK5OwNm3iP6c/cOYh+E6F12X6Gf7qGvh9OYF4/XrLJM84inLbVIg+OdSX
+         89SX6RwCZEzVjLevRLmx8LRMSzsVtmX+Ne4AdcsoYjIBl9ZJzhzoKVp1aUx40Ehlf1wm
+         h6pV4691kzAsmp5s2YEeh4y9sn0LRcgBXhKepxtGPnN0lmza/AsRZKOdxSgPXnPUYr2K
+         s1rLdrmHTv+3pEFsqR7P1pFo38BKXeK+p0S+dnFklkWjMbXcxIR13mMnLQS/X6DLvlOk
+         xyKyzcT0TKzsrkOnUXmkOrUsTkgsIjFkkw4iRA6ULusGW/IQi8Qls4uKEj8NYwicujCU
+         aweg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718906301; x=1719511101;
+        d=1e100.net; s=20230601; t=1718906303; x=1719511103;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lti5kgcPeWhIYDqzEsD33v78UGifs1rdopCyxCRLYNo=;
-        b=HvESYKySeC0dkYTla3ElZASb0SImvB3DaFWxeJ6mouzPoGfGXTgzuS+4M2Z6sxN4u5
-         xC0QWPvKQ/wSa4oQ+NDm5kOPiqpH0JY3zATWt8g6uYSQj5+1Lituakkh8Vdnd+L8gY8P
-         /m9C0ui8PAGFzDpHOtJDbgbPO9qfNveup0XcDt6bv2sGgYqmcSfjjP1Nfj0YE9zmetXJ
-         N5OEE5ghhw7VAuVED7Q2OrclWjg0OS52xAQCifyu8dEVQbGOWFEtt5hRSUJYrG+bz2p/
-         a8oUIvzBfvp2d60eVHuy7S9bhVCmIPsCsdlkJX6PqUSU1ehfCOYyXLwfKdx3Kgo0K7lM
-         GGpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmoaQeki63ZBsowMiPPl2rH48zbfVRatIBnsESKd3Y3L4jU6tChjIfxW2DHJIPcbESRhRpKNF88nsZXFtkaMyyLMZTw1mb
-X-Gm-Message-State: AOJu0Yza2sGmSmljWo4RGxqALHNpxIdtQQhE+ERLp9EBKfXF8UuXawU7
-	B2roZ5r3rCckASixZXnmE+BkTfE7Ck7Jd5bpIqijb09rPpYKaB3VX4b7xWFQC54=
-X-Google-Smtp-Source: AGHT+IFht8NxOCyg7z9RpFIr1DfT39gsfSL0btobRHEcyEuZAVDhEroB+sko5XU5BgaZjpnZPlp6Jg==
-X-Received: by 2002:a17:90a:4ca6:b0:2c8:647:216 with SMTP id 98e67ed59e1d1-2c8064709bdmr1546880a91.20.1718906300684;
-        Thu, 20 Jun 2024 10:58:20 -0700 (PDT)
+        bh=ML3sp6993QhuntHDiwMgBg5++AU4tTHxgPTWBrSRxD4=;
+        b=URNvW+8R0iOXQCezgzQT8uZPKtDJjLRhYrYWQBiTCw87qL1CCqpLADDCWjw6BSE42G
+         iH3JdupvyVJBV8/1EqSfn/Q/thiZm0KUrVFoufKOv7AYxfgQFXCb+ShVrlhyX0UpTKIh
+         NlcgLB0eQAYjCtR4q9cQ0xYEhukXZR+tsiNX3HASI+GG3343IrWMjSl/dOjcrityRLh4
+         XfgwbKJoEPDInquozllB1F9OlSnwpv7SiS1G+l88eQqtszQR6jO1Ykswtj1MOtSGwCXB
+         TL9pK4XpBeg5iJZO6k6Dq6eHq+ohjNWpTNwrMrp0yvn/BvQIfYz3gnGYbxmA8VBSvM/z
+         Erlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUoNGf7L2LzKEQPiTB51EcpeuW7pnXwWG59+d7NAN6+nbG08IWqOpIysWdY990KIsHpSMnK0z/IGU+7ZP0kV+4vPGNRcCmdBYJ7wh8=
+X-Gm-Message-State: AOJu0YwtItbCBdbJKbujhs82kTjZRHsjiygGgmSZj9xxelIZNcipTUPv
+	gvts/Pwu2oByT8jyFcomRhEtfR42l7BC2brAiKkBF9mOXnHqXtrLQiZhmTtuMF0=
+X-Google-Smtp-Source: AGHT+IFBQBMGehB+oQoKQYHD/qYtBbqhxOtOkxopDaJNky+s/Sb/aQTrReWOcCKSQ26MccV2yDTi7g==
+X-Received: by 2002:a17:902:cf11:b0:1f3:1061:60fe with SMTP id d9443c01a7336-1f9aa3d24f7mr77142485ad.18.1718906303339;
+        Thu, 20 Jun 2024 10:58:23 -0700 (PDT)
 Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e56d5d31sm1996388a91.27.2024.06.20.10.58.19
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9c81f48e3sm19719915ad.230.2024.06.20.10.58.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 10:58:20 -0700 (PDT)
+        Thu, 20 Jun 2024 10:58:22 -0700 (PDT)
 From: Yury Norov <yury.norov@gmail.com>
 To: linux-kernel@vger.kernel.org,
-	Karsten Keil <isdn@linux-pingi.de>,
-	netdev@vger.kernel.org
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Alexey Klimov <alexey.klimov@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Yury Norov <yury.norov@gmail.com>,
+	linux-media@vger.kernel.org
+Cc: Alexey Klimov <alexey.klimov@linaro.org>,
 	Bart Van Assche <bvanassche@acm.org>,
 	Jan Kara <jack@suse.cz>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Matthew Wilcox <willy@infradead.org>,
 	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
 	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH v4 25/40] mISDN: optimize get_free_devid()
-Date: Thu, 20 Jun 2024 10:56:48 -0700
-Message-ID: <20240620175703.605111-26-yury.norov@gmail.com>
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Subject: [PATCH v4 26/40] media: em28xx: cx231xx: optimize drivers by using find_and_set_bit()
+Date: Thu, 20 Jun 2024 10:56:49 -0700
+Message-ID: <20240620175703.605111-27-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240620175703.605111-1-yury.norov@gmail.com>
 References: <20240620175703.605111-1-yury.norov@gmail.com>
@@ -93,49 +94,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-get_free_devid() traverses each bit in device_ids in an open-coded loop.
-Simplify it by using the dedicated find_and_set_bit().
-
-It makes the whole function a nice one-liner. And because MAX_DEVICE_ID
-is a small constant-time value (63), on 64-bit platforms find_and_set_bit()
-call will be optimized to:
-
-	test_and_set_bit(ffs());
+Functions in the media/usb drivers opencode find_and_set_bit(). Simplify
+them by using the function.
 
 Signed-off-by: Yury Norov <yury.norov@gmail.com>
+Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 ---
- drivers/isdn/mISDN/core.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/media/usb/cx231xx/cx231xx-cards.c | 17 +++++-----
+ drivers/media/usb/em28xx/em28xx-cards.c   | 38 ++++++++++-------------
+ 2 files changed, 23 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/isdn/mISDN/core.c b/drivers/isdn/mISDN/core.c
-index ab8513a7acd5..d499b193529a 100644
---- a/drivers/isdn/mISDN/core.c
-+++ b/drivers/isdn/mISDN/core.c
-@@ -3,6 +3,7 @@
-  * Copyright 2008  by Karsten Keil <kkeil@novell.com>
+diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
+index 92efe6c1f47b..8bdfbc4454f1 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-cards.c
++++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
+@@ -9,6 +9,7 @@
   */
  
+ #include "cx231xx.h"
 +#include <linux/find_atomic.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
  #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/stddef.h>
-@@ -197,14 +198,9 @@ get_mdevice_count(void)
- static int
- get_free_devid(void)
- {
--	u_int	i;
-+	int i = find_and_set_bit((u_long *)&device_ids, MAX_DEVICE_ID + 1);
+@@ -1708,16 +1709,12 @@ static int cx231xx_usb_probe(struct usb_interface *interface,
+ 		return -ENODEV;
  
--	for (i = 0; i <= MAX_DEVICE_ID; i++)
--		if (!test_and_set_bit(i, (u_long *)&device_ids))
--			break;
--	if (i > MAX_DEVICE_ID)
--		return -EBUSY;
--	return i;
-+	return i <= MAX_DEVICE_ID ? i : -EBUSY;
- }
+ 	/* Check to see next free device and mark as used */
+-	do {
+-		nr = find_first_zero_bit(&cx231xx_devused, CX231XX_MAXBOARDS);
+-		if (nr >= CX231XX_MAXBOARDS) {
+-			/* No free device slots */
+-			dev_err(d,
+-				"Supports only %i devices.\n",
+-				CX231XX_MAXBOARDS);
+-			return -ENOMEM;
+-		}
+-	} while (test_and_set_bit(nr, &cx231xx_devused));
++	nr = find_and_set_bit(&cx231xx_devused, CX231XX_MAXBOARDS);
++	if (nr >= CX231XX_MAXBOARDS) {
++		/* No free device slots */
++		dev_err(d, "Supports only %i devices.\n", CX231XX_MAXBOARDS);
++		return -ENOMEM;
++	}
  
- int
+ 	udev = usb_get_dev(interface_to_usbdev(interface));
+ 
+diff --git a/drivers/media/usb/em28xx/em28xx-cards.c b/drivers/media/usb/em28xx/em28xx-cards.c
+index bae76023cf71..59e6d7f894ad 100644
+--- a/drivers/media/usb/em28xx/em28xx-cards.c
++++ b/drivers/media/usb/em28xx/em28xx-cards.c
+@@ -11,6 +11,7 @@
+ 
+ #include "em28xx.h"
+ 
++#include <linux/find_atomic.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
+@@ -3684,17 +3685,14 @@ static int em28xx_duplicate_dev(struct em28xx *dev)
+ 		return -ENOMEM;
+ 	}
+ 	/* Check to see next free device and mark as used */
+-	do {
+-		nr = find_first_zero_bit(em28xx_devused, EM28XX_MAXBOARDS);
+-		if (nr >= EM28XX_MAXBOARDS) {
+-			/* No free device slots */
+-			dev_warn(&dev->intf->dev, ": Supports only %i em28xx boards.\n",
+-				 EM28XX_MAXBOARDS);
+-			kfree(sec_dev);
+-			dev->dev_next = NULL;
+-			return -ENOMEM;
+-		}
+-	} while (test_and_set_bit(nr, em28xx_devused));
++	nr = find_and_set_bit(em28xx_devused, EM28XX_MAXBOARDS);
++	if (nr >= EM28XX_MAXBOARDS) {
++		/* No free device slots */
++		dev_warn(&dev->intf->dev, ": Supports only %i em28xx boards.\n", EM28XX_MAXBOARDS);
++		kfree(sec_dev);
++		dev->dev_next = NULL;
++		return -ENOMEM;
++	}
+ 	sec_dev->devno = nr;
+ 	snprintf(sec_dev->name, 28, "em28xx #%d", nr);
+ 	sec_dev->dev_next = NULL;
+@@ -3827,17 +3825,13 @@ static int em28xx_usb_probe(struct usb_interface *intf,
+ 	udev = usb_get_dev(interface_to_usbdev(intf));
+ 
+ 	/* Check to see next free device and mark as used */
+-	do {
+-		nr = find_first_zero_bit(em28xx_devused, EM28XX_MAXBOARDS);
+-		if (nr >= EM28XX_MAXBOARDS) {
+-			/* No free device slots */
+-			dev_err(&intf->dev,
+-				"Driver supports up to %i em28xx boards.\n",
+-			       EM28XX_MAXBOARDS);
+-			retval = -ENOMEM;
+-			goto err_no_slot;
+-		}
+-	} while (test_and_set_bit(nr, em28xx_devused));
++	nr = find_and_set_bit(em28xx_devused, EM28XX_MAXBOARDS);
++	if (nr >= EM28XX_MAXBOARDS) {
++		/* No free device slots */
++		dev_err(&intf->dev, "Driver supports up to %i em28xx boards.\n", EM28XX_MAXBOARDS);
++		retval = -ENOMEM;
++		goto err_no_slot;
++	}
+ 
+ 	/* Don't register audio interfaces */
+ 	if (intf->altsetting[0].desc.bInterfaceClass == USB_CLASS_AUDIO) {
 -- 
 2.43.0
 
