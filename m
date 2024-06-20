@@ -1,158 +1,191 @@
-Return-Path: <linux-kernel+bounces-223403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDFCF911265
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:43:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 541DB911267
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59312283EE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:43:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7A7A1F213F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73341BB6A3;
-	Thu, 20 Jun 2024 19:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7CB1BB6B8;
+	Thu, 20 Jun 2024 19:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RSZiEagy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U2CVATap"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6718B1BA061
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58DD1B9ACA
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718912570; cv=none; b=T8i1/wLMXoGQLq/yUCXvL+afj6ftBOpjEb0nDCX/P79tw8w97LsRAhQ+Rk8nezoGMrU+IGVJKNbYbpwA1y3gKYN21TPyrFWwCig5CuML+VZIoFhUkmOjI1IHjDIykTDdmAX0EylmpaCTqNbe4wTJ247SvVCwEjGcujTixO/iV5U=
+	t=1718912570; cv=none; b=jMKLq4fhdCR2hjMm07ecTjRnm3V0xCE2RVx+iWZBIccDhvMud8M38+y3p7YX+Zo2hB1bHfUSH3tdJnddaQz9jH1qprXifXox8QZq7WVfWCHBn5KibM7ivZm/MCdHYRyjhyBfLqP0OXsoyCFO13ldfEGII57DjgtW2n9eOJ03gDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718912570; c=relaxed/simple;
-	bh=HehlRGEC8VVYuH4plXIVmqlAlRJGpeJ8Synul5a0NSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YjrthOLH/WjbxSMZEU+C8wIygYS6uZW08fS+It6ezuGpE5QOt+cvpJ6mGFqjuqS9Xth9ZSMFZNXtZ1MWFiYFxHznste5WYmf+i46IdTqqyrJkJ+GA+FmFTEIiaFYTdBfu8z9LQWuoqct59Yb85O0+bV4HMr1PD+cDzgEIDfIbA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RSZiEagy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718912567;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1agS+ZvCUVxgkXGHHLIbPUJmAmNouL9iIY3PECE7ow4=;
-	b=RSZiEagyXXw84zqLbEl/yN/gi9sv9s+3O2xBe33Zxb4aMXtB/rLB8sXDD08gPdtNcpecc1
-	xnfdyxAP38ywRSbueZsydQnYTUOBgQZlZ9Zr8m/KwpOZZkoOovoty2N3OVqxidA8lT6aGq
-	iUU5x98Myg3pJnkO6/vPUxLzv2a+C64=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-602-VCGftyuAM4C0UIGD5dugGw-1; Thu, 20 Jun 2024 15:42:45 -0400
-X-MC-Unique: VCGftyuAM4C0UIGD5dugGw-1
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-dfab38b7f6bso1935128276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:42:45 -0700 (PDT)
+	bh=eM3wB9NAHkHjYblWTT3AjqGdA3r6nkX4upptgf3Wji0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l2Q1Nk/PR3/OHUtKXxryHYg5TapmLZhaK39MkNqzs1gtpaUW5CetfTNTcN+IRE4laXTtgqHf+xJSLCuBL4MybugJpibXJR1KPnPGYJBuh2I06O4VL7k4yHUlzA8Y8ARZPSvYExB080CVznZnuFBIFJ0YoDEr7VZIKREp2+jfieA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U2CVATap; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42172ab4b60so12871115e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:42:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718912566; x=1719517366; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=hrCX72O0lF3zsVZzlXhFO6wTPnrG9ubeae4olxpTtrI=;
+        b=U2CVATap5rvNfPRqW9aRhQd9+BHMUDLFg8l/tkxc5j2ck+SnuKGvg/xDf8Ybl2TITO
+         5xcVmlwMEz5sqVDNr6SamC7yrwklTBT0RamcKU1uNCu2wvdjbm7tWXRR9M2wYzxC98Ll
+         up6rqKiZJcg82z50EOI6yxSPGrcMAnESQe4vZbor2vmIvQ8FOjZdMPNguiHhApuDxpQU
+         bKGopmrGBsCQV2LUqV4xWPfYx+cnnNCzXhIg7qIEVg+7rpuOUAVxMJTAeYrmBayQwtui
+         Lxm+P+5qzqBcNcnodxvKFys0Fb3C88oXt74aL+RuLxuS/Uv2oO/t/v2qIzVATEFbxRhn
+         dz9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718912565; x=1719517365;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1agS+ZvCUVxgkXGHHLIbPUJmAmNouL9iIY3PECE7ow4=;
-        b=X6zd4WrnL3qf81yNGR5gGDWBAshbw/AQRe2NdOug6u9dLlCPF9EaUQ39CU0R9k5uPf
-         aCk0bglEpkRxyFyYTExNZ8fYXkBvRojQ0lOMcRZBc/8Zv9ybxcfUEftaqr3WKogHcqsK
-         BsLoYoYyUV4f4KH+DKSdQs9mwKLNNIuAaCsWrH9vxEjmmQw/QSRsTvME9qSvyA6zFOvy
-         FmlCD4gJa13FplpJILDPBBz0bUKSOPZg3W2sgTpal5JlZaMmtBJH3cKvKbNXzGfUFhnE
-         Bk+FBlvvn/cN7Oa9x7lbvVdg7XRZwzyh4IvbH1lHjl7yS7jigD0Xor+Ojz2OuqiHsX0M
-         7hAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgw05qtDPBYs8VM5vLlV+prkFwmxg44x9coGi2PNs92NeCO86SY11NvkWs15gMgS1wlQhKzMvs0Rjf4uAgcySa/s+nTa/sPnLMqNMo
-X-Gm-Message-State: AOJu0Yzxy3tgQFONh5TKYVTjOIpXHjAytG/fP2ykVooEF3f+AsVdWDMb
-	lr2asQNYfI26jqTCiEnZZKNU9XKWRWHXo7jI0m+beQgT7WxJKdux39Ei0ivF9MuzjAgpQ8Xge8N
-	Fb83oCKui/HsUP3LwuABmWPl8SdOx2TO9+WHx86/9o6M3HWoHGfq2JORcBIek8w==
-X-Received: by 2002:a25:ae95:0:b0:dfa:5895:7814 with SMTP id 3f1490d57ef6-e02be17a2d8mr6265501276.36.1718912565194;
+        d=1e100.net; s=20230601; t=1718912566; x=1719517366;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hrCX72O0lF3zsVZzlXhFO6wTPnrG9ubeae4olxpTtrI=;
+        b=XHSu6Jkn8tNrR3Ql2qjho/799hh/eA42wcWzRu9CJ9/c9a4WbaaR2Na2l1qXTqBsMV
+         /9kVMu1nGsdFNx5AipHxzxH/+zm1rW2ESlX1th2LdUleqmsNnZRMkYj0iZ+iCX8EjaSP
+         dIX6iuaaZP/aN3mmiXMRqUZJp0T3CnxjFsSZSoJcx65JEwE7BjBijCTIhw7hu80/6mlz
+         sALCGGrgwXhu77t/XQlXneFipP5rkxRm3wniAPM6Jjx85RqXw9nDPyT9N3J3uqnZ3db0
+         VNolNPk98zBhs0moWyc19TyiB71PMrmIkljfiwgg5TccgCHJcPtzaT0AyM3+DcyANlZk
+         hqmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdTe/FSp2+sCGNb3jDGF9ED9mD9v5VsWaGvmMdSmFUnNN6vLKY4JayGYh2rQ5pksxvTbWOWW16SOtW6o5Pgx1cAUHGPRKN/yzqyHsz
+X-Gm-Message-State: AOJu0YxzY9GgVvw8o87dvHvWO+fXhLMqno0WbkE3HnO35ICOSOzOf0F8
+	hQ7WzpJzhgJLi4fk168tlb9D27AsmEKye3gzNpa/qJGUBLYtQ7qVhxEVuJHehlp7LLMfzHW/Vj4
+	1
+X-Google-Smtp-Source: AGHT+IEHdPGaIbU70gbUkpcL4NypQoDbPqSUn57RnyDrQOqJmtjhsalkOytM1Kys8+dbrciRkkFncQ==
+X-Received: by 2002:a05:600c:4a14:b0:421:5554:744c with SMTP id 5b1f17b1804b1-4247517550amr49037115e9.11.1718912566079;
+        Thu, 20 Jun 2024 12:42:46 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42481922774sm1674635e9.47.2024.06.20.12.42.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
         Thu, 20 Jun 2024 12:42:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEE4ky/fERanNc8cBhQKDDDU0GeIhg6HjUx/IE8xx/ZXGSXJJZV61VB95Bm+AQ66PZaqk4hXA==
-X-Received: by 2002:a25:ae95:0:b0:dfa:5895:7814 with SMTP id 3f1490d57ef6-e02be17a2d8mr6265480276.36.1718912564724;
-        Thu, 20 Jun 2024 12:42:44 -0700 (PDT)
-Received: from x1gen2nano ([2600:1700:1ff0:d0e0::13])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b5180dd3a1sm5935796d6.31.2024.06.20.12.42.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 12:42:44 -0700 (PDT)
-Date: Thu, 20 Jun 2024 14:42:41 -0500
-From: Andrew Halaney <ahalaney@redhat.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Vinod Koul <vkoul@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH net-next 1/8] net: phy: add support for overclocked SGMII
-Message-ID: <4ts2ab5vwf7gnwqd557z62ozjdbl3kf7d64qfc6rjhuokav3th@brhzlsrpggk6>
-References: <20240619184550.34524-1-brgl@bgdev.pl>
- <20240619184550.34524-2-brgl@bgdev.pl>
- <bedd74cb-ee1e-4f8d-86ee-021e5964f6e5@lunn.ch>
- <CAMRc=MeCcrvid=+KG-6Pe5_-u21PBJDdNCChVrib8zT+FUfPJw@mail.gmail.com>
- <160b9abd-3972-449d-906d-71d12b2a0aeb@lunn.ch>
- <ZnNIib8GEpvAOlGd@shell.armlinux.org.uk>
+Message-ID: <97b84ce1-3ed2-48a8-bed4-9a671b61cd6d@linaro.org>
+Date: Thu, 20 Jun 2024 21:42:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnNIib8GEpvAOlGd@shell.armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mfd: Explain lack of child dependency in
+ simple-mfd
+To: Lee Jones <lee@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240616080659.8777-1-krzysztof.kozlowski@linaro.org>
+ <20240620171756.GY3029315@google.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240620171756.GY3029315@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 19, 2024 at 10:07:21PM GMT, Russell King (Oracle) wrote:
-> On Wed, Jun 19, 2024 at 09:51:12PM +0200, Andrew Lunn wrote:
-> > phylib supports out of band signalling, which is enough to make this
-> > work, so long as two peers will actually establish a link because they
-> > are sufficiently tolerant of what the other end is doing. Sometimes
-> > they need a hint. Russell King has been working on this mess, and i'm
-> > sure he will be along soon.
+On 20/06/2024 19:17, Lee Jones wrote:
+> On Sun, 16 Jun 2024, Krzysztof Kozlowski wrote:
 > 
-> ... and I'm rolling my eyes, wondering whether I will get time to
-> finish the code that I started any time soon. I'll note that the more
-> hacky code we end up merging, the harder it will become to solve this
-> problem (and we already have several differing behaviours merged with
-> 2500base-X already.)
+>> Common mistake of usage of 'simple-mfd' compatible is a dependency of
+>> children on resources acquired and managed by the parent, e.g. clocks.
+>> Extend the simple-mfd documentation to cover this case.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  Documentation/devicetree/bindings/mfd/mfd.txt | 13 +++++++------
+>>  1 file changed, 7 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/mfd.txt b/Documentation/devicetree/bindings/mfd/mfd.txt
+>> index 336c0495c8a3..98b4340b65f3 100644
+>> --- a/Documentation/devicetree/bindings/mfd/mfd.txt
+>> +++ b/Documentation/devicetree/bindings/mfd/mfd.txt
+>> @@ -18,12 +18,13 @@ A typical MFD can be:
+>>  Optional properties:
+>>  
+>>  - compatible : "simple-mfd" - this signifies that the operating system should
+>> -  consider all subnodes of the MFD device as separate devices akin to how
+>> -  "simple-bus" indicates when to see subnodes as children for a simple
+>> -  memory-mapped bus. For more complex devices, when the nexus driver has to
+>> -  probe registers to figure out what child devices exist etc, this should not
+>> -  be used. In the latter case the child devices will be determined by the
+>> -  operating system.
+>> +  consider all subnodes of the MFD device as separate and independent devices
+>> +  akin to how "simple-bus" indicates when to see subnodes as children for a
+>> +  simple memory-mapped bus. "Independent devices" means that children do not
 > 
-> > What i expect will happen is you keep calling this 2500BaseX, without
-> > in band signalling. You can look back in the netdev mailling list for
-> > more details and those that have been here before you. It is always
-> > good to search the history, otherwise you are just going to repeat it.
+> I'm not against the change, but I think it can be phased better.
 > 
-> That's where things start getting sticky, because at the moment,
-> phylink expects 2500base-X to be like 1000base-X, and be a media
-> interface mode rather than a MAC-to-PHY interface mode. This is partly
-> what my patches will address if I can get around to finishing them -
-> but at this point I really do not know when that will be.
-> 
-> I still have the high priority work problem that I'm actively involved
-> with. I may have three weeks holiday at the start of July (and I really
-> need it right now!) Then, there's possibly quite a lot of down time in
-> August because I'm having early cataract ops which will substantially
-> change my eye sight. There's two possible outcomes from that. The best
-> case is that in just over two weeks after the first op, I'll be able to
-> read the screen without glasses. The worst case is that I have to wait
-> a further two to three weeks to see my optometrist (assuming he has
-> availability), and then wait for replacement lenses to be made up,
-> fitted and the new glasses sent.
-> 
-> So, I'm only finding the occasional time to be able to look at
-> mainline stuff, and I don't see that changing very much until maybe
-> September.
-> 
-> At this point, I think we may as well give up and let people do
-> whatever they want to do with 2500base-X (which is basically what we're
-> already doing), and when they have compatibility problems... well...
-> really not much we can do about that, and it will be way too late to
-> try and sort the mess out.
+> Quoting the new part and going on to explain what you mean by it doesn't
+> flow very well.  Are you able to massage it so it reads a little more
+> nicely please?
 
-I hope your holiday and operation go well Russell.
+Does this feels better?
 
-Pardon my ignorance, but I know of quite a few things you have in flight
-and because of that I'm not entirely sure what specific patches you're
-referring to above. Have those hit the list? I know you're cleaning
-up stmmac's phylink/pcs usage, but I'm thinking that this is outside of
-that series. Thanks in advance for helping me understand all that's in
-progress around this mess of a topic!
+compatible : "simple-mfd" - this signifies that the operating system
+should consider all subnodes of the MFD device as separate and
+independent devices, so not needing any resources to be provided by the
+parent device. Similarly to how "simple-bus" indicates when to see
+subnodes as children for a simple memory-mapped bus.
+
+For more complex devices, when the nexus driver has to probe registers
+to figure out what child devices exist etc, this should not be used. In
+the latter case the child devices will be determined by the operating
+system.
+
+
+Best regards,
+Krzysztof
 
 
