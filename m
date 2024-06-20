@@ -1,59 +1,74 @@
-Return-Path: <linux-kernel+bounces-223453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C746911348
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:34:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D79291134E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D121C21B60
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:34:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 202E128467A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5525674A;
-	Thu, 20 Jun 2024 20:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53C95BAD7;
+	Thu, 20 Jun 2024 20:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Bg8yPHsV"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EFC3C6AC;
-	Thu, 20 Jun 2024 20:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="h2seSato"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD0555880;
+	Thu, 20 Jun 2024 20:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718915674; cv=none; b=p36Fpaywoqzw8NtxCAn0Hk2tTE5sSRFKPSzwi4kbAvtGTvVojSKOONR3TCs6oMLf+a06A2XpyvTNgMZOMSCyvWK0rFh/ug1TBgT+lvhcl9MJBaXfK0bhdf7Dcf27FVyzyGt5N9hJ78vWBFZhZrZeVUOuQt+DFRzDc5mWF6bRAEA=
+	t=1718915727; cv=none; b=M7f3Jv67ZT1YigwqOkIqS/OmIUCZJSku/W7piXL2AAHi6qbl9nULQcoKgbaGyEWnwb/JSxbhLTxKhPdc1SPa2j/o2XI/wGWDE8KrF213pNc7jQABCQDfvb2hrj3oR1MQ3G1n5muz28WMX4rnfTU1dieJ9Ux50Dz9WRWXA430Rrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718915674; c=relaxed/simple;
-	bh=Qjgls1+fDHoSlp8kty5p8JufKc02nlgR5ecC7mawsk4=;
+	s=arc-20240116; t=1718915727; c=relaxed/simple;
+	bh=rY6eGqJ75wEmGu1HgeNvbS4fJ9EDXfDA5wrtzZT6MjI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fl7Lqm8QwF/NhPfZAckoyHOEQOKylt0O0SmTCCxySJViBR/BQM09OeB7pSAKWpDp9a/UgrMyuLh4ygNzjTzopc/g8vaJ9xbqCu4BhPkosTYPEZk4LbSUPbF+lDU0uFPvwR6umwanW5VBhi+djJ+eRPrr7MjuLJ2AdqIOL7OZKLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Bg8yPHsV; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1718915668;
-	bh=Qjgls1+fDHoSlp8kty5p8JufKc02nlgR5ecC7mawsk4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bg8yPHsVg7YcnTXyQtCFTUNvWfpV80lMIWHE6HVlp//JgZpLevL+72yjpW16OMiea
-	 9wfF5ort/6xXLv+beVTMts562W1f+KV7s4t12JykJNG0rb2MbJ6QgowAxk1QZmCbPK
-	 BSJ178aUs5djvWTBHYV9DIwT0yqtgki9kKvNtf3E=
-Date: Thu, 20 Jun 2024 22:34:28 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>, 
-	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>, 
-	Dustin Howett <dustin@howett.net>, Stephen Horvath <s.horvath@outlook.com.au>, 
-	Rajas Paranjpe <paranjperajas@gmail.com>, linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev, 
-	Matt Hartley <matt.hartley@gmail.com>
-Subject: Re: [PATCH v4 4/5] power: supply: add ChromeOS EC based charge
- control driver
-Message-ID: <933f6510-2496-4ff9-af50-dd3ff35ddffd@t-8ch.de>
-References: <20240616-cros_ec-charge-control-v4-0-74d649a9117d@weissschuh.net>
- <20240616-cros_ec-charge-control-v4-4-74d649a9117d@weissschuh.net>
- <syoaiwmmxuz4ai6jomu42kvwocwozpzfbnjhvndlfqi6zkio4x@vrg6hle2httr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sN85Nz/t2T5VP9AGGPpC63OHtDlA+/IZYAaUevHidnT3AvOpC4Q08z7WjdoFLAzGyPyEtHoKq5GAERHAPakJu/T5OoMzHAgPNt1Br4JSz50VPlMlIEI0tHnOAKNg20BejX4QZ0CoSxiLaop++MreoPq98ezkCRK761D596v7rrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=h2seSato; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id CB8F014C2DD;
+	Thu, 20 Jun 2024 22:35:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1718915715;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UaFyOqx3Wna3PHffZA3lbOwaWZobih6I6zyfeyta8vg=;
+	b=h2seSatoOQGsC1oNd084UzbsoydUhd9vEuvTIVA67+KxCi+z8q0IS0pjF2KDpOyEXXn6xC
+	V5F5tFKch54wcT/63BHhocLiZ4AACqT7Li3GdqjRb9Uoce/o9dTPxiHGE3wZwgzlrvpbcq
+	r+1Z8DInjQu2mvVXoWl5Vtyzy4YtD5CUQZ+l8QQu5f6ZIOEm7+irf9TT9TglH+VFtK9Bf0
+	bUxiZ+0w0EPSZyZ4qOyV46FOnADlcelQ9/eQBgzAH5dQg48/EYTHDT1P+dqnsewYmXODfm
+	X8KMzeUD8xxj/M3UhmTOhPXsiVwITjND5inF4G6cZ4fpaCqg3uxxlbubVPnIGw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 9c0e7542;
+	Thu, 20 Jun 2024 20:35:04 +0000 (UTC)
+Date: Fri, 21 Jun 2024 05:34:49 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>,
+	Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>
+Subject: Re: [PATCH 06/17] 9p: Enable multipage folios
+Message-ID: <ZnSSaeLo8dY7cu3W@codewreck.org>
+References: <20240620173137.610345-1-dhowells@redhat.com>
+ <20240620173137.610345-7-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,64 +77,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <syoaiwmmxuz4ai6jomu42kvwocwozpzfbnjhvndlfqi6zkio4x@vrg6hle2httr>
+In-Reply-To: <20240620173137.610345-7-dhowells@redhat.com>
 
-Hi Sebastian,
+David Howells wrote on Thu, Jun 20, 2024 at 06:31:24PM +0100:
+> Enable support for multipage folios on the 9P filesystem.  This is all
+> handled through netfslib and is already enabled on AFS and CIFS also.
 
-On 2024-06-20 00:24:23+0000, Sebastian Reichel wrote:
-> On Sun, Jun 16, 2024 at 09:03:32PM GMT, Thomas Weißschuh wrote:
-> > The ChromeOS Embedded Controller implements a command to control charge
-> > thresholds and behaviour.
-> > 
-> > Use it to implement the standard Linux charge_control_start_threshold,
-> > charge_control_end_threshold and charge_behaviour sysfs UAPIs.
-> > 
-> > The driver is designed to be probed via the cros_ec mfd device.
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> 
-> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Since this is fairly unrelated to the other patches let's take this
+through the 9p tree as well - I'll run some quick tests to verify writes
+go from 4k to something larger and it doesn't blow up immediately and
+push it out for 6.11
 
-Thanks!
-
-<snip>
-
-Would you also take a look at patch 5,
-"power: supply: cros_charge-control: don't load if Framework control is present"?
-
-I'm still wondering what the best solution for the two different EC APIs
-would be. Maybe you have an idea?
-
-In short:
-
-Framework laptops have a downstream charge control API in their EC.
-This drivers binds to the upstream CrOS EC APIs, which does work on
-Framework laptops.
-If the downstream API is used, it overrides the functionality of the
-upstream API.
-
-Choices I see:
-* Ignore the incompatibility and just load the driver (maybe log something)
-* Detect if the downstream API is actively used during probing
-  (If enabled by UEFI) and either
-  * don't load the driver
-  * disable the current downstream API configuration, so the driver works
-  * disable the downstream API and take over its configuration into the
-    upstream driver
-* Detect if the downstream API is present at all and don't load the
-  driver (currently implemented)
-
-The problem is that the downstream API is still usable and its usage
-would break this driver.
-On the other hand, disabling the driver forces users to manually specify
-a kernel commandline, preventing most users from actually making use of it.
-
-(For the future I plan on adapting the Framework EC firmware to avoid
-this issue, but there is no telling how long it will take and if it is
-accepted at all)
-
-Thanks for any ideas,
-Thomas
+-- 
+Dominique Martinet | Asmadeus
 
