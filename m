@@ -1,69 +1,47 @@
-Return-Path: <linux-kernel+bounces-222016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A0490FBB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:35:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC7A90FBB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660381C21606
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:35:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775AC1C214AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6C221364;
-	Thu, 20 Jun 2024 03:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YTm9juk5"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5904D3C00
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 03:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFD323767;
+	Thu, 20 Jun 2024 03:36:00 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FDB3C00;
+	Thu, 20 Jun 2024 03:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718854520; cv=none; b=ZSK1cXTNP58ta1Bw6gM0ju8mIdel/uLWkF5+E8qlvynve8KEvvEJX7fjVoe5AW9UXSgJfsK/YMRQOMMbh/vk31FpssP/X1wWWH+85zchZ5CsbothtXGk1ziGToiI84WxvKWqkDSLHzeilHjG8P4lVDfs9goD7JyJEqc/Tp5TxZw=
+	t=1718854559; cv=none; b=V56ZdFFeCG8LVpTqC9MtdbkNqkVxi4aYdV03Ynq75fjdoGKB080G9ZypSqIsa/Mfvf4woHIB13itoe6Fb8C+MMn00k4mqUSLUmGiSNWQ2/8xVfctZ0U47yaub2UfBMiXWc7M85BxGwI6HzPhjl3oZ9juMiFfJ+ZAS7v61fLv5vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718854520; c=relaxed/simple;
-	bh=OJN682JQ0IRzpsi7pQEo2eXAzG7PtVnK0pQDq2jmkz4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bu4OoZBqjOeZxgs14ePd1CBnZ3+O3Ijahc7AVf58klOp2Gje4M4bp70wZPE70d+CkYSdXRbQ86d8TujgNcHejAVQ6NTejbSMs9IC+IjPG3lAydeTGYs7MnKM/TPA7fnI0He0PDVuiI8yPsRqGsFJq1B+31iEOyAf7P85HJ2t2PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YTm9juk5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JEw7Da025146;
-	Thu, 20 Jun 2024 03:34:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=/8F1oqaHP7W8dzdNx4W8F2
-	ghTuXXnl53DkuSaN9iNVo=; b=YTm9juk53ITPUX4Twa7CGMgzmDel8/dF2w0bWV
-	3LrHg7sSjTH2fyGJA94aWtcuV1TLMaACXwuTLVpyUUuFSiDlwjo08EZHPZKQrA0d
-	KWh/DuCZ8qJQ9zzfTaAwj7OeUOml+N4B8E9URyVvI0Ag+h/5znk/lhgA2YhlCoVy
-	cSEo6Ys2barVGyWtnPnChK62iLJAXnQ8OSLCciIiU0YCVTMqwlC5mowdQinGhKXu
-	OOQGAWaHsxNvM3IE4oYp5k0QkTorEn/1pfjvl/v7EIgEL26jYV2mfdYnizU5edwZ
-	1FlVh4JAOS2mtdeEJQ5js0X/1/hGumiZmOPuWweDSNkfHU4A==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yv1j91a05-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 03:34:54 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45K3Yq7K002169
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 03:34:52 GMT
-Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 19 Jun 2024 20:34:49 -0700
-From: Zhongqiu Han <quic_zhonhan@quicinc.com>
-To: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
-        <andy.chiu@sifive.com>, <conor.dooley@microchip.com>,
-        <ancientmodern4@gmail.com>, <ben.dooks@codethink.co.uk>,
-        <bjorn@rivosinc.com>
-CC: <quic_bjorande@quicinc.com>, <linux-riscv@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <quic_zhonhan@quicinc.com>
-Subject: [PATCH] riscv: signal: Remove unlikely() from WARN_ON() condition
-Date: Thu, 20 Jun 2024 11:34:34 +0800
-Message-ID: <20240620033434.3778156-1-quic_zhonhan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718854559; c=relaxed/simple;
+	bh=pxEJn23nT6+sqxNt5VIguQ2SC4vykVQraEA5VugQ+mQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bfFC3hBRxDfjPB3i81Kyflc6ztpswAOu0cyOfXLepnJI1v/WyQxo2IuH5O9bgjfp7zP7h7OsrfBc3s4TZoN7cYWJUEbf+cRhVpYeMeGzjDgoNFOrn1HOyez+nizE7KXk88+IlyW6XHxRt9hClJl8InllMLdXUzLTS+MFyFCovZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8Bx3+uZo3NmSWkIAA--.18063S3;
+	Thu, 20 Jun 2024 11:35:53 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8Cx78eYo3Nm6ugpAA--.35757S2;
+	Thu, 20 Jun 2024 11:35:53 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>,
+	kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] LoongArch: KVM: Sync pending interrupt when getting ESTAT from user mode
+Date: Thu, 20 Jun 2024 11:35:52 +0800
+Message-Id: <20240620033552.2739845-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,45 +49,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4w2VTZiM0lcOsouI3XGulbIfQtvP8HMm
-X-Proofpoint-GUID: 4w2VTZiM0lcOsouI3XGulbIfQtvP8HMm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_01,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 priorityscore=1501 phishscore=0 mlxscore=0 adultscore=0
- clxscore=1011 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406200024
+X-CM-TRANSID:AQAAf8Cx78eYo3Nm6ugpAA--.35757S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-"WARN_ON(unlikely(x))" is excessive. WARN_ON() already uses unlikely()
-internally.
+Currently interrupt is posted and cleared with async mode, and it is saved
+in SW state vcpu::arch::irq_pending and vcpu::arch::irq_clear. When vcpu
+is ready to run, interrupt is synced to ESTAT CSR register from SW state
+vcpu::arch::irq_pending at guest entrance.
 
-Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Reviewed-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+During VM migration stage, vcpu is put into stopped state, however
+pending interrupt is not synced to ESTAT CSR register. So there will be
+interrupt lost when VCPU is stopped and migrated to other host machines.
+
+Here when ESTAT CSR register is read from VMM user mode, pending
+interrupt is synced to ESTAT also. So that VMM can get correct pending
+interrupt.
+
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
 ---
- arch/riscv/kernel/signal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/loongarch/kvm/vcpu.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-index 5a2edd7f027e..dcd282419456 100644
---- a/arch/riscv/kernel/signal.c
-+++ b/arch/riscv/kernel/signal.c
-@@ -84,7 +84,7 @@ static long save_v_state(struct pt_regs *regs, void __user **sc_vec)
- 	datap = state + 1;
+diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+index b747bd8bc037..81622cd055af 100644
+--- a/arch/loongarch/kvm/vcpu.c
++++ b/arch/loongarch/kvm/vcpu.c
+@@ -371,9 +371,18 @@ static int _kvm_getcsr(struct kvm_vcpu *vcpu, unsigned int id, u64 *val)
+ 		return -EINVAL;
  
- 	/* datap is designed to be 16 byte aligned for better performance */
--	WARN_ON(unlikely(!IS_ALIGNED((unsigned long)datap, 16)));
-+	WARN_ON(!IS_ALIGNED((unsigned long)datap, 16));
+ 	if (id == LOONGARCH_CSR_ESTAT) {
++		preempt_disable();
++		vcpu_load(vcpu);
++		/*
++		 * Sync pending interrupt into estat so that interrupt
++		 * remains during migration stage
++		 */
++		kvm_deliver_intr(vcpu);
+ 		/* ESTAT IP0~IP7 get from GINTC */
+ 		gintc = kvm_read_sw_gcsr(csr, LOONGARCH_CSR_GINTC) & 0xff;
+ 		*val = kvm_read_sw_gcsr(csr, LOONGARCH_CSR_ESTAT) | (gintc << 2);
++		vcpu_put(vcpu);
++		preempt_enable();
+ 		return 0;
+ 	}
  
- 	get_cpu_vector_context();
- 	riscv_v_vstate_save(&current->thread.vstate, regs);
+
+base-commit: 92e5605a199efbaee59fb19e15d6cc2103a04ec2
 -- 
-2.25.1
+2.39.3
 
 
