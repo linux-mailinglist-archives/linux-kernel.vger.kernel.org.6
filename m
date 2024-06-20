@@ -1,151 +1,163 @@
-Return-Path: <linux-kernel+bounces-222871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806969108F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:50:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F2E9108FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01FADB2356F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:50:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5B58284B7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B0E01AE86E;
-	Thu, 20 Jun 2024 14:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b="E9rXJphZ"
-Received: from mail.kaechele.ca (mail.kaechele.ca [54.39.219.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C449A1AED28;
+	Thu, 20 Jun 2024 14:52:28 +0000 (UTC)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FFD1AE08E;
-	Thu, 20 Jun 2024 14:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.39.219.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BEA1AE84E;
+	Thu, 20 Jun 2024 14:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718895036; cv=none; b=OKtuNqa/R8ht6WHzQ9K3RPtI+Xcoh85sxqJWgfVYkb3g9eL9uVCo8tFvSf3KDtYo3VWPB2xU2vPDGcTSrkZw/uCtg2XgGL8AVeOf+45zD3hBx1rLH/cBNDXjz69Q5OhelwV+YeJ4wkiqWE3atwOxlvfoQSRRj4TTCZxsax7Q9wE=
+	t=1718895148; cv=none; b=ZHugzqmokr+hZXysotWWZ/CL/tk5p9c2P4nESMgEnXPzbcE9j57+phoXkpvdwywnHfldFK2XgSfcbNgZCC5UINJhveUi7dRO64A6Oo8F26IHIThNoNziyAf2RKZCEOki7QRtTsv0k1mIYphkywafZ41Tch/fnqKlNzO19VNPLvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718895036; c=relaxed/simple;
-	bh=2DzxvjV6MvKhNUdCZmu80xYkWaZG1Zm5C2Gtma+Iq1A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r1z7vxm16aWWsCoMmwL3+GFjfamk6HJIFdeb0dHs7LqRyq32dJhs2k89mkgRaihwAjfJWf2rVRBb9F39yje0ofFdO5r2zz4EKhDBLYDXt8WW+eCb2aP7jxmIYk5qT7H8L8MX7da6+uUV8K+tX8ImJWBjPshw7xR0wqOXkU/9U1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca; spf=pass smtp.mailfrom=kaechele.ca; dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b=E9rXJphZ; arc=none smtp.client-ip=54.39.219.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaechele.ca
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 60CFDC0072;
-	Thu, 20 Jun 2024 10:52:13 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaechele.ca; s=201907;
-	t=1718895134; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=K6yI03A8YX5AxufGKnNrR+pc9BLu4Q5cOZcnXlwV5G4=;
-	b=E9rXJphZGhN4S6CmjEvA6PdMbMcrSpFkJaoiDBfr68ID8nM6Iw15+dWQv/AXLUg7MsF156
-	E660eXuJftvqEpcp8WtJEY/1XwKXT0IWDxPDIu6HMxcFgUMmoCjV0UsntS1ae7fHIEStOn
-	jZR584DHqM0+FnSHDq53ilscClvaWLE=
-From: Felix Kaechele <felix@kaechele.ca>
-To: Job Noorman <job@noorman.info>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Paul Gale <paul@siliconpixel.com>
-Subject: [PATCH v3 5/5] input: himax_hx83112b: add support for HX83100A
-Date: Thu, 20 Jun 2024 10:50:06 -0400
-Message-ID: <20240620145019.156187-6-felix@kaechele.ca>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240620145019.156187-1-felix@kaechele.ca>
-References: <20240620145019.156187-1-felix@kaechele.ca>
+	s=arc-20240116; t=1718895148; c=relaxed/simple;
+	bh=quHvdMGXD+OF+Vmvo6ZchqeF+v17FJP9dNrIZBXrvGc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sMvQz3V37yeUl5LLHfleUR5r8uMdLy30IAYK5WAYiBVI1fUobedpHpH8yS6KTf+fHlY96Iz8slKJ32dT2YSyKQ6JKcAQY59JgQKX88sZ3XZHDhJ4q4Tmb5ZdoBLLfLe/8Faye0o5Xa3p13gnalRCh7oHYNc/xBRPPVmfNhfGzM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dfe81d54db9so973713276.2;
+        Thu, 20 Jun 2024 07:52:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718895144; x=1719499944;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qicnrKvU4izSAdjyf++mWnVsSY0UBkYb5drVYCcA5wY=;
+        b=cdeJnu6fScTZbDDJ5VBiclJX/d3DAxzRVw1+ZUziR2PktI4AezKkSWoXDLIZEJLPol
+         DZRNiOTkKhrWktzkK5ws/uvmoqnn771pNsuAOA2GmkNUwT/9QqA7Y18epbeCFeG1Gd5s
+         6eGSBJtSpNWqNQMFySRx3linrkSsPkoyTG2ktwX+AhEuhey3i6kR0vZOmb3xZej2t4/R
+         Rmg9HRUaf7hVvBnF7RSHN4MDSXEc4zb+68MuRRFezoeMYyzqjmUvx0BhnEXrLUDUK28U
+         PSuiCdTtEGZqSNMfsxKhHpvxop5CzFriNQpM4gr8T6jV/0L6l4FaBrOcR9sU16fYPtJN
+         If8g==
+X-Forwarded-Encrypted: i=1; AJvYcCV7e4QvIb6nn+VQV5HyGYRxivCCbSVrA2r5DiUkuVJPXOFdPiYoTOfoqaAy5zGar+K4TdZj+rhv1Fg5E4wv9Js4Xa1COSKRxxBD+7/edyVcrqhi9zICXo+75imgtf5AsU7YM9POLMTOL3tNbv6moj260D2FFp0N10MO0ETTQfuJK7Fhk1OZCSx+DFKcP/dkpFJ4B7WqTdtYPwvNUoHJ1jiUd2iy+F8Q
+X-Gm-Message-State: AOJu0Yw9Uav9DpyxEIi3k4BSYPlQK2l3YgRfjFGv0994QCuYVM+wPujX
+	/kgfNGoBbHMxXv2z7t2G8ADchrJxSWYAOtevkrnIOvjEbO/paEwt6Pw+jVmF
+X-Google-Smtp-Source: AGHT+IHa726p4LBUgJ4pKzqdMzHgOlyRn0z7kg86RymTqqoueBuhne4yq1OJUzSFpV67LGh1zg0C2A==
+X-Received: by 2002:a25:d653:0:b0:dff:745:2303 with SMTP id 3f1490d57ef6-e02be225ddemr4959097276.57.1718895144153;
+        Thu, 20 Jun 2024 07:52:24 -0700 (PDT)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e02ce311570sm987321276.15.2024.06.20.07.52.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 07:52:23 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dfe81d54db9so973676276.2;
+        Thu, 20 Jun 2024 07:52:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW8Jv9p9FcgyzdRMxyQg94hd8/iEvpkOQYFU9ir04GVpGuNBboPAeVyCFaBAjkEXnBFckDFQqpCd1biv/VRksTFljKHglTDAplzpIyqr0bcpE9HJUpcSiThl5VLfDFi8RZE9KWrC2M4W8AHJeVpoAl+bTgGgPxPNwHz9K1ekVFQKlQF+ARxO3d9+cF/sRdxv4uBkq2AXV32mgC4vLxgmWX42YBYmgEa
+X-Received: by 2002:a25:8403:0:b0:e02:b7ee:5354 with SMTP id
+ 3f1490d57ef6-e02be138271mr5993985276.20.1718895143516; Thu, 20 Jun 2024
+ 07:52:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20240605074936.578687-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240605074936.578687-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240605074936.578687-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Jun 2024 16:52:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW5J087M=xD95R87XsP-xTqiaenzJ9WVq8x_d2_+67J1A@mail.gmail.com>
+Message-ID: <CAMuHMdW5J087M=xD95R87XsP-xTqiaenzJ9WVq8x_d2_+67J1A@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/4] regulator: core: Add regulator_map_voltage_descend()
+ API
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The HX83100A is a bit of an outlier in the Himax HX831xxx series of
-touch controllers as it requires reading touch events through the AHB
-interface of the MCU rather than providing a dedicated FIFO address like
-the other chips do.
-This patch implements the specific read function and introduces the
-HX83100A chip with an appropriate i2c ID and DT compatible string.
+Hi Prabhakar,
 
-The HX83100A doesn't have a straightforward way to do chip
-identification, which is why it is not implemented in this patch.
+On Wed, Jun 5, 2024 at 9:49=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.co=
+m> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Similarly to regulator_map_voltage_ascend() api add
+> regulator_map_voltage_descend() api and export it.
+>
+> Drivers that have descendant voltage list can use this as their
+> map_voltage() operation.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Tested on: Lenovo ThinkSmart View (CD-18781Y) / Innolux P080DDD-AB2 LCM
+Thanks for your patch!
 
-Signed-off-by: Felix Kaechele <felix@kaechele.ca>
-Tested-by: Paul Gale <paul@siliconpixel.com>
----
- drivers/input/touchscreen/himax_hx83112b.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+> --- a/drivers/regulator/helpers.c
+> +++ b/drivers/regulator/helpers.c
+> @@ -368,6 +368,37 @@ int regulator_map_voltage_ascend(struct regulator_de=
+v *rdev,
+>  }
+>  EXPORT_SYMBOL_GPL(regulator_map_voltage_ascend);
+>
+> +/**
+> + * regulator_map_voltage_descend - map_voltage() for descendant voltage =
+list
+> + *
+> + * @rdev: Regulator to operate on
+> + * @min_uV: Lower bound for voltage
+> + * @max_uV: Upper bound for voltage
+> + *
+> + * Drivers that have descendant voltage list can use this as their
+> + * map_voltage() operation.
+> + */
+> +int regulator_map_voltage_descend(struct regulator_dev *rdev,
+> +                                 int min_uV, int max_uV)
+> +{
+> +       int i, ret;
+> +
+> +       for (i =3D rdev->desc->n_voltages - 1; i >=3D 0 ; i--) {
+> +               ret =3D rdev->desc->ops->list_voltage(rdev, i);
+> +               if (ret < 0)
+> +                       continue;
+> +
+> +               if (ret > min_uV)
 
-diff --git a/drivers/input/touchscreen/himax_hx83112b.c b/drivers/input/touchscreen/himax_hx83112b.c
-index 5092a357c332..9ed3bccde4ac 100644
---- a/drivers/input/touchscreen/himax_hx83112b.c
-+++ b/drivers/input/touchscreen/himax_hx83112b.c
-@@ -4,6 +4,9 @@
-  *
-  * Copyright (C) 2022 Job Noorman <job@noorman.info>
-  *
-+ * HX83100A support
-+ * Copyright (C) 2024 Felix Kaechele <felix@kaechele.ca>
-+ *
-  * This code is based on "Himax Android Driver Sample Code for QCT platform":
-  *
-  * Copyright (C) 2017 Himax Corporation.
-@@ -35,6 +38,8 @@
- 
- #define HIMAX_REG_ADDR_ICID			0x900000d0
- 
-+#define HX83100A_REG_FW_EVENT_STACK		0x90060000
-+
- #define HIMAX_INVALID_COORD		0xffff
- 
- struct himax_event_point {
-@@ -288,6 +293,12 @@ static int himax_read_events(struct himax_ts_data *ts,
- 			       length);
- }
- 
-+static int hx83100a_read_events(struct himax_ts_data *ts,
-+				struct himax_event *event, size_t length)
-+{
-+	return himax_bus_read(ts, HX83100A_REG_FW_EVENT_STACK, event, length);
-+};
-+
- static int himax_handle_input(struct himax_ts_data *ts)
- {
- 	int error;
-@@ -394,6 +405,10 @@ static int himax_resume(struct device *dev)
- 
- static DEFINE_SIMPLE_DEV_PM_OPS(himax_pm_ops, himax_suspend, himax_resume);
- 
-+static const struct himax_chip hx83100a_chip = {
-+	.read_events = hx83100a_read_events,
-+};
-+
- static const struct himax_chip hx83112b_chip = {
- 	.id = 0x83112b,
- 	.check_id = himax_check_product_id,
-@@ -401,6 +416,7 @@ static const struct himax_chip hx83112b_chip = {
- };
- 
- static const struct i2c_device_id himax_ts_id[] = {
-+	{ "hx83100a", (kernel_ulong_t)&hx83100a_chip },
- 	{ "hx83112b", (kernel_ulong_t)&hx83112b_chip },
- 	{ /* sentinel */ }
- };
-@@ -408,6 +424,7 @@ MODULE_DEVICE_TABLE(i2c, himax_ts_id);
- 
- #ifdef CONFIG_OF
- static const struct of_device_id himax_of_match[] = {
-+	{ .compatible = "himax,hx83100a", .data = &hx83100a_chip },
- 	{ .compatible = "himax,hx83112b", .data = &hx83112b_chip },
- 	{ /* sentinel */ }
- };
--- 
-2.45.2
+I know this patch is superseded, but shouldn't this be "<"?
 
+> +                       break;
+> +
+> +               if (ret >=3D min_uV && ret <=3D max_uV)
+> +                       return i;
+> +       }
+> +
+> +       return -EINVAL;
+> +}
+> +EXPORT_SYMBOL_GPL(regulator_map_voltage_descend);
+> +
+>  /**
+>   * regulator_map_voltage_linear - map_voltage() for simple linear mappin=
+gs
+>   *
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
