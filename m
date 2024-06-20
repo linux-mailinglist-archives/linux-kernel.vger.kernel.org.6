@@ -1,84 +1,128 @@
-Return-Path: <linux-kernel+bounces-222163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF91790FDB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:28:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E0490FDB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 646241F21916
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:28:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0601B1F22100
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189234502C;
-	Thu, 20 Jun 2024 07:28:13 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA3B4D8A1;
+	Thu, 20 Jun 2024 07:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aM7eDUBJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1341EB2C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3051647F7A;
+	Thu, 20 Jun 2024 07:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718868492; cv=none; b=BCGDXKGJ21i+25hzXq3hl0oKBViLu8hH9oPYfSa5XtLrWSH+7do9/QQ8ULT8QG6Vi8QQN7zTEvfy1fz5hBVkTVPZA1OAWkogELHqVRZGQZWJrDhUAt1BHS2O8Q0fXvqZ9Ty31lKgQH/0NVKPVAQokCDd9nUMQbJIBIRHixCWRNw=
+	t=1718868548; cv=none; b=GwzNQt1ubrTea1rv3a9ySlRX9NtZm74bGzFN5kiTQHWWo5/nktM6uZBBcAxF8wJX3XJN2n2frvXuz5SKuzt3nV7s0tqfLVSRvsvgYo0ayGR+3/0U8psgVe1tsN55FsMuqf+EMMbCMVYyv485fNs561mQl2PQAlwNj4VsB3X1wDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718868492; c=relaxed/simple;
-	bh=JrfP7yYDriYkOONFrOPCfb89zraenXhfVUqeDxtAAEY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=s6dhPZrEt/5Y/aVDQupm+QI0uBkaOo3IE0LjHb90x+J0wrE+eLpNt4mmWQZ43H4ib+G31pJnlaQKFAV/SUaK78pZbHhv0BlIeJ4ugSppVyPYyDmFOHA2NLY/yoQDWtLNWQ7mEdGQ7/nVu754wNY2FUel93gPl8dQfL8mnLGS+G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3738732f988so5673975ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 00:28:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718868489; x=1719473289;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JrfP7yYDriYkOONFrOPCfb89zraenXhfVUqeDxtAAEY=;
-        b=oVtcnLfy7qs3BhnM81j4y++BRwEDDEoxXB2/ZZmkZZLmmhlKKLCSN9t/U3tjiMd7tv
-         JWjp/3oP3lDbdVIiZC07ifdYFkYWlI1PXM9fMvRqOBnTSOpJoQ0iLNAhpAbn/5LPrD18
-         Kc1DdptRYeZeSUt9fkmD3J8MHB0kIbWezMBiD1H6uMh8UDUgI9QydqOCyQZCwKklAc8G
-         OU4WM+eeZAJLXdGPs/JxU+jN55G2EB+9uMVD/DOwgSAR1WH9+9MRHmqt5x8TRn4Qd4Rb
-         EYEUj3WgO/XVLtoDt23GSie65m+pbE+vCeYcs4g9cNN9KWhfKVk4jUV1LPv21QgU3E1u
-         AEAQ==
-X-Gm-Message-State: AOJu0Yym4guZMR3paGhps22nC2UHdIT7mxoTF7RO7nO6yq8ttFzaZ1F9
-	NQhxrMrJnidywkFDlNzifXtjQLUPOTSaOGEhldlQT0wjdK6u4drTk8//CaNcrBVmg7mX0Veg7cr
-	+SQbUwo9OLA7Hme8sRAYimchdLDCZ/9vk2924BXokfi6JfUBbPt0lvTY=
-X-Google-Smtp-Source: AGHT+IHIpUGbSagwrkccICYwt6Vy+nrFR64KqgZPGnisdqMC9JKa9Phma7evTBUN3PO/PjlwYVMsr0+wS4hFyQhlU3bW89KR2Dye
+	s=arc-20240116; t=1718868548; c=relaxed/simple;
+	bh=6Kza/hMjE9mD2QVBTejC6hAoZQe05MWT0U56Rjvaf/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N7jsL6eQ1qlbwmIY5kcYNGeg1bUtNgmvd54CVNMztboc6d/tCPm6mEfKv7H9+gxrrr/vaPDrDgdWLJU4NThKMvzbvoUaN5A8BxuFzNeHdax9MP43ypO03w17EPxwXSYyIoxM8rgIACmPrQazemBtXuZJWdm08j69Ft6h2X7McRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aM7eDUBJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD3AAC2BD10;
+	Thu, 20 Jun 2024 07:29:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718868547;
+	bh=6Kza/hMjE9mD2QVBTejC6hAoZQe05MWT0U56Rjvaf/k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aM7eDUBJ1FeDR8Lfr3x0y39eYrgLZLSrjG192LvrVih1sjp5HeTTylTZ/+2Xih0jm
+	 yJCHrXFTZUqM094S8N2A1Nc8GtPfKDNRM+Eo4u3M4TOtBbHf0tLGZadoOQQKf/sXlA
+	 9c7DexIIQmtai7uzJmPnfJ4Y5S6wjLUdcVoyzF1mX2LsLLcEH9N3i+SlvQJ2SJYurY
+	 YHrlt0HtewZh8puvEYdJ3D6uIXpAebdK1a7HvNWpS4po7zgAFKqRWOmzesFV+L0+j/
+	 FnbYn+JNtt5WlvMMzndMZkK9ggF7ZibEdNK9l9TrI5oC5F28YrXtNGVr5M6r0X8KYJ
+	 YF3VJZa7OZs1Q==
+Message-ID: <63e4f095-6558-4cb1-a189-60d1d3cc6ec3@kernel.org>
+Date: Thu, 20 Jun 2024 09:29:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c0c:b0:374:a2db:d6b0 with SMTP id
- e9e14a558f8ab-3761d6b8850mr2533865ab.2.1718868489356; Thu, 20 Jun 2024
- 00:28:09 -0700 (PDT)
-Date: Thu, 20 Jun 2024 00:28:09 -0700
-In-Reply-To: <000000000000be1f530615efc5ca@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b95b19061b4d417a@google.com>
-Subject: Re: [syzbot] Re: KMSAN: uninit-value in sock_hash_delete_elem
-From: syzbot <syzbot+c33bff5d5da1391df027@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] hwrng: exynos: Use devm_clk_get_enabled() to get
+ the clock
+To: Sam Protsenko <semen.protsenko@linaro.org>,
+ =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Anand Moon <linux.amoon@gmail.com>, Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240618204523.9563-1-semen.protsenko@linaro.org>
+ <20240618204523.9563-4-semen.protsenko@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240618204523.9563-4-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 18/06/2024 22:45, Sam Protsenko wrote:
+> Use devm_clk_get_enabled() helper instead of calling devm_clk_get() and
+> then clk_prepare_enable(). It simplifies the error handling and makes
+> the code more compact. Also use dev_err_probe() to handle possible
+> -EPROBE_DEFER errors if the clock is not available yet.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
 
-***
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Subject: Re: KMSAN: uninit-value in sock_hash_delete_elem
-Author: wojciech.gladysz@infogain.com
+Best regards,
+Krzysztof
 
-#syz test: https://linux.googlesource.com/linux/kernel/git/torvalds/linux e=
-478cf26c556e4ab572ab0ab2306c986901dcd61
-The information in this email is confidential and may be legally privileged=
-. It is intended solely for the addressee and access to it by anyone else i=
-s unauthorized. If you are not the intended recipient, any disclosure, copy=
-ing, distribution or any action taken or omitted to be taken based on it, i=
-s strictly prohibited and may be unlawful.
 
