@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-223233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F0491106A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:13:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8AF91100A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62469B2D90A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:05:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AFA92882E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8601C8FD0;
-	Thu, 20 Jun 2024 17:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E561C9EB8;
+	Thu, 20 Jun 2024 17:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WAhWVB/Z"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBVFz+TK"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7BF1C8FC2;
-	Thu, 20 Jun 2024 17:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E651C9EA3;
+	Thu, 20 Jun 2024 17:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718906293; cv=none; b=Ogn7gefBpvloN5p+3JvAjcRoIjDAzqVkE1HTxD5bOogckt73P2GGXYoPJ1gdIAGjiJ5R/c6D9R1aU6kEzhP+MxV3NAquX95Kpkumr1AXpZ2CFLaQpisdkgawpce1WIOk5ncRDyws97qJSqnLiETJbvBjTPDl6VWQ7aW0JsBBq1I=
+	t=1718906296; cv=none; b=AJz7sxfLS9m+ZGrVlM9JDEbiZw3yDIHnRiQN0NEL+xww4/MqOG9NXozwEREhx6A+9B4m9U6UhdodAkS4yY7422SQCvNZ2ngVEpZADH12CWhYHzERpsYTMsI9W58En6XXQ4PyEXLNtuW3+JQUEjW+f//zOY5bLrQvTQPruOzHPuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718906293; c=relaxed/simple;
-	bh=uWAIPWK/y5sntscGmoFoKf1TBYYoJ8omzWsjZLwiJ/A=;
+	s=arc-20240116; t=1718906296; c=relaxed/simple;
+	bh=KdbeHfsgkowpARY2YPlVsmqqW/kJIUxTm29Tdz3OOA0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AMsT9j0AA23Ul7nmlIXG0W8yV/H4uzPchlIwcyoNgwXVzDeohjTouePGlTyJp27h9UWoXTrQEAyEOIrpKh8oS1SsjBmXepvIIp0hx6P5cZ7qWo2KAHmCOI05Tsh+9DBwsz7VuFCcbaf21wSfXldOLd2J1OGwGmX5aDP8WpB/bX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WAhWVB/Z; arc=none smtp.client-ip=209.85.214.175
+	 MIME-Version; b=pR4Bxj1THNVvdCpEVRm2wkqxOTUPh67aNJofFOSdMsLpfJIp4DG41wMUFI2YC9fTTZ7dpVruCvKuq4VzAylKjWEm/8u8ytXBNMtiYBJ6ZrXpeCO6nyDlxb5flaaSZzLBTYZerKSPQ2kS/XWZwdlC0AIgjOS1yKQnvWCeJC453uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBVFz+TK; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f47f07acd3so9491225ad.0;
-        Thu, 20 Jun 2024 10:58:12 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7041e39a5beso983536b3a.3;
+        Thu, 20 Jun 2024 10:58:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718906292; x=1719511092; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718906295; x=1719511095; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B5EYjko3sqn/5zVhVGKhFedN1WIYjrNTNEVk8UsUCrQ=;
-        b=WAhWVB/ZT6IY+ZWG8oL8+CIyjjKosAXvkrRyugjSHoH1BHk9YtZEZPsiLilvQr6w2Z
-         XwtHjwY5w0b+2ZscCIXtImQOOj0CYFaudCB+XjlUSoHsb7UQ+H716thQ5H1Bv7fEtACb
-         c5JxMkb4eDYpe6BYge/8TFBYxnylb3+j7JF4iTbkkOcgPsO+og3dPBOkrQYlMKEpeedD
-         WopWSIRPxWy12EgnY2PJ2mc7zwIh16JjDE6QibYDvcw8IW3lwe8mVk/VBC4YPzdMVopP
-         yVNwwhWAVmrwe4ML1DMt2bmFCFgK8YbxcrWR0LeYaboT5tuuwJdmtSTOnKZMMS8bfWyn
-         PXjw==
+        bh=X3AS9JVo8Hs/Ti3mNv2gE0HU0UAaWpI1VlkoQQK++VU=;
+        b=ZBVFz+TKCMu/ZNUGyZgkeYz7BF2GY99DH+ew+oY29ZTzSudv9CTbrbkXE2QUADVoCj
+         9JuiHMxaUWVmzUIC0tDiULah63aKRdOLeHGLcvq/99stzfi1+o7B5s55HaqKpnqgvf8w
+         6zD2d5cR8HcRewR0Gmo8/ZJhFx82qzYSJMD8uvrVy2bbJb14dLPgZsG56Eu1H3CCPdEC
+         9wwktf3fbXD9F4swDyo5bkbhfXlbe5hAu7+32nerBrPtXDwE6yG1oSRZ86pZ071hVOAF
+         PWXY771grJZriqpL81+VBS57ISK1ouJSDy1AuXOgd0vCnH/icqHj630rRvS+7Fp69/ZH
+         bm8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718906292; x=1719511092;
+        d=1e100.net; s=20230601; t=1718906295; x=1719511095;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=B5EYjko3sqn/5zVhVGKhFedN1WIYjrNTNEVk8UsUCrQ=;
-        b=fMqLPm5BGaSLmNIDeG3czmU807P+0eyDol8VJBBdRJltVbK9JwU71qjwuEDqJkPGu3
-         rz+SzQpVV/vlR17KydOjuQsWgvbS0QswGqL0pFrsM6hTGJauepPgfG1jP8SyR5hMdVcd
-         tNW0MOiMc/gV8WPiBBgonNaKczqn0GCNbKONWhVyhci+vTUa6ppGLfqs4d54ClIpijQ1
-         bWl4sOWpoebl0AQI3yJCVT4tO2kKQfD1OW6YIsksKgfOIBMzytCopfH0kr4a8udbJfvO
-         eKI+aAIh7zbHEzvj3+yCwS4KS4lAlbI5pQNUQWjC5jzY27d0Klp/QHIt/+EDx0WfGziZ
-         6aNg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9gviVYfGj3S646ETF3OPGGg0rJKiQ53HnPogER/QyOrTrHOQemMddo2jdfMct7s+KBtj7ANghzrCcHDm94f3Z0tIQ6iiWxONySjVe
-X-Gm-Message-State: AOJu0Ywx9cu+A2B5PbAF17NVFZBpIsJUVwaxNbIHgMMU4h93fd9ds1f8
-	3/egk1xfO8qiy1SXjNohmXNgDELI8sssRNmh5KIOwVNWXDFJUlPpvO/0vCROS6w=
-X-Google-Smtp-Source: AGHT+IGNZgfeQC5tH36QJE9gcJwoghUtuEwxnBd7Pq0D1sgVZTvkF9LD2b5agbKQAwWjRSTyP3W0ow==
-X-Received: by 2002:a17:902:e88a:b0:1f7:4021:508a with SMTP id d9443c01a7336-1f9aa3e8931mr78300105ad.33.1718906291691;
-        Thu, 20 Jun 2024 10:58:11 -0700 (PDT)
+        bh=X3AS9JVo8Hs/Ti3mNv2gE0HU0UAaWpI1VlkoQQK++VU=;
+        b=ryOD4z3/pG4zvn1kqKFjGgz1gam3GocHeZ8I+L7r3t+ZhdiEvt88uUDPY5h5yRvB2K
+         1LwFPv93po/FBdwQ+esa6dXVgiNvhplPUQA7Hq5SsrPpGLElZAzql6HG8FlZczmMUjnY
+         Q5WnSR5s1c84EgJpDudk2DTWoJOrExIZk/YWryoDyapr+w2Bf/CJICvdU0PDozXa/L+Q
+         GfiRgrBzZjgcSPNJmzD7eIurJGU92lKUXOL8bSv1CdSDxvE2U6ptidOpGO0lyxbB5vW6
+         Mq/bD4xUWGZCq9a2MasmDn4D2yS7BFemxgZTwl3Aeb0BGKaQjD1PCuG32SwOuBUH9L7l
+         WrAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMPOOG1sIqitwJy0fz2mRQZ84vu7Ub00SqQjqlhEyUjhznUA+8on7fvt2F+I9NIfq7TjqMotL605dbfKCph0YmR02atUsNxh7Z
+X-Gm-Message-State: AOJu0Yy6fuVoZaj6DBkG8+Xt/4cSTG1jnYL3cyhiEoS5TXY+hK701XZ3
+	1Dnut4I0wyAlL6A4guP3aUlcL+CNxgbHKqn6ObPWFzkKP8OGJyN2qynVFxyUP/Q=
+X-Google-Smtp-Source: AGHT+IFyDwE+Jz3Bn1/3b5AVproXEgZap0y3BwG6IwB5VEhHDqAtrR7HyxflDE7GXDdoxY3T8nE9cg==
+X-Received: by 2002:a05:6a20:29d:b0:1b5:2fbb:2d78 with SMTP id adf61e73a8af0-1bcbb656593mr5458467637.48.1718906294899;
+        Thu, 20 Jun 2024 10:58:14 -0700 (PDT)
 Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f85bf28552sm136016905ad.132.2024.06.20.10.58.10
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb4c621sm12637089b3a.115.2024.06.20.10.58.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 10:58:11 -0700 (PDT)
+        Thu, 20 Jun 2024 10:58:14 -0700 (PDT)
 From: Yury Norov <yury.norov@gmail.com>
 To: linux-kernel@vger.kernel.org,
+	Oliver Neukum <oneukum@suse.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-serial@vger.kernel.org
+	linux-usb@vger.kernel.org
 Cc: Yury Norov <yury.norov@gmail.com>,
 	Alexey Klimov <alexey.klimov@linaro.org>,
 	Bart Van Assche <bvanassche@acm.org>,
@@ -80,9 +80,9 @@ Cc: Yury Norov <yury.norov@gmail.com>,
 	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
 	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
 	Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH v4 22/40] tty: nozomi: optimize interrupt_handler()
-Date: Thu, 20 Jun 2024 10:56:45 -0700
-Message-ID: <20240620175703.605111-23-yury.norov@gmail.com>
+Subject: [PATCH v4 23/40] usb: cdc-acm: optimize acm_softint()
+Date: Thu, 20 Jun 2024 10:56:46 -0700
+Message-ID: <20240620175703.605111-24-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240620175703.605111-1-yury.norov@gmail.com>
 References: <20240620175703.605111-1-yury.norov@gmail.com>
@@ -94,42 +94,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In the exit path of interrupt_handler(), dc->flip map is traversed bit
-by bit to find and clear set bits and call tty_flip_buffer_push() for
-corresponding ports.
+acm_softint() uses for-loop to traverse urbs_in_error_delay bitmap
+bit by bit to find and clear set bits.
 
-Simplify it by using for_each_test_and_clear_bit(), as it skips already
-clear bits.
+Simplify it by using for_each_test_and_clear_bit(), because it doesn't
+test already clear bits.
 
 Signed-off-by: Yury Norov <yury.norov@gmail.com>
+Acked-by: Oliver Neukum <oneukum@suse.com>
 ---
- drivers/tty/nozomi.c | 6 +++---
+ drivers/usb/class/cdc-acm.c | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
-index e28a921c1637..2fe063190867 100644
---- a/drivers/tty/nozomi.c
-+++ b/drivers/tty/nozomi.c
-@@ -28,6 +28,7 @@
- /* Enable this to have a lot of debug printouts */
- #define DEBUG
+diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
+index 0e7439dba8fe..f8940f0d7ad8 100644
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -18,6 +18,7 @@
+ #undef DEBUG
+ #undef VERBOSE_DEBUG
  
 +#include <linux/find_atomic.h>
  #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-@@ -1201,9 +1202,8 @@ static irqreturn_t interrupt_handler(int irq, void *dev_id)
- exit_handler:
- 	spin_unlock(&dc->spin_mutex);
+ #include <linux/sched/signal.h>
+ #include <linux/errno.h>
+@@ -613,9 +614,8 @@ static void acm_softint(struct work_struct *work)
+ 	}
  
--	for (a = 0; a < NOZOMI_MAX_PORTS; a++)
--		if (test_and_clear_bit(a, &dc->flip))
--			tty_flip_buffer_push(&dc->port[a].port);
-+	for_each_test_and_clear_bit(a, &dc->flip, NOZOMI_MAX_PORTS)
-+		tty_flip_buffer_push(&dc->port[a].port);
+ 	if (test_and_clear_bit(ACM_ERROR_DELAY, &acm->flags)) {
+-		for (i = 0; i < acm->rx_buflimit; i++)
+-			if (test_and_clear_bit(i, &acm->urbs_in_error_delay))
+-				acm_submit_read_urb(acm, i, GFP_KERNEL);
++		for_each_test_and_clear_bit(i, &acm->urbs_in_error_delay, acm->rx_buflimit)
++			acm_submit_read_urb(acm, i, GFP_KERNEL);
+ 	}
  
- 	return IRQ_HANDLED;
- none:
+ 	if (test_and_clear_bit(EVENT_TTY_WAKEUP, &acm->flags))
 -- 
 2.43.0
 
