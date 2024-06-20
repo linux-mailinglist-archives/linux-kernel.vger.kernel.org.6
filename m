@@ -1,155 +1,176 @@
-Return-Path: <linux-kernel+bounces-222390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F4CC9100AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:44:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCAC9100AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7A91C2171C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:44:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0C24281382
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946E71A4F13;
-	Thu, 20 Jun 2024 09:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5196F1A4F18;
+	Thu, 20 Jun 2024 09:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVVd7BUM"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jStVfnrk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C45199EBA;
-	Thu, 20 Jun 2024 09:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1761E176FA1;
+	Thu, 20 Jun 2024 09:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718876668; cv=none; b=YQbnhumgfbckfKksuYOPxvI5OKT6e9qwDvJe9ZncLpdYVbEkicqSvTkFVXFjLCJ/3VfitLylR9CfdoYHoKqjcz6MQtlY2yRgqSjuHJsQZB9ZpOMpM/nBy6SBPhh6QIqPSo1Cy9BNY9s4kvrUCrSb2a2+a0pWqjFmwQU2mNAaAuM=
+	t=1718876649; cv=none; b=u8tLcE0S1xfnb6pOV9uyRFAtnDTV1X9qYAlByfIcsmi1Lqzcymq5fv7GmRdFzNT3qhH+Oy5I3GmS8SyVRpQlMUhKPZU8xLR5JknpwVU+YDImkdQkbXioxmk7+5MaLDeeX1T0M/MK1Fx03/zWLo/5CslBmmuIwdRmlJuHYs4x4l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718876668; c=relaxed/simple;
-	bh=okOqLw7c0senVhgw+ra23kw900+h4DE+0U7XOxfhL+M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iFPUUP3pnjXUlyJ/L1YTSCma00t6J2zWoO+Nd/QHGmQdDLoxmgmqjF7i6DhylSiE3X7QctuEZJwt69nSuY3WObzFqpPxXHbVeg3fF9OdoinQD/cfE5DVNULkUHfiwO0M45I5ZlfAi8E/Ow/AcHexayfrxdlI0oV/yuVnnjclO7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EVVd7BUM; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4ed0b3c6a76so194904e0c.1;
-        Thu, 20 Jun 2024 02:44:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718876665; x=1719481465; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=okOqLw7c0senVhgw+ra23kw900+h4DE+0U7XOxfhL+M=;
-        b=EVVd7BUMJDTxZU+uZYDb8PzR3uHaGQ9E02m9AWRhamrbRw2GZ1XFOUHBFzELeSMHeE
-         ccAqUVkuI2/ifnTNlRNXP+5w3QM+cnqbSNoCEK+GhiLrO73dY96zAHrR3e/ZPDJGFREC
-         eBLZaaDljEmQnVX8a0rg/T8p9ohrV6YTX2hffLJ3LbCZxMnLFRO7i/3a2lotKmyG2jXT
-         jEWJFH13mh9kHqTmwBPXfN72qIXPB4gz9d1/AQoNp7QQE4MqccU4InySQBRgsQrXfSea
-         eMkNJyfQwvoJyF+8r1YI5PrUmE/Y9AWkkcgrBKqnIzkQqKM4GeYZikkbxLb2WJ9ilxMn
-         0pTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718876665; x=1719481465;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=okOqLw7c0senVhgw+ra23kw900+h4DE+0U7XOxfhL+M=;
-        b=mjxJxDhW3hQp/t3pEYWA7r96Qilwty3wLJO29GKRRy5bwaLKA7x0rRPuYua/tXXNiL
-         IjfytxwIiHmKCLo6swhikwwTtEFFP9/HhQ/0jtkYWO/2g76rNS11YiU2I87zTxQxhmiE
-         o+QzS+5a1QOIkLV52gpl2/PoAm9UguxYdQYoh7smuHm81ojNMgRcEqN8z4DNd3Tnre+4
-         ujWR1oH7yIXtOlO4o9rnFSLxflFVJljV3QkwBqVzzUGrmTebzOoQNuyWKmpVvB/jm68r
-         2xbYsJ5WdTsuQWgjdNACXdDOe7va7lW69JnQOjTVCRUoa2vY8vf22HCF0uidORm3i6me
-         O9lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVGfyfL4pwqV1pvKAItWVL0mqP0YaAzs/UJIouWxyu2OmQMMjDxSuVR9PtJmoIRtwV/+ZFldLl/ggKyrFVkAGH/x7t0Qd0mYMJEnOZgtC70jvZtfEDBl0jL2x+R4eVuU/gl+1dVFNR+jNRIKnZs+JD4uCkgxko7wEmDsAoToBZr4u24ZRRMz28KGNexRvlGwr1k/4WcGSvkXcnZ+eS1amI/SO3bFMD
-X-Gm-Message-State: AOJu0YwARpuctroM0CUrGmjmD204RGhSwf+DmxKVqsQ8JueTjpGhmMSe
-	9LeWyzz3hfkIM1yFBMPG0Tc9U8sFGLv9mwwPINCOB6sut/HPx17BTz/2Fb3widPWzVNRzXlZJP+
-	6sPOq50f4Iq1Pi7lG0OXt9RPa6N4=
-X-Google-Smtp-Source: AGHT+IFBepYei96IK6SgPeYNf/E1cKcoErQgdiXocUItGkoIcqYFiufUIo+8G4N0O6SofR+puEeWV6rivz9Db7RDCkc=
-X-Received: by 2002:a05:6122:3124:b0:4eb:1a82:2037 with SMTP id
- 71dfb90a1353d-4ef277b59f3mr5563871e0c.14.1718876663767; Thu, 20 Jun 2024
- 02:44:23 -0700 (PDT)
+	s=arc-20240116; t=1718876649; c=relaxed/simple;
+	bh=HTzGvt8cdfXE0OHYxoQkKocUFMRL+hzPcQyDYgCACo4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AVYRoyqsbfBYpr87+9Uf9SxbhsTWEt5jClTzLGOzbdkbe1eKZ0UyCShTN5YPp++ZIHr4/ChyrAyfCjGmSqEnzNTpsl5q0OKTDiHZ/bgCAZYSN0aWhsn6TA3OYnhCaeS48JBV3NFAlMNFkB5UikxFktNw0z07jIJCwwyrIY0JS7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jStVfnrk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JKbqsZ022148;
+	Thu, 20 Jun 2024 09:44:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	R2JDyZ4UzOKKd/PPEpfYp/WSOavvVShxLFRCnYnfGTA=; b=jStVfnrkVzu/0PgL
+	qE8gD7AyxTymRFmgxVu3NsA4JkqNSoByloZnt44KPtcknswHDW15IDZEhCBeCPnD
+	gN7lXLHJxTKTP5kvjIcj14jwKrLMK3+WvzAelogIv7fAZNwSohzMK09y7zI29pke
+	+YRo+X3vOj8BdAqLJkE5aXhN0w3M8tEaYh2TR1oRYbh3pT4a+1pUPH9agCtY7/DR
+	sL0xNgDLG+BBYgCZhzPcUi9ctnM9DNLPgTmO6oQCqehO6fYpwe4oMeHXO3uOC6ZC
+	lRxmFHkOlOEVCLn3RLzWd0Dd1ikUvoiQRdJF7XsXd8/uuKzbB7A62aSSAczyt26z
+	GjdiJA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yv6hn1dfj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 09:43:59 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45K9hwn2023250
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 09:43:58 GMT
+Received: from [10.214.67.128] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
+ 2024 02:43:55 -0700
+Message-ID: <c23f9f69-d095-233e-c20e-b99e6f3921e5@quicinc.com>
+Date: Thu, 20 Jun 2024 15:13:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613091721.525266-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <prdvmtsp35yy2naohivbrya3go6vh5ji2cdjoebw3ovditcujo@bhck6tca6mhj>
- <CA+V-a8u6KAFp1pox+emszjCHqvNRYrkOPpsv5XBdkAVJQMxjmA@mail.gmail.com>
- <o7tswznmyk6gxoqfqvbvzxdndvf5ggkyc54nwafypquxjlvdrv@3ncwl5i5wyy3> <TY3PR01MB113467E6EF1CFC24154AF73E986C82@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB113467E6EF1CFC24154AF73E986C82@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 20 Jun 2024 10:43:41 +0100
-Message-ID: <CA+V-a8s-fCtQ8GKVh_REkPO81v0oCKPGiLJ5aiJOVdVUbvbCzA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 3/3] mmc: renesas_sdhi: Add support for RZ/V2H(P) SoC
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Conor Dooley <conor+dt@kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH] arm64: defconfig: Enable secure QFPROM driver
+Content-Language: en-US
+To: Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Mukesh Ojha
+	<quic_mojha@quicinc.com>
+CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+References: <20240619105642.18947-1-quic_kbajaj@quicinc.com>
+ <5582a2a0-c772-4573-9d55-2f963cb87df1@linaro.org>
+ <ZnLKwqENxC4wzrUm@hu-mojha-hyd.qualcomm.com>
+ <ZnMKh5X+Bm11L/T4@hu-bjorande-lv.qualcomm.com>
+From: Komal Bajaj <quic_kbajaj@quicinc.com>
+In-Reply-To: <ZnMKh5X+Bm11L/T4@hu-bjorande-lv.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: OEcZAlljB6IH6FWxMMgR7e9HdgTZfafY
+X-Proofpoint-GUID: OEcZAlljB6IH6FWxMMgR7e9HdgTZfafY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_07,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ mlxlogscore=835 impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200068
 
-Hi Biju,
 
-On Thu, Jun 20, 2024 at 10:30=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.c=
-om> wrote:
->
-> Hi Wolfram, Prabhakar,
->
-> > -----Original Message-----
-> > From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > Sent: Thursday, June 20, 2024 8:40 AM
-> > Subject: Re: [RFC PATCH v2 3/3] mmc: renesas_sdhi: Add support for RZ/V=
-2H(P) SoC
-> >
-> > Hi Prabhakar,
-> >
-> > > I did give it a try with platform_driver_probe() and failed.
-> >
-> > Ok, thanks for trying nonetheless!
-> >
-> > > - Firstly I had to move the regulator node outside the SDHI node for
-> > > platform_driver_probe() to succeed or else it failed with -ENODEV (at
-> > > https://elixir.bootlin.com/linux/latest/source/drivers/base/platform.=
-c
-> > > #L953)
-> >
-> > This makes sense to me because it is just a "regular" regulator.
-> >
-> > > - In Renesas SoCs we have multiple instances of SDHI, the problem
-> > > being for each instance we are calling platform_driver_probe(). Which
-> > > causes a problem as the regulator node will use the first device.
-> >
-> > I see... we would need a reg property to differentiate between the inte=
-rnal regulators but that is
-> > already used by the parent SDHI node.
-> >
-> > Okay, so let's scrap that idea. However, we need to ensure that we can =
-still have an external
-> > regulator. Seeing the bindings, it looks like you enable the internal r=
-egulator with the "vqmmc-
-> > r9a09g057-regulator"
-> > property? I wonder now if we can simplify this to an "use-internal-regu=
-lator" property because we
-> > have 'compatible' already to differentiate? Needs advice from DT mainta=
-iners, probably.
->
-> Why this cannot be modelled as a regular "regulator" as a child device of=
- SDHI device?
->
-The current implementation does implement the regulator as a child
-device of the sdhi node [0] itself.
 
-Wolfram was suggesting to have the regulator outside and use
-platform_driver_probe(), which caused an issue as mentioned above.
+On 6/19/2024 10:12 PM, Bjorn Andersson wrote:
+> On Wed, Jun 19, 2024 at 05:40:42PM +0530, Mukesh Ojha wrote:
+>> On Wed, Jun 19, 2024 at 01:08:48PM +0200, Krzysztof Kozlowski wrote:
+>>> On 19/06/2024 12:56, Komal Bajaj wrote:
+>>>> Enable the secure QFPROM driver which is used by QDU1000
+>>>
+>>> Qualcomm QDU1000. You are changing kernel-wide defconfig, not some
+>>> Qualcomm downstream stuff.
+>>>
+>>>> platform for reading the secure qfprom region to get the
+>>>> DDR channel configuration.
+>>>>
+>>>> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+>>>> ---
+>>>>   arch/arm64/configs/defconfig | 1 +
+>>>>   1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>>>> index 838b4466d6f6..c940437ae1b3 100644
+>>>> --- a/arch/arm64/configs/defconfig
+>>>> +++ b/arch/arm64/configs/defconfig
+>>>> @@ -1575,6 +1575,7 @@ CONFIG_NVMEM_LAYERSCAPE_SFP=m
+>>>>   CONFIG_NVMEM_MESON_EFUSE=m
+>>>>   CONFIG_NVMEM_MTK_EFUSE=y
+>>>>   CONFIG_NVMEM_QCOM_QFPROM=y
+>>>> +CONFIG_NVMEM_QCOM_SEC_QFPROM=y
+>>>
+>>> Module
+>>
+>> Should not this be inline with what CONFIG_NVMEM_QCOM_QFPROM is having ?
+>> Either both CONFIG_NVMEM_QCOM_QFPROM and CONFIG_NVMEM_QCOM_SEC_QFPROM
+>> should be m or both y
+>>
+> 
+> While that would be a convenient guideline, you're adding runtime
+> overhead to all other targets (Qualcomm and non-Qualcomm) so the desire
+> to keep anything that can module outweigh such convenience.
+> 
+> Based on the recent addition of llcc and qfprom nodes I'm _guessing_
+> that LLCC is the one user of this today, and it is =m, so therefore
+> SEC_QFPROM can be =m as well.
+> 
+> 
+> By expanding the commit message slightly, we could have avoided the
+> "why?" questions and the need for me to "guess" the actual dependency.
+> 
 
-[0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/2024061309=
-1721.525266-2-prabhakar.mahadev-lad.rj@bp.renesas.com/
+Thanks Bjorn for the suggestion.
+I will incorporate the suggested changes in the next patch.
 
-Cheers,
-Prabhakar
+Thanks
+Komal
+
+> Regards,
+> Bjorn
+> 
+>> -Mukesh
+>>>
+>>>>   CONFIG_NVMEM_RMEM=m
+>>>>   CONFIG_NVMEM_ROCKCHIP_EFUSE=y
+>>>>   CONFIG_NVMEM_ROCKCHIP_OTP=y
+>>>> --
+>>>> 2.42.0
+>>>>
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
 
