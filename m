@@ -1,131 +1,92 @@
-Return-Path: <linux-kernel+bounces-222869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089C19108E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:49:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA557910921
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96DF3B23039
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:49:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85D27282D07
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825C81AE86B;
-	Thu, 20 Jun 2024 14:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BFE1AF6A7;
+	Thu, 20 Jun 2024 14:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="B8xFZOZt"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b="hsIagqz6"
+Received: from mail.kaechele.ca (mail.kaechele.ca [54.39.219.105])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553A71AE08E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38A91AE0BC;
+	Thu, 20 Jun 2024 14:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.39.219.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718894929; cv=none; b=c3ytB9iLUcckQ9KDs2mbVIqWqHaVmIyCStysof4/KDCWN8gmj2Jr2DH4YKXB8H7651U1R/FFrkUvAjD6f+quDOSlh9XcXVPNaUaT3WHXuMeQx4DvCRGiJ51vt+9hts4I+tIWOcbS1UHrUpNbgOnjnDxs+1ovYn7Ah44CxUMT0Io=
+	t=1718895381; cv=none; b=hePiB/KmoPC3zpjxMQoan16wvvGo2X19RIrHi3SRiqfuzcCPxzcI91lTTWDfFyyvzXPVvwbjl9SCV3nKExltERNZ1DlDqm1Me+WHXD7H/LfUM1N9trAYff4NjvkuEo9pwUERDIcuFD5yJhMAxZs08+bca1jeHkeU+JrUn5v9H24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718894929; c=relaxed/simple;
-	bh=ZWkJZNR2bxEM6LA73IvJZfOwKaypUz3ChIAu4T7npaA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iodiynNVxBC4xmPJj2UbbfCgifW0ZCIOdTl4Rf+w9t95NemPdtF3rBSwsvr8XrEpDlskqjEkP38WmVh1YL94Vfz6v4F4OGlQl0oJOoujvIlogLNrkhlmTz9rgvDvxscbvSnzjHa31hev/4p6bi+0s+aeiXSBZi9rTeWHf6/5anM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=B8xFZOZt; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-63bdb089ffdso8319057b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1718894927; x=1719499727; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T2Ix8vRkDYAbIzLofJN03PlLvyWp4g34uNnV/Zr5cQo=;
-        b=B8xFZOZt8jPqgy49CCh+db03r8W/X2N/3Hduxw02AQet6Ndo8rbrygpiB3VVOLxYVY
-         LVeJ9j71pXht2slK/ht1eJyvN0M1c3bVEPtmr1cfO68+l9eH3etCSrLR34M+UYgkGWax
-         dmWIH16RPNPJLHhH5CzWD/qzZTMdOdOhOp3xnfQZVDmE+jTuk0NZAPsFzaJW2zrxrMhm
-         lIh3re0UejijpFlzuci5Z7eo3lvzl7LrG9PyKVaRCY6rFkcYXYrdxnzlnF9VQaxzWs4+
-         aeVytPtwcm8tXgnGoBdfSpIgwGgenHHfAbopMf57nuLDqft161bwWlbdPTBF9YwA6XMx
-         mVIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718894927; x=1719499727;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T2Ix8vRkDYAbIzLofJN03PlLvyWp4g34uNnV/Zr5cQo=;
-        b=GtCtzNrn8OLoloIaX6jG2ut9vOtJmzVUHUEme89j3QzeupVN2YKslzu8g1+U0s+BdT
-         QQs3PwzwM88p4tmkxNlMNWUC7RH2dR2bI8bFm/j4gA0fcFEv0HVjQ4X/Ot3agW6UoU40
-         307QcMsZ7wjKWuaRi4ykBHT5prfU+sUfXaTMRlm/Vk5zKjgwiFkZlz8nQJY9iXsCpPEs
-         m7T7t+w5b5W8ILuUPlORPoh7ZagL5OIeF5CQVmIWralxefN3bg0hYpokVtQOeiz2LWvu
-         cLWl1fu9KAdQbeXD0OQPCDh9LOnhtLgnCVlNsvVeqCbrhUEfdq3No8bT9ONjNKm4IwD2
-         6GyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqgQaXDCg+yU9sbC+oWx7aKU+qh5rTg6Dv5jSoUKFNtoe5jfF9y3gAfSWbagQY+rjjT7fTO7UiGtCY4OBFtVCPoUvaGy7DoP1oWX+t
-X-Gm-Message-State: AOJu0Yy5LxKsf+9fkW9hFJevwnkdPW/YndpTa17Gv4/AzsSaWxeHoyQC
-	r51dfNQrLKFIR0G2UVAVy26jQOeCN4X05fiycI45D490029GT9hK+4+hKBA0i1hrbUawqglNY7J
-	65QrBXm5htseZ1mldBiJT4/yLt+GmALHBq/Fp
-X-Google-Smtp-Source: AGHT+IFuiJSlu6ok/X5AbetO8OQ5D7Cz21KHbzk+IA9kRhrNMOU3OFyVB6D+lstQN8v9cNDF9o7/AysNWhm9yCWP10k=
-X-Received: by 2002:a0d:e614:0:b0:632:6615:3d67 with SMTP id
- 00721157ae682-63a8d25c8e4mr59092877b3.6.1718894927304; Thu, 20 Jun 2024
- 07:48:47 -0700 (PDT)
+	s=arc-20240116; t=1718895381; c=relaxed/simple;
+	bh=BpEV79eo6xk9KXuJ3PMnb12OvINVybVtAnOBSCvI/6k=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=AutrwL3pSY2eNlhZvCA1jZeFhDtFH0eDKlIEPAzgKiZuK2RLIvqbtKOQGAlfbvvqsO3RuVFFEuh+dAvCk2FqQlUWa170SHKHO2sPJ4+yxlMBp/I7kqMTHbM7B3sYIq8L5otqhGPg5W54HHPAiaKBYLdz2JmsEGos2ypAC6WGUMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca; spf=pass smtp.mailfrom=kaechele.ca; dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b=hsIagqz6; arc=none smtp.client-ip=54.39.219.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaechele.ca
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 557CCC005F;
+	Thu, 20 Jun 2024 10:52:03 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaechele.ca; s=201907;
+	t=1718895125; h=from:subject:date:message-id:to:mime-version:
+	 content-transfer-encoding; bh=RbUp2ReLkv8gW9t5ybofz1VtOsfVeEDuSj6SOVF6e7k=;
+	b=hsIagqz6wRdxIBZkmLSqDdevXOJCGY+pn9TkzPGYp6Z00UL2BE3hUWM4kko/9FW2cGLodo
+	KTz7sqql7hziNSqgXf/ib+/TfuWDz5+Js/ltgrwATIue8svQBDtOhRMdsfSsbMgZtEp2XX
+	n0BwPl2PuwKmSX6ncfyaWT27akPtEFw=
+From: Felix Kaechele <felix@kaechele.ca>
+To: Job Noorman <job@noorman.info>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/5] himax_hx83112b: add support for HX83100A
+Date: Thu, 20 Jun 2024 10:50:01 -0400
+Message-ID: <20240620145019.156187-1-felix@kaechele.ca>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
- <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
- <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
- <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
- <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
- <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
- <2b335bdd5c20878e0366dcf6b62d14f73c2251de.camel@huaweicloud.com>
- <CAHC9VhSOMLH69+q_wt2W+N9SK92KGp5n4YgzpsXMcO2u7YyaTg@mail.gmail.com> <e9114733eedff99233b1711b2b05ab85b7c19ca9.camel@huaweicloud.com>
-In-Reply-To: <e9114733eedff99233b1711b2b05ab85b7c19ca9.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 20 Jun 2024 10:48:36 -0400
-Message-ID: <CAHC9VhQp1wsm+2d6Dhj1gQNSD0z_Hgj0cFrVf1=Zs94LmgfK0A@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
-	akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, mic@digikod.net, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
-	linux-integrity@vger.kernel.org, wufan@linux.microsoft.com, 
-	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org, 
-	pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, jikos@kernel.org, 
-	mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de, 
-	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Jun 20, 2024 at 5:12=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Wed, 2024-06-19 at 14:43 -0400, Paul Moore wrote:
-> > On Wed, Jun 19, 2024 at 12:38=E2=80=AFPM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > >
-> > > Making it a kernel subsystem would likely mean replicating what the L=
-SM
-> > > infrastructure is doing, inode (security) blob and being notified abo=
-ut
-> > > file/directory changes.
-> >
-> > Just because the LSM framework can be used for something, perhaps it
-> > even makes the implementation easier, it doesn't mean the framework
-> > should be used for everything.
->
-> It is supporting 3 LSMs: IMA, IPE and BPF LSM.
->
-> That makes it a clear target for the security subsystem, and as you
-> suggested to start for IMA, if other kernel subsystems require them, we
-> can make it as an independent subsystem.
+Original discussion around v2 here: https://lore.kernel.org/all/20240511121245.109644-1-felix@kaechele.ca/
 
-Have you discussed the file digest cache functionality with either the
-IPE or BPF LSM maintainers?  While digest_cache may support these
-LSMs, I don't recall seeing any comments from the other LSM
-developers; if you are going to advocate for this as something outside
-of IMA, it would be good to see a show of support for the other LSMs.
+Changes from v2:
+- reworded dt-bindings commit message to specifiy how the HX83100A is different
+  from other chips in this series to justify having its own compatible string
+- added Acked-By from Conor that was given in the v2 thread to commit message
 
---=20
-paul-moore.com
+I've done some more testing in the meantime and haven't found any issues.
+I haven't heard back from anyone with an HX83112B, but the HX83100A works as
+intended with these changes and I assume the HX83112B will too.
+
+Thanks,
+Felix
+
+Felix Kaechele (5):
+  dt-bindings: input: touchscreen: himax,hx83112b: add HX83100A
+  input: himax_hx83112b: use more descriptive register defines
+  input: himax_hx83112b: implement MCU register reading
+  input: himax_hx83112b: add himax_chip struct for multi-chip support
+  input: himax_hx83112b: add support for HX83100A
+
+ .../input/touchscreen/himax,hx83112b.yaml     |   1 +
+ drivers/input/touchscreen/himax_hx83112b.c    | 135 ++++++++++++++----
+ 2 files changed, 110 insertions(+), 26 deletions(-)
+
+
+base-commit: 9b9247397e2e20016031e59f76dae563b79b6ee2
+-- 
+2.45.2
+
 
