@@ -1,111 +1,152 @@
-Return-Path: <linux-kernel+bounces-222236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153C990FEA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:20:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3258C90FEB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B38181F21235
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:20:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE843287251
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E6D1991B4;
-	Thu, 20 Jun 2024 08:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDCF18EFEE;
+	Thu, 20 Jun 2024 08:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XMBjNsFH"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="bzA/JTEb"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2302158A3E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09435B05E;
+	Thu, 20 Jun 2024 08:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718871623; cv=none; b=s2890liplCXkrxvo7eVMcCn0c39nY/90Ee+u43jCLa1ozexoLLadixuRvkgXaRWx7jLw5qw3O9cBzujCua0iroCdeiNLfv5Ox4ESywltIPJkoAf0+FqWDrwvYIzGaSjHEgSLzOISKIjAND4E9MrKvyLOU33kzb4AqIvF4gtppks=
+	t=1718871747; cv=none; b=O1tq3viGSGFjb+Ypuq7Sb3XwCQsHzZ5g47jiCg5Cjj694ZX+HnuDvworN3QRWermqcJT+5DDBI7JQM9vGanGsdG4vJVlsAjdtdKXPyiinZ3ddsFYDNroFZ5CsEvzXxUP+KavGKTV1BNLsYzSweLr93qqIxE2L8dWSf/GGKBeCTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718871623; c=relaxed/simple;
-	bh=B7yX7rbJbYr/mTm0lEL9vuk9v/WQvi74pV0s5CSPcDg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qDjvtq4CXGD3rNQeGrGQymzAkfZKvHFbCiLkLLpKy5+U0xGWJgtB8z/HBiuKio2LvnVG7ALjAqBC2STd4+2588cQm0AM9hoD8wwetGGnAwSimy3Hq1WTcUqj5F/uCj08zVV+DkE3pw2zNzyrCTQ4u9G9R2YO4xwPZtK3C0U96VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XMBjNsFH; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52bc3130ae6so565583e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718871620; x=1719476420; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B7yX7rbJbYr/mTm0lEL9vuk9v/WQvi74pV0s5CSPcDg=;
-        b=XMBjNsFHBUenumwD5DnIx1adUHvzgD616LxC82BGFmHLRvyX35B74Az9RK5fsvjJ1T
-         T0+O7u8w2IiieexySugHQxyCmglq20KE8kAMzZh5VT8apQsVbQ2J37+y0gIgvc17UULw
-         VtDUXyQkiP+51ZEWdS78HuGoYlbnjjPEXy+Uy5EWG0oSPL6VaIuxuT+8Phj5LenD6wKQ
-         JQNrKBjYehQNMVfpLxwISSb+Zyu4RIyTX+FE/z111yNEi+nGeIjs7N1IQUM7d+5LNsWP
-         MNSf9am8EwviAG2UKxNmaj78uYqdnttvXQXaigJxnvLEWYVWpNrZ5P0kH7hb3efpjrqX
-         DsQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718871620; x=1719476420;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B7yX7rbJbYr/mTm0lEL9vuk9v/WQvi74pV0s5CSPcDg=;
-        b=ezauiaB4iCUWbPR6iItzEQPP+j6W6rN6tCosx09w0LGPbdknfb3F/UXioPLNEaU7sT
-         0gyM1/AHwok5CKAQ6DQE1GNmkfuIlsfCq7nDKZ90FDf8fzTUjTBYSot0P3rigPsGbK/B
-         cyJHwsa6KPR/jp+E2X5odjLuYmiNM99eAnOCaXk8l2QKCiwuqBbcvXLcjCoZYM31uQNB
-         8pl5d0h14s/JVnaqrXWCaYwdgAAGvsq5d0xepM655xCZU4/4iEXbndonG2gOSw0fkT6J
-         dhSLrCcoygd8NXem+91vLaJSfCoK4WIIl6UZ/cTKT3gp2g/Uv5AAJy1ppSTIXg3trpbH
-         d3uw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9TvYiAbGyXITiRnEpQwM/Kzah2xNogBLL/TCFZ5xt3dGKin9TiQn+mcX/Ry4bpVAt8w+v7O7yQVUaRLZh+Pbf6jdRRq9VsmGHdSBU
-X-Gm-Message-State: AOJu0YyPAnZG0Gvdgj7tSw2JshEPGbO+oQbf/wwk4hnmzFd/wYMFhidP
-	Ksvg+lVD3TA7dFd74cftOSMBm+b4bCPCfdxdgSuI+Kf5h8N7ItNn2YAOspupUdG9eUZ3fHbU3Th
-	oH21CKwKYcFaBIQ8MKAqMSiAAGORJR34e7ZNeiQ==
-X-Google-Smtp-Source: AGHT+IEmop4fSjADk7pSWeD8ON7nqhqCNYoCXWB9xXRFCphWhGBBKaZ3FTBp7MgrIlYFop2ThtyzgoBlAbqZbHjT0uk=
-X-Received: by 2002:a05:6512:1182:b0:52c:86d6:e8d7 with SMTP id
- 2adb3069b0e04-52ccaa2d4a3mr2435101e87.13.1718871620038; Thu, 20 Jun 2024
- 01:20:20 -0700 (PDT)
+	s=arc-20240116; t=1718871747; c=relaxed/simple;
+	bh=DgkvKqufEzVzA4mCCc5Izp084ePjsPRawcTM+KusyrY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rCuXDcJMYfMHkGDa2mqPPydcPx960evxedJp4LK+5JjAAVVKx0LgEDgGPLscYXeDZcmX3v2GSWsEhCKkKe0MpjAxTo3O+z054uwsgoOOhymy8ldnG8dk/Oaf8QGigvjMlV5enRXrfHcL0DZYnRydlSB0Q4FQec1iFj8AU7azDPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=bzA/JTEb; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718871746; x=1750407746;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DgkvKqufEzVzA4mCCc5Izp084ePjsPRawcTM+KusyrY=;
+  b=bzA/JTEbNLhNHk602tpK/ERTU+FlluweZvZtGR7dYJHR19Ki25mJMugJ
+   DcHKlYBnbBdmvgOc75BRprRyiq3PDgxKaCl5IXaKx+EYz0X8lvHwmXxd5
+   mfvL6CKHX26tffh5p3hwoNA+le/NEoSCZxHsx3WCobKHe20BafeINqWAV
+   rQws+225NQhj7IIa1AeAArbFplBJ/tM2cp2UAWzzaKNpV7aikuUzdWvhK
+   A76ntdqJkkJ6LKUrzSdaZqwYWCYcNLqGxCr+NK9e3kLhy+wc3rgMzOg3m
+   VOsjDngFbCx9GXG3/mDtafdZ+7sfj6Krqb9F+G5W6kVHeqnG+MpM1DUyN
+   Q==;
+X-CSE-ConnectionGUID: BfXzup/sSuCPo1L9vCsj6w==
+X-CSE-MsgGUID: ecnZoOx/TbqPi03KL3ujjw==
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="asc'?scan'208";a="259148518"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Jun 2024 01:22:25 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 20 Jun 2024 01:22:24 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Thu, 20 Jun 2024 01:22:20 -0700
+Date: Thu, 20 Jun 2024 09:22:02 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: Conor Dooley <conor@kernel.org>, <krzk+dt@kernel.org>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+	<conor+dt@kernel.org>, <matthias.bgg@gmail.com>, <jassisinghbrar@gmail.com>,
+	<garmin.chang@mediatek.com>, <houlong.wei@mediatek.com>,
+	<Jason-ch.Chen@mediatek.com>, <amergnat@baylibre.com>,
+	<Elvis.Wang@mediatek.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<kernel@collabora.com>
+Subject: Re: [PATCH 3/3] dt-bindings: mailbox: mediatek: Avoid clock-names on
+ MT8188 GCE
+Message-ID: <20240620-district-bullring-c028e0183925@wendy>
+References: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
+ <20240619085322.66716-3-angelogioacchino.delregno@collabora.com>
+ <20240619-sleeve-citable-a3dc10e5cd4f@spud>
+ <a7317981-8690-4d45-81b6-cc6a63c459e0@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619184550.34524-1-brgl@bgdev.pl> <20240619184550.34524-9-brgl@bgdev.pl>
- <f4af7cb3-d139-4820-8923-c90f28cca998@lunn.ch>
-In-Reply-To: <f4af7cb3-d139-4820-8923-c90f28cca998@lunn.ch>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 20 Jun 2024 10:20:08 +0200
-Message-ID: <CAMRc=MeP9o2n8AqHYNZMno5gFA94DnQCoHupYiofQLLw03bL6A@mail.gmail.com>
-Subject: Re: [PATCH net-next 8/8] net: stmmac: qcom-ethqos: add a DMA-reset
- quirk for sa8775p-ride-r3
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vinod Koul <vkoul@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vDd3+enh6BC9rJov"
+Content-Disposition: inline
+In-Reply-To: <a7317981-8690-4d45-81b6-cc6a63c459e0@collabora.com>
+
+--vDd3+enh6BC9rJov
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2024 at 9:33=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Wed, Jun 19, 2024 at 08:45:49PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > On sa8775p-ride the RX clocks from the AQR115C PHY are not available at
-> > the time of the DMA reset so we need to loop TX clocks to RX and then
-> > disable loopback after link-up. Use the provided callbacks to do it for
-> > this board.
->
-> How does this differ to ethqos_clks_config()?
->
+On Thu, Jun 20, 2024 at 10:01:18AM +0200, AngeloGioacchino Del Regno wrote:
+> Il 19/06/24 19:49, Conor Dooley ha scritto:
+> > On Wed, Jun 19, 2024 at 10:53:22AM +0200, AngeloGioacchino Del Regno wr=
+ote:
+> > > Add mediatek,mt8188-gce to the list of compatibles for which the
+> > > clock-names property is not required.
+> >=20
+> > Because, I assume, it has some internal clock? Why do either of these
+> > things have no clock? Doesn't the internal logic require one?
+> >=20
+>=20
+> Because there's no gce0/gce1 clock, there's only an infracfg_AO clock tha=
+t is
+> for one GCE instance, hence there's no need to require clock-names.
 
-I'm not sure I understand the question. This function is called at
-probe/remove and suspend/resume. It's not linked to the issue solved
-here.
+clock-names, d'oh. I misread that completely yesterday.
 
-Bart
+> I can't remove the clock-names requirement from the older compatibles tho=
+ugh,
+> because the (sorry about this word) driver (eh..) gets the clock by name =
+for
+> the single GCE SoCs...
+>=20
+> ...and here comes a self-NACK for this commit, I have to fix the driver a=
+nd
+> then stop requiring clock-names on all compatibles, instead of having this
+> ugly nonsense.
+
+Is it not worth keeping the clock names, even if ugly or w/e, because
+things have been done that way for a while?
+Also, what does U-Boot do on these systems to get the clocks?
+
+> Self-note: gce0/gce1 clocks lookup was implemented in the driver but never
+> used and never added to the binding - luckily.
+>=20
+> Sorry Conor, I just acknowledged that there's a better way of doing that.
+>=20
+> Thank you for making me re-read this stuff, I'll send the proper changes
+> later today, driver change + binding change in a separate series.
+>=20
+> As for the other two commits in this series, completely unrelated to GCE,
+> those are still fine, and are fixing dtbs_check warnings.
+
+--vDd3+enh6BC9rJov
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnPmqgAKCRB4tDGHoIJi
+0kReAP9+nHTN6lCNnpAg765nXa6b1QwdTBEFjAYmSXPq03sY+QEAtvDHFzs69uth
+qgd15/M32kAL2PfmVibeGNuC6SuDsQA=
+=4tAi
+-----END PGP SIGNATURE-----
+
+--vDd3+enh6BC9rJov--
 
