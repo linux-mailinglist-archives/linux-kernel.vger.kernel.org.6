@@ -1,124 +1,115 @@
-Return-Path: <linux-kernel+bounces-222988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8504F910B50
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D27C1910B33
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A81B31C235ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:08:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8A01C23ED5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F061B143F;
-	Thu, 20 Jun 2024 16:08:03 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACB01B1518;
-	Thu, 20 Jun 2024 16:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520AB1B151D;
+	Thu, 20 Jun 2024 16:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPz12hTE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEBA1B14F6;
+	Thu, 20 Jun 2024 16:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718899682; cv=none; b=G50I6VRL7vAYqVthdgIoJSnzrEAsmnL0FS+DgpRgJPA9nBudFJukd5rK5doJwveQUzEMytDGCiL/6hPtu/XhREoExm0uwKAq2tqSJw5mNS6laZHESBT27HXDV1vV7yc1CrNLmc+VtD74No3PhHBXbB+RQm6x7QWgRIhMBfx616U=
+	t=1718899601; cv=none; b=hXkyHnT9H8L5chZd92rn/cwQGMPCn9BJWVIptFU9Oh4bHTBgoYgcRseIfJuDvtsp+AVXMR3rS2FclwhtkH9xhFLLdeIZJ5rv+aDwy+w3/NZfN0XcUy7TdBs5b9lq0yn3Q8CRl5M1euFQfS38HYynBfcpFxjaZ9gY7t4+1K/3VLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718899682; c=relaxed/simple;
-	bh=GNVc8/vmFMgwRhMEy2TuqlraiLah1mxz5w2FWDs8fpI=;
+	s=arc-20240116; t=1718899601; c=relaxed/simple;
+	bh=LGtv35FvlZB5cEXYAShER66SaKuyixPdIhslDnimU3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eHIzZzHP9BCQSR7ceO8gbmOhMC6RgY2zgISX9wIq0rpZ+aWqCYdGa7Le2TDINR2nF1+k3fpgy1ZIYbO3Ceucf2abgc1yk3eGm7O1Q0UiNZ03yfsmO+4V4avhmHrJ6zo4Cvi/oJMD4zFN5xuMW6C2co4F36HNVo17JV4i4jva9tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sKKK1-0001mv-00; Thu, 20 Jun 2024 18:07:37 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 0F12BC0120; Thu, 20 Jun 2024 18:06:28 +0200 (CEST)
-Date: Thu, 20 Jun 2024 18:06:28 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Jonas Gorski <jonas.gorski@gmail.com>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>, linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] MIPS: Introduce config options for LLSC
- availability
-Message-ID: <ZnRThFlqqyDEprGz@alpha.franken.de>
-References: <20240612-mips-llsc-v2-0-a42bd5562bdb@flygoat.com>
- <20240612-mips-llsc-v2-2-a42bd5562bdb@flygoat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ry+sV1YzsRBJ5S5BmqPowfbIlP2dZ3J2S59AD2FLC31eSEhvLFNLlsbEM641grXFmHeFPVXQuOeHcufg40q5XkH40BKp+l/sohs336Th93K9uIIxRIYhg1qMAdCm66Pr75yoRS4Jj1UgzQW037yZlE/57jWxz7tYR8S13H1Q1do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPz12hTE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BEA2C32786;
+	Thu, 20 Jun 2024 16:06:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718899601;
+	bh=LGtv35FvlZB5cEXYAShER66SaKuyixPdIhslDnimU3s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VPz12hTETnK/PrEGksITL4CZmnHLn1Nn60h6hvQKC6HMzxtbt8pQ398l1iyRpj946
+	 7l8qs1MckalfmTKkaRGyTS4gmPOYa72VFgY5endeozOaSxV/hTV4z2e+49OrI0nmio
+	 JTIAOuKJXI0AdLbLgiuEFYuUu/R/Mf/kVWUq5weg8cHEHj1OmNPKp5qYuO0/8bp5nV
+	 1iAwA/Tqcruvz3CbliVU0gAyN9dAhv9C8kVCearBtImJb3AFTDeN5ZrZXBZT8YjRp3
+	 iudTOQgRgLkqOEt1N5VAbhiec9NtlM5T9ThkgzrYbhwxNjJjrqpqWclf7lJSwp7mbi
+	 CHWpD/VEvHyBQ==
+Date: Thu, 20 Jun 2024 17:06:31 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Sergiu Moga <sergiu.moga@microchip.com>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Doug Anderson <dianders@chromium.org>,
+	Enric Balletbo i Serra <eballetbo@kernel.org>,
+	Ricardo =?iso-8859-1?Q?Ca=F1uelo?= <ricardo.canuelo@collabora.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Vignesh R <vigneshr@ti.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Chris Brandt <chris.brandt@renesas.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-tegra@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-omap@vger.kernel.org,
+	Kamal Dasu <kdasu.kdev@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com, stable@vger.kernel.org
+Subject: Re: [PATCH 0/7] dt-bindings: i2c: few fixes and cleanups
+Message-ID: <20240620-recite-deeply-ec4aa7458d45@spud>
+References: <20240620-dt-bindings-i2c-clean-v1-0-3a1016a95f9d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="OWprGERt14zJA7P2"
+Content-Disposition: inline
+In-Reply-To: <20240620-dt-bindings-i2c-clean-v1-0-3a1016a95f9d@linaro.org>
+
+
+--OWprGERt14zJA7P2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240612-mips-llsc-v2-2-a42bd5562bdb@flygoat.com>
 
-On Wed, Jun 12, 2024 at 10:53:30AM +0100, Jiaxun Yang wrote:
-> Introduce CPU_HAS_LLSC and CPU_MAY_HAVE_LLSC to determine availability
-> of LLSC and Kconfig level.
-> 
-> They are both true for almost all supported CPUs besides:
-> 
-> R3000: Doesn't have LLSC, so both false.
-> R5000 series: LLSC is unusable for 64bit kernel, so both false.
-> R10000: Some platforms decided to opt-out LLSC due to errata, so only
-> 	select CPU_MAY_HAVE_LLSC.
-> WAR_4KC_LLSC: LLSC is buggy on certain reversion, which can be detected
-> 	at cpu-probe or platform override, so only select CPU_MAY_HAVE_LLSC.
-> 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
-> v2: Make cpu_has_llsc logic clear
-> ---
->  arch/mips/Kconfig                    | 20 ++++++++++++++++++++
->  arch/mips/include/asm/cpu-features.h |  9 ++++++++-
->  2 files changed, 28 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> index 8ac467c1f9c8..50260a7e9b54 100644
-> --- a/arch/mips/Kconfig
-> +++ b/arch/mips/Kconfig
-> @@ -1548,6 +1548,7 @@ config CPU_R3000
->  config CPU_R4300
->  	bool "R4300"
->  	depends on SYS_HAS_CPU_R4300
-> +	select CPU_HAS_LLSC
->  	select CPU_SUPPORTS_32BIT_KERNEL
->  	select CPU_SUPPORTS_64BIT_KERNEL
->  	help
-> @@ -1556,6 +1557,7 @@ config CPU_R4300
->  config CPU_R4X00
->  	bool "R4x00"
->  	depends on SYS_HAS_CPU_R4X00
-> +	select CPU_HAS_LLSC
->  	select CPU_SUPPORTS_32BIT_KERNEL
->  	select CPU_SUPPORTS_64BIT_KERNEL
->  	select CPU_SUPPORTS_HUGEPAGES
-> @@ -1566,6 +1568,7 @@ config CPU_R4X00
->  config CPU_TX49XX
->  	bool "R49XX"
->  	depends on SYS_HAS_CPU_TX49XX
-> +	select CPU_HAS_LLSC
->  	select CPU_HAS_PREFETCH
->  	select CPU_SUPPORTS_32BIT_KERNEL
->  	select CPU_SUPPORTS_64BIT_KERNEL
-> @@ -1574,6 +1577,7 @@ config CPU_TX49XX
->  config CPU_R5000
->  	bool "R5000"
->  	depends on SYS_HAS_CPU_R5000
-> +	select CPU_HAS_LLSC if !64BIT
->  	select CPU_SUPPORTS_32BIT_KERNEL
->  	select CPU_SUPPORTS_64BIT_KERNEL
->  	select CPU_SUPPORTS_HUGEPAGES
-> @@ -1583,6 +1587,7 @@ config CPU_R5000
->  config CPU_R5500
->  	bool "R5500"
->  	depends on SYS_HAS_CPU_R5500
-> +	select CPU_HAS_LLSC
+On Thu, Jun 20, 2024 at 01:34:48PM +0200, Krzysztof Kozlowski wrote:
+> Few fixes for I2C controller schemas. The third patch (atmel,at91sam)
+> depends on first, so I suggest not splitting this into fixes branch but
+> take as is via next branch.
 
-do you have an user manual stating that the R5k bug is fixed on this CPUs ?
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-Thomas.
+--OWprGERt14zJA7P2
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnRThwAKCRB4tDGHoIJi
+0qmFAP4qVsTO5fhoHDH/KxLOQ9oIndV8aFx4pmYEmgmRLGL9OQEArGLygc2tOMFb
+gTTMxW9UouX8OISj6ZTyIyS1QKmpIgI=
+=vTRs
+-----END PGP SIGNATURE-----
+
+--OWprGERt14zJA7P2--
 
