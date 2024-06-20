@@ -1,61 +1,50 @@
-Return-Path: <linux-kernel+bounces-223189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC21910F4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:47:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BEE910F4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD5771F21151
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:47:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641F61F2396B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B511B47D6;
-	Thu, 20 Jun 2024 17:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D6F1B4C3A;
+	Thu, 20 Jun 2024 17:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ESXzq9Rq"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cBSVxayy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0191C1A4F1D;
-	Thu, 20 Jun 2024 17:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFE41B4C26;
+	Thu, 20 Jun 2024 17:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718904939; cv=none; b=jZhJztT3IRTDlQG8LV9MzFhM5mcrc49R9/ZN5fqdTrDtweZk0HlXEUtIJ/mUbDAoeiO53Fno+pMAEvZ+0/fnmHyGABevOnp32QNbIGi8dRVhDDYb8/19mn/+hZ09qvwYs+oZmYqMzq1A67U5gblu2BY5tOrTEYF0GEtus4QdbiE=
+	t=1718905070; cv=none; b=SxqyhtytUETksPSZf/DeR3ODwjDlsKcCTCgcM+16urcqvk1GkD/c1DWGUC16v9/fvSoN3o0Nok76T8k/n/WcDfkXTlWpIK2UBHzovDg7kZP/mbKWYKWWW2EfDSzBEHW+nT5qNEBRipH8O/2gza3en1aIreV7vdEPxu7vG7gCzZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718904939; c=relaxed/simple;
-	bh=Qysz9e+rYvmm4WsTMe7XJXmc8MH0fJVnEXb7URgZQ6M=;
+	s=arc-20240116; t=1718905070; c=relaxed/simple;
+	bh=yUcba7XTwaAy9dHjTzqWubY7qwN5BUWdgWYQcZgo8z0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EbPMeAVx6vwYnHX+I8I25ZbJJrfMNH0yHIxrMD1lznsxPhGDGbflE4LWfAJSCc3LxFc/jcdZ2ugevljJga0QHFPH13kNKeQ7h4ByutQuWR0TO+x5gcYPAkM39X+/TTCge86R+dW7HZFdzXr/5I6FbcD4CdhMqmHg9YFvJuyeEuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ESXzq9Rq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F13CAC2BD10;
-	Thu, 20 Jun 2024 17:35:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=RYxqG3qv39t7/gfeEYpIgklT7pmGBO01oTJaZlyvTfmIsoBzbuQCNDX8JCgmjHYhecbfzXWlulccxrNsZHt0w2PQDQYzjWXnya6GaQb/KZvkrLUyUUPbdZs8i4KbeDMUVCEfEtMCHzU4kSSMvTc9Es+Sb549Gru2c4x9Nn+9Iag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cBSVxayy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0EBEC2BD10;
+	Thu, 20 Jun 2024 17:37:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718904938;
-	bh=Qysz9e+rYvmm4WsTMe7XJXmc8MH0fJVnEXb7URgZQ6M=;
+	s=korg; t=1718905070;
+	bh=yUcba7XTwaAy9dHjTzqWubY7qwN5BUWdgWYQcZgo8z0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ESXzq9Rqi5cDaDMhC+DMXnSdLksJVN58ohfhsUokypfgmp7GKDSINXC3LQgiswvjV
-	 /Qi0ad6cj8LvgWswFuDc9Sl0xEt2MJLjBDTw9dbem/rhUtUHUv2gYDR23KY7SfQXr9
-	 qLCXEt6r+rqwSWTgR7ugcWAyGVeaC2JKV3BRn/YY=
-Date: Thu, 20 Jun 2024 19:35:35 +0200
+	b=cBSVxayydlKqsBV7c7gkAZm4j9op/CLk9rGMpVeGaV/GIZRrbiD4w1Bzfq9nty/7p
+	 4dthpxaYdgxZxHOYFBOLxUQUxWySRwBZLFAo0rVHa5D5k7R1nVv4NC8GEHORKyBha3
+	 UajhBcFMl1xCInnbXyBvbbjuaKyXqoa2IYZjusM8=
+Date: Thu, 20 Jun 2024 19:37:47 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ferry Toth <ftoth@exalondelft.nl>
-Cc: "Ricardo B. Marliere" <ricardo@marliere.net>,
-	Kees Cook <kees@kernel.org>, Linyu Yuan <quic_linyyuan@quicinc.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Richard Acayan <mailingradian@gmail.com>,
-	Hardik Gajjar <hgajjar@de.adit-jv.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	s.hauer@pengutronix.de, jonathanh@nvidia.com, paul@crapouillou.net,
-	quic_eserrao@quicinc.com, erosca@de.adit-jv.com,
-	regressions@leemhuis.info, Ferry Toth <fntoth@gmail.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] Revert "usb: gadget: u_ether: Re-attach netif
- device to mirror detachment"
-Message-ID: <2024062009-unison-coauthor-46a0@gregkh>
-References: <20240606210436.54100-1-ftoth@exalondelft.nl>
- <20240606210436.54100-2-ftoth@exalondelft.nl>
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: Jameson Thies <jthies@google.com>, Benson Leung <bleung@google.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: misc: onboard_usb_dev: Add match function
+Message-ID: <2024062032-bobbing-backspace-8bd5@gregkh>
+References: <20240612180448.1.I805556c176c626872c15ce001f0e8198e1f95ae1@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,25 +53,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240606210436.54100-2-ftoth@exalondelft.nl>
+In-Reply-To: <20240612180448.1.I805556c176c626872c15ce001f0e8198e1f95ae1@changeid>
 
-On Thu, Jun 06, 2024 at 11:02:31PM +0200, Ferry Toth wrote:
-> This reverts commit 76c945730cdffb572c7767073cc6515fd3f646b4.
-> 
-> Prerequisite revert for the reverting of the original commit f49449fbc21e.
-> 
-> Fixes: 76c945730cdf ("usb: gadget: u_ether: Re-attach netif device to mirror detachment")
-> Fixes: f49449fbc21e ("usb: gadget: u_ether: Replace netif_stop_queue with netif_device_detach")
-> Reported-by: Ferry Toth <fntoth@gmail.com>
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/usb/gadget/function/u_ether.c | 2 --
->  1 file changed, 2 deletions(-)
+On Wed, Jun 12, 2024 at 06:04:48PM +0000, Matthias Kaehlcke wrote:
+> Add a match function for the onboard_usb_dev driver. Primary
+> matching is still done through the VID:PID pair, as usual for
+> USB devices. The new match function checks in addition whether
+> the device has a device tree node, which is a needed for using
+> the onboard_usb_dev driver.
 
-You have to sign-off on your changes, otherwise the tools will reject
-them (as will I).  Please fix up for both of these and resend.
+So this fixes a problem with the existing code?  Or is for future
+changes?
 
-thanks,
+confused,
 
 greg k-h
 
