@@ -1,280 +1,190 @@
-Return-Path: <linux-kernel+bounces-222175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4E990FDE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:34:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C63D90FDE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D56E1F20984
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:34:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2787E283674
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1764C59162;
-	Thu, 20 Jun 2024 07:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93A345C18;
+	Thu, 20 Jun 2024 07:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oswquI3j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ivcbIfkT"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6AD50288;
-	Thu, 20 Jun 2024 07:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73815757E8
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718868864; cv=none; b=NCfTLKgb6k5ibrkiRhwe7eQqY9DjvFSmIe2msqIE/9jCfblM+bT4xinKDG7t4XBLTQcxO2Qd8HSW8NRSvg+8/TCJxP+IyzDrF9EnczHl0TM6TzSWDyZ6j7kMFY8SqLxJarBHYtzSJbJyS6TQC5uee9Tx6lXcXFISByCuiFbcACk=
+	t=1718868874; cv=none; b=UlFC09rbpFuHf7vjpAJwjokO4bXHQp1UBSklzlWzoEjpKr4gh0esxCsB90f8r1/Sz1dB70a+QCWs4vQw4IbI+waL6z49FWT5imx7AyKyP7hSveOPqdQdn3jbMdlHGu3uBGNjnaZPEFouJHj1HPQVka4E8FiQTtIhybZutLpp8TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718868864; c=relaxed/simple;
-	bh=jKHIHK7V/egx2t2KSXuzWsfWzqfvs0vCQmSr1DEHD6E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HCxxS+ugFtIlnpMQXYvsWtP3rR0H6HbGW0CNxA+j7Bvd8jUjXJQWJLGfU5zzAeXqcA7unw7POGNb4DBkyVe2aruWH4138ApvjxXquJYMF37AsrAW08pHQlQRbrKiqCSNdLzvhZVrilzPi4NZd3WVikTf5yeVUEi93YmXU0GF5vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oswquI3j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74BB1C4AF09;
-	Thu, 20 Jun 2024 07:34:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718868863;
-	bh=jKHIHK7V/egx2t2KSXuzWsfWzqfvs0vCQmSr1DEHD6E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oswquI3jhec4eVlSZlG5R+zwjfSISlqMB6IdrWpOTK6t5/TmMKeefuCr8i/oa+Hvd
-	 sR7OwKzQG0ClWKqPdSGQshhTsA03qW1w244lkANkjGKrOwjh1G12no5uTdhkC5HA63
-	 NC2CZyAr0aYXImaz2UO39MESr6r7hwcIpfnUwKedCeuZ0R0Qg8sMPpWIX+KsZkZFl8
-	 BzIOtuK6ajuGxDRQ+Hm5wh3ZSvWwrDc4+i8W0udJv9nc/CYS22YKc+5TgOHv5fTwvh
-	 Be7o2uYBcluva+8GybukWxGy6iZVs1ZC3IG2hHgxtxC2TBVRp+kmJneZm3A1IIQ4bF
-	 uIx6CH6R9ESVg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.97.1)
-	(envelope-from <mchehab@kernel.org>)
-	id 1sKCJI-00000003c0C-3paV;
-	Thu, 20 Jun 2024 09:34:20 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: 
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Borislav Petkov" <bp@alien8.de>,
-	"James Morse" <james.morse@arm.com>,
-	"Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	"Shiju Jose" <shiju.jose@huawei.com>,
-	"Tony Luck" <tony.luck@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Daniel Ferguson <danielf@os.amperecomputing.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Len Brown <lenb@kernel.org>,
-	Shengwei Luo <luoshengwei@huawei.com>,
-	Shuai Xue <xueshuai@linux.alibaba.com>,
-	linux-acpi@vger.kernel.org,
-	linux-edac@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] efi/cper: align ARM CPER type with UEFI 2.9A/2.10 specs
-Date: Thu, 20 Jun 2024 09:34:14 +0200
-Message-ID: <78a0195889d95d4f4086151fcce093f55d432bf3.1718868693.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1718868693.git.mchehab+huawei@kernel.org>
-References: <cover.1718868693.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1718868874; c=relaxed/simple;
+	bh=PZuzMuFrGxgfRX5jCBmwds6EGDY8oZ5qE7+Fjvvet2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BmaQXx2qgunxvB58YCXSEb7YjCSupb3t0lIrK3D3aHHTAIjN3j+DjSkY5YSBTV+rrz72MFJegmWujoNkm//uQMku99Ec7WBZ4trtJF28ToU3o4l+mFfL13cIavQXroGWkvehc1fLGMwlMqNMhHxddwa/LioPtcsIBTsl/0OciAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ivcbIfkT; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4pcxUoHoWVMwiO54VOdychYI86aS+tkZ4/hYK5+OQQw=; b=ivcbIfkT00yUxtKuGeVQ1RfE2b
+	8+HMiroYhQydz0sEnPRv0gwrogVmEfTuoVfTjpTPuc+owMJ65R2un6XObQH4s9UomevSo+SNlQn+d
+	uqtml+SodTd2V/J4B1TE2zRovTdQSwR06TD63LsJDjLt1ECDEO7yPOTJ8F+o2Hlc8n1HBZSx+91L1
+	cQMcupItpCWluEJg7BwY8pEvZUpMlPSQDNq2Tp5SXolrb//nDJOnMMNQrAra7NOwr1VXbhO+lv9Cm
+	h1GoQ6ayRhVHZFcJXxsD9YUquCmu0vReo0mx/0E9LZTwO3ZYhgpzmpoma7cuKyu5SQyTOhUBDaR2t
+	zzRjReZQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sKCJO-00000007W46-320b;
+	Thu, 20 Jun 2024 07:34:27 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5AFDB300CB9; Thu, 20 Jun 2024 09:34:26 +0200 (CEST)
+Date: Thu, 20 Jun 2024 09:34:26 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+	ak@linux.intel.com, eranian@google.com
+Subject: Re: [RESEND PATCH 04/12] perf/x86/intel: Support new data source for
+ Lunar Lake
+Message-ID: <20240620073426.GR31592@noisy.programming.kicks-ass.net>
+References: <20240618151044.1318612-1-kan.liang@linux.intel.com>
+ <20240618151044.1318612-5-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618151044.1318612-5-kan.liang@linux.intel.com>
 
-Up to UEFI spec, the type byte of CPER struct for ARM processor was
-defined simply as:
+On Tue, Jun 18, 2024 at 08:10:36AM -0700, kan.liang@linux.intel.com wrote:
 
-Type at byte offset 4:
+> @@ -77,7 +86,7 @@ union intel_x86_pebs_dse {
+>  #define SNOOP_NONE_MISS (P(SNOOP, NONE) | P(SNOOP, MISS))
+>  
+>  /* Version for Sandy Bridge and later */
+> -static u64 pebs_data_source[] = {
+> +static u64 pebs_data_source[PERF_PEBS_DATA_SOURCE_MAX] = {
+>  	P(OP, LOAD) | P(LVL, MISS) | LEVEL(L3) | P(SNOOP, NA),/* 0x00:ukn L3 */
+>  	OP_LH | P(LVL, L1)  | LEVEL(L1) | P(SNOOP, NONE),  /* 0x01: L1 local */
+>  	OP_LH | P(LVL, LFB) | LEVEL(LFB) | P(SNOOP, NONE), /* 0x02: LFB hit */
+> @@ -173,6 +182,40 @@ void __init intel_pmu_pebs_data_source_cmt(void)
+>  	__intel_pmu_pebs_data_source_cmt(pebs_data_source);
+>  }
+>  
+> +/* Version for Lunar Lake p-core and later */
+> +static u64 lnc_pebs_data_source[PERF_PEBS_DATA_SOURCE_MAX] = {
 
-	- Cache error
-	- TLB Error
-	- Bus Error
-	- Micro-architectural Error
-	All other values are reserved
+Comment and naming are inconsistent, please lion-cove and lnc
 
-Yet, there was no information about how this would be encoded.
+> +	P(OP, LOAD) | P(LVL, MISS) | LEVEL(L3) | P(SNOOP, NA),	/* 0x00: ukn L3 */
+> +	OP_LH | P(LVL, L1)  | LEVEL(L1) | P(SNOOP, NONE),	/* 0x01: L1 hit */
+> +	OP_LH | P(LVL, L1)  | LEVEL(L1) | P(SNOOP, NONE),	/* 0x02: L1 hit */
+> +	OP_LH | P(LVL, LFB) | LEVEL(LFB) | P(SNOOP, NONE),	/* 0x03: LFB/L1 Miss Handling Buffer hit */
+> +	0,							/* 0x04: Reserved */
+> +	OP_LH | P(LVL, L2)  | LEVEL(L2) | P(SNOOP, NONE),	/* 0x05: L2 Hit */
+> +	OP_LH | LEVEL(L2_MHB) | P(SNOOP, NONE),			/* 0x06: L2 Miss Handling Buffer Hit */
+> +	0,							/* 0x07: Reserved */
+> +	OP_LH | P(LVL, L3)  | LEVEL(L3) | P(SNOOP, NONE),	/* 0x08: L3 Hit */
+> +	0,							/* 0x09: Reserved */
+> +	0,							/* 0x0a: Reserved */
+> +	0,							/* 0x0b: Reserved */
+> +	OP_LH | P(LVL, L3)  | LEVEL(L3) | P(SNOOPX, FWD),	/* 0x0c: L3 Hit Snoop Fwd */
+> +	OP_LH | P(LVL, L3)  | LEVEL(L3) | P(SNOOP, HITM),	/* 0x0d: L3 Hit Snoop HitM */
+> +	0,							/* 0x0e: Reserved */
+> +	P(OP, LOAD) | P(LVL, MISS) | P(LVL, L3)  | LEVEL(L3) | P(SNOOP, HITM),	/* 0x0f: L3 Miss Snoop HitM */
+> +	OP_LH | LEVEL(MSC) | P(SNOOP, NONE),			/* 0x10: Memory-side Cache Hit */
+> +	OP_LH | P(LVL, LOC_RAM)  | LEVEL(RAM) | P(SNOOP, NONE), /* 0x11: Local Memory Hit */
+> +};
+> +
+> +void __init intel_pmu_pebs_data_source_lnl(void)
+> +{
+> +	u64 *data_source;
+> +
+> +	data_source = x86_pmu.hybrid_pmu[X86_HYBRID_PMU_CORE_IDX].pebs_data_source;
+> +	memcpy(data_source, lnc_pebs_data_source, sizeof(lnc_pebs_data_source));
+> +
+> +	data_source = x86_pmu.hybrid_pmu[X86_HYBRID_PMU_ATOM_IDX].pebs_data_source;
+> +	memcpy(data_source, pebs_data_source, sizeof(pebs_data_source));
+> +	__intel_pmu_pebs_data_source_cmt(data_source);
+> +}
+> +
+>  static u64 precise_store_data(u64 status)
+>  {
+>  	union intel_x86_pebs_dse dse;
+> @@ -264,7 +307,7 @@ static u64 __adl_latency_data_small(struct perf_event *event, u64 status,
+>  
+>  	WARN_ON_ONCE(hybrid_pmu(event->pmu)->pmu_type == hybrid_big);
+>  
+> -	dse &= PERF_PEBS_DATA_SOURCE_MASK;
+> +	dse &= PERF_PEBS_DATA_SOURCE_GRT_MASK;
+>  	val = hybrid_var(event->pmu, pebs_data_source)[dse];
+>  
+>  	pebs_set_tlb_lock(&val, tlb, lock);
+> @@ -300,6 +343,45 @@ u64 mtl_latency_data_small(struct perf_event *event, u64 status)
+>  					dse.mtl_fwd_blk);
+>  }
+>  
+> +u64 lnl_latency_data(struct perf_event *event, u64 status)
+> +{
+> +	struct x86_hybrid_pmu *pmu = hybrid_pmu(event->pmu);
+> +	union intel_x86_pebs_dse dse;
+> +	union perf_mem_data_src src;
+> +	u64 val;
+> +
+> +	if (pmu->pmu_type == hybrid_small)
+> +		return mtl_latency_data_small(event, status);
 
-Spec 2.9A errata corrected it by defining:
+argh,.. can you please go and rename this mtl_small nonsense to .. /me
+googles.. crestmont / crm ?
 
-	- Bit 1 - Cache Error
-	- Bit 2 - TLB Error
-	- Bit 3 - Bus Error
-	- Bit 4 - Micro-architectural Error
-	All other values are reserved
+Oh gawd, and the adl_small things to gracemont / gcm ?
 
-That actually aligns with the values already defined on older
-versions at N.2.4.1. Generic Processor Error Section.
+> +
+	return lnc_latency_data();
+}
 
-Spec 2.10 also preserve the same encoding as 2.9A
 
-See: https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-information
-
-Adjust CPER and GHES handling code for both generic and ARM
-processors to properly handle UEFI 2.9A and 2.10 encoding.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- drivers/acpi/apei/ghes.c        |  9 ++++---
- drivers/firmware/efi/cper-arm.c | 45 ++++++++++++++-------------------
- include/linux/cper.h            |  9 +++----
- 3 files changed, 28 insertions(+), 35 deletions(-)
-
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index 623cc0cb4a65..9e76be42f27e 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -533,6 +533,7 @@ static bool ghes_handle_arm_hw_error(struct acpi_hest_generic_data *gdata,
- {
- 	struct cper_sec_proc_arm *err = acpi_hest_get_payload(gdata);
- 	int flags = sync ? MF_ACTION_REQUIRED : 0;
-+	char error_type[120];
- 	bool queued = false;
- 	int sec_sev, i;
- 	char *p;
-@@ -546,9 +547,8 @@ static bool ghes_handle_arm_hw_error(struct acpi_hest_generic_data *gdata,
- 	p = (char *)(err + 1);
- 	for (i = 0; i < err->err_info_num; i++) {
- 		struct cper_arm_err_info *err_info = (struct cper_arm_err_info *)p;
--		bool is_cache = (err_info->type == CPER_ARM_CACHE_ERROR);
-+		bool is_cache = err_info->type & CPER_ARM_CACHE_ERROR;
- 		bool has_pa = (err_info->validation_bits & CPER_ARM_INFO_VALID_PHYSICAL_ADDR);
--		const char *error_type = "unknown error";
- 
- 		/*
- 		 * The field (err_info->error_info & BIT(26)) is fixed to set to
-@@ -562,8 +562,9 @@ static bool ghes_handle_arm_hw_error(struct acpi_hest_generic_data *gdata,
- 			continue;
- 		}
- 
--		if (err_info->type < ARRAY_SIZE(cper_proc_error_type_strs))
--			error_type = cper_proc_error_type_strs[err_info->type];
-+		cper_bits_to_str(error_type, sizeof(error_type), err_info->type,
-+				 cper_proc_error_type_strs,
-+				 ARRAY_SIZE(cper_proc_error_type_strs));
- 
- 		pr_warn_ratelimited(FW_WARN GHES_PFX
- 				    "Unhandled processor error type: %s\n",
-diff --git a/drivers/firmware/efi/cper-arm.c b/drivers/firmware/efi/cper-arm.c
-index d9bbcea0adf4..d933235aa15a 100644
---- a/drivers/firmware/efi/cper-arm.c
-+++ b/drivers/firmware/efi/cper-arm.c
-@@ -93,15 +93,11 @@ static void cper_print_arm_err_info(const char *pfx, u32 type,
- 	bool proc_context_corrupt, corrected, precise_pc, restartable_pc;
- 	bool time_out, access_mode;
- 
--	/* If the type is unknown, bail. */
--	if (type > CPER_ARM_MAX_TYPE)
--		return;
--
- 	/*
- 	 * Vendor type errors have error information values that are vendor
- 	 * specific.
- 	 */
--	if (type == CPER_ARM_VENDOR_ERROR)
-+	if (type & CPER_ARM_VENDOR_ERROR)
- 		return;
- 
- 	if (error_info & CPER_ARM_ERR_VALID_TRANSACTION_TYPE) {
-@@ -116,43 +112,38 @@ static void cper_print_arm_err_info(const char *pfx, u32 type,
- 	if (error_info & CPER_ARM_ERR_VALID_OPERATION_TYPE) {
- 		op_type = ((error_info >> CPER_ARM_ERR_OPERATION_SHIFT)
- 			   & CPER_ARM_ERR_OPERATION_MASK);
--		switch (type) {
--		case CPER_ARM_CACHE_ERROR:
-+		if (type & CPER_ARM_CACHE_ERROR) {
- 			if (op_type < ARRAY_SIZE(arm_cache_err_op_strs)) {
--				printk("%soperation type: %s\n", pfx,
-+				printk("%scache error, operation type: %s\n", pfx,
- 				       arm_cache_err_op_strs[op_type]);
- 			}
--			break;
--		case CPER_ARM_TLB_ERROR:
-+		}
-+		if (type & CPER_ARM_TLB_ERROR) {
- 			if (op_type < ARRAY_SIZE(arm_tlb_err_op_strs)) {
--				printk("%soperation type: %s\n", pfx,
-+				printk("%sTLB error, operation type: %s\n", pfx,
- 				       arm_tlb_err_op_strs[op_type]);
- 			}
--			break;
--		case CPER_ARM_BUS_ERROR:
-+		}
-+		if (type & CPER_ARM_BUS_ERROR) {
- 			if (op_type < ARRAY_SIZE(arm_bus_err_op_strs)) {
--				printk("%soperation type: %s\n", pfx,
-+				printk("%sbus error, operation type: %s\n", pfx,
- 				       arm_bus_err_op_strs[op_type]);
- 			}
--			break;
- 		}
- 	}
- 
- 	if (error_info & CPER_ARM_ERR_VALID_LEVEL) {
- 		level = ((error_info >> CPER_ARM_ERR_LEVEL_SHIFT)
- 			 & CPER_ARM_ERR_LEVEL_MASK);
--		switch (type) {
--		case CPER_ARM_CACHE_ERROR:
-+		if (type & CPER_ARM_CACHE_ERROR)
- 			printk("%scache level: %d\n", pfx, level);
--			break;
--		case CPER_ARM_TLB_ERROR:
-+
-+		if (type & CPER_ARM_TLB_ERROR)
- 			printk("%sTLB level: %d\n", pfx, level);
--			break;
--		case CPER_ARM_BUS_ERROR:
-+
-+		if (type & CPER_ARM_BUS_ERROR)
- 			printk("%saffinity level at which the bus error occurred: %d\n",
- 			       pfx, level);
--			break;
--		}
- 	}
- 
- 	if (error_info & CPER_ARM_ERR_VALID_PROC_CONTEXT_CORRUPT) {
-@@ -241,6 +232,7 @@ void cper_print_proc_arm(const char *pfx,
- 	struct cper_arm_err_info *err_info;
- 	struct cper_arm_ctx_info *ctx_info;
- 	char newpfx[64], infopfx[65];
-+	char error_type[120];
- 
- 	printk("%sMIDR: 0x%016llx\n", pfx, proc->midr);
- 
-@@ -289,9 +281,10 @@ void cper_print_proc_arm(const char *pfx,
- 				       newpfx);
- 		}
- 
--		printk("%serror_type: %d, %s\n", newpfx, err_info->type,
--			err_info->type < ARRAY_SIZE(cper_proc_error_type_strs) ?
--			cper_proc_error_type_strs[err_info->type] : "unknown");
-+		cper_bits_to_str(error_type, sizeof(error_type), err_info->type,
-+				 cper_proc_error_type_strs,
-+				 ARRAY_SIZE(cper_proc_error_type_strs));
-+		printk("%serror_type: %s\n", newpfx, error_type);
- 		if (err_info->validation_bits & CPER_ARM_INFO_VALID_ERR_INFO) {
- 			printk("%serror_info: 0x%016llx\n", newpfx,
- 			       err_info->error_info);
-diff --git a/include/linux/cper.h b/include/linux/cper.h
-index 866e195819de..e66064403f98 100644
---- a/include/linux/cper.h
-+++ b/include/linux/cper.h
-@@ -293,11 +293,10 @@ enum {
- #define CPER_ARM_INFO_FLAGS_PROPAGATED		BIT(2)
- #define CPER_ARM_INFO_FLAGS_OVERFLOW		BIT(3)
- 
--#define CPER_ARM_CACHE_ERROR			0
--#define CPER_ARM_TLB_ERROR			1
--#define CPER_ARM_BUS_ERROR			2
--#define CPER_ARM_VENDOR_ERROR			3
--#define CPER_ARM_MAX_TYPE			CPER_ARM_VENDOR_ERROR
-+#define CPER_ARM_CACHE_ERROR			BIT(1)
-+#define CPER_ARM_TLB_ERROR			BIT(2)
-+#define CPER_ARM_BUS_ERROR			BIT(3)
-+#define CPER_ARM_VENDOR_ERROR			BIT(4)
- 
- #define CPER_ARM_ERR_VALID_TRANSACTION_TYPE	BIT(0)
- #define CPER_ARM_ERR_VALID_OPERATION_TYPE	BIT(1)
--- 
-2.45.2
+u64 lnc_latency_data()
+{
+> +	dse.val = status;
+> +
+> +	/* LNC core latency data */
+> +	val = hybrid_var(event->pmu, pebs_data_source)[status & PERF_PEBS_DATA_SOURCE_MASK];
+> +	if (!val)
+> +		val = P(OP, LOAD) | LEVEL(NA) | P(SNOOP, NA);
+> +
+> +	if (dse.lnc_stlb_miss)
+> +		val |= P(TLB, MISS) | P(TLB, L2);
+> +	else
+> +		val |= P(TLB, HIT) | P(TLB, L1) | P(TLB, L2);
+> +
+> +	if (dse.lnc_locked)
+> +		val |= P(LOCK, LOCKED);
+> +
+> +	if (dse.lnc_data_blk)
+> +		val |= P(BLK, DATA);
+> +	if (dse.lnc_addr_blk)
+> +		val |= P(BLK, ADDR);
+> +	if (!dse.lnc_data_blk && !dse.lnc_addr_blk)
+> +		val |= P(BLK, NA);
+> +
+> +	src.val = val;
+> +	if (event->hw.flags & PERF_X86_EVENT_PEBS_ST_HSW)
+> +		src.mem_op = P(OP, STORE);
+> +
+> +	return src.val;
+> +}
 
 
