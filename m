@@ -1,163 +1,134 @@
-Return-Path: <linux-kernel+bounces-222872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F2E9108FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:52:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 496EB910908
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5B58284B7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:52:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8D71B2463E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C449A1AED28;
-	Thu, 20 Jun 2024 14:52:28 +0000 (UTC)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0A91AED21;
+	Thu, 20 Jun 2024 14:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="c+cbk3Et"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BEA1AE84E;
-	Thu, 20 Jun 2024 14:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4661AF682;
+	Thu, 20 Jun 2024 14:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718895148; cv=none; b=ZHugzqmokr+hZXysotWWZ/CL/tk5p9c2P4nESMgEnXPzbcE9j57+phoXkpvdwywnHfldFK2XgSfcbNgZCC5UINJhveUi7dRO64A6Oo8F26IHIThNoNziyAf2RKZCEOki7QRtTsv0k1mIYphkywafZ41Tch/fnqKlNzO19VNPLvg=
+	t=1718895185; cv=none; b=MJn44AO67VVnbaMTrREsNl/IzAaEA3Z14UC4JX5U+XW9+9n5uK2zaMxlaLKfmrScmGz+J4o7AMETvSX9wVTDlGqItDXHEvrNQxb0phyJOFjpm8O2dIqcnNFfKi+Q9ymT8eNWIWfG18ZyB1cwDJ7O4iEtA0F8dJc5wf+DSOOVngw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718895148; c=relaxed/simple;
-	bh=quHvdMGXD+OF+Vmvo6ZchqeF+v17FJP9dNrIZBXrvGc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sMvQz3V37yeUl5LLHfleUR5r8uMdLy30IAYK5WAYiBVI1fUobedpHpH8yS6KTf+fHlY96Iz8slKJ32dT2YSyKQ6JKcAQY59JgQKX88sZ3XZHDhJ4q4Tmb5ZdoBLLfLe/8Faye0o5Xa3p13gnalRCh7oHYNc/xBRPPVmfNhfGzM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dfe81d54db9so973713276.2;
-        Thu, 20 Jun 2024 07:52:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718895144; x=1719499944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qicnrKvU4izSAdjyf++mWnVsSY0UBkYb5drVYCcA5wY=;
-        b=cdeJnu6fScTZbDDJ5VBiclJX/d3DAxzRVw1+ZUziR2PktI4AezKkSWoXDLIZEJLPol
-         DZRNiOTkKhrWktzkK5ws/uvmoqnn771pNsuAOA2GmkNUwT/9QqA7Y18epbeCFeG1Gd5s
-         6eGSBJtSpNWqNQMFySRx3linrkSsPkoyTG2ktwX+AhEuhey3i6kR0vZOmb3xZej2t4/R
-         Rmg9HRUaf7hVvBnF7RSHN4MDSXEc4zb+68MuRRFezoeMYyzqjmUvx0BhnEXrLUDUK28U
-         PSuiCdTtEGZqSNMfsxKhHpvxop5CzFriNQpM4gr8T6jV/0L6l4FaBrOcR9sU16fYPtJN
-         If8g==
-X-Forwarded-Encrypted: i=1; AJvYcCV7e4QvIb6nn+VQV5HyGYRxivCCbSVrA2r5DiUkuVJPXOFdPiYoTOfoqaAy5zGar+K4TdZj+rhv1Fg5E4wv9Js4Xa1COSKRxxBD+7/edyVcrqhi9zICXo+75imgtf5AsU7YM9POLMTOL3tNbv6moj260D2FFp0N10MO0ETTQfuJK7Fhk1OZCSx+DFKcP/dkpFJ4B7WqTdtYPwvNUoHJ1jiUd2iy+F8Q
-X-Gm-Message-State: AOJu0Yw9Uav9DpyxEIi3k4BSYPlQK2l3YgRfjFGv0994QCuYVM+wPujX
-	/kgfNGoBbHMxXv2z7t2G8ADchrJxSWYAOtevkrnIOvjEbO/paEwt6Pw+jVmF
-X-Google-Smtp-Source: AGHT+IHa726p4LBUgJ4pKzqdMzHgOlyRn0z7kg86RymTqqoueBuhne4yq1OJUzSFpV67LGh1zg0C2A==
-X-Received: by 2002:a25:d653:0:b0:dff:745:2303 with SMTP id 3f1490d57ef6-e02be225ddemr4959097276.57.1718895144153;
-        Thu, 20 Jun 2024 07:52:24 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e02ce311570sm987321276.15.2024.06.20.07.52.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 07:52:23 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dfe81d54db9so973676276.2;
-        Thu, 20 Jun 2024 07:52:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW8Jv9p9FcgyzdRMxyQg94hd8/iEvpkOQYFU9ir04GVpGuNBboPAeVyCFaBAjkEXnBFckDFQqpCd1biv/VRksTFljKHglTDAplzpIyqr0bcpE9HJUpcSiThl5VLfDFi8RZE9KWrC2M4W8AHJeVpoAl+bTgGgPxPNwHz9K1ekVFQKlQF+ARxO3d9+cF/sRdxv4uBkq2AXV32mgC4vLxgmWX42YBYmgEa
-X-Received: by 2002:a25:8403:0:b0:e02:b7ee:5354 with SMTP id
- 3f1490d57ef6-e02be138271mr5993985276.20.1718895143516; Thu, 20 Jun 2024
- 07:52:23 -0700 (PDT)
+	s=arc-20240116; t=1718895185; c=relaxed/simple;
+	bh=g1ed6mztL+CfErEonUXtCOXbnBAIVWMRrGbPZjTx1Fo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Mj2sz1JAJAZmn12bltfOu7ARtxJmFXzq+B/yy/2voykVVLsjBY5NxkKKSW+TlSGm5Al7m75vC4XAJd66FiCx9w4FaRxPd6iCGor9Q3bgfCIGrISzWGTKhYLfPrpc0LPrzdtWphy1OX0W6ljkLcGDmRJodfxZ6jpvCZN1n0Ndk5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=c+cbk3Et; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45KEqdpS106305;
+	Thu, 20 Jun 2024 09:52:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1718895159;
+	bh=3/6+kacdbmCst+UFgiDAIXTXVnIMfqKugEUCsNBL3ZQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=c+cbk3EtD09edSE3FFAF+G9kOgGyod6mITEUaEUCxqX8h3ZCUJHOUwZUq/I0dfVqH
+	 FdIeuq1L0t3TChAXByALOKKAPES/EL8fqo61N9IOmBYAnbZwwP3HTcmP0EVMDkZEjN
+	 pSHpTtUmxJ4nNnAN5SOfFcdrgmR0NXGH6l4gqi0g=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45KEqdOl014581
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 20 Jun 2024 09:52:39 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 20
+ Jun 2024 09:52:39 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 20 Jun 2024 09:52:39 -0500
+Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45KEqZIv002047;
+	Thu, 20 Jun 2024 09:52:36 -0500
+Message-ID: <1cefd686-2eb2-e0b2-0b24-2c4efb0c41a1@ti.com>
+Date: Thu, 20 Jun 2024 20:22:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605074936.578687-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240605074936.578687-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240605074936.578687-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Jun 2024 16:52:11 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW5J087M=xD95R87XsP-xTqiaenzJ9WVq8x_d2_+67J1A@mail.gmail.com>
-Message-ID: <CAMuHMdW5J087M=xD95R87XsP-xTqiaenzJ9WVq8x_d2_+67J1A@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/4] regulator: core: Add regulator_map_voltage_descend()
- API
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support runtime
+ suspend/resume
+Content-Language: en-US
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        "jackson.lee"
+	<jackson.lee@chipsnmedia.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>
+CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+        Nas Chung
+	<nas.chung@chipsnmedia.com>,
+        "lafley.kim" <lafley.kim@chipsnmedia.com>,
+        "b-brnich@ti.com" <b-brnich@ti.com>
+References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
+ <20240617104818.221-3-jackson.lee@chipsnmedia.com>
+ <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
+ <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+ <bc8796ef8107507e99df079f6d7ce2575ead3cab.camel@collabora.com>
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <bc8796ef8107507e99df079f6d7ce2575ead3cab.camel@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Prabhakar,
+Hi Jackson, Nicolas,
 
-On Wed, Jun 5, 2024 at 9:49=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.co=
-m> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Similarly to regulator_map_voltage_ascend() api add
-> regulator_map_voltage_descend() api and export it.
->
-> Drivers that have descendant voltage list can use this as their
-> map_voltage() operation.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 20/06/24 19:33, Nicolas Dufresne wrote:
+> Hi Jackson, Devarsh,
+> 
+> Le mercredi 19 juin 2024 à 23:56 +0000, jackson.lee a écrit :
+>> Hi Devarsh
+>>
+>> If there is no feeding bitstreams during encoding and decoding frames, then driver's status is switched to suspended automatically by autosuspend.
+>> And if we don’t use autosuspend, it is very difficult for us to catch if there is feeding or not while working a pipeline.
+>> So it is very efficient for managing power status.
+>>
+>> If the delay is very great value, we can adjust it.
+> 
+> One way to resolve this, would be if someone share measurement of the suspend /
+> resume cycle duration. With firmware (third party OS) like this, the cost and
+> duration is few order of magnitude higher then with more basic ASIC like Hantro
+> and other single function HW.
+> 
+> Yet, 5s might be to much (but clearly safe), but getting two low may means that
+> we suspect "between two frames", and if that happens, we may endup with various
+> range of side effect, like reduce throughput due to suspend collisions, or even
+> worse power footprint. Some lab testing to adjust the value will be needed, we
+> have very little of that happening at the moment as I understood.
+> 
 
-Thanks for your patch!
+Okay I see the intention here is that if there is a process holding the vpu
+device handle and the input feed is stalled for some seconds due to network
+delay or CPU throughput then after a specified timeout say 5 seconds we want
+to suspend even if the process is still active and holding the vpu device
+handle ? I agree then if we want to support this feature a safer/slightly
+larger value is required to avoid frequent suspend/resume due to network
+jitter or any other bottleneck and maybe 5s is a good value to start with.
 
-> --- a/drivers/regulator/helpers.c
-> +++ b/drivers/regulator/helpers.c
-> @@ -368,6 +368,37 @@ int regulator_map_voltage_ascend(struct regulator_de=
-v *rdev,
->  }
->  EXPORT_SYMBOL_GPL(regulator_map_voltage_ascend);
->
-> +/**
-> + * regulator_map_voltage_descend - map_voltage() for descendant voltage =
-list
-> + *
-> + * @rdev: Regulator to operate on
-> + * @min_uV: Lower bound for voltage
-> + * @max_uV: Upper bound for voltage
-> + *
-> + * Drivers that have descendant voltage list can use this as their
-> + * map_voltage() operation.
-> + */
-> +int regulator_map_voltage_descend(struct regulator_dev *rdev,
-> +                                 int min_uV, int max_uV)
-> +{
-> +       int i, ret;
-> +
-> +       for (i =3D rdev->desc->n_voltages - 1; i >=3D 0 ; i--) {
-> +               ret =3D rdev->desc->ops->list_voltage(rdev, i);
-> +               if (ret < 0)
-> +                       continue;
-> +
-> +               if (ret > min_uV)
+But if last instance is closed/stops streaming and there is no process holding
+the device handle anymore then I think we should suspend immediately without
+any delay.
 
-I know this patch is superseded, but shouldn't this be "<"?
-
-> +                       break;
-> +
-> +               if (ret >=3D min_uV && ret <=3D max_uV)
-> +                       return i;
-> +       }
-> +
-> +       return -EINVAL;
-> +}
-> +EXPORT_SYMBOL_GPL(regulator_map_voltage_descend);
-> +
->  /**
->   * regulator_map_voltage_linear - map_voltage() for simple linear mappin=
-gs
->   *
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Regards
+Devarsh
 
