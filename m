@@ -1,100 +1,85 @@
-Return-Path: <linux-kernel+bounces-222611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A59C910483
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:50:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424EA910492
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A46F28357E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:50:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563551C230DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275C11AC792;
-	Thu, 20 Jun 2024 12:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6661ACE65;
+	Thu, 20 Jun 2024 12:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WnmpJxTW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vdbygXFK"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653161A4F3B;
-	Thu, 20 Jun 2024 12:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DE11AC769;
+	Thu, 20 Jun 2024 12:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718887831; cv=none; b=m62t0jZ4RtoAxifKVjnkzZXg2d6R7xN17XOa7XSQIpACjonJV2beHORCg/s8Tb3tN3rvJbcXQpQUknfMnXRoPEeQeGseqAF6e1HEZRKl7mpoHUAYD9WfPBv6jOI7SAimllzO7M2JBFditiCGGQm3+itmoEDF6aTYKCqCJFWjZiE=
+	t=1718887900; cv=none; b=PE0Kl1Q/mhqXRidrzkXkco+3tQ5wzeNCPJX9nbZjpHSuj9k+/RVSCoAtt66WZ+VF1ehsvYESO6nR3yR+VKFHLyNh9QnQSzKQnLvStrU7U0z6wvAhwZSfMklG3vyBtO4V7jdJvpyCUQX1eKSXhvnu/Fx8z4b4h14LWuCwhEWhwGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718887831; c=relaxed/simple;
-	bh=pnzHV/VL+7issGfjvpn7r2EeeIOdQV7ajaj5sS9hrlo=;
+	s=arc-20240116; t=1718887900; c=relaxed/simple;
+	bh=rn/xKc0QZnyQyw1/MqaN1bPzDjoef8kwv0cOwEoNu/w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ERh9yTpRkjxBQu6CBMLjNe8FQ0nJagvRD1Vj9sDgvxQhZZvgWpA8Lnwd8+EUwkDO8qYX7wV0ZCSgQ6zVC82BtM0eX0ngo5mpwdQCNWc/z2z+drH/GAXsX6hDJ8Zh0tZolfNUG866i/iYIfqOtW6+uUAhw3yI05vclwNFikMSzKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WnmpJxTW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD5BC2BD10;
-	Thu, 20 Jun 2024 12:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718887831;
-	bh=pnzHV/VL+7issGfjvpn7r2EeeIOdQV7ajaj5sS9hrlo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WnmpJxTWdOsv+o+wjwPtUtMv4SHQ5BcoaZ2fFBPuPQ7wFg7Iq0rJK2fT0RDDSLq/m
-	 vkeDsy+ZEtUIXSLW2I/wZn/Ht/lchOs2u9hLUazLx8DObROExrwYsS/iAQ0KOmLkFI
-	 g/1FfSIhjOHOaE/suzLOxkx1O5GOAWVrwHZLlVwNdyKWjR7PYC7waLBIyMDgrABDeq
-	 GO71uPOPJyLGBr00wz09uqSQJINS2ipMUB3JE3y55Ps96odNMtOKg1YTlbLNfwAPB+
-	 f/Eb26Uz+NIjZcFMJRWQ/qprYK87b4V5prvZxpnysQzeYubPP4WZ60+LAMdNhzURf2
-	 8e/jCFmBDOo1A==
-Date: Thu, 20 Jun 2024 13:50:26 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	NeilBrown <neilb@suse.de>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the
- vfs-brauner-fixes tree
-Message-ID: <80a7d335-690b-491e-9b55-d0d1f75fda29@sirena.org.uk>
-References: <ZnQTtD_d-egGzooR@sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j7wFVlxtSQs3d+VgCYefGZ90cNibM/5fiuJn/tuVHXiV5kyrSWYxDYrVRGY8g80DWPmwIE8M2/oLivckzouoH8tPPDU4jn5xf/hBj+/vNsN/vUmPt1XRsZ1Z/lE9L0avLFRSnq6y9P4LD0mTOxSqXZlYHnhMCQceSEVl8b4OSwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vdbygXFK; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: youling.tang@linux.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718887895;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QYG5eZDYkp3gQEsRvvA/OGgggUaYoDnBXE/aW0ZGwlc=;
+	b=vdbygXFKDLP5mcwftryurjdr7XS4npos/O6d5YOpYhNsbfR7vuGfv/poNO4LwGlkTgg3BF
+	p1ETUDD5j+to2eaXmEo/HJrmZQN5s8fTgQpzdgilrwRlAmT2I2Qtq3AU3kseP6/hJ4aHUN
+	r6wtsAoBf7WSU6zv5035ZYaUXiUocR0=
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: tangyouling@kylinos.cn
+Date: Thu, 20 Jun 2024 08:51:30 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH] bcachefs: fix alignment of VMA for memory mapped files
+ on THP
+Message-ID: <myw2h2mm7725gegy6pbqf4qpzghrfypnlbn4z6rh6idwfjzpjc@chzxxg47sw77>
+References: <20240620012242.106698-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zBzHP251PFU9WPg2"
-Content-Disposition: inline
-In-Reply-To: <ZnQTtD_d-egGzooR@sirena.org.uk>
-X-Cookie: You're already carrying the sphere!
-
-
---zBzHP251PFU9WPg2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240620012242.106698-1-youling.tang@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jun 20, 2024 at 12:34:17PM +0100, Mark Brown wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the vfs-brauner tree got a conflict in:
->=20
->   fs/open.c
->=20
-> between commit:
+On Thu, Jun 20, 2024 at 09:22:42AM +0800, Youling Tang wrote:
+> From: Youling Tang <tangyouling@kylinos.cn>
+> 
+> With CONFIG_READ_ONLY_THP_FOR_FS, the Linux kernel supports using THPs
+> for read-only mmapped files, such as shared libraries. However, the
+> kernel makes no attempt to actually align those mappings on 2MB
+> boundaries, which makes it impossible to use those THPs most of the
+> time. This issue applies to general file mapping THP as well as
+> existing setups using CONFIG_READ_ONLY_THP_FOR_FS. This is easily
+> fixed by using thp_get_unmapped_area for the unmapped_area function
+> in bcachefs, which is what ext2, ext4, fuse, xfs and btrfs all use.
+> 
+> Similar to commit b0c582233a85 ("btrfs: fix alignment of VMA for
+> memory mapped files on THP").
+> 
+> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
 
-Sorry, the scripting got confused and didn't start the merge properly so
-this should just be noise.
-
---zBzHP251PFU9WPg2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ0JZIACgkQJNaLcl1U
-h9C+Agf/ajb6KzqTKEo8UJWpqUYyr6nTGRsJVZ8lK1f4b4QMF/hmw6xy8VKrK7Qu
-H8XaW/8j8q6EgNXrwtKuxJJH+SlInjJL3YDNLGCvheQ3k/hqTI9dxuV1v/aIGHJE
-smP9OyjzMOQ7cm2bD0ThPZdCpWwbEqhZYcv8ecQPhm2hngr4NqjWnGsmVQ/QkpsH
-pqvqOLCcyzSSyy0DQUIc8IDcSol1zeSOU0k/atz4NermxYx+Sb7636q6GEG0zw3V
-wdR93642keqpGuULXjOWpKUqnaiCNy7k4RIVKF5M8wvGylvT9M0DOvJEp95vpYce
-uiOCSHWZ4PQUqj6g8WZG8PM7iFHBDw==
-=gYEM
------END PGP SIGNATURE-----
-
---zBzHP251PFU9WPg2--
+Thanks - applied
 
