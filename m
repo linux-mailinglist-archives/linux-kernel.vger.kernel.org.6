@@ -1,115 +1,123 @@
-Return-Path: <linux-kernel+bounces-222982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27C1910B33
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:07:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A30910B38
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8A01C23ED5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:07:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7BB81C242E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520AB1B151D;
-	Thu, 20 Jun 2024 16:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09C91B14E7;
+	Thu, 20 Jun 2024 16:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPz12hTE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZPvpPqKs"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEBA1B14F6;
-	Thu, 20 Jun 2024 16:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A281AF68A;
+	Thu, 20 Jun 2024 16:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718899601; cv=none; b=hXkyHnT9H8L5chZd92rn/cwQGMPCn9BJWVIptFU9Oh4bHTBgoYgcRseIfJuDvtsp+AVXMR3rS2FclwhtkH9xhFLLdeIZJ5rv+aDwy+w3/NZfN0XcUy7TdBs5b9lq0yn3Q8CRl5M1euFQfS38HYynBfcpFxjaZ9gY7t4+1K/3VLw=
+	t=1718899617; cv=none; b=XbSdTJcoRNSg4ajV3CH90y9gwnamyQrtDCISMYYBUWTRIbuuD81C0hw5iM3lSa9ZYi82VpvWHaO80BPpBBDQgkK2c7j+hFb2IvR79v3nZIMQHvwDgOoTPzify863KfXoQWiYAoEgmqNKNj/1iUMEjsindfnJd2WtrBZy27gufd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718899601; c=relaxed/simple;
-	bh=LGtv35FvlZB5cEXYAShER66SaKuyixPdIhslDnimU3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ry+sV1YzsRBJ5S5BmqPowfbIlP2dZ3J2S59AD2FLC31eSEhvLFNLlsbEM641grXFmHeFPVXQuOeHcufg40q5XkH40BKp+l/sohs336Th93K9uIIxRIYhg1qMAdCm66Pr75yoRS4Jj1UgzQW037yZlE/57jWxz7tYR8S13H1Q1do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPz12hTE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BEA2C32786;
-	Thu, 20 Jun 2024 16:06:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718899601;
-	bh=LGtv35FvlZB5cEXYAShER66SaKuyixPdIhslDnimU3s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VPz12hTETnK/PrEGksITL4CZmnHLn1Nn60h6hvQKC6HMzxtbt8pQ398l1iyRpj946
-	 7l8qs1MckalfmTKkaRGyTS4gmPOYa72VFgY5endeozOaSxV/hTV4z2e+49OrI0nmio
-	 JTIAOuKJXI0AdLbLgiuEFYuUu/R/Mf/kVWUq5weg8cHEHj1OmNPKp5qYuO0/8bp5nV
-	 1iAwA/Tqcruvz3CbliVU0gAyN9dAhv9C8kVCearBtImJb3AFTDeN5ZrZXBZT8YjRp3
-	 iudTOQgRgLkqOEt1N5VAbhiec9NtlM5T9ThkgzrYbhwxNjJjrqpqWclf7lJSwp7mbi
-	 CHWpD/VEvHyBQ==
-Date: Thu, 20 Jun 2024 17:06:31 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Sergiu Moga <sergiu.moga@microchip.com>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Doug Anderson <dianders@chromium.org>,
-	Enric Balletbo i Serra <eballetbo@kernel.org>,
-	Ricardo =?iso-8859-1?Q?Ca=F1uelo?= <ricardo.canuelo@collabora.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Vignesh R <vigneshr@ti.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Chris Brandt <chris.brandt@renesas.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-tegra@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-omap@vger.kernel.org,
-	Kamal Dasu <kdasu.kdev@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com, stable@vger.kernel.org
-Subject: Re: [PATCH 0/7] dt-bindings: i2c: few fixes and cleanups
-Message-ID: <20240620-recite-deeply-ec4aa7458d45@spud>
-References: <20240620-dt-bindings-i2c-clean-v1-0-3a1016a95f9d@linaro.org>
+	s=arc-20240116; t=1718899617; c=relaxed/simple;
+	bh=zXbdU1oLq+AqkMmyeelEkii4gp4zKH4SF9MBqk8l1aQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UykP50NTydc68TizzyBdNOSglWRZStahMMu0pmAzsO6wBmilTNzAZodFqZdGQ2uQ8fUSPEn5sDhygg8T+h++AsyBJBzLAoqqpK7PeQ0y0bxRD9RSo+ThW7TJLS4XdJjvPIei/mw2nBuHcFqA7jbKb1s7FxwDanLv6manHDOeM/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZPvpPqKs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K9v8Dd029254;
+	Thu, 20 Jun 2024 16:06:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EPYPyP+Di0PB2m1ljCIq9SqCdLBOpOwq7ZjrKC+Akfs=; b=ZPvpPqKs2KHCPu5i
+	QREhhYMtDXaie3wT27IVyu3YdkmgoV4ZZZR1g/SyzPggLSKlj2XbpBeRMnrJ3/Wq
+	d1z/KsXxaESPT4p3gd2qm5RbMVtWwbSwfAPFPSjaA35EqRKSANZr9KbZMDLSaRek
+	TYlJPW8xBJW6SeoBNz/Sh7PsduY9usVA5i6O/DAB4RiqObx2QcAZCo1u6Z47Jj/+
+	KnNhR5ie6Jsm/3lL2p3DLz+uCr/uKN6cHQlFnfgVWAE+SNU6Mhl4p3FqGoSle+PT
+	rxbWFfcUzgVUXUb1zNojYR1X9sZpkaP8YqLVuniocSkPSU3HyEYvfX8WRA5bTWUT
+	fl52Zg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvabp1wf0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 16:06:45 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KG6i9v031711
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 16:06:44 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
+ 2024 09:06:43 -0700
+Message-ID: <bbff5b14-75ae-4dc3-9aac-17afd4e92693@quicinc.com>
+Date: Thu, 20 Jun 2024 09:06:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="OWprGERt14zJA7P2"
-Content-Disposition: inline
-In-Reply-To: <20240620-dt-bindings-i2c-clean-v1-0-3a1016a95f9d@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: ext4: add missing MODULE_DESCRIPTION()
+To: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro
+	<viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240527-md-fs-ext4-v1-1-07aad5936bb1@quicinc.com>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240527-md-fs-ext4-v1-1-07aad5936bb1@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: iEhmeQnKT_kDzTdiXLG0NGm9C5dm5tlb
+X-Proofpoint-ORIG-GUID: iEhmeQnKT_kDzTdiXLG0NGm9C5dm5tlb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_07,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ phishscore=0 mlxscore=0 priorityscore=1501 spamscore=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406200116
 
+On 5/27/24 11:02, Jeff Johnson wrote:
+> Fix the 'make W=1' warning:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>   fs/ext4/inode-test.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/ext4/inode-test.c b/fs/ext4/inode-test.c
+> index f0c0fd507fbc..749af7ad4e09 100644
+> --- a/fs/ext4/inode-test.c
+> +++ b/fs/ext4/inode-test.c
+> @@ -279,4 +279,5 @@ static struct kunit_suite ext4_inode_test_suite = {
+>   
+>   kunit_test_suites(&ext4_inode_test_suite);
+>   
+> +MODULE_DESCRIPTION("KUnit test of ext4 inode timestamp decoding");
+>   MODULE_LICENSE("GPL v2");
+> 
+> ---
+> base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
+> change-id: 20240527-md-fs-ext4-9d52d6959fb6
+> 
 
---OWprGERt14zJA7P2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Adding core fs maintainers.
+Following up to see if anything else is needed to get this merged.
 
-On Thu, Jun 20, 2024 at 01:34:48PM +0200, Krzysztof Kozlowski wrote:
-> Few fixes for I2C controller schemas. The third patch (atmel,at91sam)
-> depends on first, so I suggest not splitting this into fixes branch but
-> take as is via next branch.
-
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
---OWprGERt14zJA7P2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnRThwAKCRB4tDGHoIJi
-0qmFAP4qVsTO5fhoHDH/KxLOQ9oIndV8aFx4pmYEmgmRLGL9OQEArGLygc2tOMFb
-gTTMxW9UouX8OISj6ZTyIyS1QKmpIgI=
-=vTRs
------END PGP SIGNATURE-----
-
---OWprGERt14zJA7P2--
 
