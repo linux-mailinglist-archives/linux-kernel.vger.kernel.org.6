@@ -1,117 +1,232 @@
-Return-Path: <linux-kernel+bounces-222576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 750929103F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:27:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC347910412
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280CC1F21E70
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:27:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CE6AB212B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4977F1AC43D;
-	Thu, 20 Jun 2024 12:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57A51AD412;
+	Thu, 20 Jun 2024 12:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTlRBJ0c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hA3vsHWM"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8600B1AC24E;
-	Thu, 20 Jun 2024 12:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E121AD3F6;
+	Thu, 20 Jun 2024 12:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718886466; cv=none; b=fzRlPE2OZ5YE1UIYkQLrZb5Dx9xB0OSUxiYs1zD5PaqshDu0iM7zjPhOl6jrFnLdZuuVCAUhWnbP4mqmShrgfNmqBYRKtRDDH+LUki1xeBa6ZKYa75pADfV+9nt4h6dUIIU9qeiog73qPpSo+2FqKAhseEvpZNZZlqC2NH+HO+0=
+	t=1718886503; cv=none; b=mxOtytLyNsqWczOH2reO/MB+ISAI4FRnVljksTuGf/GvWZ8HRWfQ93aOLsBtv7OCEGoU404slR6uuWgNZZYaS3IgEnyns8ZvHS7QwXuuEkymQtz9BXsIFKFQHpxmTDMCWuPGmAURQ3AnS+e/a04A3GSmn9mylG4Sd5m47bFhRug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718886466; c=relaxed/simple;
-	bh=d3uDdynGfOkk0mbmcQ+FLr+9NUSGH+fNkufeZ4WI608=;
+	s=arc-20240116; t=1718886503; c=relaxed/simple;
+	bh=6JVxjcSSQVPV7Gv95eTpy/Ya3pQAu/jeYNvFD4eoLl4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ao+vlcj7C2NBdHUOEkFyDpM8qvnXWD8evhSeiRgbv+WBaSnAE/gh9nzuxfBxS0qc4ZD9/jj7NBrkUU69gYWupdCiThN22+DHX7vLu6fhBvc+HTzINH2/xo4aWajwvo9noGlsQEB84nzbKpH2rdnpZ2z0HDJPmrPgbEzy2r+tW/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTlRBJ0c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E84DC2BD10;
-	Thu, 20 Jun 2024 12:27:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718886466;
-	bh=d3uDdynGfOkk0mbmcQ+FLr+9NUSGH+fNkufeZ4WI608=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DTlRBJ0cwfOGL9atmnuGvX1/fnNlWgOZTnTN+9Xv6uyX2sMavDNKzoHmXcYysq376
-	 n4/+EkLTlHwV2wuRwOwG8uoT132+MBWOBSP1NkzPpLbwwdmhJwDajVSeScevsW20pR
-	 xhuiSmi3hc6tOVQYqSxHapmVlzJONBjxYnPhIufj7Pz0LKhBcyB0bNKX0OE7rx3JW7
-	 /w7xtvjISIL/BXtsr5Cp2sg/qRHZL1AoA7ILhz4b5LX77OIcsih83QmnfB/6vFxiKe
-	 krQqJmHxTfuRCNBFeUibI/eVD5YH7eC6SVAr6j43vQsqMeXd19kgZwS6iXAqQu+v58
-	 vC0lNTaNoZBUg==
-Date: Thu, 20 Jun 2024 13:27:41 +0100
-From: Lee Jones <lee@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Pavel Machek <pavel@ucw.cz>, Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>, linux-leds@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: cros_ec: Implement review comments from Lee
-Message-ID: <20240620122741.GL3029315@google.com>
-References: <20240614-cros_ec-led-review-v1-1-946f2549fac2@weissschuh.net>
- <20240620093114.GH3029315@google.com>
- <5708f5c6-65fe-4bf9-8d08-6dbb77e21a9d@t-8ch.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/E417FfpLYvI9apicdo4/KYdiS7bvHjfnwKJHxJ/ncl2/wajOG/bEnaMZKkXG4T9tuzFnnW9B4k3FZhEXk9Q70IvSycvWTiXfUPf9rd5ZVO8vUqz0G6g53NECapcpfyBn61eupWsw+O3nsoF97ToRiyyqWLpmSyFOwJ48EGSAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hA3vsHWM; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a63359aaacaso118855966b.1;
+        Thu, 20 Jun 2024 05:28:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718886500; x=1719491300; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WtInD33nzpSK44s1JnnPRYoHH/jmvVeTud7sO01t4nE=;
+        b=hA3vsHWMQJGwuLxtNQhrA5GiYEjqyb50D+1hxyly5qvg7n7toBK09RBiZizN+vZaUu
+         n3HT0j44WIaCCj3nquLBkILy0aG7etBNCtv2kjUHUyRKD31RtAwNc/qYD2tuBOmfcU+z
+         hg6MPukLdRFsWLUXMbYjLXteA5g2vsgejC2bVBx6qhEBPHwUluriotPxdYm0PXJfWsXT
+         t6R6/Vya3x1R6mGDmA7CzGLIyjkbX4mCweJ19JF/eTWf/I9Swuhlf0XTzOI0FfMcR7oh
+         3Okpi3s3c4rbwVIkLisL0NjH9Kzl2pU5KIvUzFe0NBdQthV2kYDsr7OAyGBm3Zxg1Fiv
+         LMdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718886500; x=1719491300;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WtInD33nzpSK44s1JnnPRYoHH/jmvVeTud7sO01t4nE=;
+        b=Ttd/Z+7Ck1vgeMmbXOBZS854vxanncWM8IVdDz34+UYZ6pxwgFyz0yf6ItwuPqkIJR
+         7ftwBrfCXHn5LLRJNv8Ti/kU4VAc5HvsqXe9O+QnzuEs0LP3q9S7GHSkFbMyow09DfZ8
+         PUlGNltHPLYENZdjb13HfEwHi6ewSzEHmpOmZUYs33JPreFT00N5XERavhFtQB0k3yJU
+         P+DYS3Uxw/rQKAIXp1LrLYlEIJ/wpKuvcDxAYpjwxoCiyHORzvMZiutWFXjYHY6/pMhs
+         ycBFhkDTbCfsUD04o7Wh8I7il7h85r3+vKAL6t7KT8zfrqYBSt379boN5SZ6i4ai92uH
+         KYEw==
+X-Forwarded-Encrypted: i=1; AJvYcCV927q97AYn9hFDhWzMbN2zxR/XPEqjPwaY5z/T8JilUidAfbPAxcgSGL7fCVPOVFddRsb9kHhj0n6Vlq+RNbjwT7oiFVCQOLLJ1loj
+X-Gm-Message-State: AOJu0YyCLMrGgRtwxRV/N4Z5J3Sb2/zjKVvdm+fYsXJ58rB89yxbLRld
+	KsxnItaJBpDDhHLUVPGfl12ViLIq3dOYpf4vUpseUJIHLaubHP+O
+X-Google-Smtp-Source: AGHT+IF4Qyldbfqw1/idXFcHIfvvHaJ2Zwuw1GprSCSOvGAc+FldFLbpqFOpoKNrZx0X2P2i7E5bGA==
+X-Received: by 2002:a17:906:c2cc:b0:a6f:6029:998f with SMTP id a640c23a62f3a-a6fab64510emr297906666b.46.1718886500037;
+        Thu, 20 Jun 2024 05:28:20 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f4177csm759386866b.162.2024.06.20.05.28.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 05:28:19 -0700 (PDT)
+Date: Thu, 20 Jun 2024 15:28:16 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	UNGLinuxDriver@microchip.com, Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 04/12] net: dsa: tag_sja1105: absorb entire
+ sja1105_vlan_rcv() into dsa_8021q_rcv()
+Message-ID: <20240620122816.qho2hq7i4eakpnbc@skbuf>
+References: <20240619205220.965844-1-paweldembicki@gmail.com>
+ <20240619205220.965844-5-paweldembicki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5708f5c6-65fe-4bf9-8d08-6dbb77e21a9d@t-8ch.de>
+In-Reply-To: <20240619205220.965844-5-paweldembicki@gmail.com>
 
-On Thu, 20 Jun 2024, Thomas Weißschuh wrote:
+On Wed, Jun 19, 2024 at 10:52:10PM +0200, Pawel Dembicki wrote:
+> From: Vladimir Oltean <vladimir.oltean@nxp.com>
+> 
+> tag_sja1105 has a wrapper over dsa_8021q_rcv(): sja1105_vlan_rcv(),
+> which determines whether the packet came from a bridge with
+> vlan_filtering=1 (the case resolved via
+> dsa_find_designated_bridge_port_by_vid()), or if it contains a tag_8021q
+> header.
+> 
+> Looking at a new tagger implementation for vsc73xx, based also on
+> tag_8021q, it is becoming clear that the logic is needed there as well.
+> So instead of forcing each tagger to wrap around dsa_8021q_rcv(), let's
+> merge the logic into the core.
+> 
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+> ---
+> v2,v1:
+>   - resend only
+> ---
+> Before patch series split:
+> https://patchwork.kernel.org/project/netdevbpf/list/?series=841034&state=%2A&archive=both
+> v8, v7, v6:
+>   - resend only
+> v5:
+>   - add missing SoB
+> v4:
+>   - introduced patch
+> ---
+>  net/dsa/tag_8021q.c        | 34 ++++++++++++++++++++++++++++------
+>  net/dsa/tag_8021q.h        |  2 +-
+>  net/dsa/tag_ocelot_8021q.c |  2 +-
+>  net/dsa/tag_sja1105.c      | 32 ++++----------------------------
+>  4 files changed, 34 insertions(+), 36 deletions(-)
+> 
+> diff --git a/net/dsa/tag_8021q.c b/net/dsa/tag_8021q.c
+> index 3cb0293793a5..332b0ae02645 100644
+> --- a/net/dsa/tag_8021q.c
+> +++ b/net/dsa/tag_8021q.c
+> @@ -507,27 +507,39 @@ EXPORT_SYMBOL_GPL(dsa_tag_8021q_find_port_by_vbid);
+>   * @vbid: pointer to storage for imprecise bridge ID. Must be pre-initialized
+>   *	with -1. If a positive value is returned, the source_port and switch_id
+>   *	are invalid.
+> + * @vid: pointer to storage for original VID, in case tag_8021q decoding failed.
+> + *
+> + * If the packet has a tag_8021q header, decode it and set @source_port,
+> + * @switch_id and @vbid, and strip the header. Otherwise set @vid and keep the
+> + * header in the hwaccel area of the packet.
+>   */
+>  void dsa_8021q_rcv(struct sk_buff *skb, int *source_port, int *switch_id,
+> -		   int *vbid)
+> +		   int *vbid, int *vid)
+>  {
+>  	int tmp_source_port, tmp_switch_id, tmp_vbid;
+> -	u16 vid, tci;
+> +	__be16 vlan_proto;
+> +	u16 tmp_vid, tci;
+>  
+>  	if (skb_vlan_tag_present(skb)) {
+> +		vlan_proto = skb->vlan_proto;
+>  		tci = skb_vlan_tag_get(skb);
+>  		__vlan_hwaccel_clear_tag(skb);
+>  	} else {
+> +		struct vlan_ethhdr *hdr = vlan_eth_hdr(skb);
+> +
+> +		vlan_proto = hdr->h_vlan_proto;
+>  		skb_push_rcsum(skb, ETH_HLEN);
+>  		__skb_vlan_pop(skb, &tci);
+>  		skb_pull_rcsum(skb, ETH_HLEN);
+>  	}
+>  
+> -	vid = tci & VLAN_VID_MASK;
+> +	tmp_vid = tci & VLAN_VID_MASK;
+> +	if (!vid_is_dsa_8021q(tmp_vid))
+> +		goto not_tag_8021q;
 
-> Hi Lee,
-> 
-> On 2024-06-20 10:31:14+0000, Lee Jones wrote:
-> > Definitely not seen a commit message like that before
-> 
-> I assumed that this patch would be squashed into the original commit.
-> 
-> My question in which form you wanted the changes should have included
-> "incremental series".
+I think this may be more clearly expressed linearly, without a goto.
 
-Incremental means on top.
+	if (!vid_is_dsa_8021q(tmp_vid)) {
+		/* Not a tag_8021q frame, so return the VID to the
+		 * caller for further processing, and put the tag back
+		 */
+		if (vid)
+			*vid = tmp_vid;
 
-A lot of maintainers don't support history re-writes, but I've reserved
-that right since forever, so I can squash it if you like.
+		__vlan_hwaccel_put_tag(skb, vlan_proto, tci);
 
-> > > Implement review comments from Lee as requested in [0] for
-> > > "leds: Add ChromeOS EC driver".
-> > > 
-> > > Changes:
-> > > * Inline DRV_NAME string constant.
-> > > * Use dev_err() instead of dev_warn() to report errors.
-> > > * Rename cros_ec_led_probe_led() to cros_ec_led_probe_one().
-> > > * Make loop variable "int" where they belong.
-> > > * Move "Unknown LED" comment to where it belongs.
-> > > * Register trigger during _probe().
-> > > * Use module_platform_driver() and drop all the custom boilerplate.
-> > 
-> > If you're fixing many things, then I would expect to receive many
-> > patches.  One patch for functional change please.  If you can reasonably
-> > group fixes of similar elk, then please do.  However one patch that does
-> > a bunch of different things is a no-go from me, sorry.
-> 
-> Absolutely, if these changes are to end up as actual commits then they
-> need to look different.
-> I'll resend them as proper series.
-> 
-> > > [0] https://lore.kernel.org/lkml/20240614093445.GF3029315@google.com/T/#m8750abdef6a968ace765645189170814196c9ce9
-> > > 
-> > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > > ---
-> > >  drivers/leds/leds-cros_ec.c | 50 +++++++++++++--------------------------------
-> > >  1 file changed, 14 insertions(+), 36 deletions(-)
-> 
-> <snip>
-> 
-> Sorry for the confusion,
-> Thomas
+		return;
+	}
 
--- 
-Lee Jones [李琼斯]
+>  
+> -	tmp_source_port = dsa_8021q_rx_source_port(vid);
+> -	tmp_switch_id = dsa_8021q_rx_switch_id(vid);
+> -	tmp_vbid = dsa_tag_8021q_rx_vbid(vid);
+> +	tmp_source_port = dsa_8021q_rx_source_port(tmp_vid);
+> +	tmp_switch_id = dsa_8021q_rx_switch_id(tmp_vid);
+> +	tmp_vbid = dsa_tag_8021q_rx_vbid(tmp_vid);
+>  
+>  	/* Precise source port information is unknown when receiving from a
+>  	 * VLAN-unaware bridging domain, and tmp_source_port and tmp_switch_id
+> @@ -546,5 +558,15 @@ void dsa_8021q_rcv(struct sk_buff *skb, int *source_port, int *switch_id,
+>  		*vbid = tmp_vbid;
+>  
+>  	skb->priority = (tci & VLAN_PRIO_MASK) >> VLAN_PRIO_SHIFT;
+> +	return;
+> +
+> +not_tag_8021q:
+> +	if (vid)
+> +		*vid = tmp_vid;
+> +	if (vbid)
+> +		*vbid = -1;
+
+Thinking more about it, I don't think this is needed (hence it is
+missing in my rewritten snippet above). I mean, *vbid is already
+initialized with -1 (it's a requirement also specified in the
+kernel-doc) and we haven't changed it.
+
+> +
+> +	/* Put the tag back */
+> +	__vlan_hwaccel_put_tag(skb, vlan_proto, tci);
+>  }
+>  EXPORT_SYMBOL_GPL(dsa_8021q_rcv);
+> diff --git a/net/dsa/tag_8021q.h b/net/dsa/tag_8021q.h
+> index 41f7167ac520..0c6671d7c1c2 100644
+> --- a/net/dsa/tag_8021q.h
+> +++ b/net/dsa/tag_8021q.h
+> @@ -14,7 +14,7 @@ struct sk_buff *dsa_8021q_xmit(struct sk_buff *skb, struct net_device *netdev,
+>  			       u16 tpid, u16 tci);
+>  
+>  void dsa_8021q_rcv(struct sk_buff *skb, int *source_port, int *switch_id,
+> -		   int *vbid);
+> +		   int *vbid, int *vid);
+>  
+>  struct net_device *dsa_tag_8021q_find_port_by_vbid(struct net_device *conduit,
+>  						   int vbid);
 
