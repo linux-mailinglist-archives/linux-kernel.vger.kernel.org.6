@@ -1,174 +1,142 @@
-Return-Path: <linux-kernel+bounces-223558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67DCD9114D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:40:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D08A79114D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8958C1C218AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:40:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AD05283524
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1E684A4D;
-	Thu, 20 Jun 2024 21:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EF681AC1;
+	Thu, 20 Jun 2024 21:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N9L0ONjq"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="N9eeNJ6u";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Mn8yBW35"
+Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE2B8288F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4116874BF0;
+	Thu, 20 Jun 2024 21:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718919561; cv=none; b=P6+GhL0MvxRWS+9tN6Z2tCGMIVEUA1ymwSzqYnkUGt4EarvcPKdEyOhZxLzgFyC9SypYmuSjg7JFhF9cA33Hjc0rsfgLCU0ocxANZ+lT873K2MS78fpT111W0j+Ao96FBWDHgOiq5AGPHI5RSdOCW7xObMw32MU5jr7cws8CEHQ=
+	t=1718919648; cv=none; b=o4b5gixea88kSseajy7dCBmFKzFj026e3LhLM/F87zMRuO7iczlP2j5F0Rx5Gk1cU4zX3d0PffCJnAxegBEJpB9te2z4wVxe0PJedhcsFH523XMuxNTWugT+OFsGeFlPKOKF8i56jkVn9qcBPjrPQp8evSXwyPuVLuJTiX7ikSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718919561; c=relaxed/simple;
-	bh=GzGqxe0BB5cRnb5zU6DvWVaR1aOl5IzW/euKFXuh1E0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ax6k+Gd1p+vRz/e8H5jzw1wzSubV5r0rbmzXsTxYH245oNdVaGdQF3cdVCeSKMR8TwIonqAP/h2AzxVsA1dv4JzenjqgZPBH8igZuJZRt5y9mzHPHNO+/TwkEfIx8FTXNYX7gco1cX5YHePiVE5O4KYCXILIqNQoIuVNmjOC7ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N9L0ONjq; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-63bdb089ffdso11861017b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:39:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718919558; x=1719524358; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CG5oVmRocYyy3IzJSCKu3dOBsS/cU690fmgDh0CQkVQ=;
-        b=N9L0ONjq4lC/w3BFjweZFJfk19faDZOLdjPP7R7HdH+rjyPZEVHG+xyA6WoLHxHP6y
-         /ILDp3CArnK5xvFzCVkaRCixfWdXxTpMguMv5f/yvRq5FSEXeWJZzVwTHIQ3E6sJefUC
-         MU9dvjjrOT8YbUEfj6gYM5SFdUi0Qpy/kKB7A0m4cjrKh4ZqpirCMmtMJgWFnJtdC2p9
-         XUzPDv1jYbVE5Tf1EE0rS3J9kqAxICWkrCLTVIEmloNrkWaB6KrBjmrz/e+LyBgNV0GO
-         i5PC62gS9eScG212lucSu9bKJfxXqEonzT2fdbg+Yvdi0wku/4gKY1/EC65xMTN1jHhJ
-         bkmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718919559; x=1719524359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CG5oVmRocYyy3IzJSCKu3dOBsS/cU690fmgDh0CQkVQ=;
-        b=RCW8iW8K4jEpkTiTLNMT67a/EyiWweot4sIWMYSBVCHpb5ko031RuskZMi1bQPG17t
-         q9Z2dlPkyHWJfxWnM0MzhGIjUHWpi0Fl9J52zhcgfaHYhSlMndRKK0EeUDwbnY+6jxhX
-         +vZxJ+ngRKSJ/1yVxzq9qXFD8RrXO+FmcJa9Pt1WqU5eV/8V6FVNET/RXmpSZTWZ/q9K
-         EcVEBaI4K1Dggw575LBuAfYxmQXrDGz8PHf1oSB+H3D51eFpw/s+dm6z95fLr4+mBXng
-         rtcHuHpyEHVxxUFchVexdoZJvDd3FBDmkREQdrFMXZkEoDh6eXRcTvMc+i39gGDDKekU
-         E2eg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgmUHtvOV/TqkPpxWiMxWPa+VxVKbwOOTFzAY30QpsjoqEQYpmOkROpeidtEMuQ1Il/iGo6Rr1FhTNtOvf/Zzly9RjbgPEf3bmKjPj
-X-Gm-Message-State: AOJu0YzzLMnXPgaBQemSjiy+OLpDF153yMTk9aA31ZIpB24KGfirlN/Q
-	NHrsNrS0KMQqowGzBzG6r2pLvk8wgyzsNJuFh++k4yNp79zy6NvV9P+tyLtWrlzxre+Z6b/zHXh
-	Fv7WHQd5hsZNlv1g7KQ5cHemQvCjyON2+73RizQ==
-X-Google-Smtp-Source: AGHT+IHtwKXc9VjTxwTjE1WQPqo/nzCzyNk2L1W9UPMvQvq0zqX89g/JasxRk6Xfq7E9/GsSNsXqFPYAW5GA/xFzOvE=
-X-Received: by 2002:a81:9186:0:b0:63c:416e:fc96 with SMTP id
- 00721157ae682-63c416f1988mr33324357b3.24.1718919558585; Thu, 20 Jun 2024
- 14:39:18 -0700 (PDT)
+	s=arc-20240116; t=1718919648; c=relaxed/simple;
+	bh=/ZqHaM7eyu6SEUfj0+cHTAw1+kYHMfcUuW+8dm6VPTo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j1TXBi+YREsdPe5nqd8qVfbA7rSCtl/hufybju+/JrG5ntGqUOSiBNNb22AHxBg3NxYt2WlKJZIheySHKqTYOcWMw2pomGdMH0Rx2RBnDcD9/5vHk6X4s759Ln3iUUaS0fjvn9rWtsnq6/AHxxlWOOckoKvhsKcubxyMceFl28I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=N9eeNJ6u; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Mn8yBW35; arc=none smtp.client-ip=64.147.123.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfout.west.internal (Postfix) with ESMTP id 150491C00111;
+	Thu, 20 Jun 2024 17:40:45 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Thu, 20 Jun 2024 17:40:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1718919644;
+	 x=1719006044; bh=U+RQTWGThkmobRX/Ae5sAZDBhtv41vgHeflEaT6xjZA=; b=
+	N9eeNJ6uNO7irK7f8M72gWeb/rVgXRDLxog5z6GWz/j/+grE9gRoyI/1B68CVfBb
+	D6qc03M0R8DtSt06pK8mDKJ24hY32hbnewOgoZg6fTQGQd2wF+Cr6CLj1V7/+Cpz
+	MfaBLz3DppQjyYyObSrz2CaGgc2ROeOlbVTMLzg27TnAqRWKY8skzbzZ47B4WxwD
+	djJIGTmFyY70M7LPRjYx0bM+BjXgYdPJ9DyxSappwy7VPUEUM+FZopuH7QeDkbpD
+	jAW5iUD9q4M3Drn9CErNAzq2+GsG+JIFzfwn5z6nF6ayEr29UDrCfSghcW2YPY32
+	wA854AsRwmwxQZ5OE0dHdQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718919644; x=
+	1719006044; bh=U+RQTWGThkmobRX/Ae5sAZDBhtv41vgHeflEaT6xjZA=; b=M
+	n8yBW35S91ledb2ISb0AO6UywBGqhbfacKehc5eO+0U/hFJqAuL3wUGqOFQ6k5W7
+	HiyGabFBXiGTkZ4MfJewmLFofapdWXotHDAW2tIbN7HcCKCSnSatmz1zFi9YJHkl
+	wveFsAVCaX6w7KPZHg4f/k1Fi8IwU1Kb29SKQfKEK3wCO4bNFa7w7ZQlVeApXD9n
+	t+AuKZS2JQx0DUrm3gq0AG5c6e1uRR/KSQ0dLOAsJzj9TLQE8udcosGxfjb710Aa
+	b0gWHKg486FtSydP0ZQ72bilKbtEiZGjgcs3ct0cvsoUO8LD298jCGijZfKaVV0n
+	OFGRTzQLYxvaKDBZ1+gSg==
+X-ME-Sender: <xms:3KF0ZqdBFqgTUwDM-6jZGF7O3bwXIuwZXeAIa4EbfsYdzN1yjqnuAQ>
+    <xme:3KF0ZkMaYDDx64GKNU0Y87cPPW2sGBubWphSjQ22KrtSKpRf47RO0u05G4xtxOT1I
+    M8jwkiPa5-GljZC>
+X-ME-Received: <xmr:3KF0Zri4pzfok0YNrmV2t2VdoPlVbtzGJeDSMwW05hazSF9utkIk-0z15I1iuZBLchIBuYTjEwjNXym-iVeZxUybgE_h2sH9q7sC85bECoz57lzr2MbL>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeffedgtddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefgueektdefuefgkeeuieekieeljeehffej
+    heeludeifeetueefhfetueehhfefnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgu
+    rdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
+X-ME-Proxy: <xmx:3KF0Zn9i4oDauOmi_nlkvaNxTJaK2Rys1nff8wqEw_xSr1qJPh7V2w>
+    <xmx:3KF0ZmvOOXA1IvatgqQmI0hZR3yekNZxRyhPqWQLOcQodmYOFZutyw>
+    <xmx:3KF0ZuGhm0300HenAkIo9NUM2kAKeGUoz24z95mTh6Lhg8Umd9h2MQ>
+    <xmx:3KF0ZlOkvapH134FoJ4dk7m8uookEBLEGUrWLqgKw9ziy_UAsJJCJA>
+    <xmx:3KF0ZoV7u-jY_UdubUqyI_qVjF7wthXcKa5tQw4osGIoqlgbXW2v7Gur>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 20 Jun 2024 17:40:43 -0400 (EDT)
+Message-ID: <db4ed4e5-7c23-468d-8bac-cee215ace19e@fastmail.fm>
+Date: Thu, 20 Jun 2024 23:40:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240620134610eucas1p2fbcd7218bc220bf568ea117acf2f4781@eucas1p2.samsung.com>
- <20240618204523.9563-6-semen.protsenko@linaro.org> <oypijdbk3vu3qd.fsf%l.stelmach@samsung.com>
-In-Reply-To: <oypijdbk3vu3qd.fsf%l.stelmach@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Thu, 20 Jun 2024 16:39:07 -0500
-Message-ID: <CAPLW+4n52gHBcMA3EN7faJUj-7pQNLM=UEiEBL4jT9iWQkkKfw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] hwrng: exynos: Add SMC based TRNG operation
-To: Lukasz Stelmach <l.stelmach@samsung.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Anand Moon <linux.amoon@gmail.com>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] fuse: do not generate interrupt requests for fatal signals
+To: Haifeng Xu <haifeng.xu@shopee.com>, Christian Brauner
+ <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240613040147.329220-1-haifeng.xu@shopee.com>
+ <CAJfpegsGOsnqmKT=6_UN=GYPNpVBU2kOjQraTcmD8h4wDr91Ew@mail.gmail.com>
+ <a8d0c5da-6935-4d28-9380-68b84b8e6e72@shopee.com>
+ <CAJfpegsvzDg6fUy9HGUaR=7x=LdzOet4fowPvcbuOnhj71todg@mail.gmail.com>
+ <20240617-vanille-labil-8de959ba5756@brauner>
+ <2cf34c6b-4653-4f48-9a5f-43b484ed629e@shopee.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <2cf34c6b-4653-4f48-9a5f-43b484ed629e@shopee.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 20, 2024 at 8:46=E2=80=AFAM Lukasz Stelmach <l.stelmach@samsung=
-.com> wrote:
->
-> It was <2024-06-18 wto 15:45>, when Sam Protsenko wrote:
-> > On some Exynos chips like Exynos850 the access to Security Sub System
-> > (SSS) registers is protected with TrustZone, and therefore only possibl=
-e
-> > from EL3 monitor software. The Linux kernel is running in EL1, so the
-> > only way for the driver to obtain TRNG data is via SMC calls to EL3
-> > monitor. Implement such SMC operation and use it when EXYNOS_SMC flag i=
-s
-> > set in the corresponding chip driver data.
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > ---
-> > Changes in v2:
-> >   - Used the "reversed Christmas tree" style in the variable declaratio=
-n
-> >     block in exynos_trng_do_read_smc()
-> >   - Renamed .quirks to .flags in the driver structure
-> >   - Added Krzysztof's R-b tag
-> >
-> >  drivers/char/hw_random/exynos-trng.c | 133 +++++++++++++++++++++++++--
-> >  1 file changed, 123 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_ran=
-dom/exynos-trng.c
-> > index 99a0b271ffb7..497d6018c6ba 100644
-> > --- a/drivers/char/hw_random/exynos-trng.c
-> > +++ b/drivers/char/hw_random/exynos-trng.c
-> > @@ -10,6 +10,7 @@
-> >   * Krzysztof Koz=C5=82owski <krzk@kernel.org>
-> >   */
->
-> [...]
->
-> > +static int exynos_trng_init_smc(struct hwrng *rng)
-> > +{
-> > +     struct arm_smccc_res res;
-> > +
-> > +     arm_smccc_smc(SMC_CMD_RANDOM, HWRNG_INIT, 0, 0, 0, 0, 0, 0, &res)=
-;
-> > +     if (res.a0 !=3D HWRNG_RET_OK)
-> > +             return -EIO;
-> > +
-> > +     return 0;
-> > +}
-> > +
->
-> Does this driver requiers some vendor-specifig bootloading code?
-> I am testing the code on a WinLink E850-96 board booted with the
-> upstream u-boot and it fails during init (res0.a is -1).
->
 
-This series was only tested (and works fine) with LittleKernel based
-bootloader [1]. It's officially recommended and the only feature
-complete bootloader at the moment. And you are right, the reason why
-TRNG probe fails when you boot the kernel from U-Boot is that the LDFW
-(Loadable Firmware) loading is not implemented in U-Boot right now,
-which makes HWRNG_INIT SMC command fail and return -1. In fact, I'm
-adding LDFW loading in U-Boot right now and expect it to be ready in 1
-week or so. For now, can you please check with LK [1] instead? I'm
-happy to help if you have any related questions.
 
-> [    1.883413] exynos-trng 12081400.rng: Could not register hwrng device
-> [    1.893394] exynos-trng 12081400.rng: probe with driver exynos-trng fa=
-iled with error -5
->
-> If an additional code outside the kernel is required for this to run,
-> then maybe the error message should reflect that.
->
+On 6/20/24 08:43, Haifeng Xu wrote:
+> 
+> 
+> On 2024/6/17 15:25, Christian Brauner wrote:
+>> On Fri, Jun 14, 2024 at 12:01:39PM GMT, Miklos Szeredi wrote:
+>>> On Thu, 13 Jun 2024 at 12:44, Haifeng Xu <haifeng.xu@shopee.com> wrote:
+>>>
+>>>> So why the client doesn't get woken up?
+>>>
+>>> Need to find out what the server (lxcfs) is doing.  Can you do a
+>>> strace of lxcfs to see the communication on the fuse device?
+>>
+>> Fwiw, I'm one of the orignal authors and maintainers of LXCFS so if you
+>> have specific questions, I may be able to help.
+> 
+> Thanks. All server threads of lcxfs wokrs fine now.
+> 
+> So can we add another interface to abort those dead request?
+> If the client thread got killed and wait for relpy, but the fuse sever didn't 
+> send reply for some unknown reason，we can use this interface to wakeup the client thread.
 
-Good idea! Will send v3 soon, with proper error message added.
+Isn't that a manual workaround? I.e. an admin or a script needs to trigger it?
 
-Thanks!
+There is a discussion in this thread to add request timeouts
+https://lore.kernel.org/linux-kernel/20240605153552.GB21567@localhost.localdomain/T/
+I guess for interrupted requests that would be definitely a case where timeouts could be
+applied?
 
-[1] https://gitlab.com/Linaro/96boards/e850-96/lk
 
-> Kind regards,
-> --
-> =C5=81ukasz Stelmach
-> Samsung R&D Institute Poland
-> Samsung Electronics
+Thanks,
+Bernd
 
