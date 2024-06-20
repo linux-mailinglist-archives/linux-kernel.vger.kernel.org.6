@@ -1,151 +1,99 @@
-Return-Path: <linux-kernel+bounces-221936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2A6490FAD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:19:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5C090FAD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D602283933
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:19:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C38151C21ABA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B4911C83;
-	Thu, 20 Jun 2024 01:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E7211712;
+	Thu, 20 Jun 2024 01:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UmUt6j1m"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GH6DHv7/"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3F2EEAA;
-	Thu, 20 Jun 2024 01:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946B0101E2
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718846343; cv=none; b=MD561CoKXhzLN04rR+s2J3o+Bi8SQA9QnUcbfv9GK2326IFV9bmFsK5vem3nYj1lBtj4NkuQQY6xDe13SRW62zg/0FtW/Bs5x1lwXUqzD5IyKeDOr7dQ/Z1D85KRSxCVuUJoMytXtuPRlbenE6LKVGZ86A8a1/EV+ckAdKFpE80=
+	t=1718846585; cv=none; b=LyHZA2Ohp9Zks6cmZPnT2V9ViQusoSy3HwVre11bZt4OYF9Auf/bVe3OvTIp1PgKmhEFKSBxp1+wFdBROfJ7P1FwpVqC020wQxnxAXYpsL+t62WUbZhnkH0ir98cgRfJcwH1qciB4uSyY77OMe6FSWqQa0pQuqP2k9g11734Qt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718846343; c=relaxed/simple;
-	bh=CiVOVivRlQIu24Ixw0rbOHAen0kjuJ5zDGUPi3OSZXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CWdWNayFXqjS9VWODuKa1JfJZ9snPYfQyDd+5kDYXgGSUP+q+0vgjrSQNgnG5nhojZhiPT34BtKIyQc5uGOY+BwxVeCOGidtfIYuNh+PbPyivGij5dmwzDJneyz/SxYkqz32VaIr9B5gxVSUjYplwzAUjhHyl/bWRQcqHOuDZ1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UmUt6j1m; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4217d451f69so3791385e9.0;
-        Wed, 19 Jun 2024 18:19:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718846340; x=1719451140; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uDHT6yLRB/v0oglM9yUXjYWVmzlOS187SihTeCnHq4k=;
-        b=UmUt6j1mzbqDEwWnU8Jc7PeSmB6pjyKD2Z1CyZCM9YzQf6gt8gQWZHWL4HotQ1THDR
-         s08cHYDMsofHu7d4xKEuLD14OFYWWtK3CCwpIGCAYqHZymV5oMUHgDghwOyy4wuFo/DZ
-         TdF4ytInqOCLSI2Bq+PusmLO98q4v09iK6Wb6raaHv34hE/nNR+wZ2ih4x4nCK+5p6YD
-         VUhSRgYLCXRPYD6e/M1Db4NDSKsxshyPqly+sQKeNPZtsyrygzU7+uyy83iAcUhr4/x/
-         li+x/M/yk5G/9y9uROjamtzjo2rtFwaAFlb1/kisbapBrgKOa1Z47yM5/h/bU3qJzJ+v
-         hE/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718846340; x=1719451140;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uDHT6yLRB/v0oglM9yUXjYWVmzlOS187SihTeCnHq4k=;
-        b=T8NJf8TWR9jTIaY4xejO07EyJRCY65o3I14HlXD7VsqXz4zrb9uvEkmfMZChjzZz5U
-         Taxa6pI+uZhxAuNciuQmMtjnMq28qMyAk7qkCmP53ugtej+6RFGgqalpzTOm+p8GU5oB
-         tmvXe/CyfjlMYDZV4rMWBsI16TrWg1M1t5zcGXKsE3NBqcSqfMsCO3dmVb05+boOm6s4
-         e1DXXLoolhloX+JKqVORZgJ4YI2qba67JNAzjO2QmrlP3qwce6t7kCcfZTL0bxVjy9Fm
-         3ZW/nNOhFao/EN22eQz+cN11sm2isNjEWKKFxOkdSmUgTbyYViUv7I2N/fMKydTG3fDu
-         5F9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWDee1KhIr3Zg1uzB9H4uKNqnL4lLiswjuSF2/0c4PMQE5hbfVQ1JVWLGpKWyxr/mcUuYltBUPoXVkMxBl5SVzinCp+akPze/82HWPS/C3vTwoQRWwidmF9UmNZPdF/1d5rXwLhCg+gJ5ila5H7SThJPm7nglmhlTR4asQ84VpgCVArXxCc
-X-Gm-Message-State: AOJu0YxlqClnXeE+QH7eKmoaGhlyPYOXg1KiBD2uBQMu4ZqWC/EjP/QQ
-	/G+EQlYXGO7C5kVFWZYTwHElaJRfs4MBjW1wCL5YzatUrRXs3GUWvEnAU+KWozswveo0PktHdql
-	sn9xMcr/n1r8hiF4ITJfNLeZ6Y58=
-X-Google-Smtp-Source: AGHT+IGKhQCbJwrXTD1wLMTOnHS2G1M40SRH7cHaBrBenjcNqfuIlq6OJO1UBMN5+xHWxsPf3hslz7XTNojTJbBeuO4=
-X-Received: by 2002:a05:600c:6a09:b0:421:eecc:2404 with SMTP id
- 5b1f17b1804b1-424751809e3mr29825415e9.24.1718846339564; Wed, 19 Jun 2024
- 18:18:59 -0700 (PDT)
+	s=arc-20240116; t=1718846585; c=relaxed/simple;
+	bh=saeGdpjWPdh327RdznjsypQ9fc88/+/qBMuua8BScqA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZocesoUkWr2n6LmTGcRW4l+l3u+HaR6eoHsa0t3rKeA7geOvL5g3WziVICMt/rEIEQm4GwdyNhd5g4pJNpXU3VB+qSPduNpKiajCTuiNrMFLOPShHBNB7tM5Y8mQ76Sn3c4KFUW771NedogmERdgWAR4ltFM6Vxcc6zPI0Zara0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GH6DHv7/; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: kent.overstreet@linux.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1718846580;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=e7M9DV95CF8GzH3oXpOgs7oAsy0oi0fdcYUzT4NpIjw=;
+	b=GH6DHv7/UPMltkAsmlPv8Nfr3lbkRyrjX0pGG3vyYeMG07YohgupZY1MF4klAaBzaen+/2
+	8Ti9cGa5y0rpyM8nAUOBaT/fw7XLwiKZGDsKwYLBCW8EHuTvC4czWA1a4ZjUN77z9m+yTL
+	9zIwac2pamLWOi8TuuTjLrFsoqBbTC4=
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: youling.tang@linux.dev
+X-Envelope-To: tangyouling@kylinos.cn
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	youling.tang@linux.dev,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: [PATCH] bcachefs: fix alignment of VMA for memory mapped files on THP
+Date: Thu, 20 Jun 2024 09:22:42 +0800
+Message-Id: <20240620012242.106698-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620-fault-injection-statickeys-v2-0-e23947d3d84b@suse.cz> <20240620-fault-injection-statickeys-v2-5-e23947d3d84b@suse.cz>
-In-Reply-To: <20240620-fault-injection-statickeys-v2-5-e23947d3d84b@suse.cz>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 19 Jun 2024 18:18:48 -0700
-Message-ID: <CAADnVQLKRAa5_-JUEZwwbrbySDekVdSgEp0UqgqbVfqsgfYjQg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] bpf: do not create bpf_non_sleepable_error_inject
- list when unnecessary
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	bpf <bpf@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jun 19, 2024 at 3:49=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> When CONFIG_FUNCTION_ERROR_INJECTION is disabled,
-> within_error_injection_list() will return false for any address and the
-> result of check_non_sleepable_error_inject() denylist is thus redundant.
-> The bpf_non_sleepable_error_inject list thus does not need to be
-> constructed at all, so #ifdef it out.
->
-> This will allow to inline functions on the list when
-> CONFIG_FUNCTION_ERROR_INJECTION is disabled as there will be no BTF_ID()
-> reference for them.
->
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  kernel/bpf/verifier.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 77da1f438bec..5cd93de37d68 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -21044,6 +21044,8 @@ static int check_attach_modify_return(unsigned lo=
-ng addr, const char *func_name)
->         return -EINVAL;
->  }
->
-> +#ifdef CONFIG_FUNCTION_ERROR_INJECTION
-> +
->  /* list of non-sleepable functions that are otherwise on
->   * ALLOW_ERROR_INJECTION list
->   */
-> @@ -21061,6 +21063,19 @@ static int check_non_sleepable_error_inject(u32 =
-btf_id)
->         return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_i=
-d);
->  }
->
-> +#else /* CONFIG_FUNCTION_ERROR_INJECTION */
-> +
-> +/*
-> + * Pretend the denylist is empty, within_error_injection_list() will ret=
-urn
-> + * false anyway.
-> + */
-> +static int check_non_sleepable_error_inject(u32 btf_id)
-> +{
-> +       return 0;
-> +}
-> +
-> +#endif
+From: Youling Tang <tangyouling@kylinos.cn>
 
-The comment reads like this is an optimization, but it's a mandatory
-ifdef since should_failslab() might not be found by resolve_btfid
-during the build.
-Please make it clear in the comment.
+With CONFIG_READ_ONLY_THP_FOR_FS, the Linux kernel supports using THPs
+for read-only mmapped files, such as shared libraries. However, the
+kernel makes no attempt to actually align those mappings on 2MB
+boundaries, which makes it impossible to use those THPs most of the
+time. This issue applies to general file mapping THP as well as
+existing setups using CONFIG_READ_ONLY_THP_FOR_FS. This is easily
+fixed by using thp_get_unmapped_area for the unmapped_area function
+in bcachefs, which is what ext2, ext4, fuse, xfs and btrfs all use.
+
+Similar to commit b0c582233a85 ("btrfs: fix alignment of VMA for
+memory mapped files on THP").
+
+Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+---
+ fs/bcachefs/fs.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+index 96040a95cf46..b99a961b9f8f 100644
+--- a/fs/bcachefs/fs.c
++++ b/fs/bcachefs/fs.c
+@@ -1155,6 +1155,7 @@ static const struct file_operations bch_file_operations = {
+ 	.read_iter	= bch2_read_iter,
+ 	.write_iter	= bch2_write_iter,
+ 	.mmap		= bch2_mmap,
++	.get_unmapped_area = thp_get_unmapped_area,
+ 	.fsync		= bch2_fsync,
+ 	.splice_read	= filemap_splice_read,
+ 	.splice_write	= iter_file_splice_write,
+-- 
+2.34.1
+
 
