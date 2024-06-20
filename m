@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-222540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11437910371
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:53:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3569F910373
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 176C01C20F4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:53:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05631F235FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDE51ABCD1;
-	Thu, 20 Jun 2024 11:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310FD15E5C4;
+	Thu, 20 Jun 2024 11:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="bjCqDR6k"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="hySU/xsc"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A08A1AB35F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A241AC234
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718884380; cv=none; b=Li1KmvcEzBtwmmXwMReVVe/FSjrOS3wOPraeB4RlVL/o9wUu/nT69fL9/nzSiOPoThzaKBMUJfipSCYw5veGZ14mEitHO37gC1JA4erGREK2ayJiwqe+Jwd1YNlOJVO2brjM99sAVsViCCANHzBtGQRYcijjshDVjwA4BSady8I=
+	t=1718884384; cv=none; b=H3mhuW8ZkJoZhXlVD74EtYxdmBkFQRQXOlbu2gDOz5LdQmFWomNvlqcGkQcrz7yjSiQsZQhGi6ZJnmfQ6SzSB0jjqTvgiEyMIXvG3DvnNIuGzpyUEPTl4WLxc9ft6BtO2y2NEwIoOV+CaEPlK+MYN3m0ccgoGxq0ec1BTwgtUtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718884380; c=relaxed/simple;
-	bh=lB89n7gi5PnAdnhdIwHUJW4IXvlWg8YRpkta5rSUHKc=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=t+sDBDJ0yF1Zd0eDX7URwm1VRaBjHHtvWhn1z3JVuM2poFSmQBAX1MDQaDVp7P9JwOn3SQGSyazfrptKDf/H9E9ZnU2eD2JMYzOu2/GoUH8G54GezOJ3BUtiYLrC6mV+FGAJFBp1u3BJSjYZdbmzpRHHWOAHV26UBz1T0NNUNE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=bjCqDR6k; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1718884384; c=relaxed/simple;
+	bh=cn33yzbuHsD4XHvHkWif+lhgLxTCLFn5SfcYDICYlcE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Xuy3BbT1NhNJPBeev9T0HnsBV20HuCgi/R8tVeZcy4rEVebGgUPPqM+jJntkmqnjeM6t6GTo+rtCsWQE+VT5rhkBHuWdFVnh37GEdIfE/xYmUAQFbpNKWJ/8y+EnckLZAWSC+kyQezXeTyPx+83hE86zik9eo0R2pJlL7N2WNVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=hySU/xsc; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70436048c25so809671b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 04:52:58 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c348a263easo1382722a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 04:53:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1718884378; x=1719489178; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cxshfbiYtk1odTxX03f+kq7uhvGyIninyQ/wy7iz3xQ=;
-        b=bjCqDR6k0+MGemFRU6ykq+lWxUYLL3Iqy0iN5XnZtMDeUOiF4wXE7jdfNJtCufEvZg
-         yxCIkZ/3eQ5jTcyABK4ZJlytDeR+1zw1T562RoNXrQRLxS6gIjr4nEMxxZ1ninud8tgs
-         rIwRkoIQdJni2M+6cYj8ZqXKhSyO7MrKEEjmwEbO9D4Nd2uiwBymqpRhPSuyeMrIKAdt
-         xFzf1AQI5XhEFBc9N1oS18FUEeYhyN1xHCJXAW2OwPt6Z4WYHyjv4o+uRWyyJpCWi6sG
-         FqyOOcOr6tUZqwffJUF4YKmda6NG8OPKPbHdE+1HzNHB8/ACCvNHR0sfQGcYnEqz+/fs
-         IdUQ==
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1718884382; x=1719489182; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TZOfcyLKgj+yv+ED942rapRmAvPkDAxODQtfckKPepA=;
+        b=hySU/xsclDHcauoHn/mGk66dWx0JrhrJxOBBLG9Egk0u8qTM+k5ks+90XF4hRwmZWF
+         vww+5jMnF9nuuF+mSua3Bzkr3eFeZFdaFiWq9u+Ivb9VzCv0cdQs78PgAC1A5LAOBxJT
+         NyLijmpArBN1S7NXTER4gz5l4DsMpebx44T/5ydoJOqJQqLRIJDHDkwRB/uwaRLJIhjQ
+         D3fWDmIc/k76uRIEIeCyo1Z2O/aGkhQV+/AgKlS7FWTKtbasEMROmcx7ozEW7F/J+fob
+         HBaCgRkfc0s8MJDluDJSEYHhM8ZXWCu9Znpe1CGqPtUVHHMgm82bxznz4OTpSJnVIcU5
+         a31w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718884378; x=1719489178;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cxshfbiYtk1odTxX03f+kq7uhvGyIninyQ/wy7iz3xQ=;
-        b=lRyScGv7e2Pe/eJ3E3E8NvhMFrthLFfP42dhgBT4PTnM9Sdj111T7lwH3Knzqb91qQ
-         0HfrIiEjRW+H9R+6TEzADYJ16B0kfAT9vVYs7ee9wesX1GOYNaducMZrXrYa2GmKuhw6
-         LPQ/uj4+WRZ/+QGACfHsLBrb9DNsxGxJ01Nr3S3rV4zwr03MPXTBxm0QWJpwLggppnbe
-         yUisJ2wPdjHiVo/37Jx9/PJhAwT84WbOpxs5FIcA6GdYLVQE/T3PTwIl15XOQjt7goX1
-         70ZyCpasnsZxpohKWpIoQHa6ARLvOvc0v/hy8csNTzSAgQvG7EBcjMJ3xGXg1mArVDdh
-         TExA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqr7MSNkqPYB9kn5ssEp3mQvcCee26LFjkfFs+ztYQZujmitS44ro6u7BxE9SI9e9gpej3aah3OadFSQUhWN8Rvk8HnppYY312uaic
-X-Gm-Message-State: AOJu0YwYXMdXn9VDMFyaamMvlB6ER+rzJgbnyoPLHwfR41cm4vvYWQ28
-	+qvE5jjiqGLZ370uJ39i4VbWvOQXipo0ei28ere2L0mSo2n6oIFMKvsD0AO3/38=
-X-Google-Smtp-Source: AGHT+IHWVuA9ptbleuNtiiQwSC0s7v5qEfJr+4Yzd7+QkHCwMzolv8Kc1rfPAEj837awwHSzsEBFXQ==
-X-Received: by 2002:a05:6a20:1b18:b0:1b7:1ede:ce57 with SMTP id adf61e73a8af0-1bcbb626642mr4846670637.59.1718884377880;
-        Thu, 20 Jun 2024 04:52:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718884382; x=1719489182;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZOfcyLKgj+yv+ED942rapRmAvPkDAxODQtfckKPepA=;
+        b=hyVejhpMFnFhgJy1po/5W5Zgyc7/5xAWhWJwEK/L1hqFElG7FfEK3mVJ7AJSyudTKw
+         k7I0mXF13XkR7givlsq3dI7zVjEDVjzQUFEQty0zzbsUKSSLEu31HisbDBq6sr2K5Y0c
+         Xj2OQC2YMM9LovBLKjzd9t4cXukSisZiSUr3PWPNwCiBNkyIE+R0CsZopeJzOe7eyDFt
+         Y/T2cLWgF5MeU/Ce6aqriSFX8ir3p5/chFHak/tB/XSUJyzkLeq3AXRtzh2zD7Dn3u27
+         vvHTBN0w0oGnaqEmM8HmuXMLPIpWbmH6ZiFs5LU2oWoSkt7+BM1rTDxOaFwLaQEN1WhT
+         cHMw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1f+TquZ+zW8m5f8l9jcBoF7AzfGXVaACOonNc7RJUw2f8UXIVlpXO6c11VQfJtLy9E6OT8qsUZHZFhwj8TN1a7h/9hQF3KO8MzJ7H
+X-Gm-Message-State: AOJu0Ywllio7uY44aVsEyxlNFdGiMAuHyHKvjyj85DVDIF9akJsNIJMc
+	Sv1Hv4fBLyr0mCwaOtwJGu9hecX0ww7jjIG3SUMfkpYU+ZJN8drSDX8VdYR0FkY=
+X-Google-Smtp-Source: AGHT+IGMNnTgKPsfl8aIi5r8uzi6bXKkR5QprrMn7nZuUrBC67TYRolWeSqdoOUgVCP9/FJ/JCF9Jg==
+X-Received: by 2002:a17:90a:69a4:b0:2c7:45a:d237 with SMTP id 98e67ed59e1d1-2c7b3b0eab9mr7321636a91.12.1718884382279;
+        Thu, 20 Jun 2024 04:53:02 -0700 (PDT)
 Received: from lvzhaoxiong-KLVC-WXX9.huaqin.com ([116.66.212.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e64a1da9sm1486316a91.53.2024.06.20.04.52.55
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e64a1da9sm1486316a91.53.2024.06.20.04.52.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 04:52:57 -0700 (PDT)
+        Thu, 20 Jun 2024 04:53:01 -0700 (PDT)
 From: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
 To: dmitry.torokhov@gmail.com,
 	robh@kernel.org,
@@ -76,49 +76,53 @@ Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Subject: [PATCH v4 0/2] Support Starry er88577 MIPI-DSI panel
-Date: Thu, 20 Jun 2024 19:52:43 +0800
-Message-Id: <20240620115245.31540-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+Subject: [PATCH v4 1/2] dt-bindings: display: panel-simple-dsi: add Starry-er88577 DSI panel bindings
+Date: Thu, 20 Jun 2024 19:52:44 +0800
+Message-Id: <20240620115245.31540-2-lvzhaoxiong@huaqin.corp-partner.google.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240620115245.31540-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+References: <20240620115245.31540-1-lvzhaoxiong@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The Starry is a 10.1" WXGA TFT LCD panel with er88577 controller
-Because Starry-er88577 and kingdisplay-kd101ne3 are not the same IC, 
-separate Starry-er88577 from the panel-kingdisplay-kd101ne3 driver.
+This add the bindings for the 1280x800 TFT LCD Starry-er88577 DSI panel
+to panel-simple-dsi.
 
+Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+---
 Changes between V4 and V3:
-- PATCH 1/2: Move positions to keep the list sorted.
-- PATCH 2/2: Adjust the ".clock" assignment format.
-- Link to v3: https://lore.kernel.org/all/20240614145609.25432-1-lvzhaoxiong@huaqin.corp-partner.google.com/
+-  1. Move positions to keep the list sorted.
+
+v3: https://lore.kernel.org/all/20240614145609.25432-2-lvzhaoxiong@huaqin.corp-partner.google.com/
 
 Changes between V3 and V2:
-- PATCH 1/2: This add the bindings to panel-simple-dsi.
-- PATCH 2/2: Add a separate driver for Starry-er88577, and Use the new mipi_dsi_dcs_write_seq_multi() function.
-- Link to v2: https://lore.kernel.org/all/20240601084528.22502-1-lvzhaoxiong@huaqin.corp-partner.google.com/
+-  1. Separate the Starry bindings from kingdisplay, and add it to panel-simple-dsi.yaml
+
+v2: https://lore.kernel.org/all/20240601084528.22502-4-lvzhaoxiong@huaqin.corp-partner.google.com/
 
 Changes between V2 and V1:
-- PATCH 1/4: Delete some unnecessary information.
-- PATCH 2/4: Use the new mipi_dsi_dcs_write_seq_multi() function, deleted some unnecessary functions.
-- PATCH 3/4: Add compatible for Starry-er88577.
-- PATCH 4/4: Add starry panel configuration in panel-kingdisplay-kd101ne3 driver.
-- Link to v1: https://lore.kernel.org/all/20240418081548.12160-1-lvzhaoxiong@huaqin.corp-partner.google.com/
+-  1. Add compatible for Starry er88577 in Kingdisplay kd101ne3 dt-bindings.
 
-Zhaoxiong Lv (2):
-  dt-bindings: display: panel-simple-dsi: add Starry-er88577 DSI panel
-    bindings
-  drm/panel: starry-er88577: add new panel driver
+---
+ .../devicetree/bindings/display/panel/panel-simple-dsi.yaml     | 2 ++
+ 1 file changed, 2 insertions(+)
 
- .../display/panel/panel-simple-dsi.yaml       |   2 +
- drivers/gpu/drm/panel/Kconfig                 |   9 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- drivers/gpu/drm/panel/panel-starry-er88577.c  | 343 ++++++++++++++++++
- 4 files changed, 355 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-starry-er88577.c
-
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
+index db5acd2807ed..f67059d44bde 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
++++ b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
+@@ -58,6 +58,8 @@ properties:
+       - samsung,s6e3fc2x01
+         # Samsung sofef00 1080x2280 AMOLED panel
+       - samsung,sofef00
++        # The Starry-er88577 is a 10.1" WXGA TFT-LCD panel
++      - starry,er88577
+         # Shangai Top Display Optoelectronics 7" TL070WSH30 1024x600 TFT LCD panel
+       - tdo,tl070wsh30
+ 
 -- 
 2.17.1
 
