@@ -1,177 +1,159 @@
-Return-Path: <linux-kernel+bounces-222291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D8A90FF4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:48:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFBA90FF5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537B6285246
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66B21F214E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC1C1AAE3E;
-	Thu, 20 Jun 2024 08:45:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD009157A7C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70331ABCB8;
+	Thu, 20 Jun 2024 08:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="R7ZNqx3f";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XToeBiMX"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F6D1AB515;
+	Thu, 20 Jun 2024 08:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718873143; cv=none; b=Xgi9RrvyB+lNs/fmoxyGCT6QF35RHcidajb53iTAB/6+S7JPmaayVKp1tag415Cix4yoFhrze4Znc9dyb6OMflf3/f/ZtoLtJaPf7RH/MQ6AGEHtwvyYfAaKxAqJtaabVsw6SMwsenVAUcJoUAKexGZYCThRwISWc4ZYtFzVgJg=
+	t=1718873162; cv=none; b=EogEZnd9s9HVFetyIdx7VeB9bMmttAPki26wWYBALug7E/uHMfRg81yv68CBtxm7yvfs5IWjlYjSdhPRWANILp0B8EfNFuPBJUrLrVjIprJnbTKcKM0F33gbL+dxSa79i4G2HG2azylg2AJ1GSqsRDUfRDugDAHLcDyIPjxcD9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718873143; c=relaxed/simple;
-	bh=s60ARkADtTjM++eddQ04Sm61z7sn/03d0UCt7ubLUHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GJsModuqgXj2q060h3AlYcI2VjsRlMtpnkLv2MmH+WYPoUQgKjOT3d9Kc/hRHvPFsR0AXFeXQyXbm3a8e86e51LQ0EufvwAAr0XymwCnl6cvyOAzRFzpMigiQRSHbfrw40oCCo8iZ77cATJ6owOeLghsUoTB7juV4slkrpWP2w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D227EDA7;
-	Thu, 20 Jun 2024 01:46:05 -0700 (PDT)
-Received: from [10.57.74.104] (unknown [10.57.74.104])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC88A3F6A8;
-	Thu, 20 Jun 2024 01:45:39 -0700 (PDT)
-Message-ID: <d29136e9-6c63-4e4f-81bb-488edcac587e@arm.com>
-Date: Thu, 20 Jun 2024 09:45:38 +0100
+	s=arc-20240116; t=1718873162; c=relaxed/simple;
+	bh=iu9Qsy1Q3Z5wWLHAdLya1yL55GGGG38xW3ihZShowMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dYl5jJd2b0msFwDYYTBMrjTxxNIjlJ0Vz1W6PwiUXq4wIZOJ3Xr9jKINllH0lA4YWbc+JnFYXd2HQXY2zuDX9v4FWuHlafa6uBjRD8mAnsENZOw5ODyKvw5Oqn5HtXVMVUbJuOZSLKIK62uOsCaJMVf2Kg4+rYmx18VGOCwd1EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=R7ZNqx3f; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XToeBiMX; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 996A613807C3;
+	Thu, 20 Jun 2024 04:45:58 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Thu, 20 Jun 2024 04:45:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1718873158;
+	 x=1718959558; bh=/nJGfaLPFrBcfjyfQUIv53koNxCSN0bq8WWaPmsRHUY=; b=
+	R7ZNqx3fwyA9N7V/mXsFgJcDcv4t6b96eJHbbQZCbTLytBtBxjFMHpnSHlfdnubR
+	zXC9EdLI3ngeQGGTq95OIU+hPL3293Ownr9DsxgDVVLiXup8DwT1Uke4xgzFtPZg
+	mOS2+E4OYIhpUyAEnmFIpd3mDJSpT3X91hWwo3ekIhD0hlMyvlsInxfa22QpYHrB
+	T1cwA2yhictnn8nRj60yYeZhF24Yym+QVhRMBTehFZ5mdBRmjzmj087syS11sS9R
+	PN17Awj57eCD6meh8QiEqtjEkuVziI3h3DwGzvHnbfgBbe9owQLrsX1FH+fNOLwt
+	w+aVmJv2RJ4QzbbxcOUwSA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718873158; x=
+	1718959558; bh=/nJGfaLPFrBcfjyfQUIv53koNxCSN0bq8WWaPmsRHUY=; b=X
+	ToeBiMXbs5QBo5iL4dYy/xS6sFMaPnbkgNDipEu+/+SUq3pfWTlySlsFcJNn44+W
+	2lmwHDxLB6jnZcLUlxr3rHtTy1JX+iwcbCuiFBSeXHd8tim7pvIasAh72sZ4nB7W
+	6+RkcqNr+4AIxGLQphqx/02ZLwIaA9z9bagD71DCLE3gCCyBKW1kthlYXvCCXY64
+	gUFeKD7trzMDXHZziDY9gPMm4ME1ika0s1Cz1BBxBslhi8hcmo6w/m/RwVgM+mAF
+	eDjBkNWw/qS1B+O4EwoOtQCp2oRiK4wrPLCBThoA66JoWKW9F5aCrSG7X9kGxpVF
+	9heoZi98FbpIwJ5Og8Vfg==
+X-ME-Sender: <xms:RexzZr9F5QiJTeHm-vgBajKhNS_ovATwJzOROiOdLtVLHyQBieaLsQ>
+    <xme:RexzZntoUvxrMg-aC1qwjG_edT0wxibvIlOv8xVZ5O1tAxI-8Wp_4IlMTISjBISnj
+    IPRuY8gL5SSDA>
+X-ME-Received: <xmr:RexzZpBWuWtHlJvHYyJoTmIZa4ixJn1H-pZ3XlujzluiPc9DSYx0YJESnPIQV38Q0EX9FTpFf5jOr2nCI9AS_GdvcBDCHIgBXiBZew>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefvddgtdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefirhgv
+    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpefgke
+    ffieefieevkeelteejvdetvddtledugfdvhfetjeejieduledtfefffedvieenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhroh
+    grhhdrtghomh
+X-ME-Proxy: <xmx:RexzZnenUlMAgqLLYF-nvcBKPAg4XjhaenBx38nA3XAjwLYwc2OCRw>
+    <xmx:RexzZgP8nYwvQTtaSioid3DEoUCxcyAYas1gsrj2pRE7BBNmhaePiQ>
+    <xmx:RexzZpmbWT1M1e5vRAhWJAOsAG9thQXLzkRjvor44dJf4tuMGBV2Nw>
+    <xmx:RexzZqtHnDI9Q-ln7iIK_sADTLVa84PDcE-UWqSB4hCpxYXt2deVeg>
+    <xmx:RuxzZmt_vjCwBxJRaAPeJg381Vl2_epK_NsEGLGkFmBw19HTF_OKjz4I>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 20 Jun 2024 04:45:56 -0400 (EDT)
+Date: Thu, 20 Jun 2024 10:45:58 +0200
+From: Greg KH <greg@kroah.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: John Hubbard <jhubbard@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, linux-kbuild@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Makefile: rust-analyzer target: better error handling
+ and comments
+Message-ID: <2024062005-subtype-collage-2c35@gregkh>
+References: <20240601004856.206682-1-jhubbard@nvidia.com>
+ <CANiq72m46gN4GkfeXgykEar6OVa56ck9FmWQComd+iuf61FVSw@mail.gmail.com>
+ <4262dee7-b6fb-449c-9de8-7d6404912338@nvidia.com>
+ <CANiq72n=mFF5+MxAmOwNS+ZOGo=H199MX_5nPiZTKchFK+Gn6g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] arm64/mm: Stop using ESR_ELx_FSC_TYPE during fault
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: mark.rutland@arm.com, maz@kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20240618034703.3622510-1-anshuman.khandual@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240618034703.3622510-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72n=mFF5+MxAmOwNS+ZOGo=H199MX_5nPiZTKchFK+Gn6g@mail.gmail.com>
 
-On 18/06/2024 04:47, Anshuman Khandual wrote:
-> Fault status codes at page table level 0, 1, 2 and 3 for access, permission
-> and translation faults are architecturally organized in a way, that masking
-> out ESR_ELx_FSC_TYPE, fetches Level 0 status code for the respective fault.
+On Thu, Jun 20, 2024 at 10:31:53AM +0200, Miguel Ojeda wrote:
+> On Thu, Jun 20, 2024 at 8:13 AM John Hubbard <jhubbard@nvidia.com> wrote:
+> >
+> > What exactly did you have in mind for how that should look? The
+> > "make rustavailable" target has some leading *** and some bare
+> > statements, so I'm not quite sure exactly how to lay it out:
 > 
-> Helpers like esr_fsc_is_[translation|permission|access_flag]_fault() mask
-> out ESR_ELx_FSC_TYPE before comparing against corresponding Level 0 status
-> code as the kernel does not yet care about the page table level, where in
-> the fault really occurred previously.
+> I was thinking something like:
 > 
-> This scheme is starting to crumble after FEAT_LPA2 when level -1 got added.
-> Fault status code for translation fault at level -1 is 0x2B which does not
-> follow ESR_ELx_FSC_TYPE, requiring esr_fsc_is_translation_fault() changes.
+>     ***
+>     *** Rust is not available.
+>     ***
 > 
-> This changes above helpers to compare against individual fault status code
-> values for each page table level and stop using ESR_ELx_FSC_TYPE, which is
-> losing its value as a common mask.
+> (the `***` prefix is used also in other similar scripts and by Make itself).
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> This applies on v6.10-rc4 and still leaves behind ESR_ELx_FSC_TYPE for now.
+> However, thinking about it a bit more, we should perhaps just let
+> `rust_is_available.sh` tell the user why it fails, since it is likely
+> the next step the user would do anyway:
 > 
-> Changes in V2:
+>     $ make LLVM=1 rust-analyzer
+>     ***
+>     *** Rust compiler 'rustc' is too old.
+>     ***   Your version:    1.62.0
+>     ***   Minimum version: 1.78.0
+>     ***
+>     ***
+>     *** Please see Documentation/rust/quick-start.rst for details
+>     *** on how to set up the Rust support.
+>     ***
+>     make[1]: *** [linux/Makefile:1973: rust-analyzer] Error 1
+>     make: *** [Makefile:240: __sub-make] Error 2
 > 
-> - Defined ESR_ELx_FSC_[ACCESS|FAULT_PERM]_L() macros
-> - Changed fault helpers using the above macros instead
-> - Dropped each page table level fault status discrete values
-> - Dropped set_thread_esr() changes in arch/arm64/mm/fault.c
-> - Updated the commit message
-> 
-> Changes in V1:
-> 
-> https://lore.kernel.org/linux-arm-kernel/20240613094538.3263536-1-anshuman.khandual@arm.com/
-> 
->  arch/arm64/include/asm/esr.h | 33 +++++++++++++++++++++++++++------
->  1 file changed, 27 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
-> index 7abf09df7033..3f482500f71f 100644
-> --- a/arch/arm64/include/asm/esr.h
-> +++ b/arch/arm64/include/asm/esr.h
-> @@ -121,6 +121,14 @@
->  #define ESR_ELx_FSC_SECC	(0x18)
->  #define ESR_ELx_FSC_SECC_TTW(n)	(0x1c + (n))
->  
-> +/* Status codes for individual page table levels */
-> +#define ESR_ELx_FSC_ACCESS_L(n)	(ESR_ELx_FSC_ACCESS + n)
-> +#define ESR_ELx_FSC_PERM_L(n)	(ESR_ELx_FSC_PERM + n)
-> +
-> +#define ESR_ELx_FSC_FAULT_nL	(0x2C)
-> +#define ESR_ELx_FSC_FAULT_L(n)	(((n) < 0 ? ESR_ELx_FSC_FAULT_nL : \
-> +					    ESR_ELx_FSC_FAULT) + (n))
+> What do you think? Then there is no need for extra output here and the
+> patch becomes simpler too.
 
-I think the only real argument for parameterizing it like this is so we can
-write "-1" as a parameter rather than "N1" as part of the macro name? Other than
-that (marginal) benefit, personally I don't think this approach is very
-extensible because we are devining a pattern from the encoding that doesn't
-really exist. If we ever needed a level 4 or -3 the encoding would have to be
-discontiguous and we would need to rework this again to accomodate. Perhaps the
-chances of that ever happening are small enough that the problem can be ignored.
+As someone who just ran into the "wait, how do I get rust to build on
+this machine again?" problem, yes, having the link to the documentation
+right there would be helpful.  I did know where to find it, but others
+might not, and it's free to add.
 
-TBH, I didn't really follow Marc's argument for keeping the "type" macros either
-since ESR_ELx_FSC_FAULT does not help to identify the type of a level -1 or -2
-translation fault - the encoding is completely different. But I'll take it on
-faith that Marc is correct and I just don't understand ;-)
+thanks,
 
-Regardless, the implementation looks correct, so:
-
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-
-> +
->  /* ISS field definitions for Data Aborts */
->  #define ESR_ELx_ISV_SHIFT	(24)
->  #define ESR_ELx_ISV		(UL(1) << ESR_ELx_ISV_SHIFT)
-> @@ -388,20 +396,33 @@ static inline bool esr_is_data_abort(unsigned long esr)
->  
->  static inline bool esr_fsc_is_translation_fault(unsigned long esr)
->  {
-> -	/* Translation fault, level -1 */
-> -	if ((esr & ESR_ELx_FSC) == 0b101011)
-> -		return true;
-> -	return (esr & ESR_ELx_FSC_TYPE) == ESR_ELx_FSC_FAULT;
-> +	esr = esr & ESR_ELx_FSC;
-> +
-> +	return (esr == ESR_ELx_FSC_FAULT_L(3)) ||
-> +	       (esr == ESR_ELx_FSC_FAULT_L(2)) ||
-> +	       (esr == ESR_ELx_FSC_FAULT_L(1)) ||
-> +	       (esr == ESR_ELx_FSC_FAULT_L(0)) ||
-> +	       (esr == ESR_ELx_FSC_FAULT_L(-1));
->  }
->  
->  static inline bool esr_fsc_is_permission_fault(unsigned long esr)
->  {
-> -	return (esr & ESR_ELx_FSC_TYPE) == ESR_ELx_FSC_PERM;
-> +	esr = esr & ESR_ELx_FSC;
-> +
-> +	return (esr == ESR_ELx_FSC_PERM_L(3)) ||
-> +	       (esr == ESR_ELx_FSC_PERM_L(2)) ||
-> +	       (esr == ESR_ELx_FSC_PERM_L(1)) ||
-> +	       (esr == ESR_ELx_FSC_PERM_L(0));
->  }
->  
->  static inline bool esr_fsc_is_access_flag_fault(unsigned long esr)
->  {
-> -	return (esr & ESR_ELx_FSC_TYPE) == ESR_ELx_FSC_ACCESS;
-> +	esr = esr & ESR_ELx_FSC;
-> +
-> +	return (esr == ESR_ELx_FSC_ACCESS_L(3)) ||
-> +	       (esr == ESR_ELx_FSC_ACCESS_L(2)) ||
-> +	       (esr == ESR_ELx_FSC_ACCESS_L(1)) ||
-> +	       (esr == ESR_ELx_FSC_ACCESS_L(0));
->  }
->  
->  /* Indicate whether ESR.EC==0x1A is for an ERETAx instruction */
-
+greg k-h
 
