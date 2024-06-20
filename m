@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-222995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42EA0910B72
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:10:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DA3910B76
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C591C24A99
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:10:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57C4F1F2251E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1021B29A7;
-	Thu, 20 Jun 2024 16:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A881B14E2;
+	Thu, 20 Jun 2024 16:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1N5ZWMZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gEE50IVk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1611B1509;
-	Thu, 20 Jun 2024 16:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164E93BB50;
+	Thu, 20 Jun 2024 16:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718899824; cv=none; b=Lt70kfcaHWI2pGLA4fFto6fVm1ML5Q81cvjVNKzwkA88igv5FcVmXB+ftUUIc3dqzxz8992/ebxoP5+nH43SfvNs4ao1ceg/tl+uuNL1XZhq48ysM6ZH2x1lQ9F8mBjdWUGu8R3BBJ0A20pxMtFEHSeUupXlJWDizVRs2z/VLSE=
+	t=1718899880; cv=none; b=c+syIF8fx6WYp41qgfh7PWiPaRMwfh8BEh0cFHuTC8zKrrQ+pkg9qHFGNdppdvvVGN6zgb35LE5YE2IPLOfJpSmyGb22TSYDvyurHhe4xqOn4ygqsX78CdnSavWrS0bHS1plt+gSAiYJzn9XMiCYNN+t+FpPz7KHVYWY07LqaaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718899824; c=relaxed/simple;
-	bh=7GwI5j/yDSrkvc5Pgfk2z6Kha0u3fi52ugjXtVX8NrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=b5fO4ACZSEOeEyhkTc8VqxRTf5j7HmSrEtLTbY+GLOWs8DgZHNJfW1Kg05f7ezoqw51ZybGPavFJvBrAHpnH26nTrAWY7ZK8DvgK1HxdKIKMYaxTmDhXQ7MqB+tuWrUziUqxHvL+eFvwN5dhPIShYOaxwRWFF/Zm79qZUYqQzv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1N5ZWMZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84187C2BD10;
-	Thu, 20 Jun 2024 16:10:23 +0000 (UTC)
+	s=arc-20240116; t=1718899880; c=relaxed/simple;
+	bh=OxkljKrow05q4da7B3GsfU2bTy755SQpG+GHmoDz1FI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dDyPdRiLaYFN2jYxkQzclksN+5DPbZkbEPIclyhG7YlErTO7xKKXZxbZwQG12XxpXzHs2r9rFsVt7/rGrngghSwTAeaAkL6CMNhlfMHI8KODoTKcQ/hMSIn7zbY+j+Du0g/z/ccr0Tl6/71iW7y+mh495x1VAaZdwsRzvIQeqN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gEE50IVk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A57F7C32786;
+	Thu, 20 Jun 2024 16:11:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718899824;
-	bh=7GwI5j/yDSrkvc5Pgfk2z6Kha0u3fi52ugjXtVX8NrU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=m1N5ZWMZ/XSbda0wCNHyvPeIn/7PFSW86lVG8+Ney+4rTlMfydYRxl50BDj9thoQu
-	 uVCpXRsp8Cl+1ljvbBo5Io4j7RBJiOW7FgaGgtyrexNf10KwnjTZLUpEVRmMnMXs3A
-	 FPpSf6ZIhr4gpG0YeIVTyHRUpjjqrvAMm5uO3iRM98QIn+p26m+tHUSD+nJ1uTMJ2P
-	 V7WOXR+GSKD96ZniuFSaul2ZXQgNUkHj9KHi3SszsM2ERL0Vt1wq+LZeSAdA2DzXY6
-	 n2ECxUKerntdz+g4td25JkOVh4xPQiFn8f32rCkoem//EL5uwyw2pY3fKKb5vaF0aE
-	 4d+Va3ulVK43g==
-Date: Thu, 20 Jun 2024 17:10:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jun 20
-Message-ID: <ZnRUbK1pvBJqOsoh@sirena.org.uk>
+	s=k20201202; t=1718899879;
+	bh=OxkljKrow05q4da7B3GsfU2bTy755SQpG+GHmoDz1FI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gEE50IVkbPtvw82RdiBMZQ1mNk+3cLyGhjLH/BWn4ChiAXvTrqQCRBAwhSffTND6r
+	 NWu2lb/MaaE83hHXAXlmnxShUjmnwLv9PgCUwRaCQ3Wx67YsrTpzTE+bkpDyKM3Dkl
+	 iqN2vZhldikA6kMGOvQUcHUau+R8JoInV9XnIUaoaqs7BGLRknpwR5JcXKBb9Z9w4h
+	 8lG5cC3U0L7vkAnZWIkOnDQOY05qNAOJqJXGwb/6HATB/SU7lcxd9nnJ0uRdZJT90X
+	 HSCTf37lVAyxUdr6mmP3X74POiLUfbKr/wNc/n0TRz0Tz+cxIuQcaO4eaSxySSQ11t
+	 ebXUj06Aqaxng==
+Date: Thu, 20 Jun 2024 17:11:15 +0100
+From: Conor Dooley <conor@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, matthias.bgg@gmail.com,
+	houlong.wei@mediatek.com, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 4/4] dt-bindings: mailbox: mediatek,gce-mailbox: Stop
+ requiring clock-names
+Message-ID: <20240620-pacify-family-c6cdaad66d70@spud>
+References: <20240620100750.1075790-1-angelogioacchino.delregno@collabora.com>
+ <20240620100750.1075790-5-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ja5wTWUi8XDrbGi5"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="+8p3lhhqGn1CLu0k"
 Content-Disposition: inline
+In-Reply-To: <20240620100750.1075790-5-angelogioacchino.delregno@collabora.com>
 
 
---ja5wTWUi8XDrbGi5
+--+8p3lhhqGn1CLu0k
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, Jun 20, 2024 at 12:07:50PM +0200, AngeloGioacchino Del Regno wrote:
+> On all MediaTek SoCs, each GCE Mailbox have got only one single
+> clock, and this is true in both SoCs with a single mailbox and
+> ones with multiple mailboxes.
+>=20
+> Stop requiring clock-names on all GCEs, as there is and there
+> will always be only one CMDQ clock per HW instance.
 
-Changes since 20240619:
+I'd like the commit message here to mention that there are no users
+outside of Linux for this before making the property non-required.
+And obviously you can only say that if it is true - although I think you
+said to me earlier today that U-Boot etc don't support this device, only
+Linux.
 
-The v4l-dvb-next tree gained a build failure, I used the version from
-20240619 instead.
+>=20
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> ---
+>  .../bindings/mailbox/mediatek,gce-mailbox.yaml        | 11 -----------
+>  1 file changed, 11 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailb=
+ox.yaml b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.ya=
+ml
+> index cef9d7601398..ff5d010fbcf0 100644
+> --- a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
+> +++ b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
+> @@ -56,17 +56,6 @@ required:
+>    - interrupts
+>    - clocks
+> =20
+> -allOf:
+> -  - if:
+> -      not:
+> -        properties:
+> -          compatible:
+> -            contains:
+> -              const: mediatek,mt8195-gce
+> -    then:
+> -      required:
+> -        - clock-names
+> -
+>  additionalProperties: false
+> =20
+>  examples:
+> --=20
+> 2.45.2
+>=20
 
-The memblock tree gained a conflict with Linus' tree.
-
-Non-merge commits (relative to Linus' tree): 6610
- 6991 files changed, 595079 insertions(+), 119966 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with a defconfig
-for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm
-and a native build of tools/perf.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 377 trees (counting Linus' and 106 trees of bug
-fix patches pending for the current merge release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
---ja5wTWUi8XDrbGi5
+--+8p3lhhqGn1CLu0k
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ0VGwACgkQJNaLcl1U
-h9CbFgf6AxKaq2WvM99zGqR6xvmWmBT/fJwItZmalzqKC93CNpeuZOwjXEj6KDKw
-r+pURQFhRX18+R/VSfkByV4cC8DcHc4wtpg6xEJunlWWXhK55ME6LHOI9mwFQwO5
-7f/q4W39ttIlDaafua0moLSLTfuhvIVGm3kYguPoONgAUiMEWWWzJe0RaM1T/icg
-TaVWaWf9sHcqxrMSp01JwKQlWGAuuUHWuVfaOInmn3j2bHMvO3KNGACDQtoPcwqn
-gFWZyaY8C5/7iwLVjiFsfOCc6zf/kAm5oqtl9PcEUSmAEVemWskS0QCMAOoxHiHq
-EqxoAG2MjJmAcNNoDprRGyWwNW0vHA==
-=FEGW
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnRUowAKCRB4tDGHoIJi
+0vxJAP9UxWxnp7qX0VpdMhL+fAihXvXOYRDUuJwD0piTz8VThgD/VoHZrPuBUkOP
+2XWUqlQOEjQNdxiq8ne24Nl5UnF5uQM=
+=6W/D
 -----END PGP SIGNATURE-----
 
---ja5wTWUi8XDrbGi5--
+--+8p3lhhqGn1CLu0k--
 
