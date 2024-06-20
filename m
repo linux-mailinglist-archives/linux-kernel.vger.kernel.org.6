@@ -1,68 +1,69 @@
-Return-Path: <linux-kernel+bounces-223869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367999119B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:47:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E3B9119B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 06:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6B412859EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:47:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 224941C22A83
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 04:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CF912EBE7;
-	Fri, 21 Jun 2024 04:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FE813E022;
+	Fri, 21 Jun 2024 04:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k7TKxjIa"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gypKUVDQ"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B751D52C
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61146130ADA
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 04:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718945211; cv=none; b=EFwcOIKO3hPB40lOl9L9z9quu5zDjT789vnLN7b+s5wiX1ZaV5v6DHA5XJPo2v8K8A5gMXvQRWtuYwWf7JmJQ57klyohb0SEPYfReI2f/+Oig+T0BwoxjiYYXrH+iWWKxyvgn9PzIg6Tot7c3IIqDzjzyP9rK4s7fmzNZOLP/R8=
+	t=1718945214; cv=none; b=tVZsFOXWjxZYQki9mCta59+4tztMkRb0z4X25ITnzmaoN8CCW4Hocm0Hgv1bZK50MrkwYihGSr+LFOaBRS5p4qR3mksojrJ6YMVmOyNyjYe5DAx+/oAufR2AtKARWo4iNrohQZzkmuyXuict5BLnZ5LX4F1IZSxO53uPtpUzT9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718945211; c=relaxed/simple;
-	bh=R8NdDkdLHuAJuu5DqtuYnvDxeUNZJtW9Joc8RZ7NcFU=;
+	s=arc-20240116; t=1718945214; c=relaxed/simple;
+	bh=eg31BoRkeTJON7zXV4K1jhgM/v2n2k+KGM9iQFc0N64=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CSHeCq039G5W6hv9U39+6sEAgmLYkL6NoiFYo8XH9235fqcKK2txBNfPyt/BEB8UVaC9Fw58cytty2zx/z7ipwqw4dWwTJjTsBvZMNsx1lNOgZVYWwFb4dfM6mSPalls6PtTCMcpFCz2xNXWUSjCI3AzpqD3BJ8TFvTk6h0eWpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=k7TKxjIa; arc=none smtp.client-ip=209.85.215.181
+	 MIME-Version; b=MUSlydx6OPnl8hS3dJEvdNCwmmRVio3j9RCTEZLBEwHpn9AezAmjDWWPcI4G5Mks7c/L+F9ZpyHSIMv11Tulp4BWlY6zqE8AoW0Oqe0R3Mu3cWY6he8gnpEHYOgDibR7vqb3ddea61xMd0mHT0TeR2uEvDjahSxFre0bTjjDKLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gypKUVDQ; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-709423bc2e5so1253501a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:46:49 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f6fabe9da3so13471285ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:46:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718945209; x=1719550009; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1718945212; x=1719550012; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NFw8MXYGxMp7L3cI809OeU/qg49sBCBLTir7UDQywWA=;
-        b=k7TKxjIas4fZ1idculBVHTekb/bq7S7+3TpGODMU4oOzTCG/S5VArp1FKn8dN34ylw
-         vOeNIjsdlhuMYr5A81Wg7SaozNFgP8usDMUjuqBH3+PcJep7XmEaikvIucMW/eQ70jo3
-         SLzR641GjFyX3O8/0i7fCj51bv5WjnRrd2OlA=
+        bh=Qs6kToBk8YjSTiZsPQaIgz5b7g4VfXjvffstHMdxZFU=;
+        b=gypKUVDQI7Ffbl1Wnu5kXb6vzVS7KgCFDOg35Gvy3gOBUINWAXQs1iw6d3VvzEAi+m
+         GQqiTDnctqGGfcHg/1x5jvz73sFrhJUH4+jIG8mgC4uJdhcr9HJzVWjw+x9Tz0sC6aIS
+         r1v0OK7YXl3hutUpZJXjrCWMOimuDKiwaAafI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718945209; x=1719550009;
+        d=1e100.net; s=20230601; t=1718945212; x=1719550012;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NFw8MXYGxMp7L3cI809OeU/qg49sBCBLTir7UDQywWA=;
-        b=fLoRLpd6XArvEOAqMs9HYq5DirCDdPuQdZqg4cZLuUT6x7NloRRF9BXFxTdITgiyby
-         MAaEVIKXpuEDTcz/LumRTU9QTakqq1lOCPdX+aZ/54fqn77hw5eo5g6EnaNiolbvQ557
-         uNQUR70L1WaDppBkXrpvFgw4TVRvLeJ51AkP97YFdc4JfKqTz86KZGTdApBKywGARiSv
-         iLzvkgqSbXJxjhfTsOlyLNdNkqSw8ANr1Fc442eJSCCT7lCvqz6CfeJ63aH9xbm8kSK0
-         nF3JumA0opdk2W2CXxVzUe5fhBGOhlQMNqwU/w7Ln6A2o57psksF3bjWLclGuziFJahj
-         zR3w==
-X-Forwarded-Encrypted: i=1; AJvYcCX8zz+u5pDFICpKfol1NatNeOWhR251K27dIPo9hKIIV8Rzz+ydu+4Fyu3bBf085vj8nrX42ddqdgsfQ3qbXVC09X1xO/9Yb6bDcpMA
-X-Gm-Message-State: AOJu0YwI296aWTiwjMcN32Ke10iEv5gjJtsmiVyk7WRVS/hUT2u5V2Vg
-	uIU1Ylt0w2earSy2EjB8jmYJcnyGO3Yc2SkXSHYkW6FP/fStTAe/Ee0M9M8cbw==
-X-Google-Smtp-Source: AGHT+IGGosIMTTEw+hzlCiXlOi3rnGUIGOyZxC4WoKJX3kiPR+CzNCJgS7NRP7b1zjwEU/GvUpWcrA==
-X-Received: by 2002:a05:6a21:3288:b0:1b4:da55:e1be with SMTP id adf61e73a8af0-1bcbb4172cdmr9568050637.14.1718945209235;
-        Thu, 20 Jun 2024 21:46:49 -0700 (PDT)
+        bh=Qs6kToBk8YjSTiZsPQaIgz5b7g4VfXjvffstHMdxZFU=;
+        b=xMo7Yx5FlCzILbaZJA0Kn6AeJQsMoTOIjf1UjkW5FUfvAvUGk2RkSOtBoek9qkfyQo
+         AKq1KPplrEuG9YleEGuETJEccXrxzdPXNFrM7ZnXpJo0Ht7cxIKxwiZsvKrXaeiY/YKA
+         9OOyX10iAzQqcN1V8GUJXul01v69Nb44iGV6ETWmmk04xqAwQuNNiGBdBq1NeNWiCkUf
+         4/kTvGqK+AVEVuKJydjVgt3+PqyPSv+1UEZW1U+LVrty5/M0CCBpwqf4Qip1kutU34HS
+         quNURYFORksSe+YmvhOba81tLufZmq1Ai7HO36oOcL6KObJDaK63MpNkvU9MSquWKqg8
+         dm4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW3kf2W+Ap73psYUQOAmN9msK41kmYkow5zTho0g3I8ee2T9DWs1v9X/KLxdQisFZ148tYQel049hkqLNs6XnbFzRdgwDT+Wtfjp/a9
+X-Gm-Message-State: AOJu0Ywh7+2jlX/vAXVX7Gkv+KQiE7Z85IKLyZotKbGEHQDs/LrFyjgO
+	BjQRXuSlvIw/L75WjMXrgFY88FcHC+88DQBT/2KqHmT3I34AV69Pen74VxtdYDEDluyLVgvtNBc
+	=
+X-Google-Smtp-Source: AGHT+IGBWYpF1pYJ9+icaGVYwbZfvFF5d0o4lVQn5+tcG9E+8MIgi+4DUMl+GZROA3IqIr4GWwFgNA==
+X-Received: by 2002:a17:902:ecd0:b0:1f9:eb2e:d32 with SMTP id d9443c01a7336-1f9eb2e0ffamr10912895ad.22.1718945211680;
+        Thu, 20 Jun 2024 21:46:51 -0700 (PDT)
 Received: from mstaudt.tok.corp.google.com ([2401:fa00:8f:203:3c9:e095:f93c:9c3c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbb5aa5sm4780755ad.271.2024.06.20.21.46.47
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbb5aa5sm4780755ad.271.2024.06.20.21.46.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 21:46:48 -0700 (PDT)
+        Thu, 20 Jun 2024 21:46:51 -0700 (PDT)
 From: Max Staudt <mstaudt@chromium.org>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>,
 	Bingbu Cao <bingbu.cao@intel.com>,
@@ -73,9 +74,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	Ricardo Ribalda <ribalda@chromium.org>,
 	Max Staudt <mstaudt@chromium.org>
-Subject: [PATCH v1 1/3] staging: media: ipu3: Drop superfluous check in imgu_vb2_stop_streaming()
-Date: Thu, 20 Jun 2024 23:45:41 +0900
-Message-ID: <20240620145820.3910239-2-mstaudt@chromium.org>
+Subject: [PATCH v1 2/3] staging: media: ipu3: Return buffers outside of needless locking
+Date: Thu, 20 Jun 2024 23:45:42 +0900
+Message-ID: <20240620145820.3910239-3-mstaudt@chromium.org>
 X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
 In-Reply-To: <20240620145820.3910239-1-mstaudt@chromium.org>
 References: <20240620145820.3910239-1-mstaudt@chromium.org>
@@ -87,10 +88,11 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The check for imgu_all_nodes_streaming() seems superfluous, since
-imgu->streaming can only become true once imgu_all_nodes_streaming()
-has been true. Hence, checking for imgu->streaming == true should
-imply imgu_all_nodes_streaming(), and therefore suffice.
+In imgu_vb2_start_streaming()'s error path, imgu_return_all_buffers()
+is outside the streaming_lock and after the call to
+video_device_pipeline_stop().
+
+Let's apply the same order in imgu_vb2_stop_streaming() as well.
 
 Signed-off-by: Max Staudt <mstaudt@chromium.org>
 ---
@@ -98,18 +100,21 @@ Signed-off-by: Max Staudt <mstaudt@chromium.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/media/ipu3/ipu3-v4l2.c b/drivers/staging/media/ipu3/ipu3-v4l2.c
-index 3df58eb3e882..541556037c42 100644
+index 541556037c42..3ff390b04e1a 100644
 --- a/drivers/staging/media/ipu3/ipu3-v4l2.c
 +++ b/drivers/staging/media/ipu3/ipu3-v4l2.c
-@@ -548,7 +548,7 @@ static void imgu_vb2_stop_streaming(struct vb2_queue *vq)
+@@ -556,10 +556,10 @@ static void imgu_vb2_stop_streaming(struct vb2_queue *vq)
+ 			imgu->streaming = false;
+ 	}
  
- 	mutex_lock(&imgu->streaming_lock);
- 	/* Was this the first node with streaming disabled? */
--	if (imgu->streaming && imgu_all_nodes_streaming(imgu, node)) {
-+	if (imgu->streaming) {
- 		/* Yes, really stop streaming now */
- 		dev_dbg(dev, "IMGU streaming is ready to stop");
- 		r = imgu_s_stream(imgu, false);
+-	imgu_return_all_buffers(imgu, node, VB2_BUF_STATE_ERROR);
+ 	mutex_unlock(&imgu->streaming_lock);
+ 
+ 	video_device_pipeline_stop(&node->vdev);
++	imgu_return_all_buffers(imgu, node, VB2_BUF_STATE_ERROR);
+ }
+ 
+ /******************** v4l2_ioctl_ops ********************/
 -- 
 2.45.2.627.g7a2c4fd464-goog
 
