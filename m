@@ -1,279 +1,232 @@
-Return-Path: <linux-kernel+bounces-222061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF8990FC59
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:53:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB0190FC5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336942849E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:53:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16E931C211A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3150F383A3;
-	Thu, 20 Jun 2024 05:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D889383B2;
+	Thu, 20 Jun 2024 05:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wCZqAwfS"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bb7GplBy"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2067.outbound.protection.outlook.com [40.107.220.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59B51B974;
-	Thu, 20 Jun 2024 05:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718862824; cv=none; b=r3db2Yv2YaaQemRfekJtWuSFcAS70VLuZVYLEZ+liweBsj7++asZU0wsi/XquuyxxA2sVzTFXU06+jKFCksuTvtzudTgDRtn2y/gGblHOLNZhb64dVjdD+SBRd6lcYSLkKFvFm1m+sJsNSncqXCu4Ls8M0LrRAk812HVRqKtTdI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718862824; c=relaxed/simple;
-	bh=LX1ae9Ucy6tE7OgwZDQqPWAi7bFXaRS6m4mE5A4vJyA=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=QRH2L4+8K83IUAOY6Nhyws1jbYyUOiOGVy2q9USJcpbOADgGq7SSf/GF+Bvt8NNcVK0dJlXTzNuE0r2p1Rp9cyyM1fkJA6eYvqpd3zhKQ6xGHPtY1d1KW7og0IC4LUEk98k2CSSARx9nHjkQKBeUiC3hnUYNv2ebp1TqKM4wS2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wCZqAwfS; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718862812; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
-	bh=eE9A/iipdQOkdKHI3+6IjQxFk248H2941ujTipyP1bU=;
-	b=wCZqAwfSAyyKvmcuF9FIhe9ksxifrbgkj/4Zb8jxtaP6ON7AgvqLyxXEZMyYL2pUAyx2eMT9bT3OGT2LpXa/jAQQQ7khkHzcXtBiOCa7F80s8smDeTh7cPqvq3t6spYovAR4E8gOSvc4KkHvFjOoSiLOeOOIwn6tDx3M/LZcJmM=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=wodemia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W8qDdKV_1718862810;
-Received: from smtpclient.apple(mailfrom:wodemia@linux.alibaba.com fp:SMTPD_---0W8qDdKV_1718862810)
-          by smtp.aliyun-inc.com;
-          Thu, 20 Jun 2024 13:53:31 +0800
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77ED2744C
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 05:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718862854; cv=fail; b=tZXoRizLBAVDCdNQG60fIie/ytlYH9FcdXPY2cKkl/oQDES2KmKOMRhyEmiTCQicsMihWdmoF9/27pPda5RBIzrfuYqM7cRRrYmKpRiwopkoPa+mhsAcP70+/7Ctu27i9w7JSagvgppaOLkNKYM+oKWMwL39H+UAQtsBQxP1TPE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718862854; c=relaxed/simple;
+	bh=KJTkyK4gCvk4o9zdonzlX6vyzzfpriBD/U+2iX39H/E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=W2ROc+u4RIPzrUIbbPWEOoe2S5sVKjyqw1mgl3gmFHcbOtLremnyNt+9XSXVGYSIljsqGmvJaFwumHLx4mexkmqaYuxwRm4BLXtU0Z2xaxl/P+f6OjbIzoebiKOJxWTATflRku7tiYCQeHBa+ouWmy4XsTzoiVAhQjJEk9EUmgc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bb7GplBy; arc=fail smtp.client-ip=40.107.220.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ArGKBWaz6ChZvPvD3lqJIGxI5rstXUioRnVyfoKnS3beUrTYEVLqiL7pks8EBFplD41x0ydBIvIzER0Ivf1/xqRgoeqB4bafm0bbBopHGqd2Ks1HX4R2Ufyu4dI7D0KgTXBz+I0Mg5+ch+qqGetq9OOR9ahEknYoE6vPwdG6GrywKRxNU5g7d5DQHicdkqoS9oqDWlOMaImnIFPyHbevhc3SHmefrKv3cffdhMALSLs9mQbQCJhActVNEJdUc2iKEf2AWKybY+fVOG13J7BWq3s3lyzGzih+TzexbUTfedfp+JaPP4jpqLgtN5FyORzxmao2GzxAukyw1mRHyFJP6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QUSRnrKOVqdC5dw2ThrZnedWjjo1Mk0mJ6GHjeVUclo=;
+ b=fNQ8J2S7r5YyLGfnaagl7ZRoAL3m/V1dCuXlrZGHGx9PDyQXxWJpP1KyKzXsPXA4WEuK0K0AhpyN1H26kMD0/yF6uEKBdRP8EW8Rpqvj9GqPMCnmZ6iBBHl0M4PSZqDB488QQQpuUQ/khyDBsaWHaaGwHTCq//+mPpu8bZ1M8FF1W7zXSPpVQ+lcPWkJ/uF7hMKCpYcBVff23y8UXh6euJItFRC6bawOJAc40rkQJlN5V8x+BvU0IogqBbLcvj7YmqHofBO6M+0o7161SdyU2W6M39X7HxnU/N2Js2cRZG5qzaYt01r8dashIk6Qf6+IOg9PHh2o1DJeyLX5ollGoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QUSRnrKOVqdC5dw2ThrZnedWjjo1Mk0mJ6GHjeVUclo=;
+ b=bb7GplBy7XCJeCvIEsZ8heV8x1JElHGNWkf9BhigWGxiW1tb6vOS26R4f2KL/HFpcKVEKjD56U7SQT5lA0pyn9XV22Rs2cyjGuVS9N/tdSuWbAZ2PhxvUnSYGxkZMBRWE8yBcPagU97cGGEW+SXYUeo2u6t6oWLGhHhMd0GarOk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA1PR12MB6043.namprd12.prod.outlook.com (2603:10b6:208:3d5::20)
+ by DS0PR12MB7557.namprd12.prod.outlook.com (2603:10b6:8:130::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Thu, 20 Jun
+ 2024 05:54:10 +0000
+Received: from IA1PR12MB6043.namprd12.prod.outlook.com
+ ([fe80::73e4:a06a:f737:e9be]) by IA1PR12MB6043.namprd12.prod.outlook.com
+ ([fe80::73e4:a06a:f737:e9be%6]) with mapi id 15.20.7677.030; Thu, 20 Jun 2024
+ 05:54:09 +0000
+Message-ID: <bdbb40da-faa5-4321-a58b-5fcffcbc818c@amd.com>
+Date: Thu, 20 Jun 2024 11:24:00 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] iommu/vt-d: Fix missed device TLB cache tag
+To: Baolu Lu <baolu.lu@linux.intel.com>, "Tian, Kevin"
+ <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240619015345.182773-1-baolu.lu@linux.intel.com>
+ <20240619164620.GN791043@ziepe.ca>
+ <1dfb467d-f25a-4270-8a36-a048f061e2aa@linux.intel.com>
+ <BN9PR11MB5276F76798E61D231D861A2F8CC82@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <976d4054-6306-4325-a112-5cf69b0c6f34@linux.intel.com>
+Content-Language: en-US
+From: Vasant Hegde <vasant.hegde@amd.com>
+In-Reply-To: <976d4054-6306-4325-a112-5cf69b0c6f34@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN3PR01CA0073.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:9a::6) To IA1PR12MB6043.namprd12.prod.outlook.com
+ (2603:10b6:208:3d5::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH v3] zh_CN/admin-guide: Add zh_CN/admin-guide/numastat.rst
- translation document
-From: Tao Zou <wodemia@linux.alibaba.com>
-In-Reply-To: <5f6bd005-81b4-4e26-ae43-803448a0dbbf@gmail.com>
-Date: Thu, 20 Jun 2024 13:53:29 +0800
-Cc: Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>,
- Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1FE78415-9A02-4859-9C11-6A46EAAC17E4@linux.alibaba.com>
-References: <tencent_6C54200469B1518482F88605A0980FBFD20A@qq.com>
- <5f6bd005-81b4-4e26-ae43-803448a0dbbf@gmail.com>
-To: Alex Shi <seakeel@gmail.com>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6043:EE_|DS0PR12MB7557:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb2bbddd-45ba-40bd-b884-08dc90ed675a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|1800799021|376011|366013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UWMxMHpvQUt6dFNvSWxPTWdIcWVGeGtSNVp3d0xRQndzV1NUVVpXcmRZVGcy?=
+ =?utf-8?B?MlZRRHplVEx3bzF2amY2ekx2aTdKb2E2QXhIcHB6TXlpVGEwTjhMSk04K0Jz?=
+ =?utf-8?B?S0xqenVKVFNTcWlBOXpDcVFxVVNGWFNHR3NFRmZIK0g2TlJyNXNBSkVjVjhW?=
+ =?utf-8?B?ZHl3blB3KytkT1Q4VzdtKzU3V08zalY4eEYvcUJhVUY2a2FiaW5YS3BQQmli?=
+ =?utf-8?B?cjBNTmY0bmVhZHBaZ01UbVhMZUZ4akdPb0ZxWkZCc3RjRm9yK011MkI4WHRF?=
+ =?utf-8?B?UnRuQWpvdElJRkF3V3FUMm52R0ZxVnowYVN3SHZ6M2pjTnEzOUNJN0k4bWtS?=
+ =?utf-8?B?QlV0Z3hIa2I0VkduNG50cUhnNG1IWjFDRHM2anhqbWRLZy9talJKaGk4UUJR?=
+ =?utf-8?B?Rjd1a244dkNPN1FLSmlMSzF0ZVpJdzJyVmFTVnZqWkRZRWRidnh4K3FFL2lL?=
+ =?utf-8?B?QWZ1dXBqRUJqYnRVNTRSdmxUMWRDSXI0STc1dk5lYklkTFR2NStZWFNBV3Bq?=
+ =?utf-8?B?S2VhWDFKcWtwRS8vb2xNNzJJc2dRaEY0eXdLSFBvRkFrUFFaQ0dldXU5bmdk?=
+ =?utf-8?B?QUo4YU1ialVwNTZUTTYybUhmcXRGSncvN0xWWXA0RmJrdFR4L3p4eU9xbVox?=
+ =?utf-8?B?TmVlMjFvM2tBcDlWb1dTbFUvbWhXWDI1dEdHaEF3aHlua2VQMkZNRzhHekwy?=
+ =?utf-8?B?ak1Jdk1hWHg2SXRiOFpJSHJ5UGRiWmc2c2ZOQXhwRGlBMW5SYkdxTkE0V2VK?=
+ =?utf-8?B?M2FMRzZEanRQSklTZE9Ha3FXNzZJM2YzYnZSSTZMNzc1djNDNjVqeldGN0tQ?=
+ =?utf-8?B?Z21VMlBCSUtDdnEzZUFkZ0xYeVVrd0VGeEVXRDF3KzYzZVpKR1VqeFVIbzRF?=
+ =?utf-8?B?T1owazk1UGgxQjVIb0FVU2hwWDFtcXhEK2NoT1M2WVdJWC80OXM1dk1yY1hV?=
+ =?utf-8?B?QTNiekppeTVNcDZTbTNpMGJoSVNCUHlpdTZoLy9ObnlqZWU2VE9Kd2s5Z3RB?=
+ =?utf-8?B?ZjdBaHRJc0I1MFN6WDU1RGFZY2p0NWNGMVNldlpYR2NnUHlyaWw0aG1kVEtI?=
+ =?utf-8?B?RWVtb3dSaWRpeHZDMmNEVUlZczFKSUF2V29ZRCtyQzlYM2MzRzRxWDI5Zm5C?=
+ =?utf-8?B?WHE2d3RxYisxczhqSEZGTkoya0NHQ05FbmtrbjRvZER2REtrTmJxRW9LaUR6?=
+ =?utf-8?B?VG1wanF1c3FaaFZTUW8wK2xaSjRZQlY4anp1U3dkRzRpdDQ5QlN0THpWU29V?=
+ =?utf-8?B?QTRrdFUvUDhFZkZkTW9xRW5xRjIrNThTV2h2MmFNWTZTSzBkZWZYMFR5Z3FE?=
+ =?utf-8?B?UTJPbzBEaFJrSFgvYWhwb3hJNk91MXFqU3RkUWM3Q2dzNkwzelFRK3dVVkw3?=
+ =?utf-8?B?VVQyaTNrUHk0ZmNEbjMvQmp0Q0pWS3B4NkJ1cjlsWDRJWWo1SXZyNE92Z1FO?=
+ =?utf-8?B?T3d3Wk5nbnNMOTMyaC9rUnpRVEc0U3Y0VWFiSTRYRnR3VVh3WlRjaU84dkFh?=
+ =?utf-8?B?YUxMT0xXMHZvbE9td05FNkt2czhhSThkSElqaDRiQnlQbHNJMjQzanFGekox?=
+ =?utf-8?B?dS8xaHNRcUNCMS9wMEJsZkVZS0FpMGZPNnc4UW40MlRoUG1FV2VXL2xQV3dW?=
+ =?utf-8?B?WnZJYUpvako3enBDY3VEY2xVNUd2NElZNWE5RHRBSE51V1pwdjRJT3d2YnlB?=
+ =?utf-8?B?UmYvWnd4aXpJcWVQSmNWYnhLYjhpRkQwWEVFeDEyT3ZvOTdqbStPa1hHYWZx?=
+ =?utf-8?Q?HORd7HJOIahUJ1oeR+7khqFZrCigLbaJsoeYXsp?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6043.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(366013);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bktkbHZjbUNGbm1MK2J2WUpEWHZ5Z29LT1Rua2dzQi85RE85NmhKWURqUU5u?=
+ =?utf-8?B?dkZ4cjR5cG45THAxa2QrdnBicjFtN1FYUGxTOG1oNjFBNCthNUhiK2lxZmpD?=
+ =?utf-8?B?akdXQmV4WEpOM1I0TUd0eWZpVmhkSDZZWElML09CNjJyOVdJay9kQzB3NDhP?=
+ =?utf-8?B?Wi9iUVlDcmRxdkZVaWFoOTJnckdpblB1MlBHcHNidFZMZUpEQ0xvK0p6QzNR?=
+ =?utf-8?B?UkhwcHlMb3gvZGliV3NHMWUxd0NzNDhhem0xUExLRGhZbTZlSG9UYVo3VHRy?=
+ =?utf-8?B?YkI1Vk5vTnBmOGFBZ1FZamFZSjRVcmRYRW95Q2JFcU1xRHpNTCt3T1JQRDUr?=
+ =?utf-8?B?Z25TS052KyszcytwUTZLampWN1JuWWlIWHJFVUZjdmhjTlBOQlFvY29VQnhO?=
+ =?utf-8?B?RFl6bnNnN0dCRW04ZVVPTnhwb0N3TTN6aWVOY2F6aUhjT3lsbjhBU0FDNGlI?=
+ =?utf-8?B?U0toalFCRFp5NUNLZGlpUmRqZ0lqT2tFUk00Wk4xTHBRMTVuRG1TMFRFa0Jt?=
+ =?utf-8?B?dG5CZGEzaCtRZisvOHBYQjVwQ2lsaHRkYmhDaUFZTXBKQ2d5ZVJxMmFpTE54?=
+ =?utf-8?B?SzJITXJoRHllMEpkWWdRZUxXMUZSTW1id0hWR2VvbXhBb2swcVdPWGdnMStr?=
+ =?utf-8?B?RldvaThBbURHcHZpUjJxTW0wcG9EZjRzSG5RbE1HMk5CQm1SZTRUZi9adjlX?=
+ =?utf-8?B?Ukl2N1RuUHYrY1U4ZmRoeWcreTJwaXVMTFJsYnJNK2NOTHJpRC81dDVuR1p6?=
+ =?utf-8?B?WnJqYUd6a29aNHZ5WmxVR1BjdENFS0N3dmZ2Z1hMR1ZGOHJLZCtjNDd6dDhN?=
+ =?utf-8?B?VDFabW53QW56U2Z4dzdIbCtJU0FJTWtiYlZRUVNLWEg5TmNXOFdHdk53VzAx?=
+ =?utf-8?B?Z0JIL3JKeDhMQ0RKMGlERzNYRkl0QVFDemh2U21NS1hEM212NXJ3eUFVRy9E?=
+ =?utf-8?B?WGxnTWYyUmV6Q2tBVXl4dnpSVXNzMTBMNlp0dWZWYUdUcEpEamhYZHVFWlM0?=
+ =?utf-8?B?MThRaUd5aUhBaUp4OVVnVEI2bG5uOStoNW9pazFTZVdPMmNYanZPVUdsdEJm?=
+ =?utf-8?B?SUkrNEdLMktrSW5OTzgrbUdIUXY3bkFoRm5Dd1dDQUNEZ0pBQzhwZmt4a29a?=
+ =?utf-8?B?VmxsdnNkK25JKzk2QVlPVEJwMEJVSWxSMmxPL1B0Q3NibDVYcm9xaWdTY0oy?=
+ =?utf-8?B?MlZkV3ViV09QYmIzSnN1WExPWWpEa2hidWg2TU1nV0pPRDhhL09uZmlaOXJa?=
+ =?utf-8?B?R3BmckN6eTJBeWg1QWZsa2FIVUxtVFB3aExDZGtGU2pUY3h4cTN3cUh6VU90?=
+ =?utf-8?B?ZjFrOGUxSDA5Z2F3ejlJV3BlRWJPbUpIUVA4aUYrOWtKMTN6d281a0NyeHRL?=
+ =?utf-8?B?V01IZ3NCeVFUMkhtdUxGV1RkQmErOTJhYUFGUmZ2T0FhT1RGTm1lK2FEa2dx?=
+ =?utf-8?B?VDlYL3FVLzJDVC8veEdoejVQVUhrQ1lMWCtzRUpZcUpzNUthaWJUTWZXRlND?=
+ =?utf-8?B?eVJaS1czZEpSV3RRTVNRaktrbWx2MU9TdTdzODhRem5TaXdTczZ0M01pZVNR?=
+ =?utf-8?B?aDEvWTE3bFR3aDZXVkdyZUpwVTVjYlowM1VWc3JzVysydjlIQnd3NHRjckM1?=
+ =?utf-8?B?dnNyV2NKZThUamhhUkVmNWUvcnJOYzBCTFhQSko2OC9OMmt4aE9LUldNRDBz?=
+ =?utf-8?B?REtTLzlKSkgyckh4bnA1Umt2SW9ramJKLzhNZ3V1RCtjaDRXYk53TDU3ZDFp?=
+ =?utf-8?B?OVJka1JPenl4L1Jaa1FLQk9rRmR2RVAwWHRqc3hOTTh4N2tGdXBsdXVLandG?=
+ =?utf-8?B?dFdwc3RzcmZ5d0JPMlFpTTZXeFA2a0kxditlR3N0VnF3VW1WbTdjc2d0ZUhm?=
+ =?utf-8?B?M29ScWFVRyszRFRuSVNsLzZENEIzM01LM0I2SUJwOGd0dU5uR01sS0Z4MHR3?=
+ =?utf-8?B?WTJnbmpOaEJmQllMRkdVN0x2TGw5czZXQWxOZUREc0RBamI2N09jTHlZNFhh?=
+ =?utf-8?B?RFdQZmVEdmJCa3J3cUZSQVhvQW9VcWY2V1FZZU54Q1llbzFmZzlCYUE3ckk5?=
+ =?utf-8?B?T1RSanhZZTc5ZC9Ma0JyVkZZWkZOWi84Y3loQnFibXVXZmRnK3d6OUQ4YTFR?=
+ =?utf-8?Q?zqSrqEX0n2KVo/i6JBy9pnF/v?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb2bbddd-45ba-40bd-b884-08dc90ed675a
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6043.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 05:54:09.8473
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: R23p6Ci98wFsjpQ/F9ZhFYomvf6iODsXFRhuLe8DgunatJqkhEMHAwO/RjgmcYL1yLk0LLMon9tr2+Eb9I+S9Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7557
 
-Hi, Alex. Thanks for your review.
-If you receive the duplicate mail, I am so sorry.
-Because the settings of Apple Email is incorrect, I send a email without =
-the text-plain format.
+Hi Baolu,
 
-2024=E5=B9=B46=E6=9C=8820=E6=97=A5 11:18=EF=BC=8CAlex Shi =
-<seakeel@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
->=20
->=20
-> On 6/20/24 11:14 AM, Tao Zou wrote:
->> From: Tao Zou <wodemia@linux.alibaba.com>
->>=20
->> Add translation zh_CN/admin-guide/numastat.rst and link it to
->> zh_CN/admin-guide/index.rst while clean its todo entry.
->>=20
->> commit 77691ee92d4a ("Documentation: update numastat explanation")
->>=20
->> Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
->> Reviewed-by: Yanteng Si <siyanteng@loongson.cn>
->> ---
->> .../translations/zh_CN/admin-guide/index.rst  |  2 +-
->> .../zh_CN/admin-guide/numastat.rst            | 48 =
-+++++++++++++++++++
->> 2 files changed, 49 insertions(+), 1 deletion(-)
->> create mode 100644 =
-Documentation/translations/zh_CN/admin-guide/numastat.rst
->>=20
->> diff --git a/Documentation/translations/zh_CN/admin-guide/index.rst =
-b/Documentation/translations/zh_CN/admin-guide/index.rst
->> index ac2960da33e6..0db80ab830a0 100644
->> --- a/Documentation/translations/zh_CN/admin-guide/index.rst
->> +++ b/Documentation/translations/zh_CN/admin-guide/index.rst
->> @@ -68,6 +68,7 @@ Todolist:
->>    cpu-load
->>    cputopology
->>    lockup-watchdogs
->> +   numastat
->>    unicode
->>    sysrq
->>    mm/index
->> @@ -109,7 +110,6 @@ Todolist:
->> *   module-signing
->> *   mono
->> *   namespaces/index
->> -*   numastat
->> *   parport
->> *   perf-security
->> *   pm/index
->> diff --git =
-a/Documentation/translations/zh_CN/admin-guide/numastat.rst =
-b/Documentation/translations/zh_CN/admin-guide/numastat.rst
->> new file mode 100644
->> index 000000000000..817043676c90
->> --- /dev/null
->> +++ b/Documentation/translations/zh_CN/admin-guide/numastat.rst
->> @@ -0,0 +1,48 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +.. include:: ../disclaimer-zh_CN.rst
->> +
->> +:Original: Documentation/admin-guide/numastat.rst
->> +:Translator: Tao Zou <wodemia@linux.alibaba.com>
->> +
->> +
->> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> +Numa=E7=AD=96=E7=95=A5=E5=91=BD=E4=B8=AD/=E6=9C=AA=E5=91=BD=E4=B8=AD=E7=
-=BB=9F=E8=AE=A1
->> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> +
->> +/sys/devices/system/node/node*/numastat
->> +
->> +=E6=89=80=E6=9C=89=E6=95=B0=E6=8D=AE=E7=9A=84=E5=8D=95=E4=BD=8D=E9=83=BD=
-=E6=98=AF=E9=A1=B5=E9=9D=A2=E3=80=82=E5=B7=A8=E9=A1=B5=E6=9C=89=E7=8B=AC=E7=
-=AB=8B=E7=9A=84=E8=AE=A1=E6=95=B0=E5=99=A8=E3=80=82
->> +
->> =
-+numa_hit=E3=80=81numa_miss=E5=92=8Cnuma_foreign=E8=AE=A1=E6=95=B0=E5=99=A8=
-=E5=8F=8D=E5=BA=94=E4=BA=86=E8=BF=9B=E7=A8=8B=E6=98=AF=E5=90=A6=E8=83=BD=E5=
-=A4=9F=E5=9C=A8=E4=BB=96=E4=BB=AC=E5=81=8F=E5=A5=BD=E7=9A=84=E8=8A=82=E7=82=
-=B9=E4=B8=8A=E5=88=86=E9=85=8D=E5=86=85=E5=AD=98=E3=80=82
->> =
-+=E5=A6=82=E6=9E=9C=E8=BF=9B=E7=A8=8B=E6=88=90=E5=8A=9F=E5=9C=A8=E5=81=8F=E5=
-=A5=BD=E7=9A=84=E8=8A=82=E7=82=B9=E4=B8=8A=E5=88=86=E9=85=8D=E5=86=85=E5=AD=
-=98=E5=88=99=E5=9C=A8=E5=81=8F=E5=A5=BD=E7=9A=84=E8=8A=82=E7=82=B9=E4=B8=8A=
-=E5=A2=9E=E5=8A=A0numa_hit=E8=AE=A1=E6=95=B0=EF=BC=8C=E5=90=A6=E5=88=99=E5=
-=9C=A8=E5=81=8F=E5=A5=BD=E7=9A=84=E8=8A=82=E7=82=B9=E4=B8=8A=E5=A2=9E
->> =
-+=E5=8A=A0numa_foreign=E8=AE=A1=E6=95=B0=E5=90=8C=E6=97=B6=E5=9C=A8=E5=AE=9E=
-=E9=99=85=E5=86=85=E5=AD=98=E5=88=86=E9=85=8D=E7=9A=84=E8=8A=82=E7=82=B9=E4=
-=B8=8A=E5=A2=9E=E5=8A=A0numa_miss=E8=AE=A1=E6=95=B0=E3=80=82
->> +
->> =
-+=E9=80=9A=E5=B8=B8=EF=BC=8C=E5=81=8F=E5=A5=BD=E7=9A=84=E8=8A=82=E7=82=B9=E6=
-=98=AF=E8=BF=9B=E7=A8=8B=E8=BF=90=E8=A1=8C=E6=89=80=E5=9C=A8=E7=9A=84CPU=E7=
-=9A=84=E6=9C=AC=E5=9C=B0=E8=8A=82=E7=82=B9=EF=BC=8C=E4=BD=86=E6=98=AF=E4=B8=
-=80=E4=BA=9B=E9=99=90=E5=88=B6=E5=8F=AF=E4=BB=A5=E6=94=B9=E5=8F=98=E8=BF=99=
-=E4=B8=80=E8=A1=8C=E4=B8=BA=EF=BC=8C=E6=AF=94=E5=A6=82=E5=86=85=E5=AD=98=E7=
-=AD=96=E7=95=A5=EF=BC=8C
->> =
-+=E5=9B=A0=E6=AD=A4=E5=90=8C=E6=A0=B7=E6=9C=89=E4=B8=A4=E4=B8=AA=E5=9F=BA=E4=
-=BA=8ECPU=E6=9C=AC=E5=9C=B0=E8=8A=82=E7=82=B9=E7=9A=84=E8=AE=A1=E6=95=B0=E5=
-=99=A8=E3=80=82local_node=E5=92=8Cnuma_hit=E7=B1=BB=E4=BC=BC=EF=BC=8C=E5=BD=
-=93=E5=9C=A8CPU=E6=89=80=E5=9C=A8=E7=9A=84=E8=8A=82=E7=82=B9=E4=B8=8A=E5=88=
-=86
->> =
-+=E9=85=8D=E5=86=85=E5=AD=98=E6=97=B6=E5=A2=9E=E5=8A=A0local_node=E8=AE=A1=
-=E6=95=B0=EF=BC=8Cother_node=E5=92=8Cnuma_miss=E7=B1=BB=E4=BC=BC=EF=BC=8C=E5=
-=BD=93=E5=9C=A8CPU=E6=89=80=E5=9C=A8=E8=8A=82=E7=82=B9=E4=B9=8B=E5=A4=96=E7=
-=9A=84=E5=85=B6=E4=BB=96=E8=8A=82=E7=82=B9
->> =
-+=E4=B8=8A=E6=88=90=E5=8A=9F=E5=88=86=E9=85=8D=E5=86=85=E5=AD=98=E6=97=B6=E5=
-=A2=9E=E5=8A=A0other_node=E8=AE=A1=E6=95=B0=E3=80=82=E9=9C=80=E8=A6=81=E6=B3=
-=A8=E6=84=8F=EF=BC=8C=E6=B2=A1=E6=9C=89=E5=92=8Cnuma_foreign=E5=AF=B9=E5=BA=
-=94=E7=9A=84=E8=AE=A1=E6=95=B0=E5=99=A8=E3=80=82
->> +
->> +=E6=9B=B4=E5=A4=9A=E7=BB=86=E8=8A=82=E5=86=85=E5=AE=B9:
->> +
->> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> +numa_hit        =
-=E4=B8=80=E4=B8=AA=E8=BF=9B=E7=A8=8B=E6=83=B3=E8=A6=81=E4=BB=8E=E6=9C=AC=E8=
-=8A=82=E7=82=B9=E5=88=86=E9=85=8D=E5=86=85=E5=AD=98=E5=B9=B6=E4=B8=94=E6=88=
-=90=E5=8A=9F=E3=80=82
->> +
->> +numa_miss       =
-=E4=B8=80=E4=B8=AA=E8=BF=9B=E7=A8=8B=E6=83=B3=E8=A6=81=E4=BB=8E=E5=85=B6=E4=
-=BB=96=E8=8A=82=E7=82=B9=E5=88=86=E9=85=8D=E5=86=85=E5=AD=98=E4=BD=86=E6=98=
-=AF=E6=9C=80=E7=BB=88=E5=9C=A8=E6=9C=AC=E8=8A=82=E7=82=B9=E5=AE=8C=E6=88=90=
-=E5=86=85=E5=AD=98=E5=88=86=E9=85=8D=E3=80=82
->> +
->> +numa_foreign    =
-=E4=B8=80=E4=B8=AA=E8=BF=9B=E7=A8=8B=E6=83=B3=E8=A6=81=E5=9C=A8=E6=9C=AC=E8=
-=8A=82=E7=82=B9=E5=88=86=E9=85=8D=E5=86=85=E5=AD=98=E4=BD=86=E6=98=AF=E6=9C=
-=80=E7=BB=88=E5=9C=A8=E5=85=B6=E4=BB=96=E8=8A=82=E7=82=B9=E5=AE=8C=E6=88=90=
-=E5=86=85=E5=AD=98=E5=88=86=E9=85=8D=E3=80=82
->> +
->> +local_node      =
-=E4=B8=80=E4=B8=AA=E8=BF=9B=E7=A8=8B=E8=BF=90=E8=A1=8C=E5=9C=A8=E6=9C=AC=E8=
-=8A=82=E7=82=B9=E7=9A=84CPU=E4=B8=8A=E5=B9=B6=E4=B8=94=E4=BB=8E=E6=9C=AC=E8=
-=8A=82=E7=82=B9=E4=B8=8A=E8=8E=B7=E5=BE=97=E4=BA=86=E5=86=85=E5=AD=98=E3=80=
-=82
->> +
->> +other_node      =
-=E4=B8=80=E4=B8=AA=E8=BF=9B=E7=A8=8B=E8=BF=90=E8=A1=8C=E5=9C=A8=E5=85=B6=E4=
-=BB=96=E8=8A=82=E7=82=B9=E7=9A=84CPU=E4=B8=8A=E4=BD=86=E6=98=AF=E5=9C=A8=E6=
-=9C=AC=E8=8A=82=E7=82=B9=E4=B8=8A=E8=8E=B7=E5=BE=97=E4=BA=86=E5=86=85=E5=AD=
-=98=E3=80=82
->> +
->> +interleave_hit  =
-=E5=86=85=E5=AD=98=E4=BA=A4=E5=8F=89=E5=88=86=E9=85=8D=E7=AD=96=E7=95=A5=E4=
-=B8=8B=E6=83=B3=E8=A6=81=E4=BB=8E=E6=9C=AC=E8=8A=82=E7=82=B9=E5=88=86=E9=85=
-=8D=E5=86=85=E5=AD=98=E5=B9=B6=E4=B8=94=E6=88=90=E5=8A=9F=E3=80=82
->> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> +
->> =
-+=E4=BD=A0=E5=8F=AF=E4=BB=A5=E4=BD=BF=E7=94=A8numactl=E8=BD=AF=E4=BB=B6=E5=
-=8C=85=EF=BC=88http://oss.sgi.com/projects/libnuma/=EF=BC=89=E4=B8=AD=E7=9A=
-=84numastat=E5=B7=A5=E5=85=B7
->> =
-+=E6=9D=A5=E8=BE=85=E5=8A=A9=E9=98=85=E8=AF=BB=E3=80=82=E9=9C=80=E8=A6=81=E6=
-=B3=A8=E6=84=8F=EF=BC=8Cnumastat=E5=B7=A5=E5=85=B7=E7=9B=AE=E5=89=8D=E5=8F=
-=AA=E5=9C=A8=E6=9C=89=E5=B0=91=E9=87=8FCPU=E7=9A=84=E6=9C=BA=E5=99=A8=E4=B8=
-=8A=E8=BF=90=E8=A1=8C=E8=89=AF=E5=A5=BD=E3=80=82
->> +
->> =
-+=E9=9C=80=E8=A6=81=E6=B3=A8=E6=84=8F=EF=BC=8C=E5=9C=A8=E6=9C=89=E6=97=A0=E5=
-=86=85=E5=AD=98=E8=8A=82=E7=82=B9=EF=BC=88=E4=B8=80=E4=B8=AA=E8=8A=82=E7=82=
-=B9=E6=9C=89CPUs=E4=BD=86=E6=98=AF=E6=B2=A1=E6=9C=89=E5=86=85=E5=AD=98=EF=BC=
-=89=E7=9A=84=E7=B3=BB=E7=BB=9F=E4=B8=ADnuma_hit=EF=BC=8Cnuma_miss=E5=92=8C=
+On 6/20/2024 8:43 AM, Baolu Lu wrote:
+> On 6/20/24 11:04 AM, Tian, Kevin wrote:
+>>> From: Baolu Lu<baolu.lu@linux.intel.com>
+>>> Sent: Thursday, June 20, 2024 8:50 AM
+>>>
+>>> On 6/20/24 12:46 AM, Jason Gunthorpe wrote:
+>>>> On Wed, Jun 19, 2024 at 09:53:45AM +0800, Lu Baolu wrote:
+>>>>> When a domain is attached to a device, the required cache tags are
+>>>>> assigned to the domain so that the related caches could be flushed
+>>>>> whenever it is needed. The device TLB cache tag is created selectively
+>>>>> by checking the ats_enabled field of the device's iommu data. This
+>>>>> creates an ordered dependency between attach and ATS enabling paths.
+>>>>>
+>>>>> The device TLB cache tag will not be created if device's ATS is enabled
+>>>>> after the domain attachment. This causes some devices, for example
+>>>>> intel_vpu, to malfunction.
+>>>> What? How is this even possible?
+>>>>
+>>>> ATS is controlled exclusively by the iommu driver, how can it be
+>>>> changed without the driver knowing??
+>>> Yes. ATS is currently controlled exclusively by the iommu driver. The
+>>> intel iommu driver enables PCI/ATS on the probe path after the default
+>>> domain is attached. That means when the default domain is attached to
+>>> the device, the ats_supported is set, but ats_enabled is cleared. So the
+>>> cache tag for the device TLB won't be created.
+>> I don't quite get why this is specific to the probe path and the default
+>> domain.
+> 
+> The issue is with the domain attaching device path, not specific to the
+> probe or default domain.
+> 
+>>
+>> dmar_domain_attach_device()
+>> {
+>>     cache_tag_assign_domain();
+>>     //setup pasid entry for pt/1st/2nd
+>>     iommu_enable_pci_caps();
+>> }
+>>
+>> seems that for all domain attaches above is coded in a wrong order
+>> as ats is enabled after the cache tag is assigned.
+> 
+> Yes, exactly. But simply changing the order isn't future-proof,
+> considering ATS control will eventually be moved out of iommu drivers.
 
->=20
-> s/=E5=9C=A8=E6=9C=89=E6=97=A0=E5=86=85=E5=AD=98=E8=8A=82=E7=82=B9/=E5=AD=
-=98=E5=9C=A8=E6=97=A0=E5=86=85=E5=AD=98=E8=8A=82=E7=82=B9/ =EF=BC=9F
->=20
-> Thanks
-> Alex
-You pointed out a readability issue. Maybe =
-"=E5=9C=A8=E5=8C=85=E5=90=AB=E6=97=A0=E5=86=85=E5=AD=98=E8=8A=82=E7=82=B9=EF=
-=BC=88=E4=B8=80=E4=B8=AA=E8=8A=82=E7=82=B9=E6=9C=89CPUs=E4=BD=86=E6=98=AF=E6=
-=B2=A1=E6=9C=89=E5=86=85=E5=AD=98=EF=BC=89=E7=9A=84=E7=B3=BB=E7=BB=9F=E4=B8=
-=AD" is better=EF=BC=9F
+[Unrelated to this patch]
 
-Thanks.
-Tao Zou
->> =
-+numa_foreign=E7=BB=9F=E8=AE=A1=E6=95=B0=E6=8D=AE=E4=BC=9A=E8=A2=AB=E4=B8=A5=
-=E9=87=8D=E6=9B=B2=E8=A7=A3=E3=80=82=E5=9C=A8=E5=BD=93=E5=89=8D=E7=9A=84=E5=
-=86=85=E6=A0=B8=E5=AE=9E=E7=8E=B0=E4=B8=AD=EF=BC=8C=E5=A6=82=E6=9E=9C=E4=B8=
-=80=E4=B8=AA=E8=BF=9B=E7=A8=8B=E5=81=8F=E5=A5=BD=E4=B8=80=E4=B8=AA=E6=97=A0=
-=E5=86=85=E5=AD=98=E8=8A=82=E7=82=B9=EF=BC=88=E5=8D=B3
->> =
-+=E8=BF=9B=E7=A8=8B=E6=AD=A3=E5=9C=A8=E8=AF=A5=E8=8A=82=E7=82=B9=E7=9A=84=E4=
-=B8=80=E4=B8=AA=E6=9C=AC=E5=9C=B0CPU=E4=B8=8A=E8=BF=90=E8=A1=8C=EF=BC=89=EF=
-=BC=8C=E5=AE=9E=E9=99=85=E4=B8=8A=E4=BC=9A=E4=BB=8E=E8=B7=9D=E7=A6=BB=E6=9C=
-=80=E8=BF=91=E7=9A=84=E6=9C=89=E5=86=85=E5=AD=98=E8=8A=82=E7=82=B9=E4=B8=AD=
-=E6=8C=91=E9=80=89=E4=B8=80=E4=B8=AA=E4=BD=9C=E4=B8=BA=E5=81=8F=E5=A5=BD=E8=
-=8A=82=E7=82=B9=E3=80=82
->> =
-+=E7=BB=93=E6=9E=9C=E4=BC=9A=E5=AF=BC=E8=87=B4=E7=9B=B8=E5=BA=94=E7=9A=84=E5=
-=86=85=E5=AD=98=E5=88=86=E9=85=8D=E4=B8=8D=E4=BC=9A=E5=A2=9E=E5=8A=A0=E6=97=
-=A0=E5=86=85=E5=AD=98=E8=8A=82=E7=82=B9=E4=B8=8A=E7=9A=84numa_foreign=E8=AE=
-=A1=E6=95=B0=E5=99=A8=EF=BC=8C=E5=B9=B6=E4=B8=94=E4=BC=9A=E6=89=AD=E6=9B=B2=
-=E6=9C=80=E8=BF=91=E8=8A=82=E7=82=B9=E4=B8=8A=E7=9A=84
->> +numa_hit=E3=80=81numa_miss=E5=92=8Cnuma_foreign=E7=BB=9F=E8=AE=A1=E6=95=
-=B0=E6=8D=AE=E3=80=82
+You mean ATS setup will be moved to individual device driver? Is there any
+reason for that?
 
+
+-Vasant
 
 
