@@ -1,150 +1,120 @@
-Return-Path: <linux-kernel+bounces-222331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC1290FFC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:01:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 028F390FFC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D171F2196F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:01:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FC04281ECA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9002A19E836;
-	Thu, 20 Jun 2024 09:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CE719DF7B;
+	Thu, 20 Jun 2024 09:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u7rfbikp"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="RXdVMOvU"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C88850288
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C4E46426;
+	Thu, 20 Jun 2024 09:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718874034; cv=none; b=nIB2pD82X3m6MQmSci95lL0ZF+cPr8AHOAtXgLkX8pNvjFUKrNIactmc99hdZePmQzej/WAXozeckyp9wscJGLObaZ02ijt7iIm5wNe2PNAC1mD2JRn03V5yvOz0anqWpZ8Cl25+6FUlYw25fFZH1l1TzdhhNnQphaJ8pqjRGbU=
+	t=1718874033; cv=none; b=lb4ny+eCn81vHTMbd8xZCV13hLIg6h1XBBs/PWNZNiG1/Omq5Xyji/XgYSsV4nlgUSlvzccUcPgJ+KC22n0ohWWnBXzHmQW4S9o3aPQREjOK+50v+alw4CIJ2igL2423Vb+/POKKlCgQuw3BNIlS6K2lkD8odTVGmBc90MY5NOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718874034; c=relaxed/simple;
-	bh=garobEQZrgEddQebq3ve+QulKtp6U6J+7KW9+rA30+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uFLjswU2R2eDBrEoQAihWikV4CYcSt5G4CiwEMplhQcF7rRTR/lIK5rgLdczhQ5R8xtKAqRWE894zNc6CvQTLTF5+YkmejIbw3Qo7PH/Q5xtz1P1sdzE0nNWyAfSsXJwIKhKjjKlWOuqYjCI1h8PM4J/qRNdB60obZpNtWKsX+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u7rfbikp; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1718874033; c=relaxed/simple;
+	bh=WUzxI6t79r6gnwI4tifBVLKDeA34ObvBVLljTtoAA/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tb2jX0sSA208qgAL8zA7vTKQ/LKqmoHSyihrjSJKO/45RAJ4iqYl3hWc8lIYvefJWvFPoed49NN5Ca5wxGJtC0SOR99PdMkwMTq/V6e6U86h3Jx1gkz1Py7YSNbQ000kY03MLPbyll4vYmkW6yRpXZfq5/a3ARtg4OstURU79s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=RXdVMOvU; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pU0mtXswrga3e9qk/Sn+GsOMld6jBWrUO4iVxP5PfSM=; b=u7rfbikpRrqa0cE51d/OFT6Pss
-	nRqu71wQxeGAGuPzhIrvha4KS8/xAOMT2hYCkjspJEYivAiFjqaC/aYutYPfiZyTYruU7cDKBYOYN
-	PQAp7xJAnYsu4UODtJAMegyiOTBkmGah14Gs1wbKx0gDyhOkwxwCqxPhUJHbtT2xaddm/kYChIOBN
-	nwpr2SOoKgGdiLjePr7L4klPPVARCRHdXLqoWpm/j2isGhvhJExi5zaMYkz4C53tjqyGKajhLZabj
-	snRoi6gmQPX8p7TZcVNtSevg85IpR7Tx3dhK+3uEEFlI/gYPp8Rx5QQLj4KequIPMRkE0Le/oyu22
-	hTr+AY3Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sKDee-00000005ryO-1rAC;
-	Thu, 20 Jun 2024 09:00:28 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1A502300CB9; Thu, 20 Jun 2024 11:00:28 +0200 (CEST)
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=p8Vz3ZIFAxJUslr3jeGWvyTGoo/lwPYvqRqFu8M667M=; t=1718874032;
+	x=1719306032; b=RXdVMOvUnogl1XlzQhXs8C4xB9Jyy9R8ax5vAVMf/jH9Mgcj/jypoczbXG0Y/
+	zvspr51rfNj5wIh1cbmPuhdFfNhWPlTybdG4cxAGZPJgqw3WWuNhCkh8SfPMGeGWLT9S7SruwkPli
+	vpI+m13aIdKNWxYDThPhL8OQUYiQFBi7C/FwHFH/VSLFSQbhKdJHrNF0m401OzkjGCw+hF/BAqLi5
+	RMkeJl+HmBImMBB7R2TWPQF71AfJh8i5dldqYvq6vX4SfBjEvkGYV88cghss+ZTvBtmVeSlNGFxg8
+	QpRSMqhax4+I/ej0Szl4XyUTSDyEyCAYF/av+iwzLYD0+OKJVw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sKDef-0007yq-CM; Thu, 20 Jun 2024 11:00:29 +0200
+Message-ID: <eeade9cf-d30d-4c7a-ab42-97b9459268d0@leemhuis.info>
 Date: Thu, 20 Jun 2024 11:00:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: kan.liang@linux.intel.com
-Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-	ak@linux.intel.com, eranian@google.com
-Subject: Re: [RESEND PATCH 09/12] perf: Extend perf_output_read
-Message-ID: <20240620090028.GW31592@noisy.programming.kicks-ass.net>
-References: <20240618151044.1318612-1-kan.liang@linux.intel.com>
- <20240618151044.1318612-10-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618151044.1318612-10-kan.liang@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: verify/bisect: Fix rendered version URL
+To: Diederik de Haas <didi.debian@cknow.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240620081355.11549-1-didi.debian@cknow.org>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <20240620081355.11549-1-didi.debian@cknow.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1718874032;4585ba94;
+X-HE-SMSGID: 1sKDef-0007yq-CM
 
-On Tue, Jun 18, 2024 at 08:10:41AM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> The event may have been updated in the PMU-specific implementation,
-> e.g., Intel PEBS counters snapshotting. The common code should not
-> read and overwrite the value.
-> 
-> The PERF_SAMPLE_READ in the data->sample_type can be used to detect
-> whether the PMU-specific value is available. If yes, avoid the
-> pmu->read() in the common code.
-> 
-> Reviewed-by: Andi Kleen <ak@linux.intel.com>
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> ---
->  kernel/events/core.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 8f908f077935..733e507948e6 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -7243,7 +7243,7 @@ static void perf_output_read_one(struct perf_output_handle *handle,
->  
->  static void perf_output_read_group(struct perf_output_handle *handle,
->  			    struct perf_event *event,
-> -			    u64 enabled, u64 running)
-> +			    u64 enabled, u64 running, bool read)
->  {
->  	struct perf_event *leader = event->group_leader, *sub;
->  	u64 read_format = event->attr.read_format;
-> @@ -7265,7 +7265,7 @@ static void perf_output_read_group(struct perf_output_handle *handle,
->  	if (read_format & PERF_FORMAT_TOTAL_TIME_RUNNING)
->  		values[n++] = running;
->  
-> -	if ((leader != event) &&
-> +	if ((leader != event) && read &&
->  	    (leader->state == PERF_EVENT_STATE_ACTIVE))
->  		leader->pmu->read(leader);
->  
-> @@ -7280,7 +7280,7 @@ static void perf_output_read_group(struct perf_output_handle *handle,
->  	for_each_sibling_event(sub, leader) {
->  		n = 0;
->  
-> -		if ((sub != event) &&
-> +		if ((sub != event) && read &&
->  		    (sub->state == PERF_EVENT_STATE_ACTIVE))
->  			sub->pmu->read(sub);
->  
-> @@ -7307,7 +7307,8 @@ static void perf_output_read_group(struct perf_output_handle *handle,
->   * on another CPU, from interrupt/NMI context.
->   */
->  static void perf_output_read(struct perf_output_handle *handle,
-> -			     struct perf_event *event)
-> +			     struct perf_event *event,
-> +			     bool read)
->  {
->  	u64 enabled = 0, running = 0, now;
->  	u64 read_format = event->attr.read_format;
-> @@ -7325,7 +7326,7 @@ static void perf_output_read(struct perf_output_handle *handle,
->  		calc_timer_values(event, &now, &enabled, &running);
->  
->  	if (event->attr.read_format & PERF_FORMAT_GROUP)
-> -		perf_output_read_group(handle, event, enabled, running);
-> +		perf_output_read_group(handle, event, enabled, running, read);
->  	else
->  		perf_output_read_one(handle, event, enabled, running);
->  }
-> @@ -7367,7 +7368,7 @@ void perf_output_sample(struct perf_output_handle *handle,
->  		perf_output_put(handle, data->period);
->  
->  	if (sample_type & PERF_SAMPLE_READ)
-> -		perf_output_read(handle, event);
-> +		perf_output_read(handle, event, !(data->sample_flags & PERF_SAMPLE_READ));
->  
->  	if (sample_type & PERF_SAMPLE_CALLCHAIN) {
->  		int size = 1;
+On 20.06.24 10:13, Diederik de Haas wrote:
+> -   https://docs.kernel.org/admin-guide/verify-bugs-and-bisect-regressions.rst.html
+> +   https://docs.kernel.org/admin-guide/verify-bugs-and-bisect-regressions.html
 
-this can't be right. The output is order sensitive. If a
-PERF_SAMPLE_READ is part of the PERF_RECORD_SAMPLE, it must be in this
-location.
+Many thx.
+
+Reviewed-by: Thorsten Leemhuis <linux@leemhuis.info>
+
+Ciao, Thorsten
 
