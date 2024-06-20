@@ -1,101 +1,121 @@
-Return-Path: <linux-kernel+bounces-223482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DBC9113B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:50:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C0B9113B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30E0AB21F83
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:50:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 037921C2210F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B7474267;
-	Thu, 20 Jun 2024 20:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D16B757E8;
+	Thu, 20 Jun 2024 20:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="ALJdfkXV"
-Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CA73D3B8;
-	Thu, 20 Jun 2024 20:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PrMeuBDI"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5F83D0C5;
+	Thu, 20 Jun 2024 20:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718916618; cv=none; b=OcLXR+gDKLZ1vwHCwveoZNxneJAsHnlHaZkoo2r8ERzTFcVeJH2Dmd7HjeVzS36YnAsMPk1I3kJpJsciMCprfYJRbw6xh5kc7mO7nK1D/lmeQ5tUgOXGVdbALe1bjivgImBeqMx8H4XCAT/K9tIKAlwknkROlGoAnT5S5SgUPeM=
+	t=1718916676; cv=none; b=C7gpMZCNMYVdql4to2WgC7+sF3r9z3O+FipOjj8fWj7RrPsfDh38N6h8LUegrCZLW2Wex8nMHNV+CGCEQVPNPX/ZrgaW1gr7IkAYm2g2DsNWZ63860U9Ludq3M3jp3k5oSZpqQsGocCvr9SSESzwU5spShLIdo75MHyg+DHuD40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718916618; c=relaxed/simple;
-	bh=AvGVFTfgQ8CQv1Ova9G8llKmivCTuZfd3jl734L9bIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TggXoK4Q1dS4G3j/kMm6dHRd116TfXOEA7c3wU2lS8eT7kg3f2NhKJCr1RejTTc1SCpkExX2thyxAYWu/EK/lLsVIbDRI7dnXIONTA4ZHvgwTRbaOOyYGX6454Ge4ysiG3CSI5SENOQycLhjztzZqjiEOGysKknDz5R9nRNeyxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=ALJdfkXV; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 8A5F214C2DD;
-	Thu, 20 Jun 2024 22:50:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1718916615;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VLVCmMswFYW/yptkreRA4q0clrbQSOEC9H3udI4LuGU=;
-	b=ALJdfkXV4jYbTnxVURz9T/eVwi75e+Jpzd/NnEdNtowVW0EPginJ+UR6WjORHnH38deSjd
-	uJwnIU9Cj7KamD9RuKu8/mGuiDvl4zepXXeiSbVTriN0efe9Ugz46seuDEdUL9p7r7KRLr
-	P7bpbNTjSYBxjIuPaVX1MWKzMKecMwktnyLawuNoID0Mbc/ddEMnIWkpd3XG+6pyYH418a
-	3W/N9t5Qfs/oTZaI9U3i3KvnPFWdkdWReTPrI5Iv2PcSTYiBLmAJf7px1y70cBjtciXJPK
-	i5woghwPVaymjTFrWRyF7a/0NAHSSLe6Bk1rVFeZVi+wKnfbRR0RGgGH6UokHw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 39921304;
-	Thu, 20 Jun 2024 20:50:04 +0000 (UTC)
-Date: Fri, 21 Jun 2024 05:49:49 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [PATCH 06/17] 9p: Enable multipage folios
-Message-ID: <ZnSV7TmLpmucb8el@codewreck.org>
-References: <20240620173137.610345-1-dhowells@redhat.com>
- <20240620173137.610345-7-dhowells@redhat.com>
- <ZnSSaeLo8dY7cu3W@codewreck.org>
+	s=arc-20240116; t=1718916676; c=relaxed/simple;
+	bh=Ry01bOUKNY/YQmuWaeYzO1vGrODt3sYJFKDL/k+WQSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N95ee6mlvFRuzXkfy/OhNLQ9DM2T70GchS/XW5xOw+fpFSyClza2N5dEt/3pcbRvct0F0dqKYIlkRujhHWfCIAQShjYi0OuFI2mgEDFxB8inZPblky9L1o5lLapic1gzJyHRwAVfgA8+BGKZjHx9HB4B/nmE0szNfKtPpqWy1CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PrMeuBDI; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a6efe62f583so134951166b.3;
+        Thu, 20 Jun 2024 13:51:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718916673; x=1719521473; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bMfg/qkKGleDW4zNFv4Ac6ssqV1biO17IVk9rT8wxEQ=;
+        b=PrMeuBDI8eQZG1DwRLxQvQhdL9sIFu1/MMGch99A6YLZPlj0Xo4BBACyPJhkPwJMrK
+         bvKMOy7n+ifyvBQNWCRFScHOskQUfF4QaJHtKJB2C474wA46Ui5TO1GuTT/fyNb+ruo7
+         fhHfHGDJqBnVc/V31VZhjj252uDZ9pgmxfcCKYFYb3cYGws4MRxqHnCZD2rQ3jdUabga
+         Q+x1x/iknGLTYmZNiLD1gXXE7vd2wiehQ1/8gih3NgycS0EgcWUH1YNQhypCAqahjaP8
+         dQs7TgD2eo1JZ5gv153MJp1+e5IgwolLd12SGDlyuMMfgE5hc74Kap3IEWA46QQu/X+G
+         whuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718916673; x=1719521473;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bMfg/qkKGleDW4zNFv4Ac6ssqV1biO17IVk9rT8wxEQ=;
+        b=wxLyjhNfxPO9RDYDq1Z2dMQujdjfnI7Hwcql6QBldfIRelNwB1nKTILtOarZ8BOs8d
+         WnxlI6CMgCt7IHluQ1bq2zWxLfLpple064fGumyktA2mVk6RGrDSYYUYt+FQX+0TiyWD
+         +nPx8XuU4KVmVD0MCI0TEQ/wttuX0ykjJfTE0W9BaB4OAvrMFDg01xUyI3Xz72cWrFlz
+         WpLsDBpzlcBfkuqKz/0W/Qcv884OvmMWijtaxtd0qKXzHOuI+TJFKQKXP9lYRfel4DHO
+         +8z8a0XcqGwfmD0VzgiW27gRvRbi+zjU0VVNELkJdcGJptwVwDikGr688x+0Qa2EiKyM
+         JL/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWVxUbTzdyx8hEkX+ZnRIkMGvK/c23ITMDUYAWYccz9PwKEyp6rECymvNQ9eR4LnZAY64V4NYZZgCsZSD3gGl+K4/IsQWMTE+zO3WFJnoNZi/C+pWqeeoE0akAkoR7rFwL8dzSW6wd0
+X-Gm-Message-State: AOJu0Yz3m+Sc9esANEtsSvJplkmpgeis9WU0DxQFAa5tHxhDvGo7gK1J
+	4Ytw0SzXLC/tHKPW4ccCcyRU5BCuqaIwHlOEnxRviaeHETM/O3fD
+X-Google-Smtp-Source: AGHT+IG//b73tseVzwNg+xVJretRngg3yCf4usec6X2lUp2ROKFdiPIU2ImZRLJZ2lUZ2A8NYn9s9w==
+X-Received: by 2002:a17:907:7ea8:b0:a6c:8b01:3f78 with SMTP id a640c23a62f3a-a6fab607b67mr517070266b.9.1718916672618;
+        Thu, 20 Jun 2024 13:51:12 -0700 (PDT)
+Received: from ?IPV6:2a02:a466:68ed:1:d31:9797:59c3:1c58? (2a02-a466-68ed-1-d31-9797-59c3-1c58.fixed6.kpn.net. [2a02:a466:68ed:1:d31:9797:59c3:1c58])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48b17esm9024566b.88.2024.06.20.13.51.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 13:51:12 -0700 (PDT)
+Message-ID: <10e2c4d7-f033-46cf-819e-22977e2359eb@gmail.com>
+Date: Thu, 20 Jun 2024 22:51:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZnSSaeLo8dY7cu3W@codewreck.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] usb: gadget: u_ether: revert netif_device_detach
+ change
+To: Ferry Toth <ftoth@exalondelft.nl>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hardik Gajjar <hgajjar@de.adit-jv.com>,
+ "Ricardo B. Marliere" <ricardo@marliere.net>, Kees Cook <kees@kernel.org>,
+ Richard Acayan <mailingradian@gmail.com>,
+ Linyu Yuan <quic_linyyuan@quicinc.com>, Justin Stitt
+ <justinstitt@google.com>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, s.hauer@pengutronix.de,
+ jonathanh@nvidia.com, paul@crapouillou.net, quic_eserrao@quicinc.com,
+ erosca@de.adit-jv.com, regressions@leemhuis.info
+References: <20240620203954.20254-1-ftoth@exalondelft.nl>
+Content-Language: en-US
+From: Ferry Toth <fntoth@gmail.com>
+In-Reply-To: <20240620203954.20254-1-ftoth@exalondelft.nl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Dominique Martinet wrote on Fri, Jun 21, 2024 at 05:34:49AM +0900:
-> David Howells wrote on Thu, Jun 20, 2024 at 06:31:24PM +0100:
-> > Enable support for multipage folios on the 9P filesystem.  This is all
-> > handled through netfslib and is already enabled on AFS and CIFS also.
-> 
-> Since this is fairly unrelated to the other patches let's take this
-> through the 9p tree as well - I'll run some quick tests to verify writes
-> go from 4k to something larger
+Oops, used the wrong hash. It's late... Sorry
 
-(huh, my memory is rotten, we were already aggregating writes at some
-point without this. Oh, well, at least it doesn't seem to blow up)
+v3 follows.
 
-> and it doesn't blow up immediately and push it out for 6.11
-
-Queued for -next.
-
--- 
-Dominique Martinet | Asmadeus
+Op 20-06-2024 om 22:38 schreef Ferry Toth:
+> usb: gadget: u_ether: revert netif_device_detach change
+>
+> As agreed with the author, the netif_device_detach change is going to be reverted by
+> this series, so we will collaborate on a new one in the future that
+> brings no regressions.
+>
+> v2:
+> - Add missing SoB (Greg)
+>
+> Ferry Toth (2):
+>    Revert "usb: gadget: u_ether: Re-attach netif device to mirror
+>      detachment"
+>    Revert "usb: gadget: u_ether: Replace netif_stop_queue with
+>      netif_device_detach"
+>
+>   drivers/usb/gadget/function/u_ether.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+>
 
