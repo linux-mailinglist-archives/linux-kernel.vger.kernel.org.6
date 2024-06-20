@@ -1,317 +1,213 @@
-Return-Path: <linux-kernel+bounces-222086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638F890FCA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:25:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB1790FCA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA466285DA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:25:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98F192851F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7843C485;
-	Thu, 20 Jun 2024 06:25:23 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302273BBEB;
+	Thu, 20 Jun 2024 06:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Vl91qYy2"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54DF628
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A94A3B192
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718864722; cv=none; b=c0iostZ8WfhDfu8QKtMZSjK08EjYj61gb89suIbtsGYPX9RDAyHqAOxHZigCXN5bH5zkZo159u/cm29/k7iCYITJ0lm+rJ+H486I6Pwc37Tiw3zRwR8OJL2OO4dS8AWTfxS6exjiL2XqvOGLgN1FVNcxBiJATu/Yujf8KazHzUw=
+	t=1718864759; cv=none; b=cDt0NoNkrkCcuzJaSO15UryaLEgSLYz3hMLDSwnEMeC3wHwDW+wXdEpmqIVFXtcJ+g7+EJbxoOtrOgnoXXBF9irxLFA2DLLRPSQRS5ySF2yU22QChZafpuE7AY5k86ZPqLyke2AABPpZncBLInwXwKzijg9R600vEgO/WxAJfw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718864722; c=relaxed/simple;
-	bh=fULNwszqJaEApS1a+eE+vu/noDOAwwjIjKgLNouY4gc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=t2LlrCYvzpUcCeJmakU3eE4XVb4I3zJndXxHYEdsIOGCZQqZREwL/eHHqa5zNK15gbJi4GF7Z+/myz9rn83hJDVnGR2cFIPfv1zKfznSt55/O+galVXviREfS44MXG8FEz11fAHuoZGgRPJPpr6YF970mCJvyLbW1tzLqnn7ytA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-375e45a4110so5855175ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 23:25:20 -0700 (PDT)
+	s=arc-20240116; t=1718864759; c=relaxed/simple;
+	bh=NHziX5an/WXByp/RwkwtaKPhEn+FIv0/em+X6/IR/tM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZnRv2yxquDhR+4+3NKjFE00kP2aipha2sQE/rpmhpGjGhlcZcn3mdUi2OBjFBBj+pD7XDu+HSLXf3JPUyVrPkvwaKTmRyNyG62l6U7Ta7TOD96GRyYazkIl7Lx/CxOr4GplNqFTSpQDfKKg8JfCLdqXHhomwNDY/kH9ZPTdfPGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Vl91qYy2; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52bc27cfb14so635075e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 23:25:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1718864756; x=1719469556; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BfOsoI6voHcnzMk74pjD4g6YebgYICnBJRD+PHZtwlQ=;
+        b=Vl91qYy2n3HNNdAHWPVr38bhTMcUKUzCooXzRV609PcUzeZBnveoAlfYhTBNGFqJzc
+         VVUxY1Av86g344gJxx0ANMrvQdKMtJ9Ukcr4ylsXxPfrfMlHIlAX5czGNAc38JN701MR
+         sxLvqUjPHj4JR32CQeqJZvmANedUkekB6vCR4Y32H2kNkGSvwuyeCfe8rQ5OzeY2ja5v
+         g9iICqtiC0modV9u7r3d6hK7q/PgXAC/teQnWY3g5CWFK2toQ5WB2ttt6aYceZLz+3Ee
+         F7Vm3Z59cu5H9NLugPhJRKC5kPpArDmWjiN4JnpA/rZ/pBCvgAUXqonWihqBEh6oowsO
+         u3eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718864720; x=1719469520;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MMC8+QM0WZZQXmx3OoC9rnCZbTY4EqDYux1G2JqKRCU=;
-        b=Em+KgcZxVQ5xHA7fJz+z1HuZfrAtFIno/ZhvtIkZAapy1645dDJGEfam/VgRNa0BIc
-         uclhVtK+EviagMI6S9TYY21dRWTa52tHQkcDlB44KNNRetdoL2de3ysKifrHLyILEoT4
-         1D/TsP4/HwFmEHbQbKnFv6xyEE5qVEQccztBwTmci2vKyskC2jWMLNsg4B80sG7JNg7b
-         D32ip1bhq3d6O97B4dPHcC0RnMfGLtS3JFQh7Zg89Kx2+z6ORQFkVSq6LgRIZZAkwq9a
-         nuzpt1keAUXXlkNd/JOjF8+3KkHdo4eVLiiZ1j/92tOmmKbsTqhVoFXzHojoeSIzpOn/
-         qpcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiw4Dp0pHv4d2j8YmzcpSK5omWgUDD4xpKnK7Cv/zVodUKDZzzKMeMzJwfVgncbXr3td5U9CgxBXRBEFTPDasf5XYQ+b2vs5e1GwEG
-X-Gm-Message-State: AOJu0YxfaY1sqeS/lqsF0ssG72z8voMQqjNBZpo+ja7b9x/4lRnQZ+9z
-	+S9PkL251tAhKX/T4Ifmz2BjcS8JUhIq1jpqPCOGOVOjTlr1tjD0NuO+jJAHuTtZ4BRJGAXfpcE
-	DOeTsTRgWOHA7Ov3Uyve+PDiWTGkUFmtbsl5nYKEg8I9F0IuItvau7+U=
-X-Google-Smtp-Source: AGHT+IEP6O4RwCTqovH5Zw4ats9W/rcbd2NCNhZhmEoKi9g5sjCBSuDlOWb27QMDOZlrKiJSNmozd8zPCvmBsHmOd7pzt+nZJDST
+        d=1e100.net; s=20230601; t=1718864756; x=1719469556;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BfOsoI6voHcnzMk74pjD4g6YebgYICnBJRD+PHZtwlQ=;
+        b=vOC910vwFVJvBp0zFOIJ7xHT8vnJPYQbxv9KEm2HGpzCwKmwZGBPN+3ShNTs28sJ4I
+         HhC+E7W+VXNQ2PM/YWJeQ5eiXWVNM1ky3x4Uqzl6GhiJdarZ3Pmsu4ctJvGLpz41ZqAz
+         Wb+ZGLe0G3CqQwg9G9XCFmeeZh5gLevQI6+kxchemz3+jhajS3RsbckbyHp3nc0ofZE+
+         2hMrMPOQptxlsViYRIY22at83qr7KzuiyGOCeLrBtY0+hXf7/J0zcURVN9A4v+4FEJQH
+         8pTayv1C5W9peee3gWBvD+NxOWjNenBWrh1HiKnZu2cFToV+g0dwx+B7Le/kaR+wJvUB
+         IhRA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5GetZ96eDmVX5hrelfvn51PBTcRbUdc/OrXbEUhXtE38yrCA8ZDh177TslWmpKb/2vbGCf2Ysvay3f/8+TOkmGkd7vCvs/IsbXUA2
+X-Gm-Message-State: AOJu0YwckyEM5wIJ/bdpR6oy5Ohp/uujNxn5kMo14Ig2satTQRhj5H7O
+	L/uQvSH7jvT//TgOMiZjBnz57IG5oQBIabHKL51cDh/LF7b+nObcl+OF2Xq09vqiWk+W4Ccpcv2
+	2E4cOhXHFRhUlllwx0RzT8iOLRmS9zldCFzgKFQ==
+X-Google-Smtp-Source: AGHT+IEdXN/Lta/JiQoTJ2V7PnSptyYKyFl9aQjNj6ALLZJ1jIfulboG94pKBg6oA9ag5d0mkAo46StBtPfrMh4JGjQ=
+X-Received: by 2002:a05:6512:5c9:b0:52b:c296:9739 with SMTP id
+ 2adb3069b0e04-52ccaa375f4mr2897265e87.41.1718864755286; Wed, 19 Jun 2024
+ 23:25:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d12:b0:375:8fed:7e74 with SMTP id
- e9e14a558f8ab-3761d75f2f0mr2817515ab.5.1718864719738; Wed, 19 Jun 2024
- 23:25:19 -0700 (PDT)
-Date: Wed, 19 Jun 2024 23:25:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000098a89061b4c61a9@google.com>
-Subject: [syzbot] [jfs?] possible deadlock in diAllocAG
-From: syzbot <syzbot+70d7737fe34ba0f39ccd@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
+ <20240605121512.32083-3-yongxuan.wang@sifive.com> <20240605-atrium-neuron-c2512b34d3da@spud>
+In-Reply-To: <20240605-atrium-neuron-c2512b34d3da@spud>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Thu, 20 Jun 2024 11:55:44 +0530
+Message-ID: <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
+Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+To: Conor Dooley <conor@kernel.org>
+Cc: Yong-Xuan Wang <yongxuan.wang@sifive.com>, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, alex@ghiti.fr, ajones@ventanamicro.com, 
+	greentime.hu@sifive.com, vincent.chen@sifive.com, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Jun 5, 2024 at 10:25=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
+te:
+>
+> On Wed, Jun 05, 2024 at 08:15:08PM +0800, Yong-Xuan Wang wrote:
+> > Add entries for the Svade and Svadu extensions to the riscv,isa-extensi=
+ons
+> > property.
+> >
+> > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > ---
+> >  .../devicetree/bindings/riscv/extensions.yaml | 30 +++++++++++++++++++
+> >  1 file changed, 30 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/=
+Documentation/devicetree/bindings/riscv/extensions.yaml
+> > index 468c646247aa..1e30988826b9 100644
+> > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > @@ -153,6 +153,36 @@ properties:
+> >              ratified at commit 3f9ed34 ("Add ability to manually trigg=
+er
+> >              workflow. (#2)") of riscv-time-compare.
+> >
+> > +        - const: svade
+> > +          description: |
+> > +            The standard Svade supervisor-level extension for raising =
+page-fault
+> > +            exceptions when PTE A/D bits need be set as ratified in th=
+e 20240213
+> > +            version of the privileged ISA specification.
+> > +
+> > +            Both Svade and Svadu extensions control the hardware behav=
+ior when
+> > +            the PTE A/D bits need to be set. The default behavior for =
+the four
+> > +            possible combinations of these extensions in the device tr=
+ee are:
+> > +            1. Neither svade nor svadu in DT: default to svade.
+>
+> I think this needs to be expanded on, as to why nothing means svade.
 
-syzbot found the following issue on:
+Actually if both Svade and Svadu are not present in DT then
+it is left to the platform and OpenSBI does nothing.
 
-HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15d7c1de980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=81c0d76ceef02b39
-dashboard link: https://syzkaller.appspot.com/bug?extid=70d7737fe34ba0f39ccd
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+>
+> > +            2. Only svade in DT: use svade.
+>
+> That's a statement of the obvious, right?
+>
+> > +            3. Only svadu in DT: use svadu.
+>
+> This is not relevant for Svade.
+>
+> > +            4. Both svade and svadu in DT: default to svade (Linux can=
+ switch to
+> > +               svadu once the SBI FWFT extension is available).
+>
+> "The privilege level to which this devicetree has been provided can switc=
+h to
+> Svadu if the SBI FWFT extension is available".
+>
+> > +        - const: svadu
+> > +          description: |
+> > +            The standard Svadu supervisor-level extension for hardware=
+ updating
+> > +            of PTE A/D bits as ratified at commit c1abccf ("Merge pull=
+ request
+> > +            #25 from ved-rivos/ratified") of riscv-svadu.
+> > +
+> > +            Both Svade and Svadu extensions control the hardware behav=
+ior when
+> > +            the PTE A/D bits need to be set. The default behavior for =
+the four
+> > +            possible combinations of these extensions in the device tr=
+ee are:
+>
+> @Anup/Drew/Alex, are we missing some wording in here about it only being
+> valid to have Svadu in isolation if the provider of the devicetree has
+> actually turned on Svadu? The binding says "the default behaviour", but
+> it is not the "default" behaviour, the behaviour is a must AFAICT. If
+> you set Svadu in isolation, you /must/ have turned it on. If you set
+> Svadu and Svade, you must have Svadu turned off?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Yes, the wording should be more of requirement style using
+must or may.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2ccbdf43.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/13cdb5bfbafa/vmlinux-2ccbdf43.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7a14f5d07f81/bzImage-2ccbdf43.xz
+How about this ?
+1) Both Svade and Svadu not present in DT =3D> Supervisor may
+    assume Svade to be present and enabled or it can discover
+    based on mvendorid, marchid, and mimpid.
+2) Only Svade present in DT =3D> Supervisor must assume Svade
+    to be always enabled. (Obvious)
+3) Only Svadu present in DT =3D> Supervisor must assume Svadu
+    to be always enabled. (Obvious)
+4) Both Svade and Svadu present in DT =3D> Supervisor must
+    assume Svadu turned-off at boot time. To use Svadu, supervisor
+    must explicitly enable it using the SBI FWFT extension.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+70d7737fe34ba0f39ccd@syzkaller.appspotmail.com
+IMO, the #2 and #3 are definitely obvious but still worth mentioning.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0 Not tainted
-------------------------------------------------------
-syz-executor.0/7415 is trying to acquire lock:
-ffff88806b966788 (&jfs_ip->commit_mutex){+.+.}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2519 [inline]
-ffff88806b966788 (&jfs_ip->commit_mutex){+.+.}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
-ffff88806b966788 (&jfs_ip->commit_mutex){+.+.}-{3:3}, at: diAllocAG+0xc59/0x2300 fs/jfs/jfs_imap.c:1666
+>
+> > +            1. Neither svade nor svadu in DT: default to svade.
+> > +            2. Only svade in DT: use svade.
+>
+> These two are not relevant to Svadu, I'd leave them out.
+>
+> > +            3. Only svadu in DT: use svadu.
+>
+> Again, statement of the obvious?
+>
+> > +            4. Both svade and svadu in DT: default to svade (Linux can=
+ switch to
+> > +               svadu once the SBI FWFT extension is available).
+>
+> Same here as in the Svade entry.
+>
+> Thanks,
+> Conor.
+>
 
-but task is already holding lock:
-ffff88806b9666f8 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2474 [inline]
-ffff88806b9666f8 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
-ffff88806b9666f8 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocAG+0xa99/0x2300 fs/jfs/jfs_imap.c:1666
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&jfs_ip->rdwrlock/1){++++}-{3:3}:
-       down_read_nested+0x9e/0x330 kernel/locking/rwsem.c:1651
-       diAllocExt fs/jfs/jfs_imap.c:1914 [inline]
-       diAllocAG+0x235/0x2300 fs/jfs/jfs_imap.c:1666
-       diAlloc+0x8f7/0x1a70 fs/jfs/jfs_imap.c:1587
-       ialloc+0x84/0x9e0 fs/jfs/jfs_inode.c:56
-       jfs_mkdir+0x244/0xb30 fs/jfs/namei.c:225
-       vfs_mkdir+0x57d/0x860 fs/namei.c:4131
-       do_mkdirat+0x301/0x3a0 fs/namei.c:4154
-       __do_sys_mkdirat fs/namei.c:4169 [inline]
-       __se_sys_mkdirat fs/namei.c:4167 [inline]
-       __ia32_sys_mkdirat+0x84/0xb0 fs/namei.c:4167
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
--> #2 (&(imap->im_aglock[index])){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       diFree+0x2ff/0x2770 fs/jfs/jfs_imap.c:886
-       jfs_evict_inode+0x3d4/0x4b0 fs/jfs/inode.c:156
-       evict+0x2ed/0x6c0 fs/inode.c:667
-       iput_final fs/inode.c:1741 [inline]
-       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
-       iput+0x5c/0x80 fs/inode.c:1757
-       dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
-       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
-       shrink_kill fs/dcache.c:1048 [inline]
-       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
-       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
-       super_cache_scan+0x32a/0x550 fs/super.c:221
-       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
-       shrink_slab_memcg mm/shrinker.c:548 [inline]
-       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
-       shrink_one+0x493/0x7c0 mm/vmscan.c:4790
-       shrink_many mm/vmscan.c:4851 [inline]
-       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
-       shrink_node mm/vmscan.c:5910 [inline]
-       kswapd_shrink_node mm/vmscan.c:6720 [inline]
-       balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
-       kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
-       kthread+0x2c1/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #1 (fs_reclaim){+.+.}-{0:0}:
-       __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
-       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
-       might_alloc include/linux/sched/mm.h:334 [inline]
-       slab_pre_alloc_hook mm/slub.c:3891 [inline]
-       slab_alloc_node mm/slub.c:3981 [inline]
-       __do_kmalloc_node mm/slub.c:4121 [inline]
-       __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
-       kmalloc_noprof include/linux/slab.h:664 [inline]
-       __jfs_set_acl+0xaa/0x1a0 fs/jfs/acl.c:80
-       jfs_set_acl+0x256/0x330 fs/jfs/acl.c:115
-       set_posix_acl+0x25c/0x320 fs/posix_acl.c:955
-       vfs_set_acl+0x53d/0x940 fs/posix_acl.c:1134
-       do_set_acl+0xd9/0x1b0 fs/posix_acl.c:1279
-       do_setxattr+0xeb/0x170 fs/xattr.c:626
-       setxattr+0x15d/0x180 fs/xattr.c:652
-       path_setxattr+0x179/0x1e0 fs/xattr.c:671
-       __do_sys_setxattr fs/xattr.c:687 [inline]
-       __se_sys_setxattr fs/xattr.c:683 [inline]
-       __ia32_sys_setxattr+0xc0/0x160 fs/xattr.c:683
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
--> #0 (&jfs_ip->commit_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain kernel/locking/lockdep.c:3869 [inline]
-       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
-       lock_acquire kernel/locking/lockdep.c:5754 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       diNewIAG fs/jfs/jfs_imap.c:2519 [inline]
-       diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
-       diAllocAG+0xc59/0x2300 fs/jfs/jfs_imap.c:1666
-       diAlloc+0x8f7/0x1a70 fs/jfs/jfs_imap.c:1587
-       ialloc+0x84/0x9e0 fs/jfs/jfs_inode.c:56
-       jfs_mkdir+0x244/0xb30 fs/jfs/namei.c:225
-       vfs_mkdir+0x57d/0x860 fs/namei.c:4131
-       do_mkdirat+0x301/0x3a0 fs/namei.c:4154
-       __do_sys_mkdirat fs/namei.c:4169 [inline]
-       __se_sys_mkdirat fs/namei.c:4167 [inline]
-       __ia32_sys_mkdirat+0x84/0xb0 fs/namei.c:4167
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-other info that might help us debug this:
-
-Chain exists of:
-  &jfs_ip->commit_mutex --> &(imap->im_aglock[index]) --> &jfs_ip->rdwrlock/1
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&jfs_ip->rdwrlock/1);
-                               lock(&(imap->im_aglock[index]));
-                               lock(&jfs_ip->rdwrlock/1);
-  lock(&jfs_ip->commit_mutex);
-
- *** DEADLOCK ***
-
-5 locks held by syz-executor.0/7415:
- #0: ffff888059e4c420 (sb_writers#14){.+.+}-{0:0}, at: filename_create+0x10d/0x530 fs/namei.c:3893
- #1: ffff88806b967480 (&type->i_mutex_dir_key#10/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
- #1: ffff88806b967480 (&type->i_mutex_dir_key#10/1){+.+.}-{3:3}, at: filename_create+0x1c2/0x530 fs/namei.c:3900
- #2: ffff888066090920 (&(imap->im_aglock[index])){+.+.}-{3:3}, at: diAlloc+0xb9c/0x1a70 fs/jfs/jfs_imap.c:1370
- #3: ffff888066090890 (&imap->im_freelock){+.+.}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2457 [inline]
- #3: ffff888066090890 (&imap->im_freelock){+.+.}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
- #3: ffff888066090890 (&imap->im_freelock){+.+.}-{3:3}, at: diAllocAG+0x782/0x2300 fs/jfs/jfs_imap.c:1666
- #4: ffff88806b9666f8 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2474 [inline]
- #4: ffff88806b9666f8 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
- #4: ffff88806b9666f8 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocAG+0xa99/0x2300 fs/jfs/jfs_imap.c:1666
-
-stack backtrace:
-CPU: 0 PID: 7415 Comm: syz-executor.0 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain kernel/locking/lockdep.c:3869 [inline]
- __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
- diNewIAG fs/jfs/jfs_imap.c:2519 [inline]
- diAllocExt fs/jfs/jfs_imap.c:1902 [inline]
- diAllocAG+0xc59/0x2300 fs/jfs/jfs_imap.c:1666
- diAlloc+0x8f7/0x1a70 fs/jfs/jfs_imap.c:1587
- ialloc+0x84/0x9e0 fs/jfs/jfs_inode.c:56
- jfs_mkdir+0x244/0xb30 fs/jfs/namei.c:225
- vfs_mkdir+0x57d/0x860 fs/namei.c:4131
- do_mkdirat+0x301/0x3a0 fs/namei.c:4154
- __do_sys_mkdirat fs/namei.c:4169 [inline]
- __se_sys_mkdirat fs/namei.c:4167 [inline]
- __ia32_sys_mkdirat+0x84/0xb0 fs/namei.c:4167
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf7312579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f5f04418 EFLAGS: 00000296 ORIG_RAX: 0000000000000128
-RAX: ffffffffffffffda RBX: 00000000ffffff9c RCX: 0000000020000040
-RDX: 00000000000001ff RSI: 0000000000000000 RDI: 00000000000000fc
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Regards,
+Anup
 
