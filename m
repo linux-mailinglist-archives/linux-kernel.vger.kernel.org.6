@@ -1,46 +1,64 @@
-Return-Path: <linux-kernel+bounces-222489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5540E91024E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:14:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C27E91024F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BEF51C2113E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E999B1F21DCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AA61AB53B;
-	Thu, 20 Jun 2024 11:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0501AB34E;
+	Thu, 20 Jun 2024 11:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="O1daiWT2"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TTa6YGBa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1021AB537
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17D31AAE09
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718882036; cv=none; b=DIHMUH1bXP5i5c8Aj2tKlfMDttrtVzXARaIcabnmrxX7QJOUgDrq3YDMZoJ/APD7KOslHlaIyUVdXZ2xI1to8i3l3NtlTsu8GQ4ODutmDSnWA7lzIJGFHSYfFhk1sYPtAQusW6vFefRm3iWYHPA2RE9/pfnv3F7DhtBYFoH+4uI=
+	t=1718882062; cv=none; b=gtNh468+ScHna/cWo5KeBi88p8q7ALxJ3BzUYZX+31pcjCxbmaV1rIB5vqRjxHDn2A+L1cTmwHu4Y69jgl6m4p/UlJHvVXzfSfpOwU3+mkI14+/CURQJXtmKnyZO84MMB9wwSyUGlEmveWf/hdhQalwD+Yd6LwwC4WSWY6f0mmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718882036; c=relaxed/simple;
-	bh=1/4NRcgT6efYLc+Gjxe48ItNJG5eN+Wre6lr446Pc8U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XYLUpcgkRfZxOWvW3bwXSDUchh/x4uGNd1IGTDWB6IKJOd7uBDakVQiPK2BW16Md9+JxzAWPicgFMykloh1HEo4pQih/5dSrviLJIdKa75b9Z5Z2MIpO+++AyVEuTFYV2tPBc+nF6WrZ7IdatIrOZn9RDrteyj3HZQInfFRPhOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=O1daiWT2; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718882032; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=2IBQqo2wdt4w9E1pQCBcfo/63oBXu3c5JBnJg0KVLSg=;
-	b=O1daiWT2BGJCYtjOIfllslagGOIyqnrUkRgLxiBFd/t0BhayTxEUwDGFmb5EWmdlj1K54hIfi6ztJa97q8epjpOzT5n9iPJgqwEYOt4RHQYFaI7h6G5Lipf7E7gemodxEUJlViBUMw3rJq6zVp8edPAXbKXjQY3POI1dB/jRAXg=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W8sD9SO_1718882030;
-Received: from 30.97.56.69(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8sD9SO_1718882030)
-          by smtp.aliyun-inc.com;
-          Thu, 20 Jun 2024 19:13:51 +0800
-Message-ID: <fab6f79f-3fb5-471a-8995-7f683a199769@linux.alibaba.com>
-Date: Thu, 20 Jun 2024 19:13:49 +0800
+	s=arc-20240116; t=1718882062; c=relaxed/simple;
+	bh=41V5qM2Xc8+hKW6MPPByw1cyUc6zgZCcguLz9Xf3LIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=dryCmuNYh/yWcGQYnd/4nFbiMGWWtgDxkmglaJWzO6Wq7AhzGTmC/uEAv5m11DEuWedCP8ur2GUw+MiTZbd16Tx9BWJ1ClhkJukTADsJ77abOrBo87BC95juDDkVGCmTp6XX8483WpmgHjQT9CM6Qlc5eZAfGA0xaJ7nKQpbw+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TTa6YGBa; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718882061; x=1750418061;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=41V5qM2Xc8+hKW6MPPByw1cyUc6zgZCcguLz9Xf3LIg=;
+  b=TTa6YGBagS/dCEDaBtUXlAwhF1B9RtYupJrPfwFItZXGk8DMOrSfFN06
+   A8WrXURwRxdHmFTAFy1/TH9ZgXuVAZXcXA1FcBDPd5FBLRFx/4UpHVz7A
+   1iO2dISroiyz4wc9xiYeQoOaUNplhvUliZ1txqyqH89P5zS2/Pt4m2qHu
+   XfpAbwjn3RttVT1Be73dt8YhAgqaRt4kKSqdb/mhYOE9DbI5ASWW/V4ri
+   pjk40VloJ2KEaE060Caq0hZMqrff0NinoVjpkYaBHA3YkkpCZbvq2ICRc
+   wAzJc5o3k8EQXYcPDREz+JGXATtRi3ut+nWPmkPY911co4egpcl9xS1nr
+   A==;
+X-CSE-ConnectionGUID: 8JCm/11hT36+vS3IeQkCkQ==
+X-CSE-MsgGUID: uimiK2gPSMqlBZbwvQ5/IQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="12161663"
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="12161663"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 04:14:19 -0700
+X-CSE-ConnectionGUID: v4ovnh61T3ukPwlwybUEKA==
+X-CSE-MsgGUID: opO1isRZRx6et/8qXf718w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="46660974"
+Received: from lfiedoro-mobl.ger.corp.intel.com (HELO [10.245.246.65]) ([10.245.246.65])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 04:14:17 -0700
+Message-ID: <6f51ef55-54a7-4dfc-b203-77bc48790c62@linux.intel.com>
+Date: Thu, 20 Jun 2024 13:14:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,90 +66,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [mm] d2136d749d: vm-scalability.throughput -7.1%
- regression
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
- lkp@intel.com, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>,
- Mel Gorman <mgorman@techsingularity.net>, Ryan Roberts
- <ryan.roberts@arm.com>, linux-mm@kvack.org, feng.tang@intel.com,
- fengwei.yin@intel.com
-References: <202406201010.a1344783-oliver.sang@intel.com>
- <24a985cf-1bbf-41f9-b234-24f000164fa6@linux.alibaba.com>
- <87bk3w2he5.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <87bk3w2he5.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] soundwire: bus: simplify by using local slave->prop
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Sanyog Kale <sanyog.r.kale@intel.com>, alsa-devel@alsa-project.org,
+ linux-kernel@vger.kernel.org
+References: <20240620091046.12426-1-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20240620091046.12426-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
 
-On 2024/6/20 15:38, Huang, Ying wrote:
-> Baolin Wang <baolin.wang@linux.alibaba.com> writes:
+On 6/20/24 11:10, Krzysztof Kozlowski wrote:
+> The sdw_initialize_slave() function stores 'slave->prop' as local 'prop'
+> variable, so use it in all applicable places to make code a bit simpler.
 > 
->> On 2024/6/20 10:39, kernel test robot wrote:
->>> Hello,
->>> kernel test robot noticed a -7.1% regression of
->>> vm-scalability.throughput on:
->>> commit: d2136d749d76af980b3accd72704eea4eab625bd ("mm: support
->>> multi-size THP numa balancing")
->>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->>> [still regression on linus/master
->>> 92e5605a199efbaee59fb19e15d6cc2103a04ec2]
->>> testcase: vm-scalability
->>> test machine: 128 threads 2 sockets Intel(R) Xeon(R) Gold 6338 CPU @ 2.00GHz (Ice Lake) with 256G memory
->>> parameters:
->>> 	runtime: 300s
->>> 	size: 512G
->>> 	test: anon-cow-rand-hugetlb
->>> 	cpufreq_governor: performance
->>
->> Thanks for reporting. IIUC numa balancing will not scan hugetlb VMA,
->> I'm not sure how this patch affects the performance of hugetlb cow,
->> but let me try to reproduce it.
->>
->>
->>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->>> the same patch/commit), kindly add following tags
->>> | Reported-by: kernel test robot <oliver.sang@intel.com>
->>> | Closes: https://lore.kernel.org/oe-lkp/202406201010.a1344783-oliver.sang@intel.com
->>> Details are as below:
->>> -------------------------------------------------------------------------------------------------->
->>> The kernel config and materials to reproduce are available at:
->>> https://download.01.org/0day-ci/archive/20240620/202406201010.a1344783-oliver.sang@intel.com
->>> =========================================================================================
->>> compiler/cpufreq_governor/kconfig/rootfs/runtime/size/tbox_group/test/testcase:
->>>     gcc-13/performance/x86_64-rhel-8.3/debian-12-x86_64-20240206.cgz/300s/512G/lkp-icl-2sp2/anon-cow-rand-hugetlb/vm-scalability
->>> commit:
->>>     6b0ed7b3c7 ("mm: factor out the numa mapping rebuilding into a new helper")
->>>     d2136d749d ("mm: support multi-size THP numa balancing")
->>> 6b0ed7b3c77547d2 d2136d749d76af980b3accd7270
->>> ---------------- ---------------------------
->>>            %stddev     %change         %stddev
->>>                \          |                \
->>>        12.02            -1.3       10.72 ±  4%  mpstat.cpu.all.sys%
->>>      1228757            +3.0%    1265679        proc-vmstat.pgfault
-> 
-> Also from other proc-vmstat stats,
-> 
->       21770  36%      +6.1%      23098  28%  proc-vmstat.numa_hint_faults
->        6168 107%     +48.8%       9180  18%  proc-vmstat.numa_hint_faults_local
->      154537  15%     +23.5%     190883  17%  proc-vmstat.numa_pte_updates
-> 
-> After your patch, more hint page faults occurs, I think this is expected.
-> 
-> Then, tasks may be moved between sockets because of that, so that some
-> hugetlb page access becomes remote?
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-After trying to reproduce this case, I also find that more hint page 
-faults occur. And I think that is casued by changing 
-"folio_ref_count(folio) != 1" to "folio_likely_mapped_shared(folio)", 
-which results in scanning more exclusive pages, so I think this is 
-expected from the previous discussion.
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-Yes, I think your analysis is correct, some hugetlb page accesses become 
-remote due to task migration.
+> ---
+>  drivers/soundwire/bus.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
+> index 191e6cc6f962..263ca32f0c5c 100644
+> --- a/drivers/soundwire/bus.c
+> +++ b/drivers/soundwire/bus.c
+> @@ -1410,7 +1410,7 @@ static int sdw_initialize_slave(struct sdw_slave *slave)
+>  		}
+>  	}
+>  	if ((slave->bus->prop.quirks & SDW_MASTER_QUIRKS_CLEAR_INITIAL_PARITY) &&
+> -	    !(slave->prop.quirks & SDW_SLAVE_QUIRKS_INVALID_INITIAL_PARITY)) {
+> +	    !(prop->quirks & SDW_SLAVE_QUIRKS_INVALID_INITIAL_PARITY)) {
+>  		/* Clear parity interrupt before enabling interrupt mask */
+>  		status = sdw_read_no_pm(slave, SDW_SCP_INT1);
+>  		if (status < 0) {
+> @@ -1436,7 +1436,7 @@ static int sdw_initialize_slave(struct sdw_slave *slave)
+>  	 * device-dependent, it might e.g. only be enabled in
+>  	 * steady-state after a couple of frames.
+>  	 */
+> -	val = slave->prop.scp_int1_mask;
+> +	val = prop->scp_int1_mask;
+>  
+>  	/* Enable SCP interrupts */
+>  	ret = sdw_update_no_pm(slave, SDW_SCP_INTMASK1, val, val);
+> @@ -1447,7 +1447,7 @@ static int sdw_initialize_slave(struct sdw_slave *slave)
+>  	}
+>  
+>  	/* No need to continue if DP0 is not present */
+> -	if (!slave->prop.dp0_prop)
+> +	if (!prop->dp0_prop)
+>  		return 0;
+>  
+>  	/* Enable DP0 interrupts */
 
