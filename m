@@ -1,97 +1,131 @@
-Return-Path: <linux-kernel+bounces-222382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E566910094
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:41:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7DC91009B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DCE9B214E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:41:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BB291C20F54
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC681A4F10;
-	Thu, 20 Jun 2024 09:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48BF1A8C19;
+	Thu, 20 Jun 2024 09:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wAgoNhGR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="SJ9C2RT/"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19FC47772
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666FB1A01B9;
+	Thu, 20 Jun 2024 09:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718876501; cv=none; b=t7vHfDkif4ZX3GafyvkR0OtS8dcC2IM6wLU/0gy8ijE5mUBzAfQhyH5OmR1hwcHHbjx5UOG7meiwl28f2EwpmSp6c9wQX5D0CKYD+jGZ3GGVmdS7QZVT8W71hVPTkFTQsG08/ite2JOMTFsIu0DDvJkKy4d5qvlg+U16fPbLrgM=
+	t=1718876520; cv=none; b=dYE9bQyDzoJQEz/egvLziA3zekHqFvI0kq9XmFB3M4uBI0xMB7gBdhBwv0BAJig9+RkTmD/6YV+tU3fE5q39C2LPVp5uFFxyJmzvi7vVWyONi9vyBfi/y9LrpUYLzN3fSVvwxookCVGoxIAzhxGLHOildy0D+G0ujqqps0tNXNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718876501; c=relaxed/simple;
-	bh=1eugF1z4Brh/DZEVuJw15S50aNzF1e1G6Bt2ePznUJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9AQ3J5umNrAKyFnkupQ/mRjHvMaZ/WCCH0T3eKbRDcB3pYUqYkcqqlVBRGb7gPVOBImcRmijDoTbVXJ4m+70W6bHVxK+9pnviolV0WuHlqMKLRfSl0k5mVst8gx3mxO5wnv6ipwfg+aqQf94/xZ/1gaqrHru4mQJEJbBXQcnO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wAgoNhGR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26FB3C32781;
-	Thu, 20 Jun 2024 09:41:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718876500;
-	bh=1eugF1z4Brh/DZEVuJw15S50aNzF1e1G6Bt2ePznUJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wAgoNhGRNk11hcX31Bo3yZPN040ZRSMCRyIB5ZqauXNb/f0S3n7Rnpkb2aFUhIg6w
-	 6g7yItcVm0mdICpyrcP55ETOAXhdOVHBl5qrOv2GoBYIuc40TU5PHF9HjKZVTypU1z
-	 RwgzkEQaHVO8zC+0yrbrZ8cPf3spoYyN8l6EcAjE=
-Date: Thu, 20 Jun 2024 11:41:41 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jan Beulich <jbeulich@suse.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	"security@xenproject.org" <security@xenproject.org>,
-	Juergen Gross <jgross@suse.com>
-Subject: Re: CVE-2021-47573: xen/blkfront: harden blkfront against event
- channel storms
-Message-ID: <2024062001-jab-eliminate-5198@gregkh>
-References: <2024061911-CVE-2021-47573-5c43@gregkh>
- <769040d1-fc9c-47a7-a4b5-93c693472624@suse.com>
- <2024062034-pork-limes-2c4c@gregkh>
- <ac40bf5e-6537-4ef5-bac9-afbe512a9d70@suse.com>
- <2024062025-uncivil-sterile-03f7@gregkh>
- <92819ebe-8895-4c61-825d-4bd56aac38ad@suse.com>
+	s=arc-20240116; t=1718876520; c=relaxed/simple;
+	bh=+XomlozgwEM7W7jw1RV2XyzUdCf14DpPm3CMqpPk4RU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LDAHnCzesrn5y+OqLBaTm09hAfs9b0k7viiHriJnlkNQsLKM2ij3bpmVkSj+iLTP/xrkhLug9qdT4IXqV0dlT47+FrDmfU8u84In0ts/kzdEfLntJ5NA6DtUM2sr4R7Lvxyz38ZZTbq8vKaacQUuw4dnnnM7Bl7+0uKNk5R8iyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=SJ9C2RT/; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 095FB10001E;
+	Thu, 20 Jun 2024 12:41:47 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 095FB10001E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1718876507;
+	bh=eHWSHU6IOFj9d81lzeTSCSoajp29AFtL+A3T39sy4lk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=SJ9C2RT/3zxNcETOlA+R7zdR9bgqCBWrTAJKs6yKjHsLD92MS0HKFRJ6tgF47uJdC
+	 2D8JzU4ZBZKqQnlDmhNQ+jJtM1LsUuZBkWCbqfNu2SC19RrO0B826IIgjtAkuiNku/
+	 qBYufLJfpgbHyadnxpSGN91F/1bTEMqag/3CjsSxfsBxyU+Hzwmh/fAn5uZs9e27rS
+	 8oFLwkDs8ETXGGDo8UvUi5s1W0z8adnonSe/14p0m+nKmy8Hi7+NN62ydlW+kqKcR0
+	 rpbSQTmuo0fxX2N5/quj+Z7SS1mGSIC/X9sZm23PbhFf7smSqqyLTNQZASjKuMF15q
+	 OepCAAht5MUOg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Thu, 20 Jun 2024 12:41:46 +0300 (MSK)
+Received: from [172.28.129.141] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Thu, 20 Jun 2024 12:41:46 +0300
+Message-ID: <dc787966-2920-459f-b091-ce09fe97315d@salutedevices.com>
+Date: Thu, 20 Jun 2024 12:41:45 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92819ebe-8895-4c61-825d-4bd56aac38ad@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 13/41] iio: adc: meson_saradc: make use of
+ regmap_clear_bits(), regmap_set_bits()
+To: Trevor Gamblin <tgamblin@baylibre.com>
+CC: <linux-iio@vger.kernel.org>, Jean-Baptiste Maneyrol
+	<jmaneyrol@invensense.com>, Crt Mori <cmo@melexis.com>, Fabio Estevam
+	<festevam@gmail.com>, Broadcom internal kernel review list
+	<bcm-kernel-feedback-list@broadcom.com>, Scott Branden
+	<sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, Chen-Yu Tsai
+	<wens@csie.org>, Shawn Guo <shawnguo@kernel.org>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Linus Walleij
+	<linus.walleij@linaro.org>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>, Saravanan Sekar <sravanhome@gmail.com>,
+	Dmitry Rokosov <ddrokosov@sberdevices.ru>, Lars-Peter Clausen
+	<lars@metafoo.de>, Kevin Hilman <khilman@baylibre.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>, <imx@lists.linux.dev>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Hans de
+ Goede <hdegoede@redhat.com>, Orson Zhai <orsonzhai@gmail.com>
+References: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
+ <20240617-review-v3-13-88d1338c4cca@baylibre.com>
+Content-Language: en-US
+From: George Stark <gnstark@salutedevices.com>
+In-Reply-To: <20240617-review-v3-13-88d1338c4cca@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186025 [Jun 20 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;salutedevices.com:7.1.1;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/20 08:22:00 #25655230
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Thu, Jun 20, 2024 at 11:32:49AM +0200, Jan Beulich wrote:
-> On 20.06.2024 11:20, Greg Kroah-Hartman wrote:
-> > On Thu, Jun 20, 2024 at 10:46:10AM +0200, Jan Beulich wrote:
-> >> On 20.06.2024 10:18, Greg Kroah-Hartman wrote:
-> >>> Also, the XSA-391 announcement doesn't say anything about them either,
-> >>> is that intentional?
-> >>
-> >> If by announcement you mean the email sent out to xen-security-issues@lists.xen.org,
-> >> then the copy I'm looking at (v3, the only one having gone public afaict) clearly
-> >> lists the three CVEs.
-> > 
-> > I'm looking at:
-> > 	https://xenbits.xen.org/xsa/advisory-391.html
-> > and I don't see a git id anywhere, where do you see the v3 announcement
-> > saying that?
+On 6/17/24 16:49, Trevor Gamblin wrote:
+> Instead of using regmap_update_bits() and passing the mask twice, use
+> regmap_set_bits().
 > 
-> Hmm, okay, I then misunderstood your earlier reply: I was assuming you
-> were looking for the CVE numbers associated with the XSA, as I thought
-> that's what you need to know when deciding whether to issue one
-> yourself. No, we didn't ever mention commit IDs anywhere, except when
-> issuing XSAs after-the-fact (i.e. changes already having gone in earlier
-> on). I guess we need to see whether that's feasible to do for Linux XSAs
-> going forward. Yet then it may not be needed there, as we'd now ask you
-> for CVE numbers in such cases anyway?
+> Instead of using regmap_update_bits() and passing val = 0, use
+> regmap_clear_bits().
+> 
+> Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
 
-Yes, going forward it's not going to matter, I was just trying to verify
-that when I assign ids for older stuff like this that I'm not messing up
-in an obvious way :)
+Reviewed-by: George Stark <gnstark@salutedevices.com>
 
-thanks,
-
-greg k-h
+-- 
+Best regards
+George
 
