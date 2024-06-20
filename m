@@ -1,185 +1,124 @@
-Return-Path: <linux-kernel+bounces-222679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7684C91059D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:15:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2359105A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2362E283AE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:15:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAA26B23B77
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EDE1ACE93;
-	Thu, 20 Jun 2024 13:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B89F1ACE96;
+	Thu, 20 Jun 2024 13:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JDU2na7F"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BoKrqgCM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451E31E49E;
-	Thu, 20 Jun 2024 13:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6E71E493;
+	Thu, 20 Jun 2024 13:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718889335; cv=none; b=Rof6SR5aJrWEDBmB9R0+N/3T1P4iJPV7wqeOgs8QP4B4omRiLGI2wjOQrwdd0W4tYoXse69EF6f4FeTrQdQf2tH0eB1uMWtGAXgCgF/av54oBiKW7iklDZRXEvHslFT5V7cZW7bzDIkGQgrI0tlosFLV+1RO4PR1Kty199/kZ0E=
+	t=1718889357; cv=none; b=ntYNUijAMuytt0IzAfr/tKqSU6lWNWBtVSCijdK2EQ3UWUrGmFvwObFLwf8TiVkYRYdvlqU3MAQqzkd6I8mOHiCFyx7Khg63jj5PeBGIFYF08wBHOLyXxdQmL7CYG6cQL5xosl2BTMeH8+Ltd8vFidggGd0A5Qez2HusXmNTLb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718889335; c=relaxed/simple;
-	bh=Dm+OAoDNq27a8NmdBwsCJshDlb5owqtvCwqqIvl+zsE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=INstyemNZrynsY17W7ErAdqKmTsVyRB6Ym9Mzbno4WOUoP8Yc4hkKeYr9NuR0ZX7SY7tQ3bAC3awGn3O4houH1npXFYH5XIDqdXGFkVw9ZzE5WdO9xbaoBJRvcZBwNm2JO1S83OrlRZDPdABpe/+tfBkh0nbMLdCX/GV/cun5/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JDU2na7F; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f8ebbd268so330896566b.0;
-        Thu, 20 Jun 2024 06:15:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718889332; x=1719494132; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GvxuvoBqoE/GY1YheFb9DI1s4W2tvYezeKtzJ7T24dY=;
-        b=JDU2na7FFY87GS6cg1I9dAXj5c8Cprpx4I6LhnUAtUXgjURRLgpuFFjub4EwLT2KWA
-         c7XveWEzLC7BD5/XiIc7y80lEF4wBOuQ0gJSIF5h0jJubtikETqQrc+xZRNngkYt1MME
-         o9yiD72LywuUVXiC5x0ki7GwQiqeIQbm3iEBAdqWxnWz4RkP13y0mZcnl/lcwInVGJxL
-         lj5vFpr+nqMoTik9OcSiNn6tkbcAp9+oxj8XIcRME3COk5ibC6BdpS63DeG2PQn1x3o5
-         CHItPil0O0fcBXYsxze1v3KkK+IRNQO9D2AQSwYmT05KlBacWTgU85OwxxAXUjXC3oqB
-         Vnjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718889332; x=1719494132;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GvxuvoBqoE/GY1YheFb9DI1s4W2tvYezeKtzJ7T24dY=;
-        b=e3uZ1TsPHO5Av/oolfdx/V3wYimyQB+1pE1hg87q/n//nxlCuKe04QIYuARQgPePin
-         Hvc8sRQ5sK0LDnDsjrNrKmcRF+QeAkEpTpn9XVbrJncqUcu4qQjLAkQQQTjruv6rmnyz
-         KfXzXxWAnEOXipGNeG7uQxTgdnjAZ49mXexgPlfEZBgXoMUa4252jBrma2L5rvTKB3Qn
-         SW959WYUthJ6zahlIqpQEf8Mi0kfpgK96pedHnpiHWNv2bLNkMYku6ymLjWRwvEWI/1t
-         nuYFxOtor5dC0bTIDjsQBYQnH+eFMJooVG4c4l+C8eAOCEpWf2t564rTEY99XJh55DNd
-         rE1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWyG2qTf5dhKAGtkL2n+s6Fpzg1On/Od8Gtt+jsYmQaHKUh/9xDuIcFN9TTbrDhXp0Sxv4kne4GSfzV2KcJkkIi2xLAXsZMuvuK3nnDg8g4dyKQcRuI1jwWeXs9mbM4n3HsnL4ps0Ut9YO4/OIdNECVj9gB
-X-Gm-Message-State: AOJu0Yz6UoNIILNiklMDBBT5jeHhjAKNKLzhEeQUr2mVmDS5JvtX7Zz0
-	GonOLJGFUIHGftsSL5rtWm//c9fevVEzIrLO/oPKQR3X3b166E2Y
-X-Google-Smtp-Source: AGHT+IEqnJp1SNZXbYGPZ0xa9ovKenpl+H5Wg16kK3FxOFIVW8FaphRKTrag0JDQQqPQVJ6VlHxa9w==
-X-Received: by 2002:a17:907:a645:b0:a62:49ae:cd7b with SMTP id a640c23a62f3a-a6fa438df9fmr358825866b.24.1718889332198;
-        Thu, 20 Jun 2024 06:15:32 -0700 (PDT)
-Received: from f.. (cst-prg-30-39.cust.vodafone.cz. [46.135.30.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f881fbdfcsm370454266b.121.2024.06.20.06.15.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 06:15:31 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: john.johansen@canonical.com
-Cc: paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	linux-kernel@vger.kernel.org,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	Neeraj.Upadhyay@amd.com,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] apparmor: try to avoid refing the label in apparmor_file_open
-Date: Thu, 20 Jun 2024 15:15:24 +0200
-Message-ID: <20240620131524.156312-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1718889357; c=relaxed/simple;
+	bh=a5v1N9YSHQxpSI93Gl++5LBRgMoNEVfhhjP+TQOA070=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WXa7LuEjV59Ia/0UhPy73BoS5bUuauh+7d2NJqbUk2kD6XQd245MLoEPvfW7Q1ipolqOEEN8UmirJT5WrQ0+GWtqkKtAmHwPr73xHmk/2Be1ZyJ811+goJOuXwte9Vq/iSjvVUx3pJZ+3W/yYZI+FyIGlrBz7/w3JgbteDcequc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BoKrqgCM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD6EAC2BD10;
+	Thu, 20 Jun 2024 13:15:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718889356;
+	bh=a5v1N9YSHQxpSI93Gl++5LBRgMoNEVfhhjP+TQOA070=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BoKrqgCMZk+aqim4CtSorRaGGyqkUExUVGTQ1XXQlv/0+Paq5LKvFWvmpOuSSrn3G
+	 RAuIeACDHfg1FmI89Z7Iqn3wWlgPqDIAXjB9u+lREPkKJyGFQuiqMQSuh0q25WLmoK
+	 YXWh4p14R7qqgWnU7a0UeuNd/y9sfyAEOF/l54eD2OanWRH3flOq3ViWR2MAsv9Cjm
+	 0ZS856b5BAj9UsVMH2PBPXXW5QpljFi2sX0tg3KIYlWplkNpmyJtfuLk4YfulDVE92
+	 hmXBUfLpR6oWgZ4KNVzNuriYM1iD33nmpRMuhP2iOhx0a+dqyJQyJaqeLQBYzWD4ur
+	 ESN89RwekYQ0A==
+Message-ID: <b240f781-9570-4327-aaef-79819f977238@kernel.org>
+Date: Thu, 20 Jun 2024 15:15:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ARM: dts: twl6032: Add DTS file for TWL6032 PMIC
+To: Mithil <bavishimithil@gmail.com>, Andreas Kemnade <andreas@kemnade.info>
+Cc: =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+ Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240611132134.31269-1-bavishimithil@gmail.com>
+ <20240611164951.51754ffc@aktux>
+ <CAGzNGRmoSawz7yHGzHS8PeQwRAsnnORLMPrrNBLupNdaOkUeHw@mail.gmail.com>
+ <CAGzNGRnnZWJP6CF1X6SXus2QCwUA763=qHUAy6c6Ny6_FFd7GQ@mail.gmail.com>
+ <CAGzNGRk3dwGEsQbrN4LZfKwDGTncHpKEcf2cLepUkRYBO4yn5Q@mail.gmail.com>
+ <CAGzNGRmMqFm55r3FdhKHuYej1pENfaO0az6sb2_1P6+r65M-yQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAGzNGRmMqFm55r3FdhKHuYej1pENfaO0az6sb2_1P6+r65M-yQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-It can be done in the common case.
+On 20/06/2024 15:05, Mithil wrote:
+> Hello, how should we go ahead with this?
 
-A 24-way open1_processes from will-it-scale (separate file open) shows:
-  29.37%  [kernel]           [k] apparmor_file_open
-  26.84%  [kernel]           [k] apparmor_file_alloc_security
-  26.62%  [kernel]           [k] apparmor_file_free_security
-   1.32%  [kernel]           [k] clear_bhb_loop
+It's impossible to figure out what you refer to. Please fix your email
+client so you preserve relevant context and readers can understand to
+whom and about what you are replying.
 
-apparmor_file_open is eliminated from the profile with the patch.
-
-Throughput (ops/s):
-before:	6092196
-after:	8309726 (+36%)
-
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
-
-I think this is a worthwhile touch up regardless of what happens with
-label refcouting in the long run. It does not of course does not fully
-fix the problem.
-
-I concede the naming is not consistent with other stuff in the file and
-I'm not going to argue about it -- happy to name it whatever as long as
-the problem is sorted out.
-
-Am I missing something which makes the approach below not work to begin
-with?
-
- security/apparmor/include/cred.h | 20 ++++++++++++++++++++
- security/apparmor/lsm.c          |  5 +++--
- 2 files changed, 23 insertions(+), 2 deletions(-)
-
-diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
-index 58fdc72af664..7265d2f81dd5 100644
---- a/security/apparmor/include/cred.h
-+++ b/security/apparmor/include/cred.h
-@@ -63,6 +63,26 @@ static inline struct aa_label *aa_get_newest_cred_label(const struct cred *cred)
- 	return aa_get_newest_label(aa_cred_raw_label(cred));
- }
- 
-+static inline struct aa_label *aa_get_newest_cred_label_condref(const struct cred *cred,
-+								bool *needput)
-+{
-+	struct aa_label *l = aa_cred_raw_label(cred);
-+
-+	if (unlikely(label_is_stale(l))) {
-+		*needput = true;
-+		return aa_get_newest_label(l);
-+	}
-+
-+	*needput = false;
-+	return l;
-+}
-+
-+static inline void aa_put_label_condref(struct aa_label *l, bool needput)
-+{
-+	if (unlikely(needput))
-+		aa_put_label(l);
-+}
-+
- /**
-  * aa_current_raw_label - find the current tasks confining label
-  *
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 2cea34657a47..4bf87eac4a56 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -461,6 +461,7 @@ static int apparmor_file_open(struct file *file)
- 	struct aa_file_ctx *fctx = file_ctx(file);
- 	struct aa_label *label;
- 	int error = 0;
-+	bool needput;
- 
- 	if (!path_mediated_fs(file->f_path.dentry))
- 		return 0;
-@@ -477,7 +478,7 @@ static int apparmor_file_open(struct file *file)
- 		return 0;
- 	}
- 
--	label = aa_get_newest_cred_label(file->f_cred);
-+	label = aa_get_newest_cred_label_condref(file->f_cred, &needput);
- 	if (!unconfined(label)) {
- 		struct mnt_idmap *idmap = file_mnt_idmap(file);
- 		struct inode *inode = file_inode(file);
-@@ -494,7 +495,7 @@ static int apparmor_file_open(struct file *file)
- 		/* todo cache full allowed permissions set and state */
- 		fctx->allow = aa_map_file_to_perms(file);
- 	}
--	aa_put_label(label);
-+	aa_put_label_condref(label, needput);
- 
- 	return error;
- }
--- 
-2.43.0
+Best regards,
+Krzysztof
 
 
