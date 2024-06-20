@@ -1,98 +1,109 @@
-Return-Path: <linux-kernel+bounces-222188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56BCC90FE06
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:48:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D1390FE07
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9531B24DB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:48:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F7121F233C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D98E54FA2;
-	Thu, 20 Jun 2024 07:48:21 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5243F4F883;
+	Thu, 20 Jun 2024 07:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="at4SKJec"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CC14AEF7
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6094F1803A;
+	Thu, 20 Jun 2024 07:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718869700; cv=none; b=QnqiY9uckA1J85CAXbFFJk/cXaLKi8RuhOJ3feW8rEc04RdPbIiL8pvUHxBkGWAyHRUOoWwno+Guru0EGm5Aqym7cOv9khlxHib1cv4glBjgI5WdundPF3mBRUlwvhyG9wqI9M4pNJFO1YDi94tPxs5abCDJF68TgMrxvUFaR80=
+	t=1718869784; cv=none; b=L4FlvI6bAl+pamKuy/7yXmBCD04Mq4VtVvXwADwa2jIbV4YhNRrubgkldiIfB4g4dWslsCgW7uyFBA4GFy9sjtWdEw5g9B/gCddoWK+xKyi3gqrpJh5v3UVu0KcnPuHI93TYdSc8shXK0HxoMkC7vGqg7aY8IL3nS89QpzYgpcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718869700; c=relaxed/simple;
-	bh=/FqTxJZot9tCUx5tX3aqLquJOwrxqBIQbEcGjf881ls=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QnfMndM4NejyBagbpmnRMed5Tt7YB8andgbBRUKvXIz4q7ol4ZwUD7iwAmSmtd0wSAW0E4QypBFRJlPwEHKFkJiM5A0csn2/TUcnGQ8Ns2CM8bGiy8RvCGnkhiTDA+IPd3uuo9h32abS9xkSIGO1keQiHD2lzU6lrTxTCcr1WDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowACXnQG03nNm4VXLEQ--.62365S2;
-	Thu, 20 Jun 2024 15:48:04 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH 2/2] drm/panel-xinpeng-xpp055c272: add check for mipi_dsi_dcs_enter_sleep_mode
-Date: Thu, 20 Jun 2024 15:48:02 +0800
-Message-Id: <20240620074802.852544-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1718869784; c=relaxed/simple;
+	bh=o1XFCoagNhJXqXUIiNvyL2xj3ZTqbsjGmTXPfkrfaXg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cu9KL4gNAnciqL2HNAP8gnEBa+WNc/Z9q0fMLvgez66V/BbgCTlN+pDJIIbF0Cn+kKlxJXGQDqd4yGLQV6gzAoJ6qz0VTUk9hlwq0ImHgOfNasDCF2e1zR3lX+9lyA8eZi1oFQ0vFKr9vytoGLsZtbqSd7Hh5l9C41f/LDXXkiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=at4SKJec; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70623ec42c2so499386b3a.0;
+        Thu, 20 Jun 2024 00:49:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718869783; x=1719474583; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=03ztKaSOsfSrhkNsQs0sNY3YIw2YL4srv92sD8kx3lo=;
+        b=at4SKJec8OV17ifVw8wDMpmAbw/WzRisiWjOeGI7l7S64lQNx5ps8H+gfo+dKHBa8f
+         RyV8W3Y+ngzsgzN27YlOeqF3zlyZeIJRAPG3AX4lHjYaEd3rEY06eHFrz8nEV3BqkW2e
+         DF2uLdFBWBvQlnYb7E6R5yxvIH8E3+/pYtdzTgEcK74sY0ZoC+zA/RCFyLTdDU7aAcpQ
+         NHX8eEoyXYR7qbwo6m2hXQps0nR0FU0HB1Hlc+3dOu4dTf0/9A3vR45yhegUrU4o7Egl
+         dbAgQx8nXydgpbV69IzcL53R4AC8jtp+OoofzyY/Bvn5A3DWiR9SV1LV/AFdRY7STAYO
+         /Fhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718869783; x=1719474583;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=03ztKaSOsfSrhkNsQs0sNY3YIw2YL4srv92sD8kx3lo=;
+        b=rojTDsikBmzG5PwET/kQkOPqyw4vTlk95w7aSz7zcSPoMagLmtOy5Kp1M1SLbaxhDk
+         gI0YXybbJ3Q0Y0cggHbeVHYbdlsLsokCakWTTTW3ZKlkGHq9SdQlgUV1vjA8SZUE1K4o
+         nHoCCho4EGh5axZnbGnWPJoL+C3Y+CkFar8Tsww0KqAd8v0VU+d4SqsvgNHSfoLrUQuY
+         qIAu4Uhdc/h1PWysjk6vzg31ZANgDoexTxUs54C5VcrWNk4Igi1z7ztd9QQy6CJJr6dQ
+         gQj/LqaDMXdB/o+6leZwtmKzWViCLhztaGOK88TKBwCu2S5DsWx9EYN9UOgEJE7/nvkh
+         MbYg==
+X-Forwarded-Encrypted: i=1; AJvYcCU15d73iiC+P7X2LGTbvaMCRv8Fu1RYqjYxj0nAepmM7Iw/2M9VSLAe7/MAQOdYZAwc+bidn4/zSb5MT/ht2oV65jEnxnenymnqDzBtIZM2waB6Jy4Mo5phdMVEx1zGMdtkhu2NqAaDivvEGbk=
+X-Gm-Message-State: AOJu0YxXx8tKce6CSBV+J36J5bb4/O05Kaj3uIC5CJvW78rF+rPeC1tM
+	ZPHYgG18kiYQ4THWYag5pg3y8aGjxFdZLxYx5zycD+d0fAtW0jp+aA1BdIZGXQy5zEaaDmqcLR7
+	ySfClOXklePIbOo/iDQpWQDICQsTxeXxGq/o=
+X-Google-Smtp-Source: AGHT+IFnQPdlijHxiRw7/46UUIuekBm8mYgIp2okL+2RHHKQ4SYTYcEaoXKAkOsINHNkT/pVxZp9JHadT4awGf/9D8Q=
+X-Received: by 2002:a05:6a00:26c6:b0:706:2be3:a2e8 with SMTP id
+ d2e1a72fcca58-7062be3a3e1mr5664579b3a.9.1718869782582; Thu, 20 Jun 2024
+ 00:49:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACXnQG03nNm4VXLEQ--.62365S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xw4kCFyfCF1rtrWDWryUZFb_yoWfuFX_Cr
-	1xXFnrurWUtr9ruwnFka18XFyakFn8uF4kuw10va4xC347Gwn3J34UWryruay7Aw4jyF98
-	C34DXF9FvF43GjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY02Avz4vE14v_GF4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-	73UjIFyTuYvjfUOPEfUUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+References: <20240620021112.136667-1-ethan.twardy@gmail.com>
+In-Reply-To: <20240620021112.136667-1-ethan.twardy@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 20 Jun 2024 09:49:30 +0200
+Message-ID: <CANiq72nSP8RcHuDmcPWAjjvYtyULi=g7tGcqOo8nKo2dN9evVw@mail.gmail.com>
+Subject: Re: [PATCH] rust: alloc: Fix unused import warning
+To: "Ethan D. Twardy" <ethan.twardy@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@redhat.com>, 
+	"open list:RUST" <rust-for-linux@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add check for the return value of mipi_dsi_dcs_enter_sleep_mode() and
-return the error if it fails in order to catch the error.
+On Thu, Jun 20, 2024 at 4:11=E2=80=AFAM Ethan D. Twardy <ethan.twardy@gmail=
+.com> wrote:
+>
+> core::ptr is only used in code that's not compiled during test, which
+> causes rustc to emit the below warning while building the rusttest
+> target. Add a conditional attribute to match conditions at the usage
+> site.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+We have an alternative fix (that avoids conditional compilation) for
+this one in the `rust-fixes` branch that I am planning to send to
+Linus this week.
 
-diff --git a/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c b/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
-index 22a14006765e..d7c9df673f35 100644
---- a/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
-+++ b/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
-@@ -139,7 +139,7 @@ static int xpp055c272_unprepare(struct drm_panel *panel)
- 	if (ret < 0)
- 		dev_err(ctx->dev, "failed to set display off: %d\n", ret);
- 
--	mipi_dsi_dcs_enter_sleep_mode(dsi);
-+	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
- 	if (ret < 0) {
- 		dev_err(ctx->dev, "failed to enter sleep mode: %d\n", ret);
- 		return ret;
--- 
-2.25.1
+    https://lore.kernel.org/r/20240519210735.587323-1-ojeda@kernel.org
 
+If that one does not fix the issue for you, please let me know!
+
+Thanks!
+
+Cheers,
+Miguel
 
