@@ -1,76 +1,77 @@
-Return-Path: <linux-kernel+bounces-223218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1C45910FDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:01:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B4E910FE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C06A2857C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:01:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04FAC1C24C11
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1582E1B4C49;
-	Thu, 20 Jun 2024 17:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8D31BE254;
+	Thu, 20 Jun 2024 17:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUwu9T40"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RW2+F/2z"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDEA1BD915
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE521BE23F;
+	Thu, 20 Jun 2024 17:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718906256; cv=none; b=RkxlpJ87bwgSFaOciqKoOfdrNpkBuyzH2pUYpKJVhgw7bNfE/6NJzePkaeg9CTL+oa5HG95cKbW/27wvsYdivv+rUZAcAV7aUzNY3rWRCBBd48GMbkxkxHvRlTy1VybbuaCDTsGdDHTs88jCig7uQIBOYjoKIfuSE9MC7hx5Y1s=
+	t=1718906259; cv=none; b=YvWy5ZD1oUhuxW4/xxUlbbVp8J4QGhGbIcFs8NXp5uEI7s0+qSafFQ4n8f4b+b3BZPPSKRDmbbPLke438mSqcPIQSsMXdJ/N+i42HMfWTQnbbY57SdQiTZ3iiU2RdN1OUSJ5N1K8VGTilwebqF7ZAb315VQkYsumMnhCPj4SXCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718906256; c=relaxed/simple;
-	bh=IJH0Xr1pzPS2QRONxWqkkm6N53c8msn9QYo80VGvKXU=;
+	s=arc-20240116; t=1718906259; c=relaxed/simple;
+	bh=z4fUClb8dXuu+9jxRPnwJI/cA/pCMiUgLCw/o06uyx0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OKysLKrFIzbQFUfc/QCLTDD8cCI/x2XpSYciPc5rCax+PTGxdktdLDl0Zk11eVu78/cKaQunNJ/kfSY7eSHDLbsB3k1N3u6SECR7Drf3usNRuTw5a13sbdISJwnIi+vMTYx8+rvhXbIsvA4pUOlrup9cTuzlDKM/C0QJwb3/iWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MUwu9T40; arc=none smtp.client-ip=209.85.215.170
+	 MIME-Version; b=VeaeXwCBNs+AmV+3QgiTGNHEUMxIHJ7uureN6F2bcz66tI4eAUlvmYzFv7HRmraLXz7okCcrmJCbZkAXoFv+TwxPGwpgIUskSO7whD78T/TO0KqPY8RnbwF428vySx1VHgoj8y8imgPXwZfcHO8vNuvMthpy8zBBLnRoIZC+AEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RW2+F/2z; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6e41550ae5bso903926a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:57:34 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f9aa039327so10177265ad.2;
+        Thu, 20 Jun 2024 10:57:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718906254; x=1719511054; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718906257; x=1719511057; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V5DGzLYbAUAdrqbJyW80kv/C/QU59EDA9QcwDgDhhzU=;
-        b=MUwu9T40imIjXvxFeNDOMqpFLMD7DqnrIFwdIO87dT2BGC0rNjG9nrBKp3E0WHBULS
-         IlYlVkxGELvGw+5SWCxK0+7e5a3XCCKtjD26h6O6hXmZR8UyHCKSXLx/MLud50ow6idi
-         e5XAE7uGc8SsU3UFDrmDs7Rt2ftWVSSkTG+pco22wBCx5fPejDWtrPuNzwM/vAB6HW/2
-         INnx5MfIGOzZ0fYNMIk8Gw9vfJpD4cs6Y91LvjSXFmnDWmaZ9ppyKxQvoicQTYLkfI1n
-         nL/ao5PkQFpYbUgf5STpVC8q/fjuP5ZZsgmeM34Kwm20cVlRzBgQDEATjx03/t5pnLBl
-         upPg==
+        bh=S217yThdoIjU6QeboD3InxZjcbGcSzSpB5H/7IT54JI=;
+        b=RW2+F/2zWMGQqFszbWwyd3img/QWoXlD5hZNpcP4AlE7S8GcAo/Zu+fbnLrgL75OP3
+         sW6h7jSEp1Ja02h0b8YEo3PYYEwdMWjhHUyFyl16kUs5LU+vaykGzgCYIkd+Ie8vZJ21
+         zyYvUBj/RTmf2wDmDZx62ETIJkEh1Tmja0z8aHX+Yq/C+wszPPkmARTewHks+RGZv6/X
+         zu0XXgokWU+6zVjWqRaspMcGvgONFFDwy9YXQ9tMXzC3Kyj3BCHyDQ8UnyDkBj9XdBYk
+         3lfaMZ78uXIzCF+sEvSWfNHCVIH9pf/Mzs2oCZOKC4h+gHcjNnkPmWlnf/gSb/XH8sEL
+         wFiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718906254; x=1719511054;
+        d=1e100.net; s=20230601; t=1718906257; x=1719511057;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=V5DGzLYbAUAdrqbJyW80kv/C/QU59EDA9QcwDgDhhzU=;
-        b=er3zW+n4JW8/FZzZVTshc2IfXeSFdSTZFURJt3U9u+U+1Cr9IrcK7Tr3CAHf80pzPm
-         DXrarcTbK4JdhHlWbk+M1zLqqTDz6QP7w5XUx3G2i39j/O68DtDAlaMKnaHIXdRcvauI
-         /chajvnfTZC9bOHEmf6yvnxqhLrdnduIqhGme1IJymRzISFAz+gRZxm78gXBDQr3EeVA
-         9PP760TPtgUqwPxX/KfmsLe2JAze1SnZf1q16CijIO0/p9GYbX+RvhpB/xOfMeWPPeX/
-         e78ILPeVi7ttH4hHwj63yQA8SfOnsDTOJKVjLsbZyTrTNC2lNL7/Dyw/0Q60SD5AFVxK
-         VVxQ==
-X-Gm-Message-State: AOJu0YxzAcg3fFUwYQW00zCr2SbbBcRqAEXp0LzXaxsXTu9aEjOnWYTc
-	M+R/P//hazln7Q14YW4vcIrHhl26P2YPFMxEK63vEOFffLjbCVqdsrOqlf1d1Cg=
-X-Google-Smtp-Source: AGHT+IEumLOfgHy9ptSYIb80BMzk95Th2CfOVKwPVPTL9GX5qt4vT11e0BpVTPi3+WCx/rlRYbxNTg==
-X-Received: by 2002:a17:90a:e60d:b0:2c4:a7af:4d79 with SMTP id 98e67ed59e1d1-2c7b5c75d03mr5990223a91.11.1718906254495;
-        Thu, 20 Jun 2024 10:57:34 -0700 (PDT)
+        bh=S217yThdoIjU6QeboD3InxZjcbGcSzSpB5H/7IT54JI=;
+        b=OgOJJ+5Eer9yHAoJZLmKk65ka7B75LtRr1WbXZPxkIRQNkMd9dvbVnjwyKJGLLkFE5
+         VWr7iMqLwx8bQkGbuiPEcX+5xob8bH3nEBwZzgWZFWvuqf5duAIMGeywvsyN6hxmNDSe
+         PHpYLqx5I5K0RH1k5ydBn4yhHja6cU9bD0Ue/VS0JjCjK1D4NtaL2cSvOGApcwHwXNmI
+         T709gqOq7gyucPds/L1fyfWIaH6HSvhYZ4YDgOtCTuGyvr1ALJTDz5ANAscs0T7Exwxh
+         1mAoijHaeOieNI27TL1L94v6BbCpPOqLZQTXa2ruLYQGbwxndLlewmaaV1K+GQgFa5qP
+         o5Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+aDMqmPmf8DRiZkrvONwCL8hjTqTi/Fq0FT6b6zilwlVZbfboNtxEc2D7z9YEgdw+NSZyGkgWG90Lb2f1q00JoCPsSpKHqTH/
+X-Gm-Message-State: AOJu0YyS4nyfMJ/ALdURHt5xLRs+5FcL5OQcoUz0norqAKXF1VqMCEIp
+	vBkdS9Zp1kzkixcCwIkxvrrY0kch9apgaCCDeeRqUERsRg3oG7IWZMWeVPmdmyw=
+X-Google-Smtp-Source: AGHT+IEsuBQgU5tFbCUFweOZuFt81ozFdug3U9h5V494KH6XT54Y5Mu4sLWTPUs8g0qHcojBfwlzTw==
+X-Received: by 2002:a17:902:ea01:b0:1f6:3445:3437 with SMTP id d9443c01a7336-1f9aa3de130mr63778435ad.27.1718906257091;
+        Thu, 20 Jun 2024 10:57:37 -0700 (PDT)
 Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e5af9b5dsm1989603a91.43.2024.06.20.10.57.33
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855f5e72asm140359505ad.308.2024.06.20.10.57.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 10:57:34 -0700 (PDT)
+        Thu, 20 Jun 2024 10:57:36 -0700 (PDT)
 From: Yury Norov <yury.norov@gmail.com>
 To: linux-kernel@vger.kernel.org,
-	Shuai Xue <xueshuai@linux.alibaba.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	dmaengine@vger.kernel.org
 Cc: Yury Norov <yury.norov@gmail.com>,
 	Alexey Klimov <alexey.klimov@linaro.org>,
 	Bart Van Assche <bvanassche@acm.org>,
@@ -80,9 +81,9 @@ Cc: Yury Norov <yury.norov@gmail.com>,
 	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
 	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
 	Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH v4 09/40] drivers/perf: optimize ali_drw_get_counter_idx() by using find_and_set_bit()
-Date: Thu, 20 Jun 2024 10:56:32 -0700
-Message-ID: <20240620175703.605111-10-yury.norov@gmail.com>
+Subject: [PATCH v4 10/40] dmaengine: idxd: optimize perfmon_assign_event()
+Date: Thu, 20 Jun 2024 10:56:33 -0700
+Message-ID: <20240620175703.605111-11-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240620175703.605111-1-yury.norov@gmail.com>
 References: <20240620175703.605111-1-yury.norov@gmail.com>
@@ -94,45 +95,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The function searches used_mask for a set bit in a for-loop bit by bit.
-Simplify it by using atomic find_and_set_bit().
+The function searches used_mask for a set bit in a for-loop bit by
+bit. Simplify it by using atomic find_and_set_bit(), and make a nice
+one-liner.
 
 Signed-off-by: Yury Norov <yury.norov@gmail.com>
-Acked-by: Will Deacon <will@kernel.org>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Acked-by: Vinod Koul <vkoul@kernel.org>
+Reviewed-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- drivers/perf/alibaba_uncore_drw_pmu.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/dma/idxd/perfmon.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/perf/alibaba_uncore_drw_pmu.c b/drivers/perf/alibaba_uncore_drw_pmu.c
-index 38a2947ae813..1516f2c3d58f 100644
---- a/drivers/perf/alibaba_uncore_drw_pmu.c
-+++ b/drivers/perf/alibaba_uncore_drw_pmu.c
-@@ -17,6 +17,7 @@
- #include <linux/cpumask.h>
- #include <linux/device.h>
- #include <linux/errno.h>
-+#include <linux/find_atomic.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/kernel.h>
-@@ -266,15 +267,9 @@ static const struct attribute_group *ali_drw_pmu_attr_groups[] = {
- static int ali_drw_get_counter_idx(struct perf_event *event)
- {
- 	struct ali_drw_pmu *drw_pmu = to_ali_drw_pmu(event->pmu);
--	int idx;
-+	int idx = find_and_set_bit(drw_pmu->used_mask, ALI_DRW_PMU_COMMON_MAX_COUNTERS);
+diff --git a/drivers/dma/idxd/perfmon.c b/drivers/dma/idxd/perfmon.c
+index 5e94247e1ea7..063ee78fb132 100644
+--- a/drivers/dma/idxd/perfmon.c
++++ b/drivers/dma/idxd/perfmon.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /* Copyright(c) 2020 Intel Corporation. All rights rsvd. */
  
--	for (idx = 0; idx < ALI_DRW_PMU_COMMON_MAX_COUNTERS; ++idx) {
--		if (!test_and_set_bit(idx, drw_pmu->used_mask))
--			return idx;
--	}
++#include <linux/find_atomic.h>
+ #include <linux/sched/task.h>
+ #include <linux/io-64-nonatomic-lo-hi.h>
+ #include "idxd.h"
+@@ -134,13 +135,9 @@ static void perfmon_assign_hw_event(struct idxd_pmu *idxd_pmu,
+ static int perfmon_assign_event(struct idxd_pmu *idxd_pmu,
+ 				struct perf_event *event)
+ {
+-	int i;
 -
--	/* The counters are all in use. */
--	return -EBUSY;
-+	return idx < ALI_DRW_PMU_COMMON_MAX_COUNTERS ? idx : -EBUSY;
+-	for (i = 0; i < IDXD_PMU_EVENT_MAX; i++)
+-		if (!test_and_set_bit(i, idxd_pmu->used_mask))
+-			return i;
++	int i = find_and_set_bit(idxd_pmu->used_mask, IDXD_PMU_EVENT_MAX);
+ 
+-	return -EINVAL;
++	return i < IDXD_PMU_EVENT_MAX ? i : -EINVAL;
  }
  
- static u64 ali_drw_pmu_read_counter(struct perf_event *event)
+ /*
 -- 
 2.43.0
 
