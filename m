@@ -1,583 +1,244 @@
-Return-Path: <linux-kernel+bounces-221920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA8190FA89
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:55:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB3590FA86
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C295282F99
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AB4C1C2171F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF59D1E536;
-	Thu, 20 Jun 2024 00:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="MVoqkKG5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4D61CFA9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FC01CD23;
 	Thu, 20 Jun 2024 00:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzDIg2ly"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8FCDDC7;
+	Thu, 20 Jun 2024 00:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718844853; cv=none; b=fxM7PTqaEHpJqSeyf21Mn3IvdgBXDAeOaBLm1zuPtbxGUGdDUEGBRic7PLsCN8IW93D/26UQGL/mVP/79jI1XtwZL16vTWBPCC90TKsgWhAgxcuFIACiRTk+VeG6zNs0qZFoMZNKh+5+tqeM8r4fezGDz21P4FIAP7UyRhNxzW0=
+	t=1718844852; cv=none; b=XJk74X2dhhqY4RP9r+a1+aJiCJ4oAKYvv/ugtBrjt9YAwqxPIgSul2rN7BUP1pc/g7Dhxt+k0uERf9bQ2T14uu4wWGAsMgTUSr1WLMTSybpMNuwwJXlf4xlLg58u2cDQ14Ok2pKTgnHs/5SA2hiK8lM/ufHl1oVveLz1GpMUX7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718844853; c=relaxed/simple;
-	bh=nv7DoVcBRJQ3KvKTvQCtcj89AHQP9m8bl446UZ9ur9E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iyrMbEeCyIt8NzrHPMnfu0m2YfVAp3go/8n7jUDH4xGUTGj14nCNEk7icsN3cA+RUK3Kp4gDC1WCzp7kpEVvVEmNIy9RV3DkWssC1AnEduoUrTs9HCzmdUGHWzyq3dp+WrYSy6CJI8pzZebAVM84BxCrWltVNZyxP9m52X4g2LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=MVoqkKG5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11974C2BBFC;
-	Thu, 20 Jun 2024 00:54:11 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="MVoqkKG5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1718844851;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LTafW/4m6CpVp7WHosAWMxqHJkHecQ2jSjqzU8kmtiY=;
-	b=MVoqkKG55rtFbGviP4tc8xoUtSArmnb/Fpn4jdSXxNj5qetOBDmYDudsaEEeNFg8D21hNQ
-	kMogCWsXsk6ZckISk/lb1juwcwASGqZQFuzQ91xn/+gzbNi7FAemOeHf/A8VEi1ykdwYQq
-	WY+zvA5rWgQSkk/tSAcz/3bacCRyfVc=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 31769cc3 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 20 Jun 2024 00:54:11 +0000 (UTC)
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	tglx@linutronix.de
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>,
-	Samuel Neves <sneves@dei.uc.pt>
-Subject: [PATCH v18 5/5] x86: vdso: Wire up getrandom() vDSO implementation
-Date: Thu, 20 Jun 2024 02:53:37 +0200
-Message-ID: <20240620005339.1273434-6-Jason@zx2c4.com>
-In-Reply-To: <20240620005339.1273434-1-Jason@zx2c4.com>
-References: <20240620005339.1273434-1-Jason@zx2c4.com>
+	s=arc-20240116; t=1718844852; c=relaxed/simple;
+	bh=5ZzxlnPl6QHH8zZM0Bxkh6bNL5fo2OEy/Yyo92Jqi6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+pvBw1/lNq3InpS/VdGSCu0KtvbhQWlpg6+Oiv2p3vJrjZVgoVYSXlaDWsCkImgMi6g34rdjvNwavBVld+lBgs+DQuy8S3lbg8aWf7REJY+Kkh2lAa29462mgU8SivYjEBsKb6dqTjYE5kdtZ9HsbZuET0hQdCo3Vxw0ssJigY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzDIg2ly; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f70131063cso2976285ad.2;
+        Wed, 19 Jun 2024 17:54:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718844850; x=1719449650; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kos3a5+8tgScme3AXUkmStzF9iR6lkKUT5lESoizK2o=;
+        b=RzDIg2lyr+BgLVuE2ZDQHBIIRNc4itKHK4Ux8npTamWtfPHBDrhnPDedn1PpH4xctb
+         WwQgPpyCcHzSQF2gwiBkEv6qp7+4nPfgOaLrNctK7PQ0+ThqCGtta1VL7zo7OLdlkQv4
+         GdxHzhhjove+OIQmfmJ0y0479wCKYxgj1T4SmtgU2ThrhfbW8hPdEqGf0S3ogrcNIb1F
+         OEYmdauQ3GfAkV2Ll6fQf1otA+eZe4oEmVJz7seBLZcsImR/KTCaLarKJNW20k2j9Et6
+         IdWeemVwlr3O9HQjwAJE4fIiyV1iL3OkOs09EyXxaqrQYJ0WqSGArNSeyELV73lU3TtV
+         WQHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718844850; x=1719449650;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kos3a5+8tgScme3AXUkmStzF9iR6lkKUT5lESoizK2o=;
+        b=SCOk7hYxmwmzOUt3ExMWY+odUbXSrY8O84OCsD8g9oVNVwLfS7nN+dBggOipBfzAO6
+         zECM3T3eK3D9arDvClPigAbKj0+SrE5wUrkCSqYp1PEsJiYaQuvz5JTTD8u1O6F9FiwG
+         sbjdryfUde9nLq0d7xw0kGJutkWQVW5n/O+1sAT+skPpt8u8OIOFhpmz0sxJl9m1XkmK
+         dNBFC7TzJJ5bUCRBG3kNMlhHf0vhjkxfmSEB8olS+yupVDEsPCrNPadUEcj3FsBm3Tv+
+         fmkR5A771KEi7GTKQOMT0/CcxC/AYI+okUZi6oPrvl7DRpKsTfXdhWX297QSV4Vo5WFn
+         Shmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYYt6WtoewCazTZOAt9dqpUIMyJLQ49OjaWQ3qzJ7o6ztYfJCAjdksgM5SWtUgZCY2xPnBm5U5xjvgOsraSFkvxPBB/RWTY1gZJNGn7Aw/GeEpl3ZyL7RHLCrisa5H/x1E+GynEWo47j5hi1IwEcVTKcc9DOYY2liYbnwA41IqrA==
+X-Gm-Message-State: AOJu0YxA9Qws/Rw4m5Jgin8PCb2c9ajzq0CgoYJwKaUaX0E8SsGhMkGM
+	LYS2FXddUPAtsCjNfaQcOH5+v7PiXC7s1T7c3HoxYjZc3WMaunT5
+X-Google-Smtp-Source: AGHT+IHUZRsqBZONk1cnHXYagT0xqKFsmQ1HV2Poe9z4T6xIIhlzFZn750OVF/2JqoteiFDZy2TAdA==
+X-Received: by 2002:a17:902:da8e:b0:1f9:99d8:4a9e with SMTP id d9443c01a7336-1f9aa3ddab3mr46103265ad.25.1718844849641;
+        Wed, 19 Jun 2024 17:54:09 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:36d9:2b1f:59f:8e9e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f99cfbfa1bsm37273355ad.26.2024.06.19.17.54.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 17:54:09 -0700 (PDT)
+Date: Wed, 19 Jun 2024 17:54:06 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Martin Schiller <ms@dev.tdt.de>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, tsbogend@alpha.franken.de,
+	rdunlap@infradead.org, robh@kernel.org, bhelgaas@google.com,
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] MIPS: pci: lantiq: restore reset gpio polarity
+Message-ID: <ZnN9rkNqucEYuXzR@google.com>
+References: <20240607090400.1816612-1-ms@dev.tdt.de>
+ <ZmnfQWFoIw5UCV-k@google.com>
+ <7d34eb4017e809245daa342e3ccddf4f@dev.tdt.de>
+ <b6bea9239050ed39ce3a051a5985b86d@dev.tdt.de>
+ <6e4eed26-0a15-4ab4-8f3f-7ed0e223db5e@hauke-m.de>
+ <c1813503ba16e1d46a93382dd806ffa6@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <c1813503ba16e1d46a93382dd806ffa6@dev.tdt.de>
 
-Hook up the generic vDSO implementation to the x86 vDSO data page. Since
-the existing vDSO infrastructure is heavily based on the timekeeping
-functionality, which works over arrays of bases, a new macro is
-introduced for vvars that are not arrays.
+On Fri, Jun 14, 2024 at 10:43:29AM +0200, Martin Schiller wrote:
+> On 2024-06-13 22:06, Hauke Mehrtens wrote:
+> > On 6/12/24 21:47, Martin Schiller wrote:
+> > > On 2024-06-12 20:39, Martin Schiller wrote:
+> > > > On 2024-06-12 19:47, Dmitry Torokhov wrote:
+> > > > > Hi Marton,
+> > > > 
+> > > > Hi Dmitry,
+> > > > 
+> > > > > 
+> > > > > On Fri, Jun 07, 2024 at 11:04:00AM +0200, Martin Schiller wrote:
+> > > > > > Commit 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using
+> > > > > > gpiod API") not
+> > > > > > only switched to the gpiod API, but also inverted /
+> > > > > > changed the polarity
+> > > > > > of the GPIO.
+> > > > > > 
+> > > > > > According to the PCI specification, the RST# pin is an active-low
+> > > > > > signal. However, most of the device trees that have been
+> > > > > > widely used for
+> > > > > > a long time (mainly in the openWrt project) define this GPIO as
+> > > > > > active-high and the old driver code inverted the signal internally.
+> > > > > > 
+> > > > > > Apparently there are actually boards where the reset gpio must be
+> > > > > > operated inverted. For this reason, we cannot use the
+> > > > > > GPIOD_OUT_LOW/HIGH
+> > > > > > flag for initialization. Instead, we must explicitly set
+> > > > > > the gpio to
+> > > > > > value 1 in order to take into account any
+> > > > > > "GPIO_ACTIVE_LOW" flag that
+> > > > > > may have been set.
+> > > > > 
+> > > > > Do you have example of such boards? They could not have
+> > > > > worked before
+> > > > > 90c2d2eb7ab5 because it was actively setting the reset line
+> > > > > to physical
+> > > > > high, which should leave the device in reset state if there is an
+> > > > > inverter between the AP and the device.
+> > > > 
+> > > > Oh, you're right. I totally missed that '__gpio_set_value' was
+> > > > used in
+> > > > the original code and that raw accesses took place without paying
+> > > > attention to the GPIO_ACTIVE_* flags.
+> > > > 
+> > > > You can find the device trees I am talking about in [1].
+> > > > 
+> > > > @Thomas Bogendoerfer:
+> > > > Would it be possible to stop the merging of this patch?
+> > > > I think We have to do do some further/other changes.
+> > > > 
+> > > > > 
+> > > > > > 
+> > > > > > In order to remain compatible with all these existing
+> > > > > > device trees, we
+> > > > > > should therefore keep the logic as it was before the commit.
+> > > > > 
+> > > > > With gpiod API operating with logical states there's still
+> > > > > difference in
+> > > > > logic:
+> > > > > 
+> > > > >     gpiod_set_value_cansleep(reset_gpio, 1);
+> > > > > 
+> > > > > will leave GPIO at 1 if it is described as GPIO_ACTIVE_HIGH
+> > > > > (which is
+> > > > > apparently what you want for boards with broken DTS) but for boards
+> > > > > that accurately describe GPIO as GPIO_ACTIVE_LOW it well
+> > > > > drive GPIO to
+> > > > > 0, leaving the card in reset state.
+> > > > > 
+> > > > > You should either use gpiod_set_raw_value_calsleep() or we
+> > > > > can try and
+> > > > > quirk it in gpiolib (like we do for many other cases of
+> > > > > incorrect GPIO
+> > > > > polarity descriptions and which is my preference).
+> > > 
+> > > So you mean we should add an entry for "lantiq,pci-xway" to the
+> > > of_gpio_try_fixup_polarity()?
+> > > Do you know any dts / device outside the openWrt universe which is
+> > > using
+> > > this driver.
+> > > 
+> > > For the lantiq targets in openWrt, the devicetree blob is appended to
+> > > the kernel image and therefore also updated when doing a firmware
+> > > upgrade. So, maybe it would also be an option to fix the driver (using
+> > > GPIO_ACTIVE_* flag for the initial level and set it to 0 -> 1 -> 0)
+> > > and
+> > > rework all the dts files to use GPIO_ACTIVE_LOW.
 
-The vDSO function requires a ChaCha20 implementation that does not write
-to the stack, yet can still do an entire ChaCha20 permutation, so
-provide this using SSE2, since this is userland code that must work on
-all x86-64 processors. There's a simple test for this code as well.
+Yes, cleaning up DTS files when it is possible is nice.
 
-Reviewed-by: Samuel Neves <sneves@dei.uc.pt> # for vgetrandom-chacha.S
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- arch/x86/Kconfig                              |   1 +
- arch/x86/entry/vdso/Makefile                  |   3 +-
- arch/x86/entry/vdso/vdso.lds.S                |   2 +
- arch/x86/entry/vdso/vgetrandom-chacha.S       | 178 ++++++++++++++++++
- arch/x86/entry/vdso/vgetrandom.c              |  17 ++
- arch/x86/include/asm/vdso/getrandom.h         |  55 ++++++
- arch/x86/include/asm/vdso/vsyscall.h          |   2 +
- arch/x86/include/asm/vvar.h                   |  16 ++
- tools/testing/selftests/vDSO/.gitignore       |   1 +
- tools/testing/selftests/vDSO/Makefile         |  15 ++
- .../testing/selftests/vDSO/vdso_test_chacha.c |  43 +++++
- 11 files changed, 332 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/entry/vdso/vgetrandom-chacha.S
- create mode 100644 arch/x86/entry/vdso/vgetrandom.c
- create mode 100644 arch/x86/include/asm/vdso/getrandom.h
- create mode 100644 tools/testing/selftests/vDSO/vdso_test_chacha.c
+> > > 
+> > > Then we won't need any quirks.
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1d7122a1883e..9c98b7a88cc2 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -287,6 +287,7 @@ config X86
- 	select HAVE_UNSTABLE_SCHED_CLOCK
- 	select HAVE_USER_RETURN_NOTIFIER
- 	select HAVE_GENERIC_VDSO
-+	select VDSO_GETRANDOM			if X86_64
- 	select HOTPLUG_PARALLEL			if SMP && X86_64
- 	select HOTPLUG_SMT			if SMP
- 	select HOTPLUG_SPLIT_STARTUP		if SMP && X86_32
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 215a1b202a91..c9216ac4fb1e 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -7,7 +7,7 @@
- include $(srctree)/lib/vdso/Makefile
- 
- # Files to link into the vDSO:
--vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o
-+vobjs-y := vdso-note.o vclock_gettime.o vgetcpu.o vgetrandom.o vgetrandom-chacha.o
- vobjs32-y := vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
- vobjs32-y += vdso32/vclock_gettime.o vdso32/vgetcpu.o
- vobjs-$(CONFIG_X86_SGX)	+= vsgx.o
-@@ -73,6 +73,7 @@ CFLAGS_REMOVE_vdso32/vclock_gettime.o = -pg
- CFLAGS_REMOVE_vgetcpu.o = -pg
- CFLAGS_REMOVE_vdso32/vgetcpu.o = -pg
- CFLAGS_REMOVE_vsgx.o = -pg
-+CFLAGS_REMOVE_vgetrandom.o = -pg
- 
- #
- # X32 processes use x32 vDSO to access 64bit kernel data.
-diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso.lds.S
-index e8c60ae7a7c8..0bab5f4af6d1 100644
---- a/arch/x86/entry/vdso/vdso.lds.S
-+++ b/arch/x86/entry/vdso/vdso.lds.S
-@@ -30,6 +30,8 @@ VERSION {
- #ifdef CONFIG_X86_SGX
- 		__vdso_sgx_enter_enclave;
- #endif
-+		getrandom;
-+		__vdso_getrandom;
- 	local: *;
- 	};
- }
-diff --git a/arch/x86/entry/vdso/vgetrandom-chacha.S b/arch/x86/entry/vdso/vgetrandom-chacha.S
-new file mode 100644
-index 000000000000..bcba5639b8ee
---- /dev/null
-+++ b/arch/x86/entry/vdso/vgetrandom-chacha.S
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+
-+#include <linux/linkage.h>
-+#include <asm/frame.h>
-+
-+.section	.rodata, "a"
-+.align 16
-+CONSTANTS:	.octa 0x6b20657479622d323320646e61707865
-+.text
-+
-+/*
-+ * Very basic SSE2 implementation of ChaCha20. Produces a given positive number
-+ * of blocks of output with a nonce of 0, taking an input key and 8-byte
-+ * counter. Importantly does not spill to the stack. Its arguments are:
-+ *
-+ *	rdi: output bytes
-+ *	rsi: 32-byte key input
-+ *	rdx: 8-byte counter input/output
-+ *	rcx: number of 64-byte blocks to write to output
-+ */
-+SYM_FUNC_START(__arch_chacha20_blocks_nostack)
-+
-+.set	output,		%rdi
-+.set	key,		%rsi
-+.set	counter,	%rdx
-+.set	nblocks,	%rcx
-+.set	i,		%al
-+/* xmm registers are *not* callee-save. */
-+.set	temp,		%xmm0
-+.set	state0,		%xmm1
-+.set	state1,		%xmm2
-+.set	state2,		%xmm3
-+.set	state3,		%xmm4
-+.set	copy0,		%xmm5
-+.set	copy1,		%xmm6
-+.set	copy2,		%xmm7
-+.set	copy3,		%xmm8
-+.set	one,		%xmm9
-+
-+	/* copy0 = "expand 32-byte k" */
-+	movaps		CONSTANTS(%rip),copy0
-+	/* copy1,copy2 = key */
-+	movups		0x00(key),copy1
-+	movups		0x10(key),copy2
-+	/* copy3 = counter || zero nonce */
-+	movq		0x00(counter),copy3
-+	/* one = 1 || 0 */
-+	movq		$1,%rax
-+	movq		%rax,one
-+
-+.Lblock:
-+	/* state0,state1,state2,state3 = copy0,copy1,copy2,copy3 */
-+	movdqa		copy0,state0
-+	movdqa		copy1,state1
-+	movdqa		copy2,state2
-+	movdqa		copy3,state3
-+
-+	movb		$10,i
-+.Lpermute:
-+	/* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
-+	paddd		state1,state0
-+	pxor		state0,state3
-+	movdqa		state3,temp
-+	pslld		$16,temp
-+	psrld		$16,state3
-+	por		temp,state3
-+
-+	/* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
-+	paddd		state3,state2
-+	pxor		state2,state1
-+	movdqa		state1,temp
-+	pslld		$12,temp
-+	psrld		$20,state1
-+	por		temp,state1
-+
-+	/* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
-+	paddd		state1,state0
-+	pxor		state0,state3
-+	movdqa		state3,temp
-+	pslld		$8,temp
-+	psrld		$24,state3
-+	por		temp,state3
-+
-+	/* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
-+	paddd		state3,state2
-+	pxor		state2,state1
-+	movdqa		state1,temp
-+	pslld		$7,temp
-+	psrld		$25,state1
-+	por		temp,state1
-+
-+	/* state1[0,1,2,3] = state1[1,2,3,0] */
-+	pshufd		$0x39,state1,state1
-+	/* state2[0,1,2,3] = state2[2,3,0,1] */
-+	pshufd		$0x4e,state2,state2
-+	/* state3[0,1,2,3] = state3[3,0,1,2] */
-+	pshufd		$0x93,state3,state3
-+
-+	/* state0 += state1, state3 = rotl32(state3 ^ state0, 16) */
-+	paddd		state1,state0
-+	pxor		state0,state3
-+	movdqa		state3,temp
-+	pslld		$16,temp
-+	psrld		$16,state3
-+	por		temp,state3
-+
-+	/* state2 += state3, state1 = rotl32(state1 ^ state2, 12) */
-+	paddd		state3,state2
-+	pxor		state2,state1
-+	movdqa		state1,temp
-+	pslld		$12,temp
-+	psrld		$20,state1
-+	por		temp,state1
-+
-+	/* state0 += state1, state3 = rotl32(state3 ^ state0, 8) */
-+	paddd		state1,state0
-+	pxor		state0,state3
-+	movdqa		state3,temp
-+	pslld		$8,temp
-+	psrld		$24,state3
-+	por		temp,state3
-+
-+	/* state2 += state3, state1 = rotl32(state1 ^ state2, 7) */
-+	paddd		state3,state2
-+	pxor		state2,state1
-+	movdqa		state1,temp
-+	pslld		$7,temp
-+	psrld		$25,state1
-+	por		temp,state1
-+
-+	/* state1[0,1,2,3] = state1[3,0,1,2] */
-+	pshufd		$0x93,state1,state1
-+	/* state2[0,1,2,3] = state2[2,3,0,1] */
-+	pshufd		$0x4e,state2,state2
-+	/* state3[0,1,2,3] = state3[1,2,3,0] */
-+	pshufd		$0x39,state3,state3
-+
-+	decb		i
-+	jnz		.Lpermute
-+
-+	/* output0 = state0 + copy0 */
-+	paddd		copy0,state0
-+	movups		state0,0x00(output)
-+	/* output1 = state1 + copy1 */
-+	paddd		copy1,state1
-+	movups		state1,0x10(output)
-+	/* output2 = state2 + copy2 */
-+	paddd		copy2,state2
-+	movups		state2,0x20(output)
-+	/* output3 = state3 + copy3 */
-+	paddd		copy3,state3
-+	movups		state3,0x30(output)
-+
-+	/* ++copy3.counter */
-+	paddq		one,copy3
-+
-+	/* output += 64, --nblocks */
-+	addq		$64,output
-+	decq		nblocks
-+	jnz		.Lblock
-+
-+	/* counter = copy3.counter */
-+	movq		copy3,0x00(counter)
-+
-+	/* Zero out the potentially sensitive regs, in case nothing uses these again. */
-+	pxor		state0,state0
-+	pxor		state1,state1
-+	pxor		state2,state2
-+	pxor		state3,state3
-+	pxor		copy1,copy1
-+	pxor		copy2,copy2
-+	pxor		temp,temp
-+
-+	ret
-+SYM_FUNC_END(__arch_chacha20_blocks_nostack)
-diff --git a/arch/x86/entry/vdso/vgetrandom.c b/arch/x86/entry/vdso/vgetrandom.c
-new file mode 100644
-index 000000000000..52d3c7faae2e
---- /dev/null
-+++ b/arch/x86/entry/vdso/vgetrandom.c
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+#include <linux/types.h>
-+
-+#include "../../../../lib/vdso/getrandom.c"
-+
-+ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len);
-+
-+ssize_t __vdso_getrandom(void *buffer, size_t len, unsigned int flags, void *opaque_state, size_t opaque_len)
-+{
-+	return __cvdso_getrandom(buffer, len, flags, opaque_state, opaque_len);
-+}
-+
-+ssize_t getrandom(void *, size_t, unsigned int, void *, size_t)
-+	__attribute__((weak, alias("__vdso_getrandom")));
-diff --git a/arch/x86/include/asm/vdso/getrandom.h b/arch/x86/include/asm/vdso/getrandom.h
-new file mode 100644
-index 000000000000..b96e674cafde
---- /dev/null
-+++ b/arch/x86/include/asm/vdso/getrandom.h
-@@ -0,0 +1,55 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+#ifndef __ASM_VDSO_GETRANDOM_H
-+#define __ASM_VDSO_GETRANDOM_H
-+
-+#ifndef __ASSEMBLY__
-+
-+#include <asm/unistd.h>
-+#include <asm/vvar.h>
-+
-+/**
-+ * getrandom_syscall - Invoke the getrandom() syscall.
-+ * @buffer:	Destination buffer to fill with random bytes.
-+ * @len:	Size of @buffer in bytes.
-+ * @flags:	Zero or more GRND_* flags.
-+ * Returns:	The number of random bytes written to @buffer, or a negative value indicating an error.
-+ */
-+static __always_inline ssize_t getrandom_syscall(void *buffer, size_t len, unsigned int flags)
-+{
-+	long ret;
-+
-+	asm ("syscall" : "=a" (ret) :
-+	     "0" (__NR_getrandom), "D" (buffer), "S" (len), "d" (flags) :
-+	     "rcx", "r11", "memory");
-+
-+	return ret;
-+}
-+
-+#define __vdso_rng_data (VVAR(_vdso_rng_data))
-+
-+static __always_inline const struct vdso_rng_data *__arch_get_vdso_rng_data(void)
-+{
-+	if (IS_ENABLED(CONFIG_TIME_NS) && __vdso_data->clock_mode == VDSO_CLOCKMODE_TIMENS)
-+		return (void *)&__vdso_rng_data + ((void *)&__timens_vdso_data - (void *)&__vdso_data);
-+	return &__vdso_rng_data;
-+}
-+
-+/**
-+ * __arch_chacha20_blocks_nostack - Generate ChaCha20 stream without using the stack.
-+ * @dst_bytes:	Destination buffer to hold @nblocks * 64 bytes of output.
-+ * @key:	32-byte input key.
-+ * @counter:	8-byte counter, read on input and updated on return.
-+ * @nblocks:	Number of blocks to generate.
-+ *
-+ * Generates a given positive number of blocks of ChaCha20 output with nonce=0, and does not write
-+ * to any stack or memory outside of the parameters passed to it, in order to mitigate stack data
-+ * leaking into forked child processes.
-+ */
-+extern void __arch_chacha20_blocks_nostack(u8 *dst_bytes, const u32 *key, u32 *counter, size_t nblocks);
-+
-+#endif /* !__ASSEMBLY__ */
-+
-+#endif /* __ASM_VDSO_GETRANDOM_H */
-diff --git a/arch/x86/include/asm/vdso/vsyscall.h b/arch/x86/include/asm/vdso/vsyscall.h
-index be199a9b2676..71c56586a22f 100644
---- a/arch/x86/include/asm/vdso/vsyscall.h
-+++ b/arch/x86/include/asm/vdso/vsyscall.h
-@@ -11,6 +11,8 @@
- #include <asm/vvar.h>
- 
- DEFINE_VVAR(struct vdso_data, _vdso_data);
-+DEFINE_VVAR_SINGLE(struct vdso_rng_data, _vdso_rng_data);
-+
- /*
-  * Update the vDSO data page to keep in sync with kernel timekeeping.
-  */
-diff --git a/arch/x86/include/asm/vvar.h b/arch/x86/include/asm/vvar.h
-index 183e98e49ab9..9d9af37f7cab 100644
---- a/arch/x86/include/asm/vvar.h
-+++ b/arch/x86/include/asm/vvar.h
-@@ -26,6 +26,8 @@
-  */
- #define DECLARE_VVAR(offset, type, name) \
- 	EMIT_VVAR(name, offset)
-+#define DECLARE_VVAR_SINGLE(offset, type, name) \
-+	EMIT_VVAR(name, offset)
- 
- #else
- 
-@@ -37,6 +39,10 @@ extern char __vvar_page;
- 	extern type timens_ ## name[CS_BASES]				\
- 	__attribute__((visibility("hidden")));				\
- 
-+#define DECLARE_VVAR_SINGLE(offset, type, name)				\
-+	extern type vvar_ ## name					\
-+	__attribute__((visibility("hidden")));				\
-+
- #define VVAR(name) (vvar_ ## name)
- #define TIMENS(name) (timens_ ## name)
- 
-@@ -44,12 +50,22 @@ extern char __vvar_page;
- 	type name[CS_BASES]						\
- 	__attribute__((section(".vvar_" #name), aligned(16))) __visible
- 
-+#define DEFINE_VVAR_SINGLE(type, name)					\
-+	type name							\
-+	__attribute__((section(".vvar_" #name), aligned(16))) __visible
-+
- #endif
- 
- /* DECLARE_VVAR(offset, type, name) */
- 
- DECLARE_VVAR(128, struct vdso_data, _vdso_data)
- 
-+#if !defined(_SINGLE_DATA)
-+#define _SINGLE_DATA
-+DECLARE_VVAR_SINGLE(640, struct vdso_rng_data, _vdso_rng_data)
-+#endif
-+
- #undef DECLARE_VVAR
-+#undef DECLARE_VVAR_SINGLE
- 
- #endif
-diff --git a/tools/testing/selftests/vDSO/.gitignore b/tools/testing/selftests/vDSO/.gitignore
-index 7dbfdec53f3d..30d5c8f0e5c7 100644
---- a/tools/testing/selftests/vDSO/.gitignore
-+++ b/tools/testing/selftests/vDSO/.gitignore
-@@ -7,3 +7,4 @@ vdso_test_gettimeofday
- vdso_test_getcpu
- vdso_standalone_test_x86
- vdso_test_getrandom
-+vdso_test_chacha
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index a33b4d200a32..7d59b7bc6ace 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -3,6 +3,7 @@ include ../lib.mk
- 
- uname_M := $(shell uname -m 2>/dev/null || echo not)
- ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
-+SODIUM := $(shell pkg-config --libs libsodium 2>/dev/null)
- 
- TEST_GEN_PROGS := $(OUTPUT)/vdso_test_gettimeofday $(OUTPUT)/vdso_test_getcpu
- TEST_GEN_PROGS += $(OUTPUT)/vdso_test_abi
-@@ -12,9 +13,17 @@ TEST_GEN_PROGS += $(OUTPUT)/vdso_standalone_test_x86
- endif
- TEST_GEN_PROGS += $(OUTPUT)/vdso_test_correctness
- TEST_GEN_PROGS += $(OUTPUT)/vdso_test_getrandom
-+ifeq ($(uname_M),x86_64)
-+ifneq ($(SODIUM),)
-+TEST_GEN_PROGS += $(OUTPUT)/vdso_test_chacha
-+endif
-+endif
- 
- CFLAGS := -std=gnu99
- CFLAGS_vdso_standalone_test_x86 := -nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector
-+CFLAGS_vdso_test_chacha := $(SODIUM) -idirafter $(top_srcdir)/include -idirafter \
-+			   $(top_srcdir)/arch/$(ARCH)/include -idirafter include \
-+			   -D__ASSEMBLY__ -DBULID_VDSO -DCONFIG_FUNCTION_ALIGNMENT=0 -Wa,--noexecstack
- LDFLAGS_vdso_test_correctness := -ldl
- ifeq ($(CONFIG_X86_32),y)
- LDLIBS += -lgcc_s
-@@ -35,3 +44,9 @@ $(OUTPUT)/vdso_test_correctness: vdso_test_correctness.c
- 		-o $@ \
- 		$(LDFLAGS_vdso_test_correctness)
- $(OUTPUT)/vdso_test_getrandom: parse_vdso.c
-+$(OUTPUT)/vdso_test_chacha: CFLAGS += $(CFLAGS_vdso_test_chacha)
-+$(OUTPUT)/vdso_test_chacha: $(top_srcdir)/arch/$(ARCH)/entry/vdso/vgetrandom-chacha.S
-+$(OUTPUT)/vdso_test_chacha: include/asm/rwonce.h
-+include/asm/rwonce.h:
-+	mkdir -p include/asm
-+	touch $@
-diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-new file mode 100644
-index 000000000000..e38f44e5f803
---- /dev/null
-+++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+
-+#include <sodium/crypto_stream_chacha20.h>
-+#include <sys/random.h>
-+#include <string.h>
-+#include <stdint.h>
-+#include "../kselftest.h"
-+
-+extern void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes, const uint8_t *key, uint32_t *counter, size_t nblocks);
-+
-+int main(int argc, char *argv[])
-+{
-+	enum { TRIALS = 1000, BLOCKS = 128, BLOCK_SIZE = 64 };
-+	static const uint8_t nonce[8] = { 0 };
-+	uint32_t counter[2];
-+	uint8_t key[32];
-+	uint8_t output1[BLOCK_SIZE * BLOCKS], output2[BLOCK_SIZE * BLOCKS];
-+
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
-+	for (unsigned int trial = 0; trial < TRIALS; ++trial) {
-+		if (getrandom(key, sizeof(key), 0) != sizeof(key)) {
-+			printf("getrandom() failed!\n");
-+			return KSFT_SKIP;
-+		}
-+		crypto_stream_chacha20(output1, sizeof(output1), nonce, key);
-+		for (unsigned int split = 0; split < BLOCKS; ++split) {
-+			memset(output2, 'X', sizeof(output2));
-+			memset(counter, 0, sizeof(counter));
-+			if (split)
-+				__arch_chacha20_blocks_nostack(output2, key, counter, split);
-+			__arch_chacha20_blocks_nostack(output2 + split * BLOCK_SIZE, key, counter, BLOCKS - split);
-+			if (memcmp(output1, output2, sizeof(output1)))
-+				return KSFT_FAIL;
-+		}
-+	}
-+	ksft_test_result_pass("chacha: PASS\n");
-+	return KSFT_PASS;
-+}
+Quirks are fairly cheap and we are not in a hot path here.
+
+> > 
+> > I am not aware that anyone is using a recent kernel on the VRX200
+> > outside of OpenWrt. I am also not aware that anyone is *not* appending
+> > the DTB to the kernel. The SoC is pretty old now, the successor of
+> > this SoC was released about 10 years ago.
+> > 
+> 
+> We're not just talking about VRX200 (VR9) here, but even older devices
+> such as AR9 and Danube.
+> 
+> > For me it would be fine if you fix the broken device device trees
+> > shipped with the upstream kernel and with OpenWrt to make them work
+> > with the PCI driver instead of investing too much time into handling
+> > old DTBs.
+> > 
+> > The PCI reset is inverted on some boards to handle a dying gasp. If
+> > the power breaks down the reset should get triggered and the PCIe
+> > device can send a dying gasp signal to the other side. This is done on
+> > the reference designs of some Lantiq PCIe DSL card for the VRX318 and
+> > probably also some other components.
+> > 
+> > Hauke
+> 
+> What I missed so far is the fact that the driver used '__gpio_set_value'
+> before Dmitry's commit and thus used raw access to the GPIO.
+> 
+> This effectively means that every device that has worked with the driver
+> so far must have an ACTIVE_LOW reset, no matter what was configured in
+> the device tree.
+> 
+> 
+> So renaming the property in the dts from "gpio-reset" to "reset-gpios"
+> and setting the FLAGS to "GPIO_ACTIVE_LOW" should actually solve the
+> problem.
+
+Right, luckily (to a definition of luckily) the driver and DTB used
+"wrong" syntax for the gpio property, so we can quirk it and make
+force ACTIVE_LOW polarity on old DTBs, and new DTBs with "reset-gpios"
+property will follow polarity specified in DTB.
+
+> 
+> What still bothers me about the driver itself are 2 things:
+> 1. the initial value of GPIOD_OUT_LOW. This means that there is no real
+>    defined HIGH -> LOW -> HIGH on reset.
+
+Is this actually needed? Typically a card requires certain time in reset
+state (with reset line active) before it can be released, however there
+usually no restrictions on line being inactive beforehand. But typically
+it will be pulled up to avoid leakage...
+
+Thanks.
+
 -- 
-2.45.2
-
+Dmitry
 
