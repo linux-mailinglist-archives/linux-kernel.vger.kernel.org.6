@@ -1,152 +1,137 @@
-Return-Path: <linux-kernel+bounces-221939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F8790FAE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:27:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A0D90FAED
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F951C21CEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:27:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88B30B22A0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F63010A3D;
-	Thu, 20 Jun 2024 01:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B8A171A5;
+	Thu, 20 Jun 2024 01:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="Y9W/okRq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kA3RPmUp"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SUzI6TU6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6560B803
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4317F101E2;
+	Thu, 20 Jun 2024 01:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718846839; cv=none; b=NWWR0zvk3Jn7ThCe5AyuNObMwrtO15X6UeXwXX4gRSGtJ1qGTL9HgRm5aXP5AKKDiqn8rrkT+SChGE1f4KfU/sMJdojTjggf43RqKB0T9v4PxVwgZtAlyspL8PXKPIJaaX1ygh7bKS+uDYRgWRy3tO+VLo/MWvgYHlaYgRe6mqA=
+	t=1718846888; cv=none; b=gzVWVnNrb6kd6/TmG8toGXhJIPwQnHXUWcq6f0tYKCp+NlMVwXFUB8Gv4WdEO8ItpqZpSOX9CFQfDK+foOKgf7/wXJxgwxgQiYbTMNcUHsKw1VAV1yCyCoDfr24/H0gIXJlMP6eX4w0nkz1iMoygWJlLhwEXbBWT3fT3Q7LTvmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718846839; c=relaxed/simple;
-	bh=grvF2qrtdC/38+0kcT/7zv9vEgZe+zVR+MDqI8G7nZ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cl9tbsHqjA5wWPGw7nOUNOkAFnKYzhRDFvbwnJLAqh5xgNHiediqZRlnk0ubVwsSS9/sNLdLBtXQlQyoeD1hIHv4ttWuKvnJNEBe8xO0LybKtZ7/5jxqq/I9BYCTQ3PuenLaD8+gfDnPwgsga+HcoejyaCTNu6KYLtz7H75polc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com; spf=pass smtp.mailfrom=sent.com; dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b=Y9W/okRq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kA3RPmUp; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sent.com
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 6D001114022F;
-	Wed, 19 Jun 2024 21:27:16 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Wed, 19 Jun 2024 21:27:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
-	:subject:to:to; s=fm2; t=1718846836; x=1718933236; bh=k9foSFkePz
-	9cBwUSIx+qhJ76EzRla1z5nODbQMDGUyw=; b=Y9W/okRqn5OzHVjaMnL84Oz7Mm
-	vesKSAL1dP78CkuGWuKRQMYR0fjUALK+z0Nd8AGKTbhe7NO4lbU/vYO3wwbNE1PZ
-	nAlT4V1gVeVUGJ5MsyXEjzeDgU5cEABlzB5AJ8VkI6d255/EBJmBUrOaCNcxhao9
-	RlohSOPLIl5+1UaFR/4SyV7YIWjMUvjaRXWdMO2V/K3sz15rAf1gnPdNs4vnLC3e
-	hro/UmkapcFG66W8w/jLc+Vcl2nPBCEAio7qrRC0d6jh51x1MUDhTLqfo8/EuUKy
-	k3a73PRUoUfLlX1n0/tvJs0DdrA3PIWxzylr5fd6j9FOOM6TQCQVqGfyxmHg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm2; t=1718846836; x=1718933236; bh=k9foSFkePz9cB
-	wUSIx+qhJ76EzRla1z5nODbQMDGUyw=; b=kA3RPmUprUBRXC7VjHr31NGCXf9ef
-	EubGp8TF1o6vYFTr22oeu/uSWh99M8c2jqrWjYjfxV1Sy85TlklbxELZJa1xB/kf
-	UJTJnbg9oIfe1NEAiZRYlcMsUS3So9ltGXlWg9wA/N8INxGOGUjDaLQthaNjXady
-	ldFOZHHRyYZy9o707uH10vg4nXAuWURzw1ngw0lnlK6snldyQLnQ2MTAb0EfKMR1
-	OdWfHm8Kj/fvtK9CMyCzw2ZQogVt1OSwfNFfwLSbBk2aMvXrHCuY/SDA01ljiyxf
-	RbrmllQPprqeeO7iMsoUsbapUHxeY28u0V4hcYnVO73vmJpXx8c2RsuVA==
-X-ME-Sender: <xms:dIVzZo6U9_mnjPTxfudMD2EneXrXXQ1GI8B3Efdgg_J34mx4NYa_Zw>
-    <xme:dIVzZp7wvzwC0RTWbAlCKijVMOPux8mHGYR8My4T6aiH5rid6SeoyLKH6NAGpOt8X
-    xUF7r7NLMCgxk6huQ>
-X-ME-Received: <xmr:dIVzZne_7xxTisiKpBb2b_qGwCc3HEHh162VNK7dR016m2DlZah9phcLOGKNUT94Cxtv6kb4hRr8T3k0LHtSirYeFQk98haS6aTPZv3sGxyyJ1TpMHjJNQGv>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefuddggeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvvefufffkofhrggfgsedtkeertdertddtnecuhfhrohhmpegkihcujggr
-    nhcuoeiiihdrhigrnhesshgvnhhtrdgtohhmqeenucggtffrrghtthgvrhhnpeeigeffgf
-    egkeetudelueejveefieeuieffheduteetudeuffejkeffhfettdeihfenucffohhmrghi
-    nhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepiihirdihrghnsehsvghnthdrtghomh
-X-ME-Proxy: <xmx:dIVzZtLbsLA_nluTokiK1r7MchsDAyeeBjSjpUvEhI05KOyQljyLJA>
-    <xmx:dIVzZsIIqB7lX4mwUMQpNZlwEmQ-HPgCBKMcafi2DrWA2XQLoxm7QA>
-    <xmx:dIVzZuyiKNWBYoELOJHjCRRsonmEiQR12ZU-tNelW6GYjvDNhAleyw>
-    <xmx:dIVzZgL42pB31g9rV8y462FkQbgn1KVCFQ785piHTkU_foqiTbHJqQ>
-    <xmx:dIVzZpBPCmHs24nNeGqv0AyIInOoZPE4-Pbs8x21sVGoL6dD_h-9xUzU>
-Feedback-ID: iccd040f4:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 19 Jun 2024 21:27:15 -0400 (EDT)
-From: Zi Yan <zi.yan@sent.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Hugh Dickins <hughd@google.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	linux-mm@kvack.org
-Cc: Zi Yan <ziy@nvidia.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Yang Shi <shy828301@gmail.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yin Fengwei <fengwei.yin@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mm/migrate: make migrate_pages_batch() stats consistent.
-Date: Wed, 19 Jun 2024 21:27:12 -0400
-Message-ID: <20240620012712.19804-1-zi.yan@sent.com>
-X-Mailer: git-send-email 2.43.0
-Reply-To: Zi Yan <ziy@nvidia.com>
+	s=arc-20240116; t=1718846888; c=relaxed/simple;
+	bh=tah7JHMloHYyyuXUkIuQdAVfA3S4etDUcECfCntNUiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=axCVs1ondF6ydrPez64avgisdGFmALer1OCHQ48xbFPoS7SqNOR2EPzHMZskaXI4T899NtAoSkmvfjCogRKnYAKEj4ggiR1DCrOJqPqPxZb5hOJuUFm8ApB/Ylv60D6ZZ4RPX464otONe0J0gcHP/ZZPAJRd0XjGt3K6TfOzUes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SUzI6TU6; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718846887; x=1750382887;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tah7JHMloHYyyuXUkIuQdAVfA3S4etDUcECfCntNUiA=;
+  b=SUzI6TU6bCDN3VFqALCbS1V0aksPwbU1YlqTVXEEUVEu0XMRlnGyS5Gd
+   eTznzE3m8VxC2qag8jsR1P5fHRw5Dg6LcjqjpVrCgOSqHjnK4o6kFlGJL
+   g9VBl+t4WOOYAjqvNjkMeYWJ2L6oR+ygAiOCLtSwiY5sVL/tTfWHStRrv
+   sZg9eC52kHT9OJ+COPIERZo9k+sm4Dvd5cAQFPPoj52IUfUH2dxk1YR40
+   4oKuG9qfAqvSKcUlfxjcNMIWpjsRNc3qgQOSlCmZMheMq5e20Wu7vcCGH
+   SQf+P6ydpA2a7fyt95uYJ489U9UtXeRqklJISJjjwHDF1e3/FDND87p9C
+   Q==;
+X-CSE-ConnectionGUID: xcPIGPVaQeaDmpnR2XZNaA==
+X-CSE-MsgGUID: bRMwGOGHRPmbNCr/BFqzbg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="33349848"
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="33349848"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 18:28:06 -0700
+X-CSE-ConnectionGUID: B1iPLfK6S7Wzu53SOwNG0w==
+X-CSE-MsgGUID: WIg/bWvsRvSNbC4fn8CN6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="65328322"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 19 Jun 2024 18:28:03 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sK6am-0007Bl-2k;
+	Thu, 20 Jun 2024 01:28:00 +0000
+Date: Thu, 20 Jun 2024 09:27:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sa8775p-ride-r3: add new board file
+Message-ID: <202406200921.dxATkjA1-lkp@intel.com>
+References: <20240619183255.34107-3-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619183255.34107-3-brgl@bgdev.pl>
 
-From: Zi Yan <ziy@nvidia.com>
+Hi Bartosz,
 
-As Ying pointed out in [1], stats->nr_thp_failed needs to be updated to
-avoid stats inconsistency between MIGRATE_SYNC and MIGRATE_ASYNC when
-calling migrate_pages_batch().
+kernel test robot noticed the following build warnings:
 
-Because if not, when migrate_pages_batch() is called via
-migrate_pages(MIGRATE_ASYNC), nr_thp_failed will not be increased and
-when migrate_pages_batch() is called via migrate_pages(MIGRATE_SYNC*),
-nr_thp_failed will be increase in migrate_pages_sync() by
-stats->nr_thp_failed += astats.nr_thp_split.
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.10-rc4 next-20240619]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-[1] https://lore.kernel.org/linux-mm/87msnq7key.fsf@yhuang6-desk2.ccr.corp.intel.com/
+url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/arm64-dts-qcom-move-common-parts-for-sa8775p-ride-variants-into-a-dtsi/20240620-023438
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240619183255.34107-3-brgl%40bgdev.pl
+patch subject: [PATCH 2/2] arm64: dts: qcom: sa8775p-ride-r3: add new board file
+config: arm64-randconfig-051-20240620 (https://download.01.org/0day-ci/archive/20240620/202406200921.dxATkjA1-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 78ee473784e5ef6f0b19ce4cb111fb6e4d23c6b2)
+dtschema version: 2024.6.dev1+g833054f
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240620/202406200921.dxATkjA1-lkp@intel.com/reproduce)
 
-Suggested-by: "Huang, Ying" <ying.huang@intel.com>
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
- mm/migrate.c | 5 +++++
- 1 file changed, 5 insertions(+)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406200921.dxATkjA1-lkp@intel.com/
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 66c74b89d3de..781979567f64 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1645,6 +1645,10 @@ static int migrate_pages_batch(struct list_head *from,
- 			 * migrate_pages() may report success with (split but
- 			 * unmigrated) pages still on its fromlist; whereas it
- 			 * always reports success when its fromlist is empty.
-+			 * stats->nr_thp_failed should be increased too,
-+			 * otherwise stats inconsistency will happen when
-+			 * migrate_pages_batch is called via migrate_pages()
-+			 * with MIGRATE_SYNC and MIGRATE_ASYNC.
- 			 *
- 			 * Only check it without removing it from the list.
- 			 * Since the folio can be on deferred_split_scan()
-@@ -1661,6 +1665,7 @@ static int migrate_pages_batch(struct list_head *from,
- 			   !list_empty(&folio->_deferred_list)) {
- 				if (try_split_folio(folio, split_folios) == 0) {
- 					nr_failed++;
-+					stats->nr_thp_failed += is_thp;
- 					stats->nr_thp_split += is_thp;
- 					stats->nr_split++;
- 					continue;
+dtcheck warnings: (new ones prefixed by >>)
+>> arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: usb@a4f8800: interrupt-names: ['pwr_event', 'hs_phy_irq', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+   	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+>> arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: rsc@18200000: 'power-domains' is a required property
+   	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+>> arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23000000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+>> arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23000000: phy-mode:0: 'ocsgmii' is not one of ['internal', 'mii', 'gmii', 'sgmii', 'psgmii', 'qsgmii', 'qusgmii', 'tbi', 'rev-mii', 'rmii', 'rev-rmii', 'moca', 'rgmii', 'rgmii-id', 'rgmii-rxid', 'rgmii-txid', 'rtbi', 'smii', 'xgmii', 'trgmii', '1000base-x', '2500base-x', '5gbase-r', 'rxaui', 'xaui', '10gbase-kr', 'usxgmii', '10gbase-r', '25gbase-r']
+   	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+>> arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23000000: Unevaluated properties are not allowed ('phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+   	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+>> arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23000000: phy-mode:0: 'ocsgmii' is not one of ['internal', 'mii', 'gmii', 'sgmii', 'psgmii', 'qsgmii', 'qusgmii', 'tbi', 'rev-mii', 'rmii', 'rev-rmii', 'moca', 'rgmii', 'rgmii-id', 'rgmii-rxid', 'rgmii-txid', 'rtbi', 'smii', 'xgmii', 'trgmii', '1000base-x', '2500base-x', '5gbase-r', 'rxaui', 'xaui', '10gbase-kr', 'usxgmii', '10gbase-r', '25gbase-r']
+   	from schema $id: http://devicetree.org/schemas/net/ethernet-controller.yaml#
+   arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23040000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+   arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23040000: phy-mode:0: 'ocsgmii' is not one of ['internal', 'mii', 'gmii', 'sgmii', 'psgmii', 'qsgmii', 'qusgmii', 'tbi', 'rev-mii', 'rmii', 'rev-rmii', 'moca', 'rgmii', 'rgmii-id', 'rgmii-rxid', 'rgmii-txid', 'rtbi', 'smii', 'xgmii', 'trgmii', '1000base-x', '2500base-x', '5gbase-r', 'rxaui', 'xaui', '10gbase-kr', 'usxgmii', '10gbase-r', '25gbase-r']
+   	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+>> arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23040000: Unevaluated properties are not allowed ('mdio', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+   	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+   arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23040000: phy-mode:0: 'ocsgmii' is not one of ['internal', 'mii', 'gmii', 'sgmii', 'psgmii', 'qsgmii', 'qusgmii', 'tbi', 'rev-mii', 'rmii', 'rev-rmii', 'moca', 'rgmii', 'rgmii-id', 'rgmii-rxid', 'rgmii-txid', 'rtbi', 'smii', 'xgmii', 'trgmii', '1000base-x', '2500base-x', '5gbase-r', 'rxaui', 'xaui', '10gbase-kr', 'usxgmii', '10gbase-r', '25gbase-r']
+   	from schema $id: http://devicetree.org/schemas/net/ethernet-controller.yaml#
 
-base-commit: 7c4c5a2ebbcea9031dbb130bb529c8eba025b16a
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
