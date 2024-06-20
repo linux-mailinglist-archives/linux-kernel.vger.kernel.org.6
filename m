@@ -1,97 +1,112 @@
-Return-Path: <linux-kernel+bounces-222400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD0E9100EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:58:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD0349100F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB67A283D5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:58:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 737181F222F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7391A8C0A;
-	Thu, 20 Jun 2024 09:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZdQzlxBY"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1217A1AAE09;
+	Thu, 20 Jun 2024 09:58:19 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CE250288;
-	Thu, 20 Jun 2024 09:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753331A8C22;
+	Thu, 20 Jun 2024 09:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718877493; cv=none; b=GmO+OEnBFfpoGsQy7FDsSDWx/CLBjmq7TyGBdlXtqKSWLJur6PAOn3Xr4pee1xbyHZxxPyh+PdUD2Wufg5BcGff2qr6DsMbCIPSOCbK6pGMJ0RAYA0fRdkeiQGbDYJ4nbc1hbGS3NHkbL2YOf0O68tlV+1EvG6qM7PiOaCHcP2A=
+	t=1718877498; cv=none; b=NaKoCSvbu5+Rgl+bKJ4AhxpVPMa+DKbFEAgd8sCplkiaPLj4zVAOHWg0y1wzq+wq5n1c4ZUNY7WOpHiiMOGNBdvdjoFMZrRqCueFt7L76PSpdHhiS19QRwovQcPNPqcJWygEPEOS6pUtcSSI7scRRfTSql8rmXREgX1ox35bLgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718877493; c=relaxed/simple;
-	bh=/5H0W6bpzr/xWhXo2uhsjMtRPyGadwTtdkaBlFBjGAE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hvfuepSj8Fz1rpSn/n1J3jOrO0uTmFtCoDase3+nCw2czbCag/RKNoEPGZxKdnGxM0uW+l0dmS6bteaIHwUrPcg5L5WOEtN96mYy9wUS56PpXEcz771gKLD6BjtCTrkxKhHeF+N4aAPOc2FI8lvyBabi5taaDrxSpdECzZMQZmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZdQzlxBY; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B17D14000F;
-	Thu, 20 Jun 2024 09:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718877483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4TKdOT/QJ+8CsEXFGrsw+K9KP2TGcydZi7LEpJK+X3E=;
-	b=ZdQzlxBYx8G+CVIeNAuIX/YEYMZhhsaSCExXfuLZ/X72ldsAX/7+bj00Y7zCvUceOGHtc2
-	wcZ1064qqwTJw/IhVuXUuKPpyhcKlCjSiUV2cPYcjqcvP0BJkYu6fkoSVKYl00z61QMU7R
-	5Vto2f1x3bHrBzMy6hQX/QByxRQDPRGYc4oAeo2ikWmfFPoDkqgc3bSTz9Hkz1u7Y8En3G
-	ziYU8VaWCiMMECi+yTsSm+gPP0z71hrgFkxpwJ5o+HaLb7rwrSKHYdI8gFyzuUxuQWm6Sc
-	eHRrstwFEf6xFzWRHSxjb/5hv1p+34miSnRjsXab8+WkI21gqkJdBEvSROpX+Q==
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	"Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel test robot <lkp@intel.com>,
-	thomas.petazzoni@bootlin.com,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH net] net: pse-pd: Kconfig: Fix missing firmware loader config select
-Date: Thu, 20 Jun 2024 11:57:50 +0200
-Message-Id: <20240620095751.1911278-1-kory.maincent@bootlin.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718877498; c=relaxed/simple;
+	bh=zVSE71SnLH+I9UT5DlKC4EFoBihe0WH0r9wpgS4IYtA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uUDXGRQZMKQFi7F5KE24DcfPu3kqRQCqIBbRAqikXAVPDCb1qdBXxyNHTZ6VhpggSisbIJJBZXfshfZymXKMf2Fu3LJBSsqDPnlLj/dehU7L4nw00YOHDHBVkdQvKf5SHPkJswqTyu5jzmR2ylA+vlJHuRJyLBUFjmcykm+N+UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4W4bRs66cvz2CkQV;
+	Thu, 20 Jun 2024 17:54:17 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7E1871A016C;
+	Thu, 20 Jun 2024 17:58:12 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 20 Jun 2024 17:58:11 +0800
+Message-ID: <f0678e11-dd59-2e9b-56d5-cb28a20ffac7@huawei.com>
+Date: Thu, 20 Jun 2024 17:58:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH bpf-next] uprobes: Fix the xol slots reserved for
+ uretprobe trampoline
+To: Oleg Nesterov <oleg@redhat.com>
+CC: <jolsa@kernel.org>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
+	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+	<nathan@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
+	<mark.rutland@arm.com>, <linux-perf-users@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
+References: <20240619013411.756995-1-liaochang1@huawei.com>
+ <20240619143852.GA24240@redhat.com>
+ <7cfa9f1f-d9ce-b6bb-3fe0-687fae9c77c4@huawei.com>
+ <20240620083602.GB30070@redhat.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <20240620083602.GB30070@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: kory.maincent@bootlin.com
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-Selecting FW_UPLOAD is not sufficient as it allows the firmware loader
-API to be built as a module alongside the pd692x0 driver built as builtin.
-Add select FW_LOADER to fix this issue.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202406200632.hSChnX0g-lkp@intel.com/
-Fixes: 9a9938451890 ("net: pse-pd: Add PD692x0 PSE controller driver")
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
- drivers/net/pse-pd/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/pse-pd/Kconfig b/drivers/net/pse-pd/Kconfig
-index 577ea904b3d9..7fab916a7f46 100644
---- a/drivers/net/pse-pd/Kconfig
-+++ b/drivers/net/pse-pd/Kconfig
-@@ -23,6 +23,7 @@ config PSE_REGULATOR
- config PSE_PD692X0
- 	tristate "PD692X0 PSE controller"
- 	depends on I2C
-+	select FW_LOADER
- 	select FW_UPLOAD
- 	help
- 	  This module provides support for PD692x0 regulator based Ethernet
+在 2024/6/20 16:36, Oleg Nesterov 写道:
+> On 06/20, Liao, Chang wrote:
+>>
+>> However, when i asm porting uretprobe trampoline to arm64
+>> to explore its benefits on that architecture, i discovered the problem that
+>> single slot is not large enought for trampoline code.
+> 
+> Ah, but then I'd suggest to make the changelog more clear. It looks as
+> if the problem was introduced by the patch from Jiri. Note that we was
+> confused as well ;)
+
+Perhaps i should use 'RFC' in the subject line, instead of 'PATCH'?
+
+> 
+> And,
+> 
+> 	+	/* Reserve enough slots for the uretprobe trampoline */
+> 	+	for (slot_nr = 0;
+> 	+	     slot_nr < max((insns_size / UPROBE_XOL_SLOT_BYTES), 1);
+> 	+	     slot_nr++)
+> 
+> this doesn't look right. Just suppose that insns_size = UPROBE_XOL_SLOT_BYTES + 1.
+> I'd suggest DIV_ROUND_UP(insns_size, UPROBE_XOL_SLOT_BYTES).
+
+Oh, what a stupid mistake to me. thanks for pointing that out.
+
+> 
+> And perhaps it would be better to send this change along with
+> uretprobe_trampoline_for_arm64 ?
+
+Sure, i would send them out in next revision.
+
+
+> 
+> Oleg.
+> 
+
 -- 
-2.34.1
-
+BR
+Liao, Chang
 
