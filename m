@@ -1,238 +1,222 @@
-Return-Path: <linux-kernel+bounces-222102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB4390FCD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:38:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B018490FCD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B77DFB23BDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:38:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1130B24056
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EB43BBF4;
-	Thu, 20 Jun 2024 06:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EAE40848;
+	Thu, 20 Jun 2024 06:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="s9yo794l"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2043.outbound.protection.outlook.com [40.107.255.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zfkbO/bA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Kx9CHdLf";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="efM2zed1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="E1WooP+v"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AD12B9D6;
-	Thu, 20 Jun 2024 06:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718865472; cv=fail; b=dA7mDuw/QTFEhdp2TprFgSb/W3OGJZ/bH85h8CEn8bhYhJZxgbcI1EzrcF08cQaYx6S4sNWR6+65e4seCanEZJHxd1ZT5oKod+1dZ19E5m1gx/qlcxax5HllNUfaUGgcJyWZ80lf8MNikltXj6wIEe30cYkDLDohjPT9df68LIo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718865472; c=relaxed/simple;
-	bh=o9MiHyEXhw4sTHHoTm3qvYXanYEFxgWMV7tM5Tq1dRY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pVCjJ6BTfJaKWW09l18+GJ+nWndu9Sx048/ZZ8LgEJpz/LTYyN0F5218SVK8TtflQjlWrb3JFbC2E9PcdxkAF/uxn9lBIdRcWu/BRGhFFoHbhC0JajZDRfL8jiCmG+jDw0tsqXp2TMxDRSl/dgylKnG5oYP3Wc83akK2c0eSwlY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=s9yo794l; arc=fail smtp.client-ip=40.107.255.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XWPeavYbdnOSHtrJX2OmeVYNXPN2n6fHPCwK+UOX+67hjy3dO0/LiDBPbpW4OVHXhl9dZf9VNj7m8C8DPHLC1C8kd5MMZjXmwWfyAF9zMy0MTrTKaPEigtM3htFHnUn2RWmSS1tJl6mIOVtkO3gpj27jmyuBUbzhJ1v+0f55alTlfXMF1X4R3ZiuEgo1zPTxTuh3bFF/yx43xuJUud7IKTp0vbSVL44xCz1j+QZpYluF4BaV8AOqA/KuENorRP62GlRGVL2958Kw4yUwerGVMyLfRYnyZwVvTd67Xx7+JpYf8neAJqyRkJ0gH3PKbTBbSw0+408dPNuXhCV4NKx3GA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SmDArJGpA0cWcDqC2g2sGxL2DYTZ1IaHCVmVBxbrkfM=;
- b=jnDbWjsm3kVeHW/isfBZbd/kKWGTaX+49K0LeV1VUfepPlNAYahn91KqCZiq36EhvWfGzGiQ/KtKyVAXs8wAqZuwtZ2+fmPZDewu2nzmSpJo8nsbTIiEWdMm/q6NrfWl3sfAOzu43IX3pJ5GsT11Ff1yEK1g3JLOusmTHpIWfZec7nYfgnRrwx24+T7udZDbxRK4lb8zW0TnbQYmcLb0hFAWUQFLKNYEvUNjeDU3yyp8NkII8VBeXpo/bZXtChCH0cwGytx7iX2a2v85ZQHS430en/UoeRpei127YaK8BIep2D/rxUpjFS4nwM3T0gPmHjZM3eScMooAhbbl3msxkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=draconx.ca smtp.mailfrom=oppo.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SmDArJGpA0cWcDqC2g2sGxL2DYTZ1IaHCVmVBxbrkfM=;
- b=s9yo794lSvPbbE8gmBBM1nU4t6dS1gXIINSLqJnmha55+cQMIXe9nDnRpAfp5q7cA9sjbAxJape2njC4x1t5rCpfh4swKDnw1838+M2FS0psfy5J2Ef2tKYW/VzWDAEUbA1JMT2Q0QOvo5aL/zva8w0xGhwfML5wWBLXJHlCvmo=
-Received: from SI1PR02CA0024.apcprd02.prod.outlook.com (2603:1096:4:1f4::12)
- by KL1PR02MB6353.apcprd02.prod.outlook.com (2603:1096:820:e4::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Thu, 20 Jun
- 2024 06:37:48 +0000
-Received: from SG1PEPF000082E1.apcprd02.prod.outlook.com
- (2603:1096:4:1f4:cafe::b6) by SI1PR02CA0024.outlook.office365.com
- (2603:1096:4:1f4::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.34 via Frontend
- Transport; Thu, 20 Jun 2024 06:37:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- SG1PEPF000082E1.mail.protection.outlook.com (10.167.240.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Thu, 20 Jun 2024 06:37:48 +0000
-Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Jun
- 2024 14:37:47 +0800
-Date: Thu, 20 Jun 2024 14:37:42 +0800
-From: Hailong Liu <hailong.liu@oppo.com>
-To: Nick Bowler <nbowler@draconx.ca>
-CC: <linux-kernel@vger.kernel.org>, Linux regressions mailing list
-	<regressions@lists.linux.dev>, <linux-mm@kvack.org>,
-	<sparclinux@vger.kernel.org>, "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
-Message-ID: <20240620063742.7qugmebodtlogn5r@oppo.com>
-References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54853D556
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718865477; cv=none; b=mKzIlk++9Poxkn2+nLy/5qyCxsnLVSTmLBDlIg9gbixvSCXavuLdMxuLhhIY1K+PAoQTuceNkDqJ1z62RLijE10rTAvJqd6ZY5oG4C100WOsSwhxZYWybeADATDAMkDjDGu3jpdBm38/e39kSy48kA0LbKnOvNnbFJHFrczbxCo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718865477; c=relaxed/simple;
+	bh=zeS7NX5CNUY4aN0izFGib6xZLREX2y7S9y+6i0/RHAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DRVjVrgf31KcilCvowtxHQLCy4KmN9UxDfhh14C72sqtO0Jibsbl9rphF/rhiDgRVvuD+/akHICD+aleu2DpJ3gyf3Zna/FfFzbzJUX3KGXVsX9effXub7tfzzzQZKcwNo8g+gD3hp2jjmy8LpbzmY4s66lJKU7jnT9oAivdJ9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zfkbO/bA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Kx9CHdLf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=efM2zed1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=E1WooP+v; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A86A321A80;
+	Thu, 20 Jun 2024 06:37:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718865474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QVH3AYyzjCE71luft19to40d2L40K3M9Tv9E1KhGFHw=;
+	b=zfkbO/bAubrhbJb46TM9Z8S6ml4+gMnhi7SGyvghXIOwa4I8FHaibS3eyCNOmXeML+ezxA
+	Nlnqw4HeRRJX2ls7CfxeYp6vrY9Q8XDUa321ZsqackGJ2IIpSTo6NdDgXbtebwVQqKciMS
+	71Wu9pNpjDhalvBGkHVS42zPEpAcGZM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718865474;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QVH3AYyzjCE71luft19to40d2L40K3M9Tv9E1KhGFHw=;
+	b=Kx9CHdLfso4HgVqcAtQD0LM4u/ohOYc6vVabjPrJ0dPwTYabgN8q9eFTkpvz4a5IxqflFT
+	AFbILQLL9k0xqlAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=efM2zed1;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=E1WooP+v
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718865472; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QVH3AYyzjCE71luft19to40d2L40K3M9Tv9E1KhGFHw=;
+	b=efM2zed112fiKhqj8InOuO/bYzjUla0T9LTz2+z7x2hZ1E+BbypUJ/zAXL0J0VDXmCYCs5
+	u08PFXadS/oLTSXdi3pv3U20P+sTlCg3vdgI/w1pJf3lJPNDT/ahv455btxViVCbrp5J9s
+	WLbK22LW9VqFSKdD78AKG655oqRHDbw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718865472;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QVH3AYyzjCE71luft19to40d2L40K3M9Tv9E1KhGFHw=;
+	b=E1WooP+vNn75+to41+rkFQUaoLWaV6Mq/HtLp4EoyAVPJgXVi6q4jfS1TdJTyo/Jw4y0PC
+	3oUF6isWQoMGS3AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C3011369F;
+	Thu, 20 Jun 2024 06:37:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hc40FUDOc2akPgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 20 Jun 2024 06:37:52 +0000
+Message-ID: <743577a0-ef60-4731-8901-daf1ae4f7f7f@suse.de>
+Date: Thu, 20 Jun 2024 08:37:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
-X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E1:EE_|KL1PR02MB6353:EE_
-X-MS-Office365-Filtering-Correlation-Id: dfcb97f3-7150-44ec-c056-08dc90f38054
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|1800799021|82310400023|376011|36860700010;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YgbWPOndJ18Lt79qgC1w90i/6CHuUkShk8EaltFjXXKUy826PYv2Mv0bRsTq?=
- =?us-ascii?Q?nz6Fq7kp7y3iypiaaXH+r7wqUfo8Pf4olYp8mh+t6VCSONqEmvJ0cMfTj3rh?=
- =?us-ascii?Q?iRH/K73WHsJs1FjPdf4f2LQJQ5uQblJcMEO9rEFXIyxfZEKzNfljcC+B1UOR?=
- =?us-ascii?Q?/XdsBlhucG+ht9yx/kLcj8of7OufEniLhxubctJnMHgrxwtboZKq/7RyFE/W?=
- =?us-ascii?Q?YMAWV8BO+1xD3ISWdAnGho82nTAboB48FKU2RufS3DMLqn6YEU8fADmz6rNr?=
- =?us-ascii?Q?ShiT5i9IIN4zImnGUEAmvC0FNgoUfE2T8LmgbkVWXDTke36FfpG0PU0mgs1S?=
- =?us-ascii?Q?+1FadKtn/9028dvWV/h/ocBCRIuYg6iVlfQe6Mqr7gw7o095H5qLW27C3mrB?=
- =?us-ascii?Q?n+MknzqG/7xXit72Swm/fY3NOJvzlRbgH3PrzYXloe2ia1FqFAYbQUchSfaj?=
- =?us-ascii?Q?NHjoZGCbtseW0Q3Fc2jkBFpskW8LQ3+zBVvTAzx3Nl5L1KYfVBSGBp8yNoUM?=
- =?us-ascii?Q?wF9GdYPqJJekdlezCGdX2rVNkz1S/HhFFXYQiDyiHefRJSRkw9ido+A6XiQh?=
- =?us-ascii?Q?DF6Z+iaxn2i7xaOlos02ZPpIiyfBd+Xs25I+pla/GQiVRh5Ih9XNLweDTKbt?=
- =?us-ascii?Q?3EXTub0wZGm4Q22/5wONmlo/FyuKtCNIMwy+/XQxVuq8GWsLYzUagCAdzWQG?=
- =?us-ascii?Q?BRxP5TS62gN4+KRDtpMNuPyItbxg4d2ITjEv15eSGhzGIK776hT4vky3qicI?=
- =?us-ascii?Q?OEhGyrdF4o9F8PqxoteUak5Kf5h3zKBfLcc2gkOFuGEJwfUz7p3hZffblEcP?=
- =?us-ascii?Q?03Xx7je24RJmRPvIgkwqmYIT0jiosUCQ5w138v6TRTobFfi4BkEvI4+rGEWp?=
- =?us-ascii?Q?GS8+fdwkr3/1/E9EBh2HZk6th3oz32oc6SNfbh+3rBza+fRhZQFp3IUIh8So?=
- =?us-ascii?Q?0P8WI8F629QXeS5qJsT9nSr01eok1W4oL2S1hdMmI3AEV2hl8u4FIdlkki87?=
- =?us-ascii?Q?DSU5kLBjuLKrYywJ+eTs/cqJIl42cMNzH4cPu94+DDtNX9UMSGVkiZH9pc2H?=
- =?us-ascii?Q?rQcvPBWF+jBWpeCnUYIqggp6iVIZhuRDN2ujeovAryhNpRFhKZtAMmKbQPJt?=
- =?us-ascii?Q?X9XBpH2EQWBYL0z7c00Qvr4tehVkcn+XYPFPWTH0GL2DL9QFQVejg8K5WClP?=
- =?us-ascii?Q?xQnCwPV2tmcjvVhGHLtZB2eMLd5AR6k6krGjwY7ePx6k6FiqJC/uaBOrKWKH?=
- =?us-ascii?Q?M9Pmu/vUTtHbPnaQrIkVU1R7cidGF7D7XFnj0P2IdMl+SoWHF7gG9ZxoWfhy?=
- =?us-ascii?Q?S1KYxx3U6vlpJEqWHFlkcV3YJIFplIOrYlaa/WAqwf2UaLxa3EtJPYy4ZWk9?=
- =?us-ascii?Q?1nQ1P5s=3D?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(82310400023)(376011)(36860700010);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 06:37:48.3164
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dfcb97f3-7150-44ec-c056-08dc90f38054
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E1.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB6353
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/mediatek: select DRM_GEM_DMA_HELPER if
+ DRM_FBDEV_EMULATION=y
+To: Chen-Yu Tsai <wenst@chromium.org>, Chun-Kuang Hu
+ <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+References: <20240620054708.2230665-1-wenst@chromium.org>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20240620054708.2230665-1-wenst@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-6.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,chromium.org:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: A86A321A80
+X-Spam-Flag: NO
+X-Spam-Score: -6.50
+X-Spam-Level: 
 
-On Thu, 20. Jun 02:19, Nick Bowler wrote:
-> Hi,
->
-> After upgrading my sparc to 6.9.5 I noticed that attempting to run
-> xfsdump instantly (within a couple seconds) and reliably crashes the
-> kernel.  The same problem is also observed on 6.10-rc4.
->
-> This is a regression introduced around 6.4 timeframe.  6.3 appears
-> to work fine and xfsdump goes about its business dumping stuff.
->
-> Bisection implicates the following:
->
->   062eacf57ad91b5c272f89dc964fd6dd9715ea7d is the first bad commit
->   commit 062eacf57ad91b5c272f89dc964fd6dd9715ea7d
->   Author: Uladzislau Rezki (Sony) <urezki@gmail.com>
->   Date:   Thu Mar 30 21:06:38 2023 +0200
->
->       mm: vmalloc: remove a global vmap_blocks xarray
->
-> This reverts pretty easily on top of v6.10-rc4, as long as I first
-> revert fa1c77c13ca5 ("mm: vmalloc: rename addr_to_vb_xarray() function")
-> as this just causes conflicts.  Then there is one easily-corrected build
-> failure (adjust the one remaining &vbq->vmap_blocks back to &vmap_blocks).
->
-> If I do all of that then the kernel is not crashing anymore.
->
-> A splat like this one is output on the console when the crash occurs (varies a bit):
->
->   spitfire_data_access_exception: SFSR[000000000080100d] SFAR[0000000000c51ba0], going.
->                 \|/ ____ \|/
->                 "@'/ .. \`@"
->                 /_| \__/ |_\
->                    \__U_/
->   xfsdump(2028): Dax [#1]
->   CPU: 0 PID: 2028 Comm: xfsdump Not tainted 6.9.5 #199
->   TSTATE: 0000000811001607 TPC: 0000000000974fc4 TNPC: 0000000000974fc8 Y: 00000000    Not tainted
->   TPC: <queued_spin_lock_slowpath+0x1d0/0x2cc>
->   g0: 0000000000aa9110 g1: 0000000000c51ba0 g2: 444b000000000000 g3: 0000000000c560c0
->   g4: fffff800a71a1f00 g5: fffff800bebb6000 g6: fffff800ac0ec000 g7: 0000000000040000
->   o0: 0000000000000002 o1: 00000000000007d8 o2: fffff800a4131420 o3: ffffffff0000ffff
->   o4: 00000000900a2001 o5: 0000000000c4f5a0 sp: fffff800ac0eeac1 ret_pc: 0000000000040000
->   RPC: <0x40000>
->   l0: fffff800a40098c0 l1: 0000000100800000 l2: 0000000000000000 l3: 0000000000000103
->   l4: fffff800a40081b0 l5: 0000000000aeec00 l6: fffff800a40080a0 l7: 0000000101000000
->   i0: 0000000000c4f5a0 i1: 00000000900a2001 i2: 0000000000000000 i3: fffff800bf807b80
->   i4: 0000000000000000 i5: fffff800bf807b80 i6: fffff800ac0eeb71 i7: 0000000000503438
->   I7: <vm_map_ram+0x210/0x724>
->   Call Trace:
->   [<0000000000503438>] vm_map_ram+0x210/0x724
->   [<00000000006661f8>] _xfs_buf_map_pages+0x58/0xa0
->   [<0000000000667058>] xfs_buf_get_map+0x668/0x7a4
->   [<00000000006673e0>] xfs_buf_read_map+0x20/0x160
->   [<0000000000667548>] xfs_buf_readahead_map+0x28/0x38
->   [<000000000067a4f8>] xfs_iwalk_ichunk_ra.isra.0+0xa8/0xc4
->   [<000000000067a8f0>] xfs_iwalk_ag+0x1c0/0x260
->   [<000000000067ab08>] xfs_iwalk+0xdc/0x130
->   [<0000000000679fc8>] xfs_bulkstat+0x10c/0x140
->   [<0000000000695528>] xfs_compat_ioc_fsbulkstat+0x1a4/0x1e8
->   [<000000000069572c>] xfs_file_compat_ioctl+0x8c/0x1f4
->   [<0000000000534ab0>] compat_sys_ioctl+0x9c/0xfc
->   [<0000000000406214>] linux_sparc_syscall32+0x34/0x60
->   Disabling lock debugging due to kernel taint
->   Caller[0000000000503438]: vm_map_ram+0x210/0x724
->   Caller[00000000006661f8]: _xfs_buf_map_pages+0x58/0xa0
->   Caller[0000000000667058]: xfs_buf_get_map+0x668/0x7a4
->   Caller[00000000006673e0]: xfs_buf_read_map+0x20/0x160
->   Caller[0000000000667548]: xfs_buf_readahead_map+0x28/0x38
->   Caller[000000000067a4f8]: xfs_iwalk_ichunk_ra.isra.0+0xa8/0xc4
->   Caller[000000000067a8f0]: xfs_iwalk_ag+0x1c0/0x260
->   Caller[000000000067ab08]: xfs_iwalk+0xdc/0x130
->   Caller[0000000000679fc8]: xfs_bulkstat+0x10c/0x140
->   Caller[0000000000695528]: xfs_compat_ioc_fsbulkstat+0x1a4/0x1e8
->   Caller[000000000069572c]: xfs_file_compat_ioctl+0x8c/0x1f4
->   Caller[0000000000534ab0]: compat_sys_ioctl+0x9c/0xfc
->   Caller[0000000000406214]: linux_sparc_syscall32+0x34/0x60
->   Caller[00000000f789ccdc]: 0xf789ccdc
->   Instruction DUMP:
->    8610e0c0
->    8400c002
->    c458a0f8
->   <f6704002>
->    c206e008
->    80a06000
->    12400012
->    01000000
->    81408000
->
-> Let me know if you need any more info!
->
-> Thanks,
->   Nick
->
-I guess you can patch this
-https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=mm-hotfixes-unstable&id=00468d41c20cac748c2e4bfcf003283d554673f5
+Hi
 
+Am 20.06.24 um 07:47 schrieb Chen-Yu Tsai:
+> With the recent switch from fbdev-generic to fbdev-dma, the driver now
+> requires the DRM GEM DMA helpers. This dependency is missing, and will
+> cause a link failure if fbdev emulation is enabled.
+>
+> Add the missing dependency.
+>
+> Fixes: 0992284b4fe4 ("drm/mediatek: Use fbdev-dma")
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+Apart from this problem, would it make sense to convert the driver's 
+management to GEM's DMA helpers? It appears there's some code 
+duplication in mtk_gem.c and these helpers.
+
+Best regards
+Thomas
+
+> ---
+> The commit this patch fixes is in drm-misc-next. Ideally this patch
+> should be applied on top of it directly.
+>
+> CK, could you give your ack for it?
+>
+>   drivers/gpu/drm/mediatek/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/mediatek/Kconfig b/drivers/gpu/drm/mediatek/Kconfig
+> index 96cbe020f493..d6449ebae838 100644
+> --- a/drivers/gpu/drm/mediatek/Kconfig
+> +++ b/drivers/gpu/drm/mediatek/Kconfig
+> @@ -7,6 +7,7 @@ config DRM_MEDIATEK
+>   	depends on HAVE_ARM_SMCCC
+>   	depends on OF
+>   	depends on MTK_MMSYS
+> +	select DRM_GEM_DMA_HELPER if DRM_FBDEV_EMULATION
+>   	select DRM_KMS_HELPER
+>   	select DRM_MIPI_DSI
+>   	select DRM_PANEL
+
+-- 
 --
-help you, help me,
-Hailong.
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
