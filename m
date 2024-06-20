@@ -1,105 +1,104 @@
-Return-Path: <linux-kernel+bounces-223513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73EA911447
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:20:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE7D911448
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DF231F247FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C4B91C21725
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EB37711C;
-	Thu, 20 Jun 2024 21:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2558B78C70;
+	Thu, 20 Jun 2024 21:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="du8jc1am"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OjzIpfsN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15348757F6
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79D7770F2
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718918412; cv=none; b=Q7X9Ye7/Rp9OfrJapm4YLYA/L589q4s3nVJItqU6fsl2h234VycU/eJvlIj+N2xkSElg7LJHwmX9xPeq4OltySA43+7D2I/CsDkm5XtxymEjbLY60e9iTI+UguJpIkxVDqaRWt68OVuEnFMCWCuBssMddep26B0Ckf1VNTewUyg=
+	t=1718918430; cv=none; b=DPxeMCOyJeKz1ZdyReFJ35WKvO27gaP8ImmqosdvPlOWg+HFriqbuSxlrOGbcYYOZd6JHiML8EMmMeUMQOE2oG7csWmDinkLIUYRbkj5t+neCjFe4iTrNvLT27MlIdBlJVM70SJC8d2YsJuXo6XI9xMsXu/DQZQJJQOCCml/LeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718918412; c=relaxed/simple;
-	bh=w8tKgNnZphqOV8+1lxnIdoceRh5HvzWFxdxJrnRLlFs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aKN/aSb+1EYezmVJPxakqGVYbsZ+OPZJRxx/Amj62h5gTCpl5JgSbizqJuZ8Vy6CmrEJPhFrVlLRNcYu8V/dWaqnIcrXl/T6tOwky8jxqcZ7ktWzVUTyqifvBCR2cf4n5B4DDi4T9fxkUHi68i6o4CMNcnx88Gd7HBJ6V0+vsz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=du8jc1am; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: jdelvare@suse.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718918409;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nrTd+P8XD11NlExzimKrveSe59LGx3sOd4knYOqqS04=;
-	b=du8jc1amvmmLF2vLDp1QOo6rUPwG44p7r9xdxKO0dQOe0Q3wJKUKVo+YOCIKgL7TK8UqR7
-	RVbJsGzgxObBjZX8uQ6pncbGUaTGO7/LnEuQM/74AhHbWbkx1hnhmDOdF3EYt4+ztKcV9p
-	Nq3R/Bx/hVLxP15t0QLotgzUVYnyxXQ=
-X-Envelope-To: linux@roeck-us.net
-X-Envelope-To: linux-hwmon@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: sean.anderson@linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH] hwmon: iio: Use iio_read_channel_processed_scale for IIO_POWER
-Date: Thu, 20 Jun 2024 17:20:05 -0400
-Message-Id: <20240620212005.821805-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1718918430; c=relaxed/simple;
+	bh=87Dp8Q4lrEL7ITxkh/neWEv+aJpT4mSXkTVg9joWs80=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tv/ryrgLAhMslivBpXNgihdkZRHvhcvypKqzNfNVap2R9ul5wuEIUSZwbr+Acndq+vLZhZE7rF03Lzyw1J5ATI8zBKn32ZwbgBiP+Mst1pGQ6IMUUKNkq1agmtkRopsHw68Uipf0ttussXVmiuqQ/ohXoj8xKyiKScVdfz4wfOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OjzIpfsN; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718918429; x=1750454429;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=87Dp8Q4lrEL7ITxkh/neWEv+aJpT4mSXkTVg9joWs80=;
+  b=OjzIpfsNsSiZCaRmmTSQcmlYHk6a+/ZFMzTFeZwvSATePzriiIv1O//Q
+   VQQbY0lUrBk1efqs2KPpzNL9ghZOgM1m6vd3uxfzXCACIY1ILwW5VNdh2
+   +WCj8i5SMbfNbHtZZCALgf9ISQ0udXhTfQkf2VOyRmmMS+3jOC+pd9Fys
+   5Y5olZTZ/rZ6mcIpw1OQwnlo0bAXA/wfQaeBZfJDzxKnekkFMF7+7lO1r
+   oceld4fUi8etthmlHvxvBd9hcuxZAH+aY9GgWysAQlTBGpW4CGm7H5J4g
+   4ZBy2yrGa+UD/YxC14h5B2UzfTTm7nIZ1UGDaPoZuddQqIe/cEHKlVJJW
+   w==;
+X-CSE-ConnectionGUID: Eo+IXQy8RVW0MVH8YGW/hw==
+X-CSE-MsgGUID: XWdOagkrSL68Cp/0HUZn7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="27338445"
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="27338445"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 14:20:28 -0700
+X-CSE-ConnectionGUID: sn3wgCqSRweElp+sWryq+g==
+X-CSE-MsgGUID: Jv2iKtIIRYaG3QQzyJBR6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="47334471"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 20 Jun 2024 14:20:27 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sKPCi-0007xs-2Q;
+	Thu, 20 Jun 2024 21:20:24 +0000
+Date: Fri, 21 Jun 2024 05:20:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jianguo Wu <wujianguo@chinatelecom.cn>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: csky-linux-ld: core.c:undefined reference to
+ `netfilter_lwtunnel_fini'
+Message-ID: <202406210511.8vbByYj3-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Instead of rescaling power channels after the fact, use the dedicated
-scaling API. This should reduce any inaccuracies resulting from the
-scaling.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   50736169ecc8387247fe6a00932852ce7b057083
+commit: a2225e0250c5fa397dcebf6ce65a9f05a114e0cf netfilter: move the sysctl nf_hooks_lwtunnel into the netfilter core
+date:   29 hours ago
+config: csky-buildonly-randconfig-r003-20220117 (https://download.01.org/0day-ci/archive/20240621/202406210511.8vbByYj3-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240621/202406210511.8vbByYj3-lkp@intel.com/reproduce)
 
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
----
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406210511.8vbByYj3-lkp@intel.com/
 
- drivers/hwmon/iio_hwmon.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+All errors (new ones prefixed by >>):
 
-diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
-index 4c8a80847891..fab32e1e15f2 100644
---- a/drivers/hwmon/iio_hwmon.c
-+++ b/drivers/hwmon/iio_hwmon.c
-@@ -49,16 +49,17 @@ static ssize_t iio_hwmon_read_val(struct device *dev,
- 	struct iio_channel *chan = &state->channels[sattr->index];
- 	enum iio_chan_type type;
- 
--	ret = iio_read_channel_processed(chan, &result);
--	if (ret < 0)
--		return ret;
--
- 	ret = iio_get_channel_type(chan, &type);
- 	if (ret < 0)
- 		return ret;
- 
- 	if (type == IIO_POWER)
--		result *= 1000; /* mili-Watts to micro-Watts conversion */
-+		/* mili-Watts to micro-Watts conversion */
-+		ret = iio_read_channel_processed_scale(chan, &result, 1000);
-+	else
-+		ret = iio_read_channel_processed(chan, &result);
-+	if (ret < 0)
-+		return ret;
- 
- 	return sprintf(buf, "%d\n", result);
- }
+   csky-linux-ld: net/netfilter/core.o: in function `netfilter_init':
+   core.c:(.init.text+0x42): undefined reference to `netfilter_lwtunnel_init'
+>> csky-linux-ld: core.c:(.init.text+0x56): undefined reference to `netfilter_lwtunnel_fini'
+>> csky-linux-ld: core.c:(.init.text+0x70): undefined reference to `netfilter_lwtunnel_init'
+   csky-linux-ld: core.c:(.init.text+0x78): undefined reference to `netfilter_lwtunnel_fini'
+
 -- 
-2.35.1.1320.gc452695387.dirty
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
