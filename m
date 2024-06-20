@@ -1,124 +1,101 @@
-Return-Path: <linux-kernel+bounces-222723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A7D910632
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:36:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D531910639
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F395E28BA1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:36:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E56101F260EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBBC1AD9CB;
-	Thu, 20 Jun 2024 13:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2421AE0A0;
+	Thu, 20 Jun 2024 13:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUFnNODS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PHe57qic"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD7B1AD4B8;
-	Thu, 20 Jun 2024 13:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2DD1AD3EB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718890207; cv=none; b=IM3iwHbsF0sIMz0oSjlUWZZWggQmNbRylmFcyF5twQif+ldV5IyW+ElltRPDGA55c1Nlj0NW9HSgFs3epEaRHkc1ZuH74lP0vLVROtJIJX6O102Ynw+LE55kNBEc/SqcbAc3Rsf5ISFi5roL9UMpFWE2w3Jbo0vhViFJz6ZzPQw=
+	t=1718890302; cv=none; b=Ec2D3yibywn7Whtf8mz5Qe881FQqO7waqSe1bPXkd/Fzjqq5A/bGoxJCn73ajTH4pbhMPeOwm2Yz3FC06AI64gRJRjkVnTasGdCv4HJ4RfAgW/+OsKtfAzTAdv7tk513XnYlR5714tP+/rxUdcKsO1pdvXhYbC/sxfqoqn4cbSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718890207; c=relaxed/simple;
-	bh=IxmUyzEcJMOiOVQPDyxrSqnmY7FhcCTjFRxTX7XpCYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=erKmlS6jbGX+fCfyAMfpbR8T4gjyb0sDSsC3LfmB5Z8IPe1JTqGL+aae9Q4jIcYi54stKkBpiPjZM7+Rh1C9FQKqDvSAG+TX744oHqp82gDSP8RbgE4VIueUHhPgFwKRKwrwZ0gfJc6Kgu+ZZBQlyMBOAEYLhxskyRsYPJowB+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUFnNODS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19455C2BD10;
-	Thu, 20 Jun 2024 13:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718890206;
-	bh=IxmUyzEcJMOiOVQPDyxrSqnmY7FhcCTjFRxTX7XpCYs=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=TUFnNODS7TBwqRxVVcUJxA36KOMRliWq2noSGIMMbvbXmg4zG3k66tJ2PFPlRoc2H
-	 FaIjUJGTUmwByQcb78KmfmIXOHpi0KKorMVOOGyJLthEU18I2YIs939/IVlUAPLS5b
-	 Yf7w3gqHQsEnMwCtFgTUQNdNUcRI8D812isM50aLIMfibLopKk6ZFeUe+EjEUZYx+4
-	 rJXQjcWBCxuxrMta6bp1kI0jcPLItc4oNhRktsKkXxDchtb0lxJgac01fX713E0sMY
-	 x8YnjDI+NFxfrObyJ9+PQAQIsUWcd8M0RBoMAXW6H96hZpxHKaY9Lf9hacLCOtjxOB
-	 U9A/cnare5T9A==
-Message-ID: <0fead9a9-1742-4468-a85b-fc3ff4b33f54@kernel.org>
-Date: Thu, 20 Jun 2024 15:30:00 +0200
+	s=arc-20240116; t=1718890302; c=relaxed/simple;
+	bh=ppX6VBx7+1zsn2VbQNl3tkDpaOj+UZLirFEMqA8idfc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ebwtdfodoXU2ypYnMedWlNHN1VH+0cNSEBz7h4rk0uYvr9hH6zf6yNdvKzGqfOhBRQH3EO6Pse4+xDVw3abNmaUs+gU+7uS4V+s3d8QkbFa7j5ZpBGyc2O7ibW4CE2r6K3Pq1J90ILGROPDAkekUiJmcFwJe0IAX/lKYA7ngggU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PHe57qic; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718890300;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vE+mxyg8YyUZt5GQS1+ElW8LtSozIu63aF5ZDw92HPo=;
+	b=PHe57qic3IuiCnuykqRTjFQhxFPavZQ1huUjxI5nRlR+MTeskRdXvcnCuFcGHWu3o7ES3E
+	TQE70l3Mmuzu18C6NosVS4zEvaIOLxmPQHMzgr8NAjPsQTDMiZCrY33KGCmB0irG5uf2Mj
+	eURF9pJ3cauqrhzjYvwofbbnyVxCWCI=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-61-mEWm_jU-PZ-8LL1KS58Nvw-1; Thu,
+ 20 Jun 2024 09:31:37 -0400
+X-MC-Unique: mEWm_jU-PZ-8LL1KS58Nvw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 229C01955D68;
+	Thu, 20 Jun 2024 13:31:31 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.104])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3988E1956087;
+	Thu, 20 Jun 2024 13:31:25 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: pabeni@redhat.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	jtornosm@redhat.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] net: usb: ax88179_178a: improve link status logs
+Date: Thu, 20 Jun 2024 15:31:20 +0200
+Message-ID: <20240620133124.102154-1-jtornosm@redhat.com>
+In-Reply-To: <c76d1786c308aeb6e4c836334084e3049c0f108a.camel@redhat.com>
+References: <c76d1786c308aeb6e4c836334084e3049c0f108a.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/7] dt-bindings: clock: Add CPR clock defines for
- IPQ9574
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org,
- angelogioacchino.delregno@collabora.com, andersson@kernel.org,
- konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- ulf.hansson@linaro.org, quic_sibis@quicinc.com, quic_rjendra@quicinc.com,
- luca@z3ntu.xyz, abel.vesa@linaro.org, quic_rohiagar@quicinc.com,
- danila@jiaxyga.com, otto.pflueger@abscue.de, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20240620081427.2860066-1-quic_varada@quicinc.com>
- <20240620081427.2860066-5-quic_varada@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240620081427.2860066-5-quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 20/06/2024 10:14, Varadarajan Narayanan wrote:
-> Add defines for the CPR block present in IPQ9574.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+Hello Paolo,
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Please always include the target tree in the subj prefix - in this case
+> it should have been 'net'.
+Ok, I forgot it.
 
-Best regards,
-Krzysztof
+> Here                                ^^^^ link value is always 0, so you
+> should using a constant string.
+Ok, better in that way.
+
+I will send a next version of the patch.
+
+Thanks
+
+Best regards
+José Ignacio
 
 
