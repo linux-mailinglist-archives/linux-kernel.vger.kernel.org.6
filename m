@@ -1,296 +1,153 @@
-Return-Path: <linux-kernel+bounces-222812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9FBA91080A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:21:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E099391080D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 304B6B24D97
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:21:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 945E81F21802
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8C61AE0A9;
-	Thu, 20 Jun 2024 14:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE2B1AD9DD;
+	Thu, 20 Jun 2024 14:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lB2NegJh"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JMWFSkSZ"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FAA1AD499;
-	Thu, 20 Jun 2024 14:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A102E4F211
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718893247; cv=none; b=OzzoIGjkD4s4Ko9FAafopeJkHnXWDW6j8uHnqasPuYoA8Jwb06lrcBu6p27ceuqvrMyxDw4iwSlF9dKNx35XaDYUQIJiMF9gFyxtJs8tNklTK8rePadr+st/TXpc/Bgo8b4xfwNCgWy77ugHFTRG5qj6yA95RvG+X0FsYQBv/3M=
+	t=1718893369; cv=none; b=Z+b/sR+hwOL7ygX5BwX55giLx8cYCwyAp6lUJ51xR6lb8LurQDv33Qz/0SovxaWfzLBn8f5F1QbpvdGGZLB2WDwUxnoWVhOfsG8nDS+Fn9etlXoSl4nnScwGudHLvqPa6uIJGVSSB7vov+QQv8hs0B7iEmOjbgV9MRTylJpfVuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718893247; c=relaxed/simple;
-	bh=RpDzMEPAkTH0gCUtj8Zipc0F542rspFE5ClM8an0Mto=;
+	s=arc-20240116; t=1718893369; c=relaxed/simple;
+	bh=R5I8MCxc6HrCQZOo49PzevemalXoQruR1e5Ny69+HHw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VhmViT5JCVqpzYs2yBb014Nvm1jhukrRvAm5pkSj+RnzYRrVdx2TQ/ijsQvFtWWYB46J/iYxEaPHiypmx0BkGTssdRYdtV0ZYQ1KGeKhR6o746/WNVDhIkrGVBlH3Yce39xEehqpIL9qp9qzG3We1yq+/S/GgIW7p6kQYNdY9q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lB2NegJh; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebe0a81dc8so10885081fa.2;
-        Thu, 20 Jun 2024 07:20:45 -0700 (PDT)
+	 To:Cc:Content-Type; b=TWyRGXMHmL5ASo6EUVIZVPbHdNZVgednP0VbBnSVyUP8nRJhXKRAvPdnmQMAC6uvpVaeEsUsPBnHE4zucdDxs9BeSnPMaxtSYk4umxUbbKT8/VHctN+Pun/Rr3KBctcwTIn21U0lj526dnJBx/QpSaFiO8DKuBmp/Y6Hi7MpiAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JMWFSkSZ; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-62ce53782f4so8156937b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718893243; x=1719498043; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aE+vLn2GjGuqLu8n+Texxnq8vZV2TJlYRLG7tNkSm9w=;
-        b=lB2NegJhi6qat4W54xuOimsqp8F6UDTWxzUFkOrPnrfQsrP3rfIMgVI6Su+epJXtp8
-         ZbFYqoeOUKMrUqKkm0gdB2BOMiIO5HBUfozD7h8wpiQDB2kK9ps7v8eRQKs4X/EK6vha
-         B7LsM+O0FdUB/fXp/ReojMhcrxQBxJjPoEpNUt6UaR64eiZoAdmUBL5m1goCg5XQcK3z
-         I32TDs0UixQUkEas+mvpzcT40MtpVAH8iZ9o6qgPhSXwjEpl/p0l5oWdN/kI3UNk0sEC
-         Wr7kQVyrVc08R81yM+QXxJJnPu5aPgM9fwYzq6sOpCxpZRLiMbfXTmfozsrZbyK5tSYC
-         vUBw==
+        d=linaro.org; s=google; t=1718893366; x=1719498166; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pb2FlnRi8qf9Ze+6GjyEuSI6u+QcvLgXicbUKY1aLM0=;
+        b=JMWFSkSZhiR6H0C+ao1dNTq6cAVIfeC6Gqos4OCgGHv78P2A2Z9ErT6W/3xZ2TdlXv
+         Yav1+oVwye3jwjLK4IcLCzOhTljVeF6N0O25CMex2CYMnYQkCmSoDoOYhdBkc1S2FKHv
+         4yjsoeCK7QVb9KA2lSBcBmevIoEzm7WeGVyZW7dDYV4GoW1ydYF2TCQQNBdDYutMR4NM
+         dvGiVc/bpPABa21GjjBjJeeSoqOj73TVETUMq0YPjMKbyxc2zTI5JYQeWE/Gr3uAR7k8
+         UWQ+9YKztq2iqXdJaEog9/v4w8xZBYbcpFyVwYsvVj/eO7yxIVAEtzFnGzxjMi4vDaHu
+         uL8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718893243; x=1719498043;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aE+vLn2GjGuqLu8n+Texxnq8vZV2TJlYRLG7tNkSm9w=;
-        b=sIZRWq8XKChomKpPruZkIGWFdbQD4HNA5FHt4m3dmqF2T5mPyYQI2f0MHXo+Us0AYZ
-         W+pYhrSLY6Wwvfl6U9tOjqqqBAhk7FkJknkX2nua0Oi8tR+8ejZ12YjHf71zQ/xXfv3E
-         NvslcySxqrcWn2P4FqpwXkbm35Nqhlo1GjBKiFFxKcqTMYCv3D1/ort7XcKQ6TetlLV4
-         RGin5/gEjR0Et7k3+MxDsYgODOgPbVy+LquK3mC9v2W3F9nyvtesUw2WtIFWc9dSf0Y2
-         uTvkmrJgLqIoSkwE2L/4UYnrV2881FJVfWiFte57jtWFPMq1q1I39mGFoAvJ+Z1+KMmu
-         dtLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfpuY7v8FXGLUi1Yp9s2nEE8ULeOATd5KXt59ou4Di9w7LA+YBS6aPvcqnhp3a2dbamm+ToCbC3vvhHXfzZQjYgYgYF7MVOc5T3XXARxh9Vdz+3lrW1hXrdtpA2FxF26PJCT8WtZooFVgclgx5qOTpNcFxieSXeqKPtMTC9ovZpgmj3O1X8Ip5MkEUhhsPDYMdLndxpmB8fSVkCgGT99I2Eg==
-X-Gm-Message-State: AOJu0YxsxI2gWy+j6IDcxPtxHX3l1xJ+Qb6GvGY3GrutQ6LnVqWAdSZ4
-	fVET5q5gLH3mIfEdFkn+VKJcAWEB3Ijp54+9Wf48Yh5aRCPuPC8HsTGaLO4UHuoHOcvPlzKdpDd
-	yePl8MbUmOqgz1Ysm3qbdbiho2H0=
-X-Google-Smtp-Source: AGHT+IGfHPFkchZI4XFBDyNkcZVktC7kVtwWWeNopv9MwMRTymLvl60lvFyANEtN7uERk9DW2caXasLHMpYMVL3ALww=
-X-Received: by 2002:a2e:9a8e:0:b0:2ec:429a:a807 with SMTP id
- 38308e7fff4ca-2ec429aa8b1mr25630481fa.7.1718893243411; Thu, 20 Jun 2024
- 07:20:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718893366; x=1719498166;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pb2FlnRi8qf9Ze+6GjyEuSI6u+QcvLgXicbUKY1aLM0=;
+        b=J2Lz/2yyGAHaCQs0dwsyt7NHSE9vUyxzMNCtmK7ubU8UEeU8NBXrrI5u4pFmAe1v4s
+         D4MLsRnyOEwMN3eth57eIR3a0PDna0aH4jP5ZfiV1RmB8p7YSCNMjWsu/S2rVtdhT6Al
+         G86uaH5vpOpde//n27UCIz3gRKvIIA0XB3HVUG6SHvYW9LPvNTEoEpwztS5+HIluqjV1
+         ZHxxuTQA8TjIJNw/LUUGGovkrsr4C6XFGpInngfRbtaurjxFOXjoktd6kgzmqsReERi1
+         W4q2VbyHFKuSDWdTkXXOMJYKjBJAFPc/oBIKMPlB/FaBBIA+GcPyalHlLJAnuNjSpQ26
+         icKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUoknKHeApOs2VPcQSmZxvM+rIOBjp3hBLhQlpCcYNCSKD2fNsLwTTbnkK2G/s2OIoKJ2rq08SFK5PoZ9D8FyuR7IBQOJXJ6HwEv8hb
+X-Gm-Message-State: AOJu0Yzvtp/GCoXPyJtdcxQDjranjEpfq9lVU4xHOMjwG5wdXBJN1VDo
+	PY5IX8OFLqDS47vxnkFwkKbwhLvM/7IEbAhanEkJOwBox4/QQVni4fAlhBrzXdfRimYQfAhyQcr
+	dZY0nmneOC6F/iVjWOAewlhiKtktwOWT0OwhnDUPF8csqfr45
+X-Google-Smtp-Source: AGHT+IEeEQ+wBPet0NG1PUeZIgHWiVCS8wkCOBp21eaOWmXAAk8Ryjep4aUjBcCsRpOAEVGWt4sGzL19OJEg52KNsdo=
+X-Received: by 2002:a25:6942:0:b0:dfa:fed0:caee with SMTP id
+ 3f1490d57ef6-e02be176f4fmr6442103276.39.1718893366575; Thu, 20 Jun 2024
+ 07:22:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612075829.18241-1-brgl@bgdev.pl> <CABBYNZLrwgj848w97GP+ijybt-yU8yMNnW5UWhb2y5Zq6b5H9A@mail.gmail.com>
- <CAMRc=Mdb31YGUUXRWACnx55JawayFaRjEPYSdjOCMrYr5xDYag@mail.gmail.com>
- <CABBYNZLPv3zk_UX67yPetQKWiQ-g+Dv9ZjZydhwG3jfaeV+48w@mail.gmail.com>
- <CAMRc=Mdsw5c_BDwUwP2Ss4Bogz-d+waZVd8LLaZ5oyc9dWS2Qg@mail.gmail.com>
- <CAMRc=Mf2koxQH8Pw--6g5O3FTFn_qcyfwTVQjUqxwJ5qW1nzjw@mail.gmail.com>
- <CABBYNZ+7SrLSDeCLF0WDM01prRgAEHMD=9mhu5MfWOuGwoAkNQ@mail.gmail.com>
- <CAMRc=MdozeAzWJCSrDdxVBZ=fwP2yn_j-KZaTDT2Dp7YjKP8-g@mail.gmail.com> <CABBYNZKA7-PAODStTZO33KfHOrGmZHjbEQcP+DKq-CVNwEce4w@mail.gmail.com>
-In-Reply-To: <CABBYNZKA7-PAODStTZO33KfHOrGmZHjbEQcP+DKq-CVNwEce4w@mail.gmail.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Thu, 20 Jun 2024 10:20:30 -0400
-Message-ID: <CABBYNZ+x-HPCEwQVPONr6pF-Kvss=gJxqdosNGUfFFQDLz75DA@mail.gmail.com>
-Subject: Re: [GIT PULL] Immutable tag between the Bluetooth and pwrseq
- branches for v6.11-rc1
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <cover.1718213918.git.limings@nvidia.com> <2c459196c6867e325f9386ec0559efea464cfdd6.1718213918.git.limings@nvidia.com>
+In-Reply-To: <2c459196c6867e325f9386ec0559efea464cfdd6.1718213918.git.limings@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 20 Jun 2024 16:22:10 +0200
+Message-ID: <CAPDyKFqXZ3JdQBMpTM1ccAFqUSsqUcZ2fn+Ste2aG-APS2dt2w@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] dw_mmc-bluefield: add hw_reset() support
+To: Liming Sun <limings@nvidia.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, David Thompson <davthompson@nvidia.com>, 
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, 13 Jun 2024 at 00:53, Liming Sun <limings@nvidia.com> wrote:
+>
+> The eMMC RST_N register is implemented as secure register on
+> BlueField SoC and controlled by ATF. This commit sends SMC call
+> to ATF for the eMMC HW reset.
 
-On Thu, Jun 20, 2024 at 10:16=E2=80=AFAM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> Hi Bartosz,
->
-> On Wed, Jun 19, 2024 at 3:40=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
-l> wrote:
-> >
-> > On Wed, Jun 19, 2024 at 8:59=E2=80=AFPM Luiz Augusto von Dentz
-> > <luiz.dentz@gmail.com> wrote:
-> > >
-> > > Hi Bartosz,
-> > >
-> > > On Wed, Jun 19, 2024 at 3:35=E2=80=AFAM Bartosz Golaszewski <brgl@bgd=
-ev.pl> wrote:
-> > > >
-> > > > On Wed, Jun 12, 2024 at 5:00=E2=80=AFPM Bartosz Golaszewski <brgl@b=
-gdev.pl> wrote:
-> > > > >
-> > > > > On Wed, Jun 12, 2024 at 4:54=E2=80=AFPM Luiz Augusto von Dentz
-> > > > > <luiz.dentz@gmail.com> wrote:
-> > > > > >
-> > > > > > Hi Bartosz,
-> > > > > >
-> > > > > > On Wed, Jun 12, 2024 at 10:45=E2=80=AFAM Bartosz Golaszewski <b=
-rgl@bgdev.pl> wrote:
-> > > > > > >
-> > > > > > > On Wed, Jun 12, 2024 at 4:43=E2=80=AFPM Luiz Augusto von Dent=
-z
-> > > > > > > <luiz.dentz@gmail.com> wrote:
-> > > > > > > >
-> > > > > > > > Hi Bartosz,
-> > > > > > > >
-> > > > > > > > On Wed, Jun 12, 2024 at 3:59=E2=80=AFAM Bartosz Golaszewski=
- <brgl@bgdev.pl> wrote:
-> > > > > > > > >
-> > > > > > > > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org=
->
-> > > > > > > > >
-> > > > > > > > > Hi Marcel, Luiz,
-> > > > > > > > >
-> > > > > > > > > Please pull the following power sequencing changes into t=
-he Bluetooth tree
-> > > > > > > > > before applying the hci_qca patches I sent separately.
-> > > > > > > > >
-> > > > > > > > > Link: https://lore.kernel.org/linux-kernel/20240605174713=
-.GA767261@bhelgaas/T/
-> > > > > > > > >
-> > > > > > > > > The following changes since commit 83a7eefedc9b56fe7bfeff=
-13b6c7356688ffa670:
-> > > > > > > > >
-> > > > > > > > >   Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
-> > > > > > > > >
-> > > > > > > > > are available in the Git repository at:
-> > > > > > > > >
-> > > > > > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linu=
-x.git tags/pwrseq-initial-for-v6.11
-> > > > > > > > >
-> > > > > > > > > for you to fetch changes up to 2f1630f437dff20d02e4b3f07e=
-836f42869128dd:
-> > > > > > > > >
-> > > > > > > > >   power: pwrseq: add a driver for the PMU module on the Q=
-Com WCN chipsets (2024-06-12 09:20:13 +0200)
-> > > > > > > > >
-> > > > > > > > > ---------------------------------------------------------=
--------
-> > > > > > > > > Initial implementation of the power sequencing subsystem =
-for linux v6.11
-> > > > > > > > >
-> > > > > > > > > ---------------------------------------------------------=
--------
-> > > > > > > > > Bartosz Golaszewski (2):
-> > > > > > > > >       power: sequencing: implement the pwrseq core
-> > > > > > > > >       power: pwrseq: add a driver for the PMU module on t=
-he QCom WCN chipsets
-> > > > > > > >
-> > > > > > > > Is this intended to go via bluetooth-next or it is just bec=
-ause it is
-> > > > > > > > a dependency of another set? You could perhaps send another=
- set
-> > > > > > > > including these changes to avoid having CI failing to compi=
-le.
-> > > > > > > >
-> > > > > > >
-> > > > > > > No, the pwrseq stuff is intended to go through its own pwrseq=
- tree
-> > > > > > > hence the PR. We cannot have these commits in next twice.
-> > > > > >
-> > > > > > Not following you here, why can't we have these commits on diff=
-erent
-> > > > > > next trees? If that is the case how can we apply the bluetooth
-> > > > > > specific ones without causing build regressions?
-> > > > > >
-> > > > >
-> > > > > We can't have the same commits twice with different hashes in nex=
-t
-> > > > > because Stephen Rothwell will yell at us both.
-> > > > >
-> > > > > Just pull the tag I provided and then apply the Bluetooth specifi=
-c
-> > > > > changes I sent on top of it. When sending to Linus Torvalds/David
-> > > > > Miller (not sure how your tree gets upstream) mention that you pu=
-lled
-> > > > > in the pwrseq changes in your PR cover letter.
-> > >
-> > > By pull the tag you mean using merge commits to merge the trees and
-> > > not rebase, doesn't that lock us down to only doing merge commits
-> > > rather than rebases later on? I have never used merge commits before.
-> > > There is some documentation around it that suggests not to use merges=
-:
-> > >
-> > > 'While merges from downstream are common and unremarkable, merges fro=
-m
-> > > other trees tend to be a red flag when it comes time to push a branch
-> > > upstream. Such merges need to be carefully thought about and well
-> > > justified, or there=E2=80=99s a good chance that a subsequent pull re=
-quest
-> > > will be rejected.'
-> > > https://docs.kernel.org/maintainer/rebasing-and-merging.html#merging-=
-from-sibling-or-upstream-trees
-> > >
-> > > But then looking forward in that documentation it says:
-> > >
-> > > 'Another reason for doing merges of upstream or another subsystem tre=
-e
-> > > is to resolve dependencies. These dependency issues do happen at
-> > > times, and sometimes a cross-merge with another tree is the best way
-> > > to resolve them; as always, in such situations, the merge commit
-> > > should explain why the merge has been done. Take a moment to do it
-> > > right; people will read those changelogs.'
-> > >
-> > > So I guess that is the reason we want to merge the trees, but what I'=
-m
-> > > really looking forward to is for the 'proper' commands and commit
-> > > message to use to make sure we don't have problems in the future.
-> > >
-> >
-> > You shouldn't really need to rebase your branch very often anyway.
-> > This is really for special cases. But even then you can always use:
-> > `git rebase --rebase-merges` to keep the merge commits.
-> >
-> > The commands you want to run are:
-> >
-> > git pull git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
-> > tags/pwrseq-initial-for-v6.11
-> > git am or b4 shazam on the patches targeting the Bluetooth subsystem
-> > git push
->
-> Not quite working for me:
->
-> From git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux
->  * tag                         pwrseq-initial-for-v6.11 -> FETCH_HEAD
-> hint: You have divergent branches and need to specify how to reconcile th=
-em.
-> hint: You can do so by running one of the following commands sometime bef=
-ore
-> hint: your next pull:
-> hint:
-> hint:   git config pull.rebase false  # merge
-> hint:   git config pull.rebase true   # rebase
-> hint:   git config pull.ff only       # fast-forward only
-> hint:
-> hint: You can replace "git config" with "git config --global" to set a de=
-fault
-> hint: preference for all repositories. You can also pass --rebase, --no-r=
-ebase,
-> hint: or --ff-only on the command line to override the configured default=
- per
-> hint: invocation.
-> fatal: Need to specify how to reconcile divergent branches.
->
-> Perhaps I need to configure pull.rebase to be false?
+Just to make sure I get this correctly. Asserting the eMMC reset line
+is managed through a secure register? Or is this about resetting the
+eMMC controller?
 
-Looks like I just needed -no-ff, will be pushing it after it finishes compi=
-ling.
+No matter what, it looks to me that it should be implemented as a
+reset provider.
 
-> > That's really it, there's not much else to it.
-> >
-> > Bart
-> >
-> > > > > Bart
-> > > >
-> > > > Gentle ping.
-> > > >
-> > > > Bart
-> > >
-> > >
-> > >
-> > > --
-> > > Luiz Augusto von Dentz
+Kind regards
+Uffe
+
 >
+> Reviewed-by: David Thompson <davthompson@nvidia.com>
+> Signed-off-by: Liming Sun <limings@nvidia.com>
+> ---
+>  drivers/mmc/host/dw_mmc-bluefield.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
 >
+> diff --git a/drivers/mmc/host/dw_mmc-bluefield.c b/drivers/mmc/host/dw_mmc-bluefield.c
+> index 4747e5698f48..24e0b604b405 100644
+> --- a/drivers/mmc/host/dw_mmc-bluefield.c
+> +++ b/drivers/mmc/host/dw_mmc-bluefield.c
+> @@ -3,6 +3,7 @@
+>   * Copyright (C) 2018 Mellanox Technologies.
+>   */
 >
+> +#include <linux/arm-smccc.h>
+>  #include <linux/bitfield.h>
+>  #include <linux/bitops.h>
+>  #include <linux/mmc/host.h>
+> @@ -20,6 +21,9 @@
+>  #define BLUEFIELD_UHS_REG_EXT_SAMPLE   2
+>  #define BLUEFIELD_UHS_REG_EXT_DRIVE    4
+>
+> +/* SMC call for RST_N */
+> +#define BLUEFIELD_SMC_SET_EMMC_RST_N   0x82000007
+> +
+>  static void dw_mci_bluefield_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>  {
+>         u32 reg;
+> @@ -34,8 +38,20 @@ static void dw_mci_bluefield_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>         mci_writel(host, UHS_REG_EXT, reg);
+>  }
+>
+> +static void dw_mci_bluefield_hw_reset(struct dw_mci *host)
+> +{
+> +               struct arm_smccc_res res = { 0 };
+> +
+> +               arm_smccc_smc(BLUEFIELD_SMC_SET_EMMC_RST_N, 0, 0, 0, 0, 0, 0, 0,
+> +                             &res);
+> +
+> +               if (res.a0)
+> +                       pr_err("RST_N failed.\n");
+> +}
+> +
+>  static const struct dw_mci_drv_data bluefield_drv_data = {
+> -       .set_ios                = dw_mci_bluefield_set_ios
+> +       .set_ios                = dw_mci_bluefield_set_ios,
+> +       .hw_reset               = dw_mci_bluefield_hw_reset
+>  };
+>
+>  static const struct of_device_id dw_mci_bluefield_match[] = {
 > --
-> Luiz Augusto von Dentz
-
-
-
---=20
-Luiz Augusto von Dentz
+> 2.30.1
+>
 
