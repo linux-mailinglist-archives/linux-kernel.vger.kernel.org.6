@@ -1,171 +1,127 @@
-Return-Path: <linux-kernel+bounces-222336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81DD290FFE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:05:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6DA90FFE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0372B1F238BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:05:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C054A282284
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A573628;
-	Thu, 20 Jun 2024 09:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A4B19ADB0;
+	Thu, 20 Jun 2024 09:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QJJvqQHT"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jir7Gk5k"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521C47C6C9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158E450288;
+	Thu, 20 Jun 2024 09:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718874338; cv=none; b=DGcecoFw277623Q5ZYQshrUSYyHdsIc+fZudR8aWV3Gb4+GKb9lPPhnLRV7T0rUcCC3YIF+WaaA+CN3EWEWgEfMu5bepakoxlEhwc/uWW4kzLOicsEj4HSoGM/mTwI7v8qcvrHo3h+ICMI+9y9FcOORLPtODMpUBKyK1G3lph/0=
+	t=1718874395; cv=none; b=jUEgoiRSjonQzs1nPwfmB9LMc4crgZ/QIm6tQC3vDwT/noM7SmxOwbHDCGPhpwTPvcF67rfxcGADu3/xwUAOVAaarJ0OFglqCvLHlnY3erv/QjhxEnMpeBi3xKnCvcifpcE4Iek9NwYj8RZGFDUDSdmh7ejhLfErOO6taJ9IjVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718874338; c=relaxed/simple;
-	bh=jkKEq5JT+Lrrhve6Owgp68jjvCNnaECDynRqPxfxNt4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jOg+r2PJGE/mN71n1ORp4uLc1u1qQ54DiA/yrVsmUL4+OynkE+dYBpQwabBSs4HINa3AWvHJ+T5m5cJUHJm8IJTMrWilNV8ykqkV0GcoaTCYYTPvsNm7j0WVTd/fp/0amYUmDbF1wDKhRW5VKrcMx6yEHGx0MbVtQfWO7XBkc+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QJJvqQHT; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: leon@kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718874334;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UvFo5cd3E4KERCkesw8BgsGhNxyquIalxzKIE9JjvGY=;
-	b=QJJvqQHTAHPtgcEoyYsp9kFBQqiswzb48TDSfzE/FHaez1zP0Hd3i+oy8qIe03ZB+kkBc5
-	hiMoakj3Vo9O9PeXkYTjpp12EBINz97SlmaVH743rkUpKUKT3QhPgsWfZJmWk7sqqLVbKd
-	vMNyfag0OyDFpJ+Ih22gQKl4GBB+Zk0=
-X-Envelope-To: syzbot+19ec7595e3aa1a45f623@syzkaller.appspotmail.com
-X-Envelope-To: jgg@ziepe.ca
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-rdma@vger.kernel.org
-X-Envelope-To: netdev@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Message-ID: <ef2c01b5-d38b-4409-bbd4-0484564657c9@linux.dev>
-Date: Thu, 20 Jun 2024 17:05:25 +0800
+	s=arc-20240116; t=1718874395; c=relaxed/simple;
+	bh=a/KjCti6R+6JZx72P0n0Q+rTyMBKjYD4Fta1C7UK/Dg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YfF2ou/LL0XBII4bdrs/uibszvqhJIWMzqZ1KOpQwSkQjAcu6dp73JznNdaU3mNVgQBu0LUtwn7N7iguV94XenedJ9emdBCAgUNRev4WCRNlGxq7++bpfLUyGA5Pzq9EiPiplF10N9XBep9m5cE2u9DAg2WUqhxF6xigHe3QDjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jir7Gk5k; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57d07f07a27so593974a12.3;
+        Thu, 20 Jun 2024 02:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718874392; x=1719479192; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=78uUzESMOdQTWvfYAcQTyK+lGm1Zw7Sc2BeqHShFKEI=;
+        b=Jir7Gk5kNfhCYEt0NirnD6d/ESSK/L9UOjKDGvprzRHr9T91XncFkO6OjOP0KpuduG
+         PZ7I1ejlB88Q/5XktVtR2GD6pF4VOdPxWNam6Ej71r1uyhHh44Wnn5Z6qLHZRQN5oZfA
+         4Sax6s/8geTXeVmvqebpLMaxB1bvkMvqGyqynReWJUNb6q03rJ+AHAsPmmUEm8wMqaih
+         nhg0yrSvzy+WCHDht6Xy9WUAB1v3heD38D85dm3RJxNTnGq8+FQxjcfm0pdpbZ5TG2ZT
+         EDhO028UdCPprBOQczSMfDZZsRblPxm4mawTyLBM0kXTI6GR17tbEu2UCWg4NqTyc4/b
+         Zygw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718874392; x=1719479192;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=78uUzESMOdQTWvfYAcQTyK+lGm1Zw7Sc2BeqHShFKEI=;
+        b=ppKLu+6yTJZ5/Jd1580MZIGgtd1VPE7yRUUGSsPFS+Uo1J/hPTgKC4fT9+uSVCgzlP
+         wZ65qpd52fAaC92gwLNc3e7w4p/WmZcW91U9usH9defGsG1u7OT2MDzBEiwxb6b01Loh
+         Jqr3ny7uWkudnmB5TIFUhyH9jfpuUFhyGUTZasFN6yraSXNitptAv29obfBr9E3Tmiii
+         iC5F6FbwQpv6RUudC+/hg0FaYB9ZtucIOyPz07Pvb2Jr3xBBlwvLFY0P41sQBVgGG4nw
+         eMqun5JeD6HmqyOZ5QTH9QRDXhN+PozIAKcR0gixQTNIHYOLHOcPADqrUF9UsBe8fY63
+         HkAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVlHWnd18XYhPg8FiX+JEjdzSpYPj3gjyPnAovSxPtirG68ASGJnQAC2znAsjSsJrKuM8vuknw1HJpgtAFCFnfhP/F+qnobW1OfEUmA0g/Z3IfaVZ5kNQ3R+gj7UmjHz0Yi64x67R2j5uY5VMTqt2+FcSH+qzVkUhkWGRuh8e1SuemWg==
+X-Gm-Message-State: AOJu0Yz0boHNerDZ3NFnW1b27tD7/0WvkMSDy4UlmGvD2kV6jxlO6Nmi
+	aiJBoqqzft6tGYkSSVj3QUJV+mAgkFVSKnnmYl7Lgtd6DrSwAipG
+X-Google-Smtp-Source: AGHT+IGYHPCmAg0EcgWW8sBLz05Oi1dwLaRAw/0OftwpRGxvbdEiRWcysCyM3L2qUl1b/QeM9haRcA==
+X-Received: by 2002:a50:d613:0:b0:579:e7c5:1001 with SMTP id 4fb4d7f45d1cf-57d07e6f4ecmr2570839a12.23.1718874392134;
+        Thu, 20 Jun 2024 02:06:32 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d27198948sm45831a12.54.2024.06.20.02.06.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 02:06:31 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 20 Jun 2024 11:06:29 +0200
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Liao, Chang" <liaochang1@huawei.com>, rostedt@goodmis.org,
+	mhiramat@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+	andrii@kernel.org, nathan@kernel.org, peterz@infradead.org,
+	mingo@redhat.com, mark.rutland@arm.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH bpf-next] uprobes: Fix the xol slots reserved for
+ uretprobe trampoline
+Message-ID: <ZnPxFbUJVUQd80hs@krava>
+References: <20240619013411.756995-1-liaochang1@huawei.com>
+ <20240619143852.GA24240@redhat.com>
+ <7cfa9f1f-d9ce-b6bb-3fe0-687fae9c77c4@huawei.com>
+ <20240620083602.GB30070@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [syzbot] [rdma?] WARNING in ib_uverbs_release_dev
-To: Leon Romanovsky <leon@kernel.org>
-Cc: syzbot <syzbot+19ec7595e3aa1a45f623@syzkaller.appspotmail.com>,
- jgg@ziepe.ca, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
- netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000057e4c061b386e23@google.com>
- <20240619091557.GM4025@unreal>
- <94d36dd5-313b-46b3-8d43-95016175d273@linux.dev>
- <20240619174802.GP4025@unreal>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20240619174802.GP4025@unreal>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620083602.GB30070@redhat.com>
 
-在 2024/6/20 1:48, Leon Romanovsky 写道:
-> On Wed, Jun 19, 2024 at 10:16:20PM +0800, Zhu Yanjun wrote:
->> 在 2024/6/19 17:15, Leon Romanovsky 写道:
->>> On Tue, Jun 18, 2024 at 11:37:18PM -0700, syzbot wrote:
->>>> Hello,
->>>>
->>>> syzbot found the following issue on:
->>>>
->>>> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
->>>> git tree:       upstream
->>>> console output: https://syzkaller.appspot.com/x/log.txt?x=179e93fe980000
->>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
->>>> dashboard link: https://syzkaller.appspot.com/bug?extid=19ec7595e3aa1a45f623
->>>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->>>>
->>>> Unfortunately, I don't have any reproducer for this issue yet.
->>>>
->>>> Downloadable assets:
->>>> disk image: https://storage.googleapis.com/syzbot-assets/27e64d7472ce/disk-2ccbdf43.raw.xz
->>>> vmlinux: https://storage.googleapis.com/syzbot-assets/e1c494bb5c9c/vmlinux-2ccbdf43.xz
->>>> kernel image: https://storage.googleapis.com/syzbot-assets/752498985a5e/bzImage-2ccbdf43.xz
->>>>
->>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>>> Reported-by: syzbot+19ec7595e3aa1a45f623@syzkaller.appspotmail.com
->>>>
->>>> smc: removing ib device syz0
->>>> ------------[ cut here ]------------
->>>> WARNING: CPU: 0 PID: 51 at kernel/rcu/srcutree.c:653 cleanup_srcu_struct+0x404/0x4d0 kernel/rcu/srcutree.c:653
->>>> Modules linked in:
->>>> CPU: 0 PID: 51 Comm: kworker/u8:3 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
->>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
->>>> Workqueue: ib-unreg-wq ib_unregister_work
->>>> RIP: 0010:cleanup_srcu_struct+0x404/0x4d0 kernel/rcu/srcutree.c:653
->>>> Code: 12 80 00 48 c7 03 00 00 00 00 48 83 c4 48 5b 41 5c 41 5d 41 5e 41 5f 5d e9 14 67 34 0a 90 0f 0b 90 eb e7 90 0f 0b 90 eb e1 90 <0f> 0b 90 eb db 90 0f 0b 90 eb 0a 90 0f 0b 90 eb 04 90 0f 0b 90 48
->>>> RSP: 0018:ffffc90000bb7970 EFLAGS: 00010202
->>>> RAX: 0000000000000001 RBX: ffff88802a1bc980 RCX: 0000000000000002
->>>> RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffe8ffffd74c58
->>>> RBP: 0000000000000001 R08: ffffe8ffffd74c5f R09: 1ffffd1ffffae98b
->>>> R10: dffffc0000000000 R11: fffff91ffffae98c R12: dffffc0000000000
->>>> R13: ffff88802285b5f0 R14: ffff88802285b000 R15: ffff88802a1bc800
->>>> FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
->>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>> CR2: 00007fa3852cae10 CR3: 000000000e132000 CR4: 0000000000350ef0
->>>> Call Trace:
->>>>    <TASK>
->>>>    ib_uverbs_release_dev+0x4e/0x80 drivers/infiniband/core/uverbs_main.c:136
->>>>    device_release+0x9b/0x1c0
->>>>    kobject_cleanup lib/kobject.c:689 [inline]
->>>>    kobject_release lib/kobject.c:720 [inline]
->>>>    kref_put include/linux/kref.h:65 [inline]
->>>>    kobject_put+0x231/0x480 lib/kobject.c:737
->>>>    remove_client_context+0xb9/0x1e0 drivers/infiniband/core/device.c:776
->>>>    disable_device+0x13b/0x360 drivers/infiniband/core/device.c:1282
->>>>    __ib_unregister_device+0x6d/0x170 drivers/infiniband/core/device.c:1475
->>>>    ib_unregister_work+0x19/0x30 drivers/infiniband/core/device.c:1586
->>>>    process_one_work kernel/workqueue.c:3231 [inline]
->>>>    process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
->>>>    worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
->>>>    kthread+0x2f2/0x390 kernel/kthread.c:389
->>>>    ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
->>>>    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->>>>    </TASK>
->>>
->>> I see that this is caused by call to ib_unregister_device_queued() as a
->>> response to NETDEV_UNREGISTER event, but we don't flush anything before.
->>> How can we be sure that ib_device is not used anymore?
->>
->> Hi, Leon
->>
->> This is the console output:
->>
->> https://syzkaller.appspot.com/x/log.txt?x=179e93fe980000
->>
->>  From the above link, it seems that other devices or subsystems failed
->> firstly, then caused this call trace to appear. When other problem occurred,
->> the whole kernel system was in mess state.So it is not weird that some
->> problems occurred.
-> 
-> Which devices/subsystems failed? I grepped the log and don't see
-> anything suspicious, before first "------------[ cut here ]------------"
-> sentence.
+On Thu, Jun 20, 2024 at 10:36:02AM +0200, Oleg Nesterov wrote:
+> On 06/20, Liao, Chang wrote:
+> >
+> > However, when i asm porting uretprobe trampoline to arm64
+> > to explore its benefits on that architecture, i discovered the problem that
+> > single slot is not large enought for trampoline code.
 
-Need the script to check this problem. It is an interesting problem.
-
-Zhu Yanjun
+ah ok, makes sense now.. x86_64 has the slot big enough for the trampoline,
+but arm64 does not
 
 > 
->>
->> To be simple, the root cause is not in RDMA subsystem.
->>
->> I will continue to delve into this problem.
->>
->> Zhu Yanjun
->>>
->>> Thanks
->>
+> Ah, but then I'd suggest to make the changelog more clear. It looks as
+> if the problem was introduced by the patch from Jiri. Note that we was
+> confused as well ;)
+> 
+> And,
+> 
+> 	+	/* Reserve enough slots for the uretprobe trampoline */
+> 	+	for (slot_nr = 0;
+> 	+	     slot_nr < max((insns_size / UPROBE_XOL_SLOT_BYTES), 1);
+> 	+	     slot_nr++)
+> 
+> this doesn't look right. Just suppose that insns_size = UPROBE_XOL_SLOT_BYTES + 1.
+> I'd suggest DIV_ROUND_UP(insns_size, UPROBE_XOL_SLOT_BYTES).
+> 
+> And perhaps it would be better to send this change along with
+> uretprobe_trampoline_for_arm64 ?
 
++1, also I'm curious what's the gain on arm64?
+
+thanks,
+jirka
 
