@@ -1,45 +1,63 @@
-Return-Path: <linux-kernel+bounces-222287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBDF490FF3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A26190FF3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748E11F23B05
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:47:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE9BD1F22D85
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754B71A00EB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075A019FA87;
 	Thu, 20 Jun 2024 08:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="w+4UFry4"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gTypdvf2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDBD19939B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C0C19DF64;
+	Thu, 20 Jun 2024 08:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718873075; cv=none; b=hYWsUoSACeowKGG6X8G9BHLGJFVvzIbJeUeX8ZT2tO7B4gEnHjp/nDZ3kqIf2Hh3aZaawcKYGTCwdIb/umwaZyK6rr6TRs2mOj9RvFSs7dhlENOvrOST0QG3lBN74HI8sxZQk5YQxaBI2miVwq69ab8/xfOifMNgh5aRSXAeQN4=
+	t=1718873075; cv=none; b=oBS5XdPGKQ7bOJaLi7Mq6yzaoMCMbYoy9Dbk2Hw/wTBinmDsIRFShmd8ThEIjB6W7HM3naFNwjL42O0nTUrv5T+PMs4QZ2miBa51nXIkB9jbZqU3QpsbxkvabhHQO/2km099ndQJtzkelPXOrty6/N4TeGKTX7JZwmCRXSvzWis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718873075; c=relaxed/simple;
-	bh=jItaWTxtvQq16zawBOAbNPjZc6xybjFH2ako2FTZJYM=;
+	bh=ly4NBxLP+IfyhZ72WkmAB+qyAyjntow6va62j+tSK2U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gawZrMRl4pelF/YrcnaJzxWwE6uOmOx1aBT5O4ZojNcFkFLEk0WF1KaCVjlxUS+gLXsKPdrIirsHuaFIqzdohaHNdEtcnECdTUlsbyiwjg4Ts/WAJ07BLC/veYOhx4OaCqWc6XK+e0xADQvw55fji386MBurCv7PCDeaRlN9nxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=w+4UFry4; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1718873069; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=iW77EJVfYwKkFDl4zjX0fOY7BnxcYMTdOkYcNmQQZZo=;
-	b=w+4UFry4JhZegBR/19HFrM2VeRkGblUTT5V1A14qdR7YaALdZVAuYIr77S8zcjkLdaaB1khJ4EZI6/O7yQTZJIml5O1s+WJByQNZkD6nQPRebGPL8ZNxSDAwn5gJb7chI8SeNrwEAlKauy4fmAabMwQURKwH7OA2pF83uHweFf8=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R221e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W8rDW98_1718873066;
-Received: from 30.97.56.69(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8rDW98_1718873066)
-          by smtp.aliyun-inc.com;
-          Thu, 20 Jun 2024 16:44:27 +0800
-Message-ID: <67930dc6-e9e4-44f2-8f10-74325a21b1d5@linux.alibaba.com>
+	 In-Reply-To:Content-Type; b=KH8GDtE5G1WftnwKjpMHU+EyyIVGS6bZ5RmpC4odQIueL+r+ycgvj7QL6T/6ii3iyVfCWnKvf9ODznvgViy7O2rPbHtFoiPt3hzStI7BVRQ+3uMzbFOIx4wYb9kHLxpNIJfCY/JS+wSNRezqNRf3+OE8Id9HuWyANc5MQrzuiTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gTypdvf2; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718873073; x=1750409073;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ly4NBxLP+IfyhZ72WkmAB+qyAyjntow6va62j+tSK2U=;
+  b=gTypdvf2zXBl3rla69Jsp4CJFxItYbzeZm0AveuQXB04RotC8SKNa7j8
+   ogY4e4Y5mPcnlH33ZdMCRzZ2x6e7ERtRKSHDckac5w9DZJ4438QjYLjgP
+   2krAWlrBXsSNgr79qjifmvc6I1C3Hu5eRLmGPw75WMNPOZkJB5beAgI4t
+   Bz1Ea3k/C7WrIz2TGev9H3taB8tAnV4hoecWrnxc/r2cdC7zPj1VXsJ3+
+   ktEfp9F4+P2tkmXOFLP6gC29qhPj9a6G0BC7zoo2RMjZznbbCbduC1mdK
+   5rKRsJ/UfdxRm+ZnDQlmBsxfr4UuXhj+ObwHY5mdlCrxIdcNYVteLsv2r
+   Q==;
+X-CSE-ConnectionGUID: 6LMvOpSpTfaUNVbl5k6aVg==
+X-CSE-MsgGUID: Yfwz9aClTS2iDrH2L9WoVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="15955090"
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="15955090"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 01:44:32 -0700
+X-CSE-ConnectionGUID: 1hFuia17TUqkjulNsFs3Zg==
+X-CSE-MsgGUID: QLcnBzIPRSuRIohfM/K9lA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="42051034"
+Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.224.116]) ([10.124.224.116])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 01:44:29 -0700
+Message-ID: <e693adab-9fa3-47fd-b62f-c3f2589ffe7f@linux.intel.com>
 Date: Thu, 20 Jun 2024 16:44:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -48,137 +66,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [mm] d2136d749d: vm-scalability.throughput -7.1%
- regression
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
- lkp@intel.com, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>,
- Mel Gorman <mgorman@techsingularity.net>, Ryan Roberts
- <ryan.roberts@arm.com>, linux-mm@kvack.org, feng.tang@intel.com,
- fengwei.yin@intel.com
-References: <202406201010.a1344783-oliver.sang@intel.com>
- <24a985cf-1bbf-41f9-b234-24f000164fa6@linux.alibaba.com>
- <87bk3w2he5.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <87bk3w2he5.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Subject: Re: [PATCH v3 16/17] KVM: x86/tdp_mmu: Propagate tearing down mirror
+ page tables
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+ kai.huang@intel.com, dmatlack@google.com, erdemaktas@google.com,
+ isaku.yamahata@gmail.com, linux-kernel@vger.kernel.org, sagis@google.com,
+ yan.y.zhao@intel.com, Isaku Yamahata <isaku.yamahata@intel.com>
+References: <20240619223614.290657-1-rick.p.edgecombe@intel.com>
+ <20240619223614.290657-17-rick.p.edgecombe@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20240619223614.290657-17-rick.p.edgecombe@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
-On 2024/6/20 15:38, Huang, Ying wrote:
-> Baolin Wang <baolin.wang@linux.alibaba.com> writes:
-> 
->> On 2024/6/20 10:39, kernel test robot wrote:
->>> Hello,
->>> kernel test robot noticed a -7.1% regression of
->>> vm-scalability.throughput on:
->>> commit: d2136d749d76af980b3accd72704eea4eab625bd ("mm: support
->>> multi-size THP numa balancing")
->>> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->>> [still regression on linus/master
->>> 92e5605a199efbaee59fb19e15d6cc2103a04ec2]
->>> testcase: vm-scalability
->>> test machine: 128 threads 2 sockets Intel(R) Xeon(R) Gold 6338 CPU @ 2.00GHz (Ice Lake) with 256G memory
->>> parameters:
->>> 	runtime: 300s
->>> 	size: 512G
->>> 	test: anon-cow-rand-hugetlb
->>> 	cpufreq_governor: performance
->>
->> Thanks for reporting. IIUC numa balancing will not scan hugetlb VMA,
->> I'm not sure how this patch affects the performance of hugetlb cow,
->> but let me try to reproduce it.
->>
->>
->>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->>> the same patch/commit), kindly add following tags
->>> | Reported-by: kernel test robot <oliver.sang@intel.com>
->>> | Closes: https://lore.kernel.org/oe-lkp/202406201010.a1344783-oliver.sang@intel.com
->>> Details are as below:
->>> -------------------------------------------------------------------------------------------------->
->>> The kernel config and materials to reproduce are available at:
->>> https://download.01.org/0day-ci/archive/20240620/202406201010.a1344783-oliver.sang@intel.com
->>> =========================================================================================
->>> compiler/cpufreq_governor/kconfig/rootfs/runtime/size/tbox_group/test/testcase:
->>>     gcc-13/performance/x86_64-rhel-8.3/debian-12-x86_64-20240206.cgz/300s/512G/lkp-icl-2sp2/anon-cow-rand-hugetlb/vm-scalability
->>> commit:
->>>     6b0ed7b3c7 ("mm: factor out the numa mapping rebuilding into a new helper")
->>>     d2136d749d ("mm: support multi-size THP numa balancing")
->>> 6b0ed7b3c77547d2 d2136d749d76af980b3accd7270
->>> ---------------- ---------------------------
->>>            %stddev     %change         %stddev
->>>                \          |                \
->>>        12.02            -1.3       10.72 ±  4%  mpstat.cpu.all.sys%
->>>      1228757            +3.0%    1265679        proc-vmstat.pgfault
-> 
-> Also from other proc-vmstat stats,
-> 
->       21770  36%      +6.1%      23098  28%  proc-vmstat.numa_hint_faults
->        6168 107%     +48.8%       9180  18%  proc-vmstat.numa_hint_faults_local
->      154537  15%     +23.5%     190883  17%  proc-vmstat.numa_pte_updates
-> 
-> After your patch, more hint page faults occurs, I think this is expected.
+On 6/20/2024 6:36 AM, Rick Edgecombe wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
+>
+> Integrate hooks for mirroring page table operations for cases where TDX
+> will zap PTEs or free page tables.
+>
+> Like other Coco technologies, TDX has the concept of private and shared
+> memory. For TDX the private and shared mappings are managed on separate
+> EPT roots. The private half is managed indirectly though calls into a
+> protected runtime environment called the TDX module, where the shared half
+> is managed within KVM in normal page tables.
+>
+> Since calls into the TDX module are relatively slow, walking private page
+> tables by making calls into the TDX module would not be efficient. Because
+> of this, previous changes have taught the TDP MMU to keep a mirror root,
+> which is separate, unmapped TDP root that private operations can be
+> directed to. Currently this root is disconnected from the guest. Now add
+> plumbing to propagate changes to the "external" page tables being
+> mirrored. Just create the x86_ops for now, leave plumbing the operations
+> into the TDX module for future patches.
+>
+> Add two operations for tearing down page tables, one for freeing page
+> tables (free_external_spt) and one for zapping PTEs (remove_external_spte).
+> Define them such that remove_external_spte will perform a TLB flush as
+> well. (in TDX terms "ensure there are no active translations").
+>
+> TDX MMU support will exclude certain MMU operations, so only plug in the
+> mirroring x86 ops where they will be needed. For zapping/freeing, only
+> hook tdp_mmu_iter_set_spte() which is use used for mapping and linking
+                                         ^
+                                         extra "use"
 
-This is exactly my confusion, why are there more numa hint faults? The 
-hugetlb VMAs will be skipped from scanning, so other VMAs of the 
-application will use mTHP or large folio?
+Also, this sentence is a bit confusing about "used for mapping and linking".
 
-> Then, tasks may be moved between sockets because of that, so that some
-> hugetlb page access becomes remote?
+> PTs. Don't bother hooking tdp_mmu_set_spte_atomic() as it is only used for
+> zapping PTEs in operations unsupported by TDX: zapping collapsible PTEs and
+> kvm_mmu_zap_all_fast().
+>
+> In previous changes to address races around concurrent populating using
+> tdp_mmu_set_spte_atomic(), a solution was introduced to temporarily set
+> REMOVED_SPTE in the mirrored page tables while performing the external
+   ^
+  FROZEN_SPTE
 
-Yes, that is possible if the application uses some large folio.
+> operations. Such a solution is not needed for the tear down paths in TDX
+> as these will always be performed with the mmu_lock held for write.
+> Sprinkle some KVM_BUG_ON()s to reflect this.
+>
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Co-developed-by: Kai Huang <kai.huang@intel.com>
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
+> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> Co-developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> TDX MMU Prep v3:
+>   - Rename mirrored->external (Paolo)
+>   - Drop new_spte arg from reflect_removed_spte() (Paolo)
+>   - ...and drop was_present and is_present bools (Paolo)
+>   - Use base_gfn instead of sp->gfn (Paolo)
+>   - Better comment on logic that bugs if doing tdp_mmu_set_spte() on
+>     present PTE. (Paolo)
+>   - Move comment around KVM_BUG_ON() in __tdp_mmu_set_spte_atomic() to this
+>     patch, and add better comment. (Paolo)
+>   - In remove_external_spte(), remove was_leaf bool, skip duplicates
+>     present check and add comment.
+>   - Rename REMOVED_SPTE to FROZEN_SPTE (Paolo)
+>
+> TDX MMU Prep v2:
+>   - Split from "KVM: x86/tdp_mmu: Support TDX private mapping for TDP MMU"
+>   - Rename x86_ops from "private" to "reflect"
+>   - In response to "sp->mirrored_spt" rename helpers to "mirrored"
+>   - Remove unused present mirroring support in tdp_mmu_set_spte()
+>   - Merge reflect_zap_spte() into reflect_remove_spte()
+>   - Move mirror zapping logic out of handle_changed_spte()
+>   - Add some KVM_BUG_ONs
+> ---
+>   arch/x86/include/asm/kvm-x86-ops.h |  2 ++
+>   arch/x86/include/asm/kvm_host.h    |  8 +++++
+>   arch/x86/kvm/mmu/tdp_mmu.c         | 51 +++++++++++++++++++++++++++++-
+>   3 files changed, 60 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
+> index 3ef19fcb5e42..18a83b211c90 100644
+> --- a/arch/x86/include/asm/kvm-x86-ops.h
+> +++ b/arch/x86/include/asm/kvm-x86-ops.h
+> @@ -97,6 +97,8 @@ KVM_X86_OP_OPTIONAL_RET0(get_mt_mask)
+>   KVM_X86_OP(load_mmu_pgd)
+>   KVM_X86_OP_OPTIONAL(link_external_spt)
+>   KVM_X86_OP_OPTIONAL(set_external_spte)
+> +KVM_X86_OP_OPTIONAL(free_external_spt)
+> +KVM_X86_OP_OPTIONAL(remove_external_spte)
+>   KVM_X86_OP(has_wbinvd_exit)
+>   KVM_X86_OP(get_l2_tsc_offset)
+>   KVM_X86_OP(get_l2_tsc_multiplier)
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 12ff04135a0e..dca623ffa903 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1745,6 +1745,14 @@ struct kvm_x86_ops {
+>   	int (*set_external_spte)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
+>   				 kvm_pfn_t pfn_for_gfn);
+>   
+> +	/* Update external page tables for page table about to be freed */
+Nit: Add "." at the end of the sentence.
 
->>>      7392513            -7.1%    6865649        vm-scalability.throughput
->>>        17356            +9.4%      18986        vm-scalability.time.user_time
->>>         0.32 ± 22%     -36.9%       0.20 ± 17%  sched_debug.cfs_rq:/.h_nr_running.stddev
->>>        28657 ± 86%     -90.8%       2640 ± 19%  sched_debug.cfs_rq:/.load.stddev
->>>         0.28 ± 35%     -52.1%       0.13 ± 29%  sched_debug.cfs_rq:/.nr_running.stddev
->>>       299.88 ± 27%     -39.6%     181.04 ± 23%  sched_debug.cfs_rq:/.runnable_avg.stddev
->>>       284.88 ± 32%     -44.0%     159.65 ± 27%  sched_debug.cfs_rq:/.util_avg.stddev
->>>         0.32 ± 22%     -37.2%       0.20 ± 17%  sched_debug.cpu.nr_running.stddev
->>>    1.584e+10 ±  2%      -6.9%  1.476e+10 ±  3%  perf-stat.i.branch-instructions
->>>     11673151 ±  3%      -6.3%   10935072 ±  4%  perf-stat.i.branch-misses
->>>         4.90            +3.5%       5.07        perf-stat.i.cpi
->>>       333.40            +7.5%     358.32        perf-stat.i.cycles-between-cache-misses
->>>    6.787e+10 ±  2%      -6.8%  6.324e+10 ±  3%  perf-stat.i.instructions
->>>         0.25            -6.2%       0.24        perf-stat.i.ipc
->>>         4.19            +7.5%       4.51        perf-stat.overall.cpi
->>>       323.02            +7.4%     346.94        perf-stat.overall.cycles-between-cache-misses
->>>         0.24            -7.0%       0.22        perf-stat.overall.ipc
->>>    1.549e+10 ±  2%      -6.8%  1.444e+10 ±  3%  perf-stat.ps.branch-instructions
->>>    6.634e+10 ±  2%      -6.7%  6.186e+10 ±  3%  perf-stat.ps.instructions
->>>        17.33 ± 77%     -10.6        6.72 ±169%  perf-profile.calltrace.cycles-pp.asm_exc_page_fault.do_access
->>>        17.30 ± 77%     -10.6        6.71 ±169%  perf-profile.calltrace.cycles-pp.exc_page_fault.asm_exc_page_fault.do_access
->>>        17.30 ± 77%     -10.6        6.71 ±169%  perf-profile.calltrace.cycles-pp.do_user_addr_fault.exc_page_fault.asm_exc_page_fault.do_access
->>>        17.28 ± 77%     -10.6        6.70 ±169%  perf-profile.calltrace.cycles-pp.handle_mm_fault.do_user_addr_fault.exc_page_fault.asm_exc_page_fault.do_access
->>>        17.27 ± 77%     -10.6        6.70 ±169%  perf-profile.calltrace.cycles-pp.hugetlb_fault.handle_mm_fault.do_user_addr_fault.exc_page_fault.asm_exc_page_fault
->>>        13.65 ± 76%      -8.4        5.29 ±168%  perf-profile.calltrace.cycles-pp.hugetlb_wp.hugetlb_fault.handle_mm_fault.do_user_addr_fault.exc_page_fault
->>>        13.37 ± 76%      -8.2        5.18 ±168%  perf-profile.calltrace.cycles-pp.copy_user_large_folio.hugetlb_wp.hugetlb_fault.handle_mm_fault.do_user_addr_fault
->>>        13.35 ± 76%      -8.2        5.18 ±168%  perf-profile.calltrace.cycles-pp.copy_subpage.copy_user_large_folio.hugetlb_wp.hugetlb_fault.handle_mm_fault
->>>        13.23 ± 76%      -8.1        5.13 ±168%  perf-profile.calltrace.cycles-pp.copy_mc_enhanced_fast_string.copy_subpage.copy_user_large_folio.hugetlb_wp.hugetlb_fault
->>>         3.59 ± 78%      -2.2        1.39 ±169%  perf-profile.calltrace.cycles-pp.__mutex_lock.hugetlb_fault.handle_mm_fault.do_user_addr_fault.exc_page_fault
->>>        17.35 ± 77%     -10.6        6.73 ±169%  perf-profile.children.cycles-pp.asm_exc_page_fault
->>>        17.32 ± 77%     -10.6        6.72 ±168%  perf-profile.children.cycles-pp.do_user_addr_fault
->>>        17.32 ± 77%     -10.6        6.72 ±168%  perf-profile.children.cycles-pp.exc_page_fault
->>>        17.30 ± 77%     -10.6        6.71 ±168%  perf-profile.children.cycles-pp.handle_mm_fault
->>>        17.28 ± 77%     -10.6        6.70 ±169%  perf-profile.children.cycles-pp.hugetlb_fault
->>>        13.65 ± 76%      -8.4        5.29 ±168%  perf-profile.children.cycles-pp.hugetlb_wp
->>>        13.37 ± 76%      -8.2        5.18 ±168%  perf-profile.children.cycles-pp.copy_user_large_folio
->>>        13.35 ± 76%      -8.2        5.18 ±168%  perf-profile.children.cycles-pp.copy_subpage
->>>        13.34 ± 76%      -8.2        5.17 ±168%  perf-profile.children.cycles-pp.copy_mc_enhanced_fast_string
->>>         3.59 ± 78%      -2.2        1.39 ±169%  perf-profile.children.cycles-pp.__mutex_lock
->>>        13.24 ± 76%      -8.1        5.13 ±168%  perf-profile.self.cycles-pp.copy_mc_enhanced_fast_string
->>> Disclaimer:
->>> Results have been estimated based on internal Intel analysis and are provided
->>> for informational purposes only. Any difference in system hardware or software
->>> design or configuration may affect actual performance.
->>>
-> 
-> --
-> Best Regards,
-> Huang, Ying
+> +	int (*free_external_spt)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
+> +				 void *external_spt);
+> +
+> +	/* Update external page table from spte getting removed, and flush TLB */
+Ditto
+
+> +	int (*remove_external_spte)(struct kvm *kvm, gfn_t gfn, enum pg_level level,
+> +				    kvm_pfn_t pfn_for_gfn);
+> +
+>   	bool (*has_wbinvd_exit)(void);
+>   
+>   	u64 (*get_l2_tsc_offset)(struct kvm_vcpu *vcpu);
+[...]
 
