@@ -1,149 +1,84 @@
-Return-Path: <linux-kernel+bounces-223440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8245791130F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:21:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA550911312
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4FC51C219C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:21:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91433283252
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85261BA87F;
-	Thu, 20 Jun 2024 20:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2281BA084;
+	Thu, 20 Jun 2024 20:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HBMuCvVm"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K/HA8cBt"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A551B4C54;
-	Thu, 20 Jun 2024 20:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD8E2E859
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 20:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718914826; cv=none; b=KXhjOUACSRHOo0SLIXvIvwXm6XBTu8GdZV55R8xl+me1nEnAJI6ztMaEPQMiIbVZcMZVldSLpwoDOtegmhZeNKf+QH+8oXaY1gCkIaFpScrE+yRUFpJhnEZvABbPZtNh1dtwNJ2AWWxzuvo4AZ5kRz48SNRHfRbl5YBPHyLNsiw=
+	t=1718914941; cv=none; b=DjO4RY8zsQLIeO2xA3/s32n8OzdGleRfCpMU3bZMgyd8Ju05PI7RVHXjhTeKqn6vhEwZfqtZFlO+nVJ5LfYYrcq/bSC/F1xxHiLK69X9e86hhnDmupY8nMSl4BQmfEzRaVr45BRvvx0luNL+DCNqcgVUZU+o9RyYoU9RUqDAgaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718914826; c=relaxed/simple;
-	bh=rBq7IdJM+K+0+xUcWM1SpeYU9dZrL3Z/PWGHq/TQFvc=;
+	s=arc-20240116; t=1718914941; c=relaxed/simple;
+	bh=lKsNVvn8g6ewzdJ/OW5IYJqCN/+v7NPYP9gkx5zEdwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=snMsX1jgiY3iUyj9+41db7jBSGodN5ZMkPVlSoJJM0/Zdt05o4z/EVS3djpLxBe2qaoOPRdP3CvFz0XzKkCE2XNS5heJCfnTcODSmzMImpGvT7KDA6Gbtouq+Dh8rNt1sB2Hs9Gg04Zz20m3PtC5HWGNRKZOm+1Npqv6ty7buwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HBMuCvVm; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-6bfd4b88608so1011082a12.1;
-        Thu, 20 Jun 2024 13:20:23 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/yv4Cq5usUuj98nklDyyV8JtgwYmSk+8yiYG/YlGsSt6ZrnP66lFUezdctLL3LqVquT/tOSP2T2AaEp70wkoYxI3bYo+F3tMVXBMFJsSR3Mfy3IKMvZar/r2YyPUN7h8v2kFjz4NQ9i7zJ9lSd84Dj14y96gUaP4mvkd+goKcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K/HA8cBt; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e95a75a90eso13236371fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:22:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718914823; x=1719519623; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718914937; x=1719519737; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xyF3zFimLRvnxw2fNLWvvt4TaZ4/tRThw/CSNxiuI4k=;
-        b=HBMuCvVmdb4Sc/t5rLWkeQINLK/S2PhdlyS9BiF/RITKFgL139MVpyJ4p46Vw0LLfl
-         WwUWKzSnRhmr7ELk1WAvvN2+7sYVpWV7RFKU3ZgTVY37Ktg/G7e0I+hsEe/8lbXgnevh
-         HK7YsZGQkUdsfQyOzNKW+GiqIjpWfhkVwwSNWv2pwLIzUVSqzoXsrZ5G2xMFHhrmY67e
-         Mjb/Doq0dWWph1BGEKHrxKfOgwuLoGtgRgjomPkxBB7gOhfk726CcCyr6shZYV0ZBlEs
-         4K4GGGtVeTm3ozCUNWYLaw5TkeRFmt0QWDB375xRvIiS6M34Qmve5LgWMgnii27ymsUm
-         G2Jg==
+        bh=lOvYMghuPF6rvmiNqyAE5UU+Cu5JdSGdpel/er+AFsg=;
+        b=K/HA8cBtdaP1qKbP8p531oBKSfHRTGCz/2bNjnFTNbVMFIzmP9U7bSLz+/bjgP3iPV
+         5YSz+b0L/lPvwPVVjgJ+XmdtuWLKbL1/DCJjILW9+WqcSUviFQIgcOEPXOCCpag2RPjC
+         VtIZ8ZOBtAGYK8sT0ZtDnZCiVHY0L40hs+ei6AFL/UGgc48QolrJP9ZLE4EiX+blbCkc
+         XUOKddNy8KVQW0YTizKHn0lHAYr0PILgqyab+wOyIvsr7k/LCZbCrZU/u3CpWCmNzVC0
+         UZ2e3B8c0uARyGLNBEnVbLhxr735Ahs5IQL74e5VmeYal7cxHu+jn6kmt0z40zXVgoIc
+         UyDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718914823; x=1719519623;
+        d=1e100.net; s=20230601; t=1718914937; x=1719519737;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xyF3zFimLRvnxw2fNLWvvt4TaZ4/tRThw/CSNxiuI4k=;
-        b=IZN/h+Y+JwDlXLfCuuejad1DNQiH6Yf7rWw6y8ELQjs9cmos9rUHZKQ8YZuNLFnvgm
-         A2wh0u7ZnHI/wxhRoKokw+KsoDjBAarKg1mLd/AocaC1RLOdE9yMJAWis6xMSzCIBE6S
-         LqJ8n/t+bWh7O2p5tTIhMRnbXpUWoPfhsjt5LkMO5mQ5KV76EtEIphwbd2xh8fv/HgJ8
-         TcFXUObAyqfwZZZSnm23pMmHmIWyYo1a6jtV635CCIEPT2fIvj+WZdJzzBISTNOZyRQV
-         FZsJBSH4yX1gnQ8lQs4q7fCFbdN8kH1b64+ldvdqLEMnUyqqEc3fkY8fuh/MS7B3TCCo
-         HtnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXb3mc+CIjr5uFZ4jTT/Tjtwe/pUoriQmYfDVS0Jdn9qYyKLFy0Ng/N/cdiQ11KIcFNENQnkdc8EX8lDt9s/5qAPiSQhV/WB3Tn9lKnEJhO8yOeUl0m9ga1W86/wCTEdUz6akS6Iry5wSRyIVVN7R5APGqIwcQZl7/RFLTgpAhxeRSGiS9ya1aDfp8rJko/4p60kPCHh4LXdECJGdcTPwBqtPxuzZGzc2qGD54ZqTzdxj4ooGHmZT2cTeyb7p750Gp9MsPrJ7g1S6WrQCV5mUrTnYHrjlCpaaNz3G+lU5AwRb0whwLlshRJim+So8j2RgUenhKTq1gU/FeXUJQkl88wCGvVByeCPCynbKv9arA4oCiC1BB15Nec8dJrLQQQ//gGRVF+aIa00YP1WyNlS1zN6oX8WNWAhHkr37RejNnJIuW/o4Td5x+weTUtwphu3ZZYfSOCfnIpQWWPpO9o5uKoKgvxPACZgRhCaVMkdwnf179j1yMzpjKagsf8cYYpPHRvRr6Fc10sZCwsN2AYn4tw6upgLF09s3z05imWw9p0GrX+Ak25mLScP7lK+2PbMm9uPHQ6fr0gDWiJwjY+1xnzycu8d6OaavcbOy9QBrvwj2vnSdkZyzvy+M6U9FI4aJGOv4mXbBxXi1TDikNabyopHFYJHZzfoXn4yt8RDOLSqesHxsLdUqD/wwnEOW6tuuABE2vOTRneo2NyKPa/ASJxAKSsguNJC0yiIS2a6hLSU4Y52b+9fvlMILkucGXT1GfHX+6brA==
-X-Gm-Message-State: AOJu0Yw/tXaU1CSmszMcZ0JWNyyRBNC/eG91ZODIVeeavqpzNxhwc3Cg
-	aYZZj7q4pNMKhvV5LOzCch14TrrcvcpEcBOKl881sCYyQbBiGfDe
-X-Google-Smtp-Source: AGHT+IHgTaUdNjnFlceuqDZQb86IcFDSmpZVDJyq9iZqJozpl3uONt9e5qvEXl/03kBUwqlpGmD+xQ==
-X-Received: by 2002:a17:90b:3ec6:b0:2c7:e420:a0ec with SMTP id 98e67ed59e1d1-2c7e420a3f5mr3603638a91.0.1718914823251;
-        Thu, 20 Jun 2024 13:20:23 -0700 (PDT)
-Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819dcc704sm81988a91.47.2024.06.20.13.20.21
+        bh=lOvYMghuPF6rvmiNqyAE5UU+Cu5JdSGdpel/er+AFsg=;
+        b=qIUmmF9sxg1iK7peWy0JUYBgibwB22LgxChXYAM+0Zur9bYVDnFc0P+HU1Dqc2ffCt
+         IHJDJTl4mWZc90KUFMjSH26unEacdtnOGVRqY8jv6XP6/YP8EW49q+E/4g1U2enipnGG
+         dv7sfWNRhB42vxo6/mlOxXNslr1214vU17cOF4XRS6xldETHJ/AKw50PyvGlrtulnR19
+         IDSDGnq3uJOFV1uMLA7+A+GOgDoEgRNmwl8jzmLVEfHnC9Dam+NDiFGS8I4xuRkb6arw
+         zwqOL0vb6MG2ekgaBOu+UnPWvyskue8jRyhbXEldLfR6q2ZxNW0P1eymEnI3U+JZkB8j
+         BX1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWb5ZB0VIZbfyelD+oK8X+7mLa/WTqSiLt0CaWfbSxUtiIZVT6J/qTpNzOamhf0cF9he1sDvktHCJ1jjhUtIqRHKEsZDieFavKxfFKV
+X-Gm-Message-State: AOJu0YyIyCZJT8RgZI+HUjP2r6gEzVdnsDE+RhMek4C9tYvW4IFrDnY4
+	VoRi35xOCv805ZVChLDTvF4bsKCcPFr9AzXEZcBVKSMsvdWIyq3UlZWWs+Hn+kI=
+X-Google-Smtp-Source: AGHT+IGiaHRg7jR/WYQboUkDnyBsqb7OqSvEkiFZuFC3QRtuiPZzbScBg4tpeD3wwsA+RSMqYyxzFQ==
+X-Received: by 2002:a2e:9bca:0:b0:2ea:e773:c58 with SMTP id 38308e7fff4ca-2ec3cea10d1mr38061221fa.24.1718914937186;
+        Thu, 20 Jun 2024 13:22:17 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d76f728sm116721fa.120.2024.06.20.13.22.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 13:20:22 -0700 (PDT)
-Date: Thu, 20 Jun 2024 13:20:20 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"James E.J. Bottomley" <jejb@linux.ibm.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	"Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-	Akinobu Mita <akinobu.mita@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Borislav Petkov <bp@alien8.de>, Chaitanya Kulkarni <kch@nvidia.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Disseldorp <ddiss@suse.de>,
-	Edward Cree <ecree.xilinx@gmail.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Gregory Greenman <gregory.greenman@intel.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Hugh Dickins <hughd@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-	Jiri Pirko <jiri@resnulli.us>, Jiri Slaby <jirislaby@kernel.org>,
-	Kalle Valo <kvalo@kernel.org>, Karsten Graul <kgraul@linux.ibm.com>,
-	Karsten Keil <isdn@linux-pingi.de>,
-	Kees Cook <keescook@chromium.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Martin Habets <habetsm.xilinx@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Oliver Neukum <oneukum@suse.com>, Paolo Abeni <pabeni@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ping-Ke Shih <pkshih@realtek.com>, Rich Felker <dalias@libc.org>,
-	Rob Herring <robh@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Shuai Xue <xueshuai@linux.alibaba.com>,
-	Stanislaw Gruszka <stf_xl@wp.pl>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Wenjia Zhang <wenjia@linux.ibm.com>, Will Deacon <will@kernel.org>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	GR-QLogic-Storage-Upstream@marvell.com, alsa-devel@alsa-project.org,
-	ath10k@lists.infradead.org, dmaengine@vger.kernel.org,
-	iommu@lists.linux.dev, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	linux-hyperv@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-media@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-net-drivers@amd.com, linux-pci@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, mpi3mr-linuxdrv.pdl@broadcom.com,
-	netdev@vger.kernel.org, sparclinux@vger.kernel.org, x86@kernel.org,
-	Alexey Klimov <alexey.klimov@linaro.org>,
-	Bart Van Assche <bvanassche@acm.org>, Jan Kara <jack@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: Re: [PATCH v4 00/40] lib/find: add atomic find_bit() primitives
-Message-ID: <ZnSPBFW5wL0D0b86@yury-ThinkPad>
-References: <20240620175703.605111-1-yury.norov@gmail.com>
- <CAHk-=wiUTXC452qbypG3jW6XCZGfc8d-iehSavxn5JkQ=sv0zA@mail.gmail.com>
- <ZnR1tQN01kN97G_F@yury-ThinkPad>
- <CAHk-=wjv-DkukaKb7f04WezyPjRERp=xfxv34j5fA8cDQ_JudA@mail.gmail.com>
+        Thu, 20 Jun 2024 13:22:16 -0700 (PDT)
+Date: Thu, 20 Jun 2024 23:22:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Adam Ford <aford173@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, victor.liu@nxp.com, 
+	sui.jingfeng@linux.dev, aford@beaconembedded.com, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] drm/bridge: adv7511:  Fix Intermittent EDID failures
+Message-ID: <bsfvj5st6s3m5bvegkaq6sqrojq7obevsxf2wlffs5ewrz7hog@yrpq7azq7b6k>
+References: <20240601132459.81123-1-aford173@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -152,59 +87,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjv-DkukaKb7f04WezyPjRERp=xfxv34j5fA8cDQ_JudA@mail.gmail.com>
+In-Reply-To: <20240601132459.81123-1-aford173@gmail.com>
 
-On Thu, Jun 20, 2024 at 12:26:18PM -0700, Linus Torvalds wrote:
-> On Thu, 20 Jun 2024 at 11:32, Yury Norov <yury.norov@gmail.com> wrote:
-> >
-> > Is that in master already? I didn't get any email, and I can't find
-> > anything related in the master branch.
+On Sat, Jun 01, 2024 at 08:24:59AM GMT, Adam Ford wrote:
+> In the process of adding support for shared IRQ pins, a scenario
+> was accidentally created where adv7511_irq_process returned
+> prematurely causing the EDID to fail randomly.
 > 
-> It's 5d272dd1b343 ("cpumask: limit FORCE_NR_CPUS to just the UP case").
-
-FORCE_NR_CPUS helped to generate a better code for me back then. I'll
-check again against the current kernel.
-
-The 5d272dd1b343 is wrong. Limiting FORCE_NR_CPUS to UP case makes no
-sense because in UP case nr_cpu_ids is already a compile-time macro:
-
-#if (NR_CPUS == 1) || defined(CONFIG_FORCE_NR_CPUS)
-#define nr_cpu_ids ((unsigned int)NR_CPUS)
-#else
-extern unsigned int nr_cpu_ids;
-#endif
-
-I use FORCE_NR_CPUS for my Rpi. (used, until I burnt it)
-
-> > > New rule: before you send some optimization, you need to have NUMBERS.
-> >
-> > I tried to underline that it's not a performance optimization at my
-> > best.
+> Since the interrupt handler is broken up into two main helper functions,
+> update both of them to treat the helper functions as IRQ handlers. These
+> IRQ routines process their respective tasks as before, but if they
+> determine that actual work was done, mark the respective IRQ status
+> accordingly, and delay the check until everything has been processed.
 > 
-> If it's not about performance, then it damn well shouldn't be 90%
-> inline functions in a header file.
+> This should guarantee the helper functions don't return prematurely
+> while still returning proper values of either IRQ_HANDLED or IRQ_NONE.
 > 
-> If it's a helper function, it needs to be a real function elsewhere. Not this:
+> Reported-by: Liu Ying <victor.liu@nxp.com>
+> Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> Tested-by: Liu Ying <victor.liu@nxp.com> # i.MX8MP EVK ADV7535 EDID retrieval w/o IRQ
+> ---
+> V2:  Fix uninitialized cec_status
+>      Cut back a little on error handling to return either IRQ_NONE or
+>      IRQ_HANDLED.
 > 
->  include/linux/find_atomic.h                  | 324 +++++++++++++++++++
-> 
-> because either performance really matters, in which case you need to
-> show profiles, or performance doesn't matter, in which case it damn
-> well shouldn't have special cases for small bitsets that double the
-> size of the code.
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> index ea271f62b214..ec0b7f3d889c 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> @@ -401,7 +401,7 @@ struct adv7511 {
+>  
+>  #ifdef CONFIG_DRM_I2C_ADV7511_CEC
+>  int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511);
+> -void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
+> +int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
+>  #else
+>  static inline int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511)
+>  {
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+> index 44451a9658a3..651fb1dde780 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+> @@ -119,7 +119,7 @@ static void adv7511_cec_rx(struct adv7511 *adv7511, int rx_buf)
+>  	cec_received_msg(adv7511->cec_adap, &msg);
+>  }
+>  
+> -void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+> +int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>  {
+>  	unsigned int offset = adv7511->info->reg_cec_offset;
+>  	const u32 irq_tx_mask = ADV7511_INT1_CEC_TX_READY |
+> @@ -130,17 +130,21 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>  				ADV7511_INT1_CEC_RX_READY3;
+>  	unsigned int rx_status;
+>  	int rx_order[3] = { -1, -1, -1 };
+> -	int i;
+> +	int i, ret = 0;
+> +	int irq_status = IRQ_NONE;
+>  
+> -	if (irq1 & irq_tx_mask)
+> +	if (irq1 & irq_tx_mask) {
+>  		adv_cec_tx_raw_status(adv7511, irq1);
+> +		irq_status = IRQ_HANDLED;
+> +	}
+>  
+>  	if (!(irq1 & irq_rx_mask))
+> -		return;
+> +		return irq_status;
+>  
+> -	if (regmap_read(adv7511->regmap_cec,
+> -			ADV7511_REG_CEC_RX_STATUS + offset, &rx_status))
+> -		return;
+> +	ret = regmap_read(adv7511->regmap_cec,
+> +			ADV7511_REG_CEC_RX_STATUS + offset, &rx_status);
 
-This small_const_nbits() thing is a compile-time optimization for a
-single-word bitmap with a compile-time length.
+There is no need for the ret variable, regmap_read can return either 0
+or a negative error code.
 
-If the bitmap is longer, or nbits is not known at compile time, the
-inline part goes away entirely at compile time.
+With that fixed:
 
-In the other case, outline part goes away. So those converting from
-find_bit() + test_and_set_bit() will see no new outline function
-calls.
 
-This inline + outline implementation is traditional for bitmaps, and
-for some people it's important. For example, Sean Christopherson
-explicitly asked to add a notice that converting to the new API will
-still generate inline code. See patch #13.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
+> +	if (ret < 0)
+> +		return irq_status;
+>  
+>  	/*
+>  	 * ADV7511_REG_CEC_RX_STATUS[5:0] contains the reception order of RX
+
+
+-- 
+With best wishes
+Dmitry
 
