@@ -1,159 +1,460 @@
-Return-Path: <linux-kernel+bounces-222298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 443FD90FF65
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:50:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E44B90FF71
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DE41F24A33
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:50:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7B85284E76
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FED51A00D6;
-	Thu, 20 Jun 2024 08:47:28 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F239D1A8C27;
+	Thu, 20 Jun 2024 08:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3pQBhQm+"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1667140858
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A8019DF88
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718873247; cv=none; b=hIoNxZ74JUhNBsexHsCrx6jmduKC29MGxEwMu0EzVk3NJLkctTxerKSUvOAyBXLNivbVExfQ3Ui8cY9RMcC5/JOH3uZbuhuSnOt+vxgcKqqEgWl6tuvEES+fEaoEA82E4EGyKNDV4qYBDHYgn24uXLxf709o7h9z4AWxfHv9q+M=
+	t=1718873297; cv=none; b=XGqx0IfhOtJUkuIPUbCONtnAfMgOCfN+/uu1i72IJHnpfhuPOk0q9YCzsI5bX3DVQAgDQw/xpUWXOQkoSEkDa915T7hP9IwscvokaiEL4Dw2K6tghnQp/Tkzz2qCU8kEF3BB/roWDax6+5BslrGJ1tksmIUYn3HWsQfDJ/dR65w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718873247; c=relaxed/simple;
-	bh=4ajyZXdaNZf5EZcN3QttERkpTghR9wLhMoW6fjeTTLE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sWu893We5UIHALz2qye5ibCxzmioMjPUkjSjTZrSaeI+RYB9bUgRxbus85gUIe5ADF22Scmv7hDUhhT2f0ojykBKdVZchg7T/0ICJ3xefq8jye52LvbMEcn1h0dW5tdJZSdiheR8LSnHQAPUri+g2+uCMnUTldA6LD8NQqE3JhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-376282b0e2bso5465195ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:47:25 -0700 (PDT)
+	s=arc-20240116; t=1718873297; c=relaxed/simple;
+	bh=oWPtw0QtaFsH1/E9pl1fDuu8ryfWebNgGgY+iHzXzWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LbOUO3X8I+Mi6goRPnfIDLAtRuZSEgVGz5UqYp5+MSURoE/PPV/EcVsOewauXrG7PwMUjZIXrkn67UWE6EjYHZdOxR6kTB/XivO7WnVGzctnPQbR+ipD9MEsIGv9pJoeE/gJA8E93IFRub32nBscOg5cFyRciMPXtyuBoamQGY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3pQBhQm+; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-48f12b4f5b6so242421137.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718873295; x=1719478095; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MaguyLJRfckUMNCt0LbPp1LmWhc5UBYEsFNMYuWx6U4=;
+        b=3pQBhQm+I0Y58HE5JrmyVYey9mO7VQVUWCE9JjU4mEwNa2CTlkYsRg6wzQC5UdcCVY
+         lxcQ47c4ST1F9j1T0sUycEgB6Ycww/wOU0/iTCk1OBX8Z2k0oir++Al6y+SDNFi9CDAc
+         l1bijyufj4nzR2uK7IK8nFy7SlcerWIoP6fY5YY7fp0zv4cVgVP3m6+ulp4lVpjdHv0H
+         r1PhWYrhvdBft7QGIFT9VeSPHKpRc3Hj66QSFFedSecfCUy5tdm5eih5BctpppA54w1c
+         Zx/Og1LS5mXokDsFzE9oHws8tV6Ej9s2ZUmrcbkVU2ggBKGZFG5sZWQAGWoTVPMrzErK
+         8iag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718873245; x=1719478045;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=95se0OHnag9kJGTphSgvBACh2aH/NzEMdmcamMkWJW0=;
-        b=bXORu/bwrYQwrAUY9B7yTNNKZZUzSVObtYqXq1zjhCt9hkkjxoPW9L61HIVD52FyXo
-         JjnZXNcWeCWSZp++I84AmbKvLJPzGUaM8UIHiuTgS59sIu7/3vfidIwJqohgXChRVaVI
-         S5lgjQ5K8TRXBIW2az3WpcPwdDvUD2GKrQUEF0CA6N/RQLYz9Se4QIYqF5mma81ujB1n
-         0u5eSGd1bM5Nv+AqEgfjGOzSjBkAfrqcrheofVL/oT7+iL2hpccgZOaDTggk0x1h2Jpc
-         3LO62/woobRPcaZJhsYpFYEcCk6hp6IZP8SRYohpiHkKYQE27hQtEfS3RrEbBmPGlBZh
-         itzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXuLdH8GgikH6Eg55m6Aacym3+p/0ddt9SCiR6u+i/RE4ozPKs6VHON5mVEtmhuZp2eS+uxOX+QZu4ey/mJ+DyQDbgwkPhFsmY1bhW4
-X-Gm-Message-State: AOJu0YxUQ74XVBL7B7qpQwLfshvBSN9laTGeQ+VJzKPUreY1QtH8kQl4
-	4MdkN4pAbXf1fSd6KUv1ZkEmoVwAu0i5/v0PppbD0DVJgQwD5uzoB7UKVl06+tBoCQjvZPJlM0S
-	JnrxvU3o44E0GmMmxpaKPm2raO8h398IxybSaYutam+RE2nnZOCLM4Ug=
-X-Google-Smtp-Source: AGHT+IHhn7wtUM2trPcm2DW8Mf8U9tvwkndqInLjrjTlkXvxpjQaZZ07systtO9nwxLdfJGeUmCI+eqdqe8Q4D/7zXVPQtr3AGe6
+        d=1e100.net; s=20230601; t=1718873295; x=1719478095;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MaguyLJRfckUMNCt0LbPp1LmWhc5UBYEsFNMYuWx6U4=;
+        b=qqJtN/njAYe/NA2tsfziBzPRe38Gq26eTlafcZrKQkPB/hpb5qqu9hHjz5c3gJUmbX
+         xqLYsLdRwuQQDssc3O/F/MdOCKaulcv21zm3SAeadBtYOJBkHtjRXqL+6pbfXYIth6uP
+         nrnfnouz0icCYBioRDNNO1yeDajuou3isUaEuLPva+jUdK7zgdIXczdbclZ6+ZODqPSY
+         +keHe+tMabfVa91tSDLfN93iqpASWfKds72y9wHSjtcHdzQlfsZEu1FAWVHOBKuJ9bSc
+         T0mZ/7+SSrKrz6cHtzZQHPcDoBEznyn9TSpTzAVy6zyGubhXxIHAWUXJ/D241H9vjk2+
+         rBKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmajeBorLGMSyTlG0vbF//ju1M2potYD2m0tuc/ffKqkyMdxM74yczHTMGQzWM5h8d/07VsUKjSge8rEDiWDLSEXyVfo2UiZZPmyIb
+X-Gm-Message-State: AOJu0Yw/FDxiu65x4++Asv7SXFmgsw4SiI3Hau8/i2Lg5HJ+bF9aFetD
+	oh4lxhoUhIggWpBiagJ2u1k1OTZxmVT6vZCKpNBy4nrN6u8nhL6++YI7FKRw1CxFoOnCOT7kcLA
+	l70OQS00GVeCE+EJG87fZgYEbPQtqVfZO1JXB
+X-Google-Smtp-Source: AGHT+IHJHzGsTLlHdkGDfsllSRh8iQMAMrbMYzPHQDEIz67b8VjhtYs5x/lKsIwdroHEofnKgRGum5trjIiYD3NwmSE=
+X-Received: by 2002:a05:6102:83b:b0:48f:1ec2:2921 with SMTP id
+ ada2fe7eead31-48f1ec22ad1mr2601049137.3.1718873294579; Thu, 20 Jun 2024
+ 01:48:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c563:0:b0:376:24b1:1746 with SMTP id
- e9e14a558f8ab-37624b11ac6mr1791235ab.3.1718873245203; Thu, 20 Jun 2024
- 01:47:25 -0700 (PDT)
-Date: Thu, 20 Jun 2024 01:47:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000031ce3a061b4e5d79@google.com>
-Subject: [syzbot] [wireless?] INFO: task hung in cfg80211_dfs_channels_update_work
- (7)
-From: syzbot <syzbot+4f955b33340810d6c105@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+ <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com> <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+ <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com> <489d1494-626c-40d9-89ec-4afc4cd0624b@redhat.com>
+In-Reply-To: <489d1494-626c-40d9-89ec-4afc4cd0624b@redhat.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Thu, 20 Jun 2024 09:47:38 +0100
+Message-ID: <CA+EHjTzuqd5PYdZzAGWTjH+EyhomCeGSaFvDjgZfU7GUAWqu9A@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+To: David Hildenbrand <david@redhat.com>
+Cc: John Hubbard <jhubbard@nvidia.com>, Elliot Berman <quic_eberman@quicinc.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, maz@kernel.org, kvm@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com, Jason Gunthorpe <jgg@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi David,
 
-syzbot found the following issue on:
+On Wed, Jun 19, 2024 at 1:16=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 19.06.24 11:11, Fuad Tabba wrote:
+> > Hi John and David,
+> >
+> > Thank you for your comments.
+> >
+> > On Wed, Jun 19, 2024 at 8:38=E2=80=AFAM David Hildenbrand <david@redhat=
+.com> wrote:
+> >>
+> >> Hi,
+> >>
+> >> On 19.06.24 04:44, John Hubbard wrote:
+> >>> On 6/18/24 5:05 PM, Elliot Berman wrote:
+> >>>> In arm64 pKVM and QuIC's Gunyah protected VM model, we want to suppo=
+rt
+> >>>> grabbing shmem user pages instead of using KVM's guestmemfd. These
+> >>>> hypervisors provide a different isolation model than the CoCo
+> >>>> implementations from x86. KVM's guest_memfd is focused on providing
+> >>>> memory that is more isolated than AVF requires. Some specific exampl=
+es
+> >>>> include ability to pre-load data onto guest-private pages, dynamical=
+ly
+> >>>> sharing/isolating guest pages without copy, and (future) migrating
+> >>>> guest-private pages.  In sum of those differences after a discussion=
+ in
+> >>>> [1] and at PUCK, we want to try to stick with existing shmem and ext=
+end
+> >>>> GUP to support the isolation needs for arm64 pKVM and Gunyah.
+> >>
+> >> The main question really is, into which direction we want and can
+> >> develop guest_memfd. At this point (after talking to Jason at LSF/MM),=
+ I
+> >> wonder if guest_memfd should be our new target for guest memory, both
+> >> shared and private. There are a bunch of issues to be sorted out thoug=
+h ...
+> >>
+> >> As there is interest from Red Hat into supporting hugetlb-style huge
+> >> pages in confidential VMs for real-time workloads, and wasting memory =
+is
+> >> not really desired, I'm going to think some more about some of the
+> >> challenges (shared+private in guest_memfd, mmap support, migration of
+> >> !shared folios, hugetlb-like support, in-place shared<->private
+> >> conversion, interaction with page pinning). Tricky.
+> >>
+> >> Ideally, we'd have one way to back guest memory for confidential VMs i=
+n
+> >> the future.
+> >
+> > As you know, initially we went down the route of guest memory and
+> > invested a lot of time on it, including presenting our proposal at LPC
+> > last year. But there was resistance to expanding it to support more
+> > than what was initially envisioned, e.g., sharing guest memory in
+> > place migration, and maybe even huge pages, and its implications such
+> > as being able to conditionally mmap guest memory.
+>
+> Yes, and I think we might have to revive that discussion, unfortunately.
+> I started thinking about this, but did not reach a conclusion. Sharing
+> my thoughts.
+>
+> The minimum we might need to make use of guest_memfd (v1 or v2 ;) ) not
+> just for private memory should be:
+>
+> (1) Have private + shared parts backed by guest_memfd. Either the same,
+>      or a fd pair.
+> (2) Allow to mmap only the "shared" parts.
+> (3) Allow in-place conversion between "shared" and "private" parts.
 
-HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16519dde980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
-dashboard link: https://syzkaller.appspot.com/bug?extid=4f955b33340810d6c105
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+These three were covered (modulo bugs) in the guest_memfd() RFC I'd
+sent a while back:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+https://lore.kernel.org/all/20240222161047.402609-1-tabba@google.com/
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/27e64d7472ce/disk-2ccbdf43.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e1c494bb5c9c/vmlinux-2ccbdf43.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/752498985a5e/bzImage-2ccbdf43.xz
+> (4) Allow migration of the "shared" parts.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4f955b33340810d6c105@syzkaller.appspotmail.com
+We would really like that too, if they allow us :)
 
-INFO: task kworker/u8:4:61 blocked for more than 143 seconds.
-      Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:4    state:D stack:21872 pid:61    tgid:61    ppid:2      flags:0x00004000
-Workqueue: cfg80211 cfg80211_dfs_channels_update_work
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
- cfg80211_dfs_channels_update_work+0xbf/0x610 net/wireless/mlme.c:1021
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2e/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task syz-executor.3:7040 blocked for more than 143 seconds.
-      Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.3  state:D stack:25456 pid:7040  tgid:7035  ppid:5121   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
- netlink_dump+0x5d3/0xe50 net/netlink/af_netlink.c:2336
- __netlink_dump_start+0x59d/0x780 net/netlink/af_netlink.c:2454
- netlink_dump_start include/linux/netlink.h:340 [inline]
- rtnetlink_dump_start net/core/rtnetlink.c:6524 [inline]
- rtnetlink_rcv_msg+0xda2/0x1180 net/core/rtnetlink.c:6591
- netlink_rcv_skb+0x1e5/0x430 net/netlink/af_netlink.c:2564
- netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
- netlink_unicast+0x7ec/0x980 net/netlink/af_netlink.c:1361
- netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1905
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x223/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
+> A) Convert shared -> private?
+> * Must not be GUP-pinned
+> * Must not be mapped
+> * Must not reside on ZONE_MOVABLE/MIGRATE_CMA
+> * (must rule out any other problematic folio references that could
+>     read/write memory, might be feasible for guest_memfd)
+>
+> B) Convert private -> shared?
+> * Nothing to consider
+>
+> C) Map something?
+> * Must not be private
 
+A,B and C were covered (again, modulo bugs) in the RFC.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> For ordinary (small) pages, that might be feasible.
+> (ZONE_MOVABLE/MIGRATE_CMA might be feasible, but maybe we could just not
+> support them initially)
+>
+> The real fun begins once we want to support huge pages/large folios and
+> can end up having a mixture of "private" and "shared" per huge page. But
+> really, that's what we want in the end I think.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I agree.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> Unless we can teach the VM to not convert arbitrary physical memory
+> ranges on a 4k basis to a mixture of private/shared ... but I've been
+> told we don't want that. Hm.
+>
+>
+> There are two big problems with that that I can see:
+>
+> 1) References/GUP-pins are per folio
+>
+> What if some shared part of the folio is pinned but another shared part
+> that we want to convert to private is not? Core-mm will not provide the
+> answer to that: the folio maybe pinned, that's it. *Disallowing* at
+> least long-term GUP-pins might be an option.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Right.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> To get stuff into an IOMMU, maybe a per-fd interface could work, and
+> guest_memfd would track itself which parts are currently "handed out",
+> and with which "semantics" (shared vs. private).
+>
+> [IOMMU + private parts might require that either way? Because, if we
+> dissallow mmap, how should that ever work with an IOMMU otherwise].
 
-If you want to undo deduplication, reply with:
-#syz undup
+Not sure if IOMMU + private makes that much sense really, but I think
+I might not really understand what you mean by this.
+
+> 2) Tracking of mappings will likely soon be per folio.
+>
+> page_mapped() / folio_mapped() only tell us if any part of the folio is
+> mapped. Of course, what always works is unmapping the whole thing, or
+> walking the rmap to detect if a specific part is currently mapped.
+
+This might complicate things a but, but we could be conservative, at
+least initially in what we allow to be mapped.
+
+>
+> Then, there is the problem of getting huge pages into guest_memfd (using
+> hugetlb reserves, but not using hugetlb), but that should be solvable.
+>
+>
+> As raised in previous discussions, I think we should then allow the
+> whole guest_memfd to be mapped, but simply SIGBUS/... when trying to
+> access a private part. We would track private/shared internally, and
+> track "handed out" pages to IOMMUs internally. FOLL_LONGTERM would be
+> disallowed.
+>
+> But that's only the high level idea I had so far ... likely ignore way
+> too many details.
+>
+> Is there broader interest to discuss that and there would be value in
+> setting up a meeting and finally make progress with that?
+>
+> I recall quite some details with memory renting or so on pKVM ... and I
+> have to refresh my memory on that.
+
+I really would like to get to a place where we could investigate and
+sort out all of these issues. It would be good to know though, what,
+in principle (and not due to any technical limitations), we might be
+allowed to do and expand guest_memfd() to do, and what out of
+principle is off the table.
+
+> >
+> > To be honest, personally (speaking only for myself, not necessarily
+> > for Elliot and not for anyone else in the pKVM team), I still would
+> > prefer to use guest_memfd(). I think that having one solution for
+> > confidential computing that rules them all would be best. But we do
+> > need to be able to share memory in place, have a plan for supporting
+> > huge pages in the near future, and migration in the not-too-distant
+> > future.
+>
+> Yes, huge pages are also of interest for RH. And memory-overconsumption
+> due to having partially used huge pages in private/shared memory is not
+> desired.
+>
+> >
+> > We are currently shipping pKVM in Android as it is, warts and all.
+> > We're also working on upstreaming the rest of it. Currently, this is
+> > the main blocker for us to be able to upstream the rest (same probably
+> > applies to Gunyah).
+> >
+> >> Can you comment on the bigger design goal here? In particular:
+> >
+> > At a high level: We want to prevent a misbehaving host process from
+> > crashing the system when attempting to access (deliberately or
+> > accidentally) protected guest memory. As it currently stands in pKVM
+> > and Gunyah, the hypervisor does prevent the host from accessing
+> > (private) guest memory. In certain cases though, if the host attempts
+> > to access that memory and is prevented by the hypervisor (either out
+> > of ignorance or out of malice), the host kernel wouldn't be able to
+> > recover, causing the whole system to crash.
+> >
+> > guest_memfd() prevents such accesses by not allowing confidential
+> > memory to be mapped at the host to begin with. This works fine for us,
+> > but there's the issue of being able to share memory in place, which
+> > implies mapping it conditionally (among others that I've mentioned).
+> >
+> > The approach we're taking with this proposal is to instead restrict
+> > the pinning of protected memory. If the host kernel can't pin the
+> > memory, then a misbehaving process can't trick the host into accessing
+> > it.
+>
+> Got it, thanks. So once we pinned it, nobody else can pin it. But we can
+> still map it?
+
+This proposal (the exclusive gup) places no limitations on mapping,
+only on pinning. If private memory is mapped and then accessed, then
+the worst thing that could happen is the userspace process gets
+killed, potentially taking down the guest with it (if that process
+happens to be the VMM for example).
+
+The reason why we care about pinning is to ensure that the host kernel
+doesn't access protected memory, thereby crashing the system.
+
+> >
+> >>
+> >> 1) Who would get the exclusive PIN and for which reason? When would we
+> >>      pin, when would we unpin?
+> >
+> > The exclusive pin would be acquired for private guest pages, in
+> > addition to a normal pin. It would be released when the private memory
+> > is released, or if the guest shares that memory.
+>
+> Understood.
+>
+> >
+> >> 2) What would happen if there is already another PIN? Can we deal with
+> >>      speculative short-term PINs from GUP-fast that could introduce
+> >>      errors?
+> >
+> > The exclusive pin would be rejected if there's any other pin
+> > (exclusive or normal). Normal pins would be rejected if there's an
+> > exclusive pin.
+>
+> Makes sense, thanks.
+>
+> >
+> >> 3) How can we be sure we don't need other long-term pins (IOMMUs?) in
+> >>      the future?
+> >
+> > I can't :)
+>
+> :)
+>
+> >
+> >> 4) Why are GUP pins special? How one would deal with other folio
+> >>      references (e.g., simply mmap the shmem file into a different
+> >>      process).
+> >
+> > Other references would crash the userspace process, but the host
+> > kernel can handle them, and shouldn't cause the system to crash. The
+> > way things are now in Android/pKVM, a userspace process can crash the
+> > system as a whole.
+>
+> Okay, so very Android/pKVM specific :/
+
+Gunyah too.
+
+> >
+> >> 5) Why you have to bother about anonymous pages at all (skimming over =
+s
+> >>      some patches), when you really want to handle shmem differently o=
+nly?
+> >
+> > I'm not sure I understand the question. We use anonymous memory for pKV=
+M.
+> >
+>
+> "we want to support grabbing shmem user pages instead of using KVM's
+> guestmemfd" indicated to me that you primarily care about shmem with
+> FOLL_EXCLUSIVE?
+
+Right, maybe we should have clarified this better when we sent out this ser=
+ies.
+
+This patch series is meant as an alternative to guest_memfd(), and not
+as something to be used in conjunction with it. This came about from
+the discussions we had with you and others back when Elliot and I sent
+our respective RFCs, and found that there was resistance into adding
+guest_memfd() support that would make it practical to use with pKVM or
+Gunyah.
+
+https://lore.kernel.org/all/ZdfoR3nCEP3HTtm1@casper.infradead.org/
+
+Thanks again for your ideas and comments!
+/fuad
+
+> >>>> To that
+> >>>> end, we introduce the concept of "exclusive GUP pinning", which enfo=
+rces
+> >>>> that only one pin of any kind is allowed when using the FOLL_EXCLUSI=
+VE
+> >>>> flag is set. This behavior doesn't affect FOLL_GET or any other foli=
+o
+> >>>> refcount operations that don't go through the FOLL_PIN path.
+> >>
+> >> So, FOLL_EXCLUSIVE would fail if there already is a PIN, but
+> >> !FOLL_EXCLUSIVE would succeed even if there is a single PIN via
+> >> FOLL_EXCLUSIVE? Or would the single FOLL_EXCLUSIVE pin make other pins
+> >> that don't have FOLL_EXCLUSIVE set fail as well?
+> >
+> > A FOLL_EXCLUSIVE would fail if there's any other pin. A normal pin
+> > (!FOLL_EXCLUSIVE) would fail if there's a FOLL_EXCLUSIVE pin. It's the
+> > PIN to end all pins!
+> >
+> >>>>
+> >>>> [1]: https://lore.kernel.org/all/20240319143119.GA2736@willie-the-tr=
+uck/
+> >>>>
+> >>>
+> >>> Hi!
+> >>>
+> >>> Looking through this, I feel that some intangible threshold of "this =
+is
+> >>> too much overloading of page->_refcount" has been crossed. This is a =
+very
+> >>> specific feature, and it is using approximately one more bit than is
+> >>> really actually "available"...
+> >>
+> >> Agreed.
+> >
+> > We are gating it behind a CONFIG flag :)
+>
+> ;)
+>
+> >
+> > Also, since pin is already overloading the refcount, having the
+> > exclusive pin there helps in ensuring atomic accesses and avoiding
+> > races.
+> >
+> >>>
+> >>> If we need a bit in struct page/folio, is this really the only way? W=
+illy
+> >>> is working towards getting us an entirely separate folio->pincount, I
+> >>> suppose that might take too long? Or not?
+> >>
+> >> Before talking about how to implement it, I think we first have to lea=
+rn
+> >> whether that approach is what we want at all, and how it fits into the
+> >> bigger picture of that use case.
+> >>
+> >>>
+> >>> This feels like force-fitting a very specific feature (KVM/CoCo handl=
+ing
+> >>> of shmem pages) into a more general mechanism that is running low on
+> >>> bits (gup/pup).
+> >>
+> >> Agreed.
+> >>
+> >>>
+> >>> Maybe a good topic for LPC!
+> >>
+> >> The KVM track has plenty of guest_memfd topics, might be a good fit
+> >> there. (or in the MM track, of course)
+> >
+> > We are planning on submitting a proposal for LPC (see you in Vienna!) :=
+)
+>
+> Great!
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
