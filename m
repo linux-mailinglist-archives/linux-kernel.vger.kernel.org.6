@@ -1,300 +1,185 @@
-Return-Path: <linux-kernel+bounces-223177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0313F910F0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:41:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070BD910F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD2E2848A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:41:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34C51F22DB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A806C1B9AA7;
-	Thu, 20 Jun 2024 17:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B901C6894;
+	Thu, 20 Jun 2024 17:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eSWHo8M4"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZxcBDPCw"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53251C0DC0
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500091C231A
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718904787; cv=none; b=N1Ehflowy0hQReHm+ZIWFmBqlJhGHzYdYMX5GC8GKTkEyELkaaO4T2Or8lzpCbcHISE8CoMIl++JIv4wP+e7bsbYUwbmAIrtJuxhLnbaxJnnD2q/i2VF8UpCiHUbQvbLYtCqRQtxUeMENPHPksIBFcLRCwxO4KLmqDrC4tEUk3k=
+	t=1718904804; cv=none; b=l8soDi45t6x6JuTf9f9oV4IlgTv5UY2pRHMKLeACq2oBGeRzt02aeYURzNN+dFxITG5S4rygosf4yvwU7ygvkix4yvdfe9ca6xBizcc6Q6cHXky6QLBbuzN4u59v58qbYGiL4Cb+6MvQHygZyZ/8vuyA1Ra7IrdwtI2fwhPu2Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718904787; c=relaxed/simple;
-	bh=AaKb7xH3D6322u5oRmwnJltCEtxp6IvHn7eAt659z8I=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=shWU1uduqB87O0oohF+NCax75JjMc91Pf1ccGltk85K8/10Ar0oBZ6GBZR3oQJeEtu+cNMwwrI3dO4SFU3UMfndrFmVvXex7kIA6ufcElAxmrvngoOmh+tXPJku3xdRvrd2hBKZfrWwgfOJXYFAMDUqAbHgdEOzEksE/AJlFH24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eSWHo8M4; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dff1eb1c1fcso2176466276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:33:05 -0700 (PDT)
+	s=arc-20240116; t=1718904804; c=relaxed/simple;
+	bh=TzPKOpvCwBaNFnGsw/iEn+9Z1c6ztU05h6eNk4LkJr4=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=sDjuzBiUDKdps0lQIajaGTZiuvpQN9vCWuxyflbz+13yOYgOmW5DvoVbleOuQ2zAW/c3tov4qPrgaA8vedN/i1N113roewoGUNEsfPgMyYvcj0v9CMKAYmV691v78mo2O0Kb6Z6cgvSkhg7RTyghrXUXrzWaNhhLRymyVk8AFns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZxcBDPCw; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57d280e2d5dso538354a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:33:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718904785; x=1719509585; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FxbUlqEIru4E7gX2WnN1T22F/48gDP0UMTSnaKBJ4Lc=;
-        b=eSWHo8M4VOVFdy0hf7i25uBcyd5QD7kYB+vH8Ur6a8X9zrr5Kdy4NI9Bh4fePQhrr/
-         KlTYR8dUlD60cPl9pQzGfCTmNyCL8TsJZwRNsfq1qd+vl9WVWrCNAqkox0ex4eZT5XnF
-         /ZhHMoEVaqLlWb2mDVAPwrfty4pZbi0aFXWqqpqNSzCYGJ75VL2kyXO8LsuTkwNcISDf
-         +Mb6uWxqvUS7hrTqNQNRkwc4mc46Vqt01iIiQsCeiULYI8thGXMsiDs6DLWugL3M7aru
-         LG+1aakbRd9nZTw/SVABZQBq47og2C3CJWV2rFNoYCpnJkPWQsEb757WO+Nr5PLzdeSL
-         FTIA==
+        d=broadcom.com; s=google; t=1718904801; x=1719509601; darn=vger.kernel.org;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EMoI8JOvTSXNXIOcAqTiZC4i2TKLws93lCZwt9d8F4Y=;
+        b=ZxcBDPCwfuNXAGPeqmVr9RcAcWOXki2c+s2b2CUoy4IhkcyPbvHUX7zH1a4n6hyiRy
+         xp23MPhk/iL9gE+KlrSi8si8YW9Vhq9eV47/Ovh9auKO2K4JOeO2UMrYNbS1BYale9NK
+         4hP8+e0StdqtQStIM2nXVAlgpAct0DPtkFusU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718904785; x=1719509585;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FxbUlqEIru4E7gX2WnN1T22F/48gDP0UMTSnaKBJ4Lc=;
-        b=SEGC3so5quk+Ag9AyctW/shXxm4WrtDyLH8woFwwDweFZcLWeA9FJUAQgpmgT6UOsV
-         7pL1HJdkEIOela6JZUMnBVh1fsUSiLfDQSgSX8c6XTos8Bm6gxVG4bJwpFBy8gQpBOC/
-         YB39z3qOshbW8IbGnRlwiQaoB6JXQymSoH5WZaXsV5r7lcufHCoFnDpIDObohCIFjBcp
-         6fMy28nZm+W4o/Nlsf5waCVKRhokkpfUCqq5FB6zj4Sp5c/+QctZAezqtHxfPPS4qgIr
-         xeInQ4VKvoY8ihUXhDnMrlu5+XOF7zyTDLIgXtXSoJzNLs/86unszOtvTqa/H9SJcdAs
-         v/tQ==
-X-Gm-Message-State: AOJu0YwSlqLNdsjfEbd7/rMllA88ud5ZL5x7pYoViZFHJUh1h6z93Odj
-	8nestN7MyF6PlzEFR5Qt7pXajzO7lAxPRv5WfQoAgPSzGicjBWsLnsE4En7LS2ncYs3h0p02CQb
-	XxIgzplyzLcj2OLorT/UmFIG1MT1TeBybLBXIiEmkt6eBKKofVQ0idAvwT4/0Ho+TR0C8fMtHNP
-	ECTLqAdD43Ly24NATHm8e0QrYDm8dyY0NOzpR/806h92t8
-X-Google-Smtp-Source: AGHT+IHaP7Rj7bKnYJ7MWtjZwe4lSBiUsB0rCkavybCanBMTCd0BYHyPfenxphR36EJEjDUhH4U78MupPTyf
-X-Received: from jstultz-noogler2.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:600])
- (user=jstultz job=sendgmr) by 2002:a25:db10:0:b0:e02:c3c2:4b96 with SMTP id
- 3f1490d57ef6-e02c3c25615mr754700276.1.1718904784462; Thu, 20 Jun 2024
- 10:33:04 -0700 (PDT)
-Date: Thu, 20 Jun 2024 10:32:57 -0700
+        d=1e100.net; s=20230601; t=1718904801; x=1719509601;
+        h=mime-version:subject:user-agent:references:in-reply-to:message-id
+         :date:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EMoI8JOvTSXNXIOcAqTiZC4i2TKLws93lCZwt9d8F4Y=;
+        b=mlByL97is7YGIc8A1FAQo5EyTJE2A5UrHMtgtaxOsT0NMGib4rP3vyfuYjUqFgaptq
+         x1HBP9UPxv23CpsCfTzMZlMpq2lXK05979gzsW55QtX73VVmnddkvOhOCLk2GmX5VuIj
+         JKK6/TjiafmYz4As/TZyiF2xSl5c8csDWjtxk1n4kCD6SaXNkNTDIGDrA8nX0jbQ79sY
+         Qmcb7SwTRV8/brjdG4s/ECBAmgUn4tFFyv00Txq5rqEtivC0zir+ohUgL4U4IZi4JCs1
+         d8SmWTT4ZqStl6xWuBNHyI5BbiXRiMeRM32+a8Wr2cn5mlEWVY8HdbwNR0f2s97d+N/Q
+         B4+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUT+lWjc6NWX3PMcpN000lZRL8S2RwALscpcL2T2/WckpPMNkSEXbYjZrtn9yD1hdb6gEWLeYnjt72O/3+hZgQanvgQs/bZBAhTyoA+
+X-Gm-Message-State: AOJu0Yz/qHZsbW6n6IgBwUdRRKs7JkixrcZwmsA9Lv1o31BH6QfzOv5t
+	SqsKeiESsOFriWo7/gg+CrW3r7Lj0sHEyaXvcQ7T1WKdVdBtb/tDmehzhEvXRA==
+X-Google-Smtp-Source: AGHT+IETUAVlwwFkqDQ4w98uIqyon39aonVaXSncZlcpdsKtKdRss5bCY3FXbq7fQ34KTjOyYSsSvA==
+X-Received: by 2002:a50:9e67:0:b0:57d:57c:ce99 with SMTP id 4fb4d7f45d1cf-57d07e68e29mr3351251a12.2.1718904800448;
+        Thu, 20 Jun 2024 10:33:20 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72da156sm9886234a12.22.2024.06.20.10.33.19
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Jun 2024 10:33:20 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Jacobe Zang <jacobe.zang@wesion.com>
+CC: <kvalo@kernel.org>, <duoming@zju.edu.cn>, <bhelgaas@google.com>, <minipli@grsecurity.net>, <linux-wireless@vger.kernel.org>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <megi@xff.cz>, <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <heiko@sntech.de>, <nick@khadas.com>, <efectn@protonmail.com>, <jagan@edgeble.ai>, <dsimic@manjaro.org>, <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Thu, 20 Jun 2024 19:33:18 +0200
+Message-ID: <19036b5bb30.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <20240620020015.4021696-1-jacobe.zang@wesion.com>
+References: <20240620020015.4021696-1-jacobe.zang@wesion.com>
+User-Agent: AquaMail/1.51.3 (build: 105103473)
+Subject: Re: [PATCH v1 0/3] Add AP6275P wireless support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-Message-ID: <20240620173301.1761679-1-jstultz@google.com>
-Subject: [PATCH v2] sched: Move psi_account_irqtime() out of
- update_rq_clock_task() hotpath
-From: John Stultz <jstultz@google.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: John Stultz <jstultz@google.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Chengming Zhou <zhouchengming@bytedance.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Qais Yousef <qyousef@layalina.io>, 
-	Joel Fernandes <joel@joelfernandes.org>, kernel-team@android.com, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jimmy Shiu <jimmyshiu@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000110aa2061b55b674"
 
-It was reported that in moving to 6.1, a larger then 10%
-regression was seen in the performance of
-clock_gettime(CLOCK_THREAD_CPUTIME_ID,...).
+--000000000000110aa2061b55b674
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Using a simple reproducer, I found:
-5.10:
-100000000 calls in 24345994193 ns => 243.460 ns per call
-100000000 calls in 24288172050 ns => 242.882 ns per call
-100000000 calls in 24289135225 ns => 242.891 ns per call
+On June 20, 2024 4:00:31 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
 
-6.1:
-100000000 calls in 28248646742 ns => 282.486 ns per call
-100000000 calls in 28227055067 ns => 282.271 ns per call
-100000000 calls in 28177471287 ns => 281.775 ns per call
+> These add AP6275P wireless support on Khadas Edge2. Enable 32k clock
+> for Wi-Fi module and extend the hardware IDs table in the brcmfmac
+> driver for it to attach.
 
-The cause of this was finally narrowed down to the addition of
-psi_account_irqtime() in update_rq_clock_task(), in commit
-52b1364ba0b1 ("sched/psi: Add PSI_IRQ to track IRQ/SOFTIRQ
-pressure").
+Please get the bindings properly defined. I assume the patch sent earlier 
+titled "[PATCH v1] dt-bindings: net: wireless: BCM4329 binding: add 
+pci14e4,449d" is related. Focus on getting agreement on that before 
+throwing in DTS and driver details.
 
-In my initial attempt to resolve this, I leaned towards moving
-all accounting work out of the clock_gettime() call path, but it
-wasn't very pretty, so it will have to wait for a later deeper
-rework. Instead, Peter shared this approach:
+Regards,
+Arend
 
-Rework psi_account_irqtime() to use its own psi_irq_time base
-for accounting, and move it out of the hotpath, calling it
-instead from sched_tick() and __schedule().
 
-In testing this, we found the importance of ensuring
-psi_account_irqtime() is run under the rq_lock, which Johannes
-Weiner helpfully explained, so also add some lockdep annotations
-to make that requirement clear.
 
-With this change the performance is back in-line with 5.10:
-6.1+fix:
-100000000 calls in 24297324597 ns => 242.973 ns per call
-100000000 calls in 24318869234 ns => 243.189 ns per call
-100000000 calls in 24291564588 ns => 242.916 ns per call
+--000000000000110aa2061b55b674
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Chengming Zhou <zhouchengming@bytedance.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Qais Yousef <qyousef@layalina.io>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: kernel-team@android.com
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
-Reviewed-by: Qais Yousef <qyousef@layalina.io>
-Fixes: 52b1364ba0b1 ("sched/psi: Add PSI_IRQ to track IRQ/SOFTIRQ pressure")
-Originally-by: Peter Zijlstra <peterz@infradead.org>
-Reported-by: Jimmy Shiu <jimmyshiu@google.com>
-Signed-off-by: John Stultz <jstultz@google.com>
----
-v2:
-* Added Fixed tag
-* Switched to (delta <= 0) comparision as suggested by
-  Chengming Zhou
-* Added Reviewed-by tags
----
- kernel/sched/core.c  |  7 +++++--
- kernel/sched/psi.c   | 21 ++++++++++++++++-----
- kernel/sched/sched.h |  1 +
- kernel/sched/stats.h | 11 ++++++++---
- 4 files changed, 30 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bcf2c4cc0522..59ce0841eb1f 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -723,7 +723,6 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
- 
- 	rq->prev_irq_time += irq_delta;
- 	delta -= irq_delta;
--	psi_account_irqtime(rq->curr, irq_delta);
- 	delayacct_irq(rq->curr, irq_delta);
- #endif
- #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
-@@ -5665,7 +5664,7 @@ void sched_tick(void)
- {
- 	int cpu = smp_processor_id();
- 	struct rq *rq = cpu_rq(cpu);
--	struct task_struct *curr = rq->curr;
-+	struct task_struct *curr;
- 	struct rq_flags rf;
- 	unsigned long hw_pressure;
- 	u64 resched_latency;
-@@ -5677,6 +5676,9 @@ void sched_tick(void)
- 
- 	rq_lock(rq, &rf);
- 
-+	curr = rq->curr;
-+	psi_account_irqtime(rq, curr, NULL);
-+
- 	update_rq_clock(rq);
- 	hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
- 	update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure);
-@@ -6737,6 +6739,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
- 		++*switch_count;
- 
- 		migrate_disable_switch(rq, prev);
-+		psi_account_irqtime(rq, prev, next);
- 		psi_sched_switch(prev, next, !task_on_rq_queued(prev));
- 
- 		trace_sched_switch(sched_mode & SM_MASK_PREEMPT, prev, next, prev_state);
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 7b4aa5809c0f..c37ddcb642d5 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -773,6 +773,7 @@ static void psi_group_change(struct psi_group *group, int cpu,
- 	enum psi_states s;
- 	u32 state_mask;
- 
-+	lockdep_assert_rq_held(cpu_rq(cpu));
- 	groupc = per_cpu_ptr(group->pcpu, cpu);
- 
- 	/*
-@@ -991,22 +992,32 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
- }
- 
- #ifdef CONFIG_IRQ_TIME_ACCOUNTING
--void psi_account_irqtime(struct task_struct *task, u32 delta)
-+void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev)
- {
--	int cpu = task_cpu(task);
-+	int cpu = task_cpu(curr);
- 	struct psi_group *group;
- 	struct psi_group_cpu *groupc;
--	u64 now;
-+	u64 now, irq;
-+	s64 delta;
- 
- 	if (static_branch_likely(&psi_disabled))
- 		return;
- 
--	if (!task->pid)
-+	if (!curr->pid)
-+		return;
-+
-+	lockdep_assert_rq_held(rq);
-+	group = task_psi_group(curr);
-+	if (prev && task_psi_group(prev) == group)
- 		return;
- 
- 	now = cpu_clock(cpu);
-+	irq = irq_time_read(cpu);
-+	delta = (s64)(irq - rq->psi_irq_time);
-+	if (delta <= 0)
-+		return;
-+	rq->psi_irq_time = irq;
- 
--	group = task_psi_group(task);
- 	do {
- 		if (!group->enabled)
- 			continue;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index a831af102070..ef20c61004eb 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1126,6 +1126,7 @@ struct rq {
- 
- #ifdef CONFIG_IRQ_TIME_ACCOUNTING
- 	u64			prev_irq_time;
-+	u64			psi_irq_time;
- #endif
- #ifdef CONFIG_PARAVIRT
- 	u64			prev_steal_time;
-diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index 38f3698f5e5b..b02dfc322951 100644
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -110,8 +110,12 @@ __schedstats_from_se(struct sched_entity *se)
- void psi_task_change(struct task_struct *task, int clear, int set);
- void psi_task_switch(struct task_struct *prev, struct task_struct *next,
- 		     bool sleep);
--void psi_account_irqtime(struct task_struct *task, u32 delta);
--
-+#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-+void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev);
-+#else
-+static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
-+				       struct task_struct *prev) {}
-+#endif /*CONFIG_IRQ_TIME_ACCOUNTING */
- /*
-  * PSI tracks state that persists across sleeps, such as iowaits and
-  * memory stalls. As a result, it has to distinguish between sleeps,
-@@ -192,7 +196,8 @@ static inline void psi_ttwu_dequeue(struct task_struct *p) {}
- static inline void psi_sched_switch(struct task_struct *prev,
- 				    struct task_struct *next,
- 				    bool sleep) {}
--static inline void psi_account_irqtime(struct task_struct *task, u32 delta) {}
-+static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
-+				       struct task_struct *prev) {}
- #endif /* CONFIG_PSI */
- 
- #ifdef CONFIG_SCHED_INFO
--- 
-2.45.2.741.gdbec12cfda-goog
-
+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
+2Gzj3QNJRLsZu1TLyOyBBIr/BE7UiY3RabgRzknBGAPmzhS+fmyM8OtM5BYBsFBrSUFtZZO2p/tf
+Nbc24J2zf2peoZ8MK+7WQqummYlOnz+FyDkA9EybeNMcS5C+xi/PAgMBAAGjggHdMIIB2TAOBgNV
+HQ8BAf8EBAMCBaAwgaMGCCsGAQUFBwEBBIGWMIGTME4GCCsGAQUFBzAChkJodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcnQwQQYI
+KwYBBQUHMAGGNWh0dHA6Ly9vY3NwLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24y
+Y2EyMDIwME0GA1UdIARGMEQwQgYKKwYBBAGgMgEoCjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3
+dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEkGA1UdHwRCMEAwPqA8oDqG
+OGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3Js
+MCcGA1UdEQQgMB6BHGFyZW5kLnZhbnNwcmllbEBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYB
+BQUHAwQwHwYDVR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFIikAXd8CEtv
+ZbDflDRnf3tuStPuMA0GCSqGSIb3DQEBCwUAA4IBAQCdS5XCYx6k2GGZui9DlFsFm75khkqAU7rT
+zBX04sJU1+B1wtgmWTVIzW7ugdtDZ4gzaV0S9xRhpDErjJaltxPbCylb1DEsLj+AIvBR34caW6ZG
+sQk444t0HPb29HnWYj+OllIGMbdJWr0/P95ZrKk2bP24ub3ZP/8SyzrohfIba9WZKMq6g2nTLZE3
+BtkeSGJx/8dy0h8YmRn+adOrxKXHxhSL8BNn8wsmIZyYWe6fRcBtO3Ks2DOLyHCdkoFlN8x9VUQF
+N2ulEgqCbRKkx+qNirW86eF138lr1gRxzclu/38ko//MmkAYR/+hP3WnBll7zbpIt0jc9wyFkSqH
+p8a1MYICbTCCAmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1z
+YTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMTv1t
+bpIzNUky46LXMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBPebLIu9F2P1y30YQL
+jbYsU5v9bP7EgEDtpbFiVHGrMDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
+BTEPFw0yNDA2MjAxNzMzMjFaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFl
+AwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzAL
+BglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAFUacIdRVb6zyMWqRS4C7dma+hpUQFPR5x7It
+rDfvoZeyqV9dgn71AeciW4E+ySGN2Nw2iRo/KOte3hFL+BBF4HT2Jb8OHOBQ2/qR8NSHdLrVCxQS
+8CVAhXwriZG2nk4AmrCIp/bJQh+ktIQzs77xCcWXw+6Vr0vBvdp1bbYJ4Bx1GI/lm9OSwRRT3FDP
+Gw29GNRWS/ur33cZFZA/z1xB69ALZqXtW0+SWfR1I6NqjWu7iEnH1YB+FPfdI4dwjn/9ROgaQxBE
+3+bcsDKJoezoz8inDmiCz+XQaHl0XrrqN0GVs9xavUUCl9HePs3neKFNKwHVPoCvubyeVkx4xK9b
+zA==
+--000000000000110aa2061b55b674--
 
