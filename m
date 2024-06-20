@@ -1,131 +1,159 @@
-Return-Path: <linux-kernel+bounces-222384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D7DC91009B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:42:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 198F6910097
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BB291C20F54
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:42:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 725DE282D63
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48BF1A8C19;
-	Thu, 20 Jun 2024 09:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FF41A4F22;
+	Thu, 20 Jun 2024 09:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="SJ9C2RT/"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SAzaK/xo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BjacE3nt";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SAzaK/xo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BjacE3nt"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666FB1A01B9;
-	Thu, 20 Jun 2024 09:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018EC176FA1;
+	Thu, 20 Jun 2024 09:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718876520; cv=none; b=dYE9bQyDzoJQEz/egvLziA3zekHqFvI0kq9XmFB3M4uBI0xMB7gBdhBwv0BAJig9+RkTmD/6YV+tU3fE5q39C2LPVp5uFFxyJmzvi7vVWyONi9vyBfi/y9LrpUYLzN3fSVvwxookCVGoxIAzhxGLHOildy0D+G0ujqqps0tNXNg=
+	t=1718876515; cv=none; b=dDLXJeLYubJ38iEcbipOjApPsblllS6ysn+1NToI5kZz/rBjUmKX3FZCQOj8tjY/XF86UsGoTrk/OHQ0NFm6hwWTkmQMUTDljM/8jRWrjsfj39hnkCJQT6BmyOtaScV25bkszhvNcD0YONHhOMEDepDPqlQcnO2KIFP3NAzdvyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718876520; c=relaxed/simple;
-	bh=+XomlozgwEM7W7jw1RV2XyzUdCf14DpPm3CMqpPk4RU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LDAHnCzesrn5y+OqLBaTm09hAfs9b0k7viiHriJnlkNQsLKM2ij3bpmVkSj+iLTP/xrkhLug9qdT4IXqV0dlT47+FrDmfU8u84In0ts/kzdEfLntJ5NA6DtUM2sr4R7Lvxyz38ZZTbq8vKaacQUuw4dnnnM7Bl7+0uKNk5R8iyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=SJ9C2RT/; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 095FB10001E;
-	Thu, 20 Jun 2024 12:41:47 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 095FB10001E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1718876507;
-	bh=eHWSHU6IOFj9d81lzeTSCSoajp29AFtL+A3T39sy4lk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=SJ9C2RT/3zxNcETOlA+R7zdR9bgqCBWrTAJKs6yKjHsLD92MS0HKFRJ6tgF47uJdC
-	 2D8JzU4ZBZKqQnlDmhNQ+jJtM1LsUuZBkWCbqfNu2SC19RrO0B826IIgjtAkuiNku/
-	 qBYufLJfpgbHyadnxpSGN91F/1bTEMqag/3CjsSxfsBxyU+Hzwmh/fAn5uZs9e27rS
-	 8oFLwkDs8ETXGGDo8UvUi5s1W0z8adnonSe/14p0m+nKmy8Hi7+NN62ydlW+kqKcR0
-	 rpbSQTmuo0fxX2N5/quj+Z7SS1mGSIC/X9sZm23PbhFf7smSqqyLTNQZASjKuMF15q
-	 OepCAAht5MUOg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	s=arc-20240116; t=1718876515; c=relaxed/simple;
+	bh=y/D5SODM8g5ptykrokVj2Z77bguifhyU8/FZmoMEG+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvQViotkRtvjWa1cvKJqAzQC6hDV4Ht1X+eCt2DWQNRFaVVf5PSLWI9waOV74dbkyan54Pghnl7DsUCE5kBb2jNwK+2brWsIpvDjuJ3egRlUv+y0O4gmDQk7Qx4GYM/m4TVHspeh94PIZ7cd0na9RvjBZEE8h6CV5T49Egktcls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SAzaK/xo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BjacE3nt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SAzaK/xo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BjacE3nt; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 20 Jun 2024 12:41:46 +0300 (MSK)
-Received: from [172.28.129.141] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 20 Jun 2024 12:41:46 +0300
-Message-ID: <dc787966-2920-459f-b091-ce09fe97315d@salutedevices.com>
-Date: Thu, 20 Jun 2024 12:41:45 +0300
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1CE8321966;
+	Thu, 20 Jun 2024 09:41:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718876512; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=by6xbOtQhJMEqLZEgKtPj8oDDcf6k9Hues9GV1+zcyQ=;
+	b=SAzaK/xoZwIuWUNy6d194BAU2VGW14tMKTKl2dDCq0fJojXr6vXLm/lkP/Phg0bY3HnTWS
+	TpwGm0lRujT6/LM84g3Dr8niw21ljxNE3ofz8/e1VEeiXPy/xz7KQtsnj77XtGCm2lSIRM
+	mi5PY1m+F6ZOg5ntsQLuGEMo/L28uCM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718876512;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=by6xbOtQhJMEqLZEgKtPj8oDDcf6k9Hues9GV1+zcyQ=;
+	b=BjacE3nt64e/Idvu0fGlwzUA/YgYLZoi/XC3w2bm7Yah/tBMLlGjXj/KqPs3ohXeanVbtL
+	vOk/sPoq8k7VN7CA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1718876512; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=by6xbOtQhJMEqLZEgKtPj8oDDcf6k9Hues9GV1+zcyQ=;
+	b=SAzaK/xoZwIuWUNy6d194BAU2VGW14tMKTKl2dDCq0fJojXr6vXLm/lkP/Phg0bY3HnTWS
+	TpwGm0lRujT6/LM84g3Dr8niw21ljxNE3ofz8/e1VEeiXPy/xz7KQtsnj77XtGCm2lSIRM
+	mi5PY1m+F6ZOg5ntsQLuGEMo/L28uCM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1718876512;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=by6xbOtQhJMEqLZEgKtPj8oDDcf6k9Hues9GV1+zcyQ=;
+	b=BjacE3nt64e/Idvu0fGlwzUA/YgYLZoi/XC3w2bm7Yah/tBMLlGjXj/KqPs3ohXeanVbtL
+	vOk/sPoq8k7VN7CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0BCFA13AC1;
+	Thu, 20 Jun 2024 09:41:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UTPbAmD5c2bYewAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 20 Jun 2024 09:41:52 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A683FA0881; Thu, 20 Jun 2024 11:41:51 +0200 (CEST)
+Date: Thu, 20 Jun 2024 11:41:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, NeilBrown <neilb@suse.de>,
+	Amir Goldstein <amir73il@gmail.com>,
+	James Clark <james.clark@arm.com>, ltp@lists.linux.it,
+	linux-nfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
+ ->atomic_open used.
+Message-ID: <20240620094151.cuamehtaioenokyv@quack3>
+References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
+ <20240615-fahrrad-bauordnung-a349bacd8c82@brauner>
+ <20240617093745.nhnc7e7efdldnjzl@quack3>
+ <20240618-wahr-drossel-19297ad2a361@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 13/41] iio: adc: meson_saradc: make use of
- regmap_clear_bits(), regmap_set_bits()
-To: Trevor Gamblin <tgamblin@baylibre.com>
-CC: <linux-iio@vger.kernel.org>, Jean-Baptiste Maneyrol
-	<jmaneyrol@invensense.com>, Crt Mori <cmo@melexis.com>, Fabio Estevam
-	<festevam@gmail.com>, Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>, Chen-Yu Tsai
-	<wens@csie.org>, Shawn Guo <shawnguo@kernel.org>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Linus Walleij
-	<linus.walleij@linaro.org>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>, Baolin Wang
-	<baolin.wang@linux.alibaba.com>, Saravanan Sekar <sravanhome@gmail.com>,
-	Dmitry Rokosov <ddrokosov@sberdevices.ru>, Lars-Peter Clausen
-	<lars@metafoo.de>, Kevin Hilman <khilman@baylibre.com>, Alexandre Torgue
-	<alexandre.torgue@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Cosmin Tanislav <cosmin.tanislav@analog.com>, <imx@lists.linux.dev>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Hans de
- Goede <hdegoede@redhat.com>, Orson Zhai <orsonzhai@gmail.com>
-References: <20240617-review-v3-0-88d1338c4cca@baylibre.com>
- <20240617-review-v3-13-88d1338c4cca@baylibre.com>
-Content-Language: en-US
-From: George Stark <gnstark@salutedevices.com>
-In-Reply-To: <20240617-review-v3-13-88d1338c4cca@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186025 [Jun 20 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;salutedevices.com:7.1.1;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/20 08:22:00 #25655230
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618-wahr-drossel-19297ad2a361@brauner>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,suse.de,gmail.com,arm.com,lists.linux.it,vger.kernel.org,zeniv.linux.org.uk];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-On 6/17/24 16:49, Trevor Gamblin wrote:
-> Instead of using regmap_update_bits() and passing the mask twice, use
-> regmap_set_bits().
+On Tue 18-06-24 16:19:37, Christian Brauner wrote:
+> > AFAICT this will have a side-effect that now fsnotify_open() will be
+> > generated even for O_PATH open. It is true that fsnotify_close() is getting
 > 
-> Instead of using regmap_update_bits() and passing val = 0, use
-> regmap_clear_bits().
+> Thanks! That change seemed sensible because a close() event is
+> generated.
 > 
-> Suggested-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
-> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+> But I don't agree that generating events for O_PATH fds doesn't make
+> sense on principle. But I don't care if you drop events for O_PATH now.
 
-Reviewed-by: George Stark <gnstark@salutedevices.com>
+Well, I can be convinced otherwise but I was not able to find a compeling
+usecase for it. fanotify(8) users primarily care about file data
+modification / access events and secondarily also about directory content
+changes (because they change how data can be accessed). And creation of
+O_PATH fds does not seem to fall into either of these categories...
 
+								Honza
 -- 
-Best regards
-George
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
