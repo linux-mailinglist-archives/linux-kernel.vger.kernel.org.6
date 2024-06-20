@@ -1,236 +1,118 @@
-Return-Path: <linux-kernel+bounces-222264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE6490FEF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:35:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DF590FF10
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 230291C209C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:35:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70DCD1C216CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E1E1A3BD3;
-	Thu, 20 Jun 2024 08:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1410A19A291;
+	Thu, 20 Jun 2024 08:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XExCbvbF"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FTu61AyA"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305A1EDB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA583A1AC;
+	Thu, 20 Jun 2024 08:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718872420; cv=none; b=Fd03zvZrpR/VVN60MHdT9BIITZQmT+RySCAfhGg4R5RyFoI4ZblwuxK1OKRgTO6bRrj6EdxTTGBZVW3C08wTXyFBnEWZ3SUyajcWRSYMiOYSOTksltyiJ1mTIGWGii6A9C+cB4ceA/Hp4wO1x6Xp3WCEELHawcKEDoRCbG3MBJ4=
+	t=1718872787; cv=none; b=GK+vTXsNAwnrKR4RFRlBUn/WhSzMLYJ9UGaODdJSQ8w24S98IT3a/IjAY2zUo0bNiEY5YM+y+SUrYJ6AMQIc2h85sHHvblmYrOZZl2deBs5AwCqBKqnml6KLMyu5PXPHkmjhaLV9rebq3UXS9VeSo1406K/R7u+DnMHz4jOC4oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718872420; c=relaxed/simple;
-	bh=mKIH8VnmavGZbtbsQSzKmnqw6Vs6IGl4hPjAk1+cbR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UfSbKtivAujd1WWNmX1BcwKk43BX+7pLaNBoJ9+VBrZ3OcD6770AQ6O7UwFkI3ecwKzQ58wsQtBCdwU1C9ethX2RX/e1HNp4AkXxct7FcY9DXGylI85snc5lqwDQXu6S/aAbx9HPOOpVquli7Qaum9MC0//c8ofbEOtciWV5GJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XExCbvbF; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6b06b78e716so4010006d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:33:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718872418; x=1719477218; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eZbdM0CxTH317iSXQAcaPR6qww8Y1BrNhZlyqW4F0P8=;
-        b=XExCbvbFPRdz3pP810TG6wI7yMsiippB0Vk+j0KuGz2Mx1dw21Un/YN1wIQKMF2xcf
-         UXpH/6wDJ5aKn7cxc7b8sAovjWgPO5isrnhlGOB6OKDJ9+gfKACXvWcUTdbhl6nIhO8U
-         bXT5/eF5zRnEGCS4DpIl2Wy2ZYpuIkBTYgTcu6wtdWviENBjmJJCx9v8ez8ISB6jdFHJ
-         6DgWLl4Ve2sZgCMH/QW1ILf8rHLPj2+c0Vd9ERczJzodMSuAopUNKWqmxS+kqN5tS/1R
-         pde976PtNgWeZ+uzfCE2SLiEFgcx8IDQZK2afBtB+KH/yifoCoHeNOMxl1OE+KRu+TuU
-         hDMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718872418; x=1719477218;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eZbdM0CxTH317iSXQAcaPR6qww8Y1BrNhZlyqW4F0P8=;
-        b=htv0GRIPi6UezWt4xjsQGWZ5iqOIdMLDHiJ4QhsvfeAethTQyUSjsNvPU7eak56M4K
-         2HPilUGG1F1vai3knzVDKotWlBhLiaNSpZEJgCHjZjLHskh5d+P0Ww70AHn1m11odhvR
-         n7r9m5IfF8x6aavgup2hzayQO76Ln6m5vLQX8CwFfk+c8uTB6t2gNHzGb27zADVMweU2
-         w/Nnl6Ty9w15XUycpTzGTRvKSXFvCkyx6LwVaOMSExmMgG/7rIWJoyaNOdyWaIMlsMaU
-         Ftk/rAMLXEeHscGjq8/WdqzXdixIFHwR93ZPNsPrYUPWikHZe32S8x4XO3NpM/QH1wk4
-         shtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlLYZSXd34H5jAeHaKuC2WRMxiaFN9HRsJftVL+EmTFojGBArtSESi4yOgBN9eRrB9pwo4Jglhgq0TbcV+QZoPEVBe3NKBHdquNym1
-X-Gm-Message-State: AOJu0YzbxEDIooyYhqWQH5a5fJ4xgHaeOHyscZrPP36dM1Lc+qYsQpK3
-	n2HzLlZC4Slm+40JkK2SjQtpa9sk1x2uqr1phkJKLEM2PtchU7G/iCvKlNp7xoTW76CjgpBGuHf
-	sKBa2p3T+AetZ5LhhXouGhrMqekk=
-X-Google-Smtp-Source: AGHT+IHMXqSWRTBO6gCHHzNgpymBs/tO7JwH3tmswJuxf6bXw5SnGPcIDCXJ3dQmz1AYgwfT2a6e8Gu7aVFe4Vtri6M=
-X-Received: by 2002:ad4:58b0:0:b0:6b0:7fc4:7744 with SMTP id
- 6a1803df08f44-6b501e48e81mr44918136d6.29.1718872418029; Thu, 20 Jun 2024
- 01:33:38 -0700 (PDT)
+	s=arc-20240116; t=1718872787; c=relaxed/simple;
+	bh=ZrwZHFV+13ewVv1PIPqaUmU6Uz5D5zivApM1jrH5YHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bi3Gn86qL4yrvqaDW9DRxOywTy8X9KEcaAzJOeH94Z9tYMRsFM2VeSlMp9LEmF5WvvIjxT9IdLJLZlx+liT9eOKCZqd3Ll0/xigWaTtCxtw5PieBVdbl/dqyD51Z5tQ+dk2eFth5LUbgcoUaoRlfuilAfju19Rdek0Gs7qQZh+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FTu61AyA; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718872781; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=hBHfXWhYwtiI+dnajvheMQQED9ly6NUkKrwTjHsfaKk=;
+	b=FTu61AyA0kUYSK0o62iJ2o1Q+PNe38Bims6OfnBVi2uEI/TfA4W373USMWFAAGYPD38hi4f6bCwD/wmdb0ra3u09o7lu/Sqzaozh0FH65yYlmq89fzOyhvfvs9xx4+ejgArvaMMA9MCFL0/IHs3bkItRyEkm7E5kqJvza1emSWA=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=hengqi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W8qghtv_1718872459;
+Received: from 30.221.149.144(mailfrom:hengqi@linux.alibaba.com fp:SMTPD_---0W8qghtv_1718872459)
+          by smtp.aliyun-inc.com;
+          Thu, 20 Jun 2024 16:34:22 +0800
+Message-ID: <36b94f6f-befb-45d5-b56a-9871b10c2b0f@linux.alibaba.com>
+Date: Thu, 20 Jun 2024 16:34:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617231137.80726-1-21cnbao@gmail.com> <20240617231137.80726-3-21cnbao@gmail.com>
- <f9cb01c2-967f-406c-9304-5e31a82b6b0f@redhat.com>
-In-Reply-To: <f9cb01c2-967f-406c-9304-5e31a82b6b0f@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 20 Jun 2024 20:33:26 +1200
-Message-ID: <CAGsJ_4yuBJW578sL5dsKvWP2A=x54zV5b+qbwfy9vj8rFiQM1Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] mm: use folio_add_new_anon_rmap() if folio_test_anon(folio)==false
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, 
-	linux-kernel@vger.kernel.org, mhocko@suse.com, ryan.roberts@arm.com, 
-	shy828301@gmail.com, surenb@google.com, v-songbaohua@oppo.com, 
-	willy@infradead.org, ying.huang@intel.com, yosryahmed@google.com, 
-	yuzhao@google.com, Shuai Yuan <yuanshuai@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jun 20, 2024 at 7:46=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 18.06.24 01:11, Barry Song wrote:
-> > From: Barry Song <v-songbaohua@oppo.com>
-> >
-> > For the !folio_test_anon(folio) case, we can now invoke folio_add_new_a=
-non_rmap()
-> > with the rmap flags set to either EXCLUSIVE or non-EXCLUSIVE. This acti=
-on will
-> > suppress the VM_WARN_ON_FOLIO check within __folio_add_anon_rmap() whil=
-e initiating
-> > the process of bringing up mTHP swapin.
-> >
-> >   static __always_inline void __folio_add_anon_rmap(struct folio *folio=
-,
-> >                   struct page *page, int nr_pages, struct vm_area_struc=
-t *vma,
-> >                   unsigned long address, rmap_t flags, enum rmap_level =
-level)
-> >   {
-> >           ...
-> >           if (unlikely(!folio_test_anon(folio))) {
-> >                   VM_WARN_ON_FOLIO(folio_test_large(folio) &&
-> >                                    level !=3D RMAP_LEVEL_PMD, folio);
-> >           }
-> >           ...
-> >   }
-> >
-> > It also improves the code=E2=80=99s readability. Currently, all new ano=
-nymous
-> > folios calling folio_add_anon_rmap_ptes() are order-0. This ensures
-> > that new folios cannot be partially exclusive; they are either entirely
-> > exclusive or entirely shared.
-> >
-> > Suggested-by: David Hildenbrand <david@redhat.com>
-> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> > Tested-by: Shuai Yuan <yuanshuai@oppo.com>
-> > ---
-> >   mm/memory.c   |  8 ++++++++
-> >   mm/swapfile.c | 13 +++++++++++--
-> >   2 files changed, 19 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 1f24ecdafe05..620654c13b2f 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -4339,6 +4339,14 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> >       if (unlikely(folio !=3D swapcache && swapcache)) {
-> >               folio_add_new_anon_rmap(folio, vma, address, RMAP_EXCLUSI=
-VE);
-> >               folio_add_lru_vma(folio, vma);
-> > +     } else if (!folio_test_anon(folio)) {
-> > +             /*
-> > +              * We currently only expect small !anon folios, for which=
- we now
-> > +              * that they are either fully exclusive or fully shared. =
-If we
-> > +              * ever get large folios here, we have to be careful.
-> > +              */
-> > +             VM_WARN_ON_ONCE(folio_test_large(folio));
-> > +             folio_add_new_anon_rmap(folio, vma, address, rmap_flags);
-> >       } else {
-> >               folio_add_anon_rmap_ptes(folio, page, nr_pages, vma, addr=
-ess,
-> >                                       rmap_flags);
-> > diff --git a/mm/swapfile.c b/mm/swapfile.c
-> > index ae1d2700f6a3..69efa1a57087 100644
-> > --- a/mm/swapfile.c
-> > +++ b/mm/swapfile.c
-> > @@ -1908,8 +1908,17 @@ static int unuse_pte(struct vm_area_struct *vma,=
- pmd_t *pmd,
-> >               VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
-> >               if (pte_swp_exclusive(old_pte))
-> >                       rmap_flags |=3D RMAP_EXCLUSIVE;
-> > -
-> > -             folio_add_anon_rmap_pte(folio, page, vma, addr, rmap_flag=
-s);
-> > +             /*
-> > +              * We currently only expect small !anon folios, for which=
- we now that
-> > +              * they are either fully exclusive or fully shared. If we=
- ever get
-> > +              * large folios here, we have to be careful.
-> > +              */
-> > +             if (!folio_test_anon(folio)) {
-> > +                     VM_WARN_ON_ONCE(folio_test_large(folio));
->
-> (comment applies to both cases)
->
-> Thinking about Hugh's comment, we should likely add here:
->
-> VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
->
-> [the check we are removing from __folio_add_anon_rmap()]
->
-> and document for folio_add_new_anon_rmap() in patch #1, that when
-> dealing with folios that might be mapped concurrently by others, the
-> folio lock must be held.
-
-I assume you mean something like the following for patch#1?
-
-diff --git a/mm/rmap.c b/mm/rmap.c
-index df1a43295c85..20986b25f1b2 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1394,7 +1394,8 @@ void folio_add_anon_rmap_pmd(struct folio
-*folio, struct page *page,
-  *
-  * Like folio_add_anon_rmap_*() but must only be called on *new* folios.
-  * This means the inc-and-test can be bypassed.
-- * The folio does not have to be locked.
-+ * The folio doesn't necessarily need to be locked while it's
-exclusive unless two threads
-+ * map it concurrently. However, the folio must be locked if it's shared.
-  *
-  * If the folio is pmd-mappable, it is accounted as a THP.
-  */
-@@ -1406,6 +1407,7 @@ void folio_add_new_anon_rmap(struct folio
-*folio, struct vm_area_struct *vma,
-        int nr_pmdmapped =3D 0;
-
-        VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
-+       VM_WARN_ON_FOLIO(!exclusive && !folio_test_locked(folio), folio);
-        VM_BUG_ON_VMA(address < vma->vm_start ||
-                        address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
-        __folio_set_swapbacked(folio);
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: virtio: unify code to init stats
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ virtualization@lists.linux.dev, netdev@vger.kernel.org,
+ Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
+References: <fb91a4ec2224c36adda854314940304d708d59ef.1718869408.git.mst@redhat.com>
+From: Heng Qi <hengqi@linux.alibaba.com>
+In-Reply-To: <fb91a4ec2224c36adda854314940304d708d59ef.1718869408.git.mst@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
+在 2024/6/20 下午3:44, Michael S. Tsirkin 写道:
+> Moving initialization of stats structure into
+> __free_old_xmit reduces the code size slightly.
+> It also makes it clearer that this function shouldn't
+> be called multiple times on the same stats struct.
 >
-> > +                     folio_add_new_anon_rmap(folio, vma, addr, rmap_fl=
-ags);
-> > +             } else {
-> > +                     folio_add_anon_rmap_pte(folio, page, vma, addr, r=
-map_flags);
-> > +             }
-> >       } else { /* ksm created a completely new copy */
-> >               folio_add_new_anon_rmap(folio, vma, addr, RMAP_EXCLUSIVE)=
-;
-> >               folio_add_lru_vma(folio, vma);
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
 >
-> --
-> Cheers,
+> Especially important now that Jiri's patch for BQL has been merged.
+> Lightly tested.
 >
-> David / dhildenb
+>   drivers/net/virtio_net.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
 >
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 283b34d50296..c2ce8de340f7 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -383,6 +383,8 @@ static void __free_old_xmit(struct send_queue *sq, bool in_napi,
+>   	unsigned int len;
+>   	void *ptr;
+>   
+> +	stats->bytes = stats->packets = 0;
+> +
+>   	while ((ptr = virtqueue_get_buf(sq->vq, &len)) != NULL) {
+>   		++stats->packets;
+>   
+> @@ -828,7 +830,7 @@ static void virtnet_rq_unmap_free_buf(struct virtqueue *vq, void *buf)
+>   
+>   static void free_old_xmit(struct send_queue *sq, bool in_napi)
+>   {
+> -	struct virtnet_sq_free_stats stats = {0};
+> +	struct virtnet_sq_free_stats stats;
+>   
+>   	__free_old_xmit(sq, in_napi, &stats);
+>   
+> @@ -979,7 +981,7 @@ static int virtnet_xdp_xmit(struct net_device *dev,
+>   			    int n, struct xdp_frame **frames, u32 flags)
+>   {
+>   	struct virtnet_info *vi = netdev_priv(dev);
+> -	struct virtnet_sq_free_stats stats = {0};
+> +	struct virtnet_sq_free_stats stats;
+>   	struct receive_queue *rq = vi->rq;
+>   	struct bpf_prog *xdp_prog;
+>   	struct send_queue *sq;
+
+Reviewed-by: Heng Qi <hengqi@linux.alibaba.com>
+
+Thanks.
+
+
 
