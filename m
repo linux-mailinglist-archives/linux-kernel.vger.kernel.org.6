@@ -1,84 +1,58 @@
-Return-Path: <linux-kernel+bounces-222901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FFB891096E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:11:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCCCF910970
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 132BD2823F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:11:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF90C1C21E13
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705C51B010C;
-	Thu, 20 Jun 2024 15:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC361AE0B3;
+	Thu, 20 Jun 2024 15:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fhvNPEUt"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pm4w85L1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686571AE0B3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270591AED5A;
+	Thu, 20 Jun 2024 15:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718896298; cv=none; b=FLEAvTROpncJBse4kT0x8950ebQJWTZdyS636S1cktpj4lNrw1NxnJ/apTJrvafQw2UUksxNIFSHQ2RNxZPNu3vDGJNyuekrjPO2u1d4BCRn9NGG8pxwg8u6uH9sW/oI1t76vP79Oda55SHcFFBMMbsbtt4YkgQi7KM3dScNhCA=
+	t=1718896307; cv=none; b=Y9V0UFsK9RJxXqMDFMaFh4oTjWljUE+9fCSF8MKWIuSTj0NFuYr5wkAH5hjp939ZJpGdRYQVfHS2eHXlah9Le90xTIXQvTt4iKe1Rm64jzGtkZNwEhnJzMStP/FnlS/8TarsdwRJTslZcCOKEX8N8wrr3HxR15kheNHXnEJLSyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718896298; c=relaxed/simple;
-	bh=bXi5AxhJ6BOlPGDlzlnhp/B19Cg5Fbvd0iajo/vvX3U=;
+	s=arc-20240116; t=1718896307; c=relaxed/simple;
+	bh=BQJCcQtirxB2NsQ9DEZ7h6l2NY6z1Y7N7Zei18H96NA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HiSI5Ob7mCWf3/plLxUAzG40xMbnZxIdAsJNUdH6luPur8gJ8P6MdbWQvm5diKqM0aXXcuS5Yo/QWgVU1dNC+qoVyCVK5fKwq4jEyD3FApFcZKQ9CRZNesTKrGbX4YetW7FticyPJx08nHom9cDMabRfAYXtrHIimfXMzjvKmGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fhvNPEUt; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52bc0a9cea4so918573e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:11:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718896294; x=1719501094; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3h6oqRW/qdffe42UR3aCeVEd5BB42fceS5IJnJKBOSg=;
-        b=fhvNPEUtUIs+2riN8Unpt5qz8zQWQqfmrmVuTSdWgCnOrFgicx+cb8QB/HazvRD1dZ
-         9iCZIriFQtZWKRKpFEtNeQkUET4UuQmszb/1KSdWqSNGAi1aPu/ahGmJXYuIN38rDdtf
-         MkDyg8WcdwFrtJ7rGwm42oA/bTosKLv9kmcwQsKtgofekmlK2drj8mCzrSIWEuaLBjAl
-         bRgRp3v1ekG754XWWzg1o64MR2W+KqrKiFMKzV1bmtsDsHUXb68wHAy5olSSbWkmag7r
-         twYPZYIwaxINL/xY7emBcB5S6eIF90fG340YnR8nCyIYFe5j7btngQEIt+QDcPOqCeN5
-         AiDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718896294; x=1719501094;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3h6oqRW/qdffe42UR3aCeVEd5BB42fceS5IJnJKBOSg=;
-        b=V+glJ4q6WVkGFhPHKBBaRCOX9k5LaWwHwjMxZ3mCgwCiPFbmxqgKYTeSf3B5UzkguX
-         /SLbMR33CtTVH/7pR47h5skOfIBd0AtF1P+BbgoEQC3KPiWk6hIgOmdUvvIkyz6hjV8B
-         ZbsH8KzQ0mAhV6+n4ZnqFQfeumuf7sC1MwEwApzJ/Qa7NYXh/E/vLIwydgoaQCEgB0Bp
-         jTuPsPT/lPdJsr6xkdHlBSiQD7iLeffTrNjQA8l9qvTKuQTH85CxW+htDu+UPUIWiFrU
-         suXlrTA1BgndFFxRhMiNlO71UeXHTNxHII8HWwLhTKfGMcvpnBNRPAQriOLp7gW89ZET
-         EPkA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7qm2d1CdkiQme1yj71SLrFtTpg13k5dMw1xGl106Tq0F7LIQHP4GWISd8os3kk/Yz7+NwiqkyLDMryBLusyuogNdb8tQ66TIBkT5o
-X-Gm-Message-State: AOJu0YzCk2tuAgUBkGH2gPI+IAMMD5WQj+FLlIcy1HW8qXNodKrqfVwX
-	6fauMK8xlYSeyl/iCPi/za0ryZNBKe29t2ZrwtIumnrNrihOQiRvExn9kmlQ69o=
-X-Google-Smtp-Source: AGHT+IG2bhnBYuuNCUcW1g1XePnvj4eVOUhHtCKEC+de0GhrbLOlWQDOt226Xo64hud8Q/lYWQdHrw==
-X-Received: by 2002:a05:6512:3049:b0:52c:a88e:945e with SMTP id 2adb3069b0e04-52cca1f35bcmr1702015e87.31.1718896294581;
-        Thu, 20 Jun 2024 08:11:34 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282ee54sm2120259e87.73.2024.06.20.08.11.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 08:11:34 -0700 (PDT)
-Date: Thu, 20 Jun 2024 18:11:32 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	angelogioacchino.delregno@collabora.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, ulf.hansson@linaro.org, quic_sibis@quicinc.com, 
-	quic_rjendra@quicinc.com, luca@z3ntu.xyz, abel.vesa@linaro.org, quic_rohiagar@quicinc.com, 
-	danila@jiaxyga.com, otto.pflueger@abscue.de, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v1 5/7] clk: qcom: gcc-ipq9574: Add CPR clock definition
-Message-ID: <wadru6axfhvws74vcd6umdhnm6gl5poegoljvb7fgbtuz2mccp@hrclt6qesp6e>
-References: <20240620081427.2860066-1-quic_varada@quicinc.com>
- <20240620081427.2860066-6-quic_varada@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNifMgGvUUbU1epflmNps6dXT6Pxvt0nG4ZVwT8/2lwZCXlt0yco80jyPbnqgH1jczL9EU4LP7hgeXo5g/SNVnD0Ue/KkE/9xuoAFUUiIeSaoQ8Wz5oBsqyqx2qhpp4f56vN4Wwm+md02EWCC3yHzJFfsPztqnpeYR3QRCGixK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pm4w85L1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2828AC2BD10;
+	Thu, 20 Jun 2024 15:11:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718896306;
+	bh=BQJCcQtirxB2NsQ9DEZ7h6l2NY6z1Y7N7Zei18H96NA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pm4w85L1UGEkJWoArD+dGELBdp3Fz2jkqrARACgDuB954rSkvT7sqEqrPx82yRvnA
+	 A4Aj7j95BEwuCtgHHJMwbEqQTE6K0A66rqEPwWhsUgopEpoK2r1IjFZJ1riQda1t2X
+	 GxWqs7ZyqjOSHr/dZvdghRN2y14Pew6nOC+Ngxd4=
+Date: Thu, 20 Jun 2024 17:11:43 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 09/10] rust: pci: add basic PCI device / driver
+ abstractions
+Message-ID: <2024062011-property-hypnotist-e652@gregkh>
+References: <20240618234025.15036-1-dakr@redhat.com>
+ <20240618234025.15036-10-dakr@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,81 +61,255 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240620081427.2860066-6-quic_varada@quicinc.com>
+In-Reply-To: <20240618234025.15036-10-dakr@redhat.com>
 
-On Thu, Jun 20, 2024 at 01:44:25PM GMT, Varadarajan Narayanan wrote:
-> Add the CPR clock definition needed for enabling access to
-> CPR register space.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
->  drivers/clk/qcom/gcc-ipq9574.c | 38 ++++++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-> index e1dc74d04ed1..7c8eb94f654b 100644
-> --- a/drivers/clk/qcom/gcc-ipq9574.c
-> +++ b/drivers/clk/qcom/gcc-ipq9574.c
-> @@ -3994,6 +3994,43 @@ static struct clk_branch gcc_xo_div4_clk = {
->  	},
->  };
->  
-> +static const struct freq_tbl ftbl_hmss_rbcpr_clk_src[] = {
-> +	F(24000000, P_XO, 1, 0, 0),
-> +	{ }
-> +};
+On Wed, Jun 19, 2024 at 01:39:55AM +0200, Danilo Krummrich wrote:
+> +/// Abstraction for bindings::pci_device_id.
+> +#[derive(Clone, Copy)]
+> +pub struct DeviceId {
+> +    /// Vendor ID
+> +    pub vendor: u32,
+> +    /// Device ID
+> +    pub device: u32,
+> +    /// Subsystem vendor ID
+> +    pub subvendor: u32,
+> +    /// Subsystem device ID
+> +    pub subdevice: u32,
+> +    /// Device class and subclass
+> +    pub class: u32,
+> +    /// Limit which sub-fields of the class
+> +    pub class_mask: u32,
+> +}
+
+Note, this is exported to userspace, why can't you use the C structure
+that's already defined for you?  This is going to get tricky over time
+for the different busses, please use what is already there.
+
+And question, how are you guaranteeing the memory layout of this
+structure here?  Will rust always do this with no holes and no
+re-arranging?
+
+> +impl DeviceId {
+> +    const PCI_ANY_ID: u32 = !0;
 > +
-> +static struct clk_rcg2 rbcpr_clk_src = {
-> +	.cmd_rcgr = 0x48044,
-> +	.mnd_width = 0,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_map,
-> +	.freq_tbl = ftbl_gp1_clk_src,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "rbcpr_clk_src",
-> +		.parent_data = gcc_xo_gpll0_gpll4,
-> +		.num_parents = ARRAY_SIZE(gcc_xo_map),
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
+> +    /// PCI_DEVICE macro.
+> +    pub const fn new(vendor: u32, device: u32) -> Self {
+> +        Self {
+> +            vendor,
+> +            device,
+> +            subvendor: DeviceId::PCI_ANY_ID,
+> +            subdevice: DeviceId::PCI_ANY_ID,
+> +            class: 0,
+> +            class_mask: 0,
+> +        }
+> +    }
 > +
-> +static struct clk_branch gcc_rbcpr_clk = {
-> +	.halt_reg = 0x48008,
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x48008,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_rbcpr_clk",
-> +			.parent_hws = (const struct clk_hw *[]) {
-> +				&rbcpr_clk_src.clkr.hw,
+> +    /// PCI_DEVICE_CLASS macro.
+> +    pub const fn with_class(class: u32, class_mask: u32) -> Self {
+> +        Self {
+> +            vendor: DeviceId::PCI_ANY_ID,
+> +            device: DeviceId::PCI_ANY_ID,
+> +            subvendor: DeviceId::PCI_ANY_ID,
+> +            subdevice: DeviceId::PCI_ANY_ID,
+> +            class,
+> +            class_mask,
+> +        }
+> +    }
 
-Where is the &rbcpr_clk_src registered?
+Why just these 2 subsets of the normal PCI_DEVICE* macros?
 
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
 > +
->  static struct clk_hw *gcc_ipq9574_hws[] = {
->  	&gpll0_out_main_div2.hw,
->  	&gcc_xo_div4_clk_src.hw,
-> @@ -4219,6 +4256,7 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
->  	[GCC_PCIE1_PIPE_CLK] = &gcc_pcie1_pipe_clk.clkr,
->  	[GCC_PCIE2_PIPE_CLK] = &gcc_pcie2_pipe_clk.clkr,
->  	[GCC_PCIE3_PIPE_CLK] = &gcc_pcie3_pipe_clk.clkr,
-> +	[GCC_RBCPR_CLK] = &gcc_rbcpr_clk.clkr,
->  };
->  
->  static const struct qcom_reset_map gcc_ipq9574_resets[] = {
-> -- 
-> 2.34.1
-> 
+> +    /// PCI_DEVICE_ID macro.
+> +    pub const fn to_rawid(&self, offset: isize) -> bindings::pci_device_id {
 
--- 
-With best wishes
-Dmitry
+PCI_DEVICE_ID is defined to be "0x02" in pci_regs.h, I don't think you
+want that duplication here, right?
+
+> +        bindings::pci_device_id {
+> +            vendor: self.vendor,
+> +            device: self.device,
+> +            subvendor: self.subvendor,
+> +            subdevice: self.subdevice,
+> +            class: self.class,
+> +            class_mask: self.class_mask,
+> +            driver_data: offset as _,
+> +            override_only: 0,
+> +        }
+> +    }
+> +}
+> +
+> +// SAFETY: `ZERO` is all zeroed-out and `to_rawid` stores `offset` in `pci_device_id::driver_data`.
+> +unsafe impl RawDeviceId for DeviceId {
+> +    type RawType = bindings::pci_device_id;
+> +
+> +    const ZERO: Self::RawType = bindings::pci_device_id {
+> +        vendor: 0,
+> +        device: 0,
+> +        subvendor: 0,
+> +        subdevice: 0,
+> +        class: 0,
+> +        class_mask: 0,
+> +        driver_data: 0,
+> +        override_only: 0,
+
+This feels rough, why can't the whole memory chunk be set to 0 for any
+non-initialized values?  What happens if a new value gets added to the C
+side, how will this work here?
+
+> +    };
+> +}
+> +
+> +/// Define a const pci device id table
+> +///
+> +/// # Examples
+> +///
+> +/// See [`Driver`]
+> +///
+> +#[macro_export]
+> +macro_rules! define_pci_id_table {
+> +    ($data_type:ty, $($t:tt)*) => {
+> +        type IdInfo = $data_type;
+> +        const ID_TABLE: $crate::device_id::IdTable<'static, $crate::pci::DeviceId, $data_type> = {
+> +            $crate::define_id_array!(ARRAY, $crate::pci::DeviceId, $data_type, $($t)* );
+> +            ARRAY.as_table()
+> +        };
+> +    };
+> +}
+> +pub use define_pci_id_table;
+> +
+> +/// The PCI driver trait.
+> +///
+> +/// # Example
+> +///
+> +///```
+> +/// # use kernel::{bindings, define_pci_id_table, pci, sync::Arc};
+> +///
+> +/// struct MyDriver;
+> +/// struct MyDeviceData;
+> +///
+> +/// impl pci::Driver for MyDriver {
+> +///     type Data = Arc<MyDeviceData>;
+> +///
+> +///     define_pci_id_table! {
+> +///         (),
+> +///         [ (pci::DeviceId::new(bindings::PCI_VENDOR_ID_REDHAT,
+> +///                               bindings::PCI_ANY_ID as u32),
+> +///            None)
+> +///         ]
+> +///     }
+> +///
+> +///     fn probe(
+> +///         _pdev: &mut pci::Device,
+> +///         _id_info: Option<&Self::IdInfo>
+> +///     ) -> Result<Self::Data> {
+> +///         Err(ENODEV)
+> +///     }
+> +///
+> +///     fn remove(_data: &Self::Data) {
+> +///     }
+> +/// }
+> +///```
+> +/// Drivers must implement this trait in order to get a PCI driver registered. Please refer to the
+> +/// `Adapter` documentation for an example.
+> +pub trait Driver {
+> +    /// Data stored on device by driver.
+> +    ///
+> +    /// Corresponds to the data set or retrieved via the kernel's
+> +    /// `pci_{set,get}_drvdata()` functions.
+> +    ///
+> +    /// Require that `Data` implements `ForeignOwnable`. We guarantee to
+> +    /// never move the underlying wrapped data structure.
+> +    ///
+> +    /// TODO: Use associated_type_defaults once stabilized:
+> +    ///
+> +    /// `type Data: ForeignOwnable = ();`
+> +    type Data: ForeignOwnable;
+
+Does this mean this all can be 'static' in memory and never dynamically
+allocated?  If so, good, if not, why not?
+
+> +
+> +    /// The type holding information about each device id supported by the driver.
+> +    ///
+> +    /// TODO: Use associated_type_defaults once stabilized:
+> +    ///
+> +    /// type IdInfo: 'static = ();
+> +    type IdInfo: 'static;
+
+What does static mean here?
+
+> +
+> +    /// The table of device ids supported by the driver.
+> +    const ID_TABLE: IdTable<'static, DeviceId, Self::IdInfo>;
+> +
+> +    /// PCI driver probe.
+> +    ///
+> +    /// Called when a new platform device is added or discovered.
+
+This is not a platform device
+
+> +    /// Implementers should attempt to initialize the device here.
+> +    fn probe(dev: &mut Device, id: Option<&Self::IdInfo>) -> Result<Self::Data>;
+> +
+> +    /// PCI driver remove.
+> +    ///
+> +    /// Called when a platform device is removed.
+
+This is not a platform device.
+
+> +    /// Implementers should prepare the device for complete removal here.
+> +    fn remove(data: &Self::Data);
+
+No suspend?  No resume?  No shutdown?  only probe/remove?  Ok, baby
+steps are nice :)
+
+
+> +}
+> +
+> +/// The PCI device representation.
+> +///
+> +/// A PCI device is based on an always reference counted `device:Device` instance. Cloning a PCI
+> +/// device, hence, also increments the base device' reference count.
+> +#[derive(Clone)]
+> +pub struct Device(ARef<device::Device>);
+> +
+> +impl Device {
+> +    /// Create a PCI Device instance from an existing `device::Device`.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `dev` must be an `ARef<device::Device>` whose underlying `bindings::device` is a member of
+> +    /// a `bindings::pci_dev`.
+> +    pub unsafe fn from_dev(dev: ARef<device::Device>) -> Self {
+> +        Self(dev)
+> +    }
+> +
+> +    fn as_raw(&self) -> *mut bindings::pci_dev {
+> +        // SAFETY: Guaranteed by the type invaraints.
+> +        unsafe { container_of!(self.0.as_raw(), bindings::pci_dev, dev) as _ }
+> +    }
+> +
+> +    /// Enable the Device's memory.
+> +    pub fn enable_device_mem(&self) -> Result {
+> +        // SAFETY: Safe by the type invariants.
+> +        let ret = unsafe { bindings::pci_enable_device_mem(self.as_raw()) };
+> +        if ret != 0 {
+> +            Err(Error::from_errno(ret))
+> +        } else {
+> +            Ok(())
+> +        }
+> +    }
+> +
+> +    /// Set the Device's master.
+> +    pub fn set_master(&self) {
+> +        // SAFETY: Safe by the type invariants.
+> +        unsafe { bindings::pci_set_master(self.as_raw()) };
+> +    }
+
+Why just these 2 functions?  Just an example, or you don't need anything
+else yet?
+
+thanks,
+
+greg k-h
 
