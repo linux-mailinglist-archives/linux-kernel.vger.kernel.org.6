@@ -1,380 +1,197 @@
-Return-Path: <linux-kernel+bounces-223665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83DE591166C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:10:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E95911675
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C1FA283CB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:10:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA20E1C2279F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2D1143737;
-	Thu, 20 Jun 2024 23:10:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1A914A4C8;
+	Thu, 20 Jun 2024 23:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="GooPwX1R"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uczZss8T"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2073.outbound.protection.outlook.com [40.107.93.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AAC82D83
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718925020; cv=none; b=uVEWhhDEtlBBcih8VPeFvwIPQ+CzOEcMuhDXoOIeJx/9fOdkHeilE6RFcNyoyJfO8pVgePyoDVYllHtAL8QjXSaJZmwMPABfUC47H9qxqHCtl59kl84SqmMcm7wvdMs/tITN5SJxoEmy3IOk2SwTACMbaVHpp+PVuB4C+sQ1N/0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718925020; c=relaxed/simple;
-	bh=HltsEd/Ab2vdOObROhFGBktnwRGMORVlDZ8Gp5JnnKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ru3kBjaoMJThcCpl2UwHlAsBUH5Mn8124MaxgDGyErbAxd3SD5QssqcMsPZOGXfhPXbVXEz+J8Zf3YEDXkHr+rbdQBzEiiQ9VfmRZRNDFGjAejqdhW0w9uUrsE/Lf99Z46udQU3AMNdrYbMfTtiwgUYgxa1wrUBVSpffKFPYP38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=GooPwX1R; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c7cfba36f8so247947a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:10:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1718925017; x=1719529817; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=N/kfkn4pqvUi6hMPi8uZ6hOJSQ9YBEDuPCyJUlc65NY=;
-        b=GooPwX1RLCDndUQyJN8Fa1u5lIu8WlePHYri++Skn6BshYW3YpwXwnP4AjSwH8S55w
-         9HUCeHHhCIyCI50uE+oPZQrw2RLAJPpcw+hWSxTMkWaMQ2Cp6kbv78SzasmS3PqOqu3+
-         7jqjq+8TbzqKJYtCh5/B6cheXS6lPQrRpIDgpQcrOJjNyqu6bl5gKbQLx1yT+wtzoryO
-         oKB/3r1M5p6ZHRlQ9D3ieCJd1fPh3LsqGYtoLQm5OoU+4FZ7YqJ1WE3+m/3r5SqThNbn
-         ii8+0Xz6OsX0n3jjjaAeUeIl3qK3vtWOwiGvIsQBv3BUpbiCzy89YZYncX0L0KqUiogc
-         IY0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718925017; x=1719529817;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N/kfkn4pqvUi6hMPi8uZ6hOJSQ9YBEDuPCyJUlc65NY=;
-        b=fSJIyL3XLvaHtKyq/2ThdZGNXo+p4VuZEzjAx6mJiimVCilS9SnQuvvYmugb64AMvp
-         a0Rzt5LFuPyYYumSY24B0WSTjlJNGAKP2nLrm2jQ/BCtPc6goU19DfNRia0MsnPZETNo
-         2OT8VezOZEz8kgQItsTorPXYHL9SPFgNz6+Sy2lqgHzyL3rD1X5IIJ8Ap1UdfTcZhItt
-         JIj8EY0o+mYidc02lqWR5+UTAuQfEvNQ7pRQp/NLpaNNAGDHMXYX0AZH4kX3D5zvJH2B
-         UZmeANH0/gERZx8urQDj8K8Dd+GwX/htm31pEf3exo9CZ0kSXHGV16S/SL6Il0nNPuRS
-         b3JA==
-X-Forwarded-Encrypted: i=1; AJvYcCVuOO5ykWLBmVm4qpWDVTGduN3VjjP+PU0j8zQ8IyZ/2jKdATXeCVJLKmOuKXWN2fw21KVlWFZoepz3xNV47clSQOngFptQrXKLH7Vq
-X-Gm-Message-State: AOJu0YxqZkOac5U9tG66TaD3h/D5b2/tWHPKBVVtMxQG5Gr/wVOhv5jj
-	iFFndKPuwaTOJUUmd/npAHALSKdMst3sihrAiB/APxcJNnKArJlqBzUxdiuxig==
-X-Google-Smtp-Source: AGHT+IFu92dkTELov/VG/cpO+zxwabRatZNltvfKkw+b6jhw7DdkugqZofVn2j6cHLJjd/STr/Z9bQ==
-X-Received: by 2002:a05:6a20:3c9f:b0:1af:acda:979d with SMTP id adf61e73a8af0-1bcbb5849bcmr7280430637.1.1718925017116;
-        Thu, 20 Jun 2024 16:10:17 -0700 (PDT)
-Received: from [192.168.50.113] ([27.96.222.17])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70652f03d0csm54368b3a.195.2024.06.20.16.10.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 16:10:16 -0700 (PDT)
-Message-ID: <b8dc1f91-9993-4876-a8ce-299859270954@tenstorrent.com>
-Date: Fri, 21 Jun 2024 09:10:11 +1000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D471422D5;
+	Thu, 20 Jun 2024 23:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718925101; cv=fail; b=tms0O4pAffF8ViO9BnW5/x/XU36h/buGp0O9aerEU/4dDPe/ViCjsicwSYEsZ2KVLGVWeqonTt0XjEYFkHmrfsaJEn2ir/dauY0q/FSUZI8jhWEuNzmQo4gLg/xN1T23wPQORQqLjGKy3US+wgQw9x5+JharYNDMbpcTMgQcMd8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718925101; c=relaxed/simple;
+	bh=en88DzFweWVf1WNwRMTV09u1VsCl/1qH/1V1NlJGb+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DC/ZqznwEddgd5i7hZO6X+0Dkze8Y6D5A+ArDT0IWVVhurBZsWUIrR6FC10BUdv8wJhHkGfKdi/jpj2wd5J3+WwWQsOkGa29TDNBXhiDdx/VL4uaM0+mbsopkWPH11r8aZg+eP4nSAh5+xUxW0vMCwDSODMRtfnLYI7XSJOEVCI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uczZss8T; arc=fail smtp.client-ip=40.107.93.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XYgW0aSo+m9YSJnt6Oss7vz/Y1c2nL+k9Q2mpzAz0QmpCp6pFdoN0GUwvta6SX8EyAhZzNZsCjcpSgofQ71ss91em2stW60/a8blz/cMONLFhISq8/7TNmf8CB+0SoM4pm9hKYKlkGuEB/DPmm/PwyvY7BUliINGPArvt4Iv8SODqpB0aVUFmide08V8EgbxgqjImcbfT4aTDkhYTo834DCscyNK0CQTCCG2TFMMVXoFBn6283h/pCpbw9g0sRX6pdkyHwPG/RcgaueY86n5PsbixdBhqP9elwe3Z9OY+fMTMA7y7DuDCUP9iC5hNSi8iTYYEbo2LenpAH/9XQO9XA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3QUG8o2x4KoTXZg+DxKhZB8v2C0KFM98ikBqhwz+O3A=;
+ b=hItaKjS0Q+poCZuPrkhmXVazu+JElGzPkYN886EynhzUfl9rxy0ij/dKuE6If8uddFPZYH9Wnv1nxFLlQ5aFa1VCx+qKmeSDxgkbFlk141nWsM4AbAD5iHfF2MSTgQOkLAXuapcEnNWSN2psBcbS+YKqCP14ZSGej1D2IQBNOVJFtrn598YRE2QrSm3AF535RYcpCYcAw7usZ8yn4Kr19VvzKHBaSjU0LIV3+IRlgz6XuRoXScdcUBDpVos+DfyFzzTw57r2s7UnBDgZ+Bkn3hPMAG4RekOHmnvDG237spE5Ngd2h0M6G3Vhf6hwEsezPRq4Bgsgr5hNEJokv9Kk+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3QUG8o2x4KoTXZg+DxKhZB8v2C0KFM98ikBqhwz+O3A=;
+ b=uczZss8T+uRawr8ko3cJCctvQlfadKOm1C/5tRnQc2cT0/0o2ON5HAKoipZy7BCAC/2ljtQeY4+aHYALdEmfsZa7uS2Eh/OdzI3LCyMAlViyFDpFplF6lM2urNeid7D0Nz+ZdOiE4lCX2NzYOwRxy9RY5faBzo2E42v6JcNu/0pCf2nttrXNUU0KUo8wobi38z4wst7RmhozgMme693/BZsAJsCZm8mkyGjZW/Rhsuk3ANyGL7AZ0JQqmWw0Ghx7HabLibeUIp90ASfyO0OOWnTdwm5r7gjpJoA4IqKeJ97YmjyMcs6n6j43q09sL5vbOIAjeroao14ePjKlDlmK+A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by PH7PR12MB6884.namprd12.prod.outlook.com (2603:10b6:510:1ba::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.30; Thu, 20 Jun
+ 2024 23:11:36 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%5]) with mapi id 15.20.7677.030; Thu, 20 Jun 2024
+ 23:11:35 +0000
+Date: Thu, 20 Jun 2024 20:11:33 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Elliot Berman <quic_eberman@quicinc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	maz@kernel.org, kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, pbonzini@redhat.com
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+Message-ID: <20240620231133.GN2494510@nvidia.com>
+References: <20240619115135.GE2494510@nvidia.com>
+ <ZnOsAEV3GycCcqSX@infradead.org>
+ <CA+EHjTxaCxibvGOMPk9Oj5TfQV3J3ZLwXk83oVHuwf8H0Q47sA@mail.gmail.com>
+ <20240620135540.GG2494510@nvidia.com>
+ <6d7b180a-9f80-43a4-a4cc-fd79a45d7571@redhat.com>
+ <20240620142956.GI2494510@nvidia.com>
+ <385a5692-ffc8-455e-b371-0449b828b637@redhat.com>
+ <20240620163626.GK2494510@nvidia.com>
+ <66a285fc-e54e-4247-8801-e7e17ad795a6@redhat.com>
+ <ZnSRZcap1dc2_WBV@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnSRZcap1dc2_WBV@google.com>
+X-ClientProxiedBy: MN2PR16CA0044.namprd16.prod.outlook.com
+ (2603:10b6:208:234::13) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: riscv: convert bottom half of exception handling to C
-To: Jisheng Zhang <jszhang@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240616170553.2832-1-jszhang@kernel.org>
- <20240616170553.2832-4-jszhang@kernel.org>
-Content-Language: en-US
-From: Cyril Bur <cyrilbur@tenstorrent.com>
-In-Reply-To: <20240616170553.2832-4-jszhang@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|PH7PR12MB6884:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71f58d01-9b9d-4cee-2395-08dc917e548b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|376011|1800799021;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1LucShqRHgIKy0OMUZ7qIZ4kBN53H2Bn/A/JXLAE/aCmx+SHjUNJdm3O2S4y?=
+ =?us-ascii?Q?BQ6O/r7wlOCdyj3nofq+EPggVEbURjzEZzUcMY3MnO4wn3ncJJ0tDCXZpU5j?=
+ =?us-ascii?Q?/xvFeShnZcwlwqITOwrlBw/ppUs/trHTUPDSMykO/c0DUcd/sicda7BImTGz?=
+ =?us-ascii?Q?mIn3VwTuQ+QLtH8ZRoePaDjeHcGC0CLDPO1duApt2tbUtc3c80Dihykf6ywL?=
+ =?us-ascii?Q?rmDiqgp5JwQAsShXktCdXe9vcO2wF50sOWii8gFIXhdLt1pc3m2mhv+5afjH?=
+ =?us-ascii?Q?BX4vK+1yzEugrwEJCB6hACLcE56utb1PmuRKIsUYCzJ7cW8xwLLNffCxk3cz?=
+ =?us-ascii?Q?3dJj9li6B7GQoOZtRy7dSueHcEPGmsdSRfVLCNRxQU1Jo87UHD5+DuMDw266?=
+ =?us-ascii?Q?RXjd2bED/hWykJ8xChKL3UF1SONDzKbpMLB+2qLMS6xy6KG+1i3Mbn4EZw3X?=
+ =?us-ascii?Q?5yIorTui78exaWzvxEd2xiLP0WazMoqDRcPzsbAFY6Xw/YjEWExg5og9w1jr?=
+ =?us-ascii?Q?j+ZLPW15OPU4mS7OZp8ztcCQOS+mVX28IXyNmCe60+atc736llRvvMa/q09w?=
+ =?us-ascii?Q?bArzo5KQ7x+AfVNokM81vkVgMtGHpMmp9Uh4wr2kt4qLFJBAlKFa2pUlgd+w?=
+ =?us-ascii?Q?VXbQGl/LkMEIY1sAXDXMW5mGXf5ZWLEWUDaW9AJL7tUQeb/JaSgjBJYiepFD?=
+ =?us-ascii?Q?dwSUYE8PKn+s4axeFyJU80brVWxggcRKfiWG9dZN6yhtrWImdWsy3fVdBfCP?=
+ =?us-ascii?Q?wOxJLXUc2bGyyo7+ALaHzfDye0KoRwa3zzwbJbTiEsEuj+u0Plwiv9SMr4x8?=
+ =?us-ascii?Q?EMlePwjXMTY3VXYWWuN20H50I3FbieqTAtcR/hEtNMgOtpE0RKFrrzXx3CE+?=
+ =?us-ascii?Q?k0bdYuBPy1ugvpAs4CZAcZC/JS2fHW26/B9pSPPDGhiNnI0ABuj8OQFLbL3A?=
+ =?us-ascii?Q?sQWSddLYkZttwjl9ODb+kMYBC9SVm7MC1EN4tGX6Fh/UNbKE2ZrwFvAJovcA?=
+ =?us-ascii?Q?VUP+Tau/RR7V0hi0H6KezWSVG5yJDUOcmjfpjTo3Q7wY6IrtD3GwfqZdPhEF?=
+ =?us-ascii?Q?yk4INQTas+ihRUBWbqUX3Rq3u2K46bJHx+jXUN4IHgLVtwwUL5Dk1gnGfs+p?=
+ =?us-ascii?Q?S8oteeJpS4t4omZ6aBcVwsjFiJV+qQ5Bg9nhcCrp3QmNY8SAo4Yhkao/bHXD?=
+ =?us-ascii?Q?D27rg+lc8qccSTB67K5udyf532vKsrb0pKQXxgsiZRvzIajNDPFQP561FJYj?=
+ =?us-ascii?Q?n5GzDbiof4Ar93fQ945037E3XX4aehNW0mmBEFLawgEXSOyNpiD8yFRjhkuj?=
+ =?us-ascii?Q?ZVHFedCj3Z8HHX41F9E5kxa/?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?fQgy+g9KVtg5FTAeVvUJM6xY7ghdONtrYjRAWJ/PHoUdre8RW361ZpbuDLbh?=
+ =?us-ascii?Q?+uKKKIgonKpu1HJJUD3Tbv/+Ae7CyITNEwbtOieF+0I9/GOfHOtTAz3h01++?=
+ =?us-ascii?Q?DVy7fHo0I7pOI4xmiT91mfI/pah7foyReblyq2usQRkdEIShIQaMbIP5KLkN?=
+ =?us-ascii?Q?RkSqyltK7vJDuXpPFazGnjNrrXes4BTOuC1vDRwnVw9IccvGh4V1lXBfsvSV?=
+ =?us-ascii?Q?W7X0YmOISKcvwJ4JNpW5Kd88dWd/No/i1Xog9vcr7pWQYDK6SgA4J86zyyHy?=
+ =?us-ascii?Q?5L9TcKNrgqLnHHIb4wPGfTYq5mhudiiAfq/6Hi57u7CLk5KPgZVWaL7VYko9?=
+ =?us-ascii?Q?xK9zHthyW9WmK+9u2xDR8ZiD6qnmU6C0iCVxCaakDrfCMevmC/l4aO2ppFZy?=
+ =?us-ascii?Q?NrPzVTYxPpEi70fGY7cr3ema+4tNlQ7f0BWQbvIrSg3GsS+JQoJMiCfjdNcS?=
+ =?us-ascii?Q?DRIQyVNxUkQF8G332uUikHzilwYHkirD8TIuMQKn1Exu9MXnwM7UGNcilfrU?=
+ =?us-ascii?Q?6Tx2fmgjikKCrG5UzBpzkDTZhHhKGHnMfYNy6XLGEhnqEY26BmQfnhfjoQ4Z?=
+ =?us-ascii?Q?dWRlZ7gcmyz8RO988xEQyxu4z27RiIvN2YbU3usu9VB5mSlT1TbFERxI0Ak6?=
+ =?us-ascii?Q?LzOYow+E9x+wDi7UFfWroIlKLoojWbhpvVa4dYMDX6siVN4cqrvXAS+t9x8c?=
+ =?us-ascii?Q?BC3r+NOFK+2KA3GcF/0EDmfjoo5Ek9+xwS1DoM318qoQ39bKrpVxwXhAt+rI?=
+ =?us-ascii?Q?mXmodXr+RYcEUAG46m1FCI0g605b0dzn6gR38+1KrB7hHeaCCWPc/FxG2b3v?=
+ =?us-ascii?Q?mfOxpusydXKb3rpefbEoioD268UbLA5VOsCGMZZabsL8+FoQmhAtCOF6nE5h?=
+ =?us-ascii?Q?RcebjhyGtACw31aXV26yulpZ7auX/QGFofJPGtfKPzRpoF9WxGKc1C+Ef7i2?=
+ =?us-ascii?Q?/GnXO1phZhThkhPt0W2HF3plrJEFO1YweOqJaHVPbq9ZBvcN4hKAvfEAJZkV?=
+ =?us-ascii?Q?Nw7OcSbqyeHvYLNK6XfdHy8/vV6JmauFKEvSkqglqpFp0NDftDQs50vQjJRd?=
+ =?us-ascii?Q?CRZHmSRubppJO7T7FMf1653D91l3DEZR7FOw4e07TvmMm8SEnzSsSi3EWKve?=
+ =?us-ascii?Q?VdrjG6bj4/lAYn2RdNg9tUQDZVkyCxX+QwOooeJURbqhuWPvXjMIrHz6CaiR?=
+ =?us-ascii?Q?+1SsIrswiMll+qAiG0CXjpk2kwKN6EhIpnQzydJF0kLCw6/MAH2qfZXp0mtO?=
+ =?us-ascii?Q?iAPyxW9DyLbhC6rpbGMQgmyJ5yivs01qfi0YieZG8UECGxHJbvntfAiFy4Vk?=
+ =?us-ascii?Q?j2S8ox2TM85iFiUzrpLG8Uo+62lRiwPeOP+sIsFixmL7ea8Zno76+s/haVV+?=
+ =?us-ascii?Q?KRmM36+YBvUSu+etDeM3C5DlZVJ3QmuBc0XRXSWnmFaGs7cVppKfBF2H395T?=
+ =?us-ascii?Q?9ZwHRk7BkO5A++9TXQfJpO0YU7fHbK6Qo8RsMNbi8a8UPDefhps0bRSpRyjV?=
+ =?us-ascii?Q?4fjnvZSJ51Lf0LICFqqhm6cPzIisc+wZd2dlI075yYdEAfPDnRJ0aoaJV2m8?=
+ =?us-ascii?Q?Sw16mnwY/O4En8LtC/e/Na5XZZyx4qLdddc0TaxH?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71f58d01-9b9d-4cee-2395-08dc917e548b
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 23:11:35.1280
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6ch1hsacQnDVGowEX+UPOllAMzGVoWIEX63NPEOXdbh+Jtcl7rI/4yRIz67QlW0h
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6884
 
+On Thu, Jun 20, 2024 at 01:30:29PM -0700, Sean Christopherson wrote:
+> I.e. except for blatant bugs, e.g. use-after-free, we need to be able to guarantee
+> with 100% accuracy that there are no outstanding mappings when converting a page
+> from shared=>private.  Crossing our fingers and hoping that short-term GUP will
+> have gone away isn't enough.
 
+To be clear it is not crossing fingers. If the page refcount is 0 then
+there are no references to that memory anywhere at all. It is 100%
+certain.
 
-On 17/6/2024 3:05 am, Jisheng Zhang wrote:
-> For readability, maintainability and future scalability, convert the
-> bottom half of the exception handling to C.
-> 
-> Mostly the assembly code is converted to C in a relatively
-> straightforward manner.
-> 
-> However, there are two modifications I need to mention:
-> 
-> 1. the CSR_CAUSE reg reading and saving is moved to the C code
-> because we need the cause to dispatch the exception handling,
-> if we keep the cause reading and saving, we either pass it to
-> do_traps() via. 2nd param or get it from pt_regs which an extra
-> memory load is needed, I don't like any of the two solutions becase
-> the exception handling sits in hot code path, every instruction
-> matters.
-> 
-> 2.To cope with SIFIVE_CIP_453 errata, it looks like we don't need
-> alternative mechanism any more after the asm->c convertion. Just
-> replace the excp_vect_table two entries.
-> 
+It may take time to reach zero, but when it does it is safe.
 
-Hi Jisheng,
+Many things rely on this property, including FSDAX.
 
-Sorry I've been having email client problems. This email if from a few 
-days ago.
+> For non-CoCo VMs, I expect we'll want to be much more permissive, but I think
+> they'll be a complete non-issue because there is no shared vs. private to worry
+> about.  We can simply allow any and all userspace mappings for guest_memfd that is
+> attached to a "regular" VM, because a misbehaving userspace only loses whatever
+> hardening (or other benefits) was being provided by using guest_memfd.  I.e. the
+> kernel and system at-large isn't at risk.
 
-I really like the look of the patch. I just have one question.
+It does seem to me like guest_memfd should really focus on the private
+aspect.
 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->   arch/riscv/errata/sifive/errata.c       | 25 ++++++++---
->   arch/riscv/include/asm/asm-prototypes.h |  1 +
->   arch/riscv/include/asm/errata_list.h    |  5 +--
->   arch/riscv/kernel/entry.S               | 58 +------------------------
->   arch/riscv/kernel/traps.c               | 41 +++++++++++++++++
->   5 files changed, 64 insertions(+), 66 deletions(-)
-> 
-> diff --git a/arch/riscv/errata/sifive/errata.c b/arch/riscv/errata/sifive/errata.c
-> index 716cfedad3a2..bbba99f207ca 100644
-> --- a/arch/riscv/errata/sifive/errata.c
-> +++ b/arch/riscv/errata/sifive/errata.c
-> @@ -10,9 +10,14 @@
->   #include <linux/bug.h>
->   #include <asm/patch.h>
->   #include <asm/alternative.h>
-> +#include <asm/csr.h>
->   #include <asm/vendorid_list.h>
->   #include <asm/errata_list.h>
->   
-> +extern void (*excp_vect_table[])(struct pt_regs *regs);
-> +extern void sifive_cip_453_insn_fault_trp(struct pt_regs *regs);
-> +extern void sifive_cip_453_page_fault_trp(struct pt_regs *regs);
-> +
->   struct errata_info_t {
->   	char name[32];
->   	bool (*check_func)(unsigned long  arch_id, unsigned long impid);
-> @@ -20,6 +25,9 @@ struct errata_info_t {
->   
->   static bool errata_cip_453_check_func(unsigned long  arch_id, unsigned long impid)
->   {
-> +	if (!IS_ENABLED(CONFIG_ERRATA_SIFIVE_CIP_453))
-> +		return false;
-> +
->   	/*
->   	 * Affected cores:
->   	 * Architecture ID: 0x8000000000000007
-> @@ -51,10 +59,6 @@ static bool errata_cip_1200_check_func(unsigned long  arch_id, unsigned long imp
->   }
->   
->   static struct errata_info_t errata_list[ERRATA_SIFIVE_NUMBER] = {
-> -	{
-> -		.name = "cip-453",
-> -		.check_func = errata_cip_453_check_func
-> -	},
->   	{
->   		.name = "cip-1200",
->   		.check_func = errata_cip_1200_check_func
-> @@ -62,11 +66,20 @@ static struct errata_info_t errata_list[ERRATA_SIFIVE_NUMBER] = {
->   };
->   
->   static u32 __init_or_module sifive_errata_probe(unsigned long archid,
-> -						unsigned long impid)
-> +						unsigned long impid,
-> +						unsigned int stage)
->   {
->   	int idx;
->   	u32 cpu_req_errata = 0;
->   
-> +	if (stage == RISCV_ALTERNATIVES_BOOT) {
-> +		if (IS_ENABLED(CONFIG_MMU) &&
-> +		    errata_cip_453_check_func(archid, impid)) {
-> +			excp_vect_table[EXC_INST_ACCESS] = sifive_cip_453_insn_fault_trp;
-> +			excp_vect_table[EXC_INST_PAGE_FAULT] = sifive_cip_453_page_fault_trp;
-> +		}
-> +	}
-> +
->   	for (idx = 0; idx < ERRATA_SIFIVE_NUMBER; idx++)
->   		if (errata_list[idx].check_func(archid, impid))
->   			cpu_req_errata |= (1U << idx);
-> @@ -99,7 +112,7 @@ void sifive_errata_patch_func(struct alt_entry *begin, struct alt_entry *end,
->   	if (stage == RISCV_ALTERNATIVES_EARLY_BOOT)
->   		return;
->   
-> -	cpu_req_errata = sifive_errata_probe(archid, impid);
-> +	cpu_req_errata = sifive_errata_probe(archid, impid, stage);
->   
->   	for (alt = begin; alt < end; alt++) {
->   		if (alt->vendor_id != SIFIVE_VENDOR_ID)
-> diff --git a/arch/riscv/include/asm/asm-prototypes.h b/arch/riscv/include/asm/asm-prototypes.h
-> index cd627ec289f1..81a1f27fa54f 100644
-> --- a/arch/riscv/include/asm/asm-prototypes.h
-> +++ b/arch/riscv/include/asm/asm-prototypes.h
-> @@ -55,5 +55,6 @@ DECLARE_DO_ERROR_INFO(do_trap_break);
->   asmlinkage void handle_bad_stack(struct pt_regs *regs);
->   asmlinkage void do_page_fault(struct pt_regs *regs);
->   asmlinkage void do_irq(struct pt_regs *regs);
-> +asmlinkage void do_traps(struct pt_regs *regs);
->   
->   #endif /* _ASM_RISCV_PROTOTYPES_H */
-> diff --git a/arch/riscv/include/asm/errata_list.h b/arch/riscv/include/asm/errata_list.h
-> index 7c8a71a526a3..95b79afc4061 100644
-> --- a/arch/riscv/include/asm/errata_list.h
-> +++ b/arch/riscv/include/asm/errata_list.h
-> @@ -17,9 +17,8 @@
->   #endif
->   
->   #ifdef CONFIG_ERRATA_SIFIVE
-> -#define	ERRATA_SIFIVE_CIP_453 0
-> -#define	ERRATA_SIFIVE_CIP_1200 1
-> -#define	ERRATA_SIFIVE_NUMBER 2
-> +#define	ERRATA_SIFIVE_CIP_1200 0
-> +#define	ERRATA_SIFIVE_NUMBER 1
->   #endif
->   
->   #ifdef CONFIG_ERRATA_THEAD
-> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> index 81dec627a8d4..401bfe85a098 100644
-> --- a/arch/riscv/kernel/entry.S
-> +++ b/arch/riscv/kernel/entry.S
-> @@ -62,13 +62,11 @@ SYM_CODE_START(handle_exception)
->   	csrrc s1, CSR_STATUS, t0
->   	csrr s2, CSR_EPC
->   	csrr s3, CSR_TVAL
-> -	csrr s4, CSR_CAUSE
->   	csrr s5, CSR_SCRATCH
->   	REG_S s0, PT_SP(sp)
->   	REG_S s1, PT_STATUS(sp)
->   	REG_S s2, PT_EPC(sp)
->   	REG_S s3, PT_BADADDR(sp)
-> -	REG_S s4, PT_CAUSE(sp)
->   	REG_S s5, PT_TP(sp)
->   
->   	/*
-> @@ -83,36 +81,9 @@ SYM_CODE_START(handle_exception)
->   	/* Load the kernel shadow call stack pointer if coming from userspace */
->   	scs_load_current_if_task_changed s5
->   
-> -#ifdef CONFIG_RISCV_ISA_V_PREEMPTIVE
-> -	move a0, sp
-> -	call riscv_v_context_nesting_start
-> -#endif
-Along with removing this, can the asmlinkage in asm-prototypes.h be 
-removed? Or are you keeping the _start() in because the _end() needs to 
-stay?
+If we need normal memfd enhancements of some kind to work better with
+KVM then that may be a better option than turning guest_memfd into
+memfd.
 
-That leads me to think about leaving the call to 
-riscv_context_nesting_start() in asm here for the symmetry of _start() 
-and _end() being called from entry.S.
-
->   	move a0, sp /* pt_regs */
-> -
-> -	/*
-> -	 * MSB of cause differentiates between
-> -	 * interrupts and exceptions
-> -	 */
-> -	bge s4, zero, 1f
-> -
-> -	/* Handle interrupts */
-> -	call do_irq
-> -	j ret_from_exception
-> -1:
-> -	/* Handle other exceptions */
-> -	slli t0, s4, RISCV_LGPTR
-> -	la t1, excp_vect_table
-> -	la t2, excp_vect_table_end
-> -	add t0, t1, t0
-> -	/* Check if exception code lies within bounds */
-> -	bgeu t0, t2, 3f
-> -	REG_L t1, 0(t0)
-> -2:	jalr t1
-> +	call do_traps
->   	j ret_from_exception
-> -3:
-> -
-> -	la t1, do_trap_unknown
-> -	j 2b
->   SYM_CODE_END(handle_exception)
->   ASM_NOKPROBE(handle_exception)
->   
-> @@ -329,33 +300,6 @@ SYM_FUNC_START(__switch_to)
->   	ret
->   SYM_FUNC_END(__switch_to)
->   
-> -#ifndef CONFIG_MMU
-> -#define do_page_fault do_trap_unknown
-> -#endif
-> -
-> -	.section ".rodata"
-> -	.align LGREG
-> -	/* Exception vector table */
-> -SYM_DATA_START_LOCAL(excp_vect_table)
-> -	RISCV_PTR do_trap_insn_misaligned
-> -	ALT_INSN_FAULT(RISCV_PTR do_trap_insn_fault)
-> -	RISCV_PTR do_trap_insn_illegal
-> -	RISCV_PTR do_trap_break
-> -	RISCV_PTR do_trap_load_misaligned
-> -	RISCV_PTR do_trap_load_fault
-> -	RISCV_PTR do_trap_store_misaligned
-> -	RISCV_PTR do_trap_store_fault
-> -	RISCV_PTR do_trap_ecall_u /* system call */
-> -	RISCV_PTR do_trap_ecall_s
-> -	RISCV_PTR do_trap_unknown
-> -	RISCV_PTR do_trap_ecall_m
-> -	/* instruciton page fault */
-> -	ALT_PAGE_FAULT(RISCV_PTR do_page_fault)
-> -	RISCV_PTR do_page_fault   /* load page fault */
-> -	RISCV_PTR do_trap_unknown
-> -	RISCV_PTR do_page_fault   /* store page fault */
-> -SYM_DATA_END_LABEL(excp_vect_table, SYM_L_LOCAL, excp_vect_table_end)
-> -
->   #ifndef CONFIG_MMU
->   SYM_DATA_START(__user_rt_sigreturn)
->   	li a7, __NR_rt_sigreturn
-> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-> index 05a16b1f0aee..b44d4a8d4083 100644
-> --- a/arch/riscv/kernel/traps.c
-> +++ b/arch/riscv/kernel/traps.c
-> @@ -390,6 +390,47 @@ asmlinkage void noinstr do_irq(struct pt_regs *regs)
->   	irqentry_exit(regs, state);
->   }
->   
-> +void (*excp_vect_table[])(struct pt_regs *regs) __ro_after_init = {
-> +	do_trap_insn_misaligned,	/*  0 Instruction address misaligned */
-> +	do_trap_insn_fault,		/*  1 Instruction access fault */
-> +	do_trap_insn_illegal,		/*  2 Illegal instruction */
-> +	do_trap_break,			/*  3 Breakpoint */
-> +	do_trap_load_misaligned,	/*  4 Load address misaligned */
-> +	do_trap_load_fault,		/*  5 Load access fault */
-> +	do_trap_store_misaligned,	/*  6 Store/AMO address misaligned */
-> +	do_trap_store_fault,		/*  7 Store/AMO access fault */
-> +	do_trap_ecall_u,		/*  8 Environment call from U-mode */
-> +	do_trap_ecall_s,		/*  9 Environment call from S-mode */
-> +	do_trap_unknown,		/* 10 Reserved */
-> +	do_trap_ecall_m,		/* 11 Environment call from M-mode */
-> +#ifdef CONFIG_MMU
-> +	do_page_fault,			/* 12 Instruciton page fault */
-> +	do_page_fault,			/* 13 Load page fault */
-> +	do_trap_unknown,		/* 14 Reserved */
-> +	do_page_fault,			/* 15 Store/AMO page fault */
-> +#endif
-> +};
-> +
-> +asmlinkage void noinstr do_traps(struct pt_regs *regs)
-> +{
-> +	unsigned long cause = csr_read(CSR_CAUSE);
-> +
-> +	regs->cause = cause;
-> +
-> +#ifdef CONFIG_RISCV_ISA_V_PREEMPTIVE
-> +	riscv_v_context_nesting_start(regs);
-> +#endif
-> +	if (cause & CAUSE_IRQ_FLAG) {
-> +		do_irq(regs);
-> +	} else {
-> +		if (cause >= ARRAY_SIZE(excp_vect_table)) {
-> +			do_trap_unknown(regs);
-> +			return;
-> +		}
-> +		excp_vect_table[cause](regs);
-> +	}
-> +}
-> +
->   #ifdef CONFIG_GENERIC_BUG
->   int is_valid_bugaddr(unsigned long pc)
->   {
+Jason
 
