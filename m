@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-222497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3187B910276
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:25:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E717910278
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D761F21B85
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:25:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74AE1B21A52
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0621AB904;
-	Thu, 20 Jun 2024 11:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D841AB90A;
+	Thu, 20 Jun 2024 11:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E9dTn8PI"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SCCfvIGI"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E484A1AB534
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56641AB8E5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718882693; cv=none; b=ihaSGEXE7SRphkC8w9FyiHRVu6AXAxtCQ5pm1SGHeVJcfAjUg6XQlUpMlKTX/Q5byMtI0qUXKMV4lhDR39mTmg8IRf66kQS2oPaSRMVzaTnryUkyugh6gwpjKF0KN5ULnunLmgZMKshC/aOm3PGL38tFN49Z1qWbu2ynjbKYugI=
+	t=1718882694; cv=none; b=M0CgSD0Iyii0TW9Sa3ZD1yde+ANDeiSOpTKi7Q8S7Ac9D4Mrsvcl3ZQI6ASbVAg4DLE07rqNuW8EJlI6FcCqkt7+CU2aCL84nl/xYtX2rK7K84hl2Bjpk1GfRaipDfffbl+f8spTNS/8K5mvYa0fMwrAqSdMZw+xWD7IlILPEiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718882693; c=relaxed/simple;
-	bh=4ds6lgEBHypbXsdx34WZF0wcW2UxEYrxEDqsfQYnqds=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CpuHDjMDsYjHWB9zdbO9pO7K8K79H3HicxKi5G2WseL7BV2f72d69vS7GaFNEeiWYbdKqOhvdn1rl1cDsn39IXV0raMcm3exn/oXJFgVG/f6ufyRp0fkQa2yN8bejdzCtIToTqkxwhYUX3Q0Qv3iYQ/ihdKqEW5EiCfVKKW029I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E9dTn8PI; arc=none smtp.client-ip=209.85.208.173
+	s=arc-20240116; t=1718882694; c=relaxed/simple;
+	bh=tW3+FRmdT+LhW6+/gh7jWAg5hDYyMsWs2xc2h3wzP84=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rQN9f0I9LRO3oEigD4fd3GEc7g3mocVPmpViwFd6DhMSb1zNSZkXW7s4sLWfG67nqsH+MQZiC0oriZHnnMQnXEuBNLJGLdmb71fl4iJ5Hmt1dOthtEjbqwScPmpaQuCmcfl9kWzwkVL9A7zysPGcgtcQy80Pf0Dh/ZdiVcgyTTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SCCfvIGI; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ec3c0dada3so8715731fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 04:24:51 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42189d3c7efso9578295e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 04:24:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718882690; x=1719487490; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gCJG0Ja4O3W5+n0BOGZ+62h9PoJVQnw5m6Ruy1ZerC8=;
-        b=E9dTn8PIif2iwk+5mcX7bV2SXNZvuYwd6vx1Vx/DoOfLHV5NaS2s8SPO7+vl/V9zVR
-         fi33yjm9G7WPvD1GVcy2u180gLHLcYn8j6rPG0Ox56VDWoL4idt7fgpucV2SAOunIz/H
-         zX2Vsd0UDqS2+vcH4nnFRxJuIvBswkj0FldqRdN4L97g6td+kc2YFs6iaSmVkKxuyeCt
-         fyeh8qjMT66JClXV76TkXROK9Saz8ksUg56j7J01gkM7sFuSz4CkNCU3D+r5shrQldDp
-         TTqhQpCwYad2KiVDQ4pPJ2vqz0boiyS9by6bVEwBIaFwJiAHzNb9dMki9b80T2g6RQH9
-         GU0A==
+        d=linaro.org; s=google; t=1718882691; x=1719487491; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=987jsaZOwPOhpdxKZBmiiodJXPiBJ4LwBLho6zc60+8=;
+        b=SCCfvIGI2xhYTyAGXPhXUywuAwrZgW3fKqO+fj7AwlSeDPalDg7AfQvPdxm/8eLHg0
+         Tf0fDDJ0Pu//tOH7Z4w0lH1sbbERiy3i5tpn4Iy0C1IHKcep5ldA843nxeTGysDsC3+5
+         9KorXIyXQV8bumGMWioNdzN22vH3AXmMBNP+hFwvQmglJGIK22Rvr9KDo0zs4SikQbao
+         eBnmcsK84yMZHoFU7A2mIiJckAGTLWhBHq5/dxvEczAEWZ5DFpMyVAwhzU053W2x4ego
+         buB9y457Huxiq1wUdVVSkhwkhp+cxDOWrNE17dPi8tK4Dg/30wFus/Vej/AMwf2u4Ecn
+         v42g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718882690; x=1719487490;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gCJG0Ja4O3W5+n0BOGZ+62h9PoJVQnw5m6Ruy1ZerC8=;
-        b=FyN8l5eAiLJoT14+szRFBnDW4egGcWldmgi9gHm3VEr4vsWR85PAdCNsn1bhUTi1nM
-         KHnNF8v4iKaTwWahOpvDMpsZqISVoSa3ukO2JS4Qn78i5Sz5zvgf4SKK4ToFp6+5rZYW
-         XDXmojSZ1VWR50wiQgByrcAbEMil975C7bBhPbX83ctAvUBm1caANOzlGumrshL67RKo
-         TzSFJgiVEkTbi3YW/+1wM2t3tI+KnL5Cu/TX6CWlfGfwvTG1DP73DMhkBA8R6Nvtruw5
-         K/7hgPPED66hxalFeU9VkBtpEb5DF8tWCSXgNmiNkQj1NH7XJxP0LXMZN4vUFTkXuj66
-         T55Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVT2MSMmeyCg6TRqLLlWzbTcnNguPgMjXvjONY0pO3QXCkLdpsY8CZCCfIC1FXK1PqqWxpmVM8nKDYMfimfrPX7U9QdrXKmko6FpN18
-X-Gm-Message-State: AOJu0YxjMF2KH/LxyBbeG5URMGzrr6xM+/8mRUqXsfSj+U7xxLMkG63H
-	rn6LTsKEpvXh3pPEKkev+qR1wO5T0TDbFWplvUJVdWfOy3Ckag2uMdp3VzGGDlQ=
-X-Google-Smtp-Source: AGHT+IFa6EadGkjUelwniOpcoV8wjGzlajwf0CUb0A6oVYtvqsnZs3ZgSbMRkdrUCg8xWmBN7N855g==
-X-Received: by 2002:a05:651c:20f:b0:2eb:f6bd:e4ec with SMTP id 38308e7fff4ca-2ec3cea1b44mr37772661fa.24.1718882689841;
-        Thu, 20 Jun 2024 04:24:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718882691; x=1719487491;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=987jsaZOwPOhpdxKZBmiiodJXPiBJ4LwBLho6zc60+8=;
+        b=a60feldI2HjF845BUqLTKW7nkdTx2SAjpW3Kp+hU5KnVyO6rPoEHMGajfpV0JBUHef
+         r769VJXjG2NMFEzUJW/r8DkARCA1DSW4Xq7kicsiUUnuW39i1Z+sR3UZh1+T9TYpcJyI
+         vDWRmOC7Hgl0SujmAt1R3dltpRYwDe3s0p87TVA7J9MZ2ETYk8C/8odw1M9ce+GTZO+R
+         AoPwJcNbjgv8HBUOWVrWWxTMs4a27ROQQvFe7WNnIcA55k9hhiZHD0UjhfJ9xYB4Cf8P
+         3hzhrkz0ZDvHtEGzUz/zNNDxIlCxHtcmBj/5PkqH0sMlOFM64Yqv3eRLG2EcuqIdac+d
+         LImA==
+X-Forwarded-Encrypted: i=1; AJvYcCWG5KoAEi4KSoEUVzcQSUCNFB5bSfl90o8ICIRZvQf4SQVPxlxHgND7SFDOGpViWcdrXBKWiERdO8BMjVMQVJcDgR0f02Hejmrt3oxA
+X-Gm-Message-State: AOJu0YxdjJMXdmA83LLQj58pTH2i4PCUi7gQ+sf4H9N/TsiMDmghk2df
+	sp37iv6n8fhHCLFelFfqgujUoXW44E89mnjTwnVbrGq0pahFhuCYfcq8Gn5Bhqc=
+X-Google-Smtp-Source: AGHT+IEWYOFclmv+Dob4SK4leA35bYz4CV1ZSG93H0XX8NLBeMikAyl8HGO+4UJqtWZ0FffKI/BoJg==
+X-Received: by 2002:a05:600c:4b27:b0:423:b5f9:203f with SMTP id 5b1f17b1804b1-42475079466mr46049795e9.5.1718882690982;
+        Thu, 20 Jun 2024 04:24:50 -0700 (PDT)
 Received: from gpeter-l.lan ([2a0d:3344:2e8:8510::3aa])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3647bf3092csm2025371f8f.97.2024.06.20.04.24.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3647bf3092csm2025371f8f.97.2024.06.20.04.24.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 04:24:49 -0700 (PDT)
+        Thu, 20 Jun 2024 04:24:50 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: lee@kernel.org,
 	arnd@arndb.de,
@@ -79,10 +81,12 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	semen.protsenko@linaro.org,
 	kernel-team@android.com,
 	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v2 0/2]  Add syscon of_syscon_register_regmap api
-Date: Thu, 20 Jun 2024 12:24:44 +0100
-Message-ID: <20240620112446.1286223-1-peter.griffin@linaro.org>
+Subject: [PATCH v2 1/2] mfd: syscon: add of_syscon_register_regmap() API
+Date: Thu, 20 Jun 2024 12:24:45 +0100
+Message-ID: <20240620112446.1286223-2-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
+In-Reply-To: <20240620112446.1286223-1-peter.griffin@linaro.org>
+References: <20240620112446.1286223-1-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,93 +95,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Lee, Arnd, Krzysztof, all,
+The of_syscon_register_regmap() API allows an externally created regmap
+to be registered with syscon. This regmap can then be returned to client
+drivers using the syscon_regmap_lookup_by_phandle() APIs.
 
-This series adds support to syscon driver for a new of_syscon_register_regmap()
-api.
+The API is used by platforms where mmio access to the syscon registers is
+not possible, and a underlying soc driver like exynos-pmu provides a SoC
+specific regmap that can issue a SMC or hypervisor call to write the
+register.
 
-Platforms such as gs101 require a special regmap to access PMU registers, which
-in the existing upstream client drivers are accessed via syscon regmap. This
-issue was partly solved in [1] whereby a custom regmap is created in exynos-pmu
-and a new API exynos_get_pmu_regmap_by_phandle() created.
+This approach keeps the SoC complexities out of syscon, but allows common
+drivers such as  syscon-poweroff, syscon-reboot and friends that are used
+by many SoCs already to be re-used.
 
-One issue with the approach in [1] is that it required client drivers to be
-updated from syscon_regmap_lookup_by_phandle() to
-exynos_get_pmu_regmap_by_phandle() when obtaining the regmap.
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+Changes in v2:
+- Keep syscon lock held between checking and adding entry (Krzysztof)
+- Link to v1 https://lore.kernel.org/linux-arm-kernel/20240614140421.3172674-2-peter.griffin@linaro.org/
+---
+ drivers/mfd/syscon.c       | 54 ++++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/syscon.h |  8 ++++++
+ 2 files changed, 62 insertions(+)
 
-Whilst updating to exynos_get_pmu_regmap_by_phandle() was OK for exynos
-specific drivers, it meant other drivers like syscon-reboot and syscon-poweroff
-which span multiple SoC architectures could not be easily re-used.
-
-In previous review feedback for USB phy and gs101 poweroff driver Krzysztof
-requested [2] that we take a more generic approach that other SoCs can also
-leverage.
-
-The new of_syscon_register_regmap() api overcomes this limitation by allowing
-a SoC driver like exynos-pmu to register it's SoC specific regmap with the
-syscon driver. This keeps the SoC complexity out of syscon driver, and allows
-client drivers to continue using syscon_regmap_lookup_by_phandle() as before.
-The solution allows more code re-use and can be used by other SoC archs.
-
-Notes on probe ordering
-
-exynos-pmu runs at postcore_initcall, so all but one of the client drivers
-(ufs phy, usb phy, watchdog) run after the regmap is created and registered.
-
-The one exception to this is pinctrl-samsung driver which is also
-postcore_initcall level. The exynos_get_pmu_regmap() and
-exynos_get_pmu_regmap_by_phandle() have been temporarily left to support
--EPROBE_DEFER for pinctrl-samsung driver.
-
-The longer term plan to solve that probe ordering issue is to enable
-fw_devlink for syscon dt properties so they are correctly listed as
-suppliers in /sys/class/devlink. I tested a PoC patch (see below) for
-fw_devlink and that seemed to work fine. Once fw_devlink supports syscon I
-believe exynos_get_pmu_regmap_by_phandle() api could be removed. The main issue
-currently with fw_devlink syscon support is the wide diversity of dt property
-naming currently in use. That was discussed previously here [3]
-
-1248a1256,1257
-> DEFINE_SUFFIX_PROP(syscon_phandle, "syscon-phandle", NULL)
-> DEFINE_SUFFIX_PROP(pmu_syscon, "pmu-syscon", NULL)
-1358a1368,1369
->     { .parse_prop = parse_syscon_phandle, },
->     { .parse_prop = parse_pmu_syscon, },
-
-
-Note one previous concern from Saravana about syscon potentially probing
-before exynos-pmu driver and it relying on drivers/Makefile ordering. I tested
-this and even if mfd is listed before soc in drivers/Makefile exynos-pmu
-always probes first due to syscon driver not setting a .of_match_table entry.
-
-Once the syscon and exynos-pmu patchs are queued I will send patches for
-watchdog and ufs phy drivers to switch back to syscon_regmap_lookup_by_phandle()
-
-Many thanks,
-
-Peter.
-
-[1] https://lore.kernel.org/linux-arm-kernel/20240219204238.356942-1-peter.griffin@linaro.org/T/
-[2] https://lore.kernel.org/lkml/06383015-51b2-4f4c-9fd8-e4f7ce12f44e@kernel.org/
-[3] https://lore.kernel.org/all/CAGETcx-CCpaV7R0O0HpDpoX6KxQBuJiMmKdWA8nDE-5Qj2Sa7g@mail.gmail.com/
-
-Changes since v1:
- - Collect by tags
- - Keep syscon lock held for check and adding entry (Krzysztof)
- - pass pmu_np not np to syscon_node_to_regmap() (William)
-
-Link to v1:
- - https://lore.kernel.org/linux-arm-kernel/20240614140421.3172674-1-peter.griffin@linaro.org/
-
-Peter Griffin (2):
-  mfd: syscon: add of_syscon_register_regmap() API
-  soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
-
- drivers/mfd/syscon.c             | 54 ++++++++++++++++++++++++++++++++
- drivers/soc/samsung/exynos-pmu.c | 38 +++++++++-------------
- include/linux/mfd/syscon.h       |  8 +++++
- 3 files changed, 76 insertions(+), 24 deletions(-)
-
+diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+index 7d0e91164cba..75379e089b6b 100644
+--- a/drivers/mfd/syscon.c
++++ b/drivers/mfd/syscon.c
+@@ -192,6 +192,60 @@ static struct regmap *device_node_get_regmap(struct device_node *np,
+ 	return syscon->regmap;
+ }
+ 
++/**
++ * of_syscon_register_regmap() - Register regmap for specified device node
++ * @np: Device tree node
++ * @regmap: Pointer to regmap object
++ *
++ * Register an externally created regmap object with syscon for the specified
++ * device tree node. This regmap can then be returned to client drivers using
++ * the syscon_regmap_lookup_by_phandle() API.
++ *
++ * Return: 0 on success, negative error code on failure.
++ */
++int of_syscon_register_regmap(struct device_node *np, struct regmap *regmap)
++{
++	struct syscon  *entry, *syscon = NULL;
++	int ret;
++
++	if (!np || !regmap)
++		return -EINVAL;
++
++	/* check if syscon entry already exists */
++	spin_lock(&syscon_list_slock);
++
++	list_for_each_entry(entry, &syscon_list, list)
++		if (entry->np == np) {
++			syscon = entry;
++			break;
++		}
++
++	if (syscon) {
++		ret = -EEXIST;
++		goto err_unlock;
++	}
++
++	syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
++	if (!syscon) {
++		ret = -ENOMEM;
++		goto err_unlock;
++	}
++
++	syscon->regmap = regmap;
++	syscon->np = np;
++
++	/* register the regmap in syscon list */
++	list_add_tail(&syscon->list, &syscon_list);
++	spin_unlock(&syscon_list_slock);
++
++	return 0;
++
++err_unlock:
++	spin_unlock(&syscon_list_slock);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(of_syscon_register_regmap);
++
+ struct regmap *device_node_to_regmap(struct device_node *np)
+ {
+ 	return device_node_get_regmap(np, false);
+diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
+index c315903f6dab..aad9c6b50463 100644
+--- a/include/linux/mfd/syscon.h
++++ b/include/linux/mfd/syscon.h
+@@ -28,6 +28,8 @@ struct regmap *syscon_regmap_lookup_by_phandle_args(struct device_node *np,
+ 						    unsigned int *out_args);
+ struct regmap *syscon_regmap_lookup_by_phandle_optional(struct device_node *np,
+ 							const char *property);
++int of_syscon_register_regmap(struct device_node *np,
++			      struct regmap *regmap);
+ #else
+ static inline struct regmap *device_node_to_regmap(struct device_node *np)
+ {
+@@ -67,6 +69,12 @@ static inline struct regmap *syscon_regmap_lookup_by_phandle_optional(
+ 	return NULL;
+ }
+ 
++static inline int of_syscon_register_regmap(struct device_node *np,
++					struct regmap *regmap)
++{
++	return -EOPNOTSUPP;
++}
++
+ #endif
+ 
+ #endif /* __LINUX_MFD_SYSCON_H__ */
 -- 
 2.45.2.627.g7a2c4fd464-goog
 
