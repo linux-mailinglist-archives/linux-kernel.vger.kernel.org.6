@@ -1,128 +1,100 @@
-Return-Path: <linux-kernel+bounces-222614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1104D910490
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:51:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A59C910483
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 391F21C23098
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:51:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A46F28357E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D198C1AD3FB;
-	Thu, 20 Jun 2024 12:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275C11AC792;
+	Thu, 20 Jun 2024 12:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VA1Nm0sg"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WnmpJxTW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39621AC792
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653161A4F3B;
+	Thu, 20 Jun 2024 12:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718887855; cv=none; b=TMRxjGJkS1YJfs3YT21jVgXDUfdVz7gky3D04Ft6sZ7TFnbEjj+zYDxWBG10mX9Bs+lY8vVITgoC0qOihfGgt3UCG2Cl2y+7AJ4i2yGabyMOC5zV0+FxuwZzgITaMYAMWqEHw5TDrMbxd4w4uh7FFBN34FhSin9IT2xtT12EQ0c=
+	t=1718887831; cv=none; b=m62t0jZ4RtoAxifKVjnkzZXg2d6R7xN17XOa7XSQIpACjonJV2beHORCg/s8Tb3tN3rvJbcXQpQUknfMnXRoPEeQeGseqAF6e1HEZRKl7mpoHUAYD9WfPBv6jOI7SAimllzO7M2JBFditiCGGQm3+itmoEDF6aTYKCqCJFWjZiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718887855; c=relaxed/simple;
-	bh=2HmyC/8aoZ2nPJoKWEKLwCfkQSZpd1ixf1AoMQ48fKk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nEqd3GNss6CGZve4DVkPEYpiWdDZ6aFLvDryKLPcd0yKT8itmcrOTxqvG4kG2EZMG2L04UuWrcmu/jXkbYpXPxm0A6KXKUk40KFALvnaDBUjL7QipNooJt3TyXXBgfHgtqPzPged8UsHJuZH8DZUYqXeCtSP0+gePhcqZZvicRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VA1Nm0sg; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dfef5980a69so824918276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 05:50:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718887852; x=1719492652; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=V7Ui2B3eiuQfY6kcWseFEWEENplZ5Qoq4XUDUnDKk3A=;
-        b=VA1Nm0sg5UJAsKD6JV6BkbBZ5eCWivY8rCu8G5tU3I07UHRKOBMejLNz5Fq0Hsc0ZU
-         CiiCC1bKRnIbRZ0tiFie+ov6PhsWVAhr/oEcUNQ1crM9vT068Wg1W4F0ZjBv8ilqb/Kn
-         PS5QSWnd8/uhqydzS+J0rFpE8AhErg6QozuQf776qnWhkCc1vNKuzuvqJn95YgPAMJjm
-         AY+3je9Y+6vCdVh9z/OM53FH3PEPPaFcLK3MT0cD+Fk90htAUTn9NXNTbZjhYukmx1ni
-         aG537yNuavJ8wKetDfo+d3iG0/S8ckBm2Uxnjpx3Ean9djNdFyaS0MDnCcG8N5k/Gt5d
-         G+0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718887852; x=1719492652;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=V7Ui2B3eiuQfY6kcWseFEWEENplZ5Qoq4XUDUnDKk3A=;
-        b=DgiwmW4KCZruGCvg14muZA60L9Yo6+HumPLKXnbWamdj42fAyHlFKtGJgOYYtlAyR0
-         l7cZIsEsTaDuOTGa3Ix+NP3D5SGGZFOzF5dNVrP7/13cuibNnv1XzFSe5IkjWCnu288l
-         T1b0IsvRaWwgLKRLfSjBcWWYQzHv7q/zqUnc1e2tjOS24yK0edUORhfWSnWApYLcXv02
-         Qjw/7r+BdpFrk3Pspa+gkQw7c5F0aYjIZSIBwR7kKfxWs0HTMwquzsVQmICg5q/b4ijj
-         D6LeuGqb+MCYC9G8IkoPz7N2+FVACv74qW95NP/ycEJsqva3wxRjbIRFrXO6ddEt12RS
-         /Flw==
-X-Forwarded-Encrypted: i=1; AJvYcCWht5mE17cmjMELX48u09lYhZQVp0/1XGGM6VcZA44hq5XjGvvNbylm5RsF6ceBydNmqk7vGQQFDJ1wjyROVyZsDDbq2JgwUg/GZ+Rv
-X-Gm-Message-State: AOJu0YzZ6XGlsut8XjzqBR1xgPWV4LQKYZuLSLocVTHKRJFbQyEaEWnp
-	3RDA4cV9uRxwX4GICDKfRwEFeiHRL9eDqniT3fD45NZeyf4cyeOwqqZyMsO9Wg3ZeOC6GRFZZDY
-	8GPukFeJM3i3QFzH436COXVIa+9g7hbWUuWQbFA==
-X-Google-Smtp-Source: AGHT+IFzwmTlSm83S3zIQ/NDj8ijWnvuzYb+Ls9TCG0adu2HJouriCBzHm65cuenwHGzeYmKw4gbmsjLNgVHCs5ygNw=
-X-Received: by 2002:a25:81c6:0:b0:e02:b580:d0b with SMTP id
- 3f1490d57ef6-e02be203e4dmr5411315276.40.1718887852518; Thu, 20 Jun 2024
- 05:50:52 -0700 (PDT)
+	s=arc-20240116; t=1718887831; c=relaxed/simple;
+	bh=pnzHV/VL+7issGfjvpn7r2EeeIOdQV7ajaj5sS9hrlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ERh9yTpRkjxBQu6CBMLjNe8FQ0nJagvRD1Vj9sDgvxQhZZvgWpA8Lnwd8+EUwkDO8qYX7wV0ZCSgQ6zVC82BtM0eX0ngo5mpwdQCNWc/z2z+drH/GAXsX6hDJ8Zh0tZolfNUG866i/iYIfqOtW6+uUAhw3yI05vclwNFikMSzKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WnmpJxTW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD5BC2BD10;
+	Thu, 20 Jun 2024 12:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718887831;
+	bh=pnzHV/VL+7issGfjvpn7r2EeeIOdQV7ajaj5sS9hrlo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WnmpJxTWdOsv+o+wjwPtUtMv4SHQ5BcoaZ2fFBPuPQ7wFg7Iq0rJK2fT0RDDSLq/m
+	 vkeDsy+ZEtUIXSLW2I/wZn/Ht/lchOs2u9hLUazLx8DObROExrwYsS/iAQ0KOmLkFI
+	 g/1FfSIhjOHOaE/suzLOxkx1O5GOAWVrwHZLlVwNdyKWjR7PYC7waLBIyMDgrABDeq
+	 GO71uPOPJyLGBr00wz09uqSQJINS2ipMUB3JE3y55Ps96odNMtOKg1YTlbLNfwAPB+
+	 f/Eb26Uz+NIjZcFMJRWQ/qprYK87b4V5prvZxpnysQzeYubPP4WZ60+LAMdNhzURf2
+	 8e/jCFmBDOo1A==
+Date: Thu, 20 Jun 2024 13:50:26 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	NeilBrown <neilb@suse.de>
+Subject: Re: linux-next: manual merge of the vfs-brauner tree with the
+ vfs-brauner-fixes tree
+Message-ID: <80a7d335-690b-491e-9b55-d0d1f75fda29@sirena.org.uk>
+References: <ZnQTtD_d-egGzooR@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612-brigade-shell-1f626e7e592f@spud> <20240612-dense-resample-563f07c30185@spud>
-In-Reply-To: <20240612-dense-resample-563f07c30185@spud>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 20 Jun 2024 14:50:15 +0200
-Message-ID: <CAPDyKFozcUPuMooDHVSBZomHTGKzseVf9F=YBY_uQejh9o3x7g@mail.gmail.com>
-Subject: Re: [RFC v1 1/3] mmc: mmc_spi: allow for spi controllers incapable of
- getting as low as 400k
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-mmc@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
-	cyril.jean@microchip.com, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-spi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zBzHP251PFU9WPg2"
+Content-Disposition: inline
+In-Reply-To: <ZnQTtD_d-egGzooR@sirena.org.uk>
+X-Cookie: You're already carrying the sphere!
 
-On Wed, 12 Jun 2024 at 17:48, Conor Dooley <conor@kernel.org> wrote:
->
-> From: Conor Dooley <conor.dooley@microchip.com>
->
-> Some controllers may not be able to reach a bus clock as low as 400 KHz
-> due to a lack of sufficient divisors. In these cases, the SD card slot
-> becomes non-functional as Linux continuously attempts to set the bus
-> clock to 400 KHz. If the controller is incapable of getting that low,
-> set its minimum frequency instead. While this may eliminate some SD
-> cards, it allows those capable of operating at the controller's minimum
-> frequency to be used.
->
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 
-Looks reasonable to me. I assume you intend to send a non-RFC for
-this, that I can pick up?
+--zBzHP251PFU9WPg2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Kind regards
-Uffe
+On Thu, Jun 20, 2024 at 12:34:17PM +0100, Mark Brown wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the vfs-brauner tree got a conflict in:
+>=20
+>   fs/open.c
+>=20
+> between commit:
 
-> ---
->  drivers/mmc/host/mmc_spi.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/mmc_spi.c b/drivers/mmc/host/mmc_spi.c
-> index 09d7a6a0dc1a..c9caa1ece7ef 100644
-> --- a/drivers/mmc/host/mmc_spi.c
-> +++ b/drivers/mmc/host/mmc_spi.c
-> @@ -1208,7 +1208,10 @@ static int mmc_spi_probe(struct spi_device *spi)
->          * that's the only reason not to use a few MHz for f_min (until
->          * the upper layer reads the target frequency from the CSD).
->          */
-> -       mmc->f_min = 400000;
-> +       if (spi->controller->min_speed_hz > 400000)
-> +               dev_warn(&spi->dev,"Controller unable to reduce bus clock to 400 KHz\n");
-> +
-> +       mmc->f_min = max(spi->controller->min_speed_hz, 400000);
->         mmc->f_max = spi->max_speed_hz;
->
->         host = mmc_priv(mmc);
-> --
-> 2.43.0
->
+Sorry, the scripting got confused and didn't start the merge properly so
+this should just be noise.
+
+--zBzHP251PFU9WPg2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ0JZIACgkQJNaLcl1U
+h9C+Agf/ajb6KzqTKEo8UJWpqUYyr6nTGRsJVZ8lK1f4b4QMF/hmw6xy8VKrK7Qu
+H8XaW/8j8q6EgNXrwtKuxJJH+SlInjJL3YDNLGCvheQ3k/hqTI9dxuV1v/aIGHJE
+smP9OyjzMOQ7cm2bD0ThPZdCpWwbEqhZYcv8ecQPhm2hngr4NqjWnGsmVQ/QkpsH
+pqvqOLCcyzSSyy0DQUIc8IDcSol1zeSOU0k/atz4NermxYx+Sb7636q6GEG0zw3V
+wdR93642keqpGuULXjOWpKUqnaiCNy7k4RIVKF5M8wvGylvT9M0DOvJEp95vpYce
+uiOCSHWZ4PQUqj6g8WZG8PM7iFHBDw==
+=gYEM
+-----END PGP SIGNATURE-----
+
+--zBzHP251PFU9WPg2--
 
