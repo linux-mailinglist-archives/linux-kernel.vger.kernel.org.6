@@ -1,58 +1,46 @@
-Return-Path: <linux-kernel+bounces-222838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A68F910870
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2779108D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AACD81C21AD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DA601C21AAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9091AE0A9;
-	Thu, 20 Jun 2024 14:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BUMk0Mla"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C977626AE8;
-	Thu, 20 Jun 2024 14:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D8B1AF68A;
+	Thu, 20 Jun 2024 14:46:10 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FB61AC42B;
+	Thu, 20 Jun 2024 14:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718893895; cv=none; b=SYcbeQGq4jvMrUD9GQn/7D47+5ru7/YCnvuO/Ty1P9WTw+EJatBsSO3nDLo0roQAIOPqHIeQs6VlsY+MIbrh47XZMCugj4chXvUilg8MwhOQTMfZNDWsXvD1LRSs9UXd2iE/X/x+fXzSeUVYT4vCZ2f8X/pUVsDBcfEu1VwbIEw=
+	t=1718894770; cv=none; b=qAoV68mfcC0bqR/o3bTq2Rr3xy0w9VQwX9xq1rm15SxSvorJaH2dOI1WDyjyXGL/Oy+vnaJAbxgOOmSrtVb1NKjDWgtXozsSoaAN3uyGW+Xu4UGt4KwQq36hTfrMnfFWc+rKiwryJT2mt2MIPIvXnR20HRyz538OeoUgCUi+3wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718893895; c=relaxed/simple;
-	bh=twOrqBFFqDvTjWbRrwIUvXugDfBRMo2UYCoRXgolWI0=;
+	s=arc-20240116; t=1718894770; c=relaxed/simple;
+	bh=JaVmcivnWj+9Be8PMYO7S0M/Z8S5Cwc4xP0uTz/4Mac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NqL6BbTPzsPD9v49SBOlyGzBpRx7OdKSwT2zLl6shbajln2xOEIR/cIGMVYM0Kn1XmiHO24whyps8WXNqQ3TBE8o8mItcsCU6PqVb6d4zg+1k3d09Ztj5F8pDcmnLaaBn2q03E1NhMKsjC7svBDYhqU9kBubqhJpZnoDjLs2SNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BUMk0Mla; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7307C2BD10;
-	Thu, 20 Jun 2024 14:31:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718893895;
-	bh=twOrqBFFqDvTjWbRrwIUvXugDfBRMo2UYCoRXgolWI0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BUMk0Mlawif2Lh2C1AebggyiEXjcm3wOz6JLwY49Dc61L/oBnYnpETH0cXKssDnBY
-	 oFfvs3fqcpIM3S24NG+DpFGuc6CKMZ8bDF2BFLrQiMDBjG+JNbeLsHY/L0nHuVOMXH
-	 nJvMCelrN+kJxCDWRbtfbmtM3EJBfXmTonUlvy3M=
-Date: Thu, 20 Jun 2024 16:31:32 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 03/10] rust: implement `IdArray`, `IdTable` and
- `RawDeviceId`
-Message-ID: <2024062031-untracked-opt-3ff1@gregkh>
-References: <20240618234025.15036-1-dakr@redhat.com>
- <20240618234025.15036-4-dakr@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ct+1J6271FL7WtCkchJsg7J321+Liqc87Gp5u7KJhOmHExVXxPlmPn9pk/YXNAneC08sZRTlOfIIpQLieT38KqshtGpYmILESvk3ghjA0WXLv5VO3t6yEF60psfTlz4rDssswUiWqvrHW8QbGcZjjvhP9a/knkThVVhEz6VoEx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sKJ2m-0000tJ-00; Thu, 20 Jun 2024 16:45:44 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id C46EFC0411; Thu, 20 Jun 2024 16:31:40 +0200 (CEST)
+Date: Thu, 20 Jun 2024 16:31:40 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: mips/poly1305 - add missing MODULE_DESCRIPTION()
+ macro
+Message-ID: <ZnQ9TK9q/g3mSWga@alpha.franken.de>
+References: <20240618-md-mips-arch-mips-crypto-v1-1-1ba592871112@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,59 +49,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240618234025.15036-4-dakr@redhat.com>
+In-Reply-To: <20240618-md-mips-arch-mips-crypto-v1-1-1ba592871112@quicinc.com>
 
-On Wed, Jun 19, 2024 at 01:39:49AM +0200, Danilo Krummrich wrote:
-> From: Wedson Almeida Filho <wedsonaf@gmail.com>
+On Tue, Jun 18, 2024 at 06:01:29PM -0700, Jeff Johnson wrote:
+> With ARCH=mips, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/mips/crypto/poly1305-mips.o
 > 
-> Most subsystems use some kind of ID to match devices and drivers. Hence,
-> we have to provide Rust drivers an abstraction to register an ID table
-> for the driver to match.
-
-Let's not.
-
-For now, let's stick with the C arrays please.  That way it's simple,
-makes it easy to understand, and you can put the array in a .c file and
-access it that way.  That way also all of our existing infrastructure
-will work properly (I don't know how you deal with the modinfo sections
-here...)
-
-
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
-> Generally, those IDs are subsystem specific and hence need to be
-> implemented by the corresponding subsystem. However, the `IdArray`,
-> `IdTable` and `RawDeviceId` types provide a generalized implementation
-> that makes the life of subsystems easier to do so.
-> 
-> Co-developed-by: Asahi Lina <lina@asahilina.net>
-> Signed-off-by: Asahi Lina <lina@asahilina.net>
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Co-developed-by: Danilo Krummrich <dakr@redhat.com>
-> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  rust/kernel/device_id.rs | 336 +++++++++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs       |   2 +
->  2 files changed, 338 insertions(+)
->  create mode 100644 rust/kernel/device_id.rs
+>  arch/mips/crypto/poly1305-glue.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/rust/kernel/device_id.rs b/rust/kernel/device_id.rs
-> new file mode 100644
-> index 000000000000..c490300f29bb
-> --- /dev/null
-> +++ b/rust/kernel/device_id.rs
+> diff --git a/arch/mips/crypto/poly1305-glue.c b/arch/mips/crypto/poly1305-glue.c
+> index bc6110fb98e0..867728ee535a 100644
+> --- a/arch/mips/crypto/poly1305-glue.c
+> +++ b/arch/mips/crypto/poly1305-glue.c
+> @@ -186,6 +186,7 @@ static void __exit mips_poly1305_mod_exit(void)
+>  module_init(mips_poly1305_mod_init);
+>  module_exit(mips_poly1305_mod_exit);
+>  
+> +MODULE_DESCRIPTION("Poly1305 transform (MIPS accelerated");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_ALIAS_CRYPTO("poly1305");
+>  MODULE_ALIAS_CRYPTO("poly1305-mips");
+> 
+> ---
+> base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+> change-id: 20240618-md-mips-arch-mips-crypto-19785d95418c
 
-While I see the temptation to attempt to create a generic class for ids,
-this is all VERY bus specific.  Please just stick with a simple C array
-for now, trying to mess with generic array types of arbitrary structures
-and values and fields is a fun exercise in rust macros, but ick, let's
-worry about that much later.
+applied to mips-next.
 
-Try to do something "simple" if you really must, like just a pci device
-id list, and if that works, then try USB ids.  And then, if you think
-they look comon, THEN think about maybe combining them into something
-that looks crazy like this.
+Thomas.
 
-But not now, no, please, keep it simple.  Stick to C arrays.
-
-greg k-h
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
