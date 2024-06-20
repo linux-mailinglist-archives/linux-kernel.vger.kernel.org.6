@@ -1,158 +1,172 @@
-Return-Path: <linux-kernel+bounces-223100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09733910DA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:54:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54967910AFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99D3FB272F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:53:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EDFCB24528
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783201B3720;
-	Thu, 20 Jun 2024 16:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BBB1B141E;
+	Thu, 20 Jun 2024 16:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cO4GBObt"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NIaCFUrw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2639C1B29C3;
-	Thu, 20 Jun 2024 16:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DABA22616
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718902431; cv=none; b=E7lyfzaQQai6Yop3fHH+WCiPO8IOf6Zp+yGtZFZqjWOdVP1SuMjT5mfC8kBRfV4vlzYhN3mjQ/I0HNEOYJV8f8EQU+tSXlj123fbU7MYhcLupHXeT1WcOB7MsuxXv4bII9cYCcmBubNL4qG/RiIpshOExx03hF3+bbcIeqIvan8=
+	t=1718899446; cv=none; b=D1YfOm7fUB8G15F6iQ8KRPOu9/Gbecz+mw1bMJB70Nm0aKSVzEa0FEpovCOQJIqHI/ivGTFW/dARjITo0kUbg8uP2DYy8Vxs+1jLAKoleySsTM1NSND6TPWhpbKRbNMDelF6hx8pDht9Tk/n+d8kSEzLh3WlfjG8G1XVNh3Nxjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718902431; c=relaxed/simple;
-	bh=xDu6nf8ci4QkjfA1n/XlGyTpBjij84y5HwadxfVXaVs=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mWC+Zl/wBmWnmXx3wHJ8JWt99cVowtrFE+D+cZfdm/C4IcCS1+MbvJuwKWjyg+/VROTlvgYaBbVc0rcX8vxNc3HYu1tQD1IhFVKA5gwIejX9luo/fH1w4ukRI99J0J/Ll7nZSbFz2A3xFbPzv35dkEcAe7eGcvm7eM6SXTGdKA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cO4GBObt; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-421f4d1c057so10993435e9.3;
-        Thu, 20 Jun 2024 09:53:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718902428; x=1719507228; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Z2+47l+SiK70HxZhNHp7aI9H3v+48mNDDXc2JjqLFDw=;
-        b=cO4GBObtnQr92sMvhvNErl7Ek60B2qQkb54dVup2z40eg7BXrMkB+lhPC6hB7yOTzt
-         C1sxpSUyvtmkIwjIKVa7h+3McX+AElS1Eq4tNBPrW3N3VQHcKIKPnvaTgHrKfchaLgtK
-         igZ7/qQGr0/gTh9ZAuYAHq6w38oyTqNBhkX1gRGsXErHcAI4Quw5xhz7867t9CSbXCWe
-         Pk3WK65Y27WKMCFCNmuu4XNrV3/FENAehXvl5AK3eYOoLIz4hzK7gjp6r2daGtYtvfIs
-         wGStqhQ8uCIZAQoObMstBmut/XhNPir6Cz99yvXVOMInKan0rgpOkyErxrol4PwwfY7G
-         Jx4g==
+	s=arc-20240116; t=1718899446; c=relaxed/simple;
+	bh=sQzq/TKljZMD4pKsJgwfiUeJ9tPpo+3DV47u3VvC5mA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lJSokP0BbFX/y9tw4qkXdAKc7vKLpsj5fLlt34cGOsutQPFK/0ZdTf7K3df9udr2PFGGN2JQeU9bHb8yubm21lyVUVzdziUSVZavQHwESpjk0+HrttZraqrYtl8aqYvS+DqUJ9VNsYLkfic7QvKg6ihI4J9LtkxzbA2LE0g/9dA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NIaCFUrw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718899442;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iDqQrPGd42O44YfWw+IRXhYqcC8xwDaLQyCUqbKdOfM=;
+	b=NIaCFUrwiKTKZwwmOfDWDwRT8pz2quqQizr/z7x5FaFaa5PvBpTOpxl0N7TshrGSBwug37
+	9+3ky3cy4+M0YzuF9qBOAqMUVOrIQYn7l3RthRbZ85UUJhgSUvMusuvBse6HuX4N9I7GOz
+	DOYJAy5Gprxt/qfhUJg4yWGH15LZ3bY=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-257-2G-oAVgeMq25OuuHHPCZSA-1; Thu, 20 Jun 2024 12:04:01 -0400
+X-MC-Unique: 2G-oAVgeMq25OuuHHPCZSA-1
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-44212083709so21836071cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:03:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718902428; x=1719507228;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z2+47l+SiK70HxZhNHp7aI9H3v+48mNDDXc2JjqLFDw=;
-        b=jRFZNdlObkmlFnAhJGHHW7PyGu9f21mOGt8QtC3fJjtHN6u8zykPZ/Dnx00uJ1Nizr
-         rlc124hiXtx1R7CoXfTR9vscfq0yxuTCysxFrDtOyrjgK9CRmbhwg6e7CtqT11z0zJlU
-         rrFdrgcGOxKC1Vh+7BovP2u/PfCTMJ6SnIA17jg+h+kNTfFCEz06bjtL0VQ1Ig3LA/uF
-         iQcYuClJ9xxY0kTxTlhH9/B0Q4qjpyxiSHUKhHllfcpLCR01NvqSEfkO+X58PrfGK2Du
-         tKr7jsnF92/McdCUD0yYL3DCXSazY7XiafMgL0N5MxcuBPf/sS6DDnZKt4hSWDdVp/QN
-         X72Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUTbbMGMZvB6FrWyKFuv0uljqhIQzRwZbhYpDlXqj60Mbj0WkSEwInqrCg/oFS9qPwy869BpZgDhYDC+vgwKIUN205x5EVntLzyJpoxzyPG9LnKPAvhA97ntI3KvlEBMEdXdSc3UU3L/m4BhC98UuLesw/2rELjnaK94Jes11IlopNJYL4=
-X-Gm-Message-State: AOJu0YxfjrjDppeI7gnSX9OdlQSWKmMJDXuz6pejw69FG55ZFHJuCoOY
-	kd7QzfAUgaKts2BhybXzdxsMYPTORRLP+2uQ34swV2YAEsLOuU9F
-X-Google-Smtp-Source: AGHT+IEhQc/ylcurdd/6IEDOuPK9KgguMxvGLh2XA4wtboP+mlDcIBQRJO8SspzV77CcTZtx/U/d8Q==
-X-Received: by 2002:a5d:4a90:0:b0:360:74c0:e546 with SMTP id ffacd0b85a97d-363175b806dmr4079573f8f.23.1718902428239;
-        Thu, 20 Jun 2024 09:53:48 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3648e8c4e18sm2556956f8f.76.2024.06.20.09.53.47
+        d=1e100.net; s=20230601; t=1718899439; x=1719504239;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iDqQrPGd42O44YfWw+IRXhYqcC8xwDaLQyCUqbKdOfM=;
+        b=NmQjjd4KZJmHlPVWu/9uz1rW+rPNd7Rp4EQgIDwU8r0W0O4uhyZXt5wWUQlL2uFgUn
+         +stP53qnInrudEL72HJAF/bn5S2BG8CE+tn9dXDUv8IE7YsCV7lfM9fkaxU4WQ4bb04i
+         peNjNXqzYk9dOS9eVsahfsqd6BzHdddteSsmlWjMAEViYVvrht6vNAU/PBJmJ9Xa90UB
+         VKXFWb50Ac0fEoQv3rPmEtj2AhTMMutoAO3u/OUVs7ti2FLvub5ACYq4e1wt7Xz/b1X7
+         P3lvFiM6F2goW1aoZy9ssmREyqDde2wOtXWByg9z3F+F7lTDI7l5w1U4jm7b1n0figs9
+         MVHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG95hSkqZooy45MLOhAVIUEMvA9IJs2S40R4op9/UvTO63eeJedstajedMxm1SeV8cP5iZ397KuHmwaNmH3vn4Bcd/B0RBaBCHJoxp
+X-Gm-Message-State: AOJu0YwtmUIT1ExL9uzYacsMRGd5x7vLbMblDswp6j4l0MZhel0QrS9f
+	P8dMJSGRt99vBO9BSlRUwkCeQplA9M79Mi+xYsGAOJ3nkD6mBSMO5niiHCR6zs2MS+xECTvWmOI
+	zAirmdEZNW2TRjFs1o6PdqSuCbqLOnUN75r8UwzFqyoWQUkTJMArobaJVRtoK0s/ETPK5ow==
+X-Received: by 2002:ac8:574f:0:b0:440:e39:372a with SMTP id d75a77b69052e-4449b8cc771mr147429531cf.3.1718899439062;
+        Thu, 20 Jun 2024 09:03:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhB1DYbQ7e1+d1lc5JGo+U74y4WtMNDo+mQhkOQObAXNZnPDXfG8If9cx7sbaD1+JFxdxvwQ==
+X-Received: by 2002:ac8:574f:0:b0:440:e39:372a with SMTP id d75a77b69052e-4449b8cc771mr147429061cf.3.1718899438587;
+        Thu, 20 Jun 2024 09:03:58 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::13])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-442198f6160sm66411891cf.45.2024.06.20.09.03.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 09:53:47 -0700 (PDT)
-Message-ID: <66745e9b.df0a0220.41e53.a3af@mx.google.com>
-X-Google-Original-Message-ID: <ZnRRWFrixDYs_Ndk@Ansuel-XPS.>
-Date: Thu, 20 Jun 2024 17:57:12 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 00/20] leds: leds-lp55xx: overhaul driver
-References: <20240616215226.2112-1-ansuelsmth@gmail.com>
- <171890216265.1289520.18025885103780443097.b4-ty@kernel.org>
+        Thu, 20 Jun 2024 09:03:58 -0700 (PDT)
+Date: Thu, 20 Jun 2024 11:03:55 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sa8775p-ride-r3: add new board file
+Message-ID: <henuash23dwkj5fcmub6sabygwo4kam7fgots2pp2j3eu4asuk@cn3o7a62lo74>
+References: <20240619183255.34107-1-brgl@bgdev.pl>
+ <20240619183255.34107-3-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <171890216265.1289520.18025885103780443097.b4-ty@kernel.org>
+In-Reply-To: <20240619183255.34107-3-brgl@bgdev.pl>
 
-On Thu, Jun 20, 2024 at 05:49:22PM +0100, Lee Jones wrote:
-> On Sun, 16 Jun 2024 23:51:59 +0200, Christian Marangi wrote:
-> > This long series is (as requested) a big overhaul of the lp55xx based
-> > LED driver.
-> > 
-> > As notice for these kind of LED chip there was the bad habit of copy
-> > the old driver and just modify it enough to make it work with the new
-> > model. Till v4 I was also doing the same by following the pattern and
-> > the code format of previous driver.
-> > 
-> > [...]
+On Wed, Jun 19, 2024 at 08:32:54PM GMT, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Applied, thanks!
+> Revision 3 of the sa8775p-ride board uses a different PHY for the two
+> ethernet ports and supports 2.5G speed. Create a new file for the board
+> reflecting the changes.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile            |  1 +
+>  arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts | 42 ++++++++++++++++++++
+>  2 files changed, 43 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 0c1cebd16649..916fbdbf5631 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -112,6 +112,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sa8155p-adp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= sa8295p-adp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= sa8540p-ride.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= sa8775p-ride.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= sa8775p-ride-r3.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-acer-aspire1.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-idp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-trogdor-coachz-r1.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts b/arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts
+> new file mode 100644
+> index 000000000000..d7f0a25c1fc4
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts
+> @@ -0,0 +1,42 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2023, Linaro Limited
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "sa8775p-ride.dtsi"
+> +
+> +&ethernet0 {
+> +	phy-mode = "ocsgmii";
+> +};
+> +
+> +&ethernet1 {
+> +	phy-mode = "ocsgmii";
+> +};
+> +
+> +&mdio {
+> +	compatible = "snps,dwmac-mdio";
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +
+> +	sgmii_phy0: phy@8 {
+> +		compatible = "ethernet-phy-id31c3.1c33";
+> +		reg = <0x8>;
+> +		device_type = "ethernet-phy";
+> +		interrupts-extended = <&tlmm 7 IRQ_TYPE_EDGE_FALLING>;
+> +		reset-gpios = <&pmm8654au_2_gpios 8 GPIO_ACTIVE_LOW>;
+> +		reset-assert-us = <11000>;
+> +		reset-deassert-us = <70000>;
 
-Mh? What happen? I'm preparing v7 with the changes requested :(
+I need to read your other series still wrt "ocsgmii", but any chance you
+have access to docs indicating the reset timing? I've never had docs for
+the specific Marvell phy on the prior board or the Aquantia one on the
+new board...
 
-> 
-> [01/20] dt-bindings: leds-lp55xx: limit pwr-sel property to ti,lp8501
->         commit: 08a9d2e79140ea1b40c107ea4c025bb8b71aa4b5
-> [02/20] dt-bindings: leds-lp55xx: Add new ti,lp5569 compatible
->         commit: 75e28e4b32dda36c4a015cf2f9c4955d9024234a
-> [03/20] leds: leds-lp55xx: generalize stop_all_engine OP
->         commit: e2176c637856cd206bf06b5bbba89b2cf45f7dca
-> [04/20] leds: leds-lp55xx: generalize probe/remove functions
->         (no commit info)
-> [05/20] leds: leds-lp55xx: generalize load_engine function
->         (no commit info)
-> [06/20] leds: leds-lp55xx: generalize load_engine_and_select_page function
->         (no commit info)
-> [07/20] leds: leds-lp55xx: generalize run_engine function
->         (no commit info)
-> [08/20] leds: leds-lp55xx: generalize update_program_memory function
->         (no commit info)
-> [09/20] leds: leds-lp55xx: generalize firmware_loaded function
->         (no commit info)
-> [10/20] leds: leds-lp55xx: generalize led_brightness function
->         (no commit info)
-> [11/20] leds: leds-lp55xx: generalize multicolor_brightness function
->         (no commit info)
-> [12/20] leds: leds-lp55xx: generalize set_led_current function
->         (no commit info)
-> [13/20] leds: leds-lp55xx: generalize turn_off_channels function
->         (no commit info)
-> [14/20] leds: leds-lp55xx: generalize stop_engine function
->         (no commit info)
-> [15/20] leds: leds-lp55xx: generalize sysfs engine_load and engine_mode
->         (no commit info)
-> [16/20] leds: leds-lp55xx: generalize sysfs engine_leds
->         (no commit info)
-> [17/20] leds: leds-lp55xx: generalize sysfs master_fader
->         (no commit info)
-> [18/20] leds: leds-lp55xx: support ENGINE program up to 128 bytes
->         (no commit info)
-> [19/20] leds: leds-lp55xx: drop deprecated defines
->         (no commit info)
-> [20/20] leds: leds-lp5569: Add support for Texas Instruments LP5569
->         (no commit info)
-> 
-> --
-> Lee Jones [李琼斯]
-> 
+Boot time is something automotive is always concerned over, so I just
+want to make sure that this timing isn't any longer than it needs to be.
+Right now it looks the same as the Marvell phy's in the "v2" boards etc
+and that made me raise my eyebrows.
 
--- 
-	Ansuel
+Thanks,
+Andrew
+
 
