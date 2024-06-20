@@ -1,141 +1,164 @@
-Return-Path: <linux-kernel+bounces-223582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7EC9911518
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:47:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D3C91151C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 159BFB22630
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:47:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBEF91C2299E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237106BB39;
-	Thu, 20 Jun 2024 21:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622B77FBBD;
+	Thu, 20 Jun 2024 21:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mVrOSlAn"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b="Vn7sJmKi"
+Received: from shout12.mail.de (shout12.mail.de [62.201.172.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC2B757E3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 21:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF20A2E859;
+	Thu, 20 Jun 2024 21:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.201.172.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718919906; cv=none; b=X8UG4Y0wO5aJEqwf12mpMbIfMuXZC89nJ+xXQ5GKZjdRhhgJEiiD44Oveau/+ubTe0WzDAp5BgU5JZU69iQZfa14dfMZevYjIT6BkcL7GR24aK3ZGjAWQIDxzIePPz4BR0PDdMWVeiJcsjne8KDoSuqY63XQT4gSxPAtsj4Dl7Q=
+	t=1718920100; cv=none; b=gtw+3Rx0gFdMqNAldb9LAQ4/4hX9d/aiECWxYf+6ZcTl7Y90U0DgZtIEnAhwJf86m3k+ciMgDaDpg+119PhWraMUo0ovfKNKNzDMDad9whNEVFq+OCY179OGiyf2t8CH0WQ9PkhUVZDN7WF1/W5GLoWBUWJrzfRVPABGoax8NOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718919906; c=relaxed/simple;
-	bh=GmvUuqKbb7n43OslbzGKvvAa1mkypfI2dR+ymYYwPmE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=YdsiK5ZblK1zhhG7pZ6hf/thIM/e5488Ifc4Qvyki963iiZ+0wReD/FvwfM83itcg8c06HsV13HKkq47FFaAmuMiqj853wLc+uPJK7wDXrf5XWUleyAYfyJ8lRLCcGzflKcvIPQUSPbKt9FAL91ptY4krwk61i7OKd4gW/Ksx2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joshdon.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mVrOSlAn; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joshdon.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e02bb41247dso2223902276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:45:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718919904; x=1719524704; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vxhudjPJnYDE4Edy4y7qeVeY3wlFSWRlFOEzVjiQdnM=;
-        b=mVrOSlAn64CNT4o0a5lop8xJu3mjp85F+h47dEppWETckwUSjIcOUOCnTobKj31E0c
-         ZB6kq9Gdw4eI0VrKvYDRLdI05Bo4MSwl6e5KmrMaDXM2RqMefQi8r1JmPm5S9x6ThuXk
-         c6wjL8XAQ7DGjb32U5F2ZNe+SufB3fKibFU+goMpf+i4a85fQhBNNiP3rawJDa6lSJI7
-         j33AwjasO9fC8xQnDv/u4uDr0X1TKn/5EpJ4He62VFyN8Q3v0Vwq7Iay5y9T+FHj1o3K
-         E193DNzb5AxzbmKgq0dfuPaqv4sM6MNRAou+VuY4jB6YIkzI1Zrjoj7nwnyaLIo/5dXt
-         yAQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718919904; x=1719524704;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vxhudjPJnYDE4Edy4y7qeVeY3wlFSWRlFOEzVjiQdnM=;
-        b=hmVfAMQl/5WWn8OubihefraTPHbYctMz2Dh7InnxJ6vVwOrZeC63dIBXNk4QYWHx04
-         +VQZ3agEBMFbxBTKInkJLCilzwo57uc8moz4inoxgVvOa2xCx/hjHxS9xX9low2wMavj
-         kwDWe7IFZ3Gyzq0Q7ZPcWGR9IdO0ZTJ3bVceFeZ1la6N+PlNJWDyipc5oUmAPg8Ja9HD
-         2wN1u1xi4L3haYYxvkssL4qGyee8ASl/uBRLvsa0eY2lVLO+aO/9XVr6PnzBdbR1wXXH
-         XqAYM+YsILGkO81ktBuJTlDyb1+W7igkVzE+7KLyI2VCxd7OyPmdozlhbZMOye14Y6LQ
-         X5rA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDhotYmxK+MODTY/ToF/qV00Zl+sxxTt+X0Ir+4UaiVFrJPC5zHcH8yBNRMl4ZmrlaILivPEWUmL7q2a41YNtWq112CRTnrygD++xY
-X-Gm-Message-State: AOJu0YxmdwFDyd5SU++E9PcBogrbeUlUnIw70p044AgNAY5SqKNDjTsr
-	Zp/meGg2n3Y36YfTnLTCWHkW5qCHkZfUmKVkuiWOvc5PnstIcTt/7MTnd24/J4YWfJouvhJiUl0
-	xbynCbQ==
-X-Google-Smtp-Source: AGHT+IF23ImrQXZpJej2WBWcjkqPvgV/dCDTXUK8W5Z/Hgn+QBhA5rR2sN+Oswny2hRKQgcoO2DsV0l1p1wi
-X-Received: from joshdon-desktop.svl.corp.google.com ([2620:15c:2a3:200:602a:9113:ce4e:4683])
- (user=joshdon job=sendgmr) by 2002:a05:6902:154b:b0:dda:d7cf:5c2c with SMTP
- id 3f1490d57ef6-e02be23cf86mr554207276.13.1718919903874; Thu, 20 Jun 2024
- 14:45:03 -0700 (PDT)
-Date: Thu, 20 Jun 2024 14:44:50 -0700
+	s=arc-20240116; t=1718920100; c=relaxed/simple;
+	bh=iq4LT+jyWGK+Ggs3f9sRwblW6Uz0uQJK4QXqBRqHS48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YOO2898JqlVmLTvxJs6DcgSx8l1V4A3qq5LIm65/ECvqhqkVx10tbwGrovkWIDtI59no+C9zb83aZKqh8bGlmQYfn2kATFi3DaNCRMM+3nwHJvIqezId7sUbCQ8LIK28dllseQ4oZlhaP6aiqJoUvlWu37P89qtY3KDRUMuzuFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de; spf=pass smtp.mailfrom=mail.de; dkim=pass (2048-bit key) header.d=mail.de header.i=@mail.de header.b=Vn7sJmKi; arc=none smtp.client-ip=62.201.172.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mail.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.de
+Received: from shout02.mail.de (unknown [10.0.120.222])
+	by shout12.mail.de (Postfix) with ESMTPS id 71EB2240AE7;
+	Thu, 20 Jun 2024 23:48:11 +0200 (CEST)
+Received: from postfix01.mail.de (postfix01.bt.mail.de [10.0.121.125])
+	by shout02.mail.de (Postfix) with ESMTP id 510B3240E88;
+	Thu, 20 Jun 2024 23:48:11 +0200 (CEST)
+Received: from smtp01.mail.de (smtp03.bt.mail.de [10.0.121.213])
+	by postfix01.mail.de (Postfix) with ESMTP id 3408D80102;
+	Thu, 20 Jun 2024 23:48:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mail.de;
+	s=mailde202009; t=1718920091;
+	bh=iq4LT+jyWGK+Ggs3f9sRwblW6Uz0uQJK4QXqBRqHS48=;
+	h=Message-ID:Date:Subject:To:Cc:From:From:To:CC:Subject:Reply-To;
+	b=Vn7sJmKioo/vVPjRjBiQdn1e/iqneX/zujqFhr/NkFIZMQ+2Go2xXHs0meftyb7VW
+	 eZsewcjYvQaTnTMdez4fedy51q2YtJKHjHHNFU+nw/0R4aHjpb7BNj0HMOTeYgNcWb
+	 Upz6iXkbJm5ylowLCTH6+bVzlwAmLk3es+1B8WDkz2rSLU62SqnrqKnXlvfSZn8Pld
+	 LVuqReINdq03YRp1TC2uHDz9koT3TibUGsOGbW3ZuQLpkzhjgXD35pgfgRs8aMB0J1
+	 XA9lP0ugSBsmhRsoPxtXS4LAbqpGjsdmm7d/LrCmISuWECxRl1ZUlYNlhwQOhLoaJD
+	 aNftFxTOfMNbA==
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp01.mail.de (Postfix) with ESMTPSA id 650BA240573;
+	Thu, 20 Jun 2024 23:48:10 +0200 (CEST)
+Message-ID: <dd08df6f-5074-4fc2-909d-1d4f7676b2b3@mail.de>
+Date: Thu, 20 Jun 2024 23:48:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-Message-ID: <20240620214450.316280-1-joshdon@google.com>
-Subject: [PATCH] Revert "sched/fair: Make sure to try to detach at least one
- movable task"
-From: Josh Don <joshdon@google.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
-	Josh Don <joshdon@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Subject: Re: [PATCH 2/5] arm64: dts: rockchip: Fix regulators, gmac and naming
+ on NanoPi R6C/R6S
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240612205056.397204-1-seb-dev@mail.de>
+ <20240612205056.397204-3-seb-dev@mail.de> <2396550.3c9HiEOlIg@diego>
+From: Sebastian Kropatsch <seb-dev@mail.de>
+In-Reply-To: <2396550.3c9HiEOlIg@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-purgate: clean
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate-type: clean
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
+X-purgate-size: 2485
+X-purgate-ID: 154282::1718920091-0EE221F9-1BC16D9C/0/0
 
-This reverts commit b0defa7ae03ecf91b8bfd10ede430cff12fcbd06.
+Hello,
 
-b0defa7ae03ec changed the load balancing logic to ignore env.max_loop if
-all tasks examined to that point were pinned. The goal of the patch was
-to make it more likely to be able to detach a task buried in a long list
-of pinned tasks. However, this has the unfortunate side effect of
-creating an O(n) iteration in detach_tasks(), as we now must fully
-iterate every task on a cpu if all or most are pinned. Since this load
-balance code is done with rq lock held, and often in softirq context, it
-is very easy to trigger hard lockups. We observed such hard lockups with
-a user who affined O(10k) threads to a single cpu.
+Am 20.06.2024 um 20:39 schrieb Heiko Stübner:
+> Am Mittwoch, 12. Juni 2024, 22:48:11 CEST schrieb Sebastian Kropatsch:
+>> Fix the alphabetical ordering in some nodes and rename some regulators
+>> and pins to match the schematics [1][2] as well as to adhere to
+>> preferred naming schemes.
+> 
+> General rule of thumb, when you need an "and" in your subject or a list
+> like the above - you definitly want to split the change into multiple
+> commits.
 
-When I discussed this with Vincent he initially suggested that we keep
-the limit on the number of tasks to detach, but increase the number of
-tasks we can search. However, after some back and forth on the mailing
-list, he recommended we instead revert the original patch, as it seems
-likely no one was actually getting hit by the original issue.
+Thanks for the advice! I wasn't sure and didn't want to spam the list.
+Also, my email provider only allows a limited number of emails to be
+sent every day (series with 5 patches, with 9 recipients = 45 emails
+sent). So I might have to send the patch series by spanning the
+different patches over multiple days.
 
-Signed-off-by: Josh Don <joshdon@google.com>
----
- kernel/sched/fair.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+If anyone knows an email provider which is better suited for this kind
+of open source work/mailing lists and is also privacy respecting, please
+let me know :)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 34fe6e9490c2..a5416798702b 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9043,12 +9043,8 @@ static int detach_tasks(struct lb_env *env)
- 			break;
- 
- 		env->loop++;
--		/*
--		 * We've more or less seen every task there is, call it quits
--		 * unless we haven't found any movable task yet.
--		 */
--		if (env->loop > env->loop_max &&
--		    !(env->flags & LBF_ALL_PINNED))
-+		/* We've more or less seen every task there is, call it quits */
-+		if (env->loop > env->loop_max)
- 			break;
- 
- 		/* take a breather every nr_migrate tasks */
-@@ -11328,9 +11324,7 @@ static int load_balance(int this_cpu, struct rq *this_rq,
- 
- 		if (env.flags & LBF_NEED_BREAK) {
- 			env.flags &= ~LBF_NEED_BREAK;
--			/* Stop if we tried all running tasks */
--			if (env.loop < busiest->nr_running)
--				goto more_balance;
-+			goto more_balance;
- 		}
- 
- 		/*
--- 
-2.45.2.741.gdbec12cfda-goog
+I will definitely split these changes into separate commits.
+
+>> In addition to that:
+>> * vcc_3v3_sd_s0: Fix voltage to be 3.3V
+>> * vcc3v3_pcie:
+>>      - Move to NanoPi R6C, this power switch is not available on R6S
+>>      - Fix vin-supply (is vcc_5v0 per schematics)
+>>      - Add gpios/pincrtl to enable power
+> 
+> this defnitly needs its own patch
+> 
+>> * vcc5v0_usb: Remove this regulator since according to the schematics,
+> 
+> this too
+> 
+>> * vcc5v0_host_20 and vcc5v0_usb_otg0 are directly powered by vcc_5v0
+> 
+> this could be grouped together with the 3.3v change
+> 
+>> * gmac1: Add rx_delay of 0 (no delay since phy-mode = "rgmii-rxid")
+> 
+> with rxid mode, why is the rx_delay needed at all?
+> Shouldn't this just work without the property?
+
+In theory yes, but with the property missing, you'll get a warning
+message in dmesg which says:
+
+	Can not read property: rx_delay.
+	Set rx_delay to 0x10
+
+So it will set the rx_delay to a value which is not 0, even if rxid
+mode is selected. I guess this is something which can be fixed in the
+driver, but that may be beyond my abilities.
+Setting the rx_delay to 0 gets rid of this warning, so it seems to
+be a viable workaround.
+
+>> * rgmii_phy1: Add phy-supply as seen in schematics
+> 
+> separate patch
+> 
+>> * pcie2*:
+>>      - Add pinctrl reset pins
+>>      - Update vpcie3v3-supply to match the schematics
+> 
+> separate patch
+> 
+>> * sdhci: Add vmmc-supply and vqmmc-supply
+> 
+> separate patch
+> 
+
+Thanks,
+Sebastian
 
 
