@@ -1,190 +1,134 @@
-Return-Path: <linux-kernel+bounces-222518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43F7910326
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:38:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92769910324
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F4172890D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:38:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B93E1F232D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7936C1AC782;
-	Thu, 20 Jun 2024 11:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352E51AC453;
+	Thu, 20 Jun 2024 11:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="IaENGWEN";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="ZtS6t78U"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="14nK58Dc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1b/bJhC3";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="14nK58Dc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1b/bJhC3"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586421ABCD5;
-	Thu, 20 Jun 2024 11:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836351ABCD5;
+	Thu, 20 Jun 2024 11:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718883445; cv=none; b=YuE2meFGS3EYN5rgjowdoYH/9OU2Wc46fY0zEZCo3sCJGaGB/hEjwBceCuNNWU8DvjKw1XCxzbCEknicLAoSRv4wLjEdtgRD0zAZXIacFK9IjPgd6ZNsOzxemvjpYIqHPuvAl0nUr3rsFN0K6yZim0A5QjKbEECaGMLNfRq4IVU=
+	t=1718883432; cv=none; b=dwWlZNtxOVIdoRAQwnaKbL+qOGgBNVgDAXXDMxDqqv092WzqNTSGlr9KqH6VqsCQPM1zUHjdO9UWkKzxYfyh//PmsuvOMWRUeC5GzsPGedsrB/3lyx5YtU0E1n17nCBe9frLjczMpajD8n6XUlqklDhddSI5yuCm6mRV6hHGKE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718883445; c=relaxed/simple;
-	bh=qoW0vyk6HZvIQuzlKHMXqNDVBP1cdFn6kO5pF/oldM0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lXNgMBcONGbFHljuaxEx6/PRoT01LklI5FJHm5CcyhuPF1j+CkiZDibVfwmLOhlIQY++j98kNNTqD2+bQEPIXJ3YUIWR6rYJsltdnrJE88Q+NewRDSa7mhUJN4/LAiabpoEgF43u0cj3dLQxDaTgSXdwgpaR0vReXaejc3V1Y+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=IaENGWEN; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=ZtS6t78U reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1718883440; x=1750419440;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=XsMdtVrVgtV7oMw8vFBN6CYNKuXpTptfGJ0gp07/wv8=;
-  b=IaENGWENMjPh+gXPOoA15sx07VR/styddAOodo+rmdTwbQXd1u3zUwc1
-   mnKjN8byxBUzzEYYngCr+pCdRtg0JPpBuORqwYzD9A95XrE95ZBeEQQq2
-   Ju5YopLs9cwIgoFmqtZ7K+N5hdJAhVBVzbSaa5lh9qCnI5tJ1FGr9DnPY
-   FG7fh9ZqQx08wM+jifmbz6Y50aKS6V2CKJyMfSSsuEt+OWKiSixUibrVL
-   O4nlmRDlOUgUGA+oS5ZfvL0GV+RrSl6CVLmqvVqhEx/xxz/6W45lo7pYu
-   bA6sKNDX926W3nNjCuSd71F3VYcyQdH+75HSmBEQROzqdkKqb0PykjKEH
-   A==;
-X-CSE-ConnectionGUID: 80Ooz7eQSYShYhVtP4i1tg==
-X-CSE-MsgGUID: bZfMWF2hRKe3Ze1DFZItaA==
-X-IronPort-AV: E=Sophos;i="6.08,252,1712613600"; 
-   d="scan'208";a="37498585"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 20 Jun 2024 13:37:18 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A36AF1617F9;
-	Thu, 20 Jun 2024 13:37:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1718883433;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=XsMdtVrVgtV7oMw8vFBN6CYNKuXpTptfGJ0gp07/wv8=;
-	b=ZtS6t78URTtXeUlQyBR9u5WP33VzQK7N6Ak8d7PVvVEyCFmUJTRJYBPYGngpHSg8x1ztYK
-	BXAJr/oO0L6ZXb4GL5sD7cReyGLMLQKyh/trKBWx5y5w5FxNObU7zasknOzDuQIG5xvTT/
-	vASsnyFYSzzodls7KjnzJDpnV/Yr9kNkE5veRio3kEFpfOAvAbS7FQyL41D8TWu52zxlTE
-	9iVM2fsVSa2VD/eeyniCmE3BR8uirP1OGptO9ETqPo7AfMKPoaH6EsftOsHfR0ksqYyFms
-	zdYRUP6yUC52vjrglCw1zHAVImizl7IT0sEr756rvaVGGpVm4M7MJJH/ESFQmw==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: linux-arm-kernel@lists.infradead.org, Adam Ford <aford173@gmail.com>
-Cc: aford@beaconembedded.com, Adam Ford <aford173@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, devicetree@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: imx8mp: Fix pgc vpu locations
-Date: Thu, 20 Jun 2024 13:37:15 +0200
-Message-ID: <2295311.iZASKD2KPV@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20240619101045.6317-1-aford173@gmail.com>
-References: <20240619101045.6317-1-aford173@gmail.com>
+	s=arc-20240116; t=1718883432; c=relaxed/simple;
+	bh=jGu20gAF7CVuGmTD3FC5+rgDSogPocUptiVpPZOUnZQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=msO4qoDaNWpQBzLn+SJLIes8m8znnum3xXU3cF40oX5d/I7+z1cOHl1GHETuwP+jXIHcG1L6hknd0vM1/p6t6Gj1Ni6rCCCSfS9wj+ZHvxq7y5YrPYgPlmeADfhdqmaUohMZG733MFA8JhqQC37CaW+KSAFwlikOHmRTZqRilX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=14nK58Dc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1b/bJhC3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=14nK58Dc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1b/bJhC3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B9D8821A23;
+	Thu, 20 Jun 2024 11:37:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718883428; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=/PL53pjBrqHeHwdxri5JISd0hWvB74/wdvPY89yZtbU=;
+	b=14nK58DcS52PyYysrVHnNADsg45JDGVu3h7e74FVWAZguvSTDP22yu3INbdyXn8jawTrRn
+	DTDgLkYVbBZu8Kj/aeaNqcUtA8q3tqEeFKEbS+Ja7W/W8KaYBC+I3ReStG29rWUra1H4cQ
+	0szW2PIK6oJ9hItgSLVA2SXW7eAFCWo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718883428;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=/PL53pjBrqHeHwdxri5JISd0hWvB74/wdvPY89yZtbU=;
+	b=1b/bJhC32so/AH8uCWjJBf6ypXXVUAw5u2kc712C60Nrup7Cp+7XM31Y31ac0aDGh7JBtc
+	rxbVmlJWpEj2PsAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1718883428; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=/PL53pjBrqHeHwdxri5JISd0hWvB74/wdvPY89yZtbU=;
+	b=14nK58DcS52PyYysrVHnNADsg45JDGVu3h7e74FVWAZguvSTDP22yu3INbdyXn8jawTrRn
+	DTDgLkYVbBZu8Kj/aeaNqcUtA8q3tqEeFKEbS+Ja7W/W8KaYBC+I3ReStG29rWUra1H4cQ
+	0szW2PIK6oJ9hItgSLVA2SXW7eAFCWo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1718883428;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=/PL53pjBrqHeHwdxri5JISd0hWvB74/wdvPY89yZtbU=;
+	b=1b/bJhC32so/AH8uCWjJBf6ypXXVUAw5u2kc712C60Nrup7Cp+7XM31Y31ac0aDGh7JBtc
+	rxbVmlJWpEj2PsAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9174213AC1;
+	Thu, 20 Jun 2024 11:37:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id sPJOImQUdGZuJAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 20 Jun 2024 11:37:08 +0000
+Date: Thu, 20 Jun 2024 13:37:34 +0200
+Message-ID: <87zfrf26bl.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Cc: linux-wireless@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: iwlwifi firmware regression (6.9.5 kernel, Intel AX210)
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
+X-Spam-Level: 
 
-Hi Adam,
+Hi,
 
-Am Mittwoch, 19. Juni 2024, 12:10:44 CEST schrieb Adam Ford:
-> The various pgv_vpu nodes have a mismatch between the value after
-> the @ symbol and what is referenced by 'reg' so reorder the nodes
-> to align.
->=20
-> Fixes: df680992dd62 ("arm64: dts: imx8mp: add vpu pgc nodes")
-> Suggested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+we've received a bug report from openSUSE Tumbleweed users that the
+latest iwlwifi firmware update broke the WiFi on 6.9.x kernel:
+  https://bugzilla.suse.com/show_bug.cgi?id=1226544
 
-Thanks for the patch.
-Reviewd-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+The package from the latest git 7d931f8afa51 is broken while the one
+from aae8224390e2 worked.
 
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
-dts/freescale/imx8mp.dtsi
-> index 3576d2b89b43..ee0c864f27e8 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> @@ -838,6 +838,12 @@ pgc_gpumix: power-domain@7 {
->  						assigned-clock-rates =3D <800000000>, <400000000>;
->  					};
-> =20
-> +					pgc_vpumix: power-domain@8 {
-> +						#power-domain-cells =3D <0>;
-> +						reg =3D <IMX8MP_POWER_DOMAIN_VPUMIX>;
-> +						clocks =3D <&clk IMX8MP_CLK_VPU_ROOT>;
-> +					};
-> +
->  					pgc_gpu3d: power-domain@9 {
->  						#power-domain-cells =3D <0>;
->  						reg =3D <IMX8MP_POWER_DOMAIN_GPU3D>;
-> @@ -853,6 +859,28 @@ pgc_mediamix: power-domain@10 {
->  							 <&clk IMX8MP_CLK_MEDIA_APB_ROOT>;
->  					};
-> =20
-> +					pgc_vpu_g1: power-domain@11 {
-> +						#power-domain-cells =3D <0>;
-> +						power-domains =3D <&pgc_vpumix>;
-> +						reg =3D <IMX8MP_POWER_DOMAIN_VPU_G1>;
-> +						clocks =3D <&clk IMX8MP_CLK_VPU_G1_ROOT>;
-> +					};
-> +
-> +					pgc_vpu_g2: power-domain@12 {
-> +						#power-domain-cells =3D <0>;
-> +						power-domains =3D <&pgc_vpumix>;
-> +						reg =3D <IMX8MP_POWER_DOMAIN_VPU_G2>;
-> +						clocks =3D <&clk IMX8MP_CLK_VPU_G2_ROOT>;
-> +
-> +					};
-> +
-> +					pgc_vpu_vc8000e: power-domain@13 {
-> +						#power-domain-cells =3D <0>;
-> +						power-domains =3D <&pgc_vpumix>;
-> +						reg =3D <IMX8MP_POWER_DOMAIN_VPU_VC8000E>;
-> +						clocks =3D <&clk IMX8MP_CLK_VPU_VC8KE_ROOT>;
-> +					};
-> +
->  					pgc_hdmimix: power-domain@14 {
->  						#power-domain-cells =3D <0>;
->  						reg =3D <IMX8MP_POWER_DOMAIN_HDMIMIX>;
-> @@ -890,33 +918,6 @@ pgc_ispdwp: power-domain@18 {
->  						reg =3D <IMX8MP_POWER_DOMAIN_MEDIAMIX_ISPDWP>;
->  						clocks =3D <&clk IMX8MP_CLK_MEDIA_ISP_ROOT>;
->  					};
-> -
-> -					pgc_vpumix: power-domain@19 {
-> -						#power-domain-cells =3D <0>;
-> -						reg =3D <IMX8MP_POWER_DOMAIN_VPUMIX>;
-> -						clocks =3D <&clk IMX8MP_CLK_VPU_ROOT>;
-> -					};
-> -
-> -					pgc_vpu_g1: power-domain@20 {
-> -						#power-domain-cells =3D <0>;
-> -						power-domains =3D <&pgc_vpumix>;
-> -						reg =3D <IMX8MP_POWER_DOMAIN_VPU_G1>;
-> -						clocks =3D <&clk IMX8MP_CLK_VPU_G1_ROOT>;
-> -					};
-> -
-> -					pgc_vpu_g2: power-domain@21 {
-> -						#power-domain-cells =3D <0>;
-> -						power-domains =3D <&pgc_vpumix>;
-> -						reg =3D <IMX8MP_POWER_DOMAIN_VPU_G2>;
-> -						clocks =3D <&clk IMX8MP_CLK_VPU_G2_ROOT>;
-> -					};
-> -
-> -					pgc_vpu_vc8000e: power-domain@22 {
-> -						#power-domain-cells =3D <0>;
-> -						power-domains =3D <&pgc_vpumix>;
-> -						reg =3D <IMX8MP_POWER_DOMAIN_VPU_VC8000E>;
-> -						clocks =3D <&clk IMX8MP_CLK_VPU_VC8KE_ROOT>;
-> -					};
->  				};
->  			};
->  		};
->=20
+Could you investigate this?
 
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+Thanks!
 
-
+Takashi
 
