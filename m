@@ -1,63 +1,68 @@
-Return-Path: <linux-kernel+bounces-222368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E97CC91006C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:32:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DB591006D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DEEEB21E4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:32:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E764285760
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1C71A4F02;
-	Thu, 20 Jun 2024 09:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7E21802E;
+	Thu, 20 Jun 2024 09:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EtrvQbvj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GQpXuen2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7MUQNnz+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763771802E;
-	Thu, 20 Jun 2024 09:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3413717109F;
+	Thu, 20 Jun 2024 09:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718875952; cv=none; b=jWYJjWLSODXpGq/d2IQ7gI7Qb/vY7FZqy9NbixU/ujox5j4m7pHByUdjlQKAU+xA/+cAQZ/z9NFaC9ekPe25lbiUGgkskq21AWFywcKKr9TsbIH8VJYYYPielckAqIiD9/HpoTrWizrYvgsxVnMjzeawTxm288aGWGcHf+qe7xg=
+	t=1718875971; cv=none; b=qfMy8RYpayy2tNc0N44bx4q+naOSgFA9AnbbQ2fCUW+LQsP19n9RAVMj/ufFx1CMFLcUF8X6m8JU6+nIpkBWYTFWmV0x/vrE38VCbdL5O5UArBGeDxnf371NQ2ZhSM/vilf6QnGfkmWMfHNsO82cINmeJ6qKkjTTd5zFPl4RfLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718875952; c=relaxed/simple;
-	bh=O/Et+olhzP5XobD8bdj3w1CIIC0vknNGVO0piDAW26s=;
+	s=arc-20240116; t=1718875971; c=relaxed/simple;
+	bh=u6jfOiJoRXi8Yt+IZr/RX5Wh9PD4NKswuMEdG0Y2VA8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cy6dEN0oOH83rk/Kv13aZ4SaybwaCo5Xwp4gfyGgiqe83UNWEJ6kzRu46LdxB+T80LvY/GFjNSaUmvfgqFTI1ZJngYxL8O+y2O0wUNn7qi0o8sEMtNVTlmmcJrr8ivzUvU3BDKQ8q9FJgLrBo5m74IbU1WvbcO75vlBCXgNb6cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EtrvQbvj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B89C2BD10;
-	Thu, 20 Jun 2024 09:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718875952;
-	bh=O/Et+olhzP5XobD8bdj3w1CIIC0vknNGVO0piDAW26s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EtrvQbvjvB3OlS0NqQVMZ78pc5yjJBlgxYROJaDdmAeUuwpZ8PiDoIYaZiiohLS/m
-	 dqJQcp+fiJC0KNtb5Fs1T5S3WX79Ftgk5Y8xP62GafReVKgi1HtoSGJo7HXCJb/ihD
-	 sq4+4RX9VfZBaAld4D2usmp06jkDelxewiIrEbdiY1JcRlhyizfGiKXR1apqEHkWvZ
-	 Eb8ELdwoKiR/1DVZMqNE6V2lE3zd6kDsrDhZ5kom+uoxBCnIFNlgJSdHNlAeDkpyrM
-	 yTK1Im4WXdZJSlwXXKMmTJpW2s+/7eteThN+IyFz4jcV0KfbPEy7p33D5fwS80kinE
-	 NwQ91k8PEhPlw==
-Date: Thu, 20 Jun 2024 10:32:27 +0100
-From: Lee Jones <lee@kernel.org>
-To: William Breathitt Gray <wbg@kernel.org>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-pwm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Scherer <T.Scherer@eckelmann.de>
-Subject: Re: [PATCH v2 3/5] counter: stm32-timer-cnt: Use TIM_DIER_CCxIE(x)
- instead of TIM_DIER_CCxIE(x)
-Message-ID: <20240620093227.GI3029315@google.com>
-References: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
- <126bd153a03f39e42645573eecf44ffab5354fc7.1718791090.git.u.kleine-koenig@baylibre.com>
- <20240620084451.GC3029315@google.com>
- <ZnPvW6Zx69wVjNRS@ishi>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EJT77w1/R9gwSD2o9CG/5OnTJTwFXJkxoeZevScYlTaKgrUI97UXa93bPGZ3otbt4UeaRDhyJzIwxwnhw1I6+1+OT9p2AHu5oOCnwvf7ydbxh19VNgSQ/qqMT/TFRYMAzX8Ypixh7/0otPXTH+PHR4kL9AL9P9lHoI6StXDymQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GQpXuen2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7MUQNnz+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 20 Jun 2024 11:32:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718875968;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YrkRjG59mwSd/P6A8Mp3VbPnMUiS0Se+Hyy+KUOHJMs=;
+	b=GQpXuen28H3icBd5N/vrxH3rpXO6wT+XduoGsTLpIHOx7MzKiTUly5l5SKKB48YpO5D1g+
+	MTsIRiSYuGFBdymmX3t+QXB76uAYNKbrxl4KpEN12fz3gX0twXclWcdW9tDZzoYVg8S4YS
+	WPUVT6EPGxHpKNIfsJHbyoKgPgZZm/mesoT4zvfJ/A+HuZvZbJ9KSY0dqK18wmPdGt7CGG
+	E5WeimOtWlXRee7iezJZc1c1dRbKGzf9T1LcNkDm4+6i5MepjNa4dVok6cWyubpGQIkZ5h
+	xLcCv2Cjxf5tKml41cYzp0hlLbCBkh95u/QL4f6CZCJ1cYcxofxcWXpd1N0Z4g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718875968;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YrkRjG59mwSd/P6A8Mp3VbPnMUiS0Se+Hyy+KUOHJMs=;
+	b=7MUQNnz+hD/Xp8+ZtaymTkmHeqp7kwAy3Iw2z9jRBGnhs98vEZTr/jvb6cSlCbm16lgI5m
+	tRNMN/pBpKjZBDBQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Derek Barbosa <debarbos@redhat.com>
+Cc: pmladek@suse.com, rostedt@goodmis.org, john.ogness@linutronix.de,
+	senozhatsky@chromium.org, linux-rt-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, williams@redhat.com,
+	jlelli@redhat.com, ahalaney@redhat.com, lgoncalv@redhat.com,
+	jwyatt@redhat.com, aubaker@redhat.com
+Subject: Re: [BUG] printk/nbcon.c: watchdog BUG: softlockup - CPU#x stuck for
+ 78s
+Message-ID: <20240620093246.HE9XDWSZ@linutronix.de>
+References: <ZnHF5j1DUDjN1kkq@debarbos-thinkpadt14sgen2i.remote.csb>
+ <20240620071545.Es9LoyJY@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,51 +71,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZnPvW6Zx69wVjNRS@ishi>
+In-Reply-To: <20240620071545.Es9LoyJY@linutronix.de>
 
-On Thu, 20 Jun 2024, William Breathitt Gray wrote:
-
-> On Thu, Jun 20, 2024 at 09:44:51AM +0100, Lee Jones wrote:
-> > On Wed, 19 Jun 2024, Uwe Kleine-König wrote:
-> > 
-> > > These two defines have the same purpose and this change doesn't
-> > > introduce any differences in drivers/counter/stm32-timer-cnt.o.
-> > > 
-> > > The only difference between the two is that
-> > > 
-> > > 	TIM_DIER_CC_IE(1) == TIM_DIER_CC2IE
-> > > 
-> > > while
-> > > 
-> > > 	TIM_DIER_CCxIE(1) == TIM_DIER_CC1IE
-> > > 
-> > > . That makes it necessary to have an explicit "+ 1" in the user code,
-> > > but IMHO this is a good thing as this is the code locatation that
-> > > "knows" that for software channel 1 you have to use TIM_DIER_CC2IE
-> > > (because software guys start counting at 0, while the relevant hardware
-> > > designer started at 1).
-> > > 
-> > > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
-> > > ---
-> > >  drivers/counter/stm32-timer-cnt.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > Did you drop William's Ack on purpose?
-> > 
-> > -- 
-> > Lee Jones [李琼斯]
+On 2024-06-20 09:15:45 [+0200], To Derek Barbosa wrote:
+> On 2024-06-18 13:37:42 [-0400], Derek Barbosa wrote:
+> > Hi,
+> Hi,
 > 
-> No problem, here it is again for the sake of the LKML scraper tools:
+> > We have a modicum of reasonable suspicion to believe that nbcon_reacquire, or
+> > some other nbcon mechanism *may* be causing such behavior.
 > 
-> Acked-by: William Breathitt Gray <wbg@kernel.org>
+> Does this help?
 > 
-> Lee, do you prefer taking this patchset through your tree?
+> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> index bb9689f94d302..0813ce88a49c5 100644
+> --- a/kernel/printk/nbcon.c
+> +++ b/kernel/printk/nbcon.c
+> @@ -1119,6 +1119,7 @@ static int nbcon_kthread_func(void *__console)
+>  		}
+>  
+>  		console_srcu_read_unlock(cookie);
+> +		cond_resched();
+>  
+>  	} while (backlog);
+>  
 
-I think that would make things easier.
+Okay. Works here on a 144 CPU box without CONFIG_PREEMPT.
 
-A pull-request for you and the PWM folk would follow.
-
--- 
-Lee Jones [李琼斯]
+Sebastian
 
