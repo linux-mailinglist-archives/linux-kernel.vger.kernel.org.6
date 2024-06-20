@@ -1,150 +1,299 @@
-Return-Path: <linux-kernel+bounces-223645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D339115F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:55:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD5B39115FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B411F222EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:55:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B1B1F221A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBCD14D2BF;
-	Thu, 20 Jun 2024 22:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54034143727;
+	Thu, 20 Jun 2024 22:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ioCc8jZG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pWFzLEAF"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BB68288F;
-	Thu, 20 Jun 2024 22:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF57C14038F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718924083; cv=none; b=rhYrcqA7QgP2vzBFG9S915EkFH9a9S4U9RT2MCA/5vqz0GTbYc09EvvE/VTOMO4KOaeKJ4MtXFoyRAAKZz1Sw9986j7qVVealkdC2Xv/l4E3ZXc0lG0oVjvw5vGyQnl1XtGZIMxqeah26rbrJT83xdHGj8tHxQB+lVVvuEW4ULo=
+	t=1718924113; cv=none; b=FLo5EfTOV1OQdzwGt8pK4RsDCT+VNSQIf6oKPvp/C3B5Mmwg+GrZYZnxfg+4+4aBHWAc4b84NFvEgQTQvrneO5QDHlBBN0zMmy4Ko5nQ/fhQM3U4G2p5xLo3vVuK5CkkT6PZIWyrOzSJypXj5GtWgaWkPPvFs0xWAvUxI4mWQjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718924083; c=relaxed/simple;
-	bh=6s54gryEI2nB5nSFviM+FczXOmdQ2NwgqP5gpP+OsI4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cx+DEjazs84y4yXaZ+fPhbY8baUSRy02xN6trHWvFFiUZT6Ab4hDuUeGOSsgm68f/IkOg7ekV3nry69bWIVBMzuzv5DxOpUMl0qKAktEdflYayMEYtk33M8g3RjA7Iy59KKTYbJFAV62hdXfR9cBPkwJ3P8aCImSOCzB/WL7mBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ioCc8jZG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KHBPuu019863;
-	Thu, 20 Jun 2024 22:54:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=5efyFqs4GPqMuPKxHftb8s3+
-	zllo+CUh+kZENKu6w/k=; b=ioCc8jZGqzXOOQ2a+RBd/LK2g6FF/x8CQBS/rgXB
-	eSdg9OCv7YLWobfp+ysUksuRZlOsTCzP1iTOhvieyyDl0VyQpBnd72Bd3kxpdRzo
-	utvUHW28R+rB6rHcKweh+qd2ktsADS9Bt1LzPYsz4EiFr6rM1fS8fpRcXMn47Rg4
-	zEbZpgs5P7rYT7WIEBjXmLNSbiE/jerr083Fo9+rdLQi9I0tf34CGRA3QNx6kLcQ
-	xWFq0Gmee8lGCVXy6TI9wn5lc6hMlcnoDzZODJVEEWuMAN+PJSIeMUYeCa/IPJl/
-	8DscnxdoCk1PsNuLrE6EYOlM7IucjmXRq8dufXB4mCGNJg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrkw8tty-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 22:54:28 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KMsQ8L022892
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 22:54:26 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 20 Jun 2024 15:54:23 -0700
-Date: Thu, 20 Jun 2024 15:54:23 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Robert
- Marko" <robimarko@gmail.com>,
-        Das Srinagesh <quic_gurus@quicinc.com>,
-        "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
-        Maximilian Luz
-	<luzmaximilian@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Will
- Deacon" <will@kernel.org>,
-        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Alex Elder <elder@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <kernel@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>,
-        Deepti Jaggi
-	<quic_djaggi@quicinc.com>
-Subject: Re: [PATCH v10 13/15] firmware: qcom: scm: clarify the comment in
- qcom_scm_pas_init_image()
-Message-ID: <20240620155335645-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240527-shm-bridge-v10-0-ce7afaa58d3a@linaro.org>
- <20240527-shm-bridge-v10-13-ce7afaa58d3a@linaro.org>
+	s=arc-20240116; t=1718924113; c=relaxed/simple;
+	bh=0uVG+Kodk6NIh979veJYjUyiiM4F2AAMRJVBZcRNBiY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CJ+WijGZkb2J89urB1uNXFit8zLAmBv5dVpikECCIB7UUv4nWiHx83O3QBDBEKaChlVnyc006w9tnnyDaoptLFBo60Pv0pW2AozvT5VdcjXYtS+yXemnOAXRf70Jylp2jyaL7RIfEubafANCDTsDzBPHmleiBBFGUoWl/RQ3HU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pWFzLEAF; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7042d9a5227so1680845b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:55:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718924111; x=1719528911; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tySm4ijKnIPoN8BvC0T46QFCG7aRAlVmxvM6qU3vNYk=;
+        b=pWFzLEAFufi3hluT23bLie4VWN4yEcMiOWLYP0vaSN56FlZQLyxuvk35dFGtSApGbT
+         PlxzjDHfpRn+xbvCysLCXs0SFEESNLphXNtQajYNS4X6F0Y0KkoPe2ALXTry7uq/d0Rg
+         OWjQV5TYgrPspR0rI+dW7oRb14nWiIt17fGPbSCf2YdYD90TMdYOMnfwg/JM+VJNMvTO
+         2hYJLb0cmTx26xL4CeX1JEv3whgBdUwOQTiTIY1B2F8VtgQWatORsuvBM2OCmy1vjP0u
+         wKp7FUSodLNqHk6N+xmWfD6quCZ9NSqr1WDNDRqH1AGWnit+7K48OA5ktmrmVqoqAvTY
+         kiWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718924111; x=1719528911;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tySm4ijKnIPoN8BvC0T46QFCG7aRAlVmxvM6qU3vNYk=;
+        b=wkEFRGdpsJrmZYQi8i76rblfgc7cApd8t8VuB3rEdo7IbbImft/5h99Y57Fa5YS1mv
+         NR3Uq5PzbtVTQGSKVZJWL5YkKuuEvjPAKjyUZWh1UYU35oRtWzGvXlWdXe24PWU/r96n
+         K+Rj9trT7C4jJ9Jmn62iX6Tr919rtyHmdGyTUMXw6JwNvZUZXieh73JuRj0Je9teKGyQ
+         lm3lwM32eWeApntLbH1ZvpRsUdoCf9mf/6P/3Uw9D6dB+OuTUtZ3u4JRHBCD6g0nQkyy
+         PEKCGMOpiueuEyZLb1BZ6/P7Q+yJsVPuzTI7CPMNqJzzlS1U8v9oikb8+lEchsT1qvyP
+         Jx0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2uLaoE5H/IKtNL+oYBYsNjPw1VquFTsRSBn19J9pXUgTi5wIyuRHvs+RswrgFdSlnW5KW8FbxRxoaWsWB+hBBdX6AcgsnT2cUuE87
+X-Gm-Message-State: AOJu0YxUIEx4SaYy2nu5H/a8r3BEjXtpVE1BvGvS2V1LeLoHervbjL4I
+	S6p65pvb3nmbnlVmp//zGhpp1dqvYauxKsqP2/snvLNemsLBLf3aj7PZ1XT3pHnmK86QvmfG6Ty
+	rsh1kdAL7dw==
+X-Google-Smtp-Source: AGHT+IFV6VUOI4SuU28aDpkXI/PTklnnXrtGnp2+jWDiZtV3V8aTBN/WjwZEFd2BdBr+zWtI6XiQgYZnz1vdXA==
+X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
+ (user=cmllamas job=sendgmr) by 2002:a17:902:ce90:b0:1f7:516:4235 with SMTP id
+ d9443c01a7336-1f9a9b54de5mr3749175ad.6.1718924111154; Thu, 20 Jun 2024
+ 15:55:11 -0700 (PDT)
+Date: Thu, 20 Jun 2024 22:54:34 +0000
+In-Reply-To: <20240514191547.3230887-1-cmllamas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240527-shm-bridge-v10-13-ce7afaa58d3a@linaro.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rABNjX2dGB1obdcAXek6VQSLo2Ybzw5O
-X-Proofpoint-ORIG-GUID: rABNjX2dGB1obdcAXek6VQSLo2Ybzw5O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_10,2024-06-20_04,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
- clxscore=1011 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
- mlxscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406200167
+Mime-Version: 1.0
+References: <20240514191547.3230887-1-cmllamas@google.com>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+Message-ID: <20240620225436.3127927-1-cmllamas@google.com>
+Subject: [PATCH v4][RESEND x4] lockdep: fix deadlock issue between lockdep and rcu
+From: Carlos Llamas <cmllamas@google.com>
+To: "Paul E . McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Bart Van Assche <bvanassche@acm.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, John Stultz <jstultz@google.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com, Zhiguo Niu <zhiguo.niu@unisoc.com>, stable@vger.kernel.org, 
+	Carlos Llamas <cmllamas@google.com>, Xuewen Yan <xuewen.yan@unisoc.com>, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, May 27, 2024 at 02:55:03PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> The "memory protection" mechanism mentioned in the comment is the SHM
-> Bridge. This is also the reason why we do not convert this call to using
-> the TZ memory allocator.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Tested-by: Andrew Halaney <ahalaney@redhat.com> # sc8280xp-lenovo-thinkpad-x13s
-> Tested-by: Deepti Jaggi <quic_djaggi@quicinc.com> #sa8775p-ride
-> Reviewed-by: Elliot Berman <quic_eberman@quicinc.com>
-> ---
->  drivers/firmware/qcom/qcom_scm.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index c82957727650..86e26f17ca19 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -583,6 +583,13 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
->  	 * During the scm call memory protection will be enabled for the meta
->  	 * data blob, so make sure it's physically contiguous, 4K aligned and
->  	 * non-cachable to avoid XPU violations.
-> +	 *
-> +	 * For PIL calls the hypervisor creates SHM Bridges for the blob
-> +	 * buffers on behalf of Linus so we must not do it ourselves hence
-                                Linux
-> +	 * not using the TZMem allocator here.
-> +	 *
-> +	 * If we pass a buffer that is already part of an SHM Bridge to this
-> +	 * call, it will fail.
->  	 */
->  	mdata_buf = dma_alloc_coherent(__scm->dev, size, &mdata_phys,
->  				       GFP_KERNEL);
-> 
-> -- 
-> 2.43.0
-> 
+From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+
+There is a deadlock scenario between lockdep and rcu when
+rcu nocb feature is enabled, just as following call stack:
+
+     rcuop/x
+-000|queued_spin_lock_slowpath(lock = 0xFFFFFF817F2A8A80, val = ?)
+-001|queued_spin_lock(inline) // try to hold nocb_gp_lock
+-001|do_raw_spin_lock(lock = 0xFFFFFF817F2A8A80)
+-002|__raw_spin_lock_irqsave(inline)
+-002|_raw_spin_lock_irqsave(lock = 0xFFFFFF817F2A8A80)
+-003|wake_nocb_gp_defer(inline)
+-003|__call_rcu_nocb_wake(rdp = 0xFFFFFF817F30B680)
+-004|__call_rcu_common(inline)
+-004|call_rcu(head = 0xFFFFFFC082EECC28, func = ?)
+-005|call_rcu_zapped(inline)
+-005|free_zapped_rcu(ch = ?)// hold graph lock
+-006|rcu_do_batch(rdp = 0xFFFFFF817F245680)
+-007|nocb_cb_wait(inline)
+-007|rcu_nocb_cb_kthread(arg = 0xFFFFFF817F245680)
+-008|kthread(_create = 0xFFFFFF80803122C0)
+-009|ret_from_fork(asm)
+
+     rcuop/y
+-000|queued_spin_lock_slowpath(lock = 0xFFFFFFC08291BBC8, val = 0)
+-001|queued_spin_lock()
+-001|lockdep_lock()
+-001|graph_lock() // try to hold graph lock
+-002|lookup_chain_cache_add()
+-002|validate_chain()
+-003|lock_acquire
+-004|_raw_spin_lock_irqsave(lock = 0xFFFFFF817F211D80)
+-005|lock_timer_base(inline)
+-006|mod_timer(inline)
+-006|wake_nocb_gp_defer(inline)// hold nocb_gp_lock
+-006|__call_rcu_nocb_wake(rdp = 0xFFFFFF817F2A8680)
+-007|__call_rcu_common(inline)
+-007|call_rcu(head = 0xFFFFFFC0822E0B58, func = ?)
+-008|call_rcu_hurry(inline)
+-008|rcu_sync_call(inline)
+-008|rcu_sync_func(rhp = 0xFFFFFFC0822E0B58)
+-009|rcu_do_batch(rdp = 0xFFFFFF817F266680)
+-010|nocb_cb_wait(inline)
+-010|rcu_nocb_cb_kthread(arg = 0xFFFFFF817F266680)
+-011|kthread(_create = 0xFFFFFF8080363740)
+-012|ret_from_fork(asm)
+
+rcuop/x and rcuop/y are rcu nocb threads with the same nocb gp thread.
+This patch release the graph lock before lockdep call_rcu.
+
+Fixes: a0b0fd53e1e6 ("locking/lockdep: Free lock classes that are no longer in use")
+Cc: stable@vger.kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Carlos Llamas <cmllamas@google.com>
+Cc: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+Reviewed-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Carlos Llamas <cmllamas@google.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Carlos Llamas <cmllamas@google.com>
+---
+ kernel/locking/lockdep.c | 48 ++++++++++++++++++++++++++--------------
+ 1 file changed, 32 insertions(+), 16 deletions(-)
+
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 151bd3de5936..3468d8230e5f 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -6184,25 +6184,27 @@ static struct pending_free *get_pending_free(void)
+ static void free_zapped_rcu(struct rcu_head *cb);
+ 
+ /*
+- * Schedule an RCU callback if no RCU callback is pending. Must be called with
+- * the graph lock held.
+- */
+-static void call_rcu_zapped(struct pending_free *pf)
++* See if we need to queue an RCU callback, must called with
++* the lockdep lock held, returns false if either we don't have
++* any pending free or the callback is already scheduled.
++* Otherwise, a call_rcu() must follow this function call.
++*/
++static bool prepare_call_rcu_zapped(struct pending_free *pf)
+ {
+ 	WARN_ON_ONCE(inside_selftest());
+ 
+ 	if (list_empty(&pf->zapped))
+-		return;
++		return false;
+ 
+ 	if (delayed_free.scheduled)
+-		return;
++		return false;
+ 
+ 	delayed_free.scheduled = true;
+ 
+ 	WARN_ON_ONCE(delayed_free.pf + delayed_free.index != pf);
+ 	delayed_free.index ^= 1;
+ 
+-	call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
++	return true;
+ }
+ 
+ /* The caller must hold the graph lock. May be called from RCU context. */
+@@ -6228,6 +6230,7 @@ static void free_zapped_rcu(struct rcu_head *ch)
+ {
+ 	struct pending_free *pf;
+ 	unsigned long flags;
++	bool need_callback;
+ 
+ 	if (WARN_ON_ONCE(ch != &delayed_free.rcu_head))
+ 		return;
+@@ -6239,14 +6242,18 @@ static void free_zapped_rcu(struct rcu_head *ch)
+ 	pf = delayed_free.pf + (delayed_free.index ^ 1);
+ 	__free_zapped_classes(pf);
+ 	delayed_free.scheduled = false;
++	need_callback =
++		prepare_call_rcu_zapped(delayed_free.pf + delayed_free.index);
++	lockdep_unlock();
++	raw_local_irq_restore(flags);
+ 
+ 	/*
+-	 * If there's anything on the open list, close and start a new callback.
+-	 */
+-	call_rcu_zapped(delayed_free.pf + delayed_free.index);
++	* If there's pending free and its callback has not been scheduled,
++	* queue an RCU callback.
++	*/
++	if (need_callback)
++		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
+ 
+-	lockdep_unlock();
+-	raw_local_irq_restore(flags);
+ }
+ 
+ /*
+@@ -6286,6 +6293,7 @@ static void lockdep_free_key_range_reg(void *start, unsigned long size)
+ {
+ 	struct pending_free *pf;
+ 	unsigned long flags;
++	bool need_callback;
+ 
+ 	init_data_structures_once();
+ 
+@@ -6293,10 +6301,11 @@ static void lockdep_free_key_range_reg(void *start, unsigned long size)
+ 	lockdep_lock();
+ 	pf = get_pending_free();
+ 	__lockdep_free_key_range(pf, start, size);
+-	call_rcu_zapped(pf);
++	need_callback = prepare_call_rcu_zapped(pf);
+ 	lockdep_unlock();
+ 	raw_local_irq_restore(flags);
+-
++	if (need_callback)
++		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
+ 	/*
+ 	 * Wait for any possible iterators from look_up_lock_class() to pass
+ 	 * before continuing to free the memory they refer to.
+@@ -6390,6 +6399,7 @@ static void lockdep_reset_lock_reg(struct lockdep_map *lock)
+ 	struct pending_free *pf;
+ 	unsigned long flags;
+ 	int locked;
++	bool need_callback = false;
+ 
+ 	raw_local_irq_save(flags);
+ 	locked = graph_lock();
+@@ -6398,11 +6408,13 @@ static void lockdep_reset_lock_reg(struct lockdep_map *lock)
+ 
+ 	pf = get_pending_free();
+ 	__lockdep_reset_lock(pf, lock);
+-	call_rcu_zapped(pf);
++	need_callback = prepare_call_rcu_zapped(pf);
+ 
+ 	graph_unlock();
+ out_irq:
+ 	raw_local_irq_restore(flags);
++	if (need_callback)
++		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
+ }
+ 
+ /*
+@@ -6446,6 +6458,7 @@ void lockdep_unregister_key(struct lock_class_key *key)
+ 	struct pending_free *pf;
+ 	unsigned long flags;
+ 	bool found = false;
++	bool need_callback = false;
+ 
+ 	might_sleep();
+ 
+@@ -6466,11 +6479,14 @@ void lockdep_unregister_key(struct lock_class_key *key)
+ 	if (found) {
+ 		pf = get_pending_free();
+ 		__lockdep_free_key_range(pf, key, 1);
+-		call_rcu_zapped(pf);
++		need_callback = prepare_call_rcu_zapped(pf);
+ 	}
+ 	lockdep_unlock();
+ 	raw_local_irq_restore(flags);
+ 
++	if (need_callback)
++		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
++
+ 	/* Wait until is_dynamic_key() has finished accessing k->hash_entry. */
+ 	synchronize_rcu();
+ }
+-- 
+2.45.2.741.gdbec12cfda-goog
+
 
