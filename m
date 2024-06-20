@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-223234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8AF91100A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:05:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8A89110F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AFA92882E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:05:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9056B28A5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E561C9EB8;
-	Thu, 20 Jun 2024 17:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EB31BA071;
+	Thu, 20 Jun 2024 17:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBVFz+TK"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJW2RHhY"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E651C9EA3;
-	Thu, 20 Jun 2024 17:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EE31C9EC3;
+	Thu, 20 Jun 2024 17:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718906296; cv=none; b=AJz7sxfLS9m+ZGrVlM9JDEbiZw3yDIHnRiQN0NEL+xww4/MqOG9NXozwEREhx6A+9B4m9U6UhdodAkS4yY7422SQCvNZ2ngVEpZADH12CWhYHzERpsYTMsI9W58En6XXQ4PyEXLNtuW3+JQUEjW+f//zOY5bLrQvTQPruOzHPuY=
+	t=1718906299; cv=none; b=i0/+JyG1mRq6yf+PnMuilfQuKx45EoFm6I6+ZpAJGTYL+ssWbwyEFruGcTCySZfeeQ/2ULsUpOcY1AN2tLokirT2xUW1niHwZSfs/HWQ9WxaQKTNn4/Q8Y/TMzVtBiE8TG1C18G9tzaKw0jB8EXxEfVerI+Cen04VWjrCnX8d+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718906296; c=relaxed/simple;
-	bh=KdbeHfsgkowpARY2YPlVsmqqW/kJIUxTm29Tdz3OOA0=;
+	s=arc-20240116; t=1718906299; c=relaxed/simple;
+	bh=EEnf5xzi7eXOhkKDYzRKsCmReB+rHy33vbj/1r6jsqo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pR4Bxj1THNVvdCpEVRm2wkqxOTUPh67aNJofFOSdMsLpfJIp4DG41wMUFI2YC9fTTZ7dpVruCvKuq4VzAylKjWEm/8u8ytXBNMtiYBJ6ZrXpeCO6nyDlxb5flaaSZzLBTYZerKSPQ2kS/XWZwdlC0AIgjOS1yKQnvWCeJC453uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBVFz+TK; arc=none smtp.client-ip=209.85.210.171
+	 MIME-Version; b=OjtGivw0aov+S/td7GSoPcBPCInKp6INRoVQn0Xxa9OR6eFPp+hSwR4uhzsu8ilj55TF0b3QwVGss6gWH9mWITPIFKNFmsOWDAzuDoBoQYY+Zmdo+bcIionDN7o7knbYWRPptpONM8b8o4tgyPJlwreQY/kdSwUtineqw8JYRR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJW2RHhY; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7041e39a5beso983536b3a.3;
-        Thu, 20 Jun 2024 10:58:15 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7061365d2f3so941691b3a.3;
+        Thu, 20 Jun 2024 10:58:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718906295; x=1719511095; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718906298; x=1719511098; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X3AS9JVo8Hs/Ti3mNv2gE0HU0UAaWpI1VlkoQQK++VU=;
-        b=ZBVFz+TKCMu/ZNUGyZgkeYz7BF2GY99DH+ew+oY29ZTzSudv9CTbrbkXE2QUADVoCj
-         9JuiHMxaUWVmzUIC0tDiULah63aKRdOLeHGLcvq/99stzfi1+o7B5s55HaqKpnqgvf8w
-         6zD2d5cR8HcRewR0Gmo8/ZJhFx82qzYSJMD8uvrVy2bbJb14dLPgZsG56Eu1H3CCPdEC
-         9wwktf3fbXD9F4swDyo5bkbhfXlbe5hAu7+32nerBrPtXDwE6yG1oSRZ86pZ071hVOAF
-         PWXY771grJZriqpL81+VBS57ISK1ouJSDy1AuXOgd0vCnH/icqHj630rRvS+7Fp69/ZH
-         bm8A==
+        bh=EllZQDb/fqD8EGwJT0CuH2LSmY08c8ja9Mytx23g1KM=;
+        b=fJW2RHhYQu8j9VzlQBTJNiee2IE2SLdof1Aw7zwr69AS6Hv09/UHjcdevwEW6iFE15
+         sqpJYHqJt8/1E3Hwo/HzeC1KzXfchUjZhedpJUJu1CZnc92HgliMVd/Rbe7bGYeGrirI
+         XkMUL+Yka8uEOQnWUA13T2/99UrG8wbd9QTq7rb66AgjIWmyAIGsLqR0oVDrpenuMflI
+         Bn/oUTb7g9d/NQVqhgLZ8wp+ORkWG/9fcpDOadxhGLv3w0qqQSCX64qdLPvTHP15f5Ua
+         aRdxt4BGLlgNX3syfDSN16KM8A1hOejTv05K/WM5h6jYMnSyDL67RXevfsrKJRsRPGdC
+         ATDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718906295; x=1719511095;
+        d=1e100.net; s=20230601; t=1718906298; x=1719511098;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=X3AS9JVo8Hs/Ti3mNv2gE0HU0UAaWpI1VlkoQQK++VU=;
-        b=ryOD4z3/pG4zvn1kqKFjGgz1gam3GocHeZ8I+L7r3t+ZhdiEvt88uUDPY5h5yRvB2K
-         1LwFPv93po/FBdwQ+esa6dXVgiNvhplPUQA7Hq5SsrPpGLElZAzql6HG8FlZczmMUjnY
-         Q5WnSR5s1c84EgJpDudk2DTWoJOrExIZk/YWryoDyapr+w2Bf/CJICvdU0PDozXa/L+Q
-         GfiRgrBzZjgcSPNJmzD7eIurJGU92lKUXOL8bSv1CdSDxvE2U6ptidOpGO0lyxbB5vW6
-         Mq/bD4xUWGZCq9a2MasmDn4D2yS7BFemxgZTwl3Aeb0BGKaQjD1PCuG32SwOuBUH9L7l
-         WrAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMPOOG1sIqitwJy0fz2mRQZ84vu7Ub00SqQjqlhEyUjhznUA+8on7fvt2F+I9NIfq7TjqMotL605dbfKCph0YmR02atUsNxh7Z
-X-Gm-Message-State: AOJu0Yy6fuVoZaj6DBkG8+Xt/4cSTG1jnYL3cyhiEoS5TXY+hK701XZ3
-	1Dnut4I0wyAlL6A4guP3aUlcL+CNxgbHKqn6ObPWFzkKP8OGJyN2qynVFxyUP/Q=
-X-Google-Smtp-Source: AGHT+IFyDwE+Jz3Bn1/3b5AVproXEgZap0y3BwG6IwB5VEhHDqAtrR7HyxflDE7GXDdoxY3T8nE9cg==
-X-Received: by 2002:a05:6a20:29d:b0:1b5:2fbb:2d78 with SMTP id adf61e73a8af0-1bcbb656593mr5458467637.48.1718906294899;
-        Thu, 20 Jun 2024 10:58:14 -0700 (PDT)
+        bh=EllZQDb/fqD8EGwJT0CuH2LSmY08c8ja9Mytx23g1KM=;
+        b=DkFVZG+Pe4KNDRSbq4u2T4zw/JJ9yJ/8gW/eYNR69KS8szoDhufMpUgxWH5GuN1Zsy
+         vdO2h0cPbX4bpqsPrX+MwFlYHM2Cq8qpjZl/6H2HFdNHJ7gwF42S10Ps9KWOHr5DY3Vz
+         zaa824mpi4SVIhOKSMYeM6mJ87tt/+SdgXAk5HRMQJTRmWeSvJO7IowdZHj2fmeUTNH1
+         J+ty8Duow3YBQmrLJ4fO1W13Oo1+y4Eh8mZMiStDRJxMU+i38j8M3+hhl+jnUODq0M39
+         q9qtWxYYG36jrPPBziL7P7IV6lJaiZ75dqWsFWNyyr//hOaJXXucB/dCmw/CLKtQKgAo
+         zESg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZXSKcBY1WWrSlDNTd1Me1EixHLmJgoejOn9eirFYID4FZ9Vk7YUne1Evm0eInD7yoknraZX+SNiXK2objf2xraIxig8GdEAam8A==
+X-Gm-Message-State: AOJu0Yz35JKIezrNq49VusPTgS3ehTRj7S0DgGiMBdO8vqB6UofuBEUv
+	IVIoVGMIAQVlwzME5rr4SndH/5hapFgZR9sh5A70kUkb2GH9Mkaoba/xFAZon1Q=
+X-Google-Smtp-Source: AGHT+IEkrpt1MRFKLlVi7ulyys1DlHO0ZCczRH9xxekWr4vHxde7wTkq55+80B0FxrWnRZBVoG0B4w==
+X-Received: by 2002:a05:6a20:4881:b0:1b0:1a02:4136 with SMTP id adf61e73a8af0-1bcbb386b43mr5771824637.8.1718906297955;
+        Thu, 20 Jun 2024 10:58:17 -0700 (PDT)
 Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb4c621sm12637089b3a.115.2024.06.20.10.58.13
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e53e2846sm1989195a91.24.2024.06.20.10.58.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 10:58:14 -0700 (PDT)
+        Thu, 20 Jun 2024 10:58:17 -0700 (PDT)
 From: Yury Norov <yury.norov@gmail.com>
 To: linux-kernel@vger.kernel.org,
-	Oliver Neukum <oneukum@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org
+	"Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+	Jack Wang <jinpu.wang@ionos.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	linux-rdma@vger.kernel.org
 Cc: Yury Norov <yury.norov@gmail.com>,
 	Alexey Klimov <alexey.klimov@linaro.org>,
 	Bart Van Assche <bvanassche@acm.org>,
@@ -80,9 +82,9 @@ Cc: Yury Norov <yury.norov@gmail.com>,
 	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
 	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
 	Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH v4 23/40] usb: cdc-acm: optimize acm_softint()
-Date: Thu, 20 Jun 2024 10:56:46 -0700
-Message-ID: <20240620175703.605111-24-yury.norov@gmail.com>
+Subject: [PATCH v4 24/40] RDMA/rtrs: optimize __rtrs_get_permit() by using find_and_set_bit_lock()
+Date: Thu, 20 Jun 2024 10:56:47 -0700
+Message-ID: <20240620175703.605111-25-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240620175703.605111-1-yury.norov@gmail.com>
 References: <20240620175703.605111-1-yury.norov@gmail.com>
@@ -94,42 +96,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-acm_softint() uses for-loop to traverse urbs_in_error_delay bitmap
-bit by bit to find and clear set bits.
-
-Simplify it by using for_each_test_and_clear_bit(), because it doesn't
-test already clear bits.
+The function opencodes find_and_set_bit_lock() with a while-loop polling
+on test_and_set_bit_lock(). Use the dedicated function instead.
 
 Signed-off-by: Yury Norov <yury.norov@gmail.com>
-Acked-by: Oliver Neukum <oneukum@suse.com>
 ---
- drivers/usb/class/cdc-acm.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/ulp/rtrs/rtrs-clt.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
-index 0e7439dba8fe..f8940f0d7ad8 100644
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -18,6 +18,7 @@
- #undef DEBUG
- #undef VERBOSE_DEBUG
+diff --git a/drivers/infiniband/ulp/rtrs/rtrs-clt.c b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
+index 88106cf5ce55..52b7728f6c63 100644
+--- a/drivers/infiniband/ulp/rtrs/rtrs-clt.c
++++ b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
+@@ -10,6 +10,7 @@
+ #undef pr_fmt
+ #define pr_fmt(fmt) KBUILD_MODNAME " L" __stringify(__LINE__) ": " fmt
  
 +#include <linux/find_atomic.h>
- #include <linux/kernel.h>
- #include <linux/sched/signal.h>
- #include <linux/errno.h>
-@@ -613,9 +614,8 @@ static void acm_softint(struct work_struct *work)
- 	}
+ #include <linux/module.h>
+ #include <linux/rculist.h>
+ #include <linux/random.h>
+@@ -72,18 +73,9 @@ __rtrs_get_permit(struct rtrs_clt_sess *clt, enum rtrs_clt_con_type con_type)
+ 	struct rtrs_permit *permit;
+ 	int bit;
  
- 	if (test_and_clear_bit(ACM_ERROR_DELAY, &acm->flags)) {
--		for (i = 0; i < acm->rx_buflimit; i++)
--			if (test_and_clear_bit(i, &acm->urbs_in_error_delay))
--				acm_submit_read_urb(acm, i, GFP_KERNEL);
-+		for_each_test_and_clear_bit(i, &acm->urbs_in_error_delay, acm->rx_buflimit)
-+			acm_submit_read_urb(acm, i, GFP_KERNEL);
- 	}
+-	/*
+-	 * Adapted from null_blk get_tag(). Callers from different cpus may
+-	 * grab the same bit, since find_first_zero_bit is not atomic.
+-	 * But then the test_and_set_bit_lock will fail for all the
+-	 * callers but one, so that they will loop again.
+-	 * This way an explicit spinlock is not required.
+-	 */
+-	do {
+-		bit = find_first_zero_bit(clt->permits_map, max_depth);
+-		if (bit >= max_depth)
+-			return NULL;
+-	} while (test_and_set_bit_lock(bit, clt->permits_map));
++	bit = find_and_set_bit_lock(clt->permits_map, max_depth);
++	if (bit >= max_depth)
++		return NULL;
  
- 	if (test_and_clear_bit(EVENT_TTY_WAKEUP, &acm->flags))
+ 	permit = get_permit(clt, bit);
+ 	WARN_ON(permit->mem_id != bit);
 -- 
 2.43.0
 
