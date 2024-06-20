@@ -1,102 +1,123 @@
-Return-Path: <linux-kernel+bounces-222939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4496910A36
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:42:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6042910A39
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 490EBB21CDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:42:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8FEB1C2305A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B351B011B;
-	Thu, 20 Jun 2024 15:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5669E1B0129;
+	Thu, 20 Jun 2024 15:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkPvyY4T"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iybkP5VE"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D6E1E51E;
-	Thu, 20 Jun 2024 15:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F871B0104;
+	Thu, 20 Jun 2024 15:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718898160; cv=none; b=XCE8KGH5ZskbD83PUKGHDgbpfAv/ARv+CPkuwEfLhJ48NL5qefhN8YPjbmenmSKCIrZlDQfecHkaPpLzif5m1+AxxKzJoYeVfB7RpLufzEXfBjZnDHNmUhO/0/hNTrVqtDa8IvRanqa7XPi4m7g3fldHbarS5zIqyMEwUVgnXlM=
+	t=1718898184; cv=none; b=ZmKOH/ZL8Vr4wGj3MtkrP+dfPALuLmO1EuzSfbG0BD9P7/T1BqHVtNNhfo6WQKP+iGwXc8La+FTJXRGPaxtEzHCzy5VPVBHEhnWm+h16K0pJF5mHSGfgPFdhAkbg/d800fd1pBZGVjyRHZH0jMwHny2Wg2+pQshK2OkqCmLyCn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718898160; c=relaxed/simple;
-	bh=kfe4B5jV/9NSh1rK+lsYDgNAGNsHJAd5proacfFFmvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TJ87bPhMn/D3AuiVelQDRE3UukARqKU9ui8MCFjIMwTAlo5ssANl0e89cHoXPnj+ZF/QD1aXBF4HlMnhY6Dnzrwmx0P6lBnkzyd+LnR3p5ypUW/sAwelxaqEajUxkMkPrJsugc1d+c1LQbSVS6TZsJy+td7d+3C/nE0YQbLFGQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkPvyY4T; arc=none smtp.client-ip=209.85.215.171
+	s=arc-20240116; t=1718898184; c=relaxed/simple;
+	bh=cR6djxH09Ea4TNlofQrMPziUOAf3QcLsBQENcOtnsSc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ObRFSdObHSSksoyw3sYZIIYK96x9L2poYY+jFQ9Gdx+Ck50WogkAqpXhr/QvchO73WaIhhDz69Fk8FO621hMBcvPu48FPP13NZ3us/Cfk4du3SbND7LDt9eq3z7KA9Q3k3Aow1zuAaMIbE80B97bvDs4VPPtqgxMp2RW1+fyQyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iybkP5VE; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-70df2135426so715606a12.2;
-        Thu, 20 Jun 2024 08:42:39 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f480624d10so8645465ad.1;
+        Thu, 20 Jun 2024 08:43:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718898159; x=1719502959; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ygOijMwQj4RvlxsjHJZqT1HfHPexAo9x8mXgAR6tGk=;
-        b=dkPvyY4TWq3mhSRp6NZPcio25BAV3c2JAnqJUgXyc6PrGhb1Jp+2IUFnEzRPPOA6f6
-         VRv3iHGjcKse8MlXbMzUglyYjq5hgtMgkuMmjj4zbdQV2BJopfji85UcqSIXhZdn+cCi
-         PoxEUTpJgZPVM7OIRHuF8Pw1Pn6nZPn3KIPa/zPoU6D8mOLLoJ/VTo4K8CywiJhMp7NF
-         yIATVRggKoZkgADu9JvHXDhapDHyQsE7PIixzY8kWPMPjPx4qw4g2+g7wLqFhIsJNU/B
-         U+aCgBqIpBHqsbC9lINDE9tA68vZ/6XdZ/g+8tO1Hww1px9IFbHax5Xut4PrlnPaaEV2
-         VMtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718898159; x=1719502959;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1718898183; x=1719502983; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4ygOijMwQj4RvlxsjHJZqT1HfHPexAo9x8mXgAR6tGk=;
-        b=ez/wh3kVCkwIzQPRfMB/JPcTEHeH4uJv2owzMv9XYgiKq2+BAviN+mpHhCtrTRLM1u
-         GNOWiQLBNjFXs3cALNRSovpaaboLyYcn+tlq2CmzY+M9CVfwbumV6ov+zzwwaQlAv5Oj
-         TBBuvhHZkaEFjgFJevKSVEBmMWHbNLBQTyvFEbMAhhtHISETIpNExovykYspNfvXiTyU
-         XxA7DqCM2Hv53IZU7ToAraNt0Z6zG3TUqYO+X0z6+QWWb4emR/qKVDI8Mp9LKOF4ub45
-         CPMvt3b9mCXSRgbTbNflkSpit9M/c5/TaO0Ld5DSs7bopMP+45ou2udSx09zkVBy6DXB
-         qAAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBZCJYZBMa9GBAceBCyWUF7FhNmYBaN0zuhi3s0aEACocl9qp2RUkabe8xUIBvuWtBkx+1owzwPn8NZHBL8+ewOayzVnxNnBLmCIFz
-X-Gm-Message-State: AOJu0YzHRfNMhfcB53Un1em9LKLkpeyXxj+wEDmcuVz/Q8rhcRxMxjwy
-	n0BhAT2CwPPv41LtstYNCpxnQzZyeyVTzhTZ64pCeitG11WCWCbdsydW3A==
-X-Google-Smtp-Source: AGHT+IGgTPkJv+cypyDxLOVHWGctGnq3mNwdLo0LkRYjtUGphx08ykpHTsCGkqsL6pEwfUXgz/UYsg==
-X-Received: by 2002:a17:90a:df07:b0:2c1:ebc4:4f1f with SMTP id 98e67ed59e1d1-2c7b5d56b91mr5461405a91.33.1718898158566;
-        Thu, 20 Jun 2024 08:42:38 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:36d9:2b1f:59f:8e9e])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e55dcdffsm1847997a91.33.2024.06.20.08.42.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 08:42:38 -0700 (PDT)
-Date: Thu, 20 Jun 2024 08:42:36 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] Input: ads7846 - Use spi_device_id table
-Message-ID: <ZnRN7LXAc3lujLFX@google.com>
-References: <20240619122703.2081476-1-alexander.stein@ew.tq-group.com>
+        bh=k6+cRiKVZO9FUYX5aSKkhl/XU8fhmFH+Uqj0NqNLjzY=;
+        b=iybkP5VErJDvp8YUEywM0iMyyYzbrMq7J1A+zldcYVkEFB8QuQNK0wWkOnZ8vrdhwx
+         mcWsMMqhY1CQuZlaEnEq1q0czgh2tjJNSaLZjXvWZeVMYbQs/KILA4ruuv7cmHuTCOi6
+         u/L91FtxbydoyDXxWyEeXhYsIWMM4X8N6ZHeCEG9tBLXgSuWb6/6lk27wBTP691HGU+f
+         r5iDKJwonLF/wEIcu4oyliQrPkx+3+rgTMAYS0O9h50ytn3tfSTABtLTrc09CZESapHl
+         M8pBiJEqSmh0cPvcFR7mde0gjv+yZayhog5mlHfgPb0fSXj/32PeZB3s68NWAgfZ84S5
+         vfmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718898183; x=1719502983;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k6+cRiKVZO9FUYX5aSKkhl/XU8fhmFH+Uqj0NqNLjzY=;
+        b=gDFjLlEMhgHdCtpvetyC0afNurs4gvLeY9aW1rlNRX1lhzS4t62PxfJEpu2KbV5Fm5
+         qydFRSjeTOjMjK0ydZry4ynbhow7SZwQT5D4KNGQ9P/h00FzcWCBoq0krC8gJKTBZlXz
+         EyAdchPFwvvnRiHo0YeRguqxNrHJBFQCtPVzEHh2L36anLJ/DNdPwDipFCg7BINotFLU
+         9HC32t3NTtPSBOYI1UaOrfL11e4MXWbHSW4IxvcOnnc2KSDoNKJfYyz99d4nEO1pbmlJ
+         gdj0mohMNHAe2/bQlapH05D4ly39CkwgzRGehQVluVci+o2L/AwM+mUTBVB/lbVRFXla
+         HGYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVljZRRaFzUjd2FvoBbL2DPMHS0YW6EwQjGvdBI+XBs66A6+lSddKqpPWXyPTvYfnWlwEsUEhVfFLSOrT+IOPzwoLA2UNjG+cNPsJXUaJ3y5/3ZV8PnE0lFSAjvVqsWOP3VfKB6OXn4ulgFLkx9
+X-Gm-Message-State: AOJu0Yz/6iHvR+1+WJ8jb/S19Yqmrfhw9ZgF5WMtz30s/nhojuEsT8kI
+	eSrRmFLOn3sKbsUtJHI+r9g7OU8KQij7plTk20t0PfUk9U67s9HbrlP5EX8d3ayLEQc6NqqPezP
+	jMXJ/EwpaJjbhhlmS/9OU67SJkMJNjQ==
+X-Google-Smtp-Source: AGHT+IH/qGtmd25WWTOZkSnnwAfm5sy2oxl3ao2SCrYKmj2x13c+PTut6ES6liqOyIzzDab8A2DfeKmumSKaGaV3ZlQ=
+X-Received: by 2002:a17:903:1cf:b0:1f9:8cd9:96c9 with SMTP id
+ d9443c01a7336-1f9aa45a571mr60134705ad.46.1718898182576; Thu, 20 Jun 2024
+ 08:43:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619122703.2081476-1-alexander.stein@ew.tq-group.com>
+References: <10510733-a59a-4419-afb5-e75fdd802794@moroto.mountain>
+In-Reply-To: <10510733-a59a-4419-afb5-e75fdd802794@moroto.mountain>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 20 Jun 2024 11:42:51 -0400
+Message-ID: <CADnq5_PsUNMG6FmH40fb_AetaGjhBf6S0Yd41ewAaai=eec_nQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu/kfd: Add unlock() on error path to add_queue_mes()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Yunxiang Li <Yunxiang.Li@amd.com>, Felix Kuehling <Felix.Kuehling@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2024 at 02:27:02PM +0200, Alexander Stein wrote:
-> As the driver supports more devices over time the single MODULE_ALIAS
-> is complete and raises several warnings:
-> SPI driver ads7846 has no spi_device_id for ti,tsc2046
-> SPI driver ads7846 has no spi_device_id for ti,ads7843
-> SPI driver ads7846 has no spi_device_id for ti,ads7845
-> SPI driver ads7846 has no spi_device_id for ti,ads7873
-> 
-> Fix this by adding a spi_device_id table and removing the manual
-> MODULE_ALIAS.
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Applied.  Thanks!
 
-Applied, thank you.
+Alex
 
--- 
-Dmitry
+On Thu, Jun 20, 2024 at 5:07=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> We recently added locking to add_queue_mes() but this error path was
+> overlooked.  Add an unlock to the error path.
+>
+> Fixes: 1802b042a343 ("drm/amdgpu/kfd: remove is_hws_hang and is_resetting=
+")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/driv=
+ers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+> index d2fceb6f9802..4f48507418d2 100644
+> --- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+> @@ -230,6 +230,7 @@ static int add_queue_mes(struct device_queue_manager =
+*dqm, struct queue *q,
+>         if (queue_type < 0) {
+>                 dev_err(adev->dev, "Queue type not supported with MES, qu=
+eue:%d\n",
+>                         q->properties.type);
+> +               up_read(&adev->reset_domain->sem);
+>                 return -EINVAL;
+>         }
+>         queue_input.queue_type =3D (uint32_t)queue_type;
+> --
+> 2.43.0
+>
 
