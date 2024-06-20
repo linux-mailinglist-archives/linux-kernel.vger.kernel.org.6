@@ -1,162 +1,225 @@
-Return-Path: <linux-kernel+bounces-223326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC47911115
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:40:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F276D911123
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F294F1F21578
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:40:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 592DAB289A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7B11B4C2C;
-	Thu, 20 Jun 2024 18:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF071BC068;
+	Thu, 20 Jun 2024 18:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOmTno0Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LXnwqsB5"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26CB1C0052;
-	Thu, 20 Jun 2024 18:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548FD1B9AC9;
+	Thu, 20 Jun 2024 18:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718908021; cv=none; b=MeQOyW1aqbJGqK7tUTqJdyEUwf9zgo6WD7AqkWeeq6btnxAoRIjXtMxtR9y0AOEJieeO8I145MGLjOLSh3LSoIE8lK9rdP/AvdmCPrN+wikQrSHmmqjScM0zFVy2AqV4oBSwVdVfP4cgm1iCGBv/v7422EHlCLogjT7ZjdgIUpk=
+	t=1718908218; cv=none; b=GPqfHWsnufoywImIwniGNV5cAWRZ4J1Q/DZh03t3YL++4GBySlNRl32bsIbaZPEb5wmB8gzUKjbgkX9tIUcWh3AhiuZEx0zOpCXr2fUz2gG5r2390fbiE6WFX/njUuI7sKGmYPGP0G0Yp/WnhQYi3vfeISt5GSz/twigtF+Dgqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718908021; c=relaxed/simple;
-	bh=Npw3k9d4pOutQAzbANjN50tc75Fu4ciumJhM6mJHTaI=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=RcwVvziCk5NelpivnplSV4kU9AMUejA1W+xKdU5ErNO//p1crVEBsGstGBGJ0+vPlsNRgSnW7N/0Txw5hZeAId7/LFVZR+p3XQt5UyIyyvWD4A+m/XHrg/4vz1vufHH+UgFLy3pX37lvAcd55zXjHl+/dgnRqhwFSJV2Lh1/j5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOmTno0Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18134C4AF0D;
-	Thu, 20 Jun 2024 18:27:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718908020;
-	bh=Npw3k9d4pOutQAzbANjN50tc75Fu4ciumJhM6mJHTaI=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=bOmTno0ZAI/lrVwWk8qZeZQp/7E/IKb2Zd/nPKbHfQIXzdr4xKlznfmGOBnZ19kmz
-	 5t0O0cirHqQ82XIkzwF1JS0GWfDBqVYHz+sLqD1uO16yYfORLy1Hrl5W6Gry3GkAbI
-	 TCNjzb4VuuaFyzxCG5d+teNDRnRF5uhhOFUdyZprHz1qQ0qS6uRUPSE2CgQtV4ISQT
-	 jRqL15VjUnjBfyZrsfvdIoZvYcgP9hKjZn2/VTDJRx0ahRaXV4k0nQJEhY0G/EhPpa
-	 MHJmow22NZFWdVY26rcRCvMVmRW40oJzvm6b95dV45V9Uws1/U2mpez6vVY2wGhUgX
-	 K2uIZa0Egkg4w==
-Date: Thu, 20 Jun 2024 12:26:58 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1718908218; c=relaxed/simple;
+	bh=23zcJ+d5OKU7OHuj9SbbJQlzUz7TBJgSFQthjCH4jb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BRE5a+GKHghkzGtZgkPY4s0ndhxlu6LnQC+v8GyRpFOzACP59/1bG1sw+Es4DkHv0xtgZYbdQq8z3mMYV0G4OWZX51JjTZ5MVwe6i7dkj5XrX3sg3Gzq1wL1z8DHuWnyUQQret25eNaevV/5nkQ9/36tQFRf7KdeqxY/QAl0UZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LXnwqsB5; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d1d45ba34so1333428a12.3;
+        Thu, 20 Jun 2024 11:30:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718908214; x=1719513014; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6m1gMzA5fnD2sjUydDvpKr3zIKxDfhIqLd68Kj5jrIU=;
+        b=LXnwqsB5iPRnchjSY2vjhQ/pVftZbmIqWQ/vP/1KdYAvhiTzKQ0wy3+X0ZptsTeUjO
+         QsAN9M5B7OGhIwU3oKvOZAP6cePlVzYJi45PeuOfcodc/h7ooTF/LeYeTWl6lNgXNPvo
+         /HRD1inp8skJMpOtteHWbMwPpNQ+08gk29ftkR9b4zOgorvvU2xmsbwcmDRQWerUsr/H
+         DetjbbsWv7F5NuExSe2ZJaxv0oRMsjKbPae7BdOIQZLFzK9fTmDMtoSAFAhw6bExqG9V
+         q5kC6LGXkS8f8WWcAHWP9MQhHgnGvaQTwfEYKxPF6buRWyi9G9dtbI0EkNk2e3qx1ss0
+         76fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718908214; x=1719513014;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6m1gMzA5fnD2sjUydDvpKr3zIKxDfhIqLd68Kj5jrIU=;
+        b=CaUev5EJwiGj09LrSDNPAzY56DcLVjuDx6uHWck/rbsHCungwAGTrT97fgK2MlNt74
+         Rw9NyQ7QPa8OpC2EqMgyG7FIpZ4hA6bPJqtKjP1ya2LwPxXLfkoCCVT4PCcTQ+t+FyB+
+         XNHSGnzDZakm5+L9B7R6xqmZGPsEpM1l0vy09GxhBeO+zWZ+H2sCZy4FzPHaSGxAXvU0
+         HKE0FcX14sjIZFzSs2BINzHUukRJTR+vD02A1Qa1KcLmbt+nQgU/i4HR6zJqfFHL8WMy
+         MCHk6gRBCME4HjR/lcTCg1NCsjwrYFFPnbws3O3XkL+UmORnY14yRCCWQ31ILQbZI9vJ
+         gFEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdANxfwyHnj/rGvqKCZgYkUvB2M0WtDOHsHFI7keZ0/hC3W5oefRo2cyKOSXi7f3SGuZpATxbhrjDo8x7epktWdMLDo/IhGuuCWPAhicMZQDb6ijK+bK8CPFlqOYCkLhjTbAHCAhOpTHDuPz7oezebvUTd
+X-Gm-Message-State: AOJu0YwrHqOgHc3xhS4mAs1g+vQdrxitEBPy5oO40btde6FqrZJkarfp
+	5x9S92oUMyFPGX3MuS1YOumPpFdHxCb5/gof1J0LygNE/qUk9n2pRBEramXwOguiVN8cHDabdWu
+	U2VdYi0Kwm38H/s2tW1EaWVUNlBw=
+X-Google-Smtp-Source: AGHT+IHUEaMNwS1/lDslY7n8j8o8MmR5UldgYWqZCqrHZCOG6gHMWvb41UggkniTgZec+c4o1IZNVFbioZ/sL6VxoI0=
+X-Received: by 2002:a17:907:1686:b0:a6f:b428:30fa with SMTP id
+ a640c23a62f3a-a6fb4283167mr368999466b.59.1718908214436; Thu, 20 Jun 2024
+ 11:30:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, linux-clk@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, Lee Jones <lee@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-In-Reply-To: <20240620-mbly-olb-v3-4-5f29f8ca289c@bootlin.com>
-References: <20240620-mbly-olb-v3-0-5f29f8ca289c@bootlin.com>
- <20240620-mbly-olb-v3-4-5f29f8ca289c@bootlin.com>
-Message-Id: <171890801727.3178289.9824854320457865934.robh@kernel.org>
-Subject: Re: [PATCH v3 4/9] dt-bindings: soc: mobileye: add EyeQ OLB system
- controller
+References: <20240620171528.167997-1-mjguzik@gmail.com> <155a24f7-8059-49b0-93fa-94bcdc058621@amd.com>
+In-Reply-To: <155a24f7-8059-49b0-93fa-94bcdc058621@amd.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 20 Jun 2024 20:30:02 +0200
+Message-ID: <CAGudoHFsqDS-5ELmy=t2fdQ2Xrk8q+xyfCkZPpb4XA-+6HOpNA@mail.gmail.com>
+Subject: Re: [PATCH v2] apparmor: try to avoid refing the label in apparmor_file_open
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jun 20, 2024 at 8:23=E2=80=AFPM Neeraj Upadhyay <Neeraj.Upadhyay@am=
+d.com> wrote:
+>
+>
+>
+> On 6/20/2024 10:45 PM, Mateusz Guzik wrote:
+> > apparmor: try to avoid refing the label in apparmor_file_open
+> >
+> > If the label is not stale (which is the common case), the fact that the
+> > passed file object holds a reference can be leverged to avoid the
+>
+> Minor: Typo 'leveraged'
+>
+> > ref/unref cycle. Doing so reduces performance impact of apparmor on
+> > parallel open() invocations.
+> >
+> > When benchmarking on a 24-core vm using will-it-scale's open1_process
+> > ("Separate file open"), the results are (ops/s):
+> > before: 6092196
+> > after:  8309726 (+36%)
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+>
+>
+> Trying to understand the changes done here. So, while the file cred can b=
+e updated
+> async to the task (referring to the comment from John here [1]), the file=
+ cred label
+> cannot change during apparmor_file_open() execution?
+>
+
+Refing a label retains racy vs refing it.
+
+On stock code you can test the flag, determine it's not stale, grab
+the ref and have it become stale immediately after. My patch avoids
+the atomic dance for the common case, does not alter anything
+correctness-wise AFAICS.
+
+I am assuming the race is tolerated and checking here is only done to
+make sure the new label is seen eventually.
+
+Not having the race is possible with a bunch of trickery like seqc,
+but so far does not look like this is necessary.
+
+>
+> Reviewed-by: Neeraj upadhyay <Neeraj.Upadhyay@amd.com>
+>
+>
+> Thanks
+> Neeraj
+>
+> [1] https://lore.kernel.org/lkml/9bfaeec2-535d-4401-8244-7560f660a065@can=
+onical.com/
+>
+>
+> >
+> > v2:
+> > - reword the commit message
+> >
+> > If you want any changes made to it can you just do them on your own
+> > accord? :) Will be faster for both of us than another mail trip.
+> >
+> >  security/apparmor/include/cred.h | 20 ++++++++++++++++++++
+> >  security/apparmor/lsm.c          |  5 +++--
+> >  2 files changed, 23 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/security/apparmor/include/cred.h b/security/apparmor/inclu=
+de/cred.h
+> > index 58fdc72af664..7265d2f81dd5 100644
+> > --- a/security/apparmor/include/cred.h
+> > +++ b/security/apparmor/include/cred.h
+> > @@ -63,6 +63,26 @@ static inline struct aa_label *aa_get_newest_cred_la=
+bel(const struct cred *cred)
+> >       return aa_get_newest_label(aa_cred_raw_label(cred));
+> >  }
+> >
+> > +static inline struct aa_label *aa_get_newest_cred_label_condref(const =
+struct cred *cred,
+> > +                                                             bool *nee=
+dput)
+> > +{
+> > +     struct aa_label *l =3D aa_cred_raw_label(cred);
+> > +
+> > +     if (unlikely(label_is_stale(l))) {
+> > +             *needput =3D true;
+> > +             return aa_get_newest_label(l);
+> > +     }
+> > +
+> > +     *needput =3D false;
+> > +     return l;
+> > +}
+> > +
+> > +static inline void aa_put_label_condref(struct aa_label *l, bool needp=
+ut)
+> > +{
+> > +     if (unlikely(needput))
+> > +             aa_put_label(l);
+> > +}
+> > +
+> >  /**
+> >   * aa_current_raw_label - find the current tasks confining label
+> >   *
+> > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> > index 2cea34657a47..4bf87eac4a56 100644
+> > --- a/security/apparmor/lsm.c
+> > +++ b/security/apparmor/lsm.c
+> > @@ -461,6 +461,7 @@ static int apparmor_file_open(struct file *file)
+> >       struct aa_file_ctx *fctx =3D file_ctx(file);
+> >       struct aa_label *label;
+> >       int error =3D 0;
+> > +     bool needput;
+> >
+> >       if (!path_mediated_fs(file->f_path.dentry))
+> >               return 0;
+> > @@ -477,7 +478,7 @@ static int apparmor_file_open(struct file *file)
+> >               return 0;
+> >       }
+> >
+> > -     label =3D aa_get_newest_cred_label(file->f_cred);
+> > +     label =3D aa_get_newest_cred_label_condref(file->f_cred, &needput=
+);
+> >       if (!unconfined(label)) {
+> >               struct mnt_idmap *idmap =3D file_mnt_idmap(file);
+> >               struct inode *inode =3D file_inode(file);
+> > @@ -494,7 +495,7 @@ static int apparmor_file_open(struct file *file)
+> >               /* todo cache full allowed permissions set and state */
+> >               fctx->allow =3D aa_map_file_to_perms(file);
+> >       }
+> > -     aa_put_label(label);
+> > +     aa_put_label_condref(label, needput);
+> >
+> >       return error;
+> >  }
 
 
-On Thu, 20 Jun 2024 19:30:56 +0200, Théo Lebrun wrote:
-> Add documentation to describe the "Other Logic Block" system-controller.
-> It deals with three platforms: EyeQ5, EyeQ6L and EyeQ6H. First two have
-> a single instance, whereas EyeQ6H has seven named instances.
-> 
-> Features provided are:
->  - Clocks, children to main crystal. Some PLLs and divider clocks.
->  - Resets. Some instances DO NOT have reset.
->  - Pinctrl. Only EyeQ5 has such feature.
-> 
-> Those are NOT the only features exposed in OLB system-controllers! Many
-> individual registers, related to IP block integration, can be found.
-> Additional features will be exposed over time.
-> 
-> We simplify devicetree phandles to OLB in two ways:
-> 
->  - Compatibles exposing a single clock do not ask for a index argument.
->    This means we use EyeQ6H OLB south (it has four clocks):
-> 
->       clocks = <&olb_south EQ6HC_SOUTH_PLL_PER>;
-> 
->    But use EyeQ6H OLB east (it has one clock):
-> 
->       clocks = <&olb_east>;
-> 
->  - Compatibles exposing a single reset domain do not ask for a domain
->    index, only a reset index.
->    This means we use EyeQ5 OLB (it has three domains):
-> 
->      resets = <&olb 0 10>;
-> 
->    But use EyeQ6H west reset (it has one domain):
-> 
->       resets = <&olb_west 3>;
-> 
-> About pinctrl subnodes: all pins have two functionality, either GPIO or
-> something-else. The latter is pin dependent, we express constraints
-> using many if-then.
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-> ---
->  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 374 +++++++++++++++++++++
->  MAINTAINERS                                        |   2 +
->  include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  21 ++
->  3 files changed, 397 insertions(+)
-> 
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml: ^.*@[1-4]$: Missing additionalProperties/unevaluatedProperties constraint
-
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/qcom,pcie-sm8350.yaml: oneOf: Missing additionalProperties/unevaluatedProperties constraint
-
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/qcom,pcie-sm8350.yaml: oneOf: Missing additionalProperties/unevaluatedProperties constraint
-
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml: ^.*@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
-
-Documentation/devicetree/bindings/sound/st,stm32-sai.example.dtb: /example-0/sai@4400b000/audio-controller@4400b004: failed to match any schema with compatible: ['st,stm32-sai-sub-a']
-Documentation/devicetree/bindings/net/wireless/qcom,ath11k.example.dtb: /example-0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
-Documentation/devicetree/bindings/thermal/brcm,avs-ro-thermal.example.dtb: /example-0/avs-monitor@7d5d2000: failed to match any schema with compatible: ['brcm,bcm2711-avs-monitor', 'syscon', 'simple-mfd']
-Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.example.dtb: /example-1/syscon@20e00000: failed to match any schema with compatible: ['sprd,sc9863a-glbregs', 'syscon', 'simple-mfd']
-Documentation/devicetree/bindings/clock/milbeaut-clock.example.dtb: /example-2/serial@1e700010: failed to match any schema with compatible: ['socionext,milbeaut-usio-uart']
-Documentation/devicetree/bindings/arm/hisilicon/controller/hi3798cv200-perictrl.example.dtb: /example-0/peripheral-controller@8a20000/phy@850: failed to match any schema with compatible: ['hisilicon,hi3798cv200-combphy']
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/stm32/st,mlahb.example.dtb: ahb@38000000: Unevaluated properties are not allowed ('reg' was unexpected)
-	from schema $id: http://devicetree.org/schemas/arm/stm32/st,mlahb.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240620-mbly-olb-v3-4-5f29f8ca289c@bootlin.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
