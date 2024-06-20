@@ -1,86 +1,64 @@
-Return-Path: <linux-kernel+bounces-223064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2894910D0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:34:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE353910D12
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC8328865E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:34:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E991F22510
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0D21B47A0;
-	Thu, 20 Jun 2024 16:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A361BA867;
+	Thu, 20 Jun 2024 16:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLiWt73I"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fpcDoxmh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFBB1B1500;
-	Thu, 20 Jun 2024 16:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C991A1B1500;
+	Thu, 20 Jun 2024 16:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718901038; cv=none; b=qYPFLvEztbHbKgR66A1qG6/lVyFCcZQnCQyEy3pWrJzcUGrNzr1Ni+OW4IGdkoGXJIhvMWEfRW1CKWb7CwzZwaoAGqHtWFcghs6U8gdlRfvUux9zark9JhtyZJQ3/Wq4KUh0PtJZgkO0jDUj5M/Eas4Ioi4Pxxq+Wa0/et5+fLY=
+	t=1718901053; cv=none; b=qL9e0wquftXALdv9DLNwGBaS6RtGd5xDcH7vIh/F0IDEhl3LxETCB034gKqwFmfREnf2KrJhfe8JEZdaeISqgXFutTH40minDsoK7fmEPv7A2HA5OxaNHUkJhAODFfgdz4OvleHkXO7svT3eMT8bsIkwdcu2DmdtGsM74Vrz70Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718901038; c=relaxed/simple;
-	bh=Z7wFmenBZTlsebiBGRtqRQxklYko51QR4XutUm2q4MQ=;
+	s=arc-20240116; t=1718901053; c=relaxed/simple;
+	bh=+u20+PzQw0ydTGvhxZkg0M/CZ1MW4ZV07QKlmdkZH9c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ofIopdqU7WxeVo/3QHanHXtCpr1THo4OWwvLKemRbiP+w8FiARUuTlNs4as0GqejTzpYUjj2Kq6nVZIESMR6FqUfKgadramxHlFqae28xX+xaeRDzZy7kH91358eeAcNueLOWPZHZrHNDB2iLk7+4kf6jpUFDjCLKDN7melFcqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLiWt73I; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-701b0b0be38so1028705b3a.0;
-        Thu, 20 Jun 2024 09:30:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718901036; x=1719505836; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qsyYBnBD4C+9cyxgt//5+wZQ+goYBnLsU/vC89c+kzo=;
-        b=dLiWt73Io7czNu/I9bqXvv7IZQd4o/Q+bsDH8ROwvDCzettWN7pLFTivHmxtMD+6EH
-         DthZNDIFukZ46Mwa1tlDRpqRFedATBUYKjDGWbjiQujiKTuHM/4zqtln6/wbeZezbwXk
-         ln6yd6KhP75ADut8ifhFFlBnQf7aIJfU03tgLf8Ztlr6N3DcfV/ThBUUEROljyN9WqBk
-         ajFbQIPhD1zogCkMylprTL3HpnIoUs9UDskDdEGJlQeJVU4i1CucnAMGmqDUo32ZLE2U
-         HUkBP654TN4FDFwW4KDMNjFeS72Gjwo9GMKikB4YpPgpzDhIIMTxh32mG7X4IMSa6r+/
-         0+iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718901036; x=1719505836;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qsyYBnBD4C+9cyxgt//5+wZQ+goYBnLsU/vC89c+kzo=;
-        b=hhXUiWmcFviYu/89jhJ2pektm1xRw3G+Semj55DfjY3/wD/26eebWXLiqSyOV3MUds
-         ZVnAfS2iGbTPtd2pP45U60cOGWOR8SzU/33m9KdtfWsSaLT5SIWoJTqbutomLfnk6M6A
-         +xmzXOTnEGyrf3mO245uRpq5B7vfy+pkY+rBeuwYCoFGyM2QPSwmLjhAjLWXEcOn5Zas
-         H7hu0PYqtfJwihyK3ZcW3BeU4Lec/q6Qk2x1Ybi34DF1JQFzeGmelKN4RMhX1e3YKNbo
-         n2uTAOngGIklEJBT5MPyx3c0BTs1QalQt5qeHYH62p7odFHGDvzXlw68NGER0AcEbE+6
-         hC1g==
-X-Forwarded-Encrypted: i=1; AJvYcCV45THYnP16Y7M+nFwzs+b9GwB2CByd4JlZXWqpyW1E7P8qQZcN/Ck3FkjuVt642ThgYGslHTTtmz67zTHBNdjflwhCBCpdgOaJLTFetfAPl47FoDxPdO839v9TZQYC0tAc/cSZZZO6Fw==
-X-Gm-Message-State: AOJu0YzpBhuQabPDsfZxVhb6uW8Q7UPrCouFxH6pFCYvVDnu7SnxzHvd
-	Ct9JQY+lgn4ctB8JrYZUZZX4QdlO01hps+sdZj9X/QUI4pzvBHBPV3bV+A==
-X-Google-Smtp-Source: AGHT+IGndCdN78CF73lLg0AoJ92l4TcuUZFfs+eZAg3UI09VK75VmrkOJNgBpK+jw/bXD4JUtOZVuw==
-X-Received: by 2002:a05:6a20:a891:b0:1b8:d79:55f6 with SMTP id adf61e73a8af0-1bcbb40ee1dmr5691357637.25.1718901036424;
-        Thu, 20 Jun 2024 09:30:36 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb67b29sm12936722b3a.141.2024.06.20.09.30.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 09:30:35 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 20 Jun 2024 09:30:33 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: conor@kernel.org, vkoul@kernel.org, kishon@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	frank.li@nxp.com, conor+dt@kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de, imx@lists.linux.dev
-Subject: Re: [PATCH v7 2/2] phy: freescale: imx8qm-hsio: Add i.MX8QM HSIO PHY
- driver support
-Message-ID: <2f15baba-68b5-4e99-bdb5-6d2e05b7688b@roeck-us.net>
-References: <1716962565-2084-1-git-send-email-hongxing.zhu@nxp.com>
- <1716962565-2084-3-git-send-email-hongxing.zhu@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GIeqKThDF5IpxBtQ9qFYV9vN+qx715BvSL2rG4vITxAhrgNHaVSsJfYejCP0aknvQ5ToCX+dvv3WTyAmEzSZ2Q57KXxih55YHKWR4hGNKfK8Uhb2IVUyFV6mWuzsv1giz1JXrlqLdtGn1/byb+yMqhrKYZqREZa7FucU4e4kI+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fpcDoxmh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B15EC2BD10;
+	Thu, 20 Jun 2024 16:30:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718901053;
+	bh=+u20+PzQw0ydTGvhxZkg0M/CZ1MW4ZV07QKlmdkZH9c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fpcDoxmhms7zCAojcmv/RYq8amuLtl7ctEBD7zQhfbjW7+P8jmXqkou3HRrlVlZb7
+	 qYze12R0q8VIC64JI2zqHYNHsKkTWq5FDGrl8aZADPgnv4scthWEesv3iVgNjopql8
+	 KjHezkm5GuBt5xFg30ugfxRRImANN6sWHEAf0KXygq1ydZmdZ+9rBnbcrFOT6nMOoc
+	 j7Pf5kBzBYriCkkIuGAcfwiPeLYN59qvgvCua5fa56a5zX7iDDkL9QGgm+5hsw5yfi
+	 QLEqJNvH3RUjLyJcUQAFLiXUZgI9M2wj9DdxqjNPeeZuHj7YMSmhbwHzhh6qWY3Aof
+	 NGLV5yR/cROXQ==
+Date: Thu, 20 Jun 2024 17:30:48 +0100
+From: Simon Horman <horms@kernel.org>
+To: "Nemanov, Michael" <michael.nemanov@ti.com>
+Cc: Sabeeh Khan <sabeeh-khan@ti.com>, Kalle Valo <kvalo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 11/17] wifi: cc33xx: Add init.c, init.h
+Message-ID: <20240620163048.GK959333@kernel.org>
+References: <20240609182102.2950457-1-michael.nemanov@ti.com>
+ <20240609182102.2950457-12-michael.nemanov@ti.com>
+ <20240615085133.GA234885@kernel.org>
+ <8dbb30be-3c0c-43c9-8f7a-dbfeeca3837e@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,36 +67,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1716962565-2084-3-git-send-email-hongxing.zhu@nxp.com>
+In-Reply-To: <8dbb30be-3c0c-43c9-8f7a-dbfeeca3837e@ti.com>
 
-On Wed, May 29, 2024 at 02:02:45PM +0800, Richard Zhu wrote:
-> Add i.MX8QM HSIO PHY driver support.
+On Thu, Jun 20, 2024 at 11:40:31AM +0300, Nemanov, Michael wrote:
+> On 6/15/2024 11:51 AM, Simon Horman wrote:
+> ...
 > 
-> i.MX8QM HSIO has three lane PHY instances, and can be bound to the
-> following controllers in the different use cases listed in below table.
-> - two lanes capable PCIEA controller.
-> - one lane PCIEB controller.
-> - AHCI SATA controller.
+> > 
+> > Hi Michael,
+> > 
+> > allmodconfig builds on x86_64 with gcc-13 flag the following:
+> > 
+> > In file included from ./include/linux/string.h:374,
+> >                   from ./include/linux/bitmap.h:13,
+> >                   from ./include/linux/cpumask.h:13,
+> >                   from ./arch/x86/include/asm/paravirt.h:21,
+> >                   from ./arch/x86/include/asm/irqflags.h:60,
+> >                   from ./include/linux/irqflags.h:18,
+> >                   from ./include/linux/spinlock.h:59,
+> >                   from ./include/linux/mmzone.h:8,
+> >                   from ./include/linux/gfp.h:7,
+> >                   from ./include/linux/firmware.h:8,
+> >                   from drivers/net/wireless/ti/cc33xx/init.c:6:
+> > In function 'fortify_memcpy_chk',
+> >      inlined from 'cc33xx_init_vif_specific' at drivers/net/wireless/ti/cc33xx/init.c:156:2:
+> > ./include/linux/fortify-string.h:580:25: warning: call to '__read_overflow2_field' declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Wattribute-warning]
+> >    580 |                         __read_overflow2_field(q_size_field, size);
+> >        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > In function 'fortify_memcpy_chk',
+> >      inlined from 'cc33xx_init_vif_specific' at drivers/net/wireless/ti/cc33xx/init.c:157:2:
+> > ./include/linux/fortify-string.h:580:25: warning: call to '__read_overflow2_field' declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Wattribute-warning]
+> >    580 |                         __read_overflow2_field(q_size_field, size);
+> >        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >    CC [M]  drivers/net/wireless/ti/cc33xx/rx.o
+> > 
+> > I believe that this is because the destination for each of the two memcpy()
+> > calls immediately above is too narrow - 1 structure wide instead of 4 or 8.
+> > 
+> > I think this can be resolved by either using:
+> > 1. struct_group in .../cc33xx/conf.h:struct conf_tx_settings
+> >     to wrap ac_conf0 ... ac_conf3, and separately tid_conf0 ... tid_conf7.
+> > 2. Using arrays for ac_conf and tid_conf in
+> >     .../cc33xx/conf.h:struct conf_tx_settings, in which case perhaps
+> >     .../wlcore/conf.h:struct conf_tx_settings can be reused somehow
+> >     (I did not check closely)?
+> > 
 > 
-> i.MX8QM HSIO PHYs support the following use cases.
-> +----------------------------------------------------+
-> |                               | Lane0| Lane1| Lane2|
-> |-------------------------------|------|------|------|
-> | use case 1: PCIEAX2SATA       | PCIEA| PCIEA| SATA |
-> |-------------------------------|------|------|------|
-> | use case 2: PCIEAX2PCIEB      | PCIEA| PCIEA| PCIEB|
-> |-------------------------------|------|------|------|
-> | use case 3: PCIEAPCIEBSATA    | PCIEA| PCIEB| SATA |
-> +----------------------------------------------------+
+> Thank you for checking. I agree this code should be rewritten so it is more
+> clear and w/o any warnings. Will fix.
 > 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> I was unsuccessful reproducing the warning on my end. Tried with GCC 13.2.0
+> (ARCH=x86_64, allmodconfig) and Arm GNU Toolchain 13.2 (ARCH=arm,
+> allmodconfig) and only got errors in scan.c which I assume you refer to
+> below (will also be fixed).
 
-Building alpha:allmodconfig ... failed
---------------
-Error log:
-drivers/phy/freescale/phy-fsl-imx8qm-hsio.c: In function 'imx_hsio_set_mode':
-drivers/phy/freescale/phy-fsl-imx8qm-hsio.c:459:15: error: implicit declaration of function 'FIELD_PREP'
+Hi Michael,
 
-Guenter
+I tried this again with GCC 13.2.0 on x86_64 with allmodconfig.
+And I was able to see this with a W=1 (make W=1) build.
+
+I don't think it is an important detail, but for reference,
+I am using the compiler here, on an x86_64 host.
+https://mirrors.edge.kernel.org/pub/tools/crosstool/
+
+> > Similar errors are flagged elsewhere in this series.
+> > Please take a look at allmodconfig builds and make sure
+> > no warnings are introduced.
+> > 
+> > Lastly, more related to the series as a whole than this patch in
+> > particular, please consider running checkpatch.pl --codespell
+> 
+> Sure, will add checkpatch.pl --codespell to my tests.
+
+Great, thanks.
 
