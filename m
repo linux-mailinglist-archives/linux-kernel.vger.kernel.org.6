@@ -1,191 +1,156 @@
-Return-Path: <linux-kernel+bounces-222299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B44190FF6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:51:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A293290FF77
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D08B4B21257
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:51:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FCFA2828F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065501A4F2F;
-	Thu, 20 Jun 2024 08:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974F01AAE23;
+	Thu, 20 Jun 2024 08:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CnCwWcPG"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="dv3k7Rea"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD9740858;
-	Thu, 20 Jun 2024 08:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA992582;
+	Thu, 20 Jun 2024 08:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718873276; cv=none; b=s/B652ecpI8VndZsqb3KCPifVNXCXCGdbjmpbBN1XBLA9mR402FeS4zftmGX0jH3H710Yj8WMUA2txxPNN+065mWmoY+UJpXZKctnKD9uoXkAm5RNsPi8kcJmSIzb3G73bPvz046Q0o7B6ebX6tuII40HhXrd86Gd9kKZYMv0To=
+	t=1718873360; cv=none; b=jtmYYQadIG55RIQO6EoVS/gwq7IsV9YHiQgN4lTHELik7dGZLD6tznCrIZzgV8hPD9ImZVUE3lBRzjdyGEvX2l4jWFQLGaajbHpvrJEYRuwRSt43egIAH+3iyZqWF85uaNOEfq6nLHTMpPW7Tcko4JX7pP1pUQ3g3ic7I4+U1WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718873276; c=relaxed/simple;
-	bh=TBVTI/0PYjZSNwLs8zOMBanM4w1UfbWtOpjIx22X/S8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:References; b=VQbRjLSm4Qb1roC7yuLhd5ASR39aynhOz/pRXMI0spw8N+Pv1Z76WeQOZcpUdkPLrdik/UciEfKPXSfSPxGCmmzsrhjNGak8Bc0lgAfYz3+G62lhCKhEmLYPKWhRs8hZHDBH3/sNyxad5aWO7R1YbVngb0ph9S6/tj45HwP6uEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CnCwWcPG; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240620084750euoutp022a61bdb452905d0d93967b59e85b60ff~aqiHwNbLt1458414584euoutp02w;
-	Thu, 20 Jun 2024 08:47:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240620084750euoutp022a61bdb452905d0d93967b59e85b60ff~aqiHwNbLt1458414584euoutp02w
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718873270;
-	bh=2xH7UaeSHxwlKbfKFdgiBYrxzRVkCcqlRlIhfGGkv3E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CnCwWcPGEQLlrmu5GiGFmqg0ZxD5CVc+j6jPG5uuRr9gCAk7ZPCub9S5bgAmQfeoS
-	 glnYI8j0c2Va+5WGibE3KKBIp7FN49iE7HuZaLtE3SR3AYhmtU7UPUuVXg9iBr3H4Y
-	 BexdtWc8Ke8ws3TU2C6pXr/R9dncumT+S7Dkx+F0=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240620084750eucas1p1e7fb1bcad2283f58e3f6041152a56a46~aqiHegUUU0512305123eucas1p1O;
-	Thu, 20 Jun 2024 08:47:50 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id CE.08.09624.6BCE3766; Thu, 20
-	Jun 2024 09:47:50 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240620084749eucas1p18f46cc9aa0983afb75e1677b399d12f8~aqiG47y3k0326503265eucas1p1Z;
-	Thu, 20 Jun 2024 08:47:49 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240620084749eusmtrp10b61c85089f15485d410823a8fd41c31~aqiG4BP6H2065920659eusmtrp1C;
-	Thu, 20 Jun 2024 08:47:49 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-16-6673ecb6e85e
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 41.33.09010.5BCE3766; Thu, 20
-	Jun 2024 09:47:49 +0100 (BST)
-Received: from localhost (unknown [106.120.51.111]) by eusmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240620084749eusmtip121f8870fba034cffe60389c2be011cc0~aqiGnuu2i3165231652eusmtip1W;
-	Thu, 20 Jun 2024 08:47:49 +0000 (GMT)
-From: Lukasz Stelmach <l.stelmach@samsung.com>
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,  Rob Herring
-	<robh@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Anand Moon
-	<linux.amoon@gmail.com>,  Olivia Mackall <olivia@selenic.com>,  Herbert Xu
-	<herbert@gondor.apana.org.au>,  Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,  linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] hwrng: exynos: Enable Exynos850 support
-Date: Thu, 20 Jun 2024 10:47:44 +0200
-In-Reply-To: <20240618204523.9563-7-semen.protsenko@linaro.org> (Sam
-	Protsenko's message of "Tue, 18 Jun 2024 15:45:22 -0500")
-Message-ID: <oypijdjzikt2z3.fsf%l.stelmach@samsung.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1718873360; c=relaxed/simple;
+	bh=jNfkDMRcO2oeeYKSJDzxCHJCMTTV67C3zqxJqxPPYYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r/tpR4dn9cjltW2pGV06epKesf0YxmHNUaKJdM8ec+7uikIRDU8VN6JX7BNRtXNpvU4azLGiZMy2lM50meftA+9hY5PpaIjPZp21iEcYg7GXRxaH5H8cS5Ws4FwZ2Fzdo/VxJgJB+4nX3HvaJ68kgDJJpf5OCiyM5y5S6FG0jXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=dv3k7Rea; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 645CA40E021A;
+	Thu, 20 Jun 2024 08:49:14 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Uv5zLkmrO5Np; Thu, 20 Jun 2024 08:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1718873350; bh=6EyIcoUfttVVNnxBX/AUr5QBtwGzWzGdL+5OK4EVuC0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dv3k7ReanBgHyjpkkVskT8jnbh35c6C2llvNvCgDKnvCWxNqlEIEDzBCnQ/Ub2TLN
+	 GKDDKWT6DRo1EtsdPgO7lzjTjr+ZwBP/BCi5BGfrYnTI4P7sfZkrQD0ksrdTWPfhEx
+	 ArhQtF4JrfMhr6fkc2C0FaoXBT9BjxIgXX58RfiUqWn5Ie5Pmz8rTpcS3/YAPMKSfm
+	 xxBT8SIIoSuSC/vF2crSp8+d8ARufM/0KFiWnT94OPkOAn+XiY7IlMCsPVTgseo4z/
+	 Npsg9zKJ+LX6Ah6Djv7RApCNZKTuchEANiXkv2CVMnHqSTBSbr4IPtchC3kBxYDmuX
+	 oCFtMmjjhgj5S0KdP3FiW1iriC2bzBAGssXhxu6lGU+Kx5PXl+wD2lCaQodtH4QNOt
+	 WNEsDudjN7V7PO5YqNagT4qrQ8GuiqI9oYC6Bu7llRw8eTWTk/NcBOigDjTGYfzldm
+	 RuYOrhFBrlyOac7rKMSbPqHLaHMStoHz7oKa83/fmu3qAqGUWF1vWaDjZm3LN9Oalx
+	 Anu7G/KJXBv6q3x/3K947gmdEaVMMf5MAbH6qz1Hd12JkSjMx24Ax9iPMBxo5uSY67
+	 VccROMPvyeOtCyCrWMXTIgfapeJSU/J3ghYBS6NCtHRZNVjTsSatnNmjpTCxL0dNpi
+	 608HV6WbwiemcHMmWr984C9A=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 706FA40E01A5;
+	Thu, 20 Jun 2024 08:49:05 +0000 (UTC)
+Date: Thu, 20 Jun 2024 10:48:53 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, kernel test robot <lkp@intel.com>,
+	Sean Christopherson <seanjc@google.com>, x86@kernel.org
+Subject: Re: [tip: x86/alternatives] x86/alternatives, kvm: Fix a couple of
+ CALLs without a frame pointer
+Message-ID: <20240620084853.GAZnPs9Q94aakywkUn@fat_crate.local>
+References: <171878639288.10875.12927337921927674667.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-	protocol="application/pgp-signature"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMKsWRmVeSWpSXmKPExsWy7djPc7rb3hSnGRx/yWnxYN42Nos1e88x
-	Wcw/co7VovuVjMXLWffYLDY9vsZqcf/eTyaLy7vmsFnMOL+PyWLdxlvsFvfP9DBa/N+zg93i
-	ed8+Jgdej52z7rJ7bDug6rFpVSebx51re9g8Ni+p9+jbsorRo+/lBkaPz5vkAjiiuGxSUnMy
-	y1KL9O0SuDK+7N7GXvCfr2LTnnVMDYyfeboYOTkkBEwkuo7sZu9i5OIQEljBKLF753RGCOcL
-	o0RP7x02COczo8TSM83sMC0ftr+DqlrOKHF+3TdWCOcFo8SDG5OYuxg5ONgE9CTWro0AaRAB
-	MtfNfAXWzCywj1li099AEFtYwFmiec1jsDiLgKrE1+MNYHdwCjQwSnz6fAMswStgLnFh00pW
-	EFtUwFLi+NZ2Noi4oMTJmU9YIIbmSsw8/wbsIgmB7ZwSNyZdYoU41UXi14LdUGcLS7w6vgXK
-	lpE4PbmHBaKhnVGi6cpCVghnAqPE544mJogqa4k7536xQdiOEh+/HGIHeU1CgE/ixltBiM18
-	EpO2TWeGCPNKdLQJQVSrSKzr38MCYUtJ9L5awQhhe0icW/EEGtqTGCXONfezT2BUmIXkoVlI
-	HpoFNJZZQFNi/S59iLC2xLKFr5khbFuJdevesyxgZF3FKJ5aWpybnlpsmJdarlecmFtcmpeu
-	l5yfu4kRmPZO/zv+aQfj3Fcf9Q4xMnEwHmJUAWp+tGH1BUYplrz8vFQlEd7nXUVpQrwpiZVV
-	qUX58UWlOanFhxilOViUxHlVU+RThQTSE0tSs1NTC1KLYLJMHJxSDUyCti31/z0Xb/F02MZx
-	8NWZaV/7tCN38U9ymrLlylPeJQEufzdkylrqzHTkerjh1X27NYpXznmxbPLY+ebBAnOvqw7b
-	K4rXpTCfYVy0mCva+P/Vm4du5j4431a3PcDWf8uS694pe5155gQE2v9wd7sc77rDfoK/tP8i
-	2xuvZ9x/66at91F54d7a/CBrnT91eyY93FD/eYWz9spkxz1Ox9wmNqTNFTZmz3z6Zf2zV+GX
-	Chd0NrUE5DVn8F1/erm7ks/5xtT20y8t5lZIOWZuD3zoOMs5Ma7neXzCbs+8TeqZJbF6Rk9P
-	J7UWcG9Uvp7inLaa/+re0i1vRKTnhVxZnHn0svOZNpUzRl9nH93tpnVbiaU4I9FQi7moOBEA
-	xZ5FWfYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJIsWRmVeSWpSXmKPExsVy+t/xu7pb3xSnGfTtkLZ4MG8bm8WaveeY
-	LOYfOcdq0f1KxuLlrHtsFpseX2O1uH/vJ5PF5V1z2CxmnN/HZLFu4y12i/tnehgt/u/ZwW7x
-	vG8fkwOvx85Zd9k9th1Q9di0qpPN4861PWwem5fUe/RtWcXo0fdyA6PH501yARxRejZF+aUl
-	qQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlfdm9jL/jPV7Fp
-	zzqmBsbPPF2MnBwSAiYSH7a/Y+xi5OIQEljKKPH56Qq2LkYOoISUxMq56RA1whJ/rnWxQdQ8
-	Y5R4OOMHWA2bgJ7E2rURIDUiQOa6ma/YQWqYBQ4yS1x63MMEkhAWcJZoXvOYHcQWErCTaLt0
-	gxnEZhFQlfh6vAGsgVOggVHi0+cbYEW8AuYSFzatZAWxRQUsJY5vbWeDiAtKnJz5hAXEZhbI
-	lvi6+jnzBEaBWUhSs5CkZgHdxyygKbF+lz5EWFti2cLXzBC2rcS6de9ZFjCyrmIUSS0tzk3P
-	LTbSK07MLS7NS9dLzs/dxAiM123Hfm7Zwbjy1Ue9Q4xMHIyHGFWAOh9tWH2BUYolLz8vVUmE
-	93lXUZoQb0piZVVqUX58UWlOavEhRlOg3yYyS4km5wMTSV5JvKGZgamhiZmlgamlmbGSOK9n
-	QUeikEB6YklqdmpqQWoRTB8TB6dUA9PSUxVKDxvvzPmmkVvOtzTGJuKhDe95vs/p6xmOfPmp
-	uT/m0LWOfPXdYiZvD7YU3Er/bWzl6+oUceZRI/OpPdyHrZd0qcfI25Q8OZtRcN0vXXdHWEfd
-	d2bfM2tbUqavS52kZHxlZ9mVyLmsi/Pa5t22rZ3izzC9O3HmrwWLc7IS2C++q7B9Yj/t14oq
-	k12Pbb6p19p9/TwzWzj3ilW5in3soVc/t8Rc+5W/LXXqsev3eIL+yijm7nIU+DHlxL/O/zra
-	lz69Otd851fS3hy53LItyRNeNc/Nm5nLWLfwzDx34f95BaJhq3+t2sK/4luNa3FXqa7ShpkJ
-	MpqOF9/rPtirt2BFgc/F1BevlZdwyP5UYinOSDTUYi4qTgQA8UnVOmwDAAA=
-X-CMS-MailID: 20240620084749eucas1p18f46cc9aa0983afb75e1677b399d12f8
-X-Msg-Generator: CA
-X-RootMTR: 20240620084749eucas1p18f46cc9aa0983afb75e1677b399d12f8
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240620084749eucas1p18f46cc9aa0983afb75e1677b399d12f8
-References: <20240618204523.9563-7-semen.protsenko@linaro.org>
-	<CGME20240620084749eucas1p18f46cc9aa0983afb75e1677b399d12f8@eucas1p1.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <171878639288.10875.12927337921927674667.tip-bot2@tip-bot2>
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-It was <2024-06-18 wto 15:45>, when Sam Protsenko wrote:
-> Add Exynos850 compatible and its driver data. It's only possible to
-> access TRNG block via SMC calls in Exynos850, so specify that fact using
-> EXYNOS_SMC flag in the driver data.
->
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+On Wed, Jun 19, 2024 at 08:39:52AM -0000, tip-bot2 for Borislav Petkov (AMD) wrote:
+> The following commit has been merged into the x86/alternatives branch of tip:
+> 
+> Commit-ID:     93f78dadee5e56ae48aff567583d503868aa3bf2
+> Gitweb:        https://git.kernel.org/tip/93f78dadee5e56ae48aff567583d503868aa3bf2
+> Author:        Borislav Petkov (AMD) <bp@alien8.de>
+> AuthorDate:    Tue, 18 Jun 2024 21:57:27 +02:00
+> Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+> CommitterDate: Wed, 19 Jun 2024 10:33:25 +02:00
+> 
+> x86/alternatives, kvm: Fix a couple of CALLs without a frame pointer
+> 
+> objtool complains:
+> 
+>   arch/x86/kvm/kvm.o: warning: objtool: .altinstr_replacement+0xc5: call without frame pointer save/setup
+>   vmlinux.o: warning: objtool: .altinstr_replacement+0x2eb: call without frame pointer save/setup
+> 
+> Make sure rSP is an output operand to the respective asm() statements.
+> 
+> The test_cc() hunk courtesy of peterz. Also from him add some helpful
+> debugging info to the documentation.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406141648.jO9qNGLa-lkp@intel.com/
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+> Acked-by: Sean Christopherson <seanjc@google.com>
 > ---
-> Changes in v2:
->   - Changed QUIRK_SMC to EXYNOS_SMC to reflect the name change in the
->     previous patch
->
->  drivers/char/hw_random/exynos-trng.c | 3 +++
->  1 file changed, 3 insertions(+)
->
+>  arch/x86/include/asm/alternative.h      |  2 +-
+>  arch/x86/kernel/alternative.c           |  2 +-
+>  arch/x86/kvm/emulate.c                  |  2 +-
+>  tools/objtool/Documentation/objtool.txt | 19 +++++++++++++++++++
+>  4 files changed, 22 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+> index 89fa50d..8cff462 100644
+> --- a/arch/x86/include/asm/alternative.h
+> +++ b/arch/x86/include/asm/alternative.h
+> @@ -248,7 +248,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
+>   */
+>  #define alternative_call(oldfunc, newfunc, ft_flags, output, input...)	\
+>  	asm_inline volatile(ALTERNATIVE("call %c[old]", "call %c[new]", ft_flags) \
+> -		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
+> +		: output, ASM_CALL_CONSTRAINT : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
 
-Acked-by: =C5=81ukasz Stelmach <l.stelmach@samsung.com>
+Yeah, this doesn't fly currently:
 
-> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_rando=
-m/exynos-trng.c
-> index 497d6018c6ba..841598037cce 100644
-> --- a/drivers/char/hw_random/exynos-trng.c
-> +++ b/drivers/char/hw_random/exynos-trng.c
-> @@ -313,6 +313,9 @@ static DEFINE_SIMPLE_DEV_PM_OPS(exynos_trng_pm_ops, e=
-xynos_trng_suspend,
->  static const struct of_device_id exynos_trng_dt_match[] =3D {
->  	{
->  		.compatible =3D "samsung,exynos5250-trng",
-> +	}, {
-> +		.compatible =3D "samsung,exynos850-trng",
-> +		.data =3D (void *)EXYNOS_SMC,
->  	},
->  	{ },
->  };
+https://lore.kernel.org/r/202406200507.AXxJ6Bmw-lkp@intel.com
 
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
+because those atomic64_32.h macros do
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+        alternative_atomic64(set, /* no output */,
+                             "S" (v), "b" (low), "c" (high)
 
------BEGIN PGP SIGNATURE-----
+so without an output, it ends up becoming:
 
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAmZz7LAACgkQsK4enJil
-gBA4ZQf9H/yTan9r7idWXpguT1GA+QwtJfaZDQynWcWKu6JdXndL54/0k5A5WQsC
-KAItmS8Wzp5CDEUY2uTO/o3O7vSuuAMWC8yY1Gz6OyA9A6RZ1wYlSdYSyPO7eu2Q
-+lAaSn+hx6EgEWeAmsN8e67FhbRu7qvY/+EaYbobCGDfoBTVw4d1eX1ZmAEVY9+W
-qqvMyOlFq8KVxA6I+kYdkm9/Yj6AsxcZMSfZMLf/GfFwgkySTwnxxTz7nFpihYUc
-fEHU8L8IqEaU6EFxkg6tmkx2y0nYnBSkEuQ5/0LYndCqIH8ts+cBBExNNrpVNRz3
-peJy+ClnFMVwNxSK64LK9iBItsDq/w==
-=DvxN
------END PGP SIGNATURE-----
---=-=-=--
+asm __inline volatile("# ALT: oldinstr\n" ... ".popsection\n" : , "+r" (current_stack_pointer) : [old] "i" ...
+
+note the preceding ",".
+
+And I can't do "output..." macro argument with ellipsis and paste with "##
+output" because "input..." already does that. :-\
+
+So I am not sure what to do here. Removing the ASM_CALL_CONSTRAINT works,
+let's see whether it passes build tests.
+
+Or add dummy output arguments to the three atomic macros which have no
+output?
+
+Hm.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
