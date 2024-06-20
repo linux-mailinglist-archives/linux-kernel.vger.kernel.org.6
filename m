@@ -1,126 +1,126 @@
-Return-Path: <linux-kernel+bounces-222166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB65390FDC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:29:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E88590FDC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87A20281FD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:29:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF227B20BBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DA448CCD;
-	Thu, 20 Jun 2024 07:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EC954F8C;
+	Thu, 20 Jun 2024 07:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xl+N7rT0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H0nW0RDn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5179A51016;
-	Thu, 20 Jun 2024 07:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFC14CDE0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718868587; cv=none; b=CjM0lpnntAOtb9//kJ4BiICy8hae00rKxWEgRJfN/xOilD4V1YXnE1+wi5vyEtYH/KKN7zcMIITij/V/L5wjQbO4Fjch/nvAvRHj3mhAHNW0uzs/z1gSb8dnzNjYy1b1gD1YBSY9oF/E5PyogP6SKhrogypCez6clP1qkKCMlK4=
+	t=1718868590; cv=none; b=BlqO5+zv1u/y9xbBWdqPwNvVc/bWl01wPhvKOV/7jWSrgg1FB2Z8z9311JWz+pd6hN6hWMPsWLIQUePPAkOtWCdA5pvYO2vz4h1PlH55RxqsMnWB+17h2ev265lkjIn0eMELSDkp+GLU7gtV2B5lSjgB4rdbk3fLiPEWJz6gc1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718868587; c=relaxed/simple;
-	bh=/0Pu/qY+/qWUJjZ6cuA3xu5HXb/g2AgHzz2MOiE2n4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bWgqPrvPELd3uxIfGGrvRxJ7rz+l+n6RchDxRV2idCfB9uvOoXZeapENOixIZEyg+3dHyV8qual427h+0Qsqc+eJBuSS50XFRW99ymSCURxc7BagS2ZFfs+c6EQ8VuwslGg7KWveSa38rJGSfl+sjczPzZj/WQgk6JUqlP1YaCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xl+N7rT0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A3F2C2BD10;
-	Thu, 20 Jun 2024 07:29:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718868585;
-	bh=/0Pu/qY+/qWUJjZ6cuA3xu5HXb/g2AgHzz2MOiE2n4k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Xl+N7rT0nScFC5i7zVVjLy0tBT8VPIrz8JcILz62jtm+O1daLv4w1gFk3ld6Pdlo4
-	 eFhy2jm+GCtERlp90dNS6P9m7fYdLpsKpkU6uCTF+PdXUz/Eh6IM6B21TmGR9TectH
-	 /rM773eG8oapb38bJYnVLLCi3OSIOtDk26h9G3U9SVmw0nI67rgNqZWqarCDRVrdHK
-	 gBap/sjOe/gqMe8c5xShFzBkHRIrcJTKsT7LNAfHbQmZEkaAFRVzUu2aJ34z3gtNTg
-	 LRue0Os0lKawREKGz18Vz2Gxa1acIvFcS05V3idbmd74GrKOB/wVDwquTqB1bFe+Zm
-	 bhy9rzmf7kVEg==
-Message-ID: <dd9433a8-7992-487b-9b33-10ca66ba9c51@kernel.org>
-Date: Thu, 20 Jun 2024 09:29:38 +0200
+	s=arc-20240116; t=1718868590; c=relaxed/simple;
+	bh=8ZmitoDbH+cVJQHrcxtblPDnuNim+KyNprGyFrJmgUc=;
+	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lNVNO9HZGYocMujHVxVpBI35cktPE6jPaUa0z5UFFwwOUbzyIn6EG955GBeYLlnApoMEFx9pL5ZCUB0WbBYnw0J0oDlnAlL4nqd2G/NnnYyufeFz86HrGROy0MIUVgIQfn5d2pz45BbJ6C2SqQ6jhcGE3PT6uqk3vnsBfdi106w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H0nW0RDn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718868587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ztKOnDGsf2GzDyPBbwHlxz7MtbZW2Vf4Gzu8EVZGA6E=;
+	b=H0nW0RDnrxWsyXA1xvO8idgKENQ51VNSTNUWYsaeX3go2RPsFvDpkCaBw2aYoBHJFmIZDQ
+	1QkNVnPbG/E17DOtPJMgQHSjomVORPnD67BDeqCZ6T+lzO84yR24H2bTUPAXf/xWLXJgwt
+	ayeMT3MqC52Y+NlCiLUICIDeT1etZw4=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-17-u-FK56VkP5-UDArHy43DTw-1; Thu, 20 Jun 2024 03:29:45 -0400
+X-MC-Unique: u-FK56VkP5-UDArHy43DTw-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6ae4c8c30baso6340746d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 00:29:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718868584; x=1719473384;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
+         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ztKOnDGsf2GzDyPBbwHlxz7MtbZW2Vf4Gzu8EVZGA6E=;
+        b=k575G6M7ySo2lcsMqtChF+NdnNQe1G6w1rgjeQERe+AxTgYO865RN2SBYRPX6oE6BI
+         gORlvvEP1bIyYUACOxGbwdhv6KLvv4BKP+2VZoN0mUK8LqKxA8tZ3kDYfrtAHwJmlJ/o
+         lJ2EYOtwMBMeMe8+fF+EMtGC1h4byTK19+GrN21ikW+STXLkE9HZQsRHW57b3Mah0yLe
+         Yu3nWSgQz8zxJ/gtUaCserS68kobn4QU/4nyp+jIPXhQUnGP6ttkuEJkgnuv21SbOBof
+         IPWIwKnC/cygFmJ1J8RakA1RRN8+9AYIbeaMMfdepFbeytm/iUXXGjXGya67bYPTUfF5
+         SNJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhz7LYfBYhNqaBE27Doi98ln3PS5Ly2yDYMohjS1NBRaTSHMiwZfNDmPxy8aMycDDg/L06fd827oL58q1U7cRHm+Wu3CRc721rw25R
+X-Gm-Message-State: AOJu0YzKYGdr8BWOxDXGVQffJNgGYCoEDzMY0EohelMzRYzQFzn4L/u0
+	a++NwNkqxnBmzbtY2A0Os7qpRUflYu5+P4bYlUtCahf7KRWrTl7mjUGE2Av7EpZPvs8fXTj69OR
+	J1vvORZiUDDerBZ65He7rJTLqG+KfjV9nbceTAUxcKHQxxGXp/9OiCgyBnsLTeRdt4Q9vf7ceUY
+	DRGQiI0LaCdzVttoirWSHBOF1VT7grDZ+KSVqZ
+X-Received: by 2002:ad4:558d:0:b0:6b5:6f9:3690 with SMTP id 6a1803df08f44-6b506f936b8mr32298726d6.36.1718868584640;
+        Thu, 20 Jun 2024 00:29:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFtucCfTw18OK/4driyigN7DscgMAJqfUMg8ePNH2mvWjujEgVbf0sK3qaDLw4s0/Ak66TSeuNfD+4wwT5BsSc=
+X-Received: by 2002:ad4:558d:0:b0:6b5:6f9:3690 with SMTP id
+ 6a1803df08f44-6b506f936b8mr32298626d6.36.1718868584389; Thu, 20 Jun 2024
+ 00:29:44 -0700 (PDT)
+Received: from 311643009450 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 20 Jun 2024 02:29:43 -0500
+From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240619210023.982698-1-amorenoz@redhat.com> <20240619210023.982698-6-amorenoz@redhat.com>
+ <20240619183943.5a41f009@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] hwrng: exynos: Enable Exynos850 support
-To: Sam Protsenko <semen.protsenko@linaro.org>,
- =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Anand Moon <linux.amoon@gmail.com>, Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org,
- linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240618204523.9563-1-semen.protsenko@linaro.org>
- <20240618204523.9563-7-semen.protsenko@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240618204523.9563-7-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20240619183943.5a41f009@kernel.org>
+Date: Thu, 20 Jun 2024 02:29:43 -0500
+Message-ID: <CAG=2xmO5jY7Rj=O+ZToRn=aSLXSPc4anzXfZM+_-PxMvqacWhg@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 05/10] net: openvswitch: add emit_sample action
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com, 
+	horms@kernel.org, i.maximets@ovn.org, dev@openvswitch.org, 
+	Donald Hunter <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/06/2024 22:45, Sam Protsenko wrote:
-> Add Exynos850 compatible and its driver data. It's only possible to
-> access TRNG block via SMC calls in Exynos850, so specify that fact using
-> EXYNOS_SMC flag in the driver data.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
+On Wed, Jun 19, 2024 at 06:39:43PM GMT, Jakub Kicinski wrote:
+> On Wed, 19 Jun 2024 23:00:06 +0200 Adrian Moreno wrote:
+> > +	OVS_EMIT_SAMPLE_ATTR_UNPSEC,
+>
+> Are you using this one? Looking closely I presume not, since it's
+> misspelled ;) You can assign =3D 1 to GROUP, no need to name the value
+> for 0.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Good point, thanks.
+The openvswitch header seems full of unused names for value 0.
+I guess it's OK to break the local "style" if we're improving it?
+Or is it better to get rid of all of them in a single cleaning patch?
 
-Best regards,
-Krzysztof
+>
+> > +	OVS_EMIT_SAMPLE_ATTR_GROUP,	/* u32 number. */
+> > +	OVS_EMIT_SAMPLE_ATTR_COOKIE,	/* Optional, user specified cookie. */
+> > +	__OVS_EMIT_SAMPLE_ATTR_MAX
+>
+> kdoc is complaining that __OVS_EMIT_SAMPLE_ATTR_MAX is not documented.
+> You can add:
+>
+> 	/* private: */
+>
+> before, take a look at include/uapi/linux/netdev.h for example.
+
+Thanks. Will do.
+--
+Adri=C3=A1n
 
 
