@@ -1,116 +1,149 @@
-Return-Path: <linux-kernel+bounces-223201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C577911043
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:11:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E6B910FFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8E96B24854
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E241283E7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012DE1B373C;
-	Thu, 20 Jun 2024 17:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63171C2331;
+	Thu, 20 Jun 2024 17:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4DectiFN"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="Z1WAPFAm"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A501B0115
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085EF1C2305
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718905940; cv=none; b=UgeUbhk2HK66nqSpFIzdeZB+Pp3AcHkxh82A48RIufMkAHnjL6y4hzEDOLgisdvzekIbnQ3VJtCKCzeBVtxxHUWLWAn9HfeRicMBpgegwkXHNRk3bdgbjnEBo7WKx12eo+VsqFdgzmakkWC4WZ+A/ghkySxZpolAHgCsrmD8tps=
+	t=1718906284; cv=none; b=pM1Mrp9V5Sbh+JrTGK0y13AHmo28v8Pa+VTYFib10JvgPkXM1S1jwx6VYKL+ugJ1VoT1bEopE3W1J3QQG9A5nX1bvwsQtidBga8AUN0vzYvf7+lD107vdqobQgoZtMbgrDCk78P6fSFAKPMpa+iO/YbVq0rqOrpAkcWgASkP5j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718905940; c=relaxed/simple;
-	bh=TLEjZsKdmpxVXXLteU7nv3fBpHDmfyE0TGvbdCsV6pk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=SJYjFG3m4d2gd2Mw7Y5fP0jMNruWl1jOUmIT+sLWhA53rRyT10HRH7u1gDvUvOtEae9ubaib/SxH5q1ih7BCwPeLHVMHW2egx5e0NU7oDhI1UbVnz9xUgj1HYuQGv8L7FKk65aIF0XC+1ynR5MVOJi7gv/X1nmq2nIkSU7pne24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rkir.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4DectiFN; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rkir.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62f43c95de4so21802737b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:52:18 -0700 (PDT)
+	s=arc-20240116; t=1718906284; c=relaxed/simple;
+	bh=57mSqvK5F8icDZvtosz8MW5pSg98mK2P/IkbkOYFjBo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bb9iFGhzjJ/QtTwCJ2XyU86nqALJQVubD5z4yJE5j7Gh/ryhDvOYHoyFOlj9JSSbckPsTjxshcuCPW7UOFWDHO7DpwMoOUkBoeLZW+SXmFpN1IfJt1LD2fAfcFdmA5F+V0pHh3hB0TdEXe6FCEg1NpOQhCkhbbZlKTX2qwUTB/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=Z1WAPFAm; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f0e153eddso158137566b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:58:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718905938; x=1719510738; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Sm2gpa6hcQ4RATrD54TnpEVi32e1itP79MJvvCbKJQU=;
-        b=4DectiFNIO4pJddMnodVmQYM+WjIJBV2wUKaW1hGj8dOzakhgB6X6r6M0Y08Q/lkuL
-         OMy0L+ED8slxcFVV/jRfLbIkdc0bWX5CnJvx9FPVtCQhaZudylWb0I1KRFL3NPgcl0gD
-         +I2YU69jBqUySHxDIXMHm8bYNWwxXcalbFdEL7cchsRxGgge6bWulAZcCL9/G3viznA/
-         iOW/BavgnrqMpa7DefW9yHydHAdwrTSM00BppRI/vy8kislFiOJt59hcKQIV2uBOO+JG
-         cE6rwsVJIyZezlDG84Gn6O4zVEDEhIUq5l+k+wYgt3peUj04Xi7j3U8AHFv0U5By8ISc
-         j8Pg==
+        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1718906280; x=1719511080; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LLJSsUsQJimHeyehvy4obxzFbfnPiiocs4Of944Xm3I=;
+        b=Z1WAPFAmggyZXgLQQ8xHRVLJyIdVqTm6EFiZQkqU98DYk6IGKMtR0IbCNv8eef7YzJ
+         4U5udbizQMs46zEqIFLLcbKD6EtEnSEv7giK2XYYh7iwjvYnoT/O3BVQt6wbbJy8D2jR
+         WvPVWf5OPR+9R73AdLBwFo6uXDNiyz4Q0GVRQbP4JgqR6vr1DSMg7WEOq3R+k69zaT5i
+         VDWjNunvXVyqv5ZGr2lZ8ZG4qGUrUJEnTdNpG1agdy5Rp1xak0eQNgAdsOXgyqale1hO
+         FHt1JdLhWZ4fm+JxXSREDbBVDzEf+viVWyUTEj8FpRgGHT6Fa0Ul950C885uZOllMtUi
+         WA6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718905938; x=1719510738;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Sm2gpa6hcQ4RATrD54TnpEVi32e1itP79MJvvCbKJQU=;
-        b=QMsuo9sEOF8TaEs3p5tGC0kii+i3iauTFl7j4cb1hSnRvR3ytXEOL3n9OKPxOB9THq
-         6U/6VzQ+NwxNi8HuYcKqqWeFzKb2prhhWHmA8qvUNwFMbwr/kFQyS8dXzvuzZ2SlzmTA
-         9/Yas0DaO24DHvQQkPRIijvYC6pv1hEGE17v8Z28u1/7kI9XOGp31y9M4ThKjCXQlY18
-         1Pd5PPPnj00LIRQ1JHyyEf5J0BD1emrmx49zRi94Fm4a/5Y0VLKcrOrDeb/GlQZTLrc2
-         8OfzmXzxp/7E7lkLCwPzDlVX4kUhPp9IfknSjtcjOsfsUzp+gn/O+D6N+2i0wOZSako4
-         Bn3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVNSv5D02X+T6SkzKrM2oCTSZfelzokblD2zjH8ekmjpASK4eaG/w8587Kp87xcUwPKMff+mVA23Uajh+Z+wT4iD5AlRZlTeMyZ8faN
-X-Gm-Message-State: AOJu0YwdWnEnA560NUo2UVP1h1tKOVlpLZOWagunLJf87Gd6oK2v6SYo
-	s/MbSdmRSSEuC0CapYpbreZJQoxN8eT4fCp8kPCahOZE1b3QSSEPsET7CYQzyYCzygCfqA==
-X-Google-Smtp-Source: AGHT+IFuWlbIslAeTyNzbjywNAP+777MiMdKK+WPP+r9rQlqEuhXFSUkwwTiQkmcp9ClrNjd1fkYkL4d
-X-Received: from rkir98.kir.corp.google.com ([2620:15c:7d:4:df4:7552:4ba4:9441])
- (user=rkir job=sendgmr) by 2002:a05:690c:ec4:b0:61b:e689:7347 with SMTP id
- 00721157ae682-63a8dc08e63mr14852627b3.2.1718905937949; Thu, 20 Jun 2024
- 10:52:17 -0700 (PDT)
-Date: Thu, 20 Jun 2024 10:52:14 -0700
+        d=1e100.net; s=20230601; t=1718906280; x=1719511080;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LLJSsUsQJimHeyehvy4obxzFbfnPiiocs4Of944Xm3I=;
+        b=YIzTjzdTrO5p7t8cwG03+ShfNdiUm7Ji6WymEjD83Ycc778RtTfesqwIVonRoJXJPu
+         z2r7FuV+aOmu270y+zxhDRZ3QiZkyqoayLT3XwMSGDqCbwptpLSLp+K075DRWkdNVTFG
+         YrLhjwQAd1QMXuqwA5BkG2f3KS/cjk/BX0nSx7oQ69vwPOj6zw2feVViNRIg+b11oXlf
+         33wddX1kfZEjTY45wWLipEFi0rVBAnr4vAzUdTgD2wNZ6IJ0GJOJZbvN1PpacKSCA9ce
+         nRR2DIciTX/LJkJr32110o5lz1LQwFcig0KYhdy5a70H0ybIm2Am8mX2DKUYca9q1cE8
+         88NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMMEnoJubR5eqA5xI+z50j/L+KB443IcWGlTwzOWUxMFquBUVRHORG7eS3tyBRbh8q2ZpmVjWekccO4dI2fv6kWUGdztHb3PcPoaYa
+X-Gm-Message-State: AOJu0Ywod8EMWu4S6cwsJsQyU+/gCRf4mQ6cOMQOCRLq6dLvx5ivuZIL
+	Dp6voTT2K4sXrgGG38JVLGr2lfJ+1B7XwU1FBTgTe1O90aSgrTjlhifkCsXQ/mM=
+X-Google-Smtp-Source: AGHT+IGXtwYdokrlfBxhK8FxTp2sWYE+r/rA8OXrz8ajsAvjdcVPMUue0BkFzpXPCbEPXWGLdile5Q==
+X-Received: by 2002:a17:907:8025:b0:a6f:147f:7d06 with SMTP id a640c23a62f3a-a6fab7de093mr273780966b.77.1718906280266;
+        Thu, 20 Jun 2024 10:58:00 -0700 (PDT)
+Received: from localhost.localdomain ([91.216.213.152])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f42e80sm781370766b.186.2024.06.20.10.57.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 10:57:59 -0700 (PDT)
+From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"J.M.B. Downing" <jonathan.downing@nautel.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Yangtao Li <frank.li@vivo.com>,
+	Li Zetao <lizetao1@huawei.com>,
+	Chancel Liu <chancel.liu@nxp.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	alsa-devel@alsa-project.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Cc: Markus Elfring <Markus.Elfring@web.de>
+Subject: [Patch v4 01/10] dt-bindings: dma: pl08x: Add dma-cells description
+Date: Thu, 20 Jun 2024 19:56:32 +0200
+Message-Id: <20240620175657.358273-2-piotr.wojtaszczyk@timesys.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
+References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-Message-ID: <20240620175214.515211-1-rkir@google.com>
-Subject: [PATCH] UAPI: Make virtio_ring.h C++ friendly
-From: Roman Kiryanov <rkir@google.com>
-To: mst@redhat.com, linux-kernel@vger.kernel.org
-Cc: jansene@google.com, mett@google.com, jpcottin@google.com, 
-	Roman Kiryanov <rkir@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-virtio_ring.h is an UAPI files which could
-be used by code outside of the linux kernel
-which could be written in C++.
+Recover dma-cells description from the legacy DT binding.
 
-Google-Bug-Id: 331190993
-Change-Id: Ib27c1e57c273ec5613b4e745a3ab4d53bdde5aac
-Signed-off-by: Roman Kiryanov <rkir@google.com>
+Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
 ---
- include/uapi/linux/virtio_ring.h | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Changes for v4:
+- This patch is new in v4
 
-diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
-index f8c20d3de8da..be88871d512b 100644
---- a/include/uapi/linux/virtio_ring.h
-+++ b/include/uapi/linux/virtio_ring.h
-@@ -199,11 +199,13 @@ struct vring {
- static inline void vring_init(struct vring *vr, unsigned int num, void *p,
- 			      unsigned long align)
- {
-+	struct vring_desc *desc = (struct vring_desc *)p;
-+
- 	vr->num = num;
--	vr->desc = p;
--	vr->avail = (struct vring_avail *)((char *)p + num * sizeof(struct vring_desc));
--	vr->used = (void *)(((uintptr_t)&vr->avail->ring[num] + sizeof(__virtio16)
--		+ align-1) & ~(align - 1));
-+	vr->desc = desc;
-+	vr->avail = (struct vring_avail *)(desc + num);
-+	vr->used = (struct vring_used *)(((uintptr_t)&vr->avail->ring[num]
-+		+ sizeof(__virtio16) + align-1) & ~(align - 1));
- }
+ Documentation/devicetree/bindings/dma/arm-pl08x.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/dma/arm-pl08x.yaml b/Documentation/devicetree/bindings/dma/arm-pl08x.yaml
+index ab25ae63d2c3..191215d36c85 100644
+--- a/Documentation/devicetree/bindings/dma/arm-pl08x.yaml
++++ b/Documentation/devicetree/bindings/dma/arm-pl08x.yaml
+@@ -52,6 +52,13 @@ properties:
+   clock-names:
+     maxItems: 1
  
- static inline unsigned vring_size(unsigned int num, unsigned long align)
++  "#dma-cells":
++    const: 2
++    description: |
++      First cell should contain the DMA request,
++      second cell should contain either 1 or 2 depending on
++      which AHB master that is used.
++
+   lli-bus-interface-ahb1:
+     type: boolean
+     description: if AHB master 1 is eligible for fetching LLIs
 -- 
-2.45.2.741.gdbec12cfda-goog
+2.25.1
 
 
