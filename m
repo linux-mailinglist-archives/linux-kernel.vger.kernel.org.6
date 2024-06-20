@@ -1,87 +1,90 @@
-Return-Path: <linux-kernel+bounces-223151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24FA9910E89
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:30:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67902910E8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FF4E1C21A9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:30:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 149AF1F22EA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4021B3F37;
-	Thu, 20 Jun 2024 17:29:51 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id C7B991AB8F0
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544201B3F33;
+	Thu, 20 Jun 2024 17:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Io/PNz+W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903B21AB8F0;
+	Thu, 20 Jun 2024 17:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718904591; cv=none; b=SRhPDB7mtnjUgPygrU2TjocvR251TuycZo/GzRpg/A6cOf2SCYAMuXsNHtR9+J4ZAtEcQkM6ojGQs9J4KSbNrPB2C34FL5uc76KFFgqcXLE/AHy+XONk7qPPTOWxQ0q6TFBQKKcj1HTQQ1LV11teZPxffZWaDaY08QGZv/teN5o=
+	t=1718904624; cv=none; b=uIr2CUlGd9dZyiKEd/4/VzucsJBfHfGPVtvIcYfmG/WQO4mEA4M1zf4kZLA6XL9cQVKejKjSh+W80erRlNRO+cFP724CPXsIE4Nsz2SOp3G+mvO9nox5ejFb8dEkdqPtz1HQm4U7RGsvYczHBH6qc8cE/BAJb7c/5AQftD1h+T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718904591; c=relaxed/simple;
-	bh=HSV+mjGe9U1QjnuLWkIZr8nQXJh3Rx93/FTUhxTQ+94=;
+	s=arc-20240116; t=1718904624; c=relaxed/simple;
+	bh=iK02/V36i9hR8kwG3cCXAEbfm4PnmKo2X9b88lBJgjw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U4U3Mm4w5HuT4pRRtfzWCMv+U0JLZhm4RFn7F0aPWztyCdHFK8CrOPZZazEZQZ1J+QQoKBDCmCpkmmpmsWbbhdXsaKZyxUSHI5dDZEhe6BoD+q7bdQlPMGGsGN6ZXDzn008d51UkqVJi0aczJ7PuhhLS28UHuMtoyUN64/30C+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 506493 invoked by uid 1000); 20 Jun 2024 13:29:42 -0400
-Date: Thu, 20 Jun 2024 13:29:42 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+696cffe71c444e4a2dd8@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
-  kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
-  linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-  netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org,
-  syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [netfilter?] [usb?] INFO: rcu detected stall in NF_HOOK
-Message-ID: <24f0d918-efba-414c-8328-c0ed240e67b2@rowland.harvard.edu>
-References: <000000000000c63a8e061b556ea6@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MvTybpx1UZR9dsp6V5D5Li0UCbOZvP9H55/c+uLOcBkA7AQR7VLtgjUcHkHAzQluh4qPep2rIHYFjaqQTkcVmXo7mghAtf0ptZBonGYe53maNNoCkzdlDmljy8s9wdPS5wZZQ3LFKFcscA/AcJooii1PbSJVDH8ut4GZKmcBX/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Io/PNz+W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53554C2BD10;
+	Thu, 20 Jun 2024 17:30:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718904624;
+	bh=iK02/V36i9hR8kwG3cCXAEbfm4PnmKo2X9b88lBJgjw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Io/PNz+WmqjDIH2KxtvUkQ2lgEP7c2QKC8Fb1nIVzRic6EQEE67qQMXJWRpA2v4Vh
+	 rk91hji93MD9qrqK1Lmj6DuUKkmOEc7vmlFMRBxyXtUpq+fswYbPj14vk9O9tleeBS
+	 N3aHPjdTAv+5ee4YAn2yzcfgoXfWSXtnOIHULBhgNw0iIr/o2qB5QvZ8+NFe52OAns
+	 ZbAqV7/YXPF1Z4WKD7S0of1V5OC9cj7UfkfqYZuEUg+egnlSznVrLMO1Xv+V5A7KeF
+	 yYO1LEJJ7YeYkbaiPrjOU4Dv/SaVm2B8uFG50bbskEj3g9dF9tRZGdmLTIYhhD4pqE
+	 Ww6i7kRGLY9SA==
+Date: Thu, 20 Jun 2024 18:30:19 +0100
+From: Lee Jones <lee@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 00/20] leds: leds-lp55xx: overhaul driver
+Message-ID: <20240620173019.GA1318296@google.com>
+References: <20240616215226.2112-1-ansuelsmth@gmail.com>
+ <171890216265.1289520.18025885103780443097.b4-ty@kernel.org>
+ <66745e9b.df0a0220.41e53.a3af@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <000000000000c63a8e061b556ea6@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <66745e9b.df0a0220.41e53.a3af@mx.google.com>
 
-On Thu, Jun 20, 2024 at 10:13:24AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10341146980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
-> dashboard link: https://syzkaller.appspot.com/bug?extid=696cffe71c444e4a2dd8
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13e8bfee980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12d3d851980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/93525a95fe83/disk-2ccbdf43.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/b9b895227ea2/vmlinux-2ccbdf43.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/e825248a8e73/bzImage-2ccbdf43.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+696cffe71c444e4a2dd8@syzkaller.appspotmail.com
-> 
-> rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { P45
->  1-....
->  } 2688 jiffies s: 1349 root: 0x2/T
-> rcu: blocking rcu_node structures (internal RCU debug):
-> 
-> Sending NMI from CPU 0 to CPUs 1:
-> cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-> cdc_wdm 3-1:1.0: nonzero urb status received: -71
-> cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
-> cdc_wdm 3-1:1.0: nonzero urb status received: -71
+On Thu, 20 Jun 2024, Christian Marangi wrote:
 
-#syz dup: [syzbot] [usb?] INFO: rcu detected stall in raw_ioctl
+> On Thu, Jun 20, 2024 at 05:49:22PM +0100, Lee Jones wrote:
+> > On Sun, 16 Jun 2024 23:51:59 +0200, Christian Marangi wrote:
+> > > This long series is (as requested) a big overhaul of the lp55xx based
+> > > LED driver.
+> > > 
+> > > As notice for these kind of LED chip there was the bad habit of copy
+> > > the old driver and just modify it enough to make it work with the new
+> > > model. Till v4 I was also doing the same by following the pattern and
+> > > the code format of previous driver.
+> > > 
+> > > [...]
+> > 
+> > Applied, thanks!
+> 
+> Mh? What happen? I'm preparing v7 with the changes requested :(
 
-Alan Stern
+Tooling issue, please ignore.
+
+-- 
+Lee Jones [李琼斯]
 
