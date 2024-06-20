@@ -1,136 +1,201 @@
-Return-Path: <linux-kernel+bounces-223008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E50D910BB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:15:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6888910D04
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF2321C230DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:15:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 713B12872CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616D21B29C7;
-	Thu, 20 Jun 2024 16:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DD81B3757;
+	Thu, 20 Jun 2024 16:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="mUIFHveI"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tfRWGxIY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26EB1B29A4;
-	Thu, 20 Jun 2024 16:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380551AD4B9;
+	Thu, 20 Jun 2024 16:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900099; cv=none; b=KDo2Jdq5h0Cls97o77p3cBELcN+bnbxEIYLy+HnJALhji6qMKqsztIYCcWkd+N0fFYRsaOC7Du10VLmiOFQbjGQENFKdk6Td0OkW0AcpX6dYUj0CUaYqyuk/nqaLSsdYF7GICt2cf+MgrnjDd7GsnJ+yTSohkv0HwkaXpRanG9I=
+	t=1718900957; cv=none; b=I7VIfIq8YmzF5BUjtPhj4I+K/qPbRQ4Wi1cDc5/16IHUxvG86I/rzn+H5a5LezbArNAYUANfeK0d8d88DI/oAJqvL7fXb2HeBvax8g4R3hdmWQ7/U5AQDLWzxoryiYCIBwqN/VJBgrN0iX3RWJn8tq4Il8LESptftT0vhqHwSmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900099; c=relaxed/simple;
-	bh=+EKV5AxHovF3V+5mH8rAZYNVsw/V8pR/PzLDsahGGlc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OvEkSnvlER3n5GnFnA6LKxMKwPtRQOk5YTm2jhzDbiHi/pUBvAxWI2AgbQR350Xs4bX20P1ieiX2h8B/xgE+q3VAIA/GahgkGoZpJRVhRYpDV0JDHG7dUZ0sGyNZN0pD2Ap62JWGbWSTPaXGsR5SwHO+VC2jT5BIZFeLHZrpkF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=mUIFHveI reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 5242e261afb4306f; Thu, 20 Jun 2024 18:14:54 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id DCA3C6A7AE3;
-	Thu, 20 Jun 2024 18:14:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1718900094;
-	bh=+EKV5AxHovF3V+5mH8rAZYNVsw/V8pR/PzLDsahGGlc=;
-	h=From:To:Cc:Subject:Date;
-	b=mUIFHveIkUT6u7RajyME0O5sYywcrPsHEUaK+8ucCZ2Qa3/GMmozOXdNVWBneBZbU
-	 SZqiZnl7TKSk5K6thh6J/pGbMOxgEKYj590ectBdyI2zTyzoZcVePpsW+dpwoeF137
-	 YAbvjhW994Ana4yPDKOwRMmCFAORueMLP2H7dBI+vTvH/zUywcwqoBYXpcH2CdlSZw
-	 KjLKCH7hoz3CpX+SLLIKbT6EU11KDPyAcjCfsAGDpCRrs2oO6Ub9yL267cBcR6khhm
-	 pXGZTGE6OtMe95432TPNFDRbuhvWY9K8YNGeYXSRVBhD65/H8ikME92Al6wBpPsIsx
-	 RdU9Ncu1QQiZw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Aaron Rainbolt <arainbolt@kfocus.org>,
- LKML <linux-kernel@vger.kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-Subject:
- [PATCH v1] cpufreq: intel_pstate: Use HWP to initialize ITMT if CPPC is
- missing
-Date: Thu, 20 Jun 2024 18:14:53 +0200
-Message-ID: <12460110.O9o76ZdvQC@rjwysocki.net>
+	s=arc-20240116; t=1718900957; c=relaxed/simple;
+	bh=BrICMMZrS8m6MYe0kQ4cVRc55ARLzaghyayTnAQ5YTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sy4vioTgC+WpBYXAxMn3i+nIgP45rWGBp5seIsTfnBCNjBwD8Kybjm+WUypLltTxoqBGfxMT/KS6TBqBIgPnlYQRYreWLI1rAnwBTTpi3VlHNQ/bZhgmLFuR4sW8ZaoeJFUp5nSPueCBgWn9aUCa2noQPrmbUj/Rcv1BiVYqDh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tfRWGxIY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16970C2BD10;
+	Thu, 20 Jun 2024 16:29:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718900956;
+	bh=BrICMMZrS8m6MYe0kQ4cVRc55ARLzaghyayTnAQ5YTM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tfRWGxIYwv7J5fGI6mps0kORlWb0ron2PdO3PjRczD4G/Y4pAX+qMDDlzHuead6Rf
+	 5jAD0/cIlrJEByacZSSW93LFqUBkoDOjBef0kR0hKHegJcoEREXpWDfrik5/EuvrSn
+	 A7zH4b572BPnpHCutK77CIgPTNSyRv7nDlEiH3jshxrlZyfz4MjKDkJiy/pOkFNwYm
+	 QCNf0IMYU70IXg8D6ABA3AApRAgichtlf817CcTHMEK4DWew6s1cOGmDlHnZxTHah+
+	 7BBA+bGOoJYioXZwVoofX8K7N4RxxewpcxU3LhG5yPloMJNDK8UTCOWm75uMINa8Cq
+	 5Hsiul3plJ+Wg==
+Date: Fri, 21 Jun 2024 00:15:12 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: adrian.hunter@intel.com, aou@eecs.berkeley.edu, conor+dt@kernel.org,
+	guoren@kernel.org, inochiama@outlook.com,
+	krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
+	paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com, haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com, tingzhu.wang@sophgo.com,
+	Chen Wang <unicorn_wang@outlook.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: mmc: sdhci-of-dwcmhsc: Add Sophgo
+ SG2042 support
+Message-ID: <ZnRVkPy5akurmi_D@xhacker>
+References: <cover.1718697954.git.unicorn_wang@outlook.com>
+ <dcc060c3ada7a56eda02b586c16c47f0a0905c61.1718697954.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfeefvddguddttdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhgrihhnsgholhhtsehkfhhotghushdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhk
- vghrnhgvlhdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <dcc060c3ada7a56eda02b586c16c47f0a0905c61.1718697954.git.unicorn_wang@outlook.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Jun 18, 2024 at 04:38:30PM +0800, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
+> 
+> SG2042 use Synopsys dwcnshc IP for SD/eMMC controllers.
+> 
+> SG2042 defines 3 clocks for SD/eMMC controllers.
+> - AXI_EMMC/AXI_SD for aclk/hclk(Bus interface clocks in DWC_mshc)
+>   and blck(Core Base Clock in DWC_mshc), these 3 clocks share one
+>   source, so reuse existing "core".
 
-It is reported that single-thread performance on some hybrid systems
-dropped significantly after commit 7feec7430edd ("ACPI: CPPC: Only probe
-for _CPC if CPPC v2 is acked") which prevented _CPC from being used if
-the support for it had not been confirmed by the platform firmware.
+No, this seems not correct. This should be the "bus" clk, and your above
+sentence "aclk/hclk(Bus interface clocks in DWC_mshc)" implies this clk is
+for bus
 
-The problem is that if the platform firmware does not confirm CPPC v2
-support, cppc_get_perf_caps() returns an error which prevents the
-intel_pstate driver from enabling ITMT.  Consequently, the scheduler
-does not get any hints on CPU performance differences, so in a hybrid
-system some tasks may run on CPUs with lower capacity even though they
-should be running on high-capacity CPUs.
+> - 100K_EMMC/100K_SD for cqetmclk(Timer clocks in DWC_mshc), so reuse
+>   existing "timer" which was added for rockchip specified.
+> - EMMC_100M/SD_100M for cclk(Card clocks in DWC_mshc), add new "card".
 
-To address this, modify intel_pstate to use the information from
-MSR_HWP_CAPABILITIES to enable ITMT if CPPC is not available (which is
-done already if the highest performance number coming from CPPC is not
-realistic).
+I think this is "core" clk, no? Plz check which internal clks' clock
+source is the so called EMMC_100M/SD_100M.
 
-Fixes: 7feec7430edd ("ACPI: CPPC: Only probe for _CPC if CPPC v2 is acked")
-Closes: https://lore.kernel.org/linux-acpi/d01b0a1f-bd33-47fe-ab41-43843d8a374f@kfocus.org
-Link: https://lore.kernel.org/linux-acpi/ZnD22b3Br1ng7alf@kf-XE
-Reported-by: Aaron Rainbolt <arainbolt@kfocus.org>
-Tested-by: Aaron Rainbolt <arainbolt@kfocus.org>
-Cc: 5.19+ <stable@vger.kernel.org> # 5.19+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/intel_pstate.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
-
-Index: linux-pm/drivers/cpufreq/intel_pstate.c
-===================================================================
---- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-+++ linux-pm/drivers/cpufreq/intel_pstate.c
-@@ -355,15 +355,14 @@ static void intel_pstate_set_itmt_prio(i
- 	int ret;
- 
- 	ret = cppc_get_perf_caps(cpu, &cppc_perf);
--	if (ret)
--		return;
--
- 	/*
--	 * On some systems with overclocking enabled, CPPC.highest_perf is hardcoded to 0xff.
--	 * In this case we can't use CPPC.highest_perf to enable ITMT.
--	 * In this case we can look at MSR_HWP_CAPABILITIES bits [8:0] to decide.
-+	 * If CPPC is not available, fall back to MSR_HWP_CAPABILITIES bits [8:0].
-+	 *
-+	 * Also, on some systems with overclocking enabled, CPPC.highest_perf is
-+	 * hardcoded to 0xff, so CPPC.highest_perf cannot be used to enable ITMT.
-+	 * Fall back to MSR_HWP_CAPABILITIES then too.
- 	 */
--	if (cppc_perf.highest_perf == CPPC_MAX_PERF)
-+	if (ret || cppc_perf.highest_perf == CPPC_MAX_PERF)
- 		cppc_perf.highest_perf = HWP_HIGHEST_PERF(READ_ONCE(all_cpu_data[cpu]->hwp_cap_cached));
- 
- 	/*
-
-
-
+> 
+> Adding example for sg2042.
+> 
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> ---
+>  .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 69 +++++++++++++------
+>  1 file changed, 49 insertions(+), 20 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> index 4d3031d9965f..b53f20733f79 100644
+> --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> @@ -21,6 +21,7 @@ properties:
+>        - snps,dwcmshc-sdhci
+>        - sophgo,cv1800b-dwcmshc
+>        - sophgo,sg2002-dwcmshc
+> +      - sophgo,sg2042-dwcmshc
+>        - thead,th1520-dwcmshc
+>  
+>    reg:
+> @@ -29,25 +30,6 @@ properties:
+>    interrupts:
+>      maxItems: 1
+>  
+> -  clocks:
+> -    minItems: 1
+> -    items:
+> -      - description: core clock
+> -      - description: bus clock for optional
+> -      - description: axi clock for rockchip specified
+> -      - description: block clock for rockchip specified
+> -      - description: timer clock for rockchip specified
+> -
+> -
+> -  clock-names:
+> -    minItems: 1
+> -    items:
+> -      - const: core
+> -      - const: bus
+> -      - const: axi
+> -      - const: block
+> -      - const: timer
+> -
+>    resets:
+>      maxItems: 5
+>  
+> @@ -63,6 +45,43 @@ properties:
+>      description: Specify the number of delay for tx sampling.
+>      $ref: /schemas/types.yaml#/definitions/uint8
+>  
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: sophgo,sg2042-dwcmshc
+> +then:
+> +  properties:
+> +    clocks:
+> +      items:
+> +        - description: core clock
+> +        - description: timer clock
+> +        - description: card clock
+> +
+> +    clock-names:
+> +      items:
+> +        - const: core
+> +        - const: timer
+> +        - const: card
+> +else:
+> +  properties:
+> +    clocks:
+> +      minItems: 1
+> +      items:
+> +        - description: core clock
+> +        - description: bus clock for optional
+> +        - description: axi clock for rockchip specified
+> +        - description: block clock for rockchip specified
+> +        - description: timer clock for rockchip specified
+> +
+> +    clock-names:
+> +      minItems: 1
+> +      items:
+> +        - const: core
+> +        - const: bus
+> +        - const: axi
+> +        - const: block
+> +        - const: timer
+>  
+>  required:
+>    - compatible
+> @@ -96,5 +115,15 @@ examples:
+>        #address-cells = <1>;
+>        #size-cells = <0>;
+>      };
+> -
+> +  - |
+> +    mmc@bb0000 {
+> +      compatible = "sophgo,sg2042-dwcmshc";
+> +      reg = <0xcc000 0x1000>;
+> +      interrupts = <0 25 0x4>;
+> +      clocks = <&cru 17>, <&cru 18>, <&cru 19>;
+> +      clock-names = "core", "timer", "card";
+> +      bus-width = <8>;
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +    };
+>  ...
+> -- 
+> 2.25.1
+> 
 
