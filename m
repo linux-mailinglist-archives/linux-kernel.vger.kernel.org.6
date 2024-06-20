@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-222506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7FFB9102E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:35:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394D69102F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC6AD1C2157F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:35:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C0012870F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F421ABCAC;
-	Thu, 20 Jun 2024 11:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E45A1AC243;
+	Thu, 20 Jun 2024 11:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ebLIvKuc"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YS9lkgs9"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB5C39FD7
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536C41ABCCD
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718883307; cv=none; b=GtS5owcJdz2JKAwk4YcGEbiizJJwBoZGy0eqCAoOCqJ/cTG65RrA/VUMjTRxUwyYQmySolNMt24fFo/Xb0LYyQ7/ytvBe7fCLMLBag/YSUDe+T9k45Ap2NF2anhuF1bCcyAiQHnwHrnwFnaT2kR+9q3CFb6EdjcpXq8D3BvjzWk=
+	t=1718883310; cv=none; b=DKXL9siiOTRhfxwSPzryhAQMjkEW2W0lKMgcDLpVM2FuofmO0SHL2Xf8XUZF+hbZ5PKrOGRbH6YSuOw3TPMHvNQCv0DfPTZVNNWAPtzBkBh8J1TKE2O8OaYqCiSCoFJ7/K/zlCRa0CNudy4KKYbXa09t3a3p+e3hbuJlXvaKMvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718883307; c=relaxed/simple;
-	bh=YHKoaWAcJ+E4X2k8gwY2x6AxEmhfp7BeziwiF4EyNK8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XgkDVuEACCA38v9MbqdnS0hXyxBkf3/lVZCY8Xr/76v7qbPNQKYKa4XtpZJhaJBNSR4HgVw9Q3tMvtTj78tslmBKddIeSIurV13ZVYoHnsrn3lzBf/LOsdgMHwiJGmH31JVss81EzEG7/kTQ2teG/1AX8EeERr3GNXbCs0BQ9Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ebLIvKuc; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1718883310; c=relaxed/simple;
+	bh=u46DXMnnV+4LGWHLSY0HJbWET1X6kq31L8FmQvAWJfo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TxDSzDKavWZ6ts9/5sQ2Yz+MxuVKlNgT4xQ7/oj1ZDRFcrV5mCDe3HzTI0Ut7APqO0OIjXUgl2+hMxQ8p3S3FTQLeW1Dp6DaMtiq5Z9TTGOV2f01Ba+ZI3JooW0ZilnUUzX31JwsIOtr5DbAmVb6to9+Rh1n02pX43WU0qHSTkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YS9lkgs9; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42121d27861so8184635e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 04:35:05 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42278f3aea4so8091525e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 04:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718883304; x=1719488104; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Glq2tMaifuOAdzvop5Ltj2KSs2eGaTbj/dbnplQsCrE=;
-        b=ebLIvKucc63hXPA5fGq1RDYhuSO78iZgWRIehIyIyZBZDiAvNy3fa89ebWEem/ijgi
-         XlQEGU3tUHs8emv9FCgfAgUoj4dqAjjROgNUVeDoPCpBGk7VNt8b7zvq2ho00Gu+n32b
-         9y8aEibQ8r7pR7jaeBebUTAusaMLribWl1KVuFBMwcaCWY8a4XFs4xgDllK8kHRKj/je
-         l75T2jw482dbTmlZcaGVYQQ3znl4c/SyfpYUb0LXiNCtryBawbNnA9VqfcoCBglZaF7k
-         3sKYLI9Jc5jYglptJYMIjatFD3QtW1fcAjrZTtZHtYBe0h2zE+k732kVKHb7W+J7S4PE
-         kq0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718883304; x=1719488104;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1718883307; x=1719488107; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Glq2tMaifuOAdzvop5Ltj2KSs2eGaTbj/dbnplQsCrE=;
-        b=A6erHYrEm4OklpDS0HUaAmfqActul18v2gdU/Z1br9rk1EUsk9yw6wjVmroxONFZaE
-         TGd27aq1mhhWkYacKISTHiHQZU/X1WFub+2xV8k6ivrPSO0UPBGUfcs9nvsEuTGAzAqv
-         YFoILb58wWyEgMpXHFRqwXkYlCpdbIvckSVLPtyl5cGGaQBjIDyUCl/vIeECKuza+rus
-         Burn2jqH/fVsLNNiRHryTwTWLdpca8hKKLGaJZTH0DWoN6Nli2OBhvE6D5ddjwwpTQ8+
-         oMgwHUIBoHzn24eiOP9dLv8Jg6ZlaTuFZHWC9T9/l8/8S6jDlekBVe3PVg4Q0AUAkjPy
-         aFVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIjHWGbk4pavabT/9w7c1tFp2AvpBejQft76SBCy+0UGmL7vqiRc4ekkS1TX3PawLthst5ZRXLWX2wLmjB/lFEYe9c/IsaQhe3nG1p
-X-Gm-Message-State: AOJu0Yx6ocj30a94+uCMVSoOPpbjVp/joYld8UZu3dzV4YV2zIRQu88P
-	M3VbmKXOvFhTAHRtsjN8Dsl6FNlazDYfOCvSg7VIm+8zT7nW2ZUxvT4ICVdIVRs=
-X-Google-Smtp-Source: AGHT+IEC333EUO2VdZZgiMKDT3IOG5Ndy0ctNQWLEfPi1WjOb00373ugVPyZ9Tm+mewPfuUng+mSoQ==
-X-Received: by 2002:a05:600c:3587:b0:422:683b:df4d with SMTP id 5b1f17b1804b1-4247507831emr41097855e9.8.1718883303885;
-        Thu, 20 Jun 2024 04:35:03 -0700 (PDT)
+        bh=Rm0p3ifM1mvsX1ZP0z5AtqzhzB7gV2tVDLMJERR6NCI=;
+        b=YS9lkgs9a0/9fFxyN8kRrBstJDezGWBxnuLJsYJbSJzZS3w1HG6ZKsuoJZVd2Upt4i
+         coWZkPLN3XFwwlQNBL1IeW2xS2r87PebOA5jXwX/1yRjRcCjMuJYJP6BHKQVIWIhx824
+         FAapkOw8HzUqAEaogbHeAbgIFsnUHrKUp/lAjla/4bNI/gaEQlk1wqXJzjdKNfycXGgJ
+         OOsn5w6wRFlvp3hzas4lWV/JlgKgz7K9+ob87+geZOKnaxE1XMsCUqRbhakIws+XmPsD
+         2rZVedzXnFSSmyOqU29nG+1awkxTAVyzvoz29S9qlCNMWQgel6GsQlpUyIFyFIxMFGMU
+         YYgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718883307; x=1719488107;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rm0p3ifM1mvsX1ZP0z5AtqzhzB7gV2tVDLMJERR6NCI=;
+        b=Tyubx9g1K7rOffh+ETJbi8csve6hwwMPBDZ5KXsuynxigXmtVbzvgODt8Ec5kVOMOR
+         MzMHasKyGkvyQkUtfK8XedxVUs2/zoeM2bvIKAnJftY8vMbOT62P6oNJgDIcIKFUBZLX
+         SRk0Bqw+tIFOkSjG4H4CDHnpOJRhH1wrmFdPy8WBY6/83CY7ihu4QOyONiTVXwcsMPzb
+         qHy42+NSYMGEgkrrZWEEvIGYu4XDAOrsgLwJq1/1M8YGwWGWT5NEVMlo1KYaOdsZtQu6
+         AMsaxynCUvynj+NG+pAPKcnntD9Ka4FUBvAnM+r1pQYydrrO/Rvhk46TfaMadraWuy7P
+         7tbA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7OQghn78JTS9x60fEHdAc8XrXeUpli5Wbby5uwEGVvs98F4wbVPA4gen9OQ/WWL9Q+aAt3+K4MXI+V90c8c0T6yDHBYgEhZylTCd+
+X-Gm-Message-State: AOJu0YxIxZY+BePRy2ChFn3Kzo1zEbRjP48b3WQdSZY0iuhVEFAT9G6X
+	gOgd/gqFfUZHEDplb2YG8eDv8pR4Qlvf8EuziAm3Db63svSZLOrPxjnNJ2CwHDQ=
+X-Google-Smtp-Source: AGHT+IGITfCEpwFct/l4OjaPbZYnxzu8jG4aF3Etd4mv8IL4/vYQZk/8aqDfBzKmZssKsLb26FIdcw==
+X-Received: by 2002:a05:600c:22c3:b0:424:7615:ecc0 with SMTP id 5b1f17b1804b1-4247615eed9mr36879725e9.6.1718883306600;
+        Thu, 20 Jun 2024 04:35:06 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42471e6623fsm49708985e9.1.2024.06.20.04.35.01
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42471e6623fsm49708985e9.1.2024.06.20.04.35.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 04:35:03 -0700 (PDT)
+        Thu, 20 Jun 2024 04:35:06 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 0/7] dt-bindings: i2c: few fixes and cleanups
-Date: Thu, 20 Jun 2024 13:34:48 +0200
-Message-Id: <20240620-dt-bindings-i2c-clean-v1-0-3a1016a95f9d@linaro.org>
+Date: Thu, 20 Jun 2024 13:34:49 +0200
+Subject: [PATCH 1/7] dt-bindings: i2c: atmel,at91sam: correct path to
+ i2c-controller schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,9 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANgTdGYC/x3MMQqAMAxA0atIZgM1qINXEYe2iRqQKK2IIN7d4
- viG/x/IklQyDNUDSS7NultBU1cQV2+LoHIxkKPW9eSQTwxqrLZkVIoYN/GGofMuEM8sUaC0R5J
- Z7/87Tu/7AQPg29pnAAAA
+Message-Id: <20240620-dt-bindings-i2c-clean-v1-1-3a1016a95f9d@linaro.org>
+References: <20240620-dt-bindings-i2c-clean-v1-0-3a1016a95f9d@linaro.org>
+In-Reply-To: <20240620-dt-bindings-i2c-clean-v1-0-3a1016a95f9d@linaro.org>
 To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -109,60 +111,49 @@ Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
  linux-stm32@st-md-mailman.stormreply.com, stable@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1821;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=952;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=YHKoaWAcJ+E4X2k8gwY2x6AxEmhfp7BeziwiF4EyNK8=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmdBPbcGv1s7Mfb86Y03fTN++vt3SrVwitqTmvp
- PjKNhugL8mJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZnQT2wAKCRDBN2bmhouD
- 1y3MD/4rvCpsB6iB+y+tU/COMJL7PG9Y86Yyz+XvNfpgy86am4K1TLbZ8Sny/9oXRnShDlLPq/H
- WiNVGeCHtmrCa3ns9Jjbxz52NuAFSa4yTyjWIy3ibTBkbeR1Jr+y86y6Lnv8NvzK44v+XbcI5FM
- ci6uH4KG8b1CwU/1rDDA4gWiT7JPEAQZPkeydJ9KLakahgPTbDOkifM37vjYLxJTJSjwlodAK3r
- uKRtEQxP3pAIeHlAgV3DAi8tKwnkGOOQ3tC9iiiaYTT+CyA9Hn/NQlojUkPMhfS3ye0/HGpmyi5
- livlJ9EPWJC2C7sTZ/4OTHny8BtNU5OE6n1gdOXk8y9ueRkfdABW66IDoOdoIpqoBMcFw+CkYh5
- yyzUAUVllosS7j+wrPK0iy+fAhjPZyvfuss2n+Sf8P+Jx8kghLANqPkAoaLuIqSWLnbFCJoME3d
- JHdsLZlsNq5W0y4cobEBTs6744XtWrd5KZXuYR72LcpvLkJZSJZ4DP7o1vpCTvhzHbbfPTY8Z9e
- tMoCB76WkcZC51GzYi3x9I8y/5hjhOwDIxZr7D7fxKR0fhM+STQZ0LaLlihTtceBvZ5fH96mO5F
- UQM2j755vk4CruBVO2fMSo9ABYwLZaXAtpTv0sWlOH8eVmDRYEKM4kamjLlpi/VHebYYg5nrVlz
- ZconbQdG6ZzLgsA==
+ bh=u46DXMnnV+4LGWHLSY0HJbWET1X6kq31L8FmQvAWJfo=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmdBPfKTxkgSWFS16ttNrSkHVD+KfF9UARnuiYo
+ p/Rg1/qfC2JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZnQT3wAKCRDBN2bmhouD
+ 1zFeEACRB+3buIVB42wep9GrsWRJvPAbGfU1NiSOwOWMl4acBsi/Ae7Sgi5W0g2LptUCrzkfkGQ
+ xUD/SXSg8YfnX4nS43j8v+T6sdKojb/YDnwydeU4dcZ3QiXwDOFXKUYBhD1fDg+H8nj/Bf0ONL8
+ 5ACzYaz7KG+UibU9qrO38oQZRUGnnaQZziZ5PPDbdhKmJJMR17dJm+j5b95yf1vddig+6q3EXyB
+ 3Pe15ZkAttWaqygCI9BzVdJtRI+fLyuZyRElgrKPHFiRUZ8CCQraImgzLMPAiImujpgWBw6S3gk
+ aQ7agZgAsbtcx5zTS6OkpIjqKfTWoiJ2mLhllJ9K7NsaD30I3b7zZcx8xdf1RgWVcites4dLQ/h
+ MrDNwXUxJ9+OCngyaGTvvk7S9Ue5pkucYk3Xkh3sqgGmko1AnAHHJbj9/4OEf6yDuMqerFsa+up
+ iXraRVe4ss1L9zvciJRhJ5/GAFq8b+9wNKpOaQJ5E/iwdSQP6GwGQpG0EbGqavil/1deI6DnXYq
+ ojQlij3BgC/stXMg4mA/56o/2yDjIKup6nrl+lUWebS9+DV96Mnmw+eb8KxRc5df6fogfVBRT3p
+ bjtUkCU/fR5+IQyJkhrqTIcDZsveUV/E3H7/oiFIk/ShvLXbcGQuuBd/y1ug0McV5mw9W+gKcmu
+ 3xrSukroiOeO5GQ==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Few fixes for I2C controller schemas. The third patch (atmel,at91sam)
-depends on first, so I suggest not splitting this into fixes branch but
-take as is via next branch.
+The referenced i2c-controller.yaml schema is provided by dtschema
+package (outside of Linux kernel), so use full path to reference it.
 
-Best regards,
-Krzysztof
-
+Cc: <stable@vger.kernel.org>
+Fixes: 7ea75dd386be ("dt-bindings: i2c: convert i2c-at91 to json-schema")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Krzysztof Kozlowski (7):
-      dt-bindings: i2c: atmel,at91sam: correct path to i2c-controller schema
-      dt-bindings: i2c: google,cros-ec-i2c-tunnel: correct path to i2c-controller schema
-      dt-bindings: i2c: atmel,at91sam: drop unneeded address/size-cells
-      dt-bindings: i2c: nvidia,tegra20: drop unneeded address/size-cells
-      dt-bindings: i2c: samsung,s3c2410: drop unneeded address/size-cells
-      dt-bindings: i2c: ti,omap4: reference i2c-controller.yaml schema
-      dt-bindings: i2c: adjust indentation in DTS example to coding style
+ Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../devicetree/bindings/i2c/atmel,at91sam-i2c.yaml |  10 +-
- .../devicetree/bindings/i2c/brcm,brcmstb-i2c.yaml  |  28 +++---
- .../bindings/i2c/google,cros-ec-i2c-tunnel.yaml    |   2 +-
- .../devicetree/bindings/i2c/i2c-demux-pinctrl.yaml | 106 ++++++++++-----------
- .../bindings/i2c/nvidia,tegra20-i2c.yaml           |   6 --
- .../devicetree/bindings/i2c/renesas,iic-emev2.yaml |  14 +--
- .../devicetree/bindings/i2c/renesas,rcar-i2c.yaml  |  20 ++--
- .../devicetree/bindings/i2c/renesas,riic.yaml      |  34 +++----
- .../bindings/i2c/renesas,rmobile-iic.yaml          |  24 ++---
- .../bindings/i2c/samsung,s3c2410-i2c.yaml          |   6 --
- .../devicetree/bindings/i2c/st,stm32-i2c.yaml      |  66 ++++++-------
- .../devicetree/bindings/i2c/ti,omap4-i2c.yaml      |  64 +++++--------
- 12 files changed, 174 insertions(+), 206 deletions(-)
----
-base-commit: 76db4c64526c5e8ba0f56ad3d890dce8f9b00bbc
-change-id: 20240620-dt-bindings-i2c-clean-b5a0b2dfdece
+diff --git a/Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml b/Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml
+index b1c13bab2472..b2d19cfb87ad 100644
+--- a/Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml
++++ b/Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml
+@@ -77,7 +77,7 @@ required:
+   - clocks
+ 
+ allOf:
+-  - $ref: i2c-controller.yaml
++  - $ref: /schemas/i2c/i2c-controller.yaml#
+   - if:
+       properties:
+         compatible:
 
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.43.0
 
 
