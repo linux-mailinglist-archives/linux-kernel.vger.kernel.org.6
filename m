@@ -1,152 +1,87 @@
-Return-Path: <linux-kernel+bounces-222237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3258C90FEB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:22:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F3890FEB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE843287251
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:22:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A1F71C2314E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDCF18EFEE;
-	Thu, 20 Jun 2024 08:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C0A1990B3;
+	Thu, 20 Jun 2024 08:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="bzA/JTEb"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=doubly.so header.i=@doubly.so header.b="cMv9yLM1"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09435B05E;
-	Thu, 20 Jun 2024 08:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEF95B05E;
+	Thu, 20 Jun 2024 08:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718871747; cv=none; b=O1tq3viGSGFjb+Ypuq7Sb3XwCQsHzZ5g47jiCg5Cjj694ZX+HnuDvworN3QRWermqcJT+5DDBI7JQM9vGanGsdG4vJVlsAjdtdKXPyiinZ3ddsFYDNroFZ5CsEvzXxUP+KavGKTV1BNLsYzSweLr93qqIxE2L8dWSf/GGKBeCTo=
+	t=1718871800; cv=none; b=GVaIfJX/Lp7A1y9bG+96l6mrm2Op+uniT/2z8jqMO6hYeqffHADLX16XVe7VJ1fcQxskg36YVydITBTC6xfX7+VAzJU1r5em+0EnRF9Pb8Bupf2IvH+QdUfLN1HanDD1MRxETDFmyBT4iMkaBqZpBFH4eVp/atDPhr7uHrGU3T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718871747; c=relaxed/simple;
-	bh=DgkvKqufEzVzA4mCCc5Izp084ePjsPRawcTM+KusyrY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rCuXDcJMYfMHkGDa2mqPPydcPx960evxedJp4LK+5JjAAVVKx0LgEDgGPLscYXeDZcmX3v2GSWsEhCKkKe0MpjAxTo3O+z054uwsgoOOhymy8ldnG8dk/Oaf8QGigvjMlV5enRXrfHcL0DZYnRydlSB0Q4FQec1iFj8AU7azDPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=bzA/JTEb; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718871746; x=1750407746;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DgkvKqufEzVzA4mCCc5Izp084ePjsPRawcTM+KusyrY=;
-  b=bzA/JTEbNLhNHk602tpK/ERTU+FlluweZvZtGR7dYJHR19Ki25mJMugJ
-   DcHKlYBnbBdmvgOc75BRprRyiq3PDgxKaCl5IXaKx+EYz0X8lvHwmXxd5
-   mfvL6CKHX26tffh5p3hwoNA+le/NEoSCZxHsx3WCobKHe20BafeINqWAV
-   rQws+225NQhj7IIa1AeAArbFplBJ/tM2cp2UAWzzaKNpV7aikuUzdWvhK
-   A76ntdqJkkJ6LKUrzSdaZqwYWCYcNLqGxCr+NK9e3kLhy+wc3rgMzOg3m
-   VOsjDngFbCx9GXG3/mDtafdZ+7sfj6Krqb9F+G5W6kVHeqnG+MpM1DUyN
-   Q==;
-X-CSE-ConnectionGUID: BfXzup/sSuCPo1L9vCsj6w==
-X-CSE-MsgGUID: ecnZoOx/TbqPi03KL3ujjw==
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="asc'?scan'208";a="259148518"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Jun 2024 01:22:25 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 20 Jun 2024 01:22:24 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Thu, 20 Jun 2024 01:22:20 -0700
-Date: Thu, 20 Jun 2024 09:22:02 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: Conor Dooley <conor@kernel.org>, <krzk+dt@kernel.org>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-	<conor+dt@kernel.org>, <matthias.bgg@gmail.com>, <jassisinghbrar@gmail.com>,
-	<garmin.chang@mediatek.com>, <houlong.wei@mediatek.com>,
-	<Jason-ch.Chen@mediatek.com>, <amergnat@baylibre.com>,
-	<Elvis.Wang@mediatek.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<kernel@collabora.com>
-Subject: Re: [PATCH 3/3] dt-bindings: mailbox: mediatek: Avoid clock-names on
- MT8188 GCE
-Message-ID: <20240620-district-bullring-c028e0183925@wendy>
-References: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
- <20240619085322.66716-3-angelogioacchino.delregno@collabora.com>
- <20240619-sleeve-citable-a3dc10e5cd4f@spud>
- <a7317981-8690-4d45-81b6-cc6a63c459e0@collabora.com>
+	s=arc-20240116; t=1718871800; c=relaxed/simple;
+	bh=gqRCh7V0zgazq4fZJ0RImt/6DBk5XXoaUCsCtJKRyVw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bhyk3MnAavTVA0GYEcaVx1XR6YzZACy43Ph3h2LUOHm5r9ZgCEUKYnSiAJ2Z7lXOyhzhBTTWWPWZ43HNAdRzfjPocmmLBpblS94AhIs2EHZNWPBiZCD2rJiYRJKf0CGtXuVNG2gQvK99HTpnpKq5c89Xpn7OiKCBzis9L2duQfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doubly.so; spf=pass smtp.mailfrom=doubly.so; dkim=pass (2048-bit key) header.d=doubly.so header.i=@doubly.so header.b=cMv9yLM1; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doubly.so
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=doubly.so
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W4YQg4VHRz9sb6;
+	Thu, 20 Jun 2024 10:23:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=doubly.so; s=MBO0001;
+	t=1718871787;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zftazIbKjTs3PvlI6d239BfHmQVryi+vLjtlNVjjeMY=;
+	b=cMv9yLM1f1U73fwUYuMJhRO/d4oULd92Ued2MF/0zbxAGs7Cc6JcBkMFQYcGHSSDS3ld/y
+	UCuPobmooQux5Piwzr0ESj32RNKu2zRkewMwuZRLFSrQqaXOAJBd8cx6DcGI9gMPvuuXj9
+	AFmvIs9unO4rMRHpKZ6BA0TCctGaQTfqjU4EjB6Uvg+P5VvhuWfKKLdT3y9l+0WzmkWI1Y
+	Nw7K6IJtcfARQ8ZdS0Wbo+E/07r45eC1r6/wgGzo/xkatpz5ZQcSRUE92A7c/jW5QJ1L8q
+	ItZQTPsl21mFVzSSBb//sIEwq6EwpsWYAvxYC2ZFepDTvDtUaNp2Lnfz1GgBiQ==
+From: Devin Bayer <dev@doubly.so>
+To: corentin.chary@gmail.com,
+	luke@ljones.dev
+Cc: hdegoede@redhat.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	Devin Bayer <dev@doubly.so>
+Subject: [PATCH 0/2] platform/x86: asus-wmi: support a couple Zenbook 2023 features
+Date: Thu, 20 Jun 2024 08:22:21 +0000
+Message-ID: <20240620082223.20178-1-dev@doubly.so>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vDd3+enh6BC9rJov"
-Content-Disposition: inline
-In-Reply-To: <a7317981-8690-4d45-81b6-cc6a63c459e0@collabora.com>
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4W4YQg4VHRz9sb6
 
---vDd3+enh6BC9rJov
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch series adds support for a couple features on
+my Zenbook UX3404VC:
 
-On Thu, Jun 20, 2024 at 10:01:18AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 19/06/24 19:49, Conor Dooley ha scritto:
-> > On Wed, Jun 19, 2024 at 10:53:22AM +0200, AngeloGioacchino Del Regno wr=
-ote:
-> > > Add mediatek,mt8188-gce to the list of compatibles for which the
-> > > clock-names property is not required.
-> >=20
-> > Because, I assume, it has some internal clock? Why do either of these
-> > things have no clock? Doesn't the internal logic require one?
-> >=20
->=20
-> Because there's no gce0/gce1 clock, there's only an infracfg_AO clock tha=
-t is
-> for one GCE instance, hence there's no need to require clock-names.
+1. the LED on F11 "disable camera" key
+2. fan speed control
 
-clock-names, d'oh. I misread that completely yesterday.
+Devin Bayer (2):
+  platform/x86: asus-wmi: support camera disable LED
+  platform/x86: asus-wmi: support newer fan_boost_mode dev_id
 
-> I can't remove the clock-names requirement from the older compatibles tho=
-ugh,
-> because the (sorry about this word) driver (eh..) gets the clock by name =
-for
-> the single GCE SoCs...
->=20
-> ...and here comes a self-NACK for this commit, I have to fix the driver a=
-nd
-> then stop requiring clock-names on all compatibles, instead of having this
-> ugly nonsense.
+ drivers/platform/x86/asus-wmi.c            | 121 ++++++++++++++++++++-
+ include/linux/platform_data/x86/asus-wmi.h |   3 +
+ 2 files changed, 119 insertions(+), 5 deletions(-)
 
-Is it not worth keeping the clock names, even if ugly or w/e, because
-things have been done that way for a while?
-Also, what does U-Boot do on these systems to get the clocks?
+-- 
+2.45.2
 
-> Self-note: gce0/gce1 clocks lookup was implemented in the driver but never
-> used and never added to the binding - luckily.
->=20
-> Sorry Conor, I just acknowledged that there's a better way of doing that.
->=20
-> Thank you for making me re-read this stuff, I'll send the proper changes
-> later today, driver change + binding change in a separate series.
->=20
-> As for the other two commits in this series, completely unrelated to GCE,
-> those are still fine, and are fixing dtbs_check warnings.
-
---vDd3+enh6BC9rJov
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnPmqgAKCRB4tDGHoIJi
-0kReAP9+nHTN6lCNnpAg765nXa6b1QwdTBEFjAYmSXPq03sY+QEAtvDHFzs69uth
-qgd15/M32kAL2PfmVibeGNuC6SuDsQA=
-=4tAi
------END PGP SIGNATURE-----
-
---vDd3+enh6BC9rJov--
 
