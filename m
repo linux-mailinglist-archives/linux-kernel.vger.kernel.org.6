@@ -1,137 +1,204 @@
-Return-Path: <linux-kernel+bounces-222927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BF8910A08
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:38:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20EA4910A11
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 267C71C21070
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:38:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEF7286088
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330CA1B143A;
-	Thu, 20 Jun 2024 15:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB061B1428;
+	Thu, 20 Jun 2024 15:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/XyTFaS"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yv6aWu0u"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AFA1AF6B7;
-	Thu, 20 Jun 2024 15:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12C91B1422;
+	Thu, 20 Jun 2024 15:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718897840; cv=none; b=jpdAxXRu6q11hHxDnkKCyXcb8NYLQcblTtXVzM57y8XMEglCpPROoU8gLaAQJezDOSdb9vkdba12z4SKp/shMOVZesAr3pzOpJ4/BQqdF2CvSVUXK2uLDpo0pMAFINI5BaJCxUY0Ud2m2LPob3qEpNVskR8cgUhi9cM/vgfm0X4=
+	t=1718897866; cv=none; b=Yq51XR3RQD9kZR+7psLACSmuIqe8FL/KZjmHxfM0qjT7uriwmYclzhpc23mNOfv5VRq4gLXC4RIqhvIS824BidoTEyTsGY+hmwApnGB9uX/7CS1Pj3biViDbt8yNfExcJJjXv+wPOTiCU6EeIcJuzoM5lTByv5xY9jGfJ0FK7fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718897840; c=relaxed/simple;
-	bh=8wpoUZH3SR3wSuMlTkrUQr+OoR64UaEjTJ4j4qsZPAk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ug9/N1sWWEHgFWlBEh2hrdYktUgSrqq8c0s88ORpDMvs1C9LbkiwAsprIN2dwOjSLACh6LCXwyXU8KhY5vr1rNyXI+RbCmKs9u3RTSkKzA9QpfAd75ascaqCdcQdue1QOjhcPQvWFy6I36NNMeJQqGBY70W/wVBazJxQqE/uneY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/XyTFaS; arc=none smtp.client-ip=209.85.215.181
+	s=arc-20240116; t=1718897866; c=relaxed/simple;
+	bh=RsIlLBhJcyE3XwRqtVP46pxZY2iyfW8Fw1s+960Es2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YbYhhAXx/McBP61pvs66XIPlTuXg6AmlF7/ZNBNKYHpjEIubmPmuGinJqCGHBFuGwk786cIw894bMX4WIXSmVOtGD2kDwwKQi2XkSnmr8D4NECHDgPe8YkT6n3hX0Oq3uicDdbZdYzzo4CZA1DC9Y8Q8N/S3CsZIGAJE+mUVvPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yv6aWu0u; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-713fa1ae9a7so669050a12.2;
-        Thu, 20 Jun 2024 08:37:18 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70633f0812dso948513b3a.0;
+        Thu, 20 Jun 2024 08:37:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718897838; x=1719502638; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7uAJa9cd+U3ByOgDIj6AuFYi+T/LG4WllhhWOF2SAZo=;
-        b=W/XyTFaS1i07Tx+siKrpkV4SVB19G+fQTsfxz89XskK2RZry9Whq1NdkctAgvWRnfR
-         cDQ02rO4twdsMHG/UPzJ0ww63NengFHcPHM3azUv8V0mKYbHXdFooJ26d+mmOr+KUxiG
-         u3Lehthy+yAhNV3Ot+wcfQ2Q5swCtUXQ+rZhkpSaPGjgORz+PMpjCD7vnqyyAzjNr5J4
-         29ifqDz9WdaQIkvCuwmVIlJiQDghNf9hO7wcQGVsLApKQOpELNJNG7nnkuRN2/wNNsG1
-         WyslKaWlZnC8Ka/haL2NBonJNxIbSLUR3+PeZk/M8SjaJt8AbFRS5fzUyQCGIwGGn54e
-         effQ==
+        d=gmail.com; s=20230601; t=1718897864; x=1719502664; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=s+h387lf4ounMi+iVhkJYXBLUErzSRJimx+T0EIiAWQ=;
+        b=Yv6aWu0umi75kF+yz3Ur3Wo2+DRG0PU621TduJ+cqqIN6cq4qRDX5KlayaO/lQopvA
+         IqeCCc8LrQZ5JrSlrYL1TpVHH8Q7AIZH7JRoZfcO03uJlatIQWsBnoXhWNAwV37Aqr4g
+         nvXPKUDlCHeEX7HEN/BTGXHtnwNIvXggWWUew1OGqTZybPZRLI9+Ks9Nj0Vlbwhcs5MG
+         vgo9E60l5Ci/gzIiD9PlfWI4kVovAfBF2y07JeVrygM0ocZVTHsFfWdf3nuEve26K42o
+         lw4tSjVOYYWXJNSqFrgKNvopdRFEy1y9Cm0wdcsllKD9LFWG0Z3GayVJJRmRrgWwMCeg
+         aD/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718897838; x=1719502638;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7uAJa9cd+U3ByOgDIj6AuFYi+T/LG4WllhhWOF2SAZo=;
-        b=K44OtjOHinPJtJ/COw8dXgieq3IwLnwK6Hmp41D4N8VsFWDinQN4a/NoAq8J7vlTBg
-         W/y1pIYGPynMv92biTT8zxP5xfRCXe6CQYqdMTJdaxROYUo0F8e1vt2HHkWE3LbTGg5u
-         q/K9xk5bXGEgYIZLHMWf+NQ/1WYB5IjlgAg1egGpYMfhMDTyPs8GNMWsRTly2CYdpQ9L
-         BU7jLpWnUv4dCNq4Doe/QWuD+uKpukMjbKonLt4LPNryYJlnP7cFE3eXuO70eZ56lZhE
-         I1nlCpKF5h/sJoB6IbpVQcqGU50qc4NpzThKA4xcF7TsZqILRb6F6R09YzP0Ga+Z4uQ+
-         WrCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOgIpcnGBt84O7A7ChVImVh8KgeeOID6BIlJfcWphUyW7uPJXQ/YcftUoW9iEIeG0BBYn1iEqKbx1NsEhZViZBIwLbRYgXm81274IyrIN6QEB5g6t2YoTvS572ly6kf2bCQo06NIA9sD3o1JXu
-X-Gm-Message-State: AOJu0YzeUUM2bbFpwfyWQNCglv8sG8sFi+tRiZ3xqY03yrXYNffw8DHc
-	er6Hj/D8JXqF/U2avo5d4ovbGzYe9MVC6SDEJA8IWdpiX4sxDOM6R15p2l5+bHe6/3eb84IrpYi
-	mb3HUAdBOhVgrgmg8tMx7F98AlG0=
-X-Google-Smtp-Source: AGHT+IHSa5FQ71JMRXYJyNnf8Gm4yVBhH8IUXZ/P53BWbl/sQt3VuXb0a7WwZrfoKndyPecNdx8rJ7qCoEk/iEFq384=
-X-Received: by 2002:a17:90a:2f45:b0:2c7:aafb:8e3c with SMTP id
- 98e67ed59e1d1-2c7b5afc252mr6219918a91.18.1718897838148; Thu, 20 Jun 2024
- 08:37:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718897864; x=1719502664;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s+h387lf4ounMi+iVhkJYXBLUErzSRJimx+T0EIiAWQ=;
+        b=P2gRBpdKPxG4+3aJ+Oyq8JHs/LNemjQTs2Bn5XMQ1VMshpXowdXd8ee/elG6+Kc1wS
+         O20hIgms4dFpvnRP4UZ6wkM+/S1tTMh1DNUw+D5kgqf/m1PvEkSUVZIGlxjmFyZRK/bY
+         Uu4TwfyHkLlCknXHsSHALsjnl1/U1gwODsTr3QltyLnLazVAM7TTGv8AJpAwS3UsKjwV
+         87Okqj+XbTMOM2aD5346pfz7FG/1s4biAh9UPA+PEpn5MRVH99Xa8sHDJ+PKf1hf+LBt
+         rukZyrEtlo3isbs76VAVOr+gYFDbgDXgKJJc5J8uboai7Djub8W2bWgrH1flA5kW9F8p
+         3eMA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0BizlvR+v9XOp/Ky5Gififq+TN+naABANcMgjRFGszUQT4v+7ZWaIxt4yCVaS21MSxZC/fCm9xPdGRMpVb1z8Tzx5J6aPp8p1aoLR4bMJrQhv9NNwO5WOCQjDmGkQhlLcj+6Dqtf9Ttv1zDI1Z7iL/li26ok7XdbrccMt4y2tehhUxyhk
+X-Gm-Message-State: AOJu0YyCiSZPe+9OfS6YUov4ATKxnO5DaLl5O2n7gCPtmWndmYnpxklD
+	OohW27qZBFcSw9jQhcdD0bgnz/yFh7QBeaWi2ld3jZGEbX/Y7u5h
+X-Google-Smtp-Source: AGHT+IEdhGZIHUC59cCIO/mixYH72/cV9kIvYVpyNXHNqjJuo4SpZGFWObBqJtoJBrKvWs1VeIZvuQ==
+X-Received: by 2002:a05:6a00:189b:b0:705:cade:1f50 with SMTP id d2e1a72fcca58-70629d012c0mr7919791b3a.34.1718897863773;
+        Thu, 20 Jun 2024 08:37:43 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:36d9:2b1f:59f:8e9e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc91e133sm12441315b3a.24.2024.06.20.08.37.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 08:37:43 -0700 (PDT)
+Date: Thu, 20 Jun 2024 08:37:40 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: nick@shmanahar.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+	linus.walleij@linaro.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v4 1/4] Input: atmel_mxt_ts - add power off and power on
+ functions
+Message-ID: <ZnRMxONryyi5uZ8a@google.com>
+References: <20240417090527.15357-1-eichest@gmail.com>
+ <20240417090527.15357-2-eichest@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a57a9d8f-40bb-4cfa-9dad-4f93a1f33303@moroto.mountain>
-In-Reply-To: <a57a9d8f-40bb-4cfa-9dad-4f93a1f33303@moroto.mountain>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 20 Jun 2024 11:37:06 -0400
-Message-ID: <CADnq5_OeVWwL2UfR0a5eE5TYaQo4QySvTennYJdGQ9r-ajDwWw@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: Clean up indenting in dm_dp_mst_is_port_support_mode()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	"Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Alex Hung <alex.hung@amd.com>, Wayne Lin <wayne.lin@amd.com>, Fangzhi Zuo <jerry.zuo@amd.com>, 
-	Agustin Gutierrez <agustin.gutierrez@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
-	Hersen Wu <hersenxs.wu@amd.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240417090527.15357-2-eichest@gmail.com>
 
-Applied.  Thanks!
+Hi Stefan,
 
-Alex
-
-On Thu, Jun 20, 2024 at 4:49=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> This code works, but it's not aligned correctly.  Add a couple missing
-> tabs.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Wed, Apr 17, 2024 at 11:05:24AM +0200, Stefan Eichenberger wrote:
+> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> 
+> Add a separate function for power off and power on instead of calling
+> regulator_bulk_enable and regulator_bulk_disable directly.
+> 
+> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 > ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c =
-b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> index 48118447c8d9..5d4f831b1e55 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> @@ -1691,7 +1691,7 @@ enum dc_status dm_dp_mst_is_port_support_mode(
->                 if (aconnector->mst_output_port->passthrough_aux) {
->                         if (bw_range.min_kbps > end_to_end_bw_in_kbps) {
->                                 DRM_DEBUG_DRIVER("DSC passthrough. Max ds=
-c compression can't fit into end-to-end bw\n");
-> -                       return DC_FAIL_BANDWIDTH_VALIDATE;
-> +                               return DC_FAIL_BANDWIDTH_VALIDATE;
->                         }
->                 } else {
->                         /*dsc bitstream decoded at the dp last link*/
-> @@ -1756,7 +1756,7 @@ enum dc_status dm_dp_mst_is_port_support_mode(
->                 if (branch_max_throughput_mps !=3D 0 &&
->                         ((stream->timing.pix_clk_100hz / 10) >  branch_ma=
-x_throughput_mps * 1000)) {
->                         DRM_DEBUG_DRIVER("DSC is required but max through=
-put mps fails");
-> -               return DC_FAIL_BANDWIDTH_VALIDATE;
-> +                       return DC_FAIL_BANDWIDTH_VALIDATE;
->                 }
->         } else {
->                 DRM_DEBUG_DRIVER("DSC is required but can't find common d=
-sc config.");
-> --
-> 2.43.0
->
+>  drivers/input/touchscreen/atmel_mxt_ts.c | 59 +++++++++++++++---------
+>  1 file changed, 37 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+> index 542a31448c8f..52867ce3b9b6 100644
+> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
+> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+> @@ -1307,6 +1307,38 @@ static int mxt_soft_reset(struct mxt_data *data)
+>  	return 0;
+>  }
+>  
+> +static int mxt_power_on(struct mxt_data *data)
+> +{
+> +	int error;
+> +
+> +	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators),
+> +				      data->regulators);
+> +	if (error) {
+> +		dev_err(&data->client->dev, "failed to enable regulators: %d\n",
+> +			error);
+> +		return error;
+> +	}
+> +
+> +	msleep(MXT_BACKUP_TIME);
+> +
+> +	if (data->reset_gpio) {
+> +		/* Wait a while and then de-assert the RESET GPIO line */
+> +		msleep(MXT_RESET_GPIO_TIME);
+> +		gpiod_set_value(data->reset_gpio, 0);
+> +		msleep(MXT_RESET_INVALID_CHG);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void mxt_power_off(struct mxt_data *data)
+> +{
+> +	if (data->reset_gpio)
+> +		gpiod_set_value(data->reset_gpio, 1);
+> +
+> +	regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
+> +}
+> +
+>  static void mxt_update_crc(struct mxt_data *data, u8 cmd, u8 value)
+>  {
+>  	/*
+> @@ -3305,25 +3337,9 @@ static int mxt_probe(struct i2c_client *client)
+>  		return error;
+>  	}
+>  
+> -	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators),
+> -				      data->regulators);
+> -	if (error) {
+> -		dev_err(&client->dev, "failed to enable regulators: %d\n",
+> -			error);
+> +	error = mxt_power_on(data);
+> +	if (error)
+>  		return error;
+> -	}
+> -	/*
+> -	 * The device takes 40ms to come up after power-on according
+> -	 * to the mXT224 datasheet, page 13.
+> -	 */
+> -	msleep(MXT_BACKUP_TIME);
+> -
+> -	if (data->reset_gpio) {
+> -		/* Wait a while and then de-assert the RESET GPIO line */
+> -		msleep(MXT_RESET_GPIO_TIME);
+> -		gpiod_set_value(data->reset_gpio, 0);
+> -		msleep(MXT_RESET_INVALID_CHG);
+> -	}
+>  
+>  	/*
+>  	 * Controllers like mXT1386 have a dedicated WAKE line that could be
+> @@ -3361,8 +3377,8 @@ static int mxt_probe(struct i2c_client *client)
+>  	mxt_free_input_device(data);
+>  	mxt_free_object_table(data);
+>  err_disable_regulators:
+> -	regulator_bulk_disable(ARRAY_SIZE(data->regulators),
+> -			       data->regulators);
+> +	mxt_power_off(data);
+> +
+>  	return error;
+>  }
+>  
+> @@ -3374,8 +3390,7 @@ static void mxt_remove(struct i2c_client *client)
+>  	sysfs_remove_group(&client->dev.kobj, &mxt_attr_group);
+>  	mxt_free_input_device(data);
+>  	mxt_free_object_table(data);
+> -	regulator_bulk_disable(ARRAY_SIZE(data->regulators),
+> -			       data->regulators);
+> +	mxt_power_off(data);
+
+This change means that on unbind we will leave with GPIO line asserted.
+Won't this potentially cause some current leakage? Why do we need to
+have reset asserted here?
+
+Thanks.
+
+-- 
+Dmitry
 
