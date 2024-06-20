@@ -1,116 +1,130 @@
-Return-Path: <linux-kernel+bounces-222500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63B37910282
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:27:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B39C910285
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17D121F22946
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:27:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20B511F2157E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CF11AB8F3;
-	Thu, 20 Jun 2024 11:27:29 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7DF1AB8F1;
+	Thu, 20 Jun 2024 11:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BQ0Pt91t"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4450621A19;
-	Thu, 20 Jun 2024 11:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4777821A19;
+	Thu, 20 Jun 2024 11:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718882849; cv=none; b=I3QDTbPb8Rc7UnZZWzfsp/q9+EALc+VZjerE/K4Ofj7fHAe+kJ9BVxpj0IuYlf5/e9AF1310zpm48PlZGEYPqHyJTA8T8gSbyLsV+TTsdoY9WwP/20WUzwccdMstsicP+GrzPWLCz2PDtfUKAHakwQRtCv3EdTcantHuCc29CFQ=
+	t=1718882880; cv=none; b=REQFnCPxXXGBHr4/hGLOIcik/QZIPmpoVAAQ6mCNBdAXDN4c2yNwC6haoUOwx9/y67pHI5uh2MtzQ+uRQ6YYkOMd+YLmm2CuqLjrjtOhUdH6bWadDCyw01C3lCXlMf/j3V3An9QIl43pt4cbYlF7LzKo3bhG2EHEqdh+iF1Lrcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718882849; c=relaxed/simple;
-	bh=nU8lEdZZ5H6b2ve8JzNasuCw99ZtNV1kYCetk91R0Bc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aBqVrTMIEpMb6hLi7nrsr2ZWuBqzjPp2iKBq+AuzzYPcaOMgifkdUw/vj1zOyGpmg4tO2BafAwMIgW5oFW/q+QKgEUbHxM6+N0MuhKgL+/xizih7gUZKiQDwctaX7Ia0CmOEmGs+RncJS6Gkpc22Ug7lbs2EM5YRQOibzItnRoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W4dTQ2qTRzdcLG;
-	Thu, 20 Jun 2024 19:25:46 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 76369180087;
-	Thu, 20 Jun 2024 19:27:17 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+	s=arc-20240116; t=1718882880; c=relaxed/simple;
+	bh=N7VLxM5t+CIQt6m++a1ea9Ploo5fC/7kJqS0HoGv4Mc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jiIVlx9KRVpImNrkHhIYafcKocpL5kUVIxrMGzYB2R4MTEek2dec80ehup5HU79jlAT1aq5bhhyjP72S3qjactnJo2ZRRx3GAgAJa9Pycdwk/PitC9/LDQduNlVtCLYjcHdY437xzKkx8FBs7txe2XJllVwuGaziw8ys+oRBuRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BQ0Pt91t; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K9v5l1030590;
+	Thu, 20 Jun 2024 11:27:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=N7VLxM5t+CIQt6m++a1ea9
+	Ploo5fC/7kJqS0HoGv4Mc=; b=BQ0Pt91th1kh2tj/K5pnR49vzZ1HuDqsJyxe4h
+	HEnR6L6RexG10ATq7C8v3jHpLc6GaYG8YwZBZ2mEt1YCkTH8kn+zsvF+L3fFV2qN
+	FhwIxSoGQ1upnoeMtcy6eiqZJI82337zRrY9TtLyqVEfyb4E0O77k+66THerOa26
+	8UkGejsCUdGBfIBkv0OBZGJ+yCv3A60RBPF8nSi85LXOs0qj6CDslvFmIpm4Nx0U
+	wD3ju+aZ+TqmeaBMLjL1IvvJdP3sBGsMk5Q9ZjF2SCgITS+3cPA7pdTJxdrGSiVK
+	mAFcKq7rKLDsc5p60hO6oQrkwLMn0KiTkiNKGqGH/g0wINMQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yv6hn1n2r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 11:27:41 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KBReUA020527
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 11:27:40 GMT
+Received: from hu-kbajaj-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 20 Jun 2024 19:27:16 +0800
-Message-ID: <11ae956a-9d0c-ca80-c3a7-a16b2c53e737@huawei.com>
-Date: Thu, 20 Jun 2024 19:27:16 +0800
+ 15.2.1544.9; Thu, 20 Jun 2024 04:27:35 -0700
+From: Komal Bajaj <quic_kbajaj@quicinc.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_mojha@quicinc.com>,
+        Komal Bajaj
+	<quic_kbajaj@quicinc.com>
+Subject: [PATCH v2] arm64: defconfig: Enable secure QFPROM driver
+Date: Thu, 20 Jun 2024 16:57:16 +0530
+Message-ID: <20240620112716.1339-1-quic_kbajaj@quicinc.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH bpf-next] uprobes: Fix the xol slots reserved for
- uretprobe trampoline
-To: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>
-CC: <rostedt@goodmis.org>, <mhiramat@kernel.org>, <ast@kernel.org>,
-	<daniel@iogearbox.net>, <andrii@kernel.org>, <nathan@kernel.org>,
-	<peterz@infradead.org>, <mingo@redhat.com>, <mark.rutland@arm.com>,
-	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<bpf@vger.kernel.org>
-References: <20240619013411.756995-1-liaochang1@huawei.com>
- <20240619143852.GA24240@redhat.com>
- <7cfa9f1f-d9ce-b6bb-3fe0-687fae9c77c4@huawei.com>
- <20240620083602.GB30070@redhat.com> <ZnPxFbUJVUQd80hs@krava>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <ZnPxFbUJVUQd80hs@krava>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 1mtQuxNnR0zAtqkB1TFwj7Dd_046U3Cu
+X-Proofpoint-GUID: 1mtQuxNnR0zAtqkB1TFwj7Dd_046U3Cu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_07,2024-06-20_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ mlxlogscore=994 impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200082
 
+Enable the secure QFPROM driver used by Qualcomm QDU1000
+platform to read the secure qfprom region allowing LLCC driver
+to get the DDR channel configuration.
 
+Currently, LLCC is the only user of secure QFPROM, and hence
+setting CONFIG_NVMEM_QCOM_SEC_QFPROM as module to the convenience
+of LLCC module.
 
-在 2024/6/20 17:06, Jiri Olsa 写道:
-> On Thu, Jun 20, 2024 at 10:36:02AM +0200, Oleg Nesterov wrote:
->> On 06/20, Liao, Chang wrote:
->>>
->>> However, when i asm porting uretprobe trampoline to arm64
->>> to explore its benefits on that architecture, i discovered the problem that
->>> single slot is not large enought for trampoline code.
-> 
-> ah ok, makes sense now.. x86_64 has the slot big enough for the trampoline,
-> but arm64 does not
-> 
->>
->> Ah, but then I'd suggest to make the changelog more clear. It looks as
->> if the problem was introduced by the patch from Jiri. Note that we was
->> confused as well ;)
->>
->> And,
->>
->> 	+	/* Reserve enough slots for the uretprobe trampoline */
->> 	+	for (slot_nr = 0;
->> 	+	     slot_nr < max((insns_size / UPROBE_XOL_SLOT_BYTES), 1);
->> 	+	     slot_nr++)
->>
->> this doesn't look right. Just suppose that insns_size = UPROBE_XOL_SLOT_BYTES + 1.
->> I'd suggest DIV_ROUND_UP(insns_size, UPROBE_XOL_SLOT_BYTES).
->>
->> And perhaps it would be better to send this change along with
->> uretprobe_trampoline_for_arm64 ?
-> 
-> +1, also I'm curious what's the gain on arm64?
+Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+---
+Changes in v2:
+* Setting the CONFIG_NVMEM_QCOM_SEC_QFPROM as module
+* Modified the commit message to mention the need for driver enablement
+* Link to v1: https://lore.kernel.org/all/20240619105642.18947-1-quic_kbajaj@quicinc.com/
+---
 
-I am currently finalizing the uretprobe trampoline and syscall implementation on arm64.
-While i have addressed most of issues, there are stiil a few bugs that reguire more effort.
-Once these are fixed, i will use Redis to evaluate the performance gains on arm64. In the
-next revision, i will submit a patchset that includes all relevant code changs, testcases
-and benchmark data, which will allows a comprehensive review and dicussion.
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> thanks,
-> jirka
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 838b4466d6f6..2f280d7f5a79 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1575,6 +1575,7 @@ CONFIG_NVMEM_LAYERSCAPE_SFP=m
+ CONFIG_NVMEM_MESON_EFUSE=m
+ CONFIG_NVMEM_MTK_EFUSE=y
+ CONFIG_NVMEM_QCOM_QFPROM=y
++CONFIG_NVMEM_QCOM_SEC_QFPROM=m
+ CONFIG_NVMEM_RMEM=m
+ CONFIG_NVMEM_ROCKCHIP_EFUSE=y
+ CONFIG_NVMEM_ROCKCHIP_OTP=y
+--
+2.42.0
 
--- 
-BR
-Liao, Chang
 
