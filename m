@@ -1,339 +1,121 @@
-Return-Path: <linux-kernel+bounces-223115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3644910DFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:04:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD23C910DFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F33EB21645
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:03:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F71E28630B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3011B3736;
-	Thu, 20 Jun 2024 17:03:48 +0000 (UTC)
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5461B3735;
+	Thu, 20 Jun 2024 17:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="SQ2wA1Uv"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880E21AE875;
-	Thu, 20 Jun 2024 17:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626421ABCBB
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718903028; cv=none; b=UNOeAQNZJmR0kI3Mccg57Q9jWGEE1i8o3aGDauSnIlQha0v3zKpdl4lpHDIOD20UaTpvPaTDNpK3PAjAWQD95xxhrOfzsC2KGAnTjJEaZWWKxhidYJzz5bxgIeUcm5bNviPY4MGSjObuCiWzOxNe98AhPYt4V4MIQuXNhI5+qZQ=
+	t=1718903126; cv=none; b=kEgJSpjaIvVLnQfmVl5oPOgJzfsi5mxl52OqkQL1qOQSnikwRWvPrBAC6PqJ7otYnKzgUfZsTSr/sOuLqMnQN438aBygthNOm3Kxu5jYmqu1ts+Wt59RulMVlCMwajo3yMJTppl6spqCM36HEBpgrvH2Y72e3yWR9FFClj3tML8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718903028; c=relaxed/simple;
-	bh=8iRJHYBHSJDAfuG/nuIifUPlChLJCBR9C7u6zRQZ6aA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E/QWj3+4AnSNQEm1EOFWCrmbhhYErVQkjoppfya+b6KDy48IMkLJof7Grf4BjpRor/C0gBCzAOe1rgVeqzmNuGz0EBXjIxWXbyj4FBBpdYwEQqyEM3Dxt6RcOuPCfLkQFkvwabKXbXVQBdDAaUomErLfZk2HBbJR3RztRHf7A1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7F8F820007;
-	Thu, 20 Jun 2024 17:03:39 +0000 (UTC)
-Message-ID: <92f64e0c-fe10-48df-9ede-d841741755d7@ghiti.fr>
-Date: Thu, 20 Jun 2024 19:03:38 +0200
+	s=arc-20240116; t=1718903126; c=relaxed/simple;
+	bh=V9vbedrO0h4dfaGDqH9asqdRuXK1RwmHacUkIr2CNKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gFa2fGZ7NOuM2U0A4NN+PJUpfF11yukqSjzVTGPAsmV+YzqeJFZ7sRuDG/aCUXJdRiOH2GM6QDkmiBZHELk75VrdIn4qZMDrxkUyraCnuqcEXoGjLB4iLVCOZmYHW6jY1M+VGSIPL3k6lZ+1PMJcKcqiHfMuEqQ6u3a5Ov3ZvPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=SQ2wA1Uv; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f8395a530dso8967545ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:05:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1718903124; x=1719507924; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4E89UTgs/5r5atSnFCInRbSVBNWxc0zHVVFCoSblkK4=;
+        b=SQ2wA1UvJo+FxGdiQB820HLc/ezBD8k0bFseMWkqbCWGLNf4pGZvFKbSKpIc4adzBg
+         XyBw4CiaSU4v6PpIgY9r4d8adyWCjzCjhLAJfLSY4cph0WgzHEQc93JRlxUDAkGGOzfj
+         rWTaaaqtVdet7lygYfrTvATC4KAFZ6bNhW253aPn0K+7kkJ91I1ucWCSGPuCRnmd8dba
+         WJsDkMaKDr0i+i4s5GZ7bMBk/vkdf5PRRP8iqm5DvvdAYrI7nrG0HwvJZA98wfI/QfjP
+         aa00Yf7KaWfHjXwUBJ2hTPzAxPlsyDGpfnlFiotE3yQnQR48vUhyLw4zcosQGHfLChI/
+         fBYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718903124; x=1719507924;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4E89UTgs/5r5atSnFCInRbSVBNWxc0zHVVFCoSblkK4=;
+        b=iqfuLLGO89QGFMEF8RVh8j5aB8L5pE7302L3Zp095wdVVwKPlLBIbVXNJnFx0rNOst
+         tEEEEAdGLRWKC+c/lmkZPCXZoChvTvzXmCVgBUgWKAq4TtEZ2o6g5qEaB1mBSK7v5sJb
+         PwTha6FnPboxMRl1hyNAhc66yOuH6YYHGckWX6AmMU+FM5M+B5tzuvfbspEh+fJU3EeG
+         the4KI5tYs++leo1OGybxNzd5/BDG6bT9bokHukwzY4x0HoiEmQSey0OqeLrpSOb3rAf
+         l9Vk6QSYaUuY02T+bxM17E1J6yaPYFnxdQ1nxnSKk4ESVDZi8jwCXqaJ+qfkxEpayHb7
+         7bjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtdL797b0CyyqQIBOEEcMwDXBa2XKPAmudyKqe5Ic5hAZaPlxcWPcmK5CX0qiNtwslmeTngYUb0MyI7tXFI2r3QnWiUYMOcQoCYCj7
+X-Gm-Message-State: AOJu0YwXy5y23eryFyTG546FrEJQI+aUkBHCVP5OQxQHJb7h9g/inlqd
+	qxIzngrFrElq9i4cRSPSlsjUs/gOERn8PGtaSunA0Mz8MJywShpapL/foobGDxI=
+X-Google-Smtp-Source: AGHT+IHnO0PhojcD/q5JTTxQb+zxwVYaNBwpbOMTUxU2qhG2GuUiEPiNiJ0WLvWdxuAzdO/MlAP2Kg==
+X-Received: by 2002:a17:902:d4c7:b0:1f7:17c2:118b with SMTP id d9443c01a7336-1f9aa3e9e49mr59538365ad.27.1718903123621;
+        Thu, 20 Jun 2024 10:05:23 -0700 (PDT)
+Received: from x1 ([2601:1c2:1802:170:4a35:79ce:6499:e43c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9acc04adcsm39635605ad.204.2024.06.20.10.05.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 10:05:23 -0700 (PDT)
+Date: Thu, 20 Jun 2024 10:05:20 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: Drew Fustini <dfustini@tenstorrent.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: thead: update Maintainer
+Message-ID: <ZnRhUOSB+/hMSs2x@x1>
+References: <20240620162522.386-1-jszhang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: Fix early ftrace nop patching
-Content-Language: en-US
-To: Andy Chiu <andy.chiu@sifive.com>, Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Andrea Parri <parri.andrea@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- puranjay Mohan <puranjay12@gmail.com>
-References: <20240523115134.70380-1-alexghiti@rivosinc.com>
- <20240613-lubricant-breath-061192a9489a@wendy>
- <a396c024-f1a8-4636-85ee-e36950a2dca0@ghiti.fr>
- <b603c8b5-3100-4ccf-b014-9274f980358d@ghiti.fr>
- <CABgGipU1tjFAJ+KD7fFabVmLoqNtmQagn2sREHVzZCZ3OxozzQ@mail.gmail.com>
- <CAHVXubiubf9oCHnFco19SReZRPELYJSRtZmwEnGQLR++N+aH-g@mail.gmail.com>
- <CABgGipWu2sL0EiKGUgksCZta5Ru3N5fqiNZVQ-5mrDt00puyyQ@mail.gmail.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <CABgGipWu2sL0EiKGUgksCZta5Ru3N5fqiNZVQ-5mrDt00puyyQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620162522.386-1-jszhang@kernel.org>
 
+On Fri, Jun 21, 2024 at 12:25:22AM +0800, Jisheng Zhang wrote:
+> Due to personal reasons, I can't maintain T-Head SoCs any more. At the
+> same time, I would nominate Drew Fustini as Maintainer. Drew contributed
+> the sdhci support of TH1520 in the past, and is working on the clk
+> parts. I believe he will look after T-Head SoCs.
+> 
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index aacccb376c28..b5f5506815d6 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19315,7 +19315,7 @@ F:	drivers/perf/riscv_pmu_legacy.c
+>  F:	drivers/perf/riscv_pmu_sbi.c
+>  
+>  RISC-V THEAD SoC SUPPORT
+> -M:	Jisheng Zhang <jszhang@kernel.org>
+> +M:	Drew Fustini <drew@pdp7.com>
+>  M:	Guo Ren <guoren@kernel.org>
+>  M:	Fu Wei <wefu@redhat.com>
+>  L:	linux-riscv@lists.infradead.org
+> -- 
+> 2.43.0
+> 
 
-On 19/06/2024 05:40, Andy Chiu wrote:
-> On Tue, Jun 18, 2024 at 9:40 PM Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
->> Hi Andy,
->>
->> On Tue, Jun 18, 2024 at 2:48 PM Andy Chiu <andy.chiu@sifive.com> wrote:
->>> On Tue, Jun 18, 2024 at 8:02 PM Alexandre Ghiti <alex@ghiti.fr> wrote:
->>>> Hi Conor,
->>>>
->>>> On 17/06/2024 15:23, Alexandre Ghiti wrote:
->>>>> Hi Conor,
->>>>>
->>>>> Sorry for the delay here.
->>>>>
->>>>> On 13/06/2024 09:48, Conor Dooley wrote:
->>>>>> On Thu, May 23, 2024 at 01:51:34PM +0200, Alexandre Ghiti wrote:
->>>>>>> Commit c97bf629963e ("riscv: Fix text patching when IPI are used")
->>>>>>> converted ftrace_make_nop() to use patch_insn_write() which does not
->>>>>>> emit any icache flush relying entirely on __ftrace_modify_code() to do
->>>>>>> that.
->>>>>>>
->>>>>>> But we missed that ftrace_make_nop() was called very early directly
->>>>>>> when
->>>>>>> converting mcount calls into nops (actually on riscv it converts 2B
->>>>>>> nops
->>>>>>> emitted by the compiler into 4B nops).
->>>>>>>
->>>>>>> This caused crashes on multiple HW as reported by Conor and Björn since
->>>>>>> the booting core could have half-patched instructions in its icache
->>>>>>> which would trigger an illegal instruction trap: fix this by emitting a
->>>>>>> local flush icache when early patching nops.
->>>>>>>
->>>>>>> Fixes: c97bf629963e ("riscv: Fix text patching when IPI are used")
->>>>>>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->>>>>>> ---
->>>>>>>    arch/riscv/include/asm/cacheflush.h | 6 ++++++
->>>>>>>    arch/riscv/kernel/ftrace.c          | 3 +++
->>>>>>>    2 files changed, 9 insertions(+)
->>>>>>>
->>>>>>> diff --git a/arch/riscv/include/asm/cacheflush.h
->>>>>>> b/arch/riscv/include/asm/cacheflush.h
->>>>>>> index dd8d07146116..ce79c558a4c8 100644
->>>>>>> --- a/arch/riscv/include/asm/cacheflush.h
->>>>>>> +++ b/arch/riscv/include/asm/cacheflush.h
->>>>>>> @@ -13,6 +13,12 @@ static inline void local_flush_icache_all(void)
->>>>>>>        asm volatile ("fence.i" ::: "memory");
->>>>>>>    }
->>>>>>>    +static inline void local_flush_icache_range(unsigned long start,
->>>>>>> +                        unsigned long end)
->>>>>>> +{
->>>>>>> +    local_flush_icache_all();
->>>>>>> +}
->>>>>>> +
->>>>>>>    #define PG_dcache_clean PG_arch_1
->>>>>>>      static inline void flush_dcache_folio(struct folio *folio)
->>>>>>> diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
->>>>>>> index 4f4987a6d83d..32e7c401dfb4 100644
->>>>>>> --- a/arch/riscv/kernel/ftrace.c
->>>>>>> +++ b/arch/riscv/kernel/ftrace.c
->>>>>>> @@ -120,6 +120,9 @@ int ftrace_init_nop(struct module *mod, struct
->>>>>>> dyn_ftrace *rec)
->>>>>>>        out = ftrace_make_nop(mod, rec, MCOUNT_ADDR);
->>>>>>>        mutex_unlock(&text_mutex);
->>>>>> So, turns out that this patch is not sufficient. I've seen some more
->>>>>> crashes, seemingly due to initialising nops on this mutex_unlock().
->>>>>> Palmer suggested moving the if (!mod) ... into the lock, which fixed
->>>>>> the problem for me.
->>>>>
->>>>> Ok, it makes sense, I completely missed that. I'll send a fix for that
->>>>> shortly so that it can be merged in rc5.
->>>>>
->>>>> Thanks,
->>>>>
->>>>> Alex
->>>>
->>>> So I digged a bit more and I'm afraid that the only way to make sure
->>>> this issue does not happen elsewhere is to flush the icache right after
->>>> the patching. We actually can't wait to batch the icache flush since
->>>> along the way, we may call a function that has just been patched (the
->>>> issue that you encountered here).
->>> Trying to provide my thoughts, please let me know if I missed
->>> anything. I think what Conor suggested is safe for init_nop, as it
->>> would be called only when there is only one core (booting) and at the
->>> loading stage of kernel modules. In the first case we just have to
->>> make sure there is no patchable entry before the core executes
->>> fence.i. The second case is unconditionally safe because there is no
->>> read-side of the race.
->>>
->>> It is a bit tricky for the generic (runtime) case of ftrace code
->>> patching, but that is not because of the batch fence.i maintenance. As
->>> long as there exists a patchable entry for the stopping thread, it is
->>> possible for them to execute on a partially patched instruction. A
->>> solution for this is again to prevent any patchable entry in the
->>> stop_machine's stopping thread. Another solution is to apply the
->>> atomic ftrace patching series which aims to get rid of the race.
->> Yeah but my worry is that we can't make sure that functions called
->> between the patching and the fence.i are not the ones that just get
->> patched. At least today, patch_insn_write() etc should be marked as
-> IIUC, the compiler does not generate a patchable entry for
-> patch_insn_write, and so do all functions in patch.c. The entire file
-> is not compiled with patchable entry because the flag is removed in
-> riscv's Makefile. Please let me know if I misunderstand it.
->
->> noinstr. But even then, we call core functions that could be patchable
->> (I went through all and it *seems* we are safe *for now*, but this is
->> very fragile).
-> Yes, functions in the "else" clause, atomic_read() etc, are safe for
-> now. However, it is impossible to fix as long as there exists a
-> patchable entry along the way. This is the problem that we cannot
-> patch 2 instructions with a concurrent read-side. On the other hand,
-> the path of ftrace_modify_all_code may experience the batch fence.i
-> maintenance issue, and can be fixed via a local fence.i. This is
-> because the path is executed by only one core. There does not exist a
-> concurrent write-side. As a result, we just need to make sure it
-> leaves each patch-site with a local fence.i to make sure code is
-> up-to-date.
->
->> Then what do you think we should do to fix Conor's issue right now:
->> should we mark the riscv specific functions as noinstr, cross fingers
->> that the core functions are not (and don't become) patchable and wait
->> for your atomic patching? Or should we flush as soon as possible as I
->> proposed above (which to me fixes the issue but hurts performance)?
-> Either way works for me. IMHO, the fix should include:
->
-> 1. move fence.i before mutex_unlock in init_nop
-> 2. do local fence.i in __ftrace_modify_call
-> 3. make sure the else clause does not happen to have a patchable entry
+Acked-by: Drew Fustini <drew@pdp7.com>
 
+Jisheng - thanks for your efforts thus far and I'm happy to take over.
 
-OK I have just checked again and I agree with you on the whole fix :) I 
-may add some comments for 3 so that it is very clear.
-
-Thanks Andy!
-
-Alex
-
-
->
-> Thanks,
-> Andy
->
->> Thanks,
->>
->> Alex
->>
->>>> I don't know how much it will impact the performance but I guess it will.
->>>>
->>>> Unless someone has a better idea (I added Andy and Puranjay in cc), here
->>>> is the patch that implements this, can you give it a try? Thanks
->>>>
->>>> diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
->>>> index 87cbd86576b2..4b95c574fd04 100644
->>>> --- a/arch/riscv/kernel/ftrace.c
->>>> +++ b/arch/riscv/kernel/ftrace.c
->>>> @@ -120,9 +120,6 @@ int ftrace_init_nop(struct module *mod, struct
->>>> dyn_ftrace *rec)
->>>>           out = ftrace_make_nop(mod, rec, MCOUNT_ADDR);
->>>>           mutex_unlock(&text_mutex);
->>>>
->>>> -       if (!mod)
->>>> -               local_flush_icache_range(rec->ip, rec->ip +
->>>> MCOUNT_INSN_SIZE);
->>>> -
->>>>           return out;
->>>>    }
->>>>
->>>> @@ -156,9 +153,9 @@ static int __ftrace_modify_code(void *data)
->>>>           } else {
->>>>                   while (atomic_read(&param->cpu_count) <= num_online_cpus())
->>>>                           cpu_relax();
->>>> -       }
->>>>
->>>> -       local_flush_icache_all();
->>>> +               local_flush_icache_all();
->>>> +       }
->>>>
->>>>           return 0;
->>>>    }
->>>> diff --git a/arch/riscv/kernel/patch.c b/arch/riscv/kernel/patch.c
->>>> index 4007563fb607..ab03732d06c4 100644
->>>> --- a/arch/riscv/kernel/patch.c
->>>> +++ b/arch/riscv/kernel/patch.c
->>>> @@ -89,6 +89,14 @@ static int __patch_insn_set(void *addr, u8 c, size_t len)
->>>>
->>>>           memset(waddr, c, len);
->>>>
->>>> +       /*
->>>> +        * We could have just patched a function that is about to be
->>>> +        * called so make sure we don't execute partially patched
->>>> +        * instructions by flushing the icache as soon as possible.
->>>> +        */
->>>> +       local_flush_icache_range((unsigned long)waddr,
->>>> +                                (unsigned long)waddr + len);
->>>> +
->>>>           patch_unmap(FIX_TEXT_POKE0);
->>>>
->>>>           if (across_pages)
->>>> @@ -135,6 +143,14 @@ static int __patch_insn_write(void *addr, const
->>>> void *insn, size_t len)
->>>>
->>>>           ret = copy_to_kernel_nofault(waddr, insn, len);
->>>>
->>>> +       /*
->>>> +        * We could have just patched a function that is about to be
->>>> +        * called so make sure we don't execute partially patched
->>>> +        * instructions by flushing the icache as soon as possible.
->>>> +        */
->>>> +       local_flush_icache_range((unsigned long)waddr,
->>>> +                                (unsigned long)waddr + len);
->>>> +
->>>>           patch_unmap(FIX_TEXT_POKE0);
->>>>
->>>>           if (across_pages)
->>>> @@ -189,9 +205,6 @@ int patch_text_set_nosync(void *addr, u8 c, size_t len)
->>>>
->>>>           ret = patch_insn_set(tp, c, len);
->>>>
->>>> -       if (!ret)
->>>> -               flush_icache_range((uintptr_t)tp, (uintptr_t)tp + len);
->>>> -
->>>>           return ret;
->>>>    }
->>>>    NOKPROBE_SYMBOL(patch_text_set_nosync);
->>>> @@ -224,9 +237,6 @@ int patch_text_nosync(void *addr, const void *insns,
->>>> size_t len)
->>>>
->>>>           ret = patch_insn_write(tp, insns, len);
->>>>
->>>> -       if (!ret)
->>>> -               flush_icache_range((uintptr_t) tp, (uintptr_t) tp + len);
->>>> -
->>>>           return ret;
->>>>    }
->>>>    NOKPROBE_SYMBOL(patch_text_nosync);
->>>> @@ -253,9 +263,9 @@ static int patch_text_cb(void *data)
->>>>           } else {
->>>>                   while (atomic_read(&patch->cpu_count) <= num_online_cpus())
->>>>                           cpu_relax();
->>>> -       }
->>>>
->>>> -       local_flush_icache_all();
->>>> +               local_flush_icache_all();
->>>> +       }
->>>>
->>>>           return ret;
->>>>    }
->>>>
->>>>
->>>>>
->>>>>>>    +    if (!mod)
->>>>>>> +        local_flush_icache_range(rec->ip, rec->ip + MCOUNT_INSN_SIZE);
->>>>>>> +
->>>>>>>        return out;
->>>>>>>    }
->>>>>>>    --
->>>>>>> 2.39.2
->>>>>>>
->>>>>>>
->>>>>>> _______________________________________________
->>>>>>> linux-riscv mailing list
->>>>>>> linux-riscv@lists.infradead.org
->>>>>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
->>>>> _______________________________________________
->>>>> linux-riscv mailing list
->>>>> linux-riscv@lists.infradead.org
->>>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
->>> Cheers,
->>> Andy
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Drew
 
