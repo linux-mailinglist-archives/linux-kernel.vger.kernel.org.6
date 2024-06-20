@@ -1,264 +1,609 @@
-Return-Path: <linux-kernel+bounces-221998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4775B90FB8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:10:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A2890FB8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 314761C21395
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:10:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0889283A30
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2A71EA8F;
-	Thu, 20 Jun 2024 03:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A931E876;
+	Thu, 20 Jun 2024 03:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="KtSofEPs"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2097.outbound.protection.outlook.com [40.107.94.97])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Hm0IA4tp"
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01on2052.outbound.protection.outlook.com [40.107.13.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8151D52C;
-	Thu, 20 Jun 2024 03:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D114A2B9DA;
+	Thu, 20 Jun 2024 03:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.13.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718853026; cv=fail; b=tnvh7Jvijco6ga/ZLV16O+Sn1lZsvW+/A7u6Kk6ftTjKrxs54gnxny8JFov64RS/m+GQfpl59FgvozTH0/LXb6hjOVs39pjj5k7+nAL6oHmNkeGTfFD5ucx8MTwBr6rOh7OLiorTEFiLCwnHZGlwyezFdZKYxrubN5VIqr+0UnU=
+	t=1718853038; cv=fail; b=piSwSAO+g6IWBmihc5RA66enHuVeQkCMxJoPmC895gPhYbKH16qI8lB3yC0BKr12ul3hk/In8jUffuLbk3BRlJLxQ932Zo88WnJsLz3waY2Pgfod9LBcz0jErTww+vvSzxNjXQ6GT6XZv51e3WYpMNwlGVybljO+ZaIQqWId1ss=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718853026; c=relaxed/simple;
-	bh=+7l0fXg83Ytly7/OT7WvnM3YAMDxcxRIPE3aZRBDJd8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aqwsj7QSRbl+crOo3Y6KpVFXkTRaQtrZioO3t5AvPWjiujwthI4pvmPnrL/thBTJiGAtSTXvuuK5OsWK089zODW+6LHFyK0VwPvUd/X05JUKpSb1QamSkDwcemYtb65xaYP2NAqhawaf6evcOqxYhY2DBdE9I40bGxsmSvKRigs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=KtSofEPs reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.94.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1718853038; c=relaxed/simple;
+	bh=5kivzI+TUBG2tnFoVoNlYU/39PVAR1V6qfgXZRuJpO0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tF/PbWJxeFqtosbzDA2toxx5oHz8HereuBRcOH0DnAZwIoh2U41LVr2sD8zc67pmiVu0Rll+zNKD8Veo+9u88YGhThRsfa9iLUHT0VDn5pFpxn3/AJZN9pQe63rZVIW3QOdLPTSUfkx+QF4I1d1Uz9oTLit/ARO4qBb1YMrpdFY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Hm0IA4tp; arc=fail smtp.client-ip=40.107.13.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CwcymbGxP/lDCK4ojZdldQJ+OHkZRQGhcd7FUOn8sXitGqhzQYcViflnH0NTQy5JykxtoBr1oKrgdwYE0aEgsau/PiGrhKgfbg3xZtst5+dPEY15k5z0UavggOLRxMpes6meunK1izVpSgmWTi6vhrxqMQQSJDYrt0+M3nfwBUnjSBn29lcbXXo4d3lm4VUu6cL7GetPTCA3E/5dTwocGq7M3HzIqqZWvyeAWMP2dkJ5jAo4HQgOPOm1SWivS9lL2qmzfmAcdb8ZoYQqCpmAlDILbAgSSNA+eo5ftB5609b1VKLoHZTmwmlyjNP9PgQNPkhMLyyOu+el0gc3lemc1g==
+ b=UR0MqHNCyDvR40nGwRQQ+6JtyUSH/UC0A4SvTBKfNApF4I8rgizdGv1jFht3mGLb6Te5kmPk8CnrOC1C9+aYnXtBz1BPL20I5uWVnBHcYPZ712mOCdJN9LHqmzfnvlb1MbsIS2P+HHhStpCV5ohGLNxLy/w6bTRkUf18fOHpZrLXY+HQDt3qQTf+3dFiTWfK6+Cw8nUwvpJbEc+IBHY3z5nsrzKZAIsi/WcS/2j33MPn1MjDkC9+MdMSHYV8JaMsiXRcCy2a43goSXTxiOTsXjerG5IVnlrjt8INXLx9V5u34WhxT8IWc9qufOgBFSJ8EPkgcPq2Pcn8jHQQh/+WOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+pThxDCkzMK+IfSq9+cVdr+3JZaQQEtObL9Hd50UW5o=;
- b=NKqlXZP6IpImjG7G/fEsTe880Q6ZEpzMi4YsO09Cp3gXE/PDIS8wNh27mybt4UXp6ZCKTwxOUMzDWw/DZCm7NLZnZpens8Enfygk4AgQij+Zp9yqHwaBonXOTFpKYW04Ydw2OIs+QHQ8umUyHvPTJGYLQf5qMrvbdbRpIHSriDU6FUlVQgn4/8EQR7zxutQGUwKI76/Jm+7GVjgM+Z7mvljl1VgwQs7GODMFNwPOljjp9WSDvet9Et0CzyIRdgjYOASZbKuWSNhSKclIWn0vDmc5a+ZXPTiTF5rxa9tNsO5PLBnfIriRmUI4UYHPZW6pXJkFqo9TjrqUdpRi6Ay42A==
+ bh=LRteQerI4r59rNG5YiJ5/UWYLEv9UVyu2UwSRTKuAMM=;
+ b=kGlWw+6P2zJEdXL4WUroz2+7TLulWIai/PrG/0v8xgUudVje+RpCiLaGHycXpAyOWFIDVUsg/iZtI4dhcMJiAWuOuiYbRaQfHBVjBIxfWzIXOAIus6uogxgYxgNxfkJz4RdlPKXCnISJQMCW7uMOcXTjxqUhGWu+TB7HQHCyRqtR88fnQfCqj9cr8PknabJZV2n9fI/P8rYBWZTxgRK37L/SggOsFJU196Zlws1yQ7H3/livMBbabvKgkluRqbZL024udE4rlp/vYb9N+Pk1xl7/waw1AksAvCtNnpzS2VRsSAVTnk+CwUNe5TIuI5YSwDi7UBXArIVygztdPAgUQg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+pThxDCkzMK+IfSq9+cVdr+3JZaQQEtObL9Hd50UW5o=;
- b=KtSofEPsk2QJynCu4WmTQ0ffzvIDVk+lrT7F5OeoAOgZjpvrggkEZ/PzkRmQhojBmvPHu0TwM2cR6nGaUtdqrH5uRT0NC9CmqA8qr6mLKJNSvpzZLgKXevGd7IUVjzKIj5xHjozxEZab600ebKBVig+PRQMMFGt8STOBb5p/qEk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from SA0PR01MB6171.prod.exchangelabs.com (2603:10b6:806:e5::16) by
- SN7PR01MB8066.prod.exchangelabs.com (2603:10b6:806:359::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.36; Thu, 20 Jun 2024 03:10:22 +0000
-Received: from SA0PR01MB6171.prod.exchangelabs.com
- ([fe80::b0e5:c494:81a3:5e1d]) by SA0PR01MB6171.prod.exchangelabs.com
- ([fe80::b0e5:c494:81a3:5e1d%7]) with mapi id 15.20.7698.017; Thu, 20 Jun 2024
- 03:10:22 +0000
-Message-ID: <8922781d-5f12-4590-af41-b17d83836d19@amperemail.onmicrosoft.com>
-Date: Wed, 19 Jun 2024 23:10:18 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] MCTP over PCC
-To: admiyo@os.amperecomputing.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240513173546.679061-1-admiyo@os.amperecomputing.com>
- <20240619200552.119080-1-admiyo@os.amperecomputing.com>
+ bh=LRteQerI4r59rNG5YiJ5/UWYLEv9UVyu2UwSRTKuAMM=;
+ b=Hm0IA4tpr1JmLEIpV6s7KkzwOZw0VD0PbEiEEix/vtRy2hZySXy05oILH/TIyzhw0XPQDwXM9yToD1wwFl2svKfNjaPfJNFeMHBNUEpK2QIagTp640iSTwmvbpaqK0MIYeboKfcwuSPGPu0ihOzt7PIzpv38mCvWPghqUw0BB7s=
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
+ by VI2PR04MB10115.eurprd04.prod.outlook.com (2603:10a6:800:21d::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Thu, 20 Jun
+ 2024 03:10:32 +0000
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256%4]) with mapi id 15.20.7698.017; Thu, 20 Jun 2024
+ 03:10:32 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Cristian Marussi <cristian.marussi@arm.com>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: RE: [PATCH v4 1/6] Documentation: firmware-guide: add NXP i.MX95 SCMI
+ documentation
+Thread-Topic: [PATCH v4 1/6] Documentation: firmware-guide: add NXP i.MX95
+ SCMI documentation
+Thread-Index: AQHarbcWvQ6qnrsIjkGMWdfSXLY1JLHMSYaAgAPXkKA=
+Date: Thu, 20 Jun 2024 03:10:31 +0000
+Message-ID:
+ <AM6PR04MB5941FC1BB606ED5A2A9FD19088C82@AM6PR04MB5941.eurprd04.prod.outlook.com>
+References: <20240524-imx95-bbm-misc-v2-v4-0-dc456995d590@nxp.com>
+ <20240524-imx95-bbm-misc-v2-v4-1-dc456995d590@nxp.com>
+ <ZnBip_XY1PAkTEbB@pluto>
+In-Reply-To: <ZnBip_XY1PAkTEbB@pluto>
+Accept-Language: en-US
 Content-Language: en-US
-From: Adam Young <admiyo@amperemail.onmicrosoft.com>
-In-Reply-To: <20240619200552.119080-1-admiyo@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR05CA0070.namprd05.prod.outlook.com
- (2603:10b6:a03:332::15) To SA0PR01MB6171.prod.exchangelabs.com
- (2603:10b6:806:e5::16)
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|VI2PR04MB10115:EE_
+x-ms-office365-filtering-correlation-id: f2e55539-42fb-4159-37c9-08dc90d68bc6
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230037|366013|7416011|1800799021|376011|38070700015;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?uAfqiRnUh39Oni4sPdNjV9tb3WhOOUcEqeMZy6X+UACpStq+iiUNOrz/oAVI?=
+ =?us-ascii?Q?IzHbU76pj74snwrlBBgAdFUQs8jLB9vY/Te7B+xQHENwnoGgBSEVqvkTG3Us?=
+ =?us-ascii?Q?wBdyw9EriE15fFNeVQ2qyAvrJb0GZ+lEGlq1n88pv86J+UaARlrag/TzkI9E?=
+ =?us-ascii?Q?liQ3IKhsc3uwYP69PsU8ZPcQkvjUGd8d5SwgDyJX4nVmkIPu67M99Uaf7PTA?=
+ =?us-ascii?Q?NzxOWd4CQaQJlcmJpHXLaUZc9hw6nfeGh67VHJyzAfAV1H4MzREnS31w6TOY?=
+ =?us-ascii?Q?2vXifl24uro97A+mrhtIiJgm9kGmG4POedu8eqRLXcopj2TjytJfVg3s1wgj?=
+ =?us-ascii?Q?v6wGEuA6OkAUJMOhL+lvqKyy59CAUrZbFOEt+srMIQextNv5EyrxbdfUlTBL?=
+ =?us-ascii?Q?4W7vJgPotPBwOyjbZy0Vqiuqkjt6Lbb0xdcPbJOromhNMY0ItlWm0REWLzQN?=
+ =?us-ascii?Q?O/sYnaXFmq1AoYPepfQhkVjIzfuUN/iJVO6SSMBbmQZ0EpkZMGZG+eE+io9/?=
+ =?us-ascii?Q?7TdyLBItnqOdaLtA3CUPiOJwI9sVMXX+8qhHz4c7xyy2pucFv+pZ4gbIlEBt?=
+ =?us-ascii?Q?BSun8wUcb9lX+5P1K41nR8R56PYVDWpD9Rc/9GOm8Btj/iz3mCv9EmhvAZzF?=
+ =?us-ascii?Q?MShWGsN2XZQQAYZfkK1Ncq5YtY6nV6LoVWgFvhxSJ9qJAZPJIp4RTkZQcFlR?=
+ =?us-ascii?Q?vWC2PDDJ2Tl5lBTnXh/i+18RC7Iv3zhQmnmQuan7PwKbZXZvMTSoR4q9ega5?=
+ =?us-ascii?Q?t1lzvGbtVi/Tu64YFTE7xTkdmbanJVe87LszYa5vcJZdvxdBRm7TPAXAMtIl?=
+ =?us-ascii?Q?BWuqjSNe9rgdYGejB3g8yJX5cbOX0NPoXTJMj9TgZHHXMOB7Ay42ywdmoj5z?=
+ =?us-ascii?Q?BqbmtFYC788poXozzoRm39mLlXaF1/bl8CXB96KlpjvJiOI/jdXfP/7a9FHr?=
+ =?us-ascii?Q?lSJgqgcjbx8mMUaFP6+FdMs6BcVHNz6Wo/qlWyxbUivTdGlxGBYKlMSZskzn?=
+ =?us-ascii?Q?3igN9kB2/G0OroK10/C2Ki09cvamcs7CCfIS9EHtazF4eI0X8sFjfO4eIuWZ?=
+ =?us-ascii?Q?h87/ssAN5LSjiS/4803TmRSaEpXlDj1VK0ENnFRtsLvgDj8BppzAabBgJpht?=
+ =?us-ascii?Q?y6hMSfle7o/uMTP9Mf0zh6AmsTQMwws3rMRMRlKrbUaiRKLv4US0NxbWQQtf?=
+ =?us-ascii?Q?gtt33XX0sEok7/YtzAXrbzv8okcKh/69nRANljkUhxCAhzoLGn85ceRQSGGR?=
+ =?us-ascii?Q?nIvifLGmcux6MP4OYLuAKEPyRBPn864gv+d15iEIbKXZZ9aoa0JxXV+p3ZHV?=
+ =?us-ascii?Q?T4Ng6+oud2C9jPDsCpltyvuNKPNN8oAbQ5j7yUJfdIEwiOty5YXs/kpx7sdP?=
+ =?us-ascii?Q?dMf7PP8=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(1800799021)(376011)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?Ezye8wCyRrZXu9bGveBxZIYPBkJOcSHuajKJ+hdolq6hn+yxpDNBAkbzT2es?=
+ =?us-ascii?Q?hAUCjzAjLTxO3p0GmGRdQ1sXQ+8hF4fklmkiaE5Aoaa8Q2c/Pn3iQtfdOduI?=
+ =?us-ascii?Q?SrTANWiZxNPjik5MewegzXe2JNrqVWTZHHnkayVSQ6Dbd7Un5GMtdCXsiwj7?=
+ =?us-ascii?Q?CNhiqcZStV+9faKzHErzhQHO45SRYX2D/2qmcS4XoDmsQvx3+V4vCT/O88YL?=
+ =?us-ascii?Q?Yo0k0SLEoe2WLacMMEha4xRwbrZWEc8/FESbcfgLdSJKAQb7fzBgdWre9+1+?=
+ =?us-ascii?Q?A9ejaU7YxIbCcY4WrK25GOEbYwMzLJL0aZvCA4vuzK4B3vTEqOHOWlh/R/iI?=
+ =?us-ascii?Q?u9aP0vNQpEZPQOuQVmldiXH2WRewO2IojZVDH5hjyUqRLjkwQqRdDL8oLY64?=
+ =?us-ascii?Q?56RXP/WmfpGwVp+XWAw+IXnsJYcaqaKPvoJJ0xJISic02ygUoDHIHK7rda2Y?=
+ =?us-ascii?Q?FJxLi5rE/Q2pyiKJDABoRzkXePUa5oY44j35a10dwkwHvk7weraNuutYucBx?=
+ =?us-ascii?Q?M6fAet88NcMnQknCRx0LJzBp4J0XW0NtJkvXjz3muk1FZd/JRYziUPH8f7no?=
+ =?us-ascii?Q?ao+IwtS10nNoNzuKXUqqM0emWHDDocRCYssUXBozDVIruWds1owELJrWCEqU?=
+ =?us-ascii?Q?hVapVF7Te9atNzQRsYJUVqYu1IiUM0RWsqO3Mumuas75yt1TIz7Pj/jV3yKb?=
+ =?us-ascii?Q?L6LwqBY79xX+YjURC0hv8k27ssf1cdfiHWwVdi4BPlMvIe1KUSkp13yxbqYI?=
+ =?us-ascii?Q?QkhFmNGw61jLyyJd0Eu02bg+CkJjJU7nEhdomnxLbhlKaAOvJScmRe3Vwu8j?=
+ =?us-ascii?Q?kNe5eVCZPJPZYPtZ7LZ+2r1N89jd9TFbtjbiyGE7mmntn5mR4sIQ+co1mfVk?=
+ =?us-ascii?Q?9lxlMNshuDR7bkXIvNCcCQiIN+AizQKdHgQpI7BAMv64VuH7WYPRhwTRGlgO?=
+ =?us-ascii?Q?ge0XyTraFD/5oTxyG6p9S2XWbhKuCrMXKKl/xWMgUGDnMbgZMcZbzHfGbhFX?=
+ =?us-ascii?Q?LRqDbAYQlbAIc+akDpnluTtCz5WJ6ZpupjDwOXO98pugJNhZPbHmVxP1moAc?=
+ =?us-ascii?Q?Bstzf6rimloa8DS1pmcK3wq1Tgs13gN6BzdswJdou7OqpMy9ZBZ305t6d4+A?=
+ =?us-ascii?Q?S/ZkaOPCan5xsEheG9L7D/BJece8gMIbq/v3uQPlI26236YcobLNe95DVW56?=
+ =?us-ascii?Q?AzvndVjKxsIkt/GexGx83G7Q3jw8BMlC7U6ixkMRxZtXhSqrlU1x2E/is2yv?=
+ =?us-ascii?Q?lLL+551+eQpNmY+WymawZHCHmHu2KYlNOCLk6GfBP58OYaVnAXK2PQDoLp04?=
+ =?us-ascii?Q?JLq3P9e3PUShQRHQ2DV2e9O3dCfbQzCIufsLFNANXAcUNcWrcf5r44m1qbXw?=
+ =?us-ascii?Q?RBIizLFA97Xu2Ym+p42J8efkDNj6HhIH6z/5dYJywFqx/sD/6H1pEMCLJ3rt?=
+ =?us-ascii?Q?LDKHvMuES3FqTfSi7q7d+wf4BuWQdBbL4UAlyMOtF5gS5mfK61MuyEOQMX2y?=
+ =?us-ascii?Q?kcGHzQIDB/A9FSnfKdAQPOJ4QDNvRzG1GEKpuEApTOESHAtsD7UteCQiokA5?=
+ =?us-ascii?Q?dcOAXT3dObJTXED3TWI=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA0PR01MB6171:EE_|SN7PR01MB8066:EE_
-X-MS-Office365-Filtering-Correlation-Id: a6cbb5bf-b98d-4c0d-a2c2-08dc90d685a1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|1800799021|376011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WmtOMjBRQktrdXhiRE5VVGpCOW50VGpyWFQ5ZksxMjA2WjZUa0tpZWFjWEJh?=
- =?utf-8?B?VzdFaXNZUXEzWHpVZ3FBRytFL1pDS1J6ajc0dGtsa1duTldrazk1YWxlR29r?=
- =?utf-8?B?UE9jd3RyMDd4cTBWOFh4SW0rMk9vT0RPSWRJVE5vWWVDODhlM3dhaDBTNmcw?=
- =?utf-8?B?by90aGE1dlJOOUI5ZnBMQ1ZuWDZiUmdtNzlPaG9XZ0VidHNYdU9vU3l4OWJL?=
- =?utf-8?B?SWRZdTEzOEFGQzB4WWxVZkVCV0FPbjJ4VmI2YVVmakhsbThGRW9qRXUxL0x5?=
- =?utf-8?B?U0psdzFDNFJrMTBVRnZJK052aGFtTjVBVWQwc3JIYlV3WE5CeEdyd016RUJF?=
- =?utf-8?B?M05NazFhSU8yc1dDNFpKcnY3OVJ1TTdGcXRaNVdCWHYwOEJTaFhodjl3N3FF?=
- =?utf-8?B?VXdqTlFOQVU5RmFUMEVrSmFyV3ZvcDRzbERYekFxam5lT1RQQXREV2IwNEVo?=
- =?utf-8?B?YklIOEVVWklSN2o0d1EzbzREdFZqUWJZUjFqZzlBaUg0UXB2dDNoeWV4T09N?=
- =?utf-8?B?Zys5RXhFeDY0QnRsM011eXoyNWJzZitzYnRLaDFRV2pBL2QxdHlxZ1ZTMkFp?=
- =?utf-8?B?RjliRFNXbWRhaXVvaEZnK1lmcTBlbU0yL00vcWVTcHlFdzlWekRPMDBRMzBu?=
- =?utf-8?B?RHVUTElpZGVVbmpxR2MyRzJPTWwvaWY1M3JqWTkzYTZyZnVHalh3NHFZTXBz?=
- =?utf-8?B?UUhVVStCc2JXRXQ0elJpSFE2Sk15VGlWMFZRUG5JYUl5L2FXa29TTEdQN0Va?=
- =?utf-8?B?Y21lVlZoaG5RMGo5elZnVVVKRklqd3Z4dTlsTWVLVW9hVkVGWmU4NzFSK1FF?=
- =?utf-8?B?TGFicG5ZU2hFUG1vNEtiL3lpcGhON0IvcG1rTGVKQTZFNEFGY0ZSVFZydHRl?=
- =?utf-8?B?Y0xHaGhqUnZXeFdhY2EyZ2R6Rjg5bmUraTgvL1BGdE5TMXZvMlFLM2xqL2xr?=
- =?utf-8?B?WTgwSnd2ZWRwNUcwVXFqbDd3OElTaHJEL1VPWC85NDZJdHM1UERNZGZNelhs?=
- =?utf-8?B?WnpHUnBrb29vYkwvcUUxQUxKdmhHUzg4bWp1L2lhTThsYThCRkZIQ1c1S3VC?=
- =?utf-8?B?T3JJYVBCam9Rdm5kZ2k0VjZsMXdYaVZpK01HSWxPdU5vdS90eUk5NzBCRTd1?=
- =?utf-8?B?Qi9LT0d0alVUQmQ5b25iUERWWk5ObGVpeFh4UHRvNEZPNFFhYXdjbGRiQjVK?=
- =?utf-8?B?Qm5hMGdjd2FjdDloKzFGczNlbldFQzhSOVJpOUJ1WTRra2lKVlk3M0dlY2Vv?=
- =?utf-8?B?TFN0RHBKNjhCaElrV0FWNVplZ1ZPeHQ2VHBiV2NJNUdaVUhQVHpxNWlwQml6?=
- =?utf-8?B?dHNYWGxGaURvQnI4OFJFaXI2eDljeUkxUXVLRWFIU0g0cGpjeWlhOGN0TE9O?=
- =?utf-8?B?MkRoSjhuRzJzUEdRRWNkVlFNUkxPc1pGTExDQVlIQkJoWnN0a2ZZSTk2Mkl3?=
- =?utf-8?B?RjNHZEw0S1ljWGJkWUo2WHZLWDlVaXIzYmRpWEtoOExrOHJJR2YvVVUxVDVO?=
- =?utf-8?B?bWVGaEFQWkx6Rkt0T1BiZVZ1U040V1BBOXhFNzlHRmFndDVmNG8wWjdSaWdZ?=
- =?utf-8?B?aGFzRFVwY3cwMHcreDJ0V1ZKZUMvWW5MclBPdnBmZ3VkOVZPeWxiY09TNnFH?=
- =?utf-8?B?MVJGVDdWUVlhYVZ1VmF2dkNweElLRWpia0M3QXlaU2NKNGxHWGd5cGxzZ0ph?=
- =?utf-8?B?MzVTb1BkMm1vOGhNNlRaWGJYWk1FOVVZZktDcnlIV0JJYnV5eFVwc0x6KzJj?=
- =?utf-8?Q?OozDDziDVC1psSDtmqmV9fjE5DRtYrtJSRSTzdH?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR01MB6171.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(1800799021)(376011);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UVJtWm5uZVN0a3hzTHdRU0NUd1hDWldaSE0ycEQ3NzVURkZGRGIrSU1IVU5Y?=
- =?utf-8?B?empmTDJxS1VzQ09VaDBQV3YvYzZ2UlRFWWdQMHFRZ3RtTXU0aGsyUnpjRmFq?=
- =?utf-8?B?Wit6WGQwMVY1NXlubFFjMnpRd0Z5WFZZTHo2ZjhrQ3p1S2dEc0g1WlZHcStR?=
- =?utf-8?B?VzNic1JMc1VMSTREbCtMbVYyREhmRHNrdFF6aWp3dmZMZlJuSnI5RUFhSm5V?=
- =?utf-8?B?Y2s0VHBNNUFaTTNtdU1BMElXZFZna3M4Ym9jWTQ5akZVSlZENkVsbEgzSmtN?=
- =?utf-8?B?cENLbUZCYlpQaDlsbEl5ajI0WTlSYzYrWlAyUm9kWEdqVXA3M2tTcjFRcitG?=
- =?utf-8?B?Y3BZemxoK05JNmdtVlFZUHJXTTF0NUVmenJ5cFNLclQyRWJnanB2YnFsazNF?=
- =?utf-8?B?YlJPbnBGaWZhUFVyRnJ5WDYvaDJWMmxmRGNNa1ZjdGMxS2Jjb2M5RkRFdGVK?=
- =?utf-8?B?ZkZTd1JoTStFaDdTRWVsSTB1YTZKUWhSNmtqUExQbEhtd3loY2dUL0FhTm9M?=
- =?utf-8?B?N3FiaWMrSWo3NTNLQ0p6YlBlc1l3WDNqeWthcWFBVDFkNytzMEJzNHdQRm9q?=
- =?utf-8?B?b1JKclNOalZLdmdFbDNFR3kzZENGNzFtWnpmSHdYa3FMMHFCdkRhTzFTWmNi?=
- =?utf-8?B?RmtqSnl6S2d6L0VOVThaQ0Q4R205MUVrSHh2RzhOMmoxQmJiRXQ2SUEwUFZ3?=
- =?utf-8?B?a1h1ZFVVT2RIcy9MN3pDanE1WURwRFZvQ2xOZ01KSW1SajJGSlJmU2h5T2Jo?=
- =?utf-8?B?NFJKMEFmTFlhV2Y1T2RoNnBxY29JbVNiazg0enBML1kzZHBxdHFZalZnMlNH?=
- =?utf-8?B?V1EzRk9MalljRkVxVHpkZGVHdWozQnVnZWF2WXVKdk82dUU3RkJnaGs5N1pt?=
- =?utf-8?B?Rkl2VCtnUVdoOTFzSTlOOHRENlhtdldjVVRhRE1XTUtiVUpnZTBnYldXdHBp?=
- =?utf-8?B?VU1XT2MzcDF5Q2NINkd3eDBvVTRhc09MNlVsdE4raE8xTDZSREVTemp3MFNq?=
- =?utf-8?B?eFM5TFB3TG5rOEkrOGVvZmErMDVKS1JoVktJTy90d1hIOGpCbXZNcVBla1I3?=
- =?utf-8?B?WGY2Z05tZnZDMlZqNlcxSVpJdFZnczhaUE9wZ2xKMG9Yck5XTXRSL3ZlTnVi?=
- =?utf-8?B?blNMOHgxVVBIcjNreTFaTnVJWk9wUHh4Y2hyc3Z1T3IveDZzajNTdFVOSkhu?=
- =?utf-8?B?aHMzcWdoRTJaOWNNVENrd2R3ejdVOUtDajVBSUx2Y1NMQmdoVkpwa1JlS2JX?=
- =?utf-8?B?b0VNNHlmQVdNYVRNdFRvZGdpZzAvTzRVMmIzRS9yNk4zdTgyeHArd2ZoY2FB?=
- =?utf-8?B?eGkwbzNIdmRFTUdOL1kyM1Rlak1ST2FtcFlzZGs5eWVVSnNwRU4xOUJLNUdz?=
- =?utf-8?B?b1kvdk1TcE4vKzc0anN2K1BNc0hOK3lpZXd0RjRWSTZoZUVUcGtWUXVlU2xw?=
- =?utf-8?B?bE9XMkRDUFh2RVowREdUOWpBZEdvMXVSdE03UW1oSDQvNXVRZ2l3RmRZeXVT?=
- =?utf-8?B?SEMySmxKOHg5aE5kUjBNUmxrcmtVSHhDUkJrMHdGMjBQSEI5QnV4NXR6ejE5?=
- =?utf-8?B?ZGxWTzU1dW9KZkJTb29QVEpveGhQcjJjQllVYWQrTkc1a1FuNGkxdnlPN2x0?=
- =?utf-8?B?ck1JTERVVXdrVnpOWGJsYWQ4bHRVeGdOYmNURElsZTVCU0FTcDRSNkpuVnc5?=
- =?utf-8?B?WjJxK08wMnFyYnl2MTl1RzY5ODljNkI0VnZ2NEovU21lTkt5aFdDTXdUUGND?=
- =?utf-8?B?dEp1TE5XYmdPOThCN1pvaUN5K2dscHVHVnpHV3c1cHFLdFliaCszTGpFNEFl?=
- =?utf-8?B?YjFiejBUck5aLzJ3Ny9IdklJYVl5SjBkK3NkczJ5dS9ub0dOTUxmck5MbGk2?=
- =?utf-8?B?YWFpaXAzdVlmU2t2QU9CZ29OTllsZlFxRGNTdG9CcUVnOGo2cC91Vmx4RjdG?=
- =?utf-8?B?RTdWbHN0L0hjNjhNVjhDcGE3V2RoNnhkN0pzY0ViS0UrUlU4dklXYklteGhG?=
- =?utf-8?B?RVdnbGhhT3ErSEdtd2lxRWl5K3p6Q3YzVTdWaUppQ2VSc1lheUZpdDd1Tlhw?=
- =?utf-8?B?cDRjVmkwLzJhWVZrSUNWR1Q4SFpkZ1dEelJjMWxIa0I2cFE5SWpBZXcxRzdX?=
- =?utf-8?B?V2gwYVFnV1NpNTVlMVB4Skp5N1VCTGt1MmhkRkgxenUrdU9OOVAvMDRqaW1l?=
- =?utf-8?B?dEtueTNEZjNEeWN4bFRBVVVBcjIxTU9sTVhBSFI5QjNwTHRDcHIrazBPNW9J?=
- =?utf-8?Q?4BLpclvFACsRsfyeRfMKW/GJA24CdDVII3MBZJR6nc=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6cbb5bf-b98d-4c0d-a2c2-08dc90d685a1
-X-MS-Exchange-CrossTenant-AuthSource: SA0PR01MB6171.prod.exchangelabs.com
+X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 03:10:22.0020
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2e55539-42fb-4159-37c9-08dc90d68bc6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2024 03:10:32.1779
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bV2j/lU8238tET6Z3k0VBndPVf6bxexXyahZbAJxvCWx0cLXkdJe34BlX9cAOoMoEm7YCaq3FoYOoExP7qZUkf0pTM7TPPAoYN4XD/Wx5UEjagKRSvVugEt68omvTlgZ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR01MB8066
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: f2e0z1IctFb0P3gNg1Yr8BwaLjs8po0LW0Dbwuc+0bF2Rr9XjbO5OwZ83M4NfI7cMbhj4Yn31rwrlja2zu9+Ow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10115
 
-Apologies.  I just saw that there was more feedback on the previous 
-patchset.  I am addressing that now.
+> Subject: Re: [PATCH v4 1/6] Documentation: firmware-guide: add NXP
+> i.MX95 SCMI documentation
+>=20
 
-On 6/19/24 16:05, admiyo@os.amperecomputing.com wrote:
-> From: Adam Young <admiyo@os.amperecomputing.com>
->
-> This series adds support for the Management Control Transport Protocol (MCTP)
-> over the Platform Communication Channel (PCC) mechanism.
->
-> MCTP defines a communication model intended to
-> facilitate communication between Management controllers
-> and other management controllers, and between Management
-> controllers and management devices
->
-> PCC is a mechanism for communication between components within
-> the  Platform.  It is a composed of shared memory regions,
-> interrupt registers, and status registers.
->
-> The MCTP over PCC driver makes use of two PCC channels. For
-> sending messages, it uses a Type 3 channel, and for receiving
-> messages it uses the paired Type 4 channel.  The device
-> and corresponding channels are specified via ACPI.
->
-> The first patch in the series implements a mechanism to allow the driver
-> to indicate whether an ACK should be sent back to the caller
-> after processing the interrupt.  This is an optional feature in
-> the PCC code, but has been made explicitly required in another driver.
-> The implementation here maintains the backwards compatibility of that
-> driver.
->
-> The second patch in the series is the required change from ACPICA
-> code that will be imported into the Linux kernel when synchronized
-> with the ACPICA repository. It ahs already merged there and will
-> be merged in as is.  It is included here so that the patch series
-> can run and be tested prior to that merge.
->
-> Changes in V3
-> - removed unused header
-> - removed spurious space
-> - removed spurious semis after functiomns
-> - removed null assignment for init
-> - remove redundant set of device on skb
-> - tabify constant declarations
-> - added  rtnl_link_stats64 function
-> - set MTU to minimum to start
-> - clean up logic on driver removal
-> - remove cast on void * assignment
-> - call cleanup function directly
-> - check received length before allocating skb
-> - introduce symbolic constatn for ACK FLAG MASK
-> - symbolic constant for PCC header flag.
-> - Add namespace ID to PCC magic
-> - replaced readls with copy from io of PCC header
->
-> Changes in V2
->
-> - All Variable Declarations are in reverse Xmass Tree Format
-> - All Checkpatch Warnings Are Fixed
-> - Removed Dead code
-> - Added packet tx/rx stats
-> - Removed network physical address.  This is still in
->    disucssion in the spec, and will be added once there
->    is consensus. The protocol can be used with out it.
->    This also lead to the removal of the Big Endian
->    conversions.
-> - Avoided using non volatile pointers in copy to and from io space
-> - Reorderd the patches to put the ACK check for the PCC Mailbox
->    as a pre-requisite.  The corresponding change for the MCTP
->    driver has been inlined in the main patch.
-> - Replaced magic numbers with constants, fixed typos, and other
->    minor changes from code review.
->
-> Code Review Change not made
->
-> - Did not change the module init unload function to use the
->    ACPI equivalent as they do not remove all devices prior
->    to unload, leading to dangling references and seg faults.
->
-> Adam Young (3):
->    mctp pcc: Check before sending MCTP PCC response ACK
->    mctp pcc: Allow PCC Data Type in MCTP resource.
->    mctp pcc: Implement MCTP over PCC Transport
->
->   drivers/acpi/acpica/rsaddr.c |   2 +-
->   drivers/mailbox/pcc.c        |   5 +-
->   drivers/net/mctp/Kconfig     |  13 ++
->   drivers/net/mctp/Makefile    |   1 +
->   drivers/net/mctp/mctp-pcc.c  | 373 +++++++++++++++++++++++++++++++++++
->   include/acpi/pcc.h           |   1 +
->   6 files changed, 393 insertions(+), 2 deletions(-)
->   create mode 100644 drivers/net/mctp/mctp-pcc.c
->
+......
+> > +The SM implements an interface compliant with the Arm SCMI 3.2
+> Specification
+>=20
+> I would not specify the exact version, since the SCMI protocol is
+> anyway
+> completely discoverable and in case you evolve your support you will
+> have to update endlessly the doc.
+
+
+Sure. I will fix all in the patchset.
+
+>=20
+...
+
+> > +- Set an alarm (per LM) in seconds
+>=20
+> what is an LM ? maybe a worth a note about it above in the intro
+
+
+Logic Machine, it is i.MX SCMI firmware specific.
+I will add in v5.
+
+
+>=20
+> > +- Get notifications on RTC update, alarm, or rollover.
+> > +- Get notification on ON/OFF button activity.
+
+....
+> > ++---------------+-----------------------------------------------------=
+---------+
+> > +|int32 status   | See ARM SCMI Specification v3.2 section 4.1.4 for
+> status     |
+> > +|               | code definitions.                                   =
+         |
+>=20
+> I understand that you want to mention a specific table in a specific
+> document for a well-defined version, BUT I would drop here and all
+> over this
+> versioning and refs and just generically say
+>=20
+> | See ARM SCMI Specification for status code definitions.
+> |
+>=20
+> to avoid all the future churn in keeping the refs updated here, since,
+> as said, all versions and features are discoverable and the Linux
+> kernel SCMI stack takes care usually to downgrade to match the
+> detected
+> protocol version.
+
+
+Sure. I will fix in v5
+
+>=20
+>=20
+> > ++---------------+-----------------------------------------------------=
+---------+
+> > +|uint32 version | For this revision of the specification, this value
+> must be   |
+> > +|               | 0x10000.                                            =
+         |
+> > ++---------------+-----------------------------------------------------=
+---------+
+> > +
+
+......
+> > +|int32 status      |SUCCESS: if the button status was read.
+> |
+> > +|                  |Other value: ARM SCMI Specification v3.2 section 4=
+.1.4.
+> |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 state      |State of the ON/OFF button                        =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+>=20
+> How the states are codified ? 0/1 ? with the remaining bits reserevd ?
+
+0  or 1 for now. other bits reserved.
+
+>=20
+> > +
+> > +BBM_RTC_NOTIFY
+> > +~~~~~~~~~~~~~~
+> > +
+
+.....
+> > +|uint32 index      |Index of the control                              =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 action	   |Action for the control
+> |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 numarg	   |Size of the argument data
+> |
+>=20
+> Max 8, it seems...please specify
+>=20
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 arg[8]	   |Argument data array
+> |
+>=20
+> arg[N] with N in [0, numarg -1] ?
+>=20
+> ... a bit of formatting issues too above...
+>=20
+
+
+Yeah. Fix in v5
+
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Return values                                                        =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Name              |Description                                       =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|int32 status      |SUCCESS: if the action was set successfully.
+> |
+> > +|                  |NOT_FOUND: if the index is not valid.             =
+         |
+> > +|                  |DENIED: if the agent does not have permission to g=
+et
+> the   |
+> > +|                  |control                                           =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 num        |Size of the return data in words                  =
+         |
+>=20
+> max 8 ?
+>=20
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 val[8]     |value data array                                  =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+>=20
+> val[N] with N in [0, num -1] as above ... I suppose
+>=20
+
+
+Fix in v5.
+
+> > +
+> > +MISC_DISCOVER_BUILD_INFO
+> > +~~~~~~~~~~~~~~~~~~~~~~~~
+> > +
+>=20
+> Which build version this refers to ? the SM fw build version and
+> metadata ?
+>=20
+
+
+Build date, commit hash and etc.
+
+> > +message_id: 0x6
+> > +protocol_id: 0x84
+> > +
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Return values                                                        =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Name              |Description                                       =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|int32 status      |SUCCESS: if the build info was got successfully.
+> |
+> > +|                  |NOT_SUPPORTED: if the data is not available.      =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 buildnum   |Build number                                      =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 buildcommit|Most significant 32 bits of the git commit
+> hash            |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint8 date[16]    |Date of build. Null terminated ASCII string of up
+> to 16    |
+> > +|                  |bytes in length                                   =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint8 time[16]    |Time of build. Null terminated ASCII string of up
+> to 16    |
+> > +|                  |bytes in length                                   =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +
+> > +MISC_ROM_PASSOVER_GET
+> > +~~~~~~~~~~~~~~~~~~~~~
+> > +
+> > +This function is used to obtain the ROM passover data. The returned
+> block of
+> > +words is structured as defined in the ROM passover section in the
+> SoC RM.
+> > +
+>=20
+> what is a ROM passover exactly ?
+>=20
+
+It is ROM stored some info in RAM that could be used by SCMI firmware,
+such ad boot device and etc.
+
+> > +message_id: 0x7
+> > +protocol_id: 0x84
+> > +
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Return values                                                        =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Name              |Description                                       =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|int32 status      |SUCCESS: if the data was got successfully.
+> |
+> > +|                  |NOT_SUPPORTED: if the data is not available.      =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 num        |Size of the passover data in words                =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32_t data[8]  |Passover data array                               =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +
+> > +MISC_CONTROL_NOTIFY
+> > +~~~~~~~~~~~~~~~~~~~
+> > +
+> > +message_id: 0x8
+> > +protocol_id: 0x84
+> > +
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Parameters                                                           =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Name              |Description                                       =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 index      |Index of control                                  =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 flags      |Notification flags, varies by control             =
+         |
+>=20
+> So basically this is to somehow enable notifs on the specified index
+> BUT the flag field syntax is completely opaque and varies by the
+> control type...
+> ...how is this even used in the code ? there should be at least a bit
+> dedicatd to enable/disable right ?
+
+Currently the flag is in board device tree. Our current usage is
+board specific.
+
+>=20
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Return values                                                        =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Name              |Description                                       =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|int32 status      |SUCCESS: notification configuration was
+> successfully       |
+> > +|                  |updated.                                          =
+         |
+> > +|                  |NOT_FOUND: control id not exists.                 =
+         |
+> > +|                  |INVALID_PARAMETERS: if the input attributes flag
+> specifies |
+> > +|                  |unsupported or invalid configurations..           =
+         |
+> > +|                  |DENIED: if the calling agent is not permitted to r=
+equest
+> |
+> > +|                  |the notification.                                 =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +
+> > +MISC_REASON_ATTRIBUTES
+> > +~~~~~~~~~~~~~~~~~~~~~~
+>=20
+> ? as above said... REASON ?
+>=20
+
+It is reset reason. Such as WDOG, FCCU and etc.
+
+> > +
+> > +message_id: 0x9
+> > +protocol_id: 0x84
+> > +
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Parameters                                                           =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Name              |Description                                       =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 reasonid   |Identifier for the reason                         =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Return values                                                        =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|Name              |Description                                       =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|int32 status      |SUCCESS: if valid reason attributes are returned
+> |
+> > +|                  |NOT_FOUND: if reasonId pertains to a non-existent
+> reason.  |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint32 attributes |Reason attributes. This parameter has the
+> following        |
+> > +|                  |format: Bits[31:0] Reserved, must be zero         =
+         |
+> > +|                  |Bits[15:0] Number of persistent storage (GPR) word=
+s.
+> |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +|uint8 name[16]    |Null-terminated ASCII string of up to 16 bytes in
+> length   |
+> > +|                  |describing the reason                             =
+         |
+> > ++------------------+--------------------------------------------------=
+---------+
+> > +
+> > +MISC_RESET_REASON
+> > +~~~~~~~~~~~~~~~~~
+> > +
+> > +message_id: 0xA
+> > +protocol_id: 0x84
+> > +
+>=20
+> So is this a GET ? MISC_RESET_REASON_GET ?
+
+Yes.
+
+>=20
+> > ++--------------------+------------------------------------------------=
+---------+
+> > +|Parameters                                                           =
+         |
+
+....
+> > ++--------------------+------------------------------------------------=
+---------+
+> > +|int32 status        |SUCCESS: reset reason return                    =
+         |
+>=20
+> ??
+
+Fix in v5.
+
+>=20
+> > ++--------------------+------------------------------------------------=
+---------+
+> > +|uint32 numLogflags  |Descriptor for the log data returned by this
+> call.       |
+> > +|                    |Bits[31:20] Number of remaining log words.      =
+         |
+> > +|                    |Bits[15:12] Reserved, must be zero.             =
+         |
+> > +|                    |Bits[11:0] Number of log words that are returned=
+ by
+> this |
+> > +|                    |call                                            =
+         |
+> > ++--------------------+------------------------------------------------=
+---------+
+> > +|uint32 syslog[16]   |Log data array                                  =
+         |
+> > ++--------------------+------------------------------------------------=
+---------+
+>=20
+> This should be syslog[N} with N defined by bits[11:0] in numLogflags,
+> by
+> the definition itself of multi-part SCMI command...the number of
+> returned
+> entries is limited by the platform dinamically based on the max size
+> that
+> the configure underlying transport allows....it could be more OR less
+> than 16...this way is seems that you always carry around 16 bytes max,
+> potentially with unused bytes if returned words are far less...
+
+
+I need check firmware design, but your question is valid. I will check
+and fix in v5.
+
+Thanks,
+Peng.
+
+>=20
+> Thanks,
+> Cristian
 
