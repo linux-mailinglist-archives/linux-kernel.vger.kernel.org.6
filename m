@@ -1,111 +1,153 @@
-Return-Path: <linux-kernel+bounces-222309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0927490FF8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:53:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9EC190FF98
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94745281C31
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:53:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97315281C31
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5571ABCA5;
-	Thu, 20 Jun 2024 08:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84A81A4F2D;
+	Thu, 20 Jun 2024 08:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X7VeeHkV"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="FbPcbL/Z"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A7B1AB91D
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C94D40858;
+	Thu, 20 Jun 2024 08:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718873404; cv=none; b=Un5hLJMDvidEh78JGMzJ0MwPQVX7BRxmrlWgvnCc4iFZWigeH85A232skC91deZ7D8EFUXeTNKsydBV4L9MvnJC3igk+Nh1J1J34HkkQwcG87dqT6DA3Vl5pPVJ/+SQvmFe2pqIQ71oUDestjRcjWD7DqX2EKim9FtlkZiJdS1Q=
+	t=1718873512; cv=none; b=p/By9Y4Qp3rC8oTtiqUDSt6Ilab7HGtD2j+aBqVlsE3wQolMCdqssMiWEsY9ChKkufx3mcHlnWJgF8z6ZsXRpqaTR/lwFFZFKoNFCEwnUYCEXYZl3TRCvmxEkUwzECjNoaZ6+o1X82/80NKDJJWYaIp3oI0CtyR+rh6MW38k6Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718873404; c=relaxed/simple;
-	bh=E/xlmU084aOXXwFw807wZImjGPqm1ANMchdMOU8QUug=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=r7+oKMZJaXU9WX0HHYo057Gf9BkGVXe2MA2rR9opdJHKgldgzyBVxPMBzsjMw2FwjG54uyulgtnHnaxniTShu9xdKvRnCpVdQG8iTMVf//1Yl9WDvbpvB0Zkq6aK0rKEiN002kpo691NIfSDtxPr052t/5a8ojPVc7/XkeFj8pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X7VeeHkV; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so67691466b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718873401; x=1719478201; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vPUY4GnBpPiQcbABkIr/cid7Dg+9bQhVw0p/ZhNJByA=;
-        b=X7VeeHkVNnoM4c/vIDPSHLEFNAAE4h9jolRxuo4ZEwsFzcqN+IX6rwhyn8CUVcnBIK
-         Ljoq08b58s8IVqjm/YIRJqY6l/ZxLVNhufoUil9vwHs2po8Rtn7Y8FaxVL6OeAt7/0ZI
-         AcVuC9RjRbP4YPbT96GAyM3SlWQmbK6ilbUTPX9M2x6p79SJJ700XoHAigMkqt698fWF
-         CE2HNrthqHlMWLDNqMDYvVBjEVnZpYCFvhqvoKxYM4phuyg0YwnIBEU7SrlQEX8HwgT4
-         /NH0kKw1qGodIboCMVqbdaoecvAIafSn6rOgr96Fj5BQc/Dtn8eQEOCo0MtZXW//9izk
-         fICQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718873401; x=1719478201;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vPUY4GnBpPiQcbABkIr/cid7Dg+9bQhVw0p/ZhNJByA=;
-        b=V3bGgfSIbrXI7OPT7qxO45NtkUGYY8E4hii0Q0IQy/459cOHJ8NsasC2P69m0h7hTw
-         ZZxwL6hKHSyvcM9B6pqgiZTuiQZIli9jfh5lJRuvqPoBXuCVKRxdNN7/O6P/BwZ2P1iz
-         UF37tfGUjnPmDCTSD5uDf394cd4FcEBk1tnObY4juuxCyY+B2HaV5MhbrAsFzgLv6Bon
-         runPFy7lbfe/xEwyWr+k30Ym4+CL/ZdkrtiOwWjryZbstaIIgZD+LC79feRVMwx2HLSD
-         z+xJni9CjBLU48A8KFBUOiIPmi4P8qJCNZERXBpTp3ZybRu7J22Ccl5cUUxuOQu/jBLD
-         mSJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVruavMrj6nBSHmsUNSOUT1InSgpxaedvrGXiTxPiwXc1KpnTKUwPOPozi4JISXbxD3hoOlnPD9E51jcSertNXxdTZwb7WyFQ2wesAN
-X-Gm-Message-State: AOJu0Ywg1o0gJa8Dqkwk0Bygx+GXT1Urh4i9euL0ZkqAhII1tDMm4VTU
-	z7UMpqDzPUxWBks8J5/ZHiuKZyrG5doQmlHOeSVi+7QlbI7RsSX/BJf7Wx057fA=
-X-Google-Smtp-Source: AGHT+IGeRQpttQkvdYS0dTEFzVkziwzBfpxbBi4M6n3CVQkw5KiESUy5y3Tp6fSmCv99sCUYOBBX3g==
-X-Received: by 2002:a17:907:c70d:b0:a6f:1045:d5e2 with SMTP id a640c23a62f3a-a6fab60b27amr291477766b.4.1718873401051;
-        Thu, 20 Jun 2024 01:50:01 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f5f377dd8sm694535966b.146.2024.06.20.01.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 01:50:00 -0700 (PDT)
-Date: Thu, 20 Jun 2024 11:49:57 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] tracing: Fix NULL vs IS_ERR() check in enable_instances()
-Message-ID: <9b23ea03-d709-435f-a309-461c3d747457@moroto.mountain>
+	s=arc-20240116; t=1718873512; c=relaxed/simple;
+	bh=2TvpXXhOk9nqvvpL7r4WYpLMcH8C6BL3/fs1sCKRmQI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZdh6Abph4Oatu4st4Dp3c6SoLZW2xmpfHpQ19jpjGalyL8BncVCO2VP+lCsT4KPLnO5O54SW0MKdOW3R52RQLHr4PkEVgpPRGISf+HaSN54aYqhjIAG9MI10lcyGIRR8IyiIpHlkLrVWtc7FvC6uORAvfTBMhgnl5iP/lxx5dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=FbPcbL/Z; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718873510; x=1750409510;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2TvpXXhOk9nqvvpL7r4WYpLMcH8C6BL3/fs1sCKRmQI=;
+  b=FbPcbL/ZCijGAftAWywDTHH/0YYZXHnJAPzwNG9UmDjrPn2Z13rGuFH3
+   NTrjh/qIlDFihgar8uSpKdVmdmJ6RgW30977qEWEoVsOX2QY0yHNNNE2f
+   ZD249eUohEXOIfz8bcc9TCo5QoO56NSUMyRzad7oeV9f3q9Hn3XaAdS4h
+   oTGyhFpnaH4cp3+L1ReMqqUJsmCMm2J5IJQzpERogNFdCyWoCJtbpAemx
+   4JFwzbo96FbDKKBvPDZtZEmIkEYHPVaMP9iZEEBvUjHnS/nh+ABAzfK8N
+   IaaNn/4QefW0LKeUAQWbiJbSeAb5OTBALjAFRwjWoyYoJdIrIO+d7OnER
+   Q==;
+X-CSE-ConnectionGUID: 56ZSahdTSAWG5kTlegWLxQ==
+X-CSE-MsgGUID: n5KP9bTySkmIbaRvewCWMg==
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="asc'?scan'208";a="28910098"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Jun 2024 01:51:49 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 20 Jun 2024 01:51:25 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Thu, 20 Jun 2024 01:51:22 -0700
+Date: Thu, 20 Jun 2024 09:51:03 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Olivier MOYSAN <olivier.moysan@foss.st.com>
+CC: Conor Dooley <conor@kernel.org>, Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, Fabrice Gasnier
+	<fabrice.gasnier@foss.st.com>, <alsa-devel@alsa-project.org>,
+	<linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/8] dt-bindings: iio: dfsdm: move to backend framework
+Message-ID: <20240620-custody-jailbreak-6540620d6570@wendy>
+References: <20240618160836.945242-1-olivier.moysan@foss.st.com>
+ <20240618160836.945242-5-olivier.moysan@foss.st.com>
+ <20240618-footwear-impotence-5284985a609d@spud>
+ <4734e915-9ea7-4e65-a9ef-bc1e88c40e76@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="NJFxl4lrwoiFDjYE"
+Content-Disposition: inline
+In-Reply-To: <4734e915-9ea7-4e65-a9ef-bc1e88c40e76@foss.st.com>
+
+--NJFxl4lrwoiFDjYE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: quoted-printable
 
-The trace_array_create_systems() function returns error pointers, not
-NULL.  Fix the check to match.
+On Thu, Jun 20, 2024 at 10:03:44AM +0200, Olivier MOYSAN wrote:
+> On 6/18/24 20:10, Conor Dooley wrote:
+> > On Tue, Jun 18, 2024 at 06:08:30PM +0200, Olivier Moysan wrote:
+> > >       allOf:
+> > >         - if:
+> > >             properties:
+> > > @@ -199,9 +264,19 @@ patternProperties:
+> > >                 description:
+> > >                   From common IIO binding. Used to pipe external sigm=
+a delta
+> > >                   modulator or internal ADC output to DFSDM channel.
+> > > +              deprecated: true
+> > > -          required:
+> > > -            - io-channels
+> > > +          if:
+> > > +            required:
+> > > +              - st,adc-channels
+> > > +          then:
+> > > +            required:
+> > > +              - io-channels
+> > > +
+> > > +          patternProperties:
+> > > +            "^channel@([0-9]|1[0-9])$":
+> > > +              required:
+> > > +                - io-backends
+> >=20
+> > Why is this here, rather than with reg above? Only some channels require
+> > a backend?
+>=20
+> The io-backends property is required only when we use st,stm32-dfsdm-adc
+> compatible. In other words, when we are in an analog use case. In this ca=
+se
+> the channel is a consumer of a backend (typically a sd modulator)
+> In an audio use case (compatible st,stm32-dfsdm-dmic) the backend is not
+> required.
 
-Fixes: e645535a954a ("tracing: Add option to use memmapped memory for trace boot instance")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- kernel/trace/trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ahh, I think the hunks and indent confused me here. What you're doing is
+making io-backends required based on the compatible, but what I thought
+you were doing was trying to make io-backends required in channels if
+st,adc-channels was set.
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 71cca10581d6..5462fb10ff64 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -10507,7 +10507,7 @@ __init static void enable_instances(void)
- 		}
- 
- 		tr = trace_array_create_systems(name, NULL, addr, size);
--		if (!tr) {
-+		if (IS_ERR(tr)) {
- 			pr_warn("Tracing: Failed to create instance buffer %s\n", curr_str);
- 			continue;
- 		}
--- 
-2.43.0
+Thanks for the explanation,
+Conor.
 
+--NJFxl4lrwoiFDjYE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnPtdwAKCRB4tDGHoIJi
+0j93AP44jgZe6b+HBEZ4omA3y0tvrLry/EB6akIV7NR8Vap5igEAg+cGLKESOy+o
+Zt9PvSP8qWdePXuj43/CfT/7C1OO8go=
+=JkF+
+-----END PGP SIGNATURE-----
+
+--NJFxl4lrwoiFDjYE--
 
