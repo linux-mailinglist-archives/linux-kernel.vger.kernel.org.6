@@ -1,121 +1,217 @@
-Return-Path: <linux-kernel+bounces-222904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F49910978
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:14:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C40991097E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:15:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E1A281591
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:14:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B28B1C21325
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0781AF69F;
-	Thu, 20 Jun 2024 15:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604C119B3EC;
+	Thu, 20 Jun 2024 15:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G4KL8xx1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XLrfSJwk"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EA81AE0AC;
-	Thu, 20 Jun 2024 15:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE7A26AE8
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718896463; cv=none; b=q3Yk8MPyN8TjeZt10+Tu3JAtd/y998kqaapKFyPi8qRTq+yf+odG+sjch7+ZrTqbCahCisz5WQNhLCdzSb/gLHhmdJJiGSyKlwmkFQCvcd8/bmCKYD9AO4BPYmPan1q77HV87wc8F7i/4JsLU1vt9d3Tz8vxCLq/6Sw+OoRw84g=
+	t=1718896502; cv=none; b=nydYZP4jPt6gT5ye+mXA21fq6PXVQvYulNcFSI0c7pemyxd/wYMLSUnS8pPR4W4YkXxj7Iigl1xNgzflQorbmXKR+caIIon67+gW6JsY+qpUB1X1VtoMj8tgjgbvx3jHv3bUMX8W8KhKARH43/x+ErkublzI2a/CdR9ef5WR25U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718896463; c=relaxed/simple;
-	bh=hchd0yzgV/Lu9QC2uQ3ylV/jLOxjSf3niBC2u+cVng8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hjt4rMs7sqH9mCN225Xx6nZ49uWTQJz9OQT3P9o6N04pgNBpj+gTPlzZtK0Z9mupyWd4d2Jck/mX0iTQBMAnKsUFZrRPv/bt+MQ6DxKlKUdrNGrTdcesGNSgqlLz4/00wrA7k7XOLEl/2+CKx16fLqf1Kn8xXktyZPluiSotTDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G4KL8xx1; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718896461; x=1750432461;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hchd0yzgV/Lu9QC2uQ3ylV/jLOxjSf3niBC2u+cVng8=;
-  b=G4KL8xx1wlRWPmhDPyB3s35Y4wemuEKGYdD/ZV8Kghp1Ysg88tj8CbiO
-   1An2EMJrFa6kcZeIHxbdZOS1g4rrpVUo6ptYA1lGK3PzdGzK85TgAYsVM
-   VcjVIc0j2etD311/QFg1437vbwrjjyez1yTpNmd0GHZbESC7TSn0Wuc09
-   Ted4k+adK7OpZUkMx9BUTdWVrHsWLj32Pe4kx40+NJ7+NrnbRPo3GxvNd
-   kT9RaqeU8/WY1t0/9JW8bBRT8pzJvnloZ60zp9X9OvRM/xrRFjF76TRei
-   IpjDMmAWbHbDDPyonzBMlx9FIK8VFPcT235lWXbehkehmpDIaJ+jZRY4F
-   w==;
-X-CSE-ConnectionGUID: H82ERXWYSSWnsRHIT9Xdfg==
-X-CSE-MsgGUID: z+jiZ9hrSTKjymliJJTTTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="15756670"
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="15756670"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 08:14:10 -0700
-X-CSE-ConnectionGUID: OkY8lUvwSuq2jPMqeWG5wA==
-X-CSE-MsgGUID: /JRLTXRCQlGqqL3nnQ75FQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="42213460"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 20 Jun 2024 08:14:08 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sKJUD-0007hU-2G;
-	Thu, 20 Jun 2024 15:14:05 +0000
-Date: Thu, 20 Jun 2024 23:13:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
-Message-ID: <202406202206.9e7oGmfh-lkp@intel.com>
-References: <20240619200552.119080-4-admiyo@os.amperecomputing.com>
+	s=arc-20240116; t=1718896502; c=relaxed/simple;
+	bh=lz3BOHPbrV9ue2IQ/GjEc7GK+aOqkc6HCQO4gNYk5xk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ahTMlJyb2nIZ1qjudnEJ75tgFB3rPRVpHecF3InU8s8e82MIVwMzsNsyVcTzHCeU+5WId0c+AHEc+bHlnCzGn+k6m/8FDPQzSbP+0ANR2DmmBcK8Q5+SKyVkpQ2qyODhSfMK0tBZ2/2w1foRpvZxKWS0eR4QGwEdjXMvvEIvD9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XLrfSJwk; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e02748b2402so1130705276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:14:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718896498; x=1719501298; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9guc84Gchla6fWBOTCy+Mf9QLNavuevhtReJrUxDmLY=;
+        b=XLrfSJwkdg+puXlRQOcaraTiVymhfdyXMnZq11jSIleLrKpqTojHmtjdPlu6LuOhyx
+         3wWl0c4BWTb9OM0g+GqMvRXVTsXCTNwT8HpM222f4t13h4Ev/icUUR5jfynrDJs/6z1g
+         nZpDFGyoVaZrvEW20MnTv0Gj5CtJIf7OSLy8MX3Vlid6pw35EoWqgpDCGLVFLgzLU/c9
+         TF80SqsDxBrY13ut3MUzncJbDnGabppr7P82COFr8l4mYEQUu/c1Fucpm/NabLZeCvbC
+         3PbSlQvB0Kgdl/QxBFBrCg/QfrzFoOJj6Zz8tJR9lOnCs/72HuUe7JPRwbbQ8jpfHn8J
+         gfmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718896498; x=1719501298;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9guc84Gchla6fWBOTCy+Mf9QLNavuevhtReJrUxDmLY=;
+        b=sTJOAAdL+OyNdGeCAfi+ayxOumweGfWnfRR9gTv/gclZZcpGTeLINKiZ+S5J0eho7w
+         f6pEiX2+v2OBvNzPTIpVJmq0jPvfH3LPoTNERJPLcONzqMpQuqFAMMloqVuP4A2Cj0Qb
+         maZf8WAhvWww7ShiF6VyXovbjUu5u94KEJY5DaVIUGWraBpb6z6VukEpk5K199shWbMy
+         eBFMAiNPbopDxH+yICMArPhW+c4MeCVFChUmjOlgDiEdlbSkkJR6Jgunc/ofUt65NyCM
+         ISpiT7hVh+N4T41YMLIZorlaPU4eF+ghpx6dgp00GdFprZAXhk42nPcld8dethovvwcu
+         QWHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsDquPv9sqkWP62TYwXYiBVyfH3IHbxc6Hdg86edjqPwAJHgFLi6jszcfwSGY/O7AM/fhayRgBaH/N2txmeIw4iO+CpTX3C2+DvZ0G
+X-Gm-Message-State: AOJu0YyXdYTGJIxqowacJpwOkkjz+gj7cXq3MQIStTb5+rKOFkBHeVte
+	+2Z04PVDfKEYGK1nt3UC+K8WMcSEi5reSJCt9jD2vk6RV2EVo728Eb3GjyOisN3roJ62xtQMchC
+	UJa/wyTf4qcCqW3tDN9eqXaAwdGbvBQNNL64uGKREAXFTzUMF
+X-Google-Smtp-Source: AGHT+IH6LIN/vpcDotvk+Oh6j6vDVI1v3GEU01qU7DJ8PJNlH9KlHTY/JAb+18RbHiWT8y0dyadEsog30/o2UAJ03Zo=
+X-Received: by 2002:a25:824a:0:b0:e02:b65d:6e11 with SMTP id
+ 3f1490d57ef6-e02be13b4c8mr6144708276.5.1718896498312; Thu, 20 Jun 2024
+ 08:14:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619200552.119080-4-admiyo@os.amperecomputing.com>
+References: <20240611-md-drivers-mmc-v2-1-2ef2cbcdc061@quicinc.com>
+In-Reply-To: <20240611-md-drivers-mmc-v2-1-2ef2cbcdc061@quicinc.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 20 Jun 2024 17:14:22 +0200
+Message-ID: <CAPDyKFqniea558arz-9tJm26Rx_KyOROtpwShq6MHUXsww=ptg@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Dragan Simic <dsimic@manjaro.org>, 
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Tue, 11 Jun 2024 at 17:50, Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+>
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/of_mmc_spi.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/tmio_mmc_core.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/renesas_sdhi_core.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/mmc_core.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_simple.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_sd8787.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_emmc.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/sdio_uart.o
+>
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com> # for TMIO and SDHI
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-kernel test robot noticed the following build warnings:
+Applied for next, thanks!
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.10-rc4 next-20240619]
-[cannot apply to horms-ipvs/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Kind regards
+Uffe
 
-url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Check-before-sending-MCTP-PCC-response-ACK/20240620-040816
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20240619200552.119080-4-admiyo%40os.amperecomputing.com
-patch subject: [PATCH v2 3/3] mctp pcc: Implement MCTP over PCC Transport
-config: arm64-kismet-CONFIG_ACPI-CONFIG_MCTP_TRANSPORT_PCC-0-0 (https://download.01.org/0day-ci/archive/20240620/202406202206.9e7oGmfh-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20240620/202406202206.9e7oGmfh-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406202206.9e7oGmfh-lkp@intel.com/
-
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for ACPI when selected by MCTP_TRANSPORT_PCC
-   WARNING: unmet direct dependencies detected for ACPI
-     Depends on [n]: ARCH_SUPPORTS_ACPI [=n]
-     Selected by [y]:
-     - MCTP_TRANSPORT_PCC [=y] && NETDEVICES [=y] && MCTP [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+> Corrections to these descriptions are welcomed. I'm not an expert in
+> this code so in most cases I've taken these descriptions directly from
+> code comments, Kconfig descriptions, or git logs.  History has shown
+> that in some cases these are originally wrong due to cut-n-paste
+> errors, and in other cases the drivers have evolved such that the
+> original information is no longer accurate.
+> ---
+> Changes in v2:
+> - Updated descriptions in core/pwrseq_emmc.c, core/pwrseq_simple.c, and
+>   host/renesas_sdhi_core.c per guidance from Dragan.
+> - Link to v1: https://lore.kernel.org/r/20240610-md-drivers-mmc-v1-1-c2a2593e4121@quicinc.com
+> ---
+>  drivers/mmc/core/core.c              | 1 +
+>  drivers/mmc/core/pwrseq_emmc.c       | 1 +
+>  drivers/mmc/core/pwrseq_sd8787.c     | 1 +
+>  drivers/mmc/core/pwrseq_simple.c     | 1 +
+>  drivers/mmc/core/sdio_uart.c         | 1 +
+>  drivers/mmc/host/of_mmc_spi.c        | 1 +
+>  drivers/mmc/host/renesas_sdhi_core.c | 1 +
+>  drivers/mmc/host/tmio_mmc_core.c     | 1 +
+>  8 files changed, 8 insertions(+)
+>
+> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> index a8c17b4cd737..d6c819dd68ed 100644
+> --- a/drivers/mmc/core/core.c
+> +++ b/drivers/mmc/core/core.c
+> @@ -2362,4 +2362,5 @@ static void __exit mmc_exit(void)
+>  subsys_initcall(mmc_init);
+>  module_exit(mmc_exit);
+>
+> +MODULE_DESCRIPTION("MMC core driver");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
+> index 3b6d69cefb4e..96fa4c508900 100644
+> --- a/drivers/mmc/core/pwrseq_emmc.c
+> +++ b/drivers/mmc/core/pwrseq_emmc.c
+> @@ -115,4 +115,5 @@ static struct platform_driver mmc_pwrseq_emmc_driver = {
+>  };
+>
+>  module_platform_driver(mmc_pwrseq_emmc_driver);
+> +MODULE_DESCRIPTION("Hardware reset support for eMMC");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/mmc/core/pwrseq_sd8787.c b/drivers/mmc/core/pwrseq_sd8787.c
+> index 0c5808fc3206..f24bbd68e251 100644
+> --- a/drivers/mmc/core/pwrseq_sd8787.c
+> +++ b/drivers/mmc/core/pwrseq_sd8787.c
+> @@ -130,4 +130,5 @@ static struct platform_driver mmc_pwrseq_sd8787_driver = {
+>  };
+>
+>  module_platform_driver(mmc_pwrseq_sd8787_driver);
+> +MODULE_DESCRIPTION("Power sequence support for Marvell SD8787 BT + Wifi chip");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
+> index df9588503ad0..154a8921ae75 100644
+> --- a/drivers/mmc/core/pwrseq_simple.c
+> +++ b/drivers/mmc/core/pwrseq_simple.c
+> @@ -159,4 +159,5 @@ static struct platform_driver mmc_pwrseq_simple_driver = {
+>  };
+>
+>  module_platform_driver(mmc_pwrseq_simple_driver);
+> +MODULE_DESCRIPTION("Simple power sequence management for MMC");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/mmc/core/sdio_uart.c b/drivers/mmc/core/sdio_uart.c
+> index 575ebbce378e..6b7471dba3bf 100644
+> --- a/drivers/mmc/core/sdio_uart.c
+> +++ b/drivers/mmc/core/sdio_uart.c
+> @@ -1162,4 +1162,5 @@ module_init(sdio_uart_init);
+>  module_exit(sdio_uart_exit);
+>
+>  MODULE_AUTHOR("Nicolas Pitre");
+> +MODULE_DESCRIPTION("SDIO UART/GPS driver");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/mmc/host/of_mmc_spi.c b/drivers/mmc/host/of_mmc_spi.c
+> index bf54776fb26c..05939f30a5ae 100644
+> --- a/drivers/mmc/host/of_mmc_spi.c
+> +++ b/drivers/mmc/host/of_mmc_spi.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/mmc/core.h>
+>  #include <linux/mmc/host.h>
+>
+> +MODULE_DESCRIPTION("OpenFirmware bindings for the MMC-over-SPI driver");
+>  MODULE_LICENSE("GPL");
+>
+>  struct of_mmc_spi {
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> index 12f4faaaf4ee..58536626e6c5 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -1162,4 +1162,5 @@ void renesas_sdhi_remove(struct platform_device *pdev)
+>  }
+>  EXPORT_SYMBOL_GPL(renesas_sdhi_remove);
+>
+> +MODULE_DESCRIPTION("Renesas SDHI core driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+> index 93e912afd3ae..c1a4ade5f949 100644
+> --- a/drivers/mmc/host/tmio_mmc_core.c
+> +++ b/drivers/mmc/host/tmio_mmc_core.c
+> @@ -1319,4 +1319,5 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
+>  EXPORT_SYMBOL_GPL(tmio_mmc_host_runtime_resume);
+>  #endif
+>
+> +MODULE_DESCRIPTION("TMIO MMC core driver");
+>  MODULE_LICENSE("GPL v2");
+>
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240610-md-drivers-mmc-cb5f273b5b33
+>
 
