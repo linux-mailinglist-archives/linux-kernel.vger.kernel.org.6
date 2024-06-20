@@ -1,54 +1,87 @@
-Return-Path: <linux-kernel+bounces-222596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0729910451
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:38:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B1A0910457
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD85281E28
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:38:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66455B214CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736DD1AC765;
-	Thu, 20 Jun 2024 12:38:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCCA1AC451;
-	Thu, 20 Jun 2024 12:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36731AC770;
+	Thu, 20 Jun 2024 12:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltPSV0vP"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C577D1A3BD3;
+	Thu, 20 Jun 2024 12:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718887127; cv=none; b=M37kwUA3GZszfhmDaq1tsF2qG76a6mnaIEpEVqh9fHft60fZDTS/7tRkCCpFZrWG1mHuIm72Xkwp4ld2a3OKpZVQ5c+nLNUDfAbj8PSYRQjTTYWWbgsBGADkiJDhu6l8OaIj1EZL/D46YzorkHnHUglyZt7tgTi0Ha/kU9+O/cg=
+	t=1718887376; cv=none; b=dWok0qtHDTJTlh0wNyTSeYDuNN3B943rxlilw55KpKhTlKkRd4Agfh+hbTiDT7JghK4r1/tHjhk6VRnqXkx9O/fyhbRVlB0qiyKQBVfDOd+RUBkflk0EJooh5VMZY9ItNXjyB2lxfMM6RF6/MUUuO36k6KDNtuyTGRt6hNElkPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718887127; c=relaxed/simple;
-	bh=MYZc8VcOMHW0zW/O1qd63wSKJQy0yho9ouViyflAf4c=;
+	s=arc-20240116; t=1718887376; c=relaxed/simple;
+	bh=t0N0y1oyMCqLW+dEihhN/P9vSMFe/yHw3LDE08eebjE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O+tmzWioqFXcemjTtuC1sdqwwb1zzeuuJFUSNrA44rBWKk31+iHsl+NhoX9XjR2nfVnudUniUAXJknf1VhbqZxywhkhqFEmXto77u0WUTWEUDQ+xJwjBNRdYHy6yFJPdhol7+eiyj9wEIffsHLP83K5c8rfZBBSA+LZYfoox7YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3CEBDA7;
-	Thu, 20 Jun 2024 05:39:07 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 508003F73B;
-	Thu, 20 Jun 2024 05:38:42 -0700 (PDT)
-Date: Thu, 20 Jun 2024 13:38:39 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-tip-commits@vger.kernel.org,
-	Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=fI7wXZZNcMs0o2DNieZmvJCxBA6yeNBV512pa8EDYFYQBOdBEwH3pYDFSAlMOMh9xYrPfchmIHBVl+TY2pEvFI1rLBX8NswZZ0fGExdc3UHoyDQu/e+T/bB3xb2nuBWbDZ87rxFWhMLYKZZvlqz52l0Am1YpHSNp3wJHtSf8SPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ltPSV0vP; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d07673185so735108a12.1;
+        Thu, 20 Jun 2024 05:42:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718887373; x=1719492173; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IxevQl3D3HQJVJYA8M08gtV0nH43iXT7TwT6tdCH50I=;
+        b=ltPSV0vPVhhf60XGwZ+DLgjDCYAcA+ZE8Vjxnjer3L3QrSZX/DbiKBuaK3P/iegevZ
+         BilfvBz7fsfFnEIP/rdGPtRP03Z6p7FUoNthCAP0KGHt+zRGoITyIkZR8f4r1nbu7+ZM
+         vXrag1ycQ4AgH4Bvx+u+u4+FPK6j37g5NwiZEmdwrfRbnIiuTgxLxIf5mhKQO9dwxQeg
+         7BL1/AUtvmX0sdVROYEelaFMViDO0lJdjhVSnxQT1X7zlmLJNOqW+MAQlC/b0yFSGP8m
+         U9vZ6xSuFW0qvPQJme/ara0KR5QMRyknSleBQdDjbb3h8FM+PxfdYAa/zFEEso3zzPx5
+         6RFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718887373; x=1719492173;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IxevQl3D3HQJVJYA8M08gtV0nH43iXT7TwT6tdCH50I=;
+        b=IJEp5XbvQgVrtuJi7LaLT/Usd24eFRRJ2/PEQ1BBRuT/8GEWtQBs7gRhekI7htzxBc
+         gXxdBsNdy42OYs/I9J1AQn1aTWib1uqMM/wTsjoVZKj37CVGpgmkiyCtG2BXrQNLOhXT
+         0DzgsP/9xJhM/1FJfPg6Ye5jMEgIA0WyeQlpBVsHEChuHdtjTDz45nyYFbK/EeYHL/kc
+         4Os6jVCfQU1HtnOLz3QFpxpbYLQrjK9SwFHCX0T3uu7Ueq/zhXQ3cdEsGhA8EjwyxedG
+         O8q4E9wpHHZJBZ8dlZMtN7DcVMoPFeEqSDvhi4rynk0yiyEmvI9bXwEyaaMvIhKoIh1Q
+         6rQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRE2RGTHjGFmnFERNQoRqSd8O848gEOOoQ7zIC2RfYh4oiwbOD5SOrtWLMvJN4s8aL9yXyDveIIWU907v8M2G9WGLpVTikzffp2Je0
+X-Gm-Message-State: AOJu0YxLs/3xHQyJGmh8Fxh+G4ezx4rlQd+KfQ9TUi+y76nF1g8sowDw
+	CCnfzRSPGC/xyj03qw/VUye0g0o5EZ+juimdksqzUXxHa/mEeN1I
+X-Google-Smtp-Source: AGHT+IFPwUYApRAep3mSwNWa7q4K5yr8wWihprCuHwrSAm2DVmZPRJnA7uHt/dZjOu4JMg/4WnHJnQ==
+X-Received: by 2002:a50:d543:0:b0:57c:6b68:3bb1 with SMTP id 4fb4d7f45d1cf-57d07ec6774mr3102092a12.42.1718887372881;
+        Thu, 20 Jun 2024 05:42:52 -0700 (PDT)
+Received: from skbuf ([188.25.55.166])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72cdfd0sm9667958a12.5.2024.06.20.05.42.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 05:42:52 -0700 (PDT)
+Date: Thu, 20 Jun 2024 15:42:49 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	UNGLinuxDriver@microchip.com, Russell King <linux@armlinux.org.uk>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [tip: x86/urgent] x86/resctrl: Don't try to free nonexistent
- RMIDs
-Message-ID: <ZnQizwOWjsIbj6TR@e133380.arm.com>
-References: <20240618140152.83154-1-Dave.Martin@arm.com>
- <171879092443.10875.1695191697085701044.tip-bot2@tip-bot2>
- <ZnLUVtZ3oaFjcUj9@e133380.arm.com>
- <20240619134522.GCZnLg8pgJq9MPHS8M@fat_crate.local>
- <ZnMBN487xiPOfpRp@e133380.arm.com>
- <20240619162124.GFZnMFhPW3wo2Avezo@fat_crate.local>
- <ZnQUS+xchr13/3jk@e133380.arm.com>
- <20240620115305.GBZnQYIex1mnXxoG-8@fat_crate.local>
+Subject: Re: [PATCH net-next v2 11/12] net: dsa: vsc73xx: Add bridge support
+Message-ID: <20240620124249.emsveiu4ydsdvxpx@skbuf>
+References: <20240619205220.965844-1-paweldembicki@gmail.com>
+ <20240619205220.965844-12-paweldembicki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,49 +90,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240620115305.GBZnQYIex1mnXxoG-8@fat_crate.local>
+In-Reply-To: <20240619205220.965844-12-paweldembicki@gmail.com>
 
-On Thu, Jun 20, 2024 at 01:53:05PM +0200, Borislav Petkov wrote:
-> On Thu, Jun 20, 2024 at 12:36:43PM +0100, Dave Martin wrote:
-> > I guess my issue is that the "Massage commit message" seems to document
-> > a criticism that the author was careless, didn't follow a rule, or that
-> > the commit message was defective in some way, with the author having no
-> > right of reply (at least, not recorded in the git history).
+On Wed, Jun 19, 2024 at 10:52:17PM +0200, Pawel Dembicki wrote:
+> This patch adds bridge support for vsc73xx driver.
 > 
-> Not necessarily - that's what you said. I massage commit messages because they
-> need some touch ups sometimes.
+> Vsc73xx require minimal operations and generic
+> dsa_tag_8021q_bridge_* api is sufficient.
 > 
-> In your case I rewrote the sentence with "we" because "we" is ambiguous in
+> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+> ---
+> v2, v1:
+>   - Use generic functions instead unnecessary intermediary shims
+> ---
 
-That _was_ unintentional, so apologies for that.
-
-> commit messages. I also broke up this biggish paragraph into smaller chunks to
-> make it more readable.
-> 
-> > I may just be being too touchy.
-> > 
-> > Anyway, thanks for picking up the patch -- I'm not trying to make extra
-> > work for anyone.
-> 
-> I look at it this way: I don't always agree with other maintainers' choices
-> either but this is the reality: every maintainer has their own
-> requirements/views/etc on how the code and commit messages are going to look,
-> yadda yadda. And to some extent that's their prerogative.
-> 
-> But we have a *lot* *bigger* fish to fry so I'm going to stop debating here as
-> everything was already said.
-> 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
-> 
-
-Ack; apologies for the noise.
-
-Cheers
----Dave
+Maybe you could add a small comment to the commit message that the
+forwarding matrix is taken care of by vsc73xx_port_stp_state_set() ->
+vsc73xx_refresh_fwd_map(), which is called immediately after
+.port_bridge_join() and .port_bridge_leave().
 
