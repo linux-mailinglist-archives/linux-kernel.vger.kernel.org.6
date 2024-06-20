@@ -1,165 +1,126 @@
-Return-Path: <linux-kernel+bounces-222354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C7E91003A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:25:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E6DB910038
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D628E281F74
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:25:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 054771F2130D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCB21A00CB;
-	Thu, 20 Jun 2024 09:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B096219FA90;
+	Thu, 20 Jun 2024 09:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Sfio6WQO"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YYNzqfb3"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FF619EED6;
-	Thu, 20 Jun 2024 09:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38144AEE9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718875548; cv=none; b=ImIO26l+xECA4dE0U3NcIM3K+XlhpsUcO0KvCf4LiXOD3GXmk/tGbfGMQw4TN2x55MHcBVv5pVDG5EM3SWJuwQnwQb9McDD9rey2p35qVyoqrpsdME/8JnXpd48tuoB0AzH+weooQYsUTTLvBNzS2cens1ljBOj9NJqylb5WmzM=
+	t=1718875533; cv=none; b=gSINTJj1mDnPry/vxjHAo4BSCv6AaPTU8IdTPLRzqP1mDmF04gQBJ+sxQj8b0Gp3q3oyvfCmHHUGEsT51r/ISjqBcIxpmoaAS7Se8amneB83Bp8drLsIr/OT5BGTt9Z2GutZetwsKTLKvEjk/G2b5IaOK/gdooI2bxnEs/XjjJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718875548; c=relaxed/simple;
-	bh=VtSuKoly8HsDQXpdGvQMKQfSextruyz0l/gETZd1bLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Shb8vJziH6BX3+zCc/f7cFSfRL6mXIx5PICkw9wVZ3J+tQS1LPbsLp5FEkjxLLhOYjaEO28OwJH8+R/J3b7gu9R5qOaY5/obC6Px5UheHmRcrItycK67R5oNPrGFUN7fykr8Om4Vjoa3r70qtikup1GYsnH4YizmupPi4I1M3oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Sfio6WQO; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K902cF016608;
-	Thu, 20 Jun 2024 09:25:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=f+xXT+pi71Ik+KvC0QHepWSaRor
-	cAZ6T5r10Nujhews=; b=Sfio6WQOYVTagW1lvAePUjWg7PZYt5T+OSgX5FR5CBQ
-	4T8FqTVC4pGk7y9uFqQ9H82xU9f/hxcd1AgZq15JV1SUzIYn/uLKhvzmNl2iZ9Tz
-	Lt8l30OOq/SVsJ62yESCJkh9impmd3uvFPWd2G7fr63apxlMVlkv4h2os7U1DYMX
-	HmqePfnNaDGAu1KYVehinYSGS9ETdQuWZZLbIwk4lKJq0X7y+CEiEAxFDXuFX8Nf
-	Dxsky2rQB37kiRnGjwmzceUoBJaqVuOj+MJJ2KE7GYW3ExS44sx0F4w8p1m4myRR
-	jMxxH054GfGQtk+2zifvVE6F7PQWB8/ysIhYxJNj3+A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvhd082aj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 09:25:24 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45K9PNjH007553;
-	Thu, 20 Jun 2024 09:25:23 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvhd082ad-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 09:25:23 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45K8q0Lp011355;
-	Thu, 20 Jun 2024 09:25:22 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yspsnmdy9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 09:25:22 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45K9PFWx50331948
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Jun 2024 09:25:17 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3AA6C2004D;
-	Thu, 20 Jun 2024 09:25:15 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 50D6720043;
-	Thu, 20 Jun 2024 09:25:13 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.21.176])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 20 Jun 2024 09:25:13 +0000 (GMT)
-Date: Thu, 20 Jun 2024 11:25:11 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Ilya Leoshkevich <iii@linux.ibm.com>
-Cc: Alexander Potapenko <glider@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Vasily Gorbik <gor@linux.ibm.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Sven Schnelle <svens@linux.ibm.com>
-Subject: Re: [PATCH v5 36/37] s390/kmsan: Implement the architecture-specific
- functions
-Message-ID: <ZnP1dwNycehZyjkQ@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20240619154530.163232-1-iii@linux.ibm.com>
- <20240619154530.163232-37-iii@linux.ibm.com>
+	s=arc-20240116; t=1718875533; c=relaxed/simple;
+	bh=TKqkzUYhhfD22w9CKigg9XXTwlv5RIY3tN1qm51ilwA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s6njKY8LAcwhNHHmP8IlRFB8UGUw8xX8s7MenRInPO/cgn46ELkTlqflQJRRi8+rvBbnE3tyTk0ebS6f5Dhtu8TXxkJzLfv1IXtnwi0uOGEtB4zbdRflF0QwQ58pZFDw9pLjEoV909Dn15AISHax525IkEcnoA04eL3H6afZMUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YYNzqfb3; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70435f4c330so645287b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 02:25:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718875531; x=1719480331; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rDZlI2yZ4wi+UH3k0wT+hmOJJKg/VzbaB//Srify4c8=;
+        b=YYNzqfb3xNsuGedxo9sPQod2U9yJ5Be+G8kMVn5YfQ8cgDqFQQjFuMr4rcy6olzb2E
+         opqut3MdF6A6pl/hmAIr3fSJzPG0JiWjDvyPCxy5pMWQx0xDXLDONzLXZuXXayZC/Eu/
+         zS1igSBSVsEFA1VDYq1tK58wNSjGtM44DwC08=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718875531; x=1719480331;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rDZlI2yZ4wi+UH3k0wT+hmOJJKg/VzbaB//Srify4c8=;
+        b=qslhSDpCZ8w844a+zFvMARFRk57jrGgfaiZzrCk1N1Gt8O8L34pScklUetRwVhSsNx
+         m2BXlOjfwxB/ZLfOvfrVTRWrSpx4IgQtbfFx1kYU+OSBUc4PhNHDDm4SVfcxCTcmcb3Z
+         ghrrYyA/NMmEhhQiIKbkLymSj6w6X20MJeYWy9GXI9ca/h5Prr9PI6AC19GZmk37sijo
+         rVf0A33vq8ffVhFAuwAc0RxZTiHyugsQMYpA9RRvBnYIfXkfOAMxO50KxGDG0ycf0Z13
+         SE3uZif2k2sDxx7au7tAJaq/39Y+mbjW/XA1xN5vCl/54wrK/He/riF9CBcQmaYRuaHM
+         XkOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqchHa94lV5S2FfDSQuOfDVmtxUVdNfvz2fu1IpNFJdi6FO/YIOyBAwjGcY/SqdS//beVLxulnIrTBlQoKBjoo5oUYh4XpUySEkqFE
+X-Gm-Message-State: AOJu0Yz1TUzsc7DogsfQtSJn75NaOAtvmrxMhsIHs3SLofEp4+ZyaENh
+	Iw8fPY8UYrn7CoB6Mb94KQxgkSNto/cQhdxp/NGAX8rt+41H1nFy48mry+1sbA==
+X-Google-Smtp-Source: AGHT+IFjLrlNvst0OTexBZLhq72UApS8umR+VI7cUlAbt/0YeIqLW8EGKxs24IIss6Yf64ZG7G1XCw==
+X-Received: by 2002:a62:f90e:0:b0:705:964e:d9f3 with SMTP id d2e1a72fcca58-70629c34f80mr4334277b3a.11.1718875530972;
+        Thu, 20 Jun 2024 02:25:30 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:c53a:5326:7f72:759f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ce168be0sm11866412b3a.28.2024.06.20.02.25.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 02:25:30 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Mark Brown <broonie@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	Trevor Wu <trevor.wu@mediatek.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] ASoC: mediatek: mt8195: Re-add codec entry for ETDM1_OUT_BE dai link
+Date: Thu, 20 Jun 2024 17:25:24 +0800
+Message-ID: <20240620092526.2353537-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619154530.163232-37-iii@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: wGgihVial8kXJ1bFTIVWyPNHF-8EUg62
-X-Proofpoint-GUID: 0mzQWVSjgWONbMvCB5bN-IoPQn2J8C9F
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_06,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- bulkscore=0 spamscore=0 adultscore=0 mlxlogscore=512 suspectscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406200062
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 19, 2024 at 05:44:11PM +0200, Ilya Leoshkevich wrote:
+This partially reverts commit e70b8dd26711704b1ff1f1b4eb3d048ba69e29da.
 
-Hi Ilya,
+Said commit removes the codec entry for the ETDM1_OUT_BE dai link for
+some reason. This does not have the intended effect, as the remaining
+DAILINK_COMP_ARRAY(COMP_EMPTY()) platform entry becomes the codec
+entry, and the platform entry is completely gone.
 
-> +static inline bool is_lowcore_addr(void *addr)
-> +{
-> +	return addr >= (void *)&S390_lowcore &&
-> +	       addr < (void *)(&S390_lowcore + 1);
-> +}
-> +
-> +static inline void *arch_kmsan_get_meta_or_null(void *addr, bool is_origin)
-> +{
-> +	if (is_lowcore_addr(addr)) {
-> +		/*
-> +		 * Different lowcores accessed via S390_lowcore are described
-> +		 * by the same struct page. Resolve the prefix manually in
-> +		 * order to get a distinct struct page.
-> +		 */
+This causes in a KASAN out-of-bounds warning in mtk_soundcard_common_probe()
+in sound/soc/mediatek/common/mtk-soundcard-driver.c:
 
-> +		addr += (void *)lowcore_ptr[raw_smp_processor_id()] -
-> +			(void *)&S390_lowcore;
+	for_each_card_prelinks(card, i, dai_link) {
+		if (adsp_node && !strncmp(dai_link->name, "AFE_SOF", strlen("AFE_SOF")))
+			dai_link->platforms->of_node = adsp_node;
+		else if (!dai_link->platforms->name && !dai_link->platforms->of_node)
+			dai_link->platforms->of_node = platform_node;
+	}
 
-If I am not mistaken neither raw_smp_processor_id() itself, nor
-lowcore_ptr[raw_smp_processor_id()] are atomic. Should the preemption
-be disabled while the addr is calculated?
+where the code expects the platforms array to have space for at least one entry.
 
-But then the question arises - how meaningful the returned value is?
-AFAICT kmsan_get_metadata() is called from a preemptable context.
-So if the CPU is changed - how useful the previous CPU lowcore meta is?
+Re-add the entry so that dai_link->platforms has space.
 
-Is it a memory block that needs to be ignored instead?
+Fixes: e70b8dd26711 ("ASoC: mediatek: mt8195: Remove afe-dai component and rework codec link")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+ sound/soc/mediatek/mt8195/mt8195-mt6359.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +		if (WARN_ON_ONCE(is_lowcore_addr(addr)))
-> +			return NULL;
+diff --git a/sound/soc/mediatek/mt8195/mt8195-mt6359.c b/sound/soc/mediatek/mt8195/mt8195-mt6359.c
+index ca8751190520..2832ef78eaed 100644
+--- a/sound/soc/mediatek/mt8195/mt8195-mt6359.c
++++ b/sound/soc/mediatek/mt8195/mt8195-mt6359.c
+@@ -827,6 +827,7 @@ SND_SOC_DAILINK_DEFS(ETDM2_IN_BE,
+ 
+ SND_SOC_DAILINK_DEFS(ETDM1_OUT_BE,
+ 		     DAILINK_COMP_ARRAY(COMP_CPU("ETDM1_OUT")),
++		     DAILINK_COMP_ARRAY(COMP_EMPTY()),
+ 		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
+ 
+ SND_SOC_DAILINK_DEFS(ETDM2_OUT_BE,
+-- 
+2.45.2.741.gdbec12cfda-goog
 
-lowcore_ptr[] pointing into S390_lowcore is rather a bug.
-
-> +		return kmsan_get_metadata(addr, is_origin);
-> +	}
-> +	return NULL;
-> +}
-
-Thanks!
 
