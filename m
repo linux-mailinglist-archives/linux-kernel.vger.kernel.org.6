@@ -1,279 +1,126 @@
-Return-Path: <linux-kernel+bounces-223684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA1A9116EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:38:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1297D9116ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 700E8B21CF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:38:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C423B283B0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399BE14E2E4;
-	Thu, 20 Jun 2024 23:38:28 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5681E14D70A;
+	Thu, 20 Jun 2024 23:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGHOo/vl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768C314B973
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8867D143737;
+	Thu, 20 Jun 2024 23:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718926707; cv=none; b=AZ9xSmuoIBKcQtZtLSH+C/xX2WWKQuEkzz/7Cab0fF/PU9U+1q9b2A9/SoKJQEA3wLk7WH44mC6COQIfoEW1up0/JBneFEhGD0XSMVUci1XrIGsfqTKpBXMBpVbRIKci8v8auTqGlMwbo4u0H5Upz5SAqywS+ifkM7hXcsCvzR0=
+	t=1718926718; cv=none; b=o6ObvY7tkH/DVccKl1Dgr9rH5VemQYFU6DXWC1JDQ7DddUWaiJjSsS4s78kgaMyE05PZrG+H2PznTRkj8yM6CY91vBQvpTQ1DDw2Ao/DbidYqo7TuDW3I/CMDv8CNYVJb1ydBuagf2qARGpcJoY2BBdThrLpZAnFcjrlVdKUavE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718926707; c=relaxed/simple;
-	bh=v3D/P95J4YmfH1xUkNBGtXvM+z5IAowxMTTY6yNvt7I=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dikm3Cpg+7ORIQx42yNL0jT1QZa7dIYLe0tCF0c0XhWTEre7MDsBjFhzNILkZrS6ugB+nPk4r4lDnzOVT92Z0jRIws9shdn/3xw2qqFSEIM9qdFq7Vw1RClaEpRCyDPFEGPILrVtOaArjsyjq8IBQxEhawRVpZZG0Y2KLDTN6ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7f12e60c050so200055439f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:38:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718926703; x=1719531503;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4SG3zddIQssoZma5vleUSzkCskl/93/FnF9Ajg08jlI=;
-        b=p7LERam3d3f2ro9dM/P6AB26D7qvqSjb5d8Au62IBFUV6Q7KU/Mo1bLjr2B5EW4tmA
-         QC6DstEaSn8LMKA2SmtYnzGTb+X8T1cOvT6h6UsmCfYWTGChIi/sSziTEQ2ltScnDYHo
-         UM30UbGK5HVMP4x1+AyalYcitUavHVqAJZZhLHfzRRH8HdH73r563ekc00fC6H1mbpl4
-         8RtxmyDFRoMA17QczQRzkNzxEi+7CyqDVheghZfC+btUEwai5J/We8J3VaKZdChzbx2J
-         OS6lUlLPNKTauPW7E3zL48FD7yTLPK8cRutjARll/BDj7h8w804T43MSAUEbvBRS1r4G
-         DdmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/mJoRHYsGM6+9zH8xdwZxapqCbh+dEjzvPZKkI6XvYJw4LQSZoQ3+2ROHO7Jhub3NzzhKUGJQB1SydVwBLtcN33wQJIA4qx3akJVc
-X-Gm-Message-State: AOJu0YwE9tbB67sMRAJ8G/rqtFx2cE06TfOBBn4OjtMmYSsFK65zBMcq
-	k6SjyQFD7p0oIgLWlSL3E6p8ieIea8n8U9cpHLbJMdR3QI0TxxpoSHR2eCjuB3frrQjNN+afJIQ
-	Fab8fvMBDk0KvAv/0T8qJLqq9d7GWyjyZncQeebo+BToNWbNuWHGoq2g=
-X-Google-Smtp-Source: AGHT+IGuAgj0r9ZVQxgndmmfXvDuF5QPVYaNfk49g1amZ9s3tQdAdpI//JU7Ue9SX/FTH0TGbHNdvipKDoGmVaERrs/L6anM7uKD
+	s=arc-20240116; t=1718926718; c=relaxed/simple;
+	bh=1j+MPqd5427aFZk074Saqo2BYrlWM4GKrQyJbNXfGgM=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mr74FksdMwwQjiRuS2GeBADdnZvtHYXkHWJ0wcDjsdDRClt0ES+7pDvo61jgwhCD3t8AeEUSIeW4x7R+Z+Ruhcg3bRM89YnTpQxPxGFty8qk3BgrP7vdfTJZBa9MuTdvvdD3/g5h+MJdPc9rfjjrv+xdExZ7zoypzejoR+eIEUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGHOo/vl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40A4AC2BD10;
+	Thu, 20 Jun 2024 23:38:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718926718;
+	bh=1j+MPqd5427aFZk074Saqo2BYrlWM4GKrQyJbNXfGgM=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=IGHOo/vlrJ4JI/KXQz6bwzqzXCJtKUPn0+DdE2y84JNZppIV03GhBuJZTZvYp9q+r
+	 JPYwnHDVLjwe72JkdBjw0l3TlMPECqfP/PntOk5Iw2BcM7tT4Egka0hZK1kbNbjZNi
+	 svkWX9FliFsEyM4FEFRFaeQ52Ojzcyc5Z3ciOcXk5LJx18nD22hLpk2Di9NigqdSL6
+	 HrYGPkxGMlpajEnFbQ1XGMY1xrYdBiibZM3WET7SkrBB43qwy/BmDEOKLcaxqXRFwO
+	 7HBU0KoPo3QtUQGlLB0a/guZ7EmoIUWSYPhQ9P/TrTRqkM+3RB7DxXDhszrE9agb3V
+	 e8dqtr4kApIWg==
+Date: Fri, 21 Jun 2024 01:38:33 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Easwar Hariharan <eahariha@linux.microsoft.com>, linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] docs: i2c: summary: document 'local' and 'remote'
+ targets
+Message-ID: <cbwamjer2rupkmyze6atgpkrszajcbhw2udb23ldl73ne3m6qr@jjs7q3codtx5>
+References: <20240614081239.7128-8-wsa+renesas@sang-engineering.com>
+ <20240614081239.7128-13-wsa+renesas@sang-engineering.com>
+ <4zxr4rlqnjqbqh3oxmd2ufqi6uk4pxa3tniuya5pgjtqi6tswc@utq4r2zt6z6b>
+ <ed75fyc2xcsnwubq42eposf6ayt5aj2jmqz6mthugk6vm2zpi4@qqwlmuwayoo5>
+ <y34k2k25xdr5z4v7oejp4da237s4o5qym5npihyydwlbsdh75c@vhmfl7sw3pbm>
+ <7d5f800f-fc65-4fbf-adad-616d51501c62@linux.microsoft.com>
+ <boehtgry7j7ulhrw7tenkmzxujahmxfn25imvb7zw2ibtmebbk@u3jryw4v2y7h>
+ <cu2mkl42byhce6eytcnw7yseogbnypgtrkoirlezakwg35egdg@vjjye4ca7yey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:138b:b0:4b9:ace4:34ff with SMTP id
- 8926c6da1cb9f-4b9ace44019mr226064173.2.1718926703632; Thu, 20 Jun 2024
- 16:38:23 -0700 (PDT)
-Date: Thu, 20 Jun 2024 16:38:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000090adbc061b5acfd9@google.com>
-Subject: [syzbot] [bcachefs?] KASAN: slab-use-after-free Read in bch2_fs_recovery
-From: syzbot <syzbot+8992fc10a192067b8d8a@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cu2mkl42byhce6eytcnw7yseogbnypgtrkoirlezakwg35egdg@vjjye4ca7yey>
 
-Hello,
+Hi Wolfram,
 
-syzbot found the following issue on:
+On Wed, Jun 19, 2024 at 09:10:26AM GMT, Wolfram Sang wrote:
+> > > "Synonyms" from patch 6 does say that controller/target is preferred but
+> > > couched it in the caveat "If speaking about I2C in general" and
+> > > adapter/client when "discuss[ing] implementation details." I was trying
+> > > to give space for an unambiguous recommendation.
+> > 
+> > Exactly, this is what I referred to in my previous e-mails.
+> > These two statements sound a bit ambiguous to me, as well.
+> 
+> Okay, here is my proposed update:
+> 
+> ===
+> 
+> diff --git a/Documentation/i2c/summary.rst b/Documentation/i2c/summary.rst
+> index 90f46f1504fe..579a1c7df200 100644
+> --- a/Documentation/i2c/summary.rst
+> +++ b/Documentation/i2c/summary.rst
+> @@ -67,9 +67,9 @@ Synonyms
+>  
+>  As mentioned above, the Linux I2C implementation historically uses the terms
+>  "adapter" for controller and "client" for target. A number of data structures
+> -have these synonyms in their name. So, to discuss implementation details, it
+> -might be easier to use these terms. If speaking about I2C in general, the
+> -official terminology is preferred.
+> +have these synonyms in their name. So, when discussing implementation details,
+> +you should be aware of these terms as well. The official wording is preferred,
+> +though.
 
-HEAD commit:    b992b79ca8bc Add linux-next specific files for 20240620
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16882c2a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=199e4e4d681e4b85
-dashboard link: https://syzkaller.appspot.com/bug?extid=8992fc10a192067b8d8a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+ACK!
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> ===
+> 
+> I don't want to be stricter than "preferred". If someone still wants to
+> use 'struct i2c_client *client' this is fine with me.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1951d72058a5/disk-b992b79c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/eb9ce26817e1/vmlinux-b992b79c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2f09002f6ed1/bzImage-b992b79c.xz
+Sure, let's see how it goes.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8992fc10a192067b8d8a@syzkaller.appspotmail.com
+> > Maybe we are wasting time at discussing minor details, but I
+> > consider this part important in order to give way to the major
+> > refactoring that Wolfram started at the beginning.
+> 
+> The refactoring only affects "master/slave" not "adapter/client". We are
+> 
+> aligned here, aren't we?
 
-bcachefs (loop4): Doing compatible version upgrade from 1.7: mi_btree_bitmap to 1.9: disk_accounting_v2
-  running recovery passes: check_allocations
-==================================================================
-BUG: KASAN: slab-use-after-free in bch2_fs_recovery+0xe85/0x38e0 fs/bcachefs/recovery.c:705
-Read of size 8 at addr ffff88805d598f98 by task syz-executor.4/7287
+Yes, of course. And I'm not really asking for the totality of the
+"client"'s to be replaced, rather than, when replacing slave, to
+choose "target" over "client" whenever possible(*).
 
-CPU: 0 UID: 0 PID: 7287 Comm: syz-executor.4 Not tainted 6.10.0-rc4-next-20240620-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- bch2_fs_recovery+0xe85/0x38e0 fs/bcachefs/recovery.c:705
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1034
- bch2_fs_get_tree+0xd42/0x16c0 fs/bcachefs/fs.c:1921
- vfs_get_tree+0x90/0x2a0 fs/super.c:1789
- do_new_mount+0x2be/0xb40 fs/namespace.c:3379
- do_mount fs/namespace.c:3719 [inline]
- __do_sys_mount fs/namespace.c:3925 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3902
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f03cde7e62a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f03ceb8aef8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f03ceb8af80 RCX: 00007f03cde7e62a
-RDX: 000000002000f640 RSI: 000000002000f680 RDI: 00007f03ceb8af40
-RBP: 000000002000f640 R08: 00007f03ceb8af80 R09: 0000000000200012
-R10: 0000000000200012 R11: 0000000000000202 R12: 000000002000f680
-R13: 00007f03ceb8af40 R14: 000000000000f629 R15: 00000000200000c0
- </TASK>
+Thanks, Wolfram,
 
-Allocated by task 7287:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
- kasan_kmalloc include/linux/kasan.h:211 [inline]
- __do_kmalloc_node mm/slub.c:4145 [inline]
- kmalloc_node_track_caller_noprof+0x225/0x440 mm/slub.c:4165
- __do_krealloc mm/slab_common.c:1183 [inline]
- krealloc_noprof+0x7d/0x120 mm/slab_common.c:1216
- bch2_sb_realloc+0x2f5/0x660 fs/bcachefs/super-io.c:189
- __copy_super+0x5dc/0xe70 fs/bcachefs/super-io.c:579
- bch2_sb_to_fs+0xab/0x150 fs/bcachefs/super-io.c:606
- bch2_fs_alloc+0xd50/0x20a0 fs/bcachefs/super.c:826
- bch2_fs_open+0x8cc/0xdf0 fs/bcachefs/super.c:2109
- bch2_fs_get_tree+0x750/0x16c0 fs/bcachefs/fs.c:1908
- vfs_get_tree+0x90/0x2a0 fs/super.c:1789
- do_new_mount+0x2be/0xb40 fs/namespace.c:3379
- do_mount fs/namespace.c:3719 [inline]
- __do_sys_mount fs/namespace.c:3925 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3902
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Andi
 
-Freed by task 7287:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2218 [inline]
- slab_free mm/slub.c:4460 [inline]
- kfree+0x149/0x360 mm/slub.c:4581
- krealloc_noprof+0xcf/0x120
- bch2_sb_realloc+0x2f5/0x660 fs/bcachefs/super-io.c:189
- bch2_sb_field_resize_id+0x140/0x7c0 fs/bcachefs/super-io.c:221
- bch2_sb_counters_from_cpu+0xac/0x300 fs/bcachefs/sb-counters.c:67
- bch2_write_super+0xe80/0x3c80 fs/bcachefs/super-io.c:967
- bch2_fs_recovery+0xe6c/0x38e0 fs/bcachefs/recovery.c:703
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1034
- bch2_fs_get_tree+0xd42/0x16c0 fs/bcachefs/fs.c:1921
- vfs_get_tree+0x90/0x2a0 fs/super.c:1789
- do_new_mount+0x2be/0xb40 fs/namespace.c:3379
- do_mount fs/namespace.c:3719 [inline]
- __do_sys_mount fs/namespace.c:3925 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3902
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88805d598000
- which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 3992 bytes inside of
- freed 4096-byte region [ffff88805d598000, ffff88805d599000)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5d598
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffefff(slab)
-raw: 00fff00000000040 ffff888015042140 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000040004 00000001ffffefff 0000000000000000
-head: 00fff00000000040 ffff888015042140 dead000000000122 0000000000000000
-head: 0000000000000000 0000000000040004 00000001ffffefff 0000000000000000
-head: 00fff00000000003 ffffea0001756601 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0x1d2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL), pid 7287, tgid 7286 (syz-executor.4), ts 171372494007, free_ts 171102290712
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1495
- prep_new_page mm/page_alloc.c:1503 [inline]
- get_page_from_freelist+0x2cbd/0x2d70 mm/page_alloc.c:3482
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4740
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2287
- allocate_slab+0x5a/0x2f0 mm/slub.c:2450
- new_slab mm/slub.c:2503 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3689
- __slab_alloc+0x58/0xa0 mm/slub.c:3779
- __slab_alloc_node mm/slub.c:3832 [inline]
- slab_alloc_node mm/slub.c:4012 [inline]
- __do_kmalloc_node mm/slub.c:4144 [inline]
- kmalloc_node_track_caller_noprof+0x281/0x440 mm/slub.c:4165
- __do_krealloc mm/slab_common.c:1183 [inline]
- krealloc_noprof+0x7d/0x120 mm/slab_common.c:1216
- bch2_sb_realloc+0x2f5/0x660 fs/bcachefs/super-io.c:189
- __copy_super+0x5dc/0xe70 fs/bcachefs/super-io.c:579
- bch2_sb_to_fs+0xab/0x150 fs/bcachefs/super-io.c:606
- bch2_fs_alloc+0xd50/0x20a0 fs/bcachefs/super.c:826
- bch2_fs_open+0x8cc/0xdf0 fs/bcachefs/super.c:2109
- bch2_fs_get_tree+0x750/0x16c0 fs/bcachefs/fs.c:1908
- vfs_get_tree+0x90/0x2a0 fs/super.c:1789
-page last free pid 7290 tgid 7290 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1088 [inline]
- free_unref_page+0xd22/0xea0 mm/page_alloc.c:2646
- __slab_free+0x31b/0x3d0 mm/slub.c:4371
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9e/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:322
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3962 [inline]
- slab_alloc_node mm/slub.c:4024 [inline]
- __do_kmalloc_node mm/slub.c:4144 [inline]
- kmalloc_node_track_caller_noprof+0x1cd/0x440 mm/slub.c:4165
- kvasprintf+0xdf/0x190 lib/kasprintf.c:25
- kobject_set_name_vargs+0x61/0x120 lib/kobject.c:274
- dev_set_name+0xd5/0x120 drivers/base/core.c:3482
- hci_register_dev+0xda/0x8b0 net/bluetooth/hci_core.c:2644
- __vhci_create_device drivers/bluetooth/hci_vhci.c:430 [inline]
- vhci_create_device+0x38b/0x6e0 drivers/bluetooth/hci_vhci.c:472
- vhci_get_user drivers/bluetooth/hci_vhci.c:529 [inline]
- vhci_write+0x3d1/0x490 drivers/bluetooth/hci_vhci.c:609
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa72/0xc90 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff88805d598e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88805d598f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88805d598f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                            ^
- ffff88805d599000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88805d599080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+(*) E.g. if in a file "client" is used a lot, doesn't make sense
+    to go against the trend and use "target".
 
