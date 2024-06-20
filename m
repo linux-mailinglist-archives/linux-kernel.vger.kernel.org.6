@@ -1,66 +1,120 @@
-Return-Path: <linux-kernel+bounces-222773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EE5910737
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:02:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B3291073C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1D3A1C22DB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:02:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402841C228E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA7D1AED48;
-	Thu, 20 Jun 2024 13:59:17 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984871AF6A2;
+	Thu, 20 Jun 2024 13:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ies5kZvC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739121AED42
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 13:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D225B1AD9C6;
+	Thu, 20 Jun 2024 13:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718891957; cv=none; b=g5tKd3PNs2bRw80iRBjcgRTmW+O84S9BC/I1/siHRNtDyAbp7R4jnPX4AKVfE5I0WTDH4yElsK2yvPVXrIkLRQ/zQRWjTNDvqwSNX0I1Frlr3t8os9a21/EzHzmZ+LgZxNqrVl5RGw0V0lHnnpeWcHK6EPD59JXHw5h0/CcqJNI=
+	t=1718891963; cv=none; b=E4sXRh4Ij1OVqOYjpUiuTc0nDVSsdejcgyUj2q3bD68AWgc+OQEgAyKk3KBK7z3jhZ/n3rjCtSufxOXmRHaCm5w5fl/yu2xsrZfnmHacJ7gXJXgwqGzztZA1cpUtNwRBKQCAuwFa09ONaph8IlWZBjKnKS+MWrLenCRnysrprOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718891957; c=relaxed/simple;
-	bh=JS+FDRKJbZHvaSKrJc6d25NPBfmbKnAUt9Z/dztHKK8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=oL8R8hQFIRR9Pmp+3kgfRSEmDcHpfLR5gmZYNSTW/5OA8UqYg0UxPWopFCgtY9mX+kmPNi6kInPG9jGSYKbBuXRTUzF+N22ad+69P2OBxkJ1VzntVLm/+Wb4+1/60PHJ/Q9tYdnt1o2NOzeuqtkDha46R23ySvm2/M6BsaovpF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav114.sakura.ne.jp (fsav114.sakura.ne.jp [27.133.134.241])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 45KDx9NZ056748;
-	Thu, 20 Jun 2024 22:59:09 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav114.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav114.sakura.ne.jp);
- Thu, 20 Jun 2024 22:59:09 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav114.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 45KDx9wH056745
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 20 Jun 2024 22:59:09 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <9345b032-a3d4-4c70-941e-db321ff471f2@I-love.SAKURA.ne.jp>
-Date: Thu, 20 Jun 2024 22:59:09 +0900
+	s=arc-20240116; t=1718891963; c=relaxed/simple;
+	bh=Z8ykrk5YoWwEuFbj1k4TUc4xuI2OXNR4A6IYRWxVNWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HGAmDZ707lwMSnpLMSH9XbwwLnlbDI4aBRzI7gv1xgQeXKcv5DlbbCdBUZ4JWBcu7+ZEaQ+omhRqkew4xZoAEtS8zxwKwvSFpQsp0uhz8TflbBqWb9Ip/B3CstxbJ0txmQiTr0SmdNNHO91YiuD+XPkD2L+3XNlCmh3jsRmUB7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ies5kZvC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CEFDC32786;
+	Thu, 20 Jun 2024 13:59:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718891963;
+	bh=Z8ykrk5YoWwEuFbj1k4TUc4xuI2OXNR4A6IYRWxVNWM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ies5kZvCDEdEO5yAghIHv8V1zLcS6yhwHCeMNvPmfOwkWVclOLSfb56gZs/8EK8B/
+	 e37Z7VOww7TDvkHRgdB1X0Ors/+sPow6JwHjreCPMEajdgvfzE+N/hcFKqI3Dbuw6J
+	 nXP7VpQT9yX8ZVgtu+Y3klXN5byrkBnb8HrUg+PtyKMzAtjeQnFCdDgiG+FWuFCg1U
+	 4jDa2R2mof19EKJZ3PnDlMc0qF6MePTNPn3b2IohnZtPGxbz5LH6IIm3yok4blm5U+
+	 xxO5MrMJn9bYcu0ctXgpIOJ4LDViJYuSObQPhRSwvMPv9F3MHJgtsoUlazCcGxVhO1
+	 CzUk5v3Uoa/7w==
+Date: Thu, 20 Jun 2024 14:59:17 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
+	Kamil =?iso-8859-1?Q?Hor=E1k?= - 2N <kamilh@axis.com>,
+	florian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 3/4] dt-bindings: ethernet-phy: add optional brr-mode
+ flag
+Message-ID: <20240620-rocky-impure-7fd0caf9f01d@spud>
+References: <20240619150359.311459-1-kamilh@axis.com>
+ <20240619150359.311459-4-kamilh@axis.com>
+ <20240619-plow-audacity-8ee9d98a005e@spud>
+ <20240619163803.6ba73ec5@kernel.org>
+ <20240620-eskimo-banana-7b90cddfd9c3@wendy>
+ <9f8628dd-e11c-4c91-ad46-c1e01f17be1e@lunn.ch>
+ <20240620063532.653227a1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [net?] INFO: task hung in devinet_ioctl (5)
-To: syzbot <syzbot+78761e13e81f4bfbb554@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <00000000000052e5c5061ac9f158@google.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <00000000000052e5c5061ac9f158@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wRUHkzBBSbDnLgU6"
+Content-Disposition: inline
+In-Reply-To: <20240620063532.653227a1@kernel.org>
 
-#syz fix: net/sched: act_api: fix possible infinite loop in tcf_idr_check_alloc()
 
+--wRUHkzBBSbDnLgU6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jun 20, 2024 at 06:35:32AM -0700, Jakub Kicinski wrote:
+> On Thu, 20 Jun 2024 14:59:53 +0200 Andrew Lunn wrote:
+> > > BTW Jakub, am I able to interact with the pw-bot, or is that limited =
+to
+> > > maintainers/senior netdev reviewers? Been curious about that for a
+> > > while.. =20
+> >=20
+> > https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html#u=
+pdating-patch-status
+
+Hmm, thanks for the link Andrew. In theory I should be able to use it
+then, I wonder if it is smart enough to detect that conor@kernel.org is
+the same person as conor+dt@kernel.org.
+I'll have to try it at some point and find out :)
+
+>=20
+> One thing that may not be immediately obvious is that this is our local
+> netdev thing, so it will only work on netdev@ and bpf@.
+> We could try to convince Konstantin to run it for all pw instances, we
+> never tried.
+
+ngl, I'd love to have it on the riscv instance. Things are hectic for me
+this month, but I might just ~harass~ask him about it after that..
+
+Thanks,
+Conor.
+
+--wRUHkzBBSbDnLgU6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnQ1jgAKCRB4tDGHoIJi
+0rRhAP9GP2eEIbEhKtBPnUJSJDp9esWXhxgUbmNib0nMWearkwEAs7lANltzZdpy
+rfh95/1jdKE5NFdhAgYWW/VfAVviGg4=
+=NT0+
+-----END PGP SIGNATURE-----
+
+--wRUHkzBBSbDnLgU6--
 
