@@ -1,120 +1,117 @@
-Return-Path: <linux-kernel+bounces-222220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B5190FE6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:15:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6714F90FE72
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248A21C22852
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:15:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795501C22776
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F0A175544;
-	Thu, 20 Jun 2024 08:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B39217C7CC;
+	Thu, 20 Jun 2024 08:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0q1TTYUR"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ro0UStxI"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BCA172BCB
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD32517B50D;
+	Thu, 20 Jun 2024 08:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718871311; cv=none; b=bGmeAYgQXB8uQZ8kMfXNI86dd7vkix2NZ4LS2GJ7lEqIWqLhfGKHTLK6uoHL9wYC3RnkuLFwPmTv2xNxy0pHFvtG220cTpUt/RuIF32N/kiRWKoRdLrrpResd17IEzq1+meVW+zGfBzIeHv/7VYnqtZANwGMfjrVb5WHAHKBdBg=
+	t=1718871327; cv=none; b=l3UpLKv2K/ZXbcibw0fT3hiHMhV4UQOxO/AAud351QVGu2BoDE9oyAOknW84TIJ5bBYapAW3zs4kHUdoQHjN5ihR2hSZPPCQVuuzCqchB/iYXydMcNMJHMsy3IkyaeO3Rm07bArzLHXplEIMpLJu9FycJtu8naXJEm2NYM3hgcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718871311; c=relaxed/simple;
-	bh=ZHRuGJFlUYdLamnB6sF47nsjZQIytquVYyRv7K2ZWxU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CXiOJaa0+EPzLXIqr2OXv/V3YWrJStDKQYNt3darBxIz1ahS0AtDhUBnjvazbj6Z0PPQX4gz+sRBp//+3KasB3mN+Rd8plUaAlWFRFH1SK6dDOG2iBsnwhy+mpGjXAS9q5gIwK2a9vaJ9Scz9FSXnil9ur1vWr48BQL3HCMS0h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0q1TTYUR; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6327e303739so5805817b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:15:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718871309; x=1719476109; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VkDyjmmo2mJ4eSIsOzioTK+npaxfD4Q0PqQ0hVQZ66Q=;
-        b=0q1TTYURnIp+/XFb/EoH4dDbQF63DjNb0U+1GNE+ogoI/17YREMvATQGVlZ+Y6fAfV
-         AUyJLwDnn3FP7lwBsoNp10YgVAwp2QdsHCllE7PW+Y5wiCoHKW9McjfSfQmbAGkeFJym
-         bKwrSSW54DfizLu/IGad6MaLecomhonc0iXvbQ6NaAmX/1LGC4LlnLAzzP/6QR6xkQZT
-         7yUta9lsPaaNfJt2bbaMYrrgLINexvn9ihcRooPYTyFSmrEnZ2DgSD7Ayr7jPfwl1PaD
-         hW6+/vbc6A/NQ5p3IHkWvGy7W6rwj8y3qTN4L3rZMG/H49O8GUbelgrAroLH7vhEQgKS
-         crhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718871309; x=1719476109;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VkDyjmmo2mJ4eSIsOzioTK+npaxfD4Q0PqQ0hVQZ66Q=;
-        b=umimVGYCEfEXJH1dIEmdQh7HkclLWpwyzVIrW6ABZa2LWdWzKmCotSq0zgpJZF31JD
-         GwS+RHSrGPlskk/BMG2OOwHpYWQ/wQNhbPRvhb+a/5dyyRcI9g9Nhv294NoBemJON5mh
-         UalKI1ScRH1yckf/b9gekDFg9n/JKbhTOGCoiIkUGoPB0QY56tv5L970oAHeJSTIvRlk
-         wpxyaqI49q/jEaGTy72IiMqmhI/Oiti2RDmmo+dtYzoOBKQSbJQXQiUAtpkivSbDVjfQ
-         qijuTAETo7vNIh7U4SxV/tbDahjM759p0ZbyhVaAszKbhGOIcK7TqYTRO6oACOL6RH8z
-         Oz8g==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Gk/YubwXBg9IQKVw6otmW4o/kqcdVH8xxgkuNOpRNsquMoeQM7adqxnvj/5rhQSYLGlFHUZmDj0YR+P0eqKWxHJWPsAPcb06bHmf
-X-Gm-Message-State: AOJu0YxOAJCpFjCWCV8WRYTM7Ez/pRlmhAEjWIHUNrzaf4OrFOnLM0V3
-	uxZC+SXEN4lyu5U4zRRRwVKeApT84CoVbFBiMTwucT1WeryM0DMkmE/QHA+3Z+JTCJmT69lrywH
-	BnUiycXX2zDbp7jjEmJfw5y5viqOVM4QVNHKz
-X-Google-Smtp-Source: AGHT+IEov8tA6WgC+NocZnlJNfskZn/sCcpgNQNbOkch4CKnuKF2F+01qvPEG14FlebgcmBeM68GwMaerknT5zuvZsM=
-X-Received: by 2002:a0d:f185:0:b0:61b:3345:a349 with SMTP id
- 00721157ae682-63a8d44ac47mr43240177b3.3.1718871308642; Thu, 20 Jun 2024
- 01:15:08 -0700 (PDT)
+	s=arc-20240116; t=1718871327; c=relaxed/simple;
+	bh=QQN5MWcgFvej1lFWyiOc0hlQXuyKb17sEjfAfzK8yE4=;
+	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=N2ZWgbbsZo6UueijpW2iEISVfNEQnjswzK1Xn2nR4k9mgPjPbsmAA4g7m1KC9kfimcgFiZiUxPIWid2EdrEZ5APUhZr6MeWVle8pBIA1ObOlWk7XS26jHw9MdhkexkPBV9KI9R3XufOdjjXm9MMDMuCyol8aPhO8RcM0FebL3bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ro0UStxI; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718871321; h=Message-ID:Subject:Date:From:To;
+	bh=IWsqLolJNxTdvFPMcucDRzIAOF+b9AvIwc4qt2sjbVw=;
+	b=ro0UStxIi6MMURDFhPf5kChmcBGLC/l5rwXM9JrxjwNifQ80RZN89zMQXATPtKMFgXczAOPntK4272bVZOKeeVz/uLfPBvCA2kJQ9G3AFExGeCI7p8w2FaGjc7/W8WcFSD6uEdgWEkcPmAGKGcPC0BBCJIQGr1+ozAtx9YxeqTo=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W8qgb1u_1718871320;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0W8qgb1u_1718871320)
+          by smtp.aliyun-inc.com;
+          Thu, 20 Jun 2024 16:15:20 +0800
+Message-ID: <1718871314.1931674-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH net-next] net: virtio: unify code to init stats
+Date: Thu, 20 Jun 2024 16:15:14 +0800
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ virtualization@lists.linux.dev,
+ netdev@vger.kernel.org,
+ Jiri Pirko <jiri@resnulli.us>,
+ linux-kernel@vger.kernel.org
+References: <fb91a4ec2224c36adda854314940304d708d59ef.1718869408.git.mst@redhat.com>
+In-Reply-To: <fb91a4ec2224c36adda854314940304d708d59ef.1718869408.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240619154530.163232-1-iii@linux.ibm.com> <20240619154530.163232-13-iii@linux.ibm.com>
-In-Reply-To: <20240619154530.163232-13-iii@linux.ibm.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Thu, 20 Jun 2024 10:14:27 +0200
-Message-ID: <CAG_fn=W6L0Yr_GLHEok=LmL0-whk2r+-E7fVHj8pA8GCtgze=Q@mail.gmail.com>
-Subject: Re: [PATCH v5 12/37] kmsan: Introduce memset_no_sanitize_memory()
-To: Ilya Leoshkevich <iii@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Pekka Enberg <penberg@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Sven Schnelle <svens@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2024 at 5:45=E2=80=AFPM Ilya Leoshkevich <iii@linux.ibm.com=
-> wrote:
+On Thu, 20 Jun 2024 03:44:53 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
+> Moving initialization of stats structure into
+> __free_old_xmit reduces the code size slightly.
+> It also makes it clearer that this function shouldn't
+> be called multiple times on the same stats struct.
 >
-> Add a wrapper for memset() that prevents unpoisoning. This is useful
-> for filling memory allocator redzones.
->
-> Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-Reviewed-by: Alexander Potapenko <glider@google.com>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+
+Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+
 
 > ---
->  include/linux/kmsan.h | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
 >
-> diff --git a/include/linux/kmsan.h b/include/linux/kmsan.h
-> index 23de1b3d6aee..5f50885f2023 100644
-> --- a/include/linux/kmsan.h
-> +++ b/include/linux/kmsan.h
-> @@ -255,6 +255,14 @@ void kmsan_enable_current(void);
->   */
->  void kmsan_disable_current(void);
+> Especially important now that Jiri's patch for BQL has been merged.
+> Lightly tested.
 >
-> +/*
-> + * memset_no_sanitize_memory(): memset() without KMSAN instrumentation.
-> + */
-Please make this a doc comment, like in the rest of the file.
-(Please also fix kmsan_enable_current/kmsan_disable_current in the
-respective patch)
+>  drivers/net/virtio_net.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 283b34d50296..c2ce8de340f7 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -383,6 +383,8 @@ static void __free_old_xmit(struct send_queue *sq, bool in_napi,
+>  	unsigned int len;
+>  	void *ptr;
+>
+> +	stats->bytes = stats->packets = 0;
+> +
+>  	while ((ptr = virtqueue_get_buf(sq->vq, &len)) != NULL) {
+>  		++stats->packets;
+>
+> @@ -828,7 +830,7 @@ static void virtnet_rq_unmap_free_buf(struct virtqueue *vq, void *buf)
+>
+>  static void free_old_xmit(struct send_queue *sq, bool in_napi)
+>  {
+> -	struct virtnet_sq_free_stats stats = {0};
+> +	struct virtnet_sq_free_stats stats;
+>
+>  	__free_old_xmit(sq, in_napi, &stats);
+>
+> @@ -979,7 +981,7 @@ static int virtnet_xdp_xmit(struct net_device *dev,
+>  			    int n, struct xdp_frame **frames, u32 flags)
+>  {
+>  	struct virtnet_info *vi = netdev_priv(dev);
+> -	struct virtnet_sq_free_stats stats = {0};
+> +	struct virtnet_sq_free_stats stats;
+>  	struct receive_queue *rq = vi->rq;
+>  	struct bpf_prog *xdp_prog;
+>  	struct send_queue *sq;
+> --
+> MST
+>
 
