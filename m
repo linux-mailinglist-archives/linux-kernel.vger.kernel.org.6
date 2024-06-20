@@ -1,274 +1,180 @@
-Return-Path: <linux-kernel+bounces-223391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351BB911240
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:37:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741B2911242
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597791C22989
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:37:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 303682858BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E8C1B9AC9;
-	Thu, 20 Jun 2024 19:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34B11BA089;
+	Thu, 20 Jun 2024 19:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Iqx0o8GG"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uv0tDssc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FE01B3727;
-	Thu, 20 Jun 2024 19:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143AF1B9AD6;
+	Thu, 20 Jun 2024 19:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718912223; cv=none; b=HPZFbPnb/hoYKcCzex9xo+4RFx5WjQSg/jUWR/PPwF3LJubSDzRz3gLYzrwW8bQ1b6WsBkFQ8dqNJJxD5kLaKELRA+VUBPc6hKMnRLju5S82jfgLS8PU4ZcyOqYvxxF+4XrCJ2+i6NzhRW8plBmQEC0kkhs1hn/68qHK4ucX9tw=
+	t=1718912227; cv=none; b=VXhrGdKY5UNuV5dxOvuTarY2KBo1KDYTzxudxSyn6GbMtUV6VEzYG3bU62v5oKWa7uUpRE4LlBng1niNYIhnTobI4HHcAJgiYgpxKw7dS2CH4w9inxi7CM39bCLuvoN/F/VxowdcQriH6tZ1WndZmamDgKXajBIwjPa//ZC+Zc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718912223; c=relaxed/simple;
-	bh=5IdMw3CS1Y7sK1lonjSlEocrecNZz6o8+weAxEgWr3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UctYpf07hmJ3haURztyf2jwmAq3mtzv4jbQ5rbUIV8okPPN69kTAGT/+ayULE80RT7Emp1KDa88UTO/fE/bI9UDmFqo03SfIae/+va7Q4HfyMBxv+JBkf6g/8z8bLIXjb8ogcSAqXrqXC1qLR8ahuYEbEmVVx5v6hbQpmfSghqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Iqx0o8GG; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4C1851C0003;
-	Thu, 20 Jun 2024 19:36:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718912216;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5I7UdPfxtD1iHOoR6mQl8rKZBvIJT2OuGxvghk0fROk=;
-	b=Iqx0o8GGvnpfXdtfCyUqdTTnWO3tw0V67hm0sLPQSRpXklMHtfFDJZa8xiywocXm0RMkki
-	joMEruEX0uf1FftOx8a+ynLw77d1NbrF9j1LA9gHDnAwoymjba5IXB5MiK2kzlNJYECZiO
-	Jk9Jd565OPKm1R87IZ2cdHHd+0wSgyy7J1WEl52e/1k6olrpSuAowwUVWLUzeeg0c+3uxZ
-	Dr6NNvHJfqKYuz6wgzL++WkO4FyZYYlCqz9Nl3DoB/JyfvyJ7xmzfwF04qOGgF1h02o642
-	66IOwM9ckZSnPFiJ9OooSYgRmET8V8gYRgKIS69EnHBFCZIeic1tOZPgOpfZcg==
-Date: Thu, 20 Jun 2024 21:36:54 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Joseph Jang <jjang@nvidia.com>
-Cc: shuah@kernel.org, avagin@google.com, amir73il@gmail.com,
-	brauner@kernel.org, mochs@nvidia.com, kobak@nvidia.com,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/2] selftest: rtc: Add to check rtc alarm status for
- alarm related test
-Message-ID: <20240620193654d3cd1f05@mail.local>
-References: <20240524013807.154338-1-jjang@nvidia.com>
- <20240524013807.154338-2-jjang@nvidia.com>
+	s=arc-20240116; t=1718912227; c=relaxed/simple;
+	bh=yZz3lSM2+eyxM8s5zcUsYg12gHFKn/bb+Dk6U7uPnJs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=p4DJUWZdG9dJDM0heFYx5uXwdGkeufYmr4nbsbTV5YwdjNf53oEE6zaCKhHdLQjDonoSvCA/AfxQCp4TYbDO0xqiTQBrEDwrXjxfYczXV9zOLZ8d8wGJvuIVYNXO3s/vYK+eyBQewne7ZxjlyAF+97xvg9qSSpwR1ka4OWHaYa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uv0tDssc; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718912226; x=1750448226;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=yZz3lSM2+eyxM8s5zcUsYg12gHFKn/bb+Dk6U7uPnJs=;
+  b=Uv0tDsscAZ2VHP2lyRo/z4EmRS1ykap8rvHH3rp0R/VkC24rY57LWjlr
+   XXiDGLiGzY8HM2Vde0ZY4YoG2yAN16coEUH+PiIIW7BP9ip7Zw7JZ5ESt
+   5TpXp4n1k219p9ldyG4XSKOHjOiL7NT7fnvazggKAuWbfJVHYW5aSFo7s
+   f8P14KeWAq5fYnwBNtg7MTj9b8ySeEtk0Gq0nlAJgxoswIeG7zZHT/h4Y
+   zF12BrIF/hHpAHK3gqNKqFP5Pa+hc6wAH+wJalw6tuOgc5W3qyOeyijIp
+   EUyVhxRgjgRBJ9vhUa36qgQmx++pcvsq/1qPVCw0zHVhjw8FzHpWGSnEh
+   w==;
+X-CSE-ConnectionGUID: YSZGvN5gSKGdtCrgBH/O0g==
+X-CSE-MsgGUID: a7F6Z5ZkRECUrycot67ncQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="15754131"
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="15754131"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 12:37:05 -0700
+X-CSE-ConnectionGUID: x18nf85+Teic2oICoGRKXg==
+X-CSE-MsgGUID: FgbdG7gjRByz6F9l8eM6Pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="42806941"
+Received: from wjayasek-mobl1.amr.corp.intel.com (HELO rpedgeco-desk4.intel.com) ([10.209.71.12])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 12:37:06 -0700
+From: Rick Edgecombe <rick.p.edgecombe@intel.com>
+To: yan.y.zhao@intel.com
+Cc: dmatlack@google.com,
+	erdemaktas@google.com,
+	isaku.yamahata@intel.com,
+	kai.huang@intel.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pbonzini@redhat.com,
+	rick.p.edgecombe@intel.com,
+	sagis@google.com,
+	seanjc@google.com
+Subject: [PATCH] KVM: x86/mmu: Implement memslot deletion for TDX
+Date: Thu, 20 Jun 2024 12:37:01 -0700
+Message-Id: <20240620193701.374519-1-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240613060708.11761-1-yan.y.zhao@intel.com>
+References: <20240613060708.11761-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240524013807.154338-2-jjang@nvidia.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On 23/05/2024 18:38:06-0700, Joseph Jang wrote:
-> In alarm_wkalm_set and alarm_wkalm_set_minute test, they use different
-> ioctl (RTC_ALM_SET/RTC_WKALM_SET) for alarm feature detection. They will
-> skip testing if RTC_ALM_SET/RTC_WKALM_SET ioctl returns an EINVAL error
-> code. This design may miss detecting real problems when the
-> efi.set_wakeup_time() return errors and then RTC_ALM_SET/RTC_WKALM_SET
-> ioctl returns an EINVAL error code with RTC_FEATURE_ALARM enabled.
-> 
-> In order to make rtctest more explicit and robust, we propose to use
-> RTC_PARAM_GET ioctl interface to check rtc alarm feature state before
-> running alarm related tests. If the kernel does not support RTC_PARAM_GET
-> ioctl interface, we will fallback to check the error number of
-> (RTC_ALM_SET/RTC_WKALM_SET) ioctl call for alarm feature detection.
-> 
-> Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services
-> as optional")
-> 
-> Reviewed-by: Koba Ko <kobak@nvidia.com>
-> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
-> Signed-off-by: Joseph Jang <jjang@nvidia.com>
-> ---
->  tools/testing/selftests/rtc/Makefile  |  2 +-
->  tools/testing/selftests/rtc/rtctest.c | 64 +++++++++++++++++++++++++++
->  2 files changed, 65 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
-> index 55198ecc04db..6e3a98fb24ba 100644
-> --- a/tools/testing/selftests/rtc/Makefile
-> +++ b/tools/testing/selftests/rtc/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -CFLAGS += -O3 -Wl,-no-as-needed -Wall
-> +CFLAGS += -O3 -Wl,-no-as-needed -Wall -I../../../../usr/include/
+Force TDX VMs to use the KVM_X86_QUIRK_SLOT_ZAP_ALL behavior.
 
-Is this change actually needed?
+TDs cannot use the fast zapping operation to implement memslot deletion for
+a couple reasons:
+1. KVM cannot zap TDX private PTEs and re-fault them without coordinating
+   with the guest. This is due to the TDs needing to "accept" memory. So an
+   operation to delete a memslot needs to limit the private zapping to the
+   range of the memslot.
+2. For reason (1), kvm_mmu_zap_all_fast() is limited to direct (shared)
+   roots. This means it will not zap the mirror (private) PTEs. If a
+   memslot is deleted with private memory mapped, the private memory would
+   remain mapped in the TD. Then if later the gmem fd was whole punched,
+   the pages could be freed on the host while still mapped in the TD. This
+   is because that operation would no longer have the memslot to map the
+   pgoff to the gfn.
 
->  LDLIBS += -lrt -lpthread -lm
->  
->  TEST_GEN_PROGS = rtctest
-> diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
-> index 63ce02d1d5cc..2b12497eb30d 100644
-> --- a/tools/testing/selftests/rtc/rtctest.c
-> +++ b/tools/testing/selftests/rtc/rtctest.c
-> @@ -25,6 +25,12 @@
->  
->  static char *rtc_file = "/dev/rtc0";
->  
-> +enum rtc_alarm_state {
-> +	RTC_ALARM_UNKNOWN,
-> +	RTC_ALARM_ENABLED,
-> +	RTC_ALARM_DISABLED,
-> +};
-> +
->  FIXTURE(rtc) {
->  	int fd;
->  };
-> @@ -82,6 +88,24 @@ static void nanosleep_with_retries(long ns)
->  	}
->  }
->  
-> +static enum rtc_alarm_state get_rtc_alarm_state(int fd)
-> +{
-> +	struct rtc_param param = { 0 };
-> +	int rc;
-> +
-> +	/* Validate kernel reflects unsupported RTC alarm state */
-> +	param.param = RTC_PARAM_FEATURES;
-> +	param.index = 0;
-> +	rc = ioctl(fd, RTC_PARAM_GET, &param);
-> +	if (rc < 0)
-> +		return RTC_ALARM_UNKNOWN;
-> +
-> +	if ((param.uvalue & _BITUL(RTC_FEATURE_ALARM)) == 0)
-> +		return RTC_ALARM_DISABLED;
-> +
-> +	return RTC_ALARM_ENABLED;
-> +}
-> +
->  TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
->  	int rc;
->  	long iter_count = 0;
-> @@ -197,11 +221,16 @@ TEST_F(rtc, alarm_alm_set) {
->  	fd_set readfds;
->  	time_t secs, new;
->  	int rc;
-> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
->  
->  	if (self->fd == -1 && errno == ENOENT)
->  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
->  	ASSERT_NE(-1, self->fd);
->  
-> +	alarm_state = get_rtc_alarm_state(self->fd);
-> +	if (alarm_state == RTC_ALARM_DISABLED)
-> +		SKIP(return, "Skipping test since alarms are not supported.");
-> +
->  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -210,6 +239,11 @@ TEST_F(rtc, alarm_alm_set) {
->  
->  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
->  	if (rc == -1) {
-> +		/*
-> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
-> +		 * error number if rtc alarm state is unknown.
-> +		 */
-> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
->  		ASSERT_EQ(EINVAL, errno);
->  		TH_LOG("skip alarms are not supported.");
->  		return;
-> @@ -255,11 +289,16 @@ TEST_F(rtc, alarm_wkalm_set) {
->  	fd_set readfds;
->  	time_t secs, new;
->  	int rc;
-> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
->  
->  	if (self->fd == -1 && errno == ENOENT)
->  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
->  	ASSERT_NE(-1, self->fd);
->  
-> +	alarm_state = get_rtc_alarm_state(self->fd);
-> +	if (alarm_state == RTC_ALARM_DISABLED)
-> +		SKIP(return, "Skipping test since alarms are not supported.");
-> +
->  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -270,6 +309,11 @@ TEST_F(rtc, alarm_wkalm_set) {
->  
->  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
->  	if (rc == -1) {
-> +		/*
-> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
-> +		 * error number if rtc alarm state is unknown.
-> +		 */
-> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
->  		ASSERT_EQ(EINVAL, errno);
->  		TH_LOG("skip alarms are not supported.");
->  		return;
-> @@ -307,11 +351,16 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
->  	fd_set readfds;
->  	time_t secs, new;
->  	int rc;
-> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
->  
->  	if (self->fd == -1 && errno == ENOENT)
->  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
->  	ASSERT_NE(-1, self->fd);
->  
-> +	alarm_state = get_rtc_alarm_state(self->fd);
-> +	if (alarm_state == RTC_ALARM_DISABLED)
-> +		SKIP(return, "Skipping test since alarms are not supported.");
-> +
->  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -320,6 +369,11 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
->  
->  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
->  	if (rc == -1) {
-> +		/*
-> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
-> +		 * error number if rtc alarm state is unknown.
-> +		 */
-> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
->  		ASSERT_EQ(EINVAL, errno);
->  		TH_LOG("skip alarms are not supported.");
->  		return;
-> @@ -365,11 +419,16 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
->  	fd_set readfds;
->  	time_t secs, new;
->  	int rc;
-> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
->  
->  	if (self->fd == -1 && errno == ENOENT)
->  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
->  	ASSERT_NE(-1, self->fd);
->  
-> +	alarm_state = get_rtc_alarm_state(self->fd);
-> +	if (alarm_state == RTC_ALARM_DISABLED)
-> +		SKIP(return, "Skipping test since alarms are not supported.");
-> +
->  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -380,6 +439,11 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
->  
->  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
->  	if (rc == -1) {
-> +		/*
-> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
-> +		 * error number if rtc alarm state is unknown.
-> +		 */
-> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
->  		ASSERT_EQ(EINVAL, errno);
->  		TH_LOG("skip alarms are not supported.");
->  		return;
-> -- 
-> 2.34.1
-> 
+To handle the first case, userspace could simply set the
+KVM_X86_QUIRK_SLOT_ZAP_ALL quirk for TDs. This would prevent the issue in
+(1), but it is not sufficient to resolve (2) because the problems there
+extend beyond the userspace's TD, to affecting the rest of the host. So the
+zap-leafs-only behavior is required for both
 
+A couple options were considered, including forcing
+KVM_X86_QUIRK_SLOT_ZAP_ALL to always be on for TDs, however due to the
+currently limited quirks interface (no way to query quirks, or force them
+to be disabled), this would require developing additional interfaces. So
+instead just do the simple thing and make TDs always do the zap-leafs
+behavior like when KVM_X86_QUIRK_SLOT_ZAP_ALL is disabled.
+
+While at it, have the new behavior apply to all non-KVM_X86_DEFAULT_VM VMs,
+as the previous behavior was not ideal (see [0]). It is assumed until
+proven otherwise that the other VM types will not be exposed to the bug[1]
+that derailed that effort.
+
+Memslot deletion needs to zap both the private and shared mappings of a
+GFN, so update the attr_filter field in kvm_mmu_zap_memslot_leafs() to
+include both.
+
+Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Link: https://lore.kernel.org/kvm/20190205205443.1059-1-sean.j.christopherson@intel.com/ [0]
+Link: https://patchwork.kernel.org/project/kvm/patch/20190205210137.1377-11-sean.j.christopherson@intel.com [1]
+---
+
+Here is the patch for TDX integration. It is not needed until we can
+actually create KVM_X86_TDX_VMs.
+
+Admittedly, this kind of combines two changes, but the amount of code is
+very small so I left it as one patch.
+
+ arch/x86/kvm/mmu.h     | 6 ++++++
+ arch/x86/kvm/mmu/mmu.c | 3 ++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
+index 7b12ba761c51..72ed6c07719a 100644
+--- a/arch/x86/kvm/mmu.h
++++ b/arch/x86/kvm/mmu.h
+@@ -335,4 +335,10 @@ static inline bool kvm_is_addr_direct(struct kvm *kvm, gpa_t gpa)
+ 
+ 	return !gpa_direct_bits || (gpa & gpa_direct_bits);
+ }
++
++static inline bool kvm_memslot_flush_zap_all(struct kvm *kvm)
++{
++	return kvm->arch.vm_type == KVM_X86_DEFAULT_VM &&
++	       kvm_check_has_quirk(kvm, KVM_X86_QUIRK_SLOT_ZAP_ALL);
++}
+ #endif
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 42faad76806a..8212bf77af70 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -6993,6 +6993,7 @@ static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *s
+ 		.start = slot->base_gfn,
+ 		.end = slot->base_gfn + slot->npages,
+ 		.may_block = true,
++		.attr_filter = KVM_FILTER_PRIVATE | KVM_FILTER_SHARED,
+ 	};
+ 	bool flush = false;
+ 
+@@ -7013,7 +7014,7 @@ static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *s
+ void kvm_arch_flush_shadow_memslot(struct kvm *kvm,
+ 				   struct kvm_memory_slot *slot)
+ {
+-	if (kvm_check_has_quirk(kvm, KVM_X86_QUIRK_SLOT_ZAP_ALL))
++	if (kvm_memslot_flush_zap_all(kvm))
+ 		kvm_mmu_zap_all_fast(kvm);
+ 	else
+ 		kvm_mmu_zap_memslot_leafs(kvm, slot);
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.34.1
+
 
