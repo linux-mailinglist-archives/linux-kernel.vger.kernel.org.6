@@ -1,253 +1,133 @@
-Return-Path: <linux-kernel+bounces-221964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A872290FB2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:04:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787A490FB2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF258B21084
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:04:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6625F1C212B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB570182AE;
-	Thu, 20 Jun 2024 02:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ckXixJUK"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCE41BDD0;
-	Thu, 20 Jun 2024 02:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726C418EAB;
+	Thu, 20 Jun 2024 02:05:44 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614EE320B;
+	Thu, 20 Jun 2024 02:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718849057; cv=none; b=kpkw+7TqC7Kf+/w5GXZXkHGLKe1QzGD9/G+VXVeieTqGKCw0S9uQPMoK/gXOxbbLJckrCIDGOt3kuy8yen8Mu7XrU+VvJvCuYIhyCsrmV5z1ymXXjTW3M7BmK9wnXp5amdGeDsusqIaHNDIWwx/R3EMB1HcTGZ6RWZ3pE8iN8mE=
+	t=1718849144; cv=none; b=Q74XWmMF6nvfl0Zhppy7uRHt/ikJ8raXkKGPnnzIxjoHQ9Vi8X0n83WVWEe3PoXTkL1sUpyw/+KoT25MxVLBtMEioktUoIdUWlD+A3R4xyKvcXggWUJlirkreLAtaaL9ddsuZkfCZnTeHViBihds2+Yrb+x1KB7ekSSZwNTq7CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718849057; c=relaxed/simple;
-	bh=W95vJRsdR9kjIHZqmPeoWP9lomjKv6MGJ35IR8aW08E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mbu0hLEjua6JcySlXXKO3pph3Tf/eFEePF2ZyHB795GWu5xFz/GODIn5jOgJybo5iF/YaANJ3WrtA438CFH4zI28L5Ec05Ueh0koJ9LUvu91NDi8hUMNG1TMFoEBV8FfEFIF8I+dYydFa+TgAoOrPeovFwQLS38oePiWh0U6Ehs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ckXixJUK; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-80b755c6c06so118097241.2;
-        Wed, 19 Jun 2024 19:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718849055; x=1719453855; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jhmMCJlWLT6P0x0JEVsA2CFzvtPsQuWVwbgag5ghfwE=;
-        b=ckXixJUKGyQ9bZ7gG0Kymq2ChiZ+UAzvHJhq1tqBNeA+Yeyjc0zE21mPXHEh4RPnpc
-         e11/LnuayRc/OtBZRbMPVwmGXfxVwWlYWeb9HA5PQVVB6IRY+5QIJSCdSGaU+hEynpjO
-         G8buXu6d6F8BtAwgdR5UVrFAYCcWwwvw3HUIkR97pazP3QFXGT9E6d6ERvfNi7+FOQNt
-         8KH1HUxLsNvSFqT5AJCInxlxo/w+vs3J8zgYvA8yrETuOsmmVkDxwCDkdIZ57K8PIz2M
-         eRAemKoI4zq5CKvOaoENsZxJWKix0dnsBsOehbtxTfkJi+ABfD6bKiw0hmELeSnZFiTp
-         9IWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718849055; x=1719453855;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jhmMCJlWLT6P0x0JEVsA2CFzvtPsQuWVwbgag5ghfwE=;
-        b=w3Vpozk8xwURHsU0cbVCFmVlH6RGGF2sdOvW4LJ54kTV8hmO/QAeE3UTq+gj9Wffp7
-         eZ2isQL/riC+eR5VKtJ/frgEb7lG/NlqfwrOTNWa6dURdzal2N8x1iKOMk86UF2S2hU6
-         S/pKepDmScrsXVyRFiZbZVMc0oBGO2iqcJLe9UKqobG45UR3nS9VHArg/tj9IWGYcxSR
-         dVOsycUFJlvQ4QfAy7Hw9+uBO60aeJlfCY9ZWM+JkZYvGGlmZomil+BrqKpXkrA2Bm/r
-         0s+ioUOO7Ab8mm7YQ7PofKJ148gSuT8npzUmY5ajNcnfrnKd02OnwAAqKTKbzDhL5TAz
-         Nd0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXk3DjLFFoLs1r+2mSDCSEt5WKZ2h6ZT4U3o5uly0mYxxIggFkVkqjB/RrUOXDPUgWN5R6EXVe6GKcJrTOquHBN9rVqjqYpY0zcTSJnTfOjnhEV13bUlUnklvYvYssl2sxUqcBReSA+M7kSbpDU
-X-Gm-Message-State: AOJu0Yw5Sa48zRCELnFVAgsfSdyhsyYYjZf6ICXtRh5tg/5nP8mmJu71
-	Kt1NHMv9N9fhje/BynO04pI+n8IiMw7uvBkZUlqK85rXC2t4+ksomxFGlZR1UsBFTA+u5rMC6co
-	L9Xsz6iUTTcwXAznrPLRTugRJ6Qw=
-X-Google-Smtp-Source: AGHT+IGWMX6GIQMKhSTglWLeOPg1r0KL1VIJVatQqACDfbph/Dm/svF8qriPsm3BUQO0wRsDfIBQ+vY4BH5McdG6U1A=
-X-Received: by 2002:a05:6102:4c46:b0:48f:1d57:9b with SMTP id
- ada2fe7eead31-48f1d5700f5mr2656379137.26.1718849054960; Wed, 19 Jun 2024
- 19:04:14 -0700 (PDT)
+	s=arc-20240116; t=1718849144; c=relaxed/simple;
+	bh=bQTySmjxjXq3J2IRRMOogCcA3BQmFgjBbULK2WtTyYk=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Jl8SHTHOIfD1TsT3hPANNdTbAAzZNhGbVG9rFVZeB5x+hZcES1c9T8nrWmP0oMM+4Zqp/7s72yMmt2fLg7sqKLcpAAXCaGV8qnlAEA/ENp3bbq2ukaLNM2gZfcGDVAcLEGbt9xJFI5grIR+AkojkWRSYWfiIANjNN087jduf6Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8AxUPBxjnNm1GQIAA--.33845S3;
+	Thu, 20 Jun 2024 10:05:37 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxPMdvjnNmxdgpAA--.36253S3;
+	Thu, 20 Jun 2024 10:05:35 +0800 (CST)
+Subject: Re: [PATCH] arm64: hw_breakpoint: Save privilege of access control
+ via ptrace
+To: Oleg Nesterov <oleg@redhat.com>
+References: <20240618071010.11214-1-yangtiezhu@loongson.cn>
+ <20240619151524.GB24240@redhat.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <9cc6d314-2431-c1b5-3d46-63c0ac80ed4d@loongson.cn>
+Date: Thu, 20 Jun 2024 10:05:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620002648.75204-1-21cnbao@gmail.com> <87zfrg2xce.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87zfrg2xce.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 20 Jun 2024 14:04:03 +1200
-Message-ID: <CAGsJ_4wS1PbGpfi5oWw4qRgs49kcdyTb42PA+35vBC1oA8Jsbg@mail.gmail.com>
-Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
- entry allocation for thp_swapout
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: akpm@linux-foundation.org, shuah@kernel.org, linux-mm@kvack.org, 
-	ryan.roberts@arm.com, chrisl@kernel.org, david@redhat.com, hughd@google.com, 
-	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240619151524.GB24240@redhat.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:AQAAf8DxPMdvjnNmxdgpAA--.36253S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7tF4DuryruF4DWr1UKF17Arc_yoW8Gr18pw
+	s8C3Z8tw4DJa1Uuwn0qwsxZa1Ykw1fWryDXwn8W3yakr4Yg393WFW09F4Ykrs8Ar1kCw1F
+	gw4qqr9xWFWUXFgCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWU
+	twAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l
+	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jOiSdUUUUU=
 
-On Thu, Jun 20, 2024 at 1:55=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
-wrote:
->
-> Barry Song <21cnbao@gmail.com> writes:
->
-> > From: Barry Song <v-songbaohua@oppo.com>
-> >
-> > Both Ryan and Chris have been utilizing the small test program to aid
-> > in debugging and identifying issues with swap entry allocation. While
-> > a real or intricate workload might be more suitable for assessing the
-> > correctness and effectiveness of the swap allocation policy, a small
-> > test program presents a simpler means of understanding the problem and
-> > initially verifying the improvements being made.
-> >
-> > Let's endeavor to integrate it into the self-test suite. Although it
-> > presently only accommodates 64KB and 4KB, I'm optimistic that we can
-> > expand its capabilities to support multiple sizes and simulate more
-> > complex systems in the future as required.
->
-> IIUC, this is a performance test program instead of functionality test
-> program.  Does it match the purpose of the kernel selftest?
+On 06/19/2024 11:15 PM, Oleg Nesterov wrote:
+> I don't understand what this patch does, but...
 
-I have a differing perspective. I maintain that the functionality is
-not functioning
-as expected. Despite having all the necessary resources for allocation, fai=
-lure
-persists, indicating a lack of functionality.
+Thanks for your reply.
 
->
-> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> > ---
-> >  tools/testing/selftests/mm/Makefile           |   1 +
-> >  .../selftests/mm/thp_swap_allocator_test.c    | 192 ++++++++++++++++++
-> >  2 files changed, 193 insertions(+)
-> >  create mode 100644 tools/testing/selftests/mm/thp_swap_allocator_test.=
-c
-> >
-> > diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selfte=
-sts/mm/Makefile
-> > index e1aa09ddaa3d..64164ad66835 100644
-> > --- a/tools/testing/selftests/mm/Makefile
-> > +++ b/tools/testing/selftests/mm/Makefile
-> > @@ -65,6 +65,7 @@ TEST_GEN_FILES +=3D mseal_test
-> >  TEST_GEN_FILES +=3D seal_elf
-> >  TEST_GEN_FILES +=3D on-fault-limit
-> >  TEST_GEN_FILES +=3D pagemap_ioctl
-> > +TEST_GEN_FILES +=3D thp_swap_allocator_test
-> >  TEST_GEN_FILES +=3D thuge-gen
-> >  TEST_GEN_FILES +=3D transhuge-stress
-> >  TEST_GEN_FILES +=3D uffd-stress
-> > diff --git a/tools/testing/selftests/mm/thp_swap_allocator_test.c b/too=
-ls/testing/selftests/mm/thp_swap_allocator_test.c
-> > new file mode 100644
-> > index 000000000000..4443a906d0f8
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/mm/thp_swap_allocator_test.c
-> > @@ -0,0 +1,192 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + * thp_swap_allocator_test
-> > + *
-> > + * The purpose of this test program is helping check if THP swpout
-> > + * can correctly get swap slots to swap out as a whole instead of
-> > + * being split. It randomly releases swap entries through madvise
-> > + * DONTNEED and do swapout on two memory areas: a memory area for
-> > + * 64KB THP and the other area for small folios. The second memory
-> > + * can be enabled by "-s".
-> > + * Before running the program, we need to setup a zRAM or similar
-> > + * swap device by:
-> > + *  echo lzo > /sys/block/zram0/comp_algorithm
-> > + *  echo 64M > /sys/block/zram0/disksize
-> > + *  echo never > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/=
-enabled
-> > + *  echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/e=
-nabled
-> > + *  mkswap /dev/zram0
-> > + *  swapon /dev/zram0
-> > + * The expected result should be 0% anon swpout fallback ratio w/ or
-> > + * w/o "-s".
-> > + *
-> > + * Author(s): Barry Song <v-songbaohua@oppo.com>
-> > + */
-> > +
-> > +#define _GNU_SOURCE
-> > +#include <stdio.h>
-> > +#include <stdlib.h>
-> > +#include <unistd.h>
-> > +#include <string.h>
-> > +#include <sys/mman.h>
-> > +#include <errno.h>
-> > +#include <time.h>
-> > +
-> > +#define MEMSIZE_MTHP (60 * 1024 * 1024)
-> > +#define MEMSIZE_SMALLFOLIO (1 * 1024 * 1024)
-> > +#define ALIGNMENT_MTHP (64 * 1024)
-> > +#define ALIGNMENT_SMALLFOLIO (4 * 1024)
-> > +#define TOTAL_DONTNEED_MTHP (16 * 1024 * 1024)
-> > +#define TOTAL_DONTNEED_SMALLFOLIO (768 * 1024)
-> > +#define MTHP_FOLIO_SIZE (64 * 1024)
-> > +
-> > +#define SWPOUT_PATH \
-> > +     "/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout"
-> > +#define SWPOUT_FALLBACK_PATH \
-> > +     "/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout_=
-fallback"
-> > +
-> > +static void *aligned_alloc_mem(size_t size, size_t alignment)
-> > +{
-> > +     void *mem =3D NULL;
-> > +
-> > +     if (posix_memalign(&mem, alignment, size) !=3D 0) {
-> > +             perror("posix_memalign");
-> > +             return NULL;
-> > +     }
-> > +     return mem;
-> > +}
-> > +
-> > +static void random_madvise_dontneed(void *mem, size_t mem_size,
-> > +             size_t align_size, size_t total_dontneed_size)
-> > +{
-> > +     size_t num_pages =3D total_dontneed_size / align_size;
-> > +     size_t i;
-> > +     size_t offset;
-> > +     void *addr;
-> > +
-> > +     for (i =3D 0; i < num_pages; ++i) {
-> > +             offset =3D (rand() % (mem_size / align_size)) * align_siz=
-e;
-> > +             addr =3D (char *)mem + offset;
-> > +             if (madvise(addr, align_size, MADV_DONTNEED) !=3D 0)
-> > +                     perror("madvise dontneed");
->
-> IIUC, this simulates align_size (generally 64KB) swap-in.  That is, it
-> simulate the effect of large size swap-in when it's not available in
-> kernel.  If we have large size swap-in in kernel in the future, this
-> becomes unnecessary.
->
-> Additionally, we have not reached the consensus that we should always
-> swap-in with swapped-out size.  So, I suspect that this test may not
-> reflect real situation in the future.  Although it doesn't reflect
-> current situation too.
+ctrl->privilege in decode_ctrl_reg() is never be used later but
+it can and should be used in arch_build_bp_info().
 
-Disagree again. releasing the whole mTHP swaps is the best case. Even in
-the best-case scenario, if we fail, it raises concerns for handling potenti=
-ally
-more challenging situations.
+arch/arm64/include/asm/hw_breakpoint.h
+static inline void decode_ctrl_reg(u32 reg,
+				   struct arch_hw_breakpoint_ctrl *ctrl)
+{
+     ...
+	ctrl->privilege	= reg & 0x3;  // it is never be used later but ...
+	...
+}
 
-I don't find it hard to incorporate additional features into this test
-program to simulate more intricate scenarios.
+arch/arm64/kernel/hw_breakpoint.c
+static int arch_build_bp_info(struct perf_event *bp,
+			      const struct perf_event_attr *attr,
+			      struct arch_hw_breakpoint *hw)
+{
+	...
+
+	if (arch_check_bp_in_kernelspace(hw))
+		hw->ctrl.privilege = AARCH64_BREAKPOINT_EL1;  // ... it can and should 
+be used here
+	else
+		hw->ctrl.privilege = AARCH64_BREAKPOINT_EL0;  // and here.
+     ...
+}
 
 >
-> > +
-> > +             memset(addr, 0x11, align_size);
-> > +     }
-> > +}
-> > +
+> On 06/18, Tiezhu Yang wrote:
+>>
+>> --- a/include/uapi/linux/perf_event.h
+>> +++ b/include/uapi/linux/perf_event.h
+>> @@ -467,6 +467,7 @@ struct perf_event_attr {
+>>  		__u32		wakeup_watermark; /* bytes before wakeup   */
+>>  	};
+>>
+>> +	__u8			bp_priv;
+>>  	__u32			bp_type;
 >
-> [snip]
->
-> --
-> Best Regards,
-> Huang, Ying
+> Is it safe to add the new member in the middle of uapi struct?
+> This will break userspace...
 
-Thanks
-Barry
+Let me put the new member "bp_priv" at the end of uapi struct
+perf_event_attr in the next version if you are OK with it.
+
+Thanks,
+Tiezhu
+
 
