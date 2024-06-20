@@ -1,214 +1,265 @@
-Return-Path: <linux-kernel+bounces-222562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F709103B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:07:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A66729103AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:07:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62E64282537
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26242282292
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C6E1AC785;
-	Thu, 20 Jun 2024 12:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5A11ABCD9;
+	Thu, 20 Jun 2024 12:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YOwNy6Er"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=opensynergy.com header.i=@opensynergy.com header.b="vN1QuG8l"
+Received: from refb01.tmes.trendmicro.eu (refb01.tmes.trendmicro.eu [18.185.115.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119D48175E;
-	Thu, 20 Jun 2024 12:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718885210; cv=none; b=jV15DNzwluPuYlWEu/A4qi5qXMgRifYtB7c/rAXJJkR50XewqnQ3j0NhGseEaOUUAcgQoEdqR6T4KBhU17bkU3wuFdqnb5WF6UuAh3EyccDcyfUHSOzxZxArvQZGlVnJVSYSBkgcMmzZz263QppHmmsy7COrDCp25dYwA5eUEQY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718885210; c=relaxed/simple;
-	bh=YcOQMnUGOll2T9P5B0BTqi4hNY9cmP0ib2UkDRJOtdM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cxwEK0gl9oc/zHrqFoqyTBFWliAjHdUbP98Jw7KXZTbqsqA88R3DMY6gE36j2leo+3p2I1NfTpEHl/KiEVj+JRGt8Vqs0dYhpEyFUGHuDAEB7r+942Gqpdokjle4OhoNeLyfuTiuDIbScZWFivymbAoKQ/KQYsGuT3cFpLN5DUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YOwNy6Er; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KBxMFG018194;
-	Thu, 20 Jun 2024 12:06:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	3nHXdBeQK4wTfCVubrwrziJsRRxybuQIzhP44f+g4Z8=; b=YOwNy6ErD1RsCaBs
-	sFLoLwpmbpUvBuDlFRqqJG2Teja1l8iGq7PTSzwA0M+ZsYwnwyMt55R0KqeNBF+R
-	/1rq5ouTkTreXC9XriH/TFV1X3Fl3FR+0x5OoXUEI21ef76eSyheAyn3d7c8Gta3
-	oRk8+8Rkv1O9XJKLTMeL6/QE5qfHVzoudZiPQcZ3jJoYiUSOjCxdlU7ZFlgAR8EF
-	xRsSaY2nTLt/GP4Gd4KxakyLsgwNx6uMcW3K0F2S/0dDQ+ZhO8a2XTPD/rCzb9+P
-	+/F/6v7TPZwWpVZeEXT58An40mqRfNt53Tpuu0eu5CrMJqLlKc88CcIh4dzQtq5m
-	dy203w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvm1400pr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 12:06:40 +0000 (GMT)
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45KC36eh026269;
-	Thu, 20 Jun 2024 12:06:39 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvm1400pn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 12:06:39 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45KACKHR019495;
-	Thu, 20 Jun 2024 12:06:38 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ysnp1nwtn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 12:06:38 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45KC6ZGQ7733894
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 20 Jun 2024 12:06:37 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9791C58068;
-	Thu, 20 Jun 2024 12:06:33 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C7C1F58054;
-	Thu, 20 Jun 2024 12:06:30 +0000 (GMT)
-Received: from [9.171.74.145] (unknown [9.171.74.145])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 20 Jun 2024 12:06:30 +0000 (GMT)
-Message-ID: <ecbd75e7c9a96ac38846a17917339d2cae6fe74c.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 2/3] vfio/pci: Tolerate oversized BARs by disallowing
- mmap
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-        Gerald Schaefer
- <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily
- Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle
- <svens@linux.ibm.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>,
-        Matthew Rosato
- <mjrosato@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Date: Thu, 20 Jun 2024 14:06:29 +0200
-In-Reply-To: <ZnOrlB6fqYC4S-RJ@infradead.org>
-References: <20240529-vfio_pci_mmap-v3-0-cd217d019218@linux.ibm.com>
-	 <20240529-vfio_pci_mmap-v3-2-cd217d019218@linux.ibm.com>
-	 <20240618095134.41478bbf.alex.williamson@redhat.com>
-	 <ZnKEuCP7o6KurJvq@infradead.org>
-	 <76a840711f7c073e52149107aa62045c462d7033.camel@linux.ibm.com>
-	 <ZnOrlB6fqYC4S-RJ@infradead.org>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C3515B0EE
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=18.185.115.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718885207; cv=fail; b=n/fhBgSpj2w0EVDfqqnHGB8vRRAb0wGHf7t/+JTeN8n/Khv4FmaRdI6iaiSizuzdryzLmDtiNPbnuCtu7HL38I73uutcKwz9Bc48LS0iN1tGZWDyFzgLH4kI+7BfXC4GVBK0HmBxKBJy34IiPVxTOzrY+RL4JJ6hS0YQbrjksgo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718885207; c=relaxed/simple;
+	bh=O0GMQ9dOhVakRCX8D0CnxQRmxu0Ue/8ECkjt1UD/ANk=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ACpaDrYMiaBC6GoRRgJxhOIlBymUlGcn76iu1S5ufUWvvwuCMroH0IA12igB9oGMh9HAZcXZau/5DVMe+xxJQRmEo9EHH1fACSMbXxdSSSjaQTzg786lZGteY+iJs4pgLQ0RWOszNon5LUrAjpvKOdwaLUARVcdzU7hJZrhnhfU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensynergy.com; spf=pass smtp.mailfrom=opensynergy.com; dkim=pass (2048-bit key) header.d=opensynergy.com header.i=@opensynergy.com header.b=vN1QuG8l; arc=fail smtp.client-ip=18.185.115.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensynergy.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensynergy.com
+Received: from 104.47.11.168_.trendmicro.com (unknown [172.21.10.134])
+	by refb01.tmes.trendmicro.eu (Postfix) with ESMTPS id 6182A10056E61
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:06:44 +0000 (UTC)
+Received: from 104.47.11.168_.trendmicro.com (unknown [172.21.191.80])
+	by repost01.tmes.trendmicro.eu (Postfix) with SMTP id 6ECB510001FBC;
+	Thu, 20 Jun 2024 12:06:37 +0000 (UTC)
+X-TM-MAIL-RECEIVED-TIME: 1718885195.787000
+X-TM-MAIL-UUID: d2e37d00-fef0-49b7-aec9-70d137e25fd1
+Received: from DEU01-FR2-obe.outbound.protection.outlook.com (unknown [104.47.11.168])
+	by repre01.tmes.trendmicro.eu (Trend Micro Email Security) with ESMTPS id C0672100058E4;
+	Thu, 20 Jun 2024 12:06:35 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FY4oPwPstlIyOwGkpFqr5npjuq435VnyMAjrtwCiyZ6b8zF636t3Le94UtSab9RpUba4miz6sdyddCovmcgCAaGeChOgYBV9E75nMjNRxbpO8X+4BM5FgJSBYlIGO634hiydmmAnKCOiwvFvD7oPqGGcEcEUEu6XoxZ0OLzK8REEapARcvjd7aBgx74R7MZDv66Y199FiuYzSz9wmQCZgHzesFqLkhx7BTlUqaVP5r/svXQlzcKQlKE491KziZV1qdaNMHgMGuguHhAKFeCE1rQo2yY60BBx6KCMCRqQfzT0p/wZX63DxZuUSWp2o5Ujpm1PMPLKk8ZW421Nk/LDDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VbN30poB3tCwfYn66GoIIo56ast/jE9yfXeLEQFi7ho=;
+ b=hDdIRtjJdLSfr7sKo4jsW+9ZTwRuBxzT4xXPZ0F0+RvQod9zvk6X5N1VBiDXCkwRGOwnuTohUduHm6sKKi+n+qeeWgPT3mpttkSAFSdYPs86ApcdVTvHlt1dfPqo0ucvOYtuCNf4L1OIe4sJLUGPBm2TfvvVWbO79hUKYou9WAMc4zqRiNNDb0BCEKfI0R1lgIeeXFvXvfOvInV0bazyMp6EHbJ1PN6qCbQ1+7kvYsUYKr9dpnESW1vEcy3xvyQ3dhs0YVfoN2QKfOjw2WOQzbRHwzcVNaTcpbRMWsaRlDh6t6gse6A0CqkHMc/pqWfn5dx95Z6WtmtNFlSMv119EQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=opensynergy.com; dmarc=pass action=none
+ header.from=opensynergy.com; dkim=pass header.d=opensynergy.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=opensynergy.com;
+Message-ID: <f0d5858e-66c5-4a74-b43b-625f1ba22314@opensynergy.com>
+Date: Thu, 20 Jun 2024 14:06:32 +0200
+From: Peter Hilber <peter.hilber@opensynergy.com>
+Subject: Re: [RFC PATCH v3 6/7] virtio_rtc: Add Arm Generic Timer
+ cross-timestamping
+To: David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ virtio-dev@lists.linux.dev
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20231218073849.35294-1-peter.hilber@opensynergy.com>
+ <20231218073849.35294-7-peter.hilber@opensynergy.com>
+ <e410d65754ba6a11ad7f74b27dc28d9a25d8c82e.camel@infradead.org>
+Content-Language: en-US
+In-Reply-To: <e410d65754ba6a11ad7f74b27dc28d9a25d8c82e.camel@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BE1P281CA0337.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:7d::14) To BE1P281MB1906.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:3d::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: E7UrQA2-DXnhowYQNDMq2MBeJAUW1nvf
-X-Proofpoint-GUID: W5ZOa8ZInFEMGYCDjcKD3NwJagn2Lily
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_07,2024-06-20_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- bulkscore=0 clxscore=1015 adultscore=0 phishscore=0 suspectscore=0
- mlxscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- mlxlogscore=689 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406200085
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BE1P281MB1906:EE_|FR2P281MB0105:EE_
+X-MS-Office365-Filtering-Correlation-Id: e48352d9-79ec-4faf-2a8c-08dc91216ddc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|376011|7416011|1800799021;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dGJwSkhjZHNmak9BSG1HdlUxcXI3ODZKYXBjUUE2em0zZTY1WFpacTg2aU8y?=
+ =?utf-8?B?bkd4bVBEcGpWNGFyZUVoYVJwNlpSQ2xkeVhjZHdJNkRmdW1VWWVlaU5uOG9y?=
+ =?utf-8?B?ZVpHKzNvWlBkTzRvZStWSGlLeGMrWTN2U2RNS3NEU2ZnQ1V6dWxLNEgxQ0ZG?=
+ =?utf-8?B?dlBRWTZydjh5Mm4zRVZIM2c5ZDFyVmY1NzRleXI2amFCelN4QXA2NllFU2VL?=
+ =?utf-8?B?ZUpxd3FzcjB2SnY0N1gxQ0NHUGdidGZjeWdvMGVpU3RTT0dlemFwS0JjZWV6?=
+ =?utf-8?B?RmxzMm9BcFBTNW1GQURoSlZQNjl4c3BjQzhBSjJYRkVlK2s3UnVRTS9Zd0t4?=
+ =?utf-8?B?Tm5RMzVxZ1BsaDdtVi95SVhkd2V6SENteGE1YWVkMFcyY2p6ajZaWkhuSTZI?=
+ =?utf-8?B?U1dvWmlSQmxOQ3h1TFRXdmR6TzU1T2ZnYU91Znk2UVc3eUFCenVYZ2lvZXBh?=
+ =?utf-8?B?UWg2YWZORlRHK2Fua0ZYSlRaZlZCRWR0SDQ1UG9hejU4eEErelZuYWZjQmFG?=
+ =?utf-8?B?SllOdENFTG1zampaZSsrcUNWL2ozaS9BWTNTYm5TelJEUFpZNVo2OW14TGpW?=
+ =?utf-8?B?WDdYRllkVEpRaG5wTFEzbXJyUnhFTmN5T1ZZZlpMUVFkeStBczI0d3VwRml0?=
+ =?utf-8?B?OGovVkJsVzJEbzlPK2lzSXpBc1FwVDJwZVc1bmtmZ1VpSkhLN1ErZm9LZlVp?=
+ =?utf-8?B?djB3T0hHdjRMN0Rwcmd0K1VnY1djZ1NSdHNvSStBSnRjWHVYRWRtdlQ0VGxw?=
+ =?utf-8?B?V3RRd285dlAySXovVW11UVlyc2lzOHplMkNuaERqNW1UbG1SS0RkaCs1VHg4?=
+ =?utf-8?B?ZXZQWGhkeHdnT2RHQ3lPMWMyYVZyeE40WW05OWJJSjlVREdsaG5kRlFaN3lS?=
+ =?utf-8?B?bXdkaTFGdThEMDNyZ1pXeVhVcGNKVGJlN2hUaWJaT0Z2M0V6c2E5cjkyTDZ1?=
+ =?utf-8?B?c3pJQ3JMc0Z1K2txenVrdlFVbGhNbHkxanlDbEFnckdGMVBWVzFEc2JnMWVD?=
+ =?utf-8?B?NWNzTjkzc2ZYdUUxbENyVm1BaGZubys1UGNQczJYRkRUOWN1WEplalFIMGda?=
+ =?utf-8?B?NlphVzEzTjhUZVAxRjhZMlA3ckRtYnlOYTdZcVd6YXZ0WXRFTXZzUUlmUkIz?=
+ =?utf-8?B?R1BpMkdkMnBPVGRHQzlXVUlrc0cybDhHTVZjblQzRWtFQW52RXUwYW5ESFBM?=
+ =?utf-8?B?c2lDcUM5MlkwMkNveGRwYUUzTHFyelQ0YlpNaEtoZVdyYXBpbmtJWEpLaWJo?=
+ =?utf-8?B?KytzOGJaVlRsVVpZQU8wRlp0aEk4RFJINm1PZ1lXYUVqQW1wbkN3OGdoMFlr?=
+ =?utf-8?B?YUFyZTAxSUV0cllpMktvdHRRRlR5SE4xSDd0dlFPaGN1bnpmTmRCaGxESTFH?=
+ =?utf-8?B?YUZkbGFFUEpnRlUwRlphaEtoOWlZeVdwZ0REMzAwUTgwYVNNQUNxakdCWWNT?=
+ =?utf-8?B?T1RxRDZSbUZZeXZsaFBHTmlrR1h4dkdoYjNsOG5oRGpCSXY3Tkoxa2tYbW9G?=
+ =?utf-8?B?emJSdGxodUhBYlNMdjdKeS8wOHBwSWVyNFVMRkVxR1MvMENLNjRZYVBGYzl4?=
+ =?utf-8?B?MTlrS1dHa2Q5UlNMcFhpY243aWZUb21WdjE3bUlPTTRKcnhRVldFVlBVaVM3?=
+ =?utf-8?B?K1N4Vmx6RFdQbWhZdm92a2hGNFl6cVp6MndBbUlhdUFsOHVFYVhHNjlHWURY?=
+ =?utf-8?B?WW80MUdSK3RQMFhsUkxLKy9wKzlEZUtwS255cnRJQ3Y0OVhhazJrUzBnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BE1P281MB1906.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(7416011)(1800799021);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VXVDVE5jRVNoeVRGNy9nK1M1TGt3elVSK2paL1VmNk01MmtNM0Y5QjR2Z2M5?=
+ =?utf-8?B?S3M3YTEyQ1laeW1ielNrWXNkZE9IR0k5YUhXdEhRSVk3WGFhNWh1SStUTGIx?=
+ =?utf-8?B?V1BSeE5hRFFQNXRZdk1BVVFoWllqbDU2Z2Noa0F0bkJDbVNxM0dJUkFlRFVZ?=
+ =?utf-8?B?dTh6S0ZTTTdIWXRCZUNTbk1kb1ZKaVdlVk1ZQ1JBZ2hlR3h1M0QwOUQ5MmdY?=
+ =?utf-8?B?ZE1uK1dNSkhtdVJUcmovZEN6MW9xUDVaZXFjTXk3RUNrYnhhUWlxb200aG1S?=
+ =?utf-8?B?ckdZaWtCR0p3blZIUWNqUTNmbnpWV1ZlTjNFZDVIUjBuV043Wkx2RjVCWDBI?=
+ =?utf-8?B?Nm0wZUhxZ1FBK0ZHTHhia09nT0ZRcGpCK2dCUklReFFuZG9HdGxnaWJ3V3lv?=
+ =?utf-8?B?aE5iRTdpbW11ZU1MZGt2QXNMTjU3R2lwZysyMGhYMFF3aFZ6cURZWS9HaTZW?=
+ =?utf-8?B?L0IzeForWXhvSEpZdTVNc2Zkd1gvQmxJb1JnWGgybXY3cjNwQTl1akZacGFx?=
+ =?utf-8?B?QlF3aXRHMjVzREJXblFDR0JYay9jN2pHcks1bllRNXFqRDR6Tm1md1A2bi9u?=
+ =?utf-8?B?dTZkS0J5VFcyU2wvSW1PVzkzSHBTUXEvOHdSZHArUUF3K1JTaXk3ZWNCazhx?=
+ =?utf-8?B?bnpQSUg5cmFnd29YTyt0Q2Vna3ZaR1FERHpGRmI5b2xubG9FWmlsV0RTV0I1?=
+ =?utf-8?B?d2RYaW5ycGN6STlQd0k3NndzekUxRGdKSlVNSTZpTWZpemF0VWZnOHloWTNH?=
+ =?utf-8?B?VjVqUTI0VzhuYzFDaXlHaHp5Vm9TYnlIMFAxbWhkNnpybkFJOVZJWGdQZ2tJ?=
+ =?utf-8?B?OTZZWEZDWkRPN0phQ0xFS0FTRFg0L00wVnFXcnFnaDhkSUloS1orNU1yaGdv?=
+ =?utf-8?B?aU41ZWNHOFhNRC9iUVNtQ2NWVzZuT1ZsM3FocHF5OXVSMnBRdVFic0JzOFNR?=
+ =?utf-8?B?SVBYaHBWbkR1UVFoQWV3V09MRVNMbGo0YzVFTDllSDhmT29OVDVTTGd4NDFB?=
+ =?utf-8?B?aUpCR3hIQndBRjVqNmdiUEI0WHBLL3hoTXlqcFlXWWJ1bEV0em9OdXBjTHZY?=
+ =?utf-8?B?OVlBcVBNUTNQdnE2dG03SlpJeHE2MUsra2h0N1ljcDIrbmowbkFCbFh1Rmoy?=
+ =?utf-8?B?Nzd1Nm4rWnpQOVkxcjdHR2hLbEsrNGdyMmNzU2Y4VkRZSDdHZDdoQnNtT1VZ?=
+ =?utf-8?B?SUVCTG9NTUlzd3hNdFRsbUNKcmJvU2ZPZU0rUkQ0bVl6TlhNdC9FTTRsSlpC?=
+ =?utf-8?B?dEF5NFlBNElMWVBkMmQxY3RXQ2sxcGhpR09UdkVBQUZvZmViR0kyVXo3bnFk?=
+ =?utf-8?B?ZU1KQnNab3BHTUJmQ05BSEhld3B1WmlFb1pQK0tBTURTL0tjNlNGelFDMHgy?=
+ =?utf-8?B?Z1JUbDVuek9MR3F0ek1lK1B4bzhoVW05NzhVbGM3VVZlbEpscitsYkFzd24y?=
+ =?utf-8?B?c09JT0EwdkliV0F6QWlIYXF2aUY1WnJvQnp1ek9UclFpVXBJTjZ3anl6WTVN?=
+ =?utf-8?B?VzY4Y1hnSUYrWFRVdmtNejZPZ3Z1TzNKY3R5YURzT21ua0lhUVBxQm1ta1Bt?=
+ =?utf-8?B?U21oZVFHYzBPdjJadHBlT2RvaUZwT0E2eHBiNlVKNEVkUmZjN0FIVXB1d2Zl?=
+ =?utf-8?B?UENZNkdKWkNubnNKdEVVOFJEV0NVOGg2VkNmSm8wTVpsRUVpWFR0RG9YY2xF?=
+ =?utf-8?B?ZzBEVGZybUpVSDRGaHI0bTNFSFloRUlOUWtXKzN4amxjVFJIdlpzS0hPd2pH?=
+ =?utf-8?B?NXNZMkx4eHBIaGlXMURFc3hZOG9lOUh4TnptZEtiNjlHeXpzMnQxdW94ZGZN?=
+ =?utf-8?B?MUd5dFlET084SjBWUDhyaFhmSlBmbHpaTDJKUlZwVmJmbnpkWnEzWnVNWlVF?=
+ =?utf-8?B?VHp1V1lHTkdUUXBjN3p0YVBnS1ZEM3EvUlNKOEZKYU8rWW1SR3FtbnZhRkdn?=
+ =?utf-8?B?Z214MVNla1pCeVFqN0tTam1xVzU2STcwd1NvNmxqSzVQb01pT3ZUTWF0ME52?=
+ =?utf-8?B?ZTRDRjVZMFNSVXk2ZFhGOHBQQ28yL3BuSUpYYWYvU2ZUdzlaUnJ1d2FyOTg0?=
+ =?utf-8?B?YW9tSEVJNFRMYTZET3BiUXBpeUFuUVdYQkJyRWFTSGpqbnZKbXFGN014RWUr?=
+ =?utf-8?B?N3F2V1FKYzNRdzZHVWZqYU1FWURZZ3dIamxlTHRGRnUwQS9reXdubEVRb05u?=
+ =?utf-8?Q?sCT7r24a9u1wW4ewdizXDVR+szd9hW/umHbcY27JoYFk?=
+X-OriginatorOrg: opensynergy.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e48352d9-79ec-4faf-2a8c-08dc91216ddc
+X-MS-Exchange-CrossTenant-AuthSource: BE1P281MB1906.DEUP281.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 12:06:34.4817
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 800fae25-9b1b-4edc-993d-c939c4e84a64
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EadJRaunBpgc4oiNMX7DKeJdBr65AHUZFQKeDYRlsphJGTCgid+wQ1zVYiFzH8mAsoGtPaia2rtWmdTi10NOJQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR2P281MB0105
+X-TM-AS-ERS: 104.47.11.168-0.0.0.0
+X-TMASE-Version: StarCloud-1.3-9.1.1026-28464.007
+X-TMASE-Result: 10--15.569800-4.000000
+X-TMASE-MatchedRID: byfwvk+IcRn5ETspAEX/ni5SIQSguq+gGfP6Q7XnYoeRnjfvXVSKt689
+	5HEdohSr6lROzfyovSM3TavLrREKnHAHTluwxdGFybaMhlRNDfDrlkvw0pZ13DZF3fXwq22PXeA
+	eGekCohIr+qWDpaTpageG9+7JmpwrJjpgX+qGOZEJ9830SX03Azsagavr4+KJImJmy502lS0NDH
+	XdWeqRGrwY8epx+4ywhH0rjqaZPdIyrV2ubzbrNZ0UyaWO1QCnF1k2re42Ig0hkL0gCMh6DsJi3
+	JKzHbmk1mh3V2G9QO8aqShqHxesm0Fp7EpJVf2uOagwGSua5/+YJgzgxqgVT3vBA9C/1eiFSJap
+	XYJQvpPYeXOEzfM22dEoO5p+Ouf5muMpo5XKw29WPx536TZMQBomt7e+ksQhJpK4F9wnIiZiyuQ
+	OZndK/bpcTKsMs1ZR+gsSeW2jNCfz06lohXENhP08piqRFMnZ40pnJqOe/RX84SWtFYp7wAkrYw
+	rjkf4Y
+X-TMASE-XGENCLOUD: 26535871-38dd-44cd-b188-7de1eb07b9d1-0-0-200-0
+X-TM-Deliver-Signature: 499231C7649B77F7641C2652589B65A8
+X-TM-Addin-Auth: QZNHK0YGoM9+6fAtK51X0TLG6DY2VmPM/0/ew2N1HhPjL9FIoZSgDoLXusj
+	ylK43Gh2LsvWUy3UsIy02bxw8f2BswD2jTogQam+XGx27kYLeXHkBxFUoyUctSWYPighAdN349g
+	NH1u5XfL2eADLAwQY4BP42t6z1dsX1Sp+XWnKPS68qai2kY6G5tyTA2Q4Jwa/MluXyGJD3OyfdN
+	kyzAnTHOcYz54mngt1SRf5D2xiKhpvpqn5/UXzkM4k+c0xDGgz/qjnyinqNTqIFz81Uaag6iHx4
+	zfT677GY/he1MW8=.GyIAX4l/MAtcJymbQv3IS4avFP0xlmcbB/9TFO1gtbdTMeAeYN5LTx23dR
+	NMt0/v1n4Vs0DxMNyq7OAc1E5oktisD/GAhaQb5M3sQxRJDqvdfbI0I9okRJeGdL27y31r7oLhp
+	ziO5dEHC1v+aeE/b4dJDK/yGgWgsWrGqgiQ+qusbqnn7odyRuD2aHmjmw/vb9PQ2dyNUaAndebQ
+	Td8X5XUckvOIS9tTzxN/wCGD0EDpDho1465I/8cnxd6S1AJljHR+A7ahvHvm86+04A5Fc4OkBIO
+	1yaIaVIvvIDgxmnDcduivvy9SxkuGDYjchtxOS3wCaP0EUFk1Sxsb/ukSzg==
+X-TM-Addin-ProductCode: EMS
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=opensynergy.com;
+	s=TM-DKIM-20210503141657; t=1718885197;
+	bh=O0GMQ9dOhVakRCX8D0CnxQRmxu0Ue/8ECkjt1UD/ANk=; l=2433;
+	h=Date:From:To;
+	b=vN1QuG8lEc7Slb1lLFjabqgL6FO1yNrOM8VDVAg0tft3o4YklD8d3vViWixjBCa9P
+	 eKv+3IbrjuZKO4JX+SoaKrjWXRKRNHbrFJ7xhriTuNv9mL9YCym507NlWCf0BpWgmg
+	 Z0x7tjb4F5ga0gQbSKYuDPyBur3YGK4PWE9pZdomLuxxbsLcZYmyZHL0TXvCIJC5Zk
+	 lcP/VHrLe7DfD/cTTqg8t2JcHNjhzFUkNAOa+vdOpCapehzKfaG+uiQclwbjtbJFV0
+	 /DwqngAUVdBTRteGB7mt7lW5rZ5HyIp4i181pgiKMQA1/eI+n8NLaksQhxyolZqxDS
+	 7QXo/8KLZgKkA==
 
-On Wed, 2024-06-19 at 21:09 -0700, Christoph Hellwig wrote:
-> On Wed, Jun 19, 2024 at 12:56:47PM +0200, Niklas Schnelle wrote:
-> > In short, the ISM BAR 0 is stupidly large but this is intentional. It
-> > not fitting in the VMAP is simply the least crazy filter I could come
-> > up with to keep the ISM device from causing trouble for use of vfio-pci
-> > mmap() for other, normal, PCI devices.
->=20
-> Then maybe add a PCI quirk to prevent mapping it.  This would also
-> affect the sysfs resource0 file unless I'm missing something.
->=20
+Changing virtio-dev address to the new one.
 
-The resource<N> files are globally disabled on s390x due to lack of
-HAVE_PCI_MMAP/ARCH_GENERIC_PCI_MMAP_RESOURCE at the moment. I might
-change that in the future with a analogous argument as for
-VFIO_PCI_MMAP but for its not there. Once we add it we of course need
-the same special ISM treatment there too.
+On 15.06.24 09:50, David Woodhouse wrote:
+> On Mon, 2023-12-18 at 08:38 +0100, Peter Hilber wrote:
+>>
+>> +int viortc_hw_xtstamp_params(u16 *hw_counter, enum clocksource_ids *cs_id)
+>> +{
+>> +       *hw_counter = VIRTIO_RTC_COUNTER_ARM_VIRT;
+> 
+> Hm, but what if it isn't? I think you need to put this in
+> drivers/clocksource/arm_arch_timer.c where it can do something like
+> kvm_arch_ptp_get_crosststamp() does to decide:
+> 
+>          if (arch_timer_uses_ppi == ARCH_TIMER_VIRT_PPI)
+>                  ptp_counter = KVM_PTP_VIRT_COUNTER;
+>          else
+>                  ptp_counter = KVM_PTP_PHYS_COUNTER;
+> 
+> 
+>> +       *cs_id = CSID_ARM_ARCH_COUNTER;
+>> +
+>> +       return 0;
+>> +}
+> 
 
-Looking at the existing PCI quirks I don't see anything that would fit
-so I'm guessing you would want to add a new quirk? As I understand it
-we would then have to export something like a is_pci_mmap_broken(pdev)
-function while currently the only quirk function that seems to be
-exported is pxi_fixup_device(). But then what happens if
-CONFIG_PCI_QUIRKS=3Dn? Also the header comment in drivers/pci/quirks.c
-says that platform specific devices shouldn't go in there and ISM is
-platform specific.
+I had such a check in v1, but Marc Zyngier didn't like the distinction [1,
+2] - maybe also exposing the timer through a generic helper was not
+desired. Quoting from [2]:
 
-Instead of exporting IOREMAP_START/IOREMAP_END maybe there is another
-reasonable maximum resource length? Or maybe we could create a size_t
-ioremap_area_size() helper similar to is_ioremap_addr() but not
-inlined. The latter already uses IOREMAP_START/IOREMAP_END so not sure
-how that works when IOREMAP_END is not exported?
+>> This was the rationale to come up with the physical/virtual counter
+>> distinction for the Virtio RTC device. Looking at extensions such as
+>> FEAT_ECV, where the CNTPCT_EL0 value can depend on the EL, or FEAT_NV*,
+>> it might be a bit simplistic.
+> 
+> Not just simplistic. It doesn't make sense. For this to work, you'd
+> need to know the global offset that KVM applies to the global counter,
+> plus the *virtualised* CNTPOFF/CNTVOFF values that the guest can
+> change at any time on a *per-CPU* basis. None of that is available
+> outside of KVM, nor would it make any sense anyway.
+> 
+>> Does this physical/virtual counter distinction sound like a good idea?
+>> Otherwise I would drop the arch_timer_counter_get_type() in the next
+>> iteration.
+> 
+> My take on this is that only the global counter value makes any sense.
+> That value is already available from the host as the virtual counter,
+> because we guarantee that CNTVOFF is 0 when outside of the guest
+> (well, technically, outside of the vcpu_load/vcpu_put section).
 
-Thanks,
-Niklas
+So I put the assumption that the virtual counter will always be the right
+choice for current Linux kernels, from the Virtio device POV.
+
+Thanks for the comment,
+
+Peter
+
+[1] https://lore.kernel.org/lkml/20230630171052.985577-1-peter.hilber@opensynergy.com/T/#ma8d596de1cbc8f4a78a18b2aa995db18423494a7
+[2] https://lore.kernel.org/lkml/20230630171052.985577-1-peter.hilber@opensynergy.com/T/#m65fa1d715933360498c4e33d7225e4220215a9d6
 
