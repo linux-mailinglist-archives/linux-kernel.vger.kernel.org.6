@@ -1,110 +1,171 @@
-Return-Path: <linux-kernel+bounces-223171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E004C910EF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:38:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09FD910F09
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F00C1C21BAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F2D9281AD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C470D1BD8EC;
-	Thu, 20 Jun 2024 17:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63791C0043;
+	Thu, 20 Jun 2024 17:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=svenjoac@gmx.de header.b="gbnJn78c"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4e3GMXpV"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35F81B4C57;
-	Thu, 20 Jun 2024 17:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774A21BF32C;
+	Thu, 20 Jun 2024 17:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718904759; cv=none; b=uqXAt2N28lyUOboZlMBxWsR2JTNnNKUw+YtnXCPJNApQ+x2kdYuV2+1mIuC7wU1eTer4H8xBm19K9APS1jLfm1zCuySVcS9V20qAKqHN3NY/Jgw9FsbVEOJZoH2tAIXd73Rbwpx5IE6sHP9SyZNY7qpuR11BrpQRJMZQeP3nHAo=
+	t=1718904781; cv=none; b=m/NuB4APjPidz2VPI/3GnFhxvfuFGO1E4B47QSUWJm+6i5jPvpfSn+cWyKbATPTheXrtYPOkGDjI4qc+UpWPGKGazRmvXs3tEkyNd640kzmURUW333V6ezMA/xdr07z9l3lbxMIVQnPGBdtvHroDje3AMOoMKyohR29TJhnEHBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718904759; c=relaxed/simple;
-	bh=Ts+o4DLTXehjZyeHtMv6S5vqB21Rs0oTAypOtLp54rU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Khe3cXGUdErFiM1S0TTgwy1KfJwd6A7IXdjTPye55SbE+ZjTzNZfX+THhjLy7LD8tDXt0vI1K+JEgTVaKLB7TO8BtKxvLbSLNzb8bF0QK/zWnE17mkh1TSS1CG1X1lunT6SS73z3zQ1uUyfs+jvwxEuF1xlI089lthwAatXy8lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=svenjoac@gmx.de header.b=gbnJn78c; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1718904729; x=1719509529; i=svenjoac@gmx.de;
-	bh=+a/gBdVUBp3b37TjJVSy0kNY3Cl6AVJmqidg8Y53dB4=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 Message-ID:MIME-Version:Content-Type:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=gbnJn78cSkCXp8vtbWZG0QE9i6MlkuVPiA8GOL57+0+jTP83+E7JIFdLmWnSvatF
-	 QXavR+X9K25IDZDjosJgPGvw3und67imfCb0jTe6n/FeJaKlHnbxfvhM1vmNGr1Vr
-	 G4GObPQqo6iJa0+IQotGctofZYcFBqMfIe3Zy/eSq4Yx0Yi7e26iQdME8/nA6hFmg
-	 7M+YkKlsuj/POrCka5SrdJk+8esLkC8MoIQV4bt1OPmoA4OVKww1yjOItsQcc1wcR
-	 AlgILYeUrjAsuKOfCNLJHshjSbsjK2VoTnsPfjTkfL5IEty2bX4jhcRVai3JDMC1z
-	 rsz80sZQJ1ND4WpPXQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from localhost.localdomain ([79.203.67.129]) by mail.gmx.net
- (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MXXyP-1rrOGU1fOJ-00XS1t; Thu, 20 Jun 2024 19:32:09 +0200
-Received: by localhost.localdomain (Postfix, from userid 1000)
-	id 758908009A; Thu, 20 Jun 2024 19:32:07 +0200 (CEST)
-From: Sven Joachim <svenjoac@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org,  patches@lists.linux.dev,
-  linux-kernel@vger.kernel.org,  torvalds@linux-foundation.org,
-  akpm@linux-foundation.org,  linux@roeck-us.net,  shuah@kernel.org,
-  patches@kernelci.org,  lkft-triage@lists.linaro.org,  pavel@denx.de,
-  jonathanh@nvidia.com,  f.fainelli@gmail.com,  sudipm.mukherjee@gmail.com,
-  srw@sladewatkins.net,  rwarsow@gmx.de,  conor@kernel.org,
-  allen.lkml@gmail.com,  broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/217] 6.1.95-rc1 review
-In-Reply-To: <20240619125556.491243678@linuxfoundation.org> (Greg
-	Kroah-Hartman's message of "Wed, 19 Jun 2024 14:54:03 +0200")
-References: <20240619125556.491243678@linuxfoundation.org>
-Date: Thu, 20 Jun 2024 19:32:07 +0200
-Message-ID: <874j9n1pwo.fsf@turtle.gmx.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1718904781; c=relaxed/simple;
+	bh=kp1Q4kOh5cBalrsrfuwKZ2xz4Q7tGmSDRh5ia6AColo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ew4eyQrtXCnF6KweAx3aHE7rllFAcMYEFyHRWtnqTdVeI5/+rWiLSPiGwLvYiuENDI6klur1NsEalqcDZfADL4tug7jiv2S2L7oTgGF1IDMIWjeQeQ+YNyP7WkDTZ9D0s+qsrTZpXUstUgw357FuiNp4ypCcuMDPgaXsnO0vi9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4e3GMXpV; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718904777;
+	bh=kp1Q4kOh5cBalrsrfuwKZ2xz4Q7tGmSDRh5ia6AColo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=4e3GMXpVwKiIbMVo4FBTo077VSFfO5NQaKIm+GvYE0c9IoGOwMTxnAhivY1LKwwJn
+	 f4B2jyWmH4Zf3NACjEEVJr8gYnVYui4oms0nZU56Lmt1Q4zIreD8y/4lvW/G4JVJQi
+	 2sCeaJn5B11ezbhnsWDv0ra281KOkh5mLup6am1As6xZY7xD60TuXOMarPf5YB4BEw
+	 iNcKY9zGZQHLoWE9aywIFKjLzsJNz6dnEpbd3QeYpmg/Yngvv+D+sm0VFO0C5SjU+x
+	 VyQfhhXyjzfKH9padDtAaxaYRH5vcljyGsa6LUfyFMVXx/tDRqbkd3qjN7jbxX+cQT
+	 DPor6Xqk351pA==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B112237810CD;
+	Thu, 20 Jun 2024 17:32:55 +0000 (UTC)
+Message-ID: <07d56a690d5fed16082e73c5565b67777e31494a.camel@collabora.com>
+Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support
+ runtime suspend/resume
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Devarsh Thakkar <devarsht@ti.com>, "jackson.lee"
+	 <jackson.lee@chipsnmedia.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
+ "sebastian.fricke@collabora.com"
+	 <sebastian.fricke@collabora.com>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,  Nas Chung
+ <nas.chung@chipsnmedia.com>, "lafley.kim" <lafley.kim@chipsnmedia.com>,
+ "b-brnich@ti.com" <b-brnich@ti.com>, "Luthra, Jai" <j-luthra@ti.com>,
+ Vibhore <vibhore@ti.com>,  Dhruva Gole <d-gole@ti.com>, Aradhya
+ <a-bhatia1@ti.com>, "Raghavendra, Vignesh" <vigneshr@ti.com>
+Date: Thu, 20 Jun 2024 13:32:52 -0400
+In-Reply-To: <e901967f-59df-f4b0-de51-61e542c04161@ti.com>
+References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
+	 <20240617104818.221-3-jackson.lee@chipsnmedia.com>
+	 <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
+	 <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+	 <SE1P216MB130382374B76CD8BC9FFCFE5EDC82@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+	 <881dcea1-a592-4506-083a-9d5f3c6a8781@ti.com>
+	 <b2f7552d37075538e22640f7b42838d29d3f8b3e.camel@collabora.com>
+	 <e901967f-59df-f4b0-de51-61e542c04161@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Provags-ID: V03:K1:i+b2EJiqseAXzgK5UePzEeGyPoIp8OIxqKVASacOhRqeE11/NGA
- Rk3U0jvuSR76ewmbxJHQYFzZc43fu12JhT4p+iVjRGxWzLdHKSWqeEHZzYnzXdLAnJUVAqR
- j0B9RCrpk0OEMfG4/O7NkhR11jryrasI0g9/jqRSz4mOIizZsm5KpceIsz7XRiCLDlkcu2X
- K18RAs4T6DL6LhEwf91GA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:sDEeG2sWfDg=;lfcIxVmUkhuGU7E1+qtpD+qzUL/
- M9R0KldLs1E4SsFWExATp33gQq03wnUH0HTiDjIPGfSUxDEtOfR3bPMRvKVtAjPmsxVrlq+P8
- td/WUn/g7tJ1UfiGgLOrq3lJdfXfncR+SfKTI79BwL/uMEr8AOCjyWFmcWxVoVQ/bKbdVFlfe
- mbUiUyDZ5KpuBVTvz9izK7W9sMl52biFlLdq+IOo9k4vwIaDpn4fSGqgdTxMlPrCR0Afdfs/o
- mlVx1hMwRp/Hhrk1hLa9wJbA1EsbYozd4Ds4o+ahon3ZLOIGk4A4hDYzLBNJ2xiB265X0aUqK
- miN7ONY/dNjIf3xe4YzLDwiTKVgkwrQyg0Ejc3BVqJWEkfQU+KCW7d+WGmowKAHdY/sx6fsj9
- /Iu+5092mxASIfumMd0fjUnKdYwfyTTLT79K1zyxaTxWvu1p23OEw9+zmyFM2qaug33Ul2Xa3
- e4yeJ76TcF7+nR1uVnbrn317i7xOGLmBgyv1/QKGDNFlitiQ+TYZj704EHmo7J98+4i06Xsvc
- N5YCR7yQeTFrDn+YAM4Ek0rroK99Wgy+vtEjy95iVLvlNWZS1lihQeRxnILfZnygV70hVZ7ms
- Ed5LsdKcdO5vdsQ9tZXZIQH6vs9cZM+3qwiIIFYLx63PjNRatIxpvfjYfppzhDsKSJyS/Av1G
- 942MQPfnT01NKwj+jRJeqgOcmVbLTtsyju271OJGHJuy5McANlucACLtcxusgeY/CeYqZS1NE
- Bae15jcJyA9CxKtgn12mzagJaKDS8POvNbKV66WLYquUYWbfzwWkEkztL5e1v0L3A94vbnSbY
- PiFSE4ly2JnTcqCZuqunlmhOAYnN8pmT14UZdhIqC9zNc=
 
-On 2024-06-19 14:54 +0200, Greg Kroah-Hartman wrote:
+Le jeudi 20 juin 2024 =C3=A0 19:50 +0530, Devarsh Thakkar a =C3=A9crit=C2=
+=A0:
+> Hi Nicolas,
+>=20
+> On 20/06/24 19:35, Nicolas Dufresne wrote:
+> > Hi Devarsh,
+> >=20
+> > Le jeudi 20 juin 2024 =C3=A0 15:05 +0530, Devarsh Thakkar a =C3=A9crit=
+=C2=A0:
+> > > In my view the delayed suspend functionality is generally helpful for=
+ devices
+> > > where resume latencies are higher for e.g. this light sensor driver [=
+2] uses
+> > > it because it takes 250ms to stabilize after resumption and I don't s=
+ee this
+> > > being used in codec drivers generally since there is no such large re=
+sume
+> > > latency. Please let me know if I am missing something or there is a s=
+trong
+> > > reason to have delayed suspend for wave5.
+> >=20
+> > It sounds like you did proper scientific testing of the suspend results=
+ calls,
+> > mind sharing the actual data ?
+>=20
+> Nopes, I did not do that but yes I agree it is good to profile and evalua=
+te
+> the trade-off but I am not expecting 250ms kind of latency. I would sugge=
+st
+> Jackson to do the profiling for the resume latencies.
 
-> This is the start of the stable review cycle for the 6.1.95 release.
-> There are 217 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
-> Anything received after that time might be too late.
+I'd clearly like to see numbers before we proceed.
 
-Works fine for me on x86_64.
+>=20
+> But perhaps a separate issue, I did notice that intention of the patchset=
+ was
+> to suspend without waiting for the timeout if there is no application hav=
+ing a
+> handle to the wave5 device but even if I close the last instance I still =
+see
+> the IP stays on for 5seconds as seen in this logs [1] and this perhaps co=
+uld
+> be because extra pm counter references being hold.
 
-Tested-by: Sven Joachim <svenjoac@gmx.de>
+Not sure where this comes from, I'm not aware of drivers doing that with M2=
+M
+instances. Only=20
 
-Cheers,
-       Sven
+>=20
+> [2024-06-20 12:32:50] Freeing pipeline ...
+>=20
+> and after 5 seconds..
+>=20
+> [2024-06-20 12:32:55] |   204     | AM62AX_DEV_CODEC0 | DEVICE_STATE_ON |
+> [2024-06-20 12:32:56] |   204     | AM62AX_DEV_CODEC0 | DEVICE_STATE_OFF
+>=20
+> [1]: https://gist.github.com/devarsht/009075d8706001f447733ed859152d90
+
+Appart from the 5s being too long, that is expected. If it fails after that=
+,
+this is a bug, we we should hold on merging this until the problem has been
+resolved.
+
+Imagine that userspace is going gapless playback, if you have a lets say 30=
+ms on
+forced suspend cycle due to close/open of the decoder instance, it won't
+actually endup gapless. The delay will ensure that we only suspend when nee=
+ded.
+
+There is other changes I have asked in this series, since we always have th=
+e
+case where userspace just pause on streaming, and we want that prolonged pa=
+used
+lead to suspend. Hopefully this has been strongly tested and is not just ad=
+ded
+for "completeness".
+
+Its important to note that has a reviewer only, my time is limited, and I
+completely rely on the author judgment of delay tuning and actual testing.
+
+Nicolas
+
+>=20
+> Regards
+> Devarsh
+
 
