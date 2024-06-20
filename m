@@ -1,298 +1,203 @@
-Return-Path: <linux-kernel+bounces-222636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710A191051C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:02:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCB29104E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084272854C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:02:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0249E1F23208
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B021B3F3B;
-	Thu, 20 Jun 2024 12:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8F21AD3F1;
+	Thu, 20 Jun 2024 12:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dFsobLBx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNK1Iunn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CB41B3F05
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866611ACE76;
+	Thu, 20 Jun 2024 12:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718888188; cv=none; b=QwIxVjuhWUu+cR+4qYepzWuSeaW6WnFNrSgJ8beHq/9KppHDlmHhIhmIyP6MCeU5xrwWJhmGVKcKAcu1izp1+0j9wfcnUpAn/C9HuVchxrt4anGGbrE2ZmRZ6MmD5YEFe2U/Jvelh+nBPiCXNQ563j+U+bwlVMuwgdgT9cMzweA=
+	t=1718888164; cv=none; b=pPqWLys+OOa+dDgNyyhvu0O+t7h1LZgps1lOXRUoh7z3+BN0wv9ftcACNBGI3H8tz7XQ6jK5WSvot7bculSYzsqa8dOnbIFpY6UDcGud1yyAMfAJixS8sMvc7CnyKBhDfBG0B4RpAOnH9dp537wQX6HgNEnd4QbJxRUGK3QejQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718888188; c=relaxed/simple;
-	bh=DM5Ex803zS7MOxfWJYf5m05LJwFNJsDu1bx7wMEtVz4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hk/0/DTzasNjIAg4Q7WrzzWyK+2HWDKknGf7Pyl0jiZUFUwF0Gjftvb2OvqKGG8ypFpLogVNqI3YIPNv4jK0JZkcQO9/ZnmuqPSPncG7aaKqvXA3zAzxaXn5s9bmO366skLLfC6xjy5Oq3U1Sr2rtcWWajYUkSqED4GR2RhsheM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dFsobLBx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718888186;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4KlgFTzGvRQ9KF2HWnCZmoGsdCauwElV+Abi5MawrNg=;
-	b=dFsobLBxthexWKUR/+AW/E4eHGu12Ell05n9GpOkI1bCIO7ObD0KrYEvJLsHgp5aS+PMx0
-	Dso0O7xa8A3ZunXJut7ug4h4/W1X3EUJKwniRJCcCEt61vfnUPbWSaK/IN4Y8B9D7zs8Sp
-	lO33G7RAa+8k5t/ykSWMam1XijhtEZk=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-588-Zhx9NxpYOn6hONCNaIiG6g-1; Thu,
- 20 Jun 2024 08:56:23 -0400
-X-MC-Unique: Zhx9NxpYOn6hONCNaIiG6g-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 882BE1955EBA;
-	Thu, 20 Jun 2024 12:56:19 +0000 (UTC)
-Received: from RHTRH0061144.redhat.com (unknown [10.22.9.58])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7C30C1956087;
-	Thu, 20 Jun 2024 12:56:16 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: netdev@vger.kernel.org
-Cc: dev@openvswitch.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pravin B Shelar <pshelar@ovn.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Stefano Brivio <sbrivio@redhat.com>,
-	=?UTF-8?q?Adri=C3=A1n=20Moreno?= <amorenoz@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Subject: [PATCH v2 net-next 4/7] selftests: openvswitch: Add support for tunnel() key.
-Date: Thu, 20 Jun 2024 08:55:58 -0400
-Message-ID: <20240620125601.15755-5-aconole@redhat.com>
-In-Reply-To: <20240620125601.15755-1-aconole@redhat.com>
-References: <20240620125601.15755-1-aconole@redhat.com>
+	s=arc-20240116; t=1718888164; c=relaxed/simple;
+	bh=8cykN1c2mMQEkbuY06k7H6YYMrKkSvyIO1LK882iTxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sj5MB++sSr9dkI9XCQTZ5eS/x478nW5dUeeGBt7pST93fiIoetGED58dTu9u57FL8r0b45PL/E4SUzSxLXrb7532WWmabzaWuD2YJ1QZrCMv55t1nlJXrRSbMXUzMh3pZcpQZVN13TLzA489GlDCJNwN+nI7vo3/MFR8NYjhCmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNK1Iunn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7356DC2BD10;
+	Thu, 20 Jun 2024 12:56:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718888164;
+	bh=8cykN1c2mMQEkbuY06k7H6YYMrKkSvyIO1LK882iTxE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VNK1Iunn6JiOcOQea6vBO9Nxbzv9mJApbxra+qJ7d5optwfVyzsp4QnHBu9VF8zOu
+	 dAQoLSC7tnoWQ51j0MbqJNeVD2q0KbYhSmp3xoN7i+THb0eb9kfAbX5AmNVHgveEIR
+	 c/nkRar71VtsIvKLfRKzrWpWI8Cjyi3GevfQTesk8RR5YwHSWfV8sj1+i2UPUvcGnH
+	 /9K5cQt2yQKbZUE4R1S4yITvT308inJhB51dbXY2uTL8I0rL3rq78L7gEHf4jzHbDk
+	 a3yBnrWCnC+T6sa4zk9zd3/Gvy5QSdJwKOtqGG1u2G1ysYiE2/8QLnhGll+oVeKou4
+	 XDUwu/fErty6g==
+Date: Thu, 20 Jun 2024 14:55:59 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Igor Pylypiv <ipylypiv@google.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] ata: libata-scsi: Generate ATA PT sense data when
+ ATA ERR/DF are set
+Message-ID: <ZnQm3-OL95x_Z_VP@ryzen.lan>
+References: <20240614191835.3056153-1-ipylypiv@google.com>
+ <20240614191835.3056153-3-ipylypiv@google.com>
+ <ZnAeFbdt02zge2my@ryzen.lan>
+ <ZnIBdj02yKFz4sK8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <ZnIBdj02yKFz4sK8@google.com>
 
-This will be used when setting details about the tunnel to use as
-transport.  There is a difference between the ODP format between tunnel():
-the 'key' flag is not actually a flag field, so we don't support it in the
-same way that the vswitchd userspace supports displaying it.
+On Tue, Jun 18, 2024 at 09:51:50PM +0000, Igor Pylypiv wrote:
+> On Mon, Jun 17, 2024 at 01:29:25PM +0200, Niklas Cassel wrote:
+> > On Fri, Jun 14, 2024 at 07:18:33PM +0000, Igor Pylypiv wrote:
+> > > SCSI/ATA Translation-5 (SAT-5) Table 209 — "ATA command results"
+> > > specifies that SATL shall generate sense data for ATA PASS-THROUGH
+> > > commands when either CK_COND is set or when ATA_ERR or ATA_DF status
+> > > bits are set.
+> > > 
+> > > ata_eh_analyze_tf() sets AC_ERR_DEV bit in qc->err_mask when ATA_ERR
+> > > or ATA_DF bits are set. It looks like qc->err_mask can be used as
+> > > an error indicator but ata_eh_link_autopsy() clears AC_ERR_DEV bit
+> > > when ATA_QCFLAG_SENSE_VALID is set. This effectively clears the error
+> > > indication if no other bits were set in qc->err_mask.
+> > 
+> > The reason why libata clears the err_mask when having sense data,
+> > is because the upper layer, i.e. SCSI, should determine what to do
+> > with the command, if there is sense data.
+> > 
+> > For a non-passthrough command, this will be done by
+> > scsi_io_completion_action():
+> > https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/scsi/scsi_lib.c#L1084-L1087
+> > 
+> > 
+> > However, if there is any bits set in cmd->result,
+> > scsi_io_completion_nz_result() will be called:
+> > https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/scsi/scsi_lib.c#L1052-L1053
+> > 
+> > which will do the following for a passthrough command:
+> > https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/scsi/scsi_lib.c#L969-L978
+> > which will set blk_stat.
+> > 
+> > After that, scsi_io_completion() which check blk_stat and if it is a
+> > scsi_noretry_cmd():
+> > https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/scsi/scsi_lib.c#L1073-L1078
+> > 
+> > A passthrough command will return true for scsi_noretry_cmd(), so
+> > scsi_io_completion_action() should NOT get called for a passthough command.
+> > 
+> > So IIUC, for a non-passthrough command, scsi_io_completion_action() will
+> > decide what to do depending on the sense data, but a passthrough command will
+> > get finished with the sense data, leaving the user to decide what to do.
+> >
+> 
+> Thank you for the detailed explanation, Niklas!
+> I was looking at a related logic in ata_eh_link_report():
+> https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/ata/libata-eh.c#L2359-L2360
+>  
+> Is my understanding correct that if we have ATA_QCFLAG_SENSE_VALID set and 
+> qc->err_mask is zero then we don't want to report the error to user since
+> SCSI might decide that it is not an error based on the sense data?
 
-Signed-off-by: Aaron Conole <aconole@redhat.com>
----
- .../selftests/net/openvswitch/ovs-dpctl.py    | 167 +++++++++++++++++-
- 1 file changed, 166 insertions(+), 1 deletion(-)
+I'm assuming that that was the reasoning.
 
-diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-index 4c235ff07aeb..2f16df2fb16b 100644
---- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-+++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-@@ -709,7 +709,7 @@ class ovskey(nla):
-         ("OVS_KEY_ATTR_ARP", "ovs_key_arp"),
-         ("OVS_KEY_ATTR_ND", "ovs_key_nd"),
-         ("OVS_KEY_ATTR_SKB_MARK", "uint32"),
--        ("OVS_KEY_ATTR_TUNNEL", "none"),
-+        ("OVS_KEY_ATTR_TUNNEL", "ovs_key_tunnel"),
-         ("OVS_KEY_ATTR_SCTP", "ovs_key_sctp"),
-         ("OVS_KEY_ATTR_TCP_FLAGS", "be16"),
-         ("OVS_KEY_ATTR_DP_HASH", "uint32"),
-@@ -1269,6 +1269,163 @@ class ovskey(nla):
-                 init=init,
-             )
- 
-+    class ovs_key_tunnel(nla):
-+        nla_flags = NLA_F_NESTED
-+
-+        nla_map = (
-+            ("OVS_TUNNEL_KEY_ATTR_ID", "be64"),
-+            ("OVS_TUNNEL_KEY_ATTR_IPV4_SRC", "ipaddr"),
-+            ("OVS_TUNNEL_KEY_ATTR_IPV4_DST", "ipaddr"),
-+            ("OVS_TUNNEL_KEY_ATTR_TOS", "uint8"),
-+            ("OVS_TUNNEL_KEY_ATTR_TTL", "uint8"),
-+            ("OVS_TUNNEL_KEY_ATTR_DONT_FRAGMENT", "flag"),
-+            ("OVS_TUNNEL_KEY_ATTR_CSUM", "flag"),
-+            ("OVS_TUNNEL_KEY_ATTR_OAM", "flag"),
-+            ("OVS_TUNNEL_KEY_ATTR_GENEVE_OPTS", "array(uint32)"),
-+            ("OVS_TUNNEL_KEY_ATTR_TP_SRC", "be16"),
-+            ("OVS_TUNNEL_KEY_ATTR_TP_DST", "be16"),
-+            ("OVS_TUNNEL_KEY_ATTR_VXLAN_OPTS", "none"),
-+            ("OVS_TUNNEL_KEY_ATTR_IPV6_SRC", "ipaddr"),
-+            ("OVS_TUNNEL_KEY_ATTR_IPV6_DST", "ipaddr"),
-+            ("OVS_TUNNEL_KEY_ATTR_PAD", "none"),
-+            ("OVS_TUNNEL_KEY_ATTR_ERSPAN_OPTS", "none"),
-+            ("OVS_TUNNEL_KEY_ATTR_IPV4_INFO_BRIDGE", "flag"),
-+        )
-+
-+        def parse(self, flowstr, mask=None):
-+            if not flowstr.startswith("tunnel("):
-+                return None, None
-+
-+            k = ovskey.ovs_key_tunnel()
-+            if mask is not None:
-+                mask = ovskey.ovs_key_tunnel()
-+
-+            flowstr = flowstr[len("tunnel("):]
-+
-+            v6_address = None
-+
-+            fields = [
-+                ("tun_id=", r"(\d+)", int, "OVS_TUNNEL_KEY_ATTR_ID",
-+                 0xffffffffffffffff, None, None),
-+
-+                ("src=", r"([0-9a-fA-F\.]+)", str,
-+                 "OVS_TUNNEL_KEY_ATTR_IPV4_SRC", "255.255.255.255", "0.0.0.0",
-+                 False),
-+                ("dst=", r"([0-9a-fA-F\.]+)", str,
-+                 "OVS_TUNNEL_KEY_ATTR_IPV4_DST", "255.255.255.255", "0.0.0.0",
-+                 False),
-+
-+                ("ipv6_src=", r"([0-9a-fA-F:]+)", str,
-+                 "OVS_TUNNEL_KEY_ATTR_IPV6_SRC",
-+                 "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "::", True),
-+                ("ipv6_dst=", r"([0-9a-fA-F:]+)", str,
-+                 "OVS_TUNNEL_KEY_ATTR_IPV6_DST",
-+                 "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "::", True),
-+
-+                ("tos=", r"(\d+)", int, "OVS_TUNNEL_KEY_ATTR_TOS", 255, 0,
-+                 None),
-+                ("ttl=", r"(\d+)", int, "OVS_TUNNEL_KEY_ATTR_TTL", 255, 0,
-+                 None),
-+
-+                ("tp_src=", r"(\d+)", int, "OVS_TUNNEL_KEY_ATTR_TP_SRC",
-+                 65535, 0, None),
-+                ("tp_dst=", r"(\d+)", int, "OVS_TUNNEL_KEY_ATTR_TP_DST",
-+                 65535, 0, None),
-+            ]
-+
-+            forced_include = ["OVS_TUNNEL_KEY_ATTR_TTL"]
-+
-+            for prefix, regex, typ, attr_name, mask_val, default_val, v46_flag in fields:
-+                flowstr, value = parse_extract_field(flowstr, prefix, regex, typ, False)
-+                if not attr_name:
-+                    raise Exception("Bad list value in tunnel fields")
-+
-+                if value is None and attr_name in forced_include:
-+                    value = default_val
-+                    mask_val = default_val
-+
-+                if value is not None:
-+                    if v46_flag is not None:
-+                        if v6_address is None:
-+                            v6_address = v46_flag
-+                        if v46_flag != v6_address:
-+                            raise ValueError("Cannot mix v6 and v4 addresses")
-+                    k["attrs"].append([attr_name, value])
-+                    if mask is not None:
-+                        mask["attrs"].append([attr_name, mask_val])
-+                else:
-+                    if v46_flag is not None:
-+                        if v6_address is None or v46_flag != v6_address:
-+                            continue
-+                    if mask is not None:
-+                        mask["attrs"].append([attr_name, default_val])
-+
-+            if k["attrs"][0][0] != "OVS_TUNNEL_KEY_ATTR_ID":
-+                raise ValueError("Needs a tunid set")
-+
-+            if flowstr.startswith("flags("):
-+                flowstr = flowstr[len("flags("):]
-+                flagspos = flowstr.find(")")
-+                flags = flowstr[:flagspos]
-+                flowstr = flowstr[flagspos + 1:]
-+
-+                flag_attrs = {
-+                    "df": "OVS_TUNNEL_KEY_ATTR_DONT_FRAGMENT",
-+                    "csum": "OVS_TUNNEL_KEY_ATTR_CSUM",
-+                    "oam": "OVS_TUNNEL_KEY_ATTR_OAM"
-+                }
-+
-+                for flag in flags.split("|"):
-+                    if flag in flag_attrs:
-+                        k["attrs"].append([flag_attrs[flag], True])
-+                        if mask is not None:
-+                            mask["attrs"].append([flag_attrs[flag], True])
-+
-+            flowstr = flowstr[strspn(flowstr, ", ") :]
-+            return flowstr, k, mask
-+
-+        def dpstr(self, mask=None, more=False):
-+            print_str = "tunnel("
-+
-+            flagsattrs = []
-+            for k in self["attrs"]:
-+                noprint = False
-+                if k[0] == "OVS_TUNNEL_KEY_ATTR_ID":
-+                    print_str += "tun_id=%d" % k[1]
-+                elif k[0] == "OVS_TUNNEL_KEY_ATTR_IPV4_SRC":
-+                    print_str += "src=%s" % k[1]
-+                elif k[0] == "OVS_TUNNEL_KEY_ATTR_IPV4_DST":
-+                    print_str += "dst=%s" % k[1]
-+                elif k[0] == "OVS_TUNNEL_KEY_ATTR_IPV6_SRC":
-+                    print_str += "ipv6_src=%s" % k[1]
-+                elif k[0] == "OVS_TUNNEL_KEY_ATTR_IPV6_DST":
-+                    print_str += "ipv6_dst=%s" % k[1]
-+                elif k[0] == "OVS_TUNNEL_KEY_ATTR_TOS":
-+                    print_str += "tos=%d" % k[1]
-+                elif k[0] == "OVS_TUNNEL_KEY_ATTR_TTL":
-+                    print_str += "ttl=%d" % k[1]
-+                elif k[0] == "OVS_TUNNEL_KEY_ATTR_TP_SRC":
-+                    print_str += "tp_src=%d" % k[1]
-+                elif k[0] == "OVS_TUNNEL_KEY_ATTR_TP_DST":
-+                    print_str += "tp_dst=%d" % k[1]
-+                elif k[0] == "OVS_TUNNEL_KEY_ATTR_DONT_FRAGMENT":
-+                    noprint = True
-+                    flagsattrs.append("df")
-+                elif k[0] == "OVS_TUNNEL_KEY_ATTR_CSUM":
-+                    noprint = True
-+                    flagsattrs.append("csum")
-+                elif k[0] == "OVS_TUNNEL_KEY_ATTR_OAM":
-+                    noprint = True
-+                    flagsattrs.append("oam")
-+
-+                if not noprint:
-+                    print_str += ","
-+
-+            if len(flagsattrs):
-+                print_str += "flags(" + "|".join(flagsattrs) + ")"
-+            print_str += ")"
-+            return print_str
-+
-     class ovs_key_mpls(nla):
-         fields = (("lse", ">I"),)
- 
-@@ -1277,6 +1434,7 @@ class ovskey(nla):
-             ("OVS_KEY_ATTR_PRIORITY", "skb_priority", intparse),
-             ("OVS_KEY_ATTR_SKB_MARK", "skb_mark", intparse),
-             ("OVS_KEY_ATTR_RECIRC_ID", "recirc_id", intparse),
-+            ("OVS_KEY_ATTR_TUNNEL", "tunnel", ovskey.ovs_key_tunnel),
-             ("OVS_KEY_ATTR_DP_HASH", "dp_hash", intparse),
-             ("OVS_KEY_ATTR_CT_STATE", "ct_state", parse_ct_state),
-             ("OVS_KEY_ATTR_CT_ZONE", "ct_zone", intparse),
-@@ -1379,6 +1537,13 @@ class ovskey(nla):
-                 lambda x: False,
-                 True,
-             ),
-+            (
-+                "OVS_KEY_ATTR_TUNNEL",
-+                "tunnel",
-+                None,
-+                False,
-+                False,
-+            ),
-             (
-                 "OVS_KEY_ATTR_CT_STATE",
-                 "ct_state",
--- 
-2.45.1
+However, IIUC, passthrough commands should never be retried by SCSI,
+it should always be reported back to the user.
 
+
+> 
+> > 
+> > > 
+> > > ata_scsi_qc_complete() should not use qc->err_mask for ATA PASS-THROUGH
+> > > commands because qc->err_mask can be zero (i.e. "no error") even when
+> > > the corresponding command has failed with ATA_ERR/ATA_DF bits set.
+> > > 
+> > > Additionally, the presence of valid sense data (ATA_QCFLAG_SENSE_VALID)
+> > > should not prevent SATL from generating sense data for ATA PASS-THROUGH.
+> > > 
+> > > Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> > > ---
+> > >  drivers/ata/libata-scsi.c | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> > > index 032cf11d0bcc..79e8103ef3a9 100644
+> > > --- a/drivers/ata/libata-scsi.c
+> > > +++ b/drivers/ata/libata-scsi.c
+> > > @@ -1632,8 +1632,8 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
+> > >  		!(qc->flags & ATA_QCFLAG_SENSE_VALID);
+> > >  
+> > >  	/* For ATA pass thru (SAT) commands, generate a sense block if
+> > > -	 * user mandated it or if there's an error.  Note that if we
+> > > -	 * generate because the user forced us to [CK_COND =1], a check
+> > > +	 * user mandated it or if ATA_ERR or ATA_DF bits are set. Note that
+> > > +	 * if we generate because the user forced us to [CK_COND=1], a check
+> > >  	 * condition is generated and the ATA register values are returned
+> > >  	 * whether the command completed successfully or not. If there
+> > >  	 * was no error, we use the following sense data:
+> > > @@ -1641,7 +1641,7 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
+> > >  	 * asc,ascq = ATA PASS-THROUGH INFORMATION AVAILABLE
+> > >  	 */
+> > >  	if (((cdb[0] == ATA_16) || (cdb[0] == ATA_12)) &&
+> > > -	    ((cdb[2] & 0x20) || need_sense))
+> > > +	    ((cdb[2] & 0x20) || (qc->result_tf.status & (ATA_ERR | ATA_DF))))
+> > 
+> > qc->result_tf can only be used if qc->flags has ATA_QCFLAG_RESULT_TF set,
+> > otherwise it can contain bogus data.
+> > You don't seem to check if ATA_QCFLAG_RESULT_TF is set.
+> >
+> > ata_scsi_pass_thru() does set ATA_QCFLAG_RESULT_TF.
+> > 
+> 
+> Thanks for pointing this out! Looks like ATA PASS-TRHOUGH case is fine
+> since the flag is always set by ata_scsi_pass_thru() as you pointed out.
+> Do we still want to add the check even though we know that it is always
+> set by ata_scsi_pass_thru()?
+> 
+> If the answer is "yes", I wonder if we should use the ATA_QCFLAG_RTF_FILLED
+> flag instead? Currently it is used for ahci only but looks like it can be
+> expanded to other drivers. inic_qc_fill_rtf() will benefit from this change
+> because it is not always setting the status/error values:
+> https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/ata/sata_inic162x.c#L583-L586
+> 
+> For the non passthough case qc->result_tf in ata_gen_ata_sense() is also valid
+> because fill_result_tf() is being called for failed commands regardless of
+> the ATA_QCFLAG_RESULT_TF flag:
+> https://github.com/torvalds/linux/blob/v6.10-rc4/drivers/ata/libata-core.c#L4856-L4873
+> 
+> In this case using ATA_QCFLAG_RTF_FILLED will be more accurate because
+> fill_result_tf() is being called even when ATA_QCFLAG_RESULT_TF is not set.
+> 
+> With that said I'm not sure if it makes sense to update all of the ATA
+> error handling to start checking for the ATA_QCFLAG_RTF_FILLED flag.
+> 
+> What are your thoughts on this?
+
+I see your point, we will fill the result if there is an error,
+even if ATA_QCFLAG_RESULT_TF wasn't set.
+
+Perhaps we should modify fill_result_tf() to set ATA_QCFLAG_RTF_FILLED,
+after it has called ap->ops->qc_fill_rtf(qc);
+
+Then this code can check if ATA_QCFLAG_RTF_FILLED is set, like you suggested.
+
+
+Kind regards,
+Niklas
 
