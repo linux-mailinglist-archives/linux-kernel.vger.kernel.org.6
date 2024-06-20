@@ -1,236 +1,85 @@
-Return-Path: <linux-kernel+bounces-222110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ECAA90FCF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:44:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1117C90FCFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C3411C23845
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:44:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18F8F1C21F40
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0BF3DBBF;
-	Thu, 20 Jun 2024 06:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DC73FB83;
+	Thu, 20 Jun 2024 06:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="bmspK5ym"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="01ffPyud"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F181F2BAF3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF26F38F82;
+	Thu, 20 Jun 2024 06:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718865831; cv=none; b=ffryjYs3vDLGenADl9H8+AVq2cxiHSkqK+j9410M1CE6oVT6r578Oxz6xB8JCBJc2fS7KFkGII1ajIQQj9RG1njZ2hjYIujz/vb/U6g6gsI8DCgCrkUMj25RXFDmCO/jX0EReOlzAlZ4hARAnCEsXkEY16WT8L5i9Gt7oIyN+QY=
+	t=1718866111; cv=none; b=YZj5eTFeS3LKkuqVXQ2byKAGN0gQhry0M7lNfXWI9nwlGgDmcVjlQwQoIMQNLzSo2V8Udo3EG5kXV9ibq93x2TRt3B71MfdKGe6/jytDgARjDOYB2HF/ss8jWTEHg8eGhQp5dElDTbN+d+zRofiQw8B/hc8b84siaJH1Dyz7qWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718865831; c=relaxed/simple;
-	bh=uE/uN6UQI8ULkWeXH2hrpTUuDXf9ezQJl6Unmy5CsLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gFIyu4wgJr1ZSRjZY6ZEDObJo5giOaKtD5sJJw+Cv5XhynBNEwWSu8NCCWyTrrCabZMoYyWQcKQOS+FWv37VBl3hfbCHhbz6g8s5HrL5qrm2vpE8gqmQef7YtY8PiTEfEr/1F31xdFr97ZWgL+JUvFTeVFaKw+FHrIqgF6PTyOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=bmspK5ym; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f9a78c6c5dso4964425ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 23:43:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1718865829; x=1719470629; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8YwiZn1PGDETwbHuEaIKOoV4wrE/8n3ka9pPww3cXT0=;
-        b=bmspK5ymTQLkNK1z7Nl4rtUnQUxfSla0LkWomn7dk7ZeL0iCYq82cx46jZGOY/XKx5
-         UMkWHfDwBCQJS4pmA5xDEWY8Wut1/FF+AMY5NUU5t2hZ2jOSuHIeA/xNATHNbYLnkp8C
-         l7uvy7GA8/gkYh8FgKzjbhdUeDW3gFlwtG6/vA9GRDpCIZNLomIKX0ZDiPS4icIj6l8b
-         5cBf5e4ybxkgS7plKNXWJC+KBooPduqr81AzqYfKBD8bBLpXb0ITaEz5X0ET29Gq/g/P
-         iU2d/uzl0gG8wecElR1piIe2faaKU7l1EBt47sl5Qn+SCgHMcksxJTO+A2UfU3c2qDth
-         rvJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718865829; x=1719470629;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8YwiZn1PGDETwbHuEaIKOoV4wrE/8n3ka9pPww3cXT0=;
-        b=NhPYMnNsUzZSHtQxDL/fA8RuZwOJqWCQRMPo9561kf0chZH6qZsPgnAOxt7NRrdVdw
-         2wDCWDJy0b9NWclK/brRliSzPSG01VfEMil05LVpd074I5FV1L6Yb+3O7ugvLjnFINLC
-         GFcgEmqpGZIN/deVY1QFwZEce6bs9ZgyahvJ8J9vGdGx7fsS01GxLOlMM9td9hAJxXM+
-         mgFGA5KyV4AU/GjrBIH0YtNGxeErS/7ZGCjwiOSTt+pFcHneQfYXLGbm1sHesFdls+G6
-         vuZG/n+aTIowtowxSx0rATZ0PB3yg0s8N2sINezmfwthkFDGS89HA25g/R5Let6kyzf9
-         aP7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV7PR2gSVo6NVPTh7KnREvsOwgEdZYvQvSddRTyTPb/3j3byip4fkqss3ZOTow8V3OLQqrXJvPhLBk1WdDJxNuGwoxB0VQ1ifzOGF51
-X-Gm-Message-State: AOJu0YwM/vjNiux6rVMaTxzZgpKZWrHacIRxQ+6qrkNCCJQ9Y8HRlTIC
-	LDuxyjpra+x1udV7TjA4R40asHe0WrvuDEZb7BPD/L3251dx0OULrZFLh+ibrGc=
-X-Google-Smtp-Source: AGHT+IGd34NqtNaGuPMB/ROhKNjgz2OeNbmesm9iNVtJ7V7/gYkRhinqnM9f3iddiqpR8hP9iR8/yQ==
-X-Received: by 2002:a17:903:22d1:b0:1f6:e20f:86ab with SMTP id d9443c01a7336-1f9aa44c98cmr47315875ad.40.1718865829286;
-        Wed, 19 Jun 2024 23:43:49 -0700 (PDT)
-Received: from [10.54.24.59] ([143.92.118.3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9b000bffdsm26431565ad.107.2024.06.19.23.43.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 23:43:48 -0700 (PDT)
-Message-ID: <2cf34c6b-4653-4f48-9a5f-43b484ed629e@shopee.com>
-Date: Thu, 20 Jun 2024 14:43:45 +0800
+	s=arc-20240116; t=1718866111; c=relaxed/simple;
+	bh=EURGL1Rs3BdktP3BB0xtvce8eQsfhKCbDz44BOfgB4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zeziuefi+OKyBjD7Dz1huDjMmaDP+UdNMCA6eUCOjyIcdqsm8wMOwq3t6CK90LMBNLnesSYjx4/UmSn5iuzdyX3X87InLOFP6dteHuZC9RKPxmozm0HzoK+tCjqDquWHvKO18USjIJjR1M4olDoJTk53GAR69bShezcaB7TTRIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=01ffPyud; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5jgpDICmScrWTrO4VPVId37Kbw6KdjAcTNIFFr+6Bgw=; b=01ffPyudzC/VgkyjmjQOPwou+s
+	1QzmQmXLrPXKUMSKu6oGIznZeINtfeyUrZZ2yxj9ICX9sRmgJ5ZA1HQ4I2JegSqZVxKv3Bi8nQtun
+	67dMzxaYV8MdzA65jPyT4mpdSVwpwmk7wnsvE5XCHCMhYkkCkls3ai/yU/hobR0FM3A6uqD4Cm/Sw
+	Q19MzuDWeSroLcv4b47sWjTrro4U0rR2rkEkiagMWy4+86GhPlAnB/9UuyP7Q8RFYZX4eErktfVwT
+	WmbItLm0kxVmjX4cuHu3W9diD3d13pVIOkMNi6mwNm7DzaE/jsq94oncOR4xfIg+HTkJafazdmZH9
+	dr4nDkCQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sKBam-00000003r8E-17Bl;
+	Thu, 20 Jun 2024 06:48:20 +0000
+Date: Wed, 19 Jun 2024 23:48:20 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk, tj@kernel.org,
+	gregkh@linuxfoundation.org, bvanassche@acm.org,
+	josef@toxicpanda.com, lizefan.x@bytedance.com, hannes@cmpxchg.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+	"yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH RFC v2 3/7] block: export some API
+Message-ID: <ZnPQtJE8VqgPjaLA@infradead.org>
+References: <20240618031751.3470464-1-yukuai1@huaweicloud.com>
+ <20240618031751.3470464-4-yukuai1@huaweicloud.com>
+ <ZnEzyJW9WAX0Rjsx@infradead.org>
+ <25110963-cc9e-7c9f-09b3-d57e4ce6109b@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] fuse: do not generate interrupt requests for fatal signals
-To: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240613040147.329220-1-haifeng.xu@shopee.com>
- <CAJfpegsGOsnqmKT=6_UN=GYPNpVBU2kOjQraTcmD8h4wDr91Ew@mail.gmail.com>
- <a8d0c5da-6935-4d28-9380-68b84b8e6e72@shopee.com>
- <CAJfpegsvzDg6fUy9HGUaR=7x=LdzOet4fowPvcbuOnhj71todg@mail.gmail.com>
- <20240617-vanille-labil-8de959ba5756@brauner>
-From: Haifeng Xu <haifeng.xu@shopee.com>
-In-Reply-To: <20240617-vanille-labil-8de959ba5756@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <25110963-cc9e-7c9f-09b3-d57e4ce6109b@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-
-
-On 2024/6/17 15:25, Christian Brauner wrote:
-> On Fri, Jun 14, 2024 at 12:01:39PM GMT, Miklos Szeredi wrote:
->> On Thu, 13 Jun 2024 at 12:44, Haifeng Xu <haifeng.xu@shopee.com> wrote:
->>
->>> So why the client doesn't get woken up?
->>
->> Need to find out what the server (lxcfs) is doing.  Can you do a
->> strace of lxcfs to see the communication on the fuse device?
+On Tue, Jun 18, 2024 at 03:58:54PM +0800, Yu Kuai wrote:
+> There is already bigger helper blkg_conf_prep() exported, as used by bfq
+> for a long time already, and this helper is introduced for code
+> optimization, as iocost configuration doesn't need to access the blkg.
 > 
-> Fwiw, I'm one of the orignal authors and maintainers of LXCFS so if you
-> have specific questions, I may be able to help.
+> Perhaps this should be another discussion about "design mistakes",
+> however, I'm not sure why. :( Do you have previous discussions?
 
-Thanks. All server threads of lcxfs wokrs fine now.
+blkg_conf_prep at least has some level of abstraction.
 
-So can we add another interface to abort those dead request?
-If the client thread got killed and wait for relpy, but the fuse sever didn't 
-send reply for some unknown reason，we can use this interface to wakeup the client thread.
+But at least my conclusion is:  don't make blk-iocost modular.  It's
+far too messy to split out, and not really worth it.
 
-
-diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-index 97ac994ff78f..b171d03171e7 100644
---- a/fs/fuse/control.c
-+++ b/fs/fuse/control.c
-@@ -44,6 +44,17 @@ static ssize_t fuse_conn_abort_write(struct file *file, const char __user *buf,
- 	return count;
- }
-
-+static ssize_t fuse_abort_dead_requests_write(struct file *file, const char __user *buf,
-+				     size_t count, loff_t *ppos)
-+{
-+	struct fuse_conn *fc = fuse_ctl_file_conn_get(file);
-+	if (fc) {
-+		fuse_abort_dead_requests(fc);
-+		fuse_conn_put(fc);
-+	}
-+	return count;
-+}
-+
- static ssize_t fuse_conn_waiting_read(struct file *file, char __user *buf,
- 				      size_t len, loff_t *ppos)
- {
-@@ -186,6 +197,12 @@ static const struct file_operations fuse_ctl_abort_ops = {
- 	.llseek = no_llseek,
- };
-
-+static const struct file_operations fuse_ctl_abort_dead_requests_ops = {
-+	.open = nonseekable_open,
-+	.write = fuse_abort_dead_requests_write,
-+	.llseek = no_llseek,
-+};
-+
- static const struct file_operations fuse_ctl_waiting_ops = {
- 	.open = nonseekable_open,
- 	.read = fuse_conn_waiting_read,
-@@ -274,7 +291,10 @@ int fuse_ctl_add_conn(struct fuse_conn *fc)
- 				 1, NULL, &fuse_conn_max_background_ops) ||
- 	    !fuse_ctl_add_dentry(parent, fc, "congestion_threshold",
- 				 S_IFREG | 0600, 1, NULL,
--				 &fuse_conn_congestion_threshold_ops))
-+				 &fuse_conn_congestion_threshold_ops) ||
-+	    !fuse_ctl_add_dentry(parent, fc, "abort_dead_requests",
-+				 S_IFREG | 0200, 1, NULL,
-+				 &fuse_ctl_abort_dead_requests_ops))
- 		goto err;
-
- 	return 0;
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 5fb830ad860d..77b54c5ea9bd 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -2249,6 +2249,49 @@ void fuse_abort_conn(struct fuse_conn *fc)
- }
- EXPORT_SYMBOL_GPL(fuse_abort_conn);
-
-+void fuse_abort_dead_requests(struct fuse_conn *fc)
-+{
-+	spin_lock(&fc->lock);
-+	if (fc->connected) {
-+		struct fuse_dev *fud;
-+		struct fuse_req *req, *next;
-+		LIST_HEAD(to_end);
-+		unsigned int i;
-+
-+		list_for_each_entry(fud, &fc->devices, entry) {
-+			struct fuse_pqueue *fpq = &fud->pq;
-+
-+			spin_lock(&fpq->lock);
-+
-+			for (i = 0; i < FUSE_PQ_HASH_SIZE; i++) {
-+				list_for_each_entry_safe(req, next, &fpq->processing[i], list) {
-+					if (test_bit(FR_INTERRUPTED, &req->flags)) {
-+						struct list_head *head = &req->waitq.head;
-+						struct wait_queue_entry *wq;
-+
-+						list_for_each_entry(wq, head, entry) {
-+							if (__fatal_signal_pending(wq->private)) {
-+								list_move_tail(&req->list, &to_end);
-+								break;
-+							}
-+						}
-+
-+					}
-+
-+				}
-+			}
-+
-+			spin_unlock(&fpq->lock);
-+		}
-+
-+		spin_unlock(&fc->lock);
-+		end_requests(&to_end);
-+	} else {
-+		spin_unlock(&fc->lock);
-+	}
-+
-+}
-+
- void fuse_wait_aborted(struct fuse_conn *fc)
- {
- 	/* matches implicit memory barrier in fuse_drop_waiting() */
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index f23919610313..fc8b5a7d1d0a 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -45,7 +45,7 @@
- #define FUSE_NAME_MAX 1024
-
- /** Number of dentries for each connection in the control filesystem */
--#define FUSE_CTL_NUM_DENTRIES 5
-+#define FUSE_CTL_NUM_DENTRIES 6
-
- /** List of active connections */
- extern struct list_head fuse_conn_list;
-@@ -1167,6 +1167,9 @@ void fuse_request_end(struct fuse_req *req);
- void fuse_abort_conn(struct fuse_conn *fc);
- void fuse_wait_aborted(struct fuse_conn *fc);
-
-+/* Abort dead requests */
-+void fuse_abort_dead_requests(struct fuse_conn *fc);
-+
- /**
-  * Invalidate inode attributes
-  */
 
