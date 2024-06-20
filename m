@@ -1,105 +1,128 @@
-Return-Path: <linux-kernel+bounces-222097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FF490FCC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:34:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CD2590FCC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DF3F285FD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:34:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DB071F21591
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E8B3B28F;
-	Thu, 20 Jun 2024 06:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F704084C;
+	Thu, 20 Jun 2024 06:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PS2GdJ4G"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="fqO3Djv1";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="YCnYn+Nb"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8332B657;
-	Thu, 20 Jun 2024 06:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1CFB657;
+	Thu, 20 Jun 2024 06:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718865261; cv=none; b=BaeuLRMC1cMV4M5BB+mFFQaH6RO49wTiOJHyiMQMH67liOfGAAmjEJS4YnYEDjpORJjzMSZO5BtE0Ffk6treco9hSpB9Q/GQnrVHbBjOKZZ22gJiZsnufLAEnUjGc5RMpS4xrEcUS3ZC02JThueVez46fRNM58xmd6umursyijo=
+	t=1718865211; cv=none; b=TcM1bto0EkywQkfJ/8ciEYvvjh4y7biv3emrgLvGRNi/xpU6lsLBvxvCc3YBVBsj11/lKQWMpmILU3H1JJ5CH1ScYA0WqLBaN0FZXV+9Xvpv75la6qLwWYgFDshJ8H5uKEOeoXXWAjCbxOsogT6rp+diuDhdONDrqZdTyex+kwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718865261; c=relaxed/simple;
-	bh=t2M+UiQhicdcVxQSHRebOcOt1gBXYG4LUGZsQvbB+Fw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=omLMDHB5R/nR+T/iWqSHseczhTQRhW71UD3cc2ma574xc/9cCJXcmore7tJ8UjhmjjZh8qnAA+CtRZoMzbDjPbURd11QD6lizBy+1SYVlXbYs8kqvLrCZCiZCKOAK7Z1I/QxCTg0OF8C//O1O/6XQNZkkHagB6QpbLD5lXupN9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PS2GdJ4G; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718865198; x=1719469998; i=markus.elfring@web.de;
-	bh=t2M+UiQhicdcVxQSHRebOcOt1gBXYG4LUGZsQvbB+Fw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=PS2GdJ4G89D2nrUnJOlk7c3N6sQ+U6q4tOerwrZzwSaWVafnMvUbTegeEoC1Y2OZ
-	 8d2XuMm+LSav6bpSkBD1ggfbTNVr8VWLbu9DVIvk9w5RlWoeOY+GwzXAOGhLF8fbb
-	 Hc0Xz9CM4VmZQjQtM3LHZgStsvZIE1k9AkOJ2UYmLDG5gccWJV75L3cRpgTyWuZzP
-	 Q43elYDTDYo+gzOhOJ7jGciRpZHFqzEWFLd0ak9jZO8+9twIGyYXR6Hg2jJqiG6j2
-	 J5yzy3+77f5vBaijpiUMPe4ZRPWYXmZPR4ACqUEPu+TSMR2wzFKNKoH4LV3HLBPck
-	 kmlzZHld7aZ1xgyHdw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Igv-1sXSt0457n-013nx5; Thu, 20
- Jun 2024 08:33:18 +0200
-Message-ID: <dec3e8d9-0a29-4e9b-afb5-888aaef4780d@web.de>
-Date: Thu, 20 Jun 2024 08:33:06 +0200
+	s=arc-20240116; t=1718865211; c=relaxed/simple;
+	bh=BVtUwaFFCxwF3HQC1MxNYooCWzM/7pCtL2gI1+sOr8U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YplG3jLezWq1EXamFkrNbe1xYOQQUmDjHiysvYB0YptW77Ae0zhB6vSFsy/6vJ8jYMtuxK1wQkM6srjx7QIt2FfPFpWRgo6RUlGnWwsW48Wq0Vpy3oXpPL5Qc/2Vmv1c2KtgZkkHzLzLObeSTDA2iWE/Gj8e+Z7Jew4YY+l4q/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=fqO3Djv1; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=YCnYn+Nb reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1718865207; x=1750401207;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=l6H8FP2mpqCvryZ//MA7LA1mh1+A8ayGdScvIrjtFiM=;
+  b=fqO3Djv11Bxlsi/wQr2EWjeqN3NLJsruU7AJmrpNmnTLCoHVLSq28mK4
+   3StlZKqepmhFvx+RnzwiVy9ODXSwacBTwQqY9Zx/2JCJez8Nd2OKWaHoZ
+   VECqKFplisPb2pIPsr8Ely6W1wGCx+QaIQFbY7p+IpA07i1hvgPqyoNvM
+   ICPOUtxr5OagJdhrwNjx+sFBoNmwzzre5f5C/al16Srq0WsLPUyiojlGW
+   OWfni7flNUj8RjYeka9EeupUQv7ldbMVV6caxPzcJlNANdBDBXlDr+ja7
+   DBlVf2b0tcj0yVyPvOGs6xKQNQKA1Ks1I+8MS3fRgP/HU1SkKt3PXvrH0
+   w==;
+X-CSE-ConnectionGUID: dAG106jpTombTYn7mPadyw==
+X-CSE-MsgGUID: dcILZs0LSwamU1xqybPwPw==
+X-IronPort-AV: E=Sophos;i="6.08,251,1712613600"; 
+   d="scan'208";a="37488758"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 20 Jun 2024 08:33:23 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CF8CE1668EE;
+	Thu, 20 Jun 2024 08:33:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1718865199; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=l6H8FP2mpqCvryZ//MA7LA1mh1+A8ayGdScvIrjtFiM=;
+	b=YCnYn+NbBgTowwUkiNqIgjt9GDRqWovZyuWTNKRVPlJCienrXqB2B6eD2WGZ9Yma2j4OXz
+	ajT7UfgCst7aFoZ7xMo/U4c8vPGf2NO3PTobZs5We2nebFeVbIOHBaGyiUBRYNQ49XhI0N
+	3geVpD+Z8qsY2OdFCo76JaQUIon8fC1UK5WD9ODfddKQXDYYKnH587RcZpH9ifLH0mOCBS
+	/5gk2anX8cdOwWB58AIxFJIpf2Jw7brFu9SKMCerShCvOLF1SyY7qPCJVQLWVf1MuxX7Dz
+	j4jG5TsA9qqQdPJUN9h0gRORhILf074CyBYPpglQPRD941TLkCACKp36f2xaqA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] media: verisilicon: Move rockchip hardware drivers to the corresponding option
+Date: Thu, 20 Jun 2024 08:33:13 +0200
+Message-Id: <20240620063313.2309767-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: dlm: use KMEM_CACHE() in dlm_memory_init()
-To: Alexander Aring <aahringo@redhat.com>,
- David Teigland <teigland@redhat.com>, Hongfu Li <lihongfu@kylinos.cn>,
- gfs2@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240619050358.411888-1-lihongfu@kylinos.cn>
- <78ded683-9bf8-4f2d-9dd4-877aa86e0e0b@web.de>
- <CAK-6q+jPMPoue9w+=_ZtEjE7AohRrbPHN93Fa=CbXtrTOyhicQ@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAK-6q+jPMPoue9w+=_ZtEjE7AohRrbPHN93Fa=CbXtrTOyhicQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:hN5RWVE9/3J/e8gwTmbE0X0+WkleYCEQT+2JIokmTCXVjmz8StX
- H6IVg8aL3SuVJyNFIqJ1ROLkgAdRd/rm4ml+86pqOVsw0czbVynTfBT0cTPRn6Ky3gDKU/2
- bakWroWFkfx778fLnpTvxjwD8X0nBaL9bdODyKoYzAeFIYP2/yNfFyk7l9jiWeZo7wRsP14
- lSpPxy7OW1RFbdA+Qd30w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SPe03AcFnYM=;WAr9U3dt2XzzefJKuH17280zLKF
- asxZdCNxGMSZYYuHIwiJ1m0a8fN6dFvTwT09O4BaMLgb3lEN/jWYUfU/P0od5hH7Z2GSa1xEu
- KDHOGoRpRud1BGGDKl49gESNKMrnpE9e/ktsbL/jBFuo4Wbd/L5OhNbGkjYaOgGrcjhNrs9aR
- vu7iJkOJs2/4s9au/SDvmBo8t1GAhiz//+lxvkWbNQABtU8UiVdkbik5KlMdqhtr4tUze0LXE
- fCh490BWWQRkbm0oo5+71Y/yhEycQUzjS0T5zWvMcjl0aaH9MwjsaTbAjs3n35DqWgfQksHOQ
- FPrg4/dV9TBuKbRfpecgSo3RzXhCtFQBveJK0zcZdmmS/IhCxs/PeICmKXrY4Nm2hqq/fIoso
- chEjG0i27S7ocWmq5epmQCjtz1jGt5NVHGjCQDAPQ3FJCKj6ZQIXl4rElFAR7hDMLxn+YsGjy
- CnPzeM89vtwda+S6oYPO7zKTXafRnqlqbhNpRky39rYKq15OXwablyJmGBJr0O7tg8sInH3dW
- n7uR7ImkfzLEBqZE1ZIIWx+Lru2il0n3aGUi7Lt5CcJDEPVLogKhHZV/BaJ/CaTDhp8eVKgII
- YxO20xaA7h7Is94SKdiBwF7Lq2oLWCIYOYdGh7NDKn4SxMYn7edXZvYMVmpiLNXAdlNT0lZub
- XjQ2ircBDMwIMByfcu8QHSsua9N3HLqmQUvwv0aqPBAkd5Sm94Zgyq/vO743J2ePH6Q6T2B3O
- 4NrDsZNqA4DVLfsW39VR+rlnC77uVKyRHBQ9WVObKIv2j+K/1w5rRNXjW8gQmQdEBnaR+zAVn
- aq58ESNB6W1an8Al83G/YMi0DsoiHXE0XzDlFbc0s4j55gtLG+s41mScjmSNPAjozz
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
->> Can the three passed name strings matter still for the identification
->> of the created caches from this function implementation?
->> https://elixir.bootlin.com/linux/v6.10-rc4/source/fs/dlm/memory.c#L27
->> https://elixir.bootlin.com/linux/v6.10-rc4/source/mm/slab_common.c#L362
->
-> probably only for "dlm_cb" that turns into "dlm_callback".
-=E2=80=A6
+There is no need to compile the rockchip specific drivers if
+CONFIG_VIDEO_HANTRO_ROCKCHIP is not set.
+All driver functions are only referenced by rockchip_vpu_hw.c which is
+already under this option.
 
-Will the development attention grow for deviations of passed name strings
-from applied data structure identifiers?
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+ drivers/media/platform/verisilicon/Makefile | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Regards,
-Markus
+diff --git a/drivers/media/platform/verisilicon/Makefile b/drivers/media/platform/verisilicon/Makefile
+index eb38a1833b02..f6f019d04ff0 100644
+--- a/drivers/media/platform/verisilicon/Makefile
++++ b/drivers/media/platform/verisilicon/Makefile
+@@ -14,13 +14,6 @@ hantro-vpu-y += \
+ 		hantro_g2.o \
+ 		hantro_g2_hevc_dec.o \
+ 		hantro_g2_vp9_dec.o \
+-		rockchip_vpu2_hw_jpeg_enc.o \
+-		rockchip_vpu2_hw_h264_dec.o \
+-		rockchip_vpu2_hw_mpeg2_dec.o \
+-		rockchip_vpu2_hw_vp8_dec.o \
+-		rockchip_vpu981_hw_av1_dec.o \
+-		rockchip_av1_filmgrain.o \
+-		rockchip_av1_entropymode.o \
+ 		hantro_jpeg.o \
+ 		hantro_h264.o \
+ 		hantro_hevc.o \
+@@ -35,6 +28,13 @@ hantro-vpu-$(CONFIG_VIDEO_HANTRO_SAMA5D4) += \
+ 		sama5d4_vdec_hw.o
+ 
+ hantro-vpu-$(CONFIG_VIDEO_HANTRO_ROCKCHIP) += \
++		rockchip_vpu2_hw_jpeg_enc.o \
++		rockchip_vpu2_hw_h264_dec.o \
++		rockchip_vpu2_hw_mpeg2_dec.o \
++		rockchip_vpu2_hw_vp8_dec.o \
++		rockchip_vpu981_hw_av1_dec.o \
++		rockchip_av1_filmgrain.o \
++		rockchip_av1_entropymode.o \
+ 		rockchip_vpu_hw.o
+ 
+ hantro-vpu-$(CONFIG_VIDEO_HANTRO_SUNXI) += \
+-- 
+2.34.1
+
 
