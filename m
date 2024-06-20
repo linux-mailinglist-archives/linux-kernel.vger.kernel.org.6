@@ -1,137 +1,102 @@
-Return-Path: <linux-kernel+bounces-222938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04DA3910A32
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:41:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4496910A36
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B51E3286486
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:41:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 490EBB21CDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02E71B0126;
-	Thu, 20 Jun 2024 15:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B351B011B;
+	Thu, 20 Jun 2024 15:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkIsszvS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkPvyY4T"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90BE1AF6B5;
-	Thu, 20 Jun 2024 15:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D6E1E51E;
+	Thu, 20 Jun 2024 15:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718898086; cv=none; b=GTE6NEp9rbzztaFrj0aNSL7aUbsnDcAS0Dkv1/XkcWVSDEieLDTr8cSSf5lB0cKkjw9cZ2bDSJShmiiCtRAWRgyXV6Go37EzTqOB7XZoG9Pk5sZPOKZtjf9IT2Qr6IUX/E+7YTIQ6g13xqqdRV3ASS/pYncL4KvWs99LYB8bdXs=
+	t=1718898160; cv=none; b=XCE8KGH5ZskbD83PUKGHDgbpfAv/ARv+CPkuwEfLhJ48NL5qefhN8YPjbmenmSKCIrZlDQfecHkaPpLzif5m1+AxxKzJoYeVfB7RpLufzEXfBjZnDHNmUhO/0/hNTrVqtDa8IvRanqa7XPi4m7g3fldHbarS5zIqyMEwUVgnXlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718898086; c=relaxed/simple;
-	bh=uXUQcC50fbjgB0KPnRDtDslrC8JyKIUItq1pr5paBoI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=milqmIibxmJuqMllo0DKTnD5Ud8JMU/QJOhfSOK6DK3Ci+Zcr02nQYUPeDgrEkYgD3lQApJuy9zAyT7zySF6Rgb6HH7HiM4v3ek74MxV/TxQgY26sgQi8T+o1aFCReaiXfxOrvoICKdLDs3GLARtRKHPb7S4xfn69JxfuI8IxbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkIsszvS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 208C9C2BD10;
-	Thu, 20 Jun 2024 15:41:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718898085;
-	bh=uXUQcC50fbjgB0KPnRDtDslrC8JyKIUItq1pr5paBoI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZkIsszvSM4/Ajr56xQhCIfuNxnI8q5fVkVegM0T6V3NMrslGImYvLCdMkUZMij89i
-	 VzBs5QMu2CvMaUC/Rp14LE+3OccIDDquaFJPzFScTRN6q8SgH04Q/buwg0UM11npHq
-	 6VpUZOyExsyTQLmP+2gkP8CEkG0AwOEo2Vy4JVG3yOf6bTGxL/+pFi9dG+QwXWuK0A
-	 uIru3VGJP/pZeCS/JCE+jI+ogO8xWtPN2+zWJ2slGmu/w4AsalyIdy+SFBGX9glhJh
-	 6RtNpVf2m/u6W2d0GCxMVe+AZko9dXAQhSzr6xQf2U4ubAJwf756QRB9cWaD8svuww
-	 rJkVuwqljKwTw==
-Message-ID: <475b8567-e77b-47d4-96bc-19405f3a6ffd@kernel.org>
-Date: Thu, 20 Jun 2024 17:41:16 +0200
+	s=arc-20240116; t=1718898160; c=relaxed/simple;
+	bh=kfe4B5jV/9NSh1rK+lsYDgNAGNsHJAd5proacfFFmvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TJ87bPhMn/D3AuiVelQDRE3UukARqKU9ui8MCFjIMwTAlo5ssANl0e89cHoXPnj+ZF/QD1aXBF4HlMnhY6Dnzrwmx0P6lBnkzyd+LnR3p5ypUW/sAwelxaqEajUxkMkPrJsugc1d+c1LQbSVS6TZsJy+td7d+3C/nE0YQbLFGQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkPvyY4T; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-70df2135426so715606a12.2;
+        Thu, 20 Jun 2024 08:42:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718898159; x=1719502959; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ygOijMwQj4RvlxsjHJZqT1HfHPexAo9x8mXgAR6tGk=;
+        b=dkPvyY4TWq3mhSRp6NZPcio25BAV3c2JAnqJUgXyc6PrGhb1Jp+2IUFnEzRPPOA6f6
+         VRv3iHGjcKse8MlXbMzUglyYjq5hgtMgkuMmjj4zbdQV2BJopfji85UcqSIXhZdn+cCi
+         PoxEUTpJgZPVM7OIRHuF8Pw1Pn6nZPn3KIPa/zPoU6D8mOLLoJ/VTo4K8CywiJhMp7NF
+         yIATVRggKoZkgADu9JvHXDhapDHyQsE7PIixzY8kWPMPjPx4qw4g2+g7wLqFhIsJNU/B
+         U+aCgBqIpBHqsbC9lINDE9tA68vZ/6XdZ/g+8tO1Hww1px9IFbHax5Xut4PrlnPaaEV2
+         VMtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718898159; x=1719502959;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4ygOijMwQj4RvlxsjHJZqT1HfHPexAo9x8mXgAR6tGk=;
+        b=ez/wh3kVCkwIzQPRfMB/JPcTEHeH4uJv2owzMv9XYgiKq2+BAviN+mpHhCtrTRLM1u
+         GNOWiQLBNjFXs3cALNRSovpaaboLyYcn+tlq2CmzY+M9CVfwbumV6ov+zzwwaQlAv5Oj
+         TBBuvhHZkaEFjgFJevKSVEBmMWHbNLBQTyvFEbMAhhtHISETIpNExovykYspNfvXiTyU
+         XxA7DqCM2Hv53IZU7ToAraNt0Z6zG3TUqYO+X0z6+QWWb4emR/qKVDI8Mp9LKOF4ub45
+         CPMvt3b9mCXSRgbTbNflkSpit9M/c5/TaO0Ld5DSs7bopMP+45ou2udSx09zkVBy6DXB
+         qAAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBZCJYZBMa9GBAceBCyWUF7FhNmYBaN0zuhi3s0aEACocl9qp2RUkabe8xUIBvuWtBkx+1owzwPn8NZHBL8+ewOayzVnxNnBLmCIFz
+X-Gm-Message-State: AOJu0YzHRfNMhfcB53Un1em9LKLkpeyXxj+wEDmcuVz/Q8rhcRxMxjwy
+	n0BhAT2CwPPv41LtstYNCpxnQzZyeyVTzhTZ64pCeitG11WCWCbdsydW3A==
+X-Google-Smtp-Source: AGHT+IGgTPkJv+cypyDxLOVHWGctGnq3mNwdLo0LkRYjtUGphx08ykpHTsCGkqsL6pEwfUXgz/UYsg==
+X-Received: by 2002:a17:90a:df07:b0:2c1:ebc4:4f1f with SMTP id 98e67ed59e1d1-2c7b5d56b91mr5461405a91.33.1718898158566;
+        Thu, 20 Jun 2024 08:42:38 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:36d9:2b1f:59f:8e9e])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e55dcdffsm1847997a91.33.2024.06.20.08.42.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 08:42:38 -0700 (PDT)
+Date: Thu, 20 Jun 2024 08:42:36 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] Input: ads7846 - Use spi_device_id table
+Message-ID: <ZnRN7LXAc3lujLFX@google.com>
+References: <20240619122703.2081476-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dt-bindings: media: Add bindings for
- raspberrypi,rp1-cfe
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Naushir Patuck
- <naush@raspberrypi.com>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- 20240531080707.34568-1-jacopo.mondi@ideasonboard.com
-References: <20240620-rp1-cfe-v2-0-b8b48fdba3b3@ideasonboard.com>
- <20240620-rp1-cfe-v2-2-b8b48fdba3b3@ideasonboard.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240620-rp1-cfe-v2-2-b8b48fdba3b3@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619122703.2081476-1-alexander.stein@ew.tq-group.com>
 
-On 20/06/2024 13:07, Tomi Valkeinen wrote:
-> Add DT bindings for raspberrypi,rp1-cfe.
+On Wed, Jun 19, 2024 at 02:27:02PM +0200, Alexander Stein wrote:
+> As the driver supports more devices over time the single MODULE_ALIAS
+> is complete and raises several warnings:
+> SPI driver ads7846 has no spi_device_id for ti,tsc2046
+> SPI driver ads7846 has no spi_device_id for ti,ads7843
+> SPI driver ads7846 has no spi_device_id for ti,ads7845
+> SPI driver ads7846 has no spi_device_id for ti,ads7873
 > 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> ---
+> Fix this by adding a spi_device_id table and removing the manual
+> MODULE_ALIAS.
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
+Applied, thank you.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-Best regards,
-Krzysztof
-
+-- 
+Dmitry
 
