@@ -1,256 +1,146 @@
-Return-Path: <linux-kernel+bounces-223080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BA7910D4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:41:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C8D910D50
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E045E28166A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:41:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8156B24C0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1EC1AED3C;
-	Thu, 20 Jun 2024 16:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296851B1435;
+	Thu, 20 Jun 2024 16:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AiLQf1Fi"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d/j4HiKd"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1AE1AD4B9
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B421AED3B;
+	Thu, 20 Jun 2024 16:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718901673; cv=none; b=S88ikS6Hq2uKjhBkulIMqbPGJwxJ4vCIas4X8F6JDsge5rqI3e06WdqmjC8z8WUgvsP6Cqmo9puSIuaN4K8DJN7s5On9j6sS6tilJhbmWQ9pc9h9Ee0BoU7JL/3LyW5fV6310Sl5ZQlWdFEy2lGAKCQLFq3HD1FcbR/4U9T3SRU=
+	t=1718901694; cv=none; b=kqgicMBsSWOIchTxw4Sn4jalO9+ZRzujmfxRmjq6wa3P7SF9qdYAGi7KtxGlk7A5US7BrJbe10z/Mo6Utkp05dU2J9IJMsUIvBn01k575bvisRJ0GLG6zEPd2LtO64r9r5o3AeS8PN1UknPiCdXiz9bviimU5zLpMqdkt3wxrfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718901673; c=relaxed/simple;
-	bh=ledX+Evj/xF3pBn7sbfyeIbSq+67i7LKlZzPlN9m8mQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BxGBkNsGzpIJ/ll7dvNkZg4oYsHagIb7C+oSJS9oAngWGRf9g2ChTdJSfyMbsJwzJhPoYWKdoJZjoZTMXEzWgR/nizPFe7JDVZMaXIfj9tfIcrVyLJnj7BNSIz0y7pDxMJsGV9XdLoTPiNBUguubMhq1Q+8lqjfzVCL0XMzCyK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AiLQf1Fi; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57d06101d76so1134185a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:41:11 -0700 (PDT)
+	s=arc-20240116; t=1718901694; c=relaxed/simple;
+	bh=qGawXLVw4L1VsNo7+DMAcs7Y1m2pJDSmWkpIDHqyYus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VRr8d6csiGuGzG6sQr9fqhQVKPTDJJAvR9+zVcj+KaQGMVv3sgIaExVowlXX3kl573TXf52R2X/t4dvU0x93T7mZGMZ/h8vyJzDGFwRe3JabRWKOGfpJ2uQdTRCNZvN1zpindZA3f2QC2Zx/1zHfLe7QG4LVaTLZlFE8vUPn5Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d/j4HiKd; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a62ef52e837so127127666b.3;
+        Thu, 20 Jun 2024 09:41:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718901670; x=1719506470; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RyDn9eW//5EapF5PlqflhBRpLT8Lnv9D1EdTqTgpHRw=;
-        b=AiLQf1FiXSfhrnPzEXBP9zJA+reSYBC/MNMtm60ncv+8Gf45b9BCFrm4Iei+9iBt5O
-         xmvPvj7MsHn9NwfVe9TLCpVeLJ2qPCIyNd7GZ4rIZXVLbnyreHwngqXCN6rDkuqa8TiJ
-         Pr9q/BwDCbyeoDuWLmysQdrhqMAbTophdcwIZAwgdEB3MIskCi4SotrVsCkwZZspD76s
-         sFoFIiyzY6g9NAF8nuzqqiTi2Kj5mmBD6sl2pO0QmEhzgVjml8SNRgzxAt+stuymZmzr
-         QRE9Y0bL09nT8a8+wtJtuCrtgT+TIqC5XkY7avVsd4NQq71LxOZCRNtnf6AuDQq5ikgV
-         k37Q==
+        d=gmail.com; s=20230601; t=1718901691; x=1719506491; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PVqFMf+YA6WaCF8UVxLhtLxGRBqYbo7Uv1IbfXsLd0I=;
+        b=d/j4HiKdeKuuzBZ6tXkyz7+AL5e5JVspjpGGw1ZkvPdV6oG7hXoqlonE4KPI4XicMt
+         j5yakAxfjBCSy3xzF1sJxupWCQnvBwXzXaXTHeYi3o6Dmu+u5JTRmVgddMZApCJfEFh/
+         7wqePC0kYwK9GWTq821w67i3VnAykARqpgfo9HAm+bND7M3m0NX2bSzfhivnvLc/0tK7
+         PgDDETe7ISvMfuMcQMqIr364WrdatNXWK7kow7gs3zxqOoRhoe1Oe8c0oHRi/0sMlfEJ
+         /DmS9uPXAVRnWgz6feHztS/T9QNxMFBLASnoZsVuppOOYb44/mSQ3+xHhjyoIK5MMk3g
+         TzRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718901670; x=1719506470;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RyDn9eW//5EapF5PlqflhBRpLT8Lnv9D1EdTqTgpHRw=;
-        b=QidHewxJfgzdOBLlsA8gzsvKafHUTBo9EF4mHkCbcwhAp3Vtd1UB6itHuIi/X6cavV
-         gcRDVjQpzR9gBxzxL3RipXwQaCSusIb8MsC5JZRACdLYfTowhOdc7NyBkt+t/ZnrlVad
-         6Na+pP1/nZ0qD8WvPDCZgHNZkaCIkyB+YtmtkkNBJs+zFdQpAo/sRBScN0QIWDROo5hf
-         7h6EUU+RIa700emCmX7nW5T21u/gZjmrAgCKAOXVK7b4RE24dCIbHGLrewT/7L2iWAe0
-         qugB27H+M2Rc37ShkPb8EzH9AKLDTguQq1ZWF9a6WRURiVKnb494vhSV6gmzBHHPpHLK
-         uGAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMbculE739o/stsqYEshA5yHBzR+5NkBK5yO9s82K1jLeIXEZWshfHyIl/twBdbQEumr8vNeVcJbqrjKWACwFbdZTGvC4Nj7ehTPro
-X-Gm-Message-State: AOJu0Yzs06r9/M2UkPcnbamskzFaD8SykbqHgh4K32sUJ5FO0u+ls2X/
-	1o/g6R0KXGdnY5ENWSVDII6MOtItOKXTqQcHVxWLwu9US8xB2Xx8+6hI6gtQKKf3g2WppgpTou/
-	9dNPoVuvRT9aywOiL2pzIcNG7UVl1XgNogqb6JLQJJbf5j9VD6o2JKQ==
-X-Google-Smtp-Source: AGHT+IFl6ngpWJx0DPdjF2Ef+KV4yVfuMhOWaSlMpqYuE0wg6ck/d9HSJv2HtpaDd2IMYZ/iHKwb4pqg9xmri2HqBj4=
-X-Received: by 2002:a50:a69d:0:b0:57c:c6f0:e229 with SMTP id
- 4fb4d7f45d1cf-57d07c5bd8cmr3034648a12.0.1718901669678; Thu, 20 Jun 2024
- 09:41:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718901691; x=1719506491;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PVqFMf+YA6WaCF8UVxLhtLxGRBqYbo7Uv1IbfXsLd0I=;
+        b=Kr5X4OWZf9KBQBMDgxviCQKOnmtBOhqqGBVvwTlqaZaoVtOA6hyNj2lcky8toUnIAg
+         0r0u3oVTdNv9GQptkSS/yXySUjXmpQBvqhwX42jxMPtimwsUKNF8Wrzcnxdcsiy7g1Z4
+         MOhDE9AFBOrydbv4YKmqMiXNHtrksowjjAiWZqv7S07rD7iZ58JmyL1JSWfzevvqWElA
+         uPR6bI7+zqhhFZ0pqrQrVOjGVMQfHeWrEx5QSR2yH4vZgQAvmd15KW9vN3hbwgnFJvx+
+         XeRS2u69gYzoQpwdscwP1LOiDMVux194yPKvUDa975/uAk4m0R4lPuL8HluvNgHGFOLN
+         mg5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVccRP2Gg6ce8/1pBmHtpcxLDGc3JUWxP2wSX1jf/U+9nKnQ27+N8BDneZQBaH1eTGeLBUToR6h3oJkDflkRSgpF+1aciMAuh6pNTwO7zXoRU8GY4RcR5oaGiSE6GxdVfMaVRfrTC6QVs/842Lak8etNbRE
+X-Gm-Message-State: AOJu0YxO4/WFqaOlfuY2nzU1+f9aO8YXmYEX7CkBvGhf3gNeFrGcPJ/x
+	fSUlgbYaIpo2NzuH45beRqIqNMOeNav/bQ8zgGZMgcXpyfPPSy9J
+X-Google-Smtp-Source: AGHT+IFYCMPJHTVF90AK5hSCiAHLK5/uxoQ/V6aN3/XvBLsizCv+mz3Iu4ITX/MA7fl1zsEVva7nEQ==
+X-Received: by 2002:a17:906:dfe2:b0:a6f:ffa:9596 with SMTP id a640c23a62f3a-a6fab7d0b8dmr345856866b.63.1718901690803;
+        Thu, 20 Jun 2024 09:41:30 -0700 (PDT)
+Received: from f (cst-prg-30-39.cust.vodafone.cz. [46.135.30.39])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ecd666sm784693266b.135.2024.06.20.09.41.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 09:41:30 -0700 (PDT)
+Date: Thu, 20 Jun 2024 18:41:22 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: John Johansen <john.johansen@canonical.com>
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	Neeraj.Upadhyay@amd.com
+Subject: Re: [PATCH] apparmor: try to avoid refing the label in
+ apparmor_file_open
+Message-ID: <3ijkwqkrynfxi6t5bj2jingkpebsnomdcwduhe4pgl6pu25sfs@smvxx7ewexkc>
+References: <20240620131524.156312-1-mjguzik@gmail.com>
+ <71c0ea18-8b8b-402b-b03c-029aeedc2747@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619125606.345939659@linuxfoundation.org>
-In-Reply-To: <20240619125606.345939659@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 20 Jun 2024 22:10:56 +0530
-Message-ID: <CA+G9fYtjcAUnH1LAGVR_H7q9-TbPk2QhZVXJOARUO4hRDhcDcw@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/267] 6.6.35-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <71c0ea18-8b8b-402b-b03c-029aeedc2747@canonical.com>
 
-On Wed, 19 Jun 2024 at 18:28, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.35 release.
-> There are 267 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.35-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Thu, Jun 20, 2024 at 09:26:00AM -0700, John Johansen wrote:
+> On 6/20/24 06:15, Mateusz Guzik wrote:
+> > It can be done in the common case.
+> > > A 24-way open1_processes from will-it-scale (separate file open) shows:
+> >    29.37%  [kernel]           [k] apparmor_file_open
+> >    26.84%  [kernel]           [k] apparmor_file_alloc_security
+> >    26.62%  [kernel]           [k] apparmor_file_free_security
+> >     1.32%  [kernel]           [k] clear_bhb_loop
+> > 
+> > apparmor_file_open is eliminated from the profile with the patch.
+> > 
+> > Throughput (ops/s):
+> > before:	6092196
+> > after:	8309726 (+36%)
+> > 
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> can you cleanup the commit message and I will pull this in
+> 
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+First of all thanks for a timely review.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+I thought that's a decent commit message though. ;)
 
-## Build
-* kernel: 6.6.35-rc1
-* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
-* git branch: linux-6.6.y
-* git commit: 0db1e58b51e37c5cbaa81a40104bd54aad052427
-* git describe: v6.6.34-268-g0db1e58b51e3
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.3=
-4-268-g0db1e58b51e3
+Would something like this work:
+<cm>
+apparmor: try to avoid refing the label in apparmor_file_open
 
-## Test Regressions (compared to v6.6.34)
+In the common case it can be avoided, which in turn reduces the
+performance impact apparmor on parallel open() invocations.
 
-## Metric Regressions (compared to v6.6.34)
+When benchmarking on 24-core vm using will-it-scale's open1_process
+("Separate file open"), the results are (ops/s):
+before: 6092196
+after:  8309726 (+36%)
+</cm>
 
-## Test Fixes (compared to v6.6.34)
+If this is fine I'll send a v2.
 
-## Metric Fixes (compared to v6.6.34)
+If you are looking for something fundamentally different I would say it
+will be the fastest if you write your own commit message while borrowing
+the numbers and denoting all the wording is yours. I'm trying to reduce
+back and forth over email here.
 
-## Test result summary
-total: 256850, pass: 222555, fail: 3269, skip: 30682, xfail: 344
+> > Am I missing something which makes the approach below not work to begin
+> > with?
+> > 
+> no this will work in the short term. Long term there is work that will
+> break this. Both replacing unconfined and the object delegation work
+> will cause a performance regression as I am not sure we will be able
+> to conditionally get the label but that is something for those patch
+> series to work out. My biggest concern being people objecting to necessary
+> changes that regress performance, if it can't be worked out, but
+> that really isn't a reason to stop this now.
+> 
 
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 129 total, 129 passed, 0 failed
-* arm64: 38 total, 38 passed, 0 failed
-* i386: 29 total, 29 passed, 0 failed
-* mips: 24 total, 24 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 34 total, 34 passed, 0 failed
-* riscv: 17 total, 17 passed, 0 failed
-* s390: 12 total, 12 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 33 total, 33 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselft[
-* kselftest-android
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-drivers-dma-buf
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-ir
-* kselftest-kcmp
-* kselftest-kexec
-* kselftest-kvm
-* kselftest-lib
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-memory-hotplug
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mount
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-forwarding
-* kselftest-net-mptcp
-* kselftest-netfilter
-* kselftest-nsfs
-* kselftest-openat2
-* kselftest-pid_namespace
-* kselftest-pidfd
-* kselftest-proc
-* kselftest-pstore
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-splice
-* kselftest-static_keys
-* kselftest-sync
-* kselftest-sysctl
-* kselftest-tc-testing
-* kselftest-timens
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kselftest-zram
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+hrm. I was looking at going a step further, now I'm going to have to
+poke around.
 
