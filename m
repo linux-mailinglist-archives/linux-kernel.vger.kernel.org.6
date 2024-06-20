@@ -1,58 +1,64 @@
-Return-Path: <linux-kernel+bounces-222615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 424EA910492
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:51:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03965910495
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563551C230DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:51:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B853282665
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6661ACE65;
-	Thu, 20 Jun 2024 12:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819C31AC79E;
+	Thu, 20 Jun 2024 12:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vdbygXFK"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cWcASoEe"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DE11AC769;
-	Thu, 20 Jun 2024 12:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6649246BF
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718887900; cv=none; b=PE0Kl1Q/mhqXRidrzkXkco+3tQ5wzeNCPJX9nbZjpHSuj9k+/RVSCoAtt66WZ+VF1ehsvYESO6nR3yR+VKFHLyNh9QnQSzKQnLvStrU7U0z6wvAhwZSfMklG3vyBtO4V7jdJvpyCUQX1eKSXhvnu/Fx8z4b4h14LWuCwhEWhwGE=
+	t=1718887935; cv=none; b=Jgcyo/ZmXFvPQqMN1eB0N6H/bfDG+rsqBOFpz+c9/acQoAIzzOmnIvzvD0F2TP/svdK85LRa5wFKUsPOS/t05nAesWrUNoXWMQQ6l69/0VuWHtwls2kCP7eLQa+YJ0E4F9PBJILZZpTXtcsJISkGWsCF8CMSiXWx3oXsnfKBIio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718887900; c=relaxed/simple;
-	bh=rn/xKc0QZnyQyw1/MqaN1bPzDjoef8kwv0cOwEoNu/w=;
+	s=arc-20240116; t=1718887935; c=relaxed/simple;
+	bh=Nkr2TbOco4Tj5ehCCvFSa/gdpZxr4QI/95nA34o59GY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j7wFVlxtSQs3d+VgCYefGZ90cNibM/5fiuJn/tuVHXiV5kyrSWYxDYrVRGY8g80DWPmwIE8M2/oLivckzouoH8tPPDU4jn5xf/hBj+/vNsN/vUmPt1XRsZ1Z/lE9L0avLFRSnq6y9P4LD0mTOxSqXZlYHnhMCQceSEVl8b4OSwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vdbygXFK; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: youling.tang@linux.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1718887895;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QYG5eZDYkp3gQEsRvvA/OGgggUaYoDnBXE/aW0ZGwlc=;
-	b=vdbygXFKDLP5mcwftryurjdr7XS4npos/O6d5YOpYhNsbfR7vuGfv/poNO4LwGlkTgg3BF
-	p1ETUDD5j+to2eaXmEo/HJrmZQN5s8fTgQpzdgilrwRlAmT2I2Qtq3AU3kseP6/hJ4aHUN
-	r6wtsAoBf7WSU6zv5035ZYaUXiUocR0=
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: tangyouling@kylinos.cn
-Date: Thu, 20 Jun 2024 08:51:30 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Youling Tang <youling.tang@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: [PATCH] bcachefs: fix alignment of VMA for memory mapped files
- on THP
-Message-ID: <myw2h2mm7725gegy6pbqf4qpzghrfypnlbn4z6rh6idwfjzpjc@chzxxg47sw77>
-References: <20240620012242.106698-1-youling.tang@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W6MiFhf0IH3F5SGLXDTXmi5lw/NOeC3EWiUFgBFa1ng52GGjfaDkCbyXAi39F5TYsWH/nojZL8lgGHFRjO3z5s1t6eLjmLxsJCAbZvtgxJdp7sBKiQr1aVvKteyu/L6he8Xf0XTYec+awhwMsyWJXLV7zzbEHYPLMl1uDQJf+ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cWcASoEe; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5RHPdovA/z7Hq2P/42bo3jHwkzpD5YMvXbXNmsoIgIU=; b=cWcASoEeTmK+MvCS6aKcmrwzSw
+	xyQHnfnMPGyn8HSO3eWKSSkpLCAGqjcmnkUx+5VRVXoT4cuxg8Ax5RH3qE9jc9/rVfOrqJOmkBSrH
+	ow5kcKv/1t1OFKRrvOHREJEM2qJZ3EhpG4mBFXrxEkCgSb+j50b8Bm3jXcFEAXY1svPL868T5eOqR
+	DYrHwtc/V23QENqZS1QvcsV6HJNQZSCm78LqwMIGR3kONNYW84PFOGUU7bw6cRI7CKQMLSRZdAi2a
+	UXcqzVsvhHK/s/AT/STjazhVXV/ccFsE0AWn8Ho28Xnn0GjWp+oUTzBwEDlo89HHMo77yxQJ3grOx
+	af6Qk5Mw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sKHGd-000000064cv-3ifT;
+	Thu, 20 Jun 2024 12:51:55 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 84FCF300CB9; Thu, 20 Jun 2024 14:51:55 +0200 (CEST)
+Date: Thu, 20 Jun 2024 14:51:55 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Chunxin Zang <spring.cxz@gmail.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	yu.c.chen@intel.com, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+	bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org, efault@gmx.de,
+	kprateek.nayak@amd.com, jameshongleiwang@126.com,
+	yangchen11@lixiang.com, zangchunxin@lixiang.com
+Subject: Re: [PATCH v3] sched/fair: Preempt if the current process is
+ ineligible
+Message-ID: <20240620125155.GY31592@noisy.programming.kicks-ass.net>
+References: <20240613131437.9555-1-spring.cxz@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,25 +67,152 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240620012242.106698-1-youling.tang@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240613131437.9555-1-spring.cxz@gmail.com>
 
-On Thu, Jun 20, 2024 at 09:22:42AM +0800, Youling Tang wrote:
-> From: Youling Tang <tangyouling@kylinos.cn>
+On Thu, Jun 13, 2024 at 09:14:37PM +0800, Chunxin Zang wrote:
+> ---
+>  kernel/sched/fair.c | 28 +++++++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 7 deletions(-)
 > 
-> With CONFIG_READ_ONLY_THP_FOR_FS, the Linux kernel supports using THPs
-> for read-only mmapped files, such as shared libraries. However, the
-> kernel makes no attempt to actually align those mappings on 2MB
-> boundaries, which makes it impossible to use those THPs most of the
-> time. This issue applies to general file mapping THP as well as
-> existing setups using CONFIG_READ_ONLY_THP_FOR_FS. This is easily
-> fixed by using thp_get_unmapped_area for the unmapped_area function
-> in bcachefs, which is what ext2, ext4, fuse, xfs and btrfs all use.
-> 
-> Similar to commit b0c582233a85 ("btrfs: fix alignment of VMA for
-> memory mapped files on THP").
-> 
-> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 03be0d1330a6..21ef610ddb14 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -745,6 +745,15 @@ int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>  	return vruntime_eligible(cfs_rq, se->vruntime);
+>  }
+>  
+> +static bool check_entity_need_preempt(struct cfs_rq *cfs_rq, struct sched_entity *se)
+> +{
+> +	if (sched_feat(RUN_TO_PARITY) || cfs_rq->nr_running <= 1 ||
+> +	    entity_eligible(cfs_rq, se))
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+>  static u64 __update_min_vruntime(struct cfs_rq *cfs_rq, u64 vruntime)
+>  {
+>  	u64 min_vruntime = cfs_rq->min_vruntime;
+> @@ -974,11 +983,13 @@ static void clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se);
+>  /*
+>   * XXX: strictly: vd_i += N*r_i/w_i such that: vd_i > ve_i
+>   * this is probably good enough.
+> + *
+> + * return true if se need preempt
+>   */
+> -static void update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
+> +static bool update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>  {
+>  	if ((s64)(se->vruntime - se->deadline) < 0)
+> -		return;
+> +		return false;
+>  
+>  	/*
+>  	 * For EEVDF the virtual time slope is determined by w_i (iow.
+> @@ -995,10 +1006,7 @@ static void update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>  	/*
+>  	 * The task has consumed its request, reschedule.
+>  	 */
+> -	if (cfs_rq->nr_running > 1) {
+> -		resched_curr(rq_of(cfs_rq));
+> -		clear_buddies(cfs_rq, se);
+> -	}
+> +	return true;
+>  }
+>  
+>  #include "pelt.h"
+> @@ -1157,6 +1165,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
+>  {
+>  	struct sched_entity *curr = cfs_rq->curr;
+>  	s64 delta_exec;
+> +	bool need_preempt;
+>  
+>  	if (unlikely(!curr))
+>  		return;
+> @@ -1166,12 +1175,17 @@ static void update_curr(struct cfs_rq *cfs_rq)
+>  		return;
+>  
+>  	curr->vruntime += calc_delta_fair(delta_exec, curr);
+> -	update_deadline(cfs_rq, curr);
+> +	need_preempt = update_deadline(cfs_rq, curr);
+>  	update_min_vruntime(cfs_rq);
+>  
+>  	if (entity_is_task(curr))
+>  		update_curr_task(task_of(curr), delta_exec);
+>  
+> +	if (need_preempt || check_entity_need_preempt(cfs_rq, curr)) {
+> +		resched_curr(rq_of(cfs_rq));
+> +		clear_buddies(cfs_rq, curr);
+> +	}
+> +
+>  	account_cfs_rq_runtime(cfs_rq, delta_exec);
+>  }
 
-Thanks - applied
+Yeah sorry no. This will mess up the steady state schedule. At best we
+can do something like the below which will make PREEMPT_SHORT a little
+more effective I suppose.
+
+
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -985,10 +985,10 @@ static void clear_buddies(struct cfs_rq
+  * XXX: strictly: vd_i += N*r_i/w_i such that: vd_i > ve_i
+  * this is probably good enough.
+  */
+-static void update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
++static bool update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ {
+ 	if ((s64)(se->vruntime - se->deadline) < 0)
+-		return;
++		return false;
+ 
+ 	/*
+ 	 * For EEVDF the virtual time slope is determined by w_i (iow.
+@@ -1005,10 +1005,7 @@ static void update_deadline(struct cfs_r
+ 	/*
+ 	 * The task has consumed its request, reschedule.
+ 	 */
+-	if (cfs_rq->nr_running > 1) {
+-		resched_curr(rq_of(cfs_rq));
+-		clear_buddies(cfs_rq, se);
+-	}
++	return true;
+ }
+ 
+ #include "pelt.h"
+@@ -1168,6 +1165,8 @@ static void update_curr(struct cfs_rq *c
+ {
+ 	struct sched_entity *curr = cfs_rq->curr;
+ 	s64 delta_exec;
++	struct rq *rq;
++	bool resched;
+ 
+ 	if (unlikely(!curr))
+ 		return;
+@@ -1177,13 +1176,23 @@ static void update_curr(struct cfs_rq *c
+ 		return;
+ 
+ 	curr->vruntime += calc_delta_fair(delta_exec, curr);
+-	update_deadline(cfs_rq, curr);
++	resched = update_deadline(cfs_rq, curr);
+ 	update_min_vruntime(cfs_rq);
+ 
+ 	if (entity_is_task(curr))
+ 		update_curr_task(task_of(curr), delta_exec);
+ 
+ 	account_cfs_rq_runtime(cfs_rq, delta_exec);
++
++	rq = rq_of(cfs_rq);
++	if (rq->nr_running == 1)
++		return;
++
++	if (resched ||
++	    (curr->vlag != curr->deadline && !entity_eligible(cfs_rq, curr))) {
++		resched_curr(rq);
++		clear_buddies(cfs_rq, curr);
++	}
+ }
+ 
+ static void update_curr_fair(struct rq *rq)
 
