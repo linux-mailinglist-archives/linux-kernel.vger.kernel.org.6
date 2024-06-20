@@ -1,95 +1,80 @@
-Return-Path: <linux-kernel+bounces-222798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 781029107BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:14:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA809107C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01A2E1F257B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC1D1C214B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0379F1AE083;
-	Thu, 20 Jun 2024 14:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766ED1AD9C2;
+	Thu, 20 Jun 2024 14:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TYieyEJp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ql8zx4GC";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TYieyEJp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ql8zx4GC"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KMx62eni"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCDA1AB91B;
-	Thu, 20 Jun 2024 14:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0D91AD499
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718892856; cv=none; b=Ja2zydANi4O/u9TIOaPjk4rUHRiF1QFTHcHyUJqNGj8AfN/b4puP/zFEsAujbJLbvUGw7ZzXj+OaCtq2joV0DDs0Tl04I9JYU/fFtMa/LkQUWAha0mL5/nR0SE3ekCJw0yh1pMK/rFBcpZVzam5eu/EB9vNm9AQU9tRCkzUE+XM=
+	t=1718892871; cv=none; b=TRGQLlEENBdJp/Ifl5NUHmLFlCO04ttn3Fzj+0oHbo3SsxiwxEpKI51lJJ48XVZamlblImKajzApxjrsyrxp5g1MOFScfZUQS118FXLgOxrvgeCTmHimYWom0JjZ2TEC5SidTyR7Q3rsEEpl8RwPNbjQiALDaCHnA14ZnYCwIow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718892856; c=relaxed/simple;
-	bh=DPp863t6Iv2CN9gXF2rMAItgxwljmraSFPCSsQe+Yfc=;
+	s=arc-20240116; t=1718892871; c=relaxed/simple;
+	bh=+A5n0VgholTG/5KXvYQzlGgbOvrmJOn/c9i4a3yDERw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tGei7yl4H10INxe2Y9p6b+BUml7wZJk/PTlnd73CxU9EUOskd7y1MZ8PZrEE1Y1f+lsiLa8Kz+p1h4xyB8RVCZkfv/tyCn5/eNHjE7hiLOJUs/NOjn/EHCQWYBshk7baOWzSNZ8ablDvIvwp2oXz0yLCDW8uREPZdy56HX6VHU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TYieyEJp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ql8zx4GC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TYieyEJp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ql8zx4GC; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 227FE1F8AA;
-	Thu, 20 Jun 2024 14:14:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718892852; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 In-Reply-To:Content-Type; b=CKrk8R5clWeRSN09LirYc9VgL3sNTAQ6Pv2fC6R+FzeIO8aA4IU9wm8YG70Hwz9zdyFsjUndy+YVGXRBuPjtmTUpoGmEQYYy0SOgOhtaHjQGMtOKF8Xl/1vUapJ+eOhOJfT/5Tf8xQgGZwLWsHEj/mYSqJeUFAvCMDv4SO9I8Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KMx62eni; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718892869;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W/VduWasdKCSLgKbJulCui0AKbISjLYU9oRgLacKJWk=;
-	b=TYieyEJpcEliHFGUMOjVwd2MsHeTEJpl64iglSHvfZ5OZA0NbvyZ5bFjw3sVu98BxMeLfo
-	X+4Y/mvXnRL7U8eOaEoMw2oDdybBRz0U2tIyZ8EGVJgmPZng6sdYCyAYKNvWXizhZPbPOC
-	Q5/ZDx3q9VA6KEoS3xlzjy5Mj2BdhRo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718892852;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W/VduWasdKCSLgKbJulCui0AKbISjLYU9oRgLacKJWk=;
-	b=ql8zx4GCDwPNmZBIEXu9VK0shr3zENQYJCB5gUg+QsV3semzmKkRj0Hq9/W7ouLeCyoCRO
-	gCf4QDU3fx0VO9Bw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TYieyEJp;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ql8zx4GC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1718892852; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W/VduWasdKCSLgKbJulCui0AKbISjLYU9oRgLacKJWk=;
-	b=TYieyEJpcEliHFGUMOjVwd2MsHeTEJpl64iglSHvfZ5OZA0NbvyZ5bFjw3sVu98BxMeLfo
-	X+4Y/mvXnRL7U8eOaEoMw2oDdybBRz0U2tIyZ8EGVJgmPZng6sdYCyAYKNvWXizhZPbPOC
-	Q5/ZDx3q9VA6KEoS3xlzjy5Mj2BdhRo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1718892852;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W/VduWasdKCSLgKbJulCui0AKbISjLYU9oRgLacKJWk=;
-	b=ql8zx4GCDwPNmZBIEXu9VK0shr3zENQYJCB5gUg+QsV3semzmKkRj0Hq9/W7ouLeCyoCRO
-	gCf4QDU3fx0VO9Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 35EA113AC1;
-	Thu, 20 Jun 2024 14:14:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MI3SBjI5dGZwWgAAD6G6ig
-	(envelope-from <hare@suse.de>); Thu, 20 Jun 2024 14:14:10 +0000
-Message-ID: <4be6fe89-c972-4bf9-9d5f-84614c1c5792@suse.de>
-Date: Thu, 20 Jun 2024 16:14:09 +0200
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8YHhV1KpFjJzx2FPMSuwc2xc9dElDmjLPcw5n3EHpx8=;
+	b=KMx62eniHhXBD1TEQQT7abpZP6J0T1q8TMM23aFtBRFgq3YRpKFMEa968lzz09eOP+PspB
+	DDT9XRSqquiF62b0AEMk5phFH5FB4SDNcL+dqE+5HYOKkQ9Lb7vC1wAgfecHR6L67r0Ap2
+	+MGGpVP5DL1IIIpmcocuZZJ23wj3GBQ=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-661-4QYDSQIlM8SawndemAz1_w-1; Thu, 20 Jun 2024 10:14:27 -0400
+X-MC-Unique: 4QYDSQIlM8SawndemAz1_w-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3643d0e3831so738689f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:14:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718892866; x=1719497666;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8YHhV1KpFjJzx2FPMSuwc2xc9dElDmjLPcw5n3EHpx8=;
+        b=ekyvdHK8cIRRwPrD5Pue/VqsUkFG1VOOPeiactr5NRXzUPijNW45qMF/LX7YVXD2ln
+         7TBCce5hf9/EohV34gJYehEg6T4sh4B9+c+Um8ZUWi5WBtVpoPEZCIsB079eU/p8kZwU
+         cfVMGdJvkmuNnzO10rPP+/le0iYZcKjLTMyP2ehJm6OJyKnZMGv+lLvhfZyppTHyMDJB
+         QMn9BFm323FvBwYRzTyzHGgVh6FcT8qb8gX9Qqt5LexnOU53t7JVjCTYMeOI8wJs03ad
+         1GFk2qGp9b4qARngJQKC6XlDsrbnNCBpuqMSbYi7jtbdrrWHeTz8MmbC6gfNFkXst5de
+         LG0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVPu79dyUVgjZqhTg7rZFLm1OX7dukvie+Whn1IzIWvtBO1ipOBr3EKHvZM+9HG9jI82F3glpaHu5WaCn7H0VtpOlwtF9MTre+IFiqg
+X-Gm-Message-State: AOJu0YxQcQycrnwxtCm2R7kJK9LO/Rdim4WDWd7hi1FWPk4gMBHUxQJw
+	fwsvY7hijOh1qWOG6ASKbr/FsqBx3QZGT0aVyT9KX9FKBX3AztxPd8cvQFfSMQ8bXejspNJgWKm
+	bNxxIGe6J03JN6C3GJouSi5PsoCn0n3iJ2bE6Si2XD1jlEUEFvNg7E1zbhywJ2Q==
+X-Received: by 2002:adf:fa49:0:b0:362:c971:d97c with SMTP id ffacd0b85a97d-36319a85fc4mr4043900f8f.63.1718892866388;
+        Thu, 20 Jun 2024 07:14:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFjBTFGDhSICBWeqaJ/g+1siYAs4hTMdRuzQ/UcpNoH8Mfb7Z30LbIVlGJzMcwVyzuH8D+uPg==
+X-Received: by 2002:adf:fa49:0:b0:362:c971:d97c with SMTP id ffacd0b85a97d-36319a85fc4mr4043880f8f.63.1718892865896;
+        Thu, 20 Jun 2024 07:14:25 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c719:5b00:61af:900f:3aef:3af3? (p200300cbc7195b0061af900f3aef3af3.dip0.t-ipconnect.de. [2003:cb:c719:5b00:61af:900f:3aef:3af3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36387d9b812sm4468939f8f.26.2024.06.20.07.14.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 07:14:25 -0700 (PDT)
+Message-ID: <1ab73f42-9397-4fc7-8e62-2627b945f729@redhat.com>
+Date: Thu, 20 Jun 2024 16:14:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,90 +82,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v9 02/10] block: Generalize chunk_sectors support as
- boundary support
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+To: Mostafa Saleh <smostafa@google.com>
+Cc: John Hubbard <jhubbard@nvidia.com>,
+ Elliot Berman <quic_eberman@quicinc.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, maz@kernel.org, kvm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ pbonzini@redhat.com, Fuad Tabba <tabba@google.com>,
+ Jason Gunthorpe <jgg@nvidia.com>
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+ <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com>
+ <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+ <ZnQpslcah7dcSS8z@google.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org,
- hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
- martin.petersen@oracle.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
- dchinner@redhat.com, jack@suse.cz
-Cc: djwong@kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
- linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org,
- linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org, nilay@linux.ibm.com,
- ritesh.list@gmail.com, willy@infradead.org, agk@redhat.com,
- snitzer@kernel.org, mpatocka@redhat.com, dm-devel@lists.linux.dev
-References: <20240620125359.2684798-1-john.g.garry@oracle.com>
- <20240620125359.2684798-3-john.g.garry@oracle.com>
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240620125359.2684798-3-john.g.garry@oracle.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZnQpslcah7dcSS8z@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[30];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,lists.infradead.org,mit.edu,google.com,linux.ibm.com,kvack.org,gmail.com,infradead.org,redhat.com,lists.linux.dev];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[to_ip_from(RL7q43nzpr7is614unuocxbefr)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 227FE1F8AA
-X-Spam-Flag: NO
-X-Spam-Score: -3.00
-X-Spam-Level: 
+Content-Transfer-Encoding: 7bit
 
-On 6/20/24 14:53, John Garry wrote:
-> The purpose of the chunk_sectors limit is to ensure that a mergeble request
-> fits within the boundary of the chunck_sector value.
+On 20.06.24 15:08, Mostafa Saleh wrote:
+> Hi David,
 > 
-> Such a feature will be useful for other request_queue boundary limits, so
-> generalize the chunk_sectors merge code.
+> On Wed, Jun 19, 2024 at 09:37:58AM +0200, David Hildenbrand wrote:
+>> Hi,
+>>
+>> On 19.06.24 04:44, John Hubbard wrote:
+>>> On 6/18/24 5:05 PM, Elliot Berman wrote:
+>>>> In arm64 pKVM and QuIC's Gunyah protected VM model, we want to support
+>>>> grabbing shmem user pages instead of using KVM's guestmemfd. These
+>>>> hypervisors provide a different isolation model than the CoCo
+>>>> implementations from x86. KVM's guest_memfd is focused on providing
+>>>> memory that is more isolated than AVF requires. Some specific examples
+>>>> include ability to pre-load data onto guest-private pages, dynamically
+>>>> sharing/isolating guest pages without copy, and (future) migrating
+>>>> guest-private pages.  In sum of those differences after a discussion in
+>>>> [1] and at PUCK, we want to try to stick with existing shmem and extend
+>>>> GUP to support the isolation needs for arm64 pKVM and Gunyah.
+>>
+>> The main question really is, into which direction we want and can develop
+>> guest_memfd. At this point (after talking to Jason at LSF/MM), I wonder if
+>> guest_memfd should be our new target for guest memory, both shared and
+>> private. There are a bunch of issues to be sorted out though ...
+>>
+>> As there is interest from Red Hat into supporting hugetlb-style huge pages
+>> in confidential VMs for real-time workloads, and wasting memory is not
+>> really desired, I'm going to think some more about some of the challenges
+>> (shared+private in guest_memfd, mmap support, migration of !shared folios,
+>> hugetlb-like support, in-place shared<->private conversion, interaction with
+>> page pinning). Tricky.
+>>
+>> Ideally, we'd have one way to back guest memory for confidential VMs in the
+>> future.
+>>
+>>
+>> Can you comment on the bigger design goal here? In particular:
+>>
+>> 1) Who would get the exclusive PIN and for which reason? When would we
+>>     pin, when would we unpin?
+>>
+>> 2) What would happen if there is already another PIN? Can we deal with
+>>     speculative short-term PINs from GUP-fast that could introduce
+>>     errors?
+>>
+>> 3) How can we be sure we don't need other long-term pins (IOMMUs?) in
+>>     the future?
 > 
-> This idea was proposed by Hannes Reinecke.
+> Can you please clarify more about the IOMMU case?
 > 
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->   block/blk-merge.c      | 20 ++++++++++++++------
->   drivers/md/dm.c        |  2 +-
->   include/linux/blkdev.h | 13 +++++++------
->   3 files changed, 22 insertions(+), 13 deletions(-)
+> pKVM has no merged upstream IOMMU support at the moment, although
+> there was an RFC a while a go [1], also there would be a v2 soon.
 > 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+> In the patches KVM (running in EL2) will manage the IOMMUs including
+> the page tables and all pages used in that are allocated from the
+> kernel.
+> 
+> These patches don't support IOMMUs for guests. However, I don't see
+> why would that be different from the CPU? as once the page is pinned
+> it can be owned by a guest and that would be reflected in the
+> hypervisor tracking, the CPU stage-2 and IOMMU page tables as well.
 
+So this is my thinking, it might be flawed:
+
+In the "normal" world (e.g., vfio), we FOLL_PIN|FOLL_LONGTERM the pages 
+to be accessible by a dedicated device. We look them up in the page 
+tables to pin them, then we can map them into the IOMMU.
+
+Devices that cannot speak "private memory" should only access shared 
+memory. So we must not have "private memory" mapped into their IOMMU.
+
+Devices that can speak "private memory" may either access shared or 
+private memory. So we may have"private memory" mapped into their IOMMU.
+
+
+What I see (again, I might be just wrong):
+
+1) How would the device be able to grab/access "private memory", if not
+    via the user page tables?
+
+2) How would we be able to convert shared -> private, if there is a
+    longterm pin from that IOMMU? We must dynamically unmap it from the
+    IOMMU.
+
+I assume when you're saying "In the patches KVM (running in EL2) will 
+manage the IOMMUs  including the page tables", this is easily solved by 
+not relying on pinning: KVM just knows what to update and where. (which 
+is a very different model than what VFIO does)
+
+Thanks!
+
+-- 
 Cheers,
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+David / dhildenb
 
 
