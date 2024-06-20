@@ -1,105 +1,137 @@
-Return-Path: <linux-kernel+bounces-222048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6279190FC13
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:57:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E3A90FC17
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1DEE28194C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:57:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE1441C230E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222692B9BE;
-	Thu, 20 Jun 2024 04:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A85F2C684;
+	Thu, 20 Jun 2024 05:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="LV8LZfx7"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JL67l15s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41946381B8
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 04:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BC737E;
+	Thu, 20 Jun 2024 05:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718859430; cv=none; b=h5TVItS+efHJbKZWn6M15UsJkY21K3bds47Xf+XiYyGGiqqzRNHG7BccJ6I5Mznj2TMX3eijaBaG7IsgYa6ga4qEqfccrqi/nsDoX5d3CJFm3FRrHARhgEb0bjifIEPXVchyhTb0BDJIPLUlFbT7mhIQoufuvtBH+WGaiuqDYUs=
+	t=1718859813; cv=none; b=FtxnZA9bY74Ec926A6yomdB3ElYZcXWmAWjSj637ErOZ3zKHHboUK9octOySPLXrmn+Y9MfhmBjRNCy9CxVDYlQKm4YQ5F3FBYeK/96cb/1iTA6Lk6gj225a5hUvf9aDEzmdTLcSbL6XwDCv6hOIOEx2WmCMnS2z6pIzPGvTs2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718859430; c=relaxed/simple;
-	bh=Gs9Hhj85dtpjC9Z68UX/s72sQFsHJWTAG5Wv01q5Ax4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PrMQpKLlyFl8i2QUYjdVYSmnCv3JvtdDVglJB3jnDlw6fVz4xuOM8rQz2UDlSIKaG1ds3Yv4/OF5x2ZotSCt9KbV+Sz7o8p6sbpSvNHEzX0tI0/ME22Y8od2ZK6kXseik6abyWMRJnNyP29RwGcvewqFk3g2CPyqmahyDQxhELM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=LV8LZfx7; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 0EF072C0BA5;
-	Thu, 20 Jun 2024 16:57:06 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1718859426;
-	bh=Gs9Hhj85dtpjC9Z68UX/s72sQFsHJWTAG5Wv01q5Ax4=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=LV8LZfx7mlPbuw4u7RxXduIyY+8KHTnrvALcTXu0Hte41/6ShgFSK2Ldkj/QDNPwO
-	 zGY3pstecQbmID0BhYX7qZ2dI5ylDgW+4wKGf7C5FPSzSbkiT7Hu8ykvdnmYVZ29Ny
-	 O/YOeCya1KBEcDgnvVe3HG7XRJDXfC3+5aNHtFbW0GqnSpuRJOInjRNS/4TSJTG2LP
-	 A3bRjPVVzFJWYS00l+Rak0VQ/DIS8qoHjDWEvE76Vjn1fuN+MG26Uny1RHEk1wQc46
-	 TE8ct9AAx4r1tRfI9De1Ho2z0fqpo12gPDWaOCvZ0u8venTN3Umls+GVThzYjHErsq
-	 DiQwbkfqEuuBw==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6673b6a20000>; Thu, 20 Jun 2024 16:57:06 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Thu, 20 Jun 2024 16:57:05 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with Microsoft
- SMTP Server (TLS) id 15.0.1497.48; Thu, 20 Jun 2024 16:57:05 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Thu, 20 Jun 2024 16:57:05 +1200
-From: Aryan Srivastava <Aryan.Srivastava@alliedtelesis.co.nz>
-To: "kuba@kernel.org" <kuba@kernel.org>
-CC: "andrew@lunn.ch" <andrew@lunn.ch>, "olteanv@gmail.com"
-	<olteanv@gmail.com>, "davem@davemloft.net" <davem@davemloft.net>,
-	"kabel@kernel.org" <kabel@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-	"edumazet@google.com" <edumazet@google.com>, "pabeni@redhat.com"
-	<pabeni@redhat.com>
-Subject: Re: [PATCH v1] net: dsa: mv88e6xxx: Add FID map cache
-Thread-Topic: [PATCH v1] net: dsa: mv88e6xxx: Add FID map cache
-Thread-Index: AQHawqjJCoLCup8mLki/aO5oskWPDLHPF1iAgAA2w4A=
-Date: Thu, 20 Jun 2024 04:57:05 +0000
-Message-ID: <0dcbc80f5e92e8e6f62a2f34f5ba4af8bc78f44c.camel@alliedtelesis.co.nz>
-References: <20240620002826.213013-1-aryan.srivastava@alliedtelesis.co.nz>
-	 <20240619184105.05d8e925@kernel.org>
-In-Reply-To: <20240619184105.05d8e925@kernel.org>
-Accept-Language: en-US, en-NZ
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6784F563159D4645A4D7FDDC5DC4B86B@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1718859813; c=relaxed/simple;
+	bh=um6EzRG9rDhQ70hgDPX52v6t9bSpMx3cOEYUndWjFL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ScyLxT0BXrZ6tsNKjWKESxxV6JTJgLifcobiMlAtLxtUwhLr61OpkHAyW+Kw0EctBPGT1rABHpob7G/BNo5P1K7d9flIA7Q526ongBJlf1QpDPtfay70PHFCbq0eF2rPx9tQBShf7fXd0q2esKenxehQ27yJfq1sHCbR+6321KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JL67l15s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEFDAC2BD10;
+	Thu, 20 Jun 2024 05:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718859812;
+	bh=um6EzRG9rDhQ70hgDPX52v6t9bSpMx3cOEYUndWjFL0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=JL67l15sZBWcbTDbpNV9MiSZRqIaG79TZUqutfE/7Bjkx4e/5x5vV4kveA+/xvV9S
+	 wESqiZ43/u8R5dcMOcMpWhE19HSUgNaig07G+CrOfv+/vIq+cwVu6EpKcTt+LuQ+zd
+	 ssPFmpc5ug99NwmLKPlKGlD6IidbhGHTXRcZzGjHcuiKAQT81ofNungDgxtHLGsgty
+	 YsKkD+uLq8TQ5LbC5S4DTB1j9dR+ofXp0y+Vq6qsb3blvlQ/hlyJshwuINVvbzY54z
+	 P2SKTRkiutnldKng15WtA5u+ir0AvWoy4Ytw56HIIDAeJAj7pknzgzpRsxw9wfHu2u
+	 Y6KCLSlo6zE/Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 5E24DCE0F65; Wed, 19 Jun 2024 22:03:32 -0700 (PDT)
+Date: Wed, 19 Jun 2024 22:03:32 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [paulmck-rcu:dev.2024.06.18a 20/34]
+ kernel/time/clocksource.c:136:25: error:
+ 'CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US' undeclared
+Message-ID: <0fa70ce4-afa6-42e8-b6ab-e32dcbabb56e@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <202406201116.d69O9imA-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=6673b6a2 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=w1vUsAckAk8A:10 a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=62ntRvTiAAAA:8 a=VwQbUJbxAAAA:8 a=x6h6SwU4EEBpS8rbUbAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pToNdpNmrtiFLRE6bQ9Z:22 a=AjGcO6oz07-iQ99wixmX:22
-X-SEG-SpamProfiler-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202406201116.d69O9imA-lkp@intel.com>
 
-T24gV2VkLCAyMDI0LTA2LTE5IGF0IDE4OjQxIC0wNzAwLCBKYWt1YiBLaWNpbnNraSB3cm90ZToN
-Cj4gT24gVGh1LCAyMCBKdW4gMjAyNCAxMjoyODoyNiArMTIwMCBBcnlhbiBTcml2YXN0YXZhIHdy
-b3RlOg0KPiA+ICtzdGF0aWMgaW50IG12ODhlNnh4eF9hdHVfbmV3KHN0cnVjdCBtdjg4ZTZ4eHhf
-Y2hpcCAqY2hpcCwgdTE2DQo+ID4gKmZpZCkNCj4gPiArew0KPiA+ICvCoMKgwqDCoMKgwqDCoGlu
-dCBlcnI7DQo+IA0KPiBlcnIgaXMgdW51c2VkIGluIHRoaXMgZnVuY3Rpb24uIFBsZWFzZSBtYWtl
-IHN1cmUgeW91IGxvb2sgYXQ6DQo+IGh0dHBzOi8vc2Nhbm1haWwudHJ1c3R3YXZlLmNvbS8/Yz0y
-MDk4OCZkPXRvano1b05wa0x3c3BVVnc3aWpWTFJ4cTZrcHJYcXI1bXFTSHN6ci1ZUSZ1PWh0dHBz
-JTNhJTJmJTJmd3d3JTJla2VybmVsJTJlb3JnJTJmZG9jJTJmaHRtbCUyZm5leHQlMmZwcm9jZXNz
-JTJmbWFpbnRhaW5lci1uZXRkZXYlMmVodG1sDQo+IGJlZm9yZSByZXBvc3RpbmcNCkFwb2xvZ2ll
-cywgbWlzc2VkIHRoaXMgZHVyaW5nIG15IGNvbXBpbGUuIFdpbGwgcmUtdXBsb2FkIHdpdGggZml4
-IGluDQpuZXh0IHNlcmllcy4NCg0KVGhhbmtzLA0KQXJ5YW4NCg==
+On Thu, Jun 20, 2024 at 11:16:36AM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2024.06.18a
+> head:   f29bcafffef0ecc8a5d2cdc1bbef9a6889225263
+> commit: 5800c05045dbfeb8c9e571c6b47e8d7dd0d0691d [20/34] clocksource: Take advantage of always-defined CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
+> config: arc-randconfig-002-20240620 (https://download.01.org/0day-ci/archive/20240620/202406201116.d69O9imA-lkp@intel.com/config)
+> compiler: arc-elf-gcc (GCC) 13.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240620/202406201116.d69O9imA-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202406201116.d69O9imA-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    kernel/time/clocksource.c: In function '__clocksource_update_freq_scale':
+> >> kernel/time/clocksource.c:136:25: error: 'CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US' undeclared (first use in this function)
+>      136 | #define MAX_SKEW_USEC   CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
+>          |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    kernel/time/clocksource.c:137:28: note: in expansion of macro 'MAX_SKEW_USEC'
+>      137 | #define WATCHDOG_MAX_SKEW (MAX_SKEW_USEC * NSEC_PER_USEC)
+>          |                            ^~~~~~~~~~~~~
+>    kernel/time/clocksource.c:1167:50: note: in expansion of macro 'WATCHDOG_MAX_SKEW'
+>     1167 |                 if (cs->uncertainty_margin < 2 * WATCHDOG_MAX_SKEW)
+>          |                                                  ^~~~~~~~~~~~~~~~~
+>    kernel/time/clocksource.c:136:25: note: each undeclared identifier is reported only once for each function it appears in
+>      136 | #define MAX_SKEW_USEC   CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
+>          |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    kernel/time/clocksource.c:137:28: note: in expansion of macro 'MAX_SKEW_USEC'
+>      137 | #define WATCHDOG_MAX_SKEW (MAX_SKEW_USEC * NSEC_PER_USEC)
+>          |                            ^~~~~~~~~~~~~
+>    kernel/time/clocksource.c:1167:50: note: in expansion of macro 'WATCHDOG_MAX_SKEW'
+>     1167 |                 if (cs->uncertainty_margin < 2 * WATCHDOG_MAX_SKEW)
+>          |                                                  ^~~~~~~~~~~~~~~~~
+> 
+
+I have dropped this patch, and thank you for your testing!
+
+								Thanx, Paul
+
+> vim +/CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US +136 kernel/time/clocksource.c
+> 
+> 2e27e793e280ff1 Paul E. McKenney 2021-05-27  119  
+> 2e27e793e280ff1 Paul E. McKenney 2021-05-27  120  /*
+> 2e27e793e280ff1 Paul E. McKenney 2021-05-27  121   * Maximum permissible delay between two readouts of the watchdog
+> 2e27e793e280ff1 Paul E. McKenney 2021-05-27  122   * clocksource surrounding a read of the clocksource being validated.
+> 2e27e793e280ff1 Paul E. McKenney 2021-05-27  123   * This delay could be due to SMIs, NMIs, or to VCPU preemptions.  Used as
+> 2e27e793e280ff1 Paul E. McKenney 2021-05-27  124   * a lower bound for cs->uncertainty_margin values when registering clocks.
+> c37e85c135cead4 Paul E. McKenney 2022-12-06  125   *
+> c37e85c135cead4 Paul E. McKenney 2022-12-06  126   * The default of 500 parts per million is based on NTP's limits.
+> c37e85c135cead4 Paul E. McKenney 2022-12-06  127   * If a clocksource is good enough for NTP, it is good enough for us!
+> ababe5f6bfbf3eb Borislav Petkov  2024-06-12  128   *
+> ababe5f6bfbf3eb Borislav Petkov  2024-06-12  129   * In other words, by default, even if a clocksource is extremely
+> ababe5f6bfbf3eb Borislav Petkov  2024-06-12  130   * precise (for example, with a sub-nanosecond period), the maximum
+> ababe5f6bfbf3eb Borislav Petkov  2024-06-12  131   * permissible skew between the clocksource watchdog and the clocksource
+> ababe5f6bfbf3eb Borislav Petkov  2024-06-12  132   * under test is not permitted to go below the 500ppm minimum defined
+> ababe5f6bfbf3eb Borislav Petkov  2024-06-12  133   * by MAX_SKEW_USEC.  This 500ppm minimum may be overridden using the
+> ababe5f6bfbf3eb Borislav Petkov  2024-06-12  134   * CLOCKSOURCE_WATCHDOG_MAX_SKEW_US Kconfig option.
+> 2e27e793e280ff1 Paul E. McKenney 2021-05-27  135   */
+> fc153c1c58cb8c3 Waiman Long      2021-12-05 @136  #define MAX_SKEW_USEC	CONFIG_CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
+> fc153c1c58cb8c3 Waiman Long      2021-12-05  137  #define WATCHDOG_MAX_SKEW (MAX_SKEW_USEC * NSEC_PER_USEC)
+> 2e27e793e280ff1 Paul E. McKenney 2021-05-27  138  
+> 
+> :::::: The code at line 136 was first introduced by commit
+> :::::: fc153c1c58cb8c3bb3b443b4d7dc3211ff5f65fc clocksource: Add a Kconfig option for WATCHDOG_MAX_SKEW
+> 
+> :::::: TO: Waiman Long <longman@redhat.com>
+> :::::: CC: Paul E. McKenney <paulmck@kernel.org>
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
