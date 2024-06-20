@@ -1,102 +1,176 @@
-Return-Path: <linux-kernel+bounces-222783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E69FF91076B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:05:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F71E910769
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08F621C23813
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:05:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53F9E1C23509
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250B91AF696;
-	Thu, 20 Jun 2024 14:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39831AED4D;
+	Thu, 20 Jun 2024 14:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5oZDmcR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hShq5juN"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B4B1AED59;
-	Thu, 20 Jun 2024 14:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C751ACE7C;
+	Thu, 20 Jun 2024 14:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718892208; cv=none; b=GnbEMsgfWruSqXN+lbfZknxas2QkGnIRmNAHS/8Zp9AFX+2B4mHIdc+ZxRTDgcNFSkDGfpZwZxNrGRUMfeWFtaiViZ6ZjOpzCNpHYxPeoTTMBoIoWGtled+aCiyiQbN2zgZMUdcFMZC2OyQ6Yy+FqqtTIMVFlqX6YYIUD8uiea4=
+	t=1718892204; cv=none; b=MbxZTS60Bfi1ptAhDB0yf4qCf51ayRW+fpHc0Qjrld87aF0Zsb85Q+mDx6s3NtK1W8pGVeYeQ0EQ1rLMEUXym6giRpduokqn5EEKY4Tkw0TlZk5AIR4RbeulFrxigBp7EntcO1Z3L2iLgjYScl2N3uN+qiFV+mp0PbKkR38EWxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718892208; c=relaxed/simple;
-	bh=Bm2ZjNf2b+VNKHoshVbV2rXdyFmyGGFZXFG269zvKN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E9DFTxxxn2fnlhpAs415tOibfqxsqjARH4MUvoMMAO0rHKyazulGB2ac5AXiywH6/GG7+5E2aMh/re3CJoeLC57m9W8+8ExGUaA9wzP5zuBNWJ1UTvVLAPtcZLjLu/obiA1ExdLhSYrlS0KLSs62ugWjue2csqBnyEZ742XuWd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5oZDmcR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0095C32786;
-	Thu, 20 Jun 2024 14:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718892208;
-	bh=Bm2ZjNf2b+VNKHoshVbV2rXdyFmyGGFZXFG269zvKN0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=C5oZDmcRVKiRXGV/z66rlpXEDT79Ddpy4N7glSKSArC8UTNU8pFoRHfWsC5B9w9NS
-	 T5kECR2Pd0qqet8v+1zBALgtxdmy7vGcXB0hr3h+ybzQa57RAbbb7jl2TixR8zmGya
-	 KNVrGLpf8h8wys9zex85p0mFsWByPDzJxFo/wlCi9FF2qZcO+DFqmCc+5ofCPO0qEr
-	 gDlYIGSqo6ZeY8wwrUqdcgOMfaCBz1T9zWZHzDf1PyCI8QRmms3m8R+xqDvjsh9Xq/
-	 95/kxM22g6HOD9FeAGvZJMdqUthc9aCGNPMrB7Y5WfPtbi3+HqC8EA+IZ/68MUso3l
-	 pTpfMznOFFZNw==
-From: Christian Brauner <brauner@kernel.org>
-To: Youling Tang <youling.tang@linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	Youling Tang <tangyouling@kylinos.cn>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH 1/3] fs: Export in_group_or_capable()
-Date: Thu, 20 Jun 2024 16:03:01 +0200
-Message-ID: <20240620-biografie-anlief-f8640333c226@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240620032335.147136-1-youling.tang@linux.dev>
-References: <20240620032335.147136-1-youling.tang@linux.dev>
+	s=arc-20240116; t=1718892204; c=relaxed/simple;
+	bh=xUOYsCDdVtUL6hlGl8tCl7Hz7xJj589qLC+r4STEt1c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QQUCri0TnFuhnzQxia2alj4hIq2IHrNvnZvWfh+8wyu/fRFWpKGSvXSchoK6LTdxMIrmL8sTiAYbjYWIEcz2HH2E9FOxIMYC2XNjc5YTlI2CCDy+/qP7rNhDRQC0Y7L/oD16VS0Vd1svX98qt8vZqf8haEALpUxVPDqvenlO61A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hShq5juN; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718892200;
+	bh=xUOYsCDdVtUL6hlGl8tCl7Hz7xJj589qLC+r4STEt1c=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=hShq5juNr8MUXwUlaamUy2JujTyhRLfNxg0Lgy/7bhuJHlS+ZrppoglPsP9Rscw9C
+	 PvIVAWhJw2HoQlkcBIWToL+7ImIsOHzsEgqyZT0mU9xgGtppUvp3+Jn/OiIdNPuZD6
+	 cTAnA3xsmkYRxCIVjSx46BkqvgVM3Q6+OhDrJ8rsYof+eTL3P9IbXdyyIvOzR/rd4f
+	 d5998ObmQimbWl2FhUmo2ta5ApedzYM5Rho9KahDZy4BymxZa7dnbwap3wS7RtA4kd
+	 O9/2OWFMLzi9nQ8TvHM5WZcMHtnse3AGOZP0GRLfOgGaF15/cnMzUpZsPQkYnQsHiz
+	 O2nHqO8QP8fmQ==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2E8FA37821B9;
+	Thu, 20 Jun 2024 14:03:19 +0000 (UTC)
+Message-ID: <bc8796ef8107507e99df079f6d7ce2575ead3cab.camel@collabora.com>
+Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support
+ runtime suspend/resume
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: "jackson.lee" <jackson.lee@chipsnmedia.com>, Devarsh Thakkar
+	 <devarsht@ti.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
+ "sebastian.fricke@collabora.com"
+	 <sebastian.fricke@collabora.com>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,  Nas Chung
+ <nas.chung@chipsnmedia.com>, "lafley.kim" <lafley.kim@chipsnmedia.com>,
+ "b-brnich@ti.com" <b-brnich@ti.com>
+Date: Thu, 20 Jun 2024 10:03:15 -0400
+In-Reply-To: <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
+	 <20240617104818.221-3-jackson.lee@chipsnmedia.com>
+	 <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
+	 <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1099; i=brauner@kernel.org; h=from:subject:message-id; bh=Bm2ZjNf2b+VNKHoshVbV2rXdyFmyGGFZXFG269zvKN0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSVmC17tVI48m/oNrs10XfDN+mzHTzSq/L+0dZ5Pv92S AR433Wu6ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI6VNGhmVCq9btav7Av7Z1 3YZtD5pS5G++tNigPeuz8dWExuNXwuIZGY7czpyYG60r4W354eu/7VvMp7/b/CL3u+Hmy8JXAgw nreQHAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
 
-On Thu, 20 Jun 2024 11:23:33 +0800, Youling Tang wrote:
-> Export in_group_or_capable() as a VFS helper function.
-> 
-> 
+Hi Jackson, Devarsh,
 
-This makes sense to me.
+Le mercredi 19 juin 2024 =C3=A0 23:56 +0000, jackson.lee a =C3=A9crit=C2=A0=
+:
+> Hi Devarsh
+>=20
+> If there is no feeding bitstreams during encoding and decoding frames, th=
+en driver's status is switched to suspended automatically by autosuspend.
+> And if we don=E2=80=99t use autosuspend, it is very difficult for us to c=
+atch if there is feeding or not while working a pipeline.
+> So it is very efficient for managing power status.
+>=20
+> If the delay is very great value, we can adjust it.
 
----
+One way to resolve this, would be if someone share measurement of the suspe=
+nd /
+resume cycle duration. With firmware (third party OS) like this, the cost a=
+nd
+duration is few order of magnitude higher then with more basic ASIC like Ha=
+ntro
+and other single function HW.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Yet, 5s might be to much (but clearly safe), but getting two low may means =
+that
+we suspect "between two frames", and if that happens, we may endup with var=
+ious
+range of side effect, like reduce throughput due to suspend collisions, or =
+even
+worse power footprint. Some lab testing to adjust the value will be needed,=
+ we
+have very little of that happening at the moment as I understood.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Nicolas
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+>=20
+> Thanks
+> Jackson
+>=20
+> > -----Original Message-----
+> > From: Devarsh Thakkar <devarsht@ti.com>
+> > Sent: Wednesday, June 19, 2024 10:00 PM
+> > To: jackson.lee <jackson.lee@chipsnmedia.com>; mchehab@kernel.org;
+> > nicolas@ndufresne.ca; sebastian.fricke@collabora.com
+> > Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > hverkuil@xs4all.nl; Nas Chung <nas.chung@chipsnmedia.com>; lafley.kim
+> > <lafley.kim@chipsnmedia.com>; b-brnich@ti.com; Nicolas Dufresne
+> > <nicolas.dufresne@collabora.com>
+> > Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support r=
+untime
+> > suspend/resume
+> >=20
+> > Hi Jackson,
+> >=20
+> > Thanks for the patch.
+> > On 17/06/24 16:18, Jackson.lee wrote:
+> > > From: "jackson.lee" <jackson.lee@chipsnmedia.com>
+> > >=20
+> > > Add support for runtime suspend/resume in the encoder and decoder.
+> > > This is achieved by saving the VPU state and powering it off while th=
+e VPU
+> > idle.
+> > >=20
+> > > Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
+> > > Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+> > > Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> >=20
+> > [..]
+> > >  static int wave5_vpu_probe(struct platform_device *pdev)  {
+> > >  	int ret;
+> > > @@ -268,6 +301,12 @@ static int wave5_vpu_probe(struct platform_devic=
+e
+> > *pdev)
+> > >  		 (match_data->flags & WAVE5_IS_DEC) ? "'DECODE'" : "");
+> > >  	dev_info(&pdev->dev, "Product Code:      0x%x\n", dev->product_code=
+);
+> > >  	dev_info(&pdev->dev, "Firmware Revision: %u\n", fw_revision);
+> > > +
+> > > +	pm_runtime_set_autosuspend_delay(&pdev->dev, 5000);
+> >=20
+> > Why are we putting 5s delay for autosuspend ? Without using auto-suspen=
+d
+> > delay too, we can directly go to suspended state when last instance is =
+closed
+> > and resume back when first instance is open.
+> >=20
+> > I don't think having an autosuspend delay (especially of 5s) bodes well=
+ with
+> > low power-centric devices such as AM62A where we would prefer to go to
+> > suspend state as soon as possible when the last instance is closed.
+> >=20
+> > Also apologies for the delay in review, this didn't caught my eye earli=
+er as
+> > commit message did not mention it either.
+> >=20
+> > Regards
+> > Devarsh
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/3] fs: Export in_group_or_capable()
-      https://git.kernel.org/vfs/vfs/c/daf0f1ce3585
-[2/3] f2fs: Use in_group_or_capable() helper
-      https://git.kernel.org/vfs/vfs/c/29a76d8b349b
-[3/3] fuse: Use in_group_or_capable() helper
-      https://git.kernel.org/vfs/vfs/c/d128e6b878ac
 
