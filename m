@@ -1,102 +1,92 @@
-Return-Path: <linux-kernel+bounces-223371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3034C9111F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:15:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE2D9111F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614781C21FA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:15:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4507B282127
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40301BA08A;
-	Thu, 20 Jun 2024 19:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD701BA874;
+	Thu, 20 Jun 2024 19:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYUPkiBR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GTRU5+to"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87671B47C1;
-	Thu, 20 Jun 2024 19:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C131B47C1;
+	Thu, 20 Jun 2024 19:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718910873; cv=none; b=q9/VaZ3zxJUjeAg4wdSkB6Y/kI6iQzgIqobOxnsQeppOK/hwmgj077GXBxgXOLMokF+/buCxbsQPj1MjS/hjy107UmZe31gSYJMgDVB9H2fIUatmh5rwzwU0CVbacNPC6wM0aGF5S1gbqPTgBE78PqKKoy5cxaUm/BOhw0MKj6w=
+	t=1718910880; cv=none; b=F4sV91iHVpdUXepuEzUFY0rErnFQGsif7fXV3NNtdWj2ifJmnAVolGHfoOEeWe9glbhm0vS0aQyFhzVVBZlIEgE2JOLdmtTbMB/GiAmhWIyfcYTVbcIXpIrqq0UB2xw0y4NuHOXowRdozV2en6A9jTGVpsMbeaXxIh0428hsO6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718910873; c=relaxed/simple;
-	bh=bjhFvNWi5TsvQnfmtqUqpLdLlMq0YUpUWHuLtvckbn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fJuQXp7a6CheLuWZ7EWo3nOkaWRfszfDOx7O3RFnL6Bzr8INsozQEXQn6lETpsJZHzW2kXIiwB7d9usz2H4640Lfdz/1VDyJ1RirnPQ92SEyiZS7XX7ScFj1oeFM0CgV9Vs8puVhxRD+tloSmyaQFvf+E9re5xDgm6pur+PRMTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYUPkiBR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9539AC4AF10;
-	Thu, 20 Jun 2024 19:14:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718910872;
-	bh=bjhFvNWi5TsvQnfmtqUqpLdLlMq0YUpUWHuLtvckbn4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZYUPkiBRn0UHJaSaMjoznC1HWpr24AlPSJPIZygqUCrs1sksNt6azm8wGush54FXl
-	 MmlS8JJP2e+UmdBUqrKYrQdaL05dTbjCcDloZ6h7gK08fEnVCVbLuzVabF8Nw5Zcyl
-	 tWJGZde5J5KZkIEEPIHKOdpNkfvz2Vz4ncziWv4FfWDVrzfuwiSfd3MR3RprjWR7VI
-	 iMhGn/vljPQvtF0zSl+s5aV+hXn1DMFKvP2PO+DyAL19sI0UUXMLq68be52bo8FKWI
-	 ms0zxNnhUxdAhcyv8XD3lNzT8tgZzWG3R2RfF+EfzuyuYoUyW02Fj5XD0z2JHWuNeI
-	 I2OEpzrkVVe7Q==
-Date: Thu, 20 Jun 2024 20:14:25 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Paul Cercueil <paul@crapouillou.net>, Lars-Peter Clausen
- <lars@metafoo.de>, Sumit Semwal <sumit.semwal@linaro.org>, Christian
- =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Jonathan Corbet
- <corbet@lwn.net>, Nuno Sa <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v12 0/7] iio: new DMABUF based API v12
-Message-ID: <20240620201425.1cbcb5f1@jic23-huawei>
-In-Reply-To: <20240620201150.72c11599@jic23-huawei>
-References: <20240620122726.41232-1-paul@crapouillou.net>
-	<ZnRW2axOg7gtKzz0@matsya>
-	<20240620201150.72c11599@jic23-huawei>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1718910880; c=relaxed/simple;
+	bh=JqKuhxuOfiKP/ZmD0E10286le4lRBg5B2jJTJETya8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KGTE7MECjjS87OJuVAITcJfnaa8uMayg9CZMi8mkuCtszUnhU6of1VTGIWUvistSJl/5htqsKbyihdk7O+N+wN55557eyV7Lou7pTikVTiETVip+BZvTW+LaT8C+4+GE+jQoficSWkJaPimdoKTuHCC4awwA/akNsHzZVFPyjps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GTRU5+to; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=GtUiKMS+JogD7d3VokqpWsqamEr3QnRsE46YsJrX/0o=; b=GTRU5+to0kKy1NAX4h4nyUFaZ6
+	jHdJh1WGaW6/adsVToEIo0B3tkHPVcSm1Dk+NLBYCa+QwOQqCEHobDiYS2pEgMbvbB7wJly6vlod+
+	sHB79KMKRc9abEw6vVPCyQedSikAivG/UC00Pnvy/Hdr0/nTDai8TwiLOgRnLWvcMq58=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sKNEu-000bKe-I4; Thu, 20 Jun 2024 21:14:32 +0200
+Date: Thu, 20 Jun 2024 21:14:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Omer Shpigelman <oshpigelman@habana.ai>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"ogabbay@kernel.org" <ogabbay@kernel.org>,
+	Zvika Yehudai <zyehudai@habana.ai>
+Subject: Re: [PATCH 09/15] net: hbl_en: add habanalabs Ethernet driver
+Message-ID: <9d459e01-6171-4a1a-855c-f56813ea9e0f@lunn.ch>
+References: <20240613082208.1439968-1-oshpigelman@habana.ai>
+ <20240613082208.1439968-10-oshpigelman@habana.ai>
+ <10902044-fb02-4328-bf88-0b386ee51c78@lunn.ch>
+ <bddb69c3-511b-4385-a67d-903e910a8b51@habana.ai>
+ <621d4891-36d7-48c6-bdd8-2f3ca06a23f6@lunn.ch>
+ <45e35940-c8fc-4f6c-8429-e6681a48b889@habana.ai>
+ <20240619082104.2dcdcd86@kernel.org>
+ <5cb11774-a710-4edc-a55c-c529b0114ca4@habana.ai>
+ <20240620065135.116d8edf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620065135.116d8edf@kernel.org>
 
-On Thu, 20 Jun 2024 20:11:50 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
-
-> On Thu, 20 Jun 2024 21:50:41 +0530
-> Vinod Koul <vkoul@kernel.org> wrote:
-> 
-> > On 20-06-24, 14:27, Paul Cercueil wrote:  
-> > > Hi Jonathan,    
+On Thu, Jun 20, 2024 at 06:51:35AM -0700, Jakub Kicinski wrote:
+> On Thu, 20 Jun 2024 08:43:34 +0000 Omer Shpigelman wrote:
+> > > You support 400G, you really need to give the user the ability
+> > > to access higher pages.  
 > > 
-> > Hey Jonathan,
-> > 
-> > Assuming we are fine with this series, how would you like to proceed.
-> > Would you be fine with me picking the dmaengine bits and providing a
-> > signed tag for you to pull?
-> >   
+> > Actually the 200G and 400G modes in the ethtool code should be removed
+> > from this patch set. They are not relevant for Gaudi2. I'll fix it in the
+> > next version.
 > 
-> Hi Vinod,
-> 
-> Yes. That will work nicely.
-> From my side it all looks good.
+> How do your customers / users check SFP diagnostics?
+ 
+And perform firmware upgrade of the SFPs?
 
-Just to make sure we are on the same page, based on a clean rc1
-so I just get the parts of this series (hopefully there aren't
-an necessary precursors!) 
+https://lore.kernel.org/netdev/20240619121727.3643161-7-danieller@nvidia.com/T/
 
-J
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> 
+	Andrew
 
 
