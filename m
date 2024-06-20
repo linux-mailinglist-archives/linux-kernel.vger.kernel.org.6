@@ -1,125 +1,118 @@
-Return-Path: <linux-kernel+bounces-222534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5DC91035F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:50:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04EC6910367
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE0161C21316
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:50:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8155B281A7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCC71ABCBB;
-	Thu, 20 Jun 2024 11:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Vlt3Tn2D"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56AA1AC234;
+	Thu, 20 Jun 2024 11:51:12 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48CB1ABCB6
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9245C157E84
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718884230; cv=none; b=lszbvTTIb4q2JZMSnwhP756Jij0ggAL2hAP6gZT77qVsbfBXh3hl4A3Lgi0J/yNH6GMemkUIR1PyNIS+z3QQ89MY52Yk7mXVMSpvZYyZ8DD856IIFHPH+C//uNBBll2eAqrWNYYUBT3FSWtOOvwwY1Io9eb/KdTI9LAYZLSoMX4=
+	t=1718884272; cv=none; b=SD4YEuC2EidP7u3tYl3vdQNAbVdGO+yhDZt+wNURGEMiF4W8m7g/9Cw3qOe3TjRpRtUzCQ5SaEsakNhyho7xkENVRwcRoODN1CjYHsUsSyZOugKIWXCfPDR7Jwj0t1XEfS1bb4K+Fwa6tP8KnVP/vyTINpx7rGAemgwsrcCTNSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718884230; c=relaxed/simple;
-	bh=/fsDy/J5swdf4EmXOs+1OkO3VMutkagftRVjj5QTHnE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CVXWx60yLUsMZIoYrqzQKh/fXP7p+w2pVbbMwp/BM4cJ0uhH0TE8+jV94ixIq8fMGJSF+qdgShVrsUdWqXYN1wOaLdqEEIWFmFFU4XzdgxPhJHG4To+eoxW925ACqOcDgiBcehFmbkN+NdAqyR1Ax7mI9a4+MR1bQ0DhJLwywD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Vlt3Tn2D; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=RwiFhKj6DSEa7VQUlcxMDilTp/jRlc2Dqj2vwVcpqj0=; b=Vlt3Tn
-	2Do8jfLoK1eRL4FgWZISar4kfzMU8gde27BdiSj8lgTTxmhI3UJFq11TCRUvR6tZ
-	Pbsq6E/E3CZBgfdazgX8Q1vjsi/qXow7oDmaf0Qd6dOambnNHXMmMasDxNAA3Ipn
-	VT8megWPDDrnHORl3mVY7k4WpUImipilMeymCFdIi3WVy9kwFfJmUCTMtIIg/JkM
-	5X+0MDgoErhr2Rppndy/u5YsghEhi70zSvfzGERH+aQqP2yE1SHxR2UA1uPF3Maj
-	f4gTadjm+Nm6WVGltCVco4BB3Q0EI9HBlxm2xXT8zYR8OEqENAwRG98C38FB3Y1U
-	4MYuFRmbtK6gkLAg==
-Received: (qmail 1002835 invoked from network); 20 Jun 2024 13:50:25 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Jun 2024 13:50:25 +0200
-X-UD-Smtp-Session: l3s3148p1@pg+p61Ab3JMgAwDPXzjQABqqX1QYyOSW
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Moritz Fischer <mdf@kernel.org>,
-	Wu Hao <hao.wu@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	linux-fpga@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 2/2] fpga: zynq-fpga: use 'time_left' variable with wait_for_completion_timeout()
-Date: Thu, 20 Jun 2024 13:50:22 +0200
-Message-ID: <20240620115022.24409-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240620115022.24409-1-wsa+renesas@sang-engineering.com>
-References: <20240620115022.24409-1-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1718884272; c=relaxed/simple;
+	bh=CIGmQ+V0M295n9K+gwrHgo2V+yDH/y7k/cpu+XtVVUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T0hbLH1CISiyUfL9TcgKbFS5H0GQ2KVSZsHuvyWUFvDqDTlWFCO1+KtkCVBIwCRa6CscKupN/yyA80u234OF+hcbmu5aDBDasueVDspo1iCQMBbWrP96D99SF1hlwN0JcMUy4IpLHiu7RBKVllNZvCtwNSWKgMKeFNDF1xm6g38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sKGJY-0002IH-PJ; Thu, 20 Jun 2024 13:50:52 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sKGJY-003h1L-5Y; Thu, 20 Jun 2024 13:50:52 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id BECBD2ED977;
+	Thu, 20 Jun 2024 11:50:51 +0000 (UTC)
+Date: Thu, 20 Jun 2024 13:50:51 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Stefan Moring <stefan.moring@technolution.nl>, Benjamin Bigler <benjamin@bigler.one>, 
+	Carlos Song <carlos.song@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, 
+	Adam Butcher <adam@jessamine.co.uk>, linux-spi@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stefan Bigler <linux@bigler.io>, 
+	Sebastian Reichel <sre@kernel.org>, Thorsten Scherer <T.Scherer@eckelmann.de>
+Subject: Re: [PATCH] spi: spi-imx: imx51: revert burst length calculation
+ back to bits_per_word
+Message-ID: <20240620-positive-industrious-tiger-b09d1e-mkl@pengutronix.de>
+References: <20240618-spi-imx-fix-bustlength-v1-1-2053dd5fdf87@pengutronix.de>
+ <171888201712.41294.3998570181399309379.b4-ty@kernel.org>
+ <20240620-annoying-elated-lobster-240aed-mkl@pengutronix.de>
+ <63e0b99d-d47c-4645-bf83-fb671f28d57f@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3x7ithjlu3aaazns"
+Content-Disposition: inline
+In-Reply-To: <63e0b99d-d47c-4645-bf83-fb671f28d57f@sirena.org.uk>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-There is a confusing pattern in the kernel to use a variable named
-'timeout' to store the result of wait_for_completion_timeout() causing
-patterns like:
 
-        timeout = wait_for_completion_timeout(...)
-        if (!timeout) return -ETIMEDOUT;
+--3x7ithjlu3aaazns
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-with all kinds of permutations. Use 'time_left' as a variable to make
-the code self explaining.
+On 20.06.2024 12:47:14, Mark Brown wrote:
+> On Thu, Jun 20, 2024 at 01:43:29PM +0200, Marc Kleine-Budde wrote:
+>=20
+> > As this is a fix of a regression, can you pick this for v6.10, too.
+>=20
+> It is applied for v6.10.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Michal Simek <michal.simek@amd.com>
----
+Thanks a lot,
+Marc
 
-Change since v1: added ack (Thanks Michal)
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
- drivers/fpga/zynq-fpga.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+--3x7ithjlu3aaazns
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/fpga/zynq-fpga.c b/drivers/fpga/zynq-fpga.c
-index 0ac93183d201..4db3d80e10b0 100644
---- a/drivers/fpga/zynq-fpga.c
-+++ b/drivers/fpga/zynq-fpga.c
-@@ -387,7 +387,7 @@ static int zynq_fpga_ops_write(struct fpga_manager *mgr, struct sg_table *sgt)
- 	const char *why;
- 	int err;
- 	u32 intr_status;
--	unsigned long timeout;
-+	unsigned long time_left;
- 	unsigned long flags;
- 	struct scatterlist *sg;
- 	int i;
-@@ -427,8 +427,8 @@ static int zynq_fpga_ops_write(struct fpga_manager *mgr, struct sg_table *sgt)
- 	zynq_step_dma(priv);
- 	spin_unlock_irqrestore(&priv->dma_lock, flags);
- 
--	timeout = wait_for_completion_timeout(&priv->dma_done,
--					      msecs_to_jiffies(DMA_TIMEOUT_MS));
-+	time_left = wait_for_completion_timeout(&priv->dma_done,
-+						msecs_to_jiffies(DMA_TIMEOUT_MS));
- 
- 	spin_lock_irqsave(&priv->dma_lock, flags);
- 	zynq_fpga_set_irq(priv, 0);
-@@ -452,7 +452,7 @@ static int zynq_fpga_ops_write(struct fpga_manager *mgr, struct sg_table *sgt)
- 
- 	if (priv->cur_sg ||
- 	    !((intr_status & IXR_D_P_DONE_MASK) == IXR_D_P_DONE_MASK)) {
--		if (timeout == 0)
-+		if (time_left == 0)
- 			why = "DMA timed out";
- 		else
- 			why = "DMA did not complete";
--- 
-2.43.0
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZ0F5kACgkQKDiiPnot
+vG+SoAf9FggSpDf/WcsiSEhV95WrFkOLSvn+VBHOJJ5/RtFsKMabSKYOeADRcVEl
+KVkb0SEEzbmX5nV/+RZoZDtIlYDiG9bX17LFnQ+yqNoao5Gy6JnraxRLSfV3pwzm
+RMBuYc1Bx8Se36D8DtBe4e/sqDshxGclrXLleFuxFjbF0KrXT5HRVckDXkUUqEG6
+B6S57ElyETojw4oNqrweaFGPGUYu6ZKoW0wwZgxte7rdSNks3Y8sn4Z1GCTpEArH
+Qal9V1mze0MHtJKlTUS8IpOJgoahMBDiU7TcmXclbp7ky87eXHOLDvx6z1jh9bTw
+QDCOkic0moCRk4vu+QagV84SkHrRBA==
+=Fczp
+-----END PGP SIGNATURE-----
+
+--3x7ithjlu3aaazns--
 
