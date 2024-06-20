@@ -1,131 +1,141 @@
-Return-Path: <linux-kernel+bounces-222936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9564B910A2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:40:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E31B6910A2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 513A22866DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:40:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FBD41C22FBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F421B011B;
-	Thu, 20 Jun 2024 15:40:23 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B221B011B;
+	Thu, 20 Jun 2024 15:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFlYf4XA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE441ACE94;
-	Thu, 20 Jun 2024 15:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201301AF6B6;
+	Thu, 20 Jun 2024 15:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718898023; cv=none; b=HbAf9nS9mEdkXzOAJ/n+hsGpK4qhvr/3qi55HGakZRAUkagOkX6cSylWFG27eXQqE2mBnCyIer2+LJq+m/BlRIJJDEw033jAwg9DJAg6s3qAgFD5SNpDP9fFSIQr8/PHj++QN/Z6LnDhU9vwgUmH5U905j4pl60QDDSUgsepbew=
+	t=1718898057; cv=none; b=AZg5hybyQaqo18ek2XxSCs6fjJHD9xgHoG7zLdOWCnvL2kXSWKc1H2UU6W8XMRwYsgGNuzHAsvk1t5hfBBkQQBqwTZhzshUQmvP+OJRhmVKOed7UGHs0nz1lpDyQzS/f0EQGBvJcr2qd9RPtdM97OxJ25LKamcM8BeiTE3vVGnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718898023; c=relaxed/simple;
-	bh=44UxWeJuayI3bZGqwBHbWalofDb7+ni2lz+I7HuZP18=;
+	s=arc-20240116; t=1718898057; c=relaxed/simple;
+	bh=5NRg4mklmcVDLa6pAbrcinNo9L7rLC5Vfgmi7UG6vnM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mak7SS1QC9y1jn0j5iRwAgceFvJS5vPyo3mVm3tGLGz2Hg5ZTvPxmXzsNzXBtO2NIR99pIk8qQYqTHC25FfgrFeT3JQpWLLPVHEkQFbj0CigOhrZG70jeJVGSQB3UkkvIIvW4/Tj4vE23YNNsrQXSIt/JW8WD3WpOBzgoX3pgpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-63bf3452359so10424127b3.2;
-        Thu, 20 Jun 2024 08:40:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718898019; x=1719502819;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sH7+YxOUiDXwjwnxlowJ+B9PVdvEeRNVTnlGmm0Kww0=;
-        b=xEeC9uxbIF+dXjTO9Ny0EwsxYd3NaSmUXu1pBDUZ9jfyM7tlbcWwolISTNL0MLR7vR
-         dWxYAfGRlnlc+pUv+UOWSTBpCc+4TL9L8x8EpXDZLTZuB59miEjNWrcZp/pDPpBzWd2k
-         3DsbMoEDZlLezdxW7VFGIT48Xr22z/7F97/FSzgR23+YUNJelzF3dCxanoF1E62S2TlU
-         faBK9EgtSOzKkrQvgtfaSTcGdr9Gv821q2TIwf95pXNejvaqavQQrmzlXcZjJgzo6n1F
-         2HLllOcX/wbbfp2sdXblK/4/5XrYFaOsPhXGDHFBx+YScq2PpS8aVaVwMOhR1Gr3qjE5
-         pu8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVgDCbgsCiTndGO5Th/cPOaIESKznxoyeiqvCXZTL1x3ii9alTmUbn20WRVlA83G8XioTGgRbdAeA6+/UcJtxVwUmujEt6/ji6btX0huKS+f/OqdME1MPoUfPsHKWP5+9haKoq6x6v4axwkSYU4HgEFVv3+9QNdqvSiMUEjvLyAOwBkdoVw8XEp4LdiAPSSRGxHF+/fkWLQhWD9eqESJ21dZ9b3wctu
-X-Gm-Message-State: AOJu0YzC+VxXSgqEpTwRgcCLyqNyup4K3KlyQtKFxHqMa17se2GSFfRA
-	SzGtSuOpN/RxMxme3myGbZe0WqKB7cxyTe8ZGhaTbkPSGyS/oyZqltdpcXdD
-X-Google-Smtp-Source: AGHT+IHeLwk3RLz1ugAFOA+qTtKGY0HmYMbOxT79xAtMjZYQD1N9yD97tlJM2gGgPbaC08XmKOZqdg==
-X-Received: by 2002:a05:690c:a10:b0:631:1d44:5850 with SMTP id 00721157ae682-63a903a431cmr54698107b3.47.1718898019519;
-        Thu, 20 Jun 2024 08:40:19 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63118e9917asm30523987b3.60.2024.06.20.08.40.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 08:40:19 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6316253dc52so8497757b3.0;
-        Thu, 20 Jun 2024 08:40:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXe2BM8nqJh4hLDGhO98m3VPYsGhFb6YGs6xKx0OvPTmaCQhq4GuIYjgr5eAnzGMoJ6FbiCuGuLsr4UGT0HyG+rseDPos47lXtjJUo84Sat50NKyabpe3DiQQessgCmLrGOJF8Q5j7ZqlzdkjeGTGb+61R/sIorbLpOonJ/Vt4VHiDZvuBtenCv58tSe8QiBDFecgnrGw69BAACKZb1UT0fGNqqF/Us
-X-Received: by 2002:a0d:e810:0:b0:632:5b24:c0c with SMTP id
- 00721157ae682-63a8dc08affmr55684907b3.5.1718898019011; Thu, 20 Jun 2024
- 08:40:19 -0700 (PDT)
+	 To:Cc:Content-Type; b=F36ZF2q8CuG3TgPc16klyTK+CKsPMbn22GVbaty421c7NtntExLqTPsvmS2RSuNjm4gNc77QcMiKz2eETk4Gyv/v+yK2L0YlVaecuaxTWPjJNvEv1UNL6AKLEIRVhQY6Fys99p1glRj4pRugscV8ZDepM6Ffe1y8jRd/JMLexzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFlYf4XA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE2D1C4AF0A;
+	Thu, 20 Jun 2024 15:40:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718898056;
+	bh=5NRg4mklmcVDLa6pAbrcinNo9L7rLC5Vfgmi7UG6vnM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=tFlYf4XAhcnGaAocWpzl7eleVZbskpKwP9k4o8ttq2tGl5gNwLG9PGzGr20klImoK
+	 81EYkQdXGXWE0u7zOMXfjWGRdUP1dlq25X5icPS1Agh5FCEjUAZiC2Tvecj3RHf5WF
+	 U/un5hCJkG8cHXqRuaZgF6uBO+hz+x1yYqpmRiS10bP5q50louQIQwMgulsJBv9Zg3
+	 PJBXGN0x+l3WC74Tbs5shR3PoIfwOBK6cWkL4v983dTOcc8uZmzB/vBj2nVrlAjhCN
+	 KDHeL/K8OBfYRELlqfNlhrV1+1Jp7GKoISwqX1p8NHX3zG2LF6Iu5Wflj7+ojeZSiX
+	 gCgjA0ette8SQ==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-254f646b625so152032fac.0;
+        Thu, 20 Jun 2024 08:40:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXDxDw9sOFBR4+vezddYNxGu+G3zw1xXImFgf87YOZrC6F56MyEvn3I/6Sci7x5vdXKFSD/nb9nwS3MnmhQlu+zpB+JjubEdkbnxJPwnwoV++/95JYixEA7qjlhXKvBgCtm+yRfBRRUVw==
+X-Gm-Message-State: AOJu0Yx5NzmSibkTz9jS1XY2BQAq1xJBVwaPJkpHjLMOVAPLNVoAJ52n
+	qP6s1oZKc8XcmW5+WkX6NAmk0OhPCsSCHc4AQhcjzkikQnr18bbBl3PvhgJleXa2odtvG3kJReR
+	/gID66LWfJGP8WhzC7CWbPr55+W0=
+X-Google-Smtp-Source: AGHT+IEEbjG4U4hmoaWBonQYMHv3Lm5gg+atRAh7jRjhs1Zfdqy3tNiYdXwpvPVjtLaQfuhuFLrE2TzLDSnhk6exseI=
+X-Received: by 2002:a05:6870:d1c9:b0:259:8928:85ec with SMTP id
+ 586e51a60fabf-25c9496379bmr6442865fac.2.1718898055795; Thu, 20 Jun 2024
+ 08:40:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613091721.525266-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Jun 2024 17:40:06 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU0oFH61fHNp2txOOJi_pWihKrK=UdETrzBs-bDeULTqQ@mail.gmail.com>
-Message-ID: <CAMuHMdU0oFH61fHNp2txOOJi_pWihKrK=UdETrzBs-bDeULTqQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 3/3] mmc: renesas_sdhi: Add support for RZ/V2H(P) SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com> <ZnJfmUXmU_tsb9pV@kf-XE>
+ <CAJZ5v0gOBH7OKF3KXwxYfWkGkC45rzDguR4VmSnoZDKpm+KPSg@mail.gmail.com>
+ <12457165.O9o76ZdvQC@rjwysocki.net> <ZnNQF0ussBRSAt1g@kf-XE>
+ <ZnNZgxDaXoCqkkJq@kf-XE> <ZnOAVWdBanvocb4D@kf-XE>
+In-Reply-To: <ZnOAVWdBanvocb4D@kf-XE>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 20 Jun 2024 17:40:44 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g87Gmsi9HoPbNXO0Fu_sy+5MNGTjr_79UNOABNLmRn2Q@mail.gmail.com>
+Message-ID: <CAJZ5v0g87Gmsi9HoPbNXO0Fu_sy+5MNGTjr_79UNOABNLmRn2Q@mail.gmail.com>
+Subject: Re: [PATCH V3] acpi: Allow ignoring _OSC CPPC v2 bit via kernel parameter
+To: Aaron Rainbolt <arainbolt@kfocus.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Mario Limonciello <mario.limonciello@amd.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lenb@kernel.org, mmikowski@kfocus.org, 
+	Perry.Yuan@amd.com, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
-
-Thanks for your patch!
-
-On Thu, Jun 13, 2024 at 11:17=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Jun 20, 2024 at 3:05=E2=80=AFAM Aaron Rainbolt <arainbolt@kfocus.or=
+g> wrote:
 >
-> The SDHI/eMMC IPs found in the RZ/V2H(P) (a.k.a. r9a09g057) are very
-> similar to those found in R-Car Gen3. However, they are not identical,
-> necessitating an SoC-specific compatible string for fine-tuning driver
-> support.
->
-> Key features of the RZ/V2H(P) SDHI/eMMC IPs include:
-> - Voltage level control via the IOVS bit.
-> - PWEN pin support via SD_STATUS register.
-> - Lack of HS400 support.
-> - Fixed address mode operation.
->
-> regulator support is added to control the volatage levels of SD pins
-> via sd_iovs/sd_pwen bits in SD_STATUS register.
+> OK, we have done thorough benchmarking of the two patches. In summary,
+> they both seem to provide exactly the same performance improvements.
+> My initial worry that Rafael's patch didn't deliver the same performance
+> improvements was unfounded.
 
-Probably I am missing something obvious in the big picture, but why
-must this be modelled as a regulator?  Can't the SDHI driver handle
-this register bit directly?
+Good to know, thanks!
 
-Cfr. tmio_mmc_power_on(), which can use the tmio_mmc_host.set_pwr()
-callback[1] instead of/in addition to a regulator.
+> The following are the single-core and multi-core scores from running
+> Geekbench 5 multiple times on a Carbon Systems Iridium 16 system. The
+> first batch of tests was done with an Ubuntu kernel built with with my V3
+> proposed patch, while the second batch was done with a kernel build with
+> Rafael's proposed patch.
+>
+> Links to the Geekbench 5 reports can be shared if needed.
+>
+> _OSC CPPC bit ignore patch (written by Aaron Rainbolt):
+> Kernel parameter 'ignore_osc_cppc_bit' set in
+> '/etc/default/grub.d/kfocus.cfg'.
+> '/sys/devices/system/cpu/cpu*/acpi_cppc' and
+> '/proc/sys/kernel/sched_itmt_enabled' both present
+>
+> | Run | Single | Multi  |
+> | --- | ------ | ------ |
+> |  01 |   1874 |  10475 |
+> |  02 |   1831 |  10132 |
+> |  03 |   1858 |  10348 |
+> |  04 |   1848 |  10370 |
+> |  05 |   1831 |  10413 |
+> | --- | ------ | ------ |
+> | AVG |   1848 |  10348 |
+>
+>
+> intel_pstate CPPC override patch (written by Rafael Wysocki):
+> No special kernel parameters set.
+> '/sys/devices/system/cpu/cpu*/acpi_cppc' ABSENT,
+> '/proc/sys/kernel/sched_itmt_enabled' present
+>
+> | Run | Single | Multi  |
+> | --- | ------ | ------ |
+> |  01 |   1820 |  10310 |
+> |  02 |   1870 |  10303 |
+> |  03 |   1867 |  10420 |
+> |  04 |   1844 |  10283 |
+> |  05 |   1835 |  10451 |
+> | --- | ------ | ------ |
+> | AVG |   1847 |  10353 |
+
+The problem with ignoring what the platform firmware is telling (or
+not telling) the OS through ACPI is that only it knows the reason why
+it is doing that.
+
+It may be by mistake, but it also may be on purpose and it is hard to say.
+
+However, intel_pstate already knows that HWP is enabled on the
+processor, so it can be used directly regardless of whether or not
+CPPC is enabled.  That is more appropriate and does not require users
+to modify their kernel command line.
+
+I'll add a changelog to the patch and submit it properly.
 
 Thanks!
-
-[1] Oh, no more users... Let's get rid of it... patch sent...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
