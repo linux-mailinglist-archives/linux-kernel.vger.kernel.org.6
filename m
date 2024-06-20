@@ -1,299 +1,495 @@
-Return-Path: <linux-kernel+bounces-222909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63679910994
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:16:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D6FE910998
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52461F225D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:16:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E6D1C218F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAFF1AF696;
-	Thu, 20 Jun 2024 15:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2081B011B;
+	Thu, 20 Jun 2024 15:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kawdHOy7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YZVch/qq"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B8F1E51E;
-	Thu, 20 Jun 2024 15:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718896579; cv=fail; b=IJA2JBJBWco5N9uwnq2Kc1kJfuCKHQy5PPVREYeS0XXKgSTYdUjwUA7OAT4bxY2zFNA0UxmkKzjCZnTjekdjE5E9WqG7FMCnTQGLxYLuyQIJ8lps6F3yLAata7RLQc/RPuhJIFxP0QXt2REIF2y20d9rKQ2zWs+z2po3EBebgC8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718896579; c=relaxed/simple;
-	bh=XlUqzL7mGf02SgrEz+q42qeCDsG3bFK97sB0yDGf1ls=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EGNlquH7QCqL9GmEuyfOKM8iCqwNifb5/e95ODTC10B17PlqaFOflmPEFQuBvfJPJ7W49KbRZbOxvnvu7NS3Jfqb9oB8svx6gU+AegADEM43it6v9f2vkok3R2dXlpGhLBRo6HRksc842nISB+GsAzEGdXrZeoiimnnmYS8O7ZE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kawdHOy7; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718896578; x=1750432578;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=XlUqzL7mGf02SgrEz+q42qeCDsG3bFK97sB0yDGf1ls=;
-  b=kawdHOy77aoMKjxG3ftINMbEcA+rimjhMUtcNywbjMlYvz5DCG1TGD6/
-   9qqWoYH4ETa60f32i27l7fPZ7S5b7RrO0nYRZ1teFvM6V8KWO8oggZuSa
-   TbyR2L3vz6no+OcZy+FyIdDyn/nsnlYSVi5gzo825RzotaM7OE8GNmsxM
-   aBEYPJFHcq4gPxeST3l2EBiESsI0Uhr9ruUA+PLqAJldDhGGhBPyBb6aV
-   ROMQM4OTB7ayPkTnUx6Woh6KRsrSe1kQYX/yZO5/xFbnRxn5ekF3xLKiL
-   17hWxk6hgvuhHcVkoSIy/T2UUcLWZUTheXnLy5puACNRRt0qcnRQ6l4fg
-   A==;
-X-CSE-ConnectionGUID: 6iBxiiUyTyGfLMkHi3/YEA==
-X-CSE-MsgGUID: YJj1+5LIS62Tf+cSVWqZ1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="27010124"
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="27010124"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 08:16:08 -0700
-X-CSE-ConnectionGUID: lFJrIe/hTq6Fs6f5diXMug==
-X-CSE-MsgGUID: M4KVj+rhSr6ms4u3hBcDxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="42387635"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Jun 2024 08:16:03 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 20 Jun 2024 08:16:03 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 20 Jun 2024 08:16:02 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 20 Jun 2024 08:16:02 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 20 Jun 2024 08:16:02 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MBtuTyPO8lfAO1HsnQGKVrOqi3mlnaAftjNkKPdbWvWtZdrjsv2a9ECi67CAlDh5Z77SV7uwbEd5TT/3ibpjPgIIIkopZng4nRNo7I67o3nD7fXurGJ1fRvG19ZzKStt9WI1rFlNsR0twtEAuJ+QZyy3fnLW3V+Ld+GtQdvd/mn8Knlpow9z7RP/qzHb9MJypIT/gpcZ5KQr9PeUYDWjtp7SbeO9505TuvW3Rj37PFkWrF0vJFIjV1U5U0HEe5djaXcZsedO3gwx42XOrgPfSVRXJkCVyWxEW2EdWStPANQgyGS2VZLVoZs7G2hNb+o2ty3A4NTz4t9ds6rHXFmQ0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v5rVgMX5GNQwpVVpYo1HTcHQEfS9WC4R/Bo/HeLbEmA=;
- b=HvZyAZ55Ci6dyrp+ypugpExG+FBU20fztjiEf7winYA5UNNG43TcJU9uaYxs6dauCuhUo9EfQJ4deRgumId1zvAULIgcvfmQv94MKaP3oJBBXU45NgdVc66bw4Bo1TOjvJpXmREWdc4tOuRnWfRhqN4oPFlUzATPPxx4f7Qadw6S6Q1b4bHgMTqoh2di4/z0K4DVLYUZ4EM2Jld2I8k9NH5bHUWYQYO6Cl0ZP08D5aSl+xxj4rpomxpk9hr6V7OEMRfz+AfBlWMa2RoOKV/zZWlV5SuG9DgMr2zMfCfVtrcOY77iprEnhl+1LYDotX16I2XaqYdn2GKrG3npoiPKag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by BL3PR11MB6529.namprd11.prod.outlook.com (2603:10b6:208:38c::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.22; Thu, 20 Jun
- 2024 15:16:00 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.7698.017; Thu, 20 Jun 2024
- 15:16:00 +0000
-Message-ID: <38875747-d728-4784-b8da-057d999e1fac@intel.com>
-Date: Thu, 20 Jun 2024 17:15:53 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-next v2 01/14] cache: add
- __cacheline_group_{begin,end}_aligned() (+ couple more)
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-CC: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	<intel-wired-lan@lists.osuosl.org>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, Jacob Keller <jacob.e.keller@intel.com>, "Mina
- Almasry" <almasrymina@google.com>,
-	<nex.sw.ncis.osdt.itp.upstreaming@intel.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240620135347.3006818-1-aleksander.lobakin@intel.com>
- <20240620135347.3006818-2-aleksander.lobakin@intel.com>
-Content-Language: en-US
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-In-Reply-To: <20240620135347.3006818-2-aleksander.lobakin@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR0P278CA0164.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:45::14) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E98C1AF6B3
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718896584; cv=none; b=PF1VOFjvpkMma4xiut4+awTy6lhXdgWPj6rCN51aYIGhJsPCdgsWPR3K2fJkqhckIHoZ9pLDYpmQbwBQuWuSbcIOlB3Fk5kzb08x56vvFs87WiOv6vLwqPP+jEd2bF276tB7rMNJst0sSaLwc6J5KFsgylzqS82zE43wspGMgYw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718896584; c=relaxed/simple;
+	bh=KRHMtLJrF+j4+GXIMITBdynXNl/Y+VeIHS0AQJgTEBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YAX9JaVcBh//RHPVSh3G3NmKMWxkf4V6Rw8ZRCFs5Qbp8+xBEsdyR1/EXrEP2tZooy5YeEi3xo/+YXQBQY8Joa9QYhOJj3GzffaYeDtxHR5YrTdgzSe4yoN96Q2uP+DNZ2vHjnbJChs/1Ol4LJAS3L85hNaeXHLxOz+4NCl+vTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YZVch/qq; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52bc29c79fdso1111749e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:16:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718896581; x=1719501381; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QczbahY8mobXaJEZMcLZwiI4MMRcFJ224ASCceiqP1s=;
+        b=YZVch/qqT1lDZTTh3NblhKkT6lUEOQURhalXQmJ4aNnCXVNiw3gVV8SXMISm47aB5H
+         KHBSI57HwqQ07cE+DhM7LxqlgL5ZNkBLx6aVp0AJdWePSyWS5ZhEd78j54SxL2BN9Egg
+         1kZUP2+AqpFMs/62JukK/22NPaK+Kg5eUx/Yy2qPxxXDhGp/epJ8Wk8xYt/Vb3fMNSIU
+         mxW6d+c+Vn9C0j/gCR5vAMQVQ+lEQK9HDkfvWt4lptN7SKeptMxjFyseTmoVq5Quh7un
+         wE3jDKE74i4xdixOL8EkmpZntXAETteivm1fy2GwBqYKv0u6npJRFeJUXeSaChYiJRzu
+         OFwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718896581; x=1719501381;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QczbahY8mobXaJEZMcLZwiI4MMRcFJ224ASCceiqP1s=;
+        b=i5UE3+HIzKMgeh85uWXWCxG/O7ZFRT1CpCtF6pU7smn4jwYL9swbFmH8RiIk2MDHAt
+         RgN/bCN2Br9ZO+f408HWVclTvetJhpdyf2exyHCfGT1a7mSUzi/18MoQfnplk0OXPohT
+         pcZC4Wzl2aDMNABjAcOUhwzVME4+jqwk7BOGlUHi9x2h5oW2B56o+XCBu159+CgXN0dZ
+         4oFfMa2BV1dfTurPA39iP3XX64tj6vLHYh9hlta7glfNqYgozAFPwXPdK8Qtap4tnwYL
+         10+QW503yUfyknQf29/9B0jC52/NbNJLQTR93IgGiKyjm0jlh5OvOnPPmD2mr51MPIfP
+         Izyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXogGGIRGzO4I1ulyFfHG04SRtxPsvxxYAOF3c5zZWw/UeEm3xMkMLAtggtE7ARHG693FCMTU4FZ7+ov9ItKkkppMqjt5m3BFD32N5V
+X-Gm-Message-State: AOJu0YwpGIRL9aB9MPkCW3JX3O8pqM0HWyrzVsucm6h+zdFfp7FG62+Q
+	nyPL2GIXjZCSJL0Qzp6gkSlo5ZDoxzvOYTEz+WUq/I+VtvHXUQ1fV1DSc/r6VpM=
+X-Google-Smtp-Source: AGHT+IGscRI/bwMTqNox27PJIvo6iwRNWan3tUIVDnHv6SnwjilhAds1ngg2KWSBnVtn2aaKj0qiOw==
+X-Received: by 2002:a05:6512:39cd:b0:52b:7a44:e17b with SMTP id 2adb3069b0e04-52ccaa2a8eemr5144165e87.13.1718896580684;
+        Thu, 20 Jun 2024 08:16:20 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca288e6dfsm2101164e87.307.2024.06.20.08.16.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 08:16:20 -0700 (PDT)
+Date: Thu, 20 Jun 2024 18:16:18 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	angelogioacchino.delregno@collabora.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, ulf.hansson@linaro.org, quic_sibis@quicinc.com, 
+	quic_rjendra@quicinc.com, luca@z3ntu.xyz, abel.vesa@linaro.org, quic_rohiagar@quicinc.com, 
+	danila@jiaxyga.com, otto.pflueger@abscue.de, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v1 7/7] dts: arm64: qcom: ipq9574: Enable CPR
+Message-ID: <x3jznckxbnqz6lxbqpdgmevw7dppsuqiqs56vugeyxhbcmw2m4@fyk6mzrtg5b7>
+References: <20240620081427.2860066-1-quic_varada@quicinc.com>
+ <20240620081427.2860066-8-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|BL3PR11MB6529:EE_
-X-MS-Office365-Filtering-Correlation-Id: d923f6bd-d5b9-4e1d-3099-08dc913be497
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|366013|1800799021;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?c2p3b0ZTd1ZEMm9nZHJMZmZ0K1JaV3hjMGlISkJXVHdxSGZtZUdnNnBRMytD?=
- =?utf-8?B?bEFDeGZXWW5nOFduT2hsTVE1OHE2ZGFZZFk0bDY4bmR6dGE4cHlNeng2Z2ZJ?=
- =?utf-8?B?Y3NpOTRBNGRqWW9CaVVlTlkxWXhDVy9GUXV2WFRQZXZ1bDltUUdGc052M1dI?=
- =?utf-8?B?d1p6dGJRbHgwM2FRcjE0S1VCamFwaUVVRDl3M3FnRDFlUVpMallZdW5jTVR6?=
- =?utf-8?B?NGllZXpBSFJPWTZwdVhvQWM4TmFURTZLb1R3R1EzY3pudFVpTnB3Q2M4Uk8z?=
- =?utf-8?B?Zll3dVdEWXkwbTk1S2FscHFoNkJPaGdWMlo3dzdZTXhIMjlGdkVseFc0RHpx?=
- =?utf-8?B?aXEyTW1Bazg4cEZ0MG42a0tsMDZ6eEFCNGlWa25XMlREWXFaSlo4b3FTNnFt?=
- =?utf-8?B?RVNwYitMdUNsNGlJVVFrbFM4QTdaMFdkajJZR29mZzhCd2xvd1NiaVBPZ203?=
- =?utf-8?B?L2NGTlBxOU1MODF4elR1MEVuR3pPeUJ0MTBOSWkwaTZmYU42OEdXZThKQVlm?=
- =?utf-8?B?Z1NKczI1R2orOUk4ZGVDZWI0ZDZHZ2pmc2JKTmpiT2p1VkYzenJpb3E2R2th?=
- =?utf-8?B?b0l4SUh5MHUyU0RBa0x3ZG5VQ1NJa0Z5MEVldi9wYldPYUFCdFVVM01EcTJ6?=
- =?utf-8?B?dFIyWlhxVncwbFRENWdJdy9ZM2crVWZWQkVVR2ZXY3JjeTJOT0dtcEtpYnZt?=
- =?utf-8?B?RjZIL09IcFVRNnpkMnNCUmpuMjlDYTFDaHpGeFJqWW90Y2YvU2cydTRTS25K?=
- =?utf-8?B?MFFQam1ZUS85SDRqRkVieDZOTkR4THB5L3V2WEUxeFRVL2lXLzMvS0xOR1FI?=
- =?utf-8?B?R3N6bkxoSXFna2lWamc0M0ZNS0VFTzBjQk9HZERZTkxhbFpjMklVOWt0V0pB?=
- =?utf-8?B?ZG5Sd2pCTzVTVDlLRElINHVvMjRXdDVZQ1ZkRStTbXJCbWxPMm9xem8xRzFG?=
- =?utf-8?B?OWNEVjNOejIzQXZsNVJsakNIOVN4M0dzWnZYZzRoN1lHa2FwcUxPeGpRMDV3?=
- =?utf-8?B?RHdaVnpJYThKeWU5L2thR0FmWnR5dUV0KzJ6VUdHc01LWXRXTG12bG9FU3Ev?=
- =?utf-8?B?YXBlVEdLUWpWZTZTTk9hdGdBaFJYRTRMbmdtM28yd3JLb01zSSsyVHRBWHZa?=
- =?utf-8?B?Um9xT2kzVVNBYmlodzBmSFJxUklLT1VMZXhtOE90MHFjYlh1K2FBL09mQy9v?=
- =?utf-8?B?cVhvY25abmhuZTBqcC9XcXBkU3ZpN3NmeDZLb2pOazFuYXdXRUVXdmcrTFFL?=
- =?utf-8?B?SDdranpybEpsZkdsWEVHbk5WUTU2ejJEQTRjNlhTU2lCZTJnV0RPZjRKaGN6?=
- =?utf-8?B?cDY2WXpCaG16bllrbkt3ZWxkZGtsYjc5N0VQTHplUnNlQmpGc0NwdGV6Tm9l?=
- =?utf-8?B?eEQzOGdubkFvaFV0QmNuY2RwOGJtekhSQkNlNFlwT0lGS1dLZzREQ0sxbFFs?=
- =?utf-8?B?ZzhqT3RZR3JvOWlscGNDZE1GSEV1UTJ4S3BvRlJveGZ4MWVKQVlkd3FFVFdT?=
- =?utf-8?B?cTNzWURmTVhuc1FYZjJzcTFXV1cyaThFRFBETHhNbjlnOUMvVkNiNm1OOWhO?=
- =?utf-8?B?SEFieG0rdnIyZEp6NkVubGY2VmNzSURlNG0xNjQwUkJZc0pRbWUzZ2dyYzhk?=
- =?utf-8?B?UkNBcGNjbHF5U2Erbkg5N1cyS3p5U2FyU0dzR2RzWHVvS3VMWTBpeDlOTnYx?=
- =?utf-8?B?RDVZQitpWFhTcy9FYS9mUnRjWVhBN1BpbEI0YzBhaEoyOHNvVmg0T3hKYU5D?=
- =?utf-8?Q?vZME74vXAtyAB1ojYFMvIQOZ4uUDV4NX4OI/cOX?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(366013)(1800799021);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bk9sQWVqbUF3TXNaYzIyb2QzVThiUy81dUdZWEhrWjNMSlhHNVBhNmwyaXlO?=
- =?utf-8?B?Qkc1U2FKVk5CR3ZDZzdIUHNUbURlc0hnWmdnV0dNVWhsUkpZei9aOFZGS0RN?=
- =?utf-8?B?bmY4VUYwaElUNGNZMUlrSHpjd0NPRElRb1NtR3M3eEJIcklSTjVtU0lUVVdn?=
- =?utf-8?B?aXFNMVgwSkJRekNPYWxQV3U3azdaYm85YndxVGd6My9tRU0vd0hjTFFYME0r?=
- =?utf-8?B?WUl2aSt6cnpGbEFjUkpja29xemhJT0ZoNEVpRllqTjdyb3ZRelVMS25XYUlS?=
- =?utf-8?B?Z1l3SUpMcDZwOWhRNW1lSEo2QjZXTXNUTXordXMwTGV4RlIvR3FPeUt5cFF0?=
- =?utf-8?B?VzZKbUg3cjlvSTVzajVScTEvWnlUUjcwVjZGMnE2S0UvV045N09veHVtcnI5?=
- =?utf-8?B?clZERGhSRzA3RldibzhKMUxKQlk4UjlGWTdEWU5INURoaFhKWFR3dXg3anJV?=
- =?utf-8?B?YUtHK21qWnhVM3FHUURlMzg1LzdBK096YlZSSnFRRTZDc2djYmhEd2s0ZFNW?=
- =?utf-8?B?UnJFL0Q0ZzZ5WlhCS2VvcnkzaVVVeTArNnFWNTBlWlkrd3F5aUNIOUFORDk3?=
- =?utf-8?B?ZDFuU0Q0OGpuZnF4OW1oQ1pJSFFsc1RKRld0TlY5UDR3L0tuVE5UNzdMZlN6?=
- =?utf-8?B?ZHVkYlFIMjk3aHVsM0QxcjFjQzBKV1MxaXVWVDhKYVU3ZVExQVBOTkJRbngx?=
- =?utf-8?B?U0ZFanVSWWJSM0xFRVkxZUVEMVcrUUVRZG9maEllWWJZeGVkWWEzUkYxTXNL?=
- =?utf-8?B?N1dQQnpUQXR3Vi9Tc29TZzhQdTJiZkhFNmhKUnhSZnBIWWNpQ2V4dHh1NHI2?=
- =?utf-8?B?NW5ocXc5T0JQUEZWak0wVWdtY0pOZHlmb2dWSXFpZGVwcmxPOCs2UllibG9F?=
- =?utf-8?B?RndSWmRJck9FU2xnNFdFWFhrMWh5d3JhdXBiUFVXR3h5MUVrcG1FMklTV0RQ?=
- =?utf-8?B?VHNBY1MrdlJHaXdZQVVTWHRxNmNueEJvWjBaUFdaM2FBRE1MZVBmZkpoRW5k?=
- =?utf-8?B?dFBrVG96YUdRaDQ1clFYWGtsVUs0VUNHK2lwT2h5cTZTbXh3YllJcnh2UDVu?=
- =?utf-8?B?cmxIbmlqZDNKa0ZKekZ3Y0ZCamdYWmdBNWQ3RStBMzU5b0MyTGdDdk9pU09U?=
- =?utf-8?B?NHdsbG1OSFV4OXNxWENxdEZqMXgvOS9SMjhBdXJaWnF0elUrcGg5c3l6bE5T?=
- =?utf-8?B?cFpONUpNelRZbDJXWSszNDRRbmZSaW0rQjR0UTJJQi9UYTJDQVZVcVYrYXNV?=
- =?utf-8?B?TFRaYmorOEhLdGVwSzhYUVkveXF2aXZvVTNEdzJYb0I2aHVhTktJU3dIVUpi?=
- =?utf-8?B?d3hPUWNqeHY0bFo0eEVpeXBhSkxncDJtQ0lBTVJrZko2SGtjQ2R2YjV4M3pX?=
- =?utf-8?B?ckwyUVZVYXZjT0pkYUdzTUlxZ3FLNVVhd3g4bGVCeEIzSEI3TDFmQkZwam9r?=
- =?utf-8?B?eFdlM1JmRGRrMU5wZ0NidDZlRm9QblJudndrRTVaOEc3YXJoSHlsWWRDSEEy?=
- =?utf-8?B?SlpkUTNOSE5KVk8veFdIRVFYK3BKUGxWcDl2MWpIaFlWeFVOSlFITUlpbWFW?=
- =?utf-8?B?cE1qTnM0ODhMUDVyZjhpd0xMZzJJWjBtT0h5OVJCMk8yS3YzajdTVGdnejF5?=
- =?utf-8?B?bENvRkowZVRiaGUveVdzbHBFSXhFY1YxY000alJCN2g4L1A3Nm9ibGowVTYx?=
- =?utf-8?B?VHBkdUhkbC9EVHdPRGk5UTdNMGRITC9kRXdWSUNtZmIrdTY5am9NbS93S2xI?=
- =?utf-8?B?ZVV0Vm5seXZGZ3lqU2c0WXp4d3VqbkYxdjlVM2w4VHlEMkk4Yk5ydVpwckti?=
- =?utf-8?B?RmJ5Vk9zZlRCcFcrUTRIMEszZmptenNXcU1WUjJWUXdBb29Td3RtNjVEUjhv?=
- =?utf-8?B?UXRKK09lVUJGL1JBK2dRRWd1UmFqL2pvLzBZRzBpRE82SndudUc2SXRGY3Zz?=
- =?utf-8?B?cncwU1lmVXFmQ2pnTHJKQ0tMdzd6UzNGVXE3dnh5Y0FxOVMyY1NCVWl4MU9h?=
- =?utf-8?B?a2ZkSVRwaWZQNXpZZldIb1cwbEZYY0F3U1gvbU16OElUdlpxUXl0TW5vbzds?=
- =?utf-8?B?NGNDN0xyN0pQTTY0enVIUkkyajJDZjhWSjRUYnhVWEl0Q3dud0RvRDd2WGw4?=
- =?utf-8?B?elFGRlpIWUx3YTZlMGZFaW5qSTIxNHZROVlmRHFjNVNBQ3grS2NoajNKL2lO?=
- =?utf-8?B?T2c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d923f6bd-d5b9-4e1d-3099-08dc913be497
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 15:16:00.4916
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Aikbc1iQXXyW6UTBPzbf3vVF2WoGdc3FLVdDCD2P4T75Sj4Uno7RADOZllUCxe56j4IZ/NazBRQRhDTXggooYMCAz4A50w0AWe4ADQTkPlc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6529
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620081427.2860066-8-quic_varada@quicinc.com>
 
-On 6/20/24 15:53, Alexander Lobakin wrote:
-> __cacheline_group_begin(), unfortunately, doesn't align the group
-> anyhow. If it is wanted, then you need to do something like
+On Thu, Jun 20, 2024 at 01:44:27PM GMT, Varadarajan Narayanan wrote:
+> Add CPR, RPMPD, OPP table nodes as applicable to IPQ9574 to
+> enable CPR functionality on IPQ9574.
+
+Please document your CPU opp table changes in the commit message. You
+have added 792 MHz, dropped 1200 MHz. At least we need to know what's
+going on.
+
 > 
-> __cacheline_group_begin(grp) __aligned(ALIGN)
-> 
-> which isn't really convenient nor compact.
-> Add the _aligned() counterparts to align the groups automatically to
-> either the specified alignment (optional) or ``SMP_CACHE_BYTES``.
-> Note that the actual struct layout will then be (on x64 with 64-byte CL):
-> 
-> struct x {
-> 	u32 y;				// offset 0, size 4, padding 56
-> 	__cacheline_group_begin__grp;	// offset 64, size 0
-> 	u32 z;				// offset 64, size 4, padding 4
-> 	__cacheline_group_end__grp;	// offset 72, size 0
-> 	__cacheline_group_pad__grp;	// offset 72, size 0, padding 56
-> 	u32 w;				// offset 128
-> };
-> 
-> The end marker is aligned to long, so that you can assert the struct
-> size more strictly, but the offset of the next field in the structure
-> will be aligned to the group alignment, so that the next field won't
-> fall into the group it's not intended to.
-> 
-> Add __LARGEST_ALIGN definition and LARGEST_ALIGN() macro.
-> __LARGEST_ALIGN is the value to which the compilers align fields when
-> __aligned_largest is specified. Sometimes, it might be needed to get
-> this value outside of variable definitions. LARGEST_ALIGN() is macro
-> which just aligns a value to __LARGEST_ALIGN.
-> Also add SMP_CACHE_ALIGN(), similar to L1_CACHE_ALIGN(), but using
-> ``SMP_CACHE_BYTES`` instead of ``L1_CACHE_BYTES`` as the former
-> also accounts L2, needed in some cases.
-> 
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
->   include/linux/cache.h | 59 +++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 59 insertions(+)
+>  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 269 ++++++++++++++++++++++++--
+>  1 file changed, 252 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> index 04ba09a9156c..439ee5accc47 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> @@ -11,6 +11,7 @@
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/reset/qcom,ipq9574-gcc.h>
+>  #include <dt-bindings/thermal/thermal.h>
+> +#include <dt-bindings/power/qcom-rpmpd.h>
+>  
+>  / {
+>  	interrupt-parent = <&intc>;
+> @@ -42,8 +43,9 @@ CPU0: cpu@0 {
+>  			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
+>  			clock-names = "cpu";
+>  			operating-points-v2 = <&cpu_opp_table>;
+> -			cpu-supply = <&ipq9574_s1>;
+>  			#cooling-cells = <2>;
+> +			power-domains = <&apc_cprh 0>;
+> +			power-domain-names = "perf";
+>  		};
+>  
+>  		CPU1: cpu@1 {
+> @@ -55,8 +57,9 @@ CPU1: cpu@1 {
+>  			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
+>  			clock-names = "cpu";
+>  			operating-points-v2 = <&cpu_opp_table>;
+> -			cpu-supply = <&ipq9574_s1>;
+>  			#cooling-cells = <2>;
+> +			power-domains = <&apc_cprh 0>;
+> +			power-domain-names = "perf";
+>  		};
+>  
+>  		CPU2: cpu@2 {
+> @@ -68,8 +71,9 @@ CPU2: cpu@2 {
+>  			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
+>  			clock-names = "cpu";
+>  			operating-points-v2 = <&cpu_opp_table>;
+> -			cpu-supply = <&ipq9574_s1>;
+>  			#cooling-cells = <2>;
+> +			power-domains = <&apc_cprh 0>;
+> +			power-domain-names = "perf";
+>  		};
+>  
+>  		CPU3: cpu@3 {
+> @@ -81,8 +85,9 @@ CPU3: cpu@3 {
+>  			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
+>  			clock-names = "cpu";
+>  			operating-points-v2 = <&cpu_opp_table>;
+> -			cpu-supply = <&ipq9574_s1>;
+>  			#cooling-cells = <2>;
+> +			power-domains = <&apc_cprh 0>;
+> +			power-domain-names = "perf";
+>  		};
+>  
+>  		L2_0: l2-cache {
+> @@ -105,58 +110,111 @@ memory@40000000 {
+>  		reg = <0x0 0x40000000 0x0 0x0>;
+>  	};
+>  
+> +	cprh_opp_table: opp-table-cprh {
+> +		compatible = "operating-points-v2-qcom-level";
+> +
+> +		cprh_opp0: opp-0 {
+> +			opp-level = <1>;
+> +			qcom,opp-fuse-level = <1>;
+> +			qcom,opp-cloop-vadj = <0>;
+> +			qcom,opp-oloop-vadj = <0>;
+> +		};
+> +
+> +		cprh_opp1: opp-1 {
+> +			opp-level = <2>;
+> +			qcom,opp-fuse-level = <1>;
+> +			qcom,opp-cloop-vadj = <0>;
+> +			qcom,opp-oloop-vadj = <0>;
+> +		};
+> +
+> +		cprh_opp2: opp-2 {
+> +			opp-level = <3>;
+> +			qcom,opp-fuse-level = <1>;
+> +			qcom,opp-cloop-vadj = <0>;
+> +			qcom,opp-oloop-vadj = <0>;
+> +		};
+> +
+> +		cprh_opp3: opp-3 {
+> +			opp-level = <4>;
+> +			qcom,opp-fuse-level = <2>;
+> +			qcom,opp-cloop-vadj = <0>;
+> +			qcom,opp-oloop-vadj = <0>;
+> +		};
+> +
+> +		cprh_opp4: opp-4 {
+> +			opp-level = <5>;
+> +			qcom,opp-fuse-level = <2>;
+> +			qcom,opp-cloop-vadj = <0>;
+> +			qcom,opp-oloop-vadj = <0>;
+> +		};
+> +
+> +		cprh_opp5: opp-5 {
+> +			opp-level = <6>;
+> +			qcom,opp-fuse-level = <3>;
+> +			qcom,opp-cloop-vadj = <0>;
+> +			qcom,opp-oloop-vadj = <0>;
+> +		};
+> +
+> +		cprh_opp6: opp-6 {
+> +			opp-level = <7>;
+> +			qcom,opp-fuse-level = <4>;
+> +			qcom,opp-cloop-vadj = <0>;
+> +			qcom,opp-oloop-vadj = <0>;
+> +		};
+> +	};
+> +
+>  	cpu_opp_table: opp-table-cpu {
+>  		compatible = "operating-points-v2-kryo-cpu";
+>  		opp-shared;
+>  		nvmem-cells = <&cpu_speed_bin>;
+>  
+> +		opp-792000000 {
+> +			opp-hz = /bits/ 64 <792000000>;
+> +			opp-supported-hw = <0x0>;
+> +			clock-latency-ns = <200000>;
+> +			required-opps = <&cprh_opp0>;
+> +		};
+> +
+>  		opp-936000000 {
+>  			opp-hz = /bits/ 64 <936000000>;
+> -			opp-microvolt = <725000>;
+>  			opp-supported-hw = <0xf>;
+>  			clock-latency-ns = <200000>;
+> +			required-opps = <&cprh_opp1>;
+>  		};
+>  
+>  		opp-1104000000 {
+>  			opp-hz = /bits/ 64 <1104000000>;
+> -			opp-microvolt = <787500>;
+> -			opp-supported-hw = <0xf>;
+> -			clock-latency-ns = <200000>;
+> -		};
+> -
+> -		opp-1200000000 {
+> -			opp-hz = /bits/ 64 <1200000000>;
+> -			opp-microvolt = <862500>;
+>  			opp-supported-hw = <0xf>;
+>  			clock-latency-ns = <200000>;
+> +			required-opps = <&cprh_opp2>;
+>  		};
+>  
+>  		opp-1416000000 {
+>  			opp-hz = /bits/ 64 <1416000000>;
+> -			opp-microvolt = <862500>;
+>  			opp-supported-hw = <0x7>;
+>  			clock-latency-ns = <200000>;
+> +			required-opps = <&cprh_opp3>;
+>  		};
+>  
+>  		opp-1488000000 {
+>  			opp-hz = /bits/ 64 <1488000000>;
+> -			opp-microvolt = <925000>;
+>  			opp-supported-hw = <0x7>;
+>  			clock-latency-ns = <200000>;
+> +			required-opps = <&cprh_opp4>;
+>  		};
+>  
+>  		opp-1800000000 {
+>  			opp-hz = /bits/ 64 <1800000000>;
+> -			opp-microvolt = <987500>;
+>  			opp-supported-hw = <0x5>;
+>  			clock-latency-ns = <200000>;
+> +			required-opps = <&cprh_opp5>;
+>  		};
+>  
+>  		opp-2208000000 {
+>  			opp-hz = /bits/ 64 <2208000000>;
+> -			opp-microvolt = <1062500>;
+>  			opp-supported-hw = <0x1>;
+>  			clock-latency-ns = <200000>;
+> +			required-opps = <&cprh_opp6>;
+>  		};
+>  	};
+>  
+> @@ -182,6 +240,40 @@ glink-edge {
+>  			rpm_requests: rpm-requests {
+>  				compatible = "qcom,rpm-ipq9574";
+>  				qcom,glink-channels = "rpm_requests";
+> +
+> +				rpmpd: power-controller {
+> +					compatible = "qcom,ipq9574-rpmpd";
+> +					#power-domain-cells = <1>;
+> +					operating-points-v2 = <&rpmpd_opp_table>;
+> +
+> +					rpmpd_opp_table: opp-table {
+> +						compatible = "operating-points-v2";
+> +
+> +						rpmpd_opp_svs: opp1 {
+
+Where are these nodes going to be used?
+
+> +							opp-level = <RPM_SMD_LEVEL_SVS>;
+> +						};
+> +
+> +						rpmpd_opp_svs_plus: opp2 {
+> +							opp-level = <RPM_SMD_LEVEL_SVS_PLUS>;
+> +						};
+> +
+> +						rpmpd_opp_nom: opp3 {
+> +							opp-level = <RPM_SMD_LEVEL_NOM>;
+> +						};
+> +
+> +						rpmpd_opp_nom_plus: opp4 {
+> +							opp-level = <RPM_SMD_LEVEL_NOM_PLUS>;
+> +						};
+> +
+> +						rpmpd_opp_turbo: opp5 {
+> +							opp-level = <RPM_SMD_LEVEL_TURBO>;
+> +						};
+> +
+> +						rpmpd_opp_turbo_high: opp6 {
+> +							opp-level = <RPM_SMD_LEVEL_TURBO_HIGH>;
+> +						};
+> +					};
+> +				};
+>  			};
+>  		};
+>  	};
+> @@ -252,6 +344,95 @@ cpu_speed_bin: cpu-speed-bin@15 {
+>  				reg = <0x15 0x2>;
+>  				bits = <7 2>;
+>  			};
+> +
+> +			cpr_efuse_speedbin: speedbin@5 {
+> +				reg = <0x5 0x8>;
+> +				bits = <0 3>;
+> +			};
+> +
+> +			cpr_fuse_revision: cpr-fusing-rev@7 {
+> +				reg = <0x7 0x8>;
+> +				bits = <1 5>;
+> +			};
+> +
+> +			/* CPR Ring Oscillator: Power Cluster */
+> +			cpr_ro_sel0_pwrcl: rosel0-pwrcl@358 {	/* ROSEL_SVS */
+> +				reg = <0x358 0x1>;
+> +				bits = <4 4>;
+> +			};
+> +
+> +			cpr_ro_sel1_pwrcl: rosel1-pwrcl@358 {	/* ROSEL_NOM */
+> +				reg = <0x358 0x1>;
+> +				bits = <0 4>;
+> +			};
+> +
+> +			cpr_ro_sel2_pwrcl: rosel2-pwrcl@350 {	/* ROSEL_TUR */
+> +				reg = <0x350 0x1>;
+> +				bits = <4 4>;
+> +			};
+> +
+> +			cpr_ro_sel3_pwrcl: rosel3-pwrcl@350 {	/* ROSEL_STUR */
+> +				reg = <0x350 0x1>;
+> +				bits = <0 4>;
+> +			};
+> +
+> +			/* CPR Init Voltage: Power Cluster */
+> +			cpr_init_voltage0_pwrcl: ivolt0-pwrcl@343 {	/* VOLT_SVS */
+> +				reg = <0x343 0x1>;
+> +				bits = <0 6>;
+> +			};
+> +
+> +			cpr_init_voltage1_pwrcl: ivolt1-pwrcl@342 {	/* VOLT_NOM */
+> +				reg = <0x342 0x1>;
+> +				bits = <2 6>;
+> +			};
+> +
+> +			cpr_init_voltage2_pwrcl: ivolt2-pwrcl@341 {	/* VOLT_TUR */
+> +				reg = <0x341 0x2>;
+> +				bits = <4 6>;
+> +			};
+> +
+> +			cpr_init_voltage3_pwrcl: ivolt3-pwrcl@340 {	/* VOLT_STUR */
+> +				reg = <0x340 0x2>;
+> +				bits = <6 6>;
+> +			};
+> +
+> +			/* CPR Target Quotients: Power Cluster */
+> +			cpr_quot0_pwrcl: quot0-pwrcl@354 {	/* QUOT_VMIN_SVS */
+> +				reg = <0x354 0x2>;
+> +				bits = <0 12>;
+> +			};
+> +
+> +			cpr_quot1_pwrcl: quot1-pwrcl@352 {	/* QUOT_VMIN_NOM */
+> +				reg = <0x352 0x2>;
+> +				bits = <4 12>;
+> +			};
+> +
+> +			cpr_quot2_pwrcl: quot2-pwrcl@351 {	/* QUOT_VMIN_TUR */
+> +				reg = <0x351 0x2>;
+> +				bits = <0 12>;
+> +			};
+> +
+> +			cpr_quot3_pwrcl: quot3-pwrcl@355 {	/* QUOT_VMIN_STUR */
+> +				reg = <0x355 0x2>;
+> +				bits = <4 12>;
+> +			};
+> +
+> +			/* CPR Quotient Offsets: Power Cluster */
+> +			cpr_quot_offset1_pwrcl: qoff1-pwrcl@34e {	/* QUOT_OFFSET_NOM_SVS */
+> +				reg = <0x34e 0x1>;
+> +				bits = <0 8>;
+> +			};
+> +
+> +			cpr_quot_offset2_pwrcl: qoff2-pwrcl@34d {	/* QUOT_OFFSET_TUR_NOM */
+> +				reg = <0x34d 0x1>;
+> +				bits = <0 8>;
+> +			};
+> +
+> +			cpr_quot_offset3_pwrcl: qoff0-pwrcl@34c {	/* QUOT_OFFSET_STUR_TUR */
+> +				reg = <0x34c 0x1>;
+> +				bits = <0 8>;
+> +			};
+>  		};
+>  
+>  		cryptobam: dma-controller@704000 {
+> @@ -639,6 +820,60 @@ usb_0_dwc3: usb@8a00000 {
+>  			};
+>  		};
+>  
+> +		apc_cprh: power-controller@b018000 {
+> +			compatible = "qcom,ipq9574-cprh", "qcom,cprh";
+> +			reg = <0x0b018000 0x4000>,
+> +			      <0x00048000 0x4000>;
+> +
+> +			clocks = <&gcc GCC_RBCPR_CLK>;
+> +
+> +			interrupts = <GIC_SPI 15 IRQ_TYPE_EDGE_RISING>;
+> +			vdd-supply = <&ipq9574_s1>;
+> +
+> +			/* Set the CPR clock here, it needs to match XO */
+> +			assigned-clocks = <&gcc GCC_RBCPR_CLK>;
+> +			assigned-clock-rates = <24000000>;
+> +
+> +			operating-points-v2 = <&cprh_opp_table>;
+> +			power-domains = <&rpmpd IPQ9574_VDDAPC>;
+> +			#power-domain-cells = <1>;
+> +
+> +			nvmem-cells = <&cpr_efuse_speedbin>,
+> +				      <&cpr_fuse_revision>,
+> +				      <&cpr_quot0_pwrcl>,
+> +				      <&cpr_quot1_pwrcl>,
+> +				      <&cpr_quot2_pwrcl>,
+> +				      <&cpr_quot3_pwrcl>,
+> +				      <&cpr_quot_offset1_pwrcl>,
+> +				      <&cpr_quot_offset2_pwrcl>,
+> +				      <&cpr_quot_offset3_pwrcl>,
+> +				      <&cpr_init_voltage0_pwrcl>,
+> +				      <&cpr_init_voltage1_pwrcl>,
+> +				      <&cpr_init_voltage2_pwrcl>,
+> +				      <&cpr_init_voltage3_pwrcl>,
+> +				      <&cpr_ro_sel0_pwrcl>,
+> +				      <&cpr_ro_sel1_pwrcl>,
+> +				      <&cpr_ro_sel2_pwrcl>,
+> +				      <&cpr_ro_sel3_pwrcl>;
+> +			nvmem-cell-names = "cpr_speed_bin",
+> +					   "cpr_fuse_revision",
+> +					   "cpr0_quotient1",
+> +					   "cpr0_quotient2",
+> +					   "cpr0_quotient3",
+> +					   "cpr0_quotient4",
+> +					   "cpr0_quotient_offset2",
+> +					   "cpr0_quotient_offset3",
+> +					   "cpr0_quotient_offset4",
+> +					   "cpr0_init_voltage1",
+> +					   "cpr0_init_voltage2",
+> +					   "cpr0_init_voltage3",
+> +					   "cpr0_init_voltage4",
+> +					   "cpr0_ring_osc1",
+> +					   "cpr0_ring_osc2",
+> +					   "cpr0_ring_osc3",
+> +					   "cpr0_ring_osc4";
+> +		};
+> +
+>  		intc: interrupt-controller@b000000 {
+>  			compatible = "qcom,msm-qgic2";
+>  			reg = <0x0b000000 0x1000>,  /* GICD */
+> -- 
+> 2.34.1
 > 
 
-[...]
-
-> +/**
-> + * __cacheline_group_begin_aligned - declare an aligned group start
-> + * @GROUP: name of the group
-> + * @...: optional group alignment
-
-didn't know that you could document "..." :)
-
-> + *
-> + * The following block inside a struct:
-> + *
-> + *	__cacheline_group_begin_aligned(grp);
-> + *	field a;
-> + *	field b;
-> + *	__cacheline_group_end_aligned(grp);
-> + *
-> + * will always be aligned to either the specified alignment or
-> + * ``SMP_CACHE_BYTES``.
-> + */
-> +#define __cacheline_group_begin_aligned(GROUP, ...)		\
-> +	__cacheline_group_begin(GROUP)				\
-> +	__aligned((__VA_ARGS__ + 0) ? : SMP_CACHE_BYTES)
-
-nice trick :) +0
-
-> +
-> +/**
-> + * __cacheline_group_end_aligned - declare an aligned group end
-> + * @GROUP: name of the group
-> + * @...: optional alignment (same as was in __cacheline_group_begin_aligned())
-> + *
-> + * Note that the end marker is aligned to sizeof(long) to allow more precise
-> + * size assertion. It also declares a padding at the end to avoid next field
-> + * falling into this cacheline.
-> + */
-> +#define __cacheline_group_end_aligned(GROUP, ...)		\
-> +	__cacheline_group_end(GROUP) __aligned(sizeof(long));	\
-> +	struct { } __cacheline_group_pad__##GROUP		\
-> +	__aligned((__VA_ARGS__ + 0) ? : SMP_CACHE_BYTES)
-> +
->   #ifndef CACHELINE_ASSERT_GROUP_MEMBER
->   #define CACHELINE_ASSERT_GROUP_MEMBER(TYPE, GROUP, MEMBER) \
->   	BUILD_BUG_ON(!(offsetof(TYPE, MEMBER) >= \
-
-Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+-- 
+With best wishes
+Dmitry
 
