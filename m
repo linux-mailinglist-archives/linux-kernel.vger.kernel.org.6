@@ -1,108 +1,105 @@
-Return-Path: <linux-kernel+bounces-223097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD13910D9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:53:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A086910D9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A321F21FCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:53:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A6491C21DF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B2A1B372E;
-	Thu, 20 Jun 2024 16:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AB91B3721;
+	Thu, 20 Jun 2024 16:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PZ58B+r9"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T3dGvHhj"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1ED317545;
-	Thu, 20 Jun 2024 16:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2343017545;
+	Thu, 20 Jun 2024 16:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718902367; cv=none; b=VgXSWWp3nXyeSTrCI39IDuKzNmBOJ3SDFJWESHPTeJEw/oos+TYUawHw8KOLs02mtf38Kyvq7Kl/XAm6pE/Law+9E3LMG5awGcbFS/a/p8xhEE8FT2hpvg1fkkLUgq1ApQJCOiqHa3i7D++RKSz8EcDEPVMa/BxFF5Qk9FDqd8o=
+	t=1718902401; cv=none; b=oO0wj8OxlDyXGBa4hs3MkByjXPej5ClffE8iPvxHGO8a7NdU9hlv3CWJGHa4TP41BQTGI4+lmiibalwlsnsQt7kexniC/XvxU7IeMPJ5IDTxwwfdXxARJuOVnSWsDQbgk824x7LoUJiKJcovtDoq1TpqvQJD088c6tERfeOy4Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718902367; c=relaxed/simple;
-	bh=qbAYQwuAZ3+wqE5qpkltgeY9gIOi1oncenNBRJRTJTk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sl6SUKXieLUaNV0B/Win3s9lHhlQZ+uH3PHt8NUB9ynK/COuRNyeH51m985T5swg695oHnghIZ5r5DaRf1BeapJxznAB/RSNZzpaXbW1eOkOWHKdzjsASUQIt/eivtNXHTlqAhnutwQxqfl53qdhr0hKg16a3ytT7mkqfmwFjCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PZ58B+r9; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45KGqQKQ070807;
-	Thu, 20 Jun 2024 11:52:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718902346;
-	bh=HG1bfcMijyIFrjAnBLZjdBnssxxpZ4esXoREhIa1pjM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=PZ58B+r90OegnbC0udY0dzwaoPOwxby3SKaz8mAZwm0IW2iGKQXON5/H33HYpA6e4
-	 gzRuO/nN8LNt3ff8zinl+KLMiw/wzfOjEI4qtX8O8UC67ibKow2AiufjJEE4ulj8Ud
-	 F1NA5jVNDS8dC149dVZC1d6GDuO/EYPp7u1LOveo=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45KGqQbm020672
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 20 Jun 2024 11:52:26 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 20
- Jun 2024 11:52:25 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 20 Jun 2024 11:52:26 -0500
-Received: from [10.250.212.197] ([10.250.212.197])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45KGqMX1051378;
-	Thu, 20 Jun 2024 11:52:22 -0500
-Message-ID: <8dd345ae-7da3-440f-9d9c-d2b0500ba78b@ti.com>
-Date: Thu, 20 Jun 2024 19:52:21 +0300
+	s=arc-20240116; t=1718902401; c=relaxed/simple;
+	bh=7AmTvR060R3Xb4pZV+tbl305NBdOBTN3BeShU8bb3iM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tmZlClsbStZrcMXJlqClt75I6MSn8+0aCYJoTNjpfrlDTiDgpRVBD+3qoQ1rMS5WCGjkC+TlmhZYI3VN8u9e7LLzuZskHLQSvNcPyIqSDGOpBSCfM3ihwULse7YqjIC36YY/lZB5E7Gr9G5zUvW9zz+GdRUTlZfBYW7uPAAiRj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T3dGvHhj; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f9d0354d8cso666705ad.2;
+        Thu, 20 Jun 2024 09:53:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718902399; x=1719507199; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7AmTvR060R3Xb4pZV+tbl305NBdOBTN3BeShU8bb3iM=;
+        b=T3dGvHhj3h8jfBxzbt1u3QsqoquhQTrUk8SHgpSW5D330zMeZT3NJorW1fEP8ay/4h
+         X79yP50NZLXDz51Co4JxKq8i/Z5jsTXzjVJ2Np8neJDnA0GH5EJf5ZDEt0TXEoi9tZzp
+         DI+fX/XqSwOaPtChimPZ1oOfQDFRMYCtP3uXfewNWocSyCBiOAhdJa3nmdySsA2Cemv7
+         SNVUr2Nu+xG1mNA+6SaLFWMMJGWI3aLqhD+ZHjCt5RwUn4mqUhIYXbbtea1GG6NKb7lI
+         dxbQd/kKCCYly4rda8/l1cw60PUdJCHg6prEqLEgwYnuEp7UN2ebwSgP9vJSRNua+72r
+         GCIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718902399; x=1719507199;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7AmTvR060R3Xb4pZV+tbl305NBdOBTN3BeShU8bb3iM=;
+        b=nHAx3PFMXP59OEBzg4RnxSL1Qm3dcpgGYjTlV7dGZ88HvMKTLK+E7RC+kenAt8JJA9
+         sB1zNTdNcczRwblIRQnPhY3B6Y4mPmAgab9SDJVlqpYeF0kLd6c1EzNoWPbaQABj50R5
+         bybw8cWko6L3ztC57mplrr0tu0+5vUoq41qUSBHz48FLBqHTx6j1ORVZdc6wvmgQcdJI
+         zXahdMxOrjrJlS0etrZkh3bYaWNGIntssBdunL32jcc8fWzGoHDfQYLtasUzoLK7AV7X
+         dCMyLbMkAdcLjCyn8GudGaXWmHGGC0bC7SY/wS1j6Eb74Bbupv92KPZB4yu3UkXVUR2W
+         gPPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXRPV5l7XT4J/08YIOFceWT612rK5lyCIGtZu+vmQWZyMuHy/kASahmCAm+ZmHRxIx/DZMXuJDx+QK1mOntm/Wm5U9NOaMv4myrQl0tuWj91dnRMOE8ymRUh9X1ofVKdrWB1fzLDv2hg==
+X-Gm-Message-State: AOJu0Yy6H96b+yrZaJya+NdsXIfGpKhvuQwz5IrHf+NxbaBp3+ENJIAC
+	2IdOE4/pqorfNGnZ5Psd1vR6hRdt8pLPVAbISnd3muWU5W2lM5HubcxZqsWYbmvaMse74GF/CtR
+	FX2KcUF3kK8xY752VHGjAZdvWAJI=
+X-Google-Smtp-Source: AGHT+IF/WclI9nxVPYbvTRGt5Ozim4FmlJxWK0XFHHvagUIq2drNW2Tk+Lnvy0cKdMs9XBclyq0RBzh5sfTQdRGOXDg=
+X-Received: by 2002:a05:6a20:a12b:b0:1b4:e10c:62bd with SMTP id
+ adf61e73a8af0-1bcbb3fd1cdmr6155893637.2.1718902399386; Thu, 20 Jun 2024
+ 09:53:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/17] wifi: cc33xx: Add init.c, init.h
-To: Simon Horman <horms@kernel.org>
-CC: Sabeeh Khan <sabeeh-khan@ti.com>, Kalle Valo <kvalo@kernel.org>,
-        Johannes
- Berg <johannes.berg@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240609182102.2950457-1-michael.nemanov@ti.com>
- <20240609182102.2950457-12-michael.nemanov@ti.com>
- <20240615085133.GA234885@kernel.org>
- <8dbb30be-3c0c-43c9-8f7a-dbfeeca3837e@ti.com>
- <20240620163048.GK959333@kernel.org>
-Content-Language: en-US
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-In-Reply-To: <20240620163048.GK959333@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1716962565-2084-1-git-send-email-hongxing.zhu@nxp.com>
+ <1716962565-2084-3-git-send-email-hongxing.zhu@nxp.com> <2f15baba-68b5-4e99-bdb5-6d2e05b7688b@roeck-us.net>
+In-Reply-To: <2f15baba-68b5-4e99-bdb5-6d2e05b7688b@roeck-us.net>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 20 Jun 2024 13:53:08 -0300
+Message-ID: <CAOMZO5ApiFtRYB5gtzxQj53SLGu_64-J_owEt4MYzABM249qpw@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] phy: freescale: imx8qm-hsio: Add i.MX8QM HSIO PHY
+ driver support
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>, conor@kernel.org, vkoul@kernel.org, 
+	kishon@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	frank.li@nxp.com, conor+dt@kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel@pengutronix.de, imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/20/2024 7:30 PM, Simon Horman wrote:
+On Thu, Jun 20, 2024 at 1:39=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
+wrote:
 
-...
+> Building alpha:allmodconfig ... failed
+> --------------
+> Error log:
+> drivers/phy/freescale/phy-fsl-imx8qm-hsio.c: In function 'imx_hsio_set_mo=
+de':
+> drivers/phy/freescale/phy-fsl-imx8qm-hsio.c:459:15: error: implicit decla=
+ration of function 'FIELD_PREP'
 
-> Hi Michael,
-> 
-> I tried this again with GCC 13.2.0 on x86_64 with allmodconfig.
-> And I was able to see this with a W=1 (make W=1) build.
-> 
+Nathan sent a fix for it and Vinod applied:
 
-Oh it was the combination of CONFIG_FORTIFY_SOURCE=y (from allmodconfig) 
-and W=1. Thanks, I see it now.
-
-Michael.
-
+https://lore.kernel.org/linux-phy/171890153156.219744.4144352903595964774.b=
+4-ty@kernel.org/
 
