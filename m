@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-222127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794CA90FD2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:58:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5888690FD2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D919D286CE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:58:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECD4D287000
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 06:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB4945BEF;
-	Thu, 20 Jun 2024 06:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B7A482D7;
+	Thu, 20 Jun 2024 06:58:35 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0453941746
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A440B41C92
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 06:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718866711; cv=none; b=QiZwIv2XVxOQkEo1l7F4g01wXcl+L2oVtKFkIy6an02dfwLJpUjAjlG4nT+GbqkPRUAxglDR6Gs5mv0ZSR5foj66gccblCdUcsR/DtLC2K9ehN6nWrWe4tQunrHw+NDKJOe7jV+aKfieFkvLP/fp/CIPkucZdua0r/TcWQTn57s=
+	t=1718866715; cv=none; b=UtilIa7rcYoYw6OpHtVtTbinN8LEUXeKFB1ae3U9h0YG17Q487Pgd8pjtYKvucN/CaTJzAXMRudzYhn5XwgDPnFwtbOWueukVgYhCgFT1ef9Kk66ozJe9raExfCkkwkk9u0n65R2qNN6xwJHpUEV+FDvvSOKRjgc6o/hAnV1gjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718866711; c=relaxed/simple;
-	bh=xjbJFsh+DNwv7lE4wWk8mOP/meWAocKRf2LzgDRYUqg=;
+	s=arc-20240116; t=1718866715; c=relaxed/simple;
+	bh=Mnxp7ulmZhX7evHvfvvrVYDQQD3VnbjXhZM63/SYV50=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=py4K603E9I8AoF1WNEGweSiNI+v3Q8SjJnZAPy3g1PvfcrD4CvcHRovFHAXufehmTJX5tG3kCLqRu3CwdIxXok4lnf3y2vIK0alir4qlJSh1mZpgg5+/vQvG1hKuap3AsNCo4lnVgDATkB5Rn+/d4xGlatKqI5BsEgWgmHhk9uk=
+	 MIME-Version; b=nGVzSBz5QLdxzUgzd0TiBNgxcNeeU9oDk39HDC1LCNjaC30sVfVnS1oSanM4zMcHEXpuKBfogjfuZ+nSAZdHaezmvDMYJ1Pprm5p2ELc8alGwdxQ5Fx8ZotyW07/I9J/DtLNmZGDTVUHtMYoh9WDvTuYlDZSD1w7LuVc3nr45pY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3857B1684;
-	Wed, 19 Jun 2024 23:58:53 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0AE71042;
+	Wed, 19 Jun 2024 23:58:57 -0700 (PDT)
 Received: from a077893.arm.com (unknown [10.163.46.59])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7FD533F73B;
-	Wed, 19 Jun 2024 23:58:24 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 185A23F73B;
+	Wed, 19 Jun 2024 23:58:28 -0700 (PDT)
 From: Anshuman Khandual <anshuman.khandual@arm.com>
 To: linux-arm-kernel@lists.infradead.org,
 	maz@kernel.org
@@ -44,9 +44,9 @@ Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
 	Mark Brown <broonie@kernel.org>,
 	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [RFC 02/10] arm64/sysreg: Update ID_AA64DFR0_EL1 register
-Date: Thu, 20 Jun 2024 12:27:59 +0530
-Message-Id: <20240620065807.151540-3-anshuman.khandual@arm.com>
+Subject: [RFC 03/10] arm64/sysreg: Add register fields for ID_AA64DFR2_EL1
+Date: Thu, 20 Jun 2024 12:28:00 +0530
+Message-Id: <20240620065807.151540-4-anshuman.khandual@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240620065807.151540-1-anshuman.khandual@arm.com>
 References: <20240620065807.151540-1-anshuman.khandual@arm.com>
@@ -58,8 +58,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This updates ID_AA64DFR0_EL1.[SEBEP|PMSS|PMUVer] register fields as per the
-definitions based on DDI0601 2024-03.
+This adds register fields for ID_AA64DFR2_EL1 as per the definitions based
+on DDI0601 2024-03.
 
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will@kernel.org>
@@ -68,39 +68,33 @@ Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
- arch/arm64/tools/sysreg | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ arch/arm64/tools/sysreg | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
-index b50dd7568c0d..4b44ea5dce7e 100644
+index 4b44ea5dce7e..df9111d11bc0 100644
 --- a/arch/arm64/tools/sysreg
 +++ b/arch/arm64/tools/sysreg
-@@ -1226,9 +1226,15 @@ UnsignedEnum	35:32	PMSVer
- 	0b0101	V1P4
- EndEnum
- Field	31:28	CTX_CMPs
--Res0	27:24
-+UnsignedEnum	27:24	SEBEP
+@@ -1294,6 +1294,19 @@ Field	15:8	BRPs
+ Field	7:0	SYSPMUID
+ EndSysreg
+ 
++Sysreg	ID_AA64DFR2_EL1	3	0	0	5	2
++Res0	63:8
++UnsignedEnum	7:4	BWE
++	0b0000	NI
++	0b0001	IMP
++	0b0010	IMP_WPT
++EndEnum
++UnsignedEnum	3:0	STEP
 +	0b0000	NI
 +	0b0001	IMP
 +EndEnum
- Field	23:20	WRPs
--Res0	19:16
-+UnsignedEnum	19:16	PMSS
-+	0b0000	NI
-+	0b0001	IMP
-+EndEnum
- Field	15:12	BRPs
- UnsignedEnum	11:8	PMUVer
- 	0b0000	NI
-@@ -1238,6 +1244,7 @@ UnsignedEnum	11:8	PMUVer
- 	0b0110	V3P5
- 	0b0111	V3P7
- 	0b1000	V3P8
-+	0b1001	V3P9
- 	0b1111	IMP_DEF
- EndEnum
- UnsignedEnum	7:4	TraceVer
++EndSysreg
++
+ Sysreg	ID_AA64AFR0_EL1	3	0	0	5	4
+ Res0	63:32
+ Field	31:28	IMPDEF7
 -- 
 2.25.1
 
