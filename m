@@ -1,232 +1,176 @@
-Return-Path: <linux-kernel+bounces-223099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6184C910DA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:53:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F6E910DA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEDD21F223FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:53:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC862818DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247B117545;
-	Thu, 20 Jun 2024 16:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F861B3731;
+	Thu, 20 Jun 2024 16:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I09D2cnI"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c6+1Sb2Y"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964461A8C18;
-	Thu, 20 Jun 2024 16:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3351E17545;
+	Thu, 20 Jun 2024 16:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718902416; cv=none; b=SCAxs95KBS9JRi6TPesREo/xIeusnV3WVzZuUakkuG1tMLk+IQ9zysPOmj5yfb/NK+yWbTtrQyPQu5ZjYFTHTeRV8xqZSvIes+Z+PTxJDiEH9632e0gMSGFX0Lx1DQEBOxzfXEHq/MHTtRjvV0nLPXVmUpkVV2ql9jFu6lviJX0=
+	t=1718902473; cv=none; b=XxDdiatWdYsMxb7U2B81lISRfwKojS7TudkKGdvaA1+OLCaN4tKd3cfDsksbJP099tNoNyv+RYsa193djdZj9VjxIngNBZl6SAxKjWAvoqjcMLNVwS6V6omdmS0JgJXNyiYR9AasT3ifRnwmXWHOxJiIR8kVU/IeI55jh2+iJY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718902416; c=relaxed/simple;
-	bh=iM5Eg97x8n8d8z/94RRfa6VktLX6DakK5UrL/H3w44k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sN8VZr4zz9XW87nQGTQ0MCbZrtlH8f+riucJDugbqFqO5cKDUn1Yq/LD7Fw2afkoSIGVzyvs8J+g/WmSnR41WUXcgJVNVAFAEHiQFSDW7RPhH2FPxW+B8UxV9byn6g2+dznSDWu7aMJ5xcg4izW63tRea9MEAoQRZDZV6g33Uxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I09D2cnI; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ebe3bac6c6so13292431fa.1;
-        Thu, 20 Jun 2024 09:53:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718902413; x=1719507213; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XlSI1kU5EfoPWbu4rORadLRlFAtcZ+ELmaMk1xCCeVI=;
-        b=I09D2cnIm1hQf9lUyh2xpLW0JRaCM7dmeYHSytahgCGESQyaYxDwx8lAHjcxGyMelN
-         Bt5knjmDCmGmTvmLeuWn/x14cuhuphgZpQr3xjcIyD5ZZJRcrwxF6OsKztGZnSqi3EQy
-         tkNay8DDPQ+aP0wNEhu7n/JSZ948o7N47E2QIlfYui7hiH/bzR8msn2o86v/PIl90Rs2
-         QdMt7TlsbuqpNTUxBydxDCxktwWL25VSlaCYOXQ5Rok8dX/42RfVpSuKKSiGPnN1pAnZ
-         9j3tAVwxOnCLVHWYmMrVc5aIxKXJjyolxnPQPQ+8PIXl2QOrJ6uKZnQc3feIJ5gMD/E0
-         ocDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718902413; x=1719507213;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XlSI1kU5EfoPWbu4rORadLRlFAtcZ+ELmaMk1xCCeVI=;
-        b=PRxg8M2ugR1QyfXqHhA/HfzYZxEW6m9xkIhqZv7O7B7VaOAVDl0OvCbMpacLwFGaYM
-         b77pB7R4q2/GnC3q/W/ByhzgjIzu3VqNIH9Mi4qyfsEfW+2n4k3hqT/q1Jp0D9FXZu8j
-         TMttTF3Na0uU02gkjGpljwE+ykNnhUOR4Y4Nsrepg8MTXlayFn36wv//bdFE+sDMszcS
-         iM0rijEt2NDTjnrWz4YclKs66b1YDbNErXJrneYOURvP4u+zanwn0Xv2XDmWeiL49E8Q
-         vHWTuAKZdQHsyFvBUKw0mKdhe6U4PZosGD1Arx+FU5fC2v497tHu96HMYaet5nLoRDs6
-         Nb2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXoyM3G3VlgredCXrZ1geNYb+l4dsLZ2Iii3E1VMXKT2DTBS+ECQ+ADVyzXNEJ9tn5vHPXTCIaPCeTeGYciy8rwQIIt0YXXnqkDhCGirklCG4bxtzwqP5Q08G/gCSow1oQgRyh40QfDCEdOLzJW
-X-Gm-Message-State: AOJu0Yz5stXDCZ+RfI+VXqSP7PBJxg+WR5EJT1fKzEA2OndGBVpoBWXq
-	UJ9tQB6+lJv/JJhI8eYwnjjNepiELa9EspT1uk04McSV1vTAYOLOQlZXp+EqrakounD8pnKLXXh
-	X6VykcweiUhZywrfDJAgoF4EkVyM=
-X-Google-Smtp-Source: AGHT+IFYNYaMtnMjT1lCQBP24bfOt2PsGSoUdV1BJ8zPVziliE1+X33uhkQ2caEYoAad3z1jsIsKR1FmYKEPuzMlGZQ=
-X-Received: by 2002:a2e:9949:0:b0:2eb:d9b3:634b with SMTP id
- 38308e7fff4ca-2ec3cfe0d2cmr41715041fa.46.1718902412428; Thu, 20 Jun 2024
- 09:53:32 -0700 (PDT)
+	s=arc-20240116; t=1718902473; c=relaxed/simple;
+	bh=h2t57nJLoz5RZ64WPddtZ0+12QrwCgUUG1Ucxb+b+Mk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YOobzmt1321nZNxGiIoqsxoLAjJ3R/zT6Nv0UfrdsVRwDeSgfYEuCnIOygknsMekeYCgMLqQ/pNmBOXEgHW0gCxEoMBn8F3KiQANatUqnn2XmdGPNDmCI8GDFF5qFIvbM3HGVVsNzq+n19vPdJ0oszQuMrktgcFwL6Drcz+21Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c6+1Sb2Y; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K9v9ku002533;
+	Thu, 20 Jun 2024 16:54:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	v+yEuDylbLxT0gUrqRYwbUC3arI+5fFPpiDRHx6W3gg=; b=c6+1Sb2YfEC0h+0Y
+	DbjpdGBSucR5+0DJN5hWuUY1muXN/pIqy1Hj0UQx7ZLmy9ln+esNXics8rz/4BBj
+	P2v8JIXT5xJ5LEZ0ovPAhsFP16Eruln49qQibvRcYENORKHA/nDLyAa18JljhIXR
+	/KUm3SLCq/khsuT4QJ705m/s5a14LVCnDxe6g/QbFb1lxl3gImhHkHZmT/B/+sXC
+	moV7yZ+sv8aD7MHz0CBrAVJ3VLFkBVrx3cbbtk61SzZmQqKzobL6uRYQqd2gI36c
+	2NSURaQpcTyHgG9YUZ+oe1ZpfAATtB7NNc7Z4MOMsbY9tyK1yne31k8e1NgKJyOc
+	FeTgkQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvaqbt061-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 16:54:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KGsITP015234
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 16:54:18 GMT
+Received: from [10.110.82.141] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
+ 2024 09:54:15 -0700
+Message-ID: <51832bc1-19ad-2865-2257-97eeeb8b44ee@quicinc.com>
+Date: Thu, 20 Jun 2024 09:54:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABBYNZKArASNApkJPvJn8C4HE0y5aZy0X2ZrOjjdrsDhBO+7rQ@mail.gmail.com>
- <tencent_8D9918CF808DC6A5FF8DCB12055DECDDF107@qq.com>
-In-Reply-To: <tencent_8D9918CF808DC6A5FF8DCB12055DECDDF107@qq.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Thu, 20 Jun 2024 12:53:19 -0400
-Message-ID: <CABBYNZLu-wAu6cdyDVim=bP+0Ld-P=YvENO=fa6r=rdY4UqukQ@mail.gmail.com>
-Subject: Re: [PATCH v2] bluetooth/l2cap: sync sock recv cb and release
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, marcel@holtmann.org, 
-	syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] drm/msm/dpu: protect ctl ops calls with validity checks
+Content-Language: en-US
+To: Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+CC: <freedreno@lists.freedesktop.org>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
+        <dan.carpenter@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240619212743.3193985-1-quic_abhinavk@quicinc.com>
+ <CAA8EJpowTONWNQH+Sqe1w1eL85Ty4tw8_Qkc1yToQu9s17Tokw@mail.gmail.com>
+ <CAF6AEGsQLqf96g9iaUqB1D6zcay8csvUH7oyirTd04x+bUzvYA@mail.gmail.com>
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAF6AEGsQLqf96g9iaUqB1D6zcay8csvUH7oyirTd04x+bUzvYA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _zisnYxbYC3c_8ke1MS7UfwmuEPJZfLp
+X-Proofpoint-ORIG-GUID: _zisnYxbYC3c_8ke1MS7UfwmuEPJZfLp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_08,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 bulkscore=0 phishscore=0 mlxlogscore=999
+ priorityscore=1501 malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200122
 
-Hi Edward,
 
-On Fri, Jun 14, 2024 at 9:46=E2=80=AFPM Edward Adam Davis <eadavis@qq.com> =
-wrote:
->
-> The problem occurs between the system call to close the sock and hci_rx_w=
-ork,
-> where the former releases the sock and the latter accesses it without loc=
-k protection.
->
->            CPU0                       CPU1
->            ----                       ----
->            sock_close                 hci_rx_work
->            l2cap_sock_release         hci_acldata_packet
->            l2cap_sock_kill            l2cap_recv_frame
->            sk_free                    l2cap_conless_channel
->                                       l2cap_sock_recv_cb
->
-> If hci_rx_work processes the data that needs to be received before the so=
-ck is
-> closed, then everything is normal; Otherwise, the work thread may access =
-the
-> released sock when receiving data.
->
-> Add a chan mutex in the rx callback of the sock to achieve synchronizatio=
-n between
-> the sock release and recv cb.
->
-> Sock is dead, so set chan data to NULL, avoid others use invalid sock poi=
-nter.
->
-> Reported-and-tested-by: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail=
-.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  net/bluetooth/l2cap_sock.c | 25 ++++++++++++++++++++++---
->  1 file changed, 22 insertions(+), 3 deletions(-)
->
-> diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
-> index 6db60946c627..f45cdf9bc985 100644
-> --- a/net/bluetooth/l2cap_sock.c
-> +++ b/net/bluetooth/l2cap_sock.c
-> @@ -1239,6 +1239,10 @@ static void l2cap_sock_kill(struct sock *sk)
->
->         BT_DBG("sk %p state %s", sk, state_to_string(sk->sk_state));
->
-> +       /* Sock is dead, so set chan data to NULL, avoid other task use i=
-nvalid
-> +        * sock pointer.
-> +        */
-> +       l2cap_pi(sk)->chan->data =3D NULL;
->         /* Kill poor orphan */
->
->         l2cap_chan_put(l2cap_pi(sk)->chan);
-> @@ -1481,12 +1485,25 @@ static struct l2cap_chan *l2cap_sock_new_connecti=
-on_cb(struct l2cap_chan *chan)
->
->  static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff *s=
-kb)
->  {
-> -       struct sock *sk =3D chan->data;
-> -       struct l2cap_pinfo *pi =3D l2cap_pi(sk);
-> +       struct sock *sk;
-> +       struct l2cap_pinfo *pi;
->         int err;
->
-> -       lock_sock(sk);
-> +       /* To avoid race with sock_release, a chan lock needs to be added=
- here
-> +        * to synchronize the sock.
-> +        */
-> +       l2cap_chan_hold(chan);
-> +       l2cap_chan_lock(chan);
-> +       sk =3D chan->data;
->
-> +       if (!sk) {
-> +               l2cap_chan_unlock(chan);
-> +               l2cap_chan_put(chan);
-> +               return -ENXIO;
-> +       }
-> +
-> +       pi =3D l2cap_pi(sk);
-> +       lock_sock(sk);
->         if (chan->mode =3D=3D L2CAP_MODE_ERTM && !list_empty(&pi->rx_busy=
-)) {
->                 err =3D -ENOMEM;
->                 goto done;
-> @@ -1535,6 +1552,8 @@ static int l2cap_sock_recv_cb(struct l2cap_chan *ch=
-an, struct sk_buff *skb)
->
->  done:
->         release_sock(sk);
-> +       l2cap_chan_unlock(chan);
-> +       l2cap_chan_put(chan);
->
->         return err;
->  }
-> --
-> 2.43.0
 
-Looks like this was never really tested properly:
+On 6/20/2024 9:41 AM, Rob Clark wrote:
+> On Thu, Jun 20, 2024 at 6:08 AM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+>>
+>> On Thu, 20 Jun 2024 at 00:27, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>>
+>>> dpu_encoder_helper_phys_cleanup() calls the ctl ops without checking if
+>>> the ops are assigned causing discrepancy between its callers where the
+>>> checks are performed and the API itself which does not.
+>>>
+>>> Two approaches can be taken: either drop the checks even in the caller
+>>> OR add the checks even in dpu_encoder_helper_phys_cleanup().
+>>>
+>>> Adopt the latter approach as ctl ops are assigned revision based so may not
+>>> be always assigned.
+>>
+>> NAK, these calls are always assigned. Please make sure that they are
+>> documented as required and drop offending checks.
+> 
+> agreed, I'd rather see the obvious crash if somehow a required
+> callback didn't get set up, than a subtle/silent problem.  It is
+> easier to debug that way.
+> 
+> BR,
+> -R
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-WARNING: possible recursive locking detected
-6.10.0-rc3-g4029dba6b6f1 #6823 Not tainted
---------------------------------------------
-kworker/u5:0/35 is trying to acquire lock:
-ffff888002ec2510 (&chan->lock#2/1){+.+.}-{3:3}, at:
-l2cap_sock_recv_cb+0x44/0x1e0
+Thank you both for the review.
 
-but task is already holding lock:
-ffff888002ec2510 (&chan->lock#2/1){+.+.}-{3:3}, at:
-l2cap_get_chan_by_scid+0xaf/0xd0
+Yes, as I wrote in the commit text, there were two ways to go about it.
+And looks like the consensus is to go with the other way (drop the checks).
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+I will update the v2 that way and I also update the documentation of the 
+ctl op of interest to this patch that it is always expected to be assigned.
 
-       CPU0
-       ----
-  lock(&chan->lock#2/1);
-  lock(&chan->lock#2/1);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-3 locks held by kworker/u5:0/35:
- #0: ffff888002b8a940 ((wq_completion)hci0#2){+.+.}-{0:0}, at:
-process_one_work+0x750/0x930
- #1: ffff888002c67dd0 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0},
-at: process_one_work+0x44e/0x930
- #2: ffff888002ec2510 (&chan->lock#2/1){+.+.}-{3:3}, at:
-l2cap_get_chan_by_scid+0xaf/0xd0
-
-l2cap_sock_recv_cb is assumed to be called with the chan_lock held so
-perhaps we can just do:
-
-       sk =3D chan->data;
-       if (!sk)
-               return -ENXIO;
-
---=20
-Luiz Augusto von Dentz
+> 
+>>>
+>>> Fixes: d7d0e73f7de3 ("drm/msm/dpu: introduce the dpu_encoder_phys_* for writeback")
+>>> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+>>> Closes: https://lore.kernel.org/all/464fbd84-0d1c-43c3-a40b-31656ac06456@moroto.mountain/T/
+>>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>>> ---
+>>>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 9 ++++++---
+>>>   1 file changed, 6 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+>>> index 708657598cce..7f7e6d4e974b 100644
+>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+>>> @@ -2180,9 +2180,12 @@ void dpu_encoder_helper_phys_cleanup(struct dpu_encoder_phys *phys_enc)
+>>>          if (ctl->ops.reset_intf_cfg)
+>>>                  ctl->ops.reset_intf_cfg(ctl, &intf_cfg);
+>>>
+>>> -       ctl->ops.trigger_flush(ctl);
+>>> -       ctl->ops.trigger_start(ctl);
+>>> -       ctl->ops.clear_pending_flush(ctl);
+>>> +       if (ctl->ops.trigger_flush)
+>>> +               ctl->ops.trigger_flush(ctl);
+>>> +       if (ctl->ops.trigger_start)
+>>> +               ctl->ops.trigger_start(ctl);
+>>> +       if (ctl->ops.clear_pending_flush)
+>>> +               ctl->ops.clear_pending_flush(ctl);
+>>>   }
+>>>
+>>>   void dpu_encoder_helper_phys_setup_cdm(struct dpu_encoder_phys *phys_enc,
+>>> --
+>>> 2.44.0
+>>>
+>>
+>>
+>> --
+>> With best wishes
+>> Dmitry
 
