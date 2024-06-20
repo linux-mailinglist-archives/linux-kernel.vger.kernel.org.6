@@ -1,141 +1,116 @@
-Return-Path: <linux-kernel+bounces-222367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0429B910068
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:31:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E97CC91006C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8141F22824
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:31:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DEEEB21E4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E6A1A4F2D;
-	Thu, 20 Jun 2024 09:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1C71A4F02;
+	Thu, 20 Jun 2024 09:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EZGzaT/D";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bWQe+dNr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EZGzaT/D";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bWQe+dNr"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EtrvQbvj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1111A4F07;
-	Thu, 20 Jun 2024 09:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763771802E;
+	Thu, 20 Jun 2024 09:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718875881; cv=none; b=rPOLBwrhzZeoCdfTpyXjzVsFjX1cn0F4EJw14goDh4dOSeeDMCqC4grEKTAQ2HUuSrafz6jon2hjXi44c3yaLTM994dAHniQCQbuosDs/S7XFzy6kacKlfF10LEQc1Yac6BI1s6QxHVuFvDKXQZcsrw9fOf9T5YwMFC933sagig=
+	t=1718875952; cv=none; b=jWYJjWLSODXpGq/d2IQ7gI7Qb/vY7FZqy9NbixU/ujox5j4m7pHByUdjlQKAU+xA/+cAQZ/z9NFaC9ekPe25lbiUGgkskq21AWFywcKKr9TsbIH8VJYYYPielckAqIiD9/HpoTrWizrYvgsxVnMjzeawTxm288aGWGcHf+qe7xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718875881; c=relaxed/simple;
-	bh=v0UMqDXC5+SAf4JfkVwnd+K8Z7UmpjaIhgRRAQXV928=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GcL3RftHJTzWZJN1LyLLQ3PgC5wUiOYeICCVxaxfi3iVhIDecHx7WRTeG6tblcefHd39wtVWZ6v57WE0oDTEx8cPj0JrpOsvVyUP5832nNrvDVCM6rtar44EuXSZzagSPAjN0fVOYYUx/H9W02ihlmTok+m7bCPRlkB+EudvCLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EZGzaT/D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bWQe+dNr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EZGzaT/D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bWQe+dNr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 70B6921AAD;
-	Thu, 20 Jun 2024 09:31:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718875877; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=idixMQpR+HA90NjHITkoUM5azVKTe8F/f+cm+VdShII=;
-	b=EZGzaT/Dg4CNMYRRYXRwUcyafXj+bAN9ILaCA+hJYdgzmBMFw/ddds+msrxIGOJ15K4PE6
-	T4gUyMqteEuwpz0G/nexoHP0rbofssSlTvSkJzFnjXCsKokyQpuHhREr1nnBNIt+B5XmJH
-	7MKKB3vbruhciuGd8/vYEEY0tJFCn2c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718875877;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=idixMQpR+HA90NjHITkoUM5azVKTe8F/f+cm+VdShII=;
-	b=bWQe+dNrVZHaDm2wRS24uwyyvf4In0B/wHWtJ5eKhnhcSi++q/GS+1N+93hl5rGDnm8ELf
-	jTH2sMlybqhzLrCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1718875877; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=idixMQpR+HA90NjHITkoUM5azVKTe8F/f+cm+VdShII=;
-	b=EZGzaT/Dg4CNMYRRYXRwUcyafXj+bAN9ILaCA+hJYdgzmBMFw/ddds+msrxIGOJ15K4PE6
-	T4gUyMqteEuwpz0G/nexoHP0rbofssSlTvSkJzFnjXCsKokyQpuHhREr1nnBNIt+B5XmJH
-	7MKKB3vbruhciuGd8/vYEEY0tJFCn2c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1718875877;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=idixMQpR+HA90NjHITkoUM5azVKTe8F/f+cm+VdShII=;
-	b=bWQe+dNrVZHaDm2wRS24uwyyvf4In0B/wHWtJ5eKhnhcSi++q/GS+1N+93hl5rGDnm8ELf
-	jTH2sMlybqhzLrCA==
-Date: Thu, 20 Jun 2024 11:31:15 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: zhang warden <zhangwarden@gmail.com>
-cc: Song Liu <song@kernel.org>, Petr Mladek <pmladek@suse.com>, 
-    Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
-    Joe Lawrence <joe.lawrence@redhat.com>, live-patching@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] livepatch: introduce klp_func called interface
-In-Reply-To: <17FDEE20-A187-4493-BFA6-F09555B1EF6F@gmail.com>
-Message-ID: <alpine.LSU.2.21.2406201129130.5846@pobox.suse.cz>
-References: <20240520005826.17281-1-zhangwarden@gmail.com> <alpine.LSU.2.21.2405200845130.11413@pobox.suse.cz> <BBD2A553-6D44-4CD5-94DD-D8B2D5536F94@gmail.com> <alpine.LSU.2.21.2405210823590.4805@pobox.suse.cz> <ZkxVlIPj9VZ9NJC4@pathway.suse.cz>
- <CAPhsuW7bjyLvfQ-ysKE+S8x26Zv5b7jbJoyW8UiBaUfaRncKfg@mail.gmail.com> <alpine.LSU.2.21.2406071102420.29080@pobox.suse.cz> <17FDEE20-A187-4493-BFA6-F09555B1EF6F@gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1718875952; c=relaxed/simple;
+	bh=O/Et+olhzP5XobD8bdj3w1CIIC0vknNGVO0piDAW26s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cy6dEN0oOH83rk/Kv13aZ4SaybwaCo5Xwp4gfyGgiqe83UNWEJ6kzRu46LdxB+T80LvY/GFjNSaUmvfgqFTI1ZJngYxL8O+y2O0wUNn7qi0o8sEMtNVTlmmcJrr8ivzUvU3BDKQ8q9FJgLrBo5m74IbU1WvbcO75vlBCXgNb6cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EtrvQbvj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B89C2BD10;
+	Thu, 20 Jun 2024 09:32:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718875952;
+	bh=O/Et+olhzP5XobD8bdj3w1CIIC0vknNGVO0piDAW26s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EtrvQbvjvB3OlS0NqQVMZ78pc5yjJBlgxYROJaDdmAeUuwpZ8PiDoIYaZiiohLS/m
+	 dqJQcp+fiJC0KNtb5Fs1T5S3WX79Ftgk5Y8xP62GafReVKgi1HtoSGJo7HXCJb/ihD
+	 sq4+4RX9VfZBaAld4D2usmp06jkDelxewiIrEbdiY1JcRlhyizfGiKXR1apqEHkWvZ
+	 Eb8ELdwoKiR/1DVZMqNE6V2lE3zd6kDsrDhZ5kom+uoxBCnIFNlgJSdHNlAeDkpyrM
+	 yTK1Im4WXdZJSlwXXKMmTJpW2s+/7eteThN+IyFz4jcV0KfbPEy7p33D5fwS80kinE
+	 NwQ91k8PEhPlw==
+Date: Thu, 20 Jun 2024 10:32:27 +0100
+From: Lee Jones <lee@kernel.org>
+To: William Breathitt Gray <wbg@kernel.org>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-pwm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Scherer <T.Scherer@eckelmann.de>
+Subject: Re: [PATCH v2 3/5] counter: stm32-timer-cnt: Use TIM_DIER_CCxIE(x)
+ instead of TIM_DIER_CCxIE(x)
+Message-ID: <20240620093227.GI3029315@google.com>
+References: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
+ <126bd153a03f39e42645573eecf44ffab5354fc7.1718791090.git.u.kleine-koenig@baylibre.com>
+ <20240620084451.GC3029315@google.com>
+ <ZnPvW6Zx69wVjNRS@ishi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -4.29
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-0.99)[-0.992];
-	NEURAL_HAM_SHORT(-0.20)[-0.995];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_ZERO(0.00)[0];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZnPvW6Zx69wVjNRS@ishi>
 
-Hi,
+On Thu, 20 Jun 2024, William Breathitt Gray wrote:
 
-On Thu, 20 Jun 2024, zhang warden wrote:
-
-> 
-> 
-> > On Jun 7, 2024, at 17:07, Miroslav Benes <mbenes@suse.cz> wrote:
+> On Thu, Jun 20, 2024 at 09:44:51AM +0100, Lee Jones wrote:
+> > On Wed, 19 Jun 2024, Uwe Kleine-König wrote:
 > > 
-> > It would be better than this patch but given what was mentioned in the 
-> > thread I wonder if it is possible to use ftrace even for this. See 
-> > /sys/kernel/tracing/trace_stat/function*. It already gathers the number of 
-> > hits.
+> > > These two defines have the same purpose and this change doesn't
+> > > introduce any differences in drivers/counter/stm32-timer-cnt.o.
+> > > 
+> > > The only difference between the two is that
+> > > 
+> > > 	TIM_DIER_CC_IE(1) == TIM_DIER_CC2IE
+> > > 
+> > > while
+> > > 
+> > > 	TIM_DIER_CCxIE(1) == TIM_DIER_CC1IE
+> > > 
+> > > . That makes it necessary to have an explicit "+ 1" in the user code,
+> > > but IMHO this is a good thing as this is the code locatation that
+> > > "knows" that for software channel 1 you have to use TIM_DIER_CC2IE
+> > > (because software guys start counting at 0, while the relevant hardware
+> > > designer started at 1).
+> > > 
+> > > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+> > > ---
+> > >  drivers/counter/stm32-timer-cnt.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
 > > 
+> > Did you drop William's Ack on purpose?
+> > 
+> > -- 
+> > Lee Jones [李琼斯]
 > 
-> Hi, Miroslav
+> No problem, here it is again for the sake of the LKML scraper tools:
 > 
-> Can ftrace able to trace the function which I added into kernel by livepatching?
+> Acked-by: William Breathitt Gray <wbg@kernel.org>
+> 
+> Lee, do you prefer taking this patchset through your tree?
 
-yes, it should also work as is. I just generally recommend to use a 
-different name (prefixed for example) for the new replacement function to 
-avoid issues if you do not already do it.
+I think that would make things easier.
 
-Miroslav
+A pull-request for you and the PWM folk would follow.
+
+-- 
+Lee Jones [李琼斯]
 
