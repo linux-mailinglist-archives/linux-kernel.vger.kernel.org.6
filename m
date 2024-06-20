@@ -1,178 +1,224 @@
-Return-Path: <linux-kernel+bounces-221987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B77090FB6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:55:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6136390FB76
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68FFAB223C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:55:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A4228387A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F7F22334;
-	Thu, 20 Jun 2024 02:55:21 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BB01DDEE;
+	Thu, 20 Jun 2024 03:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L9xNRFYD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBDC1EB44
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 02:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE37E63C;
+	Thu, 20 Jun 2024 03:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718852120; cv=none; b=TpH/9o3F4bPawtb+s7LeEluDBU6pIERFBNtSCyV7maa946kkkR2KI3Yg/rXngdGz9ZCd/dm3lDEvipvVx9ryHuzY6uoPT/pGSjJPokcQXyPZfkdVX2ciP8rVdoMJG8xCBmlvlXyY7q3Hfe9yvWBxjX4VQgxT1MfwsOuGLpS8JX0=
+	t=1718852515; cv=none; b=ko3aFimRqWeAtoNmxfN8C+EaK+0f3qjrbmWBKdT9b0IQlJ3Luf2hL94RxypTvFqzFZrHfZW2cmj5lalHG4EMRGyh/W6Qz3kMh/Tu+pgmIuObzexOn2iX+4uDXIG+KAO482K/cIYWRYlWkedwP/OEQinMfCdQ/RtU1GB61a3abbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718852120; c=relaxed/simple;
-	bh=8ZAYadfQMP3kgVVXbb9DEbzHJ8kYAfE38F9eOtCv1EU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=B8/Yr+07vZf1ebvwrBYJaqqQqciwIrFsNSxijvPCUVFdzkvyl2vZtlPuvOwX/Cb8yNzyXiHbJyTYFSeU/ohnaRpwjD4Q3sAFv586Mtsg9ZygKJDuwRonEvjh95xK2mPF2+VNm5VUKWd+lMjfTD1AGJUtF2IyCYR8be4DvA3jfrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e1fe2ba2e1so51716939f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 19:55:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718852118; x=1719456918;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Lj58J19YIpPfhu4V4a/LLJxDtQkTPli6j+7LhpVu/0s=;
-        b=l7BC6f00/XswgBh5m0UsHNl+EOvb6XfcF86ZBRmHHhwPU908AvAN2O30teyriaWC3C
-         qwJE++YQ1Jbcpq0/B6SOr4is5uhzo7AKB3ZrM727zfDMqu17sJbLYdJ7+wodPpQ8dknX
-         PqEGGlEZwN0H7FPDQARecVpkzmhbnCVEbSqBsxxFpacjVJsYNvVVgLEYPAhbOrcn9+l1
-         b+zcxX1GwpCpj6m1+vDdbFGSxH1PcLO6GketibAV2TIgTMijOqTFmbYTdR+YUYVdzSd1
-         v3Sc9mcKjhX5V6XZyEbYbySeu53ImXHyAVcWH1FkCbiDScEvgNVBeW0UvC/SYpq4NA/e
-         0Mkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOZLDZfpdX+4EchJrWu48yPYvS+MLA1duhAgTssNiWJd3/PqBc0jq+sqXT+IeR8K/AVizkwXDzp4XFHBHx76IVpbJ+0Av9gRJEJYDl
-X-Gm-Message-State: AOJu0YxQtpDdoBzsFISKQmW95NmJgq/TrzUFFCASQP2vvOCWtq8gUQz5
-	KUAiijjW20kfcYsc2UQEqCb2RTYeQwvz/yciFNYG0XkwqP6DbJuFSlp93kl5+X8QwwvD1lSh/KS
-	FLQtl7Nf/Jo6QQJtKiig0M7yNpuWtylUSEGlaCuV2JD9SjVMMOD19s+0=
-X-Google-Smtp-Source: AGHT+IFDKmHYSdoqqrWcihJVQmFeiJeeByqLhXP5SfqmK45w/mgBHFfUUXhyqlp48Edo+VtkDkao4newadT7GAhAhUilnqkGIHBu
+	s=arc-20240116; t=1718852515; c=relaxed/simple;
+	bh=EIVXR1Drz5ZwlD3T4VwTfooVVhT2SxMV7lr93B1iMIg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iPfmhix/GS9ZfVdlYSE9AiAZb0weDZ05sonaSr9SklOgYNvZiH3OcBP2ERHpg1scCtcELVVbs1/17FXuUdcM4xG3R7eWtPgpBU/TyDNhMEnBDVpkD5GZTFKOthllIwn7MP5viqbASNKmqLqUjjABJG+vyMVHD0Es/vBUazHkB9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L9xNRFYD; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718852513; x=1750388513;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EIVXR1Drz5ZwlD3T4VwTfooVVhT2SxMV7lr93B1iMIg=;
+  b=L9xNRFYDNG/RU4cwBwoEO7alZhI+NLCgItNop79wuEqWQyX3E3cpI2Za
+   8o4JBqM1HOGGrOx4ECDBGjJYb0R/s6vLKSfk6WdG+xXewe4w16xiAEMN3
+   m/1CILuDPekFomkygWvY5gkQyoTf8K9Bxv8wGkHFYjcp38NhPBlxHhtss
+   CqKiC8mw0EuULCbf3ntjzGu68h96VMt0HUcRXLa+TxwyiqHE7/ZdAWIAb
+   cTFJQTDlRYndmz0dh/zldSDrRUpOxOFikutrjbK2Hd7C6r7Ivw1GLfAeQ
+   h5xbM/cxC+XjV4GutqJf8GypNkU2K0TvvqpGcevt0xxuJLUS37SdEMXd5
+   A==;
+X-CSE-ConnectionGUID: 93BSlk5HS8KrTmXA/pMLLA==
+X-CSE-MsgGUID: hiVqABXRQN+aPvu7Z05gWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="26444191"
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="26444191"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 20:01:52 -0700
+X-CSE-ConnectionGUID: GsV7gGC6RDm/wd79OQ/n6A==
+X-CSE-MsgGUID: I3E8fsj0QnmEqr/RNB1usw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="42049389"
+Received: from unknown (HELO SPR-S2600BT.bj.intel.com) ([10.240.192.127])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 20:01:45 -0700
+From: Zhenzhong Duan <zhenzhong.duan@intel.com>
+To: linux-pci@vger.kernel.org
+Cc: bhelgaas@google.com,
+	mahesh@linux.ibm.com,
+	oohall@gmail.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-acpi@vger.kernel.org,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	james.morse@arm.com,
+	tony.luck@intel.com,
+	bp@alien8.de,
+	dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	helgaas@kernel.org,
+	linmiaohe@huawei.com,
+	shiju.jose@huawei.com,
+	adam.c.preble@intel.com,
+	lukas@wunner.de,
+	Smita.KoralahalliChannabasappa@amd.com,
+	rrichter@amd.com,
+	linux-cxl@vger.kernel.org,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	erwin.tsaur@intel.com,
+	sathyanarayanan.kuppuswamy@intel.com,
+	dan.j.williams@intel.com,
+	feiting.wanyan@intel.com,
+	yudong.wang@intel.com,
+	chao.p.peng@intel.com,
+	qingshun.wang@linux.intel.com,
+	Zhenzhong Duan <zhenzhong.duan@intel.com>
+Subject: [PATCH v5 0/2] PCI/AER: Handle Advisory Non-Fatal error
+Date: Thu, 20 Jun 2024 10:58:55 +0800
+Message-Id: <20240620025857.206647-1-zhenzhong.duan@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2394:b0:4b9:afd1:d4f8 with SMTP id
- 8926c6da1cb9f-4b9afd1f309mr74034173.2.1718852118501; Wed, 19 Jun 2024
- 19:55:18 -0700 (PDT)
-Date: Wed, 19 Jun 2024 19:55:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f1ed2e061b4971d2@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_bucket_alloc_trans
-From: syzbot <syzbot+24a867cb90d8315cccff@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+This is a relay work of Qingshun's v2 [1], but changed to focus on ANFE
+processing as subject suggests and drops trace-event for now. I think it's
+a bit heavy to do extra IOes to get PCIe registers only for trace purpose
+and not see it a community request for now.
 
-HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13315dde980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c79815c08cc14227
-dashboard link: https://syzkaller.appspot.com/bug?extid=24a867cb90d8315cccff
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+According to PCIe Base Specification Revision 6.1, Sections 6.2.3.2.4 and
+6.2.4.3, certain uncorrectable errors will signal ERR_COR instead of
+ERR_NONFATAL, logged as Advisory Non-Fatal Error(ANFE), and set bits in
+both Correctable Error(CE) Status register and Uncorrectable Error(UE)
+Status register. Currently, when handling AER events the kernel will only
+look at CE status or UE status, but never both. In the ANFE case, bits set
+in the UE status register will not be reported and cleared until the next
+FE/NFE arrives.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+For instance, previously, when the kernel receives an ANFE with Poisoned
+TLP in OS native AER mode, only the status of CE will be reported and
+cleared:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/35e32e9073a7/disk-2ccbdf43.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6c6e34658d16/vmlinux-2ccbdf43.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4417e7ef76ed/bzImage-2ccbdf43.xz
+  AER: Correctable error message received from 0000:b7:02.0
+  PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
+    device [8086:0db0] error status/mask=00002000/00000000
+     [13] NonFatalErr
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+24a867cb90d8315cccff@syzkaller.appspotmail.com
+If the kernel receives a Malformed TLP after that, two UEs will be
+reported, which is unexpected. The Malformed TLP Header is lost since
+the previous ANFE gated the TLP header logs:
 
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/alloc_foreground.c:489!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 PID: 5956 Comm: syz-executor.2 Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:bch2_bucket_alloc_freelist fs/bcachefs/alloc_foreground.c:489 [inline]
-RIP: 0010:bch2_bucket_alloc_trans+0x3ac8/0x3b30 fs/bcachefs/alloc_foreground.c:649
-Code: 4e f6 f4 fd e9 07 c7 ff ff 44 89 f1 80 e1 07 38 c1 0f 8c fe fd ff ff 4c 89 f7 e8 e3 f4 f4 fd e9 f1 fd ff ff e8 69 7a 92 fd 90 <0f> 0b e8 61 7a 92 fd 90 0f 0b e8 29 3b 7a 07 f3 0f 1e fa e8 50 7a
-RSP: 0018:ffffc900048f5c80 EFLAGS: 00010287
-RAX: ffffffff8403aba7 RBX: 0000000000000019 RCX: 0000000000040000
-RDX: ffffc90014c00000 RSI: 000000000000da04 RDI: 000000000000da05
-RBP: ffffc900048f63b0 R08: ffffffff84037d73 R09: 0000000000000000
-R10: ffffc900048f6268 R11: fffff5200091ec52 R12: 0000000000000037
-R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007efeb1dc06c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30d26000 CR3: 000000002336e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_bucket_alloc_set_trans+0x4f9/0xcf0 fs/bcachefs/alloc_foreground.c:810
- __open_bucket_add_buckets+0x11ed/0x1c80 fs/bcachefs/alloc_foreground.c:1058
- open_bucket_add_buckets+0x174/0x230 fs/bcachefs/alloc_foreground.c:1102
- bch2_alloc_sectors_start_trans+0xcaf/0x1f60
- __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:333 [inline]
- bch2_btree_reserve_get+0x5f5/0x18d0 fs/bcachefs/btree_update_interior.c:547
- bch2_btree_update_start+0xe84/0x1500 fs/bcachefs/btree_update_interior.c:1245
- bch2_btree_split_leaf+0x12c/0x810 fs/bcachefs/btree_update_interior.c:1851
- bch2_trans_commit_error+0x200/0x1210 fs/bcachefs/btree_trans_commit.c:918
- __bch2_trans_commit+0x6e6c/0x88e0 fs/bcachefs/btree_trans_commit.c:1138
- bch2_trans_commit fs/bcachefs/btree_update.h:170 [inline]
- bch2_logged_op_start+0x1c8/0x310 fs/bcachefs/logged_ops.c:83
- bch2_truncate+0x1a4/0x2c0 fs/bcachefs/io_misc.c:291
- bchfs_truncate+0x80f/0xc80 fs/bcachefs/fs-io.c:476
- notify_change+0xb9d/0xe70 fs/attr.c:497
- do_truncate+0x220/0x310 fs/open.c:65
- vfs_truncate+0x2e1/0x3b0 fs/open.c:111
- do_sys_truncate+0xde/0x190 fs/open.c:134
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7efeb107cf29
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007efeb1dc00c8 EFLAGS: 00000246 ORIG_RAX: 000000000000004c
-RAX: ffffffffffffffda RBX: 00007efeb11b3f80 RCX: 00007efeb107cf29
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000340
-RBP: 00007efeb10ec074 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007efeb11b3f80 R15: 00007ffdd551b608
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_bucket_alloc_freelist fs/bcachefs/alloc_foreground.c:489 [inline]
-RIP: 0010:bch2_bucket_alloc_trans+0x3ac8/0x3b30 fs/bcachefs/alloc_foreground.c:649
-Code: 4e f6 f4 fd e9 07 c7 ff ff 44 89 f1 80 e1 07 38 c1 0f 8c fe fd ff ff 4c 89 f7 e8 e3 f4 f4 fd e9 f1 fd ff ff e8 69 7a 92 fd 90 <0f> 0b e8 61 7a 92 fd 90 0f 0b e8 29 3b 7a 07 f3 0f 1e fa e8 50 7a
-RSP: 0018:ffffc900048f5c80 EFLAGS: 00010287
-RAX: ffffffff8403aba7 RBX: 0000000000000019 RCX: 0000000000040000
-RDX: ffffc90014c00000 RSI: 000000000000da04 RDI: 000000000000da05
-RBP: ffffc900048f63b0 R08: ffffffff84037d73 R09: 0000000000000000
-R10: ffffc900048f6268 R11: fffff5200091ec52 R12: 0000000000000037
-R13: dffffc0000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007efeb1dc06c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc6b66ca628 CR3: 000000002336e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  PCIe Bus Error: severity="Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+    device [8086:0db0] error status/mask=00041000/00180020
+     [12] TLP                    (First)
+     [18] MalfTLP
+
+To handle this case properly, calculate potential ANFE related status bits
+and save in aer_err_info. Use this information to determine the status bits
+that need to be cleared.
+
+Now, for the previous scenario, both CE status and related UE status will
+be reported and cleared after ANFE:
+
+  AER: Correctable error message received from 0000:b7:02.0
+  PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
+    device [8086:0db0] error status/mask=00002000/00000000
+     [13] NonFatalErr
+    Uncorrectable errors that may cause Advisory Non-Fatal:
+     [12] TLP
+
+Note:
+checkpatch.pl will produce following warnings on PATCH1&2:
+
+WARNING: 'UE' may be misspelled - perhaps 'USE'?
+#22:
+uncorrectable error(UE) status should be cleared. However, there is no
+
+...similar warnings omitted...
+
+This is a false-positive, so not fixed.
+
+WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)
+#10:
+  PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
+
+...similar warnings omitted...
+
+For readability reasons, these warnings are not fixed.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+[1] https://lore.kernel.org/linux-pci/20240125062802.50819-1-qingshun.wang@linux.intel.com
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Thanks
+Qingshun, Zhenzhong
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Changelog:
+v5:
+ - squash patch 1 and 3 (Kuppuswamy)
+ - add comment about avoiding race and fix typo error (Kuppuswamy)
+ - collect Jonathan and Kuppuswamy's R-b
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+v4:
+  - Fix a race in anfe_get_uc_status() (Jonathan)
+  - Add a comment to explain side effect of processing ANFE as NFE (Jonathan)
+  - Drop the check for PCI_EXP_DEVSTA_NFED
 
-If you want to undo deduplication, reply with:
-#syz undup
+v3:
+  - Split ANFE print and processing to two patches (Bjorn)
+  - Simplify ANFE handling, drop trace event
+  - Polish comments and patch description
+  - Add Tested-by
+
+v2:
+  - Reference to the latest PCIe Specification in both commit messages
+    and comments, as suggested by Bjorn Helgaas.
+  - Describe the reason for storing additional information in
+    aer_err_info in the commit message of PATCH 1, as suggested by Bjorn
+    Helgaas.
+  - Add more details of behavior changes in the commit message of PATCH
+    2, as suggested by Bjorn Helgaas.
+
+v4: https://lkml.org/lkml/2024/5/9/247
+v3: https://lore.kernel.org/lkml/20240417061407.1491361-1-zhenzhong.duan@intel.com
+v2: https://lore.kernel.org/linux-pci/20240125062802.50819-1-qingshun.wang@linux.intel.com
+v1: https://lore.kernel.org/linux-pci/20240111073227.31488-1-qingshun.wang@linux.intel.com
+
+
+Zhenzhong Duan (2):
+  PCI/AER: Clear UNCOR_STATUS bits that might be ANFE
+  PCI/AER: Print UNCOR_STATUS bits that might be ANFE
+
+ drivers/pci/pci.h      |  1 +
+ drivers/pci/pcie/aer.c | 79 +++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 79 insertions(+), 1 deletion(-)
+
+-- 
+2.34.1
+
 
