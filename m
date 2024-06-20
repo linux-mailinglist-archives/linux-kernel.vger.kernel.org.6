@@ -1,180 +1,145 @@
-Return-Path: <linux-kernel+bounces-223392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 741B2911242
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:37:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EAB8911246
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 303682858BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C97381F22497
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34B11BA089;
-	Thu, 20 Jun 2024 19:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353FE1BA062;
+	Thu, 20 Jun 2024 19:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uv0tDssc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="C77MmbHS"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143AF1B9AD6;
-	Thu, 20 Jun 2024 19:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40121B5838
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718912227; cv=none; b=VXhrGdKY5UNuV5dxOvuTarY2KBo1KDYTzxudxSyn6GbMtUV6VEzYG3bU62v5oKWa7uUpRE4LlBng1niNYIhnTobI4HHcAJgiYgpxKw7dS2CH4w9inxi7CM39bCLuvoN/F/VxowdcQriH6tZ1WndZmamDgKXajBIwjPa//ZC+Zc4=
+	t=1718912243; cv=none; b=XdST48OpZ+1h3AVKQxfWpuR3QL28NalyR16Ghv7+1mgcPvi7AoWwELWPtq1n8ZxyhVy6lZk7uLwysJy80H17AWF2ZlgdAMHjHSkUxkI9cCQL426l+2y+pbBFlWJwjk+bXUc4TNp+IB6idnLMEhtm0HJTm9R0wbycfptI8x5ZHlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718912227; c=relaxed/simple;
-	bh=yZz3lSM2+eyxM8s5zcUsYg12gHFKn/bb+Dk6U7uPnJs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p4DJUWZdG9dJDM0heFYx5uXwdGkeufYmr4nbsbTV5YwdjNf53oEE6zaCKhHdLQjDonoSvCA/AfxQCp4TYbDO0xqiTQBrEDwrXjxfYczXV9zOLZ8d8wGJvuIVYNXO3s/vYK+eyBQewne7ZxjlyAF+97xvg9qSSpwR1ka4OWHaYa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uv0tDssc; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718912226; x=1750448226;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yZz3lSM2+eyxM8s5zcUsYg12gHFKn/bb+Dk6U7uPnJs=;
-  b=Uv0tDsscAZ2VHP2lyRo/z4EmRS1ykap8rvHH3rp0R/VkC24rY57LWjlr
-   XXiDGLiGzY8HM2Vde0ZY4YoG2yAN16coEUH+PiIIW7BP9ip7Zw7JZ5ESt
-   5TpXp4n1k219p9ldyG4XSKOHjOiL7NT7fnvazggKAuWbfJVHYW5aSFo7s
-   f8P14KeWAq5fYnwBNtg7MTj9b8ySeEtk0Gq0nlAJgxoswIeG7zZHT/h4Y
-   zF12BrIF/hHpAHK3gqNKqFP5Pa+hc6wAH+wJalw6tuOgc5W3qyOeyijIp
-   EUyVhxRgjgRBJ9vhUa36qgQmx++pcvsq/1qPVCw0zHVhjw8FzHpWGSnEh
-   w==;
-X-CSE-ConnectionGUID: YSZGvN5gSKGdtCrgBH/O0g==
-X-CSE-MsgGUID: a7F6Z5ZkRECUrycot67ncQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="15754131"
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="15754131"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 12:37:05 -0700
-X-CSE-ConnectionGUID: x18nf85+Teic2oICoGRKXg==
-X-CSE-MsgGUID: FgbdG7gjRByz6F9l8eM6Pw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
-   d="scan'208";a="42806941"
-Received: from wjayasek-mobl1.amr.corp.intel.com (HELO rpedgeco-desk4.intel.com) ([10.209.71.12])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 12:37:06 -0700
-From: Rick Edgecombe <rick.p.edgecombe@intel.com>
-To: yan.y.zhao@intel.com
-Cc: dmatlack@google.com,
-	erdemaktas@google.com,
-	isaku.yamahata@intel.com,
-	kai.huang@intel.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pbonzini@redhat.com,
-	rick.p.edgecombe@intel.com,
-	sagis@google.com,
-	seanjc@google.com
-Subject: [PATCH] KVM: x86/mmu: Implement memslot deletion for TDX
-Date: Thu, 20 Jun 2024 12:37:01 -0700
-Message-Id: <20240620193701.374519-1-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240613060708.11761-1-yan.y.zhao@intel.com>
-References: <20240613060708.11761-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1718912243; c=relaxed/simple;
+	bh=rXsyJA9QBMX+RibxYe3uJ4xaYsp1C4y1HPJLv7IepjE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gC6X21xmZxFizvbHk6VNs45X38ilker3TG3RrsSKFwsazUDB+9nk4qr76CEAx3WWU4jD6R733RF3sNssIIunTuUQfCKlOSqUN+IQGWl4d15C646UoRmcx8p3kMLXh+oCNCLDekOF3s/ZLSr8T+/FSzLjmN8MITy4HENx92uxLjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=C77MmbHS; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6b4fced5999so6787766d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:37:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1718912241; x=1719517041; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=H4Z+ybUYMauqZ31ugavPoL4O/Q0wanX4Mqqn+IQJwQQ=;
+        b=C77MmbHSlvfgIKxKrCPFvxcLzpqVEWqj6e2AcZu2DrIpqSxszEGhLFdrfiilCnZd+q
+         G0QKvZzsbPT8VBq1MVlDeGmDmdcuxi8t+62a+H+amepDOjfiCiAawZ5a5GOZwc3aZw9l
+         mQYhneBvWK97l19IamULSrkjnraFCL5V1TIccy5IR2tjxiCqBNCI+BB3bQEHjL9mfzSn
+         1ULDD34YiNprsLdUcq41z8nuwAMckJBDFhdQr+Gd6jvXLX5ygTmEftq+SAt/fN9vSrqg
+         iFxtCHk3mUYUt4OcuA3+9xnRss3I2INiiBeXZworAIzSnG1nYtZKbVO+zxEco5sUwYL0
+         zyKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718912241; x=1719517041;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H4Z+ybUYMauqZ31ugavPoL4O/Q0wanX4Mqqn+IQJwQQ=;
+        b=aGCkkCMm5vGvwuUapRVpqDmwcfy9AqDXMIy8OXUC+LV0/OYngBCfS/KJwKUDd/oBPC
+         NuzugmQyetFtjk7kWYv+DhgotVc5PXR9gw6xdn3yceHXK9/mO+bhcvPZizTes4OzO6MD
+         8OnjDLrNxOwy886B/jG8IFnrl+hfvo3Ek3WSKjVN18U5L2sP46r7gHLDIfkTvavm6i7a
+         gliz3cX+Hr1QsuJe2N7r92JIjKvobBOwNxYIAgrfHLFsEnq18jlsrT6u4NHWHbTxZ7iu
+         pwHh1JBgrm/JCW1Mav9Kvh5fF1SATYmpPZ6NiDNotv23IMvLNdhZZB9vBkTH22r+bMNL
+         bIMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA1SZueJmWBOyXyWGEEE/iMXFHdMP2u4GCzxYu2E/ndqXZd5NT++xjrbtySP1fcreafrr3V3XU+GW5PsVdyMxlgII4vZ5Hz+Vbmi7a
+X-Gm-Message-State: AOJu0YypZZSD1xV+0K3AOPwGMB2/TUuFDbPlXcu53RpGihDv0pqVH/cw
+	qdkEBbolo58cMLLNthT8sjlGng88foHLimhFmljb5CpUr78qOUxYYiPjkCBYZKQ=
+X-Google-Smtp-Source: AGHT+IHNbneA1rPJZPgvcj3mwHKuiGb77Z6vVNX3UHTpocfd13qKN824+8NQu/mJjvCXPM6WtEQUuw==
+X-Received: by 2002:a0c:ca92:0:b0:6b5:34b:8c02 with SMTP id 6a1803df08f44-6b5034b8dbamr63633426d6.27.1718912240911;
+        Thu, 20 Jun 2024 12:37:20 -0700 (PDT)
+Received: from nicolas-tpx395.lan ([2606:6d00:17:6d4e::580])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51b90472bsm3248726d6.143.2024.06.20.12.37.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 12:37:20 -0700 (PDT)
+Message-ID: <d31f18cae640095ca0704185f8238184c13cf93b.camel@ndufresne.ca>
+Subject: Re: [PATCH 0/4] Support MediaTek MT8188 Media Data Path 3 (MDP3)
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	linux-media@vger.kernel.org, hverkuil-cisco@xs4all.nl, 
+	sebastian.fricke@collabora.com
+Cc: mchehab@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+ conor+dt@kernel.org, matthias.bgg@gmail.com, amergnat@baylibre.com, 
+ moudy.ho@mediatek.com, u.kleine-koenig@pengutronix.de,
+ chunkuang.hu@kernel.org,  p.zabel@pengutronix.de,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ kernel@collabora.com
+Date: Thu, 20 Jun 2024 15:37:19 -0400
+In-Reply-To: <4e1a8383-fdcb-45b9-b3d8-7019ed8c07bb@collabora.com>
+References: 
+	<20240322092845.381313-1-angelogioacchino.delregno@collabora.com>
+	 <4e1a8383-fdcb-45b9-b3d8-7019ed8c07bb@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Force TDX VMs to use the KVM_X86_QUIRK_SLOT_ZAP_ALL behavior.
+Le mercredi 19 juin 2024 =C3=A0 11:23 +0200, AngeloGioacchino Del Regno a =
+=C3=A9crit=C2=A0:
+> Il 22/03/24 10:28, AngeloGioacchino Del Regno ha scritto:
+> > This series adds code to support for the MDP3 block found in the
+> > MediaTek MT8188 SoC, including the necessary bits for mtk-mutex
+> > and platform data for the MDP3 driver.
+> >=20
+> > This is mostly compatible with MT8195, with a few differences
+> > "here and there", with the former having less instances of some
+> > of the MDP3 IPs compared to the latter.
+> >=20
+>=20
+> Gentle ping for this series getting stale.
+>=20
+> The soc bindings and commits are already upstream (v6.10).
+>=20
+> The commits that would go through the media tree [3/4], [4/4] still apply
+> cleanly as they are.
+>=20
+> Should I resend this, or ... ?
 
-TDs cannot use the fast zapping operation to implement memslot deletion for
-a couple reasons:
-1. KVM cannot zap TDX private PTEs and re-fault them without coordinating
-   with the guest. This is due to the TDs needing to "accept" memory. So an
-   operation to delete a memslot needs to limit the private zapping to the
-   range of the memslot.
-2. For reason (1), kvm_mmu_zap_all_fast() is limited to direct (shared)
-   roots. This means it will not zap the mirror (private) PTEs. If a
-   memslot is deleted with private memory mapped, the private memory would
-   remain mapped in the TD. Then if later the gmem fd was whole punched,
-   the pages could be freed on the host while still mapped in the TD. This
-   is because that operation would no longer have the memslot to map the
-   pgoff to the gfn.
+If 1 and 2 is merged already, a rebase and resend makes a lot of sense.
 
-To handle the first case, userspace could simply set the
-KVM_X86_QUIRK_SLOT_ZAP_ALL quirk for TDs. This would prevent the issue in
-(1), but it is not sufficient to resolve (2) because the problems there
-extend beyond the userspace's TD, to affecting the rest of the host. So the
-zap-leafs-only behavior is required for both
+Nicolas
 
-A couple options were considered, including forcing
-KVM_X86_QUIRK_SLOT_ZAP_ALL to always be on for TDs, however due to the
-currently limited quirks interface (no way to query quirks, or force them
-to be disabled), this would require developing additional interfaces. So
-instead just do the simple thing and make TDs always do the zap-leafs
-behavior like when KVM_X86_QUIRK_SLOT_ZAP_ALL is disabled.
-
-While at it, have the new behavior apply to all non-KVM_X86_DEFAULT_VM VMs,
-as the previous behavior was not ideal (see [0]). It is assumed until
-proven otherwise that the other VM types will not be exposed to the bug[1]
-that derailed that effort.
-
-Memslot deletion needs to zap both the private and shared mappings of a
-GFN, so update the attr_filter field in kvm_mmu_zap_memslot_leafs() to
-include both.
-
-Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Link: https://lore.kernel.org/kvm/20190205205443.1059-1-sean.j.christopherson@intel.com/ [0]
-Link: https://patchwork.kernel.org/project/kvm/patch/20190205210137.1377-11-sean.j.christopherson@intel.com [1]
----
-
-Here is the patch for TDX integration. It is not needed until we can
-actually create KVM_X86_TDX_VMs.
-
-Admittedly, this kind of combines two changes, but the amount of code is
-very small so I left it as one patch.
-
- arch/x86/kvm/mmu.h     | 6 ++++++
- arch/x86/kvm/mmu/mmu.c | 3 ++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-index 7b12ba761c51..72ed6c07719a 100644
---- a/arch/x86/kvm/mmu.h
-+++ b/arch/x86/kvm/mmu.h
-@@ -335,4 +335,10 @@ static inline bool kvm_is_addr_direct(struct kvm *kvm, gpa_t gpa)
- 
- 	return !gpa_direct_bits || (gpa & gpa_direct_bits);
- }
+>=20
+> Cheers,
+> Angelo
+>=20
+> >=20
+> > AngeloGioacchino Del Regno (4):
+> >    dt-bindings: soc: mediatek: Add support for MT8188 VPPSYS
+> >    soc: mediatek: mtk-mutex: Add support for MT8188 VPPSYS
+> >    dt-bindings: media: mediatek: mdp3: Add support for MT8188 RDMA
+> >    media: platform: mtk-mdp3: Add support for MT8188 MDP3 components
+> >=20
+> >   .../bindings/media/mediatek,mdp3-rdma.yaml    |   1 +
+> >   .../bindings/soc/mediatek/mediatek,mutex.yaml |   1 +
+> >   .../platform/mediatek/mdp3/mdp_cfg_data.c     | 280 +++++++++++++++++=
 +
-+static inline bool kvm_memslot_flush_zap_all(struct kvm *kvm)
-+{
-+	return kvm->arch.vm_type == KVM_X86_DEFAULT_VM &&
-+	       kvm_check_has_quirk(kvm, KVM_X86_QUIRK_SLOT_ZAP_ALL);
-+}
- #endif
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 42faad76806a..8212bf77af70 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -6993,6 +6993,7 @@ static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *s
- 		.start = slot->base_gfn,
- 		.end = slot->base_gfn + slot->npages,
- 		.may_block = true,
-+		.attr_filter = KVM_FILTER_PRIVATE | KVM_FILTER_SHARED,
- 	};
- 	bool flush = false;
- 
-@@ -7013,7 +7014,7 @@ static void kvm_mmu_zap_memslot_leafs(struct kvm *kvm, struct kvm_memory_slot *s
- void kvm_arch_flush_shadow_memslot(struct kvm *kvm,
- 				   struct kvm_memory_slot *slot)
- {
--	if (kvm_check_has_quirk(kvm, KVM_X86_QUIRK_SLOT_ZAP_ALL))
-+	if (kvm_memslot_flush_zap_all(kvm))
- 		kvm_mmu_zap_all_fast(kvm);
- 	else
- 		kvm_mmu_zap_memslot_leafs(kvm, slot);
--- 
-2.34.1
+> >   .../platform/mediatek/mdp3/mtk-img-ipi.h      |   1 +
+> >   .../platform/mediatek/mdp3/mtk-mdp3-cfg.h     |   1 +
+> >   .../platform/mediatek/mdp3/mtk-mdp3-core.c    |   3 +
+> >   drivers/soc/mediatek/mtk-mutex.c              |  41 +++
+> >   7 files changed, 328 insertions(+)
+>=20
+>=20
 
 
