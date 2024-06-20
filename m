@@ -1,176 +1,230 @@
-Return-Path: <linux-kernel+bounces-222389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DCAC9100AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:44:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF989100B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0C24281382
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:44:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE2CA1C21C40
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5196F1A4F18;
-	Thu, 20 Jun 2024 09:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA651A4F23;
+	Thu, 20 Jun 2024 09:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jStVfnrk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GF4+2Xno"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1761E176FA1;
-	Thu, 20 Jun 2024 09:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CD51A3BC8
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718876649; cv=none; b=u8tLcE0S1xfnb6pOV9uyRFAtnDTV1X9qYAlByfIcsmi1Lqzcymq5fv7GmRdFzNT3qhH+Oy5I3GmS8SyVRpQlMUhKPZU8xLR5JknpwVU+YDImkdQkbXioxmk7+5MaLDeeX1T0M/MK1Fx03/zWLo/5CslBmmuIwdRmlJuHYs4x4l0=
+	t=1718876801; cv=none; b=Lzkx2CsJ/I/PNSUbFoLL09/muBJ0z+XEMFRLZZ2I5Tqu+FvwUQBdo6k24tgaC8zUoOW1gEke1yPYJUpNhfDgCGLy0X4d2Dh8u3P2Ib5+ty/sehuO5VtL4FVdXLBRNpD7riA/It2mej6ctvpuScSetoOisil5x8NBUiemkxMEaso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718876649; c=relaxed/simple;
-	bh=HTzGvt8cdfXE0OHYxoQkKocUFMRL+hzPcQyDYgCACo4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AVYRoyqsbfBYpr87+9Uf9SxbhsTWEt5jClTzLGOzbdkbe1eKZ0UyCShTN5YPp++ZIHr4/ChyrAyfCjGmSqEnzNTpsl5q0OKTDiHZ/bgCAZYSN0aWhsn6TA3OYnhCaeS48JBV3NFAlMNFkB5UikxFktNw0z07jIJCwwyrIY0JS7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jStVfnrk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45JKbqsZ022148;
-	Thu, 20 Jun 2024 09:44:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	R2JDyZ4UzOKKd/PPEpfYp/WSOavvVShxLFRCnYnfGTA=; b=jStVfnrkVzu/0PgL
-	qE8gD7AyxTymRFmgxVu3NsA4JkqNSoByloZnt44KPtcknswHDW15IDZEhCBeCPnD
-	gN7lXLHJxTKTP5kvjIcj14jwKrLMK3+WvzAelogIv7fAZNwSohzMK09y7zI29pke
-	+YRo+X3vOj8BdAqLJkE5aXhN0w3M8tEaYh2TR1oRYbh3pT4a+1pUPH9agCtY7/DR
-	sL0xNgDLG+BBYgCZhzPcUi9ctnM9DNLPgTmO6oQCqehO6fYpwe4oMeHXO3uOC6ZC
-	lRxmFHkOlOEVCLn3RLzWd0Dd1ikUvoiQRdJF7XsXd8/uuKzbB7A62aSSAczyt26z
-	GjdiJA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yv6hn1dfj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 09:43:59 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45K9hwn2023250
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 09:43:58 GMT
-Received: from [10.214.67.128] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Jun
- 2024 02:43:55 -0700
-Message-ID: <c23f9f69-d095-233e-c20e-b99e6f3921e5@quicinc.com>
-Date: Thu, 20 Jun 2024 15:13:51 +0530
+	s=arc-20240116; t=1718876801; c=relaxed/simple;
+	bh=PQeDvQdpV3xoa4EoS+6rRCcA8khvc+TkBodiCwJ0nPM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IKzQJa1y0wUpU3T2ra5hYRkE50huD27S2wR1Bfoct8sKLtExgRxITB5i0SXMCysF2IyD6nXrMAyx8ZIwI8nhOdeIWZ8zc7gRKXEbZghujcN9/cFB2A9x/79aTeZgABzGxzemOKw7aj5MMHBFiJeTqZ2SwfECsh+JcIU8x3PG/Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GF4+2Xno; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebd421a931so6374411fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 02:46:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718876798; x=1719481598; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1C8Ju8XWmp5T/a5fTSJkVEbGY+u2Y8Oaw2wvJKVqwcw=;
+        b=GF4+2XnoU8Q3JXTCA7tHT80PNo1AoLZkOLZOSqkdPn95Y1lVZ9IXGU0IEGpnIIqaxn
+         YSrIPMBEFUxSn460HIBRvnmPccKJLDtd7ncMV3/fHTBE/KTPMDwHeoVk353yWgbGVu2p
+         mN5PxYyst7iWw0rqdC1K140hdORTEHcMyliMM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718876798; x=1719481598;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1C8Ju8XWmp5T/a5fTSJkVEbGY+u2Y8Oaw2wvJKVqwcw=;
+        b=Ro/gVy8T7lxrCOPI9GtNzJWP/Ubp1MbktuMURDnqAwh6b4x8T8+37Sy3o8cg7Ey7Qd
+         lIOBP7DbXuzxlZjCUJ6KorxjBoqb35KwkJZ0bQ7LSdo9aPkUCE4PiKOGdUZUWsGZsY/M
+         iLdf0vHbB3Vo2YAPJxM1VPXZIeDwXYGmElG6gWMjr38IOAPZHJk0Y1QkLbbuafGDndYt
+         I7rwMhynjED8YotNTcVxT+paWaTo8rTTcg5PZzEvJo4e6LuA6DJVSiz+xzFt98Gjm599
+         KAAhgsHmfWkAYY+wVcppSEDRMtobwp9TOZc98hulUdZcIPjvxVNY4xIKvpG0dvcWtV15
+         BLfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNB10nc+RcCP4AC9YSTIplQzqYKJup9udVatxfoP/BxkWnyQ1UYy2Ga/+ckPOiZeiMfcsgdyAYpuQ28RUONDaksA5C20BPdjOrgPXQ
+X-Gm-Message-State: AOJu0YxKua9rCEJ08L1evqu57ixARH359Pl7YAge2nPNxVFOmCAe4trG
+	d3kUOH1GAShEQy6Y5E+Cl/ylAAlt3wGyxgoP8dLW9nnfBdtJLixn9QIh2tb7mlmYJP0tjHxe8pu
+	VpjpbnBwC0jzLR/xCrp/On+JQm17D0tywyFuJ
+X-Google-Smtp-Source: AGHT+IEAch4d9DfYlt6svj7uQiDMS/kkFeiPt+x05ruz/JwQ3l7QJT/Zf3fr43/NzPnYxwZicSzj+aUa/F91bwpokys=
+X-Received: by 2002:a2e:2281:0:b0:2ec:3f29:a0fe with SMTP id
+ 38308e7fff4ca-2ec3f29a240mr23325101fa.38.1718876797983; Thu, 20 Jun 2024
+ 02:46:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH] arm64: defconfig: Enable secure QFPROM driver
-Content-Language: en-US
-To: Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Mukesh Ojha
-	<quic_mojha@quicinc.com>
-CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20240619105642.18947-1-quic_kbajaj@quicinc.com>
- <5582a2a0-c772-4573-9d55-2f963cb87df1@linaro.org>
- <ZnLKwqENxC4wzrUm@hu-mojha-hyd.qualcomm.com>
- <ZnMKh5X+Bm11L/T4@hu-bjorande-lv.qualcomm.com>
-From: Komal Bajaj <quic_kbajaj@quicinc.com>
-In-Reply-To: <ZnMKh5X+Bm11L/T4@hu-bjorande-lv.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: OEcZAlljB6IH6FWxMMgR7e9HdgTZfafY
-X-Proofpoint-GUID: OEcZAlljB6IH6FWxMMgR7e9HdgTZfafY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_07,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- mlxlogscore=835 impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406200068
+References: <20240529-mtk-thermal-mt818x-dtsi-v6-0-0c71478a9c37@baylibre.com>
+ <20240529-mtk-thermal-mt818x-dtsi-v6-4-0c71478a9c37@baylibre.com>
+ <75826085-fd59-466a-b1de-b4c323c801c1@collabora.com> <CAGXv+5FPG4ob3mTU0Utm8Wgk0_ZLw=NLPbfFerWh4OUeAz7UHw@mail.gmail.com>
+ <808db317-4cee-426b-a840-013a5e03098d@baylibre.com> <ad047631-16b8-42ce-8a8d-1429e6af4517@collabora.com>
+ <940eec49-91d8-4d38-a3d8-e1b7e090b905@baylibre.com>
+In-Reply-To: <940eec49-91d8-4d38-a3d8-e1b7e090b905@baylibre.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 20 Jun 2024 17:46:26 +0800
+Message-ID: <CAGXv+5HpRvsYz3ZJ_hNM=RhDHbnEZA73Xwm1YgjuWWPXhymT9w@mail.gmail.com>
+Subject: Re: [PATCH v6 4/6] arm64: dts: mediatek: mt8186: add default thermal zones
+To: Julien Panis <jpanis@baylibre.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Nicolas Pitre <npitre@baylibre.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
+On Mon, Jun 3, 2024 at 3:58=E2=80=AFPM Julien Panis <jpanis@baylibre.com> w=
+rote:
+>
+> On 5/29/24 14:06, AngeloGioacchino Del Regno wrote:
+> > Il 29/05/24 11:12, Julien Panis ha scritto:
+> >> On 5/29/24 10:33, Chen-Yu Tsai wrote:
+> >>> On Wed, May 29, 2024 at 4:17=E2=80=AFPM AngeloGioacchino Del Regno
+> >>> <angelogioacchino.delregno@collabora.com> wrote:
+> >>>> Il 29/05/24 07:57, Julien Panis ha scritto:
+> >>>>> From: Nicolas Pitre <npitre@baylibre.com>
+> >>>>>
+> >>>>> Inspired by the vendor kernel but adapted to the upstream thermal
+> >>>>> driver version.
+> >>>>>
+> >>>>> Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
+> >>>>> Signed-off-by: Julien Panis <jpanis@baylibre.com>
+> >>>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@c=
+ollabora.com>
+> >>> I'm getting some crazy readings which would cause the machine to
+> >>> immediately shutdown during boot. Anyone else see this? Or maybe
+> >>> my device has bad calibration data?
+> >>>
+> >>> gpu_thermal-virtual-0
+> >>> Adapter: Virtual device
+> >>> temp1:       +229.7 C
+> >>>
+> >>> nna_thermal-virtual-0
+> >>> Adapter: Virtual device
+> >>> temp1:       +229.7 C
+> >>>
+> >>> cpu_big0_thermal-virtual-0
+> >>> Adapter: Virtual device
+> >>> temp1:         -7.2 C
+> >>>
+> >>> cpu_little2_thermal-virtual-0
+> >>> Adapter: Virtual device
+> >>> temp1:       +157.2 C
+> >>>
+> >>> cpu_little0_thermal-virtual-0
+> >>> Adapter: Virtual device
+> >>> temp1:       -277.1 C
+> >>>
+> >>> adsp_thermal-virtual-0
+> >>> Adapter: Virtual device
+> >>> temp1:       +229.7 C
+> >>>
+> >>> cpu_big1_thermal-virtual-0
+> >>> Adapter: Virtual device
+> >>> temp1:       +229.7 C
+> >>>
+> >>> cam_thermal-virtual-0
+> >>> Adapter: Virtual device
+> >>> temp1:        +45.4 C
+> >>>
+> >>> cpu_little1_thermal-virtual-0
+> >>> Adapter: Virtual device
+> >>> temp1:       -241.8 C
+> >>
+> >> It's likely that your device has bad calibration data indeed. We obser=
+ved the same
+> >> behavior on the mt8186 device we used (a Corsola) and finally realized=
+ that the
+> >> golden temperature was 0 (device not properly calibrated).
+> >>
+> >> To make a comparison, we run chromiumos v5.15 and dmesg output was:
+> >> 'This sample is not calibrated, fake !!'
+> >> Additional debugging revealed that the golden temp was actually 0. As =
+a result,
+> >> chromiumos v5.15 does not use the calibration data. It uses some defau=
+lt values
+> >> instead. That's why you can observe good temperatures with chromiumos =
+v5.15
+> >> even with a device that is not calibrated.
+> >>
+> >> This feature is not implemented in the driver upstream, so you need a =
+device
+> >> properly calibrated to get good temperatures with it. When we forced t=
+his
+> >> driver using the default values used by chromiumos v5.15 instead of re=
+al calib
+> >> data (temporarily, just for testing), the temperatures were good.
+> >>
+> >> Please make sure your device is properly calibrated: 0 < golden temp <=
+ 62.
+> >>
+> >
+> > Wait wait wait wait.
+> >
+> > What's up with that calibration data stuff?
+> >
+> > If there's any device that cannot use the calibration data, we need a w=
+ay to
+> > recognize whether the provided data (read from efuse, of course) is val=
+id,
+> > otherwise we're creating an important regression here.
+> >
+> > "This device is unlucky" is not a good reason to have this kind of regr=
+ession.
+> >
+> > Since - as far as I understand - downstream can recognize that, upstrea=
+m should
+> > do the same.
+> > I'd be okay with refusing to even probe this driver on such devices for=
+ the
+> > moment being, as those are things that could be eventually handled on a=
+ second
+> > part series, even though I would prefer a kind of on-the-fly calibratio=
+n or
+> > anyway something that would still make the unlucky ones to actually hav=
+e good
+> > readings *right now*.
+> >
+> > Though, the fact that you assert that you observed this behavior on one=
+ of your
+> > devices and *still decided to send that upstream* is, in my opinion, un=
+acceptable.
+> >
+> > Regards,
+> > Angelo
+>
+> I've been trying to find some more information about the criteria
+> "device calibrated VS device not calibrated" because there's a
+> confusing comment in downstream code (the comment does not
+> match what I observe on my device). I'll send a separate patch
+> to add this feature over the next few days, when I get additional
+> information from MTK about this criteria.
 
-On 6/19/2024 10:12 PM, Bjorn Andersson wrote:
-> On Wed, Jun 19, 2024 at 05:40:42PM +0530, Mukesh Ojha wrote:
->> On Wed, Jun 19, 2024 at 01:08:48PM +0200, Krzysztof Kozlowski wrote:
->>> On 19/06/2024 12:56, Komal Bajaj wrote:
->>>> Enable the secure QFPROM driver which is used by QDU1000
->>>
->>> Qualcomm QDU1000. You are changing kernel-wide defconfig, not some
->>> Qualcomm downstream stuff.
->>>
->>>> platform for reading the secure qfprom region to get the
->>>> DDR channel configuration.
->>>>
->>>> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
->>>> ---
->>>>   arch/arm64/configs/defconfig | 1 +
->>>>   1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->>>> index 838b4466d6f6..c940437ae1b3 100644
->>>> --- a/arch/arm64/configs/defconfig
->>>> +++ b/arch/arm64/configs/defconfig
->>>> @@ -1575,6 +1575,7 @@ CONFIG_NVMEM_LAYERSCAPE_SFP=m
->>>>   CONFIG_NVMEM_MESON_EFUSE=m
->>>>   CONFIG_NVMEM_MTK_EFUSE=y
->>>>   CONFIG_NVMEM_QCOM_QFPROM=y
->>>> +CONFIG_NVMEM_QCOM_SEC_QFPROM=y
->>>
->>> Module
->>
->> Should not this be inline with what CONFIG_NVMEM_QCOM_QFPROM is having ?
->> Either both CONFIG_NVMEM_QCOM_QFPROM and CONFIG_NVMEM_QCOM_SEC_QFPROM
->> should be m or both y
->>
-> 
-> While that would be a convenient guideline, you're adding runtime
-> overhead to all other targets (Qualcomm and non-Qualcomm) so the desire
-> to keep anything that can module outweigh such convenience.
-> 
-> Based on the recent addition of llcc and qfprom nodes I'm _guessing_
-> that LLCC is the one user of this today, and it is =m, so therefore
-> SEC_QFPROM can be =m as well.
-> 
-> 
-> By expanding the commit message slightly, we could have avoided the
-> "why?" questions and the need for me to "guess" the actual dependency.
-> 
+I couldn't wait and sent a patch to provide default calibration data,
+based on the values and code from the ChromeOS kernels. It seems to
+work OK-ish. I get 4x degrees C on my MT8186 device.
 
-Thanks Bjorn for the suggestion.
-I will incorporate the suggested changes in the next patch.
+Also, your previous patch blocking invalid efuse data has landed. So
+I think this series can be relanded. What do you think, Angelo?
 
-Thanks
-Komal
-
-> Regards,
-> Bjorn
-> 
->> -Mukesh
->>>
->>>>   CONFIG_NVMEM_RMEM=m
->>>>   CONFIG_NVMEM_ROCKCHIP_EFUSE=y
->>>>   CONFIG_NVMEM_ROCKCHIP_OTP=y
->>>> --
->>>> 2.42.0
->>>>
->>>
->>> Best regards,
->>> Krzysztof
->>>
+ChenYu
 
