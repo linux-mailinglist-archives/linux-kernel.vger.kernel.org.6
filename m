@@ -1,168 +1,134 @@
-Return-Path: <linux-kernel+bounces-222954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94F4910ABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:52:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D7B910AC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E3CA1F21585
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:52:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D342810ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 15:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6ED71AED3E;
-	Thu, 20 Jun 2024 15:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783F41B012B;
+	Thu, 20 Jun 2024 15:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yqqFD4t1"
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqWR3Stg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692B21B0129
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA550171A5;
+	Thu, 20 Jun 2024 15:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718898743; cv=none; b=iYpRXEiA7+X3QKxNx9WA7a1KYW6oLTcjdJ9Zh4G6EyC0CwRA2UhDuojcu1kiTBmArI44YV4Ucd+djdXw+lybrmCeho7ZcJA8+XbUHCaMenj1JrXF2PEOsn4jbQe3Q+BUeQ2wjGO13HDlhbwn9jA8mzwISWXo3/defkB7UWvIs9k=
+	t=1718898883; cv=none; b=Uwn8Iu2sPtdju6dA8P0Sk8OhJjCFXw8eg8cWxEjJ0OZbP8YbUHHuc2ayApZrPmeFNnBaJ6lRFILG4ECGm8DP4QdgFSTHPZF0OczMu6l+73U59DihwIQr+Fh5Y+qzbOex2y6H2WqkQTyyIN9CF+x0+R+Uo3E1TbjQdB6RQt81Uo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718898743; c=relaxed/simple;
-	bh=BYNxbdP/tSiZdSJx/SObM+Ky44A9Mo1KpwOH14PHu00=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l9idd4YbjkUkV1ZekTqnV52qqe0ct/UIb7rlpwAYOLurDRPIj2E+/FSL4E/ewmAea2S3Bhp6nRaBzmS0Yvqaw1zgjueds2sMSN7O059bEVylb7QKv3KVSTcw5MRvdcrMpjoW4tro/MFMqkqw8HCGMKKgK5N15+AFFSUCKXrt6A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yqqFD4t1; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5b9794dad09so456768eaf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:52:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718898740; x=1719503540; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A5K50mR+1xPezwh+gwNk3sB+K93FGplia3k1sTjlMTk=;
-        b=yqqFD4t1+EIUYmNn8Gfs+mA2W8etFYgFdi72afx9GQuYAJX/1wIKLRMbZ/8sfeWp8D
-         RPrmUwV7JmUy+3Z7hshgkPCSgDHBXaJas/Txstl4wAg1ftAmqTXmNKSKctroous9s2g6
-         M4pS+9my7BHYo+3HdM7jmpGl+5IJKDVo5UPUIOM1ZZ3uJVBDxd62m+rHLYV6GSNhuQmJ
-         inN5oLgpjX99O0XUxYSSw8FjQCZViKJ+K15MUyPcf/G2raJwyGimEZDsZ7hE/GA7NQMR
-         uFU5IH/47tMM9yemvsLgy7LXabR4b2qUt6VaPL0WcBqJM8hm2U0QcCMQzGxr2d+TOYlt
-         O55Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718898740; x=1719503540;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A5K50mR+1xPezwh+gwNk3sB+K93FGplia3k1sTjlMTk=;
-        b=GHJaDa6PV8XQRuWcBqPGbh3ZMa63J03giM5ZTzbd7GJ2PHEkCl7nLen1d4oXcIWvmc
-         /pXNfJA8wnV/h1ysZjelJ7LrM8tVltQZnJN5ZaIfoBd6SK8UWYkRZ3GtlD/xYDJc9xa6
-         HEPZmL26IX3mcZzDx5CWebx4yYhCAaN4QZb2jn+2RYRGJYBnR6twFX9oKlEbgbFzpRjr
-         JFnHi76qplZocuEBSXamzY+q/p1W4Oh0pn2FPDGO5P5huA8ESLK41CHm5wjwFIxBfbFs
-         hYHP+xb1SpQRDlS9hH9VLrEh9z+Q/bwyIAhsTNcDyyruRR45XfnLCcRPszapOKMM6K3E
-         uGXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+zIYUJWDOaaAwKiQl6vy7xgLnW+siMPVXsiJZ4yhuupLbumgfmXgzWm57yyfQqsI/bqTne0NHWafzP2Dw63Jq+Ux8ycYiqLDaJpy7
-X-Gm-Message-State: AOJu0YwmKy7oMjqdrssuhhkygj7iMhstIXGVj1ESaPiUBG32Q+Z1bZ1J
-	XNMhRag3ocsuGlt4Fsr3OCtgw83f57MKiUoQOaSBsnUejLvpbaMTsiKp94hIyLs=
-X-Google-Smtp-Source: AGHT+IHncNjOje8u1WIEw9Wc86WeCNVSVv8Wbvs9UjaDytJFANc+0rllOYq/KhKNXJZkScsH5FWhpA==
-X-Received: by 2002:a05:6820:1d97:b0:5c1:b9ec:7258 with SMTP id 006d021491bc7-5c1b9ec7316mr3702687eaf.0.1718898740473;
-        Thu, 20 Jun 2024 08:52:20 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c198460ab5sm936795eaf.38.2024.06.20.08.52.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 08:52:19 -0700 (PDT)
-Message-ID: <08c09a34-af59-4387-8db9-594f30f85b7a@baylibre.com>
-Date: Thu, 20 Jun 2024 10:52:19 -0500
+	s=arc-20240116; t=1718898883; c=relaxed/simple;
+	bh=2tp22RCvOuiLWgdRY2kEpdBuhkrIPjuRZalWBGnpZY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CxSHcEArshHXyyzU7J2fSZtzfvxPTKHO4YOfTmAtR4njZxWAM9HWl4M3pa8REJIsgon/4xoK35H91+kEwMeUhP/RalgW8lGGQmBj3ZgK1Xe3lZnQDmmhywhpVQugEAG+0cQGvUPUB3cLqzrpXNOKEE3Gnz329vYsObSCZhBzgOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqWR3Stg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24467C2BD10;
+	Thu, 20 Jun 2024 15:54:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718898883;
+	bh=2tp22RCvOuiLWgdRY2kEpdBuhkrIPjuRZalWBGnpZY4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tqWR3Stgd3tUBuWRK2Blx0UXTQrcMnTn7oHlTUxpvayEVqo7c/SUtSweqejJ56Eqi
+	 R+1p2boO/QTu2owP7Z7tzP7BQWXC9Anm59m1L12QJhOTAOmz8ZCOJJh5Iw2hTIuD29
+	 Vx2AV2EtGYBg+4A4wd+kmIuM99cliewxTlOlCO52sK9SroniZOyKjgD9uXEqCRm1qg
+	 7U/93UVlq34jBwxogTTWtjkuUaoubGUCEGWGk3OwPDZWJy9dXjSydb7dp9pKiVimS3
+	 CZ+LQ3w0fFT7JXS+3E8sUopsKCItxOZI1Efhgra7EN60Vi5ZgcOZ11a4EdzcHupG1h
+	 oMD+nRyGjWFDw==
+Date: Thu, 20 Jun 2024 16:54:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: James Gowans <jgowans@amazon.com>, Jan Beulich <jbeulich@suse.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the memblock tree with the origin tree
+Message-ID: <ZnRQv-EVf2LQ1Cjv@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] spi: Enable controllers to extend the SPI protocol
- with MOSI idle configuration
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
- lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- nuno.sa@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1718749981.git.marcelo.schmitt@analog.com>
- <36eefb860f660e2cadb13b00aca04b5a65498993.1718749981.git.marcelo.schmitt@analog.com>
- <63db9349-f453-4a5b-aa09-d1857ddd8b03@baylibre.com>
- <ZnMqOAPc3IXP-eHC@debian-BULLSEYE-live-builder-AMD64>
- <e7a2438a-f6a3-439e-8058-937248dd5b3f@baylibre.com>
- <ZnRG9wgY3WIaYFyQ@debian-BULLSEYE-live-builder-AMD64>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <ZnRG9wgY3WIaYFyQ@debian-BULLSEYE-live-builder-AMD64>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 6/20/24 10:12 AM, Marcelo Schmitt wrote:
-> On 06/19, David Lechner wrote:
->> On 6/19/24 1:58 PM, Marcelo Schmitt wrote:
->>> On 06/19, David Lechner wrote:
->>>> On 6/18/24 6:10 PM, Marcelo Schmitt wrote:
->>>>
->>>>
->>
->> ...
->>
->>>>
->>>>> +the peripheral and also when CS is inactive.
->>>>
->>>> As I mentioned in a previous review, I think the key detail here is that the
->>>> MOSI line has to be in the required state during the CS line assertion
->>>> (falling edge). I didn't really get that from the current wording. The current
->>>> wording makes it sound like MOSI needs to be high indefinitely longer.
->>>
->>> It may be that we only need MOSI high just before bringing CS low. Though,
->>> I don't see that info in the datasheets. How much time would MOSI be required
->>> to be high prior to bringing CS low? The timing diagrams for register access and
->>> ADC sampling in "3-wire" mode all start and end with MOSI at logical 1 (high).
->>> I think reg access work if MOSI is brought low after CS gets low, but sample
->>> read definitely don't work.
->>>
->>> From the info available in datasheets, it looks like MOSI is indeed expected 
->>> to be high indefinitely amount of time. Except when the controller is clocking
->>> out data to the peripheral.
->>>
->>> Even if find out the amount of time MOSI would be required high prior to CS low,
->>> then we would need some sort of MOSI high/low state set with a delay prior to
->>> active CS. That might be enough to support the AD4000 series of devices but,
->>> would it be worth the added complexity?
->>>
->>
->> It needs to happen at the same time as setting CPOL for the SCLK line for the
->> device that is about to have the CS asserted. So I don't think we are breaking
->> new ground here. Typically, in most datasheets I've seen they tend to say
->> something like 2 ns before the CS change. So in most cases, I don't think
-> which datasheets? Are any of those for devices supported by the ad4000 driver?
-
-In the AD4000 datasheet, Figure 59, it shows the time needed for SDI setup
-before CS assertion, labeled as t_SSDICNV. Table 2 gives this value to be
-2 ns.
-
-So unless a SPI controller has a functional clock of > 500 MHz or somehow
-sets the SDI state and the CS assertion in the same register write this
-minimum delay will always be met. I highly suspect noting like this has
-happened before so no one ever needed to worry about the timing and it
-just works (for the similar case of CPOL).
-
-> 
->> anyone bothers adding a delay. But if a longer delay was really needed for
->> a specific peripheral, we could add a SPI xfer with no read/write that has
->> cs_off=1 and a delay to get the correct state of both MOSI and SCLK a longer
->> time before the CS change.
-> 
-> I don't know if that would actually work. I have not tested doing something like that.
-> This also implies the controller will be able to start the next transfer right
-> after the first preparatory transfer ends and it will meet that inter-transfer
-> timing requirement (which I still didn't find documented anywhere).
-> I'm not convinced that would be the best way to support those devices.
-
-I did something like this in the ad7944 driver where we needed an up to
-500ns delay before asserting CS. On SPI controllers without a hardware
-sleep or FIFO, the delay will of course be much longer. But the delay
-is just a minimum delay, so longer doesn't hurt. It just affects the
-max sample rate that can be reliably achieved.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="J5Vnv3MRBTlrDgal"
+Content-Disposition: inline
 
 
+--J5Vnv3MRBTlrDgal
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the memblock tree got a conflict in:
+
+  mm/memblock.c
+
+between commit:
+
+  e0eec24e2e199 ("memblock: make memblock_set_node() also warn about use of=
+ MAX_NUMNODES")
+
+=66rom the origin tree and commit:
+
+  94ff46de4a738 ("memblock: Move late alloc warning down to phys alloc")
+
+=66rom the memblock tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc mm/memblock.c
+index e81fb68f7f888,692dc551c0fde..0000000000000
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@@ -1441,6 -1446,20 +1439,9 @@@ phys_addr_t __init memblock_alloc_range
+  	enum memblock_flags flags =3D choose_memblock_flags();
+  	phys_addr_t found;
+ =20
++ 	if (WARN_ONCE(nid =3D=3D MAX_NUMNODES, "Usage of MAX_NUMNODES is depreca=
+ted. Use NUMA_NO_NODE instead\n"))
++ 		nid =3D NUMA_NO_NODE;
++=20
+ -	/*
+ -	 * Detect any accidental use of these APIs after slab is ready, as at
+ -	 * this moment memblock may be deinitialized already and its
+ -	 * internal data may be destroyed (after execution of memblock_free_all)
+ -	 */
+ -	if (WARN_ON_ONCE(slab_is_available())) {
+ -		void *vaddr =3D kzalloc_node(size, GFP_NOWAIT, nid);
+ -
+ -		return vaddr ? virt_to_phys(vaddr) : 0;
+ -	}
+ -
+  	if (!align) {
+  		/* Can't use WARNs this early in boot on powerpc */
+  		dump_stack();
+
+--J5Vnv3MRBTlrDgal
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ0UL4ACgkQJNaLcl1U
+h9DOGQf/ROe7zNja31gTL++T7XT9JbYwuPY65LY/F0wSSfRZeuWmJYd5UWhx87Q9
+yIEd9bK32FJ6aThN5B6LdFYWtgsBwd4TkiVapYn3KKPX3qTr43cIL0Z4kz3uLPUC
+cXJg5unc0jtT3o1gC7f5KgEnUHjZGZYoMRByhValUaQ4A+mFPatRAFEJpRoU59W1
+hWrJ8qyhIQMAAj0xi51mCbFGPLYwppdvKvtrwYrpL+5ssEoe94n/aO2+JvueIN3g
+MMmOhskEv126QluNsQbnV80bURIS9bnmCKcERgrwtR9C4ThHb1NTk5PHRpmzS50g
+Q0xoNrXKXoRQu3fdBNFkZMkfxnQ0Ow==
+=/JZ/
+-----END PGP SIGNATURE-----
+
+--J5Vnv3MRBTlrDgal--
 
