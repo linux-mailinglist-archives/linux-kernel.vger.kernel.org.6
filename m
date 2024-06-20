@@ -1,139 +1,127 @@
-Return-Path: <linux-kernel+bounces-223358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1789111B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:01:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 491A19111BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 805F5289F70
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:01:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03AE8284C61
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966061B4C3F;
-	Thu, 20 Jun 2024 19:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F371B5838;
+	Thu, 20 Jun 2024 19:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTq21/IV"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="jvmowCZX"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925CDB657;
-	Thu, 20 Jun 2024 19:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED7F156255
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718910069; cv=none; b=G5TpHCT1e7QYzR0hfCYoSGAfl0Jh54rWOFmsuLG+kTHSIBeP1s4wRfPl8olAexk29v2wvrQCT1QfzEUogw1bipcRoIudpRkyCzu9uUktWM6mMmT7mzjcbkyy5q7U3kJE2TGCIEY6yKLL7ZAiU1QhCJ0huh4g3ZaYPwpu7Gxv27Q=
+	t=1718910188; cv=none; b=fBL3IormRDh4rgj3aXa6svWz+927Pv/1mahpmKSrXfcWiQ596eUUgz8Tp10QCOaIX4ULhi34aV49nFjKgsWQitZvGRev7XLO+7M4UpejqtBG8fF1hNM6IimnvYr5aUUCLbqu/CPNWIxraJueSjQReiDeFQ7pPT+tSZ7YNPChdsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718910069; c=relaxed/simple;
-	bh=DhHUliTDv9obS+xUqwdC0en0lhuGpMpydP7QX14WBNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QEia1LDketutSalTZLY49eWFjEUA3AvaBE608m/ynC2tLRQDqZN6oQAlNRtrpb0EJWq8Y3+dkDv5gmScU8wPg75gVVwzTeSTCpbMue7r/dCjaueBF2reH0LVC5hhPhYy3ldsBsSdFF9F1BRaQ3QqMMyO6ukBdX0bU8fhJCKNz54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTq21/IV; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6e9f52e99c2so912145a12.1;
-        Thu, 20 Jun 2024 12:01:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718910068; x=1719514868; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=edgL49LMRv7Ws8FTfMR2qUOp30oBPUnUg1BlrmXNj0k=;
-        b=MTq21/IVEatBY1E1Yx2PfGGPbVGt8wQTrKBFx2BFHEUN065p36JnRzwvQfjwB4bfpv
-         f2OoW04xRwH+udRcBqOw9rz0qPru+vVq3p0lzt95E2ocHIubhJdh+A1XEKrm1ciWfoEo
-         4ODl4kosg6jMlpYT2VMI/NxtTN778Ha5bT7t8wn0jl9HOlJr4q/2VIk8uWVXBDsDipca
-         tQN6QXPOYeqFrZMw94RHq0zM+sERLO7whEPX5ieqOexdYyDFAT4TFJi28ZolTlxKY6HJ
-         LhUyL0kO+sP6bu7Ti/F6Ew11Zbfb36oSD3BIhJD+1fowK8JpJGz6Dvdycq6RrgLZET/u
-         rUDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718910068; x=1719514868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=edgL49LMRv7Ws8FTfMR2qUOp30oBPUnUg1BlrmXNj0k=;
-        b=OazL4yOYd/avTnXGWy3hmxsd/bHQrkmsn6+5N+JjSJKH4ss0pZD7TR73CzKIIVwizB
-         qzipL16ReGzOkCNAfuk8W6jD4de9kJdMHB9Uj3kR+0qeHtTX5qqTYjewyuKp6/vIlCom
-         go456XR9yXlzWlidO+1nOUEYavXnWUCdZbTaC9NGNFU1ldo3dfbr4uZqaskteB5AkiQv
-         SYxVDfXfp7SGbtL6+PdAy5dwk6EMP0epasQuQIctiB2OR5mH7qI27c2FZr0jKUBSUrUc
-         LeEALxnORsozuWC0+IF5v4gwRz5oxIRqt/0Pi7PMBsKzAUUkCMvwAJiH46MvgkqH1UpN
-         QQ2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUzWJw2F/nfkDBEUtNA1iqKUvhEr+n7+BComBoCh3u/A2vlF4IIXM3G+s1rUOcvuvuxGglv+OHGUEBeDYapZvZaFL+TVmzt67XV+0VZTTYfl8Ows6UrXat1jfFFoYaIdFlR/bQP5EPfcCx1yrqu08isxa0+1TDTeTPRujdY1XZtgpo7IRIC
-X-Gm-Message-State: AOJu0YwBDKN8Q6pAUmt5HssuIIYmxuYaZxx50rjROXgMNXGYgvvHjse5
-	k8TjNTJjPWj2XKjrdoDO0XQdRFS57Wzi/meIBgol7Uw1jz6GyBrOwkmxQq0dCIiDHfgoP2uB95O
-	ad+AdfvNHKSPKwLuXsERr/VjjqdFOHg==
-X-Google-Smtp-Source: AGHT+IFwISJyQPW1kEQVodY5n7ZimQCwzXCRznBCj3vo6t+DlpcwO+ayOJjl5QFOV+y2yc6+XFD75IBGnnNRgJR3+q0=
-X-Received: by 2002:a17:90a:8a02:b0:2c2:f704:5278 with SMTP id
- 98e67ed59e1d1-2c7b5dc7f9emr6158069a91.42.1718910067663; Thu, 20 Jun 2024
- 12:01:07 -0700 (PDT)
+	s=arc-20240116; t=1718910188; c=relaxed/simple;
+	bh=+Jj2iyrjvgazskQSxghCtRl5yuPRiI5t6yni7Yjz8Y8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o6XqSv1kra7II2IdlkMWwFnd+Lu8yObPZHTKpbOQyCJtFurxqMu84XIIvBEzxU+jlrJe9rapDqP8tQhb0CzcA5gug7mR6iZxREyJzh+8GQIeobfTPQCc7HCqqY9IzRd37ozOmvA3uX0/GG4Rbkb7oh+73/nQwK8JXtCc/AHLfRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=jvmowCZX; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6003a.ext.cloudfilter.net ([10.0.30.151])
+	by cmsmtp with ESMTPS
+	id KHgisxT7VSqshKN3ksK4T4; Thu, 20 Jun 2024 19:03:00 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id KN3jsoLhId4oeKN3jsVbzw; Thu, 20 Jun 2024 19:03:00 +0000
+X-Authority-Analysis: v=2.4 cv=aYKqngot c=1 sm=1 tr=0 ts=66747ce4
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=wYkD_t78qR0A:10
+ a=YnLhUqmXxxwrq80so2UA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=QYH75iMubAgA:10
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=W5Sd7FdHakQhG3LkErMyF9EONJJIZEQHFSsJXeCMdcw=; b=jvmowCZXAPZXwN71QtV56/f/2t
+	OgMWzfsKABm/jZfdV6sxtYD/1ZpuF7qoFCl/zk0XFls2Hn6CverV/XuR9wdS7u7I210A3qoN3VI/x
+	NoUm81K8WFt2l0N+y5EFhauq84MJSbpxXrOcvK0rJ2iqNEhxXYX9O+elYynryhMlUH0DGlJ79OJZ1
+	JZMQrVDB7npUIWd65TfGvkQE0yOjAnF+fOHLPc51qq/XZb9/KnQMmwBA8heUgaP5KUcEV76YCwDlZ
+	taCEVPIJ1gLPAjtf7s4VrF1KJy3YTfKaUSbdpep1kPQoQUASywrs5ZkoANo7EGKn2Hu5h6CePQQyi
+	EoRu27NA==;
+Received: from [201.172.173.139] (port=38462 helo=[192.168.15.10])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sKN3h-000CZj-3B;
+	Thu, 20 Jun 2024 14:02:58 -0500
+Message-ID: <b0569cd6-83a4-4b5c-a31e-340bba452473@embeddedor.com>
+Date: Thu, 20 Jun 2024 13:02:55 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618194306.1577022-1-jolsa@kernel.org>
-In-Reply-To: <20240618194306.1577022-1-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 20 Jun 2024 12:00:55 -0700
-Message-ID: <CAEf4BzbN4Li2iesQm28ZYEV2nXsLre8_qknmvkSy510EV7h=SA@mail.gmail.com>
-Subject: Re: [PATCH] uprobe: Do not use UPROBE_SWBP_INSN as static initializer
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: iwlwifi: mvm: Fix __counted_by usage in
+ cfg80211_wowlan_nd_*
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Kees Cook <kees@kernel.org>
+Cc: benjamin.berg@intel.com, dmantipov@yandex.ru, gregory.greenman@intel.com,
+ gustavoars@kernel.org, haim.dreyfuss@intel.com, johannes.berg@intel.com,
+ kvalo@kernel.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+ luciano.coelho@intel.com, miriam.rachel.korenblit@intel.com,
+ shaul.triebitz@intel.com, yedidya.ben.shimol@intel.com
+References: <20240619211233.work.355-kees@kernel.org>
+ <d9bdb9c1-689e-4b3f-8325-8ee813257d8f@wanadoo.fr>
+ <c8404725-e4c4-453b-b72d-19ab0761da70@embeddedor.com>
+ <47a71c03-0306-4239-b77c-cb63a1760d19@embeddedor.com>
+ <0f7d2d25-5c7c-4a19-8af7-ce38ee630d4d@wanadoo.fr>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <0f7d2d25-5c7c-4a19-8af7-ce38ee630d4d@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sKN3h-000CZj-3B
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.10]) [201.172.173.139]:38462
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPIGiyH8oQRXfGyaVHWWBq1W+N5w7rbqu76DPGpQfjzWmseRo6urvgcnxwMq4QYoT2BcD7vLViZOHMDV2Go6Zihln5a3XH1iDD+qxpOTidevQ8mQshsb
+ MsOojf6k/ueV/GHHrMUgf1VvEy+41ZfkVKtUGrUuaMfjX6fTjq67NFdnHCue2qQK7f62OdP7pPcrnwL1OpPc7YJ/YYJPuAbVIozA5x0mEv818hAlVDAVsbJB
 
-On Tue, Jun 18, 2024 at 12:43=E2=80=AFPM Jiri Olsa <jolsa@kernel.org> wrote=
-:
->
-> Nathan reported compilation fail for loongarch arch:
->
->   kernel/events/uprobes.c: In function 'arch_uprobe_trampoline':
->   arch/loongarch/include/asm/uprobes.h:12:33: error: initializer element =
-is not constant
->      12 | #define UPROBE_SWBP_INSN        larch_insn_gen_break(BRK_UPROBE=
-_BP)
->         |                                 ^~~~~~~~~~~~~~~~~~~~
->   kernel/events/uprobes.c:1479:39: note: in expansion of macro 'UPROBE_SW=
-BP_INSN'
->    1479 |         static uprobe_opcode_t insn =3D UPROBE_SWBP_INSN;
->
-> Loongarch defines UPROBE_SWBP_INSN as function call, so we can't
-> use it to initialize static variable.
->
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Fixes: ff474a78cef5 ("uprobe: Add uretprobe syscall to speed up return pr=
-obe")
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  kernel/events/uprobes.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
 
-Can we instead ask loongarch folks to rewrite it to be a constant?
-Having this as a function call is both an inconvenience and potential
-performance problem (a minor one, but still). I would imagine it's not
-hard to hard-code an instruction as a constant here.
+>> then match->n_channels updated here:
+>>
+>>           if (!match)
+>>               goto out_report_nd;
+>> +        match->n_channels = n_channels;
+> 
+> Thanks for the explanation.
+> This is what I was looking for, and I missed this line.
+> 
+> Sorry for the noise.
 
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 2816e65729ac..6986bd993702 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -1476,8 +1476,9 @@ static int xol_add_vma(struct mm_struct *mm, struct=
- xol_area *area)
->
->  void * __weak arch_uprobe_trampoline(unsigned long *psize)
->  {
-> -       static uprobe_opcode_t insn =3D UPROBE_SWBP_INSN;
-> +       static uprobe_opcode_t insn;
->
-> +       insn =3D insn ?: UPROBE_SWBP_INSN;
->         *psize =3D UPROBE_SWBP_INSN_SIZE;
->         return &insn;
->  }
-> --
-> 2.45.1
->
+No worries. Glad to help. :)
+
+--
+Gustavo
 
