@@ -1,80 +1,112 @@
-Return-Path: <linux-kernel+bounces-223132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82378910E41
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:16:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42641910E4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B48EB1C235D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:16:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C18F9B2662E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3498B1B3F0E;
-	Thu, 20 Jun 2024 17:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A051B3F06;
+	Thu, 20 Jun 2024 17:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Nfy4McdF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="soEHDweD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EA51AB8F0;
-	Thu, 20 Jun 2024 17:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBEC1B3758;
+	Thu, 20 Jun 2024 17:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718903775; cv=none; b=pVcKgHbapiLd4cZ/gQ7EDiB/zN0WHReow6h007mZxqHHLelGHUu0+MJKoqBGz1VbFASrl6T262h+P6puUdfNAJuK/MABM2Iv7uNPZ/RW5QyMRjKAr6dCxw2BZHOxxR2+QlXETlnPu+3T/IO6pUrn9mrRFd3I9JZB7LPbqaFgWYQ=
+	t=1718903881; cv=none; b=l1y8Klvvboi918ALXf3R9NdOlNtv5tblM1JpNdF7g4mJQiVYu9zRvKjButaDijmDtRwc+b0tPEuRNmab/ZW4r4m6j10AcJXFflUemqikFX5hky3y9xkqz96n8hYc8ZMJ9vSIdmk1GcXZbcCWKXxzqdQZ7FZ6ev26WwqBbcBP/EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718903775; c=relaxed/simple;
-	bh=nTUjyvPJwsjHGiR5ySPNqFmwFDArPcRIv7+YmkcFFU4=;
+	s=arc-20240116; t=1718903881; c=relaxed/simple;
+	bh=t1APqyOX6OlFWYI/LA0CSPLKegiYEgglDrIX/FUPggU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fY1v2zv4YeiBzKkqmocRUBiVS278+e75Gv7Z59Czk7YairUjHxEXnLbHJnd2QA4V2c/qIT65mYJoWZopJaBlv0wXPkruhgGGWIEVg92ykPH+ePSMbpF3udIudnSncXhgaIl1rSWvvmmaawI5bSjjJY5iR8ElxO+LcA+6s5lA0Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Nfy4McdF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83661C2BD10;
-	Thu, 20 Jun 2024 17:16:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718903774;
-	bh=nTUjyvPJwsjHGiR5ySPNqFmwFDArPcRIv7+YmkcFFU4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=LYe4+eOYkZ68qn1Je8WNcYeagiVQGdB3OAM8BknqnPOHCQ+IMRosFrU0j52CBpjqUVaJSPsYCBSWWMYx83Y/mH+EzYSSJs2jwdRJ6ESLBhSalmcRWiHLGOC/kmSAZeOwAn5ctjhAsWWcDuL2oWTvjV5kEUk2mhmP4Ojyf9XbE9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=soEHDweD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B562C2BD10;
+	Thu, 20 Jun 2024 17:17:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718903880;
+	bh=t1APqyOX6OlFWYI/LA0CSPLKegiYEgglDrIX/FUPggU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nfy4McdF386W/gXzEyZ1mJEuc3YaDXHDojaIAbWNI66xGKUkCTx8dGqwzj1fP+Xgt
-	 zX9gmQnLf+m5SJXfZa1lty5JuVhZdZh8Bn8Re6+zKZ//1CziFcwaaiNynNH4FwgZb4
-	 Zh5ut+a0k+bKp1lIfiKzYKE75F77VqLCTUOoU2xg=
-Date: Thu, 20 Jun 2024 19:16:12 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: joswang <joswang1221@gmail.com>
-Cc: Thinh.Nguyen@synopsys.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Jos Wang <joswang@lenovo.com>
-Subject: Re: [PATCH v7] usb: dwc3: core: Workaround for CSR read timeout
-Message-ID: <2024062051-washtub-sufferer-d756@gregkh>
-References: <20240619114529.3441-1-joswang1221@gmail.com>
+	b=soEHDweDY18VLbVdmjclCdP/6tTXKiADN6UYpjFp/tpqYhJhiohZ2Hb/UhnbDTUQ1
+	 ilSBbevD3Mx2P30LQDKAnT8HkS7r8qSv6HVAhXH0EpR6PhDQrqFOm052cjt+5jJR2G
+	 t54EbAeifXUsFTZ4x3jB4pyh12ef5iLe6lDCgFtCy/Q30hHyV3p6sbkY6ZKV4/agxb
+	 ce4vwBmlssyah/TS0HJEg3dtZC0CLNuF/cfZjS3TvERLiagWrkAAeCyAwkBoJFsMP3
+	 pMlmtRVTW60/UNhKZcJWw03EgnrLrg+74+gc6ArBD3Ij2W97B3KT8twmTUl6qMVwjM
+	 ed6ch5ea6FMfw==
+Date: Thu, 20 Jun 2024 18:17:56 +0100
+From: Lee Jones <lee@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mfd: Explain lack of child dependency in
+ simple-mfd
+Message-ID: <20240620171756.GY3029315@google.com>
+References: <20240616080659.8777-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240619114529.3441-1-joswang1221@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240616080659.8777-1-krzysztof.kozlowski@linaro.org>
 
-On Wed, Jun 19, 2024 at 07:45:29PM +0800, joswang wrote:
-> From: Jos Wang <joswang@lenovo.com>
+On Sun, 16 Jun 2024, Krzysztof Kozlowski wrote:
+
+> Common mistake of usage of 'simple-mfd' compatible is a dependency of
+> children on resources acquired and managed by the parent, e.g. clocks.
+> Extend the simple-mfd documentation to cover this case.
 > 
-> This is a workaround for STAR 4846132, which only affects
-> DWC_usb31 version2.00a operating in host mode.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/mfd/mfd.txt | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
 > 
-> There is a problem in DWC_usb31 version 2.00a operating
-> in host mode that would cause a CSR read timeout When CSR
-> read coincides with RAM Clock Gating Entry. By disable
-> Clock Gating, sacrificing power consumption for normal
-> operation.
+> diff --git a/Documentation/devicetree/bindings/mfd/mfd.txt b/Documentation/devicetree/bindings/mfd/mfd.txt
+> index 336c0495c8a3..98b4340b65f3 100644
+> --- a/Documentation/devicetree/bindings/mfd/mfd.txt
+> +++ b/Documentation/devicetree/bindings/mfd/mfd.txt
+> @@ -18,12 +18,13 @@ A typical MFD can be:
+>  Optional properties:
+>  
+>  - compatible : "simple-mfd" - this signifies that the operating system should
+> -  consider all subnodes of the MFD device as separate devices akin to how
+> -  "simple-bus" indicates when to see subnodes as children for a simple
+> -  memory-mapped bus. For more complex devices, when the nexus driver has to
+> -  probe registers to figure out what child devices exist etc, this should not
+> -  be used. In the latter case the child devices will be determined by the
+> -  operating system.
+> +  consider all subnodes of the MFD device as separate and independent devices
+> +  akin to how "simple-bus" indicates when to see subnodes as children for a
+> +  simple memory-mapped bus. "Independent devices" means that children do not
+
+I'm not against the change, but I think it can be phased better.
+
+Quoting the new part and going on to explain what you mean by it doesn't
+flow very well.  Are you able to massage it so it reads a little more
+nicely please?
+
+> +  need any resources to be provided by the parent device.
+> +  For more complex devices, when the nexus driver has to probe registers to
+> +  figure out what child devices exist etc, this should not be used. In the
+> +  latter case the child devices will be determined by the operating system.
+>  
+>  - ranges: Describes the address mapping relationship to the parent. Should set
+>    the child's base address to 0, the physical address within parent's address
+> -- 
+> 2.43.0
 > 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jos Wang <joswang@lenovo.com>
 
-What commit id does this fix?  How far back should it be backported in
-the stable releases?
-
-thanks,
-
-greg k-h
+-- 
+Lee Jones [李琼斯]
 
