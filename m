@@ -1,109 +1,190 @@
-Return-Path: <linux-kernel+bounces-222516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF68910322
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:38:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43F7910326
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26DAA1F22F6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F4172890D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAD21ABCC0;
-	Thu, 20 Jun 2024 11:36:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D46439FD7;
-	Thu, 20 Jun 2024 11:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7936C1AC782;
+	Thu, 20 Jun 2024 11:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="IaENGWEN";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="ZtS6t78U"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586421ABCD5;
+	Thu, 20 Jun 2024 11:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718883413; cv=none; b=iH342SvzPN/Vhwd4SLhgYfxUJbnWLQcaaSlGzIHpHekF4X0LrDcMXWRK1DMIYwkJCbT1gOqUACGlmhlMkIXyxh5zE9qU1gZx+yzIFxsw8NWJ83P1F/WKfD+qCx0zXDSKrmiqHzppZ2xWetYzxLFqdhdAQwjflVTVWngjpQSd8s8=
+	t=1718883445; cv=none; b=YuE2meFGS3EYN5rgjowdoYH/9OU2Wc46fY0zEZCo3sCJGaGB/hEjwBceCuNNWU8DvjKw1XCxzbCEknicLAoSRv4wLjEdtgRD0zAZXIacFK9IjPgd6ZNsOzxemvjpYIqHPuvAl0nUr3rsFN0K6yZim0A5QjKbEECaGMLNfRq4IVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718883413; c=relaxed/simple;
-	bh=yKMdN4mgeSJWVWyiv46KXqPiWOGWA5iwguABvHUDFfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QPox8iLgD85fOwk7SYAulJHvG4BeXnlFYMs6vIRupbhG3EavusdVmbIv8dUW+1EI78pktKuuShZfZ+jSG78xXzhS9vrejtdjepPLHdSRfot7CqfFGFQ+6p+kVlv0BvhGztJQxPHPDt7tOHJar8EYU9vc3DV7e8ATelcMzU2Ju+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E86A11042;
-	Thu, 20 Jun 2024 04:37:14 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 755923F6A8;
-	Thu, 20 Jun 2024 04:36:49 -0700 (PDT)
-Date: Thu, 20 Jun 2024 12:36:43 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-tip-commits@vger.kernel.org,
-	Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [tip: x86/urgent] x86/resctrl: Don't try to free nonexistent
- RMIDs
-Message-ID: <ZnQUS+xchr13/3jk@e133380.arm.com>
-References: <20240618140152.83154-1-Dave.Martin@arm.com>
- <171879092443.10875.1695191697085701044.tip-bot2@tip-bot2>
- <ZnLUVtZ3oaFjcUj9@e133380.arm.com>
- <20240619134522.GCZnLg8pgJq9MPHS8M@fat_crate.local>
- <ZnMBN487xiPOfpRp@e133380.arm.com>
- <20240619162124.GFZnMFhPW3wo2Avezo@fat_crate.local>
+	s=arc-20240116; t=1718883445; c=relaxed/simple;
+	bh=qoW0vyk6HZvIQuzlKHMXqNDVBP1cdFn6kO5pF/oldM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lXNgMBcONGbFHljuaxEx6/PRoT01LklI5FJHm5CcyhuPF1j+CkiZDibVfwmLOhlIQY++j98kNNTqD2+bQEPIXJ3YUIWR6rYJsltdnrJE88Q+NewRDSa7mhUJN4/LAiabpoEgF43u0cj3dLQxDaTgSXdwgpaR0vReXaejc3V1Y+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=IaENGWEN; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=ZtS6t78U reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1718883440; x=1750419440;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=XsMdtVrVgtV7oMw8vFBN6CYNKuXpTptfGJ0gp07/wv8=;
+  b=IaENGWENMjPh+gXPOoA15sx07VR/styddAOodo+rmdTwbQXd1u3zUwc1
+   mnKjN8byxBUzzEYYngCr+pCdRtg0JPpBuORqwYzD9A95XrE95ZBeEQQq2
+   Ju5YopLs9cwIgoFmqtZ7K+N5hdJAhVBVzbSaa5lh9qCnI5tJ1FGr9DnPY
+   FG7fh9ZqQx08wM+jifmbz6Y50aKS6V2CKJyMfSSsuEt+OWKiSixUibrVL
+   O4nlmRDlOUgUGA+oS5ZfvL0GV+RrSl6CVLmqvVqhEx/xxz/6W45lo7pYu
+   bA6sKNDX926W3nNjCuSd71F3VYcyQdH+75HSmBEQROzqdkKqb0PykjKEH
+   A==;
+X-CSE-ConnectionGUID: 80Ooz7eQSYShYhVtP4i1tg==
+X-CSE-MsgGUID: bZfMWF2hRKe3Ze1DFZItaA==
+X-IronPort-AV: E=Sophos;i="6.08,252,1712613600"; 
+   d="scan'208";a="37498585"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 20 Jun 2024 13:37:18 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A36AF1617F9;
+	Thu, 20 Jun 2024 13:37:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1718883433;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=XsMdtVrVgtV7oMw8vFBN6CYNKuXpTptfGJ0gp07/wv8=;
+	b=ZtS6t78URTtXeUlQyBR9u5WP33VzQK7N6Ak8d7PVvVEyCFmUJTRJYBPYGngpHSg8x1ztYK
+	BXAJr/oO0L6ZXb4GL5sD7cReyGLMLQKyh/trKBWx5y5w5FxNObU7zasknOzDuQIG5xvTT/
+	vASsnyFYSzzodls7KjnzJDpnV/Yr9kNkE5veRio3kEFpfOAvAbS7FQyL41D8TWu52zxlTE
+	9iVM2fsVSa2VD/eeyniCmE3BR8uirP1OGptO9ETqPo7AfMKPoaH6EsftOsHfR0ksqYyFms
+	zdYRUP6yUC52vjrglCw1zHAVImizl7IT0sEr756rvaVGGpVm4M7MJJH/ESFQmw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: linux-arm-kernel@lists.infradead.org, Adam Ford <aford173@gmail.com>
+Cc: aford@beaconembedded.com, Adam Ford <aford173@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, devicetree@vger.kernel.org, imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: imx8mp: Fix pgc vpu locations
+Date: Thu, 20 Jun 2024 13:37:15 +0200
+Message-ID: <2295311.iZASKD2KPV@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240619101045.6317-1-aford173@gmail.com>
+References: <20240619101045.6317-1-aford173@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619162124.GFZnMFhPW3wo2Avezo@fat_crate.local>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
+Hi Adam,
 
-On Wed, Jun 19, 2024 at 06:21:24PM +0200, Borislav Petkov wrote:
-> On Wed, Jun 19, 2024 at 05:03:03PM +0100, Dave Martin wrote:
-> > It's still a guideline, no?  (Though I admit that common sense has to
-> > apply and there are quite often good reasons to bust the limit in
-> > code.)  But commit messages are not code, and don't suffer from
-> > creeping indentation that eats up half of each line, so the rationale
-> > is not really the same.
-> 
-> Just do a "git log" on mainline and marvel at all the possible "formatting".
-> 
-> The ship on being able to read commit messages with formatting that fits what
-> you're expecting has long sailed.
+Am Mittwoch, 19. Juni 2024, 12:10:44 CEST schrieb Adam Ford:
+> The various pgv_vpu nodes have a mismatch between the value after
+> the @ symbol and what is referenced by 'reg' so reorder the nodes
+> to align.
+>=20
+> Fixes: df680992dd62 ("arm64: dts: imx8mp: add vpu pgc nodes")
+> Suggested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Well, not exactly "expecting", but unfamiliar.  I've mostly been living
-in in arch/arm{,64}/ where it's common to have lines a little shorter.
+Thanks for the patch.
+Reviewd-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-> > Anyway, I was just mildly surprised, it's not a huge deal.
-> 
-> Yeah, we don't have a strict rule. And I don't think you can make everyone
-> agree and then adhere to some rule for commit messages width. But hey... :-)
-> 
-> > (Quoted: "Text-based e-mail should not exceed 80 columns per line of
-> > text.  Consult the documentation of your e-mail client to enable proper
-> > line breaks around column 78.".  No statement about commit messages,
-> > and "should not exceed" is not the same as "should be wrapped to".
-> > This document doesn't seem to consider how git formats text derived
-> > from emails.)
-> 
-> See above.
-> 
-> I'm willing to consider a rule for commit messages if the majority agrees on
-> some rule.
-> 
-> Thx.
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
+dts/freescale/imx8mp.dtsi
+> index 3576d2b89b43..ee0c864f27e8 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -838,6 +838,12 @@ pgc_gpumix: power-domain@7 {
+>  						assigned-clock-rates =3D <800000000>, <400000000>;
+>  					};
+> =20
+> +					pgc_vpumix: power-domain@8 {
+> +						#power-domain-cells =3D <0>;
+> +						reg =3D <IMX8MP_POWER_DOMAIN_VPUMIX>;
+> +						clocks =3D <&clk IMX8MP_CLK_VPU_ROOT>;
+> +					};
+> +
+>  					pgc_gpu3d: power-domain@9 {
+>  						#power-domain-cells =3D <0>;
+>  						reg =3D <IMX8MP_POWER_DOMAIN_GPU3D>;
+> @@ -853,6 +859,28 @@ pgc_mediamix: power-domain@10 {
+>  							 <&clk IMX8MP_CLK_MEDIA_APB_ROOT>;
+>  					};
+> =20
+> +					pgc_vpu_g1: power-domain@11 {
+> +						#power-domain-cells =3D <0>;
+> +						power-domains =3D <&pgc_vpumix>;
+> +						reg =3D <IMX8MP_POWER_DOMAIN_VPU_G1>;
+> +						clocks =3D <&clk IMX8MP_CLK_VPU_G1_ROOT>;
+> +					};
+> +
+> +					pgc_vpu_g2: power-domain@12 {
+> +						#power-domain-cells =3D <0>;
+> +						power-domains =3D <&pgc_vpumix>;
+> +						reg =3D <IMX8MP_POWER_DOMAIN_VPU_G2>;
+> +						clocks =3D <&clk IMX8MP_CLK_VPU_G2_ROOT>;
+> +
+> +					};
+> +
+> +					pgc_vpu_vc8000e: power-domain@13 {
+> +						#power-domain-cells =3D <0>;
+> +						power-domains =3D <&pgc_vpumix>;
+> +						reg =3D <IMX8MP_POWER_DOMAIN_VPU_VC8000E>;
+> +						clocks =3D <&clk IMX8MP_CLK_VPU_VC8KE_ROOT>;
+> +					};
+> +
+>  					pgc_hdmimix: power-domain@14 {
+>  						#power-domain-cells =3D <0>;
+>  						reg =3D <IMX8MP_POWER_DOMAIN_HDMIMIX>;
+> @@ -890,33 +918,6 @@ pgc_ispdwp: power-domain@18 {
+>  						reg =3D <IMX8MP_POWER_DOMAIN_MEDIAMIX_ISPDWP>;
+>  						clocks =3D <&clk IMX8MP_CLK_MEDIA_ISP_ROOT>;
+>  					};
+> -
+> -					pgc_vpumix: power-domain@19 {
+> -						#power-domain-cells =3D <0>;
+> -						reg =3D <IMX8MP_POWER_DOMAIN_VPUMIX>;
+> -						clocks =3D <&clk IMX8MP_CLK_VPU_ROOT>;
+> -					};
+> -
+> -					pgc_vpu_g1: power-domain@20 {
+> -						#power-domain-cells =3D <0>;
+> -						power-domains =3D <&pgc_vpumix>;
+> -						reg =3D <IMX8MP_POWER_DOMAIN_VPU_G1>;
+> -						clocks =3D <&clk IMX8MP_CLK_VPU_G1_ROOT>;
+> -					};
+> -
+> -					pgc_vpu_g2: power-domain@21 {
+> -						#power-domain-cells =3D <0>;
+> -						power-domains =3D <&pgc_vpumix>;
+> -						reg =3D <IMX8MP_POWER_DOMAIN_VPU_G2>;
+> -						clocks =3D <&clk IMX8MP_CLK_VPU_G2_ROOT>;
+> -					};
+> -
+> -					pgc_vpu_vc8000e: power-domain@22 {
+> -						#power-domain-cells =3D <0>;
+> -						power-domains =3D <&pgc_vpumix>;
+> -						reg =3D <IMX8MP_POWER_DOMAIN_VPU_VC8000E>;
+> -						clocks =3D <&clk IMX8MP_CLK_VPU_VC8KE_ROOT>;
+> -					};
+>  				};
+>  			};
+>  		};
+>=20
 
-I guess my issue is that the "Massage commit message" seems to document
-a criticism that the author was careless, didn't follow a rule, or that
-the commit message was defective in some way, with the author having no
-right of reply (at least, not recorded in the git history).
 
-I may just be being too touchy.
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
-Anyway, thanks for picking up the patch -- I'm not trying to make extra
-work for anyone.
 
-Cheers
----Dave
 
