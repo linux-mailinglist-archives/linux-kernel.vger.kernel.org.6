@@ -1,124 +1,125 @@
-Return-Path: <linux-kernel+bounces-222160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0F890FDAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:26:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3D990FDA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6CCE1F2425A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7A001C21CAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B326D4502C;
-	Thu, 20 Jun 2024 07:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F6647F53;
+	Thu, 20 Jun 2024 07:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f4WEh8y3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Rql91ceP"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3A344366;
-	Thu, 20 Jun 2024 07:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D792C44366
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718868388; cv=none; b=dJizKYpOh1Id2L8UnDoIUzVGsqoQ+Z6VV3Q/MeznR2l/ladE328UYrzenZrpTs/Erxtx9OD/oLMZXGaK3Ol6fWNXJMm0l4r5yB14X7FeUIaWaeYCfcXdUHdTWRnAJVd7oHFnr/3nFHBOx3HKZW0jLl+fcLXWQrObFLvCsL5fEGM=
+	t=1718868314; cv=none; b=m7eUgBhwYPKcxTEM8W4QGePwYtWlVSxm/CFYvTsrExuTIYn+M+V3oMztrDJcljLRsIygfxHX3V9lXw6Y1gdHb6Lncy/6iAwJdHNqpaQS02HAQ9ban+WoAH1f5bPjzeyJFcwQWzIoAxrzcYfPFzftrfPxPRAfqHaxR9d9chkFWLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718868388; c=relaxed/simple;
-	bh=8/A1Y3E8GY6PIn4gC4KVtV56SOoGUo+DimAJe67mlxs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KWbhPBaBkR516KozoQDPZtUwbL5Rje4rz3pFVza96WZaVBvz7ALrkNWMx4h/hf5nenJHdcfi40K1hSjQQjxVIfa2d9EX0wPnAoqN4GaB86XtJlF171M3utPNgBG+APZLNkYeUy5G43nzECczdufXrITdikEzT4+fv3r9eno/82o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f4WEh8y3; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718868386; x=1750404386;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=8/A1Y3E8GY6PIn4gC4KVtV56SOoGUo+DimAJe67mlxs=;
-  b=f4WEh8y3OH5a5TqoWO2cwdSnnB5MpBS67l4pOnJ9kkmYg6+zirar1F7r
-   9s55rEwuOKmrT+PqSmd4TFYjA67gWRz3Ne24S2N5tkyOzr9NFEuVRM+wF
-   vFSHj0eQmjnz7bTkuUFCCF1BdbU4XBTofbkX+QA7bjOcWT6Iat471yYEC
-   H+Ec4cjC+npXPGChkr5gPMUggs/gai+54/LtHtf+fodht/FthxNeAWnMC
-   dve5LDCTkD0/Vf8KDE99jlVidgTYl2Pg1KDgGwxfN2m9eNcH9PxEXpiQ8
-   4F4gm3vr3E4wV25d0HH+GyPyUnHx3EQSsWBs53isC+tG3n6TcJM1T5bP1
-   A==;
-X-CSE-ConnectionGUID: 4jqDzsG7TbyEgfmXdyykLw==
-X-CSE-MsgGUID: /Pn9maYATyq3mofXgm5bwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="15966942"
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="scan'208";a="15966942"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 00:26:24 -0700
-X-CSE-ConnectionGUID: YPSl5iKzSRa7ktrwYfds6Q==
-X-CSE-MsgGUID: MuPmNWmlS8mScjrAeRBEkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="scan'208";a="73344286"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 00:26:21 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Barry Song <21cnbao@gmail.com>,  akpm@linux-foundation.org,
-  shuah@kernel.org,  linux-mm@kvack.org,  ryan.roberts@arm.com,
-  chrisl@kernel.org,  hughd@google.com,  kaleshsingh@google.com,
-  kasong@tencent.com,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  Barry Song <v-songbaohua@oppo.com>
-Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
- entry allocation for thp_swapout
-In-Reply-To: <3e185f8d-da63-4a61-9cd1-9804bd972515@redhat.com> (David
-	Hildenbrand's message of "Thu, 20 Jun 2024 09:20:43 +0200")
-References: <20240620002648.75204-1-21cnbao@gmail.com>
-	<87zfrg2xce.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<3e185f8d-da63-4a61-9cd1-9804bd972515@redhat.com>
-Date: Thu, 20 Jun 2024 15:24:30 +0800
-Message-ID: <87cyoc2i1d.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1718868314; c=relaxed/simple;
+	bh=jSwahG1fUc4nuo9lDEw9TRn4gAVc7Sv8Lfe1Q7iPXNQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BJZiHsfTy3EcB7ZMyvXppzRTk5528xEItJvP78iQLO0OzjHTTwgOUWiwMln0uH1rJ4R5uYFov2tQuaytNTmOO2wWgm7OAPkvW5ipyPiClfFgbk6/blFpAFUj8Eq+t6NQTN9/2+ZkRLEe86/OPEWuAmj8MocyORxt/6bcgTZhnMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Rql91ceP; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52bc0a9cea4so518773e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 00:25:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1718868311; x=1719473111; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yRH5412s3wX0CB4KIXqQXWuDqJc61xtQQ1UqcTmYbLs=;
+        b=Rql91cePriLwtxiq4n/1I2OAgbYmoN3CqoOuEPIEgDiAfvJlW2u2G2uw9Vz2saoT+A
+         0gs2VRfIbQJs7bAex9J3TASgHuBSEpoSDpkv/3zWRrogIn8dbSgioD6zQ6Ttf2fyI9DL
+         Szq1dftbfmzU4hmFNQ8eM6v3BkD8s4+ceMzPREzMxQUbWFWT7Ic84mtz6gZPFikN0b3y
+         vIBNI3neNx9kX+Fv1urTCpvdm9r13BgT3PHqRjwjNLREBzxiOrGuBGVW+7a5hgHFiF/0
+         1A3fU8YEuWlKaVNnER8kEtA28f2NJTqfCBYRYLinICkE81L3Klyqzh/J5JE2SGhdj4KQ
+         9AEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718868311; x=1719473111;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yRH5412s3wX0CB4KIXqQXWuDqJc61xtQQ1UqcTmYbLs=;
+        b=DHPpznuFr55auwCOVe4c5cmY715h7pkP/n5NG7ykvAiCiLOCCaTeJ7VdMqRZKbEJGY
+         VFFeBBQCrLlq4niNe2F7LJwOaZKJbJVdmU8BTw11iMxn9OlB1GivfRN6GMQ6fb7kHUDH
+         NRTmH8GspulkNAcB4lRy5J8yWx5vZYqQmIhgXACb0pbSNqToJH0o2kXGn7uiNLgkBdOm
+         0Qu+4kyZs48mul1OGVhk+60MSX1CKflb9pR/4SEQvoMnQGyKY+uHeNOgG4sYyyyA587a
+         KfVenYKKKgN+P3yDGTASmi77nQTEnhRGfyIqEHcOe4dTPO1hlweQKdEVlBrsizEPAl3i
+         hgnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhrdU1V3X46hGI7L/odo86MqQu2O3xYmS/tEP2Zw61IciEg9NeK0Cubo03ynvr4K30WXmbwtFEYIAYYClsGNXEghneS29XtrcunHue
+X-Gm-Message-State: AOJu0YxnkuuMDJU57MeK7SBn67GgKe7AoQVlK8LiiDkRnQYuNvJAbVgb
+	vFjlHHxh5PZxqtmrUsWizFygXGPrlAD7JkrFC2xUwYqTSSCL4jE7Xl9Ynku9UTRuPdOaYVfxE+Z
+	59QC2PFlQJdUFL7G3ot6D4VXW+5We+FrEIRE2Mg==
+X-Google-Smtp-Source: AGHT+IEdeM9R3n/NNtQDYZHx3TkVh4Vr7+gb+bkwvyCIBlqBU2TmaHrNNS+3vlKpjGfCJsXmfuuse+wN8rhE8KzDejs=
+X-Received: by 2002:a05:6512:ad5:b0:52c:86e0:97b5 with SMTP id
+ 2adb3069b0e04-52cca1c57b8mr1464365e87.16.1718868310875; Thu, 20 Jun 2024
+ 00:25:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+References: <20240619184550.34524-1-brgl@bgdev.pl> <20240619184550.34524-6-brgl@bgdev.pl>
+ <44cf011b-ec81-4826-b7c2-1a8d57594fca@lunn.ch>
+In-Reply-To: <44cf011b-ec81-4826-b7c2-1a8d57594fca@lunn.ch>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 20 Jun 2024 09:24:59 +0200
+Message-ID: <CAMRc=Mc0wN=zkduCnKetXyMsuY2k-BzrZ19ehPDntZRDu_o6fA@mail.gmail.com>
+Subject: Re: [PATCH net-next 5/8] net: phy: aquantia: wait for FW reset before
+ checking the vendor ID
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vinod Koul <vkoul@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-David Hildenbrand <david@redhat.com> writes:
+On Wed, Jun 19, 2024 at 9:27=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Wed, Jun 19, 2024 at 08:45:46PM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Checking the firmware register before it boots makes no sense, it will
+> > report 0 even if FW is loaded. Always wait for FW to boot before
+> > continuing.
+>
+> Please split this patch up. One patch which renames the method to the
+> more generic aqr_ since it is used by more than aqr107. Then add the
+> new use of it.
+>
 
-> On 20.06.24 03:53, Huang, Ying wrote:
->> Barry Song <21cnbao@gmail.com> writes:
->> 
->>> From: Barry Song <v-songbaohua@oppo.com>
->>>
->>> Both Ryan and Chris have been utilizing the small test program to aid
->>> in debugging and identifying issues with swap entry allocation. While
->>> a real or intricate workload might be more suitable for assessing the
->>> correctness and effectiveness of the swap allocation policy, a small
->>> test program presents a simpler means of understanding the problem and
->>> initially verifying the improvements being made.
->>>
->>> Let's endeavor to integrate it into the self-test suite. Although it
->>> presently only accommodates 64KB and 4KB, I'm optimistic that we can
->>> expand its capabilities to support multiple sizes and simulate more
->>> complex systems in the future as required.
->> IIUC, this is a performance test program instead of functionality
->> test
->> program.  Does it match the purpose of the kernel selftest?
->
-> We do have the similar tests at least for ksm (ksm_tests.c) and
-> probably others:
->
-> $ git grep -l clock_gettime
-> ksm_tests.c
-> migration.c
-> mremap_test.c
-> transhuge-stress.c
->
->
-> I recall that gup_test.c also measures performance things.
+Will do.
 
-Good to know that!  Thanks for your information!
+> Is this actually a fix? What happens to the firmware if you try to
+> download it while it is still booting? Or do you end up downloading
+> firmware when it is not actually needed? Please expand the commit
+> message.
+>
 
---
-Best Regards,
-Huang, Ying
+It says '0' and the driver tries to load it from nvmem, then the
+filesystem and bails-out after these two fail. I'll extend the commit
+message.
+
+Bart
+
+>     Andrew
+>
+> ---
+> pw-bot: cr
 
