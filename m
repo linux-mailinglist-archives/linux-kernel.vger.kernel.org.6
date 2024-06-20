@@ -1,209 +1,130 @@
-Return-Path: <linux-kernel+bounces-223011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711A0910BC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:16:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7721910BD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD0B1F22A98
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:16:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 165B81F21026
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DAF61B1506;
-	Thu, 20 Jun 2024 16:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1211B3F1B;
+	Thu, 20 Jun 2024 16:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C0e008+T"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KhxhDep6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B779015B0E5
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3399E1B372F
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900205; cv=none; b=GrIThWI4uwOEKVOsA1SXWTKw/wM8Xuis+znKd2JS8fUcHSmCP6KCZdzbGFvEjeESnDevFL7FzEstltuQxnTGq1/oxrfuuP+oGLMmSZnNUH7tx2uvo9qucOTUShy5pJ3J65F1s2yRaI24j6sUcBrSxBydhSDXLAGZcmVbpmy5tA4=
+	t=1718900211; cv=none; b=jlYP9SAGu5fPWxvdy1IyJMc81CjGHXA6drfmK80fIRai3S2GK3RqKRqWUNpYqIRTOzDQSoOEwPdAQBu5vvc6q8zwJM4Qxhn3exnT01rWFxOuMZ6DuWeWssmn0Q2DaJ4N2CAIJTUCoSFqJpZyJ2oRssv5ASpYi9yxIbL5gw4DBNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900205; c=relaxed/simple;
-	bh=3F25YNJFqKhy4bYsXBenLOYPz74lQQHcEZxBGefIBRw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jGGJ9R6iOshgGtCW8DavGH3u9/N4TfhNIniklz5xB0Wtq4erq5po7ESjyxqq4qV/d6fSGp59jleTDmAgeDgjzrLyzPlcruYDqOlWtlER/QE2V0wqLFtukqRVWeKSubN+xjWNeivMmCOc+t3JCq/imZSfmPsKjstT7zy/dq0w5Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C0e008+T; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-63bab20b9f4so16663467b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:16:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718900203; x=1719505003; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BCZKNDHzfJBJVhIBZvZUEBrTAzEooayjC9bbFQcCP8A=;
-        b=C0e008+T5bVLspMJrKa2RUGHNY7Br9p/8ytOj93JwAgxKIT58c4P9DmV5T1VALFb2c
-         lDUdSEdMfLsGLkiQ6LRthy0mLN7u3HyHpJ5eb8XsvVt0crl33e3vAbTZx9seq/tP0U0g
-         td3wkRjfsMwj5r2D8Gt8jVO6Q/3oLGkcE11Z5siumCeH30FIxfmL/qZNaFLfGWlSyLoe
-         3uDQfCkMeVTARk9yqLuyBx4UPPXgTYWGrwS0+ENoT9etQVSKVYnQ7//VaUrQ80dgCZzN
-         5JjUA4WLd76rtKZb6aZUMfJPXnzZ2kjz3X/hLdK6EVaW49UgZbFULS0qun6p/QnPIoYQ
-         jUrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718900203; x=1719505003;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BCZKNDHzfJBJVhIBZvZUEBrTAzEooayjC9bbFQcCP8A=;
-        b=YQQYeg9ycWz/4EhvPDflRu2WmtN2o6ne0gIZsdOOFLEWrPRfA42CKB+XLzOtRvcIHi
-         8Np/zM1ehEDmoJWgJufJVsIhOXI9JvF6kHTVFxhiZfqIapIfLpZdoMD9LHJdNMxxOi2Q
-         01IAeMkecnS2xix6n9OFiSgv560fmgq53qgPr5qHwrltp7kRs0XELBbslmnPe37mQ+Ny
-         QqrrGVolOJQtrQW5mjhNfKC5dP4Dm4Ajzjjqvjmp8I8LTRvglFOXYNtB2rRYnszzK6WD
-         9a9b5XNhyTYZkhp14+V3b8x0eGYa9kVpxi989yhyHPPvkmXhAtM+iv2EOaB2DWmwULfv
-         V4CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVnkXY5D+6YrVwALhrhc1qp52pSCyFVeHovlwW3aE3DDL3mkRPNS3jJviUi1srgAoumcWmIdoO0ZJ3ogMbaCY61P1zTluHoijAfee9
-X-Gm-Message-State: AOJu0Yz9a3hiBV1TWb039rHHfH8DJiDti3wTWjAKmOZH6YO1JsCJZZ8H
-	KdgZ4D6NnKGJo8M+UAP6u26wLI+Bv8BkDFLy5IM3wrSnoDPz8RbmPqNb6V7VoExTkdRi8cLsk3e
-	mhg==
-X-Google-Smtp-Source: AGHT+IHAW5Cu6uLeC2DeFrvw8mg2Wa8Sr6zlHDRn6IX74FBYp/Cbjsm3VmzOc1NPaMgFbVqucolfGz2nfUI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:ab33:0:b0:df4:d6ca:fed0 with SMTP id
- 3f1490d57ef6-e02be133adfmr219127276.4.1718900202676; Thu, 20 Jun 2024
- 09:16:42 -0700 (PDT)
-Date: Thu, 20 Jun 2024 09:16:41 -0700
-In-Reply-To: <20240619182128.4131355-2-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1718900211; c=relaxed/simple;
+	bh=+SqyJkoIErTrnlzyt9GtOIsskudssLb0nIT/gSHuTwU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jZtsK8mAWE7va6p4KeGNm2KtQwkJVZz1mjSGbXN+fqmThmeNr+rLdk5LuKJL9yNf4/qIzIJ6aih8nS0uTeuVOX3IMl+UBX2JuYGDVzOL9RwXiuqQtAdoCqAmvNPqdwuzA8LwnMpHJWqKVFkfwiToNDNKu8LhXdV1uCAlTgAms6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KhxhDep6; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718900210; x=1750436210;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+SqyJkoIErTrnlzyt9GtOIsskudssLb0nIT/gSHuTwU=;
+  b=KhxhDep6/74nrcr4hCKIgOpUd0KMDpQfPkWQ6ubzzk6Lcwzry6ouYAWr
+   XLHteyUWh0slHL7fXDHSsMQwe8A7NVqzmaDl06EFD4AJNgdkj78Hct1uY
+   mn5p/xfMSsxXhUs/c74uNz0GAkce8BD21eN3xKCX6Jwft8BF1zh7JkPIA
+   TM67+2Zl9wocmwbnf4wS68s4VGMjSv4NFbwDeetyJlTINMxglMYacSU+E
+   UyO7VLEuYDP5AJtHen+ba/wXKu6EcBHeCJkUHbVFAFuIg7+xUGdQhGmrw
+   zvOTYvfBAPUv+r+NKS054uM9GmI+0GJvomNaFrRWRq8JJ6Jvxb4tjOlwP
+   g==;
+X-CSE-ConnectionGUID: bpoaz8OPRUSpDCGKPDQWZQ==
+X-CSE-MsgGUID: ghsscLcDQPWcojFlVdL+rw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="33436997"
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="33436997"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 09:16:50 -0700
+X-CSE-ConnectionGUID: FmyXfYqMSqWmN38HMlM0EQ==
+X-CSE-MsgGUID: 4AjvyFn8Q1SBMnLt14VUaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="42962394"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 09:16:49 -0700
+Received: from [10.212.43.222] (kliang2-mobl1.ccr.corp.intel.com [10.212.43.222])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id EC72D20B5703;
+	Thu, 20 Jun 2024 09:16:47 -0700 (PDT)
+Message-ID: <4cce9f37-7698-418d-a9c5-4aa1dc01b719@linux.intel.com>
+Date: Thu, 20 Jun 2024 12:16:46 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240619182128.4131355-1-dapeng1.mi@linux.intel.com> <20240619182128.4131355-2-dapeng1.mi@linux.intel.com>
-Message-ID: <ZnRV6XrKkVwZB2TN@google.com>
-Subject: Re: [PATCH 1/2] KVM: x86/pmu: Define KVM_PMC_MAX_GENERIC for platform independence
-From: Sean Christopherson <seanjc@google.com>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>, 
-	Xiong Zhang <xiong.y.zhang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>, 
-	Like Xu <like.xu.linux@gmail.com>, Jinrong Liang <cloudliang@tencent.com>, 
-	Dapeng Mi <dapeng1.mi@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH 05/12] perf/x86: Add config_mask to represent
+ EVENTSEL bitmask
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com,
+ alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+ ak@linux.intel.com, eranian@google.com,
+ Dapeng Mi <dapeng1.mi@linux.intel.com>
+References: <20240618151044.1318612-1-kan.liang@linux.intel.com>
+ <20240618151044.1318612-6-kan.liang@linux.intel.com>
+ <20240620074402.GS31592@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240620074402.GS31592@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 20, 2024, Dapeng Mi wrote:
-> The existing macro, KVM_INTEL_PMC_MAX_GENERIC, ambiguously represents the
-> maximum supported General Purpose (GP) counter number for both Intel and
-> AMD platforms. This could lead to issues if AMD begins to support more GP
-> counters than Intel.
+
+
+On 2024-06-20 3:44 a.m., Peter Zijlstra wrote:
+> On Tue, Jun 18, 2024 at 08:10:37AM -0700, kan.liang@linux.intel.com wrote:
+>> From: Kan Liang <kan.liang@linux.intel.com>
+>>
+>> Different vendors may support different fields in EVENTSEL MSR, such as
+>> Intel would introduce new fields umask2 and eq bits in EVENTSEL MSR
+>> since Perfmon version 6. However, a fixed mask X86_RAW_EVENT_MASK is
+>> used to filter the attr.config.
+>>
 > 
-> To resolve this, a new platform-independent macro, KVM_PMC_MAX_GENERIC,
-> is introduced to represent the maximum GP counter number across all x86
-> platforms.
+>> @@ -1231,6 +1233,11 @@ static inline int x86_pmu_num_counters_fixed(struct pmu *pmu)
+>>  	return hweight64(hybrid(pmu, fixed_cntr_mask64));
+>>  }
+>>  
+>> +static inline u64 x86_pmu_get_event_config(struct perf_event *event)
+>> +{
+>> +	return event->attr.config & hybrid(event->pmu, config_mask);
+>> +}
 > 
-> No logic changes are introduced in this patch.
-> 
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> ---
->  arch/x86/include/asm/kvm_host.h | 9 +++++----
->  arch/x86/kvm/svm/pmu.c          | 2 +-
->  arch/x86/kvm/vmx/pmu_intel.c    | 2 ++
->  3 files changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 57440bda4dc4..18137be6504a 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -534,11 +534,12 @@ struct kvm_pmc {
->  
->  /* More counters may conflict with other existing Architectural MSRs */
->  #define KVM_INTEL_PMC_MAX_GENERIC	8
-> -#define MSR_ARCH_PERFMON_PERFCTR_MAX	(MSR_ARCH_PERFMON_PERFCTR0 + KVM_INTEL_PMC_MAX_GENERIC - 1)
-> -#define MSR_ARCH_PERFMON_EVENTSEL_MAX	(MSR_ARCH_PERFMON_EVENTSEL0 + KVM_INTEL_PMC_MAX_GENERIC - 1)
-> +#define KVM_AMD_PMC_MAX_GENERIC	6
-> +#define KVM_PMC_MAX_GENERIC		KVM_INTEL_PMC_MAX_GENERIC
+> Seriously, we're going to be having such major event encoding
+> differences between cores on a single chip?
 
-Since we're changing the macro, maybe take the opportunity to use a better name?
-E.g. KVM_MAX_NR_GP_COUNTERS?  And then in a follow-up patch, give fixed counters
-the same treatment, e.g. KVM_MAX_NR_FIXED_COUNTERS.  Or maybe KVM_MAX_NR_GP_PMCS
-and KVM_MAX_NR_FIXED_PMCS?
+For LNL, no. But ARL-H may have an event encoding differences.
+I will double check.
 
-> +#define MSR_ARCH_PERFMON_PERFCTR_MAX	(MSR_ARCH_PERFMON_PERFCTR0 + KVM_PMC_MAX_GENERIC - 1)
-> +#define MSR_ARCH_PERFMON_EVENTSEL_MAX	(MSR_ARCH_PERFMON_EVENTSEL0 + KVM_PMC_MAX_GENERIC - 1)
+The problem is that there is no guarantee for the future platforms.
+With the CPUID leaf 0x23, all the features are enumerated per CPU.
+In theory, it's possible that different layout of the EVENTSEL MSR
+between different types of core.
+If we take the virtualization into account, that's even worse.
 
-And I'm very, very tempted to say we should simply delete these two, along with
-MSR_ARCH_PERFMON_FIXED_CTR_MAX, and just open code the "end" MSR in the one user.
-Especially since "KVM" doesn't appear anyone in the name, i.e. because the names
-misrepresent KVM's semi-arbitrary max as the *architectural* max.
+It should be a safe way to add the hybrid() check.
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 6ad19d913d31..547dfe40d017 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7432,17 +7432,20 @@ static void kvm_probe_msr_to_save(u32 msr_index)
-                     intel_pt_validate_hw_cap(PT_CAP_num_address_ranges) * 2))
-                        return;
-                break;
--       case MSR_ARCH_PERFMON_PERFCTR0 ... MSR_ARCH_PERFMON_PERFCTR_MAX:
-+       case MSR_ARCH_PERFMON_PERFCTR0 ...
-+            MSR_ARCH_PERFMON_PERFCTR0 + KVM_MAX_NR_GP_COUNTERS - 1:
-                if (msr_index - MSR_ARCH_PERFMON_PERFCTR0 >=
-                    kvm_pmu_cap.num_counters_gp)
-                        return;
-                break;
--       case MSR_ARCH_PERFMON_EVENTSEL0 ... MSR_ARCH_PERFMON_EVENTSEL_MAX:
-+       case MSR_ARCH_PERFMON_EVENTSEL0 ...
-+            MSR_ARCH_PERFMON_EVENTSEL0 + KVM_MAX_NR_GP_COUNTERS - 1:
-                if (msr_index - MSR_ARCH_PERFMON_EVENTSEL0 >=
-                    kvm_pmu_cap.num_counters_gp)
-                        return;
-                break;
--       case MSR_ARCH_PERFMON_FIXED_CTR0 ... MSR_ARCH_PERFMON_FIXED_CTR_MAX:
-+       case MSR_ARCH_PERFMON_FIXED_CTR0 ...
-+            MSR_ARCH_PERFMON_FIXED_CTR0 + KVM_MAR_NR_FIXED_COUNTERS - 1:
-                if (msr_index - MSR_ARCH_PERFMON_FIXED_CTR0 >=
-                    kvm_pmu_cap.num_counters_fixed)
-                        return;
 
->  #define KVM_PMC_MAX_FIXED	3
->  #define MSR_ARCH_PERFMON_FIXED_CTR_MAX	(MSR_ARCH_PERFMON_FIXED_CTR0 + KVM_PMC_MAX_FIXED - 1)
-> -#define KVM_AMD_PMC_MAX_GENERIC	6
->  
->  struct kvm_pmu {
->  	u8 version;
-> @@ -554,7 +555,7 @@ struct kvm_pmu {
->  	u64 global_status_rsvd;
->  	u64 reserved_bits;
->  	u64 raw_event_mask;
-> -	struct kvm_pmc gp_counters[KVM_INTEL_PMC_MAX_GENERIC];
-> +	struct kvm_pmc gp_counters[KVM_PMC_MAX_GENERIC];
->  	struct kvm_pmc fixed_counters[KVM_PMC_MAX_FIXED];
->  
->  	/*
-> diff --git a/arch/x86/kvm/svm/pmu.c b/arch/x86/kvm/svm/pmu.c
-> index 6e908bdc3310..2fca247798eb 100644
-> --- a/arch/x86/kvm/svm/pmu.c
-> +++ b/arch/x86/kvm/svm/pmu.c
-> @@ -218,7 +218,7 @@ static void amd_pmu_init(struct kvm_vcpu *vcpu)
->  	int i;
->  
->  	BUILD_BUG_ON(KVM_AMD_PMC_MAX_GENERIC > AMD64_NUM_COUNTERS_CORE);
-> -	BUILD_BUG_ON(KVM_AMD_PMC_MAX_GENERIC > INTEL_PMC_MAX_GENERIC);
-> +	BUILD_BUG_ON(KVM_AMD_PMC_MAX_GENERIC > KVM_PMC_MAX_GENERIC);
->  
->  	for (i = 0; i < KVM_AMD_PMC_MAX_GENERIC ; i++) {
->  		pmu->gp_counters[i].type = KVM_PMC_GP;
-> diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
-> index fb5cbd6cbeff..a4b0bee04596 100644
-> --- a/arch/x86/kvm/vmx/pmu_intel.c
-> +++ b/arch/x86/kvm/vmx/pmu_intel.c
-> @@ -570,6 +570,8 @@ static void intel_pmu_init(struct kvm_vcpu *vcpu)
->  	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
->  	struct lbr_desc *lbr_desc = vcpu_to_lbr_desc(vcpu);
->  
-> +	BUILD_BUG_ON(KVM_INTEL_PMC_MAX_GENERIC > KVM_PMC_MAX_GENERIC);
-
-Rather than BUILD_BUG_ON() for both Intel and AMD, can't we just do?
-
-#define KVM_MAX_NR_GP_COUNTERS max(KVM_INTEL_PMC_MAX_GENERIC, KVM_AMD_PMC_MAX_GENERIC)
-
-> +
->  	for (i = 0; i < KVM_INTEL_PMC_MAX_GENERIC; i++) {
->  		pmu->gp_counters[i].type = KVM_PMC_GP;
->  		pmu->gp_counters[i].vcpu = vcpu;
-> -- 
-> 2.34.1
-> 
+Thanks,
+Kan
 
