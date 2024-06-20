@@ -1,142 +1,207 @@
-Return-Path: <linux-kernel+bounces-223559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08A79114D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:40:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7E39114D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AD05283524
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:40:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20790B216FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EF681AC1;
-	Thu, 20 Jun 2024 21:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E797981AC3;
+	Thu, 20 Jun 2024 21:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="N9eeNJ6u";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Mn8yBW35"
-Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="pVEHlSzw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UY+YRFuP"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4116874BF0;
-	Thu, 20 Jun 2024 21:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958A47711C;
+	Thu, 20 Jun 2024 21:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718919648; cv=none; b=o4b5gixea88kSseajy7dCBmFKzFj026e3LhLM/F87zMRuO7iczlP2j5F0Rx5Gk1cU4zX3d0PffCJnAxegBEJpB9te2z4wVxe0PJedhcsFH523XMuxNTWugT+OFsGeFlPKOKF8i56jkVn9qcBPjrPQp8evSXwyPuVLuJTiX7ikSU=
+	t=1718919669; cv=none; b=ObMnPntmVGsG2ZolQ4g/6poRJoaKxy7JSHoM5hZbrD7qVobT7hhwgb4QjJ3LJI/XkA1GoPeqZpxA5Bdoe2Zx5ajyaeR6hxjVig/dpDQ5i4RaxhrleFM5qwyF+ZGjzpooWXzDhcNUKonllkjTRqvNaf+b7/bvgbfKOOSK3HJud2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718919648; c=relaxed/simple;
-	bh=/ZqHaM7eyu6SEUfj0+cHTAw1+kYHMfcUuW+8dm6VPTo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j1TXBi+YREsdPe5nqd8qVfbA7rSCtl/hufybju+/JrG5ntGqUOSiBNNb22AHxBg3NxYt2WlKJZIheySHKqTYOcWMw2pomGdMH0Rx2RBnDcD9/5vHk6X4s759Ln3iUUaS0fjvn9rWtsnq6/AHxxlWOOckoKvhsKcubxyMceFl28I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=N9eeNJ6u; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Mn8yBW35; arc=none smtp.client-ip=64.147.123.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfout.west.internal (Postfix) with ESMTP id 150491C00111;
-	Thu, 20 Jun 2024 17:40:45 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Thu, 20 Jun 2024 17:40:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1718919644;
-	 x=1719006044; bh=U+RQTWGThkmobRX/Ae5sAZDBhtv41vgHeflEaT6xjZA=; b=
-	N9eeNJ6uNO7irK7f8M72gWeb/rVgXRDLxog5z6GWz/j/+grE9gRoyI/1B68CVfBb
-	D6qc03M0R8DtSt06pK8mDKJ24hY32hbnewOgoZg6fTQGQd2wF+Cr6CLj1V7/+Cpz
-	MfaBLz3DppQjyYyObSrz2CaGgc2ROeOlbVTMLzg27TnAqRWKY8skzbzZ47B4WxwD
-	djJIGTmFyY70M7LPRjYx0bM+BjXgYdPJ9DyxSappwy7VPUEUM+FZopuH7QeDkbpD
-	jAW5iUD9q4M3Drn9CErNAzq2+GsG+JIFzfwn5z6nF6ayEr29UDrCfSghcW2YPY32
-	wA854AsRwmwxQZ5OE0dHdQ==
+	s=arc-20240116; t=1718919669; c=relaxed/simple;
+	bh=WpuU19vmTKbofK2gQplueUgolsFBx2pt9q8yJbUln0s=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=PFwpj+H1tMnidRdkcOK1kcraO/lQuB4qfZ3VcJf8l7NVAmvtMdPgoQoEHHvvVEHZD70oCgonUuUpocmzTEIIhU7XJNggoocFIk7n+6T53iWd6mqxIHHAj6ft1qLn/ssOGvC/xoJw6WiAQZsg1FhfM7BuST/0Kzip6+XHVTnOUMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=pVEHlSzw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UY+YRFuP; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 90C801140185;
+	Thu, 20 Jun 2024 17:41:06 -0400 (EDT)
+Received: from imap41 ([10.202.2.91])
+  by compute2.internal (MEProxy); Thu, 20 Jun 2024 17:41:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1718919666; x=1719006066; bh=zCnYiIjAkA
+	sr6vmZnoznJvVH6yAn3CfED7lE05yJcBU=; b=pVEHlSzwLXoiO66HAPQAOLBzIy
+	SIOhM0gaW+8CgOagQiYqYeS0QU1n/Xf6tDNlVe8hPeUBTuR6QP6tHs5MmtsBDWzn
+	NqvvK+8oL+YFdTdUFy8F71MvMUASk21XZkTGx4LCWZOo0mmw/rXEq6qqklaKl0SB
+	tjqZjNrA5v/qxPD+VpEDDHSpxSgvqt4RbqXCuzadH2JBgXjbMajljZPBpmoYI3jF
+	vFUg0LrHxDtWXovcJ/8G1l4dmMUK0FUa3UVXs36bm7IKsBeHsMd2oDZ8GfASohte
+	+xnRb9LazezXdrZ6kJbP4NKj97hmX+ECzn+Uj7zM0Q4qcm3Idcg45SmSBBXw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718919644; x=
-	1719006044; bh=U+RQTWGThkmobRX/Ae5sAZDBhtv41vgHeflEaT6xjZA=; b=M
-	n8yBW35S91ledb2ISb0AO6UywBGqhbfacKehc5eO+0U/hFJqAuL3wUGqOFQ6k5W7
-	HiyGabFBXiGTkZ4MfJewmLFofapdWXotHDAW2tIbN7HcCKCSnSatmz1zFi9YJHkl
-	wveFsAVCaX6w7KPZHg4f/k1Fi8IwU1Kb29SKQfKEK3wCO4bNFa7w7ZQlVeApXD9n
-	t+AuKZS2JQx0DUrm3gq0AG5c6e1uRR/KSQ0dLOAsJzj9TLQE8udcosGxfjb710Aa
-	b0gWHKg486FtSydP0ZQ72bilKbtEiZGjgcs3ct0cvsoUO8LD298jCGijZfKaVV0n
-	OFGRTzQLYxvaKDBZ1+gSg==
-X-ME-Sender: <xms:3KF0ZqdBFqgTUwDM-6jZGF7O3bwXIuwZXeAIa4EbfsYdzN1yjqnuAQ>
-    <xme:3KF0ZkMaYDDx64GKNU0Y87cPPW2sGBubWphSjQ22KrtSKpRf47RO0u05G4xtxOT1I
-    M8jwkiPa5-GljZC>
-X-ME-Received: <xmr:3KF0Zri4pzfok0YNrmV2t2VdoPlVbtzGJeDSMwW05hazSF9utkIk-0z15I1iuZBLchIBuYTjEwjNXym-iVeZxUybgE_h2sH9q7sC85bECoz57lzr2MbL>
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1718919666; x=1719006066; bh=zCnYiIjAkAsr6vmZnoznJvVH6yAn
+	3CfED7lE05yJcBU=; b=UY+YRFuPInKuSX2AgEJqyGLGpGKHt4ffqpf/HDx2RkR+
+	W2TeoJiPByYSjIv7siFzuKIRlu4tEVB1SmiFYv28cz7zDkbcS+DHsKbxuqqBkPPY
+	PIGb9eYY9ydVnZMMwEVnBl/SYnyK2N6yjTc14mTk6QKjd439EzlNGhbENj71KzUz
+	FJ1kZSnad343Uczbv9nAR1HYDnY1uVMNv4WoZxoiGlXQVMjeH0MSXTQ2IdXwgjGz
+	X7qT+Xmw6ucZ/hmfDa7X6cfAmNQGjDoiZfHOOqkZB6O6ZPNoDEMHLIOXnksVWntw
+	stHEG2qqh6sI/uNsuKn6tqndslzLmMbU6b3bEsUQDw==
+X-ME-Sender: <xms:8aF0ZkC-ezlRi_rO5EbkMRKrF9EbmOU9hzADB6tcWoHu11d-BqTcvQ>
+    <xme:8aF0Zmidk9FDp31QKIZaWzXYP4cla8D2eNXy7CionmnXzkpiM51nm0G9eCdoMW0Tn
+    k9STZB6dbitAuBOhJ4>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeffedgtddvucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefgueektdefuefgkeeuieekieeljeehffej
-    heeludeifeetueefhfetueehhfefnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgu
-    rdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
-X-ME-Proxy: <xmx:3KF0Zn9i4oDauOmi_nlkvaNxTJaK2Rys1nff8wqEw_xSr1qJPh7V2w>
-    <xmx:3KF0ZmvOOXA1IvatgqQmI0hZR3yekNZxRyhPqWQLOcQodmYOFZutyw>
-    <xmx:3KF0ZuGhm0300HenAkIo9NUM2kAKeGUoz24z95mTh6Lhg8Umd9h2MQ>
-    <xmx:3KF0ZlOkvapH134FoJ4dk7m8uookEBLEGUrWLqgKw9ziy_UAsJJCJA>
-    <xmx:3KF0ZoV7u-jY_UdubUqyI_qVjF7wthXcKa5tQw4osGIoqlgbXW2v7Gur>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 20 Jun 2024 17:40:43 -0400 (EDT)
-Message-ID: <db4ed4e5-7c23-468d-8bac-cee215ace19e@fastmail.fm>
-Date: Thu, 20 Jun 2024 23:40:41 +0200
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedfnfhu
+    khgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtth
+    gvrhhnpedutdelgfdvgeekueeuteevffelfedukeeitedugfdvtdeutdetjeduudeuvdeg
+    gfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehluh
+    hkvgeslhhjohhnvghsrdguvghv
+X-ME-Proxy: <xmx:8aF0ZnnNhR5JfdkqWVEwZNztwByosnXyuPwizIeNiEO9lwKP8PBKIw>
+    <xmx:8aF0ZqyeAtRTWhvLD-QX3Inj0hBw4uKk-C9xtx_yTim3O_fkri0A1w>
+    <xmx:8aF0ZpTbf0oaLvkA1xAoTdtC0I2ko3jDh24pQeN5ASkYdEtxKup46Q>
+    <xmx:8aF0ZlYSDt0yiGkt6BTaTprWSZ69NfQUmAXq_VgmDlkUKWr3JYlZDw>
+    <xmx:8qF0ZiKQowSrKxFjEI7A7muK-jBjeQMeGzUNkxq1oB53yNxTFzz6RpHY>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id A954A2340080; Thu, 20 Jun 2024 17:41:05 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] fuse: do not generate interrupt requests for fatal signals
-To: Haifeng Xu <haifeng.xu@shopee.com>, Christian Brauner
- <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240613040147.329220-1-haifeng.xu@shopee.com>
- <CAJfpegsGOsnqmKT=6_UN=GYPNpVBU2kOjQraTcmD8h4wDr91Ew@mail.gmail.com>
- <a8d0c5da-6935-4d28-9380-68b84b8e6e72@shopee.com>
- <CAJfpegsvzDg6fUy9HGUaR=7x=LdzOet4fowPvcbuOnhj71todg@mail.gmail.com>
- <20240617-vanille-labil-8de959ba5756@brauner>
- <2cf34c6b-4653-4f48-9a5f-43b484ed629e@shopee.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <2cf34c6b-4653-4f48-9a5f-43b484ed629e@shopee.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-Id: <ede8505f-bcf6-403e-bda2-6848cd4ff4c7@app.fastmail.com>
+In-Reply-To: <20240620082223.20178-2-dev@doubly.so>
+References: <20240620082223.20178-1-dev@doubly.so>
+ <20240620082223.20178-2-dev@doubly.so>
+Date: Fri, 21 Jun 2024 09:40:45 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: "Devin Bayer" <dev@doubly.so>, corentin.chary@gmail.com
+Cc: "Hans de Goede" <hdegoede@redhat.com>,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-api@vger.kernel.org,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: support camera disable LED
+Content-Type: text/plain
 
-
-
-On 6/20/24 08:43, Haifeng Xu wrote:
+On Thu, 20 Jun 2024, at 8:22 PM, Devin Bayer wrote:
+> Support the LED on F10 above the crossed out camera icon.
 > 
+> Signed-off-by: Devin Bayer <dev@doubly.so>
+> ---
+> drivers/platform/x86/asus-wmi.c            | 36 ++++++++++++++++++++++
+> include/linux/platform_data/x86/asus-wmi.h |  2 ++
+> 2 files changed, 38 insertions(+)
 > 
-> On 2024/6/17 15:25, Christian Brauner wrote:
->> On Fri, Jun 14, 2024 at 12:01:39PM GMT, Miklos Szeredi wrote:
->>> On Thu, 13 Jun 2024 at 12:44, Haifeng Xu <haifeng.xu@shopee.com> wrote:
->>>
->>>> So why the client doesn't get woken up?
->>>
->>> Need to find out what the server (lxcfs) is doing.  Can you do a
->>> strace of lxcfs to see the communication on the fuse device?
->>
->> Fwiw, I'm one of the orignal authors and maintainers of LXCFS so if you
->> have specific questions, I may be able to help.
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 3f9b6285c9a6..5585f15e7920 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -73,6 +73,7 @@ module_param(fnlock_default, bool, 0444);
+> #define NOTIFY_LID_FLIP_ROG 0xbd
+>  
+> #define ASUS_WMI_FNLOCK_BIOS_DISABLED BIT(0)
+> +#define ASUS_WMI_DEVID_CAMERA_LED 0x00060079
+>  
+> #define ASUS_MID_FAN_DESC "mid_fan"
+> #define ASUS_GPU_FAN_DESC "gpu_fan"
+> @@ -238,6 +239,7 @@ struct asus_wmi {
+> struct led_classdev lightbar_led;
+> int lightbar_led_wk;
+> struct led_classdev micmute_led;
+> + struct led_classdev camera_led;
+> struct workqueue_struct *led_workqueue;
+> struct work_struct tpd_led_work;
+> struct work_struct wlan_led_work;
+> @@ -1642,6 +1644,27 @@ static int micmute_led_set(struct led_classdev *led_cdev,
+> return err < 0 ? err : 0;
+> }
+>  
+> +static enum led_brightness camera_led_get(struct led_classdev *led_cdev)
+> +{
+> + struct asus_wmi *asus;
+> + u32 result;
+> +
+> + asus = container_of(led_cdev, struct asus_wmi, camera_led);
+> + asus_wmi_get_devstate(asus, ASUS_WMI_DEVID_CAMERA_LED, &result);
+> +
+> + return result & ASUS_WMI_DSTS_BRIGHTNESS_MASK;
+> +}
+> +
+> +static int camera_led_set(struct led_classdev *led_cdev,
+> +    enum led_brightness brightness)
+> +{
+> + int state = brightness != LED_OFF;
+> + int err;
+> +
+> + err = asus_wmi_set_devstate(ASUS_WMI_DEVID_CAMERA_LED, state, NULL);
+> + return err < 0 ? err : 0;
+> +}
+> +
+> static void asus_wmi_led_exit(struct asus_wmi *asus)
+> {
+> led_classdev_unregister(&asus->kbd_led);
+> @@ -1649,6 +1672,7 @@ static void asus_wmi_led_exit(struct asus_wmi *asus)
+> led_classdev_unregister(&asus->wlan_led);
+> led_classdev_unregister(&asus->lightbar_led);
+> led_classdev_unregister(&asus->micmute_led);
+> + led_classdev_unregister(&asus->camera_led);
+>  
+> if (asus->led_workqueue)
+> destroy_workqueue(asus->led_workqueue);
+> @@ -1740,6 +1764,18 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
+> goto error;
+> }
+>  
+> + if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_CAMERA_LED)) {
+> + asus->camera_led.name = "platform::camera";
+
+What do other devices label their camera LED as? The one I could find appears to use `<vendor>::camera`. So maybe `asus::camera` would be better? This also keeps in line with `asus::kbd_backlight`.
+
+> + asus->camera_led.max_brightness = 1;
+> + asus->camera_led.brightness_get = camera_led_get;
+> + asus->camera_led.brightness_set_blocking = camera_led_set;
+> +
+> + rv = led_classdev_register(&asus->platform_device->dev,
+> + &asus->camera_led);
+> + if (rv)
+> + goto error;
+> + }
+> +
+> error:
+> if (rv)
+> asus_wmi_led_exit(asus);
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index 3eb5cd6773ad..b3c35e33f1e7 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -50,6 +50,8 @@
+> #define ASUS_WMI_DEVID_LED5 0x00020015
+> #define ASUS_WMI_DEVID_LED6 0x00020016
+> #define ASUS_WMI_DEVID_MICMUTE_LED 0x00040017
+> +#define ASUS_WMI_DEVID_CAMERA_LED_NEG 0x00060078
+> +#define ASUS_WMI_DEVID_CAMERA_LED 0x00060079
+>  
+> /* Backlight and Brightness */
+> #define ASUS_WMI_DEVID_ALS_ENABLE 0x00050001 /* Ambient Light Sensor */
+> -- 
+> 2.45.2
 > 
-> Thanks. All server threads of lcxfs wokrs fine now.
-> 
-> So can we add another interface to abort those dead request?
-> If the client thread got killed and wait for relpy, but the fuse sever didn't 
-> send reply for some unknown reason，we can use this interface to wakeup the client thread.
 
-Isn't that a manual workaround? I.e. an admin or a script needs to trigger it?
-
-There is a discussion in this thread to add request timeouts
-https://lore.kernel.org/linux-kernel/20240605153552.GB21567@localhost.localdomain/T/
-I guess for interrupted requests that would be definitely a case where timeouts could be
-applied?
-
-
-Thanks,
-Bernd
+I'll defer final review to Hans and Ilpo to be sure I've not missed anything, otherwise it LGTM pending the one comment above.
 
