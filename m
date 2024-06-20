@@ -1,109 +1,89 @@
-Return-Path: <linux-kernel+bounces-222836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9204F91086B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:32:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A16EF9108C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CF71B20C8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:32:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2FEF1C2194D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDADE1B142D;
-	Thu, 20 Jun 2024 14:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5MlKvy8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6CE1AED20;
-	Thu, 20 Jun 2024 14:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B612419B3E1;
+	Thu, 20 Jun 2024 14:46:01 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4011E497;
+	Thu, 20 Jun 2024 14:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718893851; cv=none; b=H+6Fk3qkOb4pZQfe36kK87/fGF/sq7Y6DhJoQebZPMBIwjquEJRnt8t4H6Jt+4fkXrtdLO2YiiPYhYlwjoUP8pXWR8S2sihmO/QTY7N3L0JwdPt3OESSc/AIeDBcPS4xpnuWi3XpaZskA4tKdg0peAeO7aqNEbVuz3fiP6pxoXg=
+	t=1718894761; cv=none; b=HDsB+jgH3qD0gufEcRrEi+xMhJb5ishgU5t8FrtzdAbxuLj5QVq07abmUPKN/e6eHwS0j3zDxZqZQZbKEor+/0LY7nur2XR6vDxSoQ0iW1VtqrlvZyBpcaMSVAC39FCAldqo9YkHdZUBvqoJuRLDVnJQG/6YyCQmLJUnb0DpZH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718893851; c=relaxed/simple;
-	bh=MCEdSf7+2gNB9bRow0LmNrkJ5TryvBvJFSq8fOZe7Rg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cyto9yB/74kHVOGoRXPRM/f/9VBIIEOmttBEDRrT8qQMBvzx+jc+p0TUlZfk7WjEZ3nV3NvR4uG9G7eHgAogYa7CiLpa4GWroshzcl7YceAA6hetUytMrBlpO4284yTvtwqm9laLD3D/StBrTyjTmir1vezlJ75EOTrSblrCKcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K5MlKvy8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 754EDC4AF08;
-	Thu, 20 Jun 2024 14:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718893850;
-	bh=MCEdSf7+2gNB9bRow0LmNrkJ5TryvBvJFSq8fOZe7Rg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=K5MlKvy87w2ZwcwG/Mb+ggZHPQRRRAsjnPfz5F/9Rw3ACzo50kWz4W/1sPKRsx2OD
-	 45eJ8PJhfT9C1aSYG2oOOgEz+4pmU2qtcoDQQGDJjKM0vkdc2yPDvx7BKGEKYgUVfJ
-	 FbJJ3SHC715N7y2gwH8X8Iarb/5jC5/Ag2YNJNCp9yR768tH/pzNSKCVNFyqQ+EmGk
-	 Qe94ZYQ3qZ7SE+cBm4X+6bEGLap4rWytkSdmouOPCDSoDglqpewIDO836XoaVi9yvu
-	 NEAxY8FQhqm3R7R7kvd87h48C07OD9j7BGxz2P5qUju6kcFwPuPmw9/B2XOOiweZox
-	 aoPYuE7BiyA6g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5B2D8E7C4C6;
-	Thu, 20 Jun 2024 14:30:50 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1718894761; c=relaxed/simple;
+	bh=qDGnScQ7WuPpwcBEvsp6QgrvUYW/bjdBDuuaefI7n1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tnqiqqEEEA2zdYSlRoMLpHh/8joVqzYg3idOy1Jgr081+Ct5iLrXPgqh1oRR2uXGrNuHCY9fS9sZtyDvpSYm2N7cH3FWLw8Q3zC0d1hm308QzdjH2IfqpQOOQIYm2AqVUGL0lH0iuVluVO+RfyW31PK22ALd5c8qsZeY8m/SdBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sKJ2m-0000tH-00; Thu, 20 Jun 2024 16:45:44 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 661D3C0120; Thu, 20 Jun 2024 16:31:15 +0200 (CEST)
+Date: Thu, 20 Jun 2024 16:31:15 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH fixes] MIPS: ip30: ip30-console: Add missing include
+Message-ID: <ZnQ9M4Q/TTZi13Sg@alpha.franken.de>
+References: <20240616-ip30-buildfix-v1-1-0ab2b9aec9f5@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v9 0/2] pwrseq: introduce the subsystem and first driver
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <171889385036.4585.6482250630135606154.git-patchwork-notify@kernel.org>
-Date: Thu, 20 Jun 2024 14:30:50 +0000
-References: <20240605123850.24857-1-brgl@bgdev.pl>
-In-Reply-To: <20240605123850.24857-1-brgl@bgdev.pl>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, kvalo@kernel.org,
- andersson@kernel.org, konrad.dybcio@linaro.org, lgirdwood@gmail.com,
- broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org,
- bhelgaas@google.com, saravanak@google.com, geert+renesas@glider.be,
- arnd@arndb.de, neil.armstrong@linaro.org, m.szyprowski@samsung.com,
- elder@linaro.org, srinivas.kandagatla@linaro.org, gregkh@linuxfoundation.org,
- abel.vesa@linaro.org, mani@kernel.org, lukas@wunner.de,
- dmitry.baryshkov@linaro.org, amit.pundir@linaro.org, wuxilin123@gmail.com,
- linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-wireless@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-pm@vger.kernel.org, bartosz.golaszewski@linaro.org
+In-Reply-To: <20240616-ip30-buildfix-v1-1-0ab2b9aec9f5@flygoat.com>
 
-Hello:
-
-This series was applied to bluetooth/bluetooth-next.git (master)
-by Bartosz Golaszewski <bartosz.golaszewski@linaro.org>:
-
-On Wed,  5 Jun 2024 14:38:48 +0200 you wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Sun, Jun 16, 2024 at 06:54:24PM +0100, Jiaxun Yang wrote:
+> Include linux/processor.h to fix build error:
 > 
-> Hi!
+> arch/mips/sgi-ip30/ip30-console.c: In function ‘prom_putchar’:
+> arch/mips/sgi-ip30/ip30-console.c:21:17: error: implicit declaration of function ‘cpu_relax’ [-Werror=implicit-function-declaration]
+>    21 |                 cpu_relax();
 > 
-> These are the power sequencing patches sent separately after some
-> improvements suggested by Bjorn Helgaas. I intend to pick them up into a
-> new branch and maintain the subsystem from now on. I then plan to
-> provide an immutable tag to the Bluetooth and PCI subsystems so that the
-> rest of the C changes can be applied. This new branch will then be
-> directly sent to Linus Torvalds for the next merge window.
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+>  arch/mips/sgi-ip30/ip30-console.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> [...]
+> diff --git a/arch/mips/sgi-ip30/ip30-console.c b/arch/mips/sgi-ip30/ip30-console.c
+> index 7c6dcf6e73f7..a5f10097b985 100644
+> --- a/arch/mips/sgi-ip30/ip30-console.c
+> +++ b/arch/mips/sgi-ip30/ip30-console.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+>  #include <linux/io.h>
+> +#include <linux/processor.h>
+>  
+>  #include <asm/sn/ioc3.h>
+>  #include <asm/setup.h>
+> 
+> ---
+> base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+> change-id: 20240616-ip30-buildfix-20d62f2d6186
 
-Here is the summary with links:
-  - [v9,1/2] power: sequencing: implement the pwrseq core
-    https://git.kernel.org/bluetooth/bluetooth-next/c/249ebf3f65f8
-  - [v9,2/2] power: pwrseq: add a driver for the PMU module on the QCom WCN chipsets
-    https://git.kernel.org/bluetooth/bluetooth-next/c/2f1630f437df
+applied to mips-next.
 
-You are awesome, thank you!
+Thomas.
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
