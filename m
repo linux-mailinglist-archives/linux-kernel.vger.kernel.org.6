@@ -1,299 +1,166 @@
-Return-Path: <linux-kernel+bounces-223646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD5B39115FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:55:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DF8C911606
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B1B1F221A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2E59282B20
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54034143727;
-	Thu, 20 Jun 2024 22:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475C814E2E9;
+	Thu, 20 Jun 2024 22:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pWFzLEAF"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OkozrszK"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF57C14038F
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CF81422B6
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718924113; cv=none; b=FLo5EfTOV1OQdzwGt8pK4RsDCT+VNSQIf6oKPvp/C3B5Mmwg+GrZYZnxfg+4+4aBHWAc4b84NFvEgQTQvrneO5QDHlBBN0zMmy4Ko5nQ/fhQM3U4G2p5xLo3vVuK5CkkT6PZIWyrOzSJypXj5GtWgaWkPPvFs0xWAvUxI4mWQjw=
+	t=1718924128; cv=none; b=uGGSsn+hIjD+ZUXzZABqsFVl2i6X5WRyJ6UOthFpLHHdnOd7ZzNp3Ch7mCFvgFsGxMEjz0ThBK2ap/W0lrlSvbWgcwP2StAOwiEo0SI5Jw2NSFUA1vT/JFfZysU7NFuydO2xcEKM7ab5mQW74Z9fHZVWszhPn8Fg8DandZ4+B+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718924113; c=relaxed/simple;
-	bh=0uVG+Kodk6NIh979veJYjUyiiM4F2AAMRJVBZcRNBiY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CJ+WijGZkb2J89urB1uNXFit8zLAmBv5dVpikECCIB7UUv4nWiHx83O3QBDBEKaChlVnyc006w9tnnyDaoptLFBo60Pv0pW2AozvT5VdcjXYtS+yXemnOAXRf70Jylp2jyaL7RIfEubafANCDTsDzBPHmleiBBFGUoWl/RQ3HU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pWFzLEAF; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7042d9a5227so1680845b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:55:11 -0700 (PDT)
+	s=arc-20240116; t=1718924128; c=relaxed/simple;
+	bh=NGDUIv34hYFZN854eluh2DVe78KwRqnWAHRvdoMY1uA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ISx2ZJE1kI81jAxv3Pmf/r00nHBuBEu4Z4hFc7YKhDlL8T6hS5qXUMLnpRWCPY3rjXzJlRwTqMsg1H3tNMRk6cX4hOzM3bJTtRZ4VrhK5WcPggHJ0alTdbzYrsL2Asltkm0rQxoY6JpdeHz0Eb83xwLRzm85jiNfr5m1VBLUXZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OkozrszK; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so14239281fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:55:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718924111; x=1719528911; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tySm4ijKnIPoN8BvC0T46QFCG7aRAlVmxvM6qU3vNYk=;
-        b=pWFzLEAFufi3hluT23bLie4VWN4yEcMiOWLYP0vaSN56FlZQLyxuvk35dFGtSApGbT
-         PlxzjDHfpRn+xbvCysLCXs0SFEESNLphXNtQajYNS4X6F0Y0KkoPe2ALXTry7uq/d0Rg
-         OWjQV5TYgrPspR0rI+dW7oRb14nWiIt17fGPbSCf2YdYD90TMdYOMnfwg/JM+VJNMvTO
-         2hYJLb0cmTx26xL4CeX1JEv3whgBdUwOQTiTIY1B2F8VtgQWatORsuvBM2OCmy1vjP0u
-         wKp7FUSodLNqHk6N+xmWfD6quCZ9NSqr1WDNDRqH1AGWnit+7K48OA5ktmrmVqoqAvTY
-         kiWg==
+        d=linaro.org; s=google; t=1718924123; x=1719528923; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J93Wdu3UHX/SH5BNBWL2XcVx8HcjEhvK9ORDAnvlEtw=;
+        b=OkozrszKoRjSreGKNRbLnnKrMe2B6bghPT+ZdV/vXuFULgsfKeWjJCS7y4/RJU77EP
+         v0oB8eMnUji+HGTl2u0vRNZcl70mQun6vekwarfmFQKjw03RI1tVqaphIacIdPZQyMtg
+         GBuiSOmTaS+pZTtVeBH+26n32tB3KVc+9xlznI6+3KVTGPiBHJBdSsA1HztLQpkJ2/ci
+         IPhN4JG/dAMh6RE5L3UdocPCcZft/qiVkMNwZ6kR/w8F+crNX6odDnc06cF37d3YxHiT
+         84/IFzAnKGQ/dTefNrw5Z7tBbM7+uSFuhRWZlTfaaJKcPEzqwKw/Dn2MXho9dnfddBFh
+         9+wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718924111; x=1719528911;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tySm4ijKnIPoN8BvC0T46QFCG7aRAlVmxvM6qU3vNYk=;
-        b=wkEFRGdpsJrmZYQi8i76rblfgc7cApd8t8VuB3rEdo7IbbImft/5h99Y57Fa5YS1mv
-         NR3Uq5PzbtVTQGSKVZJWL5YkKuuEvjPAKjyUZWh1UYU35oRtWzGvXlWdXe24PWU/r96n
-         K+Rj9trT7C4jJ9Jmn62iX6Tr919rtyHmdGyTUMXw6JwNvZUZXieh73JuRj0Je9teKGyQ
-         lm3lwM32eWeApntLbH1ZvpRsUdoCf9mf/6P/3Uw9D6dB+OuTUtZ3u4JRHBCD6g0nQkyy
-         PEKCGMOpiueuEyZLb1BZ6/P7Q+yJsVPuzTI7CPMNqJzzlS1U8v9oikb8+lEchsT1qvyP
-         Jx0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU2uLaoE5H/IKtNL+oYBYsNjPw1VquFTsRSBn19J9pXUgTi5wIyuRHvs+RswrgFdSlnW5KW8FbxRxoaWsWB+hBBdX6AcgsnT2cUuE87
-X-Gm-Message-State: AOJu0YxUIEx4SaYy2nu5H/a8r3BEjXtpVE1BvGvS2V1LeLoHervbjL4I
-	S6p65pvb3nmbnlVmp//zGhpp1dqvYauxKsqP2/snvLNemsLBLf3aj7PZ1XT3pHnmK86QvmfG6Ty
-	rsh1kdAL7dw==
-X-Google-Smtp-Source: AGHT+IFV6VUOI4SuU28aDpkXI/PTklnnXrtGnp2+jWDiZtV3V8aTBN/WjwZEFd2BdBr+zWtI6XiQgYZnz1vdXA==
-X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
- (user=cmllamas job=sendgmr) by 2002:a17:902:ce90:b0:1f7:516:4235 with SMTP id
- d9443c01a7336-1f9a9b54de5mr3749175ad.6.1718924111154; Thu, 20 Jun 2024
- 15:55:11 -0700 (PDT)
-Date: Thu, 20 Jun 2024 22:54:34 +0000
-In-Reply-To: <20240514191547.3230887-1-cmllamas@google.com>
+        d=1e100.net; s=20230601; t=1718924123; x=1719528923;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J93Wdu3UHX/SH5BNBWL2XcVx8HcjEhvK9ORDAnvlEtw=;
+        b=xQCczCxzSwR3DDt9h1B0dn8SK3kT5Kiq9XHln1Fvv4wlrmbGtJu4Zrpi7BFEiuNYc5
+         c70kEKL9rO62C+pVruEnD49DWgerOOY89DmRi46z5MLG07trFWeJoGoMzgr7gPWhDXrz
+         L8FJfug+IyixziuBNxCPrJWmEA0MkPrUUVFe1wBJ3v4Qaj6Uv1ySctLybeUPoSwbF1Uz
+         ChfbYP+XeOI824cJu3fQ28O6IJPgsTzzJbXANQpLRXvapqbkMzK1ZT6boZ/BhEMmqC+n
+         8UrU1F/hVhD1bxi8ZcNFiTOoSKpAjBGyJv0cHQ6ZMGP7prhaIlUH34BDn00niKiwkNor
+         3gcg==
+X-Forwarded-Encrypted: i=1; AJvYcCV81QaFkuX/6GK/l1on1o8bWpCPmGYD/LozSwAfFgI6HrFPS7e5WY7rfkL1dtA2t1VSuCzDASd+yjS5hw87LzOIWWHNT3JzmsrC/Pam
+X-Gm-Message-State: AOJu0YxTHL5ip/1PwIw0ZhvEqQuZG4EyezyGRtnZ1e0n/2rszJ4M/0Gh
+	g4WZoVgqhpsHukImeZ5wu9O7kH4Pgp/8+v+kAupoimEWQpjWAWYi07SAHJpgEIA=
+X-Google-Smtp-Source: AGHT+IFQN2Bt5zqFFKMUGCJsgkrAaABWB+x6UZRmiYHHZjBZGwfUjSSQ4U5Pk9vdJM+yd1sxDvObTg==
+X-Received: by 2002:a2e:9d4d:0:b0:2ec:4d89:795e with SMTP id 38308e7fff4ca-2ec4d897aebmr1580681fa.17.1718924123126;
+        Thu, 20 Jun 2024 15:55:23 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d60126fsm510461fa.20.2024.06.20.15.55.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 15:55:22 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/7] usb: typec: ucsi: rework glue driver interface
+Date: Fri, 21 Jun 2024 01:55:19 +0300
+Message-Id: <20240621-ucsi-rework-interface-v2-0-a399ff96bf88@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240514191547.3230887-1-cmllamas@google.com>
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-Message-ID: <20240620225436.3127927-1-cmllamas@google.com>
-Subject: [PATCH v4][RESEND x4] lockdep: fix deadlock issue between lockdep and rcu
-From: Carlos Llamas <cmllamas@google.com>
-To: "Paul E . McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Bart Van Assche <bvanassche@acm.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, John Stultz <jstultz@google.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com, Zhiguo Niu <zhiguo.niu@unisoc.com>, stable@vger.kernel.org, 
-	Carlos Llamas <cmllamas@google.com>, Xuewen Yan <xuewen.yan@unisoc.com>, 
-	Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFezdGYC/3WNQQ7CIBBFr9LMWgxFINaV9zBdEDq0Ew2YoVZNw
+ 93Funb5XvLfXyEjE2Y4NSswLpQpxQpq14CfXBxR0FAZlFRaGmXEw2cSjM/EV0FxRg7OozAhKGV
+ 1sA491O2dMdBr6176yhPlOfF7u1nar/0VrTz8KS6tkKLrnB2M1h798Xyj6DjtE4/Ql1I+KdSRW
+ 7sAAAA=
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Nikita Travkin <nikita@trvn.ru>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, linux-usb@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2727;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=NGDUIv34hYFZN854eluh2DVe78KwRqnWAHRvdoMY1uA=;
+ b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ1rJ5sgVx7PFb4ZH8FW6nmSoUlXRFZdQykv9LNKyS2nzd
+ In+nXqdjMYsDIxcDLJiiiw+BS1TYzYlh33YMbUeZhArE8gUBi5OAZiI/G72vyLrNm+y3WNfvX+J
+ yH0Hv1Jm72qJtYxG+9z8b7P4zXMPCN1ifTS9V7vhWs05oSV7FT4pi5x8tSTLxNuFuWnGUc3P8X5
+ f+O53/Nm8K9v9yMdzEV1tsvsFxXeUnXgoeUxH9ayX95sdhnzfFngsf7Enl1+xa/HPWNOQY0+88m
+ /ZdvVXPSxgXJnWvy3F19gsQGZjOJPO5+4bgoeaAzI/hGd6f79333f6o+rL8vb17QFiPfPj/RTSf
+ 3u88Fp+70iRv+jX+b90uU8usWlWOfGPTUNv17t6VeuT0lufb+o3tfzpf/ljVdKCjhn7fTS5JSzW
+ nM/6No37w5cTb1n6Snbw2U1+ZTrdcPEepakWcyW1ck3yAA==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+The interface between UCSI and the glue driver is very low-level. It
+allows reading the UCSI data from any offset (but in reality the UCSI
+driver reads only VERSION, CCI an MESSAGE_IN data). All event handling
+is to be done by the glue driver (which already resulted in several
+similar-but-slightly different implementations). It leaves no place to
+optimize the write-read-read sequence for the command execution (which
+might be beneficial for some of the drivers), etc.
 
-There is a deadlock scenario between lockdep and rcu when
-rcu nocb feature is enabled, just as following call stack:
+The patchseries attempts to restructure the UCSI glue driver interface
+in order to provide sensible operations instead of a low-level read /
+write calls.
 
-     rcuop/x
--000|queued_spin_lock_slowpath(lock = 0xFFFFFF817F2A8A80, val = ?)
--001|queued_spin_lock(inline) // try to hold nocb_gp_lock
--001|do_raw_spin_lock(lock = 0xFFFFFF817F2A8A80)
--002|__raw_spin_lock_irqsave(inline)
--002|_raw_spin_lock_irqsave(lock = 0xFFFFFF817F2A8A80)
--003|wake_nocb_gp_defer(inline)
--003|__call_rcu_nocb_wake(rdp = 0xFFFFFF817F30B680)
--004|__call_rcu_common(inline)
--004|call_rcu(head = 0xFFFFFFC082EECC28, func = ?)
--005|call_rcu_zapped(inline)
--005|free_zapped_rcu(ch = ?)// hold graph lock
--006|rcu_do_batch(rdp = 0xFFFFFF817F245680)
--007|nocb_cb_wait(inline)
--007|rcu_nocb_cb_kthread(arg = 0xFFFFFF817F245680)
--008|kthread(_create = 0xFFFFFF80803122C0)
--009|ret_from_fork(asm)
+If this approach is found to be acceptable, I plan to further rework the
+command interface, moving reading CCI and MESSAGE_IN to the common
+control code, which should simplify driver's implementation and remove
+necessity to split quirks between sync_control and read_message_in e.g.
+as implemented in the ucsi_ccg.c.
 
-     rcuop/y
--000|queued_spin_lock_slowpath(lock = 0xFFFFFFC08291BBC8, val = 0)
--001|queued_spin_lock()
--001|lockdep_lock()
--001|graph_lock() // try to hold graph lock
--002|lookup_chain_cache_add()
--002|validate_chain()
--003|lock_acquire
--004|_raw_spin_lock_irqsave(lock = 0xFFFFFF817F211D80)
--005|lock_timer_base(inline)
--006|mod_timer(inline)
--006|wake_nocb_gp_defer(inline)// hold nocb_gp_lock
--006|__call_rcu_nocb_wake(rdp = 0xFFFFFF817F2A8680)
--007|__call_rcu_common(inline)
--007|call_rcu(head = 0xFFFFFFC0822E0B58, func = ?)
--008|call_rcu_hurry(inline)
--008|rcu_sync_call(inline)
--008|rcu_sync_func(rhp = 0xFFFFFFC0822E0B58)
--009|rcu_do_batch(rdp = 0xFFFFFF817F266680)
--010|nocb_cb_wait(inline)
--010|rcu_nocb_cb_kthread(arg = 0xFFFFFF817F266680)
--011|kthread(_create = 0xFFFFFF8080363740)
--012|ret_from_fork(asm)
+Note, the series was tested only on the ucsi_glink platforms. Further
+testing is appreciated.
 
-rcuop/x and rcuop/y are rcu nocb threads with the same nocb gp thread.
-This patch release the graph lock before lockdep call_rcu.
+Depends: [1], [2]
 
-Fixes: a0b0fd53e1e6 ("locking/lockdep: Free lock classes that are no longer in use")
-Cc: stable@vger.kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Carlos Llamas <cmllamas@google.com>
-Cc: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Reviewed-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Carlos Llamas <cmllamas@google.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
+[1] https://lore.kernel.org/linux-usb/20240612124656.2305603-1-fabrice.gasnier@foss.st.com/
+
+[2] https://lore.kernel.org/linux-usb/20240621-ucsi-yoga-ec-driver-v8-1-e03f3536b8c6@linaro.org/
+
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- kernel/locking/lockdep.c | 48 ++++++++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 16 deletions(-)
+Changes in v2:
+- Dropped the RFC prefix
+- Rebased on top of the fixed STM32 patch
+- Included the pending Yoga C630 driver into the cleanup.
+- Link to v1: https://lore.kernel.org/r/20240603-ucsi-rework-interface-v1-0-99a6d544cec8@linaro.org
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 151bd3de5936..3468d8230e5f 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -6184,25 +6184,27 @@ static struct pending_free *get_pending_free(void)
- static void free_zapped_rcu(struct rcu_head *cb);
- 
- /*
-- * Schedule an RCU callback if no RCU callback is pending. Must be called with
-- * the graph lock held.
-- */
--static void call_rcu_zapped(struct pending_free *pf)
-+* See if we need to queue an RCU callback, must called with
-+* the lockdep lock held, returns false if either we don't have
-+* any pending free or the callback is already scheduled.
-+* Otherwise, a call_rcu() must follow this function call.
-+*/
-+static bool prepare_call_rcu_zapped(struct pending_free *pf)
- {
- 	WARN_ON_ONCE(inside_selftest());
- 
- 	if (list_empty(&pf->zapped))
--		return;
-+		return false;
- 
- 	if (delayed_free.scheduled)
--		return;
-+		return false;
- 
- 	delayed_free.scheduled = true;
- 
- 	WARN_ON_ONCE(delayed_free.pf + delayed_free.index != pf);
- 	delayed_free.index ^= 1;
- 
--	call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
-+	return true;
- }
- 
- /* The caller must hold the graph lock. May be called from RCU context. */
-@@ -6228,6 +6230,7 @@ static void free_zapped_rcu(struct rcu_head *ch)
- {
- 	struct pending_free *pf;
- 	unsigned long flags;
-+	bool need_callback;
- 
- 	if (WARN_ON_ONCE(ch != &delayed_free.rcu_head))
- 		return;
-@@ -6239,14 +6242,18 @@ static void free_zapped_rcu(struct rcu_head *ch)
- 	pf = delayed_free.pf + (delayed_free.index ^ 1);
- 	__free_zapped_classes(pf);
- 	delayed_free.scheduled = false;
-+	need_callback =
-+		prepare_call_rcu_zapped(delayed_free.pf + delayed_free.index);
-+	lockdep_unlock();
-+	raw_local_irq_restore(flags);
- 
- 	/*
--	 * If there's anything on the open list, close and start a new callback.
--	 */
--	call_rcu_zapped(delayed_free.pf + delayed_free.index);
-+	* If there's pending free and its callback has not been scheduled,
-+	* queue an RCU callback.
-+	*/
-+	if (need_callback)
-+		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
- 
--	lockdep_unlock();
--	raw_local_irq_restore(flags);
- }
- 
- /*
-@@ -6286,6 +6293,7 @@ static void lockdep_free_key_range_reg(void *start, unsigned long size)
- {
- 	struct pending_free *pf;
- 	unsigned long flags;
-+	bool need_callback;
- 
- 	init_data_structures_once();
- 
-@@ -6293,10 +6301,11 @@ static void lockdep_free_key_range_reg(void *start, unsigned long size)
- 	lockdep_lock();
- 	pf = get_pending_free();
- 	__lockdep_free_key_range(pf, start, size);
--	call_rcu_zapped(pf);
-+	need_callback = prepare_call_rcu_zapped(pf);
- 	lockdep_unlock();
- 	raw_local_irq_restore(flags);
--
-+	if (need_callback)
-+		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
- 	/*
- 	 * Wait for any possible iterators from look_up_lock_class() to pass
- 	 * before continuing to free the memory they refer to.
-@@ -6390,6 +6399,7 @@ static void lockdep_reset_lock_reg(struct lockdep_map *lock)
- 	struct pending_free *pf;
- 	unsigned long flags;
- 	int locked;
-+	bool need_callback = false;
- 
- 	raw_local_irq_save(flags);
- 	locked = graph_lock();
-@@ -6398,11 +6408,13 @@ static void lockdep_reset_lock_reg(struct lockdep_map *lock)
- 
- 	pf = get_pending_free();
- 	__lockdep_reset_lock(pf, lock);
--	call_rcu_zapped(pf);
-+	need_callback = prepare_call_rcu_zapped(pf);
- 
- 	graph_unlock();
- out_irq:
- 	raw_local_irq_restore(flags);
-+	if (need_callback)
-+		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
- }
- 
- /*
-@@ -6446,6 +6458,7 @@ void lockdep_unregister_key(struct lock_class_key *key)
- 	struct pending_free *pf;
- 	unsigned long flags;
- 	bool found = false;
-+	bool need_callback = false;
- 
- 	might_sleep();
- 
-@@ -6466,11 +6479,14 @@ void lockdep_unregister_key(struct lock_class_key *key)
- 	if (found) {
- 		pf = get_pending_free();
- 		__lockdep_free_key_range(pf, key, 1);
--		call_rcu_zapped(pf);
-+		need_callback = prepare_call_rcu_zapped(pf);
- 	}
- 	lockdep_unlock();
- 	raw_local_irq_restore(flags);
- 
-+	if (need_callback)
-+		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
-+
- 	/* Wait until is_dynamic_key() has finished accessing k->hash_entry. */
- 	synchronize_rcu();
- }
+---
+Dmitry Baryshkov (7):
+      usb: typec: ucsi: move ucsi_acknowledge() from ucsi_read_error()
+      usb: typec: ucsi: simplify command sending API
+      usb: typec: ucsi: split read operation
+      usb: typec: ucsi: rework command execution functions
+      usb: typec: ucsi: inline ucsi_read_message_in
+      usb: typec: ucsi: extract common code for command handling
+      usb: typec: ucsi: reorder operations in ucsi_run_command()
+
+ drivers/usb/typec/ucsi/ucsi.c           | 215 +++++++++++++++++---------------
+ drivers/usb/typec/ucsi/ucsi.h           |  26 ++--
+ drivers/usb/typec/ucsi/ucsi_acpi.c      | 100 +++++++--------
+ drivers/usb/typec/ucsi/ucsi_ccg.c       | 103 +++++++--------
+ drivers/usb/typec/ucsi/ucsi_glink.c     |  74 ++++-------
+ drivers/usb/typec/ucsi/ucsi_stm32g0.c   |  79 ++++--------
+ drivers/usb/typec/ucsi/ucsi_yoga_c630.c | 104 +++++----------
+ 7 files changed, 309 insertions(+), 392 deletions(-)
+---
+base-commit: f0dbf09a40c8100a895f675d619db5ed1f58f7ac
+change-id: 20240525-ucsi-rework-interface-5ff2264f6aec
+
+Best regards,
 -- 
-2.45.2.741.gdbec12cfda-goog
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
