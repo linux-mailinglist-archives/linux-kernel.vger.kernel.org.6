@@ -1,128 +1,94 @@
-Return-Path: <linux-kernel+bounces-222412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CEA6910120
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:07:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E28C3910124
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0152F1F22AAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:07:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97F681F234DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D4E1A8C1D;
-	Thu, 20 Jun 2024 10:07:18 +0000 (UTC)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151B41A8C32;
+	Thu, 20 Jun 2024 10:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Kz+Cx5hN"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AEC2BAE2;
-	Thu, 20 Jun 2024 10:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A121A8C1D;
+	Thu, 20 Jun 2024 10:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718878037; cv=none; b=lR3r/iACNCOjN/SXzbG/Ms3SYkobFlLosACb1J4tgR4hAjKC8vv6PY4NA17blonBay9qTIBK4TZuMxe/z6wcSoGBYTaUvQgNnbxVsqxWkXSy0yv45+5NEMaK3RV5dj/yAg+1qSi9MYbmhaOJ9UtYuh3IOzHqbH1HPr/n3pc8Jtc=
+	t=1718878088; cv=none; b=tmU5Hj08SgkIln8OHqr5PJEiUUzLqe9V/J/De5Z56eaMCDB0ia5DB+QoxDGV+Yu88YdsmzTcC0Vj7hPxBaXlJwOgqt1wJslJGrlaiX5jzios9Flybgq2yMTjC5u3AZCZoOuGYnlON8HNKNOXUeSlrwamjksypngHqzqa9ggYIOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718878037; c=relaxed/simple;
-	bh=gtlJye50+OfffKjggbOEmtKNH45g/zjK6ZfJA8b8AdM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CouKu1g2ujm8uzj3dxLEo4k+efqZoIn0K0mGx2+BH4Ng7NktVsy3arcBu9tIoQVo3iJ6x5c4Jet+xofKsLUJ8Q77iRwkGzx6IdBqARnvvGe2gqb3jHTj3TsClZHFbZaag6KnDnNlJA7coGXa5ZdA2VT/7Iruk9LYeXPVMyKzdiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so7082151fa.2;
-        Thu, 20 Jun 2024 03:07:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718878031; x=1719482831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ir1hVcg7ykDi/DMYCtyM630+t+MR02LhBXB13vEhoEE=;
-        b=HWadjFrxdhidJf581/KHMFU37LIsrX/0ubkpYymrRmBLj4wvzBfCyuIDqGI1wgy2at
-         lu2s7oSKpDIKTJqNq8o3gG8UPs7PM71+pmuwq0jfoA/Vgkk3Kt7e0zWNAXmQLIxtbFi1
-         3H2FduzYdwH6eBDR74xWTKptMj4swB/C6F1upRRsQ/ApHdbj99mm5Oy2MaAxNaI/DBZH
-         SSBb5cqMd5ocSR0mRozDOXTxACdRnXXB7+ZBWhpXGXEa3HZudfulFoJ8MVNV0TcZR/pD
-         MUI3aON2EyjPi8/1GDP/BL6ngWojhlZ6Wm1BKzdGdNR7aKH8PBvdgQbtotdmTQE4X3Be
-         zdJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBwQTfodVpvWU6iyiDoUuuOs4DUjzm3WdganSnOWuCffmy6nbG746MFLoCFgrohnDsC+9FS7wc6WdXWbSWQcve7et7Xo91xJpsKCxUQ+vo5MvfiQqLHRIm3UeWZG3+XTCF78QcgAIkacCLGLcbenwmkOFQOOspILe8xm0twQIGhNN+IuQ2TEdynnidcYYnfgH3orSqwJ4JhOUxLKxUpHNKr+3xkg==
-X-Gm-Message-State: AOJu0YzHuMg6bjZSMyCboPguWpo1q8YJywLVBDZWaOPGMbImsjayt59F
-	64S7Exb4E4njmx/6aChQsOtyd9i+dZlxnlj9ajqxU4hYyuNVbQRvpXhyUQHp
-X-Google-Smtp-Source: AGHT+IHyWFHFPL26B3ZfZfKkuSgAC6BXeGhWLtLKr8pp33zaKyC/TKmg3uHEqLkwMS/Udx+d/1ifcg==
-X-Received: by 2002:a2e:9046:0:b0:2ec:4211:e9dc with SMTP id 38308e7fff4ca-2ec4211ea8emr18468281fa.0.1718878030548;
-        Thu, 20 Jun 2024 03:07:10 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec45542b7asm1646711fa.29.2024.06.20.03.07.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 03:07:09 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so7112321fa.3;
-        Thu, 20 Jun 2024 03:07:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW78aCKfgTlp1XJ8AAfi3OCmf7iWDyNIzaVVwSPDqGymV6qvtsfZan1oiVMAz+/QWOQx0sp7mWbqcUiaNRw5QZ3DgyiUZ/BmoJRgfNjmkWH2cGiQKIICPA7MtnY3kzVzaT2EW+HT81SRjqVFg4KQC5952bLNVq3N/cZnppt11HL/bGl++FAXmfbPkI6Q2LIYzxDjk4pgcQ5H7bYi9qJYuYWkzOqfg==
-X-Received: by 2002:a05:651c:90:b0:2eb:f8d1:87d9 with SMTP id
- 38308e7fff4ca-2ec3cecca82mr30693691fa.31.1718878028507; Thu, 20 Jun 2024
- 03:07:08 -0700 (PDT)
+	s=arc-20240116; t=1718878088; c=relaxed/simple;
+	bh=fcT31yM+NshgIhzfWXghtZi7e3NaZVSVWS2eQeAyGkY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c/2eMXO9zMB277/JnHJ5p51C9z7n5bglGlL3/L9JySs16Kq4oYp/oMip1Y9Dhtc4BcwTjWc6LETJLHleoczNc4j/51nl65EkLZ8uADCAKjBA6sW74PL+hThaxfwY8Pw2Obb9tx1d1GvV6Gvfnas0GTc2ESyqu5lkb3dAPXjXtoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Kz+Cx5hN; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718878084;
+	bh=fcT31yM+NshgIhzfWXghtZi7e3NaZVSVWS2eQeAyGkY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Kz+Cx5hNFgkqzab9aIBWCYtNRS2+Xat5GTL+bNOLeAqN8o/EJljq7PWQ3i+vE6qbm
+	 sUmpW4mCOu9FM4+9loKTixn9/r9e2VNxyWpTCPoLOyweOJ9dXXi/kxz87gP+Q7LuXU
+	 xo3MMk0769nV23qyhizW94PH0R8YiJoWrE/xIFr1Lx0zxLarvBEhndesWYxWqPKdh6
+	 sYSmRf39xMo5Yjvya641afNrx3EIL8mVY0abFiO57CS7z7mafVprdrvtIMAjFb0JBe
+	 FSGJFYp26zWxNeZ8M55400UOqbgMTDx1mlr+EaEer4VRC6+VJO82IyIfzI9aKdysqN
+	 nLU7R+gHLgkyA==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 213C6378143B;
+	Thu, 20 Jun 2024 10:08:04 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: jassisinghbrar@gmail.com
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	houlong.wei@mediatek.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH 0/4] MediaTek CMDQ - drop clock-names and refactor clock probe
+Date: Thu, 20 Jun 2024 12:07:46 +0200
+Message-ID: <20240620100750.1075790-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com> <20240619-xtheadvector-v3-3-bff39eb9668e@rivosinc.com>
-In-Reply-To: <20240619-xtheadvector-v3-3-bff39eb9668e@rivosinc.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 20 Jun 2024 18:06:56 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64ZuLhnZn4G_Zbqqosh46Fh57WtXCcCFkwMA2phtLzq1g@mail.gmail.com>
-Message-ID: <CAGb2v64ZuLhnZn4G_Zbqqosh46Fh57WtXCcCFkwMA2phtLzq1g@mail.gmail.com>
-Subject: Re: [PATCH v3 03/13] riscv: dts: allwinner: Add xtheadvector to the
- D1/D1s devicetree
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Jisheng Zhang <jszhang@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, Andy Chiu <andy.chiu@sifive.com>, 
-	Jessica Clarke <jrtc27@jrtc27.com>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 20, 2024 at 7:57=E2=80=AFAM Charlie Jenkins <charlie@rivosinc.c=
-om> wrote:
->
-> The D1/D1s SoCs support xtheadvector so it can be included in the
-> devicetree. Also include vlenb for the cpu.
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+All CMDQ Mailboxes have only one GCE clock per hardware instance:
+remove the clock-names requirement and, while at it, also partially
+refactor the clock probe code to improve both readability and its
+flexibility.
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+This was tested on MT8192, MT8195 Chromebooks, MT8395 Radxa NIO 12L
+and on the MT6795 Xperia M5 smartphone.
 
-If the RISC-V maintainers want to take the whole series.
+AngeloGioacchino Del Regno (4):
+  mailbox: mtk-cmdq: Stop requiring name for GCE clock
+  mailbox: mtk-cmdq: Move and partially refactor clocks probe
+  mailbox: mtk-cmdq: Dynamically allocate clk_bulk_data structure
+  dt-bindings: mailbox: mediatek,gce-mailbox: Stop requiring clock-names
 
-> ---
->  arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi b/arch/riscv/b=
-oot/dts/allwinner/sun20i-d1s.dtsi
-> index 64c3c2e6cbe0..6367112e614a 100644
-> --- a/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-> +++ b/arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi
-> @@ -27,7 +27,8 @@ cpu0: cpu@0 {
->                         riscv,isa =3D "rv64imafdc";
->                         riscv,isa-base =3D "rv64i";
->                         riscv,isa-extensions =3D "i", "m", "a", "f", "d",=
- "c", "zicntr", "zicsr",
-> -                                              "zifencei", "zihpm";
-> +                                              "zifencei", "zihpm", "xthe=
-advector";
-> +                       thead,vlenb =3D <128>;
->                         #cooling-cells =3D <2>;
->
->                         cpu0_intc: interrupt-controller {
->
-> --
-> 2.34.1
->
+ .../mailbox/mediatek,gce-mailbox.yaml         | 11 ---
+ drivers/mailbox/mtk-cmdq-mailbox.c            | 87 ++++++++++++-------
+ 2 files changed, 57 insertions(+), 41 deletions(-)
+
+-- 
+2.45.2
+
 
