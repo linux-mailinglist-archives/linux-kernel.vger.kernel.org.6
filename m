@@ -1,353 +1,255 @@
-Return-Path: <linux-kernel+bounces-223030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7595E910C20
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:24:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8853910C45
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9001B26A4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450691F21F06
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EE91B29C4;
-	Thu, 20 Jun 2024 16:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A6A1B47C9;
+	Thu, 20 Jun 2024 16:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jW8l+4Qq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jVy4dqoG"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83CE1CD3D;
-	Thu, 20 Jun 2024 16:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8B01B47C2
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900614; cv=none; b=DXB3wzdlPefLlntfZVYO9qmLbtQqGDO9Vfz8QK1aqFOPXBdjTJv4rOEsp5dpvmB9WkhoxvfuytDBZahP0cXuZVB9g4qPo2xKvuWHA3TLb+CVP3MAnswGz9jnO/DklCR49w7HzdxGBcRxxFG93pxTI5CUfQ6Qnex31GdnR18e3tg=
+	t=1718900635; cv=none; b=a+EhKmGcwkPLkasYiOEH5QFBqYgRKvsSJEy1l5sTEVdZOfSVOfNRHVZBqdGf32kMxyT3jyjf05WAjIznCRrOGGXHNHwOuHyf1YSuquiC6slAfnidCRAkdClbfk+KDW473RKPoX55nlhbUvoFkIHZooTzUPSA1+vHd5cYifm8Jiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900614; c=relaxed/simple;
-	bh=cA6xfkPCA7PV7l7TkuYNFtjd8vwJZYn9Cq2GBBMIa9Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tij0+4n6Utll9YI4amXDdmBS6Oyg/dyIYyuYPO6LJNSE8ystoQRbln+d5chYZxtIC5dGADXi8N3EA71lhSlZeyUMxN8l62c7NTB1exzpOiNYgwH0uWa+TX+iMRAEEzsgTRKwZbzyJ2zn/UWE8m7vvzTU/0hkGrq3J+0N9hXAHr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jW8l+4Qq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8179C2BD10;
-	Thu, 20 Jun 2024 16:23:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718900614;
-	bh=cA6xfkPCA7PV7l7TkuYNFtjd8vwJZYn9Cq2GBBMIa9Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jW8l+4QqdYz41zrgkWVoXXMzEYTqoMMfLowBT6TRr4sth6chTVMZKOiUnsV/dlQRo
-	 3U7BALa+BVXoUB5BfV9/6IHZklGl5of7D7q9P+cIVTcAydArnqGwEpOwTZfrt0HImy
-	 gUpR/a3f3xuz8b2jK7S5KKAcnmm2pn0agod1LHA0asMoNPlUlQiuNqCEgj1fOzpu/a
-	 Z3yfo9EfuJy3QD1pjdgJMb6wh0lZGIgcgYiRX9siwIdTsUvcbkyAKR4zTIaB7+i6zp
-	 z421+QBvSyaKSn8VfHje+o0h+y+PiE47t0893bx733EitbeKCm6OEOzulMg81sCn+w
-	 hjQNjQ8ZSqleg==
-From: Jakub Kicinski <kuba@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pabeni@redhat.com
-Subject: [GIT PULL] Networking for v6.10-rc5
-Date: Thu, 20 Jun 2024 09:23:33 -0700
-Message-ID: <20240620162333.2386649-1-kuba@kernel.org>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1718900635; c=relaxed/simple;
+	bh=Fx1smBOU7+g5gN1krwDVwIdwdPcrGDOEe1sKrAvkiEY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cEuA1MagxZf595x3nt28ykt0ZIIDiC6LZBtKEw6sg0M3p4FvxBGnq9EBnzhQoGqRYraGcOGRtMUJZ6UJgW2LHv3Jm4Iiym9d2drbsh5AYh446ziY+lbk6dbeKgzTR8tqgGIlfnWY+ZsGlDoWYr37K7sTdw1pvjrM9VTtJiJB/rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jVy4dqoG; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d203d4682so1348178a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:23:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718900632; x=1719505432; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LlwMIJz/BLrmB2WpkXjrpRTAkcL0lyiD4VvvoeLE5V4=;
+        b=jVy4dqoGz5c2AQMRQ+EDk9ZP0lHrRSM7yVcgWsB6xM+nc23/sUwWcuggrsHsQRCSQX
+         FvItdD9fuwFrx0ptO3i+X9cgqIWpkkkRQUC3GU9jn3g3mOk+2gnEe9Jin6i+ZBMYweev
+         pxnDTfm4sp7MZg1ghc9OAx/LjfA4bXM4eiqGLysINJXlO0gn2s/9m7ihKKC70Iwzjmb3
+         1iFsq/Fsyd7xA9yB7m8hWuXhHk1wZ+lIjPU9WrUSHokTwXKixkfsEirPJloCfqydzgbd
+         fwVkfKUMfY2tmjDWrddKQYyTC/7gnutHNEGTsZ5+xhfy9pls2+O8yUqol0MvcJC3WI/0
+         BFGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718900632; x=1719505432;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LlwMIJz/BLrmB2WpkXjrpRTAkcL0lyiD4VvvoeLE5V4=;
+        b=Fn0pWy1xpCRlJ4HjAjSVntakAqCJfRMxQLAmhCXOYmLJdSOwai/vjur0bUKXvAg2uc
+         hfHrGUob28WiY2EDcVr8EhmtTthzdfJ4QvKhm4/UaR51UiZGHskdOi9WRKG4u6pSuoEH
+         k4oLIyrJqYgCVEVyU4+x3hZR8Llk1MQA/4PH2yM54wMcVAoTb3kDZHZz2CGN67uOZCsF
+         E7YUFt3Bk8N50lYzXb5jj9/FDk7mhl/gMWV3ZKFwM/RXwIWSY79mz08JEJCEB/Gk87Fp
+         nHKJf2QICp6/eq+oDtQXDFLYXW2KhTzzYiQGXJpfDYt5VHMHbzgqWIwUCSFQkO19ucWa
+         r+Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBPXVHvyZRUmuKx+OQKqcY9xKNaTTtUtFZZul0gwqhDdhszHvnYR+l8iBjOrOHsrUz0A88ZMABuBXxYj5Y4scCzO+P2ZwTGdcAiP/x
+X-Gm-Message-State: AOJu0Yzqd9gWPW9rVIjlI2OWHGflsXhpbZCvXoS2HvJH/e92pds9QRiy
+	101zvg32shwAlt2p6jrGF19MgVQT/y40Mtz3NV18Pk/bdWkFyenNb0YSOacjltqHE47Osheg/Wj
+	L9sQOEHqVdDPd87SY9NEcRnTFnnwZxBqiimPiuO89M0O+WfZEBowl8Q==
+X-Google-Smtp-Source: AGHT+IEiUurqA8/vupAfbQYgfZXpGG83X+0xfR1yK7bM0GHwHo0LQaZYIH41GdenK+O+unfb1dHXnKUo8wy8Glq5Rs0=
+X-Received: by 2002:a50:99c2:0:b0:57c:ff94:c817 with SMTP id
+ 4fb4d7f45d1cf-57d07e7b28bmr4498282a12.16.1718900631856; Thu, 20 Jun 2024
+ 09:23:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Hi Linus!
-
-Happy summer solstice! The line count is a bit inflated by a selftest
-and update to a driver's FW interface header, in reality the PR is
-slightly below average for us. We are expecting one driver fix from
-Intel, but there are no big known issues.
-
-The following changes since commit d20f6b3d747c36889b7ce75ee369182af3decb6b:
-
-  Merge tag 'net-6.10-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-06-13 11:11:53 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.10-rc5
-
-for you to fetch changes up to fba383985354e83474f95f36d7c65feb75dba19d:
-
-  net: usb: rtl8150 fix unintiatilzed variables in rtl8150_get_link_ksettings (2024-06-20 07:15:17 -0700)
-
-----------------------------------------------------------------
-Including fixes from wireless, bpf and netfilter.
-
-Current release - regressions:
-
- - ipv6: bring NLM_DONE out to a separate recv() again
-
-Current release - new code bugs:
-
- - wifi: cfg80211: wext: set ssids=NULL for passive scans via old wext API
-
-Previous releases - regressions:
-
- - wifi: mac80211: fix monitor channel setting with chanctx emulation
-   (probably most awaited of the fixes in this PR, tracked by Thorsten)
-
- - usb: ax88179_178a: bring back reset on init, if PHY is disconnected
-
- - bpf: fix UML x86_64 compile failure with BPF
-
- - bpf: avoid splat in pskb_pull_reason(), sanity check added can be hit
-   with malicious BPF
-
- - eth: mvpp2: use slab_build_skb() for packets in slab, driver was
-   missed during API refactoring
-
- - wifi: iwlwifi: add missing unlock of mvm mutex
-
-Previous releases - always broken:
-
- - ipv6: add a number of missing null-checks for in6_dev_get(), in case
-   IPv6 disabling races with the datapath
-
- - bpf: fix reg_set_min_max corruption of fake_reg
-
- - sched: act_ct: add netns as part of the key of tcf_ct_flow_table
-
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-
-----------------------------------------------------------------
-Adrian Moreno (1):
-      selftests: openvswitch: Set value to nla flags.
-
-Aryan Srivastava (1):
-      net: mvpp2: use slab_build_skb for oversized frames
-
-Ayala Beker (1):
-      wifi: iwlwifi: scan: correctly check if PSC listen period is needed
-
-Dan Carpenter (1):
-      ptp: fix integer overflow in max_vclocks_store
-
-Daniel Borkmann (3):
-      bpf: Fix reg_set_min_max corruption of fake_reg
-      bpf: Reduce stack consumption in check_stack_write_fixed_off
-      selftests/bpf: Add test coverage for reg_set_min_max handling
-
-David Ruth (1):
-      net/sched: act_api: fix possible infinite loop in tcf_idr_check_alloc()
-
-David S. Miller (1):
-      Merge branch 'virtio_net-csum-xdp-fixes'
-
-Dmitry Antipov (1):
-      wifi: cfg80211: wext: add extra SIOCSIWSCAN data check
-
-Dmitry Safonov (1):
-      net/tcp_ao: Don't leak ao_info on error-path
-
-En-Wei Wu (1):
-      ice: avoid IRQ collision to fix init failure on ACPI S3 resume
-
-Eric Dumazet (4):
-      tcp: clear tp->retrans_stamp in tcp_rcv_fastopen_synack()
-      ipv6: prevent possible NULL deref in fib6_nh_init()
-      ipv6: prevent possible NULL dereference in rt6_probe()
-      xfrm6: check ip6_dst_idev() return value in xfrm6_get_saddr()
-
-Florian Westphal (1):
-      bpf: Avoid splat in pskb_pull_reason
-
-Gavrilov Ilia (1):
-      netrom: Fix a memory leak in nr_heartbeat_expiry()
-
-Geetha sowjanya (1):
-      octeontx2-pf: Fix linking objects into multiple modules
-
-Heng Qi (2):
-      virtio_net: checksum offloading handling fix
-      virtio_net: fixing XDP for fully checksummed packets handling
-
-Ignat Korchagin (1):
-      net: do not leave a dangling sk pointer, when socket creation fails
-
-Jakub Kicinski (6):
-      Merge tag 'wireless-2024-06-14' of git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless
-      Merge tag 'for-netdev' of https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf
-      netdev-genl: fix error codes when outputting XDP features
-      Merge branch '40GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
-      ipv6: bring NLM_DONE out to a separate recv() again
-      Merge branch 'bnxt_en-bug-fixes-for-net'
-
-Jianguo Wu (4):
-      seg6: fix parameter passing when calling NF_HOOK() in End.DX4 and End.DX6 behaviors
-      netfilter: move the sysctl nf_hooks_lwtunnel into the netfilter core
-      selftests: add selftest for the SRv6 End.DX4 behavior with netfilter
-      selftests: add selftest for the SRv6 End.DX6 behavior with netfilter
-
-Jiri Pirko (1):
-      selftests: virtio_net: add forgotten config options
-
-Johannes Berg (2):
-      wifi: cfg80211: wext: set ssids=NULL for passive scans
-      wifi: mac80211: fix monitor channel with chanctx emulation
-
-Jose Ignacio Tornos Martinez (1):
-      net: usb: ax88179_178a: improve reset check
-
-Jozsef Kadlecsik (1):
-      netfilter: ipset: Fix suspicious rcu_dereference_protected()
-
-Kenton Groombridge (1):
-      wifi: mac80211: Avoid address calculations via out of bounds array indexing
-
-Maciej Żenczykowski (1):
-      bpf: fix UML x86_64 compile failure
-
-Marcin Szycik (1):
-      ice: Fix VSI list rule with ICE_SW_LKUP_LAST type
-
-Matthieu Baerts (NGI0) (1):
-      selftests: mptcp: userspace_pm: fixed subtest names
-
-Michael Chan (2):
-      bnxt_en: Update firmware interface to 1.10.3.44
-      bnxt_en: Set TSO max segs on devices with limits
-
-Oleksij Rempel (3):
-      net: phy: dp83tg720: wake up PHYs in managed mode
-      net: phy: dp83tg720: get master/slave configuration in link down state
-      net: stmmac: Assign configured channel value to EXTTS event
-
-Oliver Neukum (1):
-      net: usb: rtl8150 fix unintiatilzed variables in rtl8150_get_link_ksettings
-
-Ondrej Mosnacek (2):
-      cipso: fix total option length computation
-      cipso: make cipso_v4_skbuff_delattr() fully remove the CIPSO options
-
-Paolo Abeni (2):
-      Merge branch 'net-lan743x-fixes-for-multiple-wol-related-issues'
-      Merge tag 'nf-24-06-19' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
-
-Paul Greenwalt (1):
-      ice: fix 200G link speed message log
-
-Pavan Chebbi (1):
-      bnxt_en: Restore PTP tx_avail count in case of skb_pad() error
-
-Raju Lakkaraju (3):
-      net: lan743x: disable WOL upon resume to restore full data path operation
-      net: lan743x: Support WOL at both the PHY and MAC appropriately
-      net: phy: mxl-gpy: Remove interrupt mask clearing from config_init
-
-Remi Pommarel (1):
-      wifi: mac80211: Recalc offload when monitor stop
-
-Shaul Triebitz (2):
-      wifi: iwlwifi: mvm: unlock mvm mutex
-      wifi: iwlwifi: mvm: fix ROC version check
-
-Simon Horman (2):
-      selftests: openvswitch: Use bash as interpreter
-      octeontx2-pf: Add error handling to VLAN unoffload handling
-
-Stanislav Fomichev (1):
-      MAINTAINERS: mailmap: Update Stanislav's email address
-
-Stefan Wahren (1):
-      qca_spi: Make interrupt remembering atomic
-
-Tony Ambardar (2):
-      compiler_types.h: Define __retain for __attribute__((__retain__))
-      bpf: Harden __bpf_kfunc tag against linker kfunc removal
-
-Wojciech Drewek (1):
-      ice: implement AQ download pkg retry
-
-Xiaolei Wang (1):
-      net: stmmac: No need to calculate speed divider when offload is disabled
-
-Xin Long (2):
-      tipc: force a dst refcount before doing decryption
-      sched: act_ct: add netns into the key of tcf_ct_flow_table
-
-Yue Haibing (1):
-      netns: Make get_net_ns() handle zero refcount net
-
- .mailmap                                           |   1 +
- MAINTAINERS                                        |   2 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt.c          |   8 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt.h          |   1 +
- drivers/net/ethernet/broadcom/bnxt/bnxt_hsi.h      | 311 +++++++++++--------
- drivers/net/ethernet/intel/ice/ice_ddp.c           |  23 +-
- drivers/net/ethernet/intel/ice/ice_main.c          |  10 +-
- drivers/net/ethernet/intel/ice/ice_switch.c        |   6 +-
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c    |   5 +-
- .../net/ethernet/marvell/octeontx2/nic/Makefile    |   3 +-
- .../ethernet/marvell/octeontx2/nic/otx2_dcbnl.c    |   7 +
- .../ethernet/marvell/octeontx2/nic/otx2_devlink.c  |   2 +
- .../net/ethernet/marvell/octeontx2/nic/otx2_txrx.c |   5 +-
- drivers/net/ethernet/microchip/lan743x_ethtool.c   |  44 ++-
- drivers/net/ethernet/microchip/lan743x_main.c      |  48 ++-
- drivers/net/ethernet/microchip/lan743x_main.h      |  28 ++
- drivers/net/ethernet/qualcomm/qca_debug.c          |   6 +-
- drivers/net/ethernet/qualcomm/qca_spi.c            |  16 +-
- drivers/net/ethernet/qualcomm/qca_spi.h            |   3 +-
- .../net/ethernet/stmicro/stmmac/stmmac_hwtstamp.c  |   6 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c    |  40 +--
- drivers/net/phy/dp83tg720.c                        |  38 ++-
- drivers/net/phy/mxl-gpy.c                          |  58 ++--
- drivers/net/usb/ax88179_178a.c                     |  18 +-
- drivers/net/usb/rtl8150.c                          |   3 +-
- drivers/net/virtio_net.c                           |  32 +-
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c  |   2 +-
- drivers/net/wireless/intel/iwlwifi/mvm/scan.c      |   2 +-
- .../net/wireless/intel/iwlwifi/mvm/time-event.c    |   2 +
- drivers/ptp/ptp_sysfs.c                            |   3 +-
- include/linux/bpf_verifier.h                       |   2 +
- include/linux/btf.h                                |   2 +-
- include/linux/compiler_types.h                     |  23 ++
- include/net/netns/netfilter.h                      |   3 +
- kernel/bpf/verifier.c                              |  25 +-
- net/core/filter.c                                  |   5 +
- net/core/net_namespace.c                           |   9 +-
- net/core/netdev-genl.c                             |  16 +-
- net/core/sock.c                                    |   3 +
- net/ipv4/cipso_ipv4.c                              |  75 +++--
- net/ipv4/tcp_ao.c                                  |   6 +-
- net/ipv4/tcp_input.c                               |   1 +
- net/ipv6/ip6_fib.c                                 |   3 +-
- net/ipv6/route.c                                   |   4 +-
- net/ipv6/seg6_local.c                              |   8 +-
- net/ipv6/xfrm6_policy.c                            |   8 +-
- net/mac80211/driver-ops.c                          |  17 ++
- net/mac80211/iface.c                               |  22 +-
- net/mac80211/scan.c                                |  17 +-
- net/mac80211/util.c                                |   2 +-
- net/netfilter/core.c                               |  13 +-
- net/netfilter/ipset/ip_set_core.c                  |  11 +-
- net/netfilter/nf_conntrack_standalone.c            |  15 -
- net/netfilter/nf_hooks_lwtunnel.c                  |  67 ++++
- net/netfilter/nf_internals.h                       |   6 +
- net/netrom/nr_timer.c                              |   3 +-
- net/sched/act_api.c                                |   3 +-
- net/sched/act_ct.c                                 |  16 +-
- net/tipc/node.c                                    |   1 +
- net/wireless/scan.c                                |  12 +-
- tools/testing/selftests/bpf/prog_tests/verifier.c  |   2 +
- .../selftests/bpf/progs/verifier_or_jmp32_k.c      |  41 +++
- .../selftests/drivers/net/virtio_net/config        |   8 +-
- tools/testing/selftests/net/Makefile               |   2 +
- tools/testing/selftests/net/config                 |   2 +
- tools/testing/selftests/net/mptcp/userspace_pm.sh  |  46 +--
- .../selftests/net/openvswitch/openvswitch.sh       |   2 +-
- .../testing/selftests/net/openvswitch/ovs-dpctl.py |   2 +-
- .../selftests/net/srv6_end_dx4_netfilter_test.sh   | 335 ++++++++++++++++++++
- .../selftests/net/srv6_end_dx6_netfilter_test.sh   | 340 +++++++++++++++++++++
- 70 files changed, 1558 insertions(+), 353 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/progs/verifier_or_jmp32_k.c
- create mode 100755 tools/testing/selftests/net/srv6_end_dx4_netfilter_test.sh
- create mode 100755 tools/testing/selftests/net/srv6_end_dx6_netfilter_test.sh
+References: <20240619125556.491243678@linuxfoundation.org>
+In-Reply-To: <20240619125556.491243678@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 20 Jun 2024 21:53:39 +0530
+Message-ID: <CA+G9fYsnxHwaPb2YvcLJXrgPRkqJbm7w=cF6b-Ap1mQ7jHHMsA@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/217] 6.1.95-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 19 Jun 2024 at 18:56, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.1.95 release.
+> There are 217 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.1.95-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 6.1.95-rc1
+* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
+* git branch: linux-6.1.y
+* git commit: 0891d95b9db39ae51c0edef73f56d41521be9fbd
+* git describe: v6.1.94-218-g0891d95b9db3
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.9=
+4-218-g0891d95b9db3
+
+## Test Regressions (compared to v6.1.94)
+
+## Metric Regressions (compared to v6.1.94)
+
+## Test Fixes (compared to v6.1.94)
+
+## Metric Fixes (compared to v6.1.94)
+
+## Test result summary
+total: 171975, pass: 145682, fail: 3002, skip: 23038, xfail: 253
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 135 total, 135 passed, 0 failed
+* arm64: 38 total, 38 passed, 0 failed
+* i386: 29 total, 29 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 33 total, 33 passed, 0 failed
+* riscv: 9 total, 9 passed, 0 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 33 total, 33 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-android
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-drivers-dma-buf
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-ir
+* kselftest-kcmp
+* kselftest-kexec
+* kselftest-kvm
+* kselftest-lib
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-memory-hotplug
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mount
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-forwarding
+* kselftest-net-mptcp
+* kselftest-netfilter
+* kselftest-nsfs
+* kselftest-openat2
+* kselftest-pid_namespace
+* kselftest-pidfd
+* kselftest-proc
+* kselftest-pstore
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-splice
+* kselftest-static_keys
+* kselftest-sync
+* kselftest-sysctl
+* kselftest-tc-testing
+* kselftest-timens
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kselftest-zram
+* kunit
+* kvm-unit-tests
+* libgpiod
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
