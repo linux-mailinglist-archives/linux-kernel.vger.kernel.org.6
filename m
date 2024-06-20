@@ -1,167 +1,112 @@
-Return-Path: <linux-kernel+bounces-222824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12EAC91082E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:27:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A009107F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 433AE1C21CFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:27:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24001C21743
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06B81B010D;
-	Thu, 20 Jun 2024 14:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5E41AE08C;
+	Thu, 20 Jun 2024 14:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hSCtGxVA"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FtHLF3ZO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C98B1AE096;
-	Thu, 20 Jun 2024 14:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04131E48B;
+	Thu, 20 Jun 2024 14:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718893587; cv=none; b=fj3zQgyiWmX3GCaC/1xV5mKzpTE0v8i1soo1AyI4mLl4/uoENXDMPAplcqZyxEN2yCIbiC+8ncpAyBhU/y/vIv8ii6u1TYuTOh2p7i5U2WwlznMDBNFuIMsdxrABH8FB2+4PYKeAKNgtRfkjW/g/itn92a1YdmFAgzAvT1xQu3o=
+	t=1718893191; cv=none; b=ZAc/CSE5p7i5TfnLwBertnLWi5A6WyfNkZNRebjHiXvGvaLJJg3V/GXtXqA2KopAclUJs6S935QI6QQbzofm+13ehUDiHZWsgomhCSG5UJCGXDWXQDDbdz0G5fiDkWSghel1zRgmY4u0OaNGL+b5fb12gCjUkoYznjHaHmSmuFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718893587; c=relaxed/simple;
-	bh=J4ZzHlMsU2GCNXR+PaXtuLPzMGTluUszmXuqmkPWX1s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Jx6ol5sq05LMkhVTg5jiq3VT3ksqzFFlfNtYIuqQ2qJH/qTTOMlBKoQNmyzzUGAPe/3i5lCN/XH+7/O730l1znmrJjspfb+2dcTLPIFFtCQuxiXb4Pl3rN+qITH2emflqPxovm+E5Th71eiu+0Z6Eh43ZV3DJFgnGLHWjmGu9Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hSCtGxVA; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718893583;
-	bh=J4ZzHlMsU2GCNXR+PaXtuLPzMGTluUszmXuqmkPWX1s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hSCtGxVAqcL2jXdMLdAqo+79uJgPvFtYyvYYjSf3GAKnkPBGzVOXMnZjt4KF6UP4f
-	 lA7jlIS3WpQZ+wOGbIIMT57IXHi+EZ00NPKBAFX9UzNHPrGN5CSOdIKeJ9HuJDU/LO
-	 c2wHoSBg5s2UNfFBKhkYoycUqkjmp0/otfPFFh3dnWD93GFfJumWMcrPX/yp/l3qoi
-	 DqQeZ2ME1kBqIpriMOzFbcaLAzds+DG/JabA39wHGzrfnxKx8QThTKv1y8qScwPWl9
-	 gYFDqeA5/roM6ljkjnPzUDVofaPK3KlkmInSgACTzqYeIpGpTFP91jBEShAymECkZE
-	 xIh3uhRyrq95Q==
-Received: from arisu.hitronhub.home (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2960837821D9;
-	Thu, 20 Jun 2024 14:26:20 +0000 (UTC)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Diederik de Haas <didi.debian@cknow.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Alex Bee <knaerzche@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev,
-	Detlev Casanova <detlev.casanova@collabora.com>
-Subject: [PATCH v3 4/4] arm64: dts: rockchip: Add rkvdec2 Video Decoder on rk3588(s)
-Date: Thu, 20 Jun 2024 10:19:46 -0400
-Message-ID: <20240620142532.406564-5-detlev.casanova@collabora.com>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <20240620142532.406564-1-detlev.casanova@collabora.com>
-References: <20240620142532.406564-1-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1718893191; c=relaxed/simple;
+	bh=n4tUnj4Eac6aj+hWgpJmqPCrRk3ihP2085hGyDuOXuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FWuXIXL0qn5QR9AFxj2bPOD1QRkMjDALC6UhiGgB9x9mheOVb1CV/F8rIu+PPseheWG+5eXcffqL059ToY8AQSZcqHHtt/pvH5IURNg9yBU+ymn9BqONUOLfG3eNIq76azROv6JBRfgckPn0xDxt4baU72OfagYGZhpX9fuxtic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FtHLF3ZO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB58C2BD10;
+	Thu, 20 Jun 2024 14:19:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718893191;
+	bh=n4tUnj4Eac6aj+hWgpJmqPCrRk3ihP2085hGyDuOXuc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FtHLF3ZOVju0xqDIklse7AyPztxmeh4jWGWWcyzOZdGlNnvUTiyc+I5gKy4Abp5UR
+	 kaKhrK179HE+JUq2gl2oPVKUC/+orvYots3AOmDrEEtVo9U9XAx8O+tH/xluQnOfGi
+	 8Tgx9vAK5DCib4e5M2+7wDIazhSmCEczTNyTA7KY=
+Date: Thu, 20 Jun 2024 16:19:48 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 01/10] rust: pass module name to `Module::init`
+Message-ID: <2024062038-backroom-crunchy-d4c9@gregkh>
+References: <20240618234025.15036-1-dakr@redhat.com>
+ <20240618234025.15036-2-dakr@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618234025.15036-2-dakr@redhat.com>
 
-Add the rkvdec2 Video Decoder to the RK3588s devicetree.
+On Wed, Jun 19, 2024 at 01:39:47AM +0200, Danilo Krummrich wrote:
+> In a subsequent patch we introduce the `Registration` abstraction used
+> to register driver structures. Some subsystems require the module name on
+> driver registration (e.g. PCI in __pci_register_driver()), hence pass
+> the module name to `Module::init`.
 
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 48 +++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+I understand the need/want here, but it feels odd that you have to
+change anything to do it.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-index 6ac5ac8b48ab..9c44c99125b4 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-@@ -2596,6 +2596,16 @@ system_sram2: sram@ff001000 {
- 		ranges = <0x0 0x0 0xff001000 0xef000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-+
-+		vdec0_sram: rkvdec-sram@0 {
-+			reg = <0x0 0x78000>;
-+			pool;
-+		};
-+
-+		vdec1_sram: rkvdec-sram@1 {
-+			reg = <0x78000 0x77000>;
-+			pool;
-+		};
- 	};
- 
- 	pinctrl: pinctrl {
-@@ -2665,6 +2675,44 @@ gpio4: gpio@fec50000 {
- 			#interrupt-cells = <2>;
- 		};
- 	};
-+
-+	vdec0: video-decoder@fdc38100 {
-+		compatible = "rockchip,rk3588-vdec";
-+		reg = <0x0 0xfdc38100 0x0 0x500>;
-+		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
-+		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>, <&cru CLK_RKVDEC0_CA>,
-+			 <&cru CLK_RKVDEC0_CORE>, <&cru CLK_RKVDEC0_HEVC_CA>;
-+		clock-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
-+		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
-+				  <&cru CLK_RKVDEC0_CA>, <&cru CLK_RKVDEC0_HEVC_CA>;
-+		assigned-clock-rates = <800000000>, <600000000>,
-+				       <600000000>, <1000000000>;
-+		resets = <&cru SRST_A_RKVDEC0>, <&cru SRST_H_RKVDEC0>, <&cru SRST_RKVDEC0_CA>,
-+			 <&cru SRST_RKVDEC0_CORE>, <&cru SRST_RKVDEC0_HEVC_CA>;
-+		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
-+			      "rst_core", "rst_hevc_cabac";
-+		power-domains = <&power RK3588_PD_RKVDEC0>;
-+		sram = <&vdec0_sram>;
-+	};
-+
-+	vdec1: video-decoder@fdc40100 {
-+		compatible = "rockchip,rk3588-vdec";
-+		reg = <0x0 0xfdc40100 0x0 0x500>;
-+		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH 0>;
-+		clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>, <&cru CLK_RKVDEC1_CA>,
-+			 <&cru CLK_RKVDEC1_CORE>, <&cru CLK_RKVDEC1_HEVC_CA>;
-+		clock-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
-+		assigned-clocks = <&cru ACLK_RKVDEC1>, <&cru CLK_RKVDEC1_CORE>,
-+				  <&cru CLK_RKVDEC1_CA>, <&cru CLK_RKVDEC1_HEVC_CA>;
-+		assigned-clock-rates = <800000000>, <600000000>,
-+				       <600000000>, <1000000000>;
-+		resets = <&cru SRST_A_RKVDEC1>, <&cru SRST_H_RKVDEC1>, <&cru SRST_RKVDEC1_CA>,
-+			 <&cru SRST_RKVDEC1_CORE>, <&cru SRST_RKVDEC1_HEVC_CA>;
-+		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
-+			      "rst_core", "rst_hevc_cabac";
-+		power-domains = <&power RK3588_PD_RKVDEC1>;
-+		sram = <&vdec1_sram>;
-+	};
- };
- 
- #include "rk3588s-pinctrl.dtsi"
--- 
-2.44.2
+> 
+> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+> ---
+>  rust/kernel/lib.rs           | 14 ++++++++++----
+>  rust/kernel/net/phy.rs       |  2 +-
+>  rust/macros/module.rs        |  3 ++-
+>  samples/rust/rust_minimal.rs |  2 +-
+>  samples/rust/rust_print.rs   |  2 +-
+>  5 files changed, 15 insertions(+), 8 deletions(-)
+> 
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index a791702b4fee..5af00e072a58 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -71,7 +71,7 @@ pub trait Module: Sized + Sync + Send {
+>      /// should do.
+>      ///
+>      /// Equivalent to the `module_init` macro in the C API.
+> -    fn init(module: &'static ThisModule) -> error::Result<Self>;
+> +    fn init(name: &'static str::CStr, module: &'static ThisModule) -> error::Result<Self>;
 
+Why can't the name come directly from the build system?  Why must it be
+passed into the init function of the module "class"?  What is it going
+to do with it?
+
+A PCI, or other bus, driver "knows" it's name already by virtue of the
+build system, so it can pass that string into whatever function needs
+that, but the module init function itself does NOT need that.
+
+So I fail to understand why we need to burden ALL module init functions
+with this, when only a very very very tiny subset of all drivers will
+ever need to know this, and even then, they don't need to know it at
+init module time, they know it at build time and it will be a static
+string at that point, it will not be coming in through an init call.
+
+thanks,
+
+greg k-h
 
