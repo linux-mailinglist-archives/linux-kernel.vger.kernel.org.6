@@ -1,269 +1,829 @@
-Return-Path: <linux-kernel+bounces-222832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F77910853
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:31:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74B7910854
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D4411F21EB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:31:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA121C22F8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D60A1AF6A0;
-	Thu, 20 Jun 2024 14:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850FD1AE869;
+	Thu, 20 Jun 2024 14:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ptwCBJjj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aoWxlU3W"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726DB1ACE94;
-	Thu, 20 Jun 2024 14:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9BE1ACE94
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718893815; cv=none; b=Z+K/RLD9L7iLzU4scI2YX82aLg+CtFiwvOEm5ZMdO5Le5MgDm+nUyLotzKyEfdPy/FhYk6Wo7snvK+vfVuPU26J2BJANL068mB7BR1vf13XImiibk1LqkgmijRQurbSYbs/k8m1M/xvNon4kXg+wIDcXFZQ3l2vNJCIDPjy7kSM=
+	t=1718893836; cv=none; b=jwfnX3+IineVxa+mo0J96pyN1uzEVVaIVRzBfkxjxniw/V7bdFmGOxTWLkRYp0SjsvrPwaiB+v1B/xU2hWt0TSlfBIiz0bXQlUxIW4c5Ha3vw3tUTeqHMUE29OMX2UHUsUSQ5ZgyVPlvKXvX5hpUqXdaYloM8cx913eV7LdLM98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718893815; c=relaxed/simple;
-	bh=CB0GfU5+WRIGYKX3xpnEIAeKadPq26rv8xPeG4YddIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gkdcJm9J//IolwNqLp7j4ZOboeDqytzggc/muKh89omk5ONBCcQj7ltWAFHANEUJ09UZPtyGJBoAHG9N3C66ajtBQ/jmX075RnCMAnI9dPbbA7zAdSe6tzGj8+pKO7p1ypGBD60Y5mEoSkvn9LfszMFcz5r8deVg4Va1m+3l/6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ptwCBJjj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74523C2BD10;
-	Thu, 20 Jun 2024 14:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718893814;
-	bh=CB0GfU5+WRIGYKX3xpnEIAeKadPq26rv8xPeG4YddIw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ptwCBJjjCoTf0NzrLBidJt/G48pusMeozirAqpkLd+rdk1yO3dNNTfILnOZxbNjka
-	 UdkJyocoAQD4/PZzVXaJoNnihizBOnbf6uZoFFscYseHRY+DCw9yAkARKiwkOka53a
-	 G09HHJNlbnnlgWgmNOGv+VUIURvYOXuxJTVdJwlZQ9spKzD4YGtWt7bySJxqEZ36J7
-	 XWpwt0tLBRNddqr6FgT9DIdQlfJaxXpuDeJjPC6bKt1wFU3p4AnFJQ+Ash+Eqj1JXb
-	 hsiWoS3/9tKHIu0ELtHwlBGlHSqQm2Ff9jdrE88pHUEh1nfTU1XQh9ssqGwegZFVz1
-	 sgneK8K5QL+mA==
-Message-ID: <5267ecb3-6380-4c70-a0ae-5830679d2935@kernel.org>
-Date: Thu, 20 Jun 2024 16:30:09 +0200
+	s=arc-20240116; t=1718893836; c=relaxed/simple;
+	bh=C/TQNtxnxOmHgQp1HmWo3LCNZQYdIUVtJKn2oBRiQtY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VzMGDX+zeg80wqWsR/KL1nAfgWpq2D2ehYKBA1EutAOt8r+LbqMivQsu/U0tPzXlBxX/YeGyqHlNpFT6+mpB38+Mpmnk8dZUsBr5W6jNeWERvg1RMjtLJc/gNLMzaUoh8cfykEXqqYJCnV9YqMTV4SshzyPtgs0/TBbH325VDW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aoWxlU3W; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52ccc40e72eso735920e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:30:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718893832; x=1719498632; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qXTpR0wejgte+pdhfQfRa9mmASrAQw02LMITkzaw/cE=;
+        b=aoWxlU3WKgvU7/dtkH6NZggN/+KdzrdLNo4Z2zx+958SWpVoWe/HZ6htIwJ7RAhaqb
+         3YN0ct6cykBegDDiYcRlNsO1SoUnf/vE5jbdrBLkCrEuGkkHMoCqFQxeu1eBcz8bCs05
+         NUc/vf0yYEnb3qbZfO11vd578/Kyv/VNzJuLyv7xAH/RO0dh2Y1xVW2IPEfl9HTYZdsw
+         K31NoV9oKhdDjK9FUfPD4b41EdCeAYco3JK9kurvlYJtyMGbjhiUC8ljuKscKo1mfWVP
+         6p9NDA1bE1PJDI0lABgaVzFkVgBIcVJw3hd0dWBeD+kv4cSIpSI6l27ul3/fx2asYx92
+         mT6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718893832; x=1719498632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qXTpR0wejgte+pdhfQfRa9mmASrAQw02LMITkzaw/cE=;
+        b=WfnFbjzbp1L/b8Rh3URaWAIkvlGFdHZbMCYVMYPgx6r40en8bUhHViwOM2ROQtcbOT
+         bwJ5vOwmGLsf1/ZWVZ7imnQm7+z9naQU7MJocsRDa1xN8bzu/XXkTCGMouXbYNc/omM6
+         KzfbjKshgurhJNkBwC6RS3miL2d/TwPzFEle4aS1S4ZO6KyFx/OGVDF3Q2MkTrQAnFz+
+         uIXmrZMFsF0zapHq1AswOCOzV+l82oyz3Ped+OYqP+DyQ7v8JghzQSsF/R5aRMlBWbFu
+         9HJgX9Lk1qYb/x0aefyJ0O9fkrddJhH0v6w80cXJ2oqXvNSc3a7p9x4t9bYFlpP4DXWv
+         dZiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDR1J9rau6v9Y8c7DsAef2oLejtCzNjJJkz2THqBNkzNf0AVVWAD2i4AHjpO0/+Zi+QRF+lDsPpyLeEfNktgXSQiVwwzjoS/I0dB3x
+X-Gm-Message-State: AOJu0Yzi8MsDqVIhyb0ZZFqJiALW0v9gRC+UxUqI6wEqKUq/wLxYiYqu
+	dTVIHia0RmtIky0SFrlT8nWgLNEFEyQakjzWX6Jr82mvjOUirG7rdfMWkqqPuA4ZvrUi0UdE+3T
+	9+oO0rWKmbSStnZPImucnmHL3Ygw=
+X-Google-Smtp-Source: AGHT+IF5unEW6ZfWripgK+JkipGjr01v0qPO7s5ulVlsl+NP9e9opKghEDBLEgl6MawXIlXF0J3VXSY8E9Fou9bw9lQ=
+X-Received: by 2002:a05:6512:3f0e:b0:52b:c09e:407a with SMTP id
+ 2adb3069b0e04-52ccaa53e12mr5302955e87.47.1718893831258; Thu, 20 Jun 2024
+ 07:30:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] Immutable tag between the Bluetooth and pwrseq
- branches for v6.11-rc1
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-bluetooth@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240612075829.18241-1-brgl@bgdev.pl>
- <CABBYNZLrwgj848w97GP+ijybt-yU8yMNnW5UWhb2y5Zq6b5H9A@mail.gmail.com>
- <CAMRc=Mdb31YGUUXRWACnx55JawayFaRjEPYSdjOCMrYr5xDYag@mail.gmail.com>
- <CABBYNZLPv3zk_UX67yPetQKWiQ-g+Dv9ZjZydhwG3jfaeV+48w@mail.gmail.com>
- <CAMRc=Mdsw5c_BDwUwP2Ss4Bogz-d+waZVd8LLaZ5oyc9dWS2Qg@mail.gmail.com>
- <CAMRc=Mf2koxQH8Pw--6g5O3FTFn_qcyfwTVQjUqxwJ5qW1nzjw@mail.gmail.com>
- <CABBYNZ+7SrLSDeCLF0WDM01prRgAEHMD=9mhu5MfWOuGwoAkNQ@mail.gmail.com>
- <CAMRc=MdozeAzWJCSrDdxVBZ=fwP2yn_j-KZaTDT2Dp7YjKP8-g@mail.gmail.com>
- <CABBYNZKA7-PAODStTZO33KfHOrGmZHjbEQcP+DKq-CVNwEce4w@mail.gmail.com>
- <CABBYNZ+x-HPCEwQVPONr6pF-Kvss=gJxqdosNGUfFFQDLz75DA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CABBYNZ+x-HPCEwQVPONr6pF-Kvss=gJxqdosNGUfFFQDLz75DA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240607011413.8839-1-wuhoipok@gmail.com> <060bcbb2-0b93-49af-ad17-e84ecd4da4fd@suse.de>
+In-Reply-To: <060bcbb2-0b93-49af-ad17-e84ecd4da4fd@suse.de>
+From: Hoi Pok Wu <wuhoipok@gmail.com>
+Date: Thu, 20 Jun 2024 10:30:20 -0400
+Message-ID: <CANyH0kBTsfMoTM3vksW=dS8bxPNxZHjJFRji6eBEmzt=NRXf_w@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon: remove load callback
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>, 
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 20/06/2024 16:20, Luiz Augusto von Dentz wrote:
-> Hi,
-> 
-> On Thu, Jun 20, 2024 at 10:16 AM Luiz Augusto von Dentz
-> <luiz.dentz@gmail.com> wrote:
->>
->> Hi Bartosz,
->>
->> On Wed, Jun 19, 2024 at 3:40 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>
->>> On Wed, Jun 19, 2024 at 8:59 PM Luiz Augusto von Dentz
->>> <luiz.dentz@gmail.com> wrote:
->>>>
->>>> Hi Bartosz,
->>>>
->>>> On Wed, Jun 19, 2024 at 3:35 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>>>
->>>>> On Wed, Jun 12, 2024 at 5:00 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>>>>
->>>>>> On Wed, Jun 12, 2024 at 4:54 PM Luiz Augusto von Dentz
->>>>>> <luiz.dentz@gmail.com> wrote:
->>>>>>>
->>>>>>> Hi Bartosz,
->>>>>>>
->>>>>>> On Wed, Jun 12, 2024 at 10:45 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>>>>>>
->>>>>>>> On Wed, Jun 12, 2024 at 4:43 PM Luiz Augusto von Dentz
->>>>>>>> <luiz.dentz@gmail.com> wrote:
->>>>>>>>>
->>>>>>>>> Hi Bartosz,
->>>>>>>>>
->>>>>>>>> On Wed, Jun 12, 2024 at 3:59 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>>>>>>>>>
->>>>>>>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>>>>>>>
->>>>>>>>>> Hi Marcel, Luiz,
->>>>>>>>>>
->>>>>>>>>> Please pull the following power sequencing changes into the Bluetooth tree
->>>>>>>>>> before applying the hci_qca patches I sent separately.
->>>>>>>>>>
->>>>>>>>>> Link: https://lore.kernel.org/linux-kernel/20240605174713.GA767261@bhelgaas/T/
->>>>>>>>>>
->>>>>>>>>> The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
->>>>>>>>>>
->>>>>>>>>>   Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
->>>>>>>>>>
->>>>>>>>>> are available in the Git repository at:
->>>>>>>>>>
->>>>>>>>>>   git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/pwrseq-initial-for-v6.11
->>>>>>>>>>
->>>>>>>>>> for you to fetch changes up to 2f1630f437dff20d02e4b3f07e836f42869128dd:
->>>>>>>>>>
->>>>>>>>>>   power: pwrseq: add a driver for the PMU module on the QCom WCN chipsets (2024-06-12 09:20:13 +0200)
->>>>>>>>>>
->>>>>>>>>> ----------------------------------------------------------------
->>>>>>>>>> Initial implementation of the power sequencing subsystem for linux v6.11
->>>>>>>>>>
->>>>>>>>>> ----------------------------------------------------------------
->>>>>>>>>> Bartosz Golaszewski (2):
->>>>>>>>>>       power: sequencing: implement the pwrseq core
->>>>>>>>>>       power: pwrseq: add a driver for the PMU module on the QCom WCN chipsets
->>>>>>>>>
->>>>>>>>> Is this intended to go via bluetooth-next or it is just because it is
->>>>>>>>> a dependency of another set? You could perhaps send another set
->>>>>>>>> including these changes to avoid having CI failing to compile.
->>>>>>>>>
->>>>>>>>
->>>>>>>> No, the pwrseq stuff is intended to go through its own pwrseq tree
->>>>>>>> hence the PR. We cannot have these commits in next twice.
->>>>>>>
->>>>>>> Not following you here, why can't we have these commits on different
->>>>>>> next trees? If that is the case how can we apply the bluetooth
->>>>>>> specific ones without causing build regressions?
->>>>>>>
->>>>>>
->>>>>> We can't have the same commits twice with different hashes in next
->>>>>> because Stephen Rothwell will yell at us both.
->>>>>>
->>>>>> Just pull the tag I provided and then apply the Bluetooth specific
->>>>>> changes I sent on top of it. When sending to Linus Torvalds/David
->>>>>> Miller (not sure how your tree gets upstream) mention that you pulled
->>>>>> in the pwrseq changes in your PR cover letter.
->>>>
->>>> By pull the tag you mean using merge commits to merge the trees and
->>>> not rebase, doesn't that lock us down to only doing merge commits
->>>> rather than rebases later on? I have never used merge commits before.
->>>> There is some documentation around it that suggests not to use merges:
->>>>
->>>> 'While merges from downstream are common and unremarkable, merges from
->>>> other trees tend to be a red flag when it comes time to push a branch
->>>> upstream. Such merges need to be carefully thought about and well
->>>> justified, or there’s a good chance that a subsequent pull request
->>>> will be rejected.'
->>>> https://docs.kernel.org/maintainer/rebasing-and-merging.html#merging-from-sibling-or-upstream-trees
->>>>
->>>> But then looking forward in that documentation it says:
->>>>
->>>> 'Another reason for doing merges of upstream or another subsystem tree
->>>> is to resolve dependencies. These dependency issues do happen at
->>>> times, and sometimes a cross-merge with another tree is the best way
->>>> to resolve them; as always, in such situations, the merge commit
->>>> should explain why the merge has been done. Take a moment to do it
->>>> right; people will read those changelogs.'
->>>>
->>>> So I guess that is the reason we want to merge the trees, but what I'm
->>>> really looking forward to is for the 'proper' commands and commit
->>>> message to use to make sure we don't have problems in the future.
->>>>
->>>
->>> You shouldn't really need to rebase your branch very often anyway.
->>> This is really for special cases. But even then you can always use:
->>> `git rebase --rebase-merges` to keep the merge commits.
->>>
->>> The commands you want to run are:
->>>
->>> git pull git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
->>> tags/pwrseq-initial-for-v6.11
->>> git am or b4 shazam on the patches targeting the Bluetooth subsystem
->>> git push
->>
->> Not quite working for me:
->>
->> From git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux
->>  * tag                         pwrseq-initial-for-v6.11 -> FETCH_HEAD
->> hint: You have divergent branches and need to specify how to reconcile them.
->> hint: You can do so by running one of the following commands sometime before
->> hint: your next pull:
->> hint:
->> hint:   git config pull.rebase false  # merge
->> hint:   git config pull.rebase true   # rebase
->> hint:   git config pull.ff only       # fast-forward only
->> hint:
->> hint: You can replace "git config" with "git config --global" to set a default
->> hint: preference for all repositories. You can also pass --rebase, --no-rebase,
->> hint: or --ff-only on the command line to override the configured default per
->> hint: invocation.
->> fatal: Need to specify how to reconcile divergent branches.
->>
->> Perhaps I need to configure pull.rebase to be false?
-> 
-> Looks like I just needed -no-ff, will be pushing it after it finishes compiling.
+Dear Thomas,
 
-Ah, so there was a tag. You miss proper config option... Well, I am
-surprised you do not have default pull.rebase set. How did you manage to
-pull anything from anyone? Git requires it since some time.
+Thank you for testing my patch. The dev->dev_private is indeed the problem.
 
-Best regards,
-Krzysztof
+However, most of the functions that uses dev->dev_private is passing
+drm_device as parameter, and then uses dev->dev_private to retrieve
+radeon_device,
+contradicting what the patch intended. It should use radeon_device directly=
+.
+Should I send a follow up patch with the updated patch?
 
+Thank you.
+
+Best Regards
+Wu
+
+On Wed, Jun 19, 2024 at 10:28=E2=80=AFAM Thomas Zimmermann <tzimmermann@sus=
+e.de> wrote:
+>
+> Hi
+>
+> Am 07.06.24 um 03:14 schrieb wu hoi pok:
+> > this patch is to remove the load callback from the kms_driver,
+> > following closly to amdgpu, radeon_driver_load_kms and devm_drm_dev_all=
+oc
+> > are used, most of the changes here are rdev->ddev to rdev_to_drm,
+> > which maps to adev_to_drm in amdgpu. however this patch is not tested o=
+n
+> > hardware, so if you are free and have a gcn1 gcn2 card please do so.
+> >
+> > Signed-off-by: wu hoi pok <wuhoipok@gmail.com>
+>
+> I volunteer for testing. The test device is
+>
+> 01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.
+> [AMD/ATI] Turks PRO [Radeon HD 6570/7570/8550 / R5 230] (prog-if 00 [VGA
+> controller])
+>          Subsystem: PC Partner Limited / Sapphire Technology Device e193
+>          Flags: bus master, fast devsel, latency 0, IRQ 147
+>          Memory at c0000000 (64-bit, prefetchable) [size=3D256M]
+>          Memory at dfe20000 (64-bit, non-prefetchable) [size=3D128K]
+>          I/O ports at e000 [size=3D256]
+>          Expansion ROM at 000c0000 [disabled] [size=3D128K]
+>          Capabilities: <access denied>
+>          Kernel driver in use: radeon
+>          Kernel modules: radeon, amdgpu
+>
+>
+> With the current patch, the driver crashes upon booting. Here is your
+> backtrace:
+>
+> [   24.013524] Console: switching to colour dummy device 80x25
+> [   24.021093] radeon 0000:01:00.0: vgaarb: deactivate vga console
+> [   24.031806] [drm] initializing kernel modesetting (TURKS
+> 0x1002:0x6759 0x174B:0xE193 0x00).
+> [   24.041066] ATOM BIOS: YODA
+> [   24.043930]
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [   24.051195] BUG: KASAN: user-memory-access in
+> radeon_atom_initialize_bios_scratch_regs+0x33/0x110 [radeon]
+> [   24.061287] Read of size 4 at addr 0000000000001058 by task
+> (udev-worker)/349
+> [   24.061292]
+> [   24.061295] CPU: 3 PID: 349 Comm: (udev-worker) Tainted: G U
+> E      6.10.0-rc4-1-default+ #2977
+> [   24.061301] Hardware name: System manufacturer System Product
+> Name/Z170-A, BIOS 3802 03/15/2018
+> [   24.061305] Call Trace:
+> [  OK     24.061308]  <TASK>
+> [   24.061313]  dump_stack_lvl+0x68/0x90
+> [   24.061322]  ? radeon_atom_initialize_bios_scratch_regs+0x33/0x110
+> [radeon]
+> 0m] Finished    24.105026]  kasan_report+0xcf/0x1a0
+> [   24.105039]  ? radeon_atom_initialize_bios_scratch_regs+0x33/0x110
+> [radeon]
+> ;1;39mCreate Vol[   24.117055]  ? __pfx_cail_ioreg_read+0x10/0x10 [radeon=
+]
+> atile Files and [   24.123698]
+> radeon_atom_initialize_bios_scratch_regs+0x33/0x110 [radeon]
+> Directories.[   24.131933]  radeon_atombios_init+0x192/0x220 [radeon]
+>
+> [   24.138506]  evergreen_init+0x57/0x400 [radeon]
+> [   24.143473]  radeon_device_init+0x8f2/0x1040 [radeon]
+> [   24.148897]  ? down_read_failed+0x7/0x410
+> [   24.152936]  ? ksm_might_need_to_copy+0x10/0x280
+> [   24.157594]  radeon_driver_load_kms+0xe3/0x330 [radeon]
+> [   24.163198]  radeon_pci_probe+0x117/0x180 [radeon]
+> [   24.168431]  ? __pfx_radeon_pci_probe+0x10/0x10 [radeon]
+> [   24.174161]  local_pci_probe+0x74/0xc0
+> [   24.177945]  pci_call_probe+0xc6/0x260
+> [   24.181727]  ? __pfx_pci_call_probe+0x10/0x10
+> [   24.186118]  ? do_raw_spin_trylock+0xb0/0xf0
+> [   24.190439]  ? pci_match_device+0x1c5/0x240
+> [   24.194651]  ? pci_match_id+0x102/0x150
+> [   24.198522]  ? pci_match_device+0x1dd/0x240
+> [   24.202752]  pci_device_probe+0x9d/0x150
+> [   24.206705]  ? driver_sysfs_add+0xb0/0x130
+> [   24.210838]  really_probe+0x13b/0x490
+> [   24.214547]  __driver_probe_device+0xca/0x1b0
+> [   24.218943]  driver_probe_device+0x4a/0xf0
+> [   24.223073]  __driver_attach+0x136/0x290
+> [   24.227032]  ? __pfx___driver_attach+0x10/0x10
+> [   24.231508]  bus_for_each_dev+0xc0/0x110
+> [   24.235465]  ? __pfx_bus_for_each_dev+0x10/0x10
+> [   24.240032]  ? bus_add_driver+0x17a/0x2b0
+> [   24.244079]  bus_add_driver+0x19a/0x2b0
+> [   24.247950]  driver_register+0xc5/0x140
+> [   24.251817]  ? __pfx_radeon_module_init+0x10/0x10 [radeon]
+> [   24.257674]  do_one_initcall+0xbc/0x390
+> [   24.261542]  ? __pfx_do_one_initcall+0x10/0x10
+> [   24.266022]  ? kasan_unpoison+0x40/0x70
+> [   24.269891]  ? rcu_is_watching+0x34/0x60
+> [   24.273849]  ? kmalloc_trace_noprof+0x286/0x320
+> [   24.278415]  ? do_init_module+0x38/0x3a0
+> [   24.282387]  ? kasan_unpoison+0x40/0x70
+> [   24.286264]  do_init_module+0x13a/0x3a0
+> [   24.290133]  init_module_from_file+0xc0/0x100
+> [   24.294523]  ? __pfx_init_module_from_file+0x10/0x10
+> [   24.299522]  ? __lock_release.isra.0+0x132/0x4f0
+> [   24.304185]  ? do_raw_spin_unlock+0x83/0xe0
+> [   24.304209]  idempotent_init_module+0x1b7/0x3e0
+> [   24.304217]  ? __pfx_idempotent_init_module+0x10/0x10
+> [   24.304244]  ? security_capable+0x2e/0x80
+> [   24.322122]  __x64_sys_finit_module+0x78/0xd0
+> [   24.326527]  do_syscall_64+0x69/0x140
+> [   24.330223]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   24.335316] RIP: 0033:0x7f23d81e0bcd
+> [   24.338937] Code: 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 90 90
+> 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f
+> 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 1b d2 0d 00 f7 d8 64 89 01 48
+> [   24.357784] RSP: 002b:00007ffc0ab94858 EFLAGS: 00000246 ORIG_RAX:
+> 0000000000000139
+> [   24.365430] RAX: ffffffffffffffda RBX: 0000556312b67370 RCX:
+> 00007f23d81e0bcd
+> [   24.372610] RDX: 0000000000000000 RSI: 00007f23d82ea061 RDI:
+> 0000000000000025
+> [   24.379787] RBP: 00007f23d82ea061 R08: 0000000000000001 R09:
+> 0000556312b65820
+> [   24.386960] R10: 0000000000000050 R11: 0000000000000246 R12:
+> 0000000000020000
+> [   24.394138] R13: 0000000000000000 R14: 0000556312b70880 R15:
+> 0000000000000000
+> [   24.401323]  </TASK>
+> [   24.403530]
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [   24.410813] Disabling lock debugging due to kernel taint
+> [   24.416165] BUG: unable to handle page fault for address:
+> 0000000000001058
+> [   24.423072] #PF: supervisor read access in kernel mode
+> [   24.428245] #PF: error_code(0x0000) - not-present page
+> [   24.433416] PGD 0 P4D 0
+> [   24.435984] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN PTI
+> [   24.441240] CPU: 3 PID: 349 Comm: (udev-worker) Tainted: G BU
+> E      6.10.0-rc4-1-default+ #2977
+> [   24.450775] Hardware name: System manufacturer System Product
+> Name/Z170-A, BIOS 3802 03/15/2018
+> [   24.459512] RIP:
+> 0010:radeon_atom_initialize_bios_scratch_regs+0x33/0x110 [radeon]
+> [   24.467461] Code: 41 54 55 53 48 89 fb 48 83 c7 78 e8 e7 17 cd e7 48
+> 8b 5b 78 4c 8d b3 58 10 00 00 4c 8d ab 08 14 00 00 4c 89 f7 e8 9d 16 cd
+> e7 <8b> ab 58 10 00 00 4c 89 ef e8 bf 17 cd e7 48 8b 83 08 14 00 00 83
+> [   24.486310] RSP: 0018:ffffc90001bdf748 EFLAGS: 00010282
+> [   24.491565] RAX: 0000000000000001 RBX: 0000000000000000 RCX:
+> ffffffffa8116556
+> [   24.498736] RDX: fffffbfff584b7d5 RSI: 0000000000000008 RDI:
+> ffffffffac25bea0
+> [   24.505934] RBP: ffff8881398b8000 R08: 0000000000000001 R09:
+> fffffbfff584b7d4
+> [   24.513105] R10: ffffffffac25bea7 R11: 0000000000000001 R12:
+> ffff8881398b8008
+> [   24.520284] R13: 0000000000001408 R14: 0000000000001058 R15:
+> ffffffffc08ffb00
+> [   24.527458] FS:  00007f23d7627900(0000) GS:ffff88841d800000(0000)
+> knlGS:0000000000000000
+> [   24.535591] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   24.541396] CR2: 0000000000001058 CR3: 0000000104e24003 CR4:
+> 00000000003706f0
+> [   24.548568] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+> 0000000000000000
+> [   24.555741] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+> 0000000000000400
+> [   24.562916] Call Trace:
+> [   24.565390]  <TASK>
+> [   24.567511]  ? show_trace_log_lvl+0x1af/0x2c0
+> [   24.571896]  ? show_trace_log_lvl+0x1af/0x2c0
+> [   24.576281]  ? show_trace_log_lvl+0x1af/0x2c0
+> [   24.580679]  ? radeon_atombios_init+0x192/0x220 [radeon]
+> [   24.586355]  ? __die_body.cold+0x8/0x12
+> [   24.590220]  ? page_fault_oops+0xed/0x190
+> [   24.594258]  ? __pfx_page_fault_oops+0x10/0x10
+> [   24.598736]  ? do_user_addr_fault+0x44f/0x710
+> [   24.603129]  ? rcu_is_watching+0x34/0x60
+> [   24.607088]  ? exc_page_fault+0x65/0xf0
+> [   24.610956]  ? asm_exc_page_fault+0x22/0x30
+> [   24.615174]  ? __pfx_cail_ioreg_read+0x10/0x10 [radeon]
+> [   24.620831]  ? add_taint+0x26/0x70
+> [   24.624246]  ? radeon_atom_initialize_bios_scratch_regs+0x33/0x110
+> [radeon]
+> [   24.631556]  ? radeon_atom_initialize_bios_scratch_regs+0x33/0x110
+> [radeon]
+> [   24.638844]  radeon_atombios_init+0x192/0x220 [radeon]
+> [   24.644309]  evergreen_init+0x57/0x400 [radeon]
+> [   24.649237]  radeon_device_init+0x8f2/0x1040 [radeon]
+> [   24.654662]  ? down_read_failed+0x7/0x410
+> [   24.658670]  ? ksm_might_need_to_copy+0x10/0x280
+> [   24.663309]  radeon_driver_load_kms+0xe3/0x330 [radeon]
+> [   24.668892]  radeon_pci_probe+0x117/0x180 [radeon]
+> [   24.674012]  ? __pfx_radeon_pci_probe+0x10/0x10 [radeon]
+> [   24.679651]  local_pci_probe+0x74/0xc0
+> [   24.683405]  pci_call_probe+0xc6/0x260
+> [   24.687158]  ? __pfx_pci_call_probe+0x10/0x10
+> [   24.691512]  ? do_raw_spin_trylock+0xb0/0xf0
+> [   24.695789]  ? pci_match_device+0x1c5/0x240
+> [   24.699974]  ? pci_match_id+0x102/0x150
+> [   24.703809]  ? pci_match_device+0x1dd/0x240
+> [   24.708000]  pci_device_probe+0x9d/0x150
+> [   24.711924]  ? driver_sysfs_add+0xb0/0x130
+> [   24.716029]  really_probe+0x13b/0x490
+> [   24.719700]  __driver_probe_device+0xca/0x1b0
+> [   24.724059]  driver_probe_device+0x4a/0xf0
+> [   24.728162]  __driver_attach+0x136/0x290
+> [   24.732106]  ? __pfx___driver_attach+0x10/0x10
+> [   24.736551]  bus_for_each_dev+0xc0/0x110
+> [   24.740481]  ? __pfx_bus_for_each_dev+0x10/0x10
+> [   24.745013]  ? bus_add_driver+0x17a/0x2b0
+> [   24.749033]  bus_add_driver+0x19a/0x2b0
+> [   24.752875]  driver_register+0xc5/0x140
+> [   24.756713]  ? __pfx_radeon_module_init+0x10/0x10 [radeon]
+> [   24.762519]  do_one_initcall+0xbc/0x390
+> [   24.766357]  ? __pfx_do_one_initcall+0x10/0x10
+> [   24.770806]  ? kasan_unpoison+0x40/0x70
+> [   24.774650]  ? rcu_is_watching+0x34/0x60
+> [   24.778589]  ? kmalloc_trace_noprof+0x286/0x320
+> [   24.783118]  ? do_init_module+0x38/0x3a0
+> [   24.787048]  ? kasan_unpoison+0x40/0x70
+> [   24.790894]  do_init_module+0x13a/0x3a0
+> [   24.794737]  init_module_from_file+0xc0/0x100
+> [   24.799095]  ? __pfx_init_module_from_file+0x10/0x10
+> [   24.804060]  ? __lock_release.isra.0+0x132/0x4f0
+> [   24.808687]  ? do_raw_spin_unlock+0x83/0xe0
+> [   24.812875]  idempotent_init_module+0x1b7/0x3e0
+> [   24.817425]  ? __pfx_idempotent_init_module+0x10/0x10
+> [   24.822493]  ? security_capable+0x2e/0x80
+> [   24.826514]  __x64_sys_finit_module+0x78/0xd0
+> [   24.830870]  do_syscall_64+0x69/0x140
+> [   24.834539]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   24.839591] RIP: 0033:0x7f23d81e0bcd
+> [   24.843171] Code: 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 90 90
+> 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f
+> 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 1b d2 0d 00 f7 d8 64 89 01 48
+> [   24.861883] RSP: 002b:00007ffc0ab94858 EFLAGS: 00000246 ORIG_RAX:
+> 0000000000000139
+> [   24.869444] RAX: ffffffffffffffda RBX: 0000556312b67370 RCX:
+> 00007f23d81e0bcd
+> [   24.876569] RDX: 0000000000000000 RSI: 00007f23d82ea061 RDI:
+> 0000000000000025
+> [   24.883693] RBP: 00007f23d82ea061 R08: 0000000000000001 R09:
+> 0000556312b65820
+> [   24.890819] R10: 0000000000000050 R11: 0000000000000246 R12:
+> 0000000000020000
+> [   24.897943] R13: 0000000000000000 R14: 0000556312b70880 R15:
+> 0000000000000000
+> [   24.905085]  </TASK>
+> [   24.907299] Modules linked in: radeon(E+) crct10dif_pclmul(E)
+> crc32_pclmul(E) ghash_clmulni_intel(E) sha512_ssse3(E) drm_ttm_helper(E)
+> sha256_ssse3(E) ttm(E) sha1_ssse3(E) video(E) hid_generic(E)
+> aesni_intel(E) crypto_simd(E) cryptd(E)
+> [   24.942885] CR2: 0000000000001058
+> [   24.946201] ---[ end trace 0000000000000000 ]---
+> [   24.950810] RIP:
+> 0010:radeon_atom_initialize_bios_scratch_regs+0x33/0x110 [radeon]
+> [   24.958700] Code: 41 54 55 53 48 89 fb 48 83 c7 78 e8 e7 17 cd e7 48
+> 8b 5b 78 4c 8d b3 58 10 00 00 4c 8d ab 08 14 00 00 4c 89 f7 e8 9d 16 cd
+> e7 <8b> ab 58 10 00 00 4c 89 ef e8 bf 17 cd e7 48 8b 83 08 14 00 00 83
+> [   24.977427] RSP: 0018:ffffc90001bdf748 EFLAGS: 00010282
+> [   24.982648] RAX: 0000000000000001 RBX: 0000000000000000 RCX:
+> ffffffffa8116556
+> [   24.989769] RDX: fffffbfff584b7d5 RSI: 0000000000000008 RDI:
+> ffffffffac25bea0
+> [   24.996891] RBP: ffff8881398b8000 R08: 0000000000000001 R09:
+> fffffbfff584b7d4
+> [   25.004016] R10: ffffffffac25bea7 R11: 0000000000000001 R12:
+> ffff8881398b8008
+> [   25.011140] R13: 0000000000001408 R14: 0000000000001058 R15:
+> ffffffffc08ffb00
+> [   25.018265] FS:  00007f23d7627900(0000) GS:ffff88841d800000(0000)
+> knlGS:0000000000000000
+> [   25.026339] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   25.032076] CR2: 0000000000001058 CR3: 0000000104e24003 CR4:
+> 00000000003706f0
+> [   25.039209] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+> 0000000000000000
+> [   25.046329] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+> 0000000000000400
+>
+>
+> Building with W=3D1 also shows the following warnings:
+>
+>
+> drivers/gpu/drm/radeon/radeon_kms.c:105: warning: Function parameter or
+> struct member 'rdev' not described in 'radeon_driver_load_kms'
+> drivers/gpu/drm/radeon/radeon_kms.c:105: warning: Excess function
+> parameter 'dev' description in 'radeon_driver_load_kms'
+> drivers/gpu/drm/radeon/radeon_device.c:1280: warning: Excess function
+> parameter 'ddev' description in 'radeon_device_init'
+> drivers/gpu/drm/radeon/radeon_device.c:1280: warning: Excess function
+> parameter 'pdev' description in 'radeon_device_init'
+>
+>
+> I suggest to turn this patch into a little series. First do the trival
+> conversion from rdev->dev to rdev_to_drm() without any internal changes.
+> Then do the rest in a separate patch.
+>
+>
+> [...]
+> > @@ -569,7 +578,7 @@ static const struct drm_ioctl_desc radeon_ioctls_km=
+s[] =3D {
+> >   static const struct drm_driver kms_driver =3D {
+> >       .driver_features =3D
+> >           DRIVER_GEM | DRIVER_RENDER | DRIVER_MODESET,
+> > -     .load =3D radeon_driver_load_kms,
+> > +     // .load =3D radeon_driver_load_kms,
+>
+> Please remove this line instead of out-commenting it.
+>
+> >       .open =3D radeon_driver_open_kms,
+> >       .postclose =3D radeon_driver_postclose_kms,
+> >       .unload =3D radeon_driver_unload_kms,
+> > diff --git a/drivers/gpu/drm/radeon/radeon_drv.h b/drivers/gpu/drm/rade=
+on/radeon_drv.h
+> > index 02a65971d140..6c1eb75a951b 100644
+> [...]
+> > -int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags=
+)
+> > +int radeon_driver_load_kms(struct radeon_device *rdev, unsigned long f=
+lags)
+> >   {
+> > -     struct pci_dev *pdev =3D to_pci_dev(dev->dev);
+> > -     struct radeon_device *rdev;
+> > +     struct pci_dev *pdev =3D rdev->pdev;
+> > +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >       int r, acpi_status;
+> >
+> > -     rdev =3D kzalloc(sizeof(struct radeon_device), GFP_KERNEL);
+> > -     if (rdev =3D=3D NULL) {
+> > -             return -ENOMEM;
+> > -     }
+> > -     dev->dev_private =3D (void *)rdev;
+>
+> You still need to set dev->dev_private =3D rdev or the driver will crash.
+> I'd assume that this is the cause for the stack trace.
+>
+> If you have an updated patchset, I can test again.
+>
+> Best regards
+> Thomas
+>
+> > -
+> >   #ifdef __alpha__
+> >       rdev->hose =3D pdev->sysdata;
+> >   #endif
+> >
+> >       if (pci_find_capability(pdev, PCI_CAP_ID_AGP))
+> > -             rdev->agp =3D radeon_agp_head_init(dev);
+> > +             rdev->agp =3D radeon_agp_head_init(rdev_to_drm(rdev));
+> >       if (rdev->agp) {
+> >               rdev->agp->agp_mtrr =3D arch_phys_wc_add(
+> >                       rdev->agp->agp_info.aper_base,
+> > @@ -147,7 +141,7 @@ int radeon_driver_load_kms(struct drm_device *dev, =
+unsigned long flags)
+> >        * properly initialize the GPU MC controller and permit
+> >        * VRAM allocation
+> >        */
+> > -     r =3D radeon_device_init(rdev, dev, pdev, flags);
+> > +     r =3D radeon_device_init(rdev, flags);
+> >       if (r) {
+> >               dev_err(dev->dev, "Fatal error during GPU init\n");
+> >               goto out;
+> > diff --git a/drivers/gpu/drm/radeon/radeon_object.c b/drivers/gpu/drm/r=
+adeon/radeon_object.c
+> > index a955f8a2f7fe..450ff7daa46c 100644
+> > --- a/drivers/gpu/drm/radeon/radeon_object.c
+> > +++ b/drivers/gpu/drm/radeon/radeon_object.c
+> > @@ -150,7 +150,7 @@ int radeon_bo_create(struct radeon_device *rdev,
+> >       bo =3D kzalloc(sizeof(struct radeon_bo), GFP_KERNEL);
+> >       if (bo =3D=3D NULL)
+> >               return -ENOMEM;
+> > -     drm_gem_private_object_init(rdev->ddev, &bo->tbo.base, size);
+> > +     drm_gem_private_object_init(rdev_to_drm(rdev), &bo->tbo.base, siz=
+e);
+> >       bo->rdev =3D rdev;
+> >       bo->surface_reg =3D -1;
+> >       INIT_LIST_HEAD(&bo->list);
+> > diff --git a/drivers/gpu/drm/radeon/radeon_pm.c b/drivers/gpu/drm/radeo=
+n/radeon_pm.c
+> > index 2d9d9f46f243..b4fb7e70320b 100644
+> > --- a/drivers/gpu/drm/radeon/radeon_pm.c
+> > +++ b/drivers/gpu/drm/radeon/radeon_pm.c
+> > @@ -282,7 +282,7 @@ static void radeon_pm_set_clocks(struct radeon_devi=
+ce *rdev)
+> >
+> >       if (rdev->irq.installed) {
+> >               i =3D 0;
+> > -             drm_for_each_crtc(crtc, rdev->ddev) {
+> > +             drm_for_each_crtc(crtc, rdev_to_drm(rdev)) {
+> >                       if (rdev->pm.active_crtcs & (1 << i)) {
+> >                               /* This can fail if a modeset is in progr=
+ess */
+> >                               if (drm_crtc_vblank_get(crtc) =3D=3D 0)
+> > @@ -299,7 +299,7 @@ static void radeon_pm_set_clocks(struct radeon_devi=
+ce *rdev)
+> >
+> >       if (rdev->irq.installed) {
+> >               i =3D 0;
+> > -             drm_for_each_crtc(crtc, rdev->ddev) {
+> > +             drm_for_each_crtc(crtc, rdev_to_drm(rdev)) {
+> >                       if (rdev->pm.req_vblank & (1 << i)) {
+> >                               rdev->pm.req_vblank &=3D ~(1 << i);
+> >                               drm_crtc_vblank_put(crtc);
+> > @@ -671,7 +671,7 @@ static ssize_t radeon_hwmon_show_temp(struct device=
+ *dev,
+> >                                     char *buf)
+> >   {
+> >       struct radeon_device *rdev =3D dev_get_drvdata(dev);
+> > -     struct drm_device *ddev =3D rdev->ddev;
+> > +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >       int temp;
+> >
+> >       /* Can't get temperature when the card is off */
+> > @@ -715,7 +715,7 @@ static ssize_t radeon_hwmon_show_sclk(struct device=
+ *dev,
+> >                                     struct device_attribute *attr, char=
+ *buf)
+> >   {
+> >       struct radeon_device *rdev =3D dev_get_drvdata(dev);
+> > -     struct drm_device *ddev =3D rdev->ddev;
+> > +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >       u32 sclk =3D 0;
+> >
+> >       /* Can't get clock frequency when the card is off */
+> > @@ -740,7 +740,7 @@ static ssize_t radeon_hwmon_show_vddc(struct device=
+ *dev,
+> >                                     struct device_attribute *attr, char=
+ *buf)
+> >   {
+> >       struct radeon_device *rdev =3D dev_get_drvdata(dev);
+> > -     struct drm_device *ddev =3D rdev->ddev;
+> > +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >       u16 vddc =3D 0;
+> >
+> >       /* Can't get vddc when the card is off */
+> > @@ -1692,7 +1692,7 @@ void radeon_pm_fini(struct radeon_device *rdev)
+> >
+> >   static void radeon_pm_compute_clocks_old(struct radeon_device *rdev)
+> >   {
+> > -     struct drm_device *ddev =3D rdev->ddev;
+> > +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >       struct drm_crtc *crtc;
+> >       struct radeon_crtc *radeon_crtc;
+> >
+> > @@ -1765,7 +1765,7 @@ static void radeon_pm_compute_clocks_old(struct r=
+adeon_device *rdev)
+> >
+> >   static void radeon_pm_compute_clocks_dpm(struct radeon_device *rdev)
+> >   {
+> > -     struct drm_device *ddev =3D rdev->ddev;
+> > +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >       struct drm_crtc *crtc;
+> >       struct radeon_crtc *radeon_crtc;
+> >       struct radeon_connector *radeon_connector;
+> > @@ -1826,7 +1826,7 @@ static bool radeon_pm_in_vbl(struct radeon_device=
+ *rdev)
+> >        */
+> >       for (crtc =3D 0; (crtc < rdev->num_crtc) && in_vbl; crtc++) {
+> >               if (rdev->pm.active_crtcs & (1 << crtc)) {
+> > -                     vbl_status =3D radeon_get_crtc_scanoutpos(rdev->d=
+dev,
+> > +                     vbl_status =3D radeon_get_crtc_scanoutpos(rdev_to=
+_drm(rdev),
+> >                                                               crtc,
+> >                                                               USE_REAL_=
+VBLANKSTART,
+> >                                                               &vpos, &h=
+pos, NULL, NULL,
+> > @@ -1918,7 +1918,7 @@ static void radeon_dynpm_idle_work_handler(struct=
+ work_struct *work)
+> >   static int radeon_debugfs_pm_info_show(struct seq_file *m, void *unus=
+ed)
+> >   {
+> >       struct radeon_device *rdev =3D m->private;
+> > -     struct drm_device *ddev =3D rdev->ddev;
+> > +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >
+> >       if  ((rdev->flags & RADEON_IS_PX) &&
+> >            (ddev->switch_power_state !=3D DRM_SWITCH_POWER_ON)) {
+> > @@ -1955,7 +1955,7 @@ DEFINE_SHOW_ATTRIBUTE(radeon_debugfs_pm_info);
+> >   static void radeon_debugfs_pm_init(struct radeon_device *rdev)
+> >   {
+> >   #if defined(CONFIG_DEBUG_FS)
+> > -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> > +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_root;
+> >
+> >       debugfs_create_file("radeon_pm_info", 0444, root, rdev,
+> >                           &radeon_debugfs_pm_info_fops);
+> > diff --git a/drivers/gpu/drm/radeon/radeon_ring.c b/drivers/gpu/drm/rad=
+eon/radeon_ring.c
+> > index 8d1d458286a8..581ae20c46e4 100644
+> > --- a/drivers/gpu/drm/radeon/radeon_ring.c
+> > +++ b/drivers/gpu/drm/radeon/radeon_ring.c
+> > @@ -550,7 +550,7 @@ static void radeon_debugfs_ring_init(struct radeon_=
+device *rdev, struct radeon_r
+> >   {
+> >   #if defined(CONFIG_DEBUG_FS)
+> >       const char *ring_name =3D radeon_debugfs_ring_idx_to_name(ring->i=
+dx);
+> > -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> > +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_root;
+> >
+> >       if (ring_name)
+> >               debugfs_create_file(ring_name, 0444, root, ring,
+> > diff --git a/drivers/gpu/drm/radeon/radeon_ttm.c b/drivers/gpu/drm/rade=
+on/radeon_ttm.c
+> > index 5c65b6dfb99a..69d0c12fa419 100644
+> > --- a/drivers/gpu/drm/radeon/radeon_ttm.c
+> > +++ b/drivers/gpu/drm/radeon/radeon_ttm.c
+> > @@ -682,8 +682,8 @@ int radeon_ttm_init(struct radeon_device *rdev)
+> >
+> >       /* No others user of address space so set it to 0 */
+> >       r =3D ttm_device_init(&rdev->mman.bdev, &radeon_bo_driver, rdev->=
+dev,
+> > -                            rdev->ddev->anon_inode->i_mapping,
+> > -                            rdev->ddev->vma_offset_manager,
+> > +                            rdev_to_drm(rdev)->anon_inode->i_mapping,
+> > +                            rdev_to_drm(rdev)->vma_offset_manager,
+> >                              rdev->need_swiotlb,
+> >                              dma_addressing_limited(&rdev->pdev->dev));
+> >       if (r) {
+> > @@ -890,7 +890,7 @@ static const struct file_operations radeon_ttm_gtt_=
+fops =3D {
+> >   static void radeon_ttm_debugfs_init(struct radeon_device *rdev)
+> >   {
+> >   #if defined(CONFIG_DEBUG_FS)
+> > -     struct drm_minor *minor =3D rdev->ddev->primary;
+> > +     struct drm_minor *minor =3D rdev_to_drm(rdev)->primary;
+> >       struct dentry *root =3D minor->debugfs_root;
+> >
+> >       debugfs_create_file("radeon_vram", 0444, root, rdev,
+> > diff --git a/drivers/gpu/drm/radeon/rs400.c b/drivers/gpu/drm/radeon/rs=
+400.c
+> > index d4d1501e6576..d6c18fd740ec 100644
+> > --- a/drivers/gpu/drm/radeon/rs400.c
+> > +++ b/drivers/gpu/drm/radeon/rs400.c
+> > @@ -379,7 +379,7 @@ DEFINE_SHOW_ATTRIBUTE(rs400_debugfs_gart_info);
+> >   static void rs400_debugfs_pcie_gart_info_init(struct radeon_device *r=
+dev)
+> >   {
+> >   #if defined(CONFIG_DEBUG_FS)
+> > -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> > +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_root;
+> >
+> >       debugfs_create_file("rs400_gart_info", 0444, root, rdev,
+> >                           &rs400_debugfs_gart_info_fops);
+> > @@ -474,7 +474,7 @@ int rs400_resume(struct radeon_device *rdev)
+> >                       RREG32(R_0007C0_CP_STAT));
+> >       }
+> >       /* post */
+> > -     radeon_combios_asic_init(rdev->ddev);
+> > +     radeon_combios_asic_init(rdev_to_drm(rdev));
+> >       /* Resume clock after posting */
+> >       r300_clock_startup(rdev);
+> >       /* Initialize surface registers */
+> > @@ -552,7 +552,7 @@ int rs400_init(struct radeon_device *rdev)
+> >               return -EINVAL;
+> >
+> >       /* Initialize clocks */
+> > -     radeon_get_clock_info(rdev->ddev);
+> > +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >       /* initialize memory controller */
+> >       rs400_mc_init(rdev);
+> >       /* Fence driver */
+> > diff --git a/drivers/gpu/drm/radeon/rs600.c b/drivers/gpu/drm/radeon/rs=
+600.c
+> > index 5c162778899b..88c8e91ea651 100644
+> > --- a/drivers/gpu/drm/radeon/rs600.c
+> > +++ b/drivers/gpu/drm/radeon/rs600.c
+> > @@ -321,7 +321,7 @@ void rs600_pm_misc(struct radeon_device *rdev)
+> >
+> >   void rs600_pm_prepare(struct radeon_device *rdev)
+> >   {
+> > -     struct drm_device *ddev =3D rdev->ddev;
+> > +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >       struct drm_crtc *crtc;
+> >       struct radeon_crtc *radeon_crtc;
+> >       u32 tmp;
+> > @@ -339,7 +339,7 @@ void rs600_pm_prepare(struct radeon_device *rdev)
+> >
+> >   void rs600_pm_finish(struct radeon_device *rdev)
+> >   {
+> > -     struct drm_device *ddev =3D rdev->ddev;
+> > +     struct drm_device *ddev =3D rdev_to_drm(rdev);
+> >       struct drm_crtc *crtc;
+> >       struct radeon_crtc *radeon_crtc;
+> >       u32 tmp;
+> > @@ -408,7 +408,7 @@ void rs600_hpd_set_polarity(struct radeon_device *r=
+dev,
+> >
+> >   void rs600_hpd_init(struct radeon_device *rdev)
+> >   {
+> > -     struct drm_device *dev =3D rdev->ddev;
+> > +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >       struct drm_connector *connector;
+> >       unsigned enable =3D 0;
+> >
+> > @@ -435,7 +435,7 @@ void rs600_hpd_init(struct radeon_device *rdev)
+> >
+> >   void rs600_hpd_fini(struct radeon_device *rdev)
+> >   {
+> > -     struct drm_device *dev =3D rdev->ddev;
+> > +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >       struct drm_connector *connector;
+> >       unsigned disable =3D 0;
+> >
+> > @@ -797,7 +797,7 @@ int rs600_irq_process(struct radeon_device *rdev)
+> >               /* Vertical blank interrupts */
+> >               if (G_007EDC_LB_D1_VBLANK_INTERRUPT(rdev->irq.stat_regs.r=
+500.disp_int)) {
+> >                       if (rdev->irq.crtc_vblank_int[0]) {
+> > -                             drm_handle_vblank(rdev->ddev, 0);
+> > +                             drm_handle_vblank(rdev_to_drm(rdev), 0);
+> >                               rdev->pm.vblank_sync =3D true;
+> >                               wake_up(&rdev->irq.vblank_queue);
+> >                       }
+> > @@ -806,7 +806,7 @@ int rs600_irq_process(struct radeon_device *rdev)
+> >               }
+> >               if (G_007EDC_LB_D2_VBLANK_INTERRUPT(rdev->irq.stat_regs.r=
+500.disp_int)) {
+> >                       if (rdev->irq.crtc_vblank_int[1]) {
+> > -                             drm_handle_vblank(rdev->ddev, 1);
+> > +                             drm_handle_vblank(rdev_to_drm(rdev), 1);
+> >                               rdev->pm.vblank_sync =3D true;
+> >                               wake_up(&rdev->irq.vblank_queue);
+> >                       }
+> > @@ -1133,7 +1133,7 @@ int rs600_init(struct radeon_device *rdev)
+> >               return -EINVAL;
+> >
+> >       /* Initialize clocks */
+> > -     radeon_get_clock_info(rdev->ddev);
+> > +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >       /* initialize memory controller */
+> >       rs600_mc_init(rdev);
+> >       r100_debugfs_rbbm_init(rdev);
+> > diff --git a/drivers/gpu/drm/radeon/rs690.c b/drivers/gpu/drm/radeon/rs=
+690.c
+> > index 14fb0819b8c1..016eb4992803 100644
+> > --- a/drivers/gpu/drm/radeon/rs690.c
+> > +++ b/drivers/gpu/drm/radeon/rs690.c
+> > @@ -845,7 +845,7 @@ int rs690_init(struct radeon_device *rdev)
+> >               return -EINVAL;
+> >
+> >       /* Initialize clocks */
+> > -     radeon_get_clock_info(rdev->ddev);
+> > +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >       /* initialize memory controller */
+> >       rs690_mc_init(rdev);
+> >       rv515_debugfs(rdev);
+> > diff --git a/drivers/gpu/drm/radeon/rv515.c b/drivers/gpu/drm/radeon/rv=
+515.c
+> > index bbc6ccabf788..1b4dfb645585 100644
+> > --- a/drivers/gpu/drm/radeon/rv515.c
+> > +++ b/drivers/gpu/drm/radeon/rv515.c
+> > @@ -255,7 +255,7 @@ DEFINE_SHOW_ATTRIBUTE(rv515_debugfs_ga_info);
+> >   void rv515_debugfs(struct radeon_device *rdev)
+> >   {
+> >   #if defined(CONFIG_DEBUG_FS)
+> > -     struct dentry *root =3D rdev->ddev->primary->debugfs_root;
+> > +     struct dentry *root =3D rdev_to_drm(rdev)->primary->debugfs_root;
+> >
+> >       debugfs_create_file("rv515_pipes_info", 0444, root, rdev,
+> >                           &rv515_debugfs_pipes_info_fops);
+> > @@ -636,7 +636,7 @@ int rv515_init(struct radeon_device *rdev)
+> >       if (radeon_boot_test_post_card(rdev) =3D=3D false)
+> >               return -EINVAL;
+> >       /* Initialize clocks */
+> > -     radeon_get_clock_info(rdev->ddev);
+> > +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >       /* initialize AGP */
+> >       if (rdev->flags & RADEON_IS_AGP) {
+> >               r =3D radeon_agp_init(rdev);
+> > diff --git a/drivers/gpu/drm/radeon/rv770.c b/drivers/gpu/drm/radeon/rv=
+770.c
+> > index 9ce12fa3c356..7d4b0bf59109 100644
+> > --- a/drivers/gpu/drm/radeon/rv770.c
+> > +++ b/drivers/gpu/drm/radeon/rv770.c
+> > @@ -1935,7 +1935,7 @@ int rv770_init(struct radeon_device *rdev)
+> >       /* Initialize surface registers */
+> >       radeon_surface_init(rdev);
+> >       /* Initialize clocks */
+> > -     radeon_get_clock_info(rdev->ddev);
+> > +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >       /* Fence driver */
+> >       radeon_fence_driver_init(rdev);
+> >       /* initialize AGP */
+> > diff --git a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
+> > index 15759c8ca5b7..6c95575ce109 100644
+> > --- a/drivers/gpu/drm/radeon/si.c
+> > +++ b/drivers/gpu/drm/radeon/si.c
+> > @@ -6277,7 +6277,7 @@ int si_irq_process(struct radeon_device *rdev)
+> >                               event_name =3D "vblank";
+> >
+> >                               if (rdev->irq.crtc_vblank_int[crtc_idx]) =
+{
+> > -                                     drm_handle_vblank(rdev->ddev, crt=
+c_idx);
+> > +                                     drm_handle_vblank(rdev_to_drm(rde=
+v), crtc_idx);
+> >                                       rdev->pm.vblank_sync =3D true;
+> >                                       wake_up(&rdev->irq.vblank_queue);
+> >                               }
+> > @@ -6839,7 +6839,7 @@ int si_init(struct radeon_device *rdev)
+> >       /* Initialize surface registers */
+> >       radeon_surface_init(rdev);
+> >       /* Initialize clocks */
+> > -     radeon_get_clock_info(rdev->ddev);
+> > +     radeon_get_clock_info(rdev_to_drm(rdev));
+> >
+> >       /* Fence driver */
+> >       radeon_fence_driver_init(rdev);
+>
+> --
+> --
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Frankenstrasse 146, 90461 Nuernberg, Germany
+> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+> HRB 36809 (AG Nuernberg)
+>
 
