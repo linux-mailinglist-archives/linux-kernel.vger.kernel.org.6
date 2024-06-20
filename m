@@ -1,124 +1,87 @@
-Return-Path: <linux-kernel+bounces-223150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509D7910E83
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:29:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24FA9910E89
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 833A21C21524
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:29:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FF4E1C21A9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5201B3F27;
-	Thu, 20 Jun 2024 17:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lh5s59ea"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1681AB8F0;
-	Thu, 20 Jun 2024 17:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4021B3F37;
+	Thu, 20 Jun 2024 17:29:51 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id C7B991AB8F0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718904553; cv=none; b=f9AfwxFP1rzfLKapLihzNdm/c6hjEdc6yL8veR/dPO8KZzXwTvKBdpFN6aQQIBUZ5wYk7ImyDNOEIIHSfVoANBG4BkF2+nhYMP0ZjusGG3U7k29V6pbDnh4WoZEe/TNaiMVgjPaU2Y4h5rXYnRjY7mdot/mm5vnR/wGFvbzXLc8=
+	t=1718904591; cv=none; b=SRhPDB7mtnjUgPygrU2TjocvR251TuycZo/GzRpg/A6cOf2SCYAMuXsNHtR9+J4ZAtEcQkM6ojGQs9J4KSbNrPB2C34FL5uc76KFFgqcXLE/AHy+XONk7qPPTOWxQ0q6TFBQKKcj1HTQQ1LV11teZPxffZWaDaY08QGZv/teN5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718904553; c=relaxed/simple;
-	bh=MFhmUKjvDtTBlQ9Bn+GX9qD5W1UERPoEYpFB4l7lIEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sKpLxGBtv0fF0KqUA6yKJFvp/0EpKcXT0St8p8RPLVJqm9fTcT5GhSzz6OUaIRsHtgMTrnZcmKKgc5DFIONXg1ntYnCP1PiYc8kz8LCehuvS0RXVorvifGqFi0W+5w0yevflKxE2PXOg91aJj/s7J0iared5BtqS8OCd+cINvwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lh5s59ea; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-43ff9d1e0bbso5199471cf.3;
-        Thu, 20 Jun 2024 10:29:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718904551; x=1719509351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n0iu5V6CVJ2htaSZURuMvsIrPmxFYUDGGtOzfJvtWgk=;
-        b=lh5s59eaCJJIz53N1csZb+6Wqs3X2Jxp2X2PAl0RS8h5UzNKB0xU4fnNOC1ZCGpehK
-         HdML4rIcU8OAQgS3ucByVHGaT+jTWKnekMSxD2+swAjd23TR+BlBdDrDdV5TAueJYKt/
-         +JI6GDsBdlNLUZFytTN62K+dOj6ppR1s1Me7XRrlZucn8B93i0pQmZxh0SAHg7NUbo6H
-         7W8Lz7nPGNCQrqGF2RI/C9HqTlFe//v5JVT7NgC9qP9AngOlaAjhIvdaMd8l5nbk+rQ9
-         jgiUUH0GmlB0pAslRMscRL/ieALVXv605sbiLNQB9wykRLPSfaYPyjv10rOQ013QuLOf
-         HrAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718904551; x=1719509351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n0iu5V6CVJ2htaSZURuMvsIrPmxFYUDGGtOzfJvtWgk=;
-        b=n89rsQDiroWMnTpflwQ4AlugWJgsqIycJb3yunXhlzKDKdsVTWyjIE6oJi9XR2gBK3
-         oNskcU3lGmStW3aWx6ZrRFPuZvAKhEXVz2ZF1kyjCZRcc5RoImr4FW20Vn7QrEdoezU4
-         Fob1OSepMVTpxG1gjMR1wj7mAAsy55AVi2QSFC3x7uiJQR4wIdzMj74YQUlF4ClJI6CC
-         4mRfycbyl+4HpaAWeif8W0KxqZUCANIfe+x156upHQmiRO5sIPoMFkjAr8yMgZLtU/nd
-         9KUIrYWLpAjkQ7Z570LBMcbaRpio5sCVrg5eZt/qrI7Ej8zPxsE0VP2Rn2DC5a2oenjK
-         qlVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoUHcxvGoJ6wAU96c6Yb9SzMlHS+psuVJYL6AfuzLZYluafWZpOBHFHwuiQlMCSwluVBIObeHhC/8nWl6M7Mj0GW4bGLfRp3qK2zDbP5CbfvZnZUQY7mxzbLL12Y4P0eTZLMivVZ0AherE4w==
-X-Gm-Message-State: AOJu0Yyf2ETsUmjA8XeBrQe+agNT9thhWHSzcSzS57Qcez99HRNIgzI/
-	KckN3w1YbE0i0RscrcsUEKURj7FaHE+lg81bIwG+yB6jfgxhvwK4YOQ9H8wNfc5cI1hgt+FuEOl
-	QSPps/BlSThmoHkyb+DL3RbT0+PY=
-X-Google-Smtp-Source: AGHT+IHnU4Kfz0hQPXXVFIATrwZUVqfWopwRtu2bkf4SRPQCq8ZqbWpdRu8EZFIAv5Jal3eFR36wqu1MCkoHLXxZDIg=
-X-Received: by 2002:ac8:5709:0:b0:441:575a:786d with SMTP id
- d75a77b69052e-444a79c2f7bmr65856181cf.26.1718904550945; Thu, 20 Jun 2024
- 10:29:10 -0700 (PDT)
+	s=arc-20240116; t=1718904591; c=relaxed/simple;
+	bh=HSV+mjGe9U1QjnuLWkIZr8nQXJh3Rx93/FTUhxTQ+94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U4U3Mm4w5HuT4pRRtfzWCMv+U0JLZhm4RFn7F0aPWztyCdHFK8CrOPZZazEZQZ1J+QQoKBDCmCpkmmpmsWbbhdXsaKZyxUSHI5dDZEhe6BoD+q7bdQlPMGGsGN6ZXDzn008d51UkqVJi0aczJ7PuhhLS28UHuMtoyUN64/30C+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 506493 invoked by uid 1000); 20 Jun 2024 13:29:42 -0400
+Date: Thu, 20 Jun 2024 13:29:42 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+696cffe71c444e4a2dd8@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+  kadlec@netfilter.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
+  linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+  netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org,
+  syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfilter?] [usb?] INFO: rcu detected stall in NF_HOOK
+Message-ID: <24f0d918-efba-414c-8328-c0ed240e67b2@rowland.harvard.edu>
+References: <000000000000c63a8e061b556ea6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528-a306a-v1-1-03a66dacd8c7@gmail.com> <76a124b6-8cc3-4060-866c-03f47da450cc@linaro.org>
-In-Reply-To: <76a124b6-8cc3-4060-866c-03f47da450cc@linaro.org>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 20 Jun 2024 10:28:57 -0700
-Message-ID: <CAF6AEGuHSG0t6CH=+JGzZqiZa_JsOgPkcgO_UhCbO3vAgFZK_g@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm/adreno: Add A306A support
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000c63a8e061b556ea6@google.com>
 
-On Wed, May 29, 2024 at 3:41=E2=80=AFAM Konrad Dybcio <konrad.dybcio@linaro=
-.org> wrote:
->
-> On 28.05.2024 9:43 PM, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wrote:
-> > From: Otto Pfl=C3=BCger <otto.pflueger@abscue.de>
-> >
-> > Add support for Adreno 306A GPU what is found in MSM8917 SoC.
-> > This GPU marketing name is Adreno 308.
-> >
-> > Signed-off-by: Otto Pfl=C3=BCger <otto.pflueger@abscue.de>
-> > [use internal name of the GPU, reword the commit message]
-> > Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com>
-> > ---
->
-> [...]
->
->
-> >
-> > +static inline bool adreno_is_a306a(const struct adreno_gpu *gpu)
-> > +{
-> > +     /* a306a marketing name is a308 */
-> > +     return adreno_is_revn(gpu, 308);
-> > +}
->
-> The .c changes look good. Rob, do we still want .rev nowadays?
+On Thu, Jun 20, 2024 at 10:13:24AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10341146980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa0ce06dcc735711
+> dashboard link: https://syzkaller.appspot.com/bug?extid=696cffe71c444e4a2dd8
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13e8bfee980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12d3d851980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/93525a95fe83/disk-2ccbdf43.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/b9b895227ea2/vmlinux-2ccbdf43.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/e825248a8e73/bzImage-2ccbdf43.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+696cffe71c444e4a2dd8@syzkaller.appspotmail.com
+> 
+> rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { P45
+>  1-....
+>  } 2688 jiffies s: 1349 root: 0x2/T
+> rcu: blocking rcu_node structures (internal RCU debug):
+> 
+> Sending NMI from CPU 0 to CPUs 1:
+> cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
+> cdc_wdm 3-1:1.0: nonzero urb status received: -71
+> cdc_wdm 3-1:1.0: wdm_int_callback - 0 bytes
+> cdc_wdm 3-1:1.0: nonzero urb status received: -71
 
-mostly I just want to avoid revn for newer GPUs, but I suppose we
-should be consistent and drop it for "new old" GPUs..
+#syz dup: [syzbot] [usb?] INFO: rcu detected stall in raw_ioctl
 
-Also, it would be nice to rebase on
-https://patchwork.freedesktop.org/series/127393/
-
-BR,
--R
+Alan Stern
 
