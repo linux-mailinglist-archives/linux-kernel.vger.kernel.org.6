@@ -1,123 +1,240 @@
-Return-Path: <linux-kernel+bounces-222067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E63390FC63
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:57:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF6490FC6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C43D1C20F2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:57:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 239271F22794
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A684438F82;
-	Thu, 20 Jun 2024 05:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5842539FF3;
+	Thu, 20 Jun 2024 05:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RxgTjgPY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TCEUtSnF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B472B38385;
-	Thu, 20 Jun 2024 05:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49E338FA1
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 05:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718863062; cv=none; b=suBiWf2wxmuaAHUnQwf+XOEV5NEoK+umSxfsxO1FGDg5pqJr6bmVzcj7oOwdN1E7TCUdBNu7kM7l6gjivPQUHptg2gTM/FIkefvNUeZU4Zmr1270rM/EqQVpfkRDh2b0uRSzuF7+9eDEAdtR+qCPnQUGrjY4mpTTN145ks9DJq8=
+	t=1718863134; cv=none; b=suQl/1b9IfFPtWQgJhzZCRTx2oA8c5wbdjvEpElqIgvsqCWBBtVUZibsmnVU4fGnMh/a2VEMUoBTDBR02Ef81LKi4ViAqF+dAiPEJvcM/g05lR/TXlnWB2T1hYva5Y9fMV7R7bp8XWvtnui5+OsGnHjgj6bndCVPlEsElAvsUwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718863062; c=relaxed/simple;
-	bh=zMCFp8zCllWXZJOLn+ox9s+gLl+0FUepfCkgfmEOmGU=;
+	s=arc-20240116; t=1718863134; c=relaxed/simple;
+	bh=8nJowE8rTy0MhaM+MZo8vpg8qKpOU8NEAABYQmu5KJI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B7wkrGC8De4siOWoE+/SsL/VBg69vhncDvzZm2n/u5N9Fveg3I1KNfd7xDO+/GEG94HUr16A9cfXmRx4ZB25LwjwlazQ2mlgNjWKHD2DBEnRPEMr8pTKf0OxE6LUU7DhdsaJH6sc4mMuzs0SYBBgqQ3xOoc8P3sjqkvxYmzkk04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RxgTjgPY; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718863059; x=1750399059;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zMCFp8zCllWXZJOLn+ox9s+gLl+0FUepfCkgfmEOmGU=;
-  b=RxgTjgPYoVV8iCGOnQ/T7++dSQmB0B6ePTQU6x49nnL8hx0WHAri0mSb
-   cXVXrxkYjgO3auOaycLjRO/ZUx+7y3EMoT4pAdziFirqss/N3y3TBWUig
-   WOLuwQtycbStOUHjnzNsiM2KZocBBjv1CwVdIyxTjPoWEbqDkUKTbbfUn
-   DP7F/zyD/MSL7LphhQ94AN9R7mmZUfChcht9pJvWp3nTQXDlDSP7JNrEt
-   1g80rOTLN4dw19xSHR/fXXbx/GfREKPSUMXn0YRs2jRy7oHSEbPKmaLdr
-   Bz/NN8uEVCdXwB0c5mmmywBQLURfQ0Jpbp7BzulB+dfY8FH9OdbBT7aKY
-   w==;
-X-CSE-ConnectionGUID: uQKHA3TpQtaEfeztt55WZw==
-X-CSE-MsgGUID: BCuam25yTJmkZlK4g6/moQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="15585019"
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="scan'208";a="15585019"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 22:57:38 -0700
-X-CSE-ConnectionGUID: xNu0A6xbT2qdW0R8iq+V0Q==
-X-CSE-MsgGUID: Cca+h7QjQquGw6LR94NR2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
-   d="scan'208";a="42792780"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 19 Jun 2024 22:57:35 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sKAnb-0007Mk-34;
-	Thu, 20 Jun 2024 05:57:31 +0000
-Date: Thu, 20 Jun 2024 13:57:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tomer Maimon <tmaimon77@gmail.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, p.zabel@pengutronix.de, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com,
-	joel@jms.id.au, venture@google.com, yuenn@google.com,
-	benjaminfair@google.com
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	openbmc@lists.ozlabs.org, Tomer Maimon <tmaimon77@gmail.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v25 2/3] reset: npcm: register npcm8xx clock auxiliary
- bus device
-Message-ID: <202406201328.SGrN27to-lkp@intel.com>
-References: <20240618185819.2155595-3-tmaimon77@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kwQGeAhygWI4G55NtpdZrIq6Jgn1BFIzGk4uCI28RvVrVAm+BnZYOxClZkwZ1PkfFUrZkjAXS1qI4dLe0KyV6EHzM6UMPcx8gqjyfoDCZPs7sAeKuzdXlml63OuOnmZUrfMypTNVu/a7Zmju7l8UehE5K7fvpFYFM+TZVhGhK9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TCEUtSnF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718863131;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pgz7erBbsqlQUnBT2bXs/f7YsXgZpwLUVpf5Ft0epH4=;
+	b=TCEUtSnF9h77VG7kz8CJwxFcCTRie/IPmQ3NN7cIi+YNILV0YXP6lzqWUOG7UYuYzWxzI2
+	P0w8IQATOIsAMjg233DoUJOWJP8vN3XT3G90YSUrjMI4uxNh1XX5fD9/fJ1Yp7tXjk3FOK
+	+lnVVbvZbnU54S5vV7sToz3Mfequ7I4=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-235-pKn0L9oBNMe77L0fk2tHoQ-1; Thu, 20 Jun 2024 01:58:49 -0400
+X-MC-Unique: pKn0L9oBNMe77L0fk2tHoQ-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ebe77b877eso2659261fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 22:58:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718863128; x=1719467928;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pgz7erBbsqlQUnBT2bXs/f7YsXgZpwLUVpf5Ft0epH4=;
+        b=s8hrP+Xbk2AYctivVAXdCXcIZN7sl9lfpQXrcAYcraoLyu6EM/vMUoTdTARd9Ii0gC
+         FP8bk73wacfmlQXeNhC7FFI3MaXSU0LbTACxRLlOOCpgZ7nj6L8Fu/qPj8c26qCyDAHn
+         vJbbm+ATopSnOQAOKaT6yfPRxepeiYdWfEmF6s7LeDP5k7/7H1UmfB7fnFlZFTOQOdjk
+         1pZoacRyYzxdSHjE0K+DQIMV9sdAkP/N8WlJfmZAMp8YkYvRkvWClirSbGvhgIDut6YX
+         Os07CG2q2EoW7vQi0Bg5BBw1EwvvVw3Kz7ozMd6R+nxbLGajP78J4OVq+8VGLIGaKl5k
+         C7ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWk/9DhaXRzPhxS9zdVsoRlL55Ei/6bwpnUbAtFafEsM9CqTjS1z+899aflxFfvOIUZlaj4uczDPsbjeEx++Hr/4A6SdPfWUGGZL34b
+X-Gm-Message-State: AOJu0Yw8U/u5/0Ze+5VlatGIGS9kRZcVhDOJtp1AT7TvH683GDhdmDLS
+	BiTpZgtCAGSffu0PIfJGpcrqXlPJi1SJjzK86FFnKKrbgb8Saxi4uZTUizRQyuaO4tJFSN2Vber
+	21JxTINaoo9osaW7QOwycZ8t3SoWhHLghU82wz/02M+JkRxWVGwGp/ZUvVijZmw==
+X-Received: by 2002:a05:651c:1a1f:b0:2ec:4086:ea71 with SMTP id 38308e7fff4ca-2ec4086ec13mr24198191fa.5.1718863128277;
+        Wed, 19 Jun 2024 22:58:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHu735F2hiNtWMCvbhFdAxvjx0gml4MZariwxa2PfPBAR+wDRwgyU1ehJS0l7lqMFPWf3q9Wg==
+X-Received: by 2002:a05:651c:1a1f:b0:2ec:4086:ea71 with SMTP id 38308e7fff4ca-2ec4086ec13mr24197881fa.5.1718863126499;
+        Wed, 19 Jun 2024 22:58:46 -0700 (PDT)
+Received: from redhat.com ([2.52.146.100])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cbe89005asm8053445a12.10.2024.06.19.22.58.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 22:58:45 -0700 (PDT)
+Date: Thu, 20 Jun 2024 01:58:40 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>,
+	Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
+Subject: Re: [PATCH net-next V2] virtio-net: synchronize operstate with admin
+ state on up/down
+Message-ID: <20240620014550-mutt-send-email-mst@kernel.org>
+References: <20240530032055.8036-1-jasowang@redhat.com>
+ <20240530020531-mutt-send-email-mst@kernel.org>
+ <CACGkMEun-77fXbQ93H_GEC4=0_7CLq7iPtXSKe9Qriw-Qh1Tbw@mail.gmail.com>
+ <20240530090742-mutt-send-email-mst@kernel.org>
+ <CACGkMEsYRCJ96=sja9pBo_mnPsp75Go6E-wmm=-QX0kaOu4RFQ@mail.gmail.com>
+ <CACGkMEu2vb8njbNHExWnDAG_pFjsLkYChgNerH4LAQ7pbYyEcg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240618185819.2155595-3-tmaimon77@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACGkMEu2vb8njbNHExWnDAG_pFjsLkYChgNerH4LAQ7pbYyEcg@mail.gmail.com>
 
-Hi Tomer,
+On Thu, Jun 06, 2024 at 08:22:13AM +0800, Jason Wang wrote:
+> On Fri, May 31, 2024 at 8:18 AM Jason Wang <jasowang@redhat.com> wrote:
+> >
+> > On Thu, May 30, 2024 at 9:09 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > >
+> > > On Thu, May 30, 2024 at 06:29:51PM +0800, Jason Wang wrote:
+> > > > On Thu, May 30, 2024 at 2:10 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > > >
+> > > > > On Thu, May 30, 2024 at 11:20:55AM +0800, Jason Wang wrote:
+> > > > > > This patch synchronize operstate with admin state per RFC2863.
+> > > > > >
+> > > > > > This is done by trying to toggle the carrier upon open/close and
+> > > > > > synchronize with the config change work. This allows propagate status
+> > > > > > correctly to stacked devices like:
+> > > > > >
+> > > > > > ip link add link enp0s3 macvlan0 type macvlan
+> > > > > > ip link set link enp0s3 down
+> > > > > > ip link show
+> > > > > >
+> > > > > > Before this patch:
+> > > > > >
+> > > > > > 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
+> > > > > >     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
+> > > > > > ......
+> > > > > > 5: macvlan0@enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+> > > > > >     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
+> > > > > >
+> > > > > > After this patch:
+> > > > > >
+> > > > > > 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
+> > > > > >     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
+> > > > > > ...
+> > > > > > 5: macvlan0@enp0s3: <NO-CARRIER,BROADCAST,MULTICAST,UP,M-DOWN> mtu 1500 qdisc noqueue state LOWERLAYERDOWN mode DEFAULT group default qlen 1000
+> > > > > >     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
+> > > > > >
+> > > > > > Cc: Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>
+> > > > > > Cc: Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
+> > > > > > Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > > > > > Acked-by: Michael S. Tsirkin <mst@redhat.com>
+> > > > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
+> > > > > > ---
+> > > > > > Changes since V1:
+> > > > > > - rebase
+> > > > > > - add ack/review tags
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > > > ---
+> > > > > >  drivers/net/virtio_net.c | 94 +++++++++++++++++++++++++++-------------
+> > > > > >  1 file changed, 63 insertions(+), 31 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > > > > > index 4a802c0ea2cb..69e4ae353c51 100644
+> > > > > > --- a/drivers/net/virtio_net.c
+> > > > > > +++ b/drivers/net/virtio_net.c
+> > > > > > @@ -433,6 +433,12 @@ struct virtnet_info {
+> > > > > >       /* The lock to synchronize the access to refill_enabled */
+> > > > > >       spinlock_t refill_lock;
+> > > > > >
+> > > > > > +     /* Is config change enabled? */
+> > > > > > +     bool config_change_enabled;
+> > > > > > +
+> > > > > > +     /* The lock to synchronize the access to config_change_enabled */
+> > > > > > +     spinlock_t config_change_lock;
+> > > > > > +
+> > > > > >       /* Work struct for config space updates */
+> > > > > >       struct work_struct config_work;
+> > > > > >
+> > > > >
+> > > > >
+> > > > > But we already have dev->config_lock and dev->config_enabled.
+> > > > >
+> > > > > And it actually works better - instead of discarding config
+> > > > > change events it defers them until enabled.
+> > > > >
+> > > >
+> > > > Yes but then both virtio-net driver and virtio core can ask to enable
+> > > > and disable and then we need some kind of synchronization which is
+> > > > non-trivial.
+> > >
+> > > Well for core it happens on bring up path before driver works
+> > > and later on tear down after it is gone.
+> > > So I do not think they ever do it at the same time.
+> >
+> > For example, there could be a suspend/resume when the admin state is down.
+> >
+> > >
+> > >
+> > > > And device enabling on the core is different from bringing the device
+> > > > up in the networking subsystem. Here we just delay to deal with the
+> > > > config change interrupt on ndo_open(). (E.g try to ack announce is
+> > > > meaningless when the device is down).
+> > > >
+> > > > Thanks
+> > >
+> > > another thing is that it is better not to re-read all config
+> > > on link up if there was no config interrupt - less vm exits.
+> >
+> > Yes, but it should not matter much as it's done in the ndo_open().
+> 
+> Michael, any more comments on this?
+> 
+> Please confirm if this patch is ok or not. If you prefer to reuse the
+> config_disable() I can change it from a boolean to a counter that
+> allows to be nested.
+> 
+> Thanks
 
-kernel test robot noticed the following build errors:
+I think doing this in core and re-using config_lock is a cleaner approach for sure, yes.
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on linus/master pza/reset/next v6.10-rc4 next-20240619]
-[cannot apply to pza/imx-drm/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+For remove we do not need stacking. But yes we need it for freeze.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tomer-Maimon/dt-bindings-reset-npcm-add-clock-properties/20240619-093532
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20240618185819.2155595-3-tmaimon77%40gmail.com
-patch subject: [PATCH v25 2/3] reset: npcm: register npcm8xx clock auxiliary bus device
-config: arm64-randconfig-003-20240620 (https://download.01.org/0day-ci/archive/20240620/202406201328.SGrN27to-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240620/202406201328.SGrN27to-lkp@intel.com/reproduce)
+I am not sure how will a counter work. Let's see the patch.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406201328.SGrN27to-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+It might be easier, besides config_enabled, to add config_disabled,
+document that  config_enabled is controlled by core,
+config_disabled by driver.
+And we'd have 2 APIs virtio_config_disable_core and
+virtio_config_disable_driver.
 
-   aarch64-linux-ld: drivers/reset/reset-npcm.o: in function `npcm_rc_probe':
-   reset-npcm.c:(.text+0xce8): undefined reference to `auxiliary_device_init'
->> reset-npcm.c:(.text+0xce8): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `auxiliary_device_init'
->> aarch64-linux-ld: reset-npcm.c:(.text+0xd30): undefined reference to `__auxiliary_device_add'
->> reset-npcm.c:(.text+0xd30): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `__auxiliary_device_add'
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+But I leave that decision in your capable hands.
+
+
+
+> >
+> > Thanks
+> >
+> > >
+> > > --
+> > > MST
+> > >
+
 
