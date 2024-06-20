@@ -1,180 +1,127 @@
-Return-Path: <linux-kernel+bounces-223121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A2F910E1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:09:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD281910E22
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2111F21695
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:09:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680CA2840E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F411B374B;
-	Thu, 20 Jun 2024 17:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBCA1B374E;
+	Thu, 20 Jun 2024 17:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="E/5/ThKI"
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MEpxy4fl"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A521B3736;
-	Thu, 20 Jun 2024 17:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633F917545
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718903348; cv=none; b=A2jZLZcmRiwhPOTGa/iMxBAbbtx96C2UNJzdTusXvXFv/Na7Gzr2j5A71zMO0vKeS0+RDPeCWlOcq/m7ScBDKdg/dHjBdL1sQVBoug06LXICWUQVA97Xy3lYuVUHAyW3VjU84VDCr8mYjySQGwOKrTkMeXIDaaNvWtN4TaY2qn0=
+	t=1718903551; cv=none; b=BoNFs4XKu8jgxJ9Qvf3k28IvwyidCxb7dK8G1axv8RRp24RWdJr3tSD6i1oJ4olEKRAsM7/+VblrQg5Z8nhuZdZPNS+xPt3jq3FYKPcsiUaTMUVu3XEK+V5BrySxjoOCw3WZc6tbrYHI9No8Xo6Y1GG3riDg56mrn4PwE0Q271o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718903348; c=relaxed/simple;
-	bh=dMTJ8908E2JNrwW/lpHVRd+tVPSWWPLkCIEguNz8I0k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mHxWWkXW9aZkLBNiE/gr+YccUqF4ZJoLaibs9rJsFHfWBI8zoguEduLGYRfSH0exXzamq2eucjteQMJtcuRs4GGOuB55dHO9/bzhZgEvCpuCuQgFK6By6HU4OP6FDJPu1lhgBH2TGNG1TZHqY/gb0tMxlHVwYORSoRO+lzeez8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=E/5/ThKI; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [10.0.0.100] (pool-99-255-30-7.cpe.net.cable.rogers.com [99.255.30.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id EBC4A3F210;
-	Thu, 20 Jun 2024 17:08:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1718903341;
-	bh=WUmq2Z+BZ+5Q2DHpiaBkQxOe37bDl4Qhdq2/NQMQuco=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=E/5/ThKIUAuABAsJCcC6kMW81J3WwrxQq/XW0JKQjblFomtVI3c+vnhI0JI9j6R+i
-	 bybkZ/XRsNk27Mpk0KeHaDcdsQi6phL1cPBQyIP+WKkf49HxE8AgFakPqG2yBxxCRt
-	 AC8hF6lCbMnnSx+VHjw3+NWAejhDnwLdn4tPF39l5fVnYxt/dNSFxmIAvoUdAb+x/L
-	 vl6lJR0NK+bEdbvas11hujemBPFuCi0/28hu6tRvmVwlhp1i45Qxwh905Tj508DgwQ
-	 aJQjkgicrulhYg/Men9dopgWqvLbcU6h/lT9xEj48abe/vZjR4Xa6RhhNzlUY5sbgi
-	 ddYdhEbXMja7A==
-Message-ID: <c9f55357-029b-4799-8072-f5c96216d60c@canonical.com>
-Date: Thu, 20 Jun 2024 10:08:58 -0700
+	s=arc-20240116; t=1718903551; c=relaxed/simple;
+	bh=g7WfMcaBjh6YPIh2UjnnvRHNQREoKfly02V4jb0nz9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=owAtaJ3Fkukf2kNs26OK3zcdXPQypGh1Id3lZyfHVDj4yvgUWGPnQzb747jx6in6KBO1nDgRmMFKCrU0Nf0moEF1NFrSUg1l1Gupie0jGy9sCyw5zFmXDiMjPMk3vVZKYfTR4+3DAHOOLB0VmzQJxyzNcYQsb33Rdg7JnBoCgn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MEpxy4fl; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6f1c4800easo125338366b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:12:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1718903547; x=1719508347; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rhFHixzYRCr0Du1zLo7y9OoIpaaj9IpifQpSn+Y7skc=;
+        b=MEpxy4flhOqlBTwYxgeD7FY3LQ+5CYvv+9czB+LOP829g+6265c8SjxZYU55+AO150
+         5JEH0YzchKN0Vlu1WVPf9pmEEtZYyoTcLZZAfkx3QgLoiXf8VZoQgSQ5rBB8s1AKDd5f
+         SE7rrbwg8q8+VR7mSagyo+nK1gSYwqcWid3h4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718903547; x=1719508347;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rhFHixzYRCr0Du1zLo7y9OoIpaaj9IpifQpSn+Y7skc=;
+        b=NegW7N6FacoEyH+E2fhzL4lp9MGcDox3OIlwWMqeexH3T/TvKCNalYM0HQslfL3Jbf
+         FVFOCdA2ilNOAtuulAyuMttBpsj3y5TfISc6HOqaquF52K3+KhyNy2wGQscBRQjNFBIz
+         SEikIoSJ9m6cTGDjOJ7dI/cwmA29pBwPmAfvHfa1A85hRX2SBkaA7FS2RAkKWkSKGrxX
+         4hG3znzTT92eDPweOwyR8LYdTg2dTkLTxkeDhGQAyFzgunK+R1xzq1Qc34JZ5bj3aRay
+         gdWZp86p3Aa0zTupJ4sxmCaVQnBQsFo5GEIJWKCmr15BrofTyRYmqr9ESytpSPAKFFGl
+         dbSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAuwV2oJwuk26b/UbSmPI1++BFmgTJdPgOHKT7HlsgjBhD9CDPQ6P4+sKvrcgnPmPqmwH6R8Akh5zvaRVdcniRRssVQr6PjgkvuExh
+X-Gm-Message-State: AOJu0Yz8Lu2lgppI3ohFo7TrOjOBJ4Y65Va55/h7lOC8EcjHXcFKREBc
+	B/6vS2H/yhu6J0kA2/DQYw1s1zxqLESyHcFJT+Qgix5HEJEhRcG+Sr9bn0JvmANJWlcGpu7k3O3
+	H36E7GA==
+X-Google-Smtp-Source: AGHT+IFcH370opdYptkoVmUWX2Uy42wTNNtTHdariqsyBeALkbCqbvnPycS6e10fC48fYeZNQGCCBw==
+X-Received: by 2002:a17:907:d042:b0:a6f:b425:17cf with SMTP id a640c23a62f3a-a6fb4258107mr315391566b.36.1718903547651;
+        Thu, 20 Jun 2024 10:12:27 -0700 (PDT)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com. [209.85.221.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f6ac22e57sm652060866b.177.2024.06.20.10.12.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Jun 2024 10:12:27 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35f23f3da44so959775f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:12:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV7L6AgYXS/XowPHDPwGdrpsYQESRfnTgr3pbRvyBv96U6aMvCJLB2Sklcu9O21lx1lCZRMOmP6tNJBChQltL19L6rgFILaSh4Htg1T
+X-Received: by 2002:a17:907:c24d:b0:a6f:c0e0:5512 with SMTP id
+ a640c23a62f3a-a6fc0e055c5mr194825666b.23.1718903526779; Thu, 20 Jun 2024
+ 10:12:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: try to avoid refing the label in
- apparmor_file_open
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, Neeraj.Upadhyay@amd.com
-References: <20240620131524.156312-1-mjguzik@gmail.com>
- <71c0ea18-8b8b-402b-b03c-029aeedc2747@canonical.com>
- <3ijkwqkrynfxi6t5bj2jingkpebsnomdcwduhe4pgl6pu25sfs@smvxx7ewexkc>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <3ijkwqkrynfxi6t5bj2jingkpebsnomdcwduhe4pgl6pu25sfs@smvxx7ewexkc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAHk-=wg8APE61e5Ddq5mwH55Eh0ZLDV4Tr+c6_gFS7g2AxnuHQ@mail.gmail.com>
+ <87ed8sps71.ffs@tglx> <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
+ <87bk3wpnzv.ffs@tglx> <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
+ <878qz0pcir.ffs@tglx> <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 20 Jun 2024 10:11:49 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgjbNLRtOvcmeEUtBQyJtYYAtvRTROBy9GHeF1Quszfgg@mail.gmail.com>
+Message-ID: <CAHk-=wgjbNLRtOvcmeEUtBQyJtYYAtvRTROBy9GHeF1Quszfgg@mail.gmail.com>
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tejun Heo <tj@kernel.org>, mingo@redhat.com, peterz@infradead.org, 
+	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
+	vschneid@redhat.com, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@kernel.org, joshdon@google.com, brho@google.com, pjt@google.com, 
+	derkling@google.com, haoluo@google.com, dvernet@meta.com, 
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com, 
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com, 
+	andrea.righi@canonical.com, joel@joelfernandes.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/20/24 09:41, Mateusz Guzik wrote:
-> On Thu, Jun 20, 2024 at 09:26:00AM -0700, John Johansen wrote:
->> On 6/20/24 06:15, Mateusz Guzik wrote:
->>> It can be done in the common case.
->>>> A 24-way open1_processes from will-it-scale (separate file open) shows:
->>>     29.37%  [kernel]           [k] apparmor_file_open
->>>     26.84%  [kernel]           [k] apparmor_file_alloc_security
->>>     26.62%  [kernel]           [k] apparmor_file_free_security
->>>      1.32%  [kernel]           [k] clear_bhb_loop
->>>
->>> apparmor_file_open is eliminated from the profile with the patch.
->>>
->>> Throughput (ops/s):
->>> before:	6092196
->>> after:	8309726 (+36%)
->>>
->>> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
->> can you cleanup the commit message and I will pull this in
->>
-> 
-> First of all thanks for a timely review.
-> 
-> I thought that's a decent commit message though. ;)
-> 
-> Would something like this work:
-> <cm>
-> apparmor: try to avoid refing the label in apparmor_file_open
-> 
-> In the common case it can be avoided, which in turn reduces the
-> performance impact apparmor on parallel open() invocations.
-> 
-> When benchmarking on 24-core vm using will-it-scale's open1_process
-> ("Separate file open"), the results are (ops/s):
-> before: 6092196
-> after:  8309726 (+36%)
-> </cm>
-> 
-> If this is fine I'll send a v2.
-> 
-it will do, largely, I was just looking for something that explains
-a little more than. "It can be done in the common case"
+On Wed, 19 Jun 2024 at 22:07, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> And scx_next_task_picked() isn't pretty - as far as I understand, it's
+> because there's only a "class X picked" callback ("pick_next_task()"),
+> and no way to tell other classes they weren't picked.
 
+I guess that could be a class callback, something like this:
 
-> If you are looking for something fundamentally different I would say it
-> will be the fastest if you write your own commit message while borrowing
-> the numbers and denoting all the wording is yours. I'm trying to reduce
-> back and forth over email here.
-> 
->>> Am I missing something which makes the approach below not work to begin
->>> with?
->>>
->> no this will work in the short term. Long term there is work that will
->> break this. Both replacing unconfined and the object delegation work
->> will cause a performance regression as I am not sure we will be able
->> to conditionally get the label but that is something for those patch
->> series to work out. My biggest concern being people objecting to necessary
->> changes that regress performance, if it can't be worked out, but
->> that really isn't a reason to stop this now.
->>
-> 
-> hrm. I was looking at going a step further, now I'm going to have to
-> poke around.
+        p = class->pick_next_task(rq);
+        if (p)
+        if (p) {
+-               scx_next_task_picked(rq, p, class);
++               struct sched_class *prev = last->sched_class;
++               if (class != prev && prev->switch_class)
++                       prev->switch_class(rq);
+                return p;
+        }
 
+and that would be arguably much prettier. But maybe I've
+mis-understood the reason for that scx_next_task_picked() thing.
+
+Tejun?
+
+             Linus
 
