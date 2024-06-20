@@ -1,149 +1,85 @@
-Return-Path: <linux-kernel+bounces-223420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784579112A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:58:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2D99112A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9B171F22DC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:58:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35ED728218D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686BE1B9ADD;
-	Thu, 20 Jun 2024 19:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DD01B9ADD;
+	Thu, 20 Jun 2024 19:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMkcJcQW"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gj2rMBzc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7C81B3F2D;
-	Thu, 20 Jun 2024 19:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088433D575;
+	Thu, 20 Jun 2024 19:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718913519; cv=none; b=Ee6jeRvuq0pxZKLoWRS5o6neEkGE9dcjq4ZVZqbZkfQ3lM56oJloMhSpzmLD/f0k/UgvKoe/SidIWR1X+Nkg4ZccIC19vLBEHGVlhqCsCpdG/MbGgHfCraoj7tTRkwJbREY/xP0uY2IrmZOqjdqqrsqqzTC6o7U8nxRodXhHqbw=
+	t=1718913533; cv=none; b=s03xz+mWjUriIEuH/zvsvpoyE9uRlARfAQQa72MK+AkQPX5AHYcT0/CM5sMb7mp54LBN4I9w+mgyoG8KfQELZfw0T+SQKRaBK/6J9fy1wePfu41iB+Fot8u12FT7QHG4UWSsZez5tkNTFhxO9wD1KnEg44dPoTI8nl/xlHGELNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718913519; c=relaxed/simple;
-	bh=dVxfHwtenKBSjV9OfjRyhDKFNSv2wMV5nHOruqsGr5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C5TpoBwB6Lbo3mESeU2Wd000Ul+mIUuKdwFqKfAi8WdGKsZQ8x2JopebbH0CovZIoYnsJOxyC0MOFAVia0FsbQFBl3sWkNVairDND+roGGbR07Cwe99D3YjPtVNe2katAqzx8d1lZPGEPybwbFRMx+THb5PlyXY4XXIy8t0d3iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dMkcJcQW; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70436ac8882so1121452b3a.2;
-        Thu, 20 Jun 2024 12:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718913517; x=1719518317; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OvYBhmIJQ6oNWDLzYCe4j2TV++2BkNYnycvPCo+ymfc=;
-        b=dMkcJcQWEPyAGJNF+g4mM9heUYlx3I9nRuXj9eYYmsLvf75VA7Jd+8t2U1MkPtHQBi
-         LC98Vrjd61R/tEA6jb3SwR/1xiQOH2ys5hgvXtObxWa1R3MPcPnvQY8uUSDqqG6nOovW
-         RDx4C+Y/wlz9r4/cvNyPlEWht8YDGr0jVvuqPVYfeurshdlYp23Qty4vCxvmAN8fEKmK
-         5cTlDkQac3Mypq7A4rBfJdBEafbg2WhoBbJZoZIcgOGJAVJ+YfnhEH6yOAUGz3qlQ/7p
-         8LZeUbmAST+rzuSZP1W5t990Hylc0KKN5Lomv/4lbNUwBYfzjjWyrUU5xecLKrMx85bR
-         fyBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718913517; x=1719518317;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OvYBhmIJQ6oNWDLzYCe4j2TV++2BkNYnycvPCo+ymfc=;
-        b=AsPNPESM8EGNCQjeOYnWn81VVVODpkZdMKcCY7QEhdtfI7ifVRPQ/PHYQkE37N8Nhe
-         LEaupgHeiaW2pHVSXXgWS/VTg0eb+Ja8VpRyY7oNlZmsAxjUScujJayCha+4wOcu43WD
-         iOoVDpCUm4iiBHaLgq8/KHjCca/CNsAfcYuIVA9lsutHaIjgMvL8HaNBOkxDaN+m876W
-         eTeol6m1YAIiRJuEP/X594zHuiWQD0AH3VFv7Ky0KGVo6P5CtP4ail/q/PK5wKI6JP5+
-         XHvp7sasEXumz/RLHKdZ9q3GgsH1IbgUZoNI9W8R6w0WLsqtGT1/6N9m3touG/8lc1ta
-         dnUA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6j2g9p9zl6Y/kQi7Ulqc9G1niT/KOucUhDboBK21cIrsx23//J1Ejm78uTHVmpYTFF9DUEfauhCYEREM83BN7YRnqYZtKgpgymN/TUX4y01OQBKjk7kWruwbUvpoixmoy
-X-Gm-Message-State: AOJu0Yxe8HWi7FuTCfT9pQnjZqZy9fCIq2K4YkVhZOMFPtizxiANmpZf
-	bTSk1qeUppDK+tJVLenH8Gwi4jd/iwIcY+iQLWy+FzDDrfdWyR9T
-X-Google-Smtp-Source: AGHT+IFMNYnp7v0mbDJ7mdFJWPxgcQ4HGv6x3IKaKW9ueMkmsnmWYImVH9+vuJQEIGrjlsc652DPog==
-X-Received: by 2002:a05:6a20:6a82:b0:1b6:1ed4:e91b with SMTP id adf61e73a8af0-1bcbb5cb106mr6416293637.39.1718913517391;
-        Thu, 20 Jun 2024 12:58:37 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706511aa322sm35763b3a.84.2024.06.20.12.58.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 12:58:37 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Thu, 20 Jun 2024 09:58:35 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
-Message-ID: <ZnSJ67xyroVUwIna@slm.duckdns.org>
-References: <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
- <871q4rpi2s.ffs@tglx>
+	s=arc-20240116; t=1718913533; c=relaxed/simple;
+	bh=bM30UKYhIfj6luAIp3k9eTCvuMmDpCYt27nj187lpxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f2w5ND5kzyNYpV7S6ZS8/AkOqzKE1xDlz3YFtS0azbTYrJxX6Fb2UGnKllCQueV3wKFj1SMfrK//PfzklRTnvTjEPrABPfj4rhTBNbRDTN4isRYG4ayzZ2X2wN2bhhOvqRoDc635ZV9acua6repeY0sDAVwKsf4A+NnjqEMKigU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gj2rMBzc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70B85C2BD10;
+	Thu, 20 Jun 2024 19:58:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718913532;
+	bh=bM30UKYhIfj6luAIp3k9eTCvuMmDpCYt27nj187lpxA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Gj2rMBzcVBznCM3RDIstCVw0ztqeVIkgqbRwgCOj9Fi0NInJOlazJpYSWlZ3tCzCM
+	 5udSIMtuJcbihPbkjJwdpIyrRm6lEAPTouk50T0VGDGelk7y02ETqYkOBtVtrIKEG9
+	 0q7km4QCynvSO9WpefCfaStaiYh990eJd0s9H+7gJ6Y3CDLSL18eCumktlINieD52J
+	 4w/Dxc/cs1ND7Tm7xKmZT1bKi+TxN6+8/hOtJgxC2NIVCKzUKr+hU74EM9679+s5Ro
+	 yFW35eZHHJQp4H3qD1E83A5Cx9VueWv6xI9DbG7qaA3F+DhdSk8BUCSM2qg5W1dzBi
+	 BRUWXiMO/DCNg==
+Date: Thu, 20 Jun 2024 12:58:51 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jon Kohler <jon@nutanix.com>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Christian Benvenuti
+ <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Larysa
+ Zaremba <larysa.zaremba@intel.com>
+Subject: Re: [PATCH] enic: add ethtool get_channel support
+Message-ID: <20240620125851.142de79c@kernel.org>
+In-Reply-To: <0201165C-1677-4525-A38B-4DB1E6F6AB68@nutanix.com>
+References: <20240618160146.3900470-1-jon@nutanix.com>
+	<51a446e5-e5c5-433d-96fd-e0e23d560b08@intel.com>
+	<2CB61A20-4055-49AF-A941-AF5376687244@nutanix.com>
+	<20240619170424.5592d6f6@kernel.org>
+	<0201165C-1677-4525-A38B-4DB1E6F6AB68@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871q4rpi2s.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, 20 Jun 2024 19:49:45 +0000 Jon Kohler wrote:
+> > channel is a bit of an old term, think about interrupts more than
+> > queues. ethtool man page has the most informative description. =20
+>=20
+> Thanks for the pointer on man ethtool - one question, Przemek had
+> brought up a good point that ethtool uapi says that combined queues
+> valid values start at 1; however, I don=E2=80=99t see anything that enfor=
+ces that
+> point in the code or the man page.
+>=20
+> Should I just omit that completely from the change, since the fields
+> are zero initialized anyhow?
 
-On Thu, Jun 20, 2024 at 08:47:23PM +0200, Thomas Gleixner wrote:
-> One example I very explicitely mentioned back then is the dance around
-> fork().  It took me at least an hour last year to grok the convoluted
-> logic and it did not get any faster when I stared at it today again.
-> 
-> fork()
->   sched_fork()
->     scx_pre_fork()
->       percpu_down_rwsem(&scx_fork_rwsem);
-> 
->     if (dl_prio(p)) {
->     	ret = -EINVAL;
->         goto cancel; // required to release the semaphore
->     }
-> 
->   sched_cgroup_fork()
->     return scx_fork();
-> 
->   sched_post_fork()
->     scx_post_fork()
->       percpu_up_rwsem(&scx_fork_rwsem);
-> 
-> Plus the extra scx_cancel_fork() which releases the scx_fork_rwsem in
-> case that any call after sched_fork() fails.
-
-This part is actually tricky. sched_cgroup_fork() part is mostly just me
-trying to find the right place among existing hooks. We can either just
-rename sched_cgroup_fork() to a more generic name or separate out the SCX
-hook in the fork path.
-
-When a BPF scheduler attaches, it needs to establish its base operating
-condition - ie. allocate per-task data structures, change sched class, and
-so on. There is trade-off between how fine-grained the synchronization can
-be and how easy it is for the BPF schedulers and we really do wanna make it
-easy for the BPF schedulers.
-
-So, the current approach is just locking things down while attaching which
-makes things a lot easier for the BPF schedulers. The locking is through a
-percpu_rwsem, so it's super heavy on the writer side but really light on the
-reader (fork) side. Maybe the overhead can be further reduced by guarding it
-with static_key but the difference won't be much and I doubt it'd make any
-noticeable difference in the fork path.
-
-Thanks.
-
--- 
-tejun
+Not sure what the comment about 1 to max is intending to communicate.
+But I'd guess it trying to convey that on SET driver doesn't have to
+worry about the value being crazy, if it sets max correctly.
 
