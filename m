@@ -1,220 +1,176 @@
-Return-Path: <linux-kernel+bounces-223009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23751910BB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:15:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE339910CE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 465D31C23A57
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:15:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 587401F21671
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8103B1B14E9;
-	Thu, 20 Jun 2024 16:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AFD1B47BC;
+	Thu, 20 Jun 2024 16:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rkscq9RF"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L4F+Vx1z"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6611CD3D;
-	Thu, 20 Jun 2024 16:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22B71B151E;
+	Thu, 20 Jun 2024 16:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900130; cv=none; b=lwPuU1YdtweQs/hEgpuypQol/udHnF/Mf1gKmcxg9ULJcmyZSXP3Bj4rAjKdG28hu8E1KOXphKGySWGBmrqCAHJV8BZrOh4mqOoE66N3xeXhdY+mcZ4XJ/20kWcLX+gGjin2xIXAMIfzTjZVl0eZoLUR0/xEQYjfNW6SZhLka/U=
+	t=1718900761; cv=none; b=DA40yLpLrXrzdj7A5IJbsRkVsl/6eiwP0v/srmlByDbVHpFoFWVJF8dA5AAN2zd4SKymOKbYm/UnkR5oL1YqVHB/blqqAWstPxRNRDPcj0Cq41J3ytA12fLz0ZY72tNB97ywluFbvoS6WJ40JgDBMnCeTZvZW+60S/qaEM7yu0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900130; c=relaxed/simple;
-	bh=iblHSi10AuILwtDWFYWrNs420fLs8WQLdO1dzegU+mo=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bAW7w1ENINCCtMpXoCcGopCF/C3iouL5m/CutkaHip2kveT//D1mZFbfiJCuQovWfznbC/eIw8D5zSM9CvkyRhUnqFKQF1TPKO6BPUFKDHBwyCXHmU+Gu7ukcCRjBDNGrsE8+6t0NbvhLfeufCkvyrvrbxYSBf9egNwipb9pqK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rkscq9RF; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1718900761; c=relaxed/simple;
+	bh=XjtJ6HmPGJo89edbXyv0JLcPDu/QZ5gEhbsVCK0sZE8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eoTPof67GLdx545rxgZ699ZGbFg86EBtoO0enEm9HmalBj6pnj2Y5IqmhYNBqurIEugenhDJ/A4ZU/k2lGC+NkDFIh/aq8eUKyXvtXMibha8+X05dp0c3KJ5PPMBv9bShlaz+c3fAZERl47kVbiq5xHLi3bK4BWKnnoBEROnyDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L4F+Vx1z; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42121d27861so10849425e9.0;
-        Thu, 20 Jun 2024 09:15:28 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52c94cf4c9bso1367484e87.2;
+        Thu, 20 Jun 2024 09:25:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718900127; x=1719504927; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BstTnchL1g9WNRv1yB6FmVexKMDI5/7ZXs3DFkUlV0E=;
-        b=Rkscq9RFNY4H1IZ7DPejsdIf3HO0DWQ8pHm8oI6EJFGONyLQQPeEN6o4lzZwjx/aHJ
-         7Las/rIgwOGnwufDO/s4JZcxncVm6Y1ExzU0kcqExmP2uxkAxTM71f0b61S8Xi3CMZ3F
-         UKldZxEhvKELx/dfAwxTXcnU0IkLP9/Jy86OhkxlqUgwytZZwCgE5LKv0cbCP2XKMInl
-         tua/2Q0IkkkcUEDDsL1E3D5V/+gt3LESmLqv2D3EWg/8meXi/JfcIDqgQ1bxnbkCUyQ/
-         LsGeYzbiWpBtNi+l8yIBJH38x80B/b9d20P2l3LxB+SNUL7o4KuFEUBfgP8+s1T3kbDv
-         PvwA==
+        d=gmail.com; s=20230601; t=1718900758; x=1719505558; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=833+zfxmz9bbSWVcLfQEhMlqBmI86SR0QRSphxPu4F4=;
+        b=L4F+Vx1zQkdqy2rE1/f+2XSb1I0YJ7V63uc7twyK2RSO37kglriz1MY1gZ3LP++yuI
+         cdE318bQImDkjiV2TzJT9wx09uzeSejAAiUrtZ3qzaOtNXkitZbCdXf58h/Ttuwxsq07
+         BjW9XCbVTub4eC75DfcYKpXtHUsO7syMPrv0/f9NBh3QZOGe+88j/vI/CUH9gjmHWHMD
+         AKlHiBUAUqvWwOk3mwp2F5Tb8xH+A9zhposs9NXcPPKHP2coki+TDjqmm2WKxkjewFZt
+         zC0oPhtQOxqHp69T5dt1qlRUZICrP/m3oub3+XvmjDxyEcz3ygutyF/A6oteAEiD9qSr
+         mqJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718900127; x=1719504927;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BstTnchL1g9WNRv1yB6FmVexKMDI5/7ZXs3DFkUlV0E=;
-        b=kbqR1URhvret1N7a1g+Khz7k5kwefrNb1lhKEoZDeXZXTtXUTWyHC9Dl8JmH3UOg4y
-         0UO7cRJ8wLnz/Xb2Jf27SWFKyz4GQtvYpdK1UiOHtl5hg97YFjpFuJWq4SAqUGHb4iDa
-         bbPzseXQ5gkPCNEX7SsmP/lhYrEo6D9OJSPjyaB8bDRc/XRM3I94MUt/PdtAfjH1ty/r
-         zICkxEeNj8re/uoujxsUdUJV0WTjvB9Sqq0GSPs6ykTaxG0rbqyRsGh6+UDD19hFpQX1
-         y+x6fEtKiwnT5Mx81TbOrcX1sxGdMsjzCu1VtQnhUBekoas0Lyqo2PTaCNJhd7PIW2g5
-         2BCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNpC3Is+oshgKiSu7MW2dqkan0FV8uWIqkJsaoG6cQOJyZpnEY0vxHctOgzIzCkhlCFynEGPAWsS1nOAr3fiIDP9Ynd97gUa6+MZ4Wy7K+FQkTQF84teK/FNMQMxHCT526DpXhXQZm/XlNlbnNKEM3hx8823L5wCG+Fl5RqAsD1zcINkY=
-X-Gm-Message-State: AOJu0YwU2sbvOFJ9AfvlAUOCF7jujs+lTfhQUUe0d7p0TtbwnADxCzwt
-	ZZHSVd4xOMuCKQloYs9CLYYU7eY8zSv8ygx0p0BbEzIjINpbDzlC
-X-Google-Smtp-Source: AGHT+IHotOeTmi3cx/hKnhyyOXPzVz9w8/VmYgvuqZQkugAEyPeKDfhQGXLD4K9BaiGXtaQxTTH11A==
-X-Received: by 2002:a05:600c:314b:b0:421:7fe5:12a with SMTP id 5b1f17b1804b1-4247529a9c1mr49600905e9.35.1718900126775;
-        Thu, 20 Jun 2024 09:15:26 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d1f6dbasm29676695e9.43.2024.06.20.09.15.25
+        d=1e100.net; s=20230601; t=1718900758; x=1719505558;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=833+zfxmz9bbSWVcLfQEhMlqBmI86SR0QRSphxPu4F4=;
+        b=WJVAtzG15DtawDYxgClNPqad+p9O16Ezx9HjEudRZ6ui6bXN7C+oPCE9Ss1KN+FrH0
+         GKNmCQis+8Oh9oA23K34Q43eadS0lozxK9EGEkO3may8VAF9Ga9cLLzpem19SvDzy1Va
+         ou81SlWYNPymwr/E+YJgtWVcGZDtw5hknL3jJ6ccoBWKTSTyCW8CagVZ4JGSDhg8wfsa
+         13KzQIRSKxU4S5DXnpX170gYf7P07mbEGZOgcUQY0J9vT8YVoXiUy8tlKLKyAOrr3zpP
+         9vQF8mhwXDU6S2P0fZXrcT3/teYQGidoKelm18igjwrmxZhJvE6ADQHJLBTr5JDMDd16
+         QfAw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2sBs37Gl6c8A7Tqn5VJlM2LJGpCQaTEf9chzWG+hvW52ouRKluUVXeeIvHeCkkQtUKu1QzpecgKZ0Y6S4x8yGSk83rv/DGRNvzZeWufJyuV2ETGI5GJRBwv9F5WcfBkCUiwTxf/kJngDuSe0MyQpZ7RTG3Y6gLHV+kYq/Y7vagpktREo=
+X-Gm-Message-State: AOJu0YxPj2fy9eiRX3O40qOGuyU0x3FJJOZD2ae9CQud1StfU3749Ifc
+	Z6K2KHvKl/YpMyXvVf91uHfXLpAF1yAoA22MjqW+WoQTLgE1AFUd
+X-Google-Smtp-Source: AGHT+IG4fUEcQ1XtBapKtLC13TFzZnyP1UyME4SroZvARrkhCU7E+1ynQ6SkLGUkQ46STojhKaaEQQ==
+X-Received: by 2002:a19:e01a:0:b0:52c:bd55:5b21 with SMTP id 2adb3069b0e04-52ccaa33e30mr4035766e87.24.1718900757687;
+        Thu, 20 Jun 2024 09:25:57 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-362c7c2dffdsm6277480f8f.35.2024.06.20.09.25.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 09:15:26 -0700 (PDT)
-Message-ID: <6674559e.050a0220.14848.cb8f@mx.google.com>
-X-Google-Original-Message-ID: <ZnRHm5eF6P2VCoiz@Ansuel-XPS.>
-Date: Thu, 20 Jun 2024 17:15:39 +0200
+        Thu, 20 Jun 2024 09:25:57 -0700 (PDT)
 From: Christian Marangi <ansuelsmth@gmail.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 00/20] leds: leds-lp55xx: overhaul driver
-References: <20240616215226.2112-1-ansuelsmth@gmail.com>
- <20240620160907.GP3029315@google.com>
+Subject: [PATCH v8 0/4] mips: bmips: improve handling of RAC and CBR addr
+Date: Thu, 20 Jun 2024 17:26:41 +0200
+Message-ID: <20240620152649.994-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240620160907.GP3029315@google.com>
 
-On Thu, Jun 20, 2024 at 05:09:07PM +0100, Lee Jones wrote:
-> On Sun, 16 Jun 2024, Christian Marangi wrote:
-> 
-> > This long series is (as requested) a big overhaul of the lp55xx based
-> > LED driver.
-> > 
-> > As notice for these kind of LED chip there was the bad habit of copy
-> > the old driver and just modify it enough to make it work with the new
-> > model. Till v4 I was also doing the same by following the pattern and
-> > the code format of previous driver.
-> > 
-> > Since Lee didn't like this, here is the BIG series that generalize
-> > pretty much anything in the 4 model currently supported.
-> > 
-> > Indeed, although the LED chip have fundamental difference (page
-> > support), things can be generalized and produce slimmer drivers by
-> > putting everything in the lp55xx-common shared module.
-> > 
-> > This result in the new model lp5569 being very small with only the
-> > selftest portion to be custom.
-> > 
-> > Lee also wasn't clear by the meaning of ENGINE in these LED driver,
-> > so here some simple explaination. This is very common on these TI LED
-> > chip. The ENGINE (there are always 3) is just some kind of processor
-> > that execute a program (precompiled code ASM like) loaded in the SRAM.
-> > Sysfs is used to load the pattern, and to start and stop the engine.
-> > 
-> > These pattern can do all kind of complex thing with LEDs. Old LED chip
-> > had 32bytes of space for the pattern but newer one (like lp5569) have
-> > pages and if correctly configured can have massive pattern.
-> > These pattern can do all kind of magic like loops that make the LED
-> > pulse, change color and all kind of stuff.
-> > 
-> > (For Lee, sorry if you will have to repeat some review that I might
-> >  have missed in the lp5569 driver)
-> > 
-> > Changes v6:
-> > - Fix compilation warning for ret unused in read_poll_timeout
-> >   (no idea why this is flagged only on some particular arch...)
-> > - Fix missing bitfield.h in lp55x-common.c (again it seems this
-> >   header gets included in the flow if the arch use them or not...)
-> > Changes v5:
-> > - Big generalization patch
-> > - Rework lp5569 driver with new generalized functions
-> > - Drop all copyright header in lp5569 as the driver got reworked
-> >   entirely and it's not based on previous one anymore.
-> > Changes v4:
-> > - Fix reported buffer overflow due to a copypaste error
-> > - Add comments to describe fw size logic
-> > Changes v3:
-> > - Add ACK tag to DT patch
-> > - Enlarge and support program size up to 128bytes
-> > Changes v2:
-> > - Add ACK tag to DT patch
-> > - Fix compilation error with target that doesn't
-> >   include bitfield.h
-> > 
-> > Christian Marangi (20):
-> >   dt-bindings: leds-lp55xx: limit pwr-sel property to ti,lp8501
-> >   dt-bindings: leds-lp55xx: Add new ti,lp5569 compatible
-> >   leds: leds-lp55xx: generalize stop_all_engine OP
-> >   leds: leds-lp55xx: generalize probe/remove functions
-> >   leds: leds-lp55xx: generalize load_engine function
-> >   leds: leds-lp55xx: generalize load_engine_and_select_page function
-> >   leds: leds-lp55xx: generalize run_engine function
-> >   leds: leds-lp55xx: generalize update_program_memory function
-> >   leds: leds-lp55xx: generalize firmware_loaded function
-> >   leds: leds-lp55xx: generalize led_brightness function
-> >   leds: leds-lp55xx: generalize multicolor_brightness function
-> >   leds: leds-lp55xx: generalize set_led_current function
-> >   leds: leds-lp55xx: generalize turn_off_channels function
-> >   leds: leds-lp55xx: generalize stop_engine function
-> >   leds: leds-lp55xx: generalize sysfs engine_load and engine_mode
-> >   leds: leds-lp55xx: generalize sysfs engine_leds
-> >   leds: leds-lp55xx: generalize sysfs master_fader
-> >   leds: leds-lp55xx: support ENGINE program up to 128 bytes
-> >   leds: leds-lp55xx: drop deprecated defines
-> >   leds: leds-lp5569: Add support for Texas Instruments LP5569
-> > 
-> >  .../devicetree/bindings/leds/leds-lp55xx.yaml |  11 +
-> >  drivers/leds/Kconfig                          |  16 +-
-> >  drivers/leds/Makefile                         |   1 +
-> >  drivers/leds/leds-lp5521.c                    | 405 +---------
-> >  drivers/leds/leds-lp5523.c                    | 728 ++---------------
-> >  drivers/leds/leds-lp5562.c                    | 261 +------
-> >  drivers/leds/leds-lp5569.c                    | 542 +++++++++++++
-> >  drivers/leds/leds-lp55xx-common.c             | 730 +++++++++++++++++-
-> >  drivers/leds/leds-lp55xx-common.h             | 133 +++-
-> >  drivers/leds/leds-lp8501.c                    | 313 +-------
-> >  10 files changed, 1523 insertions(+), 1617 deletions(-)
-> >  create mode 100644 drivers/leds/leds-lp5569.c
-> 
-> Generally, I love it - what a difference!
-> 
-> Couple of small things within the patches and few general points.
-> 
-> * Ensure scripts/checkpatch.pl is happy before resubmitting.
+Hi,
 
-Eh I always run patch with checkpatch.pl --strict but this time is quite
-problematic to fix the single error for the complex macro.
+this simple series improve handling of RAC and CBR address and try to
+upstream these simple patch we have in OpenWrt for a while.
 
-I will check what I can do but I think I'm really stretching the C
-precompiler there... That is really one of the very few case where error
-might be acceptable.
+The first patch fix a straight kernel panic where some Bootloader might
+enable RAC but misconfigure the CBR address. The current logic only
+check if RAC is enabled but doesn't verify if the CBR address is usable.
 
-If I manage to mute that error, it might result in very bad code...
+The DMA sync function cause a kernel panic for invalid write. (as CBR is
+0 or something like 0xa)
 
-If you are referring to other warning and check just tell me.
+The second is preparation for making the CBR address configurable in DT.
+Since this address doesn't change, we can cache it and reference it with
+a local variable instead of calling the register to access the value.
 
-> * Please place my Suggested-by in all of the consolidation patches.
+The 4th patch make it configurable with 2 DT property, one to actually
+set the reg and the other to force set it.
 
-Ok will add the suggested in all the generalization patch
+The first property is used when CBR is set to 0. The second property is
+to force it if the Bootloader sets it to something wrong.
 
-> * Subject titles should always match that of the subsystem
->   - In our case the first letter of the description should be uppercase
+If the CBR value is not 0 and is not forced with the second property a
+WARN is printed and the DT value is ignored.
 
-Ok missed that.
+The 4th patch enable RAC on BMIPS4350.
 
-> 
-> Thanks for doing this, it's great work.
-> 
-> -- 
-> Lee Jones [李琼斯]
+These has been tested on BCM6358 (HG556a) and BCM6368 (VH4032N) and
+reported correct functionality.
+
+Changes v8:
+- Drop fix patch (applied to mips-fixes)
+- Rework CBR cache patch to handle bcm47xx not compiling smp-bmips.c
+Changes v7:
+- Add ACK and Reviewed-by tag for dt patch from v5
+Changes v6:
+- Add missing patch that got lost in v5
+- Fix missing header for legacy bcm47xx
+- Fix compilation error with gcc 10.2.1
+Changes v5:
+- Add Ack tags
+- Improve DT descriptions as suggested by Conor
+Changes v4:
+- Fix compilation error with legacy brcm target
+- Improve property description in DT commit (give
+  CBR meaning and drop reference to linux functions)
+- Use only __read_mostly as we can't add variable to
+  multiple data sections
+- In patch 4 use local cbr variable instead of global
+  one.
+Changes v3:
+- Drop broken-cbr-reg property
+- Fix anyOf+const with enum
+Changes v2:
+- Prefix brcm vendor in the added property
+- Drop last patch (cpu switch from DMA sync)
+- Validate CBR addr from DT to be outside DRAM
+- Reduce indentation in DT CBR check
+- Reduce delta and use local variable for CBR where possible
+- Fix and improve typo and spelling mistake
+- Use 0xf instead of 0xa for BCM6358 RAC enable
+
+Christian Marangi (3):
+  mips: bmips: rework and cache CBR addr handling
+  dt-bindings: mips: brcm: Document brcm,bmips-cbr-reg property
+  mips: bmips: setup: make CBR address configurable
+
+Daniel González Cabanelas (1):
+  mips: bmips: enable RAC on BMIPS4350
+
+ .../devicetree/bindings/mips/brcm/soc.yaml    | 24 +++++++++++++
+ arch/mips/bcm47xx/prom.c                      |  3 ++
+ arch/mips/bcm47xx/setup.c                     |  8 +++++
+ arch/mips/bcm63xx/prom.c                      |  3 ++
+ arch/mips/bcm63xx/setup.c                     |  8 +++++
+ arch/mips/bmips/dma.c                         |  2 +-
+ arch/mips/bmips/setup.c                       | 35 +++++++++++++++++--
+ arch/mips/include/asm/bmips.h                 |  1 +
+ arch/mips/kernel/smp-bmips.c                  | 22 ++++++++++--
+ 9 files changed, 101 insertions(+), 5 deletions(-)
 
 -- 
-	Ansuel
+2.45.1
+
 
