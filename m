@@ -1,102 +1,139 @@
-Return-Path: <linux-kernel+bounces-221930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E877D90FAC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:05:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF9890FAC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 03:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB7D1F228B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:05:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 759EC2831C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 01:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A61ED51A;
-	Thu, 20 Jun 2024 01:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5483212E78;
+	Thu, 20 Jun 2024 01:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Q2QDIuog"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="I5RqrGVT"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B836319B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B572D531
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 01:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718845529; cv=none; b=MlEuQrfSdNtsEe/abdF6kReKA1irRjiYTdDkZcAyruto0NufBpVlaVur3t7Ld6hEES9PwxGJU1bj6dlFfACyRjSuDp2wC85ajLsoFgIa6pwEDF/b7AUxnQlH3P/QnoeDyf5hY0/g3J0NY3WQqc4jibYn/DsBZLxthvS/8paALUk=
+	t=1718845531; cv=none; b=mpntsTc9VbpgTWeLRFbWzXdPPZoc4RdzWYZniVpTiKePc8eQbzpMAjpEeNvH9mauEuxCuk1mPW1s6Wv57w2zqoXqSULBJzii+iY16R9lZUzqChpAhcqEwOBng8xGpxuzRcG5B5v1HSi3uw6teF1vkDqYLU4hdz6X3ZT5aXvp2VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718845529; c=relaxed/simple;
-	bh=SavSndA/u2H9gbARk/djutSfqZDpUHGWYWRdfF+wye0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LCqTjd3gO6Gh5+p4TpbsOVADE+Trn4SkAEfvLR3nrKb1vPfPpIJljV88zaH1k34bP5iD5RXjj0lMKEokeMXlOi0teFFkFh2KmZGD96NMCYvza35+0UppLFS7Qn//OXe48OBOgyrEmH+nhjlimOTqJpEdR7/70pewWYQSXnNnUS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=Q2QDIuog; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 726B52C0358;
-	Thu, 20 Jun 2024 13:05:24 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1718845524;
-	bh=SavSndA/u2H9gbARk/djutSfqZDpUHGWYWRdfF+wye0=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=Q2QDIuogwp+i8Y9oYlo91Z4/NIGNuheUVHY+pAORWZBTHjb6OHOETEOhxB6KguEJQ
-	 IitUQjEzKQ0A0K6sYWZNlWwmOZIFmyRpJDD9tuZ8PyXSc4GhaNoWR2wKH8ow/Q31IY
-	 7dDldpQYccUHE+I08VR86FfHISnACQ2NOaZwxDAeFGPBpGxzRShUTyStwYjgrh9XCp
-	 KJ8GJsstksM3M7i56HbCm0GedKSr6dWeSpoWnZhllCqmxye6k5VdYK6vq8ygtI2bgi
-	 L3+tzfwXk7LrO3BpZmWnBs6ASd94/FXhZG+1eZnaT+89nLvmCwRDvx4R5Wl+Cl1owE
-	 uBMFxhorI7U4w==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B667380540001>; Thu, 20 Jun 2024 13:05:24 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 20 Jun 2024 13:05:24 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Thu, 20 Jun 2024 13:05:24 +1200
-From: Aryan Srivastava <Aryan.Srivastava@alliedtelesis.co.nz>
-To: "Markus.Elfring@web.de" <Markus.Elfring@web.de>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"andi.shyti@kernel.org" <andi.shyti@kernel.org>, "rric@kernel.org"
-	<rric@kernel.org>
-Subject: Re: [PATCH v6 1/2] i2c: octeon: refactor hlc r/w operations
-Thread-Topic: [PATCH v6 1/2] i2c: octeon: refactor hlc r/w operations
-Thread-Index: AQHavTz6fQ4iQdx2D0KL9Q0aILYeGrHEc0wAgAqk6oA=
-Date: Thu, 20 Jun 2024 01:05:24 +0000
-Message-ID: <91f9c8b0938851ce399062dac03363e77d38f547.camel@alliedtelesis.co.nz>
-References: <20240613025412.3848629-1-aryan.srivastava@alliedtelesis.co.nz>
-	 <20240613025412.3848629-2-aryan.srivastava@alliedtelesis.co.nz>
-	 <8383c494-911f-40fd-abfa-9489fada67a3@web.de>
-In-Reply-To: <8383c494-911f-40fd-abfa-9489fada67a3@web.de>
-Accept-Language: en-US, en-NZ
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <091B5162677A124EBB8455DB47AB441D@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1718845531; c=relaxed/simple;
+	bh=o+AtFRKSppPVchIcAIk8QIOiTYfGveuSXbYBE9byyqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YpIRj2OP24Qc4ccyC82+ZeQHBYxoIwNuJl2V8XEIfp4RloRwYstHJAFt8h22KCdtndShP79Mg+iolAf2DWv4vhY5Yp59CA0A/04m4GxcO+5QBpvMizL/swniawsMtBPHCL7n+q5JT9WlLpvy5uzJ3X5Zm29ukDRWL8l/BYJx3qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=I5RqrGVT; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7eee5740aceso10777439f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 18:05:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1718845529; x=1719450329; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qbSKc+TrggUrHTort2/p62nHWU+tnCEwH+LIOaDUnMY=;
+        b=I5RqrGVTQ1jV9PG8nwDy0sX5HXJia0KHbPxH1S8jzy4Q11HkoMx9CTZTtwHWnXKD/y
+         tfG5x18ua3/HXERRb13rzw7j+BYBtHQGgKuxHHfdlnLMPSpveqAN6UfKU/5gW73E14Na
+         dT9lpmGBfnYh+VWkf9lILUWvzeqq7WAy0gPruWl8JKULQhAk2upS9vvyTmzaUJMXtZx1
+         6RqUu16tYoKM+gUIrys8LB/aCBfz4Kjc71Ui/MYCUmYYTuJ2DeTmxepMYMxpvQumVDC0
+         V+UIVA8LqPrSvtGP/HYxaNE4M5CeFtrRMKyYVjUBmNw/XxSJGxVLnU+u6utOn++OtdWk
+         Tetw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718845529; x=1719450329;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qbSKc+TrggUrHTort2/p62nHWU+tnCEwH+LIOaDUnMY=;
+        b=ihzi3Ygvq75pnQtVFxJX9FiPogaf2+Toz0DJbTK5TuHdyqsm8YC7J9eSceqWeShw/3
+         UUevt0P75PDCaJ3GLuv2DmNFcwFILYdS4M5wuvd4ivugy+5U0T9p3s0IJY7tbaqYrzH7
+         wYFuS/SE2ClJZ5VQ70A/iYdFFQmMfFvAufqe94+WpsYhdvuVjjH7r1LZ1JzOIhbQNpOL
+         5feflRmcdlBxcERIo56xkNUALRhWTtbgYgrvvmegqdzmCYOGmuEVxQVa8w6oK2+6RvKi
+         ANcRqhmQfGfLxBvOtoNeocdp56RQUOmv2Yi0V+cs14UtYt42inHU2KJ2qDBAjqhKIbb6
+         h7EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnkKTx5ABIvbcFD8g4qDgnFaGv7fiklM5sCwmgo8qk9ie4aVGKvKK+WfcHbO5UWHiUd69C80C+tb9FGtM8L5BxYcMqmvfTKSpW2Ff2
+X-Gm-Message-State: AOJu0Yxd6Npp8Zxp84RotNsbu5KlbvJUh7HvSwuW6pq68ONNE7HyOjX3
+	d32XE9tLPFywIh4n9GtJcMIyPQDi7/9WxR0Cu+g6kQOUZl+FOmoaVwzyJJEA5ms=
+X-Google-Smtp-Source: AGHT+IFWukuy+yK0xWq0jQOureLprn4ZulWF8/CzRIJtzl9V0bK6pRZbTWtBrXeLa/MkYQC02Cg15g==
+X-Received: by 2002:a05:6602:6b84:b0:7eb:687f:66a5 with SMTP id ca18e2360f4ac-7f13ee8fc06mr435515539f.21.1718845529168;
+        Wed, 19 Jun 2024 18:05:29 -0700 (PDT)
+Received: from kf-XE ([2607:fb91:111c:4643:212e:5310:572e:1126])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7ebdb74cd1asm358910539f.0.2024.06.19.18.05.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jun 2024 18:05:28 -0700 (PDT)
+Date: Wed, 19 Jun 2024 20:05:25 -0500
+From: Aaron Rainbolt <arainbolt@kfocus.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lenb@kernel.org, mmikowski@kfocus.org, Perry.Yuan@amd.com,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH V3] acpi: Allow ignoring _OSC CPPC v2 bit via kernel
+ parameter
+Message-ID: <ZnOAVWdBanvocb4D@kf-XE>
+References: <b516084f-909e-4ea4-b450-3ee15c5e3527@amd.com>
+ <ZnJfmUXmU_tsb9pV@kf-XE>
+ <CAJZ5v0gOBH7OKF3KXwxYfWkGkC45rzDguR4VmSnoZDKpm+KPSg@mail.gmail.com>
+ <12457165.O9o76ZdvQC@rjwysocki.net>
+ <ZnNQF0ussBRSAt1g@kf-XE>
+ <ZnNZgxDaXoCqkkJq@kf-XE>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=66738054 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=w1vUsAckAk8A:10 a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=AQz5W6wBH4rOcr7yEUoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnNZgxDaXoCqkkJq@kf-XE>
 
-SGkgTWFya3VzLA0KT24gVGh1LCAyMDI0LTA2LTEzIGF0IDA4OjMyICswMjAwLCBNYXJrdXMgRWxm
-cmluZyB3cm90ZToNCj4gPiBSZWZhY3RvciB0aGUgY3VycmVudCBpbXBsZW1lbnRhdGlvbiBvZiB0
-aGUgaGlnaC1sZXZlbCBjb21wb3NpdGUNCj4gPiByZWFkIGFuZA0KPiA+IHdyaXRlIG9wZXJhdGlv
-bnMgaW4gcHJlcGFyYXRpb24gb2YgdGhlIGFkZGl0aW9uIG9mIGJsb2NrLW1vZGUNCj4gPiByZWFk
-L3dyaXRlDQo+ID4gb3BlcmF0aW9ucy4NCj4g4oCmDQo+IA0KPiAqIEkgZmluZCB0aGF0IGEgY292
-ZXIgbGV0dGVyIGNhbiBiZSBoZWxwZnVsIGFsc28gZm9yIHRoZSBwcmVzZW50ZWQNCj4gc21hbGwg
-cGF0Y2ggc2VyaWVzLg0KPiANCkkgZGlkIG1ha2Ugb25lLCBidXQgSSBhbSBub3Qgc3VyZSB3aGF0
-IGhhcHBlbmVkIHRvIGl0LiBUaGUgbGluayBvbiB0aGUNCmxvcmUua2VybmVsIHRocmVhZCBmb3Ig
-aXQgaXMgYnJva2VuLCBJIG1pZ2h0IGhhdmUgZ2VuZXJhdGVkIGl0DQppbmNvcnJlY3RseT8gSG9w
-ZWZ1bGx5IHRoZSBuZXh0IHBhdGNoIHNlcmllcyB3aWxsIGhhdmUgaW50YWN0Lg0KPiAqIEhvdyBk
-byB5b3UgdGhpbmsgYWJvdXQgdG8gcmVwbGFjZSBhbnkgYWJicmV2aWF0aW9ucyBpbiBzdW1tYXJ5
-DQo+IHBocmFzZXM/DQo+IMKgIC0gSExDDQo+IMKgIC0gci93DQo+IA0KRG9uZS4NCj4gDQo+IFJl
-Z2FyZHMsDQo+IE1hcmt1cw0KDQpUaGFua3MsDQpBcnlhbg0K
+OK, we have done thorough benchmarking of the two patches. In summary,
+they both seem to provide exactly the same performance improvements.
+My initial worry that Rafael's patch didn't deliver the same performance
+improvements was unfounded.
+
+The following are the single-core and multi-core scores from running
+Geekbench 5 multiple times on a Carbon Systems Iridium 16 system. The
+first batch of tests was done with an Ubuntu kernel built with with my V3
+proposed patch, while the second batch was done with a kernel build with
+Rafael's proposed patch.
+
+Links to the Geekbench 5 reports can be shared if needed.
+
+_OSC CPPC bit ignore patch (written by Aaron Rainbolt):
+Kernel parameter 'ignore_osc_cppc_bit' set in
+'/etc/default/grub.d/kfocus.cfg'.
+'/sys/devices/system/cpu/cpu*/acpi_cppc' and
+'/proc/sys/kernel/sched_itmt_enabled' both present
+
+| Run | Single | Multi  |
+| --- | ------ | ------ |
+|  01 |   1874 |  10475 |
+|  02 |   1831 |  10132 |
+|  03 |   1858 |  10348 |
+|  04 |   1848 |  10370 |
+|  05 |   1831 |  10413 |
+| --- | ------ | ------ |
+| AVG |   1848 |  10348 |
+
+
+intel_pstate CPPC override patch (written by Rafael Wysocki):
+No special kernel parameters set.
+'/sys/devices/system/cpu/cpu*/acpi_cppc' ABSENT,
+'/proc/sys/kernel/sched_itmt_enabled' present
+
+| Run | Single | Multi  |
+| --- | ------ | ------ |
+|  01 |   1820 |  10310 |
+|  02 |   1870 |  10303 |
+|  03 |   1867 |  10420 |
+|  04 |   1844 |  10283 |
+|  05 |   1835 |  10451 |
+| --- | ------ | ------ |
+| AVG |   1847 |  10353 |
 
