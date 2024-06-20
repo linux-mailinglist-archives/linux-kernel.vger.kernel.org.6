@@ -1,134 +1,133 @@
-Return-Path: <linux-kernel+bounces-223635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 423C49115D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 346909115D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E06281F23875
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEE951F2338F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C5D142E78;
-	Thu, 20 Jun 2024 22:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721D11422D6;
+	Thu, 20 Jun 2024 22:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jzDuUyQG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hnjQCVbi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5324D79949;
-	Thu, 20 Jun 2024 22:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F8813C8E5;
+	Thu, 20 Jun 2024 22:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718923669; cv=none; b=CzkGQmJMWZ8eqsktGXK4K47asKhjogkx4ayaZ5anF3OF1R1zM2cpCSyPFpNDURD50aFiI9DZ1NxQlXviMBxEWPhVx5YT2nhUQPr8X/Ye8phXNVwhFTB7kOMC+uSP2ROhkPoWaYMwux5qXwIbnpex3g/xGB+iMoPmumqeeerzwRM=
+	t=1718923707; cv=none; b=rl+8XRSEDMVTGB7YU5a/NwMXbPmbY/RSQtJxJ5QMlWf4n+7ZORZRwNTgrsvK1qMA/p682Ygj6AvWticUJtCFE4zNl374LgaJrIUKbWK8p+Z/hK2QO2lYmblpgUJbSzFyPVQq8HBR/VJxFDYnFSsc2XsKkkqNDliqgyQOBo8cLKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718923669; c=relaxed/simple;
-	bh=VVG0u6kJx6gy9QOoxI0WCnMXxw0wTHsd0ZhQUmx+USY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mRmmIuyuFDCd55xpGC9COrhv+USOcDApPYmeWjQz7EsJItYhS7jot0fyyJaOUGNshuRbMIaOuaZhQAu9aT2DPHwMqcvJcED/hjmAXllm83ODX77/aw1mJ+bOfDZBDRDLElRpYnzwteJq6Ff0MkYF3+lWiLcMq7YHJfRSvVsZ+rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jzDuUyQG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KHL5uN010657;
-	Thu, 20 Jun 2024 22:47:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=UzU1DFJ4xrF/xX5fZgyh2T96
-	UuT9FhaFK+d/7JtKvNI=; b=jzDuUyQGbn/J5EKIcYa/VYyT6OqYGWRl6bqvdfBm
-	3wqaJ1kW3cK+p3bp+S8gDKtYC2fjQKzeafmoZOdNL5jgDJAlv5dHmWM3iYx6boFC
-	k3gtvbWxU1U6uPELCKJJklxknTxfqq857nvR8yrOnU0E9WFI57Y3Bp5sAlzTgSxP
-	0f1K34rmJ/hg4RCtOtL9GNcM1T599TPeJFAUNzYoeb8Xd6afUpkGpFgfo8YHSuak
-	Ygf1FYljOGhG+Cu69kI4+siX7WaQyk9h1FQpyeb6AY3tfs5IsyMmfEppO7aK18nC
-	IBAAIYcIebPJBK0YN1PA30VlduHppw5LISHTDmfqwYJtMw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrrc8stu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 22:47:26 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45KMlORB009447
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 22:47:24 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 20 Jun 2024 15:47:24 -0700
-Date: Thu, 20 Jun 2024 15:47:23 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-        <maz@kernel.org>, <kvm@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <pbonzini@redhat.com>
-Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
-Message-ID: <20240620140516768-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
- <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com>
- <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
- <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
- <20240619115135.GE2494510@nvidia.com>
- <ZnOsAEV3GycCcqSX@infradead.org>
- <CA+EHjTxaCxibvGOMPk9Oj5TfQV3J3ZLwXk83oVHuwf8H0Q47sA@mail.gmail.com>
- <20240620135540.GG2494510@nvidia.com>
- <6d7b180a-9f80-43a4-a4cc-fd79a45d7571@redhat.com>
- <20240620142956.GI2494510@nvidia.com>
+	s=arc-20240116; t=1718923707; c=relaxed/simple;
+	bh=zoovoJhNRfgDjC9B72bTorp2/szLX092n+btLcuuqSU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KSt6S+NO9rFmUwPS2Xwa8HrOkpf8qHAZkvUhF4+e5Ai6pSDCw4iE5H/XGYlxsZyXFAtccKw/BLzbJR6OXVmmoIMlPJV/lfW8VOwQCmbPlK38DlAPvd/cS8jtvSyrdOs5ew4A7JQbNfSCCPoXzRYiyW+35dAn4kvdw6nfww106Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hnjQCVbi; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718923706; x=1750459706;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=zoovoJhNRfgDjC9B72bTorp2/szLX092n+btLcuuqSU=;
+  b=hnjQCVbiGaHSN02uY5HLtVBUE01Qn9B/9Nup2NHjXz4OYPY2E9DI3gO5
+   mrv9SwC/fqeC+5seN9yl43+/p0ImfLNKffOWuHCLIN2EWZynRijjJqFG6
+   lrU7/bxTBUgFpBhWsJsmH9aJBioUET4zBDwwYhnecKBxnCzW6iGAI1BCr
+   BKSBwu7mtFtyP6BjaLUUOac9sATXpnrg9Tw1ktcoPwNAABWYuCULKDBKJ
+   wHMiSJnkLkfKi/ixNedmBk5MQ3Wam8ujPqbzJeC9CyJBHbiy1ZSHCXx40
+   BxSD1CothIfxNn+uzTSCsUeUCW9j9b/9ScBUadMIZIPiNyMv6KB8Va8nJ
+   Q==;
+X-CSE-ConnectionGUID: gyIUlsTtR1ubTVyXc4MaQw==
+X-CSE-MsgGUID: zaJQlcAKTNSP76m3uzGGNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="15767076"
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="15767076"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2024 15:48:25 -0700
+X-CSE-ConnectionGUID: XpaLxycjSxeqMiVY+nQ8Bw==
+X-CSE-MsgGUID: nKLgFteISSeH3bWw+T/wLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,252,1712646000"; 
+   d="scan'208";a="42506433"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.38.190])
+  by fmviesa010.fm.intel.com with ESMTP; 20 Jun 2024 15:48:24 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+	id 537703003B6; Thu, 20 Jun 2024 15:48:24 -0700 (PDT)
+From: Andi Kleen <ak@linux.intel.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>,  "GONG, Ruiqi"
+ <gongruiqi@huaweicloud.com>,  Christoph Lameter <cl@linux.com>,  Pekka
+ Enberg <penberg@kernel.org>,  David Rientjes <rientjes@google.com>,
+  Joonsoo Kim <iamjoonsoo.kim@lge.com>,  jvoisin
+ <julien.voisin@dustri.org>,  Andrew Morton <akpm@linux-foundation.org>,
+  Roman Gushchin <roman.gushchin@linux.dev>,  Hyeonggon Yoo
+ <42.hyeyoo@gmail.com>,  Xiu Jianfeng <xiujianfeng@huawei.com>,  Suren
+ Baghdasaryan <surenb@google.com>,  Kent Overstreet
+ <kent.overstreet@linux.dev>,  Jann Horn <jannh@google.com>,  Matteo Rizzo
+ <matteorizzo@google.com>,  Thomas Graf <tgraf@suug.ch>,  Herbert Xu
+ <herbert@gondor.apana.org.au>,  linux-kernel@vger.kernel.org,
+  linux-mm@kvack.org,  linux-hardening@vger.kernel.org,
+  netdev@vger.kernel.org
+Subject: Re: [PATCH v5 4/6] mm/slab: Introduce kmem_buckets_create() and family
+In-Reply-To: <20240619193357.1333772-4-kees@kernel.org> (Kees Cook's message
+	of "Wed, 19 Jun 2024 12:33:52 -0700")
+References: <20240619192131.do.115-kees@kernel.org>
+	<20240619193357.1333772-4-kees@kernel.org>
+Date: Thu, 20 Jun 2024 15:48:24 -0700
+Message-ID: <87r0crut6v.fsf@linux.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240620142956.GI2494510@nvidia.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rmA4Wwy_3KWwSQd6c-bmt4HkSHSDNN4N
-X-Proofpoint-ORIG-GUID: rmA4Wwy_3KWwSQd6c-bmt4HkSHSDNN4N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-20_10,2024-06-20_04,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 mlxlogscore=771 spamscore=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 adultscore=0 mlxscore=0 suspectscore=0
- malwarescore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406200166
+Content-Type: text/plain
 
-On Thu, Jun 20, 2024 at 11:29:56AM -0300, Jason Gunthorpe wrote:
-> On Thu, Jun 20, 2024 at 04:01:08PM +0200, David Hildenbrand wrote:
-> > Regarding huge pages: assume the huge page (e.g., 1 GiB hugetlb) is shared,
-> > now the VM requests to make one subpage private. 
-> 
-> I think the general CC model has the shared/private setup earlier on
-> the VM lifecycle with large runs of contiguous pages. It would only
-> become a problem if you intend to to high rate fine granual
-> shared/private switching. Which is why I am asking what the actual
-> "why" is here.
-> 
+Kees Cook <kees@kernel.org> writes:
 
-I'd let Fuad comment if he's aware of any specific/concrete Anrdoid
-usecases about converting between shared and private. One usecase I can
-think about is host providing large multimedia blobs (e.g. video) to the
-guest. Rather than using swiotlb, the CC guest can share pages back with
-the host so host can copy the blob in, possibly using H/W accel. I
-mention this example because we may not need to support shared/private
-conversions at granularity finer than huge pages. The host and guest can
-negotiate the minimum size that can be converted and you never run into
-issue where subpages of a folio are differently shared. I can't think of
-a usecase where we need such granularity for converting private/shared.
+> Dedicated caches are available for fixed size allocations via
+> kmem_cache_alloc(), but for dynamically sized allocations there is only
+> the global kmalloc API's set of buckets available. This means it isn't
+> possible to separate specific sets of dynamically sized allocations into
+> a separate collection of caches.
+>
+> This leads to a use-after-free exploitation weakness in the Linux
+> kernel since many heap memory spraying/grooming attacks depend on using
+> userspace-controllable dynamically sized allocations to collide with
+> fixed size allocations that end up in same cache.
+>
+> While CONFIG_RANDOM_KMALLOC_CACHES provides a probabilistic defense
+> against these kinds of "type confusion" attacks, including for fixed
+> same-size heap objects, we can create a complementary deterministic
+> defense for dynamically sized allocations that are directly user
+> controlled. Addressing these cases is limited in scope, so isolating these
+> kinds of interfaces will not become an unbounded game of whack-a-mole. For
+> example, many pass through memdup_user(), making isolation there very
+> effective.
 
-Jason, do you have scenario in mind? I couldn't tell if we now had a
-usecase or are brainstorming a solution to have a solution.
+Isn't the attack still possible if the attacker can free the slab page
+during the use-after-free period with enough memory pressure?
 
-Thanks,
-Elliot
+Someone else might grab the page that was in the bucket for another slab
+and the type confusion could hurt again.
 
+Or is there some other defense against that, other than
+CONFIG_DEBUG_PAGEALLOC or full slab poisoning? And how expensive
+does it get when any of those are enabled?
+
+I remember reading some paper about a apple allocator trying similar
+techniques and it tried very hard to never reuse memory (probably
+not a good idea for Linux though)
+
+I assume you thought about this, but it would be good to discuss such
+limitations and interactions in the commit log.
+
+-Andi
 
