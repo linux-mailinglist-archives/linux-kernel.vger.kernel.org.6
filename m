@@ -1,127 +1,155 @@
-Return-Path: <linux-kernel+bounces-222410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07DE291010E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:04:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6916691011B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A255A1F22B4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:04:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A1A1C2134A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BBE1A8C2E;
-	Thu, 20 Jun 2024 10:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DCA19B3E1;
+	Thu, 20 Jun 2024 10:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3EGJx0E"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ei2jqAh+"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F0319DF46;
-	Thu, 20 Jun 2024 10:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C111A4F2B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718877877; cv=none; b=tUVMHEFh71N3lSZbLHF0EXtHdM+VX5IYd17SdjSjX1HJaGc9eo2MZnL1xKJhvExURy9cj8sxFX9Cs385pwGZDdZKnuaSbb1bzXwhgCePWqQ6qLPt0xR2p7YJ8JaKq6AHj+doGbuS9Jo05z3+b5H7Jmoa+b9ChEg3wam1yBqc9G8=
+	t=1718877961; cv=none; b=bEDPUtBnzlErOeQrSiWPq3R6EVZzt6k5hQkxVbxLYFhJbQ3GllpPWhtiu3ntI7QBCBDgT8kKbkEweMA6GvVKYHQQVe/kwwEa+s+0aAVII763VXiY2z5StlmeqEcdy+s2IVJnqhADhpxSV5KBUDD06b1RugKdH34GXacnbHelAgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718877877; c=relaxed/simple;
-	bh=qssxO3H97xYgQ6phX7ShXtegLep8IN5IzW1nwrh59UQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iyVX3SCY1TcYs91Z0Uovvn0BY0BsOjG6KXtC3ZZJLHMX3DkPqHxvpQcMXi6E3x2R6mB0NnoT3Ub+/JZL8X364WHbtlugTKima2lmcQiiLWDnM0iohAyv7t5+ymk7ezhShVmwJnfZxBzNawGz7ZHrDf6RsPL9L2PhnxjvbyGGgGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3EGJx0E; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6fc36865561so311364a34.3;
-        Thu, 20 Jun 2024 03:04:35 -0700 (PDT)
+	s=arc-20240116; t=1718877961; c=relaxed/simple;
+	bh=eLn2BPyqwtOsU8OJXbiU6ccNFc9v0T0ok33O1jzeSrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CSC+83HzA0qrV4+CTEirRfqvd8Tfz8zTXWKP6zQ8eVA0mx8bDSrzsGyWOBHoGc9Bwm5FopKAVuTTS1mk8rL+GusZnZu3u1irKiDWXq+I07Gi5Wy4H5L+HvyNdov2HJqBUAFYBLk8YDuQoveC3XVxWLNXcOZIXKjQUOWxReOyYPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ei2jqAh+; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70601bcfddcso675511b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 03:05:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718877875; x=1719482675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qssxO3H97xYgQ6phX7ShXtegLep8IN5IzW1nwrh59UQ=;
-        b=B3EGJx0E3p4MH7DCwhk4udRzfvOaBzSNnCG/G7cb8VY8pHHWlgaUPt3mZhm0KKsuda
-         iSoXsL58n7GwFkqA7GbCyJY/PWYQCeilnUkgUQlOCKRsQ+WANdipFNuRsUT2PT9QvwWC
-         dUYnAXQRP/kARMzAM1mb3Fh8zVl9jZLn0JaNSOVzoRCHMylZzYumz2I7T8P4eAsThXGu
-         MRF7R1AXu9NI3stEVgeQjEj2PsTI6nuoZlxJaJ3Uc+U+HpKkaea4e9MIxS8sImbxM/c4
-         3I1XuKaVI5jfzhXoqCdJq67myYJWzpIew4bEKbqe0tgL5p406QdZS4/w8OI/OW8fjTPt
-         jExw==
+        d=linaro.org; s=google; t=1718877959; x=1719482759; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NhWu1fk/lCmbQUjWXvQO3v9FYyNWP0Nqdx7mwhkHrbY=;
+        b=ei2jqAh+Dw283azot3aTYueuA2c9WNYQRurx099Xo8IsQSZ8ebgJE8W2S1ZjIRfpLm
+         t1tIZNHjywvOpY3z7wCXWciMoqjwLLpYlk+4sykm6YO3uNIwYhzQ4IHvgUw2yldjLK61
+         KIX7sErrkHKsA7CtMXY68w5ZAFiCNk8up7F6Qj3ygCD0mGZACxooUWgNJxwmV+RdfTra
+         kiRI3Q0rW3zdh1Ali9WPQgfYLvIfHmMXbi9+gnQGBQHrLfJE6vDqUkwILgcfvpeiuslW
+         6Tsh4t0HsROVt5aBdZLAHJyHVKkW1ttZ9leoIM1kPJg5nSDcPZ0xxziWIl8cYu675X5c
+         6pzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718877875; x=1719482675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qssxO3H97xYgQ6phX7ShXtegLep8IN5IzW1nwrh59UQ=;
-        b=PbeG4RXhUbne5d4pUzUuSszyKD4asDnOXUhJazaRxX7IceXDou0YwmHPfGuetiGh8K
-         +QAmix37ttjNOayqlMZR/xhBVJ/YGQZLr58l9HmpgXtWQCr37lzFC50l+UdHXi3aWGDG
-         xeutCDnJZQmFkx7c+OAqU6mV9xIbdh75F9XrXG8f3Bxw8ikDHsMUlHbAXH099ToOhaun
-         Yh75hZrAJobSeLUzpWDSEbQS5nztWoXDjMQa4uZEkpuDxszwLK6EqrssJtsM3L3eUDNq
-         1JQ7IidTh3MrRv7XrTkQnCpLhiELW8HcjhCC8pcKmf3VxBI7JIkOC94UiAJQYUFylglS
-         5G0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXrVG9V9+BwSD+v4pR/saN8BqmxNDR5qPi4jwY69xr6C+vD3y6z549WZLoE5sim7G2SYaxf8AtROK7FVdU3lQoMHGuD0gDyPpWKZfNQYaVEZ3HeUCbDyOhbd1EhQC+JFvLIyGCF4VMlitLt5U2Udn/KVfTbRNkGnoOgXV3I2nkgt3HdOpbUSg==
-X-Gm-Message-State: AOJu0YzXRNaHLPdqjCNMt1v72rwhGyx4rIUp1rN/0ZIT+ezkmGg67r7u
-	XcNcXJ7uoaBrI94dZFPUaUvtBg31/rZTmr01NmUNDpeKBp/dmRrS8yHvOtin2PIlY5AeJwX3WGn
-	cOVugNb5ga0heAQmF/e/B0hw6gQk=
-X-Google-Smtp-Source: AGHT+IEsRoAAbHHrux8RoioxqnCJYdrd6SXFlI9sC177VWlo2dg4V8kucLTYTM3m9HxTRR2I126OQYwbcrhsErp1o4o=
-X-Received: by 2002:a05:6830:310f:b0:6f9:b69f:b64f with SMTP id
- 46e09a7af769-70076a1c558mr5925673a34.35.1718877874742; Thu, 20 Jun 2024
- 03:04:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718877959; x=1719482759;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NhWu1fk/lCmbQUjWXvQO3v9FYyNWP0Nqdx7mwhkHrbY=;
+        b=oZz382OvB7Y3UQb4fKnpC9vMRTQHQN584m3agfF3QHYhEUqUEOgCLZO0w/rMsb39Vy
+         G7z4JUtg0QlkbAhdzO6RCt+MRfBQMjMiGFCXP8j5qGy94DN56rvzW90jT0d/qsjlERP5
+         bFl27ZhLXPVNcMAEhIFu2gGnLdC1QhtQshaRIJhym9miEI3C72XQUcZSGLSmbQ/UJslf
+         iiFkpjCfbeN0Tx9ti/VPl5Lu+60y4LZdaNdfxv8DiNdNM19cYH3lvaTFTow4Zminv/JH
+         VIemgc7+DYGTzy4eFuD1fKYfoxMvze+zs21Swj1g8DnPcNMh4pL+4r+4Cx42NbpbeRXW
+         s/WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKnjC2qKrlp59XjdENvOyMaMDBCCZz8RZ1jMP88qX8ZiljBGSirTaxvXNBFySNjUsQifDM9Pmfsvahf4XF1bImCPfv6uMsIqCm1EZD
+X-Gm-Message-State: AOJu0Yw4e0iQUMqy8hA4YtgCWqOABBR6XaV6L8vM4fUeAheL5hFt5T2k
+	rH3aQ3ezdNwLH1rsMluJaGkcieRXR0n/FSvhUDBg1dSrdKc5pGlNbe7i0a9EMGo=
+X-Google-Smtp-Source: AGHT+IFCjK0hOvRoxLRcYP4hRKS/qRnuD1YRVk3loP8lgbZXBmRWqsOlKdxH+a0aQHsc5stH6MChIg==
+X-Received: by 2002:aa7:9291:0:b0:706:337f:1ab7 with SMTP id d2e1a72fcca58-706337f1d69mr4258838b3a.34.1718877959125;
+        Thu, 20 Jun 2024 03:05:59 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc91e0fbsm12080981b3a.9.2024.06.20.03.05.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 03:05:58 -0700 (PDT)
+Date: Thu, 20 Jun 2024 15:35:56 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
+	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com,
+	lyude@redhat.com, robh@kernel.org, daniel.almeida@collabora.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH v2 00/10] Device / Driver and PCI Rust abstractions
+Message-ID: <20240620100556.xsehtd7ii25rtn7k@vireshk-i7>
+References: <20240618234025.15036-1-dakr@redhat.com>
+ <20240619120407.o7qh6jlld76j5luu@vireshk-i7>
+ <ZnLQxZjtsmDJb4I1@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <171817619547.14261.975798725161704336@noble.neil.brown.name>
- <20240615-fahrrad-bauordnung-a349bacd8c82@brauner> <20240617093745.nhnc7e7efdldnjzl@quack3>
- <20240618-wahr-drossel-19297ad2a361@brauner> <20240620094151.cuamehtaioenokyv@quack3>
-In-Reply-To: <20240620094151.cuamehtaioenokyv@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 20 Jun 2024 13:04:22 +0300
-Message-ID: <CAOQ4uxgqct2ru571NwzMqVaYOJwwr05La=OTecMCVQZJko9gPw@mail.gmail.com>
-Subject: Re: [PATCH v2] VFS: generate FS_CREATE before FS_OPEN when
- ->atomic_open used.
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, NeilBrown <neilb@suse.de>, James Clark <james.clark@arm.com>, 
-	ltp@lists.linux.it, linux-nfs@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnLQxZjtsmDJb4I1@pollux>
 
-On Thu, Jun 20, 2024 at 12:41=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 18-06-24 16:19:37, Christian Brauner wrote:
-> > > AFAICT this will have a side-effect that now fsnotify_open() will be
-> > > generated even for O_PATH open. It is true that fsnotify_close() is g=
-etting
-> >
-> > Thanks! That change seemed sensible because a close() event is
-> > generated.
-> >
-> > But I don't agree that generating events for O_PATH fds doesn't make
-> > sense on principle. But I don't care if you drop events for O_PATH now.
->
-> Well, I can be convinced otherwise but I was not able to find a compeling
-> usecase for it. fanotify(8) users primarily care about file data
-> modification / access events and secondarily also about directory content
-> changes (because they change how data can be accessed). And creation of
-> O_PATH fds does not seem to fall into either of these categories...
+On 19-06-24, 14:36, Danilo Krummrich wrote:
+> If you want to split `cpufreq::Registration` in `new()` and `register()`, you
+> probably want to pass the registration object to `Devres` in `register()`
+> instead.
+> 
+> However, I wouldn't recommend splitting it up (unless you absolutely have to),
+> it's way cleaner (and probably less racy) if things are registered once the
+> registration is created.
 
-Not to mention the fact that security_file_open() and therefore
-fsnotify_open_perm() is not called for O_PATH open.
+> The PCI abstraction did not need to change for that, since it uses the
+> generalized `driver::Registration`, which is handled by the `Module` structure
+> instead.
+> 
+> However, staging/dev also contains the `drm::drv::Registration` type [1], which
+> in principle does the same thing as `cpufreq::Registration` just for a DRM
+> device.
+> 
+> If you're looking for an example driver making use of this, please have a look
+> at Nova [1].
 
-It's not that we have to keep FS_OPEN balanced with
-FS_OPEN_PERM, but I think it will be quite odd to get FS_OPEN without
-FS_OPEN_PERM.
+Thanks for the pointers Danilo.
 
-I think that open an O_PATH fd fits perfectly to the design "pre path"
-events [1].
-I have designated FAN_PATH_ACCESS (with dir id + name info) for lookup
-permission.
-Perhaps open an O_PATH can generate the same event with additional child id
-or another dedicated FAN_PATH_OPEN event.
+There is more to it now and I still don't know what's the best way
+forward. :(
 
-Thanks,
-Amir.
+Devres will probably work well with the frameworks that provide a bus,
+where a device and driver are matched and probe/remove are called.
+Obviously Devres needs a struct device, whose probing/removal can
+allocate/free resources.
 
-[1] https://github.com/amir73il/man-pages/commits/fan_pre_path/
+The CPUFreq framework is a bit different. There is no bus, device or
+driver there. The device for the framework is the CPU device, but we
+don't (can't) really bind a struct driver to it. There are more layers
+in the kernel which use the CPU devices directly, like cpuidle, etc.
+And so the CPU device isn't really private to the cpufreq/cpuidle
+frameworks.
+
+Most of the cpufreq drivers register with the cpufreq core from their
+module_init() function, and unregister from module_exit(). There is no
+probe/remove() callbacks available. Some drivers though have a
+platform device/driver model implemented over an imaginary platform
+device, a hack implemented to get them working because of special
+requirements (one of them is to allow defer probing to work). The
+driver I am implementing, cpufreq-dt, also has one such platform
+device which is created at runtime. But there will be others without a
+platform device.
+
+The point is that the Rust cpufreq core can't do the Devres stuff
+itself and it can't expect a struct device to be made available to it
+by the driver. Some cpufreq drivers will have a platform device, some
+won't.
+
+One way to make this whole work is to reintroduce the Data part, just
+for cpufreq core, but I really don't want to do it. What else can be
+done ?
+
+-- 
+viresh
 
