@@ -1,283 +1,422 @@
-Return-Path: <linux-kernel+bounces-223148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEFA2910E7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:28:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3CF910E7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66696283586
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:28:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4741C2214B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2331B583F;
-	Thu, 20 Jun 2024 17:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE271B3F2B;
+	Thu, 20 Jun 2024 17:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2IWdu9w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JCpG+w4e"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1F91B581C;
-	Thu, 20 Jun 2024 17:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C73F1AD3E9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718904399; cv=none; b=YIeCS2YEQ1jIJCydYOoXKzHMG/aMlgeS4BAdxjKfMYn87DSo7pSCctvTyRRF0dx84RWC3MmKnbb/Q08FiVz0DAGkOGAECnIJHNGLAojLhafbNFcjSzcGXi3z97k18V8aPfDCrbUTt3nP7GXeaVJIKlx5wub/ePHnIjvg2Ns5jgc=
+	t=1718904443; cv=none; b=gL2GAtDZvwUIans0NUw8UVGeEwQvvRMrMStjdsZIpkb8JiC+r+ti1zTGEdJAg/0o8TUyacXCDLcIqR1ymNJIJMHHai6+b2eWW4/h18wc6mPPDhqKW4ZjpQ0c55C/OtLiOBl9PepW46B8OCAyWAmGJRFpZsOVYHvHAq+cJk8artA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718904399; c=relaxed/simple;
-	bh=+ioW9PGXM5JNheurSEkJYdNNFACKVmnqQ5gOf6deJkA=;
+	s=arc-20240116; t=1718904443; c=relaxed/simple;
+	bh=21Z2KoSY4xBNDnfqbWZnENwlbbY4zm00qHp8dh5UZJ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t+iasa4jVuyfZJ73mhavU6FFuVEHR0vaIlOSTHOuRR+oywlESoAa0ltxljRkj+ivHHOwUVPqqXMAgwz2VXFW+0HiV33xq/ne929ybLcD7s5rLlxQJExyUowjyjl+jz1C6ofAbHVOHYRkSTz7cbqbSu/7Ere134NFQ2QRknFjG68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L2IWdu9w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08703C2BD10;
-	Thu, 20 Jun 2024 17:26:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718904399;
-	bh=+ioW9PGXM5JNheurSEkJYdNNFACKVmnqQ5gOf6deJkA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=L2IWdu9w8QpGmDU4jpMorwOxnZHvPIpsNMxk1G8L33FKNWkike2wwS+oNQX8FYoZc
-	 wHNxh3005ByYCLMUzF/Ti4h+ny4DecMl9ooocR2D+d/28ySNDXlHlfl4njg/ZfRK5Q
-	 umQlu89oGeoqSjFFwLfPHoS36UbGI4FB967NYz8fmyetULJEONX1dsNoLztTPkiI5i
-	 Qx9pKfAZRCPBx3NgAdVDyKY3mihBpCBc9IPQvhJGu5PzAeywOEG6fUtDqi0HsGviUC
-	 JcaURxrWjJYnzvBx1TB0WVUf9y4rwbJa5B0Xk12gYsGQEAJeO4LY3/1qCcwNcVwZgM
-	 jLaw6rIBw4ieA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9D4CFCE0B67; Thu, 20 Jun 2024 10:26:38 -0700 (PDT)
-Date: Thu, 20 Jun 2024 10:26:38 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Leonardo Bras <leobras.c@gmail.com>
-Cc: Leonardo Bras <leobras@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
-Message-ID: <ec8088fa-0312-4e98-9e0e-ba9a60106d58@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240511020557.1198200-1-leobras@redhat.com>
- <ZkJsvTH3Nye-TGVa@google.com>
- <CAJ6HWG7pgMu7sAUPykFPtsDfq5Kfh1WecRcgN5wpKQj_EyrbJA@mail.gmail.com>
- <68c39823-6b1d-4368-bd1e-a521ade8889b@paulmck-laptop>
- <ZkQ97QcEw34aYOB1@LeoBras>
- <17ebd54d-a058-4bc8-bd65-a175d73b6d1a@paulmck-laptop>
- <ZnPUTGSdF7t0DCwR@LeoBras>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GZqcptlD6rXv74nDJMNpf4svqFjG01MauHK20eaPlDHgdg97jYgGyRBMiITUjdrWiipdQHIPwXpNMoqCnN0Ea5RdGTT4krR1pkqse8UVs7ij5Kse3nLnBWrrXchmtAzg71VbJmA5J77B2z2W0jRz/p7TLw/5kNl/FBiuS5upkH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JCpG+w4e; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718904440;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0k//qXc3WKzLba11jjH2L7NUDmBJVHz0KH+EMGhJYYM=;
+	b=JCpG+w4eXubFPOLcjBHbvQyVcNj5zv1qXvNekAs/jlnDJx0bvYOoapXnhPiuIeKQiXbZMD
+	zGZUnjD+BpkJuXEGS+vOO3qyHLGmojIrafOIUxbBBGx7hyjTKB1puwKmw1Ayx66JWdPJS0
+	CxTtCfLZXls7cM74bMbNv4VUEQmQ/RY=
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
+ [209.85.210.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-530-9fS9wt-6N6ifdWkUZOojnA-1; Thu, 20 Jun 2024 13:27:16 -0400
+X-MC-Unique: 9fS9wt-6N6ifdWkUZOojnA-1
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-7008d9677baso1202977a34.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:27:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718904436; x=1719509236;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0k//qXc3WKzLba11jjH2L7NUDmBJVHz0KH+EMGhJYYM=;
+        b=cz+aP6NpYBC0B7tE06TYwwhKGgS0e2q+GkiiDkuZPnXMEUixWQXRbO05UJqAQrqOnQ
+         7GLO1bR7a5XJekpItv4aJNk0I7NJoumBuFc14ZWhcFlj4n6UVFc8DC8jBSWN6xskwoke
+         zGqd9FIXf1E0nJIqMXR2L3kwiObFaMBoW4I9k3yTZetc3xZvs92llhXjyV8jsfchBqFb
+         hVOvwezaaH4+E+aTY7XLB/n4FaIDX1j30uToabHuyMYDd00+Sdb0McF0Mz7dHbAN6AlW
+         eSp0DEAjmt5N+HPpLllhxmEItPm+zO9E356ZNHdEoSTVrUl2sv9NZzJqiYaDJK9g5eGl
+         MPAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHPh0DGUHGWKcuodz9tTiTFh7bWnmaHJ5R8rP+iDx19ICG3I10tgAWyW/mxPFDYf8p4eLX9WYBk1i/LkpcVReKFMpsonOxE4yJWSNc
+X-Gm-Message-State: AOJu0Yw/na/I3km6Q19xN8wZ1n6fQIe3ru148GJia5mC3Hg2Uu2BZvJ9
+	lDCVRtTHUOdKLdLe/udMkhTis7lv9m8VRTpv3XfW2KWmjogWq9SKdtJQAVp9oqWnVIZpo2BrVx8
+	7L9GniY6DzstKRwsgTCSgmGjRcvdGrZlKazAN1qd4ipW5y7jj9N2clpFhqRWpMg==
+X-Received: by 2002:a9d:7f91:0:b0:6fd:5875:5c87 with SMTP id 46e09a7af769-700776c3a7bmr6406438a34.36.1718904435505;
+        Thu, 20 Jun 2024 10:27:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFi6RpORxFfYuissfKgzZ7acsH/4bISUB8Kn89g72eJZyt0ZCQmvv35tSwJt/0Mgnd5BRxyXg==
+X-Received: by 2002:a9d:7f91:0:b0:6fd:5875:5c87 with SMTP id 46e09a7af769-700776c3a7bmr6406415a34.36.1718904434998;
+        Thu, 20 Jun 2024 10:27:14 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::13])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b2a5ee8bc0sm90981666d6.121.2024.06.20.10.27.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 10:27:14 -0700 (PDT)
+Date: Thu, 20 Jun 2024 12:27:12 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: John Ogness <john.ogness@linutronix.de>, 
+	Derek Barbosa <debarbos@redhat.com>, rostedt@goodmis.org, senozhatsky@chromium.org, 
+	linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org, williams@redhat.com, 
+	jlelli@redhat.com, lgoncalv@redhat.com, jwyatt@redhat.com, aubaker@redhat.com
+Subject: Re: [BUG] printk/nbcon.c: watchdog BUG: softlockup - CPU#x stuck for
+ 78s
+Message-ID: <xt5rhuygy2wwugsbdxemfrlkfcj6czfsmdkkjlqpmf4lcvc4pk@o6j6errohzfs>
+References: <ZnHF5j1DUDjN1kkq@debarbos-thinkpadt14sgen2i.remote.csb>
+ <87msni13lv.fsf@jogness.linutronix.de>
+ <dtde47mfm3amxg4mbrnbct53ehpfbekdvrjhhd6j5tzl7lulwj@zwdsvkq3orag>
+ <ZnKo_n9LJnMCPSCA@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZnPUTGSdF7t0DCwR@LeoBras>
+In-Reply-To: <ZnKo_n9LJnMCPSCA@pathway.suse.cz>
 
-On Thu, Jun 20, 2024 at 04:03:41AM -0300, Leonardo Bras wrote:
-> On Wed, May 15, 2024 at 07:57:41AM -0700, Paul E. McKenney wrote:
-> > On Wed, May 15, 2024 at 01:45:33AM -0300, Leonardo Bras wrote:
-> > > On Tue, May 14, 2024 at 03:54:16PM -0700, Paul E. McKenney wrote:
-> > > > On Mon, May 13, 2024 at 06:47:13PM -0300, Leonardo Bras Soares Passos wrote:
-> > > > > On Mon, May 13, 2024 at 4:40 PM Sean Christopherson <seanjc@google.com> wrote:
-> > > > > >
-> > > > > > On Fri, May 10, 2024, Leonardo Bras wrote:
-> > > > > > > As of today, KVM notes a quiescent state only in guest entry, which is good
-> > > > > > > as it avoids the guest being interrupted for current RCU operations.
-> > > > > > >
-> > > > > > > While the guest vcpu runs, it can be interrupted by a timer IRQ that will
-> > > > > > > check for any RCU operations waiting for this CPU. In case there are any of
-> > > > > > > such, it invokes rcu_core() in order to sched-out the current thread and
-> > > > > > > note a quiescent state.
-> > > > > > >
-> > > > > > > This occasional schedule work will introduce tens of microsseconds of
-> > > > > > > latency, which is really bad for vcpus running latency-sensitive
-> > > > > > > applications, such as real-time workloads.
-> > > > > > >
-> > > > > > > So, note a quiescent state in guest exit, so the interrupted guests is able
-> > > > > > > to deal with any pending RCU operations before being required to invoke
-> > > > > > > rcu_core(), and thus avoid the overhead of related scheduler work.
-> > > > > >
-> > > > > > Are there any downsides to this?  E.g. extra latency or anything?  KVM will note
-> > > > > > a context switch on the next VM-Enter, so even if there is extra latency or
-> > > > > > something, KVM will eventually take the hit in the common case no matter what.
-> > > > > > But I know some setups are sensitive to handling select VM-Exits as soon as possible.
-> > > > > >
-> > > > > > I ask mainly because it seems like a no brainer to me to have both VM-Entry and
-> > > > > > VM-Exit note the context switch, which begs the question of why KVM isn't already
-> > > > > > doing that.  I assume it was just oversight when commit 126a6a542446 ("kvm,rcu,nohz:
-> > > > > > use RCU extended quiescent state when running KVM guest") handled the VM-Entry
-> > > > > > case?
-> > > > > 
-> > > > > I don't know, by the lore I see it happening in guest entry since the
-> > > > > first time it was introduced at
-> > > > > https://lore.kernel.org/all/1423167832-17609-5-git-send-email-riel@redhat.com/
-> > > > > 
-> > > > > Noting a quiescent state is cheap, but it may cost a few accesses to
-> > > > > possibly non-local cachelines. (Not an expert in this, Paul please let
-> > > > > me know if I got it wrong).
-> > > > 
-> > > > Yes, it is cheap, especially if interrupts are already disabled.
-> > > > (As in the scheduler asks RCU to do the same amount of work on its
-> > > > context-switch fastpath.)
+On Wed, Jun 19, 2024 at 11:46:38AM GMT, Petr Mladek wrote:
+> On Tue 2024-06-18 17:52:19, Andrew Halaney wrote:
+> > On Tue, Jun 18, 2024 at 09:03:00PM GMT, John Ogness wrote:
+> > > Hi Derek,
 > > > 
-> > > Thanks!
+> > > On 2024-06-18, Derek Barbosa <debarbos@redhat.com> wrote:
+> > > > The realtime team at Red Hat has recently backported the latest printk
+> > > > changes present in 6.6-rt stable (HEAD at 20fd4439f644 printk: nbcon:
+> > > > move locked_port flag to struct uart_port) to CentOS Stream 9 for
+> > > > performance improvements and printk-related bugfixes.
+> > > >
+> > > > Since merging this said code, we've hit an interesting bug during
+> > > > testing, specifically, on larger systems, a softlockup may be reported
+> > > > by the watchdog when there is a heavy amount of printing to tty
+> > > > devices (whether it be through printk, /dev/kmsg, etc).
+> > > >
+> > > > We have a modicum of reasonable suspicion to believe that
+> > > > nbcon_reacquire, or some other nbcon mechanism *may* be causing such
+> > > > behavior.
+> > > >
+> > > > Since we've succesfully reproduced this in the Kernel-ARK/Fedora-ELN
+> > > > (osbuild-rt), and linux-rt-devel 6.10.rc4-rt6, we are reporting this
+> > > > bug upstream.
+> > > >
+> > > > Anyway, here is a more in-depth description, along with some call traces.
+> > > >
+> > > > Description:
+> > > >
+> > > > On x86 systems with a large amount of logical cores (nproc ~> 60), a
+> > > > softlockup can be observed with accompanying call trace when a large
+> > > > amount of "printing" activity is taking place.
+> > > >
+> > > > As shown in the call traces appended below, during some kind of numa
+> > > > balancing/numa_migration after a task_numa_fault --where a set of
+> > > > processess are being migrated/swapped between two CPUs-- there is a
+> > > > busy thread that is being waited on (in the order of seconds), causing
+> > > > a livelock. Additional investigation of collected vmcores by toggling
+> > > > panic on softlockup shows that the waiting thread may be waiting for a
+> > > > thread looping with nbcon_reacquire.
+> > > >
+> > > > I suspect that some logic within nbcon_context_try_acquire may be a
+> > > > good place to start. My understanding of the code becomes a bit fuzzy
+> > > > here, so apologies in advance for any erroneous statements. As I see
+> > > > it, there may be something happening during migration (or under heavy
+> > > > load) in which nbcon_reacquire() is in a non-migratable or
+> > > > non-preemtible state as it is attempting to regain access to a
+> > > > lost/taken console. It could very well be a situation in which context
+> > > > was forcefully taken from the printing thread.
+> > > >
+> > > > Alternatively, Andrew Halaney <ahalaney@redhat.com> suspects that it
+> > > > is the loop within nbcon_kthread_func() -- since there is nothing that
+> > > > would yield the task in said loop (cant_migrate()), the migrate code
+> > > > would be essentially waiting forever for the aforementioned loop to
+> > > > "finish". I believe in PREEMPT_RT, there would be a preemption point
+> > > > here. Furthermore, in his investigation, there were signs that the
+> > > > loop was just iterating up until the crash, leaving reason to believe
+> > > > that task would be the culprit.
+> > > >
+> > > > In fact, with the following diff, we noticed this output:
+> > > >
+> > > > ```
+> > > > ahalaney@x1gen2nano ~/git/linux-rt-devel (git)-[tags/v6.10-rc4-rt6-rebase] % git diff | cat
+> > > > diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> > > > index bb9689f94d30..d716b72bf2f8 100644
+> > > > --- a/kernel/printk/nbcon.c
+> > > > +++ b/kernel/printk/nbcon.c
+> > > > @@ -1075,6 +1075,7 @@ static int nbcon_kthread_func(void *__console)
+> > > >       *
+> > > >       * This pairs with rcuwait_has_sleeper:A and nbcon_kthread_wake:A.
+> > > >       */
+> > > > +    trace_printk("Before rcuwait_wait_event()\n");
+> > > >      ret = rcuwait_wait_event(&con->rcuwait,
+> > > >                   nbcon_kthread_should_wakeup(con, ctxt),
+> > > >                   TASK_INTERRUPTIBLE); /* LMM(nbcon_kthread_func:A) */
+> > > > @@ -1086,7 +1087,10 @@ static int nbcon_kthread_func(void *__console)
+> > > >      if (ret)
+> > > >          goto wait_for_event;
+> > > >
+> > > > +    trace_printk("Starting do while(backlog) loop \n");
+> > > > +    unsigned long int loop = 0;
+> > > >      do {
+> > > > +        trace_printk("On loop %lu\n", ++loop);
+> > > >          backlog = false;
+> > > >
+> > > >          cookie = console_srcu_read_lock();
+> > > > @@ -1121,6 +1125,7 @@ static int nbcon_kthread_func(void *__console)
+> > > >          console_srcu_read_unlock(cookie);
+> > > >
+> > > >      } while (backlog);
+> > > > +    trace_printk("End of while(backlog) loop, looped %lu times \n", loop);
+> > > >
+> > > >      goto wait_for_event;
+> > > > ```
+> > > >
+> > > > The output:
+> > > >
+> > > > ```
+> > > > [ 1681.309720] pr/ttyS0-18       21.N... 893365994us : nbcon_kthread_func: On loop 2117
+> > > > [ 1681.309727] pr/ttyS0-18       21.N... 893374418us : nbcon_kthread_func: On loop 2118
+> > > > [ 1681.309734] pr/ttyS0-18       21.N... 893382860us : nbcon_kthread_func: On loop 2119
+> > > > (...)
+> > > > [ 1681.396193] pr/ttyS0-18       21.N... 954571399us : nbcon_kthread_func: On loop 14025
+> > > > [ 1681.396200] pr/ttyS0-18       21.N... 954576525us : nbcon_kthread_func: On loop 14026
+> > > > [ 1681.396207] pr/ttyS0-18       21.N... 954581561us : nbcon_kthread_func: On loop 14027
+> > > > [ 1681.396213] pr/ttyS0-18       21.N... 954584954us : nbcon_kthread_func: On loop 14028
+> > > > [ 1681.396220] pr/ttyS0-18       21.N... 954590111us : nbcon_kthread_func: On loop 14029
+> > > > [ 1681.396223] ---------------------------------
+> > > > [ 1681.396230] Kernel panic - not syncing: softlockup: hung tasks
+> > > > (...)
+> > > > ```
+> > > >
+> > > > Demonstrating evidence that the nbcon kthread function is invoked
+> > > > continuously up until the point of panic. I do believe that this
+> > > > approach is more sound than my initial hints (or it could be more than
+> > > > a handful of threads). Some traces around
+> > > > serial8250_console_write_thread() also denote continuous calls without
+> > > > any holdups.
+> > > >
+> > > > As a sidenote, we are seeing the softlockup with !CONFIG_PREEMPT_RT
 > > > 
-> > > > 
-> > > > > I don't have a historic context on why it was just implemented on
-> > > > > guest_entry, but it would make sense when we don't worry about latency
-> > > > > to take the entry-only approach:
-> > > > > - It saves the overhead of calling rcu_virt_note_context_switch()
-> > > > > twice per guest entry in the loop
-> > > > > - KVM will probably run guest entry soon after guest exit (in loop),
-> > > > > so there is no need to run it twice
-> > > > > - Eventually running rcu_core() may be cheaper than noting quiescent
-> > > > > state every guest entry/exit cycle
-> > > > > 
-> > > > > Upsides of the new strategy:
-> > > > > - Noting a quiescent state in guest exit avoids calling rcu_core() if
-> > > > > there was a grace period request while guest was running, and timer
-> > > > > interrupt hits the cpu.
-> > > > > - If the loop re-enter quickly there is a high chance that guest
-> > > > > entry's rcu_virt_note_context_switch() will be fast (local cacheline)
-> > > > > as there is low probability of a grace period request happening
-> > > > > between exit & re-entry.
-> > > > > - It allows us to use the rcu patience strategy to avoid rcu_core()
-> > > > > running if any grace period request happens between guest exit and
-> > > > > guest re-entry, which is very important for low latency workloads
-> > > > > running on guests as it reduces maximum latency in long runs.
-> > > > > 
-> > > > > What do you think?
-> > > > 
-> > > > Try both on the workload of interest with appropriate tracing and
-> > > > see what happens?  The hardware's opinion overrides mine.  ;-)
+> > > This trace shows that the thread is successfully printing
+> > > lines. So I doubt nbcon_reacquire() is involved here.
 > > > 
-> > > That's a great approach!
+> > > Assuming the ringbuffer is getting filled as fast or faster than the
+> > > thread can print, then we effectively have this:
 > > > 
-> > > But in this case I think noting a quiescent state in guest exit is 
-> > > necessary to avoid a scenario in which a VM takes longer than RCU 
-> > > patience, and it ends up running rcuc in a nohz_full cpu, even if guest 
-> > > exit was quite brief. 
+> > > DEFINE_STATIC_SRCU(test_srcu);
+> > > static DEFINE_SPINLOCK(test_lock);
 > > > 
-> > > IIUC Sean's question is more on the tone of "Why KVM does not note a 
-> > > quiescent state in guest exit already, if it does in guest entry", and I 
-> > > just came with a few arguments to try finding a possible rationale, since 
-> > > I could find no discussion on that topic in the lore for the original 
-> > > commit.
+> > > static int kthread_func(void *arg)
+> > > {
+> > > 	unsigned long flags;
+> > > 
+> > > 	do {
+> > > 		srcu_read_lock_nmisafe(&test_srcu);
+> > > 		spin_lock_irqsave(&test_lock, flags);
+> > > 		udelay(5000);  // print a line to serial
+> > > 		spin_unlock_irqrestore(&test_lock, flags);
+> > > 		srcu_read_unlock_nmisafe(&test_srcu);
+> > > 	} while (true);
+> > > 
+> > > 	return 0;
+> > > }
+> > > 
+> > > And since the thread has a nice value of -20, it will get a lot of CPU
+> > > time allocated to it. Is that a problem? Shouldn't the scheduler
+> > > eventually kick the task off the CPU after its timeslice is up?
 > > 
-> > Understood, and maybe trying it would answer that question quickly.
-> > Don't get me wrong, just because it appears to work in a few tests doesn't
-> > mean that it really works, but if it visibly blows up, that answers the
-> > question quite quickly and easily.  ;-)
+> > I trust you better than myself about this, but this is being reproduced
+> > with a CONFIG_PREEMPT_DYNAMIC=y + CONFIG_PREEMPT_VOLUNTARY=y setup (so
+> > essentially the current mode is VOLUNTARY). Does that actually work that
+> > way for a kthread in that mode? I've been trying to reason with myself
+> > on when the scheduler actually will get involved and stop the above
+> > kthread_func() to run something else.
 > > 
-> > But yes, if it appears to work, there must be a full investigation into
-> > whether or not the change really is safe.
+> > > 
+> > > > Some questions arise from this, as we've never encountered this in our
+> > > > testing with John Ogness' console_blast (kudos to <jwyatt@redhat.com>)
+> > > > and other printk torture tests that have been compiled
+> > > > [here](https://gitlab.com/debarbos/printktorture).
+> > > 
+> > > Yes, that is odd since those tests will ensure that the printing thread
+> > > never exits its printing loop because it will never catch up. So it
+> > > should be the same situation.
+> > > 
+> > > > We are curious to understand why is it that the printing thread is
+> > > > chosen by the NUMA balancer for migration/swap, and how that
+> > > > interaction is handled within the code (in other words, how else would
+> > > > nbcon handle a migrated printing thread?).
+> > > 
+> > > The nbcon console can only be owned when migration is disabled. In the
+> > > case of the printing thread for serial, this is under the
+> > > spin_lock_irqsave(). The NUMA balancer would only be able to migrate the
+> > > thread outside of the spin_lock critical section. And outside of the
+> > > spin_lock critical section, the thread does not own/hold any resources
+> > > at all. So it should be no problem to migrate it.
+> > > 
+> > > > Our next round of tests aim to disable numa balancing on
+> > > > large-multi-core-systems to determine whether it is the NUMA
+> > > > mechanisms + nbcon interactions are at fault here.
+> > > 
+> > > I am curious if starting a kthread using the code I wrote above (with
+> > > nice=-20) would cause similar issues.
+> > >
 > > 
-> > 							Thanx, Paul
+> > Just in case I did something dumb, here's the module I wrote up:
+> > 
+> > ahalaney@x1gen2nano ~/git/linux-rt-devel (git)-[tags/v6.10-rc4-rt6-rebase] % cat kernel/printk/test_thread.c                         :(
+> > /*
+> >  * Test making a kthread similar to nbcon's (under load)
+> >  * to see if it also has issues with migrate_swap()
+> >  */
+> > #include "linux/nmi.h"
+> > #include <asm-generic/delay.h>
+> > #include <linux/kthread.h>
+> > #include <linux/module.h>
+> > #include <linux/sched.h>
+> > 
+> > DEFINE_STATIC_SRCU(test_srcu);
+> > static DEFINE_SPINLOCK(test_lock);
+> > static struct task_struct *kt;
+> > static bool dont_stop = true;
+> > 
+> > static int test_thread_func(void *unused) {
+> > 	unsigned long flags;
+> > 
+> > 	pr_info("Starting the while true loop\n");
+> > 	do {
+> > 		int cookie = srcu_read_lock_nmisafe(&test_srcu);
+> > 		spin_lock_irqsave(&test_lock, flags);
+> > 		touch_nmi_watchdog();
+> > 		udelay(5000);  // print a line to serial
+> > 		spin_unlock_irqrestore(&test_lock, flags);
+> > 		srcu_read_unlock_nmisafe(&test_srcu, cookie);
 > 
-> Hello Paul, Sean, sorry for the delay on this.
+> Does it help to add here?
 > 
-> I tested x86 by counting cycles (using rdtsc_ordered()).
+> 		cond_resched();
 > 
-> Cycles were counted upon function entry/exit on 
-> {svm,vmx}_vcpu_enter_exit(), and right before / after 
-> __{svm,vmx}_vcpu_run() in the same function.
+> > 	} while (dont_stop);
+> > 
+> > 	return 0;
+> > }
+> > 
+> > static int __init test_thread_init(void) {
+> > 
+> > 	pr_info("Creating test_thread at -20 nice level\n");
+> > 	kt = kthread_run(test_thread_func, NULL, "test_thread");
+> > 	if (IS_ERR(kt)) {
+> > 		pr_err("Failed to make test_thread\n");
+> > 		return PTR_ERR(kt);
+> > 	}
+> > 	sched_set_normal(kt, -20);
+> > 
+> > 	return 0;
+> > }
+> > 
+> > static void __exit test_thread_exit(void) {
+> > 	dont_stop = false;
+> > 	kthread_stop(kt);
+> > }
+> > 
+> > module_init(test_thread_init);
+> > module_exit(test_thread_exit);
+> > MODULE_LICENSE("GPL");
+> > ahalaney@x1gen2nano ~/git/linux-rt-devel (git)-[tags/v6.10-rc4-rt6-rebase] %
+> > 
+> > That shows a softlockup quite quickly on the CPU that thread is
+> > running on (as opposed to what Derek reports, where migrate_swap() is
+> > going on and the softlockup reports on the other CPU in the swapping of
+> > tasks). I guess that's because of the touch_nmi_watchdog() happening
+> > in serial8250_console_write_thread().
+> > 
+> > The below is without the touch_nmi_watchdog() in the above snippet
+> > (just to show what happens as written in your reply).
+> > 
+> >     [   72.018480] Creating test_thread at -20 nice level
+> >     [   72.018632] Starting the while true loop
+> >     [   99.673116] watchdog: BUG: soft lockup - CPU#53 stuck for 26s! [test_thread:2628]
+> >     [   99.673119] Modules linked in: test_thread rfkill intel_rapl_msr intel_rapl_common sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel mei_me ipmi_si kvm mei acpi_power_meter i2c_i801 mgag200 iTCO_wdt rapl acpi_ipmi i2c_algo_bit iTCO_vendor_support mxm_wmi pcspkr i2c_smbus joydev lpc_ich ioatdma intel_cstate intel_uncore ipmi_devintf ipmi_msghandler acpi_pad fuse xfs sd_mod t10_pi sg ahci crct10dif_pclmul libahci crc32_pclmul ixgbe crc32c_intel libata megaraid_sas ghash_clmulni_intel mdio dca wmi dm_mirror dm_region_hash dm_log dm_mod
+> >     [   99.673159] CPU: 53 PID: 2628 Comm: test_thread Kdump: loaded Not tainted 6.10.0-rc4-rt6+ #7
+> >     [   99.673162] Hardware name: Intel Corporation S2600CWR/S2600CWR, BIOS SE5C610.86B.01.01.0018.072020161249 07/20/2016
+> >     [   99.673163] RIP: 0010:_raw_spin_unlock_irqrestore+0x1f/0x40
 > 
-> The main idea was to get cycles spend in the procedures before entering 
-> guest (such as reporting RCU quiescent state in entry / exit) and the 
-> cycles actually used by the VM. 
+> This is the point where the interrupts were enabled. It allowed to
+> handle pending timers, including watchdog_timer_fn().
+> It printed this softlockup report.
 > 
-> Those cycles were summed-up and stored in per-cpu structures, with a 
-> counter to get the average value. I then created a debug file to read the 
-> results and reset the counters.
+> It means that test_thread() never scheduled in the do while() loop.
 > 
-> As for the VM, it got 20 vcpus, 8GB memory, and was booted with idle=poll.
-> 
-> The workload inside the VM consisted in cyclictest in 16 vcpus 
-> (SCHED_FIFO,p95), while maintaining it's main routine in 4 other cpus 
-> (SCHED_OTHER). This was made to somehow simulate busy and idle-er cpus. 
-> 
->  $cyclictest -m -q -p95 --policy=fifo -D 1h -h60 -t 16 -a 4-19 -i 200 
->   --mainaffinity 0-3
-> 
-> All tests were run for exaclty 1 hour, and the clock counter was reset at 
-> the same moment cyclictest stared. After that VM was poweroff from guest.
-> Results show the average for all CPUs in the same category, in cycles.
-> 
-> With above setup, I tested 2 use cases:
-> 1 - Non-RT host, no CPU Isolation, no RCU patience (regular use-case)
-> 2 - PREEMPT_RT host, with CPU Isolation for all vcpus (pinned), and 
->     RCU patience = 1000ms (best case for RT)
-> 
-> Results are:
-> # Test case 1:
-> Vanilla: (average on all vcpus)
-> VM Cycles / RT vcpu:		123287.75 
-> VM Cycles / non-RT vcpu:	709847.25
-> Setup Cycles:			186.00
-> VM entries / RT vcpu:		58737094.81
-> VM entries / non-RT vcpu:	10527869.25
-> Total cycles in RT VM:		7241564260969.80
-> Total cycles in non-RT VM:	7473179035472.06
-> 
-> Patched: (average on all vcpus)
-> VM Cycles / RT vcpu:		124695.31        (+ 1.14%)
-> VM Cycles / non-RT vcpu:	710479.00        (+ 0.09%)
-> Setup Cycles:			218.65           (+17.55%)
-> VM entries / RT vcpu:		60654285.44      (+ 3.26%) 
-> VM entries / non-RT vcpu:	11003516.75      (+ 4.52%)
-> Total cycles in RT VM:		7563305077093.26 (+ 4.44%)
-> Total cycles in non-RT VM:	7817767577023.25 (+ 4.61%)
-> 
-> Discussion:
-> Setup cycles raised in ~33 cycles, increasing overhead.
-> It proves that noting a quiescent state in guest entry introduces setup 
-> routine costs, which is expected.
-> 
-> On the other hand, both the average time spend inside the VM and the number 
-> of VM entries raised, causing the VM to have ~4.5% more cpu cycles 
-> available to run, which is positive. Extra cycles probably came from not 
-> having invoke_rcu_core() getting ran after VM exit.
+> I believe that the cond_resched() would cure the problem.
 > 
 > 
-> # Test case 2:
-> Vanilla: (average on all vcpus)
-> VM Cycles / RT vcpu:		123785.63
-> VM Cycles / non-RT vcpu:	698758.25
-> Setup Cycles:			187.20
-> VM entries / RT vcpu:		61096820.75
-> VM entries / non-RT vcpu:	11191873.00
-> Total cycles in RT VM:		7562908142051.72
-> Total cycles in non-RT VM:	7820413591702.25
+> >     [   99.673179] Code: 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 c6 07 00 0f 1f 00 f7 c6 00 02 00 00 74 01 fb 65 ff 0d 09 17 9c 4a <74> 06 c3 cc cc cc cc cc 0f 1f 44 00 00 c3 cc cc cc cc cc 66 66 66
+> >     [   99.673180] RSP: 0018:ffffb10887dafed0 EFLAGS: 00000246
+> >     [   99.673182] RAX: 00000000e3ddc104 RBX: 0000000000000000 RCX: 0000000000001035
+> >     [   99.673183] RDX: 0000000000af11a8 RSI: 0000000000000286 RDI: ffffffffc0e1b700
+> >     [   99.673184] RBP: ffffb1088a4c77b0 R08: 0000000000000035 R09: 0000000000000035
+> >     [   99.673185] R10: 0000000000017ffd R11: ffffffffb5649760 R12: ffff8b5f0caa4f00
+> >     [   99.673186] R13: ffff8b4f87c04e80 R14: 0000000000000286 R15: ffff8b5f200e3380
+> >     [   99.673187] FS:  0000000000000000(0000) GS:ffff8b6ebf880000(0000) knlGS:0000000000000000
+> >     [   99.673189] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >     [   99.673190] CR2: 000055a7bd4f3b68 CR3: 0000001f35820003 CR4: 00000000001706f0
+> >     [   99.673191] Call Trace:
+> >     [   99.673192]  <IRQ>
+> >     [   99.673193]  ? watchdog_timer_fn+0x21f/0x2a0
+> >     [   99.673197]  ? __pfx_watchdog_timer_fn+0x10/0x10
+> >     [   99.673198]  ? __hrtimer_run_queues+0xfa/0x270
+> >     [   99.673202]  ? hrtimer_interrupt+0xf4/0x390
+> >     [   99.673205]  ? __sysvec_apic_timer_interrupt+0x52/0x160
+> >     [   99.673208]  ? sysvec_apic_timer_interrupt+0x6f/0x80
+> >     [   99.673210]  </IRQ>
+> >     [   99.673211]  <TASK>
+> >     [   99.673212]  ? asm_sysvec_apic_timer_interrupt+0x1a/0x20
+> >     [   99.673215]  ? __pfx_delay_tsc+0x10/0x10
+> >     [   99.673221]  ? _raw_spin_unlock_irqrestore+0x1f/0x40
+> >     [   99.673222]  test_thread_func+0x5e/0xff0 [test_thread]
+> >     [   99.673225]  ? __pfx_test_thread_func+0x10/0x10 [test_thread]
+> >     [   99.673226]  kthread+0xec/0x110
+> >     [   99.673230]  ? __pfx_kthread+0x10/0x10
+> >     [   99.673232]  ret_from_fork+0x3a/0x50
+> >     [   99.673235]  ? __pfx_kthread+0x10/0x10
+> >     [   99.673237]  ret_from_fork_asm+0x1a/0x30
+> >     [   99.673239]  </TASK>
+> > 
+> > 
+> > If you mimic that touch_nmi_watchdog() above the udelay() in the function above,
 > 
-> Patched: (average on all vcpus)
-> VM Cycles / RT vcpu:		123137.13        (- 0.52%)
-> VM Cycles / non-RT vcpu:	696824.25        (- 0.28%)
-> Setup Cycles:			229.35           (+22.52%)
-> VM entries / RT vcpu:		61424897.13      (+ 0.54%) 
-> VM entries / non-RT vcpu:	11237660.50      (+ 0.41%)
-> Total cycles in RT VM:		7563685235393.27 (+ 0.01%)
-> Total cycles in non-RT VM:	7830674349667.13 (+ 0.13%)
+> The touch_nmi_watchdog() caused that watchdog_timer_fn() did not see
+> that "test_thread" kthread did not schedule. By other words, it did
+> hide the problem.
 > 
-> Discussion:
-> Setup cycles raised in ~42 cycles, increasing overhead.
-> It proves that noting a quiescent state in guest entry introduces setup 
-> routine costs, which is expected.
-> 
-> The average time spend inside the VM was reduced, but the number of VM  
-> entries raised, causing the VM to have around the same number of cpu cycles 
-> available to run, meaning that the overhead caused by reporting RCU 
-> quiescent state in VM exit got absorbed, and it may have to do with those 
-> rare invoke_rcu_core()s that were bothering latency.
-> 
-> The difference is much smaller compared to case 1, and this is probably 
-> because there is a clause in rcu_pending() for isolated (nohz_full) cpus 
-> which may be already inhibiting a lot of invoke_rcu_core()s.
-> 
-> Sean, Paul, what do you think?
 
-First, thank you for doing this work!
+Is it reasonable to consider removing the touch_nmi_watchdog()'s in
+8250_port.c? There's some rather old ones, and some new ones with the
+nbcon transition, and they sort of made finding this issue more
+indirect.
 
-I must defer to Sean on how to handle this tradeoff.  My kneejerk reaction
-would be to add yet another knob, but knobs are not free.
+Could be some valid reason they exist still, but to me it seems sensible
+to remove if we can't think of any good reasons.
 
-							Thanx, Paul
+Thanks,
+Andrew
+
 
