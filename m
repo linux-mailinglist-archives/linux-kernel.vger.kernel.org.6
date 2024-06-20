@@ -1,173 +1,122 @@
-Return-Path: <linux-kernel+bounces-223410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1BB91128B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:50:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4728F911285
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0F6CB2796E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:48:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002661F22005
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D541BA863;
-	Thu, 20 Jun 2024 19:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378D61B9AC9;
+	Thu, 20 Jun 2024 19:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ceUta9yT"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pM0lwtAc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4302D61B
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E13F376E9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 19:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718912886; cv=none; b=pl6h2O5y1EShyWKKazA2NpilXfVqYA7YIYzxe8Bytfd0PuWZazZEtSHzwsq/IS2tboNODFQ4TaYxKoXAZsZplZB4xWuuon/gpdfhKg6Bu1WPzdIAjSe0Iwp2SHSXN64exTaDUE67fDKYBVECkhCFrQMEoN1Xpn+TROFZ0kQ3pNQ=
+	t=1718912928; cv=none; b=Srp834lFbuu3i/66onFx6CB+gOJZzHC3nD5+TAu7T7ag3rj446tj7cZajW25WmNXBM7K4t7VUxjMqAvfxVXcgQ12zUitGihKn8A/Pk07qwOuc/9vA0+zz5hKPmPowcZcK5aMRAf2sGnYy6UCbXxtwisodUz0AoWzQKNK3Kw1zy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718912886; c=relaxed/simple;
-	bh=awUqwE93wXcTKvo7ol88UKTqegDT1C9qpGNi09weIsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KZK5nezGHOM2C5AcXw6LLhpb2Co0KPZuIM+7wznpeIN2Azyq8QNSBT8uReCQS8qZ7smt2CofR1BNsCMe1ruRrSi34CGj+IKVCtgzgb3XoZ01mc6vAzzVQygPOs+fj1Id8n1juJIG/4XRK5k42L4CrF/KwFSvkgrxNByvOe0YwZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ceUta9yT; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f6b0a40721so9712175ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:48:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718912884; x=1719517684; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=z3gaAAA9tFzbTfrmb6ppBykngzDxoq0Px2MEPQ4ymLY=;
-        b=ceUta9yTbf9Mqsk+Eiz+3nzwUsvOYtrT5LSwDmxVIVCUj52gRtg0h5AKXV4Za6iUwa
-         PbCxrjbyh2PIGBbIwv2MrAvhpvuROkcCatw/yuw96tijQg6VQo8nU9eZmbJNcij81DKN
-         aGfgcSl8IRhW/oCfzBHEy0kqdS6uaQXTv3bZo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718912884; x=1719517684;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z3gaAAA9tFzbTfrmb6ppBykngzDxoq0Px2MEPQ4ymLY=;
-        b=qyaoriCi4ypEtR/ErbjhAwa75Xa9vyr8b1Zp9TI2rU+dJletWxf9DR3Z0iZX9SSuJw
-         tkEADFKaDfqCH+WMb2a+xvqroCvS9qCjWIVS/nrjs7CWSOfOFiv42TKKa0U43dhYFqpa
-         jBJVs6rCC3RyBMSgFUrF/Lmq2s7gz3fby7QjfHds3UwZau9zb/4AE61pLpCycjB6eY8T
-         +CpFgGsutdLlm+H0K5422VrJZfVQD243cqYXTqLfNubzOfdrxoDlYzG++pj4ZwB5TaBb
-         uDjOEPvO4Ya3CbxTNmQRmhk/frYjxVfrTRr7qrzakHp492m+RzIpsmAeaT21ZJ1+BwZw
-         t0Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhi0i0K5C3BxofUpqkMaPf1zDMlvdC5XQ8UzdFJU7LnkhCCzZGYJxAZYfEUhNbVYlJpV4DTK8h2nErO4zwsTJyAaxA4g+R1kaep7ur
-X-Gm-Message-State: AOJu0YzUoL3Mk0A6H0QhBYblDSRjwnZjiBe8nT2uLIPtv/BPqysUMR/Y
-	dFk7otB5GJ6NOI6g/h4I3z/LB9JVlYrr5H3rfk+fmZ9EfxrWY1wqGxiiEwIWsg==
-X-Google-Smtp-Source: AGHT+IEwL8sWyeO+AO4RDSEBECQdktpgu8GHQ417gFO1L6pv/TF+6VFPQWQRBNh6mAnIj3O6xdidjg==
-X-Received: by 2002:a17:902:ee86:b0:1f7:2051:c816 with SMTP id d9443c01a7336-1f9aa40521dmr60222285ad.35.1718912883581;
-        Thu, 20 Jun 2024 12:48:03 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:3c9c:a224:3ec6:17d2])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-1f9eb323636sm10805ad.102.2024.06.20.12.48.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 12:48:03 -0700 (PDT)
-Date: Thu, 20 Jun 2024 12:48:01 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, David Lin <yu-hao.lin@nxp.com>,
-	Francesco Dolcini <francesco@dolcini.it>
-Subject: Re: [PATCH] [RFC] mwifiex: Fix NULL pointer deref
-Message-ID: <ZnSHcZttq79cJS3l@google.com>
-References: <20240619070824.537856-1-s.hauer@pengutronix.de>
- <87wmmll5mf.fsf@kernel.org>
+	s=arc-20240116; t=1718912928; c=relaxed/simple;
+	bh=A3CWG5i/e70gRo5pIeSegfmVZT4eoyfj4m3/HwUAuzg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZeSPYh5gg6y5vrKDjsP/SHJmbUHYLxhRpVrAdGFMDE2mgcxfKcWjcgXmki2ewaUSKzn5+4wGRWAmaNfZhgj35fkPhpTuyojaz+KmYkS+/cIwlRLST2snHax87N6xsNrB5DZulXGpf8aXk8oDsBJp5oeiy1wtYRzV9H4b7eCTVno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pM0lwtAc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 08DD1C2BD10;
+	Thu, 20 Jun 2024 19:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718912928;
+	bh=A3CWG5i/e70gRo5pIeSegfmVZT4eoyfj4m3/HwUAuzg=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=pM0lwtAc1C1i58XsfyGI7HA0hgaQEfXXSNe6xzc311szkgXW2Rjz/srmceTEZGhWW
+	 11an7D9SEpsOzDugZAmbXGXZ8mDpBa4AEQEO6v9Kd+3n7UvrnJNUWjs6gnXXuttRI4
+	 X0w1JugULlokbAmN8qt98Jfm/Sjucf8OCRtIAfgXeLuJKb+h1mk39QwpVRGOpa51fB
+	 eYNi2C1e1IOOC3DKbdtdUv0Y3VZ6g7wVF8qmbXPbGQ30+jOz5WBTFTeQRbCaUKXXd4
+	 NM6ZaVzbnH3pi0BQCRS5tiHZrhaUv9rQT9rAtnkMnF1ITNku6cEUoKDqw96R2oPIhw
+	 2A/o4cMgZA+Pg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7C4C2BA1A;
+	Thu, 20 Jun 2024 19:48:47 +0000 (UTC)
+From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
+Date: Thu, 20 Jun 2024 21:48:32 +0200
+Subject: [PATCH] kbuild: scripts/gdb: bring the "abspath" back
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wmmll5mf.fsf@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240620-jag-fix_gdb_py_symlinks-v1-1-36a0f0217fbf@samsung.com>
+X-B4-Tracking: v=1; b=H4sIAI+HdGYC/x2M0QqDMAwAf0XyvEINU5m/MkapJtZM7aSBoYj/b
+ vHx4O4OUE7CCm1xQOK/qPxihvJRQD/6GNgIZQa0+LQ1WvP1wQyyuUCdW3en+zJLnNRgSS+yxE3
+ lEXK9Js7afX5/zvMCD8QIh2kAAAA=
+To: Jan Kiszka <jan.kiszka@siemens.com>, 
+ Kieran Bingham <kbingham@kernel.org>, 
+ Masahiro Yamada <masahiroy@kernel.org>, 
+ Douglas Anderson <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Joel Granados <j.granados@samsung.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1168;
+ i=j.granados@samsung.com; h=from:subject:message-id;
+ bh=7bxRLJCekPbUSVVSEsWXoyZjnOy26Cg5VuTjO3pr+oE=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGZ0h57LponIbCQBtuQrDWoo00muw2dl46UfY
+ lbQoIiRBEF2cYkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmdIeeAAoJELqXzVK3
+ lkFPNXsL+QH5ec584sP4USYWj0gOobplkUCoahv1IEkdH+Ickt99MPv4hjWhWf15yQ0FS2tlHsu
+ C8d04+dFpneDHgf0QA5gdxYkNeeLGspljAX+RqwHeocx/Emvp+/v1/BxPELQkpWfcaWBjxyqt2z
+ EmCdqTnRONrblxq0rZnEA9g+qDtwomMV5S16AULcNUG2H8Kb52fJNBauR2ddmRDDz8Lz7HjPWOQ
+ mlGFCLoQaPkmMW+zBxvoa1pZ8YRMO9jqxMTchqFwML+7vWOa6Ffa0HjCpS0SA5Uw4J6O95/KbQ2
+ wA1JYegCO7FlomsJKErRe2uxhr0KH080xk2AhC3syyMh8mZYOGu03MkB1SUTHZ7QxoBh49JJD1c
+ YqISa7rhlaron+Vexeyxe5/XDqqhi+Lm1R6Yraf7qYY3zLUxiOqDnDdn7S49pRBsNfDmChwsmuZ
+ Qdi7aXNBLXepGGdU6ltmLObwZhayozdQh+3xkmFJljYqxJmYu6nJHX4d5RamJQ2nftZQUYjFEg5
+ rA=
+X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
+ auth_id=70
+X-Original-From: Joel Granados <j.granados@samsung.com>
+Reply-To: j.granados@samsung.com
 
-Hi Sascha,
+From: Joel Granados <j.granados@samsung.com>
 
-On Wed, Jun 19, 2024 at 11:05:28AM +0300, Kalle Valo wrote:
-> Sascha Hauer <s.hauer@pengutronix.de> writes:
-> 
-> > When an Access Point is repeatedly started it happens that the
-> > interrupts handler is called with priv->wdev.wiphy being NULL, but
-> > dereferenced in mwifiex_parse_single_response_buf() resulting in:
-> >
-> > | Unable to handle kernel NULL pointer dereference at virtual address 0000000000000140
-...
-> > | pc : mwifiex_get_cfp+0xd8/0x15c [mwifiex]
-> > | lr : mwifiex_get_cfp+0x34/0x15c [mwifiex]
-> > | sp : ffff8000818b3a70
-> > | x29: ffff8000818b3a70 x28: ffff000006bfd8a5 x27: 0000000000000004
-> > | x26: 000000000000002c x25: 0000000000001511 x24: 0000000002e86bc9
-> > | x23: ffff000006bfd996 x22: 0000000000000004 x21: ffff000007bec000
-> > | x20: 000000000000002c x19: 0000000000000000 x18: 0000000000000000
-> > | x17: 000000040044ffff x16: 00500072b5503510 x15: ccc283740681e517
-> > | x14: 0201000101006d15 x13: 0000000002e8ff43 x12: 002c01000000ffb1
-> > | x11: 0100000000000000 x10: 02e8ff43002c0100 x9 : 0000ffb100100157
-> > | x8 : ffff000003d20000 x7 : 00000000000002f1 x6 : 00000000ffffe124
-> > | x5 : 0000000000000001 x4 : 0000000000000003 x3 : 0000000000000000
-> > | x2 : 0000000000000000 x1 : 0001000000011001 x0 : 0000000000000000
-> > | Call trace:
-> > |  mwifiex_get_cfp+0xd8/0x15c [mwifiex]
-> > |  mwifiex_parse_single_response_buf+0x1d0/0x504 [mwifiex]
-> > |  mwifiex_handle_event_ext_scan_report+0x19c/0x2f8 [mwifiex]
-> > |  mwifiex_process_sta_event+0x298/0xf0c [mwifiex]
-> > |  mwifiex_process_event+0x110/0x238 [mwifiex]
-> > |  mwifiex_main_process+0x428/0xa44 [mwifiex]
-> > |  mwifiex_sdio_interrupt+0x64/0x12c [mwifiex_sdio]
-> > |  process_sdio_pending_irqs+0x64/0x1b8
-> > |  sdio_irq_work+0x4c/0x7c
-> > |  process_one_work+0x148/0x2a0
-> > |  worker_thread+0x2fc/0x40c
-> > |  kthread+0x110/0x114
-> > |  ret_from_fork+0x10/0x20
-> > | Code: a94153f3 a8c37bfd d50323bf d65f03c0 (f940a000)
-> > | ---[ end trace 0000000000000000 ]---
-> >
-> > Fix this by adding a NULL check before dereferencing this pointer.
-> >
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> >
-> > ---
-> >
-> > This is the most obvious fix for this problem, but I am not sure if we
-> > might want to catch priv->wdev.wiphy being NULL earlier in the call
-> > chain.
-> 
-> I haven't looked at the call but the symptoms sound like that either we
-> are enabling the interrupts too early or there's some kind of locking
-> problem so that an other cpu doesn't see the change.
+Use the "abspath" call when symlinking the gdb python scripts in
+scripts/gdb/linux. This call is needed to avoid broken links when
+running the scripts_gdb target on a different build directory
+(O=builddir).
 
-I agree with Kalle that there's a different underlying bug involved, and
-(my conclusion:) we shouldn't whack-a-mole the NULL pointer without
-addressing the underlying problem.
+Fixes: 659bbf7e1b08 ("kbuild: scripts/gdb: Replace missed $(srctree)/$(src) w/ $(src)")
+Signed-off-by: Joel Granados <j.granados@samsung.com>
+---
+ scripts/gdb/linux/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Looking a bit closer (and without much other context to go on): I believe 
-that one potential underlying problem is the complete lack of locking
-between cfg80211 entry points (such as mwifiex_add_virtual_intf() or
-mwifiex_cfg80211_change_virtual_intf()) and most stuff in the main loop
-(mwifiex_main_process()). The former call sites only hold the wiphy
-lock, and the latter tends to ... mostly not hold any locks, but rely on
-sequentialization with itself, and using its |main_proc_lock| for setup
-and teardown. It's all really bad and ready to fall down like a house of
-cards at any moment. Unfortunately, no one has spent time on
-rearchitecting this driver.
+diff --git a/scripts/gdb/linux/Makefile b/scripts/gdb/linux/Makefile
+index fd1402c0a1a1..fcd32fcf3ae0 100644
+--- a/scripts/gdb/linux/Makefile
++++ b/scripts/gdb/linux/Makefile
+@@ -5,7 +5,7 @@ ifdef building_out_of_srctree
+ symlinks := $(patsubst $(src)/%,%,$(wildcard $(src)/*.py))
+ 
+ quiet_cmd_symlink = SYMLINK $@
+-      cmd_symlink = ln -fsn $(patsubst $(obj)/%,$(src)/%,$@) $@
++      cmd_symlink = ln -fsn $(patsubst $(obj)/%,$(abspath $(src))/%,$@) $@
+ 
+ always-y += $(symlinks)
+ $(addprefix $(obj)/, $(symlinks)): FORCE
 
-So it's possible that mwifiex_process_event() (mwifiex_get_priv_by_id()
-/ mwifiex_get_priv()) is getting a hold of a not-fully-initialized
-'priv' structure.
+---
+base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+change-id: 20240620-jag-fix_gdb_py_symlinks-21d9d0de75a2
 
-BTW, in case I can reproduce and poke at your scenario, what exactly
-is your test case? Are you just starting / killing / restarting hostapd
-in a loop? Are you running a full network manager stack that's doing
-something more complex (e.g., initiating scans)? Can you reproduce with
-some more targeted set of `iw` commands? (`iw phy ... interface add ...;
-iw dev ... del`) Is there anything else interesting in the dmesg logs?
-(Some of the worst behaviors in this driver come when we see command
-timeouts and mwifiex_reinit_sw(), for example.)
+Best regards,
+-- 
+Joel Granados <j.granados@samsung.com>
 
-Or barring that, can you get some kind of trace of the nl80211 command
-sequence, so it's clearer which command(s) are involved leading up to
-the problem?
 
-Brian
 
