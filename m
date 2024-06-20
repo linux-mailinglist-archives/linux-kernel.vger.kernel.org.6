@@ -1,166 +1,128 @@
-Return-Path: <linux-kernel+bounces-222050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1D290FC1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F9590FC1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:10:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43BB61C231D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:08:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8101A1C20EAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 05:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078D52D611;
-	Thu, 20 Jun 2024 05:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072462D058;
+	Thu, 20 Jun 2024 05:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="b5nEx0pe"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="h0jXyEqc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YDIK+DYQ"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF30637E
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 05:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B1022625;
+	Thu, 20 Jun 2024 05:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718860121; cv=none; b=iwc8uYa02125f8gBy5VTy9TzYReHy+5DrgDyT/v+R4yeDyb8cLxO5Ey9fvXqC7l4x8rLxxVnjhO20JyHK5a/yv1bDb+tu4ziVf0R45xcW0qXuzcWcvEco5DHLT2wSf0raRwKLTG0316eDAI5yl7ewYvFOm4/pgHQYV3y3/uPlHI=
+	t=1718860237; cv=none; b=E1ERnnPZ0LhmJTPP4Hz1LMmubxj/E9vYSVbSKWwUU56ykW7ON4kZxZ2rH7DX1kbvtVt01gdRXelvwGBnafdYEGMgItpUDBDaCGK1dDEU3HT2U6aue46o2w663+S+z0vznl6HAkUZkBPIx6fyqpt14JMN5HcsY2HWR6S6fLHW3eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718860121; c=relaxed/simple;
-	bh=PGEcj8aZ0X8uBbNFw1pg4Ohn4geSnMhLB5GTcNk6DQ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R5E1nkwzI1yJLWSmSLE6OkM0HyjOTSrY6EeEnILaLJ0ZZIAiQ8/FkMkIJ/w5uyqT0BznKz9PkmU7F0mJE8T91FDEXTojy3bts43XKf6rz7gqYk0iY90sUmRK6kRajsEhxBzosrlY3zIqNlZfURV1ZbXnL9Au5Ixzsv4TGYc621E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=b5nEx0pe; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52bc121fb1eso470636e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 22:08:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1718860114; x=1719464914; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mKJ7tA0uxmt7GivwOPU2qhqe93NAGJzAby4kZnJZbdI=;
-        b=b5nEx0pe/gYDTazkR0ULDSkSFzo2OCtd+RwRt6i8ho9DXOc9KFIztYM0M5+sTPaQBZ
-         B87ozhePoCzBF3YLmq7sYAVwv+JHfYw8ltYq0H6UNyNdF9J/+9AXKwH6j8N8tstOnViZ
-         z/yY0Np0abBy9p3aXMAfKA/9RlPbpRXArNGI0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718860114; x=1719464914;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mKJ7tA0uxmt7GivwOPU2qhqe93NAGJzAby4kZnJZbdI=;
-        b=PyjQI0K3Z48weOGqcTymMLs9FYLSUJZ3qcBl2Rwkn10SN23+r9wjOQdQpmCv8ZRQaA
-         KL6/YBHolMQNkHVsMuebWBB3yLfWTouA4H7xDbpmhVAk/cQw7VSHiFlVlKq8GDJabqEt
-         IFV/m2rBuH7RBAvXGRnWcCMeNQ9qt8sTCONRN9ojYTrwWs+QJrdYg5xez0I8RCIdc8He
-         FINVv8guQAlwcMAxxhxAhCtDyyg13h0ygRFr66dCc4DEc5A70UxdUzbS7WnAXVYtRiiY
-         L5HmjDBUBLPLib/BczOeMOETIp3FXPehH0J9+w3aq+oNuYxtzetPadfu4mKvCsxjY4gr
-         MGtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTZL6w4tXbl/TugxnWsbQPlCIUMkdbF0mEmbB4nO+ChhqkMwROO07vHMZedOXwS/yk8NDdh8hYkcc3hzlIlB/VcfwopyoqOnsPyMw2
-X-Gm-Message-State: AOJu0YxCVK1c7zlOo2OEVqsfV1sufhl1QLho6bwY04RffV3fq0i1M/+E
-	p3QYaAEl6Ah5Txxq7sZCJwLHRG8h1BYQV1fJRU0fJkE6lBEgzwEV3EqMusZfJA+RZ2NmZOi4WKU
-	oipmEVA==
-X-Google-Smtp-Source: AGHT+IGXIqmTDbiR3t0SpyQm52lffRpgljMwAJQ56fp1oQ3hA+11KFPfntm8PFtsQe71oKQ6rBLoBQ==
-X-Received: by 2002:a05:6512:39c5:b0:52c:a465:c61f with SMTP id 2adb3069b0e04-52ccaa59ff1mr2614438e87.56.1718860113697;
-        Wed, 19 Jun 2024 22:08:33 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cceaf18fesm166083e87.248.2024.06.19.22.08.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 22:08:32 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52bc121fb1eso470604e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2024 22:08:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXN4S3jbDR1HpZ3gnvB89aq2OVsY/b0H/S+EFQKQyVkbNK2/f+3w0MX1zJUbtU+Bb1W96e7A9OeZNuJNB89WIKMJU9i887v966o0duL
-X-Received: by 2002:a17:907:a0d5:b0:a6f:bd27:3f13 with SMTP id
- a640c23a62f3a-a6fbd273fccmr98231066b.34.1718860091359; Wed, 19 Jun 2024
- 22:08:11 -0700 (PDT)
+	s=arc-20240116; t=1718860237; c=relaxed/simple;
+	bh=EcoZJnOw4ZxQicG1ODL6MLtAc4U2F8syA+1dK4SXrlE=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=omWp2Jt1quVNBFVm1QBqroSnsCFlgQmjquH+dNQTfWtp5i+gbQ5xc5AtF/cr8YlumE1MZUAVTNaNAypdJn9XYm1rCKZZswo6h7IoNFdnMgJ2j3ToieMsJyPUKpyzfbbPgyUJyEz7uZtS/SVmPKT44G3LBSoAMZofg15YP0WfMgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=h0jXyEqc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YDIK+DYQ; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 7EDEB1380508;
+	Thu, 20 Jun 2024 01:10:34 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Thu, 20 Jun 2024 01:10:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1718860234; x=1718946634; bh=oOvBZk5ku2
+	PHWJwOBdeAamQaGtBAcJuFlI+eQulJJ/g=; b=h0jXyEqcRFm3Hi22xQ+m2VpoUE
+	teCVADhBueEOqre6hUAZDNz9c7t2pIHWTblOXrTvh1c9WAuih+sekLy8D8YLPuy9
+	EyiLQOFJsE24JVv5PVVPJ6aegqsw9vzA/g8Eoedaa19JiylOWPxiFYV5Ep+Ggp/H
+	NWotnuSjeX+hol5p4ghiMw8eHa01WMMSl9pmD561f6bC8oePben+DuLAjTzdlyYw
+	zd4C7dgylUsgmPJkCZdLnsGsMDhr/sThH4KbhqGvLI5j6GGNNO98nU8nu2H4ykUI
+	7BmcDP4fLZNR/TlhBd9uaT8hQBXpzgeJGp7aQbd7eQNgLYv3zS7MYnjS8qGQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1718860234; x=1718946634; bh=oOvBZk5ku2PHWJwOBdeAamQaGtBA
+	cJuFlI+eQulJJ/g=; b=YDIK+DYQVSAZsVlNHkyZxYleCK505KY/U/rQoAaT8u4u
+	NGYRrG22n1I0ASTtmF8swqQZpRO7FrJwazf0YFZ6SRHTpuYS9GwOhLl4VrMfT0/E
+	Tn4lx9Ue4RNlJqqK/pkSgIHgU+Gcm5UIx6au27jadKGJdgJY+gjqFAn7HQnpxkAq
+	akcjwD6QAbuaUNCqZ63KMSDrf164sGa9+t7AbtbUn25OsHWUScjqePhlu/z6SLVV
+	f49PgIm/yLWg3smw/xMO/UR44aqcUVrEnWWDOWEpgdPJ8qXaoYNh73EQvbpR5Jy6
+	nggfX5r6OgDOvazKcjl3+/Ne65tE0aK1iJ6kHXatGw==
+X-ME-Sender: <xms:yrlzZsXfhMHWLqRCrCPOK53Pbu6PPue9mKKo4AI6hYkiMOI1Nw5j0A>
+    <xme:yrlzZglhMC5JetbHsGZEYC7aAq2IjDjrFY5zsS4YKs4IFCHzQN6_APR773UpWj751
+    72KlrkMKvxOtqpWMGo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefuddgleegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:yrlzZga_c1vis0bOUDGP6ANeihwp5WlYQoDine7an1U4KRFU127giA>
+    <xmx:yrlzZrUlU4ChJ8D2Jr0SE3PFhtfYFoJEQYLO-RlpUwzDgkyzWiZq-w>
+    <xmx:yrlzZmlwZ0xCQPCCw4MCFjdHLvoSBXhrOVInOh6HuWucbLq63l1kDA>
+    <xmx:yrlzZgfPu6arFSV2RA8BqkjtvytabBWNGVqPsTwohX9D8h1d2RoTBw>
+    <xmx:yrlzZohudk4mJXONopTxuL3f8xOQ1gQ27SxwbHmOOR_k1EONWOchV295>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 3AFAFB6008D; Thu, 20 Jun 2024 01:10:34 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wg8APE61e5Ddq5mwH55Eh0ZLDV4Tr+c6_gFS7g2AxnuHQ@mail.gmail.com>
- <87ed8sps71.ffs@tglx> <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
- <87bk3wpnzv.ffs@tglx> <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
- <878qz0pcir.ffs@tglx>
-In-Reply-To: <878qz0pcir.ffs@tglx>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 19 Jun 2024 22:07:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
-Message-ID: <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
-Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tejun Heo <tj@kernel.org>, mingo@redhat.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
-	vschneid@redhat.com, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	martin.lau@kernel.org, joshdon@google.com, brho@google.com, pjt@google.com, 
-	derkling@google.com, haoluo@google.com, dvernet@meta.com, 
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com, 
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com, 
-	andrea.righi@canonical.com, joel@joelfernandes.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <345dff33-86f0-4de3-90e3-9e3a13f20875@app.fastmail.com>
+In-Reply-To: <202406191414.67C589A@keescook>
+References: <563b8f82-9865-40ae-85d3-055b3bcda7d6@quicinc.com>
+ <202406191343.D361BC137@keescook>
+ <f1f08297-e8c7-4673-88b5-e9b6bff69371@app.fastmail.com>
+ <202406191414.67C589A@keescook>
+Date: Thu, 20 Jun 2024 07:10:13 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Kees Cook" <kees@kernel.org>
+Cc: "Jeff Johnson" <quic_jjohnson@quicinc.com>,
+ linux-hardening@vger.kernel.org, "open list" <linux-kernel@vger.kernel.org>
+Subject: Re: mips gcc plugin issues
+Content-Type: text/plain
 
-[ I'll try to look more at this tomorrow, but I'll send this part early ]
+On Wed, Jun 19, 2024, at 23:17, Kees Cook wrote:
+> On Wed, Jun 19, 2024 at 11:12:25PM +0200, Arnd Bergmann wrote:
+>> On Wed, Jun 19, 2024, at 22:50, Kees Cook wrote:
 
-On Wed, 19 Jun 2024 at 19:35, Thomas Gleixner <tglx@linutronix.de> wrote:
+>> The problem here is that a gcc plugin links against the
+>> compiler, not against code produced by it. I'm linking the
+>> crosstool compilers statically against libraries as much as
+>> possible in order to make them more portable between distros,
+>> but the downside of that is that plugins will only work in
+>> the environment that I was using to build these toolchains.
+>> 
+>> My build environment is an older Debian (in order to be
+>> portable to old glibc versions), but with the system compiler
+>> updated to gcc-13 (since x86 libgcc cannot be cross-compiled
+>> with an older compiler).
 >
-> When I sat there in Richmond with the sched_ext people I gave them very
-> deep technical feedback especially on the way how they integrate it:
+> Can the crosstools remove the plugin support? That seems like the best
+> solution. Kconfig test for plugin availability with:
 >
->   Sprinkle hooks and callbacks all over the place until it works by some
->   definition of works.
+> 	depends on $(success,test -e $(shell,$(CC) 
+> -print-file-name=plugin)/include/plugin-version.h)
 
-Are we even talking about the same thing?
+Good idea, yes. I still have to upload gcc-14.1 and gcc-13.3 binaries
+anyway, so I'll try turning off plugin support when I build it.
 
-There are basically two new hooks, for reweight_task (which is
-something the fair scheduler wanted and was the only user of) and for
-switching_to(), which is the class changing (again, mainly because
-there's now not a hardcoded "normal" class).
-
-And yes, there are a couple of other things where the CFS rules were
-just encoded in the core scheduler code, and they got an extra check
-or whatever (eg the SCHED_NORMAL changes and things like stop-tick -
-things that changed simply because now there isn't a single normal
-scheduler any more).
-
-The rest are mostly all the existing scheduler call-ins, afaik. Or
-_exactly_ the same thing that other schedulers already do, like the
-task_prio() stuff.
-
-Yes, there's scx_rq_activate/deactivate at CPU up/down time. Doesn't
-look unreasonable to me. Same goes for the idle cpu management.
-
-In other cases, it takes a few code sequences, turns them into helper
-functions, just to be able to re-use them.
-
-The ugliest parts are from what I can see the whole "ok, stop using
-user space input over PM events" and that "bypass" stuff is sure not
-pretty.
-
-But that's pretty much all internal to sched_ext, and seems mostly
-like a sane approach to "what if we do policy in user space"?
-
-And scx_next_task_picked() isn't pretty - as far as I understand, it's
-because there's only a "class X picked" callback ("pick_next_task()"),
-and no way to tell other classes they weren't picked.
-
-But "sprinkle hooks and callbacks all over the place"?
-
-Could things like that next_active_class() perhaps be done more
-prettily? I'm sure.
-
-But I get the very strong feeling that people wanted to limit the
-amount of changes they made to the core scheduler code.
-
-> I clearly offered you to try to resolve this amicably within a
-> reasonable time frame.
->
-> How exaclty is that equivalent to "continue to do nothing" ?
-
-So if we actually *can* resolve this amicably in three months, then
-that sounds worth it.
-
-But my reaction is "what changed"? Nothing has become more amicable in
-the last nine months. What makes the next three months special?
-
-                        Linus
+      Arnd
 
