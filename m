@@ -1,114 +1,80 @@
-Return-Path: <linux-kernel+bounces-222817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BA0910819
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:25:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3FD910823
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CAE6282694
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:25:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6FB5B24A77
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CEF1AD9EE;
-	Thu, 20 Jun 2024 14:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OL5Nao81"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAA11AE858;
+	Thu, 20 Jun 2024 14:26:20 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C421AD9D3
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 14:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA521AE09C;
+	Thu, 20 Jun 2024 14:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718893527; cv=none; b=EQlC3F1wSUQ9DcbrgY4pg7Au87RojNsiVA06iEzuBiiiCy3gfoZag3ZLOu81MxTrEUs9qqgglTt68/d6xUrc8268dmzORwjzyDx2FMmF5nmbCh7zOA/fsEeu8YisyU9ZjmvTFBarlAeygyV1dtN8nXqjIjAaZFXlPHMbkAfDXWU=
+	t=1718893580; cv=none; b=DBw9YWMmLDDUFVTLCFkKuS01dLWAQ2HSFSthczU803OVtM4mgAHzdYvv+7DzxmkVcCYft+xn5cq66gcAOvCn+BLVVoo7GxVfjlTF/fAB20x1hCRtd81ZAKgMnLli+SP9/6SYLpIswEDJaHstbtEmk+gA/mUNT3e48prXhFe0hnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718893527; c=relaxed/simple;
-	bh=SQMNm/Wgloa85H/6Ml/z+UyGgCgN9Pm78Q6nwvCTYt0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yu41Nl1za7yqbJZW55uNPjbaAHh4P4Vrmt8URgBo0Iv+pIa2M/aCuJ8CVDh8upjnbl1XecbSDufeaMxXYmMVQjrYunQgIM2fG2LZ7U+qnjeA5kdCrdMfmTMVwqRYB9MwbFlkvO7hsCceVGgcMzvKnYPZN2Mub9qTMm9oDUPC/bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OL5Nao81; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e02b571b0f6so960178276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:25:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718893525; x=1719498325; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SQMNm/Wgloa85H/6Ml/z+UyGgCgN9Pm78Q6nwvCTYt0=;
-        b=OL5Nao81oJKls2x2xNXV9G/VLUWSItD0Hd5yBzxZJLJGqX9SgVyy8wVwhM+yLR3Pt6
-         VOmNxrF+DkaYmKE/3PIJU7OlYgDBiw5J32MA5T3egKvH3nwuOu17c3OpzwWVC+/Sr/Wc
-         +uoGBWMVqX4jjUQoWheH+2bByYekd5OpcBXVzVVCajXw8b1o7GFQxrPzuEQYQhUZTgpk
-         Ia3I60JHSstYsf12I4wXrEnQJwSSVFXLhBlkltpMs9G2RDxnNbwIk7cspOMP5/LnCP4O
-         y+o9oVIEFY5qGPvpEZQw9/MRcgpz+EMbDnxh6ZGVZtMDSs0mf9ZTmOvQGBml8eRBw/aU
-         6CNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718893525; x=1719498325;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SQMNm/Wgloa85H/6Ml/z+UyGgCgN9Pm78Q6nwvCTYt0=;
-        b=p46yJ+0kypSdr48wxCCAyGhWDlIsc5URgHduWx8VF7H51fSMxTR4B4MG/uzk4siO95
-         F9hH1OYOiRh5zkS4KTbg4TYn9ztYYL6OVzdsEmc+ahjhyU4/OZrrZlpKrFmGE2V+y16g
-         xKSaBuVJ7MnrVM/tIGIZIQm7nsySt1HQLgPIbh/jzxkHEdDnu70WFzN5RAZHyLnd/L5/
-         DoaVJNVr1qN7i9ql/EAe/ezBSItKE4WAjlOFvl0hKxpbTkbDm7jBTUzWuuEaKb5sE52t
-         R58lFrQY7z+2PiGvayvDCQigX22FXGl4Iwp6sOJq0EzwVNRKZ3EjlgJxdX7M1hnzONJK
-         oKiA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1koLpHEp0Y0eURCgp+0rZzJXddEGx/UfriwQQhUKOWXugn+4ejokgCJeIhg3FlJmZ97Ss4nfg1PLJ1FSdcGCAd2nqNebHX70ZdiLU
-X-Gm-Message-State: AOJu0YxpN5OesbLGSYixjQ3FTeTj+Vcj7c9CYseoAkdSHPy65vt8mUZ1
-	itaemPYgLArLvoO/6xrO4Ik/TEmoBRSSWLPn84Qy4wcnVu/FT+KsoqbnDl9YjjgNUXNUirBonc8
-	aEFhc/8pzRGN/eyMNztylnoVDpRXJidpMy0GJlA==
-X-Google-Smtp-Source: AGHT+IHR7fpKdExIeayYO8J71ywzwR+4VpYOIFbdfii6VoqwkxcVhItB0QotOZnRgehcLXlgkNKGKaigbbl58w+Xms0=
-X-Received: by 2002:a25:8188:0:b0:dfb:1ea:23ee with SMTP id
- 3f1490d57ef6-e02be17b1bamr6168497276.37.1718893524724; Thu, 20 Jun 2024
- 07:25:24 -0700 (PDT)
+	s=arc-20240116; t=1718893580; c=relaxed/simple;
+	bh=v4/Y0Brkjokk9Q16BCvSklcARCeaZDYKuPQ9dJKC9hI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XpvXD1ZkuMvkYWccI3Rt+XWJrPAKks/XgjrSIy4bc27S+SFLOstCTF8WgZ6prFgbIyEqOU683T1apUeNLOe4stzJBGqLL7VzPKKSTMu2+kksC+CcgwMp7JuuQ01pYkoEnKqwyDth95m6+ZTPDz78/Ms0Ahx7fE3VcriB0hfEfcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860cc8.versanet.de ([94.134.12.200] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sKIjk-00065o-HX; Thu, 20 Jun 2024 16:26:04 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: Johan Jonker <jbx6244@gmail.com>, davem@davemloft.net,
+ edumazet@google.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/3] net: ethernet: arc: remove emac_arc driver
+Date: Thu, 20 Jun 2024 16:26:03 +0200
+Message-ID: <4777231.1oUyQt6lIG@diego>
+In-Reply-To: <20240620063729.55702736@kernel.org>
+References:
+ <0b889b87-5442-4fd4-b26f-8d5d67695c77@gmail.com>
+ <7d208e8c8bb577cfc790fd24cf990684020ee7c5.camel@redhat.com>
+ <20240620063729.55702736@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612-brigade-shell-1f626e7e592f@spud> <20240612-dense-resample-563f07c30185@spud>
- <CAPDyKFozcUPuMooDHVSBZomHTGKzseVf9F=YBY_uQejh9o3x7g@mail.gmail.com> <20240620-sabbath-ambulance-b8764fb386e9@spud>
-In-Reply-To: <20240620-sabbath-ambulance-b8764fb386e9@spud>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 20 Jun 2024 16:24:49 +0200
-Message-ID: <CAPDyKFre12rqqwar8sfoWyc6duS3psp4OT=W5ToG9r_EdqH89w@mail.gmail.com>
-Subject: Re: [RFC v1 1/3] mmc: mmc_spi: allow for spi controllers incapable of
- getting as low as 400k
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-mmc@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
-	cyril.jean@microchip.com, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-spi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, 20 Jun 2024 at 16:12, Conor Dooley <conor@kernel.org> wrote:
->
-> On Thu, Jun 20, 2024 at 02:50:15PM +0200, Ulf Hansson wrote:
-> > On Wed, 12 Jun 2024 at 17:48, Conor Dooley <conor@kernel.org> wrote:
-> > >
-> > > From: Conor Dooley <conor.dooley@microchip.com>
-> > >
-> > > Some controllers may not be able to reach a bus clock as low as 400 KHz
-> > > due to a lack of sufficient divisors. In these cases, the SD card slot
-> > > becomes non-functional as Linux continuously attempts to set the bus
-> > > clock to 400 KHz. If the controller is incapable of getting that low,
-> > > set its minimum frequency instead. While this may eliminate some SD
-> > > cards, it allows those capable of operating at the controller's minimum
-> > > frequency to be used.
-> > >
-> > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> >
-> > Looks reasonable to me. I assume you intend to send a non-RFC for
-> > this, that I can pick up?
->
-> I do intend doing that. How soon depends on whether or not you are
-> willing to take it on its own, or require it to come in a series with
-> the spi driver changes.
+Am Donnerstag, 20. Juni 2024, 15:37:29 CEST schrieb Jakub Kicinski:
+> On Thu, 20 Jun 2024 15:19:24 +0200 Paolo Abeni wrote:
+> > AFAICS this depends on the previous DT patch, which in turn should go
+> > via the arm tree.
+> > 
+> > Perhaps the whole series should go via the arm tree?
+> 
+> FWIW Heiko said on patch 1 that the whole thing should go via netdev...
 
-I can pick it separately, if that makes sense to you.
+yep.
 
-Kind regards
-Uffe
+Reasoning is that the rk3066 is mostly inactive, so taking that dt-patch
+through the net-tree won't create conflicts with other dt-changes here.
+
+And of course both binding and driver changes are the bigger parts
+of this series.
+
+
+
+
 
