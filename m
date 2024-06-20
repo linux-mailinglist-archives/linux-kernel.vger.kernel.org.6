@@ -1,148 +1,177 @@
-Return-Path: <linux-kernel+bounces-222178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B9290FDEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 464AB90FDF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2197AB21A46
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:40:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCFF4B23A24
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E674F211;
-	Thu, 20 Jun 2024 07:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="AZn2oVNb"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761DE4F211;
+	Thu, 20 Jun 2024 07:43:53 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317B5481DA
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9806345C18;
+	Thu, 20 Jun 2024 07:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718869203; cv=none; b=k3hGnG1INCWhFZdIEB+inL33GhM8TZyLa3TTzz1obEY6b7kpjJDmHgsBkfqQTF1R/+lVJjfJhF1WT7eqrhfV2WhyEn0Avua717X/logll/cEU7m/i/98Vg1jZNu5PMx3e1GAxM1xvoNc7nsFvGRNd61Gq0Qtx64cCUUCZdA7ZmY=
+	t=1718869433; cv=none; b=e4vCL90LTHoKk88MwCz8VCuRAVTr0y+3ahKpbHNbUq1kCEWwvUGjA6MNYNRZKExNtEapj0ik7TLRb10Mju4iJmawGlZLFeKS1Hrxp9WoiUkrp3P/8hAeYD0ZWaJ7escfMnoVPLmUkuKEAZOIuO0w2xK+FunWWrlo75oBIWDCGGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718869203; c=relaxed/simple;
-	bh=/yPsOddln1Esdy1u8224EnBJL9NW6sXJz7xHSt84Uxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J63Y3DY3nF1nRlZvGJnPhbvaMSZrpW5PbKD40AQiO+UjLc50zXOKEkFPDca7G8pevdfkXYDZWsiXIWFEZvre/Shd1ijVZ4N893wCaw3RDyPOTZHS/kd3c4eJjWu7l1qCOSO7ivfRZedeQMBxbmLkW57YnxB1NfHpl/bUnyUDPes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=AZn2oVNb; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=bGVr
-	+yK03jS/+Uz4gbUSq4VhW8opj+zgNA5uyq5XFro=; b=AZn2oVNbUjatESfxtfvo
-	g9Vs+Z1+vmJTNMPzGTVq+DU1MHCNvXNXDCq1C31C4iQQvN8B/lLqlQB3YdWUBa/2
-	9MysEn4I9s+pFFa2HSTKFgaqPaHzkzTN1lFejJhlFnw4zx1WC9wmdmUz3Yt0W0a1
-	x/gdjkCFZLtYyPRCn8CNt+oz3xmXZwds5inJ2uinfj0jQcwsoxSz94uNYYkVxRRs
-	ayQF7yuUtaSAc5vu+Z2uZMZ8Dryshf43DwG/YlIbVslaJ26588iAr7TlKjWAsomR
-	C15X68AddF9Ye0GVrfbJlGoVDo3wm3XXgE9Nswo61ismm8YoN1afxJiG2uZ7Zddh
-	1g==
-Received: (qmail 928080 invoked from network); 20 Jun 2024 09:39:52 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Jun 2024 09:39:52 +0200
-X-UD-Smtp-Session: l3s3148p1@yyOYa00bXqEgAwDPXzjQABqqX1QYyOSW
-Date: Thu, 20 Jun 2024 09:39:51 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: linux-mmc@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 3/3] mmc: renesas_sdhi: Add support for RZ/V2H(P)
- SoC
-Message-ID: <o7tswznmyk6gxoqfqvbvzxdndvf5ggkyc54nwafypquxjlvdrv@3ncwl5i5wyy3>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>, linux-mmc@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240613091721.525266-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240613091721.525266-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <prdvmtsp35yy2naohivbrya3go6vh5ji2cdjoebw3ovditcujo@bhck6tca6mhj>
- <CA+V-a8u6KAFp1pox+emszjCHqvNRYrkOPpsv5XBdkAVJQMxjmA@mail.gmail.com>
+	s=arc-20240116; t=1718869433; c=relaxed/simple;
+	bh=2wZuP2tGNgUyHH0sO6Iikxk/kDANcJqGrqJ9vQBGR2Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZUFqK4TQ5cFhjrkhhLZJH3bjgLsARBhOXCzKZQsStpx2kkL2nTW2ElCc+MVazdsn3YdihsExAbmKUevPFFgj/hlLYBXdec5SuEQh0OTihWRRHwIOobQRaFL813udpMg2vodL0uVXR1Ng4HDG6Wif/oLh1UAcCm/4aJ7HbZuZFog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: cd3f94202ed811ef9305a59a3cc225df-20240620
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:1823fc96-0938-45f2-86a2-8f5271a1870a,IP:20,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:15
+X-CID-INFO: VERSION:1.1.38,REQID:1823fc96-0938-45f2-86a2-8f5271a1870a,IP:20,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:15
+X-CID-META: VersionHash:82c5f88,CLOUDID:f45b09256ab3039538acd0274731d486,BulkI
+	D:240620153437FZVNTPXL,BulkQuantity:1,Recheck:0,SF:66|38|24|72|19|44|102,T
+	C:nil,Content:0,EDM:-3,IP:-2,URL:11|1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:n
+	il,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_ULN
+X-UUID: cd3f94202ed811ef9305a59a3cc225df-20240620
+Received: from node4.com.cn [(39.156.73.12)] by mailgw.kylinos.cn
+	(envelope-from <shaozongfan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 416432350; Thu, 20 Jun 2024 15:43:36 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 0E56516002081;
+	Thu, 20 Jun 2024 15:43:36 +0800 (CST)
+X-ns-mid: postfix-6673DDA7-866860212
+Received: from localhost.localdomain (unknown [172.30.110.47])
+	by node4.com.cn (NSMail) with ESMTPA id 8047316002081;
+	Thu, 20 Jun 2024 07:43:35 +0000 (UTC)
+From: shaozongfan <shaozongfan@kylinos.cn>
+To: chandan.babu@oracle.com,
+	djwong@kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shaozongfan <shaozongfan@kylinos.cn>
+Subject: [PATCH] xfs: fix a NULL pointer problem
+Date: Thu, 20 Jun 2024 15:43:13 +0800
+Message-Id: <20240620074312.646085-1-shaozongfan@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="33ovhsmrkgytchwi"
-Content-Disposition: inline
-In-Reply-To: <CA+V-a8u6KAFp1pox+emszjCHqvNRYrkOPpsv5XBdkAVJQMxjmA@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
+when a process using getdents64() api to get a Folder inside
+the file directory,meantime other process delete the file
+directory.it would cause an error like this:
 
---33ovhsmrkgytchwi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[  100.640099] Unable to handle kernel NULL pointer dereference at virtua=
+l address 0000000000000001
+[  100.641246] Mem abort info:
+[  100.641636]   ESR =3D 0x96000007
+[  100.642057]   Exception class =3D DABT (current EL), IL =3D 32 bits
+[  100.642815]   SET =3D 0, FnV =3D 0
+[  100.643235]   EA =3D 0, S1PTW =3D 0
+[  100.643664] Data abort info:
+[  100.644063]   ISV =3D 0, ISS =3D 0x00000007
+[  100.644574]   CM =3D 0, WnR =3D 0
+[  100.644984] user pgtable: 64k pages, 48-bit VAs, pgdp =3D 000000001351=
+05a5
+[  100.645876] [0000000000000001] pgd=3D00000001ac6b0003, pud=3D00000001a=
+c6b0003, pmd=3D00000001aad30003, pte=3D0000000000000000
+[  100.647204] Internal error: Oops: 96000007 [#1] SMP
+[  100.647843] Modules linked in: binfmt_misc fuse devlink xt_CHECKSUM ip=
+t_MASQUERADE ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_rejec=
+t_ipv4 xt_conntrack ebtable_nat ip6table_nat nf_nat_ipv6 ip6table_mangle =
+tun bridge ip6table_raw ip6table_security stp llc iptable_nat nf_nat_ipv4=
+ nf_nat iptable_mangle iptable_raw iptable_security nf_conntrack nf_defra=
+g_ipv6 nf_defrag_ipv4 rfkill ip_set nfnetlink ebtable_filter ebtables ip6=
+table_filter ip6_tables iptable_filter sch_fq_codel sunrpc vfat fat ip_ta=
+bles sr_mod cdrom virtio_gpu virtio_console virtio_net virtio_scsi net_fa=
+ilover failover dm_mirror dm_region_hash dm_log gb
+[  100.654877] Process getdents (pid: 6455, stack limit =3D 0x00000000a82=
+41109)
+[  100.655759] CPU: 0 PID: 6455 Comm: getdents Kdump: loaded Tainted: P  =
+         OE     4.19.90-25.10.v2101.ky10.aarch64 #1
+[  100.657418] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/=
+2015
+[  100.658484] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[  100.659297] pc : xfs_dir2_sf_get_parent_ino+0x1c/0x30
+[  100.660093] lr : xfs_dir2_sf_getdents.isra.0+0xd8/0x248
+[  100.660922] sp : ffff80016eda3bd0
+[  100.661476] x29: ffff80016eda3bd0 x28: ffff800167c4d900
+[  100.662310] x27: 0000000000000000 x26: 0000000000000000
+[  100.663149] x25: 0000000000000000 x24: ffff800174ca5000
+[  100.663980] x23: 000000000000000a x22: 0000000000000000
+[  100.664822] x21: ffff800161337780 x20: ffff8001437b8000
+[  100.665647] x19: 0000000000000000 x18: 0000000000000000
+[  100.666482] x17: 0000000000000001 x16: 0000000000000000
+[  100.667328] x15: 0000000000000000 x14: 0000000000000000
+[  100.668159] x13: 0000000000000000 x12: 0000000000000000
+[  100.668985] x11: 0000000000000000 x10: 0000000000000000
+[  100.669816] x9 : 0000000000000000 x8 : 0000000000000000
+[  100.670643] x7 : 0000000000000000 x6 : ffff8001704a6414
+[  100.671517] x5 : 0000000000000004 x4 : 0000000004195704
+[  100.672355] x3 : 000000000000002e x2 : 0000000000000001
+[  100.673181] x1 : 0000000000000002 x0 : ffff0000084cda20
+[  100.674007] Call trace:
+[  100.674427]  xfs_dir2_sf_get_parent_ino+0x1c/0x30
+[  100.675168]  xfs_dir2_sf_getdents.isra.0+0xd8/0x248
+[  100.675943]  xfs_readdir+0x184/0x1d0
+[  100.676522]  xfs_file_readdir+0x40/0x50
+[  100.677149]  iterate_dir+0x8c/0x1a8
+[  100.677717]  ksys_getdents64+0xb4/0x348
+[  100.678335]  __arm64_sys_getdents64+0x28/0x38
+[  100.679027]  el0_svc_common+0x78/0x130
+[  100.679640]  el0_svc_handler+0x38/0x78
+[  100.680249]  el0_svc+0x8/0x1b0
+[  100.680756] Code: aa0003f3 aa1e03e0 d503201f 91000a61 (39400660)
+[  100.681720] SMP: stopping secondary CPUs
+[  100.684250] Starting crashdump kernel...
+[  100.684868] Bye!
 
-Hi Prabhakar,
+Signed-off-by: shaozongfan <shaozongfan@kylinos.cn>
+---
+ fs/xfs/xfs_dir2_readdir.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-> I did give it a try with platform_driver_probe() and failed.
+diff --git a/fs/xfs/xfs_dir2_readdir.c b/fs/xfs/xfs_dir2_readdir.c
+index 9f3ceb461515..db6c910cad96 100644
+--- a/fs/xfs/xfs_dir2_readdir.c
++++ b/fs/xfs/xfs_dir2_readdir.c
+@@ -51,7 +51,7 @@ xfs_dir2_sf_getdents(
+ 	struct xfs_mount	*mp =3D dp->i_mount;
+ 	xfs_dir2_dataptr_t	off;		/* current entry's offset */
+ 	xfs_dir2_sf_entry_t	*sfep;		/* shortform directory entry */
+-	xfs_dir2_sf_hdr_t	*sfp;		/* shortform structure */
++	xfs_dir2_sf_hdr_t	*sfp, *sfp1;		/* shortform structure */
+ 	xfs_dir2_dataptr_t	dot_offset;
+ 	xfs_dir2_dataptr_t	dotdot_offset;
+ 	xfs_ino_t		ino;
+@@ -93,7 +93,10 @@ xfs_dir2_sf_getdents(
+ 	 * Put .. entry unless we're starting past it.
+ 	 */
+ 	if (ctx->pos <=3D dotdot_offset) {
+-		ino =3D xfs_dir2_sf_get_parent_ino(sfp);
++		sfp1 =3D sfp;
++		if (sfp1 =3D=3D NULL)
++			return 0;
++		ino =3D xfs_dir2_sf_get_parent_ino(sfp1);
+ 		ctx->pos =3D dotdot_offset & 0x7fffffff;
+ 		if (!dir_emit(ctx, "..", 2, ino, DT_DIR))
+ 			return 0;
+--=20
+2.25.1
 
-Ok, thanks for trying nonetheless!
-
-> - Firstly I had to move the regulator node outside the SDHI node for
-> platform_driver_probe() to succeed or else it failed with -ENODEV (at
-> https://elixir.bootlin.com/linux/latest/source/drivers/base/platform.c#L953)
-
-This makes sense to me because it is just a "regular" regulator.
-
-> - In Renesas SoCs we have multiple instances of SDHI, the problem
-> being for each instance we are calling platform_driver_probe(). Which
-> causes a problem as the regulator node will use the first device.
-
-I see... we would need a reg property to differentiate between the
-internal regulators but that is already used by the parent SDHI node.
-
-Okay, so let's scrap that idea. However, we need to ensure that we can
-still have an external regulator. Seeing the bindings, it looks like you
-enable the internal regulator with the "vqmmc-r9a09g057-regulator"
-property? I wonder now if we can simplify this to an
-"use-internal-regulator" property because we have 'compatible' already
-to differentiate? Needs advice from DT maintainers, probably.
-
-> Let me know if I have missed something obvious here.
-
-Nope, all good.
-
-> > Don't we need REGULATOR_CHANGE_VOLTAGE here as well? Or is this implicit
-> > because of REGULATOR_VOLTAGE? Can't find this, though.
-> >
-> I will investigate it.
-
-Thank you.
-
-And happy hacking,
-
-   Wolfram
-
-
---33ovhsmrkgytchwi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZz3MQACgkQFA3kzBSg
-KbZX2A//e7lZCY3V/QM4Kxz/32nrGxuFsbxpiA5GWvyWGqNLNrbbheU+sQkcRVF9
-Om1EyiYx/xWGdoTpSrQyislS0dRLIBw6BRs8XTq5iBO4iFGyoqhY/5t0+f+eNpc3
-TN9FnvuKFEI6BzuuBoHlJfBtJY2oCDtuWJU5eW4AheUFSzCP2zUDEanbSVBxEHDs
-giF7r1eYCCBH4k8CqryVsl6bLSdpmoO5S+tQpW9df0h9SE10dqtyLG++1UzyK4//
-n1E4trQRXHoWUBgK2IgDYCLD6JWAox4LI+oxSSYievnRKMIMZ8wnoecWNq1JWwvT
-vtuYIVAAbkVpTwrbGebxhHhd/wA5E8ns7eG7zdgmOUV1RAK5AhtW/lBuKR2B8ACU
-zWlDtQkibA9vf7a3wAwia8tMczbPoKzlhUI+okEVukI5Hngok91fitnfGROMV7gA
-XbNChfWtxkKXg2VoCfNcx9b1teHMn4F4A4jGToCIjCe5Ux6MBsVUS5LY1kSld1YH
-p730G8T9BoDcPjqWPwhXL+X7fkuGLx74DE4QbGTZ/NisYl/PYxa2UNyud1GPp7oB
-j43cInw/bppQ+vcbK4R36Q/7IvCdo1ZbAQh+e0V6FlDEnCl/c2Quo3QWsnruc2GM
-XV9rXr0n+vj4uRcsdqRHTg0jHJbLZEv+GUr+Y5tJlTpuDOl9JtA=
-=Gdi4
------END PGP SIGNATURE-----
-
---33ovhsmrkgytchwi--
 
