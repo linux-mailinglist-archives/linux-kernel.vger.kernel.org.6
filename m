@@ -1,118 +1,314 @@
-Return-Path: <linux-kernel+bounces-222537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EC6910367
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:51:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6485091036B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8155B281A7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:51:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D17B11F22C86
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56AA1AC234;
-	Thu, 20 Jun 2024 11:51:12 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046621ABCD1;
+	Thu, 20 Jun 2024 11:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MT5/8lgm"
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9245C157E84
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2951ABCC9
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 11:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718884272; cv=none; b=SD4YEuC2EidP7u3tYl3vdQNAbVdGO+yhDZt+wNURGEMiF4W8m7g/9Cw3qOe3TjRpRtUzCQ5SaEsakNhyho7xkENVRwcRoODN1CjYHsUsSyZOugKIWXCfPDR7Jwj0t1XEfS1bb4K+Fwa6tP8KnVP/vyTINpx7rGAemgwsrcCTNSo=
+	t=1718884283; cv=none; b=i5idYhLbUW/Ida83C1+W9k9eiBe1AfmVHcp8sySJ3FJGXCeJs6MMU/rQ5G3ImLiBzCTNi+XXsNIOrUmvdJBZM9H3JNmqQ0A999Q0ws7yq7fbFQbih8hk3Dgkum0nLOWfKFwn2cz1nnoMxwyN79PyLLunV8CZYYLFvQgORQMiEi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718884272; c=relaxed/simple;
-	bh=CIGmQ+V0M295n9K+gwrHgo2V+yDH/y7k/cpu+XtVVUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T0hbLH1CISiyUfL9TcgKbFS5H0GQ2KVSZsHuvyWUFvDqDTlWFCO1+KtkCVBIwCRa6CscKupN/yyA80u234OF+hcbmu5aDBDasueVDspo1iCQMBbWrP96D99SF1hlwN0JcMUy4IpLHiu7RBKVllNZvCtwNSWKgMKeFNDF1xm6g38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sKGJY-0002IH-PJ; Thu, 20 Jun 2024 13:50:52 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sKGJY-003h1L-5Y; Thu, 20 Jun 2024 13:50:52 +0200
-Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id BECBD2ED977;
-	Thu, 20 Jun 2024 11:50:51 +0000 (UTC)
-Date: Thu, 20 Jun 2024 13:50:51 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Mark Brown <broonie@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Stefan Moring <stefan.moring@technolution.nl>, Benjamin Bigler <benjamin@bigler.one>, 
-	Carlos Song <carlos.song@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, 
-	Adam Butcher <adam@jessamine.co.uk>, linux-spi@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stefan Bigler <linux@bigler.io>, 
-	Sebastian Reichel <sre@kernel.org>, Thorsten Scherer <T.Scherer@eckelmann.de>
-Subject: Re: [PATCH] spi: spi-imx: imx51: revert burst length calculation
- back to bits_per_word
-Message-ID: <20240620-positive-industrious-tiger-b09d1e-mkl@pengutronix.de>
-References: <20240618-spi-imx-fix-bustlength-v1-1-2053dd5fdf87@pengutronix.de>
- <171888201712.41294.3998570181399309379.b4-ty@kernel.org>
- <20240620-annoying-elated-lobster-240aed-mkl@pengutronix.de>
- <63e0b99d-d47c-4645-bf83-fb671f28d57f@sirena.org.uk>
+	s=arc-20240116; t=1718884283; c=relaxed/simple;
+	bh=85K2pu2AWoZroBZXPpv3PmtyqrZDCsmZjDUn3hT8WIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tzLJ8xLbJgwjTGUIZ8Ko+tGcTYfjTY26xzTq1kqqHXxEMLgWF+hMsJPfevb0i33POOYzD1ERnZsinBZNW6davYmwOVAmHKEEcA8brkah/7/MA7H4h/8hvzuhnIC89TWmk1k8W0Ts3TKtDVc+UNKjsSwyQhTOuAJkiL8bPdgD1X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MT5/8lgm; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-48c4c5c0614so273135137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 04:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718884281; x=1719489081; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2bgNJiFTvXzfd9V1Bu90Pdh0gTgubeWAK8jGjDQQDkY=;
+        b=MT5/8lgmCPF8h843eHPKv9STEMWwOfnYc14PGV4dpdA4qqUbJ/954Holi3aZOThtPI
+         IUJANusHHILBsKJTKbtx7ZW2BYlHwZ0mTFye0/6nOBcbvWY1uSN0Evlzt4YtnwzWkVtz
+         BWTRK3InmGx9ScQSr3bhOu6BtGNXEdFrhFwvF7nZYO5+htgtipVUijEC+kL3PKGekJ3n
+         Dz5wjKREJxiZS+rTRJkFB3ak66s9VdBiyK/gs23YnIq6NEIrqvkMWUVA6szbF0gvqWwj
+         LBFty+CCLTYhFlctAe/8kq9fhgTZ/Q/v4UjNhmG/wBohequ5pvJtkKAvFsDL6P0CCbtq
+         suAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718884281; x=1719489081;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2bgNJiFTvXzfd9V1Bu90Pdh0gTgubeWAK8jGjDQQDkY=;
+        b=PfKG+AqLuyh75HilEDbCV5PY4LVGLvcmoYmTzi6yOCZzN5a6/OAdh1cJ8RlAL+PLlR
+         Nvp0Ij5C+YRJ+7cLk9V2Egzr9H4LNUikEuJLuoYSNMgiHN86dWsNOFgp+gcRl7Bo9VjE
+         idjmRKKpipikRQyBvEp6fsO+mt9wzcMsbq+DbKpPiNlRCBjCjZhQIUCKckCLqygdd1Xq
+         yepJt58uWUsQby6+4O6i2/LL6wXKQDS3YcNCWRppGiRAyIrZd6y/GxUVsOdvWQjCxu0f
+         e06Kx+KxR8y7TsRg4SeCBX94U6VD3S0UqIFwefO9GAhkqS+o50MHZrDgQKm8WZtwgWcW
+         +fUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUX/kKGQHCMy5nUtfVjE2L+K2NkttVNVkF/DD08jsX/ValOd+8vc1N2VMUOxKO3AH+gQzSezUVQAd2ca/FzcGgV7pqLumVkmBA8PIDn
+X-Gm-Message-State: AOJu0YwiFV/HSHapR3FiKDIBQRuhzm6bQq6orZJryTlBjYGpkWAiQw/r
+	SbGZmUJ3sxyPnYD1fMCeghWLqcoR/nk4H2JENlLXlC37BTfndkBm5wCK7r3fTtyWHU9Fy3lMbWs
+	5++9SZQTOWyddv701J0HiDzf6UT8hFaNpkxltsw==
+X-Google-Smtp-Source: AGHT+IGZfPkWsM7N3Gsj51E+988dSB/D/Zg80mWbI0dZpf/96I1y1F/MMX2R+yCoqRRbh8zOr1KuVEtFD2at1ZvS9fM=
+X-Received: by 2002:a05:6102:743:b0:48f:205e:9b8 with SMTP id
+ ada2fe7eead31-48f205e0aafmr2808952137.34.1718884280677; Thu, 20 Jun 2024
+ 04:51:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3x7ithjlu3aaazns"
-Content-Disposition: inline
-In-Reply-To: <63e0b99d-d47c-4645-bf83-fb671f28d57f@sirena.org.uk>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240619125609.836313103@linuxfoundation.org>
+In-Reply-To: <20240619125609.836313103@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 20 Jun 2024 17:21:09 +0530
+Message-ID: <CA+G9fYtPV3kskAyc4NQws68-CpBrV+ohxkt1EEaAN54Dh6J6Uw@mail.gmail.com>
+Subject: Re: [PATCH 6.9 000/281] 6.9.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Miaohe Lin <linmiaohe@huawei.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, David Hildenbrand <david@redhat.com>, 
+	Cgroups <cgroups@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, jbeulich@suse.com, 
+	LTP List <ltp@lists.linux.it>
+Content-Type: text/plain; charset="UTF-8"
+
+On Wed, 19 Jun 2024 at 18:41, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.9.6 release.
+> There are 281 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 21 Jun 2024 12:55:11 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.6-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+There are two major issues on arm64 Juno-r2 on Linux stable-rc 6.9.6-rc1
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+1)
+The LTP controllers cgroup_fj_stress test cases causing kernel crash
+on arm64 Juno-r2 with
+compat mode testing with stable-rc 6.9 kernel.
+
+In the recent past I have reported this issues on Linux mainline.
+
+LTP: fork13: kernel panic on rk3399-rock-pi-4 running mainline 6.10.rc3
+  - https://lore.kernel.org/all/CA+G9fYvKmr84WzTArmfaypKM9+=Aw0uXCtuUKHQKFCNMGJyOgQ@mail.gmail.com/
+
+it goes like this,
+  Unable to handle kernel NULL pointer dereference at virtual address
+  ...
+  Insufficient stack space to handle exception!
+  end Kernel panic - not syncing: kernel stack overflow
+
+2)
+The LTP controllers cgroup_fj_stress test suite causing kernel oops on
+arm64 Juno-r2 (with the clang-night build toolchain).
+  Unable to handle kernel NULL pointer dereference at virtual address
+0000000000000009
+  Internal error: Oops: 0000000096000044 [#1] PREEMPT SMP
+  pc : xprt_alloc_slot+0x54/0x1c8
+  lr : xprt_alloc_slot+0x30/0x1c8
 
 
---3x7ithjlu3aaazns
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Details of crash log:
+1)
+Crash log:
+-----------
+cgroup_fj_stress 1 TINFO: Running: cgroup_fj_stress.sh cpuacct 200 1 none
+cgroup_fj_stress 1 TINFO: timeout per run is 0h 50m 0s
+tst_cgroup.c:764: TINFO: Mounted V1 cpuacct CGroup on
+/scratch/ltp-iiltEE0UOm/cgroup_cpuacct
+cgroup_fj_stress 1 TINFO: test starts with cgroup version 1
+cgroup_fj_stress 1 TINFO: Creating subgroups ...
+[ 1785.477847] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000070
+[ 1785.486682] Mem abort info:
+[ 1785.489477]   ESR = 0x0000000096000004
+[ 1785.493232]   EC = 0x25: DABT (current EL), IL = 32 bits
+[ 1785.498555]   SET = 0, FnV = 0
+[ 1785.501613]   EA = 0, S1PTW = 0
+[ 1785.504757]   FSC = 0x04: level 0 translation fault
+[ 1785.509643] Data abort info:
+[ 1785.512526]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[ 1785.518021]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[ 1785.523082]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+..
+[ 1786.235715] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000070
+..
+[ 1786.286238] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000070
+..
+[ 1786.336761] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000070
+[ 1786.345564] Mem abort info:
+[ 1786.348359]   ESR = 0x0000000096000004
+[ 1786.352112]   EC = 0x25: DABT (current EL), IL = 32 bits
+[ 1786.357434]   SET = 0, FnV = 0
+[ 1786.360492]   EA = 0, S1PTW = 0
+[ 1786.363637]   FSC = 0x04: level 0 translation fault
+[ 1786.368523] Data abort info:
+[ 1786.371405]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[ 1786.376900]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[ 1786.381960]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[ 1786.387284] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000070
+[ 1786.387293] Insufficient stack space to handle exception!
+[ 1786.387296] ESR: 0x0000000096000047 -- DABT (current EL)
+[ 1786.387302] FAR: 0xffff80008399ffe0
+[ 1786.387306] Task stack:     [0xffff8000839a0000..0xffff8000839a4000]
+[ 1786.387312] IRQ stack:      [0xffff8000837f8000..0xffff8000837fc000]
+[ 1786.387319] Overflow stack: [0xffff00097ec95320..0xffff00097ec96320]
+[ 1786.387327] CPU: 4 PID: 0 Comm: swapper/4 Not tainted 6.9.6-rc1 #1
+[ 1786.387338] Hardware name: ARM Juno development board (r2) (DT)
+[ 1786.387344] pstate: a00003c5 (NzCv DAIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[ 1786.387355] pc : _prb_read_valid (kernel/printk/printk_ringbuffer.c:2109)
+[ 1786.387374] lr : prb_read_valid (kernel/printk/printk_ringbuffer.c:2183)
+[ 1786.387385] sp : ffff80008399ffe0
+[ 1786.387390] x29: ffff8000839a0030 x28: ffff000800365f00 x27: ffff800082530008
+[ 1786.387407] x26: ffff8000834e33b8 x25: ffff8000839a00b0 x24: 0000000000000001
+[ 1786.387423] x23: ffff8000839a00a8 x22: ffff8000830e3e40 x21: 0000000000001e9e
+[ 1786.387438] x20: 0000000000000000 x19: ffff8000839a01c8 x18: 0000000000000010
+[ 1786.387453] x17: 72646461206c6175 x16: 7472697620746120 x15: 65636e6572656665
+[ 1786.387468] x14: 726564207265746e x13: 3037303030303030 x12: 3030303030303030
+[ 1786.387483] x11: 2073736572646461 x10: ffff800083151ea0 x9 : ffff80008014273c
+[ 1786.387498] x8 : ffff8000839a0120 x7 : 0000000000000000 x6 : 0000000000000e9f
+[ 1786.387512] x5 : ffff8000839a00c8 x4 : ffff8000837157c0 x3 : 0000000000000000
+[ 1786.387526] x2 : ffff8000839a00b0 x1 : 0000000000000000 x0 : ffff8000830e3f58
+[ 1786.387542] Kernel panic - not syncing: kernel stack overflow
+[ 1786.387549] SMP: stopping secondary CPUs
+[ 1787.510055] SMP: failed to stop secondary CPUs 0,4
+[ 1787.510065] Kernel Offset: disabled
+[ 1787.510068] CPU features: 0x4,00001061,e0100000,0200421b
+[ 1787.510076] Memory Limit: none
+[ 1787.680436] ---[ end Kernel panic - not syncing: kernel stack overflow ]---
 
-On 20.06.2024 12:47:14, Mark Brown wrote:
-> On Thu, Jun 20, 2024 at 01:43:29PM +0200, Marc Kleine-Budde wrote:
->=20
-> > As this is a fix of a regression, can you pick this for v6.10, too.
->=20
-> It is applied for v6.10.
+2) Kernel oops log:
+-----------
+[ 1094.253182]  __secondary_switched+0xb8/0xc0
+[ 1094.258306] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000009
+[ 1094.267132] Mem abort info:
+[ 1094.269938]   ESR = 0x0000000096000044
+[ 1094.273701]   EC = 0x25: DABT (current EL), IL = 32 bits
+[ 1094.279031]   SET = 0, FnV = 0
+[ 1094.282097]   EA = 0, S1PTW = 0
+[ 1094.285242]   FSC = ranslation fault
+[ 1094.290136] Data abort info:
+[ 1094.293019]   ISV = 0, ISS = 0x00000044, ISS2 = 0x00000000
+[ 1094.298523]   CM = 0, WnR = 1, TnD = 0, TagAccess = 0
+[ 1094.303592]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[ 1094.308921] user pgtable: 4k bit VAs, pgdp=00000008a2a34000
+[ 1094.315383] [0000000000000009] pgd=0000000000000000, p4d=0000000000000000
+[ 1094.322211] Internal error: Oops: 0000000096000044 [#1] PREEMPT SMP
+[ 1094.328489] Modules linked in: btrfs xor xor_neon raid6_pq
+zstd_compress libcrc38x hdlcd cec drm_dma_helper onboard_usb_hub
+crct10dif_ce drm_kms_helper fuse drm backlight dm_mod ip_tables
+x_tables
+[ 1094.346744] CPU: 1 PID: 161 Comm: systemd-journal Tainted: G
+W          6.9.6-rc1 #1
+[ 1094.355112] Hardware name: ARM Juno development board (r2) (DT)
+[ 1094.361038] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[ 1094.368013] pc : xprt_alloc_slot+0x54/0x1c8
+[ 1094.372208] lr : xprt_alloc_slot+0x30/0x1c8
+[ 1094.376398] sp : ffff800082dc37e0
+[ 1094.379713] x29: ffff800082dc37e0 x28: ffff8000814d31c8 x27: 0000000000008080
+[ 1094.386868] x26: ffff8000825da000 x25: 0000000000000001 x24: 0000000000440100
+[ 1094.394022] x23: ffff000821759300 x22: 0000000000002102 x21: ffff00082d39d000
+[ 1094.401176] x20: ffff00082201f800 x19: ffff0008225bf400 x18: 0000000000000000
+[ 1094.408329] x17: 0000000000000000 x16: 0000000000000800 x15: 8080008000000000
+[ 1094.415483] x14: 0000ff0064656873 x13: ffff800082dc0000 x12: 0000000000000022
+[ 1094.422636] x11: dead000000000100 x10: 0000000000000001 x9 : 0000000000000000
+[ 1094.429790] x8 : ffff00082d39d0c8 x7 : 0000000000000000 x6 : 0000000000000000
+[ 1094.436942] x5 : 0000000000000000 x4 : ffff00097ec4c530 x3 : ffff800082dc3790
+[ 1094.444096] x2 : ffff000821759300 x1 : 0000000000000000 x0 : ffff800081583770
+[ 1094.451249] Call trace:
+[ 1094.453694]  xprt_alloc_slot+0x54/0x1c8
+[ 1094.457536]  xprt_reserve+0x6c/0xe8
+[ 1094.461029]  call_reserve+0x2c/0x40
+[ 1094.464522]  __rpc_execute+0x124/0x640
+[ 1094.468280]  rpc_execute+0x100/0x280
+[ 1094.471862]  rpc_run_task+0x124/0x1e8
+[ 1094.475528]  rpc_call_sync+0x58/0xc0
+[ 1094.479106]  nfs3_proc_getattr+0x94/0xf8
+[ 1094.483037]  __nfs_revalidate_inode+0x13c/0x310
+[ 1094.487575]  nfs_access_get_cached+0x23c/0x3b8
+[ 1094.492024]  nfs_do_access+0x74/0x2b8
+[ 1094.495689]  nfs_permission+0xb8/0x1e0
+[ 1094.499441]  inode_permission+0xc4/0x170
+[ 1094.503371]  link_path_walk+0x100/0x3e0
+[ 1094.507215]  path_lookupat+0x74/0x130
+[ 1094.510882]  filename_lookup+0xdc/0x1d8
+[ 1094.514724]  user_path_at_empty+0x58/0x108
+[ 1094.518828]  do_faccessat+0x178/0x330
+[ 1094.522495]  __arm64_sys_faccessat+0x30/0x48
+[ 1094.526771]  invoke_syscall+0x4c/0x118
+[ 1094.530528]  el0_svc_common+0x8c/0xf0
+[ 1094.534197]  do_el0_svc+0x28/0x40
+[ 1094.537518]  el0_svc+0x40/0x88
+[ 1094.540576]  el0t_64_sync_handler+0x90/0x100
+[ 1094.544853]  el0t_64_sync+0x190/0x198
+[ 1094.548522] Code: d280200b f2fbd5ab 5280044c d1032115 (f9000549)
+[ 1094.554623] ---[ end trace 0000000000000000 ]---
+[ 1094.559268] note: systemd-journal[161] exited with preempt_count 1
+[ 1115.569495] rcu: INFO: rcu_preempt self-detected stall on CPU
 
-Thanks a lot,
-Marc
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Links:
+------
+1)
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.5-282-g93f303762da5/testrun/24410131/suite/log-parser-test/test/check-kernel-panic/log
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.5-282-g93f303762da5/testrun/24410131/suite/log-parser-test/test/check-kernel-panic-a44367e5836148d6e94412d6de8ab7a0ca37c18d2bfb6a639947ecd2704ad6b1/details/
+ - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2i6h1Ah6I8CP7ABUzTl9shfaW60
+ - https://lkft.validation.linaro.org/scheduler/job/7687060#L23314
 
---3x7ithjlu3aaazns
-Content-Type: application/pgp-signature; name="signature.asc"
+2)
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.5-282-g93f303762da5/testrun/24410890/suite/log-parser-test/test/check-kernel-oops/log
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.5-282-g93f303762da5/testrun/24410890/suite/log-parser-test/test/check-kernel-exception-55b962f42ea3dfdcb5c7b6c7ceee184b48ae8d479f430f7b31241f220adcb542/details/
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6.9.5-282-g93f303762da5/testrun/24410890/suite/log-parser-test/tests/
+ - https://lkft.validation.linaro.org/scheduler/job/7688690#L16336
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZ0F5kACgkQKDiiPnot
-vG+SoAf9FggSpDf/WcsiSEhV95WrFkOLSvn+VBHOJJ5/RtFsKMabSKYOeADRcVEl
-KVkb0SEEzbmX5nV/+RZoZDtIlYDiG9bX17LFnQ+yqNoao5Gy6JnraxRLSfV3pwzm
-RMBuYc1Bx8Se36D8DtBe4e/sqDshxGclrXLleFuxFjbF0KrXT5HRVckDXkUUqEG6
-B6S57ElyETojw4oNqrweaFGPGUYu6ZKoW0wwZgxte7rdSNks3Y8sn4Z1GCTpEArH
-Qal9V1mze0MHtJKlTUS8IpOJgoahMBDiU7TcmXclbp7ky87eXHOLDvx6z1jh9bTw
-QDCOkic0moCRk4vu+QagV84SkHrRBA==
-=Fczp
------END PGP SIGNATURE-----
+Build details:
+-------
+* kernel: 6.9.6-rc1
+* git: https://gitlab.com/Linaro/lkft/mirrors/stable/linux-stable-rc
+* git branch: linux-6.9.y
+* git commit: 93f303762da5a9d9c2c72cac615d4d092ce42b1f
+* git describe: v6.9.5-282-g93f303762da5
 
---3x7ithjlu3aaazns--
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
