@@ -1,111 +1,95 @@
-Return-Path: <linux-kernel+bounces-223699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5256D911718
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:02:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CCA9117BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 02:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07EAF282BA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:02:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4B17B21EDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7436F15C9;
-	Fri, 21 Jun 2024 00:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="i5txX3rl"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6E5A47;
+	Fri, 21 Jun 2024 00:37:16 +0000 (UTC)
+Received: from 20.mo583.mail-out.ovh.net (20.mo583.mail-out.ovh.net [91.121.55.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022A864F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 00:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694504411
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 00:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.121.55.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718928171; cv=none; b=LxNJWONocDjxgxjPRMEiZwl2qoczRhXQ32NVuuzWvj+s0/bVTDatxNrcEgAMdYMZPz0WKOSoEspKucTWWMiE8SUQdZvAnCUh7Kgt9oNvX1f9wRXxNIokZm+GiC7zeHm8iJGtjM2ggBSdDFPuppvYCEBlWbquR9Mw19ZgGaKApGI=
+	t=1718930236; cv=none; b=DIGy3lN41bpGEKHUAY23x51tKlyB+wLsaQMNyfANhHEZYi2TI3h97QHldi5oonrbhzYslGx/ERygrmoUingLqicvO0nlawVtpNODGBMld7YjztTL2JmLDkWKzSl10M5S1P+Yu9FHYcU+6aWueggzcu5zhZOjkvmu/8yPrdBvlFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718928171; c=relaxed/simple;
-	bh=O0thi/O9CqDl0z3mgB/8o78Qqtqe60X9WxKn9W+eods=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdQQ+npYfGja5O8DHN+mo6ap/zfRshqYEMylWEhp3aL6dA7BUVb8T61Bv1rAS7lAgg5mp0o9oxUaUep0BFxnbemJtJk8Jde8eINVzE7KW11ABh94V/LVvnpAWH08lEku1mYG3BNpRnP6PDZpnhJGwvONUuGq5vEEBn7AcXCwrmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=i5txX3rl; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=qrNK5A/MTRu4rCBQZVtDvFFjMNsiGmVeH0NujBDe5eo=; b=i5txX3rlYKgf8Jb/
-	EmlqE2jNpvrqfjm4mDGe5WqxNGg6wYux9SxJ7ybgV/lZNzzK7roiQRDcTAg6PxQxFmRgAXs3ZRRof
-	5SoD+hfulqJkrtd8YKKbnqJK81kPg0FFc6s/jfjJhA6pXkXORY62Ii0hwVk7hZbNelMyPKClnaWeT
-	T9hXgRjSNcj6skzCUn5Vohqp7624yNb8h4Y9qoKIuPUB/75d6P7hu18klRIg7tDP79EhGJCl/yI+/
-	/RhgZpz26T6Vz2okkCKlJnO60ZipAjufN97ZYQxcXqwodUfqNKivir2axFfpivsmOLbkPFz0u303G
-	y3fHA8DRTZmloEC5yA==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sKRjl-007Vlp-0S;
-	Fri, 21 Jun 2024 00:02:41 +0000
-Date: Fri, 21 Jun 2024 00:02:41 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: nipun.gupta@amd.com, nikhil.agarwal@amd.com
-Cc: abhijit.gangurde@amd.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cdx: remove unused struct 'cdx_mcdi_copy_buffer'
-Message-ID: <ZnTDIRpC9xhH4vrO@gallifrey>
-References: <20240530233436.224461-1-linux@treblig.org>
+	s=arc-20240116; t=1718930236; c=relaxed/simple;
+	bh=20Bno1n30DsBD2LYX6UR5S9jh4So2fbTQRi6hmhPU14=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=csTRwpjJ6x7seQcNHEGdOtMDh6wbdlsgDtLReHh2FuL4RRuBGNwrsT9VCoM3YXDcHrtFyphTzD6Qs52bWDxd3kFYHKLZjgOkwGUDRbytxN2jQyKL/lkZQKPhNXV+fw7/nqTJ2xQXAyyrr7UoKzALMFqbQwboptKTyNTbGQiptJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=etezian.org; arc=none smtp.client-ip=91.121.55.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etezian.org
+Received: from director1.ghost.mail-out.ovh.net (unknown [10.109.140.28])
+	by mo583.mail-out.ovh.net (Postfix) with ESMTP id 4W4xKJ13d3z1Rjf
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:19:48 +0000 (UTC)
+Received: from ghost-submission-6684bf9d7b-bvkjt (unknown [10.110.96.185])
+	by director1.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 541F31FD4C;
+	Thu, 20 Jun 2024 23:19:47 +0000 (UTC)
+Received: from etezian.org ([37.59.142.110])
+	by ghost-submission-6684bf9d7b-bvkjt with ESMTPSA
+	id O1+2EhO5dGb3AgAA/KbBAQ
+	(envelope-from <andi@etezian.org>); Thu, 20 Jun 2024 23:19:47 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-110S0040f310b2f-be15-42b6-bcff-984cf221b99d,
+                    C57D3D2E0A03F635C8A27B63C027BBD507C09C29) smtp.auth=andi@etezian.org
+X-OVh-ClientIp:89.217.109.169
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>, 
+ Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>, 
+ Thomas Gleixner <tglx@linutronix.de>, linux-i2c@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Grygorii Tertychnyi <grembeter@gmail.com>
+Cc: Grygorii Tertychnyi <grygorii.tertychnyi@leica-geosystems.com>, 
+ bsp-development.geo@leica-geosystems.com, stable@vger.kernel.org
+In-Reply-To: <20240520153932.116731-1-grygorii.tertychnyi@leica-geosystems.com>
+References: <20240520153932.116731-1-grygorii.tertychnyi@leica-geosystems.com>
+Subject: Re: [PATCH v2] i2c: ocores: set IACK bit after core is enabled
+Message-Id: <171892558671.2178094.6404949110171049934.b4-ty@kernel.org>
+Date: Fri, 21 Jun 2024 01:19:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240530233436.224461-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 00:02:29 up 43 days, 11:16,  1 user,  load average: 0.01, 0.01, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
+X-Ovh-Tracer-Id: 13336284400655993449
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrfeeffedgvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvegjfhfukfffgggtgffosehtjeertdertdejnecuhfhrohhmpeetnhguihcuufhhhihtihcuoegrnhguihdrshhhhihtiheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrhhnpeffteehudffvdfhudfgffdugfejjeduheehgeefgeeuhfeiuefghffgueffvdfgfeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduvdejrddtrddtrddupdekledrvddujedruddtledrudeiledpfeejrdehledrudegvddruddutdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomheprghnughisegvthgviihirghnrdhorhhgpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehkeefpdhmohguvgepshhmthhpohhuth
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> 'cdx_mcdi_copy_buffer' has been unused since the original
-> commit eb96b740192b ("cdx: add MCDI protocol interface for firmware
-> interaction").
-> 
-> Looking at lkml,  it was used in the V1 posting but was removed
-> somewhere before V6.
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Hi
 
-Ping.
-
-Dave
-
-> ---
->  drivers/cdx/controller/mcdi.c | 4 ----
->  1 file changed, 4 deletions(-)
+On Mon, 20 May 2024 17:39:32 +0200, Grygorii Tertychnyi wrote:
+> Setting IACK bit when core is disabled does not clear the "Interrupt Flag"
+> bit in the status register, and the interrupt remains pending.
 > 
-> diff --git a/drivers/cdx/controller/mcdi.c b/drivers/cdx/controller/mcdi.c
-> index 1eedc5eeb315..e760f8d347cc 100644
-> --- a/drivers/cdx/controller/mcdi.c
-> +++ b/drivers/cdx/controller/mcdi.c
-> @@ -27,10 +27,6 @@
->  #include "bitfield.h"
->  #include "mcdi.h"
->  
-> -struct cdx_mcdi_copy_buffer {
-> -	struct cdx_dword buffer[DIV_ROUND_UP(MCDI_CTL_SDU_LEN_MAX, 4)];
-> -};
-> -
->  static void cdx_mcdi_cancel_cmd(struct cdx_mcdi *cdx, struct cdx_mcdi_cmd *cmd);
->  static void cdx_mcdi_wait_for_cleanup(struct cdx_mcdi *cdx);
->  static int cdx_mcdi_rpc_async_internal(struct cdx_mcdi *cdx,
-> -- 
-> 2.45.1
+> Sometimes it causes failure for the very first message transfer, that is
+> usually a device probe.
 > 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> Hence, set IACK bit after core is enabled to clear pending interrupt.
+> 
+> [...]
+
+Applied to i2c/i2c-host-next on
+
+git://git.kernel.org/pub/scm/linux/kernel/git/local tree
+
+Thank you,
+Andi
+
+Patches applied
+===============
+[1/1] i2c: ocores: set IACK bit after core is enabled
+      commit: 5a72477273066b5b357801ab2d315ef14949d402
+
 
