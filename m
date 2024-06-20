@@ -1,196 +1,268 @@
-Return-Path: <linux-kernel+bounces-223119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D914910E0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:06:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1DE910E0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D550E1F2293F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:06:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 535FD1C231DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801D01B375D;
-	Thu, 20 Jun 2024 17:06:14 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30441B373E;
+	Thu, 20 Jun 2024 17:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WpEf61lL"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F011B3734;
-	Thu, 20 Jun 2024 17:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED361AE875;
+	Thu, 20 Jun 2024 17:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718903173; cv=none; b=E5acr9EzeZEJD75Xap6IReurx0/MEyGIDzPVPFX7ib1kS7bVwYzQRLi1atKPLgXOVZ05x0+iEyQozJp35a5Q5y1dXBRU8DJx3Vv9jXBqM0w81KgIsePgwqbnxKsZ0KfhCXqJSms8PvzVXIS5U/aLwPF+41ed7BC+JBbGH5jfXzs=
+	t=1718903190; cv=none; b=n3utL0XnWzz3uv7/GF3uwf2enLy8xs93DG6Rq/TZlGcfMIbUffQWs+39TcFoCiHyHP+eQc7/Som2QwkK73gfwB1pEUHWJa+yd51sQYwaGKQEfOO0WGkj7HvrIMmJl8WngMiCT/6dKU9ZwYrBoMxrx5rN2wsQ6GLcBzVRtjKia2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718903173; c=relaxed/simple;
-	bh=AoZ6D8fSBvekFvYLMvjwTYhprb4uvI1sHBlL9MIjCQc=;
+	s=arc-20240116; t=1718903190; c=relaxed/simple;
+	bh=aZefvX2i2zdaaemPAMbUWZ55XJ/KZi7qSCtrnSRv/hs=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nloDgvPTAlTzHOkCi7O8avLnjHf4I1qPiBFVAjAOiqBkzkeG9aNCjY5QYfXegPJuOoTTzilbW5Z0LoIPL1lEKBlsmRd48ue975/inuqnGLtNzKUfp/MmR5Z5wPMUd3tkj0YVeVA2ObVnuM2XPazQkcAfB8v40iGaq5KcGcIRYKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4W4mWr08Dbz9v7JW;
-	Fri, 21 Jun 2024 00:43:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 757DF140F97;
-	Fri, 21 Jun 2024 01:06:01 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwBHHDdmYXRm14LOAA--.36105S2;
-	Thu, 20 Jun 2024 18:06:00 +0100 (CET)
-Message-ID: <7ad255dce0b85e018b693d302689e0e970b8cc00.camel@huaweicloud.com>
-Subject: Re: [PATCH v4 00/14] security: digest_cache LSM
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, 
- akpm@linux-foundation.org, shuah@kernel.org, mcoquelin.stm32@gmail.com, 
- alexandre.torgue@foss.st.com, mic@digikod.net, 
- linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- bpf@vger.kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
- linux-integrity@vger.kernel.org, wufan@linux.microsoft.com,
- pbrobinson@gmail.com,  zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
- pmatilai@redhat.com,  jannh@google.com, dhowells@redhat.com,
- jikos@kernel.org, mkoutny@suse.com,  ppavlu@suse.com, petr.vorel@gmail.com,
- mzerqung@0pointer.de, kgold@linux.ibm.com,  Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Thu, 20 Jun 2024 19:05:38 +0200
-In-Reply-To: <CAHC9VhSA0dSQ1jaRO_J1S5xEc14XoCnYaVG3AWF=uYaDb-AjoQ@mail.gmail.com>
-References: <20240415142436.2545003-1-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhTs8p1nTUXXea2JmF0FCEU6w39gwQRMtwACqM=+EBj1jw@mail.gmail.com>
-	 <7cf03a6ba8dbf212623aab2dea3dac39482e8695.camel@huaweicloud.com>
-	 <CAHC9VhSCw6RweTs6whAu4v6t4n7gxUWJtjmzY-UXrdzW0H+YJA@mail.gmail.com>
-	 <520d2dc2ff0091335a280a877fa9eb004af14309.camel@huaweicloud.com>
-	 <CAHC9VhRD1kBwqtkF+_cxCUCeNPp+0PAiNP-rG06me6gRQyYcyg@mail.gmail.com>
-	 <2b335bdd5c20878e0366dcf6b62d14f73c2251de.camel@huaweicloud.com>
-	 <CAHC9VhSOMLH69+q_wt2W+N9SK92KGp5n4YgzpsXMcO2u7YyaTg@mail.gmail.com>
-	 <e9114733eedff99233b1711b2b05ab85b7c19ca9.camel@huaweicloud.com>
-	 <CAHC9VhQp1wsm+2d6Dhj1gQNSD0z_Hgj0cFrVf1=Zs94LmgfK0A@mail.gmail.com>
-	 <c96db3ab0aec6586b6d55c3055e7eb9fea6bf4e3.camel@huaweicloud.com>
-	 <CAHC9VhSQOiC9t0qk10Lg3o6eAFdrR2QFLvCn1h2EP+P+AgdSbw@mail.gmail.com>
-	 <c732b1eb15141f909e99247192539b7f76e9952c.camel@huaweicloud.com>
-	 <CAHC9VhSA0dSQ1jaRO_J1S5xEc14XoCnYaVG3AWF=uYaDb-AjoQ@mail.gmail.com>
+	 Content-Type:MIME-Version; b=qhZHWO1rvUT1g7FG1zI9n3oo1Dr9wqZWBaUkME0PaGozBKsYA4Qedmiv/086CbvyBQMPJ4ypRN2uGDt+txT5WzPEpxtlvN1xLCqk11GrdxVYki1jviCZFIfAc5NnvCguT8uOTCX3fA3agPG5N0sr3QfnW+nZCAeJwVcOf4078OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WpEf61lL; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45KGw4nC024890;
+	Thu, 20 Jun 2024 17:06:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	aZefvX2i2zdaaemPAMbUWZ55XJ/KZi7qSCtrnSRv/hs=; b=WpEf61lLhyDkJfY0
+	dk/Dz4IM+JSVcEnqU5f0IiO400t/Z2LI6UtFSpj8MreiwScPueDFdaFyw/NmayrQ
+	gti6xiqgJ5yYiL4z+QFnxXmZJgm0IiWvqhQKchyPifDaAQTiQWY3c9Z7tRm5EZmT
+	5yR2LM2nF/a+PWTyssJMCjfSeFheknMItHS500aQ3Qr3iSZG0JeNcGVg/a5dx/ka
+	7ioT5gbXOF4kDDkTfaujEVVdIj+rWHqrNXsA9dYkSyr88zJVv7DPoq8CAvsYag/4
+	Xb7DdKgpkG0I+SbGvVGvASPIrJA139/8JcG3nqo6AnxCdazcyIQXLsA1SJXael3w
+	yXYELA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvqymr31b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 17:06:01 +0000 (GMT)
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45KH60lE006975;
+	Thu, 20 Jun 2024 17:06:00 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvqymr316-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 17:06:00 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45KFOWgb019670;
+	Thu, 20 Jun 2024 17:05:59 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ysnp1re64-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 17:05:58 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45KH5qkU42205492
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Jun 2024 17:05:54 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B54F220043;
+	Thu, 20 Jun 2024 17:05:52 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 464A820069;
+	Thu, 20 Jun 2024 17:05:51 +0000 (GMT)
+Received: from [127.0.0.1] (unknown [9.152.108.100])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Jun 2024 17:05:51 +0000 (GMT)
+Message-ID: <2fe48485c7181b4fe3a39882f495babebadad595.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 33/37] s390/uaccess: Add KMSAN support to put_user()
+ and get_user()
+From: Ilya Leoshkevich <iii@linux.ibm.com>
+To: Alexander Potapenko <glider@google.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+        Andrew Morton
+ <akpm@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        David
+ Rientjes <rientjes@google.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Joonsoo
+ Kim <iamjoonsoo.kim@lge.com>, Marco Elver <elver@google.com>,
+        Masami
+ Hiramatsu <mhiramat@kernel.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        Steven
+ Rostedt <rostedt@goodmis.org>,
+        Vasily Gorbik <gor@linux.ibm.com>, Vlastimil
+ Babka <vbabka@suse.cz>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Sven Schnelle
+ <svens@linux.ibm.com>
+Date: Thu, 20 Jun 2024 19:05:50 +0200
+In-Reply-To: <aaef3e0fe22ad9074de84717f36f316204ae088c.camel@linux.ibm.com>
+References: <20240619154530.163232-1-iii@linux.ibm.com>
+	 <20240619154530.163232-34-iii@linux.ibm.com>
+	 <CAG_fn=V8Tt28LE9FtoYkos=5XG4zP_tDP1mF1COfEhAMg2ULqQ@mail.gmail.com>
+	 <aaef3e0fe22ad9074de84717f36f316204ae088c.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwBHHDdmYXRm14LOAA--.36105S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF15tF48ur45tFWxtry7ZFb_yoWrXw4Dpa
-	y7K3WUKr4ktFyxCr1Iy3W3Za4Fkry3tF17X3s8Jw15Aas09r1Ikr1SkrW5uFWDWrs7Cr12
-	va1ag343Z3srAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkab4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
-	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
-	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY
-	0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
-	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF
-	0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42
-	IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2
-	z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQZ2-UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABF1jj597OwABsq
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: j17PtW7VvRI5cDmaVdbvQOn8NhUFba9g
+X-Proofpoint-ORIG-GUID: CB6tpAHI_NWQszkbL50NdGp2bn9CzjB5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_08,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=668 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
+ spamscore=0 malwarescore=0 suspectscore=0 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200122
 
-On Thu, 2024-06-20 at 12:51 -0400, Paul Moore wrote:
-> On Thu, Jun 20, 2024 at 12:31=E2=80=AFPM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > On Thu, 2024-06-20 at 12:08 -0400, Paul Moore wrote:
-> > > On Thu, Jun 20, 2024 at 11:14=E2=80=AFAM Roberto Sassu
-> > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > On Thu, 2024-06-20 at 10:48 -0400, Paul Moore wrote:
-> > > > > On Thu, Jun 20, 2024 at 5:12=E2=80=AFAM Roberto Sassu
-> > > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > > On Wed, 2024-06-19 at 14:43 -0400, Paul Moore wrote:
-> > > > > > > On Wed, Jun 19, 2024 at 12:38=E2=80=AFPM Roberto Sassu
-> > > > > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > > > > >=20
-> > > > > > > > Making it a kernel subsystem would likely mean replicating =
-what the LSM
-> > > > > > > > infrastructure is doing, inode (security) blob and being no=
-tified about
-> > > > > > > > file/directory changes.
-> > > > > > >=20
-> > > > > > > Just because the LSM framework can be used for something, per=
-haps it
-> > > > > > > even makes the implementation easier, it doesn't mean the fra=
-mework
-> > > > > > > should be used for everything.
-> > > > > >=20
-> > > > > > It is supporting 3 LSMs: IMA, IPE and BPF LSM.
-> > > > > >=20
-> > > > > > That makes it a clear target for the security subsystem, and as=
- you
-> > > > > > suggested to start for IMA, if other kernel subsystems require =
-them, we
-> > > > > > can make it as an independent subsystem.
-> > > > >=20
-> > > > > Have you discussed the file digest cache functionality with eithe=
-r the
-> > > > > IPE or BPF LSM maintainers?  While digest_cache may support these
-> > > >=20
-> > > > Well, yes. I was in a discussion since long time ago with Deven and
-> > > > Fan. The digest_cache LSM is listed in the Use Case section of the =
-IPE
-> > > > cover letter:
-> > > >=20
-> > > > https://lore.kernel.org/linux-integrity/1716583609-21790-1-git-send=
--email-wufan@linux.microsoft.com/
+On Thu, 2024-06-20 at 13:19 +0200, Ilya Leoshkevich wrote:
+> On Thu, 2024-06-20 at 10:36 +0200, Alexander Potapenko wrote:
+> > On Wed, Jun 19, 2024 at 5:45=E2=80=AFPM Ilya Leoshkevich
+> > <iii@linux.ibm.com>
+> > wrote:
 > > >=20
-> > > I would hope to see more than one sentence casually mentioning that
-> > > there might be some integration in the future.
+> > > put_user() uses inline assembly with precise constraints, so
+> > > Clang
+> > > is
+> > > in principle capable of instrumenting it automatically.
+> > > Unfortunately,
+> > > one of the constraints contains a dereferenced user pointer, and
+> > > Clang
+> > > does not currently distinguish user and kernel pointers.
+> > > Therefore
+> > > KMSAN attempts to access shadow for user pointers, which is not a
+> > > right
+> > > thing to do.
 > >=20
-> > Sure, I can work more with Fan to do a proper integration.
->=20
-> That seems like a good pre-requisite for turning digest_cache into a
-> general purpose subsystem.
->=20
-> > > > I also developed an IPE module back in the DIGLIM days:
-> > > >=20
-> > > > https://lore.kernel.org/linux-integrity/a16a628b9e21433198c490500a9=
-87121@huawei.com/
-> > >=20
-> > > That looks like more of an fs-verity integration to me.  Yes, of
-> > > course there would be IPE changes to accept a signature/digest from a
-> > > digest cache, but that should be minor.
+> > By the way, how does this problem manifest?
+> > I was expecting KMSAN to generate dummy shadow accesses in this
+> > case,
+> > and reading/writing 1-8 bytes from dummy shadow shouldn't be a
+> > problem.
 > >=20
-> > True, but IPE will also benefit from not needing to specify every
-> > digest in the policy.
+> > (On the other hand, not inlining the get_user/put_user functions is
+> > probably still faster than retrieving the dummy shadow, so I'm fine
+> > either way)
 >=20
-> Sure, but that isn't really that important from a code integration
-> perspective, that's an admin policy issue.  I expect there would be
-> much more integration work with fs-verity than with IPE, and I think
-> the fs-verity related work might be a challenge.
-
-Uhm, not sure what you mean, but I don't plan to touch fsverity. There
-was already work to get the fsverity digest. All I would need to do
-from my side is to request a digest cache for the inode being verified
-by IPE and to query the fsverity digest.
-
-Of course IPE should also capture kernel reads and verify the file
-containing the reference digests, used to build the digest cache.
-
-> > Also, the design choice of attaching the digest cache to the inode
-> > helps LSMs like IPE that don't have a per inode cache on their own.
-> > Sure, IPE would have to do a digest lookup every time, but at least on
-> > an already populated hash table.
+> We have two problems here: not only clang can't distinguish user and
+> kernel pointers, the KMSAN runtime - which is supposed to clean that
+> up - can't do that either due to overlapping kernel and user address
+> spaces on s390. So the instrumentation ultimately tries to access the
+> real shadow.
 >=20
-> Just because you need to attach some state to an inode does not mean a
-> file digest cache must be a LSM.  It could be integrated into the VFS
-> or it could be a separate subsystem; either way it could provide an
-> API (either through well defined data structures or functions) that
-> could be used by various LSMs and filesystems that provide integrity
-> protection.
+> I forgot what the consequences of that were exactly, so I reverted
+> the
+> patch and now I get:
+>=20
+> Unable to handle kernel pointer dereference in virtual kernel address
+> space
+> Failing address: 000003fed25fa000 TEID: 000003fed25fa403
+> Fault in home space mode while using kernel ASCE.
+> AS:0000000005a70007 R3:00000000824d8007 S:0000000000000020=20
+> Oops: 0010 ilc:2 [#1] SMP=20
+> Modules linked in:
+> CPU: 3 PID: 1 Comm: init Tainted: G=C2=A0=C2=A0=C2=A0 B=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 N 6.10.0-rc4-
+> g8aadb00f495e #11
+> Hardware name: IBM 3931 A01 704 (KVM/Linux)
+> Krnl PSW : 0704c00180000000 000003ffe288975a (memset+0x3a/0xa0)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 R:0 T:1 IO:1=
+ EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0
+> EA:3
+> Krnl GPRS: 0000000000000000 000003fed25fa180 000003fed25fa180
+> 000003ffe28897a6
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 000000000000=
+0007 000003ffe0000000 0000000000000000
+> 000002ee06e68190
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 000002ee06f1=
+9000 000003fed25fa180 000003ffd25fa180
+> 000003ffd25fa180
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 000000000000=
+0008 0000000000000000 000003ffe17262e0
+> 0000037ee000f730
+> Krnl Code: 000003ffe288974c: 41101100=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 la=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 %r1,256(%r1)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 000003ffe288=
+9750: a737fffb=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+brctg=C2=A0=20
+> %r3,000003ffe2889746
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #000003ffe2889754:=
+ c03000000029=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 larl=C2=A0=C2=A0=20
+> %r3,000003ffe28897a6
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 >000003ffe288975a:=
+ 44403000=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ex=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 %r4,0(%r3)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 000003ffe288=
+975e: 07fe=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 bcr=C2=A0=C2=A0=C2=A0=C2=A0 15,%r14
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 000003ffe288=
+9760: a74f0001=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+cghi=C2=A0=C2=A0=C2=A0 %r4,1
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 000003ffe288=
+9764: b9040012=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+lgr=C2=A0=C2=A0=C2=A0=C2=A0 %r1,%r2
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 000003ffe288=
+9768: a784001c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+brc=C2=A0=C2=A0=C2=A0=20
+> 8,000003ffe28897a0
+> Call Trace:
+> =C2=A0[<000003ffe288975a>] memset+0x3a/0xa0=20
+> ([<000003ffe17262bc>] kmsan_internal_set_shadow_origin+0x21c/0x3a0)
+> =C2=A0[<000003ffe1725fb6>] kmsan_internal_unpoison_memory+0x26/0x30=20
+> =C2=A0[<000003ffe1c1c646>] create_elf_tables+0x13c6/0x2620=20
+> =C2=A0[<000003ffe1c0ebaa>] load_elf_binary+0x50da/0x68f0=C2=A0=20
+> =C2=A0[<000003ffe18c41fc>] bprm_execve+0x201c/0x2f40=20
+> =C2=A0[<000003ffe18bff9a>] kernel_execve+0x2cda/0x2d00=20
+> =C2=A0[<000003ffe49b745a>] kernel_init+0x9ba/0x1630=20
+> =C2=A0[<000003ffe000cd5c>] __ret_from_fork+0xbc/0x180=20
+> =C2=A0[<000003ffe4a1907a>] ret_from_fork+0xa/0x30=20
+> Last Breaking-Event-Address:
+> =C2=A0[<000003ffe2889742>] memset+0x22/0xa0
+> Kernel panic - not syncing: Fatal exception: panic_on_oops
+>=20
+> So is_bad_asm_addr() returned false for a userspace address.
+> Why? Because it happened to collide with the kernel modules area:
+> precisely the effect of overlapping.
+>=20
+> VMALLOC_START: 0x37ee0000000
+> VMALLOC_END:=C2=A0=C2=A0 0x3a960000000
+> MODULES_VADDR: 0x3ff60000000
+> Address:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x3ffd157a580
+> MODULES_END:=C2=A0=C2=A0 0x3ffe0000000
+>=20
+> Now the question is, why do we crash when accessing shadow for
+> modules?
 
-Given that IMA solved the same problem after 15 years, when it became
-an LSM, I'm not super optimistic on that. But if VFS people or other
-subsystem maintainers would be open for such alternative, I can give it
-a try.
+So, Alexander G. and I have figured it out. KMSAN maps vmalloc/modules
+metadata lazily - when the corresponding memory is allocated. Here we
+have a completely random address that did not come from a prior
+vmalloc()/execmem_alloc(), so the corresponding metadata pages are
+missing.
 
-Roberto
+We could probably detect this situation and perform the lazy
+initialization in this case as well, but I don't know if it's worth the
+effort.
+
+> I'll need to investigate, this does not look normal. But even if that
+> worked, we clearly wouldn't want userspace accesses to pollute module
+> shadow, so I think we need this patch in its current form.
+>=20
+> [...]
 
 
