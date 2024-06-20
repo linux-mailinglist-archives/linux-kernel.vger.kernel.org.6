@@ -1,162 +1,274 @@
-Return-Path: <linux-kernel+bounces-223390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DA0911239
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:35:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 351BB911240
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15A0B1C229F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:35:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597791C22989
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961EA1B9AC4;
-	Thu, 20 Jun 2024 19:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E8C1B9AC9;
+	Thu, 20 Jun 2024 19:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BDbWaC9T"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Iqx0o8GG"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731F21B9AC3;
-	Thu, 20 Jun 2024 19:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FE01B3727;
+	Thu, 20 Jun 2024 19:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718912123; cv=none; b=Q0yC1dvZ/M9tlGk47exczIG9kZfFxppjaB32RCqXj5YTkyg3ebYHfkDwXpyX2EUaZtocs98xAlT/gTOmQCpEcqZZZmgWFQwa14LebfdfKy2kF9wCTLnP2K4pocTGCHuFiCNojp/dl1yrcVwfTKw8RUl9hmINvQhknA3d98hP79A=
+	t=1718912223; cv=none; b=HPZFbPnb/hoYKcCzex9xo+4RFx5WjQSg/jUWR/PPwF3LJubSDzRz3gLYzrwW8bQ1b6WsBkFQ8dqNJJxD5kLaKELRA+VUBPc6hKMnRLju5S82jfgLS8PU4ZcyOqYvxxF+4XrCJ2+i6NzhRW8plBmQEC0kkhs1hn/68qHK4ucX9tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718912123; c=relaxed/simple;
-	bh=CZ4vCQRbC/D+Q0spOdedGC9PVT62zn4ZFwpwrw3zfBE=;
+	s=arc-20240116; t=1718912223; c=relaxed/simple;
+	bh=5IdMw3CS1Y7sK1lonjSlEocrecNZz6o8+weAxEgWr3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PwCDOWCNdF/oUckR0D0MgGfsXh6ID+X03k2xgTxiFax2JoTkoCB7LvPJ+zRMxvVWy8PFSo5SVynB9psrCRjfhDFb75vXE05GAYfhDrgBf5pUAcmidOGvNUMCb4/FvBlfb8PPTA9Zfd/Xso1NSTHOz7vS3CtVV5W33Mz2ZCvfqiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BDbWaC9T; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f9e5fb4845so735315ad.0;
-        Thu, 20 Jun 2024 12:35:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718912122; x=1719516922; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=stT07F0FmaEAp0pjqZJjlb0QXpimaL67vkyOhVBAm6s=;
-        b=BDbWaC9TWYFptbk77KixoDtG0nfuVSV2wC5SM46xf8yCa1SsC8zkLaDuhVTumaeezc
-         eIi+IXpHKuo5oR9i8d9OXeyJYAhK5oEKCuFZHp2mfb8+nbubyIQ6eYB+D+RIcJeZR+yg
-         zb+q3NLtLtFTiq97WIiUyYzZ8abusKZ987OF0sUybBeBsn27+PAfUCDP3PSxNJ32Io23
-         Gn+U4ZeD/PPxQwHGrKmO3vbgYXHxwGVY6pUpoR83d2mcQ/lnP4YXoreGpG5cHVpHEpwW
-         IGvGNn+QEHcXfA0hQmJlMQedazG7l+4n+CobEW8ulahXsvPUasmEJbSC7Rgw2y0U0kS0
-         MWKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718912122; x=1719516922;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=stT07F0FmaEAp0pjqZJjlb0QXpimaL67vkyOhVBAm6s=;
-        b=Hj5NXOQGW/bSJgeM2865fgXFERYCAz1vYcCZX6IuZZ3S3xnkLp3TLQtDTu2aSVCZB5
-         T6PRHkqSATZrRQjOEKM/YpFj67UdjTKLzmH2qFbqwsk1RoPen1MaUNNTvXoAqOkpvtIL
-         Qeb/3TbiLbvOf66Wjc1xKI9tUjcok+vTDP+EaL0sU8fZ4SSnwyC/VenJ/spxlrW2f7FI
-         WmbKgkpXJbTQvfoE8+D/JkcYF9uznuzWuWtVuPHzMLGD80/mVa7U2F9SvPPMMO9TOPiM
-         CDtklvSFHiQ7RRs4Hh/NYuZEE4/PJ44cDMz0BgKTnVxfqeR7MJKumCjaZ9kfgzgShf0n
-         sBdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvEFipfZ5XANCokd7Jp4S5xSIWhcxzYYvvTQtfY/NyrfUqIZZKEqUg4001D+sVQDM6yoR0FwbhnVIHIgDW4Vmphn6z+TJcZwnyKw77pTopO40XFv6bfwl/LTfKcdZjEgtX
-X-Gm-Message-State: AOJu0YzmjO0StlyXojMz5ir0XOk4udjsWSFlYr6UEbJayRvyzR5lwbg/
-	JERYd0NkmJK+P1hw519Y7OeWCd974dXeNWA70t2fUkK8EZxKioD+
-X-Google-Smtp-Source: AGHT+IFBaYin5Emvgr9AeDeq8MOwKNyD8wDNCHiYpFiFIsr7nV88kb7csWBIoxk9T2BoPR3Jj7VwdQ==
-X-Received: by 2002:a17:902:ea12:b0:1f6:8c90:3521 with SMTP id d9443c01a7336-1f9a8d419a0mr90405615ad.8.1718912121572;
-        Thu, 20 Jun 2024 12:35:21 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9c2560b9csm24795615ad.224.2024.06.20.12.35.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 12:35:21 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Thu, 20 Jun 2024 09:35:20 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
-Message-ID: <ZnSEeO8MHIQRJyt1@slm.duckdns.org>
-References: <CAHk-=wg8APE61e5Ddq5mwH55Eh0ZLDV4Tr+c6_gFS7g2AxnuHQ@mail.gmail.com>
- <87ed8sps71.ffs@tglx>
- <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
- <87bk3wpnzv.ffs@tglx>
- <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
- <878qz0pcir.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UctYpf07hmJ3haURztyf2jwmAq3mtzv4jbQ5rbUIV8okPPN69kTAGT/+ayULE80RT7Emp1KDa88UTO/fE/bI9UDmFqo03SfIae/+va7Q4HfyMBxv+JBkf6g/8z8bLIXjb8ogcSAqXrqXC1qLR8ahuYEbEmVVx5v6hbQpmfSghqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Iqx0o8GG; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4C1851C0003;
+	Thu, 20 Jun 2024 19:36:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718912216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5I7UdPfxtD1iHOoR6mQl8rKZBvIJT2OuGxvghk0fROk=;
+	b=Iqx0o8GGvnpfXdtfCyUqdTTnWO3tw0V67hm0sLPQSRpXklMHtfFDJZa8xiywocXm0RMkki
+	joMEruEX0uf1FftOx8a+ynLw77d1NbrF9j1LA9gHDnAwoymjba5IXB5MiK2kzlNJYECZiO
+	Jk9Jd565OPKm1R87IZ2cdHHd+0wSgyy7J1WEl52e/1k6olrpSuAowwUVWLUzeeg0c+3uxZ
+	Dr6NNvHJfqKYuz6wgzL++WkO4FyZYYlCqz9Nl3DoB/JyfvyJ7xmzfwF04qOGgF1h02o642
+	66IOwM9ckZSnPFiJ9OooSYgRmET8V8gYRgKIS69EnHBFCZIeic1tOZPgOpfZcg==
+Date: Thu, 20 Jun 2024 21:36:54 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Joseph Jang <jjang@nvidia.com>
+Cc: shuah@kernel.org, avagin@google.com, amir73il@gmail.com,
+	brauner@kernel.org, mochs@nvidia.com, kobak@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/2] selftest: rtc: Add to check rtc alarm status for
+ alarm related test
+Message-ID: <20240620193654d3cd1f05@mail.local>
+References: <20240524013807.154338-1-jjang@nvidia.com>
+ <20240524013807.154338-2-jjang@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <878qz0pcir.ffs@tglx>
+In-Reply-To: <20240524013807.154338-2-jjang@nvidia.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hello, Thomas.
-
-On Thu, Jun 20, 2024 at 04:35:08AM +0200, Thomas Gleixner wrote:
-...
-> There have been voiced a lot of technical arguments, which never got
-> addressed and at some point people gave up due to being ignored.
-
-More on the in-person discussion later, but can you please point to the many
-technical arguments that have been ignored? I addressed all the review
-points that PeterZ raised on the first RFC patchset and responded to most of
-the arguments that were raised. There haven’t been any technical feedbacks
-since then. If there are things that I missed, please point them out, I'd be
-happy to respond.
-
-> When I sat there in Richmond with the sched_ext people I gave them very
-> deep technical feedback especially on the way how they integrate it:
+On 23/05/2024 18:38:06-0700, Joseph Jang wrote:
+> In alarm_wkalm_set and alarm_wkalm_set_minute test, they use different
+> ioctl (RTC_ALM_SET/RTC_WKALM_SET) for alarm feature detection. They will
+> skip testing if RTC_ALM_SET/RTC_WKALM_SET ioctl returns an EINVAL error
+> code. This design may miss detecting real problems when the
+> efi.set_wakeup_time() return errors and then RTC_ALM_SET/RTC_WKALM_SET
+> ioctl returns an EINVAL error code with RTC_FEATURE_ALARM enabled.
 > 
->   Sprinkle hooks and callbacks all over the place until it works by some
->   definition of works.
-
-I would characterize that part of the discussion more nebulous than deep.
-You cited a really high number for where SCX is hooking into the scheduler
-core and then made wide-ranging suggestions including refactoring all the
-schedulers, which seemed vague and out of scope. I tried to probe and we
-didn't get anywhere concrete, which is fine. It's difficult to hash out
-details in such settings.
-
-> That's perfectly fine for a PoC, but not for something which gets merged
-> into the core of an OS. I clearly asked them to refactor the existing
-> code so that these warts go away and everything is contained into the
-> scheduler classes and at the very end sched_ext falls into place. That's
-> a basic engineering principle as far as I know.
+> In order to make rtctest more explicit and robust, we propose to use
+> RTC_PARAM_GET ioctl interface to check rtc alarm feature state before
+> running alarm related tests. If the kernel does not support RTC_PARAM_GET
+> ioctl interface, we will fallback to check the error number of
+> (RTC_ALM_SET/RTC_WKALM_SET) ioctl call for alarm feature detection.
 > 
-> They nodded, ignored my feedback and just continued to pursue their way.
+> Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services
+> as optional")
+> 
+> Reviewed-by: Koba Ko <kobak@nvidia.com>
+> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+> Signed-off-by: Joseph Jang <jjang@nvidia.com>
+> ---
+>  tools/testing/selftests/rtc/Makefile  |  2 +-
+>  tools/testing/selftests/rtc/rtctest.c | 64 +++++++++++++++++++++++++++
+>  2 files changed, 65 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
+> index 55198ecc04db..6e3a98fb24ba 100644
+> --- a/tools/testing/selftests/rtc/Makefile
+> +++ b/tools/testing/selftests/rtc/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -CFLAGS += -O3 -Wl,-no-as-needed -Wall
+> +CFLAGS += -O3 -Wl,-no-as-needed -Wall -I../../../../usr/include/
 
-However, this is not true. During the discussion, I asked you multiple times
-to review the patches and point out the parts that are problematic so that
-they can be addressed and the discussion can become more concrete. You
-promised you would but didn't.
+Is this change actually needed?
 
-This patch series has been up in one form or another for almost two years.
-It took forcing the discussion in Richmond to get any responses from you and
-Peter, and what we got wasn't feedback on the patches, but verbal
-suggestions about SCX itself, and suggestions that X for Y would help us.
-When we attempted to follow up with you afterwards, we got no responses.
-
-Now that Linus said he would pull it, there all of a sudden are discussions
-about the code. It seems likely that we wouldn't have that without Linus'
-email last week. The raised issues seem resolvable and mostly stem from
-trying to minimize changes to sched core. I don’t see a reason why this
-would warrant yet another delay. Why can’t we work it out in tree like any
-other problem?
-
-Thanks.
+>  LDLIBS += -lrt -lpthread -lm
+>  
+>  TEST_GEN_PROGS = rtctest
+> diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
+> index 63ce02d1d5cc..2b12497eb30d 100644
+> --- a/tools/testing/selftests/rtc/rtctest.c
+> +++ b/tools/testing/selftests/rtc/rtctest.c
+> @@ -25,6 +25,12 @@
+>  
+>  static char *rtc_file = "/dev/rtc0";
+>  
+> +enum rtc_alarm_state {
+> +	RTC_ALARM_UNKNOWN,
+> +	RTC_ALARM_ENABLED,
+> +	RTC_ALARM_DISABLED,
+> +};
+> +
+>  FIXTURE(rtc) {
+>  	int fd;
+>  };
+> @@ -82,6 +88,24 @@ static void nanosleep_with_retries(long ns)
+>  	}
+>  }
+>  
+> +static enum rtc_alarm_state get_rtc_alarm_state(int fd)
+> +{
+> +	struct rtc_param param = { 0 };
+> +	int rc;
+> +
+> +	/* Validate kernel reflects unsupported RTC alarm state */
+> +	param.param = RTC_PARAM_FEATURES;
+> +	param.index = 0;
+> +	rc = ioctl(fd, RTC_PARAM_GET, &param);
+> +	if (rc < 0)
+> +		return RTC_ALARM_UNKNOWN;
+> +
+> +	if ((param.uvalue & _BITUL(RTC_FEATURE_ALARM)) == 0)
+> +		return RTC_ALARM_DISABLED;
+> +
+> +	return RTC_ALARM_ENABLED;
+> +}
+> +
+>  TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
+>  	int rc;
+>  	long iter_count = 0;
+> @@ -197,11 +221,16 @@ TEST_F(rtc, alarm_alm_set) {
+>  	fd_set readfds;
+>  	time_t secs, new;
+>  	int rc;
+> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
+>  
+>  	if (self->fd == -1 && errno == ENOENT)
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	alarm_state = get_rtc_alarm_state(self->fd);
+> +	if (alarm_state == RTC_ALARM_DISABLED)
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -210,6 +239,11 @@ TEST_F(rtc, alarm_alm_set) {
+>  
+>  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
+>  	if (rc == -1) {
+> +		/*
+> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
+> +		 * error number if rtc alarm state is unknown.
+> +		 */
+> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
+>  		ASSERT_EQ(EINVAL, errno);
+>  		TH_LOG("skip alarms are not supported.");
+>  		return;
+> @@ -255,11 +289,16 @@ TEST_F(rtc, alarm_wkalm_set) {
+>  	fd_set readfds;
+>  	time_t secs, new;
+>  	int rc;
+> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
+>  
+>  	if (self->fd == -1 && errno == ENOENT)
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	alarm_state = get_rtc_alarm_state(self->fd);
+> +	if (alarm_state == RTC_ALARM_DISABLED)
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -270,6 +309,11 @@ TEST_F(rtc, alarm_wkalm_set) {
+>  
+>  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
+>  	if (rc == -1) {
+> +		/*
+> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
+> +		 * error number if rtc alarm state is unknown.
+> +		 */
+> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
+>  		ASSERT_EQ(EINVAL, errno);
+>  		TH_LOG("skip alarms are not supported.");
+>  		return;
+> @@ -307,11 +351,16 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
+>  	fd_set readfds;
+>  	time_t secs, new;
+>  	int rc;
+> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
+>  
+>  	if (self->fd == -1 && errno == ENOENT)
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	alarm_state = get_rtc_alarm_state(self->fd);
+> +	if (alarm_state == RTC_ALARM_DISABLED)
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -320,6 +369,11 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
+>  
+>  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
+>  	if (rc == -1) {
+> +		/*
+> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
+> +		 * error number if rtc alarm state is unknown.
+> +		 */
+> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
+>  		ASSERT_EQ(EINVAL, errno);
+>  		TH_LOG("skip alarms are not supported.");
+>  		return;
+> @@ -365,11 +419,16 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+>  	fd_set readfds;
+>  	time_t secs, new;
+>  	int rc;
+> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
+>  
+>  	if (self->fd == -1 && errno == ENOENT)
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	alarm_state = get_rtc_alarm_state(self->fd);
+> +	if (alarm_state == RTC_ALARM_DISABLED)
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -380,6 +439,11 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+>  
+>  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
+>  	if (rc == -1) {
+> +		/*
+> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
+> +		 * error number if rtc alarm state is unknown.
+> +		 */
+> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
+>  		ASSERT_EQ(EINVAL, errno);
+>  		TH_LOG("skip alarms are not supported.");
+>  		return;
+> -- 
+> 2.34.1
+> 
 
 -- 
-tejun
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
