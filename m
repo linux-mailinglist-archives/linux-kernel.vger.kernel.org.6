@@ -1,158 +1,123 @@
-Return-Path: <linux-kernel+bounces-223324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686B191110D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:39:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DD191115A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B7271F21335
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:39:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5847B2639B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391C91BB6BA;
-	Thu, 20 Jun 2024 18:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A7A1C004F;
+	Thu, 20 Jun 2024 18:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g49SGkRN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sH0IQHW6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB0F1B5819;
-	Thu, 20 Jun 2024 18:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2111B5819;
+	Thu, 20 Jun 2024 18:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718908014; cv=none; b=u3yEJpakyXym3dOOlQMA5mon9aVoMYPQ3pNCaYN5v1DKKSOGlx4Q2FekyzJTTAMPSsHD612JLPC/YQGYhw2IIO7wHg9HSNVAqQz/FpSf/fh05Vr5/PD1jOG1ONpQaPpxMEdwweSf1ZRavmY77NKjaKLnt0YAWkjOOWya4fn+G9A=
+	t=1718908019; cv=none; b=H/Nwhk0V0grKYEFUFZQXKuEfhRe5zj+f5mT6Ks7p9vl/nvs5K2O8F4CjEYTKxJXoMIGsWobL5RzPZkxbnlRUUQWrw5fWvUMjnICqnyKf2rtiof1UNIm4uiBgg5sQOADDv5EneUNaKiwBs2ke72ebU0JFW2FWcVjs4f3qX9wJPF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718908014; c=relaxed/simple;
-	bh=LYqT1Uu1OecCU2BJJQ+Io08qzbyYl4zJUIcAQBPlWbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PGsscAJIZ9oVFZERLY1GPSRGl3sZhBt811498urNLAxcdldypWk2wh1DXOzxaCh+g6kAcMyXXGEV8jA2tUzC/GmpL2rwZna59SpU2ZjkWFDg99MRJWBAD3+4YGe1Wmb+LahdltWsfNJL9hq8BiV/zBryZuNizjwABVwCEtSAriU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g49SGkRN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06A53C4AF19;
-	Thu, 20 Jun 2024 18:26:52 +0000 (UTC)
+	s=arc-20240116; t=1718908019; c=relaxed/simple;
+	bh=GCVz56YUsKhMOPZ3/lT8irkwPfCF1lu1XjYmgk8WXFo=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=juKOzPh7OqMfudfwCAVhQ2cydmFjgw1jCT/5wzlQ3n1oGzOcsoxGOYDIy+QRWagq2PoSQO8RfUemTVEXjBgnfI+mgGRPr3jD9pXt5+7yc8gq9t8p3eA6o3eovWlGk04ser+T3FdxejLJBSktcpfHzUQUFvHAUVmp+om2Opyy6v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sH0IQHW6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5620DC4AF0D;
+	Thu, 20 Jun 2024 18:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718908013;
-	bh=LYqT1Uu1OecCU2BJJQ+Io08qzbyYl4zJUIcAQBPlWbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g49SGkRN8S2Mavl5RmCW9iL6JIMmlqPrDdntU8UCFVwhWkThAc4SMvqtMJTwPd+PT
-	 EOCOpfq+PKwzRJcCV5f61H10I75SKvULhS1vpydKnaI5RqC/WqJtlQNUj3ncCAX0A3
-	 vYEyL/JSYCmoaByhW1MRhwnvrJz297pQiz1TdTH3bR3jXmAo2YQsA+BPVP7zTr/iyg
-	 qW80cv3MIXoZahNSP11DW9rJkXZRopSfKhKZUagLlOuvyj6G+R3GqLp9ooQ/iitMOG
-	 q8VyLLI4n5Oh/Zr8qdoeooQkaQt+d32NAGMSRmDLSdELiAGOwm756dTyyJhR6QB+5U
-	 9+uYD4vgdDngg==
-Date: Thu, 20 Jun 2024 11:26:52 -0700
-From: Kees Cook <kees@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Martin Uecker <uecker@tugraz.at>,
-	Erick Archer <erick.archer@outlook.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Matthew Wilcox <mawilcox@microsoft.com>, x86@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 0/3] Hardening perf subsystem
-Message-ID: <202406201120.C1629ACFE@keescook>
-References: <20240610200544.GY8774@noisy.programming.kicks-ass.net>
- <202406101438.BC43514F@keescook>
- <20240611075542.GD8774@noisy.programming.kicks-ass.net>
- <202406121148.688240B@keescook>
- <20240612220821.GA18881@noisy.programming.kicks-ass.net>
- <202406121530.D9DB956C8@keescook>
- <20240614101708.GO8774@noisy.programming.kicks-ass.net>
- <c8234b8e2c9c1122eec73c97901e36586160f0cb.camel@tugraz.at>
- <202406171019.9F0127F@keescook>
- <20240618082242.GC31592@noisy.programming.kicks-ass.net>
+	s=k20201202; t=1718908018;
+	bh=GCVz56YUsKhMOPZ3/lT8irkwPfCF1lu1XjYmgk8WXFo=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=sH0IQHW62SBgLfg2w1RlHsuXBIjJKjKgC2GKV6jn5aNfgOWnsLrmbkRnSq1oBuq9s
+	 yNMFt0FuMhrxubu7q2VOFDud2LdMWRSz4zrgjNH8KKFJKnB55wdy77CN3bv6AfBImw
+	 CPKPJ96Y4OK+3COJ8NRZtzFerQN9DXQgnWe1a0WBefVHD/IPAIktInzcbY1/O3VMDJ
+	 X1O8GbAgk412PdDUnyMcHZ88gfF3iiv7Z8r063njG8NrS79wXc9NkjZbIn8Uf/ngLY
+	 eTH0HccRIvkNfVvTSr8q3aUu2DmhrL1WGocYNgq4M8votV1TsC2gRbyCfOaOb6foC7
+	 CZr6CaHy8SyPQ==
+Date: Thu, 20 Jun 2024 12:26:57 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618082242.GC31592@noisy.programming.kicks-ass.net>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ linux-gpio@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+ linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree@vger.kernel.org
+In-Reply-To: <20240620-mbly-olb-v3-2-5f29f8ca289c@bootlin.com>
+References: <20240620-mbly-olb-v3-0-5f29f8ca289c@bootlin.com>
+ <20240620-mbly-olb-v3-2-5f29f8ca289c@bootlin.com>
+Message-Id: <171890801579.3178249.13779438329936311446.robh@kernel.org>
+Subject: Re: [PATCH v3 2/9] Revert "dt-bindings: reset:
+ mobileye,eyeq5-reset: add bindings"
 
-On Tue, Jun 18, 2024 at 10:22:42AM +0200, Peter Zijlstra wrote:
-> On Mon, Jun 17, 2024 at 10:28:20AM -0700, Kees Cook wrote:
+
+On Thu, 20 Jun 2024 19:30:54 +0200, Théo Lebrun wrote:
+> Switch from one sub-node per functionality in the system-controller to a
+> single node representing the entire OLB instance. This is the
+> recommended approach for controllers handling many different
+> functionalities; it is a single controller and should be represented by
+> a single devicetree node.
 > 
-> > But, using type attributes we have much more flexibility. Hence, the
-> > proposed "wraps" attribute:
-> > https://github.com/llvm/llvm-project/pull/86618
+> The reset bindings is removed and all properties will be described by:
+> soc/mobileye/mobileye,eyeq5-olb.yaml
 > 
-> So I still think that's going about things backwards.
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  .../bindings/reset/mobileye,eyeq5-reset.yaml       | 43 ----------------------
+>  1 file changed, 43 deletions(-)
 > 
-> unsigned explicitly wraps. signed is UB.
-> 
-> When using -fwrapv signed is well defined as 2s complement, which takes
-> away the UB and makes it implicitly wrap.
-> 
-> When extending the language, it is important to not break existing code,
-> so the default must remain wrap. This in turn means you need to add a
-> 'nowrap' thingy.
 
-Well, we still disagree about this, but I guess we'll see how the size_t
-work comes along. Maybe I will come to agree with you. :)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-> Also, I would very much not make this an attribute, but a full type
-> qualifier. Furthermore, add type promotion rules to ensure nowrap takes
-> precedence and is preserved throughout expressions. Such that:
-> 
->   'long' + 'nowrap int' -> 'nowrap long'
-> 
-> Then, once you have this, you can go do things like:
-> 
-> typedef nowrap unsigned long size_t;
-> #define sizeof(x) ((size_t)sizeof(x))
-> 
-> and things will just work. Hmm?
+yamllint warnings/errors:
 
-Right. Currently this is being plumbed through the sanitizers, so the
-type selection will happen there (for this version of it). The current
-experiment is to basically tell the sanitizers to ignore all types
-except a given list, and our initial list will be just size_t.
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/sound/st,stm32-sai.example.dtb: /example-0/sai@4400b000/audio-controller@4400b004: failed to match any schema with compatible: ['st,stm32-sai-sub-a']
+Documentation/devicetree/bindings/net/wireless/qcom,ath11k.example.dtb: /example-0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
+Documentation/devicetree/bindings/thermal/brcm,avs-ro-thermal.example.dtb: /example-0/avs-monitor@7d5d2000: failed to match any schema with compatible: ['brcm,bcm2711-avs-monitor', 'syscon', 'simple-mfd']
+Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.example.dtb: /example-1/syscon@20e00000: failed to match any schema with compatible: ['sprd,sc9863a-glbregs', 'syscon', 'simple-mfd']
+Documentation/devicetree/bindings/clock/milbeaut-clock.example.dtb: /example-2/serial@1e700010: failed to match any schema with compatible: ['socionext,milbeaut-usio-uart']
+Documentation/devicetree/bindings/arm/hisilicon/controller/hi3798cv200-perictrl.example.dtb: /example-0/peripheral-controller@8a20000/phy@850: failed to match any schema with compatible: ['hisilicon,hi3798cv200-combphy']
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/stm32/st,mlahb.example.dtb: ahb@38000000: Unevaluated properties are not allowed ('reg' was unexpected)
+	from schema $id: http://devicetree.org/schemas/arm/stm32/st,mlahb.yaml#
 
-Before this, Justin is finishing up the initial set of idiom exclusions.
-.e.g.:
+doc reference errors (make refcheckdocs):
 
-	size_t var, offset;
-	...
-	if (var + offset < var) { ... }
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240620-mbly-olb-v3-2-5f29f8ca289c@bootlin.com
 
-This will not freak out if "var + offset" wraps.
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-And "negative unsigned constants" will be ignored:
+pip3 install dtschema --upgrade
 
-	#define MASK	-2ULL
-	...
-	size_t mask = MASK;
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
-
-And loop post decrements wrapping will get ignored too:
-
-	size_t count = ...;
-	...
-	while (count--) { ... }
-
-
-After we get it all nailed down, we'll see if anything new pops up. :)
-
--- 
-Kees Cook
 
