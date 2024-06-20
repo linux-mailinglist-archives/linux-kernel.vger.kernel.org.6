@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-221984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CAAF90FB65
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:49:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52BA990FB69
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 04:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8A781F229F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:49:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58A3A1C20FEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E431CD16;
-	Thu, 20 Jun 2024 02:49:13 +0000 (UTC)
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.124.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0324C1CD2A;
+	Thu, 20 Jun 2024 02:54:53 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A77E57E;
-	Thu, 20 Jun 2024 02:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.124.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B105518026;
+	Thu, 20 Jun 2024 02:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718851753; cv=none; b=VqKN6ss/9TFTPMGR8BaFImHY9TX7E+/pAeR7MSs7kfUkKnqlzray/iB9qJ5vN/wuSYIALVFljURpBFWUk+byL2jfhjYj7DRPTB6iQEaiLeOsHFG4oYhTeUVBCGNyrc3Nv+DcxkiChe/b4rMYmuhrLFweO21udPsSl23wzbRF/2A=
+	t=1718852092; cv=none; b=HCA9v9jyd9l4T/VXx64BXgOjLBrm3zNujFQwGAL0QlPJK7gWLp0LsK57AlLGex/TMu7ULeu2Tj4pQxBs8CZzuklUKFvWrAhrrKlPgKeF4MWBGdmZ+Y7dtdEHyVWt4EdtxEurqdDC/4M6exsixcwNakXLAp1C5aGwn1xdBt6SK4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718851753; c=relaxed/simple;
-	bh=Y/rDw2bzCXwt+Sd6tTdo6KTXR1kTgawHQy3Q4jGSmAQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pSlzxCOrJ4dYga5gkNb2QUlNqdtWRqKDllA1OyW9/UXgAKGxrcLQJkn0BxWc6QygtEMg2SF4rXy94yhc3j16q6Io6WCBin/F2IdnFJ2JFwodoQd7UE42HmnM1sDxNlWnkA7OaBx31fa/ivmqMaucE6WYCkdFDsg7cBrWpTXuxNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=114.132.124.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
-X-QQ-mid: bizesmtp89t1718851638tsf77eb2
-X-QQ-Originating-IP: Cnxcf0yE6w+MsvywbXobZi1OIKdeiMnOlWen8+fPLAs=
-Received: from HX01040082.powercore.com.cn ( [14.19.141.254])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 20 Jun 2024 10:47:16 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16810093544147674005
-From: Jinglin Wen <jinglin.wen@shingroup.cn>
-To: mpe@ellerman.id.au
-Cc: npiggin@gmail.com,
-	christophe.leroy@csgroup.eu,
-	naveen.n.rao@linux.ibm.com,
-	masahiroy@kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Jinglin Wen <jinglin.wen@shingroup.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] powerpc: Fix unnecessary copy to 0 when kernel is booted at address 0.
-Date: Thu, 20 Jun 2024 10:41:50 +0800
-Message-Id: <20240620024150.14857-1-jinglin.wen@shingroup.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240617023509.5674-1-jinglin.wen@shingroup.cn>
-References: <20240617023509.5674-1-jinglin.wen@shingroup.cn>
+	s=arc-20240116; t=1718852092; c=relaxed/simple;
+	bh=tLnc3zwvRxPEXY5tUvxS5XisSdYkV41lDjfIikHHj5w=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hMpA1qA2njyJFWWK0tYWyia2jLhcd3/FI4ya+W9Sz+Ey3awZSFYfOFX/HLlZ5NKVqUN43ampoFy0Sw5NTGalFfyBoo8bxPDbwsj17Sfh1z0RiG8AZ/7agyBQLLuPFioD1KSMtGKewLkxadY2+K+ZVnDqcVSRAfqwC4DAU5DASqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4W4Q620lr1z1xsSP;
+	Thu, 20 Jun 2024 10:53:14 +0800 (CST)
+Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id C254E1A0188;
+	Thu, 20 Jun 2024 10:54:40 +0800 (CST)
+Received: from localhost.huawei.com (10.90.30.45) by
+ kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 20 Jun 2024 10:54:40 +0800
+From: Jie Hai <haijie1@huawei.com>
+To: <vkoul@kernel.org>, Frank Li <Frank.Li@nxp.com>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, Li
+ Zetao <lizetao1@huawei.com>, Guanhua Gao <guanhua.gao@nxp.com>, "open
+ list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" <dmaengine@vger.kernel.org>, open
+ list <linux-kernel@vger.kernel.org>, "open list:FREESCALE eDMA DRIVER"
+	<imx@lists.linux.dev>, "open list:SIFIVE DRIVERS"
+	<linux-riscv@lists.infradead.org>
+CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] dmaegine: virt-dma : Fix multi-user with vchan
+Date: Thu, 20 Jun 2024 10:53:53 +0800
+Message-ID: <20240620025400.3300641-1-haijie1@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20230720114212.51224-1-haijie1@huawei.com>
+References: <20230720114212.51224-1-haijie1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,47 +60,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz5a-2
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemf500004.china.huawei.com (7.202.181.242)
 
-According to the code logic, when the kernel is loaded to address 0,
-no copying operation should be performed, but it is currently being
-done.
+List desc_allocated was introduced for the case of a transfer
+submitted multiple times. But elegating descriptors on the list
+causes other problems.
 
-This patch fixes the issue where the kernel code was incorrectly
-duplicated to address 0 when booting from address 0.
+For example, in the multi-thread scenario, which tasks are
+continuously created and submitted by each thread. If one of
+the threads calls dmaengine_terminate_all, for dirvers using
+vchan_get_all_descriptors, all descriptors will be freed. If
+there's another thread submitting a transfer A by
+vchan_tx_submit, the following results may be generated:
+1. desc A is freeing -> visit wrong address of node prep/next.
+2. desc A is freed -> visit invalid address of A.
 
-Fixes: b270bebd34e3 ("powerpc/64s: Run at the kernel virtual address earlier in boot")
-Signed-off-by: Jinglin Wen <jinglin.wen@shingroup.cn>
-Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
-Cc: <stable@vger.kernel.org>
+In the above case, calltrace is generated and the system is
+suspended. This can be tested by dmatest.
+
+This patch removes desc_allocated from vchan_get_all_descriptors,
+and add new function 'vchan_get_all_allocated_descs' to get all
+descriptors ever allocated.
+
+And apply vchan_get_all_allocated_descs to free chan resource and
+vchan_get_all_descriptors to terminate all transfers, respectively.
+This avoids freeing up descriptors in use by other threads.
+
+Signed-off-by: Jie Hai <haijie1@huawei.com>
 ---
+ drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c |  2 +-
+ drivers/dma/fsl-edma-common.c           |  2 +-
+ drivers/dma/fsl-qdma.c                  |  2 +-
+ drivers/dma/sf-pdma/sf-pdma.c           |  2 +-
+ drivers/dma/virt-dma.h                  | 20 ++++++++++++++++++--
+ 5 files changed, 22 insertions(+), 6 deletions(-)
 
-v2:
-  - According to 87le336c6k.fsf@mail.lhotse, improve this patch.
-v1:
-  - 20240617023509.5674-1-jinglin.wen@shingroup.cn
-
- arch/powerpc/kernel/head_64.S | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
-index 4690c219bfa4..63432a33ec49 100644
---- a/arch/powerpc/kernel/head_64.S
-+++ b/arch/powerpc/kernel/head_64.S
-@@ -647,8 +647,9 @@ __after_prom_start:
-  * Note: This process overwrites the OF exception vectors.
-  */
- 	LOAD_REG_IMMEDIATE(r3, PAGE_OFFSET)
--	mr.	r4,r26			/* In some cases the loader may  */
--	beq	9f			/* have already put us at zero */
-+	mr	r4,r26			/* Load the virtual source address into r4 */
-+	cmpld	r3,r4			/* Check if source == dest */
-+	beq	9f			/* If so skip the copy  */
- 	li	r6,0x100		/* Start offset, the first 0x100 */
- 					/* bytes were copied earlier.	 */
+diff --git a/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c b/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c
+index 36384d019263..efdecf15e1b3 100644
+--- a/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c
++++ b/drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.c
+@@ -71,7 +71,7 @@ static void dpaa2_qdma_free_chan_resources(struct dma_chan *chan)
+ 	LIST_HEAD(head);
  
+ 	spin_lock_irqsave(&dpaa2_chan->vchan.lock, flags);
+-	vchan_get_all_descriptors(&dpaa2_chan->vchan, &head);
++	vchan_get_all_allocated_descs(&dpaa2_chan->vchan, &head);
+ 	spin_unlock_irqrestore(&dpaa2_chan->vchan.lock, flags);
+ 
+ 	vchan_dma_desc_free_list(&dpaa2_chan->vchan, &head);
+diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
+index 3af430787315..1e0ad87eb7fa 100644
+--- a/drivers/dma/fsl-edma-common.c
++++ b/drivers/dma/fsl-edma-common.c
+@@ -828,7 +828,7 @@ void fsl_edma_free_chan_resources(struct dma_chan *chan)
+ 	if (edma->drvdata->dmamuxs)
+ 		fsl_edma_chan_mux(fsl_chan, 0, false);
+ 	fsl_chan->edesc = NULL;
+-	vchan_get_all_descriptors(&fsl_chan->vchan, &head);
++	vchan_get_all_allocated_descs(&fsl_chan->vchan, &head);
+ 	fsl_edma_unprep_slave_dma(fsl_chan);
+ 	spin_unlock_irqrestore(&fsl_chan->vchan.lock, flags);
+ 
+diff --git a/drivers/dma/fsl-qdma.c b/drivers/dma/fsl-qdma.c
+index 5005e138fc23..7af428db404e 100644
+--- a/drivers/dma/fsl-qdma.c
++++ b/drivers/dma/fsl-qdma.c
+@@ -316,7 +316,7 @@ static void fsl_qdma_free_chan_resources(struct dma_chan *chan)
+ 	LIST_HEAD(head);
+ 
+ 	spin_lock_irqsave(&fsl_chan->vchan.lock, flags);
+-	vchan_get_all_descriptors(&fsl_chan->vchan, &head);
++	vchan_get_all_allocated_descs(&fsl_chan->vchan, &head);
+ 	spin_unlock_irqrestore(&fsl_chan->vchan.lock, flags);
+ 
+ 	vchan_dma_desc_free_list(&fsl_chan->vchan, &head);
+diff --git a/drivers/dma/sf-pdma/sf-pdma.c b/drivers/dma/sf-pdma/sf-pdma.c
+index 428473611115..4dc8a8c8ad80 100644
+--- a/drivers/dma/sf-pdma/sf-pdma.c
++++ b/drivers/dma/sf-pdma/sf-pdma.c
+@@ -147,7 +147,7 @@ static void sf_pdma_free_chan_resources(struct dma_chan *dchan)
+ 	sf_pdma_disable_request(chan);
+ 	kfree(chan->desc);
+ 	chan->desc = NULL;
+-	vchan_get_all_descriptors(&chan->vchan, &head);
++	vchan_get_all_allocated_descs(&chan->vchan, &head);
+ 	sf_pdma_disclaim_chan(chan);
+ 	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+ 	vchan_dma_desc_free_list(&chan->vchan, &head);
+diff --git a/drivers/dma/virt-dma.h b/drivers/dma/virt-dma.h
+index 59d9eabc8b67..4492641b79f6 100644
+--- a/drivers/dma/virt-dma.h
++++ b/drivers/dma/virt-dma.h
+@@ -187,13 +187,29 @@ static inline void vchan_get_all_descriptors(struct virt_dma_chan *vc,
+ {
+ 	lockdep_assert_held(&vc->lock);
+ 
+-	list_splice_tail_init(&vc->desc_allocated, head);
+ 	list_splice_tail_init(&vc->desc_submitted, head);
+ 	list_splice_tail_init(&vc->desc_issued, head);
+ 	list_splice_tail_init(&vc->desc_completed, head);
+ 	list_splice_tail_init(&vc->desc_terminated, head);
+ }
+ 
++/**
++ * vchan_get_all_allocated_descs - obtain all descriptors
++ * @vc: virtual channel to get descriptors from
++ * @head: list of descriptors found
++ *
++ * vc.lock must be held by caller
++ *
++ * Removes all descriptors from internal lists, and provides a list of all
++ * descriptors found
++ */
++static inline void vchan_get_all_allocated_descs(struct virt_dma_chan *vc,
++	struct list_head *head)
++{
++	list_splice_tail_init(&vc->desc_allocated, head);
++	vchan_get_all_descriptors(vc, head);
++}
++
+ static inline void vchan_free_chan_resources(struct virt_dma_chan *vc)
+ {
+ 	struct virt_dma_desc *vd;
+@@ -201,7 +217,7 @@ static inline void vchan_free_chan_resources(struct virt_dma_chan *vc)
+ 	LIST_HEAD(head);
+ 
+ 	spin_lock_irqsave(&vc->lock, flags);
+-	vchan_get_all_descriptors(vc, &head);
++	vchan_get_all_allocated_descs(vc, &head);
+ 	list_for_each_entry(vd, &head, node)
+ 		dmaengine_desc_clear_reuse(&vd->tx);
+ 	spin_unlock_irqrestore(&vc->lock, flags);
 -- 
-2.25.1
+2.33.0
 
 
