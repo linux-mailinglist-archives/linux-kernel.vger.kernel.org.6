@@ -1,172 +1,109 @@
-Return-Path: <linux-kernel+bounces-223087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C51D910D64
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:43:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D097910D67
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2165F287BF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:43:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F1F1F21740
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 16:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15BD1B3F06;
-	Thu, 20 Jun 2024 16:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFBF1B29D5;
+	Thu, 20 Jun 2024 16:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EN3Rla40"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A7FDs2jX"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14571B3739;
-	Thu, 20 Jun 2024 16:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E3F1B1436;
+	Thu, 20 Jun 2024 16:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718901796; cv=none; b=koK2EOCKTvlAYJf16715QhgV3H8laybtSPxjZ62OHS4nWYKiVrkFEZKUP36QhftX+rnapWU0CyoBT0mamyukyfcxOFcV6RV9bPUnwVl1112b2crNQDDSWv5IFbcpi5BM21W8RtCoPxAeoqC42sldl6TPP6CPJWab037bVQl7U9w=
+	t=1718901828; cv=none; b=X/JlmoYVXhxpUXEoSuehH3CBtU9G6y3pQRxHVx6QduhqXXR/FeeSR4mlQgo5xPfnuZPIaK/23VPUu890DkcRP6pCWP/KHYA2nRogdbiqipIw49E5d3g5ri9JTJvLIJrQESmYvch9UVE9Q1VLfmPUtE4dgOHUlYsJEY6lO9McHR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718901796; c=relaxed/simple;
-	bh=GK4MNvX4+1JfczyTRdZTg9XT+qi0+8xD3AsZHcZ8Fqo=;
-	h=Date:From:To:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cChLcAOUOFKatvBuCgyQfBmpeW3avuLXIebA7TO0PkQQovsZPM65E/tv/BXjZUmBy2aXPU4jysPspI1phCPlDYyvcOG+z6JasrjF8UrfkxgMLY+S308bBTq4slEM9+tgNAfR17UDtFesrkfeYrP9u9UPLjojhgeG8VT2j44YLUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EN3Rla40; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 632AB240005;
-	Thu, 20 Jun 2024 16:43:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718901791;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zCnekOgzHJ5CtNqqN1hEHsWUPpfbXDdutXGhUVlconY=;
-	b=EN3Rla40J76rp4uxb98AiJsO9bmSyCfqNZia+LcMqKEdmZcebP+27tab//3SrxFUcHQBJL
-	3AU25VosnRi/zgpew0HqncZXezZAmh/Rr8sTw6x0XqfcigIUDpZBcSfMJPIxqw5KSP6cIo
-	+H+nxgh/087GcC7gnPTifJnz/6pzWsICipD04n0Emsa+cGigFc+rh7ld2BtNq4YYpPKd6N
-	C+sNoxdVYLtvZmFf1WIA1K08UnP7KbBn3jRiMg/YFD7N7/G+J8MCW36V7MSgBMA5Jt4lgk
-	y2T1T/ldqmbj1TcVxIfCImdFJjKEyU+9v0MV1/x0kNazRDKJgHOIMeQfYKmM3A==
-Date: Thu, 20 Jun 2024 18:43:09 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Simon Horman
- <horms@kernel.org>, Sai Krishna Gajula <saikrishnag@marvell.com>, Thomas
- Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Lee Jones
- <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Saravana Kannan <saravanak@google.com>, Bjorn
- Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, Lars
- Povlsen <lars.povlsen@microchip.com>, Steen Hegelund
- <Steen.Hegelund@microchip.com>, Daniel Machon
- <daniel.machon@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Allan
- Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 18/19] mfd: Add support for LAN966x PCI device
-Message-ID: <20240620184309.6d1a29a1@bootlin.com>
-In-Reply-To: <CAHp75VdDkv-dxWa60=OLfXAQ8T5CkFiKALbDHaVVKQOK3gJehA@mail.gmail.com>
-References: <20240527161450.326615-1-herve.codina@bootlin.com>
-	<20240527161450.326615-19-herve.codina@bootlin.com>
-	<ZmDJi__Ilp7zd-yJ@surfacebook.localdomain>
-	<20240620175646.24455efb@bootlin.com>
-	<CAHp75VdDkv-dxWa60=OLfXAQ8T5CkFiKALbDHaVVKQOK3gJehA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1718901828; c=relaxed/simple;
+	bh=p5S9jfbwUmvqRP1i2btHbKqu3Moz4r2TjCuUBCtg/oY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=prQD00vyRzwFPOt3NpWbY6pMbctzKQv4z4tcTi/Enine47vf7hrnOefu1jdai9mYfZR8OiUPQyLdukeaJNedTfVZguc7BBZLjlETDDgYkDWs+V7Pzyg2hyneY6CSyJ0RXfcNNcv1P1w4XVEeF5KdL+z/MkyalF8dli2GT6znu2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A7FDs2jX; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfb16f9b047so133961276.2;
+        Thu, 20 Jun 2024 09:43:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718901826; x=1719506626; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MpsKA6dN8tiK+ilRBdR/wwMkc9wHaYLF5tM9swx5qe0=;
+        b=A7FDs2jXwULbRnrr8gT6ZQywPViiV8pnC46ad2lGCqSOmV8X+izVUi5GYZfqxZDXM6
+         Vxs087oTWJarndSExv7W73/ffyBDmPWOxXfvmSE+JxJLORlITIW+ccNGgxzbmM+D4bMG
+         GUnAOA5nQpBuxs1lsNcE29aWPsx79XkOr+VwRAy7IWBpJ/lWr1gn2PnmdvmOpOQ4+ZP2
+         Q7VNgst62lV7coAsUsoB4lzFjIQsscIc3aU0UnnSIxFpbiOoq5pKBO/C1d5s81iAgLUQ
+         +V+vEUklxrT3Oc3AiEakzF0uWGyVZ/9lsXh2xn1kEfI0V77DPSncrtUPArJv9mA45SQA
+         +TvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718901826; x=1719506626;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MpsKA6dN8tiK+ilRBdR/wwMkc9wHaYLF5tM9swx5qe0=;
+        b=kUwA0GgsUMp76m5liGkzvSgmNLKOI6hayXkXi6dVIjEbSujfcZ/S+KQ5IJBi68Simk
+         k2hzkfXoqxlbm0moJOvtzFbbyZAz3DgMhJBTcjlDWIf3zrFLaJCU9odmFTmaAHnscUyH
+         V5EV75XZSeb14J5ql+2j8eem052YNa//2ITOuGpTpZeWgl6W3/zMD1vimp8/h5s7rFZ6
+         keGmKtaYle/64F1WuzFoaEAe9+ciLlXkDc9QbeVhMsx1Knkhn0k9+wESmkT86/zW99Hb
+         aNNZbWWXcpZ5R1oubWtGiW3jCti0bC1UshOeRgBhJL1/b5RA1Dwruu7VjsbWqtfI6L96
+         6Jow==
+X-Forwarded-Encrypted: i=1; AJvYcCW6TqMqpHyT8VXwILx+Lm1JzFvIWlyNNIkwajQZxngStvhNQFVI6bOF304tM+1DosWYl3PQp9qg0eIchK+oCl/6u/TPG2hEeEhOKGdZRtgycUxBjrTocPcSV5vRTbvvIzm+eUoufvy1ow==
+X-Gm-Message-State: AOJu0Yykai979/8LF1Gkv6+sEtMJZpJMX1HOPGXdKG9dfULEdEnIGPqE
+	NIA1mZHsT/M30KCVEdz5WLg5gn/F3ngWPUKlzsPT1T6fU8+UR/e9SaZYKsYvQGtAXRYHy6ejWeV
+	BfWGaGWZChMEvg42lAchTLS6fV3k=
+X-Google-Smtp-Source: AGHT+IF9qo3Y0Z8hx4Q91/rEaLETH4GL8dJgopyoPNv9MOov7usRHZoeRPpAo53RLscGJ+T8lK3qTUbaUnN1ft9P2AU=
+X-Received: by 2002:a25:d654:0:b0:dff:164d:6f2 with SMTP id
+ 3f1490d57ef6-e02be13dd38mr5465650276.2.1718901825615; Thu, 20 Jun 2024
+ 09:43:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+References: <20240620120101.419437-1-qq810974084@gmail.com>
+In-Reply-To: <20240620120101.419437-1-qq810974084@gmail.com>
+From: Justin Tee <justintee8345@gmail.com>
+Date: Thu, 20 Jun 2024 09:43:34 -0700
+Message-ID: <CABPRKS8eGh8AkcxhLswOkaGHB2OewnbCcQd8=WoNiYuxeMGw8A@mail.gmail.com>
+Subject: Re: [PATCH V3] scsi: lpfc: Fix a possible null pointer dereference
+To: Huai-Yuan Liu <qq810974084@gmail.com>
+Cc: Justin Tee <justin.tee@broadcom.com>, james.smart@broadcom.com, 
+	dick.kennedy@broadcom.com, James.Bottomley@hansenpartnership.com, 
+	martin.petersen@oracle.com, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-My bad, I wrongly answered first in private.
-I already eesend my answers with people in Cc
+Hi Huai-Yuan,
 
-Now, this is the Andy's your reply.
+Sorry for noticing this later, but a return len while len is 0 would
+result in a silent $(cat /sys/class/scsi_host/host*/lpfc_xcvr_data).
 
-Sorry for this mistake.
+Perhaps, it's better to log something to at least notify the user why
+SFP information was not able to be collected.
 
-Herve
+How about something like this?
 
-On Thu, 20 Jun 2024 18:07:16 +0200
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+        /* Get transceiver information */
+        rdp_context = kmalloc(sizeof(*rdp_context), GFP_KERNEL);
++       if (!rdp_context) {
++               len = scnprintf(buf, PAGE_SIZE - len,
++                                       "SFP info NA: alloc failure\n");
++               return len;
++       }
 
-> On Thu, Jun 20, 2024 at 5:56 PM Herve Codina <herve.codina@bootlin.com> wrote:
-> > On Wed, 5 Jun 2024 23:24:43 +0300
-> > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:  
-> > > Mon, May 27, 2024 at 06:14:45PM +0200, Herve Codina kirjoitti:  
-> 
-> ...
-> 
-> > > > +   if (!dev->of_node) {
-> > > > +           dev_err(dev, "Missing of_node for device\n");
-> > > > +           return -EINVAL;
-> > > > +   }  
-> > >
-> > > Why do you need this? The code you have in _create_intr_ctrl() will take care
-> > > already for this case.  
-> >
-> > The code in _create_intr_ctrl checks for fwnode and not an of_node.
-> >
-> > The check here is to ensure that an of_node is available as it will be use
-> > for DT overlay loading.  
-> 
-> So, what exactly do you want to check? fwnode check covers this.
-> 
-> > I will keep the check here and use dev_of_node() instead of dev->of_node.  
-> 
-> It needs to be well justified as from a coding point of view this is a
-> duplication.
-> 
-> ...
-> 
-> > > > +   pci_set_master(pdev);  
-> > >
-> > > You don't use MSI, what is this for?  
-> >
-> > DMA related.
-> > Allows the PCI device to be master on the bus and so initiate transactions.
-> >
-> > Did I misunderstood ?  
-> 
-> So, you mean that the PCI device may initiate DMA transactions and
-> they are not related to MSI, correct?
-> 
-> ...
-> 
-> > > > +static struct pci_device_id lan966x_pci_ids[] = {
-> > > > +   { PCI_DEVICE(0x1055, 0x9660) },  
-> > >
-> > > Don't you have VENDOR_ID defined somewhere?  
-> >
-> > No and 0x1055 is taken by PCI_VENDOR_ID_EFAR in pci-ids.h
-> > but SMSC acquired EFAR late 1990's and MCHP acquired SMSC in 2012
-> > https://elixir.bootlin.com/linux/latest/source/drivers/net/ethernet/microchip/lan743x_main.h#L851
-> >
-> > I will patch pci-ids.h to create:
-> >   #define PCI_VENDOR_ID_SMSC PCI_VENDOR_ID_EFAR
-> >   #define PCI_VENDOR_ID_MCHP PCI_VENDOR_ID_SMSC
-> > As part of this patch, I will update lan743x_main.h to remove its own #define
-> >
-> > And use PCI_VENDOR_ID_MCHP in this series.  
-> 
-> Okay, but I don't think (but I haven't checked) we have something like
-> this ever done there. In any case it's up to Bjorn how to implement
-> this.
-> 
-> > > > +   { 0, }  
-> > >
-> > > Unneeded ' 0, ' part  
-> >
-> > Will be removed.
-> >  
-> > > > +};  
-> 
+        rc = lpfc_get_sfp_info_wait(phba, rdp_context);
+        if (rc) {
+
+
+Thanks,
+Justin Tee
 
