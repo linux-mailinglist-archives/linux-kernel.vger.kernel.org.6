@@ -1,327 +1,228 @@
-Return-Path: <linux-kernel+bounces-221897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB0790FA3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:27:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB47190FA41
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFBD61C215FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:27:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A0281F22362
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272FF1109;
-	Thu, 20 Jun 2024 00:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B9C442F;
+	Thu, 20 Jun 2024 00:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3mtCkuD"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="cp2tc/uL"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F9F64C;
-	Thu, 20 Jun 2024 00:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FA080B
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 00:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718843228; cv=none; b=ndIYfXAOYrvR3EYPXxwZgKzcfqXJVM449llf83X+yhC4PoA1ElWrg360J0m0xQSeIXdpr3XSXggfHhI6X8Xyp7BgGel76sboNIrIlApgYURqfFKlMBF3YxnnqtxMc2IDxBVW7xZwhVUFFYWcFL4UsNl5tv+lcrGSfsX0LLznPow=
+	t=1718843321; cv=none; b=vGEx8RB/78hO/z2TnYvDtPdaArijDJQ5fzx+MNK+Od6BZLHR/vWI05eYdRNJR4cuUh3wFUuxUaTYaHI4kUcHyPiZLyyWsJDnYgDdSFmr8yfPvhnIhdSF+XQxkGrOfEJ49XSllDKRHn9KOFCor/IB5NCFPgoHftMdCoCWLWuTyYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718843228; c=relaxed/simple;
-	bh=bz3ViVq8/ema1ANLsu/KH87HhKpcqFGpBqv5TCzfcMU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Sznmgb+w4w7WtVUbsU4/r+0sdMBAxtVvFNAxwMO+wEyGpo+VjTjrdl3aBfg4hByncMaC/DBzDAKm0yGih4NV2EcZZ0YuOCsATy9/Oj6oeeOql0BhdGNl9smalC4UopfruY/Zyu96ApOZXP+644sDQOZRZyEZi0n41SxA3p/l6fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W3mtCkuD; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-705bf368037so366924b3a.0;
-        Wed, 19 Jun 2024 17:27:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718843226; x=1719448026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/phkDRQOzz1mys5+rBCaSnbv5F7N/ucY8CBHIGfrx8g=;
-        b=W3mtCkuDHY8JEZBWvzlZC3CsTSGi7B4fNaL6hJWPdJY80erW5/7jbt0RMpaNlY0SV+
-         b/OVWYzF48xS+meknY0MN00e/+Kf2DDcjeOBfD+A4Z5ui/QW2YVhTnkhahMPwGH83ZVB
-         BbD9BKq/OdphaIBpycL9L1RDy9fmxWue3aiGZ1Gf7S2072jom/rh9LAJt1kT5/7If9Em
-         85JSinGTfe7Raloe9zOFyPMtIUUJeVRc+cQTcGRGV8pWuxjtz/HZ4nq6b2foV6+Nv/zW
-         FtxC56E0kHpTFzkg/uB4GFebVRC/oqrbgizBud1U5Wv4+eSScabGicJXCNMEu5dstSHs
-         2sgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718843226; x=1719448026;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/phkDRQOzz1mys5+rBCaSnbv5F7N/ucY8CBHIGfrx8g=;
-        b=et1DN2d15P1YpKZdHq77X0NwYk8OoP4bTiwnIneYqw2CEsHxvSJPrIPNJZW8pGAlEJ
-         ddq1G1HFiTCz7fwYorS0TWddQ51SzM0KvZPJdKsZ0tHWutdWMza0xM7C1YWBH8gqDGK3
-         hhuDc0CFAfo+Sz2Q6ghidLbvLz625+NKpHvYbcGl8VP4TSsemd+v2qaIZuZ7VNioibxS
-         kWqARdk0HTGpmQRE3vgx0eUI7vrC8v+muNbsoV5bCNJAXe5gYMYtgiAeWTNGzHMJE9YK
-         PUJclyvQzW6JmUSy5IrVm+2ziSNvj1lOXhONgchF4nPQq2u1Q0qS9ryNeBw2a3Qak5sk
-         xZ0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCULyfndJ1OlymQb7uTvh8vFUaqsbIiyAEhEY4Fvi4DuET7J83sLLwgnqjn67n50UcBw3GB/XL90rU9RQB502yraoaXFvn7D1MdwBVDzpC5XdfRWkX8iZXKCHDI+y63ri9vKgeVOe0+MDM0jmom1
-X-Gm-Message-State: AOJu0YwmrBU4BLHriHQzMkC90NtWmYHf/B16shoqCUvLPnPNwf4R5Qhh
-	IFw+2JcJiIqK7Cyc32mSmhm8IIbIBfEBGTG33Qljzkpbviwd0Fgx
-X-Google-Smtp-Source: AGHT+IEKP///BAxzukR21Dn0SGKbKyRk6+T0rDc0H3AwIZxrIsHI7d6TiHcl1VqbM0vqcWGSiAyMEA==
-X-Received: by 2002:a05:6a00:2f43:b0:704:1ac0:bf16 with SMTP id d2e1a72fcca58-70629c1fcbbmr3686506b3a.5.1718843225789;
-        Wed, 19 Jun 2024 17:27:05 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc967356sm11273385b3a.63.2024.06.19.17.27.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 17:27:05 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	shuah@kernel.org,
-	linux-mm@kvack.org
-Cc: ryan.roberts@arm.com,
-	chrisl@kernel.org,
-	david@redhat.com,
-	hughd@google.com,
-	kaleshsingh@google.com,
-	kasong@tencent.com,
-	linux-kernel@vger.kernel.org,
-	ying.huang@intel.com,
-	linux-kselftest@vger.kernel.org,
-	Barry Song <v-songbaohua@oppo.com>
-Subject: [PATCH] selftests/mm: Introduce a test program to assess swap entry allocation for thp_swapout
-Date: Thu, 20 Jun 2024 12:26:48 +1200
-Message-Id: <20240620002648.75204-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1718843321; c=relaxed/simple;
+	bh=orcpOtdaVS8Lt/7nnK/nb+mz8CnEu5zIl3alpK03zTY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hRcLurCDBzMHpxP6h3KEb9hns3Mxv9G0gQx6Zh0KaHcOpT9+J1XjVVv0NUt8jOddX5O1kJaYIr2Ai8Z0Zzu2B9KzErwi25spxNTcu1TN+EGKsXCHMn8R3zPgeieRcbKYQMCN1u8Gzyh7NMzWkazDeiBo3gHvRADv4kTreaz+pGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=cp2tc/uL; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id BD9F12C0240;
+	Thu, 20 Jun 2024 12:28:35 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1718843315;
+	bh=Lp0DNFqLPHML0eGPT5nW0MrIY2TAE9vKBYzLLBAqySw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cp2tc/uLVhYDT+l1Kd9iDU6pIc016zYPed3iQ22252Y0LWI6b0gOQtRus7wteeKQU
+	 KHtzfANv+av3xBY7/Uo2fmSchk3lSSga9nWDRSfZfK0Tn65zFgPE9zZCLcoOGZWwWA
+	 O4XtXCBNQsG/mnu3B6EKg2QVX+yuHskDvnBtVSQQs2PrWSGVpdgf98MQ7DjKNevCR3
+	 Ei7GrpZMWyVSRmEQDsoc1iUB1Cn5BSST+vwVhkz44S1MkMHcBIp4tUOw2/11vcTjrL
+	 QkdyjJA65x5iMJ+R7xhp5MKzNC85nn7zk/Fckn2js7DOGuRRBxkIG7YXrMYAkIAZIW
+	 bxLkPc/Uh2VWA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B667377b30000>; Thu, 20 Jun 2024 12:28:35 +1200
+Received: from aryans-dl.ws.atlnz.lc (aryans-dl.ws.atlnz.lc [10.33.22.38])
+	by pat.atlnz.lc (Postfix) with ESMTP id 7FB0613ED63;
+	Thu, 20 Jun 2024 12:28:35 +1200 (NZST)
+Received: by aryans-dl.ws.atlnz.lc (Postfix, from userid 1844)
+	id 7BBDD2A0FF5; Thu, 20 Jun 2024 12:28:35 +1200 (NZST)
+From: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+To: Andrew Lunn <andrew@lunn.ch>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
+Cc: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] net: dsa: mv88e6xxx: Add FID map cache
+Date: Thu, 20 Jun 2024 12:28:26 +1200
+Message-ID: <20240620002826.213013-1-aryan.srivastava@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=667377b3 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=d04kM7kIrsN5wIaQCncA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-From: Barry Song <v-songbaohua@oppo.com>
+Add a cached FID bitmap. This mitigates the need to walk all VTU entries
+to find the next free FID.
 
-Both Ryan and Chris have been utilizing the small test program to aid
-in debugging and identifying issues with swap entry allocation. While
-a real or intricate workload might be more suitable for assessing the
-correctness and effectiveness of the swap allocation policy, a small
-test program presents a simpler means of understanding the problem and
-initially verifying the improvements being made.
+Walk VTU once, then store read FID map into bitmap. Use and manipulate
+this bitmap from now on, instead of re-reading HW for the FID map.
 
-Let's endeavor to integrate it into the self-test suite. Although it
-presently only accommodates 64KB and 4KB, I'm optimistic that we can
-expand its capabilities to support multiple sizes and simulate more
-complex systems in the future as required.
+The repeatedly VTU walks are costly can result in taking ~40 mins if
+~4000 vlans are added. Caching the FID map reduces this time to <2
+mins.
 
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+Signed-off-by: Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
 ---
- tools/testing/selftests/mm/Makefile           |   1 +
- .../selftests/mm/thp_swap_allocator_test.c    | 192 ++++++++++++++++++
- 2 files changed, 193 insertions(+)
- create mode 100644 tools/testing/selftests/mm/thp_swap_allocator_test.c
+ drivers/net/dsa/mv88e6xxx/chip.c    | 37 +++++++++++++++++++----------
+ drivers/net/dsa/mv88e6xxx/chip.h    |  3 +++
+ drivers/net/dsa/mv88e6xxx/devlink.c |  9 +------
+ 3 files changed, 28 insertions(+), 21 deletions(-)
 
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index e1aa09ddaa3d..64164ad66835 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -65,6 +65,7 @@ TEST_GEN_FILES += mseal_test
- TEST_GEN_FILES += seal_elf
- TEST_GEN_FILES += on-fault-limit
- TEST_GEN_FILES += pagemap_ioctl
-+TEST_GEN_FILES += thp_swap_allocator_test
- TEST_GEN_FILES += thuge-gen
- TEST_GEN_FILES += transhuge-stress
- TEST_GEN_FILES += uffd-stress
-diff --git a/tools/testing/selftests/mm/thp_swap_allocator_test.c b/tools/testing/selftests/mm/thp_swap_allocator_test.c
-new file mode 100644
-index 000000000000..4443a906d0f8
---- /dev/null
-+++ b/tools/testing/selftests/mm/thp_swap_allocator_test.c
-@@ -0,0 +1,192 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * thp_swap_allocator_test
-+ *
-+ * The purpose of this test program is helping check if THP swpout
-+ * can correctly get swap slots to swap out as a whole instead of
-+ * being split. It randomly releases swap entries through madvise
-+ * DONTNEED and do swapout on two memory areas: a memory area for
-+ * 64KB THP and the other area for small folios. The second memory
-+ * can be enabled by "-s".
-+ * Before running the program, we need to setup a zRAM or similar
-+ * swap device by:
-+ *  echo lzo > /sys/block/zram0/comp_algorithm
-+ *  echo 64M > /sys/block/zram0/disksize
-+ *  echo never > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled
-+ *  echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enabled
-+ *  mkswap /dev/zram0
-+ *  swapon /dev/zram0
-+ * The expected result should be 0% anon swpout fallback ratio w/ or
-+ * w/o "-s".
-+ *
-+ * Author(s): Barry Song <v-songbaohua@oppo.com>
-+ */
-+
-+#define _GNU_SOURCE
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <string.h>
-+#include <sys/mman.h>
-+#include <errno.h>
-+#include <time.h>
-+
-+#define MEMSIZE_MTHP (60 * 1024 * 1024)
-+#define MEMSIZE_SMALLFOLIO (1 * 1024 * 1024)
-+#define ALIGNMENT_MTHP (64 * 1024)
-+#define ALIGNMENT_SMALLFOLIO (4 * 1024)
-+#define TOTAL_DONTNEED_MTHP (16 * 1024 * 1024)
-+#define TOTAL_DONTNEED_SMALLFOLIO (768 * 1024)
-+#define MTHP_FOLIO_SIZE (64 * 1024)
-+
-+#define SWPOUT_PATH \
-+	"/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout"
-+#define SWPOUT_FALLBACK_PATH \
-+	"/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout_fallback"
-+
-+static void *aligned_alloc_mem(size_t size, size_t alignment)
-+{
-+	void *mem = NULL;
-+
-+	if (posix_memalign(&mem, alignment, size) != 0) {
-+		perror("posix_memalign");
-+		return NULL;
-+	}
-+	return mem;
-+}
-+
-+static void random_madvise_dontneed(void *mem, size_t mem_size,
-+		size_t align_size, size_t total_dontneed_size)
-+{
-+	size_t num_pages = total_dontneed_size / align_size;
-+	size_t i;
-+	size_t offset;
-+	void *addr;
-+
-+	for (i = 0; i < num_pages; ++i) {
-+		offset = (rand() % (mem_size / align_size)) * align_size;
-+		addr = (char *)mem + offset;
-+		if (madvise(addr, align_size, MADV_DONTNEED) != 0)
-+			perror("madvise dontneed");
-+
-+		memset(addr, 0x11, align_size);
-+	}
-+}
-+
-+static unsigned long read_stat(const char *path)
-+{
-+	FILE *file;
-+	unsigned long value;
-+
-+	file = fopen(path, "r");
-+	if (!file) {
-+		perror("fopen");
+diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx=
+/chip.c
+index e5bac87941f6..38426434707c 100644
+--- a/drivers/net/dsa/mv88e6xxx/chip.c
++++ b/drivers/net/dsa/mv88e6xxx/chip.c
+@@ -1726,14 +1726,6 @@ static void mv88e6xxx_port_fast_age(struct dsa_swi=
+tch *ds, int port)
+ 			port, err);
+ }
+=20
+-static int mv88e6xxx_vtu_setup(struct mv88e6xxx_chip *chip)
+-{
+-	if (!mv88e6xxx_max_vid(chip))
+-		return 0;
+-
+-	return mv88e6xxx_g1_vtu_flush(chip);
+-}
+-
+ static int mv88e6xxx_vtu_get(struct mv88e6xxx_chip *chip, u16 vid,
+ 			     struct mv88e6xxx_vtu_entry *entry)
+ {
+@@ -1813,16 +1805,25 @@ int mv88e6xxx_fid_map(struct mv88e6xxx_chip *chip=
+, unsigned long *fid_bitmap)
+ 	return mv88e6xxx_vtu_walk(chip, mv88e6xxx_fid_map_vlan, fid_bitmap);
+ }
+=20
+-static int mv88e6xxx_atu_new(struct mv88e6xxx_chip *chip, u16 *fid)
++static int mv88e6xxx_vtu_setup(struct mv88e6xxx_chip *chip)
+ {
+-	DECLARE_BITMAP(fid_bitmap, MV88E6XXX_N_FID);
+ 	int err;
+=20
+-	err =3D mv88e6xxx_fid_map(chip, fid_bitmap);
++	if (!mv88e6xxx_max_vid(chip))
 +		return 0;
-+	}
 +
-+	if (fscanf(file, "%lu", &value) != 1) {
-+		perror("fscanf");
-+		fclose(file);
-+		return 0;
-+	}
-+
-+	fclose(file);
-+	return value;
++	err =3D mv88e6xxx_g1_vtu_flush(chip);
+ 	if (err)
+ 		return err;
+=20
+-	*fid =3D find_first_zero_bit(fid_bitmap, MV88E6XXX_N_FID);
++	return mv88e6xxx_fid_map(chip, chip->fid_bitmap);
 +}
 +
-+int main(int argc, char *argv[])
++static int mv88e6xxx_atu_new(struct mv88e6xxx_chip *chip, u16 *fid)
 +{
-+	int use_small_folio = 0;
-+	int i;
-+	void *mem1 = aligned_alloc_mem(MEMSIZE_MTHP, ALIGNMENT_MTHP);
-+	void *mem2 = NULL;
++	int err;
 +
-+	if (mem1 == NULL) {
-+		fprintf(stderr, "Failed to allocate 60MB memory\n");
-+		return EXIT_FAILURE;
-+	}
++	*fid =3D find_first_zero_bit(chip->fid_bitmap, MV88E6XXX_N_FID);
+ 	if (unlikely(*fid >=3D mv88e6xxx_num_databases(chip)))
+ 		return -ENOSPC;
+=20
+@@ -2529,6 +2530,9 @@ static int mv88e6xxx_port_vlan_join(struct mv88e6xx=
+x_chip *chip, int port,
+ 			 port, vid);
+ 	}
+=20
++	/* Record FID used in SW FID map */
++	bitmap_set(chip->fid_bitmap, vlan.fid, 1);
 +
-+	if (madvise(mem1, MEMSIZE_MTHP, MADV_HUGEPAGE) != 0) {
-+		perror("madvise hugepage for mem1");
-+		free(mem1);
-+		return EXIT_FAILURE;
-+	}
+ 	return 0;
+ }
+=20
+@@ -2636,7 +2640,14 @@ static int mv88e6xxx_port_vlan_leave(struct mv88e6=
+xxx_chip *chip,
+ 			return err;
+ 	}
+=20
+-	return mv88e6xxx_g1_atu_remove(chip, vlan.fid, port, false);
++	err =3D mv88e6xxx_g1_atu_remove(chip, vlan.fid, port, false);
++	if (err)
++		return err;
 +
-+	for (i = 1; i < argc; ++i) {
-+		if (strcmp(argv[i], "-s") == 0)
-+			use_small_folio = 1;
-+	}
++	/* Record FID freed in SW FID map */
++	bitmap_clear(chip->fid_bitmap, vlan.fid, 1);
 +
-+	if (use_small_folio) {
-+		mem2 = aligned_alloc_mem(MEMSIZE_SMALLFOLIO, ALIGNMENT_MTHP);
-+		if (mem2 == NULL) {
-+			fprintf(stderr, "Failed to allocate 1MB memory\n");
-+			free(mem1);
-+			return EXIT_FAILURE;
-+		}
++	return err;
+ }
+=20
+ static int mv88e6xxx_port_vlan_del(struct dsa_switch *ds, int port,
+diff --git a/drivers/net/dsa/mv88e6xxx/chip.h b/drivers/net/dsa/mv88e6xxx=
+/chip.h
+index c54d305a1d83..37958a016a3f 100644
+--- a/drivers/net/dsa/mv88e6xxx/chip.h
++++ b/drivers/net/dsa/mv88e6xxx/chip.h
+@@ -421,6 +421,9 @@ struct mv88e6xxx_chip {
+=20
+ 	/* Bridge MST to SID mappings */
+ 	struct list_head msts;
 +
-+		if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_NOHUGEPAGE) != 0) {
-+			perror("madvise nohugepage for mem2");
-+			free(mem1);
-+			free(mem2);
-+			return EXIT_FAILURE;
-+		}
-+	}
-+
-+	for (i = 0; i < 100; ++i) {
-+		unsigned long initial_swpout;
-+		unsigned long initial_swpout_fallback;
-+		unsigned long final_swpout;
-+		unsigned long final_swpout_fallback;
-+		unsigned long swpout_inc;
-+		unsigned long swpout_fallback_inc;
-+		double fallback_percentage;
-+
-+		initial_swpout = read_stat(SWPOUT_PATH);
-+		initial_swpout_fallback = read_stat(SWPOUT_FALLBACK_PATH);
-+
-+		random_madvise_dontneed(mem1, MEMSIZE_MTHP, ALIGNMENT_MTHP,
-+				TOTAL_DONTNEED_MTHP);
-+
-+		if (use_small_folio) {
-+			random_madvise_dontneed(mem2, MEMSIZE_SMALLFOLIO,
-+					ALIGNMENT_SMALLFOLIO,
-+					TOTAL_DONTNEED_SMALLFOLIO);
-+		}
-+
-+		if (madvise(mem1, MEMSIZE_MTHP, MADV_PAGEOUT) != 0) {
-+			perror("madvise pageout for mem1");
-+			free(mem1);
-+			if (mem2 != NULL)
-+				free(mem2);
-+			return EXIT_FAILURE;
-+		}
-+
-+		if (use_small_folio) {
-+			if (madvise(mem2, MEMSIZE_SMALLFOLIO, MADV_PAGEOUT) != 0) {
-+				perror("madvise pageout for mem2");
-+				free(mem1);
-+				free(mem2);
-+				return EXIT_FAILURE;
-+			}
-+		}
-+
-+		final_swpout = read_stat(SWPOUT_PATH);
-+		final_swpout_fallback = read_stat(SWPOUT_FALLBACK_PATH);
-+
-+		swpout_inc = final_swpout - initial_swpout;
-+		swpout_fallback_inc = final_swpout_fallback - initial_swpout_fallback;
-+
-+		fallback_percentage = (double)swpout_fallback_inc /
-+			(swpout_fallback_inc + swpout_inc) * 100;
-+
-+		printf("Iteration %d: swpout inc: %lu, swpout fallback inc: %lu, Fallback percentage: %.2f%%\n",
-+				i + 1, swpout_inc, swpout_fallback_inc, fallback_percentage);
-+	}
-+
-+	free(mem1);
-+	if (mem2 != NULL)
-+		free(mem2);
-+
-+	return EXIT_SUCCESS;
-+}
--- 
-2.34.1
++	/* FID map */
++	DECLARE_BITMAP(fid_bitmap, MV88E6XXX_N_FID);
+ };
+=20
+ struct mv88e6xxx_bus_ops {
+diff --git a/drivers/net/dsa/mv88e6xxx/devlink.c b/drivers/net/dsa/mv88e6=
+xxx/devlink.c
+index a08dab75e0c0..ef3643bc43db 100644
+--- a/drivers/net/dsa/mv88e6xxx/devlink.c
++++ b/drivers/net/dsa/mv88e6xxx/devlink.c
+@@ -374,7 +374,6 @@ static int mv88e6xxx_region_atu_snapshot(struct devli=
+nk *dl,
+ 					 u8 **data)
+ {
+ 	struct dsa_switch *ds =3D dsa_devlink_to_ds(dl);
+-	DECLARE_BITMAP(fid_bitmap, MV88E6XXX_N_FID);
+ 	struct mv88e6xxx_devlink_atu_entry *table;
+ 	struct mv88e6xxx_chip *chip =3D ds->priv;
+ 	int fid =3D -1, count, err;
+@@ -392,14 +391,8 @@ static int mv88e6xxx_region_atu_snapshot(struct devl=
+ink *dl,
+=20
+ 	mv88e6xxx_reg_lock(chip);
+=20
+-	err =3D mv88e6xxx_fid_map(chip, fid_bitmap);
+-	if (err) {
+-		kfree(table);
+-		goto out;
+-	}
+-
+ 	while (1) {
+-		fid =3D find_next_bit(fid_bitmap, MV88E6XXX_N_FID, fid + 1);
++		fid =3D find_next_bit(chip->fid_bitmap, MV88E6XXX_N_FID, fid + 1);
+ 		if (fid =3D=3D MV88E6XXX_N_FID)
+ 			break;
+=20
+--=20
+2.43.2
 
 
