@@ -1,189 +1,143 @@
-Return-Path: <linux-kernel+bounces-222617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48920910499
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:52:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1581391049C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF8672855A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:52:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B578C1F212CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC781AC78C;
-	Thu, 20 Jun 2024 12:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B5Ox6D7i"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BFE1ACE62;
+	Thu, 20 Jun 2024 12:53:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68ED61AB91C
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A2246BF;
+	Thu, 20 Jun 2024 12:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718887962; cv=none; b=dD6jrPRi//bJJSyO9L8o2erNURMzug/AEEKiTvZ/NxoUvBb7n/mu49r64pHRqksxbGEPqYuV3qQ2RU8gWSkh4y+4YDXorb8q7RCmFUO8v/9NlAHhLCMMBuR58jhMEPMwh4u5v2lu69mY43AMLJuwc12/L0Ohs7c95IhZiDsE3B8=
+	t=1718888017; cv=none; b=daKsPfjzpEJgNnKo61RsDAPVo7/v13/PRPKYoU+tEOC55iNk7QzwLKf7+q4I9mYyz/7l21ADi3YBrOwJGC+D0kXHK8E6QrOGxu8zrzENKRYTASQb44sq0Eu5d7mPB+8S8ugidhvh8zpN4AyYjfahNeJ7b+dT6e9FM6rdyv+uhRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718887962; c=relaxed/simple;
-	bh=BJWaKsUqKFaNc6rmzn7Kb9q3t1NJM450x5LshY3v8aY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qf+ArWWMbmDns2AyHoR7lHZaJs+3GGcpvr+ydThQ+MsJgE/gWxgXZG2At9dyTZi7o7++N64sJnbqrL+NaI48wx9xwAEByXXRza0GgDE37FlWZMO4uxUm0WtbuTEeqHx3Vekh1e67dx/sZzF1S1nHYuojXLULYR65tgdUQfpcFTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B5Ox6D7i; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-421eab59723so6614315e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 05:52:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718887959; x=1719492759; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ykk8VSXa2B9f9Rl4fXDSJSfLpyccYa1pxr5sqjpV2O4=;
-        b=B5Ox6D7iznAJJd+CgoTl7FTlpzf+6wSfsqlwQJCxA8WiLmeWUP75ZFw3aShQVkhcN9
-         HZSSOkNirhgf9oHsXFPitWhmN9Me/HVqFGki1EQfVreNR7SCkyEDw5HwGWDlQCqEQqHg
-         hJwfsUm/xWQUNDv6+Y9gvf3mHbQhNEbqCRKclFaom8NOHq980Uoa+UyRv1rsilqL0ajt
-         Ljpoe3appovSU2GdJvLKvG+TtYz+BO8MpzCpOtqsxIkbS7aR8KwxpM2bP9hlksjnBvXE
-         llVOJB/07/dkiUGpwy5p2NFHp3a9Wz6bkZ4hhsy6rPBT4iGfBWALOzlYtbNUqg/UJaWk
-         NNXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718887959; x=1719492759;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ykk8VSXa2B9f9Rl4fXDSJSfLpyccYa1pxr5sqjpV2O4=;
-        b=iQCSyA06zD2hC1EZXvfFlzHArKmF9PWXo9BRLIPWCD3EtpohPEqnXtrY2SYgOU/zSS
-         CtCe4qpewMX3WaauqOrneMPphBwOspK0t0kPvacP2g0EeNIqS5BMGNiHViBAjpg1r3NU
-         e3t35A9sOJl3xecGPjlQo5kCWzh2Fn04OkZw6hihTkC9uPt92qqd0LgzTMs8tMFeZtHF
-         7xYaP6hiZS/lyeMf4myzTrA8QdgiHGn8NYQ4JeYrC+DSr595YQhITIiczp6csoFYiwcn
-         pV2PuIvOxesqNhS4DRI25FlJ/nhmom4RTOHIOKwS7TChKXMnkKP/xAGqktKB5LtdS/6m
-         ipNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUepNYf4dWpc7ujP2Y/dU0qzUGHbqVqcVjXF/Ws4WpvHZewvoKJfXXnPkAWt220iHjTmvSzh/V0LqHw1506nuKTXCjHgaWmop1N404B
-X-Gm-Message-State: AOJu0YyxCEGXtNqvDEqS6kCxq8c4KBwuVIS6iAtawfQh9J+DDCRrGx6/
-	+lL3bzqK3BT/2ijdELrH+ZIBN6r5KSEbiXlatSV7Z76+j0smxeTUw8IVunFWhnU=
-X-Google-Smtp-Source: AGHT+IFzcSaO+VXSfnXhvIYTKpmX2B/Ljg0Y3EEcfI2J1GLNZshG3lH32rEtoaDR0lqk22PNJ6tcmQ==
-X-Received: by 2002:a05:600c:6553:b0:421:7f4d:5280 with SMTP id 5b1f17b1804b1-42475184107mr35289375e9.21.1718887958525;
-        Thu, 20 Jun 2024 05:52:38 -0700 (PDT)
-Received: from linaro.org ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d1e38dcsm24053485e9.36.2024.06.20.05.52.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 05:52:38 -0700 (PDT)
-Date: Thu, 20 Jun 2024 15:52:36 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Rajendra Nayak <quic_rjendra@quicinc.com>
-Subject: Re: [PATCH v2] arm64: dts: qcom: x1e80100: Enable tsens and thermal
- zone nodes
-Message-ID: <ZnQmFFq/lCm63yuL@linaro.org>
-References: <20240614-x1e80100-dts-thermal-v2-1-4d4f9effacc6@linaro.org>
- <4a1e8cc5-5d82-435d-8a2a-5fab56f85965@linaro.org>
+	s=arc-20240116; t=1718888017; c=relaxed/simple;
+	bh=7nQ+7f4wihFoFdDBGTkKhLtrG9cRzMLnguTmYW3JZzc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qzWGb0p5mDe4kB1WlKXTYsOwZ9R6Y+1IohpNJBVca5RCLi0mgdKWtqcMHJ16l3apVpd3/kZ5lEp+babhnQY8NbSUPqutUZoMTXxOmqYnwuvC2QPdCbBXt+2B25phNJqNmGQA8WhpxQLx/zLXQvUIslbNLJ5bxZdauEycZg1sVF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W4gQG25y8z6K6xx;
+	Thu, 20 Jun 2024 20:53:10 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 94C3A1402C6;
+	Thu, 20 Jun 2024 20:53:33 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 20 Jun
+ 2024 13:53:32 +0100
+Date: Thu, 20 Jun 2024 13:53:32 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dan.j.williams@intel.com>, <ira.weiny@intel.com>, <dave@stgolabs.net>,
+	<dave.jiang@intel.com>, <alison.schofield@intel.com>, <ming4.li@intel.com>,
+	<vishal.l.verma@intel.com>, <jim.harris@samsung.com>,
+	<ilpo.jarvinen@linux.intel.com>, <ardb@kernel.org>,
+	<sathyanarayanan.kuppuswamy@linux.intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <Yazen.Ghannam@amd.com>,
+	<Robert.Richter@amd.com>
+Subject: Re: [RFC PATCH 6/9] cxl/pci: Add trace logging for CXL PCIe port
+ RAS errors
+Message-ID: <20240620135332.000053f5@Huawei.com>
+In-Reply-To: <20240617200411.1426554-7-terry.bowman@amd.com>
+References: <20240617200411.1426554-1-terry.bowman@amd.com>
+	<20240617200411.1426554-7-terry.bowman@amd.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a1e8cc5-5d82-435d-8a2a-5fab56f85965@linaro.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 24-06-18 13:06:34, Konrad Dybcio wrote:
-> 
-> 
-> On 6/14/24 12:50, Abel Vesa wrote:
-> > From: Rajendra Nayak <quic_rjendra@quicinc.com>
-> > 
-> > Add tsens and thermal zones nodes for x1e80100 SoC.
-> > 
-> > Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> 
-> [...]
-> 
-> > +		tsens0: thermal-sensor@c271000 {
-> > +			compatible = "qcom,x1e80100-tsens", "qcom,tsens-v2";
-> > +			reg = <0 0x0c271000 0 0x1000>,
-> > +			      <0 0x0c222000 0 0x1000>;
-> > +
-> > +			interrupts = <GIC_SPI 506 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>;
-> 
-> These are normally wired up through PDC so that the system can shut down
-> even if CPUSS is off
+On Mon, 17 Jun 2024 15:04:08 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-The upper-lower one is wired through PDC, but the critical doesn't seem
-it is.
+> The cxl_pci driver uses kernel trace functions to log RAS errors for
+> endpoints and RCH downstream ports. The same is needed for CXL root ports,
+> CXL downstream switch ports, and CXL upstream switch ports.
+> 
+> Add RAS correctable and RAS uncorrectable trace logging functions for
+> CXL PCIE ports.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> ---
+>  drivers/cxl/core/trace.h | 34 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
+> index e5f13260fc52..5cfd9952d88a 100644
+> --- a/drivers/cxl/core/trace.h
+> +++ b/drivers/cxl/core/trace.h
+> @@ -48,6 +48,23 @@
+>  	{ CXL_RAS_UC_IDE_RX_ERR, "IDE Rx Error" }			  \
+>  )
+>  
+> +TRACE_EVENT(cxl_port_aer_uncorrectable_error,
+> +	TP_PROTO(struct device *dev, u32 status),
 
-> 
-> [...]
-> 
-> > +		cpu0-0-top-thermal {
-> > +			thermal-sensors = <&tsens0 1>;
-> 
-> Here you have passive trip points with no passive polling, this will
-> only report threshold crossing events (so e.g. cpufreq throttling will
-> be broken)
-> 
+By comparison with existing code, why no fe or header
+log?  Don't exist for ports for some reason?
+Serial number of the port might also be useful.
 
-Sure, will add with 250 value for all cpu per-core sensors.
+> +	TP_ARGS(dev, status),
+> +	TP_STRUCT__entry(
+> +		__string(devname, dev_name(dev))
+> +		__field(u32, status)
+> +	),
+> +	TP_fast_assign(
+> +		__assign_str(devname, dev_name(dev));
+> +		__entry->status = status;
+> +	),
+> +	TP_printk("device=%s status='%s'",
+> +		  __get_str(devname),
+> +		  show_uc_errs(__entry->status)
+> +	)
+> +);
+> +
+>  TRACE_EVENT(cxl_aer_uncorrectable_error,
+>  	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status, u32 fe, u32 *hl),
+>  	TP_ARGS(cxlmd, status, fe, hl),
+> @@ -96,6 +113,23 @@ TRACE_EVENT(cxl_aer_uncorrectable_error,
+>  	{ CXL_RAS_CE_PHYS_LAYER_ERR, "Received Error From Physical Layer" }	\
+>  )
+>  
+> +TRACE_EVENT(cxl_port_aer_correctable_error,
+> +	TP_PROTO(struct device *dev, u32 status),
+> +	TP_ARGS(dev, status),
+> +	TP_STRUCT__entry(
+> +		__string(devname, dev_name(dev))
+> +		__field(u32, status)
+> +	),
+> +	TP_fast_assign(
+> +		__assign_str(devname, dev_name(dev));
+> +		__entry->status = status;
+> +	),
+> +	TP_printk("device=%s status='%s'",
+> +		  __get_str(devname),
+> +		  show_ce_errs(__entry->status)
+> +	)
+> +);
+> +
+>  TRACE_EVENT(cxl_aer_correctable_error,
+>  	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status),
+>  	TP_ARGS(cxlmd, status),
 
-> > +
-> > +			trips {
-> > +				trip-point0 {
-> > +					temperature = <90000>;
-> > +					hysteresis = <2000>;
-> > +					type = "passive";
-> > +				};
-> > +
-> > +				trip-point1 {
-> > +					temperature = <95000>;
-> > +					hysteresis = <2000>;
-> > +					type = "passive";
-> > +				};
-> > +
-> > +				cpu-critical {
-> > +					temperature = <110000>;
-> > +					hysteresis = <1000>;
-> > +					type = "critical";
-> > +				};
-> > +			};
-> > +		};
-> > +
-> 
-> [...]
-> 
-> 
-> > +
-> > +		nsp1-thermal {
-> > +			polling-delay-passive = <10>;
-> 
-> Here you have passive polling, but no passive trip point
-> 
-
-Will drop the passive polling delay..
-
-> > +
-> > +			thermal-sensors = <&tsens3 2>;
-> > +
-> > +			trips {
-> > +				trip-point0 {
-> > +					temperature = <90000>;
-> > +					hysteresis = <2000>;
-> > +					type = "hot";
-> > +				};
-> > +
-> > +				nsp1-critical {
-> > +					temperature = <125000>;
-> > +					hysteresis = <0>;
-> > +					type = "critical";
-> > +				};
-> > +			};
-> > +		};
-> 
-> 
-> The rest looks okayish
-> 
-> Konrad
 
