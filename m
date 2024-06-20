@@ -1,96 +1,157 @@
-Return-Path: <linux-kernel+bounces-222574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F1689103E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:24:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F2429103EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 14:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD96A282CEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96DBC282DD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 12:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02ED21AC254;
-	Thu, 20 Jun 2024 12:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rGcAW5HN"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A511AC456;
+	Thu, 20 Jun 2024 12:27:29 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2539FC0C;
-	Thu, 20 Jun 2024 12:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576121991DC
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 12:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718886240; cv=none; b=PBXhQx4h4/R82i5O8fsmJrjni8ITAHqzL5UJG3tM1e3kdWekmXYZPg/XA7NoPuUL1IvyRYaxplMpNDxg6vcDvqF15iHqB5CsxL68+ghg3i3NBA+wlGQtO9Ia6IsVZOqah+HB0OkgrCoOy+3Adclyn16CdWDLeuNnHy3IrVPsnyE=
+	t=1718886449; cv=none; b=D0RBAZ7RxdUHCzYpEJQX2WJodP2V+B3pSXeA/XqVHlHKRdNFLvsdfopG7KnQd9/yzU6Bwzj+2R/iDQS3bfagcyT1UMmw0oph9pH9R/pA+a3aGyUau/cz9WnhH2RCBsVgATLdkkeFBPHFP4PRR8qHv+MZeOFqDV1PQcGeUySYd6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718886240; c=relaxed/simple;
-	bh=AW7DaSZCd1KDBTYJ8IgKl9VZdfL5b7uzrNFPFjz+b+0=;
+	s=arc-20240116; t=1718886449; c=relaxed/simple;
+	bh=Wu2LgFnOmJBZ5ujdas2D9HWZy81C/aJPRhzDhrICV3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gTVSMK/gApoF0PbmbU/mEhuwtaXdJqxQPFbJaLccV2K1m4gS6ZMqWqRmqgifzCPV96J4LWihWX8ZL48TLH+vhes3t6aFm2OeDVir5bKZeBpwngb2UGl1jZT1voxpZjlEYP7aSlGgOsZfpIlCRzWH+7XEOztLv+pw5yeCTkNrZEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rGcAW5HN; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pyrite.rasen.tech (h175-177-049-156.catv02.itscom.jp [175.177.49.156])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6E9E6A4C;
-	Thu, 20 Jun 2024 14:23:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1718886218;
-	bh=AW7DaSZCd1KDBTYJ8IgKl9VZdfL5b7uzrNFPFjz+b+0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rGcAW5HNlyjJxdodt1YIqfiETn5M6V+KiJGSP6Yc6YtEvllXdtQBm0gJAJ/ctZvPP
-	 R3icLqrOcxwczHZ98aumvuFwleohB2HsWeCA+R1O53sF256HtdRMoyiUeGAq7detwF
-	 yFSg9ednfR1hjWcJjbQMVTlRNr0V9++tKAiY0SsA=
-Date: Thu, 20 Jun 2024 21:23:49 +0900
-From: Paul Elder <paul.elder@ideasonboard.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH] media: i2c: Kconfig: Fix missing firmware upload config
- select
-Message-ID: <ZnQfVX5bbmDSsFlK@pyrite.rasen.tech>
-References: <20240620102544.1918105-1-kory.maincent@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XPTi5Cl7yX7XWYDi3f9sT7yGR7QxmMlTJ2N/QHFw48mepV5vj06mCdz1WO3iUI6+nzQouFfaNyUW9SnCuwoIacEkJP3hpk0KC1cfNvLNHq82pm8EEgezHwh0JccCt7A/JsiGbQV+DR8DhiliRIsv7EpOlQyFt3V9Wsd0f+BQiUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sKGsT-0005bi-Ro; Thu, 20 Jun 2024 14:26:57 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sKGsR-003hQC-Hd; Thu, 20 Jun 2024 14:26:55 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 2E3912ED9D2;
+	Thu, 20 Jun 2024 12:26:55 +0000 (UTC)
+Date: Thu, 20 Jun 2024 14:26:55 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Vibhore Vardhan <vibhore@ti.com>, Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
+	Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>, Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/7] can: m_can: Map WoL to device_set_wakeup_enable
+Message-ID: <20240620-magnificent-antique-pogona-4c81e8-mkl@pengutronix.de>
+References: <20240523075347.1282395-1-msp@baylibre.com>
+ <20240523075347.1282395-4-msp@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rfzr2icf65wjmr2w"
 Content-Disposition: inline
-In-Reply-To: <20240620102544.1918105-1-kory.maincent@bootlin.com>
+In-Reply-To: <20240523075347.1282395-4-msp@baylibre.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2024 at 12:25:43PM +0200, Kory Maincent wrote:
-> FW_LOADER config only selects the firmware loader API, but we also need
-> the sysfs_upload symbols for firmware_upload_unregister() and
-> firmware_upload_register() to function properly.
-> 
-> Fixes: 7a52ab415b43 ("media: i2c: Add driver for THine THP7312")
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-Reviewed-by: Paul Elder <paul.elder@ideasonboard.com>
+--rfzr2icf65wjmr2w
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On 23.05.2024 09:53:43, Markus Schneider-Pargmann wrote:
+> In some devices the pins of the m_can module can act as a wakeup source.
+> This patch helps do that by connecting the PHY_WAKE WoL option to
+> device_set_wakeup_enable. By marking this device as being wakeup
+> enabled, this setting can be used by platform code to decide which
+> sleep or poweroff mode to use.
+>=20
+> Also this prepares the driver for the next patch in which the pinctrl
+> settings are changed depending on the desired wakeup source.
+>=20
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 > ---
->  drivers/media/i2c/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> index c6d3ee472d81..742bc665602e 100644
-> --- a/drivers/media/i2c/Kconfig
-> +++ b/drivers/media/i2c/Kconfig
-> @@ -679,6 +679,7 @@ config VIDEO_THP7312
->  	tristate "THine THP7312 support"
->  	depends on I2C
->  	select FW_LOADER
-> +	select FW_UPLOAD
->  	select MEDIA_CONTROLLER
->  	select V4L2_CCI_I2C
->  	select V4L2_FWNODE
-> -- 
-> 2.34.1
-> 
-> 
+>  drivers/net/can/m_can/m_can.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>=20
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+> index 14b231c4d7ec..80964e403a5e 100644
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> @@ -2129,6 +2129,26 @@ static int m_can_set_coalesce(struct net_device *d=
+ev,
+>  	return 0;
+>  }
+> =20
+> +static void m_can_get_wol(struct net_device *dev, struct ethtool_wolinfo=
+ *wol)
+> +{
+> +	struct m_can_classdev *cdev =3D netdev_priv(dev);
+> +
+> +	wol->supported =3D device_can_wakeup(cdev->dev) ? WAKE_PHY : 0;
+> +	wol->wolopts =3D device_may_wakeup(cdev->dev) ? WAKE_PHY : 0;
+> +}
+> +
+> +static int m_can_set_wol(struct net_device *dev, struct ethtool_wolinfo =
+*wol)
+> +{
+> +	struct m_can_classdev *cdev =3D netdev_priv(dev);
+> +
+> +	if ((wol->wolopts & WAKE_PHY) !=3D wol->wolopts)
+> +		return -EINVAL;
+> +
+> +	device_set_wakeup_enable(cdev->dev, !!wol->wolopts & WAKE_PHY);
+
+Can you please add error handling here? Same for the modifications in
+the next patch.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--rfzr2icf65wjmr2w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZ0IAwACgkQKDiiPnot
+vG/QlQf9EPQ0rJoEUiln6+rSd3vSElag0DNfhQ7x8gu+ZyGkuhdE4925LpTJzASr
+yubguF2fXnNcV9m+ituFtCiPmiJUGGPSvjel1E6mbddwOj0U4AdKkPeYrX5BcIj8
+UeLfRT9zMXBW7EYVU3XB/NKb7ap4Hk2luw7Rbgbn7fEtiKfjjE+toy4NmZR4S2r5
+XVqt+ACdjGObgsYxG1D7GkGCFGjZxdwN1lF3/Ik0J7jE4dYmkSBcBX7c3/bo/q8M
+yexqV0USpIq4kQqpJWTTe6rS2tNUiZZ7xr8bpbxBJGCXHVpY8wGoRrNytdnZgLTQ
+PrnmRCrDcNH0Rauay9xHkVTPNXoOTQ==
+=UzvE
+-----END PGP SIGNATURE-----
+
+--rfzr2icf65wjmr2w--
 
