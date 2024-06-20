@@ -1,84 +1,71 @@
-Return-Path: <linux-kernel+bounces-223679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5869116B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:25:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190CC9116BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 01:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 608A61C21EE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:25:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9E00B21FF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 23:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B45214387F;
-	Thu, 20 Jun 2024 23:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A872149C65;
+	Thu, 20 Jun 2024 23:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nthJo7P/"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vI7naTbg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5C18663A
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 23:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6471F7D08D;
+	Thu, 20 Jun 2024 23:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718925905; cv=none; b=fuhLdt9q9fGeEwleYAYZYeD5XrgR7PvpkqfX9rEFI0tt5weUfE1Ae6Bb3sPFSrvIV3MxJrBA1NjKhkxD+t0Jj8k1MOCPCngbLya+G/qw+kSY4ww+OjkDiP9ngI+3FxnH39LV+4+CJWKNM9hg1vqGWq6l4kGMRaH+yjHFgMyE9Wc=
+	t=1718926167; cv=none; b=uF9w8QtnCEp44u87S37Y/UxZ4FJJTOTbf3VfAz8euub6Gc2UJVfAObcx4KieokptdWpQRTy+tztqty8m3AtPNrsV8OKhpSVQMgHtC+nLCRGzfcMMCCDYPgnOaEzU1Crlq1jt0wpM4oCyxLaz7uLh0nWkaysr+MMFR6pP1aI9AHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718925905; c=relaxed/simple;
-	bh=XpnCDdCtFgwhKYViq+paZ/4p0x6bnKXUvWUEofljj9c=;
+	s=arc-20240116; t=1718926167; c=relaxed/simple;
+	bh=/sadit87DkhqYLioSkOH0TfD3gxDb0YHnkI1SLYBgSw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LWQn5Uvl07AgL7JHmMztuAe+b2/DXd1y2C/TjzJyVRpRcqkt7Xm35+JFGT+AwEsb56Yb48XaZ2RsZ2GfuDqXeMjRbefNdeqPSZ5xSD+uoBXwosxcjgMoXga3dPcuGWiospFLuZ4NAZUmbZuiPBdl8fxh5Nfb3lJZHBmFUgkVqPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nthJo7P/; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f9de13d6baso6744135ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 16:25:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718925904; x=1719530704; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=x3SPHHE27gYahsWkwlMaZaH2ZmSYr9KZMF6ALpWQofo=;
-        b=nthJo7P/wgF0jfynJf7ijefrEcjhDhTv0XbiDdA8FXJeW1maEzqooXUvTimDH6WLoG
-         VS2j8vlXGreNauFr5JCsI4zzJ2EPxx4N9OZRPXYN7rM0bKS0yeXqIo/Cqkgirm8XctM2
-         2kqgGr2F1JG/1zcUNg0XQV35dk/9g/E0OPIcwEm/GAuA9W2LalV28aDc9uN5350txgDe
-         hDHM9SwflBQ8Jo9OocgFx3+hIXqVE9BJcNoSbNZVT4ZCwtQQL+GS8li9cG/TzgnGyCQi
-         4M1bmraqTT/cjnfcSISnMNqWghktUPUKnAM37YIvb5FMULtfl6aBc5Yzqq5e0uUbSRDW
-         MKtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718925904; x=1719530704;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x3SPHHE27gYahsWkwlMaZaH2ZmSYr9KZMF6ALpWQofo=;
-        b=F6DW7MoQMGFZrNTEGtctAaIMLll1FGAXE/6cgBtZreazmyCC9REj90KyX/3w/Z17cs
-         nhxyZHwfGNVB8k6HLnHyQ+zXMftB/Hq5D0+z2zm6xrQh4x+aQ/If1NaC0dZ3DnCU+ZTS
-         R3YcvJtz/lV6kZ0ckgtCZ0lSxlox7cV/u9sTRtytcsHLA2GEIBGHw43EzG4e+IWHifh/
-         3o8BGm32IcsPQMmlrQbOn2ImZzehK+/B0jONMGZmNtfqbpoeIfcsi3QVV+20BmY2dJLB
-         DHWYGmRB0mQAWrKrkGIFqcWx4uFbLcR0uqncXgqfzGPFzJcAgeG3eVBBvAc1fiCnEIF7
-         /wMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnRE9ld85gMgCneaeHNPaDNgJaexlm4n2JEC+30owqW2gmIvbwrFoTnk3mIBSduyddR5h1P3WL7nOmEuTaD4z/IATaRDDdU9j0xAbm
-X-Gm-Message-State: AOJu0YxKj3rjbgHftGn8zGOFC1XA+DKhtxB//EAeMsAKiWlNwvA8F4t8
-	GqHdGhaJKm00TmaorBB7YmGobRZixIU6szBMBTdOzMl1gRfxsCw9C0uJEcwtHQ==
-X-Google-Smtp-Source: AGHT+IEzZ/EZAxsNNZtlJ7tILFRqDfO8mcw4qYmbN5kVCzF1Rb+x/lYh8a2Fo4yZHpTcSsSEoqwpqw==
-X-Received: by 2002:a17:902:db0d:b0:1f9:d930:85d7 with SMTP id d9443c01a7336-1f9d9308697mr21606745ad.20.1718925903442;
-        Thu, 20 Jun 2024 16:25:03 -0700 (PDT)
-Received: from google.com (148.98.83.34.bc.googleusercontent.com. [34.83.98.148])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3205f3sm1664945ad.76.2024.06.20.16.25.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 16:25:02 -0700 (PDT)
-Date: Thu, 20 Jun 2024 23:24:59 +0000
-From: Igor Pylypiv <ipylypiv@google.com>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] ata: libata-scsi: Generate ATA PT sense data when
- ATA ERR/DF are set
-Message-ID: <ZnS6S1fukhGVWZY2@google.com>
-References: <20240614191835.3056153-1-ipylypiv@google.com>
- <20240614191835.3056153-3-ipylypiv@google.com>
- <b87d51d8-5a89-480e-b229-7750c241aa6f@kernel.org>
- <ZnDfNLBwsG6zFJ4-@google.com>
- <ZnQqxTgSTDHCBDNJ@ryzen.lan>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p6gvWTejzt99biNrZAllPptNhCIlqeVJ9P/smYWrC/XEC2SjLWgUVq0SjV5q3OJIGxfeGizO7KMGB1xZ6t33JvivJ9CLal0kYDYRHU/2ppatNh58HrupB9WescYcOfkXYmoP0L3hiMm1MWopQOQAgib+yVjKTyDjCKqST03pAr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vI7naTbg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41F06C2BD10;
+	Thu, 20 Jun 2024 23:29:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718926167;
+	bh=/sadit87DkhqYLioSkOH0TfD3gxDb0YHnkI1SLYBgSw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vI7naTbg3JsloxxZ0TMaMBhRn9jCCMpzIRnnznh402AZg3Xjtbw9aAv3Durp4e++N
+	 taLRY6lqcGpI1Ve7YymtUQJd1ok8eitlLBVT0IguNvLTOxSiuVgNbJnkPGOwcnDnBx
+	 EJ8v+kEyT53Mf/pFzMO+hLRctCONcinjlkTUs6/e+TAdagrQHu3jvLnshX9Ja5DjFb
+	 J/D8B3X2ItjVP7lO+HxFDgX1g5+VcNQbV7vedmGH0NX3tMcf69SJa87Jthbxrs6HP3
+	 lTmmfVBhhlC3KxY2yeJJ4wHNyP5trc7njZLla/AsmKfUs/ROEQKWS0E08t5ovG63an
+	 fVLl49P474idA==
+Date: Thu, 20 Jun 2024 16:29:26 -0700
+From: Kees Cook <kees@kernel.org>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	jvoisin <julien.voisin@dustri.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Xiu Jianfeng <xiujianfeng@huawei.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>,
+	Thomas Graf <tgraf@suug.ch>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-hardening@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v5 4/6] mm/slab: Introduce kmem_buckets_create() and
+ family
+Message-ID: <202406201620.0392F7E45@keescook>
+References: <20240619192131.do.115-kees@kernel.org>
+ <20240619193357.1333772-4-kees@kernel.org>
+ <87r0crut6v.fsf@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,28 +74,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZnQqxTgSTDHCBDNJ@ryzen.lan>
+In-Reply-To: <87r0crut6v.fsf@linux.intel.com>
 
-On Thu, Jun 20, 2024 at 03:12:37PM +0200, Niklas Cassel wrote:
-> On Tue, Jun 18, 2024 at 01:13:24AM +0000, Igor Pylypiv wrote:
-> > 
-> > Any failed ATA PASS-THROUGH command with CK_COND=1 has this issue. For example,
-> > Sending READ SECTOR(S) EXT via ATA PASS-THROUGH with CK_COND=1 to an lba
-> > that was previously corrupted by WRITE UNCORRECTABLE EXT is supposed to
-> > return "READ ERROR - LBA MARKED BAD BY APPLICATION CLIENT" but instead it
-> > returns generated "UNRECOVERED READ ERROR - AUTO REALLOCATE FAILED".
+On Thu, Jun 20, 2024 at 03:48:24PM -0700, Andi Kleen wrote:
+> Kees Cook <kees@kernel.org> writes:
 > 
-> I assume that the drive generated correct sense data, but that
-> ata_gen_passthru_sense() overwrites/overwrote the sense data with
-> generated sense data based on taskfile registers?
->
-
-Yes, that is correct.
-
-Thanks,
-Igor
- 
+> > Dedicated caches are available for fixed size allocations via
+> > kmem_cache_alloc(), but for dynamically sized allocations there is only
+> > the global kmalloc API's set of buckets available. This means it isn't
+> > possible to separate specific sets of dynamically sized allocations into
+> > a separate collection of caches.
+> >
+> > This leads to a use-after-free exploitation weakness in the Linux
+> > kernel since many heap memory spraying/grooming attacks depend on using
+> > userspace-controllable dynamically sized allocations to collide with
+> > fixed size allocations that end up in same cache.
+> >
+> > While CONFIG_RANDOM_KMALLOC_CACHES provides a probabilistic defense
+> > against these kinds of "type confusion" attacks, including for fixed
+> > same-size heap objects, we can create a complementary deterministic
+> > defense for dynamically sized allocations that are directly user
+> > controlled. Addressing these cases is limited in scope, so isolating these
+> > kinds of interfaces will not become an unbounded game of whack-a-mole. For
+> > example, many pass through memdup_user(), making isolation there very
+> > effective.
 > 
-> Kind regards,
-> Niklas
+> Isn't the attack still possible if the attacker can free the slab page
+> during the use-after-free period with enough memory pressure?
+> 
+> Someone else might grab the page that was in the bucket for another slab
+> and the type confusion could hurt again.
+> 
+> Or is there some other defense against that, other than
+> CONFIG_DEBUG_PAGEALLOC or full slab poisoning? And how expensive
+> does it get when any of those are enabled?
+> 
+> I remember reading some paper about a apple allocator trying similar
+> techniques and it tried very hard to never reuse memory (probably
+> not a good idea for Linux though)
+> 
+> I assume you thought about this, but it would be good to discuss such
+> limitations and interactions in the commit log.
+
+Yup! It's in there; it's just after what you quoted above. Here it is:
+
+> > Memory allocation pinning[2] is still needed to plug the Use-After-Free
+> > cross-allocator weakness, but that is an existing and separate issue
+> > which is complementary to this improvement. Development continues for
+> > that feature via the SLAB_VIRTUAL[3] series (which could also provide
+> > guard pages -- another complementary improvement).
+> > [...]
+> > Link: https://googleprojectzero.blogspot.com/2021/10/how-simple-linux-kernel-memory.html [2]
+> > Link: https://lore.kernel.org/lkml/20230915105933.495735-1-matteorizzo@google.com/ [3]
+
+Let me know if you think this description needs to be improved...
+
+-Kees
+
+-- 
+Kees Cook
 
