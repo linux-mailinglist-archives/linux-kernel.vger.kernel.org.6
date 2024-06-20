@@ -1,175 +1,145 @@
-Return-Path: <linux-kernel+bounces-223367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABDD9111E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:13:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B6F9111F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 21:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5885B22007
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:13:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47CACB241EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BA41B4C44;
-	Thu, 20 Jun 2024 19:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065DD3A28D;
+	Thu, 20 Jun 2024 19:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZXdOMYcz"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="XxTpuznq"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7EC1B47AF;
-	Thu, 20 Jun 2024 19:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311791B4C49;
+	Thu, 20 Jun 2024 19:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718910784; cv=none; b=aurUpm2Tf1CxdNvnKDmOG4bHutfZXtnMraVUf+cpxoiW/obgy4+egCXFOeC6SksHzUTvmoGKXd7B4B1Xr0vNcWBqASYzQJqmaSNHqRT5MLCoi9RuwLsfl8qoyIub6JLhr83wy+8dae7fEgsuQccmO5dK8CuJf45+TOFoNBa08gg=
+	t=1718910869; cv=none; b=PNV4pnv5gdeDQ6rB2hU1/ZjHVFLTc57fDIDsaOLhosraq8aj2nG78LkoXubdSkBQZj2o0ASSObniw4/Fr+kBxA9iY2cRtFzQ+xFjevfYjlIsIlMrHlerntx5q0p7BBt1PgbHMZ9NHxYlRZr6zLsCzdeT6JqAXSNrP1N20H2H5WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718910784; c=relaxed/simple;
-	bh=PtOuu6kZTUlqJSxFa4kAha8tsp0h6MEzBH1ssp/uCPA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZuBxpznJx45lnsdAEGo5TeXbggLGAQfJ9GgNYgFg4/kuxGabv575bkRHKaTqbM4oZVI+MBpvm+hTn11EtRwwXMuuDADNKOWws1eKWO3c80bjxoZsDq+Q3AEpExWlt/wzuj8cST/t0o6SIc8baEN0edf+Eb/n4ghd2WGBu5AC6Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZXdOMYcz; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfdff9771f8so1119670276.1;
-        Thu, 20 Jun 2024 12:13:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718910782; x=1719515582; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SJihJ2XjNSJujbGLQU/mlrPfH9EVduDFdZBkjvA0LOQ=;
-        b=ZXdOMYcz5qPjMefTgRgRom92dVvpeDSUaHn0NQKDZV5bUbytHbDsAknerTMFOgY94R
-         gV+0+jhG6x+9g4QU6HgGs7zoHvNQxvZseurP/bTnKUiXEInD7KnFnQM5rsHSgvCyCn3r
-         iIHo+0XWnh8ZvOdxII2wa02cHGBIm5d2zf3YPd/4MbQq9accqejfWaqyuuF6PwpcsxyM
-         bHqT1m/XLQwzKsNrbXPOB8RAnrj+VOREQcTUt3VeqVuJ+k3N6KnvgSSOqXJteGcPqvR+
-         aG2u6wkJWs5sI84gIarw0D2+uWWeEOBmke4WlJp+EFVmPCJXaFPFW/BdMbRMcShPat+g
-         T6Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718910782; x=1719515582;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SJihJ2XjNSJujbGLQU/mlrPfH9EVduDFdZBkjvA0LOQ=;
-        b=Bat4rBMfWoHnSmiGXaEqi2b9BRaU+gh1YANfLCT/3LfUReXdwnD+uz/EU+PED/Sdt+
-         Z3BD+0voZTMuFCk1IWlaOjEHJkltJ0PBTKpwJahUqFmR7oapd8QLFLwkNImfKK5DgwJr
-         qpxc8O9LwpQmqB7tGJbaNOc2dQ4WuEwHY6WnD0qkvkWtMABJkR8DXPh+lProR/iBSUIj
-         xNyQ8xk0RB7Xo1n/4knCPIxBuyClD8VPqpORLGNdn9h59ofWwjSXTOuRBcqmnR6tC83m
-         cBb+lGsK83Lp8kkqTen+VZU/ZWh9+dR+oBtzl3njXJyRr0CCA5UX8OYtcDXWbod10CJX
-         nE/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUkHCvfYAUUvVbfwJ9n3eJ0JeO+4wmTLrAwAMAghdONiqmOAR38WAGIRIoIpG2w9HvlH95OnqQsWyjzLlutNRzagK7dXURgRWS5Oa/1ualdQA1vOKZtAnRX5NCJTSoIyCkY4SpL37BS52p+2cVzUg==
-X-Gm-Message-State: AOJu0YwF6Y40y/c/U8qRf9B841799qpn42SwfBIxtKLwO79r1DGCVp5b
-	PminrNr5D9JvKPlX5isfwKWDRpOwfZH5dyzIk0gxmcaObS2pV2PMARDyIyd8uadzKUno5F2Snfa
-	UnyaMKU60pM2pfVDe3/6LjitPM88CWU0YaPFdxw==
-X-Google-Smtp-Source: AGHT+IG9IxxcGqXPxN0WIStMRgSoeydwG5S4iSwCWw0r3GJUCAjE98dwQra2tCzymn+Ow/PiJUsEWr6PrHrajTidu/U=
-X-Received: by 2002:a5b:1ca:0:b0:dfe:3de:87a0 with SMTP id 3f1490d57ef6-e02be142101mr6000616276.24.1718910782151;
- Thu, 20 Jun 2024 12:13:02 -0700 (PDT)
+	s=arc-20240116; t=1718910869; c=relaxed/simple;
+	bh=oM7d2nU/1EXglGqyMknsqP4KzMVjfNITvBaD0xtbb8U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FSSGUWdjXpIOmkB5tG0jHhXkNWu6Yh/Ms7qA6VzQ2ek91bTYG1FbBHECiLveTd7nNZdecgHbq0UE688Zc7qgvG3z9b9MwO/ZOc8rA9KM2UkBaFhacVjQtFe0AotjWA07QNlmsTTnbkB1ywNKCse77kiM/g3sStU2yqnGaeZktmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=XxTpuznq; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1718910856; x=1719515656; i=w_armin@gmx.de;
+	bh=JfxDuAxw0I5rokPnnN/NN9/gOvD5EFn1E9laPeck6iA=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=XxTpuznqa5s0SpQ6YdBrvZNwCXRJ0edFeG7RwA4nafWEyqJXBNYwkwFHqkAwFph/
+	 obu4vTPFY+7Qo8UXInbPMrj96MAUMv7WH+7KynWZbaU6jWpmgpfI3EtAqC0iGv7tB
+	 R6/iC0NBkzpWYJe/A+3dBrppWvzsVla1nGnwu66kc6DXtUyEZ/Znr8eFMdKXi77bu
+	 +xt7LGs4mr+Swymo1EOxUvTy59CZERil76zkUyBO9n3ndytFj8qd11eeWXYQwZGYP
+	 y9QhxcX50jwPqpUX5rCcdjiU6Z6DT0uJoGV+4O4YWpCBzUpj4V+Bq1MYzUKtq/GeN
+	 ytkbdoU/jbWr0NIakw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
+ (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1N8XTv-1sP43t1c9p-015xmJ; Thu, 20 Jun 2024 21:14:16 +0200
+From: Armin Wolf <W_Armin@gmx.de>
+To: rafael@kernel.org,
+	lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ACPI: battery: Add support for charge limiting state
+Date: Thu, 20 Jun 2024 21:14:09 +0200
+Message-Id: <20240620191410.3646-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619082042.4173621-1-howardchu95@gmail.com>
- <ZnLjT_m90EDtRFE0@x1> <CAM9d7ci+TEXG49=-7oLfFpTakUMHikxGFc-=NhEPPG0sf-UC9g@mail.gmail.com>
- <CAH0uvoiFvHu-iKJFNHeO1TcQHLMgo60N+1zXFQx3QrLibgEU6w@mail.gmail.com>
-In-Reply-To: <CAH0uvoiFvHu-iKJFNHeO1TcQHLMgo60N+1zXFQx3QrLibgEU6w@mail.gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Fri, 21 Jun 2024 03:12:54 +0800
-Message-ID: <CAH0uvojwF0j4=9qP83Re3YMVg0tT3RtURRNkxnXWXqC6CKPxeA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] perf trace: Augment enum arguments with BTF
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:uNBDOBDXPCELTkGamOlx2L0j/W2Zhplj2lD9/D7v5T+apEJnnw9
+ YiM8dfeyyR6Sy2iqGvBwBDR6TNNFBsC9VaQzIPF0Zi5MqlrWxVwPMPuZuRC8nQgDl6lfsIT
+ NNaneKZl8AKNkuZEFKyFzA3bTq9rBVXFdlx/onmHI+b7i3oAv8ZBdY2ucgGs31HLhjlPCCZ
+ eV4atUc4q9u9vxLvvUQpg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1ivwSHmpePc=;uSM9rr41Wuw5kjzAoyyV5tk2mIl
+ i3jkEV278EZxI7Tk/3ljPtMJcjPoU7q2SD0TKmrBG8zaCd1wn9zF183BELhNv0Vz6fxEa1Op0
+ CYjwyMDqZHupFczhdiADcP3WdB53f9HVAK0KB+USScSkLgiu1AGKwkoHNnhLvXxK6K0vaNcsZ
+ A8iThkF8WUgig558RbKPTTVjpE4yyI5xeuJ8m5wxTj/BvHcenpIuXOFPuhmIZAETe+JbVjZyY
+ kdVion2B/yeZ+WS2V2FVwbyh1s9sXNLNvioudWhER+U7rEqykfYIHoJll5px93LumYyvalSNo
+ b6b4eAt5FMXefwAdhc1WQaf9LcUuXwTvLBJxDVMmk+MToV0W9eRkYanJbW/YAune218sx7M3w
+ UyTwWk5eBSckWg2GFCz8zjLJ62pYXFWo2gC3d8UVVmSG+sudcgEBjyaDxaVHF6WPfRl2NyheG
+ /ss80HzssXQwewBtvvvm4QzyloC5TNoD9KaORUWWFYYKO7xMg0avbO33Z0vEV9kqMsTSa1Wel
+ wb0JtzFQhnBIRS1/ulhAjNtrKVtMQzBqLiDPgmUUv8zfMxoLhiYpMagXzvDQCoc5Buzr6FgvH
+ jDhA3MuPWGLufg+nCVMyiOsYRArwG52PSBbF107eEPGxEkM3igcCkaprQVTZv+huO+fSOVK/Y
+ YSw1InfHXFjx9mRga1WvahMB06QO7rCfD7/3H4ht8+hLQxPIn4J/gyFGXLRkdumLXtayoU7kh
+ nEAPyxyGRIMZOmvO0O2EHYiwveoCWIc7U+2D+KnQ6UnaZ/nQmLJ/1XtzCA2dRL6V4tefU69Qy
+ 1dWpymJu7A6bbYvJ5cBYL7zeMf8Q3zp1OitpB8c7FIj0g=
 
-Hello,
+The ACPI specification says that bit 3 inside the battery state
+signals that the battery is in charge limiting state. In this state,
+the platform limits the battery from reaching its full capacity, the
+exact limit is platform-specific.
 
-Now $ make NO_LIBELF=3D1 can build successfully, and if
-__NR_landlock_add_rule is not defined, we'll skip the test. The fixes
-that Arnaldo suggested are also included.
+This might explain why a number of batteries reported a "Unknown"
+battery state in the past when using platform-specific interfaces to
+stop battery charging at a user defined level.
 
-I added too many things, changed some behaviors, figured it's probably
-easier for you to merge from my source tree.
+Unfortunately not all platforms set this bit in such cases, so
+"non-charging" is still the default state when the battery is neither
+charging, discharging or full.
 
-The fixes are on the perf-tools-next branch at:
-https://github.com/Sberm/linux.git
+Tested on a Lenovo Ideapad S145-14IWL.
 
-please use
-```
-git pull https://github.com/Sberm/linux.git perf-tools-next
-```
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+=2D--
+ drivers/acpi/battery.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-I'm no git expert so please tell me if something is wrong.
+diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+index d289b98a2cca..9ba2191a96d6 100644
+=2D-- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -38,9 +38,10 @@
+ /* Battery power unit: 0 means mW, 1 means mA */
+ #define ACPI_BATTERY_POWER_UNIT_MA	1
 
-P.S. not my proudest patch, changed too many things, might be buggy.
-If there're bugs please let me know.
+-#define ACPI_BATTERY_STATE_DISCHARGING	0x1
+-#define ACPI_BATTERY_STATE_CHARGING	0x2
+-#define ACPI_BATTERY_STATE_CRITICAL	0x4
++#define ACPI_BATTERY_STATE_DISCHARGING		0x1
++#define ACPI_BATTERY_STATE_CHARGING		0x2
++#define ACPI_BATTERY_STATE_CRITICAL		0x4
++#define ACPI_BATTERY_STATE_CHARGE_LIMITING	0x8
 
-On Thu, Jun 20, 2024 at 2:25=E2=80=AFAM Howard Chu <howardchu95@gmail.com> =
-wrote:
->
-> On Thu, Jun 20, 2024 at 2:19=E2=80=AFAM Namhyung Kim <namhyung@kernel.org=
-> wrote:
-> >
-> > Hello,
-> >
-> > On Wed, Jun 19, 2024 at 9:55=E2=80=AFAM Arnaldo Carvalho de Melo
-> > <acme@kernel.org> wrote:
-> > >
-> > > On Wed, Jun 19, 2024 at 04:20:37PM +0800, Howard Chu wrote:
-> > > > changes in v2:
-> > > > - Move inline landlock_add_rule c code to tests/workloads
-> > > > - Rename 'enum_aug_prereq' to 'check_vmlinux'
-> > >
-> > > Usually the versions descriptions comes at the end, after your signat=
-ure
-> > > line, just before the list of csets in the series.
-> > >
-> > > > Augment enum arguments in perf trace, including syscall arguments a=
-nd
-> > > > non-syscall tracepoint arguments. The augmentation is implemented u=
-sing
-> > > > BTF.
-> > > >
-> > > > This patch series also includes a bug fix by Arnaldo Carvalho de Me=
-lo
-> > > > <acme@redhat.com>, which makes more syscalls to be traceable by per=
-f trace.
-> > > >
-> > > > Test is included.
-> > >
-> > > Thanks, the patch submission is now very good, at some point you'll b=
-e
-> > > able to point to a git tree from where to do a pull, then have it wit=
-h a
-> > > signed tag, etc, all this is not necessary at this point in our
-> > > collaboration, but as you evolve as a kernel developer, it eventually
-> > > will be asked from you.
-> > >
-> > > And it comes with a test that introduces a 'perf test -w' workload,
-> > > super great!
-> > >
-> > > - Arnaldo
-> > >
-> > > > Howard Chu (5):
-> > > >   perf trace: Fix iteration of syscall ids in syscalltbl->entries
-> > > >   perf trace: Augment enum syscall arguments with BTF
-> > > >   perf trace: Augment enum tracepoint arguments with BTF
-> > > >   perf trace: Filter enum arguments with enum names
-> > > >   perf trace: Add test for enum augmentation
-> >
-> > Please make sure that your change doesn't break the build
-> > in case libbpf is not available.  For example, a build without
-> > libelf seems to be broken.
-> >
-> >   $ make NO_LIBELF=3D1
-> >
-> > Thanks,
-> > Namhyung
->
-> Thank you, I'll fix this.
->
-> Thanks,
-> Howard
+ #define MAX_STRING_LENGTH	64
+
+@@ -155,7 +156,7 @@ static int acpi_battery_get_state(struct acpi_battery =
+*battery);
+
+ static int acpi_battery_is_charged(struct acpi_battery *battery)
+ {
+-	/* charging, discharging or critical low */
++	/* charging, discharging, critical low or charge limited */
+ 	if (battery->state !=3D 0)
+ 		return 0;
+
+@@ -215,6 +216,8 @@ static int acpi_battery_get_property(struct power_supp=
+ly *psy,
+ 			val->intval =3D acpi_battery_handle_discharging(battery);
+ 		else if (battery->state & ACPI_BATTERY_STATE_CHARGING)
+ 			val->intval =3D POWER_SUPPLY_STATUS_CHARGING;
++		else if (battery->state & ACPI_BATTERY_STATE_CHARGE_LIMITING)
++			val->intval =3D POWER_SUPPLY_STATUS_NOT_CHARGING;
+ 		else if (acpi_battery_is_charged(battery))
+ 			val->intval =3D POWER_SUPPLY_STATUS_FULL;
+ 		else
+=2D-
+2.39.2
+
 
