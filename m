@@ -1,171 +1,300 @@
-Return-Path: <linux-kernel+bounces-223175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09FD910F09
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0313F910F0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 19:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F2D9281AD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:40:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFD2E2848A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 17:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63791C0043;
-	Thu, 20 Jun 2024 17:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A806C1B9AA7;
+	Thu, 20 Jun 2024 17:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4e3GMXpV"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eSWHo8M4"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774A21BF32C;
-	Thu, 20 Jun 2024 17:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53251C0DC0
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 17:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718904781; cv=none; b=m/NuB4APjPidz2VPI/3GnFhxvfuFGO1E4B47QSUWJm+6i5jPvpfSn+cWyKbATPTheXrtYPOkGDjI4qc+UpWPGKGazRmvXs3tEkyNd640kzmURUW333V6ezMA/xdr07z9l3lbxMIVQnPGBdtvHroDje3AMOoMKyohR29TJhnEHBg=
+	t=1718904787; cv=none; b=N1Ehflowy0hQReHm+ZIWFmBqlJhGHzYdYMX5GC8GKTkEyELkaaO4T2Or8lzpCbcHISE8CoMIl++JIv4wP+e7bsbYUwbmAIrtJuxhLnbaxJnnD2q/i2VF8UpCiHUbQvbLYtCqRQtxUeMENPHPksIBFcLRCwxO4KLmqDrC4tEUk3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718904781; c=relaxed/simple;
-	bh=kp1Q4kOh5cBalrsrfuwKZ2xz4Q7tGmSDRh5ia6AColo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ew4eyQrtXCnF6KweAx3aHE7rllFAcMYEFyHRWtnqTdVeI5/+rWiLSPiGwLvYiuENDI6klur1NsEalqcDZfADL4tug7jiv2S2L7oTgGF1IDMIWjeQeQ+YNyP7WkDTZ9D0s+qsrTZpXUstUgw357FuiNp4ypCcuMDPgaXsnO0vi9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4e3GMXpV; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718904777;
-	bh=kp1Q4kOh5cBalrsrfuwKZ2xz4Q7tGmSDRh5ia6AColo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=4e3GMXpVwKiIbMVo4FBTo077VSFfO5NQaKIm+GvYE0c9IoGOwMTxnAhivY1LKwwJn
-	 f4B2jyWmH4Zf3NACjEEVJr8gYnVYui4oms0nZU56Lmt1Q4zIreD8y/4lvW/G4JVJQi
-	 2sCeaJn5B11ezbhnsWDv0ra281KOkh5mLup6am1As6xZY7xD60TuXOMarPf5YB4BEw
-	 iNcKY9zGZQHLoWE9aywIFKjLzsJNz6dnEpbd3QeYpmg/Yngvv+D+sm0VFO0C5SjU+x
-	 VyQfhhXyjzfKH9padDtAaxaYRH5vcljyGsa6LUfyFMVXx/tDRqbkd3qjN7jbxX+cQT
-	 DPor6Xqk351pA==
-Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B112237810CD;
-	Thu, 20 Jun 2024 17:32:55 +0000 (UTC)
-Message-ID: <07d56a690d5fed16082e73c5565b67777e31494a.camel@collabora.com>
-Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support
- runtime suspend/resume
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Devarsh Thakkar <devarsht@ti.com>, "jackson.lee"
-	 <jackson.lee@chipsnmedia.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
- "sebastian.fricke@collabora.com"
-	 <sebastian.fricke@collabora.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,  Nas Chung
- <nas.chung@chipsnmedia.com>, "lafley.kim" <lafley.kim@chipsnmedia.com>,
- "b-brnich@ti.com" <b-brnich@ti.com>, "Luthra, Jai" <j-luthra@ti.com>,
- Vibhore <vibhore@ti.com>,  Dhruva Gole <d-gole@ti.com>, Aradhya
- <a-bhatia1@ti.com>, "Raghavendra, Vignesh" <vigneshr@ti.com>
-Date: Thu, 20 Jun 2024 13:32:52 -0400
-In-Reply-To: <e901967f-59df-f4b0-de51-61e542c04161@ti.com>
-References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
-	 <20240617104818.221-3-jackson.lee@chipsnmedia.com>
-	 <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
-	 <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
-	 <SE1P216MB130382374B76CD8BC9FFCFE5EDC82@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
-	 <881dcea1-a592-4506-083a-9d5f3c6a8781@ti.com>
-	 <b2f7552d37075538e22640f7b42838d29d3f8b3e.camel@collabora.com>
-	 <e901967f-59df-f4b0-de51-61e542c04161@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1718904787; c=relaxed/simple;
+	bh=AaKb7xH3D6322u5oRmwnJltCEtxp6IvHn7eAt659z8I=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=shWU1uduqB87O0oohF+NCax75JjMc91Pf1ccGltk85K8/10Ar0oBZ6GBZR3oQJeEtu+cNMwwrI3dO4SFU3UMfndrFmVvXex7kIA6ufcElAxmrvngoOmh+tXPJku3xdRvrd2hBKZfrWwgfOJXYFAMDUqAbHgdEOzEksE/AJlFH24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eSWHo8M4; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dff1eb1c1fcso2176466276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 10:33:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718904785; x=1719509585; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FxbUlqEIru4E7gX2WnN1T22F/48gDP0UMTSnaKBJ4Lc=;
+        b=eSWHo8M4VOVFdy0hf7i25uBcyd5QD7kYB+vH8Ur6a8X9zrr5Kdy4NI9Bh4fePQhrr/
+         KlTYR8dUlD60cPl9pQzGfCTmNyCL8TsJZwRNsfq1qd+vl9WVWrCNAqkox0ex4eZT5XnF
+         /ZhHMoEVaqLlWb2mDVAPwrfty4pZbi0aFXWqqpqNSzCYGJ75VL2kyXO8LsuTkwNcISDf
+         +Mb6uWxqvUS7hrTqNQNRkwc4mc46Vqt01iIiQsCeiULYI8thGXMsiDs6DLWugL3M7aru
+         LG+1aakbRd9nZTw/SVABZQBq47og2C3CJWV2rFNoYCpnJkPWQsEb757WO+Nr5PLzdeSL
+         FTIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718904785; x=1719509585;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FxbUlqEIru4E7gX2WnN1T22F/48gDP0UMTSnaKBJ4Lc=;
+        b=SEGC3so5quk+Ag9AyctW/shXxm4WrtDyLH8woFwwDweFZcLWeA9FJUAQgpmgT6UOsV
+         7pL1HJdkEIOela6JZUMnBVh1fsUSiLfDQSgSX8c6XTos8Bm6gxVG4bJwpFBy8gQpBOC/
+         YB39z3qOshbW8IbGnRlwiQaoB6JXQymSoH5WZaXsV5r7lcufHCoFnDpIDObohCIFjBcp
+         6fMy28nZm+W4o/Nlsf5waCVKRhokkpfUCqq5FB6zj4Sp5c/+QctZAezqtHxfPPS4qgIr
+         xeInQ4VKvoY8ihUXhDnMrlu5+XOF7zyTDLIgXtXSoJzNLs/86unszOtvTqa/H9SJcdAs
+         v/tQ==
+X-Gm-Message-State: AOJu0YwSlqLNdsjfEbd7/rMllA88ud5ZL5x7pYoViZFHJUh1h6z93Odj
+	8nestN7MyF6PlzEFR5Qt7pXajzO7lAxPRv5WfQoAgPSzGicjBWsLnsE4En7LS2ncYs3h0p02CQb
+	XxIgzplyzLcj2OLorT/UmFIG1MT1TeBybLBXIiEmkt6eBKKofVQ0idAvwT4/0Ho+TR0C8fMtHNP
+	ECTLqAdD43Ly24NATHm8e0QrYDm8dyY0NOzpR/806h92t8
+X-Google-Smtp-Source: AGHT+IHaP7Rj7bKnYJ7MWtjZwe4lSBiUsB0rCkavybCanBMTCd0BYHyPfenxphR36EJEjDUhH4U78MupPTyf
+X-Received: from jstultz-noogler2.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:600])
+ (user=jstultz job=sendgmr) by 2002:a25:db10:0:b0:e02:c3c2:4b96 with SMTP id
+ 3f1490d57ef6-e02c3c25615mr754700276.1.1718904784462; Thu, 20 Jun 2024
+ 10:33:04 -0700 (PDT)
+Date: Thu, 20 Jun 2024 10:32:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+Message-ID: <20240620173301.1761679-1-jstultz@google.com>
+Subject: [PATCH v2] sched: Move psi_account_irqtime() out of
+ update_rq_clock_task() hotpath
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Chengming Zhou <zhouchengming@bytedance.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Qais Yousef <qyousef@layalina.io>, 
+	Joel Fernandes <joel@joelfernandes.org>, kernel-team@android.com, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jimmy Shiu <jimmyshiu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Le jeudi 20 juin 2024 =C3=A0 19:50 +0530, Devarsh Thakkar a =C3=A9crit=C2=
-=A0:
-> Hi Nicolas,
->=20
-> On 20/06/24 19:35, Nicolas Dufresne wrote:
-> > Hi Devarsh,
-> >=20
-> > Le jeudi 20 juin 2024 =C3=A0 15:05 +0530, Devarsh Thakkar a =C3=A9crit=
-=C2=A0:
-> > > In my view the delayed suspend functionality is generally helpful for=
- devices
-> > > where resume latencies are higher for e.g. this light sensor driver [=
-2] uses
-> > > it because it takes 250ms to stabilize after resumption and I don't s=
-ee this
-> > > being used in codec drivers generally since there is no such large re=
-sume
-> > > latency. Please let me know if I am missing something or there is a s=
-trong
-> > > reason to have delayed suspend for wave5.
-> >=20
-> > It sounds like you did proper scientific testing of the suspend results=
- calls,
-> > mind sharing the actual data ?
->=20
-> Nopes, I did not do that but yes I agree it is good to profile and evalua=
-te
-> the trade-off but I am not expecting 250ms kind of latency. I would sugge=
-st
-> Jackson to do the profiling for the resume latencies.
+It was reported that in moving to 6.1, a larger then 10%
+regression was seen in the performance of
+clock_gettime(CLOCK_THREAD_CPUTIME_ID,...).
 
-I'd clearly like to see numbers before we proceed.
+Using a simple reproducer, I found:
+5.10:
+100000000 calls in 24345994193 ns => 243.460 ns per call
+100000000 calls in 24288172050 ns => 242.882 ns per call
+100000000 calls in 24289135225 ns => 242.891 ns per call
 
->=20
-> But perhaps a separate issue, I did notice that intention of the patchset=
- was
-> to suspend without waiting for the timeout if there is no application hav=
-ing a
-> handle to the wave5 device but even if I close the last instance I still =
-see
-> the IP stays on for 5seconds as seen in this logs [1] and this perhaps co=
-uld
-> be because extra pm counter references being hold.
+6.1:
+100000000 calls in 28248646742 ns => 282.486 ns per call
+100000000 calls in 28227055067 ns => 282.271 ns per call
+100000000 calls in 28177471287 ns => 281.775 ns per call
 
-Not sure where this comes from, I'm not aware of drivers doing that with M2=
-M
-instances. Only=20
+The cause of this was finally narrowed down to the addition of
+psi_account_irqtime() in update_rq_clock_task(), in commit
+52b1364ba0b1 ("sched/psi: Add PSI_IRQ to track IRQ/SOFTIRQ
+pressure").
 
->=20
-> [2024-06-20 12:32:50] Freeing pipeline ...
->=20
-> and after 5 seconds..
->=20
-> [2024-06-20 12:32:55] |   204     | AM62AX_DEV_CODEC0 | DEVICE_STATE_ON |
-> [2024-06-20 12:32:56] |   204     | AM62AX_DEV_CODEC0 | DEVICE_STATE_OFF
->=20
-> [1]: https://gist.github.com/devarsht/009075d8706001f447733ed859152d90
+In my initial attempt to resolve this, I leaned towards moving
+all accounting work out of the clock_gettime() call path, but it
+wasn't very pretty, so it will have to wait for a later deeper
+rework. Instead, Peter shared this approach:
 
-Appart from the 5s being too long, that is expected. If it fails after that=
-,
-this is a bug, we we should hold on merging this until the problem has been
-resolved.
+Rework psi_account_irqtime() to use its own psi_irq_time base
+for accounting, and move it out of the hotpath, calling it
+instead from sched_tick() and __schedule().
 
-Imagine that userspace is going gapless playback, if you have a lets say 30=
-ms on
-forced suspend cycle due to close/open of the decoder instance, it won't
-actually endup gapless. The delay will ensure that we only suspend when nee=
-ded.
+In testing this, we found the importance of ensuring
+psi_account_irqtime() is run under the rq_lock, which Johannes
+Weiner helpfully explained, so also add some lockdep annotations
+to make that requirement clear.
 
-There is other changes I have asked in this series, since we always have th=
-e
-case where userspace just pause on streaming, and we want that prolonged pa=
-used
-lead to suspend. Hopefully this has been strongly tested and is not just ad=
-ded
-for "completeness".
+With this change the performance is back in-line with 5.10:
+6.1+fix:
+100000000 calls in 24297324597 ns => 242.973 ns per call
+100000000 calls in 24318869234 ns => 243.189 ns per call
+100000000 calls in 24291564588 ns => 242.916 ns per call
 
-Its important to note that has a reviewer only, my time is limited, and I
-completely rely on the author judgment of delay tuning and actual testing.
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc: Valentin Schneider <vschneid@redhat.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Chengming Zhou <zhouchengming@bytedance.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Qais Yousef <qyousef@layalina.io>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: kernel-team@android.com
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+Reviewed-by: Qais Yousef <qyousef@layalina.io>
+Fixes: 52b1364ba0b1 ("sched/psi: Add PSI_IRQ to track IRQ/SOFTIRQ pressure")
+Originally-by: Peter Zijlstra <peterz@infradead.org>
+Reported-by: Jimmy Shiu <jimmyshiu@google.com>
+Signed-off-by: John Stultz <jstultz@google.com>
+---
+v2:
+* Added Fixed tag
+* Switched to (delta <= 0) comparision as suggested by
+  Chengming Zhou
+* Added Reviewed-by tags
+---
+ kernel/sched/core.c  |  7 +++++--
+ kernel/sched/psi.c   | 21 ++++++++++++++++-----
+ kernel/sched/sched.h |  1 +
+ kernel/sched/stats.h | 11 ++++++++---
+ 4 files changed, 30 insertions(+), 10 deletions(-)
 
-Nicolas
-
->=20
-> Regards
-> Devarsh
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index bcf2c4cc0522..59ce0841eb1f 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -723,7 +723,6 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+ 
+ 	rq->prev_irq_time += irq_delta;
+ 	delta -= irq_delta;
+-	psi_account_irqtime(rq->curr, irq_delta);
+ 	delayacct_irq(rq->curr, irq_delta);
+ #endif
+ #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
+@@ -5665,7 +5664,7 @@ void sched_tick(void)
+ {
+ 	int cpu = smp_processor_id();
+ 	struct rq *rq = cpu_rq(cpu);
+-	struct task_struct *curr = rq->curr;
++	struct task_struct *curr;
+ 	struct rq_flags rf;
+ 	unsigned long hw_pressure;
+ 	u64 resched_latency;
+@@ -5677,6 +5676,9 @@ void sched_tick(void)
+ 
+ 	rq_lock(rq, &rf);
+ 
++	curr = rq->curr;
++	psi_account_irqtime(rq, curr, NULL);
++
+ 	update_rq_clock(rq);
+ 	hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
+ 	update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure);
+@@ -6737,6 +6739,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
+ 		++*switch_count;
+ 
+ 		migrate_disable_switch(rq, prev);
++		psi_account_irqtime(rq, prev, next);
+ 		psi_sched_switch(prev, next, !task_on_rq_queued(prev));
+ 
+ 		trace_sched_switch(sched_mode & SM_MASK_PREEMPT, prev, next, prev_state);
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 7b4aa5809c0f..c37ddcb642d5 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -773,6 +773,7 @@ static void psi_group_change(struct psi_group *group, int cpu,
+ 	enum psi_states s;
+ 	u32 state_mask;
+ 
++	lockdep_assert_rq_held(cpu_rq(cpu));
+ 	groupc = per_cpu_ptr(group->pcpu, cpu);
+ 
+ 	/*
+@@ -991,22 +992,32 @@ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+ }
+ 
+ #ifdef CONFIG_IRQ_TIME_ACCOUNTING
+-void psi_account_irqtime(struct task_struct *task, u32 delta)
++void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev)
+ {
+-	int cpu = task_cpu(task);
++	int cpu = task_cpu(curr);
+ 	struct psi_group *group;
+ 	struct psi_group_cpu *groupc;
+-	u64 now;
++	u64 now, irq;
++	s64 delta;
+ 
+ 	if (static_branch_likely(&psi_disabled))
+ 		return;
+ 
+-	if (!task->pid)
++	if (!curr->pid)
++		return;
++
++	lockdep_assert_rq_held(rq);
++	group = task_psi_group(curr);
++	if (prev && task_psi_group(prev) == group)
+ 		return;
+ 
+ 	now = cpu_clock(cpu);
++	irq = irq_time_read(cpu);
++	delta = (s64)(irq - rq->psi_irq_time);
++	if (delta <= 0)
++		return;
++	rq->psi_irq_time = irq;
+ 
+-	group = task_psi_group(task);
+ 	do {
+ 		if (!group->enabled)
+ 			continue;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index a831af102070..ef20c61004eb 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1126,6 +1126,7 @@ struct rq {
+ 
+ #ifdef CONFIG_IRQ_TIME_ACCOUNTING
+ 	u64			prev_irq_time;
++	u64			psi_irq_time;
+ #endif
+ #ifdef CONFIG_PARAVIRT
+ 	u64			prev_steal_time;
+diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
+index 38f3698f5e5b..b02dfc322951 100644
+--- a/kernel/sched/stats.h
++++ b/kernel/sched/stats.h
+@@ -110,8 +110,12 @@ __schedstats_from_se(struct sched_entity *se)
+ void psi_task_change(struct task_struct *task, int clear, int set);
+ void psi_task_switch(struct task_struct *prev, struct task_struct *next,
+ 		     bool sleep);
+-void psi_account_irqtime(struct task_struct *task, u32 delta);
+-
++#ifdef CONFIG_IRQ_TIME_ACCOUNTING
++void psi_account_irqtime(struct rq *rq, struct task_struct *curr, struct task_struct *prev);
++#else
++static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
++				       struct task_struct *prev) {}
++#endif /*CONFIG_IRQ_TIME_ACCOUNTING */
+ /*
+  * PSI tracks state that persists across sleeps, such as iowaits and
+  * memory stalls. As a result, it has to distinguish between sleeps,
+@@ -192,7 +196,8 @@ static inline void psi_ttwu_dequeue(struct task_struct *p) {}
+ static inline void psi_sched_switch(struct task_struct *prev,
+ 				    struct task_struct *next,
+ 				    bool sleep) {}
+-static inline void psi_account_irqtime(struct task_struct *task, u32 delta) {}
++static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
++				       struct task_struct *prev) {}
+ #endif /* CONFIG_PSI */
+ 
+ #ifdef CONFIG_SCHED_INFO
+-- 
+2.45.2.741.gdbec12cfda-goog
 
 
