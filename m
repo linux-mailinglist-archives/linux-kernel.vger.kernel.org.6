@@ -1,92 +1,97 @@
-Return-Path: <linux-kernel+bounces-222533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E306291035D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:49:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D96891033F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 13:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D477B21328
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:49:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 647351C21B59
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D641ABCB6;
-	Thu, 20 Jun 2024 11:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE2A1ABCC7;
+	Thu, 20 Jun 2024 11:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="TNfv5+js"
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oydk22UJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA8C3CF6A;
-	Thu, 20 Jun 2024 11:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695911AAE12;
+	Thu, 20 Jun 2024 11:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718884176; cv=none; b=EfXDoZei12u0MLW0ZRCmjHB4GGeUj9nWUTDdMLQVf9xov5STJTBIQEiD07c0vVCfMM2G6+gq+FcG6muqmucM4mE1jlqdwQZks9tDDHbQu/fI668i0fTJehqkV7285y0Wrq9HmYc5GNQWRyd4A+UxbiwvDSCLQKIJf3EfUIpeWAQ=
+	t=1718883726; cv=none; b=MO/P38Wjn/MdUi0b68uYazETu4puKmC+qOhJGsYNMvmpmZCFz5pnGVL0IE1KXmTgjz/HaAzeBpsWbphTYrrIAP2VN7PnfkEMCzOrxB/9IAqGkb21W/2dzaYPsKZ+zHwplIWPXVheqoZSw1KbNhCDS3Yyk96hC+HZAz1Zch8HoAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718884176; c=relaxed/simple;
-	bh=dY8z+smoB7m2JuIIGgKesBPayVZV0SvtARYT3rVvhvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GF7Jzomcmz3zNhVGi8QTkyAwWCyCKn9DMMZppTOWtx4kvizoDqyJ1jc1ffSUIaBJ/D/qpS6Fd3T9pFvT+nDqzElAONBd3BefoYaiDj+TsFC8izQQEGgCHPQ2JU8N1OfvcevR8RKc/ULFg3npasmWjWKVsyIYHT3fOmyMU7gEXcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=TNfv5+js; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4W4dqj1SZxz67xy;
-	Thu, 20 Jun 2024 13:41:37 +0200 (CEST)
-Received: from [192.168.0.25] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4W4dqh6S7gz680P;
-	Thu, 20 Jun 2024 13:41:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=unoeuro; t=1718883697;
-	bh=fRfd3BQtT7px5Q7LqnzxUXpp3PwV32t2tLWoVB0AXGY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=TNfv5+jsGU315+0/fG1eyBCiE9nAjozPshqaWQl8sLPaF33ct0AIX1CGZz1axyZev
-	 dwnP+1aww/F/qsVMv1j5mdYpMxHB0X6Jzmuf/2dQwNCjChDb3RdIe1Y0jd0lumhinW
-	 TjW2XeLu6ns9w3Z/sRk4ottzcCFTVart03c3ZUrQ=
-Message-ID: <74331eda-9582-48f7-a343-1dd0e785323d@gaisler.com>
-Date: Thu, 20 Jun 2024 13:41:36 +0200
+	s=arc-20240116; t=1718883726; c=relaxed/simple;
+	bh=Fl/meoJ9hW24/lUGw0b0OdTMIjc0zn4uaifHlua49hI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l3xlH5k5t2xXYOUlM8RDX2xDQ5a6WGDzXZwR1At5J7Nk5scaFb+XXrZKx1S5aRYSVY86irt2VBdw0ZgXuxnYpS/EZ8QK9cwU4FfIjt9YVJes0BrD4RdjzTZnZYqoVCLNVnrQpGek910krwLGK2S0YbT98Xrj2SEx1spvDqadGpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oydk22UJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 946F6C2BD10;
+	Thu, 20 Jun 2024 11:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718883726;
+	bh=Fl/meoJ9hW24/lUGw0b0OdTMIjc0zn4uaifHlua49hI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oydk22UJfdc3kWGqOeAIhU49QYcl4Lc6HnbUo72+VutuFphIPPPXsjhZJE89qikBs
+	 dx8LV5lhbeb24YNDV5WZGSSNKgI0+WXbuDA+lzLsWt5KoJIo1TyS2gndsUzs6leA+q
+	 S52HBtapaL91C+f7aSDNYQZFBVWvNH8c2To6pCzcCJvKuZXNr1+Yu+qBmyzBb97ogp
+	 YR7p9ji2ObXex/g/yqPf68I3WKdKgIINEjv+r/4eC69L2XaiAy3PNTGBQ/PBZyC/Q9
+	 cXtNm+obnpLkTcYiPYmSb2gIIgQ0dj2mrBjasaWetsOE8OsNwVsuSJ3Gh5KlwPEaGr
+	 Ih8dg2QpPGc+g==
+Date: Thu, 20 Jun 2024 12:41:58 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.1 000/217] 6.1.95-rc1 review
+Message-ID: <7ee343a4-f42a-42b3-84cf-2617b0131197@sirena.org.uk>
+References: <20240619125556.491243678@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Build regressions/improvements in v6.10-rc3
-To: Sam Ravnborg <sam@ravnborg.org>, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org
-References: <CAHk-=wiK75SY+r3W5hx+Tt_bjhcSKPLdji-Zf_8HjikRPbn9wg@mail.gmail.com>
- <20240610071049.933142-1-geert@linux-m68k.org>
- <46c5a25-ea8c-4a1-5241-df88a9848a9@linux-m68k.org>
- <20240611173739.GB545417@ravnborg.org>
-Content-Language: en-US
-From: Andreas Larsson <andreas@gaisler.com>
-In-Reply-To: <20240611173739.GB545417@ravnborg.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r/iM7pK6grmTiquK"
+Content-Disposition: inline
+In-Reply-To: <20240619125556.491243678@linuxfoundation.org>
+X-Cookie: You're already carrying the sphere!
 
-On 2024-06-11 19:37, Sam Ravnborg wrote:
-> Hi Andreas,
-> 
-> On Mon, Jun 10, 2024 at 09:28:25AM +0200, Geert Uytterhoeven wrote:
->> On Mon, 10 Jun 2024, Geert Uytterhoeven wrote:
->>> JFYI, when comparing v6.10-rc3[1] to v6.10-rc2[3], the summaries are:
->>>  - build errors: +6/-1
->>
->>   + error: arch/sparc/kernel/process_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text':  => (.fixup+0x4), (.fixup+0xc)
->>   + error: arch/sparc/kernel/signal_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text':  => (.fixup+0x34), (.fixup+0x10), (.fixup+0x0), (.fixup+0x28), (.fixup+0x4), (.fixup+0x18), (.fixup+0x20), (.fixup+0x1c), (.fixup+0x8)
->>   + error: relocation truncated to fit: R_SPARC_WDISP22 against `.init.text':  => (.head.text+0x5040), (.head.text+0x5100)
->>   + error: relocation truncated to fit: R_SPARC_WDISP22 against symbol `leon_smp_cpu_startup' defined in .text section in arch/sparc/kernel/trampoline_32.o:  => (.init.text+0xa4)
-> 
-> Did you have something in a local branch that would address this?
-> I have no idea how to fix it.
-Hi Sam,
 
-Yes, I'll try to get it sent next week.
+--r/iM7pK6grmTiquK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Cheers,
-Andreas
+On Wed, Jun 19, 2024 at 02:54:03PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.95 release.
+> There are 217 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--r/iM7pK6grmTiquK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ0FYYACgkQJNaLcl1U
+h9CB2gf+L1/PKInBdGKJiUkjMlfN3sZOyot/+neHLRc/tax1VkZXOoUzpuU7aP0K
+pIfgUk4eXItwYqNsXYbDxKwCme1/v30Rjb3TBeEUr4VVALHnCe74OffYPaRih+gm
+JbscxCqTxPdewm767XCjggZkKlIkNMCV1B57anHEejVh/3h18wtymjW8VnoYWat4
+PM4ntRWKZSFYpFfkmRLBNJfTxNCxkV1FNHo/wEXCrH0NbtgjewtKQhpY2wjEJgE2
+LD6aiRrhw5yTz4MME+S27Gndqn6GpXAEtmgx181ft5vAXp7JbLaHwFlSMMrTXd4K
+Y/+Yw2hT9gZLy5wZUryJBBdzb2MuKA==
+=AKAY
+-----END PGP SIGNATURE-----
+
+--r/iM7pK6grmTiquK--
 
