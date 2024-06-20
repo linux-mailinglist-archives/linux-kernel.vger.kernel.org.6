@@ -1,127 +1,130 @@
-Return-Path: <linux-kernel+bounces-222341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A504290FFF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:09:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A66D90FFFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 11:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A4931F21FD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:09:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EEC2B21162
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBA219B3C0;
-	Thu, 20 Jun 2024 09:09:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2B819B3D7;
+	Thu, 20 Jun 2024 09:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlJPJEH/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QDBMOHtV"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC4F558A5;
-	Thu, 20 Jun 2024 09:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB8E558A5
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 09:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718874576; cv=none; b=n/cnXJoIF1krJv3wscHF0sdUKhTx3W/KZEwz/gWefkXElBTX2xeJPE2gv9LHYYHREELkrEQrSV/RC/nrh7+oCxef/qYMUMUMNQ3mnRl/8rKOlP7jvEkUAcMWWp7AaKOWK3aCIEZBeXC42eMO5hvOvVa6GnwFKmfii72lhBbPbxY=
+	t=1718874654; cv=none; b=rn+XQUrPbU/mqcAFfmcaciuFJPV+kFeDoKbwSaF4sMVac7V4aa7hsuYDI7Y3KNT1mf6eawbjAy8c8YGEiiZjrTaFNc7DfLTjcTwyNscOafpnIgbEALgY1Gp7hcgoqxpDxbNe2UJ6Toi7+QZ6wpUy2M6uuHLu26a6r0xFkgm4sZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718874576; c=relaxed/simple;
-	bh=66gyrIipeI+kZfnEWslEEqI7z7Ksf4eHolGiHrxklRY=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nO02OdFtjQazEenLVj7CWbXqzaLrbEeBiIyxsTGYfIYhEH5In/Q49BR1j4NcrvoUxmRzjvpi2LuQTaXA8pcmF1kja+IyME6x6rM9GwSwkaVAtE67s3ydGOkKON5QzsAtkridh84A/Q6BJWjG22pilkKAIn322JcM8YkOmY84vlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KlJPJEH/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E7CC32781;
-	Thu, 20 Jun 2024 09:09:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718874576;
-	bh=66gyrIipeI+kZfnEWslEEqI7z7Ksf4eHolGiHrxklRY=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=KlJPJEH/7stjURIho0o5YzOzs2+3apAgDeGOPj31iDlHnD4E8gNXxOfJMVojCBuhu
-	 Hrdeqp0lBPA/+a9gZU5tfJoQ+3hT4Ll4A4qrRCU+zoPVEe4mR0/tIltxX0gfwO7iW7
-	 JujiJtppl0ic8KUv2BFt1D/7QALckqDVTuGWKCrPyt2ScFOA8zyOjzT3MxRdZgiiOU
-	 VtRAiOqwYuS2cYWj4PRnrGM50O/DHd61nAoefu8N3dJUx9fcgZ1DRB6OiXcgw4bnGx
-	 yHgKO09L5FxNbmveY3KPVlrqzSf5JbVa+07LRI8vnyxK6IlJCrZ5dn6gibRS93ei1n
-	 iaaedVUCvvDPg==
-Date: Thu, 20 Jun 2024 10:09:32 +0100
-From: Lee Jones <lee@kernel.org>
-To: linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-	linux-leds@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH 1/1] leds: core: Omit set_brightness error message for a
- LED supporting hw trigger only
-Message-ID: <20240620090932.GD3029315@google.com>
-References: <20240613075712.2479669-1-lee@kernel.org>
+	s=arc-20240116; t=1718874654; c=relaxed/simple;
+	bh=c4D7Z9CR9MfOFr8x4TqhuN903N+QSpMF6a7kToVGrDc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jEaGqokT1t6iBuyJqEnz4b+B2kn3gvk77fmY9VTgb3RDZqAftNIA0fBNmiNi3I44ah6M3RAibFmdWkzhYVCCHAnkqfBOBHzj1RCM/GqMoke2U/1Nt1lqWE8HC3mPxuWpFr+LJYONLsjJ/aJWHHSOzvTEUky4z/Osxdu0xhf63es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QDBMOHtV; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42172ed3487so5331345e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 02:10:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718874651; x=1719479451; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PHBkJAins6g8k8CRgVDBSrncktJoQ1zQZ+ZidiRGnrM=;
+        b=QDBMOHtVhk8SbJrlUhTaJ+GhUSxTSy/grzZmM/2hAueByrRzq6Uv+L0ONoeJLdo2/M
+         17C+jk/F8/bHVXNz8ftEbzZhaDOVQT0nwG+HpR16PfDt/PyY6npeu6d+SNg5u+57xRKE
+         b84zWHgfk+zDJhNx9rTWD1AP1bcdlY0zl7+1GGc6YT1fkKBHyH1F2tjBWMy7QhGNBb04
+         Nd9dBmj7bExKq/d/h88AuuGBXJQ309zlHgjXgZwdeKYvULQkfhQedCU6DWZ6SjHkuvwm
+         btFC4pCn5CXdHkSZoJ98upl4htgGNhCCcLsg15SLIMaS1hAjgkFlv7ZKarbDBLfSkj5X
+         bc3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718874651; x=1719479451;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PHBkJAins6g8k8CRgVDBSrncktJoQ1zQZ+ZidiRGnrM=;
+        b=YrQ7nLnbVzhQuNVg9V+9Kk8YvnWWcHWS42mdnEK+lEWlDTQvI8HtHFL6tvXRCtd++q
+         9agJaUNGQ897g6MCQdhLDcnpjlzR3i4lSjn75sBPBEutAKE16vZADYHK6GljzLi/xn4f
+         TP/IrWjJP5K69OoRFdEQ7GoXsw5Z5EEiNuGCtr/tnPnCK4PKNrQlKTlgLNP9OdUAXIl1
+         HSpzkr22FSI5/TQXH2cUEDRxMVSAMKLRuZkmTyzt9VnEpK/1vGSX4ScZ/mOd8+ZVPlXV
+         61X9oSteriaj3XCbrOrvDgrisVw9B3fGjpmsAhfJ5qnt7FPkFHZvrV1/1rTrj9yBRKCD
+         hv+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXhEuynmTQ7XdtZRI7JwIhlq1VxgdSKbiL586tnij0my2xEbjFskqFHKsCy/TxqaJYo117j4a/3d7LqhfFdZk8EVobs/2pa3FeU+Zyw
+X-Gm-Message-State: AOJu0YysN+tAjV+7kCHzF/oXUKDlywmbN3hcJ50Hvi3KZnK0Xxfd6nhf
+	9xBEDtILV+QThqKspPKnyvKvoGfq4GlRHdLFbtGY7Tz/7mj30NblpIe5CdXlmlLtvBCWzs7dCFG
+	I
+X-Google-Smtp-Source: AGHT+IGbAsr4VCtVmR91oxpzAar7lPnAha8zhGqOQi2bz0FL/BFRbaDZAys1bZaV9FZphUYTqCbqqA==
+X-Received: by 2002:a05:600c:158c:b0:422:dfb0:8644 with SMTP id 5b1f17b1804b1-4247529bc07mr38253855e9.33.1718874651188;
+        Thu, 20 Jun 2024 02:10:51 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247ef50750sm8238195e9.14.2024.06.20.02.10.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 02:10:50 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Sanyog Kale <sanyog.r.kale@intel.com>,
+	alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] soundwire: bus: simplify by using local slave->prop
+Date: Thu, 20 Jun 2024 11:10:46 +0200
+Message-ID: <20240620091046.12426-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240613075712.2479669-1-lee@kernel.org>
 
-On Thu, 13 Jun 2024, Lee Jones wrote:
+The sdw_initialize_slave() function stores 'slave->prop' as local 'prop'
+variable, so use it in all applicable places to make code a bit simpler.
 
-> If both set_brightness functions return -ENOTSUPP, then the LED doesn't
-> support setting a fixed brightness value, and the error message isn't
-> helpful. This can be the case e.g. for LEDs supporting a specific hw
-> trigger only.
-> 
-> Pinched the subject line and commit message from Heiner:
-> Link: https://lore.kernel.org/all/44177e37-9512-4044-8991-bb23b184bf37@gmail.com/
-> 
-> Reworked the function to provide Heiner's required semantics whilst
-> simultaneously increasing readability and flow.
-> 
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: linux-leds@vger.kernel.org
-> Suggested-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/soundwire/bus.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Heiner, you good with this solution?
-
-A Tested-by or Reviewed-by would be good if you have the time.
-
-> Signed-off-by: Lee Jones <lee@kernel.org>
-> ---
->  drivers/leds/led-core.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index ef7d1c6767ca..3b4db39f2326 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -123,15 +123,22 @@ static void led_timer_function(struct timer_list *t)
->  static void set_brightness_delayed_set_brightness(struct led_classdev *led_cdev,
->  						  unsigned int value)
->  {
-> -	int ret = 0;
-> +	int ret;
->  
->  	ret = __led_set_brightness(led_cdev, value);
-> -	if (ret == -ENOTSUPP)
-> +	if (ret == -ENOTSUPP) {
->  		ret = __led_set_brightness_blocking(led_cdev, value);
-> -	if (ret < 0 &&
-> -	    /* LED HW might have been unplugged, therefore don't warn */
-> -	    !(ret == -ENODEV && (led_cdev->flags & LED_UNREGISTERING) &&
-> -	    (led_cdev->flags & LED_HW_PLUGGABLE)))
-> +		if (ret == -ENOTSUPP)
-> +			/* No back-end support to set a fixed brightness value */
-> +			return;
-> +	}
-> +
-> +	/* LED HW might have been unplugged, therefore don't warn */
-> +	if (ret == -ENODEV && led_cdev->flags & LED_UNREGISTERING &&
-> +	    led_cdev->flags & LED_HW_PLUGGABLE)
-> +		return;
-> +
-> +	if (ret < 0)
->  		dev_err(led_cdev->dev,
->  			"Setting an LED's brightness failed (%d)\n", ret);
->  }
-> -- 
-> 2.45.2.505.gda0bf45e8d-goog
-> 
-
+diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
+index 191e6cc6f962..263ca32f0c5c 100644
+--- a/drivers/soundwire/bus.c
++++ b/drivers/soundwire/bus.c
+@@ -1410,7 +1410,7 @@ static int sdw_initialize_slave(struct sdw_slave *slave)
+ 		}
+ 	}
+ 	if ((slave->bus->prop.quirks & SDW_MASTER_QUIRKS_CLEAR_INITIAL_PARITY) &&
+-	    !(slave->prop.quirks & SDW_SLAVE_QUIRKS_INVALID_INITIAL_PARITY)) {
++	    !(prop->quirks & SDW_SLAVE_QUIRKS_INVALID_INITIAL_PARITY)) {
+ 		/* Clear parity interrupt before enabling interrupt mask */
+ 		status = sdw_read_no_pm(slave, SDW_SCP_INT1);
+ 		if (status < 0) {
+@@ -1436,7 +1436,7 @@ static int sdw_initialize_slave(struct sdw_slave *slave)
+ 	 * device-dependent, it might e.g. only be enabled in
+ 	 * steady-state after a couple of frames.
+ 	 */
+-	val = slave->prop.scp_int1_mask;
++	val = prop->scp_int1_mask;
+ 
+ 	/* Enable SCP interrupts */
+ 	ret = sdw_update_no_pm(slave, SDW_SCP_INTMASK1, val, val);
+@@ -1447,7 +1447,7 @@ static int sdw_initialize_slave(struct sdw_slave *slave)
+ 	}
+ 
+ 	/* No need to continue if DP0 is not present */
+-	if (!slave->prop.dp0_prop)
++	if (!prop->dp0_prop)
+ 		return 0;
+ 
+ 	/* Enable DP0 interrupts */
 -- 
-Lee Jones [李琼斯]
+2.43.0
+
 
