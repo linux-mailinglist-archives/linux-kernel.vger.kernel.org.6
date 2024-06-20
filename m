@@ -1,149 +1,166 @@
-Return-Path: <linux-kernel+bounces-222170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4C090FDD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:32:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63BFF90FE02
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE961C216A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:32:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEE8FB23C19
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9920F4C62B;
-	Thu, 20 Jun 2024 07:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98AD50276;
+	Thu, 20 Jun 2024 07:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwUWPywQ"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b5EbUuzX"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5265B2582;
-	Thu, 20 Jun 2024 07:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A111803A;
+	Thu, 20 Jun 2024 07:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718868759; cv=none; b=siPhPTTjLsFZ9gVI+Uoe4hRx6xkdpjd0gmAHKJ6wao0dloS4pVq9PnJuHfrHW65iHsISSCT5LDcmjiAxmRXKeTFc/V6Qqy0z3rFV1JG+zpZKipykMhP+/gvMFIuCrx3NxhBZQ5u0CusXbMLmUJpFlUQ0/602R9Yoo3fgNrpGduc=
+	t=1718869652; cv=none; b=Ogj0uvojcNoRb+cMgY2kyK388MPSVJ5yD1hfn4bHTrCitzH44hPVamVr5ixbipCAmCkeKVlurzJCuPYGm/XN98iYPnzkk/Qm8oSR5+lHURKwJnQisWXEw3IOKNJE0qJDzy4eExcBwn4ecoyoT2hloXRfUrwbeLL376kEfxFkgUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718868759; c=relaxed/simple;
-	bh=wHBVd9fc2iWfUZuweb4LS9YbAAd/18fD/OhLw/DQ1QU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sgBQKDElaiBa5THypnJhe2lEd3Vm7YsfMtruG0sRKzSlC6ykCPiOtTa2hUSWUxdrVdRjpYAEEiAqQkcJ/rYF9ky4e7QSjT5nl3oxj75FvP4nBj/ZA+Uud2QpK+tNuIjqFABwyY6e2vY6vrWVCghTJNxuvKBcv87sd/kKgXaG4XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XwUWPywQ; arc=none smtp.client-ip=209.85.128.178
+	s=arc-20240116; t=1718869652; c=relaxed/simple;
+	bh=TxPaQ2T2S+aityQLLGgH/Keifx6knkqZTKCZFINZBTY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G0cfEVkC7C8TnqSn8iFockHWi43MNQjTI2WzbLgPEPqKZtGL0+HaE8XLJeXLR1ujZizF/60YvtagR4mWDqsKO1J0mtcZGYLV5aQ/9w4/mgSPDHh8JLKlfAVYuPHrWSQGab8vTJCXZb70fjp+zTrjkbH27DQMUqCHw2iB95PmHFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b5EbUuzX; arc=none smtp.client-ip=209.85.128.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-62cddff7f20so5002917b3.3;
-        Thu, 20 Jun 2024 00:32:38 -0700 (PDT)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-63ba688bdc9so5570677b3.1;
+        Thu, 20 Jun 2024 00:47:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718868757; x=1719473557; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qnAIkWGQryIAQtTLmUZTYaNhdbVrLJLMPyGuu/muHE4=;
-        b=XwUWPywQ0J+uow7/3WM3VxDHf2yfN/gmz8ONSejpWXnXXkWkkcE6WD3hNXztgjiZVo
-         XZ/zSclx0OJXpYAt0hGVqpAKB5difb1mpYRCH5OztsfEtLSQVWJJxQf5pL+Ax06f5/iA
-         YT+2o8YyMkinjPqJBepe7jKwDwX/teTqWzztgBF0AgwHBEQj18K6jalWPXDQ7mVG+3rM
-         lRpqajQUKesOT1MtPKiLGeYMhl84qtQd7AsoAWQ3veguEion4+RPkDrzazug3283o4DQ
-         XhnQ+rsbr6UhJgkolyueURKUq9pOthe+pN6W38xpX4RdhrJ6ewiKSuYwQbH6BsDEDA//
-         Es4A==
+        d=gmail.com; s=20230601; t=1718869649; x=1719474449; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XSwQ+pDHwc+ISBO+lO0fSxSzZGv3c3jhzP1gKh/lpU4=;
+        b=b5EbUuzX062JxPKmBvkb0uwXJmCUpvvIeKLPu2q1/Sm8DLqJxHUNJq+MDGAkK8itWD
+         3M/qG9WPOvXnCyO6jDq9ZkThQSa2h7rChM7GVXENUW7D/uehQiUEQtM1Kgr/qSzcdH1w
+         a0HjwLsBZNQ/YJb3cc9o85Ac7oZsE4ukTMEpENEtj2dL6Ju8WZDzj2SxtkE0LINwK044
+         QRfEJA7aS2+2ANH6dXb3VDri/bAhmtAzejRZ+fW/RH1Mox80q/3xAVO3m0w2s+3XVzzh
+         AiyNh+348WjgMeNX8DP22GKbPfFxebd1PVMGlPNkfWdtcu8UEVzr5cVwMZg9ptZMKDFj
+         KiNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718868757; x=1719473557;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1718869649; x=1719474449;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qnAIkWGQryIAQtTLmUZTYaNhdbVrLJLMPyGuu/muHE4=;
-        b=KA5CCCihMW//oD6Yi55M2BfcadVmm7lW8d9ZIwq+o6o94Mtmo0tuYNWjxxKMDYgXlv
-         PMHBm8SJTGgI2vruVFh2TV21J/yR7qDzZVuCPIDAwErzppl+BnHy0IsSOU3PqvPyKhE4
-         u5VvznZIa/LgKx0kSLtoNivesaN4cJsQWXCDzkHt7diIWJWgDqdFHkgDT7sYTry4VEpw
-         /1PHEIrSrT0xcXin7n9Pytw+LyJIfVTaknU9htgVEmZ5Sv3FhhXANnUDeXznhOP8Ud2a
-         bMFlQohwI6iQVia8c3WvwVka0sG0s9POS69Hsmn3FHjEotKyEAJB1xnd9tlIBZA5y8i3
-         h65A==
-X-Forwarded-Encrypted: i=1; AJvYcCWv8ZDAIh0SxfIUHIt2W0GfAtq7Cg3Mo7e3M4EEeyw55Xt2PuEH9PKozocC3jjglvmltyFRMmr56JvIG7uZh8+mCLA2ZRViK9pwJFEg1tMEDUFFbvFByivFIZuMYdW1XuIa1dTUXE1lECx5eNBkHw5/+FiLlD/yF3ctIQUPLvTbw1Duxw==
-X-Gm-Message-State: AOJu0YxZrMoQyKbBGmykjiLU9NaI1hd8zo3cXXdEgLdZSvqOompsMIT6
-	kQ6eg6wqWRslT5Sw2fQPwl1Pd3WDwnJVlX5W7UJ0kbrp6s/ZT+lZBLH6qoew6LPwzWlsv733B42
-	QPlrHXKyH9BzouBOVGiLH2jdwmmM=
-X-Google-Smtp-Source: AGHT+IFMs27chWrPqAVjs1vjzs16P9LfbkLcD+9tzrx+qaAHwjt2BmEAahSMklBZ+1btLgaZ6nW+L/dXD2/WIeBy5t8=
-X-Received: by 2002:a0d:e605:0:b0:618:8d31:a557 with SMTP id
- 00721157ae682-63a8e1d915cmr46504547b3.14.1718868757233; Thu, 20 Jun 2024
- 00:32:37 -0700 (PDT)
+        bh=XSwQ+pDHwc+ISBO+lO0fSxSzZGv3c3jhzP1gKh/lpU4=;
+        b=OSQEXCQBZmfu4jmKCi4QKOcTj6Cs4GlwvwwgOWowcNJI3nc6Ph/laIfuh4bfidAEcc
+         G2EKFNaZoL/+h60BIPV2yUh6Ms6vNg3wSUMlcg+HOioCc9g419afrnbd+ls9KnKmk1bH
+         ciW+WHp4BNdvaMp5U5+EcER4s/1owrbYnnoSpPcmSrC3Ote0HDSGXLZNEmpjse8yo4PM
+         BeyW7qLlQwxkZEOB1LV+VLrJP0XKLQiYFUYnFKpgDgObyhp4nLfOIyQFWQ4VkZnixlgK
+         LTaSjNysUFkTbw1o0y8TaEmRhuZCJJK7gkL71RSInS4PznpnTROKMWLIs/7qST1kGMX6
+         iUlw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9/Qo/kkIVzAiHJwxaY1ElBL/HoIt63sIbEK4xIiqw3c32M2WAXaqlgc6TUacgzhf5acMnTPDnthOVIKFCxISE13XigKGSVdIqCLmg9OZA1foVSKMP79DC52IRuh5oS2m/FoynXr+MaHK9oeJn
+X-Gm-Message-State: AOJu0YxCmQy9Cj+w9Tpbh1NhWXGZtJflKWkrLaHqsXDhGhKQvqjIR1Sj
+	ZtX4Rb+vuDO1+/oSDtJkp6n9LAXnO8TTZfzG8FrRYsmT3+8SFpXrZLDqoU4sUcU=
+X-Google-Smtp-Source: AGHT+IEC523RrI5z07NZ3GIZ65U03GKcNMI5pwUwivutIWjvpUxld3QXGJKogByY4HM1spaTxJx3Pg==
+X-Received: by 2002:a05:6902:260b:b0:dfa:5748:124c with SMTP id 3f1490d57ef6-e02be0fc596mr6124441276.10.1718869649391;
+        Thu, 20 Jun 2024 00:47:29 -0700 (PDT)
+Received: from OPEN-HORIZONS.attlocal.net ([2600:1700:65a0:8110::3e])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dff048767e2sm3354998276.17.2024.06.20.00.47.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 00:47:28 -0700 (PDT)
+From: ultrabear <bearodark@gmail.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: ultrabear <bearodark@gmail.com>,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] Bluetooth: mt7925e: Add extra mt7925 btusb target
+Date: Thu, 20 Jun 2024 00:33:21 -0700
+Message-ID: <20240620073321.401822-2-bearodark@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618185819.2155595-2-tmaimon77@gmail.com> <202406191439.3NcnExKM-lkp@intel.com>
-In-Reply-To: <202406191439.3NcnExKM-lkp@intel.com>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Thu, 20 Jun 2024 10:32:26 +0300
-Message-ID: <CAP6Zq1h2Sk6H2V-i+PAk_fCy9xdywcYw=w9wT_xcJ2WrqyWbAg@mail.gmail.com>
-Subject: Re: [PATCH v25 1/3] dt-bindings: reset: npcm: add clock properties
-To: kernel test robot <lkp@intel.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, 
-	joel@jms.id.au, venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	oe-kbuild-all@lists.linux.dev, openbmc@lists.ozlabs.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Rob and Krzysztof,
+This patch fixes bluetooth support on the MediaTek MT7925 WiFi 7 +
+BT 5.3 M.2 chipset that I purchased from aliexpress (and which 
+arrived today). The PCB states that it is an MT7925B22M.
 
-Could you please review this patch?
+Device from /sys/kernel/debug/usb/devices:
 
-Thanks,
+T:  Bus=03 Lev=02 Prnt=03 Port=02 Cnt=01 Dev#=  4 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=13d3 ProdID=3604 Rev= 1.00
+S:  Manufacturer=MediaTek Inc.
+S:  Product=Wireless_Device
+S:  SerialNumber=000000000
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
 
-Tomer
+High fidelity images I took of the chip itself for future reference:
+https://archive.org/details/MediaTek-MT7925B22M/
 
-On Wed, 19 Jun 2024 at 09:20, kernel test robot <lkp@intel.com> wrote:
->
-> Hi Tomer,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on clk/clk-next]
-> [also build test WARNING on linus/master pza/reset/next v6.10-rc4 next-20240618]
-> [cannot apply to pza/imx-drm/next]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Tomer-Maimon/dt-bindings-reset-npcm-add-clock-properties/20240619-093532
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> patch link:    https://lore.kernel.org/r/20240618185819.2155595-2-tmaimon77%40gmail.com
-> patch subject: [PATCH v25 1/3] dt-bindings: reset: npcm: add clock properties
-> config: arm64-randconfig-051-20240619 (https://download.01.org/0day-ci/archive/20240619/202406191439.3NcnExKM-lkp@intel.com/config)
-> compiler: aarch64-linux-gcc (GCC) 13.2.0
-> dtschema version: 2024.6.dev1+g833054f
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240619/202406191439.3NcnExKM-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406191439.3NcnExKM-lkp@intel.com/
->
-> dtcheck warnings: (new ones prefixed by >>)
->    arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi:63.7-177.5: Warning (simple_bus_reg): /ahb/apb: simple-bus unit address format error, expected "f0000000"
->    arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi:50.35-55.5: Warning (unique_unit_address_if_enabled): /ahb/reset-controller@f0801000: duplicate unit-address (also used in node /ahb/clock-controller@f0801000)
->    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /: memory@0: 'device_type' is a required property
->         from schema $id: http://devicetree.org/schemas/memory.yaml#
->    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: system-controller@f0800000: compatible: ['nuvoton,npcm845-gcr', 'syscon'] is too short
->         from schema $id: http://devicetree.org/schemas/soc/nuvoton/nuvoton,npcm-gcr.yaml#
->    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: interrupt-controller@dfff9000: 'ppi-partitions' does not match any of the regexes: '^v2m@[0-9a-f]+$', 'pinctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/interrupt-controller/arm,gic.yaml#
->    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: ahb: apb:ranges: [[0, 0, 4026531840, 3145728], [4293918720, 0, 4293918720, 90112]] is not of type 'boolean'
->         from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-> >> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: reset-controller@f0801000: '#clock-cells' is a required property
->         from schema $id: http://devicetree.org/schemas/reset/nuvoton,npcm750-reset.yaml#
-> >> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: reset-controller@f0801000: 'clocks' is a required property
->         from schema $id: http://devicetree.org/schemas/reset/nuvoton,npcm750-reset.yaml#
->    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: timer@8000: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/timer/nuvoton,npcm7xx-timer.yaml#
->    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@801c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
->    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@801c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
->    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@901c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
->    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@901c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
->    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@a01c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
->    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@a01c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+Signed-off-by: Alexander Hall <bearodark@gmail.com>
+---
+Changes from v1:
+It was suggested that the (now removed) aliexpress link be run through
+	 archive.org, however aliexpress is incompatible with waybacks
+	 scraping tool, and as an alternative I have taken high resolution
+	 images of the actual chip I received and put them on archive.org.
+The prefix of this patch was changed to `Bluetooth:` as suggested
+Maintainers and open lists have been auto CC'd as suggested, via
+	 get_maintainers.pl
+
+
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index e384ef6ff..2ea46a0e6 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -691,6 +691,9 @@ static const struct usb_device_id quirks_table[] = {
+ 	{ USB_DEVICE(0x13d3, 0x3603), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH |
+ 						     BTUSB_VALID_LE_STATES },
++	{ USB_DEVICE(0x13d3, 0x3604), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH |
++						     BTUSB_VALID_LE_STATES },
+ 
+ 	/* Additional Realtek 8723AE Bluetooth devices */
+ 	{ USB_DEVICE(0x0930, 0x021d), .driver_info = BTUSB_REALTEK },
+-- 
+2.45.1
+
 
