@@ -1,82 +1,76 @@
-Return-Path: <linux-kernel+bounces-223230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B52911060
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:12:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4767A911004
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 20:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B64BB2522D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:04:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02E1E288EAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 18:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF0C1C232A;
-	Thu, 20 Jun 2024 17:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0436E1C68B9;
+	Thu, 20 Jun 2024 17:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHuR/vw0"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RTnd2+Ww"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131ED1C231E;
-	Thu, 20 Jun 2024 17:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83CD1C689B;
+	Thu, 20 Jun 2024 17:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718906285; cv=none; b=u2UY/IQRVmK8DHdctBlXHdiyLzDRlKKmB81qBS3tN0lW7mEN3BrvKp6FHPJoSeqy1D3tD1L6dnYAYRtvR1LdIdUrPvuUspEoBpYKIZgg6F5S7Ch8J91nqPRaKNECF6nO/bv2z7OlJ/2CsOk2/pi9rf4qGpBGSSktqjOSJ/MJdUs=
+	t=1718906288; cv=none; b=VbByJxYfXpVoxy3txFkb7d7hyivi/fG5N58cccLyhzt+dstQ3dOYhs+Gu/XkSDnQhFoojU5J24aOrXUMfKaJ4kt1gPvi4Waz73jQG3ZZWfSBM+xYNLyc9NzSeF8QibTuDad7TVsEWFpWCDaDrlsY+cKhHLMOaNzSYAmpqPC+fuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718906285; c=relaxed/simple;
-	bh=G8SsYV8VKhk+1kr8G6gSzRlXENvMiu+vYX15iq0TH0c=;
+	s=arc-20240116; t=1718906288; c=relaxed/simple;
+	bh=rbpkUlmlOme1ikdxKqZBWeti6AjXTa90yhLh7ntoYNQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PLChtDLWWHgwWu1QLR7jWpR/z68QZD3uCg7NR7FEDp2ivPp9U48uGI9VytDdZ2I133KZopKKMXTflGeKidk4WShJ0XNpW7+ARQireikVth6ZJQFnFfD0Zeda8pIP7x6wN2bqDhV4bXB848AaL0OlyFVwPbFYLhkqt9LUlexY6u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHuR/vw0; arc=none smtp.client-ip=209.85.210.170
+	 MIME-Version; b=YjvnAhWj00yYCdT2ylyQpEPFsyUZilTFspcE7C2oxzBYrPvQ4E4kc0yl9uFMWKS1eWKwvu2KxxlEKr9KA2GJnYfWnxIaynp19Y7P8m9ltoQmxnLfWlkPiXgtwSauoJFT1j3S5IvT8kmSXenAcP+4uZMOlbaBihaUpSxkms/8Lx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RTnd2+Ww; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70601bcfddcso1160854b3a.3;
-        Thu, 20 Jun 2024 10:58:03 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f44b45d6abso9824665ad.0;
+        Thu, 20 Jun 2024 10:58:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718906283; x=1719511083; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718906286; x=1719511086; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=voUtFDbfyXxYSLuhMxY/5Es179PR05W0y6qbv62GFHo=;
-        b=IHuR/vw0Yr3ip4W2ecHazBSDXEDQf67luVGyRA1rThf/BH5Pcp7+7bMg/G5S1dT8p8
-         m/FU2PAqZ1iP8Iz9KaS3jBrELAvI1ElNLi8BDG3RHPXFYp4kH6c5YV6z1NBmeDCQyHVb
-         qTRGK3Ow8gL30dSVq2vT3b+DHVFmQtWWMuYP9vogVPH9jZnk7h3vqZ/2UKu5J5K9FOrT
-         KeFdMb3vyJ1W1w3GDR/51Guz8nAQFkGqepQDBgSUlvcROOlydyOQWwcBJbYaIHW/CXqC
-         aRvok4dLGPGkT48z+4sawxUoXM5hTNizqMN8IQYxCAec9w1MYzVeJ7keJ2HSwsJGZoSl
-         CI9Q==
+        bh=SFjixNs7es/to5XyEjk1SDKnVmCrXPTnsKlxKMUnV5E=;
+        b=RTnd2+Ww4D8I3qYAX+wiRl47Ig/lyjyAHqWZ2Sd3TlnxQHuGzxZx6ngzqlFhmhGQt6
+         N9mk/PUfHTWE2rbV+grMl03x2h9BB9mM02ZyZG+HixVzU/BNZwOZnhbd03IJPSHmLLQ8
+         kvFcQxOurvVzGnXVx6i8HWlgs7VsB96LvPkE9dy394+mJccSeJ6jw9aYDjszWWhwabpB
+         Uik/C7EJIx0YYLcK1KYgihn6IJMn/K+YtLcf1ciKmBiFGRW3vEG0QSRgQ3ax+7dUJ4pk
+         /lQUesoG/4o7RA9YxhOfqXn84q6N15woGm4JKJhY8YP/3KpuZ8fIwO0EvjT01J3A3X0p
+         RZlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718906283; x=1719511083;
+        d=1e100.net; s=20230601; t=1718906286; x=1719511086;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=voUtFDbfyXxYSLuhMxY/5Es179PR05W0y6qbv62GFHo=;
-        b=HU7uT9rK1XX0fjEmrhS0URDigtaRQbyFz0A0WBooptDVYThD/6qD3jYnjGvf/pDXA1
-         YHNA7p72Oe57JU2hWQxDKujsgncUbJvtP0R9yagrNmU9wVjj9qznWZezOisrnr1Hg59K
-         K9aXLOuDrovlPD0wCGvxDsLLtm1VxYJ7+6Og+oJsCmnZcbA4BriprXHLB8mGV5IJcAEp
-         mOKWU2nLoddfC5f5D6NHq7dhdjDXVDzvQ5ZOYN27q/tApQQs7/172G0CrgM9zLusgKzf
-         i1u++gcEdTKuUCECdMTfUfNRQ1G/VR2ZUcnHbtOaDWGO51k1PB/rIvIq2TOnV3hJ2Vw9
-         v3Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgzj8cnlrVrUgXKhY0TYOykavtbGpXFSbBwX3hUUXCngewcrPWD2hrAqnilXJTmXyN8Z7L1C6XAL3Qkcb/dDb/YCddp9i46SNlW+Er/g==
-X-Gm-Message-State: AOJu0YzZnMIp6RMgkgYppQKNCaxOrxu88DfvZUwF2ic2xLC2gQeRBtr0
-	S0qT0K6ee8Fi6DakRu9Ovdq54vrD0WyTNpllJsKQ7P/idoqaMaGqqeVtTyvZnns=
-X-Google-Smtp-Source: AGHT+IFuFY8WsrUaBevsclcxusM/Sc7ZvIAfPxrnCGbXlGrdTSyKJ0ahnS/qbGoRPvPpSuP7Wt6hDQ==
-X-Received: by 2002:a05:6a00:4d07:b0:706:3514:2d6c with SMTP id d2e1a72fcca58-70635142dd9mr3899791b3a.29.1718906283409;
-        Thu, 20 Jun 2024 10:58:03 -0700 (PDT)
+        bh=SFjixNs7es/to5XyEjk1SDKnVmCrXPTnsKlxKMUnV5E=;
+        b=s0ivuSK4n9XW1EhAto3B0BTdEOK3a36qBpH4TOerExHogQQhSERDxoGRbXypAkiTNh
+         PTvtuaI2kfjfAHuCJRj2j0mzWgyb8a44Yog/WZvNvQOX6+4V2pG2H5Mcq84l+yrK5pOe
+         uC/4U3H7qRAS51DBxnvKptyTqw5esyXJMMHSeiPfUCQo0nRxFkEkWRRChZxjPQ9KrMjG
+         8g+qu+QKSkUUbxvwQi0mset7TGGbRE6nC4uEiI6qJB7thlt3FK75SJTJj6JWDYWeRLR9
+         ReqZw4Ioon3nzLFUy2bxKakZb0EctbONEN9F8ioAsbliMp5meogSJaULHMPpTC+UbxWO
+         PgEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOuo7/0GjkmXHeYeQd3OA+j8SXl6xeNyxkwzU2Aiw6fkLDwPMhZa+AKZsh5hLC5D4C6O4IKbCgfgrWEsI9y0HMJ7BjrRzTK+qOHCk=
+X-Gm-Message-State: AOJu0YyDj6hy4ZC7+5BHePtDL+IlEHn8YffqdQ7dOGeCdL9560mbRkMS
+	PFnlZS3sELecJ6MeQQX/d0VDhGdMT48flq4R7E4kY+2H//nXJ9jmMFXaElfo6p0=
+X-Google-Smtp-Source: AGHT+IF/POMq9aLYdhYAN8mGl+02ev+tjcxf5SZfsiQcx3hYPUqBs5YJM468bSW3OlFox/Lm2qYWhA==
+X-Received: by 2002:a17:903:2c6:b0:1f4:977e:bf with SMTP id d9443c01a7336-1f9aa3c1bf6mr80297755ad.19.1718906286292;
+        Thu, 20 Jun 2024 10:58:06 -0700 (PDT)
 Received: from localhost ([216.228.127.128])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705ccb6adb5sm12628100b3a.155.2024.06.20.10.58.02
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f855e55c96sm139667235ad.61.2024.06.20.10.58.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 10:58:02 -0700 (PDT)
+        Thu, 20 Jun 2024 10:58:05 -0700 (PDT)
 From: Yury Norov <yury.norov@gmail.com>
 To: linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
 Cc: Yury Norov <yury.norov@gmail.com>,
 	Alexey Klimov <alexey.klimov@linaro.org>,
 	Bart Van Assche <bvanassche@acm.org>,
@@ -85,10 +79,11 @@ Cc: Yury Norov <yury.norov@gmail.com>,
 	Matthew Wilcox <willy@infradead.org>,
 	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
 	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH v4 19/40] iommu: optimize subsystem by using atomic find_bit() API
-Date: Thu, 20 Jun 2024 10:56:42 -0700
-Message-ID: <20240620175703.605111-20-yury.norov@gmail.com>
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Subject: [PATCH v4 20/40] media: radio-shark: optimize the driver by using atomic find_bit() API
+Date: Thu, 20 Jun 2024 10:56:43 -0700
+Message-ID: <20240620175703.605111-21-yury.norov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240620175703.605111-1-yury.norov@gmail.com>
 References: <20240620175703.605111-1-yury.norov@gmail.com>
@@ -100,93 +95,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Simplify __arm_smmu_alloc_bitmap() and msm_iommu_alloc_ctx() by using
-a dedicated API, and make them nice one-liner wrappers.
-
-While here, refactor msm_iommu_attach_dev() and msm_iommu_alloc_ctx()
-so that error codes don't mismatch.
+Despite that it's only 2- or 3-bit maps, convert for-loop followed by
+test_bit() to for_each_test_and_clear_bit() as it makes the code cleaner.
 
 Signed-off-by: Yury Norov <yury.norov@gmail.com>
+Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 ---
- drivers/iommu/arm/arm-smmu/arm-smmu.h | 11 +++--------
- drivers/iommu/msm_iommu.c             | 19 +++++--------------
- 2 files changed, 8 insertions(+), 22 deletions(-)
+ drivers/media/radio/radio-shark.c  | 6 ++----
+ drivers/media/radio/radio-shark2.c | 6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-index 4765c6945c34..c74d0300b64b 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-@@ -15,6 +15,7 @@
- #include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/device.h>
+diff --git a/drivers/media/radio/radio-shark.c b/drivers/media/radio/radio-shark.c
+index 127a3be0e0f0..c7e5c08d034a 100644
+--- a/drivers/media/radio/radio-shark.c
++++ b/drivers/media/radio/radio-shark.c
+@@ -21,6 +21,7 @@
+  * GNU General Public License for more details.
+ */
+ 
 +#include <linux/find_atomic.h>
- #include <linux/io-64-nonatomic-hi-lo.h>
- #include <linux/io-pgtable.h>
- #include <linux/iommu.h>
-@@ -455,15 +456,9 @@ struct arm_smmu_impl {
- 
- static inline int __arm_smmu_alloc_bitmap(unsigned long *map, int start, int end)
- {
--	int idx;
-+	int idx = find_and_set_next_bit(map, end, start);
- 
--	do {
--		idx = find_next_zero_bit(map, end, start);
--		if (idx == end)
--			return -ENOSPC;
--	} while (test_and_set_bit(idx, map));
--
--	return idx;
-+	return idx < end ? idx : -ENOSPC;
- }
- 
- static inline void __iomem *arm_smmu_page(struct arm_smmu_device *smmu, int n)
-diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-index 989e0869d805..4299e6a5b2ec 100644
---- a/drivers/iommu/msm_iommu.c
-+++ b/drivers/iommu/msm_iommu.c
-@@ -9,6 +9,7 @@
  #include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/errno.h>
+ #include <linux/kernel.h>
+ #include <linux/leds.h>
+@@ -158,10 +159,7 @@ static void shark_led_work(struct work_struct *work)
+ 		container_of(work, struct shark_device, led_work);
+ 	int i, res, brightness, actual_len;
+ 
+-	for (i = 0; i < 3; i++) {
+-		if (!test_and_clear_bit(i, &shark->brightness_new))
+-			continue;
+-
++	for_each_test_and_clear_bit(i, &shark->brightness_new, 3) {
+ 		brightness = atomic_read(&shark->brightness[i]);
+ 		memset(shark->transfer_buffer, 0, TB_LEN);
+ 		if (i != RED_LED) {
+diff --git a/drivers/media/radio/radio-shark2.c b/drivers/media/radio/radio-shark2.c
+index e3e6aa87fe08..d897a3e6fcb0 100644
+--- a/drivers/media/radio/radio-shark2.c
++++ b/drivers/media/radio/radio-shark2.c
+@@ -21,6 +21,7 @@
+  * GNU General Public License for more details.
+  */
+ 
 +#include <linux/find_atomic.h>
- #include <linux/io.h>
- #include <linux/io-pgtable.h>
- #include <linux/interrupt.h>
-@@ -185,17 +186,9 @@ static const struct iommu_flush_ops msm_iommu_flush_ops = {
- 	.tlb_add_page = __flush_iotlb_page,
- };
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/leds.h>
+@@ -145,10 +146,7 @@ static void shark_led_work(struct work_struct *work)
+ 		container_of(work, struct shark_device, led_work);
+ 	int i, res, brightness, actual_len;
  
--static int msm_iommu_alloc_ctx(unsigned long *map, int start, int end)
-+static int msm_iommu_alloc_ctx(struct msm_iommu_dev *iommu)
- {
--	int idx;
+-	for (i = 0; i < 2; i++) {
+-		if (!test_and_clear_bit(i, &shark->brightness_new))
+-			continue;
 -
--	do {
--		idx = find_next_zero_bit(map, end, start);
--		if (idx == end)
--			return -ENOSPC;
--	} while (test_and_set_bit(idx, map));
--
--	return idx;
-+	return find_and_set_bit(iommu->context_map, iommu->ncb);
- }
- 
- static void msm_iommu_free_ctx(unsigned long *map, int idx)
-@@ -418,10 +411,8 @@ static int msm_iommu_attach_dev(struct iommu_domain *domain, struct device *dev)
- 					ret = -EEXIST;
- 					goto fail;
- 				}
--				master->num =
--					msm_iommu_alloc_ctx(iommu->context_map,
--							    0, iommu->ncb);
--				if (IS_ERR_VALUE(master->num)) {
-+				master->num = msm_iommu_alloc_ctx(iommu);
-+				if (master->num >= iommu->ncb) {
- 					ret = -ENODEV;
- 					goto fail;
- 				}
++	for_each_test_and_clear_bit(i, &shark->brightness_new, 2) {
+ 		brightness = atomic_read(&shark->brightness[i]);
+ 		memset(shark->transfer_buffer, 0, TB_LEN);
+ 		shark->transfer_buffer[0] = 0x83 + i;
 -- 
 2.43.0
 
