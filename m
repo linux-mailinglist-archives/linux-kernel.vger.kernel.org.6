@@ -1,211 +1,1605 @@
-Return-Path: <linux-kernel+bounces-222312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA7690FF94
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:54:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4039790FFA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 10:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877391C23A14
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 528D91F218A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 08:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91DE17557C;
-	Thu, 20 Jun 2024 08:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="HmBlszHA"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01olkn2092.outbound.protection.outlook.com [40.92.53.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B234B1AB37B;
+	Thu, 20 Jun 2024 08:53:21 +0000 (UTC)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C595C40858;
-	Thu, 20 Jun 2024 08:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.53.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718873488; cv=fail; b=tuEzLjbOw7MPUchcNvvsUhO24DnL2wZD3YujzEJrt2IFqmJb9tdRREs/TqJFSrAoF5FZrfVCih0J3kmKSzo7bVVycH7IkTBFVZAjXWyVUq1+YKeILJAAuhQjf2haPBrg08qvLLAbjBm3K1XmHtaNQlPbz7cyow3m7DmqVCWEzcE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718873488; c=relaxed/simple;
-	bh=NwoOQgsH7togAnKtvrNaYGEAboE/sTcbm1JjLHHSx9I=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=TLG4GNmq9Zd+XCwkQ+lnsfp47OXbB6Q0CnpTz8jrdSzr/p75iOb112tEuwJE3dVRR+ly1KTFz/ANc0NqKM5S+V8HyF/IhSlEdtiJejfpABe2QSucxo37+b4Zbfc6BRHbplOYm8uPbttvmiNEqux6aaBG8+bAzJCE279b5AyrK+c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=HmBlszHA; arc=fail smtp.client-ip=40.92.53.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DwphcPS6dx5vzeZHja0d3NstX7n8TxhM68uy3+B/2j1Dqv5ZfS+cfwxR2Mup5lVncfP03FxVEybgAFnrMu7OZwmZUbe5h9rLZRk5DMXvszwFAsgDugJS4YuDs8a5TfjV9TKFcpoqld0vMSlb6M8VWAFfZwmdkZjY+HjLiYMmWFq7bvg6mnVGglF+VcqE01RSmZBeErrPGbTZPaguA5N7HfRq743QLA8GYyHT4SY/5I+f8xKz9OyXPmA+pSNwYrpvCBqySPZnduJG83Ei6oF9IZNyp+pHoNDUINkP8z0ElV73zPTfps4CbMjmtbJdkJ2wmIWs4vtkRGjeZQ6UJgITjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6g20A5St77nSp9t/MZZBqtDNODNwsja+usQdT0yAEg0=;
- b=XDxFMLDU8RNRNPnU+5nrhBMjj/6IUu4/Bj0xW0vI7KsjZzrHq8CvBsD1d74X6g6EeQk4AN02HmN+CwW90GLT/kunMt5PMtFRJdYtMdJez6mgMgowiOiJXg0I9111mVay8IRO5/e9rSEFxXlBcW+bhy/z8SgGU+60GA8E7CVEvZt3P5ikcwWVmqjXHNYzodP8icHusYDut3e9Yj+12418zsdL5VbbjSXcNRv+W0/uCfwNfXhDIGEwYuKN77iRh7H9wiXnvjPKGP6NDwc1lv/nJSYaDsdEBWWBKEVqFu1vrQdb98fBbuaPvaSlBj4i8eXYEPocSlzlqKjxIU8WRP1hNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6g20A5St77nSp9t/MZZBqtDNODNwsja+usQdT0yAEg0=;
- b=HmBlszHAAgRxNcfI8KBBMpAdlUAYe1VWm9Iuh01wg5G/d+rwp56XO8oVJqtOebeYzfR72RYAw7/kJ8RO4xSismH8c2TXp7sYSbu1WRejZn42lM7OYomwEdneD9mU3KK7ne9sG/XA/+0BHjWPCqwwdQXjCnqVOFCTyXfEJrFqDWHRDRzcSsSK1DqOQqI8/rHSicwAHYilTa2ugRtk37JYspw3I8Zdbak6GmVO3n9sSAguYeWd2bIaiSXEAQG35Mx41vxp5+yuqkq8rc58u+B6tvFAyQ35nnPWKaakdKDJwtiwc2N+GJ5Jvxcjz4KnLfTFFwPV/pqrSLRqxu/ijwA1tA==
-Received: from SEZPR01MB4527.apcprd01.prod.exchangelabs.com
- (2603:1096:101:76::5) by JH0PR01MB5516.apcprd01.prod.exchangelabs.com
- (2603:1096:990:13::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Thu, 20 Jun
- 2024 08:51:21 +0000
-Received: from SEZPR01MB4527.apcprd01.prod.exchangelabs.com
- ([fe80::653b:3492:9140:d2bf]) by SEZPR01MB4527.apcprd01.prod.exchangelabs.com
- ([fe80::653b:3492:9140:d2bf%2]) with mapi id 15.20.7677.030; Thu, 20 Jun 2024
- 08:51:21 +0000
-From: Jiwei Sun <sunjw10@outlook.com>
-To: giovanni.cabiddu@intel.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	damian.muszynski@intel.com,
-	tero.kristo@linux.intel.com,
-	siming.wan@intel.com,
-	adam.guerin@intel.com,
-	ciunas.bennett@intel.com
-Cc: qat-linux@intel.com,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sunjw10@lenovo.com,
-	sunjw10@outlook.com,
-	ahuang12@lenovo.com
-Subject: [PATCH] crypto: qat - initialize user_input.lock for rate_limiting
-Date: Thu, 20 Jun 2024 16:51:10 +0800
-Message-ID:
- <SEZPR01MB45275F2F7A32D2DE4D6E2C9BA8C82@SEZPR01MB4527.apcprd01.prod.exchangelabs.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD19119AD9E
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 08:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718873599; cv=none; b=FhrRpIfXO2EPmflBxP3I3NBgyhFiiGfzi1MKHE3flgI3tu9olGW9TmonxY715eNqdWILLdc+v7kgdYGpTbnfB+jfJcA/3ilWQ5k+dLZpxkaCs806Vr3YXpRyjb3PMHnKiPdHZlZbwMYAk/zSfkH/13wT5PZ/H1W0h6eMUn38NtI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718873599; c=relaxed/simple;
+	bh=3LEKJREDszthsMSJRHh9mnzMTncgis9PmfYQr8npozY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XFLaqcwqpR4HQVwTg6zuejpo635WlXuvnYfOer9Oijsax2wSplH/5MG8hRxbbkUwHN1h8WL5lhCogKW/MG5JdTZqQdLYUWjYzMR1q7GRJAJbceVyQwyIfn1L8uQVzD7HsRThivI4+HmaV8do9OiTd4LrASMsG3Ao3mARqpOfaKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
+X-QQ-mid: bizesmtpsz3t1718873504tk7r6c7
+X-QQ-Originating-IP: uJcI5MomMjjakxmyI5YfDPhxD4NzcVGKWfbA0I+f5xo=
+Received: from HX01040022.powercore.com.cn ( [223.112.234.130])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 20 Jun 2024 16:51:42 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 787696607546443104
+From: Jialong Yang <jialong.yang@shingroup.cn>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
+Cc: luming.yu@shingroup.cn,
+	shenghui.qu@shingroup.cn,
+	Jialong Yang <jialong.yang@shingroup.cn>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] powerpc/mmiotrace: Add MMIO Tracing tool for PowerPC
+Date: Thu, 20 Jun 2024 16:51:17 +0800
+Message-Id: <2bf90acf7d29641ba6643934ff8dbba897dbd2d9.1718873074.git.jialong.yang@shingroup.cn>
 X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [HPwfxdzSystxuZy61dO/Uakq5MgonkVs]
-X-ClientProxiedBy: SG3P274CA0003.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::15)
- To SEZPR01MB4527.apcprd01.prod.exchangelabs.com (2603:1096:101:76::5)
-X-Microsoft-Original-Message-ID: <20240620085110.11288-1-sunjw10@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR01MB4527:EE_|JH0PR01MB5516:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4c97552a-75f3-4da9-efc0-08dc91062816
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199025|3412199022|440099025|3420499029|1710799023;
-X-Microsoft-Antispam-Message-Info:
-	a0Nd5ppn57/wRgRjv5dPJuCzZw9qYfI8fr7FOHsDWHWB6lRuISePqf6PgA3MpNILNBRu0ceMbmcawm+bGwNGhhnD93OiiPhFUcwQQj9z8v3uFfIomShwbMdWefIBRyI9/R/gejd0dvfdOcCNLzZZUJmEVtwJxqGHfpB6coGxq+t/vPPVFpycpUf0a76Ib96uxiqlIsZ3+VYMOA1K2y55eEL+n+1AMGooBGYQq4didSDIut6ml6UeGNt7rR5yQS0GTN9NW+AiKDnN+kssQgveooA5JptrHYPLX+bGUOta0U0BsS33jSzdtlao1exxOTXfqo2hCngk/iQC10RwvsEAGdnVK0Wf6wvaNnKrqu/FxFt/bBVeRbzr328ZI8RpED5Szh0R0xKI5SSJgIyuPau4gdY9kihHUUfBZ6bDjAdwb5490Lvnv9rHKbJjRJUtwYl5JSKgjUC3P1AZx8mUbap2NuJySQJJSIiXarbJuWu+aADiSQiKencn9k9mbyehhhLx6m9xkKNVl3ukpX+ep5cWG5PYc21e4KLsxRPLiBMDaBl0eVo3JDsxPASzhxFJvKOE12u1cQ4MeZL3zXVtlQ4nrCe4LGgw21SEjwzdwHWAZ/hJWJxsLI6vHbovWUTMp34w
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?L2ZKEi9/gVAbaYF13092gS08D28w7CIFT/qqKc0Dk496D4D1KidsmT9j8TQu?=
- =?us-ascii?Q?rZ30SMELVN6+V5Do5H22Cf/UqmkBBiv4OjqmkQzoMr16Z60UxQlvIQDodyfG?=
- =?us-ascii?Q?SfHFepSW6i4J70Spd3/I62LPeIlk6yXP+4YxtJYluPizOC/L2QmYoL6c6RDo?=
- =?us-ascii?Q?IRSStFlIiL3fTdPMYanqGCiFhsLGC2Llq1Ky+Gny0niJT8cofmFf3EMIpuXt?=
- =?us-ascii?Q?o1QNY7SneLcTasocofzvgfdxCuxk/JtijdQlUNY4n7KWv+97oQ0T25dmt+/E?=
- =?us-ascii?Q?v4IVm302ibSnqtkYGZxJ0/IxP0cVw1lsCGIr68J3vsfqIU3m42emYuHy083E?=
- =?us-ascii?Q?6YajJSh0fMNruJxRUBxFWNmYL/lU2eodxE7S2nHxxzE49FhVSYxm3A6LNWYq?=
- =?us-ascii?Q?jGy65iO8KQZchCxJWgQkA1DgQHGsC69vrz0EyqdF0hoALlwoJcdLk6ZqDj91?=
- =?us-ascii?Q?eMvO03SRd6+i5yXg1gv5U2b4TRFma8ZeypguiCe1JnMJ8of4Z635juh1gu0c?=
- =?us-ascii?Q?JzFEy6yxLgLIoXDuSTKdM0twgWjSVe4Cgq+/wnLBN+jtEdTVgsFdzIHxs0up?=
- =?us-ascii?Q?ljCnMINsf1OkcYCU3TQpokdUJlRpAySbmdGk8OiXy7n9WjVahZBpdZlkE2Z7?=
- =?us-ascii?Q?BEsddIvZiUOz5NSmfFBM9xur0vxoHF8FtSAOdQKY6xbfCGBvf/qCKflWnlUq?=
- =?us-ascii?Q?OWtYI5620EBnc8XuMaK85uI7wktFxIzje4p36u0qcHCS2JAk5IhvXxvHPugc?=
- =?us-ascii?Q?dgsBYeMnGJleo2TQDlN5rpYtl4Il3sArx56qKLvpZB7ccY4XUxiLr/l9X2ls?=
- =?us-ascii?Q?IfxUgmxkw7AFhOfunWM0vWDnIWy/OPUpQdNsNpKHTe75hF7mSk3yDzgdrF19?=
- =?us-ascii?Q?1OozYepbuzYLmT5idMd6fujGGUpOmZYxQYfc7wn9gYUAsYJCbPVJLwpLPvJe?=
- =?us-ascii?Q?wdRli2lMbpQ7XbyOFGmUUNSq3aEo2WAta58jp2t40gtw1EUrrrVp5QeoI8UN?=
- =?us-ascii?Q?vgbq+92xMQdMfglOK/wKI3QlTfW1xWPXxmusKXPhxDqrhqw8J+qcJm8m7PFM?=
- =?us-ascii?Q?tnzzvHhZZbeRn68sA5u0mFuQexU7U3/m4DjTAnrDj1MxthJC7AK3indrQBQV?=
- =?us-ascii?Q?grsT76NF2d4Sme79Vz+a9T6YpuvfJmqet1CG4LbZmCqwh6SurNX3aLja/J5T?=
- =?us-ascii?Q?YH2PFMhQXvvfeH0osawwXDmZocufSRyMcZAfnu51tAoOdu9efaUgBp/c9nc?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c97552a-75f3-4da9-efc0-08dc91062816
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR01MB4527.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 08:51:21.0719
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR01MB5516
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz6a-1
 
-From: Jiwei Sun <sunjw10@lenovo.com>
+mmiotrace is a useful tool to trace MMIO accesses. Nowadays, it only
+supported on x86 and x86_64 platforms. Here is a support for powerpc.
+The manual is located at Documentation/trace/mmiotrace.rst which means
+I have not changed user API. People will be easy to use it.
+Almost all files are copied from x86/mm, there are only some
+differences from hardware and architectures software.
 
-If the following configurations are set,
-CONFIG_DEBUG_RWSEMS=y
-CONFIG_DEBUG_LOCK_ALLOC=y
-CONFIG_RWSEM_SPIN_ON_OWNER=y
+LINK: https://lore.kernel.org/lkml/20080127195536.50809974@daedalus.pq.iki.fi/
 
-And run the following command,
-[root@localhost sys]# cat /sys/devices/pci0000:6b/0000:6b:00.0/qat_rl/pir
-The following warning log appears,
-
-------------[ cut here ]------------
-DEBUG_RWSEMS_WARN_ON(sem->magic != sem): count = 0x0, magic = 0x0, owner = 0x1, curr 0xff11000119288040, list not empty
-WARNING: CPU: 131 PID: 1254984 at kernel/locking/rwsem.c:1280 down_read+0x439/0x7f0
-CPU: 131 PID: 1254984 Comm: cat Kdump: loaded Tainted: G        W          6.10.0-rc4+ #86 b2ae60c8ceabed15f4fd2dba03c1c5a5f7f4040c
-Hardware name: Lenovo ThinkServer SR660 V3/SR660 V3, BIOS T8E166X-2.54 05/30/2024
-RIP: 0010:down_read+0x439/0x7f0
-Code: 44 24 10 80 3c 02 00 0f 85 05 03 00 00 48 8b 13 41 54 48 c7 c6 a0 3e 0e b4 48 c7 c7 e0 3e 0e b4 4c 8b 4c 24 08 e8 77 d5 40 fd <0f> 0b 59 e9 bc fc ff ff 0f 1f 44 00 00 e9 e2 fd ff ff 4c 8d 7b 08
-RSP: 0018:ffa0000035f67a78 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ff1100012b03a658 RCX: 0000000000000000
-RDX: 0000000080000002 RSI: 0000000000000008 RDI: 0000000000000001
-RBP: 1ff4000006becf53 R08: fff3fc0006becf17 R09: fff3fc0006becf17
-R10: fff3fc0006becf16 R11: ffa0000035f678b7 R12: ffffffffb40e3e60
-R13: ffffffffb627d1f4 R14: ff1100012b03a6d0 R15: ff1100012b03a6c8
-FS:  00007fa9ff9a6740(0000) GS:ff1100081e600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa9ff984000 CR3: 00000002118ae006 CR4: 0000000000771ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
-PKRU: 55555554
-Call Trace:
- <TASK>
- pir_show+0x5d/0xe0 [intel_qat 9e297e249ab040329cf58b657b06f418fd5c5855]
- dev_attr_show+0x3f/0xc0
- sysfs_kf_seq_show+0x1ce/0x400
- seq_read_iter+0x3fa/0x10b0
- vfs_read+0x6f5/0xb20
- ksys_read+0xe9/0x1d0
- do_syscall_64+0x8a/0x170
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-RIP: 0033:0x7fa9ff6fd9b2
-Code: c0 e9 b2 fe ff ff 50 48 8d 3d ea 1d 0c 00 e8 c5 fd 01 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89 54 24
-RSP: 002b:00007ffc0616b968 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007fa9ff6fd9b2
-RDX: 0000000000020000 RSI: 00007fa9ff985000 RDI: 0000000000000003
-RBP: 00007fa9ff985000 R08: 00007fa9ff984010 R09: 0000000000000000
-R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000022000
-R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000020000
- </TASK>
-irq event stamp: 0
-hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-hardirqs last disabled at (0): [<ffffffffb102c126>] copy_process+0x21e6/0x6e70
-softirqs last  enabled at (0): [<ffffffffb102c176>] copy_process+0x2236/0x6e70
-softirqs last disabled at (0): [<0000000000000000>] 0x0
----[ end trace 0000000000000000 ]---
-
-The rate_limiting->user_input.lock rwsem lock is not initialized before
-use. Let's initialize it.
-
-Signed-off-by: Jiwei Sun <sunjw10@lenovo.com>
-Reviewed-by: Adrian Huang <ahuang12@lenovo.com>
+Signed-off-by: Jialong Yang <jialong.yang@shingroup.cn>
 ---
- drivers/crypto/intel/qat/qat_common/adf_rl.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/Kconfig.debug       |   3 +
+ arch/powerpc/mm/Makefile         |   1 +
+ arch/powerpc/mm/kmmio.c          | 649 +++++++++++++++++++++++++++++++
+ arch/powerpc/mm/mmio-mod.c       | 414 ++++++++++++++++++++
+ arch/powerpc/mm/mmiotrace_arch.c | 149 +++++++
+ arch/powerpc/mm/mmiotrace_arch.h |  25 ++
+ arch/powerpc/mm/pf_in.c          | 185 +++++++++
+ arch/powerpc/mm/pf_in.h          |  33 ++
+ 8 files changed, 1459 insertions(+)
+ create mode 100644 arch/powerpc/mm/kmmio.c
+ create mode 100644 arch/powerpc/mm/mmio-mod.c
+ create mode 100644 arch/powerpc/mm/mmiotrace_arch.c
+ create mode 100644 arch/powerpc/mm/mmiotrace_arch.h
+ create mode 100644 arch/powerpc/mm/pf_in.c
+ create mode 100644 arch/powerpc/mm/pf_in.h
 
-diff --git a/drivers/crypto/intel/qat/qat_common/adf_rl.c b/drivers/crypto/intel/qat/qat_common/adf_rl.c
-index 346ef8bee99d..e782c23fc1bf 100644
---- a/drivers/crypto/intel/qat/qat_common/adf_rl.c
-+++ b/drivers/crypto/intel/qat/qat_common/adf_rl.c
-@@ -1106,6 +1106,7 @@ int adf_rl_init(struct adf_accel_dev *accel_dev)
- 	mutex_init(&rl->rl_lock);
- 	rl->device_data = &accel_dev->hw_device->rl_data;
- 	rl->accel_dev = accel_dev;
-+	init_rwsem(&rl->user_input.lock);
- 	accel_dev->rate_limiting = rl;
+diff --git a/arch/powerpc/Kconfig.debug b/arch/powerpc/Kconfig.debug
+index 8c80b154e814..8a69188aa75a 100644
+--- a/arch/powerpc/Kconfig.debug
++++ b/arch/powerpc/Kconfig.debug
+@@ -1,5 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
  
- err_ret:
++config HAVE_MMIOTRACE_SUPPORT
++	def_bool y
++
+ config PPC_DISABLE_WERROR
+ 	bool "Don't build arch/powerpc code with -Werror"
+ 	help
+diff --git a/arch/powerpc/mm/Makefile b/arch/powerpc/mm/Makefile
+index 0fe2f085c05a..cb92049f1239 100644
+--- a/arch/powerpc/mm/Makefile
++++ b/arch/powerpc/mm/Makefile
+@@ -17,3 +17,4 @@ obj-$(CONFIG_NOT_COHERENT_CACHE) += dma-noncoherent.o
+ obj-$(CONFIG_PPC_COPRO_BASE)	+= copro_fault.o
+ obj-$(CONFIG_PTDUMP_CORE)	+= ptdump/
+ obj-$(CONFIG_KASAN)		+= kasan/
++obj-$(CONFIG_MMIOTRACE) += kmmio.o mmio-mod.o pf_in.o mmiotrace_arch.o
+diff --git a/arch/powerpc/mm/kmmio.c b/arch/powerpc/mm/kmmio.c
+new file mode 100644
+index 000000000000..f4374e721b37
+--- /dev/null
++++ b/arch/powerpc/mm/kmmio.c
+@@ -0,0 +1,649 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Support for MMIO probes.
++ * Derived from arch/x86/mm/kmmio.c:
++ *   Copyright (C) 2024 Jialong Yang (jialong.yang@shingroup.cn)
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/list.h>
++#include <linux/rculist.h>
++#include <linux/spinlock.h>
++#include <linux/hash.h>
++#include <linux/export.h>
++#include <linux/kernel.h>
++#include <linux/uaccess.h>
++#include <linux/ptrace.h>
++#include <linux/preempt.h>
++#include <linux/percpu.h>
++#include <linux/kdebug.h>
++#include <linux/mutex.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <asm/cacheflush.h>
++#include <asm/tlbflush.h>
++#include <asm/paca.h>
++#include <linux/errno.h>
++#include <linux/mmiotrace.h>
++
++#include "mmiotrace_arch.h"
++
++typedef unsigned long	pteval_t;
++typedef unsigned long	pmdval_t;
++
++#define KMMIO_PAGE_HASH_BITS 4
++#define KMMIO_PAGE_TABLE_SIZE (1 << KMMIO_PAGE_HASH_BITS)
++
++struct kmmio_fault_page {
++	struct list_head list;
++	struct kmmio_fault_page *release_next;
++	unsigned long addr; /* the requested address */
++	pteval_t old_presence; /* page presence prior to arming */
++	bool armed;
++
++	/*
++	 * Number of times this page has been registered as a part
++	 * of a probe. If zero, page is disarmed and this may be freed.
++	 * Used only by writers (RCU) and post_kmmio_handler().
++	 * Protected by kmmio_lock, when linked into kmmio_page_table.
++	 */
++	int count;
++
++	bool scheduled_for_release;
++};
++
++struct kmmio_delayed_release {
++	struct rcu_head rcu;
++	struct kmmio_fault_page *release_list;
++};
++
++struct kmmio_context {
++	struct kmmio_fault_page *fpage;
++	struct kmmio_probe *probe;
++	unsigned long saved_flags;
++	unsigned long saved_softe;
++	unsigned long addr;
++	int active;
++};
++
++/*
++ * The kmmio_lock is taken in int3 context, which is treated as NMI context.
++ * This causes lockdep to complain about it bein in both NMI and normal
++ * context. Hide it from lockdep, as it should not have any other locks
++ * taken under it, and this is only enabled for debugging mmio anyway.
++ */
++static arch_spinlock_t kmmio_lock = __ARCH_SPIN_LOCK_UNLOCKED;
++
++/* Protected by kmmio_lock */
++unsigned int kmmio_count;
++
++/* Read-protected by RCU, write-protected by kmmio_lock. */
++static struct list_head kmmio_page_table[KMMIO_PAGE_TABLE_SIZE];
++static LIST_HEAD(kmmio_probes);
++
++static struct list_head *kmmio_page_list(unsigned long addr)
++{
++	unsigned int l;
++	pte_t *pte = lookup_address(addr, &l);
++
++	if (!pte)
++		return NULL;
++	addr &= page_level_mask(l);
++
++	return &kmmio_page_table[hash_long(addr, KMMIO_PAGE_HASH_BITS)];
++}
++
++/* Accessed per-cpu */
++static DEFINE_PER_CPU(struct kmmio_context, kmmio_ctx);
++
++/*
++ * this is basically a dynamic stabbing problem:
++ * Could use the existing prio tree code or
++ * Possible better implementations:
++ * The Interval Skip List: A Data Structure for Finding All Intervals That
++ * Overlap a Point (might be simple)
++ * Space Efficient Dynamic Stabbing with Fast Queries - Mikkel Thorup
++ */
++/* Get the kmmio at this addr (if any). You must be holding RCU read lock. */
++static struct kmmio_probe *get_kmmio_probe(unsigned long addr)
++{
++	struct kmmio_probe *p;
++
++	list_for_each_entry_rcu(p, &kmmio_probes, list) {
++		if (addr >= p->addr && addr < (p->addr + p->len))
++			return p;
++	}
++	return NULL;
++}
++
++/* You must be holding RCU read lock. */
++static struct kmmio_fault_page *get_kmmio_fault_page(unsigned long addr)
++{
++	struct list_head *head;
++	struct kmmio_fault_page *f;
++	unsigned int l;
++	pte_t *pte = lookup_address(addr, &l);
++
++	if (!pte)
++		return NULL;
++	addr &= page_level_mask(l);
++	head = kmmio_page_list(addr);
++	list_for_each_entry_rcu(f, head, list) {
++		if (f->addr == addr)
++			return f;
++	}
++	return NULL;
++}
++
++static inline pmd_t pmd_mkinvalid(pmd_t pmd)
++{
++	return __pmd_raw(pmd_raw(pmd) & ~cpu_to_be64(_PAGE_PRESENT | _PAGE_INVALID));
++}
++
++static void clear_pmd_presence(pmd_t *pmd, bool clear, pmdval_t *old)
++{
++	pmd_t new_pmd;
++	pmdval_t v = pmd_val(*pmd);
++
++	if (clear) {
++		*old = v;
++		new_pmd = pmd_mkinvalid(*pmd);
++	} else {
++		/* Presume this has been called with clear==true previously */
++		new_pmd = __pmd(*old);
++	}
++	*pmd = new_pmd;
++}
++
++static void clear_pte_presence(pte_t *pte, bool clear, pteval_t *old, unsigned long addr)
++{
++	pteval_t v = pte_val(*pte);
++
++	if (clear) {
++		*old = v;
++		/* Nothing should care about address */
++		pte_clear(&init_mm, addr, pte);
++	} else {
++		/* Presume this has been called with clear==true previously */
++		set_pte_at(&init_mm, addr, pte, __pte(*old));
++	}
++}
++
++static int clear_page_presence(struct kmmio_fault_page *f, bool clear)
++{
++	unsigned int level;
++	pte_t *pte = lookup_address(f->addr, &level);
++
++	if (!pte) {
++		pr_err("no pte for addr 0x%08lx\n", f->addr);
++		return -1;
++	}
++
++	if (level == PMD_SHIFT)
++		clear_pmd_presence((pmd_t *)pte, clear, &f->old_presence);
++	else if (level == PAGE_SHIFT)
++		clear_pte_presence(pte, clear, &f->old_presence, f->addr);
++	else {
++		pr_err("unexpected page level 0x%x.\n", level);
++		return -1;
++	}
++
++	mmap_read_lock(&init_mm);
++	struct vm_area_struct *vma = find_vma(&init_mm, f->addr);
++
++	mmap_read_unlock(&init_mm);
++
++	flush_tlb_page(vma, f->addr);
++
++	return 0;
++}
++
++/*
++ * Mark the given page as not present. Access to it will trigger a fault.
++ *
++ * Struct kmmio_fault_page is protected by RCU and kmmio_lock, but the
++ * protection is ignored here. RCU read lock is assumed held, so the struct
++ * will not disappear unexpectedly. Furthermore, the caller must guarantee,
++ * that double arming the same virtual address (page) cannot occur.
++ *
++ * Double disarming on the other hand is allowed, and may occur when a fault
++ * and mmiotrace shutdown happen simultaneously.
++ */
++static int arm_kmmio_fault_page(struct kmmio_fault_page *f)
++{
++	int ret;
++
++	WARN_ONCE(f->armed, pr_fmt("kmmio page already armed.\n"));
++	if (f->armed) {
++		pr_warn("double-arm: addr 0x%08lx, ref %d, old %d\n",
++			f->addr, f->count, !!f->old_presence);
++	}
++	ret = clear_page_presence(f, true);
++	WARN_ONCE(ret < 0, pr_fmt("arming at 0x%08lx failed.\n"),
++		  f->addr);
++	f->armed = true;
++	return ret;
++}
++
++/** Restore the given page to saved presence state. */
++static void disarm_kmmio_fault_page(struct kmmio_fault_page *f)
++{
++	int ret = clear_page_presence(f, false);
++
++	WARN_ONCE(ret < 0,
++			KERN_ERR "kmmio disarming at 0x%08lx failed.\n", f->addr);
++	f->armed = false;
++}
++
++/*
++ * This is being called from do_page_fault().
++ *
++ * We may be in an interrupt or a critical section. Also prefecthing may
++ * trigger a page fault. We may be in the middle of process switch.
++ * We cannot take any locks, because we could be executing especially
++ * within a kmmio critical section.
++ *
++ * Local interrupts are disabled, so preemption cannot happen.
++ * Do not enable interrupts, do not sleep, and watch out for other CPUs.
++ */
++/*
++ * Interrupts are disabled on entry as trap3 is an interrupt gate
++ * and they remain disabled throughout this function.
++ */
++int kmmio_handler(struct pt_regs *regs, unsigned long addr)
++{
++	struct kmmio_context *ctx;
++	struct kmmio_fault_page *faultpage;
++	int ret = 0; /* default to fault not handled */
++	unsigned long page_base = addr;
++	unsigned int l;
++	pte_t *pte = lookup_address(addr, &l);
++
++	if (!pte)
++		return -EINVAL;
++	page_base &= page_level_mask(l);
++
++	/*
++	 * Hold the RCU read lock over single stepping to avoid looking
++	 * up the probe and kmmio_fault_page again. The rcu_read_lock_sched()
++	 * also disables preemption and prevents process switch during
++	 * the single stepping. We can only handle one active kmmio trace
++	 * per cpu, so ensure that we finish it before something else
++	 * gets to run.
++	 */
++	rcu_read_lock_sched_notrace();
++
++	faultpage = get_kmmio_fault_page(page_base);
++	if (!faultpage) {
++		/*
++		 * Either this page fault is not caused by kmmio, or
++		 * another CPU just pulled the kmmio probe from under
++		 * our feet. The latter case should not be possible.
++		 */
++		goto no_kmmio;
++	}
++
++	ctx = this_cpu_ptr(&kmmio_ctx);
++	if (ctx->active) {
++		if (page_base == ctx->addr) {
++			/*
++			 * A second fault on the same page means some other
++			 * condition needs handling by do_page_fault(), the
++			 * page really not being present is the most common.
++			 */
++			pr_debug("secondary hit for 0x%08lx CPU %d.\n",
++				 addr, smp_processor_id());
++
++			if (!faultpage->old_presence)
++				pr_info("unexpected secondary hit for address 0x%08lx on CPU %d.\n",
++					addr, smp_processor_id());
++		} else {
++			/*
++			 * Prevent overwriting already in-flight context.
++			 * This should not happen, let's hope disarming at
++			 * least prevents a panic.
++			 */
++			pr_emerg("recursive probe hit on CPU %d, for address 0x%08lx. Ignoring.\n",
++				 smp_processor_id(), addr);
++			pr_emerg("previous hit was at 0x%08lx.\n", ctx->addr);
++			disarm_kmmio_fault_page(faultpage);
++		}
++		goto no_kmmio;
++	}
++	ctx->active++;
++
++	ctx->fpage = faultpage;
++	ctx->probe = get_kmmio_probe(page_base);
++	ctx->saved_flags = (regs->msr & (MSR_SE | MSR_EE));
++	ctx->saved_softe = regs->softe;
++	ctx->addr = page_base;
++
++	if (ctx->probe && ctx->probe->pre_handler)
++		ctx->probe->pre_handler(ctx->probe, regs, addr);
++
++	/*
++	 * Enable single-stepping and disable interrupts for the faulting
++	 * context. Local interrupts must not get enabled during stepping.
++	 */
++	regs->msr |= MSR_SE;         // single step
++	regs->msr &= ~MSR_EE;        // hard interrupt
++	regs->softe = IRQS_DISABLED; // soft interrupt
++
++	local_paca->srr_valid = 0;
++
++	/* Now we set present bit in PTE and single step. */
++	disarm_kmmio_fault_page(ctx->fpage);
++
++	/*
++	 * If another cpu accesses the same page while we are stepping,
++	 * the access will not be caught. It will simply succeed and the
++	 * only downside is we lose the event. If this becomes a problem,
++	 * the user should drop to single cpu before tracing.
++	 */
++
++	return 1; /* fault handled */
++
++no_kmmio:
++	rcu_read_unlock_sched_notrace();
++	return ret;
++}
++
++/*
++ * Interrupts are disabled on entry as trap1 is an interrupt gate
++ * and they remain disabled throughout this function.
++ * This must always get called as the pair to kmmio_handler().
++ */
++static int post_kmmio_handler(unsigned long condition, struct pt_regs *regs)
++{
++	int ret = 0;
++	struct kmmio_context *ctx = this_cpu_ptr(&kmmio_ctx);
++
++	if (!ctx->active) {
++		/*
++		 * debug traps without an active context are due to either
++		 * something external causing them (f.e. using a debugger while
++		 * mmio tracing enabled), or erroneous behaviour
++		 */
++		pr_warn("unexpected debug trap on CPU %d.\n", smp_processor_id());
++		goto out;
++	}
++
++	if (ctx->probe && ctx->probe->post_handler)
++		ctx->probe->post_handler(ctx->probe, condition, regs);
++
++	/* Prevent racing against release_kmmio_fault_page(). */
++	arch_spin_lock(&kmmio_lock);
++	if (ctx->fpage->count)
++		arm_kmmio_fault_page(ctx->fpage);
++	arch_spin_unlock(&kmmio_lock);
++
++	// disabled single step in entry of single_step_exception.
++	// regs->msr &= ~MSR_SE;
++	regs->msr |= ctx->saved_flags;
++	regs->softe = ctx->saved_softe;
++
++	/* These were acquired in kmmio_handler(). */
++	ctx->active--;
++	BUG_ON(ctx->active);
++	rcu_read_unlock_sched_notrace();
++
++	/*
++	 * if somebody else is singlestepping across a probe point, flags
++	 * will have TF set, in which case, continue the remaining processing
++	 * of do_debug, as if this is not a probe hit.
++	 */
++	if (!(regs->msr & MSR_SE))
++		ret = 1;
++out:
++	return ret;
++}
++
++/* You must be holding kmmio_lock. */
++static int add_kmmio_fault_page(unsigned long addr)
++{
++	struct kmmio_fault_page *f;
++
++	f = get_kmmio_fault_page(addr);
++	if (f) {
++		if (!f->count)
++			arm_kmmio_fault_page(f);
++		f->count++;
++		return 0;
++	}
++
++	f = kzalloc(sizeof(*f), GFP_ATOMIC);
++	if (!f)
++		return -1;
++
++	f->count = 1;
++	f->addr = addr;
++
++	if (arm_kmmio_fault_page(f)) {
++		kfree(f);
++		return -1;
++	}
++
++	list_add_rcu(&f->list, kmmio_page_list(f->addr));
++
++	return 0;
++}
++
++/* You must be holding kmmio_lock. */
++static void release_kmmio_fault_page(unsigned long addr,
++				struct kmmio_fault_page **release_list)
++{
++	struct kmmio_fault_page *f;
++
++	f = get_kmmio_fault_page(addr);
++	if (!f)
++		return;
++
++	f->count--;
++	BUG_ON(f->count < 0);
++	if (!f->count) {
++		disarm_kmmio_fault_page(f);
++		if (!f->scheduled_for_release) {
++			f->release_next = *release_list;
++			*release_list = f;
++			f->scheduled_for_release = true;
++		}
++	}
++}
++
++/*
++ * With page-unaligned ioremaps, one or two armed pages may contain
++ * addresses from outside the intended mapping. Events for these addresses
++ * are currently silently dropped. The events may result only from programming
++ * mistakes by accessing addresses before the beginning or past the end of a
++ * mapping.
++ */
++int register_kmmio_probe(struct kmmio_probe *p)
++{
++	unsigned long flags;
++	int ret = 0;
++	unsigned long size = 0;
++	unsigned long addr = p->addr & PAGE_MASK;
++	const unsigned long size_lim = p->len + (p->addr & ~PAGE_MASK);
++	unsigned int l;
++	pte_t *pte;
++
++	local_irq_save(flags);
++	arch_spin_lock(&kmmio_lock);
++	if (get_kmmio_probe(addr)) {
++		ret = -EEXIST;
++		goto out;
++	}
++
++	pte = lookup_address(addr, &l);
++	if (!pte) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	kmmio_count++;
++	list_add_rcu(&p->list, &kmmio_probes);
++	while (size < size_lim) {
++		if (add_kmmio_fault_page(addr + size))
++			pr_err("Unable to set page fault.\n");
++		size += page_level_size(l);
++	}
++out:
++	arch_spin_unlock(&kmmio_lock);
++	local_irq_restore(flags);
++
++	/*
++	 * XXX: What should I do here?
++	 * Here was a call to global_flush_tlb(), but it does not exist
++	 * anymore. It seems it's not needed after all.
++	 */
++	return ret;
++}
++EXPORT_SYMBOL(register_kmmio_probe);
++
++static void rcu_free_kmmio_fault_pages(struct rcu_head *head)
++{
++	struct kmmio_delayed_release *dr = container_of(
++						head,
++						struct kmmio_delayed_release,
++						rcu);
++	struct kmmio_fault_page *f = dr->release_list;
++
++	while (f) {
++		struct kmmio_fault_page *next = f->release_next;
++
++		BUG_ON(f->count);
++		kfree(f);
++		f = next;
++	}
++	kfree(dr);
++}
++
++static void remove_kmmio_fault_pages(struct rcu_head *head)
++{
++	struct kmmio_delayed_release *dr =
++		container_of(head, struct kmmio_delayed_release, rcu);
++	struct kmmio_fault_page *f = dr->release_list;
++	struct kmmio_fault_page **prevp = &dr->release_list;
++	unsigned long flags;
++
++	local_irq_save(flags);
++	arch_spin_lock(&kmmio_lock);
++	while (f) {
++		if (!f->count) {
++			list_del_rcu(&f->list);
++			prevp = &f->release_next;
++		} else {
++			*prevp = f->release_next;
++			f->release_next = NULL;
++			f->scheduled_for_release = false;
++		}
++		f = *prevp;
++	}
++	arch_spin_unlock(&kmmio_lock);
++	local_irq_restore(flags);
++
++	/* This is the real RCU destroy call. */
++	call_rcu(&dr->rcu, rcu_free_kmmio_fault_pages);
++}
++
++/*
++ * Remove a kmmio probe. You have to synchronize_rcu() before you can be
++ * sure that the callbacks will not be called anymore. Only after that
++ * you may actually release your struct kmmio_probe.
++ *
++ * Unregistering a kmmio fault page has three steps:
++ * 1. release_kmmio_fault_page()
++ *    Disarm the page, wait a grace period to let all faults finish.
++ * 2. remove_kmmio_fault_pages()
++ *    Remove the pages from kmmio_page_table.
++ * 3. rcu_free_kmmio_fault_pages()
++ *    Actually free the kmmio_fault_page structs as with RCU.
++ */
++void unregister_kmmio_probe(struct kmmio_probe *p)
++{
++	unsigned long flags;
++	unsigned long size = 0;
++	unsigned long addr = p->addr & PAGE_MASK;
++	const unsigned long size_lim = p->len + (p->addr & ~PAGE_MASK);
++	struct kmmio_fault_page *release_list = NULL;
++	struct kmmio_delayed_release *drelease;
++	unsigned int l;
++	pte_t *pte;
++
++	pte = lookup_address(addr, &l);
++	if (!pte)
++		return;
++
++	local_irq_save(flags);
++	arch_spin_lock(&kmmio_lock);
++	while (size < size_lim) {
++		release_kmmio_fault_page(addr + size, &release_list);
++		size += page_level_size(l);
++	}
++	list_del_rcu(&p->list);
++	kmmio_count--;
++	arch_spin_unlock(&kmmio_lock);
++	local_irq_restore(flags);
++
++	if (!release_list)
++		return;
++
++	drelease = kmalloc(sizeof(*drelease), GFP_ATOMIC);
++	if (!drelease)
++		return;
++
++	drelease->release_list = release_list;
++
++	/*
++	 * This is not really RCU here. We have just disarmed a set of
++	 * pages so that they cannot trigger page faults anymore. However,
++	 * we cannot remove the pages from kmmio_page_table,
++	 * because a probe hit might be in flight on another CPU. The
++	 * pages are collected into a list, and they will be removed from
++	 * kmmio_page_table when it is certain that no probe hit related to
++	 * these pages can be in flight. RCU grace period sounds like a
++	 * good choice.
++	 *
++	 * If we removed the pages too early, kmmio page fault handler might
++	 * not find the respective kmmio_fault_page and determine it's not
++	 * a kmmio fault, when it actually is. This would lead to madness.
++	 */
++	call_rcu(&drelease->rcu, remove_kmmio_fault_pages);
++}
++EXPORT_SYMBOL(unregister_kmmio_probe);
++
++static int
++kmmio_die_notifier(struct notifier_block *nb, unsigned long val, void *args)
++{
++	struct die_args *arg = args;
++
++	if (val == DIE_SSTEP && post_kmmio_handler(0, arg->regs) == 1)
++		return NOTIFY_STOP;
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block nb_die = {
++	.notifier_call = kmmio_die_notifier
++};
++
++int kmmio_init(void)
++{
++	int i;
++
++	for (i = 0; i < KMMIO_PAGE_TABLE_SIZE; i++)
++		INIT_LIST_HEAD(&kmmio_page_table[i]);
++
++	return register_die_notifier(&nb_die);
++}
++
++void kmmio_cleanup(void)
++{
++	int i;
++
++	unregister_die_notifier(&nb_die);
++	for (i = 0; i < KMMIO_PAGE_TABLE_SIZE; i++) {
++		WARN_ONCE(!list_empty(&kmmio_page_table[i]),
++			  pr_fmt("kmmio_page_table not empty at cleanup, any further tracing will leak memory.\n"));
++	}
++}
+diff --git a/arch/powerpc/mm/mmio-mod.c b/arch/powerpc/mm/mmio-mod.c
+new file mode 100644
+index 000000000000..68ba9f028678
+--- /dev/null
++++ b/arch/powerpc/mm/mmio-mod.c
+@@ -0,0 +1,414 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Derived from arch/x86/mm/mmio-mod.c:
++ *   Copyright (C) 2024 Jialong Yang (jialong.yang@shingroup.cn)
++ */
++
++#define pr_fmt(fmt) "mmiotrace: " fmt
++
++#include <linux/moduleparam.h>
++#include <linux/debugfs.h>
++#include <linux/slab.h>
++#include <linux/uaccess.h>
++#include <linux/io.h>
++#include <linux/mmiotrace.h>
++#include <linux/pgtable.h>
++#include <linux/atomic.h>
++#include <linux/percpu.h>
++#include <linux/cpu.h>
++
++#include "pf_in.h"
++#include "mmiotrace_arch.h"
++
++struct remap_trace {
++	struct list_head list;
++	struct kmmio_probe probe;
++	resource_size_t phys;
++	unsigned long id;
++};
++
++/* Accessed per-cpu. */
++static DEFINE_PER_CPU(struct trap_reason, pf_reason);
++static DEFINE_PER_CPU(struct mmiotrace_rw, cpu_trace);
++
++static DEFINE_MUTEX(mmiotrace_mutex);
++static DEFINE_SPINLOCK(trace_lock);
++static atomic_t mmiotrace_enabled;
++static LIST_HEAD(trace_list);		/* struct remap_trace */
++
++/*
++ * Locking in this file:
++ * - mmiotrace_mutex enforces enable/disable_mmiotrace() critical sections.
++ * - mmiotrace_enabled may be modified only when holding mmiotrace_mutex
++ *   and trace_lock.
++ * - Routines depending on is_enabled() must take trace_lock.
++ * - trace_list users must hold trace_lock.
++ * - is_enabled() guarantees that mmio_trace_{rw,mapping} are allowed.
++ * - pre/post callbacks assume the effect of is_enabled() being true.
++ */
++
++/* module parameters */
++static unsigned long	filter_offset;
++static bool		nommiotrace;
++
++module_param(filter_offset, ulong, 0);
++module_param(nommiotrace, bool, 0);
++
++MODULE_PARM_DESC(filter_offset, "Start address of traced mappings.");
++MODULE_PARM_DESC(nommiotrace, "Disable actual MMIO tracing.");
++
++static bool is_enabled(void)
++{
++	return atomic_read(&mmiotrace_enabled);
++}
++
++static void print_pte(unsigned long address)
++{
++	unsigned int level;
++	pte_t *pte = lookup_address(address, &level);
++
++	if (!pte) {
++		pr_err("Error in %s: no pte for page 0x%08lx\n",
++		       __func__, address);
++		return;
++	}
++
++	if (level == PMD_SHIFT) {
++		pr_emerg("4MB pages are not currently supported: 0x%08lx\n",
++			 address);
++		BUG();
++	}
++	pr_info("pte for 0x%lx: 0x%llx 0x%llx\n",
++		address,
++		(unsigned long long)pte_val(*pte),
++		(unsigned long long)pte_val(*pte) & _PAGE_PRESENT);
++}
++
++/*
++ * For some reason the pre/post pairs have been called in an
++ * unmatched order. Report and die.
++ */
++static void die_kmmio_nesting_error(struct pt_regs *regs, unsigned long addr)
++{
++	const struct trap_reason *my_reason = &get_cpu_var(pf_reason);
++
++	pr_emerg("unexpected fault for address: 0x%08lx, last fault for address: 0x%08lx\n",
++		 addr, my_reason->addr);
++	print_pte(addr);
++	pr_emerg("faulting IP is at %pS\n", (void *)regs->nip);
++	pr_emerg("last faulting IP was at %pS\n", (void *)my_reason->ip);
++	put_cpu_var(pf_reason);
++	BUG();
++}
++
++static void pre(struct kmmio_probe *p, struct pt_regs *regs,
++						unsigned long addr)
++{
++	struct trap_reason *my_reason = &get_cpu_var(pf_reason);
++	struct mmiotrace_rw *my_trace = &get_cpu_var(cpu_trace);
++	const unsigned long instptr = instruction_pointer(regs);
++	struct opcode_t *opcode = get_opcode((unsigned int *)instptr);
++	enum mm_io_opcode type = get_ins_type(opcode);
++	struct remap_trace *trace = p->private;
++
++	/* it doesn't make sense to have more than one active trace per cpu */
++	if (my_reason->active_traces)
++		die_kmmio_nesting_error(regs, addr);
++	else
++		my_reason->active_traces++;
++
++	if (!opcode) {
++		pr_warn("The ins may be not included in src. Tell the dever follow info:");
++		pr_warn("ins_addr: 0x%lx    ins: 0x%lx", instptr, *(unsigned long *)instptr);
++	}
++
++	my_reason->opcode = opcode;
++
++	my_reason->addr = addr;
++	my_reason->ip = instptr;
++
++	my_trace->phys = addr - trace->probe.addr + trace->phys;
++	my_trace->map_id = trace->id;
++
++	my_trace->pc = instptr;
++
++	my_trace->opcode = type;
++	my_trace->width = get_ins_width(opcode);
++
++	if (type == MMIO_WRITE)
++		my_trace->value = get_ins_val(my_reason, regs);
++
++	put_cpu_var(cpu_trace);
++	put_cpu_var(pf_reason);
++}
++
++static void post(struct kmmio_probe *p, unsigned long condition,
++							struct pt_regs *regs)
++{
++	struct trap_reason *my_reason = &get_cpu_var(pf_reason);
++	struct mmiotrace_rw *my_trace = &get_cpu_var(cpu_trace);
++	struct opcode_t *opcode = my_reason->opcode;
++	enum mm_io_opcode type = get_ins_type(opcode);
++
++	/* this should always return the active_trace count to 0 */
++	my_reason->active_traces--;
++	if (my_reason->active_traces) {
++		pr_emerg("unexpected post handler");
++		BUG();
++	}
++
++	if (type == MMIO_READ)
++		my_trace->value = get_ins_val(my_reason, regs);
++
++	mmio_trace_rw(my_trace);
++	put_cpu_var(cpu_trace);
++	put_cpu_var(pf_reason);
++}
++
++static void ioremap_trace_core(resource_size_t offset, unsigned long size,
++							void __iomem *addr)
++{
++	static atomic_t next_id;
++	struct remap_trace *trace = kmalloc(sizeof(*trace), GFP_KERNEL);
++	/* These are page-unaligned. */
++	struct mmiotrace_map map = {
++		.phys = offset,
++		.virt = (unsigned long)addr,
++		.len = size,
++		.opcode = MMIO_PROBE
++	};
++
++	if (!trace) {
++		pr_err("kmalloc failed in ioremap\n");
++		return;
++	}
++
++	*trace = (struct remap_trace) {
++		.probe = {
++			.addr = (unsigned long)addr,
++			.len = size,
++			.pre_handler = pre,
++			.post_handler = post,
++			.private = trace
++		},
++		.phys = offset,
++		.id = atomic_inc_return(&next_id)
++	};
++	map.map_id = trace->id;
++
++	spin_lock_irq(&trace_lock);
++	if (!is_enabled()) {
++		kfree(trace);
++		goto not_enabled;
++	}
++
++	mmio_trace_mapping(&map);
++	list_add_tail(&trace->list, &trace_list);
++	if (!nommiotrace)
++		register_kmmio_probe(&trace->probe);
++
++not_enabled:
++	spin_unlock_irq(&trace_lock);
++}
++
++void mmiotrace_ioremap(resource_size_t offset, unsigned long size,
++						void __iomem *addr)
++{
++	pr_err("ioremap_*(0x%llx, 0x%lx) = %p\n",
++		 (unsigned long long)offset, size, addr);
++	if (!is_enabled()) /* recheck and proper locking in *_core() */
++		return;
++
++	pr_debug("ioremap_*(0x%llx, 0x%lx) = %p\n",
++		 (unsigned long long)offset, size, addr);
++	if ((filter_offset) && (offset != filter_offset))
++		return;
++	ioremap_trace_core(offset, size, addr);
++}
++
++static void iounmap_trace_core(volatile void __iomem *addr)
++{
++	struct mmiotrace_map map = {
++		.phys = 0,
++		.virt = (unsigned long)addr,
++		.len = 0,
++		.opcode = MMIO_UNPROBE
++	};
++	struct remap_trace *trace;
++	struct remap_trace *tmp;
++	struct remap_trace *found_trace = NULL;
++
++	pr_debug("Unmapping %p.\n", addr);
++
++	spin_lock_irq(&trace_lock);
++	if (!is_enabled())
++		goto not_enabled;
++
++	list_for_each_entry_safe(trace, tmp, &trace_list, list) {
++		if ((unsigned long)addr == trace->probe.addr) {
++			if (!nommiotrace)
++				unregister_kmmio_probe(&trace->probe);
++			list_del(&trace->list);
++			found_trace = trace;
++			break;
++		}
++	}
++	map.map_id = (found_trace) ? found_trace->id : -1;
++	mmio_trace_mapping(&map);
++
++not_enabled:
++	spin_unlock_irq(&trace_lock);
++	if (found_trace) {
++		synchronize_rcu(); /* unregister_kmmio_probe() requirement */
++		kfree(found_trace);
++	}
++}
++
++void mmiotrace_iounmap(volatile void __iomem *addr)
++{
++	might_sleep();
++	if (is_enabled()) /* recheck and proper locking in *_core() */
++		iounmap_trace_core(addr);
++}
++
++int mmiotrace_printk(const char *fmt, ...)
++{
++	int ret = 0;
++	va_list args;
++	unsigned long flags;
++
++	va_start(args, fmt);
++
++	spin_lock_irqsave(&trace_lock, flags);
++	if (is_enabled())
++		ret = mmio_trace_printk(fmt, args);
++	spin_unlock_irqrestore(&trace_lock, flags);
++
++	va_end(args);
++	return ret;
++}
++EXPORT_SYMBOL(mmiotrace_printk);
++
++static void clear_trace_list(void)
++{
++	struct remap_trace *trace;
++	struct remap_trace *tmp;
++
++	/*
++	 * No locking required, because the caller ensures we are in a
++	 * critical section via mutex, and is_enabled() is false,
++	 * i.e. nothing can traverse or modify this list.
++	 * Caller also ensures is_enabled() cannot change.
++	 */
++	list_for_each_entry(trace, &trace_list, list) {
++		pr_notice("purging non-iounmapped trace @0x%08lx, size 0x%lx.\n",
++			  trace->probe.addr, trace->probe.len);
++		if (!nommiotrace)
++			unregister_kmmio_probe(&trace->probe);
++	}
++	synchronize_rcu(); /* unregister_kmmio_probe() requirement */
++
++	list_for_each_entry_safe(trace, tmp, &trace_list, list) {
++		list_del(&trace->list);
++		kfree(trace);
++	}
++}
++
++#ifdef CONFIG_HOTPLUG_CPU
++static cpumask_var_t downed_cpus;
++
++static void enter_uniprocessor(void)
++{
++	int cpu;
++	int err;
++
++	if (!cpumask_available(downed_cpus) &&
++	    !alloc_cpumask_var(&downed_cpus, GFP_KERNEL)) {
++		pr_notice("Failed to allocate mask\n");
++		goto out;
++	}
++
++	cpus_read_lock();
++	cpumask_copy(downed_cpus, cpu_online_mask);
++	cpumask_clear_cpu(cpumask_first(cpu_online_mask), downed_cpus);
++	if (num_online_cpus() > 1)
++		pr_notice("Disabling non-boot CPUs...\n");
++	cpus_read_unlock();
++
++	for_each_cpu(cpu, downed_cpus) {
++		err = remove_cpu(cpu);
++		if (!err)
++			pr_info("CPU%d is down.\n", cpu);
++		else
++			pr_err("Error taking CPU%d down: %d\n", cpu, err);
++	}
++out:
++	if (num_online_cpus() > 1)
++		pr_warn("multiple CPUs still online, may miss events.\n");
++}
++
++static void leave_uniprocessor(void)
++{
++	int cpu;
++	int err;
++
++	if (!cpumask_available(downed_cpus) || cpumask_empty(downed_cpus))
++		return;
++	pr_notice("Re-enabling CPUs...\n");
++	for_each_cpu(cpu, downed_cpus) {
++		err = add_cpu(cpu);
++		if (!err)
++			pr_info("enabled CPU%d.\n", cpu);
++		else
++			pr_err("cannot re-enable CPU%d: %d\n", cpu, err);
++	}
++}
++
++#else /* !CONFIG_HOTPLUG_CPU */
++static void enter_uniprocessor(void)
++{
++	if (num_online_cpus() > 1)
++		pr_warn("multiple CPUs are online, may miss events. Suggest booting with maxcpus=1 kernel argument.\n");
++}
++
++static void leave_uniprocessor(void)
++{
++}
++#endif
++
++void enable_mmiotrace(void)
++{
++	mutex_lock(&mmiotrace_mutex);
++	if (is_enabled())
++		goto out;
++
++	if (nommiotrace)
++		pr_info("MMIO tracing disabled.\n");
++	kmmio_init();
++	enter_uniprocessor();
++	spin_lock_irq(&trace_lock);
++	atomic_inc(&mmiotrace_enabled);
++	spin_unlock_irq(&trace_lock);
++	pr_info("enabled.\n");
++out:
++	mutex_unlock(&mmiotrace_mutex);
++}
++
++void disable_mmiotrace(void)
++{
++	mutex_lock(&mmiotrace_mutex);
++	if (!is_enabled())
++		goto out;
++
++	spin_lock_irq(&trace_lock);
++	atomic_dec(&mmiotrace_enabled);
++	BUG_ON(is_enabled());
++	spin_unlock_irq(&trace_lock);
++
++	clear_trace_list(); /* guarantees: no more kmmio callbacks */
++	leave_uniprocessor();
++	kmmio_cleanup();
++	pr_info("disabled.\n");
++out:
++	mutex_unlock(&mmiotrace_mutex);
++}
+diff --git a/arch/powerpc/mm/mmiotrace_arch.c b/arch/powerpc/mm/mmiotrace_arch.c
+new file mode 100644
+index 000000000000..ccc8032384ef
+--- /dev/null
++++ b/arch/powerpc/mm/mmiotrace_arch.c
+@@ -0,0 +1,149 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Derived from arch/powerpc/mm/pgtable.c:
++ *   Copyright (C) 2024 Jialong Yang (jialong.yang@shingroup.cn)
++ */
++
++#include <linux/kernel.h>
++#include <linux/gfp.h>
++#include <linux/mm.h>
++#include <linux/percpu.h>
++#include <linux/hardirq.h>
++#include <linux/hugetlb.h>
++#include <asm/tlbflush.h>
++#include <asm/tlb.h>
++#include <asm/hugetlb.h>
++
++#include "mmiotrace_arch.h"
++
++static pte_t *mmiotrace_find_linux_pte(pgd_t *pgdp, unsigned long ea,
++			bool *is_thp, unsigned int *hpage_shift)
++{
++	p4d_t p4d, *p4dp;
++	pud_t pud, *pudp;
++	pmd_t pmd, *pmdp;
++	pte_t *ret_pte;
++	hugepd_t *hpdp = NULL;
++	unsigned int pdshift;
++
++	if (hpage_shift)
++		*hpage_shift = 0;
++
++	if (is_thp)
++		*is_thp = false;
++
++	/*
++	 * Always operate on the local stack value. This make sure the
++	 * value don't get updated by a parallel THP split/collapse,
++	 * page fault or a page unmap. The return pte_t * is still not
++	 * stable. So should be checked there for above conditions.
++	 * Top level is an exception because it is folded into p4d.
++	 */
++	p4dp = p4d_offset(pgdp, ea);
++	p4d  = READ_ONCE(*p4dp);
++	pdshift = P4D_SHIFT;
++
++	if (p4d_none(p4d))
++		return NULL;
++
++	if (p4d_leaf(p4d)) {
++		ret_pte = (pte_t *)p4dp;
++		goto out;
++	}
++
++	if (is_hugepd(__hugepd(p4d_val(p4d)))) {
++		hpdp = (hugepd_t *)&p4d;
++		goto out_huge;
++	}
++
++	/*
++	 * Even if we end up with an unmap, the pgtable will not
++	 * be freed, because we do an rcu free and here we are
++	 * irq disabled
++	 */
++	pdshift = PUD_SHIFT;
++	pudp = pud_offset(&p4d, ea);
++	pud  = READ_ONCE(*pudp);
++
++	if (pud_none(pud))
++		return NULL;
++
++	if (pud_leaf(pud)) {
++		ret_pte = (pte_t *)pudp;
++		goto out;
++	}
++
++	if (is_hugepd(__hugepd(pud_val(pud)))) {
++		hpdp = (hugepd_t *)&pud;
++		goto out_huge;
++	}
++
++	pdshift = PMD_SHIFT;
++	pmdp = pmd_offset(&pud, ea);
++	pmd  = READ_ONCE(*pmdp);
++
++	/*
++	 * A hugepage collapse is captured by this condition, see
++	 * pmdp_collapse_flush.
++	 */
++	if (pmd_none(pmd))
++		return NULL;
++
++#ifdef CONFIG_PPC_BOOK3S_64
++	/*
++	 * A hugepage split is captured by this condition, see
++	 * pmdp_invalidate.
++	 *
++	 * Huge page modification can be caught here too.
++	 */
++	if (pmd_is_serializing(pmd))
++		return NULL;
++#endif
++
++	if (pmd_trans_huge(pmd) || pmd_devmap(pmd)) {
++		if (is_thp)
++			*is_thp = true;
++		ret_pte = (pte_t *)pmdp;
++		goto out;
++	}
++
++	if (pmd_leaf(pmd)) {
++		ret_pte = (pte_t *)pmdp;
++		goto out;
++	}
++
++	if (is_hugepd(__hugepd(pmd_val(pmd)))) {
++		hpdp = (hugepd_t *)&pmd;
++		goto out_huge;
++	}
++
++	pdshift = PAGE_SHIFT;
++
++	if (hpage_shift)
++		*hpage_shift = pdshift;
++
++	return pte_offset_kernel(&pmd, ea);
++
++out_huge:
++	if (!hpdp)
++		return NULL;
++
++	ret_pte = hugepte_offset(*hpdp, ea, pdshift);
++	pdshift = hugepd_shift(*hpdp);
++out:
++	if (hpage_shift)
++		*hpage_shift = pdshift;
++	return ret_pte;
++}
++
++pte_t *lookup_address(unsigned long address, unsigned int *shift)
++{
++	unsigned long flags;
++
++	local_irq_save(flags);
++	pte_t *pte = mmiotrace_find_linux_pte(pgd_offset_k(address), address, NULL, shift);
++
++	local_irq_restore(flags);
++
++	return pte;
++}
+diff --git a/arch/powerpc/mm/mmiotrace_arch.h b/arch/powerpc/mm/mmiotrace_arch.h
+new file mode 100644
+index 000000000000..f4a5bff24a07
+--- /dev/null
++++ b/arch/powerpc/mm/mmiotrace_arch.h
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Derived from arch/powerpc/mm/pgtable.c:
++ *   Copyright (C) 2024 Jialong Yang (jialong.yang@shingroup.cn)
++ */
++
++#ifndef __MMIOTRACE_ARCH_
++#define __MMIOTRACE_ARCH_
++#include <asm/pgtable.h>
++
++static inline int page_level_shift(unsigned int level)
++{
++	return level;
++}
++static inline unsigned long page_level_size(unsigned int level)
++{
++	return 1UL << page_level_shift(level);
++}
++static inline unsigned long page_level_mask(unsigned int level)
++{
++	return ~(page_level_size(level) - 1);
++}
++
++pte_t *lookup_address(unsigned long address, unsigned int *level);
++#endif // __MMIOTRACE_ARCH_
+diff --git a/arch/powerpc/mm/pf_in.c b/arch/powerpc/mm/pf_in.c
+new file mode 100644
+index 000000000000..e6c90b383e7f
+--- /dev/null
++++ b/arch/powerpc/mm/pf_in.c
+@@ -0,0 +1,185 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Derived from arch/x86/mm/pf_in.c:
++ *   Copyright (C) 2024 Jialong Yang (jialong.yang@shingroup.cn)
++ */
++
++#include <linux/ptrace.h> /* struct pt_regs */
++#include "pf_in.h"
++#include <linux/printk.h>
++#include <linux/mmiotrace.h>
++
++/* D 32 0x80000000 B lwz Load Word and Zero */
++/* D 33 0x84000000 B lwz Load Word and Zero with Update */
++/* D 34 0x88000000 B lbz Load Byte and Zero */
++/* D 33 0x8C000000 B lbzu Load Word and Zero with Update */
++/* D 35 0x90000000 B stw Store Word */
++/* D 36 0x94000000 B stwu Store Word with Update */
++/* D 37 0x98000000 B stb Store Byte */
++/* D 38 0x9C000000 B stbu Store Byte with Update */
++/* D 40 0xA0000000 B lhz Load Halfword and Zero with Update */
++/* D 41 0xA4000000 B lhzu Load Halfword and Zero with Update */
++/* D 42 0xA8000000 B lha Load Halfword Algebraic */
++/* D 43 0xAC000000 B lhau Load Halfword Algebraic with Update */
++/* D 44 0xB0000000 B sth Store Halfword */
++/* D 45 0xB4000000 B sthu Store Halfword with Update */
++/* D 46 0xB8000000 B lmw Load Multiple Word */
++/* D 47 0xBC000000 B stmw Store Multiple Word */
++/* D 48 0xC0000000 FP lfs Load Floating-Point Single */
++/* D 49 0xC4000000 FP lfsu Load Floating-Point Single with Update */
++/* D 50 0xC8000000 FP lfd Load Floating-Point Double */
++/* D 51 0xCC000000 FP lfdu Load Floating-Point Double with Update */
++/* D 52 0xD0000000 FP stfs Store Floating-Point Single */
++/* D 53 0xD4000000 FP stfsu Store Floating-Point Single with Update */
++/* D 54 0xD8000000 FP stfd Store Floating-Point Double */
++/* D 55 0xDC000000 FP stfdu Store Floating-Point Double with Update */
++/* DQ 56 0xE0000000 P 58 LSQ lq Load Quadword */
++/* DS 57 0xE4000000 140 FP.out Lfdp Load Floating-Point Double Pair */
++/* DS 58 0xE8000000 53 64 Ldu Load Doubleword with Update */
++/* DS 58 0xE8000001 53 64 Ld Load Doubleword */
++/* DS 58 0xE8000002 52 64 Lwa Load Word Algebraic */
++/* DS 62 0xF8000000 57 64 std Store Doubleword */
++/* DS 62 0xF8000001 57 64 stdu Store Doubleword with Update */
++/* DS 62 0xF8000002 59 LSQ stq Store Quadword */
++
++// D-form:
++// 0-5    6-10    11-15   16-31
++// opcode RT      RA      Offset
++
++// DQ-form:
++// 0-5    6-10  11-15  16-27
++// opcode RT    RA     Offset
++
++// DS-form:
++// 0-5    6-10  11-15  16-29  30-31
++// opcode RT    RA     Offset opcode
++
++#define D_OPCODE_MASK GENMASK(31, 26)
++#define DQ_OPCODE_MASK D_OPCODE_MASK
++#define DS_OPCODE_MASK (D_OPCODE_MASK | GENMASK(0, 1))
++#define RS_RT_OFFSET 21UL
++#define RS_RT_MASK GENMASK(25, 21)
++#define RA_MASK GENMASK(20, 16)
++#define D_OFFSET GENMASK(15, 0)
++#define DQ_OFFSET GENMASK(15, 4)
++#define DS_OFFSET GENMASK(15, 2)
++
++struct opcode_t opcodes[] = {
++	{0x80000000, D_FORMAT, "lwz", },
++	{0x84000000, D_FORMAT, "lwzu", },
++	{0x88000000, D_FORMAT, "lbz", },
++	{0x8C000000, D_FORMAT, "lbzu", },
++	{0x90000000, D_FORMAT, "stw", },
++	{0x94000000, D_FORMAT, "stwu", },
++	{0x98000000, D_FORMAT, "stb", },
++	{0x9C000000, D_FORMAT, "stbu", },
++	{0xA0000000, D_FORMAT, "lhz", },
++	{0xA4000000, D_FORMAT, "lhzu", },
++	{0xA8000000, D_FORMAT, "lha", },
++	{0xAC000000, D_FORMAT, "lhau", },
++	{0xB0000000, D_FORMAT, "sth", },
++	{0xB4000000, D_FORMAT, "sthu", },
++	{0xB8000000, D_FORMAT, "lmw", },
++	{0xBC000000, D_FORMAT, "stmw", },
++	{0xC0000000, D_FORMAT, "lfs", },
++	{0xC4000000, D_FORMAT, "lfsu", },
++	{0xC8000000, D_FORMAT, "lfd", },
++	{0xCC000000, D_FORMAT, "lfdu", },
++	{0xD0000000, D_FORMAT, "stfs", },
++	{0xD4000000, D_FORMAT, "stfsu", },
++	{0xD8000000, D_FORMAT, "stfd", },
++	{0xDC000000, D_FORMAT, "stfdu", },
++	{0xE0000000, DQ_FORMAT, "lq", },
++	{0xE4000000, DS_FORMAT, "lfdp", },
++	{0xE8000000, DS_FORMAT, "ldu", },
++	{0xE8000001, DS_FORMAT, "ld", },
++	{0xE8000002, DS_FORMAT, "lwa", },
++	{0xF8000000, DS_FORMAT, "std", },
++	{0xF8000001, DS_FORMAT, "stdu", },
++	{0xF8000002, DS_FORMAT, "stq", }
++};
++
++struct opcode_t *get_opcode(unsigned int *addr)
++{
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(opcodes); i++) {
++		switch (opcodes[i].form) {
++		case D_FORMAT:
++			if (opcodes[i].opcode == (*addr & D_OPCODE_MASK))
++				return &opcodes[i];
++			break;
++		case DQ_FORMAT:
++			if (opcodes[i].opcode == (*addr & DQ_OPCODE_MASK))
++				return &opcodes[i];
++			break;
++		case DS_FORMAT:
++			if (opcodes[i].opcode == (*addr & DQ_OPCODE_MASK))
++				return &opcodes[i];
++			break;
++		}
++	}
++
++	return NULL;
++}
++
++inline enum mm_io_opcode get_ins_type(struct opcode_t *opcode)
++{
++	if (!opcode)
++		return MMIO_UNKNOWN_OP;
++
++	if (opcode->name[0] == 'l')
++		return MMIO_READ;
++
++	if (opcode->name[0] == 's')
++		return MMIO_WRITE;
++
++	return MMIO_UNKNOWN_OP;
++}
++
++unsigned int get_ins_width(struct opcode_t *opcode)
++{
++	char width_ch;
++
++	if (!opcode)
++		return 0;
++
++	if (opcode->name[0] == 'l')
++		width_ch = opcode->name[1];
++
++	if (opcode->name[0] == 's')
++		width_ch = opcode->name[2];
++
++	switch (width_ch) {
++	case 'b': /* byte */
++		return 1;
++	case 'h': /* half word */
++		return sizeof(long) / 2;
++	case 'w': /* word */
++		/* return sizeof(long); */
++	case 'm': /* multi words(can be calculated out by (32-RT) * sizeof(long)) */
++	case 'f': /* float(not too much. So ignore word number) */
++	case 'd': /* double words */
++		/* return 2 * sizeof(long); */
++	case 'q': /* quad words */
++		/* return 4 * sizeof(long); */
++	default:
++		return sizeof(long);
++	}
++}
++
++unsigned long get_ins_val(struct trap_reason *reason, struct pt_regs *regs)
++{
++	struct opcode_t *opcode = reason->opcode;
++	unsigned int ins = *(unsigned int *)(reason->ip);
++	unsigned int reg_no;
++	unsigned long mask = ~0UL;
++
++	if (!opcode)
++		return 0;
++
++	mask >>= 8 * (sizeof(long) - get_ins_width(opcode));
++	reg_no = (ins & RS_RT_MASK) >> RS_RT_OFFSET;
++
++	return regs->gpr[reg_no] & mask;
++}
+diff --git a/arch/powerpc/mm/pf_in.h b/arch/powerpc/mm/pf_in.h
+new file mode 100644
+index 000000000000..905ba4937137
+--- /dev/null
++++ b/arch/powerpc/mm/pf_in.h
+@@ -0,0 +1,33 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Derived from arch/x86/mm/pf_in.h:
++ *   Copyright (C) 2024 Jialong Yang (jialong.yang@shingroup.cn)
++ */
++
++#ifndef __PF_H_
++#define __PF_H_
++
++enum OPCODE_FORMAT {
++	D_FORMAT,
++	DQ_FORMAT,
++	DS_FORMAT,
++};
++
++struct opcode_t {
++	unsigned int opcode;
++	enum OPCODE_FORMAT form;
++	const char *name;
++};
++
++struct trap_reason {
++	unsigned long addr;
++	unsigned long ip;
++	struct opcode_t *opcode;
++	int active_traces;
++};
++
++struct opcode_t *get_opcode(unsigned int *addr);
++enum mm_io_opcode get_ins_type(struct opcode_t *opcode);
++unsigned int get_ins_width(struct opcode_t *opcode);
++unsigned long get_ins_val(struct trap_reason *reason, struct pt_regs *regs);
++#endif /* __PF_H_ */
 -- 
-2.27.0
+2.34.1
 
 
