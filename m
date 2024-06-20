@@ -1,749 +1,410 @@
-Return-Path: <linux-kernel+bounces-223624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9719115B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:24:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5419115B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 00:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FFE31F2184F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773B11F226CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 22:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76A9147C86;
-	Thu, 20 Jun 2024 22:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17C5139CE5;
+	Thu, 20 Jun 2024 22:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ge2HQb+5"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="E6GllXk/"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2040.outbound.protection.outlook.com [40.107.94.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666CE130ADA
-	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718922239; cv=none; b=TEOx0UMjaXsLr/fuhfAloTiBciXxHc6GbcHjKonnC0JpFP1U0Ah56LKOou6UCzOXMC0axTFQTD2QTtT7dU8jZhAU8HAehdcrc1+E31J7ZST1yUbqp2TKJcSMJbj16etUddhgFWdNkDVYiDmQjxZQlDSl8EoW4dWYq+OY+lK7W9k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718922239; c=relaxed/simple;
-	bh=yWvDNUnycsvNLcY1fv9zSc+31qHIwCJyqw3hyXvVbPM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rO1KWsYLyomDPao40Zqv8C7wOa5eVJ/xoWlwOW0+johRGgBM7+fWtJeNffyNQZTWChreeyln5CtIhm6yhRO3td7io5yU1u+yvRIKVnDfejv4O353+TAfiE/ZrR5phtYooiDg2+lVkwZE5muPT7fnBzj8HF+EYTLpabDqQTXztjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ge2HQb+5; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e95a75a90eso13897341fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 15:23:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718922233; x=1719527033; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=95cGvsTIxxoPqHVnj/dsaZr+AEgSGPbzLZmmEJChD/k=;
-        b=ge2HQb+5CUktXMICqyaMQ5878VJRap5yBrX/o262PTEiVoq3c9pmmDQvk+0hx0aMW2
-         7eAKsvo0CKZ1Q7tN3wmrwLd5FNKqdyuaGbr/NMocVLFo0AuYo+H7e//1vn/KKLpqe0px
-         pG7uZKlzwX8lTknS1wqv4ixiSucWkzrmzL6M9lK1Gat3/yBHL9qki4h5A57TgAzRZLrp
-         NBOwSW8rMRoM0UdxW6I3GcSnLWGP7nTRAog8y1eaVcCtZ75XN+8hqyimONHU4qrAFoMf
-         F6fMM4dnv+thZ0hmvYRwJwhryaHDN8s3xH6VJz54z1Opu9dcbTYYhZGTDtuoUFcLXGyZ
-         lzqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718922233; x=1719527033;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=95cGvsTIxxoPqHVnj/dsaZr+AEgSGPbzLZmmEJChD/k=;
-        b=jR5w8cDAdosBdfRgro8R10afLmd/CljHfgvOcMyRZv6LKVTmZ7b3WMwRBU3Xz1kAPj
-         4gvbLv5+Ow6nFsRdPJP6MJa1F9dM3TUoohzAwyLjHObQNL2L+SweSZNoCgWJCxgopUIo
-         85ATkaZvjSXxVPSMqUG1FAUR+RlNTMSrdU6V1sZw4S6D3zpJ3JBzMK95KlvMrkCm7qDX
-         jfxFWUTmsfeuV/sEwjES63yOdqXKC+F48dd5cxI04gsb6VKIKOESpN5leOn/WvCRtBLz
-         1FoiR2d4LaqRP5qTZan5J3LLOmbh9yeulb9Quz2O5zdRyYYhQeYuP/GQscR4+4cNDlvq
-         Rv8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWc36T8n0ZoR8190prcJRHeuMkrLOcPKX7BGCvxTXdNpLvV2p3+3ARcXD48pyn+R++JXpDLRind91mATg4Q1zmGqwAQ9roV3vkHSUoB
-X-Gm-Message-State: AOJu0YwiAPCjJU33N0DeVIsE8rn0IMqpGQA4bFSVztg1hyHsUlQLaQ2m
-	hiyELoO2aYRIHvdeNDp8BBQpQRCMEmv/4O4x/ioe5zi9kOn/5/ifjfbNUnEJiak=
-X-Google-Smtp-Source: AGHT+IEH8QzReGIpzV4n3StJJcq4V4kD3jaaLDyLKlDq1I9VS4r4QDfxRATirFqHwJbvtHlKIiHKFQ==
-X-Received: by 2002:a05:651c:20f:b0:2ea:e57c:a55b with SMTP id 38308e7fff4ca-2ec3cea2b52mr43643171fa.31.1718922233413;
-        Thu, 20 Jun 2024 15:23:53 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d76f683sm416451fa.125.2024.06.20.15.23.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 15:23:53 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 21 Jun 2024 01:23:51 +0300
-Subject: [PATCH v8] power: supply: lenovo_yoga_c630_battery: add Lenovo
- C630 driver
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0A314F9EE
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 22:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718922255; cv=fail; b=MYemTxOmpCIbqJc7qXTLJtTPYUkvC0GiVyt04YIqTe4C+i3Mxr8kdF26Xne87RSRuLDDYS5RB6ZFfJf0+NwDeUQVDA65QnlUG+sUa/2AqwvyOJVrkYOaD3JZCQxMRzYhU16ZfzgM8VgCdpWQu7qVme38iZVu5vFBY0uD8z1QGfs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718922255; c=relaxed/simple;
+	bh=//X+ceCgmDZ9pDa+fSwMI67J6zWoEq/kcKyPK8d7DGI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UI27ovJxE9sd2m0GKGc+bsIldYtSJCeHQ19lbU9kbAODyal57w9vESDRTd7TtO6DA0/M1NLS/kdAf7dxRkSe73fX1Wjm0P11ES+Z3Q+kbC1MenOQpHkwWaUz2SXXJzL/Dpm3CQwqPEth9jw55z8MHveqi2qyJK95j960MxGqQ+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=E6GllXk/; arc=fail smtp.client-ip=40.107.94.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZBdWoil/qRPx2hKkS8eIO+rPrVWufUwqgEhOffw6ttl0HOcwwgvTPComJt0Km5EuZeaPL7ULMRgrEDpSrW8mkaiCTnHZ2LmDcnr7YRDSQqG3bY/XxkNyPFX15614MMyfslRh5P/fCLlgLJauoRa5sdoSL4hf/9NtUt2Y8S4AZ4aV51cnUzN5Y/G06vsLyOSCAInAzLkPWesknOmj1zKCNaLx3umJnaqlZpZklQpujMi1YB/kWNYSNHunpLM7gm1JOhgapotK/uWmts9UKaVVINklmafAG/bgVrMq4n7kZcBHNt6Z125p3LIK3/QWtWTPoyKR4YrpYSBErgViIrtCsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2J+bxF4RMF54exgJCXjn4Sm2+fnJVGvuauyYNYQGI/w=;
+ b=PKR7zUBHceCE9qIRiS8N7Nd1Q1SE9bm0K/HlVvysR2EfHm3Bapy1SQesmtsIMSDlW4tPfhP4zIbOC71QEakdt2eqRkmfpsF8kEsv80BsqfLUra6ywJgy84bHOzAqLpLxfcYAcrd3kq3/g/vXwQV5m7yNxheLNi3slL5oU4EvLg9wAYXicw2UZ/4D/Xloy5fqaP/iEywaA6yut9ffv4bPDhCc7xaFIc0zkYjrf9gi7eoBFOf/Ib0p3u2eqBu8j9G400IFuk8N1ukK3tyKq/r1/UmRG1g9jTmsah36mP/AeGM9QxdfzOmPTUzPMkFDW0hI0X1avpxiZhSqvHHDCvMt5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2J+bxF4RMF54exgJCXjn4Sm2+fnJVGvuauyYNYQGI/w=;
+ b=E6GllXk/VshSdZflQuD0Ki7nQqJtCuasI1T057XfHa9iovCQs34vDW0khJG4eBqMuelKWHl/oylNZCDYKvBXESxeXEdpKt3W4RfYjeKnXO6bGDC7vrFZFHWPfCvBNPpOTFssoYsB2Q+y47LpKUTC9cUkPB9fxPDrO53RUoLrSJo=
+Received: from CH0PR04CA0055.namprd04.prod.outlook.com (2603:10b6:610:77::30)
+ by IA1PR12MB6578.namprd12.prod.outlook.com (2603:10b6:208:3a2::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Thu, 20 Jun
+ 2024 22:24:09 +0000
+Received: from CH1PEPF0000AD78.namprd04.prod.outlook.com
+ (2603:10b6:610:77:cafe::4) by CH0PR04CA0055.outlook.office365.com
+ (2603:10b6:610:77::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.33 via Frontend
+ Transport; Thu, 20 Jun 2024 22:24:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH1PEPF0000AD78.mail.protection.outlook.com (10.167.244.56) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Thu, 20 Jun 2024 22:24:09 +0000
+Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Jun
+ 2024 17:24:08 -0500
+From: Ashish Kalra <Ashish.Kalra@amd.com>
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>
+CC: <rafael@kernel.org>, <hpa@zytor.com>, <peterz@infradead.org>,
+	<adrian.hunter@intel.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<jun.nakajima@intel.com>, <rick.p.edgecombe@intel.com>,
+	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <seanjc@google.com>,
+	<kai.huang@intel.com>, <bhe@redhat.com>, <kirill.shutemov@linux.intel.com>,
+	<bdas@redhat.com>, <vkuznets@redhat.com>, <dionnaglaze@google.com>,
+	<anisinha@redhat.com>, <jroedel@suse.de>, <ardb@kernel.org>,
+	<dyoung@redhat.com>, <kexec@lists.infradead.org>,
+	<linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v9 3/3] x86/snp: Convert shared memory back to private on kexec
+Date: Thu, 20 Jun 2024 22:23:59 +0000
+Message-ID: <f6c0ddfd15579674bc234d6e1b84e92768531050.1718920799.git.ashish.kalra@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1718920799.git.ashish.kalra@amd.com>
+References: <20240614095904.1345461-1-kirill.shutemov@linux.intel.com> <cover.1718920799.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240621-yoga-ec-driver-v8-1-daae67d0233d@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAPardGYC/3XPzUrEMBQF4FcZsjYl/z+ufA9xcdMkbdBpJC3BM
- vTdzQyIleDyLL5zz72hNZQUVvR8uaESalpTXlowTxc0zrBMASffMmKECSKZxnueAIcR+5JqKFi
- r6HWU3kMwqKHPEmL6ehS+vrUcS77ibS4Bfmo4YURSyQyxA2OcC64wxf6atrIPDsq+zu+5vnykB
- UoecpnutXNat1z2x8zK7+X/LqocE8yZBmsk9eDlueo+qYqzN50XzYsIxkeAoJ3qvPz1ivT3ZfM
- URkuBOMFZ79XJU9Z51bwJWjlo9YLbzuuzF53XzdtInHWCtAf+3j+O4xsoVz5j9AEAAA==
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- platform-driver-x86@vger.kernel.org, linux-arm-msm@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=19993;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=yWvDNUnycsvNLcY1fv9zSc+31qHIwCJyqw3hyXvVbPM=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmdKv4l7DoBGQQ1ua2QNgMmgbfVSPZh0vsxdFpw
- f2Vzo+oreOJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnSr+AAKCRCLPIo+Aiko
- 1RsxCACJI37eYWT5YcqcqZZ+kM7V/fP8M/9n6oSET915Ra0eCFml4HN1EqrTGmbDtZnzJxkt7ho
- PFZ1xJG6qOW0ujkdSaFKvJZPsoJb04lZT8jCMORHRoDhX11lvuDdhjcDonot47pyoTBDYuF279T
- qzv3Gk/SiC3MLNrLXx3vCWzREypdKgHHX1JWDQ4xJESyx0oY17EKuAi2NxPsuAOoE3elPMk7299
- +emb2ppqv6jxb00ml/gNKtgePw86HSwE0kGK4Ci6c4/HpFra821y9TDgAlRVPmXq7wMXqAjz2zZ
- 0EvPXpu5Ov+WyqZDiQpEnUjUYGsy/oiZrrnI3pO4zNSIHi/A
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD78:EE_|IA1PR12MB6578:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5df3d160-d4bb-4cbf-59e8-08dc9177b498
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|1800799021|82310400023|36860700010|7416011|376011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ghQmLF7frqupN2+g978ZLQhj8iulSpLFDTuCTvlynsk/tjZc4Qs8PinZEFiR?=
+ =?us-ascii?Q?M+/tseywL29IIwMLkNP4/AyToyH+R455X3WflVekAOyZQjxuTDca+Heb1oIr?=
+ =?us-ascii?Q?MDNdPVHZOXQ/ZPDw7RL9/raOGndgy4BTWEZput/yB+8Bs8B4Wsk90yl0xWXS?=
+ =?us-ascii?Q?DeaVla4NYPyexkKjVO7DHz2f483x8DoPEcaQFEfyUv6FUzNL5Je09rgkAZGq?=
+ =?us-ascii?Q?qg58QtHh/IHKASN065W5He8k8Kf8mHRqu9gOwC9sBRigAiVzTML9ALQDuCFI?=
+ =?us-ascii?Q?tuuBaUDPbRiI/r6Gkg1DpKofdQ0szRYG32zKrIfNSgbnuoj7+EkF8OOT/XO/?=
+ =?us-ascii?Q?V1ftEMSi/TaOldZ0sHOu/ETf55/mqNMv3V51k6pqW/C3/7BfmQK8494xZGIT?=
+ =?us-ascii?Q?sn6mtnix+YGJ6WaZaC+H70cGPMONYrXFTNjy78+MKt709Xu8T+0mQrNZTEQr?=
+ =?us-ascii?Q?FTmLom4sZvpsPCwM+qDWlzkMgqozBbfC8Doz0AeeCtrrK8O3r4DQ1BF6UBrI?=
+ =?us-ascii?Q?v0hY0AGMZ3nNOYd3+k4D5NEYDjw2QdVecZjrJrncdhgxWzCDg9yk16daeFc4?=
+ =?us-ascii?Q?9/P6QIS35tKSnzp+u+jRQtx58nF/CZVhXJYLvEkuICJkPNohkfv1xUj3roBC?=
+ =?us-ascii?Q?czYj7QSejlkM1u9M8ZlwrDTJWyrLp4K0pkGMpdoI4HL82aGGa5+y8Mqx1vb6?=
+ =?us-ascii?Q?7BzR/aCfkMQkBDuTpcWOJ9hxbCWPMzgMlmCYQV0pqQ9j6XHeUvk3iHR24UyD?=
+ =?us-ascii?Q?rqY8NHpOWrazD/X94OFkDWuppewS2TWaclYeSj/lLF7fvQVSjtwBitmPHuIR?=
+ =?us-ascii?Q?31v7o+EQ1ViiznAtHhoLK+oabYjcGx0fT2fTpkU8FJuhANperwUerwoxYkSp?=
+ =?us-ascii?Q?clzA2MkwGw0i+7sLiJs+zrDeTH+OzpQR9htFIA1v7fOgk9Ekxmn4W1UukOXj?=
+ =?us-ascii?Q?OdzoaHUTeFTMr3AOpCdRuUkAwiUt1wXRGSy8C8P8m2yh737jOT98bwQkP4+K?=
+ =?us-ascii?Q?ZJ9VdLBj7T9tmSvqZ5K4bexG+1I3PwJJ6FNkweB6TtBKBVAUZTqD0/GNCfFt?=
+ =?us-ascii?Q?tJeWFxPwVE7d4/XPPr0NuxkYW1tJX7tzeOMspcZkOz1KdpUfCmfimrJO2OS2?=
+ =?us-ascii?Q?vpNeFi8enV/RgeZHAJiNTU3xTZAFFVgIqmnxiExy2DuXhODkn1cjoxJ9JIyP?=
+ =?us-ascii?Q?9IpRP5WZcb/R4dSY66cpA2XexVhhUGjm++33Al38P7caVnVele24N59kEAS+?=
+ =?us-ascii?Q?0sm0XJ63rci1o6uxUYRtGba94833MYEWBY8/zlBE2LhMrk9zqyv9DPA36mFX?=
+ =?us-ascii?Q?NH7v83kw31Bbnyfbfb1gzLzE0OlKKZR7iw9Q5snJzDiIn43FxpCipXNptrrZ?=
+ =?us-ascii?Q?3ynUpRmY39HG2chE3pXdSskksbKJSU18QvCA19J42ivvFDpLFw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(82310400023)(36860700010)(7416011)(376011);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2024 22:24:09.6161
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5df3d160-d4bb-4cbf-59e8-08dc9177b498
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD78.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6578
 
-On the Lenovo Yoga C630 WOS laptop the EC provides access to the adapter
-and battery status. Add the driver to read power supply status on the
-laptop.
+From: Ashish Kalra <ashish.kalra@amd.com>
 
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+SNP guests allocate shared buffers to perform I/O. It is done by
+allocating pages normally from the buddy allocator and converting them
+to shared with set_memory_decrypted().
+
+The second kernel has no idea what memory is converted this way. It only
+sees E820_TYPE_RAM.
+
+Accessing shared memory via private mapping will cause unrecoverable RMP
+page-faults.
+
+On kexec walk direct mapping and convert all shared memory back to
+private. It makes all RAM private again and second kernel may use it
+normally. Additionally for SNP guests convert all bss decrypted section
+pages back to private.
+
+The conversion occurs in two steps: stopping new conversions and
+unsharing all memory. In the case of normal kexec, the stopping of
+conversions takes place while scheduling is still functioning. This
+allows for waiting until any ongoing conversions are finished. The
+second step is carried out when all CPUs except one are inactive and
+interrupts are disabled. This prevents any conflicts with code that may
+access shared memory.
+
+Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
 ---
-Add power supply support for the Lenovo Yoga C630 driver as handled by
-the on-laptop Embedded Controller.
+ arch/x86/coco/sev/core.c      | 168 ++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/sev.h    |   4 +
+ arch/x86/mm/mem_encrypt_amd.c |   2 +
+ 3 files changed, 174 insertions(+)
 
-Support for this EC was implemented by Bjorn, who later could not work
-on this driver. I've picked this patchset up and updated it following
-the pending review comments.
-
-NOTE: the patch depends on the header from the platform driver. Ilpo
-Järvinen has created an immutable branch based on v6.10-rc1, please pull
-it before merging the patches:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-ib-lenovo-c630-v6.11
-
-  platform: arm64: add Lenovo Yoga C630 WOS EC driver (2024-06-14 12:51:30 +0300)
-
-----------------------------------------------------------------
-Immutable branch between pdx86 lenovo c630 branch, power/supply and USB
-subsystems due for the v6.11 merge window.
-
-platform-drivers-x86-ib-lenovo-c630-v6.11:
-  v6.10-rc1 + platform-drivers-x86-lenovo-c630
-for merging into the power/supply and USB subsystems for v6.11.
-----------------------------------------------------------------
----
-Changes in v8:
-- Added missing <linux/cleanup.h> include (Ilpo)
-- Dropped rogue dependency on OF of the PSY driver (Sebastian)
-- Split the remaining patchset per the maintainer
-- Link to v7: https://lore.kernel.org/r/20240614-yoga-ec-driver-v7-0-9f0b9b40ae76@linaro.org
-
-Changes in v7:
-- In PSY driver use guard() instead of scoped_guard() (Ilpo)
-- Use switch/case rather than ifs in yoga_c630_ucsi_read() (Ilpo)
-- Link to v6: https://lore.kernel.org/r/20240612-yoga-ec-driver-v6-0-8e76ba060439@linaro.org
-
-Changes in v6:
-- Use guard() instead of scoped_guard() (Ilpo)
-- Add a define for UCSI version register (Ilpo)
-- Added a check to prevent overflowing the address in reg16 read (Ilpo)
-- Link to v5: https://lore.kernel.org/r/20240607-yoga-ec-driver-v5-0-1ac91a0b4326@linaro.org
-
-Changes in v5:
-- Added missing article in the commit message (Bryan)
-- Changed yoga_c630_ec_ucsi_get_version() to explicitly set the register
-  instead of just incrementing it (Bryan)
-- Dropped spurious debugging pr_info (Bryan)
-- Added missing includes all over the place (Ilpo)
-- Switched to scoped_guard() where it's suitable (Ilpo)
-- Defined register bits (Ilpo, Bryan)
-- Whitespace cleanup (Ilpo, Bryan)
-- Reworked yoga_c630_ucsi_notify() to use switch-case (Bryan)
-- Use ternary operators instead of if()s (Ilpo)
-- Switched power supply driver to use fwnode (Sebastian)
-- Fixed handling of the adapter's type vs usb_type (Sebastian)
-- Added SCOPE property to the battery (Sebastian)
-- Link to v4: https://lore.kernel.org/r/20240528-yoga-ec-driver-v4-0-4fa8dfaae7b6@linaro.org
-
-Changes in v4:
-- Moved bindings to platform/ to follow example of other Acer Aspire1 EC
-  (Nikita Travkin)
-- Fixed dt validation for EC interrupt pin (Rob Herring)
-- Dropped separate 'scale' property (Oliver Neukum)
-- Link to v3: https://lore.kernel.org/r/20240527-yoga-ec-driver-v3-0-327a9851dad5@linaro.org
-
-Changes in v3:
-- Split the driver into core and power supply drivers,
-- Added UCSI driver part, handling USB connections,
-- Fixed Bjorn's address in DT bindings (Brian Masney)
-- Changed power-role for both ports to be "dual" per UCSI
-- Link to v2: https://lore.kernel.org/linux-arm-msm/20230205152809.2233436-1-dmitry.baryshkov@linaro.org/
-
-Changes in v2:
-- Dropped DP support for now, as the bindings are in process of being
-  discussed separately,
-- Merged dt patch into the same patchseries,
-- Removed the fixed serial number battery property,
-- Fixed indentation of dt bindings example,
-- Added property: reg and unevaluatedProperties to the connector
-  bindings.
-- Link to v1: https://lore.kernel.org/linux-arm-msm/20220810035424.2796777-1-bjorn.andersson@linaro.org/
----
- drivers/power/supply/Kconfig                    |   9 +
- drivers/power/supply/Makefile                   |   1 +
- drivers/power/supply/lenovo_yoga_c630_battery.c | 501 ++++++++++++++++++++++++
- 3 files changed, 511 insertions(+)
-
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index 3e31375491d5..75b4f65c7d77 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -167,6 +167,15 @@ config BATTERY_LEGO_EV3
- 	help
- 	  Say Y here to enable support for the LEGO MINDSTORMS EV3 battery.
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 082d61d85dfc..0ce96123b684 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -42,6 +42,8 @@
+ #include <asm/apic.h>
+ #include <asm/cpuid.h>
+ #include <asm/cmdline.h>
++#include <asm/pgtable.h>
++#include <asm/set_memory.h>
  
-+config BATTERY_LENOVO_YOGA_C630
-+	tristate "Lenovo Yoga C630 battery"
-+	depends on EC_LENOVO_YOGA_C630
-+	help
-+	  This driver enables battery support on the Lenovo Yoga C630 laptop.
+ #define DR7_RESET_VALUE        0x400
+ 
+@@ -92,6 +94,9 @@ static struct ghcb *boot_ghcb __section(".data");
+ /* Bitmap of SEV features supported by the hypervisor */
+ static u64 sev_hv_features __ro_after_init;
+ 
++/* Last address to be switched to private during kexec */
++static unsigned long kexec_last_addr_to_make_private;
 +
-+	  To compile the driver as a module, choose M here: the module will be
-+	  called lenovo_yoga_c630_battery.
-+
- config BATTERY_PMU
- 	tristate "Apple PMU battery"
- 	depends on PPC32 && ADB_PMU
-diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
-index 58b567278034..8ebbdcf92dac 100644
---- a/drivers/power/supply/Makefile
-+++ b/drivers/power/supply/Makefile
-@@ -32,6 +32,7 @@ obj-$(CONFIG_BATTERY_DS2782)	+= ds2782_battery.o
- obj-$(CONFIG_BATTERY_GAUGE_LTC2941)	+= ltc2941-battery-gauge.o
- obj-$(CONFIG_BATTERY_GOLDFISH)	+= goldfish_battery.o
- obj-$(CONFIG_BATTERY_LEGO_EV3)	+= lego_ev3_battery.o
-+obj-$(CONFIG_BATTERY_LENOVO_YOGA_C630) += lenovo_yoga_c630_battery.o
- obj-$(CONFIG_BATTERY_PMU)	+= pmu_battery.o
- obj-$(CONFIG_BATTERY_QCOM_BATTMGR)	+= qcom_battmgr.o
- obj-$(CONFIG_BATTERY_OLPC)	+= olpc_battery.o
-diff --git a/drivers/power/supply/lenovo_yoga_c630_battery.c b/drivers/power/supply/lenovo_yoga_c630_battery.c
-new file mode 100644
-index 000000000000..d4d422cc5353
---- /dev/null
-+++ b/drivers/power/supply/lenovo_yoga_c630_battery.c
-@@ -0,0 +1,501 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2022-2024, Linaro Ltd
-+ * Authors:
-+ *    Bjorn Andersson
-+ *    Dmitry Baryshkov
-+ */
-+#include <linux/auxiliary_bus.h>
-+#include <linux/bits.h>
-+#include <linux/cleanup.h>
-+#include <linux/delay.h>
-+#include <linux/jiffies.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/notifier.h>
-+#include <linux/power_supply.h>
-+#include <linux/platform_data/lenovo-yoga-c630.h>
-+
-+struct yoga_c630_psy {
-+	struct yoga_c630_ec *ec;
-+	struct device *dev;
-+	struct fwnode_handle *fwnode;
-+	struct notifier_block nb;
-+
-+	/* guards all battery properties and registration of power supplies */
-+	struct mutex lock;
-+
-+	struct power_supply *adp_psy;
-+	struct power_supply *bat_psy;
-+
-+	unsigned long last_status_update;
-+
-+	bool adapter_online;
-+
-+	bool unit_mA;
-+
-+	bool bat_present;
-+	unsigned int bat_status;
-+	unsigned int design_capacity;
-+	unsigned int design_voltage;
-+	unsigned int full_charge_capacity;
-+
-+	unsigned int capacity_now;
-+	unsigned int voltage_now;
-+
-+	int current_now;
-+	int rate_now;
-+};
-+
-+#define LENOVO_EC_CACHE_TIME		(10 * HZ)
-+
-+#define LENOVO_EC_ADPT_STATUS		0xa3
-+#define LENOVO_EC_ADPT_STATUS_PRESENT		BIT(7)
-+#define LENOVO_EC_BAT_ATTRIBUTES	0xc0
-+#define LENOVO_EC_BAT_ATTRIBUTES_UNIT_IS_MA	BIT(1)
-+#define LENOVO_EC_BAT_STATUS		0xc1
-+#define LENOVO_EC_BAT_STATUS_DISCHARGING	BIT(0)
-+#define LENOVO_EC_BAT_STATUS_CHARGING		BIT(1)
-+#define LENOVO_EC_BAT_REMAIN_CAPACITY	0xc2
-+#define LENOVO_EC_BAT_VOLTAGE		0xc6
-+#define LENOVO_EC_BAT_DESIGN_VOLTAGE	0xc8
-+#define LENOVO_EC_BAT_DESIGN_CAPACITY	0xca
-+#define LENOVO_EC_BAT_FULL_CAPACITY	0xcc
-+#define LENOVO_EC_BAT_CURRENT		0xd2
-+#define LENOVO_EC_BAT_FULL_FACTORY	0xd6
-+#define LENOVO_EC_BAT_PRESENT		0xda
-+#define LENOVO_EC_BAT_PRESENT_IS_PRESENT	BIT(0)
-+#define LENOVO_EC_BAT_FULL_REGISTER	0xdb
-+#define LENOVO_EC_BAT_FULL_REGISTER_IS_FACTORY	BIT(0)
-+
-+static int yoga_c630_psy_update_bat_info(struct yoga_c630_psy *ecbat)
+ /* #VC handler runtime per-CPU data */
+ struct sev_es_runtime_data {
+ 	struct ghcb ghcb_page;
+@@ -1010,6 +1015,169 @@ void snp_accept_memory(phys_addr_t start, phys_addr_t end)
+ 	set_pages_state(vaddr, npages, SNP_PAGE_STATE_PRIVATE);
+ }
+ 
++static bool set_pte_enc(pte_t *kpte, int level, void *va)
 +{
-+	struct yoga_c630_ec *ec = ecbat->ec;
-+	int val;
++	pte_t new_pte;
 +
-+	lockdep_assert_held(&ecbat->lock);
-+
-+	val = yoga_c630_ec_read8(ec, LENOVO_EC_BAT_PRESENT);
-+	if (val < 0)
-+		return val;
-+	ecbat->bat_present = !!(val & LENOVO_EC_BAT_PRESENT_IS_PRESENT);
-+	if (!ecbat->bat_present)
-+		return val;
-+
-+	val = yoga_c630_ec_read8(ec, LENOVO_EC_BAT_ATTRIBUTES);
-+	if (val < 0)
-+		return val;
-+	ecbat->unit_mA = val & LENOVO_EC_BAT_ATTRIBUTES_UNIT_IS_MA;
-+
-+	val = yoga_c630_ec_read16(ec, LENOVO_EC_BAT_DESIGN_CAPACITY);
-+	if (val < 0)
-+		return val;
-+	ecbat->design_capacity = val * 1000;
-+
-+	/*
-+	 * DSDT has delays after most of EC reads in these methods.
-+	 * Having no documentation for the EC we have to follow and sleep here.
-+	 */
-+	msleep(50);
-+
-+	val = yoga_c630_ec_read16(ec, LENOVO_EC_BAT_DESIGN_VOLTAGE);
-+	if (val < 0)
-+		return val;
-+	ecbat->design_voltage = val;
-+
-+	msleep(50);
-+
-+	val = yoga_c630_ec_read8(ec, LENOVO_EC_BAT_FULL_REGISTER);
-+	if (val < 0)
-+		return val;
-+	val = yoga_c630_ec_read16(ec,
-+				  val & LENOVO_EC_BAT_FULL_REGISTER_IS_FACTORY ?
-+				  LENOVO_EC_BAT_FULL_FACTORY :
-+				  LENOVO_EC_BAT_FULL_CAPACITY);
-+	if (val < 0)
-+		return val;
-+
-+	ecbat->full_charge_capacity = val * 1000;
-+
-+	if (!ecbat->unit_mA) {
-+		ecbat->design_capacity *= 10;
-+		ecbat->full_charge_capacity *= 10;
-+	}
-+
-+	return 0;
-+}
-+
-+static int yoga_c630_psy_maybe_update_bat_status(struct yoga_c630_psy *ecbat)
-+{
-+	struct yoga_c630_ec *ec = ecbat->ec;
-+	int current_mA;
-+	int val;
-+
-+	guard(mutex)(&ecbat->lock);
-+	if (time_before(jiffies, ecbat->last_status_update + LENOVO_EC_CACHE_TIME))
-+		return 0;
-+
-+	val = yoga_c630_ec_read8(ec, LENOVO_EC_BAT_STATUS);
-+	if (val < 0)
-+		return val;
-+	ecbat->bat_status = val;
-+
-+	msleep(50);
-+
-+	val = yoga_c630_ec_read16(ec, LENOVO_EC_BAT_REMAIN_CAPACITY);
-+	if (val < 0)
-+		return val;
-+	ecbat->capacity_now = val * 1000;
-+
-+	msleep(50);
-+
-+	val = yoga_c630_ec_read16(ec, LENOVO_EC_BAT_VOLTAGE);
-+	if (val < 0)
-+		return val;
-+	ecbat->voltage_now = val * 1000;
-+
-+	msleep(50);
-+
-+	val = yoga_c630_ec_read16(ec, LENOVO_EC_BAT_CURRENT);
-+	if (val < 0)
-+		return val;
-+	current_mA = sign_extend32(val, 15);
-+	ecbat->current_now = current_mA * 1000;
-+	ecbat->rate_now = current_mA * (ecbat->voltage_now / 1000);
-+
-+	msleep(50);
-+
-+	if (!ecbat->unit_mA)
-+		ecbat->capacity_now *= 10;
-+
-+	ecbat->last_status_update = jiffies;
-+
-+	return 0;
-+}
-+
-+static int yoga_c630_psy_update_adapter_status(struct yoga_c630_psy *ecbat)
-+{
-+	struct yoga_c630_ec *ec = ecbat->ec;
-+	int val;
-+
-+	guard(mutex)(&ecbat->lock);
-+
-+	val = yoga_c630_ec_read8(ec, LENOVO_EC_ADPT_STATUS);
-+	if (val < 0)
-+		return val;
-+
-+	ecbat->adapter_online = !!(val & LENOVO_EC_ADPT_STATUS_PRESENT);
-+
-+	return 0;
-+}
-+
-+static bool yoga_c630_psy_is_charged(struct yoga_c630_psy *ecbat)
-+{
-+	if (ecbat->bat_status != 0)
++	if (pte_none(*kpte))
 +		return false;
 +
-+	if (ecbat->full_charge_capacity <= ecbat->capacity_now)
++	/*
++	 * Change the physical page attribute from C=0 to C=1. Flush the
++	 * caches to ensure that data gets accessed with the correct C-bit.
++	 */
++	if (pte_present(*kpte))
++		clflush_cache_range(va, page_level_size(level));
++
++	new_pte = __pte(cc_mkenc(pte_val(*kpte)));
++	set_pte_atomic(kpte, new_pte);
++
++	return true;
++}
++
++static bool make_pte_private(pte_t *pte, unsigned long addr, int pages, int level)
++{
++	struct sev_es_runtime_data *data;
++	struct ghcb *ghcb;
++
++	data = this_cpu_read(runtime_data);
++	ghcb = &data->ghcb_page;
++
++	/* Check for GHCB for being part of a PMD range. */
++	if ((unsigned long)ghcb >= addr &&
++	    (unsigned long)ghcb <= (addr + (pages * PAGE_SIZE))) {
++		/*
++		 * Ensure that the current cpu's GHCB is made private
++		 * at the end of unshared loop so that we continue to use the
++		 * optimized GHCB protocol and not force the switch to
++		 * MSR protocol till the very end.
++		 */
++		pr_debug("setting boot_ghcb to NULL for this cpu ghcb\n");
++		kexec_last_addr_to_make_private = addr;
 +		return true;
-+
-+	if (ecbat->design_capacity <= ecbat->capacity_now)
-+		return true;
-+
-+	return false;
-+}
-+
-+static int yoga_c630_psy_bat_get_property(struct power_supply *psy,
-+					 enum power_supply_property psp,
-+					 union power_supply_propval *val)
-+{
-+	struct yoga_c630_psy *ecbat = power_supply_get_drvdata(psy);
-+	int rc = 0;
-+
-+	if (!ecbat->bat_present && psp != POWER_SUPPLY_PROP_PRESENT)
-+		return -ENODEV;
-+
-+	rc = yoga_c630_psy_maybe_update_bat_status(ecbat);
-+	if (rc)
-+		return rc;
-+
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_STATUS:
-+		if (ecbat->bat_status & LENOVO_EC_BAT_STATUS_DISCHARGING)
-+			val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
-+		else if (ecbat->bat_status & LENOVO_EC_BAT_STATUS_CHARGING)
-+			val->intval = POWER_SUPPLY_STATUS_CHARGING;
-+		else if (yoga_c630_psy_is_charged(ecbat))
-+			val->intval = POWER_SUPPLY_STATUS_FULL;
-+		else
-+			val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
-+		break;
-+	case POWER_SUPPLY_PROP_PRESENT:
-+		val->intval = ecbat->bat_present;
-+		break;
-+	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
-+		val->intval = ecbat->design_voltage;
-+		break;
-+	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
-+	case POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN:
-+		val->intval = ecbat->design_capacity;
-+		break;
-+	case POWER_SUPPLY_PROP_CHARGE_FULL:
-+	case POWER_SUPPLY_PROP_ENERGY_FULL:
-+		val->intval = ecbat->full_charge_capacity;
-+		break;
-+	case POWER_SUPPLY_PROP_CHARGE_NOW:
-+	case POWER_SUPPLY_PROP_ENERGY_NOW:
-+		val->intval = ecbat->capacity_now;
-+		break;
-+	case POWER_SUPPLY_PROP_CURRENT_NOW:
-+		val->intval = ecbat->current_now;
-+		break;
-+	case POWER_SUPPLY_PROP_POWER_NOW:
-+		val->intval = ecbat->rate_now;
-+		break;
-+	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-+		val->intval = ecbat->voltage_now;
-+		break;
-+	case POWER_SUPPLY_PROP_TECHNOLOGY:
-+		val->intval = POWER_SUPPLY_TECHNOLOGY_LION;
-+		break;
-+	case POWER_SUPPLY_PROP_MODEL_NAME:
-+		val->strval = "PABAS0241231";
-+		break;
-+	case POWER_SUPPLY_PROP_MANUFACTURER:
-+		val->strval = "Compal";
-+		break;
-+	case POWER_SUPPLY_PROP_SCOPE:
-+		val->intval = POWER_SUPPLY_SCOPE_SYSTEM;
-+		break;
-+	default:
-+		rc = -EINVAL;
-+		break;
 +	}
 +
-+	return rc;
++	if (!set_pte_enc(pte, level, (void *)addr))
++		return false;
++
++	snp_set_memory_private(addr, pages);
++
++	return true;
 +}
 +
-+static enum power_supply_property yoga_c630_psy_bat_mA_properties[] = {
-+	POWER_SUPPLY_PROP_STATUS,
-+	POWER_SUPPLY_PROP_PRESENT,
-+	POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN,
-+	POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN,
-+	POWER_SUPPLY_PROP_CHARGE_FULL,
-+	POWER_SUPPLY_PROP_CHARGE_NOW,
-+	POWER_SUPPLY_PROP_CURRENT_NOW,
-+	POWER_SUPPLY_PROP_POWER_NOW,
-+	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-+	POWER_SUPPLY_PROP_TECHNOLOGY,
-+	POWER_SUPPLY_PROP_MODEL_NAME,
-+	POWER_SUPPLY_PROP_MANUFACTURER,
-+	POWER_SUPPLY_PROP_SCOPE,
-+};
-+
-+static enum power_supply_property yoga_c630_psy_bat_mWh_properties[] = {
-+	POWER_SUPPLY_PROP_STATUS,
-+	POWER_SUPPLY_PROP_PRESENT,
-+	POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN,
-+	POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN,
-+	POWER_SUPPLY_PROP_ENERGY_FULL,
-+	POWER_SUPPLY_PROP_ENERGY_NOW,
-+	POWER_SUPPLY_PROP_CURRENT_NOW,
-+	POWER_SUPPLY_PROP_POWER_NOW,
-+	POWER_SUPPLY_PROP_VOLTAGE_NOW,
-+	POWER_SUPPLY_PROP_TECHNOLOGY,
-+	POWER_SUPPLY_PROP_MODEL_NAME,
-+	POWER_SUPPLY_PROP_MANUFACTURER,
-+	POWER_SUPPLY_PROP_SCOPE,
-+};
-+
-+static const struct power_supply_desc yoga_c630_psy_bat_psy_desc_mA = {
-+	.name = "yoga-c630-battery",
-+	.type = POWER_SUPPLY_TYPE_BATTERY,
-+	.properties = yoga_c630_psy_bat_mA_properties,
-+	.num_properties = ARRAY_SIZE(yoga_c630_psy_bat_mA_properties),
-+	.get_property = yoga_c630_psy_bat_get_property,
-+};
-+
-+static const struct power_supply_desc yoga_c630_psy_bat_psy_desc_mWh = {
-+	.name = "yoga-c630-battery",
-+	.type = POWER_SUPPLY_TYPE_BATTERY,
-+	.properties = yoga_c630_psy_bat_mWh_properties,
-+	.num_properties = ARRAY_SIZE(yoga_c630_psy_bat_mWh_properties),
-+	.get_property = yoga_c630_psy_bat_get_property,
-+};
-+
-+static int yoga_c630_psy_adpt_get_property(struct power_supply *psy,
-+					  enum power_supply_property psp,
-+					  union power_supply_propval *val)
++static void unshare_all_memory(void)
 +{
-+	struct yoga_c630_psy *ecbat = power_supply_get_drvdata(psy);
-+	int ret = 0;
++	unsigned long addr, end;
 +
-+	ret = yoga_c630_psy_update_adapter_status(ecbat);
-+	if (ret < 0)
-+		return ret;
++	/*
++	 * Walk direct mapping and convert all shared memory back to private,
++	 */
 +
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_ONLINE:
-+		val->intval = ecbat->adapter_online;
-+		break;
-+	case POWER_SUPPLY_PROP_USB_TYPE:
-+		val->intval = POWER_SUPPLY_USB_TYPE_C;
-+		break;
-+	default:
-+		return -EINVAL;
++	addr = PAGE_OFFSET;
++	end  = PAGE_OFFSET + get_max_mapped();
++
++	while (addr < end) {
++		unsigned long size;
++		unsigned int level;
++		pte_t *pte;
++
++		pte = lookup_address(addr, &level);
++		size = page_level_size(level);
++
++		/*
++		 * pte_none() check is required to skip physical memory holes in direct mapped.
++		 */
++		if (pte && pte_decrypted(*pte) && !pte_none(*pte)) {
++			int pages = size / PAGE_SIZE;
++
++			if (!make_pte_private(pte, addr, pages, level)) {
++				pr_err("Failed to unshare range %#lx-%#lx\n",
++				       addr, addr + size);
++			}
++
++		}
++
++		addr += size;
 +	}
++	__flush_tlb_all();
 +
-+	return 0;
 +}
 +
-+static enum power_supply_property yoga_c630_psy_adpt_properties[] = {
-+	POWER_SUPPLY_PROP_ONLINE,
-+	POWER_SUPPLY_PROP_USB_TYPE,
-+};
-+
-+static const enum power_supply_usb_type yoga_c630_psy_adpt_usb_type[] = {
-+	POWER_SUPPLY_USB_TYPE_C,
-+};
-+
-+static const struct power_supply_desc yoga_c630_psy_adpt_psy_desc = {
-+	.name = "yoga-c630-adapter",
-+	.type = POWER_SUPPLY_TYPE_USB,
-+	.usb_types = yoga_c630_psy_adpt_usb_type,
-+	.num_usb_types = ARRAY_SIZE(yoga_c630_psy_adpt_usb_type),
-+	.properties = yoga_c630_psy_adpt_properties,
-+	.num_properties = ARRAY_SIZE(yoga_c630_psy_adpt_properties),
-+	.get_property = yoga_c630_psy_adpt_get_property,
-+};
-+
-+static int yoga_c630_psy_register_bat_psy(struct yoga_c630_psy *ecbat)
++static void unshare_all_bss_decrypted_memory(void)
 +{
-+	struct power_supply_config bat_cfg = {};
++	unsigned long vaddr, vaddr_end;
++	unsigned int level;
++	unsigned int npages;
++	pte_t *pte;
 +
-+	bat_cfg.drv_data = ecbat;
-+	bat_cfg.fwnode = ecbat->fwnode;
-+	ecbat->bat_psy = power_supply_register_no_ws(ecbat->dev,
-+						     ecbat->unit_mA ?
-+						     &yoga_c630_psy_bat_psy_desc_mA :
-+						     &yoga_c630_psy_bat_psy_desc_mWh,
-+						     &bat_cfg);
-+	if (IS_ERR(ecbat->bat_psy)) {
-+		dev_err(ecbat->dev, "failed to register battery supply\n");
-+		return PTR_ERR(ecbat->bat_psy);
++	vaddr = (unsigned long)__start_bss_decrypted;
++	vaddr_end = (unsigned long)__start_bss_decrypted_unused;
++	npages = (vaddr_end - vaddr) >> PAGE_SHIFT;
++	for (; vaddr < vaddr_end; vaddr += PAGE_SIZE) {
++		pte = lookup_address(vaddr, &level);
++		if (!pte || !pte_decrypted(*pte) || pte_none(*pte))
++			continue;
++
++		set_pte_enc(pte, level, (void *)vaddr);
 +	}
-+
-+	return 0;
++	vaddr = (unsigned long)__start_bss_decrypted;
++	snp_set_memory_private(vaddr, npages);
 +}
 +
-+static void yoga_c630_ec_refresh_bat_info(struct yoga_c630_psy *ecbat)
++/* Stop new private<->shared conversions */
++void snp_kexec_begin(void)
 +{
-+	bool current_unit;
++	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
++		return;
 +
-+	guard(mutex)(&ecbat->lock);
++	if (!IS_ENABLED(CONFIG_KEXEC_CORE))
++		return;
++	/*
++	 * Crash kernel reaches here with interrupts disabled: can't wait for
++	 * conversions to finish.
++	 *
++	 * If race happened, just report and proceed.
++	 */
++	if (!set_memory_enc_stop_conversion())
++		pr_warn("Failed to stop shared<->private conversions\n");
++}
 +
-+	current_unit = ecbat->unit_mA;
++/* Walk direct mapping and convert all shared memory back to private */
++void snp_kexec_finish(void)
++{
++	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
++		return;
 +
-+	yoga_c630_psy_update_bat_info(ecbat);
++	if (!IS_ENABLED(CONFIG_KEXEC_CORE))
++		return;
 +
-+	if (current_unit != ecbat->unit_mA) {
-+		power_supply_unregister(ecbat->bat_psy);
-+		yoga_c630_psy_register_bat_psy(ecbat);
++	unshare_all_memory();
++
++	unshare_all_bss_decrypted_memory();
++
++	if (kexec_last_addr_to_make_private) {
++		unsigned long size;
++		unsigned int level;
++		pte_t *pte;
++
++		/*
++		 * Switch to using the MSR protocol to change this cpu's
++		 * GHCB to private.
++		 * All the per-cpu GHCBs have been switched back to private,
++		 * so can't do any more GHCB calls to the hypervisor beyond
++		 * this point till the kexec kernel starts running.
++		 */
++		boot_ghcb = NULL;
++		sev_cfg.ghcbs_initialized = false;
++
++		pr_debug("boot ghcb 0x%lx\n", kexec_last_addr_to_make_private);
++		pte = lookup_address(kexec_last_addr_to_make_private, &level);
++		size = page_level_size(level);
++		set_pte_enc(pte, level, (void *)kexec_last_addr_to_make_private);
++		snp_set_memory_private(kexec_last_addr_to_make_private, (size / PAGE_SIZE));
 +	}
 +}
 +
-+static int yoga_c630_psy_notify(struct notifier_block *nb,
-+				unsigned long action, void *data)
-+{
-+	struct yoga_c630_psy *ecbat = container_of(nb, struct yoga_c630_psy, nb);
-+
-+	switch (action) {
-+	case LENOVO_EC_EVENT_BAT_INFO:
-+		yoga_c630_ec_refresh_bat_info(ecbat);
-+		break;
-+	case LENOVO_EC_EVENT_BAT_ADPT_STATUS:
-+		power_supply_changed(ecbat->adp_psy);
-+		fallthrough;
-+	case LENOVO_EC_EVENT_BAT_STATUS:
-+		power_supply_changed(ecbat->bat_psy);
-+		break;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+static int yoga_c630_psy_probe(struct auxiliary_device *adev,
-+				   const struct auxiliary_device_id *id)
-+{
-+	struct yoga_c630_ec *ec = adev->dev.platform_data;
-+	struct power_supply_config adp_cfg = {};
-+	struct device *dev = &adev->dev;
-+	struct yoga_c630_psy *ecbat;
-+	int ret;
-+
-+	ecbat = devm_kzalloc(&adev->dev, sizeof(*ecbat), GFP_KERNEL);
-+	if (!ecbat)
-+		return -ENOMEM;
-+
-+	ecbat->ec = ec;
-+	ecbat->dev = dev;
-+	mutex_init(&ecbat->lock);
-+	ecbat->fwnode = adev->dev.parent->fwnode;
-+	ecbat->nb.notifier_call = yoga_c630_psy_notify;
-+
-+	auxiliary_set_drvdata(adev, ecbat);
-+
-+	adp_cfg.drv_data = ecbat;
-+	adp_cfg.fwnode = ecbat->fwnode;
-+	adp_cfg.supplied_to = (char **)&yoga_c630_psy_bat_psy_desc_mA.name;
-+	adp_cfg.num_supplicants = 1;
-+	ecbat->adp_psy = devm_power_supply_register_no_ws(dev, &yoga_c630_psy_adpt_psy_desc, &adp_cfg);
-+	if (IS_ERR(ecbat->adp_psy)) {
-+		dev_err(dev, "failed to register AC adapter supply\n");
-+		return PTR_ERR(ecbat->adp_psy);
-+	}
-+
-+	scoped_guard(mutex, &ecbat->lock) {
-+		ret = yoga_c630_psy_update_bat_info(ecbat);
-+		if (ret)
-+			goto err_unreg_bat;
-+
-+		ret = yoga_c630_psy_register_bat_psy(ecbat);
-+		if (ret)
-+			goto err_unreg_bat;
-+	}
-+
-+	ret = yoga_c630_ec_register_notify(ecbat->ec, &ecbat->nb);
-+	if (ret)
-+		goto err_unreg_bat;
-+
-+	return 0;
-+
-+err_unreg_bat:
-+	power_supply_unregister(ecbat->bat_psy);
-+	return ret;
-+}
-+
-+static void yoga_c630_psy_remove(struct auxiliary_device *adev)
-+{
-+	struct yoga_c630_psy *ecbat = auxiliary_get_drvdata(adev);
-+
-+	yoga_c630_ec_unregister_notify(ecbat->ec, &ecbat->nb);
-+	power_supply_unregister(ecbat->bat_psy);
-+}
-+
-+static const struct auxiliary_device_id yoga_c630_psy_id_table[] = {
-+	{ .name = YOGA_C630_MOD_NAME "." YOGA_C630_DEV_PSY, },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(auxiliary, yoga_c630_psy_id_table);
-+
-+static struct auxiliary_driver yoga_c630_psy_driver = {
-+	.name = YOGA_C630_DEV_PSY,
-+	.id_table = yoga_c630_psy_id_table,
-+	.probe = yoga_c630_psy_probe,
-+	.remove = yoga_c630_psy_remove,
-+};
-+
-+module_auxiliary_driver(yoga_c630_psy_driver);
-+
-+MODULE_DESCRIPTION("Lenovo Yoga C630 psy");
-+MODULE_LICENSE("GPL");
-
----
-base-commit: 2102cb0d050d34d50b9642a3a50861787527e922
-change-id: 20240527-yoga-ec-driver-76fd7f5ddae8
-
-Best regards,
+ static int snp_set_vmsa(void *va, void *caa, int apic_id, bool make_vmsa)
+ {
+ 	int ret;
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index ac5886ce252e..56e723bc63e2 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -348,6 +348,8 @@ u64 snp_get_unsupported_features(u64 status);
+ u64 sev_get_status(void);
+ void sev_show_status(void);
+ void snp_update_svsm_ca(void);
++void snp_kexec_finish(void);
++void snp_kexec_begin(void);
+ 
+ #else	/* !CONFIG_AMD_MEM_ENCRYPT */
+ 
+@@ -384,6 +386,8 @@ static inline u64 snp_get_unsupported_features(u64 status) { return 0; }
+ static inline u64 sev_get_status(void) { return 0; }
+ static inline void sev_show_status(void) { }
+ static inline void snp_update_svsm_ca(void) { }
++static inline void snp_kexec_finish(void) { }
++static inline void snp_kexec_begin(void) { }
+ 
+ #endif	/* CONFIG_AMD_MEM_ENCRYPT */
+ 
+diff --git a/arch/x86/mm/mem_encrypt_amd.c b/arch/x86/mm/mem_encrypt_amd.c
+index 86a476a426c2..9a2cb740772e 100644
+--- a/arch/x86/mm/mem_encrypt_amd.c
++++ b/arch/x86/mm/mem_encrypt_amd.c
+@@ -467,6 +467,8 @@ void __init sme_early_init(void)
+ 	x86_platform.guest.enc_status_change_finish  = amd_enc_status_change_finish;
+ 	x86_platform.guest.enc_tlb_flush_required    = amd_enc_tlb_flush_required;
+ 	x86_platform.guest.enc_cache_flush_required  = amd_enc_cache_flush_required;
++	x86_platform.guest.enc_kexec_begin	     = snp_kexec_begin;
++	x86_platform.guest.enc_kexec_finish	     = snp_kexec_finish;
+ 
+ 	/*
+ 	 * AMD-SEV-ES intercepts the RDMSR to read the X2APIC ID in the
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+2.34.1
 
 
