@@ -1,96 +1,98 @@
-Return-Path: <linux-kernel+bounces-222185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-222187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7DA90FE00
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:46:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F8590FE05
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 09:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F3FCB25029
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:46:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4162285D94
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 07:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4620856B79;
-	Thu, 20 Jun 2024 07:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWHbd+m3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5724CDE0;
+	Thu, 20 Jun 2024 07:48:20 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F951803A;
-	Thu, 20 Jun 2024 07:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04F7482C8
+	for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2024 07:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718869596; cv=none; b=p56w9jp1paPGmoWCgBmS3dvSPXzhr+AWXgAdqatUEaYi1Hy/dGWyX6isyj79oQExI3QCoMns7Ekb99uUefVryrDkCtrFXrBKyO00P2F5ZNSjrTRisWNLFpaaoxKGWjVPs0Se2eXiXZO0rXBStlAi0gC1ab/65pnkfzRR+ZXyavI=
+	t=1718869700; cv=none; b=h6xqHczlPdEtFWQCXfwqgxzuoaRU+ybQtkJcbmBuMrSNT8n/uL2sAtC3vfJl7Do5SH6DGnjgZRtMyPCZec0O+wpsaDsCFSr+sNQsXUiDpu2/VQJV87c9WpAe49341z4KFIteU9Qh6pWvNZEr74uDFwnVYNfwncQvvKyOkgCE4Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718869596; c=relaxed/simple;
-	bh=v2gXpKgBK7Qhc0Qigkxufj6SFVYQaHNJh7yaTp7lIjE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DHjjP9bCpw72Krxg1JqPlV97FN55aWJPs3B3g+z/BmcaUOfEBPJv5M837gwUfCPoR++o4bfT4c8+gWTO6PADLGwXP8sWJqS8pkQZQpB44/zvwElHO8RRt0sU+cbzsfAnOHOck0/0pcjZL4CquzY59gd2g9lHskHvqKeKqpF6wlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWHbd+m3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87BDCC2BD10;
-	Thu, 20 Jun 2024 07:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718869596;
-	bh=v2gXpKgBK7Qhc0Qigkxufj6SFVYQaHNJh7yaTp7lIjE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CWHbd+m3Lyicvoc6NVwiI70irdmZ7m2/V/fn0f9jRrL7MJDvsvFwIhQOQ5FIRKEqo
-	 L1dDSsfk3Acw8QmOesIOQiBSiaAZQVbN4lRWpbEEoHRrNYx0EPYGIZugA2lQr4mlm3
-	 kY/au8NDHWjUSAlTz3aj5y2MzyBArPIwtsc3o9svgMAFC0nivk0o3j4wo4Dw87RwNx
-	 HK/5TPn9YRKsjTKGz3r+ms6+a+3ZD8fVKDWNUawBWbHbw2oxs4GY5Ky/qPzbJyjxMw
-	 DseKV3Yc920blW/EigtLemKgxlLFQQnXHHZ+h3rtoIV386fvwhBcYgjASkmDfCmHe9
-	 MDTcrTEik+WpA==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	sparclinux@vger.kernel.org,
+	s=arc-20240116; t=1718869700; c=relaxed/simple;
+	bh=fSsLmm6xI8rM7ZlJBg3+JGciXFSOY7iTXxxC65tu3Po=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=do6O2qZeLMmLtGlre++lBABjiW4qUTh8THWvjbB/ProXHo1ObPCpZ02bMTjW0DH74QRv1aJ1uTjlIwAH2M+TEtyWQ3JpbqCVGKEh6Oc9dH/UqDgRW0zLWqqeb1AoNBRKFBCDEIqegmVyZkuRkizpugoPEFlnA4bxZX4hgoj/VJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowACHjeWs3nNms1TLEQ--.25969S2;
+	Thu, 20 Jun 2024 15:47:56 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] openpromfs: add missing MODULE_DESCRIPTION() macro
-Date: Thu, 20 Jun 2024 09:46:19 +0200
-Message-ID: <20240620-periodisch-begleichen-68d1d06b70c6@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240619-md-sparc-fs-openpromfs-v1-1-51c85ce90fa3@quicinc.com>
-References: <20240619-md-sparc-fs-openpromfs-v1-1-51c85ce90fa3@quicinc.com>
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH 1/2] drm/panel: ltk050h3146w: add check for mipi_dsi_dcs_enter_sleep_mode
+Date: Thu, 20 Jun 2024 15:47:20 +0800
+Message-Id: <20240620074720.852495-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1081; i=brauner@kernel.org; h=from:subject:message-id; bh=v2gXpKgBK7Qhc0Qigkxufj6SFVYQaHNJh7yaTp7lIjE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQV3wuZq3Geze38Mpvzt7oUXB7qXrLfo7Eg//8SmYa/M +9bRW5S7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIAS1GhuvrM4/PWxr+5Opr ju2aX85+7ub48FnvZqrK560Wi5rn+KgyMszZO2fNO/X7U+tC5bQu3PbW9grP4Ny4+oDuk6CmFbs P6nEBAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACHjeWs3nNms1TLEQ--.25969S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xw4kCFyfCF1rtrWDWryUZFb_yoWfArb_CF
+	1xZr47Xryjk3s8uw17AanrAryakan8uF4ku3W0va4fKw1UCwnxX34kXryqvrZ8Jr4jyF98
+	C3WUtFyjvF4xGjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY02Avz4vE14v_GF4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjfUOPEfUUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Wed, 19 Jun 2024 07:38:14 -0700, Jeff Johnson wrote:
-> With ARCH=sparc, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/openpromfs/openpromfs.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> 
+Add check for the return value of mipi_dsi_dcs_enter_sleep_mode() and
+return the error if it fails in order to catch the error.
 
-Applied to the vfs.module.description branch of the vfs/vfs.git tree.
-Patches in the vfs.module.description branch should appear in linux-next soon.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c b/drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c
+index 292aa26a456d..24bf05d0589f 100644
+--- a/drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c
++++ b/drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c
+@@ -526,7 +526,7 @@ static int ltk050h3146w_unprepare(struct drm_panel *panel)
+ 		return ret;
+ 	}
+ 
+-	mipi_dsi_dcs_enter_sleep_mode(dsi);
++	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+ 	if (ret < 0) {
+ 		dev_err(ctx->dev, "failed to enter sleep mode: %d\n", ret);
+ 		return ret;
+-- 
+2.25.1
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.module.description
-
-[1/1] openpromfs: add missing MODULE_DESCRIPTION() macro
-      https://git.kernel.org/vfs/vfs/c/807221c54db6
 
