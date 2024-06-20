@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-221899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-221900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E21690FA49
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:30:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B3690FA4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 02:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E0CA1C21199
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:30:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 860181F2244F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2024 00:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16A2B662;
-	Thu, 20 Jun 2024 00:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E32EEB2;
+	Thu, 20 Jun 2024 00:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jaEWEVIF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KpEHyP7S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BB91C06;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3CC3FC2;
 	Thu, 20 Jun 2024 00:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718843428; cv=none; b=sbFm4ZFgWQihrq12eFE+EsmaGj/EBHx4Z2Rp5QFfNXu/09WWdRrrFQZwcAb5xooXFTlmeLVzY3VQweXyYJNn1tHq9kJYrZmtXrW/qmdIdtxVfCZ00x/mwDp5T7Zmbewc3O6ElO7S0pT8FaJyWoIfeJIEKLXi9eTJYxqH8KQZwWI=
+	t=1718843428; cv=none; b=bhET4x83EyMvwLcEbyrBg4tHgKO+QhdBW59VWWJje1SBVxBjAQiAiSqnOB3z7f1VuFJ4dpUWCNYSsOrdiNL9MhhKNzlx17/IF39E4Fyenfj3/MNQPczS46sE+hW7qOQdGWQX2GvRKWLkbK3SbPFkiZNbkDTZL4O+PksZY9crrqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718843428; c=relaxed/simple;
-	bh=5tbk9+Fr16/riDnMOtgnfheqzFQwhcOjQtRbMoh4Fgc=;
+	bh=xbc8Zmi3Bmbg1lb4ckWibU2TsYivfw18LapC26/oXH8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=k4fMpHJK1dOQgS2eGxklf9O9GraEvMB5VHcMygkL0A8Qtjt7HQcuCUOpF55fB+EsjH+6Y/tj5tU5h7E6AvWbAVCtaS63pBEARi8XUmFYdnOft2k2rU+g8c/xXYczoNuPUuHVTyMO0/3lFEtXB1tW608ljL/+gGrYDxYXDRSoTKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jaEWEVIF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0579CC4AF0B;
+	 In-Reply-To:To:Cc; b=cKK9cwLGm8C7pcE/s7r3MgXNE2lghGM0uVOMrDm6Ht5LXMzqbfz5WmZzgoHcJbeYNMJL06cieAIKMto8381sWNeG7phU6prNbkXn4RXTX8zGAZmha4y89We+/z8DOacEUuj2fpvrpp+06XZSBbdGE8pewR+gp0Psbd8lgyuBoUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KpEHyP7S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 27354C2BBFC;
 	Thu, 20 Jun 2024 00:30:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1718843428;
-	bh=5tbk9+Fr16/riDnMOtgnfheqzFQwhcOjQtRbMoh4Fgc=;
+	bh=xbc8Zmi3Bmbg1lb4ckWibU2TsYivfw18LapC26/oXH8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jaEWEVIFwMtn4wdcGZOcRJK1fX5AQ+Wlh9iiv26PBUVr0MjPcVOuJm+WY9YCoFgAO
-	 QSOCgPDs3o9zJuz4/qPru0UYWcqoytoD5GZQMM6VFtw2K93XzV53tI5aBL2VXgqRN6
-	 2xBnQErshPnDqCCcaPBQjfQLS6YW/tCm4oZcbp4+0KR6sZezXlqTS+TrLp9TG3mKGu
-	 fRh1YA1IktrzT+oEJUeI1LqwAcM4Tf3bBSAKvn38YOIZy6nuMAqa5qzA2IN55OacRu
-	 d9Oq7XSVJPkUS+9jZBGCpggHfc5eZUBfkqY0mlxrtGGNjEXBjZpK8y2s6XUl4qs/2I
-	 3IV/EMh7uCLQQ==
+	b=KpEHyP7ShMtkcjd93I144ldDRUhI6LGvQ1EodQUMKDgl5ONf809yrT8sz5sw752Tu
+	 6U3+gtSZm4xV89vbIC6csUavt76u4Ybsz7Slu0lN1kreshNFgGhclUJ/6puwljj2Hw
+	 zRZZ2/XvUAHmUHBMGxGUrMj+PFym0mWlJTCxbtHXarfkmXahRyKW6ME0+vpDcvCaaq
+	 08VQAzk+RvrzBGdph20Q5wOSKvWmVRdBe9FhzQv3DnYkzuDcgUC0BkePfU1Kn/s2g1
+	 e9ZwPb7lxgpqocRY0BSmZvKcek9Zs6qjFMH37ip1SfcAwhStUTPb8VaYN6peQfGXJE
+	 F7KfyzGONnZMw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F1D4AE7C4C5;
-	Thu, 20 Jun 2024 00:30:27 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 13B9EC4361B;
+	Thu, 20 Jun 2024 00:30:28 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,14 +51,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: smc9194: add missing MODULE_DESCRIPTION()
- macro
+Subject: Re: [PATCH net-next] net: ethernet: mac89x0: add missing
+ MODULE_DESCRIPTION() macro
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171884342798.23279.345235713034514694.git-patchwork-notify@kernel.org>
-Date: Thu, 20 Jun 2024 00:30:27 +0000
-References: <20240618-md-m68k-drivers-net-ethernet-smsc-v1-1-ad3d7200421e@quicinc.com>
-In-Reply-To: <20240618-md-m68k-drivers-net-ethernet-smsc-v1-1-ad3d7200421e@quicinc.com>
+ <171884342807.23279.8819940675643672464.git-patchwork-notify@kernel.org>
+Date: Thu, 20 Jun 2024 00:30:28 +0000
+References: <20240618-md-m68k-drivers-net-ethernet-cirrus-v1-1-07f5bd0b64cb@quicinc.com>
+In-Reply-To: <20240618-md-m68k-drivers-net-ethernet-cirrus-v1-1-07f5bd0b64cb@quicinc.com>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
 Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
  pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -69,9 +69,9 @@ Hello:
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 18 Jun 2024 10:56:28 -0700 you wrote:
+On Tue, 18 Jun 2024 10:41:54 -0700 you wrote:
 > With ARCH=m68k, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/ethernet/smsc/smc9194.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/ethernet/cirrus/mac89x0.o
 > 
 > Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
@@ -80,8 +80,8 @@ On Tue, 18 Jun 2024 10:56:28 -0700 you wrote:
 > [...]
 
 Here is the summary with links:
-  - [net-next] net: smc9194: add missing MODULE_DESCRIPTION() macro
-    https://git.kernel.org/netdev/net-next/c/2b0cd6b7270e
+  - [net-next] net: ethernet: mac89x0: add missing MODULE_DESCRIPTION() macro
+    https://git.kernel.org/netdev/net-next/c/5e736135ad00
 
 You are awesome, thank you!
 -- 
