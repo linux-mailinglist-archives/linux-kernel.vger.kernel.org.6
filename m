@@ -1,172 +1,131 @@
-Return-Path: <linux-kernel+bounces-225000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26542912A66
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C461B912A6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14D60B28885
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:38:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79076B222A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 15:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2D181AD1;
-	Fri, 21 Jun 2024 15:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61E2823B5;
+	Fri, 21 Jun 2024 15:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqKpB09a"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqHrmq45"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E536FBED;
-	Fri, 21 Jun 2024 15:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B3C7581B;
+	Fri, 21 Jun 2024 15:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718984250; cv=none; b=oG5PrY56bWrFmlKfWyhKrZ+c3k3AcaUFQLgDvWOJncvvy5sxPnZRMULsF/BIVov4yauVW0nhvCrEYEUFT8NWCHz3ONHmgZMuAsGv4CmoSJ6GvmzsEDllRwaCe36UrAtI/KjzKYPCk2D5X/LAW6sxI+3clENcXqYceMOm18xedMA=
+	t=1718984329; cv=none; b=dfUol3TJ6kTij31cvzGEXG6PKjLbDgQ0ZO+hnGSyku3hGlEx3MZJH8wWXauBGaOlHyJf6L3o+OTDzfos3Npfcdzrlg7qFRnFMLyiHXiP1xGz3EV2yZIx1VQp+snx0qMlKpbsF0a3DuZVRxJxbWUwjN+hZpWt3yQl/T56Bi7/Kzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718984250; c=relaxed/simple;
-	bh=Y2saANydyVcnYI9e5RxEPCFuU2P+k+wVTvRnss0jXX0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oGJt9qKkGgOSJHI52WW9gk907XNseOYx2WgXHSalMtepzx4mPblAhOLY9Jxo15Ocbhmqk0y7M12n/KyEwAcYwZN+jG2ldNtcQzp7JeOYgUbgf3nDgK83lLC06i0O4U3OychTXtIY+vXwui6Lg2Tp8ZcqM83rimCPeqvYNZ1kYzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqKpB09a; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1718984329; c=relaxed/simple;
+	bh=kCl/MMZVsBt2uE6AgyIV3XMIFogLKH0WHMvLYmRV4mA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PCFZUqNL/g4aK0iI1hhjcr1R01e9T/W5xEdkqAxPY1UctuH9oB/1wEQkC28eJK2oXg0zlH3DCtcSw+eQt7Vb+mWRsbGK3/1x7sb0xUKej/qieXWQk/PMtEUEqBMxkGqP6PM1gAegxERhmxTEGzu3n65M5SweAxeXiNMhXj27OAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqHrmq45; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4217990f8baso20237525e9.2;
-        Fri, 21 Jun 2024 08:37:28 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-421d32fda86so24259155e9.0;
+        Fri, 21 Jun 2024 08:38:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718984247; x=1719589047; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZEzPUxJosE4Dv4tMtApiYXkD+OE7D7/mwDL1O48YzwQ=;
-        b=JqKpB09amApmCgb/sxRsuehauoQBW90e7pwoXl9SArnlUGoErNvIydBfiEcHfXppt2
-         h7Tlqcxn+ShP6I2v73ZZCnFAJubAWyahmVfwdIQ5uBeTL+LnMfyyJb7G95PDVe6OUwce
-         B4omms4ndTHluTfSl/+zAlMbOeQitrYVwVlCU7mTDnp7ZZunbQmD0rniVsXmCuvnmRNg
-         8+CBoPLE+Bd6AL+pUbhBMGR1xSor2cqfONoEboim1OfC/3U13oj1osshryR/LzcBrpqf
-         wko1Iv/fIIJAYhQoguhAjtK6HX5YyClz3OIbVVKfEZwe5IE3sReHTCyb26Xo7gKCHHUW
-         CHIQ==
+        d=gmail.com; s=20230601; t=1718984326; x=1719589126; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oOPm3vCa0hebn5PQU85PCCbT9jGBNVDgsMo+2JVto90=;
+        b=lqHrmq45B4vETz/kT0U9oG9X6u4iYu+zhv6rxU+we8G48zxFvuegh3dI2WoC0kBn6M
+         /raNL2o1xfIr1TegSCbug3HFsqaPfS/+ZyF8IZMmsq+tzZFGUIrJHF1dF97YSmACCnVh
+         NGDgoYFWXabQIZVW7R8Ha5+YWC9Ivc0v6aAv6zXE/k518aK1RZ6W9Pre5Kn+NxABPlB+
+         21aTO+t0OelV5/84eLbo1LRdFH+DV7pmcHOWZYBt4cmY2TZbUQTvKHQ9rXS7aRCipfyb
+         ipEAGjf2SNyHHBa16DhavySyYR2AGRBIuUeI6azKCYl9H+AeLpPFbNg2KJR9472hJnng
+         qOIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718984247; x=1719589047;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZEzPUxJosE4Dv4tMtApiYXkD+OE7D7/mwDL1O48YzwQ=;
-        b=IuptSIQPAtp6FcVK64eHI84rzpkuqWEYL4CJEWqpEf0dmDESD0BBOiZIwetnqoGKSL
-         3831MWnAxgJJNvjNwCPKujKCYnceixYbvEeJuwO80VS0mI86inzmnp37xENKVRiYpUJf
-         h050pXt/h21FlevPgflTtN3WDsRnJThT/Fhitzb9Ni6ct9/Bek5ENU3y6ivxgF6HfcGH
-         hZwgAzet61TBF+iwgqJfz9sjruGGctJiLKnags3HKudQKH8neidFNiwaHSTxP/x/zpSy
-         J0ELPFhk4QRswUpoJhdSy3Y7Z2qt0Qjg8cmtnMuRzPcl8LO17VV/9961c8zdYiJRlhUK
-         UeyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVf0pl1JzC1PsMmaiEwx3p2UsZ6P2Gi/5L5IzBr1HhsQcCfFCRXeZKSJMHAayo6ZOLSHQI2YlWHVcBP51YjrK5sZper1cVFDjo5irjj0O8MPldz26ryiOJbt+zek3yRbVjoKJu2oqY1IVtn2TaJXdJOf23ywpRIfqDHIlwd3My4/utouYoiEEvKBAmsujFQvu8/kL9V19L8tx8udTqm73ZWsj5bKoD87ZkN4uR4IaS/Wep7vb6PuJPKzHE=
-X-Gm-Message-State: AOJu0YwY491NX1vAqCodTjabYJlnrMKyTFIE4UYzj26AIvvwZXm7ZWSN
-	9IWhlHF0EGoLbC5WliTUvTqszlu2z9pID4C9azfQTTbpYR1knHw3wCwGVsGBSxlMoWGVGn24v7Q
-	Iz5KBvhJPspn55+cqg1PambHxKX8=
-X-Google-Smtp-Source: AGHT+IFKLBM5mFnVwBQaLpG8mi4nu03QYb8IeKwotTRo4us7hJs+0DIW7+segniYBbyuCbW83a3oehpQCy2SXGOBBI4=
-X-Received: by 2002:a05:600c:41c9:b0:422:7391:1be1 with SMTP id
- 5b1f17b1804b1-4247529e1a3mr66980315e9.35.1718984246497; Fri, 21 Jun 2024
- 08:37:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718984326; x=1719589126;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oOPm3vCa0hebn5PQU85PCCbT9jGBNVDgsMo+2JVto90=;
+        b=VD7tTelYcNSHMOrCQSVG/pd1euCweCUnZXOdEWw3As4+UR3arUg4G9+w3hJ3hfr0ui
+         oDM0M/F1w+S32QfTnMVuwsYLVPOzjn17mNbbwln0LyAxBZN/aCqdnX8r//KBL8yPXQCf
+         W/21teQJuIw7sbZhgW6WDVA3rT3Q4n5sc2k19xLjeYMOIPvNHBrXZPL8q/Pds9jsPIRg
+         IKF9zv3VNq8RFPVOemQ6nuSupi/W27SBynzBGbPikyXm3V+YAy+7YpD9svF9TNNJpEMF
+         sqbyYIgSkPfJ4q8ZBBS37U31QJX369Bwt/CONu77mcZgdp3R24GC5fmi5PzLkfc2lhiA
+         dkuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMLHOwajc85EOJjXJpHAufAqeX3Zu7ZVTkoleY199+FUJnHPMszbg+NpPiEvCnyhCMWC/ZPKS3cFuVNJm2u0EqL3LwvhhzEvTYK7dz
+X-Gm-Message-State: AOJu0Yy76uJ1p8vIF0Dt0Vvohfi5GldkY/EzEgEr+gLhyqDLL6tceUH3
+	ooqsjQ5sjvP8lBJUU5yhwdK6vMAu3IQE/spUlELVEXYE2Ic+q8DG
+X-Google-Smtp-Source: AGHT+IHuPmxHPN0gA69T7fWEolN/fR1P/BeIEUc2ajvI/YlolQuTbQvkvhMs5isoyekjPRiuDRSXow==
+X-Received: by 2002:a05:600c:314a:b0:424:82eb:7270 with SMTP id 5b1f17b1804b1-42482eb739dmr22422585e9.32.1718984325542;
+        Fri, 21 Jun 2024 08:38:45 -0700 (PDT)
+Received: from eichest-laptop.lan ([2a02:168:af72:0:b162:502a:9bd1:4c8b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d21226asm69793115e9.47.2024.06.21.08.38.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 08:38:45 -0700 (PDT)
+From: Stefan Eichenberger <eichest@gmail.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	l.sanfilippo@kunbus.com,
+	cniedermaier@dh-electronics.com,
+	john.ogness@linutronix.de,
+	esben@geanix.com,
+	rickaran@axis.com,
+	tglx@linutronix.de,
+	stefan@agner.ch,
+	francesco.dolcini@toradex.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: [PATCH v1] serial: imx: set receiver level before starting uart
+Date: Fri, 21 Jun 2024 17:37:49 +0200
+Message-ID: <20240621153829.183780-1-eichest@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621-hid_hw_req_bpf-v1-0-d7ab8b885a0b@kernel.org> <20240621-hid_hw_req_bpf-v1-6-d7ab8b885a0b@kernel.org>
-In-Reply-To: <20240621-hid_hw_req_bpf-v1-6-d7ab8b885a0b@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 21 Jun 2024 08:37:15 -0700
-Message-ID: <CAADnVQ+us6cQepSGWbOB4K1bb_0Wh43Cpo4zXJxB2d+SVpYinQ@mail.gmail.com>
-Subject: Re: [PATCH HID 06/12] HID: bpf: add HID-BPF hooks for hid_hw_output_report
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, "open list:HID CORE LAYER" <linux-input@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 21, 2024 at 1:56=E2=80=AFAM Benjamin Tissoires <bentiss@kernel.=
-org> wrote:
->
-> Same story than hid_hw_raw_requests:
->
-> This allows to intercept and prevent or change the behavior of
-> hid_hw_output_report() from a bpf program.
->
-> The intent is to solve a couple of use case:
->   - firewalling a HID device: a firewall can monitor who opens the hidraw
->     nodes and then prevent or allow access to write operations on that
->     hidraw node.
->   - change the behavior of a device and emulate a new HID feature request
->
-> The hook is allowed to be run as sleepable so it can itself call
-> hid_hw_output_report(), which allows to "convert" one feature request int=
-o
-> another or even call the feature request on a different HID device on the
-> same physical device.
->
-> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
->
-> ---
->
-> Here checkpatch complains about:
-> WARNING: use of RCU tasks trace is incorrect outside BPF or core RCU code
->
-> However, we are jumping in BPF code, so I think this is correct, but I'd
-> like to have the opinion on the BPF folks.
-> ---
->  drivers/hid/bpf/hid_bpf_dispatch.c   | 37 ++++++++++++++++++++++++++++++=
-++----
->  drivers/hid/bpf/hid_bpf_struct_ops.c |  1 +
->  drivers/hid/hid-core.c               | 10 ++++++++--
->  drivers/hid/hidraw.c                 |  2 +-
->  include/linux/hid.h                  |  3 ++-
->  include/linux/hid_bpf.h              | 24 ++++++++++++++++++++++-
->  6 files changed, 68 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/hid/bpf/hid_bpf_dispatch.c b/drivers/hid/bpf/hid_bpf=
-_dispatch.c
-> index 8d6e08b7c42f..2a29a0625a3b 100644
-> --- a/drivers/hid/bpf/hid_bpf_dispatch.c
-> +++ b/drivers/hid/bpf/hid_bpf_dispatch.c
-> @@ -111,6 +111,38 @@ int dispatch_hid_bpf_raw_requests(struct hid_device =
-*hdev,
->  }
->  EXPORT_SYMBOL_GPL(dispatch_hid_bpf_raw_requests);
->
-> +int dispatch_hid_bpf_output_report(struct hid_device *hdev,
-> +                                  __u8 *buf, u32 size, __u64 source,
-> +                                  bool from_bpf)
-> +{
-> +       struct hid_bpf_ctx_kern ctx_kern =3D {
-> +               .ctx =3D {
-> +                       .hid =3D hdev,
-> +                       .allocated_size =3D size,
-> +                       .size =3D size,
-> +               },
-> +               .data =3D buf,
-> +               .from_bpf =3D from_bpf,
-> +       };
-> +       struct hid_bpf_ops *e;
-> +       int ret;
-> +
-> +       rcu_read_lock_trace();
-> +       list_for_each_entry_rcu(e, &hdev->bpf.prog_list, list) {
-> +               if (e->hid_hw_output_report) {
-> +                       ret =3D e->hid_hw_output_report(&ctx_kern.ctx, so=
-urce);
-> +                       if (ret)
-> +                               goto out;
-> +               }
-> +       }
-> +       ret =3D 0;
-> +
-> +out:
-> +       rcu_read_unlock_trace();
+From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 
-same question.
-What protects prog_list ?
-list_for_each_entry_rcu() should be used within RCU CS
-if elements of that list are freed via call_rcu().
-rcu_read_lock_trace() looks wrong here.
+Set the receiver level to something > 0 before calling imx_uart_start_rx
+in rs485_config. This is necessary to avoid an interrupt storm that
+might prevent the system from booting. This was seen on an i.MX7 device
+when the rs485-rts-active-low property was active in the device tree.
+
+Fixes: 6d215f83e5fc ("serial: imx: warn user when using unsupported configuration")
+Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+---
+ drivers/tty/serial/imx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+index 2eb22594960f3..f4f40c9373c2f 100644
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -1952,8 +1952,10 @@ static int imx_uart_rs485_config(struct uart_port *port, struct ktermios *termio
+ 
+ 	/* Make sure Rx is enabled in case Tx is active with Rx disabled */
+ 	if (!(rs485conf->flags & SER_RS485_ENABLED) ||
+-	    rs485conf->flags & SER_RS485_RX_DURING_TX)
++	    rs485conf->flags & SER_RS485_RX_DURING_TX) {
++		imx_uart_setup_ufcr(sport, TXTL_DEFAULT, RXTL_DEFAULT);
+ 		imx_uart_start_rx(port);
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.43.0
+
 
