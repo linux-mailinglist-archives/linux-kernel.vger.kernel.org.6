@@ -1,122 +1,224 @@
-Return-Path: <linux-kernel+bounces-224651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71CC791255A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:32:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C6A912565
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0F74B273B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:32:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A6332836B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE76152E05;
-	Fri, 21 Jun 2024 12:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6CC152E04;
+	Fri, 21 Jun 2024 12:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Otn3IBKR"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TLA/uDPe"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0C51514F3;
-	Fri, 21 Jun 2024 12:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7ACD152161
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718973139; cv=none; b=Pr0lFPtRKNxpFL29qLBxd/hg/L9OXF+nHo2iZFj5GhEBnT7GDZQBE35qx4KF/RZXk0OeEN9J1ZwZIeyeOYOZ7KNyKDmUxMrF5eIjGgB+vzAAS+ZUN/4oqcLB5lD2yWrmJx/j9zyh+2WPMxkwq8E2E4S0mqd9Nv5129pJYZGgbmw=
+	t=1718973160; cv=none; b=VpWl7k8lNGXjO00gRTMStnD8qxdReUT65iVoCwoJ1Xk/mRWOX6Lj6ITQLu9JRAHZ1cucnHkinzY4qGbH/FvNL+nPsLGSqUWAAouc5moK7tc4Gw+ZeIezquvGKlPhnGUoRDHShwiU8aeu5kJHKftKFB+eNSCytB3XC26Atn0RqN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718973139; c=relaxed/simple;
-	bh=V44OKae8BKk0nDRrIxC+yaM61dIqQKFep4kq4C25E9w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=h2NGmyV6ScbmloFE5eb4uHUaDHOv5tQosURjYz6JNsCJLLP5Wgmy4XYDaISij9IA4p8c/vE87eLwiJLpeaV/SAnJa6L+3HpdPhVJOfwWQYnE/1Ek/aYlWOEc0ft2GKMN+OfYx7Zpa78y+291umARsLH/Cvkrd5C3RR25BU76k9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Otn3IBKR; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45LCW5mB119829;
-	Fri, 21 Jun 2024 07:32:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1718973125;
-	bh=p6/zGIGi3elNgmwAGdH3xR/gSEWIHPKZHo0vK5pmIiY=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Otn3IBKRT4V13UUwWYxu6UHN1xhZuv36VfqtenQLHD0RibyNippWi5hPFg3DUIQUw
-	 t34ve61B6j7v5EhWyLazdOGhfO/Yac0EJhVgofhQf7CJmgz72KY7opmssBGapaocIx
-	 5k5eC23vAXy6C4LUMpTy0IjzoO/nNq6UaOLh3O5o=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45LCW5Sa054652
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Jun 2024 07:32:05 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 21
- Jun 2024 07:32:05 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 21 Jun 2024 07:32:04 -0500
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45LCW08m079412;
-	Fri, 21 Jun 2024 07:32:01 -0500
-Message-ID: <147fddd4-0f73-0546-b73e-d8e2326bfb2a@ti.com>
-Date: Fri, 21 Jun 2024 18:01:59 +0530
+	s=arc-20240116; t=1718973160; c=relaxed/simple;
+	bh=r9Qp+3t57LKbLCQehAaphI5epSAhBl7IBxONt6On+2k=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Dzgtd8VVyuGZXYfcWDkk+R6/t0ADi6LbR1qrmURAw/INE5fsobcgjzCuNEmr0jIfuozpBV2TYZFgqau4wYt/FgsW0zOon23NBPHH9OhwuzZdPewto3WZIYbbiOGAW4D779HG6RqGKVU911yVRUie0ic4ElwdoB2jOnokHm0O4go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TLA/uDPe; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4218447b900so11063465e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:32:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1718973157; x=1719577957; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PMXX+jk8CoyrGDajp1NmkklStgSxsIyqK7BV0cb2dR4=;
+        b=TLA/uDPeJ8jW0MMot3IY8VN7c1Ov7+M5rmQSbB869RQ0p6p3UKXpJSaQuVl2NNp7F9
+         35HlYiZ3TEALX5MHGtlUN0PfqC+rp/ob8wbBG4+HMujIoulS5VBwfFSBDflCgpqwuAUR
+         UhTaAbr+8YOgT85dxqDN7G2PMYKOBcKwBcKsyUIwIxPA/JOLnERmen235SbJ+NjMoIyW
+         bgpxZ2os3YF5uASaq+liDi4HE6zudVHgp87l27nfuySGaEvaHdqCzaUHjLsHyZ4DRo++
+         cgVVr44Ok7ainrXjaLuW3kagB4lgZN3xsJpzByxWI7FNw1+VjpYbuRD1TCJvNsnxpbaN
+         eo8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718973157; x=1719577957;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PMXX+jk8CoyrGDajp1NmkklStgSxsIyqK7BV0cb2dR4=;
+        b=i2lAJ5roqHgQtzFKZAPFF33tPPz/alKt2pNluIqwN5eeCfBAvJ03snhiZ/pNwezJ0/
+         0AbQEwICX/kbCJU0xPCAmo2g0aeAqpWMKsqFF4y0N8CONEV9aTNF8iVV11U2McStP0lH
+         8IL/4yKuJRUT8Y5FwOP/eAvAwsJFAE/BKj5C0eLHTxTF+9Bn7USdEWxuR+cVTjYFJ8hN
+         qJQVY9YKcJPHIsJP81+7/oi1VKzakP1b1AxkAybgLMQryRTZwh3aIUEUxVGILmBFDJRz
+         bmbCplc7vykDGdwYS3ItN4pELxomqu7aRfu3WlKZApHfYHU2GEJhKLi7sQGBbSDqD1Je
+         GQZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKTX6uj6w+twxzu4jw6WCD1Xx2vIzFtZA8ltLRQiTBkv0oICvQHjXF7ctJtQDz71KjBmGz/0qz18YnzEr2xp9cNqYF8deC93Ps1dGb
+X-Gm-Message-State: AOJu0Yx8ddughDCAY+Q7xruEAKhnEF1YdcwcWleZG39ZL2HKUn7WIzPl
+	a756Rfd0nqUfrdE+Exz5qD3v0ChaZNVAKZgLW0vEORlS1qW6zhn0aN9TlKPCUJGFd7aqOXElr5I
+	mR+0E9K4LdJAYGgj6IIOwJfJDJw==
+X-Google-Smtp-Source: AGHT+IEF1VDRkJcqgGZr7F6pw8YsXYfWulpGqWDu9ViK9xi/OKgbp+BBhdGW5TbYitbNz0PnBDObFBUGJcfUzlV7l5c=
+X-Received: from sebkvm.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:cd5])
+ (user=sebastianene job=sendgmr) by 2002:a05:600c:511d:b0:421:de31:7b with
+ SMTP id 5b1f17b1804b1-42474ca44c6mr1852195e9.0.1718973157245; Fri, 21 Jun
+ 2024 05:32:37 -0700 (PDT)
+Date: Fri, 21 Jun 2024 12:32:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [RESEND PATCH v6 2/4] media: chips-media: wave5: Support runtime
- suspend/resume
-Content-Language: en-US
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        "jackson.lee"
-	<jackson.lee@chipsnmedia.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "sebastian.fricke@collabora.com" <sebastian.fricke@collabora.com>
-CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-        Nas Chung
-	<nas.chung@chipsnmedia.com>,
-        "lafley.kim" <lafley.kim@chipsnmedia.com>,
-        "b-brnich@ti.com" <b-brnich@ti.com>, "Luthra, Jai" <j-luthra@ti.com>,
-        Vibhore
-	<vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>,
-        Aradhya <a-bhatia1@ti.com>, "Raghavendra, Vignesh" <vigneshr@ti.com>
-References: <20240617104818.221-1-jackson.lee@chipsnmedia.com>
- <20240617104818.221-3-jackson.lee@chipsnmedia.com>
- <6e6f767c-85e9-87f6-394f-440efcc0fd21@ti.com>
- <SE1P216MB13037621438C8CE6142A69A8EDCF2@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
- <SE1P216MB130382374B76CD8BC9FFCFE5EDC82@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
- <881dcea1-a592-4506-083a-9d5f3c6a8781@ti.com>
- <b2f7552d37075538e22640f7b42838d29d3f8b3e.camel@collabora.com>
- <e901967f-59df-f4b0-de51-61e542c04161@ti.com>
- <07d56a690d5fed16082e73c5565b67777e31494a.camel@collabora.com>
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <07d56a690d5fed16082e73c5565b67777e31494a.camel@collabora.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+Message-ID: <20240621123230.1085265-1-sebastianene@google.com>
+Subject: [PATCH v7 0/6] arm64: ptdump: View the second stage page-tables
+From: Sebastian Ene <sebastianene@google.com>
+To: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com, 
+	ardb@kernel.org, catalin.marinas@arm.com, christophe.leroy@csgroup.eu, 
+	james.morse@arm.com, vdonnefort@google.com, mark.rutland@arm.com, 
+	maz@kernel.org, oliver.upton@linux.dev, rananta@google.com, 
+	ryan.roberts@arm.com, sebastianene@google.com, shahuang@redhat.com, 
+	suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com
+Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Nicolas,
+Hi,
 
-On 20/06/24 23:02, Nicolas Dufresne wrote:
-> Le jeudi 20 juin 2024 à 19:50 +0530, Devarsh Thakkar a écrit :
-[..]
- > Imagine that userspace is going gapless playback, if you have a lets say
-30ms on
-> forced suspend cycle due to close/open of the decoder instance, it won't
-> actually endup gapless. The delay will ensure that we only suspend when needed.
-> 
 
-Shouldn't the applications doing gapless playback avoid frequent open/close of
-the decoder instance too as it will add up re-instantiation (initializing hw,
-allocating buffers) and cleanup (de-initialization and freeing up of buffers)
-delay for each open/close respectively ? Even in case of scenario where
-resolution of next stream is different than previous, I guess the application
-can still hold up the file handle and do the necessary setup (stream
-off/stream on/REQBUFS etc) required for re-initialization ?
+This series extends the ptdump support to allow dumping the guest
+stage-2 pagetables. When CONFIG_PTDUMP_STAGE2_DEBUGFS is enabled, ptdump
+registers '/sys/debug/kvm/<guest_id>/stage2_page_tables' entry with debugfs
+upon guest creation. This allows userspace tools (eg. cat) to dump the
+stage-2 pagetables by reading the registered file.
 
-Regards
-Devarsh
+Reading the debugfs file shows stage-2 memory ranges in following format:
+<IPA range> <size> <descriptor type> <access permissions> <mem_attributes>
+
+Below is the output of a guest stage-2 pagetable dump running under Qemu:
+
+---[ IPA bits 33 start lvl 2 ]---
+0x0000000000000000-0x0000000080000000           2G PGD
+0x0000000080000000-0x0000000080c00000          12M PGD      R W AF        BLK
+0x0000000080c00000-0x0000000080e00000           2M PGD   XN R W AF        BLK
+0x0000000080e00000-0x0000000081000000           2M PGD      R W AF        BLK
+0x0000000081000000-0x0000000081400000           4M PGD   XN R W AF        BLK
+0x0000000081400000-0x000000008fe00000         234M PGD
+0x000000008fe00000-0x0000000090000000           2M PGD   XN R W AF        BLK
+0x0000000090000000-0x00000000fa000000        1696M PGD
+0x00000000fa000000-0x00000000fe000000          64M PGD   XN R W AF        BLK
+0x00000000fe000000-0x0000000100000000          32M PGD
+0x0000000100000000-0x0000000101c00000          28M PGD   XN R W AF        BLK
+0x0000000101c00000-0x0000000102000000           4M PGD
+0x0000000102000000-0x0000000102200000           2M PGD   XN R W AF        BLK
+0x0000000102200000-0x000000017b000000        1934M PGD
+0x000000017b000000-0x0000000180000000          80M PGD   XN R W AF        BLK
+
+Link to v6:
+https://lore.kernel.org/all/20240220151035.327199-1-sebastianene@google.com/
+
+Link to v5:
+https://lore.kernel.org/all/20240207144832.1017815-2-sebastianene@google.com/
+
+Link to v4:
+https://lore.kernel.org/all/20231218135859.2513568-2-sebastianene@google.com/
+
+Link to v3:
+https://lore.kernel.org/all/20231115171639.2852644-2-sebastianene@google.com/
+
+Changelog:
+ v6 -> v7:
+ * Reworded commit for this patch : [PATCH v6 2/6] arm64: ptdump: Expose
+   the attribute parsing functionality
+ * fixed minor conflicts in the struct pg_state definition
+ * moved the kvm_ptdump_guest_registration in the
+ * kvm_arch_create_vm_debugfs
+ * reset the parse state before walking the pagetables
+ * copy the level name to the pg_level buffer
+
+
+ v5 -> v6:
+ * don't return an error if the kvm_arch_create_vm_debugfs fails to
+   initialize (ref.
+https://lore.kernel.org/all/20240216155941.2029458-1-oliver.upton@linux.dev/)  
+ * fix use-after-free suggested by getting a reference to the
+   KVM struct while manipulating the debugfs files
+   and put the reference on the file close.
+ * do all the allocations at once for the ptdump parser state tracking
+   and simplify the initialization.
+ * move the ptdump parser state initialization as part of the file_open
+ * create separate files for printing the guest stage-2 pagetable
+   configuration such as: the start level of the pagetable walk and the
+   number of bits used for the IPA space representation.
+ * fixed the wrong header format for the newly added file
+ * include missing patch which hasn't been posted on the v5:
+   "KVM-arm64-Move-pagetable-definitions-to-common-heade.patch" 
+
+
+ v4 -> v5:
+ * refactorization: split the series into two parts as per the feedback
+   received from Oliver. Introduce the base support which allows dumping
+   of the guest stage-2 pagetables.
+ * removed the *ops* struct wrapper built on top of the file_ops and
+   simplify the ptdump interface access.
+ * keep the page table walker away from the ptdump specific code
+
+  v3 -> current_version:
+  * refactorization: moved all the **KVM** specific components under
+    kvm/ as suggested by Oliver. Introduced a new file
+    arm64/kvm/ptdump.c which handled the second stage translation.
+    re-used only the display portion from mm/ptdump.c
+  * pagetable snapshot creation now uses memory donated from the host.
+    The memory is no longer shared with the host as this can pose a security
+    risk if the host has access to manipulate the pagetable copy while
+    the hypervisor iterates it.
+  * fixed a memory leak: while memory was used from the memcache for
+    building the snapshot pagetable, it was no longer giving back the
+    pages to the host for freeing. A separate array was introduced to
+    keep track of the pages allocated from the memcache.
+
+
+  v2 -> v3:
+  * register the stage-2 debugfs entry for the host under
+    /sys/debug/kvm/host_stage2_page_tables and in
+    /sys/debug/kvm/<guest_id>/stage2_page_tables for guests.
+  * don't use a static array for parsing the attributes description,
+    generate it dynamically based on the number of pagetable levels
+  * remove the lock that was guarding the seq_file private inode data,
+    and keep the data private to the open file session.
+  * minor fixes & renaming of CONFIG_NVHE_EL2_PTDUMP_DEBUGFS to
+    CONFIG_PTDUMP_STAGE2_DEBUGFS
+
+
+  v1 -> v2:
+  * use the stage-2 pagetable walker for dumping descriptors instead of
+    the one provided by ptdump.
+  * support for guests pagetables dumping under VHE/nVHE non-protected
+
+Thanks,
+
+Sebastian Ene (6):
+  KVM: arm64: Move pagetable definitions to common header
+  arm64: ptdump: Expose the attribute parsing functionality
+  arm64: ptdump: Use the mask from the state structure
+  KVM: arm64: Register ptdump with debugfs on guest creation
+  KVM: arm64: Initialize the ptdump parser with stage-2 attributes
+  KVM: arm64: Expose guest stage-2 pagetable config to debugfs
+
+ arch/arm64/include/asm/kvm_pgtable.h |  42 +++++
+ arch/arm64/include/asm/ptdump.h      |  42 ++++-
+ arch/arm64/kvm/Kconfig               |  14 ++
+ arch/arm64/kvm/Makefile              |   1 +
+ arch/arm64/kvm/arm.c                 |   2 +
+ arch/arm64/kvm/hyp/pgtable.c         |  42 -----
+ arch/arm64/kvm/kvm_ptdump.h          |  20 ++
+ arch/arm64/kvm/ptdump.c              | 272 +++++++++++++++++++++++++++
+ arch/arm64/mm/ptdump.c               |  50 +----
+ 9 files changed, 402 insertions(+), 83 deletions(-)
+ create mode 100644 arch/arm64/kvm/kvm_ptdump.h
+ create mode 100644 arch/arm64/kvm/ptdump.c
+
+-- 
+2.45.2.741.gdbec12cfda-goog
+
 
