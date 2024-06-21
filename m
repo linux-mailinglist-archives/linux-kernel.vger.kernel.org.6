@@ -1,176 +1,218 @@
-Return-Path: <linux-kernel+bounces-224302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F09912072
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:25:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC50C912078
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 282D12881D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:25:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82347288849
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0850C16E884;
-	Fri, 21 Jun 2024 09:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0k3NfcBl"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F4F16E876;
+	Fri, 21 Jun 2024 09:26:22 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23F816DEDA
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79BC12D1EB;
+	Fri, 21 Jun 2024 09:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718961917; cv=none; b=DGEd+w4gMNTnZB5YPc3l/ka5nu0NM4nTE9ki0bvsoywZmSzbkKsanu6murCypIOPQJyMDuZb80oT3XC2pgRYyp0dS6+RHm/DnbWltYDajUOjMo3JKXc59LyGxfJ7qGZL8QUivUHC+3pMD52xdFFyTGCtM/Fbhhc98NNzjJFtrJ8=
+	t=1718961981; cv=none; b=EXM7KeszyZtsVNMTqwB8v50Ump4hzK/mM8uoAqXL/sLyIZg6ZA0xHlD/XOroN4jswXVHjeyQPirhpY1ys8ngheRkm/QOV/PXINypj4V/b2ENN7AChoa7ZXuLUqHNoSLDLo4M8GzQNLHxp2mlPLCJkHgJD59GjAn5Bp0ojejmZzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718961917; c=relaxed/simple;
-	bh=IVf06wXtoQ06bGlwMj4u28LbqL8Tx549GhE4KTb7LS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V/fSZ/zqiOdc07W3AkCJlaHX5flGpNlgygTOb3wTR4xmj5G5jaQLiRD4Dset2OFsEJtbS0HVgzjsQM1BWuUrVH6p+jUg7vgoPRsPWHfyUjkYo9LRsDT30jglIKHPSnjBpdB3qa5NANby1QtBG04Xe6mZLslzCH/ascDNGHP41b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0k3NfcBl; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d0f929f79so1631907a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 02:25:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1718961914; x=1719566714; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TJ7kPulOx451lKRJFwdomb+qJgH0vBNRBUJ9vVH3v6U=;
-        b=0k3NfcBlQ7nqkYtYow1Tg9e+/CF5M9pR04+jU0wT/dpM9YtPoXVMyX+Eq/3GgJGcR8
-         xAge2WTquRxBXtNe7uvMt5NlU2YbC7YQxcqMDXD3XVVYmHWp3q6HH1QTkv4hSRC7essk
-         D7RRcI4L+4yEsYjpocdUGv3G8cwTHSLvTaQ/Ly/5sb7XmnVzoq2icwVK0DCElALyyHdZ
-         lYQ955GhUR6W6ZQ1s4n/a/Wt0GU3mGyoOLgTI/2mepaI4g0JI9Eckgr2GaHByE0Jfwtk
-         VYNNkNNeXTeJ6qoxwgqRtfNK3T2K7pF6jC0t3ctetV9LkETfFUL+ngRf66opetRQiGhZ
-         uueg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718961914; x=1719566714;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TJ7kPulOx451lKRJFwdomb+qJgH0vBNRBUJ9vVH3v6U=;
-        b=VcMyNXgwDY3gAaGvquGV8QRwk9Y66KaHDLaXIKvis7gdRwT01RIY4OYd7tqZ5ewt2r
-         nyzcmaq808dEbw1eNYj41I6JN1exrGpM76U2jlV6qT7RxU3yUqeQ1evG6Y7QcDv/LPtf
-         XUp8G0obsShCnInmbdE9gHKsaHHGZdgmLw3Sqxl5J2zljNYVW6KV8qOriE72Q4uVKs1L
-         NqgQ5jLfWMWNptu4yoxtvfNfULQv0GijMO3cWhGwHxyPX4MYe+OmtUQ3hAZkU3q68EaL
-         03CkLe39hOtbvNiHFbUrqC42dt5D/Cmcq/DAIuYPYdEfFLFaplDyG+uWYT3HGdodnmUh
-         2sXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWup0/STvmgx6XWZ2VdFa83RwWDzLlQvQJcwzLGhHpne6lDDNiJGEP/g4yoME1YuKYKWDZ1andy84seKNYtTjzM/QpgXIeWsyNjQOL
-X-Gm-Message-State: AOJu0Yyn3GRtbQqffYHbGEbiE/RRWUYX1NmTh6FVbJK1goK/xUniMTPC
-	aGMhjnLlqOHFqAvGdPvMUEzX0IEHfjE240r9EcywQvt05gz6yKHMlsMwPPFIPg==
-X-Google-Smtp-Source: AGHT+IEpz/9QgX9U5wyhR6jzpLAUkz7DFkr/DyE9ciM0TRNOVp0gEwP5yeSZ1FfEyhdCaNpMGEoyBw==
-X-Received: by 2002:a50:d71c:0:b0:57c:d237:4fd with SMTP id 4fb4d7f45d1cf-57d20d49ee9mr2816823a12.4.1718961913575;
-        Fri, 21 Jun 2024 02:25:13 -0700 (PDT)
-Received: from google.com (118.240.90.34.bc.googleusercontent.com. [34.90.240.118])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3042d8b1sm683245a12.45.2024.06.21.02.25.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 02:25:13 -0700 (PDT)
-Date: Fri, 21 Jun 2024 09:25:10 +0000
-From: Quentin Perret <qperret@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	Fuad Tabba <tabba@google.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>,
-	maz@kernel.org, kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, pbonzini@redhat.com
-Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
-Message-ID: <ZnVG9oZL4GT0uFy_@google.com>
-References: <20240619115135.GE2494510@nvidia.com>
- <ZnOsAEV3GycCcqSX@infradead.org>
- <CA+EHjTxaCxibvGOMPk9Oj5TfQV3J3ZLwXk83oVHuwf8H0Q47sA@mail.gmail.com>
- <20240620135540.GG2494510@nvidia.com>
- <6d7b180a-9f80-43a4-a4cc-fd79a45d7571@redhat.com>
- <20240620142956.GI2494510@nvidia.com>
- <20240620140516768-0700.eberman@hu-eberman-lv.qualcomm.com>
- <20240620231814.GO2494510@nvidia.com>
- <ZnUsmFFslBWZxGIq@google.com>
- <c05f2a97-5863-4da7-bfae-2d6873a62ebe@redhat.com>
+	s=arc-20240116; t=1718961981; c=relaxed/simple;
+	bh=iGyxiKTVbLVFE4tjDiXsZQhh4d9kiqe6XaPjBhqKVJo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CSRv7/nHGYYpb3BE5gu261cAMK2zmz5W4ZLHd95SbaKpY8mUzV2gUvjn94f5nk+NR4ziHFBTpQOQLllPEA7rq0uyEfgONpAbLt6/SEi4VEaBEG0BuxmO/katxTPPQCUsXEsLuUjGYAqARoSXVKqEhej/gN9qZs0QoHMuMwd2HXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W5Bn01hZ9z6GDNF;
+	Fri, 21 Jun 2024 17:26:12 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8FF9B140B2A;
+	Fri, 21 Jun 2024 17:26:16 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 21 Jun
+ 2024 10:26:16 +0100
+Date: Fri, 21 Jun 2024 10:26:15 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Borislav Petkov <bp@alien8.de>, James Morse <james.morse@arm.com>, Shiju
+ Jose <shiju.jose@huawei.com>, Tony Luck <tony.luck@intel.com>, "Ard
+ Biesheuvel" <ardb@kernel.org>, Dave Jiang <dave.jiang@intel.com>, Ira Weiny
+	<ira.weiny@intel.com>, <linux-edac@vger.kernel.org>,
+	<linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/3] efi/cper: Add a new helper function to print
+ bitmasks
+Message-ID: <20240621102615.00004ce7@Huawei.com>
+In-Reply-To: <20240621102036.0000493e@Huawei.com>
+References: <cover.1718906288.git.mchehab+huawei@kernel.org>
+	<fcc8a699c9497b788ac99aa0d57dedd629ac4945.1718906288.git.mchehab+huawei@kernel.org>
+	<20240621102036.0000493e@Huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c05f2a97-5863-4da7-bfae-2d6873a62ebe@redhat.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Friday 21 Jun 2024 at 10:02:08 (+0200), David Hildenbrand wrote:
-> Thanks for the information. IMHO we really should try to find a common
-> ground here, and FOLL_EXCLUSIVE is likely not it :)
+On Fri, 21 Jun 2024 10:20:36 +0100
+Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
 
-That's OK, IMO at least :-).
-
-> Thanks for reviving this discussion with your patch set!
+> On Thu, 20 Jun 2024 20:01:45 +0200
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 > 
-> pKVM is interested in in-place conversion, I believe there are valid use
-> cases for in-place conversion for TDX and friends as well (as discussed, I
-> think that might be a clean way to get huge/gigantic page support in).
+> > Sometimes it is desired to produce a single log line for errors.
+> > Add a new helper function for such purpose.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >  drivers/firmware/efi/cper.c | 59 +++++++++++++++++++++++++++++++++++++
+> >  include/linux/cper.h        |  3 ++
+> >  2 files changed, 62 insertions(+)
+> > 
+> > diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+> > index 7d2cdd9e2227..9bf27af3e870 100644
+> > --- a/drivers/firmware/efi/cper.c
+> > +++ b/drivers/firmware/efi/cper.c
+> > @@ -106,6 +106,65 @@ void cper_print_bits(const char *pfx, unsigned int bits,
+> >  		printk("%s\n", buf);
+> >  }
+> >  
+> > +/*  
 > 
-> This implies the option to:
+> It's exported and in a header used by other code, so why not make
+> this kernel-doc? /**
 > 
-> 1) Have shared+private memory in guest_memfd
-> 2) Be able to mmap shared parts
-> 3) Be able to convert shared<->private in place
+> > + * cper_bits_to_str - return a string for set bits
+> > + * @buf: buffer to store the output string
+> > + * @buf_size: size of the output string buffer
+> > + * @bits: bit mask
+> > + * @strs: string array, indexed by bit position
+> > + * @strs_size: size of the string array: @strs  
 > 
-> and later in my interest
+> If it had been kernel doc, W=1 would have told you mask is
+> missing.
 > 
-> 4) Have huge/gigantic page support in guest_memfd with the option of
->    converting individual subpages
+> Passing a 0 for mask seems probably not worth while.
+> If all bits of the unsigned int are set then people can pass ~0
 > 
-> We might not want to make use of that model for all of CC -- as you state,
-> sometimes the destructive approach might be better performance wise -- but
-> having that option doesn't sound crazy to me (and maybe would solve real
-> issues as well).
-
-Cool.
-
-> After all, the common requirement here is that "private" pages are not
-> mapped/pinned/accessible.
+> Or make this cper_bits_to_str_masked() and have
+> cper_bits_to_str() that doesn't take a mask.
 > 
-> Sure, there might be cases like "pKVM can handle access to private pages in
-> user page mappings", "AMD-SNP will not crash the host if writing to private
-> pages" but there are not factors that really make a difference for a common
-> solution.
 
-Sure, there isn't much value in differentiating on these things. One
-might argue that we could save one mmap() on the private->shared
-conversion path by keeping all of guest_memfd mapped in userspace
-including private memory, but that's most probably not worth the
-effort of re-designing the whole thing just for that, so let's forget
-that.
+Mask definitely needs docs as I misunderstood it :(
+Also needs to be contiguous I think which is also a bit unusual.
 
-The ability to handle stage-2 faults in the kernel has implications in
-other places however. It means we don't need to punch holes in the
-kernel linear map when donating memory to a guest for example, even with
-'crazy' access patterns like load_unaligned_zeropad(). So that's good.
-
-> private memory: not mapped, not pinned
-> shared memory: maybe mapped, maybe pinned
-> granularity of conversion: single pages
+> If you do that, some simplifications can be easily made.
 > 
-> Anything I am missing?
+> 
+> 
+> > + *
+> > + * add to @buf the bitmask in hexadecimal. Then, for each set bit in @bits,
+> > + * add the corresponding string in @strs to @buf.
+> > + */
+> > +char *cper_bits_to_str(char *buf, int buf_size, unsigned int bits,  
+> 
+> Perhaps make bits an unsigned long as then you can use the
+> for_each_set_bit() etc.
+> 
+> > +		       const char * const strs[], unsigned int strs_size,
+> > +		       unsigned int mask)
+> > +{
+> > +	int i, size, first_bit;
+> > +	int len = buf_size;
+> > +	const char *start;
+> > +	char *str = buf;
+> > +
+> > +	if (strs_size < 16)
+> > +		size = snprintf(str, len, "0x%02x: ", bits);
+> > +	if (strs_size < 32)
+> > +		size = snprintf(str, len, "0x%04x: ", bits);
+> > +
+> > +	len -= size;
+> > +	str += size;
+> > +
+> > +	start = str;
+> > +
+> > +	if (mask) {
+> > +		first_bit = ffs(mask) - 1;
+> > +		if (bits & ~mask) {
+> > +			size = strscpy(str, "reserved bit(s)", len);
+> > +			len -= size;
+> > +			str += size;
+> > +		}
+> > +	} else {
+> > +		first_bit = 0;
+> > +	}  
+> Might be worth
+> 
+> 	bits = bits & mask;
+> 
+> Obviously setting bits that aren't in the mask is
+> odd though so maybe a warning print if that happens?
+> > +  
+> 
+> 
+> for_each_bit_set(i, &bits, strs_size) {
 
-That looks good to me. And as discussed in previous threads, we have the
-ambition of getting page-migration to work, including for private memory,
-mostly to get kcompactd to work better when pVMs are running. Android
-makes extensive use of compaction, and pVMs currently stick out like a
-sore thumb.
+Ah. I'd missed the offset and gotten function name wrong.
 
-We can trivially implement a hypercall to have pKVM swap a private
-page with another without the guest having to know. The difficulty is
-obviously to hook that in Linux, and I've personally not looked into it
-properly, so that is clearly longer term. We don't want to take anybody
-by surprise if there is a need for some added complexity in guest_memfd
-to support this use-case though. I don't expect folks on the receiving
-end of that to agree to it blindly without knowing _what_ this
-complexity is FWIW. But at least our intentions are clear :-)
+i = first_bit
+for_each_set_bit_from(i, &bits, strs_size + first_bit)
 
-Thanks,
-Quentin
+and look up based on i - first_bit
+
+
+> 	...
+> 
+> }
+> 
+> > +	for (i = 0; i < strs_size; i++) {
+> > +		if (!(bits & (1U << (i + first_bit))))
+> > +			continue;
+> > +
+> > +		if (*start && len > 0) {
+> > +			*str = '|';
+> > +			len--;
+> > +			str++;
+> > +		}
+> > +
+> > +		size = strscpy(str, strs[i], len);
+> > +		len -= size;
+> > +		str += size;
+> > +	}
+> > +	return buf;
+> > +}
+> > +EXPORT_SYMBOL_GPL(cper_bits_to_str);
+> > +
+> >  static const char * const proc_type_strs[] = {
+> >  	"IA32/X64",
+> >  	"IA64",
+> > diff --git a/include/linux/cper.h b/include/linux/cper.h
+> > index 265b0f8fc0b3..856e8f00a7fb 100644
+> > --- a/include/linux/cper.h
+> > +++ b/include/linux/cper.h
+> > @@ -584,6 +584,9 @@ const char *cper_mem_err_type_str(unsigned int);
+> >  const char *cper_mem_err_status_str(u64 status);
+> >  void cper_print_bits(const char *prefix, unsigned int bits,
+> >  		     const char * const strs[], unsigned int strs_size);
+> > +char *cper_bits_to_str(char *buf, int buf_size, unsigned int bits,
+> > +		       const char * const strs[], unsigned int strs_size,
+> > +		       unsigned int mask);
+> >  void cper_mem_err_pack(const struct cper_sec_mem_err *,
+> >  		       struct cper_mem_err_compact *);
+> >  const char *cper_mem_err_unpack(struct trace_seq *,  
+> 
+
 
