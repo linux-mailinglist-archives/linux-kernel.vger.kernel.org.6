@@ -1,90 +1,103 @@
-Return-Path: <linux-kernel+bounces-224105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15AF5911D4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:51:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73457911D55
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472A01C20FEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:51:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CBA22840BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B61516C877;
-	Fri, 21 Jun 2024 07:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B436B16D31E;
+	Fri, 21 Jun 2024 07:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=doubly.so header.i=@doubly.so header.b="kEsmgYjW"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1hdrIkF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52867E58D;
-	Fri, 21 Jun 2024 07:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32EC16C863;
+	Fri, 21 Jun 2024 07:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718956266; cv=none; b=AqrZd8JCir8YjUKHtDzIMprhoQQKxZfPW25KF06qoZ9+TbRoDD+x2MbMSU2vqwZ78EOFNZYq0yJOVaMZrGlFb+EUKOD5+Fruo/HnQI+HRE6BW5e3kCXkt2MXDMtzY/PDeZmp2bv78N+7u9Hd2PfjZ1qiM9GKz3PGZgNulmgzLPg=
+	t=1718956290; cv=none; b=ADDBXCttKrEFGMRwoYiqzeZRoIIVq9WQ0/4L+GxvFh6ChxdNm5DdlIkQT7vp68eoMHWo/c4fF8ZBNHO+KoiOa6TvAr+9+rjuHMAaopPmxnmVOP+Srx/JzRC53biwWyt3rTMjliQSwP0L3iUVOhbVjEgpFcc4Hbw6MW7xqFq9e78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718956266; c=relaxed/simple;
-	bh=Pxmox1WHzNqLNTjRZ+wfFdPf6PN5Od+20NDoOX4LdIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZKy2cLR2+qzz2aJU61a+kes1NxbQSqg72JdWnslkVZVNrozSVA8VxSyXjLtGImbkzsqQsk9DDU/VtnFoGtBf79QE+cLYjz1pexzR/aBMS2JcTLRcJJ+zDAGMtnU2nEgxQXxvwoWGjzGDM4NewVGjrRagR5v5p28i88zQNP7HeXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doubly.so; spf=pass smtp.mailfrom=doubly.so; dkim=pass (2048-bit key) header.d=doubly.so header.i=@doubly.so header.b=kEsmgYjW; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=doubly.so
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=doubly.so
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W58g055qkz9stw;
-	Fri, 21 Jun 2024 09:50:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=doubly.so; s=MBO0001;
-	t=1718956252;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/ocU6Wb9xrrpo54+K+ErVA2DXeKsDSMwyOOGzzhERa0=;
-	b=kEsmgYjW01NiKeqVOCiKs34hrGQt8owhWaNrxG+CWMlixF7QDGMEaI/T4CgydztYlu6FIp
-	YX3CIoDTbpTF1sHOd5hBgU+RQDEx/ai4e90conDdXUdOjnv7vA04Xxb4b/4G0ScCdqmTQu
-	2ueKThlCYp138fUKHPJkMCAs+W4/2K8Ch+6AoWrdXtpTBcC2Wju4StWyTzZ6zFTpfMNdF2
-	AJlOXMt75AmcFoBulpBQLlLQEoUitPM9U/thEYQ+e9avBMriCkqeHKNA5b179wkaogVQka
-	Oyxwb9FDk2CI+Cv6Oa7cjkMih0Xh5haYdUdGtdnEqdYZ7dIWF5wdsp6Zfz/EVA==
-Message-ID: <a18c8b3a-90b0-47a7-aff6-a289ecddc2c0@doubly.so>
-Date: Fri, 21 Jun 2024 09:50:50 +0200
+	s=arc-20240116; t=1718956290; c=relaxed/simple;
+	bh=1HCwf6TJ72c4wbSMsx0ToW1GLnhJDNJ8Afp1KOu+icw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rx35nSm/bIk/F2gMpukKUlLjpnhK3lNS3InMyfKO9BwLYMJMSpn8nAz/2IeJwEWlhop/kPBeM6LbGnW9vqPhJDTAnybCE13upazWHcMClJsJp9rt+LqwxOTe2u47X3f3/1E4aNt38fMy/LDqZFTDiCjIDr7/MQpTIRGq8wO7AX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1hdrIkF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDC14C2BBFC;
+	Fri, 21 Jun 2024 07:51:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718956289;
+	bh=1HCwf6TJ72c4wbSMsx0ToW1GLnhJDNJ8Afp1KOu+icw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c1hdrIkFymyDz2jm9julINVwJdVh0apoGK/wOJgAfzgQciUyMpXO11gJeobnhyj/O
+	 HN7aNcc5+7PxztjUyqA062UCdYMiPoQvViog8Xrv0y9bIxvqxsagAzJMmuVrgQIUup
+	 I/cVid0PV0daHpnlqjFuqXeIQ2YCGm/gHAcyVU/o1rfRtE7Ii0RAwhucR+x/mYN8TM
+	 XMF4h1coHHcuTt0dpExaF0Yl8kWq7sY0nbsfmm++caCX3/fl21wh20/1GCKj4vllQa
+	 xuvf8a9Q3PYkXssVcn5yqcT7rOChpgLgCUWb09KCofzKUmVkGhexjOXcqgDrZIGyxv
+	 1zwNw8HQda1fg==
+Date: Fri, 21 Jun 2024 08:51:23 +0100
+From: Lee Jones <lee@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Vinod Koul <vkoul@kernel.org>, lkp@intel.com, linux-iio@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	Paul Cercueil <paul@crapouillou.net>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+	linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Julia Lawall <julia.lawall@inria.fr>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [v11 3/7] iio: core: Add new DMABUF interface infrastructure
+Message-ID: <20240621075123.GG1318296@google.com>
+References: <202406191014.9JAzwRV6-lkp@intel.com>
+ <c25aab0d-48f6-4754-b514-d6caf8d51fd1@web.de>
+ <ZnRUSaHJhz7XLcKa@matsya>
+ <20240620170522.GU3029315@google.com>
+ <ZnUnFeum1Z2ahm9M@matsya>
+ <ebddd644-b9b1-4a87-a2e7-dcf255f4184d@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/2] platform/x86: asus-wmi: support camera disable LED
-To: Luke Jones <luke@ljones.dev>, corentin.chary@gmail.com
-Cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20240620082223.20178-1-dev@doubly.so>
- <20240620082223.20178-2-dev@doubly.so>
- <ede8505f-bcf6-403e-bda2-6848cd4ff4c7@app.fastmail.com>
-Content-Language: en-US
-From: Devin Bayer <dev@doubly.so>
-In-Reply-To: <ede8505f-bcf6-403e-bda2-6848cd4ff4c7@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ebddd644-b9b1-4a87-a2e7-dcf255f4184d@web.de>
 
+On Fri, 21 Jun 2024, Markus Elfring wrote:
 
-Thanks for the review, Luke.
-
-On 20/06/2024 23.40, Luke Jones wrote:
->>   
->> + if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_CAMERA_LED)) {
->> + asus->camera_led.name = "platform::camera";
+> > Sadly, I am yet to see a constructive approach or even better a helpful
+> > patch which improve something, rather than vague suggestions on the list
 > 
-> What do other devices label their camera LED as? The one I could find appears to use `<vendor>::camera`. So maybe `asus::camera` would be better? This also keeps in line with `asus::kbd_backlight`.
+> Can you get any more constructive impressions from another data representation?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?qt=author&q=Elfring
+> 
+> Are you aware how many change suggestions (also from my selection) are still
+> in various waiting queues?
 
-I reasoned it would be better to keep the name generic is so out of the 
-box desktops could toggle the camera and the LED when KEY_CAMERA is 
-pressed, just like with micmute and mute.
+No one is doubting your overall contributions Markus.
 
-But I'll submit a new version with just this patch and the name change.
+The issue is one of communication and the way reviews are conducted.
 
-~ Dev
+Reviewing other people's work is challenging and requires a certain
+skill-set, of which _excellent_ communication skills are non-negotiable.
+
+Why not concentrate on more complex submissions for a while and grow
+your repertoire of common review points, rather than repeating the same
+few over and over?  Reading other, more experienced maintainer's reviews
+would also be a good use of your time.
+
+-- 
+Lee Jones [李琼斯]
 
