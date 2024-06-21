@@ -1,138 +1,246 @@
-Return-Path: <linux-kernel+bounces-224431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584D3912254
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:23:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 821B7912256
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E091C23A83
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:23:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377BE28A78A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE725171643;
-	Fri, 21 Jun 2024 10:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7EF171647;
+	Fri, 21 Jun 2024 10:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9cbJDMk"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="YgqBa/Nu"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5F416DEA9;
-	Fri, 21 Jun 2024 10:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9387197;
+	Fri, 21 Jun 2024 10:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718965378; cv=none; b=AMnqv33R4PjbDz2gUDoVKUSbecIBKCoicMl7GUHhRYklDR/3Gd8xcpfy2qAGxNhuBUmkF18BV3axeERU59qnh424//LTWvxsgUB7sMMlbq5jhx1lizga2OkyGUExLaM23c4cGAjEQOuVTc7U25eNJAiilMGCbEUKEkSoJR/nznU=
+	t=1718965496; cv=none; b=sZY/4A9IQctr3mg0oHhgrWOlXLJjwEv/luHxVm4oXRb2P0V7r8Oii8v76gHJwxmXVznADb5LFO2IoXnI+fwMYGJRX6cxhBpHSSyYrX/lOj1XtYTO6AxrwovV8VYunMDPPjbWBvtKYJ7H2oklWv1+fyBqorHCnNGilNkAZyo/8rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718965378; c=relaxed/simple;
-	bh=TSwRMDRga/1dOIySBpm82JhQM0xRqtYGsuG5K6KhxEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LEw/DrY2Zfj/fB2vZFJzVexNnZoCK9YAHO8tBTGtCRmndxfDtGu+w5Kg8Aa26VyglsYkYpPnTNir7Jr8+JjnomgFXkEFlJEvBvD1VNPDsuU9XqAvKvZTifjVCB0uMcuh+/zEFpk8RD6DYkFJGWf2dVvl/te0/ZQm6u5Ni7UwQVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9cbJDMk; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57d106e69a2so3032948a12.0;
-        Fri, 21 Jun 2024 03:22:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718965374; x=1719570174; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KRU/CLMPMIdyJLsUDddkWEnZJa3UQNsHKLmP0cyv9wU=;
-        b=i9cbJDMklYT6l8Oi+gyKIdUUridFoUTGVayevJA7X0JFb8M1UPXzAZYO97VTZAc1sv
-         Ij3NuZNJlTHExlvec9fpuGOKld0ZYZFyGxqPLF+zWcThFPgIFhNv8jjoiUbZQZ6C+/41
-         WeflDtKWdmDqXHHk6xTO2rIbL2o6BAWx2/44Tj6BNCx7QD3cDlVOyAp7Dz8PtYXtXf2u
-         mdUhfwQruSq/6wv0OkPePZLLSOeESkxkYZVswaHdvXZkqeJbXEsxBaAl3670SdlYF0Lf
-         w7c1i6GiR2gSGA1NhtjhukC7XMaFrKIGmZR8N+Jpxi37xBktxzpU0p1T7TcMGqNrYwmO
-         YmcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718965374; x=1719570174;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KRU/CLMPMIdyJLsUDddkWEnZJa3UQNsHKLmP0cyv9wU=;
-        b=HV23yHdnfFL2sxRleKPA5pVxEqEatRHVR7DPXOX0t8HIo6P56Oljlv2pbgUBgd+p0g
-         AQht4RuK3TUEJYtEjz92P1I+MQGiNZ8Nh6/CpmuSBiCUC1/8iXvB1Ewk8XzikAlwGGV9
-         vgbpCdMUs5YiaprcXShRfjoWzV0NGCdddzkd64z/cDw6Cj3en+Zb4Tjo0SeWVS33s9q1
-         h4Pf0eQjN+tMzPwxbqChwV1VGUxtK621kbTzoYF0Kbb4SvixqxRJMJuCDRWnKqv2x56j
-         Gi+gzq4XtHf4BE2NhTIEPdXsXPa8ojhIW2RT7ZC+S2OZGpTcGrp49jQ+urRonV+EK+7s
-         /viw==
-X-Forwarded-Encrypted: i=1; AJvYcCV46saGmxRyMIh2bl5KUU9TEb2WjDCMNHzQE5pDvHMlEHWZLuOiHk/CvRhu4GeGjpviwc7gSlRwcRksaVnHNxKg8jecePdLlQwBWfNSZmQxGxlLtwrtPgZ1NGXb+bB1eYoVcRg92gXrEYdSG2I+OJDb51uTYfbWWBjU0FJOQ4TC1NDJWA==
-X-Gm-Message-State: AOJu0Yx+bBWoqDRh5kppQdWhAKPyOMeWLeUDY62jpCvGHqlhNn1nEm2C
-	PulB6N1EL0kxsZ7+ln3mrdDu0nlnwlvz9OBAYuiERzqx0JvVqBRR
-X-Google-Smtp-Source: AGHT+IGwy3qhXOfp29GIKRxhqtXvx9J6dgCw1Tr9xWky4wRxbgPQtZwYLyM+DZSsRDqAp9hh6L6OqA==
-X-Received: by 2002:aa7:c603:0:b0:578:6360:aa11 with SMTP id 4fb4d7f45d1cf-57cf7a5732fmr8074633a12.5.1718965374192;
-        Fri, 21 Jun 2024 03:22:54 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30564be6sm723550a12.93.2024.06.21.03.22.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 03:22:53 -0700 (PDT)
-Date: Fri, 21 Jun 2024 13:22:50 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Frank Li <frank.li@nxp.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH v3 1/3] spi: fsl-dspi: use common proptery
- 'spi-cs-setup(hold)-delay-ns'
-Message-ID: <20240621102250.oc2cck26tpoqsywz@skbuf>
-References: <20240620-ls_qspi-v3-0-1a2afcf417e4@nxp.com>
- <20240620-ls_qspi-v3-1-1a2afcf417e4@nxp.com>
- <AM6PR04MB5941CD3048D65DABD19256A488C92@AM6PR04MB5941.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1718965496; c=relaxed/simple;
+	bh=uZ+MY3E/RbmCK3hzLvClaKhQpnThw2y5EurerNSCszs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TKxjd+6TBMialPboGscQGhKdW9X1XnuJ22/C7vejbeluCAkK79McesCGQgLi09nWQ+NS0aWV25v224tEqYBR5tTAEtnyUCLJ81nW66RujBYjhHmn4CUzk/uDdSELwotv0AEwF9bvZC9hQ7qliOeTmbBYCVljSGzj+XC+3CYFZPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=YgqBa/Nu; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718965494; x=1750501494;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uZ+MY3E/RbmCK3hzLvClaKhQpnThw2y5EurerNSCszs=;
+  b=YgqBa/NuAkwq82zUdFAjQ0F2Ci9LCTuZRhPiQX8BywjXrhFa8lZ0h94k
+   Sl4sNuwMJuipKlpMUGKySYv52VCpaEgxnGglU1tUQ94AnFgNvScrM/a0N
+   V+xYZKqjhhcsWP5No1dyXo1SW2PsEXLBFQc12lm1zYErJoLCeVaN9oJWn
+   aOUC4Jtd0pVESgt4mBsDXrmcwBZMevY4OYD/wpc9JvXKqYIKdBMRKk812
+   MSyM8KRxb8qTodH82jb0sJalklM0W7H75ttP6kjfqgzlg+l2BJnX6q5Ha
+   oUFmr58GVJAptmeyWSDwWmnZSKKj7nW1o4FcGrZd5ATdMD3wm367SE++s
+   A==;
+X-CSE-ConnectionGUID: bErWBs7qSkOvRV01FLxzrA==
+X-CSE-MsgGUID: KIP2OomJSsaAuQf5fKD3lA==
+X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
+   d="asc'?scan'208";a="195731658"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Jun 2024 03:24:53 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 21 Jun 2024 03:24:43 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Fri, 21 Jun 2024 03:24:37 -0700
+Date: Fri, 21 Jun 2024 11:24:19 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Andrew Jones <ajones@ventanamicro.com>
+CC: Yong-Xuan Wang <yongxuan.wang@sifive.com>, <linux-kernel@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>, <kvm-riscv@lists.infradead.org>,
+	<kvm@vger.kernel.org>, <apatel@ventanamicro.com>, <alex@ghiti.fr>,
+	<greentime.hu@sifive.com>, <vincent.chen@sifive.com>, Jinyu Tang
+	<tjytimi@163.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Anup Patel
+	<anup@brainfault.org>, Mayuresh Chitale <mchitale@ventanamicro.com>, Atish
+ Patra <atishp@rivosinc.com>, wchen <waylingii@gmail.com>, Samuel Ortiz
+	<sameo@rivosinc.com>, =?iso-8859-1?Q?Cl=E9ment_L=E9ger?=
+	<cleger@rivosinc.com>, Evan Green <evan@rivosinc.com>, Xiao Wang
+	<xiao.w.wang@intel.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Andrew
+ Morton <akpm@linux-foundation.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Kemeng Shi <shikemeng@huaweicloud.com>, Samuel Holland
+	<samuel.holland@sifive.com>, Jisheng Zhang <jszhang@kernel.org>, Charlie
+ Jenkins <charlie@rivosinc.com>, "Matthew Wilcox (Oracle)"
+	<willy@infradead.org>, Leonardo Bras <leobras@redhat.com>
+Subject: Re: [PATCH v5 1/4] RISC-V: Add Svade and Svadu Extensions Support
+Message-ID: <20240621-nutty-penknife-ca541ee5108d@wendy>
+References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
+ <20240605121512.32083-2-yongxuan.wang@sifive.com>
+ <20240621-d1b77d43adacaa34337238c2@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0UoLULy78srbKCqT"
+Content-Disposition: inline
+In-Reply-To: <20240621-d1b77d43adacaa34337238c2@orel>
+
+--0UoLULy78srbKCqT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AM6PR04MB5941CD3048D65DABD19256A488C92@AM6PR04MB5941.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 01:28:28AM +0000, Peng Fan wrote:
-> > +		cs_sck_delay = spi_delay_to_ns(&spi->cs_setup, NULL);
-> > +		if (!cs_sck_delay)
-> 
-> `if (cs_sck_delay <= 0)` ?
+On Fri, Jun 21, 2024 at 10:43:58AM +0200, Andrew Jones wrote:
+> On Wed, Jun 05, 2024 at 08:15:07PM GMT, Yong-Xuan Wang wrote:
+> > Svade and Svadu extensions represent two schemes for managing the PTE A=
+/D
+> > bits. When the PTE A/D bits need to be set, Svade extension intdicates
+> > that a related page fault will be raised. In contrast, the Svadu extens=
+ion
+> > supports hardware updating of PTE A/D bits. Since the Svade extension is
+> > mandatory and the Svadu extension is optional in RVA23 profile, by defa=
+ult
+> > the M-mode firmware will enable the Svadu extension in the menvcfg CSR
+> > when only Svadu is present in DT.
+> >=20
+> > This patch detects Svade and Svadu extensions from DT and adds
+> > arch_has_hw_pte_young() to enable optimization in MGLRU and
+> > __wp_page_copy_user() when we have the PTE A/D bits hardware updating
+> > support.
+> >=20
+> > Co-developed-by: Jinyu Tang <tjytimi@163.com>
+> > Signed-off-by: Jinyu Tang <tjytimi@163.com>
+> > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > ---
+> >  arch/riscv/Kconfig               |  1 +
+> >  arch/riscv/include/asm/csr.h     |  1 +
+> >  arch/riscv/include/asm/hwcap.h   |  2 ++
+> >  arch/riscv/include/asm/pgtable.h | 14 +++++++++++++-
+> >  arch/riscv/kernel/cpufeature.c   |  2 ++
+> >  5 files changed, 19 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index b94176e25be1..dbfe2be99bf9 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -36,6 +36,7 @@ config RISCV
+> >  	select ARCH_HAS_PMEM_API
+> >  	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
+> >  	select ARCH_HAS_PTE_SPECIAL
+> > +	select ARCH_HAS_HW_PTE_YOUNG
+> >  	select ARCH_HAS_SET_DIRECT_MAP if MMU
+> >  	select ARCH_HAS_SET_MEMORY if MMU
+> >  	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
+> > diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+> > index 25966995da04..524cd4131c71 100644
+> > --- a/arch/riscv/include/asm/csr.h
+> > +++ b/arch/riscv/include/asm/csr.h
+> > @@ -195,6 +195,7 @@
+> >  /* xENVCFG flags */
+> >  #define ENVCFG_STCE			(_AC(1, ULL) << 63)
+> >  #define ENVCFG_PBMTE			(_AC(1, ULL) << 62)
+> > +#define ENVCFG_ADUE			(_AC(1, ULL) << 61)
+> >  #define ENVCFG_CBZE			(_AC(1, UL) << 7)
+> >  #define ENVCFG_CBCFE			(_AC(1, UL) << 6)
+> >  #define ENVCFG_CBIE_SHIFT		4
+> > diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hw=
+cap.h
+> > index e17d0078a651..35d7aa49785d 100644
+> > --- a/arch/riscv/include/asm/hwcap.h
+> > +++ b/arch/riscv/include/asm/hwcap.h
+> > @@ -81,6 +81,8 @@
+> >  #define RISCV_ISA_EXT_ZTSO		72
+> >  #define RISCV_ISA_EXT_ZACAS		73
+> >  #define RISCV_ISA_EXT_XANDESPMU		74
+> > +#define RISCV_ISA_EXT_SVADE             75
+> > +#define RISCV_ISA_EXT_SVADU		76
+> > =20
+> >  #define RISCV_ISA_EXT_XLINUXENVCFG	127
+> > =20
+> > diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/=
+pgtable.h
+> > index aad8b8ca51f1..7287ea4a6160 100644
+> > --- a/arch/riscv/include/asm/pgtable.h
+> > +++ b/arch/riscv/include/asm/pgtable.h
+> > @@ -120,6 +120,7 @@
+> >  #include <asm/tlbflush.h>
+> >  #include <linux/mm_types.h>
+> >  #include <asm/compat.h>
+> > +#include <asm/cpufeature.h>
+> > =20
+> >  #define __page_val_to_pfn(_val)  (((_val) & _PAGE_PFN_MASK) >> _PAGE_P=
+FN_SHIFT)
+> > =20
+> > @@ -288,7 +289,6 @@ static inline pte_t pud_pte(pud_t pud)
+> >  }
+> > =20
+> >  #ifdef CONFIG_RISCV_ISA_SVNAPOT
+> > -#include <asm/cpufeature.h>
+> > =20
+> >  static __always_inline bool has_svnapot(void)
+> >  {
+> > @@ -624,6 +624,18 @@ static inline pgprot_t pgprot_writecombine(pgprot_=
+t _prot)
+> >  	return __pgprot(prot);
+> >  }
+> > =20
+> > +/*
+> > + * Both Svade and Svadu control the hardware behavior when the PTE A/D=
+ bits need to be set. By
+> > + * default the M-mode firmware enables the hardware updating scheme wh=
+en only Svadu is present in
+> > + * DT.
+> > + */
+> > +#define arch_has_hw_pte_young arch_has_hw_pte_young
+> > +static inline bool arch_has_hw_pte_young(void)
+> > +{
+> > +	return riscv_has_extension_unlikely(RISCV_ISA_EXT_SVADU) &&
+> > +	       !riscv_has_extension_likely(RISCV_ISA_EXT_SVADE);
+>=20
+> It's hard to guess what is, or will be, more likely to be the correct
+> choice of call between the _unlikely and _likely variants. But, while we
+> assume svade is most prevalent right now, it's actually quite unlikely
+> that 'svade' will be in the DT, since DTs haven't been putting it there
+> yet. Anyway, it doesn't really matter much and maybe the _unlikely vs.
+> _likely variants are better for documenting expectations than for
+> performance.
 
-spi_delay_to_ns() returns error only for SPI_DELAY_UNIT_SCK and for
-unknown units.
+binding hat off, and kernel hat on, what do we actually do if there's
+neither Svadu or Svade in the firmware's description of the hardware?
+Do we just arbitrarily turn on Svade, like we already do for some
+extensions:
+	/*
+	 * These ones were as they were part of the base ISA when the
+	 * port & dt-bindings were upstreamed, and so can be set
+	 * unconditionally where `i` is in riscv,isa on DT systems.
+	 */
+	if (acpi_disabled) {
+		set_bit(RISCV_ISA_EXT_ZICSR, isainfo->isa);
+		set_bit(RISCV_ISA_EXT_ZIFENCEI, isainfo->isa);
+		set_bit(RISCV_ISA_EXT_ZICNTR, isainfo->isa);
+		set_bit(RISCV_ISA_EXT_ZIHPM, isainfo->isa);
+	}
 
-The first case never appears to be set by the core. Only spi-dw-core.c
-and spi-dw-dma.c set SPI_DELAY_UNIT_SCK.
 
-The latter case seems to be mostly avoidable defensive programming.
-spi_alloc_device() gives you zero-initialized memory, which means
-spi->cs_hold.unit is by default SPI_DELAY_UNIT_USECS (0) and so is
-spi->cs_setup.unit. Nothing seems to set the unit to an invalid value,
-so the default case appears dead code. If "u8 unit" from within
-struct spi_delay was an enum type, it would have likely been fine to
-even omit the default case altogether.
+--0UoLULy78srbKCqT
+Content-Type: application/pgp-signature; name="signature.asc"
 
-There's also the curious case of integer type (signedness) mismatch
-between:
-- the u32 type of "delay" processed and returned by spi_delay_to_ns()
-- the int return type of spi_delay_to_ns()
-- the u32 type of the "cs_sck_delay" and "sck_cs_delay" variables used
-  by Frank to store the output from spi_delay_to_ns() inside the dspi
-  driver
+-----BEGIN PGP SIGNATURE-----
 
-The interaction between these data types means that:
-- The "if (cs_sck_delay <= 0)" snippet you suggest will simply not work,
-  because the spi_delay_to_ns() function output is assigned to an
-  unsigned variable, which is never negative.
-- There is a theoretical possibility that a large u32 delay returned by
-  spi_delay_to_ns() is misinterpreted as an error by a caller which does
-  make an attempt to check for negative values. However, simply casting
-  the value back to unsigned as Frank does eliminates that possibility.
-  Given that ultimately, the setup and hold times come from u32 device
-  tree properties which aren't range-checked, it might just well happen
-  for someone who does check for < 0 to trip over this. It might be
-  worth somebody having a closer look at this situation.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnVU0wAKCRB4tDGHoIJi
+0tO+AP9fSCy8DKEUzhWJLZKCX9bDiwMGYDTUA7ScliHR3a5XqAEA2XsW/dKpr/Rc
+Rn7YzOV3QPOW5f7vXy+CiO6Rf2HnEgk=
+=8GSV
+-----END PGP SIGNATURE-----
 
-I don't think that your suggestion will produce better code.
+--0UoLULy78srbKCqT--
 
