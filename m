@@ -1,155 +1,191 @@
-Return-Path: <linux-kernel+bounces-225149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D4B912C9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:48:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7E8912CA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB11D1C23B8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:48:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B23F2870BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7982816A922;
-	Fri, 21 Jun 2024 17:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2241B16A922;
+	Fri, 21 Jun 2024 17:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLyDDW6j"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GL/I/Hv+"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF1F15FD0E;
-	Fri, 21 Jun 2024 17:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949431C14;
+	Fri, 21 Jun 2024 17:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718992088; cv=none; b=NEMGyi+L81t1o+YBN5Gp3OIm/h/I60fNwc2C/k2bFsv9eplU06XUzFjaUHruetsHVy8ypXtOOw/OPawPEisGlTuUkOrvb891VbStioyLRwo0sd1RfWoh/cl4pPbDfNFoMjRYe89leiVX3uel5s27zadxKb6nfofRHsLqooUdPc0=
+	t=1718992165; cv=none; b=CeAVtqcoL57t5vPWqhz+AKoFyox9SCEmgESTmQlzcP1RUk4eTr3M4+YJNd25fOMFV2Bigcqe97L+6fNtkG07tKA1co7ifHTrQQpb+AZtWglY6C8cmJP+LnqV//u0IPxJJ99OMuNk3wInXk1SWRyKj9vdxZJpfobMcDlgkqV4MS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718992088; c=relaxed/simple;
-	bh=mQ5L2vYcZRCcrLtYFaBkfoz0TXVWKORjITMqPyTNnlM=;
+	s=arc-20240116; t=1718992165; c=relaxed/simple;
+	bh=16Q7UL0YhkM2EiDSjw0enmCXlzuHQdUMucuuffEQB5Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=RzfTVYPwMmAMVM3PYLZtUutOKsgvNLgRA4fdnq6Zj5UWf/de99G8NnAqKO+fH0OtICCluEXg938HuHC+3zr6z/TcaaqCIwMl52fx51CZbrdnUeZpT9FmsG9A7UT3h70ZPOfCw6cGSK9IsM8Jh62kDoAva4UItrL95fHWXxW/o8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FLyDDW6j; arc=none smtp.client-ip=209.85.222.53
+	 To:Cc:Content-Type; b=sST5+VmoSa21LXH17Dxe1xEC30yZyHgW1bq0B+crQ0cnljPcslkIMznHMD0g2jp6jRXxFbRWwqCsSLrC3Opfqz48khUtv2iabGVa/Mo9sZqwrtAhMg/gEUl0uikel5+TiPKmL2gh6AOHV+cuJj5TvvnZA6AQbdQo3vRXSPzPk4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GL/I/Hv+; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-80f6cc81aa4so353951241.2;
-        Fri, 21 Jun 2024 10:48:07 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6f09eaf420so265180566b.3;
+        Fri, 21 Jun 2024 10:49:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718992086; x=1719596886; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=81ObmjHXbEwa7gKh45uz6idV8z3omKUYoqXG05RakrE=;
-        b=FLyDDW6jUcz1RfebPvBnPSoPO5IHFDPFuN6ONc0hgauR0YWSf2wvbyfO8LuWnMBCNj
-         JmsHXPoViElWKKDJghvqxledpIGTKr0K39+RIwDTJG2vYtdI51hXrO7dKC0y/HyaAUIw
-         tSUXPPW3p2UQxBtQdfC6pjmzRlSUdt1R8UICZ0hcfp0YPvJ69cTg2isSvTYibIvkYVLm
-         qflbLh2AP52uCjeQmboNEpC/bF34+P/YskNnr4LR+jWIofMUlc/wzGFfUtw1Z05RLXlw
-         HkHYh+XPTK+vz2mIhVCSSVkv+V7mGRcp7ozcPR3vKEgKU84/+ujx9v6sDVRpL+wlf54h
-         TYhQ==
+        d=gmail.com; s=20230601; t=1718992162; x=1719596962; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dd59nbjK5mxx2t+S2o2mRnCCr+mXTEe9t7Rxfuo2GxU=;
+        b=GL/I/Hv+WkNccOUVyVEskJoq96vytPnRYYI0EzrkJRssyBKSRCuseTnHQmUonxz5kM
+         VxxhHNxJnzmJv288YTe/stnFuWS4yjas88L/yj/HhKoCrXN71g3GUWFWZsIsAch0/mGO
+         CRVjTQqUTdMC3GDC3lR6FlQ8309zY6e3qU87dG350LyTBOqI2/5QDTPFFEhOXNqDqxPC
+         WHyYhNXL7FD7wfFztZQFRoG5juyeBM5rvA6G/FR96L4eqROWQPoEb4TGRXHrS1l2lJ5i
+         Uvr2TBCjearcmRl2IJCsS4LHrtK4lVsxX5DGHEnK7f6dYnBc4aAxKqFK+7ZPTrK4ylkv
+         LFvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718992086; x=1719596886;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=81ObmjHXbEwa7gKh45uz6idV8z3omKUYoqXG05RakrE=;
-        b=hIG/1cdRWYBQvUYdy+pddsW6EgifaHy7EwLgO7YtUKzkFQGn/XsW1zyNbHffbaVpgI
-         Wlfj+SZ8a6ljrVm3cR8FLC3+3IickegIQ5b//Qp821uRcB2j3wc6bpfYQf2D1ogVDHsP
-         RdNQ6IdRj2rVmA03AZ2/485eHWjVXHhp0K8JhwLPHmazztBC1xU/srPHKvKFF0pbq/LB
-         oe9emOmb92MhcENFouF7/e3c82MAJnUjcaVclLDAjU/4r9Vlp9n/Qd5HpfGhTVn7Vbb0
-         yDqpGrvyKrGJXhXNUvRUIcbq+Cyt5s5JV7IjNu3befF8A4WBwEiAoF8YGvTpdNRPtUGP
-         sFFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCXjV2pyoJtc+dcHAtz1TbEFMAQCPHOnoQ5L4EvTzOl6n5ek4L5ppIQsezHhtLJgRNPIuNtYb1+EvNvPx7GnrJvR6PuzRYQSsgFlYvKjancHstXivL6plVJjDukl+bISyElYuC43AXqO9d+irl7kCev5pqmL9PB1HFBhz8HliWCVeKHPY/VuTa4++7tmVdLQvx289cxOqI3iBDNCNfZEyf5xy8XEi8
-X-Gm-Message-State: AOJu0YwerkS4r4v1KHDhdcyldn3qCrwBRleNK26fsx5VV6pwbGqG5pMl
-	4dpV6+JmWxfQ5tLBxbyJVDfr2kCvJvdmnSHOfdzrU4MoekfNvFdwVTblR1IzpCXyNF61cYUA+g9
-	bqxuKRuS2LZpNTGFZA2CqA2oF8Kk=
-X-Google-Smtp-Source: AGHT+IGuB2z+co8OUz9vMffmlPdrxKTYQViMR/EpC9iBEu86iSA4jDVHANAWyQ0JOxVMxt1gemx/eb204mkQAI8RZ4I=
-X-Received: by 2002:a05:6122:18a1:b0:4ef:53ad:97bd with SMTP id
- 71dfb90a1353d-4ef53ad9c40mr1421229e0c.3.1718992086037; Fri, 21 Jun 2024
- 10:48:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718992162; x=1719596962;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dd59nbjK5mxx2t+S2o2mRnCCr+mXTEe9t7Rxfuo2GxU=;
+        b=ZUJLtp1B9R2HJFsygn83Ppip25EBNGHI9eOrqPvpsl2XQtECNT1fvsHpHIfw27+MbS
+         iop+waijIAhgBzZM8ik0s5wNTeipob1/Wg6MwDYqLrncc1vihI1Fg0SRmwY137SWNrt5
+         lmCl15gR/HAk+RPslHFfbrKS1vz7U/r7m+D45UZXKJD6DT3kDOahqdX+NjjEhzjvzGML
+         SYE7ggzpAfoUwmv0kwqOhY5wccOhzr5wpKbn1O5c+wPCnK6KoGeU5Rwm//y7knTqkNd5
+         w1EnVuqRSthF/Vf8PmRqmyDue8ewhWpurSL9jCMKniEcZmItYF9uvejUbd55vXHWcjUG
+         4n8A==
+X-Forwarded-Encrypted: i=1; AJvYcCW9ncCGIloZW9j7Gufa9B3APq0ze6HVN6jitgXOVpdG0ogU/gRUJa5H3+EMimNtMHYlQ2SVXCtTomeoQPo2FmhPVr6pr4xI+yBESC1LamQ315U6nRESoQdheFMjjYorBwmD69joVvObbA==
+X-Gm-Message-State: AOJu0YzL5KHfACkprLEDINNjVgyz0G3JprJOjk6Cx2//hMox4nAbwG96
+	w5j5wT0ROHjd4lzNaTdl2FrRQNyhY5W6EW9GW65kAJDIF+r1IjFBm3oXHQ2fc0FC+vZbaInR5vW
+	akyUKw8OO78JIlBWicT1x67wf7SM=
+X-Google-Smtp-Source: AGHT+IHuxXRp9oMpOcE6TOMJCZu9K/BXWS3ZbVFC9+KQ7nQaPPN+hSsVK1nMG8Wok8Lm7VJZ1yfqKBzvbhRANY/cPkA=
+X-Received: by 2002:a17:906:4092:b0:a6f:6d98:d4d4 with SMTP id
+ a640c23a62f3a-a6fab60bad6mr524907266b.11.1718992161614; Fri, 21 Jun 2024
+ 10:49:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618225210.825290-1-allen.lkml@gmail.com> <gw6adkoy3ndjdjufti2gs2gnk3xdgylt6tnia2zha76hsgdwtq@dr3czbxjij66>
-In-Reply-To: <gw6adkoy3ndjdjufti2gs2gnk3xdgylt6tnia2zha76hsgdwtq@dr3czbxjij66>
+References: <20240621050525.3720069-1-allen.lkml@gmail.com> <20240621082525.0def003b@hermes.local>
+In-Reply-To: <20240621082525.0def003b@hermes.local>
 From: Allen <allen.lkml@gmail.com>
-Date: Fri, 21 Jun 2024 10:47:54 -0700
-Message-ID: <CAOMdWS+p4Dt2xDGWvwoXtWinsRZintLwPmADddbsmaEfLvRQkw@mail.gmail.com>
-Subject: Re: [PATCH v3] mmc: Convert from tasklet to BH workqueue
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Allen Pais <allen.lkml@gmail.com>, 
-	Aubin Constans <aubin.constans@microchip.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Manuel Lauss <manuel.lauss@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
-	Jaehoon Chung <jh80.chung@samsung.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Alex Dubov <oakad@yahoo.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Bruce Chang <brucechang@via.com.tw>, Harald Welte <HaraldWelte@viatech.com>, 
-	Pierre Ossman <pierre@ossman.eu>, Christian Loehle <christian.loehle@arm.com>, linux-mmc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Date: Fri, 21 Jun 2024 10:49:09 -0700
+Message-ID: <CAOMdWS+Z_vvcrJE9ug3dYe033te-EW7eBdygJ9hbe6R6e37yzQ@mail.gmail.com>
+Subject: Re: [PATCH 00/15] ethernet: Convert from tasklet to BH workqueue
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: kuba@kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, jes@trained-monkey.org, 
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+	kda@linux-powerpc.org, cai.huoqing@linux.dev, dougmill@linux.ibm.com, 
+	npiggin@gmail.com, christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org, 
+	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com, tlfalcon@linux.ibm.com, 
+	cooldavid@cooldavid.org, marcin.s.wojtas@gmail.com, mlindner@marvell.com, 
+	nbd@nbd.name, sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com, 
+	lorenzo@kernel.org, borisp@nvidia.com, bryan.whitehead@microchip.com, 
+	UNGLinuxDriver@microchip.com, louis.peens@corigine.com, 
+	richardcochran@gmail.com, linux-rdma@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-acenic@sunsite.dk, 
+	linux-net-drivers@amd.com, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-> On Tue, Jun 18, 2024 at 03:52:07PM GMT, Allen Pais wrote:
-> > The only generic interface to execute asynchronously in the BH context =
-is
+>
+> > The only generic interface to execute asynchronously in the BH context is
 > > tasklet; however, it's marked deprecated and has some design flaws. To
-> > replace tasklets, BH workqueue support was recently added. A BH workque=
-ue
-> > behaves similarly to regular workqueues except that the queued work ite=
-ms
+> > replace tasklets, BH workqueue support was recently added. A BH workqueue
+> > behaves similarly to regular workqueues except that the queued work items
 > > are executed in the BH context.
 > >
-> > This patch converts drivers/mmc/* from tasklet to BH workqueue.
+> > This patch converts a few drivers in drivers/ethernet/* from tasklet
+> > to BH workqueue. The next set will be sent out after the next -rc is
+> > out.
 > >
-> > Based on the work done by Tejun Heo <tj@kernel.org>
+> > This series is based on
+> > commit a6ec08beec9e ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net")
+> >
+> > First version converting all the drivers can be found at:
+> > https://lore.kernel.org/all/20240507190111.16710
+> > -2-apais@linux.microsoft.com/
+> >
+> >
+> > Allen Pais (15):
+> >   net: alteon: Convert tasklet API to new bottom half workqueue
+> >     mechanism
+> >   net: xgbe: Convert tasklet API to new bottom half workqueue mechanism
+> >   net: cnic: Convert tasklet API to new bottom half workqueue mechanism
+> >   net: macb: Convert tasklet API to new bottom half workqueue mechanism
+> >   net: cavium/liquidio: Convert tasklet API to new bottom half workqueue
+> >     mechanism
+> >   net: octeon: Convert tasklet API to new bottom half workqueue
+> >     mechanism
+> >   net: thunderx: Convert tasklet API to new bottom half workqueue
+> >     mechanism
+> >   net: chelsio: Convert tasklet API to new bottom half workqueue
+> >     mechanism
+> >   net: sundance: Convert tasklet API to new bottom half workqueue
+> >     mechanism
+> >   net: hinic: Convert tasklet API to new bottom half workqueue mechanism
+> >   net: ehea: Convert tasklet API to new bottom half workqueue mechanism
+> >   net: ibmvnic: Convert tasklet API to new bottom half workqueue
+> >     mechanism
+> >   net: jme: Convert tasklet API to new bottom half workqueue mechanism
+> >   net: marvell: Convert tasklet API to new bottom half workqueue
+> >     mechanism
+> >   net: mtk-wed: Convert tasklet API to new bottom half workqueue
+> >     mechanism
+> >
+> >  drivers/net/ethernet/alteon/acenic.c          | 26 +++----
+> >  drivers/net/ethernet/alteon/acenic.h          |  8 +--
+> >  drivers/net/ethernet/amd/xgbe/xgbe-drv.c      | 30 ++++----
+> >  drivers/net/ethernet/amd/xgbe/xgbe-i2c.c      | 16 ++---
+> >  drivers/net/ethernet/amd/xgbe/xgbe-mdio.c     | 16 ++---
+> >  drivers/net/ethernet/amd/xgbe/xgbe-pci.c      |  4 +-
+> >  drivers/net/ethernet/amd/xgbe/xgbe.h          | 10 +--
+> >  drivers/net/ethernet/broadcom/cnic.c          | 19 ++---
+> >  drivers/net/ethernet/broadcom/cnic.h          |  2 +-
+> >  drivers/net/ethernet/cadence/macb.h           |  3 +-
+> >  drivers/net/ethernet/cadence/macb_main.c      | 10 +--
+> >  .../net/ethernet/cavium/liquidio/lio_core.c   |  4 +-
+> >  .../net/ethernet/cavium/liquidio/lio_main.c   | 24 +++----
+> >  .../ethernet/cavium/liquidio/lio_vf_main.c    | 10 +--
+> >  .../ethernet/cavium/liquidio/octeon_droq.c    |  4 +-
+> >  .../ethernet/cavium/liquidio/octeon_main.h    |  4 +-
+> >  .../net/ethernet/cavium/octeon/octeon_mgmt.c  | 13 ++--
+> >  drivers/net/ethernet/cavium/thunder/nic.h     |  5 +-
+> >  .../net/ethernet/cavium/thunder/nicvf_main.c  | 24 +++----
+> >  .../ethernet/cavium/thunder/nicvf_queues.c    |  4 +-
+> >  .../ethernet/cavium/thunder/nicvf_queues.h    |  2 +-
+> >  drivers/net/ethernet/chelsio/cxgb/sge.c       | 19 ++---
+> >  drivers/net/ethernet/chelsio/cxgb4/cxgb4.h    |  9 +--
+> >  .../net/ethernet/chelsio/cxgb4/cxgb4_main.c   |  2 +-
+> >  .../ethernet/chelsio/cxgb4/cxgb4_tc_mqprio.c  |  4 +-
+> >  .../net/ethernet/chelsio/cxgb4/cxgb4_uld.c    |  2 +-
+> >  drivers/net/ethernet/chelsio/cxgb4/sge.c      | 40 +++++------
+> >  drivers/net/ethernet/chelsio/cxgb4vf/sge.c    |  6 +-
+> >  drivers/net/ethernet/dlink/sundance.c         | 41 +++++------
+> >  .../net/ethernet/huawei/hinic/hinic_hw_cmdq.c |  2 +-
+> >  .../net/ethernet/huawei/hinic/hinic_hw_eqs.c  | 17 +++--
+> >  .../net/ethernet/huawei/hinic/hinic_hw_eqs.h  |  2 +-
+> >  drivers/net/ethernet/ibm/ehea/ehea.h          |  3 +-
+> >  drivers/net/ethernet/ibm/ehea/ehea_main.c     | 14 ++--
+> >  drivers/net/ethernet/ibm/ibmvnic.c            | 24 +++----
+> >  drivers/net/ethernet/ibm/ibmvnic.h            |  2 +-
+> >  drivers/net/ethernet/jme.c                    | 72 +++++++++----------
+> >  drivers/net/ethernet/jme.h                    |  8 +--
+> >  .../net/ethernet/marvell/mvpp2/mvpp2_main.c   |  4 +-
+> >  drivers/net/ethernet/marvell/skge.c           | 12 ++--
+> >  drivers/net/ethernet/marvell/skge.h           |  3 +-
+> >  drivers/net/ethernet/mediatek/mtk_wed_wo.c    | 12 ++--
+> >  drivers/net/ethernet/mediatek/mtk_wed_wo.h    |  3 +-
+> >  43 files changed, 273 insertions(+), 266 deletions(-)
+> >
 >
-> Has this been fully build-tested?
->
-> =3D=3D=3D
-> drivers/mmc/host/renesas_sdhi_internal_dmac.c: In function =E2=80=98renes=
-as_sdhi_internal_dmac_complete_work_fn=E2=80=99:
-> ./include/linux/container_of.h:20:54: error: =E2=80=98struct tmio_mmc_hos=
-t=E2=80=99 has no member named =E2=80=98dma_complete=E2=80=99
-> =3D=3D=3D
+> This should also go to netdev@vger.kernel.org
 
- Yes, it does break. My bad, my local compile testing failed to catch this.
+My Bad, I thought I had it marked. Thanks for pointing it out.
 
->
-> In deed, 'dma_complete' is only in 'struct renesas_sdhi_dma'. From
-> there, we can get to the parent 'struct renesas_sdhi' using
-> container_of. But then, I don't see a way to go to 'struct
-> tmio_mmc_host' from there. The other way around is possible because
-> there is the pointer 'struct tmio_mmc_data *pdata' in the TMIO struct
-> pointing to the data contained in 'struct renesas_sdhi'. 'host_to_priv()'
-> does the math. But I don't see a path the other way around.
->
-
- I have been looking at this code since the issue was reported. Yes it
-is a bit tricky and so far, the only way I found was to introduce a new poi=
-nter.
-But, I am not very familiar with the code and have asked Ulf for pointers.
-
-If introducing the pointer is the only way forward and is an
-acceptable solution,
-I can send out a draft.
-
-Thanks,
-Allen
-
-> So, it doesn't look like the workqueue interface can provide a
-> generic pointer like tasklets could do? This means we have to add a
-> pointer from 'struct renesas_sdhi' to 'struct tmio_mmc_host'?
->
-> All the best,
->
->    Wolfram
->
-
-
---=20
        - Allen
 
