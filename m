@@ -1,167 +1,152 @@
-Return-Path: <linux-kernel+bounces-224467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E94419122C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:46:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706989122C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763771F21474
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:46:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4B83B2424D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69C5171679;
-	Fri, 21 Jun 2024 10:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5CE172767;
+	Fri, 21 Jun 2024 10:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="VLTvLFBS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="m3hJLn8J"
-Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zeriEZJ7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ar1Xz6jS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6F116F8E3;
-	Fri, 21 Jun 2024 10:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A1E7FBBD;
+	Fri, 21 Jun 2024 10:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718966782; cv=none; b=huhXn11VLSQI7PNdp0ln/YxE3g4RLxaM3GlAgnKFfdrwLZciFiSOcit1qlXN839KefxSmuMwosoDYBwC4aAZUJQQxq0mFKdiWz/jtkwN5+1jtjBYw9gcpJ+tNYW4sWSq4W1PUuJOvAgnT6wLIUFF7UJIewCI5XPyVoBdTXho7Kw=
+	t=1718966768; cv=none; b=o9DjXWUsIJCpErXdhhwCQRv5i8uPIUMk6opjyuwDqVko3vN3JACLkySWwAzDUg3phyI3sv9VIkW2Jl22V/LiuVoqivyc8NAjtJSOmRsPuXkiAWbOdbMKUXcD+hsbaQSTnLji1C/xMbozLvw4T4Kyxfj4r2h3qZL2J1FaiFXalfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718966782; c=relaxed/simple;
-	bh=zSB1STr2bBQAh/5Jdwsp6IX4g62SfhyrEo5rMbFs3jc=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=hI7+QcBgGxZHajvL5r43EjwboQjghkcfJjRHnZEk1bx7oYyOubtUhgFfdUt311VsWuvGg2bRU60AiEDZu1NWMJotywn7hFlgnVhHW6fOfg8oOYIduPddMVSvLp+fe4eTHxzDwqVEaZiWKBYC9fXlwnHUmNTj4tfP/qeJmfASTAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=VLTvLFBS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=m3hJLn8J; arc=none smtp.client-ip=64.147.123.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.west.internal (Postfix) with ESMTP id AAA251C00063;
-	Fri, 21 Jun 2024 06:46:19 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Fri, 21 Jun 2024 06:46:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1718966779;
-	 x=1719053179; bh=vNXsJmdir0Xv77IAtckKiaw1MH1hpHUSKfVRwspug3c=; b=
-	VLTvLFBSey95k5TiD7bpNPHcMkQnLN9eAKlzbAeofLVEsyixujK7I5ovCDe40SWs
-	FLgU8BmoGDe+BgUGXtCUdmKeURgn9HQpzVZqK9qJPfiIOTBu7dewzoPVaO/7q/3x
-	DsA1aSVzUatWH4BZLs1PnEl8Bu5+BLjgNI1+zhCzZRdQUm8J0nZp2UTKRxkIpTVx
-	WA/DEyfUCG8D1v5T8przxqUYfSHXLpmfpFrhobmquwX615UHxTyP60QwQ8sEsOIa
-	BhR6QdwDwpHEjPNKnqiQakWMo23jjtZkpnnt9x+OzoSmxq16i+aDqyoZ/sL0vmOT
-	3JhyZXtIxVBmLjP1wjapUA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718966779; x=
-	1719053179; bh=vNXsJmdir0Xv77IAtckKiaw1MH1hpHUSKfVRwspug3c=; b=m
-	3hJLn8J2QBaWmtsH+6TdZdEGxYsMgTqKKaDLIcIz96QR4xMt/iZcfnIUx7zlu7xr
-	wk8q6ymX0xHrX7BmIvIy5StVEr4sn/usivp4kQBFcUni32NT4b2Ha4heyePpxYCi
-	21+a2YrJHgkzHCRPNAQ8Cv+RdN+zlTweWqpTtoIt2jm+gz0gixe9Zodekx+Y5mfn
-	m8aDd0LSstzlJCHd7Z+n2SN3hnqZFoyhBTgkcaGAONZW8iRQlzyTVKpHs+REc8H2
-	tJpGcsLtT5XFmBn35UiXwjs9gVXuYNnwBbpWsbpuGHgiCp1FDYRPjTMvvWdUlvIw
-	OoEmxjBNIyG9MsldTxjGw==
-X-ME-Sender: <xms:-ll1ZlkDLAukEljR8R7lhsaSooXKhYasckmb4fB_UMh1rirNIcfKyQ>
-    <xme:-ll1Zg1_wdjDROQyeBvDcU_ZB4HYf4riZotE8sYx5WAUpcCI9zD1mpJHqF51PXTKI
-    SbUBWHDWDXnh_JibPY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefgedgfedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:-ll1Zroe5X-HcjdaOF9-AA6PRahlbiKrggujHaghQUybU_nRLpTKfw>
-    <xmx:-1l1ZlmdhDIJdwOAxvSN2kmVRbBKHAtN5XP1sKulKDn54GddnTE9og>
-    <xmx:-1l1Zj25JCAdymEVaYhZbJMiy5RDNHZeD14r2Qmzaubm5ejV-Kp93g>
-    <xmx:-1l1ZktJMtmGb97HPujk4VmM_spCf00AjxphP2bjMbbpHl9fVAPrqA>
-    <xmx:-1l1ZuRwhOTRuP3C3Rf7RixgEMpHPcxkfENNiKh8rTvTunG4ntmKtlOP>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id CD7A236A0075; Fri, 21 Jun 2024 06:46:18 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1718966768; c=relaxed/simple;
+	bh=VrIIoHGeotm8tbt7s5A8/A4khw9feLi4pSGfWNF6d7g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dYgdEqY9/L0SppK1Rrt4TwMbkHmaD9/UVXY1jZHQ9JAy36AgZhaxr3P+5Euhz35J3MCYXwnPfJkLzBO4DBCSDkOJNxVM6xbshOCOayMjWh2lBNAc6wpjIiKXmqLLOCO4vVvi5XtNPI8q1/LpmEmf6CbqEeweZ9Yx1a9E2bkNjf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zeriEZJ7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ar1Xz6jS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1718966763;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z6uzgA3OuvNjAKIJ1N0WUV8pAvtRghi5pTO6jCkNH5U=;
+	b=zeriEZJ7L1UK/GlEtsiC3fs7tuAVTkfjEc6VkvBHIxusX4kyGOAtDMsIhU89oj4CZ+6pg8
+	in9aBAFxv8A969MdpenBZfobQkXfJBbar982zcqWIGVBCbUZSz6uZwWrz0xlwTjVUdUVpJ
+	2mAvJnNrHWE3Yq2+fqh/eBUnp2mx7CdHnRiPwkEKqTrA1XIGloB6YryVwnN9ihaIen4EHT
+	v9sKOpPIXVhwDJiJZP5rlUlv6J1BzsDiwLDFt/53yDpvsKKhsplplIq+Z+q91xu5hOOknm
+	GQG6skoGjy+LicxDznXuMCnIIXyW6XWLhl2D78ma8MlFi+Zok6vHJt9XM+3bFg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1718966763;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z6uzgA3OuvNjAKIJ1N0WUV8pAvtRghi5pTO6jCkNH5U=;
+	b=Ar1Xz6jSrHUvkUGhcAZDKDWtOxkObXL0L6pA6oHpfZZ9K2PImIerWkaERoGYgRPBozDvHS
+	XTN1rOjLplwR1YBg==
+To: Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+ joshdon@google.com, brho@google.com, pjt@google.com, derkling@google.com,
+ haoluo@google.com, dvernet@meta.com, dschatzberg@meta.com,
+ dskarlat@cs.cmu.edu, riel@surriel.com, changwoo@igalia.com,
+ himadrics@inria.fr, memxor@gmail.com, andrea.righi@canonical.com,
+ joel@joelfernandes.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ kernel-team@meta.com
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+In-Reply-To: <ZnSEeO8MHIQRJyt1@slm.duckdns.org>
+References: <CAHk-=wg8APE61e5Ddq5mwH55Eh0ZLDV4Tr+c6_gFS7g2AxnuHQ@mail.gmail.com>
+ <87ed8sps71.ffs@tglx>
+ <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
+ <87bk3wpnzv.ffs@tglx>
+ <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
+ <878qz0pcir.ffs@tglx> <ZnSEeO8MHIQRJyt1@slm.duckdns.org>
+Date: Fri, 21 Jun 2024 12:46:03 +0200
+Message-ID: <87r0cqo9p0.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <2c26a07f-fa68-48f1-8f3b-3b5e4f77130b@app.fastmail.com>
-In-Reply-To: <alpine.DEB.2.21.2406210041140.43454@angie.orcam.me.uk>
-References: <20240612-mips-llsc-v2-0-a42bd5562bdb@flygoat.com>
- <20240612-mips-llsc-v2-2-a42bd5562bdb@flygoat.com>
- <alpine.DEB.2.21.2406210041140.43454@angie.orcam.me.uk>
-Date: Fri, 21 Jun 2024 11:45:41 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Jonas Gorski" <jonas.gorski@gmail.com>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] MIPS: Introduce config options for LLSC availability
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
+Tejun!
 
-
-=E5=9C=A82024=E5=B9=B46=E6=9C=8821=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=E5=
-=8D=881:00=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=EF=BC=9A
-> On Wed, 12 Jun 2024, Jiaxun Yang wrote:
+On Thu, Jun 20 2024 at 09:35, Tejun Heo wrote:
+> On Thu, Jun 20, 2024 at 04:35:08AM +0200, Thomas Gleixner wrote:
+>> When I sat there in Richmond with the sched_ext people I gave them very
+>> deep technical feedback especially on the way how they integrate it:
+>> 
+>>   Sprinkle hooks and callbacks all over the place until it works by some
+>>   definition of works.
 >
->> Introduce CPU_HAS_LLSC and CPU_MAY_HAVE_LLSC to determine availability
->> of LLSC and Kconfig level.
+> I would characterize that part of the discussion more nebulous than deep.
+> You cited a really high number for where SCX is hooking into the scheduler
+> core and then made wide-ranging suggestions including refactoring all the
+> schedulers, which seemed vague and out of scope. I tried to probe and we
+> didn't get anywhere concrete, which is fine. It's difficult to hash out
+> details in such settings.
+
+It's not that nebulous. And fine if you tried and got nowhere, but did
+you give feedback to those failed attempts or started a discussion with
+anyone on the scheduler side? No.
+
+>> That's perfectly fine for a PoC, but not for something which gets merged
+>> into the core of an OS. I clearly asked them to refactor the existing
+>> code so that these warts go away and everything is contained into the
+>> scheduler classes and at the very end sched_ext falls into place. That's
+>> a basic engineering principle as far as I know.
+>> 
+>> They nodded, ignored my feedback and just continued to pursue their way.
 >
->  Taking the subsequent patches in this series into account this seems =
-to=20
-> create a parallel universe in which the availability of LL/SC for cert=
-ain=20
-> features is handled at the Kconfig level while in the other universe i=
-t's=20
-> handled via <asm/mach-*/cpu-feature-overrides.h>.
->
->  I think this ought not to be done in two places independently and the=20
-> pieces in <asm/mach-*/cpu-feature-overrides.h> need to be removed, lik=
-ely=20
-> in the same change even, *however* not without double-checking whether=20
-> there is not a case among them where a platform actually has LL/SC sup=
-port=20
-> disabled despite the CPU used there having architectural support for t=
-he=20
-> feature.  Otherwise we may end up with a case where a platform has LL/=
-SC=20
-> support disabled via its <asm/mach-*/cpu-feature-overrides.h> setting =
-and=20
-> yet we enable ARCH_SUPPORTS_ATOMIC_RMW or ARCH_HAVE_NMI_SAFE_CMPXCHG f=
-or=20
-> it via Kconfig.
+> However, this is not true. During the discussion, I asked you multiple times
+> to review the patches and point out the parts that are problematic so that
+> they can be addressed and the discussion can become more concrete. You
+> promised you would but didn't.
 
-IMO it's necessary for platforms who know what are they doing such as AT=
-H25,
-which we took care in this series.
+Yes, I said I will do two things:
 
-I'll add a build time assertion to ensure when CONFIG_CPU_HAS_LLSC is se=
-lected
-kernel_uses_llsc is statically 1, so any incorrect overrides can be spot=
-ted
-at build time.
+     - Talk to Peter
+     - Review the stuff again
 
-It's better to clean up platform's overrides at some point, I'll leave
-it to a future patch.
+I talked to Peter to come up with a proper plan in order to give
+feedback. It was unfortunate that Peter vanished from the planet at that
+time due to his shoulder incident.
 
->
->  The note from <asm/mach-ip32/cpu-feature-overrides.h> seems a candida=
-te=20
-> to move to arch/mips/Kconfig at the relevant place on this occasion to=
-o.
-> There may be more such notes and they ought not to be lost.
+As I said to Linus, I'm sorry that I afterwards dropped the ball
+because I got dragged into other things and ran out of cycles.
 
-Noted, I'll add a Kconfig symbol WAR_R5000_LLSC and rescue this comment.
+I also asked you to reach out to the scheduler folks and work with them
+to get things moving again. Are you really claiming that you couldn't do
+that without me holding your hands?
 
-Thanks
->
->   Maciej
+> When we attempted to follow up with you afterwards, we got no responses.
 
---=20
-- Jiaxun
+I just checked and found three private mails from you which ended up in
+the wrong filter dated Feb 1, Feb 9, Feb 16. My bad that I dropped
+them, but definitely not because of desinterest or malice.
+
+You can of course say you tried and I ignored you, but seriously?
+
+If you really wanted to get my attention then you exactly know how to
+get it like everyone else who is working with me for decades.
+
+Thanks,
+
+        tglx
+
+
+
+
 
