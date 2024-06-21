@@ -1,174 +1,135 @@
-Return-Path: <linux-kernel+bounces-224345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA81912120
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:47:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58739120BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA1FFB21A29
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:47:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 431AC1F24405
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A23516EC09;
-	Fri, 21 Jun 2024 09:46:58 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FAF116E886;
+	Fri, 21 Jun 2024 09:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IjIEVOqY"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6F516EBE2;
-	Fri, 21 Jun 2024 09:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C1316E87B;
+	Fri, 21 Jun 2024 09:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718963217; cv=none; b=WPJKE04TMGaADSh37XXEZeICyL2UP1Y26pDGKHy7T0E8JChiqxkFGO6tW+cYXmk1T/mvFgrUELhyT2rheRx0NS0parjK1P7+Gw5CLKxvWdKe55ciXhADMrNTnno1d/cwwqnd4tytfc3MAndrIP6eiBvMIJQfb+NYguP/Cq0/Miw=
+	t=1718962483; cv=none; b=g068VrHf4QdsHfOgIT9pPFopPI/uR6szNQZY555kjLGczJZaJfnwaVNPYB1RTKt3Btld54xYWB8Af7mWrr0OBOAUBXVk14Gj/OMsfzfjj/3HGjsVJibtPnmbXgCM3aYG4K0m2b+iAC/VWVtcfz6Yw9KnQw5sbGSLnPlozLyrrLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718963217; c=relaxed/simple;
-	bh=HJTFm3ne3G9N/E5vIgWrPP8CfAEG4zIi627y5AOehJE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EjgLCNtHs0zSh/S1VW6HIPEzXkz/6ikLvLDSgSCyRiJLDgr/HAW5Zo4UO6LJjQ9CdTXl03NqplNL5NSKSgs/wNNMN5Tj8HiO4Ix2bIM6fuSZ+TKpPEEP5jfLtwPxBadzp4g2Dh1J/vSsYndy8ZjMsZZYjRVTt4fq+OJPLUM0Nqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L7PHc8026598;
-	Fri, 21 Jun 2024 02:34:26 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yvrmq8p5c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 21 Jun 2024 02:34:26 -0700 (PDT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 21 Jun 2024 02:34:26 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Fri, 21 Jun 2024 02:34:24 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com>
-CC: <bfoster@redhat.com>, <kent.overstreet@linux.dev>,
-        <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] bcachefs: fix deadlock in bch2_gc_mark_key
-Date: Fri, 21 Jun 2024 17:34:23 +0800
-Message-ID: <20240621093423.1874314-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000c43781061b5fbdcd@google.com>
-References: <000000000000c43781061b5fbdcd@google.com>
+	s=arc-20240116; t=1718962483; c=relaxed/simple;
+	bh=jE51PnV5EwBj2vUe72KXHFR0KLjv+PHhidQiOR7Tnrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dvLo7V0/K6uLequZkIoHcT3JBbPkarCGwe7r0OV8VnuDS4AnFP/mXhIc4xu75nFGOxtDktTTIHkCgUDPDWfbykYUiM+AxiMBIDydd75LvthB0sn7FTj9ny6wHLT/rL2p3x8rNsvCiqmfwMv3onuGEfROFPwE9Wj0MCrw1dazT3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IjIEVOqY; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7062c11d0d1so1650502b3a.1;
+        Fri, 21 Jun 2024 02:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718962481; x=1719567281; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dOfOHGWM85MYwLzr4mYDa2Z5BOkt2sOF/968G/m/mOk=;
+        b=IjIEVOqYOmV0lYcNd2teDTYRCSM/Y1dj7EvnJ9BUm+6zUpgtS+A5GbfB848ZghllpQ
+         XwUkpcDMHdil5ugFacDBSFr2lR4UIAgbevafYklg5pS5YYX9FYx5T9tAI9FJIYW+kxuc
+         T4tpZs/OUwUcHAptZWB3Qb36haLfIdvb8DlSGeek94SJJtAFJccxPmvnjBm/3NKuYul/
+         s5HTik9mc6a6o97twqtJdC8oQBxE06zXC/iu09H5UlSWQP3/7h6CBVnd9tJ9TqaUXpfF
+         f4pIZzjOdEYOjnqAHvJjSGhpn+yClybriVVj+6MCg6ZVtptfepV5S8sNIGbxprinIXRV
+         5s2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718962481; x=1719567281;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dOfOHGWM85MYwLzr4mYDa2Z5BOkt2sOF/968G/m/mOk=;
+        b=DAZhpBW3/kznz2zygAG8PVDpFg+2ChAG4/5Q94+rLAxSj1gbr7eUtusmfbWicHk6jI
+         +7IqPNOvbVSir5k3a1/PleOLiurt25sgoyoaiaUOi/DZcaN8HDm5ND/VoroVzuoegcdN
+         rvzydTxpKUEeoaqMhn6EFOhMrgEEI8rrOo88aOGzATa8C4plV9tgorQIYdZF/++EQtus
+         4G9EmAg/+xfC/3mshmPpf/RvTCQHRTW6M1dfpA5nf9oCv1QYDxeEqFgya3bXpERPbh4g
+         3f8THgtd1/2EXWkGfoqJIpHotrAKdajfwx9e8E/5ZwF/a4gDqsdTRpo+lJA+VIyQNBqc
+         Ap+w==
+X-Forwarded-Encrypted: i=1; AJvYcCU3xJbsUlwUGwxm5jCIE6k/ZCW17Xd7z9Ab2jHCu6xN/aYvDZ01I8zfePf5mqS1XoD3wdHondoyUqq/l5f2NS6LZ8CdplTjBfOEq3a2JL3iXLv031u62WEPntNsO5LVvLBo1b9rtCetIA==
+X-Gm-Message-State: AOJu0YxtlUWjezLituTNe5PMpbuEbjdLuhcyUgGj4Mz0/jsZ/rsHWK4Z
+	kTB3aV9VvPuCypedq78d4i+TT8fRVb8/O/ZyUvcNeni5k0ZlU2Ut
+X-Google-Smtp-Source: AGHT+IEeUxGDTwGB8VosTpIA20i9Q6XpmX/CnHOXS1fPPKScq1Qt8Sxnlk8mQiGfdUjlvHa1IOVBRg==
+X-Received: by 2002:a05:6a20:c412:b0:1b6:63b6:ea6d with SMTP id adf61e73a8af0-1bcbb39ff23mr7701203637.11.1718962481510;
+        Fri, 21 Jun 2024 02:34:41 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512e64afsm973769b3a.189.2024.06.21.02.34.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 02:34:41 -0700 (PDT)
+Message-ID: <64f00fbc-5bcd-439e-a0f4-94f35e84e5ec@gmail.com>
+Date: Fri, 21 Jun 2024 18:34:32 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: eS3u-ap7tF52Pq7eMUnI8kgw38g8yCsy
-X-Proofpoint-GUID: eS3u-ap7tF52Pq7eMUnI8kgw38g8yCsy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_04,2024-06-20_04,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- adultscore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0
- mlxlogscore=900 suspectscore=0 clxscore=1011 malwarescore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2406140001 definitions=main-2406210071
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH lkmm 0/2] tools/memory-model: Add locking.txt and
+ glossary.txt to README
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Marco Elver <elver@google.com>,
+ Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+ David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>,
+ Luc Maranget <luc.maranget@inria.fr>, Daniel Lustig <dlustig@nvidia.com>,
+ Joel Fernandes <joel@joelfernandes.org>, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+ Akira Yokosawa <akiyks@gmail.com>
+References: <ae2b0f62-a593-4e7c-ab51-06d4e8a21005@gmail.com>
+ <ZnU4gE+OB+xvvW+I@andrea>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <ZnU4gE+OB+xvvW+I@andrea>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[Syz reported]
-the existing dependency chain (in reverse order) is:
+On Fri, 21 Jun 2024 10:23:28 +0200, Andrea Parri wrote:
+> On Fri, Jun 21, 2024 at 01:08:24PM +0900, Akira Yokosawa wrote:
+>> Hi all,
+>>
+>> [+CC: Marco, as Patch 1/2 includes update related to access-marking.txt.]
+>>
+>> Looks to me like Andrea's herd-representation.txt has stabilized.
+>> Patch 1/2 fills missing pieces in docs/README.
+>>
+>> While skimming through documents, I noticed a typo in simple.txt.
+>> Patch 2/2 fixes it.
+>>
+>>         Thanks, Akira
+>> --
+>> Akira Yokosawa (2):
+>>   tools/memory-model: Add locking.txt and glossary.txt to README
+>>   tools/memory-model: simple.txt: Fix dangling reference to
+>>     recipes-pairs.txt
+> 
+> For the series,
+> 
+> Acked-by: Andrea Parri <parri.andrea@gmail.com>
 
--> #1 (&c->btree_root_lock){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       bch2_btree_roots_to_journal_entries+0xbb/0x980 fs/bcachefs/btree_update_interior.c:2633
-       bch2_fs_mark_clean+0x2cc/0x6d0 fs/bcachefs/sb-clean.c:376
-       bch2_fs_read_only+0x1101/0x1210 fs/bcachefs/super.c:381
-       __bch2_fs_stop+0x105/0x540 fs/bcachefs/super.c:615
-       generic_shutdown_super+0x136/0x2d0 fs/super.c:642
-       bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2037
-       deactivate_locked_super+0xc4/0x130 fs/super.c:473
-       cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
-       task_work_run+0x24f/0x310 kernel/task_work.c:180
-       ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
-       ptrace_report_syscall include/linux/ptrace.h:415 [inline]
-       ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
-       syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
-       syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
-       __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
-       syscall_exit_to_user_mode+0x273/0x370 kernel/entry/common.c:218
-       do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Thank you!
 
--> #0 (&c->sb_lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       bch2_gc_mark_key+0xc66/0x1010 fs/bcachefs/btree_gc.c:600
-       bch2_gc_btree fs/bcachefs/btree_gc.c:648 [inline]
-       bch2_gc_btrees fs/bcachefs/btree_gc.c:697 [inline]
-       bch2_check_allocations+0x3e06/0xcca0 fs/bcachefs/btree_gc.c:1224
-       bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:182
-       bch2_run_recovery_passes+0x19e/0x820 fs/bcachefs/recovery_passes.c:225
-       bch2_fs_recovery+0x2370/0x3720 fs/bcachefs/recovery.c:807
-       bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1035
-       bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2127
-       bch2_mount+0x6b0/0x13a0 fs/bcachefs/fs.c:1919
-       legacy_get_tree+0xee/0x190 fs/fs_context.c:662
-       vfs_get_tree+0x90/0x2a0 fs/super.c:1780
-       do_new_mount+0x2be/0xb40 fs/namespace.c:3352
-       do_mount fs/namespace.c:3692 [inline]
-       __do_sys_mount fs/namespace.c:3898 [inline]
-       __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> I do get some "trailing whitespace" warning, for patch #1, you might
+> want to clean up when applying/reposting the series.
 
-other info that might help us debug this:
+Ugh, I failed to setup a pre-commit hook for this repo.  :-/
 
- Possible unsafe locking scenario:
+Will send a v2 in a couple of days.
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(&c->btree_root_lock);
-                               lock(&c->sb_lock);
-                               lock(&c->btree_root_lock);
-  lock(&c->sb_lock);
+        Thanks, Akira
 
-[Analysis]
-bch2_btree_roots_to_journal_entries() does not need to hold sb_lock, so
-we can remove sb_lock to avoid deadlock.
-
-Reported-by: syzbot+050e797ad21ccc3f5d1a@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=050e797ad21ccc3f5d1a
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/bcachefs/sb-clean.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
-index 47f10ab57f40..7a75615ba745 100644
---- a/fs/bcachefs/sb-clean.c
-+++ b/fs/bcachefs/sb-clean.c
-@@ -373,6 +373,7 @@ void bch2_fs_mark_clean(struct bch_fs *c)
- 
- 	entry = sb_clean->start;
- 	bch2_journal_super_entries_add_common(c, &entry, 0);
-+	mutex_unlock(&c->sb_lock);
- 	entry = bch2_btree_roots_to_journal_entries(c, entry, 0);
- 	BUG_ON((void *) entry > vstruct_end(&sb_clean->field));
- 
-@@ -383,6 +384,7 @@ void bch2_fs_mark_clean(struct bch_fs *c)
- 	 * this should be in the write path, and we should be validating every
- 	 * superblock section:
- 	 */
-+	mutex_lock(&c->sb_lock);
- 	ret = bch2_sb_clean_validate_late(c, sb_clean, WRITE);
- 	if (ret) {
- 		bch_err(c, "error writing marking filesystem clean: validate error");
--- 
-2.43.0
+> 
+>   Andrea
 
 
