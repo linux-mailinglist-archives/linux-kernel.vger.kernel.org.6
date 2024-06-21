@@ -1,349 +1,140 @@
-Return-Path: <linux-kernel+bounces-224856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 232139127A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:27:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C97E59127AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 16:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3E6628C7D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:27:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 083281C260A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4AA6F2F0;
-	Fri, 21 Jun 2024 14:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEF5225D0;
+	Fri, 21 Jun 2024 14:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QhDJRyda"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMGuYvwj"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C5F433D6
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 14:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C9622EF3;
+	Fri, 21 Jun 2024 14:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718979927; cv=none; b=CqwgE9Tuzwz8e7c72syJ+PdXCiErJE5xqVl0+kzMtwrKpq7wORtkoHm5XrOgEm30LclKdgt5klKiXjxZOe0vgZSOiOQwUGcMwa8Ls4rBqN/YPw/uq5nFu625OrcmEpyuwsHQbydUnS1S3aJVpPJYByiEEPe+KFJM390eTIFm1C8=
+	t=1718979991; cv=none; b=i9Z8urpvcYOABtyyORAlvNj0jx3McOhvZp1M07VNkeABTEBR5gfF8Y6+QP3+elF9iguRvYxgtM6Jmr+Xkq6eh4dT2fPegOSUEet5qX6Mlx1ocfbrLl3lqSmZ8cfbe07qzta/BOkyrK2IwBrVqp88M0WiuPqPC1K+z3zPKpuxFs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718979927; c=relaxed/simple;
-	bh=nOXxENP+SihR2L2Tw2z5KRQQ1L5Z5qj+bFBtQ9AMgag=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A5xMo1IVrdcJxqzsyib2HGQpO8dXjFWc30/hSsMPCfB/Si47sXQpX8b1hNmjBF2SYl6J8VzaHxy0CTmTdeD2cLie0tdIAUKDxqwrX2Nq3unqIusbCWL0gTXIoaMWEj2dxYtWdS3SLiwl/nIcA66mSMFO0jRAo4PZYaWyQ0CSHoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QhDJRyda; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718979924;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FloNdHDAMCUmgBKRbs+OcXuVLR4NlkKUkgqw/Oorwhs=;
-	b=QhDJRyda6rNLejYdscfslEYaJxGeILdq153SuN9eyZ0LtXj6AiVP5gKTDJjuHEtS33WJWn
-	1gsisAKU5bPwDGucD3EtvtAvhf/r78i55N7iSW1OW7AJLxhtlMceL81kshrn8E43g0nJPn
-	ZjLNyuYRJDlz60lYG8ctuFoc2fnu/4g=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-378-o5dTw0E7NY-6exYoyF7aiw-1; Fri, 21 Jun 2024 10:25:23 -0400
-X-MC-Unique: o5dTw0E7NY-6exYoyF7aiw-1
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-43e2c5354f9so3561121cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:25:23 -0700 (PDT)
+	s=arc-20240116; t=1718979991; c=relaxed/simple;
+	bh=tvHHuO/BCSRLG6rPE40hQw1VVA3fAhsW8KG0I1YjU9M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=C7osBu3HG0NWpUJY6+QMxiw9iCu69/qqbgxIVZr3/x2knyE3jpoVZVYU0RHPw1CQSiO5ds5GSZGqzms6/Jrj2zVoidGw4LlNl0YyxJE1BxZnX6WtZaSa0sibfktiJifasfuL4zphVqwYbGrcPKMLBvvtAZ3Sl52Imxm5073gtV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RMGuYvwj; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52b78ef397bso2765471e87.0;
+        Fri, 21 Jun 2024 07:26:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718979988; x=1719584788; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zVXXvLK2SUZBN/O7yt3THbrNfcqJYITD8QMvF/flJds=;
+        b=RMGuYvwj2smZreTYF71/H9VVLJMAixW1LEZvtYGpgBe8aKZ8YIBQ61IjYtVOfYMZSl
+         ZSevz40QlOPKBzZH9hJcSQKWliTGa1CMdCZxEk6iGWcdziiq3jeaKYk2NX/1EivdIvRH
+         k1hGm0u/tju8GMpycQUZEup6uaWhn/r00FbY4Tzc06HPrirGcqveORppxwGF/GD3PKWj
+         TUlHycMxEai1mggqGGJ5wJt1tqHg6mSqzZ+e2R8n2TjV0yasq00Dcgxzf828al4TFxJB
+         7GGPEqqyBiaP8kKJdFNjgEjAA1OVn1rpwAnWiiw5dxbJk3dwdgS6CqAGCR1q2Lti3kTa
+         EdzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718979922; x=1719584722;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FloNdHDAMCUmgBKRbs+OcXuVLR4NlkKUkgqw/Oorwhs=;
-        b=JO4jqCxIYySyHdzyVjXq3s5JZPIgVnaRZox5KAaRTv7nnTKDhyW1ekh7fpo5EID//5
-         BO99YbnpF407IjO6fnYt5yMg+7PbXIZTB9RqXdIf+6cvDyz+dCd856zRbCAibc72oHET
-         6jw97g7cG/aDwYvCJN2NZXIdaC6oVEguJhSDAfOJVNpiBx8YiQIe/jcs3LRZFE5ws9Mv
-         lthZzWgfilS8elAWhF0Asla7kxfmlakGbbSdaQ/xrYRB0gPGecw5lktiarK4VUKZQweb
-         PRx9OUMtXZD/EPQqoqCVVbpLPa2z7trqWVa/MCDwuaD8hMhFqtm2A3AMxvZdzQh/q6IB
-         Y1ZA==
-X-Gm-Message-State: AOJu0YxV42dgSEWhtmoikB97b00+VAzlQ56xjIKxA5eqVGvYmtfnJ/CQ
-	UDv3BPQdqY1r45NmQsSg7JiOW8Kxo2oytIRjYai3oUHGWYeE4PjxV5072phDwddlx9+L82pmyi1
-	AeguHuXuzZY2v1Sg/4bhcgH71fjRvu6no3HaKf/ZjY6aNnnUDu1Y2wT68O5AVnHRQpDACwFvo2v
-	qUfGWdDItjqrfFm2qFk07sQ07acWer7bsfMFGr+RsS28c=
-X-Received: by 2002:a05:620a:4725:b0:79b:b8ef:160f with SMTP id af79cd13be357-79bb8ef1a25mr832758785a.0.1718979922257;
-        Fri, 21 Jun 2024 07:25:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHKznxYW2FLJ0xJwWKaEtD8Tk/BHH+OIQZWLkXgxtzT/k39w+HZ9hDMrU5i6fKaXRUQoupH+Q==
-X-Received: by 2002:a05:620a:4725:b0:79b:b8ef:160f with SMTP id af79cd13be357-79bb8ef1a25mr832752985a.0.1718979921429;
-        Fri, 21 Jun 2024 07:25:21 -0700 (PDT)
-Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce944cb2sm90564785a.125.2024.06.21.07.25.19
+        d=1e100.net; s=20230601; t=1718979988; x=1719584788;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zVXXvLK2SUZBN/O7yt3THbrNfcqJYITD8QMvF/flJds=;
+        b=g3bzAJXw9WKTDfc9PWM9PbXE0ktajdVZAOmkRq7P1KE2/oNjXuFHoKAdGEXu1MO8wV
+         wFUdhFBMQ27IRU7bDXzTZTqbG+mYx/8q57NBPVvRZ9GkPHDvWzdzjJuMkD4cjI3tsW0m
+         lLOt0baqk1Vhvp1VGWn4gAVbQ/iR309VS5PNo9eq4wJc/ZqUSmfVaP1BVxVkVqRDffGI
+         +Yowd13H4EwblSXghHibOUASqcoCodmHt+WZKRYJkPIUfqq1C42xCkSupczSwkgutoH4
+         WqeBmYwi67br787iYSfc45MWeO6yvXoVu4RbhxGuj69WtyPhrahNXqXEIrhm1k0Yzs6g
+         H5Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQBKJwADTOlgQVHY/LwNTmDsjfVjBXUL2Z1ExETTuN0KGy1T0gaKhx7RW5TBw1KUt2jWVWInRqZH3BmEGvbbAFYuf17F4RxAara5dA174PDfxx+Qn12xTAFcVCtJMh0ne0pdo+SSvxiP+xM1Cl2fKwWRFhcGiW3YVsI76F8qgFqax9VuoF
+X-Gm-Message-State: AOJu0YxfbKJy0W2YeRoGzaAIvEklcDPVx9OlaF8JE6mBfmB8+uPDJi3Y
+	C7kJl8OGY11jvi6vFM7TjtQwaRfZQeB0sgREkYoaBx2s9DH6VhjScaNGbQ6rEjU=
+X-Google-Smtp-Source: AGHT+IE97O3KqXdCaStmRgNECBJpcvCuk+oQA+RtuAspu2WyC4kyl34Wxr/qEMf2dlRgL1HeZNA4Bg==
+X-Received: by 2002:a05:6512:1050:b0:52c:ca8d:d1c with SMTP id 2adb3069b0e04-52cca8d0d51mr2505448e87.2.1718979986970;
+        Fri, 21 Jun 2024 07:26:26 -0700 (PDT)
+Received: from deepthought.lan ([2a00:1e88:40c0:c300::729])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd6452602sm210890e87.298.2024.06.21.07.26.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 07:25:21 -0700 (PDT)
-From: Peter Xu <peterx@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: x86@kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Jiang <dave.jiang@intel.com>,
-	"Kirill A . Shutemov" <kirill@shutemov.name>,
-	Ingo Molnar <mingo@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	peterx@redhat.com,
-	Matthew Wilcox <willy@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Hugh Dickins <hughd@google.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linuxppc-dev@lists.ozlabs.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Rik van Riel <riel@surriel.com>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Huang Ying <ying.huang@intel.com>
-Subject: [PATCH 7/7] mm/mprotect: fix dax pud handlings
-Date: Fri, 21 Jun 2024 10:25:04 -0400
-Message-ID: <20240621142504.1940209-8-peterx@redhat.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240621142504.1940209-1-peterx@redhat.com>
-References: <20240621142504.1940209-1-peterx@redhat.com>
+        Fri, 21 Jun 2024 07:26:26 -0700 (PDT)
+From: Valeriy Klimin <vdos63@gmail.com>
+Subject: [PATCH v2 0/3] Add Sony Xperia Z3 Compact smartphone
+Date: Fri, 21 Jun 2024 17:26:41 +0300
+Message-Id: <20240621-sony-aries-v2-0-dddf10722522@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKGNdWYC/02OQQ6CMBBFr0Jm7ZC2wQquvIdhUcoAkwhoi42Ec
+ HcLuHD5Jv+/Pwt4ckwerskCjgJ7HocI6pSA7czQEnIdGZRQmdBKoB+HGc3WwcycK0tC20LWEAt
+ PRw1/dtm9PNjR6x2d03GEynhCO/Y9T9ck6FQKdFbCFu7YT6Ob90eC3NO/Tfm/GSQKrGxT6Pyii
+ 1zQre0NP9IohXJd1y+oqbSF0QAAAA==
+To: ~postmarketos/upstreaming <~postmarketos/upstreaming@lists.sr.ht>, 
+ phone-devel <phone-devel@vger.kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Valeriy Klimin <vdos63@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1072; i=vdos63@gmail.com;
+ h=from:subject:message-id; bh=tvHHuO/BCSRLG6rPE40hQw1VVA3fAhsW8KG0I1YjU9M=;
+ b=owEBbQKS/ZANAwAIAQ4Juwrzgg1aAcsmYgBmdY20JZOj4NxV7R7R6FeBOJ+NvEKKtjOgKlcRs
+ u+T4hXrfFeJAjMEAAEIAB0WIQT/ENLr7ksLn/+UbhAOCbsK84INWgUCZnWNtAAKCRAOCbsK84IN
+ WlZtD/445YWs51MAT36+axIx5fgDOHQuVEjJsdyyUuzgzVVYK80tuR6wfgj0ffM4tyUfMNDBU4e
+ OTa1WWCK6G0mswmvEoqHuJITRVZdjAytOrpWyTk+2WYchrSHMplwYizmQbKNG3X493IKxc0vAoC
+ xwPpn8c8a03qgox51GmA5E/uD/BNTiEViNJPK4SvGT2SB2K8tQC8y9cLtB6rKlMF01VgcLqTGZY
+ 4kHUYca8R/2Egzus+WfzWotvOkvVleKN9qjl9i7ZU1iJ1ns/XwQYdcI/3rrNq/KUJAcVAvJbsuF
+ PsXKUXZZ6dfhR8OXtOh9IIDW3moS7+prXOYl5KVrubSr6kKUzhK30WwVY60+mfEzkEcoxv7oqAa
+ 7lOwOUO+q4uYhSvxB1UknTCVP3jkxogsWp1zLaxcLlCN50DhLw8F8aaqJqvdj5BYGgywHNIX/P7
+ 7AteZy2Hwaf61tlrey+p7KgQGkGvSuZozFxMFb30Kn7y+4FeBHz2xQYhbyGXB7DtWC7Herz+rOh
+ RbkisAW/zHHqcaGj5bI7p9H8SWZ3G1jUWe98Gsl0id4zrswMld4g6fDmpwz2WO2MJWPnkLbYkU5
+ NnZ9PJOK8gUXrm/va6zaqNHkFWvJVeuyeh06K7GQmXvNh/89SEvzLb+gOaNoB3Gi/nRr4AuK/dk
+ ZRFmaji3b+4iIJg==
+X-Developer-Key: i=vdos63@gmail.com; a=openpgp;
+ fpr=FF10D2EBEE4B0B9FFF946E100E09BB0AF3820D5A
 
-This is only relevant to the two archs that support PUD dax, aka, x86_64
-and ppc64.  PUD THPs do not yet exist elsewhere, and hugetlb PUDs do not
-count in this case.
+This is almost the same as the dts of the Xperia Z3, except for the
+battery charge limits. 
 
-DAX have had PUD mappings for years, but change protection path never
-worked.  When the path is triggered in any form (a simple test program
-would be: call mprotect() on a 1G dev_dax mapping), the kernel will report
-"bad pud".  This patch should fix that.
+The current on the l21 regulator for shinano is also bumped up
+to stop SD card errors.
 
-The new change_huge_pud() tries to keep everything simple.  For example, it
-doesn't optimize write bit as that will need even more PUD helpers.  It's
-not too bad anyway to have one more write fault in the worst case once for
-1G range; may be a bigger thing for each PAGE_SIZE, though.  Neither does
-it support userfault-wp bits, as there isn't such PUD mappings that is
-supported; file mappings always need a split there.
-
-The same to TLB shootdown: the pmd path (which was for x86 only) has the
-trick of using _ad() version of pmdp_invalidate*() which can avoid one
-redundant TLB, but let's also leave that for later.  Again, the larger the
-mapping, the smaller of such effect.
-
-Another thing worth mention is this path needs to be careful on handling
-"retry" event for change_huge_pud() (where it can return 0): it isn't like
-change_huge_pmd(), as the pmd version is safe with all conditions handled
-in change_pte_range() later, thanks to Hugh's new pte_offset_map_lock().
-In short, change_pte_range() is simply smarter than change_pmd_range() now
-after the shmem thp collapse rework.  For that reason, change_pud_range()
-will need proper retry if it races with something else when a huge PUD
-changed from under us.
-
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: x86@kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Fixes: a00cc7d9dd93 ("mm, x86: add support for PUD-sized transparent hugepages")
-Fixes: 27af67f35631 ("powerpc/book3s64/mm: enable transparent pud hugepage")
-Signed-off-by: Peter Xu <peterx@redhat.com>
+Signed-off-by: Valeriy Klimin <vdos63@gmail.com>
 ---
- include/linux/huge_mm.h | 24 +++++++++++++++++++
- mm/huge_memory.c        | 52 +++++++++++++++++++++++++++++++++++++++++
- mm/mprotect.c           | 40 ++++++++++++++++++++++++-------
- 3 files changed, 108 insertions(+), 8 deletions(-)
+Changes in v2:
+- Reordered dt-bindings and dts commits
+- Link to v1: https://lore.kernel.org/r/20240621-sony-aries-v1-0-bcf96876980e@gmail.com
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 212cca384d7e..b46673689f19 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -345,6 +345,17 @@ void split_huge_pmd_address(struct vm_area_struct *vma, unsigned long address,
- void __split_huge_pud(struct vm_area_struct *vma, pud_t *pud,
- 		unsigned long address);
- 
-+#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-+int change_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
-+		    pud_t *pudp, unsigned long addr, pgprot_t newprot,
-+		    unsigned long cp_flags);
-+#else
-+static inline int
-+change_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
-+		pud_t *pudp, unsigned long addr, pgprot_t newprot,
-+		unsigned long cp_flags) { return 0; }
-+#endif
-+
- #define split_huge_pud(__vma, __pud, __address)				\
- 	do {								\
- 		pud_t *____pud = (__pud);				\
-@@ -588,6 +599,19 @@ static inline int next_order(unsigned long *orders, int prev)
- {
- 	return 0;
- }
-+
-+static inline void __split_huge_pud(struct vm_area_struct *vma, pud_t *pud,
-+				    unsigned long address)
-+{
-+}
-+
-+static inline int change_huge_pud(struct mmu_gather *tlb,
-+				  struct vm_area_struct *vma, pud_t *pudp,
-+				  unsigned long addr, pgprot_t newprot,
-+				  unsigned long cp_flags)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
- static inline int split_folio_to_list_to_order(struct folio *folio,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 0fffaa58a47a..af8d83f4ce02 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2091,6 +2091,53 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	return ret;
- }
- 
-+/*
-+ * Returns:
-+ *
-+ * - 0: if pud leaf changed from under us
-+ * - 1: if pud can be skipped
-+ * - HPAGE_PUD_NR: if pud was successfully processed
-+ */
-+#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-+int change_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
-+		    pud_t *pudp, unsigned long addr, pgprot_t newprot,
-+		    unsigned long cp_flags)
-+{
-+	struct mm_struct *mm = vma->vm_mm;
-+	pud_t oldpud, entry;
-+	spinlock_t *ptl;
-+
-+	tlb_change_page_size(tlb, HPAGE_PUD_SIZE);
-+
-+	/* NUMA balancing doesn't apply to dax */
-+	if (cp_flags & MM_CP_PROT_NUMA)
-+		return 1;
-+
-+	/*
-+	 * Huge entries on userfault-wp only works with anonymous, while we
-+	 * don't have anonymous PUDs yet.
-+	 */
-+	if (WARN_ON_ONCE(cp_flags & MM_CP_UFFD_WP_ALL))
-+		return 1;
-+
-+	ptl = __pud_trans_huge_lock(pudp, vma);
-+	if (!ptl)
-+		return 0;
-+
-+	/*
-+	 * Can't clear PUD or it can race with concurrent zapping.  See
-+	 * change_huge_pmd().
-+	 */
-+	oldpud = pudp_invalidate(vma, addr, pudp);
-+	entry = pud_modify(oldpud, newprot);
-+	set_pud_at(mm, addr, pudp, entry);
-+	tlb_flush_pud_range(tlb, addr, HPAGE_PUD_SIZE);
-+
-+	spin_unlock(ptl);
-+	return HPAGE_PUD_NR;
-+}
-+#endif
-+
- #ifdef CONFIG_USERFAULTFD
- /*
-  * The PT lock for src_pmd and dst_vma/src_vma (for reading) are locked by
-@@ -2319,6 +2366,11 @@ void __split_huge_pud(struct vm_area_struct *vma, pud_t *pud,
- 	spin_unlock(ptl);
- 	mmu_notifier_invalidate_range_end(&range);
- }
-+#else
-+void __split_huge_pud(struct vm_area_struct *vma, pud_t *pud,
-+		unsigned long address)
-+{
-+}
- #endif /* CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
- 
- static void __split_huge_zero_page_pmd(struct vm_area_struct *vma,
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index fb8bf3ff7cd9..694f13b83864 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -425,29 +425,53 @@ static inline long change_pud_range(struct mmu_gather *tlb,
- 		unsigned long end, pgprot_t newprot, unsigned long cp_flags)
- {
- 	struct mmu_notifier_range range;
--	pud_t *pud;
-+	pud_t *pudp, pud;
- 	unsigned long next;
- 	long pages = 0, ret;
- 
- 	range.start = 0;
- 
--	pud = pud_offset(p4d, addr);
-+	pudp = pud_offset(p4d, addr);
- 	do {
-+again:
- 		next = pud_addr_end(addr, end);
--		ret = change_prepare(vma, pud, pmd, addr, cp_flags);
--		if (ret)
--			return ret;
--		if (pud_none_or_clear_bad(pud))
-+		ret = change_prepare(vma, pudp, pmd, addr, cp_flags);
-+		if (ret) {
-+			pages = ret;
-+			break;
-+		}
-+
-+		pud = READ_ONCE(*pudp);
-+		if (pud_none(pud))
- 			continue;
-+
- 		if (!range.start) {
- 			mmu_notifier_range_init(&range,
- 						MMU_NOTIFY_PROTECTION_VMA, 0,
- 						vma->vm_mm, addr, end);
- 			mmu_notifier_invalidate_range_start(&range);
- 		}
--		pages += change_pmd_range(tlb, vma, pud, addr, next, newprot,
-+
-+		if (pud_leaf(pud)) {
-+			if ((next - addr != PUD_SIZE) ||
-+			    pgtable_split_needed(vma, cp_flags)) {
-+				__split_huge_pud(vma, pudp, addr);
-+				goto again;
-+			} else {
-+				ret = change_huge_pud(tlb, vma, pudp,
-+						      addr, newprot, cp_flags);
-+				if (ret == 0)
-+					goto again;
-+				/* huge pud was handled */
-+				if (ret == HPAGE_PUD_NR)
-+					pages += HPAGE_PUD_NR;
-+				continue;
-+			}
-+		}
-+
-+		pages += change_pmd_range(tlb, vma, pudp, addr, next, newprot,
- 					  cp_flags);
--	} while (pud++, addr = next, addr != end);
-+	} while (pudp++, addr = next, addr != end);
- 
- 	if (range.start)
- 		mmu_notifier_invalidate_range_end(&range);
+---
+Valeriy Klimin (3):
+      dt-bindings: arm: qcom: Add Sony Xperia Z3 Compact
+      ARM: dts: qcom: Add Sony Xperia Z3 Compact smartphone
+      ARM: dts: qcom: msm8974-sony-shinano: increase load on l21 for sdhc2
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |  1 +
+ arch/arm/boot/dts/qcom/Makefile                    |  1 +
+ .../qcom-msm8974pro-sony-xperia-shinano-aries.dts  | 44 ++++++++++++++++++++++
+ ...qcom-msm8974pro-sony-xperia-shinano-common.dtsi |  2 +
+ 4 files changed, 48 insertions(+)
+---
+base-commit: cd214efd16e30bf1aa40ccfaaf9177f47dd21fd5
+change-id: 20240620-sony-aries-4a5bce06c91d
+
+Best regards,
 -- 
-2.45.0
+Valeriy Klimin <vdos63@gmail.com>
 
 
