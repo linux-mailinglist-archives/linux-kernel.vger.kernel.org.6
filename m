@@ -1,115 +1,192 @@
-Return-Path: <linux-kernel+bounces-223936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-223937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479C7911A9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:47:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6880911A9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78ACF1C20A5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:46:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6FE2834D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 05:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85DA13CA9C;
-	Fri, 21 Jun 2024 05:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BcHwKT8q"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22EAE137775;
+	Fri, 21 Jun 2024 05:47:13 +0000 (UTC)
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A982883CD7;
-	Fri, 21 Jun 2024 05:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FAE13699E
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718948811; cv=none; b=p3yoZ/uOGgchCqFQXTSMqbxtJWfAlC9aDLvCfcV4AJUxH06/e9RJVyEk9E3bx4vRe34+mpaO9D5Jl+FMR1Dax1E4iVP2Z5bbMf1DsXWOSpBXeboteBrbz8/w5H2hCq//GJgiO6yt28S39vlBr0oUzxoJYK8fEjWs7IdIogI9WPE=
+	t=1718948832; cv=none; b=uCCCR2RA1qn3WEuSeXs556ONUehpm3pXQbuI0Oa4Fgxd62Z4HuDix08nkYpWuq4cq5khMqJjaZhWgg7cr80zJYiM1scc206aBUU9QGnNCG3/tvtQECS2Vvt69juJjRSeoG7xXEvfdbfKcD5okiN7HoFmhvlTz5JMtCWGNyiJWHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718948811; c=relaxed/simple;
-	bh=kkYqZYijKZreQC7isvDQVtuAI4cUP9+RI5g70SolPKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=t11XRK/jGDQsZeoS4LycVk6cKD/UZSoXl6eBjWwYc7PPvzttgbIqotHjpKuLAEcJH+MhKzLEVIR+3dwlTayoYDqo3VRjK26Iuy1ik9efD+a1fFzd0JrtAz6rOcKKI/mBiLVMp9HDt92GQ2J4TL+UEzTqdxQ43YOoBzqO+ojaRAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BcHwKT8q; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718948759; x=1719553559; i=markus.elfring@web.de;
-	bh=kkYqZYijKZreQC7isvDQVtuAI4cUP9+RI5g70SolPKQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:Cc:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=BcHwKT8qczQBUZmomUv0AM6QnX97SDGgPlBDIVTabydiiO2YNuvLTi0vxybiHhtx
-	 6ooiz0LklK63jJ12sUOR41eTFnHJ29i6E8dwPItmoNQ8eJ85122eKDwij4wJDHN7E
-	 jyhyIJVk1GiWjQyvMjc4L2HZ9tAkI56L1V1w9BsPe0Q4wpW9+gOOMaaqgQfI1/EfQ
-	 bL4WzQetE6FwBgkj0JRIkCdRabXU5Yl9TdVjHesjkqim7Er/RNbJyQ9UcnggovU/c
-	 jyo4VWLQUVqaDTF9GjRZ7doK/FlD0NXDCi2Nl/YD2mc268HvX7Rf/6BG240vgSaxa
-	 hJ2hXVSkzKRX78qM9Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MyvB8-1sYT6j1kTS-016cfq; Fri, 21
- Jun 2024 07:45:59 +0200
-Message-ID: <4b368817-11ba-4d6d-9a46-59bee8406ee7@web.de>
-Date: Fri, 21 Jun 2024 07:45:57 +0200
+	s=arc-20240116; t=1718948832; c=relaxed/simple;
+	bh=ClD5XEoChg+MURjDPcYB0UiROtr4843NdmqsXRuM4v8=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=ZOq6cLN1krzgzBoqIqOYCkq6aVR6YimUhzIBx1uch8tAkUMuYTKL7Q0cpdsxpcx0sfNuEx64An73ehOM55QodOWriQy/iZ96Rx9BAzvfn3bLinmdTdYv9x6t/ZFM17P2qHnOX24suzIa8FPFTnrDg2xrrCSKmewKUaQAh67N/oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:47652)
+	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sKX71-000CEV-Cu; Thu, 20 Jun 2024 23:47:03 -0600
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:34496 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sKX70-008p7B-C2; Thu, 20 Jun 2024 23:47:03 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  Tejun Heo <tj@kernel.org>,
+  linux-kernel@vger.kernel.org
+References: <87r0d5t2nt.fsf@email.froward.int.ebiederm.org>
+	<20240610152902.GC20640@redhat.com>
+	<20240613154541.GD18218@redhat.com>
+	<87ikyamf4u.fsf@email.froward.int.ebiederm.org>
+	<20240617183758.GB10753@redhat.com>
+	<87iky5k2yi.fsf@email.froward.int.ebiederm.org>
+	<87o77xinmt.fsf_-_@email.froward.int.ebiederm.org>
+	<87iky5inlv.fsf_-_@email.froward.int.ebiederm.org>
+	<20240619155016.GC24240@redhat.com>
+	<87cyocerda.fsf@email.froward.int.ebiederm.org>
+	<20240619191105.GE24240@redhat.com>
+Date: Fri, 21 Jun 2024 00:46:15 -0500
+In-Reply-To: <20240619191105.GE24240@redhat.com> (Oleg Nesterov's message of
+	"Wed, 19 Jun 2024 21:11:06 +0200")
+Message-ID: <874j9mdf14.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v4 05/10] clk: lpc32xx: initialize regmap using parent
- syscon
-To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
- Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "J.M.B. Downing" <jonathan.downing@nautel.com>,
- Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Arnd Bergmann <arnd@arndb.de>, Yangtao Li <frank.li@vivo.com>,
- Li Zetao <lizetao1@huawei.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Chancel Liu <chancel.liu@nxp.com>, dmaengine@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
- linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org
-References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
- <20240620175657.358273-6-piotr.wojtaszczyk@timesys.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240620175657.358273-6-piotr.wojtaszczyk@timesys.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:/HnPeG1IAMU/Df3lJw189pApwGB8C6p6sxQOjGGDgYaEXEYX3rR
- 1fzF6oMG/oC3y4WJ7MEJ4TBAKQIyhyJR9kLS1DmPUSeNWoeRLiHOx6XiA4dc3aykL6q8xK8
- ppHVp27GOpJ/Bs+b4hwtsFX07S22yoUi7Yykat+/2SOia9gZAP0dOgdRdMUjNp+ybmCNrse
- f6I1C/okSjZJiM9p46NnQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RZzKrzeMnoA=;3Xr8mLJNU5K+f3Yl83BIysqGVe0
- 4rpRYhraZfI1bck68O03DyDm4Cg0Ralh0kzhMQ7XEn/NHb22XhOO/qEek+tkZj9AymaCo5rlw
- bSKPoi1i/ladDc5kcnxbIKRRmcQGzYb4SSgAVMqhYt/qj/PBeAEk81mo2AOh/48zJcgz+wqoi
- MPAi/oqcMFuSKBk+mdhb2o9DXXDBjHLdAU3Yav7jWcUVm9sv3UXQg5rkBV+K14j45sxBBfCgj
- BF0eH/zDH8oj6G819SSeDhWuOAk+DOSqO7rbNv2Qt7c+GSAO2UYlxSB/Rjlnk6hp8CJKsxJLN
- TYBNewFaMSiY6DlviClA4CjSyDZabDzR2UfartoiCxpy0CsdpCAwUZZ7+/W/nRM4IPTPBuXVq
- DZOPeZX3tdo2dEw49H4cW1veaubeQCNBos2daRlftqwTo/+d6d4aoQtD0rHTwlsvcd0g6RObu
- 37Jmd3rYX0642LHQoEDxlMQ9ZVSJCkdNf19a7al0wniU1zydyKkNOG7JOzZoS5qXb+WREAufY
- QKToA9R0LG4Ix6eTpjodQq1tzUl7rLtW1asXsu4MO6VZ+MSTWdYTmapSC2TD9GmScTYm+lZwY
- 5gpJpFwGpIL0viYTOu0iXtFgTO0Lpw2eVrKsKPMkDP++IbWbuu4VOrvp/t8bgavYXXMUu4T6N
- /6VsHf5yFd4+pm1faTJC+gQmyIZzRN78+tAQwW4DfScDwIVbbvlXUxZShAa6XFjM4//+SobX1
- GbjpiRCVpeFw+GzVaX7nD6J9JYgj6Gh8vBIsAD0+ZwHk6nmmTdIMTVYTFwx3FvFnzFu1tSMhy
- 9FKVb+6gaSPCl/M1gSvlML1hIN3Q3IKlJwNFX4wmTfG34=
+Content-Type: text/plain
+X-XM-SPF: eid=1sKX70-008p7B-C2;;;mid=<874j9mdf14.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/xha5W1X2licUXIpVEEYb0Xg5Aqdj9vRo=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: **
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4994]
+	*  1.5 XMNoVowels Alpha-numberic number with no vowels
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
+	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
+	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
+	*      patterns
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Oleg Nesterov <oleg@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 428 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 4.3 (1.0%), b_tie_ro: 3.0 (0.7%), parse: 0.78
+	(0.2%), extract_message_metadata: 3.2 (0.7%), get_uri_detail_list:
+	1.69 (0.4%), tests_pri_-2000: 3.1 (0.7%), tests_pri_-1000: 1.83 (0.4%),
+	 tests_pri_-950: 1.08 (0.3%), tests_pri_-900: 0.79 (0.2%),
+	tests_pri_-90: 83 (19.4%), check_bayes: 82 (19.1%), b_tokenize: 6
+	(1.5%), b_tok_get_all: 8 (2.0%), b_comp_prob: 2.00 (0.5%),
+	b_tok_touch_all: 62 (14.4%), b_finish: 0.81 (0.2%), tests_pri_0: 314
+	(73.2%), check_dkim_signature: 0.40 (0.1%), check_dkim_adsp: 2.9
+	(0.7%), poll_dns_idle: 1.49 (0.3%), tests_pri_10: 2.8 (0.7%),
+	tests_pri_500: 8 (1.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 01/17] signal: Make SIGKILL during coredumps an explicit
+ special case
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 
-> This allows to share the regmap with other simple-mfd devices like
-> nxp,lpc32xx-dmamux
+Oleg Nesterov <oleg@redhat.com> writes:
 
-Please choose an imperative wording for an improved change description.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc4#n94
+> On 06/19, Eric W. Biederman wrote:
+>>
+>> Oleg Nesterov <oleg@redhat.com> writes:
+>>
+>> > Hi Eric,
+>> >
+>> > I'll _try_ to read this (nontrivial) changes this week. To be honest,
+>> > right now I don't really understand your goals after the quick glance...
+>> >
+>> > So far I have only looked at this simple 1/17 and it doesn't look right
+>> > to me.
+>>
+>> It might be worth applying them all on a branch and just looking at the
+>> end result.
+>
+> Perhaps. Say, the next 2/17 patch. I'd say it is very difficult to understand
+> the purpose unless you read the next patches. OK, at least the change log
+> mentions "in preparation".
+>
+>> > 	- complete_signal() won't be called, so signal->group_exit_code
+>> > 	  won't be updated.
+>> >
+>> > 	  coredump_finish() won't change it too so the process will exit
+>> > 	  with group_exit_code == signr /* coredumping signal */.
+>> >
+>> > 	  Yes, the fix is obvious and trivial...
+>>
+>> The signal handling from the coredump is arguably correct.  The process
+>> has already exited, and gotten an exit code.
+>
+> And zap_process() sets roup_exit_code = signr. But,
+>
+>> But I really don't care about the exit_code either way.  I just want to
+>> make ``killing'' a dead process while it core dumps independent of
+>> complete_signal.
+>>
+>> That ``killing'' of a dead process is a completely special case.
+>
+> Sorry I fail to understand...
+>
+> If the coredumping process is killed by SIGKILL, it should exit with
+> group_exit_code = SIGKILL, right? At least this is what we have now.
 
-Regards,
-Markus
+In general when a fatal signal is sent:
+- It is short circuit delivered.
+- If SIGNAL_GROUP_EXIT is not set
+   SIGNAL_GROUP_EXIT is set
+   signal->group_exit_code is set
+
+Under those rules group_exit_code should not be updated.  Frankly no
+signals should even be processed (except to be queued) after a fatal
+signal comes in.
+
+There is an issue that short circuit delivery does not work on coredump
+signals (because of the way the coredump code works).  So it winds up
+being zap_threads that tests if SIGNAL_GROUP_EXIT is already set and
+zap_process that sets SIGNAL_GROUP_EXIT.  Essentially the logic remains
+the same, and importantly no later signal is able to set
+group_exit_code.  Or really have any effect because the signal sent was
+fatal.
+
+Except except except when the kernel in the context of the userspace
+process is writing a coredump for that userspace process.  Then we allow
+the kernel to be sent SIGKILL to stop it's coredumping activities
+because sometimes it can block indefinitely otherwise.
+
+Which is why I call handling that SIGKILL after a coredump has
+begun and SIGNAL_GROUP_EXIT is already set a completely special case.
+
+We might have to change group_exit_code to SIGKILL in that special case,
+if someone in userspace cares.  However I expect no one cares.
+
+Further if adding support for SIGKILL during a coredump were being added
+from scratch.  The semantics I would choose would be for that SIGKILL
+and indeed all of the coredumping activity would be invisible to
+userspace except for the delay to make it happen.  Otherwise a coredump
+which every occasionally gets it's return code changed could introduce
+heisenbugs.
+
+But none of this is documented in the change description and at a bare
+minimum this change of behavior should be before such code is merged.
+
+Eric
+
 
