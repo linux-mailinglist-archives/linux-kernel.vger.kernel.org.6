@@ -1,194 +1,120 @@
-Return-Path: <linux-kernel+bounces-224209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCCAC911EDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:33:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9243911EDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92ADA281AD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:33:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC0321C21DB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 08:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A100516D9AD;
-	Fri, 21 Jun 2024 08:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFD116D4C8;
+	Fri, 21 Jun 2024 08:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="M1Tfl6tr"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RTpDm6RI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E5B16D33D
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 08:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8481218E20;
+	Fri, 21 Jun 2024 08:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718958789; cv=none; b=eXa/PlFe2LpyXqVVqm/aef+5GiYdPZI9JscRtQkw3NAmK22GsZurSOp+XBexJwG5vWgrS6Q4d9ml/PjXYbhWplBm/uPDD4WD+CywlyyJ8aYDPByYbm1c78FeHUj13BObuOSQa+YFglvh0qANKzHf/srDDwuw4mJE+VoNv/RIGb4=
+	t=1718958939; cv=none; b=u2KM90WSWwRHFoPHByyB6S7z/vpNE+l9sxtZDSiQSs/EppS9Ab/kAxVjdqGXGYF9GloVRmoYIqzc4N6eQikWwh3JTWuNjOrpzHVIF/qKqltaNy5uRsFgv/6LRDcoHMC6SJxASkcEuICBE1PLCNuodn9jkbVEuMWs1X66VrpRz1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718958789; c=relaxed/simple;
-	bh=ClkkVMk172JzTt1UKddhO3yky07U34zX40msQkUvvNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVUwZKexqqaeh8oJcOOKs68I3wiQ1dtQlet5ioGAEE+vSDV8EqD1WI+9PPqvq5oxGjK/jyhTto3qvcBNgJd0UzNAk4rWGhiStdrEu0bslrP/Ni677dl11l62m5KRrKvMqy3/4+qinCQG0ce6I4j7tw3kTMUDcMxtykgmsnyy41Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=M1Tfl6tr; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a62ef52e837so197626266b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 01:33:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1718958786; x=1719563586; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=13CmNwUXr5VhUsxq5NU9l1BI3PLV5wmazLWOuEQIO+k=;
-        b=M1Tfl6trDck75NtmR/Mwa8r/2jZT9CBvtE9svuh1nTGQKi1Y1PB2wzzSawBnCySKeE
-         AO/9qv9fFzsGxKmGV6W2GNlUn5wZ3BVSv+gm4gf+T/fJrAwQLgRoLdnEzMiX5hqOn1PI
-         XHxCSy7wd8P9RgQ+qurxaYCGCXHCOqQ5y3xVaYOj0J58ZoiaQble30YejLv21Wb10zcQ
-         2gHsKsu5KK4Dn10F3D8vtMwif8LHVzkxir/lFsqN+a61snXvU69Yh0toavTAy1RACw07
-         ytryHUfPk6cRk6yB1pK2i2p3FT2S5gpcK6Epfa6fZplsBFw+4LJUrC2rZazJ62WDC1yT
-         wA4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718958786; x=1719563586;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=13CmNwUXr5VhUsxq5NU9l1BI3PLV5wmazLWOuEQIO+k=;
-        b=QWg4jf1cbf5K8igsfp4WlozIHbswGGBfa6OA/nTJuxJZkAt6u4F3GjWR73FjyWUkH/
-         BAjMzahzHqW/W80u5HL6+qR2m+1GGUJos7SvlA98BHI0PpLNt2aoHeKD/+NehIpyMbuX
-         SDoDG9T8Lkqts8Tbo9tiauPULRuUnGaQnFDzKtiEg9d1Mgf7qa9ex+/ubJ8ZlhDPSvJ1
-         UeVq19L99ZPAFmtJC9EU8wFglIJeLDIMnd4xjOo7DvAubaH6xo+Xm47dbALl2is9oXzJ
-         oeueiSCcMXLfPXLB5qJyd1MUq5CSoz8D8tG+YxavEkYEAhemUo2cBmw99JkSpnoVuNa7
-         Vtyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpVesQQCYr8b0UQO+z5LxJZZItbKJV4lvd0HAn/9HTnVHvcMbKeTKyTL1WJUAy0F8P8czW2RCSMOOD242fugD7dkmmr0U44YbQgCDA
-X-Gm-Message-State: AOJu0Yw4ikyaWo5SagKJKt5CeMWDPG4ZVzMnXogUXWZ9N032m5r5pJlS
-	2EdKgQ29ZqFGgdZ+CHRcIjowrDQvBn6FljBZ4Mv3nJ4usdUO+b2kPJTAk5Mh9GY=
-X-Google-Smtp-Source: AGHT+IHvj0QAH2876hMCNrT7ElOxqJnXNZ06Sc4+oHnPw0f7XyOBJdmylote20qcntY2N07KCc4kBw==
-X-Received: by 2002:a17:907:a4c7:b0:a6f:b69e:8c98 with SMTP id a640c23a62f3a-a6fb69e8d25mr438502466b.62.1718958785171;
-        Fri, 21 Jun 2024 01:33:05 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf56ed53sm57395866b.217.2024.06.21.01.33.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 01:33:04 -0700 (PDT)
-Date: Fri, 21 Jun 2024 10:33:03 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Conor Dooley <conor@kernel.org>, 
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, alex@ghiti.fr, greentime.hu@sifive.com, 
-	vincent.chen@sifive.com, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
-Message-ID: <20240621-10d503a9a2e7d54e67db102c@orel>
-References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
- <20240605121512.32083-3-yongxuan.wang@sifive.com>
- <20240605-atrium-neuron-c2512b34d3da@spud>
- <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
+	s=arc-20240116; t=1718958939; c=relaxed/simple;
+	bh=YLBSukhcfbAfabPDZHRw1bCjlUJ36aIXiF01yEIM0pw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HsTIN7TCY9Cc7emjuWiwEUwFcnEneb3lcKRtY3LAkVtJFjaDPmryINgxPORTuQ9FvihNF8XDlrPyTvCJBhJO2xVVeUxTjkqjt5oRKAPVo8V4OjAbFfmzC4oOVAeBKQrnaxLlDswgNrsszq/YumlOSnLoFf6Po8gL1DY80XVWSKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RTpDm6RI; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718958938; x=1750494938;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=YLBSukhcfbAfabPDZHRw1bCjlUJ36aIXiF01yEIM0pw=;
+  b=RTpDm6RI5EO2eHPtOoQShcUY4yuIp9ek1ckm06Dr6NZ6Qb6T4RJe90SP
+   mWfpD6L+sF8Azys+XmdqJhfgLiUeFGjQkyyu9A5HpbtP7U4O9+n8VSfpT
+   UAScG1JbyHJ88u4EzNhwahALc8gYPQNRVys1SVFPOni5jPYNtGwA8tQNe
+   9/4pp+Wj8LIc1cVGUfZ+09qdKricYrnnExHy+vyrr2uEbtlolkCTzqmiy
+   cl6/Ut7WWbjWT5FQo4QDgur8KzgS8oApvZGC4i0MSx3kd1jf1Q6gBsO0P
+   X/yaesrlGKqKVSwdniE6LYRDEHghziumB+Gs1WKGVf74TWJBEiwMrWbvf
+   g==;
+X-CSE-ConnectionGUID: U6u2V0s6SUuACwT3COtvcA==
+X-CSE-MsgGUID: tEPAbQEJRWuEbdNchZ1UdQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11109"; a="19864960"
+X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
+   d="scan'208";a="19864960"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 01:35:37 -0700
+X-CSE-ConnectionGUID: Dmwuj3wQTl2M99wX+YLFVQ==
+X-CSE-MsgGUID: zXuWW/W/QCaCd/dFJhqKpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
+   d="scan'208";a="73738528"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO [10.245.246.142]) ([10.245.246.142])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2024 01:35:33 -0700
+Message-ID: <3d9ef693-75e9-4be0-b1c0-488d3e2d41c5@linux.intel.com>
+Date: Fri, 21 Jun 2024 10:35:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ALSA: hda: intel-dsp-config: Fix Azulle Access 4 quirk
+ detection
+To: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>, Allen Ballway <ballway@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Brady Norander <bradynorander@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+ Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
+ Mark Hasemeyer <markhas@chromium.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Cezary Rojewski <cezary.rojewski@intel.com>
+References: <20240430212838.1.I77b0636d5df17c275042fd66cfa028de8ad43532@changeid>
+ <83e218f9-29f5-4f35-bd0c-b298e3bb9e8c@linux.intel.com>
+ <CAEs41JC-vJaMHj6fzmNO=-bu5oURRA-u565sN2=yzBeVtKb=4g@mail.gmail.com>
+ <b2375610-4044-49e6-86e9-5c172abb2ffa@linux.intel.com>
+ <CAEs41JAPPr3xRR42H6vKic5rVrtV-on4HyT5wNCXxbJtwijnCA@mail.gmail.com>
+ <3d44c749-6c81-4c11-9409-b01815fe1a91@linux.intel.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <3d44c749-6c81-4c11-9409-b01815fe1a91@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
 
-On Thu, Jun 20, 2024 at 11:55:44AM GMT, Anup Patel wrote:
-> On Wed, Jun 5, 2024 at 10:25 PM Conor Dooley <conor@kernel.org> wrote:
-> >
-> > On Wed, Jun 05, 2024 at 08:15:08PM +0800, Yong-Xuan Wang wrote:
-> > > Add entries for the Svade and Svadu extensions to the riscv,isa-extensions
-> > > property.
-> > >
-> > > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> > > ---
-> > >  .../devicetree/bindings/riscv/extensions.yaml | 30 +++++++++++++++++++
-> > >  1 file changed, 30 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > index 468c646247aa..1e30988826b9 100644
-> > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > @@ -153,6 +153,36 @@ properties:
-> > >              ratified at commit 3f9ed34 ("Add ability to manually trigger
-> > >              workflow. (#2)") of riscv-time-compare.
-> > >
-> > > +        - const: svade
-> > > +          description: |
-> > > +            The standard Svade supervisor-level extension for raising page-fault
-> > > +            exceptions when PTE A/D bits need be set as ratified in the 20240213
-> > > +            version of the privileged ISA specification.
-> > > +
-> > > +            Both Svade and Svadu extensions control the hardware behavior when
-> > > +            the PTE A/D bits need to be set. The default behavior for the four
-> > > +            possible combinations of these extensions in the device tree are:
-> > > +            1. Neither svade nor svadu in DT: default to svade.
-> >
-> > I think this needs to be expanded on, as to why nothing means svade.
+
+
+On 6/21/24 08:15, Amadeusz Sławiński wrote:
+> On 6/20/2024 9:27 PM, Allen Ballway wrote:
+>> I filed a bug and after sharing the requested information it looks
+>> like this device won't work on SOF without vendor support. Given this,
+>> would the original patch returning this device to using HDAudio be
+>> reasonable, or is there an preferred alternative to force this device
+>> into using HDAudio?
+>>
 > 
-> Actually if both Svade and Svadu are not present in DT then
-> it is left to the platform and OpenSBI does nothing.
+> And can you share link to the issue on mailing list, so someone reading
+> this thread in the future doesn't have to guess where it is? ;)
 
-This is a good point, and maybe it's worth integrating something that
-states this case is technically unknown into the final text. (Even though
-historically this has been assumed to mean svade.)
+https://github.com/thesofproject/linux/issues/4981
 
-> 
-> >
-> > > +            2. Only svade in DT: use svade.
-> >
-> > That's a statement of the obvious, right?
-> >
-> > > +            3. Only svadu in DT: use svadu.
-> >
-> > This is not relevant for Svade.
-> >
-> > > +            4. Both svade and svadu in DT: default to svade (Linux can switch to
-> > > +               svadu once the SBI FWFT extension is available).
-> >
-> > "The privilege level to which this devicetree has been provided can switch to
-> > Svadu if the SBI FWFT extension is available".
-> >
-> > > +        - const: svadu
-> > > +          description: |
-> > > +            The standard Svadu supervisor-level extension for hardware updating
-> > > +            of PTE A/D bits as ratified at commit c1abccf ("Merge pull request
-> > > +            #25 from ved-rivos/ratified") of riscv-svadu.
-> > > +
-> > > +            Both Svade and Svadu extensions control the hardware behavior when
-> > > +            the PTE A/D bits need to be set. The default behavior for the four
-> > > +            possible combinations of these extensions in the device tree are:
-> >
-> > @Anup/Drew/Alex, are we missing some wording in here about it only being
-> > valid to have Svadu in isolation if the provider of the devicetree has
-> > actually turned on Svadu? The binding says "the default behaviour", but
-> > it is not the "default" behaviour, the behaviour is a must AFAICT. If
-> > you set Svadu in isolation, you /must/ have turned it on. If you set
-> > Svadu and Svade, you must have Svadu turned off?
-> 
-> Yes, the wording should be more of requirement style using
-> must or may.
-> 
-> How about this ?
+I don't know what to do with this configuration.
+We added a quirk to force SOF to be used for ES8336 devices. It worked
+for some, but not for others. Now we have quite a few ES8336-based
+platforms that are broken with zero support from the vendor, with
+obscure I2C/GPIO/clk issues.
+Are we going to tag each one of them and say 'not supported, use HDMI only'?
+That's pushing a bit the notion of quirk...It would generate an endless
+stream of patches. The alternative is to do nothing and ask that those
+platforms revert to HDMI audio only with a kernel parameter. That latter
+alternative has my vote.
 
-I'm mostly just +1'ing everything below, but with a minor wording change
-suggestion
-
-> 1) Both Svade and Svadu not present in DT => Supervisor may
-
-Neither Svade nor Svadu present...
-
->     assume Svade to be present and enabled or it can discover
->     based on mvendorid, marchid, and mimpid.
-> 2) Only Svade present in DT => Supervisor must assume Svade
->     to be always enabled. (Obvious)
-> 3) Only Svadu present in DT => Supervisor must assume Svadu
->     to be always enabled. (Obvious)
-> 4) Both Svade and Svadu present in DT => Supervisor must
->     assume Svadu turned-off at boot time. To use Svadu, supervisor
->     must explicitly enable it using the SBI FWFT extension.
-> 
-> IMO, the #2 and #3 are definitely obvious but still worth mentioning.
-
-Thanks,
-drew
 
