@@ -1,163 +1,149 @@
-Return-Path: <linux-kernel+bounces-224606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 157C69124A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:03:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05FD191261B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8901A1F21711
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:03:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85A301F27CF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260D7174ECF;
-	Fri, 21 Jun 2024 12:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OlF4+vvR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3197C153828;
+	Fri, 21 Jun 2024 12:57:38 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2112.outbound.protection.partner.outlook.cn [139.219.146.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D9613777F
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718971372; cv=none; b=F3DoqG98FE8lHYDeN0p5OxjILmtgwK5d1SL5BSRg07JYmnfeBMUfvxOI6risnTu02xzlpRpniwAOPO2N3GIBN8mDskGA92+RRBtOoPVAjvliVmaOv6d56e1028EXlEOao3akWvuiPe6RenJKVD2bA1XVNSCROV8s7HFK+7dHhFo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718971372; c=relaxed/simple;
-	bh=YrVPACoGs6F9RM7iXfCYIgQQgvdRy4TLIXLBJDf39bw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CV2U+oz6xY2V9hH7DJMhm5VuvcagqgqfKSR9X01DrFeM+gbDI7YbOPdOzZ0it1Sw2mWGKHFZtOJ+UO5aZ6oMPnYHa5V0ewRI5KE+RwYhExbDkouHas7o9sJJ5ym/P3oNDHmEwuy9YW3KOTqBtL5xEm5ApG88QjT6dyAzE9irZX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OlF4+vvR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718971369;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RaC3XUj/H3n8k9zuBXjy56bPOXJzKVVYdQ6M+wMxpXE=;
-	b=OlF4+vvRgmNGspAOzt3ZN13GIckDJtCeO6L5m0mjnChVdFrQ+BiynP3Pj+PRIQAS5q/9uL
-	TCEu+c/R4nWxQ3z3kDNJwVnwqt7H5K695mbX0lF8IYwIVVVOeHJZK9XfBwLwBoVFnbUVFL
-	eR/PeZHU2Id7BMSqWTxaMLXiy5YUEwQ=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-398-azOIwS-SOtqS92w_1b6G4w-1; Fri, 21 Jun 2024 08:02:48 -0400
-X-MC-Unique: azOIwS-SOtqS92w_1b6G4w-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3625503233eso1540095f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:02:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718971367; x=1719576167;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RaC3XUj/H3n8k9zuBXjy56bPOXJzKVVYdQ6M+wMxpXE=;
-        b=KP5YS7MSjT1tpEN8Va92crtfnfsIeDQk83X04DaDHOb704Act7F12jBdQsZx4bdKcC
-         2BouSHFqA1S1hA7c9idnnEQsBulkn/pPQgqfr00PvB3ekYOjLvQ/4Sjq4mfw9e33Syhl
-         fFADW70zQx8G69lVwtGKMdWXyu2YolMb6nr/ZlAaxcj1rMII0MlaTNbajR2qdnpIHNAz
-         b8YVhYmfWHeesVz806+9fAW2YXcg0VsR8Wkp3Mey30VoQINIocT552LPLThkqm47sbA4
-         2JR2Iii75tDJZHqWBRgQ3hSGQMLsv/QItNC0ZT7TRSFdTAQCrOkdh1xMemgP505THt+n
-         F5Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjnD1jM0FLpJDrsErE385DfUmZAbcsgLHb1+H+H98tdQ7KdmktSWdjDpUJsh0OarCoNiJ2KywjpB8tQIzKh/jzYxDkX/V2Jnxs1FVC
-X-Gm-Message-State: AOJu0Yye1N7h8dh7/zMh6KV/PwcV9UMDecVFilY1WSwDIsZKsy9MRjeM
-	smEkemSHPXpRCN3sybLnBllYlWCnqelW1IbEKXQQZXYcjBSaYvUj9RhXf4o4wXj6KRLWtrk5jtL
-	mFaYKNdyGRs4bsPU2qsUNgArEARlMRSw1xYQEU8JEz8BzppnE/4KYQzNtll8fyOQWvfEDqGqd95
-	Q7ZJhLvNTKinFVgV/4mzgfN694RwFk0L+O0+H+
-X-Received: by 2002:a5d:45cf:0:b0:364:8f54:e0ec with SMTP id ffacd0b85a97d-3648f54e17dmr4437223f8f.19.1718971367413;
-        Fri, 21 Jun 2024 05:02:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH7Uy0v4KWO0svAsTDFJlHJfB0t0EciGHY8TEYjVilsP8uRQyyaac8NBovUn5NOt8GET7g2E70ZfYL6B1us2tk=
-X-Received: by 2002:a5d:45cf:0:b0:364:8f54:e0ec with SMTP id
- ffacd0b85a97d-3648f54e17dmr4437200f8f.19.1718971367031; Fri, 21 Jun 2024
- 05:02:47 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5F6152E0A;
+	Fri, 21 Jun 2024 12:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718974657; cv=fail; b=WmaKypq5BA8nmUkIbJZTC4MIRQJ08MzSppW9N7z46ZOAQ5G4cydxQfIxKGEE8YybZMb+7Med3SjiHwODIvWmFcg/pNAYkt5igSZ2OeHYXn4SSRhzm21fxC95KjNJnuIiGV+cBaB/KUaoWUMoNfNF9AMKFeS57vlouoDfS9BBX0Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718974657; c=relaxed/simple;
+	bh=4lFQQpmAvsoMe4I6RYj2zMWzqDWkiYm+N1Aey/I6fQM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ADpaauj88u2ZVf4rK2cYkwZ04wwUjIomKFJ6IbkEpWu1FVMml3Qu6A63DRrcI2ppZGwscW29Sh/eE+5p0AqHdSEGgZ/opNl8S1d9JzdUWOEvlg93PKBqCpVYMcMBKLWo2P/eg0IMRpGRc1emx5LDY7z4pNSJ+aGpttVr8P1UIs0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XGjTScVJI4iEnz0iNF/L1oT2TK0lwArFWT0Fe/ZQw18QUTQiMrtoLYB9SodkllPu83xp6XicC/O3gTwJ7b0Cf9piLL7WDB3vKdxhf01R6sXplFs/PA4jHFlvNKxGvGbyEDjBLQWop5cQZ+QC6EdmZjSjboBXgaxu5F7LhjXMylui2cXVm6SWwRGO/Y0W/RciPB0jK+mg4NgVBCY2v8CY1x2pYzKyY3pUi+DD7885/WgFNcjmAgLBt7YvOo5HdZasfzlnwjwDbDAy2ZCwnF/jncnqY4e7VedRoLfaVIBrrb8CTs2nZ2xhWnNoGNCJuxELu21LTnpQbjb1/rBcdmI8ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fEj7Emiyz5dvsIIrBiVW+/4imeofSTztYvolrRg71Io=;
+ b=I6hMhLW5E+5PLAe8Zj1gjH/i1Prz+MdzHKRgJ98+9EwXpnmWPrYx/tHKHCz5fonNDJjwVgILL1bL4ZR578c21lesOQuYYdrVGSa95mCQXgBy7Ra81XcGSjXjsWFW6Pi2plPEPMGXpRYDFPDeZ4BzVAz07ZvF958tz+o/1pmztkw+uYQjLVyHpqL6FVOdQ6+0e9R9SlDOIO8TBgauZqDa1doaNxc6JUfYKf0JlRNbGh4LJJg29PIce9lr2LSvW0WOoB4sUdn0/J0zCxpuqIo528AG2VCwHz82ucKd0mGm7nRuenTrHwRHvsUnTiNsknZZmGrvX3s8elt/2cEOuGupTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c311:25::15) by SHXPR01MB0751.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c311:24::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7656.33; Fri, 21 Jun
+ 2024 08:22:42 +0000
+Received: from SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+ ([fe80::358e:d57d:439f:4e8a]) by
+ SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn ([fe80::358e:d57d:439f:4e8a%7])
+ with mapi id 15.20.7656.033; Fri, 21 Jun 2024 08:22:42 +0000
+From: Minda Chen <minda.chen@starfivetech.com>
+To: Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Minda Chen <minda.chen@starfivetech.com>
+Subject: [PATCH v2 0/1] Add PCIe dts configuration for JH7110
+Date: Fri, 21 Jun 2024 16:22:30 +0800
+Message-Id: <20240621082231.92896-1-minda.chen@starfivetech.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: BJSPR01CA0012.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:c::24) To SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c311:25::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620230937.2214992-1-seanjc@google.com>
-In-Reply-To: <20240620230937.2214992-1-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Fri, 21 Jun 2024 14:02:35 +0200
-Message-ID: <CABgObfYODQ2v5Jvmau==MCzo_rovarLpyz=UFPAo=_+APuvDKA@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM: Fixes for 6.10-rcN
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SHXPR01MB0863:EE_|SHXPR01MB0751:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6ae306b7-5db4-4648-e4bc-08dc91cb5202
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|1800799021|52116011|7416011|41320700010|366013|38350700011;
+X-Microsoft-Antispam-Message-Info:
+	NF64Cte/iVl/jy+9/S0pafs935geiwWiVXZvexufuV1GTV2BBSTr5YH99V+/lkLwWVlE2J84h2Oz7Si6lt7AsdsXskOKoD9qWJVMarTl/aiCO6dxWGr5WGbKeXdBVbw4vNHmxSJIx376kutY9556puO5UDwOICkoDI3nuYiC4nykkucEGhynbFjBQdNjBAFr/eUvn8qYwDnrbmaV2+aBpdmSEXv+6OJXZE/4CqILcDNya3KH0ZwYQenuceB1NPUGX4NSrCbS51O4A42ymveRCdmDQt6l0/1G5V3QaZbZ8O96bP7iJm5Utb2O02qquSAHyCi1nzwzt59KtaGE21p8btUWeIZYSb1XyZtdWk/EHVhp65UtUaDTTUmy0HwwvgDAYbRQSYuLIO99Y+HQ8DsGcpiypxw5uEy66Q2oUhPyfhR1gvA1K4lrioOS0HvCTZAOYvP/vj/rYPgX6cyiWoUQgFAHD6EPvvdCIGQUpqqGXskHqioRLPs3PMddQAxuNvKbMQ0Y94ZrYLfkfnk95MT614Fwjk0q5VX5K/o7m9rIYjTNR/x2dMgf2C0oFeIXjD+P4nic1HYeg7eys/W9jlVd8k6f8XMRmrHWIzHpuQFHfbXXphBvd8ZNagWY3Rap4w/I
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(52116011)(7416011)(41320700010)(366013)(38350700011);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?amKZeAqG/b1HjkjDmk9rBp0kGciDs9+LlQXWv5CsJUIMTwdM6I85RE0W5Gu2?=
+ =?us-ascii?Q?PoEeJReM0nX6qsNwwSIC/wS4sJMskiZ1Lrsj+mSlhwjdfaGDR8uwHs4HIVz6?=
+ =?us-ascii?Q?e4VCin6IPObz1jLSJurPgFE9msQQBZLn2iKiBUfH7Da/812fqUIKiUNpsFSP?=
+ =?us-ascii?Q?vKZGI/YcdQ3Jxj6Pn/N4a8FZLX7H9VpZlC9PBWdEsDiE4v/s7+CclXS02oHi?=
+ =?us-ascii?Q?vrlAYKf6/cqSv5kTKFD6h/Cy1/ARQMDc9xoGVOKI+GLY0dXeR2fWUGJIA+rR?=
+ =?us-ascii?Q?szqkKqwoBsUoBqmcdqpS/HcKwX9LLq308noJg3b4x0Hpm3Bs7a+DCdq00TZX?=
+ =?us-ascii?Q?CVwttStosRdp/bi5zgqD8B3NRR0Tyl+pq/UoFgBBa0awANPKvL7s57fC5NE3?=
+ =?us-ascii?Q?b4rCPIJn+W9SvGilTgN6HHkc4nzb3ivYJvwTd1wy3G1XGjsw0UdP494X9Cel?=
+ =?us-ascii?Q?6Ct91Mm2Fi0BWkQixkp8l1/Cwi54cNnHPvVz48AN20Zhl520zlp2A5hRutkc?=
+ =?us-ascii?Q?wf2ePqipLmTkj9Zxcbnqd5TZHWF3VchbCZYUkPJqe1gt96rJWX6mM0mxcta3?=
+ =?us-ascii?Q?iDsZXmjZ0y6u3eRyb8FYxj2+cqgqe433ZRrwknX0Rwi4BEXbDYLCl0nCN6eS?=
+ =?us-ascii?Q?TZBMMStR1Ged9uNB/RPbip7GLhu9WdsP2xJoIA+GhT6bIAG7+dpKhNqx6sZ9?=
+ =?us-ascii?Q?VoxCcFxkl5hd0C2K+LzHZxgJgVVenXeu2XfXuURdkvY+dOEljRgg6nep1yo0?=
+ =?us-ascii?Q?OvZ7YvBYobVU/nw4njX2Lu7W5YzZ3//HFQ6ENty2McvBMJ/aiGFKP07olxAs?=
+ =?us-ascii?Q?yeMN0urUn8ZLGdsGiDTplhF/KjpdMIBqxjVBux+VTNN40IoRjxTKfX9IR9yF?=
+ =?us-ascii?Q?uDKE3Q/q8JB4T6YMLeatIe/2AE+BT3oCWiSpoMy3zyRki0HP5uKDbe01PL4M?=
+ =?us-ascii?Q?fxP3wIqtpdSwuUnJqSM07P4ShqgwX2btFM2JcFAFwqFu22qkYoPxdQEt3abK?=
+ =?us-ascii?Q?Etp4l6WyaPF7ta2LRLLe6ndPr2VVlYx7y1TsJCqoCBKaTD55n0Aaz/bhkubV?=
+ =?us-ascii?Q?bHug6X89nd2v1MKeayauANtpxIOwE7dyX2nHL2GluvSiM/OOmyBhIv6qPVFA?=
+ =?us-ascii?Q?EygLkcfZSoQGQyvj29rL4+ZTxDlgVU4B0AeTAeXoayac0xH/yi7/upzyK7z0?=
+ =?us-ascii?Q?xX2A1YGgBTaiXT9vf618SWwEu0rPvbvLsYeF+L1Ciwu5MoRbRMnKtytLH9lo?=
+ =?us-ascii?Q?c2XxiFEuHGH7r00bn18LdiXiLzfWDdKFKDNVV4dd+uuAlASqgxUZon/nurtG?=
+ =?us-ascii?Q?Rvntz7ZWeGmfscnpLoyrNt7YOd45u/Dtfmigzqglv95LiG7XBOd+nbJOqBIP?=
+ =?us-ascii?Q?xPEvC6J6wzuiZ80nFHaj3Dj5oJseHB5mivFaGtw1JG/lMD6WoY3Ti87dNQaI?=
+ =?us-ascii?Q?/t+V8TSyhkfI4R1mYksry0La4UJauFiBMfuEg7/BAFl4wRzOxe/5RHT+cQbu?=
+ =?us-ascii?Q?w4Vr5m0oqsX61uynaIAOMrnRZ5CMt5MUYlARx0OskZ+gYwLDM1W4ley1SzKi?=
+ =?us-ascii?Q?HaoZjPbguoZcqbqkxTYjEbZlBDbM+JwLec7oa5UsWX8PK2shT5VtR7u1FiOT?=
+ =?us-ascii?Q?vw=3D=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ae306b7-5db4-4648-e4bc-08dc91cb5202
+X-MS-Exchange-CrossTenant-AuthSource: SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2024 08:22:42.1805
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QFHKM7r3l9gMxW1w05o7VxI0Tg2uOvto2jnRZLotldoTkD3u9UwYCRUz448h7YYUrBeXFV2GRt40F1W614d40FqN9O3q7varKSMUfa+vZnY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SHXPR01MB0751
 
-On Fri, Jun 21, 2024 at 1:09=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> Two selftests fixes and two KVM fixes for 6.10.  Only the kvm_vcpu_on_spi=
-n()
-> fix is tagged for stable@.  I deliberately didn't tag the mmu_notifier is=
-sue
-> for stable@ as I'm 99.9% certain it can't actually cause problems (other =
-than
-> making UBSAN sad).
->
-> Sorry for the late-in-the-week request, I have a feeling I missed your wi=
-ndow
-> where you're working on stuff for this week's KVM pull request.  :-/
+changed:
+    v2: default disable pcie dts node. enable it board config
+        (milkv mars and visionfive 2).
 
-Nope, I read that you were going to send something.
+base on v6.10-rc3.
 
-Pulled, thanks.
+Minda Chen (1):
+  riscv: dts: starfive: add PCIe dts configuration for JH7110
 
-Paolo
+ .../boot/dts/starfive/jh7110-common.dtsi      | 62 +++++++++++++
+ .../boot/dts/starfive/jh7110-milkv-mars.dts   |  7 ++
+ .../jh7110-starfive-visionfive-2.dtsi         |  8 ++
+ arch/riscv/boot/dts/starfive/jh7110.dtsi      | 86 +++++++++++++++++++
+ 4 files changed, 163 insertions(+)
 
-> The following changes since commit c3f38fa61af77b49866b006939479069cd4511=
-73:
->
->   Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
->
-> are available in the Git repository at:
->
->   https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.10-rcN
->
-> for you to fetch changes up to c3f3edf73a8f854f8766a69d2734198a58762e33:
->
->   KVM: Stop processing *all* memslots when "null" mmu_notifier handler is=
- found (2024-06-18 08:51:03 -0700)
->
-> ----------------------------------------------------------------
-> KVM fixes for 6.10
->
->  - Fix a "shift too big" goof in the KVM_SEV_INIT2 selftest.
->
->  - Compute the max mappable gfn for KVM selftests on x86 using GuestMaxPh=
-yAddr
->    from KVM's supported CPUID (if it's available).
->
->  - Fix a race in kvm_vcpu_on_spin() by ensuring loads and stores are atom=
-ic.
->
->  - Fix technically benign bug in __kvm_handle_hva_range() where KVM consu=
-mes
->    the return from a void-returning function as if it were a boolean.
->
-> ----------------------------------------------------------------
-> Babu Moger (1):
->       KVM: Stop processing *all* memslots when "null" mmu_notifier handle=
-r is found
->
-> Breno Leitao (1):
->       KVM: Fix a data race on last_boosted_vcpu in kvm_vcpu_on_spin()
->
-> Colin Ian King (1):
->       KVM: selftests: Fix shift of 32 bit unsigned int more than 32 bits
->
-> Tao Su (1):
->       KVM: selftests: x86: Prioritize getting max_gfn from GuestPhysBits
->
->  tools/testing/selftests/kvm/include/x86_64/processor.h |  1 +
->  tools/testing/selftests/kvm/lib/x86_64/processor.c     | 15 ++++++++++++=
-+--
->  tools/testing/selftests/kvm/x86_64/sev_init2_tests.c   |  4 ++--
->  virt/kvm/kvm_main.c                                    |  8 +++++---
->  4 files changed, 21 insertions(+), 7 deletions(-)
->
+
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+-- 
+2.17.1
 
 
