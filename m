@@ -1,324 +1,97 @@
-Return-Path: <linux-kernel+bounces-225302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A474912ED3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:50:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE758912ED7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 22:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6FBEB2111A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:50:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26BC81C21CC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 20:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8551517BB12;
-	Fri, 21 Jun 2024 20:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25D217C205;
+	Fri, 21 Jun 2024 20:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="buhkLp3p"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAve3cmy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7F616CD01
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 20:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2C1156F2E;
+	Fri, 21 Jun 2024 20:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719003001; cv=none; b=gSTaQNYdZyDGJyTZynILq6OXT/BkMQphGN9NYh/fMzIEiIbSnXCipG1L0sHxIU15ZTAc9yLjCoHTmv0iAwo/B7J8cVWiw1rIi3JUsDIsw71YwtpKft8Bxp2U5VW7tBItBf0/1sodMsxGmicVlcK/iKEbmbhPi3BiJPgkiNduSlA=
+	t=1719003047; cv=none; b=HcJPcAvMmUIlDM2F4xH5SmSVaZslHHR9r32pgOGEd+GnPLi6SDaNtn2GEgAOBqkzKp2zGpVs5elGlGenmNSCgbikJsC54DY+79oU28iwX7DOIGhl5Og/Wn24cwVBfMoziz31JF/GR6RkHZpKAEjpywq8/MsF9o5eO4WUYh5Bek0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719003001; c=relaxed/simple;
-	bh=oS5q7J8IQDOESLzahwwmI6CZ48RzdtStlil8qNQdKYI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SJ+Y3bCIL+qM73AAnaJAHSMFwnEEdCHg7+wMDZkBC3au3xOcDTYsnB0VnnwgB3X9MTxYh7aMPExZmMqDKCCp+HKV0tnGlIxtFiqj4MiatutuW2VX/10zoYbZTas1n7sqM/QP8uB5n3UN3qxQ+K9CSYVZS+sls6eRBBTlt435KrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=buhkLp3p; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57d00a51b71so8857a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 13:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719002998; x=1719607798; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=btQNo/jIeFme4ijFL164rincWC3kOSPjK8Ryfdoj6D8=;
-        b=buhkLp3p9RyXb6qqA+UBNQPZHUv+Hd9/VUrtaqQhLMcG+/OwbaVW17ltKAaiaqVCGm
-         91CXLgP93ZqU5/x6gNL6kyEIwUwvoosLD1alFfY+XepO0dNmXA4Diji70prLx+qCEmyh
-         8cBuHk7AIP8iAbO5sCNbOrA7YBx5tfXI6HCiSd4FFydX7KWW9y9ppDizt8e9kirq3In7
-         kH5X858RkQ8VIMBbjjIJWW9kyjQNRXHLgQNNqbOC7QfXayKIjDfvp36TwBBtw8OpDl7e
-         mdRAS5GnBCXr4FsdR5C24nkprLl+nBVd/X5BF50id4WprTRSq0TmyQScyuZqCkAJypyX
-         LWlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719002998; x=1719607798;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=btQNo/jIeFme4ijFL164rincWC3kOSPjK8Ryfdoj6D8=;
-        b=tNhUk2L4MY48VYEuZKxLk9rAmbtO+v6MG5Zsgpl+orInCgOAl7lOoP3QaiCJZYyfWZ
-         VJ+dIYk/0bhMFXIkIOOFG359SVI+QtxxzwKwbvlM+/VGqnUc9LZie0pHllDxUancl3/A
-         o0VNu7lj81232qWIPN/JQeW+WpBpZi8sQsh6NuLDc1LpIoB3AxGsOgTKMLDkuxJJk0VS
-         yfZ4tLZ1V4Kh3k09ghrPmSR0pE3LNpyxPOK7bmaJp85eb6fAZ0SHkiFhS6ms7apv0ldC
-         FHX01llMwVDqRqp9iziZwe4lAVgbc3VXSYFaWjipo1iFxOSZw46gs1xJzH12MFyRZg6M
-         slJw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2uF/UfpedmjVvHEI/xnqMHG9+AsXGj28MVtMS1ShP67yv6NvNe9T19Ma/yf/XkvnvTKOifxfiQxP4S5XjbbEZlW00/Ifp1OJIZU08
-X-Gm-Message-State: AOJu0YyPwVKbyEs8wiaHtjVZuM5l+A7jbIVpc+1S9hA3kuz6OCaKG6dy
-	2sgHuUQpZ4oS4/oRkf1ZMjZEBZoczrTenj7dw7jwXkKrvyIkE+JFu5S7qYYJ05sPq76S1TldSvq
-	ARzWueE6JRbQUU/EdoPC/rNslCDjQfOCXFHk=
-X-Google-Smtp-Source: AGHT+IEdVkpp6kfUYZmH8Bgx8yCL7HmRbIRa/IRT5c/6kNfDhfKKlyeBsp35Lx80IesOdn2x0lA0Ys7caGTR/Z9sLH8=
-X-Received: by 2002:a05:6402:268d:b0:57c:cfa9:837b with SMTP id
- 4fb4d7f45d1cf-57d40ee6696mr40817a12.0.1719002997483; Fri, 21 Jun 2024
- 13:49:57 -0700 (PDT)
+	s=arc-20240116; t=1719003047; c=relaxed/simple;
+	bh=zHqrm6LL14pN7J1jPUokZ61GJ0sIujqExqHulesYufY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W8ntWdnEz8lMnS6RcNR4j0od+m1wZvoqU42sQLaeYEwigk3xywH4TYBbyfaEbDdTARzCNnIVXH8w+AocOnGo8w9dp9DRHeWxH8tVs1A2KUKVKApXB+Obwv5I6jFt235Zo3lqwOJsXBF+QcgdIZIEJRt6RfwLN2WBse2xfImiDEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAve3cmy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC28C32789;
+	Fri, 21 Jun 2024 20:50:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719003046;
+	bh=zHqrm6LL14pN7J1jPUokZ61GJ0sIujqExqHulesYufY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SAve3cmy5p6v3u6W23zkp6N5P7Zdim1KxMhtleXv1qc7zUJI6hRPGLiX2F9y/4Vwv
+	 hL1YERb7sBSgwHGOIBvKEy0x+x3Ox0gs0WYdOlrfAhKMeZQn/VxH+rsHBpgYpH4QZt
+	 LCQC4+YiHsoXNSSB9SMz3fEedx2BfAjbYP/M/BXmD8JxAjxLOw0KIKINUUC0C3KUld
+	 eRwGrjcgSEnaANo4EpfU2uhJa+el0gq91npAlfpLF88LC9Y6YGt5exhPDcb7LmrSqV
+	 pdFc19/VpqBtqMdXSIVxpK4WAWQ9Erq5NBGDuljncaao8jBZcLS44VDjL7pBoRzSyt
+	 X+ukufO/bgjPQ==
+From: Kees Cook <kees@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Kees Cook <kees@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	Laurent Vivier <laurent@vivier.eu>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2 0/2] exec: Avoid pathological argc, envc, and bprm->p values
+Date: Fri, 21 Jun 2024 13:50:42 -0700
+Message-Id: <20240621204729.it.434-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620181736.1270455-1-yabinc@google.com> <CAKwvOd=ZKS9LbJExCp8vrV9kLDE_Ew+mRcFH5-sYRW_2=sBiig@mail.gmail.com>
- <CAKwvOd=DkqejWW=CTmaSi8gqopvCsVtj+63ppuR0nw==M26imA@mail.gmail.com>
- <CAKwvOdm+uudyu_JrHUBBJnU_R4GYprym6HWmcYYyHoCspbcL3Q@mail.gmail.com> <CH3PR11MB8751EEEAD1E6C970F68FF2CBF3C92@CH3PR11MB8751.namprd11.prod.outlook.com>
-In-Reply-To: <CH3PR11MB8751EEEAD1E6C970F68FF2CBF3C92@CH3PR11MB8751.namprd11.prod.outlook.com>
-From: Yabin Cui <yabinc@google.com>
-Date: Fri, 21 Jun 2024 13:49:44 -0700
-Message-ID: <CALJ9ZPN-PdYOymzxrWve2X9=dwN=SQemd=wnhv=pee6K7p0QXQ@mail.gmail.com>
-Subject: Re: [PATCH] Fix initializing a static union variable
-To: "Ballman, Aaron" <aaron.ballman@intel.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>, 
-	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=747; i=kees@kernel.org; h=from:subject:message-id; bh=zHqrm6LL14pN7J1jPUokZ61GJ0sIujqExqHulesYufY=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmdeekF5ynV+ysPDMpgOdN67QrunEd2yLM61lDt iaaLnVb092JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZnXnpAAKCRCJcvTf3G3A JrRYEACJcwXSeETPWX0azPcrjVE+k6pOKsR5cASZRppf73qGPz3sjtne2MfnPOSPHl3lGdu3pZa cHvqfcCZwciotGUh2dfRbyGs9LHlNGJz9Un31oYqiq+wvX2x6sNCNa8jG8FO+cu4cPn8lqISJHt V9QKDv9AKKj+s3qTSLVdRveg4xcuJHTV+A8R882GHLqMo12QMgA3G/CM/VZIofhKj7WTHs2LsfQ l679COtEFu5FSHOzlchAl0f86zhtYq2E6pTNsCLPNKY0NbhMtWuv1PIjJbS2SvkjSb2NMPBhsDJ KLTstbfZ9Ja+57aQRoZdereYMKSNFylYAZHI/7UDoBaCCsDNKnu6T2mcWsksKFMXfsr7AfaqR6v kuOR5Ibj3cJmS4PFE2ShtlsCzypdV7m+gQNqyTK8FMyQzMFeWseRGkbSbQYrbptfAdJqKrgdzs1 sP502r4NtJCvjIrTjWQjUnoGJ0fLXlaSBezY005UpCudsJfOjFe3Pv7CzocvGhDm5z7XQ3IIyhl Sf7S5D/Yh4E5xIvzlvmxQCjMFmOAEiDXJ46bZTztybyI3afN87kEYNj27D6GMxzrQs+x2n2SDIC B/fYFnoA542S0/X5lJBtOWl8I2GUAu6hNXhTCOExcFmT68jQ8YijBC1r+nymoYSfuMG5/bN11SZ wjC829Q5mJWK0Z
+ g==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-> You have to add a Fixes tag, perhaps:
-> Fixes: 08ec9af1c062 ("xfrm: Fix xfrm_state_find() wrt. wildcard source
-address.")
+Hi,
 
-Thanks! I will add it in the v2 patch.
+This pair of patches replaces the last patch in this[1] series.
 
-> And the other thing is that I would change the order in the union, to
-> have largest element as the first. Would be best to also add such check
-> into static analysis tool/s.
+Perform bprm argument overflow checking but only do argmin checks for MMU
+systems. To avoid tripping over this again, argmin is explicitly defined
+only for CONFIG_MMU. Thank you to Guenter Roeck for finding this issue
+(again)!
 
-xfrm_address_t is defined in include/uapi. So I am a little hesitant
-to change it now.
-Currently clang doesn't even have a check/warning to detect this.
-I am not sure how clang will fix it in the future, in
-https://github.com/llvm/llvm-project/issues/78034.
+-Kees
 
-> This idiom is used throughout the kernel.  If we decide that it
-> isn't safe to use then we should change the kernel as a whole rather
-> than the one spot that happens to have been identified.
+[1] https://lore.kernel.org/all/20240520021337.work.198-kees@kernel.org/
 
-> Alternatively the buggy compiler should be banned until it's fixed.
+Kees Cook (2):
+  execve: Keep bprm->argmin behind CONFIG_MMU
+  exec: Avoid pathological argc, envc, and bprm->p values
 
-The problem probably happens in all clang versions, depending on the
-optimization flags and inline attributes
-used. I found this problem when trying to add
--fdebug-info-for-profiling flag when compiling the code.
-This patch is to fix kernel code where the problem happens, before
-clang can give a better
-solution in https://github.com/llvm/llvm-project/issues/78034.
+ fs/exec.c               | 36 +++++++++++++++++++++++++++++-------
+ fs/exec_test.c          | 30 +++++++++++++++++++++++++++++-
+ include/linux/binfmts.h |  2 +-
+ 3 files changed, 59 insertions(+), 9 deletions(-)
 
+-- 
+2.34.1
 
-On Fri, Jun 21, 2024 at 4:25=E2=80=AFAM Ballman, Aaron <aaron.ballman@intel=
-.com> wrote:
->
-> Sadly, this is not a bug in Clang but is the terrible way C still works i=
-n C23. =E2=98=B9 See C23 6.7.11p11, the last bullet:
->
-> if it is a union, the first named member is initialized (recursively) acc=
-ording to these rules, and any padding is initialized to zero bits.
->
-> So the padding gets initialized as does the first member, but if the firs=
-t member is not the largest member in the union, that leaves other bits uni=
-nitialized. This happened late during NB comment stages, which is why N2900=
- and N3011 give the impression that the largest union member should be init=
-ialized.
->
-> That said, maybe there's appetite within the community to initialize the =
-largest member as a conforming extension. The downside is that people not p=
-laying tricks with their unions may end up paying additional initialization=
- cost that's useless, in pathological cases. e.g.,
->
-> int main() {
->   union U {
->     int i;
->     struct {
->       long double huge[1000];
->     } s;
->   } u =3D {}; // This is not a brilliant use of unions
->   return u.i;
-> }
->
-> But how often does this matter for performance -- I have to imagine that =
-most unions make use of most of the memory needed for their members instead=
- of being lopsided like that. If we find some important use case that has s=
-ignificantly worse performance, we could always add a driver flag to contro=
-l the behavior to let people opt into/out of the extension.
-
-I guess if people don't want the cost of zero initializing a union
-variable, they will not use "=3D {}". And the situation that using "=3D
-{}" only zero initializes the first member of a union variable isn't
-very intuitive.
-
->
-> ~Aaron
->
-> -----Original Message-----
-> From: Nick Desaulniers <ndesaulniers@google.com>
-> Sent: Thursday, June 20, 2024 3:54 PM
-> To: Yabin Cui <yabinc@google.com>
-> Cc: Steffen Klassert <steffen.klassert@secunet.com>; Herbert Xu <herbert@=
-gondor.apana.org.au>; David S. Miller <davem@davemloft.net>; Eric Dumazet <=
-edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni=
-@redhat.com>; Nathan Chancellor <nathan@kernel.org>; Bill Wendling <morbo@g=
-oogle.com>; Justin Stitt <justinstitt@google.com>; netdev@vger.kernel.org; =
-linux-kernel@vger.kernel.org; llvm@lists.linux.dev; Ballman, Aaron <aaron.b=
-allman@intel.com>
-> Subject: Re: [PATCH] Fix initializing a static union variable
->
-> On Thu, Jun 20, 2024 at 12:47=E2=80=AFPM Nick Desaulniers <ndesaulniers@g=
-oogle.com> wrote:
-> >
-> > On Thu, Jun 20, 2024 at 12:31=E2=80=AFPM Nick Desaulniers
-> > <ndesaulniers@google.com> wrote:
-> > >
-> > > On Thu, Jun 20, 2024 at 11:17=E2=80=AFAM Yabin Cui <yabinc@google.com=
-> wrote:
-> > > >
-> > > > saddr_wildcard is a static union variable initialized with {}.
-> > > > But c11 standard doesn't guarantee initializing all fields as zero
-> > > > for this case. As in https://godbolt.org/z/rWvdv6aEx,
-> > >
-> > > Specifically, it sounds like C99+ is just the first member of the
-> > > union, which is dumb since that may not necessarily be the largest
-> > > variant.  Can you find the specific relevant wording from a pre-c23
-> > > spec?
-> > >
-
-I feel it's unspecified in pre-c23 spec.
-From https://en.cppreference.com/w/c/language/struct_initialization,
-When initializing an object of struct or union type, the initializer
-must be a non-empty,(until C23).
-
-> > > > clang only initializes the first field as zero, but the bits
-> > > > corresponding to other (larger) members are undefined.
-> > >
-> > > Oh, that sucks!
-> > >
-> > > Reading through the internal report on this is fascinating!  Nice
-> > > job tracking down the issue!  It sounds like if we can aggressively
-> > > inline the users of this partially initialized value, then the UB
-> > > from control flow on the partially initialized value can result in
-> > > Android's kernel network tests failing.  It might be good to include
-> > > more info on "why this is a problem" in the commit message.
-> > >
-> > > https://godbolt.org/z/hxnT1PTWo more clearly demonstrates the issue, =
-IMO.
-
-Great, I will use it in the v2 patch.
-
-> > >
-> > > TIL that C23 clarifies this, but clang still doesn't have the
-> > > correct codegen then for -std=3Dc23.  Can you please find or file a
-> > > bug about this, then add a link to it in the commit message?
-> > >
-> > > It might be interesting to link to the specific section of n3096
-> > > that clarifies this, or if there was a corresponding defect report
-> > > sent to ISO about this.  Maybe something from
-> > > https://www.open-std.org/jtc1/sc22/wg14/www/wg14_document_log.htm
-> > > discusses this?
-> >
-> > https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3011.htm
-> >
-> > https://clang.llvm.org/c_status.html mentions that n3011 was addressed
-> > by clang-17, but based on my godbolt link above, it seems perhaps not?
->
-> Sorry, n3011 was a minor revision to
-> https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2900.htm
-> which is a better citation for this bug, IMO.  I still think the clang st=
-atus page is wrong (for n2900) and that is a bug against clang that should =
-be fixed (for c23), but this kernel patch still has merit (since the issue =
-I'm referring to in clang is not what's leading to the test case failures).
->
-
-I totally agree with you. And if clang fixes the support, I guess it
-will not be limited to c23.
-
-> >
-> > 6.7.10.2 of n3096 (c23) defines "empty initialization" (which wasn't
-> > defined in older standards).
-> >
-> > Ah, reading
-> >
-> > n2310 (c17) 6.7.9.10:
-> >
-> > ```
-> > If an object that has static or thread storage duration is not
-> > initialized explicitly, then:
-> > ...
-> > =E2=80=94 if it is a union, the first named member is initialized
-> > (recursively) according to these rules, and any padding is initialized
-> > to zero bits; ```
-> >
-> > Specifically, "the first named member" was a terrible mistake in the la=
-nguage.
-> >
-> > Yikes! Might want to quote that in the commit message.
-> >
-> > >
-> > > Can you also please (find or) file a bug against clang about this? A
-> > > compiler diagnostic would be very very helpful here, since `=3D {};`
-> > > is such a common idiom.
-> > >
-
-Reported to clang upstream in
-https://github.com/llvm/llvm-project/issues/78034#issuecomment-2183233517.
-It's a problem that still happens in the c23 standard.
-
-
-> > > Patch LGTM, but I think more context can be provided in the commit
-> > > message in a v2 that helps reviewers follow along with what's going
-> > > on here.
-> > >
-> > > >
-> > > > Signed-off-by: Yabin Cui <yabinc@google.com>
-> > > > ---
-> > > >  net/xfrm/xfrm_state.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c index
-> > > > 649bb739df0d..9bc69d703e5c 100644
-> > > > --- a/net/xfrm/xfrm_state.c
-> > > > +++ b/net/xfrm/xfrm_state.c
-> > > > @@ -1139,7 +1139,7 @@ xfrm_state_find(const xfrm_address_t *daddr, =
-const xfrm_address_t *saddr,
-> > > >                 struct xfrm_policy *pol, int *err,
-> > > >                 unsigned short family, u32 if_id)  {
-> > > > -       static xfrm_address_t saddr_wildcard =3D { };
-> > > > +       static const xfrm_address_t saddr_wildcard;
-> > > >         struct net *net =3D xp_net(pol);
-> > > >         unsigned int h, h_wildcard;
-> > > >         struct xfrm_state *x, *x0, *to_put;
-> > > > --
-> > > > 2.45.2.741.gdbec12cfda-goog
-> > > >
-> > >
-> > >
-> > > --
-> > > Thanks,
-> > > ~Nick Desaulniers
-> >
-> >
-> >
-> > --
-> > Thanks,
-> > ~Nick Desaulniers
->
->
->
-> --
-> Thanks,
-> ~Nick Desaulniers
 
