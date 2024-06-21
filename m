@@ -1,232 +1,210 @@
-Return-Path: <linux-kernel+bounces-224342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B77C912119
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:44:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F5B791211B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 11:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D9C01C2253D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B733F1F25D17
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D4B16F85C;
-	Fri, 21 Jun 2024 09:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8F116EB6F;
+	Fri, 21 Jun 2024 09:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b7Y1S1p1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jygJFWOz"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A5516E899
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 09:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E213716E895;
+	Fri, 21 Jun 2024 09:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718963023; cv=none; b=knwGz+vUxJHQDCxa3dADhsgaOT2m8tbF3GCHl2IqqgGSIqzSV6NGDN1Yg0vt+l9RHAbFjetaykJvsATy6vJ+wZ9cqRgYx41nJeMne3xS6bwfI/rl32DlJmCHuY59IfqhduYwrlePs1WPPQCONGV4XNRvQKiqRwLc/T2i9WuG01k=
+	t=1718963057; cv=none; b=r2V1V1XFKnrTevItF+awUh3CyTYRXe6OHMGSmk0I/iYuXer4AinvOZCcTq9VHC1jfbADbviCGCDuywQm8O7PY/dmInrzCqAokFz9RjxSmIlxL+kMK7xwivbkGEOEi6JQ3sgUu1xmiSK/UkilK5fJu09KfRS8Dqon/6Z1gTtYhcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718963023; c=relaxed/simple;
-	bh=dOu7TKpD65Qn91FhP+3ezNvvdaK37n0H64MukY+aZBs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KLajwQss8Enmb85bQNjvVMVJwKC/16Q6NefXAbXN25FzWp8w3RShvaKdS4xyiiy5g0HflGQbXQoo08EzfKDkgtcpdgwrHhhNFiuY661bfwDEgbxXr5mfJLXXk9rE90MKJ/F8raeBlQCGYFj8edoaDV26fHKxcqn/Z90NiLC+TKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b7Y1S1p1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718963020;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dOu7TKpD65Qn91FhP+3ezNvvdaK37n0H64MukY+aZBs=;
-	b=b7Y1S1p1XVbYWH8ctHYtlnHSp0V79f9IijIBrSF5ZEdZjUHTRNeDvYWCKTGJ7TE6k5sAHE
-	GuMClD0vSTANc4R/66hU0bMmd3MbWTGEEZt+AnciFMckAE1X13lRyvlO8gna0ap5tSF1WR
-	jD/vOE7gZJQdBx9cOAwCUPZDNMeRXvA=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-248-R4aNMhZzNj6QIRmLCf6_yQ-1; Fri, 21 Jun 2024 05:43:38 -0400
-X-MC-Unique: R4aNMhZzNj6QIRmLCf6_yQ-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-36499139786so281923f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 02:43:38 -0700 (PDT)
+	s=arc-20240116; t=1718963057; c=relaxed/simple;
+	bh=c+X4o8yOOqmqqo+T6TcDvzWoDO4BblrQxz4brlJHuSg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GuSP4zdSik2Wo6SVJkKwhdlIuhMomGGEFefSw2yMbSMljg8zLYyIeIzg2PEQUR0YXh06VnDPFImtIhsaR5jJsqOJs8I3JB2n7k3MhKNP5B3PEIk6QrZ16ti0iNJL8thzCp0wf1V6imZE+byOO2dyv2UESseDPhzI35rAIE7/A4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jygJFWOz; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f09b457fdso187865866b.2;
+        Fri, 21 Jun 2024 02:44:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718963054; x=1719567854; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YH8HgTmsyYTHd1UBCvXdgm36Yrr0b+GSZnRwwUHMfH4=;
+        b=jygJFWOzE7qDhvCZMYt53YmCfoMYPk4jpPHVbxlnSWSzffOyBHjLawePlBBliQ5+nK
+         ILmZkBNYOzAR7i2DJ207S6mWv2DN1M6GlYZ8SUSaN7hkTWtBS7PaE1VR63PvGY5pVbx9
+         p3Ih0jb9C4YkWq73+R1HK4bEhyowuFkKTzlgT9j85jqzIr+EG0mN7xjO24snaMMgPMuS
+         nB8YA3I+lhb7vpFOBWaZU0l5PvKuEA9ocdbCFc5QVfUJqo6OmtjhaoHc4kTvP+DVQ57k
+         IhWojDFSDkgNc9s4P0HJcn2PTnIMNJYFOoehLR+gHj7klfIeJXV9L+tWCdgUy2lV2XJL
+         cs9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718963017; x=1719567817;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dOu7TKpD65Qn91FhP+3ezNvvdaK37n0H64MukY+aZBs=;
-        b=nTf4F1iSGVouupnHu+obdzFfcC20csUq8NXzvujLlwMiTZ2BV3nJZpiSxh2D3/s7yG
-         YIB7UVD2kTOwsPasHKXq2z4rqk+tCKTBdlYtD73yraYV07IV4i07FvJzQCthrwc9DnRf
-         X3FjzQJhHwt7vjdsYdp8bCNMQroVENz2sCgwL0iOKklwmjiJVi0ORhKNPXZ2Ixqpa2dZ
-         3HxXKNSkAOfVMnxvPZGshvU4CJKHpRlc5H8ZJNIJdf8q/BA3iJmAyh69KAcz6bKywB5R
-         Bmc113jmTV87Zdi8lY4PPFFb7L7m6t5SkhE9Wn0cRlWHFGz95WF8CO6gom+oNwtTyiC6
-         f2mw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEmqsRT7Qxa9bduLnBWQtPjhNNp8kqyovzhp3LM5K0uhUMylHjQ1AmDo1Bj5CZGpVAITvDME2UxFq3TafQm2iGmYRblQPCfvd3C15Z
-X-Gm-Message-State: AOJu0YxaYh3mSVv8KOIa6zkbeLOiwmIqcEHSk2Mqor3q67nTHD1u1Ucn
-	oGRXU/+hPgbqfIIcItK8mqTlp0pHOeOfmgyI/c163L15dG+BZ3T+8ByGT+8vh8zj9jh0zYv/7kr
-	9s877TplRzKAAczTiwiz3/lOIJr1mVQZYLI2dftwsvADfSQrMg3BXf/3nOYFxcg==
-X-Received: by 2002:a05:600c:1c8b:b0:423:146b:36f8 with SMTP id 5b1f17b1804b1-42478e41349mr46698935e9.4.1718963017057;
-        Fri, 21 Jun 2024 02:43:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZy81YPJtm/RjjImN0bEGbtNnfnO0rKFhNc/jBgxq3caLP+I9REwIpO9tZ1V0UMa7wvG04DA==
-X-Received: by 2002:a05:600c:1c8b:b0:423:146b:36f8 with SMTP id 5b1f17b1804b1-42478e41349mr46698725e9.4.1718963016540;
-        Fri, 21 Jun 2024 02:43:36 -0700 (PDT)
-Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817a99fbsm19971705e9.16.2024.06.21.02.43.35
+        d=1e100.net; s=20230601; t=1718963054; x=1719567854;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YH8HgTmsyYTHd1UBCvXdgm36Yrr0b+GSZnRwwUHMfH4=;
+        b=dKMpez965GDd2VlX2312zldlPTcSS1Op35P+U9kGsWMHun9/o9w+ufVRK8x8ovHjHW
+         s8n2wD5O/0t7VPBIDSwtn1tKLsRYqmoaTfloJM2fj9FkzSJ7IT1JjX60DlY5Scz50OpA
+         U7ubSC+cKeP1cyu9oRPVO1I1CGAw/cbnkOrlDQroFtIcSqr3APa9KEDr3oUz3KYM92e/
+         ikmzbub0he9S7pGaURrXrtIJQa65Qf5SuYcDf/Ww1Vn5gNXcHZSKq7+2poOA0nJM+PRO
+         +NZX91I2RjSTjxEs0xCSbK+KACb951HDiHCw/cwSaYGLVTCio4o5ViFqm7Y+mdUsQzgi
+         i80g==
+X-Forwarded-Encrypted: i=1; AJvYcCVmLMLJzmv3XbrmIUnEz+o3sCCVfQzAXhaMEMmGqTod7a+3rVWw2F4IMCfWs/GaGpWL1t2ob2PH4bxeZQIQ6RXjbvmvYplmb0cLMDvlOlBM2eVxyAs2tS6ZnB1ejsqq8o7Hcvij0ryH3Q==
+X-Gm-Message-State: AOJu0YzYPXx4wTV66W8EBy2XBR+nRdiYtlCpa1g14c5GPWpPLIY8WgxN
+	ZvocEhB5Xfl/wDRtaPYG9QMP3ciXGqK2DO+g1BsIRzxzi/FdGOOH
+X-Google-Smtp-Source: AGHT+IHFvIYFRPxClWRA8y4JLBhyArN9ZGGm2+KYv28v2EmS+G6m3eLsRivYBY4rUA6LGQZV4cbFow==
+X-Received: by 2002:a17:907:a602:b0:a6f:5efb:5c8 with SMTP id a640c23a62f3a-a6fab6088e7mr596883766b.9.1718963054027;
+        Fri, 21 Jun 2024 02:44:14 -0700 (PDT)
+Received: from pc636 (176-227-201-31.ftth.glasoperator.nl. [31.201.227.176])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48b17esm64261166b.88.2024.06.21.02.44.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 02:43:36 -0700 (PDT)
-Message-ID: <a43dc0512194042d762bf5bb5f1396d41fef5bce.camel@redhat.com>
-Subject: Re: [PATCH v2 07/10] rust: add `io::Io` base type
-From: Philipp Stanner <pstanner@redhat.com>
-To: Greg KH <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@redhat.com>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org, 
- alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
- gary@garyguo.net,  bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com,  aliceryhl@google.com, airlied@gmail.com,
- fujita.tomonori@gmail.com,  lina@asahilina.net, ajanulgu@redhat.com,
- lyude@redhat.com, robh@kernel.org,  daniel.almeida@collabora.com,
- rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org
-Date: Fri, 21 Jun 2024 11:43:34 +0200
-In-Reply-To: <2024062040-wannabe-composer-91bc@gregkh>
-References: <20240618234025.15036-1-dakr@redhat.com>
-	 <20240618234025.15036-8-dakr@redhat.com>
-	 <2024062040-wannabe-composer-91bc@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        Fri, 21 Jun 2024 02:44:13 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Fri, 21 Jun 2024 11:44:12 +0200
+To: Baoquan He <bhe@redhat.com>, Nick Bowler <nbowler@draconx.ca>
+Cc: Hailong Liu <hailong.liu@oppo.com>, Nick Bowler <nbowler@draconx.ca>,
+	linux-kernel@vger.kernel.org,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	linux-mm@kvack.org, sparclinux@vger.kernel.org,
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
+Message-ID: <ZnVLbCCkvhf5GaTf@pc636>
+References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
+ <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
+ <20240621033005.6mccm7waduelb4m5@oppo.com>
+ <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
 
-On Thu, 2024-06-20 at 16:53 +0200, Greg KH wrote:
-> On Wed, Jun 19, 2024 at 01:39:53AM +0200, Danilo Krummrich wrote:
-> > I/O memory is typically either mapped through direct calls to
-> > ioremap()
-> > or subsystem / bus specific ones such as pci_iomap().
-> >=20
-> > Even though subsystem / bus specific functions to map I/O memory
-> > are
-> > based on ioremap() / iounmap() it is not desirable to re-implement
-> > them
-> > in Rust.
->=20
-> Why not?
+On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
+> On 06/21/24 at 11:30am, Hailong Liu wrote:
+> > On Thu, 20. Jun 14:02, Nick Bowler wrote:
+> > > On 2024-06-20 02:19, Nick Bowler wrote:
+> > > > After upgrading my sparc to 6.9.5 I noticed that attempting to run
+> > > > xfsdump instantly (within a couple seconds) and reliably crashes the
+> > > > kernel.  The same problem is also observed on 6.10-rc4.
+> > > [...]
+> > > >   062eacf57ad91b5c272f89dc964fd6dd9715ea7d is the first bad commit
+> > > >   commit 062eacf57ad91b5c272f89dc964fd6dd9715ea7d
+> > > >   Author: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > > >   Date:   Thu Mar 30 21:06:38 2023 +0200
+> > > >
+> > > >       mm: vmalloc: remove a global vmap_blocks xarray
+> > >
+> > > I think I might see what is happening here.
+> > >
+> > > On this machine, there are two CPUs numbered 0 and 2 (there is no CPU1).
+> > >
+> > +Baoquan
+> 
+> Thanks for adding me, Hailong.
+> 
+> > 
+> > Ahh, I thought you are right. addr_to_vb_xa assume that the CPU numbers are
+> > contiguous. I don't have knowledge about CPU at all.
+> > Technically change the implement addr_to_vb_xa() to
+> > return &per_cpu(vmap_block_queue, raw_smp_processor_id()).vmap_blocks;
+> > would also work, but it violate the load balance. Wating for
+> > experts reply.
+> 
+> Yeah, I think so as you explained.
+> 
+> > 
+> > > The per-cpu variables in mm/vmalloc.c are initialized like this, in
+> > > vmalloc_init
+> > >
+> > >   for_each_possible_cpu(i) {
+> > >     /* ... */
+> > >     vbq = &per_cpu(vmap_block_queue, i);
+> > >     /* initialize stuff in vbq */
+> > >   }
+> > >
+> > > This loops over the set bits of cpu_possible_mask, bits 0 and 2 are set,
+> > > so it initializes stuff with i=0 and i=2, skipping i=1 (I added prints to
+> > > confirm this).
+> > >
+> > > Then, in vm_map_ram, with the problematic change it calls the new
+> > > function addr_to_vb_xa, which does this:
+> > >
+> > >   int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > >   return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> > >
+> > > The num_possible_cpus() function counts the number of set bits in
+> > > cpu_possible_mask, so it returns 2.  Thus, index is either 0 or 1, which
+> > > does not correspond to what was initialized (0 or 2).  The crash occurs
+> > > when the computed index is 1 in this function.  In this case, the
+> > > returned value appears to be garbage (I added prints to confirm this).
+> 
+> This is a great catch. 
+> 
+Indeed :)
 
-Because you'd then up reimplementing all that logic that the C code
-already provides. In the worst case that could lead to you effectively
-reimplemting the subsystem instead of wrapping it. And that's obviously
-uncool because you'd then have two of them (besides, the community in
-general rightfully pushes back against reimplementing stuff; see the
-attempts to provide redundant Rust drivers in the past).
+> > >
+> > > If I change addr_to_vb_xa function to this:
+> > >
+> > >   int index = ((addr / VMAP_BLOCK_SIZE) & 1) << 1; /* 0 or 2 */
+> > >   return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> 
+> Yeah, while above change is not generic, e.g if it's CPU0 and CPU3.
+> I think we should take the max possible CPU number as the hush bucket
+> size. The vb->va is also got from global free_vmap_area, so no need to
+> worry about the waste.
+>
+Agree.
 
-The C code already takes care of figuring out region ranges and all
-that, and it's battle hardened.
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index be2dd281ea76..18e87cafbaf2 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+>  static struct xarray *
+>  addr_to_vb_xa(unsigned long addr)
+>  {
+> -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+>  
+>  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
+>  }
+> 
+The problem i see is about not-initializing of the:
+<snip>
+	for_each_possible_cpu(i) {
+		struct vmap_block_queue *vbq;
+		struct vfree_deferred *p;
 
-The main point of Rust is to make things safer; so if that can be
-achieved without rewrite, as is the case with the presented container
-solution, that's the way to go.
+		vbq = &per_cpu(vmap_block_queue, i);
+		spin_lock_init(&vbq->lock);
+		INIT_LIST_HEAD(&vbq->free);
+		p = &per_cpu(vfree_deferred, i);
+		init_llist_head(&p->list);
+		INIT_WORK(&p->wq, delayed_vfree_work);
+		xa_init(&vbq->vmap_blocks);
+	}
+<snip>
 
->=20
-> > Instead, implement a base type for I/O mapped memory, which
-> > generically
-> > provides the corresponding accessors, such as `Io::readb` or
-> > `Io:try_readb`.
->=20
-> It provides a subset of the existing accessors, one you might want to
-> trim down for now, see below...
->=20
-> > +/* io.h */
-> > +u8 rust_helper_readb(const volatile void __iomem *addr)
-> > +{
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return readb(addr);
-> > +}
-> > +EXPORT_SYMBOL_GPL(rust_helper_readb);
->=20
-> <snip>
->=20
-> You provide wrappers for a subset of what io.h provides, why that
-> specific subset?
->=20
-> Why not just add what you need, when you need it?=C2=A0 I doubt you need
-> all
-> of these, and odds are you will need more.
->=20
+correctly or fully. It is my bad i did not think that CPUs in a possible mask
+can be non sequential :-/
 
-That was written by me as a first play set to test. Nova itself
-currently reads only 8 byte from a PCI BAR, so we could indeed drop
-everything but readq() for now and add things subsequently later, as
-you suggest.
+nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
+when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
 
+Or i missed something in your patch, Baoquan?
 
-
-> > +u32 rust_helper_readl_relaxed(const volatile void __iomem *addr)
-> > +{
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return readl_relaxed(addr);
-> > +}
-> > +EXPORT_SYMBOL_GPL(rust_helper_readl_relaxed);
->=20
-> I know everyone complains about wrapper functions around inline
-> functions, so I'll just say it again, this is horrid.=C2=A0 And it's goin=
-g
-> to
-> hurt performance, so any rust code people write is not on a level
-> playing field here.
->=20
-> Your call, but ick...
-
-Well, can anyone think of another way to do it?
-
->=20
-> > +#ifdef CONFIG_64BIT
-> > +u64 rust_helper_readq_relaxed(const volatile void __iomem *addr)
-> > +{
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return readq_relaxed(addr);
-> > +}
-> > +EXPORT_SYMBOL_GPL(rust_helper_readq_relaxed);
-> > +#endif
->=20
-> Rust works on 32bit targets in the kernel now?
-
-Ahm, afaik not. That's some relic. Let's address that with your subset
-comment from above.
-
->=20
-> > +macro_rules! define_read {
-> > +=C2=A0=C2=A0=C2=A0 ($(#[$attr:meta])* $name:ident, $try_name:ident,
-> > $type_name:ty) =3D> {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /// Read IO data from a giv=
-en offset known at compile
-> > time.
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ///
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /// Bound checks are perfor=
-med on compile time, hence if
-> > the offset is not known at compile
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /// time, the build will fa=
-il.
->=20
-> offsets aren't know at compile time for many implementations, as it
-> could be a dynamically allocated memory range.=C2=A0 How is this going to
-> work for that?=C2=A0 Heck, how does this work for DT-defined memory range=
-s
-> today?
-
-The macro below will take care of those where it's only knowable at
-runtime I think.
-
-Rust has this feature (called "const generic") that can be used for
-APIs where ranges which are known at compile time, so the compiler can
-check all the parameters at that point. That has been judged to be
-positive because errors with the range handling become visible before
-the kernel runs and because it gives some performance advantages.
-
-
-P.
-
->=20
-> thanks,
->=20
-> greg k-h
->=20
-
+--
+Uladzislau Rezki
 
