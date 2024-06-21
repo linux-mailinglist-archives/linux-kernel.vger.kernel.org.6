@@ -1,219 +1,224 @@
-Return-Path: <linux-kernel+bounces-224419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D6A91222A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:20:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FFFD912227
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCB961C239B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:20:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06533286F80
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2975172BD6;
-	Fri, 21 Jun 2024 10:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B1817279C;
+	Fri, 21 Jun 2024 10:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="BFvmdqp/"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b="Xj3AQDtl"
+Received: from cluster-d.mailcontrol.com (cluster-d.mailcontrol.com [85.115.60.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA02172BC4;
-	Fri, 21 Jun 2024 10:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718965125; cv=none; b=hGPE/R0WQ2wW9+QT/5643YY0A1xir6BfZBD+kie3qewPo+cXKKsjlDCFbtMAWc9q29cxDMGPSbI+UuPbgS1CsHlxAoVA4v0nKlFDKzrveYTsClnTYnRMeMl4PaHui9vZohuKbFPbSY1DbvwiIgtEXtkl7yPgxGiyf7pAIy03Huk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718965125; c=relaxed/simple;
-	bh=N1yo7secwogxuEPVHJ5Vld6lZEvYNi5oKI8TVPWuc8g=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UVjF9VI8c5+RaeYUtIbP1G+yUDtI79EaOKY1bi7ILtrsUO5KF40vyjvPFFl3cdjI3aZ+mv8IzYFrgOb4iperLoOeHx/h9bXGkQ0ZIzNR6WSh0Kdx/kb4AfFS3l8kaX24SBN6BayjprtycpupcKJ0JVxiUgw0MhE/ge9SFkXakY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=BFvmdqp/; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1718965124; x=1750501124;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N1yo7secwogxuEPVHJ5Vld6lZEvYNi5oKI8TVPWuc8g=;
-  b=BFvmdqp/zlHshCSNpDaGQ5mSlnXuO0KIX1YzXPweEtwYYfvIoKWAW5Jm
-   91T2uBcCZVbi90IlBx78OVFSaA6hS2cJCHU9AloDQMel6QZrdTiymCj8J
-   e0VcGfZJL2Nf//vXJaGyNXO1TmjFseM/FsVTrsVP5AWod5/n5XLLBSwFc
-   0m/yuuLr0NYXvuG8X4yw2eQWbvKfR5Icm0tDeKuITzSDO8ybGmnt1G+0o
-   V/Lt7nSIzJzFKu+8TWL5FjFLuCI7+UR+8O4E5rgCNO/aeMUfgXeCeGn2S
-   73Kkxcg7mM6f226t33BjpB/7XxEu1x34CGRVgVN0EvAQ/vWz5m/C60F1R
-   g==;
-X-CSE-ConnectionGUID: HFkKWv5gQi6XJez7y6X/8g==
-X-CSE-MsgGUID: D4+6zTj7RaSh21uL4J0goA==
-X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
-   d="asc'?scan'208";a="28968692"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Jun 2024 03:18:42 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 21 Jun 2024 03:18:15 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Fri, 21 Jun 2024 03:18:12 -0700
-Date: Fri, 21 Jun 2024 11:17:53 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Alexandre Ghiti <alex@ghiti.fr>
-CC: Anup Patel <apatel@ventanamicro.com>, Conor Dooley <conor@kernel.org>,
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <kvm-riscv@lists.infradead.org>,
-	<kvm@vger.kernel.org>, <ajones@ventanamicro.com>, <greentime.hu@sifive.com>,
-	<vincent.chen@sifive.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	<devicetree@vger.kernel.org>
-Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
-Message-ID: <20240621-viewless-mural-f5992a247992@wendy>
-References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
- <20240605121512.32083-3-yongxuan.wang@sifive.com>
- <20240605-atrium-neuron-c2512b34d3da@spud>
- <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
- <40a7d568-3855-48fb-a73c-339e1790f12f@ghiti.fr>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9146C171E70;
+	Fri, 21 Jun 2024 10:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.115.60.190
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718965118; cv=fail; b=A5CbHFKeAC57winvbhaP0vZ20RLMUbe3n8J7S6r2wO3MxzRa5YVtuctcRQxtC5C/fHAvLCHwwGBsPFELGrXwxsHFjtcRJeDagNiIbzvNa441jiZ+HGr20aSZ3EtI4PKFtVXv36LVccoO0XLCOtw85hE58iHSBuqP68TRC20Ouzs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718965118; c=relaxed/simple;
+	bh=HbWDSfQo9O62ZHORFuoNKPgKJNNOQGHLDH7h/J7DWOw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=I3EzaPl65DojydogmRZZfGCOTn76vLRA41jIbUp1ZNMDQzJXsiF8h4rInzl63lvJI5FSJIO8SimQYl1uVKqeTYHNQuml7IythIz2yQH6hHFnvchCdfXpq13PCRJZvYbRpKI9vN1LmoWmYbN5pZDmpjbx/u0cSdBwyJOzV/QZaiM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai; spf=pass smtp.mailfrom=habana.ai; dkim=pass (2048-bit key) header.d=habana.ai header.i=@habana.ai header.b=Xj3AQDtl; arc=fail smtp.client-ip=85.115.60.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=habana.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=habana.ai
+Received: from rly13d.srv.mailcontrol.com (localhost [127.0.0.1])
+	by rly13d.srv.mailcontrol.com (MailControl) with ESMTP id 45LAIAQW069181;
+	Fri, 21 Jun 2024 11:18:10 +0100
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by rly13d.srv.mailcontrol.com (MailControl) id 45LAI3ZE067166;
+	Fri, 21 Jun 2024 11:18:03 +0100
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04lp2044.outbound.protection.outlook.com [104.47.13.44])
+	by rly13d-eth0.srv.mailcontrol.com (envelope-sender oshpigelman@habana.ai) (MIMEDefang) with ESMTP id 45LAI02j064861
+	(TLS bits=256 verify=OK); Fri, 21 Jun 2024 11:18:03 +0100 (BST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=g60rX4Q1VYQRqZuhDCcdfhKP/pHmzz//AaOnP5EQuwO3ILnh4JSHxIIOnQy+vIk1vtRc0sAgR6EkhfonahrvkgFeRxOiJpBbAd9vMFrt5lnBnHBCXZkz2w7/B+nLc5vxhlTpLw4cD4K+O6kHN8GWt3m2YPJaMQGZNEn/pyBN7xCcxHSR/BJ1ucaQDX5oE4gKN8VrN2LyzIVzu/MgkWyQ/woeaqwE5DxrsiervHuk5HJ2FmBwjZssYRQu/wNb/pMhjHmy9faH7Tsm7mL+AXg4lN0UakYsrd0cVHmR2F6u4cqqYKNCaxCQ3vHDqNEoiA7BrGESjbhBaejogGxbgJaeUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HbWDSfQo9O62ZHORFuoNKPgKJNNOQGHLDH7h/J7DWOw=;
+ b=KlCxU+eSUzcRTDxVptOxpKo4GOFnzzfsQOpNmepH55ofxSJI/ugsy9w5PAuVPW0sfwOkLKoYBDP5plqDl7/C8Rl4aq8yLJU6VGRAbRINYfQ6zVO+/lbB2l7FSJBebmgidl6tyy4qct1BltalweC+v52w4PLGNT/Kq4E+h0yuVEya84BxPZUeafxpgsvLAgbxSr9ab7cqOLQHwH9odmYImXcNoLTs1pcF6vx3wGhWPj/gZaUek9Vn7VAO0s6sJQMxen1zigJLFla41qSxhKEgMh+mKjKiPztIb5dvBMq0swKmGVqBjY0q9MUujcO127xjvvkimpcNgSoJgwmjwcsi5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
+ dkim=pass header.d=habana.ai; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=habana.ai;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HbWDSfQo9O62ZHORFuoNKPgKJNNOQGHLDH7h/J7DWOw=;
+ b=Xj3AQDtl3xyzDrzXy5OFjCDFqE1x+3nLboKtwhQQu9tSDKeYL2qL1LwVPQsCBzt2CLYN5NqRzYRz4lc4CU4I/Z2/W4Vw/M+24u/U6MT9+B3BTTXBx2IWRruBvTmj/FktyrtHcJOI5bBgzyfVWhYlbE4eiNwl6KE27peN7QPhMFhqhR2TtdW4nY8clZgHHzOW/WePJUS7icedftXno0wwui4ydd7C6cHYo/1Nr6rGY9iLDMCPe2XktWI1zXQ9wZeCgA32r+51o8yZwOuz0hSmSmjp13/hIDN5MHAN+oHmmXawPN7klG7uAEXD+NvXCn21Av6PFhlF4c2VHrD9hyZAoQ==
+Received: from PAWPR02MB9149.eurprd02.prod.outlook.com (2603:10a6:102:33d::18)
+ by PR3PR02MB6394.eurprd02.prod.outlook.com (2603:10a6:102:70::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.19; Fri, 21 Jun
+ 2024 10:17:58 +0000
+Received: from PAWPR02MB9149.eurprd02.prod.outlook.com
+ ([fe80::90a0:a4f0:72e9:58b9]) by PAWPR02MB9149.eurprd02.prod.outlook.com
+ ([fe80::90a0:a4f0:72e9:58b9%3]) with mapi id 15.20.7698.020; Fri, 21 Jun 2024
+ 10:17:58 +0000
+From: Omer Shpigelman <oshpigelman@habana.ai>
+To: Sunil Kovvuri Goutham <sgoutham@marvell.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+CC: "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        Zvika Yehudai
+	<zyehudai@habana.ai>
+Subject: Re: [PATCH 06/15] net: hbl_cn: debugfs support
+Thread-Topic: [PATCH 06/15] net: hbl_cn: debugfs support
+Thread-Index: AQHavWrP8fzUP7TvlUuSpdkfhyjIlrHPc/UAgAKZx4A=
+Date: Fri, 21 Jun 2024 10:17:58 +0000
+Message-ID: <ac16e551-b8d6-4ca7-9e3c-f2e8de613947@habana.ai>
+References: <20240613082208.1439968-1-oshpigelman@habana.ai>
+ <20240613082208.1439968-7-oshpigelman@habana.ai>
+ <BY3PR18MB473757A4F450A2F5C115D5A9C6CF2@BY3PR18MB4737.namprd18.prod.outlook.com>
+In-Reply-To: 
+ <BY3PR18MB473757A4F450A2F5C115D5A9C6CF2@BY3PR18MB4737.namprd18.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=habana.ai;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAWPR02MB9149:EE_|PR3PR02MB6394:EE_
+x-ms-office365-filtering-correlation-id: 675fa18c-ea17-47a2-5e6e-08dc91db6c68
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230037|1800799021|366013|41320700010|38070700015;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?Z0VNR2VOMGxSVHZrdTEwY29lNFdEUTErQUxSMVJqM2xFK1dRaUcrTjFLVFh2?=
+ =?utf-8?B?VlRBYW00REdhaFpETUkvN2I1THpvSmY1Vzlld0h2TFczRi9vR2g3ZWF0Y2Zv?=
+ =?utf-8?B?aXpybHFCd2REUDZYTGZVZG02YWJoNFNxaXZpcGdBZHcxaTByZjdnZWx3dFJT?=
+ =?utf-8?B?Tkl3OFRnVytvVzV2SlllbUNwNHRQRDN4YTBZbTNDYjJnZzlud3UvR0xHZ0FK?=
+ =?utf-8?B?YTdySWFoRXk2R1JLSitXUWZjVU00RWtWQXVORm9hU0wwa1YxazNUSGNRSnhJ?=
+ =?utf-8?B?eklJbERtK3BHc1ZzNUtoVSthRmpGVTVTNGIxdGhPNzQrajFMeGpaZmZRbFQ0?=
+ =?utf-8?B?ZmF2YXduNUUyK1BRRFUrdWdTSmQ1VmZDOTVkbjlqQlpEZ3UzRmNldkV2NlRK?=
+ =?utf-8?B?Mys4MXFRdmdPQW1acGZXcE5uZlp1TXdNK0tBRTBtTHVhS2VGOEkxaGJQeWVG?=
+ =?utf-8?B?L0dramk3aGRrbFZsRFM3R1UrVUhidHdFMjRpWkxTTXVmMy9NVnB1NXF5Znl4?=
+ =?utf-8?B?Y0N4c2Rzbm9KbnRuQnVtTUdNRmNVRFZFbnFEWjNRWm0rOUxTV3FHbDY3SXVx?=
+ =?utf-8?B?L2htR05PTmtxcFFVY3dVNFhwcXhodVpZbms4NC9oWGZidG01SXFjaXYyUFBW?=
+ =?utf-8?B?dmtCV2VCSWFPSWZMUzU0UjZJSURXWThyUzh4UUN0dnorQmpqaHdBdVRlN0l3?=
+ =?utf-8?B?Z3JOSDBVdFZENGRYNmxsL3RnUy9BWW9pN2R5VEZ1emJNbHZWUWRid0VKcDRP?=
+ =?utf-8?B?d2hZVSswS21adU9vUmJNUVVvdTErTVRXVWF0L1FyQnl4dXZkWlBHS1cxeXZN?=
+ =?utf-8?B?WWdPNm9CM0VHUm9YQU1rTy8zSkpucTYvSHhDc3dUVDVjdW5LVG5LUkZJZytQ?=
+ =?utf-8?B?alhtbGVlL3ZvQW1RK0Y2VmdQS3Z1RzRSVElFVlRwbitqdXZtbFN4U0xNL2xF?=
+ =?utf-8?B?bWhzN0xrT0lPMDgvb01NU3djNU92YUFuSmw0SHdjc2twekduTlY1RVN5dzdx?=
+ =?utf-8?B?SHZMZXhGanFQKzRiblhaeDNHeXlBRFBuMCtDeW83WXlCeFZhazc5Q1pEMWdY?=
+ =?utf-8?B?WkE2ZWNNaHRLd3RyKzlLMUpXTkV0SUkvQVA0SlRkQTZTTlRrUnhKMjFtNHpt?=
+ =?utf-8?B?S3ZmUS9NMEF3blE0MDF4R0JLK2xmV1RnME05bS9JU1ZxckRLMjFFVTVvQmgw?=
+ =?utf-8?B?QVFVTjRPN2hBcVhJM3hjaVdQSVVmYkV3YTFoc0E1NGxsWUYvMkdKT2J1Nnph?=
+ =?utf-8?B?bmk4MldvOXQ5RkkvN3dWN2owYkprY21LNW5tWmxMR2VGd0tRcEZtL3BlUjhE?=
+ =?utf-8?B?bEhIUzF3bnNMZ2t3S0lUby83alRYMk5DbnVyVTdxWWJvSDJ2aTlSYVl6RnRk?=
+ =?utf-8?B?NEV2Tk1ML2xZYW10ODRpWUhXd0x4Y0Q3azZGSzVNUlJNUUJWdlhBdTIvbFJY?=
+ =?utf-8?B?NEgrM0xNd3NveDJoRnp4dm83REFpSU9ZZGNzbkRIWnByZ0l5VFRqOTRLYkEx?=
+ =?utf-8?B?ZkliN0VuaDJZVXltdmxFdm9yblQzTTNxQ0kyNHVuZFYyWXJuNUcyRVFkSks4?=
+ =?utf-8?B?RjNQTGpIMmE1YTVhYmpaQTlpVFR4RlZhYkhUeUJ0SHFQVGlqMktHRTFYenRl?=
+ =?utf-8?B?UXF3M2VOenBka2FQdG5rbko5M1lqQnIxNktQUkZNSmJyV3o3ZHZvclJtNUJa?=
+ =?utf-8?B?bTg0QXhVMVNNQk5mNUljNkZXR3dOSkNPNkRJenQ1bjZCVFE2ZGsrS2R2R2ov?=
+ =?utf-8?B?NlppYlJFUzJqVHNTQ2FIM2VhQXNaSTQ1c2JvWXhiN0Nsa3E4cGhCQ0RkRHFK?=
+ =?utf-8?Q?PltmseQmHK2Vgxf7bB+2lEiLNaeaeVLd1AVLk=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR02MB9149.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(41320700010)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?YVFxQ2RxNDY4NGlsQmxmTXBSVU9ocjBoR3pza3h4c0VMVE9ET1I3WWh5cDUy?=
+ =?utf-8?B?QzZMbGlsT0VhSU5PU01kVFh4WG8xWE5jUlMwTktGN2R5Sm9tTE93MVdZaVhH?=
+ =?utf-8?B?N2ZaeGFCQ09pczh2b2k2cDM3NGVhc0oybGVraitKZUZYQ3Z3cmtJYW9BUGgv?=
+ =?utf-8?B?eVdNVFAyRllYTGZNNlJpdnhlL0RMVUhYdmVrNklWcWdRTWs4VWtINmdELzhi?=
+ =?utf-8?B?YnBHTEpTU1BlZ3JPY1ZzL2hkMnBEMUdwUk5TcHBrRTVJVEdWTFJnWVNxN01l?=
+ =?utf-8?B?aUpoQWd0S2tqMzdFSzIvWHdsbi9sTUVoUzRDS0VHOHBRU1didWU1UFdsYVRJ?=
+ =?utf-8?B?QTQzcUlncDJIZGt6WUtwRWxqaWpYb0I4eVpoV3ZGdy9zZmoreHhaQjFIMHpT?=
+ =?utf-8?B?WWZvVzUrR0Q4QzBDOE1KQVdiRUYzQ0dSUGRMOEh4SUxOcVdQMFoxeU9rN0R6?=
+ =?utf-8?B?OWNqRVdBK3hBSnFTVWwyKzZHWVFqSHhoRE54czlqLzFBNkJGRlNBQUFJRDBw?=
+ =?utf-8?B?NlFWLzdtQnBtcTFOcFVmV2piUjZaVU1YbEFqVW9Vcm9lS3RxMmh0cTlRUzNZ?=
+ =?utf-8?B?Z0ZKQUdZT0wyYmxYbm5XSVNZUk1qLytCYk5ndWo2cW11VHBsaSt5dFNVbVpF?=
+ =?utf-8?B?ZGMrb3hzVk9kaVZmWFJ4aU5hSWdqSVBKMk5BUWdZb2VTYndydFU1NnFEVSt3?=
+ =?utf-8?B?eGYrZ01uWWZ5MGtUNG9NYktvNVBiVlRGUmNMQ1RBOTgybEdOeklyc1p0dWZH?=
+ =?utf-8?B?c2p6UElGaXhCM1MrM0JEUnFWQmwva3prVkw0cmVZS0JWMlVuN1Q4WXFDMzdK?=
+ =?utf-8?B?SVpJVGhiUEZwbUFVczkwRHMxRVk2cVVBU0p2aS9vWkc5UlQweW9jTjRnSnVV?=
+ =?utf-8?B?VWdMU3V4SXlRR0x5UStyaWZkaWpnOEpSM3pBaEl0dUQrNjVGVllPRmNuU2tq?=
+ =?utf-8?B?Z1E2OFJpTHJFTmQyM1ZtTlE1dTBPT2p2bXlpOWFrWml2T20rRjcwYU1PZ3ho?=
+ =?utf-8?B?d1lDWG1ZTU9zM3NCMURTV2VhOHR2VFlXM2o5eDhPYWFyTHhaY3BYcHJvVGNt?=
+ =?utf-8?B?SU5pMG11dVRjeDc4YnBTSHZ6NGxqVHA4LzA0S1QzKzVER1RiQ0I2ZTZ6TUFO?=
+ =?utf-8?B?NzBrOW9tVUhiOThpSEdHOStYTCtEVTRuZmFGOG5jeTBWMlRINnljeTF3M28r?=
+ =?utf-8?B?c2ZNRkppcjJtS29CQmU4Wi9YcDRWRlM2cmh5NnVPaUhGMXlzS3g0UkRRYi9Y?=
+ =?utf-8?B?bDNubnN0YVFFYy84QjBxRm5leERKb3BRMit2My9sd0J1ZFdTSVFVbGRFaXpO?=
+ =?utf-8?B?MGl0c0VIRlJ0c3NOejZVanlaZ2dpRGVuc2pJYmpkYUxCTHJuTHI0WjluSWRT?=
+ =?utf-8?B?T2FzNlZ4aldLa0NHbHBxNjZSc0xyZVRKWkpFOGRVbnIzc3JCcEdiZGpDczNm?=
+ =?utf-8?B?ak1hNUVnZCtVTDVWRWNtVWJsMHlFMFVJSk51MnNxWEJYUkpwNHAvcnpOc2U3?=
+ =?utf-8?B?RVNsSzcrckhxRnBaVnVjVHJINy9zdVljTDNkdVNDb3RaQzZmemRzenVITVdF?=
+ =?utf-8?B?V0svN3hReDFjdVBDY1JrN25YcDkvL0VITDNhazFhVEl5YWtzRHI0dFJ0UG5w?=
+ =?utf-8?B?b1gyVEYvdC9DaGt0U1h3aEJCODV1aFh3RWpOUzdndm8yWHdMZ1VCU3EyVFln?=
+ =?utf-8?B?Yjk3c1ZLek9leUtuN0x4TEtYMlFKUWtuM2Fyc0M5cjhBZnpRbHdtZ1BwVEdh?=
+ =?utf-8?B?ME9mNWwvSURaT3doSUFtUVYxcFExWEtKZ2VXRjVJd1pUdkVQV0o0dURsYTUr?=
+ =?utf-8?B?TVo5WG8rZWo2U1BUODhGMWFYby8xbTV4Q0QyQnkvU3h3UDY0NTlBNDRnZGEz?=
+ =?utf-8?B?RDhIM3B2NjdGdVIxR1BsdlBvd2lpRGtlOGc4ZTBOaEZJYXI5RVhJNU9Zd3Y2?=
+ =?utf-8?B?dGtPdW92WmNrUlY2TWJOUUI5Vm1iQzNleDl0cUlXUEs4cHAvc040Q0loYkhH?=
+ =?utf-8?B?ZFpwSjFJMVI5UkhxMzA3SVhpTXltbWpUK0NTak90ZDVLZHRjNXRkeDZXSWVm?=
+ =?utf-8?B?RmxWdVRpeTNBZS9qS2J0S2lmb2toR01mS2YyVDdIdUxaaERHWWNsUFRIaUxE?=
+ =?utf-8?Q?jttfkgvDnjFZdDjwCVFv6GEZV?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2447E7A2D0AF644EB6F1DF4FDEC50505@eurprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="/Q/JsluL++EEkeZ1"
-Content-Disposition: inline
-In-Reply-To: <40a7d568-3855-48fb-a73c-339e1790f12f@ghiti.fr>
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	6EXZUxkJR8U3uymXYaXkPV+FbmEVH3VgKEGxHxeTCxOo4pgzytG5hAAK/foov86irSx2G/1gW5yRQUQQuuFcBAiUpsQHSTN8eo2UT3qLDg2gH2jBA7p2R5rFFPQXY2doIFGD9lBwbTMWKJkPt0cgvfjDjceRzncrhOjKk4sVSmEbcM0A/M6Z0eNMrnrpFRQ7siFgNdtVV05L1HkNdOtPz5OiSxy4jsn4v+dzCDuVoyqyrZVRuPRzqcHoMJkFbpQklZMZ8tyMuf3bayEwpIIYcPOinX6CFRDB8OLfOUzDHMBhNwpAw+kRIlkf5bxo68uSeBn3T4CRo/iImZB4Go6+I51TiCqXskIib4QrKyRcjhe6+JvPix1C9v1omMdIN4tFRY9hz9+y4rweU0ZPVp4jow2gONYmrzROAzptFQMzoXte/DGuXrifwwZ3loGXuj0ZUfapeNuQi+VTau4GU1wxzvtaE7Xrv2deLb+mrMLsmf5zrHYUXJaqj9gYOQWJ4nDud6pIdB/yMuB5Zojk7tmGWnVzmgaTqdd67WEu/SlIHd18rFJmoHAo2RvYldkwVh6gV2wmtLnAWBwamvOqAb4B14MVHv6rs0wXi9kFP21BgsBN9vJVYSJ0qqxOtgLhpoJr
+X-OriginatorOrg: habana.ai
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAWPR02MB9149.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 675fa18c-ea17-47a2-5e6e-08dc91db6c68
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2024 10:17:58.1861
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: PIweWTYqzC61ZHPX7M6KaL+WC75N4gHY6ddCNISgtAJBv6aBu/prOkcvvBy5+s0RXWH6344TgeqXN5Ufapao6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR02MB6394
+X-MailControlDKIMCheck: cGFzcyBoYWJhbmEuYWkgW3Bhc3Nd
+X-MailControl-OutInfo: MTcxODk2NTA5MzpGUEtleTEucHJpdjqB07280c+nqTa3LMTwJBdjBc1OtJBHrYtS4e9KtVVMRENIC8mKeq9R76h/o46Glw1EQoEOc6aXC+aqLNhWbTNWewAgJDTL9X5i2uYW8wH+mN1bl+NMbonxEpupEzDEh9koNBwbHWlMCan7SasAkkCzs79ziAo5OuyI+6IdTuZ8bG6W2XL21hqV4wFDBZKR8xNXptDG3BVEyK/zP/4i4ewTRD0z/rR0tQIGnsEL3dK5hp3z5eAOkJPQqeh36i+ksHrkpvaHjaICBwtJw183AlJgxBD+wVEfgURqYqG99TurrQECfOJKq5ti3BFIIcfJXW8Slfm9CWh9ksvzYi3f5CvN
+X-Scanned-By: MailControl 44278.2145 (www.mailcontrol.com) on 10.68.1.123
 
---/Q/JsluL++EEkeZ1
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jun 21, 2024 at 10:37:21AM +0200, Alexandre Ghiti wrote:
-> On 20/06/2024 08:25, Anup Patel wrote:
-> > On Wed, Jun 5, 2024 at 10:25=E2=80=AFPM Conor Dooley <conor@kernel.org>=
- wrote:
-> > > On Wed, Jun 05, 2024 at 08:15:08PM +0800, Yong-Xuan Wang wrote:
-> > > > Add entries for the Svade and Svadu extensions to the riscv,isa-ext=
-ensions
-> > > > property.
-> > > >=20
-> > > > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> > > > ---
-> > > >   .../devicetree/bindings/riscv/extensions.yaml | 30 ++++++++++++++=
-+++++
-> > > >   1 file changed, 30 insertions(+)
-> > > >=20
-> > > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yam=
-l b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > > index 468c646247aa..1e30988826b9 100644
-> > > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > > @@ -153,6 +153,36 @@ properties:
-> > > >               ratified at commit 3f9ed34 ("Add ability to manually =
-trigger
-> > > >               workflow. (#2)") of riscv-time-compare.
-> > > >=20
-> > > > +        - const: svade
-> > > > +          description: |
-> > > > +            The standard Svade supervisor-level extension for rais=
-ing page-fault
-> > > > +            exceptions when PTE A/D bits need be set as ratified i=
-n the 20240213
-> > > > +            version of the privileged ISA specification.
-> > > > +
-> > > > +            Both Svade and Svadu extensions control the hardware b=
-ehavior when
-> > > > +            the PTE A/D bits need to be set. The default behavior =
-for the four
-> > > > +            possible combinations of these extensions in the devic=
-e tree are:
-> > > > +            1. Neither svade nor svadu in DT: default to svade.
-> > > I think this needs to be expanded on, as to why nothing means svade.
-> > Actually if both Svade and Svadu are not present in DT then
-> > it is left to the platform and OpenSBI does nothing.
-> >=20
-> > > > +            2. Only svade in DT: use svade.
-> > > That's a statement of the obvious, right?
-> > >=20
-> > > > +            3. Only svadu in DT: use svadu.
-> > > This is not relevant for Svade.
-> > >=20
-> > > > +            4. Both svade and svadu in DT: default to svade (Linux=
- can switch to
-> > > > +               svadu once the SBI FWFT extension is available).
-> > > "The privilege level to which this devicetree has been provided can s=
-witch to
-> > > Svadu if the SBI FWFT extension is available".
-> > >=20
-> > > > +        - const: svadu
-> > > > +          description: |
-> > > > +            The standard Svadu supervisor-level extension for hard=
-ware updating
-> > > > +            of PTE A/D bits as ratified at commit c1abccf ("Merge =
-pull request
-> > > > +            #25 from ved-rivos/ratified") of riscv-svadu.
-> > > > +
-> > > > +            Both Svade and Svadu extensions control the hardware b=
-ehavior when
-> > > > +            the PTE A/D bits need to be set. The default behavior =
-for the four
-> > > > +            possible combinations of these extensions in the devic=
-e tree are:
-> > > @Anup/Drew/Alex, are we missing some wording in here about it only be=
-ing
-> > > valid to have Svadu in isolation if the provider of the devicetree has
-> > > actually turned on Svadu? The binding says "the default behaviour", b=
-ut
-> > > it is not the "default" behaviour, the behaviour is a must AFAICT. If
-> > > you set Svadu in isolation, you /must/ have turned it on. If you set
-> > > Svadu and Svade, you must have Svadu turned off?
-> > Yes, the wording should be more of requirement style using
-> > must or may.
-> >=20
-> > How about this ?
-> > 1) Both Svade and Svadu not present in DT =3D> Supervisor may
-> >      assume Svade to be present and enabled or it can discover
-> >      based on mvendorid, marchid, and mimpid.
-> > 2) Only Svade present in DT =3D> Supervisor must assume Svade
-> >      to be always enabled. (Obvious)
-> > 3) Only Svadu present in DT =3D> Supervisor must assume Svadu
-> >      to be always enabled. (Obvious)
->=20
->=20
-> I agree with all of that, but the problem is how can we guarantee that
-> openSBI actually enabled svadu?=20
-Conflation of an SBI implementation and OpenSBI aside, if the devicetree
-property is defined to mean that "the supervisor must assume svadu to be
-always enabled", then either it is, or the firmware's description of the
-hardware is broken and it's not the supervisor's problem any more. It's
-not the kernel's job to validate that the devicetree matches the
-hardware.
-
-> This is not the case for now.
-
-What "is not the case for now"? My understanding was that, at the
-moment, nothing happens with Svadu in OpenSBI. In turn, this means that
-there should be no devicetrees containing Svadu (per this binding's
-description) and therefore no problem?
-
-Thanks,
-Conor.
-
---/Q/JsluL++EEkeZ1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnVTUQAKCRB4tDGHoIJi
-0umAAP9Ky5jmwL/vxKQCCEHnHdguojF9KRICh/OKTjjNr83q0QD+M27FYa47s7qx
-aJWtzNZgU73VI8rgfcbj5zSeT7XqZQQ=
-=l7ge
------END PGP SIGNATURE-----
-
---/Q/JsluL++EEkeZ1--
+T24gNi8xOS8yNCAyMTozNSwgU3VuaWwgS292dnVyaSBHb3V0aGFtIHdyb3RlOg0KPiBbU29tZSBw
+ZW9wbGUgd2hvIHJlY2VpdmVkIHRoaXMgbWVzc2FnZSBkb24ndCBvZnRlbiBnZXQgZW1haWwgZnJv
+bSBzZ291dGhhbUBtYXJ2ZWxsLmNvbS4gTGVhcm4gd2h5IHRoaXMgaXMgaW1wb3J0YW50IGF0IGh0
+dHBzOi8vYWthLm1zL0xlYXJuQWJvdXRTZW5kZXJJZGVudGlmaWNhdGlvbiBdDQo+IA0KPj4gKw0K
+Pj4gK1doYXQ6ICAgICAgICAgICAvc3lzL2tlcm5lbC9kZWJ1Zy9oYWJhbmFsYWJzX2NuL2hibF9j
+bjxuPi9uaWNfZGlzYWJsZV9kZWNhcA0KPj4gK1doYXQ6ICAgICAgICAgICAvc3lzL2tlcm5lbC9k
+ZWJ1Zy9oYWJhbmFsYWJzX2NuL2hibF9jbjxuPi9uaWNfaW5qZWN0X3J4X2Vycg0KPj4gK1doYXQ6
+ICAgICAgICAgICAvc3lzL2tlcm5lbC9kZWJ1Zy9oYWJhbmFsYWJzX2NuL2hibF9jbjxuPi9uaWNf
+bWFjX2xhbmVfcmVtYXANCj4gDQo+IERvbid0IHRoaW5rIGRlYnVnZnMgaXMgdGhlIGNvcnJlY3Qg
+aW50ZXJmYWNlIGZvciBhbGwgdGhpcyBjb25maWd1cmF0aW9uLg0KPiBEZWJ1Z2ZzIHNob3VsZCBp
+ZGVhbGx5IGJlIHVzZWQgZm9yIGR1bXBpbmcgcnVudGltZSBkZXZpY2Ugc3RhdGUgaW5mbyBmb3Ig
+ZGVidWcgcHVycG9zZXMuDQo+IA0KDQpJIHNlZSBvdGhlciB2ZW5kb3JzIGhhdmUgZGVidWdmcyBl
+bnRyaWVzIGZvciBkZWJ1ZyBjb25maWd1cmF0aW9ucyBvcg0Kc2V0dGluZ3MsIG5vdCBqdXN0IGZv
+ciBkdW1waW5nIGRlYnVnIGluZm8uDQoNCj4+ICtXaGF0OiAgICAgICAgICAgL3N5cy9rZXJuZWwv
+ZGVidWcvaGFiYW5hbGFic19jbi9oYmxfY248bj4vbmljX21hY19sb29wYmFjaw0KPiANCj4gV2h5
+IG5vdCB1c2UgZXRodG9vbCA/DQo+DQoNCldlIGhhdmUgYW4gZXRodG9vbCBvcHRpb24gZm9yIHRo
+YXQsIGJ1dCB3ZSBoYXZlIGFsc28gaW50ZXJuYWwgTklDIHBvcnRzDQp0aGF0IGFyZSBub3QgZXhw
+b3NlZCBhcyBuZXRkZXZpY2VzIGFuZCBmb3IgdGhlbSB0aGUgZXRodG9vbCBwYXRoIGlzDQppcnJl
+bGV2YW50LiBIZW5jZSB3ZSBuZWVkIHRoaXMgZGVidWdmcyBvcHRpb24gYXMgd2VsbC4NCiANCj4+
+ICsNCj4+ICtXaGF0OiAgICAgICAgICAgL3N5cy9rZXJuZWwvZGVidWcvaGFiYW5hbGFic19jbi9o
+YmxfY248bj4vbmljX21tdV9ieXBhc3MNCj4gDQo+IEhvdyBkb2VzIHRoaXMgd29yayA/DQo+IA0K
+DQpXaGVuIHRoaXMgb3B0aW9uIGlzIGVuYWJsZWQgdGhlIFJETUEgZGF0YSBidWZmZXJzIHRoZSB1
+c2VyIGFsbG9jYXRlZCBvbiB0aGUNCmhvc3QgbWVtb3J5IGFyZSBiZWluZyBhY2Nlc3NlZCBkaXJl
+Y3RseSBpLmUuIHdpdGhvdXQgTU1VLg0KQnV0IG5vdyBhZnRlciB5b3UgYnJvdWdodCB0aGlzIHVw
+IEkgc2VlIHRoYXQgaXQgaXMgbm90IGZ1bGx5IHN1cHBvcnRlZA0KYW55bW9yZSBzbyBJJ2xsIHJl
+bW92ZSBpbiB0aGUgbmV4dCB2ZXJzaW9uLg0KDQo+IFRoYW5rcywNCj4gU3VuaWwuDQo=
 
