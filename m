@@ -1,196 +1,162 @@
-Return-Path: <linux-kernel+bounces-224399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA159121DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:13:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424099121F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D54C1C2352E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1ACF281DA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 10:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73B0175564;
-	Fri, 21 Jun 2024 10:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B801E17B43B;
+	Fri, 21 Jun 2024 10:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YUJf3q/r"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="lPa50+kF"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811E7172BBF
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B115171648;
+	Fri, 21 Jun 2024 10:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718964708; cv=none; b=HjBkOsE3hYtTVtD6adc3tZUDFse5IHHyWDXn79mulSOaOXs/Xj64cC0jSyMzRzdEbx8zbKViOQ77S00WvKX9mlnKMdvtP5nevwJKjwDMR1vPz5QyCIyQW7K1vux8lruaml4r68/BM39SORauOnrkyEkuh/ASponJw1mXec6vW94=
+	t=1718964772; cv=none; b=L/64TbsCggDh/Be0hW7dpuwQTFYzEUeWwd2qO7rR+nXEqHLlqHAOG9uEJlP3ewvGQ6JftQIDEAHVPZjID1rBtBUtC2npOv6452dFJH5Fx/Oy6f8BQPrt9pdUimw8ged5FMaBaV/426PtPIFbd8bcwKS/SzVIZcr+WoRTHwhqros=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718964708; c=relaxed/simple;
-	bh=ds+n2Z/vTLu6ylFJUoh8rET4QMBEzAe0PVAxicLEPKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F+OlOrRDGToS72/YxS+U0kMQzx9RjGGhN0AChbsady/FiTtKXORjdR+0qyT18BWtCc9jZL1ZwumFuT8uKZTbc+6I+8mProfPc5sa7yZw+qocF45+92iDPc65uaBIe6fP1WpPBDbykaLyS3guR4p8BhtRb9A4DEgBtfQhp8c/lgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YUJf3q/r; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718964705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eJBYOdOKQ4Gn1xLmpzv4Yqfj+G7XSh7zQ28K1xrcg3U=;
-	b=YUJf3q/r6NtVIVNMiAgIQpQFaVnfPU0c7AvtR7yP5Cn6iuHnCxAa0wpUBmpmezFlQ2k0g6
-	eeLj+WgMSxvC66QW2u7MbWO1/w0kIDr70NsVBscqpsTh4sMSwAgxjcN0/+kday2Lp1KlNN
-	UuWE7KAR/HdkyPO98AbsqBWv9QhP8/Q=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-553-B3Vaknb4Mt-fXxussQVolA-1; Fri, 21 Jun 2024 06:11:44 -0400
-X-MC-Unique: B3Vaknb4Mt-fXxussQVolA-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-36536118656so792827f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 03:11:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718964703; x=1719569503;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eJBYOdOKQ4Gn1xLmpzv4Yqfj+G7XSh7zQ28K1xrcg3U=;
-        b=Dkh8YlaB0DmJFtT39YxTdvbfUzi1zuf5fWzpiLoqM/rVzkssrccPjI/cQCMFO1fR6N
-         0L4XjoTHgIowBcWLLkJyMf5QWNYKo34HEPAyULxhk4CV307oqmfBXGHql1Fub9wAAM4q
-         pLu+hFiuTCVdcjyvdv/AtdN4tcx1B+69Rcza9xEe3V8dfLgEb35qWnR/7ofmoC+JFPZz
-         ejtWzsDi+t2X8bYITvM81a2PMesF/rPAo/Wfmlh8o7jE9QT7Ma2XngsU7qbARSRwZgeA
-         e3HOYbUbmAP2FpOfgAnJK6bNPz82FmGC4CeBEScFC/PhNZp2AClBuqrETniNnD7YJ7w1
-         34kA==
-X-Forwarded-Encrypted: i=1; AJvYcCUx5sZ9Bg4rkEY3UvWsgZ8mYulDTVSNxyoWu1aLFdaet1+0/MHmAeH0zjQTJOK2LpPPw2ygd2EIk6MmZtWKWgNCXfW35CKsb+452T4n
-X-Gm-Message-State: AOJu0YwDC0GGoeXyM9V+y3RVz9bIu1VjkOoRvh6s8aVIWb7lgDyagBnv
-	tVldjq557tQx341lXFjdIp93RWlEoIdF22iAoTsMbjBND9wA9W8vKedh5nC0yVPrZ7aDcpAzhYi
-	mgK2dwbcdlW1MTIxbjh62i6kf4H6nlFeoiQMvtoqwwGTnDGWhgqKJOEeSjYw8VQ==
-X-Received: by 2002:adf:9789:0:b0:361:d3ec:1031 with SMTP id ffacd0b85a97d-36317b7d4e1mr5447614f8f.31.1718964702923;
-        Fri, 21 Jun 2024 03:11:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHPWCjAxrrMaIGHIIhSa52v8fFT1APP2qrYVpvKzDzGgYOJQWUZ0ImF+bd9M5CAG4wk9RK8Yw==
-X-Received: by 2002:adf:9789:0:b0:361:d3ec:1031 with SMTP id ffacd0b85a97d-36317b7d4e1mr5447579f8f.31.1718964701948;
-        Fri, 21 Jun 2024 03:11:41 -0700 (PDT)
-Received: from localhost ([2a01:e11:1007:ea0:8374:5c74:dd98:a7b2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366383f6722sm1291316f8f.24.2024.06.21.03.11.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 03:11:41 -0700 (PDT)
-Date: Fri, 21 Jun 2024 12:11:40 +0200
-From: Davide Caratti <dcaratti@redhat.com>
-To: =?iso-8859-1?Q?Asbj=F8rn_Sloth_T=F8nnesen?= <ast@fiberby.net>
-Cc: Ilya Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next 2/9] net/sched: cls_flower: prepare
- fl_{set,dump}_key_flags() for ENC_FLAGS
-Message-ID: <ZnVR3LsBSvfRyTDD@dcaratti.users.ipa.redhat.com>
-References: <20240611235355.177667-1-ast@fiberby.net>
- <20240611235355.177667-3-ast@fiberby.net>
+	s=arc-20240116; t=1718964772; c=relaxed/simple;
+	bh=qIPAKUsfdrunLjZpUxB95w4pFXbAFx7meVdFYH0CVL0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ty8bP+ZUXESJO5KBmuI4GElS/e7/aOp5gm0wzkuWhf4Ch3AFZ6/xFDodGZz4B1ostpEsyAcCFihMXEunM5HR1tJA7GTGCdR7tt8b5hfCyxpYptgu5BK+2g0T7kbAXcS4GPIXjgVuPKVzXfEgiO77HUpkHvGA+rh0ZoSQ4CSgf0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=lPa50+kF; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1718964770; x=1750500770;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qIPAKUsfdrunLjZpUxB95w4pFXbAFx7meVdFYH0CVL0=;
+  b=lPa50+kFeslLsy49zPO6gdpc/lko+oHrlou8TIYUM/N9yvxFcY7p1dXe
+   X+ihXtVwbphsbef+wNKrAqcsZDZTTY+3Rb8t91IBPvMI2htHjsY/sXL+W
+   ThOOSWOWjipuL0k/7W07K6xQNEtizdCyko6tuspW5zpyzL4gQZ6HDfwqp
+   3sY8mTRaG6P9Ae4tzB+iau62PmIu1aMin7yj35a+FZbjpfT3Woc+vNbqy
+   Vy0Yb/WNs+s6dSKR65/jc1GivtP9mvgfbCqXxMto1htEpukEUVQ+j2CC5
+   u1G6Utt5fPbH1yX8jDCwR1z27Nz5Cd7eciCMLRF+n7z6g8NVhSBdqvCPk
+   g==;
+X-CSE-ConnectionGUID: +aZhim/bRGe+fZL72SyFNQ==
+X-CSE-MsgGUID: nsaDAPolS1GA6r4yoC3nFw==
+X-IronPort-AV: E=Sophos;i="6.08,254,1712646000"; 
+   d="asc'?scan'208";a="28315238"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Jun 2024 03:12:48 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 21 Jun 2024 03:12:17 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Fri, 21 Jun 2024 03:12:14 -0700
+Date: Fri, 21 Jun 2024 11:11:56 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Andrew Jones <ajones@ventanamicro.com>
+CC: Anup Patel <apatel@ventanamicro.com>, Conor Dooley <conor@kernel.org>,
+	Yong-Xuan Wang <yongxuan.wang@sifive.com>, <linux-kernel@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>, <kvm-riscv@lists.infradead.org>,
+	<kvm@vger.kernel.org>, <alex@ghiti.fr>, <greentime.hu@sifive.com>,
+	<vincent.chen@sifive.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	<devicetree@vger.kernel.org>
+Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+Message-ID: <20240621-flanking-twiddling-c3b6c9108438@wendy>
+References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
+ <20240605121512.32083-3-yongxuan.wang@sifive.com>
+ <20240605-atrium-neuron-c2512b34d3da@spud>
+ <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
+ <20240621-10d503a9a2e7d54e67db102c@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uIOl3MGYsZNkzbCU"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240611235355.177667-3-ast@fiberby.net>
+In-Reply-To: <20240621-10d503a9a2e7d54e67db102c@orel>
 
-hello Asbjørn,
+--uIOl3MGYsZNkzbCU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-some update on this work: I tested your patch after adapting iproute2
-bits (e.g. using TCA_FLOWER_KEY_FLAGS_TUNNEL_<CSUM|DONT_FRAGMENT|OAM|CRIT>
+On Fri, Jun 21, 2024 at 10:33:03AM +0200, Andrew Jones wrote:
+> On Thu, Jun 20, 2024 at 11:55:44AM GMT, Anup Patel wrote:
+> > On Wed, Jun 5, 2024 at 10:25=E2=80=AFPM Conor Dooley <conor@kernel.org>=
+ wrote:
+> > >
+> > > On Wed, Jun 05, 2024 at 08:15:08PM +0800, Yong-Xuan Wang wrote:
+> > > > Add entries for the Svade and Svadu extensions to the riscv,isa-ext=
+ensions
+> > > > property.
+> > > >
+> > > > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > > > ---
+> > > >  .../devicetree/bindings/riscv/extensions.yaml | 30 +++++++++++++++=
+++++
+> > > >  1 file changed, 30 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yam=
+l b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > > index 468c646247aa..1e30988826b9 100644
+> > > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > > @@ -153,6 +153,36 @@ properties:
+> > > >              ratified at commit 3f9ed34 ("Add ability to manually t=
+rigger
+> > > >              workflow. (#2)") of riscv-time-compare.
+> > > >
+> > > > +        - const: svade
+> > > > +          description: |
+> > > > +            The standard Svade supervisor-level extension for rais=
+ing page-fault
+> > > > +            exceptions when PTE A/D bits need be set as ratified i=
+n the 20240213
+> > > > +            version of the privileged ISA specification.
+> > > > +
+> > > > +            Both Svade and Svadu extensions control the hardware b=
+ehavior when
+> > > > +            the PTE A/D bits need to be set. The default behavior =
+for the four
+> > > > +            possible combinations of these extensions in the devic=
+e tree are:
+> > > > +            1. Neither svade nor svadu in DT: default to svade.
+> > >
+> > > I think this needs to be expanded on, as to why nothing means svade.
+> >=20
+> > Actually if both Svade and Svadu are not present in DT then
+> > it is left to the platform and OpenSBI does nothing.
+>=20
+> This is a good point, and maybe it's worth integrating something that
+> states this case is technically unknown into the final text. (Even though
+> historically this has been assumed to mean svade.)
 
-from
+If that is assumed to mean svade at the moment, then that's what it has
+to mean going forwards also.
 
-https://lore.kernel.org/netdev/20240611235355.177667-2-ast@fiberby.net/
+--uIOl3MGYsZNkzbCU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Now: functional tests on TCA_FLOWER_KEY_ENC_FLAGS systematically fail. I must
-admit that I didn't complete 100% of the analysis, but IMO there is at least an
-endianness problem here. See below:
+-----BEGIN PGP SIGNATURE-----
 
-On Tue, Jun 11, 2024 at 11:53:35PM +0000, Asbjørn Sloth Tønnesen wrote:
-> Prepare fl_set_key_flags/fl_dump_key_flags() for use with
-> TCA_FLOWER_KEY_ENC_FLAGS{,_MASK}.
-> 
-> This patch adds an encap argument, similar to fl_set_key_ip/
-> fl_dump_key_ip(), and determine the flower keys based on the
-> encap argument, and use them in the rest of the two functions.
-> 
-> Since these functions are so far, only called with encap set false,
-> then there is no functional change.
-> 
-> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
-> ---
->  net/sched/cls_flower.c | 40 ++++++++++++++++++++++++++++++----------
->  1 file changed, 30 insertions(+), 10 deletions(-)
-> 
-> diff --git a/net/sched/cls_flower.c b/net/sched/cls_flower.c
-> index eef570c577ac7..6a5cecfd95619 100644
-> --- a/net/sched/cls_flower.c
-> +++ b/net/sched/cls_flower.c
-> @@ -1166,19 +1166,28 @@ static void fl_set_key_flag(u32 flower_key, u32 flower_mask,
->  	}
->  }
->  
-> -static int fl_set_key_flags(struct nlattr **tb, u32 *flags_key,
-> +static int fl_set_key_flags(struct nlattr **tb, bool encap, u32 *flags_key,
->  			    u32 *flags_mask, struct netlink_ext_ack *extack)
->  {
-> +	int fl_key, fl_mask;
->  	u32 key, mask;
->  
-> +	if (encap) {
-> +		fl_key = TCA_FLOWER_KEY_ENC_FLAGS;
-> +		fl_mask = TCA_FLOWER_KEY_ENC_FLAGS_MASK;
-> +	} else {
-> +		fl_key = TCA_FLOWER_KEY_FLAGS;
-> +		fl_mask = TCA_FLOWER_KEY_FLAGS_MASK;
-> +	}
-> +
->  	/* mask is mandatory for flags */
-> -	if (!tb[TCA_FLOWER_KEY_FLAGS_MASK]) {
-> +	if (NL_REQ_ATTR_CHECK(extack, NULL, tb, fl_mask)) {
->  		NL_SET_ERR_MSG(extack, "Missing flags mask");
->  		return -EINVAL;
->  	}
->  
-> -	key = be32_to_cpu(nla_get_be32(tb[TCA_FLOWER_KEY_FLAGS]));
-> -	mask = be32_to_cpu(nla_get_be32(tb[TCA_FLOWER_KEY_FLAGS_MASK]));
-> +	key = be32_to_cpu(nla_get_be32(tb[fl_key]));
-> +	mask = be32_to_cpu(nla_get_be32(tb[fl_mask]));
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnVR7AAKCRB4tDGHoIJi
+0oVHAP4siHUZEfCCwMM83p0CPjCOAJEGoNcOdr0nkhPzLVIczAD/Q7yiuanMfYXr
+nzrBjtDPUd3Y5QR0QzLeGN78fexxmAw=
+=728p
+-----END PGP SIGNATURE-----
 
-
-I think that (at least) the above hunk is wrong - or at least, it is a
-functional discontinuity that causes failure in my test. While the
-previous bitmask storing tunnel control flags was in host byte ordering,
-the information on IP fragmentation are stored in network byte ordering.
-
-So, if we want to use this enum
-
---- a/include/uapi/linux/pkt_cls.h
-+++ b/include/uapi/linux/pkt_cls.h
-@@ -677,6 +677,11 @@ enum {
- enum {
- 	TCA_FLOWER_KEY_FLAGS_IS_FRAGMENT = (1 << 0),
- 	TCA_FLOWER_KEY_FLAGS_FRAG_IS_FIRST = (1 << 1),
-+	/* FLOW_DIS_ENCAPSULATION (1 << 2) is not exposed to userspace */
-+	TCA_FLOWER_KEY_FLAGS_TUNNEL_CSUM = (1 << 3),
-+	TCA_FLOWER_KEY_FLAGS_TUNNEL_DONT_FRAGMENT = (1 << 4),
-+	TCA_FLOWER_KEY_FLAGS_TUNNEL_OAM = (1 << 5),
-+	TCA_FLOWER_KEY_FLAGS_TUNNEL_CRIT_OPT = (1 << 6),
- };
- 
-consistently, we should keep using network byte ordering for
-TCA_FLOWER_KEY_FLAGS_TUNNEL_* flags (for a reason that I don't understand,
-because metadata are not transmitted on wire. But maybe I'm missing something).
-
-Shall I convert iproute2 to flip those bits like it happens for
-TCA_FLOWER_KEY_FLAGS ? thanks!
-
--- 
-davide
-
+--uIOl3MGYsZNkzbCU--
 
