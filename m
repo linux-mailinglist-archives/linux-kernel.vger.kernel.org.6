@@ -1,123 +1,179 @@
-Return-Path: <linux-kernel+bounces-224610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5005E9124BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:05:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DBD29124C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 14:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B431F21C72
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:05:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1908C28187B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 12:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC18174ED2;
-	Fri, 21 Jun 2024 12:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED486174EF1;
+	Fri, 21 Jun 2024 12:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F1mKHCGL"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Fz6rxrhV"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D250D1527B6;
-	Fri, 21 Jun 2024 12:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4A01527B6
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 12:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718971546; cv=none; b=KmYKfoDMfjCcIYTBsGEAQhe1llxixYSYdrrcdlsgj/TL8/iRXntQp6AFbcv2jTYfyL/RJrQhBDXGlK8T4GTb+zVJfRkbIcdm98IyMop2EyufxYZZmXoweC/Jp6bottSThlxJRNo+pkDpvK16BdRLaxS52CN7Xobfu7Zei06acbw=
+	t=1718971621; cv=none; b=dJryD4aPB0exf6MbWW9NBDRkCSKslCbBsZ8fhXttbtdABp/b3Sp4Ckf1tBbYplZbogDu2ZuDlBvlEIkdXui+PsEnZtuNb/VrpoqHP/BBUaV9g2r00rbSvUHrAWv1+OUJy/eTQOS53kSV0LpPxZHinQADqaaegiAI5y/08o7iyyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718971546; c=relaxed/simple;
-	bh=7NEdzMDsG1aF5JXdHMtlEyGPHIx8whif1ryBPcbKBwk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nNO7pMm+02ssR2AMLXGYfdhkSrcLm7QOZYiA+f1iDexIZ45jCFZ9lbh95fhZ6+NCVS2hncOzj7R7IfCSr2pY/ilCMrDE9nB6ag/Wtn6c0WeaSAyNjZN1uSiv8sHY/6slAMUSCquJev+RL24437Ks52Q0hQrEQv41QIJu55Q4HiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F1mKHCGL; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6f1c4800easo215299866b.3;
-        Fri, 21 Jun 2024 05:05:44 -0700 (PDT)
+	s=arc-20240116; t=1718971621; c=relaxed/simple;
+	bh=R27bi+sTyPcra6bImxssKXNbBgmbnnDJg/KQRnOsT+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n0/Zg2As6ONYAPP3RrkJOaK8gI7Wh9diEvyk9DHIQibbXLKP9Kbf6zqXI3ZBIX1ZOo5yjnjJxepOLqx2ALzMpzJ1Kyh6UVyZu1JoLzOrQ5qWQh2md4nGmzdUinAASImG0WaaSS15XNJNwrtpNVIZCLb6drufXuP9IAPL9hh0T7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Fz6rxrhV; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57d251b5fccso1516117a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 05:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718971543; x=1719576343; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jBWbR+qMKGw2FOTak+FHBEDOXI2ey/XY9oATFfyQUnE=;
-        b=F1mKHCGLwyTYwel9y44GLRMBSl9opUjS/b2BUsIfAjYzL+SGhhClPqkx8U/uIOVarn
-         joUtEjkYi/EcFo5oeCX5SNFEvSQhKRpIf9MGhiOTcrlVqGky5/aHmyrLkzVGLXR7UfS+
-         BZkWdMNDJdUuXl+WykQROU5LTRicgpUXqhLMxUOdw3TAtR2Y+g7EOJiGWfO3FzQhKO7r
-         lDc36XPFnzCXEMPeZI87ojKfT1A4ID3iGtZ97EErDl3SRUylZVFNH9bYOnRDKEvpmiMc
-         1x02Jn3hLyk3s5Kqbgp/6eMWAqHgJ4fjwZzVWlbcNqcftEN4J0nnhd1ocDmNp5uuLW29
-         Wybg==
+        d=ventanamicro.com; s=google; t=1718971618; x=1719576418; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VHJrI7Vqw3c5XD9sXg5PVJnoydMCRn6WSSge8PKtjyc=;
+        b=Fz6rxrhVBQeBuB2FeL2HO9+W4Z2MMBIEQFc5nZkqUTl+v9uk6tCrDrI87q4AmWiNnG
+         TasYbFwhgoXBMXkyuad/hfXo+M8pR8Eh76D47sIej7kbEuXK1IJvH64cAzwH3SbhhuOP
+         AWFEpP8B8qfqd5Tl/2seSCkx9NfAyj/2o+0sUNcuG3DwKDvJZmn/T7ravyrbrfSXIFAd
+         2pfphiQfGY3FCwBaZuwK5Qt793WPsDXOZkXg9BoOCF1lmmXfWZmmCpNILJrYQJrNye8j
+         5HgbyWtL0Zh+tmkNQMM1ud4twncFbebxJbgQe9o4g4x1LknrCp7gGIrUSCIKBnL0QyxR
+         Q9Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718971543; x=1719576343;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jBWbR+qMKGw2FOTak+FHBEDOXI2ey/XY9oATFfyQUnE=;
-        b=Gc4cHeWlZhA/JlnkORN12Cd5CEfUwxZeoQJd1B5+ly0gJnHfQxc5ip/6We56nT0HZG
-         A7ldSoPX02rS3ddCW0g1sqHVaktZgdN7Bn4bvVu35GqfampWUArjU/km+eqYTFCdq42z
-         UuiueihsV2B6AZSw4h6vz5k/iSBAo9pQ2jRvia3g5yuuH87bfaGedPLx6hAdPUXYpa9y
-         bZFftvQS7r7Jg2+rgD7LykGN903H5CPsPMxsuM2ih2OVRXV0p+a6jM84MyLqICO61CX7
-         qq0TRMXYuvL/YvJgnuGEgZAQGOsTqKWYmD0H0BUjPhim2ix+56HJz8TGbAuy0JdoE4P3
-         VHeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDLrRm/RPyYNf2IkYCqNkvIZCD6Nn2+ArUbGS25gx8WFki4LaeOupe4lo922XtXpp4efa3UsyvcpYxow2FvkvRPtcrUU78+AVHVFBNEssJDfz3AJ3jtyD88cmKcj9vlmodQ2dr8oHu
-X-Gm-Message-State: AOJu0YzxTxkxfk7TTNOVOQaqbS5wo1GVdWG5GkBLZ30j4aVP5gyoyGy7
-	sAbsEpcZwd6nA5lL97OQQEogDmelvNcTH/JB3Ytkx7VWTEZPHMlb
-X-Google-Smtp-Source: AGHT+IETpyaW331fL0IzgKYIRceuwpmtPDiQxCUQHWy88ZV2GMIRi5fyqhdvCelfrgnbvaNrvgZkSA==
-X-Received: by 2002:a17:907:c24d:b0:a6f:c0e0:5512 with SMTP id a640c23a62f3a-a6fc0e055c5mr360768966b.23.1718971542880;
-        Fri, 21 Jun 2024 05:05:42 -0700 (PDT)
-Received: from HYB-hhAwRlzzMZb.ad.analog.com ([5.2.194.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf56ea09sm76975666b.201.2024.06.21.05.05.41
+        d=1e100.net; s=20230601; t=1718971618; x=1719576418;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VHJrI7Vqw3c5XD9sXg5PVJnoydMCRn6WSSge8PKtjyc=;
+        b=FK7m9LU3Q3RoqtpqkqvVM0yw9qIJEv3n82fc4+4aYjD+5iTHOJxEGmIi5as9XGQhLw
+         OsBUanm6/itYcGO//YdadYX3beXN7tMZSON+2ZLrXTEVK7b4kOvto+Dolavu7/xKkeCc
+         va1LFBT+uR4In4RYIPgo7zl9PBAMACFSSu6h695GzRLp+Rv/+BKlfG0S8eNejPC1sTBR
+         uJymzDilDyt+5WZLH9TC7m8ln46RtgUO33FvGIGgSwC0TlWls+nN3/hWTxrsbG62iCL/
+         McfcFdT/fGzbfW40QFCWbg1mWz8XRHVqgPDIl22fBjYeyD66OD6iIHg6oSVAJDK151lM
+         QbWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbWS+b7mraGCXP6zEwjoov5qL00JxsLQkcSj20DxorIMwppzTYKJXS7mar0O3ph+zzUhLOHZGnKfKYABmWJsnd8+gEoZYtOHLFvY09
+X-Gm-Message-State: AOJu0YwR4pGswyj4AuBr31qnfFSPJzD4vYY2eU3v2qBmQGBndNb2EGUh
+	AFb1hLVGD31Iev1g/yOrcCJYA7hOmNJ2QK9brFlX0oSO/tCK6OMgb0peZann8XY=
+X-Google-Smtp-Source: AGHT+IF2EHP5Y+0/X+QcGd8dEyDcv5ub1PMssgA7iavpB36MSQ3omIYrrSlu92gh8QjYHzsmEitT+g==
+X-Received: by 2002:a17:907:a0d2:b0:a6f:b5dd:1a49 with SMTP id a640c23a62f3a-a6fb5dd1b35mr532165866b.3.1718971617469;
+        Fri, 21 Jun 2024 05:06:57 -0700 (PDT)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf5490d9sm76845966b.115.2024.06.21.05.06.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 05:05:42 -0700 (PDT)
-From: Dumitru Ceclan <mitrutzceclan@gmail.com>
-X-Google-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-To: mitrutzceclan@gmail.com
-Cc: jic23@kernel.org,
-	dlechner@baylibre.com,
-	dumitru.ceclan@analog.com0,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dumitru Ceclan <dumitru.ceclan@analog.com>
-Subject: [PATCH] iio: adc: ad_sigma_delta: fix disable_one callback
-Date: Fri, 21 Jun 2024 15:05:39 +0300
-Message-ID: <20240621120539.31351-1-dumitru.ceclan@analog.com>
-X-Mailer: git-send-email 2.43.0
+        Fri, 21 Jun 2024 05:06:57 -0700 (PDT)
+Date: Fri, 21 Jun 2024 14:06:51 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Conor Dooley <conor.dooley@microchip.com>
+Cc: Yong-Xuan Wang <yongxuan.wang@sifive.com>, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, apatel@ventanamicro.com, alex@ghiti.fr, greentime.hu@sifive.com, 
+	vincent.chen@sifive.com, Jinyu Tang <tjytimi@163.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <anup@brainfault.org>, 
+	Mayuresh Chitale <mchitale@ventanamicro.com>, Atish Patra <atishp@rivosinc.com>, wchen <waylingii@gmail.com>, 
+	Samuel Ortiz <sameo@rivosinc.com>, =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
+	Evan Green <evan@rivosinc.com>, Xiao Wang <xiao.w.wang@intel.com>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	Charlie Jenkins <charlie@rivosinc.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Leonardo Bras <leobras@redhat.com>
+Subject: Re: [PATCH v5 1/4] RISC-V: Add Svade and Svadu Extensions Support
+Message-ID: <20240621-a69c8f97e566ebd3a82654c1@orel>
+References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
+ <20240605121512.32083-2-yongxuan.wang@sifive.com>
+ <20240621-d1b77d43adacaa34337238c2@orel>
+ <20240621-nutty-penknife-ca541ee5108d@wendy>
+ <20240621-b22a7c677a8d61c26feaa75b@orel>
+ <20240621-pushpin-exclude-1b4f38ae7e8d@wendy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621-pushpin-exclude-1b4f38ae7e8d@wendy>
 
-The ADC ad7192 is a sigma delta ADC with a sequencer that does not
-require a disable_one callback as all enable channel bits are within
-the same register.
+On Fri, Jun 21, 2024 at 12:00:32PM GMT, Conor Dooley wrote:
+> On Fri, Jun 21, 2024 at 12:42:32PM +0200, Andrew Jones wrote:
+> > On Fri, Jun 21, 2024 at 11:24:19AM GMT, Conor Dooley wrote:
+> > > On Fri, Jun 21, 2024 at 10:43:58AM +0200, Andrew Jones wrote:
+...
+> > > > It's hard to guess what is, or will be, more likely to be the correct
+> > > > choice of call between the _unlikely and _likely variants. But, while we
+> > > > assume svade is most prevalent right now, it's actually quite unlikely
+> > > > that 'svade' will be in the DT, since DTs haven't been putting it there
+> > > > yet. Anyway, it doesn't really matter much and maybe the _unlikely vs.
+> > > > _likely variants are better for documenting expectations than for
+> > > > performance.
+> > > 
+> > > binding hat off, and kernel hat on, what do we actually do if there's
+> > > neither Svadu or Svade in the firmware's description of the hardware?
+> > > Do we just arbitrarily turn on Svade, like we already do for some
+> > > extensions:
+> > > 	/*
+> > > 	 * These ones were as they were part of the base ISA when the
+> > > 	 * port & dt-bindings were upstreamed, and so can be set
+> > > 	 * unconditionally where `i` is in riscv,isa on DT systems.
+> > > 	 */
+> > > 	if (acpi_disabled) {
+> > > 		set_bit(RISCV_ISA_EXT_ZICSR, isainfo->isa);
+> > > 		set_bit(RISCV_ISA_EXT_ZIFENCEI, isainfo->isa);
+> > > 		set_bit(RISCV_ISA_EXT_ZICNTR, isainfo->isa);
+> > > 		set_bit(RISCV_ISA_EXT_ZIHPM, isainfo->isa);
+> > > 	}
+> > >
+> > 
+> > Yes, I think that's reasonable, assuming we do it in the final "pass",
+> > where we're sure svadu isn't present.
+> 
+> I haven't thought about specifically when to do it, but does it need to
+> be in the final pass? If we were to, on each CPU, enable it if Svadu
+> isn't there, we'd either end up with a system that I suspect we're not
+> going to be supporting or the correct result. Or am I misunderstanding,
+> and it will be valid to have a subset of CPUs that have Svadu enabled
+> from the bootloader?
+> 
+> Note that it would not be problematic to have 3 CPUs with Svade + Svadu
+> and a 4th with only Svade in the DT because we would just not use the
+> FWFT mechanism to enable Svadu. It's just the Svadu in isolation case
+> that I'm asking about.
 
-Remove the requirement of the disable_one callback for sigma delta ADCs
-with a sequencer.
+I wasn't thinking about the potential of mixmatched A/D udpating. I'm
+pretty sure this will be one of those things that is all or none. I
+was more concerned with getting the result right and I had just been
+too lazy to double check that the block of code you pointed out is
+in the right place to be sure there's no svadu. Now that I look, I
+believe it is.
 
-This patch could be squashed with the commit that it fixes from patch
-series: Add support for AD411x
+> 
+> > Doing this is a good idea since
+> > we'll be able to simplify conditions, as we can just use 'if (svade)'
+> > since !svade would imply svadu. With FWFT and both, we'll want to remove
+> > svade from the isa bitmap when enabling svadu.
+> 
+> Right I would like to move the various extension stuff in this
+> direction, where they have a bit more intelligence to them, and don't
+> just reflect the state in DT/ACPI directly.
+> I've got some patches in mind once Clement's Zca etc patchset
+> is merged, think I posted one or two as replies to conversations on
+> the list already. An example would be disabling the vector crypto
+> extensions if we've had to disable vector, or as you suggest here,
+> dropping Svade if we have turned on Svadu using FWFT. I think that makes
+> the APIs more understandable to developers and more useful than they are
+> at the moment, where to use vector crypto you also need to check vector
+> itself for the code to be correct. If I call
+> riscv_isa_extension_available(), and it returns true, the extension
+> should be usable IMO.
 
-Fixes: a25a0aab2187 ("iio: adc: ad_sigma_delta: add disable_one callback")
-Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
----
- drivers/iio/adc/ad_sigma_delta.c | 5 -----
- 1 file changed, 5 deletions(-)
+Sounds good to me.
 
-diff --git a/drivers/iio/adc/ad_sigma_delta.c b/drivers/iio/adc/ad_sigma_delta.c
-index d6b5fca034a0..8c062b0d26e3 100644
---- a/drivers/iio/adc/ad_sigma_delta.c
-+++ b/drivers/iio/adc/ad_sigma_delta.c
-@@ -672,11 +672,6 @@ int ad_sd_init(struct ad_sigma_delta *sigma_delta, struct iio_dev *indio_dev,
- 			dev_err(&spi->dev, "ad_sigma_delta_info lacks disable_all().\n");
- 			return -EINVAL;
- 		}
--
--		if (!info->disable_one) {
--			dev_err(&spi->dev, "ad_sigma_delta_info lacks disable_one().\n");
--			return -EINVAL;
--		}
- 	}
- 
- 	if (info->irq_line)
--- 
-2.43.0
-
+Thanks,
+drew
 
