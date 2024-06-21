@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-225376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5F3912FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:59:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E55912FD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 23:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42AE61F24E9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:59:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E71981C20B02
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 21:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4660617CA11;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779A817CA1A;
 	Fri, 21 Jun 2024 21:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="I3FJIGQz"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="yNeVUHK2"
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3083817C7BB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4911C17C7C0;
 	Fri, 21 Jun 2024 21:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719007106; cv=none; b=KhuaEFhnXR/YoTIiFy1egSSTIrVSfHrzG1BBc2TDw/VIqDksuoTumJUe+V0f8JbxzVFlSAV/dCP09vsG+bxjxNw2S8YYx3j6WsMv+cXfWAX05VHTpF59efZ/gx+i8wyulm77K4Fhg/VVR3NBrcXo8CzQqZL8IOQ5Ni0isgq5ibw=
+	t=1719007106; cv=none; b=E1kDwdM5LdD7sK4LWvowM1GwQ5lcfBVqZBihCjet0lXXJTXx8bsaITYZMAFJNtT1XnzHHcA5HDfus8B0cnrlY9UIBy8+Yy5+MC1lXbW2zaf8VmRi9mFqBv1P/Q8sPKkH/KtNehH5jjVvTrJOl4BxdFb7IuAFGRRM+3zZjKxGfMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719007106; c=relaxed/simple;
-	bh=GzRDLnuFoZMdH1hQlF6ojeOZvsWqIJBgLcgKRUN0xBw=;
+	bh=mvTc6mmb97QnDGAQR4LeZV3dSJ5FUaa474nFk7DAEx8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FixgD37+2OEBd8fWj0ux722btX7tHmqvg21Slm8vu+MpwTtiTw3oqLMlCyWv9rOtKie6YSPM2NRYE35ZSFmTayEYVSssEUX87+zq0pWob81Y95RnG8YLRwlj8MLEXcAAvZ2kLU4Alc6ESRlzN985yss6qbKMCBviW4PZxz/rFtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=I3FJIGQz; arc=none smtp.client-ip=46.235.227.194
+	 In-Reply-To:To:Cc; b=rwXD6gKVbeDUR0iQjo3n6Cyj1sjERXNkpFJXiu5kie6Rfw0F10H9Pn5LOP/QA4bvI779bTz5gk+pGu6az4wJHPVt2LV91Ka/8yYpD+m9cuGY5mpo+N2bXBjOnOkr9zRwdqdVG1ADE/Y2Sg++ct0/7F6W5rhTTQHEy3oS50sWDVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=yNeVUHK2; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719007098;
-	bh=GzRDLnuFoZMdH1hQlF6ojeOZvsWqIJBgLcgKRUN0xBw=;
+	s=mail; t=1719007099;
+	bh=mvTc6mmb97QnDGAQR4LeZV3dSJ5FUaa474nFk7DAEx8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=I3FJIGQz0/eVwL3XqHal+xKSuyjIOKIrSuR2P/EMbws789fnsn/J55wtJsJEnCUCw
-	 YfCjbR90ROUiUmb/bXsHYXfyCRfh+HxlJpvjVDHo/cGTUsA9MYHDUVwvTYVg8TNLX0
-	 JAQLznq6XjlAyKlXG7tU2eP+CXX38COpXFscufpPU506ScPDAzh5v86EA+k2DGW8po
-	 0k3V3qUperSSnCxNT8m63wEnlSYPMhYTrZIJK5wohkJkOKCwu72kTJM0g6NQ3kMWlF
-	 e9R0TzyEZSx8MwJZ28NSSMAUNBOTF5EyhvhnHXMNhzpcRtibRRCy7yCDIE8ajrDyeN
-	 Ul5kp5BwuYvkg==
+	b=yNeVUHK2XP2PBBdONBRootjCXsHSA4njaLxPpWzjLCrgLWWGloO25DTZ5XZNIMp3l
+	 7fpggCWBh83igYPN3pXCVXgrxy4yl3IAXmvzk0shrdtzyIcAg27WveobPSQqLbv3l3
+	 xcRuG+DeEMt5tfv1nW+OxFtIZHPb5+y29y/D63bhahdufBq04ZavTXBEfw0oS+lc4A
+	 TIuwS2aMM3f7rrTZ7FouwqtnFDAiiQXJP3RU0oNprVBahvyrfVDclVo16J+eeshnda
+	 Ze0oFu9jGOO7qLzTZ7oZQD0YcNC/EMqe3umRNaPOgMPyNYYtLXaL5lam8gMVEJr2gC
+	 ujx+TVTyusIJA==
 Received: from localhost (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2ED1F37821E4;
-	Fri, 21 Jun 2024 21:58:18 +0000 (UTC)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5E8AC37821E6;
+	Fri, 21 Jun 2024 21:58:19 +0000 (UTC)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Sat, 22 Jun 2024 00:57:21 +0300
-Subject: [PATCH v2 4/5] arm64: dts: rockchip: Fix mic-in-differential usage
- on rk3566-roc-pc
+Date: Sat, 22 Jun 2024 00:57:22 +0300
+Subject: [PATCH v2 5/5] arm64: dts: rockchip: Fix mic-in-differential usage
+ on rk3568-evb1-v10
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240622-rk809-fixes-v2-4-c0db420d3639@collabora.com>
+Message-Id: <20240622-rk809-fixes-v2-5-c0db420d3639@collabora.com>
 References: <20240622-rk809-fixes-v2-0-c0db420d3639@collabora.com>
 In-Reply-To: <20240622-rk809-fixes-v2-0-c0db420d3639@collabora.com>
 To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -77,31 +77,32 @@ X-Mailer: b4 0.14.0
 The 'mic-in-differential' DT property supported by the RK809/RK817 audio
 codec driver is actually valid if prefixed with 'rockchip,':
 
-  DTC_CHK arch/arm64/boot/dts/rockchip/rk3566-roc-pc.dtb
-  rk3566-roc-pc.dtb: pmic@20: codec: 'mic-in-differential' does not match any of the regexes: 'pinctrl-[0-9]+'
+  DTC_CHK arch/arm64/boot/dts/rockchip/rk3568-evb1-v10.dtb
+
+  rk3568-evb1-v10.dtb: pmic@20: codec: 'mic-in-differential' does not match any of the regexes: 'pinctrl-[0-9]+'
 	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
 
 Make use of the correct property name.
 
-Fixes: a8e35c4bebe4 ("arm64: dts: rockchip: add audio nodes to rk3566-roc-pc")
+Fixes: 3e4c629ca680 ("arm64: dts: rockchip: enable rk809 audio codec on the rk3568 evb1-v10")
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3566-roc-pc.dts | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3568-evb1-v10.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3566-roc-pc.dts b/arch/arm64/boot/dts/rockchip/rk3566-roc-pc.dts
-index 63eea27293fe..67e7801bd489 100644
---- a/arch/arm64/boot/dts/rockchip/rk3566-roc-pc.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3566-roc-pc.dts
-@@ -269,7 +269,7 @@ rk809: pmic@20 {
- 		vcc9-supply = <&vcc3v3_sys>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-evb1-v10.dts b/arch/arm64/boot/dts/rockchip/rk3568-evb1-v10.dts
+index 19f8fc369b13..8c3ab07d3807 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-evb1-v10.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3568-evb1-v10.dts
+@@ -475,7 +475,7 @@ regulator-state-mem {
+ 		};
  
  		codec {
 -			mic-in-differential;
 +			rockchip,mic-in-differential;
  		};
- 
- 		regulators {
+ 	};
+ };
 
 -- 
 2.45.2
