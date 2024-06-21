@@ -1,144 +1,113 @@
-Return-Path: <linux-kernel+bounces-224071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-224072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C67911CDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:33:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5511F911CD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 09:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F1F52821D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:33:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86CB61C2214B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 07:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF9716C879;
-	Fri, 21 Jun 2024 07:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7E216D301;
+	Fri, 21 Jun 2024 07:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZxXVfpDa"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PdfMISyd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3E916E882
-	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 07:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB7C16B74F;
+	Fri, 21 Jun 2024 07:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718955035; cv=none; b=Jn3vf3LqmDyctfqRxM44yuAAcOhyKGKASUMqmNmzRK4DEx/fJLFON6DVwHUiQudXEE+GRaLa7O8PiE/b32fK0h55kStTIXej1Ng4SJ2EOZ+UrOGUzitbHXB3H2xMnbsRXIDRfUn5LbMCe8r3jT5R9Xx3Pm8R8P9Sr8enRd1SpxI=
+	t=1718955057; cv=none; b=P9gzuFOs6V9JDq5YPtP7Jlm54W2hig24ZsSXxsMNLhCfLC1zZ4fB/g9GVWEzaFmYHGpiY2GIwovVP7dUljPlu7+Q9XAowf0RrUY4C2BGsDR92+WGOJwBOkDoyVo8Yj7EOzJ/ge8EZaDkJSNSmjVUAMbX6pPPKO/As47DIrEO5rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718955035; c=relaxed/simple;
-	bh=X8INLkskdkYTHO9nLO+bqJ3aacRr5rFB23PLTToBN9k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lXFAEy+SegtZclzyC7wAH4tS7yBLiaUefo+et4fBDjKMbm7ozGvv8b5YXletI5qZj2Wl3cngSbGQzBcErsCmLyM6D+2qWteQcITW2q7LyE68mPeQNYB+ymJtM+RyFKAr61UhU8Dnti2qR/eO2Zv7f/MyR+8I25bV/xXvNTM8fCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZxXVfpDa; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=DWqmJaYmk7gfwFyT7gufw56IyMYdyCsAGXbbSjiY3n0=; b=ZxXVfp
-	Da1ik4V4mvkkHeHMjxdeMRcprHpBymgYHmxAAjWaGePsGR6z26V/SH8U9SMz3B63
-	rLYcn9+qsLZK8fnurJxK6FYSKx6WyAz7z9ztlAY0WSHPP/ATNBl125RKjnD8o4i7
-	kvJYKanq6GEWKxj9X90/cjCn69QYqiRAQd/cDKujxQMMVT+QwiyhveBM/u3x6nzE
-	Z6gcSPWOa4d4aplRSRGPAf0GhC7EsCYuT6cXFN/W1gJeNdikaP9D+hpW2oVlXthF
-	zttPYVnZvijhDwwZC6ZWn8im6PpmBAMPV/mhOzVOZyPLg6JwjIh/4+8ArgcNAnlQ
-	ArMHLjLWw283xi3Q==
-Received: (qmail 1279191 invoked from network); 21 Jun 2024 09:30:32 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jun 2024 09:30:32 +0200
-X-UD-Smtp-Session: l3s3148p1@2mPHZ2EbFpAgAwDPXzjQABqqX1QYyOSW
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: Andi Shyti <andi.shyti@kernel.org>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH v4 6/6] docs: i2c: summary: be clearer with 'controller/target' and 'adapter/client' pairs
-Date: Fri, 21 Jun 2024 09:30:13 +0200
-Message-ID: <20240621073015.5443-7-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240621073015.5443-1-wsa+renesas@sang-engineering.com>
-References: <20240621073015.5443-1-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1718955057; c=relaxed/simple;
+	bh=ko8J2UaKlSl/BDPlAtHFYwIIw4yfwjeKtWhC1B1E6dI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lfhVGj8VTXUysLGlCDz/3Lf81KQQ+LFWAGnIpVI4CaJBd7h8qE4/hXX4OfhsY2rRhS74ZAS0U8mP/yOWGBng58V/r1v1F644hPuzvFrBuP8+1XOZSQMEGZ62gApCNIrzy7cXkyt0O4SDhaQHJpUwuzFLL0eaEm4JWvGgHQyvSxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PdfMISyd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L5tdhw023962;
+	Fri, 21 Jun 2024 07:30:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ko8J2UaKlSl/BDPlAtHFYwII
+	w4yfwjeKtWhC1B1E6dI=; b=PdfMISyd+3hSBZ1Ke013xq1J2zysYifRDPjAQ8mf
+	63t0Oq8F+STq05ZXQDoltyCI+30YcLArzi+iIctkeBOJZEhAkNojqvG1/6sabk3N
+	gjdxWdf1ouecy/Es5gE5yQILuoXPrxCBIh88yD8mSeRTQ57aftuX/REz4aS6lnbe
+	lYz/VkRlnSKTNFJt2ybQ4Wr0Y/8VL/3WlkoUvRwJFFSySJLP91unkez7r5U+z0Xw
+	48QB6N5Tn1EZrr4Z+xVsjyGIm8h62N7wKW2nsJopX+2GDCqChRHV+M/tffvdW5+D
+	92c9QlT1FI6zTDWRuDvKnzet+mRAfbPYGR92vz7nuCbVJA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrksswd3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 07:30:43 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45L7Ugpb026188
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 07:30:42 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 21 Jun 2024 00:30:36 -0700
+Date: Fri, 21 Jun 2024 13:00:31 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
+        <quic_rjendra@quicinc.com>, <luca@z3ntu.xyz>, <abel.vesa@linaro.org>,
+        <quic_rohiagar@quicinc.com>, <danila@jiaxyga.com>,
+        <otto.pflueger@abscue.de>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        Praveenkumar I <quic_ipkumar@quicinc.com>
+Subject: Re: [PATCH v1 3/7] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+Message-ID: <ZnUsFwQyc7JRTXl/@hu-varada-blr.qualcomm.com>
+References: <20240620081427.2860066-1-quic_varada@quicinc.com>
+ <20240620081427.2860066-4-quic_varada@quicinc.com>
+ <jfh2xygjdoapkno2jrt6w7thlylgyp2tk7oaczundhxvi26qel@ahtskgn4v6sp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <jfh2xygjdoapkno2jrt6w7thlylgyp2tk7oaczundhxvi26qel@ahtskgn4v6sp>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 3EDCezE50oxWbJ3qrC5dswBy0blzoSZi
+X-Proofpoint-GUID: 3EDCezE50oxWbJ3qrC5dswBy0blzoSZi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_02,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ adultscore=0 phishscore=0 suspectscore=0 spamscore=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=628 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406210055
 
-This not only includes rewording, but also where to put which emphasis
-on terms in this document.
+On Thu, Jun 20, 2024 at 06:09:51PM +0300, Dmitry Baryshkov wrote:
+> On Thu, Jun 20, 2024 at 01:44:23PM GMT, Varadarajan Narayanan wrote:
+> > Add the APC power domain definitions used in IPQ9574.
+> >
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+>
+> The order of the S-o-B's is wrong. Who is the actual author of the
+> patch?
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- Documentation/i2c/summary.rst | 41 ++++++++++++++++++++---------------
- 1 file changed, 24 insertions(+), 17 deletions(-)
+Praveenkumar I <quic_ipkumar@quicinc.com> is the actual author.
 
-diff --git a/Documentation/i2c/summary.rst b/Documentation/i2c/summary.rst
-index ff8bda32b9c3..579a1c7df200 100644
---- a/Documentation/i2c/summary.rst
-+++ b/Documentation/i2c/summary.rst
-@@ -31,9 +31,7 @@ implement all the common SMBus protocol semantics or messages.
- Terminology
- ===========
- 
--The I2C bus connects one or more *controller* chips and one or more *target*
--chips.
--
-+The I2C bus connects one or more controller chips and one or more target chips.
- 
- .. kernel-figure::  i2c_bus.svg
-    :alt:    Simple I2C bus with one controller and 3 targets
-@@ -41,28 +39,37 @@ chips.
-    Simple I2C bus
- 
- A **controller** chip is a node that starts communications with targets. In the
--Linux kernel implementation it is called an **adapter** or bus. Adapter
--drivers are in the ``drivers/i2c/busses/`` subdirectory.
-+Linux kernel implementation it is also called an "adapter" or "bus". Controller
-+drivers are usually in the ``drivers/i2c/busses/`` subdirectory.
- 
--An **algorithm** contains general code that can be used to implement a
--whole class of I2C adapters. Each specific adapter driver either depends on
--an algorithm driver in the ``drivers/i2c/algos/`` subdirectory, or includes
--its own implementation.
-+An **algorithm** contains general code that can be used to implement a whole
-+class of I2C controllers. Each specific controller driver either depends on an
-+algorithm driver in the ``drivers/i2c/algos/`` subdirectory, or includes its
-+own implementation.
- 
- A **target** chip is a node that responds to communications when addressed by a
--controller. In the Linux kernel implementation it is called a **client**. While
--targets are usually separate external chips, Linux can also act as a target
--(needs hardware support) and respond to another controller on the bus. This is
--then called a **local target**. In contrast, an external chip is called a
--**remote target**.
-+controller. In the Linux kernel implementation it is also called a "client".
-+While targets are usually separate external chips, Linux can also act as a
-+target (needs hardware support) and respond to another controller on the bus.
-+This is then called a **local target**. In contrast, an external chip is called
-+a **remote target**.
- 
- Target drivers are kept in a directory specific to the feature they provide,
- for example ``drivers/gpio/`` for GPIO expanders and ``drivers/media/i2c/`` for
- video-related chips.
- 
--For the example configuration in figure, you will need a driver for your
--I2C adapter, and drivers for your I2C devices (usually one driver for each
--device).
-+For the example configuration in the figure above, you will need one driver for
-+the I2C controller, and drivers for your I2C targets. Usually one driver for
-+each target.
-+
-+Synonyms
-+--------
-+
-+As mentioned above, the Linux I2C implementation historically uses the terms
-+"adapter" for controller and "client" for target. A number of data structures
-+have these synonyms in their name. So, when discussing implementation details,
-+you should be aware of these terms as well. The official wording is preferred,
-+though.
- 
- Outdated terminology
- --------------------
--- 
-2.43.0
-
+Thanks
+Varada
 
