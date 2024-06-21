@@ -1,191 +1,308 @@
-Return-Path: <linux-kernel+bounces-225150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-225151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7E8912CA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:49:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5522E912CA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 19:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B23F2870BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:49:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84043B25D11
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2024 17:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2241B16A922;
-	Fri, 21 Jun 2024 17:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3873C16A95B;
+	Fri, 21 Jun 2024 17:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GL/I/Hv+"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gcTz6lim"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949431C14;
-	Fri, 21 Jun 2024 17:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C241684A8
+	for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 17:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718992165; cv=none; b=CeAVtqcoL57t5vPWqhz+AKoFyox9SCEmgESTmQlzcP1RUk4eTr3M4+YJNd25fOMFV2Bigcqe97L+6fNtkG07tKA1co7ifHTrQQpb+AZtWglY6C8cmJP+LnqV//u0IPxJJ99OMuNk3wInXk1SWRyKj9vdxZJpfobMcDlgkqV4MS4=
+	t=1718992211; cv=none; b=MkpIlx93/BTDBxJwKh2tDxH4kBc+EXZWUGe44zH6oq/A89sNfGmSHoAz/eAzNntSTlgJFhy43DyuhpNdQK59Xtwy2rALvXqIzRLY/unzuCyxA3maNTetd5EaotWcSKzqL47m/4y0WSaV7+dh9SgS/y9yjCIDA5rBrQs9LzP4gUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718992165; c=relaxed/simple;
-	bh=16Q7UL0YhkM2EiDSjw0enmCXlzuHQdUMucuuffEQB5Q=;
+	s=arc-20240116; t=1718992211; c=relaxed/simple;
+	bh=IPf9+fbqGUDmVSOQu/X/7C1F1f5gxqDHVFmJFmx7PBo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sST5+VmoSa21LXH17Dxe1xEC30yZyHgW1bq0B+crQ0cnljPcslkIMznHMD0g2jp6jRXxFbRWwqCsSLrC3Opfqz48khUtv2iabGVa/Mo9sZqwrtAhMg/gEUl0uikel5+TiPKmL2gh6AOHV+cuJj5TvvnZA6AQbdQo3vRXSPzPk4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GL/I/Hv+; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6f09eaf420so265180566b.3;
-        Fri, 21 Jun 2024 10:49:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=mTO+xMM2oAN3T9kmMO/iL438qG7nuxQfIpuc6JDHEjfdNRGclIzw4Ny50fIdXmMeJ6QAkRmj3cpeFsalJtNoIv3hsKMyQhfF3i1L4txWgh/a3HzyNZPX/H8vs5KzCGeats00UALJkJm3M593n5Zz2KVtZt40V3nuTzSx75X1DpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gcTz6lim; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dff305df675so2557177276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2024 10:50:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718992162; x=1719596962; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718992208; x=1719597008; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dd59nbjK5mxx2t+S2o2mRnCCr+mXTEe9t7Rxfuo2GxU=;
-        b=GL/I/Hv+WkNccOUVyVEskJoq96vytPnRYYI0EzrkJRssyBKSRCuseTnHQmUonxz5kM
-         VxxhHNxJnzmJv288YTe/stnFuWS4yjas88L/yj/HhKoCrXN71g3GUWFWZsIsAch0/mGO
-         CRVjTQqUTdMC3GDC3lR6FlQ8309zY6e3qU87dG350LyTBOqI2/5QDTPFFEhOXNqDqxPC
-         WHyYhNXL7FD7wfFztZQFRoG5juyeBM5rvA6G/FR96L4eqROWQPoEb4TGRXHrS1l2lJ5i
-         Uvr2TBCjearcmRl2IJCsS4LHrtK4lVsxX5DGHEnK7f6dYnBc4aAxKqFK+7ZPTrK4ylkv
-         LFvg==
+        bh=htDP1OG5xDHkVSgxL7act3JE2EwPbPaL4PqefhbQ1KE=;
+        b=gcTz6limN1lNk9l2pmc/7myxvx8Xtvfe9DACeOJPf8zvRAA4HDQ13PbOGfg3uDDFHB
+         HItpfnJAfV0IYiQkAj1dV3zxSX4tXOPiwPbE3WtqMTSl5tIKUJwzUsuivdeEiFr/9fo5
+         L4Lk7GXR6gjZuNFIaRbNHCpWr+4yw93pIXt02v/j6DSMu48J4qoSbOZJwXgN7H3ZzNMX
+         QcIpTtn2uY+R+o7Oxoc8irLIkBf8rCMVqKfDRW4EnpjfvirpXHm5xZ1N5kFANb5sruQV
+         NvNAQxg6av2d4/rgVZv4H4dYVEr+UoufgGrsBteZDB9+0ytUoQPQu5sOyjT1EWiDX6r8
+         zcoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718992162; x=1719596962;
+        d=1e100.net; s=20230601; t=1718992208; x=1719597008;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Dd59nbjK5mxx2t+S2o2mRnCCr+mXTEe9t7Rxfuo2GxU=;
-        b=ZUJLtp1B9R2HJFsygn83Ppip25EBNGHI9eOrqPvpsl2XQtECNT1fvsHpHIfw27+MbS
-         iop+waijIAhgBzZM8ik0s5wNTeipob1/Wg6MwDYqLrncc1vihI1Fg0SRmwY137SWNrt5
-         lmCl15gR/HAk+RPslHFfbrKS1vz7U/r7m+D45UZXKJD6DT3kDOahqdX+NjjEhzjvzGML
-         SYE7ggzpAfoUwmv0kwqOhY5wccOhzr5wpKbn1O5c+wPCnK6KoGeU5Rwm//y7knTqkNd5
-         w1EnVuqRSthF/Vf8PmRqmyDue8ewhWpurSL9jCMKniEcZmItYF9uvejUbd55vXHWcjUG
-         4n8A==
-X-Forwarded-Encrypted: i=1; AJvYcCW9ncCGIloZW9j7Gufa9B3APq0ze6HVN6jitgXOVpdG0ogU/gRUJa5H3+EMimNtMHYlQ2SVXCtTomeoQPo2FmhPVr6pr4xI+yBESC1LamQ315U6nRESoQdheFMjjYorBwmD69joVvObbA==
-X-Gm-Message-State: AOJu0YzL5KHfACkprLEDINNjVgyz0G3JprJOjk6Cx2//hMox4nAbwG96
-	w5j5wT0ROHjd4lzNaTdl2FrRQNyhY5W6EW9GW65kAJDIF+r1IjFBm3oXHQ2fc0FC+vZbaInR5vW
-	akyUKw8OO78JIlBWicT1x67wf7SM=
-X-Google-Smtp-Source: AGHT+IHuxXRp9oMpOcE6TOMJCZu9K/BXWS3ZbVFC9+KQ7nQaPPN+hSsVK1nMG8Wok8Lm7VJZ1yfqKBzvbhRANY/cPkA=
-X-Received: by 2002:a17:906:4092:b0:a6f:6d98:d4d4 with SMTP id
- a640c23a62f3a-a6fab60bad6mr524907266b.11.1718992161614; Fri, 21 Jun 2024
- 10:49:21 -0700 (PDT)
+        bh=htDP1OG5xDHkVSgxL7act3JE2EwPbPaL4PqefhbQ1KE=;
+        b=usE2LMqLRWbMm5G3cvkPO/DZ3cwGEqmdd1i4ZnqYOgT4OmGWTxTA0tfnIyuXvj8kRN
+         UNHLZOIsYfpQWvn64SUe2wbnVaijR6WIhay/jPnKDFc8TRkQ6Wt8f8+Itlsu1oqviVji
+         qzqQzYT1WpTj5Gd1K6guyEBD8E5A3cRHnHNQG1CkuNwbU0iteHkQURoYCFiTT96SaU1I
+         X5cJnUZ9f4xB7WQLC5AG/qXFnRzvBRY0xaOV/W06hSxQ27BMe54Vz9+Zc3nR7AHJOF1Z
+         KzEKq4YedkwQ/eq2zs+bYl2MQH3jNY+hrvKR7m6hkYg/Ct0USYqatY4i149Jjiv4ZSoO
+         Cxww==
+X-Forwarded-Encrypted: i=1; AJvYcCUwckRRBrai1yn3+91V6X6zZC85Mpq7DSeugQa3b+tRmKe8BWvKjGnTMQSKI7eHq6YqoT12ihmmHKz/tK8ljcTlXf296qWYDQJ7K0yL
+X-Gm-Message-State: AOJu0YxB/QhwYfGImFdsOqHzUUOrZdC7cwSGPoeBvww8FDXdntAVB0Qr
+	9vXEckThCyz+d2u95Q6RZBVI8UUYTxB8gPXeNbuHQr3LZ/dE62JBIZ86Kpmq3RWuhw4Qyzk2tmn
+	tOXYaUyi5hNgMtHbxfMojMej3O8wRyDOqxCh+0Q==
+X-Google-Smtp-Source: AGHT+IHqlvmRkxYABkG7qiYB3TKNgv1qPu0jG5c4eKaGw4Kw40QlUhGgeVH2vPtXYTkPD9ZVsxpdIq7vGdDAsYrGOR0=
+X-Received: by 2002:a25:6644:0:b0:e02:bc67:829e with SMTP id
+ 3f1490d57ef6-e02be230f48mr8974923276.65.1718992207767; Fri, 21 Jun 2024
+ 10:50:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621050525.3720069-1-allen.lkml@gmail.com> <20240621082525.0def003b@hermes.local>
-In-Reply-To: <20240621082525.0def003b@hermes.local>
-From: Allen <allen.lkml@gmail.com>
-Date: Fri, 21 Jun 2024 10:49:09 -0700
-Message-ID: <CAOMdWS+Z_vvcrJE9ug3dYe033te-EW7eBdygJ9hbe6R6e37yzQ@mail.gmail.com>
-Subject: Re: [PATCH 00/15] ethernet: Convert from tasklet to BH workqueue
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: kuba@kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, jes@trained-monkey.org, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	kda@linux-powerpc.org, cai.huoqing@linux.dev, dougmill@linux.ibm.com, 
-	npiggin@gmail.com, christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org, 
-	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com, tlfalcon@linux.ibm.com, 
-	cooldavid@cooldavid.org, marcin.s.wojtas@gmail.com, mlindner@marvell.com, 
-	nbd@nbd.name, sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com, 
-	lorenzo@kernel.org, borisp@nvidia.com, bryan.whitehead@microchip.com, 
-	UNGLinuxDriver@microchip.com, louis.peens@corigine.com, 
-	richardcochran@gmail.com, linux-rdma@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-acenic@sunsite.dk, 
-	linux-net-drivers@amd.com, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
+References: <20240617005825.1443206-5-quic_gaurkash@quicinc.com>
+ <3eehkn3cdhhjfqtzpahxhjxtu5uqwhntpgu22k3hknctrop3g5@f7dhwvdvhr3k>
+ <96e2ce4b154a4f918be0bc2a45011e6d@quicinc.com> <CAA8EJppGpv7N_JQQNJZrbngBBdEKZfuqutR9MPnS1R_WqYNTQw@mail.gmail.com>
+ <3a15df00a2714b40aba4ebc43011a7b6@quicinc.com> <CAA8EJpoZ0RR035QwzMLguJZvdYb-C6aqudp1BgHgn_DH2ffsoQ@mail.gmail.com>
+ <20240621044747.GC4362@sol.localdomain> <CAA8EJppXsbpFCeGJOMGKOQddy0fF4uW3rt4RUuDTQq6mPunBkg@mail.gmail.com>
+ <20240621153939.GA2081@sol.localdomain> <CAA8EJpqV4CW9kKLVUZgfo+hkSv+tn0t+k0McmHEyXNJUpsZF1w@mail.gmail.com>
+ <20240621163127.GC2081@sol.localdomain>
+In-Reply-To: <20240621163127.GC2081@sol.localdomain>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 21 Jun 2024 20:49:56 +0300
+Message-ID: <CAA8EJpqytynwQrCAqqBsmx2XYgV5tsNeV4hpYzT6snqu+r8Wdg@mail.gmail.com>
+Subject: Re: [PATCH v5 04/15] soc: qcom: ice: add hwkm support in ice
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>, 
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "andersson@kernel.org" <andersson@kernel.org>, 
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, 
+	"srinivas.kandagatla" <srinivas.kandagatla@linaro.org>, 
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, kernel <kernel@quicinc.com>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"Om Prakash Singh (QUIC)" <quic_omprsing@quicinc.com>, 
+	"Bao D. Nguyen (QUIC)" <quic_nguyenb@quicinc.com>, 
+	"bartosz.golaszewski" <bartosz.golaszewski@linaro.org>, 
+	"konrad.dybcio@linaro.org" <konrad.dybcio@linaro.org>, 
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, "jejb@linux.ibm.com" <jejb@linux.ibm.com>, 
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>, "mani@kernel.org" <mani@kernel.org>, 
+	"davem@davemloft.net" <davem@davemloft.net>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	Sonal Gupta <sonalg@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 21 Jun 2024 at 19:31, Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> > The only generic interface to execute asynchronously in the BH context is
-> > tasklet; however, it's marked deprecated and has some design flaws. To
-> > replace tasklets, BH workqueue support was recently added. A BH workqueue
-> > behaves similarly to regular workqueues except that the queued work items
-> > are executed in the BH context.
+> On Fri, Jun 21, 2024 at 07:06:25PM +0300, Dmitry Baryshkov wrote:
+> > On Fri, 21 Jun 2024 at 18:39, Eric Biggers <ebiggers@kernel.org> wrote:
+> > >
+> > > On Fri, Jun 21, 2024 at 06:16:37PM +0300, Dmitry Baryshkov wrote:
+> > > > On Fri, 21 Jun 2024 at 07:47, Eric Biggers <ebiggers@kernel.org> wrote:
+> > > > >
+> > > > > On Thu, Jun 20, 2024 at 02:57:40PM +0300, Dmitry Baryshkov wrote:
+> > > > > > > > >
+> > > > > > > > > > Is it possible to use both kind of keys when working on standard mode?
+> > > > > > > > > > If not, it should be the user who selects what type of keys to be used.
+> > > > > > > > > > Enforcing this via DT is not a way to go.
+> > > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > Unfortunately, that support is not there yet. When you say user, do
+> > > > > > > > > you mean to have it as a filesystem mount option?
+> > > > > > > >
+> > > > > > > > During cryptsetup time. When running e.g. cryptsetup I, as a user, would like
+> > > > > > > > to be able to use either a hardware-wrapped key or a standard key.
+> > > > > > > >
+> > > > > > >
+> > > > > > > What we are looking for with these patches is for per-file/folder encryption using fscrypt policies.
+> > > > > > > Cryptsetup to my understanding supports only full-disk , and does not support FBE (File-Based)
+> > > > > >
+> > > > > > I must admit, I mostly used dm-crypt beforehand, so I had to look at
+> > > > > > fscrypt now. Some of my previous comments might not be fully
+> > > > > > applicable.
+> > > > > >
+> > > > > > > Hence the idea here is that we mount an unencrypted device (with the inlinecrypt option that indicates inline encryption is supported)
+> > > > > > > And specify policies (links to keys) for different folders.
+> > > > > > >
+> > > > > > > > > The way the UFS/EMMC crypto layer is designed currently is that, this
+> > > > > > > > > information is needed when the modules are loaded.
+> > > > > > > > >
+> > > > > > > > > https://lore.kernel.org/all/20231104211259.17448-2-ebiggers@kernel.org
+> > > > > > > > > /#Z31drivers:ufs:core:ufshcd-crypto.c
+> > > > > > > >
+> > > > > > > > I see that the driver lists capabilities here. E.g. that it supports HW-wrapped
+> > > > > > > > keys. But the line doesn't specify that standard keys are not supported.
+> > > > > > > >
+> > > > > > >
+> > > > > > > Those are capabilities that are read from the storage controller. However, wrapped keys
+> > > > > > > Are not a standard in the ICE JEDEC specification, and in most cases, is a value add coming
+> > > > > > > from the SoC.
+> > > > > > >
+> > > > > > > QCOM SOC and firmware currently does not support both kinds of keys in the HWKM mode.
+> > > > > > > That is something we are internally working on, but not available yet.
+> > > > > >
+> > > > > > I'd say this is a significant obstacle, at least from my point of
+> > > > > > view. I understand that the default might be to use hw-wrapped keys,
+> > > > > > but it should be possible for the user to select non-HW keys if the
+> > > > > > ability to recover the data is considered to be important. Note, I'm
+> > > > > > really pointing to the user here, not to the system integrator. So
+> > > > > > using DT property or specifying kernel arguments to switch between
+> > > > > > these modes is not really an option.
+> > > > > >
+> > > > > > But I'd really love to hear some feedback from linux-security and/or
+> > > > > > linux-fscrypt here.
+> > > > > >
+> > > > > > In my humble opinion the user should be able to specify that the key
+> > > > > > is wrapped using the hardware KMK. Then if the hardware has already
+> > > > > > started using the other kind of keys, it should be able to respond
+> > > > > > with -EINVAL / whatever else. Then the user can evict previously
+> > > > > > programmed key and program a desired one.
+> > > > > >
+> > > > > > > > Also, I'd have expected that hw-wrapped keys are handled using trusted
+> > > > > > > > keys mechanism (see security/keys/trusted-keys/). Could you please point
+> > > > > > > > out why that's not the case?
+> > > > > > > >
+> > > > > > >
+> > > > > > > I will evaluate this.
+> > > > > > > But my initial response is that we currently cannot communicate to our TPM directly from HLOS, but
+> > > > > > > goes through QTEE, and I don't think our qtee currently interfaces with the open source tee
+> > > > > > > driver. The interface is through QCOM SCM driver.
+> > > > > >
+> > > > > > Note, this is just an API interface, see how it is implemented for the
+> > > > > > CAAM hardware.
+> > > > > >
+> > > > >
+> > > > > The problem is that this patchset was sent out without the patches that add the
+> > > > > block and filesystem-level framework for hardware-wrapped inline encryption
+> > > > > keys, which it depends on.  So it's lacking context.  The proposed framework can
+> > > > > be found at
+> > > > > https://lore.kernel.org/linux-block/20231104211259.17448-1-ebiggers@kernel.org/T/#u
+> > > >
+> > > > Thank you. I have quickly skimmed through the patches, but I didn't
+> > > > review them thoroughly. Maybe the patchset already implements the
+> > > > interfaces that I'm thinking about. In such a case please excuse me. I
+> > > > will give it a more thorough look later today.
+> > > >
+> > > > > As for why "trusted keys" aren't used, they just aren't helpful here.  "Trusted
+> > > > > keys" are based around a model where the kernel can request that keys be sealed
+> > > > > and unsealed using a trust source, and the kernel gets access to the raw
+> > > > > unsealed keys.  Hardware-wrapped inline encryption keys use a different model
+> > > > > where the kernel never gets access to the raw keys.  They also have the concept
+> > > > > of ephemeral wrapping which does not exist in "trusted keys".  And they need to
+> > > > > be properly integrated with the inline encryption framework in the block layer.
+> > > >
+> > > > Then what exactly does qcom_scm_derive_sw_secret() do? Does it rewrap
+> > > > the key under some other key?
+> > >
+> > > It derives a secret for functionality such as filenames encryption that can't
+> > > use inline encryption.
+> > >
+> > > > I had the feeling that there are two separate pieces of functionality
+> > > > being stuffed into a single patchset and into a single solution.
+> > > >
+> > > > First one is handling the keys. I keep on thinking that there should
+> > > > be a separate software interface to unseal the key and rewrap it under
+> > > > an ephemeral key.
+> > >
+> > > There is.  That's what the BLKCRYPTOPREPAREKEY ioctl is for.
+> > >
+> > > > Some hardware might permit importing raw keys.
+> > >
+> > > That's what BLKCRYPTOIMPORTKEY is for.
+> > >
+> > > > Other hardware might insist on generating the keys on-chip so that raw keys
+> > > > can never be used.
+> > >
+> > > And that's what BLKCRYPTOGENERATEKEY is for.
 > >
-> > This patch converts a few drivers in drivers/ethernet/* from tasklet
-> > to BH workqueue. The next set will be sent out after the next -rc is
-> > out.
+> > Again, this might be answered somewhere, but why can't we use keyctl
+> > for handling the keys and then use a single IOCTL to point the block
+> > device to the key in the keyring?
+>
+> All the same functionality would need to be supported, and I think that
+> shoehorning it into the keyrings service instead of just adding new ioctls would
+> be more difficult.  The keyrings service was not designed for this use case.
+> We've already had a lot of problems trying to take advantage of the keyrings
+> service in fscrypt previously.  The keyrings service is something that sounds
+> useful but really isn't all that useful.
+
+I would be really interested in reading or listening to any kind of
+summary or parts of the issues.
+I'm slightly pushy towards keyctl / keyrings, because it already
+provides support for different kinds of key wrapping and key
+management. Encrypted keys, trusted keys - those are all kinds of key
+management, which either will be missing or will have to be
+reimplemented for block layers.
+
+I know that keyrings are clumsy and not that logical, but then their
+API needs to be improved. Just ignoring the existing mechanisms sounds
+like a bad idea.
+
+>
+> By "a single IOCTL to point the block device to the key in the keyring", you
+> seem to be referring to configuring full block device encryption with a single
+> key.  That's not something that's supported by the upstream kernel yet, and it's
+> not related to this patchset; currently only fscrypt supports inline encryption.
+
+I see that dm has at least some provisioning and hooks for
+CONFIG_BLK_INLINE_ENCRYPTION. Thus I thought that it's possible to use
+inline encryption through DM.
+
+> Support for it will be added at some point, which will likely indeed take the
+> form of an ioctl to set a key on a block device.  But that would be the case
+> even without HW-wrapped keys.  And *requiring* the key to be given in a keyring
+> (instead of just in a byte array passed to the ioctl) isn't very helpful, as it
+> just makes the API harder to use.  We've learned this from the fscrypt API
+> already where we actually had to move away from the keyrings service in order to
+> fix all the issues caused by it (see FS_IOC_ADD_ENCRYPTION_KEY).
+>
+> > >
+> > > > Second part is the actual block interface. Gaurav wrote about
+> > > > targeting fscrypt, but there should be no actual difference between
+> > > > crypto targets. FDE or having a single partition encrypted should
+> > > > probably work in the same way. Convert the key into blk_crypto_key
+> > > > (including the cookie for the ephemeral key), program the key into the
+> > > > slot, use the slot to en/decrypt hardware blocks.
+> > > >
+> > > > My main point is that the decision on the key type should be coming
+> > > > from the user.
+> > >
+> > > That's exactly how it works.  There is a block interface for specifying an
+> > > inline encryption key along with each bio.  The submitter of the bio can specify
+> > > either a standard key or a HW-wrapped key.
 > >
-> > This series is based on
-> > commit a6ec08beec9e ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net")
-> >
-> > First version converting all the drivers can be found at:
-> > https://lore.kernel.org/all/20240507190111.16710
-> > -2-apais@linux.microsoft.com/
-> >
-> >
-> > Allen Pais (15):
-> >   net: alteon: Convert tasklet API to new bottom half workqueue
-> >     mechanism
-> >   net: xgbe: Convert tasklet API to new bottom half workqueue mechanism
-> >   net: cnic: Convert tasklet API to new bottom half workqueue mechanism
-> >   net: macb: Convert tasklet API to new bottom half workqueue mechanism
-> >   net: cavium/liquidio: Convert tasklet API to new bottom half workqueue
-> >     mechanism
-> >   net: octeon: Convert tasklet API to new bottom half workqueue
-> >     mechanism
-> >   net: thunderx: Convert tasklet API to new bottom half workqueue
-> >     mechanism
-> >   net: chelsio: Convert tasklet API to new bottom half workqueue
-> >     mechanism
-> >   net: sundance: Convert tasklet API to new bottom half workqueue
-> >     mechanism
-> >   net: hinic: Convert tasklet API to new bottom half workqueue mechanism
-> >   net: ehea: Convert tasklet API to new bottom half workqueue mechanism
-> >   net: ibmvnic: Convert tasklet API to new bottom half workqueue
-> >     mechanism
-> >   net: jme: Convert tasklet API to new bottom half workqueue mechanism
-> >   net: marvell: Convert tasklet API to new bottom half workqueue
-> >     mechanism
-> >   net: mtk-wed: Convert tasklet API to new bottom half workqueue
-> >     mechanism
-> >
-> >  drivers/net/ethernet/alteon/acenic.c          | 26 +++----
-> >  drivers/net/ethernet/alteon/acenic.h          |  8 +--
-> >  drivers/net/ethernet/amd/xgbe/xgbe-drv.c      | 30 ++++----
-> >  drivers/net/ethernet/amd/xgbe/xgbe-i2c.c      | 16 ++---
-> >  drivers/net/ethernet/amd/xgbe/xgbe-mdio.c     | 16 ++---
-> >  drivers/net/ethernet/amd/xgbe/xgbe-pci.c      |  4 +-
-> >  drivers/net/ethernet/amd/xgbe/xgbe.h          | 10 +--
-> >  drivers/net/ethernet/broadcom/cnic.c          | 19 ++---
-> >  drivers/net/ethernet/broadcom/cnic.h          |  2 +-
-> >  drivers/net/ethernet/cadence/macb.h           |  3 +-
-> >  drivers/net/ethernet/cadence/macb_main.c      | 10 +--
-> >  .../net/ethernet/cavium/liquidio/lio_core.c   |  4 +-
-> >  .../net/ethernet/cavium/liquidio/lio_main.c   | 24 +++----
-> >  .../ethernet/cavium/liquidio/lio_vf_main.c    | 10 +--
-> >  .../ethernet/cavium/liquidio/octeon_droq.c    |  4 +-
-> >  .../ethernet/cavium/liquidio/octeon_main.h    |  4 +-
-> >  .../net/ethernet/cavium/octeon/octeon_mgmt.c  | 13 ++--
-> >  drivers/net/ethernet/cavium/thunder/nic.h     |  5 +-
-> >  .../net/ethernet/cavium/thunder/nicvf_main.c  | 24 +++----
-> >  .../ethernet/cavium/thunder/nicvf_queues.c    |  4 +-
-> >  .../ethernet/cavium/thunder/nicvf_queues.h    |  2 +-
-> >  drivers/net/ethernet/chelsio/cxgb/sge.c       | 19 ++---
-> >  drivers/net/ethernet/chelsio/cxgb4/cxgb4.h    |  9 +--
-> >  .../net/ethernet/chelsio/cxgb4/cxgb4_main.c   |  2 +-
-> >  .../ethernet/chelsio/cxgb4/cxgb4_tc_mqprio.c  |  4 +-
-> >  .../net/ethernet/chelsio/cxgb4/cxgb4_uld.c    |  2 +-
-> >  drivers/net/ethernet/chelsio/cxgb4/sge.c      | 40 +++++------
-> >  drivers/net/ethernet/chelsio/cxgb4vf/sge.c    |  6 +-
-> >  drivers/net/ethernet/dlink/sundance.c         | 41 +++++------
-> >  .../net/ethernet/huawei/hinic/hinic_hw_cmdq.c |  2 +-
-> >  .../net/ethernet/huawei/hinic/hinic_hw_eqs.c  | 17 +++--
-> >  .../net/ethernet/huawei/hinic/hinic_hw_eqs.h  |  2 +-
-> >  drivers/net/ethernet/ibm/ehea/ehea.h          |  3 +-
-> >  drivers/net/ethernet/ibm/ehea/ehea_main.c     | 14 ++--
-> >  drivers/net/ethernet/ibm/ibmvnic.c            | 24 +++----
-> >  drivers/net/ethernet/ibm/ibmvnic.h            |  2 +-
-> >  drivers/net/ethernet/jme.c                    | 72 +++++++++----------
-> >  drivers/net/ethernet/jme.h                    |  8 +--
-> >  .../net/ethernet/marvell/mvpp2/mvpp2_main.c   |  4 +-
-> >  drivers/net/ethernet/marvell/skge.c           | 12 ++--
-> >  drivers/net/ethernet/marvell/skge.h           |  3 +-
-> >  drivers/net/ethernet/mediatek/mtk_wed_wo.c    | 12 ++--
-> >  drivers/net/ethernet/mediatek/mtk_wed_wo.h    |  3 +-
-> >  43 files changed, 273 insertions(+), 266 deletions(-)
+> > Not in this patchset. The ICE driver decides whether it can support
+> > HW-wrapped keys or not and then fails to support other type of keys.
 > >
 >
-> This should also go to netdev@vger.kernel.org
+> Sure, that's just a matter of hardware capabilities though, right?  The block
+> layer provides a way for drivers to declare which inline encryption capabilities
+> they support.  They can declare they support standard keys, HW-wrapped keys,
+> both, or neither.  If Qualcomm SoCs can't support both types of keys at the same
+> time, that's unfortunate, but I'm not sure what your poitnt is.  The user (e.g.
+> fscrypt) still has control over whether they use the functionality that the
+> hardware provides.
 
-My Bad, I thought I had it marked. Thanks for pointing it out.
+It's a matter of policy. Harware / firmware doesn't support using both
+kinds of keys concurrently, if I understood Gaurav's explanations
+correctly. But the user should be able to make a judgement and use
+non-hw-wrapped keys if it fits their requirements. The driver should
+not make this kind of judgement. Note, this is not an issue of your
+original patchset, but it's a driver flaw in this patchset.
 
-       - Allen
+--
+With best wishes
+Dmitry
 
